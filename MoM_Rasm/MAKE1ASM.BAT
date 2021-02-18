@@ -1,0 +1,29 @@
+@ECHO OFF
+
+RESCAN
+
+REM Options BCC passes to TASM
+REM /D__MODEL__ /D__LANG__ /mb FLOATOPT
+
+REM tasm.exe /ml larg.asm
+
+REM TASM /M /MX /Q /T /D__LARGE__ c0, c0l
+
+REM BCC -ml -S -v -y ReqdMem.ASM
+REM BCC -ml -S -v -y FindFile.ASM
+REM BCC -ml -S -v -y Rasm_MoM.ASM
+REM BCC -ml -S -v -y seg001\f010109.ASM
+REM BCC -ml -S -v -y seg004\f040101.ASM
+REM BCC -ml -S -v -y seg005\f050207.ASM
+REM BCC -ml -S -v -y seg006\f060206.ASM
+
+C:\BORLANDC\BIN\TASM.EXE /zi dseg\_dseglst.ASM
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg001\f010109.ASM
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg002\_seg002.ASM
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg004\f040101.ASM
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg005\f050207.ASM
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg006\f060206.ASM
+
+REM C:\BORLANDC\BIN\TASM.EXE /zi MRM_A.ASM
+
+REM C:\BORLANDC\BIN\TASM.EXE /zi seg002\_seg002.ASM dseg\_dseg_lst.ASM
