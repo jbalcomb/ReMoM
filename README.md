@@ -3,7 +3,7 @@
 The goal of this project is to a recreate functional source code for Master of Magic, to allow the community to imporve and expand the Simtex Universe to their herts contect.  
 
 The source code in question is from the assembly code produced by the IDA Pro and Sourcer disassemblers.  
-It is then translated to Turbo Assembly, with MASM compatibility, and then rebuilt with Borland C++, Turbo Assmebler, and Turbo Linker.  
+It is then translated to Turbo Assembly, with MASM compatibility, and then rebuilt with Borland C++, Turbo Assembler, and Turbo Linker.  
 
 To get involved or even just hang out with other MoM fans, join us on the the "Master of Magic - Fans" Discorder Server.  
 This particular project is hosted by the [#mom-reverse-engineering Channel](https://discord.gg/kSNA8bE6Wt), on that server.  
