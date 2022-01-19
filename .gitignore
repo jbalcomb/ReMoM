@@ -1,0 +1,14 @@
+
+*.LBX
+*.MOM
+*.SET
+
+*.BIN
+*.LOG
+
+*.DSK
+*.EXE
+*.LST
+*.MAP
+*.OBJ
+*.XRF
