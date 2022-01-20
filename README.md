@@ -1,16 +1,23 @@
 # Master of Magic - Reassembly Project
 
-The goal of this project is to a recreate functional source code for Master of Magic, to allow the community to imporve and expand the Simtex Universe to their herts contect.  
 
-The source code in question is from the assembly code produced by the IDA Pro and Sourcer disassemblers.  
-It is then translated to Turbo Assembly, with MASM compatibility, and then rebuilt with Borland C++, Turbo Assembler, and Turbo Linker.  
+The goal of this project is to recreate a functional source code for Master of Magic, to allow the community to improve and expand the Simtex Universe to their hearts content.  
 
-To get involved or even just hang out with other MoM fans, join us on the the "Master of Magic - Fans" Discorder Server.  
+The source code in question is from the assembly code produced by the IDA Pro and Sourcerer disassemblers.  
+It is then translated to Turbo Assembly, with MASM compatibility, and then rebuilt using Borland C++, Turbo Assembler, and Turbo Linker.  
+
+
+To get involved, or even just hang out with other MoM fans, join us on the the "Master of Magic - Fans" Discord Server.  
 This particular project is hosted by the [#mom-reverse-engineering Channel](https://discord.gg/kSNA8bE6Wt), on that server.  
 
 
 ---
 
+NOTE: MoM game files required:  
+    CONFIG.MOM, MAGIC.SET;  
+    BACKGRND.LBX, FONTS.LBX, MAINSCRN.LBX, SPELLDAT.LBX, TERRSTAT.LBX, VORTEX.LBX, WIZARDS.LBX  
+
+---
 
 MRM - MoM Rasm - MAGIC.EXE  
 
@@ -59,12 +66,14 @@ Glossary of Terms:
 BCC: Borland C++ Compiler  
 Casm: C++/C front-end for Assembly  
 Dasm: dis-assembly  
+MGC: MAGIC.EXE  
 MoM: Master of Magic  
 MRM: (M)oM (R)asm - (M)agic.Exe  
 Rasm: re-assembly  
 Simtex: Simtex Software (Simulation-Texas)  
 TASM: Borland Turbo Assembler  
 TLINK : Borland Turbo Linker  
+WZD: WIZARDS.EXE  
 
 ---
 
