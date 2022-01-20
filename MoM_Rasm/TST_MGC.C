@@ -283,7 +283,8 @@ int main(void)
 
     //test_SimTexGameEngineFramework();
 
-    // test_VGA_DrawLBXImage();
+//    test_VGA_DrawLBXImage();
+
     //test_Screen_MainMenu();
 
     return 0;
