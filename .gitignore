@@ -11,6 +11,7 @@ STU-MoM_Rasm.vcxproj.user
 DEBUG.LOG
 DEBUG-.LOG
 
+*.GAM
 *.LBX
 *.MOM
 *.SET
