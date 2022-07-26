@@ -30,15 +30,30 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     unsigned int tmp_SAMB_Size;  // used in LBXLOADTYPE/EMMLBXLOADTYPE
     sgmt_addr tmp_SAMB_data;  // result of LBXLOADTYPE/EMMLBXLOADTYPE
     unsigned int ReadNbytes;
+#ifdef DEBUG
+    unsigned char bDebugDetail = 0;
+#endif
 
-//    printf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Entry(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
-
-    if ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) )
+#ifdef DEBUG
+    if
+    (
+        ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 0) ) ||
+        ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 1) ) ||
+        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
+        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
+    )
     {
-        dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
+        bDebugDetail = 1;
     }
+#endif
 
-    //tmp_SAMB_head = SAMB_head;
+#ifdef DEBUG
+    //if (bDebugDetail)
+    //{
+        dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
+    //}
+#endif
+
     SAMB_data = ST_FAILURE;
 
     EMMLBXHANDLE()
@@ -49,14 +64,12 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     if ( g_LBX_EmmRsvd == 1 )
     {
         EMM_MapnRead((unsigned int)&LbxFileType, 0, 6, 0, 2, EmmHndl);
-
         if ( LbxFileType != 0 )
         {
             LBX_Error(EmmHndlNm, 0x0D, LbxEntry);  // LbxErrNbr = 13, LbxErrIdx = 12; 'LBXErr_cantload_reserved': cnst_LBX_ErrorD = " Only pictures may be loaded into reserved EMM"
         }
-
-        SAMB_data = EMM_LBX_HdrOnly(EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
-
+        SAMB_data = EMM_LBX_FLIC_Header(EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
+        dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X)\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
         goto Exit;
     }
 
@@ -108,11 +121,18 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     /*
         END: Read Data
     */
+    goto Exit;
 
 Error:
-//    printf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Entry(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
-    return ST_FAILURE;
+    SAMB_data = ST_FAILURE;
+
 Exit:
-//    printf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Entry(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
+
+#ifdef DEBUG
+    //if (bDebugDetail)
+    //{
+        dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d) { SAMB_data=0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
+    //}
+#endif
     return SAMB_data;
 }

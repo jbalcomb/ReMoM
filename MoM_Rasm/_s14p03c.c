@@ -47,11 +47,11 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
 
     gsa_PaletteSaved = SA_Allocate_Space(48);          // 48 paragraphcs = 48 * 16 bytes = 768 bytes
 
-    gsa_ReplacementColors = SA_Allocate_Space(384);    // ; 348 paragraphcs = 384 * 16 bytes = 6144 bytes
+    gsa_ReplacementColors = SA_Allocate_Space(384);    // 348 paragraphcs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
 
     gsa_VGAFILEH_Header = SA_Allocate_Space(2);        // 2 paragraphs = 2 * 16 bytes = 32 bytes
 
-    gsa_IntensityScaleTable = SA_Allocate_Space(2);    // 96 paragraphs = 96 * 16 = 1536 bytes
+    gsa_IntensityScaleTable = SA_Allocate_Space(2);    // 96 paragraphs = 96 * 16 = 1536 bytes / 256 = 6
 
     VGA_TextDraw_Init();
 
@@ -64,7 +64,7 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
     {
         farpokeb(gsa_PaletteFlags, itrPaletteFlags, 1);
     }
-    
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: VGA_DAC_Init(PaletteLbxFileName=%s)\n", __FILE__, __LINE__, PaletteLbxFileName);
 #endif

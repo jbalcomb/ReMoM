@@ -25,7 +25,7 @@ int SCREEN_Menu(void)
     int NewGame_Hotkey_Index;
     int Continue_Hotkey_Index;
     int Continue_Move_Down;
-    int Loop_Var;
+    int itr_SaveGam;
 
     int flag_done;
     // unsigned int c_sgmt;
@@ -46,9 +46,9 @@ int SCREEN_Menu(void)
     if ( g_GUI_MainScreenJump != -1 )
     {
         // tmp_AX = g_GUI_MainScreenJump;
-        // Loop_Var = tmp_AX;
+        // itr_SaveGam = tmp_AX;
         // g_GUI_MainScreenJump = -1;
-        // tmp_AX = Loop_Var;
+        // tmp_AX = itr_SaveGam;
         // goto Done;
         // 202201170857: no idea what code would cause this noise in the dasm, but I'm done with it (FWIW, it is flagged /bad-pink/ in IDA)
         return -1;
@@ -89,12 +89,13 @@ int SCREEN_Menu(void)
     HLP_IDX_3 = -1;
     HLP_IDX_4 = -1;
 
+    // TODO(JimBalcomb,20220723): diff this SAVE.GAM code with that in main() and elsewhere ... if ~==, MACRO
     g_GAME_ValidSaveCount = 0;
 
-    for ( Loop_Var = 1; Loop_Var < 10; Loop_Var++ )
+    for ( itr_SaveGam = 1; itr_SaveGam < 10; itr_SaveGam++ )
     {
         strcpy(File_Name, cnst_SAVE);
-        itoa(Loop_Var, Conversion_String, 10);
+        itoa(itr_SaveGam, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, cnst_SAVE_ext);
 
@@ -104,9 +105,9 @@ int SCREEN_Menu(void)
         }
         else
         {
-            if (Loop_Var < 9)
+            if (itr_SaveGam < 9)
             {
-                g_GAME_ValidSaves_Main[g_GAME_ValidSaveCount] = Loop_Var - 1;
+                g_GAME_ValidSaves_Main[g_GAME_ValidSaveCount] = itr_SaveGam - 1;
                 g_GAME_ValidSaveCount++;
             }
             else
@@ -267,6 +268,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
     GUI_SetWindows(1, g_GUI_MainMenuWindow);
 
+    // TODO(JimBalcomb,20220723): figure out if this SaveCursorArea is just because of the subsequent MouseEmuMoveTo
     GUI_SaveCursorArea_RSP(MOUSE_GetX(), MOUSE_GetY());
 
     // GUI_MouseEMUMoveTo(GUI_NewGame_Label);
@@ -300,7 +302,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
 
         // ST_GUI.H  _s34p66c.c  int GUI_GetInput(void)
-        input_control_index = GUI_GetInput();  // 1oom :: oi1 = uiobj_handle_input_cond();
+        input_control_index = GUI_GetInput();  // _s34p66c.c  1oom :: oi1 = uiobj_handle_input_cond();
 #ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] input_control_index: %d\n", __FILE__, __LINE__, input_control_index);
 #endif
@@ -344,7 +346,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
         if ( flag_done == ST_FALSE )
         {
-            SCREEN_Menu_Draw();
+            SCREEN_Menu_Draw();  // MGC_DEF.H  _s01p06c.c
             GUI_SimplePageFlip();  // 1oom :: uiobj_finish_frame();
             // Research(JimBalcomb): 2022017: Should not the screen now be drawn and rendered?
             // ...the Screen-Page Index and Address are indeed be updated properly

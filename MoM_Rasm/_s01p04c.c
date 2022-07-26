@@ -4,6 +4,9 @@
 #include "MGC_DEF.H"
 #include "ST_EMM.H"
 
+#include "STU_DBG.H"
+
+
 void GAME_LoadMainImages(void)
 {
 
@@ -14,7 +17,10 @@ void GAME_LoadMainImages(void)
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
 
     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
-
+#ifdef DEBUG
+    DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
+    dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
+#endif
     gsa_VORTEX_1_MenuContinue = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
 
     gsa_VORTEX_2_MenuHallOfFame = LBXE_LoadSingle(g_LbxNm_VORTEX, 2);
@@ -26,7 +32,10 @@ void GAME_LoadMainImages(void)
     gsa_VORTEX_3_MenuQuitToDOS = LBXE_LoadSingle(g_LbxNm_VORTEX, 3);
 
     gsa_MAINSCRN_5_ScreenBottom = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
-
+#ifdef DEBUG
+    DBG_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
+    dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_005: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_005);
+#endif
     EMM_Load_LBX_File_1(g_LbxNm_WIZARDS);
     
     for ( itr_wizards = 0; itr_wizards < 14; itr_wizards++ )

@@ -66,6 +66,7 @@ typedef void _FAR  * far_ptr;
 typedef void _SEG  * memptr;  // Wolf3d ID_MM.H J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 
 
+// ID/Wolf3D-style
 typedef unsigned char  byte;
 typedef unsigned int   word;  // elsewhere, this is `short` (see: root42, brackeen, Wolf3d, Animator, AIL214)
 typedef unsigned long  dword;
@@ -122,8 +123,8 @@ typedef   signed long  SLONG;
 #undef MK_ULONG                                                           
 #endif                                                                  
 
-#define MK_LONG  (  signed long)((void _seg *)(_DX) + (void near *)(_AX))
-#define MK_ULONG (unsigned long)((void _seg *)(_DX) + (void near *)(_AX))
+#define MK_LONG  (  signed long)( (void _seg *)(_DX) + (void near *)(_AX) )
+#define MK_ULONG (unsigned long)( (void _seg *)(_DX) + (void near *)(_AX) )
 
 // // J:\STU\DBWD\BORLANDC\INCLUDE\DOS.H
 // #define MK_FP(seg,ofs) ( (void _seg *)(seg) + (void near *)(ofs) )
@@ -140,9 +141,14 @@ typedef   signed long  SLONG;
 #undef FP_OFF                                                           
 #endif                                                                  
 
-#define MK_FP(sgmt,ofst) ( (void _seg *)(sgmt) + (void near *)(ofst) )
+// // #define MK_FP(sgmt,ofst) ( (void _SEG *)(sgmt) + (void _NEAR *)(ofst) )
+#define MK_FP(seg,ofs) ( (void _seg *)(seg) + (void near *)(ofs) )
+// #define MK_FP(_sgmt_,_ofst_) ( (void _FAR *) ( (unsigned long) (_sgmt_) << 16 | (_ofst_) ) )
+
+// #define FP_SEG(fp) ( (unsigned int)(void _SEG *)(void _FAR *)(fp) )
 #define FP_SEG(fp) ( (unsigned int)(void _seg *)(void far *)(fp) )
 #define FP_OFF(fp) ( (unsigned int)(fp) )
+
 //#define MK_HP(sgmt,ofst) ( (void _seg * )( seg ) +( void near * )( ofs ))
 // J:\STU\DBWD\developc\AIL214\AIL.MAC
 // FAR_TO_HUGE     MACRO fp_seg,fp_off             ;normalize far pointer

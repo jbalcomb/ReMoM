@@ -1,7 +1,9 @@
 TITLE   _s15p01.ASM VGA_SetModeY
-; NOTE: I found a copy of almost exactly this same code is a very old forum
+; NOTE(Jimbalcomb,20220119): I found a copy of almost exactly this same code is a very old forum
 ; but, I have since lost track of it. :(..
 ; FWIW, it well predates Abrash's DDJ publication.
+; NOTE(JimBalcomb,20220721): I am fairly certain I found the above reference based on old time limited search on google for some odd/noteable piece of the assembly code.
+; maybe/maybe not, the and or stuff, maybe/maybe in hex vs. binary
 
 .MODEL LARGE, C
 
@@ -33,6 +35,7 @@ proc VGA_SetModeY far
     or	al, 00000100b                       ; Set Bit 2: Disable - Odd/Even Host Memory Write Adressing
     out	dx, al
 
+    ; NOTE(JimBalcomb,20220721): I can not recall what the issue was such that I chose/needed to comment out this chunk of code
     ; mov	ax, VIDEO_RAM
     ; mov	es, ax
     ; sub	di, di

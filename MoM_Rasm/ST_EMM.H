@@ -46,32 +46,23 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 */
 //--------
 
-#define	EMS_INT			0x67
+#define EMS_PAGE_SIZE   16384
 
-#define	EMS_STATUS		0x40
-#define	EMS_GETFRAME	0x41
-#define	EMS_GETPAGES	0x42
-#define	EMS_ALLOCPAGES	0x43
-#define	EMS_MAPPAGE		0x44
-#define	EMS_FREEPAGES	0x45
-#define	EMS_VERSION		0x46
+#define	EMS_INT			            0x67
 
-#define	EMM_INT			    0x67
-
-#define	EMS_STATUS		    0x40
-#define	EMS_GETFRAME	    0x41
-#define	EMS_GETPAGES	    0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
-//Get Handle and Allocate Pages
-#define	EMS_ALLOCPAGES	    0x43    // DX = EMM handle
-#define	EMS_MAPPAGE		    0x44
-#define	EMS_FREEPAGES	    0x45
-#define	EMS_VERSION		    0x46
-#define	EMS_GETHANDLES      0x4B    // BX = number of currently active EMM handles (0-256)
-#define	EMS_GETHNDLPAGECNT  0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
+#define	EMS_STATUS		            0x40
+#define	EMS_GETFRAME	            0x41
+#define	EMS_GETPAGES	            0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
+#define	EMS_ALLOCPAGES	            0x43    //Get Handle and Allocate Pages // DX = EMM handle
+#define	EMS_MAPPAGE		            0x44
+#define	EMS_FREEPAGES	            0x45
+#define	EMS_VERSION		            0x46
+#define	EMS_GETHANDLES              0x4B    // BX = number of currently active EMM handles (0-256)
+#define	EMS_GETHNDLPAGECNT          0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
 #define EMS_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
-#define EMS_GET_SET_HANDLE_NAME 0x53    // AL = 00 get handle name; AL = 01 set handle name;
-#define EMS_GET_HANDLE_NAME 5300h   // ES:DI = pointer to 8byte handle name array
-#define EMS_SET_HANDLE_NAME 5301h   // DX = EMM handle; DS:SI = pointer to 8byte handle name
+#define EMS_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
+#define EMS_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8byte handle name array
+#define EMS_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8byte handle name
 
 /*
 unsigned int EMS_STATUS_Code[165] = {
@@ -317,6 +308,71 @@ struct s_EMS_L2P_Map_Record //; (sizeof=0x4)
     int LogicalPageNbr;
     int PhysicalPageNbr;
 };
+// C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
+/*===========================================================================*/
+/*                           EMM STRUCTURE TYPEDEFS                          */
+/*===========================================================================*/
+	/*-----------------------------------------------------------------------*/
+	/*               Structure:   MAP_STRUCT                                 */
+	/*                                                                       */
+	/*   Required by Functions:   map_unmap_pages                            */
+	/*                            alter_map_jump                             */
+	/*                            alter_map_call                             */
+	/*-----------------------------------------------------------------------*/
+	// #pragma pack(1)
+	// typedef struct
+	// {
+	// 	unsigned int			log_page;
+	// 	unsigned int			phys_page_or_seg;
+	// } MAP_STRUCT;
+	// #pragma pack()
+struct s_MAP_STRUCT
+{
+    unsigned int log_page;
+    unsigned int phys_page_or_seg;
+};
+typedef struct s_MAP_STRUCT MAP_STRUCT;
+// C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
+#define MAX_MAPPABLE_REGIONS    64
+// C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMM17_A.ASM
+/*
+; C USE CONVENTION:   unsigned int status;                                    ;
+;                     unsigned int mode;                                      ;
+;                     unsigned int mu_count;                                  ;
+;                     unsigned int handle;                                    ;
+;                     MAP_STRUCT   mu[MAX_MAPPABLE_REGIONS];                  ;
+;                                                                             ;
+;                     mode                   = SEG_MODE;                      ;
+;                     mu_count               = 2;                             ;
+;                     mu[0].log_page         = 0;                             ;
+;                     mu[0].phys_page_or_seg = 0xC000;                        ;
+;                     mu[1].log_page         = 1;                             ;
+;                     mu[1].phys_page_or_seg = 0xC400;                        ;
+;                     status = map_unmap_pages (mode,                         ;
+;                                               mu_count,                     ;
+;                                               mu,                           ;
+;                                               handle);                      ;
+*/
+//MAP_STRUCT   mu[MAX_MAPPABLE_REGIONS];
+// C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
+/*===========================================================================*/
+/*                                 EMM MACRO                                 */
+/*===========================================================================*/
+	/*-----------------------------------------------------------------------*/
+	/*   This macro converts an unsigned int containing a segment address,   */
+	/*   into a far pointer to a void.  It is useful in converting the       */
+	/*   segment values, returned by EMM function calls, into far pointers   */
+	/*   which C programs can use.  For example:                             */
+	/*                                                                       */
+	/*   unsigned int status,                                                */
+	/*                  page_frame_seg;                                      */
+	/*   char far *page_frame_ptr;                                           */
+	/*                                                                       */
+	/*   status = get_page_frame_seg (&page_frame_seg);                      */
+	/*   page_frame_ptr = FP(page_frame_seg);                                */
+	/*   *page_frame_ptr = 0;                                                */
+	/*-----------------------------------------------------------------------*/
+	#define FP(SEG) ((void far *)((unsigned long)SEG << 16))
 
 
 /*
@@ -343,12 +399,13 @@ extern unsigned int g_EmmHndl_FIGUREX;      // dseg:9486
 extern unsigned int g_EMM_PageFrame_Base_Address;   // dseg:40E4
 extern char g_EMM_device_name[];                    // dseg:40E6
 
-// dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
-// dseg:40EF EMS_L2P_Map_Record <0,      1>
-// dseg:40EF EMS_L2P_Map_Record <0,      2>
-// dseg:40EF EMS_L2P_Map_Record <0,      3>
-// dseg:40FF align 2
-extern unsigned int g_EMM_Log2Phys_Map[]; // dseg:40EF
+// // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
+// // dseg:40EF EMS_L2P_Map_Record <0,      1>
+// // dseg:40EF EMS_L2P_Map_Record <0,      2>
+// // dseg:40EF EMS_L2P_Map_Record <0,      3>
+// // dseg:40FF align 2
+// extern unsigned int g_EMM_Log2Phys_Map[]; // dseg:40EF
+extern MAP_STRUCT gfp_map_struct[]; // dseg:40EF
 
 extern unsigned int g_EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
 extern unsigned int g_EMM_Open_Handles;             // dseg:4102
@@ -430,8 +487,8 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
 unsigned int EMM_GetPageFrame(void);
 // _s12p11a.c
 void EMM_Map4(int EmmHandle, int EmmLogicalPage);
-// _s12p12a.c
-void EMM_MapMulti4(int argFirstLogicalPage, int argEmsHandle);
+// _s12p12c.c
+void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle);
 
 /*
     seg013
@@ -445,7 +502,9 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved);
 // _s13p11c.c
 unsigned int EMM_LBX_Load_Entry(char *LbxFileName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int FormatType);
 // _s13p12c.c
-unsigned int EMM_LBX_HdrOnly(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
+//unsigned int EMM_LBX_HdrOnly(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
+unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
+
 // _s13p13c.c
 unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
 // _s13p13c.c

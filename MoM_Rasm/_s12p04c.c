@@ -7,7 +7,7 @@ unsigned int EMM_GetHandlePageCount(unsigned int EmmHndlNbr)
 {
     _DX = EmmHndlNbr;
     _AH = EMS_GETHNDLPAGECNT;
-    geninterrupt(EMM_INT);
+    geninterrupt(EMS_INT);
 
     if (_AH)
     {

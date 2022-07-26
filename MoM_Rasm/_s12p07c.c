@@ -11,7 +11,7 @@ void EMM_ReleaseHandle(unsigned int EMM_Handle)
     {
         _DX = EMM_Handle;
         _AH = EMS_FREEPAGES;
-        geninterrupt(EMM_INT);
+        geninterrupt(EMS_INT);
     }
 
 //    printf("DEBUG: %s %d END: EMM_ReleaseHandle()\n", __FILE__, __LINE__);

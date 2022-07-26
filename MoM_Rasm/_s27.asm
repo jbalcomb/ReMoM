@@ -23,11 +23,11 @@ VGA_WriteMapMasks3 db 01h,02h,04h,08h
 ;    ;org 0Ch
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC VGA_DrawBitmap
-PUBLIC VGA_DrawBitmap_R
-PUBLIC VGA_DrawEMSBitmap
-PUBLIC VGA_MapNextEMMPages
-PUBLIC VGA_DrawEMSBitmap_R
+PUBLIC FLIC_Draw
+PUBLIC FLIC_Draw_R
+PUBLIC FLIC_Draw_EMM
+PUBLIC FLIC_EMM_MapNextPages
+PUBLIC FLIC_Draw_EMM_R
 
 e_GC_INDEX   EQU 03CEh
 e_GC_DATA    EQU 03CFh
@@ -51,9 +51,9 @@ s_FLIC_HDR ends
 ; draws an LBX image into the current draw segment,
 ; column by column, decoding its RLE along the way
 
-; int __cdecl __far VGA_DrawBitmap(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, int Img_Off, int Img_Seg)
+; int __cdecl __far FLIC_Draw(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, int Img_Off, int Img_Seg)
 
-proc VGA_DrawBitmap far
+proc FLIC_Draw
 
     ScreenPage_X = word ptr 6
     ScreenPage_Y = word ptr 8
@@ -70,31 +70,32 @@ proc VGA_DrawBitmap far
 
     mov dx, 3C4h
     mov al, 2
-    out dx, al ; EGA: sequencer address reg
-    ; map mask: data bits 0-3 enable writes to bit planes 0-3
+    out dx, al                              ; EGA: sequencer address reg
+                                            ; map mask: data bits 0-3 enable writes to bit planes 0-3
     mov ax, [bp+ScreenPage_Y]
     mov bx, ax
     shl ax, 1
     shl ax, 1
-    add ax, bx ; * 5 as a segment address = * 80 total bytes which,
-    ; since each byte is 4 pixels, equals the draw row
+    add ax, bx                              ; * 5 as a segment address = * 80 total bytes which,
+                                            ; since each byte is 4 pixels, equals the draw row
     add ax, [g_DrawScreenPage_SgmtAddr]
     mov es, ax
     mov ax, [bp+ScreenPage_X]
     mov bx, ax
     shr bx, 1
     shr bx, 1
-    mov di, bx ; X / 4 = pixel offset in video memory
-    and ax, 3 ; X mod 4 = plane index of the pixel
-    mov si, offset VGA_WriteMapMasks3 ; should use dseg:41d0
+    mov di, bx                              ; X / 4 = pixel offset in video memory
+    and ax, 3                               ; X mod 4 = plane index of the pixel
+    mov si, offset VGA_WriteMapMasks3
     add si, ax
     lodsb
-    mov ah, al ; ah = map mask for the first pixel
+    mov ah, al                              ; ah = map mask for the first pixel
     mov si, [bp+Img_Off]
     mov cx, [bp+FlicWidth]
     mov bx, [bp+Img_Seg]
     mov ds, bx
     mov bx, cx
+
 loc_1E7ED:
     push di
     mov dx, 3C5h
@@ -109,6 +110,7 @@ loc_1E7ED:
     ; the sign bit indicates whether there are repeats)
     cmp dh, 0
     js short loc_1E842
+
 loc_1E803: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
@@ -129,25 +131,30 @@ loc_1E803: ; chunk byte #2 (skip count)
     dec dx
     dec dx
     sub dx, cx
+
 loc_1E827:
     movsb
     add di, 4Fh ; same plane, one pixel down
     loop loc_1E827
     cmp dx, 1
     jns short loc_1E803 ; chunk byte #2 (skip count)
+
 loc_1E832:
     pop di
     dec bx
-    jz short loc_1E8A6
+    jz short @@Done
     shl ah, 1 ; next write plane
     cmp ah, 9 ; wrapping around?
     js short loc_1E840
     mov ah, 1 ; reset, and
     inc di ; increase the write address
+
 loc_1E840:
     jmp short loc_1E7ED
-    loc_1E842:
+
+loc_1E842:
     and dx, 7FFFh
+
 loc_1E846: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
@@ -168,6 +175,7 @@ loc_1E846: ; chunk byte #2 (skip count)
     dec dx
     dec dx
     sub dx, cx
+
 loc_1E86A:
     lodsb
     cmp al, 0E0h
@@ -178,6 +186,7 @@ loc_1E86A:
     cmp dx, 1
     jns short loc_1E846 ; chunk byte #2 (skip count)
     jmp short loc_1E832
+
 loc_1E87C:
     and al, 1Fh
     inc al
@@ -185,6 +194,7 @@ loc_1E87C:
     mov cl, al
     xor ch, ch
     lodsb
+
 loc_1E886:
     stosb
     add di, 4Fh ; same plane, one pixel down
@@ -196,23 +206,25 @@ loc_1E886:
     jns short loc_1E846 ; chunk byte #2 (skip count)
     pop di
     dec bx
-    jz short loc_1E8A6
+    jz short @@Done
     shl ah, 1 ; next write plane
     cmp ah, 9 ; wrapping around?
     js short loc_1E8A3
     mov ah, 1 ; reset, and
     inc di ; increase the write address
+
 loc_1E8A3:
     jmp loc_1E7ED
-loc_1E8A6:
+
+@@Done:
     pop ds
     pop es
     pop di
     pop si
     pop bp
-    retf
+    ret
 
-endp VGA_DrawBitmap
+endp FLIC_Draw
 
 
 ; draws an LBX image into the current draw segment,
@@ -221,8 +233,8 @@ endp VGA_DrawBitmap
 ; current screen pixel and replacing with it from
 ; the predefined Replacement_Colors@ block
 
-; int __cdecl __far VGA_DrawBitmap_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, int Img_Off, int Img_Seg)
-proc VGA_DrawBitmap_R far
+; int __cdecl __far FLIC_Draw_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, int Img_Off, int Img_Seg)
+proc FLIC_Draw_R
 
     ScreenPage_X= word ptr 6
     ScreenPage_Y= word ptr 8
@@ -267,6 +279,7 @@ proc VGA_DrawBitmap_R far
     mov bx, [bp+Img_Seg]
     mov ds, bx
     mov bx, cx
+
 loc_1E8F3:
     push di
     mov dx, 3CEh
@@ -299,6 +312,7 @@ loc_1E8F3:
     cmp dh, 0
     jns short loc_1E924 ; chunk byte #2 (skip count)
     jmp loc_1E9B5
+
 loc_1E924: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
@@ -319,6 +333,7 @@ loc_1E924: ; chunk byte #2 (skip count)
     dec dx
     dec dx
     sub dx, cx
+
 loc_1E948:
     lodsb
     cmp al, 0E8h
@@ -328,6 +343,7 @@ loc_1E948:
     loop loc_1E948
     cmp dx, 1
     jns short loc_1E924 ; chunk byte #2 (skip count)
+
 loc_1E958:
     pop di
     dec bx
@@ -342,16 +358,19 @@ loc_1E958:
     mov cl, 0 ; reset the read map,
     mov ah, 1 ; reset the write mask,
     inc di ; and increase the memory offset
+
 loc_1E973:
     or ah, cl
     jmp loc_1E8F3
+
 loc_1E978:
     pop ds
     pop es
     pop di
     pop si
     pop bp
-    retf
+    ret
+
 loc_1E97E:
     sub al, 0E8h
     push si
@@ -373,7 +392,7 @@ loc_1E97E:
                                             ; at that index, and the color and percent specified
                                             ; from the palette image when the block is filled out
                                             ;
-                                            ; VGA_DrawBitmap_R and other _R functions use these to
+                                            ; FLIC_Draw_R and other _R functions use these to
                                             ; replace bytes read from a source image file
     mov ds, si ; ds = paragraph of the block defined by (al-$E8)
     mov al, [es:di]
@@ -388,8 +407,10 @@ loc_1E97E:
     cmp dx, 1
     js short loc_1E958
     jmp loc_1E924 ; chunk byte #2 (skip count)
+
 loc_1E9B5:
     and dx, 7FFFh
+
 loc_1E9B9: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
@@ -410,6 +431,7 @@ loc_1E9B9: ; chunk byte #2 (skip count)
     dec dx
     dec dx
     sub dx, cx
+
 loc_1E9DD:
     lodsb
     cmp al, 0E0h
@@ -427,7 +449,8 @@ loc_1E9DD:
     pop di
     pop si
     pop bp
-    retf
+    ret
+
 loc_1E9FA:
     sub al, 0E8h
     push si
@@ -449,7 +472,7 @@ loc_1E9FA:
                                             ; at that index, and the color and percent specified
                                             ; from the palette image when the block is filled out
                                             ;
-                                            ; VGA_DrawBitmap_R and other _R functions use these to
+                                            ; FLIC_Draw_R and other _R functions use these to
                                             ; replace bytes read from a source image file
     mov ds, si ; ds = paragraph of the block defined by (al-$E8)
     mov al, [es:di]
@@ -464,6 +487,7 @@ loc_1E9FA:
     cmp dx, 1
     jns short loc_1E9B5
     jmp loc_1E958
+
 loc_1EA31:
     and al, 1Fh
     inc al
@@ -473,6 +497,7 @@ loc_1EA31:
     lodsb
     cmp al, 0E8h
     jnb short loc_1EA54
+
 loc_1EA3F:
     stosb
     add di, 4Fh ; same plane, one pixel down
@@ -483,8 +508,10 @@ loc_1EA3F:
     cmp dx, 1
     jns short loc_1EA51
     jmp loc_1E958
+
 loc_1EA51: ; chunk byte #2 (skip count)
     jmp loc_1E9B9
+
 loc_1EA54:
     sub al, 0E8h
     push si
@@ -506,9 +533,10 @@ loc_1EA54:
                                             ; at that index, and the color and percent specified
                                             ; from the palette image when the block is filled out
                                             ;
-                                            ; VGA_DrawBitmap_R and other _R functions use these to
+                                            ; FLIC_Draw_R and other _R functions use these to
                                             ; replace bytes read from a source image file
     mov ds, si ; ds = paragraph of the block defined by (al-$E8)
+
 loc_1EA71:
     mov al, [es:di]
     mov si, ax
@@ -523,6 +551,7 @@ loc_1EA71:
     dec cx
     jz short loc_1EA8A
     jmp loc_1E9DD
+
 loc_1EA8A:
     cmp dx, 1
     jns short loc_1EA51
@@ -532,9 +561,9 @@ loc_1EA8A:
     pop di
     pop si
     pop bp
-    retf
+    ret
 
-endp VGA_DrawBitmap_R
+endp FLIC_Draw_R
 
 
 tmpFlicHdrEmmLogicalPageOffset dw 0
@@ -549,9 +578,9 @@ tmpFlicHdrWidth dw 0
 ; maps the image into the EMS page frame, but will
 ; fail on images > 32k if they start 3 pages in
 
-; int __cdecl __far VGA_DrawEMSBitmap(int ScreenPage_X, int ScreenPage_Y, int Img_Seg, int Frame_Index)
+; int __cdecl __far FLIC_Draw_EMM(int ScreenPage_X, int ScreenPage_Y, int Img_Seg, int Frame_Index)
 
-proc VGA_DrawEMSBitmap far
+proc FLIC_Draw_EMM
 
     ScreenPage_X = word ptr 6
     ScreenPage_Y = word ptr 8
@@ -559,7 +588,7 @@ proc VGA_DrawEMSBitmap far
     Frame_Index = word ptr 0Ch
 
     push bp
-    mov bp, sp
+    mov  bp, sp
     push si
     push di
     push es
@@ -569,10 +598,13 @@ proc VGA_DrawEMSBitmap far
     mov ds, ax
     assume ds:nothing
     mov es, ax
+
     mov ax, ds:s_FLIC_HDR.fh_Width
     mov [cs:tmpFlicHdrWidth], ax
+
     mov si, s_FLIC_HDR.fh_EMM_Handle_Number
-    lodsb
+
+    lodsb  ; AX = [DS:SI]
     xor ah, ah
     mov dx, ax
     lodsb
@@ -581,23 +613,26 @@ proc VGA_DrawEMSBitmap far
     lodsw
     mov si, ax
     mov di, si
-    push dx ; argEmsHandle
-    push bx ; argFirstLogicalPage
-    call EMM_MapMulti4 ; maps in four consecutive logical pages from the
-    ; passed handle, starting with the one specified
-    ; uses a different EMM function than seg012:0251
-    ; preserves all register values
+
+    push dx                                 ; argEmsHandle
+    push bx                                 ; argFirstLogicalPage
+    call EMM_MapMulti4                      ; maps in four consecutive logical pages from the
+                                            ; passed handle, starting with the one specified
+                                            ; uses a different EMM function than seg012:0251
+                                            ; preserves all register values
     add sp, 4
+
     ;mov ax, seg dseg
     mov ax, seg DGROUP
     mov ds, ax
     ;assume ds:dseg
     assume ds:DGROUP
+
     mov ax, [bp+Frame_Index]
     shl ax, 1
     shl ax, 1
     add si, ax
-    add si, 18
+    add si, 12h  ; 18
     mov ax, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, ax
     lodsw ; frame image offset low word
@@ -614,15 +649,16 @@ proc VGA_DrawEMSBitmap far
     add al, [es:s_FLIC_HDR.fh_EMM_Logical_Page_Number]
     adc ah, 0
     add dx, [es:s_FLIC_HDR.fh_EMM_Logical_Page_Offset]
-    cmp dx, 0C000h
+    cmp dx, 0C000h  ; 49152
     jb short loc_1EB13
-    sub dx, 0C000h
+    sub dx, 0C000h  ; 49152
     inc ax
     inc ax
     inc ax
+
 loc_1EB13:
     mov [cs:tmpFlicHdrEmmLogicalPageOffset], ax
-    mov bx, 11h
+    mov bx, 11h  ; 17
     add bx, di
     mov bl, [bx]
     xor bh, bh
@@ -653,28 +689,31 @@ loc_1EB13:
     ; BX = logical page number, DX = handle
     ; Return: AH = status
     cmp di, 0
-    jz short loc_1EB5D
+    jz short @@NayShading3
     push [bp+Img_Seg]
-    push [bp+ScreenPage_Y] ; ScreenPage_Y
-    push [bp+ScreenPage_X] ; ScreenPage_X
-    push cs
-    call near ptr VGA_DrawEMSBitmap_R ; draws an LBX image into the current draw segment,
-    ; column by column, decoding its RLE along the way,
-    ; and processing any shaded colors by reading the
-    ; current screen pixel and replacing with it from
-    ; the predefined Replacement_Colors@ block
-    ;
-    ; the image must already be mapped into the EMS page
-    ; frame, and si needs to point to the image data
-    nop
+    push [bp+ScreenPage_Y]                  ; ScreenPage_Y
+    push [bp+ScreenPage_X]                  ; ScreenPage_X
+    ;push cs
+    ;call near ptr FLIC_Draw_EMM_R       ; draws an LBX image into the current draw segment,
+                                            ; column by column, decoding its RLE along the way,
+                                            ; and processing any shaded colors by reading the
+                                            ; current screen pixel and replacing with it from
+                                            ; the predefined Replacement_Colors@ block
+                                            ;
+                                            ; the image must already be mapped into the EMS page
+                                            ; frame, and si needs to point to the image data
+    ;nop
+    call FLIC_Draw_EMM_R
     add sp, 6
+
     pop ds
     pop es
     pop di
     pop si
     pop bp
-    retf
-loc_1EB5D:
+    ret
+
+@@NayShading3:
     ;mov ax, seg dseg
     mov ax, seg DGROUP
     mov ds, ax
@@ -703,27 +742,30 @@ loc_1EB5D:
     mov bx, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, bx
     mov bx, [cs:tmpFlicHdrWidth]
-loc_1EB99:
+
+@@Loop48KB3:
     push di
     cmp si, 0C000h
-    jb short loc_1EBA3
-    call VGA_MapNextEMMPages ; changes the EMM page mapping such that the previous
+    jb short @@LoopColumn3
+    call FLIC_EMM_MapNextPages ; changes the EMM page mapping such that the previous
     ; last page now becomes the first one
     ; preserves ax and bx, reduces si by $C000 (3 pages)
-loc_1EBA3:
+
+@@LoopColumn3:
     mov dx, 3C5h
     mov al, ah
     out dx, al ; EGA port: sequencer data register
     lodsb ; byte #1
     cmp al, 0FFh ; empty column (transparent)
-    jz short loc_1EBE7
+    jz short @@SkipColumn3
     mov dh, al
     lodsb ; byte #2
     mov dl, al ; dx = encoded column data length in bytes (15 bits,
     ; the sign bit indicates whether there are repeats)
     cmp dh, 0
-    js short loc_1EBF7
-loc_1EBB8: ; chunk byte #2 (skip count)
+    js short @@ULC_Run_Count3
+
+@@ULC_Copy3: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
     mov al, cl
@@ -743,26 +785,31 @@ loc_1EBB8: ; chunk byte #2 (skip count)
     dec dx
     dec dx
     sub dx, cx
-loc_1EBDC:
+
+@@ULC_Copy_Do3:
     movsb
     add di, 4Fh ; Line-Delta same plane, one pixel down
-    loop loc_1EBDC
+    loop @@ULC_Copy_Do3
     cmp dx, 1
-    jns short loc_1EBB8 ; chunk byte #2 (skip count)
-loc_1EBE7:
+    jns short @@ULC_Copy3 ; chunk byte #2 (skip count)
+
+@@SkipColumn3:
     pop di
     dec bx
-    jz short loc_1EC5B
+    jz short @@Done3
     shl ah, 1 ; next write plane
     cmp ah, 9 ; wrapping around?
-    js short loc_1EBF5
+    js short @@EndOfColumn_YaySkip3
     mov ah, 1 ; reset, and
     inc di ; increase the write address
-loc_1EBF5:
-    jmp short loc_1EB99
-loc_1EBF7:
+
+@@EndOfColumn_YaySkip3:
+    jmp short @@Loop48KB3
+
+@@ULC_Run_Count3:
     and dx, 7FFFh
-loc_1EBFB: ; chunk byte #2 (skip count)
+
+@@ULC_Run3: ; chunk byte #2 (skip count)
     mov cl, [si+1]
     xor ch, ch
     mov al, cl
@@ -770,7 +817,6 @@ loc_1EBFB: ; chunk byte #2 (skip count)
     shl cx, 1
     add cl, al
     adc ch, 0
-loc_1EC0B:
     shl cx, 1
     shl cx, 1
     shl cx, 1
@@ -783,6 +829,7 @@ loc_1EC0B:
     dec dx
     dec dx
     sub dx, cx
+
 loc_1EC1F:
     lodsb
     cmp al, 0E0h
@@ -791,8 +838,9 @@ loc_1EC1F:
     add di, 4Fh ; Line-Delta same plane, one pixel down
     loop loc_1EC1F
     cmp dx, 1
-    jns short loc_1EBFB ; chunk byte #2 (skip count)
-    jmp short loc_1EBE7
+    jns short @@ULC_Run3 ; chunk byte #2 (skip count)
+    jmp short @@SkipColumn3
+
 loc_1EC31:
     and al, 1Fh
     inc al
@@ -800,6 +848,7 @@ loc_1EC31:
     mov cl, al
     xor ch, ch
     lodsb
+
 loc_1EC3B:
     stosb
     add di, 4Fh ; Line-Delta same plane, one pixel down
@@ -808,35 +857,37 @@ loc_1EC3B:
     dec cx
     loop loc_1EC1F
     cmp dx, 1
-    jns short loc_1EBFB ; chunk byte #2 (skip count)
+    jns short @@ULC_Run3 ; chunk byte #2 (skip count)
     pop di
     dec bx
-    jz short loc_1EC5B
+    jz short @@Done3
     shl ah, 1 ; next write plane
     cmp ah, 9 ; wrapping around?
-    js short loc_1EC58
+    js short @@EndOfColumn_NaySkip3
     mov ah, 1 ; reset, and
     inc di ; increase the write address
-loc_1EC58:
-    jmp loc_1EB99
-loc_1EC5B:
+
+@@EndOfColumn_NaySkip3:
+    jmp @@Loop48KB
+
+@@Done3:
     pop ds
     pop es
     pop di
     pop si
     pop bp
-    retf
+    ret
 
-endp VGA_DrawEMSBitmap
+endp FLIC_Draw_EMM
 
 
 ; changes the EMM page mapping such that the previous
 ; last page now becomes the first one
 ; preserves ax and bx, reduces si by $C000 (3 pages)
 
-; int VGA_MapNextEMMPages(void)
+; int FLIC_EMM_MapNextPages(void)
 
-proc VGA_MapNextEMMPages near
+proc FLIC_EMM_MapNextPages
 
     push bx
     mov cx, ax
@@ -856,9 +907,9 @@ proc VGA_MapNextEMMPages near
     sub si, 0C000h                          ; 3 * sizeof(EMM Logical Page)  3*16KB = 48KB
     mov ax, cx
     pop bx
-    retn
+    ret
 
-endp VGA_MapNextEMMPages
+endp FLIC_EMM_MapNextPages
 
 
 ; draws an LBX image into the current draw segment,
@@ -870,9 +921,9 @@ endp VGA_MapNextEMMPages
 ; the image must already be mapped into the EMS page
 ; frame, and si needs to point to the image data
 
-; int __cdecl __far VGA_DrawEMSBitmap_R(int ScreenPage_X, int ScreenPage_Y)
+; int __cdecl __far FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y)
 
-proc VGA_DrawEMSBitmap_R far
+proc FLIC_Draw_EMM_R
 
     ScreenPage_X= word ptr 6
     ScreenPage_Y= word ptr 8
@@ -913,11 +964,11 @@ proc VGA_DrawEMSBitmap_R far
     mov bx, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, bx
     mov bx, [cs:tmpFlicHdrWidth]
-loc_1ECCF:
+@@Loop48KB:
     push di
     cmp si, 0C000h
     jb short loc_1ECD9
-    call VGA_MapNextEMMPages ; changes the EMM page mapping such that the previous
+    call FLIC_EMM_MapNextPages ; changes the EMM page mapping such that the previous
     ; last page now becomes the first one
     ; preserves ax and bx, reduces si by $C000 (3 pages)
 loc_1ECD9:
@@ -996,11 +1047,12 @@ loc_1ED3D:
     inc di ; and increase the memory offset
 loc_1ED58:
     or ah, cl
-    jmp loc_1ECCF
+    jmp @@Loop48KB
 loc_1ED5D:
     pop bp
-    retf
-    loc_1ED5F:
+    ret
+
+loc_1ED5F:
     sub al, 0E8h
     push si
     push ds
@@ -1021,7 +1073,7 @@ loc_1ED5D:
     ; at that index, and the color and percent specified
     ; from the palette image when the block is filled out
     ;
-    ; VGA_DrawBitmap_R and other _R functions use these to
+    ; FLIC_Draw_R and other _R functions use these to
     ; replace bytes read from a source image file
     mov ds, si ; ds = paragraph of the block defined by (al-$E8)
     mov al, [es:di]
@@ -1071,15 +1123,16 @@ loc_1EDBE:
     jns short loc_1ED9A ; chunk byte #2 (skip count)
     jmp loc_1ED3D
     pop bp
-    retf
+    ret
+
 loc_1EDD7:
     sub al, 0E8h
     push si
     push ds
     ;mov si, seg dseg
     mov si, seg DGROUP
-loc_1EDDE:
     mov ds, si
+
     mov si, ax
     and si, 0FFh
     shl si, 1
@@ -1094,10 +1147,10 @@ loc_1EDDE:
     ; at that index, and the color and percent specified
     ; from the palette image when the block is filled out
     ;
-    ; VGA_DrawBitmap_R and other _R functions use these to
+    ; FLIC_Draw_R and other _R functions use these to
     ; replace bytes read from a source image file
-loc_1EDF2: ; ds = paragraph of the block defined by (al-$E8)
-    mov ds, si
+
+    mov ds, si ; ds = paragraph of the block defined by (al-$E8)
     mov al, [es:di]
     mov si, ax
     and si, 0FFh
@@ -1106,10 +1159,8 @@ loc_1EDF2: ; ds = paragraph of the block defined by (al-$E8)
     pop si
     stosb
     add di, 4Fh ; same plane, one pixel down
-loc_1EE04:
     loop loc_1EDBE
     cmp dx, 1
-loc_1EE09:
     jns short loc_1ED96
     jmp loc_1ED3D
 loc_1EE0E:
@@ -1121,10 +1172,10 @@ loc_1EE0E:
     lodsb
     cmp al, 0E8h
     jnb short loc_1EE31
-loc_1EE1C:
+@@LoopColumn:
     stosb
     add di, 4Fh ; same plane, one pixel down
-    loop loc_1EE1C
+    loop @@LoopColumn
     pop cx
     dec cx
     loop loc_1EDBE
@@ -1154,26 +1205,22 @@ loc_1EE31:
     ; at that index, and the color and percent specified
     ; from the palette image when the block is filled out
     ;
-    ; VGA_DrawBitmap_R and other _R functions use these to
+    ; FLIC_Draw_R and other _R functions use these to
     ; replace bytes read from a source image file
     mov ds, si ; ds = paragraph of the block defined by (al-$E8)
 loc_1EE4E:
     mov al, [es:di]
     mov si, ax
-loc_1EE53:
     and si, 0FFh
     movsb
-loc_1EE58: ; same plane, one pixel down
-    add di, 4Fh
-loc_1EE5B:
+    add di, 4Fh ; same plane, one pixel down
     loop loc_1EE4E
+
     pop ds
     pop si
     pop cx
-loc_1EE60:
     dec cx
     dec cx
-loc_1EE62:
     jz short loc_1EE67
 loc_1EE64:
     jmp loc_1EDBE
@@ -1184,10 +1231,9 @@ loc_1EE6A:
 loc_1EE6C:
     jmp loc_1ED3D
     pop bp
-locret_1EE70:
-    retf
+    ret
 
-endp VGA_DrawEMSBitmap_R
+endp FLIC_Draw_EMM_R
 
 ;ends seg027
 

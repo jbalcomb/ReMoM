@@ -3,6 +3,39 @@
 
 #include "ST_HEAD.H"
 
+
+#define ADDR_RSP() { \
+    asm mov ax, [g_RenderScreenPage]; \
+    asm mov ah, al; \
+    asm xor al, al; \
+    asm shl ax, 1; \
+    asm shl ax, 1; \
+    asm add ax, 0A000h; \
+    asm add ax, dx; \
+    asm mov es, ax; \
+}
+#define ADDR_DSP() { \
+    asm mov ax, 1; \
+    asm sub ax, [g_RenderScreenPage]; \
+    asm mov ah, al; \
+    asm xor al, al; \
+    asm shl ax, 1; \
+    asm shl ax, 1; \
+    asm add ax, 0A000h; \
+    asm add ax, dx; \
+    asm mov es, ax; \
+}
+//asm   mov ax, [g_RenderScreenPage]
+//asm   mov ah, al                              //; (_AX << 8)
+//asm   sub al, al                              //; (_AX & 0xFF00)
+//asm   shl ax, 1
+//asm   shl ax, 1                               //; (_AX << 2) == (_AX * 2^2) == (_AX * 4)
+//asm   add ax, 0A000h                          //; VGA - Graphics Mode - Video Memory Segment Address / Base
+//asm   mov ds, ax
+
+
+
+
 enum Cursor_Types {
     Crsr_None,
     Crsr_Normal,
@@ -37,21 +70,21 @@ enum GUI_Controls
     Ctrl_ClickGrid  = 12,
 };
 
-// sizeof 26h 38d
+// sizeof 0Ch 12d (6 values * 2 bytes)
 struct s_GUI_WINDOW {
     int Cursor_Index;                               // ; enum Cursor_Types
-    int Cursor_Offset;
+    int Cursor_Offset;  // ? drake178:"Offset", but maybe "HotSpot" ?
     int Left;
     int Top;
     int Right;
     int Bottom;
 };
 
-struct s_Cursor_Area_Copy {                   // sizeof=0x186  390 bytes
-    int ScreenPageOffset;
-    int Width_Bytes;
-    int Height_Lines;
-    unsigned char Saved_Image[384];         // ? 384 / 16 = 24 ?
+struct s_Cursor_Area_Copy {                  // sizeof=0x186  390 bytes (2+2+2+384)
+    /*00h*/ int ScreenPageOffset;            // e.g., (X,Y)=(158,100); ColumnOffset=(158//4=39); RowOffset=(100*80=8000); PageOffset=(39+8000)=8039
+    /*02h*/ int Width_Bytes;                 // Width in Addresses  (~=Pixels/4)
+    /*04h*/ int Height_Lines;                // Height in Pixels  ... Rows ... "Lines" as in "Scan-Lines"
+    /*06h*/ unsigned char Saved_Image[384];  // ? 384 / 16 = 24 ?
 };
 /*
 ?

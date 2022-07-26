@@ -26,7 +26,10 @@ proc EMM_GetHandleName far
     mov es, bx
     assume es:@data
     int 67h
-    cmp ah, 0
+    ; 		ES:DI = pointer to 8byte handle name array
+	;       AH = status  (see EMS STATUS)
+
+    cmp ah, 0  ; 00  success
     jnz short @@error
 
     mov di, [bp+argEmmHandleName]

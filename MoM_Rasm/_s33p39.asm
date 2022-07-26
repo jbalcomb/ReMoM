@@ -26,14 +26,12 @@ proc VGA_DrawCursor_RSP
     push si
     push di
 
-    ;mov ax, seg dseg
     mov ax, seg DGROUP
     mov ds, ax
-    ;assume ds:dseg
     assume ds:DGROUP
 
     cmp dx, 0
-    jnz short loc_24ADC
+    jnz DoDrawCursor
 
     pop di
     pop si
@@ -43,7 +41,7 @@ proc VGA_DrawCursor_RSP
     pop bp
     ret
 
-loc_24ADC:
+DoDrawCursor:
     dec dx
     shl dx, 1
     shl dx, 1
@@ -52,63 +50,70 @@ loc_24ADC:
     add dx, [gsa_Palette_Cursor_Data]
     mov [bp+Cursor_Image_Segment], dx
 
-    mov dx, cx
+    mov dx, cx  ; Y_Pos
     shl dx, 1
     shl dx, 1
-    add dx, cx
-
+    add dx, cx  ; (Y_Pos * 4) + Y_Pos ~== (Y_Pos * 5)
     mov ax, [g_RenderScreenPage]
     mov ah, al
     xor al, al
     shl ax, 1
     shl ax, 1
+    add ax, 0A000h  ; AX = {A000,A4000} + ? (Y_Pos * 5) ?
     add ax, dx
-    add ax, 0A000h
     mov es, ax
 
-    mov ax, 0C8h
+    mov ax, 0C8h  ; 200d  SCREEN_HEIGHT_PIXELS
     sub ax, cx
-    jbe short @@Done
-    cmp ax, 11h
-    js short loc_24B15
+    jbe @@Done
+
+    cmp ax, 11h  ; 17d
+    js SetHeightCalcMask
+
     mov ax, 10h
 
-loc_24B15:
+SetHeightCalcMask:
     mov [bp+Draw_Height], ax
     mov ax, bx
     mov ah, 1
     and al, 3
-    jz short loc_24B28
+    jz RegMask_RowOffset_ClipHeight
+
     mov cl, al
     xor ch, ch
 
-loc_24B24:
+ShiftMaskBitIntoPosition:
     shl ah, 1
-    loop loc_24B24
+    loop ShiftMaskBitIntoPosition
 
-loc_24B28:
+RegMask_RowOffset_ClipHeight:
     mov dx, 3C4h
-    mov al, 2
+    mov al, 2 ;e_SC_MAPMASK
     out dx, al
+
     mov dx, bx
     shr dx, 1
     shr dx, 1
-    mov cx, 140h
+
+    mov cx, 140h  ; 320d
     sub cx, bx
-    jbe short @@Done
+    jbe @@Done
 
     cmp cx, 11h
-    js short loc_24B43
+    js ItrLine_SrcSgmtOfst
+
     mov cx, 10h
 
-loc_24B43:
+ItrLine_SrcSgmtOfst:
     mov bl, cl
     mov bh, byte ptr [bp+Draw_Height]
+
     mov si, 0
+
     mov cx, [bp+Cursor_Image_Segment]
     mov ds, cx
 
-loc_24B50:
+LoopPlanes:
     mov di, dx
     mov dx, 3C5h
     mov al, ah
@@ -118,37 +123,41 @@ loc_24B50:
     mov cl, bh
     xor ch, ch
 
-loc_24B5E:
+LoopLines:
     lodsb
     cmp al, 0
-    jnz short loc_24B6B
-    add di, 50h
-    loop loc_24B5E
+    jnz WritePixel
 
-    jmp short loc_24B71
-    nop
+SkipPixel:
+    add di, 50h  ; 80d
+    loop LoopLines
 
-loc_24B6B:
+JmpNextBitmapLine:
+    jmp NextBitmapLine
+    ; ? nop | align 2 ?
+
+WritePixel:
     stosb
-    add di, 4Fh
-    loop loc_24B5E
+    add di, 4Fh  ; 79d  (1 + 79 = 80)
+    loop LoopLines
 
-loc_24B71:
-    mov cl, 10h
+NextBitmapLine:
+    mov cl, 10h  ; 16d
     sub cl, bh
     xor ch, ch
     add si, cx
     dec bl
-    jz short @@Done
+    jz @@Done
     
     shl ah, 1
     cmp ah, 9
-    js short loc_24B87
+    js NextPlane
+
     inc dx
     mov ah, 1
 
-loc_24B87:
-    jmp short loc_24B50
+NextPlane:
+    jmp LoopPlanes
 
 @@Done:
     pop di

@@ -19,7 +19,7 @@ void GAME_MainMenu(void)
     int flag_quit;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GAME_MainMenu()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_MainMenu()\n", __FILE__, __LINE__);
 #endif
 
     if ( DISK_FileFind(cnst_ConfigFile, Read_Buffer) == 0 )
@@ -34,10 +34,9 @@ void GAME_MainMenu(void)
    fread(Config_Data, 18, 1, fp);
    fclose(fp);
 
-   g_ScreenChangeFade = 1;
 
-   g_GUI_MainScreenJump = -1;
-
+   g_ScreenChangeFade = 1;  // ST_TRUE
+   g_GUI_MainScreenJump = -1;  // ST_UNDEFINED
    GUI_SetEscOverride();
 
 
@@ -52,7 +51,7 @@ void GAME_MainMenu(void)
         GUI_ClearHelp();
 
         HERE("Screen_Action = SCREEN_Menu();");
-        Screen_Action = SCREEN_Menu();
+        Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
         // DEBUG(JimBalcomb): here, the screen is rendered correctly - ? happens after input ?
         
 #ifdef DEBUG
@@ -65,17 +64,17 @@ void GAME_MainMenu(void)
 
         switch (Screen_Action)
         {
-            case 0:  // Continue
+            case 0:  // "Continue"
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 0\n", __FILE__, __LINE__);
                 // SND_Stop_Music()
                 // j_GAME_WizardsLaunch(8)  // e_SAVE9GAM
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
-            case 1:  // Load
+            case 1:  // "Load Game"
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 1\n", __FILE__, __LINE__);
                 // j_GAME_LoadSaveScreen
                 break;
-            case 2:  // New
+            case 2:  // "New Game"
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 2\n", __FILE__, __LINE__);
                 // j_GAME_New_Create
                 GUI_LoadSave_State = ST_UNDEFINED;
@@ -85,7 +84,7 @@ void GAME_MainMenu(void)
                 flag_quit = ST_TRUE;
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
-            case 4:  // Hall of Fame
+            case 4:  // "Hall Of Fame"
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 4\n", __FILE__, __LINE__);
                 // j_GAME_Hall_of_Fame
                 // j_GAME_PrepareCredits
@@ -94,9 +93,9 @@ void GAME_MainMenu(void)
         }
         
     }
-    HERE("Quit(cnst_QUIT_Message);");
+
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GAME_MainMenu()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
 #endif
     Quit(cnst_QUIT_Message);
 }

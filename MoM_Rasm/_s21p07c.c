@@ -4,6 +4,7 @@
 #include "ST_FLIC.H"
 #include "ST_VGA.H"
 
+#include "STU_BITS.H"
 #include "STU_DBG.H"
 
 /*
@@ -20,15 +21,19 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
     unsigned int DstOfst;
     unsigned int SrcSgmt;
     unsigned int SrcOfst;
+    unsigned int tmp_SrcOfst;
     unsigned int _FAR *fptr_Dst;
     unsigned int _FAR *fptr_Src;
     unsigned char _FAR *fptr_DstByte;
     unsigned char _FAR *fptr_SrcByte;
-    unsigned int tmp_Palette_Data_Offset;
-    unsigned int  fh_image_offset;
-    unsigned int  fh_first_color;
-    unsigned int  fh_color_count;
-    unsigned char fh_frame_colors;
+    unsigned int tmp_Palette_Header_Offset;
+    // unsigned int  fh_image_offset;
+    // unsigned int  fh_first_color;
+    // unsigned int  fh_color_count;
+    unsigned int fh_palette_data_offset;
+    unsigned int fh_palette_color_index;
+    unsigned int fh_palette_color_count;
+    byte fh_frames_have_palettes;
     unsigned int  ffh_image_offset;
     unsigned char ffh_colors_hi_lo;
     unsigned char ffh_first_color;
@@ -51,8 +56,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
     {
         HERE("( fptr_FlicHdr_SgmtAddr->EMM_Handle_Number != 0 )");
 
-        //_DI = fptr_FlicHdr_SgmtAddr.EMM_Logical_Page_Offset;
-        DstOfst = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Offset;
+        tmp_SrcOfst = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Offset;
 
         _DX = fptr_FlicHdr_SgmtAddr->EMM_Handle_Number;
         _BL = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Number;
@@ -75,39 +79,40 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
     {
         HERE("( fptr_FlicHdr_SgmtAddr->EMM_Handle_Number == 0 )");
 
-        //_DI = 0;
-        DstOfst = 0;
+        tmp_SrcOfst = 0;
     }
 
 // @@PaletteDataOffset:
 //     _SI = 0x0E;  // FLIC_HDR.Palette_Data_Offset
 //     _SI = _SI + _DI;
 // asm lodsw                                //; AX = [DS:SI]
-    SrcOfst = DstOfst + 0x0E;
+    SrcOfst = tmp_SrcOfst + 0x0E;  // FLIC Offset to FLIC Palette Header Offset, from BoF, maybe in EMM
 
-    // tmp_Palette_Data_Offset = (unsigned int)*SrcSgmt[SrcOfst++];
+    // tmp_Palette_Header_Offset = (unsigned int)*SrcSgmt[SrcOfst++];
     fptr_Src = (unsigned int _FAR *)MK_FP(SrcSgmt, SrcOfst);
-    tmp_Palette_Data_Offset = fptr_Src[0];
+    dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
 
-    dlvfprintf("DEBUG: [%s, %d] tmp_Palette_Data_Offset: %04X %u)\n", __FILE__, __LINE__, tmp_Palette_Data_Offset, tmp_Palette_Data_Offset);
+    tmp_Palette_Header_Offset = fptr_Src[0];
+    dlvfprintf("DEBUG: [%s, %d] tmp_Palette_Header_Offset: %04Xh %ud\n", __FILE__, __LINE__, tmp_Palette_Header_Offset, tmp_Palette_Header_Offset);
 
     // _AX = _AX + _DI;
     // _SI = _AX;
     // _BX = _AX;
 
-    SrcOfst = DstOfst + tmp_Palette_Data_Offset;
-    dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u)\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+    SrcOfst = tmp_SrcOfst + tmp_Palette_Header_Offset;
+    dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04Xh %ud\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
 
     //fh_frame_colors = (unsigned char)*SrcSgmt[SrcOfst + 0x06];
     fptr_Src = (unsigned int _FAR *)MK_FP(SrcSgmt, SrcOfst);
-    fh_frame_colors = fptr_Src[0x06];
+    dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
 
-    dlvfprintf("DEBUG: [%s, %d] fh_frame_colors: %04X %u)\n", __FILE__, __LINE__, fh_frame_colors, fh_frame_colors);
+    //fh_frames_have_palettes = fptr_Src[0x06];
+    fh_frames_have_palettes = FPEEKB(SrcSgmt, SrcOfst + 0x06);
+    dlvfprintf("DEBUG: [%s, %d] fh_frames_have_palettes: %02Xh %ud\n", __FILE__, __LINE__, fh_frames_have_palettes, fh_frames_have_palettes);
 
-
-    if ( (Frame_Index == 0) || (fh_frame_colors == 0) )
+    if ( (Frame_Index == 0) || (fh_frames_have_palettes == 0) )
     {
-        // @@YayFrameZero
+        // @@UseFlicPalette
         HERE("( (Frame_Index == 0) || (fh_frame_colors == 0) )");
 
 // asm lodsw
@@ -123,21 +128,21 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         // fh_first_color = (unsigned int)*SrcSgmt[SrcOfst++];
         // fh_color_count = (unsigned int)*SrcSgmt[SrcOfst++];
         fptr_Src = (unsigned int _FAR *)MK_FP(SrcSgmt, SrcOfst);
-        fh_image_offset = fptr_Src[0];
-        fh_first_color = fptr_Src[1];
-        fh_color_count = fptr_Src[2];
+        fh_palette_data_offset = fptr_Src[0];  // Offset to FLIC Palette Data
+        fh_palette_color_index = fptr_Src[1];   // Index of Color
+        fh_palette_color_count = fptr_Src[2];   // Count of Colors
 
-        dlvfprintf("DEBUG: [%s, %d] fh_image_offset: %04X %u)\n", __FILE__, __LINE__, fh_image_offset, fh_image_offset);
-        dlvfprintf("DEBUG: [%s, %d] fh_first_color: %04X %u)\n", __FILE__, __LINE__, fh_first_color, fh_first_color);
-        dlvfprintf("DEBUG: [%s, %d] fh_color_count: %04X %u)\n", __FILE__, __LINE__, fh_color_count, fh_color_count);
+        dlvfprintf("DEBUG: [%s, %d] fh_palette_data_offset: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_data_offset, fh_palette_data_offset);
+        dlvfprintf("DEBUG: [%s, %d] fh_palette_color_index: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_color_index, fh_palette_color_index);
+        dlvfprintf("DEBUG: [%s, %d] fh_palette_color_count: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_color_count, fh_palette_color_count);
 
-        tmp_Color_Count = fh_color_count;
-        SrcOfst = DstOfst + fh_image_offset;
-        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u)\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+        tmp_Color_Count = fh_palette_color_count;
+        SrcOfst = tmp_SrcOfst + fh_palette_data_offset;
+        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
     }
     else
     {
-        // @@NayFrameZero
+        // @@UseFramePalette
         HERE("( (Frame_Index != 0) & (fh_frame_colors != 0) )");
 
 // asm dec cx
@@ -154,7 +159,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
 
         // _SI = _SI + 8 + ... Frame_Index - 1 ... * 4 ... 
         SrcOfst = SrcOfst + 8 + ( (Frame_Index - 1) * 4 );
-        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u)\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
 
         // ffh_image_offset = (unsigned int)*SrcSgmt[SrcOfst++];
         // ffh_color_count = (unsigned char)*SrcSgmt[SrcOfst++];
@@ -164,9 +169,9 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         ffh_color_count = fptr_Src[1];
         ffh_first_color = fptr_Src[2];
 
-        dlvfprintf("DEBUG: [%s, %d] ffh_image_offset: %04X %u)\n", __FILE__, __LINE__, ffh_image_offset, ffh_image_offset);
-        dlvfprintf("DEBUG: [%s, %d] ffh_color_count: %04X %u)\n", __FILE__, __LINE__, ffh_color_count, ffh_color_count);
-        dlvfprintf("DEBUG: [%s, %d] ffh_first_color: %04X %u)\n", __FILE__, __LINE__, ffh_first_color, ffh_first_color);
+        dlvfprintf("DEBUG: [%s, %d] ffh_image_offset: %04X %u\n", __FILE__, __LINE__, ffh_image_offset, ffh_image_offset);
+        dlvfprintf("DEBUG: [%s, %d] ffh_color_count: %04X %u\n", __FILE__, __LINE__, ffh_color_count, ffh_color_count);
+        dlvfprintf("DEBUG: [%s, %d] ffh_first_color: %04X %u\n", __FILE__, __LINE__, ffh_first_color, ffh_first_color);
 
         if ( ffh_color_count == 0 )
         {
@@ -176,8 +181,8 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         HERE("( ffh_color_count != 0 )");
 
         tmp_Color_Count = ffh_color_count;
-        SrcOfst = DstOfst + ffh_image_offset;
-        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u)\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+        SrcOfst = tmp_SrcOfst + ffh_image_offset;
+        dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
     }
 
 // @@SetDestinations:
@@ -186,7 +191,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
 //     add  di, bx
 //     add  bx, 768                         ; + 300h = VGA_DACmod_Segment@
 
-    DstOfst = (fh_first_color * 3);         // AKA fh_first_color + (fh_first_color * 2)
+    DstOfst = (fh_palette_color_index * 3);         // AKA fh_first_color + (fh_first_color * 2)
     ofstPaletteFlags = DstOfst + 768;
 
     fptr_DstByte = (unsigned char _FAR *)MK_FP(DstSgmt, 0);

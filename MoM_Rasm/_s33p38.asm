@@ -33,7 +33,7 @@ proc GUI_DrawCursor_DSP
     assume ds:DGROUP
 
     mov dx, [g_GUI_CurrentCursor]
-    cmp dx, 0
+    cmp dx, 0  ; e_Crsr_None
     jz short @@Done
 
     mov bx, [bp+X_Pos]

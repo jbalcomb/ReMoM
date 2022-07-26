@@ -8,7 +8,9 @@
 
 void GUI_Init(int Input_Type)
 {
-//    dlvfprintf("DEBUG: %s %d BEGIN: GUI_Init()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_Init(Input_Type=%d)\n", __FILE__, __LINE__, Input_Type);
+#endif
 
     gfp_GUI_Control_Table = SA_MK_FP0(SA_Allocate_Space(357));  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
 
@@ -17,9 +19,8 @@ void GUI_Init(int Input_Type)
     */
     if ( Input_Type == 1 )
     {
-        GUI_SetWindows(1, g_GUI_VirtualScreen);
+        GUI_SetWindows(1, g_GUI_VirtualScreen);  // _s33p01  ST_GUI.H
         g_MOUSE_Hardware = MOUSE_Init();  // _s33p07  int MOUSE_Init(void)  ST_GUI.H
-        // DEBUG: g_MOUSE_Hardware = ST_SUCCESS;
         if ( g_MOUSE_Hardware != ST_FAILURE )
         {
             g_MOUSE_Hardware = 1;  // ST_TRUE
@@ -40,9 +41,11 @@ void GUI_Init(int Input_Type)
     
     VGA_SaveCursorArea_RSP(158, 100);
     g_GUI_Delay = 0;
-    g_GUI_FocusedControl = -1;
+    g_GUI_FocusedControl = -1;  // ST_UNDEFINED
     g_GUI_EscapeOverride = 0;
-    GUI_Clear();
+    GUI_Clear();  // _s34p57  ST_GUI.H
     
-//    dlvfprintf("DEBUG: %s %d END: GUI_Init()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: GUI_Init()\n", __FILE__, __LINE__);
+#endif
 }

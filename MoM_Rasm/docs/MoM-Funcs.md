@@ -23,9 +23,49 @@ block: Mathematical Operators
 If A and B are equal by definition (i.e., A is defined as B), then this is written symbolically as A=B, A:=B, or sometimes A≜B.
 
 
+IBM PC Drawing Characters
+
+https://jrgraphix.net/r/Unicode/2500-257F
+
+═       2550
+║       2551
+╔       2554
+╗       2557
+╚       255A
+╝       255D
+╠       2560
+╣       2563
+╦       2566
+╩       2569
+╬       256C
+
+╒       2552
+╓       2553
+╕       2555
+╖       2556
+╘       2558
+╙       2559
+╛       255B
+╜       255C
+╞       255E
+╟       255F
+╡       2561
+╢       2562
+╤       2564
+╥       2565
+╧       2567
+╨       2568
+╪       256A
+╫       256B
+
+
+
+
 STU
 MoM
 Rasm-MoM
+
+
 
 
 // TODO(JimBalcomb): move these rasm deduction notes elsewhere - consolidate into KB
@@ -152,9 +192,9 @@ _s12p04c.c      EMM_GetHandlePageCount
 _s12p05.asm     EMM_MakeNamedHandle
 _s12p06.asm     EMM_GetHandleName           unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EmmHndlNbr);
 _s12p07c.c      EMM_ReleaseHandle
-[?]_s12p08.asm     EMM_MapnRead                unsigned int EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EMM_Handle)
+_s12p08c.c      EMM_MapnRead                unsigned int EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EMM_Handle)
 _s12p10         EMM_GetPageFrame            unsigned int EMM_GetPageFrame(void)
-_s12p11c.c         EMM_Map4                                    EMM_MapFourPages
+_s12p11c.c      EMM_Map4                    void EMM_Map4(int EmmHandle, int EmmLogicalPage)                EMM_MapFourPages
 _s12p12c.c      EMM_MapMulti4
 
 ##### seg013    ST_EMM.H
@@ -164,9 +204,9 @@ _s13p03c.c      EMM_Load_LBX_File_1              void EMM_Load_LBX_1(char *argLb
 _s13p04c.c      EMM_Load_LBX_File                void EMM_Load_LBX(char *argLbxFileName, int argReserved)
 ...
 _s13p11c.c      EMM_LBX_Load_Entry
-_s13p12c.c      EMM_LBX_HdrOnly
+_s13p12c.c      EMM_LBX_FLIC_Header         unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType)   EMM_LBX_HdrOnly
 _s13p13c.c      EMM_LBX_Load_Record
-[]_S13p14c.c      EMM_LBX_DirectLoad
+[]_S13p14c.c    EMM_LBX_DirectLoad
 
 _s13p15c.c      EMM_CheckHandleOpen         unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
 _s13p16c.c      EMM_Shutdown                        EMM_ReleaseAll
@@ -255,17 +295,32 @@ _s26p04a.c      VGA_PageFlip                void VGA_PageFlip(void)
 []_s26p07 VGA_Copy_RSP_DSP_NM
 
 
-##### seg027    ST_VGA.H    ALL ASM
-[]_s27p01     VGA_DrawBitmap        void VGA_DrawBitmap(int Left, int Top, int Width, int Img_Off, int Img_Seg)
-[]_s27p02     VGA_DrawBitmap_R
-[]_s27p03     VGA_DrawEMSBitmap
-[]_s27p04     VGA_MapNextEMMPages
-[]_s27p05     VGA_DrawEMSBitmap_R
+##### seg027    ST_FLIC.H    ALL ASM
+_s27.asm
+_s27p01     FLIC_Draw                   VGA_DrawBitmap
+_s27p02     FLIC_Draw_R                 VGA_DrawBitmap_R
+_s27p03     FLIC_Draw_EMM               VGA_DrawEMSBitmap
+_s27p04     FLIC_EMM_MapNextPages       VGA_MapNextEMMPages
+_s27p05     FLIC_Draw_EMM_R             VGA_DrawEMSBitmap_R
+_s27a.c
+_s27p01     FLIC_Draw_A                   VGA_DrawBitmap
+_s27p02     FLIC_Draw_R_A                 VGA_DrawBitmap_R
+_s27p03     FLIC_Draw_EMM_A               VGA_DrawEMSBitmap
+_s27p04     FLIC_EMM_MapNextPages_A       VGA_MapNextEMMPages
+_s27p05     FLIC_Draw_EMM_R_A             VGA_DrawEMSBitmap_R
+
+_s27c.c
+_s27p01     FLIC_Draw_C                   VGA_DrawBitmap
+_s27p02     FLIC_Draw_R_C                 VGA_DrawBitmap_R
+_s27p03     FLIC_Draw_EMM_C               VGA_DrawEMSBitmap
+_s27p04     FLIC_EMM_MapNextPages_C       VGA_MapNextEMMPages
+_s27p05     FLIC_Draw_EMM_R_C             VGA_DrawEMSBitmap_R
+
 
 ##### seg028    ST_FLIC.H
 _s28p02         FLIC_Prepare           void FLIC_Prepare(int Width, int Height, unsigned int SAMB_head);       LBX_Image_Prepare
 
-[]_s28p11         VGA_DrawLBXImage
+_s28p11a.c      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage
 
 LBX_IMG_DecPrepare
 LBX_IMG_LoadEMSFrame
@@ -276,9 +331,9 @@ _s22p22c.c      ST_MoveData             int ST_MoveData(unsigned int destoff, un
 
 []_s28p13         FLIC_BuildFrame     void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg)  LBX_IMG_BuildFrame
 
-_s28p14         FLIC_SetFrame         void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)      LBX_IMG_SetFrame
+_s28p14c.c      FLIC_SetFrame         void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)      LBX_IMG_SetFrame
 _s28p15         FLIC_ResetFrame       void FLIC_ResetFrame(unsigned int FlicHdr_SgmtAddr)                     LBX_IMG_ResetFrame
-_s28p16         FLIC_GetCurFrame      void FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr)                    LBX_IMG_GetCurFrame
+_s28p16c.c      FLIC_GetCurFrame      void FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr)                    LBX_IMG_GetCurFrame
 
 
 ##### seg029    ???
@@ -320,6 +375,7 @@ _s33p19c.c      MOUSE_GetY
 _s33p25c.c      MOUSE_GetClickRec1          int MOUSE_GetClickRec1(void)    MOUSE_GetClick
 _s33p26c.c      CRP_MOUSE_GetClickRec2      int MOUSE_GetClickRec2(void)    CRP_MOUSE_GetSecClick
 []_s33p29         MOUSE_SaveClick
+
 _s33p30         GUI_SaveCursorArea_RSP      void GUI_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       GUI_SaveCursorArea          
 _s33p31         GUI_SaveCursorArea_DSP      void GUI_SaveCursorArea_DSP(int X_Pos, int Y_Pos)       GUI_SaveDrawCrsrArea          
 _s33p32         VGA_SaveCursorArea_RSP      void VGA_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       VGA_SaveCursorArea

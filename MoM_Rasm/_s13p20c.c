@@ -3,69 +3,6 @@
 
 #include "ST_HEAD.H"
 
-/*
-
-NOTE:
-    _SI = EmmHandleName
-    _DI = varEmmHndlNbr_FoundOrCreated
-
-if EmmHandleName == NULL then return 0
-
-varExistingEmmHndlNbr = -1
-varItr = 0
-
-while varItr < g_EMM_Open_Handles
-    gEMM_Table[varItr].EmmHndlNm
-    if strcmp(EmmHandleName, gEMM_Table[varItr].EmmHndlNm) != 0
-        Continue
-    else
-        varExistingEmmHndlNbr = varItr
-        Continue
-
-if varExistingEmmHndlNbr != -1
-    _AX = EMM_GetHandlePageCount(gEMM_Table[varExistingEmmHndlNbr].EmmHndlNbr)
-    if _AX < EmmLogicalPageCount
-        itoa(); itoa(); itoa(); strcpy(); strcat(); strcat(); strcat(); strcat(); strcat(); strcat();
-        ...Temp_String...cnst_EMMErr_Reload1...' reloaded into EMM, diff size ='
-        GAME_QuitProgram(Temp_String)
-    else
-        _AX = _DI
-        return _AX
-
-strcpy(gEMM_Table[g_EMM_Open_Handles].EmmHndlNm, EmmHandleName)
-
-if EmmRsvdFlag != 1
-    ? g_EMM_Open_Handles = (
-        _BX = g_EMM_Open_Handles * sizeof EMM_Record
-        _AL = gEMM_Table[].EmmHndlNm + _BX
-        NEG _AL
-        gEMM_Table[g_EMM_Open_Handles].EmmHndlNm)
-    ?
-
-_DI = EMM_MakeNamedHandle(EmmLogicalPageCount, gEMM_Table[g_EMM_Open_Handles])
-
-if _DI == 0
-    _AX = _DI
-    return _AX
-
-strcpy(gEMM_Table[g_EMM_Open_Handles].EmmHndlNm, EmmHandleName)
-gEMM_Table[g_EMM_Open_Handles].Rsvd = EmmRsvdFlag
-gEMM_Table[g_EMM_Open_Handles].EmmHndlNbr = _DI
-g_EMM_Open_Handles++
-
-if EmmRsvdFlag != 1
-    gEMM_Pages_Reserved = gEMM_Pages_Reserved - EmmLogicalPageCount
-
-    // asm{cmp [gEMM_Pages_Reserved],0; jge @@NewJmpJmpJmpDone}
-    // Jump If (0 - gEMM_Pages_Reserved) ???
-if !(gEMM_Pages_Reserved >= 0)
-    'EMM reserved exceeded by ' gEMM_Pages_Reserved ' blocks [' EmmHandleName '.LBX]'
-    GAME_QuitProgram()
-
-_AX = _DI
-return _AX
-
-*/
 
 unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName, int EmmRsvdFlag)
 {
@@ -76,11 +13,14 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
     unsigned int varEmmHndlNbr;
     char tmp_EmmHndlNm_byte0;
 
-    // printf("DEBUG: [%s, %d]: BEGIN: EMM_GetHandle(EmmLogicalPageCount = %u, EmmHandleName = %s, EmmRsvdFlag = %d)\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_GetHandle(EmmLogicalPageCount=%u, EmmHandleName=%s, EmmRsvdFlag=%d)\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag);
+#endif
 
     if (EmmHandleName == NULL)
     {
-        return 0;
+        varEmmHndlNbr = 0;
+        goto Exit;
     }
 
     /* Loop through our EMM Table, Check for existing handle by name */
@@ -117,7 +57,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
         }
         else
         {
-            return varEmmHndlNbr;
+            goto Exit;
         }
     }
 
@@ -167,7 +107,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 
     if (varEmmHndlNbr == 0)
     {
-        return 0;  // ~= return varEmmHndlNbr
+        goto Exit;
     }
 
     strcpy(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
@@ -177,10 +117,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 
     if (EmmRsvdFlag == 1)
     {
-        // printf("DEBUG: [%s, %d]: g_EMM_Pages_Reserved: %u\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
-        g_EMM_Pages_Reserved = g_EMM_Pages_Reserved - EmmLogicalPageCount;
-        // printf("DEBUG: [%s, %d]: g_EMM_Pages_Reserved: %u\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
-// getch();
+        g_EMM_Pages_Reserved -= EmmLogicalPageCount;
     }
 
     if ( g_EMM_Pages_Reserved < 0 )
@@ -197,6 +134,11 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
         Quit(Temp_String);
     }
 
-    // printf("DEBUG: [%s, %d]: END: EMM_GetHandle(EmmLogicalPageCount = %u, EmmHandleName = %s, EmmRsvdFlag = %d) { varEmmHndlNbr = %u }\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag, varEmmHndlNbr);
+Exit:
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_GetHandle(EmmLogicalPageCount=%u, EmmHandleName=%s, EmmRsvdFlag=%d) {EmmHndlNbr=%u}\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag, varEmmHndlNbr);
+#endif
+
     return varEmmHndlNbr;
 }

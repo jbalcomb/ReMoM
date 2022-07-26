@@ -4,6 +4,14 @@
 #include "ST_HEAD.H"
 
 
+
+#define CLRSCR0() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDrawAddress(); }
+#define CLRSCR1() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDirectDraw();  }
+
+//     VGA_LoadPalette(EMPERATO, -1, 0); VGA_DAC_Write();
+#define SETPAL(_idx_) { VGA_LoadPalette(_idx_, -1, 0); VGA_DAC_Write();  }
+
+
 // 3DAh  e_INPUT_STATUS  STATUS_REGISTER_1
 
 #define WAIT_VBL() asm{ \
@@ -17,13 +25,47 @@ in al, dx; \
 and al, 1000b; \
 jz @@waitsync; \
 }
+//J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_VL.H
+//#define VGAMAPMASK(x) asm{cli;mov dx,SC_INDEX;mov al,SC_MAPMASK;mov ah,x;out dx,ax;sti;}
+#define VGAMAPMASK() { \
+    asm { \
+        mov  dx, e_SC_INDEX; \
+        mov  al, e_SC_MAPMASK; \
+        out  dx, al; \
+    } \
+}
+//#define VGAMAPMASK() { \
+//    asm mov dx, e_SC_INDEX; \
+//    asm mov al, e_SC_MAPMASK; \
+//    asm out dx, al; \
+//}
+//#define VGAMAPMASK() asm{mov dx, e_SC_INDEX;mov al, e_SC_MAPMASK;out dx, al;}
+
+//#define VGAWRITEPLANE() { \
+//    asm { \
+//        mov dx, e_SC_DATA;   /* 0x03C5 */ \
+//        mov al, ah;          /* VGA_WriteMapMask[3] = {0001,0010,0100,1000} */ \
+//        out dx, al; \
+//    } \
+//}
+
+
+#define e_GC_INDEX   0x03CE
+#define e_GC_DATA    0x03CF
+#define e_GC_READMAP   0x04
+#define e_SC_INDEX   0x03C4
+#define e_SC_DATA    0x03C5
+#define e_SC_MAPMASK   0x02
+
 
 #define MINX 0
 #define MINY 0
-#define MAXX 320
-#define MAXY 200
 #define MIDX 158
 #define MIDY 100
+#define MAXX 320
+#define MAXY 200
+#define PIXX 320
+#define PIXY 200
 
 
 extern int g_VGA_Min_X;                             // dseg:41B2

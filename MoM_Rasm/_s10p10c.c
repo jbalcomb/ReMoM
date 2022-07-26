@@ -29,17 +29,16 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
     unsigned int ReadNbytes;        // LBXREADDATA()
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: LBX_Load_Entry(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+//     if
+//     (
+//         ((strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntry == 2)) ||
+//         ((strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntry == 0))
+//     )
+//     {
+//         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+//     }
 #endif
-
-    if ( (strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntry == 2) )
-    {
-        dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
-    }
-    if ( (strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntry == 0) )
-    {
-        dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
-    }
 
     tmp_LbxEntry = LbxEntry;
     tmp_LbxName = LbxName;
@@ -64,7 +63,7 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
             /*
                 BEGIN: Current != Previous
             */
-            HERE("Curr. != Prev.");
+            //HERE("Curr. != Prev.");
 
             UU_g_LBX_HdrFmt = tmp_LbxHdrFmt;
             
@@ -129,7 +128,7 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
         }
         else
         {
-            HERE("Curr. == Prev.");
+            //HERE("Curr. == Prev.");
         }
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
@@ -167,10 +166,11 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
 
     }  /* if ( SAMB_data == 0 ) */
 
+    //HERE("Update_MemFreeWorst_KB()");
     Update_MemFreeWorst_KB();
 
 #ifdef DEBUG    
-    dlvfprintf("DEBUG: [%s, %d]: END: LBX_Load_Entry(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
+    dlvfprintf("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
 #endif
     return SAMB_data;
 }

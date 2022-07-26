@@ -4,8 +4,9 @@
 #include <DOS.H>
 
 #include "ST_HEAD.H"
-
 #include "ST_EMM.H"
+
+#include "STU_DBG.H"
 
 /*
     segment:offset  ->  EMM Logical Page
@@ -85,22 +86,17 @@
 void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EmmHandle)
 {
     int EmmLogicalPage;
-    unsigned int tmp_Src_Ofst;
+    //unsigned int tmp_Src_Ofst;
+    unsigned int EmmLogicalPageOfst;
     unsigned int tmp_Src_Sgmt;
     unsigned char _FAR *fptr_Dst;
     unsigned char _FAR *fptr_Src;
     int itr_nbytes;
-    unsigned int bkup_DS;
-    // int tmp_Error;
-    // unsigned char tmp_EMS_STATUS;
-
-    bkup_DS = _DS;  // IDK - JIC
 
     // NOTE: printf() clobbers AX, CX, and DX
-    //dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_MapnRead(Dst_Ofst = 0x%04X, Dst_Sgmt = 0x%04X, Src_Ofst = 0x%04X, Src_Sgmt = 0x%04X, nbytes = %d, EmmHandle = %d)\n", __FILE__, __LINE__, Dst_Ofst, Dst_Sgmt, Src_Ofst, Src_Sgmt, nbytes, EmmHandle);
-    
-    // tmp_Error = 0;
-    // tmp_EMS_STATUS = 0;
+//#ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MapnRead(Dst_Ofst=0x%04X, Dst_Sgmt=0x%04X, Src_Ofst=0x%04X, Src_Sgmt=0x%04X, nbytes=%d, EmmHandle=%d)\n", __FILE__, __LINE__, Dst_Ofst, Dst_Sgmt, Src_Ofst, Src_Sgmt, nbytes, EmmHandle);
+//#endif
 
     // If a Destination SEGMENT is not specified, assume it is the DATA SEGMENT
     if ( Dst_Sgmt == 0 )
@@ -108,6 +104,7 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
         Dst_Sgmt = _DS;
         //Dst_Sgmt = _DATA;
         //Dst_Sgmt = DGROUP;
+        // ? Dst_Sgmt = @data;
     }
 
     // /*
@@ -137,21 +134,24 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
     //     // getch();
     // }
 
+    // TODO(JimBalcomb,20220724): add debug code here to pop-off when the bits are actually set
     tmp_Src_Sgmt = Src_Sgmt;
     tmp_Src_Sgmt = (tmp_Src_Sgmt << 2);
-    if ( Src_Ofst & 0x8000 )                        // bit #16 of Src_Ofst
+    if ( (Src_Ofst & 0x8000) != 0 )                        // test bit #16 of Src_Ofst
     {
-        tmp_Src_Sgmt = (tmp_Src_Sgmt & 0x0002);     // bit #2 of Src_Sgmt
+        tmp_Src_Sgmt = (tmp_Src_Sgmt | 0x0002);     // set bit #2 of Src_Sgmt
     }
-    if ( Src_Ofst & 0x4000 )                        // bit #15 of Src_Ofst
+    if ( (Src_Ofst & 0x4000) != 0 )                        // test bit #15 of Src_Ofst
     {
-        tmp_Src_Sgmt = (tmp_Src_Sgmt & 0x0001);    // bit #1 of Src_Sgmt
+        tmp_Src_Sgmt = (tmp_Src_Sgmt | 0x0001);     // set bit #1 of Src_Sgmt
     }
     EmmLogicalPage = tmp_Src_Sgmt;
-    // printf("DEBUG: [%s, %d]: Src_Sgmt: 0x%04X\n", __FILE__, __LINE__, Src_Sgmt);
-    // printf("DEBUG: [%s, %d]: tmp_Src_Sgmt: 0x%04X\n", __FILE__, __LINE__, tmp_Src_Sgmt);
-    // printf("DEBUG: [%s, %d]: EmmLogicalPage: 0x%04X\n", __FILE__, __LINE__, EmmLogicalPage);
-    
+    EmmLogicalPageOfst = (Src_Ofst & 0x3FFF);       // bits #16 and #15
+//#ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] EmmLogicalPage: %d\n", __FILE__, __LINE__, EmmLogicalPage);
+//    dlvfprintf("DEBUG: [%s, %d] EmmLogicalPageOfst: 0x%04X\n", __FILE__, __LINE__, EmmLogicalPageOfst);
+//#endif
+
     _AL = 0;
     _BX = EmmLogicalPage + 0;
     _DX = EmmHandle;
@@ -172,19 +172,6 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
     _DX = EmmHandle;
     _AH = EMS_MAPPAGE;
     geninterrupt(EMS_INT);
-    // // if ( _AH != 0 )
-    // tmp_EMS_STATUS = _AH;
-    // if ( tmp_EMS_STATUS != 0 )
-    // {
-    //     // printf("DEBUG: [%s, %d]: FAILURE: EmmHandle = %d, EmmLogicalPage = %d\n", __FILE__, __LINE__, EmmHandle, EmmLogicalPage + 3);
-    //     printf("DEBUG: [%s, %d]: FAILURE: tmp_EMS_STATUS = 0x%02X EmmHandle = %d, EmmLogicalPage = %d\n", __FILE__, __LINE__, tmp_EMS_STATUS, EmmHandle, EmmLogicalPage + 3);
-    //     tmp_Error = 1;
-    // }
-    // if ( tmp_Error != 0 )
-    //     Quit("EMM_Map4: Page mapping failed");
-    
-
-    // printf("DEBUG: [%s, %d]: g_EMM_PageFrame_Base_Address: 0x%08X\n", __FILE__, __LINE__, g_EMM_PageFrame_Base_Address);
 
     /*
     _ES = Dst_Sgmt;
@@ -193,18 +180,22 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
     _SI = Src_Ofst;
     */
     fptr_Dst = (unsigned char _FAR *) MK_FP(Dst_Sgmt, Dst_Ofst);
-    fptr_Src = (unsigned char _FAR *) MK_FP(g_EMM_PageFrame_Base_Address, Src_Ofst);
-    // printf("DEBUG: [%s, %d]: fptr_Dst: %Fp\n", __FILE__, __LINE__, fptr_Dst);
-    // printf("DEBUG: [%s, %d]: fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
+    fptr_Src = (unsigned char _FAR *) MK_FP(g_EMM_PageFrame_Base_Address, EmmLogicalPageOfst);
+//#ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] fptr_Dst: %Fp\n", __FILE__, __LINE__, fptr_Dst);
+//    dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
+//#endif
 
     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
     {
-        //printf("DEBUG: [%s, %d]: fptr_Dst[%d]: %d (0x%02X)\n", __FILE__, __LINE__, itr_nbytes, fptr_Dst[itr_nbytes], fptr_Dst[itr_nbytes]);
-        //printf("DEBUG: [%s, %d]: fptr_Src[%d]: %d (0x%02X)\n", __FILE__, __LINE__, itr_nbytes, fptr_Src[itr_nbytes], fptr_Src[itr_nbytes]);
         // // *fptr_Dst++ = *fptr_Src++;
+        //dlvfprintf("DEBUG: [%s, %d] fptr_Src[%u]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, fptr_Src[itr_nbytes]);
         fptr_Dst[itr_nbytes] = fptr_Src[itr_nbytes];
-        //printf("DEBUG: [%s, %d]: fptr_Dst[%d]: %d (0x%02X)\n", __FILE__, __LINE__, itr_nbytes, fptr_Dst[itr_nbytes], fptr_Dst[itr_nbytes]);
+        //dlvfprintf("DEBUG: [%s, %d] fptr_Dst[%u]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, fptr_Dst[itr_nbytes]);
     }
 
-    //dlvfprintf("DEBUG: [%s, %d]: END: EMM_MapnRead(Dst_Ofst = 0x%04X, Dst_Sgmt = 0x%04X, Src_Ofst = 0x%04X, Src_Sgmt = 0x%04X, nbytes = %d, EmmHandle = %d)\n", __FILE__, __LINE__, Dst_Ofst, Dst_Sgmt, Src_Ofst, Src_Sgmt, nbytes, EmmHandle);
+//#ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] END: EMM_MapnRead(Dst_Ofst=0x%04X, Dst_Sgmt=0x%04X, Src_Ofst=0x%04X, Src_Sgmt=0x%04X, nbytes=%d, EmmHandle=%d)\n", __FILE__, __LINE__, Dst_Ofst, Dst_Sgmt, Src_Ofst, Src_Sgmt, nbytes, EmmHandle);
+//#endif
+
 }

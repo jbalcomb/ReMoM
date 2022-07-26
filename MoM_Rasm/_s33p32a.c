@@ -23,15 +23,11 @@ asm    push di
 asm    push es
 asm    push ds
 
-//asm    mov ax, seg dseg
 asm    mov ax, seg DGROUP
 asm    mov ds, ax
-//asm    assume ds:dseg
 asm    assume ds:DGROUP
-
 asm    mov ax, ds
 asm    mov es, ax
-//asm    assume es:dseg
 asm    assume es:DGROUP
 
 asm    mov ax, [g_RenderScreenPage]

@@ -18,6 +18,27 @@ char Debug_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possi
 char DBG_LBX_Filename[13] = {0};
 unsigned int DBG_LBX_EntryIndex = 0;
 
+unsigned int DBG_MAINSCRN_000;
+unsigned int DBG_MAINSCRN_005;
+
+
+unsigned int dbg_AX_Orig;
+unsigned int dbg_BX_Orig;
+unsigned int dbg_CX_Orig;
+unsigned int dbg_DX_Orig;
+unsigned int dbg_SI_Orig;
+unsigned int dbg_DI_Orig;
+unsigned int dbg_DS_Orig;
+unsigned int dbg_ES_Orig;
+unsigned int dbg_AX_Curr;
+unsigned int dbg_BX_Curr;
+unsigned int dbg_CX_Curr;
+unsigned int dbg_DX_Curr;
+unsigned int dbg_SI_Curr;
+unsigned int dbg_DI_Curr;
+unsigned int dbg_DS_Curr;
+unsigned int dbg_ES_Curr;
+
 /*
 STDARG.H
 typedef void _FAR *va_list;

@@ -59,7 +59,7 @@ void GUI_DrawControls(void)
             {
                 dlvfprintf("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
                 FLIC_ResetFrame(gfp_GUI_Control_Table[tmp_SI].Param5);
-                VGA_DrawLBXImage(gfp_GUI_Control_Table[tmp_SI].Left, gfp_GUI_Control_Table[tmp_SI].Top, gfp_GUI_Control_Table[tmp_SI].Param5);
+                FLIC_Draw_XY(gfp_GUI_Control_Table[tmp_SI].Left, gfp_GUI_Control_Table[tmp_SI].Top, gfp_GUI_Control_Table[tmp_SI].Param5);
                 //VGA_SetFont(..., 0, 0);  // argument missing in dasm
                 VGA_SetFont(gfp_GUI_Control_Table[tmp_SI].Font_Index, gfp_GUI_Control_Table[tmp_SI].ColorSet1, 0, 0);
                 Half_Font_Height = ( (VGA_GetFontHeight() - 1) / 2);

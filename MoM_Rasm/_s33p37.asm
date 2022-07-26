@@ -33,16 +33,16 @@ proc GUI_DrawCursor_RSP
     assume ds:DGROUP
 
     mov dx, [g_GUI_CurrentCursor]
-    cmp dx, 0
+    cmp dx, 0  ; e_Crsr_None
     jz short @@Done
     
     mov bx, [bp+X_Pos]
     mov cx, [bp+Y_Pos]
 
-    ;push cs
+    push cs
     ;call near ptr VGA_DrawCursor_RSP
-    ;nop
     call VGA_DrawCursor_RSP ; _s33p39
+    nop
 
 @@Done:
     pop ds

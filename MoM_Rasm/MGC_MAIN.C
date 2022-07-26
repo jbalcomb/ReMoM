@@ -137,12 +137,12 @@ int MGC_Main(void)
     */
 
     //VGA_LoadPalette(0, -1);  // argument missing in dasm
-    VGA_LoadPalette(0, -1, 0);
+    VGA_LoadPalette(0, -1, 0);  // EMPERATO
     VGA_DAC_Write();
 
 
 
-    GAME_MainMenu();  // MGC_DEF.H
+    GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
 
 
 

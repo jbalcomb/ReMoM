@@ -160,6 +160,7 @@ char *g_FontFileName = "FONTS.LBX";
 
 
 void test_defines(void);
+void test_binary_math_multivalue(void);
 
 void test_set_mem_min_ram(void);
 void test_set_mem_min_emm(void);
@@ -210,9 +211,11 @@ void test_EMM_Load_LBX_File(void);
 
 void test_SimTexGameEngineFramework(void);
 
-void test_VGA_DrawLBXImage(void);
+void test_FLIC_Draw_XY(void);
 void test_Screen_MainMenu(void);
 void test_SCREEN_Menu(void);
+
+void test_VGA_DrawCursor_RSP(void);
 
 /*
     J:\STU\DBWD\developc\Animator\Vpaint\COMMON\ptr.h
@@ -283,9 +286,15 @@ int main(void)
 
     //test_SimTexGameEngineFramework();
 
-//    test_VGA_DrawLBXImage();
+// ? test_FLIC_Draw_XY();
 
     //test_Screen_MainMenu();
+
+    //test_binary_math_multivalue();
+
+//    test_VGA_DrawCursor_RSP();
+
+//    test_draw_flic_frame();
 
     return 0;
 }
@@ -451,6 +460,122 @@ void test_defines(void)
 #else
     printf("__DLL__ = <undefined>\n");
 #endif
+
+}
+
+void test_binary_math_multivalue(void)
+{
+    /*
+        e.g.,
+            EMM Page and Offset
+            MAINSCRN,5
+            153872 / 16384 =    9 (0x0009)
+            153872 % 16384 = 6416 (0x1910)
+            00025910
+            0002
+            5910
+            00000000 00000010 01011001 00010000
+            00000000 00000010
+            01011001 00010000
+            How many 16384's? ...32768's? ...65536's?
+            low-word
+                01011001 00010000
+                |\-16384's
+                \-32768's
+            high-word:
+                00000000 00000010 - 65536's
+
+
+    */
+    unsigned char tmp_16384s;
+    unsigned char tmp_32768s;
+    unsigned char tmp_65536s;
+    unsigned char tmp_16384s_high;
+    unsigned char tmp_16384s_low;
+    unsigned char tmp_16384s_total;
+    unsigned long value;
+    unsigned int value_high;
+    unsigned int value_low;
+    long DataOffset_Begin;
+    unsigned char Entry_Begin_Logical_Page_Number;
+    unsigned int Entry_Begin_Logical_Page_Offset;
+    unsigned int tmp_DataOffsetBegin_Sgmt;
+    unsigned int tmp_DataOffsetBegin_Ofst;
+    unsigned int tmp_Src_Ofst;
+    unsigned int tmp_Src_Sgmt;
+    int EmmLogicalPage;
+
+    value = 153872;
+    value_high = (unsigned int)((value & 0xFFFF0000) >> 16);
+    value_low = (unsigned int)(value & 0x0000FFFF);
+    printf("value: 0x%08lX\n", value);
+    printf("value_high: 0x%04X\n", value_high);
+    printf("value_low: 0x%04X\n", value_low);
+
+    printf("value: %u\n", ( (value & 0x00000001) != 0 ));
+    printf("value_high: %u\n", ( (value_high & 0x0002) != 0 ));
+    printf("value_low: %u\n", ( (value_low & 0x4000) != 0 ));
+    printf("value_low: %u\n", ( (value_low & 0x1000) != 0 ));
+
+    tmp_65536s = value_high;
+    printf("How many 65536's in the high-word of the long value? %u\n", tmp_65536s);
+
+    if ( (value_low & 0x8000) != 0 )  // 1000 0000 0000 0000
+    {
+        tmp_32768s = 1;
+    }
+    else
+    {
+        tmp_32768s = 0;
+    }
+    printf("How many 32768's in the low-word of the long value? %u\n", tmp_32768s);
+
+    if ( (value_low & 0x4000) != 0 )  // 0100 0000 0000 0000
+    {
+        tmp_16384s = 1;
+    }
+    else
+    {
+        tmp_16384s = 0;
+    }
+
+    tmp_16384s_high = (tmp_65536s * 4);
+    printf("How many 16384's in the high-word of the long value? %u\n", tmp_16384s_high);
+    tmp_16384s_low = ( (tmp_32768s * 2) + (tmp_16384s * 1) );
+    printf("How many 16384's in the low-word of the long value? %u\n", tmp_16384s_low);
+    tmp_16384s_total = ( tmp_16384s_high + tmp_16384s_low);
+    printf("How many 16384's in the long value? %u\n", tmp_16384s_total);
+
+    DataOffset_Begin = 153872;
+    printf("DataOffset_Begin: %ld\n", DataOffset_Begin);
+    Entry_Begin_Logical_Page_Number = DataOffset_Begin / 16384;  // e_EMM_Page_Size (0x4000)
+    Entry_Begin_Logical_Page_Offset = DataOffset_Begin % 16384;  // e_EMM_Page_Size (0x4000)
+    printf("Entry_Begin_Logical_Page_Number: %u\n", Entry_Begin_Logical_Page_Number);
+    printf("Entry_Begin_Logical_Page_Offset: %u\n", Entry_Begin_Logical_Page_Offset);
+    tmp_DataOffsetBegin_Sgmt = (unsigned int)(DataOffset_Begin >> 16);         // Hi-Word of Double-Word
+    tmp_DataOffsetBegin_Ofst = (unsigned int)(DataOffset_Begin & 0x0000FFFF);  // Lo-Word of Double-Word
+    printf("tmp_DataOffsetBegin_Sgmt: %u (0x%04X)\n", tmp_DataOffsetBegin_Sgmt, tmp_DataOffsetBegin_Sgmt);
+    printf("tmp_DataOffsetBegin_Ofst: %u (0x%04X)\n", tmp_DataOffsetBegin_Ofst, tmp_DataOffsetBegin_Ofst);
+
+    tmp_Src_Sgmt = tmp_DataOffsetBegin_Sgmt;
+    tmp_Src_Ofst = tmp_DataOffsetBegin_Ofst;
+    printf("tmp_Src_Sgmt: %u (0x%04X)\n", tmp_Src_Sgmt, tmp_Src_Sgmt);
+    printf("tmp_Src_Ofst: %u (0x%04X)\n", tmp_Src_Ofst, tmp_Src_Ofst);
+    tmp_Src_Sgmt = (tmp_Src_Sgmt << 2);
+    printf("tmp_Src_Sgmt: %u (0x%04X)\n", tmp_Src_Sgmt, tmp_Src_Sgmt);
+    if ( (tmp_Src_Ofst & 0x8000) != 0 )     // 1000 0000 0000 0000 - test bit #16
+    {
+        tmp_Src_Sgmt = (tmp_Src_Sgmt | 0x0002);     // 0000 0000 0000 0010 - set bit #2
+    }
+    if ( (tmp_Src_Ofst & 0x4000) != 0 )         // 0100 0000 0000 0000 - test bit #15
+    {
+        tmp_Src_Sgmt = (tmp_Src_Sgmt | 0x0001);     // 0000 0000 0000 0010 - set bit #1
+    }
+    printf("tmp_Src_Sgmt: %u (0x%04X)\n", tmp_Src_Sgmt, tmp_Src_Sgmt);
+    EmmLogicalPage = tmp_Src_Sgmt;
+    printf("EmmLogicalPage: %d (0x%04X)\n", EmmLogicalPage, EmmLogicalPage);
+    tmp_Src_Ofst = (tmp_Src_Ofst & 0x3FFF);         //  - clear bits #16 and #15
+    printf("tmp_Src_Ofst: %d (0x%04X)\n", tmp_Src_Ofst, tmp_Src_Ofst);
 
 }
 
@@ -1266,7 +1391,7 @@ void test_SimTexGameEngineFramework(void)
     Debug_Log_Shutdown();
 }
 
-void test_VGA_DrawLBXImage(void)
+void test_FLIC_Draw_XY(void)
 {
     Debug_Log_Startup();
 
@@ -1333,7 +1458,7 @@ void test_VGA_DrawLBXImage(void)
     // // ? VGA_SetOutlineColor(0); ?
     // SCREEN_Menu() line 73
     VGA_LoadPalette(2, -1, 0); // ARCANUS - Magic Castle View
-    // VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
 
     //  GAME_LoadMainImages()
     //      MGC_DEF.H
@@ -1361,7 +1486,7 @@ void test_VGA_DrawLBXImage(void)
     VGA_LoadPalette(2, -1, 0); // ARCANUS - Magic Castle View
     FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
     //FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
-    VGA_DrawLBXImage(123, (141 + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    FLIC_Draw_XY(123, (141 + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
     getch();
 
@@ -1508,29 +1633,29 @@ void test_Screen_MainMenu(void)
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
     FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
-    VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
 
-    VGA_DrawLBXImage(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
 
     // FLIC_SetFrame(gsa_VORTEX_5_MenuLoadGame, 1);
     FLIC_ResetFrame(gsa_VORTEX_5_MenuLoadGame);
-    VGA_DrawLBXImage(123, (141 + 12), gsa_VORTEX_5_MenuLoadGame);
+    FLIC_Draw_XY(123, (141 + 12), gsa_VORTEX_5_MenuLoadGame);
 
     FLIC_ResetFrame(gsa_VORTEX_1_MenuContinue);
     // FLIC_SetFrame(gsa_VORTEX_1_MenuContinue, 1);
-    VGA_DrawLBXImage(123, (141 + (12 * 0)), gsa_VORTEX_1_MenuContinue);
+    FLIC_Draw_XY(123, (141 + (12 * 0)), gsa_VORTEX_1_MenuContinue);
 
     FLIC_ResetFrame(gsa_VORTEX_4_MenuNewGame);
     // FLIC_SetFrame(gsa_VORTEX_4_MenuNewGame, 1);
-    VGA_DrawLBXImage(123, (141 + 24), gsa_VORTEX_4_MenuNewGame);
+    FLIC_Draw_XY(123, (141 + 24), gsa_VORTEX_4_MenuNewGame);
 
     FLIC_ResetFrame(gsa_VORTEX_2_MenuHallOfFame);
     // FLIC_SetFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
-    VGA_DrawLBXImage(123, (141 + 36), gsa_VORTEX_2_MenuHallOfFame);
+    FLIC_Draw_XY(123, (141 + 36), gsa_VORTEX_2_MenuHallOfFame);
 
     FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
     // FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
-    VGA_DrawLBXImage(123, (141 + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    FLIC_Draw_XY(123, (141 + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
     getch();
 
@@ -1641,5 +1766,18 @@ void test_SCREEN_Menu(void)
     /*
         END: SCREEN_Menu()
     */
+
+}
+
+/*
+_s33p37         GUI_DrawCursor_RSP |-> VGA_DrawCursor_RSP
+_s33p38         GUI_DrawCursor_DSP |-> VGA_DrawCursor_DSP
+_s33p39         VGA_DrawCursor_RSP
+_s33p40         VGA_DrawCursor_DSP
+*/
+void test_VGA_DrawCursor_RSP(void)
+{
+
+    VGA_DrawCursor_RSP();
 
 }

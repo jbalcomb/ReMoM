@@ -22,7 +22,6 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
 //     {
 //         printf("DEBUG: [%s, %d]: SUCCESS: LBX_FileSize: %ld (0x%08X)\n", __FILE__, __LINE__, LBX_FileSize, LBX_FileSize);
 //     }
-// getch();
 
     //long LbxFileSize;
     //unsigned long LbxFileSize;
@@ -30,7 +29,7 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     long tmp_LbxFileSize;
     char EmmHndlNm[20];
     char EmmHndlFileName[20];
-    int UU_varNbytesRead;
+    long UU_varNbytesRead;
     int EmmLogicalPage;
     int ReadNbytes;
     unsigned int tmp_EmmPageFrameSgmtAddr;
@@ -45,7 +44,9 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     int tmp_EMM_Pages_Available;
     int tmp_EMM_Pages_Required;
 
-//    printf("DEBUG: [%s, %d]: BEGIN: EMM_Load_LBX_File(LbxFileName = %s, Reserved = %d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File(LbxFileName=%s, EmmRsvd=%d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
+#endif
 
     ExtractFileBase(LbxFileName);
     strcpy(EmmHndlNm, LbxFileName);
@@ -94,13 +95,14 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     if ( g_EMM_OK == 0 )
     {
 //        printf("DEBUG: [%s, %d]: FAILURE: if ( g_EMM_OK == 0 )\n", __FILE__, __LINE__);
-        return 0;
+        EmmHndlNbr = 0;
+        goto Exit;
     }
 
     if ( !(g_EMM_Open_Handles < 40) )
     {
 //        printf("DEBUG: [%s, %d]: FAILURE: if ( !(g_EMM_Open_Handles < 40) )\n", __FILE__, __LINE__);
-        return EmmHndlNbr;
+        goto Exit;
     }
 
     strcpy(EmmHndlFileName, EmmHndlNm);
@@ -126,7 +128,7 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     if ( LbxFileSize == 0 )
     {
 //        printf("DEBUG: [%s, %d]: FAILURE: LbxFileSize = DOS_GetFileSize(EmmHndlFileName)\n", __FILE__, __LINE__);
-        return EmmHndlNbr;
+        goto Exit;
     }
 
     LbxFileSize16kBlocks = LbxFileSize / 16384; // SZ_16K_B / EMM Page Size
@@ -139,12 +141,14 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
 
     if ( Reserved == 0 )
     {
+        // TODO(JimBalcomb): double-check and fix this error here ...tmp_EMM_Pages_Available...if ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )
         tmp_EMM_Pages_Available = EMM_GetFreePageCount();
         tmp_EMM_Pages_Required = g_EMM_Pages_Reserved + LbxFileSize16kBlocks;
         if ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )
         {
 //            printf("DEBUG: [%s, %d]: FAILURE: !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required)\n", __FILE__, __LINE__, tmp_EMM_Pages_Required, tmp_EMM_Pages_Required);
-            return 0;
+            EmmHndlNbr = 0;
+            goto Exit;
         }
     }
 
@@ -153,7 +157,7 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
    if ( EmmHndlNbr == 0 )
    {
 //       printf("DEBUG: [%s, %d]: FAILURE: EmmHndlNbr = EMM_GetHandle(LbxFileSize16kBlocks, EmmHndlNm, Reserved)\n", __FILE__, __LINE__);
-       return EmmHndlNbr;
+       goto Exit;
    }
 
     tmp_EmmPageFrameSgmtAddr = EMM_GetPageFrame();
@@ -163,7 +167,7 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     if ( tmp_EmmPageFrameSgmtAddr == 0 )
     {
 //        printf("DEBUG: [%s, %d]: FAILURE: tmp_EmmPageFrameSgmtAddr = EMM_GetPageFrame()\n", __FILE__, __LINE__);
-        return EmmHndlNbr;
+        goto Exit;
     }
 
     LbxFileHandle = lbx_open(EmmHndlFileName);
@@ -171,41 +175,59 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
     if ( LbxFileHandle == 0 )
     {
 //        printf("DEBUG: [%s, %d]: FAILURE: LbxFileHandle = lbx_open(EmmHndlFileName)\n", __FILE__, __LINE__);
-        return EmmHndlNbr;
+        goto Exit;
     }
 
     UU_varNbytesRead = 0;
 
-    ReadNbytes = 16384; // SZ_16K_B / EMM Page Size
+    ReadNbytes = EMS_PAGE_SIZE; // 16384  SZ_16K_B / EMS/EMM Page Size
+    tmp_LbxFileSize = LbxFileSize;
 
-    while ( LbxFileSize >= 16384 )
+    while ( tmp_LbxFileSize >= EMS_PAGE_SIZE )
     {
-        LbxFileSize = LbxFileSize - 16384; // SZ_16K_B / EMM Page Size
+        tmp_LbxFileSize -= EMS_PAGE_SIZE; // SZ_16K_B / EMM Page Size
 
         EMM_Map4(EmmHndlNbr, EmmLogicalPage);
 
         // printf("DEBUG: [%s, %d]: lbx_read_sgmt(0x%04X, %d, %d)\n", __FILE__, __LINE__, tmp_EmmPageFrameSgmtAddr, ReadNbytes, LbxFileHandle);
         lbx_read_sgmt(tmp_EmmPageFrameSgmtAddr, ReadNbytes, LbxFileHandle);
 
-        EmmLogicalPage = EmmLogicalPage + 1;
+        EmmLogicalPage++;
 
-        UU_varNbytesRead = UU_varNbytesRead + 16384;
+        UU_varNbytesRead += EMS_PAGE_SIZE;
     }
-    if ( LbxFileSize > 0 )
+    if ( tmp_LbxFileSize > 0 )
     {
-        ReadNbytes = LbxFileSize;
+        ReadNbytes = tmp_LbxFileSize;
         EMM_Map4(EmmHndlNbr, EmmLogicalPage);
         lbx_read_sgmt(tmp_EmmPageFrameSgmtAddr, ReadNbytes, LbxFileHandle);
     }
 
     lbx_close(LbxFileHandle);
 
-//     printf("DEBUG: [%s, %d]: LBX_EntryCount: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 0));
-//     printf("DEBUG: [%s, %d]: LBX_MagSig_Hi: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 2));
-//     printf("DEBUG: [%s, %d]: LBX_MagSig_Lo: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 4));
-//     printf("DEBUG: [%s, %d]: LBX_Type: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 6));
-// getch();
+    // TODO(JimBalcomb,20220724): add DEBUG - if MAINSCRN LbxFileSize == 196511
+//#ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] EmmLogicalPage: %d\n", __FILE__, __LINE__, EmmLogicalPage);
+//    dlvfprintf("DEBUG: [%s, %d] LbxFileSize: %ld\n", __FILE__, __LINE__, LbxFileSize);
+//    dlvfprintf("DEBUG: [%s, %d] UU_varNbytesRead: %ld\n", __FILE__, __LINE__, UU_varNbytesRead);
+//    dlvfprintf("DEBUG: [%s, %d] tmp_LbxFileSize: %ld\n", __FILE__, __LINE__, tmp_LbxFileSize);
+//    dlvfprintf("DEBUG: [%s, %d] UU_varNbytesRead + tmp_LbxFileSize: %ld\n", __FILE__, __LINE__, (UU_varNbytesRead + tmp_LbxFileSize));
+//#endif
 
-//    printf("DEBUG: [%s, %d]: END: EMM_Load_LBX_File(LbxFileName = %s, Reserved = %d) { EmmHndlNbr = %d }\n", __FILE__, __LINE__, LbxFileName, Reserved, EmmHndlNbr);
+//#ifdef DEBUG
+//    EMM_Map4(EmmHndlNbr, 0);
+//    dlvfprintf("DEBUG: [%s, %d] g_EMM_PageFrame_Base_Address: 0x%04X\n", __FILE__, __LINE__, g_EMM_PageFrame_Base_Address);
+//    dlvfprintf("DEBUG: [%s, %d] LBX_EntryCount: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 0));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Hi: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 2));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Lo: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 4));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_Type: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 6));
+//#endif
+
+Exit:
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File(LbxFileName=%s, EmmRsvd=%d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
+#endif
+
     return EmmHndlNbr;
 }

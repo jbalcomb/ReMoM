@@ -32,27 +32,30 @@ void SCREEN_Menu_Draw(void)
     VGA_SetDrawFrame();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
-    HERE("FLIC_GetCurFrame()");
+    HERE("Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);");
     Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] Title_Frame_Index: %d\n", __FILE__, __LINE__, Title_Frame_Index);
 #endif
 
-    HERE("FLIC_SetFrame()");
+    HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
     FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
 
-    // TODO(JimBalcomb): figure out and fix the logic for looping the 13 frames of the "MOM animated logo"
-    // for ( Loop_Var = 0; Loop_Var <= Title_Frame_Index; Loop_Var++ )
-    // {
-    //     HERE("VGA_DrawLBXImage()");
-    //     VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to VGA_DrawLBXImage()
-    // }
-    HERE("VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
-    VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to VGA_DrawLBXImage()
+    // TODO(JimBalcomb): figure out and fix the logic for looping the 20 frames of the "MOM animated logo"
+    for ( Loop_Var = 0; Loop_Var <= Title_Frame_Index; Loop_Var++ )
+    {
+        #ifdef DEBUG
+            dlvfprintf("DEBUG: [%s, %d] Loop_Var: %d, Title_Frame_Index: %d, (Loop_Var <= Title_Frame_Index): %d\n", __FILE__, __LINE__, Loop_Var, Title_Frame_Index, (Loop_Var <= Title_Frame_Index));
+        #endif
+        HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+        FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
+    }
+    //HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+    //FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
     // NOTE(JimBalcomb): this LBX Entry/FLIC includes a 256-color palette chunk
 
-    HERE("VGA_DrawLBXImage(0, 41, gsa_MAINSCRN_5_ScreenBottom);");
-    VGA_DrawLBXImage(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    HERE("FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);");
+    FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
 
     if ( g_ScreenChangeFade == 0 )
     {
@@ -69,17 +72,17 @@ void SCREEN_Menu_Draw(void)
     {
         if ( MouseOver_ControlIndex == GUI_Load_Lbl_Index )
         {
-            HERE("FLIC_SetFrame()");
+            HERE("FLIC_ResetFrame()");
             FLIC_ResetFrame(gsa_VORTEX_5_MenuLoadGame);
         }
         else
         {
-            HERE("FLIC_ResetFrame()");
+            HERE("FLIC_SetFrame()");
             FLIC_SetFrame(gsa_VORTEX_5_MenuLoadGame, 1);
         }
 
-        HERE("VGA_DrawLBXImage()");
-        VGA_DrawLBXImage(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
+        HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);");
+        FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
 
     }
 
@@ -96,8 +99,8 @@ void SCREEN_Menu_Draw(void)
             FLIC_SetFrame(gsa_VORTEX_1_MenuContinue, 1);
         }
 
-        HERE("VGA_DrawLBXImage()");
-        VGA_DrawLBXImage(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
+        HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);");
+        FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
     }
 
     if ( MouseOver_ControlIndex == GUI_NewGame_Label )
@@ -111,8 +114,8 @@ void SCREEN_Menu_Draw(void)
         FLIC_SetFrame(gsa_VORTEX_4_MenuNewGame, 1);
     }
 
-    HERE("VGA_DrawLBXImage()");
-    VGA_DrawLBXImage(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
+    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);");
+    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
 
     if ( MouseOver_ControlIndex == GUI_HoF_Lbl_Index )
     {
@@ -125,8 +128,8 @@ void SCREEN_Menu_Draw(void)
         FLIC_SetFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
     }
 
-    HERE("VGA_DrawLBXImage()");
-    VGA_DrawLBXImage(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
+    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);");
+    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
 
     if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
     {
@@ -139,8 +142,8 @@ void SCREEN_Menu_Draw(void)
         FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
     }
 
-    HERE("VGA_DrawLBXImage()");
-    VGA_DrawLBXImage(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);");
+    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
     // // VGA_LoadPalette(2, -1, 0);
     // // VGA_DAC_Write();
@@ -153,7 +156,7 @@ void SCREEN_Menu_Draw(void)
     // DEBUG(JimBalcomb): doing just these two here does make the screen render correctly
     VGA_DAC_Write();
     // DEBUG(JimBalcomb): just VGA_DAC_Write() here does make the screen render correctly
-    // so, ...  VGA_DrawLBXImage(0, 0, gsa_MAINSCRN_0_AnimatedLogo) has 256-clor custom palette...
+    // so, ...  FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo) has 256-clor custom palette...
     ///... and, calls FLIC_LoadPalette() to load that
     // ... and, FLIC_LoadPalette() sets the palette update flags
     // so, VGA_DAC_Write() needs to be called to /apply/ the palette

@@ -37,20 +37,24 @@ unsigned int g_EmmHndl_FIGUREX;             // dseg:9486
 */
 
 unsigned int g_EMM_PageFrame_Base_Address;   // dseg:40E4
-extern char g_EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
-//dseg:40EF EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
-//dseg:40EF                  EMM_L2P_Map_Record <0, 1>
-//dseg:40EF                  EMM_L2P_Map_Record <0, 2>
-//dseg:40EF                  EMM_L2P_Map_Record <0, 3>
-// dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
-// dseg:40EF EMS_L2P_Map_Record <0,      1>
-// dseg:40EF EMS_L2P_Map_Record <0,      2>
-// dseg:40EF EMS_L2P_Map_Record <0,      3>
-// dseg:40FF align 2
-unsigned int g_EMM_Log2Phys_Map[8] = {0,0,0,1,0,2,0,3}; // dseg:40EF
+char g_EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
+// //dseg:40EF EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
+// //dseg:40EF                  EMM_L2P_Map_Record <0, 1>
+// //dseg:40EF                  EMM_L2P_Map_Record <0, 2>
+// //dseg:40EF                  EMM_L2P_Map_Record <0, 3>
+// // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
+// // dseg:40EF EMS_L2P_Map_Record <0,      1>
+// // dseg:40EF EMS_L2P_Map_Record <0,      2>
+// // dseg:40EF EMS_L2P_Map_Record <0,      3>
+// // dseg:40FF align 2
+// unsigned int g_EMM_Log2Phys_Map[8] = {0,0,0,1,0,2,0,3}; // dseg:40EF
+// C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
+// MAP_STRUCT far * ptr_map_struct;
+//MAP_STRUCT _FAR gfp_map_struct[4] = {{0,0},{0,1},{0,2},{0,3}}; // dseg:40EF
+MAP_STRUCT gfp_map_struct[4] = {{0,0},{0,1},{0,2},{0,3}};
 
 // align 2                                                      // dseg:40FF
-unsigned int g_EMM_Pages_Reserved = 40;                         // dseg:4100 ; set to 158 at the start of _main
+unsigned int g_EMM_Pages_Reserved = 40;                         // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
 unsigned int g_EMM_Open_Handles = 0;                            // dseg:4102
 char *g_EmmHndlNm_YOMOMA1 = "YO MOMA";                          // dseg:4104 "YO MOMA"
 char *g_EmmHndlNm_YOMOMA2 = "YO MOMA";                          // dseg:410C "YO MOMA"
