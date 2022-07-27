@@ -1,4 +1,4 @@
-TITLE _s33p21.asm MOUSE_MoveCursorINT
+TITLE _s33p21.asm MD_MoveCursorINT
 ; ST_GUI.H
 
 .MODEL LARGE, C
@@ -9,9 +9,9 @@ TITLE _s33p21.asm MOUSE_MoveCursorINT
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_MoveCursorINT
+PUBLIC MD_MoveCursorINT
 
-proc MOUSE_MoveCursorINT
+proc MD_MoveCursorINT
 
     X_Pos = word ptr 6
     Y_Pos = word ptr 8
@@ -32,7 +32,7 @@ proc MOUSE_MoveCursorINT
     pop bp
     ret
 
-endp MOUSE_MoveCursorINT
+endp MD_MoveCursorINT
 
 
 

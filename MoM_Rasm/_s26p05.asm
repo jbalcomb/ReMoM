@@ -3,7 +3,7 @@ TITLE _s26p05.asm VGA_Copy_RSP_DSP
 
 .MODEL LARGE, C
 
-EXTRN GUI_GetCursorIndex:PROC
+EXTRN CR_GetIndex:PROC
 EXTRN VGA_Copy_RSP_DSP_YM:PROC
 EXTRN VGA_Copy_RSP_DSP_NM:PROC
 
@@ -22,7 +22,7 @@ proc VGA_Copy_RSP_DSP
     push si
     push di
 
-    call GUI_GetCursorIndex
+    call CR_GetIndex
 
     cmp ax, 0
     jz short @@NoCursor

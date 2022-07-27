@@ -1,4 +1,4 @@
-TITLE _s33p06.asm MOUSE_WaitRelease
+TITLE _s33p06.asm MD_WaitRelease
 ; in ST_GUI.H
 
 .MODEL LARGE, C
@@ -9,9 +9,9 @@ TITLE _s33p06.asm MOUSE_WaitRelease
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_WaitRelease
+PUBLIC MD_WaitRelease
 
-proc MOUSE_WaitRelease
+proc MD_WaitRelease
 
     push si
     push di
@@ -37,7 +37,7 @@ WaitNotPressed:
     pop si
     ret
 
-endp MOUSE_WaitRelease
+endp MD_WaitRelease
 
 ;ends seg033
 

@@ -1,17 +1,18 @@
 // _s34p72c.c GUI_DrawControl
 // ST_GUI.H
 
+#include "ST_CTRL.H"
 #include "ST_GUI.H"
 
 
-void GUI_DrawControl(int Ctrl_Index, int Input_State)
+void CTRL_DrawControl(int Ctrl_Index, int Input_State)
 {
     int Half_V_Spacing;
     int Half_Font_Height;
 
     int tmp_SI;
 
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_DrawControl()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: CTRL_DrawControl()\n", __FILE__, __LINE__);
 
     tmp_SI = Ctrl_Index;
 
@@ -29,7 +30,7 @@ void GUI_DrawControl(int Ctrl_Index, int Input_State)
     // 10: Ctrl_DialogLine 
     // 11: Ctrl_EditSelect 
     // 12: Ctrl_ClickGrid 
-    switch (gfp_GUI_Control_Table[tmp_SI].Ctrl_Type)
+    switch (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type)
         {
             case Ctrl_ClickButton:
             {
@@ -99,5 +100,5 @@ void GUI_DrawControl(int Ctrl_Index, int Input_State)
         }
 
 
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_DrawControl()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] END: CTRL_DrawControl()\n", __FILE__, __LINE__);
 }

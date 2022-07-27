@@ -39,6 +39,17 @@ unsigned int dbg_DI_Curr;
 unsigned int dbg_DS_Curr;
 unsigned int dbg_ES_Curr;
 
+
+extern char DBG_CallingFunction[256];
+
+unsigned char DBG_gflag_MD_Enabled = 0;
+unsigned char DBG_gflag_CSR_Enabled = 0;
+unsigned char DBG_gflag_MD_INT_Handler_Installed = 0;
+unsigned char DBG_gflag_MD_INT_Handler_MvOnly = 0;
+unsigned char DBG_gflag_MD_INT_Handler_MvBtns = 0;
+// CDraw called from SCRN or MD_INT ?
+
+
 /*
 STDARG.H
 typedef void _FAR *va_list;

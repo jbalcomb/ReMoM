@@ -4,10 +4,10 @@ TITLE _s33p20.asm MOUSE_MoveCursor
 .MODEL LARGE, C
 
 EXTRN g_MouseDriverInstalled:WORD
-EXTRN g_MOUSE_CurrentX:WORD
-EXTRN g_MOUSE_CurrentY:WORD
+EXTRN g_MD_CurrentX:WORD
+EXTRN g_MD_CurrentY:WORD
 
-EXTRN MOUSE_MoveCursorINT:PROC
+EXTRN MD_MoveCursorINT:PROC
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -15,9 +15,9 @@ EXTRN MOUSE_MoveCursorINT:PROC
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_MoveCursor
+PUBLIC MD_MoveCursor
 
-proc MOUSE_MoveCursor
+proc MD_MoveCursor
 
     X_Pos = word ptr 6
     Y_Pos = word ptr 8
@@ -31,10 +31,10 @@ proc MOUSE_MoveCursor
     mov ds, ax
 
     mov ax, [bp+X_Pos]
-    mov [g_MOUSE_CurrentX], ax
+    mov [g_MD_CurrentX], ax
 
     mov ax, [bp+Y_Pos]
-    mov [g_MOUSE_CurrentY], ax
+    mov [g_MD_CurrentY], ax
 
     cmp [g_MouseDriverInstalled], 0
     jz short @@Done
@@ -44,7 +44,7 @@ proc MOUSE_MoveCursor
     ;push cs
     ;call near ptr MOUSE_MoveCursorINT
     ;nop
-    call MOUSE_MoveCursorINT
+    call MD_MoveCursorINT
     add sp, 4
 
 @@Done:
@@ -52,7 +52,7 @@ proc MOUSE_MoveCursor
     pop bp
     ret
 
-endp MOUSE_MoveCursor
+endp MD_MoveCursor
 
 
 

@@ -1,6 +1,7 @@
 // _s34p01c.c GUI_ProcessInput()
 // ST_GUI.H
 
+#include "ST_CTRL.H"
 #include "ST_GUI.H"
 
 #include "STU_DBG.H"
@@ -21,7 +22,7 @@
 */
 
 
-int GUI_ProcessInput(void)
+int IN_ProcessInput(void)
 {
     char InputCode;
     int CtrlIdx;
@@ -38,16 +39,16 @@ int GUI_ProcessInput(void)
     unsigned int tmp_MidY;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_ProcessInput()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: IN_ProcessInput()\n", __FILE__, __LINE__);
 #endif
 
     CtrlIdx = 0;
-    g_GUI_FocusedControl = -1;
+    g_CTRL_FocusedControl = -1;
     Mouse_Btn_Clicked = 0;
-    g_GUI_MouseFocusCtrl = 0;
-    X_Pos = MOUSE_GetX();
-    Y_Pos = MOUSE_GetY();
-    g_GUI_Cursor_Offset = GUI_GetCursorOffset();
+    g_CTRL_MouseFocusCtrl = 0;
+    X_Pos = MD_GetX();
+    Y_Pos = MD_GetY();
+    g_CRSR_Offset = CR_GetOffset();
     
     if ( KBD_CheckBuffer() != 0 )  // _s33p16  int KBD_CheckBuffer(void)
     {
@@ -71,72 +72,72 @@ int GUI_ProcessInput(void)
             //     if ( CtrlIdx != 0 )  ... else Y/N KP_Enter Y/N InEditSelect ...
             //         if ( HotKey == InputCode )  ... else Y/N KP_Enter Y/N InEditSelect ...
             //             if ( Control Type != Slidebar )
-            //                 GUI_SetFocus(CtrlIdx, MidX, MidY)
+            //                 CTRL_SetFocus(CtrlIdx, MidX, MidY)
             //                 MOUSE_INTSet_MvBtns()
-            //                     if ( Control Type == ToggleButton )  ... if ( Param2 != 0 ) { Param2 = 0 } else { Param2 = 1 } ... GUI_Redraw_WaitOne(); UI_FcsdCtrl = -1
-            //                         if ( Control Type == LockableButton )  ... (Param2==0)?(Param2 = 1;GUI_Redraw_WaitOne();g_GUI_FocusedControl=-1;return(CtrlIdx);)
-            //                                                                               :(GUI_Redraw_WaitOne();g_GUI_FocusedControl=-1;return 0;)
-            //                             if ( Control Type == ClickLink ) {g_GUI_FocusedControl=-1;return(Param0-Parent);}
-            //                                                              else{GUI_Redraw_WaitOne();g_GUI_FocusedControl=-1;return(CtrlIdx)}
+            //                     if ( Control Type == ToggleButton )  ... if ( Param2 != 0 ) { Param2 = 0 } else { Param2 = 1 } ... SCRN_Redraw_WaitOne(); UI_FcsdCtrl = -1
+            //                         if ( Control Type == LockableButton )  ... (Param2==0)?(Param2 = 1;SCRN_Redraw_WaitOne();g_CTRL_FocusedControl=-1;return(CtrlIdx);)
+            //                                                                               :(SCRN_Redraw_WaitOne();g_CTRL_FocusedControl=-1;return 0;)
+            //                             if ( Control Type == ClickLink ) {g_CTRL_FocusedControl=-1;return(Param0-Parent);}
+            //                                                              else{SCRN_Redraw_WaitOne();g_CTRL_FocusedControl=-1;return(CtrlIdx)}
 
-            if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_AltString )
+            if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_AltString )
             {
                 if ( CtrlIdx != 0 )
                 {
-                    if ( gfp_GUI_Control_Table[CtrlIdx].Hotkey == InputCode )
+                    if ( gfp_CTRL_Control_Table[CtrlIdx].Hotkey == InputCode )
                     {
-                        if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_Slidebar )
+                        if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_Slidebar )
                         {
                             // TODO(JimBalcomb): see if this odd mid-point calculation is just compile-time confusion due to the struct array indexing
-                            tmp_MidX = gfp_GUI_Control_Table[CtrlIdx].Left + ((gfp_GUI_Control_Table[CtrlIdx].Right - gfp_GUI_Control_Table[CtrlIdx].Left) / 2);
-                            tmp_MidX = gfp_GUI_Control_Table[CtrlIdx].Top + ((gfp_GUI_Control_Table[CtrlIdx].Bottom - gfp_GUI_Control_Table[CtrlIdx].Top) / 2);
-                            GUI_SetFocus(CtrlIdx, tmp_MidX, tmp_MidY);
-                            MOUSE_INTSet_MvBtns();
-                            if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_ToggleButton )
+                            tmp_MidX = gfp_CTRL_Control_Table[CtrlIdx].Left + ((gfp_CTRL_Control_Table[CtrlIdx].Right - gfp_CTRL_Control_Table[CtrlIdx].Left) / 2);
+                            tmp_MidX = gfp_CTRL_Control_Table[CtrlIdx].Top + ((gfp_CTRL_Control_Table[CtrlIdx].Bottom - gfp_CTRL_Control_Table[CtrlIdx].Top) / 2);
+                            CTRL_SetFocus(CtrlIdx, tmp_MidX, tmp_MidY);
+                            MD_INT_SetMvBtns();
+                            if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_ToggleButton )
                             {
-                                if ( gfp_GUI_Control_Table[CtrlIdx].Param2 != 0 )
+                                if ( gfp_CTRL_Control_Table[CtrlIdx].Param2 != 0 )
                                 {
-                                    gfp_GUI_Control_Table[CtrlIdx].Param2 = 0;
+                                    gfp_CTRL_Control_Table[CtrlIdx].Param2 = 0;
                                 }
                                 else
                                 {
-                                    gfp_GUI_Control_Table[CtrlIdx].Param2 = 1;
+                                    gfp_CTRL_Control_Table[CtrlIdx].Param2 = 1;
                                 }
-                                GUI_Redraw_WaitOne();
-                                g_GUI_FocusedControl = -1;
+                                SCRN_Redraw_WaitOne();
+                                g_CTRL_FocusedControl = -1;
                                 return CtrlIdx;
                             }
-                            else if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_LockableButton )
+                            else if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_LockableButton )
                             {
-                                if ( gfp_GUI_Control_Table[CtrlIdx].Param2 == 0 )
+                                if ( gfp_CTRL_Control_Table[CtrlIdx].Param2 == 0 )
                                 {
-                                    gfp_GUI_Control_Table[CtrlIdx].Param2 = 1;
-                                    GUI_Redraw_WaitOne();
-                                    g_GUI_FocusedControl = -1;
+                                    gfp_CTRL_Control_Table[CtrlIdx].Param2 = 1;
+                                    SCRN_Redraw_WaitOne();
+                                    g_CTRL_FocusedControl = -1;
                                     return CtrlIdx;
                                 }
                                 else
                                 {
-                                    GUI_Redraw_WaitOne();
-                                    g_GUI_FocusedControl = -1;
+                                    SCRN_Redraw_WaitOne();
+                                    g_CTRL_FocusedControl = -1;
                                     return 0;
                                 }
                             }
-                            else if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_ClickLink )
+                            else if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type == Ctrl_ClickLink )
                             {
-                                g_GUI_FocusedControl = -1;
-                                return gfp_GUI_Control_Table[CtrlIdx].Param0;  // Parent
+                                g_CTRL_FocusedControl = -1;
+                                return gfp_CTRL_Control_Table[CtrlIdx].Param0;  // Parent
                             }
                             else
                             {
-                                GUI_Redraw_WaitOne();
-                                g_GUI_FocusedControl = -1;
+                                SCRN_Redraw_WaitOne();
+                                g_CTRL_FocusedControl = -1;
                                 return CtrlIdx;
                             }
                         }
-                    }  /* if ( gfp_GUI_Control_Table[CtrlIdx].Hotkey == InputCode ) */
+                    }  /* if ( gfp_CTRL_Control_Table[CtrlIdx].Hotkey == InputCode ) */
                 }  /* if ( CtrlIdx != 0 ) */
-            }  /* if ( gfp_GUI_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_AltString ) */
+            }  /* if ( gfp_CTRL_Control_Table[CtrlIdx].Ctrl_Type != Ctrl_AltString ) */
         }  /* if ( InputCode != 0 ) */
     }  /* if ( KBD_CheckBuffer() != 0 ) */
     else
@@ -161,7 +162,7 @@ int GUI_ProcessInput(void)
     // }
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_ProcessInput()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] END: IN_ProcessInput()\n", __FILE__, __LINE__);
 #endif
     return CtrlIdx;
 }

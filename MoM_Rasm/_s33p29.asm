@@ -1,13 +1,13 @@
-TITLE _s33p.asm MOUSE_SaveClick
+TITLE _s33p.asm MD_SaveClick
 ; in ST_GUI.H
 
 .MODEL LARGE, C
 
-EXTRN g_MOUSE_ClickBtns:WORD
-EXTRN g_MOUSE_ClickRec1:WORD
-EXTRN g_MOUSE_ClickRec2:WORD
-EXTRN g_MOUSE_ClickX:WORD
-EXTRN g_MOUSE_ClickY:WORD
+EXTRN g_MD_ClickBtns:WORD
+EXTRN g_MD_ClickRec1:WORD
+EXTRN g_MD_ClickRec2:WORD
+EXTRN g_MD_ClickX:WORD
+EXTRN g_MD_ClickY:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -15,9 +15,9 @@ EXTRN g_MOUSE_ClickY:WORD
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_SaveClick
+PUBLIC MD_SaveClick
 
-proc MOUSE_SaveClick far
+proc MD_SaveClick far
 
     X_Pos = word ptr 6
     Y_Pos = word ptr 8
@@ -44,13 +44,13 @@ proc MOUSE_SaveClick far
     ret
 
 @@YayButtonPressed:
-    mov [g_MOUSE_ClickBtns], ax
-    mov [g_MOUSE_ClickRec1], 1
-    mov [g_MOUSE_ClickRec2], 1
+    mov [g_MD_ClickBtns], ax
+    mov [g_MD_ClickRec1], 1
+    mov [g_MD_ClickRec2], 1
     mov ax, [bp+X_Pos]
-    mov [g_MOUSE_ClickX], ax
+    mov [g_MD_ClickX], ax
     mov ax, [bp+Y_Pos]
-    mov [g_MOUSE_ClickY], ax
+    mov [g_MD_ClickY], ax
     
     sub ax, ax
     
@@ -59,7 +59,7 @@ proc MOUSE_SaveClick far
     pop bp
     ret
 
-endp MOUSE_SaveClick
+endp MD_SaveClick
 
 ;ends seg033
 

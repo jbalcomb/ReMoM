@@ -376,25 +376,26 @@ _s33p25c.c      MOUSE_GetClickRec1          int MOUSE_GetClickRec1(void)    MOUS
 _s33p26c.c      CRP_MOUSE_GetClickRec2      int MOUSE_GetClickRec2(void)    CRP_MOUSE_GetSecClick
 []_s33p29         MOUSE_SaveClick
 
-_s33p30         GUI_SaveCursorArea_RSP      void GUI_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       GUI_SaveCursorArea          
-_s33p31         GUI_SaveCursorArea_DSP      void GUI_SaveCursorArea_DSP(int X_Pos, int Y_Pos)       GUI_SaveDrawCrsrArea          
-_s33p32         VGA_SaveCursorArea_RSP      void VGA_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       VGA_SaveCursorArea
-_s33p33         GUI_CursorCopy_Bkup2Main     void GUI_CursorCopy_Bkup2Main(void)
-_s33p34         GUI_RestoreCursorArea_RSP           VGA_RestoreCursrArea
-_s33p35         GUI_RestoreCursorArea_DSP           VGA_RestoreDrawCArea
-// UU _s33p36                                       UU_VGA_RestoreCursorArea_SP3
-_s33p37         GUI_DrawCursor_RSP |-> VGA_DrawCursor_RSP                 GUI_DisplayCursor
-_s33p38         GUI_DrawCursor_DSP |-> VGA_DrawCursor_DSP                GUI_DrawCursor
-_s33p39         VGA_DrawCursor_RSP                                        VGA_DisplayCursor
-_s33p40         VGA_DrawCursor_DSP                                       VGA_DrawCursor
+##### ST_CRSR.H
+_s33p30         CRL_Save_RSP                        GUI_SaveCursorArea_RSP          void GUI_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       GUI_SaveCursorArea          
+_s33p31         CRL_Save_DSP                        GUI_SaveCursorArea_DSP          void GUI_SaveCursorArea_DSP(int X_Pos, int Y_Pos)       GUI_SaveDrawCrsrArea          
+_s33p32         IN_CRL_Save_RSP                     VGA_SaveCursorArea_RSP          void VGA_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       VGA_SaveCursorArea
+_s33p33         CRL_Copy_DSP2RSP                    GUI_CursorCopy_Bkup2Main        void GUI_CursorCopy_Bkup2Main(void)
+_s33p34         CRL_Restore_RSP                     GUI_RestoreCursorArea_RSP       VGA_RestoreCursrArea
+_s33p35         CRL_Restore_DSP                     GUI_RestoreCursorArea_DSP       VGA_RestoreDrawCArea
+// UU _s33p36      UU_CRL_Restore_SP3                                                     UU_VGA_RestoreCursorArea_SP3
+_s33p37         CRH_Draw_RSP |-> CRL_Draw_RSP       GUI_DrawCursor_RSP              GUI_DisplayCursor
+_s33p38         CRH_Draw_DSP |-> CRL_Draw_DSP       GUI_DrawCursor_DSP              GUI_DrawCursor
+_s33p39         CRL_Draw_RSP                        VGA_DrawCursor_RSP              VGA_DisplayCursor
+_s33p40         CRL_Draw_DSP                        VGA_DrawCursor_DSP              VGA_DrawCursor
 
 
 ##### seg034    ST_GUI.H
-[]_s34p01         GUI_ProcessInput            _s34p01.asm GUI_ProcessInput
-_s34p08         GUI_SetEscOverride          void GUI_SetEscOverride(void)
+[]_s34p01       IN_ProcessInput            _s34p01.asm GUI_ProcessInput
+_s34p08         IN_SetEscOverride          void GUI_SetEscOverride(void)
 
-_s34p12 GUI_SetHelp         void GUI_SetHelp(int Entry_Tbl, int Entry_Count)
-_s34p13 GUI_ClearHelp       void GUI_ClearHelp(void)
+_s34p12 HLP_SetHelp         void GUI_SetHelp(int Entry_Tbl, int Entry_Count)
+_s34p13 HLP_ClearHelp       void GUI_ClearHelp(void)
 [?] _s34p14 GUI_ContextBasedHelp
 
 []_s34p22c.c       GUI_NoTriggerKeys           int GUI_NoTriggerKeys(int *Input_Control_Index)
@@ -402,31 +403,30 @@ _s34p13 GUI_ClearHelp       void GUI_ClearHelp(void)
 _s34p25 GUI_MouseOverControl  GUI_MouseOnControl
 _s34p26 GUI_MousedControl
 
+[?]_s34p30 IN_ProcessDirKey
 
-[?]_s34p30 GUI_ProcessDirKey
+_s34p57         CTRL_Clear                  GUI_Clear                   void GUI_Clear(void)
 
-
-_s34p57         GUI_Clear                   void GUI_Clear(void)
-_s34p65         GUI_Init                    void GUI_Init(int Input_Type)
-_s34p66c.c      GUI_GetInput                int GUI_GetInput(void)
-_s34p67         GUI_SetDelay                void GUI_SetDelay(int Input_Delay)
+_s34p65         IN_Init                    void GUI_Init(int Input_Type)
+_s34p66c.c      IN_GetInput                int GUI_GetInput(void)
+_s34p67         IN_Set_Skip                void GUI_SetDelay(int Input_Delay)
 
 []_s34p71 GUI_DrawControls
 []_s34p72 GUI_DrawControl
 
-_s34p73 GUI_SetFocus  void GUI_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
+_s34p73 CTRL_SetFocus  void GUI_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
 
-_s34p76c.c      GUI_Set_Redraw_Function           GUI_SetRedrawFn
-_s34p79c.c      GUI_DisableRedraw           void GUI_DisableRedraw(void)
+##### ST_SCRN
+_s34p76c.c      SCRN_Set_Redraw_Function           GUI_SetRedrawFn
+_s34p79c.c      SCRN_DisableRedraw           void GUI_DisableRedraw(void)
+_s34p81c.c      SCRN_CallRedrawFn
+_s34p82c.c      SCRN_Redraw_WaitOne          void GUI_Redraw_WaitOne(void)       GUI_1TickRedraw
+_s34p83c.c      SCRN_Redraw_WaitTimer        void GUI_NormalRedraw(void)         GUI_NormalRedraw      
+_s34p85c.c      SCRN_SimplePageFlip
 
-_s34p81c.c GUI_CallRedrawFn
-_s34p82c.c      GUI_Redraw_WaitOne          void GUI_Redraw_WaitOne(void)       GUI_1TickRedraw
-_s34p83c.c      GUI_Redraw_WaitTimer        void GUI_NormalRedraw(void)         GUI_NormalRedraw      
-
-_s34p85c.c      GUI_SimplePageFlip
-
-_s34p47         GUI_CreateClickLabel        GUI_CreateClickLabel(int Left, int Top, int Right, int Bottom, char *varKeyCode, char *Hlp)
-_s34p49         GUI_CreateHotkey            GUI_CreateHotkey(char *Hotkey)
+##### ST_CTRL
+_s34p47         CTRL_CreateClickLabel        GUI_CreateClickLabel(int Left, int Top, int Right, int Bottom, char *varKeyCode, char *Hlp)
+_s34p49         CTRL_CreateHotkey            GUI_CreateHotkey(char *Hotkey)
 
 
 ##### seg035    ST_SND.H

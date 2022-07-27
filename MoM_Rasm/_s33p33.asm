@@ -3,8 +3,8 @@ TITLE _s33p33.asm GUI_CursorCopy_Bkup2Main
 
 .MODEL LARGE, C
 
-EXTRN g_Cursor_Save_Main:WORD
-EXTRN g_Cursor_Save_Bkup:WORD
+EXTRN g_CRSR_Save_RSP:WORD
+EXTRN g_CRSR_Save_DSP:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -12,9 +12,9 @@ EXTRN g_Cursor_Save_Bkup:WORD
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_CursorCopy_Bkup2Main
+PUBLIC CRL_Copy_DSP2RSP
 
-proc GUI_CursorCopy_Bkup2Main
+proc CRL_Copy_DSP2RSP
 
     push si
     push di
@@ -30,8 +30,8 @@ proc GUI_CursorCopy_Bkup2Main
     ;assume es:dseg
     assume es:DGROUP
 
-    mov di, offset g_Cursor_Save_Main
-    mov si, offset g_Cursor_Save_Bkup
+    mov di, offset g_CRSR_Save_RSP
+    mov si, offset g_CRSR_Save_DSP
     mov cx, 258h ; 600 words, 1200 bytes
     rep movsw
 
@@ -42,7 +42,7 @@ proc GUI_CursorCopy_Bkup2Main
     pop si
     ret
 
-endp GUI_CursorCopy_Bkup2Main
+endp CRL_Copy_DSP2RSP
 
 ;ends seg033
 

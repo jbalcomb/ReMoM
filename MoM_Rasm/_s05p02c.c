@@ -19,7 +19,7 @@ void Quit(char *argQuitMessage)
 
     //SND_Stop_Music
 
-    MOUSE_Reset();
+    MD_Reset();
 
     //SND_Shutdown
 

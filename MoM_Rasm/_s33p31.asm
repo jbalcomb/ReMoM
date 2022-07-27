@@ -2,11 +2,11 @@ TITLE _s33p31.asm GUI_SaveCursorArea_DSP
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_CurrentCursor:WORD
-EXTRN g_GUI_PrevCursor:WORD
-EXTRN g_GUI_HaveAreaSave:WORD
-EXTRN g_RenderScreenPage:WORD
-EXTRN g_Cursor_Save_Bkup:WORD
+EXTRN g_CRSR_Curr:WORD
+EXTRN g_CRSR_Prev:WORD
+EXTRN g_CRSR_HaveSave:WORD
+EXTRN g_RSP_Idx:WORD
+EXTRN g_CRSR_Save_DSP:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -14,9 +14,9 @@ EXTRN g_Cursor_Save_Bkup:WORD
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_SaveCursorArea_DSP
+PUBLIC CRL_Save_DSP
 
-proc GUI_SaveCursorArea_DSP
+proc CRL_Save_DSP
 
     Width_Bytes = byte ptr -6
     Height_Lines = word ptr -4
@@ -38,13 +38,13 @@ proc GUI_SaveCursorArea_DSP
     ;assume ds:dseg
     assume ds:DGROUP
 
-    cmp [g_GUI_CurrentCursor], 0
+    cmp [g_CRSR_Curr], 0
     jnz short loc_2474D
 
-    cmp [g_GUI_PrevCursor], 0
+    cmp [g_CRSR_Prev], 0
     jnz short loc_2474D
 
-    cmp [g_GUI_HaveAreaSave], 0
+    cmp [g_CRSR_HaveSave], 0
     jz short loc_24747
 
     pop ds
@@ -56,7 +56,7 @@ proc GUI_SaveCursorArea_DSP
     ret
 
 loc_24747:
-    mov [g_GUI_HaveAreaSave], 1
+    mov [g_CRSR_HaveSave], 1
 
 loc_2474D:
     mov ax, ds
@@ -65,7 +65,7 @@ loc_2474D:
     assume es:DGROUP
 
     mov ax, 1
-    sub ax, [g_RenderScreenPage]
+    sub ax, [g_RSP_Idx]
     mov ah, al
     xor al, al
     shl ax, 1
@@ -90,10 +90,10 @@ loc_2477A:
     mul cx
     add si, ax
     sub di, di
-    ;mov [word ptr es:g_Cursor_Save_Bkup.ScreenPage_Offset+di], si
-    mov [word ptr es:g_Cursor_Save_Bkup+di], si
+    ;mov [word ptr es:g_CRSR_Save_DSP.ScreenPage_Offset+di], si
+    mov [word ptr es:g_CRSR_Save_DSP+di], si
     add di, 2
-    mov es:g_Cursor_Save_Bkup[di], bx
+    mov es:g_CRSR_Save_DSP[di], bx
     add di, 2
     mov [bp+Width_Bytes], bl
     mov ax, [bp+Y_Pos]
@@ -105,7 +105,7 @@ loc_2477A:
     sub bx, ax
 
 loc_247A8:
-    mov es:g_Cursor_Save_Bkup[di], bx
+    mov es:g_CRSR_Save_DSP[di], bx
     add di, 2
     mov [bp+Height_Lines], bx
     mov [bp+ScreenPage_Offset], si
@@ -125,7 +125,7 @@ loc_247A8:
 
 @@LoopWords:
     lodsw
-    mov es:g_Cursor_Save_Bkup[di], ax
+    mov es:g_CRSR_Save_DSP[di], ax
     add di, 2
     add si, 4Eh
     loop @@LoopWords
@@ -153,7 +153,7 @@ loc_247A8:
     pop bp
     ret
 
-endp GUI_SaveCursorArea_DSP
+endp CRL_Save_DSP
 
 
 ;ends seg033

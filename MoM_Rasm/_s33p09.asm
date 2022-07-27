@@ -1,18 +1,18 @@
-TITLE _s33p09.asm MOUSE_Reset
+TITLE _s33p09.asm MD_Reset
 ; ST_GUI.H
 
 .MODEL LARGE, C
 
 EXTRN g_MouseDriverInstalled:WORD
-EXTRN g_MOUSE_CursorDraw:WORD
-EXTRN g_MOUSE_ClickRec1:WORD
-EXTRN g_MOUSE_ClickRec2:WORD
-EXTRN g_MOUSE_InitX:WORD
-EXTRN g_MOUSE_InitY:WORD
+EXTRN g_MD_CursorDraw:WORD
+EXTRN g_MD_ClickRec1:WORD
+EXTRN g_MD_ClickRec2:WORD
+EXTRN g_MD_InitX:WORD
+EXTRN g_MD_InitY:WORD
 
-EXTRN MOUSE_WaitRelease:PROC
-EXTRN MOUSE_GetX:PROC
-EXTRN MOUSE_GetY:PROC
+EXTRN MD_WaitRelease:PROC
+EXTRN MD_GetX:PROC
+EXTRN MD_GetY:PROC
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -20,9 +20,9 @@ EXTRN MOUSE_GetY:PROC
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_Reset
+PUBLIC MD_Reset
 
-proc MOUSE_Reset far
+proc MD_Reset far
 
     push si
     push di
@@ -37,26 +37,26 @@ proc MOUSE_Reset far
     jz short @@Done
 
     ;push cs
-    ;call near ptr MOUSE_WaitRelease
-    call MOUSE_WaitRelease
+    ;call near ptr MD_WaitRelease
+    call MD_WaitRelease
 
-    mov [g_MOUSE_CursorDraw], 0
-    mov [g_MOUSE_ClickRec1], 0
-    mov [g_MOUSE_ClickRec2], 0
-
-    ;push cs
-    ;call near ptr MOUSE_GetX
-    ;nop
-    call MOUSE_GetX
-
-    mov [g_MOUSE_InitX], ax
+    mov [g_MD_CursorDraw], 0
+    mov [g_MD_ClickRec1], 0
+    mov [g_MD_ClickRec2], 0
 
     ;push cs
-    ;call near ptr MOUSE_GetY
+    ;call near ptr MD_GetX
     ;nop
-    call MOUSE_GetY
+    call MD_GetX
 
-    mov [g_MOUSE_InitY], ax
+    mov [g_MD_InitX], ax
+
+    ;push cs
+    ;call near ptr MD_GetY
+    ;nop
+    call MD_GetY
+
+    mov [g_MD_InitY], ax
 
     cli
 
@@ -74,7 +74,7 @@ proc MOUSE_Reset far
     pop si
     ret
 
-endp MOUSE_Reset
+endp MD_Reset
 
 ;ends seg033
 

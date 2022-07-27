@@ -2,8 +2,8 @@ TITLE _s33p40.asm VGA_DrawCursor_DSP
 
 .MODEL LARGE, C
 
-EXTRN gsa_Palette_Cursor_Data:WORD
-EXTRN g_RenderScreenPage:WORD
+EXTRN gsa_Cursor_Array:WORD
+EXTRN g_RSP_Idx:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -11,12 +11,12 @@ EXTRN g_RenderScreenPage:WORD
 ; ;org 6
 ; assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC VGA_DrawCursor_DSP
+PUBLIC CRL_Draw_DSP
 
-proc VGA_DrawCursor_DSP
+proc CRL_Draw_DSP
 
     Draw_Height = word ptr -4
-    Cursor_Image_Segment = word ptr -2
+    gsa_Cursor = word ptr -2
 
     push bp
     mov  bp, sp
@@ -47,15 +47,15 @@ DoDrawCursor:
     shl dx, 1
     shl dx, 1
     shl dx, 1
-    add dx, [gsa_Palette_Cursor_Data]
-    mov [bp+Cursor_Image_Segment], dx
+    add dx, [gsa_Cursor_Array]
+    mov [bp+gsa_Cursor], dx
 
     mov dx, cx  ; Y_Pos
     shl dx, 1
     shl dx, 1
     add dx, cx  ; (Y_Pos * 4) + Y_Pos ~== (Y_Pos * 5)
     mov ax, 1
-    sub ax, [g_RenderScreenPage]
+    sub ax, [g_RSP_Idx]
     mov ah, al
     xor al, al
     shl ax, 1
@@ -111,7 +111,7 @@ ItrLine_SrcSgmtOfst:
 
     mov si, 0
 
-    mov cx, [bp+Cursor_Image_Segment]
+    mov cx, [bp+gsa_Cursor]
     mov ds, cx
 
 LoopPlanes:
@@ -169,7 +169,7 @@ NextPlane:
     pop bp
     ret
 
-endp VGA_DrawCursor_DSP
+endp CRL_Draw_DSP
 
 ;ends seg033
 

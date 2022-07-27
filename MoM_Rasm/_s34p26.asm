@@ -3,15 +3,15 @@ TITLE _s34p26.asm GUI_MousedControl()
 
 .MODEL LARGE, C
 
-EXTRN gfp_GUI_Control_Table:DWORD
-EXTRN g_GUI_CursorOffset:WORD
-EXTRN g_GUI_FocusedControl:WORD
+EXTRN gfp_CTRL_Control_Table:DWORD
+EXTRN g_CRSR_Offset:WORD
+EXTRN g_CTRL_FocusedControl:WORD
 
 EXTRN GUI_FindWindow:PROC
-EXTRN GUI_GetCursorOffset:PROC
+EXTRN CR_GetOffset:PROC
 EXTRN GUI_MouseOverControl:PROC
-EXTRN MOUSE_GetX:PROC
-EXTRN MOUSE_GetY:PROC
+EXTRN MD_GetX:PROC
+EXTRN MD_GetY:PROC
 
 .CODE
 ;segment seg034 byte public 'CODE' use16
@@ -71,9 +71,9 @@ proc GUI_MousedControl
     sub  sp, 4
     push si
 
-    call MOUSE_GetX
+    call MD_GetX
     mov [bp+X_Pos], ax
-    call MOUSE_GetY
+    call MD_GetY
     mov [bp+Y_Pos], ax
 
     xor si, si
@@ -83,8 +83,8 @@ proc GUI_MousedControl
     pop cx
     pop cx
 
-    call GUI_GetCursorOffset
-    mov [g_GUI_CursorOffset], ax
+    call CR_GetOffset
+    mov [g_CRSR_Offset], ax
     ;push cs
     ;call near ptr GUI_MouseOverControl
     call GUI_MouseOverControl
@@ -92,22 +92,22 @@ proc GUI_MousedControl
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Ctrl_Type], Ctrl_ClickLink
     jnz short @@CheckDialogLine
 
     mov ax, si
-    mov dx, 26h
+    mov dx, 26h  ; sizeof(GUI_CTRL)
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Param1]
     push ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov bx, [es:bx+GUI_CTRL.Param2]
     pop ax
@@ -115,7 +115,7 @@ proc GUI_MousedControl
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Param0]
 
@@ -126,7 +126,7 @@ proc GUI_MousedControl
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Ctrl_Type], Ctrl_DialogLine
     jnz short @@Check_ClickGrid
@@ -134,7 +134,7 @@ proc GUI_MousedControl
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Selectable], 0
     jnz short @@Check_ClickGrid
@@ -147,32 +147,31 @@ proc GUI_MousedControl
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Ctrl_Type], Ctrl_ClickGrid
     jz short loc_27BC3
     jmp @@Return_SI
 
 loc_27BC3:
-    ;db 83h,3Eh,22h,4Dh,0FFh ; <BAD>cmp [g_GUI_FocusedControl], 0FFFFh
-    cmp [g_GUI_FocusedControl], 0FFFFh
+    cmp [g_CTRL_FocusedControl], 0FFFFh
     jz short loc_27BE2
-    mov ax, [g_GUI_FocusedControl]
+    mov ax, [g_CTRL_FocusedControl]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Ctrl_Type], Ctrl_ClickGrid
     jnz short loc_27BE2
     jmp @@Return_SI
 
 loc_27BE2:
-    call MOUSE_GetX
+    call MD_GetX
     push ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     pop ax
     sub ax, [es:bx+GUI_CTRL.Left]
@@ -180,7 +179,7 @@ loc_27BE2:
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     pop ax
     cwd
@@ -189,17 +188,17 @@ loc_27BE2:
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov bx, [es:bx+GUI_CTRL.Param3]
     pop ax
     mov [bx], ax
-    call MOUSE_GetY
+    call MD_GetY
     push ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     pop ax
     sub ax, [es:bx+GUI_CTRL.Top]
@@ -207,7 +206,7 @@ loc_27BE2:
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     pop ax
     cwd
@@ -216,7 +215,7 @@ loc_27BE2:
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov bx, [es:bx+GUI_CTRL.Param4]
     pop ax

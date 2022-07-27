@@ -4,13 +4,13 @@
 #include "ST_GUI.H"
 
 
-int CRP_MOUSE_GetClickRec2(void)
+int CRP_MD_GetClickRec2(void)
 {
-    int tmp_MOUSE_ClickRec2;
+    int tmp_MD_ClickRec2;
 
-    tmp_MOUSE_ClickRec2 = g_MOUSE_ClickRec2;
+    tmp_MD_ClickRec2 = g_MD_ClickRec2;
 
-    g_MOUSE_ClickRec2 = 0;
+    g_MD_ClickRec2 = 0;
 
-    return tmp_MOUSE_ClickRec2;
+    return tmp_MD_ClickRec2;
 }

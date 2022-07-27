@@ -3,10 +3,10 @@ TITLE _s26p07.asm VGA_Copy_RSP_DSP_NM
 
 .MODEL LARGE, C
 
-EXTRN g_RenderScreenPage:WORD
+EXTRN g_RSP_Idx:WORD
 
-EXTRN MOUSE_CDraw_Restore:PROC
-EXTRN MOUSE_Disable_CDraw:PROC
+EXTRN MD_CDraw_Restore:PROC
+EXTRN MD_CDraw_Disable:PROC
 
 .CODE
 ;segment seg026 byte public 'CODE' use16
@@ -23,9 +23,9 @@ proc VGA_Copy_RSP_DSP_NM
     push si
     push di
 
-    call MOUSE_Disable_CDraw
+    call MD_CDraw_Disable
 
-    mov ax, [g_RenderScreenPage]
+    mov ax, [g_RSP_Idx]
     mov ah, al
     xor al, al
     shl ax, 1
@@ -62,7 +62,7 @@ proc VGA_Copy_RSP_DSP_NM
     mov al, 0FFh
     out dx, al
 
-    call MOUSE_CDraw_Restore
+    call MD_CDraw_Restore
 
     pop di
     pop si

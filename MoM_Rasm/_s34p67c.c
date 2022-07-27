@@ -4,11 +4,11 @@
 #include "ST_GUI.H"
 
 
-void GUI_SetDelay(int Input_Delay)
+void IN_Set_Skip(int Input_Skip)
 {
-    g_GUI_Delay = Input_Delay;
+    g_IN_Skip = Input_Skip;
 
     /* clear Click-Record 1 and Click-Record 2 */
-    MOUSE_GetClickRec1();
-    CRP_MOUSE_GetClickRec2();
+    MD_GetClickRec1();
+    CRP_MD_GetClickRec2();
 }

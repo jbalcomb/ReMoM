@@ -3,18 +3,18 @@ TITLE _s26p06.asm VGA_Copy_RSP_DSP_YM
 
 .MODEL LARGE, C
 
-EXTRN g_RenderScreenPage:WORD
+EXTRN g_RSP_Idx:WORD
 
-EXTRN MOUSE_CDraw_Restore:PROC
-EXTRN MOUSE_Disable_CDraw:PROC
-EXTRN MOUSE_GetX:PROC
-EXTRN MOUSE_GetY:PROC
-EXTRN MOUSE_MoveCursor:PROC
+EXTRN MD_CDraw_Restore:PROC
+EXTRN MD_CDraw_Disable:PROC
+EXTRN MD_GetX:PROC
+EXTRN MD_GetY:PROC
+EXTRN MD_MoveCursor:PROC
 EXTRN GUI_FindWindow:PROC
-EXTRN GUI_DrawCursor_RSP:PROC
-EXTRN GUI_SaveCursorArea_RSP:PROC
-EXTRN GUI_RestoreCursorArea_RSP:PROC
-EXTRN GUI_RestoreCursorArea_DSP:PROC
+EXTRN CRH_Draw_RSP:PROC
+EXTRN CRL_Save_RSP:PROC
+EXTRN CRL_Restore_RSP:PROC
+EXTRN CRL_Restore_DSP:PROC
 
 .CODE
 ;segment seg026 byte public 'CODE' use16
@@ -29,7 +29,7 @@ proc VGA_Copy_RSP_DSP_YM
     Data_Seg     = word ptr -0Ah
     Top          = word ptr -6
     Left         = word ptr -4
-    tmp_RenderScreenPage_SgmtAddr  = word ptr -2
+    tmp_RSP_Addr  = word ptr -2
 
     push bp
     mov  bp, sp
@@ -42,15 +42,15 @@ proc VGA_Copy_RSP_DSP_YM
     mov ax, ds
     mov [bp+Data_Seg], ax
 
-    call MOUSE_Disable_CDraw
+    call MD_CDraw_Disable
 
-    call MOUSE_GetX
+    call MD_GetX
     mov [bp+Left], ax
 
-    call MOUSE_GetY
+    call MD_GetY
     mov [bp+Top], ax
 
-    mov ax, [g_RenderScreenPage]
+    mov ax, [g_RSP_Idx]
     mov ah, al
     xor al, al
     shl ax, 1
@@ -59,7 +59,7 @@ proc VGA_Copy_RSP_DSP_YM
     mov ds, ax
     ;assume ds:nothing
 
-    mov [bp+tmp_RenderScreenPage_SgmtAddr], ax
+    mov [bp+tmp_RSP_Addr], ax
 
     mov bx, 0A400h
     sub bx, ax
@@ -92,11 +92,11 @@ loc_1E58D:
     ;assume ds:dseg
     assume ds:DGROUP
 
-    call GUI_RestoreCursorArea_DSP
+    call CRL_Restore_DSP
 
-    call MOUSE_GetY
+    call MD_GetY
     push ax
-    call MOUSE_GetX
+    call MD_GetX
     cmp ax, [bp+Left]
     jnz short loc_1E5CB
     pop bx
@@ -107,15 +107,15 @@ loc_1E58D:
 loc_1E5CB:
     push ax
     call GUI_FindWindow
-    call GUI_RestoreCursorArea_RSP
-    call GUI_SaveCursorArea_RSP
+    call CRL_Restore_RSP
+    call CRL_Save_RSP
     call GUI_FindWindow
-    call GUI_DrawCursor_RSP
-    call MOUSE_MoveCursor
+    call CRH_Draw_RSP
+    call MD_MoveCursor
     add sp, 4
 
 loc_1E5ED:
-    mov ds, [bp+tmp_RenderScreenPage_SgmtAddr]
+    mov ds, [bp+tmp_RSP_Addr]
     cmp si, 3E80h
     jb short loc_1E58D
 
@@ -124,9 +124,9 @@ loc_1E5ED:
     ;assume ds:dseg
     assume ds:DGROUP
 
-    call GUI_RestoreCursorArea_DSP
+    call CRL_Restore_DSP
     
-    call MOUSE_CDraw_Restore
+    call MD_CDraw_Restore
 
     pop di
     pop si

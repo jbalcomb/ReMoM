@@ -322,6 +322,15 @@ extern unsigned int dbg_ES_Curr;
 #endif
 
 
+extern char DBG_CallingFunction[];
+
+extern unsigned char DBG_gflag_MD_Enabled;
+extern unsigned char DBG_gflag_CSR_Enabled;
+extern unsigned char DBG_gflag_MD_INT_Handler_Installed;
+extern unsigned char DBG_gflag_MD_INT_Handler_MvOnly;
+extern unsigned char DBG_gflag_MD_INT_Handler_MvBtns;
+// CDraw called from SCRN or MD_INT ?
+
 
 
 

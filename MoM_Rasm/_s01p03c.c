@@ -37,7 +37,7 @@ void GAME_MainMenu(void)
 
    g_ScreenChangeFade = 1;  // ST_TRUE
    g_GUI_MainScreenJump = -1;  // ST_UNDEFINED
-   GUI_SetEscOverride();
+   IN_SetEscOverride();
 
 
     // Loop While ? == 0
@@ -48,7 +48,7 @@ void GAME_MainMenu(void)
     {
 
         VGA_SetOutlineColor(0);
-        GUI_ClearHelp();
+        HLP_ClearHelp();
 
         HERE("Screen_Action = SCREEN_Menu();");
         Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
@@ -59,7 +59,7 @@ void GAME_MainMenu(void)
         dlvfprintf("DEBUG: [%s, %d] Screen_Action: %d\n", __FILE__, __LINE__, Screen_Action);
 #endif
 
-        GUI_ClearHelp();
+        HLP_ClearHelp();
         g_ScreenChangeFade = ST_FALSE;
 
         switch (Screen_Action)

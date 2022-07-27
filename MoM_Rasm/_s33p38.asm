@@ -1,10 +1,10 @@
-TITLE _s33p38.asm GUI_DrawCursor_DSP
+TITLE _s33p38.asm CRH_Draw_DSP
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_CurrentCursor:WORD
+EXTRN g_CRSR_Curr:WORD
 
-EXTRN VGA_DrawCursor_DSP:PROC
+EXTRN CRL_Draw_DSP:PROC
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -12,9 +12,9 @@ EXTRN VGA_DrawCursor_DSP:PROC
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_DrawCursor_DSP
+PUBLIC CRH_Draw_DSP
 
-proc GUI_DrawCursor_DSP
+proc CRH_Draw_DSP
 
     X_Pos = word ptr 6
     Y_Pos = word ptr 8
@@ -32,15 +32,16 @@ proc GUI_DrawCursor_DSP
     ;assume ds:dseg
     assume ds:DGROUP
 
-    mov dx, [g_GUI_CurrentCursor]
+    mov dx, [g_CRSR_Curr]
     cmp dx, 0  ; e_Crsr_None
     jz short @@Done
 
     mov bx, [bp+X_Pos]
     mov cx, [bp+Y_Pos]
-    push cs
-    call near ptr VGA_DrawCursor_DSP
-    nop
+    ;push cs
+    ;call near ptr CRL_Draw_DSP
+    ;nop
+    call CRL_Draw_DSP
 
 @@Done:
     pop ds
@@ -50,7 +51,7 @@ proc GUI_DrawCursor_DSP
     pop bp
     ret
 
-endp GUI_DrawCursor_DSP
+endp CRH_Draw_DSP
 ;ends seg033
 
 end

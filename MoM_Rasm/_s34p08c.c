@@ -3,7 +3,7 @@
 
 #include "ST_GUI.H"
 
-void GUI_SetEscOverride(void)
+void IN_SetEscOverride(void)
 {
-    g_GUI_EscapeOverride = 1;
+    g_IN_EscapeOverride = 1;
 }

@@ -20,6 +20,9 @@ DEBUG-.LOG
 *.BIN
 *.LOG
 
+stderr.txt
+stdout.txt
+
 *.DSK
 *.EXE
 *.LST

@@ -3,9 +3,9 @@ TITLE _s33p.asm GUI_RestoreCursorArea_RSP
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_PrevCursor:WORD
-EXTRN g_Cursor_Save_Main:WORD
-EXTRN g_RenderScreenPage:WORD
+EXTRN g_CRSR_Prev:WORD
+EXTRN g_CRSR_Save_RSP:WORD
+EXTRN g_RSP_Idx:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -13,9 +13,9 @@ EXTRN g_RenderScreenPage:WORD
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_RestoreCursorArea_RSP
+PUBLIC CRL_Restore_RSP
 
-proc GUI_RestoreCursorArea_RSP
+proc CRL_Restore_RSP
 
     Width_Bytes = byte ptr -6
     Height_Lines = word ptr -4
@@ -35,7 +35,7 @@ proc GUI_RestoreCursorArea_RSP
     ;assume ds:dseg
     assume ds:DGROUP
 
-    cmp [g_GUI_PrevCursor], 0
+    cmp [g_CRSR_Prev], 0
     jnz short @@HavePrevCursor
 
     pop ds
@@ -49,17 +49,17 @@ proc GUI_RestoreCursorArea_RSP
 @@HavePrevCursor:
     sub si, si
 ;    mov di, [word ptr g_Cursor_Save_Main.ScreenPage_Offset+si]
-    mov di, [word ptr g_Cursor_Save_Main+si]
+    mov di, [word ptr g_CRSR_Save_RSP+si]
     add si, 2
     mov [bp+ScreenPage_Offset], di
-    mov ax, word ptr g_Cursor_Save_Main[si]
+    mov ax, word ptr g_CRSR_Save_RSP[si]
     add si, 2
     mov [bp+Width_Bytes], al
-    mov ax, word ptr g_Cursor_Save_Main[si]
+    mov ax, word ptr g_CRSR_Save_RSP[si]
     add si, 2
     mov [bp+Height_Lines], ax
 
-    mov ax, [g_RenderScreenPage]
+    mov ax, [g_RSP_Idx]
     mov ah, al
     sub al, al
     shl ax, 1
@@ -82,7 +82,7 @@ proc GUI_RestoreCursorArea_RSP
     mov cx, [bp+Height_Lines]
 
 @@LoopWords:
-    mov ax, word ptr g_Cursor_Save_Main[si]
+    mov ax, word ptr g_CRSR_Save_RSP[si]
     stosw
     add si, 2
     add di, 4Eh
@@ -109,7 +109,7 @@ proc GUI_RestoreCursorArea_RSP
     pop bp
     ret
 
-endp GUI_RestoreCursorArea_RSP
+endp CRL_Restore_RSP
 
 ;ends seg033
 

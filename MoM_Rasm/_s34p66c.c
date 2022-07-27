@@ -17,7 +17,7 @@ e.g.,
 
 */
 
-int GUI_GetInput(void)
+int IN_GetInput(void)
 {
     int input;
 
@@ -25,25 +25,26 @@ int GUI_GetInput(void)
     dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_GetInput()\n", __FILE__, __LINE__);
 #endif
 
-    if ( g_GUI_Delay > 0 )
+    if ( g_IN_Skip > 0 )
     {
         HERE("if ( g_GUI_Delay > 0 )");
-        g_GUI_Delay -= 1;
+        g_IN_Skip -= 1;
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
 #endif
         return 0;
     }
 
-    if ( g_GUI_Delay < 0 )
+    if ( g_IN_Skip < 0 )
     {
         HERE("if ( g_GUI_Delay < 0 )");
-        g_GUI_Delay = 0;
+        g_IN_Skip = 0;
     }
 
-    if ( g_GUI_Control_Count <= 1 )
+    // TODO(JimBalcomb,20220727): figure out the logic here of skipping input on CtrlCnt<=1
+    if ( g_CTRL_Control_Count <= 1 )
     {
-        HERE("if ( g_GUI_Control_Count <= 1 )");
+        HERE("if ( g_CTRL_Control_Count <= 1 )");
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
 #endif
@@ -60,13 +61,13 @@ int GUI_GetInput(void)
     //     input = GUI_ProcessInput();
     // }
 
-    input = GUI_ProcessInput();  // _s34p01c.c
+    input = IN_ProcessInput();  // _s34p01c.c
 //    input = 5;  // DEBUG: return GUI_Quit_Lbl_Index: 5
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] input: %d\n", __FILE__, __LINE__, input);
 #endif
 
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput() { input=%d }\n", __FILE__, __LINE__, input);

@@ -2,9 +2,10 @@
 // ST_GUI.H
 
 #include "ST_GUI.H"
+#include "ST_SCRN.H"
 
 
-void GUI_DisableRedraw(void)
+void SCRN_DisableRedraw(void)
 {
-    g_GUI_RedrawFn_Present = 0;
+    g_SCRN_RedrawFn_Present = 0;
 }

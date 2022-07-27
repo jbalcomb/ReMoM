@@ -201,7 +201,7 @@ add  dx, [es:e_FlicHdr_EmmLogicalPageOffset]    ; e.g., DX=1195
     mask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
 
     fp_Src = (byte _FAR *)MK_FP(g_EMM_PageFrame_Base_Address, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
-    fp_Dst = (byte _FAR *)MK_FP(g_DrawScreenPage_SgmtAddr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
+    fp_Dst = (byte _FAR *)MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
 
 // #ifdef DEBUG
 //     for (itr_Src = 0; itr_Src < 256; itr_Src++)

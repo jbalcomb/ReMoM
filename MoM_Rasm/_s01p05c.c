@@ -6,8 +6,11 @@
 #include "MOM_DEF.H"
 #include "MGC_DEF.H"
 
+#include "ST_CRSR.H"
+#include "ST_CTRL.H"
 #include "ST_GUI.H"
 #include "ST_HLP.H"
+#include "ST_SCRN.H"
 
 #include "STU_DBG.H"
 
@@ -74,7 +77,7 @@ int SCREEN_Menu(void)
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
     // _s20p01a.c  ST_VGA.H
     // //VGA_LoadPalette(2, -1);  // argument missing in dasm
@@ -122,7 +125,7 @@ int SCREEN_Menu(void)
         g_GAME_HaveSaves = ST_TRUE;
     }
 
-    GUI_Clear();  // ? 1oom :: uiobj_table_clear(); ?
+    CTRL_Clear();  // ? 1oom :: uiobj_table_clear(); ?
 
     Continue_Move_Down = ST_FALSE;
 
@@ -133,7 +136,7 @@ int SCREEN_Menu(void)
     }
     else
     {
-        GUI_Load_Lbl_Index = GUI_CreateClickLabel(108, 150, 211, 161, 0, -1);
+        GUI_Load_Lbl_Index = CTRL_CreateClickLabel(108, 150, 211, 161, 0, -1);
         HLP_IDX_0 = 629; // HLP_LOAD
         HLP_IDX_0_X1 = 108;
         HLP_IDX_0_Y1 = 148;
@@ -148,7 +151,7 @@ int SCREEN_Menu(void)
     }
     else
     {
-        GUI_Continue_Label = GUI_CreateClickLabel(108, (138 + (12 * Continue_Move_Down)), 211, (149 + (12 * Continue_Move_Down)), 0, -1);
+        GUI_Continue_Label = CTRL_CreateClickLabel(108, (138 + (12 * Continue_Move_Down)), 211, (149 + (12 * Continue_Move_Down)), 0, -1);
         HLP_IDX_1 = 628; // HLP_CONTINUE
         HLP_IDX_1_X1 = 108;
         HLP_IDX_1_Y1 = (138 + (12 * Continue_Move_Down));
@@ -156,21 +159,21 @@ int SCREEN_Menu(void)
         HLP_IDX_1_Y2 = (149 + (12 * Continue_Move_Down));
     }
 
-    GUI_NewGame_Label = GUI_CreateClickLabel(108, 162, 211, 173, 0, -1);
+    GUI_NewGame_Label = CTRL_CreateClickLabel(108, 162, 211, 173, 0, -1);
     HLP_IDX_2 = 630; // HLP_NEWGAME
     HLP_IDX_2_X1 = 108;
     HLP_IDX_2_Y1 = 162;
     HLP_IDX_2_X2 = 211;
     HLP_IDX_2_Y2 = 173;
 
-    GUI_HoF_Lbl_Index = GUI_CreateClickLabel(108, 174, 211, 185, 0, -1);
+    GUI_HoF_Lbl_Index = CTRL_CreateClickLabel(108, 174, 211, 185, 0, -1);
     HLP_IDX_3 = 798; // HLP_HALLOFFAME
     HLP_IDX_3_X1 = 108;
     HLP_IDX_3_Y1 = 174;
     HLP_IDX_3_X2 = 211;
     HLP_IDX_3_Y2 = 185;
 
-    GUI_Quit_Lbl_Index = GUI_CreateClickLabel(108, 186, 211, 199);
+    GUI_Quit_Lbl_Index = CTRL_CreateClickLabel(108, 186, 211, 199, 0, -1);
     HLP_IDX_4 = 631; // HLP_QUITTODOS
     HLP_IDX_4_X1 = 108;
     HLP_IDX_4_Y1 = 186;
@@ -183,7 +186,7 @@ int SCREEN_Menu(void)
     }
     else
     {
-        Continue_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_C, -1);
+        Continue_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_C, -1);
     }
 
     if ( g_GAME_HaveSaves == 0 )
@@ -192,13 +195,13 @@ int SCREEN_Menu(void)
     }
     else
     {
-        Load_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_L, -1);
+        Load_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_L, -1);
     }
 
-    NewGame_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_N, -1);
-    HallofFame_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_H, -1);
-    Quit_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_Q, -1);
-    Escape_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_Esc, -1);
+    NewGame_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_N, -1);
+    HallofFame_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_H, -1);
+    Quit_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_Q, -1);
+    Escape_Hotkey_Index = CTRL_CreateHotkey(cnst_HOTKEY_Esc, -1);
 
 /*
 MGC_DEF.C
@@ -269,7 +272,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
     GUI_SetWindows(1, g_GUI_MainMenuWindow);
 
     // TODO(JimBalcomb,20220723): figure out if this SaveCursorArea is just because of the subsequent MouseEmuMoveTo
-    GUI_SaveCursorArea_RSP(MOUSE_GetX(), MOUSE_GetY());
+    CRL_Save_RSP(MD_GetX(), MD_GetY());
 
     // GUI_MouseEMUMoveTo(GUI_NewGame_Label);
 
@@ -284,16 +287,16 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
     // // push ax
     // // mov  ax, offset SCREEN_MainMenu_Draw
     // // push ax
-    // // call GUI_Set_Redraw_Function
+    // // call SCRN_Set_Redraw_Function
     // c_sgmt = FP_SEG(SCREEN_Menu_Draw);
     // c_ofst = FP_OFF(SCREEN_Menu_Draw);
     // fxnptr_ScreenDraw = (void _FAR *) MK_FP(c_sgmt,c_ofst);
-    // GUI_Set_Redraw_Function(fxnptr_ScreenDraw, 2);
-    GUI_Set_Redraw_Function(SCREEN_Menu_Draw, 2);
+    // SCRN_Set_Redraw_Function(fxnptr_ScreenDraw, 2);
+    SCRN_Set_Redraw_Function(SCREEN_Menu_Draw, 2);
 
     // GUI_SetHelp(HLP_IDX_0, 5);
 
-    GUI_SetDelay(4);
+    IN_Set_Skip(4);
 
 
     while ( flag_done == ST_FALSE )
@@ -301,8 +304,8 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
         CLK_SaveCounter();  // 1oom :: ui_delay_prepare()
 
 
-        // ST_GUI.H  _s34p66c.c  int GUI_GetInput(void)
-        input_control_index = GUI_GetInput();  // _s34p66c.c  1oom :: oi1 = uiobj_handle_input_cond();
+        // ST_GUI.H  _s34p66c.c  int IN_GetInput(void)
+        input_control_index = IN_GetInput();  // _s34p66c.c  1oom :: oi1 = uiobj_handle_input_cond();
 #ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] input_control_index: %d\n", __FILE__, __LINE__, input_control_index);
 #endif
@@ -347,7 +350,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
         if ( flag_done == ST_FALSE )
         {
             SCREEN_Menu_Draw();  // MGC_DEF.H  _s01p06c.c
-            GUI_SimplePageFlip();  // 1oom :: uiobj_finish_frame();
+            SCRN_SimplePageFlip();  // 1oom :: uiobj_finish_frame();
             // Research(JimBalcomb): 2022017: Should not the screen now be drawn and rendered?
             // ...the Screen-Page Index and Address are indeed be updated properly
 
@@ -370,9 +373,9 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
     }  /* while ( flag_done == ST_FALSE ) */
 
-    GUI_DisableRedraw();  // 1oom :: uiobj_unset_callback();
+    SCRN_DisableRedraw();  // 1oom :: uiobj_unset_callback();
 
-    GUI_ClearHelp();
+    HLP_ClearHelp();
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: SCREEN_Menu()\n", __FILE__, __LINE__);

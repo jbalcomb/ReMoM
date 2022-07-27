@@ -1,19 +1,19 @@
-TITLE _s33p12.asm MOUSE_INT_Handler
+TITLE _s33p12.asm MD_INT_Handler
 ; ST_GUI.H
 
 .MODEL LARGE, C
 
 EXTRN g_GUI_WindowCount:WORD
-EXTRN g_MOUSE_CurrentX:WORD
-EXTRN g_MOUSE_CurrentY:WORD
-EXTRN g_MOUSE_CursorDraw:WORD
-EXTRN g_MOUSE_INT_Process:WORD
+EXTRN g_MD_CurrentX:WORD
+EXTRN g_MD_CurrentY:WORD
+EXTRN g_MD_CursorDraw:WORD
+EXTRN g_MD_INT_InProcess:WORD
 
-EXTRN GUI_DrawCursor_RSP:PROC
+EXTRN CRH_Draw_RSP:PROC
 EXTRN GUI_FindWindow:PROC
-EXTRN GUI_SaveCursorArea_RSP:PROC
-EXTRN MOUSE_SaveClick:PROC
-EXTRN GUI_RestoreCursorArea_RSP:PROC
+EXTRN CRL_Save_RSP:PROC
+EXTRN MD_SaveClick:PROC
+EXTRN CRL_Restore_RSP:PROC
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -21,9 +21,9 @@ EXTRN GUI_RestoreCursorArea_RSP:PROC
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC MOUSE_INT_Handler
+PUBLIC MD_INT_Handler
 
-proc MOUSE_INT_Handler
+proc MD_INT_Handler
 
     tmp_GC_Register = word ptr -0Ah
     tmp_GC_BITMASK = word ptr -8
@@ -33,6 +33,7 @@ proc MOUSE_INT_Handler
     push bp
     mov bp, sp
     sub sp, 0Ah
+
     cli
     pushf
     push ds
@@ -45,10 +46,10 @@ proc MOUSE_INT_Handler
 
     mov ax, cx
     shr ax, 1
-    mov [g_MOUSE_CurrentX], ax
-    mov [g_MOUSE_CurrentY], dx
+    mov [g_MD_CurrentX], ax
+    mov [g_MD_CurrentY], dx
     
-    cmp [g_MOUSE_INT_Process], 0
+    cmp [g_MD_INT_InProcess], 0
     jz short @@DoDrawCursor
     jmp @@Done
 
@@ -60,24 +61,24 @@ proc MOUSE_INT_Handler
     push cx
     push dx
 
-    mov [g_MOUSE_INT_Process], 1
+    mov [g_MD_INT_InProcess], 1
 
     push bx
     push dx
     shr cx, 1
     push cx
     ;push cs
-    ;call near ptr MOUSE_SaveClick
+    ;call near ptr MD_SaveClick
     ;nop
-    call MOUSE_SaveClick
+    call MD_SaveClick
     add sp, 6
 
-    cmp [g_MOUSE_CursorDraw], 0
+    cmp [g_MD_CursorDraw], 0
     jnz short @@DoDrawCursor1
     jmp @@SkipCursorDraw
 
 @@DoDrawCursor1:
-    mov [g_MOUSE_CursorDraw], 0
+    mov [g_MD_CursorDraw], 0
     mov bx, dx                              ; mouse_y
 
     mov dx, 3C4h    ; SC_INDEX
@@ -130,17 +131,17 @@ proc MOUSE_INT_Handler
     ;push cs
     ;call near ptr VGA_RestoreCursrArea
     ;nop
-    call GUI_RestoreCursorArea_RSP ; _s33p34
+    call CRL_Restore_RSP ; _s33p34
 
     ;push cs
-    ;call near ptr GUI_SaveCursorArea_RSP
+    ;call near ptr CRL_Save_RSP
     ;nop
-    call GUI_SaveCursorArea_RSP ; _s33p30
+    call CRL_Save_RSP ; _s33p30
 
     ;push cs
-    ;call near ptr GUI_DrawCursor_RSP
+    ;call near ptr CRH_Draw_RSP
     ;nop
-    call GUI_DrawCursor_RSP ; _s33p37
+    call CRH_Draw_RSP ; _s33p37
     add sp, 4
     
     mov dx, 3C4h    ; SC_INDEX
@@ -171,7 +172,7 @@ proc MOUSE_INT_Handler
     mov ax, [bp+tmp_GC_Register]
     out dx, al
 
-    mov [g_MOUSE_CursorDraw], 1
+    mov [g_MD_CursorDraw], 1
     
 @@SkipCursorDraw:
     pop dx
@@ -180,7 +181,7 @@ proc MOUSE_INT_Handler
     pop es
     pop di
     pop si
-    mov [g_MOUSE_INT_Process], 0
+    mov [g_MD_INT_InProcess], 0
 
 @@Done:
     pop ax
@@ -191,7 +192,7 @@ proc MOUSE_INT_Handler
     pop bp
     ret
 
-endp MOUSE_INT_Handler
+endp MD_INT_Handler
 
 ;ends seg033
 

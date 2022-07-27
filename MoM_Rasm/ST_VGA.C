@@ -9,8 +9,8 @@ int g_VGA_Min_Y = MINY;                             // dseg:41B4
 int g_VGA_Max_X = MAXX;                             // dseg:41B6
 int g_VGA_Max_Y = MAXY;                             // dseg:41B8
 char DEFAULT_FONTS_FILE[] = "FONTS.LBX";            // dseg:41BA
-unsigned int g_DrawScreenPage_SgmtAddr = 0xA000;    // dseg:41C4
-int g_RenderScreenPage = 0;                         // dseg:41C6
+unsigned int gsa_DSP_Addr = 0xA000;    // dseg:41C4
+int g_RSP_Idx = 0;                         // dseg:41C6
 unsigned char g_VGA_LeftBits[4] = {15,14,12,8};       // dseg:41C8
 unsigned char g_VGA_RightBits[4] = {1,3,7,15};        // dseg:41CC
 unsigned char g_VGA_WriteMapMasks[4] = {1,2,4,8};     // dseg:41D0
@@ -52,7 +52,7 @@ unsigned int VGA_Font_Index;                             // dseg:A810
 //VGA_TextDraw_X; // dseg:A814
 unsigned int gsa_FontStyleData;             // dseg:A816
 unsigned int gsa_BorderStyleData;           // dseg:A818
-unsigned int gsa_Palette_Cursor_Data;       // dseg:A81A  ; 500h into the palette entry
+unsigned int gsa_Cursor_Array;       // dseg:A81A  ; 500h into the palette entry
 unsigned int UU_gsa_Palette_Data;           // dseg:A81C  ; 400h into the palette entry
 unsigned int gsa_Palette_Font_Colors;       // dseg:A81E  ; 300h into the palette entry, 16 arrays of 16 colors
 void _FAR * gfp_VGA_TextLine_Starts;         // dseg:A820

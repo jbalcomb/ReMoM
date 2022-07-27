@@ -3,14 +3,14 @@ TITLE _s34p25.asm GUI_MouseOverControl()
 
 .MODEL LARGE, C
 
-EXTRN gfp_GUI_Control_Table:DWORD
-EXTRN g_GUI_Control_Count:WORD
-EXTRN g_GUI_CursorOffset:WORD
+EXTRN gfp_CTRL_Control_Table:DWORD
+EXTRN g_CTRL_Control_Count:WORD
+EXTRN g_CRSR_Offset:WORD
 
 EXTRN GUI_FindWindow:PROC
-EXTRN GUI_GetCursorOffset:PROC
-EXTRN MOUSE_GetX:PROC
-EXTRN MOUSE_GetY:PROC
+EXTRN CR_GetOffset:PROC
+EXTRN MD_GetX:PROC
+EXTRN MD_GetY:PROC
 
 .CODE
 ;segment seg034 byte public 'CODE' use16
@@ -60,9 +60,9 @@ proc GUI_MouseOverControl
     push si
     push di
 
-    call MOUSE_GetX
+    call MD_GetX
     mov di, ax
-    call MOUSE_GetY
+    call MD_GetY
     mov [bp+Y_Pos], ax
 
     mov [bp+Mouse_At], 0
@@ -73,57 +73,61 @@ proc GUI_MouseOverControl
     pop cx
     pop cx
 
-    call GUI_GetCursorOffset
-    mov [g_GUI_CursorOffset], ax
+    call CR_GetOffset
+    mov [g_CRSR_Offset], ax
 
     mov si, 1
     jmp loc_27AE7
 
 loc_27A60:
     mov ax, si
-    mov dx, 26h
+    mov dx, 26h  ; sizeof(GUI_CTRL)
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Left]
     mov [bp+Control_Left], ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Top]
     mov [bp+Control_Top], ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Right]
     mov [bp+Control_Right], ax
     mov ax, si
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [es:bx+GUI_CTRL.Bottom]
     mov [bp+Control_Bottom], ax
     mov ax, di
-    add ax, [g_GUI_CursorOffset]
+    add ax, [g_CRSR_Offset]
     cmp ax, [bp+Control_Left]
     jl short loc_27AE2
+
     mov ax, di
-    add ax, [g_GUI_CursorOffset]
+    add ax, [g_CRSR_Offset]
     cmp ax, [bp+Control_Right]
     jg short loc_27AE2
+
     mov ax, [bp+Y_Pos]
-    add ax, [g_GUI_CursorOffset]
+    add ax, [g_CRSR_Offset]
     cmp ax, [bp+Control_Top]
     jl short loc_27AE2
+
     mov ax, [bp+Y_Pos]
-    add ax, [g_GUI_CursorOffset]
+    add ax, [g_CRSR_Offset]
     cmp ax, [bp+Control_Bottom]
     jg short loc_27AE2
+
     mov [bp+Mouse_At], si
     jmp short loc_27AF0
 
@@ -133,7 +137,7 @@ loc_27AE2:
     mov si, ax
 
 loc_27AE7:
-    cmp si, [g_GUI_Control_Count]
+    cmp si, [g_CTRL_Control_Count]
     jge short loc_27AF0
     jmp loc_27A60
 

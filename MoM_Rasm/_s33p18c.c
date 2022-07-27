@@ -4,7 +4,7 @@
 #include "ST_GUI.H"
 
 
-int MOUSE_GetX(void)
+int MD_GetX(void)
 {
-    return g_MOUSE_CurrentX;
+    return g_MD_CurrentX;
 }

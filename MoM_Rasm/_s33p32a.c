@@ -4,7 +4,7 @@
 #include "ST_GUI.H"
 #include "ST_VGA.H"
 
-void VGA_SaveCursorArea_RSP(int X_Pos, int Y_Pos)
+void IN_CRL_Save_RSP(int X_Pos, int Y_Pos)
 {
     char Width_Bytes;
     int Height_Lines;
@@ -30,7 +30,7 @@ asm    mov ax, ds
 asm    mov es, ax
 asm    assume es:DGROUP
 
-asm    mov ax, [g_RenderScreenPage]
+asm    mov ax, [g_RSP_Idx]
 asm    mov ah, al                              //; (_AX << 8)
 asm    sub al, al                              //; (_AX & 0xFF00)
 asm    shl ax, 1
@@ -54,9 +54,9 @@ asm    mov cx, 50h                             //; 80d 50h SCREEN_WIDTH_PER_PLAN
 asm    mul cx                                  //; _AX = (_AX * _CX)
 asm    add si, ax
 asm    sub di, di
-asm    mov [word ptr es:g_Cursor_Save_Main+di], si    //; ScreenPage Offset
+asm    mov [word ptr es:g_CRSR_Save_RSP+di], si    //; ScreenPage Offset
 asm    add di, 2
-asm    mov es:g_Cursor_Save_Main[di], bx              //; Width_Bytes
+asm    mov es:g_CRSR_Save_RSP[di], bx              //; Width_Bytes
 asm    add di, 2
 asm    mov [Width_Bytes], bl
 asm    mov ax, [Y_Pos]
@@ -67,7 +67,7 @@ asm    js short loc_2485F
 asm    sub bx, ax
 
 loc_2485F:
-asm    mov es:g_Cursor_Save_Main[di], bx              //; Height_Lines
+asm    mov es:g_CRSR_Save_RSP[di], bx              //; Height_Lines
 asm    add di, 2
 asm    mov [Height_Lines], bx
 asm    mov [ScreenPage_Offset], si
@@ -88,8 +88,8 @@ asm    mov cx, [Height_Lines]
 
 LoopWords:
 asm    lodsw
-// asm    mov word ptr es:g_Cursor_Save_Main.Saved_Image[di-6], ax
-asm    mov word ptr es:g_Cursor_Save_Main[di-6], ax
+// asm    mov word ptr es:g_CRSR_Save_RSP.Saved_Image[di-6], ax
+asm    mov word ptr es:g_CRSR_Save_RSP[di-6], ax
 asm    add di, 2
 asm    add si, 4Eh                              //; Line-Delta  78 bytes to next line, because LODS-Word
 asm    loop LoopWords

@@ -4,7 +4,7 @@
 #include "ST_GUI.H"
 
 
-void MOUSE_CDraw_Restore(void)
+void MD_CDraw_Restore(void)
 {
-    g_MOUSE_CursorDraw = g_MOUSE_CDraw_Save;
+    g_MD_CursorDraw = g_MD_CDraw_Save;
 }

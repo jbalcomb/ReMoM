@@ -1,10 +1,10 @@
-TITLE _s34p47.asm GUI_CreateClickLabel
+TITLE _s34p47.asm CTRL_CreateClickLabel
 ; ST_GUI.H
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_Control_Count:WORD
-EXTRN gfp_GUI_Control_Table:DWORD
+EXTRN g_CTRL_Control_Count:WORD
+EXTRN gfp_CTRL_Control_Table:DWORD
 
 .CODE
 ;segment seg034 byte public 'CODE' use16
@@ -12,7 +12,7 @@ EXTRN gfp_GUI_Control_Table:DWORD
 ; 	 ;org 0Eh
 ; 	 assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_CreateClickLabel
+PUBLIC CTRL_CreateClickLabel
 
 ;struc GUI_CTRL ; (sizeof=0x26)
 GUI_CTRL struc
@@ -39,7 +39,7 @@ Unused_25h db ?
 ;ends GUI_CTRL
 GUI_CTRL ends
 
-proc GUI_CreateClickLabel
+proc CTRL_CreateClickLabel
 
     argLeft = word ptr 6
     argTop = word ptr 8
@@ -54,84 +54,84 @@ proc GUI_CreateClickLabel
     push di
 
     mov di, [bp+argKey]
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [bp+argLeft]
     mov [es:bx+GUI_CTRL.Left], ax
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [bp+argTop]
     mov [es:bx+GUI_CTRL.Top], ax
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [bp+argRight]
     mov [es:bx+GUI_CTRL.Right], ax
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [bp+argBottom]
     mov [es:bx+GUI_CTRL.Bottom], ax
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov [es:bx+GUI_CTRL.Ctrl_Type], 07h ; Ctrl_Label
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov ax, [bp+argHlp]
     mov [es:bx+GUI_CTRL.UU_Help], ax
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov al, [di]
     mov [es:bx+GUI_CTRL.Hotkey], al
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Hotkey], 60h
     jle short @@Done
 
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     cmp [es:bx+GUI_CTRL.Hotkey], 7Bh
     jge short @@Done
 
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
     mov al, [es:bx+GUI_CTRL.Hotkey]
     add al, 0E0h
 
     push ax
 
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     mov dx, 26h
     imul dx
-    les bx, [gfp_GUI_Control_Table]
+    les bx, [gfp_CTRL_Control_Table]
     add bx, ax
 
     pop ax
@@ -139,11 +139,11 @@ proc GUI_CreateClickLabel
     mov [es:bx+GUI_CTRL.Hotkey], al
 
 @@Done:
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     inc ax
-    mov [g_GUI_Control_Count], ax
+    mov [g_CTRL_Control_Count], ax
 
-    mov ax, [g_GUI_Control_Count]
+    mov ax, [g_CTRL_Control_Count]
     dec ax
 
     jmp short $+2
@@ -153,7 +153,7 @@ proc GUI_CreateClickLabel
     pop bp
     ret
 
-endp GUI_CreateClickLabel
+endp CTRL_CreateClickLabel
 
 ;ends seg034
 

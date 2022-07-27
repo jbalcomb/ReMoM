@@ -3,8 +3,8 @@ TITLE _s26p02.asm VGA_SetDrawFrame
 
 .MODEL LARGE, C
 
-EXTRN g_DrawScreenPage_SgmtAddr:WORD
-EXTRN g_RenderScreenPage:WORD
+EXTRN gsa_DSP_Addr:WORD
+EXTRN g_RSP_Idx:WORD
 
 .CODE
 ;segment seg026 byte public 'CODE' use16
@@ -12,21 +12,21 @@ EXTRN g_RenderScreenPage:WORD
 ;    ;org 0Ah
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC VGA_SetDrawFrame
+PUBLIC VGA_Set_DSP_Addr
 
-proc VGA_SetDrawFrame
+proc VGA_Set_DSP_Addr
     
     mov ax, 1
-    sub ax, [g_RenderScreenPage]
+    sub ax, [g_RSP_Idx]
     mov ah, al
     xor al, al
     shl ax, 1
     shl ax, 1
     add ax, 0A000h                          ; e_GRAPHICS_MODE_VIDEO_RAM
-    mov [g_DrawScreenPage_SgmtAddr], ax
+    mov [gsa_DSP_Addr], ax
     ret
     
-endp VGA_SetDrawFrame
+endp VGA_Set_DSP_Addr
 
 ;ends seg026
 

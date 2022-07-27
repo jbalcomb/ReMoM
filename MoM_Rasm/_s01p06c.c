@@ -29,7 +29,7 @@ void SCREEN_Menu_Draw(void)
     dlvfprintf("DEBUG: [%s, %d] MouseOver_ControlIndex: %d\n", __FILE__, __LINE__, MouseOver_ControlIndex);
 #endif
 
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
     HERE("Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);");
@@ -148,7 +148,7 @@ void SCREEN_Menu_Draw(void)
     // // VGA_LoadPalette(2, -1, 0);
     // // VGA_DAC_Write();
     // // STU_VGA_DAC_Dump("MENUDAC.BIN");
-    // // //VGA_SetDrawFrame();
+    // // //VGA_Set_DSP_Addr();
     // // VGA_PageFlip();
     // // DEBUG(JimBalcomb): doing all of this here does make the screen render correctly
     // VGA_LoadPalette(2, -1, 0);

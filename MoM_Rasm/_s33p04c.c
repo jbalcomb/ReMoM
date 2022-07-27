@@ -3,7 +3,7 @@
 
 #include "ST_GUI.H"
 
-int GUI_GetCursorOffset(void)
+int CR_GetOffset(void)
 {
-    return g_GUI_CursorOffset;
+    return g_CRSR_Offset;
 }

@@ -4,7 +4,7 @@
 #include "ST_GUI.H"
 
 
-int MOUSE_GetClickedBtns(void)
+int MD_GetClickedBtns(void)
 {
-    return g_MOUSE_ClickBtns;
+    return g_MD_ClickBtns;
 }

@@ -4,7 +4,7 @@
 .MODEL LARGE, C
 
 EXTRN gsa_FontStyleData:WORD
-EXTRN g_DrawScreenPage_SgmtAddr:WORD
+EXTRN gsa_DSP_Addr:WORD
 
 EXTRN VGA_DrawGlyph:PROC
 
@@ -57,7 +57,7 @@ proc VGA_DrawChar
     shl ax, 1
     shl ax, 1
     add ax, cx
-    add ax, [g_DrawScreenPage_SgmtAddr]
+    add ax, [gsa_DSP_Addr]
     mov es, ax
 
     mov ax, [gsa_FontStyleData]

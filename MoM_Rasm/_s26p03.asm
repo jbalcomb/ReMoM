@@ -3,7 +3,7 @@ TITLE _s26p03.asm VGA_IsDefaultDrawScreenPage
 
 .MODEL LARGE, C
 
-EXTRN g_DrawScreenPage_SgmtAddr:WORD
+EXTRN gsa_DSP_Addr:WORD
 
 .CODE
 ;segment seg026 byte public 'CODE' use16
@@ -15,7 +15,7 @@ PUBLIC VGA_IsDefaultDrawScreenPage
 
 proc VGA_IsDefaultDrawScreenPage
 
-    mov ax, [g_DrawScreenPage_SgmtAddr]
+    mov ax, [gsa_DSP_Addr]
     cmp ax, 0A000h ; Screen-Page 0 SgmtAddr
     jz short @@Return_FALSE
 

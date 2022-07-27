@@ -19,10 +19,10 @@ GAME_MainMenu()
 _s01p05c.c
 SCREEN_Menu()
     Loop:
-        GUI_GetInput()
+        IN_GetInput()
         ...
         SCREEN_Menu_Draw()
-        GUI_SimplePageFlip()
+        SCRN_SimplePageFlip()
 
 _s01p06c.c
 SCREEN_Menu_Draw()
@@ -39,7 +39,7 @@ SCREEN_Menu_Draw()
     so, set debug var to true, enter loop and set to false
 
 PoI - Render Screen
-? first happens in GUI_GetInput ?
+? first happens in IN_GetInput ?
 ? on account of handling mouse movement, mouse-over control highlights, and right-click pop-up help ?
 
 Next-Up?
@@ -52,7 +52,7 @@ Next-Up?
 
     _s34p26     GUI_MousedControl()
     _s34p71     GUI_DrawControls()
-    _s34p66c.c  GUI_GetInput()
+    _s34p66c.c  IN_GetInput()
 
 GUI_MousedControl()
     e_GUI_Controls
@@ -63,23 +63,23 @@ GUI_MousedControl()
     GUI_FindWindow:PROC
     GUI_GetCursorOffset:PROC
     GUI_MouseOverControl:PROC
-    MOUSE_GetX:PROC
-    MOUSE_GetY:PROC
+    MD_GetX:PROC
+    MD_GetY:PROC
 
 GUI_MouseOverControl()    _s34p25.asm
     short-circuits on (g_GUI_Control_Count == 1) .:. returns 0
         ? meaning gfp_GUI_Control_Table[0] is special ? and can not be a /real/ control ? or, is it just "number" vs. "index" ?
-        ...seems so...SCREEN_Menu() calls GUI_GetInput() and then checks for 0 to set flag_input to ST_TRUE
+        ...seems so...SCREEN_Menu() calls IN_GetInput() and then checks for 0 to set flag_input to ST_TRUE
         ...however, it does them go on to check it against all control indexes
-        Also, GUI_GetInput() returns 0 if ( g_GUI_Control_Count <= 1 )
+        Also, IN_GetInput() returns 0 if ( g_GUI_Control_Count <= 1 )
     s_GUI_CTRL
     gfp_GUI_Control_Table:DWORD
     g_GUI_Control_Count:WORD
     g_GUI_CursorOffset:WORD
     GUI_FindWindow:PROC
     GUI_GetCursorOffset:PROC
-    MOUSE_GetX:PROC
-    MOUSE_GetY:PROC
+    MD_GetX:PROC
+    MD_GetY:PROC
 
 
 GUI_FindWindow()
@@ -124,10 +124,13 @@ _s34p72 GUI_DrawControl
 #include "MOM_DEF.H"
 #include "ST_HEAD.H"
 
+#include "ST_CRSR.H"
+#include "ST_CTRL.H"
 #include "ST_FLIC.H"
 #include "ST_GUI.H"
 #include "ST_LBX.H"
 #include "ST_SA.H"
+#include "ST_SCRN.H"
 #include "ST_VGA.H"
 
 #include "TST_MGC.H"
@@ -1143,9 +1146,9 @@ sub-tests
     VGA_SetModeY();
     VGA_DAC_Init();
     SND_Init();
-    GUI_Init();
+    IN_Init();
     RNG_TimerSeed();
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 */
 void test_Hardware_Init(void)
 {
@@ -1161,13 +1164,13 @@ void test_VGA_DAC_Init(void)
 sub-tests
     GUI_SetWindows()
     MOUSE_Init()
-    VGA_SaveCursorArea_RSP()
-    GUI_Clear()
+    CRL_Save_RSP()
+    CTRL_Clear()
 */
 void test_GUI_Init(void)
 {
     int Input_Type = 1;
-    GUI_Init(Input_Type);
+    IN_Init(Input_Type);
 }
 
 void test_VGA_SaveCursorArea_RSP(void)
@@ -1176,7 +1179,7 @@ void test_VGA_SaveCursorArea_RSP(void)
     int Y_Pos;
     X_Pos = 158;
     Y_Pos = 100;
-    VGA_SaveCursorArea_RSP(X_Pos, Y_Pos);
+    CRL_Save_RSP(X_Pos, Y_Pos);
 
 }
 
@@ -1316,9 +1319,9 @@ void test_SimTexGameEngineFramework(void)
     //     |-> VGA_DAC_Init()
     //         |-> VGA_TextDraw_Init()
     //     |-> SND_Init()
-    //     |-> GUI_Init()
+    //     |-> IN_Init()
     //     |-> RNG_TimerSeed()
-    //     |-> VGA_SetDrawFrame()
+    //     |-> VGA_Set_DSP_Addr()
     // LBX_Tables_Init(6100);   _o57p01  void LBX_Tables_Init(int gfx_buff_nparas)
     //      |-> ?
     //      |-> ...
@@ -1326,21 +1329,21 @@ void test_SimTexGameEngineFramework(void)
     // VGA_LoadPalette(0, -1, 0);
     // VGA_DAC_Write();
     VGA_SetModeY();         // _s15p01.asm  ST_VGA.H
-    VGA_SetDrawFrame();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
+    VGA_Set_DSP_Addr();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
     // ...
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
     VGA_PageFlip();
         // |-> VGA_WaitSync()
-        // |-> VGA_SetDrawFrame()
+        // |-> VGA_Set_DSP_Addr()
 
 
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
     // while ! KBD_CheckBuffer()
     getch();
@@ -1401,23 +1404,23 @@ void test_FLIC_Draw_XY(void)
     //     |-> VGA_DAC_Init()
     //         |-> VGA_TextDraw_Init()
     //     |-> SND_Init()
-    //     |-> GUI_Init()
+    //     |-> IN_Init()
     //     |-> RNG_TimerSeed()
-    //     |-> VGA_SetDrawFrame()
+    //     |-> VGA_Set_DSP_Addr()
     VGA_SetModeY();         // _s15p01.asm  ST_VGA.H
-    VGA_SetDrawFrame();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
+    VGA_Set_DSP_Addr();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
     // ...
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
     // ...
     // VGA_LoadPalette(0, -1, 0);
     // VGA_DAC_Write();
     // ...
     // VGA_PageFlip();
     //     // |-> VGA_WaitSync()
-    //     // |-> VGA_SetDrawFrame()
+    //     // |-> VGA_Set_DSP_Addr()
 
     VGA_DrawFilledRect(0, 0, 319, 199, 180);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
     getch();
@@ -1493,7 +1496,7 @@ void test_FLIC_Draw_XY(void)
     //  GUI_Redraw_WaitTime()
     //  GUI_Redraw_WaitOne()
     //      VGA_DAC_Write()
-    //      GUI_SimplePageFlip()
+    //      SCRN_SimplePageFlip()
 
     VGA_PageFlip();
 
@@ -1569,11 +1572,11 @@ void test_Screen_MainMenu(void)
     // }
 
     VGA_SetModeY();         // _s15p01.asm  ST_VGA.H
-    VGA_SetDrawFrame();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
+    VGA_Set_DSP_Addr();     // _s26p02.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_RenderScreenPage
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // _s16p01.asm  ST_VGA.H    // g_DrawScreenPage_SgmtAddr, g_VGA_LeftBits, g_VGA_RightBits
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
     strcpy(g_PaletteLbxFileName, GAME_FONT_FILE);
     gsa_PaletteLbxEntry = SA_Allocate_Space(348);
@@ -1629,7 +1632,7 @@ void test_Screen_MainMenu(void)
     // NOTE: None have shading/replacement colors
 
     //  SCREEN_Menu_Draw()
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
     FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
@@ -1662,7 +1665,7 @@ void test_Screen_MainMenu(void)
     //  GUI_Redraw_WaitTime()
     //  GUI_Redraw_WaitOne()
     //      VGA_DAC_Write()
-    //      GUI_SimplePageFlip()
+    //      SCRN_SimplePageFlip()
     
     VGA_PageFlip();
 
@@ -1727,12 +1730,12 @@ void test_SCREEN_Menu(void)
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
     VGA_LoadPalette(2, -1, 0);
     //g_GAME_ValidSaveCount
     g_GAME_HaveContSave = ST_TRUE;
     g_GAME_HaveSaves = ST_TRUE;
-    GUI_Clear();
+    CTRL_Clear();
     //Continue_Move_Down = ST_FALSE;
     // GUI_Continue_Label = GUI_CreateClickLabel(108, (138 + (12 * Continue_Move_Down)), 211, (149 + (12 * Continue_Move_Down)), 0, -1);
     // GUI_NewGame_Label = GUI_CreateClickLabel(108, 162, 211, 173, 0, -1);
@@ -1745,22 +1748,22 @@ void test_SCREEN_Menu(void)
     // Quit_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_Q, -1);
     // Escape_Hotkey_Index = GUI_CreateHotkey(cnst_HOTKEY_Esc, -1);
     GUI_SetWindows(1, g_GUI_MainMenuWindow);
-    GUI_SaveCursorArea_RSP(MOUSE_GetX(), MOUSE_GetY());
+    CRL_Save_RSP(MD_GetX(), MD_GetY());
     FLIC_ResetFrame(gsa_MAINSCRN_0_AnimatedLogo);
-    GUI_Set_Redraw_Function(SCREEN_Menu_Draw, 2);
-    GUI_SetDelay(4);
+    SCRN_Set_Redraw_Function(SCREEN_Menu_Draw, 2);
+    IN_Set_Skip(4);
 //    while ( flag_done == ST_FALSE )
     CLK_SaveCounter();  // 1oom :: ui_delay_prepare()
-    input_control_index = GUI_GetInput();  // 1oom :: oi1 = uiobj_handle_input_cond();
+    input_control_index = IN_GetInput();  // 1oom :: oi1 = uiobj_handle_input_cond();
 //    if ( flag_done == ST_FALSE )
     SCREEN_Menu_Draw();
-    GUI_SimplePageFlip();  // 1oom :: uiobj_finish_frame();
+    SCRN_SimplePageFlip();  // 1oom :: uiobj_finish_frame();
     // j_VGA_Fade_In()
     VGA_Copy_RSP_DSP();  // Research(JimBalcomb)): 20220117: what does this accomplish?
     CLK_Wait(2);  // 1oom :: ui_delay_ticks_or_click(2);
 //    }  /* while ( flag_done == ST_FALSE ) */
-    GUI_DisableRedraw();
-    GUI_ClearHelp();
+    SCRN_DisableRedraw();
+    HLP_ClearHelp();
 //    return g_GUI_MainMenuSelected;
 
     /*
@@ -1770,14 +1773,14 @@ void test_SCREEN_Menu(void)
 }
 
 /*
-_s33p37         GUI_DrawCursor_RSP |-> VGA_DrawCursor_RSP
+_s33p37         GUI_DrawCursor_RSP |-> CRL_Draw_RSP
 _s33p38         GUI_DrawCursor_DSP |-> VGA_DrawCursor_DSP
-_s33p39         VGA_DrawCursor_RSP
+_s33p39         CRL_Draw_RSP
 _s33p40         VGA_DrawCursor_DSP
 */
 void test_VGA_DrawCursor_RSP(void)
 {
 
-    VGA_DrawCursor_RSP();
+    CRL_Draw_RSP();
 
 }

@@ -28,11 +28,11 @@ void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName
         tmpInputType = argInputType;
     }
 
-    GUI_Init(tmpInputType);
+    IN_Init(tmpInputType);
 
     RNG_TimerSeed();
 
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
 //    dlvfprintf("DEBUG: %s %d END: Hardware_Init()\n", __FILE__, __LINE__);
 }

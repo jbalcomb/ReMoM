@@ -86,7 +86,7 @@ int MGC_Main(void)
         |-> SND_Init()
         |-> GUI_Init()
         |-> RNG_TimerSeed()
-        |-> VGA_SetDrawFrame()
+        |-> VGA_Set_DSP_Addr()
     */
 
     DBG_Disable();
@@ -97,7 +97,7 @@ int MGC_Main(void)
     */
     LBX_Tables_Init(6100);
     
-    GUI_SetEscOverride();
+    IN_SetEscOverride();
 
     //VGA_LoadPalette(0, -1);  // argument missing in dasm
     VGA_LoadPalette(0, -1, 0);
@@ -125,7 +125,7 @@ int MGC_Main(void)
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Draw Screen-Page
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Render Screen-Page
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
     /*
         SND_Stop_Music()

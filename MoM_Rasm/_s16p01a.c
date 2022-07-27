@@ -1,7 +1,7 @@
 // _s16p01a.c VGA_DrawFilledRect
 // ST_VGA.H
 
-extern unsigned int g_DrawScreenPage_SgmtAddr;
+extern unsigned int gsa_DSP_Addr;
 extern unsigned char g_VGA_LeftBits;
 extern unsigned char g_VGA_RightBits;
 
@@ -88,7 +88,7 @@ asm sub cx, ax
 asm shl dx, 1
 asm shl dx, 1
 asm add ax, dx
-asm add ax, [g_DrawScreenPage_SgmtAddr]
+asm add ax, [gsa_DSP_Addr]
 asm mov es, ax
 asm mov al, [color]
 LoopAllBytes:
@@ -122,7 +122,7 @@ asm mov ax, bx
 asm shl ax, 1
 asm shl ax, 1
 asm add ax, bx
-asm add ax, [g_DrawScreenPage_SgmtAddr]
+asm add ax, [gsa_DSP_Addr]
 asm mov es, ax
 asm mov di, [x1]
 asm mov bx, di
@@ -201,12 +201,14 @@ asm shr ax, 1
 asm sub bx, ax
 asm dec bx
 asm jz short Done
+
 asm mov di, ax
 asm inc di
 asm mov dx, 0x50  //; Line-Width - 80 bytes  (AKA SCREENWIDTH - Bytes Per Memory Plane)
 asm sub dx, bx
 asm mov si, [Line_Count]
 asm mov al, [color]
+
 LoopMiddleBytes:
 asm mov cx, bx
 asm rep stosb

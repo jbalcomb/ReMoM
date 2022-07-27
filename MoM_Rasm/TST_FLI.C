@@ -69,7 +69,7 @@ void MGC_StartUp(void)
         // |-> EMM_Startup();  VGA_SetModeY();  VGA_DAC_Init();  SND_Init();  GUI_Init();  RNG_TimerSeed();  VGA_SetDrawFrame();
     DBG_Disable();
     LBX_Tables_Init(6100);
-    GUI_SetEscOverride();
+    IN_SetEscOverride();
     VGA_LoadPalette(0, -1, 0);
     VGA_DAC_Write();
     // if not "JENNY", then Play_Intro()
@@ -104,9 +104,9 @@ void MGC_HardwareInit(void)
     VGA_DAC_Init("FONTS.LBX");
     // ? // SND_Init(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);
     // SND_Init(M_Drv, argSoundChannels, M_IO, M_IRQ, M_DMA, D_Drv, D_IO, D_IRQ, D_DMA);
-    GUI_Init(1);
+    IN_Init(1);
     RNG_TimerSeed();
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 }
 
 void STGE_Init_Draw(void)
@@ -129,11 +129,11 @@ void STGE_Init_Draw(void)
     HERE("CALL: VGA_DAC_Init(DEFAULT_FONTS_FILE)");
     VGA_DAC_Init(DEFAULT_FONTS_FILE);
     HERE("CALL: GUI_Init(1)");
-    GUI_Init(1);
+    IN_Init(1);
     // HERE("RNG_TimerSeed()");
     // RNG_TimerSeed();
     HERE("VGA_SetDrawFrame()");
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
     // DBG_Disable();
 
@@ -188,7 +188,7 @@ void test_draw_flic_frame()
 
     */
     dlvfprintf("DEBUG: [%s, %d] g_EMM_PageFrame_Base_Address: 0x%04X\n", __FILE__, __LINE__, g_EMM_PageFrame_Base_Address);
-    dlvfprintf("DEBUG: [%s, %d] g_RenderScreenPage: %u, g_DrawScreenPage_SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_RenderScreenPage, g_DrawScreenPage_SgmtAddr);
+    dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u, gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, g_RSP_Idx, gsa_DSP_Addr);
 
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
 

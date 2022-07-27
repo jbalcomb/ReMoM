@@ -2,9 +2,9 @@ TITLE _s33p37.asm GUI_DrawCursor_RSP
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_CurrentCursor:WORD
+EXTRN g_CRSR_Curr:WORD
 
-EXTRN VGA_DrawCursor_RSP:PROC
+EXTRN CRL_Draw_RSP:PROC
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -12,9 +12,9 @@ EXTRN VGA_DrawCursor_RSP:PROC
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_DrawCursor_RSP
+PUBLIC CRH_Draw_RSP
 
-proc GUI_DrawCursor_RSP
+proc CRH_Draw_RSP
 
     X_Pos = word ptr 6
     Y_Pos = word ptr 8
@@ -32,17 +32,17 @@ proc GUI_DrawCursor_RSP
     ;assume ds:dseg
     assume ds:DGROUP
 
-    mov dx, [g_GUI_CurrentCursor]
+    mov dx, [g_CRSR_Curr]
     cmp dx, 0  ; e_Crsr_None
     jz short @@Done
     
     mov bx, [bp+X_Pos]
     mov cx, [bp+Y_Pos]
 
-    push cs
+    ;push cs
     ;call near ptr VGA_DrawCursor_RSP
-    call VGA_DrawCursor_RSP ; _s33p39
-    nop
+    ;nop
+    call CRL_Draw_RSP ; _s33p39
 
 @@Done:
     pop ds
@@ -52,7 +52,7 @@ proc GUI_DrawCursor_RSP
     pop bp
     ret
 
-endp GUI_DrawCursor_RSP
+endp CRH_Draw_RSP
 
 ;ends seg033
 

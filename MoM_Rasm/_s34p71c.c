@@ -1,6 +1,7 @@
 // _s34p71c.c GUI_DrawControls
 // ST_GUI.H
 
+#include "ST_CTRL.H"
 #include "ST_GUI.H"
 #include "ST_VGA.H"
 
@@ -9,7 +10,7 @@
     
 */
 
-void GUI_DrawControls(void)
+void CTRL_DrawControls(void)
 {
     int Max_Y;
     int Min_Y;
@@ -23,7 +24,7 @@ void GUI_DrawControls(void)
 
     int tmp_SI;
 
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_DrawControls()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: CTRL_DrawControls()\n", __FILE__, __LINE__);
 
     Min_X = g_VGA_Min_X;
     Max_X = g_VGA_Max_X;
@@ -31,13 +32,13 @@ void GUI_DrawControls(void)
     Max_Y = g_VGA_Max_Y;
 
     VGA_ResetDrawWindow();
-    VGA_SetDrawFrame();
+    VGA_Set_DSP_Addr();
 
-    for ( tmp_SI = 1; tmp_SI < g_GUI_Control_Count; tmp_SI++ )
+    for ( tmp_SI = 1; tmp_SI < g_CTRL_Control_Count; tmp_SI++ )
     {
-        if ( (tmp_SI == g_GUI_FocusedControl) && (gfp_GUI_Control_Table[tmp_SI].Ctrl_Type != Ctrl_EditBox) && (gfp_GUI_Control_Table[tmp_SI].Ctrl_Type != Ctrl_ClickGrid) )
+        if ( (tmp_SI == g_CTRL_FocusedControl) && (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type != Ctrl_EditBox) && (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type != Ctrl_ClickGrid) )
         {
-            GUI_DrawControl(tmp_SI, 1);
+            CTRL_DrawControl(tmp_SI, 1);
         }
 
         //  0: Ctrl_ClickButton
@@ -53,20 +54,20 @@ void GUI_DrawControls(void)
         // 10: Ctrl_DialogLine 
         // 11: Ctrl_EditSelect 
         // 12: Ctrl_ClickGrid 
-        switch (gfp_GUI_Control_Table[tmp_SI].Ctrl_Type)
+        switch (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type)
         {
             case Ctrl_ClickButton:
             {
                 dlvfprintf("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
-                FLIC_ResetFrame(gfp_GUI_Control_Table[tmp_SI].Param5);
-                FLIC_Draw_XY(gfp_GUI_Control_Table[tmp_SI].Left, gfp_GUI_Control_Table[tmp_SI].Top, gfp_GUI_Control_Table[tmp_SI].Param5);
+                FLIC_ResetFrame(gfp_CTRL_Control_Table[tmp_SI].Param5);
+                FLIC_Draw_XY(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, gfp_CTRL_Control_Table[tmp_SI].Param5);
                 //VGA_SetFont(..., 0, 0);  // argument missing in dasm
-                VGA_SetFont(gfp_GUI_Control_Table[tmp_SI].Font_Index, gfp_GUI_Control_Table[tmp_SI].ColorSet1, 0, 0);
+                VGA_SetFont(gfp_CTRL_Control_Table[tmp_SI].Font_Index, gfp_CTRL_Control_Table[tmp_SI].ColorSet1, 0, 0);
                 Half_Font_Height = ( (VGA_GetFontHeight() - 1) / 2);
                 VGA_DrawCentered(
-                    ((gfp_GUI_Control_Table[tmp_SI].Right - gfp_GUI_Control_Table[tmp_SI].Left) + gfp_GUI_Control_Table[tmp_SI].Left),
-                    (((gfp_GUI_Control_Table[tmp_SI].Bottom - gfp_GUI_Control_Table[tmp_SI].Top) / 2) + gfp_GUI_Control_Table[tmp_SI].Top - Half_Font_Height),
-                    gfp_GUI_Control_Table[tmp_SI].Param0
+                    ((gfp_CTRL_Control_Table[tmp_SI].Right - gfp_CTRL_Control_Table[tmp_SI].Left) + gfp_CTRL_Control_Table[tmp_SI].Left),
+                    (((gfp_CTRL_Control_Table[tmp_SI].Bottom - gfp_CTRL_Control_Table[tmp_SI].Top) / 2) + gfp_CTRL_Control_Table[tmp_SI].Top - Half_Font_Height),
+                    gfp_CTRL_Control_Table[tmp_SI].Param0
                 );
                 break;
             }
@@ -176,5 +177,5 @@ void GUI_DrawControls(void)
 Done:
     VGA_SetDrawWindow(Min_X, Min_Y, Max_X, Max_Y);
 
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_DrawControls()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] END: CTRL_DrawControls()\n", __FILE__, __LINE__);
 }

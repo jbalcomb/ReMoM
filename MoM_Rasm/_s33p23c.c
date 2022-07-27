@@ -4,7 +4,7 @@
 #include "ST_GUI.H"
 
 
-int MOUSE_GetClickY(void)
+int MD_GetClickY(void)
 {
-    return g_MOUSE_ClickY;
+    return g_MD_ClickY;
 }

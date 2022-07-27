@@ -105,7 +105,7 @@ asm shl ax, 1
 asm shl ax, 1
 asm add ax, bx                              //; * 5 as a segment address = * 80 total bytes which,
                                             //; since each byte is 4 pixels, equals the draw row
-asm add ax, [g_DrawScreenPage_SgmtAddr]
+asm add ax, [gsa_DSP_Addr]
 asm mov es, ax
 
 asm mov ax, [ScreenPage_X]
@@ -348,7 +348,7 @@ asm assume ds:DGROUP
 // asm shl ax, 1
 // asm add ax, bx //; * 5 as a segment address = * 80 total bytes which,
 //     //; since each byte is 4 pixels, equals the draw row
-// asm add ax, [g_DrawScreenPage_SgmtAddr]
+// asm add ax, [gsa_DSP_Addr]
 // asm mov es, ax
 // asm mov ax, [ScreenPage_X]
 // asm mov bx, ax
@@ -997,8 +997,8 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
         outportb(e_SC_INDEX, e_SC_MAPMASK);
             // mov dx, e_SC_INDEX;  mov al, e_SC_MAPMASK;  out dx, al;
 
-        DstSgmt = g_DrawScreenPage_SgmtAddr + ( (ScreenPage_Y * 4) + ScreenPage_Y);
-        // mov ax, [bp+ScreenPage_Y];  mov bx, ax;  shl ax, 1;  shl ax, 1;  add ax, bx;  add ax, [g_DrawScreenPage_SgmtAddr];  mov es, ax;
+        DstSgmt = gsa_DSP_Addr + ( (ScreenPage_Y * 4) + ScreenPage_Y);
+        // mov ax, [bp+ScreenPage_Y];  mov bx, ax;  shl ax, 1;  shl ax, 1;  add ax, bx;  add ax, [gsa_DSP_Addr];  mov es, ax;
         DstOfst = (ScreenPage_X >> 2);  // ~== math.floor(ScreenPage_X / 4)
             // mov ax, [bp+Left];  mov bx, ax;  shr bx, 1;  shr bx, 1;  mov di, bx
         VgaWriteMapMask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
@@ -1007,8 +1007,8 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
             // mov bx, [g_EMM_PageFrame_Base_Address];  mov ds, bx;
         SrcOfst = tmp_EmmFlicFrameDataOffset;
 
-        // fptr_DrawScreenPageScanlineOffset = (g_DrawScreenPage_SgmtAddr << 16) + ( ScreenPage_Y * (((320/4)/16)) ); // _ES = {A000,A400} + (Y*(((320/4)/16))
-        fptr_DrawScreenPageScanlineOffset = (g_DrawScreenPage_SgmtAddr * 65536) + ( ScreenPage_Y * (((320/4)/16)) );
+        // fptr_DrawScreenPageScanlineOffset = (gsa_DSP_Addr << 16) + ( ScreenPage_Y * (((320/4)/16)) ); // _ES = {A000,A400} + (Y*(((320/4)/16))
+        fptr_DrawScreenPageScanlineOffset = (gsa_DSP_Addr * 65536) + ( ScreenPage_Y * (((320/4)/16)) );
         // fptr_EmmPageFrameBaseAddress = (g_EMM_PageFrame_Base_Address << 16);
         fptr_EmmPageFrameBaseAddress = (g_EMM_PageFrame_Base_Address * 65536);
 
@@ -1191,7 +1191,7 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
 // asm shl ax, 1
 // asm add ax, bx //; * 5 as a segment address = * 80 total bytes which,
 //     //; since each byte is 4 pixels, equals the draw row
-// asm add ax, [g_DrawScreenPage_SgmtAddr]
+// asm add ax, [gsa_DSP_Addr]
 // asm mov es, ax
 // asm mov ax, [ScreenPage_X]
 // asm mov bx, ax

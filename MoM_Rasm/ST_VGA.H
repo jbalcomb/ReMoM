@@ -73,8 +73,8 @@ extern int g_VGA_Min_Y;                             // dseg:41B4
 extern int g_VGA_Max_X;                             // dseg:41B6
 extern int g_VGA_Max_Y;                             // dseg:41B8
 extern char DEFAULT_FONTS_FILE[];                   // dseg:41BA
-extern unsigned int g_DrawScreenPage_SgmtAddr;      // dseg:41C4
-extern int g_RenderScreenPage;                      // dseg:41C6
+extern unsigned int gsa_DSP_Addr;      // dseg:41C4
+extern int g_RSP_Idx;                      // dseg:41C6
 extern unsigned char g_VGA_LeftBits[];                // dseg:41C8
 extern unsigned char g_VGA_RightBits[];               // dseg:41CC
 extern unsigned char g_VGA_WriteMapMasks[];           // dseg:41D0
@@ -122,7 +122,7 @@ extern unsigned int VGA_Font_Index;                             // dseg:A810
 //VGA_TextDraw_X; // dseg:A814
 extern unsigned int gsa_FontStyleData;          // dseg:A816    alloc & load in VGA_DAC_Init
 extern unsigned int gsa_BorderStyleData;        // dseg:A818    alloc & load in VGA_DAC_Init
-extern unsigned int gsa_Palette_Cursor_Data;    // dseg:A81A  ; 500h into the palette entry
+extern unsigned int gsa_Cursor_Array;    // dseg:A81A  ; 500h into the palette entry
 extern unsigned int UU_gsa_Palette_Data;        // dseg:A81C  ; 400h into the palette entry
 extern unsigned int gsa_Palette_Font_Colors;    // dseg:A81E  ; 300h into the palette entry, 16 arrays of 16 colors
 extern void _FAR * gfp_VGA_TextLine_Starts;    // dseg:A820
@@ -181,7 +181,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index);
 //_s26p01
 void VGA_SetDirectDraw(void);
 //_s26p02
-void VGA_SetDrawFrame(void);
+void VGA_Set_DSP_Addr(void);
 //_s26p03
 int VGA_IsDefaultDrawScreenPage(void);
 //_s26p04

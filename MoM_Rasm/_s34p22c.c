@@ -2,6 +2,7 @@
 // ST_GUI.H
 // ? UI_ProcessInput_KD ?
 
+#include "ST_CTRL.H"
 #include "ST_GUI.H"
 
 #include "STU_DBG.H"
@@ -41,14 +42,14 @@ int UI_ProcessInput_KD(int *oiptr)
     dlvfprintf("DEBUG: [%s, %d] ioi: %d\n", __FILE__, __LINE__, ioi);
 #endif
     ioi = 1;
-    HERE("while ( ioi != g_GUI_Control_Count )");
-    dlvfprintf("DEBUG: [%s, %d] ioi=%d, g_GUI_Control_Count=%d\n", __FILE__, __LINE__, ioi, g_GUI_Control_Count);
-    while ( ioi != g_GUI_Control_Count )
+    HERE("while ( ioi != g_CTRL_Control_Count )");
+    dlvfprintf("DEBUG: [%s, %d] ioi=%d, g_CTRL_Control_Count=%d\n", __FILE__, __LINE__, ioi, g_CTRL_Control_Count);
+    while ( ioi != g_CTRL_Control_Count )
     {
-        dlvfprintf("DEBUG: [%s, %d] CtrlTbl[%d].Hotkey=%d, InputCode=%d\n", __FILE__, __LINE__, ioi, gfp_GUI_Control_Table[ioi].Hotkey, InputCode);
-        if ( gfp_GUI_Control_Table[ioi].Hotkey == InputCode )
+        dlvfprintf("DEBUG: [%s, %d] CtrlTbl[%d].Hotkey=%d, InputCode=%d\n", __FILE__, __LINE__, ioi, gfp_CTRL_Control_Table[ioi].Hotkey, InputCode);
+        if ( gfp_CTRL_Control_Table[ioi].Hotkey == InputCode )
         {
-            HERE("( gfp_GUI_Control_Table[ioi].Hotkey == InputCode )");
+            HERE("( gfp_CTRL_Control_Table[ioi].Hotkey == InputCode )");
             *oiptr = ioi;
         }
 
@@ -56,9 +57,9 @@ int UI_ProcessInput_KD(int *oiptr)
     }
 
 
-    if ( InputCode != gfp_GUI_Control_Table[*oiptr].Hotkey )
+    if ( InputCode != gfp_CTRL_Control_Table[*oiptr].Hotkey )
     {
-        HERE("( InputCode != gfp_GUI_Control_Table[oi].Hotkey )");
+        HERE("( InputCode != gfp_CTRL_Control_Table[oi].Hotkey )");
         InputCode = KeyCode;
     }
 

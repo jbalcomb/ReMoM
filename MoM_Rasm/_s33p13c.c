@@ -4,8 +4,8 @@
 #include "ST_GUI.H"
 
 
-void MOUSE_Disable_CDraw(void)
+void MD_CDraw_Disable(void)
 {
-    g_MOUSE_CDraw_Save = g_MOUSE_CursorDraw;
-    g_MOUSE_CursorDraw = 0;
+    g_MD_CDraw_Save = g_MD_CursorDraw;
+    g_MD_CursorDraw = 0;
 }

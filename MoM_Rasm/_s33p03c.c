@@ -3,7 +3,7 @@
 
 #include "ST_GUI.H"
 
-int GUI_GetCursorIndex(void)
+int CR_GetIndex(void)
 {
-    return g_GUI_CurrentCursor;
+    return g_CRSR_Curr;
 }

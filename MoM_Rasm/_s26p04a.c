@@ -3,11 +3,11 @@
 
 #include "STU_DBG.H"
 
-extern unsigned int g_DrawScreenPage_SgmtAddr;
-extern unsigned int g_RenderScreenPage;
+extern unsigned int gsa_DSP_Addr;
+extern unsigned int g_RSP_Idx;
 
 extern void VGA_WaitSync(void);
-extern void VGA_SetDrawFrame(void);
+extern void VGA_Set_DSP_Addr(void);
 
 void VGA_PageFlip(void)
 {
@@ -15,7 +15,7 @@ void VGA_PageFlip(void)
     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_PageFlip()\n", __FILE__, __LINE__);
 #endif
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_RenderScreenPage: %u\n", __FILE__, __LINE__, g_RenderScreenPage);
+    dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
 #endif
 
 asm push es
@@ -23,8 +23,8 @@ asm push ds
 asm push si
 asm push di
 asm mov ax, 1
-asm sub ax, [g_RenderScreenPage]
-asm mov [g_RenderScreenPage], ax
+asm sub ax, [g_RSP_Idx]
+asm mov [g_RSP_Idx], ax
 asm shl ax, 1
 asm shl ax, 1
 asm shl ax, 1
@@ -39,7 +39,7 @@ asm inc dx
 asm mov al, bl
 asm out dx, al
 //casm call VGA_WaitSync
-//asm call VGA_SetDrawFrame
+//asm call VGA_Set_DSP_Addr
 asm pop di
 asm pop si
 asm pop ds
@@ -48,14 +48,14 @@ asm pop es
 
     VGA_WaitSync();
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_RenderScreenPage: %u\n", __FILE__, __LINE__, g_RenderScreenPage);
+    dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
 #endif
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_DrawScreenPage_SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_DrawScreenPage_SgmtAddr);
+    dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
 #endif
-    VGA_SetDrawFrame();  // _s26p02.asm
+    VGA_Set_DSP_Addr();  // _s26p02.asm
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_DrawScreenPage_SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_DrawScreenPage_SgmtAddr);
+    dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
 #endif
 
 #ifdef DEBUG

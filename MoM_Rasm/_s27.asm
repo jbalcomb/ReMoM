@@ -7,7 +7,7 @@ TITLE _s27.asm FLIC_Draw_...
 ;ScreenPage_Y
 
 EXTRN g_EMM_PageFrame_Base_Address:WORD
-EXTRN g_DrawScreenPage_SgmtAddr:WORD
+EXTRN gsa_DSP_Addr:WORD
 ;VGA_WriteMapMasks3
 ;EXTRN g_VGA_WriteMapMasks:WORD
 EXTRN gsa_ReplacementColors:WORD
@@ -78,7 +78,7 @@ proc FLIC_Draw
     shl ax, 1
     add ax, bx                              ; * 5 as a segment address = * 80 total bytes which,
                                             ; since each byte is 4 pixels, equals the draw row
-    add ax, [g_DrawScreenPage_SgmtAddr]
+    add ax, [gsa_DSP_Addr]
     mov es, ax
     mov ax, [bp+ScreenPage_X]
     mov bx, ax
@@ -254,7 +254,7 @@ proc FLIC_Draw_R
     shl ax, 1
     add ax, bx ; * 5 as a segment address = * 80 total bytes which,
     ; since each byte is 4 pixels, equals the draw row
-    add ax, [g_DrawScreenPage_SgmtAddr]
+    add ax, [gsa_DSP_Addr]
     mov es, ax
     mov ax, [bp+ScreenPage_X]
     mov bx, ax
@@ -727,7 +727,7 @@ loc_1EB13:
     shl ax, 1
     add ax, bx ; * 5 as a segment address = * 80 total bytes which,
     ; since each byte is 4 pixels, equals the draw row
-    add ax, [g_DrawScreenPage_SgmtAddr]
+    add ax, [gsa_DSP_Addr]
     mov es, ax
     mov ax, [bp+ScreenPage_X]
     mov bx, ax
@@ -941,7 +941,7 @@ proc FLIC_Draw_EMM_R
     shl ax, 1
     add ax, bx ; * 5 as a segment address = * 80 total bytes which,
     ; since each byte is 4 pixels, equals the draw row
-    add ax, [g_DrawScreenPage_SgmtAddr]
+    add ax, [gsa_DSP_Addr]
     mov es, ax
     mov ax, [bp+ScreenPage_X]
     mov bx, ax

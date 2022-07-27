@@ -40,8 +40,8 @@ void FLIC_Draw_C(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int
     unsigned int DstOfst;
     unsigned int SrcSgmt;
     unsigned int SrcOfst;
-    unsigned char _FAR * fprSrc;
-    unsigned char _FAR * fprDst;
+    unsigned char _FAR * fptrSrc;
+    unsigned char _FAR * fptrDst;
     unsigned char _FAR * fptrFlic;
 	byte writemask;
     int tmp_FlicWidth;
@@ -58,7 +58,7 @@ void FLIC_Draw_C(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int
 
     //fptrFlic = (unsigned char *) MK_FP(FlicSgmt, FlicOfst);
 
-    DstSgmt = g_DrawScreenPage_SgmtAddr + (ScreenPage_Y * 4) + ScreenPage_Y;
+    DstSgmt = gsa_DSP_Addr + (ScreenPage_Y * 4) + ScreenPage_Y;
     DstOfst = ScreenPage_X / 4;
     SrcOfst = FlicOfst;
     SrcSgmt = FlicSgmt;

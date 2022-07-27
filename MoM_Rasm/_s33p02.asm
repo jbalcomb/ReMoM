@@ -3,9 +3,9 @@ TITLE _s33p.asm GUI_FindWindow
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_CurrentCursor:WORD
-EXTRN g_GUI_CursorOffset:WORD
-EXTRN g_GUI_PrevCursor:WORD
+EXTRN g_CRSR_Curr:WORD
+EXTRN g_CRSR_Offset:WORD
+EXTRN g_CRSR_Prev:WORD
 EXTRN g_GUI_WindowCount:WORD
 EXTRN g_GUI_Windows:WORD
 
@@ -45,8 +45,8 @@ proc GUI_FindWindow
 ;    assume es:dseg
     assume es:DGROUP
 
-    mov ax, [g_GUI_CurrentCursor]
-    mov [g_GUI_PrevCursor], ax
+    mov ax, [g_CRSR_Curr]
+    mov [g_CRSR_Prev], ax
 
     mov bx, [g_GUI_Windows]
     mov cx, [g_GUI_WindowCount]
@@ -83,10 +83,10 @@ loc_23FC8:
 loc_23FCD:
 ;    mov ax, [bx+GUI_WINDOW.Cursor_Offset]
     mov ax, [bx+2]
-    mov [g_GUI_CursorOffset], ax
+    mov [g_CRSR_Offset], ax
 ;    mov ax, [bx+GUI_WINDOW.Cursor_Index]
     mov ax, [bx]
-    mov [g_GUI_CurrentCursor], ax
+    mov [g_CRSR_Curr], ax
 
     pop es
     assume es:nothing

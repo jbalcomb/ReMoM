@@ -47,7 +47,7 @@ int DISK_FileFind(const char *pathname, char *Read_Buffer)
 //     dlvfprintf("DEBUG: [%s, %d] bkup_DS: %d\n", __FILE__, __LINE__, bkup_DS);
 // #endif
 
-    MOUSE_Disable_CDraw();
+    MD_CDraw_Disable();
 
 // #ifdef DEBUG
 //     //dta = _dos_getdta();
@@ -120,13 +120,13 @@ int DISK_FileFind(const char *pathname, char *Read_Buffer)
     // {
     //     Read_Buffer[0] = '\0';
     //     Ret_val = e_ST_FAILURE;
-    //     MOUSE_CDraw_Restore();
+    //     MD_CDraw_Restore();
     // }
 
 Failure:
 //    HERE("Failure");
     Read_Buffer[0] = '\0';
-    MOUSE_CDraw_Restore();
+    MD_CDraw_Restore();
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: DISK_FileFind()\n", __FILE__, __LINE__);
 #endif
@@ -170,7 +170,7 @@ Success:
 
     _DS = bkup_DS;
 
-    MOUSE_CDraw_Restore();
+    MD_CDraw_Restore();
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: DISK_FileFind(pathname=%s, Read_Buffer=%s)\n", __FILE__, __LINE__, pathname, Read_Buffer);

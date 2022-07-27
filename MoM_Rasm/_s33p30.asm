@@ -2,10 +2,10 @@ TITLE _s33p30.asm GUI_SaveCursorArea_RSP
 
 .MODEL LARGE, C
 
-EXTRN g_GUI_CurrentCursor:WORD
-EXTRN g_GUI_HaveAreaSave:WORD
-EXTRN g_RenderScreenPage:WORD
-EXTRN g_Cursor_Save_Main:WORD
+EXTRN g_CRSR_Curr:WORD
+EXTRN g_CRSR_HaveSave:WORD
+EXTRN g_RSP_Idx:WORD
+EXTRN g_CRSR_Save_RSP:WORD
 
 .CODE
 ;segment seg033 byte public 'CODE' use16
@@ -13,9 +13,9 @@ EXTRN g_Cursor_Save_Main:WORD
 ;    ;org 6
 ;    assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 
-PUBLIC GUI_SaveCursorArea_RSP
+PUBLIC CRL_Save_RSP
 
-proc GUI_SaveCursorArea_RSP
+proc CRL_Save_RSP
 
     Width_Bytes  = byte ptr -6
     Height_Lines = word ptr -4
@@ -37,10 +37,10 @@ proc GUI_SaveCursorArea_RSP
     ;assume ds:dseg
     assume ds:DGROUP
 
-    cmp [g_GUI_CurrentCursor], 0
+    cmp [g_CRSR_Curr], 0
     jnz short loc_24673
 
-    cmp [g_GUI_HaveAreaSave], 0
+    cmp [g_CRSR_HaveSave], 0
     jz short loc_2466D
 
     pop ds
@@ -52,7 +52,7 @@ proc GUI_SaveCursorArea_RSP
     ret
 
 loc_2466D:
-    mov [g_GUI_HaveAreaSave], 1
+    mov [g_CRSR_HaveSave], 1
     
 loc_24673:
     mov ax, ds
@@ -62,7 +62,7 @@ loc_24673:
     ;assume es:dseg
     assume es:DGROUP
 
-    mov ax, [g_RenderScreenPage]
+    mov ax, [g_RSP_Idx]
     mov ah, al
     sub al, al
     shl ax, 1
@@ -85,10 +85,10 @@ loc_2469C:
     mul cx
     add si, ax
     sub di, di
-;    mov [word ptr es:g_Cursor_Save_Main.ScreenPage_Offset+di], si
-    mov [word ptr es:g_Cursor_Save_Main+di], si
+;    mov [word ptr es:g_CRSR_Save_RSP.ScreenPage_Offset+di], si
+    mov [word ptr es:g_CRSR_Save_RSP+di], si
     add di, 2
-    mov es:g_Cursor_Save_Main[di], bx
+    mov es:g_CRSR_Save_RSP[di], bx
     add di, 2
     mov [bp+Width_Bytes], bl
     mov ax, [bp+Y_Pos]
@@ -99,7 +99,7 @@ loc_2469C:
     sub bx, ax
 
 loc_246CA:
-    mov es:g_Cursor_Save_Main[di], bx
+    mov es:g_CRSR_Save_RSP[di], bx
     add di, 2
     mov [bp+Height_Lines], bx
     mov [bp+ScreenPage_Offset], si
@@ -119,7 +119,7 @@ loc_246CA:
 
 @@LoopWords:
     lodsw
-    mov es:g_Cursor_Save_Main[di], ax
+    mov es:g_CRSR_Save_RSP[di], ax
     add di, 2
     add si, 4Eh
     loop @@LoopWords
@@ -146,7 +146,7 @@ loc_246CA:
     pop bp
     ret
 
-endp GUI_SaveCursorArea_RSP
+endp CRL_Save_RSP
 
 ;ends seg033
 
