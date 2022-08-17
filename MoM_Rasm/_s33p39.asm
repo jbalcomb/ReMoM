@@ -13,6 +13,10 @@ EXTRN g_RSP_Idx:WORD
 
 PUBLIC CRL_Draw_RSP
 
+; BX = X_Pos
+; CX = Y_Pos
+; DX = g_CRSR_Curr
+
 proc CRL_Draw_RSP
 
     Draw_Height = word ptr -4
@@ -87,7 +91,7 @@ ShiftMaskBitIntoPosition:
     loop ShiftMaskBitIntoPosition
 
 RegMask_RowOffset_ClipHeight:
-    mov dx, 3C4h
+    mov dx, 3C4h ;SC_INDEX
     mov al, 2 ;e_SC_MAPMASK
     out dx, al
 
@@ -99,10 +103,10 @@ RegMask_RowOffset_ClipHeight:
     sub cx, bx
     jbe @@Done
 
-    cmp cx, 11h
+    cmp cx, 11h  ; 17d
     js ItrLine_SrcSgmtOfst
 
-    mov cx, 10h
+    mov cx, 10h  ; 16d
 
 ItrLine_SrcSgmtOfst:
     mov bl, cl
@@ -115,7 +119,7 @@ ItrLine_SrcSgmtOfst:
 
 LoopPlanes:
     mov di, dx
-    mov dx, 3C5h
+    mov dx, 3C5h ;SC_DATA
     mov al, ah
     out dx, al
     

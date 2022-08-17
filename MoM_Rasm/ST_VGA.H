@@ -57,15 +57,19 @@ jz @@waitsync; \
 #define e_SC_DATA    0x03C5
 #define e_SC_MAPMASK   0x02
 
+#define MINX      0
+#define MINY      0
+#define MIDX    158
+#define MIDY    100
+#define MAXX    320
+#define MAXY    200
+#define PIXX    320
+#define PIXY    200
+#define LINE_STRIDE  80
 
-#define MINX 0
-#define MINY 0
-#define MIDX 158
-#define MIDY 100
-#define MAXX 320
-#define MAXY 200
-#define PIXX 320
-#define PIXY 200
+#define IBM_PC_VGA_GRAPHICS_MODE_VIDEO_RAM  0xA000
+#define VRAM_BASE                           0xA000
+
 
 
 extern int g_VGA_Min_X;                             // dseg:41B2

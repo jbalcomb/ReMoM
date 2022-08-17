@@ -17,7 +17,7 @@ void IN_Init(int Input_Type)
     /*
         Input_Type: {0, 1, 2, n}
     */
-    if ( Input_Type == 1 )
+    if ( Input_Type == 1 )  // ALWAYS 1 Hard-coded 'Mouse Driver - Enabled'
     {
         GUI_SetWindows(1, g_GUI_VirtualScreen);  // _s33p01  ST_GUI.H
         g_MD_Hardware = MD_Init();  // _s33p07  int MOUSE_Init(void)  ST_GUI.H

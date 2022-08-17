@@ -17,6 +17,10 @@ GET_WORD(fp_FliHead)
 
 ?
 #define lbxgfx_get_paloffs(_data_) GET_LE_16(&((_data_)[0x0e]))
+J:\STU\DBWD\developc\1oom-master\src\bits.h
+#define GET_LE_16(_p_) (*((uint16_t const *)(_p_)))
+#define GET_LE_32(_p_) (*((uint32_t const *)(_p_)))
+
 ?
 INCLUDE/DOS.H:#define peek( a,b )( *( (int  far* )MK_FP( (a ),( b )) ))
 INCLUDE/DOS.H:#define peekb( a,b )( *( (char far* )MK_FP( (a ),( b )) ))
@@ -27,19 +31,23 @@ INCLUDE/DOS.H:#define peekb( a,b )( *( (char far* )MK_FP( (a ),( b )) ))
 //    fh_Width = *( (word  far* )MK_FP( SAMB_data_FLIC_HDR, 0x00 ));
 //    fh_EmmHandleNumber = *( (byte  far* )MK_FP( SAMB_data_FLIC_HDR, 0x0A ));
 
-#define FPGET_WORD(_fp_,_rof_) ( *( (word _FAR *)MK_FP( FP_SEG(_fp_), FP_OFF(_fp)+_rof_ ) ) )
+#define FPGET_WORD(_fp_,_relofs_) ( *( (word _FAR *)MK_FP( FP_SEG(_fp_), FP_OFF(_fp)+_relofs_ ) ) )
 
 #define FPEEKB( _sgmt_,_ofst_) ( *(( byte _FAR *)MK_FP((_sgmt_),(_ofst_))) )
 #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
 #define FPEEKDW(_sgmt_,_ofst_) ( *((dword _FAR *)MK_FP((_sgmt_),(_ofst_))) )
 
-#define GET_BYTE(_p_) (*((byte const *)(_p_)))
-#define GET_WORD(_p_) (*((word const *)(_p_)))
-#define GET_DWORD(_p_) (*((dword const *)(_p_)))
+#define FPOKEB( _sgmt_,_ofst_,_val_) ( (*(( byte _FAR *)MK_FP((_sgmt_),(_ofst_)))) = (_val_) )
+#define FPOKEW( _sgmt_,_ofst_,_val_) ( (*(( word _FAR *)MK_FP((_sgmt_),(_ofst_)))) = (_val_) )
+#define FPOKEDW(_sgmt_,_ofst_,_val_) ( (*((dword _FAR *)MK_FP((_sgmt_),(_ofst_)))) = (_val_) )
 
-#define SET_BYTE(_p_,_v_) ((*((byte *)(_p_))) = (_v_))
-#define SET_WORD(_p_,_v_) ((*((word *)(_p_))) = (_v_))
-#define SET_DWORD(_p_,_v_) ((*((dword *)(_p_))) = (_v_))
+#define GET_BYTE(_p_)  ( *((byte  const *)(_p_)) )
+#define GET_WORD(_p_)  ( *((word  const *)(_p_)) )
+#define GET_DWORD(_p_) ( *((dword const *)(_p_)) )
+
+#define SET_BYTE(_p_,_v_)  ( (*((byte  *)(_p_))) = (_v_) )
+#define SET_WORD(_p_,_v_)  ( (*((word  *)(_p_))) = (_v_) )
+#define SET_DWORD(_p_,_v_) ( (*((dword *)(_p_))) = (_v_) )
 
 
 #endif /* STU_BITS_H */

@@ -6,7 +6,9 @@
     Initialized Data
 */
 
+
 // dseg:205E GUI_MainMenuWindow GUI_WINDOW <Crsr_Normal, 0, 0, 0, 319, 199>
+//struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 319, 199, 0};    // dseg:205E
 // dseg:206A align 4
 int CRP_Unused_Anim_Var = 0; // dseg:206C CRP_Unused_Anim_Var
 // dseg:206E __ovrbuffer dw 1000h                    ; declared in overlay.lib\OVRBUFF
@@ -52,7 +54,7 @@ char g_LbxNm_TERRSTAT[] = "TERRSTAT";       // dseg:28D2
 /*
     ? next section all for settings screen ?
 */
-struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {0, 0, 0, 319, 199, 0}; // dseg:205E
+struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 0, 319, 199}; // dseg:205E
 int GUI_LoadSave_State = -1; // dseg:290A  ; 3 indicates returning from the settings screen
 // dseg:290C GUI_Settings_Tops dw    53,   64,   75,  102,  113,  124,  135,  153,  146,  157,  167,  163,  174
 // dseg:2926 COL_Settings db 4 dup(62h)

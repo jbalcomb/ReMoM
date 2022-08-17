@@ -35,24 +35,6 @@
 
 
 
-
-enum Cursor_Types {
-    Crsr_None,
-    Crsr_Normal,
-    Crsr_CastBase,
-    Crsr_RedCross,
-    Crsr_Ranged,
-    Crsr_Melee,
-    Crsr_Hourglas,
-    Crsr_MoveHat,
-    Crsr_Empty,
-    Crsr_CastAnim,
-    Crsr_CastAnim2,
-    Crsr_CastAnim3,
-    Crsr_CastAnim4,
-    Crsr_CastAnim5
-};
-
 enum GUI_Controls
 {
     Ctrl_ClickButton  = 0,
@@ -79,22 +61,6 @@ struct s_GUI_WINDOW {
     int Right;
     int Bottom;
 };
-
-struct s_Cursor_Area_Copy {                  // sizeof=0x186  390 bytes (2+2+2+384)
-    /*00h*/ int ScreenPageOffset;            // e.g., (X,Y)=(158,100); ColumnOffset=(158//4=39); RowOffset=(100*80=8000); PageOffset=(39+8000)=8039
-    /*02h*/ int Width_Bytes;                 // Width in Addresses  (~=Pixels/4)
-    /*04h*/ int Height_Lines;                // Height in Pixels  ... Rows ... "Lines" as in "Scan-Lines"
-    /*06h*/ unsigned char Saved_Image[384];  // ? 384 / 16 = 24 ?
-};
-/*
-?
-    810 + 390 = 1200
-    2 * 390 = 780
-    3 * 390 = 1170
-    1200 - 1170 = 30
-    mayhap it is actually 400 * 3 = 1200?
-?
-*/
 
 struct s_GUI_CTRL //; (sizeof=0x26)
 {
@@ -171,7 +137,7 @@ extern int g_CRSR_HaveSave;                // dseg:43A8
 extern int g_MD_InitY;                   // dseg:43AC
 extern int g_MD_InitX;                   // dseg:43AA
 extern int g_MD_CDraw_Save;              // dseg:43AE
-extern struct s_GUI_WINDOW *g_GUI_Windows;  // dseg:43B0
+extern struct s_GUI_WINDOW * g_GUI_Windows;  // dseg:43B0
 // extern struct s_Cursor_Area_Copy Cursor_Save_Main; //dseg:43B2 
 // // dseg:4538  REUSABLE_810bytes   db 32Ah dup(0)
 extern unsigned int g_CRSR_Save_RSP[];

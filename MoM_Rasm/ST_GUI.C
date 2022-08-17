@@ -24,7 +24,7 @@ int g_CRSR_HaveSave = 0;                 // dseg:43A8
 int g_MD_InitX = 158;                    // dseg:43AA
 int g_MD_InitY = 100;                    // dseg:43AC
 int g_MD_CDraw_Save = 0;                 // dseg:43AE
-struct s_GUI_WINDOW *g_GUI_Windows;         // dseg:43B0
+struct s_GUI_WINDOW * g_GUI_Windows;         // dseg:43B0
 // extern struct s_Cursor_Area_Copy Cursor_Save_Main; //dseg:43B2 
 // // dseg:4538  REUSABLE_810bytes   db 32Ah dup(0)
 unsigned int g_CRSR_Save_RSP[600];
@@ -48,7 +48,7 @@ dseg:4D28 FF FF                         GUI_EmptyTitleHelp dw 0FFFFh
 */
 int g_GUI_DialogDirections = 0;             // dseg:4D2A
 int g_SCRN_Redraw_Timer = 2;                 // dseg:4D2C
-struct s_GUI_WINDOW g_GUI_VirtualScreen[1] = {0, 0, 0, 319, 199, 0};    // dseg:4D2E
+struct s_GUI_WINDOW g_GUI_VirtualScreen[1] = {0, 0, 0, 0, 319, 199};    // dseg:4D2E
 int g_CTRL_MouseFocusCtrl = 0;               // dseg:4D3A
 // dseg:4D3C GUI_MouseHighlight dw 1
 // dseg:4D3E GUI_NoDialogWrap dw 0

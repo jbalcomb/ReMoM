@@ -218,7 +218,11 @@ void test_FLIC_Draw_XY(void);
 void test_Screen_MainMenu(void);
 void test_SCREEN_Menu(void);
 
-void test_VGA_DrawCursor_RSP(void);
+void test_CRL_Draw_RSP(void);
+
+void test_CR_Draw_C(void);
+
+
 
 /*
     J:\STU\DBWD\developc\Animator\Vpaint\COMMON\ptr.h
@@ -248,6 +252,7 @@ void *long_to_pt();
 
 int main(void)
 {
+    Debug_Log_Startup();
 
     // test_defines();
 
@@ -283,7 +288,7 @@ int main(void)
 
     // test_EMM_Load_LBX_File();
 
-    test_MGC_Main();
+//    test_MGC_Main();
 
     // TBD: test_VGA_LoadPalette();
 
@@ -295,10 +300,14 @@ int main(void)
 
     //test_binary_math_multivalue();
 
-//    test_VGA_DrawCursor_RSP();
+//    test_CRL_Draw_RSP();
 
 //    test_draw_flic_frame();
 
+    test_CR_Draw_C();  // TST_CRSR.C
+
+
+    Debug_Log_Shutdown();
     return 0;
 }
 
@@ -1769,18 +1778,5 @@ void test_SCREEN_Menu(void)
     /*
         END: SCREEN_Menu()
     */
-
-}
-
-/*
-_s33p37         GUI_DrawCursor_RSP |-> CRL_Draw_RSP
-_s33p38         GUI_DrawCursor_DSP |-> VGA_DrawCursor_DSP
-_s33p39         CRL_Draw_RSP
-_s33p40         VGA_DrawCursor_DSP
-*/
-void test_VGA_DrawCursor_RSP(void)
-{
-
-    CRL_Draw_RSP();
 
 }

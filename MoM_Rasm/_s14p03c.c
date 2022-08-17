@@ -43,7 +43,7 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
 
     gsa_Palette = SA_Allocate_Space(64);               // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
 
-    gsa_PaletteFlags = gsa_Palette + 48;               // 48 paragaphs = 48 * 16 = 768
+    gsa_PaletteFlags = gsa_Palette + 48;               // 48 paragaphs = 48 * 16 = 768 bytes
 
     gsa_PaletteSaved = SA_Allocate_Space(48);          // 48 paragraphcs = 48 * 16 bytes = 768 bytes
 

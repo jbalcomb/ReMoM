@@ -8,6 +8,8 @@ MGC_MAIN.OBJ +
 MGC_DEF.OBJ +
 MOM_DEF.OBJ +
 Y4_VL.OBJ +
+TST_STGE.OBJ +
+TST_CRSR.OBJ +
 TST_FLI.OBJ +
 ST_CRSR.OBJ +
 ST_CTRL.OBJ +
@@ -24,6 +26,9 @@ ST_TXT.OBJ +
 ST_VGA.OBJ +
 FileSize.obj +
 LbxLdEt1.obj +
+CR_Draw.obj + 
+CR_Store.obj + 
+CR_Resto.obj + 
 _o57p01c.obj +
 _o60p01c.obj +
 _o60p02c.obj +
@@ -178,7 +183,9 @@ _s33p33.obj +
 _s33p34.obj +
 _s33p35.obj +
 _s33p37.obj +
+_s33p37c.obj +
 _s33p38.obj +
+_s33p38c.obj +
 _s33p39.obj +
 _s33p40.obj +
 _s34p01c.obj +

@@ -24,6 +24,8 @@ void SCRN_SimplePageFlip(void)
     GUI_FindWindow(mouse_x, mouse_y);
     CRL_Save_DSP(mouse_x, mouse_y);
     CRH_Draw_DSP(mouse_x, mouse_y);
+    //CRH_Draw_DSP_A(mouse_x, mouse_y);
+    //CRH_Draw_DSP_C(mouse_x, mouse_y);
 
     VGA_PageFlip();  // _s26p04a.c
     

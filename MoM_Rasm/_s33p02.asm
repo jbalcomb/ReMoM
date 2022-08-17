@@ -51,8 +51,8 @@ proc GUI_FindWindow
     mov bx, [g_GUI_Windows]
     mov cx, [g_GUI_WindowCount]
     dec cx                                  ; `:` index = {0, ..., count-1}
-
     jz short loc_23FCD
+    
     mov dx, cx
     mov ax, 0Ch                             ; sizeof s_GUI_WINDOW
     mul dx

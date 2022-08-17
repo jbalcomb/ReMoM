@@ -113,6 +113,55 @@ NOTE: a function that has **any** in-line assembly code (`asm ...`) should be na
 
 
 
+
+## MIV (Most Important Variable)
+MGC_DEF
+    g_GUI_MainMenuWindow[]; // dseg:205E
+
+WZD_DEF
+MOM_DEF
+ST_DEF
+
+ST_GUI
+int g_CRSR_HaveSave = 0;                // dseg:43A8
+
+ST_VGA
+unsigned int gsa_Cursor_Array;          // dseg:A81A  ; 500h into the palette entry
+
+
+VGA_DAC_Init()
+    strcpy(g_PaletteLbxFileName, PaletteLbxFileName);
+
+    gsa_FontStyleData = LBXE_LoadSingle(PaletteLbxFileName, 0);
+
+    gsa_BorderStyleData = LBXE_LoadSingle(PaletteLbxFileName, 1);
+
+    gsa_PaletteLbxEntry = SA_Allocate_Space(348);      // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
+
+    gsa_Palette = SA_Allocate_Space(64);               // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
+
+    gsa_PaletteFlags = gsa_Palette + 48;               // 48 paragaphs = 48 * 16 = 768 bytes
+
+    gsa_PaletteSaved = SA_Allocate_Space(48);          // 48 paragraphcs = 48 * 16 bytes = 768 bytes
+
+    gsa_ReplacementColors = SA_Allocate_Space(384);    // 348 paragraphcs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
+
+    gsa_VGAFILEH_Header = SA_Allocate_Space(2);        // 2 paragraphs = 2 * 16 bytes = 32 bytes
+
+    gsa_IntensityScaleTable = SA_Allocate_Space(2);    // 96 paragraphs = 96 * 16 = 1536 bytes / 256 = 6
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##### seg001    MGC_DEF.H
 _s01p01         MGC_MAIN.C                  int MGC_Main(void)                  main                int main(argc, argv)
 _s01p03c.c      GAME_MainMenu               void GAME_MainMenu(void)
@@ -286,7 +335,7 @@ _s24p06c.c      DBG_IsDisabled              int DBG_IsDisabled(void);
 
 ##### seg026    ST_VGA.H    ALL ASM
 _s26p01         VGA_SetDirectDraw           void VGA_SetDirectDraw(void);
-_s26p02.asm     VGA_SetDrawFrame            void VGA_SetDrawFrame(void);
+_s26p02.asm     VGA_Set_DSP_Addr            void VGA_SetDrawFrame(void);
 _s26p03         VGA_IsDefaultDrawScreenPage  int VGA_IsDefaultDrawScreenPage(void)
 _s26p04a.c      VGA_PageFlip                void VGA_PageFlip(void)
 
