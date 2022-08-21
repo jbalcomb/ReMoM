@@ -53,7 +53,7 @@ void GAME_MainMenu(void)
         HERE("Screen_Action = SCREEN_Menu();");
         Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
         // DEBUG(JimBalcomb): here, the screen is rendered correctly - ? happens after input ?
-        
+
 #ifdef DEBUG
         //Screen_Action = 3;  // DEBUG: default to `Quit To DOS`
         dlvfprintf("DEBUG: [%s, %d] Screen_Action: %d\n", __FILE__, __LINE__, Screen_Action);
@@ -65,27 +65,37 @@ void GAME_MainMenu(void)
         switch (Screen_Action)
         {
             case 0:  // "Continue"
+#ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 0\n", __FILE__, __LINE__);
+#endif
                 // SND_Stop_Music()
                 // j_GAME_WizardsLaunch(8)  // e_SAVE9GAM
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 1:  // "Load Game"
+#ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 1\n", __FILE__, __LINE__);
+#endif
                 // j_GAME_LoadSaveScreen
                 break;
             case 2:  // "New Game"
+#ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 2\n", __FILE__, __LINE__);
+#endif
                 // j_GAME_New_Create
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 3:  // "Quit To DOS"
+#ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 3\n", __FILE__, __LINE__);
+#endif
                 flag_quit = ST_TRUE;
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 4:  // "Hall Of Fame"
+#ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] Menu Event 4\n", __FILE__, __LINE__);
+#endif
                 // j_GAME_Hall_of_Fame
                 // j_GAME_PrepareCredits
                 // jmp  short $+2 ... somehow this jumps back to @@LoopWhileZero

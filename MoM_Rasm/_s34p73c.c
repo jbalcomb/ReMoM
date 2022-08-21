@@ -20,9 +20,9 @@ void CTRL_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
         {
             CRL_Restore_RSP();
             VGA_SetDirectDraw();
-            g_CTRL_FocusedControl = tmp_SI;
+            g_CTRL_Focused = tmp_SI;
             CTRL_DrawControl(tmp_SI, 1);
-            g_CTRL_FocusedControl = -1;
+            g_CTRL_Focused = -1;
             VGA_Set_DSP_Addr();
             CRL_Save_RSP(tmp_DI, Y_Pos);
             CRH_Draw_RSP(tmp_DI, Y_Pos);
@@ -32,14 +32,14 @@ void CTRL_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
         {
             MD_CDraw_Disable();
 
-            if ( tmp_SI != g_CTRL_FocusedControl )
+            if ( tmp_SI != g_CTRL_Focused )
             {
-                if ( g_CTRL_FocusedControl != -1 )
+                if ( g_CTRL_Focused != -1 )
                 {
                     /*
                         Redraw Previous & Draw Current
                     */
-                    if ( g_CTRL_FocusedControl != tmp_SI)
+                    if ( g_CTRL_Focused != tmp_SI)
                     {
                         CRL_Restore_RSP();
 
@@ -59,21 +59,21 @@ void CTRL_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
 
                         */
 
-                        if ( (gfp_CTRL_Control_Table[g_CTRL_FocusedControl].Ctrl_Type != Ctrl_MStateButton)
+                        if ( (gfp_CTRL_Control_Table[g_CTRL_Focused].Ctrl_Type != Ctrl_MStateButton)
                             && (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type == Ctrl_MStateButton) )
                         {
-                            if ( (gfp_CTRL_Control_Table[g_CTRL_FocusedControl].Ctrl_Type != Ctrl_DialogLine)
+                            if ( (gfp_CTRL_Control_Table[g_CTRL_Focused].Ctrl_Type != Ctrl_DialogLine)
                             && (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type == Ctrl_DialogLine) )
                             {
                                 if ( gfp_CTRL_Control_Table[tmp_SI].Selectable == 1 )
                                 {
-                                    CTRL_DrawControl(g_CTRL_FocusedControl, 0);
+                                    CTRL_DrawControl(g_CTRL_Focused, 0);
                                 }
                             }
                         }
 
                         // @@DrawControl:
-                        g_CTRL_FocusedControl = tmp_SI;
+                        g_CTRL_Focused = tmp_SI;
                         CTRL_DrawControl(tmp_SI, 1);
 
                         if ( gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type != Ctrl_EditBox )
@@ -91,7 +91,7 @@ void CTRL_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
                 else
                 {
                     CRL_Restore_RSP();
-                    g_CTRL_FocusedControl == tmp_SI;
+                    g_CTRL_Focused == tmp_SI;
                     CTRL_DrawControl(tmp_SI, 1);
 
                     if ( gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type != Ctrl_EditBox )

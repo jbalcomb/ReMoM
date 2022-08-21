@@ -41,7 +41,7 @@ void IN_Init(int Input_Type)
     
     IN_CRL_Save_RSP(158, 100);
     g_IN_Skip = 0;
-    g_CTRL_FocusedControl = -1;  // ST_UNDEFINED
+    g_CTRL_Focused = -1;  // ST_UNDEFINED
     g_IN_EscapeOverride = 0;
     CTRL_Clear();  // _s34p57  ST_GUI.H
     

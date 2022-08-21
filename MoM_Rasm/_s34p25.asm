@@ -51,7 +51,7 @@ proc GUI_MouseOverControl
     Control_Right   = word ptr -0Ah
     Control_Top     = word ptr -8
     Control_Left    = word ptr -6
-    Mouse_At        = word ptr -4
+    CtrlIdx        = word ptr -4
     Y_Pos           = word ptr -2
 
     push bp
@@ -65,7 +65,7 @@ proc GUI_MouseOverControl
     call MD_GetY
     mov [bp+Y_Pos], ax
 
-    mov [bp+Mouse_At], 0
+    mov [bp+CtrlIdx], 0
 
     push [bp+Y_Pos]
     push di
@@ -128,7 +128,7 @@ loc_27A60:
     cmp ax, [bp+Control_Bottom]
     jg short loc_27AE2
 
-    mov [bp+Mouse_At], si
+    mov [bp+CtrlIdx], si
     jmp short loc_27AF0
 
 loc_27AE2:
@@ -142,7 +142,7 @@ loc_27AE7:
     jmp loc_27A60
 
 loc_27AF0:
-    mov ax, [bp+Mouse_At]
+    mov ax, [bp+CtrlIdx]
 
     jmp short $+2
 

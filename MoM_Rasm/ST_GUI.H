@@ -152,7 +152,7 @@ extern unsigned int g_CRSR_Save_DSP[];
 extern int g_SCRN_RedrawFn_Present;          // dseg:4D1C
 extern int g_GUI_Last_Key_Control;          // dseg:4D1E
 extern int g_MD_Hardware;                // dseg:4D20 
-extern int g_CTRL_FocusedControl;            // dseg:4D22
+extern int g_CTRL_Focused;            // dseg:4D22
 /*
 dseg:4D24 01 00                         GUI_BtnClk_TextLeft dw 1                ; added to the Left position of text drawn on buttons when clicked
 dseg:4D26 FF FF                         GUI_BtnClk_TextTop dw -1                ; added to the Top position of text drawn on buttons when clicked

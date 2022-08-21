@@ -43,10 +43,16 @@ int UI_ProcessInput_KD(int *oiptr)
 #endif
     ioi = 1;
     HERE("while ( ioi != g_CTRL_Control_Count )");
+
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] ioi=%d, g_CTRL_Control_Count=%d\n", __FILE__, __LINE__, ioi, g_CTRL_Control_Count);
+#endif
+
     while ( ioi != g_CTRL_Control_Count )
     {
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] CtrlTbl[%d].Hotkey=%d, InputCode=%d\n", __FILE__, __LINE__, ioi, gfp_CTRL_Control_Table[ioi].Hotkey, InputCode);
+#endif
         if ( gfp_CTRL_Control_Table[ioi].Hotkey == InputCode )
         {
             HERE("( gfp_CTRL_Control_Table[ioi].Hotkey == InputCode )");

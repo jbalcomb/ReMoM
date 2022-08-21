@@ -9,11 +9,11 @@
 
 Return Value:
     ? Signed / Unsigned ?
-        ...depends on GUI_ProcessInput()
+        ...depends on IN_ProcessInput() s34p01
 e.g.,
     SCREEN_Menu() expects the return value to match the control index of one of the controls that it created
     So, one function creates controls to be selected, either for the mouse or the keyboard, with the mouse x, y, and button or the keyboard key character.
-    Then, this function return the index of the control that was found to fit the actual user input.
+    Then, this function returns the index of the control that was found to fit the actual user input.
 
 */
 

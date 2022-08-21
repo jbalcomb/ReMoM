@@ -92,14 +92,17 @@ Column_Loop:
     {
         itr_count++;
         //itr_count = ((itr_plane + 1) * (itr_width + 1) * (itr_height + 1));
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] itr_count: %d  itr_plane: %d  itr_width: %d  itr_height: %d\n", __FILE__, __LINE__, itr_count, itr_plane, itr_width, itr_height);
-
+#endif
         baito = pSrc[Src_Ofst++];
         if (baito != 0)  // Color Table Index Zero AKA TRANSPARENT
         {
             pDst[Dst_Ofst] = baito;
         }
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] %Fp[0x%04X (%u)]: 0x%02X (%u)\n", __FILE__, __LINE__, pDst, Dst_Ofst, Dst_Ofst, baito, baito);
+#endif
         Dst_Ofst += LINE_STRIDE;  // 80 = (320/4) = (SCREEN_WIDTH_PIXELS / PIXELS_PER_ADDRESS)
         itr_height--;
     }

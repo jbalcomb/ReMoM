@@ -12,10 +12,12 @@ unsigned int LBXE_LoadSingle(char *LbxName, int LbxEntryIndex)
     int LoadType;
     int LbxHdrFmt;
 
+#ifdef DEBUG
     if ( (strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntryIndex == 0) )
     {
         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBXE_LoadSingle(LbxName=%s, LbxEntryIndex=%d)\n", __FILE__, __LINE__, LbxName, LbxEntryIndex);
     }
+#endif
 
     SAMB_head = 0;
     LoadType = 0;

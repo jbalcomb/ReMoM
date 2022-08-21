@@ -105,6 +105,7 @@ void FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)
     // // movedata(FlicHdr_SgmtAddr, 0, unsigned dstseg, unsigned dstoff, sizeof(FLIC_Header));
     ST_MoveData((unsigned int)&FLIC_Header, 0, 0, FlicHdr_SgmtAddr, sizeof(FLIC_Header));
 
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Width                   = 0x%04X)\n", __FILE__, __LINE__, FLIC_Header.Width);
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Height                  = 0x%04X)\n", __FILE__, __LINE__, FLIC_Header.Height);
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Current_Frame           = 0x%04X)\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
@@ -114,6 +115,7 @@ void FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.EMM_Logical_Page_Number = 0x%02X)\n", __FILE__, __LINE__, FLIC_Header.EMM_Logical_Page_Number);
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.EMM_Logical_Page_Offset = 0x%04X)\n", __FILE__, __LINE__, FLIC_Header.EMM_Logical_Page_Offset);
     dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Palette_Header_Offset     = 0x%04X)\n", __FILE__, __LINE__, FLIC_Header.Palette_Header_Offset);
+#endif
 
     //memcpy(FLIC_Header, FlicHdr_SgmtAddr, 16);
 
@@ -239,16 +241,22 @@ asm {
 
         if ( Shading != 0 ) {
             HERE("( Shading != 0 )");
+#ifdef DEBUG
             dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_R(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+#endif
             FLIC_Draw_R(tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
         } else {
             HERE("( Shading == 0 )");
+#ifdef DEBUG
             dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_A(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+#endif
             FLIC_Draw_A(tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
         }
     } else {
         HERE("( FLIC_Header.EMM_Handle_Number != 0 )");
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_EMM(tmp_SI=%d, tmp_DI=%d, FlicHdr_SgmtAddr=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FlicHdr_SgmtAddr, Frame_Index);
+#endif
         //FLIC_Draw_EMM_A(tmp_SI, tmp_DI, FlicHdr_SgmtAddr, Frame_Index);
         //FLIC_Draw_EMM_A2(tmp_SI, tmp_DI, FlicHdr_SgmtAddr, Frame_Index);
         //FLIC_Draw_EMM_A3(tmp_SI, tmp_DI, FlicHdr_SgmtAddr, Frame_Index);

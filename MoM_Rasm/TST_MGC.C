@@ -6,7 +6,6 @@ Current State:
 Debug
 
 TST_MGC.C
-test_MGC_Main();
 MGC_MAIN.C
 mgc_main()
 
@@ -112,6 +111,7 @@ _s34p72 GUI_DrawControl
         -wrpt*  Nonportable pointer conversion.
 */
 #pragma warn -aus
+#pragma warn -eff
 #pragma warn -par
 
 //#include <stdlib.h>
@@ -200,7 +200,6 @@ void test_asciz_character_array(void);
 void test_SA_Allocate_Space(void);
 void test_SA_Allocate_MemBlk(void);
 
-void test_MGC_Main(void );
 void test_Hardware_Init(void);
 void test_VGA_DAC_Init(void);
 
@@ -288,8 +287,6 @@ int main(void)
 
     // test_EMM_Load_LBX_File();
 
-//    test_MGC_Main();
-
     // TBD: test_VGA_LoadPalette();
 
     //test_SimTexGameEngineFramework();
@@ -304,9 +301,11 @@ int main(void)
 
 //    test_draw_flic_frame();
 
-    test_CR_Draw_C();  // TST_CRSR.C
+//    test_CR_Draw_C();  // TST_CRSR.C
 
+    MGC_Main();
 
+    
     Debug_Log_Shutdown();
     return 0;
 }
@@ -1141,11 +1140,6 @@ void test_SA_Allocate_MemBlk(void)
 
     printf("DEBUG: test_SA_Allocate_MemBlk(): sgmt_addr == 0x%08X\n", sgmt_addr);
 
-}
-
-void test_MGC_Main(void )
-{
-    MGC_Main();
 }
 
 /*

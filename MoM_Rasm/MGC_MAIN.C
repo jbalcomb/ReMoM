@@ -41,11 +41,9 @@ Main Menu
 //int main(void)
 int MGC_Main(void)
 {
-    //printf("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
-    Debug_Log_Startup();
     //DBGLOG("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
     //TRACE(("message %d\n", 1));
-//    dlvfprintf("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
+    // dlvfprintf("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
     
     g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
 
@@ -62,20 +60,12 @@ int MGC_Main(void)
     /*
         SAVE.GAM
         for ( itr_SaveGamNbr = 1; itr_SaveGamNbr < 9; itr_SaveGamNbr++ )
-        
     */
 
     EMM_SetMinKB(EMM_MIN_KB);
     RAM_SetMinKB(RAM_MIN_KB);
 
-    /*
-
-        Hardware_Init()
-        EMM, AIL
-    */
-
     //Settings.InputType = 1;
-    
     // _s14p01c.c
     //int __cdecl __far Hardware_Init(int Input_Type, int Snd_Chnls, char *FontFile, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
     Hardware_Init(1, 2, GAME_FONT_FILE, 0, 0, 0, 0, 0, 0, 0, 0);  // Defaults for 'No Sound'
@@ -84,7 +74,7 @@ int MGC_Main(void)
         |-> VGA_SetModeY()
         |-> VGA_DAC_Init()
         |-> SND_Init()
-        |-> GUI_Init()
+        |-> IN_Init() |-> MD_Init()
         |-> RNG_TimerSeed()
         |-> VGA_Set_DSP_Addr()
     */
@@ -95,7 +85,7 @@ int MGC_Main(void)
         j_LBX_Tables_Init();  // stub057
             |-> LBX_Tables_Init(6100);  // ovr057
     */
-    LBX_Tables_Init(6100);
+    LBX_Tables_Init(6100);  // TODO(JimBalcomb,20220818): move whatever this 6100 is to a manifest constant
     
     IN_SetEscOverride();
 
@@ -154,9 +144,9 @@ int MGC_Main(void)
     //GAME_QuitWithReport();
     Quit("Thank you for playing Master of Magic!$");
 
-    //printf("DEBUG: [%s, %d] END: MGC_Main()\n", __FILE__, __LINE__);
+
     //DBGLOG("DEBUG: [%s, %d] END: MGC_Main()\n", __FILE__, __LINE__);
-//    dlvfprintf("DEBUG: [%s, %d] END: MGC_Main()\n", __FILE__, __LINE__);
-    Debug_Log_Shutdown();
+    // dlvfprintf("DEBUG: [%s, %d] END: MGC_Main()\n", __FILE__, __LINE__);
+
     return 0;
 }

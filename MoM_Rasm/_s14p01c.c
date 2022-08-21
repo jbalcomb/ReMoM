@@ -28,7 +28,7 @@ void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName
         tmpInputType = argInputType;
     }
 
-    IN_Init(tmpInputType);
+    IN_Init(tmpInputType);  // _s34p65
 
     RNG_TimerSeed();
 

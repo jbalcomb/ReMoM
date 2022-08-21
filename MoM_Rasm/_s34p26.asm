@@ -5,7 +5,7 @@ TITLE _s34p26.asm GUI_MousedControl()
 
 EXTRN gfp_CTRL_Control_Table:DWORD
 EXTRN g_CRSR_Offset:WORD
-EXTRN g_CTRL_FocusedControl:WORD
+EXTRN g_CTRL_Focused:WORD
 
 EXTRN GUI_FindWindow:PROC
 EXTRN CR_GetOffset:PROC
@@ -154,9 +154,10 @@ proc GUI_MousedControl
     jmp @@Return_SI
 
 loc_27BC3:
-    cmp [g_CTRL_FocusedControl], 0FFFFh
+    cmp [g_CTRL_Focused], 0FFFFh
     jz short loc_27BE2
-    mov ax, [g_CTRL_FocusedControl]
+    
+    mov ax, [g_CTRL_Focused]
     mov dx, 26h
     imul dx
     les bx, [gfp_CTRL_Control_Table]

@@ -401,7 +401,7 @@ _s33p03         GUI_GetCursorIndex          int GUI_GetCursorIndex(void)
 _s33p04c.c      GUI_GetCursorOffset
 _s33p05.asm     MD_GetButtonStatus       int MD_GetButtonStatus(void)     MOUSE_ReadStatus
 _s33p06         MOUSE_WaitRelease           int MOUSE_WaitRelease(void)
-_s33p07         MOUSE_Init                  int MOUSE_Init(void)
+_s33p07         MD_Init()                   int MD_Init(void)               MOUSE_Init
 []_s33p09         MOUSE_Reset
 []_s33p10         MOUSE_INTSet_MvOnly
 []_s33p11         MOUSE_INTSet_MvBtns

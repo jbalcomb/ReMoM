@@ -90,25 +90,35 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
 
     // tmp_Palette_Header_Offset = (unsigned int)*SrcSgmt[SrcOfst++];
     fptr_Src = (unsigned int _FAR *)MK_FP(SrcSgmt, SrcOfst);
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
+#endif
 
     tmp_Palette_Header_Offset = fptr_Src[0];
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] tmp_Palette_Header_Offset: %04Xh %ud\n", __FILE__, __LINE__, tmp_Palette_Header_Offset, tmp_Palette_Header_Offset);
+#endif
 
     // _AX = _AX + _DI;
     // _SI = _AX;
     // _BX = _AX;
 
     SrcOfst = tmp_SrcOfst + tmp_Palette_Header_Offset;
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04Xh %ud\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+#endif
 
     //fh_frame_colors = (unsigned char)*SrcSgmt[SrcOfst + 0x06];
     fptr_Src = (unsigned int _FAR *)MK_FP(SrcSgmt, SrcOfst);
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
+#endif
 
     //fh_frames_have_palettes = fptr_Src[0x06];
     fh_frames_have_palettes = FPEEKB(SrcSgmt, SrcOfst + 0x06);
+#ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fh_frames_have_palettes: %02Xh %ud\n", __FILE__, __LINE__, fh_frames_have_palettes, fh_frames_have_palettes);
+#endif
 
     if ( (Frame_Index == 0) || (fh_frames_have_palettes == 0) )
     {
@@ -132,13 +142,17 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         fh_palette_color_index = fptr_Src[1];   // Index of Color
         fh_palette_color_count = fptr_Src[2];   // Count of Colors
 
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] fh_palette_data_offset: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_data_offset, fh_palette_data_offset);
         dlvfprintf("DEBUG: [%s, %d] fh_palette_color_index: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_color_index, fh_palette_color_index);
         dlvfprintf("DEBUG: [%s, %d] fh_palette_color_count: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_color_count, fh_palette_color_count);
+#endif
 
         tmp_Color_Count = fh_palette_color_count;
         SrcOfst = tmp_SrcOfst + fh_palette_data_offset;
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+#endif
     }
     else
     {
@@ -159,8 +173,9 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
 
         // _SI = _SI + 8 + ... Frame_Index - 1 ... * 4 ... 
         SrcOfst = SrcOfst + 8 + ( (Frame_Index - 1) * 4 );
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
-
+#endif
         // ffh_image_offset = (unsigned int)*SrcSgmt[SrcOfst++];
         // ffh_color_count = (unsigned char)*SrcSgmt[SrcOfst++];
         // ffh_first_color = (unsigned char)*SrcSgmt[SrcOfst++];
@@ -169,9 +184,11 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         ffh_color_count = fptr_Src[1];
         ffh_first_color = fptr_Src[2];
 
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] ffh_image_offset: %04X %u\n", __FILE__, __LINE__, ffh_image_offset, ffh_image_offset);
         dlvfprintf("DEBUG: [%s, %d] ffh_color_count: %04X %u\n", __FILE__, __LINE__, ffh_color_count, ffh_color_count);
         dlvfprintf("DEBUG: [%s, %d] ffh_first_color: %04X %u\n", __FILE__, __LINE__, ffh_first_color, ffh_first_color);
+#endif
 
         if ( ffh_color_count == 0 )
         {
@@ -182,7 +199,9 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
 
         tmp_Color_Count = ffh_color_count;
         SrcOfst = tmp_SrcOfst + ffh_image_offset;
+#ifdef DEBUG
         dlvfprintf("DEBUG: [%s, %d] SrcOfst: %04X %u\n", __FILE__, __LINE__, SrcOfst, SrcOfst);
+#endif
     }
 
 // @@SetDestinations:

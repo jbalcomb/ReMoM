@@ -63,10 +63,10 @@ proc MD_INT_Handler
 
     mov [g_MD_INT_InProcess], 1
 
-    push bx
-    push dx
+    push bx  ; X_Pos
+    push dx  ; Y_Pos
     shr cx, 1
-    push cx
+    push cx  ; Buttons
     ;push cs
     ;call near ptr MD_SaveClick
     ;nop

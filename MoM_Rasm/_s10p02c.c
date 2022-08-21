@@ -11,10 +11,12 @@ unsigned int LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, unsigned int SAM
     int LoadType;
     int LbxHdrFmt;
 
+#ifdef DEBUG
     if ( (strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntryIndex == 2) )
     {
         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBXE_LoadReplace(LbxName=%s, LbxEntryIndex=%d, SAMB_head=0x%04X)\n", __FILE__, __LINE__, LbxName, LbxEntryIndex, SAMB_head);
     }
+#endif
 
     LoadType = 1;
     LbxHdrFmt = 0;

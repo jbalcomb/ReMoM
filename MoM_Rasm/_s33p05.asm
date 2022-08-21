@@ -30,9 +30,9 @@ proc MD_GetButtonStatus
     mov cx, 0
     mov dx, 0
     cli
-    int 33h
+    int 33h                                 ; INT 33,3 - Get Mouse Position and Button Status
     sti
-    and bx, 3h
+    and bx, 3h                              ; mask 00000011 - right button and left button (1 = pressed)
     mov ax, bx
 
 @@Done:

@@ -26,27 +26,36 @@ proc MD_INT_SetMvOnly
     push es
     push ds
 
-;    mov ax, seg dseg
     mov ax, seg DGROUP
     mov ds, ax
 
     cmp [g_MouseDriverInstalled], 0
     jz short @@Done
-    cli
 
-;    mov ax, seg seg033
+    cli
+    ;/*
+    ;s33p07 MD_Init()
+    ;unsigned short c_sgmt;
+    ;unsigned short c_ofst;
+    ;c_sgmt = FP_SEG(MD_INT_Handler);     // _s33p12
+    ;c_ofst = FP_OFF(MD_INT_Handler);
+    ;asm {
+    ;    mov ax, c_sgmt
+    ;    mov es, ax
+    ;    mov dx, c_ofst
+    ;    mov ax, 0x0C
+    ;    mov cx, 1                           // User Interrupt Mask: 00000001 Cursor Position Change
+    ;    int 0x33
+    ;}
+    ;*/
     mov ax, seg _S33P12_TEXT
     mov es, ax
-;    assume es:seg033
     assume es:_S33P12_TEXT
-
     mov ax, 14h
-    mov cx, 1
+    mov cx, 1       ;// User Interrupt Mask: 00000001 Cursor Position Change
     mov dx, offset MD_INT_Handler
     int 33h
-
     ;mov ax, -1  ; ? artifact ?
-
     mov [g_MD_CursorDraw], 1
     mov ax, 3
     int 33h

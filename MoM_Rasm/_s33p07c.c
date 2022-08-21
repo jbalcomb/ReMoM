@@ -1,4 +1,4 @@
-// _s33p07c.c MOUSE_Init
+// _s33p07c.c MD_Init
 // ST_GUI.H
 
 #include <DOS.H>
@@ -29,7 +29,7 @@ int MD_Init(void)
     }
 
     g_MouseDriverInstalled = 1;             // ST_TRUE
-    g_MD_INT_InProcess = 0;                // ST_FALSE
+    g_MD_INT_InProcess = 0;                 // ST_FALSE
 
     g_MD_CurrentY = g_MD_InitY;
     g_MD_CurrentX = g_MD_InitX;
@@ -50,9 +50,9 @@ int MD_Init(void)
         int 0x33
     }
 
-    MD_WaitRelease();                    // _s33p06
+    MD_WaitRelease();                       // _s33p06
 
-    c_sgmt = FP_SEG(MD_INT_Handler);     // _s33p12
+    c_sgmt = FP_SEG(MD_INT_Handler);        // _s33p12
     c_ofst = FP_OFF(MD_INT_Handler);
 
     asm {
@@ -60,7 +60,7 @@ int MD_Init(void)
         mov es, ax
         mov dx, c_ofst
         mov ax, 0x0C
-        mov cx, 1                           // User Interrupt Mask: 00000001 Cursor Position Change
+        mov cx, 00000001b                   // User Interrupt Mask: 00000001 Cursor Position Change
         int 0x33
     }
 
