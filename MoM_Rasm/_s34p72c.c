@@ -27,9 +27,9 @@ void CTRL_DrawControl(int Ctrl_Index, int Input_State)
     //  7: Ctrl_Label
     //  8: Ctrl_AltString
     //  9: Ctrl_ClickLink
-    // 10: Ctrl_DialogLine 
-    // 11: Ctrl_EditSelect 
-    // 12: Ctrl_ClickGrid 
+    // 10: Ctrl_DialogLine
+    // 11: Ctrl_EditSelect
+    // 12: Ctrl_ClickGrid
     switch (gfp_CTRL_Control_Table[tmp_SI].Ctrl_Type)
         {
             case Ctrl_ClickButton:

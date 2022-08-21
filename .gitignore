@@ -9,6 +9,12 @@ STU-MoM_Rasm.vcxproj
 STU-MoM_Rasm.vcxproj.filters
 STU-MoM_Rasm.vcxproj.user
 
+win32_mom.sln
+
+CppProperties.json
+
+build/
+
 DEBUG.LOG
 DEBUG-.LOG
 
