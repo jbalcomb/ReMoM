@@ -23,8 +23,8 @@
 #endif
 
 
-
-#include <ALLOC.H>  /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */
+#if defined(__DOS16__)
+#include <ALLOC.H>  /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
 #include <CONIO.H>
 // #include <CTYPE.H>
 // #include <DIR.H>
@@ -39,6 +39,7 @@
 #include <STRING.H>
 #include <SYS\STAT.H>
 // #include <VALUES.H>
+#endif
 
 #include "ST_DBG.H"
 #include "ST_DEF.H"
@@ -57,7 +58,7 @@
 // #pragma pack(1)     /* Use pragma to force packing on byte boundaries. */
 
 
-
+#if defined(__DOS16__)
 typedef unsigned int sgmt_addr;
 typedef unsigned int ofst_addr;
 typedef void _SEG  * sgmt_ptr;
@@ -96,7 +97,7 @@ typedef   signed int   SINT;
 typedef   signed long  SLONG;
 
 // ? stdint.h ? limits.h ? - ? C89, C90, C99, ?
-
+#endif
 
 #define ST_TRUE  1
 #define ST_FALSE 0

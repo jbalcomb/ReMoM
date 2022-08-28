@@ -339,7 +339,9 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+#if defined(__DOS16__)
 int     _Cdecl          printf(const char _FAR *__format, ...);
+#endif
 
 void dbg_printf(const char *fmt, ...);
 

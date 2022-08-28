@@ -50,9 +50,13 @@ int MGC_Main(void)
     /*
         CONFIG.MOM
     */
+    // LoadConfigMom()
+
     /*
         MAGIC.SET
     */
+    //LoadMagicSet()
+
     /*
         MIDI Driver
         DSP Driver

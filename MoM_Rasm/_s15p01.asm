@@ -3,7 +3,7 @@ TITLE   _s15p01.ASM VGA_SetModeY
 ; but, I have since lost track of it. :(..
 ; FWIW, it well predates Abrash's DDJ publication.
 ; NOTE(JimBalcomb,20220721): I am fairly certain I found the above reference based on old time limited search on google for some odd/noteable piece of the assembly code.
-; maybe/maybe not, the and or stuff, maybe/maybe in hex vs. binary
+; maybe/maybe not, the and or stuff, maybe/maybe not in hex vs. binary
 
 .MODEL LARGE, C
 

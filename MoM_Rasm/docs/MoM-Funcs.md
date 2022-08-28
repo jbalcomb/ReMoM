@@ -208,7 +208,7 @@ _s08p12c.c      SA_Alloc_First
 _s08p14c.c      SA_Alloc_Next
 _s08p15c.c      SA_GetFree                  unsigned int SA_GetFree(unsigned int Alloc_Seg) LBX_Alloc_GetFree
 _s08p16.asm     SA_MK_FP0                      void far * MK_FAR(sgmt_addr Segment_Address) MK_FAR
-_s08p19.asm     SA_Alloc_Error                              LBX_Alloc_Error
+_s08p19c.c      SA_Alloc_Error                              LBX_Alloc_Error
 
 ##### seg009    ST_LBX.H    ALL ASM
 _s09p01     lbx_open                    int  lbx_open(char *fname);

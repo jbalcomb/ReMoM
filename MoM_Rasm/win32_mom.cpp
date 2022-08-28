@@ -2,6 +2,16 @@
 #include <windows.h>
 #include <stdint.h>
 
+/*
+https://yakvi.github.io/handmade-hero-notes/html/day11.html
+You might also notice that we decided to #include a .cpp file instead of building it separately. 
+This is because, as our building philosophy, we use the so-called Unity Builds,
+i.e. building everything in one go. You can read more in the subsection 6.1.
+|-> https://yakvi.github.io/handmade-hero-notes/html/day11.html#toc6.1
+*/
+#include "mom_x64.cpp"
+#include "win32_lbx.cpp"
+
 // unsigned integers
 typedef uint8_t u8;     // 1-byte long unsigned integer
 typedef uint16_t u16;   // 2-byte long unsigned integer
@@ -38,6 +48,14 @@ struct win32_window_dimension
 
 global_variable bool GlobalRunning;
 global_variable win32_offscreen_buffer GlobalBackbuffer;
+
+void *
+PlatformLoadFile(char* Filename)
+{
+    // NOTE(casey): Implements the Win32 file loading
+    // ... 
+    return (0);
+}
 
 internal win32_window_dimension
 Win32GetWindowDimension(HWND Window)
@@ -113,7 +131,7 @@ Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
     
 }
 
-LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
 {
     LRESULT Result = 0;
 
@@ -130,6 +148,37 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM wParam, LP
         {
             OutputDebugStringA("WM_DESTROY\n");
             GlobalRunning = false;
+        } break;
+
+        // https://yakvi.github.io/handmade-hero-notes/html/day6.html#keyboardinput
+        case WM_SYSKEYDOWN:
+        case WM_SYSKEYUP:
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        {
+            u32 VKCode = WParam;  // the virtual-key code of the key
+
+            if (VKCode == VK_SPACE)
+            {
+                g_KbHit = TRUE;
+                OutputDebugStringA("SPACEBAR\n");
+            } 
+            if (VKCode == 'W')
+            {
+                OutputDebugStringA("W\n");
+            } 
+            else if (VKCode == 'A')
+            {
+                OutputDebugStringA("A\n");
+            } 
+            else if (VKCode == 'S')
+            {
+                OutputDebugStringA("S\n");
+            } 
+            else if (VKCode == 'D')
+            {
+                OutputDebugStringA("D\n");
+            } 
         } break;
 
         case WM_PAINT:
@@ -154,7 +203,7 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM wParam, LP
 
         default:
         {
-            Result = DefWindowProc(Window, Message, wParam, lParam);
+            Result = DefWindowProc(Window, Message, WParam, LParam);
         } break;
     }
 
@@ -222,6 +271,9 @@ WinMain(HINSTANCE Instance,
 
         win32_window_dimension Dimension = Win32GetWindowDimension(Window);
         Win32DisplayBufferInWindow(&GlobalBackbuffer, DeviceContext, Dimension.Width, Dimension.Height);
+
+        MainLoop();
+
     }
         
     return 0;
