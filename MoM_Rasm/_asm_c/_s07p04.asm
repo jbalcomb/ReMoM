@@ -26,6 +26,7 @@ proc LBX_Alloc_Validate far
     mov ax, [bp+LBX_Alloc_Seg]
     mov ds, ax
     mov si, LBX_Alloc_Space_Header.MemSig1
+    
     lodsw
     cmp ax, LBX_MemSig1
     jnz short @@error

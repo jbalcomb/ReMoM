@@ -10,6 +10,7 @@
 #include "ST_VGA.H"
 #include "STU_DBG.H"
 
+//#include "ST_SA.C"
 #include "ST_EMM.C"  // g_EMM_Pages_Reserved
 
 
@@ -23,6 +24,12 @@ MainLoop()
 int MGC_Main(void)
 {
     g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+
+
+    /*
+    Hardware_Init() |-> ... |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
+    */
+    //gsa_PaletteLbxEntry = SA_Allocate_Space(348);      // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
 
 
 

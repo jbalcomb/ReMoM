@@ -1,4 +1,4 @@
-TITLE _s07p.asm 
+TITLE _s07p09.asm  farpokew
 ;BCpp31LR, pg 393/408
 ;void poke(unsigned segment, unsigned offset, int value);
 

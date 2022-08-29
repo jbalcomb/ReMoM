@@ -378,16 +378,6 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 /*
-    seg007
-*/
-unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);                // _s07p05
-unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                 // _s07p06
-unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);               // _s07p07
-void farpokeb(unsigned int sgmt, unsigned int ofst, unsigned char value);    // _s07p08
-void farpokew(unsigned int sgmt, unsigned int ofst, unsigned int value);     // _s07p09
-//void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);   // _s07p10
-
-/*
     seg009
 */
 int  lbx_open(char *fname);                                     // _s09p01.asm  DISK_OpenFile

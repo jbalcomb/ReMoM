@@ -1,4 +1,4 @@
-TITLE _s07p.asm 
+TITLE _s07p08.asm  farpokeb
 ;BCpp31LR, pg 394/409
 ;void pokeb(unsigned segment, unsigned offset, char valueue);
 

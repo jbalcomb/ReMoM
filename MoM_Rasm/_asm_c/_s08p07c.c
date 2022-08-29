@@ -45,6 +45,7 @@ unsigned FP SEG(void far *p);
 
 #include "ST_HEAD.H"
 
+
 sgmt_addr SA_Allocate_Space(unsigned int nparas)
 {
     sgmt_addr SAMB;

@@ -99,6 +99,12 @@ extern "C" {
 /*
     seg007
 */
+unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);                // _s07p05
+unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                 // _s07p06
+unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);               // _s07p07
+void farpokeb(unsigned int sgmt, unsigned int ofst, unsigned char value);    // _s07p08
+void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);   // _s07p09
+// UU? void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);   // _s07p10
 
 /*
     seg008
@@ -115,7 +121,7 @@ unsigned int SA_Alloc_Next(unsigned int SAMB, int nparas);
 
 unsigned int SA_GetFree(unsigned int Alloc_Seg);          // _s08p15.asm
 // Error: Size of '__FAR' is known or zero
-void far * SA_MK_FP0(unsigned int sgmt_addr);                   // _s08p16.asm
+void _FAR * SA_MK_FP0(unsigned int sgmt_addr);                   // _s08p16.asm
 
 void SA_Alloc_Error(int errno, int value);                      // _s08p19c.c
 

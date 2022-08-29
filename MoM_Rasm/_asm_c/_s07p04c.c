@@ -7,7 +7,7 @@ int SA_Alloc_Validate(unsigned int SAMB)
 {
     int is_valid;
     // unsigned int *SgmtPtr;
-    unsigned int far *SgmtPtr;
+    unsigned int _FAR * SgmtPtr;
     unsigned int word3;
     unsigned int word4;
 

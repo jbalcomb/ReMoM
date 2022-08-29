@@ -162,4 +162,6 @@ int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff,
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: ST_MoveData(destoff=0x%04X, destseg=0x%04X, srcoff=0x%04X, srcseg=0x%04X, nbytes=%u)\n", __FILE__, __LINE__, destoff, destseg, srcoff, srcseg, nbytes);
 #endif
+
+    return ST_SUCCESS;
 }

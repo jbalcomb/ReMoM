@@ -72,6 +72,8 @@ typedef unsigned char  byte;
 typedef unsigned int   word;  // elsewhere, this is `short` (see: root42, brackeen, Wolf3d, Animator, AIL214)
 typedef unsigned long  dword;
 
+/*
+    NOTE(JimBalcomb,20220829): moved to ST_TYPE.H
 typedef unsigned char  DB;
 typedef unsigned int   DW;
 typedef unsigned long  DD;
@@ -79,13 +81,17 @@ typedef unsigned long  DD;
 typedef unsigned char  BYTE;
 typedef unsigned int   WORD;
 typedef unsigned long  DWORD;
+*/
 
+/*
+    NOTE(JimBalcomb,20220829): these are just silly - BD,DW,DD are inherently signless
 typedef unsigned char  UBYTE;
 typedef unsigned int   UWORD;
 typedef unsigned long  UDWORD;
 typedef   signed char  SBYTE;
 typedef   signed int   SWORD;
 typedef   signed long  SDWORD;
+*/
 
 typedef unsigned char  UCHAR;
 typedef unsigned short USHORT;

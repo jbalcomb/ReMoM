@@ -193,13 +193,13 @@ _s06p01c.c      VGA_SetTextMode             void VGA_SetTextMode(void);
 _s06p02c.c      QuitToDOS                   void QuitToDOS(char *quitmsg);                  DOS_QuitWithMsg
 _s06p04c.c      dos_memfree_kb              unsigned int dos_memfree_pages(void);           RAM_GetFreeBlockSize_KB
 
-##### seg007    ST_LBX.H    (1-4 UU_DOS_ ASM)
-_s07p04c.c      SA_Alloc_Validate                     LBX_Alloc_Validate
-_s07p05.asm     farpeekb                    char farpeekb(unsigned int sgmt, unsigned int ofst);
-_s07p06c.c      farpeekw                    int farpokew(unsigned int sgmt, unsigned int ofst);
-_s07p07c.c      farpeekdw                   long farpokedw(unsigned int sgmt, unsigned int ofst);
-_s07p08.asm     farpokeb                    void farpokeb(unsigned int sgmt, unsigned int ofst, char value);
-_s07p09.asm     farpokew                    void farpokew(unsigned int sgmt, unsigned int ofst, int value);
+##### seg007    ST_SA.C ST_SA.H         (1-4 UU_DOS_ ASM)
+_s07p04     SA_Alloc_Validate                     LBX_Alloc_Validate
+_s07p05     farpeekb                    char farpeekb(unsigned int sgmt, unsigned int ofst);
+_s07p06     farpeekw                    int farpokew(unsigned int sgmt, unsigned int ofst);
+_s07p07     farpeekdw                   long farpokedw(unsigned int sgmt, unsigned int ofst);
+_s07p08     farpokeb                    void farpokeb(unsigned int sgmt, unsigned int ofst, char value);
+_s07p09     farpokew                    void farpokew(unsigned int sgmt, unsigned int ofst, int value);
 
 ##### seg008    ST_SA.H
 _s08p07c.c      SA_Allocate_Space           sgmt_addr Allocate_Space(unsigned int size)
