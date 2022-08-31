@@ -76,7 +76,7 @@ int MGC_Main(void)
     /*
         |-> EMM_Startup()
         |-> VGA_SetModeY()
-        |-> VGA_DAC_Init() |-> ... 
+        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
         |-> SND_Init()
         |-> IN_Init() |-> MD_Init()
         |-> RNG_TimerSeed()

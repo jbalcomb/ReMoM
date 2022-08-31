@@ -30,20 +30,20 @@ seg008
     Simtex 'SPACE ALLOC' Memory Block - Header
 */
 
-struct ST_Alloc_Space_Header_Struct {
-    int safety_malloc_bsize;
-    int safety_malloc_prevreal;
-    int MemSig1;
-    int MemSig2;
-    int Size_Paras;
-    int Used_Paras;
-    int unused_0C;
-    int Marked_Paras;
-};
+//struct ST_Alloc_Space_Header_Struct {
+//    int safety_malloc_bsize;
+//    int safety_malloc_prevreal;
+//    int MemSig1;
+//    int MemSig2;
+//    int Size_Paras;
+//    int Used_Paras;
+//    int unused_0C;
+//    int Marked_Paras;
+//};
+//extern struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
 
-extern struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
-
-struct SAMB {
+struct s_SAMB  // sizeof(0x10)
+{
     unsigned int safety_malloc_bsize;
     unsigned int safety_malloc_prevreal;
     unsigned int MemSig1;
@@ -56,6 +56,8 @@ struct SAMB {
 // typedef struct SAMB SAMB_head;
 // typedef struct SAMB _FAR * FPTRMCB;    /* SPTRSAMB and FPTRSAMB is a type declared to be a far pointer to Simtex 'SPACE ALLOC' Memory Block   */
 // typedef struct SAMB _SEG * SPTRMCB;
+//extern struct s_SAMB SAMB;
+typedef struct s_SAMB SAMB;
 #define SAMB_RESERVED1   0
 #define SAMB_RESERVED2   2
 #define SAMB_MEMSIG1     4
@@ -65,7 +67,9 @@ struct SAMB {
 #define SAMB_unknown    12
 #define SAMB_MARKED     14
 
-
+/*
+    Near Heap
+*/
 /*
 extern char *cnst_Alloc_Error01;            // dseg:3D56
 extern char *cnst_Alloc_Error02;            // dseg:3D74
@@ -87,7 +91,11 @@ extern char Tmp_Conv_Str_1[];                       // dseg:94F4
 extern char Tmp_Conv_Str_2[];                       // dseg:9508
 extern char Tmp_Conv_Str_3[];                       // dseg:9526
 extern unsigned char SA_NearHeap_Buffer[];          // dseg:9590 SA_NearHeap_Buffer db 4144 dup(0)
-extern void _FAR * gfp_tmpSAMB;                     // dseg:A5C0
+
+/*
+    Far Heap
+*/
+//extern void _FAR * gfp_tmpSAMB;                     // MGC dseg:A5C0  WZD dseg:E5CA
 extern unsigned int g_RAM_Min_KB;                   // dseg:A5C4
 
 

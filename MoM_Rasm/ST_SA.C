@@ -4,7 +4,8 @@
 #include "ST_SA.H"
 
 
-struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
+//struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
+//struct s_SAMB SAMB;
 
 /*
     Near Heap
@@ -27,11 +28,14 @@ char Temp_String[100];                                          // dseg:9490  Te
 char Tmp_Conv_Str_1[20];                                        // dseg:94F4  Tmp_Conv_Str_1 db 14h dup(0)  ;  20 bytes ~= char Tmp_Conv_Str_1[20]
 char Tmp_Conv_Str_2[30];                                        // dseg:9508  Tmp_Conv_Str_2 db 1Eh dup(0)  ;  30 bytes ~= char Tmp_Conv_Str_2[30]
 char Tmp_Conv_Str_3[106];                                       // dseg:9526  Tmp_Conv_Str_3 db 6Ah dup(0)  ; 106 bytes ~= char Tmp_Conv_Str_3[106] ; ...maybe sizeof/max set at compile-time?
+//unsigned char SA_NearHeap_Buffer[];          // dseg:9590 SA_NearHeap_Buffer db 4144 dup(0)
+//looks like 'Temp_String' should be something else as char [4400] then pointers to offsets from that pointer
+//code shows checking NearAlloc(nbytes) aginst 4,144 and then setting mark, used, and return value offset by 256
 /*
     Far Heap
 */
-void _FAR * gfp_tmpSAMB;                     // dseg:A5C0
-unsigned int g_RAM_Min_KB;                  // dseg:A5C4
+void _FAR * fp_tmpSAMB;                    // MGC dseg:A5C0  WZD dseg:E5CA
+unsigned int g_RAM_Min_KB;                  // MGC dseg:A5C4
 
 /*
 ##### seg007
@@ -125,25 +129,30 @@ void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short val)
 // _s08p07
 sgmt_addr SA_Allocate_Space(unsigned int nparas)
 {
-    sgmt_addr SAMB;
+    sgmt_addr SAMB_head;
+    SAMB * pSAMB_head;
 
-    gfp_tmpSAMB = (char _FAR *) farmalloc(((unsigned long)nparas * 16) + 16);
+    fp_tmpSAMB = (char *) malloc(((unsigned long)nparas * 16) + 16);
 
-    if ( gfp_tmpSAMB == NULL )
+    if ( fp_tmpSAMB == NULL )
     {
         SA_Alloc_Error(1, nparas); // Alloc Error #1: Allocation Too Small
     }
     
-    SAMB = FP_SEG(gfp_tmpSAMB) + 1;
-
-    farpokew(SAMB, 4, SA_MEMSIG1);  // SAMB.MemSig1
-    farpokew(SAMB, 6, SA_MEMSIG2);  // SAMB.MemSig2
-    farpokew(SAMB, 8, nparas);      // SAMB.Size
-    farpokew(SAMB, 10, 1);          // SAMB.Used
+    SAMB_head = FP_SEG(fp_tmpSAMB) + 1;
+    //farpokew(SAMB_head, 4, SA_MEMSIG1);  // SAMB.MemSig1
+    //farpokew(SAMB_head, 6, SA_MEMSIG2);  // SAMB.MemSig2
+    //farpokew(SAMB_head, 8, nparas);      // SAMB.Size
+    //farpokew(SAMB_head, 10, 1);          // SAMB.Used
+    pSAMB_head = (SAMB _FAR *)MK_FP(SAMB_head, 0);
+    pSAMB_head->MemSig1 = SA_MEMSIG1;
+    pSAMB_head->MemSig2 = SA_MEMSIG2;
+    pSAMB_head->Size_Paras = nparas;
+    pSAMB_head->Used_Paras = 1;
     
-    Update_MemFreeWorst_KB();
+    //Update_MemFreeWorst_KB();
 
-    return SAMB;
+    return SAMB_head;
 }
 
 // _s08p08
@@ -151,16 +160,16 @@ unsigned int SA_Allocate_MemBlk(unsigned int nparas)
 {
     sgmt_addr SAMB_data;
 
-    gfp_tmpSAMB = (char _FAR *) farmalloc(((unsigned long)nparas * 16) + 16);
+    fp_tmpSAMB = (char _FAR *) farmalloc(((unsigned long)nparas * 16) + 16);
 
-    if ( gfp_tmpSAMB == NULL )
+    if ( fp_tmpSAMB == NULL )
     {
         SA_Alloc_Error(1, nparas); // Alloc Error #1: Allocation Too Small
     }
     
-    SAMB_data = FP_SEG(gfp_tmpSAMB) + 1;
+    SAMB_data = FP_SEG(fp_tmpSAMB) + 1;
 
-    Update_MemFreeWorst_KB();
+    //Update_MemFreeWorst_KB();
 
     return SAMB_data;
 }

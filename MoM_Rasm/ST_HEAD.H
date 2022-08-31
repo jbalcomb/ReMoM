@@ -34,7 +34,7 @@
 #include <IO.H>
 // #include <MEM.H>
 // #include <PROCESS.H>
-#include <STDIO.H>
+#include <STDIO.H>      /* printf() */
 #include <STDLIB.H>     /* ltoa() */
 #include <STRING.H>
 #include <SYS\STAT.H>
