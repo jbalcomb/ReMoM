@@ -63,14 +63,19 @@ _s08p19c.c      SA_Alloc_Error
 // s07p04
 int SA_Alloc_Validate(sgmt_addr SAMB_head)
 {
+    // SAMB * pSAMB_head;
+    unsigned int memsig1;
+    unsigned int memsig2;
     int is_valid;
-    unsigned int word3;
-    unsigned int word4;
 
-    word3 = farpeekw(SAMB_head, 4);
-    word4 = farpeekw(SAMB_head, 6);
+    memsig1 = farpeekw(SAMB_head, 4);
+    memsig2 = farpeekw(SAMB_head, 6);
+    // memsig1 = *((unsigned int *)SAMB_head + 4);
+    // memsig2 = *((unsigned int *)SAMB_head + 6);
+    // pSAMB_head = (SAMB _FAR *)MK_FP(SAMB_head, 0);
 
-    if (word3 != LBX_MemSig1 || word4 != LBX_MemSig2)
+    //if (pSAMB_head->MemSig1 != LBX_MemSig1 || pSAMB_head->MemSig2 != LBX_MemSig2)
+    if (memsig1 != LBX_MemSig1 || memsig2 != LBX_MemSig2)
     {
         is_valid = ST_FAILURE;
     }

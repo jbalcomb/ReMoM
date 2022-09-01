@@ -4,9 +4,16 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#include <fcntl.h>      /* O_BINARY, O_RDONLY */
+#include<sys\stat.h>    /* ? */
+#include <io.h>         /* filelength(); SEEK_CUR, SEEK_END, SEEK_SET */
+//SEEK_SET (0)  File beginning
+//SEEK_CUR (1)  Current file pointer
+//SEEK_END (2)  End-of-file
+
 
 unsigned int g_LBX_Header_Allocd = 0;           // dseg:3E66
-int g_LBX_FileHandle = DOS_UnusedFileHandle;    // dseg:3E68  DOS Unused File Handle
+int g_LBX_FileHandle = DOS_UnusedFileHandle;    // dseg:3E68  DOS Unused File Handle  == -1
 unsigned int UU_g_LBX_HdrFmtOvrRd = 0;            // dseg:3E6A
 char UU_g_LBX_FilePath[50] = {0};               // dseg:3E6C
 char g_LBX_FileExtension[] = ".LBX";            // dseg:3E9E
@@ -39,54 +46,260 @@ unsigned int g_LBX_EmmRsvd;                 // dseg:A5EC
 
 
 
-// unsigned int DoLoadType(int LoadType, long tmp_DataSize_Bytes)
-// {
-//     // sgmt_addr SAMB_data;
-//     // sgmt_addr tmp_SAMB_data;
-//     unsigned int SAMB_data;
-//     unsigned int tmp_SAMB_data;
+/*
+    MGC  seg009
+*/
 
-//     /*
-//         BEGIN: Load Type
-//     */
-//     tmp_DataSize_Paras = 1 + (tmp_DataSize_Bytes / SZ_PARAGRAPH_B);;
-//     if ( LoadType == 0 )
-//     {
-//         SAMB_data = SA_Allocate_MemBlk(tmp_DataSize_Paras);
-//         if ( SAMB_data == 0 ) { Lbx_Error(LbxName, 0x03, LbxEntry); /* LBXErr_low_RAM */ }
-//     }
-//     if ( (LoadType == 1) || (LoadType == 2) )
-//     {
-//         if ( LoadType == 1 )
-//         {
-//             if ( SA_Alloc_Validate(SAMB_head) == 0 ) { LBX_Error(LbxName, 0x02, LbxEntry); /* LBXErr_corrupted */ }
+// _s09p01
+int lbx_open(char *fname)
+{
+    int fhandle;
 
-//             if ( tmp_DataSize_Paras > (farpeekw(SAMB_head, SAMB_SIZE) - 1) )
-//             {
-//                 LBX_Error(LbxName, 0x04, LbxEntry, (tmp_DataSize_Paras - farpeekw(SAMB_head, SAMB_SIZE) + 1) ); /* LBXErr_alloc_short */
-//             }
+    fhandle = open(fname, O_RDONLY|O_BINARY);
 
-//             SAMB_data = SAMB_head + 1;
-//             tmp_SAMB_Size = tmp_DataSize_Paras + 1;
-//         }
-//         if ( LoadType == 2 )
-//         {
-//             if ( SA_Alloc_Validate(SAMB_head) == 0 ) { LBX_Error(LbxName, 0x02, LbxEntry); /* LBXErr_corrupted */ }
+    if (fhandle == -1)
+    {
+        fhandle = 0;
+    }
 
-//             if ( tmp_DataSize_Paras > SA_GetFree(SAMB_head) )
-//             {
-//                 LBX_Error(LbxName, 0x05, LbxEntry, (tmp_DataSize_Paras - SA_GetFree(SAMB_head)) ); /* LBXErr_reload_fail */
-//             }
+    return fhandle;
+}
 
-//             SAMB_data = SAMB_head + farpeekw(SAMB_head, SAMB_USED);
-//             tmp_SAMB_Size = tmp_DataSize_Paras + farpeekw(SAMB_head, SAMB_USED);
-//         }
-//         farpokew(SAMB_head, SAMB_USED, tmp_SAMB_Size);
-//     }
-//     tmp_SAMB_data = SAMB_data;
-//     /*
-//         END: Load Type
-//     */
+// _s09p02
+int lbx_close(int fhandle)
+{
+    return close(fhandle);  // returns SUCCESS: 0, FAILURE: -1
+}
 
-//     return tmp_SAMB_data;
-// }
+// _s09p03
+int lbx_seek(long foffset, int fhandle)
+{
+    int st_status;
+
+    if ( lseek(fhandle, foffset, SEEK_SET) == -1L )  //  long lseek(int handle, long offset, int fromwhere);  returns FAILURE: -1L
+    {
+        st_status = 0;  // ST_FAILURE
+    }
+    else
+    {
+        st_status = -1;  // ST_SUCCESS
+    }
+
+    return st_status;
+}
+
+// _s09p04
+long lbx_size(int fhandle)
+{
+    long foffset;
+
+    foffset = lseek(fhandle, 0, SEEK_END);
+
+    if ( foffset == -1L )
+    {
+        foffset = 0;  // ST_FAILURE
+    }
+
+    return foffset;
+}
+
+// _s09p05
+int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
+{
+    int bytes;
+    //void * buf;
+    //buf = malloc();
+    //read(fhandle, buf, 10)
+    void _FAR * buf;
+    //unsigned int ofst;
+    int st_status;
+
+    buf = MK_FP(dst_sgmt, 0);
+    //ofst = 0;
+    //buf = (void *)((long)(sgmt << 16) | ofst);
+
+    if ((bytes = read(fhandle, buf, nbytes)) == -1) {
+        st_status = 0;  // ST_FAILURE
+    }
+    else
+    {
+        st_status = -1;  // ST_SUCCESS
+    }
+
+    return st_status;
+}
+
+// _s09p06
+int  lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
+{
+    int bytes;
+    //void * buf;
+    //buf = malloc();
+    //read(fhandle, buf, 10)
+    void _FAR * buf;
+    //unsigned int ofst;
+    int st_status;
+
+    buf = MK_FP(_DS, dst_ofst);
+    //ofst = 0;
+    //buf = (void *)((long)(sgmt << 16) | ofst);
+
+    if ((bytes = read(fhandle, buf, nbytes)) == -1) {
+        st_status = 0;  // ST_FAILURE
+    }
+    else
+    {
+        st_status = -1;  // ST_SUCCESS
+    }
+
+    return st_status;
+}
+
+// _s09p07
+//void strcpy(char _FAR * dst, const char _FAR * src)
+void strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt)
+{
+    char * fp_dst;
+    char * fp_src;
+    int itr_str;
+
+    if ( dst_sgmt == 0 )
+    {
+        dst_sgmt = _DS;
+    }
+
+    if ( src_sgmt == 0 )
+    {
+        src_sgmt = _DS;
+    }
+
+    fp_dst = MK_FP(dst_sgmt, dst_ofst);
+    fp_src = MK_FP(src_sgmt, src_ofst);
+
+    itr_str = 0;
+    while( fp_src[itr_str] != '\0' )
+    {
+        *fp_dst++ = *fp_src++;
+        itr_str++;
+    }
+}
+
+
+
+/*
+    MGC  seg010
+*/
+
+// _s10p01
+unsigned int LBXE_LoadSingle(char *LbxName, int LbxEntryIndex)
+{
+    sgmt_addr SAMB_head;
+    int LoadType;
+    int LbxHdrFmt;
+    unsigned int SAMB_data;
+
+    SAMB_head = 0;
+    LoadType = 0;
+    LbxHdrFmt = 0;
+
+    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+
+    return SAMB_data;
+}
+
+// _s10p02
+unsigned int LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head)
+{
+    int LoadType;
+    int LbxHdrFmt;
+    unsigned int SAMB_data;
+
+    LoadType = 1;
+    LbxHdrFmt = 0;
+
+    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+
+    return SAMB_data;
+}
+
+// _s10p03
+unsigned int LBXE_LoadAppend(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head)
+{
+    int LoadType;
+    int LbxHdrFmt;
+    unsigned int SAMB_data;
+
+    LoadType = 2;
+    LbxHdrFmt = 0;
+
+    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+
+    return SAMB_data;
+}
+
+// _s10p04
+unsigned int LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize)
+{
+    unsigned int SAMB_head;
+    int LoadType;
+    unsigned int SAMB_data;
+
+    SAMB_head = 0;
+    LoadType = 0;
+
+    SAMB_data = LBX_Load_Record(LbxName, LbxEntryIndex, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+
+    return SAMB_data;
+}
+
+// _s10p05
+
+// _s10p06
+
+// _s10p07
+
+// _s10p08
+
+// _s10p09
+
+// _s10p10
+
+// _s10p11
+
+// _s10p12
+
+// _s10p13
+
+// _s10p14
+
+// _s10p15
+
+// _s10p16
+void ExtractFileBase(char * LbxFileName)
+{
+    int itr_filename;
+
+    itr_filename = 0;
+
+    while (LbxFileName[itr_filename] != '\0')
+    {
+
+        if ( LbxFileName[itr_filename] >= 'a' )
+        {
+            LbxFileName[itr_filename] = LbxFileName[itr_filename] - 32;  // {'a' - 32 = 'A', ..., 'z' - 32 = 'Z'}
+        }
+
+        if ( LbxFileName[itr_filename] == '.' )
+        {
+            LbxFileName[itr_filename] = '\0';
+        }
+        
+        itr_filename++;
+    }
+}
+
+// _s10p17
+void RAM_SetMinKB(int RAM_MinKB)
+{
+    g_RAM_Min_KB = RAM_MinKB;
+}

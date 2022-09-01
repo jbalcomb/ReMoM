@@ -214,8 +214,9 @@ _s08p19     SA_Alloc_Error                              LBX_Alloc_Error
 _s09p01     lbx_open                    int  lbx_open(char *fname);
 _s09p02     lbx_close                   int  lbx_close(int fhandle);
 _s09p03     lbx_seek                    long lbx_seek(long foffset, int fhandle);
-_s09p05a.c  lbx_read_sgmt               int  lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle);
-_s09p06a.c  lbx_read_ofst               int  lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle);
+_s09p04     UU_lbx_size
+_s09p05     lbx_read_sgmt               int  lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle);
+_s09p06     lbx_read_ofst               int  lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle);
 _s09p07     strcpyfar                   void strcpyfar(unsigned int dstoff, unsigned int dstseg, unsigned int srcoff, unsigned int srcseg);
 
 ##### seg010    ST_LBX.H

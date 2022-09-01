@@ -19,6 +19,7 @@ proc lbx_close far
 
     push bp
     mov  bp, sp
+
     push si
     push di
     push es
@@ -32,6 +33,7 @@ proc lbx_close far
     pop es
     pop di
     pop si
+    
     pop bp
     ret
 

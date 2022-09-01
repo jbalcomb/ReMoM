@@ -6,10 +6,10 @@
 
 #include "STU_DBG.H"
 
-
-#define DOS_GET_DTA    0x2F
-#define DOS_FIND_FIRST 0x4E
-#define DOS_FIND_NEXT 0x4F
+#define DOS_INT         0x21
+#define DOS_GET_DTA     0x2F
+#define DOS_FIND_FIRST  0x4E
+#define DOS_FIND_NEXT   0x4F
 
 
 int DISK_FileFind(const char *pathname, char *Read_Buffer)
@@ -57,7 +57,8 @@ int DISK_FileFind(const char *pathname, char *Read_Buffer)
 
     inregs1.h.ah = DOS_GET_DTA;
     //result1 = intdosx( &inregs1, &outregs1, &segregs1 );
-    intdosx( &inregs1, &outregs1, &segregs1 );
+    //intdosx( &inregs1, &outregs1, &segregs1 );
+    int86x( DOS_INT, &inregs1, &outregs1, &segregs1 );
 
 // #ifdef DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] outregs1.x.ax: 0x%04X\n", __FILE__, __LINE__, outregs1.x.ax);
@@ -86,7 +87,8 @@ int DISK_FileFind(const char *pathname, char *Read_Buffer)
     {
         inregs2.h.ah = DOS_FIND_NEXT;
         // result2 = intdosx( &inregs2, &outregs2, &segregs2 );
-        intdosx( &inregs2, &outregs2, &segregs2 );
+        //intdosx( &inregs2, &outregs2, &segregs2 );
+        int86x( DOS_INT, &inregs2, &outregs2, &segregs2 );
 
         if  (outregs2.x.cflag)
         {
@@ -104,7 +106,8 @@ int DISK_FileFind(const char *pathname, char *Read_Buffer)
         inregs3.x.dx = FP_OFF(pathname);
         segregs3.ds = FP_SEG(pathname);
         // result3 = intdosx( &inregs3, &outregs3, &segregs3 );
-        intdosx( &inregs3, &outregs3, &segregs3 );
+        //intdosx( &inregs3, &outregs3, &segregs3 );
+        int86x( DOS_INT, &inregs3, &outregs3, &segregs3 );
 
         if  (outregs3.x.cflag)
         {

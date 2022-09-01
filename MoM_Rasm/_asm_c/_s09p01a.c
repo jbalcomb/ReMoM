@@ -1,4 +1,4 @@
-// _s09p01c.c lbx_open
+// _s09p01a.c lbx_open
 // ST_LBX.H
 
 /*
@@ -11,10 +11,26 @@
 
 #include <DOS.H>
 
+#define DOS_INT           0x21
+#define DOS_OPEN_FILE     0x3D
+#define DOS_OPEN_FILE_RO  0x3D00  // Read-Only  (RO)
+#define DOS_OPEN_FILE_WO  0x3D01  // Write-Only (WO)
+#define DOS_OPEN_FILE_RW  0x3D02  // Read-Write (RW)
+
 #define CF 1 /* Carry flag */
 
 int lbx_open(char *fname)
 {
+    union  REGS  inregs;
+    union  REGS  outregs;
+    struct SREGS segregs;
+    // int          result;
+    // INT 21,3D - Open File Using Handle
+    inregs.h.ah = DOS_OPEN_FILE;
+    inregs.h.al = 0x00;  // Read-Only (RO)
+
+
+
     // int fhandle = -1;
     // printf("DEBUG: [%s, %d]: BEGIN: lbx_open(fname = %s)\n", __FILE__, __LINE__, fname);
     // _AH = 0x3D;

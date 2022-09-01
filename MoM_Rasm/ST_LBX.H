@@ -380,14 +380,13 @@ extern "C" {
 /*
     seg009
 */
-int  lbx_open(char *fname);                                     // _s09p01.asm  DISK_OpenFile
-int  lbx_close(int fhandle);                                    // _s09p02.asm  DISK_CloseFile
-long lbx_seek(long foffset, int fhandle);                       // _s09p03.asm  DISK_LSeek
-long lbx_size(int fhandle);                                     // _s0904.asm   UU_DISK_GetFileSize
-int  lbx_read_sgmt(unsigned int sgmt_addr, int nbytes, int fhandle);   // _s09p05.asm  DISK_ReadToSeg
-//int  lbx_read_sgmt(void _seg * sgmt_ptr, int nbytes, int fhandle);   // _s09p05.asm  DISK_ReadToSeg
-int  lbx_read_ofst(unsigned int buffer, int nbytes, int fhandle);   // _s09p06.asm  DISK_ReadToData
-void strcpyfar(unsigned int dstoff, unsigned int dstseg, unsigned int srcoff, unsigned int srcseg); //_s09p07.asm STR_CopyFar
+int  lbx_open(char *fname);
+int  lbx_close(int fhandle);
+int lbx_seek(long foffset, int fhandle);
+long lbx_size(int fhandle);
+int  lbx_read_sgmt(unsigned int sgmt, int nbytes, int fhandle);
+int  lbx_read_ofst(unsigned int buffer, int nbytes, int fhandle);
+void strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt);
 
 /*
     seg010
