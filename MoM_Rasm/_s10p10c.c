@@ -130,6 +130,7 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
         {
             //HERE("Curr. == Prev.");
         }
+        
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
         {

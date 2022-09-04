@@ -274,6 +274,16 @@ unsigned int LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int
 
 // _s10p15
 
+/*
+    J:\STU\DBWD\developc\1oom-master\src\lbx.c
+        char buf[32];
+        const char *p = filename;
+        char *q = buf;
+        while (*p) {
+            *q++ = toupper(*p++);
+        }
+        *q = 0;
+*/
 // _s10p16
 void ExtractFileBase(char * LbxFileName)
 {
