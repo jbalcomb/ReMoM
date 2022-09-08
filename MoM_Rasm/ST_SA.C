@@ -1,7 +1,12 @@
 
+#include <ALLOC.H>  /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
+
 #include "ST_HEAD.H"
+#include "ST_TYPE.H"
 
 #include "ST_SA.H"
+
+#include "STU_DBG.H"
 
 
 //struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
@@ -34,8 +39,10 @@ char Tmp_Conv_Str_3[106];                                       // dseg:9526  Tm
 /*
     Far Heap
 */
-void _FAR * fp_tmpSAMB;                    // MGC dseg:A5C0  WZD dseg:E5CA
-unsigned int g_RAM_Min_KB;                  // MGC dseg:A5C4
+//void _FAR * fp_tmpSAMB;                   // MGC dseg:A5C0  WZD dseg:E5CA
+SAMB_ptr pTmpSAMB;                        // MGC dseg:A5C0  WZD dseg:E5CA
+// unsigned int g_RAM_Min_KB;               // MGC dseg:A5C4
+extern unsigned int RAM_Min_KB;             // MGC dseg:A5C4  ; set to 583 in _main
 
 /*
 ##### seg007
@@ -61,21 +68,25 @@ _s08p19c.c      SA_Alloc_Error
 */
 
 // s07p04
-int SA_Alloc_Validate(sgmt_addr SAMB_head)
+// int SA_Alloc_Validate(sgmt_addr SAMB_head)
+int SA_Alloc_Validate(SAMB_ptr pSAMB_head)
 {
-    // SAMB * pSAMB_head;
     unsigned int memsig1;
     unsigned int memsig2;
     int is_valid;
 
-    memsig1 = farpeekw(SAMB_head, 4);
-    memsig2 = farpeekw(SAMB_head, 6);
-    // memsig1 = *((unsigned int *)SAMB_head + 4);
-    // memsig2 = *((unsigned int *)SAMB_head + 6);
-    // pSAMB_head = (SAMB _FAR *)MK_FP(SAMB_head, 0);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Alloc_Validate(pSAMB_head = %p)\n", __FILE__, __LINE__, pSAMB_head);
+#endif
 
-    //if (pSAMB_head->MemSig1 != LBX_MemSig1 || pSAMB_head->MemSig2 != LBX_MemSig2)
-    if (memsig1 != LBX_MemSig1 || memsig2 != LBX_MemSig2)
+    memsig1 = ((unsigned int)*((unsigned char *)pSAMB_head + 4)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 5) << 8);
+    memsig2 = ((unsigned int)*((unsigned char *)pSAMB_head + 6)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 7) << 8);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: memsig1: 0x%04X\n", __FILE__, __LINE__, memsig1);
+    dlvfprintf("DEBUG: [%s, %d]: memsig2: 0x%04X\n", __FILE__, __LINE__, memsig2);
+#endif
+
+    if (memsig1 != SA_MEMSIG1 || memsig2 != SA_MEMSIG2)
     {
         is_valid = ST_FAILURE;
     }
@@ -83,6 +94,10 @@ int SA_Alloc_Validate(sgmt_addr SAMB_head)
     {
         is_valid = ST_SUCCESS;
     }
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Alloc_Validate(pSAMB_head = %p) { is_valid = %d }\n", __FILE__, __LINE__, pSAMB_head, is_valid);
+#endif
 
     return is_valid;
 }
@@ -132,70 +147,132 @@ void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short val)
 */
 
 // _s08p07
-sgmt_addr SA_Allocate_Space(unsigned int nparas)
+SAMB_ptr SA_Allocate_Space(unsigned int nparas)
 {
-    sgmt_addr SAMB_head;
-    SAMB * pSAMB_head;
+    SAMB_ptr pSAMB_head;
+    unsigned int memsig1;
+    unsigned int memsig2;
+    unsigned int size_paras;
+    unsigned int used_paras;
 
-    fp_tmpSAMB = (char *) malloc(((unsigned long)nparas * 16) + 16);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_Space(nparas = %u)\n", __FILE__, __LINE__, nparas);
+#endif
 
-    if ( fp_tmpSAMB == NULL )
+    pTmpSAMB = (SAMB_ptr) farmalloc(((unsigned long)nparas * 16) + 16);
+
+    if ( pTmpSAMB == NULL )
     {
         SA_Alloc_Error(1, nparas); // Alloc Error #1: Allocation Too Small
     }
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: pTmpSAMB: %p\n", __FILE__, __LINE__, pTmpSAMB);
+    dlvfprintf("DEBUG: [%s, %d]: pTmpSAMB: %Fp\n", __FILE__, __LINE__, pTmpSAMB);
+#endif
     
-    SAMB_head = FP_SEG(fp_tmpSAMB) + 1;
-    //farpokew(SAMB_head, 4, SA_MEMSIG1);  // SAMB.MemSig1
-    //farpokew(SAMB_head, 6, SA_MEMSIG2);  // SAMB.MemSig2
-    //farpokew(SAMB_head, 8, nparas);      // SAMB.Size
-    //farpokew(SAMB_head, 10, 1);          // SAMB.Used
-    pSAMB_head = (SAMB _FAR *)MK_FP(SAMB_head, 0);
-    pSAMB_head->MemSig1 = SA_MEMSIG1;
-    pSAMB_head->MemSig2 = SA_MEMSIG2;
-    pSAMB_head->Size_Paras = nparas;
-    pSAMB_head->Used_Paras = 1;
-    
+    pSAMB_head = (pTmpSAMB + 16);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %p\n", __FILE__, __LINE__, pSAMB_head);
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head);
+#endif
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: FP_SEG(pTmpSAMB): 0x%04X\n", __FILE__, __LINE__, FP_SEG(pTmpSAMB));
+    dlvfprintf("DEBUG: [%s, %d]: FP_SGMT(pTmpSAMB): 0x%04X\n", __FILE__, __LINE__, FP_SGMT(pTmpSAMB));
+    dlvfprintf("DEBUG: [%s, %d]: FP_SEG(pSAMB_head): 0x%04X\n", __FILE__, __LINE__, FP_SEG(pSAMB_head));
+    dlvfprintf("DEBUG: [%s, %d]: FP_SGMT(pSAMB_head): 0x%04X\n", __FILE__, __LINE__, FP_SGMT(pSAMB_head));
+#endif
+
+//#define SET_LE_16(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu) )
+//#define SET_LE_32(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[3] = (((_v_) >> 24) & 0xffu))
+
+    ((unsigned char *)(pSAMB_head))[4] = ((SA_MEMSIG1) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[5] = (((SA_MEMSIG1) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_head))[6] = ((SA_MEMSIG2) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[7] = (((SA_MEMSIG2) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_head))[8] = ((nparas) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[9] = (((nparas) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_head))[10] = ((1) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[11] = (((1) >> 8) & 0xFF);
+
+    memsig1 =    ((unsigned int)*((unsigned char *)pSAMB_head +  4)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head +  5) << 8);
+    memsig2 =    ((unsigned int)*((unsigned char *)pSAMB_head +  6)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head +  7) << 8);
+    size_paras = ((unsigned int)*((unsigned char *)pSAMB_head +  8)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head +  9) << 8);
+    used_paras = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: memsig1: 0x%04X\n", __FILE__, __LINE__, memsig1);
+    dlvfprintf("DEBUG: [%s, %d]: memsig2: 0x%04X\n", __FILE__, __LINE__, memsig2);
+    dlvfprintf("DEBUG: [%s, %d]: size_paras: %u\n", __FILE__, __LINE__, size_paras);
+    dlvfprintf("DEBUG: [%s, %d]: used_paras: %u\n", __FILE__, __LINE__, used_paras);
+#endif
+
     //Update_MemFreeWorst_KB();
 
-    return SAMB_head;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: SA_Allocate_Space(nparas = %u) { pSAMB_head = %p }\n", __FILE__, __LINE__, nparas, pSAMB_head);
+#endif
+
+    return pSAMB_head;
 }
 
 // _s08p08
-unsigned int SA_Allocate_MemBlk(unsigned int nparas)
+SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 {
-    sgmt_addr SAMB_data;
+    SAMB_ptr pSAMB_data;
 
-    fp_tmpSAMB = (char _FAR *) farmalloc(((unsigned long)nparas * 16) + 16);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_MemBlk(nparas = %u)\n", __FILE__, __LINE__, nparas);
+#endif
 
-    if ( fp_tmpSAMB == NULL )
+    pTmpSAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
+
+    if ( pTmpSAMB == NULL )
     {
-        SA_Alloc_Error(1, nparas); // Alloc Error #1: Allocation Too Small
+        SA_Alloc_Error(0x01, nparas); // Alloc Error #1: Allocation Too Small
     }
     
-    SAMB_data = FP_SEG(fp_tmpSAMB) + 1;
+    pSAMB_data = (pTmpSAMB + 16);
 
     //Update_MemFreeWorst_KB();
 
-    return SAMB_data;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: SA_Allocate_MemBlk(nparas = %u) { pSAMB_data = %p }\n", __FILE__, __LINE__, nparas, pSAMB_data);
+#endif
+
+    return pSAMB_data;
 }
 
 // _s08p12
-unsigned int SA_Alloc_First(unsigned int SAMB, int nparas)
+/*
+    creates a suballocation
+*/
+SAMB_ptr SA_Alloc_First(SAMB_ptr pSAMB_head, int nparas)
 {
     int paras_total;
-    unsigned int SAMB_head;
-    unsigned int SAMB_data;
+    SAMB_ptr pSAMB_sub_head;
+    SAMB_ptr pSAMB_sub_data;
     int tmp_nparas;
-    
-    tmp_nparas = nparas;
-    tmp_nparas = tmp_nparas + 1;
 
-    SAMB_data = SAMB + 1;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Alloc_First(pSAMB_head = %p, nparas = %d)\n", __FILE__, __LINE__, pSAMB_head, nparas);
+#endif
 
-    paras_total = farpeekw(SAMB, 8);  // s_SAMB.Size_Paras
+    tmp_nparas = nparas + 1;
 
-    if ( SA_Alloc_Validate(SAMB) == 0 )
+    //pSAMB_sub_data = pSAMB_head + 1;  // + 1 segment / 16 bytes / paragraph / SAMB unit size
+    pSAMB_sub_head = (pSAMB_head + 16);
+
+    //paras_total = farpeekw(SAMB_head, 8);  // s_SAMB.Size_Paras
+    paras_total = ((unsigned int)*((unsigned char *)pSAMB_head + 8)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 9) << 8);
+
+    // // if ( SA_Alloc_Validate(SAMB_head) == 0 )
+    // pSAMB_head = (void *)MK_FP(SAMB_head,0);
+    if ( SA_Alloc_Validate(pSAMB_head) == 0 )
     {
+        HERE("Allocation space has been corrupted"); \
         SA_Alloc_Error(0x03, tmp_nparas);  // Alloc_Space_corrupted
     }
 
@@ -204,86 +281,140 @@ unsigned int SA_Alloc_First(unsigned int SAMB, int nparas)
         SA_Alloc_Error(0x02, tmp_nparas);  // Alloc_Next_too_small
     }
 
-    farpokew(SAMB_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
-    farpokew(SAMB_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
-    farpokew(SAMB_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
-    farpokew(SAMB_head, 10, 1);                 // s_SAMB.Used_Paras = 1
-    farpokew(SAMB_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
+    ((unsigned char *)(pSAMB_head))[10] = ( (tmp_nparas + 1) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[11] = (((tmp_nparas + 1) >> 8) & 0xFF);
 
-    SAMB_data = SAMB_head + 1;
+    //farpokew(SAMB_sub_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
+    //farpokew(SAMB_sub_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
+    //farpokew(SAMB_sub_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
+    //farpokew(SAMB_sub_head, 10, 1);                 // s_SAMB.Used_Paras = 1
+    //farpokew(SAMB_sub_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
 
-    return SAMB_data;    
+    ((unsigned char *)(pSAMB_sub_head))[4] = ( (SA_MEMSIG1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[5] = (((SA_MEMSIG1) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[6] = ( (SA_MEMSIG2) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[7] = (((SA_MEMSIG2) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[8] = ( (tmp_nparas - 1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[9] = (((tmp_nparas - 1) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[10] = ( (1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[11] = (((1) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[14] = ( (1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[15] = (((1) >> 8) & 0xFF);
+
+    //SAMB_sub_data = SAMB_sub_head + 1;
+    pSAMB_sub_data = pSAMB_sub_head + 16;
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: SA_Alloc_First(pSAMB_head = %p, nparas = %d) { pSAMB_sub_data = %p }\n", __FILE__, __LINE__, pSAMB_head, nparas, pSAMB_sub_data);
+#endif
+
+    return pSAMB_sub_data;
 }
 
 // _s08p14
-unsigned int SA_Alloc_Next(unsigned int SAMB, int nparas)
+SAMB_ptr SA_Alloc_Next(SAMB_ptr pSAMB_head, int nparas)
 {
-    unsigned int subSAMB_head;
-    unsigned int subSAMB_data;
-    unsigned int tmp_SAMB;
+    SAMB_ptr pSAMB_sub_head;
+    SAMB_ptr pSAMB_sub_data;
     int tmp_nparas;
     int tmp_paras_free;
     int tmp_paras_used;
 
-    tmp_SAMB = SAMB;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Alloc_Next(pSAMB_head = %p, nparas = %d)\n", __FILE__, __LINE__, pSAMB_head, nparas);
+#endif
 
-    tmp_nparas = nparas;
-    tmp_nparas = tmp_nparas + 1;
+    tmp_nparas = nparas + 1;
 
-    if ( SA_Alloc_Validate(SAMB) == 0 )
+    // // if ( SA_Alloc_Validate(SAMB_head) == 0 )
+    // pSAMB_head = (void *)MK_FP(SAMB_head,0);
+    if ( SA_Alloc_Validate(pSAMB_head) == 0 )
     {
         SA_Alloc_Error(0x03, tmp_nparas);  // Alloc_Space_corrupted
     }
 
-    tmp_paras_free = SA_GetFree(tmp_SAMB);
+    tmp_paras_free = SA_GetFree(pSAMB_head);
 
     if ( tmp_paras_free < tmp_nparas )
     {
         SA_Alloc_Error(0x02, tmp_nparas);  // Alloc_Next_too_small
     }
 
-    tmp_paras_used = farpeekw(SAMB, 10);  // s_SAMB.Used_Paras
-    subSAMB_head = tmp_paras_used + tmp_SAMB;
+    // tmp_paras_used = farpeekw(SAMB_head, 10);  // s_SAMB.Used_Paras
+    tmp_paras_used = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
+    pSAMB_sub_head = pSAMB_head + tmp_paras_used;
 
-    tmp_paras_used = farpeekw(SAMB, 10);  // s_SAMB.Used_Paras
+    // tmp_paras_used = farpeekw(SAMB_head, 10);  // s_SAMB.Used_Paras
+    tmp_paras_used = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
     tmp_nparas = tmp_nparas + tmp_paras_used;
 
-    farpokew(tmp_SAMB, 10, tmp_nparas);                 // s_SAMB.Used_Paras = previously used + newly requested
+    //farpokew(tmp_SAMB, 10, tmp_nparas);                 // s_SAMB.Used_Paras = previously used + newly requested
+    ((unsigned char *)(pSAMB_head))[10] = ( (tmp_nparas) & 0xFF);
+    ((unsigned char *)(pSAMB_head))[11] = (((tmp_nparas) >> 8) & 0xFF);
 
-    farpokew(subSAMB_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
-    farpokew(subSAMB_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
-    farpokew(subSAMB_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
-    farpokew(subSAMB_head, 10, 1);                 // s_SAMB.Used_Paras = 1
-    // DNE !?! farpokew(subSAMB_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
+    // farpokew(subSAMB_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
+    // farpokew(subSAMB_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
+    // farpokew(subSAMB_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
+    // farpokew(subSAMB_head, 10, 1);                 // s_SAMB.Used_Paras = 1
+    // // DNE !?! farpokew(subSAMB_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
 
-    subSAMB_data = subSAMB_head + 1;
+    ((unsigned char *)(pSAMB_sub_head))[4] = ( (SA_MEMSIG1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[5] = (((SA_MEMSIG1) >> 8) & 0xFF);
 
-    return subSAMB_data;    
+    ((unsigned char *)(pSAMB_sub_head))[6] = ( (SA_MEMSIG2) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[7] = (((SA_MEMSIG2) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[8] = ( (tmp_nparas - 1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[9] = (((tmp_nparas - 1) >> 8) & 0xFF);
+
+    ((unsigned char *)(pSAMB_sub_head))[10] = ( (1) & 0xFF);
+    ((unsigned char *)(pSAMB_sub_head))[11] = (((1) >> 8) & 0xFF);
+
+    // ((unsigned char *)(pSAMB_sub_head))[14] = ( (1) & 0xFF);
+    // ((unsigned char *)(pSAMB_sub_head))[15] = (((1) >> 8) & 0xFF);
+
+    // subSAMB_data = subSAMB_head + 1;  // + 1 segment / 16 bytes / paragraph / SAMB unit size
+    pSAMB_sub_data = pSAMB_sub_head + 16;
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: SA_Alloc_Next(pSAMB_head = %p, nparas = %d) { pSAMB_sub_data = %p }\n", __FILE__, __LINE__, pSAMB_head, nparas, pSAMB_sub_data);
+#endif
+
+    return pSAMB_sub_data;    
 }
 
 // _s08p15
-unsigned int SA_GetFree(unsigned int SAMB)
+//unsigned int SA_GetFree(SAMB_addr SAMB_head)
+//{
+//    unsigned int tmp_Size_Paras;
+//    unsigned int tmp_Used_Paras;
+//    unsigned int tmp_Free_Paras;
+//    unsigned int Free_Paras;
+//    tmp_Size_Paras = farpeekw(SAMB_head, 0x08);  // SAMB.size
+//    tmp_Used_Paras = farpeekw(SAMB_head, 0x0A);  // SAMB.used
+//    tmp_Free_Paras = tmp_Size_Paras - tmp_Used_Paras;
+//    Free_Paras = tmp_Free_Paras;
+//    return Free_Paras;
+//}
+unsigned int SA_GetFree(SAMB_ptr pSAMB_head)
 {
     unsigned int tmp_Size_Paras;
     unsigned int tmp_Used_Paras;
-    unsigned int tmp_Free_Paras;
     unsigned int Free_Paras;
-
-    tmp_Size_Paras = farpeekw(SAMB, 0x08);  // SAMB.size
-
-    tmp_Used_Paras = farpeekw(SAMB, 0x0A);  // SAMB.used
-
-    tmp_Free_Paras = tmp_Size_Paras - tmp_Used_Paras;
-
-    Free_Paras = tmp_Free_Paras;
-
+    tmp_Size_Paras = ((unsigned int)*((unsigned char *)pSAMB_head +  8)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head +  9) << 8);
+    tmp_Used_Paras = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
+    Free_Paras = tmp_Size_Paras - tmp_Used_Paras;
     return Free_Paras;
 }
 
 // _s08p16
-void _FAR * SA_MK_FP0(unsigned int sgmt_addr)
+SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr)
 {
-    void _FAR * fp;
+    SAMB_ptr fp;
     fp = (void _FAR *)MK_FP(sgmt_addr,0);
     return fp;
 }
@@ -342,7 +473,7 @@ void SA_Alloc_Error(int errno, int value)
     else
     {
         strcpy(errmsg, cnst_Alloc_Error51);
-        itoa(g_RAM_Min_KB, conv, 10);
+        itoa(RAM_Min_KB, conv, 10);
         strcat(errmsg, conv);
         strcat(errmsg, cnst_Alloc_Error52);
         Quit(errmsg);

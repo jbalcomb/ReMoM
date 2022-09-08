@@ -46,16 +46,13 @@
 #include "ST_EMM.H"
 #include "ST_GUI.H"
 #include "ST_LBX.H"
-#include "ST_SA.H"
 #include "ST_TXT.H"
 #include "ST_VID.H"
-
-// #include "STU_TYPE.H"
-// #include "STU_UTIL.H"
 
 
 // J:\STU\DBWD\developc\_MPL13\SAMPCODE\C\OTHER\MEMORY\MOVEMEM.C
 // #pragma pack(1)     /* Use pragma to force packing on byte boundaries. */
+
 
 
 #if defined(__DOS16__)
@@ -84,7 +81,7 @@ typedef unsigned long  DWORD;
 */
 
 /*
-    NOTE(JimBalcomb,20220829): these are just silly - BD,DW,DD are inherently signless
+    NOTE(JimBalcomb,20220829): these are just silly - DB,DW,DD are inherently signless
 typedef unsigned char  UBYTE;
 typedef unsigned int   UWORD;
 typedef unsigned long  UDWORD;
@@ -150,16 +147,65 @@ typedef   signed long  SLONG;
 
 // // #define MK_FP(sgmt,ofst) ( (void _SEG *)(sgmt) + (void _NEAR *)(ofst) )
 #define MK_FP(seg,ofs) ( (void _seg *)(seg) + (void near *)(ofs) )
-// #define MK_FP(_sgmt_,_ofst_) ( (void _FAR *) ( (unsigned long) (_sgmt_) << 16 | (_ofst_) ) )
+// #define MK_FP(_sgmt_,_ofst_) ( (void _FAR *) (  (unsigned long) (_sgmt_) << 16  | (_ofst_) ) )
+// #define MK_FP(_sgmt_,_ofst_) ( (void  far *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
 
 // #define FP_SEG(fp) ( (unsigned int)(void _SEG *)(void _FAR *)(fp) )
 #define FP_SEG(fp) ( (unsigned int)(void _seg *)(void far *)(fp) )
 #define FP_OFF(fp) ( (unsigned int)(fp) )
 
+// "The [segment address] ... is simply the upper 16 bits of a far pointer." - PC Mag, 19880126
+// FarPtr = (char far *) ( (long) segment_address << 16 );
+// https://forum.arduino.cc/t/long-to-two-ints/665091/6
+// (2) Take out upper 16-bit (the high16) this way:
+// (a) Shift total32 to the right by 16-bit positions and place the new value in y.
+// (b) Replace upper 16-bit of the above valu by 0s. They will be automatically 0s due to shift.
+// (c) Keep lower 16-bit using cast.
+// ~== unsigned int SgmtAddr = (unsigned int) ( (unsigned long) (FarPtr >> 16) );
+#define FP_SGMT(_fp_) ( (unsigned int) ( (unsigned long)((void _FAR *)(_fp_)) >> 16) )
+#define FP_OFST(_fp_) ( (unsigned int)(_fp_) )
+
+
 //#define MK_HP(sgmt,ofst) ( (void _seg * )( seg ) +( void near * )( ofs ))
 // J:\STU\DBWD\developc\AIL214\AIL.MAC
 // FAR_TO_HUGE     MACRO fp_seg,fp_off             ;normalize far pointer
 // ADD_PTR         MACRO add_l,add_h,pseg,poff     ;add 32-bit dword to far ptr
+
+
+// https://groups.google.com/g/comp.os.msdos.programmer/c/zUC_3ZLs_Hs
+// Microsoft C provides FP_SEG and FP_OFF or _FP_SEG and _FP_OFF (new version)
+//   that take a far pointer as an argument and allow the segment and offset to be set or extracted.
+// I'm not sure when the leading underscore was added. C 5.1 did not have it. C 7.0 did have.
+// ...
+// You can also make MK_FP yourself:
+// #define MK_FP (seg,ofs) ((DWORD)seg <<16 + (DWORD)ofs)
+// DWORD is defined in AFX.H: it's an unsigned 32 bit integer type
+// (unsigned long probably).
+// ...
+// A simpler, and more portable (no AFX.H file needed, whatever that is) follows:
+// #if !defined(MK_FP)
+// #define MK_FP(seg,ofs) ( (void far *) (((unsigned long)(seg) | (unsigned)(ofs)) )
+// #endif
+// As an aside, it is generally safer to use macro arguments in parens.
+// If you are worried about porting to a different DOS compiler, put the above in a #ifdef _MSC_VER ... #endif block.
+// ...
+// #define MK_FP( s,o ) ( (void far*) ((unsigned long) (o) | ((unsigned long) (s)<<16)) )
+// ...
+// Still not right. Here's a better one:
+// #if !defined(MK_FP)
+// #define MK_FP(seg,ofs) ((void far *)(((unsigned long)(seg) << 16) | (ofs)))
+// #endif
+
+
+
+// https://books.google.com/books?id=hEaMhncO06EC&pg=PT259&lpg=PT259&dq=C+code+shift+get+segment+address+far+pointer&source=bl&ots=76nQup67Ge&sig=ACfU3U2_S5jOtmPfkpnsjIWIcDTGqu5y-A&hl=en&sa=X&ved=2ahUKEwjLpIv55oX6AhXoElkFHcACBsIQ6AF6BAgvEAM#v=onepage&q=C%20code%20shift%20get%20segment%20address%20far%20pointer&f=false
+// PC Mag 19890912
+//    char far * ginfo;
+//    DosGetInfoSeg(&gseg, &lseg);       // get info segment selectors
+//    (long) ginfo = (long) gseg << 16;  // make far pointer
+
+
+
 
 
 // // J:\STU\DBWD\devel\Rasm_MoM\POCEMS\PCINTERN\EMMC.C

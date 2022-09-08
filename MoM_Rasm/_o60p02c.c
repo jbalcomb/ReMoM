@@ -12,6 +12,6 @@ void GAME_PrepareCredits(void)
 {
     GAME_FirstShownCred = 0;
     GAME_CreditTextTop = 95;
-    gsa_GUI_Credits_Text_IMG = SA_Alloc_First(gsa_Sandbox, 3125);
+    gsa_GUI_Credits_Text_IMG = FP_SEG(SA_Alloc_First(MK_FP(gsa_Sandbox,0), 3125));
     FLIC_Prepare(280, 122, gsa_GUI_Credits_Text_IMG);
 }

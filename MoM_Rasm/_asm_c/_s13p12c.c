@@ -19,7 +19,7 @@
 */
 unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType)
 {
-    sgmt_addr SAMB_data;
+    SAMB_addr SAMB_data;
     static unsigned int LbxEntryCount;  // `static` just to get it put in the 'Data Segment', for EMM_MapnRead()
     long EntryTableOffset;
     unsigned int tmp_EntryTableOffset_Sgmt;
@@ -33,6 +33,8 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     unsigned int Entry_Begin_Logical_Page_Offset;
     unsigned char *ptr_Byte;
     unsigned char _FAR *fptr_Dst;
+    void * pSAMB_head;
+
 #ifdef DEBUG
     unsigned char bDebugDetail = 0;
 #endif

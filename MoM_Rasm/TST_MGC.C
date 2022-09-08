@@ -123,6 +123,7 @@ _s34p72 GUI_DrawControl
 //#include "MOM_HEAD.H"
 #include "MOM_DEF.H"
 #include "ST_HEAD.H"
+#include "ST_TYPE.H"
 
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
@@ -193,7 +194,7 @@ char __FAR * SgmtAddr_FarPtr2(unsigned int segment_address);
 char __FAR * SgmtAddr_FarPtr3(unsigned int segment_address);
 void __FAR * MK_FP0(unsigned int sgmt_addr);
 
-void test_LbxLdEt1(void);
+// void test_LbxLdEt1(void);  // NOTE(JimBalcomb,20220907): moved out to 'NoGit'
 
 void test_asciz_character_array(void);
 
@@ -272,7 +273,7 @@ int main(void)
 
     //test_pointers();
 
-    //test_LbxLdEt1();
+    //test_LbxLdEt1();  // NOTE(JimBalcomb,20220907): moved out to 'NoGit'
 
     //test_asciz_character_array();
 
@@ -1101,18 +1102,15 @@ void __FAR * MK_FAR_0(unsigned int Seg_Address)
     return segp;
 }
 
-void test_LbxLdEt1(void)
-{
-    unsigned int LBX_EntryData_SgmtAddr;
-    //LbxLdEt1(FONT_FILE_NAME);
-    //LbxLdEt1(g_FontFileName);
-    LBX_EntryData_SgmtAddr = LbxLdEt1("BACKGRND.LBX", 0);
-
-    printf("DEBUG: LBX_EntryData_SgmtAddr == 0x%08X\n", LBX_EntryData_SgmtAddr);
-
-    
-
-}
+// NOTE(JimBalcomb,20220907): moved out to 'NoGit'
+//void test_LbxLdEt1(void)
+//{
+//    unsigned int LBX_EntryData_SgmtAddr;
+//    //LbxLdEt1(FONT_FILE_NAME);
+//    //LbxLdEt1(g_FontFileName);
+//    LBX_EntryData_SgmtAddr = LbxLdEt1("BACKGRND.LBX", 0);
+//    printf("DEBUG: LBX_EntryData_SgmtAddr == 0x%08X\n", LBX_EntryData_SgmtAddr);
+//}
 
 void test_asciz_character_array(void)
 {
@@ -1125,21 +1123,22 @@ void test_asciz_character_array(void)
 
 void test_SA_Allocate_Space(void)
 {
-    unsigned int sgmt_addr;
-
-    sgmt_addr = SA_Allocate_Space(32);
-
-    printf("DEBUG: test_SA_Allocate_Space(): sgmt_addr == 0x%08X\n", sgmt_addr);
-
+    // sgmt_addr sa_SAMB_data;
+    // sa_SAMB_data = SA_Allocate_Space(32);
+    // printf("DEBUG: test_SA_Allocate_Space(): sa_SAMB_data == 0x%08X\n", sa_SAMB_data);
+    SAMB_ptr pSAMB_data;
+    pSAMB_data = SA_Allocate_Space(32);
+    printf("DEBUG: test_SA_Allocate_Space(): pSAMB_data == 0x%08X\n", pSAMB_data);
 }
+
 void test_SA_Allocate_MemBlk(void)
 {
-    unsigned int sgmt_addr;
-
-    sgmt_addr = SA_Allocate_MemBlk(32);
-
-    printf("DEBUG: test_SA_Allocate_MemBlk(): sgmt_addr == 0x%08X\n", sgmt_addr);
-
+    // SAMB_addr sa_SAMB_data;
+    // sa_SAMB_data = SA_Allocate_MemBlk(32);
+    // printf("DEBUG: test_SA_Allocate_MemBlk(): sa_SAMB_data == 0x%08X\n", sa_SAMB_data);
+    SAMB_ptr pSAMB_data;
+    pSAMB_data = SA_Allocate_MemBlk(32);
+    dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_data);
 }
 
 /*
@@ -1440,8 +1439,8 @@ void test_FLIC_Draw_XY(void)
     //         gsa_PaletteFlags = gsa_Palette + 48;               // 48 paragaphs = 48 * 16 = 768
 
     strcpy(g_PaletteLbxFileName, GAME_FONT_FILE);
-    gsa_PaletteLbxEntry = SA_Allocate_Space(348);
-    gsa_Palette = SA_Allocate_Space(64);
+    gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));
+    gsa_Palette = FP_SEG(SA_Allocate_Space(64));
     gsa_PaletteFlags = gsa_Palette + 48;
     //  main()  line 140
     VGA_LoadPalette(0, -1, 0);
@@ -1582,8 +1581,8 @@ void test_Screen_MainMenu(void)
     VGA_Set_DSP_Addr();
 
     strcpy(g_PaletteLbxFileName, GAME_FONT_FILE);
-    gsa_PaletteLbxEntry = SA_Allocate_Space(348);
-    gsa_Palette = SA_Allocate_Space(64);
+    gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));
+    gsa_Palette = FP_SEG(SA_Allocate_Space(64));
     gsa_PaletteFlags = gsa_Palette + 48;
     VGA_LoadPalette(0, -1, 0);
     VGA_DAC_Write();

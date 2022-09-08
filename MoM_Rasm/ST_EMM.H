@@ -407,7 +407,7 @@ extern char g_EMM_device_name[];                    // dseg:40E6
 // extern unsigned int g_EMM_Log2Phys_Map[]; // dseg:40EF
 extern MAP_STRUCT gfp_map_struct[]; // dseg:40EF
 
-extern unsigned int g_EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
+extern int g_EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
 extern unsigned int g_EMM_Open_Handles;             // dseg:4102
 extern char *g_EmmHndlNm_YOMOMA1;                   // dseg:4104  "YO MOMA"
 extern char *g_EmmHndlNm_YOMOMA2;                   // dseg:410C  "YO MOMA"
@@ -467,67 +467,65 @@ extern "C" {
 /*
     seg012
 */
-// _s12p01.asm
+// s12p01
 int EMM_Init(void);
-// _s12p02c.c
+// s12p02
 unsigned int EMM_GetActiveHandleCount(void);
-// _s12p03c.c
+// s12p03
 unsigned int EMM_GetFreePageCount(void);
-// _s12p04.asm
+// s12p04
 unsigned int EMM_GetHandlePageCount(unsigned int EmsHndlNbr);
-// _s12p05
-unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char far * argHandleName);
-// _s12p06
+// s12p05
+unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char _FAR * argHandleName);
+// s12p06
 unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EmmHndlNbr);
-// _s1207c.c
+// s1207
 void EMM_ReleaseHandle(unsigned int EMM_Handle);
-// _s12p08.asm
+// s12p08
 void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EMM_Handle);
-// _s12p10.asm
+// s12p10
 unsigned int EMM_GetPageFrame(void);
-// _s12p11a.c
+// s12p11
 void EMM_Map4(int EmmHandle, int EmmLogicalPage);
-// _s12p12c.c
+// s12p12
 void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle);
 
 /*
     seg013
 */
-// _s13p01c.c
+// s13p01
 void EMM_Startup(void);
-// _s13p03c.c
+// s13p03
 void EMM_Load_LBX_File_1(char *LbxFileName);
-// _s13p04c.c
+// s13p04
 int EMM_Load_LBX_File(char *LbxFileName, int Reserved);
-// _s13p11c.c
+// s13p11
 unsigned int EMM_LBX_Load_Entry(char *LbxFileName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int FormatType);
-// _s13p12c.c
-//unsigned int EMM_LBX_HdrOnly(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
+// s13p12
 unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
-
-// _s13p13c.c
+// s13p13
 unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
-// _s13p13c.c
+// s13p13
 //EMM_LBX_Load_Record
-//_S13p14c.c
+//s13p14
 //EMM_LBX_DirectLoad
-
-// _s13p15c.c
+// s13p15
 unsigned int EMM_CheckHandleOpen(char *EmmHndlNm);
-// _s13p16c.c
+// s13p16
 void EMM_Shutdown(void);
-// argEmmRsvdFlag can not be unsigned, as it is compared to -1
-// _s13p25c.c
+// NOTE(JimBalcomb): argEmmRsvdFlag can not be unsigned, as it is compared to -1
+// TODO(JimBalcomb,20220908): move this not to whereever the code-clues notes are
+// s13p25
 void EMM_Map4_EMMDATAH(void);
-// _s13p26c.c
+// s13p26
 unsigned int EMM_EMMDATAH_AllocFirst(int nparas);
-// _s13p27c.c
+// s13p27
 unsigned int EMM_EMMDATAH_AllocNext(int nparas);
-// _s13p20c.c
+// s13p20
 unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName, int EmmRsvdFlag);
-// _s13p31
+// s13p31
 void EMM_SetMinKB(int EmmMinKB);
-// _s13p32c.c
+// s13p32
 void EMM_BuildEmmErrStr(char *strbuf);
 
 #ifdef __cplusplus

@@ -9,4 +9,11 @@ typedef unsigned char  BYTE;
 typedef unsigned int   WORD;
 typedef unsigned long  DWORD;
 
+// B8,B16,B32,B64,B128,B256,B512
+
+
+typedef unsigned int        SAMB_addr;
+typedef unsigned char  *    SAMB_ptr;
+
+
 #endif /* ST_TYPE_H */

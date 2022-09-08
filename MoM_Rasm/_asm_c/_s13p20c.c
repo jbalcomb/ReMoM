@@ -1,7 +1,8 @@
 // _s13p20c.c EMM_GetHandle
 // ST_EMM.H
 
-#include "ST_HEAD.H"
+//#include "ST_HEAD.H"
+#include "ST_SA.H"
 
 
 unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName, int EmmRsvdFlag)

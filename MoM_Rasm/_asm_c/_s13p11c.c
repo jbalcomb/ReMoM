@@ -30,6 +30,8 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     unsigned int tmp_SAMB_Size;  // used in LBXLOADTYPE/EMMLBXLOADTYPE
     sgmt_addr tmp_SAMB_data;  // result of LBXLOADTYPE/EMMLBXLOADTYPE
     unsigned int ReadNbytes;
+    void * pSAMB_head;
+    
 #ifdef DEBUG
     unsigned char bDebugDetail = 0;
 #endif

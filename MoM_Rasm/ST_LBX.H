@@ -1,7 +1,9 @@
 #ifndef ST_LBX_H
 #define ST_LBX_H
 
-// #include "ST_HEAD.H"
+//#include "ST_HEAD.H"
+//#include "ST_SA.H"
+#include "ST_TYPE.H"
 
 
 /*
@@ -26,7 +28,7 @@
 */
 
 #define LBXERR01(name,entry) {LBX_Error(name, 0x01, entry);}  /* LBXErr_not_found */
-#define LBXERR02(name,entry) {LBX_Error(name, 0x02, entry);}  /* LBXErr_corrupted */
+#define LBXERR02(name,entry) {HERE("LBX entry corrupted"); LBX_Error(name, 0x02, entry);}  /* LBXErr_corrupted */
 // ...
 #define LBXERR07(name,entry) {LBX_Error(name, 0x07, entry);}  /* LBXErr_bad_header */
 #define LBXERR08(name,entry) {LBX_Error(name, 0x08, entry);}  /* LBXErr_entries_exceeded */
@@ -44,7 +46,7 @@
     if( g_LBX_Header_Allocd == 0 ) \
     { \
         g_LBX_Header_Allocd = 1; \
-        gsa_LBX_Header = SA_Allocate_MemBlk(SZ_LBX_HDR_PR); \
+        gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); \
     } \
 }
 
@@ -101,6 +103,7 @@
         DataSize_Bytes = DataOffset_End - DataOffset_Begin; \
         if ( lbx_seek(DataOffset_Begin, g_LBX_FileHandle) == ST_FAILURE ) \
         { \
+            HERE("LBX entry corrupted"); \
             LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry);  /* LBXErr_corrupted */ \
         } \
 }
@@ -144,6 +147,7 @@
         DataOffset_Begin = 4 + (Record_Size * RecFirst); \
         if ( lbx_seek(DataOffset_Begin, g_LBX_FileHandle) == ST_FAILURE ) \
         { \
+            HERE("LBX entry corrupted"); \
             LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry);  /* LBXErr_corrupted */ \
         } \
         DataSize_Bytes = (Record_Size * RecCount); \
@@ -178,7 +182,7 @@
     BEGIN: Load Type
 */
 #define LBXLOADTYPE0() { \
-    SAMB_data = SA_Allocate_MemBlk(DataSize_Paras); \
+    SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
     if ( SAMB_data == 0 ) \
     { \
         Lbx_Error(LbxName, 0x03, LbxEntry); /* LBXErr_low_RAM */ \
@@ -190,15 +194,20 @@
         /*DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);*/ \
         if ( LoadType == 0 ) \
         { \
-            SAMB_data = SA_Allocate_MemBlk(DataSize_Paras); \
+            SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
             if ( SAMB_data == 0 ) { LBX_Error(LbxName, 0x03, LbxEntry); /* LBXErr_low_RAM */ } \
         } \
         if ( (LoadType == 1) || (LoadType == 2) ) \
         { \
             if ( LoadType == 1 ) \
             { \
-                if ( SA_Alloc_Validate(SAMB_head) == 0 ) \
+                /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) */ \
+                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
+                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                if ( SA_Alloc_Validate(pSAMB_head) == 0 ) \
                 { \
+                    HERE("LBX entry corrupted"); \
                     LBX_Error(LbxName, 0x02, LbxEntry); /* LBXErr_corrupted */ \
                 } \
                 if ( DataSize_Paras > (farpeekw(SAMB_head, SAMB_SIZE) - 1) ) \
@@ -210,13 +219,18 @@
             } \
             if ( LoadType == 2 ) \
             { \
-                if ( SA_Alloc_Validate(SAMB_head) == 0 ) \
+                /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) */ \
+                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
+                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                if ( SA_Alloc_Validate(pSAMB_head) == 0 ) \
                 { \
+                    HERE("LBX entry corrupted"); \
                     LBX_Error(LbxName, 0x02, LbxEntry); /* LBXErr_corrupted */ \
                 } \
-                if ( DataSize_Paras > SA_GetFree(SAMB_head) ) \
+                if ( DataSize_Paras > SA_GetFree(pSAMB_head) ) \
                 { \
-                    LBX_Error(LbxName, 0x05, LbxEntry, (DataSize_Paras - SA_GetFree(SAMB_head)) ); /* LBXErr_reload_fail */ \
+                    LBX_Error(LbxName, 0x05, LbxEntry, (DataSize_Paras - SA_GetFree(pSAMB_head)) ); /* LBXErr_reload_fail */ \
                 } \
                 SAMB_data = SAMB_head + farpeekw(SAMB_head, SAMB_USED); \
                 tmp_SAMB_Size = DataSize_Paras + farpeekw(SAMB_head, SAMB_USED); \
@@ -229,15 +243,19 @@
         /*DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);*/ \
         if ( LoadType == 0 ) \
         { \
-            SAMB_data = SA_Allocate_MemBlk(DataSize_Paras); \
+            SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
             if ( SAMB_data == 0 ) { return 0; } \
         } \
         if ( (LoadType == 1) || (LoadType == 2) ) \
         { \
             if ( LoadType == 1 ) \
             { \
-                if ( SA_Alloc_Validate(SAMB_head) == 0 ) { return 0; } \
-                if ( DataSize_Paras > (farpeekw(SAMB_head, SAMB_SIZE) - 1) ) \
+                /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) { return 0; } */ \
+                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
+                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                if ( SA_Alloc_Validate(pSAMB_head) == 0 ) { return 0; } \
+                if ( DataSize_Paras > (farpeekw(SAMB_head, 8) - 1) ) /* SAMB_SIZE */ \
                 { \
                     return 0; \
                 } \
@@ -246,15 +264,21 @@
             } \
             if ( LoadType == 2 ) \
             { \
-                if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } \
-                if ( DataSize_Paras > SA_GetFree(SAMB_head) ) \
+                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
+                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                /* TODO(JimBalcomb,20220907): figure out what the 0 or 1 here actually means... Is it just +0/+1 segments/paragraphs? ...as in SAMB_base/SAMB_sub_head? */ \
+                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                if ( DataSize_Paras > SA_GetFree(pSAMB_head) ) \
                 { \
                     return 0; \
                 } \
-                SAMB_data = SAMB_head + farpeekw(SAMB_head, SAMB_USED); \
-                tmp_SAMB_Size = DataSize_Paras + farpeekw(SAMB_head, SAMB_USED); \
+                SAMB_data = SAMB_head + farpeekw(SAMB_head, 10); /* SAMB_USED */ \
+                tmp_SAMB_Size = DataSize_Paras + farpeekw(SAMB_head, 10); /* SAMB_USED */ \
             } \
-            farpokew(SAMB_head, SAMB_USED, tmp_SAMB_Size); \
+            farpokew(SAMB_head, 10, tmp_SAMB_Size); /* SAMB_USED */ \
         } \
         /*tmp_SAMB_data = SAMB_data;*/ \
 }
@@ -271,6 +295,7 @@
 #define LBXREADSGMT() { \
     if ( lbx_read_sgmt(tmp_SAMB_data, ReadNbytes, g_LBX_FileHandle) == ST_FAILURE ) \
     { \
+        HERE("LBX entry corrupted"); \
         LBX_Error(LbxName, 0x02, LbxEntry);  /* LBXErr_corrupted */ \
     } \
 }
@@ -337,16 +362,25 @@
 #define LBX_TYPE_PICTURES 0
 
 
-// LBX Globals - Initialized
+/*
+    LBX Globals - Initialized
+*/
 extern unsigned int g_LBX_Header_Allocd;        // dseg:3E66
 extern int g_LBX_FileHandle;                    // dseg:3E68
 extern unsigned int UU_g_LBX_HdrFmtOvrRd;       // dseg:3E6A
 extern char UU_g_LBX_FilePath[];                // dseg:3E6C
 extern char g_LBX_FileExtension[];              // dseg:3E9E
-// LBX Globals - Unitialized
+/*
+    LBX Globals - Unitialized
+*/
+extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
+// // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
+// // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
+// // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
+
 extern unsigned int g_LBX_EntryCount;           // dseg:A5C6
 extern unsigned int UU_g_LBX_HdrFmt;            // dseg:A5C8
-extern unsigned int gsa_LBX_Header;             // dseg:A5CA
+extern SAMB_addr gsa_LBX_Header;             // dseg:A5CA
 extern char g_LBX_Name[];                       // dseg:A5CC
 
 // LBX Error (initialized)
@@ -392,21 +426,21 @@ void strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_of
     seg010
 */
 // _s10p01
-unsigned int LBXE_LoadSingle(char *LbxName, int LbxEntryIndex);                                                
+SAMB_addr LBXE_LoadSingle(char *LbxName, int LbxEntryIndex);
 // _s10p02
-unsigned int LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head);
+SAMB_addr LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
 // _s10p03
-unsigned int LBXE_LoadAppend(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head);
+SAMB_addr LBXE_LoadAppend(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
 // _s10p04c.c
-unsigned int LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
+SAMB_addr LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
 
 // _s10p10c.c
-unsigned int LBX_Load_Entry(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int LbxHdrFmt);
+unsigned int LBX_Load_Entry(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
 // _s10p11c.c
-unsigned int LBX_Load_Record(char *LbxName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
+unsigned int LBX_Load_Record(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
 // _s10p12c.c
 //unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_head, int RecFirst, int RecCount, int RecSize)
-unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_data, int RecFirst, int RecCount, int RecSize);
+unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, SAMB_addr SAMB_data, int RecFirst, int RecCount, int RecSize);
 // _s10p13c.c
 unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEntryOffset, unsigned long *LbxEntrySize, int LbxHdrFmt);
 

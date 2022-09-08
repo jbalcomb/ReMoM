@@ -89,7 +89,8 @@ int MGC_Main(void)
         j_LBX_Tables_Init();  // stub057
             |-> LBX_Tables_Init(6100);  // ovr057
     */
-    LBX_Tables_Init(6100);  // TODO(JimBalcomb,20220818): move whatever this 6100 is to a manifest constant
+    // TODO(JimBalcomb,20220818): move whatever this 6100 is to a manifest constant
+    MoM_Tables_Init(6100);
     
     IN_SetEscOverride();
 

@@ -19,11 +19,9 @@ seg008
 #define SA_SetUsed(samb,nparas) {farpokew(samb, 0x0A, nparas)}
 #define SA_SetMarked(samb,nparas) {farpokew(samb, 0x0E, nparas)}
 
-#define LBX_MemSig1 0x12FA
-#define LBX_MemSig2 0x4ECF
-#define SA_MEMSIG1 0x12FA
-#define SA_MEMSIG2 0x4ECF
-#define SA_MemBlkSig 0x12FA4ECF
+#define SA_MEMSIG1      0x12FA
+#define SA_MEMSIG2      0x4ECF
+#define SA_MEMSIG       0x12FA4ECF
 
 
 /*
@@ -95,8 +93,11 @@ extern unsigned char SA_NearHeap_Buffer[];          // dseg:9590 SA_NearHeap_Buf
 /*
     Far Heap
 */
-//extern void _FAR * gfp_tmpSAMB;                     // MGC dseg:A5C0  WZD dseg:E5CA
-extern unsigned int g_RAM_Min_KB;                   // dseg:A5C4
+// //extern void _FAR * gfp_tmpSAMB;                     // MGC dseg:A5C0  WZD dseg:E5CA
+// extern unsigned int g_RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
+// // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
+// // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
+// // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
 
 
 #ifdef __cplusplus
@@ -107,31 +108,27 @@ extern "C" {
 /*
     seg007
 */
-unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);                // _s07p05
-unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                 // _s07p06
-unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);               // _s07p07
-void farpokeb(unsigned int sgmt, unsigned int ofst, unsigned char value);    // _s07p08
-void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);   // _s07p09
-// UU? void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);   // _s07p10
+//int SA_Alloc_Validate(sgmt_addr SAMB_head)                                  // s07p04
+//int SA_Alloc_Validate(SAMB_addr pSAMB_head)                                 // s07p04
+unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);               // s07p05
+unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                // s07p06
+unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);              // s07p07
+void farpokeb(unsigned int sgmt, unsigned int ofst, unsigned char value);   // s07p08
+void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);  // s07p09
+// UU? void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);  // s07p10
 
 /*
     seg008
 */
-//void _seg *
-unsigned int SA_Allocate_Space(unsigned int nparas);            // _s08p07c.c
-unsigned int SA_Allocate_MemBlk(unsigned int nparas); // _s08p08c.c
-// unsigned int SA_Allocate_MemBlk_LbxHeader(unsigned int nparas); // _s08p08c.c
-// unsigned int SA_Allocate_MemBlk_EntrySize(unsigned int nparas); // _s08p09c.c
-// _s08p12c.c
-unsigned int SA_Alloc_First(unsigned int SAMB, int nparas);
-// _s08p14c.c
-unsigned int SA_Alloc_Next(unsigned int SAMB, int nparas);
-
-unsigned int SA_GetFree(unsigned int Alloc_Seg);          // _s08p15.asm
-// Error: Size of '__FAR' is known or zero
-void _FAR * SA_MK_FP0(unsigned int sgmt_addr);                   // _s08p16.asm
-
-void SA_Alloc_Error(int errno, int value);                      // _s08p19c.c
+SAMB_ptr SA_Allocate_Space(unsigned int nparas);                        // s08p07
+SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
+// unsigned int SA_Allocate_MemBlk_LbxHeader(unsigned int nparas);      // s08p08
+// unsigned int SA_Allocate_MemBlk_EntrySize(unsigned int nparas);      // s08p09
+SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
+SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
+unsigned int SA_GetFree(SAMB_ptr SAMB_head);                            // s08p15
+SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr);                                // s08p16
+void SA_Alloc_Error(int errno, int value);                              // s08p19
 
 #ifdef __cplusplus
 }

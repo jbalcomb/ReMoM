@@ -13,7 +13,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
 {
     char *tmp_LbxName;
     int tmp_LbxEntry;
-    sgmt_addr SAMB_data;
+    SAMB_addr SAMB_data;
     int tmp_LbxHdrFmt;
     char tmp_LbxFileName[20];
     char tmp_LbxFilePathName[60];
@@ -21,7 +21,9 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
     unsigned int EntryTableOffset;
     unsigned long LbxEntryOffset_End;
 
-    printf("DEBUG: [%s, %d]: BEGIN: LBX_GetEntryData(LbxName = %s, LbxEntry = %d, *LbxEntryOffset, *LbxEntrySize, FormatType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, LbxHdrFmt);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: LBX_GetEntryData(LbxName = %s, LbxEntry = %d, *LbxEntryOffset, *LbxEntrySize, FormatType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, LbxHdrFmt);
+#endif
 
     tmp_LbxEntry = LbxEntry;
     tmp_LbxName = LbxName;
@@ -43,7 +45,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
             /*
                 BEGIN: Current != Previous
             */
-            printf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
+            dlvfprintf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
 
             UU_g_LBX_HdrFmt = tmp_LbxHdrFmt;
             
@@ -108,7 +110,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
         }
         else
         {
-            printf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
+            dlvfprintf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
         }
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
@@ -124,6 +126,9 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
     LbxEntryOffset_End = farpeekdw(gsa_LBX_Header, EntryTableOffset + 4);
     *LbxEntrySize = LbxEntryOffset_End - *LbxEntrySize;
 
-    printf("DEBUG: [%s, %d]: END: LBX_GetEntryData(LbxName = %s, LbxEntry = %d, *LbxEntryOffset, *LbxEntrySize, FormatType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, LbxHdrFmt);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: LBX_GetEntryData(LbxName = %s, LbxEntry = %d, *LbxEntryOffset, *LbxEntrySize, FormatType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, LbxHdrFmt);
+#endif
+
     return g_LBX_FileHandle;
 }

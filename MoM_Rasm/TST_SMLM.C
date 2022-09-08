@@ -28,6 +28,8 @@
 
 */
 
+#include "MOM131LB.H"
+
 
 /*
     Segmented Memory vs. Linear Memory
@@ -84,6 +86,27 @@ char LBX_Name[16];
 unsigned int LBX_EmmRsvd;
 
 char Font_File[] = "FoNtS.LbX";
+
+/*
+    Returns zero if they are the same,
+     a value less than zero if @var{x} is lexically less than @var{y},
+     or a value greater than zero if @var{x} is lexically greater than @var{y}.
+    Note that lexical order is determined as if comparing unsigned char arrays.
+*/
+static int memory_compare_bytes (const void * s1, const void * s2, unsigned long len)
+{
+    register const unsigned char * p1 = (const unsigned char *)s1;
+    register const unsigned char * p2 = (const unsigned char *)s2;
+
+	if (len != 0)
+    {
+		do {
+			if (*p1++ != *p2++)
+				return (*--p1 - *--p2);
+		} while (--len != 0);
+	}
+	return (0);
+}
 
 
 // // _s08p07
@@ -330,7 +353,10 @@ void TST_SMLM(void)
     unsigned char * dynamically_allocated_array;
     unsigned char * lbx_header;
     int is_valid;
-    void * FontStyleData;
+    //void * FontStyleData;
+    unsigned char * FontStyleData;
+    unsigned char * BorderStyleData;
+    int itr;
 
     dynamically_allocated_array = (unsigned char *)malloc(4096);
     if( dynamically_allocated_array == NULL )
@@ -356,7 +382,26 @@ void TST_SMLM(void)
         printf( "ERROR: \n" );
     }
 
-    FontStyleData = LBXE_LoadSingle(Font_File, 0);
+    FontStyleData = (unsigned char *)LBXE_LoadSingle(Font_File, 0);
+
+    // //for ( itr = 0; itr < SZ_FONTS_LBX_000; itr++ )
+    // //{
+    // //    printf("%02X", FONTS_LBX_000[itr]);
+    // //}
+    // for ( itr = 0; itr < SZ_FONTS_LBX_000; itr++ )
+    // {
+    //     printf("%s: %02X  %02X\n", (FontStyleData[itr] == FONTS_LBX_000[itr] ? "EQ" : "NE"), FontStyleData[itr], FONTS_LBX_000[itr]);
+    // }
+    if (memory_compare_bytes(FontStyleData, FONTS_LBX_000, SZ_FONTS_LBX_000) == 0 )
+    {
+        printf( "SUCCESS: FontStyleData\n" );
+    }
+    else
+    {
+        printf( "ERROR: FontStyleData\n" );
+    }
+
+    BorderStyleData = (unsigned char *)LBXE_LoadSingle(Font_File, 1);
 
     //strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt)
     //printf("%s",fp_dst_strcpyfar);

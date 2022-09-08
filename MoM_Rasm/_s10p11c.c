@@ -8,6 +8,8 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#include "STU_DBG.H"
+
 
 unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
 {
@@ -29,6 +31,7 @@ unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
     sgmt_addr tmp_SAMB_data;        // LBXREADDATA()
     unsigned int ReadNbytes;        // LBXREADDATA()
+    void * pSAMB_head;
 
 //    printf("DEBUG: [%s, %d]: BEGIN: LBX_Load_Record(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType);
 

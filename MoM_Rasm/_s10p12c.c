@@ -8,6 +8,8 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#include "STU_DBG.H"
+
 
 unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_data, int RecFirst, int RecCount, int RecSize)
 {
@@ -24,8 +26,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
     static int Record_Count;        // LBXRECORDOFFSET()
     static int Record_Size;         // LBXRECORDOFFSET()
     unsigned int ReadNbytes;        // LBXREADDATA()
-
-    printf("DEBUG: [%s, %d]: BEGIN: LBXR_DirectLoader(LbxName = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize);
+    void * pSAMB_head;
 
     tmp_LbxName = LbxName;
     tmp_LbxEntry = LbxEntry;
@@ -57,11 +58,11 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
             /*
                 BEGIN: Current != Previous
             */
-            printf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
+            //printf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
 
             UU_g_LBX_HdrFmt = tmp_LbxHdrFmt;
             
-            if ( g_LBX_FileHandle != -1 )
+            if ( g_LBX_FileHandle != -1 )  // #define DOS_UNUSED_FILE_HANDLE -1
             {
                 lbx_close(g_LBX_FileHandle);
             }
@@ -121,7 +122,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
         }
         else
         {
-            printf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
+            // printf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
         }
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
@@ -157,6 +158,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
         ReadNbytes = DataSize_Bytes % 60000;
         if ( lbx_read_sgmt(SAMB_data, ReadNbytes, g_LBX_FileHandle) == ST_FAILURE )
         {
+            HERE("LBX entry corrupted"); \
             LBX_Error(LbxName, 0x02, LbxEntry);  /* LBXErr_corrupted */
         }
         /*
@@ -167,6 +169,5 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
 
     Update_MemFreeWorst_KB();
 
-    printf("DEBUG: [%s, %d]: END: LBXR_DirectLoader(LbxName = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
     return SAMB_data;
 }

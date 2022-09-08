@@ -288,7 +288,7 @@ void VGA_WaitSync(void);
 */
 // _s03p05
 long DOS_GetFileSize(char *fname);
-unsigned int C_GetFileSize(const char *filename);
+//unsigned int C_GetFileSize(const char *filename);
 
 /*
     seg005
@@ -327,7 +327,7 @@ void VGA_ResetDrawWindow(void);
     ovr057
 */
 // _o57p01
-void LBX_Tables_Init(int gfx_buff_nparas);
+void MoM_Tables_Init(int gfx_buff_nparas);
 
 
 #ifdef __cplusplus

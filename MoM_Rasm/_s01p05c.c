@@ -11,6 +11,7 @@
 #include "ST_GUI.H"
 #include "ST_HLP.H"
 #include "ST_SCRN.H"
+#include "ST_VGA.H"
 
 #include "STU_DBG.H"
 

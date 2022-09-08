@@ -2,6 +2,7 @@
 // ST_LBX.H
 
 #include "ST_HEAD.H"
+#include "ST_TYPE.H"
 
 #include "ST_EMM.H"
 #include "ST_LBX.H"
@@ -10,11 +11,11 @@
 #include "STU_DBG.H"
 
 
-unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, int LoadType, int LbxHdrFmt)
+SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
 {
     char *tmp_LbxName;
     int tmp_LbxEntry;
-    sgmt_addr SAMB_data;
+    SAMB_addr SAMB_data;
     int tmp_LbxHdrFmt;
     char tmp_LbxFileName[20];
     char tmp_LbxFilePathName[60];
@@ -25,8 +26,9 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
     unsigned long DataSize_Bytes;   // LBXENTRYOFFSET()
     unsigned long DataSize_Paras;   // LBXLOADTYPE()
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
-    sgmt_addr tmp_SAMB_data;        // LBXREADDATA()
+    SAMB_addr tmp_SAMB_data;        // LBXREADDATA()
     unsigned int ReadNbytes;        // LBXREADDATA()
+    SAMB_ptr pSAMB_head;
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
@@ -110,6 +112,7 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
 
             if ( lbx_seek(tmp_LbxHdrOfst, g_LBX_FileHandle) == ST_FAILURE )
             {
+                HERE("LBX entry has been corrupted");
                 LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry);  /* LBXErr_corrupted */
             }
 
@@ -130,7 +133,7 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, sgmt_addr SAMB_head, in
         {
             //HERE("Curr. == Prev.");
         }
-        
+
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
         {

@@ -12,7 +12,7 @@ void IN_Init(int Input_Type)
     dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_Init(Input_Type=%d)\n", __FILE__, __LINE__, Input_Type);
 #endif
 
-    gfp_CTRL_Control_Table = SA_MK_FP0(SA_Allocate_Space(357));  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
+    gfp_CTRL_Control_Table = SA_Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
 
     /*
         Input_Type: {0, 1, 2, n}

@@ -202,12 +202,12 @@ _s07p08     farpokeb                    void farpokeb(unsigned int sgmt, unsigne
 _s07p09     farpokew                    void farpokew(unsigned int sgmt, unsigned int ofst, int value);
 
 ##### seg008    ST_SA.H
-_s08p07     SA_Allocate_Space           sgmt_addr Allocate_Space(unsigned int size)
-_s08p08     SA_Allocate_MemBlk          sgmt_addr SA_Allocate_MemBlk(unsigned int size); ***NOTE: merged _s08p08 & _s08p09  AllocMem_LBX_Header & AllocMem_EntrySize***  
+_s08p07     SA_Allocate_Space           SAMB_ptr Allocate_Space(unsigned int nparas)
+_s08p08     SA_Allocate_MemBlk          SAMB_ptr SA_Allocate_MemBlk(unsigned int size); ***NOTE: merged _s08p08 & _s08p09  AllocMem_LBX_Header & AllocMem_EntrySize***  
 _s08p12     SA_Alloc_First
 _s08p14     SA_Alloc_Next
-_s08p15     SA_GetFree                  unsigned int SA_GetFree(unsigned int Alloc_Seg) LBX_Alloc_GetFree
-_s08p16     SA_MK_FP0                      void far * MK_FAR(sgmt_addr Segment_Address) MK_FAR
+_s08p15     SA_GetFree                  unsigned int SA_GetFree(SAMB_ptr pSAMB_head)    LBX_Alloc_GetFree
+_s08p16     SA_MK_FP0                   void far * MK_FAR(sgmt_addr Segment_Address)    MK_FAR
 _s08p19     SA_Alloc_Error                              LBX_Alloc_Error
 
 ##### seg009    ST_LBX.H    ALL ASM

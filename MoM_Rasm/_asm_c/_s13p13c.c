@@ -29,6 +29,7 @@ unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAM
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
     sgmt_addr tmp_SAMB_data;        // LBXREADDATA()
     unsigned int ReadNbytes;        // LBXREADDATA()
+    void * pSAMB_head;
 
 //    printf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
 

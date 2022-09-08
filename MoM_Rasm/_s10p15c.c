@@ -32,7 +32,7 @@ void LBX_Error(char *name, int errno, int entry, int pages)
             break;
         case 3:
             strcpy(errmsg, cnst_LBX_Error31);
-            itoa(g_RAM_Min_KB, cnv, 10);
+            itoa(RAM_Min_KB, cnv, 10);
             strcat(errmsg, cnv);
             strcat(errmsg, cnst_LBX_Error32);
             break;
