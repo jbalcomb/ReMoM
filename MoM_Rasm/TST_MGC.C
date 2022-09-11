@@ -153,14 +153,12 @@ void Y4_Set_Pixel(int x, int y, unsigned char color);
 #define FONT_FILE_NAME "FONTS.LBX"
 char *g_FontFileName = "FONTS.LBX";
 
-// typedef struct SAMB_struct SAMB;
-// typedef far * SAMB fp_SAMB;
-// s_SAMB far * gfp_SAMB;
 
-// extern byte far gamepal;
-// extern	pictabletype	_seg *pictable;
-// extern	pictabletype	_seg *picmtable;
-// extern	spritetabletype _seg *spritetable;
+/*
+    ? Tell the Compiler that the Linker will find these later ?
+*/
+extern unsigned int EMM_PageFrame_Base_Address;   // dseg:40E4
+
 
 
 void test_defines(void);
@@ -1261,10 +1259,10 @@ void test_EMM_Load_LBX_File(void)
     // TODO(JimBalcomb): add another test for an entry/record that starts past 64 KB
     EMM_Map4(EmmHndlNbr, 0);
 
-    LBX_Header_Preamble_EntryCount = farpeekw(g_EMM_PageFrame_Base_Address, 0);
-    LBX_Header_Preamble_MagSig = farpeekw(g_EMM_PageFrame_Base_Address, 2);
-    LBX_Header_Preamble_Unknown = farpeekw(g_EMM_PageFrame_Base_Address, 4);
-    LBX_Header_Preamble_Type = farpeekw(g_EMM_PageFrame_Base_Address, 6);
+    LBX_Header_Preamble_EntryCount = farpeekw(EMM_PageFrame_Base_Address, 0);
+    LBX_Header_Preamble_MagSig = farpeekw(EMM_PageFrame_Base_Address, 2);
+    LBX_Header_Preamble_Unknown = farpeekw(EMM_PageFrame_Base_Address, 4);
+    LBX_Header_Preamble_Type = farpeekw(EMM_PageFrame_Base_Address, 6);
     printf("DEBUG: [%s, %d]: LBX_Header_Preamble_EntryCount: 0x%04X\n", __FILE__, __LINE__, LBX_Header_Preamble_EntryCount);
     printf("DEBUG: [%s, %d]: LBX_Header_Preamble_MagSig: 0x%04X\n", __FILE__, __LINE__, LBX_Header_Preamble_MagSig);
     printf("DEBUG: [%s, %d]: LBX_Header_Preamble_Unknown: 0x%04X\n", __FILE__, __LINE__, LBX_Header_Preamble_Unknown);

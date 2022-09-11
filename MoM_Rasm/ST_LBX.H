@@ -134,14 +134,17 @@
         lbx_read_ofst((unsigned int)&Record_Size, 2, g_LBX_FileHandle); \
         if ( Record_Size ==  0 ) \
         { \
+            HERE("LBX record size mismatch"); \
             LBX_Error(g_LBX_Name, 0x09, LbxEntry);  /* LBXErr_recsize_mismatch */ \
         } \
         if ( (RecSize - Record_Size) !=  0 ) \
         { \
+            HERE("LBX record size mismatch"); \
             LBX_Error(g_LBX_Name, 0x09, LbxEntry);  /* LBXErr_recsize_mismatch */ \
         }         \
         if ( !(Record_Count <= (RecFirst + RecCount)) ) \
         { \
+            HERE("LBX records exceeeded"); \
             LBX_Error(g_LBX_Name, 0x0A, LbxEntry);  /* LBXErr_records_exceeded */ \
         } \
         DataOffset_Begin = 4 + (Record_Size * RecFirst); \
@@ -431,22 +434,22 @@ SAMB_addr LBXE_LoadSingle(char *LbxName, int LbxEntryIndex);
 SAMB_addr LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
 // _s10p03
 SAMB_addr LBXE_LoadAppend(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
-// _s10p04c.c
+// _s10p04
 SAMB_addr LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
 
 // _s10p10c.c
-unsigned int LBX_Load_Entry(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
+SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
 // _s10p11c.c
-unsigned int LBX_Load_Record(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
+SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
 // _s10p12c.c
-//unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_head, int RecFirst, int RecCount, int RecSize)
-unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, SAMB_addr SAMB_data, int RecFirst, int RecCount, int RecSize);
+SAMB_addr LBXR_DirectLoader(char *LbxName, int LbxEntry, SAMB_addr SAMB_data, int RecFirst, int RecCount, int RecSize);
+
 // _s10p13c.c
 unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEntryOffset, unsigned long *LbxEntrySize, int LbxHdrFmt);
 
-// _s10p16.asm
+// _s10p16
 void ExtractFileBase(char *LbxFileName);
-// _s10p17c.c
+// _s10p17
 void RAM_SetMinKB(int RAM_MinKB);
 
 

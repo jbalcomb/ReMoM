@@ -5,9 +5,6 @@
 Unable to resolve configuration with compilerPath "J:/STU/DBWD/BORLANDC/BIN/BCC.EXE"
 */
 
-//#include "ST_HEAD.H"
-//#include "MOM_HEAD.H"
-//#include "MOM_DEF.H"
 #include "MGC_HEAD.H"
 
 #include "ST_GUI.H"
@@ -15,6 +12,10 @@ Unable to resolve configuration with compilerPath "J:/STU/DBWD/BORLANDC/BIN/BCC.
 
 #include "STU_DBG.H"
 
+/*
+    ? Tell the Compiler that the Linker will find these later ?
+*/
+extern unsigned int EMM_PageFrame_Base_Address;   // dseg:40E4
 
 /*
 Hardware Settings

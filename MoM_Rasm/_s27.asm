@@ -6,7 +6,7 @@ TITLE _s27.asm FLIC_Draw_...
 ;ScreenPage_X
 ;ScreenPage_Y
 
-EXTRN g_EMM_PageFrame_Base_Address:WORD
+EXTRN EMM_PageFrame_Base_Address:WORD
 EXTRN gsa_DSP_Addr:WORD
 ;VGA_WriteMapMasks3
 ;EXTRN g_VGA_WriteMapMasks:WORD
@@ -633,7 +633,7 @@ proc FLIC_Draw_EMM
     shl ax, 1
     add si, ax
     add si, 12h  ; 18
-    mov ax, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
+    mov ax, [EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, ax
     lodsw ; frame image offset low word
     mov dx, ax
@@ -739,7 +739,7 @@ loc_1EB13:
     mov bx, offset VGA_WriteMapMasks3 ; should use dseg:41d0
     add bx, ax
     mov ah, [bx] ; write mask for the first pixel
-    mov bx, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
+    mov bx, [EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, bx
     mov bx, [cs:tmpFlicHdrWidth]
 
@@ -961,7 +961,7 @@ proc FLIC_Draw_EMM_R
     mov ah, al
     or ah, cl ; low nibble = map mask for the first pixel
     ; high nibble = read map for the same
-    mov bx, [g_EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
+    mov bx, [EMM_PageFrame_Base_Address] ; contains the segment address of the EMS page frame
     mov ds, bx
     mov bx, [cs:tmpFlicHdrWidth]
 @@Loop48KB:

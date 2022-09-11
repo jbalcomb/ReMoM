@@ -246,27 +246,6 @@ extern void _FAR * gfp_UU_TBL_2;         // dseg:89EE
 extern void _FAR * gfp_TBL_Maps;         // dseg:89F2
 
 
-// J:\STU\DBWD\devel\Rasm_MoM\POCEMS\emstulkt\DISK1\EMMLIB.H
-/*===========================================================================*/
-/*                                 EMM MACRO                                 */
-/*===========================================================================*/
-	/*-----------------------------------------------------------------------*/
-	/*   This macro converts an unsigned int containing a segment address,   */
-	/*   into a far pointer to a void.  It is useful in converting the       */
-	/*   segment values, returned by EMM function calls, into far pointers   */
-	/*   which C programs can use.  For example:                             */
-	/*                                                                       */
-	/*   unsigned int status,                                                */
-	/*                  page_frame_seg;                                      */
-	/*   char far *page_frame_ptr;                                           */
-	/*                                                                       */
-	/*   status = get_page_frame_seg (&page_frame_seg);                      */
-	/*   page_frame_ptr = FP(page_frame_seg);                                */
-	/*   *page_frame_ptr = 0;                                                */
-	/*-----------------------------------------------------------------------*/
-	#define FP(SEG) ((void far *)((unsigned long)SEG << 16))
-
-
 
 #ifdef __cplusplus
 extern "C" {

@@ -235,40 +235,35 @@ _s10p16.asm     ExtractFileBase             ExtractFileBase(char * FileName)  ST
 _s10p17c.c      RAM_SetMinKB                RAM_SetMinKB(int RAM_MinKbytes)
 
 ##### seg012    ST_EMM.H
-_s12p01.asm     EMM_Init                    int EMM_Init(void);
-_s12p02c.c      EMM_GetActiveHandleCount    unsigned int EMM_GetActiveHandleCount(void);
-_s12p03c.c      EMM_GetFreePageCount        unsigned int EMM_GetFreePageCount(void);
-_s12p04c.c      EMM_GetHandlePageCount
-_s12p05.asm     EMM_MakeNamedHandle
-_s12p06.asm     EMM_GetHandleName           unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EmmHndlNbr);
-_s12p07c.c      EMM_ReleaseHandle
-_s12p08c.c      EMM_MapnRead                unsigned int EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EMM_Handle)
-_s12p10         EMM_GetPageFrame            unsigned int EMM_GetPageFrame(void)
-_s12p11c.c      EMM_Map4                    void EMM_Map4(int EmmHandle, int EmmLogicalPage)                EMM_MapFourPages
-_s12p12c.c      EMM_MapMulti4
+s12p01          EMM_Init
+s12p02          EMM_GetActiveHandleCount
+s12p03          EMM_GetFreePageCount
+s12p04          EMM_GetHandlePageCount
+s12p05          EMM_MakeNamedHandle
+s12p06          EMM_GetHandleName
+s12p07          EMM_ReleaseHandle
+s12p08          EMM_MapnRead
+s12p10          EMM_GetPageFrame
+s12p11          EMM_Map4                                                                        EMM_MapFourPages
+s12p12          EMM_MapMulti4
 
 ##### seg013    ST_EMM.H
-_s13p01c.c      EMM_Startup
-_s13p02         UU                          UU_EMM_Load_LBX_0
-_s13p03c.c      EMM_Load_LBX_File_1              void EMM_Load_LBX_1(char *argLbxFileName)       EMM_LoadResLBX
-_s13p04c.c      EMM_Load_LBX_File                void EMM_Load_LBX(char *argLbxFileName, int argReserved)
-...
-_s13p11c.c      EMM_LBX_Load_Entry
-_s13p12c.c      EMM_LBX_FLIC_Header         unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType)   EMM_LBX_HdrOnly
-_s13p13c.c      EMM_LBX_Load_Record
-[]_S13p14c.c    EMM_LBX_DirectLoad
-
-_s13p15c.c      EMM_CheckHandleOpen         unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
-_s13p16c.c      EMM_Shutdown                        EMM_ReleaseAll
-...
-_s13p20c.c      EMM_GetHandle       unsigned int EMM_GetHandle(unsigned int argEmmLogicalPageCount, char *argEmmHandleName, int argEmmRsvdFlag)  EMM_GetOrCreateHandle
-...
-_s13p25c.c      EMM_Map4_EMMDATAH
-_s13p26c.c      EMM_EMMDATAH_AllocFirst
-_s13p27c.c      EMM_EMMDATAH_AllocNext
-...
-_s13p31c.c      EMM_SetMinKB                void EMM_SetMinKB(int EMM_Min_KB);
-_s13p32c.c      EMM_BuildEmmErrStr          void EMM_BuildEmmErrStr(char *strbuf)
+s13p01          EMM_Startup
+s13p02          UU_EMM_Load_LBX_0
+s13p03          EMM_Load_LBX_File_1                                                             EMM_LoadResLBX
+s13p04          EMM_Load_LBX_File
+s13p11          EMM_LBX_Load_Entry
+s13p12          EMM_LBX_FLIC_Header                                                             EMM_LBX_HdrOnly
+s13p13          EMM_LBX_Load_Record
+s13p14          EMM_LBX_DirectLoad
+s13p15          EMM_CheckHandleOpen
+s13p16          EMM_Shutdown                                                                    EMM_ReleaseAll
+s13p20          EMM_GetHandle                                                                   EMM_GetOrCreateHandle
+s13p25          EMM_Map4_EMMDATAH
+s13p26          EMM_EMMDATAH_AllocFirst
+s13p27          EMM_EMMDATAH_AllocNext
+s13p31          EMM_SetMinKB
+s13p32          EMM_BuildEmmErrStr
 
 ##### seg014    MOM_DEF.H
 _s14p01c.c      Hardware_Init               int Hardware_Init(...);
@@ -496,7 +491,7 @@ _s36p02         SND_Init
 [?] _o49p05     HLP_Load_Settings
 
 ##### ovr057    MOM_DEF.H
-_o57p01         LBX_Tables_Init             void LBX_Tables_Init(int gfx_buff_nparas)
+_o57p01         MoM_Tables_Init                                                                 LBX_Tables_Init
 
 ##### ovr058    ...Intro Animation...
 

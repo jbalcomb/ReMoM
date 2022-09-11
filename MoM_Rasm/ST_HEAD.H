@@ -163,7 +163,7 @@ typedef   signed long  SLONG;
 // (c) Keep lower 16-bit using cast.
 // ~== unsigned int SgmtAddr = (unsigned int) ( (unsigned long) (FarPtr >> 16) );
 #define FP_SGMT(_fp_) ( (unsigned int) ( (unsigned long)((void _FAR *)(_fp_)) >> 16) )
-#define FP_OFST(_fp_) ( (unsigned int)(_fp_) )
+#define FP_OFST(_fp_) ( (unsigned int) (_fp_) )
 
 
 //#define MK_HP(sgmt,ofst) ( (void _seg * )( seg ) +( void near * )( ofs ))

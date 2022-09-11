@@ -354,6 +354,7 @@ typedef struct s_MAP_STRUCT MAP_STRUCT;
 ;                                               handle);                      ;
 */
 //MAP_STRUCT   mu[MAX_MAPPABLE_REGIONS];
+// J:\STU\DBWD\devel\Rasm_MoM\POCEMS\emstulkt\DISK1\EMMLIB.H
 // C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
 /*===========================================================================*/
 /*                                 EMM MACRO                                 */
@@ -372,7 +373,8 @@ typedef struct s_MAP_STRUCT MAP_STRUCT;
 	/*   page_frame_ptr = FP(page_frame_seg);                                */
 	/*   *page_frame_ptr = 0;                                                */
 	/*-----------------------------------------------------------------------*/
-	#define FP(SEG) ((void far *)((unsigned long)SEG << 16))
+	#define FP(_SEG_) ((void far *)((unsigned long)(_SEG_) << 16))
+
 
 
 /*
@@ -396,8 +398,8 @@ extern unsigned int g_EmmHndl_FIGUREX;      // dseg:9486
         ? ALL Xref seg012 and seg013 ?
 */
 
-extern unsigned int g_EMM_PageFrame_Base_Address;   // dseg:40E4
-extern char g_EMM_device_name[];                    // dseg:40E6
+extern unsigned int EMM_PageFrame_Base_Address;   // dseg:40E4
+//extern char EMM_device_name[];                    // dseg:40E6
 
 // // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
 // // dseg:40EF EMS_L2P_Map_Record <0,      1>
@@ -476,7 +478,7 @@ unsigned int EMM_GetFreePageCount(void);
 // s12p04
 unsigned int EMM_GetHandlePageCount(unsigned int EmsHndlNbr);
 // s12p05
-unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char _FAR * argHandleName);
+unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char * argHandleName);
 // s12p06
 unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EmmHndlNbr);
 // s1207

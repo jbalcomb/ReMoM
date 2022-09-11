@@ -31,6 +31,8 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#include "STU_DBG.H"
+
 
 // TODO(jbalcomb): move these scraps of notes
 //memptr		bufferseg;
@@ -67,8 +69,8 @@ unsigned int g_EmmHndl_FIGUREX;             // dseg:9486
         ? ALL Xref seg012 and seg013 ?
 */
 
-unsigned int g_EMM_PageFrame_Base_Address;   // dseg:40E4
-char g_EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
+unsigned int EMM_PageFrame_Base_Address;   // dseg:40E4
+char EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
 // //dseg:40EF EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
 // //dseg:40EF                  EMM_L2P_Map_Record <0, 1>
 // //dseg:40EF                  EMM_L2P_Map_Record <0, 2>
@@ -152,74 +154,118 @@ int EMM_Init(void)
     struct SREGS segregs6;
     int          result6;
 
-    //inregs1.x.dx = g_EMM_device_name;
-    inregs1.h.dh = FP_SEG(g_EMM_device_name);
-    inregs1.h.dl = FP_OFF(g_EMM_device_name);
-    inregs1.x.ax = 0x3D00;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Init()\n", __FILE__, __LINE__);
+#endif
+
+    // // //inregs1.x.dx = EMM_device_name;
+    // // //inregs1.h.dh = FP_SEG(EMM_device_name);
+    // // //inregs1.h.dl = FP_OFF(EMM_device_name);
+    // // segregs1.ds = FP_SEG(EMM_device_name);
+    // // inregs1.x.dx = FP_OFF(EMM_device_name);
+    // // //inregs1.x.dx = (unsigned int)&EMM_device_name;
+    // // inregs1.h.ah = 0x3D;  // INT 21,3D - Open File Using Handle
+    // // inregs1.h.al = 0x00;  // open access mode: read only
+    // // result1 = int86x(DOS_INT, &inregs1, &outregs1, &segregs1);
+    // // //#define CF 1 /* Carry flag */
+    // asm {
+    //     mov dx, offset EMM_device_name
+    //     mov ax, 3D00h
+    //     int 21h
+    // }
+    // if ( (_FLAGS & 1) == 0 )
+    // {
+    //     HERE("FAILURE: INT 21,3D,00 EMM_device_name");
+    //     goto Error;
+    // }
+    inregs1.x.dx = (unsigned int)&EMM_device_name;
+    inregs1.h.ah = 0x3D;  // INT 21,3D - Open File Using Handle
+    inregs1.h.al = 0x00;  // open access mode: read only
     result1 = int86(DOS_INT, &inregs1, &outregs1);
-    //#define CF 1 /* Carry flag */
-    if ( (_FLAGS & 1) == 0 )
+    if ( outregs1.x.cflag != 0 )
     {
+        HERE("FAILURE: INT 21,3D,00 EMM_device_name");
         goto Error;
     }
 
-    inregs2.x.ax = 0x4400;
+    inregs2.x.bx = outregs1.x.ax;  // File Handle
+    inregs2.h.ah = 0x44;  // INT 21,44 - I/O Control for Devices (IOCTL)
+    inregs2.h.al = 0x00;  // function value: IOCTL,0 - Get Device Information
     result2 = int86(DOS_INT, &inregs2, &outregs2);
-    if ( (_FLAGS & 1) == 0 )
+    if ( outregs2.x.cflag != 0 )
     {
+        HERE("FAILURE: INT 21,44,00");
         goto Error;
     }
 
     if ( outregs2.x.dx & 0x80 == 0 )  // ; test bit 7; 0 == File, 1 == Device
     {
+        HERE("FAILURE:  INT 21,44,00: *device* is \"disk file\", not \"character device\" ");
         goto Error;
     }
 
-    inregs3.x.ax = 0x4407;
+    inregs3.x.bx = outregs1.x.ax;  // File Handle
+    inregs3.h.ah = 0x44;  // INT 21,44 - I/O Control for Devices (IOCTL)
+    inregs3.h.al = 0x07;  // IOCTL,7 - Get Output Status
     result3 = int86(DOS_INT, &inregs3, &outregs3);
-    if ( (_FLAGS & 1) == 0 )
+    //if ( (_FLAGS & 1) == 0 )
+    if ( outregs3.x.cflag != 0 )
     {
+        HERE("FAILURE: INT 21,44,07");
         goto Error;
     }
     if ( outregs3.h.al == 0 )
     {
+        HERE("FAILURE: INT 21,44,07: *device* is not ready");
         goto Error;
     }
 
-    inregs4.h.ah = 0x3E;
+    inregs4.x.bx = outregs1.x.ax;  // File Handle
+    inregs4.h.ah = 0x3E;  // INT 21,3E - Close File Using Handle
     result4 = int86(DOS_INT, &inregs4, &outregs4);
-    if ( (_FLAGS & 1) == 0 )
+    if ( outregs4.x.cflag != 0 )
     {
+        HERE("FAILURE: INT 21,3E");
         goto Error;
     }
 
-    inregs5.h.ah = 0x46;
+    inregs5.h.ah = 0x46;  // INT 67,46 - Get EMM Version (LIM EMS)
     result5 = int86(EMS_INT, &inregs5, &outregs5);
-    if ( outregs5.h.ah == 0 )
+    if ( outregs5.h.ah != 0 )
     {
+        HERE("FAILURE: INT 67,46: (Error) Code not \"success\"");
         goto Error;
     }
-    if ( outregs5.h.al < 0x40 )
+    if ( outregs5.h.al < 0x40 )  // BCD; >= LIM EMS Version 4.0
     {
+        HERE("FAILURE: LIM EMS Version < 4.0");
         goto Error;
     }
 
-
-    inregs6.h.ah = 0x41;
+    inregs6.h.ah = 0x41;  // INT 67,41 - Get Page Frame Base Address (LIM EMS 3.0+)
     result6 = int86(EMS_INT, &inregs6, &outregs6);
     if ( outregs6.h.ah != 0 )
     {
+        HERE("FAILURE: INT 67,41: (Error) Code not \"success\"");
         goto Error;
     }
     else
     {
-        g_EMM_PageFrame_Base_Address = result1;
+        EMM_PageFrame_Base_Address = outregs6.x.bx;  // BX = segment of page frame (PFBA) ...where in the 1Mb memory address the page frame will be mapped
     }
 
-    return -1;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_Init() { EMM_PageFrame_Base_Address = 0x%04X }\n", __FILE__, __LINE__, EMM_PageFrame_Base_Address);
+#endif
+
+    return -1;  // ST_SUCCESS
 
 Error:
-    return 0;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: %s %d END: EMM_Init()\n", __FILE__, __LINE__);
+#endif
+
+    return 0;  // ST_FAILURE
 }
 
 // _s12p02c.c EMM_GetHandleCount
@@ -300,7 +346,7 @@ unsigned int EMM_GetHandlePageCount(unsigned int EmmHndlNbr)
 ; to an EMM handle, and set its name
 ; returns the handle if successful, 0 otherwise
 */
-unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char _FAR * argHandleName)
+unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char _FAR * argHandleName)
 {
     union  REGS  inregs1;
     union  REGS  outregs1;
@@ -312,17 +358,25 @@ unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char _FAR *
     int          result2;
     unsigned int varEmmHandle;
 
-    inregs1.h.ah - 0x43;
-    inregs1.x.bx = argPageCount;
-    int86(EMS_INT, &inregs1, &outregs1);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MakeNamedHandle(argPageCount = %u, argHandleName = %s)\n", __FILE__, __LINE__, argPageCount, argHandleName);
+#endif
 
-    if ( outregs1.h.ah == 0 )
+    inregs1.h.ah = 0x43;  // INT 67,43 - Get Handle and Allocate Pages (LIM EMS 3.2+)
+    inregs1.x.bx = argPageCount;
+    result1 = int86(EMS_INT, &inregs1, &outregs1);
+    if ( outregs1.h.ah != 0 )
     {
+        HERE("FAILURE: INT 67,43: (Error) Code not \"success\"");
+        dlvfprintf("DEBUG: [%s, %d] outregs1.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs1.h.ah);
         goto Error;
     }
     else
     {
         varEmmHandle = outregs1.x.dx;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] varEmmHandle: %u\n", __FILE__, __LINE__, varEmmHandle);
+#endif
     }
     // ; TODO(JimBalcomb): add code to branch around DOSBox bug - if running in DOSBOX...
     // ;lds si, [bp+argHandleName]
@@ -332,18 +386,29 @@ unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, unsigned char _FAR *
     // ;;mov ah, 09h
     // ;;int 21h
 
-    inregs2.x.ax = 0x5301;
+    inregs2.h.ah = 0x53;  // INT 67,53 Get/Set Handle Name (LIM EMS 4.0+)
+    inregs2.h.al = 0x01;  // set handle name
     inregs2.x.dx = varEmmHandle;
-    int86(EMS_INT, &inregs2, &outregs2);
+    result2 = int86(EMS_INT, &inregs2, &outregs2);
     if ( outregs2.h.ah != 0 )
     {
+        HERE("FAILURE: INT 67,53,01: (Error) Code not \"success\"");
+        dlvfprintf("DEBUG: [%s, %d] outregs2.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs2.h.ah);
         goto Error;
     }
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_MakeNamedHandle(argPageCount = %u, argHandleName = %s) { varEmmHandle = %u }\n", __FILE__, __LINE__, argPageCount, argHandleName, varEmmHandle);
+#endif
 
     return varEmmHandle;
 
 Error:
-    return 0;
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_MakeNamedHandle(argPageCount = %u, argHandleName = %s)\n", __FILE__, __LINE__, argPageCount, argHandleName);
+#endif
+
+    return 0;  // ST_FAILURE
 }
 
 // _s12p06
@@ -356,7 +421,7 @@ unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
     int ret_val;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_GetHandleName(EmmHndlNm=0, EmmHndlNbr=%u)\n", __FILE__, __LINE__, EmmHndlNbr);
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_GetHandleName(EmmHndlNm = 0, EmmHndlNbr = %u)\n", __FILE__, __LINE__, EmmHndlNbr);
 #endif
 
     inregs.x.dx = EmmHndlNbr;
@@ -370,7 +435,7 @@ unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
     {
         ret_val = 0x00;
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_GetHandleName(EmmHndlNm=0, EmmHndlNbr=%u) {ret_val=%d}\n", __FILE__, __LINE__, EmmHndlNbr, ret_val);
+    dlvfprintf("DEBUG: [%s, %d]: END: EMM_GetHandleName(EmmHndlNm = 0, EmmHndlNbr = %u) { ret_val = %d }\n", __FILE__, __LINE__, EmmHndlNbr, ret_val);
 #endif
     }
     else
@@ -378,7 +443,7 @@ unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
         EmmHndlNm[8] = '\0';
         ret_val = 0xFF;
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_GetHandleName(EmmHndlNm=%s, EmmHndlNbr=%u) {ret_val=%d\n", __FILE__, __LINE__, EmmHndlNm, EmmHndlNbr, ret_val);
+    dlvfprintf("DEBUG: [%s, %d]: END: EMM_GetHandleName(EmmHndlNm = %s, EmmHndlNbr = %u) { ret_val = %d }\n", __FILE__, __LINE__, EmmHndlNm, EmmHndlNbr, ret_val);
 #endif
     }
 
@@ -477,7 +542,7 @@ void EMM_ReleaseHandle(unsigned int EMM_Handle)
                                                     SEE: Figure 2-4: Mapping the sound to play to the page frame
 
 */
-// TODO(JimBalcomb): rename 'Src_Sgmt' - it's not quite right, as the actual 'Source Segment' is always g_EMM_PageFrame_Base_Address
+// TODO(JimBalcomb): rename 'Src_Sgmt' - it's not quite right, as the actual 'Source Segment' is always EMM_PageFrame_Base_Address
 void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src_Ofst, unsigned int Src_Sgmt, int nbytes, int EmmHandle)
 {
     union  REGS  inregs1;
@@ -588,11 +653,11 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
     /*
     _ES = Dst_Sgmt;
     _DI = Dst_Ofst;
-    _DS = g_EMM_PageFrame_Base_Address;
+    _DS = EMM_PageFrame_Base_Address;
     _SI = Src_Ofst;
     */
     fptr_Dst = (unsigned char _FAR *) MK_FP(Dst_Sgmt, Dst_Ofst);
-    fptr_Src = (unsigned char _FAR *) MK_FP(g_EMM_PageFrame_Base_Address, EmmLogicalPageOfst);
+    fptr_Src = (unsigned char _FAR *) MK_FP(EMM_PageFrame_Base_Address, EmmLogicalPageOfst);
 //#ifdef DEBUG
 //    dlvfprintf("DEBUG: [%s, %d] fptr_Dst: %Fp\n", __FILE__, __LINE__, fptr_Dst);
 //    dlvfprintf("DEBUG: [%s, %d] fptr_Src: %Fp\n", __FILE__, __LINE__, fptr_Src);
@@ -615,7 +680,7 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
 // _s12p10
 unsigned int EMM_GetPageFrame(void)
 {
-    return g_EMM_PageFrame_Base_Address;
+    return EMM_PageFrame_Base_Address;
 }
 
 // s12p11
@@ -730,6 +795,7 @@ void EMM_Startup(void)
     status_emm_init = EMM_Init();  // return: {0xFF,0x00}/{-1,0}/{ST_FAILURE,ST_SUCCESS}
     if ( status_emm_init == 0x00)
     {
+        HERE("if ( status_emm_init == 0x00)");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
@@ -771,6 +837,7 @@ void EMM_Startup(void)
 
     if ( g_EmmHndlNbr_YOMOMA == 0 )
     {
+        HERE("if ( g_EmmHndlNbr_YOMOMA == 0 )");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
@@ -797,6 +864,7 @@ void EMM_Startup(void)
 
     if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )  // returns the unallocated pages count (not the total pages count)
     {
+        HERE("if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
@@ -1040,11 +1108,11 @@ int EMM_Load_LBX_File(char *LbxFileName, int Reserved)
 
 //#ifdef DEBUG
 //    EMM_Map4(EmmHndlNbr, 0);
-//    dlvfprintf("DEBUG: [%s, %d] g_EMM_PageFrame_Base_Address: 0x%04X\n", __FILE__, __LINE__, g_EMM_PageFrame_Base_Address);
-//    dlvfprintf("DEBUG: [%s, %d] LBX_EntryCount: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 0));
-//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Hi: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 2));
-//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Lo: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 4));
-//    dlvfprintf("DEBUG: [%s, %d] LBX_Type: 0x%04X\n", __FILE__, __LINE__, farpeekw(g_EMM_PageFrame_Base_Address, 6));
+//    dlvfprintf("DEBUG: [%s, %d] EMM_PageFrame_Base_Address: 0x%04X\n", __FILE__, __LINE__, EMM_PageFrame_Base_Address);
+//    dlvfprintf("DEBUG: [%s, %d] LBX_EntryCount: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrame_Base_Address, 0));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Hi: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrame_Base_Address, 2));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_MagSig_Lo: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrame_Base_Address, 4));
+//    dlvfprintf("DEBUG: [%s, %d] LBX_Type: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrame_Base_Address, 6));
 //#endif
 
 Exit:
@@ -1395,10 +1463,9 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
 
 // s13p13
 // ~= c&p EMM_LBX_Load_Entry()
-unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
+SAMB_addr EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
 {
-    //unsigned int tmp_SAMB_head;
-    sgmt_addr SAMB_data;
+    SAMB_addr SAMB_data;
     unsigned int EmmHndl;
     unsigned int LbxEntryCount;
     long EntryTableOffset;
@@ -1413,11 +1480,13 @@ unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAM
     static int Record_Size;         // LBXRECORDOFFSET()
     unsigned long DataSize_Paras;   // LBXLOADTYPE()
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
-    sgmt_addr tmp_SAMB_data;        // LBXREADDATA()
+    SAMB_addr tmp_SAMB_data;        // LBXREADDATA()
     unsigned int ReadNbytes;        // LBXREADDATA()
-    void * pSAMB_head;
+    SAMB_ptr pSAMB_head;
 
-//    printf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+#endif
 
     //tmp_SAMB_head = SAMB_head;
     SAMB_data = ST_FAILURE;
@@ -1472,10 +1541,14 @@ unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAM
     */
 
 Error:
-//    printf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = ST_FAILURE }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+#endif
     return ST_FAILURE;
 Exit:
-//    printf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
+#endif
     return SAMB_data;
 }
 
@@ -1635,7 +1708,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
     char tmp_EmmHndlNm_byte0;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_GetHandle(EmmLogicalPageCount=%u, EmmHandleName=%s, EmmRsvdFlag=%d)\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_GetHandle(EmmLogicalPageCount = %u, EmmHandleName = %s, EmmRsvdFlag = %d)\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag);
 #endif
 
     if (EmmHandleName == NULL)
@@ -1758,7 +1831,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 Exit:
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_GetHandle(EmmLogicalPageCount=%u, EmmHandleName=%s, EmmRsvdFlag=%d) {EmmHndlNbr=%u}\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag, varEmmHndlNbr);
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_GetHandle(EmmLogicalPageCount = %u, EmmHandleName = %s, EmmRsvdFlag = %d) { EmmHndlNbr = %u }\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag, varEmmHndlNbr);
 #endif
 
     return varEmmHndlNbr;
@@ -1786,7 +1859,7 @@ unsigned int EMM_EMMDATAH_AllocFirst(int nparas)
 
     g_EMMDATAH_Level = 0;
 
-    SAMB_head = g_EMM_PageFrame_Base_Address;
+    SAMB_head = EMM_PageFrame_Base_Address;
     SAMB_head = SAMB_head + g_EMMDATAH_Level;
 
     EMM_Map4_EMMDATAH();
@@ -1829,14 +1902,14 @@ unsigned int EMM_EMMDATAH_AllocNext(int nparas)
     unsigned int tmp_g_EMMDATAH_Level;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: %s %d BEGIN: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
 #endif
 
     tmp_nparas = nparas;
 
     EMM_Map4_EMMDATAH();
 
-    SAMB_head = g_EMM_PageFrame_Base_Address;
+    SAMB_head = EMM_PageFrame_Base_Address;
     SAMB_head = SAMB_head + g_EMMDATAH_Level;
 
     EMM_Map4_EMMDATAH();
@@ -1865,7 +1938,7 @@ unsigned int EMM_EMMDATAH_AllocNext(int nparas)
     SAMB_data = SAMB_head + 1;
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: %s %d END: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
 #endif
 
     return SAMB_data;
@@ -1883,11 +1956,7 @@ void EMM_BuildEmmErrStr(char *str_buf)
     char tmp_string[20];
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: BEGIN: EMM_BuildEmmErrStr()\n");
-#endif
-
-#ifdef DEBUG
-    dlvfprintf("DEBUG: str_buf:  [%p]  %s\n", str_buf, str_buf);
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
 #endif
 
     itoa(g_EMM_MinKB, tmp_string, 10);
@@ -1896,6 +1965,6 @@ void EMM_BuildEmmErrStr(char *str_buf)
     strcat(str_buf, "K of expanded memory.");
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: END: EMM_BuildEmmErrStr()\n");
+    dlvfprintf("DEBUG: [%s, %d] END: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
 #endif
 }

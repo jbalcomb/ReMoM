@@ -7,6 +7,7 @@
 #include "STU_BITS.H"
 #include "STU_DBG.H"
 
+
 /*
     DS:SI
     ES:DI
@@ -73,7 +74,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         geninterrupt(0x67);
 
         //_DS = g_EMM_PageFrame_Base_Address
-        SrcSgmt = g_EMM_PageFrame_Base_Address;
+        SrcSgmt = EMM_PageFrame_Base_Address;
     }
     else
     {

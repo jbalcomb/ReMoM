@@ -3,6 +3,7 @@
 // ~= c&p LBX_Load_Entry()
 
 #include "ST_HEAD.H"
+#include "ST_TYPE.H"
 
 #include "ST_EMM.H"
 #include "ST_LBX.H"
@@ -11,11 +12,11 @@
 #include "STU_DBG.H"
 
 
-unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
+SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
 {
     char *tmp_LbxName;
     int tmp_LbxEntry;
-    sgmt_addr SAMB_data;
+    SAMB_addr SAMB_data;
     int tmp_LbxHdrFmt;
     char tmp_LbxFileName[20];
     char tmp_LbxFilePathName[60];
@@ -29,11 +30,13 @@ unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head
     static int Record_Size;         // LBXRECORDOFFSET()
     unsigned long DataSize_Paras;   // LBXLOADTYPE()
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
-    sgmt_addr tmp_SAMB_data;        // LBXREADDATA()
+    SAMB_addr tmp_SAMB_data;        // LBXREADDATA()
     unsigned int ReadNbytes;        // LBXREADDATA()
     void * pSAMB_head;
 
-//    printf("DEBUG: [%s, %d]: BEGIN: LBX_Load_Record(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: LBX_Load_Record(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+#endif
 
     tmp_LbxName = LbxName;
     tmp_LbxEntry = LbxEntry;
@@ -56,6 +59,7 @@ unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head
 
     if ( SAMB_data == ST_FAILURE )
     {
+        HERE("LBX not in EMM");
 
         /*
             BEGIN: Current vs. Previous
@@ -177,6 +181,8 @@ unsigned int LBX_Load_Record(char *LbxName, int LbxEntry, unsigned int SAMB_head
 
     Update_MemFreeWorst_KB();
 
-//    printf("DEBUG: [%s, %d]: END: LBX_Load_Record(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, SAMB_data);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: LBX_Load_Record(LbxName = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize), SAMB_data;
+#endif
     return SAMB_data;
 }

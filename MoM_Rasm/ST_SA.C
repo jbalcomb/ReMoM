@@ -147,6 +147,7 @@ void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short val)
 */
 
 // _s08p07
+//SAMB_ptr SA_Allocate_Space(unsigned int nparas)
 SAMB_ptr SA_Allocate_Space(unsigned int nparas)
 {
     SAMB_ptr pSAMB_head;
@@ -159,7 +160,7 @@ SAMB_ptr SA_Allocate_Space(unsigned int nparas)
     dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_Space(nparas = %u)\n", __FILE__, __LINE__, nparas);
 #endif
 
-    pTmpSAMB = (SAMB_ptr) farmalloc(((unsigned long)nparas * 16) + 16);
+    pTmpSAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
 
     if ( pTmpSAMB == NULL )
     {
@@ -170,7 +171,10 @@ SAMB_ptr SA_Allocate_Space(unsigned int nparas)
     dlvfprintf("DEBUG: [%s, %d]: pTmpSAMB: %Fp\n", __FILE__, __LINE__, pTmpSAMB);
 #endif
     
-    pSAMB_head = (pTmpSAMB + 16);
+    //pSAMB_head = (pTmpSAMB + 16);
+    //pSAMB_head = MK_FP((FP_SEG(pTmpSAMB) + 1),FP_OFF(pTmpSAMB));
+    pSAMB_head = MK_FP((FP_SEG(pTmpSAMB) + 1),0);
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %p\n", __FILE__, __LINE__, pSAMB_head);
     dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head);
@@ -263,7 +267,8 @@ SAMB_ptr SA_Alloc_First(SAMB_ptr pSAMB_head, int nparas)
     tmp_nparas = nparas + 1;
 
     //pSAMB_sub_data = pSAMB_head + 1;  // + 1 segment / 16 bytes / paragraph / SAMB unit size
-    pSAMB_sub_head = (pSAMB_head + 16);
+    //pSAMB_sub_head = (pSAMB_head + 16);
+    pSAMB_sub_head = MK_FP((FP_SEG(pSAMB_head) + 1),FP_OFF(pSAMB_head));
 
     //paras_total = farpeekw(SAMB_head, 8);  // s_SAMB.Size_Paras
     paras_total = ((unsigned int)*((unsigned char *)pSAMB_head + 8)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 9) << 8);

@@ -12,7 +12,9 @@ void GAME_LoadMainImages(void)
 
     int itr_wizards;
 
-//    printf("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#endif
 
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
 
@@ -45,5 +47,8 @@ void GAME_LoadMainImages(void)
 
     EMM_Load_LBX_File_1(g_LbxNm_SPELLDAT);
 
-//    printf("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#endif
+
 }
