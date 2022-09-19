@@ -4,9 +4,9 @@
 #include <malloc.h>
 #include <STDIO.H>      /* printf() */
 #include <STRING.H>
-//#include <fcntl.h>      /* O_BINARY, O_RDONLY */
+//#include <fcntl.h>    /* O_BINARY, O_RDONLY */
 #include <fcntl.h>      /* _O_BINARY, _O_RDONLY */
-//#include <stdio.h> 
+//#include <stdio.h>    /* FILE */
 //#include <string.h>
 //#include <unistd.h> 
 //#include <iostream>

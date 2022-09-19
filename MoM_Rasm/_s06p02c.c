@@ -111,6 +111,6 @@ void QuitToDOS(char *quitmsg)
     
     Debug_Log_Shutdown();
     
-    _AH = 0x4C;
+    _AH = 0x4C;  // INT 21,4C - Terminate Process With Return Code
     geninterrupt(DOS_INT);
 }

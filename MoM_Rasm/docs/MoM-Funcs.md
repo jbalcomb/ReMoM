@@ -1,6 +1,6 @@
 ¿
-∴
 ∵
+∴
 ≜
 
 Unicode Character “¿” (U+00BF)
@@ -177,7 +177,7 @@ _s02p03.asm     CLK_Wait
 _s02p05.asm     VGA_WaitSync
 
 ##### seg003    MOM_DEF.H
-_s03p05         DISK_GetFileSize            long DISK_GetFileSize(char *fname)
+_s03p05         DOS_GetFileSize            long DISK_GetFileSize(char *fname)
 C_GetFileSize(const char *filename)
 
 ##### seg004    ST_DEF.H
@@ -231,10 +231,11 @@ _s10p11c.c      LBX_Load_Load_Record              LBX_RecordLoader
 []_s10p13c.c      LBX_GetEntryData
 
 _s10p15c.c      LBX_Error
-_s10p16.asm     ExtractFileBase             ExtractFileBase(char * FileName)  STR_StripFileExt
-_s10p17c.c      RAM_SetMinKB                RAM_SetMinKB(int RAM_MinKbytes)
+_s10p16         ExtractFileBase             ExtractFileBase(char * FileName)  STR_StripFileExt
+_s10p17         RAM_SetMinKB                RAM_SetMinKB(int RAM_MinKbytes)
 
-##### seg012    ST_EMM.H
+##### MGC seg012  WZD seg012
+ST_EMM.H
 s12p01          EMM_Init
 s12p02          EMM_GetActiveHandleCount
 s12p03          EMM_GetFreePageCount
@@ -247,7 +248,8 @@ s12p10          EMM_GetPageFrame
 s12p11          EMM_Map4                                                                        EMM_MapFourPages
 s12p12          EMM_MapMulti4
 
-##### seg013    ST_EMM.H
+##### MGC  seg013  WZD seg013
+ST_EMM.H    ~ST_LBX_EMM.H
 s13p01          EMM_Startup
 s13p02          UU_EMM_Load_LBX_0
 s13p03          EMM_Load_LBX_File_1                                                             EMM_LoadResLBX
@@ -265,16 +267,19 @@ s13p27          EMM_EMMDATAH_AllocNext
 s13p31          EMM_SetMinKB
 s13p32          EMM_BuildEmmErrStr
 
-##### seg014    MOM_DEF.H
+##### MGC  seg014  WZD  seg014
+MOM_DEF.H
 _s14p01c.c      Hardware_Init               int Hardware_Init(...);
 _s14p03c.c      VGA_DAC_Init                void VGA_DAC_Init(char *PaletteLbxFileName);
 _s14p04c.c      VGA_SetDrawWindow
 _s14p05c.c      VGA_ResetDrawWindow
 
-##### seg015    ST_VGA.H    ALL ASM
+##### MGC  seg015  WZD  seg015
+ST_VGA.H    ALL ASM
 _s15p01.asm     VGA_SetModeY                void VGA_SetModeY(void);
 
-##### seg016    ST_VGA.H
+##### MGC  seg016  WZD  seg016
+ST_VGA.H
 _s16p01.asm     VGA_DrawFilledRect          void VGA_DrawFilledRect(int x1, int y1, int x2, int y2, char Color)
 
 ##### seg017    ST_TXT.H
@@ -321,8 +326,14 @@ _s22p08         RNG_Random
 
 
 ##### seg024    ST_DBG.H
+[?] _s24p01     DBG_Quit
+[?] _s24p02     DBG_ScreenDump
+[?] _s24p03     VGA_GetDACBlock
+[?] _s24p04     VGA_ReadScreenLine
 _s24p05c.c      DBG_Disable                 void DBG_Disable(void);
 _s24p06c.c      DBG_IsDisabled              int DBG_IsDisabled(void);
+[?] _s24p07     UU_VGA_SaveDrawSection
+[?] _s24p08     UU_VGA_CopyToLBX
 
 
 ##### seg025    ???
@@ -491,7 +502,7 @@ _s36p02         SND_Init
 [?] _o49p05     HLP_Load_Settings
 
 ##### ovr057    MOM_DEF.H
-_o57p01         MoM_Tables_Init                                                                 LBX_Tables_Init
+_o57p01c.c      MoM_Tables_Init                                                                 LBX_Tables_Init
 
 ##### ovr058    ...Intro Animation...
 

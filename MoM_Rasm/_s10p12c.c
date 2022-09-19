@@ -74,7 +74,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
             
             if ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )
             {
-                LBX_Error(LbxName, 0x01, LbxEntry);  /* LBXErr_not_found */
+                LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
             }
             else
             {
@@ -84,14 +84,14 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
 
                 if ( g_LBX_FileHandle == ST_FAILURE )
                 {
-                    LBX_Error(LbxName, 0x01, LbxEntry);  /* LBXErr_not_found */
+                    LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
                 }
             }
 
             // TODO(JimBalcom): this is wierd and not in LBX_Load_Entry
             if ( g_LBX_FileHandle == 0 )
             {
-                LBX_Error(LbxName, 0x01, LbxEntry);  /* LBXErr_not_found */
+                LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
             }
 
             /*
@@ -104,14 +104,14 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
 
             if ( lbx_seek(tmp_LbxHdrOfst, g_LBX_FileHandle) == ST_FAILURE )
             {
-                LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry);  /* LBXErr_corrupted */
+                LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */
             }
 
             lbx_read_sgmt(gsa_LBX_Header, SZ_LBX_HDR_B, g_LBX_FileHandle);
 
             if ( farpeekw(gsa_LBX_Header, 2) != LBX_MAGSIG )
             {
-                LBX_Error(tmp_LbxName, 0x07, tmp_LbxEntry);  /* LBXErr_bad_header */
+                LBX_Error(tmp_LbxName, 0x07, tmp_LbxEntry, NULL);  /* LBXErr_bad_header */
             }
 
             g_LBX_EntryCount = farpeekw(gsa_LBX_Header, 0);
@@ -127,7 +127,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
         {
-            LBX_Error(tmp_LbxName, 0x08, tmp_LbxEntry ); /* LBXErr_entries_exceeded */
+            LBX_Error(tmp_LbxName, 0x08, tmp_LbxEntry, NULL); /* LBXErr_entries_exceeded */
         }
         /*
             END: Current vs. Previous
@@ -159,7 +159,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
         if ( lbx_read_sgmt(SAMB_data, ReadNbytes, g_LBX_FileHandle) == ST_FAILURE )
         {
             HERE("LBX entry corrupted"); \
-            LBX_Error(LbxName, 0x02, LbxEntry);  /* LBXErr_corrupted */
+            LBX_Error(LbxName, 0x02, LbxEntry, NULL);  /* LBXErr_corrupted */
         }
         /*
             END: Read Data

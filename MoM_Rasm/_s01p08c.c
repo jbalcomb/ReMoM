@@ -12,9 +12,13 @@ void GAME_Load_SPELLDAT_0(void)
     int RecCount = 215;
     int RecSize = 36;
 
-//    printf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+#endif
 
     gfp_TBL_Moves_Per_Tile = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_SPELLDAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
 
-//    printf("DEBUG: [%s, %d]: END: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+#endif
 }

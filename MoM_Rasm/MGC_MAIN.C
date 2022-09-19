@@ -37,6 +37,17 @@ Load Palette, Set Palette
 Main Menu
 */
 
+int MGC_Main(void);
+
+int main(void)
+{
+    Debug_Log_Startup();
+
+    MGC_Main();
+
+    Debug_Log_Shutdown();
+    return 0;
+}
 
 //int main(int argc, char *argv[])
 //int main(void)

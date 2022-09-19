@@ -1,5 +1,8 @@
 // _s21p07c.c FLIC_LoadPalette
 
+#include "ST_HEAD.H"
+#include "ST_TYPE.H"
+
 #include "ST_EMM.H"
 #include "ST_FLIC.H"
 #include "ST_VGA.H"
@@ -15,9 +18,9 @@
 
 */
 
-void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
+void FLIC_LoadPalette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
 {
-    struct s_FLIC_HDR _FAR *fptr_FlicHdr_SgmtAddr;
+    struct s_FLIC_HDR _FAR * fptr_FlicHdr_SgmtAddr;
     unsigned int DstSgmt;
     unsigned int DstOfst;
     unsigned int SrcSgmt;
@@ -48,6 +51,11 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
     dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_LoadPalette(FlicHdr_SgmtAddr=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, FlicHdr_SgmtAddr, Frame_Index);
 #endif
 
+    if ( FlicHdr_SgmtAddr == DBG_MAINSCRN_000 )
+    {
+        dlvfprintf("DEBUG: [%s, %d] ( FlicHdr_SgmtAddr == DBG_MAINSCRN_000 )\n", __FILE__, __LINE__);
+    }
+
     fptr_FlicHdr_SgmtAddr = (struct s_FLIC_HDR _FAR *)MK_FP(FlicHdr_SgmtAddr, 0);
 
     SrcSgmt = FlicHdr_SgmtAddr;
@@ -74,7 +82,7 @@ void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
         geninterrupt(0x67);
 
         //_DS = g_EMM_PageFrame_Base_Address
-        SrcSgmt = EMM_PageFrame_Base_Address;
+        SrcSgmt = EMM_PageFrameBaseAddress;
     }
     else
     {

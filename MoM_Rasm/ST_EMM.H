@@ -46,6 +46,17 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 */
 //--------
 
+// J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_VL.H
+// #define VGAMAPMASK(x) asm{cli; mov dx,SC_INDEX; mov al,SC_MAPMASK; mov ah,x; out dx,ax; sti;}
+#define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{\
+mov al, _epp_;\
+mov bx, _elp_;\
+mov dx, _ehn_;\
+mov ah, EMS_MAPPAGE;\
+int EMS_INT;\
+}
+
+
 #define EMS_PAGE_SIZE   16384
 
 #define	EMS_INT			            0x67
@@ -53,7 +64,7 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 #define	EMS_STATUS		            0x40
 #define	EMS_GETFRAME	            0x41
 #define	EMS_GETPAGES	            0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
-#define	EMS_ALLOCPAGES	            0x43    //Get Handle and Allocate Pages // DX = EMM handle
+#define	EMS_ALLOCPAGES	            0x43    // Get Handle and Allocate Pages // DX = EMM handle
 #define	EMS_MAPPAGE		            0x44
 #define	EMS_FREEPAGES	            0x45
 #define	EMS_VERSION		            0x46
@@ -61,8 +72,10 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 #define	EMS_GETHNDLPAGECNT          0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
 #define EMS_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
 #define EMS_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
-#define EMS_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8byte handle name array
-#define EMS_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8byte handle name
+#define EMS_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8 byte handle name array
+#define EMS_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8 byte handle name
+#define EMS_HANDLE_NAME_GET         0x00
+#define EMS_HANDLE_NAME_SET         0x01
 
 /*
 unsigned int EMS_STATUS_Code[165] = {
@@ -398,7 +411,7 @@ extern unsigned int g_EmmHndl_FIGUREX;      // dseg:9486
         ? ALL Xref seg012 and seg013 ?
 */
 
-extern unsigned int EMM_PageFrame_Base_Address;   // dseg:40E4
+extern unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
 //extern char EMM_device_name[];                    // dseg:40E6
 
 // // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
@@ -498,11 +511,11 @@ void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle);
 // s13p01
 void EMM_Startup(void);
 // s13p03
-void EMM_Load_LBX_File_1(char *LbxFileName);
+void EMM_Load_LBX_File_1(char * LbxFileName);
 // s13p04
-int EMM_Load_LBX_File(char *LbxFileName, int Reserved);
+int EMM_Load_LBX_File(char * LbxFileName, int Reserved);
 // s13p11
-unsigned int EMM_LBX_Load_Entry(char *LbxFileName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int FormatType);
+unsigned int EMM_LBX_Load_Entry(char * LbxFileName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int FormatType);
 // s13p12
 unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
 // s13p13
@@ -528,7 +541,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 // s13p31
 void EMM_SetMinKB(int EmmMinKB);
 // s13p32
-void EMM_BuildEmmErrStr(char *strbuf);
+void EMM_BuildEmmErrStr(char * strbuf);
 
 #ifdef __cplusplus
 }

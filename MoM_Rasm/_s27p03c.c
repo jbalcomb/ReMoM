@@ -1,6 +1,11 @@
 // _s27p03c.c  FLIC_Draw_EMM_C
-#include "ST_HEAD.H"
 
+#include <DOS.H>
+
+#include "ST_HEAD.H"
+#include "ST_TYPE.H"
+
+#include "ST_EMM.H"
 #include "ST_FLIC.H"
 #include "ST_VGA.H"
 
@@ -24,7 +29,7 @@ Part 2:
 */
 
 //void draw_flic_frame(byte * src_buff, byte * dst_buff, word width, byte mask)
-void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data_FLIC_HDR, int Frame_Index)
+void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLIC_HDR, int Frame_Index)
 {
     union  REGS  inregs;
     union  REGS  outregs;
@@ -76,20 +81,40 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data_
     fh_EmmHandleNumber = FPEEKB(SAMB_data_FLIC_HDR, 0x0A);       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6       06
     fh_EmmLogicalPageIndex = FPEEKB(SAMB_data_FLIC_HDR, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
     fh_EmmLogicalPageOffset = FPEEKW(SAMB_data_FLIC_HDR, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] fh_Width: %u\n", __FILE__, __LINE__, fh_Width);
+    dlvfprintf("DEBUG: [%s, %d] fh_EmmHandleNumber: %u\n", __FILE__, __LINE__, fh_EmmHandleNumber);
+    dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageIndex: %u\n", __FILE__, __LINE__, fh_EmmLogicalPageIndex);
+    dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageOffset: 0x%04X\n", __FILE__, __LINE__, fh_EmmLogicalPageOffset);
+#endif
 
     EMM_MapMulti4(fh_EmmLogicalPageIndex, fh_EmmHandleNumber);
 
-    fh_FrameDataOffset = FPEEKDW(EMM_PageFrame_Base_Address, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
+    fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] fh_FrameDataOffset: 0x%08X\n", __FILE__, __LINE__, fh_FrameDataOffset);
+#endif
 
     tmp_EmmPage = fh_EmmLogicalPageIndex  + ( (fh_FrameDataOffset + 1) / 16384 );
     tmp_EmmOfst = fh_EmmLogicalPageOffset + ( (fh_FrameDataOffset + 1) % 16384 );
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
+    dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
+#endif
     if ( tmp_EmmOfst > 0xC000 )
     {
         tmp_EmmPage += 3;
         tmp_EmmOfst -= 0xC000;
     }
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
+    dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
+#endif
 
-    fh_Shading = FPEEKB(EMM_PageFrame_Base_Address, fh_EmmLogicalPageOffset + FlicHdr_Shading);
+    fh_Shading = FPEEKB(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset + FlicHdr_Shading);
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] fh_Shading: %u\n", __FILE__, __LINE__, fh_Shading);
+#endif
 
     inregs.x.dx = fh_EmmHandleNumber;
     inregs.x.bx = tmp_EmmPage;
@@ -145,8 +170,12 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data_
 
     mask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
 
-    fp_Src = (byte _FAR *)MK_FP(EMM_PageFrame_Base_Address, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
+    fp_Src = (byte _FAR *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
     fp_Dst = (byte _FAR *)MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
+    dlvfprintf("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
+#endif
 
     outportb(e_SC_INDEX, e_SC_MAPMASK);
 
@@ -158,7 +187,7 @@ Column_Loop:
         EMM_MapMulti4(tmp_EmmPage, fh_EmmHandleNumber);
         tmp_EmmOfst = FP_OFF(fp_Src);
         tmp_EmmOfst -= 0xC000;
-        fp_Src = (byte _FAR *)MK_FP(EMM_PageFrame_Base_Address, tmp_EmmOfst);
+        fp_Src = (byte _FAR *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
     }
 
     outportb(e_SC_DATA, mask);
@@ -197,7 +226,7 @@ Column_Loop:
                     *fp_Dst = baito;
                     fp_Dst += width_stride;
                 }
-            } while (--sequence_byte_count);
+            } while ( sequence_byte_count-- );
         } while (packet_byte_count >= 1);
         goto Next_Column;
     }
@@ -213,7 +242,7 @@ Column_Loop:
             do {
                 *fp_Dst = *fp_Src++;
                 fp_Dst += width_stride;
-            } while (--sequence_byte_count);
+            } while ( sequence_byte_count-- );
         } while (packet_byte_count >= 1);
         goto Next_Column;
     }

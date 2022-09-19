@@ -25,7 +25,7 @@ void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
 
 //    dlvfprintf("DEBUG: [%s, %d]: gsa_gsa_PaletteLbxEntry = 0x%04X\n", __FILE__, __LINE__, gsa_gsa_PaletteLbxEntry);
 
-                                                              //                0x0000  3*265 palette / color-map
+                                                              //                0x0000  3*256 palette / color-map
     gsa_Palette_Font_Colors = gsa_gsa_PaletteLbxEntry +  48;  //  48 pr  768 b  0x0300  16 arrays of 16 colors
     UU_gsa_Palette_Data     = gsa_Palette_Font_Colors +  16;  //  16 pr  256 b  0x0400  ? UnUsed ? DNE in MoO1 ?
     gsa_Cursor_Array        = UU_gsa_Palette_Data     +  16;  //  16 pr  256 b  0x0500  16 16x16 cursor bitmap images

@@ -9,15 +9,19 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 #include <STDIO.H>   /* FILE; fclose(), fopen() */
 #include <STDLIB.H>
 
+#include "STU_DBG.H"
 #include "STU_UTIL.H"
 
 
 char Debug_Log_FileName[] = "DEBUG.LOG";
-FILE *Debug_Log_File = NULL;
+FILE * Debug_Log_File = NULL;
 char Debug_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possible, compliant ISO-8601 DateTime/timestamp
 char DBG_LBX_Filename[13] = {0};
 unsigned int DBG_LBX_EntryIndex = 0;
 
+unsigned int DBG_FONTS_000;
+unsigned int DBG_FONTS_001;
+unsigned int DBG_FONTS_002;
 unsigned int DBG_MAINSCRN_000;
 unsigned int DBG_MAINSCRN_005;
 
@@ -156,6 +160,7 @@ void log_error(char *format, ...)
     va_end(args);
 }
 
+// "dl" as in "Debug Log"
 void dlvfprintf(const char *fmt, ...)
 {
     va_list args;

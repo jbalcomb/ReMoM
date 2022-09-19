@@ -81,7 +81,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
            
             if ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )
             {
-                LBX_Error(LbxName, 0x01, LbxEntry);  /* LBXErr_not_found */
+                LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
             }
             else
             {
@@ -91,7 +91,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 
                 if ( g_LBX_FileHandle == ST_FAILURE )
                 {
-                    LBX_Error(LbxName, 0x01, LbxEntry);  /* LBXErr_not_found */
+                    LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
                 }
             }
 
@@ -113,14 +113,14 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
             if ( lbx_seek(tmp_LbxHdrOfst, g_LBX_FileHandle) == ST_FAILURE )
             {
                 HERE("LBX entry has been corrupted");
-                LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry);  /* LBXErr_corrupted */
+                LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */
             }
 
             lbx_read_sgmt(gsa_LBX_Header, SZ_LBX_HDR_B, g_LBX_FileHandle);
 
             if ( farpeekw(gsa_LBX_Header, 2) != LBX_MAGSIG )
             {
-                LBX_Error(tmp_LbxName, 0x07, tmp_LbxEntry);  /* LBXErr_bad_header */
+                LBX_Error(tmp_LbxName, 0x07, tmp_LbxEntry, NULL);  /* LBXErr_bad_header */
             }
 
             g_LBX_EntryCount = farpeekw(gsa_LBX_Header, 0);
@@ -137,7 +137,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )
         {
-            LBX_Error(tmp_LbxName, 0x08, tmp_LbxEntry ); /* LBXErr_entries_exceeded */
+            LBX_Error(tmp_LbxName, 0x08, tmp_LbxEntry, NULL); /* LBXErr_entries_exceeded */
         }
         /*
             END: Current vs. Previous
@@ -155,7 +155,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
             BEGIN: Load Type
         */
         DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);
-        LBXLOADTYPE()
+        LBXLOADTYPE()  // sets SAMB_data and tmp_SAMB_Size
         /*
             END: Load Type
         */

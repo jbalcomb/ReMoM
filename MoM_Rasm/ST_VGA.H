@@ -77,11 +77,11 @@ extern int g_VGA_Min_Y;                             // dseg:41B4
 extern int g_VGA_Max_X;                             // dseg:41B6
 extern int g_VGA_Max_Y;                             // dseg:41B8
 extern char DEFAULT_FONTS_FILE[];                   // dseg:41BA
-extern unsigned int gsa_DSP_Addr;      // dseg:41C4
-extern int g_RSP_Idx;                      // dseg:41C6
-extern unsigned char g_VGA_LeftBits[];                // dseg:41C8
-extern unsigned char g_VGA_RightBits[];               // dseg:41CC
-extern unsigned char g_VGA_WriteMapMasks[];           // dseg:41D0
+extern unsigned int gsa_DSP_Addr;                   // dseg:41C4
+extern int g_RSP_Idx;                               // dseg:41C6
+extern unsigned char g_VGA_LeftBits[];              // dseg:41C8
+extern unsigned char g_VGA_RightBits[];             // dseg:41CC
+extern unsigned char g_VGA_WriteMapMasks[];         // dseg:41D0
 // dseg:41D4 00 00 00 00 00 00 00 00 00 00+UU_Wave_Colors db 40h dup(0)
 // dseg:4214 29 24 3F 05 62 6D 57 2F 53 11+UU_RNG_7bit_Lookup db  29h, 24h, 3Fh,   5, 62h, 6Dh, 57h, 2Fh, 53h, 11h, 4Ah,2 dup( 72h), 3Ch, 6Ah, 6Ch, 33h, 27h, 5Ch, 3Dh,   8, 0Dh, 3Fh, 1Ah, 25h, 5Fh, 0Eh, 1Dh,   7, 38h, 48h, 5Fh, 33h, 13h, 4Eh, 49h, 44h, 3Ch, 0Ch, 27h, 20h,   4, 5Bh, 7Eh, 0Ah, 39h, 26h, 20h, 5Dh, 55h, 4Ch, 7Dh, 17h, 76h, 46h, 3Ch, 14h, 0Eh, 0Ah, 0Bh, 1Dh, 5Ch, 2Fh, 33h, 20h, 1Bh, 51h, 6Fh, 41h, 79h, 37h, 7Eh, 13h, 4Ah, 33h, 77h, 1Fh, 7Eh, 4Ah, 5Dh, 2Dh, 50h, 15h, 73h, 45h, 41h, 67h, 51h, 6Ch, 45h, 31h, 38h, 33h, 3Ch, 22h, 23h, 76h, 23h, 12h, 1Eh, 62h, 0Ch, 20h, 5Bh, 31h, 4Bh, 1Ah,   3, 3Ah, 73h, 1Eh, 4Ah, 2Ch,   1, 7Fh, 46h, 1Ah, 56h, 6Ah,   0, 33h, 6Bh, 4Ah, 4Dh, 54h, 40h, 68h, 57h, 3Fh, 15h, 57h, 7Fh, 2Eh, 5Dh, 0Fh, 67h,   4, 70h, 58h, 4Ah, 62h, 7Fh, 6Ah, 10h, 61h, 4Eh, 52h, 1Fh, 1Eh, 1Dh, 17h,2 dup( 73h), 67h, 1Eh, 71h,   5, 50h, 4Bh, 78h,   2, 58h, 69h, 3Ah, 2Dh, 54h, 4Ch, 4Ah, 13h, 1Fh, 34h, 75h, 1Fh, 0Dh, 75h, 56h, 54h, 20h, 55h, 25h, 5Ah, 7Fh, 36h, 50h, 33h, 23h, 75h, 4Dh, 50h, 54h, 11h, 2Eh, 48h, 54h, 10h, 76h, 67h, 5Ah, 1Eh; 0
 // dseg:4214 4A 72 72 3C 6A 6C 33 27 5C 3D+db  2Bh, 66h, 41h, 78h, 2Ch, 79h,   2,   8, 45h, 0Eh, 60h, 51h,   1, 55h, 62h, 0Eh, 3Fh, 7Ch,   6, 16h,   8, 3Ch, 34h,   3, 20h, 18h, 71h, 13h, 5Bh, 65h, 55h, 4Fh, 32h,   6, 3Fh, 6Ah, 16h, 79h, 47h, 6Bh,   5, 16h, 74h, 0Fh, 5Ah, 17h, 30h, 68h, 69h, 55h, 78h,2 dup( 4Bh), 51h, 58h, 69h, 77h; 199

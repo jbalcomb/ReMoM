@@ -4,6 +4,53 @@
 #include <STDARG.H>  /* va_list; va_arg(), va_end(), va_start() */
 #include <STDIO.H>   /* FILE; fclose(), fopen() */
 
+// // J:\STU\DBWD\developc\Animator\Vpaint\COMMON\jimk0.h
+// /* Compile time assertions. */
+// #define ASSERT_CONCAT_(a, b)    a##b
+// #define ASSERT_CONCAT(a, b)     ASSERT_CONCAT_(a, b)
+// #define STATIC_ASSERT(module, e) \
+// 	struct ASSERT_CONCAT(static_assert_##module##_line_, __LINE__) \
+// 		{ unsigned int bf : !!(e); }
+// 
+// typedef char BYTE;
+// typedef unsigned char UBYTE;
+// typedef short WORD;
+// typedef unsigned short UWORD;
+// 
+// #if defined(__TURBOC__)
+// typedef long LONG;
+// typedef unsigned long ULONG;
+// #else
+// typedef int LONG;
+// typedef unsigned int ULONG;
+// #endif
+// 
+// STATIC_ASSERT(STU_DBG, sizeof( BYTE) == 1);
+// STATIC_ASSERT(STU_DBG, sizeof(UBYTE) == 1);
+// STATIC_ASSERT(STU_DBG, sizeof( WORD) == 2);
+// STATIC_ASSERT(STU_DBG, sizeof(UWORD) == 2);
+// STATIC_ASSERT(STU_DBG, sizeof( LONG) == 4);
+// STATIC_ASSERT(STU_DBG, sizeof(ULONG) == 4);
+// 
+// #if defined(__TURBOC__)
+// struct byte_regs
+// 	{
+// 	UBYTE al, ah, bl, bh, cl, ch, dl, dh;
+// 	UWORD si, di, ds, es;
+// 	};
+// struct word_regs
+// 	{
+// 	UWORD ax, bx, cx, dx;
+// 	UWORD si, di, ds, es;
+// 	};
+// union regs
+// 	{
+// 	struct byte_regs b;
+// 	struct word_regs w;
+// 	};
+// #endif /* __TURBOC__ */
+
+
 
 extern char Debug_Log_FileName[];
 extern FILE *Debug_Log_File;

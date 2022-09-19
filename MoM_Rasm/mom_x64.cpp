@@ -67,7 +67,7 @@ int MGC_Main(void)
         _s34p65c.c IN_Init
     */
     // gfp_CTRL_Control_Table = SA_Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
-    
+
 
     /*
         END: Hardware_Init()
@@ -86,7 +86,14 @@ int MGC_Main(void)
     /*  VGA_LoadPalette(0, -1, 0);  VGA_DAC_Write();  */
     /*  if not "JENNY", then Play_Intro()  */
     /*  GAME_LoadMainImages();  */
-    /*  GAME_Load_TERRSTAT_0();  */
+    /*
+        GAME_Load_TERRSTAT_0();
+            int LbxEntryIndex = 0;
+            int RecFirst = 0;
+            int RecCount = 770;
+            int RecSize = 6;
+            gfp_TBL_Moves_Per_Tile = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_TERRSTAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
+    */
     /*  GAME_Load_SPELLDAT_0();  */
     /*  Main Menu - Credits  GAME_PrepareCredits();  */
     /*  VGA_DrawFilledRect(0, 0, 319, 199, 0);  */  // ~= Clear Screen, on Draw Screen-Page

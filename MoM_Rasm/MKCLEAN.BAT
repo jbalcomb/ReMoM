@@ -69,6 +69,13 @@ REM #####
 REM ########################################
 
 REM #####  TST_MGC  #####
+REM DEL TST_MGC.EXE
+REM DEL TST_MGC.MAP
 
-DEL TST_MGC.EXE
-DEL TST_MGC.MAP
+REM #####  TST  #####
+REM DEL TST.EXE
+REM DEL TST.MAP
+
+REM #####  MGC  #####
+REM DEL MGC.EXE
+REM DEL MGC.MAP

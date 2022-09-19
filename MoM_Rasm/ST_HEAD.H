@@ -55,53 +55,6 @@
 
 
 
-#if defined(__DOS16__)
-typedef unsigned int sgmt_addr;
-typedef unsigned int ofst_addr;
-typedef void _SEG  * sgmt_ptr;
-typedef void _NEAR * near_ptr;
-typedef void _FAR  * far_ptr;
-typedef void _SEG  * memptr;  // Wolf3d ID_MM.H J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
-
-
-// ID/Wolf3D-style
-typedef unsigned char  byte;
-typedef unsigned int   word;  // elsewhere, this is `short` (see: root42, brackeen, Wolf3d, Animator, AIL214)
-typedef unsigned long  dword;
-
-/*
-    NOTE(JimBalcomb,20220829): moved to ST_TYPE.H
-typedef unsigned char  DB;
-typedef unsigned int   DW;
-typedef unsigned long  DD;
-
-typedef unsigned char  BYTE;
-typedef unsigned int   WORD;
-typedef unsigned long  DWORD;
-*/
-
-/*
-    NOTE(JimBalcomb,20220829): these are just silly - DB,DW,DD are inherently signless
-typedef unsigned char  UBYTE;
-typedef unsigned int   UWORD;
-typedef unsigned long  UDWORD;
-typedef   signed char  SBYTE;
-typedef   signed int   SWORD;
-typedef   signed long  SDWORD;
-*/
-
-typedef unsigned char  UCHAR;
-typedef unsigned short USHORT;
-typedef unsigned int   UINT;
-typedef unsigned long  ULONG;
-typedef   signed char  SCHAR;
-typedef   signed short SSHORT;
-typedef   signed int   SINT;
-typedef   signed long  SLONG;
-
-// ? stdint.h ? limits.h ? - ? C89, C90, C99, ?
-#endif
-
 #define ST_TRUE  1
 #define ST_FALSE 0
 #define ST_UNDEFINED -1
@@ -149,6 +102,7 @@ typedef   signed long  SLONG;
 #define MK_FP(seg,ofs) ( (void _seg *)(seg) + (void near *)(ofs) )
 // #define MK_FP(_sgmt_,_ofst_) ( (void _FAR *) (  (unsigned long) (_sgmt_) << 16  | (_ofst_) ) )
 // #define MK_FP(_sgmt_,_ofst_) ( (void  far *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
+
 
 // #define FP_SEG(fp) ( (unsigned int)(void _SEG *)(void _FAR *)(fp) )
 #define FP_SEG(fp) ( (unsigned int)(void _seg *)(void far *)(fp) )

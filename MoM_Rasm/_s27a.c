@@ -822,7 +822,7 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
         1oom: lbxgfx.h    #define lbxgfx_get_offs0c(_data_) GET_LE_16( &((_data_)[0x0c] )
         1oom: bits.h    #define GET_LE_16(_p_) ( *((uint16_t const *)(_p_) )
     */
-    SrcSgmt = EMM_PageFrame_Base_Address;
+    SrcSgmt = EMM_PageFrameBaseAddress;
     // // SrcOfst = FlicHdr_FrameOffsetTable + (4 * Frame_Index);
     // SrcOfst = 8 + (4 * Frame_Index);
         // SrcOfst = FLIC_HDR.EmmLogicalPageOffset; SrcOfst = SrcOfst + (4 * Frame_Index); SrcOfst = SrcOfst + ofsFlicFrameOffsetTable;
@@ -1003,14 +1003,14 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
             // mov ax, [bp+Left];  mov bx, ax;  shr bx, 1;  shr bx, 1;  mov di, bx
         VgaWriteMapMask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
             // and ax, 3;  mov bx, offset VGA_WriteMapMasks3;  add bx, ax; mov ah, [bx]
-        SrcSgmt = EMM_PageFrame_Base_Address;
-            // mov bx, [EMM_PageFrame_Base_Address];  mov ds, bx;
+        SrcSgmt = EMM_PageFrameBaseAddress;
+            // mov bx, [EMM_PageFrameBaseAddress];  mov ds, bx;
         SrcOfst = tmp_EmmFlicFrameDataOffset;
 
         // fptr_DrawScreenPageScanlineOffset = (gsa_DSP_Addr << 16) + ( ScreenPage_Y * (((320/4)/16)) ); // _ES = {A000,A400} + (Y*(((320/4)/16))
-        fptr_DrawScreenPageScanlineOffset = (gsa_DSP_Addr * 65536) + ( ScreenPage_Y * (((320/4)/16)) );
-        // fptr_EmmPageFrameBaseAddress = (EMM_PageFrame_Base_Address << 16);
-        fptr_EmmPageFrameBaseAddress = (EMM_PageFrame_Base_Address * 65536);
+        fptr_DrawScreenPageScanlineOffset = (byte _FAR *) (gsa_DSP_Addr * 65536) + ( ScreenPage_Y * (((320/4)/16)) );
+        // fptr_EmmPageFrameBaseAddress = (EMM_PageFrameBaseAddress << 16);
+        fptr_EmmPageFrameBaseAddress = (EMM_PageFrameBaseAddress * 65536);
 
         #ifdef DEBUG
             dlvfprintf("DEBUG: [%s, %d] fptr_DrawScreenPageScanlineOffset: %Fp\n", __FILE__, __LINE__, fptr_DrawScreenPageScanlineOffset);
@@ -1211,7 +1211,7 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
 // asm mov ah, al
 // asm or ah, cl //; low nibble = map mask for the first pixel
 //     //; high nibble = read map for the same
-// asm mov bx, [EMM_PageFrame_Base_Address] //; contains the segment address of the EMS page frame
+// asm mov bx, [EMM_PageFrameBaseAddress] //; contains the segment address of the EMS page frame
 // asm mov ds, bx
 // asm mov bx, [tmpFlicHdrWidth]
 // Loop48KB:

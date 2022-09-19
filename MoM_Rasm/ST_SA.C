@@ -238,7 +238,9 @@ SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
         SA_Alloc_Error(0x01, nparas); // Alloc Error #1: Allocation Too Small
     }
     
-    pSAMB_data = (pTmpSAMB + 16);
+    //pSAMB_data = (pTmpSAMB + 16);
+    //pSAMB_data = MK_FP((FP_SEG(pTmpSAMB) + 1),FP_OFF(pTmpSAMB));
+    pSAMB_data = MK_FP((FP_SEG(pTmpSAMB) + 1),0);
 
     //Update_MemFreeWorst_KB();
 

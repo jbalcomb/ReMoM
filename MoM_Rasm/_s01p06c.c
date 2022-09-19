@@ -1,8 +1,13 @@
 // _s01p06c.c SCREEN_Menu_Draw()
 // MGC_DEF.H
 
+#include "ST_HEAD.H"
+#include "ST_TYPE.H"
+
 #include "MOM_DEF.H"
 #include "MGC_DEF.H"
+
+#include "ST_FLIC.H"
 
 #include "STU_DBG.H"
 
