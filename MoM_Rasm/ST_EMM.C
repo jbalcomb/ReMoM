@@ -1426,6 +1426,16 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     farpokeb(SAMB_data, 11, (char)Entry_Begin_Logical_Page_Number);  // 11 0x0B LBX_FLIC_HDR.EMM_Logical_Page_Number
     farpokew(SAMB_data, 12, Entry_Begin_Logical_Page_Offset);        // 12 0x0C LBX_FLIC_HDR.EMM_Logical_Page_Offset
 
+    // capture the data for debug and testing...
+    // int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType
+    // rather than if, if, if, ... index by LBX Name (EMM Handle Name) and LBX Entry Index
+    // ? enum of LBX Name to LBX Number ? in alphabetical order ? used to index an array ? of structs ?
+    if ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) )
+    {
+        //TST_LBX_MAINSCRN_000.EMM_Logical_Page_Offset = 
+    }
+
+
 #ifdef DEBUG
     if (bDebugDetail)
     {

@@ -41,13 +41,16 @@
 // #include <VALUES.H>
 #endif
 
-#include "ST_DBG.H"
 #include "ST_DEF.H"
+
 #include "ST_EMM.H"
 #include "ST_GUI.H"
 #include "ST_LBX.H"
 #include "ST_TXT.H"
 #include "ST_VID.H"
+
+#include "ST_DBG.H"
+
 
 
 // J:\STU\DBWD\developc\_MPL13\SAMPCODE\C\OTHER\MEMORY\MOVEMEM.C

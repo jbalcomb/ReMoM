@@ -8,7 +8,13 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#ifdef DEBUG
 #include "STU_DBG.H"
+#endif
+
+#ifdef TEST
+#include "STU_TST.H"
+#endif
 
 
 SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
@@ -40,6 +46,11 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 //     {
 //         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 //     }
+#endif
+
+#ifdef TEST
+    //TST_LBX[Get_LBX_Name_Index(LbxName)];
+    Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 #endif
 
     tmp_LbxEntry = LbxEntry;

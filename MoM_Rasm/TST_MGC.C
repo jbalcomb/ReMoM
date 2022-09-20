@@ -31,6 +31,10 @@
 #include "STU_DBG.H"
 #include "STU_TST.H"
 
+#include "LBX_List.H"
+
+
+void test_Load_MAINSCRN_000(void);
 
 void test_VGA_SetDirectDraw(void);
 void test_VGA_Set_DSP_Addr(void);
@@ -42,18 +46,23 @@ void test_EMM_Startup(void);
 void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
 
+void test_FLIC_Draw_XY(void);
+
 void test_MGC_Main(void);
 
 
 
 int main(void)
 {
+
     Debug_Log_Startup();
+
+    test_Load_MAINSCRN_000();
 
     // test_VGA_SetDirectDraw();
     // test_VGA_Set_DSP_Addr();
 
-    test_VGA_DAC_Init();
+    //test_VGA_DAC_Init();
 
     // test_EMM_Init();
     // test_EMM_Startup();
@@ -160,6 +169,29 @@ void test_VGA_SetDirectDraw(void)
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_VGA_SetDirectDraw()\n", __FILE__, __LINE__);
 #endif
+
+}
+
+/*
+unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8
+gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+*/
+void test_Load_MAINSCRN_000(void)
+{
+    SAMB_data sa_MAINSCRN_000;
+
+    // MGC main() and Hardware_Init()
+    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    EMM_SetMinKB(EMM_MIN_KB);
+    RAM_SetMinKB(RAM_MIN_KB);
+    EMM_Startup();
+
+    // GAME_LoadMainImages
+    EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
+    sa_MAINSCRN_000 = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+    TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
+
+    validate_FLIC_Header(sa_MAINSCRN_000);
 
 }
 
@@ -329,7 +361,8 @@ void test_VGA_DAC_Init(void)
 
     // validate_Palette_0();
     test_status = validate_PaletteFlags_1();
-    dlvfprintf("DEBUG: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status);
+    tst_prn("TEST: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status);
+    TSTPRN(("TEST: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status));
     if ( test_status == -1 )  // TEST_FAILURE
     {
         dlvfprintf("DEBUG: [%s, %d] FAILURE: validate_PaletteFlags_1()\n", __FILE__, __LINE__);
@@ -606,4 +639,16 @@ void test_GAME_LoadMainImages(void)
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_GAME_LoadMainImages()\n", __FILE__, __LINE__);
 #endif
+}
+
+void test_FLIC_Draw_XY(void)
+{
+
+
+    HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
+    FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
+
+    HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+    FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+
 }

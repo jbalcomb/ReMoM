@@ -1,6 +1,8 @@
 #ifndef ST_DEF_H
 #define ST_DEF_H
 
+#define DEBUG 1
+#define TEST 1
 
 #ifdef FAR
 #define __FAR far

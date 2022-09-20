@@ -95,7 +95,11 @@ void GAME_LoadMainImages(void)
 
 
     */
-    gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);  // 
+   /*
+        as coded, returns a SAMB_data FLIC_Header
+        LBXE_LoadSingle() |-> LBX_Load_Entry() |-> EMM_Load_LBX_Entry() |-> EMM_LBX_FLIC_header()
+   */
+    gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
 #ifdef DEBUG
     DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
     TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
