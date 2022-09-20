@@ -31,6 +31,8 @@
 #include "STU_DBG.H"
 #include "STU_TST.H"
 
+#include "LBX_List.H"
+
 
 void test_Load_MAINSCRN_000(void);
 

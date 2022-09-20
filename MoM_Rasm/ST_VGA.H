@@ -156,28 +156,28 @@ void VGA_SetModeY(void);
 void VGA_DrawFilledRect(int x1, int y1, int x2, int y2, char Color);
 
 /*
-    seg019
+    seg019  seg019.H
 */
 // _s19p11c.c
-int VGA_GetFontHeight(void);
+// int VGA_GetFontHeight(void);
 // _s19p14c.c
-void VGA_TextDraw_Init(void);
+// void VGA_TextDraw_Init(void);
 
 /*
-    seg020
+    seg020  seg020.H
 */
 //_s20p01
-void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color);
+// void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color);
 //_s20p05
-void VGA_SetDACChanged(int First_Color, int Last_Color);
+// void VGA_SetDACChanged(int First_Color, int Last_Color);
 
 /*
-    seg021
+    seg021  seg021.H
 */
 // _s21p01
-void VGA_DAC_Write(void);
+// void VGA_DAC_Write(void);
 // _s21p07
-void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index);
+// void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index);
 
 /*
     seg026

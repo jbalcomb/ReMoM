@@ -276,21 +276,21 @@ extern "C" {
     seg001
 */
 // _s01p01 MGC_MAIN.C
-int MGC_Main(void);
-
-// _s01p03c.c
-void GAME_MainMenu(void);
-// _s01p04c.c
-void GAME_LoadMainImages(void);
-// _s01p05c.c
-int SCREEN_Menu(void);
-// _s01p06c.c
-void SCREEN_Menu_Draw(void);
-
-// _s01p07c.c
-void GAME_Load_TERRSTAT_0(void);
-// _s01p08c.c
-void GAME_Load_SPELLDAT_0(void);
+// int MGC_Main(void);
+// seg001.H
+// // _s01p03c.c
+// void GAME_MainMenu(void);
+// // _s01p04c.c
+// void GAME_LoadMainImages(void);
+// // _s01p05c.c
+// int SCREEN_Menu(void);
+// // _s01p06c.c
+// void SCREEN_Menu_Draw(void);
+// 
+// // _s01p07c.c
+// void GAME_Load_TERRSTAT_0(void);
+// // _s01p08c.c
+// void GAME_Load_SPELLDAT_0(void);
 
 /*
     ovl060

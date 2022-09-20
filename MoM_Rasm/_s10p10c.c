@@ -49,8 +49,8 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 #endif
 
 #ifdef TEST
-    //TST_LBX[Get_LBX_Name_Index(LbxName)];
-    Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+    // DELETE //TST_LBX[Get_LBX_Name_Index(LbxName)];
+    // DELETE Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 #endif
 
     tmp_LbxEntry = LbxEntry;

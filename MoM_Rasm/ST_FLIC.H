@@ -1,6 +1,7 @@
 #ifndef ST_FLIC_H
 #define ST_FLIC_H
 
+// #include "ST_TYPE"
 #include "ST_HEAD.H"
 
 /*
@@ -303,7 +304,7 @@ struct s_FLIC_HDR //; (sizeof=0x10)
     /*00h*/word Width;                             // MAX: 320  aafli.h (1990) typedef struct fli_head { ... USHORT width;
     /*02h*/word Height;                            // MAX: 200
     /*04h*/word Current_Frame;                     // Run-Time
-    /*06h*/word Frame_Count;                       // 
+    /*06h*/word Frame_Count;                       //           aafli.h (1990) typedef struct fli_head { ... USHORT frame_count;
     /*08h*/word Loop_Frame;                        // ? i.e., last frame ? ~/Animator "Ring Frame"?
     /*0Ah*/byte EMM_Handle_Number;                 // Run-Time
     /*0Bh*/byte EMM_Logical_Page_Number;           // Run-Time
@@ -517,15 +518,15 @@ void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
 // _s28p02
 void FLIC_Prepare(int Width, int Height, unsigned int SAMB_head);
 // _s28p11
-void FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr);
+void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
 // _s28p13
 //void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg);
 // _s28p14
-void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index);
+void FLIC_SetFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
 // _s28p15
-void FLIC_ResetFrame(unsigned int FlicHdr_SgmtAddr);
+void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header);
 // _s28p16
-unsigned int FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr);
+word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header);
 
 
 #ifdef __cplusplus

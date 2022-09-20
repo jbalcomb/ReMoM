@@ -56,8 +56,8 @@ void GAME_LoadMainImages(void)
     HERE("AFTER: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
 
 //#ifdef TEST
-    HERE("CALL: dl_TST_LBX_MAINSCRN_000();");
-    dl_TST_LBX_MAINSCRN_000();
+    // DELETE HERE("CALL: dl_TST_LBX_MAINSCRN_000();");
+    // DELETE dl_TST_LBX_MAINSCRN_000();
 
     //g_EMM_Table[TST_LBX_MAINSCRN_000.EMM_Table_Index].eEmmHndlNbr == TST_LBX_MAINSCRN_000.EMM_Handle_Number;
 

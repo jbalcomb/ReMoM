@@ -162,14 +162,15 @@ VGA_DAC_Init()
 
 
 
-##### seg001    MGC_DEF.H
-_s01p01         MGC_MAIN.C                  int MGC_Main(void)                  main                int main(argc, argv)
-_s01p03c.c      GAME_MainMenu               void GAME_MainMenu(void)
-_s01p04c.c      GAME_LoadMainImages         void GAME_LoadMainImages(void)
-_s01p05c.c      SCREEN_Menu                 void SCREEN_Menu(void)              GAME_MainEventLoop
-_s01p06c.c      SCREEN_Menu_Draw            void SCREEN_MainMenu_Draw(void)     GAME_DrawMainScreen
-_s01p07c.c      GAME_Load_TERRSTAT_0        void GAME_LoadTerrstat(void)
-_s01p08c.c      GAME_Load_SPELLDAT_0        void GAME_LoadSpellData(void)
+##### MGC seg001
+seg001.H  (MGC_DEF.H)
+_s01p01      MGC_MAIN.C                  int MGC_Main(void)                  main                int main(argc, argv)
+_s01p03      GAME_MainMenu               void GAME_MainMenu(void)
+_s01p04      GAME_LoadMainImages         void GAME_LoadMainImages(void)
+_s01p05      SCREEN_Menu                 void SCREEN_Menu(void)              GAME_MainEventLoop
+_s01p06      SCREEN_Menu_Draw            void SCREEN_MainMenu_Draw(void)     GAME_DrawMainScreen
+_s01p07      GAME_Load_TERRSTAT_0        void GAME_LoadTerrstat(void)
+_s01p08      GAME_Load_SPELLDAT_0        void GAME_LoadSpellData(void)
 
 ##### seg002    MOM_DEF.H
 _s02p01.asm     CLK_SaveCounter             void CLK_SaveCounter(void)
@@ -302,27 +303,30 @@ _s18p01.asm     VGA_SetFont                 void VGA_SetFont(int Font_Index, int
 
 _s18p07.asm     VGA_GetStringWidth
 
-##### seg019    ST_VGA.H
+##### MGC seg019
+seg019.H  (ST_VGA.H)
 [?]_s19p05         VGA_GetTextHeight
 [?]_s19p06         VGA_GetTextWidth
 []_s19p11         VGA_GetFontHeight
-_s19p14         VGA_TextDraw_Init           void VGA_TextDraw_Init(void)
+s19p14         VGA_TextDraw_Init           void VGA_TextDraw_Init(void)
 
 
-##### seg020    ST_VGA.H
-_s20p01c.c      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
-_s20p05c.c      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
+##### MGC seg020
+seg020.H  (ST_VGA.H)
+_s20p01      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
+_s20p05      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
 
-##### seg021    ST_VGA.H    ALL ASM
-_s21p01c.c      VGA_DAC_Write               void VGA_DAC_Write(void)
-_s21p07c.c      FLIC_LoadPalette            void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)       VGA_LoadIMGPalette
+##### MEG seg021
+seg021.H  (ST_VGA.H)  ALL ASM
+s21p01      VGA_DAC_Write               void VGA_DAC_Write(void)
+s21p07      FLIC_LoadPalette            void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)       VGA_LoadIMGPalette
 
 
 ##### seg022    ST_DEF.H
 _s22p07         RNG_TimerSeed               void RNG_TimerSeed(void)
 _s22p08         RNG_Random                  
 
-[]_s22p22       ST_MoveData                 int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes)
+_s22p22       ST_MoveData                 int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes)
 
 
 ##### seg024    ST_DBG.H

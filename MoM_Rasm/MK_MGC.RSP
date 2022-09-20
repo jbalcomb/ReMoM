@@ -1,6 +1,6 @@
 /c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
-MGC_MAIN.OBJ +
+MGC.OBJ +
 STU_DBG.OBJ +
 STU_TST.OBJ +
 STU_UTIL.OBJ +
@@ -28,12 +28,7 @@ CR_Resto.obj +
 _o57p01c.obj +
 _o60p01c.obj +
 _o60p02c.obj +
-_s01p03c.obj +
-_s01p04c.obj +
-_s01p05c.obj +
-_s01p06c.obj +
-_s01p07c.obj +
-_s01p08c.obj +
+seg001.obj +
 _s02p01.obj +
 _s02p03.obj +
 _s02p05.obj +
@@ -70,12 +65,9 @@ _s18p03.obj +
 _s18p05.obj +
 _s18p06.obj +
 _s18p07.obj +
-_s19p11c.obj +
-_s19p14c.obj +
-_s20p01a.obj +
-_s20p05c.obj +
-_s21p01c.obj +
-_s21p07c.obj +
+seg019.obj +
+seg020.obj +
+seg021.obj +
 _s22p07.obj +
 _s22p22c.obj +
 _s24p05c.obj +
