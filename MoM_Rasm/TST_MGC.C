@@ -55,44 +55,69 @@ int main(void)
 
     Debug_Log_Startup();
 
-    test_Load_MAINSCRN_000();
-
     // test_VGA_SetDirectDraw();
     // test_VGA_Set_DSP_Addr();
 
-    //test_VGA_DAC_Init();
+    // test_VGA_DAC_Init();
 
     // test_EMM_Init();
     // test_EMM_Startup();
     // test_EMM_Load_LBX_File();
 
-    // test_GAME_LoadMainImages();
-    
+    test_GAME_LoadMainImages();
+
+    // test_Load_MAINSCRN_000();
+
     Debug_Log_Shutdown();
     return 0;
 }
 
 void test_MGC_Main(void)
 {
+    // MGC main()
     g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    // MGC main()
     EMM_SetMinKB(EMM_MIN_KB);
+    // MGC main()
     RAM_SetMinKB(RAM_MIN_KB);
+    // MGC main() |-> Hardware_Init()
     EMM_Startup();
-    VGA_DAC_Init(GAME_FONT_FILE);  // |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
-    IN_Init(1);  // |-> MD_Init()
+    // MGC main() |-> Hardware_Init()
+    // s14p03
+    VGA_DAC_Init(GAME_FONT_FILE);  // "FONTS.LBX"
+        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), SA_Allocate_Space(), VGA_TextDraw_Init()
+    // MGC main() |-> Hardware_Init()
+    IN_Init(1);  // INPUT_TYPE_KEYBOARD_AND_MOUSE
+        // |-> MD_Init()
+    // MGC main() |-> Hardware_Init()
     VGA_Set_DSP_Addr();
+    // MGC main()
     MoM_Tables_Init(6100);
+    // MGC main()
+    // s20p01
     VGA_LoadPalette(0, -1, 0);
+        // 
+    // MGC main()
     VGA_DAC_Write();
+    // MGC main()
     GAME_LoadMainImages();
+    // MGC main()
     GAME_Load_TERRSTAT_0();
+    // MGC main()
     GAME_Load_SPELLDAT_0();
+    // MGC main()
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Draw Screen-Page
+    // MGC main()
     VGA_SetDirectDraw();
+    // MGC main()
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Render Screen-Page
+    // MGC main()
     VGA_Set_DSP_Addr();
+    // MGC main()
     VGA_LoadPalette(0, -1, 0);  // EMPERATO
+    // MGC main()
     VGA_DAC_Write();
+    // MGC main()
     // GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
 
 }
@@ -183,6 +208,7 @@ void test_Load_MAINSCRN_000(void)
     EMM_SetMinKB(EMM_MIN_KB);
     RAM_SetMinKB(RAM_MIN_KB);
     EMM_Startup();
+    validate_EMM_Startup();
 
     // GAME_LoadMainImages
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
@@ -360,7 +386,7 @@ void test_VGA_DAC_Init(void)
     // validate_Palette_0();
     test_status = validate_PaletteFlags_1();
     tst_prn("TEST: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status);
-    TSTPRN(("TEST: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status));
+    // TSTPRN(("TEST: [%s, %d] test_status: %d\n", __FILE__, __LINE__, test_status));  // WTF!?! "Warning: Condition is always true in function..."
     if ( test_status == -1 )  // TEST_FAILURE
     {
         dlvfprintf("DEBUG: [%s, %d] FAILURE: validate_PaletteFlags_1()\n", __FILE__, __LINE__);
@@ -580,6 +606,8 @@ void test_GAME_LoadMainImages(void)
 
     EMM_Startup();
     GAME_LoadMainImages();
+    validate_GAME_LoadMainImages();
+
     /*
         Test what, where, how?
             ?
@@ -606,9 +634,9 @@ void test_GAME_LoadMainImages(void)
     {
         if ( stricmp(g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNm, TST_LBX_MAINSCRN_000.LBX_Name) == 0 )
         {
-            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNm: %u \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNm);
+            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNm: %s \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNm);
             dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNbr: %u \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNbr);
-            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmRsrvd: %u \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmRsrvd);
+            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmRsrvd: %d \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmRsrvd);
         }
     }
     //TST_LBX_MAINSCRN_000.EMM_Table_Index

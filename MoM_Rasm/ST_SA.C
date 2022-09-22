@@ -313,7 +313,16 @@ SAMB_ptr SA_Alloc_First(SAMB_ptr pSAMB_head, int nparas)
     ((unsigned char *)(pSAMB_sub_head))[15] = (((1) >> 8) & 0xFF);
 
     //SAMB_sub_data = SAMB_sub_head + 1;
-    pSAMB_sub_data = pSAMB_sub_head + 16;
+    // pSAMB_sub_data = pSAMB_sub_head + 16;
+    pSAMB_sub_data = MK_FP((FP_SEG(pSAMB_sub_head) + 1),0);
+
+#ifdef DEBUG
+    // first sub allocation, so sub_head should be head + 1 segment and sub_data should be sub_head + 1 segment
+    // dealing in segment addresses means these are inherently/effectively normalized pointers, so the offset should be 0
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %p\n", __FILE__, __LINE__, pSAMB_head);
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_sub_head: %p\n", __FILE__, __LINE__, pSAMB_sub_head);
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_sub_data: %p\n", __FILE__, __LINE__, pSAMB_sub_data);
+#endif
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d]: END: SA_Alloc_First(pSAMB_head = %p, nparas = %d) { pSAMB_sub_data = %p }\n", __FILE__, __LINE__, pSAMB_head, nparas, pSAMB_sub_data);
@@ -353,7 +362,9 @@ SAMB_ptr SA_Alloc_Next(SAMB_ptr pSAMB_head, int nparas)
 
     // tmp_paras_used = farpeekw(SAMB_head, 10);  // s_SAMB.Used_Paras
     tmp_paras_used = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
-    pSAMB_sub_head = pSAMB_head + tmp_paras_used;
+    // pSAMB_sub_head = pSAMB_head + tmp_paras_used;
+    // pSAMB_sub_head = MK_FP((FP_SEG(pSAMB_head) + tmp_paras_used),FP_OFF(pSAMB_head));
+    pSAMB_sub_head = MK_FP((FP_SEG(pSAMB_head) + tmp_paras_used),0);
 
     // tmp_paras_used = farpeekw(SAMB_head, 10);  // s_SAMB.Used_Paras
     tmp_paras_used = ((unsigned int)*((unsigned char *)pSAMB_head + 10)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 11) << 8);
@@ -385,7 +396,16 @@ SAMB_ptr SA_Alloc_Next(SAMB_ptr pSAMB_head, int nparas)
     // ((unsigned char *)(pSAMB_sub_head))[15] = (((1) >> 8) & 0xFF);
 
     // subSAMB_data = subSAMB_head + 1;  // + 1 segment / 16 bytes / paragraph / SAMB unit size
-    pSAMB_sub_data = pSAMB_sub_head + 16;
+    // pSAMB_sub_data = pSAMB_sub_head + 16;
+    pSAMB_sub_data = MK_FP((FP_SEG(pSAMB_sub_head) + 1),0);
+
+#ifdef DEBUG
+    // next sub allocation, so sub_head should be head + used segments and sub_data should be sub_head + 1 segment
+    // dealing in segment addresses means these are inherently/effectively normalized pointers, so the offset should be 0
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_head: %p\n", __FILE__, __LINE__, pSAMB_head);
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_sub_head: %p\n", __FILE__, __LINE__, pSAMB_sub_head);
+    dlvfprintf("DEBUG: [%s, %d]: pSAMB_sub_data: %p\n", __FILE__, __LINE__, pSAMB_sub_data);
+#endif
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d]: END: SA_Alloc_Next(pSAMB_head = %p, nparas = %d) { pSAMB_sub_data = %p }\n", __FILE__, __LINE__, pSAMB_head, nparas, pSAMB_sub_data);

@@ -159,3 +159,9 @@ void VGA_Set_DSP_Addr(void)
     gsa_DSP_Addr = VRAM_BASE + ( (1 - g_RSP_Idx ) << 2 );
 }
 ```
+
+
+## GAME_LoadMainImages()
+EMM_Table[]
+    MAINSCRN, WIZARDS, SPELLDAT
+

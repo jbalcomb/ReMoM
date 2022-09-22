@@ -23,6 +23,7 @@ void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
 #endif
 
     // ? passes in a SAMB_head, gets back a SAMB_data ?
+    // gsa_PaletteLbxEntry allocated in VGA_DAC_Init() _s14p03
     gsa_gsa_PaletteLbxEntry = LBXE_LoadReplace(g_PaletteLbxFileName, Palette_Index+2, gsa_PaletteLbxEntry);
                              // |-> LBX_EntryLoader(g_PaletteLbxFileName, Palette_Index+2, gsa_PaletteLbxEntry, 1, 0);
 

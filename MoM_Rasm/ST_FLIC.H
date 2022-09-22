@@ -496,7 +496,7 @@ extern "C" {
 void FLIC_Draw(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
 void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
 void FLIC_Draw_C(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-// _s27p02
+// s27p02  _s27.asm  //_s27a.c
 void FLIC_Draw_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
 // void FLIC_Draw_R_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
 // _s27p03
@@ -507,7 +507,7 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, i
 // _s27p04
 void FLIC_EMM_MapNextPages(void);
 void FLIC_EMM_MapNextPages_A(void);
-// _s27p05
+// s27p05  _s27.asm  //_s27a.c
 void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
 // void FLIC_Draw_EMM_R_A(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg);
 

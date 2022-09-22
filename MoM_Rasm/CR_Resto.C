@@ -15,17 +15,17 @@ _s33p35         CRL_Restore_DSP                     GUI_RestoreCursorArea_DSP   
 void CR_Restore_C(int ScreenPage_Idx)
 {
     word Dst_Sgmt;
-    word _FAR * pScreenPage;
+    word * pScreenPage;
     //word * pCRSR_Save_RSP;
-    word _FAR * pCRSR_Save_RSP;
+    word * pCRSR_Save_RSP;
     word ScreenPage_Offset;
     int Draw_Width;
     int Draw_Height;
     byte mask;
     word itr_width;
     word itr_height;
-    byte _FAR * pSrc;
-    byte _FAR * pDst;
+    byte * pSrc;
+    byte * pDst;
     word Dst_Ofst;
     word wordo;
 
@@ -49,8 +49,8 @@ void CR_Restore_C(int ScreenPage_Idx)
     */
 
     //pCRSR_Save_RSP = (word *)(&g_CRSR_Save_RSP[0]);
-    //pCRSR_Save_RSP = (word _FAR *)MK_FP(FP_SEG(pCRSR_Save_RSP),FP_OFF(pCRSR_Save_RSP));
-    pCRSR_Save_RSP = (word _FAR *)(&g_CRSR_Save_RSP[0]);
+    //pCRSR_Save_RSP = (word *)MK_FP(FP_SEG(pCRSR_Save_RSP),FP_OFF(pCRSR_Save_RSP));
+    pCRSR_Save_RSP = (word *)(&g_CRSR_Save_RSP[0]);
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] pCRSR_Save_RSP: %Fp\n", __FILE__, __LINE__, pCRSR_Save_RSP);
 #endif
@@ -59,12 +59,12 @@ void CR_Restore_C(int ScreenPage_Idx)
     Draw_Width = *pCRSR_Save_RSP++;
     Draw_Height = *pCRSR_Save_RSP++;
 
-    //pDst = (byte _FAR *)MK_FP((VRAM_BASE + (g_RSP_Idx << 2), 0);
+    //pDst = (byte *)MK_FP((VRAM_BASE + (g_RSP_Idx << 2), 0);
     //Src_Sgmt = VRAM_BASE + (((g_RSP_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
     //Src_Sgmt = VRAM_BASE + (((g_RSP_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
     Dst_Sgmt = VRAM_BASE + (((ScreenPage_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
     //pScreenPage = MK_FP(Src_Sgmt);
-    pScreenPage = (word _FAR *)MK_FP(Dst_Sgmt, 0);
+    pScreenPage = (word *)MK_FP(Dst_Sgmt, 0);
     Dst_Ofst = ScreenPage_Offset;
 
 #ifdef DEBUG
@@ -108,7 +108,7 @@ void CR_Restore_C(int ScreenPage_Idx)
                 // wordo = FPEEKW(FP_SEG(pScreenPage),Dst_Ofst);
                 // dlvfprintf("DEBUG: [%s, %d] %Fp[0x%04X (%u)]: wordo: 0x%04X (%u)\n", __FILE__, __LINE__, pScreenPage, Dst_Ofst, Dst_Ofst, wordo, wordo);
 
-                pScreenPage = (word _FAR *)MK_FP(Dst_Sgmt, Dst_Ofst);
+                pScreenPage = (word *)MK_FP(Dst_Sgmt, Dst_Ofst);
                 *pScreenPage = wordo;
                 wordo = FPEEKW(Dst_Sgmt,Dst_Ofst);
                 dlvfprintf("DEBUG: [%s, %d] Dst_Sgmt: 0x%04X  Dst_Ofst: 0x%04X  pScreenPage: %Fp  wordo: 0x%04X  (%u)\n", __FILE__, __LINE__, Dst_Sgmt, Dst_Ofst, pScreenPage, wordo, wordo);

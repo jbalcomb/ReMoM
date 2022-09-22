@@ -42,10 +42,10 @@ void CR_Store_C(int CR_X, int CR_Y, int ScreenPage_Idx)
     word ScreenPage_Offset;
     int Draw_Width;
     int Draw_Height;
-    // byte _FAR * pSrc;
-    word _FAR * pScreenPage;
-    // byte _FAR * pDst;
-    word _FAR * pCRSR_Save_RSP;
+    // byte * pSrc;
+    word * pScreenPage;
+    // byte * pDst;
+    word * pCRSR_Save_RSP;
     word Src_Ofst;
     // word Dst_Ofst;
     int itr_plane;
@@ -82,10 +82,10 @@ void CR_Store_C(int CR_X, int CR_Y, int ScreenPage_Idx)
         Draw_Height
     */
 
-    // pDst = (byte _FAR *)MK_FP((VRAM_BASE + ((ScreenPage_Idx - g_RSP_Idx) * 4) + (CR_Y * 5)), 0);
+    // pDst = (byte *)MK_FP((VRAM_BASE + ((ScreenPage_Idx - g_RSP_Idx) * 4) + (CR_Y * 5)), 0);
     //Src_Sgmt = VRAM_BASE + (((g_RSP_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
     Src_Sgmt = VRAM_BASE + (((ScreenPage_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
-    pScreenPage = (word _FAR *)MK_FP(Src_Sgmt, 0);
+    pScreenPage = (word *)MK_FP(Src_Sgmt, 0);
 
     Row_Offset = (CR_X >> 2);  // PIXELS_PER_ADDRESS  e.g., 32 /4 = 8
     Column_Offset = CR_Y * 80;  // SCREEN_WIDTH_PER_PLANE  e.g., 20 * 80 - 1600
@@ -104,8 +104,8 @@ void CR_Store_C(int CR_X, int CR_Y, int ScreenPage_Idx)
     }
 
     //pCRSR_Save_RSP = (word *)(&g_CRSR_Save_RSP[0]);
-    //pCRSR_Save_RSP = (word _FAR *)MK_FP(FP_SEG(pCRSR_Save_RSP),FP_OFF(pCRSR_Save_RSP));
-    pCRSR_Save_RSP = (word _FAR *)(&g_CRSR_Save_RSP[0]);
+    //pCRSR_Save_RSP = (word *)MK_FP(FP_SEG(pCRSR_Save_RSP),FP_OFF(pCRSR_Save_RSP));
+    pCRSR_Save_RSP = (word *)(&g_CRSR_Save_RSP[0]);
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] pCRSR_Save_RSP: %Fp\n", __FILE__, __LINE__, pCRSR_Save_RSP);
 #endif

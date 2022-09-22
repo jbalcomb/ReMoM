@@ -13,8 +13,8 @@ void CR_Draw_C(int CR_X, int CR_Y, int ScreenPage_Idx)
     int itr_height;
     unsigned char mask;  // Sequence Controller - Memory-Map Mask/Bitfield
     byte baito;
-    byte _FAR * pSrc;
-    byte _FAR * pDst;
+    byte * pSrc;
+    byte * pDst;
     word Src_Ofst;
     word Dst_Ofst;
     word Src_Sgmt;
@@ -25,7 +25,7 @@ void CR_Draw_C(int CR_X, int CR_Y, int ScreenPage_Idx)
     int DBG_Column_Offset;
     word DBG_ScreenPage_Offset;
     word DBG_Src_Sgmt;
-    word _FAR * DBG_pScreenPage;
+    word * DBG_pScreenPage;
     word wordo;
 #endif
 
@@ -47,10 +47,10 @@ void CR_Draw_C(int CR_X, int CR_Y, int ScreenPage_Idx)
 
     row_offset = (CR_X >> 2);
 
-    pSrc = (byte _FAR *)MK_FP(gsa_Cursor_Array + (16 * (g_CRSR_Curr - 1)), 0);
+    pSrc = (byte *)MK_FP(gsa_Cursor_Array + (16 * (g_CRSR_Curr - 1)), 0);
     Src_Ofst = 0;
 
-    pDst = (byte _FAR *)MK_FP((VRAM_BASE + ((ScreenPage_Idx - g_RSP_Idx) * 4) + (CR_Y * 5)), 0);
+    pDst = (byte *)MK_FP((VRAM_BASE + ((ScreenPage_Idx - g_RSP_Idx) * 4) + (CR_Y * 5)), 0);
     Dst_Ofst = row_offset;
 
 #ifdef DEBUG
@@ -61,7 +61,7 @@ void CR_Draw_C(int CR_X, int CR_Y, int ScreenPage_Idx)
     DBG_Column_Offset = CR_Y * 80;  // SCREEN_WIDTH_PER_PLANE
     DBG_ScreenPage_Offset = DBG_Column_Offset + DBG_Row_Offset;
     DBG_Src_Sgmt = VRAM_BASE + (((ScreenPage_Idx << 8) & 0xFF00) * 4);  // ScreenPage Segment Address
-    DBG_pScreenPage = (word _FAR *)MK_FP(DBG_Src_Sgmt, 0);
+    DBG_pScreenPage = (word *)MK_FP(DBG_Src_Sgmt, 0);
     dlvfprintf("DEBUG: [%s, %d] Row_Offset: %d\n", __FILE__, __LINE__, DBG_Row_Offset);
     dlvfprintf("DEBUG: [%s, %d] Column_Offset: %d\n", __FILE__, __LINE__, DBG_Column_Offset);
     dlvfprintf("DEBUG: [%s, %d] ScreenPage_Offset: %u\n", __FILE__, __LINE__, DBG_ScreenPage_Offset);

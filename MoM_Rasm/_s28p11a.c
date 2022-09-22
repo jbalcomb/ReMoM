@@ -3,6 +3,8 @@
 
 //#pragma inline
 
+#include <DOS.H>
+
 #include "ST_FLIC.H"
 
 #include "STU_DBG.H"
@@ -65,10 +67,17 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 
     int tmp_SI;
     int tmp_DI;
-    unsigned char _FAR *fptr_FlicHdr_SgmtAddr;
+    // unsigned char _FAR *fptr_FlicHdr_SgmtAddr;
     unsigned char alt_Shading;
     //struct s_FLIC_HDR _FAR *fptr_FlicHeader;
-    struct s_FLIC_HDR _FAR *fptr_FLIC_Header;
+    // struct s_FLIC_HDR _FAR *fptr_FLIC_Header;
+#ifdef DEBUG
+    WORD orig_DS;
+#endif
+
+#ifdef DEBUG
+    orig_DS = _DS;
+#endif
 
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
@@ -103,6 +112,13 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     // ST_MoveData((unsigned int)&FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(FLIC_Header));
     // // //void movedata(unsigned srcseg, unsigned srcoff, unsigned dstseg, unsigned dstoff, size_t n);
     // // movedata(sa_FLIC_Header, 0, unsigned dstseg, unsigned dstoff, sizeof(FLIC_Header));
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] orig_DS: 0x%04X\n", __FILE__, __LINE__, orig_DS);
+    // dlvfprintf("DEBUG: [%s, %d] FP_SEG(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_SEG(FLIC_Header));  // Error: Incompatible type conversion
+    // dlvfprintf("DEBUG: [%s, %d] FP_OFF(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_OFF(FLIC_Header));  // Error: Incompatible type conversion
+    // dlvfprintf("DEBUG: [%s, %d] (unsigned int)&FLIC_Header: 0x%04X\n", __FILE__, __LINE__, (unsigned int)&FLIC_Header);
+    dlvfprintf("DEBUG: [%s, %d] &FLIC_Header: 0x%04X\n", __FILE__, __LINE__, &FLIC_Header);
+#endif
     ST_MoveData((unsigned int)&FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(FLIC_Header));
 
 // #ifdef DEBUG

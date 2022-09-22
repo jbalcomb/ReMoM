@@ -1,5 +1,4 @@
 
-#include "STU_DBG.H"
 
 void VGA_SetTextMode(void)
 {

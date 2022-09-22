@@ -129,10 +129,10 @@ extern unsigned int gsa_BorderStyleData;        // dseg:A818    alloc & load in 
 extern unsigned int gsa_Cursor_Array;    // dseg:A81A  ; 500h into the palette entry
 extern unsigned int UU_gsa_Palette_Data;        // dseg:A81C  ; 400h into the palette entry
 extern unsigned int gsa_Palette_Font_Colors;    // dseg:A81E  ; 300h into the palette entry, 16 arrays of 16 colors
-extern void _FAR * gfp_VGA_TextLine_Starts;    // dseg:A820
-extern void _FAR * gfp_VGA_TextLine_Tops;      // dseg:A824
-extern void _FAR * gfp_VGA_TextLine_Rights;    // dseg:A828
-extern void _FAR * gfp_VGA_TextLine_Lefts;     // dseg:A82C
+extern void * gfp_VGA_TextLine_Starts;    // dseg:A820
+extern void * gfp_VGA_TextLine_Tops;      // dseg:A824
+extern void * gfp_VGA_TextLine_Rights;    // dseg:A828
+extern void * gfp_VGA_TextLine_Lefts;     // dseg:A82C
 extern unsigned int gsa_VGA_TextDraw_Lines;     // dseg:A830
 
 

@@ -79,61 +79,61 @@ char *cnst_Quit_Report4 = "k   Worst";          // dseg:3CE1
 char *cnst_Quit_Report5 = "k   EMM: ";          // dseg:3CEB
 char *cnst_Quit_Report6 = " blocks";            // dseg:3CF5
 
-void _FAR * gfp_TBL_Moves_Per_Tile;      // dseg:5BAC
+void * gfp_TBL_Moves_Per_Tile;      // dseg:5BAC
 unsigned int gsa_CRP_SND_Music_Segment; // dseg:5BB0
-void _FAR * gfp_CRP_Visibility_Myrror;   // dseg:5BB2
-void _FAR * gfp_CRP_Visibility_Arcanus;  // dseg:5BB6
+void * gfp_CRP_Visibility_Myrror;   // dseg:5BB2
+void * gfp_CRP_Visibility_Arcanus;  // dseg:5BB6
 
 unsigned int gsa_CRP_UnitDraw_WorkArea; // dseg:5E68
 
 unsigned int gsa_GUI_SmallWork_IMG;     // dseg:61AC
 unsigned int gsa_Sandbox;               // dseg:61AE
 
-void _FAR * gfp_TBL_Events;              // dseg:61B8
+void * gfp_TBL_Events;              // dseg:61B8
 
-void _FAR * gfp_TBL_Items;               // dseg:64B0
-void _FAR * gfp_TBL_Premade_Items;       // dseg:64B4
-// void _FAR * gfp_UU_IMG_USW_Items;     // dseg:64B8  ITEM_ICONS <0>
-void _FAR * gfp_CRP_Active_Unit;         // dseg:65A0  contains a single battle unit record (110 bytes)
-void _FAR * gfp_UU_TBL_BattleUnits;      // dseg:65A4
-void _FAR * gfp_UU_TBL_CombatEnchants;   // dseg:65A8
+void * gfp_TBL_Items;               // dseg:64B0
+void * gfp_TBL_Premade_Items;       // dseg:64B4
+// void * gfp_UU_IMG_USW_Items;     // dseg:64B8  ITEM_ICONS <0>
+void * gfp_CRP_Active_Unit;         // dseg:65A0  contains a single battle unit record (110 bytes)
+void * gfp_UU_TBL_BattleUnits;      // dseg:65A4
+void * gfp_UU_TBL_CombatEnchants;   // dseg:65A8
 
-void _FAR * gfp_TBL_HeroStats_P0; // dseg:65AC
-void _FAR * gfp_TBL_HeroStats_P1; // dseg:65B0
-void _FAR * gfp_TBL_HeroStats_P2; // dseg:65B4
-void _FAR * gfp_TBL_HeroStats_P3; // dseg:65B8
-void _FAR * gfp_TBL_HeroStats_P4; // dseg:65BC
-void _FAR * gfp_TBL_HeroStats_P5; // dseg:65C0
+void * gfp_TBL_HeroStats_P0; // dseg:65AC
+void * gfp_TBL_HeroStats_P1; // dseg:65B0
+void * gfp_TBL_HeroStats_P2; // dseg:65B4
+void * gfp_TBL_HeroStats_P3; // dseg:65B8
+void * gfp_TBL_HeroStats_P4; // dseg:65BC
+void * gfp_TBL_HeroStats_P5; // dseg:65C0
 
-void _FAR * gfp_TBL_Spell_Data;   // dseg:662C
+void * gfp_TBL_Spell_Data;   // dseg:662C
 
 unsigned int g_World_Data_Paras;                // dseg:6750
 unsigned int gsa_World_Data_Extra;              // dseg:6752
 unsigned int gsa_Gfx_Swap;                      // dseg:6754
 unsigned int gsa_World_Data;                    // dseg:6756
 
-void _FAR * gfp_TBL_Units; // dseg:68F8
-void _FAR * gfp_TBL_Hero_Names; // dseg:68FC
+void * gfp_TBL_Units; // dseg:68F8
+void * gfp_TBL_Hero_Names; // dseg:68FC
 
-void _FAR * gfp_CRP_TBL_OvlMovePathsEMM; // dseg:89A6
+void * gfp_CRP_TBL_OvlMovePathsEMM; // dseg:89A6
 // ? UU gfp EMM ? dseg:89AA
 // ? UU gfp EMM ? dseg:89AE
-void _FAR * gfp_CRP_TBL_Catchments_EMM; // dseg:89B2
-void _FAR * gfp_CRP_TBL_SharedTiles_EMM; // dseg:89B6
-void _FAR * gfp_CRP_TBL_TempMoveMap_EMM; // dseg:89BA
-// extern void _FAR * UU_COL_MinimapTiles; // dseg:89BE
-void _FAR * gfp_TBL_MoveMaps_EMM; // dseg:89C2
-void _FAR * gfp_TBL_Scouting; // dseg:89C6
-void _FAR * gfp_TBL_TerrainFlags; // dseg:89CA
-void _FAR * gfp_TBL_Terr_Specials; // dseg:89CE
-void _FAR * gfp_TBL_Cities; // dseg:89D2
+void * gfp_CRP_TBL_Catchments_EMM; // dseg:89B2
+void * gfp_CRP_TBL_SharedTiles_EMM; // dseg:89B6
+void * gfp_CRP_TBL_TempMoveMap_EMM; // dseg:89BA
+// extern void * UU_COL_MinimapTiles; // dseg:89BE
+void * gfp_TBL_MoveMaps_EMM; // dseg:89C2
+void * gfp_TBL_Scouting; // dseg:89C6
+void * gfp_TBL_TerrainFlags; // dseg:89CA
+void * gfp_TBL_Terr_Specials; // dseg:89CE
+void * gfp_TBL_Cities; // dseg:89D2
  
-void _FAR * gfp_TBL_Encounters;  // dseg:89D6
-void _FAR * gfp_TBL_Towers;      // dseg:89DA
-void _FAR * gfp_TBL_Fortresses;  // dseg:89DE
-void _FAR * gfp_TBL_Nodes;       // dseg:89E2
+void * gfp_TBL_Encounters;  // dseg:89D6
+void * gfp_TBL_Towers;      // dseg:89DA
+void * gfp_TBL_Fortresses;  // dseg:89DE
+void * gfp_TBL_Nodes;       // dseg:89E2
 
-void _FAR * gfp_TBL_Landmasses;  // dseg:89E6
-void _FAR * gfp_UU_TBL_1;        // dseg:89EA
-void _FAR * gfp_UU_TBL_2;        // dseg:89EE
-void _FAR * gfp_TBL_Maps;        // dseg:89F2
+void * gfp_TBL_Landmasses;  // dseg:89E6
+void * gfp_UU_TBL_1;        // dseg:89EA
+void * gfp_UU_TBL_2;        // dseg:89EE
+void * gfp_TBL_Maps;        // dseg:89F2

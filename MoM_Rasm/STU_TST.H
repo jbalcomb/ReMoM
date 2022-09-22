@@ -58,12 +58,15 @@ void tst_prn(const char *fmt, ...);
 // DELETE 
 // DELETE void Set_LBX_Load_Function(const char * LBX_Load_Function, const char * LBX_Name, unsigned int LBX_Entry_Index);
 
+void validate_EMM_Startup(void);
 void validate_FontStyleData(void);
 void validate_BorderStyleData(void);
 void validate_Palette_0(void);
-int validate_PaletteFlags_1(void);
+int  validate_PaletteFlags_1(void);
 void validate_PaletteLbxEntry(void);
-int validate_FLIC_Header(SAMB_data sa_FLIC_Header);
+int  validate_FLIC_Header(SAMB_data sa_FLIC_Header);
+
+int  validate_GAME_LoadMainImages();
 
 void test_pre__FLIC_Draw_XY__MAINSCRN_000_000(void);
 void test_post__FLIC_Draw_XY__MAINSCRN_000_000(void);

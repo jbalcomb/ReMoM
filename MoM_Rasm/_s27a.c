@@ -76,7 +76,7 @@ FlicHdr_FrameType               0x10
 // ; draws an LBX image into the current draw segment,
 // ; column by column, decoding its RLE along the way
 
-// _s27p01
+// s27p01
 void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg)
 {
 

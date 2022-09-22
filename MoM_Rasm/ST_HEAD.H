@@ -2,27 +2,6 @@
 #define ST_HEAD_H
 
 
-#define __VSCODE__
-
-#if defined(__VSCODE__)
-#define _FAR
-#else
-#define _FAR far
-#endif
-
-#if defined(__VSCODE__)
-#define _NEAR
-#else
-#define _NEAR near
-#endif
-
-#if defined(__VSCODE__)
-#define _SEG
-#else
-#define _SEG _seg
-#endif
-
-
 #if defined(__DOS16__)
 #include <ALLOC.H>  /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
 #include <CONIO.H>

@@ -99,8 +99,8 @@ int g_GUI_Cursor_Offset;                    // dseg:A894
 // dseg:A896 GUI_PrevControlCount dw 0
 int g_CTRL_Control_Count;                    // dseg:A898
 // dseg:A89A gfp_GUI_Prev_Redraw_Fn dd 0
-//void _FAR *gfp_GUI_Redraw_Function;         // dseg:A89E 
+//void *gfp_GUI_Redraw_Function;         // dseg:A89E 
 //void      (*uiobj_callback)(void *) = NULL;
 void (*gfp_SCRN_Redraw_Function)(void);
-//void _FAR *gfp_GUI_Control_Table;           // dseg:A8A2
-struct s_GUI_CTRL _FAR *gfp_CTRL_Control_Table;  // dseg:A8A2
+//void *gfp_GUI_Control_Table;           // dseg:A8A2
+struct s_GUI_CTRL *gfp_CTRL_Control_Table;  // dseg:A8A2

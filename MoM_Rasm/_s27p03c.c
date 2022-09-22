@@ -10,7 +10,9 @@
 #include "ST_VGA.H"
 
 #include "STU_BITS.H"
+#ifdef DEBUG
 #include "STU_DBG.H"
+#endif
 
 /*
     Column-Wise
@@ -46,11 +48,11 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
     dword fh_FrameDataOffset1;
     dword fh_FrameDataSize;
     byte fh_Shading;
-    byte _FAR * fp_SrcSgmt;  // EMM_PFBA           : 0
-    byte _FAR * fp_DstSgmt;  // VRAM + Row Offset  : 0
-    byte _FAR * fp_Src;      // EMM_PFBA           : EMM Offset
-    byte _FAR * fp_Dst;      // VRAM + Row Offset  : Column Offset
-    byte _FAR * fp_FlicHeader;
+    byte * fp_SrcSgmt;  // EMM_PFBA           : 0
+    byte * fp_DstSgmt;  // VRAM + Row Offset  : 0
+    byte * fp_Src;      // EMM_PFBA           : EMM Offset
+    byte * fp_Dst;      // VRAM + Row Offset  : Column Offset
+    byte * fp_FlicHeader;
     byte tmp_EmmHandle;
     byte tmp_EmmPage;
     word tmp_EmmOfst;
@@ -170,8 +172,8 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
 
     mask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
 
-    fp_Src = (byte _FAR *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
-    fp_Dst = (byte _FAR *)MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
+    fp_Src = (byte *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
+    fp_Dst = (byte *)MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
     dlvfprintf("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
@@ -180,14 +182,14 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
     outportb(e_SC_INDEX, e_SC_MAPMASK);
 
 Column_Loop:
-    fp_Dst = (byte _FAR *)MK_FP(FP_SEG(fp_Dst), row_offset);
+    fp_Dst = (byte *)MK_FP(FP_SEG(fp_Dst), row_offset);
     if ( FP_OFF(fp_Src) > 0xC000 )
     {
         tmp_EmmPage += 3;
         EMM_MapMulti4(tmp_EmmPage, fh_EmmHandleNumber);
         tmp_EmmOfst = FP_OFF(fp_Src);
         tmp_EmmOfst -= 0xC000;
-        fp_Src = (byte _FAR *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
+        fp_Src = (byte *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
     }
 
     outportb(e_SC_DATA, mask);

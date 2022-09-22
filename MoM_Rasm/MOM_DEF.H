@@ -2,21 +2,6 @@
 #define MOM_DEF_H
 
 
-#ifndef __VSCode__
-#define __VSCode__
-#endif
-#ifdef __VSCode__
-#define _FAR
-#else
-#define _FAR far
-#endif
-
-
-// #ifdef DEBUG
-// int DEBUG 1;
-// #endif  /* DEBUG */
-
-
 #define EMM_PAGES_REQUIRED 158
 #define EMM_MIN_KB 2700  // 168 pages ? 168 = 158 + (1 + 5 + 4) ?
 #define RAM_MIN_KB 583
@@ -187,63 +172,63 @@ extern char *cnst_Quit_Report5;             // dseg:3CEB
 extern char *cnst_Quit_Report6;             // dseg:3CF5
 
 
-extern void _FAR * gfp_TBL_Moves_Per_Tile;       // dseg:5BAC
+extern void * gfp_TBL_Moves_Per_Tile;       // dseg:5BAC
 extern unsigned int gsa_CRP_SND_Music_Segment;  // dseg:5BB0
-extern void _FAR * gfp_CRP_Visibility_Myrror;    // dseg:5BB2
-extern void _FAR * gfp_CRP_Visibility_Arcanus;   // dseg:5BB6
+extern void * gfp_CRP_Visibility_Myrror;    // dseg:5BB2
+extern void * gfp_CRP_Visibility_Arcanus;   // dseg:5BB6
 
 extern unsigned int gsa_CRP_UnitDraw_WorkArea; // dseg:5E68
 
 extern unsigned int gsa_GUI_SmallWork_IMG;  // dseg:61AC
 extern unsigned int gsa_Sandbox;            // dseg:61AE
 
-extern void _FAR * gfp_TBL_Events;           // dseg:61B8
+extern void * gfp_TBL_Events;           // dseg:61B8
 
-extern void _FAR * gfp_TBL_Items;                // dseg:64B0
-extern void _FAR * gfp_TBL_Premade_Items;        // dseg:64B4
-// extern void _FAR * gfp_UU_IMG_USW_Items;      // dseg:64B8  ITEM_ICONS <0>
-extern void _FAR * gfp_CRP_Active_Unit;          // dseg:65A0  contains a single battle unit record (110 bytes)
-extern void _FAR * gfp_UU_TBL_BattleUnits;       // dseg:65A4
-extern void _FAR * gfp_UU_TBL_CombatEnchants;    // dseg:65A8
+extern void * gfp_TBL_Items;                // dseg:64B0
+extern void * gfp_TBL_Premade_Items;        // dseg:64B4
+// extern void * gfp_UU_IMG_USW_Items;      // dseg:64B8  ITEM_ICONS <0>
+extern void * gfp_CRP_Active_Unit;          // dseg:65A0  contains a single battle unit record (110 bytes)
+extern void * gfp_UU_TBL_BattleUnits;       // dseg:65A4
+extern void * gfp_UU_TBL_CombatEnchants;    // dseg:65A8
 
-extern void _FAR * gfp_TBL_HeroStats_P0; // dseg:65AC
-extern void _FAR * gfp_TBL_HeroStats_P1; // dseg:65B0
-extern void _FAR * gfp_TBL_HeroStats_P2; // dseg:65B4
-extern void _FAR * gfp_TBL_HeroStats_P3; // dseg:65B8
-extern void _FAR * gfp_TBL_HeroStats_P4; // dseg:65BC
-extern void _FAR * gfp_TBL_HeroStats_P5; // dseg:65C0
+extern void * gfp_TBL_HeroStats_P0; // dseg:65AC
+extern void * gfp_TBL_HeroStats_P1; // dseg:65B0
+extern void * gfp_TBL_HeroStats_P2; // dseg:65B4
+extern void * gfp_TBL_HeroStats_P3; // dseg:65B8
+extern void * gfp_TBL_HeroStats_P4; // dseg:65BC
+extern void * gfp_TBL_HeroStats_P5; // dseg:65C0
 
-extern void _FAR * gfp_TBL_Spell_Data;   // dseg:662C
+extern void * gfp_TBL_Spell_Data;   // dseg:662C
 
 extern unsigned int g_World_Data_Paras;     // dseg:6750
 extern unsigned int gsa_World_Data_Extra;   // dseg:6752
 extern unsigned int gsa_Gfx_Swap;           // dseg:6754
 extern unsigned int gsa_World_Data;         // dseg:6756
 
-extern void _FAR * gfp_TBL_Units;            // dseg:68F8
-extern void _FAR * gfp_TBL_Hero_Names;       // dseg:68FC
+extern void * gfp_TBL_Units;            // dseg:68F8
+extern void * gfp_TBL_Hero_Names;       // dseg:68FC
 
-extern void _FAR * gfp_CRP_TBL_OvlMovePathsEMM; // dseg:89A6
+extern void * gfp_CRP_TBL_OvlMovePathsEMM; // dseg:89A6
 // ? UU gfp EMM ? dseg:89AA
 // ? UU gfp EMM ? dseg:89AE
-extern void _FAR * gfp_CRP_TBL_Catchments_EMM; // dseg:89B2
-extern void _FAR * gfp_CRP_TBL_SharedTiles_EMM; // dseg:89B6
-extern void _FAR * gfp_CRP_TBL_TempMoveMap_EMM; // dseg:89BA
-// extern void _FAR * UU_COL_MinimapTiles; // dseg:89BE
-extern void _FAR * gfp_TBL_MoveMaps_EMM; // dseg:89C2
-extern void _FAR * gfp_TBL_Scouting; // dseg:89C6
-extern void _FAR * gfp_TBL_TerrainFlags; // dseg:89CA
-extern void _FAR * gfp_TBL_Terr_Specials; // dseg:89CE
-extern void _FAR * gfp_TBL_Cities; // dseg:89D2
+extern void * gfp_CRP_TBL_Catchments_EMM; // dseg:89B2
+extern void * gfp_CRP_TBL_SharedTiles_EMM; // dseg:89B6
+extern void * gfp_CRP_TBL_TempMoveMap_EMM; // dseg:89BA
+// extern void * UU_COL_MinimapTiles; // dseg:89BE
+extern void * gfp_TBL_MoveMaps_EMM; // dseg:89C2
+extern void * gfp_TBL_Scouting; // dseg:89C6
+extern void * gfp_TBL_TerrainFlags; // dseg:89CA
+extern void * gfp_TBL_Terr_Specials; // dseg:89CE
+extern void * gfp_TBL_Cities; // dseg:89D2
 
-extern void _FAR * gfp_TBL_Encounters;   // dseg:89D6
-extern void _FAR * gfp_TBL_Towers;       // dseg:89DA
-extern void _FAR * gfp_TBL_Fortresses;   // dseg:89DE
-extern void _FAR * gfp_TBL_Nodes;        // dseg:89E2
-extern void _FAR * gfp_TBL_Landmasses;   // dseg:89E6
-extern void _FAR * gfp_UU_TBL_1;         // dseg:89EA
-extern void _FAR * gfp_UU_TBL_2;         // dseg:89EE
-extern void _FAR * gfp_TBL_Maps;         // dseg:89F2
+extern void * gfp_TBL_Encounters;   // dseg:89D6
+extern void * gfp_TBL_Towers;       // dseg:89DA
+extern void * gfp_TBL_Fortresses;   // dseg:89DE
+extern void * gfp_TBL_Nodes;        // dseg:89E2
+extern void * gfp_TBL_Landmasses;   // dseg:89E6
+extern void * gfp_UU_TBL_1;         // dseg:89EA
+extern void * gfp_UU_TBL_2;         // dseg:89EE
+extern void * gfp_TBL_Maps;         // dseg:89F2
 
 
 
@@ -255,6 +240,7 @@ extern "C" {
 /*
     seg002
 */
+
 // _s02p01.asm
 void CLK_SaveCounter(void);
 // _s02p03.asm
@@ -262,16 +248,20 @@ void CLK_Wait(int nticks);
 // _s02p05.asm
 void VGA_WaitSync(void);
 
+
 /*
     seg003
 */
+
 // _s03p05
 long DOS_GetFileSize(char *fname);
 //unsigned int C_GetFileSize(const char *filename);
 
+
 /*
     seg005
 */
+
 // _s05p01c.c
 void Quit_MemBug(void);
 // _s05p02c.c
@@ -282,6 +272,7 @@ void Update_MemFreeWorst_KB(void);
 /*
     seg006
 */
+
 // _s06p01c.c
 void VGA_SetTextMode(void);
 // _s06p02c.c
@@ -289,22 +280,11 @@ void QuitToDOS(char *quitmsg);
 // _s06p04
 unsigned int dos_memfree_kb(void);
 
-/*
-    seg014
-*/
-// _s14p01c.c
-//void Hardware_Init(char *FontFileName);
-void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA);
-// _s14p03c.c
-void VGA_DAC_Init(char *FontFileName);
-// _s14p04c.c
-void VGA_SetDrawWindow(int Min_X, int Min_Y, int Max_X, int Max_Y);
-// _s14p05c.c
-void VGA_ResetDrawWindow(void);
 
 /*
     ovr057
 */
+
 // _o57p01
 void MoM_Tables_Init(int gfx_buff_nparas);
 

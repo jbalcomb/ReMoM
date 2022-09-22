@@ -311,27 +311,27 @@ void GAME_MainMenu(void)
         WIZARDS.LBX
         SPELLDAT.LBX
     Load LBX Entry
-        MAINSCRN.LBX, 0
-        MAINSCRN.LBX, 5
-        VORTEX.LBX, 1   "MAINTEXT, "c"
-        VORTEX.LBX, 2   "MAINTEXT, "hof"
-        VORTEX.LBX, 3   "MAINTEXT, "q"
-        VORTEX.LBX, 4   "MAINTEXT, "n"
-        VORTEX.LBX, 5   "MAINTEXT, "l"
-        WIZARDS.LBX, 0
-        WIZARDS.LBX, 1
-        WIZARDS.LBX, 2
-        WIZARDS.LBX, 3
-        WIZARDS.LBX, 4
-        WIZARDS.LBX, 5
-        WIZARDS.LBX, 6
-        WIZARDS.LBX, 7
-        WIZARDS.LBX, 8
-        WIZARDS.LBX, 9
-        WIZARDS.LBX, 10
-        WIZARDS.LBX, 11
-        WIZARDS.LBX, 12
-        WIZARDS.LBX, 13
+        MAINSCRN.LBX, 0  "MOMBACK",  "MOM animated logo"
+        MAINSCRN.LBX, 5  "CASTLE",   "MOM screen buttom"
+        VORTEX.LBX,   1  "MAINTEXT,  "c"
+        VORTEX.LBX,   2  "MAINTEXT,  "hof"
+        VORTEX.LBX,   3  "MAINTEXT,  "q"
+        VORTEX.LBX,   4  "MAINTEXT,  "n"
+        VORTEX.LBX,   5  "MAINTEXT,  "l"
+        WIZARDS.LBX,  0  "MERLIN",   ""
+        WIZARDS.LBX,  1  "SHAMAN",   ""
+        WIZARDS.LBX,  2  "PRIESTES", ""
+        WIZARDS.LBX,  3  "WU",       ""
+        WIZARDS.LBX,  4  "ARAB",     ""
+        WIZARDS.LBX,  5  "OBERIC",   ""
+        WIZARDS.LBX,  6  "WRAITH",   ""
+        WIZARDS.LBX,  7  "DRACONIA", ""
+        WIZARDS.LBX,  8  "EVILWIZ",  ""
+        WIZARDS.LBX,  9  "FREYA",    ""
+        WIZARDS.LBX, 10  "GALE",     ""
+        WIZARDS.LBX, 11  "ARIEL",    ""
+        WIZARDS.LBX, 12  "AZTEC",    ""
+        WIZARDS.LBX, 13  "KARLA",    ""
 */
 void GAME_LoadMainImages(void)
 {

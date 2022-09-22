@@ -110,6 +110,7 @@ extern "C" {
 */
 //int SA_Alloc_Validate(sgmt_addr SAMB_head)                                  // s07p04
 //int SA_Alloc_Validate(SAMB_addr pSAMB_head)                                 // s07p04
+int SA_Alloc_Validate(SAMB_ptr pSAMB_head);  // returns ST_STATUS: SUCCESS -1, FAILURE 0
 unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);               // s07p05
 unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                // s07p06
 unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);              // s07p07

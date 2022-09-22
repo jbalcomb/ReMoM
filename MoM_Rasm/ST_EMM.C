@@ -110,7 +110,7 @@ unsigned int g_EMM_Overlay_Handle;                               // dseg:A5E2
 unsigned int g_EMMDATAH_Level;                                    // dseg:A5E4  set to 0 in EMM_Startup
 unsigned int g_EmmHndlNbr_VGAFILEH;                               // dseg:A5EA  5 reserved pages
 unsigned int g_EmmHndlNbr_EMMDATAH;                               // dseg:A5E6  4 reserved pages
-unsigned int g_EmmHndlNbr_YOMOMA;                                 // dseg:A5EE  1 page
+unsigned int g_EmmHndlNbr_YOMOMA;                                 // dseg:A5EE  1 unreserved page
 unsigned int g_EMM_OK;                                            // dseg:A5F0  set to 1 after creating the YO MOMA handle
 //extern EMM_Table EMM_Record 28h dup(<0>)                      // dseg:A5F2  EMM_Table EMM_Record 28h dup(<0>)
 EMM_Record g_EMM_Table[MOM_EMM_HANDLES]; // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
@@ -1175,7 +1175,7 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
         }
         SAMB_data = EMM_LBX_FLIC_Header(EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
 #ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X)\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
+        dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
 #endif
         goto Exit;
     }

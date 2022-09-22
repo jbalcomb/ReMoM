@@ -55,10 +55,10 @@ unsigned int gsa_BorderStyleData;           // dseg:A818
 unsigned int gsa_Cursor_Array;       // dseg:A81A  ; 500h into the palette entry
 unsigned int UU_gsa_Palette_Data;           // dseg:A81C  ; 400h into the palette entry
 unsigned int gsa_Palette_Font_Colors;       // dseg:A81E  ; 300h into the palette entry, 16 arrays of 16 colors
-void _FAR * gfp_VGA_TextLine_Starts;         // dseg:A820
-void _FAR * gfp_VGA_TextLine_Tops;           // dseg:A824
-void _FAR * gfp_VGA_TextLine_Rights;         // dseg:A828
-void _FAR * gfp_VGA_TextLine_Lefts;          // dseg:A82C
+void * gfp_VGA_TextLine_Starts;         // dseg:A820
+void * gfp_VGA_TextLine_Tops;           // dseg:A824
+void * gfp_VGA_TextLine_Rights;         // dseg:A828
+void * gfp_VGA_TextLine_Lefts;          // dseg:A82C
 unsigned int gsa_VGA_TextDraw_Lines;        // dseg:A830
 //dseg:A832 VGA_FltBlock_Bottoms dw 4 dup(     0)   ; up to 4 bottom row positions used to reserve space
 //dseg:A83A VGA_FltBlock_Rights dw 4 dup(     0)    ; up to 4 right column positions used to reserve space

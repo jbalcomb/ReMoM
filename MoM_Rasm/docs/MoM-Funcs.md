@@ -269,11 +269,11 @@ s13p31          EMM_SetMinKB
 s13p32          EMM_BuildEmmErrStr
 
 ##### MGC  seg014  WZD  seg014
-MOM_DEF.H
-_s14p01c.c      Hardware_Init               int Hardware_Init(...);
-_s14p03c.c      VGA_DAC_Init                void VGA_DAC_Init(char *PaletteLbxFileName);
-_s14p04c.c      VGA_SetDrawWindow
-_s14p05c.c      VGA_ResetDrawWindow
+seg014.C/H  (MOM_DEF.H)
+s14p01      Hardware_Init               int Hardware_Init(...);
+s14p03      VGA_DAC_Init                void VGA_DAC_Init(char *PaletteLbxFileName);
+s14p04      VGA_SetDrawWindow
+s14p05      VGA_ResetDrawWindow
 
 ##### MGC  seg015  WZD  seg015
 ST_VGA.H    ALL ASM
@@ -313,10 +313,11 @@ s19p14         VGA_TextDraw_Init           void VGA_TextDraw_Init(void)
 
 ##### MGC seg020
 seg020.H  (ST_VGA.H)
-_s20p01      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
-_s20p05      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
+s20p01      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
+s20p05      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
 
-##### MEG seg021
+
+##### MGC seg021
 seg021.H  (ST_VGA.H)  ALL ASM
 s21p01      VGA_DAC_Write               void VGA_DAC_Write(void)
 s21p07      FLIC_LoadPalette            void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)       VGA_LoadIMGPalette
