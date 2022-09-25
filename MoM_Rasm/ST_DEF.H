@@ -2,9 +2,42 @@
 #define ST_DEF_H
 
 
-#ifndef DEBUG
-#define HERE
+#define asm _asm
+
+
+#define ST_TRUE  1
+#define ST_FALSE 0
+#define ST_UNDEFINED -1
+
+#define ST_SUCCESS -1
+#define ST_FAILURE  0
+
+
+#if !defined( __DOS_H )
+#include <DOS.H>
 #endif
+
+#undef MK_FP
+
+#undef FP_SEG
+
+#undef FP_OFF
+
+#define MK_FP(_sgmt_,_ofst_) ( (void *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
+
+#define FP_SEG(_fp_) ( (unsigned int) ( (unsigned long)((void *)(_fp_)) >> 16) )
+
+#define FP_OFF(_fp_) ( (unsigned int) (_fp_) )
+
+
+
+// // /j/STU/DBWD/developc/flilib/flisrc ... aatypes.h
+// #ifndef NULL
+// #define NULL ((void *)0L)
+// #endif /* NULL */
+#ifndef NULL
+#define NULL 0
+#endif /* NULL */
 
 
 #define	DOS_INT			        0x21

@@ -2,13 +2,12 @@
 // ST_LBX.H
 // ~= c&p LBX_Load_Record()
 
-#include "ST_HEAD.H"
+#include "ST_LBX.H"
 
 #include "ST_EMM.H"
-#include "ST_LBX.H"
 #include "ST_SA.H"
 
-#include "STU_DBG.H"
+// #include "STU_DBG.H"
 
 
 unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_data, int RecFirst, int RecCount, int RecSize)
@@ -158,7 +157,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
         ReadNbytes = DataSize_Bytes % 60000;
         if ( lbx_read_sgmt(SAMB_data, ReadNbytes, g_LBX_FileHandle) == ST_FAILURE )
         {
-            HERE("LBX entry corrupted"); \
+            // HERE("LBX entry corrupted");
             LBX_Error(LbxName, 0x02, LbxEntry, NULL);  /* LBXErr_corrupted */
         }
         /*

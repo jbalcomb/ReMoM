@@ -1,10 +1,6 @@
 /c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
 MGC.OBJ +
-STU_DBG.OBJ +
-STU_TST.OBJ +
-STU_UTIL.OBJ +
-STU_VGA.OBJ +
 MGC_DEF.OBJ +
 MOM_DEF.OBJ +
 ST_CRSR.OBJ +
@@ -22,9 +18,6 @@ ST_SND.OBJ +
 ST_TXT.OBJ +
 ST_TYPE.OBJ +
 ST_VGA.OBJ +
-CR_Draw.obj + 
-CR_Store.obj + 
-CR_Resto.obj + 
 _o57p01c.obj +
 _o60p01c.obj +
 _o60p02c.obj +

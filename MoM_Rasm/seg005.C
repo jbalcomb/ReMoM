@@ -7,7 +7,6 @@
 
 #include "ST_EMM.H"
 #include "ST_GUI.H"
-#include "STU_DBG.H"
 
 
 // s05p01
@@ -18,6 +17,7 @@ void Quit_MemBug(void)
     unsigned int Current_FreeNearHeap_B;
     unsigned int Worst_LargestFreeBlock_KB;
     unsigned int Current_LargestFreeBlock_KB;
+    
     Current_LargestFreeBlock_KB = dos_memfree_kb();
     Worst_LargestFreeBlock_KB = g_MemFreeWorst_KB;
     Current_FreeNearHeap_B = coreleft();
@@ -37,6 +37,7 @@ void Quit_MemBug(void)
     itoa(g_EMM_Pages_Reserved, TmpConvStr20, 10);  // "EMM: blocks"
     strcat(TmpMsgStr120, TmpConvStr20);
     strcat(TmpMsgStr120, cnst_Quit_Report6);
+
     Quit(TmpMsgStr120);
 }
 
@@ -50,7 +51,7 @@ void Quit(char * argQuitMessage)
     //CRP_Empty_Exit_Fn3
     // TODO(JimBalcomb): add DrawText("Press any key to continue...")
     getch();  // DEBUG(JimBalcomb): suspend operations, so we can have a look-see at the resultant graphics-mode screen
-    HERE("VGA_SetTextMode();");
+
     VGA_SetTextMode();
     //DOS_QuitWithMsg("argQuitMessage"); // works
     //DOS_QuitWithMsg(argQuitMessage); works when called directly with a char*

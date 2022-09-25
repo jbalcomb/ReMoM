@@ -1,6 +1,6 @@
 // MOM_DEF.H
 
-#include <DOS.H>
+#include "ST_DEF.H"
 
 
 // s06p01
@@ -116,9 +116,9 @@ void QuitToDOS(char *quitmsg)
 
 //    dlvfprintf("DEBUG: END: QuitToDOS()\n");
 
-#ifdef DEBUG    
-    Debug_Log_Shutdown();
-#endif
+// #ifdef STU_DEBUG    
+//     Debug_Log_Shutdown();
+// #endif
 
     _AH = 0x4C;  // INT 21,4C - Terminate Process With Return Code
     geninterrupt(0x21);  // DOS_INT

@@ -1,18 +1,18 @@
 // _s07p06c.c farpeekw
 // ST_LBX.H
 
-#include <DOS.H>
-
-#include "ST_HEAD.H"
+#include "ST_DEF.H"
 
 unsigned int farpeekw(unsigned int sgmt, unsigned int ofst)
 {
+    unsigned int ret_val;
     /*
     mov si, ofst
     mov ax, sgmt
     mov ds, ax
     lodsw
     */
-    
-    return(*( (unsigned int _FAR * )MK_FP(sgmt, ofst)));
+    ret_val = *( (unsigned int *) MK_FP(sgmt, ofst) );
+
+    return ret_val;
 }

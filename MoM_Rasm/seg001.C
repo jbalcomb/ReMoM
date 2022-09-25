@@ -1,22 +1,15 @@
 // seg001
 // MGC_DEF.H
 
-#pragma warn -par  // Parameter parameter is never used.
-// Warning: Parameter 'argc' is never ued in function MGC_Main
-// Warning: Parameter 'argv' is never ued in function MGC_Main
-
-
-#include <DOS.H>
-#include <STDIO.H>
-
-#include "seg001.H"
 
 #include "ST_TYPE.H"
-#include "ST_HEAD.H"
+#include "ST_DEF.H"
+#include "seg001.H"
+
 #include "MOM_DEF.H"
 #include "MGC_DEF.H"
-#include "MGC_HEAD.H"
 
+#include "seg020.H"
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
 #include "ST_EMM.H"
@@ -29,17 +22,22 @@
 #include "ST_TXT.H"
 #include "ST_VGA.H"
 
-#ifdef DEBUG
-#include "STU_DBG.H"
-#endif
-#ifdef TEST
-#include "STU_TST.H"
-#endif
+#include <STDIO.H>
+
+// #ifdef STU_DEBUG
+// #include "STU_DBG.H"
+// #endif
+// #ifdef TEST
+// #include "STU_TST.H"
+// #endif
 
 
-// _s01p01 main
-// in MGC_DEF.H
+#pragma warn -par  // Parameter parameter is never used.
+// Warning: Parameter 'argc' is never ued in function MGC_Main
+// Warning: Parameter 'argv' is never ued in function MGC_Main
 
+
+// s01p01
 /*
 Unable to resolve configuration with compilerPath "J:/STU/DBWD/BORLANDC/BIN/BCC.EXE"
 */
@@ -117,7 +115,8 @@ int MGC_Main(int argc, char *argv[])
     //Settings.InputType = 1;
     // _s14p01c.c
     //int __cdecl __far Hardware_Init(int Input_Type, int Snd_Chnls, char *FontFile, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
-    Hardware_Init(1, 2, GAME_FONT_FILE, 0, 0, 0, 0, 0, 0, 0, 0);  // Defaults for 'No Sound'
+    // Hardware_Init(1, 2, GAME_FONT_FILE, 0, 0, 0, 0, 0, 0, 0, 0);  // Defaults for 'No Sound'
+    Hardware_Init(1, GAME_FONT_FILE);  // argInputType, argFontFileName
     /*
         |-> EMM_Startup()
         |-> VGA_SetModeY()
@@ -209,15 +208,15 @@ void GAME_MainMenu(void)
     FILE *fp;
     int flag_quit;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_MainMenu()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_MainMenu()\n", __FILE__, __LINE__);
+// #endif
 
     if ( DISK_FileFind(cnst_ConfigFile, Read_Buffer) == 0 )
     {
         Quit(cnst_ConfigErr);
     }
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] Read_Buffer: %s\n", __FILE__, __LINE__, Read_Buffer);
 // #endif
 
@@ -241,14 +240,14 @@ void GAME_MainMenu(void)
         VGA_SetOutlineColor(0);
         HLP_ClearHelp();
 
-        HERE("Screen_Action = SCREEN_Menu();");
+        // HERE("Screen_Action = SCREEN_Menu();");
         Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
         // DEBUG(JimBalcomb): here, the screen is rendered correctly - ? happens after input ?
 
-#ifdef DEBUG
-        //Screen_Action = 3;  // DEBUG: default to `Quit To DOS`
-        dlvfprintf("DEBUG: [%s, %d] Screen_Action: %d\n", __FILE__, __LINE__, Screen_Action);
-#endif
+// #ifdef STU_DEBUG
+//         //Screen_Action = 3;  // DEBUG: default to `Quit To DOS`
+//         dlvfprintf("DEBUG: [%s, %d] Screen_Action: %d\n", __FILE__, __LINE__, Screen_Action);
+// #endif
 
         HLP_ClearHelp();
         g_ScreenChangeFade = ST_FALSE;
@@ -256,37 +255,47 @@ void GAME_MainMenu(void)
         switch (Screen_Action)
         {
             case 0:  // "Continue"
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] Menu Event 0\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//                 dlvfprintf("DEBUG: [%s, %d] Menu Event 0\n", __FILE__, __LINE__);
+// #endif
+
                 // SND_Stop_Music()
                 // j_GAME_WizardsLaunch(8)  // e_SAVE9GAM
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 1:  // "Load Game"
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] Menu Event 1\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//                 dlvfprintf("DEBUG: [%s, %d] Menu Event 1\n", __FILE__, __LINE__);
+// #endif
+
                 // j_GAME_LoadSaveScreen
                 break;
             case 2:  // "New Game"
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] Menu Event 2\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//                 dlvfprintf("DEBUG: [%s, %d] Menu Event 2\n", __FILE__, __LINE__);
+// #endif
+
                 // j_GAME_New_Create
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 3:  // "Quit To DOS"
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] Menu Event 3\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//                 dlvfprintf("DEBUG: [%s, %d] Menu Event 3\n", __FILE__, __LINE__);
+// #endif
+
                 flag_quit = ST_TRUE;
                 GUI_LoadSave_State = ST_UNDEFINED;
                 break;
             case 4:  // "Hall Of Fame"
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] Menu Event 4\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//                 dlvfprintf("DEBUG: [%s, %d] Menu Event 4\n", __FILE__, __LINE__);
+// #endif
+
                 // j_GAME_Hall_of_Fame
                 // j_GAME_PrepareCredits
                 // jmp  short $+2 ... somehow this jumps back to @@LoopWhileZero
@@ -295,9 +304,10 @@ void GAME_MainMenu(void)
         
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
+// #endif
+
     Quit(cnst_QUIT_Message);
 }
 
@@ -338,13 +348,13 @@ void GAME_LoadMainImages(void)
 
     int itr_wizards;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+// #endif
 
-    HERE("BEFORE: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
+    // HERE("BEFORE: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
-    HERE("AFTER: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
+    // HERE("AFTER: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
 
 //#ifdef TEST
     // DELETE HERE("CALL: dl_TST_LBX_MAINSCRN_000();");
@@ -355,7 +365,7 @@ void GAME_LoadMainImages(void)
 //#endif
 
     // TODO(JimBalcomb,20220724): add DEBUG - if MAINSCRN LbxFileSize == 196511
-//#ifdef DEBUG
+//#ifdef STU_DEBUG
 //    dlvfprintf("DEBUG: [%s, %d] EmmLogicalPage: %d\n", __FILE__, __LINE__, EmmLogicalPage);
 //    dlvfprintf("DEBUG: [%s, %d] LbxFileSize: %ld\n", __FILE__, __LINE__, LbxFileSize);
 //    dlvfprintf("DEBUG: [%s, %d] UU_varNbytesRead: %ld\n", __FILE__, __LINE__, UU_varNbytesRead);
@@ -363,7 +373,7 @@ void GAME_LoadMainImages(void)
 //    dlvfprintf("DEBUG: [%s, %d] UU_varNbytesRead + tmp_LbxFileSize: %ld\n", __FILE__, __LINE__, (UU_varNbytesRead + tmp_LbxFileSize));
 //#endif
 
-//#ifdef DEBUG
+//#ifdef STU_DEBUG
 //    EMM_Map4(EmmHndlNbr, 0);
 //    dlvfprintf("DEBUG: [%s, %d] EMM_PageFrameBaseAddress: 0x%04X\n", __FILE__, __LINE__, EMM_PageFrameBaseAddress);
 //    dlvfprintf("DEBUG: [%s, %d] LBX_EntryCount: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrameBaseAddress, 0));
@@ -391,17 +401,20 @@ void GAME_LoadMainImages(void)
         LBXE_LoadSingle() |-> LBX_Load_Entry() |-> EMM_Load_LBX_Entry() |-> EMM_LBX_FLIC_header()
    */
     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
-#ifdef DEBUG
-    DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
-    TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
-    dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
-    dlvfprintf("DEBUG: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
-#endif
+
+// #ifdef STU_DEBUG
+//     // DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
+//     TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
+//     // dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
+//     dlvfprintf("DEBUG: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
+// #endif
+
     gsa_MAINSCRN_5_ScreenBottom = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
-#ifdef DEBUG
-    DBG_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
-    dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_005: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_005);
-#endif
+
+// #ifdef STU_DEBUG
+//     // DBG_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
+//     // dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_005: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_005);
+// #endif
 
     gsa_VORTEX_1_MenuContinue    = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
     gsa_VORTEX_2_MenuHallOfFame  = LBXE_LoadSingle(g_LbxNm_VORTEX, 2);
@@ -421,9 +434,9 @@ void GAME_LoadMainImages(void)
 
     EMM_Load_LBX_File_1(g_LbxNm_SPELLDAT);
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+// #endif
 
 }
 
@@ -450,13 +463,13 @@ int SCREEN_Menu(void)
     // void (_FAR *fxnptr_ScreenDraw) (void);
     int input_control_index;
 
-#ifdef DEBUG
-    unsigned int dbg_Loop_Once;
-#endif
+// #ifdef STU_DEBUG
+//     unsigned int dbg_Loop_Once;
+// #endif
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: SCREEN_Menu()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: SCREEN_Menu()\n", __FILE__, __LINE__);
+// #endif
 
     // 1oom :: DNE - not sure if DNE in ORION
     if ( g_GUI_MainScreenJump != -1 )
@@ -654,33 +667,34 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[9].Hotkey=79, InputCode=27
 DEBUG: [_s34p22c.c, 49] CtrlTbl[10].Hotkey=77, InputCode=27
 DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 */
-#ifdef DEBUG
-/*    
-    GUI_Load_Lbl_Index
-    GUI_Continue_Label
-    GUI_NewGame_Label
-    GUI_HoF_Lbl_Index
-    GUI_Quit_Lbl_Index
 
-    Continue_Hotkey_Index
-    Load_Hotkey_Index
-    NewGame_Hotkey_Index
-    HallofFame_Hotkey_Index
-    Quit_Hotkey_Index
-    Escape_Hotkey_Index
-*/
-    dlvfprintf("DEBUG: [%s, %d] GUI_Load_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_Load_Lbl_Index);
-    dlvfprintf("DEBUG: [%s, %d] GUI_Continue_Label: %u\n", __FILE__, __LINE__, GUI_Continue_Label);
-    dlvfprintf("DEBUG: [%s, %d] GUI_NewGame_Label: %u\n", __FILE__, __LINE__, GUI_NewGame_Label);
-    dlvfprintf("DEBUG: [%s, %d] GUI_HoF_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_HoF_Lbl_Index);
-    dlvfprintf("DEBUG: [%s, %d] GUI_Quit_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_Quit_Lbl_Index);
-    dlvfprintf("DEBUG: [%s, %d] Continue_Hotkey_Index: %u\n", __FILE__, __LINE__, Continue_Hotkey_Index);
-    dlvfprintf("DEBUG: [%s, %d] Load_Hotkey_Index: %u\n", __FILE__, __LINE__, Load_Hotkey_Index);
-    dlvfprintf("DEBUG: [%s, %d] NewGame_Hotkey_Index: %u\n", __FILE__, __LINE__, NewGame_Hotkey_Index);
-    dlvfprintf("DEBUG: [%s, %d] HallofFame_Hotkey_Index: %u\n", __FILE__, __LINE__, HallofFame_Hotkey_Index);
-    dlvfprintf("DEBUG: [%s, %d] Quit_Hotkey_Index: %u\n", __FILE__, __LINE__, Quit_Hotkey_Index);
-    dlvfprintf("DEBUG: [%s, %d] Escape_Hotkey_Index: %u\n", __FILE__, __LINE__, Escape_Hotkey_Index);
-#endif
+// #ifdef STU_DEBUG
+// /*    
+//     GUI_Load_Lbl_Index
+//     GUI_Continue_Label
+//     GUI_NewGame_Label
+//     GUI_HoF_Lbl_Index
+//     GUI_Quit_Lbl_Index
+// 
+//     Continue_Hotkey_Index
+//     Load_Hotkey_Index
+//     NewGame_Hotkey_Index
+//     HallofFame_Hotkey_Index
+//     Quit_Hotkey_Index
+//     Escape_Hotkey_Index
+// */
+//     dlvfprintf("DEBUG: [%s, %d] GUI_Load_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_Load_Lbl_Index);
+//     dlvfprintf("DEBUG: [%s, %d] GUI_Continue_Label: %u\n", __FILE__, __LINE__, GUI_Continue_Label);
+//     dlvfprintf("DEBUG: [%s, %d] GUI_NewGame_Label: %u\n", __FILE__, __LINE__, GUI_NewGame_Label);
+//     dlvfprintf("DEBUG: [%s, %d] GUI_HoF_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_HoF_Lbl_Index);
+//     dlvfprintf("DEBUG: [%s, %d] GUI_Quit_Lbl_Index: %u\n", __FILE__, __LINE__, GUI_Quit_Lbl_Index);
+//     dlvfprintf("DEBUG: [%s, %d] Continue_Hotkey_Index: %u\n", __FILE__, __LINE__, Continue_Hotkey_Index);
+//     dlvfprintf("DEBUG: [%s, %d] Load_Hotkey_Index: %u\n", __FILE__, __LINE__, Load_Hotkey_Index);
+//     dlvfprintf("DEBUG: [%s, %d] NewGame_Hotkey_Index: %u\n", __FILE__, __LINE__, NewGame_Hotkey_Index);
+//     dlvfprintf("DEBUG: [%s, %d] HallofFame_Hotkey_Index: %u\n", __FILE__, __LINE__, HallofFame_Hotkey_Index);
+//     dlvfprintf("DEBUG: [%s, %d] Quit_Hotkey_Index: %u\n", __FILE__, __LINE__, Quit_Hotkey_Index);
+//     dlvfprintf("DEBUG: [%s, %d] Escape_Hotkey_Index: %u\n", __FILE__, __LINE__, Escape_Hotkey_Index);
+// #endif
 
     GUI_SetWindows(1, g_GUI_MainMenuWindow);
 
@@ -719,9 +733,10 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
         // ST_GUI.H  _s34p66c.c  int IN_GetInput(void)
         input_control_index = IN_GetInput();  // _s34p66c.c  1oom :: oi1 = uiobj_handle_input_cond();
-#ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] input_control_index: %d\n", __FILE__, __LINE__, input_control_index);
-#endif
+
+// #ifdef STU_DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] input_control_index: %d\n", __FILE__, __LINE__, input_control_index);
+// #endif
 
         // 1oom :: if (oi1 != 0) { flag_done = true; }
         if ( input_control_index != ST_FALSE )
@@ -770,7 +785,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
             // 1oom :: if ((ui_draw_finish_mode != 0) && !flag_fadein) { ui_palette_fadein_4b_19_1(); flag_fadein = true; }
             if ( !((g_ScreenChangeFade == ST_FALSE) & (First_Draw_Done != ST_FALSE)) )
             {
-                HERE("( !((g_ScreenChangeFade == ST_FALSE) && (First_Draw_Done != ST_FALSE)) )");
+                // HERE("( !((g_ScreenChangeFade == ST_FALSE) && (First_Draw_Done != ST_FALSE)) )");
                 // j_VGA_Fade_In()
                 VGA_Copy_RSP_DSP();  // Research(JimBalcomb)): 20220117: what does this accomplish?
                 First_Draw_Done = ST_TRUE;
@@ -778,7 +793,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
             }
             else
             {
-                HERE("( !((g_ScreenChangeFade != ST_FALSE) || (First_Draw_Done == ST_FALSE)) )");
+                // HERE("( !((g_ScreenChangeFade != ST_FALSE) || (First_Draw_Done == ST_FALSE)) )");
             }
 
             CLK_Wait(2);  // 1oom :: ui_delay_ticks_or_click(2);
@@ -790,11 +805,13 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
     HLP_ClearHelp();
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: SCREEN_Menu()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: SCREEN_Menu()\n", __FILE__, __LINE__);
+// #endif
+
     return g_GUI_MainMenuSelected;
-// #ifdef DEBUG
+
+// #ifdef STU_DEBUG
 //     return 3;  // DEBUG: g_GUI_MainMenuSelected = ( (Quit_Hotkey_Index) || (GUI_Quit_Lbl_Index) || (Escape_Hotkey_Index) )
 // #endif
 }
@@ -809,47 +826,51 @@ void SCREEN_Menu_Draw(void)
     int MenuArea_X_Left;
     int MenuArea_Y_Top;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: SCREEN_Menu_Draw()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: SCREEN_Menu_Draw()\n", __FILE__, __LINE__);
+// #endif
 
     MenuArea_X_Left = 123;
     MenuArea_Y_Top = 141;
 
-    HERE("GUI_MousedControl()");
+    // HERE("GUI_MousedControl()");
     MouseOver_ControlIndex = GUI_MousedControl();
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] MouseOver_ControlIndex: %d\n", __FILE__, __LINE__, MouseOver_ControlIndex);
-#endif
 
-    HERE("VGA_Set_DSP_Addr();");
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] MouseOver_ControlIndex: %d\n", __FILE__, __LINE__, MouseOver_ControlIndex);
+// #endif
+
+    // HERE("VGA_Set_DSP_Addr();");
     VGA_Set_DSP_Addr();
-    HERE("VGA_DrawFilledRect(0, 0, 319, 199, 0);");
+    // HERE("VGA_DrawFilledRect(0, 0, 319, 199, 0);");
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
-    HERE("Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);");
+    // HERE("Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);");
     Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] Title_Frame_Index: %d\n", __FILE__, __LINE__, Title_Frame_Index);
-#endif
 
-    HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] Title_Frame_Index: %d\n", __FILE__, __LINE__, Title_Frame_Index);
+// #endif
+
+    // HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
     FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
 
     // TODO(JimBalcomb): figure out and fix the logic for looping the 20 frames of the "MOM animated logo"
     for ( Loop_Var = 0; Loop_Var <= Title_Frame_Index; Loop_Var++ )
     {
-        #ifdef DEBUG
-            dlvfprintf("DEBUG: [%s, %d] Loop_Var: %d, Title_Frame_Index: %d, (Loop_Var <= Title_Frame_Index): %d\n", __FILE__, __LINE__, Loop_Var, Title_Frame_Index, (Loop_Var <= Title_Frame_Index));
-        #endif
-        HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+
+//         #ifdef STU_DEBUG
+//             dlvfprintf("DEBUG: [%s, %d] Loop_Var: %d, Title_Frame_Index: %d, (Loop_Var <= Title_Frame_Index): %d\n", __FILE__, __LINE__, Loop_Var, Title_Frame_Index, (Loop_Var <= Title_Frame_Index));
+//         #endif
+
+        // HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
         FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
     }
     //HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
     //FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
     // NOTE(JimBalcomb): this LBX Entry/FLIC includes a 256-color palette chunk
 
-    HERE("FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);");
+    // HERE("FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);");
     FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
 
     if ( g_ScreenChangeFade == 0 )
@@ -867,16 +888,16 @@ void SCREEN_Menu_Draw(void)
     {
         if ( MouseOver_ControlIndex == GUI_Load_Lbl_Index )
         {
-            HERE("FLIC_ResetFrame()");
+            // HERE("FLIC_ResetFrame()");
             FLIC_ResetFrame(gsa_VORTEX_5_MenuLoadGame);
         }
         else
         {
-            HERE("FLIC_SetFrame()");
+            // HERE("FLIC_SetFrame()");
             FLIC_SetFrame(gsa_VORTEX_5_MenuLoadGame, 1);
         }
 
-        HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);");
+        // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);");
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
 
     }
@@ -885,59 +906,59 @@ void SCREEN_Menu_Draw(void)
     {
         if ( MouseOver_ControlIndex == GUI_Continue_Label )
         {
-            HERE("FLIC_ResetFrame()");
+            // HERE("FLIC_ResetFrame()");
             FLIC_ResetFrame(gsa_VORTEX_1_MenuContinue);
         }
         else
         {
-            HERE("FLIC_SetFrame()");
+            // HERE("FLIC_SetFrame()");
             FLIC_SetFrame(gsa_VORTEX_1_MenuContinue, 1);
         }
 
-        HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);");
+        // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);");
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
     }
 
     if ( MouseOver_ControlIndex == GUI_NewGame_Label )
     {
-        HERE("FLIC_ResetFrame()");
+        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_4_MenuNewGame);
     }
     else
     {
-        HERE("FLIC_SetFrame()");
+        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_4_MenuNewGame, 1);
     }
 
-    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);");
+    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
 
     if ( MouseOver_ControlIndex == GUI_HoF_Lbl_Index )
     {
-        HERE("FLIC_ResetFrame()");
+        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_2_MenuHallOfFame);
     }
     else
     {
-        HERE("FLIC_SetFrame()");
+        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
     }
 
-    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);");
+    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
 
     if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
     {
-        HERE("FLIC_ResetFrame()");
+        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
     }
     else
     {
-        HERE("FLIC_SetFrame()");
+        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
     }
 
-    HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);");
+    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
     // // VGA_LoadPalette(2, -1, 0);
@@ -966,9 +987,9 @@ void SCREEN_Menu_Draw(void)
     // idiv bx
     // mov  [CRP_Unused_Anim_Var], dx
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: SCREEN_Menu_Draw()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: SCREEN_Menu_Draw()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // s01p07
@@ -979,15 +1000,15 @@ void GAME_Load_TERRSTAT_0(void)
     int RecCount = 770;
     int RecSize = 6;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
+// #endif
 
     gfp_TBL_Moves_Per_Tile = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_TERRSTAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // s01p08
@@ -998,14 +1019,14 @@ void GAME_Load_SPELLDAT_0(void)
     int RecCount = 215;
     int RecSize = 36;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+// #endif
 
     gfp_TBL_Spell_Data = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_SPELLDAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
+// #endif
 }
 

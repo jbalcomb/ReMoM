@@ -1,5 +1,12 @@
 
+#include "ST_TYPE.H"
+
+#include "ST_DEF.H"
+
 #include "ST_FLIC.H"
+
+#include "ST_SA.H"
+
 
 /*
     MGC  seg027

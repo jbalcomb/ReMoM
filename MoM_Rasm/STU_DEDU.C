@@ -1,4 +1,6 @@
 
+#include <STRING.H>
+
 #include "ST_EMM.H"
 #include "ST_LBX.H"
 
@@ -23,7 +25,6 @@ unsigned int STU_DBG_GetEmmHndlNbr(char * EmmHndlNm)
 #endif
 
     itr_EmmOpenHandles = 0;
-     = 0;
 
     while ( (itr_EmmOpenHandles < g_EMM_Open_Handles) && ( == 0) )
     {

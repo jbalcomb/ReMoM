@@ -1,3 +1,24 @@
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
+#include "ST_EMM.H"
+
+#include "MOM_DEF.H"
+
+#include "ST_FLIC.H"
+#include "ST_LBX.H"
+#include "ST_SA.H"
+
+// #include <STDIO.H>   /* printf() */
+#include <STDLIB.H>  /* itoa() */
+#include <STRING.H>  /* strcat(), strcpy() */
+
+// #ifdef DEBUG
+// #include "STU_DBG.H"
+// #endif
+// #ifdef TEST
+// #include "STU_TST.H"
+// #endif
+
 
 /*
     BCpp31PG, pg 175/190
@@ -14,25 +35,6 @@
 #pragma warn -aus
 #pragma warn -eff
 #pragma warn -par
-
-
-#include <DOS.H>
-
-#include <stdlib.h>  /* itoa() */
-#include <stdio.h>   /* printf() */
-#include <string.h>  /* strcat(), strcpy() */
-
-#include "ST_HEAD.H"
-#include "ST_TYPE.H"
-#include "MOM_DEF.H"
-
-#include "ST_EMM.H"
-#include "ST_FLIC.H"
-#include "ST_LBX.H"
-#include "ST_SA.H"
-
-#include "STU_DBG.H"
-#include "STU_TST.H"
 
 
 // TODO(jbalcomb): move these scraps of notes
@@ -107,13 +109,13 @@ char *cnst_EmmErr_Space = "  ";                                 // dseg:4177
 */
 
 unsigned int g_EMM_Overlay_Handle;                               // dseg:A5E2
-unsigned int g_EMMDATAH_Level;                                    // dseg:A5E4  set to 0 in EMM_Startup
+unsigned int EMMDATAH_Level;                                    // dseg:A5E4  set to 0 in EMM_Startup
 unsigned int g_EmmHndlNbr_VGAFILEH;                               // dseg:A5EA  5 reserved pages
-unsigned int g_EmmHndlNbr_EMMDATAH;                               // dseg:A5E6  4 reserved pages
-unsigned int g_EmmHndlNbr_YOMOMA;                                 // dseg:A5EE  1 unreserved page
-unsigned int g_EMM_OK;                                            // dseg:A5F0  set to 1 after creating the YO MOMA handle
+unsigned int EmmHndlNbr_EMMDATAH;                               // dseg:A5E6  4 reserved pages
+unsigned int EmmHndlNbr_YOMOMA;                                 // dseg:A5EE  1 unreserved page
+unsigned int EMM_OK;                                            // dseg:A5F0  set to 1 after creating the YO MOMA handle
 //extern EMM_Table EMM_Record 28h dup(<0>)                      // dseg:A5F2  EMM_Table EMM_Record 28h dup(<0>)
-EMM_Record g_EMM_Table[MOM_EMM_HANDLES]; // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
+EMM_Record EMM_Table[MOM_EMM_HANDLES]; // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
 unsigned int g_EMM_MinKB = 0;                                     // dseg:A7D2  initialized to 0 set to 2700 in _main
 
 
@@ -156,9 +158,9 @@ int EMM_Init(void)
     int          result6;
     int st_status;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Init()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Init()\n", __FILE__, __LINE__);
+// #endif
 
     // // //inregs1.x.dx = EMM_device_name;
     // // //inregs1.h.dh = FP_SEG(EMM_device_name);
@@ -186,7 +188,7 @@ int EMM_Init(void)
     result1 = int86(DOS_INT, &inregs1, &outregs1);
     if ( outregs1.x.cflag != 0 )
     {
-        HERE("FAILURE: INT 21,3D,00 EMM_device_name");
+        // HERE("FAILURE: INT 21,3D,00 EMM_device_name");
         goto Failure;
     }
 
@@ -196,13 +198,13 @@ int EMM_Init(void)
     result2 = int86(DOS_INT, &inregs2, &outregs2);
     if ( outregs2.x.cflag != 0 )
     {
-        HERE("FAILURE: INT 21,44,00");
+        // HERE("FAILURE: INT 21,44,00");
         goto Failure;
     }
 
     if ( outregs2.x.dx & 0x80 == 0 )  // ; test bit 7; 0 == File, 1 == Device
     {
-        HERE("FAILURE:  INT 21,44,00: *device* is \"disk file\", not \"character device\" ");
+        // HERE("FAILURE:  INT 21,44,00: *device* is \"disk file\", not \"character device\" ");
         goto Failure;
     }
 
@@ -213,12 +215,12 @@ int EMM_Init(void)
     //if ( (_FLAGS & 1) == 0 )
     if ( outregs3.x.cflag != 0 )
     {
-        HERE("FAILURE: INT 21,44,07");
+        // HERE("FAILURE: INT 21,44,07");
         goto Failure;
     }
     if ( outregs3.h.al == 0 )
     {
-        HERE("FAILURE: INT 21,44,07: *device* is not ready");
+        // HERE("FAILURE: INT 21,44,07: *device* is not ready");
         goto Failure;
     }
 
@@ -227,7 +229,7 @@ int EMM_Init(void)
     result4 = int86(DOS_INT, &inregs4, &outregs4);
     if ( outregs4.x.cflag != 0 )
     {
-        HERE("FAILURE: INT 21,3E");
+        // HERE("FAILURE: INT 21,3E");
         goto Failure;
     }
 
@@ -235,12 +237,12 @@ int EMM_Init(void)
     result5 = int86(EMS_INT, &inregs5, &outregs5);
     if ( outregs5.h.ah != 0 )
     {
-        HERE("FAILURE: INT 67,46: (Error) Code not \"success\"");
+        // HERE("FAILURE: INT 67,46: (Error) Code not \"success\"");
         goto Failure;
     }
     if ( outregs5.h.al < 0x40 )  // BCD; >= LIM EMS Version 4.0
     {
-        HERE("FAILURE: LIM EMS Version < 4.0");
+        // HERE("FAILURE: LIM EMS Version < 4.0");
         goto Failure;
     }
 
@@ -248,15 +250,15 @@ int EMM_Init(void)
     result6 = int86(EMS_INT, &inregs6, &outregs6);
     if ( outregs6.h.ah != 0 )
     {
-        HERE("FAILURE: INT 67,41: (Error) Code not \"success\"");
+        // HERE("FAILURE: INT 67,41: (Error) Code not \"success\"");
         goto Failure;
     }
     else
     {
         EMM_PageFrameBaseAddress = outregs6.x.bx;  // BX = segment of page frame (PFBA) ...where in the 1Mb memory address the page frame will be mapped
-#ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] EMM_PageFrameBaseAddress: 0x%04X }\n", __FILE__, __LINE__, EMM_PageFrameBaseAddress);
-#endif
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] EMM_PageFrameBaseAddress: 0x%04X }\n", __FILE__, __LINE__, EMM_PageFrameBaseAddress);
+// #endif
     }
 
 Success:
@@ -266,19 +268,13 @@ Failure:
     st_status = ST_FAILURE;
     goto Done;
 Done:
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_Init() { st_status = %s }\n", __FILE__, __LINE__, (st_status == ST_SUCCESS ? "ST_SUCCESS" : "ST_FAILURE/INVALID"));
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Init() { st_status = %s }\n", __FILE__, __LINE__, (st_status == ST_SUCCESS ? "ST_SUCCESS" : "ST_FAILURE/INVALID"));
+// #endif
     return st_status;
 }
 
-// _s12p02c.c EMM_GetHandleCount
-
-#include "ST_HEAD.H"
-#include "MOM_DEF.H"
-#include "ST_EMM.H"
-
-
+// s12p02
 unsigned int EMM_GetActiveHandleCount(void)
 {
     union  REGS  inregs;
@@ -338,8 +334,10 @@ unsigned int EMM_GetHandlePageCount(unsigned int EmmHndlNbr)
 
     if ( outregs.h.ah != 0 )
     {
-        HERE("FAILURE: INT 67,4C: (Error) Code not \"success\"");
-        dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);
+        // HERE("FAILURE: INT 67,4C: (Error) Code not \"success\"");
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);
+// #endif
         emm_handle_page_count = 0;
     }
     else
@@ -381,8 +379,10 @@ unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char _FAR * argHandl
     result1 = int86(EMS_INT, &inregs1, &outregs1);
     if ( outregs1.h.ah != 0x00 )
     {
-        HERE("FAILURE: INT 67,43: (Error) Code not \"success\"");
-        dlvfprintf("DEBUG: [%s, %d] outregs1.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs1.h.ah);
+        // HERE("FAILURE: INT 67,43: (Error) Code not \"success\"");
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] outregs1.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs1.h.ah);
+// #endif
         goto Failure;
     }
     else
@@ -403,8 +403,10 @@ unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char _FAR * argHandl
     result2 = int86(EMS_INT, &inregs2, &outregs2);
     if ( outregs2.h.ah != 0x00 )
     {
-        HERE("FAILURE: INT 67,53,01: (Error) Code not \"success\"");
-        dlvfprintf("DEBUG: [%s, %d] outregs2.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs2.h.ah);
+        // HERE("FAILURE: INT 67,53,01: (Error) Code not \"success\"");
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] outregs2.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs2.h.ah);
+// #endif
         goto Failure;
     }
 
@@ -443,7 +445,9 @@ unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
     if (outregs.h.ah != 0x00)
     {
         // HERE("FAILURE: INT 53,00: (Error) Code not \"success\"");
-        // dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);  // 0x83  unallocated or invalid handle
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);  // 0x83  unallocated or invalid handle
+// #endif
         st_status = ST_FAILURE;
     }
     else
@@ -743,9 +747,9 @@ void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle)
     union  REGS  outregs;
     struct SREGS segregs;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
+// #endif
 
     gfp_map_struct[0].log_page = argFirstLogicalPage + 0;
     gfp_map_struct[1].log_page = argFirstLogicalPage + 1;
@@ -760,9 +764,9 @@ void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle)
     inregs.h.ah = 0x50;  // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
     int86(EMS_INT, &inregs, &outregs);
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
+// #endif
 }
 
 
@@ -778,9 +782,9 @@ void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle)
     checks for EMS
     checks if any active handles are named "YO MOMA"
     sets that handle number or gets a new one and updates g_EMM_Open_Handles
-    sets g_EMM_OK
-    adds additional handles to g_EMM_Table and updates g_EMM_Open_Handles
-    gets handles for VGAFILEH and EMMDATAH (and sets g_EMMDATAH_Level=0)
+    sets EMM_OK
+    adds additional handles to EMM_Table and updates g_EMM_Open_Handles
+    gets handles for VGAFILEH and EMMDATAH (and sets EMMDATAH_Level=0)
 */
 void EMM_Startup(void)
 {
@@ -790,9 +794,9 @@ void EMM_Startup(void)
     int varEmmOpenHandleCount;
     unsigned int itr_EmmHndlNbrs;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Startup()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Startup()\n", __FILE__, __LINE__);
+// #endif
 
     // if ( !EMM_Init() )
     // {
@@ -802,7 +806,7 @@ void EMM_Startup(void)
     status_emm_init = EMM_Init();  // return: {0xFF,0x00}/{-1,0}/{ST_FAILURE,ST_SUCCESS}
     if ( status_emm_init == ST_FAILURE)
     {
-        HERE("if ( status_emm_init == ST_FAILURE)");
+        // HERE("if ( status_emm_init == ST_FAILURE)");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
@@ -811,15 +815,15 @@ void EMM_Startup(void)
 
 // - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- -
 
-    g_EmmHndlNbr_YOMOMA = 0;
+    EmmHndlNbr_YOMOMA = 0;
 
-    for (itr_active_handles = 1; ((itr_active_handles <= varEmmOpenHandleCount) && (g_EmmHndlNbr_YOMOMA == 0)); itr_active_handles++)
+    for (itr_active_handles = 1; ((itr_active_handles <= varEmmOpenHandleCount) && (EmmHndlNbr_YOMOMA == 0)); itr_active_handles++)
     {
         if ( EMM_GetHandleName(varTmpStr100, itr_active_handles) )
         {
             if ( stricmp(g_EmmHndlNm_YOMOMA1, varTmpStr100) )
             {
-                g_EmmHndlNbr_YOMOMA = itr_active_handles;
+                EmmHndlNbr_YOMOMA = itr_active_handles;
             }
         }
     }
@@ -828,40 +832,40 @@ void EMM_Startup(void)
 
     g_EMM_Open_Handles = 0;
 
-    if (g_EmmHndlNbr_YOMOMA != 0)
+    if (EmmHndlNbr_YOMOMA != 0)
     {
-        strcpy(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, g_EmmHndlNm_YOMOMA1);
-        g_EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = 0;
-        g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = g_EmmHndlNbr_YOMOMA;
+        strcpy(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, g_EmmHndlNm_YOMOMA1);
+        EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = 0;
+        EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = EmmHndlNbr_YOMOMA;
         g_EMM_Open_Handles = 1;
     }
     else
     {
-        g_EmmHndlNbr_YOMOMA = EMM_GetHandle(1, g_EmmHndlNm_YOMOMA2, 0);  //   // 1 page/16KB, EmmRsvd=FALSE  NOTE: EMM_GetHandle() increments g_EMM_Open_Handles
+        EmmHndlNbr_YOMOMA = EMM_GetHandle(1, g_EmmHndlNm_YOMOMA2, 0);  //   // 1 page/16KB, EmmRsvd=FALSE  NOTE: EMM_GetHandle() increments g_EMM_Open_Handles
     }
 
 // - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- -
 
-    if ( g_EmmHndlNbr_YOMOMA == 0 )
+    if ( EmmHndlNbr_YOMOMA == 0 )
     {
-        HERE("if ( g_EmmHndlNbr_YOMOMA == 0 )");
+        // HERE("if ( EmmHndlNbr_YOMOMA == 0 )");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
 
-    g_EMM_OK = ST_TRUE;
+    EMM_OK = ST_TRUE;
 
 // - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- -
 
-    itr_EmmHndlNbrs = g_EmmHndlNbr_YOMOMA + 1;
+    itr_EmmHndlNbrs = EmmHndlNbr_YOMOMA + 1;
 
     while (itr_EmmHndlNbrs < 50 && g_EMM_Open_Handles < 40)
     {
         if (EMM_GetHandleName(varTmpStr100, itr_EmmHndlNbrs) != 0 && varTmpStr100[0] != 0)
         {
-            g_EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = 0;
-            strcpy(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, varTmpStr100);
-            g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = itr_EmmHndlNbrs;
+            EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = 0;
+            strcpy(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, varTmpStr100);
+            EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = itr_EmmHndlNbrs;
             g_EMM_Open_Handles++;
         }
         itr_EmmHndlNbrs++;
@@ -871,33 +875,33 @@ void EMM_Startup(void)
 
     if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )  // returns the unallocated pages count (not the total pages count)
     {
-        HERE("if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )");
+        // HERE("if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
 
     g_EmmHndlNbr_VGAFILEH = EMM_GetHandle(5, g_EmmHndlNm_VGAFILEH, 1);  // 5 pages/80KB, EmmRsvd=TRUE
-    g_EmmHndlNbr_EMMDATAH = EMM_GetHandle(4, g_EmmHndlNm_EMMDATAH, 1);  // 4 pages/64KB, EmmRsvd=TRUE
-    g_EMMDATAH_Level = 0;
+    EmmHndlNbr_EMMDATAH = EMM_GetHandle(4, g_EmmHndlNm_EMMDATAH, 1);  // 4 pages/64KB, EmmRsvd=TRUE
+    EMMDATAH_Level = 0;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_Startup()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Startup()\n", __FILE__, __LINE__);
+// #endif
 
 }
 
 // _s13p03
 void EMM_Load_LBX_File_1(char *argLbxFileName)
 {
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
+// #endif
 
     EMM_Load_LBX_File(argLbxFileName, 1);
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
+// #endif
 }
 
 // s13p04
@@ -940,9 +944,9 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     int tmp_EMM_Pages_Available;
     int tmp_EMM_Pages_Required;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File(LbxFileName=%s, EmmRsvd=%d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File(LbxFileName=%s, EmmRsvd=%d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
+// #endif
 
     ExtractFileBase(LbxFileName);
     strcpy(EmmHndlNm, LbxFileName);
@@ -964,9 +968,9 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     itr_g_EMM_Open_Handles = 0;
     while ( itr_g_EMM_Open_Handles < g_EMM_Open_Handles )
     {
-//        printf("DEBUG: [%s, %d]: g_EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm = %s)\n", __FILE__, __LINE__, g_EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm);
+//        printf("DEBUG: [%s, %d]: EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm = %s)\n", __FILE__, __LINE__, EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm);
 
-        if ( stricmp(g_EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm, EmmHndlNm) == 0 )
+        if ( stricmp(EMM_Table[itr_g_EMM_Open_Handles].eEmmHndlNm, EmmHndlNm) == 0 )
         {
             Handle_Exists = 1;
         }
@@ -980,16 +984,16 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
         LBX_Error(EmmHndlNm, 0x0B, 0, 0);
     }
 
-    if ( g_EMM_OK == ST_FALSE )
+    if ( EMM_OK == ST_FALSE )
     {
-        HERE("FAILURE: !( g_EMM_OK == ST_FALSE )");
+        // HERE("FAILURE: !( EMM_OK == ST_FALSE )");
         EmmHndlNbr = 0;
         goto Exit;
     }
 
     if ( !(g_EMM_Open_Handles < 40) )
     {
-        HERE("FAILURE: !( g_EMM_Open_Handles < 40 )");
+        // HERE("FAILURE: !( g_EMM_Open_Handles < 40 )");
         goto Exit;
     }
 
@@ -1015,7 +1019,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 
     if ( LbxFileSize == 0 )
     {
-        HERE("FAILURE: ( LbxFileSize == 0 )");
+        // HERE("FAILURE: ( LbxFileSize == 0 )");
         goto Exit;
     }
 
@@ -1033,7 +1037,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
         tmp_EMM_Pages_Required = g_EMM_Pages_Reserved + LbxFileSize16kBlocks;
         if ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )
         {
-            HERE("FAILURE: ( Reserved == 0 ) && ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )");
+            // HERE("FAILURE: ( Reserved == 0 ) && ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )");
             EmmHndlNbr = 0;
             goto Exit;
         }
@@ -1043,7 +1047,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 
    if ( EmmHndlNbr == 0 )
    {
-        HERE("FAILURE: EMM_GetHandle() && ( EmmHndlNbr == 0 )");
+        // HERE("FAILURE: EMM_GetHandle() && ( EmmHndlNbr == 0 )");
         goto Exit;
    }
 
@@ -1053,7 +1057,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 
     if ( tmp_EmmPageFrameSgmtAddr == 0 )
     {
-        HERE("FAILURE: EMM_GetPageFrame() && ( tmp_EmmPageFrameSgmtAddr == 0 )");
+        // HERE("FAILURE: EMM_GetPageFrame() && ( tmp_EmmPageFrameSgmtAddr == 0 )");
         goto Exit;
     }
 
@@ -1061,7 +1065,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 
     if ( LbxFileHandle == 0 )
     {
-        HERE("FAILURE: lbx_open(EmmHndlFileName) && ( LbxFileHandle == 0 )");
+        // HERE("FAILURE: lbx_open(EmmHndlFileName) && ( LbxFileHandle == 0 )");
         goto Exit;
     }
 
@@ -1092,21 +1096,21 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 
     lbx_close(LbxFileHandle);
 
-//#ifdef TEST
-    if ( stricmp(EmmHndlNm, "MAINSCRN") == 0 )
-    {
-        TST_LBX_MAINSCRN_000.EMM_Handle_Number = EmmHndlNbr;
-        TST_LBX_MAINSCRN_000.LBX_File_Size_B = LbxFileSize;
-        TST_LBX_MAINSCRN_000.LBX_File_Size_PG = LbxFileSize16kBlocks;
-        TST_LBX_MAINSCRN_000.EMM_Logical_Page_Count = EmmLogicalPage;
-    }
-//#endif
+// #ifdef TEST
+//     if ( stricmp(EmmHndlNm, "MAINSCRN") == 0 )
+//     {
+//         TST_LBX_MAINSCRN_000.EMM_Handle_Number = EmmHndlNbr;
+//         TST_LBX_MAINSCRN_000.LBX_File_Size_B = LbxFileSize;
+//         TST_LBX_MAINSCRN_000.LBX_File_Size_PG = LbxFileSize16kBlocks;
+//         TST_LBX_MAINSCRN_000.EMM_Logical_Page_Count = EmmLogicalPage;
+//     }
+// #endif
 
 Exit:
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File(LbxFileName = %s, EmmRsvd = %d) { EmmHndlNbr = %d }\n", __FILE__, __LINE__, LbxFileName, Reserved, EmmHndlNbr);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File(LbxFileName = %s, EmmRsvd = %d) { EmmHndlNbr = %d }\n", __FILE__, __LINE__, LbxFileName, Reserved, EmmHndlNbr);
+// #endif
 
     return EmmHndlNbr;
 }
@@ -1134,29 +1138,29 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     unsigned int ReadNbytes;
     void * pSAMB_head;
     
-#ifdef DEBUG
-    unsigned char bDebugDetail = 0;
-#endif
+// #ifdef DEBUG
+//     unsigned char bDebugDetail = 0;
+// #endif
 
-#ifdef DEBUG
-    if
-    (
-        ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 0) ) ||
-        ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 1) ) ||
-        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
-        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
-    )
-    {
-        bDebugDetail = 1;
-    }
-#endif
+// #ifdef DEBUG
+//     if
+//     (
+//         ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 0) ) ||
+//         ( (strcmp(EmmHndlNm, "FONTS") == 0) && (LbxEntry == 1) ) ||
+//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
+//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
+//     )
+//     {
+//         bDebugDetail = 1;
+//     }
+// #endif
 
-#ifdef DEBUG
-    //if (bDebugDetail)
-    //{
-        dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
-    //}
-#endif
+// #ifdef DEBUG
+//     //if (bDebugDetail)
+//     //{
+//         dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
+//     //}
+// #endif
 
     SAMB_data = ST_FAILURE;
 
@@ -1174,9 +1178,11 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
             LBX_Error(EmmHndlNm, 0x0D, LbxEntry, 0);
         }
         SAMB_data = EMM_LBX_FLIC_Header(EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
-#ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
-#endif
+
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
+// #endif
+
         goto Exit;
     }
 
@@ -1235,12 +1241,12 @@ Error:
 
 Exit:
 
-#ifdef DEBUG
-    //if (bDebugDetail)
-    //{
-        dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d) { SAMB_data=0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
-    //}
-#endif
+// #ifdef DEBUG
+//     //if (bDebugDetail)
+//     //{
+//         dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d) { SAMB_data=0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
+//     //}
+// #endif
     return SAMB_data;
 }
 
@@ -1271,27 +1277,27 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     unsigned char _FAR *fptr_Dst;
     void * pSAMB_head;
 
-#ifdef DEBUG
-    unsigned char bDebugDetail = 0;
-#endif
+// #ifdef DEBUG
+//     unsigned char bDebugDetail = 0;
+// #endif
 
-#ifdef DEBUG
-    if
-    (
-        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
-        ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
-    )
-    {
-        bDebugDetail = 1;
-    }
-#endif
+// #ifdef DEBUG
+//     if
+//     (
+//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
+//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
+//     )
+//     {
+//         bDebugDetail = 1;
+//     }
+// #endif
 
-#ifdef DEBUG
-    //if (bDebugDetail)
-    //{
-        dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d)\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
-    //}
-#endif
+// #ifdef DEBUG
+//     //if (bDebugDetail)
+//     //{
+//         dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d)\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
+//     //}
+// #endif
     
     SAMB_data = ST_FAILURE;
 
@@ -1322,41 +1328,42 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     tmp_EntryTableOffset_Sgmt = (unsigned int)(EntryTableOffset >> 16);         // Hi-Word of Double-Word
     tmp_EntryTableOffset_Ofst = (unsigned int)(EntryTableOffset & 0x0000FFFF);  // Lo-Word of Double-Word
     EMM_MapnRead((unsigned int)&DataOffset_Begin, 0, tmp_EntryTableOffset_Ofst, tmp_EntryTableOffset_Sgmt, 4, EmmHndl);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] (unsigned int)(DataOffset_Begin >> 16): 0x%04X\n", __FILE__, __LINE__, (unsigned int)(DataOffset_Begin >> 16));
-    dlvfprintf("DEBUG: [%s, %d] (unsigned int)(DataOffset_Begin & 0x0000FFFF): 0x%04X\n", __FILE__, __LINE__, (unsigned int)(DataOffset_Begin & 0x0000FFFF));
-#endif
 
-#ifdef DEBUG
-    if (bDebugDetail)
-    {
-        dlvfprintf("DEBUG: [%s, %d] EntryTableOffset=0x%04X\n", __FILE__, __LINE__, EntryTableOffset);
-        dlvfprintf("DEBUG: [%s, %d] tmp_EntryTableOffset_Sgmt=0x%04X\n", __FILE__, __LINE__, tmp_EntryTableOffset_Sgmt);
-        dlvfprintf("DEBUG: [%s, %d] tmp_EntryTableOffset_Ofst=0x%04X\n", __FILE__, __LINE__, tmp_EntryTableOffset_Ofst);
-        dlvfprintf("DEBUG: [%s, %d] DataOffset_Begin=0x%08lX (%ld) (%lu)\n", __FILE__, __LINE__, DataOffset_Begin, DataOffset_Begin, DataOffset_Begin);
-    }
-    if (bDebugDetail)
-    {
-        if
-        (
-            ( strcmp(EmmHndlNm, "MAINSCRN") == 0 ) &&
-            ( LbxEntry == 0 ) &&
-            ( DataOffset_Begin != 0x000002C0 )
-        )
-        {
-            dlvfprintf("DEBUG: [%s, %d] FATAL: MAINSCXRN_000: DataOffset_Begin != 0x000002C0 { 0x%08lX }\n", __FILE__, __LINE__, DataOffset_Begin);
-        }
-        if
-        (
-            ( strcmp(EmmHndlNm, "MAINSCRN") == 0 ) &&
-            ( LbxEntry == 5 ) &&
-            ( DataOffset_Begin != 0x00025910 )
-        )
-        {
-            dlvfprintf("DEBUG: [%s, %d] FATAL: MAINSCXRN_005: DataOffset_Begin != 00025910 { 0x%08lX }\n", __FILE__, __LINE__, DataOffset_Begin);
-        }
-    }
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] (unsigned int)(DataOffset_Begin >> 16): 0x%04X\n", __FILE__, __LINE__, (unsigned int)(DataOffset_Begin >> 16));
+//     dlvfprintf("DEBUG: [%s, %d] (unsigned int)(DataOffset_Begin & 0x0000FFFF): 0x%04X\n", __FILE__, __LINE__, (unsigned int)(DataOffset_Begin & 0x0000FFFF));
+// #endif
+
+// #ifdef DEBUG
+//     if (bDebugDetail)
+//     {
+//         dlvfprintf("DEBUG: [%s, %d] EntryTableOffset=0x%04X\n", __FILE__, __LINE__, EntryTableOffset);
+//         dlvfprintf("DEBUG: [%s, %d] tmp_EntryTableOffset_Sgmt=0x%04X\n", __FILE__, __LINE__, tmp_EntryTableOffset_Sgmt);
+//         dlvfprintf("DEBUG: [%s, %d] tmp_EntryTableOffset_Ofst=0x%04X\n", __FILE__, __LINE__, tmp_EntryTableOffset_Ofst);
+//         dlvfprintf("DEBUG: [%s, %d] DataOffset_Begin=0x%08lX (%ld) (%lu)\n", __FILE__, __LINE__, DataOffset_Begin, DataOffset_Begin, DataOffset_Begin);
+//     }
+//     if (bDebugDetail)
+//     {
+//         if
+//         (
+//             ( strcmp(EmmHndlNm, "MAINSCRN") == 0 ) &&
+//             ( LbxEntry == 0 ) &&
+//             ( DataOffset_Begin != 0x000002C0 )
+//         )
+//         {
+//             dlvfprintf("DEBUG: [%s, %d] FATAL: MAINSCXRN_000: DataOffset_Begin != 0x000002C0 { 0x%08lX }\n", __FILE__, __LINE__, DataOffset_Begin);
+//         }
+//         if
+//         (
+//             ( strcmp(EmmHndlNm, "MAINSCRN") == 0 ) &&
+//             ( LbxEntry == 5 ) &&
+//             ( DataOffset_Begin != 0x00025910 )
+//         )
+//         {
+//             dlvfprintf("DEBUG: [%s, %d] FATAL: MAINSCXRN_005: DataOffset_Begin != 00025910 { 0x%08lX }\n", __FILE__, __LINE__, DataOffset_Begin);
+//         }
+//     }
+// #endif
     /*
         END: LBX Record Offset
     */
@@ -1370,29 +1377,29 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
         END: Load Type
     */
 
-#ifdef DEBUG
-    if (bDebugDetail)
-    {
-        dlvfprintf("DEBUG: [%s, %d] SAMB_data=0x%04X\n", __FILE__, __LINE__, SAMB_data);
-    }
-#endif
+// #ifdef DEBUG
+//     if (bDebugDetail)
+//     {
+//         dlvfprintf("DEBUG: [%s, %d] SAMB_data=0x%04X\n", __FILE__, __LINE__, SAMB_data);
+//     }
+// #endif
 
     Entry_Begin_Logical_Page_Number = DataOffset_Begin / EMS_PAGE_SIZE;  // 16384 e_EMM_Page_Size (0x4000)
     Entry_Begin_Logical_Page_Offset = DataOffset_Begin % EMS_PAGE_SIZE;  // 16384 e_EMM_Page_Size (0x4000)
 
-#ifdef DEBUG
-    if (bDebugDetail)
-    {
-        // MAINSCRN,0
-        // DEBUG: [_s13p12c.c, 115] Entry_Begin_Logical_Page_Number=0 (0x00)
-        // DEBUG: [_s13p12c.c, 116] Entry_Begin_Logical_Page_Offset=704 (0x02C0)
-        // MAINSCRN,5
-        // DEBUG: [_s13p12c.c, 115] Entry_Begin_Logical_Page_Number=9 (0x09)
-        // DEBUG: [_s13p12c.c, 116] Entry_Begin_Logical_Page_Offset=6416 (0x1910)
-        dlvfprintf("DEBUG: [%s, %d] Entry_Begin_Logical_Page_Number=%u (0x%02X)\n", __FILE__, __LINE__, Entry_Begin_Logical_Page_Number, Entry_Begin_Logical_Page_Number);
-        dlvfprintf("DEBUG: [%s, %d] Entry_Begin_Logical_Page_Offset=%u (0x%04X)\n", __FILE__, __LINE__, Entry_Begin_Logical_Page_Offset, Entry_Begin_Logical_Page_Offset);
-    }
-#endif
+// #ifdef DEBUG
+//     if (bDebugDetail)
+//     {
+//         // MAINSCRN,0
+//         // DEBUG: [_s13p12c.c, 115] Entry_Begin_Logical_Page_Number=0 (0x00)
+//         // DEBUG: [_s13p12c.c, 116] Entry_Begin_Logical_Page_Offset=704 (0x02C0)
+//         // MAINSCRN,5
+//         // DEBUG: [_s13p12c.c, 115] Entry_Begin_Logical_Page_Number=9 (0x09)
+//         // DEBUG: [_s13p12c.c, 116] Entry_Begin_Logical_Page_Offset=6416 (0x1910)
+//         dlvfprintf("DEBUG: [%s, %d] Entry_Begin_Logical_Page_Number=%u (0x%02X)\n", __FILE__, __LINE__, Entry_Begin_Logical_Page_Number, Entry_Begin_Logical_Page_Number);
+//         dlvfprintf("DEBUG: [%s, %d] Entry_Begin_Logical_Page_Offset=%u (0x%04X)\n", __FILE__, __LINE__, Entry_Begin_Logical_Page_Offset, Entry_Begin_Logical_Page_Offset);
+//     }
+// #endif
 
     /*
         BEGIN: Read Data - ST FLIC Header
@@ -1406,20 +1413,20 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
 
 //dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X, FlicHdr_EmmHandleNumber: %u, FlicHdr_EmmLogicalPageIndex: %u, FlicHdr_EmmLogicalPageOffset: 0x%04X)\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data, EmmHndl, Entry_Begin_Logical_Page_Number, Entry_Begin_Logical_Page_Offset);
 
-#ifdef DEBUG
-    if (bDebugDetail)
-    {
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_Width=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Width));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_Height=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Height));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_CurrentFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_CurrentFrame));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_FrameCount=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_FrameCount));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_LoopFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_LoopFrame));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmHandleNumber=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmHandleNumber));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageIndex=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmLogicalPageIndex));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_EmmLogicalPageOffset));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_PaletteDataOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
-    }
-#endif
+// #ifdef DEBUG
+//     if (bDebugDetail)
+//     {
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_Width=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Width));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_Height=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Height));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_CurrentFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_CurrentFrame));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_FrameCount=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_FrameCount));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_LoopFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_LoopFrame));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmHandleNumber=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmHandleNumber));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageIndex=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmLogicalPageIndex));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_EmmLogicalPageOffset));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_PaletteDataOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
+//     }
+// #endif
 
     // TODO(JimBalcomb): add defines for offsets and struct for LBX_FLIC_HDR
     farpokeb(SAMB_data, 10, (char)EmmHndl);                          // 10 0x0A LBX_FLIC_HDR.EMM_Handle_Number
@@ -1436,27 +1443,27 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     }
 
 
-#ifdef DEBUG
-    if (bDebugDetail)
-    {
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_Width=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Width));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_Height=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Height));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_CurrentFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_CurrentFrame));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_FrameCount=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_FrameCount));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_LoopFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_LoopFrame));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmHandleNumber=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmHandleNumber));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageIndex=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmLogicalPageIndex));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_EmmLogicalPageOffset));
-        dlvfprintf("DEBUG: [%s, %d] FlicHdr_PaletteDataOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
-    }
-#endif
+// #ifdef DEBUG
+//     if (bDebugDetail)
+//     {
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_Width=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Width));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_Height=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_Height));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_CurrentFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_CurrentFrame));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_FrameCount=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_FrameCount));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_LoopFrame=%d\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_LoopFrame));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmHandleNumber=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmHandleNumber));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageIndex=%d\n", __FILE__, __LINE__, farpeekb(SAMB_data, FlicHdr_EmmLogicalPageIndex));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_EmmLogicalPageOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_EmmLogicalPageOffset));
+//         dlvfprintf("DEBUG: [%s, %d] FlicHdr_PaletteDataOffset=0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
+//     }
+// #endif
 
-#ifdef DEBUG
-    //if (bDebugDetail)
-    //{
-        dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d) {SAMB_data=0x%04X}\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType, SAMB_data);
-    //}
-#endif
+// #ifdef DEBUG
+//     //if (bDebugDetail)
+//     //{
+//         dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d) {SAMB_data=0x%04X}\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType, SAMB_data);
+//     //}
+// #endif
     return SAMB_data;
 }
 
@@ -1483,9 +1490,9 @@ SAMB_addr EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, SAMB_addr SAMB_head
     unsigned int ReadNbytes;        // LBXREADDATA()
     SAMB_ptr pSAMB_head;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+// #endif
 
     //tmp_SAMB_head = SAMB_head;
     SAMB_data = ST_FAILURE;
@@ -1540,14 +1547,14 @@ SAMB_addr EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, SAMB_addr SAMB_head
     */
 
 Error:
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = ST_FAILURE }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = ST_FAILURE }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
+// #endif
     return ST_FAILURE;
 Exit:
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
+// #endif
     return SAMB_data;
 }
 
@@ -1572,9 +1579,9 @@ int EMM_LBXR_DirectLoad(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_data, i
     unsigned long DataSize_Paras;   // LBXLOADTYPE()
     unsigned int ReadNbytes;        // LBXREADDATA()
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize);
+// #endif
 
     tmp_LbxEntry = LbxEntry;
 
@@ -1628,14 +1635,14 @@ int EMM_LBXR_DirectLoad(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_data, i
     EMM_MapnRead(0, SAMB_data, tmp_DataOffsetBegin_Ofst, tmp_DataOffsetBegin_Sgmt, 16, EmmHndl);
 
 Error:
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
+// #endif
     return ST_FAILURE;
 Exit:
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
+// #endif
     return ST_SUCCESS;
 }
 
@@ -1650,25 +1657,25 @@ unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
     int itrEmmOpenHandles;
     unsigned int EmmHndl;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_CheckHandleOpen(EmmHndlNm=%s)\n", __FILE__, __LINE__, EmmHndlNm);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_CheckHandleOpen(EmmHndlNm=%s)\n", __FILE__, __LINE__, EmmHndlNm);
+// #endif
 
     itrEmmOpenHandles = 0;
     EmmHndl = 0;
     while ( (itrEmmOpenHandles < g_EMM_Open_Handles) && (EmmHndl == 0) )
     {
-        if ( stricmp(g_EMM_Table[itrEmmOpenHandles].eEmmHndlNm, EmmHndlNm) == 0 )
+        if ( stricmp(EMM_Table[itrEmmOpenHandles].eEmmHndlNm, EmmHndlNm) == 0 )
         {
-            EmmHndl = g_EMM_Table[itrEmmOpenHandles].eEmmHndlNbr;
-            g_LBX_EmmRsvd = g_EMM_Table[itrEmmOpenHandles].eEmmRsrvd;
+            EmmHndl = EMM_Table[itrEmmOpenHandles].eEmmHndlNbr;
+            g_LBX_EmmRsvd = EMM_Table[itrEmmOpenHandles].eEmmRsrvd;
         }
         itrEmmOpenHandles++;
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: EMM_CheckHandleOpen(EmmHndlNm=%s) {EmmHndl=%u}\n", __FILE__, __LINE__, EmmHndlNm, EmmHndl);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_CheckHandleOpen(EmmHndlNm=%s) {EmmHndl=%u}\n", __FILE__, __LINE__, EmmHndlNm, EmmHndl);
+// #endif
 
     return EmmHndl;
 }
@@ -1677,14 +1684,19 @@ unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
 void EMM_Shutdown(void)
 {
     unsigned int itrOpenHandles = 0;
-//    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Shutdown()\n", __FILE__, __LINE__);
 
+// #ifdef DEBUG
+//    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Shutdown()\n", __FILE__, __LINE__);
+// #endif
+
+// #ifdef DEBUG
 //    dlvfprintf("DEBUG: gEMM_Open_Handles: %u\n", g_EMM_Open_Handles);
+// #endif
 
     while (itrOpenHandles < g_EMM_Open_Handles)
     {
 //        dlvfprintf("DEBUG: gEMM_Open_Handles: %u;  itrOpenHandles: %u\n", g_EMM_Open_Handles, itrOpenHandles);
-        EMM_ReleaseHandle(g_EMM_Table[itrOpenHandles].eEmmHndlNbr);
+        EMM_ReleaseHandle(EMM_Table[itrOpenHandles].eEmmHndlNbr);
         itrOpenHandles++;
     }
 
@@ -1693,7 +1705,9 @@ void EMM_Shutdown(void)
         EMM_ReleaseHandle(g_EMM_Overlay_Handle);
     }
 
+// #ifdef DEBUG
 //    dlvfprintf("DEBUG: [%s, %d] END: EMM_Shutdown()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // s13p20
@@ -1722,7 +1736,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 
     while (varItrOurOpenHandleCount < g_EMM_Open_Handles)
     {
-        if (strcmp(EmmHandleName, g_EMM_Table[varItrOurOpenHandleCount].eEmmHndlNm) == 0)
+        if (strcmp(EmmHandleName, EMM_Table[varItrOurOpenHandleCount].eEmmHndlNm) == 0)
         {
             varExistingEmmHndlNbr = varItrOurOpenHandleCount;
         }
@@ -1733,10 +1747,10 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
     if (varExistingEmmHndlNbr != -1)
     {
         /* If the reuqested page count is not the same as the existing page count...*/
-        varEmmHndlNbr = EMM_GetHandlePageCount(g_EMM_Table[varExistingEmmHndlNbr].eEmmHndlNbr);
+        varEmmHndlNbr = EMM_GetHandlePageCount(EMM_Table[varExistingEmmHndlNbr].eEmmHndlNbr);
         if (varOurOpenHandlePageCount < EmmLogicalPageCount)
         {
-            itoa(g_EMM_Table[varExistingEmmHndlNbr].eEmmHndlNbr, Tmp_Conv_Str_1, 10);
+            itoa(EMM_Table[varExistingEmmHndlNbr].eEmmHndlNbr, Tmp_Conv_Str_1, 10);
             itoa(varEmmHndlNbr, Tmp_Conv_Str_2, 10);
             itoa(EmmLogicalPageCount, Tmp_Conv_Str_3, 10);
             strcpy(Temp_String, EmmHandleName);
@@ -1754,16 +1768,16 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
         }
     }
 
-    strcpy(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
+    strcpy(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
 
-//#ifdef TEST
-    if ( stricmp(EmmHandleName, "MAINSCRN") == 0 )
-    {
-        TST_LBX_MAINSCRN_000.EMM_Table_Index = g_EMM_Open_Handles;
-    }
-//#endif
+// #ifdef TEST
+//     if ( stricmp(EmmHandleName, "MAINSCRN") == 0 )
+//     {
+//         TST_LBX_MAINSCRN_000.EMM_Table_Index = g_EMM_Open_Handles;
+//     }
+// #endif
 
-// TODO(JimBalcomb): figure out what this business is with neg(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0])
+// TODO(JimBalcomb): figure out what this business is with neg(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0])
 //     if ( EmmRsvdFlag == 1 )
 //     {
 //         /*
@@ -1793,26 +1807,26 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 //             gEMM_Table[g_EMM_Open_Handles].EmmHndlNm)
 //         ?
 //         */
-//         printf("DEBUG: [%s, %d]: g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm: %s\n", __FILE__, __LINE__, g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
-//         tmp_EmmHndlNm_byte0 = g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0];
+//         printf("DEBUG: [%s, %d]: EMM_Table[g_EMM_Open_Handles].eEmmHndlNm: %s\n", __FILE__, __LINE__, EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
+//         tmp_EmmHndlNm_byte0 = EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0];
 //         printf("DEBUG: [%s, %d]: tmp_EmmHndlNm_byte0: %c)\n", __FILE__, __LINE__, tmp_EmmHndlNm_byte0);
 //         tmp_EmmHndlNm_byte0 = -tmp_EmmHndlNm_byte0;
 //         printf("DEBUG: [%s, %d]: tmp_EmmHndlNm_byte0: %c)\n", __FILE__, __LINE__, tmp_EmmHndlNm_byte0);
-//         g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0] = tmp_EmmHndlNm_byte0;
-//         printf("DEBUG: [%s, %d]: g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm: %s\n", __FILE__, __LINE__, g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
+//         EMM_Table[g_EMM_Open_Handles].eEmmHndlNm[0] = tmp_EmmHndlNm_byte0;
+//         printf("DEBUG: [%s, %d]: EMM_Table[g_EMM_Open_Handles].eEmmHndlNm: %s\n", __FILE__, __LINE__, EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
 // getch();
 //     }
 
-    varEmmHndlNbr = EMM_MakeNamedHandle(EmmLogicalPageCount, g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
+    varEmmHndlNbr = EMM_MakeNamedHandle(EmmLogicalPageCount, EMM_Table[g_EMM_Open_Handles].eEmmHndlNm);
 
     if (varEmmHndlNbr == 0)
     {
         goto Exit;
     }
 
-    strcpy(g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
-    g_EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = EmmRsvdFlag;
-    g_EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = varEmmHndlNbr;
+    strcpy(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
+    EMM_Table[g_EMM_Open_Handles].eEmmRsrvd = EmmRsvdFlag;
+    EMM_Table[g_EMM_Open_Handles].eEmmHndlNbr = varEmmHndlNbr;
     g_EMM_Open_Handles++;
 
     if (EmmRsvdFlag == 1)
@@ -1846,107 +1860,60 @@ Exit:
 // s13p25
 void EMM_Map4_EMMDATAH(void)
 {
-    EMM_Map4(g_EmmHndlNbr_EMMDATAH, 0);
+    EMM_Map4(EmmHndlNbr_EMMDATAH, 0);
 }
 
 // s13p26
-unsigned int EMM_EMMDATAH_AllocFirst(int nparas)
+SAMB_addr EMM_EMMDATAH_AllocFirst(int nparas)
 {
-    unsigned int paras_free;
-    unsigned int SAMB_head;
-    unsigned int SAMB_data;
+    SAMB_addr SAMB_head;
+    SAMB_addr SAMB_data;
     int tmp_nparas;
-    unsigned int tmp_paras_free;
-    unsigned int tmp_g_EMMDATAH_Level;
+    int tmp_nparas_free;
 
-//    printf("DEBUG: %s %d BEGIN: EMM_EMMDATAH_AllocFirst()\n", __FILE__, __LINE__);
+    EMMDATAH_Level = 0;
 
-    tmp_nparas = nparas;
-
-    g_EMMDATAH_Level = 0;
-
-    SAMB_head = EMM_PageFrameBaseAddress;
-    SAMB_head = SAMB_head + g_EMMDATAH_Level;
-
+    SAMB_head = EMM_PageFrameBaseAddress + EMMDATAH_Level;
     EMM_Map4_EMMDATAH();
-
-    tmp_nparas = tmp_nparas + 1;
-
-    tmp_paras_free = 4090;  // 0FFAh
-    tmp_paras_free = tmp_paras_free - g_EMMDATAH_Level;
-    paras_free = tmp_paras_free;
-
-    if ( paras_free < tmp_nparas )
+    tmp_nparas = nparas + 1;
+    tmp_nparas_free = 4090 - EMMDATAH_Level;  // 0FFAh
+    if ( tmp_nparas_free < tmp_nparas )
     {
-        SA_Alloc_Error(0x04, (tmp_nparas - paras_free));  // Alloc_EMM_too_small
+        SA_Alloc_Error(0x04, (tmp_nparas - tmp_nparas_free));  /* Alloc_EMM_too_small */
     }
-
-    farpokew(SAMB_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
-    farpokew(SAMB_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
-    farpokew(SAMB_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
+    farpokew(SAMB_head,  4, 0x12FA);            // s_SAMB.MemSig1 = e_SAMB_MemSig1
+    farpokew(SAMB_head,  6, 0x4ECF);            // s_SAMB.MemSig2 = e_SAMB_MemSig2
+    farpokew(SAMB_head,  8, (tmp_nparas - 1));  // s_SAMB.Size_Paras = nparas + 1 - 1
     farpokew(SAMB_head, 10, 1);                 // s_SAMB.Used_Paras = 1
     farpokew(SAMB_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
-
-    tmp_g_EMMDATAH_Level = tmp_nparas;
-    tmp_g_EMMDATAH_Level = tmp_g_EMMDATAH_Level + 1;
-    g_EMMDATAH_Level = g_EMMDATAH_Level + tmp_g_EMMDATAH_Level;
-
+    EMMDATAH_Level = EMMDATAH_Level + tmp_nparas + 1;
     SAMB_data = SAMB_head + 1;
-
-//    printf("DEBUG: %s %d END: EMM_EMMDATAH_AllocFirst()\n", __FILE__, __LINE__);
     return SAMB_data;
 }
 
 // s13p27
-unsigned int EMM_EMMDATAH_AllocNext(int nparas)
+SAMB_addr EMM_EMMDATAH_AllocNext(int nparas)
 {
-    unsigned int paras_free;
     unsigned int SAMB_head;
     unsigned int SAMB_data;
     int tmp_nparas;
-    unsigned int tmp_paras_free;
-    unsigned int tmp_g_EMMDATAH_Level;
+    int tmp_nparas_free;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
-#endif
-
-    tmp_nparas = nparas;
-
+    SAMB_head = EMM_PageFrameBaseAddress + EMMDATAH_Level;
     EMM_Map4_EMMDATAH();
-
-    SAMB_head = EMM_PageFrameBaseAddress;
-    SAMB_head = SAMB_head + g_EMMDATAH_Level;
-
-    EMM_Map4_EMMDATAH();
-
-    tmp_nparas = tmp_nparas + 1;
-
-    tmp_paras_free = 4090;  // 0FFAh
-    tmp_paras_free = tmp_paras_free - g_EMMDATAH_Level;
-    paras_free = tmp_paras_free;
-
-    if ( paras_free < tmp_nparas )
+    tmp_nparas = nparas + 1;
+    tmp_nparas_free = 4090 - EMMDATAH_Level;  // 0FFAh
+    if ( tmp_nparas_free < tmp_nparas )
     {
-        SA_Alloc_Error(0x04, (tmp_nparas - paras_free));  // Alloc_EMM_too_small
+        SA_Alloc_Error(0x04, (tmp_nparas - tmp_nparas_free));  /* Alloc_EMM_too_small */
     }
-
-    farpokew(SAMB_head, 4, 0x12FA);             // s_SAMB.MemSig1 = e_SAMB_MemSig1
-    farpokew(SAMB_head, 6, 0x4ECF);             // s_SAMB.MemSig2 = e_SAMB_MemSig2
-    farpokew(SAMB_head, 8, (tmp_nparas - 1));   // s_SAMB.Size_Paras = nparas + 1 - 1
+    farpokew(SAMB_head,  4, 0x12FA);            // s_SAMB.MemSig1 = e_SAMB_MemSig1
+    farpokew(SAMB_head,  6, 0x4ECF);            // s_SAMB.MemSig2 = e_SAMB_MemSig2
+    farpokew(SAMB_head,  8, (tmp_nparas - 1));  // s_SAMB.Size_Paras = nparas + 1 - 1
     farpokew(SAMB_head, 10, 1);                 // s_SAMB.Used_Paras = 1
     farpokew(SAMB_head, 14, 1);                 // s_SAMB.Marked_Paras = 1
-
-    tmp_g_EMMDATAH_Level = tmp_nparas;
-    tmp_g_EMMDATAH_Level = tmp_g_EMMDATAH_Level + 1;
-    g_EMMDATAH_Level = g_EMMDATAH_Level + tmp_g_EMMDATAH_Level;
-
+    EMMDATAH_Level = EMMDATAH_Level + tmp_nparas + 1;
     SAMB_data = SAMB_head + 1;
-
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_EMMDATAH_AllocNext()\n", __FILE__, __LINE__);
-#endif
-
     return SAMB_data;
 }
 
@@ -1961,16 +1928,16 @@ void EMM_BuildEmmErrStr(char *str_buf)
 {
     char tmp_string[20];
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
+// #endif
 
     itoa(g_EMM_MinKB, tmp_string, 10);
     strcpy(str_buf, "You must have at least ");
     strcat(str_buf, tmp_string);
     strcat(str_buf, "K of expanded memory.");
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: EMM_BuildEmmErrStr()\n", __FILE__, __LINE__);
+// #endif
 }

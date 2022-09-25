@@ -2,14 +2,16 @@
 // ST_LBX.H
 // ~= c&p LBX_Load_Entry()
 
-#include "ST_HEAD.H"
 #include "ST_TYPE.H"
+#include "ST_DEF.H"
+#include "ST_LBX.H"
 
 #include "ST_EMM.H"
-#include "ST_LBX.H"
 #include "ST_SA.H"
 
-#include "STU_DBG.H"
+// #ifdef DEBUG
+// #include "STU_DBG.H"
+// #endif
 
 
 SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
@@ -59,7 +61,7 @@ SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int 
 
     if ( SAMB_data == ST_FAILURE )
     {
-        HERE("LBX not in EMM");
+        // HERE("LBX not in EMM");
 
         /*
             BEGIN: Current vs. Previous
@@ -118,7 +120,7 @@ SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int 
                 LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */
             }
 
-            HERE("lbx_read_sgmt(gsa_LBX_Header, SZ_LBX_HDR_B, g_LBX_FileHandle);");
+            // HERE("lbx_read_sgmt(gsa_LBX_Header, SZ_LBX_HDR_B, g_LBX_FileHandle);");
             lbx_read_sgmt(gsa_LBX_Header, SZ_LBX_HDR_B, g_LBX_FileHandle);
 
             if ( farpeekw(gsa_LBX_Header, 2) != LBX_MAGSIG )

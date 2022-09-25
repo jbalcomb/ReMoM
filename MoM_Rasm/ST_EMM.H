@@ -1,7 +1,12 @@
 #ifndef ST_EMM_H
 #define ST_EMM_H
 
+/*
+    Expanded Memory
 
+    EMS - Expanded Memory Specification
+    EMM - Expanded Memory Manager
+*/
 
 /*
 J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_PM.C
@@ -386,7 +391,7 @@ typedef struct s_MAP_STRUCT MAP_STRUCT;
 	/*   page_frame_ptr = FP(page_frame_seg);                                */
 	/*   *page_frame_ptr = 0;                                                */
 	/*-----------------------------------------------------------------------*/
-	#define FP(_SEG_) ((void far *)((unsigned long)(_SEG_) << 16))
+//    #define FP(_SEG_) ((void far *)((unsigned long)(_SEG_) << 16))
 
 
 
@@ -412,7 +417,7 @@ extern unsigned int g_EmmHndl_FIGUREX;      // dseg:9486
 */
 
 extern unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
-//extern char EMM_device_name[];                    // dseg:40E6
+// internal/private  extern char EMM_device_name[];                    // dseg:40E6
 
 // // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.
 // // dseg:40EF EMS_L2P_Map_Record <0,      1>
@@ -441,15 +446,15 @@ extern char *cnst_EmmErr_Space;                     // dseg:4177
 */
 
 //dseg:A5E0 UU_EMMData_PrevLvl dw 0
-extern unsigned int g_EMM_Overlay_Handle;            // dseg:A5E2
-extern unsigned int g_EMMDATAH_Level;                 // dseg:A5E4
-extern unsigned int g_EmmHndlNbr_EMMDATAH;            // dseg:A5E6
+extern unsigned int g_EMM_Overlay_Handle;           // dseg:A5E2
+// internal/private  extern unsigned int EMMDATAH_Level;                 // dseg:A5E4
+// internal/private  extern unsigned int EmmHndlNbr_EMMDATAH;            // dseg:A5E6
 // ? dseg:A5E8 UU_EMM_Handle dw 0
 extern unsigned int g_EmmHndlNbr_VGAFILEH;            // dseg:A5EA
 extern unsigned int g_LBX_EmmRsvd;              // dseg:A5EC
-extern unsigned int g_EmmHndlNbr_YOMOMA;              // dseg:A5EE
-extern unsigned int g_EMM_OK;                         // dseg:A5F0
-extern EMM_Record g_EMM_Table[];            // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
+// internal/private  extern unsigned int EmmHndlNbr_YOMOMA;              // dseg:A5EE
+// internal/private  extern unsigned int EMM_OK;                         // dseg:A5F0
+// internal/private  extern EMM_Record EMM_Table[];            // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
 extern unsigned int g_EMM_MinKB;                      // dseg:A7D2
 
 /*

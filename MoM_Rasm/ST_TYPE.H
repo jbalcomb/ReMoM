@@ -7,34 +7,6 @@
 // ? #if defined(__DOS16__) ?
 
 
-/*
-// ? headerless, headered, sub-allocation ?
-
-int SA_Alloc_Validate(SAMB_addr SAMB_head)                              // s07p04
-
-SAMB_ptr SA_Allocate_Space(unsigned int nparas);                        // s08p07
-SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
-
-SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
-SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
-*/
-
-typedef unsigned int        SAMB_addr;
-typedef unsigned char  *    SAMB_ptr;
-
-typedef SAMB_addr SAMB_head;  // 
-typedef SAMB_addr SAMB_data;  // 
-
-
-// // /j/STU/DBWD/developc/flilib/flisrc ... aatypes.h
-// #ifndef NULL
-// #define NULL ((void *)0L)
-// #endif /* NULL */
-#ifndef NULL
-#define NULL 0
-#endif /* NULL */
-
-
 typedef unsigned char   DB;
 typedef unsigned short  DW;
 typedef unsigned long   DD;

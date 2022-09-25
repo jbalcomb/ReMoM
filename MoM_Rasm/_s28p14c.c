@@ -2,7 +2,10 @@
 // ST_FLIC.H
 
 #include "ST_FLIC.H"
-#include "STU_DBG.H"
+
+// #ifdef STU_DEBUG
+// #include "STU_DBG.H"
+// #endif
 
 
  void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
@@ -14,9 +17,9 @@
     unsigned int tmp_DI;
     int tmp_SI;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_SetFrame(FlicHdr_SgmtAddr=0x%04X, Frame_index=%d)\n", __FILE__, __LINE__, FlicHdr_SgmtAddr, Frame_Index);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_SetFrame(FlicHdr_SgmtAddr=0x%04X, Frame_index=%d)\n", __FILE__, __LINE__, FlicHdr_SgmtAddr, Frame_Index);
+// #endif
 
     tmp_DI = FlicHdr_SgmtAddr;
 
@@ -30,7 +33,7 @@
     
     if ( !(tmp_SI < Frame_Count) )
     {
-        HERE("if ( !(tmp_SI < Frame_Count) )");
+        // HERE("if ( !(tmp_SI < Frame_Count) )");
         // mov  ax, si
         // sub  ax, [bp+Frame_Count]
         // xor  dx, dx
@@ -52,11 +55,11 @@
 
     farpokew(tmp_DI, FlicHdr_CurrentFrame, tmp_SI);  // FLIC_HDR.Current_Frame
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] Frame_index=%d, tmp_SI=%d, Frame_Count=%d, Loop_Frame=%d, Loop_Length=%d)\n", __FILE__, __LINE__, Frame_Index, tmp_SI, Frame_Count, Loop_Frame, Loop_Length);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] Frame_index=%d, tmp_SI=%d, Frame_Count=%d, Loop_Frame=%d, Loop_Length=%d)\n", __FILE__, __LINE__, Frame_Index, tmp_SI, Frame_Count, Loop_Frame, Loop_Length);
+// #endif
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: FLIC_SetFrame(FlicHdr_SgmtAddr=0x%04X, Frame_index=%d)\n", __FILE__, __LINE__, FlicHdr_SgmtAddr, Frame_Index);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: FLIC_SetFrame(FlicHdr_SgmtAddr=0x%04X, Frame_index=%d)\n", __FILE__, __LINE__, FlicHdr_SgmtAddr, Frame_Index);
+// #endif
 }

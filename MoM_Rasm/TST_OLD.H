@@ -2,7 +2,7 @@
 #ifndef TST_MGC_H
 #define TST_MGC_H
 
-extern char *g_FontFileName;
+extern char * g_FontFileName;
 
 
 #ifdef __cplusplus

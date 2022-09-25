@@ -20,7 +20,9 @@
 #include "ST_CTRL.H"
 #include "ST_GUI.H"
 
+#ifdef DEBUG
 #include "STU_DBG.H"
+#endif
 
 /*
     ? Fall-Through Path ?
@@ -68,11 +70,13 @@ int IN_ProcessInput(void)
     
     if ( KBD_CheckBuffer() != 0 )  // _s33p16  int KBD_CheckBuffer(void)
     {
-        HERE("( KBD_CheckBuffer() != 0 )");
+        // HERE("( KBD_CheckBuffer() != 0 )");
         InputCode = UI_ProcessInput_KD(&CtrlIdx);  // _s34p22c.c  int GUI_NoTriggerKeys(int *CtrlIdx)
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] InputCode: %d\n", __FILE__, __LINE__, InputCode);
 #endif
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] CtrlIdx: %d\n", __FILE__, __LINE__, CtrlIdx);
 #endif
@@ -158,7 +162,7 @@ int IN_ProcessInput(void)
     }  /* if ( KBD_CheckBuffer() != 0 ) */
     else
     {
-        HERE("( KBD_CheckBuffer() == 0 )");
+        // HERE("( KBD_CheckBuffer() == 0 )");
         /*
             ProgramPath:
             KBD_CheckBuffer() == 0
@@ -168,25 +172,28 @@ int IN_ProcessInput(void)
 
         if ( MD_GetButtonStatus() == 0 )
         {
-            HERE("( MD_GetButtonStatus() == 0 )");
+            // HERE("( MD_GetButtonStatus() == 0 )");
             // TODO(JimBalcomb,20220818): Y/N/M add support for ClickRec/MouseEmulation
         }
         else
         {
-            HERE("( MD_GetButtonStatus() != 0 )");
+            // HERE("( MD_GetButtonStatus() != 0 )");
             /*
                 ProgramPath:
                     KBD_CheckBuffer() == 0
                     MD_INT_SetMvOnly()
                     MD_GetButtonStatus() != 0
             */
-            HERE("MD_ButtonStatus = MD_GetButtonStatus();");
+            // HERE("MD_ButtonStatus = MD_GetButtonStatus();");
             MD_ButtonStatus = MD_GetButtonStatus();
-            dlvfprintf("DEBUG: [%s, %d] MD_GetButtonStatus() |-> MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
             
+            #ifdef DEBUG
+            dlvfprintf("DEBUG: [%s, %d] MD_GetButtonStatus() |-> MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
+            #endif
+
             if ( MD_ButtonStatus != 2 )  // ? MD LEFT MOUSE BUTTON CLICK
             {
-                HERE("( MD_ButtonStatus != 2 )");
+                // HERE("( MD_ButtonStatus != 2 )");
                 /*
                     ProgramPath:
                         KBD_CheckBuffer() == 0
@@ -198,7 +205,7 @@ int IN_ProcessInput(void)
                 if ( MD_GetButtonStatus() == 0 )
                 {
                     // TODO(JimBalcomb,20220818): figure out why this is being checked again and where this program path goes
-                    HERE("( MD_GetButtonStatus() == 0 )");
+                    // HERE("( MD_GetButtonStatus() == 0 )");
                     /*
                         ProgramPath:
                             KBD_CheckBuffer() == 0
@@ -211,7 +218,7 @@ int IN_ProcessInput(void)
                 }  /* if ( MD_GetButtonStatus() == 0 ) */
                 else
                 {
-                    HERE("( MD_GetButtonStatus() != 0 )");
+                    // HERE("( MD_GetButtonStatus() != 0 )");
                     /*
                         ProgramPath:
                             KBD_CheckBuffer() == 0
@@ -222,22 +229,30 @@ int IN_ProcessInput(void)
                             MD_GetButtonStatus() != 0
                     */
                     X_Pos = MD_GetX();
+                    #ifdef DEBUG
                     dlvfprintf("DEBUG: [%s, %d] MD_GetX() |-> X_Pos: %d\n", __FILE__, __LINE__, X_Pos);
+                    #endif
                     Y_Pos = MD_GetY();
+                    #ifdef DEBUG
                     dlvfprintf("DEBUG: [%s, %d] MD_GetY() |-> Y_Pos: %d\n", __FILE__, __LINE__, Y_Pos);
+                    #endif
                     g_GUI_Cursor_Offset = CR_GetOffset();
+                    #ifdef DEBUG
                     dlvfprintf("DEBUG: [%s, %d] CR_GetOffset() |-> g_GUI_Cursor_Offset: %d\n", __FILE__, __LINE__, g_GUI_Cursor_Offset);
+                    #endif
                     CtrlIdx = 0;
                     //Unused_Local = -1;  // ? related to, at the beginning, `g_CTRL_Focused = -1;` ?
                     InputCode = 0;
                     CtrlIdx = GUI_MouseOverControl();
+                    #ifdef DEBUG
                     dlvfprintf("DEBUG: [%s, %d] GUI_MouseOverControl() |-> CtrlIdx: %d\n", __FILE__, __LINE__, CtrlIdx);
+                    #endif
                     /*
                         ? big break/branch here ? whether the click is meaningful ?
                     */
                     if ( CtrlIdx == 0 )
                     {
-                        HERE("( CtrlIdx == 0 )");
+                        // HERE("( CtrlIdx == 0 )");
                         /*
                             ProgramPath:
                                 KBD_CheckBuffer() == 0
@@ -251,7 +266,7 @@ int IN_ProcessInput(void)
 
                         if ( g_CTRL_Focused != -1 )
                         {
-                            HERE("( g_CTRL_Focused != -1 )");
+                            // HERE("( g_CTRL_Focused != -1 )");
 
                             //if ( gfp_CTRL_Control_Table[g_CTRL_Focused].Ctrl_Type == Ctrl_Slidebar )
                             //    SCRN_CallRedrawFn()
@@ -263,7 +278,7 @@ int IN_ProcessInput(void)
                         }
                         else
                         {
-                            HERE("( g_CTRL_Focused == -1 )");
+                            // HERE("( g_CTRL_Focused == -1 )");
                         }
 
                         // CRP_MD_SetClick_CilckRec2(X_Pos,Y_Pos);
@@ -271,7 +286,7 @@ int IN_ProcessInput(void)
                     }  /* if ( CtrlIdx == 0 ) */
                     else
                     {
-                        HERE("( CtrlIdx != 0 )");
+                        // HERE("( CtrlIdx != 0 )");
                         /*
                             ProgramPath:
                                 KBD_CheckBuffer() == 0
@@ -285,12 +300,12 @@ int IN_ProcessInput(void)
 
                         if ( CtrlIdx != g_CTRL_Focused )
                         {
-                            HERE("( CtrlIdx != g_CTRL_Focused )");
+                            // HERE("( CtrlIdx != g_CTRL_Focused )");
 
                         }
                         else
                         {
-                            HERE("( CtrlIdx == g_CTRL_Focused )");
+                            // HERE("( CtrlIdx == g_CTRL_Focused )");
 
                         }
 
@@ -305,12 +320,12 @@ int IN_ProcessInput(void)
                 g_CTRL_MouseFocusCtrl = 0;
                 if ( CtrlIdx == 0 )
                 {
-                    HERE("( CtrlIdx == 0 )");
+                    // HERE("( CtrlIdx == 0 )");
 
                 }
                 else
                 {
-                    HERE("( CtrlIdx != 0 )");
+                    // HERE("( CtrlIdx != 0 )");
                     // @@PostClickProcess_CtrlIdx
                     /*
                     MD_GetClickRec1();
@@ -336,7 +351,7 @@ int IN_ProcessInput(void)
                     {
                         case Ctrl_ClickButton:
                         {
-                            HERE("case Ctrl_ClickButton");
+                            // HERE("case Ctrl_ClickButton");
                             break;
                         }
 
@@ -349,14 +364,14 @@ int IN_ProcessInput(void)
                 g_CTRL_Focused == -1;
                 if ( MD_ButtonStatus == 0 )
                 {
-                    HERE("( MD_ButtonStatus == 0 )");
+                    // HERE("( MD_ButtonStatus == 0 )");
                     // @@JmpButtonStatusZero  @@ReturnFalse
                     goto ReturnFalse;
 
                 }
                 else
                 {
-                    HERE("( MD_ButtonStatus != 0 )");
+                    // HERE("( MD_ButtonStatus != 0 )");
                     // @@Return_InputControlIndex
 
                 }
@@ -364,7 +379,7 @@ int IN_ProcessInput(void)
             }  /* if ( MD_ButtonStatus != 2 ) */
             else
             {
-                HERE("( MD_ButtonStatus == 2 )");
+                // HERE("( MD_ButtonStatus == 2 )");
                 // TODO(JimBalcomb,20220818): add support for right-click/ContextHelp
             }  /* else ( MD_ButtonStatus == 2 ) */
 
@@ -385,8 +400,10 @@ ReturnFalse:
     goto Done;
 
 Done:
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: IN_ProcessInput()\n", __FILE__, __LINE__);
 #endif
+
     return CtrlIdx;
 }

@@ -12,7 +12,8 @@ extern "C" {
 */
 
 // s14p01
-void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA);
+// void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA);
+void Hardware_Init(int argInputType, char *argFontFileName);
 
 // s14p03
 void VGA_DAC_Init(char *PaletteLbxFileName);

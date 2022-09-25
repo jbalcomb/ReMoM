@@ -10,7 +10,10 @@
 #include "ST_VGA.H"
 
 #include "STU_BITS.H"
+
+#ifdef DEBUG
 #include "STU_DBG.H"
+#endif
 
 //unsigned char VGA_WriteMapMasks3[4] = { 0x01, 0x02, 0x04, 0x08 };
 
@@ -305,6 +308,7 @@ FLIC_RLE()
 asm mov ax, seg DGROUP
 asm mov ds, ax
 asm assume ds:DGROUP
+
 #ifdef DEBUG
     // dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_A(ScreenPage_X=%d, ScreenPage_Y=%d, FlicWidth=%d, Img_Off=0x%03X, Img_Seg=0x%04X)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, FlicWidth, Img_Off, Img_Seg);
     dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_A()\n", __FILE__, __LINE__);
@@ -746,6 +750,7 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
 
     SrcSgmt = SAMB_data_FLIC_HDR;
     DstSgmt = SAMB_data_FLIC_HDR;
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] SrcSgmt: 0x%4X\n", __FILE__, __LINE__, SrcSgmt);
     dlvfprintf("DEBUG: [%s, %d] DstSgmt: 0x%4X\n", __FILE__, __LINE__, DstSgmt);
@@ -761,6 +766,7 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
     fptr_Src_Byte = (byte _FAR *)MK_FP(SrcSgmt, 0);
     fptr_Src_Word = (word _FAR *)MK_FP(SrcSgmt, 0);
     fptr_Src = (void _FAR *)MK_FP(SrcSgmt, 0);
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fptr_Src_Word: %Fp\n", __FILE__, __LINE__, fptr_Src_Word);
     dlvfprintf("DEBUG: [%s, %d] fptr_Src_Byte: %Fp\n", __FILE__, __LINE__, fptr_Src_Byte);
@@ -828,14 +834,18 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
         // SrcOfst = FLIC_HDR.EmmLogicalPageOffset; SrcOfst = SrcOfst + (4 * Frame_Index); SrcOfst = SrcOfst + ofsFlicFrameOffsetTable;
         // AKA SrcOfst = FLIC_HDR.EmmLogicalPageOffset + (4 * Frame_Index) + ofsFlicFrameOffsetTable;
     SrcOfst = fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable;  // ? 0x02d2 ? offset in LBX File in EMM to FLIC File Frame Offset Table for Frame_Index?
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] SrcSgmt: 0x%04X\n", __FILE__, __LINE__, SrcSgmt);
     dlvfprintf("DEBUG: [%s, %d] SrcOfst: 0x%04X\n", __FILE__, __LINE__, SrcOfst);
 #endif
+
     fptr_Src_Word = (word _FAR *)MK_FP(SrcSgmt, SrcOfst);
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fptr_Src_Word: %Fp\n", __FILE__, __LINE__, fptr_Src_Word);
 #endif
+
     // Ref:  J:\STU\devel\STU-MoM_Rasm\MoM_Rasm\_s21p07c.c
     // // ffh_image_offset = (unsigned int)*SrcSgmt[SrcOfst++];
     // // ffh_color_count = (unsigned char)*SrcSgmt[SrcOfst++];
@@ -855,6 +865,7 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
     // fh_FrameDataOffset_Loword = (word)MK_FP(SrcSgmt, SrcOfst+2);
     fh_FrameDataOffset_LoWord = fptr_Src_Word[0];
     fh_FrameDataOffset_HiWord = fptr_Src_Word[1];
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fh_FrameDataOffset_LoWord: 0x%04X\n", __FILE__, __LINE__, fh_FrameDataOffset_LoWord);  // MAINSCRN_LBX_000,0: 6E 03
     dlvfprintf("DEBUG: [%s, %d] fh_FrameDataOffset_HiWord: 0x%04X\n", __FILE__, __LINE__, fh_FrameDataOffset_HiWord);  // MAINSCRN_LBX_000,0: 00 00
@@ -881,10 +892,12 @@ asm     add  dx, [es:FlicHdr_EmmLogicalPageOffset]    // DstSgmt = SAMB_data_FLI
     tmp_EmmLogicalPageIndex = _AX;
     // SrcOfst = _DX;  // Offset in EMM to FLIC Frame Data
     tmp_EmmFlicFrameDataOffset = _DX;
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%04X\n", __FILE__, __LINE__, cseg_EmmLogicalPageIndex);
     dlvfprintf("DEBUG: [%s, %d] tmp_EmmFlicFrameDataOffset: 0x%04X\n", __FILE__, __LINE__, tmp_EmmFlicFrameDataOffset);
 #endif
+
 //   cmp  dx, 0C000h
 //   jb   short @@EmsMapMem
 //   sub  dx, 0C000h
@@ -912,17 +925,21 @@ asm     add  dx, [es:FlicHdr_EmmLogicalPageOffset]    // DstSgmt = SAMB_data_FLI
 */
     SrcOfst = tmp_EmmLogicalPageOffset + FlicHdr_Shading;
         // mov bx, e_FlicHdr_Shading;  add bx, di;  mov bl, [bx];  xor bh, bh;  mov di, bx;
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] SrcSgmt: 0x%04X\n", __FILE__, __LINE__, SrcSgmt);
     dlvfprintf("DEBUG: [%s, %d] SrcOfst: 0x%04X\n", __FILE__, __LINE__, SrcOfst);
 #endif
+
     fptr_Src_Byte = (byte _FAR *)MK_FP(SrcSgmt, SrcOfst);
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fptr_Src_Byte: %Fp\n", __FILE__, __LINE__, fptr_Src_Byte);
 #endif
 
     fh_Shading = fptr_Src_Byte[0];
         // mov bx, e_FlicHdr_Shading;  add bx, di;  mov bl, [bx];  xor bh, bh;  mov di, bx;
+
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] fh_Shading: 0x%02X (%uu) (%dd) (%huhu) (%hdhd) (%cc)\n", __FILE__, __LINE__, fh_Shading, fh_Shading, fh_Shading, fh_Shading, fh_Shading, fh_Shading);
 #endif
@@ -938,8 +955,11 @@ asm     add  dx, [es:FlicHdr_EmmLogicalPageOffset]    // DstSgmt = SAMB_data_FLI
 
     cseg_EmmHandleNumber = fh_EmmHandleNumber;
         // mov dl, [es:FLIC_HDR.EMM_Handle_Number];  xor dh, dh;  mov [cs:cseg_EmmHndl], dx;
-dlvfprintf("DEBUG: [%s, %d] cseg_EmmHandleNumber: 0x%02X\n", __FILE__, __LINE__, cseg_EmmHandleNumber);
-dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LINE__, cseg_EmmLogicalPageIndex);
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] cseg_EmmHandleNumber: 0x%02X\n", __FILE__, __LINE__, cseg_EmmHandleNumber);
+    dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LINE__, cseg_EmmLogicalPageIndex);
+#endif
 
     _DX = cseg_EmmHandleNumber;
     _BX = cseg_EmmLogicalPageIndex;
@@ -1029,8 +1049,10 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
             dlvfprintf("DEBUG: [%s, %d] DstSgmt: 0x%04X\n", __FILE__, __LINE__, DstSgmt);
             dlvfprintf("DEBUG: [%s, %d] DstOfst: 0x%04X\n", __FILE__, __LINE__, DstOfst);
         #endif
+
         fptr_Src_Byte = (byte _FAR *)MK_FP(SrcSgmt, SrcOfst);
         fptr_Dst_Byte = (byte _FAR *)MK_FP(DstSgmt, DstOfst);
+        
         #ifdef DEBUG
             dlvfprintf("DEBUG: [%s, %d] fptr_Src_Byte: %Fp\n", __FILE__, __LINE__, fptr_Src_Byte);
             dlvfprintf("DEBUG: [%s, %d] fptr_Dst_Byte: %Fp\n", __FILE__, __LINE__, fptr_Dst_Byte);
@@ -1048,6 +1070,7 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
         //
         while (rle_ColumnCount--)
         {
+
             #ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] rle_ColumnCount: 0x%02X (%uu) (%dd) (%huhu) (%hdhd) (%cc)\n", __FILE__, __LINE__, rle_ColumnCount, rle_ColumnCount, rle_ColumnCount, rle_ColumnCount, rle_ColumnCount, rle_ColumnCount);
             #endif
@@ -1056,6 +1079,7 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
             dlvfprintf("DEBUG: [%s, %d] DstOfst: 0x%04X\n", __FILE__, __LINE__, DstOfst);
             dlvfprintf("DEBUG: [%s, %d] VgaWriteMapMask: 0x%02X\n", __FILE__, __LINE__, VgaWriteMapMask);
         #endif
+
             outportb(e_SC_INDEX, VgaWriteMapMask);  // set the write plane for the pixel column
                 // mov dx, e_SC_DATA;  mov al, ah;  out dx, al
 
@@ -1063,6 +1087,7 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
             // 1oom::lbxgfx.c::lbxgfx_draw_pixels_fmt0()  b = *data++;
             q = fptr_Dst_Byte++;
             rle_baito = *fptr_Src_Byte++;
+            
             #ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] rle_baito: 0x%02X (%uu) (%dd) (%huhu) (%hdhd) (%cc)\n", __FILE__, __LINE__, rle_baito, rle_baito, rle_baito, rle_baito, rle_baito, rle_baito);
                 dlvfprintf("DEBUG: [%s, %d] fptr_Src_Byte: %Fp\n", __FILE__, __LINE__, fptr_Src_Byte);
@@ -1111,9 +1136,11 @@ dlvfprintf("DEBUG: [%s, %d] cseg_EmmLogicalPageIndex: 0x%02X\n", __FILE__, __LIN
 
             NextColumn:
             VgaWriteMapMask = VgaWriteMapMask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
+            
             #ifdef DEBUG
                 dlvfprintf("DEBUG: [%s, %d] VgaWriteMapMask: 0x%02X\n", __FILE__, __LINE__, VgaWriteMapMask);
             #endif
+            
             if (VgaWriteMapMask >= 9)
             {
                 VgaWriteMapMask = 1;

@@ -1,11 +1,35 @@
 
+#include <STDARG.H>  /* va_list; va_arg(), va_end(), va_start() */
+#include <STDIO.H>   /* FILE; fclose(), fopen(), fread(); */
 #include <STRING.H>
 
-#include "ST_FLIC.H"
-#include "ST_VGA.H"
+#include "ST_TYPE.H"
+#include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
-#include "STU_DBG.H"
+#include "ST_EMM.H"
+#include "ST_FLIC.H"  /* s_FLIC_HDR */
+#include "ST_SA.H"  /* SAMB_head, SAMB_data, SAMB_addr, SAMB_ptr, etc. */
+#include "ST_VGA.H"  /* gsa_Palette, etc. */
+
+// #include "STU_DBG.H"
 #include "STU_TST.H"
+
+
+/*
+    EMM - Uninitialized
+        ? ALL Xref seg012 and seg013 ?
+*/
+//dseg:A5E0 UU_EMMData_PrevLvl dw 0
+extern unsigned int g_EMM_Overlay_Handle;           // dseg:A5E2
+extern unsigned int EMMDATAH_Level;                 // dseg:A5E4
+extern unsigned int EmmHndlNbr_EMMDATAH;            // dseg:A5E6
+// ? dseg:A5E8 UU_EMM_Handle dw 0
+extern unsigned int g_EmmHndlNbr_VGAFILEH;          // dseg:A5EA
+extern unsigned int g_LBX_EmmRsvd;                  // dseg:A5EC
+extern unsigned int EmmHndlNbr_YOMOMA;              // dseg:A5EE
+extern unsigned int EMM_OK;                         // dseg:A5F0
+extern EMM_Record EMM_Table[];                      // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
+extern unsigned int g_EMM_MinKB;                    // dseg:A7D2
 
 
 char Test_Log_FileName[] = "TEST.LOG";
@@ -19,13 +43,13 @@ void tst_prn(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    vfprintf(Debug_Log_File, fmt, args);
+    vfprintf(Test_Log_File, fmt, args);
     va_end(args);
     /*
         flush output buffer to disk, in case of crash
         fysnc() flush kernel buffers, as well as userspace buffers, on a POSIX system (i.e., NOT Windows)
     */
-   fflush(Debug_Log_File);
+   fflush(Test_Log_File);
 }
 
 
@@ -99,10 +123,10 @@ EMM_Logical_Page_Count
     Pre  EMM_Startup():
         ?
     Post EMM_Startup():
-        g_EMM_OK == ST_TRUE
-        g_EmmHndlNbr_YOMOMA != 0
+        EMM_OK == ST_TRUE
+        EmmHndlNbr_YOMOMA != 0
         g_EmmHndlNbr_VGAFILEH != 0
-        g_EmmHndlNbr_EMMDATAH != 0
+        EmmHndlNbr_EMMDATAH != 0
         g_EMM_Open_Handles == 3
         g_EMM_Pages_Reserved == 31
         EMM_Table[]
@@ -124,30 +148,30 @@ EMM_Logical_Page_Count
 
 DEBUG: [st_emm.c, 258] EMM_PageFrameBaseAddress: 0xE000 }
 
-DEBUG: [tst_mgc.c, 436] g_EMM_OK: 1
-DEBUG: [tst_mgc.c, 437] g_EmmHndlNbr_YOMOMA: 1
+DEBUG: [tst_mgc.c, 436] EMM_OK: 1
+DEBUG: [tst_mgc.c, 437] EmmHndlNbr_YOMOMA: 1
 DEBUG: [tst_mgc.c, 438] g_EmmHndlNbr_VGAFILEH: 2
-DEBUG: [tst_mgc.c, 439] g_EmmHndlNbr_EMMDATAH: 3
+DEBUG: [tst_mgc.c, 439] EmmHndlNbr_EMMDATAH: 3
 DEBUG: [tst_mgc.c, 441] g_EMM_Pages_Reserved: 31
 DEBUG: [tst_mgc.c, 442] g_EMM_Open_Handles: 3
 DEBUG: [tst_mgc.c, 443] EMM_GetFreePageCount(): 1962
 DEBUG: [tst_mgc.c, 444] EMM_GetActiveHandleCount(): 4
 
-DEBUG: [tst_mgc.c, 447] g_EMM_Table[0].eEmmHndlNm: YO MOMA
-DEBUG: [tst_mgc.c, 448] g_EMM_Table[0].eEmmRsrvd: 0
-DEBUG: [tst_mgc.c, 449] g_EMM_Table[0].eEmmHndlNbr: 1
+DEBUG: [tst_mgc.c, 447] EMM_Table[0].eEmmHndlNm: YO MOMA
+DEBUG: [tst_mgc.c, 448] EMM_Table[0].eEmmRsrvd: 0
+DEBUG: [tst_mgc.c, 449] EMM_Table[0].eEmmHndlNbr: 1
 DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(1): 1
-DEBUG: [tst_mgc.c, 447] g_EMM_Table[1].eEmmHndlNm: VGAFILEH
-DEBUG: [tst_mgc.c, 448] g_EMM_Table[1].eEmmRsrvd: 1
-DEBUG: [tst_mgc.c, 449] g_EMM_Table[1].eEmmHndlNbr: 2
+DEBUG: [tst_mgc.c, 447] EMM_Table[1].eEmmHndlNm: VGAFILEH
+DEBUG: [tst_mgc.c, 448] EMM_Table[1].eEmmRsrvd: 1
+DEBUG: [tst_mgc.c, 449] EMM_Table[1].eEmmHndlNbr: 2
 DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(2): 5
-DEBUG: [tst_mgc.c, 447] g_EMM_Table[2].eEmmHndlNm: EMMDATAH
-DEBUG: [tst_mgc.c, 448] g_EMM_Table[2].eEmmRsrvd: 1
-DEBUG: [tst_mgc.c, 449] g_EMM_Table[2].eEmmHndlNbr: 3
+DEBUG: [tst_mgc.c, 447] EMM_Table[2].eEmmHndlNm: EMMDATAH
+DEBUG: [tst_mgc.c, 448] EMM_Table[2].eEmmRsrvd: 1
+DEBUG: [tst_mgc.c, 449] EMM_Table[2].eEmmHndlNbr: 3
 DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(3): 4
 
 */
-void validate_EMM_Startup(void)
+int validate_EMM_Startup(void)
 {
     int test_status;
     int itr_EMM_Open_Handles;
@@ -158,27 +182,27 @@ void validate_EMM_Startup(void)
 
     test_status = 0;  // TEST_UNDEFINED
 
-    if( g_EMM_OK != ST_SUCCESS )                                    { test_status = -1; }
-    if( g_EmmHndlNbr_YOMOMA != 1 )                                  { test_status = -1; }
+    if( EMM_OK == ST_FALSE )                                      { test_status = -1; }
+    if( EmmHndlNbr_YOMOMA != 1 )                                  { test_status = -1; }
     if( g_EmmHndlNbr_VGAFILEH != 2 )                                { test_status = -1; }
-    if( g_EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
-    if( g_EMMDATAH_Level != 0 )                                     { test_status = -1; }
+    if( EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
+    if( EMMDATAH_Level != 0 )                                     { test_status = -1; }
     if( g_EMM_Pages_Reserved != 31 )                                { test_status = -1; }
     if( g_EMM_Open_Handles != 3 )                                   { test_status = -1; }
     if( EMM_GetFreePageCount() != 1962 )                            { test_status = -1; }
     if( EMM_GetActiveHandleCount() != 4)                            { test_status = -1; }
-    if( g_EMM_Table[0].eEmmHndlNbr != 1 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 )         { test_status = -1; }
-    if( g_EMM_Table[0].eEmmRsrvd != 0 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[0].eEmmHndlNbr) != 1 )   { test_status = -1; }
-    if( g_EMM_Table[1].eEmmHndlNbr != 2 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[1].eEmmHndlNm, "VGAFILEH") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[1].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[1].eEmmHndlNbr) != 5 )   { test_status = -1; }
-    if( g_EMM_Table[2].eEmmHndlNbr != 3 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[2].eEmmHndlNm, "EMMDATAH") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[2].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[2].eEmmHndlNbr) != 4 )   { test_status = -1; }
+    if( EMM_Table[0].eEmmHndlNbr != 1 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 )         { test_status = -1; }
+    if( EMM_Table[0].eEmmRsrvd != 0 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr) != 1 )   { test_status = -1; }
+    if( EMM_Table[1].eEmmHndlNbr != 2 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[1].eEmmHndlNm, "VGAFILEH") != 0 )        { test_status = -1; }
+    if( EMM_Table[1].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr) != 5 )   { test_status = -1; }
+    if( EMM_Table[2].eEmmHndlNbr != 3 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[2].eEmmHndlNm, "EMMDATAH") != 0 )        { test_status = -1; }
+    if( EMM_Table[2].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr) != 4 )   { test_status = -1; }
 
     if( test_status != -1 )  // TEST_FAILURE
     {
@@ -190,6 +214,31 @@ void validate_EMM_Startup(void)
 #endif
 
     return test_status;
+}
+
+int validate_VGA_DAC_Init(void)
+{
+    int test_status;
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_VGA_DAC_Init()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+
+
+    if( test_status != -1 )  // TEST_FAILURE
+    {
+        test_status = 1;  // TEST_SUCCESS
+    }
+
+#ifdef DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_VGA_DAC_Init( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
+
+    return test_status;
+
 }
 
 void validate_FontStyleData(void)
@@ -271,9 +320,61 @@ int validate_PaletteFlags_1(void)
     return test_status;
 }
 
-void validate_PaletteLbxEntry(void)
+int validate_PaletteLbxEntry(void)
 {
     
+}
+
+int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
+{
+    int test_status;
+    FILE * fp;
+    unsigned char baito1;
+    unsigned char baito2;
+    int itr_PaletteLbxEntry;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_PaletteLbxEntry_2( sad1_PaletteLbxEntry = 0x%04X)\n", __FILE__, __LINE__, sad1_PaletteLbxEntry);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    // fp = fopen("FONTS_002.BIN", "rb");
+    fp = fopen("FONTS_~1.BIN", "rb");
+
+    if (fp == NULL)
+    {
+        dlvfprintf("DEBUG: [%s, %d] ( fp = fopen(\"FONTS_002.BIN\", \"rb\") ) == NULL\n", __FILE__, __LINE__);
+        abort();
+    }
+
+    itr_PaletteLbxEntry = 0;
+    while(itr_PaletteLbxEntry++ < 5472)
+    {
+        baito1 = fread(&baito1, 1, 1, fp);
+        baito2 = *((unsigned char *) (sad1_PaletteLbxEntry + itr_PaletteLbxEntry));
+        dlvfprintf("DEBUG: [%s, %d]: baito1: 0x%02X\n", __FILE__, __LINE__, baito1);
+        dlvfprintf("DEBUG: [%s, %d]: baito2: 0x%02X\n", __FILE__, __LINE__, baito2);
+
+        if( baito2 != baito1 )
+        {
+            test_status = -1;  // TEST_FAILURE
+            break;
+        }
+    }
+
+    if ( test_status != -1 )  // TEST_FAILURE
+    {
+        test_status = 1;  // TEST_SUCCESS
+    }
+
+    fclose(fp);
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteLbxEntry_2( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
+
+    return test_status;
 }
 
 int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
@@ -332,11 +433,11 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
 }
 
 /*
-DEBUG: [stu_tst.c, 349] g_EMM_OK: 1
-DEBUG: [stu_tst.c, 350] g_EmmHndlNbr_YOMOMA: 1
+DEBUG: [stu_tst.c, 349] EMM_OK: 1
+DEBUG: [stu_tst.c, 350] EmmHndlNbr_YOMOMA: 1
 DEBUG: [stu_tst.c, 351] g_EmmHndlNbr_VGAFILEH: 2
-DEBUG: [stu_tst.c, 352] g_EmmHndlNbr_EMMDATAH: 3
-DEBUG: [stu_tst.c, 353] g_EMMDATAH_Level: 0
+DEBUG: [stu_tst.c, 352] EmmHndlNbr_EMMDATAH: 3
+DEBUG: [stu_tst.c, 353] EMMDATAH_Level: 0
 DEBUG: [stu_tst.c, 354] g_EMM_Pages_Reserved: 10
 DEBUG: [stu_tst.c, 355] g_EMM_Open_Handles: 6
 DEBUG: [stu_tst.c, 356] EMM_GetFreePageCount(): 1941
@@ -344,17 +445,17 @@ DEBUG: [stu_tst.c, 357] EMM_GetActiveHandleCount(): 7
 
 ...
 
-DEBUG: [stu_tst.c, 363] g_EMM_Table[3].eEmmHndlNbr: 4
-DEBUG: [stu_tst.c, 361] g_EMM_Table[3].eEmmHndlNm: MAINSCRN
-DEBUG: [stu_tst.c, 362] g_EMM_Table[3].eEmmRsrvd: 1
+DEBUG: [stu_tst.c, 363] EMM_Table[3].eEmmHndlNbr: 4
+DEBUG: [stu_tst.c, 361] EMM_Table[3].eEmmHndlNm: MAINSCRN
+DEBUG: [stu_tst.c, 362] EMM_Table[3].eEmmRsrvd: 1
 DEBUG: [stu_tst.c, 364] EMM_GetHandlePageCount(4): 12
-DEBUG: [stu_tst.c, 363] g_EMM_Table[4].eEmmHndlNbr: 5
-DEBUG: [stu_tst.c, 361] g_EMM_Table[4].eEmmHndlNm: WIZARDS
-DEBUG: [stu_tst.c, 362] g_EMM_Table[4].eEmmRsrvd: 1
+DEBUG: [stu_tst.c, 363] EMM_Table[4].eEmmHndlNbr: 5
+DEBUG: [stu_tst.c, 361] EMM_Table[4].eEmmHndlNm: WIZARDS
+DEBUG: [stu_tst.c, 362] EMM_Table[4].eEmmRsrvd: 1
 DEBUG: [stu_tst.c, 364] EMM_GetHandlePageCount(5): 8
-DEBUG: [stu_tst.c, 363] g_EMM_Table[5].eEmmHndlNbr: 6
-DEBUG: [stu_tst.c, 361] g_EMM_Table[5].eEmmHndlNm: SPELLDAT
-DEBUG: [stu_tst.c, 362] g_EMM_Table[5].eEmmRsrvd: 1
+DEBUG: [stu_tst.c, 363] EMM_Table[5].eEmmHndlNbr: 6
+DEBUG: [stu_tst.c, 361] EMM_Table[5].eEmmHndlNm: SPELLDAT
+DEBUG: [stu_tst.c, 362] EMM_Table[5].eEmmRsrvd: 1
 DEBUG: [stu_tst.c, 364] EMM_GetHandlePageCount(6): 1
 DEBUG: [stu_tst.c, 374] END: validate_GAME_LoadMainImages( test_status = TEST_SUCCESS)
 
@@ -371,11 +472,11 @@ int validate_GAME_LoadMainImages(void)
     test_status = 0;  // TEST_UNDEFINED
 
 // #ifdef DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] g_EMM_OK: %d\n", __FILE__, __LINE__, g_EMM_OK);
-//     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_YOMOMA);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_OK: %d\n", __FILE__, __LINE__, EMM_OK);
+//     dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
 //     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
-//     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_EMMDATAH);
-//     dlvfprintf("DEBUG: [%s, %d] g_EMMDATAH_Level: %d\n", __FILE__, __LINE__, g_EMMDATAH_Level);  // ? NIU ?
+//     dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
+//     dlvfprintf("DEBUG: [%s, %d] EMMDATAH_Level: %d\n", __FILE__, __LINE__, EMMDATAH_Level);  // ? NIU ?
 //     dlvfprintf("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
 //     dlvfprintf("DEBUG: [%s, %d] g_EMM_Open_Handles: %d\n", __FILE__, __LINE__, g_EMM_Open_Handles);
 //     dlvfprintf("DEBUG: [%s, %d] EMM_GetFreePageCount(): %u\n", __FILE__, __LINE__, EMM_GetFreePageCount());
@@ -383,37 +484,37 @@ int validate_GAME_LoadMainImages(void)
 // 
 //     for ( itr_EMM_Open_Handles = 0; itr_EMM_Open_Handles < g_EMM_Open_Handles; itr_EMM_Open_Handles++ )
 //     {
-//         dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNbr: %u\n", __FILE__, __LINE__, itr_EMM_Open_Handles, g_EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr);
-//         dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNm: %s\n", __FILE__, __LINE__, itr_EMM_Open_Handles, g_EMM_Table[itr_EMM_Open_Handles].eEmmHndlNm);
-//         dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmRsrvd: %d\n", __FILE__, __LINE__, itr_EMM_Open_Handles, g_EMM_Table[itr_EMM_Open_Handles].eEmmRsrvd);
-//         dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(%d): %u\n", __FILE__, __LINE__, g_EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr, EMM_GetHandlePageCount(g_EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr));
+//         dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNbr: %u\n", __FILE__, __LINE__, itr_EMM_Open_Handles, EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr);
+//         dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNm: %s\n", __FILE__, __LINE__, itr_EMM_Open_Handles, EMM_Table[itr_EMM_Open_Handles].eEmmHndlNm);
+//         dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmRsrvd: %d\n", __FILE__, __LINE__, itr_EMM_Open_Handles, EMM_Table[itr_EMM_Open_Handles].eEmmRsrvd);
+//         dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(%d): %u\n", __FILE__, __LINE__, EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr, EMM_GetHandlePageCount(EMM_Table[itr_EMM_Open_Handles].eEmmHndlNbr));
 //     }
 // #endif
 
     /*
         BEGIN: EMM_Startup()
     */
-    if( g_EMM_OK != ST_SUCCESS )                                    { test_status = -1; }
-    if( g_EmmHndlNbr_YOMOMA != 1 )                                  { test_status = -1; }
-    if( g_EmmHndlNbr_VGAFILEH != 2 )                                { test_status = -1; }
-    if( g_EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
-    if( g_EMMDATAH_Level != 0 )                                     { test_status = -1; }
+    if( EMM_OK == ST_FALSE )                                      { test_status = -1; }
+    if( EmmHndlNbr_YOMOMA != 1 )                                  { test_status = -1; }
+    if( g_EmmHndlNbr_VGAFILEH != 2 )                              { test_status = -1; }
+    if( EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
+    if( EMMDATAH_Level != 0 )                                     { test_status = -1; }
     // if( g_EMM_Pages_Reserved != 31 )                                { test_status = -1; }
     // if( g_EMM_Open_Handles != 3 )                                   { test_status = -1; }
     // if( EMM_GetFreePageCount() != 1962 )                            { test_status = -1; }
     // if( EMM_GetActiveHandleCount() != 4)                            { test_status = -1; }
-    if( g_EMM_Table[0].eEmmHndlNbr != 1 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 )         { test_status = -1; }
-    if( g_EMM_Table[0].eEmmRsrvd != 0 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[0].eEmmHndlNbr) != 1 )   { test_status = -1; }
-    if( g_EMM_Table[1].eEmmHndlNbr != 2 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[1].eEmmHndlNm, "VGAFILEH") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[1].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[1].eEmmHndlNbr) != 5 )   { test_status = -1; }
-    if( g_EMM_Table[2].eEmmHndlNbr != 3 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[2].eEmmHndlNm, "EMMDATAH") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[2].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[2].eEmmHndlNbr) != 4 )   { test_status = -1; }
+    if( EMM_Table[0].eEmmHndlNbr != 1 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 )         { test_status = -1; }
+    if( EMM_Table[0].eEmmRsrvd != 0 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr) != 1 )   { test_status = -1; }
+    if( EMM_Table[1].eEmmHndlNbr != 2 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[1].eEmmHndlNm, "VGAFILEH") != 0 )        { test_status = -1; }
+    if( EMM_Table[1].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr) != 5 )   { test_status = -1; }
+    if( EMM_Table[2].eEmmHndlNbr != 3 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[2].eEmmHndlNm, "EMMDATAH") != 0 )        { test_status = -1; }
+    if( EMM_Table[2].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr) != 4 )   { test_status = -1; }
     /*
         BEGIN: EMM_Startup()
     */
@@ -430,18 +531,18 @@ int validate_GAME_LoadMainImages(void)
     /*
         BEGIN: Additions...
     */
-    if( g_EMM_Table[3].eEmmHndlNbr != 4 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[3].eEmmHndlNm, "MAINSCRN") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[3].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[3].eEmmHndlNbr) != 12 )  { test_status = -1; }
-    if( g_EMM_Table[4].eEmmHndlNbr != 5 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[4].eEmmHndlNm, "WIZARDS") != 0 )         { test_status = -1; }
-    if( g_EMM_Table[4].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[4].eEmmHndlNbr) != 8 )   { test_status = -1; }
-    if( g_EMM_Table[5].eEmmHndlNbr != 6 )                           { test_status = -1; }
-    if( strcmp(g_EMM_Table[5].eEmmHndlNm, "SPELLDAT") != 0 )        { test_status = -1; }
-    if( g_EMM_Table[5].eEmmRsrvd != 1 )                             { test_status = -1; }
-    if( EMM_GetHandlePageCount(g_EMM_Table[5].eEmmHndlNbr) != 1 )   { test_status = -1; }
+    if( EMM_Table[3].eEmmHndlNbr != 4 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[3].eEmmHndlNm, "MAINSCRN") != 0 )        { test_status = -1; }
+    if( EMM_Table[3].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[3].eEmmHndlNbr) != 12 )  { test_status = -1; }
+    if( EMM_Table[4].eEmmHndlNbr != 5 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[4].eEmmHndlNm, "WIZARDS") != 0 )         { test_status = -1; }
+    if( EMM_Table[4].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[4].eEmmHndlNbr) != 8 )   { test_status = -1; }
+    if( EMM_Table[5].eEmmHndlNbr != 6 )                           { test_status = -1; }
+    if( strcmp(EMM_Table[5].eEmmHndlNm, "SPELLDAT") != 0 )        { test_status = -1; }
+    if( EMM_Table[5].eEmmRsrvd != 1 )                             { test_status = -1; }
+    if( EMM_GetHandlePageCount(EMM_Table[5].eEmmHndlNbr) != 1 )   { test_status = -1; }
     /*
         END: Additions...
     */

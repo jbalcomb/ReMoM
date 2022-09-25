@@ -1,16 +1,57 @@
 #ifndef ST_SA_H
 #define ST_SA_H
+
+typedef unsigned int SAMB_addr;
+typedef unsigned char * SAMB_ptr;
+// typedef SAMB_addr SAMB_head;
+// typedef SAMB_addr SAMB_data;
+typedef unsigned int SAMB_head;
+typedef unsigned int SAMB_data;
+
 /*
     Simtex SPACE ALLOC
         - SAMB (Space Alloc Memory Block)
-seg007
-seg008
+MGC seg007
+MGC seg008
+SEE: ST_SAMB.md
 */
 
-#include "ST_HEAD.H"
+
+/*
+    Types
+*/
+/*
+    SAMB Head
+    SAMB Data
+    'Load Type' {0,1,2}
+    sah0, sah1, sah2
+    sad0, sad1, sad2
+*/
+/*
+    SA_Allocate_MemBlk() returns a SAMB Data Type 0
+    SA_Allocate_Space()  returns a SAMB Data Type 1
+    SA_Alloc_First() returns a SAMB Data Type 2
+    SA_Alloc_Next() returns a SAMB Data Type 2
+    
+    SA_Alloc_Validate() takes a SAMB Head Type 1
+    SA_Alloc_First() takes a SAMB Head Type 1
+    SA_Alloc_Next() takes a SAMB Head Type 1
+
+    LBX_Load_Entry() takes no SAMB Head or, depending on 'Load Type', a SAMB Head Type 1 or a SAMB Head Type 2
+
+*/
 
 
-//#define LBXHEADER {if(!g_LBX_Header_Allocd){g_LBX_Header_Allocd = 1;g_LBX_Header = AllocMem_LbxHeader(32);}}
+/*
+    Manifest Constants
+*/
+#define SA_MEMSIG1      0x12FA
+#define SA_MEMSIG2      0x4ECF
+
+
+/*
+    Macros
+*/
 #define SA_FarMalloc(nparas) {(void far *) farmalloc( ((unsigned long)nparas * 16) + 16 )}
 #define SA_GetSize(samb) {farpeekw(samb, 0x08)}
 #define SA_GetUsed(samb) {farpeekw(samb, 0x0A)}
@@ -18,10 +59,6 @@ seg008
 #define SA_SetSize(samb,nparas) {farpokew(samb, 0x08, nparas)}
 #define SA_SetUsed(samb,nparas) {farpokew(samb, 0x0A, nparas)}
 #define SA_SetMarked(samb,nparas) {farpokew(samb, 0x0E, nparas)}
-
-#define SA_MEMSIG1      0x12FA
-#define SA_MEMSIG2      0x4ECF
-#define SA_MEMSIG       0x12FA4ECF
 
 
 /*

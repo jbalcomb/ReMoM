@@ -1,8 +1,10 @@
 #ifndef ST_FLIC_H
 #define ST_FLIC_H
 
-// #include "ST_TYPE"
-#include "ST_HEAD.H"
+#include "ST_TYPE.H"  /* byte, word, etc. */
+
+#include "ST_SA.H"
+
 
 /*
 J:\STU\DBWD\developc\_AnimatorPro\Pristine-Pro\DOC\FLCFILES.TXT

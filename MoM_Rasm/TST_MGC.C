@@ -1,4 +1,22 @@
 
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
+#include "MGC_DEF.H"
+
+#include "ST_EMM.H"
+#include "ST_FLIC.H"
+#include "ST_LBX.H"
+#include "ST_SA.H"
+#include "ST_VGA.H"
+
+#include "STU_DBG.H"
+#include "STU_TST.H"
+
+#include <ASSERT.H>  /* NDEBUG; assert(); */
+#include <STDLIB.H>  /* abort(); */
+#include <STRING.H>  /* strcmp() */
+
+
 /*
     BCpp31PG, pg 175/190
         #pragma warn -yyy
@@ -15,27 +33,32 @@
 #pragma warn -eff
 #pragma warn -par
 
-#include <ASSERT.H>  // NDEBUG; assert();
-#include <STDLIB.H>  // abort();
-#include <STRING.H>
 
-#include "ST_TYPE.H"
+/*
+    EMM - Uninitialized
+        ? ALL Xref seg012 and seg013 ?
+*/
+//dseg:A5E0 UU_EMMData_PrevLvl dw 0
+extern unsigned int g_EMM_Overlay_Handle;           // dseg:A5E2
+extern unsigned int EMMDATAH_Level;                 // dseg:A5E4
+extern unsigned int EmmHndlNbr_EMMDATAH;            // dseg:A5E6
+// ? dseg:A5E8 UU_EMM_Handle dw 0
+extern unsigned int g_EmmHndlNbr_VGAFILEH;          // dseg:A5EA
+extern unsigned int g_LBX_EmmRsvd;                  // dseg:A5EC
+extern unsigned int EmmHndlNbr_YOMOMA;              // dseg:A5EE
+extern unsigned int EMM_OK;                         // dseg:A5F0
+extern EMM_Record EMM_Table[];                      // dseg:A5F2 g_EMS_Table EMS_Record 28h dup(<0>)
+extern unsigned int g_EMM_MinKB;                    // dseg:A7D2
 
-#include "MGC_DEF.H"
 
-#include "ST_EMM.H"
-#include "ST_FLIC.H"
-#include "ST_LBX.H"
-#include "ST_VGA.H"
-
-#include "STU_DBG.H"
-#include "STU_TST.H"
-
+void test_MGC_Main(void);
 
 void test_Load_MAINSCRN_000(void);
 
 void test_VGA_SetDirectDraw(void);
 void test_VGA_Set_DSP_Addr(void);
+
+void test_VGA_LoadPalette(void);
 
 void test_VGA_DAC_Init(void);
 
@@ -46,9 +69,6 @@ void test_GAME_LoadMainImages(void);
 
 void test_FLIC_Draw_XY(void);
 
-void test_MGC_Main(void);
-
-
 
 int main(void)
 {
@@ -58,13 +78,15 @@ int main(void)
     // test_VGA_SetDirectDraw();
     // test_VGA_Set_DSP_Addr();
 
+    test_VGA_LoadPalette();
+
     // test_VGA_DAC_Init();
 
     // test_EMM_Init();
     // test_EMM_Startup();
     // test_EMM_Load_LBX_File();
 
-    test_GAME_LoadMainImages();
+    //test_GAME_LoadMainImages();
 
     // test_Load_MAINSCRN_000();
 
@@ -312,6 +334,49 @@ void test_VGA_Set_DSP_Addr(void)
 
 }
 
+void test_VGA_LoadPalette(void)
+{
+    SAMB_addr sa_PaletteFlags;          // unsigned int gsa_PaletteFlags;              // dseg:A7D6
+    SAMB_addr sah1_Palette;             // unsigned int gsa_Palette;                   // dseg:A7DE
+    char PaletteLbxFileName[16];        // char g_PaletteLbxFileName[16];              // dseg:A7E0
+    SAMB_addr sad1_PaletteLbxEntry;     // unsigned int gsa_gsa_PaletteLbxEntry;       // dseg:A7F2
+    SAMB_addr sah1_PaletteLbxEntry;     // unsigned int gsa_PaletteLbxEntry;           // dseg:A7F4
+    int Palette_Index;
+    int First_Color;
+    int Last_Color;
+
+    // ~== VGA_DAC_Init()
+    strcpy(PaletteLbxFileName, "FONTS.LBX");  
+    sah1_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));       // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
+    sah1_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
+    sa_PaletteFlags = sah1_Palette + 48;                         // 48 paragaphs = 48 * 16 = 768 bytes
+
+    dlvfprintf("DEBUG: [%s, %d] sah1_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, sah1_PaletteLbxEntry);
+    dlvfprintf("DEBUG: [%s, %d] sah1_Palette: 0x%04X\n", __FILE__, __LINE__, sah1_Palette);
+    dlvfprintf("DEBUG: [%s, %d] sa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, sa_PaletteFlags);
+
+    // ~== s20p01 VGA_LoadPalette()
+    // void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
+    // MGC main() |-> VGA_LoadPalette(0, -1, 0);  // EMPERATO
+    Palette_Index = 0;
+    First_Color = -1;
+    Last_Color = 0;
+    sad1_PaletteLbxEntry = LBXE_LoadReplace(PaletteLbxFileName, Palette_Index+2, sah1_PaletteLbxEntry);
+                            // _s10p02  SAMB_addr LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head)
+                            //     |-> SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType = 1, LbxHdrFmt = 0);
+                            // s10p10  SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
+
+    validate_PaletteLbxEntry_2(sad1_PaletteLbxEntry);
+
+    // s20p05 VGA_SetDACChanged()
+
+    dlvfprintf("DEBUG: [%s, %d] sad1_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, sad1_PaletteLbxEntry);
+
+    // ~== VGA_DAC_Write()
+
+}
+
+
 /*
     MGC main()
         |-> Hardware_Init(1, 2, GAME_FONT_FILE, 0, 0, 0, 0, 0, 0, 0, 0);  // Defaults for 'No Sound'
@@ -438,41 +503,41 @@ void test_EMM_Startup(void)
     EMM_Startup();
 
     if (
-        ( g_EMM_OK == ST_TRUE) &&
-        ( g_EmmHndlNbr_YOMOMA != 0 ) &&
+        ( EMM_OK == ST_TRUE) &&
+        ( EmmHndlNbr_YOMOMA != 0 ) &&
         ( g_EmmHndlNbr_VGAFILEH != 0 ) &&
-        ( g_EmmHndlNbr_EMMDATAH != 0 ) &&
+        ( EmmHndlNbr_EMMDATAH != 0 ) &&
         ( g_EMM_Open_Handles == 3 ) &&
         ( g_EMM_Pages_Reserved == 31 )
     )
     {
         dlvfprintf("DEBUG: [%s, %d] SUCCESS: \n", __FILE__, __LINE__);
     }
-    if ( g_EMM_OK == ST_FALSE )
+    if ( EMM_OK == ST_FALSE )
     {
         dlvfprintf("DEBUG: [%s, %d] FAILURE: \n", __FILE__, __LINE__);
     }
-    if ( ( g_EMM_OK != ST_TRUE ) && ( g_EMM_OK != ST_FALSE ) )
+    if ( ( EMM_OK != ST_TRUE ) && ( EMM_OK != ST_FALSE ) )
     {
         dlvfprintf("DEBUG: [%s, %d] INVALID: \n", __FILE__, __LINE__);
     }
 
 #ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_EMM_OK: %d\n", __FILE__, __LINE__, g_EMM_OK);
-    dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_YOMOMA);
+    dlvfprintf("DEBUG: [%s, %d] EMM_OK: %d\n", __FILE__, __LINE__, EMM_OK);
+    dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
-    dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_EMMDATAH);
-    //dlvfprintf("DEBUG: [%s, %d] g_EMMDATAH_Level: %d\n", __FILE__, __LINE__, g_EMMDATAH_Level);  // ? NIU ?
+    dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
+    //dlvfprintf("DEBUG: [%s, %d] EMMDATAH_Level: %d\n", __FILE__, __LINE__, EMMDATAH_Level);  // ? NIU ?
     dlvfprintf("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
     dlvfprintf("DEBUG: [%s, %d] g_EMM_Open_Handles: %d\n", __FILE__, __LINE__, g_EMM_Open_Handles);
     dlvfprintf("DEBUG: [%s, %d] EMM_GetFreePageCount(): %u\n", __FILE__, __LINE__, EMM_GetFreePageCount());
     dlvfprintf("DEBUG: [%s, %d] EMM_GetActiveHandleCount(): %u\n", __FILE__, __LINE__, EMM_GetActiveHandleCount());
     for ( itr_open_handles = 0; itr_open_handles < g_EMM_Open_Handles; itr_open_handles++ )
     {
-        dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNm: %s\n", __FILE__, __LINE__, itr_open_handles, g_EMM_Table[itr_open_handles].eEmmHndlNm);
-        dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmRsrvd: %d\n", __FILE__, __LINE__, itr_open_handles, g_EMM_Table[itr_open_handles].eEmmRsrvd);
-        dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNbr: %u\n", __FILE__, __LINE__, itr_open_handles, g_EMM_Table[itr_open_handles].eEmmHndlNbr);
-        dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(%d): %u\n", __FILE__, __LINE__, g_EMM_Table[itr_open_handles].eEmmHndlNbr, EMM_GetHandlePageCount(g_EMM_Table[itr_open_handles].eEmmHndlNbr));
+        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNm: %s\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmHndlNm);
+        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmRsrvd: %d\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmRsrvd);
+        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNbr: %u\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmHndlNbr);
+        dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(%d): %u\n", __FILE__, __LINE__, EMM_Table[itr_open_handles].eEmmHndlNbr, EMM_GetHandlePageCount(EMM_Table[itr_open_handles].eEmmHndlNbr));
     }
 #endif
 
@@ -510,19 +575,19 @@ void test_EMM_Load_LBX_File(void)
         exit(1);
     }
     if (
-        ( g_EMM_OK != ST_TRUE) ||
-        ( g_EmmHndlNbr_YOMOMA == 0 ) ||
+        ( EMM_OK != ST_TRUE) ||
+        ( EmmHndlNbr_YOMOMA == 0 ) ||
         ( g_EmmHndlNbr_VGAFILEH == 0 ) ||
-        ( g_EmmHndlNbr_EMMDATAH == 0 ) ||
+        ( EmmHndlNbr_EMMDATAH == 0 ) ||
         ( g_EMM_Open_Handles != 3 ) ||
         ( g_EMM_Pages_Reserved != 31 )
     )
     {
         dlvfprintf("DEBUG: [%s, %d] FAILURE: EMM_Startup()\n", __FILE__, __LINE__);
-        dlvfprintf("DEBUG: [%s, %d] g_EMM_OK: %d\n", __FILE__, __LINE__, g_EMM_OK);
-        dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_YOMOMA);
+        dlvfprintf("DEBUG: [%s, %d] EMM_OK: %d\n", __FILE__, __LINE__, EMM_OK);
+        dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
         dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
-        dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_EMMDATAH);
+        dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
         dlvfprintf("DEBUG: [%s, %d] g_EMM_Open_Handles: %d\n", __FILE__, __LINE__, g_EMM_Open_Handles);
         dlvfprintf("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
         exit(1);
@@ -544,9 +609,9 @@ void test_EMM_Load_LBX_File(void)
     // ...
     // ...
 
-    DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
+    // DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
     TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
-    dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
+    // dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
     dlvfprintf("DEBUG: [%s, %d] MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
 
 
@@ -632,20 +697,20 @@ void test_GAME_LoadMainImages(void)
     // same logic as in EMM_CheckHandleOpen()
     for ( itr_EMM_Table_Index = 0; itr_EMM_Table_Index < g_EMM_Open_Handles; itr_EMM_Table_Index++ )
     {
-        if ( stricmp(g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNm, TST_LBX_MAINSCRN_000.LBX_Name) == 0 )
+        if ( stricmp(EMM_Table[itr_EMM_Table_Index].eEmmHndlNm, TST_LBX_MAINSCRN_000.LBX_Name) == 0 )
         {
-            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNm: %s \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNm);
-            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmHndlNbr: %u \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNbr);
-            dlvfprintf("DEBUG: [%s, %d] g_EMM_Table[%d].eEmmRsrvd: %d \n", __FILE__, __LINE__, itr_EMM_Table_Index, g_EMM_Table[itr_EMM_Table_Index].eEmmRsrvd);
+            dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNm: %s \n", __FILE__, __LINE__, itr_EMM_Table_Index, EMM_Table[itr_EMM_Table_Index].eEmmHndlNm);
+            dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNbr: %u \n", __FILE__, __LINE__, itr_EMM_Table_Index, EMM_Table[itr_EMM_Table_Index].eEmmHndlNbr);
+            dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmRsrvd: %d \n", __FILE__, __LINE__, itr_EMM_Table_Index, EMM_Table[itr_EMM_Table_Index].eEmmRsrvd);
         }
     }
     //TST_LBX_MAINSCRN_000.EMM_Table_Index
-    //g_EMM_Table[itr_EMM_Table_Index].eEmmHndlNbr
+    //EMM_Table[itr_EMM_Table_Index].eEmmHndlNbr
 
     // s12p10  EMM_GetPageFrame()
     // s12p08  EMM_MapnRead()  s12p11  EMM_Map4()  s12p12  EMM_MapMulti4()
     // EMM_MAP_PAGE(_epp_,_ehn_,_elp_)
-    EMM_Handle_Number = g_EMM_Table[TST_LBX_MAINSCRN_000.EMM_Table_Index].eEmmHndlNbr;
+    EMM_Handle_Number = EMM_Table[TST_LBX_MAINSCRN_000.EMM_Table_Index].eEmmHndlNbr;
     EMM_Physical_Page_Number = 0;
     EMM_Logical_Page_Number = 0;
     // EMM_MAP_PAGE(0,4,0);
@@ -670,11 +735,9 @@ void test_GAME_LoadMainImages(void)
 void test_FLIC_Draw_XY(void)
 {
 
+    // HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+    // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
 
-    HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
-    FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
-
-    HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
-    FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Draw_XY(32, 20, gsa_VORTEX_3_MenuQuitToDOS);
 
 }

@@ -7,10 +7,10 @@ STU_UTIL.OBJ +
 STU_VGA.OBJ +
 MGC_DEF.OBJ +
 MOM_DEF.OBJ +
+ST_DEF.OBJ +
 ST_CRSR.OBJ +
 ST_CTRL.OBJ +
 ST_DBG.OBJ +
-ST_DEF.OBJ +
 ST_EMM.OBJ +
 ST_FLIC.OBJ +
 ST_GUI.OBJ +
@@ -22,9 +22,6 @@ ST_SND.OBJ +
 ST_TXT.OBJ +
 ST_TYPE.OBJ +
 ST_VGA.OBJ +
-CR_Draw.obj + 
-CR_Store.obj + 
-CR_Resto.obj + 
 _o57p01c.obj +
 _o60p01c.obj +
 _o60p02c.obj +

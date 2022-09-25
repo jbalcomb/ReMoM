@@ -1,18 +1,17 @@
 // _s27p03c.c  FLIC_Draw_EMM_C
 
-#include <DOS.H>
-
-#include "ST_HEAD.H"
 #include "ST_TYPE.H"
+#include "ST_DEF.H"
+#include "ST_FLIC.H"
 
 #include "ST_EMM.H"
-#include "ST_FLIC.H"
 #include "ST_VGA.H"
 
-#include "STU_BITS.H"
-#ifdef DEBUG
-#include "STU_DBG.H"
-#endif
+#include "STU_BITS.H"  /* FPEEKB(), FPEEKW(), FPEEKDW() */
+
+// #ifdef STU_DEBUG
+// #include "STU_DBG.H"
+// #endif
 
 /*
     Column-Wise
@@ -68,9 +67,9 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
     byte itr_op_repeat;
     unsigned int itr_Src;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, SAMB_data_FLIC_HDR=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR, Frame_Index);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, SAMB_data_FLIC_HDR=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR, Frame_Index);
+// #endif
 
         /* ╔══════════════════════════════════════════════════════════════════╗
         ╔══╝ PART I: Set-Up                                                   ║
@@ -83,40 +82,46 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
     fh_EmmHandleNumber = FPEEKB(SAMB_data_FLIC_HDR, 0x0A);       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6       06
     fh_EmmLogicalPageIndex = FPEEKB(SAMB_data_FLIC_HDR, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
     fh_EmmLogicalPageOffset = FPEEKW(SAMB_data_FLIC_HDR, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] fh_Width: %u\n", __FILE__, __LINE__, fh_Width);
-    dlvfprintf("DEBUG: [%s, %d] fh_EmmHandleNumber: %u\n", __FILE__, __LINE__, fh_EmmHandleNumber);
-    dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageIndex: %u\n", __FILE__, __LINE__, fh_EmmLogicalPageIndex);
-    dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageOffset: 0x%04X\n", __FILE__, __LINE__, fh_EmmLogicalPageOffset);
-#endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] fh_Width: %u\n", __FILE__, __LINE__, fh_Width);
+//     dlvfprintf("DEBUG: [%s, %d] fh_EmmHandleNumber: %u\n", __FILE__, __LINE__, fh_EmmHandleNumber);
+//     dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageIndex: %u\n", __FILE__, __LINE__, fh_EmmLogicalPageIndex);
+//     dlvfprintf("DEBUG: [%s, %d] fh_EmmLogicalPageOffset: 0x%04X\n", __FILE__, __LINE__, fh_EmmLogicalPageOffset);
+// #endif
 
     EMM_MapMulti4(fh_EmmLogicalPageIndex, fh_EmmHandleNumber);
 
     fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] fh_FrameDataOffset: 0x%08X\n", __FILE__, __LINE__, fh_FrameDataOffset);
-#endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] fh_FrameDataOffset: 0x%08X\n", __FILE__, __LINE__, fh_FrameDataOffset);
+// #endif
 
     tmp_EmmPage = fh_EmmLogicalPageIndex  + ( (fh_FrameDataOffset + 1) / 16384 );
     tmp_EmmOfst = fh_EmmLogicalPageOffset + ( (fh_FrameDataOffset + 1) % 16384 );
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
-    dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
-#endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
+//     dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
+// #endif
+
     if ( tmp_EmmOfst > 0xC000 )
     {
         tmp_EmmPage += 3;
         tmp_EmmOfst -= 0xC000;
     }
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
-    dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
-#endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
+//     dlvfprintf("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
+// #endif
 
     fh_Shading = FPEEKB(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset + FlicHdr_Shading);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] fh_Shading: %u\n", __FILE__, __LINE__, fh_Shading);
-#endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] fh_Shading: %u\n", __FILE__, __LINE__, fh_Shading);
+// #endif
 
     inregs.x.dx = fh_EmmHandleNumber;
     inregs.x.bx = tmp_EmmPage;
@@ -133,7 +138,7 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
     if (fh_Shading != 0)
     {
         //FLIC_Draw_EMM_R(ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR);
-        HERE("FLIC_Draw_EMM_R(ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR);");
+        // HERE("FLIC_Draw_EMM_R(ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR);");
         Quit();
     }
 
@@ -172,24 +177,25 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLI
 
     mask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
 
-    fp_Src = (byte *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
-    fp_Dst = (byte *)MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-    dlvfprintf("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
+    fp_Src = (byte *) MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
+    fp_Dst = (byte *) MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
+//     dlvfprintf("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
+// #endif
 
     outportb(e_SC_INDEX, e_SC_MAPMASK);
 
 Column_Loop:
-    fp_Dst = (byte *)MK_FP(FP_SEG(fp_Dst), row_offset);
+    fp_Dst = (byte *) MK_FP(FP_SEG(fp_Dst), row_offset);
     if ( FP_OFF(fp_Src) > 0xC000 )
     {
         tmp_EmmPage += 3;
         EMM_MapMulti4(tmp_EmmPage, fh_EmmHandleNumber);
         tmp_EmmOfst = FP_OFF(fp_Src);
         tmp_EmmOfst -= 0xC000;
-        fp_Src = (byte *)MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
+        fp_Src = (byte *) MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
     }
 
     outportb(e_SC_DATA, mask);
@@ -266,8 +272,8 @@ Next_Column:
 
 Done:
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, SAMB_data_FLIC_HDR=0x%03X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR, Frame_Index);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, SAMB_data_FLIC_HDR=0x%03X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, SAMB_data_FLIC_HDR, Frame_Index);
+// #endif
 
 }

@@ -8,6 +8,10 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
+#ifdef DEBUG
+#include "STU_DBG.H"
+#endif
+
 
 unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEntryOffset, unsigned long *LbxEntrySize, int LbxHdrFmt)
 {
@@ -30,6 +34,9 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
     
     LBXTESTNEGATIVEENTRY()
 
+    // LBXHEADER()
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
     LBXHEADER()
 
     ExtractFileBase(LbxName);
@@ -45,7 +52,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
             /*
                 BEGIN: Current != Previous
             */
-            dlvfprintf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
+            // dlvfprintf("DEBUG: [%s, %d]: Curr. != Prev.\n", __FILE__, __LINE__);
 
             UU_g_LBX_HdrFmt = tmp_LbxHdrFmt;
             
@@ -61,6 +68,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
            
             if ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )
             {
+                // HERE("LBX_Error: could not be found  ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )");
                 LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
             }
             else
@@ -71,6 +79,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
 
                 if ( g_LBX_FileHandle == ST_FAILURE )
                 {
+                    // HERE("LBX_Error: could not be found  ( g_LBX_FileHandle == ST_FAILURE )");
                     LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
                 }
             }
@@ -110,7 +119,7 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
         }
         else
         {
-            dlvfprintf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
+            // dlvfprintf("DEBUG: [%s, %d]: Curr. == Prev.\n", __FILE__, __LINE__);
         }
         // (g_LBX_EntryCount < LbxEntryIndex) ~== (!(LbxEntryIndex >= g_LBX_EntryCount)) ~== (!((LbxEntryIndex - g_LBX_EntryCount) < 0))
         if ( g_LBX_EntryCount < LbxEntry )

@@ -1,9 +1,10 @@
 #ifndef ST_LBX_H
 #define ST_LBX_H
 
-//#include "ST_HEAD.H"
-//#include "ST_SA.H"
 #include "ST_TYPE.H"
+#include "ST_DEF.H"  /* FP_SEG(); */
+
+#include "ST_SA.H"  /* SAMB_data, SAMB_head */
 
 
 /*
@@ -27,8 +28,8 @@
                 LBX_Error() OR return 0
 */
 
-#define LBXERR01(name,entry) {LBX_Error(name, 0x01, entry, NULL);}  /* LBXErr_not_found */
-#define LBXERR02(name,entry) {HERE("LBX entry corrupted"); LBX_Error(name, 0x02, entry, NULL);}  /* LBXErr_corrupted */
+#define LBXERR01(name,entry) {LBX_Error(name, 0x01, entry, NULL);}  /* " could not be found." */
+#define LBXERR02(name,entry) {LBX_Error(name, 0x02, entry, NULL);}  /* " has been corrupted." */
 // ...
 #define LBXERR07(name,entry) {LBX_Error(name, 0x07, entry, NULL);}  /* LBXErr_bad_header */
 #define LBXERR08(name,entry) {LBX_Error(name, 0x08, entry, NULL);}  /* LBXErr_entries_exceeded */
@@ -38,17 +39,22 @@
 #define LBXTESTNEGATIVEENTRY() { \
     if ( !(tmp_LbxEntry >= 0) ) \
     { \
+        /* HERE("LBX_Error: could not be found  ( !(tmp_LbxEntry >= 0) )"); */ \
         LBX_Error(tmp_LbxName, 0x01, tmp_LbxEntry, NULL);  /* LBXErr_not_found */ \
     } \
 }
 
-#define LBXHEADER() { \
-    if( g_LBX_Header_Allocd == 0 ) \
-    { \
-        g_LBX_Header_Allocd = 1; \
-        gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); \
-    } \
-}
+// #define LBXHEADER() { \
+//     if( g_LBX_Header_Allocd == 0 ) \
+//     { \
+//         g_LBX_Header_Allocd = 1; \
+//         gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); \
+//     } \
+// }
+// #define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); } }
+
+#define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); } }
+
 
 #define LBXHEADEROFFSET() { \
     if ( LbxHdrFmt == 0 ) \
@@ -103,7 +109,7 @@
         DataSize_Bytes = DataOffset_End - DataOffset_Begin; \
         if ( lbx_seek(DataOffset_Begin, g_LBX_FileHandle) == ST_FAILURE ) \
         { \
-            HERE("LBX entry corrupted"); \
+            /* HERE("LBX_Error: entry corrupted"); */ \
             LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */ \
         } \
 }
@@ -132,26 +138,26 @@
 #define LBXRECORDOFFSET() { \
         lbx_read_ofst((unsigned int)&Record_Count, 2, g_LBX_FileHandle); \
         lbx_read_ofst((unsigned int)&Record_Size, 2, g_LBX_FileHandle); \
-        dlvfprintf("DEBUG: [%s, %d]: Record_Count: %d, Record_Size: %d\n", __FILE__, __LINE__, Record_Count, Record_Size); \
+        /* dlvfprintf("DEBUG: [%s, %d]: Record_Count: %d, Record_Size: %d\n", __FILE__, __LINE__, Record_Count, Record_Size); */ \
         if ( Record_Size == 0 ) \
         { \
-            HERE("LBX record size mismatch  ( Record_Size ==  0 )"); \
+            /* HERE("LBX_Error: record size mismatch  ( Record_Size ==  0 )"); */ \
             LBX_Error(g_LBX_Name, 0x09, LbxEntry, NULL);  /* LBXErr_recsize_mismatch */ \
         } \
         if ( (RecSize - Record_Size) != 0 ) \
         { \
-            HERE("LBX record size mismatch  ( (RecSize - Record_Size) !=  0 )"); \
+            /* HERE("LBX_Error: record size mismatch  ( (RecSize - Record_Size) !=  0 )"); */ \
             LBX_Error(g_LBX_Name, 0x09, LbxEntry, NULL);  /* LBXErr_recsize_mismatch */ \
         }         \
         if ( !(Record_Count <= (RecFirst + RecCount)) ) \
         { \
-            HERE("LBX records exceeeded"); \
+            /* HERE("LBX_Error: records exceeeded"); */ \
             LBX_Error(g_LBX_Name, 0x0A, LbxEntry, NULL);  /* LBXErr_records_exceeded */ \
         } \
         DataOffset_Begin = 4 + (Record_Size * RecFirst); \
         if ( lbx_seek(DataOffset_Begin, g_LBX_FileHandle) == ST_FAILURE ) \
         { \
-            HERE("LBX entry corrupted"); \
+            /* HERE("LBX_Error: entry corrupted"); */ \
             LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */ \
         } \
         DataSize_Bytes = (Record_Size * RecCount); \
@@ -209,12 +215,12 @@
             if ( LoadType == 1 ) \
             { \
                 /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) */ \
-                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
-                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
                 if ( SA_Alloc_Validate(pSAMB_head) == 0 ) \
                 { \
-                    HERE("LBX entry corrupted"); \
+                    /* HERE("LBX_Error: has been corrupted  ( SA_Alloc_Validate(pSAMB_head) == 0 )"); */ \
                     LBX_Error(LbxName, 0x02, LbxEntry, NULL); /* LBXErr_corrupted */ \
                 } \
                 if ( DataSize_Paras > (farpeekw(SAMB_head, SAMB_SIZE) - 1) ) \
@@ -227,12 +233,12 @@
             if ( LoadType == 2 ) \
             { \
                 /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) */ \
-                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
-                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
                 if ( SA_Alloc_Validate(pSAMB_head) == 0 ) \
                 { \
-                    HERE("LBX entry corrupted"); \
+                    /* HERE("LBX_Error: entry corrupted"); */ \
                     LBX_Error(LbxName, 0x02, LbxEntry, NULL); /* LBXErr_corrupted */ \
                 } \
                 if ( DataSize_Paras > SA_GetFree(pSAMB_head) ) \
@@ -258,9 +264,9 @@
             if ( LoadType == 1 ) \
             { \
                 /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) { return 0; } */ \
-                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
-                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
                 if ( SA_Alloc_Validate(pSAMB_head) == 0 ) { return 0; } \
                 if ( DataSize_Paras > (farpeekw(SAMB_head, 8) - 1) ) /* SAMB_SIZE */ \
                 { \
@@ -272,9 +278,9 @@
             if ( LoadType == 2 ) \
             { \
                 /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
-                dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
-                dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); \
+                /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
                 /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
                 /* TODO(JimBalcomb,20220907): figure out what the 0 or 1 here actually means... Is it just +0/+1 segments/paragraphs? ...as in SAMB_base/SAMB_sub_head? */ \
                 /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
@@ -302,7 +308,7 @@
 #define LBXREADSGMT() { \
     if ( lbx_read_sgmt(tmp_SAMB_data, ReadNbytes, g_LBX_FileHandle) == ST_FAILURE ) \
     { \
-        HERE("LBX entry corrupted"); \
+        /* HERE("LBX entry corrupted"); */ \
         LBX_Error(LbxName, 0x02, LbxEntry, NULL);  /* LBXErr_corrupted */ \
     } \
 }

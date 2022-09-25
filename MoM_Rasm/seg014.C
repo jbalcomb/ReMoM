@@ -9,9 +9,12 @@
 #include "ST_SA.H"
 #include "ST_VGA.H"
 
+// #include "STU_DBG.H"
+
 
 // s14p01
-void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
+// void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
+void Hardware_Init(int argInputType, char *argFontFileName)
 {
     int tmpInputType;
 
@@ -69,9 +72,9 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
     unsigned int itrPaletteFlags;
     void * pPaletteLbxEntry;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
+// #endif
 
     strcpy(g_PaletteLbxFileName, PaletteLbxFileName);
 
@@ -81,22 +84,28 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
 
     // gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));       // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
     pPaletteLbxEntry = SA_Allocate_Space(348);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] pPaletteLbxEntry: %p\n", __FILE__, __LINE__, pPaletteLbxEntry);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] pPaletteLbxEntry: %p\n", __FILE__, __LINE__, pPaletteLbxEntry);
+// #endif
+
     gsa_PaletteLbxEntry = FP_SEG(pPaletteLbxEntry);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] gsa_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteLbxEntry);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteLbxEntry);
+// #endif
 
     gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);
+// #endif
+
     gsa_PaletteFlags = gsa_Palette + 48;                        // 48 paragaphs = 48 * 16 = 768 bytes
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
+// #endif
 
     gsa_PaletteSaved = FP_SEG(SA_Allocate_Space(48));           // 48 paragraphcs = 48 * 16 bytes = 768 bytes
 

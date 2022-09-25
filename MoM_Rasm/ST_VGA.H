@@ -1,9 +1,6 @@
 #ifndef ST_VGA_H
 #define ST_VGA_H
 
-#include "ST_HEAD.H"
-
-
 
 #define CLRSCR0() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDrawAddress(); }
 #define CLRSCR1() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDirectDraw();  }

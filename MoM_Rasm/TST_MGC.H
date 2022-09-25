@@ -1,4 +1,3 @@
-
 #ifndef TST_MGC_H
 #define TST_MGC_H
 

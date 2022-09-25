@@ -1,4 +1,10 @@
 
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
+#include "ST_LBX.H"
+
+#include "ST_SA.H"
+
 // J:\STU\DBWD\BORLANDC\INCLUDE\
 #include <stdio.h>      /* FILE */
 #include <fcntl.h>      /* O_BINARY, O_RDONLY */
@@ -8,12 +14,6 @@
 //#ifdef DEBUG
     #include <errno.h>
 //#endif
-
-#include "ST_HEAD.H"
-#include "ST_TYPE.H"
-
-#include "ST_LBX.H"
-//#include "ST_SA.H"
 
 
 /*
@@ -118,13 +118,17 @@ int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
 {
     void _FAR * buf;
     int st_status;
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
+// #endif
+
     buf = MK_FP(dst_sgmt, 0);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
+// #endif
+
     if (read(fhandle, buf, nbytes) == -1) {
         st_status = 0;  // ST_FAILURE
     }
@@ -132,9 +136,11 @@ int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
     {
         st_status = -1;  // ST_SUCCESS
     }
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
+// #endif
+
     return st_status;
 }
 
@@ -149,42 +155,53 @@ int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
     char * strerrbuf;
     int itr_nbytes;
 //#endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle);
+// #endif
 
     //buf = (void *)dst_ofst;
     buf = MK_FP(_DS, dst_ofst);  // without this FP, it gets the right bytes but does not assign them properly ? because all pointers are FAR in LARGE memory model ? override NEAR ?
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
+// #endif
+
     if ( (baitos = read(fhandle, buf, nbytes)) == -1 )
     {
-//#ifdef DEBUG
-        strerrbuf = strerror(errno);
-        dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
-//#endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-#endif
+
+// #ifdef DEBUG
+//         strerrbuf = strerror(errno);
+//         dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
+// #endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
+// #endif
+
         st_status = 0;  // ST_FAILURE
     }
     else
     {
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
-#endif
-//#ifdef DEBUG
-    for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
-    {
-        dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)buf + itr_nbytes));
-    }
-//#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
+// #endif
+
+// #ifdef DEBUG
+//     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
+//     {
+//         dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)buf + itr_nbytes));
+//     }
+// #endif
+
         st_status = -1;  // ST_SUCCESS
     }
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle, st_status);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle, st_status);
+// #endif
+
     return st_status;
 }
 
@@ -198,34 +215,42 @@ int lbx_read(void _FAR * fpDst, int nbytes, int fhandle)
     char * strerrbuf;
     int itr_nbytes;
 //#endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, fpDst, nbytes, fhandle);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, fpDst, nbytes, fhandle);
+// #endif
 
     if ( (baitos = read(fhandle, fpDst, nbytes)) == -1 )
     {
-//#ifdef DEBUG
-        strerrbuf = strerror(errno);
-        dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
-//#endif
+
+// #ifdef DEBUG
+//         strerrbuf = strerror(errno);
+//         dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
+// #endif
+
         st_status = 0;  // ST_FAILURE
     }
     else
     {
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
-#endif
-//#ifdef DEBUG
-    for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
-    {
-        dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)fpDst + itr_nbytes));
-    }
-//#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
+// #endif
+
+// #ifdef DEBUG
+//     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
+//     {
+//         dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)fpDst + itr_nbytes));
+//     }
+// #endif
+
         st_status = -1;  // ST_SUCCESS
     }
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d]: END: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, fpDst, nbytes, fhandle, st_status);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d]: END: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, fpDst, nbytes, fhandle, st_status);
+// #endif
+
     return st_status;
 }
 
@@ -354,32 +379,44 @@ void LBX_Error(char * name, int errno, int entry, int pages)
 
     strcpy(errmsg, name);
     itoa(entry, cnv, 10);
-    strcat(errmsg, cnst_LBXErr_Common1);
+    strcat(errmsg, cnst_LBXErr_Common1);        // char *cnst_LBXErr_Common1 = ".LBX [entry ";                                         // MGC dseg:3EA3
     strcat(errmsg, cnv);
-    strcat(errmsg, cnst_LBXErr_Common2);
-    
+    strcat(errmsg, cnst_LBXErr_Common2);        // char *cnst_LBXErr_Common2 = "] ";                                                   // MGC dseg:3EB0
+/*
+
+char *cnst_LBX_Error7 = " is not an LBX file";                                      // MGC dseg:3F8B
+char *cnst_LBX_Error8 = " exceeds number of LBX entries";                           // MGC dseg:3F9F
+char *cnst_LBX_Error9 = " has an incorrect record size";                            // MGC dseg:3FBE
+char *cnst_LBX_ErrorA = " exceeds number of defined records";                       // MGC dseg:3FDC
+char *cnst_LBX_ErrorB = " cannot be reloaded into EMS w/o being first released.";   // MGC dseg:3FFF
+char *cnst_LBX_ErrorC = " EMM loading error. Insufficient EMM.";                    // MGC dseg:4036
+char *cnst_LBX_ErrorD = " Only pictures may be loaded into reserved EMM";           // MGC dseg:405C
+char *cnst_LBX_ErrorE = " (Reserved EMM) ";                                         // MGC dseg:408B
+char *cnst_LBX_ErrorF1 = " LBX to";                                                 // MGC dseg:409C
+char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes";     // MGC dseg:40A4
+*/
     switch (errno)
     {
         case 1:
-            strcat(errmsg, cnst_LBX_Error1);
+            strcat(errmsg, cnst_LBX_Error1);    // char *cnst_LBX_Error1 = " could not be found.";                                     // MGC dseg:3EB3
             break;
         case 2:
-            strcat(errmsg, cnst_LBX_Error2);
+            strcat(errmsg, cnst_LBX_Error2);    // char *cnst_LBX_Error2 = " has been corrupted.";                                     // MGC dseg:3EC8
             break;
         case 3:
-            strcpy(errmsg, cnst_LBX_Error31);
+            strcpy(errmsg, cnst_LBX_Error31);   // char *cnst_LBX_Error31 = "Insufficient memory. You need at least ";                 // MGC dseg:3EDD
             itoa(RAM_Min_KB, cnv, 10);
             strcat(errmsg, cnv);
-            strcat(errmsg, cnst_LBX_Error32);
+            strcat(errmsg, cnst_LBX_Error32);   // char *cnst_LBX_Error32 = "K free. Try removing all TSR's.";                         // MGC dseg:3F05
             break;
         case 4:
-            strcat(errmsg, cnst_LBX_Error4);
+            strcat(errmsg, cnst_LBX_Error4);    // char *cnst_LBX_Error4 = " was not properly allocated or has been corrupted.";       // MGC dseg:3F25
             break;
         case 5:
-            strcat(errmsg, cnst_LBX_Error51);
+            strcat(errmsg, cnst_LBX_Error51);   // char *cnst_LBX_Error51 = " failed to reload. Allocation too small by ";             // MGC dseg:3F58
             itoa(pages, cnv, 10);
             strcat(errmsg, cnv);
-            strcat(errmsg, cnst_LBX_Error52);
+            strcat(errmsg, cnst_LBX_Error52);   // char *cnst_LBX_Error52 = " pages";                                                  // MGC dseg:3F84
             break;
         //case 6:
         //    break;

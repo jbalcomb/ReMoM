@@ -311,13 +311,13 @@ seg019.H  (ST_VGA.H)
 s19p14         VGA_TextDraw_Init           void VGA_TextDraw_Init(void)
 
 
-##### MGC seg020
+##### MGC seg020 WZD seg020
 seg020.H  (ST_VGA.H)
 s20p01      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
 s20p05      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
 
 
-##### MGC seg021
+##### MGC seg021 WZD seg021
 seg021.H  (ST_VGA.H)  ALL ASM
 s21p01      VGA_DAC_Write               void VGA_DAC_Write(void)
 s21p07      FLIC_LoadPalette            void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index)       VGA_LoadIMGPalette
@@ -387,8 +387,6 @@ LBX_IMG_DecPrepare
 LBX_IMG_LoadEMSFrame
 LBX_IMG_LoadFrame
 _s22p22c.c      ST_MoveData             int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes)  MEM_Copy_Far
-
-
 
 []_s28p13         FLIC_BuildFrame     void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg)  LBX_IMG_BuildFrame
 

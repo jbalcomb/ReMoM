@@ -8,15 +8,15 @@
 #include "ST_LBX.H"
 #include "ST_SA.H"
 
-#ifdef DEBUG
-#include "STU_DBG.H"
-#endif
+// #ifdef DEBUG
+// #include "STU_DBG.H"
+// #endif
 
-#ifdef TEST
-#include "STU_TST.H"
-#endif
+// #ifdef TEST
+// #include "STU_TST.H"
+// #endif
 
-
+// s10p10
 SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
 {
     char *tmp_LbxName;
@@ -36,29 +36,35 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     unsigned int ReadNbytes;        // LBXREADDATA()
     SAMB_ptr pSAMB_head;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
-//     if
-//     (
-//         ((strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntry == 2)) ||
-//         ((strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntry == 0))
-//     )
-//     {
-//         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
-//     }
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+// //     if
+// //     (
+// //         ((strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntry == 2)) ||
+// //         ((strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntry == 0))
+// //     )
+// //     {
+// //         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+// //     }
+// #endif
 
-#ifdef TEST
-    // DELETE //TST_LBX[Get_LBX_Name_Index(LbxName)];
-    // DELETE Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
-#endif
+// #ifdef TEST
+//     // DELETE //TST_LBX[Get_LBX_Name_Index(LbxName)];
+//     // DELETE Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+// #endif
 
     tmp_LbxEntry = LbxEntry;
     tmp_LbxName = LbxName;
     
     LBXTESTNEGATIVEENTRY()
 
-    LBXHEADER()
+    // LBXHEADER()
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = (unsigned int) ( (unsigned long)((void _FAR *)(SA_Allocate_MemBlk(SZ_LBX_HDR_PR))) >> 16); }
+    if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = (unsigned int) ( (unsigned long)((void *)(SA_Allocate_MemBlk(SZ_LBX_HDR_PR))) >> 16); }
+    
+
 
     ExtractFileBase(LbxName);
 
@@ -92,6 +98,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
            
             if ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )
             {
+                // HERE("LBX_Error: could not be found  ( (g_LBX_FileHandle == ST_FAILURE) && (UU_g_LBX_FilePath == ST_NULL) )");
                 LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
             }
             else
@@ -102,6 +109,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 
                 if ( g_LBX_FileHandle == ST_FAILURE )
                 {
+                    // HERE("LBX_Error: could not be found  ( g_LBX_FileHandle == ST_FAILURE )");
                     LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
                 }
             }
@@ -123,7 +131,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 
             if ( lbx_seek(tmp_LbxHdrOfst, g_LBX_FileHandle) == ST_FAILURE )
             {
-                HERE("LBX entry has been corrupted");
+                // HERE("LBX_Error: has been corrupted  ( lbx_seek(tmp_LbxHdrOfst, g_LBX_FileHandle) == ST_FAILURE )");
                 LBX_Error(tmp_LbxName, 0x02, tmp_LbxEntry, NULL);  /* LBXErr_corrupted */
             }
 
@@ -184,8 +192,9 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     //HERE("Update_MemFreeWorst_KB()");
     Update_MemFreeWorst_KB();
 
-#ifdef DEBUG    
-    dlvfprintf("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
-#endif
+// #ifdef DEBUG    
+//     dlvfprintf("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
+// #endif
+
     return SAMB_data;
 }

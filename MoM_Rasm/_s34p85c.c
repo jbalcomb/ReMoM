@@ -1,6 +1,8 @@
 // _s34p85c.c GUI_SimplePageFlip
 // ST_GUI.H
 
+#include "ST_GUI.H"
+
 #include "ST_CRSR.H"
 #include "ST_SCRN.H"
 

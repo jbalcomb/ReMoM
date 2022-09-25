@@ -1,7 +1,9 @@
 // _s26p04a.c VGA_PageFlip
 // ST_VGA.H
 
-#include "STU_DBG.H"
+
+// #include "STU_DBG.H"
+
 
 extern unsigned int gsa_DSP_Addr;
 extern unsigned int g_RSP_Idx;
@@ -11,12 +13,12 @@ extern void VGA_Set_DSP_Addr(void);
 
 void VGA_PageFlip(void)
 {
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_PageFlip()\n", __FILE__, __LINE__);
-#endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_PageFlip()\n", __FILE__, __LINE__);
+// #endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
+// #endif
 
 asm push es
 asm push ds
@@ -47,18 +49,22 @@ asm pop es
 //asm ret
 
     VGA_WaitSync();
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
-#endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
-#endif
-    VGA_Set_DSP_Addr();  // _s26p02.asm
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
-#endif
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: VGA_PageFlip()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %u\n", __FILE__, __LINE__, g_RSP_Idx);
+// #endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
+// #endif
+
+    VGA_Set_DSP_Addr();  // _s26p02.asm
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
+// #endif
+
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: VGA_PageFlip()\n", __FILE__, __LINE__);
+// #endif
 }
