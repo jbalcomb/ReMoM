@@ -3,7 +3,7 @@
 
 #include "ST_TYPE.H"  /* byte, word, etc. */
 
-#include "ST_SA.H"
+#include "ST_SA.H"  /* SAMB_addr */
 
 
 /*
@@ -517,17 +517,23 @@ void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
 /*
     seg028
 */
-// _s28p02
-void FLIC_Prepare(int Width, int Height, unsigned int SAMB_head);
-// _s28p11
-void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
-// _s28p13
+
+// _s28p02a.c
+void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
+
+// s28p11
+// seg028.H  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
+
+// s28p13
 //void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg);
-// _s28p14
+
+// _s28p14c.c
 void FLIC_SetFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
-// _s28p15
+
+// _s28p15.asm
 void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header);
-// _s28p16
+
+// _s28p16c.c
 word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header);
 
 

@@ -10,7 +10,7 @@ extern FILE * Debug_Log_File;
 
 
 #ifdef DEBUG
-#define HERE(argString) { \
+#define DLOG(argString) { \
     do { \
         fprintf(Debug_Log_File, "DEBUG: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); \
         fflush(Debug_Log_File); \
@@ -18,7 +18,7 @@ extern FILE * Debug_Log_File;
 }
 #else
 /* emptiness, when debugging is not enabled */
-#define HERE  
+#define DLOG  
 #endif
 
 
@@ -32,6 +32,7 @@ void Debug_Log_Startup(void);
 void Debug_Log_Shutdown(void);
 
 void dlvfprintf(const char *fmt, ...);
+
 
 #ifdef __cplusplus
 }

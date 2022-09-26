@@ -72,13 +72,13 @@ void test_FLIC_Draw_XY(void);
 
 int main(void)
 {
-
     Debug_Log_Startup();
+    Test_Log_Startup();
 
     // test_VGA_SetDirectDraw();
     // test_VGA_Set_DSP_Addr();
 
-    test_VGA_LoadPalette();
+    // test_VGA_LoadPalette();  // TEST_SUCCESS, for FONTS.LBX,2
 
     // test_VGA_DAC_Init();
 
@@ -88,8 +88,9 @@ int main(void)
 
     //test_GAME_LoadMainImages();
 
-    // test_Load_MAINSCRN_000();
+    test_Load_MAINSCRN_000();
 
+    Test_Log_Shutdown();
     Debug_Log_Shutdown();
     return 0;
 }
@@ -225,14 +226,16 @@ void test_Load_MAINSCRN_000(void)
 {
     SAMB_data sa_MAINSCRN_000;
 
-    // MGC main() and Hardware_Init()
+    // MGC main()
     g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     EMM_SetMinKB(EMM_MIN_KB);
     RAM_SetMinKB(RAM_MIN_KB);
+    // Hardware_Init()
     EMM_Startup();
+
     validate_EMM_Startup();
 
-    // GAME_LoadMainImages
+    // GAME_LoadMainImages()
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
     sa_MAINSCRN_000 = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
     TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
@@ -369,6 +372,7 @@ void test_VGA_LoadPalette(void)
     validate_PaletteLbxEntry_2(sad1_PaletteLbxEntry);
 
     // s20p05 VGA_SetDACChanged()
+    // if ( First_Color == -1 ) { VGA_SetDACChanged(0, 255); } else { VGA_SetDACChanged(First_Color, Last_Color); }
 
     dlvfprintf("DEBUG: [%s, %d] sad1_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, sad1_PaletteLbxEntry);
 
@@ -639,7 +643,7 @@ void test_EMM_Load_LBX_File(void)
     // SCREEN_Menu() |-> SCREEN_Menu_Draw() |->
     Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);
     FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
-    HERE("CALL: VGA_SetModeY();");
+    DLOG("CALL: VGA_SetModeY();");
     VGA_SetModeY();
     FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
         // ST_MoveData(destoff=0xB47C, destseg=0x0000, srcoff=0x0000, srcseg=0x20D1, nbytes=16)
@@ -647,7 +651,7 @@ void test_EMM_Load_LBX_File(void)
         // FLIC_Draw_EMM_C(ScreenPage_X=0, ScreenPage_Y=0, SAMB_data_FLIC_HDR=0x20D1, Frame_Index=0)
     // void FLIC_LoadPalette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
 
-    HERE("CALL: VGA_SetTextMode();");
+    DLOG("CALL: VGA_SetTextMode();");
     VGA_SetTextMode();
 #ifdef DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_EMM_Load_LBX_File()\n", __FILE__, __LINE__);
@@ -735,7 +739,7 @@ void test_GAME_LoadMainImages(void)
 void test_FLIC_Draw_XY(void)
 {
 
-    // HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+    // DLOG("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
     // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
 
     FLIC_Draw_XY(32, 20, gsa_VORTEX_3_MenuQuitToDOS);

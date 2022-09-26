@@ -38,6 +38,29 @@ char Test_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possib
 
 // DELETE struct s_TST_LBX TST_LBX[101];
 
+
+void Test_Log_Startup(void)
+{
+    Test_Log_File = fopen(Test_Log_FileName, "w");
+
+    if(Test_Log_File == NULL)
+    {
+        printf("TEST [FATAL]: Unable to open log file: %s", Test_Log_FileName);
+        exit(1);
+    }
+
+    get_datetime(&Test_Log_ISO8601_DateTime);
+
+    fprintf(Test_Log_File, "[%s] Test: %s\n", Test_Log_ISO8601_DateTime, "BEGIN: Test Log");
+}
+
+void Test_Log_Shutdown(void)
+{
+    get_datetime(&Test_Log_ISO8601_DateTime);
+    fprintf(Test_Log_File, "[%s] TEST: %s\n", Test_Log_ISO8601_DateTime, "END: Test Log");
+    fclose(Test_Log_File);
+}
+
 // "tst" as in "test"; "prn" as in "print"/"printf";
 void tst_prn(const char *fmt, ...)
 {
@@ -349,18 +372,19 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     }
 
     itr_PaletteLbxEntry = 0;
-    while(itr_PaletteLbxEntry++ < 5472)
+    while(itr_PaletteLbxEntry < 5472)
     {
-        baito1 = fread(&baito1, 1, 1, fp);
-        baito2 = *((unsigned char *) (sad1_PaletteLbxEntry + itr_PaletteLbxEntry));
-        dlvfprintf("DEBUG: [%s, %d]: baito1: 0x%02X\n", __FILE__, __LINE__, baito1);
-        dlvfprintf("DEBUG: [%s, %d]: baito2: 0x%02X\n", __FILE__, __LINE__, baito2);
+        fread(&baito1, 1, 1, fp);
+        baito2 = *((unsigned char *) MK_FP(sad1_PaletteLbxEntry, itr_PaletteLbxEntry));
+        // dlvfprintf("DEBUG: [%s, %d]: baito:  0x%02X  0x%02X\n", __FILE__, __LINE__, baito1, baito2);
 
         if( baito2 != baito1 )
         {
             test_status = -1;  // TEST_FAILURE
             break;
         }
+
+        itr_PaletteLbxEntry++;
     }
 
     if ( test_status != -1 )  // TEST_FAILURE
@@ -382,23 +406,23 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
     int test_status;
     struct s_FLIC_HDR * fp_FLIC_Header;
     
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_FLIC_Header( sa_FLIC_Header = 0x%04X)\n", __FILE__, __LINE__, sa_FLIC_Header);
 #endif
 
     test_status = 0;  // TEST_UNDEFINED
 
-    fp_FLIC_Header = (struct s_FLIC_HDR *)MK_FP(sa_FLIC_Header, 0);
+    fp_FLIC_Header = (struct s_FLIC_HDR *) MK_FP(sa_FLIC_Header, 0);
 
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Width: %d\n",                   __FILE__, __LINE__, fp_FLIC_Header->Width);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Height: %d\n",                  __FILE__, __LINE__, fp_FLIC_Header->Height);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Current_Frame: %d\n",           __FILE__, __LINE__, fp_FLIC_Header->Current_Frame);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Frame_Count: %d\n",             __FILE__, __LINE__, fp_FLIC_Header->Frame_Count);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Loop_Frame: %d\n",              __FILE__, __LINE__, fp_FLIC_Header->Loop_Frame);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->EMM_Handle_Number: %d\n",       __FILE__, __LINE__, fp_FLIC_Header->EMM_Handle_Number);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->EMM_Logical_Page_Number: %d\n", __FILE__, __LINE__, fp_FLIC_Header->EMM_Logical_Page_Number);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->EMM_Logical_Page_Offset: %d\n", __FILE__, __LINE__, fp_FLIC_Header->EMM_Logical_Page_Offset);
-    tst_prn("DEBUG: [%s, %d] fp_FLIC_Header->Palette_Header_Offset: %d\n",   __FILE__, __LINE__, fp_FLIC_Header->Palette_Header_Offset);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Width: %d\n",                   __FILE__, __LINE__, fp_FLIC_Header->Width);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Height: %d\n",                  __FILE__, __LINE__, fp_FLIC_Header->Height);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Current_Frame: %d\n",           __FILE__, __LINE__, fp_FLIC_Header->Current_Frame);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Frame_Count: %d\n",             __FILE__, __LINE__, fp_FLIC_Header->Frame_Count);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Loop_Frame: %d\n",              __FILE__, __LINE__, fp_FLIC_Header->Loop_Frame);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->EMM_Handle_Number: %d\n",       __FILE__, __LINE__, fp_FLIC_Header->EMM_Handle_Number);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->EMM_Logical_Page_Number: %d\n", __FILE__, __LINE__, fp_FLIC_Header->EMM_Logical_Page_Number);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->EMM_Logical_Page_Offset: %d\n", __FILE__, __LINE__, fp_FLIC_Header->EMM_Logical_Page_Offset);
+    tst_prn("TEST: [%s, %d] fp_FLIC_Header->Palette_Header_Offset: %d\n",   __FILE__, __LINE__, fp_FLIC_Header->Palette_Header_Offset);
 
     if ( sa_FLIC_Header == TST_LBX_MAINSCRN_000.Segment_Address )
     {
@@ -417,7 +441,7 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
         {
             test_status = -1;  // TEST_FAILURE
         }
-        tst_prn("DEBUG: [%s, %d] (fp_FLIC_Header->Width == 320) %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "TRUE" : "FALSE" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Width == 320) %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "TRUE" : "FALSE" ));
     }
 
     if ( test_status != -1 )  // TEST_FAILURE
@@ -425,7 +449,7 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
         test_status = 1;  // TEST_SUCCESS
     }
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: validate_FLIC_Header( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 

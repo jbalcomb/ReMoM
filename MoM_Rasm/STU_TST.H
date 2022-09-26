@@ -6,7 +6,12 @@
 #include "ST_SA.H"
 
 
-// #define TST_HERE(argString) { \
+#define FONTS_LBX_002    "FONTS_~1.BIN"
+#define MAINSCRN_LBX_000 "MAINSC~1.BIN"
+#define MAINSCRN_LBX_005 "MAINSC~1.BIN"
+
+
+// #define TLOG(argString) { \
 //     do { \
 //         fprintf(Test_Log_File, "TEST: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); \
 //         fflush(Test_Log_File); \
@@ -17,10 +22,6 @@
 // // Usage: TRACE(("message %d\n", var));
 
 
-extern char Debug_Log_FileName[];
-extern FILE *Debug_Log_File;
-
-// extern char DBG_LBX_Filename[];
 
 struct s_TST_LBX  // sizeof 109  ... * 101 = 11,009 bytes ... * 127 = 1,398,143 bytes  :(..
 {
@@ -54,6 +55,8 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+void Test_Log_Startup(void);
+void Test_Log_Shutdown(void);
 void tst_prn(const char *fmt, ...);
 
 // DELETE void dl_TST_LBX_MAINSCRN_000(void);

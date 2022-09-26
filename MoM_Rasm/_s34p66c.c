@@ -3,7 +3,7 @@
 
 #include "ST_GUI.H"
 
-#include "STU_DBG.H"
+// #include "STU_DBG.H"
 
 /*
 
@@ -21,33 +21,35 @@ int IN_GetInput(void)
 {
     int input;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_GetInput()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_GetInput()\n", __FILE__, __LINE__);
+// #endif
 
     if ( g_IN_Skip > 0 )
     {
-        HERE("if ( g_GUI_Delay > 0 )");
+        // HERE("if ( g_GUI_Delay > 0 )");
         g_IN_Skip -= 1;
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
+// #endif
+
         return 0;
     }
 
     if ( g_IN_Skip < 0 )
     {
-        HERE("if ( g_GUI_Delay < 0 )");
+        // HERE("if ( g_GUI_Delay < 0 )");
         g_IN_Skip = 0;
     }
 
     // TODO(JimBalcomb,20220727): figure out the logic here of skipping input on CtrlCnt<=1
     if ( g_CTRL_Control_Count <= 1 )
     {
-        HERE("if ( g_CTRL_Control_Count <= 1 )");
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
-#endif
+        // HERE("if ( g_CTRL_Control_Count <= 1 )");
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput(void) { input=0 }\n", __FILE__, __LINE__);
+// #endif
         return 0;
     }
 
@@ -63,14 +65,14 @@ int IN_GetInput(void)
 
     input = IN_ProcessInput();  // _s34p01c.c
 //    input = 5;  // DEBUG: return GUI_Quit_Lbl_Index: 5
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] input: %d\n", __FILE__, __LINE__, input);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] input: %d\n", __FILE__, __LINE__, input);
+// #endif
 
     VGA_Set_DSP_Addr();
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput() { input=%d }\n", __FILE__, __LINE__, input);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: GUI_GetInput() { input=%d }\n", __FILE__, __LINE__, input);
+// #endif
     return input;
 }

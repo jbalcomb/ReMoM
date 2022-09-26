@@ -1,13 +1,13 @@
 // seg028
 // ST_FLIC.H
 
-//#pragma inline
-
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
 #include "seg028.H"
 
 #include "ST_FLIC.H"
 
-#include "STU_DBG.H"
+// #include "STU_DBG.H"
 
 
 void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
@@ -93,9 +93,9 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     orig_DS = _DS;
 #endif
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
+// #endif
 
     // dlvfprintf("DEBUG: [%s, %d] FLIC_HDR[0x00]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x00));
     // dlvfprintf("DEBUG: [%s, %d] FLIC_HDR[0x02]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x02));
@@ -126,13 +126,15 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     // ST_MoveData((unsigned int)&FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(FLIC_Header));
     // // //void movedata(unsigned srcseg, unsigned srcoff, unsigned dstseg, unsigned dstoff, size_t n);
     // // movedata(sa_FLIC_Header, 0, unsigned dstseg, unsigned dstoff, sizeof(FLIC_Header));
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] orig_DS: 0x%04X\n", __FILE__, __LINE__, orig_DS);
-    // dlvfprintf("DEBUG: [%s, %d] FP_SEG(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_SEG(FLIC_Header));  // Error: Incompatible type conversion
-    // dlvfprintf("DEBUG: [%s, %d] FP_OFF(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_OFF(FLIC_Header));  // Error: Incompatible type conversion
-    // dlvfprintf("DEBUG: [%s, %d] (unsigned int)&FLIC_Header: 0x%04X\n", __FILE__, __LINE__, (unsigned int)&FLIC_Header);
-    dlvfprintf("DEBUG: [%s, %d] &FLIC_Header: 0x%04X\n", __FILE__, __LINE__, &FLIC_Header);
-#endif
+
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] orig_DS: 0x%04X\n", __FILE__, __LINE__, orig_DS);
+//     // dlvfprintf("DEBUG: [%s, %d] FP_SEG(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_SEG(FLIC_Header));  // Error: Incompatible type conversion
+//     // dlvfprintf("DEBUG: [%s, %d] FP_OFF(FLIC_Header): 0x%04X\n", __FILE__, __LINE__, FP_OFF(FLIC_Header));  // Error: Incompatible type conversion
+//     // dlvfprintf("DEBUG: [%s, %d] (unsigned int)&FLIC_Header: 0x%04X\n", __FILE__, __LINE__, (unsigned int)&FLIC_Header);
+//     dlvfprintf("DEBUG: [%s, %d] &FLIC_Header: 0x%04X\n", __FILE__, __LINE__, &FLIC_Header);
+// #endif
+
     ST_MoveData((unsigned int)&FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(FLIC_Header));
 
 // #ifdef DEBUG
@@ -151,38 +153,43 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 
     Frame_Index = FLIC_Header.Current_Frame;
 
-    #ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
-    #endif
+//     #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
+//     #endif
+
     FLIC_Header.Current_Frame += 1;
-    #ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
-    #endif
+
+//     #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
+//     #endif
 
     if ( FLIC_Header.Current_Frame < FLIC_Header.Frame_Count )
     {
-        #ifdef DEBUG
-            dlvfprintf("DEBUG: [%s, %d] (Next Frame < Frame Count) FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
-        #endif
+
+//         #ifdef DEBUG
+//             dlvfprintf("DEBUG: [%s, %d] (Next Frame < Frame Count) FLIC_Header.Current_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Current_Frame);
+//         #endif
+
         farpokew(sa_FLIC_Header, 0x04, FLIC_Header.Current_Frame);
     }
     else
     {
-        #ifdef DEBUG
-            dlvfprintf("DEBUG: [%s, %d] (Next Frame >= Frame Count) FLIC_Header.Loop_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Loop_Frame);
-        #endif
+//         #ifdef DEBUG
+//             dlvfprintf("DEBUG: [%s, %d] (Next Frame >= Frame Count) FLIC_Header.Loop_Frame=%d\n", __FILE__, __LINE__, FLIC_Header.Loop_Frame);
+//         #endif
+
         farpokew(sa_FLIC_Header, 0x04, FLIC_Header.Loop_Frame);
     }
 
     if ( FLIC_Header.Palette_Header_Offset != 0 )
     {
-        HERE("FLIC_LoadPalette()");
-        FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // _s21p07c.c
+        // HERE("FLIC_LoadPalette()");
+        FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
     }
 
     if ( FLIC_Header.EMM_Handle_Number == 0 )
     {
-        HERE("( FLIC_Header.EMM_Handle_Number == 0 )");
+        // HERE("( FLIC_Header.EMM_Handle_Number == 0 )");
 
 //         fptr_FlicHdr_SgmtAddr = MK_FP(sa_FLIC_Header, 0);
 //         // dlvfprintf("DEBUG: [%s, %d] fptr_FlicHdr_SgmtAddr: %Fp\n", __FILE__, __LINE__, fptr_FlicHdr_SgmtAddr);
@@ -255,30 +262,30 @@ asm {
 }
 
         if ( Shading != 0 ) {
-            HERE("( Shading != 0 )");
-#ifdef DEBUG
-            dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_R(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-#endif
+            // HERE("( Shading != 0 )");
+// #ifdef DEBUG
+//             dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_R(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+// #endif
             FLIC_Draw_R(tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
         } else {
-            HERE("( Shading == 0 )");
-#ifdef DEBUG
-            dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_A(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-#endif
+            // HERE("( Shading == 0 )");
+// #ifdef DEBUG
+//             dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_A(tmp_SI=%d, tmp_DI=%d, FLIC_Header.Width=%d, FLIC_Frame_Ofst=0x%04X, FLIC_Frame_Sgmt=0x%04X)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+// #endif
             FLIC_Draw_A(tmp_SI, tmp_DI, FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
         }
     } else {
-        HERE("( FLIC_Header.EMM_Handle_Number != 0 )");
-#ifdef DEBUG
-        dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_EMM(tmp_SI=%d, tmp_DI=%d, sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
-#endif
+        // HERE("( FLIC_Header.EMM_Handle_Number != 0 )");
+// #ifdef DEBUG
+//         dlvfprintf("DEBUG: [%s, %d] CALL: FLIC_Draw_EMM(tmp_SI=%d, tmp_DI=%d, sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
+// #endif
         //FLIC_Draw_EMM_A(tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
         //FLIC_Draw_EMM_A2(tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
         //FLIC_Draw_EMM_A3(tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
-        FLIC_Draw_EMM_C(tmp_SI, tmp_DI, sa_FLIC_Header, Frame_Index);
+        FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_XY()\n", __FILE__, __LINE__);
-#endif
+// #ifdef DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_XY()\n", __FILE__, __LINE__);
+// #endif
 }
