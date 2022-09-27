@@ -1,12 +1,16 @@
-/c /TDe +
+/c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
 MGC.OBJ +
+STU_DBG.OBJ +
+STU_TST.OBJ +
+STU_UTIL.OBJ +
+STU_VGA.OBJ +
 MGC_DEF.OBJ +
 MOM_DEF.OBJ +
+ST_DEF.OBJ +
 ST_CRSR.OBJ +
 ST_CTRL.OBJ +
 ST_DBG.OBJ +
-ST_DEF.OBJ +
 ST_EMM.OBJ +
 ST_FLIC.OBJ +
 ST_GUI.OBJ +
@@ -68,8 +72,8 @@ _s26p07.obj +
 _s27.obj +
 _s27a.obj +
 _s27p03c.obj +
-_s28p02.obj +
-_s28p11a.obj +
+seg028.obj +
+_s28p02a.obj +
 _s28p14c.obj +
 _s28p15a.obj +
 _s28p16c.obj +
@@ -133,5 +137,5 @@ _s34p82c.obj +
 _s34p83c.obj +
 _s34p85c.obj, +
 MGC.EXE, +
-, +
+MGC.MAP, +
 C:\BORLANDC\LIB\CL.LIB
