@@ -6,10 +6,17 @@
 #include "ST_SA.H"
 
 
+#define TEST_FAILURE   -1
+#define TEST_SUCCESS    1
+#define TEST_UNDEFINED  0
+
+
 #define FONTS_LBX_002    "FONTS_~1.BIN"
 #define MAINSCRN_LBX_000 "MAINSC~1.BIN"
 #define MAINSCRN_LBX_005 "MAINSC~1.BIN"
 
+
+#define PF_TEST_STATUS() { (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE") }
 
 // #define TLOG(argString) { \
 //     do { \
@@ -46,6 +53,7 @@ struct s_TST_LBX  // sizeof 109  ... * 101 = 11,009 bytes ... * 127 = 1,398,143 
 };
 //typedef struct s_TST_LBX TST_LBX;
 extern struct s_TST_LBX TST_LBX_MAINSCRN_000;
+extern struct s_TST_LBX TST_LBX_MAINSCRN_005;
 
 // DELETE extern struct s_TST_LBX TST_LBX[101];
 
@@ -59,24 +67,23 @@ void Test_Log_Startup(void);
 void Test_Log_Shutdown(void);
 void tst_prn(const char *fmt, ...);
 
-// DELETE void dl_TST_LBX_MAINSCRN_000(void);
-// DELETE 
-// DELETE Populate_TST_LBX(const char * LBX_Load_Function, char * LBX_Name, int LBX_Entry_Index, SAMB_addr SAMB_head, int Load_Type, int LBX_Header_Format);
-// DELETE 
-// DELETE void Set_LBX_Load_Function(const char * LBX_Load_Function, const char * LBX_Name, unsigned int LBX_Entry_Index);
+void reset_EMM(void);
+void reset_ST_EMM(void);
 
 void validate_FontStyleData(void);
 void validate_BorderStyleData(void);
 void validate_Palette_0(void);
 int  validate_PaletteFlags_1(void);
-int validate_PaletteLbxEntry(void);
-int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
+int  validate_PaletteLbxEntry(void);
+int  validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
 
 int  validate_FLIC_Header(SAMB_data sa_FLIC_Header);
 
+int  validate_MAINSCRN_LBX_EMM(void);
+
 // int validate_Hardware_Init()
-int validate_EMM_Startup(void);
-int validate_VGA_DAC_Init(void);
+int  validate_EMM_Startup(void);
+int  validate_VGA_DAC_Init(void);
 // int validate_MoM_Tables_Init(6100);
 int  validate_GAME_LoadMainImages();
 // int validate_GAME_Load_TERRSTAT_0();

@@ -873,15 +873,16 @@ void EMM_Startup(void)
 
 // - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- -
 
+    // EMM_Pages_Reserved: initialized to 40, set to 158 in MGC main()
     if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )  // returns the unallocated pages count (not the total pages count)
     {
         // HERE("if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )");
         EMM_BuildEmmErrStr(varTmpStr100);
         Quit(varTmpStr100);
     }
-
-    g_EmmHndlNbr_VGAFILEH = EMM_GetHandle(5, g_EmmHndlNm_VGAFILEH, 1);  // 5 pages/80KB, EmmRsvd=TRUE
-    EmmHndlNbr_EMMDATAH = EMM_GetHandle(4, g_EmmHndlNm_EMMDATAH, 1);  // 4 pages/64KB, EmmRsvd=TRUE
+    
+    g_EmmHndlNbr_VGAFILEH = EMM_GetHandle(5, g_EmmHndlNm_VGAFILEH, 1);  // 5 pages/80KB, EmmRsvd=TRUE  // EMM_Pages_Reserved = 158 - 5 = 153
+    EmmHndlNbr_EMMDATAH = EMM_GetHandle(4, g_EmmHndlNm_EMMDATAH, 1);    // 4 pages/64KB, EmmRsvd=TRUE  // EMM_Pages_Reserved = 153 - 4 = 149
     EMMDATAH_Level = 0;
 
 // #ifdef DEBUG

@@ -75,6 +75,55 @@ void tst_prn(const char *fmt, ...)
    fflush(Test_Log_File);
 }
 
+void reset_EMM(void)
+{
+    unsigned int EMM_Handle_Count;
+    unsigned int EMM_Handle_Number;
+    int itr_EMM_Handle_Count;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: reset_EMM()\n", __FILE__, __LINE__);
+#endif
+
+    _AH = 0x4B;             // INT 67,4B - Get Handle Count
+    geninterrupt(0x67);     // EMS INT
+    EMM_Handle_Count = _BX;
+
+    for ( itr_EMM_Handle_Count = 1; itr_EMM_Handle_Count < EMM_Handle_Count; itr_EMM_Handle_Count++ )
+    {
+        EMM_Handle_Number = itr_EMM_Handle_Count;
+        _DX = EMM_Handle_Number;
+        _AH = 0x45;         // INT 67,45 - Release Handle and Memory Pages
+        geninterrupt(0x67); // EMS INT
+    }
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: reset_EMM()\n", __FILE__, __LINE__);
+#endif
+}
+
+void reset_ST_EMM(void)
+{
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: reset_ST_EMM()\n", __FILE__, __LINE__);
+#endif
+
+    reset_EMM();
+
+    EMM_OK = 0;
+    EmmHndlNbr_YOMOMA = 0;
+    g_EmmHndlNbr_VGAFILEH = 0;
+    EmmHndlNbr_EMMDATAH = 0;
+    EMMDATAH_Level = 0;
+    g_EMM_Pages_Reserved = 40;
+    g_EMM_Open_Handles = 0;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: reset_ST_EMM()\n", __FILE__, __LINE__);
+#endif
+}
+
+
 
 struct s_TST_LBX TST_LBX_MAINSCRN_000 = {
     "MAINSCRN.LBX",     /*  char LBX_File_Name[13]                */
@@ -101,6 +150,33 @@ LBX_Entry_Name = "MAINSCRN_000"
 LBX_File_Size_B = 196511
 LBX_File_Size_PR = 13;  // (196511 /    16 = 12281.9375)
 LBX_File_Size_PG = 12;  // (196511 / 16384 =    11.99407958984375)
+EMM_Logical_Page_Count
+*/
+struct s_TST_LBX TST_LBX_MAINSCRN_005 = {
+    "MAINSCRN.LBX",     /*  char LBX_File_Name[13]                */
+    "MAINSCRN",         /*  char LBX_Name[9]                      */
+    0,                  /*  unsigned int LBX_Type                 */
+    0,                  /*  int LBX_Entry                         */
+    "MAINSCRN_005",     /*  char LBX_Entry_Name[13]               */
+    0,                  /*  int EMM_Table_Index                   */
+    0,                  /*  long LBX_File_Size_B                  */
+    0,                  /*  long LBX_File_Size_PR                 */
+    0,                  /*  long LBX_File_Size_PG                 */
+    0,                  /*  int EMM_Logical_Page_Count            */
+    0,                  /*  sgmt_addr Segment_Address             */
+    0,                  /*  unsigned char EMM_Handle_Number       */
+    0,                  /*  unsigned char EMM_Logical_Page        */
+    0                   /*  unsigned int EMM_Logical_Page_Offset  */
+};
+/*
+LBX_File_Name = "MAINSCRN.LBX"
+LBX_Name = "MAINSCRN"
+LBX_Type = 0
+LBX_Entry = 0
+LBX_Entry_Name = "MAINSCRN_005"
+LBX_File_Size_B = 
+LBX_File_Size_PR = 
+LBX_File_Size_PG = 
 EMM_Logical_Page_Count
 */
 
@@ -142,64 +218,14 @@ EMM_Logical_Page_Count
 // DELETE 
 // DELETE }
 
-/*
-    Pre  EMM_Startup():
-        ?
-    Post EMM_Startup():
-        EMM_OK == ST_TRUE
-        EmmHndlNbr_YOMOMA != 0
-        g_EmmHndlNbr_VGAFILEH != 0
-        EmmHndlNbr_EMMDATAH != 0
-        g_EMM_Open_Handles == 3
-        g_EMM_Pages_Reserved == 31
-        EMM_Table[]
-        EMM_Table[0].eEmmHndlNbr
-        EMM_Table[0].eEmmHndlNm
-        EMM_Table[0].eEmmRsrvd
-        EMM_Table[1].eEmmHndlNbr
-        EMM_Table[1].eEmmHndlNm
-        EMM_Table[1].eEmmRsrvd
-        EMM_Table[2].eEmmHndlNbr
-        EMM_Table[2].eEmmHndlNm
-        EMM_Table[2].eEmmRsrvd
-        EMM_Table[3].eEmmHndlNbr
-        EMM_Table[3].eEmmHndlNm
-        EMM_Table[3].eEmmRsrvd
-        EMM_Table[4].eEmmHndlNbr
-        EMM_Table[4].eEmmHndlNm
-        EMM_Table[4].eEmmRsrvd
 
-DEBUG: [st_emm.c, 258] EMM_PageFrameBaseAddress: 0xE000 }
 
-DEBUG: [tst_mgc.c, 436] EMM_OK: 1
-DEBUG: [tst_mgc.c, 437] EmmHndlNbr_YOMOMA: 1
-DEBUG: [tst_mgc.c, 438] g_EmmHndlNbr_VGAFILEH: 2
-DEBUG: [tst_mgc.c, 439] EmmHndlNbr_EMMDATAH: 3
-DEBUG: [tst_mgc.c, 441] g_EMM_Pages_Reserved: 31
-DEBUG: [tst_mgc.c, 442] g_EMM_Open_Handles: 3
-DEBUG: [tst_mgc.c, 443] EMM_GetFreePageCount(): 1962
-DEBUG: [tst_mgc.c, 444] EMM_GetActiveHandleCount(): 4
-
-DEBUG: [tst_mgc.c, 447] EMM_Table[0].eEmmHndlNm: YO MOMA
-DEBUG: [tst_mgc.c, 448] EMM_Table[0].eEmmRsrvd: 0
-DEBUG: [tst_mgc.c, 449] EMM_Table[0].eEmmHndlNbr: 1
-DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(1): 1
-DEBUG: [tst_mgc.c, 447] EMM_Table[1].eEmmHndlNm: VGAFILEH
-DEBUG: [tst_mgc.c, 448] EMM_Table[1].eEmmRsrvd: 1
-DEBUG: [tst_mgc.c, 449] EMM_Table[1].eEmmHndlNbr: 2
-DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(2): 5
-DEBUG: [tst_mgc.c, 447] EMM_Table[2].eEmmHndlNm: EMMDATAH
-DEBUG: [tst_mgc.c, 448] EMM_Table[2].eEmmRsrvd: 1
-DEBUG: [tst_mgc.c, 449] EMM_Table[2].eEmmHndlNbr: 3
-DEBUG: [tst_mgc.c, 450] EMM_GetHandlePageCount(3): 4
-
-*/
 int validate_EMM_Startup(void)
 {
     int test_status;
     int itr_EMM_Open_Handles;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_EMM_Startup()\n", __FILE__, __LINE__);
 #endif
 
@@ -207,13 +233,13 @@ int validate_EMM_Startup(void)
 
     if( EMM_OK == ST_FALSE )                                      { test_status = -1; }
     if( EmmHndlNbr_YOMOMA != 1 )                                  { test_status = -1; }
-    if( g_EmmHndlNbr_VGAFILEH != 2 )                                { test_status = -1; }
+    if( g_EmmHndlNbr_VGAFILEH != 2 )                              { test_status = -1; }
     if( EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
     if( EMMDATAH_Level != 0 )                                     { test_status = -1; }
-    if( g_EMM_Pages_Reserved != 31 )                                { test_status = -1; }
-    if( g_EMM_Open_Handles != 3 )                                   { test_status = -1; }
-    if( EMM_GetFreePageCount() != 1962 )                            { test_status = -1; }
-    if( EMM_GetActiveHandleCount() != 4)                            { test_status = -1; }
+    if( g_EMM_Pages_Reserved != 149 )                             { test_status = -1; }
+    if( g_EMM_Open_Handles != 3 )                                 { test_status = -1; }
+    if( EMM_GetFreePageCount() != 1962 )                          { test_status = -1; }
+    if( EMM_GetActiveHandleCount() != 4)                          { test_status = -1; }
     if( EMM_Table[0].eEmmHndlNbr != 1 )                           { test_status = -1; }
     if( strcmp(EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 )         { test_status = -1; }
     if( EMM_Table[0].eEmmRsrvd != 0 )                             { test_status = -1; }
@@ -231,9 +257,58 @@ int validate_EMM_Startup(void)
     {
         test_status = 1;  // TEST_SUCCESS
     }
+#ifdef STU_DEBUG
+    else
+    {
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_OK == ST_FALSE ): %s\n", __FILE__, __LINE__, (( EMM_OK == ST_FALSE ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EmmHndlNbr_YOMOMA != 1 ): %s\n", __FILE__, __LINE__, (( EmmHndlNbr_YOMOMA != 1 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( g_EmmHndlNbr_VGAFILEH != 2 ): %s\n", __FILE__, __LINE__, (( g_EmmHndlNbr_VGAFILEH != 2 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EmmHndlNbr_EMMDATAH != 3 ): %s\n", __FILE__, __LINE__, (( EmmHndlNbr_EMMDATAH != 3 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMMDATAH_Level != 0 ): %s\n", __FILE__, __LINE__, (( EMMDATAH_Level != 0 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( g_EMM_Pages_Reserved != 149 ): %s\n", __FILE__, __LINE__, (( g_EMM_Pages_Reserved != 149 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( g_EMM_Open_Handles != 3 ): %s\n", __FILE__, __LINE__, (( g_EMM_Open_Handles != 3 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_GetFreePageCount() != 1962 ): %s\n", __FILE__, __LINE__, (( EMM_GetFreePageCount() != 1962 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_GetActiveHandleCount() != 4): %s\n", __FILE__, __LINE__, (( EMM_GetActiveHandleCount() != 4) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[0].eEmmHndlNbr != 1 ): %s\n", __FILE__, __LINE__, (( EMM_Table[0].eEmmHndlNbr != 1 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( strcmp(EMM_Table[0].eEmmHndlNm, \"YO MOMA\") != 0 ): %s\n", __FILE__, __LINE__, (( strcmp(EMM_Table[0].eEmmHndlNm, "YO MOMA") != 0 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[0].eEmmRsrvd != 0 ): %s\n", __FILE__, __LINE__, (( EMM_Table[0].eEmmRsrvd != 0 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr) != 1 ): %s\n", __FILE__, __LINE__, (( EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr) != 1 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[1].eEmmHndlNbr != 2 ): %s\n", __FILE__, __LINE__, (( EMM_Table[1].eEmmHndlNbr != 2 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( strcmp(EMM_Table[1].eEmmHndlNm, \"VGAFILEH\") != 0 ): %s\n", __FILE__, __LINE__, (( strcmp(EMM_Table[1].eEmmHndlNm, "VGAFILEH") != 0 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[1].eEmmRsrvd != 1 ): %s\n", __FILE__, __LINE__, (( EMM_Table[1].eEmmRsrvd != 1 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr) != 5 ): %s\n", __FILE__, __LINE__, (( EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr) != 5 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[2].eEmmHndlNbr != 3 ): %s\n", __FILE__, __LINE__, (( EMM_Table[2].eEmmHndlNbr != 3 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( strcmp(EMM_Table[2].eEmmHndlNm, \"EMMDATAH\") != 0 ): %s\n", __FILE__, __LINE__, (( strcmp(EMM_Table[2].eEmmHndlNm, "EMMDATAH") != 0 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_Table[2].eEmmRsrvd != 1 ): %s\n", __FILE__, __LINE__, (( EMM_Table[2].eEmmRsrvd != 1 ) ? "FAIL" : "PASS"));
+        dlvfprintf("DEBUG: [%s, %d] ( EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr) != 4 ): %s\n", __FILE__, __LINE__, (( EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr) != 4 ) ? "FAIL" : "PASS"));
+    }
+#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] EMM_OK: %u\n", __FILE__, __LINE__, EMM_OK);
+//     dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %u\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
+//     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %u\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
+//     dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %u\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
+//     dlvfprintf("DEBUG: [%s, %d] EMMDATAH_Level: %u\n", __FILE__, __LINE__, EMMDATAH_Level);
+//     dlvfprintf("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
+//     dlvfprintf("DEBUG: [%s, %d] g_EMM_Open_Handles: %u\n", __FILE__, __LINE__, g_EMM_Open_Handles);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_GetFreePageCount(): %u\n", __FILE__, __LINE__, EMM_GetFreePageCount());
+//     dlvfprintf("DEBUG: [%s, %d] EMM_GetActiveHandleCount(): %u\n", __FILE__, __LINE__, EMM_GetActiveHandleCount());
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[0].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_Table[0].eEmmHndlNbr);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[0].eEmmHndlNm: %s\n", __FILE__, __LINE__, EMM_Table[0].eEmmHndlNm);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[0].eEmmRsrvd: %d\n", __FILE__, __LINE__, EMM_Table[0].eEmmRsrvd);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_GetHandlePageCount(EMM_Table[0].eEmmHndlNbr));
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[1].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_Table[1].eEmmHndlNbr);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[1].eEmmHndlNm: %s\n", __FILE__, __LINE__, EMM_Table[1].eEmmHndlNm);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[1].eEmmRsrvd: %d\n", __FILE__, __LINE__, EMM_Table[1].eEmmRsrvd);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_GetHandlePageCount(EMM_Table[1].eEmmHndlNbr));
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[2].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_Table[2].eEmmHndlNbr);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[2].eEmmHndlNm: %s\n", __FILE__, __LINE__, EMM_Table[2].eEmmHndlNm);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_Table[2].eEmmRsrvd: %d\n", __FILE__, __LINE__, EMM_Table[2].eEmmRsrvd);
+//     dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr: %u\n", __FILE__, __LINE__, EMM_GetHandlePageCount(EMM_Table[2].eEmmHndlNbr));
+// #endif
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_EMM_Startup( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_EMM_Startup( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -243,7 +318,7 @@ int validate_VGA_DAC_Init(void)
 {
     int test_status;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_VGA_DAC_Init()\n", __FILE__, __LINE__);
 #endif
 
@@ -256,8 +331,8 @@ int validate_VGA_DAC_Init(void)
         test_status = 1;  // TEST_SUCCESS
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_VGA_DAC_Init( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_VGA_DAC_Init( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -296,7 +371,7 @@ int validate_PaletteFlags_1(void)
     BYTE * pPaletteFlags;
     int test_status;
     
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_PaletteFlags_1()\n", __FILE__, __LINE__);
 #endif
 
@@ -336,8 +411,8 @@ int validate_PaletteFlags_1(void)
         test_status = 1;  // TEST_SUCCESS
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteFlags_1( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteFlags_1( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -345,7 +420,27 @@ int validate_PaletteFlags_1(void)
 
 int validate_PaletteLbxEntry(void)
 {
-    
+    int test_status;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_PaletteLbxEntry()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+
+
+    if ( test_status != -1 )  // TEST_FAILURE
+    {
+        test_status = 1;  // TEST_SUCCESS
+    }
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteLbxEntry( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
+
+    return test_status;
+
 }
 
 int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
@@ -395,7 +490,7 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     fclose(fp);
 
 #ifdef STU_DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteLbxEntry_2( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+    dlvfprintf("DEBUG: [%s, %d] END: validate_PaletteLbxEntry_2( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -439,9 +534,50 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
             (fp_FLIC_Header->Palette_Header_Offset != 102)
         )
         {
+            tst_prn("TEST: [%s, %d] if ( ... ) { test_status = -1 }\n", __FILE__, __LINE__);
             test_status = -1;  // TEST_FAILURE
         }
-        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Width == 320) %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "TRUE" : "FALSE" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Width == 320)                    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Height == 41)                    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Height == 41) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Current_Frame == 0)              %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Current_Frame == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Frame_Count == 20)               %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Frame_Count == 20) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Loop_Frame == 0)                 %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Loop_Frame == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Handle_Number == 4)          %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Handle_Number == 4) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Number == 0)    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Number == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Offset == 704)  %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Offset == 704) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Palette_Header_Offset == 102)    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Palette_Header_Offset == 102) ? "PASS" : "FAIL" ));
+    }
+    else if ( sa_FLIC_Header == TST_LBX_MAINSCRN_005.Segment_Address )
+    {
+        // ASSERT()
+        if (
+            (fp_FLIC_Header->Width != 320) ||
+            (fp_FLIC_Header->Height != 159) ||
+            (fp_FLIC_Header->Current_Frame != 0) ||
+            (fp_FLIC_Header->Frame_Count != 1) ||
+            (fp_FLIC_Header->Loop_Frame != 0) ||
+            (fp_FLIC_Header->EMM_Handle_Number == 4) ||
+            (fp_FLIC_Header->EMM_Logical_Page_Number != 9) ||
+            (fp_FLIC_Header->EMM_Logical_Page_Offset != 6416) ||
+            (fp_FLIC_Header->Palette_Header_Offset != 0)
+        )
+        {
+            tst_prn("TEST: [%s, %d] if ( ... ) { test_status = -1 }\n", __FILE__, __LINE__);
+            test_status = -1;  // TEST_FAILURE
+        }
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Width == 320):                    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Height == 159):                   %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Height == 159) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Current_Frame == 0):              %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Current_Frame == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Frame_Count == 1):                %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Frame_Count == 1) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Loop_Frame == 0):                 %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Loop_Frame == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Handle_Number == 4):          %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Handle_Number == 4) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Number == 0):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Number == 9) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Offset == 704):  %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Offset == 6416) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Palette_Header_Offset == 102):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Palette_Header_Offset == 0) ? "PASS" : "FAIL" ));
+    }
+    else
+    {
+        tst_prn("TEST: [%s, %d] UNKNOWN FLIC HEADER\n", __FILE__, __LINE__);
     }
 
     if ( test_status != -1 )  // TEST_FAILURE
@@ -450,7 +586,38 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
     }
 
 #ifdef STU_DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_FLIC_Header( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+    dlvfprintf("DEBUG: [%s, %d] END: validate_FLIC_Header( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
+
+    return test_status;
+}
+
+int validate_MAINSCRN_LBX_EMM(void)
+{
+    int test_status;
+    int itr_EMM_Open_Handles;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_MAINSCRN_LBX_EMM()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    for(itr_EMM_Open_Handles = 0; itr_EMM_Open_Handles < g_EMM_Open_Handles; itr_EMM_Open_Handles++)
+    {
+        if( strcmp(EMM_Table[itr_EMM_Open_Handles].eEmmHndlNm,"MAINSCRN") == 0 )
+        {
+            test_status = 1;
+        }
+    }
+
+    if ( test_status != -1 )  // TEST_FAILURE
+    {
+        test_status = 1;  // TEST_SUCCESS
+    }
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_MAINSCRN_LBX_EMM( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -489,13 +656,13 @@ int validate_GAME_LoadMainImages(void)
     int test_status;
     int itr_EMM_Open_Handles;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: validate_GAME_LoadMainImages()\n", __FILE__, __LINE__);
 #endif
 
     test_status = 0;  // TEST_UNDEFINED
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] EMM_OK: %d\n", __FILE__, __LINE__, EMM_OK);
 //     dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
 //     dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
@@ -576,8 +743,8 @@ int validate_GAME_LoadMainImages(void)
         test_status = 1;  // TEST_SUCCESS
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: validate_GAME_LoadMainImages( test_status = %s)\n", __FILE__, __LINE__, (test_status ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: validate_GAME_LoadMainImages( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;

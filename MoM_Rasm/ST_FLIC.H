@@ -505,7 +505,7 @@ void FLIC_Draw_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int
 //void FLIC_Draw_EMM(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
 //void FLIC_Draw_EMM_A2(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
 void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
-void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
+void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Header, int Frame_Index);
 // _s27p04
 void FLIC_EMM_MapNextPages(void);
 void FLIC_EMM_MapNextPages_A(void);

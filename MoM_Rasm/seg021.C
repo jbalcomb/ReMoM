@@ -332,10 +332,10 @@ void FLIC_LoadPalette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
 //     add  bx, 768                         ; + 300h = VGA_DACmod_Segment@
 
     DstOfst = (fh_palette_color_index * 3);         // AKA fh_first_color + (fh_first_color * 2)
-    ofstPaletteFlags = DstOfst + 768;
+    ofstPaletteFlags = DstOfst + 768;  // 768 = 256 colors * 3 bytes each
 
-    fptr_DstByte = (unsigned char *)MK_FP(DstSgmt, 0);
-    fptr_SrcByte = (unsigned char *)MK_FP(SrcSgmt, 0);
+    fptr_DstByte = (unsigned char *) MK_FP(DstSgmt, 0);
+    fptr_SrcByte = (unsigned char *) MK_FP(SrcSgmt, 0);
 
     tmp_Color_Count_Bytes = (tmp_Color_Count * 3);
     for ( itr_Color_Count = 0; itr_Color_Count < tmp_Color_Count_Bytes; itr_Color_Count++ )

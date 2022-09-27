@@ -9,6 +9,19 @@
 #include "ST_SA.H"
 #include "ST_VGA.H"
 
+#include "seg001.H"  /* GAME_LoadMainImages(); */
+#include "seg014.H"  /* Hardware_Init(), VGA_DAC_Init(); */
+#include "seg028.H"  /* FLIC_Draw_XY(); */
+/* SA_Allocate_Space() */
+/* LBXE_LoadSingle() */
+/* VGA_TextDraw_Init() */
+/* IN_Init() */
+/* MD_Init() */
+/* MoM_Tables_Init() */
+/* VGA_Set_DSP_Addr() */
+/* VGA_LoadPalette() *?
+/* VGA_DAC_Write() */
+
 #include "STU_DBG.H"
 #include "STU_TST.H"
 
@@ -51,22 +64,24 @@ extern EMM_Record EMM_Table[];                      // dseg:A5F2 g_EMS_Table EMS
 extern unsigned int g_EMM_MinKB;                    // dseg:A7D2
 
 
+unsigned char g_EMM_tested = 0;
+unsigned char g_EMM_validated = 0;
+unsigned char g_MAINSCRN_LBX_EMM_tested = 0;
+unsigned char g_MAINSCRN_LBX_EMM_validated = 0;
+
+
 void test_MGC_Main(void);
-
+void test_Load_MAINSCRN_LBX_EMM(void);
 void test_Load_MAINSCRN_000(void);
-
+void test_Load_MAINSCRN_005(void);
 void test_VGA_SetDirectDraw(void);
 void test_VGA_Set_DSP_Addr(void);
-
 void test_VGA_LoadPalette(void);
-
 void test_VGA_DAC_Init(void);
-
 void test_EMM_Init(void);
 void test_EMM_Startup(void);
 void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
-
 void test_FLIC_Draw_XY(void);
 
 
@@ -82,13 +97,14 @@ int main(void)
 
     // test_VGA_DAC_Init();
 
-    // test_EMM_Init();
-    // test_EMM_Startup();
+    // test_EMM_Init();  // TEST_SUCCESS
+    // test_EMM_Startup();  // TEST_SUCCESS
     // test_EMM_Load_LBX_File();
 
     //test_GAME_LoadMainImages();
 
-    test_Load_MAINSCRN_000();
+    test_Load_MAINSCRN_000();  // TEST_SUCCESS
+    test_Load_MAINSCRN_005();
 
     Test_Log_Shutdown();
     Debug_Log_Shutdown();
@@ -148,11 +164,11 @@ void test_MGC_Main(void)
 void test_VGA_SetDirectDraw(void)
 {
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_VGA_SetDirectDraw()\n", __FILE__, __LINE__);
 #endif
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -161,7 +177,7 @@ void test_VGA_SetDirectDraw(void)
     g_RSP_Idx = 0;
     VGA_SetDirectDraw();
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -170,7 +186,7 @@ void test_VGA_SetDirectDraw(void)
     g_RSP_Idx = 1;
     VGA_SetDirectDraw();
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -212,10 +228,28 @@ void test_VGA_SetDirectDraw(void)
         dlvfprintf("TEST: [%s, %d] SKIP: g_RSP_Idx != 1\n", __FILE__, __LINE__);
     }
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_VGA_SetDirectDraw()\n", __FILE__, __LINE__);
 #endif
+}
 
+void test_Load_MAINSCRN_LBX_EMM(void)
+{
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: test_Load_MAINSCRN_LBX_EMM()\n", __FILE__, __LINE__);
+#endif
+
+    if (!g_EMM_tested) { test_EMM_Startup(); }
+    if (!g_EMM_validated) {  abort(); }
+
+    // MGC main() |-> GAME_LoadMainImages()
+    EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
+    g_MAINSCRN_LBX_EMM_tested = 1;
+    if( validate_MAINSCRN_LBX_EMM() ) { g_MAINSCRN_LBX_EMM_validated = 1; }
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: test_Load_MAINSCRN_LBX_EMM()\n", __FILE__, __LINE__);
+#endif
 }
 
 /*
@@ -226,22 +260,56 @@ void test_Load_MAINSCRN_000(void)
 {
     SAMB_data sa_MAINSCRN_000;
 
-    // MGC main()
-    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
-    EMM_SetMinKB(EMM_MIN_KB);
-    RAM_SetMinKB(RAM_MIN_KB);
-    // Hardware_Init()
-    EMM_Startup();
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: test_Load_MAINSCRN_000()\n", __FILE__, __LINE__);
+#endif
 
-    validate_EMM_Startup();
+    if(!g_EMM_tested) { test_EMM_Startup(); }
+    if(!g_EMM_validated) {  abort(); }
 
     // GAME_LoadMainImages()
-    EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
+    // EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
+    if(!g_MAINSCRN_LBX_EMM_tested) { test_Load_MAINSCRN_LBX_EMM(); }
+    if(!g_MAINSCRN_LBX_EMM_validated) { abort(); }
+
     sa_MAINSCRN_000 = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
     TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
 
     validate_FLIC_Header(sa_MAINSCRN_000);
 
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: test_Load_MAINSCRN_000()\n", __FILE__, __LINE__);
+#endif
+}
+
+/*
+unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8
+gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+*/
+void test_Load_MAINSCRN_005(void)
+{
+    SAMB_data sa_MAINSCRN_005;
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] BEGIN: test_Load_MAINSCRN_005()\n", __FILE__, __LINE__);
+#endif
+
+    if (!g_EMM_tested) { test_EMM_Startup(); }
+    if (!g_EMM_validated) {  abort(); }
+
+    // GAME_LoadMainImages()
+    // EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
+    if(!g_MAINSCRN_LBX_EMM_tested) { test_Load_MAINSCRN_LBX_EMM(); }
+    if(!g_MAINSCRN_LBX_EMM_validated) { abort(); }
+
+    sa_MAINSCRN_005 = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
+    TST_LBX_MAINSCRN_005.Segment_Address = sa_MAINSCRN_005;
+
+    validate_FLIC_Header(sa_MAINSCRN_005);
+
+#ifdef STU_DEBUG
+    dlvfprintf("DEBUG: [%s, %d] END: test_Load_MAINSCRN_005()\n", __FILE__, __LINE__);
+#endif
 }
 
 /*
@@ -267,11 +335,11 @@ void test_Load_MAINSCRN_000(void)
 void test_VGA_Set_DSP_Addr(void)
 {
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_VGA_Set_DSP_Addr()\n", __FILE__, __LINE__);
 #endif
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -280,7 +348,7 @@ void test_VGA_Set_DSP_Addr(void)
     g_RSP_Idx = 0;
     VGA_Set_DSP_Addr();
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -289,7 +357,7 @@ void test_VGA_Set_DSP_Addr(void)
     g_RSP_Idx = 1;
     VGA_Set_DSP_Addr();
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] VRAM_BASE: 0x%04X\n", __FILE__, __LINE__, VRAM_BASE);
     dlvfprintf("DEBUG: [%s, %d] g_RSP_Idx: %d\n", __FILE__, __LINE__, g_RSP_Idx);
     dlvfprintf("DEBUG: [%s, %d] gsa_DSP_Addr: 0x%04X\n", __FILE__, __LINE__, gsa_DSP_Addr);
@@ -331,7 +399,7 @@ void test_VGA_Set_DSP_Addr(void)
         dlvfprintf("TEST: [%s, %d] SKIP: g_RSP_Idx != 1\n", __FILE__, __LINE__);
     }
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_VGA_Set_DSP_Addr()\n", __FILE__, __LINE__);
 #endif
 
@@ -394,7 +462,7 @@ void test_VGA_DAC_Init(void)
 {
     int test_status;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_VGA_DAC_Init()\n", __FILE__, __LINE__);
 #endif
 
@@ -463,7 +531,7 @@ void test_VGA_DAC_Init(void)
     }
 
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_VGA_DAC_Init()\n", __FILE__, __LINE__);
 #endif
 }
@@ -473,7 +541,7 @@ void test_EMM_Init(void)
 {
     int result;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_EMM_Init()\n", __FILE__, __LINE__);
 #endif
 
@@ -492,60 +560,25 @@ void test_EMM_Init(void)
         dlvfprintf("DEBUG: [%s, %d] INVALID: \n", __FILE__, __LINE__);
     }
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_EMM_Init()\n", __FILE__, __LINE__);
 #endif
 }
 
 void test_EMM_Startup(void)
 {
-    int itr_open_handles;
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_EMM_Startup()\n", __FILE__, __LINE__);
 #endif
-
+    // MGC main()
+    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    // EMM_SetMinKB(EMM_MIN_KB);
+    // RAM_SetMinKB(RAM_MIN_KB);
+    // MGC main() |-> Hardware_Init() |-> EMM_Startup()
     EMM_Startup();
-
-    if (
-        ( EMM_OK == ST_TRUE) &&
-        ( EmmHndlNbr_YOMOMA != 0 ) &&
-        ( g_EmmHndlNbr_VGAFILEH != 0 ) &&
-        ( EmmHndlNbr_EMMDATAH != 0 ) &&
-        ( g_EMM_Open_Handles == 3 ) &&
-        ( g_EMM_Pages_Reserved == 31 )
-    )
-    {
-        dlvfprintf("DEBUG: [%s, %d] SUCCESS: \n", __FILE__, __LINE__);
-    }
-    if ( EMM_OK == ST_FALSE )
-    {
-        dlvfprintf("DEBUG: [%s, %d] FAILURE: \n", __FILE__, __LINE__);
-    }
-    if ( ( EMM_OK != ST_TRUE ) && ( EMM_OK != ST_FALSE ) )
-    {
-        dlvfprintf("DEBUG: [%s, %d] INVALID: \n", __FILE__, __LINE__);
-    }
-
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] EMM_OK: %d\n", __FILE__, __LINE__, EMM_OK);
-    dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_YOMOMA: %d\n", __FILE__, __LINE__, EmmHndlNbr_YOMOMA);
-    dlvfprintf("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
-    dlvfprintf("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
-    //dlvfprintf("DEBUG: [%s, %d] EMMDATAH_Level: %d\n", __FILE__, __LINE__, EMMDATAH_Level);  // ? NIU ?
-    dlvfprintf("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
-    dlvfprintf("DEBUG: [%s, %d] g_EMM_Open_Handles: %d\n", __FILE__, __LINE__, g_EMM_Open_Handles);
-    dlvfprintf("DEBUG: [%s, %d] EMM_GetFreePageCount(): %u\n", __FILE__, __LINE__, EMM_GetFreePageCount());
-    dlvfprintf("DEBUG: [%s, %d] EMM_GetActiveHandleCount(): %u\n", __FILE__, __LINE__, EMM_GetActiveHandleCount());
-    for ( itr_open_handles = 0; itr_open_handles < g_EMM_Open_Handles; itr_open_handles++ )
-    {
-        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNm: %s\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmHndlNm);
-        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmRsrvd: %d\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmRsrvd);
-        dlvfprintf("DEBUG: [%s, %d] EMM_Table[%d].eEmmHndlNbr: %u\n", __FILE__, __LINE__, itr_open_handles, EMM_Table[itr_open_handles].eEmmHndlNbr);
-        dlvfprintf("DEBUG: [%s, %d] EMM_GetHandlePageCount(%d): %u\n", __FILE__, __LINE__, EMM_Table[itr_open_handles].eEmmHndlNbr, EMM_GetHandlePageCount(EMM_Table[itr_open_handles].eEmmHndlNbr));
-    }
-#endif
-
-#ifdef DEBUG
+    g_EMM_tested = 1;
+    if ( validate_EMM_Startup() ) { g_EMM_validated = 1; }
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_EMM_Startup()\n", __FILE__, __LINE__);
 #endif
 }
@@ -564,14 +597,14 @@ void test_EMM_Load_LBX_File(void)
     int Title_Frame_Index;  // _s01p06c.c  SCREEN_Menu_Draw()
     struct s_FLIC_HDR * pFlicHeader; // _s21p07c.c  FLIC_LoadPalette()
     SAMB_addr SAMB_data;
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_EMM_Load_LBX_File()\n", __FILE__, __LINE__);
 #endif
 
     // main() |-> Hardware_Init() |->
     EMM_Startup();
 
-#ifdef TEST
+#ifdef STU_TEST
     if ( EMM_PageFrameBaseAddress != 0xE000 )
     {
         dlvfprintf("DEBUG: [%s, %d] FAILURE: EMM_Init()\n", __FILE__, __LINE__);
@@ -653,7 +686,7 @@ void test_EMM_Load_LBX_File(void)
 
     DLOG("CALL: VGA_SetTextMode();");
     VGA_SetTextMode();
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_EMM_Load_LBX_File()\n", __FILE__, __LINE__);
 #endif
 }
@@ -669,7 +702,7 @@ void test_GAME_LoadMainImages(void)
     WORD LBX_MagSig_Lo;
     WORD LBX_Type;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] BEGIN: test_GAME_LoadMainImages()\n", __FILE__, __LINE__);
 #endif
 
@@ -731,7 +764,7 @@ void test_GAME_LoadMainImages(void)
     LBX_Type       = (WORD)(EMM_PageFrameBaseAddress + 6);
 
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dlvfprintf("DEBUG: [%s, %d] END: test_GAME_LoadMainImages()\n", __FILE__, __LINE__);
 #endif
 }

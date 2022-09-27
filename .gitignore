@@ -17,6 +17,8 @@ build/
 
 DEBUG.LOG
 DEBUG-.LOG
+TEST.LOG
+TEST-.LOG
 
 *.GAM
 *.LBX
