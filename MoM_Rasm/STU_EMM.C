@@ -1,28 +1,6 @@
 
 #include "STU_EMM.H"
 
-/*
-    Hey, Visual Studio Code. Sshhh....
-*/
-#define __VSCODE__ 1
-#ifdef __VSCODE__
-unsigned int _AH;
-unsigned int _AL;
-unsigned int _AX;
-unsigned int _BH;
-unsigned int _BL;
-unsigned int _BX;
-unsigned int _CH;
-unsigned int _CL;
-unsigned int _CX;
-unsigned int _DH;
-unsigned int _DL;
-unsigned int _DX;
-unsigned int _SI;
-unsigned int _DI;
-unsigned int _DS;
-unsigned int _ES;
-#endif
 
 /*  INT 67,40  Get EMM Status                              */
 /*  INT 67,41  Get Page Frame Base Address                 */

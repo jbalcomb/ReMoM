@@ -5,6 +5,8 @@
 
 #include "ST_SA.H"
 
+#include <STDIO.H>   /* FILE; */
+
 
 #define TEST_FAILURE   -1
 #define TEST_SUCCESS    1
@@ -16,15 +18,13 @@
 #define MAINSCRN_LBX_005 "MAINSC~1.BIN"
 
 
+extern char Test_Log_FileName[];
+extern FILE * Test_Log_File;
+
 #define PF_TEST_STATUS() { (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE") }
 
-// #define TLOG(argString) { \
-//     do { \
-//         fprintf(Test_Log_File, "TEST: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); \
-//         fflush(Test_Log_File); \
-//     } while(0); \
-// }
-// 
+#define TLOG(argString) { do { fprintf(Test_Log_File, "TEST: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); fflush(Test_Log_File); } while(0); }
+
 // #define TSTPRN(x) do { if (TEST) tst_prn x; } while (0)
 // // Usage: TRACE(("message %d\n", var));
 
@@ -65,7 +65,7 @@ extern "C" {
 
 void Test_Log_Startup(void);
 void Test_Log_Shutdown(void);
-void tst_prn(const char *fmt, ...);
+void tst_prn(const char * fmt, ...);
 
 void reset_EMM(void);
 void reset_ST_EMM(void);
@@ -73,19 +73,20 @@ void reset_ST_EMM(void);
 void validate_FontStyleData(void);
 void validate_BorderStyleData(void);
 void validate_Palette_0(void);
-int  validate_PaletteFlags_1(void);
-int  validate_PaletteLbxEntry(void);
-int  validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
+int validate_PaletteFlags_1(void);
+int validate_PaletteLbxEntry(void);
+int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
 
-int  validate_FLIC_Header(SAMB_data sa_FLIC_Header);
+int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header);
+int validate_FLIC_Header(SAMB_data sa_FLIC_Header);
 
-int  validate_MAINSCRN_LBX_EMM(void);
+int validate_MAINSCRN_LBX_EMM(void);
 
 // int validate_Hardware_Init()
-int  validate_EMM_Startup(void);
-int  validate_VGA_DAC_Init(void);
+int validate_EMM_Startup(void);
+int validate_VGA_DAC_Init(void);
 // int validate_MoM_Tables_Init(6100);
-int  validate_GAME_LoadMainImages();
+int validate_GAME_LoadMainImages();
 // int validate_GAME_Load_TERRSTAT_0();
 // int validate_GAME_Load_SPELLDAT_0();
 

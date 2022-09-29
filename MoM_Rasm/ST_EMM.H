@@ -53,13 +53,8 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 
 // J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_VL.H
 // #define VGAMAPMASK(x) asm{cli; mov dx,SC_INDEX; mov al,SC_MAPMASK; mov ah,x; out dx,ax; sti;}
-#define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{\
-mov al, _epp_;\
-mov bx, _elp_;\
-mov dx, _ehn_;\
-mov ah, EMS_MAPPAGE;\
-int EMS_INT;\
-}
+// #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{ mov al, _epp_; mov bx, _elp_; mov dx, _ehn_; mov ah, EMS_MAPPAGE; int EMS_INT; }
+#define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) { _AL = (_epp_); _BX = (_elp_);  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
 
 
 #define EMS_PAGE_SIZE   16384

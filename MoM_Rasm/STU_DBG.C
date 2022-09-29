@@ -40,8 +40,8 @@ void Debug_Log_Shutdown(void)
     fclose(Debug_Log_File);
 }
 
-// "dl" as in "Debug Log"
-void dlvfprintf(const char *fmt, ...)
+// "dbg" as in "debug"; "prn" as in "print"/"printf";
+void dbg_prn(const char * fmt, ...)
 {
     va_list args;
     va_start(args, fmt);

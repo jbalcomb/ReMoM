@@ -168,19 +168,22 @@ void FLIC_LoadPalette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
 
         tmp_SrcOfst = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Offset;
 
-        _DX = fptr_FlicHdr_SgmtAddr->EMM_Handle_Number;
+        // ST_EMM.H  #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_)
+        // EMM_MAP_PAGE(_AL, _DX, _BX)
+        
+        _DX = fptr_FlicHdr_SgmtAddr->EMM_Handle_Number;  // DX = EMM handle
         _BL = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Number;
-        _BH = 0;
-        _AL = 0x00;
-        _AH = 0x44;
-        geninterrupt(0x67);
+        _BH = 0;            // BX = logical page number (0 to total allocated minus 1)
+        _AL = 0x00;         // AL = physical page number (0-3)
+        _AH = 0x44;         // INT 67,44 - Map Logical Page Into Physical Page Window (LIM EMS)
+        geninterrupt(0x67); // EMS_INT - INT 67 - Expanded Memory Specification
 
-        _DX = fptr_FlicHdr_SgmtAddr->EMM_Handle_Number;
+        _DX = fptr_FlicHdr_SgmtAddr->EMM_Handle_Number;  // DX = EMM handle
         _BL = fptr_FlicHdr_SgmtAddr->EMM_Logical_Page_Number;
-        _BH = 0;
-        _AL = 0x01;
-        _AH = 0x44;
-        geninterrupt(0x67);
+        _BH = 0;            // BX = logical page number (0 to total allocated minus 1)
+        _AL = 0x01;         // AL = physical page number (0-3)
+        _AH = 0x44;         // INT 67,44 - Map Logical Page Into Physical Page Window (LIM EMS)
+        geninterrupt(0x67); // EMS_INT - INT 67 - Expanded Memory Specification
 
         //_DS = g_EMM_PageFrame_Base_Address
         SrcSgmt = EMM_PageFrameBaseAddress;

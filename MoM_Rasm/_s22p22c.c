@@ -10,16 +10,17 @@
 
     Microsoft C:
         #include <memory.h>               Required only for function declarations
-        void movedata( unsigned int srcseg, unsigned int srcoff, unsigned int destseg, unsigned int destoff, unsigned int count );
-            srcseg                            Segment address of source
-            srcoff                            Segment offset of source
-            destseg                           Segment address of destination
-            destoff                           Segment offset of destination
+        void movedata( unsigned int src_sgmt, unsigned int src_ofst, unsigned int dst_sgmt, unsigned int dst_ofst, unsigned int count );
+            src_sgmt                            Segment address of source
+            src_ofst                            Segment offset of source
+            dst_sgmt                           Segment address of destination
+            dst_ofst                           Segment offset of destination
             count                             Number of bytes
     Borland C++:
         #include <mem.h>
-        void movedata(unsigned srcseg, unsigned srcoff, unsigned dstseg, unsigned dstoff, size_t n);
+        void movedata(unsigned src_sgmt, unsigned src_ofst, unsigned dstseg, unsigned dstoff, size_t n);
         movedata is a means of moving blocks of data that is independent of memory model.
+        movedata is meant to be used to move far data in small data programs. In large model programs, you can use memcpy instead.
         #include <mem.h>
         void movmem(void *src, void *dest, unsigned length);
         J:\STU\DBWD\BORLANDC\CRTL\CLIB\MOVMEM.CAS
@@ -31,7 +32,7 @@ XREF: (MGC)
     FLIC_BuildFrame
     GUI_DisplayHelp
     NEWG_CreateEZs
-    UU_HLP_DrawExpanding+1
+    UU_HLP_DrawExpanding
     UU_LBX_IMG_LoadPalette
     UU_LBX_Image_Copy
     UU_VGA_LoadDAC
@@ -80,7 +81,7 @@ Far Pointer vs. Sgmt,Ofst
 */
 
 
-int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes)
+int ST_MoveData(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt, unsigned int nbytes)
 {
     unsigned int LoopCount;
     unsigned int itrLoopCount;
@@ -89,79 +90,30 @@ int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff,
     unsigned int _FAR *fptrDestWord;
     unsigned int _FAR *fptrSrcWord;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: ST_MoveData(destoff=0x%04X, destseg=0x%04X, srcoff=0x%04X, srcseg=0x%04X, nbytes=%u)\n", __FILE__, __LINE__, destoff, destseg, srcoff, srcseg, nbytes);
-#endif
-
-
-    if ( nbytes == 0 )
-    {
-        return ST_FAILURE;
-    }
-
-    if ( destseg == 0 )
-    {
-//        HERE("destoff = _DS");
-        destseg = _DS;
-    }
-    if ( srcseg == 0 )
-    {
-//        HERE("srcseg = _DS");
-        srcseg = _DS;
-    }
+    if ( nbytes == 0 ) { return ST_FAILURE; }
+    if ( dst_sgmt == 0 ) { dst_sgmt = _DS; }
+    if ( src_sgmt == 0 ) { src_sgmt = _DS; }
 
     if ( (nbytes & 0x01) == 1 )
     {
-//        HERE("( (nbytes & 0x01) == 1 )");
-        fptrDestByte = (unsigned char _FAR *) MK_FP(destseg, destoff);
-        fptrSrcByte = (unsigned char _FAR *) MK_FP(srcseg, srcoff);
+        fptrDestByte = (unsigned char _FAR *) MK_FP(dst_sgmt, dst_ofst);
+        fptrSrcByte = (unsigned char _FAR *) MK_FP(src_sgmt, src_ofst);
         LoopCount = nbytes;
         for ( itrLoopCount = 0; itrLoopCount < LoopCount; itrLoopCount++ )
         {
-            //*fptrDestByte++ = *fptrSrcByte++;
             fptrDestByte[itrLoopCount] = fptrSrcByte[itrLoopCount];
         }
     }
     else
     {
-//        HERE("( (nbytes & 0x01) != 1 )");
-        // // fptrDestWord = (unsigned int _FAR *) MK_FP(destseg, destoff);
-        // // fptrSrcWord = (unsigned int _FAR *) MK_FP(srcseg, srcoff);
-        // // LoopCount = (nbytes / 2);
-        // // for ( itrLoopCount = 0; itrLoopCount < LoopCount; itrLoopCount++ )
-        // // {
-        // //     *fptrDestWord++ = *fptrSrcWord++;
-        // // }
-        // fptrDestByte = (unsigned char _FAR *) MK_FP(destseg, destoff);
-        // fptrSrcByte = (unsigned char _FAR *) MK_FP(srcseg, srcoff);
-        // dlvfprintf("DEBUG: [%s, %d] fptrDestByte: %Fp\n", __FILE__, __LINE__, fptrDestByte);
-        // dlvfprintf("DEBUG: [%s, %d] fptrSrcByte: %Fp\n", __FILE__, __LINE__, fptrSrcByte);
-        // LoopCount = nbytes;
-        // for ( itrLoopCount = 0; itrLoopCount < LoopCount; itrLoopCount++ )
-        // {
-        //     dlvfprintf("DEBUG: [%s, %d] fptrSrcByte[%u]: 0x%02X\n", __FILE__, __LINE__, itrLoopCount, fptrSrcByte[itrLoopCount]);
-        //     //*fptrDestByte++ = *fptrSrcByte++;
-        //     fptrDestByte[itrLoopCount] = fptrSrcByte[itrLoopCount];
-        //     dlvfprintf("DEBUG: [%s, %d] fptrDestByte[%u]: 0x%02X\n", __FILE__, __LINE__, itrLoopCount, fptrDestByte[itrLoopCount]);
-        // }
-        fptrDestWord = (unsigned int _FAR *) MK_FP(destseg, destoff);
-        fptrSrcWord = (unsigned int _FAR *) MK_FP(srcseg, srcoff);
-//        dlvfprintf("DEBUG: [%s, %d] fptrDestWord: %Fp\n", __FILE__, __LINE__, fptrDestWord);
-//        dlvfprintf("DEBUG: [%s, %d] fptrSrcWord: %Fp\n", __FILE__, __LINE__, fptrSrcWord);
+        fptrDestWord = (unsigned int _FAR *) MK_FP(dst_sgmt, dst_ofst);
+        fptrSrcWord = (unsigned int _FAR *) MK_FP(src_sgmt, src_ofst);
         LoopCount = (nbytes / 2 );
         for ( itrLoopCount = 0; itrLoopCount < LoopCount; itrLoopCount++ )
         {
-            // dlvfprintf("DEBUG: [%s, %d] fptrSrcWord[%u]: 0x%04X\n", __FILE__, __LINE__, itrLoopCount, fptrSrcWord[itrLoopCount]);
-            //*fptrDestWord++ = *fptrSrcWord++;
             fptrDestWord[itrLoopCount] = fptrSrcWord[itrLoopCount];
-            // dlvfprintf("DEBUG: [%s, %d] fptrDestWord[%u]: 0x%04X\n", __FILE__, __LINE__, itrLoopCount, fptrDestWord[itrLoopCount]);
         }
 
     }
-
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: ST_MoveData(destoff=0x%04X, destseg=0x%04X, srcoff=0x%04X, srcseg=0x%04X, nbytes=%u)\n", __FILE__, __LINE__, destoff, destseg, srcoff, srcseg, nbytes);
-#endif
-
     return ST_SUCCESS;
 }

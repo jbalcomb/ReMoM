@@ -31,7 +31,7 @@ extern "C" {
 void Debug_Log_Startup(void);
 void Debug_Log_Shutdown(void);
 
-void dlvfprintf(const char *fmt, ...);
+void dbg_prn(const char * fmt, ...);
 
 
 #ifdef __cplusplus

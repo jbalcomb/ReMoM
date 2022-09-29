@@ -2,8 +2,31 @@
 #define ST_DEF_H
 
 
-#define asm _asm
+// /*
+//     Hey, Visual Studio Code. Sshhh....
+// */
+// #define __VSCODE__ 1
+// #ifdef __VSCODE__
+// #define asm _asm
+// unsigned int _AH;
+// unsigned int _AL;
+// unsigned int _AX;
+// unsigned int _BH;
+// unsigned int _BL;
+// unsigned int _BX;
+// unsigned int _CH;
+// unsigned int _CL;
+// unsigned int _CX;
+// unsigned int _DH;
+// unsigned int _DL;
+// unsigned int _DX;
+// unsigned int _SI;
+// unsigned int _DI;
+// unsigned int _DS;
+// unsigned int _ES;
+// #endif
 
+static int delete = 0;
 
 #define ST_TRUE  1
 #define ST_FALSE 0
@@ -74,6 +97,8 @@ void RNG_TimerSeed(void);
 // _s22p22
 //int MEM_Copy_Far(char _FAR *fptr_Dst, char _FAR *fptr_Src, int nbytes);
 int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes);
+// int ST_MoveData_SA(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt, unsigned int nbytes);
+// int ST_MoveData_FP(void _FAR * dst, void _FAR * src, size_t nbytes);
 
 
 #ifdef __cplusplus
