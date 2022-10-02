@@ -458,7 +458,7 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     test_status = 0;  // TEST_UNDEFINED
 
     // fp = fopen("FONTS_002.BIN", "rb");
-    fp = fopen("FONTS_~1.BIN", "rb");
+    fp = fopen("FONTS_~3.BIN", "rb");
 
     if (fp == NULL)
     {
@@ -496,12 +496,19 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     return test_status;
 }
 
-int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header)
+//int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header)
+int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header)
 {
     int test_status;
     SAMB_data sa_FLIC_Header;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_FLIC_Header_FP( fp_FLIC_Header == %Fp)\n", __FILE__, __LINE__, fp_FLIC_Header);
+#endif
     sa_FLIC_Header = FP_SEG(fp_FLIC_Header);
     test_status = validate_FLIC_Header(sa_FLIC_Header);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: validate_FLIC_Header_FP( test_status == %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
     return test_status;
 }
 int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
@@ -536,7 +543,7 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
             (fp_FLIC_Header->Current_Frame != 0) ||
             (fp_FLIC_Header->Frame_Count != 20) ||
             (fp_FLIC_Header->Loop_Frame != 0) ||
-            (fp_FLIC_Header->EMM_Handle_Number == 0) ||
+            (fp_FLIC_Header->EMM_Handle_Number != 4) ||
             (fp_FLIC_Header->EMM_Logical_Page_Number != 0) ||
             (fp_FLIC_Header->EMM_Logical_Page_Offset != 704) ||
             (fp_FLIC_Header->Palette_Header_Offset != 102)
@@ -564,13 +571,13 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
             (fp_FLIC_Header->Current_Frame != 0) ||
             (fp_FLIC_Header->Frame_Count != 1) ||
             (fp_FLIC_Header->Loop_Frame != 0) ||
-            (fp_FLIC_Header->EMM_Handle_Number == 4) ||
+            (fp_FLIC_Header->EMM_Handle_Number != 4) ||
             (fp_FLIC_Header->EMM_Logical_Page_Number != 9) ||
             (fp_FLIC_Header->EMM_Logical_Page_Offset != 6416) ||
             (fp_FLIC_Header->Palette_Header_Offset != 0)
         )
         {
-            tst_prn("TEST: [%s, %d] if ( ... ) { test_status = -1 }\n", __FILE__, __LINE__);
+            tst_prn("TEST: [%s, %d] if ( ... ) { test_status == TEST_FAILURE }\n", __FILE__, __LINE__);
             test_status = -1;  // TEST_FAILURE
         }
         tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Width == 320):                    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Width == 320) ? "PASS" : "FAIL" ));
@@ -579,9 +586,9 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
         tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Frame_Count == 1):                %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Frame_Count == 1) ? "PASS" : "FAIL" ));
         tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Loop_Frame == 0):                 %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Loop_Frame == 0) ? "PASS" : "FAIL" ));
         tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Handle_Number == 4):          %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Handle_Number == 4) ? "PASS" : "FAIL" ));
-        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Number == 0):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Number == 9) ? "PASS" : "FAIL" ));
-        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Offset == 704):  %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Offset == 6416) ? "PASS" : "FAIL" ));
-        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Palette_Header_Offset == 102):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Palette_Header_Offset == 0) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Number == 9):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Number == 9) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->EMM_Logical_Page_Offset == 6416):  %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->EMM_Logical_Page_Offset == 6416) ? "PASS" : "FAIL" ));
+        tst_prn("TEST: [%s, %d] (fp_FLIC_Header->Palette_Header_Offset == 0):    %s\n", __FILE__, __LINE__, ( (fp_FLIC_Header->Palette_Header_Offset == 0) ? "PASS" : "FAIL" ));
     }
     else
     {
@@ -595,9 +602,8 @@ int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: validate_FLIC_Header( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+    dbg_prn("DEBUG: [%s, %d] END: validate_FLIC_Header( test_status == %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
-
     return test_status;
 }
 
@@ -606,7 +612,7 @@ int validate_MAINSCRN_LBX_EMM(void)
     int test_status;
     int itr_EMM_Open_Handles;
     unsigned int EMM_Handle_Number;
-    unsigned int EMM_Logical_Page;
+    unsigned char EMM_Logical_Page;
     unsigned int EMM_Physical_Page;
     FILE * fp;
     unsigned char baito1;
@@ -636,7 +642,6 @@ int validate_MAINSCRN_LBX_EMM(void)
     if(test_status == 1)
     {
         
-        // fp = fopen("FONTS_002.BIN", "rb");
         fp = fopen("MAINSCRN.LBX", "rb");
 
         if (fp == NULL)

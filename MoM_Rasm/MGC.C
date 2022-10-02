@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     Debug_Log_Startup();
 // #endif
 
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     MGC_Main(argc, argv);  // s01p01  seg001.C/H
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     Debug_Log_Shutdown();
 // #endif
 

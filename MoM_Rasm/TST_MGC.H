@@ -9,7 +9,6 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
-
 #ifdef __cplusplus
 }
 #endif

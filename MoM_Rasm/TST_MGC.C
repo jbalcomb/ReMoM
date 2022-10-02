@@ -12,6 +12,7 @@
 #include "seg001.H"     /* GAME_LoadMainImages(); */
 #include "seg014.H"     /* Hardware_Init(), VGA_DAC_Init(); */
 #include "seg021.H"     /* FLIC_LoadPalette(); */
+#include "seg022.H"     /* ST_MoveData() */
 #include "seg028.H"     /* FLIC_Draw_XY(); */
 /* VGA_TextDraw_Init() */
 /* IN_Init() */
@@ -25,7 +26,7 @@
 #include "STU_TST.H"    /* TLOG(); */
 
 #include <ASSERT.H>  /* NDEBUG; assert(); */
-#include <STDLIB.H>  /* abort(); */
+#include <STDLIB.H>  /* abort(), getenv(); */
 #include <STRING.H>  /* strcmp() */
 
 
@@ -65,6 +66,8 @@ extern unsigned int g_EMM_MinKB;                    // dseg:A7D2
 
 unsigned char g_EMM_tested = 0;
 unsigned char g_EMM_validated = 0;
+unsigned char g_VGA_DAC_tested = 0;
+unsigned char g_VGA_DAC_validated = 0;
 unsigned char g_MAINSCRN_LBX_EMM_tested = 0;
 unsigned char g_MAINSCRN_LBX_EMM_validated = 0;
 
@@ -87,8 +90,26 @@ void test_FLIC_LoadPalette(void);
 
 int main(void)
 {
+    char * cstr_ComSpec;
     Debug_Log_Startup();
     Test_Log_Startup();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: TST_MGC main()()\n", __FILE__, __LINE__);
+#endif
+
+    /* get comspec environment parameter */
+    cstr_ComSpec = getenv("COMSPEC");
+    /* display comspec parameter */
+    dbg_prn("Command processor: %s\n", cstr_ComSpec);
+    // flags = fnsplit(s,drive,dir,file,ext);
+    if( strcmp(cstr_ComSpec,"Z:\\COMMAND.COM") == 0)
+    {
+        dbg_prn("Running in DOXBox...\n");
+    }
+
+#if defined(__VSCODE__)
+    abort();
+#endif
 
     // test_VGA_SetDirectDraw();
     // test_VGA_Set_DSP_Addr();
@@ -103,13 +124,16 @@ int main(void)
 
     //test_GAME_LoadMainImages();
 
-    test_Load_MAINSCRN_LBX_EMM();
+    // test_Load_MAINSCRN_LBX_EMM();  // TEST_SUCCESS
 
-    // test_Load_MAINSCRN_000();  // TEST_SUCCESS
-    // test_Load_MAINSCRN_005();
-    // 
-    // test_FLIC_LoadPalette();
+    test_Load_MAINSCRN_000();  // TEST_SUCCESS
+    test_Load_MAINSCRN_005();
+    
+    test_FLIC_LoadPalette();
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: TST_MGC main()()\n", __FILE__, __LINE__);
+#endif
     Test_Log_Shutdown();
     Debug_Log_Shutdown();
     return 0;
@@ -513,15 +537,15 @@ void test_VGA_DAC_Init(void)
     dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Starts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Starts);
 
     // ASSERT()
-    if ( strcmpi(g_PaletteLbxFileName, "FONTS.LBX") != 0 )
+    if ( strcmp(g_PaletteLbxFileName, "FONTS.LBX") != 0 )
     {
-        dbg_prn("DEBUG: [%s, %d] FAILURE: ( strcmpi(g_PaletteLbxFileName, \"FONTS.LBX\") != 0 )\n", __FILE__, __LINE__);
+        dbg_prn("DEBUG: [%s, %d] FAILURE: ( strcmp(g_PaletteLbxFileName, \"FONTS.LBX\") != 0 )\n", __FILE__, __LINE__);
         dbg_prn("DEBUG: [%s, %d] FAILURE: g_PaletteLbxFileName: %s;\n", __FILE__, __LINE__, g_PaletteLbxFileName);
         exit(1);
     }
     else
     {
-        dbg_prn("DEBUG: [%s, %d] SUCCESS: ( strcmpi(g_PaletteLbxFileName, \"FONTS.LBX\") == 0 )\n", __FILE__, __LINE__);
+        dbg_prn("DEBUG: [%s, %d] SUCCESS: ( strcmp(g_PaletteLbxFileName, \"FONTS.LBX\") == 0 )\n", __FILE__, __LINE__);
     }
 
     // validate_Palette_0();
@@ -534,6 +558,8 @@ void test_VGA_DAC_Init(void)
         exit(1);
     }
 
+    g_VGA_DAC_tested = 1;
+    if ( validate_VGA_DAC_Init() ) { g_VGA_DAC_validated = 1; }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: test_VGA_DAC_Init()\n", __FILE__, __LINE__);
@@ -773,6 +799,7 @@ void test_GAME_LoadMainImages(void)
 #endif
 }
 
+/*  s29p11  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)  */
 void test_FLIC_Draw_XY(void)
 {
 
@@ -783,10 +810,7 @@ void test_FLIC_Draw_XY(void)
 
 }
 
-/*
-    // s21p07
-    void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index);
-*/
+/*  s21p07  void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index);  */
 void test_FLIC_LoadPalette(void)
 {
     //  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
@@ -796,13 +820,8 @@ void test_FLIC_LoadPalette(void)
     int Top;
     SAMB_addr sa_FLIC_Header;
     static struct s_FLIC_HDR PS_FLIC_Header;
-    // struct s_FLIC_HDR far * pFLIC_Header;
-    struct s_FLIC_HDR _FAR * pPS_FLIC_Header;
     int Frame_Index;
-    static struct s_FLIC_HDR PS_FLIC_Header2;
-    struct s_FLIC_HDR _FAR * pPS_FLIC_Header2;
-    unsigned char _FAR * fp_FLIC_Header;
-
+    struct s_FLIC_HDR _FAR * pPS_FLIC_Header;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_LoadPalette()\n", __FILE__, __LINE__);
@@ -814,26 +833,12 @@ void test_FLIC_LoadPalette(void)
     tst_prn("TEST: [%s, %d] sa_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, sa_FLIC_Header);
     validate_FLIC_Header(sa_FLIC_Header);
 
+    test_VGA_DAC_Init();
+
     // FLIC_Draw_XY()
     // int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes);
     ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-    // e.g.,    struct LOWMEMVID vid;
-    //          struct LOWMEMVID far *pvid = &vid;
-    //          movedata( 0, 0x449, FP_SEG( pvid ), FP_OFF( pvid ), sizeof( vid ) );
-    // ? ST_MoveData(FP_OFF(pFLIC_Header), FP_SEG(pFLIC_Header), 0, sa_FLIC_Header, sizeof(FLIC_Header));
-    pPS_FLIC_Header = &PS_FLIC_Header;
-
-    tst_prn("TEST: [%s, %d] &PS_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, &PS_FLIC_Header);
-    tst_prn("TEST: [%s, %d] _DS: 0x%04X\n", __FILE__, __LINE__, _DS);
-    tst_prn("TEST: [%s, %d] pPS_FLIC_Header: %Fp\n", __FILE__, __LINE__, pPS_FLIC_Header);
-
-    fp_FLIC_Header = (unsigned char _FAR *) MK_FP(sa_FLIC_Header,0);
-    pPS_FLIC_Header2 = &PS_FLIC_Header2;
-    tst_prn("TEST: [%s, %d] fp_FLIC_Header: %Fp\n", __FILE__, __LINE__, fp_FLIC_Header);
-    tst_prn("TEST: [%s, %d] pPS_FLIC_Header2: %Fp\n", __FILE__, __LINE__, pPS_FLIC_Header2);
-    memcpy(pPS_FLIC_Header2, fp_FLIC_Header, sizeof(PS_FLIC_Header2));
-    validate_FLIC_Header_FP(fp_FLIC_Header);
-    validate_FLIC_Header_FP(pPS_FLIC_Header2);
+    //  ?  memcpy(); memmove() |-> movmem();  movedata();  ?
 
     // FLIC_Draw_XY()
     Frame_Index = PS_FLIC_Header.Current_Frame;
@@ -841,8 +846,10 @@ void test_FLIC_LoadPalette(void)
     // FLIC_Draw_XY()
     if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
     {
-        TLOG("FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);");
-        FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
+        TLOG("CALL: FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);");
+        // FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
+        // FLIC_LoadPalette_FP_EMM(sa_FLIC_Header, Frame_Index);
+        FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);  // s21p07
     }
 
 #ifdef STU_DEBUG

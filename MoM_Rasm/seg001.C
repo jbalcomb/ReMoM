@@ -120,7 +120,7 @@ int MGC_Main(int argc, char *argv[])
     /*
         |-> EMM_Startup()
         |-> VGA_SetModeY()
-        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
+        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_MemBlk(); ... VGA_TextDraw_Init()
         |-> SND_Init()
         |-> IN_Init() |-> MD_Init()
         |-> RNG_TimerSeed()

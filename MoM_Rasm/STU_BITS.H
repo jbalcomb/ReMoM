@@ -133,7 +133,7 @@
 // /*-- page frame of the EMS memory.                                ----*/
                                                                         
 // #define PAGE_ADR(x) ((void *) MK_FP(ems_frame_seg() + ((x) << 10), 0))  
-                                                                        
+
 
 // J:\STU\DBWD\BORLANDC\TVISION\INCLUDE\DRAWBUF.H
 // #define loByte(w)    (((uchar *)&w)[0])
@@ -173,7 +173,7 @@ INCLUDE/DOS.H:#define peekb( a,b )( *( (char far* )MK_FP( (a ),( b )) ))
 //    fh_Width = *( (word  far* )MK_FP( SAMB_data_FLIC_HDR, 0x00 ));
 //    fh_EmmHandleNumber = *( (byte  far* )MK_FP( SAMB_data_FLIC_HDR, 0x0A ));
 
-#define FPGET_WORD(_fp_,_relofs_) ( *( (word _FAR *) MK_FP( FP_SEG(_fp_), FP_OFF(_fp)+_relofs_ ) ) )
+#define FPGET_WORD(_fp_,_relofs_) ( *( (word _FAR *) MK_FP( FP_SEG(_fp_), FP_OFF(_fp_)+_relofs_ ) ) )
 
 #define FPEEKB( _sgmt_,_ofst_) ( *(( byte _FAR *)MK_FP((_sgmt_),(_ofst_))) )
 #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
@@ -190,6 +190,73 @@ INCLUDE/DOS.H:#define peekb( a,b )( *( (char far* )MK_FP( (a ),( b )) ))
 #define SET_BYTE(_p_,_v_)  ( (*((byte  *)(_p_))) = (_v_) )
 #define SET_WORD(_p_,_v_)  ( (*((word  *)(_p_))) = (_v_) )
 #define SET_DWORD(_p_,_v_) ( (*((dword *)(_p_))) = (_v_) )
+
+
+// https://chromium.googlesource.com/webm/libwebp/+/v0.6.1-rc2/examples/webpinfo.c
+// / -----------------------------------------------------------------------------
+// // Data reading.
+// static int GetLE16(const uint8_t* const data) {
+//   return (data[0] << 0) | (data[1] << 8);
+// }
+// static int GetLE24(const uint8_t* const data) {
+//   return GetLE16(data) | (data[2] << 16);
+// }
+// static uint32_t GetLE32(const uint8_t* const data) {
+//   return GetLE16(data) | ((uint32_t)GetLE16(data + 2) << 16);
+// }
+// static int ReadLE16(const uint8_t** data) {
+//   const int val = GetLE16(*data);
+//   *data += 2;
+//   return val;
+// }
+// static int ReadLE24(const uint8_t** data) {
+//   const int val = GetLE24(*data);
+//   *data += 3;
+//   return val;
+// }
+// static uint32_t ReadLE32(const uint8_t** data) {
+//   const uint32_t val = GetLE32(*data);
+//   *data += 4;
+//   return val;
+// }
+
+// https://pkg.go.dev/go.fuchsia.dev/fuchsia/src/lib/thinfs/bitops
+// func GetLE16 ¶
+// func GetLE16(b []byte) uint16
+// GetLE16 gets a 16 bit little endian number from memory.
+// func GetLE32 ¶
+// func GetLE32(b []byte) uint32
+// GetLE32 gets a 32 bit little endian number from memory.
+// func PutLE16 ¶
+// func PutLE16(b []byte, v uint16)
+// PutLE16 puts a 16 bit little endian number into memory.
+// func PutLE32 ¶
+// func PutLE32(b []byte, v uint32)
+// PutLE32 puts a 32 bit little endian number into memory.
+// |-> https://fuchsia.googlesource.com/fuchsia/+/220857068aaf/src/lib/thinfs/bitops/little_endian.go#8
+// package bitops
+// // GetLE16 gets a 16 bit little endian number from memory.
+// func GetLE16(b []byte) uint16 {
+// 	return uint16(b[1])<<8 | uint16(b[0])
+// }
+// // GetLE32 gets a 32 bit little endian number from memory.
+// func GetLE32(b []byte) uint32 {
+// 	return uint32(b[3])<<24 | uint32(b[2])<<16 | uint32(b[1])<<8 | uint32(b[0])
+// }
+// // PutLE16 puts a 16 bit little endian number into memory.
+// func PutLE16(b []byte, v uint16) {
+// 	b[0] = byte(v)
+// 	b[1] = byte(v >> 8)
+// }
+// // PutLE32 puts a 32 bit little endian number into memory.
+// func PutLE32(b []byte, v uint32) {
+// 	b[0] = byte(v)
+// 	b[1] = byte(v >> 8)
+// 	b[2] = byte(v >> 16)
+// 	b[3] = byte(v >> 24)
+// }
+
+
 
 
 #endif /* STU_BITS_H */

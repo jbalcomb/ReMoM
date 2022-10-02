@@ -18,14 +18,14 @@ LDFLAGS =
 .suffixes: .cpp .c .asm
 
 .c.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -Tm2 -U__VSCode__ -v -y $<
-#    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -Tm2 -U__VSCode__ -v -y $<
-#    BCC -B -c -ml -M -S -Tm2 -U__VSCode__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
+#    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
+#    BCC -B -c -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 
 .cpp.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -U__VSCode__ -v -y $<
-#    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -U__VSCode__ -v -y $<
-#    BCC -B -c -ml -M -S -U__VSCode__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -U__VSCODE__ -v -y $<
+#    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -U__VSCODE__ -v -y $<
+#    BCC -B -c -ml -M -S -U__VSCODE__ -v -y $<
 
 .asm.obj:
     TASM /c /dSTU_DEBUG=1 /dSTU_TEST=1 /d__DOS16__=1 /e /la /m2 /ml /t /z /zi $<
@@ -60,7 +60,7 @@ OBJ_s18 = _s18p01.obj _s18p02.obj _s18p03.obj _s18p05.obj _s18p06.obj _s18p07.ob
 OBJ_s19 = seg019.obj
 OBJ_s20 = seg020.obj
 OBJ_s21 = seg021.obj
-OBJ_s22 = _s22p07a.obj _s22p22c.obj
+OBJ_s22 = seg022.obj
 OBJ_s24 = _s24p05c.obj _s24p06c.obj
 OBJ_s26 = _s26p01c.obj _s26p02c.obj _s26p03.obj _s26p04a.obj _s26p05.obj _s26p06.obj _s26p07.obj
 OBJ_s27 = _s27.obj _s27a.obj _s27p03c.obj

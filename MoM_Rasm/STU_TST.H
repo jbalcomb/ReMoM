@@ -13,17 +13,20 @@
 #define TEST_UNDEFINED  0
 
 
-#define FONTS_LBX_002    "FONTS_~1.BIN"
+#define FONTS_LBX_000    "FONTS_~1.BIN"
+#define FONTS_LBX_001    "FONTS_~2.BIN"
+#define FONTS_LBX_002    "FONTS_~3.BIN"
 #define MAINSCRN_LBX_000 "MAINSC~1.BIN"
-#define MAINSCRN_LBX_005 "MAINSC~1.BIN"
+#define MAINSCRN_LBX_005 "MAINSC~2.BIN"
 
 
 extern char Test_Log_FileName[];
 extern FILE * Test_Log_File;
 
+// "PF" as in ? printf() || print format || Pass/Fail ?
 #define PF_TEST_STATUS() { (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE") }
 
-#define TLOG(argString) { do { fprintf(Test_Log_File, "TEST: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); fflush(Test_Log_File); } while(0); }
+#define TLOG(_str_) { do { fprintf(Test_Log_File, "TEST: [%s, %d]: %s\n", __FILE__, __LINE__, (_str_)); fflush(Test_Log_File); } while(0); }
 
 // #define TSTPRN(x) do { if (TEST) tst_prn x; } while (0)
 // // Usage: TRACE(("message %d\n", var));
@@ -77,7 +80,8 @@ int validate_PaletteFlags_1(void);
 int validate_PaletteLbxEntry(void);
 int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
 
-int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header);
+// int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header);
+int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header);
 int validate_FLIC_Header(SAMB_data sa_FLIC_Header);
 
 int validate_MAINSCRN_LBX_EMM(void);

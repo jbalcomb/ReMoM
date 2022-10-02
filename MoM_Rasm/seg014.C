@@ -3,11 +3,42 @@
 
 #include "seg014.H"
 
-#include "ST_HEAD.H"
+// #include "ST_HEAD.H"
+// #include "ST_TYPE.H"
+// #include "ST_DEF.H"  /* SWAP(); */
 
 #include "ST_LBX.H"
 #include "ST_SA.H"
 #include "ST_VGA.H"
+
+/*
+DEFAULT_FONTS_FILE
+
+g_PaletteLbxFileName
+gsa_FontStyleData
+gsa_BorderStyleData
+gsa_PaletteLbxEntry
+gsa_Palette
+gsa_PaletteFlags
+gsa_PaletteSaved
+gsa_ReplacementColors
+gsa_VGAFILEH_Header
+gsa_IntensityScaleTable
+
+EMM_Startup()
+VGA_SetModeY()
+VGA_DAC_Init()
+SND_Init()
+IN_Init()
+RNG_TimerSeed()
+VGA_Set_DSP_Addr()
+strcpy()
+LBXE_LoadSingle()
+FP_SEG()
+SA_Allocate_Space()
+VGA_TextDraw_Init();
+farpokeb()
+*/
 
 // #include "STU_DBG.H"
 
@@ -72,38 +103,37 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
     unsigned int itrPaletteFlags;
     void * pPaletteLbxEntry;
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
 // #endif
 
     strcpy(g_PaletteLbxFileName, PaletteLbxFileName);
 
-    gsa_FontStyleData = LBXE_LoadSingle(PaletteLbxFileName, 0);
-
-    gsa_BorderStyleData = LBXE_LoadSingle(PaletteLbxFileName, 1);
+    gsa_FontStyleData    =  LBXE_LoadSingle(PaletteLbxFileName, 0);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    gsa_BorderStyleData  =  LBXE_LoadSingle(PaletteLbxFileName, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
 
     // gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));       // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
     pPaletteLbxEntry = SA_Allocate_Space(348);
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] pPaletteLbxEntry: %p\n", __FILE__, __LINE__, pPaletteLbxEntry);
 // #endif
 
     gsa_PaletteLbxEntry = FP_SEG(pPaletteLbxEntry);
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteLbxEntry);
 // #endif
 
     gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);
 // #endif
 
     gsa_PaletteFlags = gsa_Palette + 48;                        // 48 paragaphs = 48 * 16 = 768 bytes
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
 // #endif
 
@@ -127,53 +157,44 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
         farpokeb(gsa_PaletteFlags, itrPaletteFlags, 1);
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
+// #endif
 }
 
 // s14p04
 void VGA_SetDrawWindow(int Min_X, int Min_Y, int Max_X, int Max_Y)
 {
-    int tmp_Min_X;
-    int tmp_Min_Y;
-    int tmp_Max_X;
-    int tmp_Max_Y;
-    int tmp;
 
-    if ( tmp_Min_X < 0 )
+    if ( Min_X < 0 )
     {
-        tmp_Min_X = 0;
+        Min_X = 0;
     }
-    if ( tmp_Min_Y < 0 )
+    if ( Min_Y < 0 )
     {
-        tmp_Min_Y = 0;
+        Min_Y = 0;
     }
-    if ( tmp_Max_X > 319 )
+    if ( Max_X > 319 )
     {
-        tmp_Min_X = 319;
+        Min_X = 319;
     }
-    if ( tmp_Max_Y > 199 )
+    if ( Max_Y > 199 )
     {
-        tmp_Min_Y = 199;
+        Min_Y = 199;
     }
-    if ( tmp_Min_X > tmp_Max_X )
+    if ( Min_X > Max_X )
     {
-        tmp = tmp_Max_X;
-        tmp_Max_X = tmp_Min_X;
-        tmp_Min_X = tmp;
+        SWAP(Max_X,Min_X);
     }
-    if ( tmp_Min_Y > tmp_Max_Y )
+    if ( Min_Y > Max_Y )
     {
-        tmp = tmp_Max_Y;
-        tmp_Max_Y = tmp_Min_Y;
-        tmp_Min_Y = tmp;
+        SWAP(Max_Y,Min_Y);
     }
 
-    g_VGA_Min_X = tmp_Min_X;
-    g_VGA_Max_X = tmp_Max_X;
-    g_VGA_Min_Y = tmp_Min_Y;
-    g_VGA_Max_Y = tmp_Max_Y;
+    g_VGA_Min_X = Min_X;
+    g_VGA_Max_X = Max_X;
+    g_VGA_Min_Y = Min_Y;
+    g_VGA_Max_Y = Max_Y;
 
 }
 

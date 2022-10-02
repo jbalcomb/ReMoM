@@ -13,9 +13,9 @@
         void movedata( unsigned int src_sgmt, unsigned int src_ofst, unsigned int dst_sgmt, unsigned int dst_ofst, unsigned int count );
             src_sgmt                            Segment address of source
             src_ofst                            Segment offset of source
-            dst_sgmt                           Segment address of destination
-            dst_ofst                           Segment offset of destination
-            count                             Number of bytes
+            dst_sgmt                            Segment address of destination
+            dst_ofst                            Segment offset of destination
+            count                               Number of bytes
     Borland C++:
         #include <mem.h>
         void movedata(unsigned src_sgmt, unsigned src_ofst, unsigned dstseg, unsigned dstoff, size_t n);
@@ -80,6 +80,24 @@ Far Pointer vs. Sgmt,Ofst
     Not sure if/how you'd see MK_FP() being used directly in the functional call parameters.
 */
 
+
+int ST_MoveData_FP(unsigned char _FAR ** fp_Dst, unsigned char _FAR * fp_Src, unsigned int nbytes)
+{
+    unsigned int LoopCount;
+    unsigned int itrLoopCount;
+    unsigned int ret_val;
+
+    if ( nbytes == 0 ) { ret_val = 0; }
+
+    LoopCount = nbytes;
+    for ( itrLoopCount = 0; itrLoopCount < LoopCount; itrLoopCount++ )
+    {
+        fp_Dst[itrLoopCount] = fp_Src[itrLoopCount];
+    }
+
+Done:
+    return ret_val;
+}
 
 int ST_MoveData(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_ofst, unsigned int src_sgmt, unsigned int nbytes)
 {

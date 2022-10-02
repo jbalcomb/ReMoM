@@ -191,9 +191,6 @@ SAMB_ptr SA_Allocate_Space(unsigned int nparas)
 //     dlvfprintf("DEBUG: [%s, %d]: FP_SEG(pSAMB_head): 0x%04X\n", __FILE__, __LINE__, FP_SEG(pSAMB_head));
 // #endif
 
-//#define SET_LE_16(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu) )
-//#define SET_LE_32(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[3] = (((_v_) >> 24) & 0xffu))
-
     ((unsigned char *)(pSAMB_head))[4] = ((SA_MEMSIG1) & 0xFF);
     ((unsigned char *)(pSAMB_head))[5] = (((SA_MEMSIG1) >> 8) & 0xFF);
 

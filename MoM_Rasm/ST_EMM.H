@@ -1,6 +1,9 @@
 #ifndef ST_EMM_H
 #define ST_EMM_H
 
+#include "ST_DEF.H" /* _AL, etc. */
+
+
 /*
     Expanded Memory
 
@@ -54,7 +57,9 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 // J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_VL.H
 // #define VGAMAPMASK(x) asm{cli; mov dx,SC_INDEX; mov al,SC_MAPMASK; mov ah,x; out dx,ax; sti;}
 // #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{ mov al, _epp_; mov bx, _elp_; mov dx, _ehn_; mov ah, EMS_MAPPAGE; int EMS_INT; }
-#define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) { _AL = (_epp_); _BX = (_elp_);  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
+// #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) { _AL = (_epp_); _BX = (_elp_);  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
+#define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
+// ~== void EMM_MAP_PAGE(unsigned int _eppn_, unsigned int _ehn_, unsigned char _elpn_);
 
 
 #define EMS_PAGE_SIZE   16384

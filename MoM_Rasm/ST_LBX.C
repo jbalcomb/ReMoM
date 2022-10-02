@@ -11,7 +11,7 @@
 #include<sys\stat.h>    /* ? */
 #include <IO.H>         /* filelength(), read(); SEEK_CUR, SEEK_END, SEEK_SET */
     // SEEK_SET (0)  File beginning; SEEK_CUR (1)  Current file pointer; SEEK_END (2)  End-of-file
-//#ifdef DEBUG
+//#ifdef STU_DEBUG
     #include <errno.h>
 //#endif
 
@@ -119,13 +119,13 @@ int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
     void _FAR * buf;
     int st_status;
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
 // #endif
 
     buf = MK_FP(dst_sgmt, 0);
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
 // #endif
 
@@ -137,7 +137,7 @@ int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
         st_status = -1;  // ST_SUCCESS
     }
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
 // #endif
 
@@ -150,32 +150,32 @@ int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
     // void * buf;
     void _FAR * buf;
     int st_status;
-//#ifdef DEBUG
+//#ifdef STU_DEBUG
     int baitos;
     char * strerrbuf;
     int itr_nbytes;
 //#endif
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle);
 // #endif
 
     //buf = (void *)dst_ofst;
     buf = MK_FP(_DS, dst_ofst);  // without this FP, it gets the right bytes but does not assign them properly ? because all pointers are FAR in LARGE memory model ? override NEAR ?
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
 // #endif
 
     if ( (baitos = read(fhandle, buf, nbytes)) == -1 )
     {
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //         strerrbuf = strerror(errno);
 //         dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
 // #endif
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
 // #endif
 
@@ -184,11 +184,11 @@ int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
     else
     {
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
 // #endif
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
 //     {
 //         dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)buf + itr_nbytes));
@@ -198,7 +198,7 @@ int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
         st_status = -1;  // ST_SUCCESS
     }
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: END: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle, st_status);
 // #endif
 
@@ -210,20 +210,20 @@ int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
 int lbx_read(void _FAR * fpDst, int nbytes, int fhandle)
 {
     int st_status;
-//#ifdef DEBUG
+//#ifdef STU_DEBUG
     int baitos;
     char * strerrbuf;
     int itr_nbytes;
 //#endif
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, fpDst, nbytes, fhandle);
 // #endif
 
     if ( (baitos = read(fhandle, fpDst, nbytes)) == -1 )
     {
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //         strerrbuf = strerror(errno);
 //         dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
 // #endif
@@ -233,11 +233,11 @@ int lbx_read(void _FAR * fpDst, int nbytes, int fhandle)
     else
     {
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
 // #endif
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
 //     {
 //         dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)fpDst + itr_nbytes));
@@ -247,7 +247,7 @@ int lbx_read(void _FAR * fpDst, int nbytes, int fhandle)
         st_status = -1;  // ST_SUCCESS
     }
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: END: lbx_read(fpDst = 0x%p, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, fpDst, nbytes, fhandle, st_status);
 // #endif
 

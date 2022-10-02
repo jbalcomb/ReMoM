@@ -9,16 +9,11 @@ extern char Debug_Log_FileName[];
 extern FILE * Debug_Log_File;
 
 
-#ifdef DEBUG
-#define DLOG(argString) { \
-    do { \
-        fprintf(Debug_Log_File, "DEBUG: [%s, %d]: %s \n", __FILE__, __LINE__, argString ); \
-        fflush(Debug_Log_File); \
-    } while(0); \
-}
+#ifdef STU_DEBUG
+#define DLOG(_str_) { do { fprintf(Debug_Log_File, "DEBUG: [%s, %d]: %s\n", __FILE__, __LINE__, (_str_)); fflush(Debug_Log_File); } while(0); }
 #else
 /* emptiness, when debugging is not enabled */
-#define DLOG  
+#define DLOG
 #endif
 
 

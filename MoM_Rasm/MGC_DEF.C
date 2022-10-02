@@ -284,7 +284,7 @@ unsigned int gsa_VORTEX_2_MenuHallOfFame;   // dseg:52BE
 int GUI_Quit_Lbl_Index;                     // dseg:52C0
 unsigned int gsa_VORTEX_5_MenuLoadGame;     // dseg:52C2
 int g_GUI_MainMenuSelected;                 // dseg:52C4
-unsigned int gsa_WIZARDS_0to13[14];         // dseg:52C6
+unsigned int gsa_WIZARDS_0to13[14];         // dseg:52C6  GAME_LoadMainImages()  gsa_WIZARDS_0to13[itr_wizards] = LBXE_LoadSingle(g_LbxNm_WIZARDS, itr_wizards);
 // dseg:52E2 IMG_NewG_BtnBorder@ dw 0
 int g_GAME_HaveSaves;                       // dseg:52E4
 // dseg:52E6 NEWG_HaveLastProfile dw 0

@@ -364,7 +364,25 @@ FLIC_HDR.EMM_Logical_Page_Offset
                                                 // void gfx_aux_draw_frame_to(uint8_t *data, struct gfx_aux_s *aux)
                                                 // ... if (lbxgfx_get_indep(data)) { f = frame; } else { f = 0; lbxgfx_set_frame_0(data); }
 #define FlicHdr_Shading                 0x11    // used in FLIC_Draw_EMM, if 0, continues, else calls FLIC_Draw_EMM_R; used in VGA_DrawLBXImage, if not 0, calls FLIC_Draw_R, else calls FLIC_Draw
+                                                // #define lbxgfx_get_format(_data_) ((_data_)[0x11])
 #define FlicHdr_FrameOffsetTable        0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
+
+#define GET_FLIC_HDR_EMM_HANDLE(_ptr_)              ( (_ptr_)[0x0A] )
+#define GET_FLIC_HDR_EMM_LOGICAL_PAGE(_ptr_)        ( (_ptr_)[0x0B] )
+// #define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( (unsigned char _FAR *)MK_FP(FP_SEG((_ptr_),FP_OFF((_ptr_)) + 0x0C)) ) )
+#define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( ADD_REL((_ptr_),0x0C) ) )
+
+// #define FLIC_LBX_Get_Palette_Header_Offset(_ptr_)   ( GET_LE_16( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), ( FP_OFF((_ptr_)) + 0x0E ) ) ) )
+
+#define FLIC_LBX_Get_Palette_Header_Offset(_ptr_) ( GET_LE_16( ADD_REL((_ptr_),0x0E) ) )
+
+
+#define FLIC_LBX_Has_Palette(_ptr_)               ( FLIC_LBX_Get_Palette_Header_Offset(_ptr_) != 0 )
+#define FLIC_LBX_Get_Palette_Data_Offset(_ptr_)   ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x00) ]) ) )
+#define FLIC_LBX_Get_Palette_Color_Index(_ptr_)   ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x02) ]) ) )
+#define FLIC_LBX_Get_Palette_Color_Count(_ptr_)   ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x04) ]) ) )
+#define FLIC_LBX_Get_Palette_PerFrame_Flag(_ptr_) ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x06) ]) ) )
+#define FLIC_LBX_Has_Palette_PerFrame(_ptr_)      ( FLIC_LBX_Get_Palette_PerFrame_Flag(_ptr_) != 0 )
 
 
 #define FLIC_RLE() { \

@@ -27,7 +27,7 @@ void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
     unsigned char *fptr_SrcByte;
     int itr_Color_Count;
 
-// #ifdef DEBUG
+// #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_LoadPalette(Palette_Index = %d, First_Color = %d, Last_Color = %d)\n", __FILE__, __LINE__, Palette_Index, First_Color, Last_Color);
 // #endif
 
@@ -143,9 +143,9 @@ void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
         VGA_SetDACChanged(First_Color, Last_Color);
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: VGA_LoadPalette()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dlvfprintf("DEBUG: [%s, %d] END: VGA_LoadPalette()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // s20p05
