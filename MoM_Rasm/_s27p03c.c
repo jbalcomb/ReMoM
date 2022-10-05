@@ -83,28 +83,12 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     fh_EmmLogicalPageIndex = FPEEKB(sa_FLIC_Header, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
     fh_EmmLogicalPageOffset = FPEEKW(sa_FLIC_Header, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fh_Width: %u\n", __FILE__, __LINE__, fh_Width);
-    dbg_prn("DEBUG: [%s, %d] fh_EmmHandleNumber: %u\n", __FILE__, __LINE__, fh_EmmHandleNumber);
-    dbg_prn("DEBUG: [%s, %d] fh_EmmLogicalPageIndex: %u\n", __FILE__, __LINE__, fh_EmmLogicalPageIndex);
-    dbg_prn("DEBUG: [%s, %d] fh_EmmLogicalPageOffset: 0x%04X\n", __FILE__, __LINE__, fh_EmmLogicalPageOffset);
-#endif
-
     EMM_MapMulti4(fh_EmmLogicalPageIndex, fh_EmmHandleNumber);
 
     fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fh_FrameDataOffset: 0x%08X\n", __FILE__, __LINE__, fh_FrameDataOffset);
-#endif
-
     tmp_EmmPage = fh_EmmLogicalPageIndex  + ( (fh_FrameDataOffset + 1) / 16384 );
     tmp_EmmOfst = fh_EmmLogicalPageOffset + ( (fh_FrameDataOffset + 1) % 16384 );
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
-    dbg_prn("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
-#endif
 
     if ( tmp_EmmOfst > 0xC000 )
     {
@@ -112,16 +96,7 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
         tmp_EmmOfst -= 0xC000;  // 3 * 16384 EMM Page Size
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] tmp_EmmPage: %u\n", __FILE__, __LINE__, tmp_EmmPage);
-    dbg_prn("DEBUG: [%s, %d] tmp_EmmOfst: 0x%04X\n", __FILE__, __LINE__, tmp_EmmOfst);
-#endif
-
     fh_Shading = FPEEKB(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset + FlicHdr_Shading);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fh_Shading: %u\n", __FILE__, __LINE__, fh_Shading);
-#endif
 
     inregs.x.dx = fh_EmmHandleNumber;
     inregs.x.bx = tmp_EmmPage;
@@ -180,214 +155,95 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     mask = g_VGA_WriteMapMasks3[(ScreenPage_X & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
 
     fp_Src = (byte *) MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
-    fp_Dst = (byte *) MK_FP(gsa_DSP_Addr + ( ScreenPage_Y * (((320/4)/16)) ), row_offset);  // MAINSCRN_LBX_000: A400:0000
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
+    fp_Dst = (byte *) MK_FP(gsa_DSP_Addr + (ScreenPage_Y * (((320/4)/16))), row_offset);  // MAINSCRN_LBX_000: A400:0000
 
     outportb(e_SC_INDEX, e_SC_MAPMASK);
 
 Column_Loop:
-    DLOG("Column_Loop:");
     fp_Dst = (byte *) MK_FP(FP_SEG(fp_Dst), row_offset);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] (unsigned int)FP_OFF(fp_Src): 0x%04X\n", __FILE__, __LINE__, (unsigned int)FP_OFF(fp_Src));
-#endif
-    if ( FP_OFF(fp_Src) > 0xC000 )
+    if(FP_OFF(fp_Src) > 0xC000)
     {
-        DLOG("( FP_OFF(fp_Src) > 0xC000 )");
         tmp_EmmPage += 3;
         EMM_MapMulti4(tmp_EmmPage, fh_EmmHandleNumber);
         tmp_EmmOfst = FP_OFF(fp_Src);
         tmp_EmmOfst -= 0xC000;
         fp_Src = (byte *) MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
     }
-
     outportb(e_SC_DATA, mask);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
     baito = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] baito: 0x%02X\n", __FILE__, __LINE__, baito);
-#endif
-    if (baito == 0xFF)  /* Type: skip */
+    if(baito == 0xFF)  /* Type: skip */
     {
-        DLOG("(baito == 0xFF)");
+
         goto Next_Column;
     }
 
-    if (baito == 0x80)  /* Type: copy */
+    if(baito == 0x80)  /* Type: copy */
     {
-        DLOG("(baito == 0x80)");
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
         packet_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_byte_count: %u\n", __FILE__, __LINE__, packet_byte_count);
-#endif
-        do
-        {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
+        do {
             sequence_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] sequence_byte_count: %u\n", __FILE__, __LINE__, sequence_byte_count);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
             delta_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] delta_byte_count: %u\n", __FILE__, __LINE__, delta_byte_count);
-#endif
             fp_Dst += (width_stride * delta_byte_count);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
             packet_byte_count -= sequence_byte_count + 2;  // MAINSCRN_000_000, Column Index 0; 0 = 29 - (27 + 2)
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_byte_count: %u\n", __FILE__, __LINE__, packet_byte_count);
-#endif
             do
             {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
                 baito = *fp_Src++;  // this byte is the op-repeat or just the byte to copy
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] baito: 0x%02X\n", __FILE__, __LINE__, baito);
-#endif
-                if ( baito >= 224 )  /* op: repeat */  /* (& 11100000) */
+                if(baito >= 224)  /* op: repeat */  /* (& 11100000) */
                 {
-                    DLOG("( baito >= 224 )");
                     itr_op_repeat = (baito - 224) + 1;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] itr_op_repeat: %u\n", __FILE__, __LINE__, itr_op_repeat);
-#endif
                     sequence_byte_count--;  // ? decremented here, because of the byte read immediately following ?
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] sequence_byte_count: %u\n", __FILE__, __LINE__, sequence_byte_count);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
                     baito = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] baito: 0x%02X\n", __FILE__, __LINE__, baito);
-#endif
                     while(itr_op_repeat--)
                     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] itr_op_repeat: %u\n", __FILE__, __LINE__, itr_op_repeat);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] baito: 0x%02X\n", __FILE__, __LINE__, baito);
-#endif
                         *fp_Dst = baito;
                         fp_Dst += width_stride;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
                         //itr_op_repeat--;
                     }
                 }
                 else  /* op: copy */
                 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] baito: 0x%02X\n", __FILE__, __LINE__, baito);
-#endif
                     *fp_Dst = baito;
                     fp_Dst += width_stride;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
                 }
-                dbg_prn("DEBUG: [%s, %d] } while ( sequence_byte_count: %u );\n", __FILE__, __LINE__, sequence_byte_count);
-            } while ( --sequence_byte_count );
-            dbg_prn("DEBUG: [%s, %d] } while ( packet_byte_count: %u );\n", __FILE__, __LINE__, packet_byte_count);
+            } while (--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
         } while (packet_byte_count >= 1);
         goto Next_Column;
     }
 
     if (baito == 0x00)  /* Type: copy */
     {
-        DLOG("(baito == 0x00)");
         packet_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_byte_count: 0x%02X\n", __FILE__, __LINE__, packet_byte_count);
-#endif
         do {
             sequence_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] sequence_byte_count: 0x%02X\n", __FILE__, __LINE__, sequence_byte_count);
-#endif
             delta_byte_count = *fp_Src++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] delta_byte_count: 0x%02X\n", __FILE__, __LINE__, delta_byte_count);
-#endif
             fp_Dst += (width_stride * delta_byte_count);
             packet_byte_count -= sequence_byte_count + 2;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_byte_count: 0x%02X\n", __FILE__, __LINE__, packet_byte_count);
-#endif
             do {
                 *fp_Dst = *fp_Src++;
                 fp_Dst += width_stride;
-            } while ( --sequence_byte_count );
-        } while (packet_byte_count >= 1);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
+            } while(--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
+        } while(packet_byte_count >= 1);
         goto Next_Column;
     }
 
 // decrement column count, increment map mask [, increment offset]
 Next_Column:
-    DLOG("Next_Column:");
     column_count--;
-    if (column_count != 0)
+    if(column_count != 0)
     {
         // itr++;  rot = itr % 4
         mask = mask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
-        if (mask >= 9)
+        if(mask >= 9)
         {
             mask = 1;
             row_offset++;
         }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %p\n", __FILE__, __LINE__, fp_Src);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Dst: %p\n", __FILE__, __LINE__, fp_Dst);
-#endif
         goto Column_Loop;
     }
 
 Done:
-
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, sa_FLIC_Header=0x%03X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, sa_FLIC_Header, Frame_Index);
 #endif
-
 }
