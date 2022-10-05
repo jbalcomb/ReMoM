@@ -349,8 +349,9 @@ void validate_BorderStyleData(void)
     
 }
 
-void validate_Palette_0(void)
+int validate_Palette_0(void)
 {
+    int test_status;
     int itr_Palette;
 
     for ( itr_Palette = 0; itr_Palette < 256; itr_Palette++)
@@ -358,11 +359,73 @@ void validate_Palette_0(void)
         if ( *((BYTE *)(gsa_Palette + itr_Palette)) != 0 )
         {
             dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_Palette + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
-            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_Palette: 0x%02X;\n", __FILE__, __LINE__, *((BYTE *)(gsa_Palette + itr_Palette)));
-            exit(1);
+            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_Palette[%d]: 0x%02X;\n", __FILE__, __LINE__, itr_Palette, *((BYTE *)(gsa_Palette + itr_Palette)));
+            goto Failure;
         }
     }
-    
+
+Success:
+    test_status = 1;  // TEST_SUCCESS
+    goto Done;
+Failure:
+    test_status = -1;  // TEST_FAILURE
+    goto Done;
+Done:
+    return test_status;
+}
+
+/*
+    Validate that the 'Shadow Palette' is set properly
+      after FLIC_Load_Palette() on MAINSCRN_000, Frame 0
+    MAINSCRN_000_00-Palette.BIN  (MAINSC~2.BIN)
+
+*/
+int validate_Palette_M00(void)
+{
+    int test_status;
+    FILE * fp;
+    int itr_Palette;
+    unsigned char baito1;
+    unsigned char baito2;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_Palette_M00()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    fp = fopen("MAINSC~2.BIN", "rb");
+
+    if (fp == NULL)
+    {
+        dbg_prn("DEBUG: [%s, %d] ( fp = fopen(\"MAINSC~2.BIN\", \"rb\") ) == NULL\n", __FILE__, __LINE__);
+        abort();
+    }
+
+    for ( itr_Palette = 0; itr_Palette < 256; itr_Palette++)
+    {
+        fread(&baito1, 1, 1, fp);
+        baito2 = *((BYTE *) MK_FP(gsa_Palette, itr_Palette));
+        // dbg_prn("DEBUG: [%s, %d]: baito:  0x%02X  0x%02X\n", __FILE__, __LINE__, baito1, baito2);
+        if( baito2 != baito1 )
+        {
+            dbg_prn("DEBUG: [%s, %d]: baito[%d]:  0x%02X  0x%02X\n", __FILE__, __LINE__, itr_Palette, baito1, baito2);
+            goto Failure;
+        }
+    }
+
+Success:
+    test_status = 1;  // TEST_SUCCESS
+    goto Done;
+Failure:
+    test_status = -1;  // TEST_FAILURE
+    goto Done;
+Done:
+    fclose(fp);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: validate_Palette_M00( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
+    return test_status;
 }
 
 int validate_PaletteFlags_1(void)
@@ -383,38 +446,64 @@ int validate_PaletteFlags_1(void)
 
     for ( itr_PaletteFlags = 0; itr_PaletteFlags < 256; itr_PaletteFlags++)
     {
-        // // dbg_prn("DEBUG: [%s, %d] (gsa_PaletteFlags + itr_PaletteFlags): 0x%04X\n", __FILE__, __LINE__, (gsa_PaletteFlags + itr_PaletteFlags));
-        // // dbg_prn("DEBUG: [%s, %d] ((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)): %p\n", __FILE__, __LINE__, ((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)));
-        // // dbg_prn("DEBUG: [%s, %d] *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)): 0x%02X\n", __FILE__, __LINE__, *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)));
-        // // dbg_prn("DEBUG: [%s, %d] ((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags): %p\n", __FILE__, __LINE__, ((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags));
-        // // dbg_prn("DEBUG: [%s, %d] ((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags): %Fp\n", __FILE__, __LINE__, ((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags));
-        // // dbg_prn("DEBUG: [%s, %d] *((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags): 0x%02X\n", __FILE__, __LINE__, *((BYTE *)MK_FP(gsa_PaletteFlags,0) + itr_PaletteFlags));
-        // 
-        // dbg_prn("DEBUG: [%s, %d] (pPaletteFlags + itr_PaletteFlags): %p\n", __FILE__, __LINE__, (pPaletteFlags + itr_PaletteFlags));
-        // dbg_prn("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(pPaletteFlags + itr_PaletteFlags));
-        // // e.g., { 28A5:0000, ..., 28A5:00FF}
-
-        // if ( *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)) != 1 )
         if ( *(pPaletteFlags + itr_PaletteFlags) != 1 )
         {
             dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
-            // dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)));
             dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(pPaletteFlags + itr_PaletteFlags));
-            test_status = -1;  // TEST_FAILURE
-            // exit(1);
-            break;
+            goto Failure;
         }
     }
 
-    if ( test_status != -1 )  // TEST_FAILURE
-    {
-        test_status = 1;  // TEST_SUCCESS
-    }
-
+Success:
+    test_status = 1;  // TEST_SUCCESS
+    goto Done;
+Failure:
+    test_status = -1;  // TEST_FAILURE
+    goto Done;
+Done:
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: validate_PaletteFlags_1( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
+    return test_status;
+}
 
+
+int validate_PaletteFlags_M00(void)
+{
+    int itr_PaletteFlags;
+    BYTE * pPaletteFlags;
+    int test_status;
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_PaletteFlags_M00()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    dbg_prn("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
+    pPaletteFlags = (BYTE *)MK_FP(gsa_PaletteFlags,0);
+    dbg_prn("DEBUG: [%s, %d] pPaletteFlags: %p\n", __FILE__, __LINE__, pPaletteFlags);
+
+    for(itr_PaletteFlags = 0; itr_PaletteFlags < 256; itr_PaletteFlags++)
+    {
+        if( *(pPaletteFlags + itr_PaletteFlags) != 1 )
+        {
+            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
+            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(pPaletteFlags + itr_PaletteFlags));
+            goto Failure;
+        }
+    }
+
+Success:
+    test_status = 1;  // TEST_SUCCESS
+    goto Done;
+Failure:
+    test_status = -1;  // TEST_FAILURE
+    goto Done;
+Done:
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: validate_PaletteFlags_M00( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+#endif
     return test_status;
 }
 
@@ -459,6 +548,7 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
 
     // fp = fopen("FONTS_002.BIN", "rb");
     fp = fopen("FONTS_~3.BIN", "rb");
+    // fp = fopen(FONTS_LBX_002, "rb");
 
     if (fp == NULL)
     {

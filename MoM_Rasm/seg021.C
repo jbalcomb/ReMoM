@@ -182,6 +182,7 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
 #endif
 
 
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header): 0x%02X\n", __FILE__, __LINE__, GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header));
     dbg_prn("DEBUG: [%s, %d] GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header): 0x%02X\n", __FILE__, __LINE__, GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header));
@@ -351,15 +352,15 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
     {
         // *fp_Palette++ = *fp_FlicPalette++;
         // *fp_PaletteFlags++ = 1;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_FlicPalette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_FlicPalette[itr_Color_Count]);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] fp_FlicPalette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_FlicPalette[itr_Color_Count]);
+// #endif
         fp_Palette[itr_Color_Count] = fp_FlicPalette[itr_Color_Count];
         fp_PaletteFlags[itr_Color_Count] = 1;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Palette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_Palette[itr_Color_Count]);
-    dbg_prn("DEBUG: [%s, %d] fp_PaletteFlags[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_PaletteFlags[itr_Color_Count]);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] fp_Palette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_Palette[itr_Color_Count]);
+//     dbg_prn("DEBUG: [%s, %d] fp_PaletteFlags[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_PaletteFlags[itr_Color_Count]);
+// #endif
     }
 
 Done:

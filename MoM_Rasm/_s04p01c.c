@@ -12,6 +12,7 @@
 #define DOS_FIND_NEXT   0x4F
 
 
+// DOS_FileFinder
 int DISK_FileFind(const char *pathname, char *Read_Buffer)
 {
     union  REGS  inregs1;

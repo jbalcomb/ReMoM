@@ -40,9 +40,8 @@ proc VGA_SetModeY far
     ; mov	es, ax
     ; sub	di, di
     ; mov	ax, di
-    ; mov	cx, 8000h                           ; 32,768 times
-    ; cld
-    ; rep stosw
+    ; mov	cx, 8000h                           ; 32,768 times ... 65,536 zeros
+    ; rep stosw  ; WORD [ES:DI] = AX;
 
     mov	dx, CRTC_INDEX
     mov	al, CRTC_UNDERLINE_LOCATION

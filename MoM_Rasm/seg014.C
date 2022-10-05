@@ -125,7 +125,10 @@ void VGA_DAC_Init(char *PaletteLbxFileName)
 //     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteLbxEntry);
 // #endif
 
-    gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
+    // gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
+    pPalette = SA_Allocate_Space(64);
+    gsa_Palette = FP_SEG(pPalette);
+    fp_Palette = MK_FP(gsa_Palette, 0);
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);

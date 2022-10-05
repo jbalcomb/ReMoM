@@ -4,13 +4,15 @@
 #include "MGC_DEF.H"
 
 #include "ST_EMM.H"
+#include "ST_DBG.H"     /* DBG_ScreenDump() */
 #include "ST_FLIC.H"
 #include "ST_LBX.H"     /* LBXE_LoadSingle() */
-#include "ST_SA.H"      /* SA_Allocate_Space() */
+#include "ST_SA.H"      /* SA_Allocate_MemBlk(), SA_Allocate_Space(); */
 #include "ST_VGA.H"
 
 #include "seg001.H"     /* GAME_LoadMainImages(); */
 #include "seg014.H"     /* Hardware_Init(), VGA_DAC_Init(); */
+#include "seg020.H"     /* VGA_LoadPalette() */
 #include "seg021.H"     /* FLIC_LoadPalette(); */
 #include "seg022.H"     /* ST_MoveData() */
 #include "seg028.H"     /* FLIC_Draw_XY(); */
@@ -24,6 +26,7 @@
 
 #include "STU_DBG.H"    /* DLOG(); */
 #include "STU_TST.H"    /* TLOG(); */
+#include "STU_VGA.H"    /* STU_VGA_RAM_Dump(); */
 
 #include <ASSERT.H>  /* NDEBUG; assert(); */
 #include <STDLIB.H>  /* abort(), getenv(); */
@@ -70,9 +73,12 @@ unsigned char g_VGA_DAC_tested = 0;
 unsigned char g_VGA_DAC_validated = 0;
 unsigned char g_MAINSCRN_LBX_EMM_tested = 0;
 unsigned char g_MAINSCRN_LBX_EMM_validated = 0;
+unsigned char g_FLIC_LoadPalette_tested = 0;
+unsigned char g_FLIC_LoadPalette_validated = 0;
 
 
 void test_MGC_Main(void);
+void test_VGA_VRAM(void);
 void test_Load_MAINSCRN_LBX_EMM(void);
 void test_Load_MAINSCRN_000(void);
 void test_Load_MAINSCRN_005(void);
@@ -84,8 +90,9 @@ void test_EMM_Init(void);
 void test_EMM_Startup(void);
 void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
-void test_FLIC_Draw_XY(void);
 void test_FLIC_LoadPalette(void);
+void test_FLIC_Draw_EMM(void);
+void test_FLIC_Draw_XY(void);
 
 
 int main(void)
@@ -126,10 +133,16 @@ int main(void)
 
     // test_Load_MAINSCRN_LBX_EMM();  // TEST_SUCCESS
 
-    test_Load_MAINSCRN_000();  // TEST_SUCCESS
-    test_Load_MAINSCRN_005();
-    
-    test_FLIC_LoadPalette();
+    // test_Load_MAINSCRN_000();  // TEST_SUCCESS
+    // test_Load_MAINSCRN_005();
+    // 
+    // // test_VGA_VRAM();
+    // 
+    // // test_FLIC_LoadPalette();
+    // test_FLIC_Draw_EMM();
+    // // test_FLIC_Draw_XY();
+
+    test_MGC_Main();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: TST_MGC main()()\n", __FILE__, __LINE__);
@@ -147,12 +160,17 @@ void test_MGC_Main(void)
     EMM_SetMinKB(EMM_MIN_KB);
     // MGC main()
     RAM_SetMinKB(RAM_MIN_KB);
+
     // MGC main() |-> Hardware_Init()
     EMM_Startup();
     // MGC main() |-> Hardware_Init()
+    VGA_SetModeY();
+    // MGC main() |-> Hardware_Init()
     // s14p03
     VGA_DAC_Init(GAME_FONT_FILE);  // "FONTS.LBX"
-        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), SA_Allocate_Space(), VGA_TextDraw_Init()
+        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), SA_Allocate_MemBlk()
+        // |-> ... LBXE_LoadSingle(FONTS.LBX,1), SA_Allocate_MemBlk()
+        // |-> VGA_TextDraw_Init()
     // MGC main() |-> Hardware_Init()
     IN_Init(1);  // INPUT_TYPE_KEYBOARD_AND_MOUSE
         // |-> MD_Init()
@@ -184,9 +202,99 @@ void test_MGC_Main(void)
     VGA_LoadPalette(0, -1, 0);  // EMPERATO
     // MGC main()
     VGA_DAC_Write();
-    // MGC main()
-    // GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
 
+    // MGC main()
+    GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
+    // ...
+    //          Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
+    // MGC main() |-> GAME_MainMenu() |-> SCREEN_Menu()
+    //             SCREEN_Menu_Draw();  // MGC_DEF.H  _s01p06c.c
+    //             SCRN_SimplePageFlip();
+    // MGC main() |-> GAME_MainMenu() |-> SCREEN_Menu() |-> SCREEN_Menu_Draw()
+    //     FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
+    //     FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+
+    // Quit();
+    // VGA_SetTextMode();
+}
+
+/*
+    Test
+        Write & Read VGA Graphics Mode Video Memory (VRAM)
+
+    Sequencer Address Register and the Sequencer Data Register
+    Sequencer Registers
+    Map Mask Register (Index 02h)
+        Memory Plane Write Enable
+
+    Screen-Page Index
+    Screen-Page Segment Address
+
+*/
+void test_VGA_VRAM(void)
+{
+//     // #define CLRSCR0() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDrawAddress(); }
+//     // #define CLRSCR1() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDirectDraw();  }
+//     // VGA_DrawFilledRect(0,0,319,199,0);
+//     // VGA_SetDrawAddress();
+//     // VGA_SetDirectDraw();
+// 
+//     VGA_DAC_Init(GAME_FONT_FILE);  // BAD NAME!! Nothing to with the VGA DAC. Allocs mem for font style, border style, palettes, text.
+//     // unsigned int gsa_DSP_Addr = 0xA000;                 // dseg:41C4
+//     // int g_RSP_Idx = 0;                                  // dseg:41C6
+//     VGA_Set_DSP_Addr();  // Sets Screen-Page Segment Addres, based on Screen-Page Index    gsa_DSP_Addr = VRAM_BASE + ( (1 - g_RSP_Idx) << 10 );
+//     // FLIC_Draw_EMM() uses gsa_DSP_Addr to set the Dst_Sgmt ... Also, Offset to Scan-Line
+//     // NOTE: VGA_PageFlip() is the place that g_RSP_Idx is changed - it sets it to (1 - g_RSP_Idx)
+//     VGA_LoadPalette(0, -1, 0);  // requires VGA_DAC_Init(), LBXE_LoadReplace(), LBX_Load_Entry(), SA_Allocate_MemBlk(), SA_Allocate_Space(), 
+//     VGA_DAC_Write();
+//         // outportb( 0x3C8, itrVgaDacColors );
+//         // outportb( 0x3C9, ptr_Palette[ofstPalette++] );
+//         // outportb( 0x3C9, ptr_Palette[ofstPalette++] );
+//         // outportb( 0x3C9, ptr_Palette[ofstPalette++] );
+// 
+// // asm     mov dx, 0x03C4 //; SC_INDEX
+// // asm     mov al, 0x02  //; SC_MAP_MASK
+// // asm     out dx, al
+// 
+// // asm mov dx, 0x03C5 //; SC_DATA
+// // asm mov al, bl
+// // asm out dx, al
+// 
+//     VGA_SetModeY();
+//     getch();
+//     // VGA_DrawFilledRect(0,0,319,199,0);
+//     VGA_Set_DSP_Addr();  // gsa_DSP_Addr = VRAM_BASE + ( (1 - g_RSP_Idx) << 10 );
+//     // VGA_DrawFilledRect(0,0,319,199,0);
+//     VGA_SetDirectDraw();  // gsa_DSP_Addr = VRAM_BASE + ( (g_RSP_Idx) << 10 );
+//     // ? Set the *Draw* to the Back-Buffer
+//     // ? Set the *Draw* to the Front-Buffer
+// 
+//     // ; NOTE(JimBalcomb,20220721): I can not recall what the issue was such that I chose/needed to comment out this chunk of code
+//     // ; mov	ax, VIDEO_RAM
+//     // ; mov	es, ax
+//     // ; sub	di, di
+//     // ; mov	ax, di
+//     // ; mov	cx, 8000h                           ; 32,768 times ... 65,536 zeros
+//     // ; rep stosw  ; WORD [ES:DI] = AX;
+// 
+// 
+//     VGA_SetTextMode();
+
+
+    VGA_SetModeY();
+    // g_RSP_Idx = 0;
+    // gsa_DSP_Addr = 0xA000;
+    VGA_DrawFilledRect(0,0,319,199,5);
+    getch();
+    // BAD!! STU_VGA_RAM_Dump_1();
+    STU_VGA_RAM_Dump();
+    
+    VGA_SetTextMode();
 }
 
 void test_VGA_SetDirectDraw(void)
@@ -323,7 +431,7 @@ void test_Load_MAINSCRN_005(void)
 #endif
 
     if (!g_EMM_tested) { test_EMM_Startup(); }
-    if (!g_EMM_validated) {  abort(); }
+    if (!g_EMM_validated) { abort(); }
 
     // GAME_LoadMainImages()
     // EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
@@ -799,25 +907,14 @@ void test_GAME_LoadMainImages(void)
 #endif
 }
 
-/*  s29p11  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)  */
-void test_FLIC_Draw_XY(void)
-{
-
-    // DLOG("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
-    // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
-
-    FLIC_Draw_XY(32, 20, gsa_VORTEX_3_MenuQuitToDOS);
-
-}
 
 /*  s21p07  void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index);  */
 void test_FLIC_LoadPalette(void)
 {
+    int test_status;
     //  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     //      static struct s_FLIC_HDR FLIC_Header;
     //      int Frame_Index;
-    int Left;
-    int Top;
     SAMB_addr sa_FLIC_Header;
     static struct s_FLIC_HDR PS_FLIC_Header;
     int Frame_Index;
@@ -827,13 +924,17 @@ void test_FLIC_LoadPalette(void)
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_LoadPalette()\n", __FILE__, __LINE__);
 #endif
 
+    test_status = 0;  // TEST_UNDEFINED
+
     // TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
     tst_prn("TEST: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
     sa_FLIC_Header = TST_LBX_MAINSCRN_000.Segment_Address;
     tst_prn("TEST: [%s, %d] sa_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, sa_FLIC_Header);
-    validate_FLIC_Header(sa_FLIC_Header);
 
-    test_VGA_DAC_Init();
+    if(!validate_FLIC_Header(sa_FLIC_Header)) { test_status = -1; }  // TEST_FAILURE
+
+    if(!g_VGA_DAC_tested) { test_VGA_DAC_Init(); }
+    if(!g_VGA_DAC_validated) { test_status = -1; }  // TEST_FAILURE
 
     // FLIC_Draw_XY()
     // int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes);
@@ -850,10 +951,141 @@ void test_FLIC_LoadPalette(void)
         // FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
         // FLIC_LoadPalette_FP_EMM(sa_FLIC_Header, Frame_Index);
         FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);  // s21p07
+        if(!validate_PaletteFlags_M00()) { test_status = -1; }  // TEST_FAILURE
+        if(!validate_Palette_M00()) { test_status = -1; }  // TEST_FAILURE
     }
+
+    g_FLIC_LoadPalette_tested = 1;
+    // if ( validate_FLIC_LoadPalette() ) { g_FLIC_LoadPalette_validated = 1; }
+    if ( test_status != -1 ) { g_FLIC_LoadPalette_validated = 1; }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: test_FLIC_LoadPalette()\n", __FILE__, __LINE__);
 #endif
+}
 
+/*  s27p03  void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr SAMB_data_FLIC_HDR, int Frame_Index)  */
+void test_FLIC_Draw_EMM(void)
+{
+    int test_status;
+    //  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
+    //      static struct s_FLIC_HDR FLIC_Header;
+    //      int Frame_Index;
+    int Left;
+    int Top;
+    SAMB_addr sa_FLIC_Header;
+    static struct s_FLIC_HDR PS_FLIC_Header;
+    int Frame_Index;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_Draw_EMM()\n", __FILE__, __LINE__);
+#endif
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    // TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
+    tst_prn("TEST: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
+    sa_FLIC_Header = TST_LBX_MAINSCRN_000.Segment_Address;
+    tst_prn("TEST: [%s, %d] sa_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, sa_FLIC_Header);
+
+    if(!validate_FLIC_Header(sa_FLIC_Header)) { test_status = -1; }  // TEST_FAILURE
+
+    if(!g_VGA_DAC_tested) { test_VGA_DAC_Init(); }
+    if(!g_VGA_DAC_validated) { test_status = -1; }  // TEST_FAILURE
+
+    // FLIC_Draw_XY()
+    // int ST_MoveData(unsigned int destoff, unsigned int destseg, unsigned int srcoff, unsigned int srcseg, unsigned int nbytes);
+    ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
+    //  ?  memcpy(); memmove() |-> movmem();  movedata();  ?
+
+    // FLIC_Draw_XY()
+    // Frame_Index = PS_FLIC_Header.Current_Frame;
+    Frame_Index = 0;
+
+    // main() |-> GAME_MainMenu() |-> SCREEN_Menu() |-> SCREEN_Menu_Draw() |-> FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    // FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+    Left = 0;
+    Top = 0;
+    // FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+    // 
+    // // no-workie DBG_ScreenDump();
+    // 
+    // // // STU_VGA_DAC_Dump("MENUDAC.BIN");  // STU_VGA.C/.H
+    // // // // VGA_Set_DSP_Addr();
+    // // // VGA_PageFlip();
+    // // VGA_DAC_Write();
+
+    VGA_SetModeY();
+    // g_RSP_Idx = 0;
+    // gsa_DSP_Addr = 0xA000;
+    VGA_DrawFilledRect(0,0,319,199,5);
+    getch();
+    FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+    // VGA_PageFlip();
+    getch();
+    VGA_DAC_Write();
+    getch();
+    FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);  // s21p07
+    getch();
+    VGA_DAC_Write();
+    getch();
+    // VGA_PageFlip();
+    // getch();
+    // BAD!! STU_VGA_RAM_Dump_1();
+    STU_VGA_RAM_Dump();
+
+    VGA_SetTextMode();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Draw_EMM()\n", __FILE__, __LINE__);
+#endif
+}
+
+/*
+    Test
+        FLIC_Draw_XY()
+*/
+/*  s29p11  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)  */
+void test_FLIC_Draw_XY(void)
+{
+    //  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
+    //      static struct s_FLIC_HDR FLIC_Header;
+    //      int Frame_Index;
+    int Left;
+    int Top;
+    SAMB_addr sa_FLIC_Header;
+    static struct s_FLIC_HDR PS_FLIC_Header;
+    int Frame_Index;
+    struct s_FLIC_HDR _FAR * pPS_FLIC_Header;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_Draw_XY()\n", __FILE__, __LINE__);
+#endif
+
+    // GAME_LoadMainImages()
+    // gsa_MAINSCRN_0_AnimatedLogo  = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+    // gsa_MAINSCRN_5_ScreenBottom  = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
+    // gsa_VORTEX_1_MenuContinue    = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
+    // gsa_VORTEX_2_MenuHallOfFame  = LBXE_LoadSingle(g_LbxNm_VORTEX, 2);
+    // gsa_VORTEX_3_MenuQuitToDOS   = LBXE_LoadSingle(g_LbxNm_VORTEX, 3);
+    // gsa_VORTEX_4_MenuNewGame     = LBXE_LoadSingle(g_LbxNm_VORTEX, 4);
+    // gsa_VORTEX_5_MenuLoadGame    = LBXE_LoadSingle(g_LbxNm_VORTEX, 5);
+
+    // TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
+    tst_prn("TEST: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
+    sa_FLIC_Header = TST_LBX_MAINSCRN_000.Segment_Address;
+    tst_prn("TEST: [%s, %d] sa_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, sa_FLIC_Header);
+    validate_FLIC_Header(sa_FLIC_Header);
+
+    test_VGA_DAC_Init();
+
+    // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    // e0s0 FLIC_Draw_A(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+
+    // FLIC_Draw_XY(32, 20, gsa_VORTEX_3_MenuQuitToDOS);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Draw_XY()\n", __FILE__, __LINE__);
+#endif
 }

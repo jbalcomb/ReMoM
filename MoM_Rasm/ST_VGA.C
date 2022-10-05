@@ -35,6 +35,8 @@ unsigned int gsa_ShadingColors;             // dseg:A7D8  ; 5,376 bytes (1500h) 
 unsigned int gsa_ReplacementColors;         // dseg:A7DA  
 unsigned int gsa_PaletteSaved;              // dseg:A7DC
 unsigned int gsa_Palette;                   // dseg:A7DE
+unsigned char * fp_Palette;
+void * pPalette;
 char g_PaletteLbxFileName[16];              // dseg:A7E0  ; set in VGA_DAC_Init
 unsigned int gsa_IntensityScaleTable;       // dseg:A7F0
 unsigned int gsa_gsa_PaletteLbxEntry;       // dseg:A7F2

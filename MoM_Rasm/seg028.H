@@ -18,6 +18,7 @@ extern "C" {
 
 // s28p11
 void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
+void FLIC_Draw_XY_Shim(int Left, int Top, SAMB_addr sa_FLIC_Header);
 
 
 #ifdef __cplusplus

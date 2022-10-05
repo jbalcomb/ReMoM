@@ -9,6 +9,18 @@
 #define SETPAL(_idx_) { VGA_LoadPalette(_idx_, -1, 0); VGA_DAC_Write();  }
 
 
+#define VGAREADPLANE(_plane_) { \
+    asm {                       \
+        mov  al, 0x04;          \
+        mov  dx, 0x03CE;        \
+        out  dx, al;            \
+        inc  dx;                \
+        mov  al, (_plane_);     \
+        out  dx, al;            \
+    }                           \
+}
+
+
 // 3DAh  e_INPUT_STATUS  STATUS_REGISTER_1
 
 #define WAIT_VBL() asm{ \
@@ -106,6 +118,8 @@ extern unsigned int gsa_ShadingColors;          // dseg:A7D8  ; 5,376 bytes (150
 extern unsigned int gsa_ReplacementColors;      // dseg:A7DA      alloc in VGA_DAC_Init
 extern unsigned int gsa_PaletteSaved;           // dseg:A7DC    alloc in VGA_DAC_Init
 extern unsigned int gsa_Palette;                // dseg:A7DE    alloc in VGA_DAC_Init
+extern unsigned char * fp_Palette;
+extern void * pPalette;
 extern char g_PaletteLbxFileName[];             // dseg:A7E0  ; set in VGA_DAC_Init
 extern unsigned int gsa_IntensityScaleTable;    // dseg:A7F0    alloc in VGA_DAC_Init
 extern unsigned int gsa_gsa_PaletteLbxEntry;    // dseg:A7F2

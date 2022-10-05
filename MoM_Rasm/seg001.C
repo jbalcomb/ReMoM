@@ -878,8 +878,11 @@ void SCREEN_Menu_Draw(void)
         // j_GAME_DrawCredits()
     }
 
+    /*
+        Draw Buttons
+            NOTE: uses VORTEX, not MAINSCRN
+    */
     Continue_Move_Down = 0;
-
     if ( g_GAME_HaveSaves == 0 )
     {
         Continue_Move_Down = 1;
@@ -887,79 +890,39 @@ void SCREEN_Menu_Draw(void)
     else
     {
         if ( MouseOver_ControlIndex == GUI_Load_Lbl_Index )
-        {
-            // HERE("FLIC_ResetFrame()");
             FLIC_ResetFrame(gsa_VORTEX_5_MenuLoadGame);
-        }
         else
-        {
-            // HERE("FLIC_SetFrame()");
             FLIC_SetFrame(gsa_VORTEX_5_MenuLoadGame, 1);
-        }
-
-        // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);");
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
-
     }
 
     if ( g_GAME_HaveContSave != 0 )
     {
         if ( MouseOver_ControlIndex == GUI_Continue_Label )
-        {
-            // HERE("FLIC_ResetFrame()");
             FLIC_ResetFrame(gsa_VORTEX_1_MenuContinue);
-        }
         else
-        {
-            // HERE("FLIC_SetFrame()");
             FLIC_SetFrame(gsa_VORTEX_1_MenuContinue, 1);
-        }
-
-        // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);");
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
     }
 
     if ( MouseOver_ControlIndex == GUI_NewGame_Label )
-    {
-        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_4_MenuNewGame);
-    }
     else
-    {
-        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_4_MenuNewGame, 1);
-    }
-
-    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
 
     if ( MouseOver_ControlIndex == GUI_HoF_Lbl_Index )
-    {
-        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_2_MenuHallOfFame);
-    }
     else
-    {
-        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
-    }
-
-    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
 
     if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
-    {
-        // HERE("FLIC_ResetFrame()");
         FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
-    }
     else
-    {
-        // HERE("FLIC_SetFrame()");
         FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
-    }
-
-    // HERE("FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);");
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+
 
     // // VGA_LoadPalette(2, -1, 0);
     // // VGA_DAC_Write();

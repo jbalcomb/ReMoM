@@ -87,7 +87,62 @@ char EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
 // C:\devel\STU-MoM_Rasm--rubbish\MoM_Rasm\POCEMS\emstulkt\DISKALL\EMMLIB.H
 // MAP_STRUCT far * ptr_map_struct;
 //MAP_STRUCT _FAR gfp_map_struct[4] = {{0,0},{0,1},{0,2},{0,3}}; // dseg:40EF
-MAP_STRUCT gfp_map_struct[4] = {{0,0},{0,1},{0,2},{0,3}};
+struct s_MAP_STRUCT _FAR EMM_L2P_Map[4] = {{0,0},{0,1},{0,2},{0,3}};
+/*
+J:\STU\devel\STU-MoM_Rasm--HPT2--develop-final-final\MoM_Rasm\POCEMS\emstulkt\EMS4\162A.MSG
+    LOTUS /INTEL /MICROSOFT
+EXPANDED MEMORY SPECIFICATION
+        Version 4.0
+        300275-005
+        October, 1987
+
+FUNCTION 17   MAP/UNAMP MULTIPLE HANDLE PAGES
+
+DS:SI = pointer to log_to_phys_map array
+    Contains a pointer to an array of structures that contains
+    the information necessary to map the desired pages.  The
+    array is made up of the following two elements:
+    .log_page_number
+    .phys_page_number
+
+          log_to_phys_map_struct   STRUC
+             log_page_number       DW  ?
+             phys_page_number      DW  ?
+          log_to_phys_map_struct   ENDS
+
+log_to_phys_map                    log_to_phys_map_struct
+*/
+/*
+https://www.stanislavs.org/helppc/int_67-50.html
+INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
+	DS:SI = pointer to mapping array
+*/
+/*
+J:\STU\devel\STU-MoM_Rasm--HPT2--develop-final-final\MoM_Rasm\POCEMS\LIM4\MAP_CALL.C
+struct log_phys {
+  int log_page_number;
+  int phys_page_number;
+};
+struct log_phys far current_pages[4];
+...
+result = map_unmap_multiple_pages (current_pages, emm_handle, 1);
+...
+int map_unmap_multiple_pages (log_phys_pages,handle,map_unmap)
+struct log_phys *log_phys_pages ;  / * pointer to log_phys struct * /
+unsigned int handle;               / * handle to map or unmap * /
+unsigned int map_unmap;            / * 0 = map, 1 = unmap * /
+...
+	struct log_phys *temp_ptr;
+...
+	temp_ptr = log_phys_pages;
+...
+	inregs.x.ax = MAP_UNMAP_MULTIPLE_PAGES ;
+	inregs.x.dx = handle;
+	inregs.x.cx = 4;
+	inregs.x.si = FP_OFF(temp_ptr);
+	segregs.ds  = FP_SEG(temp_ptr);
+	int86x(EMM_INT,&inregs,&outregs,&segregs);
+*/
 
 // align 2                                                      // dseg:40FF
 int g_EMM_Pages_Reserved = 40;                                  // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
@@ -275,190 +330,99 @@ Done:
 }
 
 // s12p02
-unsigned int EMM_GetActiveHandleCount(void)
+word EMM_GetActiveHandleCount(void)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
-    int          result;
-    unsigned int emm_handle_count;
+    word emm_handle_count;
 
-    inregs.h.ah = EMS_GETHANDLES;
-    int86(EMS_INT, &inregs, &outregs);
-
-    emm_handle_count = outregs.x.bx;
-
+    _AH = EMM_GET_HANDLE_COUNT;
+    geninterrupt(EMM_INT);
+    if(_AH != 0x00)
+        emm_handle_count = 0;
+    else
+        emm_handle_count = _BX;
     return(emm_handle_count);
 }
 
 // s12p03
-unsigned int EMM_GetFreePageCount(void)
+word EMM_GetFreePageCount(void)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
-    int          result;
-    unsigned int emm_free_page_count;
+    word emm_free_page_count;
 
-    inregs.h.ah = EMS_GETPAGES;
-    result = int86(EMS_INT, &inregs, &outregs);
-
-    if ( outregs.h.ah != 0 )
-    {
-        emm_free_page_count = ST_FAILURE;
-    }
+    _AH = EMM_GET_PAGE_COUNTS;
+    geninterrupt(EMM_INT);
+    if (_AH != 0x00)
+        emm_free_page_count = 0;
     else
-    {
-        emm_free_page_count = outregs.x.bx;
-    }
-
+        emm_free_page_count = _BX;
     return(emm_free_page_count);
 }
 
 // s12p04
-unsigned int EMM_GetHandlePageCount(unsigned int EmmHndlNbr)
+word EMM_GetHandlePageCount(word EMM_Handle)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
-    int          result;
-    unsigned int emm_handle_page_count;
+    word emm_handle_page_count;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_GetHandlePageCount(EmmHndlNbr = %u)\n", __FILE__, __LINE__, EmmHndlNbr);
-// #endif
-
-    inregs.x.dx = EmmHndlNbr;
-    inregs.h.ah = EMS_GETHNDLPAGECNT;
-    result = int86(EMS_INT, &inregs, &outregs);
-
-    if ( outregs.h.ah != 0 )
-    {
-        // HERE("FAILURE: INT 67,4C: (Error) Code not \"success\"");
-// #ifdef STU_DEBUG
-//         dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);
-// #endif
+    _DX = EMM_Handle;
+    _AH = EMM_GET_HANDLE_PAGE_COUNT;
+    geninterrupt(EMM_INT);
+    if (_AH != 0x00)
         emm_handle_page_count = 0;
-    }
     else
-    {
-        emm_handle_page_count = outregs.x.bx;
-    }
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_GetHandlePageCount(EmmHndlNbr = %u) { emm_handle_page_count = %u }\n", __FILE__, __LINE__, EmmHndlNbr, emm_handle_page_count);
-// #endif
-
+        emm_handle_page_count = _BX;
     return(emm_handle_page_count);
 }
 
 // s12p05
-/*
-; attempts to allocate the indicated amount of pages
-; to an EMM handle, and set its name
-; returns the handle if successful, ST_FAILURE otherwise
-*/
-unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char _FAR * argHandleName)
+word EMM_MakeNamedHandle(word EMM_Logical_Page_Count, char _FAR * EMM_Handle_Name)
 {
-    union  REGS  inregs1;
-    union  REGS  outregs1;
-    struct SREGS segregs1;
-    int          result1;
-    union  REGS  inregs2;
-    union  REGS  outregs2;
-    struct SREGS segregs2;
-    int          result2;
-    unsigned int varEmmHandle;
+    word EMM_Handle;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MakeNamedHandle(argPageCount = %u, argHandleName = %s)\n", __FILE__, __LINE__, argPageCount, argHandleName);
-// #endif
-
-    inregs1.h.ah = EMS_ALLOCPAGES;  // INT 67,43 - Get Handle and Allocate Pages (LIM EMS 3.2+)
-    inregs1.x.bx = argPageCount;
-    result1 = int86(EMS_INT, &inregs1, &outregs1);
-    if ( outregs1.h.ah != 0x00 )
-    {
-        // HERE("FAILURE: INT 67,43: (Error) Code not \"success\"");
-// #ifdef STU_DEBUG
-//         dlvfprintf("DEBUG: [%s, %d] outregs1.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs1.h.ah);
-// #endif
+    _DX = EMM_Handle;
+    _BX = EMM_Logical_Page_Count;
+    _AH = EMM_ALLOCATE_PAGES;
+    geninterrupt(EMM_INT);
+    if (_AH != 0x00)
         goto Failure;
-    }
     else
-    {
-        varEmmHandle = outregs1.x.dx;
-    }
-    // ; TODO(JimBalcomb): add code to branch around DOSBox bug - if running in DOSBOX...
-    // ;lds si, [bp+argHandleName]
-    // les di, [bp+argHandleName]  ; BUG: DOSBox uses the wrong segment and index registers (DOSBox, DOSBox-X, DOSBox-Staging)
-    // ;lds si, argHandleName
-    // ;;mov dx, si
-    // ;;mov ah, 09h
-    // ;;int 21h
+        EMM_Handle = _DX;
 
-    inregs2.h.ah = EMS_GET_SET_HANDLE_NAME;  // INT 67,53 Get/Set Handle Name (LIM EMS 4.0+)
-    inregs2.h.al = EMS_HANDLE_NAME_SET;      // set handle name
-    inregs2.x.dx = varEmmHandle;
-    result2 = int86(EMS_INT, &inregs2, &outregs2);
-    if ( outregs2.h.ah != 0x00 )
-    {
-        // HERE("FAILURE: INT 67,53,01: (Error) Code not \"success\"");
-// #ifdef STU_DEBUG
-//         dlvfprintf("DEBUG: [%s, %d] outregs2.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs2.h.ah);
-// #endif
+    // TODO(JimBalcomb): add code to branch around DOSBox bug - if running in DOSBOX...  // ;lds si, [bp+argHandleName]  // les di, [bp+argHandleName]  ; BUG: DOSBox uses the wrong segment and index registers (DOSBox, DOSBox-X, DOSBox-Staging)
+
+    _DX = EMM_Handle;
+    _AX = EMM_SET_HANDLE_NAME;
+    geninterrupt(EMM_INT);
+    if ( _AH != 0x00 )
         goto Failure;
-    }
 
 Success:
     goto Done;
 Failure:
-    varEmmHandle = ST_FAILURE;
+    EMM_Handle = ST_FAILURE;
     goto Done;
 Done:
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: EMM_MakeNamedHandle(argPageCount = %u, argHandleName = %s) { varEmmHandle = %u }\n", __FILE__, __LINE__, argPageCount, argHandleName, varEmmHandle);
-// #endif
-    return varEmmHandle;
+    return EMM_Handle;
 }
 
 // _s12p06
-unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
+word EMM_GetHandleName(char * EMM_Handle_Name, word EMM_Handle)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
-    //int isr_result;
     int st_status;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_GetHandleName(EmmHndlNm = 0, EmmHndlNbr = %u)\n", __FILE__, __LINE__, EmmHndlNbr);
-// #endif
+    _ES = FP_SEG(EMM_Handle_Name);
+    _DI = FP_OFF(EMM_Handle_Name);
+    _DX = EMM_Handle;
+    _AX = EMM_GET_HANDLE_NAME;
+    geninterrupt(EMM_INT);
 
-    inregs.x.dx = EmmHndlNbr;
-    segregs.es = FP_SEG(EmmHndlNm);
-    inregs.x.di = FP_OFF(EmmHndlNm);
-    inregs.h.ah = 0x53;  // INT 67,53 Get/Set Handle Name (LIM EMS 4.0+)
-    inregs.h.al = 0x00;  // 0 = Get, 1 = Set
-    int86x(EMS_INT, &inregs, &outregs, &segregs);
-
-    if (outregs.h.ah != 0x00)
+    if (_AH != 0x00)
     {
-        // HERE("FAILURE: INT 53,00: (Error) Code not \"success\"");
-// #ifdef STU_DEBUG
-//         dlvfprintf("DEBUG: [%s, %d] outregs.h.ah: 0x%02X\n", __FILE__, __LINE__, outregs.h.ah);  // 0x83  unallocated or invalid handle
-// #endif
         st_status = ST_FAILURE;
     }
     else
     {
-        EmmHndlNm[8] = '\0';
+        EMM_Handle_Name[8] = '\0';
         st_status = ST_SUCCESS;
     }
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_GetHandleName(EmmHndlNm = %s, EmmHndlNbr = %u) { st_status = %d }\n", __FILE__, __LINE__, EmmHndlNm, EmmHndlNbr, st_status);
-// #endif
 
     return st_status;
 }
@@ -466,18 +430,12 @@ unsigned int EMM_GetHandleName(char * EmmHndlNm, unsigned int EmmHndlNbr)
 // s12p07
 void EMM_ReleaseHandle(unsigned int EMM_Handle)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
-    int          result;
-
     if (EMM_Handle != 0)
     {
-        inregs.x.dx = EMM_Handle;
-        inregs.h.ah = EMS_FREEPAGES;
-        int86(EMS_INT, &inregs, &outregs);
+        _DX = EMM_Handle;
+        _AH = EMM_DEALLOCATE_PAGES;
+        geninterrupt(EMM_INT);
     }
-
 }
 
 // s12p08
@@ -695,78 +653,28 @@ unsigned int EMM_GetPageFrame(void)
 }
 
 // s12p11
-void EMM_Map4(int EmmHandle, int EmmLogicalPage)
+void EMM_Map4(unsigned int EMM_Handle, unsigned int EMM_Logical_Page)
 {
-    union  REGS  inregs1;
-    union  REGS  outregs1;
-    union  REGS  inregs2;
-    union  REGS  outregs2;
-    union  REGS  inregs3;
-    union  REGS  outregs3;
-    union  REGS  inregs4;
-    union  REGS  outregs4;
-
-//#ifdef STU_DEBUG
-//    dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Map4(EmmHandle=%d, EmmLogicalPage=%d)\n", __FILE__, __LINE__, EmmHandle, EmmLogicalPage);
-//#endif
-
-    inregs1.x.dx = EmmHandle;
-    inregs1.x.bx = EmmLogicalPage;
-    inregs1.h.ah = 0x44;
-    inregs1.h.al = 0x00;
-    int86(EMS_INT, &inregs1, &outregs1);
-
-    inregs2.x.dx = EmmHandle;
-    inregs2.x.bx = EmmLogicalPage + 1;
-    inregs2.h.ah = 0x44;
-    inregs2.h.al = 0x01;
-    int86(EMS_INT, &inregs2, &outregs2);
-
-    inregs3.x.dx = EmmHandle;
-    inregs3.x.bx = EmmLogicalPage + 2;
-    inregs3.h.ah = 0x44;
-    inregs3.h.al = 0x02;
-    int86(EMS_INT, &inregs3, &outregs3);
-
-    inregs4.x.dx = EmmHandle;
-    inregs4.x.bx = EmmLogicalPage + 3;
-    inregs4.h.ah = 0x44;
-    inregs4.h.al = 0x03;
-    int86(EMS_INT, &inregs4, &outregs4);
-    
-//#ifdef STU_DEBUG
-//    dlvfprintf("DEBUG: [%s, %d] END: EMM_Map4(EmmHandle=%d, EmmLogicalPage=%d)\n", __FILE__, __LINE__, EmmHandle, EmmLogicalPage);
-//#endif
-
+    EMM_MAP_PAGE(0,EMM_Handle,EMM_Logical_Page + 0)
+    EMM_MAP_PAGE(1,EMM_Handle,EMM_Logical_Page + 1)
+    EMM_MAP_PAGE(2,EMM_Handle,EMM_Logical_Page + 2)
+    EMM_MAP_PAGE(3,EMM_Handle,EMM_Logical_Page + 3)
 }
 
 // s12p12
-void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle)
+void EMM_MapMulti4(unsigned int EMM_Logical_Page, unsigned int EMM_Handle)
 {
-    union  REGS  inregs;
-    union  REGS  outregs;
-    struct SREGS segregs;
+    EMM_L2P_Map[0].log_page = EMM_Logical_Page + 0;
+    EMM_L2P_Map[1].log_page = EMM_Logical_Page + 1;
+    EMM_L2P_Map[2].log_page = EMM_Logical_Page + 2;
+    EMM_L2P_Map[3].log_page = EMM_Logical_Page + 3;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
-// #endif
-
-    gfp_map_struct[0].log_page = argFirstLogicalPage + 0;
-    gfp_map_struct[1].log_page = argFirstLogicalPage + 1;
-    gfp_map_struct[2].log_page = argFirstLogicalPage + 2;
-    gfp_map_struct[3].log_page = argFirstLogicalPage + 3;
-
-    segregs.ds = FP_SEG(gfp_map_struct);
-    inregs.x.si = FP_OFF(gfp_map_struct);  // DS:SI = pointer to mapping array
-    inregs.x.dx = argEmmHandle;
-    inregs.x.cx = 0x04;  // CX = number of entries in array
-    inregs.h.al = 0x00;  // 00 Map/unmap pages
-    inregs.h.ah = 0x50;  // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
-    int86(EMS_INT, &inregs, &outregs);
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: EMM_MapMulti4(argFirstLogicalPage=%d, argEmmHandle=%d)\n", __FILE__, __LINE__, argFirstLogicalPage, argEmmHandle);
-// #endif
+    _DS = FP_SEG(EMM_L2P_Map);
+    _SI = FP_OFF(EMM_L2P_Map);      // DS:SI = pointer to mapping array
+    _DX = EMM_Handle;               // DX = EMM Handle Number
+    _CX = 0x04;                     // CX = number of entries in mapping array
+    _AX = EMM_MAP_MULTIPLE_PAGES;   // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+) // 00 Map/unmap pages
+    geninterrupt(EMM_INT);
 }
 
 

@@ -4,15 +4,12 @@
     seg024
 */
 
-/*
-
-*/
-extern int g_Debug_Disabled;               // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
-extern char *SCRDMP00;                     // dseg:4350    XREF: DBG_ScreenDump
-extern char *Scrdmp_Ext;                   // dseg:4358    XREF: DBG_ScreenDump
-extern char *Scrdmp_0;                     // dseg:435D    XREF: DBG_ScreenDump
-extern char *Scrdmp_Base;                  // dseg:435F    XREF: DBG_ScreenDump
-extern char *cnst_WB6;                     // dseg:4366    XREF: DBG_ScreenDump
+// seg024.C     extern int Debug_Disabled;               // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
+// in-code      extern char *SCRDMP00;                     // dseg:4350    XREF: DBG_ScreenDump
+// in-code      extern char *Scrdmp_Ext;                   // dseg:4358    XREF: DBG_ScreenDump
+// in-code      extern char *Scrdmp_0;                     // dseg:435D    XREF: DBG_ScreenDump
+// in-code      extern char *Scrdmp_Base;                  // dseg:435F    XREF: DBG_ScreenDump
+// in-code      extern char *cnst_WB6;                     // dseg:4366    XREF: DBG_ScreenDump
 
 
 #ifdef __cplusplus
@@ -23,8 +20,30 @@ extern "C" {
 /*
     seg024
 */
-void DBG_Disable(void);                     // _s24p05c.c
-int DBG_IsDisabled(void);                   // _s24p06c.c
+
+// s24p02.asm
+// DBG_Quit()
+
+// s24p02
+void DBG_ScreenDump(void);
+
+// s24p03
+void VGA_GetDACBlock(unsigned int DAC_BLK, unsigned char * Buffer);
+
+// s24p04
+void VGA_ReadScreenLine(unsigned int ScreenLine, unsigned char * Buffer);
+
+// s24p05
+void DBG_Disable(void);
+
+// s24p06
+int DBG_IsDisabled(void);
+
+// s24p07
+// UU_VGA_SaveDrawSection()
+
+// s24p08
+// UU_VGA_CopyToLBX()
 
 #ifdef __cplusplus
 }

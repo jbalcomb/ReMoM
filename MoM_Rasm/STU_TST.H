@@ -13,11 +13,14 @@
 #define TEST_UNDEFINED  0
 
 
-#define FONTS_LBX_000    "FONTS_~1.BIN"
-#define FONTS_LBX_001    "FONTS_~2.BIN"
-#define FONTS_LBX_002    "FONTS_~3.BIN"
-#define MAINSCRN_LBX_000 "MAINSC~1.BIN"
-#define MAINSCRN_LBX_005 "MAINSC~2.BIN"
+// FONTS.LBX
+#define FONTS_LBX_000    "FONTS_~1.BIN"  // FONTS_000.BIN
+#define FONTS_LBX_001    "FONTS_~2.BIN"  // FONTS_001.BIN
+#define FONTS_LBX_002    "FONTS_~3.BIN"  // FONTS_002.BIN
+// MAINSCRN.LBX
+#define MAINSCRN_LBX_000 "MAINSC~1.BIN"  // MAINSCRN_000.BIN
+#define MAINSCRN_LBX_000_000_PAL "MAINSC~1.BIN"  // MAINSCRN_000_00-Palette.BIN
+#define MAINSCRN_LBX_005 "MAINSC~2.BIN"  // MAINSCRN_005.BIN
 
 
 extern char Test_Log_FileName[];
@@ -75,8 +78,10 @@ void reset_ST_EMM(void);
 
 void validate_FontStyleData(void);
 void validate_BorderStyleData(void);
-void validate_Palette_0(void);
+int validate_Palette_0(void);
+int validate_Palette_M00(void);
 int validate_PaletteFlags_1(void);
+int validate_PaletteFlags_M00(void);
 int validate_PaletteLbxEntry(void);
 int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
 

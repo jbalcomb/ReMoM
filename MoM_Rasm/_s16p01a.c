@@ -80,6 +80,7 @@ asm and bl, al
 asm mov dx, 0x03C5 //; SC_DATA
 asm mov al, bl
 asm out dx, al
+
 asm mov ax, [y1]
 asm mov dx, ax
 asm mov cx, [y2]

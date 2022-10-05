@@ -58,29 +58,52 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 // #define VGAMAPMASK(x) asm{cli; mov dx,SC_INDEX; mov al,SC_MAPMASK; mov ah,x; out dx,ax; sti;}
 // #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{ mov al, _epp_; mov bx, _elp_; mov dx, _ehn_; mov ah, EMS_MAPPAGE; int EMS_INT; }
 // #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) { _AL = (_epp_); _BX = (_elp_);  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
-#define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
+#define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); }
 // ~== void EMM_MAP_PAGE(unsigned int _eppn_, unsigned int _ehn_, unsigned char _elpn_);
+
+
 
 
 #define EMS_PAGE_SIZE   16384
 
 #define	EMS_INT			            0x67
+#define EMM_INT                     0x67    // "This is the interrupt vector the Expanded Memory Manager (EMM) uses."
 
 #define	EMS_STATUS		            0x40
 #define	EMS_GETFRAME	            0x41
+#define GET_FRAME_ADDRESS           0x41
 #define	EMS_GETPAGES	            0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
+#define	EMM_GET_PAGE_COUNTS         0x42
+#define GET_UNALLOCATED_PAGE_COUNT  0x42
+#define	EMM_GET_HANDLE_AND_ALLOCATE_PAGES  0x43  // INT 67,43 - Get Handle and Allocate Pages (LIM EMS 3.2+)
 #define	EMS_ALLOCPAGES	            0x43    // Get Handle and Allocate Pages // DX = EMM handle
+#define	EMM_ALLOCATE_PAGES          0x43    // Get Handle and Allocate Pages // DX = EMM handle
 #define	EMS_MAPPAGE		            0x44
-#define	EMS_FREEPAGES	            0x45
+#define EMM_DEALLOCATE_PAGES        0X45    // INT 67,45 - Release Handle and Memory Pages (LIM EMS);  DX = EMM handle
+// #define EMS_FREEPAGES               0x45
 #define	EMS_VERSION		            0x46
-#define	EMS_GETHANDLES              0x4B    // BX = number of currently active EMM handles (0-256)
-#define	EMS_GETHNDLPAGECNT          0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
-#define EMS_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
-#define EMS_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
-#define EMS_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8 byte handle name array
-#define EMS_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8 byte handle name
+#define EMM_GET_VERSION             0x46    // INT 67,46 - Get EMM Version (LIM EMS);  	AL = EMM version number in BCD  - upper four bits of AL contain the BCD major version - lower four bits of AL contain the BCD minor version
+#define	EMM_GET_HANDLE_COUNT        0x4B    // INT 67,4B - Get Handle Count (LIM EMS);  BX = number of currently active EMM handles (0-256)
+#define	EMS_GETHANDLES              0x4B
+#define	EMM_GET_PAGE_COUNT_FOR_HANDLE  0x4C  // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
+#define	EMM_GET_PAGE_COUNT_HANDLE   0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
+#define	EMM_GET_HANDLE_PAGE_COUNT   0x4C
+#define	EMM_GETHNDLPAGECNT          0x4C
+#define EMM_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D  // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
+#define EMM_GET_PAGE_COUNT_ALL      0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
+#define EMM_MAP_MULTIPLE            0x50    // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
+#define EMM_MAP_MULTIPLE_PAGES      0x5000  // Map/Unmap Multiple Pages; DX = EMM handle,  CX = number of entries in array,  DS:SI = pointer to mapping array [{lpn,ppn}] -1 is 'unmap' (0xFFFF)
+#define MAP_UNMAP_MULTIPLE_PAGES    0x5000
+#define EMM_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
+#define EMM_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8 byte handle name array
+#define EMM_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8 byte handle name
+#define SEARCH_FOR_HANDLE_NAME      0x5401
+#define MOVE_MEMORY_REGION          0x5700
+#define EXCHANGE_MEMORY_REGION      0x5701
 #define EMS_HANDLE_NAME_GET         0x00
 #define EMS_HANDLE_NAME_SET         0x01
+
+
 
 /*
 unsigned int EMS_STATUS_Code[165] = {
@@ -425,7 +448,8 @@ extern unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
 // // dseg:40EF EMS_L2P_Map_Record <0,      3>
 // // dseg:40FF align 2
 // extern unsigned int g_EMM_Log2Phys_Map[]; // dseg:40EF
-extern MAP_STRUCT gfp_map_struct[]; // dseg:40EF
+// extern MAP_STRUCT gfp_map_struct[]; // dseg:40EF
+// private / static local module-scoped extern struct s_MAP_STRUCT EMM_L2P_Map[]; // dseg:40EF
 
 extern int g_EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
 extern unsigned int g_EMM_Open_Handles;             // dseg:4102
@@ -494,11 +518,11 @@ unsigned int EMM_GetActiveHandleCount(void);
 // s12p03
 unsigned int EMM_GetFreePageCount(void);
 // s12p04
-unsigned int EMM_GetHandlePageCount(unsigned int EmsHndlNbr);
+unsigned int EMM_GetHandlePageCount(unsigned int EMM_Handle);
 // s12p05
 unsigned int EMM_MakeNamedHandle(unsigned int argPageCount, char * argHandleName);
 // s12p06
-unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EmmHndlNbr);
+unsigned int EMM_GetHandleName(char *EmmHndlNm, unsigned int EMM_Handle);
 // s1207
 void EMM_ReleaseHandle(unsigned int EMM_Handle);
 // s12p08
@@ -506,9 +530,10 @@ void EMM_MapnRead(unsigned int Dst_Ofst, unsigned int Dst_Sgmt, unsigned int Src
 // s12p10
 unsigned int EMM_GetPageFrame(void);
 // s12p11
-void EMM_Map4(int EmmHandle, int EmmLogicalPage);
+void EMM_Map4(unsigned int EMM_Handle, unsigned int EMM_Logical_Page);
 // s12p12
-void EMM_MapMulti4(int argFirstLogicalPage, int argEmmHandle);
+void EMM_MapMulti4(unsigned int EMM_Logical_Page, unsigned int EMM_Handle);
+
 
 /*
     seg013
@@ -522,7 +547,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved);
 // s13p11
 unsigned int EMM_LBX_Load_Entry(char * LbxFileName, int LbxEntryIndex, unsigned int SAMB_head, int LoadType, int FormatType);
 // s13p12
-unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
+unsigned int EMM_LBX_FLIC_Header(int EMM_Handle, char *EmmHndlNm, int LbxEntryIndex, unsigned int SAMB_head, int LoadType);
 // s13p13
 unsigned int EMM_LBX_Load_Record(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
 // s13p13
