@@ -2,16 +2,19 @@
 // ST_LBX.H
 // ~= c&p LBX_Load_Entry()
 
-#include "ST_TYPE.H"
-#include "ST_DEF.H"
 #include "ST_LBX.H"
 
-#include "ST_EMM.H"
-#include "ST_SA.H"
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
 
-// #ifdef DEBUG
-// #include "STU_DBG.H"
-// #endif
+#include "ST_EMM.H"
+#include "Mox_EMM.H"
+#include "ST_SA.H"
+#include "MoX_SA.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)

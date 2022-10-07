@@ -1,4 +1,6 @@
 
+#include "win32_lbx.hpp"
+
 /*
 ##### seg009    ST_LBX.H    ALL ASM
 _s09p01     lbx_open                    int  lbx_open(char *fname);
@@ -43,5 +45,6 @@ unsigned int LBX_Load_Entry(char *LbxName, int LbxEntry, unsigned int SAMB_head,
 {
     unsigned int SAMB_data;
     SAMB_data = 0;
+
     return SAMB_data;
 }

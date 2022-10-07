@@ -1,20 +1,24 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
+
 #include "ST_EMM.H"
+#include "MoX_EMM.H"
 
 #include "MOM_DEF.H"
 
+#include "MoX_EXIT.H"  /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_LBX.H"
 #include "ST_SA.H"
+#include "MoX_SA.H"  /* SA_Alloc_Error */
 
 // #include <STDIO.H>   /* printf() */
 #include <STDLIB.H>  /* itoa() */
 #include <STRING.H>  /* strcat(), strcpy() */
 
-// #ifdef STU_DEBUG
-// #include "STU_DBG.H"
-// #endif
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 // #ifdef TEST
 // #include "STU_TST.H"
 // #endif
@@ -145,7 +149,7 @@ unsigned int map_unmap;            / * 0 = map, 1 = unmap * /
 */
 
 // align 2                                                      // dseg:40FF
-int g_EMM_Pages_Reserved = 40;                                  // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
+// MoX_EMM  int EMM_Pages_Reserved = 40;                                  // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
 unsigned int g_EMM_Open_Handles = 0;                            // dseg:4102
 char *g_EmmHndlNm_YOMOMA1 = "YO MOMA";                          // dseg:4104 "YO MOMA"
 char *g_EmmHndlNm_YOMOMA2 = "YO MOMA";                          // dseg:410C "YO MOMA"
@@ -702,21 +706,21 @@ void EMM_Startup(void)
     int varEmmOpenHandleCount;
     unsigned int itr_EmmHndlNbrs;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Startup()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: EMM_Startup()\n", __FILE__, __LINE__);
+#endif
 
     // if ( !EMM_Init() )
     // {
     //     EMM_BuildEmmErrStr(&varTmpStr100);
-    //     Quit(varTmpStr100);
+    //     Exit(varTmpStr100);
     // }
     status_emm_init = EMM_Init();  // return: {0xFF,0x00}/{-1,0}/{ST_FAILURE,ST_SUCCESS}
     if ( status_emm_init == ST_FAILURE)
     {
         // HERE("if ( status_emm_init == ST_FAILURE)");
         EMM_BuildEmmErrStr(varTmpStr100);
-        Quit(varTmpStr100);
+        Exit(varTmpStr100);
     }
 
     varEmmOpenHandleCount = EMM_GetActiveHandleCount();
@@ -758,7 +762,7 @@ void EMM_Startup(void)
     {
         // HERE("if ( EmmHndlNbr_YOMOMA == 0 )");
         EMM_BuildEmmErrStr(varTmpStr100);
-        Quit(varTmpStr100);
+        Exit(varTmpStr100);
     }
 
     EMM_OK = ST_TRUE;
@@ -782,20 +786,20 @@ void EMM_Startup(void)
 // - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- - --- -
 
     // EMM_Pages_Reserved: initialized to 40, set to 158 in MGC main()
-    if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )  // returns the unallocated pages count (not the total pages count)
+    if ( EMM_GetFreePageCount() < EMM_Pages_Reserved )  // returns the unallocated pages count (not the total pages count)
     {
         // HERE("if ( EMM_GetFreePageCount() < g_EMM_Pages_Reserved )");
         EMM_BuildEmmErrStr(varTmpStr100);
-        Quit(varTmpStr100);
+        Exit(varTmpStr100);
     }
     
     g_EmmHndlNbr_VGAFILEH = EMM_GetHandle(5, g_EmmHndlNm_VGAFILEH, 1);  // 5 pages/80KB, EmmRsvd=TRUE  // EMM_Pages_Reserved = 158 - 5 = 153
     EmmHndlNbr_EMMDATAH = EMM_GetHandle(4, g_EmmHndlNm_EMMDATAH, 1);    // 4 pages/64KB, EmmRsvd=TRUE  // EMM_Pages_Reserved = 153 - 4 = 149
     EMMDATAH_Level = 0;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Startup()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: EMM_Startup()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -943,7 +947,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     {
         // TODO(JimBalcomb): double-check and fix this error here ...tmp_EMM_Pages_Available...if ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )
         tmp_EMM_Pages_Available = EMM_GetFreePageCount();
-        tmp_EMM_Pages_Required = g_EMM_Pages_Reserved + LbxFileSize16kBlocks;
+        tmp_EMM_Pages_Required = EMM_Pages_Reserved + LbxFileSize16kBlocks;
         if ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )
         {
             // HERE("FAILURE: ( Reserved == 0 ) && ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )");
@@ -1669,7 +1673,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
             strcat(Temp_String, Tmp_Conv_Str_2);
             strcat(Temp_String, cnst_EmmErr_Space);
             strcat(Temp_String, Tmp_Conv_Str_3);
-            Quit(Temp_String);
+            Exit(Temp_String);
         }
         else
         {
@@ -1740,21 +1744,21 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 
     if (EmmRsvdFlag == 1)
     {
-        g_EMM_Pages_Reserved -= EmmLogicalPageCount;
+        EMM_Pages_Reserved -= EmmLogicalPageCount;
     }
 
-    if ( g_EMM_Pages_Reserved < 0 )
+    if ( EMM_Pages_Reserved < 0 )
     {
         // 'EMM reserved exceeded by ' gEMM_Pages_Reserved ' blocks [' EmmHandleName '.LBX]'
         //asm mov ax, [gEMM_Pages_Reserved]
         //asm neg ax
-        itoa((g_EMM_Pages_Reserved * -1), varTmpStrEmmRsvdErr, 10);
+        itoa((EMM_Pages_Reserved * -1), varTmpStrEmmRsvdErr, 10);
         strcpy(Temp_String, cnst_EmmErr_ResOut1);
         strcat(Temp_String, varTmpStrEmmRsvdErr);
         strcat(Temp_String, cnst_EmmErr_ResOut2);
         strcat(Temp_String, EmmHandleName);
         strcat(Temp_String, cnst_EmmErr_ResOut3);
-        Quit(Temp_String);
+        Exit(Temp_String);
     }
 
 Exit:

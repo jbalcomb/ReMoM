@@ -71,13 +71,13 @@ long g_LbxFileSize;
 int g_TIMER_Count_Lo = 0;                   // dseg:3CB8
 int g_TIMER_Count_Hi = 0;                   // dseg:3CBA
 
-unsigned int g_MemFreeWorst_KB = 64000;         // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
-char *cnst_Quit_Report1 = "Data";               // dseg:3CC4
-char *cnst_Quit_Report2 = " Free: ";            // dseg:3CC9
-char *cnst_Quit_Report3 = " bytes   Memory";    // dseg:3CD1
-char *cnst_Quit_Report4 = "k   Worst";          // dseg:3CE1
-char *cnst_Quit_Report5 = "k   EMM: ";          // dseg:3CEB
-char *cnst_Quit_Report6 = " blocks";            // dseg:3CF5
+// MoX_EXIT unsigned int g_MemFreeWorst_KB = 64000;         // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
+// MoX_EXIT char *cnst_Quit_Report1 = "Data";               // dseg:3CC4
+// MoX_EXIT char *cnst_Quit_Report2 = " Free: ";            // dseg:3CC9
+// MoX_EXIT char *cnst_Quit_Report3 = " bytes   Memory";    // dseg:3CD1
+// MoX_EXIT char *cnst_Quit_Report4 = "k   Worst";          // dseg:3CE1
+// MoX_EXIT char *cnst_Quit_Report5 = "k   EMM: ";          // dseg:3CEB
+// MoX_EXIT char *cnst_Quit_Report6 = " blocks";            // dseg:3CF5
 
 void * gfp_TBL_Moves_Per_Tile;      // dseg:5BAC
 unsigned int gsa_CRP_SND_Music_Segment; // dseg:5BB0

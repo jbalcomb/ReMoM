@@ -21,7 +21,7 @@ extern "C" {
     seg024
 */
 
-// s24p02.asm
+// s24p01
 // DBG_Quit()
 
 // s24p02
@@ -34,10 +34,10 @@ void VGA_GetDACBlock(unsigned int DAC_BLK, unsigned char * Buffer);
 void VGA_ReadScreenLine(unsigned int ScreenLine, unsigned char * Buffer);
 
 // s24p05
-void DBG_Disable(void);
+// MoX_DBG  void DBG_Disable(void);
 
 // s24p06
-int DBG_IsDisabled(void);
+// MoX_DBG  int DBG_IsDisabled(void);
 
 // s24p07
 // UU_VGA_SaveDrawSection()

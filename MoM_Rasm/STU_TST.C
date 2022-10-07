@@ -7,6 +7,7 @@
 #include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
 #include "ST_EMM.H"
+#include "MoX_EMM.H"    /* EMM_Pages_Reserved */
 #include "ST_FLIC.H"  /* s_FLIC_HDR */
 #include "ST_SA.H"  /* SAMB_head, SAMB_data, SAMB_addr, SAMB_ptr, etc. */
 #include "ST_VGA.H"  /* gsa_Palette, etc. */
@@ -42,22 +43,21 @@ char Test_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possib
 void Test_Log_Startup(void)
 {
     Test_Log_File = fopen(Test_Log_FileName, "w");
-
     if(Test_Log_File == NULL)
     {
         printf("TEST [FATAL]: Unable to open log file: %s", Test_Log_FileName);
         exit(1);
     }
-
     get_datetime(&Test_Log_ISO8601_DateTime);
-
     fprintf(Test_Log_File, "[%s] Test: %s\n", Test_Log_ISO8601_DateTime, "BEGIN: Test Log");
+    fflush(Test_Log_File);
 }
 
 void Test_Log_Shutdown(void)
 {
     get_datetime(&Test_Log_ISO8601_DateTime);
     fprintf(Test_Log_File, "[%s] TEST: %s\n", Test_Log_ISO8601_DateTime, "END: Test Log");
+    fflush(Test_Log_File);
     fclose(Test_Log_File);
 }
 
@@ -115,7 +115,7 @@ void reset_ST_EMM(void)
     g_EmmHndlNbr_VGAFILEH = 0;
     EmmHndlNbr_EMMDATAH = 0;
     EMMDATAH_Level = 0;
-    g_EMM_Pages_Reserved = 40;
+    EMM_Pages_Reserved = 40;
     g_EMM_Open_Handles = 0;
 
 #ifdef STU_DEBUG
@@ -236,7 +236,7 @@ int validate_EMM_Startup(void)
     if( g_EmmHndlNbr_VGAFILEH != 2 )                              { test_status = -1; }
     if( EmmHndlNbr_EMMDATAH != 3 )                                { test_status = -1; }
     if( EMMDATAH_Level != 0 )                                     { test_status = -1; }
-    if( g_EMM_Pages_Reserved != 149 )                             { test_status = -1; }
+    if( EMM_Pages_Reserved != 149 )                             { test_status = -1; }
     if( g_EMM_Open_Handles != 3 )                                 { test_status = -1; }
     if( EMM_GetFreePageCount() != 1962 )                          { test_status = -1; }
     if( EMM_GetActiveHandleCount() != 4)                          { test_status = -1; }
@@ -265,7 +265,7 @@ int validate_EMM_Startup(void)
         dbg_prn("DEBUG: [%s, %d] ( g_EmmHndlNbr_VGAFILEH != 2 ): %s\n", __FILE__, __LINE__, (( g_EmmHndlNbr_VGAFILEH != 2 ) ? "FAIL" : "PASS"));
         dbg_prn("DEBUG: [%s, %d] ( EmmHndlNbr_EMMDATAH != 3 ): %s\n", __FILE__, __LINE__, (( EmmHndlNbr_EMMDATAH != 3 ) ? "FAIL" : "PASS"));
         dbg_prn("DEBUG: [%s, %d] ( EMMDATAH_Level != 0 ): %s\n", __FILE__, __LINE__, (( EMMDATAH_Level != 0 ) ? "FAIL" : "PASS"));
-        dbg_prn("DEBUG: [%s, %d] ( g_EMM_Pages_Reserved != 149 ): %s\n", __FILE__, __LINE__, (( g_EMM_Pages_Reserved != 149 ) ? "FAIL" : "PASS"));
+        dbg_prn("DEBUG: [%s, %d] ( EMM_Pages_Reserved != 149 ): %s\n", __FILE__, __LINE__, (( EMM_Pages_Reserved != 149 ) ? "FAIL" : "PASS"));
         dbg_prn("DEBUG: [%s, %d] ( g_EMM_Open_Handles != 3 ): %s\n", __FILE__, __LINE__, (( g_EMM_Open_Handles != 3 ) ? "FAIL" : "PASS"));
         dbg_prn("DEBUG: [%s, %d] ( EMM_GetFreePageCount() != 1962 ): %s\n", __FILE__, __LINE__, (( EMM_GetFreePageCount() != 1962 ) ? "FAIL" : "PASS"));
         dbg_prn("DEBUG: [%s, %d] ( EMM_GetActiveHandleCount() != 4): %s\n", __FILE__, __LINE__, (( EMM_GetActiveHandleCount() != 4) ? "FAIL" : "PASS"));
@@ -883,7 +883,7 @@ int validate_GAME_LoadMainImages(void)
     /*
         BEGIN: Changes...
     */
-    if( g_EMM_Pages_Reserved != 10 )                                { test_status = -1; }
+    if( EMM_Pages_Reserved != 10 )                                { test_status = -1; }
     if( g_EMM_Open_Handles != 6 )                                   { test_status = -1; }
     if( EMM_GetFreePageCount() != 1941 )                            { test_status = -1; }
     if( EMM_GetActiveHandleCount() != 7)                            { test_status = -1; }

@@ -451,7 +451,7 @@ extern unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
 // extern MAP_STRUCT gfp_map_struct[]; // dseg:40EF
 // private / static local module-scoped extern struct s_MAP_STRUCT EMM_L2P_Map[]; // dseg:40EF
 
-extern int g_EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
+// MoX_EMM  extern int EMM_Pages_Reserved;           // dseg:4100 ; set to 158 at the start of _main
 extern unsigned int g_EMM_Open_Handles;             // dseg:4102
 extern char *g_EmmHndlNm_YOMOMA1;                   // dseg:4104  "YO MOMA"
 extern char *g_EmmHndlNm_YOMOMA2;                   // dseg:410C  "YO MOMA"
@@ -538,8 +538,10 @@ void EMM_MapMulti4(unsigned int EMM_Logical_Page, unsigned int EMM_Handle);
 /*
     seg013
 */
+
 // s13p01
 void EMM_Startup(void);
+
 // s13p03
 void EMM_Load_LBX_File_1(char * LbxFileName);
 // s13p04

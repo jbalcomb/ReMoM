@@ -2,11 +2,14 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
 #include "ST_SA.H"
+#include "MoX_SA.H"
 
 #include "MOM_DEF.H"  /* Quit() */
 #include "ST_DBG.H"  /* DBG_IsDisabled() */
 
+#ifndef __WIN32__
 #include <ALLOC.H>  /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
+#endif
 // #include <STDIO.H>   /* printf() */
 #include <STDLIB.H>  /* itoa() */
 #include <STRING.H> /* strcat(), strcpy() */
@@ -47,9 +50,9 @@ char Tmp_Conv_Str_3[106];                                       // dseg:9526  Tm
     Far Heap
 */
 //void _FAR * fp_tmpSAMB;                   // MGC dseg:A5C0  WZD dseg:E5CA
-SAMB_ptr pTmpSAMB;                        // MGC dseg:A5C0  WZD dseg:E5CA
+// MoX_SA  SAMB_ptr pTmpSAMB;                        // MGC dseg:A5C0  WZD dseg:E5CA
 // unsigned int g_RAM_Min_KB;               // MGC dseg:A5C4
-extern unsigned int RAM_Min_KB;             // MGC dseg:A5C4  ; set to 583 in _main
+// MoX_MoM  extern unsigned int RAM_Min_KB;             // MGC dseg:A5C4  ; set to 583 in _main
 
 /*
 ##### seg007
@@ -224,34 +227,11 @@ SAMB_ptr SA_Allocate_Space(unsigned int nparas)
     return pSAMB_head;
 }
 
-// _s08p08
-SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
-{
-    SAMB_ptr pSAMB_data;
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_MemBlk(nparas = %u)\n", __FILE__, __LINE__, nparas);
-// #endif
-
-    pTmpSAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
-
-    if ( pTmpSAMB == NULL )
-    {
-        SA_Alloc_Error(0x01, nparas); // Alloc Error #1: Allocation Too Small
-    }
-    
-    //pSAMB_data = (pTmpSAMB + 16);
-    //pSAMB_data = MK_FP((FP_SEG(pTmpSAMB) + 1),FP_OFF(pTmpSAMB));
-    pSAMB_data = (SAMB_ptr) MK_FP((FP_SEG(pTmpSAMB) + 1),0);
-
-    //Update_MemFreeWorst_KB();
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: SA_Allocate_MemBlk(nparas = %u) { pSAMB_data = %p }\n", __FILE__, __LINE__, nparas, pSAMB_data);
-// #endif
-
-    return pSAMB_data;
-}
+/*
+    MoX_SA
+        s08p08
+            SAMB_ptr SA_Allocate_MemBlk()
+*/
 
 // _s08p12
 /*
@@ -448,64 +428,9 @@ SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr)
     return fp;
 }
 
-// _s08p19
-char *cnst_Alloc_Error01 = "Near Allocation too large by ";                     // dseg:3D56
-char *cnst_Alloc_Error02 = " bytes";                                            // dseg:3D74
-char *cnst_Alloc_Error51 = "Insufficient memory. You need at least ";           // dseg:3D7B
-char *cnst_Alloc_Error52 = "K free. Try removing all TSR's.";                   // dseg:3DA3
-char *cnst_Alloc_Error11 = "Dynamic allocation too small for Allocate_Space()"; // dseg:3DC3
-char *cnst_Alloc_Error12 = " of ";                                              // dseg:3DF5
-char *cnst_Alloc_Error13 = " blocks";                                           // dseg:3DFA
-char *cnst_Alloc_Error21 = "Failed to reload";                                  // dseg:3E02
-char *cnst_Alloc_Error22 = " Allocate_Next_Block()";                            // dseg:3E13
-char *cnst_Alloc_Error23 = ": Short by ";                                       // dseg:3E2A
-char *cnst_Alloc_Error3 = "Allocation space has been corrupted for";            // dseg:3E36
-char *cnst_Alloc_Error4 = " (EMM) ";                                            // dseg:3E5E
 
-void SA_Alloc_Error(int errno, int value)
-{
-    char conv[20];
-    char errmsg[120];
-    
-    if ( DBG_IsDisabled() != 0 )
-    {
-        errno = errno - 1;
-        switch(errno)
-        {
-            case 0:
-                strcpy(errmsg, cnst_Alloc_Error11);
-                itoa(value, conv, 10);
-                break;
-            case 1:
-                strcpy(errmsg, cnst_Alloc_Error21);
-                strcat(errmsg, cnst_Alloc_Error22);
-                strcat(errmsg, cnst_Alloc_Error23);
-                itoa(value, conv, 10);
-                break;
-            case 2:
-                strcpy(errmsg, cnst_Alloc_Error3);
-                itoa(value, conv, 10);
-                strcat(errmsg, cnst_Alloc_Error22);
-                strcat(errmsg, cnst_Alloc_Error12);
-                break;
-            case 3:
-                strcpy(errmsg, cnst_Alloc_Error21);
-                strcat(errmsg, cnst_Alloc_Error4);
-                strcat(errmsg, cnst_Alloc_Error22);
-                strcat(errmsg, cnst_Alloc_Error23);
-                itoa(value, conv, 10);
-                break;
-        }
-        strcat(errmsg, conv);
-        strcat(errmsg, cnst_Alloc_Error13);
-        Quit(errmsg);
-    }
-    else
-    {
-        strcpy(errmsg, cnst_Alloc_Error51);
-        itoa(RAM_Min_KB, conv, 10);
-        strcat(errmsg, conv);
-        strcat(errmsg, cnst_Alloc_Error52);
-        Quit(errmsg);
-    }
-}
+/*
+    MoX_SA
+        s08p19
+            SAMB_ptr SA_Alloc_Error()
+*/

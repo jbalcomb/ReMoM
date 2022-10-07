@@ -1,5 +1,5 @@
-#ifndef STU_DBG_H
-#define STU_DBG_H
+#ifndef STU_VGA_H
+#define STU_VGA_H
 
 
 #ifndef VRAM_BASE
@@ -107,4 +107,4 @@ void STU_VGA_DAC_Dump(char *PaletteFilename);
 }
 #endif
 
-#endif /* STU_DBG_H */
+#endif /* STU_VGA_H */

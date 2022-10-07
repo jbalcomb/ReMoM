@@ -1,15 +1,19 @@
 
-#include "ST_TYPE.H"
-#include "ST_DEF.H"
 #include "ST_LBX.H"
 
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
+
+#include "MoX_MoM.H"  /* RAM_Min_KB */
+
+#include "MoX_EXIT.H"  /* Exit() */
 #include "ST_SA.H"
 
 // J:\STU\DBWD\BORLANDC\INCLUDE\
 #include <stdio.h>      /* FILE */
 #include <fcntl.h>      /* O_BINARY, O_RDONLY */
 #include<sys\stat.h>    /* ? */
-#include <IO.H>         /* filelength(), read(); SEEK_CUR, SEEK_END, SEEK_SET */
+#include <IO.H>         /* filelength(), lseek(), read(); SEEK_CUR, SEEK_END, SEEK_SET */
     // SEEK_SET (0)  File beginning; SEEK_CUR (1)  Current file pointer; SEEK_END (2)  End-of-file
 //#ifdef STU_DEBUG
     #include <errno.h>
@@ -47,7 +51,7 @@ char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes"; 
 /*
     LBX Globals - Unitialized
 */
-unsigned int RAM_Min_KB;                    // MGC dseg:A5C4  ; set to 583 in _main
+// MoX_MoM  unsigned int RAM_Min_KB;                    // MGC dseg:A5C4  ; set to 583 in _main
 unsigned int g_LBX_EntryCount;              // MGC dseg:A5C6
 unsigned int UU_g_LBX_HdrFmt;               // MGC dseg:A5C8
 SAMB_addr gsa_LBX_Header;                   // MGC dseg:A5CA
@@ -116,30 +120,19 @@ long lbx_size(int fhandle)
 // _s09p05
 int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
 {
-    void _FAR * buf;
+    void * buf;
     int st_status;
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
-// #endif
 
     buf = MK_FP(dst_sgmt, 0);
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-// #endif
-
-    if (read(fhandle, buf, nbytes) == -1) {
+    if ( read(fhandle, buf, nbytes) == -1 )
+    {
         st_status = 0;  // ST_FAILURE
     }
     else
     {
         st_status = -1;  // ST_SUCCESS
     }
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_sgmt(dst_sgmt = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_sgmt, nbytes, fhandle);
-// #endif
 
     return st_status;
 }
@@ -147,60 +140,19 @@ int lbx_read_sgmt(unsigned int dst_sgmt, int nbytes, int fhandle)
 // _s09p06
 int lbx_read_ofst(unsigned int dst_ofst, int nbytes, int fhandle)
 {
-    // void * buf;
-    void _FAR * buf;
+    void * buf;
     int st_status;
-//#ifdef STU_DEBUG
-    int baitos;
-    char * strerrbuf;
-    int itr_nbytes;
-//#endif
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d)\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle);
-// #endif
-
-    //buf = (void *)dst_ofst;
     buf = MK_FP(_DS, dst_ofst);  // without this FP, it gets the right bytes but does not assign them properly ? because all pointers are FAR in LARGE memory model ? override NEAR ?
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-// #endif
-
-    if ( (baitos = read(fhandle, buf, nbytes)) == -1 )
+    if ( read(fhandle, buf, nbytes) == -1 )
     {
-
-// #ifdef STU_DEBUG
-//         strerrbuf = strerror(errno);
-//         dlvfprintf("DEBUG: [%s, %d]: strerrbuf: %s\n", __FILE__, __LINE__, strerrbuf);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: buf: %p\n", __FILE__, __LINE__, buf);
-// #endif
-
         st_status = 0;  // ST_FAILURE
     }
     else
     {
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: baitos: %d\n", __FILE__, __LINE__, baitos);
-// #endif
-
-// #ifdef STU_DEBUG
-//     for ( itr_nbytes = 0; itr_nbytes < nbytes; itr_nbytes++ )
-//     {
-//         dlvfprintf("DEBUG: [%s, %d]: buf[%d]: 0x%02X\n", __FILE__, __LINE__, itr_nbytes, *((unsigned char *)buf + itr_nbytes));
-//     }
-// #endif
-
         st_status = -1;  // ST_SUCCESS
     }
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: lbx_read_ofst(dst_ofst = 0x%04X, nbytes = %d, fhandle = %d) { st_status = %d }\n", __FILE__, __LINE__, dst_ofst, nbytes, fhandle, st_status);
-// #endif
 
     return st_status;
 }
@@ -372,18 +324,28 @@ SAMB_addr LBXR_LoadSingle(char *LbxName, int LbxEntryIndex, int RecFirst, int Re
 // _s10p14
 
 // _s10p15
-void LBX_Error(char * name, int errno, int entry, int pages)
+void LBX_Error(char * LBX_Name, int LBX_Error_Number, int LBX_Index, int pages)
 {
-    char cnv[20];
-    char errmsg[120];
+    int LBX_Error_Index;
+    char str_itoa[20];
+    char str_errmsg[120];
 
-    strcpy(errmsg, name);
-    itoa(entry, cnv, 10);
-    strcat(errmsg, cnst_LBXErr_Common1);        // char *cnst_LBXErr_Common1 = ".LBX [entry ";                                         // MGC dseg:3EA3
-    strcat(errmsg, cnv);
-    strcat(errmsg, cnst_LBXErr_Common2);        // char *cnst_LBXErr_Common2 = "] ";                                                   // MGC dseg:3EB0
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Error( LBX_Name = %s, LBX_Error_Number = %d, LBX_Index = %d, pages = %d)\n", __FILE__, __LINE__, LBX_Name, LBX_Error_Number, LBX_Index, pages);
+#endif
+
+#ifdef STU_DEBUG
+    // strcpy(str_errmsg, "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");  // 120 characters
+    strcpy(str_errmsg, "0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_");  // 110 characters
+    dbg_prn("DEBUG: [%s, %d] str_errmsg: %s\n", __FILE__, __LINE__, str_errmsg);
+#endif
+
+    strcpy(str_errmsg, LBX_Name);
+    itoa(LBX_Index, str_itoa, 10);
+    strcat(str_errmsg, cnst_LBXErr_Common1);        // char *cnst_LBXErr_Common1 = ".LBX [entry ";                                         // MGC dseg:3EA3
+    strcat(str_errmsg, str_itoa);
+    strcat(str_errmsg, cnst_LBXErr_Common2);        // char *cnst_LBXErr_Common2 = "] ";                                                   // MGC dseg:3EB0
 /*
-
 char *cnst_LBX_Error7 = " is not an LBX file";                                      // MGC dseg:3F8B
 char *cnst_LBX_Error8 = " exceeds number of LBX entries";                           // MGC dseg:3F9F
 char *cnst_LBX_Error9 = " has an incorrect record size";                            // MGC dseg:3FBE
@@ -395,68 +357,101 @@ char *cnst_LBX_ErrorE = " (Reserved EMM) ";                                     
 char *cnst_LBX_ErrorF1 = " LBX to";                                                 // MGC dseg:409C
 char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes";     // MGC dseg:40A4
 */
-    switch (errno)
+/*
+switch case jump table
+seg010:10F5
+off_16015           ; jump table for switch statement
+offset loc_15EE2    case 0x00
+offset loc_15EF4    case 0x01
+offset loc_15EF9    case 0x02
+offset loc_15F32    case 0x03
+offset loc_15F37    case 0x04
+offset loc_16006    case default
+offset loc_15F70    case 0x06
+offset loc_15F76    case 0x07
+offset loc_15F7C    case 0x08
+offset loc_15F82    case 0x09
+offset loc_15F88    case 0x0A
+offset loc_15FA9    case 0x0B
+offset loc_15FAF    case 0x0C
+offset loc_15FB5    case 0x0D
+offset loc_15FD3    case 0x0E
+offset loc_15FF7    case 0x0F
+*/
+    LBX_Error_Index = LBX_Error_Number - 1;
+
+    switch (LBX_Error_Index)
     {
+        case 0:
+            strcat(str_errmsg, cnst_LBX_Error1);    // char *cnst_LBX_Error1 = " could not be found.";                                     // MGC dseg:3EB3
+            break;
         case 1:
-            strcat(errmsg, cnst_LBX_Error1);    // char *cnst_LBX_Error1 = " could not be found.";                                     // MGC dseg:3EB3
+            strcat(str_errmsg, cnst_LBX_Error2);    // char *cnst_LBX_Error2 = " has been corrupted.";                                     // MGC dseg:3EC8
             break;
         case 2:
-            strcat(errmsg, cnst_LBX_Error2);    // char *cnst_LBX_Error2 = " has been corrupted.";                                     // MGC dseg:3EC8
+            strcpy(str_errmsg, cnst_LBX_Error31);   // char *cnst_LBX_Error31 = "Insufficient memory. You need at least ";                 // MGC dseg:3EDD
+            itoa(RAM_Min_KB, str_itoa, 10);
+            strcat(str_errmsg, str_itoa);
+            strcat(str_errmsg, cnst_LBX_Error32);   // char *cnst_LBX_Error32 = "K free. Try removing all TSR's.";                         // MGC dseg:3F05
             break;
         case 3:
-            strcpy(errmsg, cnst_LBX_Error31);   // char *cnst_LBX_Error31 = "Insufficient memory. You need at least ";                 // MGC dseg:3EDD
-            itoa(RAM_Min_KB, cnv, 10);
-            strcat(errmsg, cnv);
-            strcat(errmsg, cnst_LBX_Error32);   // char *cnst_LBX_Error32 = "K free. Try removing all TSR's.";                         // MGC dseg:3F05
+            strcat(str_errmsg, cnst_LBX_Error4);    // char *cnst_LBX_Error4 = " was not properly allocated or has been corrupted.";       // MGC dseg:3F25
             break;
         case 4:
-            strcat(errmsg, cnst_LBX_Error4);    // char *cnst_LBX_Error4 = " was not properly allocated or has been corrupted.";       // MGC dseg:3F25
+            strcat(str_errmsg, cnst_LBX_Error51);   // char *cnst_LBX_Error51 = " failed to reload. Allocation too small by ";             // MGC dseg:3F58
+            itoa(pages, str_itoa, 10);
+            strcat(str_errmsg, str_itoa);
+            strcat(str_errmsg, cnst_LBX_Error52);   // char *cnst_LBX_Error52 = " pages";                                                  // MGC dseg:3F84
             break;
-        case 5:
-            strcat(errmsg, cnst_LBX_Error51);   // char *cnst_LBX_Error51 = " failed to reload. Allocation too small by ";             // MGC dseg:3F58
-            itoa(pages, cnv, 10);
-            strcat(errmsg, cnv);
-            strcat(errmsg, cnst_LBX_Error52);   // char *cnst_LBX_Error52 = " pages";                                                  // MGC dseg:3F84
-            break;
-        //case 6:
+        //case 5:
         //    break;
+        case 6:
+            strcat(str_errmsg, cnst_LBX_Error7);
+            break;
         case 7:
-            strcat(errmsg, cnst_LBX_Error7);
+            strcat(str_errmsg, cnst_LBX_Error8);
             break;
         case 8:
-            strcat(errmsg, cnst_LBX_Error8);
+            strcat(str_errmsg, cnst_LBX_Error9);
             break;
         case 9:
-            strcat(errmsg, cnst_LBX_Error9);
+            strcat(str_errmsg, cnst_LBX_ErrorA);
             break;
         case 10:
-            strcat(errmsg, cnst_LBX_ErrorA);
+            strcpy(str_errmsg, LBX_Name);
+            strcat(str_errmsg, g_LBX_FileExtension);
+            strcat(str_errmsg, cnst_LBX_ErrorB);
             break;
         case 11:
-            strcpy(errmsg, name);
-            strcat(errmsg, g_LBX_FileExtension);
-            strcat(errmsg, cnst_LBX_ErrorB);
+            strcat(str_errmsg, cnst_LBX_ErrorC);
             break;
         case 12:
-            strcat(errmsg, cnst_LBX_ErrorC);
+            strcat(str_errmsg, cnst_LBX_ErrorD);
             break;
         case 13:
-            strcat(errmsg, cnst_LBX_ErrorD);
-            break;
+            strcat(str_errmsg, cnst_LBX_ErrorC);
+            strcat(str_errmsg, cnst_LBX_ErrorE);
         case 14:
-            strcat(errmsg, cnst_LBX_ErrorC);
-            strcat(errmsg, cnst_LBX_ErrorE);
-        case 15:
-            strcat(errmsg, cnst_LBX_ErrorF1);
-            strcat(errmsg, cnst_LBX_ErrorC);
-            strcat(errmsg, cnst_LBX_ErrorE);
+            strcat(str_errmsg, cnst_LBX_ErrorF1);
+            strcat(str_errmsg, cnst_LBX_ErrorC);
+            strcat(str_errmsg, cnst_LBX_ErrorE);
             break;
-        case 16:
-            strcat(errmsg, cnst_LBX_ErrorG);
+        case 15:
+            strcat(str_errmsg, cnst_LBX_ErrorG);
             break;
     }
 
-    Quit(errmsg);
+Done:
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] str_errmsg: %s\n", __FILE__, __LINE__, str_errmsg);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Error( LBX_Name = %s, LBX_Error_Number = %d, LBX_Index = %d, pages = %d)\n", __FILE__, __LINE__, LBX_Name, LBX_Error_Number, LBX_Index, pages);
+#endif
+
+    // Exit(str_errmsg);
 }
 
 /*
@@ -493,8 +488,7 @@ void ExtractFileBase(char * LbxFileName)
     }
 }
 
-// _s10p17
-void RAM_SetMinKB(int RAM_MinKB)
-{
-    RAM_Min_KB = RAM_MinKB;
-}
+/*
+    s10p17  RAM_SetMinKB()
+    MoX_MoM
+*/

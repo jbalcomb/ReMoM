@@ -1,18 +1,8 @@
 #ifndef ST_SA_H
 #define ST_SA_H
 
-typedef unsigned int SAMB_addr;
-typedef unsigned char * SAMB_ptr;
-// typedef SAMB_addr SAMB_head;
-// typedef SAMB_addr SAMB_data;
-typedef unsigned int SAMB_head;
-typedef unsigned int SAMB_data;
-typedef unsigned int SAMB_head_t0;  // sah0_
-typedef unsigned int SAMB_head_t1;  // sah1_
-typedef unsigned int SAMB_head_t2;  // sah2_
-typedef unsigned int SAMB_data_t0;  // sad0_
-typedef unsigned int SAMB_data_t1;  // sad1_
-typedef unsigned int SAMB_data_t2;  // sad2_
+#include "ST_TYPE.H"
+
 
 /*
     Simtex SPACE ALLOC
@@ -58,13 +48,13 @@ SEE: ST_SAMB.md
 /*
     Macros
 */
-#define SA_FarMalloc(nparas) {(void far *) farmalloc( ((unsigned long)nparas * 16) + 16 )}
-#define SA_GetSize(samb) {farpeekw(samb, 0x08)}
-#define SA_GetUsed(samb) {farpeekw(samb, 0x0A)}
-#define SA_GetMarked(samb) {farpeekw(samb, 0x0E)}
-#define SA_SetSize(samb,nparas) {farpokew(samb, 0x08, nparas)}
-#define SA_SetUsed(samb,nparas) {farpokew(samb, 0x0A, nparas)}
-#define SA_SetMarked(samb,nparas) {farpokew(samb, 0x0E, nparas)}
+#define SA_FarMalloc(nparas)       { (void far *) farmalloc( ((unsigned long)nparas * 16) + 16 ) }
+#define SA_GetSize(samb)           { farpeekw(samb, 0x08) }
+#define SA_GetUsed(samb)           { farpeekw(samb, 0x0A) }
+#define SA_GetMarked(samb)         { farpeekw(samb, 0x0E) }
+#define SA_SetSize(samb,nparas)    { farpokew(samb, 0x08, nparas) }
+#define SA_SetUsed(samb,nparas)    { farpokew(samb, 0x0A, nparas) }
+#define SA_SetMarked(samb,nparas)  { farpokew(samb, 0x0E, nparas) }
 
 
 /*
@@ -165,14 +155,14 @@ void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);  // s
     seg008
 */
 SAMB_ptr SA_Allocate_Space(unsigned int nparas);                        // s08p07
-SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
+// MoX_SA  SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
 // unsigned int SA_Allocate_MemBlk_LbxHeader(unsigned int nparas);      // s08p08
 // unsigned int SA_Allocate_MemBlk_EntrySize(unsigned int nparas);      // s08p09
 SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
 SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
 unsigned int SA_GetFree(SAMB_ptr SAMB_head);                            // s08p15
 SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr);                                // s08p16
-void SA_Alloc_Error(int errno, int value);                              // s08p19
+// MoX_SA  void SA_Alloc_Error(int errno, int value);                              // s08p19
 
 #ifdef __cplusplus
 }

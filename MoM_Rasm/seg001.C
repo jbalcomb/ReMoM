@@ -9,15 +9,20 @@
 #include "MOM_DEF.H"
 #include "MGC_DEF.H"
 
+#include "MoX_MoM.H"  /*  EMM_PAGES_REQUIRED, EMM_MIN_KB, RAM_MIN_KB, GAME_FONT_FILE; RAM_SetMinKB() */
+
 #include "seg020.H"
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
 #include "ST_EMM.H"
+#include "MoX_EMM.H"  /* EMM_Pages_Reserved */
+#include "MoX_EXIT.H"  /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_GUI.H"
 #include "ST_HLP.H"
 #include "ST_LBX.H"
 #include "ST_SA.H"
+#include "MoX_SA.H" /* SA_MK_FP0() */
 #include "ST_SCRN.H"
 #include "ST_TXT.H"
 #include "ST_VGA.H"
@@ -84,21 +89,32 @@ Main Menu
 //int main(void)
 int MGC_Main(int argc, char *argv[])
 {
+    char Temp_String[30];
+    char File_Name[40];
+    FILE * fileptr;
     //DBGLOG("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
     //TRACE(("message %d\n", 1));
     // dlvfprintf("DEBUG: [%s, %d] BEGIN: MGC_Main()\n", __FILE__, __LINE__);
     
-    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
 
     /*
         CONFIG.MOM
     */
-    // LoadConfigMom()
+//    if(DOS_FileFind(cnst_ConfigFile, Temp_String) != 0)
+//    {
+//        Exit(cnst_ConfigErr);  // "Run INSTALL to configure MASTER OF MAGIC.",0Ah,0Ah,0
+//    }
+//    // LoadConfigMom()
+//    fileptr = fopen(cnst_ConfigFile, "rb");  // CONFIG.MOM
+//    fread(g_CFG_HW, 18, 1, fileptr);
+//    fclose(fileptr);
 
     /*
         MAGIC.SET
     */
     //LoadMagicSet()
+    // call j_GAME_LoadSettings             // either loads the settings from MAGIC.SET or, if the file is not found, resets them and creates it
 
     /*
         MIDI Driver
@@ -191,7 +207,7 @@ int MGC_Main(int argc, char *argv[])
     */
 
     //GAME_QuitWithReport();
-    Quit("Thank you for playing Master of Magic!$");
+    Exit("Thank you for playing Master of Magic!$");
 
 
     //DBGLOG("DEBUG: [%s, %d] END: MGC_Main()\n", __FILE__, __LINE__);
@@ -214,7 +230,7 @@ void GAME_MainMenu(void)
 
     if ( DISK_FileFind(cnst_ConfigFile, Read_Buffer) == 0 )
     {
-        Quit(cnst_ConfigErr);
+        Exit(cnst_ConfigErr);
     }
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] Read_Buffer: %s\n", __FILE__, __LINE__, Read_Buffer);
@@ -308,7 +324,7 @@ void GAME_MainMenu(void)
 //     dlvfprintf("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
 // #endif
 
-    Quit(cnst_QUIT_Message);
+    Exit(cnst_QUIT_Message);
 }
 
 // s01p04
@@ -967,7 +983,7 @@ void GAME_Load_TERRSTAT_0(void)
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
 // #endif
 
-    gfp_TBL_Moves_Per_Tile = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_TERRSTAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
+    gfp_TBL_Moves_Per_Tile = (SAMB_ptr) MK_FP(LBXR_LoadSingle(g_LbxNm_TERRSTAT, LbxEntryIndex, RecFirst, RecCount, RecSize),0);
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: END: GAME_Load_TERRSTAT_0()\n", __FILE__, __LINE__);
@@ -986,7 +1002,7 @@ void GAME_Load_SPELLDAT_0(void)
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);
 // #endif
 
-    gfp_TBL_Spell_Data = SA_MK_FP0(LBXR_LoadSingle(g_LbxNm_SPELLDAT, LbxEntryIndex, RecFirst, RecCount, RecSize));
+    gfp_TBL_Spell_Data = (SAMB_ptr) MK_FP(LBXR_LoadSingle(g_LbxNm_SPELLDAT, LbxEntryIndex, RecFirst, RecCount, RecSize),0);
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_Load_SPELLDAT_0()\n", __FILE__, __LINE__);

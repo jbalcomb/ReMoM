@@ -2,13 +2,17 @@
 // ST_LBX.H
 // ~= c&p EMM_LBX_Load_Entry()
 
-#include "ST_HEAD.H"
+#include "ST_LBX.H"
+
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
 
 #include "ST_EMM.H"
-#include "ST_LBX.H"
+#include "Mox_EMM.H"
 #include "ST_SA.H"
+#include "MoX_SA.H"
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 

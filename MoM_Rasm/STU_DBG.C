@@ -21,22 +21,21 @@ char Debug_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possi
 void Debug_Log_Startup(void)
 {
     Debug_Log_File = fopen(Debug_Log_FileName, "w");
-
     if(Debug_Log_File == NULL)
     {
         printf("DEBUG [FATAL]: Unable to open log file: %s", Debug_Log_FileName);
         exit(1);
     }
-
     get_datetime(&Debug_Log_ISO8601_DateTime);
-
     fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "BEGIN: Debug Log");
+    fflush(Debug_Log_File);
 }
 
 void Debug_Log_Shutdown(void)
 {
     get_datetime(&Debug_Log_ISO8601_DateTime);
     fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "END: Debug Log");
+    fflush(Debug_Log_File);
     fclose(Debug_Log_File);
 }
 

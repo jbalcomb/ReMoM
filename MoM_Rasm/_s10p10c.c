@@ -1,20 +1,20 @@
 // _s10p10c.c LBX_Load_Entry
 // ST_LBX.H
 
-#include "ST_HEAD.H"
+#include "ST_LBX.H"
+
 #include "ST_TYPE.H"
+#include "ST_DEF.H"
 
 #include "ST_EMM.H"
-#include "ST_LBX.H"
+#include "MoX_EXIT.H"   /* Update_MemFreeWorst_KB() */
 #include "ST_SA.H"
+#include "MoX_SA.H"     /* SA_Allocate_MemBlk() */
 
-// #ifdef DEBUG
-// #include "STU_DBG.H"
-// #endif
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
-// #ifdef TEST
-// #include "STU_TST.H"
-// #endif
 
 // s10p10
 SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
@@ -36,8 +36,10 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     unsigned int ReadNbytes;        // LBXREADDATA()
     SAMB_ptr pSAMB_head;
 
-// #ifdef DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+#endif
+
 // //     if
 // //     (
 // //         ((strcmp(LbxName, "FONTS.LBX") == 0) && (LbxEntry == 2)) ||
@@ -189,12 +191,11 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 
     }  /* if ( SAMB_data == 0 ) */
 
-    //HERE("Update_MemFreeWorst_KB()");
     Update_MemFreeWorst_KB();
 
-// #ifdef DEBUG    
-//     dlvfprintf("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
-// #endif
+#ifdef STU_DEBUG    
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
+#endif
 
     return SAMB_data;
 }

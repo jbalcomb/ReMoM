@@ -48,4 +48,19 @@ typedef   signed short SSHORT;
 typedef   signed int   SINT;
 typedef   signed long  SLONG;
 
+
+typedef unsigned int SAMB_addr;
+typedef unsigned char * SAMB_ptr;
+// typedef SAMB_addr SAMB_head;
+// typedef SAMB_addr SAMB_data;
+typedef unsigned int SAMB_head;
+typedef unsigned int SAMB_data;
+typedef unsigned int SAMB_head_t0;  // sah0_
+typedef unsigned int SAMB_head_t1;  // sah1_
+typedef unsigned int SAMB_head_t2;  // sah2_
+typedef unsigned int SAMB_data_t0;  // sad0_
+typedef unsigned int SAMB_data_t1;  // sad1_
+typedef unsigned int SAMB_data_t2;  // sad2_
+
+
 #endif /* ST_TYPE_H */

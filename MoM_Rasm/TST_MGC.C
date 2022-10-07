@@ -1,17 +1,27 @@
 
 #include "ST_TYPE.H"
-#include "ST_DEF.H"  /* FP_SEG(), FP_OFF(); */
+#include "ST_DEF.H"     /* FP_SEG(), FP_OFF(); */
 #include "MGC_DEF.H"
 
+#include "MoX_MoM.H"    /* RAM_SetMinKB() */
+/*
+    EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    EMM_SetMinKB(EMM_MIN_KB);
+    RAM_SetMinKB(RAM_MIN_KB);
+*/
 #include "ST_EMM.H"
+#include "MoX_EMM.H"    /* EMM_Pages_Reserved */
 #include "ST_DBG.H"     /* DBG_ScreenDump() */
+#include "MoX_DBG.H"    /* DBG_IsDisabled() */
 #include "ST_FLIC.H"
-#include "ST_LBX.H"     /* LBXE_LoadSingle() */
+#include "ST_LBX.H"     /* LBX_Error(), LBXE_LoadSingle() */
 #include "ST_SA.H"      /* SA_Allocate_MemBlk(), SA_Allocate_Space(); */
+#include "MoX_SA.H"      /* SA_Alloc_Error() */
 #include "ST_VGA.H"
 
 #include "seg001.H"     /* GAME_LoadMainImages(); */
 #include "seg014.H"     /* Hardware_Init(), VGA_DAC_Init(); */
+#include "seg019.H"     /* VGA_TextDraw_Init() */
 #include "seg020.H"     /* VGA_LoadPalette() */
 #include "seg021.H"     /* FLIC_LoadPalette(); */
 #include "seg022.H"     /* ST_MoveData() */
@@ -24,13 +34,14 @@
 /* VGA_LoadPalette() *?
 /* VGA_DAC_Write() */
 
-#include "STU_DBG.H"    /* DLOG(); */
-#include "STU_TST.H"    /* TLOG(); */
+#include "STU_DBG.H"    /* DLOG(); Debug_Log_Startup(), Debug_Log_Shutdown(); */
+#include "STU_TST.H"    /* TLOG(); Test_Log_Startup(), Test_Log_Shutdown();*/
 #include "STU_VGA.H"    /* STU_VGA_RAM_Dump(); */
 
-#include <ASSERT.H>  /* NDEBUG; assert(); */
-#include <STDLIB.H>  /* abort(), getenv(); */
-#include <STRING.H>  /* strcmp() */
+#include <ASSERT.H>     /* NDEBUG; assert(); */
+#include <CONIO.H>      /* getch() */
+#include <STDLIB.H>     /* abort(), getenv(); */
+#include <STRING.H>     /* strcmp() */
 
 
 /*
@@ -93,6 +104,8 @@ void test_GAME_LoadMainImages(void);
 void test_FLIC_LoadPalette(void);
 void test_FLIC_Draw_EMM(void);
 void test_FLIC_Draw_XY(void);
+void test_SA_Error(void);
+void test_LBX_Error(void);
 
 
 int main(void)
@@ -101,7 +114,7 @@ int main(void)
     Debug_Log_Startup();
     Test_Log_Startup();
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: TST_MGC main()()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: TST_MGC main()\n", __FILE__, __LINE__);
 #endif
 
     /* get comspec environment parameter */
@@ -144,8 +157,12 @@ int main(void)
 
     test_MGC_Main();
 
+    // test_SA_Error();
+    // test_LBX_Error();
+
+
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: TST_MGC main()()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: TST_MGC main()\n", __FILE__, __LINE__);
 #endif
     Test_Log_Shutdown();
     Debug_Log_Shutdown();
@@ -154,56 +171,115 @@ int main(void)
 
 void test_MGC_Main(void)
 {
+    // void VGA_DAC_Init(char * PaletteLbxFileName)
+    char * PaletteLbxFileName;
+    unsigned int itrPalette;
+    unsigned int itrPaletteFlags;
+    void * pPaletteLbxEntry;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_MGC_Main()\n", __FILE__, __LINE__);
+#endif
+
     // MGC main()
-    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    DLOG("CALL: EMM_Pages_Reserved = EMM_PAGES_REQUIRED;");
+    EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     // MGC main()
+    DLOG("CALL: EMM_SetMinKB(EMM_MIN_KB);");
     EMM_SetMinKB(EMM_MIN_KB);
     // MGC main()
+    DLOG("CALL: RAM_SetMinKB(RAM_MIN_KB);");
     RAM_SetMinKB(RAM_MIN_KB);
 
     // MGC main() |-> Hardware_Init()
+    DLOG("CALL: EMM_Startup();");
     EMM_Startup();
     // MGC main() |-> Hardware_Init()
+    DLOG("CALL: VGA_SetModeY();");
     VGA_SetModeY();
     // MGC main() |-> Hardware_Init()
     // s14p03
+    DLOG("CALL: VGA_DAC_Init(GAME_FONT_FILE);");
     VGA_DAC_Init(GAME_FONT_FILE);  // "FONTS.LBX"
         // |-> ... LBXE_LoadSingle(FONTS.LBX,0), SA_Allocate_MemBlk()
         // |-> ... LBXE_LoadSingle(FONTS.LBX,1), SA_Allocate_MemBlk()
         // |-> VGA_TextDraw_Init()
+    // void VGA_DAC_Init(char * PaletteLbxFileName)
+        // unsigned int itrPalette;
+        // unsigned int itrPaletteFlags;
+        // void * pPaletteLbxEntry;
+    // strcpy(g_PaletteLbxFileName, PaletteLbxFileName);
+    // gsa_FontStyleData    =  LBXE_LoadSingle(PaletteLbxFileName, 0);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // gsa_BorderStyleData  =  LBXE_LoadSingle(PaletteLbxFileName, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // // gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));       // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
+    // pPaletteLbxEntry = SA_Allocate_Space(348);
+    // gsa_PaletteLbxEntry = FP_SEG(pPaletteLbxEntry);
+    // // gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
+    // pPalette = SA_Allocate_Space(64);
+    // gsa_Palette = FP_SEG(pPalette);
+    // fp_Palette = (BYTE *)MK_FP(gsa_Palette, 0);
+    // gsa_PaletteFlags = gsa_Palette + 48;                        // 48 paragaphs = 48 * 16 = 768 bytes
+    // gsa_PaletteSaved = FP_SEG(SA_Allocate_Space(48));           // 48 paragraphcs = 48 * 16 bytes = 768 bytes
+    // gsa_ReplacementColors = FP_SEG(SA_Allocate_Space(384));     // 348 paragraphcs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
+    // gsa_VGAFILEH_Header = FP_SEG(SA_Allocate_Space(2));         // 2 paragraphs = 2 * 16 bytes = 32 bytes
+    // gsa_IntensityScaleTable = FP_SEG(SA_Allocate_Space(2));     // 96 paragraphs = 96 * 16 = 1536 bytes / 256 = 6
+    // VGA_TextDraw_Init();
+    // for ( itrPalette = 0; itrPalette < 768; itrPalette++)
+    // {
+    //     farpokeb(gsa_Palette, itrPalette, 0);
+    // }
+    // for ( itrPaletteFlags = 0; itrPaletteFlags < 256; itrPaletteFlags++)
+    // {
+    //     farpokeb(gsa_PaletteFlags, itrPaletteFlags, 1);
+    // }
+
     // MGC main() |-> Hardware_Init()
+    DLOG("CALL: IN_Init(1);");
     IN_Init(1);  // INPUT_TYPE_KEYBOARD_AND_MOUSE
         // |-> MD_Init()
     // MGC main() |-> Hardware_Init()
+    DLOG("CALL: VGA_Set_DSP_Addr();");
     VGA_Set_DSP_Addr();
     // MGC main()
+    DLOG("CALL: MoM_Tables_Init(6100);");
     MoM_Tables_Init(6100);
     // MGC main()
     // s20p01
+    DLOG("CALL: VGA_LoadPalette(0, -1, 0);");
     VGA_LoadPalette(0, -1, 0);
-        // 
     // MGC main()
+    DLOG("CALL: VGA_DAC_Write();");
     VGA_DAC_Write();
     // MGC main()
+    DLOG("CALL: GAME_LoadMainImages();");
     GAME_LoadMainImages();
     // MGC main()
+    DLOG("CALL: GAME_Load_TERRSTAT_0();");
     GAME_Load_TERRSTAT_0();
     // MGC main()
+    DLOG("CALL: GAME_Load_SPELLDAT_0();");
     GAME_Load_SPELLDAT_0();
     // MGC main()
+    DLOG("CALL: VGA_DrawFilledRect(0, 0, 319, 199, 0);");
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Draw Screen-Page
     // MGC main()
+    DLOG("CALL: VGA_SetDirectDraw();");
     VGA_SetDirectDraw();
     // MGC main()
+    DLOG("CALL: VGA_DrawFilledRect(0, 0, 319, 199, 0);");
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Render Screen-Page
     // MGC main()
+    DLOG("CALL: VGA_Set_DSP_Addr();");
     VGA_Set_DSP_Addr();
     // MGC main()
+    DLOG("CALL: VGA_LoadPalette(0, -1, 0);");
     VGA_LoadPalette(0, -1, 0);  // EMPERATO
     // MGC main()
+    DLOG("CALL: VGA_DAC_Write();");
     VGA_DAC_Write();
 
     // MGC main()
+    DLOG("CALL: GAME_MainMenu();");
     GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
     // ...
     //          Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
@@ -219,6 +295,9 @@ void test_MGC_Main(void)
     //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
     //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_MGC_Main()\n", __FILE__, __LINE__);
+#endif
     // Quit();
     // VGA_SetTextMode();
 }
@@ -709,7 +788,7 @@ void test_EMM_Startup(void)
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_EMM_Startup()\n", __FILE__, __LINE__);
 #endif
     // MGC main()
-    g_EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
+    EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     // EMM_SetMinKB(EMM_MIN_KB);
     // RAM_SetMinKB(RAM_MIN_KB);
     // MGC main() |-> Hardware_Init() |-> EMM_Startup()
@@ -755,7 +834,7 @@ void test_EMM_Load_LBX_File(void)
         ( g_EmmHndlNbr_VGAFILEH == 0 ) ||
         ( EmmHndlNbr_EMMDATAH == 0 ) ||
         ( g_EMM_Open_Handles != 3 ) ||
-        ( g_EMM_Pages_Reserved != 31 )
+        ( EMM_Pages_Reserved != 31 )
     )
     {
         dbg_prn("DEBUG: [%s, %d] FAILURE: EMM_Startup()\n", __FILE__, __LINE__);
@@ -764,7 +843,7 @@ void test_EMM_Load_LBX_File(void)
         dbg_prn("DEBUG: [%s, %d] g_EmmHndlNbr_VGAFILEH: %d\n", __FILE__, __LINE__, g_EmmHndlNbr_VGAFILEH);
         dbg_prn("DEBUG: [%s, %d] EmmHndlNbr_EMMDATAH: %d\n", __FILE__, __LINE__, EmmHndlNbr_EMMDATAH);
         dbg_prn("DEBUG: [%s, %d] g_EMM_Open_Handles: %d\n", __FILE__, __LINE__, g_EMM_Open_Handles);
-        dbg_prn("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
+        dbg_prn("DEBUG: [%s, %d] EMM_Pages_Reserved: %d\n", __FILE__, __LINE__, EMM_Pages_Reserved);
         exit(1);
     }
 #endif
@@ -868,7 +947,7 @@ void test_GAME_LoadMainImages(void)
     // TST_LBX_MAINSCRN_000.EMM_Logical_Page_Count: 11
     // TST_LBX_MAINSCRN_000.EMM_Handle_Number: 4
     dbg_prn("DEBUG: [%s, %d] g_EMM_Open_Handles: %u \n", __FILE__, __LINE__, g_EMM_Open_Handles);
-    dbg_prn("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d \n", __FILE__, __LINE__, g_EMM_Pages_Reserved);
+    dbg_prn("DEBUG: [%s, %d] g_EMM_Pages_Reserved: %d \n", __FILE__, __LINE__, EMM_Pages_Reserved);
     // same logic as in EMM_CheckHandleOpen()
     for ( itr_EMM_Table_Index = 0; itr_EMM_Table_Index < g_EMM_Open_Handles; itr_EMM_Table_Index++ )
     {
@@ -1087,5 +1166,55 @@ void test_FLIC_Draw_XY(void)
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Draw_XY()\n", __FILE__, __LINE__);
+#endif
+}
+
+// s08p19  void SA_Alloc_Error(int SA_Error_Number, int blocks);
+void test_SA_Error(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_SA_Error()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] Debug_Disabled: %d\n", __FILE__, __LINE__, Debug_Disabled);
+#endif
+    Debug_Disabled = 0;
+    SA_Alloc_Error(1,111);
+    Debug_Disabled = 1;
+    SA_Alloc_Error(1,111);
+    SA_Alloc_Error(2,111);
+    SA_Alloc_Error(3,111);
+    SA_Alloc_Error(4,111);
+    // DNE SA_Alloc_Error(5,0);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_SA_Error()\n", __FILE__, __LINE__);
+#endif
+}
+// s10p15  void LBX_Error(char * name, int LBX_Error_Number, int entry, int pages)
+void test_LBX_Error(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_LBX_Error()\n", __FILE__, __LINE__);
+#endif
+    LBX_Error("MAINSCRN",  1, 0, 111);
+    LBX_Error("MAINSCRN",  2, 0, 111);
+    LBX_Error("MAINSCRN",  3, 0, 111);
+    LBX_Error("MAINSCRN",  4, 0, 111);
+    LBX_Error("MAINSCRN",  5, 0, 111);
+    LBX_Error("MAINSCRN",  6, 0, 111);
+    LBX_Error("MAINSCRN",  7, 0, 111);
+    LBX_Error("MAINSCRN",  8, 0, 111);
+    LBX_Error("MAINSCRN",  9, 0, 111);
+    LBX_Error("MAINSCRN", 10, 0, 111);
+    LBX_Error("MAINSCRN", 11, 0, 111);
+    LBX_Error("MAINSCRN", 12, 0, 111);
+    LBX_Error("MAINSCRN", 13, 0, 111);
+    LBX_Error("MAINSCRN", 14, 0, 111);
+    LBX_Error("MAINSCRN", 15, 0, 111);
+    LBX_Error("MAINSCRN", 16, 0, 111);
+    // DNE LBX_Error("MAINSCRN", 17, 0, 111);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_LBX_Error()\n", __FILE__, __LINE__);
 #endif
 }

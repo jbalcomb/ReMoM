@@ -2,13 +2,6 @@
 #define MOM_DEF_H
 
 
-#define EMM_PAGES_REQUIRED 158
-#define EMM_MIN_KB 2700  // 168 pages ? 168 = 158 + (1 + 5 + 4) ?
-#define RAM_MIN_KB 583
-
-#define MOM_FONT_FILE "FONTS.LBX"
-#define GAME_FONT_FILE MOM_FONT_FILE
-
 struct CONFIG_DATA //; (sizeof=0x12, standard type)
 {
     int M_IO;
@@ -152,13 +145,13 @@ extern long g_LbxFileSize;
 extern int g_TIMER_Count_Lo;                // dseg:3CB8
 extern int g_TIMER_Count_Hi;                // dseg:3CBA
 
-extern unsigned int g_MemFreeWorst_KB;      // dseg:3CC2
-extern char *cnst_Quit_Report1;             // dseg:3CC4
-extern char *cnst_Quit_Report2;             // dseg:3CC9
-extern char *cnst_Quit_Report3;             // dseg:3CD1
-extern char *cnst_Quit_Report4;             // dseg:3CE1
-extern char *cnst_Quit_Report5;             // dseg:3CEB
-extern char *cnst_Quit_Report6;             // dseg:3CF5
+// MoX_EXIT  extern unsigned int g_MemFreeWorst_KB;      // dseg:3CC2
+// MoX_EXIT  extern char *cnst_Quit_Report1;             // dseg:3CC4
+// MoX_EXIT  extern char *cnst_Quit_Report2;             // dseg:3CC9
+// MoX_EXIT  extern char *cnst_Quit_Report3;             // dseg:3CD1
+// MoX_EXIT  extern char *cnst_Quit_Report4;             // dseg:3CE1
+// MoX_EXIT  extern char *cnst_Quit_Report5;             // dseg:3CEB
+// MoX_EXIT  extern char *cnst_Quit_Report6;             // dseg:3CF5
 
 
 extern void * gfp_TBL_Moves_Per_Tile;       // dseg:5BAC

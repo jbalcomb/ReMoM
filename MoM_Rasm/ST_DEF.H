@@ -33,7 +33,9 @@ extern unsigned int _DS;
 extern unsigned int _ES;
 #endif
 
+#ifndef __WIN32__
 static int delete = 0;
+#endif
 
 #define ST_TRUE  1
 #define ST_FALSE 0
@@ -59,7 +61,7 @@ static int delete = 0;
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 #define SWAP(x, y) (x ^= y ^= x ^= y)
 
-
+#ifndef __WIN32__
 #if !defined( __DOS_H )
 #include <DOS.H>
 #endif
@@ -72,6 +74,7 @@ static int delete = 0;
 #define MK_FP(_sgmt_,_ofst_) ( (void *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
 #define FP_SEG(_fp_) ( (unsigned int) ( (unsigned long)((void *)(_fp_)) >> 16) )
 #define FP_OFF(_fp_) ( (unsigned int) (_fp_) )
+#endif
 
 
 #define ADD_REL(_ptr_,_rel_) ( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), (FP_OFF((_ptr_)) + (_rel_)) ) )

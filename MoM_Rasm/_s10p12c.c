@@ -4,10 +4,17 @@
 
 #include "ST_LBX.H"
 
-#include "ST_EMM.H"
-#include "ST_SA.H"
+#include "ST_TYPE.H"
+#include "ST_DEF.H"
 
-// #include "STU_DBG.H"
+#include "ST_EMM.H"
+#include "Mox_EMM.H"
+#include "ST_SA.H"
+#include "MoX_SA.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_data, int RecFirst, int RecCount, int RecSize)

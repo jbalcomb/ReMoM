@@ -5,6 +5,7 @@
 #include "ST_FLIC.H"
 
 #include "ST_EMM.H"
+#include "MoX_EXIT.H"  /* Exit() */
 #include "ST_VGA.H"
 
 #include "STU_BITS.H"  /* FPEEKB(), FPEEKW(), FPEEKDW() */
@@ -116,7 +117,7 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     {
         DLOG("(fh_Shading != 0)");
         //FLIC_Draw_EMM_R(ScreenPage_X, ScreenPage_Y, sa_FLIC_Header);
-        Quit();
+        Exit("(fh_Shading != 0)");
     }
 
 

@@ -1,6 +1,12 @@
 /c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
 TST_MGC.OBJ +
+MoX_MoM.OBJ +
+MoX_DBG.OBJ +
+MoX_EMM.OBJ +
+MoX_EXIT.OBJ +
+MoX_SA.OBJ +
+MoX_QUIT.OBJ +
 STU_DBG.OBJ +
 STU_TST.OBJ +
 STU_UTIL.OBJ +
@@ -31,8 +37,6 @@ _s02p03.obj +
 _s02p05.obj +
 _s03p05c.obj +
 _s04p01c.obj +
-seg005.obj +
-seg006.obj +
 _s10p10c.obj +
 _s10p11c.obj +
 _s10p12c.obj +

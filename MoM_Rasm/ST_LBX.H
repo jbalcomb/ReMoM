@@ -386,7 +386,7 @@ extern char g_LBX_FileExtension[];              // dseg:3E9E
 /*
     LBX Globals - Unitialized
 */
-extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
+// MoX_MoM  extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
 // // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
 // // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
 // // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
@@ -462,7 +462,7 @@ void LBX_Error(char * name, int errno, int entry, int pages);
 // s10p16
 void ExtractFileBase(char * LbxFileName);
 // s10p17
-void RAM_SetMinKB(int RAM_MinKB);
+// MoX_MoM  void RAM_SetMinKB(int RAM_MinKB);
 
 
 #ifdef __cplusplus
