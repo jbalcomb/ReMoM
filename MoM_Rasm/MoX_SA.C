@@ -81,10 +81,8 @@ SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_MemBlk(nparas = %u)\n", __FILE__, __LINE__, nparas);
 // #endif
 
-    printf("(nparas*16)+16: %u\n", ((nparas*16)+16));
     // g_SAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
     g_SAMB = (SAMB_ptr) malloc( ((nparas * 16) + 16) );
-    printf("g_SAMB: %p\n", g_SAMB);
 
     if ( g_SAMB == NULL )
     {
@@ -100,7 +98,6 @@ SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 //     pSAMB_data = g_SAMB + 16;  // add 16 bytes
 // #endif
     SAMB_data = (SAMB_ptr) PTR_INC_PARAGRAPH(g_SAMB);  // add 1 paragraph / 16 bytes  // unsigned char * offset = data + 512; // same as &data[512]
-    printf("SAMB_data: %p\n", SAMB_data);
 
     //Update_MemFreeWorst_KB();
 

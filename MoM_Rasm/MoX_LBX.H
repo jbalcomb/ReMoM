@@ -1,7 +1,8 @@
 #ifndef MOX_LBX_H
 #define MOX_LBX_H
 
-#include "MoX_TYPE.H"  /* SAMB_ptr */
+#include "MoX_TYPE.H"   /* SAMB_ptr */
+#include "MoX_DEF.H"    /* GET_2B() */
 
 
 char *cnst_LBXErr_Common1 = ".LBX [entry ";                                         // MGC dseg:3EA3
@@ -41,6 +42,11 @@ char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes"; 
 #define LBX_MAGSIG 0xFEAD
 // 
 // #define LBX_TYPE_PICTURES 0
+
+#define GET_LBX_HDR_COUNT(_pLbxHeader_)     ( GET_2B((_pLbxHeader_) + 0) )
+#define GET_LBX_HDR_MAGSIG(_pLbxHeader_)    ( GET_2B((_pLbxHeader_) + 2) )
+#define GET_LBX_HDR_RESERVED(_pLbxHeader_)  ( GET_2B((_pLbxHeader_) + 4) )
+#define GET_LBX_HDR_TYPE(_pLbxHeader_)      ( GET_2B((_pLbxHeader_) + 6) )
 
 
 #ifdef __cplusplus

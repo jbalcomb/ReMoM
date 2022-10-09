@@ -2,7 +2,7 @@
 #include "MoX_TYPE.H"   /* SAMB_ptr */
 #include "MoX_DEF.H"    /* NULL */
 
-#include "MoX_LBX.H"    /* SZ_LBX_HDR_PR */
+#include "MoX_LBX.H"    /* SZ_LBX_HDR_PR; GET_LBX_HDR_COUNT(), _MAGSIG(), _TYPE(); */
 
 #include "MoX_SA.H"     /* SAMB_SIZE, SAMB_USED */
 
@@ -83,17 +83,30 @@ static void MoX_LBX_Header_Load(char * LBX_Name, int LBX_Index)
 {
     char LBX_File_Name[20];
     unsigned int LBX_MagSig;
+    unsigned char * pLbxMagSig;
 
     strcpy(g_LBX_Name, LBX_Name);
-
+    strcpy(LBX_File_Name, LBX_Name);
     strcat(LBX_File_Name, LBX_File_Extension);
+    printf("LBX_File_Name: %s\n", LBX_File_Name);
+
     g_LBX_File_Pointer = fopen(LBX_File_Name, "rb");
 
     // lbx_read_sgmt(g_LBX_Header, SZ_LBX_HDR_B, g_LBX_File_Handle);
-    fread(&g_LBX_Header, 512, 1, g_LBX_File_Pointer);
+    fread(g_LBX_Header, 512, 1, g_LBX_File_Pointer);
 
     // #define GET_LE_16(_ptr_) ( (((unsigned int)(((unsigned char _FAR *)(_ptr_))[1])) << 8) | ((unsigned int)(((unsigned char _FAR *)(_ptr_))[0])) )
-    LBX_MagSig = ( (unsigned int) ((unsigned char *)(g_LBX_Header))[3] << 8 ) | ( (unsigned int) ((unsigned char *)(g_LBX_Header))[2] );
+    // yay workie LBX_MagSig = ( (unsigned int) ((unsigned char *)(g_LBX_Header))[3] << 8 ) | ( (unsigned int) ((unsigned char *)(g_LBX_Header))[2] );
+    // yay workie LBX_MagSig = g_LBX_Header[2] | g_LBX_Header[3] << 8;
+    // LBX_MagSig = g_LBX_Header + 2 | g_LBX_Header + 3 << 8;  //  error C2296: '<<': illegal, left operand has type 'SAMB_ptr'
+    // precedence issue? << vs. | vs. +
+    // trying to shift 3 then add to g_LBX_Header?
+    // LBX_MagSig = g_LBX_Header + 2 | (g_LBX_Header + 3) << 8; // error C2296: '<<': illegal, left operand has type 'SAMB_ptr'
+    // LBX_MagSig = g_LBX_Header + 2 | *(g_LBX_Header + 3) << 8; // IDE: expression must have integral or unscoped enum typeC/C++(2140)  // compiler:  error C2296: '|': illegal, left operand has type 'SAMB_ptr'
+    // yay workie LBX_MagSig = *(g_LBX_Header + 2) | *(g_LBX_Header + 3) << 8;
+    pLbxMagSig = g_LBX_Header + 2;
+    LBX_MagSig = GET_2B(pLbxMagSig);
+    printf("LBX_MagSig: 0x%04X\n", LBX_MagSig);
 
     if ( LBX_MagSig != LBX_MAGSIG ) { LBX_Error(LBX_Name, 0x07, LBX_Index, NULL); }
 
