@@ -40,7 +40,7 @@ LDFLAGS =
 # OBJP_s34 = _s34p01c.obj+_s34p08c.obj+_s34p12c.obj+_s34p13c.obj+_s34p22c.obj+_s34p25.obj+_s34p26.obj+_s34p47.obj+_s34p49c.obj+_s34p57c.obj+_s34p65c.obj+_s34p66c.obj+_s34p67c.obj+_s34p71c.obj+_s34p72c.obj+_s34p73c.obj+_s34p76c.obj+_s34p79c.obj+_s34p81c.obj+_s34p82c.obj+_s34p83c.obj+_s34p85c.obj
 
 
-OBJ_MoX = MoX_MoM.OBJ MoX_EMM.OBJ MoX_SA.OBJ
+OBJ_MoX = MoX_MoM.OBJ MoX_EMM.OBJ MoX_EXIT.OBJ MoX_SA.OBJ MoX_QUIT.OBJ
 OBJ_STU = STU_DBG.OBJ STU_TST.OBJ STU_UTIL.OBJ STU_VGA.OBJ
 OBJ_MGC = MGC_DEF.OBJ
 OBJ_MoM = MOM_DEF.OBJ
@@ -50,9 +50,9 @@ OBJ_o60 = _o60p01c.obj _o60p02c.obj
 OBJ_s01 = seg001.obj
 OBJ_s02 = _s02p01.obj _s02p03.obj _s02p05.obj _s03p05c.obj
 OBJ_s04 = _s04p01c.obj
-OBJ_s05 = MoX_EXIT.obj
-OBJ_s06 = MoX_QUIT.obj
-OBJ_s10 = _s10p10c.obj _s10p11c.obj _s10p12c.obj _s10p13c.obj
+# OBJ_s05 = MoX_EXIT
+# OBJ_s06 = MoX_QUIT
+# OBJ_s10 = ST_LBX
 OBJ_s14 = seg014.obj
 OBJ_s15 = _s15p01.obj
 OBJ_s16 = _s16p01a.obj
@@ -77,5 +77,5 @@ all: TST.EXE
 # ovl060.obj: _o60p01c.c _o60p02c.c Why does this do nothing at all?
 # seg014.obj: seg014.C seg014.H
 
-TST.EXE: TST_MGC.OBJ $(OBJ_MoX) $(OBJ_STU) $(OBJ_MGC) $(OBJ_MoM) $(OBJ_ST) $(OBJ_o57) $(OBJ_o60) $(OBJ_s01) $(OBJ_s02) $(OBJ_s04) $(OBJ_s05) $(OBJ_s06) $(OBJ_s10) $(OBJ_s14) $(OBJ_s15) $(OBJ_s16) $(OBJ_s17) $(OBJ_s18) $(OBJ_s19) $(OBJ_s20) $(OBJ_s21) $(OBJ_s22) $(OBJ_s24) $(OBJ_s26) $(OBJ_s27) $(OBJ_s28) $(OBJ_s33) $(OBJ_s34)
+TST.EXE: TST_MGC.OBJ $(OBJ_MoX) $(OBJ_STU) $(OBJ_MGC) $(OBJ_MoM) $(OBJ_ST) $(OBJ_o57) $(OBJ_o60) $(OBJ_s01) $(OBJ_s02) $(OBJ_s04) $(OBJ_s14) $(OBJ_s15) $(OBJ_s16) $(OBJ_s17) $(OBJ_s18) $(OBJ_s19) $(OBJ_s20) $(OBJ_s21) $(OBJ_s22) $(OBJ_s24) $(OBJ_s26) $(OBJ_s27) $(OBJ_s28) $(OBJ_s33) $(OBJ_s34)
     TLINK @MK_TST.RSP

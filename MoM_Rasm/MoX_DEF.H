@@ -32,7 +32,7 @@
 #define PTR_SUB_PARAGRAPH(_ptr_,_paras_) ( (unsigned char *) MK_FP( ( FP_SEG( (_ptr_) ) - (nparas)), 0) )
 #endif
 #if defined( __WIN32__ )
-#define PTR_INC_PARAGRAPH(_ptr_) ( (unsigned char *) (_ptr_) + 16 )
+#define PTR_INC_PARAGRAPH(_ptr_) ( (unsigned char *) (_ptr_) + 16 )  // unsigned char * offset = data + 512; // same as &data[512]
 #define PTR_DEC_PARAGRAPH(_ptr_) ( (unsigned char *) (_ptr_) - 16 )
 #define PTR_ADD_PARAGRAPH(_ptr_,_paras_) ( (unsigned char *) (_ptr_) + (16 * nparas) )
 #define PTR_SUB_PARAGRAPH(_ptr_,_paras_) ( (unsigned char *) (_ptr_) - (16 * nparas) )

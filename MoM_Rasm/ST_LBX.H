@@ -4,7 +4,71 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"  /* FP_SEG(); */
 
+#include "MoX_LBX.H" /*  */
+
 #include "ST_SA.H"  /* SAMB_data, SAMB_head */
+
+
+// #define DOS_UnusedFileHandle 0xFFFF  // Warning: Constant out of range in comparison ...
+#define DOS_UnusedFileHandle -1
+#define ST_NULL 0
+
+// MoX_LBX  #define SZ_LBX_HDR_B 512
+// MoX_LBX  #define SZ_LBX_HDR_PR 32
+#define SZ_LBX_HDR_PRE_B 8
+#define SZ_LBX_HDR_OFST_B 4
+#define SZ_16K_B 16384
+#define SZ_32K_B 32768
+#define SZ_32K_PR 2048
+// MoX_LBX  #define SZ_PARAGRAPH_B 16
+
+// MoX_LBX  #define LBX_MAGSIG 0xFEAD
+
+#define LBX_TYPE_PICTURES 0
+
+
+/*
+    LBX Globals - Initialized
+*/
+extern unsigned int g_LBX_Header_Allocd;        // dseg:3E66
+extern int g_LBX_FileHandle;                    // dseg:3E68
+extern unsigned int UU_g_LBX_HdrFmtOvrRd;       // dseg:3E6A
+extern char UU_g_LBX_FilePath[];                // dseg:3E6C
+extern char g_LBX_FileExtension[];              // dseg:3E9E
+/*
+    LBX Globals - Unitialized
+*/
+// MoX_MoM  extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
+// // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
+// // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
+// // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
+
+extern unsigned int g_LBX_EntryCount;           // dseg:A5C6
+extern unsigned int UU_g_LBX_HdrFmt;            // dseg:A5C8
+extern SAMB_addr gsa_LBX_Header;             // dseg:A5CA
+extern char g_LBX_Name[];                       // dseg:A5CC
+
+// MoX_LBX  // LBX Error (initialized)
+// MoX_LBX  extern char *cnst_LBXErr_Common1;               //dseg:3EA3
+// MoX_LBX  extern char *cnst_LBXErr_Common2;               //dseg:3EB0
+// MoX_LBX  extern char *cnst_LBX_Error1;                   //dseg:3EB3
+// MoX_LBX  extern char *cnst_LBX_Error2;                   //dseg:3EC8
+// MoX_LBX  extern char *cnst_LBX_Error31;                  //dseg:3EDD
+// MoX_LBX  extern char *cnst_LBX_Error32;                  //dseg:3F05
+// MoX_LBX  extern char *cnst_LBX_Error4;                   //dseg:3F25
+// MoX_LBX  extern char *cnst_LBX_Error51;                  //dseg:3F58
+// MoX_LBX  extern char *cnst_LBX_Error52;                  //dseg:3F84
+// MoX_LBX  extern char *cnst_LBX_Error7;                   //dseg:3F8B
+// MoX_LBX  extern char *cnst_LBX_Error8;                   //dseg:3F9F
+// MoX_LBX  extern char *cnst_LBX_Error9;                   //dseg:3FBE
+// MoX_LBX  extern char *cnst_LBX_ErrorA;                   //dseg:3FDC
+// MoX_LBX  extern char *cnst_LBX_ErrorB;                   //dseg:3FFF
+// MoX_LBX  extern char *cnst_LBX_ErrorC;                   //dseg:4036
+// MoX_LBX  extern char *cnst_LBX_ErrorD;                   //dseg:405C
+// MoX_LBX  extern char *cnst_LBX_ErrorE;                   //dseg:408B
+// MoX_LBX  extern char *cnst_LBX_ErrorF1;                  //dseg:409C
+// MoX_LBX  extern char *cnst_LBX_ErrorG;                   //dseg:40A4
+// dseg:40D9 align 2
 
 
 /*
@@ -356,69 +420,6 @@
 */
 
 
-
-// #define DOS_UnusedFileHandle 0xFFFF  // Warning: Constant out of range in comparison ...
-#define DOS_UnusedFileHandle -1
-#define ST_NULL 0
-
-#define SZ_LBX_HDR_B 512
-#define SZ_LBX_HDR_PR 32
-#define SZ_LBX_HDR_PRE_B 8
-#define SZ_LBX_HDR_OFST_B 4
-#define SZ_16K_B 16384
-#define SZ_32K_B 32768
-#define SZ_32K_PR 2048
-#define SZ_PARAGRAPH_B 16
-
-#define LBX_MAGSIG 0xFEAD
-
-#define LBX_TYPE_PICTURES 0
-
-
-/*
-    LBX Globals - Initialized
-*/
-extern unsigned int g_LBX_Header_Allocd;        // dseg:3E66
-extern int g_LBX_FileHandle;                    // dseg:3E68
-extern unsigned int UU_g_LBX_HdrFmtOvrRd;       // dseg:3E6A
-extern char UU_g_LBX_FilePath[];                // dseg:3E6C
-extern char g_LBX_FileExtension[];              // dseg:3E9E
-/*
-    LBX Globals - Unitialized
-*/
-// MoX_MoM  extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
-// // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
-// // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
-// // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
-
-extern unsigned int g_LBX_EntryCount;           // dseg:A5C6
-extern unsigned int UU_g_LBX_HdrFmt;            // dseg:A5C8
-extern SAMB_addr gsa_LBX_Header;             // dseg:A5CA
-extern char g_LBX_Name[];                       // dseg:A5CC
-
-// LBX Error (initialized)
-extern char *cnst_LBXErr_Common1;               //dseg:3EA3
-extern char *cnst_LBXErr_Common2;               //dseg:3EB0
-extern char *cnst_LBX_Error1;                   //dseg:3EB3
-extern char *cnst_LBX_Error2;                   //dseg:3EC8
-extern char *cnst_LBX_Error31;                  //dseg:3EDD
-extern char *cnst_LBX_Error32;                  //dseg:3F05
-extern char *cnst_LBX_Error4;                   //dseg:3F25
-extern char *cnst_LBX_Error51;                  //dseg:3F58
-extern char *cnst_LBX_Error52;                  //dseg:3F84
-extern char *cnst_LBX_Error7;                   //dseg:3F8B
-extern char *cnst_LBX_Error8;                   //dseg:3F9F
-extern char *cnst_LBX_Error9;                   //dseg:3FBE
-extern char *cnst_LBX_ErrorA;                   //dseg:3FDC
-extern char *cnst_LBX_ErrorB;                   //dseg:3FFF
-extern char *cnst_LBX_ErrorC;                   //dseg:4036
-extern char *cnst_LBX_ErrorD;                   //dseg:405C
-extern char *cnst_LBX_ErrorE;                   //dseg:408B
-extern char *cnst_LBX_ErrorF1;                  //dseg:409C
-extern char *cnst_LBX_ErrorG;                   //dseg:40A4
-// dseg:40D9 align 2
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -438,29 +439,49 @@ void strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_of
 /*
     seg010
 */
-// _s10p01
-SAMB_addr LBXE_LoadSingle(char * LbxName, int LbxEntryIndex);
-// _s10p02
-SAMB_addr LBXE_LoadReplace(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
-// _s10p03
-SAMB_addr LBXE_LoadAppend(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
-// _s10p04
-SAMB_addr LBXR_LoadSingle(char * LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
 
-// _s10p10c.c
+// s10p01
+SAMB_addr LBXE_LoadSingle(char * LbxName, int LbxEntryIndex);
+// s10p02
+SAMB_addr LBXE_LoadReplace(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+// s10p03
+SAMB_addr LBXE_LoadAppend(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+
+// s10p04
+SAMB_addr LBXR_LoadSingle(char * LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
+// s10p05
+SAMB_addr LBXR_LoadReplace(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int RecFirst, int RecCount, int RecSize);
+// s10p06
+SAMB_addr LBXR_LoadAppend(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int RecFirst, int RecCount, int RecSize);
+
+// s10p07
+SAMB_addr LBXE_LoadSingle2(char * LbxName, int LbxEntryIndex);
+// s10p08
+SAMB_addr LBXE_LoadReplace2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+// s10p09
+SAMB_addr LBXE_LoadAppend2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+
+// s10p10
 SAMB_addr LBX_Load_Entry(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
-// _s10p11c.c
+
+// s10p11
 SAMB_addr LBX_Load_Record(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);
-// _s10p12c.c
+
+// s10p12
 SAMB_addr LBXR_DirectLoader(char * LbxName, int LbxEntry, SAMB_addr SAMB_data, int RecFirst, int RecCount, int RecSize);
 
-// _s10p13c.c
+// s10p13
 unsigned int LBX_GetEntryData(char * LbxName, int LbxEntry, unsigned long * LbxEntryOffset, unsigned long * LbxEntrySize, int LbxHdrFmt);
 
+// s10p14
+LBX_SetPath(char * LBX_Path);
+
 // s10p15
-void LBX_Error(char * name, int errno, int entry, int pages);
+// MoX_LBX  void LBX_Error(char * name, int errno, int entry, int pages);
+
 // s10p16
 void ExtractFileBase(char * LbxFileName);
+
 // s10p17
 // MoX_MoM  void RAM_SetMinKB(int RAM_MinKB);
 

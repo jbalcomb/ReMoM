@@ -89,14 +89,6 @@ struct s_SAMB  // sizeof(0x10)
 // typedef struct SAMB _SEG * SPTRMCB;
 //extern struct s_SAMB SAMB;
 typedef struct s_SAMB SAMB;
-#define SAMB_RESERVED1   0
-#define SAMB_RESERVED2   2
-#define SAMB_MEMSIG1     4
-#define SAMB_MEMSIG2     6
-#define SAMB_SIZE        8
-#define SAMB_USED       10
-#define SAMB_unknown    12
-#define SAMB_MARKED     14
 
 /*
     Near Heap

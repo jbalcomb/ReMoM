@@ -3,10 +3,24 @@
 
 #include "MoX_TYPE.H"
 
+#define SAMB_RESERVED1   0
+#define SAMB_RESERVED2   2
+#define SAMB_MEMSIG1     4
+#define SAMB_MEMSIG2     6
+#define SAMB_SIZE        8
+#define SAMB_USED       10
+#define SAMB_unknown    12
+#define SAMB_MARKED     14
+
 #define SA_MEMSIG1      0x12FA
 #define SA_MEMSIG2      0x4ECF
 
 extern SAMB_ptr pTmpSAMB;
+
+
+// #define GET_SAMB_USED(_SAMB_Head_) ( GET_LE_16((_SAMB_Head_)) )
+// #define GET_SAMB_SIZE(_SAMB_Head_) ( GET_LE_16((_SAMB_Head_)) )
+// #define SET_SAMB_USED(_SAMB_Head_) ( SET_LE_16((_SAMB_Head_),_value_) )
 
 
 #ifdef __cplusplus

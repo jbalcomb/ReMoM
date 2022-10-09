@@ -10,7 +10,6 @@ i.e. building everything in one go. You can read more in the subsection 6.1.
 |-> https://yakvi.github.io/handmade-hero-notes/html/day11.html#toc6.1
 */
 #include "mom_x64.cpp"
-#include "win32_lbx.cpp"
 
 // unsigned integers
 typedef uint8_t u8;     // 1-byte long unsigned integer

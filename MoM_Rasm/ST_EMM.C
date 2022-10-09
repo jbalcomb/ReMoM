@@ -1106,13 +1106,12 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     */
     if ( FormatType != 0 )
     {
-        EntryTableOffset = ((LbxEntry * 4) + 520);
+        EntryTableOffset = 512 + 8 + (LbxEntry * 4);
     }
     else
     {
-        EntryTableOffset = ((LbxEntry * 4) + 8);
+        EntryTableOffset = 8 + (LbxEntry * 4);
     }
-    // EntryTableOffset = (LbxEntry * 4) + ( (FormatType != 0) ? 520 : 4 );
     /*
         END: LBX Header Offset
     */

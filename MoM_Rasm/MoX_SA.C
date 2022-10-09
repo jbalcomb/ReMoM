@@ -1,7 +1,7 @@
 
 #include "MoX_SA.H"
 
-#include "MoX_TYPE.H"
+#include "MoX_TYPE.H"   /* SAMB_ptr */
 #include "MoX_DEF.H"    /* PTR_INC_PARAGRAPH() */
 
 #include "MoX_MoM.H"    /*  */
@@ -26,7 +26,7 @@
 #endif
 
 
-unsigned char * pTmpSAMB;
+SAMB_ptr g_SAMB;
 
 
 char *cnst_Alloc_Error01 = "Near Allocation too large by ";                     // dseg:3D56
@@ -75,28 +75,32 @@ char *cnst_Alloc_Error4 = " (EMM) ";                                            
 // s08p08
 SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 {
-    SAMB_ptr pSAMB_data;
+    SAMB_ptr SAMB_data;
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_MemBlk(nparas = %u)\n", __FILE__, __LINE__, nparas);
 // #endif
 
-    pTmpSAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
+    printf("(nparas*16)+16: %u\n", ((nparas*16)+16));
+    // g_SAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
+    g_SAMB = (SAMB_ptr) malloc( ((nparas * 16) + 16) );
+    printf("g_SAMB: %p\n", g_SAMB);
 
-    if ( pTmpSAMB == NULL )
+    if ( g_SAMB == NULL )
     {
         SA_Alloc_Error(0x01, nparas); // Alloc Error #1: Allocation Too Small
     }
     
 // #ifdef __DOS16__
-//     //pSAMB_data = (pTmpSAMB + 16);
-//     //pSAMB_data = MK_FP((FP_SEG(pTmpSAMB) + 1),FP_OFF(pTmpSAMB));
-//     pSAMB_data = (SAMB_ptr) MK_FP((FP_SEG(pTmpSAMB) + 1),0);  // add 1 segment/paragraph
+//     //pSAMB_data = (g_SAMB + 16);
+//     //pSAMB_data = MK_FP((FP_SEG(g_SAMB) + 1),FP_OFF(g_SAMB));
+//     pSAMB_data = (SAMB_ptr) MK_FP((FP_SEG(g_SAMB) + 1),0);  // add 1 segment/paragraph
 // #endif
 // #ifdef __WIN32__
-//     pSAMB_data = pTmpSAMB + 16;  // add 16 bytes
+//     pSAMB_data = g_SAMB + 16;  // add 16 bytes
 // #endif
-    pSAMB_data = (SAMB_ptr) PTR_INC_PARAGRAPH(pTmpSAMB);  // add 1 paragraph / 16 bytes
+    SAMB_data = (SAMB_ptr) PTR_INC_PARAGRAPH(g_SAMB);  // add 1 paragraph / 16 bytes  // unsigned char * offset = data + 512; // same as &data[512]
+    printf("SAMB_data: %p\n", SAMB_data);
 
     //Update_MemFreeWorst_KB();
 
@@ -104,7 +108,7 @@ SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 //     dlvfprintf("DEBUG: [%s, %d]: END: SA_Allocate_MemBlk(nparas = %u) { pSAMB_data = %p }\n", __FILE__, __LINE__, nparas, pSAMB_data);
 // #endif
 
-    return pSAMB_data;
+    return SAMB_data;
 }
 
 
