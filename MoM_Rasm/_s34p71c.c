@@ -5,6 +5,11 @@
 #include "ST_GUI.H"
 #include "ST_VGA.H"
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
+
 /*
     ? (some) Controls have their own draw function ?
     
@@ -24,8 +29,8 @@ void CTRL_DrawControls(void)
 
     int tmp_SI;
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: CTRL_DrawControls()\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: CTRL_DrawControls()\n", __FILE__, __LINE__);
 #endif
 
     Min_X = g_VGA_Min_X;
@@ -60,8 +65,8 @@ void CTRL_DrawControls(void)
         {
             case Ctrl_ClickButton:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
 #endif
                 FLIC_ResetFrame(gfp_CTRL_Control_Table[tmp_SI].Param5);
                 FLIC_Draw_XY(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, gfp_CTRL_Control_Table[tmp_SI].Param5);
@@ -77,85 +82,85 @@ void CTRL_DrawControls(void)
             }
             case Ctrl_ToggleButton:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_ToggleButton\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_ToggleButton\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_LockableButton:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_LockableButton\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_LockableButton\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_MStateButton:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_MStateButton\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_MStateButton\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_EditBox:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_EditBox\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_EditBox\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_ImageLabel:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_ImageLabel\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_ImageLabel\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_Slidebar:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_Slidebar\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_Slidebar\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_Label:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_Label\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_Label\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_AltString:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_AltString\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_AltString\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_ClickLink:
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_ClickLink\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickLink\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_DialogLine :
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_DialogLine\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_DialogLine\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_EditSelect :
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_EditSelect\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_EditSelect\n", __FILE__, __LINE__);
 #endif
                 break;
             }
             case Ctrl_ClickGrid :
             {
-#ifdef DEBUG
-                dlvfprintf("DEBUG: [%s, %d] case Ctrl_ClickGrid\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickGrid\n", __FILE__, __LINE__);
 #endif
                 break;
             }
@@ -205,7 +210,7 @@ void CTRL_DrawControls(void)
 Done:
     VGA_SetDrawWindow(Min_X, Min_Y, Max_X, Max_Y);
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: CTRL_DrawControls()\n", __FILE__, __LINE__);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: CTRL_DrawControls()\n", __FILE__, __LINE__);
 #endif
 }

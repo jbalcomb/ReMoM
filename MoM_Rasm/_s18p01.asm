@@ -3,8 +3,8 @@
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
-EXTRN gsa_Palette_Font_Colors:WORD
+EXTRN sa_FontStyleData:WORD
+EXTRN sa_Palette_Font_Colors:WORD
 EXTRN g_VGA_Font_Index:WORD
 EXTRN g_VGA_Font_ColorIndex1:WORD
 EXTRN g_VGA_Font_ColorIndex2:WORD
@@ -144,12 +144,12 @@ loc_1AB95:
     mov ax, [bp+Font_Color_3]
     mov [g_VGA_Font_ColorIndex3], ax
 
-    mov ax, [gsa_FontStyleData]
+    mov ax, [sa_FontStyleData]
     mov es, ax
     ;mov di, 0
     mov di, FONT_HEADER
     mov si, [bp+Font_Color_1]
-    mov ax, [gsa_Palette_Font_Colors]
+    mov ax, [sa_Palette_Font_Colors]
     mov ds, ax
 
     and si, 0Fh

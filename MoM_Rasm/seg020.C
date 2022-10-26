@@ -1,5 +1,9 @@
 // MGC seg020
 // ST_VGA.H
+// MoO2 Module: fonts
+// MoO2 Module: palette
+// MoO2 Module: palstore
+// MoO2 Module: remap
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
@@ -9,152 +13,89 @@
 #include "ST_TXT.H"
 #include "ST_VGA.H"
 
-// #include "STU_DBG.H"
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
-// s20p01
+// s20p01   VGA_LoadPalette
 // 1oom :: lbxpal.c :: void lbxpal_select(int pal_index, int first/*or -1*/, int last)
-void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
+// MoO2 Module: fonts Load_Palette
+void PAL_Load_Palette(int entry, int start_color, int end_color)
 {
     int Color_Index;
     int Color_Count;
-    // int itr_Color_Count;
-    unsigned int DstSgmt;
-    unsigned int DstOfst;
-    unsigned int SrcSgmt;
-    unsigned int SrcOfst;
-    unsigned char *fptr_DstByte;
-    unsigned char *fptr_SrcByte;
-    int itr_Color_Count;
+    byte_ptr p_Dst;
+    byte_ptr p_Src;
+    int i;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: VGA_LoadPalette(Palette_Index = %d, First_Color = %d, Last_Color = %d)\n", __FILE__, __LINE__, Palette_Index, First_Color, Last_Color);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: PAL_Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
+#endif
 
-    // ? passes in a SAMB_head, gets back a SAMB_data ?
-    // gsa_PaletteLbxEntry allocated in VGA_DAC_Init() _s14p03
-    gsa_gsa_PaletteLbxEntry = LBXE_LoadReplace(g_PaletteLbxFileName, Palette_Index+2, gsa_PaletteLbxEntry);
-                             // |-> LBX_EntryLoader(g_PaletteLbxFileName, Palette_Index+2, gsa_PaletteLbxEntry, 1, 0);
-
-//    dlvfprintf("DEBUG: [%s, %d]: gsa_gsa_PaletteLbxEntry = 0x%04X\n", __FILE__, __LINE__, gsa_gsa_PaletteLbxEntry);
-
-                                                              //                0x0000  3*256 palette / color-map
-    gsa_Palette_Font_Colors = gsa_gsa_PaletteLbxEntry +  48;  //  48 pr  768 b  0x0300  16 arrays of 16 colors
-    UU_gsa_Palette_Data     = gsa_Palette_Font_Colors +  16;  //  16 pr  256 b  0x0400  ? UnUsed ? DNE in MoO1 ?
-    gsa_Cursor_Array        = UU_gsa_Palette_Data     +  16;  //  16 pr  256 b  0x0500  16 16x16 cursor bitmap images
-    gsa_ShadingColors       = gsa_Cursor_Array        + 256;  // 256 pr 4096 b  0x1500  5,376 byte array of 24 color fractions (B-G-R-Percent)
+    // palette_data = Far_Reload(file_name = font_name, entry_num = entry+1, base_seg = palette_block)
+    sad1_PaletteLbxEntry  = (SAMB_ptr)MK_FP(LBXE_LoadReplace(font_name, entry+2, (SAMB_addr)FP_SEG(sah1_PaletteLbxEntry)),0);
+    //                                                                              //                0x0000 [  0] 3*256 palette / color-map
     
+    p_Palette_Font_Colors = PTR_ADD_PARAGRAPH(sad1_PaletteLbxEntry, 48);            //  48 pr  768 b  0x0300 [768] 16 arrays of 16 colors
+    // SM2LM  
+    sa_Palette_Font_Colors = FP_SEG(p_Palette_Font_Colors);
 
-    if ( First_Color == -1 )
+    UU_p_Palette_Data = PTR_ADD_PARAGRAPH(sad1_PaletteLbxEntry, (48 + 16));          //  16 pr  256 b  0x0400 [1024] ? UnUsed ? DNE in MoO1 ?
+    // SM2LM  
+    UU_sa_Palette_Data = FP_SEG(UU_p_Palette_Data);
+    
+    p_Cursor_Array = PTR_ADD_PARAGRAPH(sad1_PaletteLbxEntry, (48 + 16 + 16));        //  16 pr  256 b  0x0500 [1280] 16 16x16 cursor bitmap images
+    // SM2LM  
+    sa_Cursor_Array = FP_SEG(p_Cursor_Array);
+    
+    p_ShadingColors = PTR_ADD_PARAGRAPH(sad1_PaletteLbxEntry, (48 + 16 + 16 + 256)); // 256 pr 4096 b  0x1500  5,376 byte array of 24 color fractions (B-G-R-Percent)
+    // SM2LM  
+    sa_ShadingColors = FP_SEG(p_ShadingColors);
+
+    if ( start_color == -1 )
     {
         Color_Index = 0;
         Color_Count = 256;
     }
     else
     {
-        Color_Index = First_Color;
-        Color_Count = (Last_Color - First_Color) + 1;
+        Color_Index = start_color;
+        Color_Count = (end_color - start_color) + 1;
     }
 
-    // for ( itr_Color_Count = Color_Index; itr_Color_Count < Color_Count; itr_Color_Count++ )
-    // {
-    //     gsa_Palette[Color_Index + itr_Color_Count] = gsa_gsa_PaletteLbxEntrygsa_Palette[Color_Index + itr_Color_Count];
-    //     gsa_Palette[Color_Index + itr_Color_Count] = 1;
-    // }
-
-// asm push si
-// asm push di
-// asm push es
-// asm push ds
-// asm mov di, Color_Index
-// asm mov bx, di
-// asm add bx, 0x300                           //; 768
-// asm mov ax, di
-// asm shl di, 1
-// asm add di, ax
-// asm mov si, di  // SrcOfst: DstOfst: ((Color_Index * 2) + Color_Index) = (Color_Index * 3)
-// asm mov cx, Color_Count
-// asm mov ax, gsa_gsa_PaletteLbxEntry
-// asm mov ds, ax  // SrcSgmt: _DS = gsa_gsa_PaletteLbxEntry
-// asm mov dx, gsa_Palette
-// asm mov es, dx  // DstSgmt: _ES = gsa_Palette
-// Copy_Red:
-// asm lodsb
-// asm cmp al, [es:di]  // Is the /new/ color the same as the /old/ color?
-// asm jz short Copy_Green
-// asm mov byte ptr [es:bx], 1  // set PaletteFlags
-// Copy_Green:
-// asm stosb
-// asm lodsb
-// asm cmp al, [es:di]
-// asm jz short Copy_Blue
-// asm mov byte ptr [es:bx], 1  // set PaletteFlags
-// Copy_Blue:
-// asm stosb
-// asm lodsb
-// asm cmp al, [es:di]
-// asm jz short LoopColorCount
-// asm mov byte ptr [es:bx], 1  // set PaletteFlags
-// LoopColorCount:
-// asm stosb
-// asm inc bx
-// asm loop Copy_Red
-// asm pop ds
-// asm pop es
-// asm pop di
-// asm pop si
-
-/*
-    copy gsa_gsa_PaletteLbxEntry to gsa_Palette, while setting gsa_PaletteFlags
-    ? same logic/approach as s14p03 VGA_DAC_Init() ?
-    ? same logic/approach as s21p07 FLIC_LoadPalette() ?
-*/
-    DstSgmt = gsa_Palette;
-    DstOfst = (Color_Index * 3);
-    SrcSgmt = gsa_gsa_PaletteLbxEntry;  // SAMB_data Type 1, returned by LBXE_LoadReplace()
-    SrcOfst = (Color_Index * 3);
-    
-    // fptr_DstByte = (unsigned char *)MK_FP(DstSgmt, 0);
-    // fptr_SrcByte = (unsigned char *)MK_FP(SrcSgmt, 0);
-    fptr_DstByte = (unsigned char *)MK_FP(DstSgmt, DstOfst);
-    fptr_SrcByte = (unsigned char *)MK_FP(SrcSgmt, SrcOfst);
-
-    for(itr_Color_Count = 0; itr_Color_Count < (Color_Count * 3); itr_Color_Count++)
+    p_Dst = &p_Palette[(Color_Index * 3)];
+    p_Src = &sad1_PaletteLbxEntry[(Color_Index * 3)];  // Warning: Nonportable pointer conversion
+    for(i = 0; i < (Color_Count * 3); i++)
     {
-        // dlvfprintf("DEBUG: [%s, %d] fptr_SrcByte[%u]: %02X %u)\n", __FILE__, __LINE__, itr_Color_Count, fptr_SrcByte[(SrcOfst + itr_Color_Count)], fptr_SrcByte[(SrcOfst + itr_Color_Count)]);
-        // fptr_DstByte[(DstOfst + itr_Color_Count)] = fptr_SrcByte[(SrcOfst + itr_Color_Count)];
-        *fptr_DstByte++ = *fptr_SrcByte++;
+        *p_Dst++ = *p_Src++;
+        // *(p_Palette + (Color_Index * 3) + i) = *(sad1_PaletteLbxEntry + (Color_Index * 3) + i);
     }
 
+    // VGA_SetFont(0, 0, 0, 0);
 
-//    dlvfprintf("DEBUG: [%s, %d] Call: VGA_SetFont(0, 0, 0, 0)\n", __FILE__, __LINE__);
-    //VGA_SetFont(0, 0);  // argument missing in dasm
-    //HERE("VGA_SetFont(0, 0, 0, 0);");
-    //VGA_SetFont(0, 0, 0, 0);
-
-    if ( First_Color == -1 )
+    if ( start_color == -1 )
     {
-        // HERE("VGA_SetDACChanged(0, 255);");
-        VGA_SetDACChanged(0, 255);
+        PAL_Set_PaletteFlags(0, 255);
     }
     else
     {
-        // HERE("VGA_SetDACChanged(First_Color, Last_Color);");
-        VGA_SetDACChanged(First_Color, Last_Color);
+        PAL_Set_PaletteFlags(start_color, end_color);
     }
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: VGA_LoadPalette()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: PAL_Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
+#endif
+
 }
 
-// s20p05
-void VGA_SetDACChanged(int First_Color, int Last_Color)
+// s20p05   VGA_SetDACChanged()
+// MoO2 Module: palette Set_Palette_Changes()
+void PAL_Set_PaletteFlags(int start_color, int end_color)
 {
-    int itr_colors;
-
-    for ( itr_colors = First_Color; itr_colors < Last_Color; itr_colors++)
+    int i;
+    for ( i = start_color; i < end_color; i++)
     {
-        farpokeb(gsa_PaletteFlags, itr_colors, 1);
+        *(p_PaletteFlags + i) = 1;
     }
 }

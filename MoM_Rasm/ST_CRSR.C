@@ -1,18 +1,15 @@
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
-#include "ST_CRSR.H"  // Crsr_None
+#include "ST_CRSR.H"    /* Crsr_None */
 
-#include "ST_GUI.H"  // g_CRSR_Curr, g_CRSR_Prev, g_CRSR_HaveSave, g_CRSR_Save_RSP, gsa_Cursor_Array, g_RSP_Idx
-#include "ST_VGA.H"  // VRAM_BASE; g_RSP_Idx
+#include "ST_GUI.H"     /* g_CRSR_Curr, g_CRSR_Prev, g_CRSR_HaveSave, g_CRSR_Save_RSP, g_RSP_Idx */
+#include "ST_VGA.H"     /* VRAM_BASE; g_RSP_Idx, gsa_Cursor_Array */
 
-#include "STU_BITS.H"  /* FPEEKW() */
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
-// #ifdef STU_DEBUG
-// #include "STU_DBG.H"
-// #endif
-
-//#define GET_LE_16(_p_) (((word)(((byte const *)(_p_))[0])) | (((word)(((byte const *)(_p_))[1])) << 8))
 
 // #define CURSOR_W    16
 // #define CURSOR_H    16
@@ -166,7 +163,7 @@ void CR_Store_C(int CR_X, int CR_Y, int ScreenPage_Idx)
                 //*pCRSR_Save_RSP++ = FPEEKW(FP_SEG(pScreenPage),Src_Ofst);
                 // wordo = FPEEKW(FP_SEG(pScreenPage),Src_Ofst);
                 // #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
-                wordo = ((unsigned int)*((unsigned char *)pScreenPage + Src_Ofst + 0)) | (unsigned int)((unsigned int)*((unsigned char *)pScreenPage + Src_Ofst + 1) << 8);
+                wordo = ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 0) ) ) | ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 1) ) << 8 );
 
 // #ifdef STU_DEBUG
 //                 dlvfprintf("DEBUG: [%s, %d] %Fp[0x%04X (%u)][%d]: wordo: 0x%04X (%u)\n", __FILE__, __LINE__, pScreenPage, (Src_Ofst - Column_Offset), (Src_Ofst - Column_Offset), itr_plane, wordo, wordo);
@@ -377,7 +374,8 @@ void CR_Draw_C(int CR_X, int CR_Y, int ScreenPage_Idx)
 
     row_offset = (CR_X >> 2);
 
-    pSrc = (byte *)MK_FP(gsa_Cursor_Array + (16 * (g_CRSR_Curr - 1)), 0);
+    // SMLM pSrc = (byte *)MK_FP(gsa_Cursor_Array + (16 * (g_CRSR_Curr - 1)), 0);
+    pSrc = p_Cursor_Array + (SZ_PARAGRAPH_B * (16 * (g_CRSR_Curr - 1)));
     Src_Ofst = 0;
 
     pDst = (byte *)MK_FP((VRAM_BASE + ((ScreenPage_Idx - g_RSP_Idx) * 4) + (CR_Y * 5)), 0);

@@ -4,8 +4,6 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"  /* FP_SEG(); */
 
-#include "MoX_LBX.H" /*  */
-
 #include "ST_SA.H"  /* SAMB_data, SAMB_head */
 
 
@@ -13,16 +11,16 @@
 #define DOS_UnusedFileHandle -1
 #define ST_NULL 0
 
-// MoX_LBX  #define SZ_LBX_HDR_B 512
-// MoX_LBX  #define SZ_LBX_HDR_PR 32
+#define SZ_LBX_HDR_B 512
+#define SZ_LBX_HDR_PR 32
 #define SZ_LBX_HDR_PRE_B 8
 #define SZ_LBX_HDR_OFST_B 4
 #define SZ_16K_B 16384
 #define SZ_32K_B 32768
 #define SZ_32K_PR 2048
-// MoX_LBX  #define SZ_PARAGRAPH_B 16
+#define SZ_PARAGRAPH_B 16
 
-// MoX_LBX  #define LBX_MAGSIG 0xFEAD
+#define LBX_MAGSIG 0xFEAD
 
 #define LBX_TYPE_PICTURES 0
 
@@ -34,11 +32,11 @@ extern unsigned int g_LBX_Header_Allocd;        // dseg:3E66
 extern int g_LBX_FileHandle;                    // dseg:3E68
 extern unsigned int UU_g_LBX_HdrFmtOvrRd;       // dseg:3E6A
 extern char UU_g_LBX_FilePath[];                // dseg:3E6C
-extern char g_LBX_FileExtension[];              // dseg:3E9E
+extern char LBX_File_Extension[];              // dseg:3E9E
 /*
     LBX Globals - Unitialized
 */
-// MoX_MoM  extern unsigned int RAM_Min_KB;                   // MGC dseg:A5C4  ; set to 583 in _main
+extern unsigned int RAM_Min_KB;                 // MGC dseg:A5C4  ; set to 583 in _main
 // // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
 // // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
 // // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
@@ -142,7 +140,7 @@ extern char g_LBX_Name[];                       // dseg:A5CC
     EmmHndl = EMM_CheckHandleOpen(EmmHndlNm); \
     if ( EmmHndl == ST_FAILURE ) \
     { \
-        goto Exit; \
+        goto Done; \
     } \
 }
 
@@ -189,7 +187,7 @@ extern char g_LBX_Name[];                       // dseg:A5CC
     DataSize_Bytes = DataOffset_End - DataOffset_Begin; \
     if ( !(DataSize_Bytes > 0) ) \
     { \
-        goto Exit; \
+        goto Done; \
     } \
 }
 /*
@@ -442,24 +440,30 @@ void strcpyfar(unsigned int dst_ofst, unsigned int dst_sgmt, unsigned int src_of
 
 // s10p01
 SAMB_addr LBXE_LoadSingle(char * LbxName, int LbxEntryIndex);
+SAMB_ptr LBXE_LoadSingle_LM(char * LbxName, int LbxEntryIndex);
 // s10p02
 SAMB_addr LBXE_LoadReplace(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+SAMB_ptr LBXE_LoadReplace_LM(char * LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head);
 // s10p03
 SAMB_addr LBXE_LoadAppend(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+SAMB_ptr LBXE_LoadAppend_LM(char * LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head);
 
 // s10p04
 SAMB_addr LBXR_LoadSingle(char * LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
+SAMB_ptr LBXR_LoadSingle_LM(char * LbxName, int LbxEntryIndex, int RecFirst, int RecCount, int RecSize);
 // s10p05
 SAMB_addr LBXR_LoadReplace(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int RecFirst, int RecCount, int RecSize);
+SAMB_ptr LBXR_LoadReplace_LM(char * LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head, int RecFirst, int RecCount, int RecSize);
 // s10p06
 SAMB_addr LBXR_LoadAppend(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int RecFirst, int RecCount, int RecSize);
+SAMB_ptr LBXR_LoadAppend_LM(char * LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head, int RecFirst, int RecCount, int RecSize);
 
-// s10p07
-SAMB_addr LBXE_LoadSingle2(char * LbxName, int LbxEntryIndex);
-// s10p08
-SAMB_addr LBXE_LoadReplace2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
-// s10p09
-SAMB_addr LBXE_LoadAppend2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+// UU // s10p07
+// UU SAMB_addr UU_LBXE_LoadSingle2(char * LbxName, int LbxEntryIndex);
+// UU // s10p08
+// UU SAMB_addr UU_LBXE_LoadReplace2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
+// UU // s10p09
+// UU SAMB_addr UU_LBXE_LoadAppend2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
 
 // s10p10
 SAMB_addr LBX_Load_Entry(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
@@ -474,16 +478,16 @@ SAMB_addr LBXR_DirectLoader(char * LbxName, int LbxEntry, SAMB_addr SAMB_data, i
 unsigned int LBX_GetEntryData(char * LbxName, int LbxEntry, unsigned long * LbxEntryOffset, unsigned long * LbxEntrySize, int LbxHdrFmt);
 
 // s10p14
-LBX_SetPath(char * LBX_Path);
+// LBX_SetPath(char * LBX_Path);
 
 // s10p15
-// MoX_LBX  void LBX_Error(char * name, int errno, int entry, int pages);
+void LBX_Error(char * name, int errno, int entry, int pages);
 
 // s10p16
 void ExtractFileBase(char * LbxFileName);
 
 // s10p17
-// MoX_MoM  void RAM_SetMinKB(int RAM_MinKB);
+void RAM_SetMinKB(int RAM_MinKB);
 
 
 #ifdef __cplusplus

@@ -6,11 +6,10 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
-#include "ST_EMM.H"
-#include "MoX_EMM.H"    /* EMM_Pages_Reserved */
+#include "ST_EMM.H"     /* EMM_Pages_Reserved */
 #include "ST_FLIC.H"  /* s_FLIC_HDR */
 #include "ST_SA.H"  /* SAMB_head, SAMB_data, SAMB_addr, SAMB_ptr, etc. */
-#include "ST_VGA.H"  /* gsa_Palette, etc. */
+#include "ST_VGA.H"  /* p_Palette, etc. */
 
 // #include "STU_DBG.H"
 #include "STU_TST.H"
@@ -314,12 +313,12 @@ int validate_EMM_Startup(void)
     return test_status;
 }
 
-int validate_VGA_DAC_Init(void)
+int validate_Load_Font_File(void)
 {
     int test_status;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_VGA_DAC_Init()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_Load_Font_File()\n", __FILE__, __LINE__);
 #endif
 
     test_status = 0;  // TEST_UNDEFINED
@@ -332,7 +331,7 @@ int validate_VGA_DAC_Init(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: validate_VGA_DAC_Init( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
+    dbg_prn("DEBUG: [%s, %d] END: validate_Load_Font_File( test_status = %s)\n", __FILE__, __LINE__, (test_status == 1 ? "TEST_SUCCESS" : "TEST_FAILURE"));
 #endif
 
     return test_status;
@@ -356,10 +355,10 @@ int validate_Palette_0(void)
 
     for ( itr_Palette = 0; itr_Palette < 256; itr_Palette++)
     {
-        if ( *((BYTE *)(gsa_Palette + itr_Palette)) != 0 )
+        if ( *(p_Palette + itr_Palette) != 0 )
         {
-            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_Palette + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
-            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_Palette[%d]: 0x%02X;\n", __FILE__, __LINE__, itr_Palette, *((BYTE *)(gsa_Palette + itr_Palette)));
+            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *(p_Palette + itr_Palette) != 0 )\n", __FILE__, __LINE__);
+            dbg_prn("DEBUG: [%s, %d] FAILURE: p_Palette[%d]: 0x%02X;\n", __FILE__, __LINE__, itr_Palette, *(p_Palette + itr_Palette));
             goto Failure;
         }
     }
@@ -405,7 +404,7 @@ int validate_Palette_M00(void)
     for ( itr_Palette = 0; itr_Palette < 256; itr_Palette++)
     {
         fread(&baito1, 1, 1, fp);
-        baito2 = *((BYTE *) MK_FP(gsa_Palette, itr_Palette));
+        baito2 = *(p_Palette + itr_Palette);
         // dbg_prn("DEBUG: [%s, %d]: baito:  0x%02X  0x%02X\n", __FILE__, __LINE__, baito1, baito2);
         if( baito2 != baito1 )
         {
@@ -431,7 +430,6 @@ Done:
 int validate_PaletteFlags_1(void)
 {
     int itr_PaletteFlags;
-    BYTE * pPaletteFlags;
     int test_status;
     
 #ifdef STU_DEBUG
@@ -440,16 +438,12 @@ int validate_PaletteFlags_1(void)
 
     test_status = 0;  // TEST_UNDEFINED
 
-    dbg_prn("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
-    pPaletteFlags = (BYTE *)MK_FP(gsa_PaletteFlags,0);
-    dbg_prn("DEBUG: [%s, %d] pPaletteFlags: %p\n", __FILE__, __LINE__, pPaletteFlags);
-
     for ( itr_PaletteFlags = 0; itr_PaletteFlags < 256; itr_PaletteFlags++)
     {
-        if ( *(pPaletteFlags + itr_PaletteFlags) != 1 )
+        if ( *(p_PaletteFlags + itr_PaletteFlags) != 1 )
         {
-            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
-            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(pPaletteFlags + itr_PaletteFlags));
+            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *(p_PaletteFlags + itr_PaletteFlags) != 1 )\n", __FILE__, __LINE__);
+            dbg_prn("DEBUG: [%s, %d] FAILURE: p_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(p_PaletteFlags + itr_PaletteFlags));
             goto Failure;
         }
     }
@@ -471,7 +465,6 @@ Done:
 int validate_PaletteFlags_M00(void)
 {
     int itr_PaletteFlags;
-    BYTE * pPaletteFlags;
     int test_status;
     
 #ifdef STU_DEBUG
@@ -480,16 +473,12 @@ int validate_PaletteFlags_M00(void)
 
     test_status = 0;  // TEST_UNDEFINED
 
-    dbg_prn("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
-    pPaletteFlags = (BYTE *)MK_FP(gsa_PaletteFlags,0);
-    dbg_prn("DEBUG: [%s, %d] pPaletteFlags: %p\n", __FILE__, __LINE__, pPaletteFlags);
-
     for(itr_PaletteFlags = 0; itr_PaletteFlags < 256; itr_PaletteFlags++)
     {
-        if( *(pPaletteFlags + itr_PaletteFlags) != 1 )
+        if( *(p_PaletteFlags + itr_PaletteFlags) != 1 )
         {
-            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *((BYTE *)(gsa_PaletteFlags + itr_PaletteFlags)) != 1 )\n", __FILE__, __LINE__);
-            dbg_prn("DEBUG: [%s, %d] FAILURE: gsa_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(pPaletteFlags + itr_PaletteFlags));
+            dbg_prn("DEBUG: [%s, %d] FAILURE: ( *(p_PaletteFlags + itr_PaletteFlags) != 1 )\n", __FILE__, __LINE__);
+            dbg_prn("DEBUG: [%s, %d] FAILURE: p_PaletteFlags: 0x%02X;\n", __FILE__, __LINE__, *(p_PaletteFlags + itr_PaletteFlags));
             goto Failure;
         }
     }
@@ -532,7 +521,7 @@ int validate_PaletteLbxEntry(void)
 
 }
 
-int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
+int validate_PaletteLbxEntry_2(SAMB_ptr sad1_PaletteLbxEntry)
 {
     int test_status;
     FILE * fp;
@@ -541,7 +530,7 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     int itr_PaletteLbxEntry;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_PaletteLbxEntry_2( sad1_PaletteLbxEntry = 0x%04X)\n", __FILE__, __LINE__, sad1_PaletteLbxEntry);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: validate_PaletteLbxEntry_2( sad1_PaletteLbxEntry = %p)\n", __FILE__, __LINE__, sad1_PaletteLbxEntry);
 #endif
 
     test_status = 0;  // TEST_UNDEFINED
@@ -560,7 +549,7 @@ int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry)
     while(itr_PaletteLbxEntry < 5472)
     {
         fread(&baito1, 1, 1, fp);
-        baito2 = *((unsigned char *) MK_FP(sad1_PaletteLbxEntry, itr_PaletteLbxEntry));
+        baito2 = *(sad1_PaletteLbxEntry + itr_PaletteLbxEntry);
         // dbg_prn("DEBUG: [%s, %d]: baito:  0x%02X  0x%02X\n", __FILE__, __LINE__, baito1, baito2);
 
         if( baito2 != baito1 )

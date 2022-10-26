@@ -1,19 +1,27 @@
-// _s27p03c.c  FLIC_Draw_EMM_C
+// ~== ST_FLIC
+// seg027
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
 #include "ST_FLIC.H"
 
 #include "ST_EMM.H"
-#include "MoX_EXIT.H"  /* Exit() */
+#include "ST_EXIT.H"  /* Exit() */
+#include "ST_SA.H"  /* SAMB_addr; farpokew(); */
 #include "ST_VGA.H"
 
-#include "STU_BITS.H"  /* FPEEKB(), FPEEKW(), FPEEKDW() */
+// #include "STU_BITS.H"   /* fh_FrameDataOffset = FPEEKDW(); fh_Shading = FPEEKB() */
+#define FPEEKB( _sgmt_,_ofst_) ( *(( byte _FAR *)MK_FP((_sgmt_),(_ofst_))) )
+// NIU #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
+#define FPEEKDW(_sgmt_,_ofst_) ( *((dword _FAR *)MK_FP((_sgmt_),(_ofst_))) )
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
+
+
+// s27p03
 /*
     Column-Wise
 
@@ -29,7 +37,6 @@ Part 2:
     fp_DstSgmt is VRAM
 
 */
-
 // void draw_flic_frame(byte * src_buff, byte * dst_buff, word width, byte mask)
 void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Header, int Frame_Index)
 {
@@ -37,6 +44,8 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     union  REGS  outregs;
     struct SREGS segregs;
     // int result;
+    SAMB_ptr fp_FLIC_Header;
+    unsigned char * fp_FLIC;
     word fh_Width;
     byte fh_EmmHandleNumber;
     byte fh_EmmLogicalPageIndex;
@@ -47,6 +56,7 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     dword fh_FrameDataOffset0;
     dword fh_FrameDataOffset1;
     dword fh_FrameDataSize;
+    // unsigned char * fp_FlicHeader_Shading;
     byte fh_Shading;
     byte * fp_SrcSgmt;  // EMM_PFBA           : 0
     byte * fp_DstSgmt;  // VRAM + Row Offset  : 0
@@ -79,14 +89,22 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
         ║                                                                  ╔══╝
         ╚══════════════════════════════════════════════════════════════════╝ */
 
-    fh_Width = FPEEKW(sa_FLIC_Header, 0x00);                 // FlicHdr_Width                MAINSCRN_LBX_000,0: 320     40 01
-    fh_EmmHandleNumber = FPEEKB(sa_FLIC_Header, 0x0A);       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6       06
-    fh_EmmLogicalPageIndex = FPEEKB(sa_FLIC_Header, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
-    fh_EmmLogicalPageOffset = FPEEKW(sa_FLIC_Header, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
+    fp_FLIC_Header = (SAMB_ptr) MK_FP(sa_FLIC_Header,0);
+
+    // fh_Width = FPEEKW(sa_FLIC_Header, 0x00);                 // FlicHdr_Width                MAINSCRN_LBX_000,0: 320     40 01
+    // fh_EmmHandleNumber = FPEEKB(sa_FLIC_Header, 0x0A);       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6       06
+    // fh_EmmLogicalPageIndex = FPEEKB(sa_FLIC_Header, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
+    // fh_EmmLogicalPageOffset = FPEEKW(sa_FLIC_Header, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
+    fh_Width = FLIC_Get_Width(fp_FLIC_Header);
+    fh_EmmHandleNumber = FLIC_Get_EmmHandleNumber(fp_FLIC_Header);
+    fh_EmmLogicalPageIndex = FLIC_Get_EmmLogicalPageIndex(fp_FLIC_Header);
+    fh_EmmLogicalPageOffset = FLIC_Get_EmmLogicalPageOffset(fp_FLIC_Header);
 
     EMM_MapMulti4(fh_EmmLogicalPageIndex, fh_EmmHandleNumber);
 
     fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
+    // fp_FLIC = (unsigned char *) MK_FP(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset);
+    // fh_FrameDataOffset = FLIC_Get_FrameDataOffset(fp_FLIC, Frame_Index);
 
     tmp_EmmPage = fh_EmmLogicalPageIndex  + ( (fh_FrameDataOffset + 1) / 16384 );
     tmp_EmmOfst = fh_EmmLogicalPageOffset + ( (fh_FrameDataOffset + 1) % 16384 );
@@ -98,6 +116,10 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     }
 
     fh_Shading = FPEEKB(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset + FlicHdr_Shading);
+    // // // fh_Shading = FLIC_Get_Shading(fp_FLIC);
+    // // fh_Shading = fp_FLIC[17];
+    // fp_FlicHeader_Shading = (unsigned char *)MK_FP(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + FlicHdr_Shading));
+    // fh_Shading = *fp_FlicHeader_Shading;
 
     inregs.x.dx = fh_EmmHandleNumber;
     inregs.x.bx = tmp_EmmPage;

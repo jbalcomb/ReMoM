@@ -10,7 +10,7 @@ EXTRN EMM_PageFrameBaseAddress:WORD
 EXTRN gsa_DSP_Addr:WORD
 ;VGA_WriteMapMasks3
 ;EXTRN g_VGA_WriteMapMasks:WORD
-EXTRN gsa_ReplacementColors:WORD
+EXTRN sa_ReplacementColors:WORD
 
 EXTRN EMM_MapMulti4:PROC
 
@@ -384,7 +384,7 @@ loc_1E97E:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
                                             ; each 256 byte (100h) block represents a different entry
                                             ;
                                             ; within a block, every byte contains a color index
@@ -464,7 +464,7 @@ loc_1E9FA:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
                                             ; each 256 byte (100h) block represents a different entry
                                             ;
                                             ; within a block, every byte contains a color index
@@ -525,7 +525,7 @@ loc_1EA54:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors]         ; 180h LBX_Alloc_Space paragraphs
                                             ; each 256 byte (100h) block represents a different entry
                                             ;
                                             ; within a block, every byte contains a color index
@@ -1065,7 +1065,7 @@ loc_1ED5F:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
     ; each 256 byte (100h) block represents a different entry
     ;
     ; within a block, every byte contains a color index
@@ -1139,7 +1139,7 @@ loc_1EDD7:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
     ; each 256 byte (100h) block represents a different entry
     ;
     ; within a block, every byte contains a color index
@@ -1197,7 +1197,7 @@ loc_1EE31:
     shl si, 1
     shl si, 1
     shl si, 1
-    add si, [gsa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
+    add si, [sa_ReplacementColors] ; 180h LBX_Alloc_Space paragraphs
     ; each 256 byte (100h) block represents a different entry
     ;
     ; within a block, every byte contains a color index

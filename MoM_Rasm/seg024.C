@@ -1,7 +1,7 @@
 // seg024.C
 // ST_DBG
 
-#include "ST_DBG.H"
+#include "ST_DBG.H"     /* Debug_Disabled */
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
@@ -15,8 +15,6 @@
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
-
-// MoX_DBG  int Debug_Disabled = 1;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
 
 
 
@@ -266,12 +264,14 @@ void VGA_ReadScreenLine(unsigned int ScreenLine, unsigned char * Buffer)
     }
 }
 
-/*
-    s24p05  DBG_Disable()
-    MoX_DBG
-*/
+// s24p05
+void DBG_Disable(void)
+{
+    Debug_Disabled = 1;
+}
 
-/*
-    s24p06  DBG_IsDisabled()
-    MoX_DBG
-*/
+// s24p06
+int DBG_IsDisabled(void)
+{
+    return Debug_Disabled;
+}

@@ -56,6 +56,21 @@ SEE: ST_SAMB.md
 #define SA_SetUsed(samb,nparas)    { farpokew(samb, 0x0A, nparas) }
 #define SA_SetMarked(samb,nparas)  { farpokew(samb, 0x0E, nparas) }
 
+// #define SAMB_SetMemSig1(_SAMB_head_) ( SET_2B(_SAMB_head_, SA_MEMSIG1) )
+// #define SAMB_SetMemSig2(_SAMB_head_) ( SET_2B(_SAMB_head_, SA_MEMSIG2) )
+
+#define SAMB_GetMemSig1(_SAMB_head_) ( ((unsigned int)*((unsigned char *)pSAMB_head + 4)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 5) << 8) )
+
+#define SAMB_GetMemSig2(_SAMB_head_) ( ((unsigned int)*((unsigned char *)pSAMB_head + 6)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 7) << 8) )
+
+#define SAMB_SetMemSig1(_SAMB_head_)        ( *((_SAMB_head_) +  4) = ((SA_MEMSIG1) & 0xFF);  *((_SAMB_head_) +  5) = (((SA_MEMSIG1) >> 8) & 0xFF); )
+
+#define SAMB_SetMemSig2(_SAMB_head_)        ( *((_SAMB_head_) +  6) = ((SA_MEMSIG2) & 0xFF);  *((_SAMB_head_) +  7) = (((SA_MEMSIG2) >> 8) & 0xFF); )
+
+#define SAMB_SetSize(_SAMB_head_,_nparas_)  ( *((_SAMB_head_) +  8) = ((_nparas_)   & 0xFF);  *((_SAMB_head_) +  9) = (((_nparas_)   >> 8) & 0xFF); )
+
+#define SAMB_SetUsed(_SAMB_head_,_nparas_)  ( *((_SAMB_head_) + 10) = ((_nparas_)   & 0xFF);  *((_SAMB_head_) + 11) = (((_nparas_)   >> 8) & 0xFF); )
+
 
 /*
     Simtex 'SPACE ALLOC' Memory Block - Header
@@ -89,6 +104,22 @@ struct s_SAMB  // sizeof(0x10)
 // typedef struct SAMB _SEG * SPTRMCB;
 //extern struct s_SAMB SAMB;
 typedef struct s_SAMB SAMB;
+
+
+#define SAMB_RESERVED1   0
+#define SAMB_RESERVED2   2
+#define SAMB_MEMSIG1     4
+#define SAMB_MEMSIG2     6
+#define SAMB_SIZE        8
+#define SAMB_USED       10
+#define SAMB_unknown    12
+#define SAMB_MARKED     14
+
+#define SA_MEMSIG1      0x12FA
+#define SA_MEMSIG2      0x4ECF
+
+extern SAMB_ptr g_SAMB;
+
 
 /*
     Near Heap
@@ -147,14 +178,14 @@ void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);  // s
     seg008
 */
 SAMB_ptr SA_Allocate_Space(unsigned int nparas);                        // s08p07
-// MoX_SA  SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
+SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
 // unsigned int SA_Allocate_MemBlk_LbxHeader(unsigned int nparas);      // s08p08
 // unsigned int SA_Allocate_MemBlk_EntrySize(unsigned int nparas);      // s08p09
 SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
 SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
 unsigned int SA_GetFree(SAMB_ptr SAMB_head);                            // s08p15
 SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr);                                // s08p16
-// MoX_SA  void SA_Alloc_Error(int errno, int value);                              // s08p19
+void SA_Alloc_Error(int errno, int value);                              // s08p19
 
 #ifdef __cplusplus
 }

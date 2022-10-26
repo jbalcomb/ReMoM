@@ -1,7 +1,14 @@
-
-
 #ifndef SEG019_H
 #define SEG019_H
+
+
+extern unsigned int UU_TextLine_Initd;              // dseg:4318
+// ...
+extern SAMB_ptr p_TextLine_Starts;                  // dseg:A820
+extern SAMB_ptr p_TextLine_Tops;                    // dseg:A824
+extern SAMB_ptr p_TextLine_Rights;                  // dseg:A828
+extern SAMB_ptr p_TextLine_Lefts;                   // dseg:A82C
+
 
 
 #ifdef __cplusplus

@@ -83,7 +83,7 @@ int validate_Palette_M00(void);
 int validate_PaletteFlags_1(void);
 int validate_PaletteFlags_M00(void);
 int validate_PaletteLbxEntry(void);
-int validate_PaletteLbxEntry_2(SAMB_addr sad1_PaletteLbxEntry);
+int validate_PaletteLbxEntry_2(SAMB_ptr sad1_PaletteLbxEntry);
 
 // int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header);
 int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header);
@@ -93,7 +93,7 @@ int validate_MAINSCRN_LBX_EMM(void);
 
 // int validate_Hardware_Init()
 int validate_EMM_Startup(void);
-int validate_VGA_DAC_Init(void);
+int validate_Load_Font_File(void);
 // int validate_MoM_Tables_Init(6100);
 int validate_GAME_LoadMainImages();
 // int validate_GAME_Load_TERRSTAT_0();

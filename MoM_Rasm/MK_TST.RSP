@@ -1,12 +1,6 @@
 /c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
 TST_MGC.OBJ +
-MoX_MoM.OBJ +
-MoX_DBG.OBJ +
-MoX_EMM.OBJ +
-MoX_EXIT.OBJ +
-MoX_SA.OBJ +
-MoX_QUIT.OBJ +
 STU_DBG.OBJ +
 STU_TST.OBJ +
 STU_UTIL.OBJ +
@@ -18,6 +12,7 @@ ST_CRSR.OBJ +
 ST_CTRL.OBJ +
 ST_DBG.OBJ +
 ST_EMM.OBJ +
+ST_EXIT.OBJ +
 ST_FLIC.OBJ +
 ST_GUI.OBJ +
 ST_HLP.OBJ +
@@ -27,6 +22,7 @@ ST_SCRN.OBJ +
 ST_SND.OBJ +
 ST_TXT.OBJ +
 ST_TYPE.OBJ +
+ST_QUIT.OBJ +
 ST_VGA.OBJ +
 _o57p01c.obj +
 _o60p01c.obj +
@@ -67,14 +63,10 @@ _s26p04a.obj +
 _s26p05.obj +
 _s26p06.obj +
 _s26p07.obj +
+seg027.obj +
 _s27.obj +
 _s27a.obj +
-_s27p03c.obj +
 seg028.obj +
-_s28p02a.obj +
-_s28p14c.obj +
-_s28p15a.obj +
-_s28p16c.obj +
 _s33p01c.obj +
 _s33p02.obj +
 _s33p03c.obj +

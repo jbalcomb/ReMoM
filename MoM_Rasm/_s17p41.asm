@@ -3,7 +3,7 @@ TITLE _s17p41.asm VGA_FontColor3Toggle
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 
 EXTRN farpeekb:PROC
 EXTRN VGA_FontColorSelect:PROC
@@ -24,7 +24,7 @@ proc VGA_FontColor3Toggle
     ;mov ax, FONT_HEADER.Color_Index
     mov ax, 14h  ; 14h 20d  FONT_HEADER.Color_Index
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpeekb
     pop cx
     pop cx

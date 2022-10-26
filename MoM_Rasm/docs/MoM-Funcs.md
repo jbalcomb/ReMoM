@@ -185,13 +185,13 @@ C_GetFileSize(const char *filename)
 []_s04p01c.c    DISK_FileFind               int __cdecl __far DISK_FileFind(char *FileName_Ptr, char *Read_Buffer)
 
 ##### seg005    MOM_DEF.H  ? ~== ST_EXIT/QUIT.C/.H ?
-MoX_EXIT
+ST_EXIT
 s05p01      Quit_MemBug                                                                 GAME_QuitWithReport
 s05p02      Quit                        void Quit(char *quitmsg);                       GAME_QuitProgram
 s05p05      RAM_Update_WorstFreeBlock_KB
 
 ##### seg006    MOM_DEF.H   (4-6 ASM)
-MoX_QUIT
+ST_QUIT
 _s06p01c.c      VGA_SetTextMode             void VGA_SetTextMode(void);
 _s06p02c.c      QuitToDOS                   void QuitToDOS(char *quitmsg);                  DOS_QuitWithMsg
 _s06p04c.c      dos_memfree_kb              unsigned int dos_memfree_pages(void);           RAM_GetFreeBlockSize_KB
@@ -273,7 +273,7 @@ s13p32          EMM_BuildEmmErrStr
 ##### MGC  seg014  WZD  seg014
 seg014.C/H  (MOM_DEF.H)
 s14p01      Hardware_Init               int Hardware_Init(...);
-s14p03      VGA_DAC_Init                void VGA_DAC_Init(char *PaletteLbxFileName);
+s14p03      Load_Font_File              void Load_Font_File(char *font_file);          VGA_DAC_Init
 s14p04      VGA_SetDrawWindow
 s14p05      VGA_ResetDrawWindow
 
@@ -315,8 +315,8 @@ s19p14         VGA_TextDraw_Init           void VGA_TextDraw_Init(void)
 
 ##### MGC seg020 WZD seg020
 seg020.H  (ST_VGA.H)
-s20p01      VGA_LoadPalette             void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color)
-s20p05      VGA_SetDACChanged           void VGA_SetDACChanged(int First_Color, int Last_Color)
+s20p01      PAL_Load_Palette            void PAL_Load_Palette(int Palette_Index, int First_Color, int Last_Color)    VGA_LoadPalette
+s20p05      PAL_Set_PaletteFlags        void PAL_Set_PaletteFlags(int First_Color, int Last_Color)                   VGA_SetDACChanged
 
 
 ##### MGC seg021 WZD seg021
@@ -382,9 +382,10 @@ _s27p05     FLIC_Draw_EMM_R_C             VGA_DrawEMSBitmap_R
 
 
 ##### seg028    ST_FLIC.H
+seg028.C/.H
 _s28p02         FLIC_Prepare           void FLIC_Prepare(int Width, int Height, unsigned int SAMB_head);       LBX_Image_Prepare
 
-_s28p11a.c      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage
+s28p11      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage
 
 LBX_IMG_DecPrepare
 LBX_IMG_LoadEMSFrame
@@ -393,9 +394,9 @@ _s22p22c.c      ST_MoveData             int ST_MoveData(unsigned int destoff, un
 
 []_s28p13         FLIC_BuildFrame     void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg)  LBX_IMG_BuildFrame
 
-_s28p14c.c      FLIC_SetFrame         void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)      LBX_IMG_SetFrame
-_s28p15         FLIC_ResetFrame       void FLIC_ResetFrame(unsigned int FlicHdr_SgmtAddr)                     LBX_IMG_ResetFrame
-_s28p16c.c      FLIC_GetCurFrame      void FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr)                    LBX_IMG_GetCurFrame
+s28p14      FLIC_SetFrame         void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)      LBX_IMG_SetFrame
+s28p15         FLIC_ResetFrame       void FLIC_ResetFrame(unsigned int FlicHdr_SgmtAddr)                     LBX_IMG_ResetFrame
+s28p16      FLIC_GetCurFrame      void FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr)                    LBX_IMG_GetCurFrame
 
 
 ##### seg029    ???

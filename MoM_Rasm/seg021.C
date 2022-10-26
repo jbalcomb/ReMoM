@@ -6,15 +6,13 @@
 #include "ST_EMM.H"
 #include "ST_FLIC.H"  /* GET_FLIC_HDR_EMM_HANDLE_NUMBER() */
 #include "ST_SA.H"
-#include "ST_VGA.H"  /* gsa_Palette  */
-
-#include "STU_BITS.H"  /* FPEEKB */
+#include "ST_VGA.H"  /* p_Palette  */
 
 #include <CONIO.H>  /* inp(), outp() */
 
-// #ifdef STU_DEBUG
+#ifdef STU_DEBUG
 #include "STU_DBG.H"
-// #endif
+#endif
 
 
 // s21p01
@@ -29,7 +27,7 @@
     LODSB
     OUT DX,AL
 
-_DS = gsa_Palette
+_DS = sa_Palette
 _SI = 0
 N/A _ES = 
 _DI = 768
@@ -37,7 +35,6 @@ _DI = 768
 // 1oom :: uipal.c :: void ui_palette_set_n(void)
 void VGA_DAC_Write(void)
 {
-    unsigned char *ptr_Palette;
     int ofstPalette;
     int ofstPaletteFlags;
     int itrVgaDacColors;
@@ -48,10 +45,6 @@ void VGA_DAC_Write(void)
 //     dbg_prn("DEBUG: [%s, %d] BEGIN: VGA_DAC_Write()\n", __FILE__, __LINE__);
 // #endif
 
-    //*ptr_Palette = (unsigned char *)MK_FP(gsa_Palette, 0);
-    //*ptr_Palette = SA_MK_FP0(gsa_Palette);
-    ptr_Palette = (unsigned char *)MK_FP(gsa_Palette, 0);
-    
     ofstPalette = 0;
     ofstPaletteFlags = 768;
     itrVgaDacColors = 0;
@@ -80,7 +73,7 @@ void VGA_DAC_Write(void)
 //        {
             //HERE("( itrVgaDacWrites != 0 )");
             ofstPalette += 3;
-            if ( ptr_Palette[ofstPaletteFlags] != 0 )
+            if ( p_Palette[ofstPaletteFlags] != 0 )
             {
                 ofstPalette -= 3;
                 //disable();  // asm CLI
@@ -88,9 +81,9 @@ void VGA_DAC_Write(void)
                 //outp( PALETTE_INDEX, 0 );
                 outportb( 0x3C8, itrVgaDacColors );
                 //outp( PALETTE_INDEX, palette[i] );
-                outportb( 0x3C9, ptr_Palette[ofstPalette++] );
-                outportb( 0x3C9, ptr_Palette[ofstPalette++] );
-                outportb( 0x3C9, ptr_Palette[ofstPalette++] );
+                outportb( 0x3C9, p_Palette[ofstPalette++] );
+                outportb( 0x3C9, p_Palette[ofstPalette++] );
+                outportb( 0x3C9, p_Palette[ofstPalette++] );
 
                 --itrVgaDacWrites;
                 //enable();  // asm STI
@@ -103,7 +96,8 @@ void VGA_DAC_Write(void)
     ofstPaletteFlags = 768;
     for ( itrPaletteFlags = 0; itrPaletteFlags < 256; itrPaletteFlags++ )
     {
-        ptr_Palette[ofstPaletteFlags++] = 0;
+        p_Palette[ofstPaletteFlags++] = 0;
+        // *(p_Palette + 768 + itrPaletteFlags) = 0;
     }
 
 // #ifdef STU_DEBUG
@@ -131,7 +125,7 @@ void FLIC_LoadPalette_Shim(SAMB_addr sa_FLIC_Header, int Frame_Index)
     struct s_FLIC_HDR * fp_FLIC_Header;
 
     SrcSgmt = sa_FLIC_Header;
-    DstSgmt = gsa_Palette;
+    DstSgmt = FP_SEG(p_Palette);
 
     fp_FLIC_Header = (struct s_FLIC_HDR *)MK_FP(sa_FLIC_Header, 0);
 
@@ -164,8 +158,6 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
     unsigned int Color_Index;
     unsigned int Color_Count;
     unsigned char _FAR * fp_FlicPalette;
-    unsigned char _FAR * fp_Palette;
-    unsigned char _FAR * fp_PaletteFlags;
     unsigned int itr_Color_Count;
     unsigned char _FAR * fp_FLIC_Palette_Header_Offset;
     unsigned char _FAR * fp_FLIC_Palette_Header;
@@ -330,37 +322,10 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
         // SrcOfst = SrcOfstBase + ffh_image_offset;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);
-    dbg_prn("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
-#endif
-    fp_Palette = (unsigned char _FAR *) MK_FP(gsa_Palette, Color_Index);
-    fp_PaletteFlags = (unsigned char _FAR *) MK_FP(gsa_PaletteFlags, Color_Index);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Palette: %Fp\n", __FILE__, __LINE__, fp_Palette);
-    dbg_prn("DEBUG: [%s, %d] fp_PaletteFlags: %Fp\n", __FILE__, __LINE__, fp_PaletteFlags);
-#endif
-
-    if ( Color_Count > 256 )
-    {
-        DLOG("( Color_Count > 256 )");
-        Debug_Log_Shutdown();
-        abort();
-    }
-
     for(itr_Color_Count = 0; itr_Color_Count < Color_Count; itr_Color_Count++)
     {
-        // *fp_Palette++ = *fp_FlicPalette++;
-        // *fp_PaletteFlags++ = 1;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] fp_FlicPalette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_FlicPalette[itr_Color_Count]);
-// #endif
-        fp_Palette[itr_Color_Count] = fp_FlicPalette[itr_Color_Count];
-        fp_PaletteFlags[itr_Color_Count] = 1;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] fp_Palette[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_Palette[itr_Color_Count]);
-//     dbg_prn("DEBUG: [%s, %d] fp_PaletteFlags[%u]: 0x%02X\n", __FILE__, __LINE__, itr_Color_Count, fp_PaletteFlags[itr_Color_Count]);
-// #endif
+        p_Palette[itr_Color_Count] = fp_FlicPalette[itr_Color_Count];
+        *(p_PaletteFlags + itr_Color_Count) = 1;
     }
 
 Done:
@@ -413,7 +378,7 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
     fp_FLIC_Header = (struct s_FLIC_HDR *)MK_FP(sa_FLIC_Header, 0);
 
     SrcSgmt = sa_FLIC_Header;
-    DstSgmt = gsa_Palette;
+    DstSgmt = FP_SEG(p_Palette);
 
     if ( fp_FLIC_Header->EMM_Handle_Number != 0 )
     {
@@ -485,7 +450,9 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
 // #endif
 
     //fh_frames_have_palettes = fptr_Src[0x06];
-    fh_frames_have_palettes = FPEEKB(SrcSgmt, SrcOfst + 0x06);
+    //fh_frames_have_palettes = FPEEKB(SrcSgmt, SrcOfst + 0x06);  // FH_Frames_Have_Palettes = FLIC_LBX_Get_Palette_PerFrame_Flag(fp_Src);
+    // GET_1B_SEG_OFS_REL(SrcSgmt, SrcOfst, FlicPalHdr_FramesHavePalettes);
+    fh_frames_have_palettes = *( (byte *) MK_FP(SrcSgmt, (SrcOfst + FlicPalHdr_FramesHavePalettes)) );
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d] fh_frames_have_palettes: %02Xh %ud\n", __FILE__, __LINE__, fh_frames_have_palettes, fh_frames_have_palettes);

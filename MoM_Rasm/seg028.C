@@ -1,14 +1,44 @@
+// ~== ST_FLIC
 // seg028
-// ST_FLIC.H
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
 #include "seg028.H"
 
 #include "ST_FLIC.H"
+#include "ST_SA.H"  /* SAMB_addr; farpokew(); */
 
-// #include "STU_DBG.H"
 
+
+// s28p02
+// ST_FLIC.H
+/*
+    XREF:
+        GAME_PrepareCredits()
+        GAME_DrawCredits()
+*/
+void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
+{
+    unsigned int FlicSize_B;
+    unsigned int Dst_Sgmt;
+    unsigned int Dst_Ofst;
+    unsigned char * pDst;
+    int itr_FlicSize_B;
+    farpokew(FlicHdr_SgmtAddr, 0x00, FlicWidth);
+    farpokew(FlicHdr_SgmtAddr, 0x02, FlicHeight);
+    farpokew(FlicHdr_SgmtAddr, 0x04, 0xDE0A);  // DE0Ah 56842d; DEh 222d; 0Ah 10d; 0ADEh 2782d;
+    farpokew(FlicHdr_SgmtAddr, 0x06, 0x00);
+    farpokew(FlicHdr_SgmtAddr, 0x08, 0x00);
+    FlicSize_B = FlicWidth * FlicHeight;
+    Dst_Sgmt = FlicHdr_SgmtAddr;
+    Dst_Ofst = 0x10;
+    pDst = (unsigned char *) MK_FP(Dst_Sgmt,Dst_Ofst);
+    for(itr_FlicSize_B = 0; itr_FlicSize_B < FlicSize_B; itr_FlicSize_B++)
+    {
+        *pDst = 0;
+    }
+
+}
 
 void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
 {
@@ -385,4 +415,39 @@ asm {
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY()\n", __FILE__, __LINE__);
 // #endif
+}
+
+// s28p14
+void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
+{
+    int Loop_Length;
+    int Loop_Frame;
+    int Frame_Count;
+    unsigned int tmp_DI;
+    int tmp_SI;
+    tmp_DI = FlicHdr_SgmtAddr;
+    tmp_SI = Frame_Index;
+    tmp_SI = (tmp_SI & 0x7FFF);
+    Frame_Count = farpeekw(tmp_DI, FlicHdr_FrameCount);  // FLIC_HDR.Frame_Count
+    Loop_Frame = farpeekw(tmp_DI, FlicHdr_LoopFrame);  // FLIC_HDR.Loop_Frame
+    Loop_Length = Frame_Count - Loop_Frame;  // e.g., 20 - 0 = 20
+    if ( !(tmp_SI < Frame_Count) )
+    {
+        tmp_SI = Loop_Frame + ( (tmp_SI - Frame_Count) % Loop_Length );
+    }
+    farpokew(tmp_DI, FlicHdr_CurrentFrame, tmp_SI);  // FLIC_HDR.Current_Frame
+}
+
+// s28p15
+void FLIC_ResetFrame(SAMB_addr FlicHdr_SgmtAddr)
+{
+    farpokew(FlicHdr_SgmtAddr, 0x04, 0x00);
+}
+
+// s28p16
+word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header)
+{
+    word Current_Frame;
+    Current_Frame = farpeekw(sa_FLIC_Header, FlicHdr_CurrentFrame);
+    return Current_Frame;
 }

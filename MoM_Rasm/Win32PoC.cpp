@@ -59,7 +59,7 @@ The size of the region, in bytes. If the lpAddress parameter is NULL, this value
 #define SZ_DOS_CONVENTIONAL_MEMORY   1048576  //   1 MB
 #define SZ_DOS_VGA_VIDEO_MEMORY       262144  // 256 KB
 #define SZ_DOS_EXPANDED_MEMORY      33554432  //  32 MB
-// sz segment, sz paragrph, sz page, sz block, ...
+// sz segment, sz paragraph, sz page, sz block, ...
 
 void DosMemEmu(void)
 {
@@ -67,9 +67,9 @@ void DosMemEmu(void)
     unsigned char * VRAM;
     unsigned char * EMM;
 
-    SRAM = (unsigned char *)VirtualAlloc(NULL, 1048576, MEM_COMMIT | MEM_RESERVE, NULL);  // 1 MB ((1024 * 1024) * 1)
+    SRAM = (unsigned char *) VirtualAlloc(NULL, SZ_DOS_CONVENTIONAL_MEMORY, MEM_COMMIT | MEM_RESERVE, NULL);  //  1 MB ((1024 * 1024) *  1)
     VRAM = SRAM + 0xA000;  // i.e., mapped into SRAM at 0xA000:0000
-    EMM = (unsigned char *)VirtualAlloc(NULL, 33554432, MEM_COMMIT | MEM_RESERVE, NULL);  // 32 MB ((1024 * 1024) * 32)
+    EMM  = (unsigned char *) VirtualAlloc(NULL, SZ_DOS_EXPANDED_MEMORY,     MEM_COMMIT | MEM_RESERVE, NULL);  // 32 MB ((1024 * 1024) * 32)
 }
 
 void main(void)

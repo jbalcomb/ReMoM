@@ -6,7 +6,7 @@ TITLE _s17p37.asm VGA_DrawString
 EXTRN g_VGA_Skip_AA_Pixels:WORD
 EXTRN g_VGA_TextDraw_Y:WORD
 EXTRN g_VGA_TextDraw_X:WORD
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 
 EXTRN farpeekw:PROC
 EXTRN VGA_DrawChar:PROC
@@ -195,7 +195,7 @@ loc_19C48:
     ;mov ax, FONT_HEADER.Line_Height
     mov ax, 44h  ; 44h 68d  FONT_HEADER.Line_Height
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpeekw
     pop cx
     pop cx

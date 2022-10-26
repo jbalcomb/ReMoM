@@ -1,17 +1,13 @@
 // TITLE _s27a.c FLIC_Draw_...
 // ST_FLIC.H
 
-#include <DOS.H>
-
-#include "ST_HEAD.H"
+#include "ST_DEF.H"
 
 #include "ST_EMM.H"
 #include "ST_FLIC.H"
 #include "ST_VGA.H"
 
-#include "STU_BITS.H"
-
-#ifdef DEBUG
+#ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
@@ -776,7 +772,8 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
     //fh_Width = *(fptr_Src_Word+0);
     //fh_Width = *( (word const *) (fptr_Src_Byte+0x00) );
     //fh_Width = *( (word  far* )MK_FP( SAMB_data_FLIC_HDR, 0x00 ));
-    fh_Width = FPEEKW(SAMB_data_FLIC_HDR, 0x00);
+    // fh_Width = FPEEKW(SAMB_data_FLIC_HDR, 0x00);
+    fh_Width = ((unsigned int)*((unsigned char *)SAMB_data_FLIC_HDR + 0x00 + 0)) | (unsigned int)((unsigned int)*((unsigned char *)SAMB_data_FLIC_HDR + 0x00 + 1) << 8);
     cseg_FlicHdrWidth = fh_Width;
         // mov ax, [bp+SAMB_data_FLIC_HDR];  mov ds, ax;  mov ax, [ds:e_FlicHdr];  mov [cs:tmpFlicHdrWidth], ax
     //fh_EmmHandleNumber = fptr_Src_Byte[10];       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6
@@ -785,20 +782,23 @@ void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int SAMB_data
     //fh_EmmHandleNumber = *(fptr_Src_Byte+10);
     //fh_EmmHandleNumber = *((byte _FAR *)MK_FP(SAMB_data_FLIC_HDR, 10));
     //fh_EmmHandleNumber = *( (byte  far* )MK_FP( SAMB_data_FLIC_HDR, 0x0A ));
-    fh_EmmHandleNumber = FPEEKB(SAMB_data_FLIC_HDR,0x0A);
-    // mov  si, 0Ah  lodsb  mov dx, ax
+    // fh_EmmHandleNumber = FPEEKB(SAMB_data_FLIC_HDR,0x0A);
+    fh_EmmHandleNumber = ((unsigned char)*((unsigned char *)SAMB_data_FLIC_HDR + 0x0A));
+        // mov  si, 0Ah  lodsb  mov dx, ax
     //fh_EmmLogicalPageIndex = fptr_Src_Byte[11];   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0
     //fh_EmmLogicalPageIndex = *( (byte const *) (fptr_Src_Byte+0x11) );
     //fh_EmmHandleNumber = *( (byte const *) ( &( (fptr_Src_Byte)[11] ) ) );
     //fh_EmmLogicalPageIndex = *( (byte  far* )MK_FP( SAMB_data_FLIC_HDR, 0x0B ));
-    fh_EmmLogicalPageIndex = FPEEKB(SAMB_data_FLIC_HDR,0x0B);
+    // fh_EmmLogicalPageIndex = FPEEKB(SAMB_data_FLIC_HDR,0x0B);
+    fh_EmmLogicalPageIndex = ((unsigned char)*((unsigned char *)SAMB_data_FLIC_HDR + 0x0B));
         // lodsb  mov bx, ax
     //fh_EmmLogicalPageOffset = fptr_Src_Word[6];   // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
     //fh_EmmLogicalPageOffset = *( (word const *) (fptr_Src_Byte+0x12) );
     //fh_EmmHandleNumber = *( (word const *) ( &( (fptr_Src_Byte)[12] ) ) );
     //fh_EmmHandleNumber = *((word _FAR *)MK_FP(SAMB_data_FLIC_HDR, 12));
     //fh_EmmLogicalPageOffset = *( (word  far* )MK_FP( SAMB_data_FLIC_HDR, 0x0C ));
-    fh_EmmLogicalPageOffset = FPEEKW(SAMB_data_FLIC_HDR,0x0C);
+    // fh_EmmLogicalPageOffset = FPEEKW(SAMB_data_FLIC_HDR,0x0C);
+    fh_EmmLogicalPageOffset = ((unsigned char)*((unsigned char *)SAMB_data_FLIC_HDR + 0x0C));
     //fh_EmmLogicalPageOffset = *(((word _FAR *)(fptr_Src))+0x0C);
         // HERE: lodsw;  mov si, ax;  BELOW: mov di, si
     tmp_EmmLogicalPageOffset = fh_EmmLogicalPageOffset;

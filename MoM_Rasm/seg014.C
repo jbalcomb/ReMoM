@@ -1,5 +1,6 @@
 // MGC  seg014  WZD  seg014
 // MOM_DEF.H
+// MoO2 Module: graphics
 
 #include "seg014.H"
 
@@ -23,8 +24,8 @@ g_PaletteLbxFileName
 gsa_FontStyleData
 gsa_BorderStyleData
 gsa_PaletteLbxEntry
-gsa_Palette
-gsa_PaletteFlags
+p_Palette
+p_PaletteFlags
 gsa_PaletteSaved
 gsa_ReplacementColors
 gsa_VGAFILEH_Header
@@ -32,7 +33,7 @@ gsa_IntensityScaleTable
 
 EMM_Startup()
 VGA_SetModeY()
-VGA_DAC_Init()
+Load_Font_File()
 SND_Init()
 IN_Init()
 RNG_TimerSeed()
@@ -50,38 +51,26 @@ farpokeb()
 
 // s14p01
 // void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
-void Hardware_Init(int argInputType, char *argFontFileName)
+void Hardware_Init(int argInputType, char * font_file)
 {
     int tmpInputType;
-
-//    dlvfprintf("DEBUG: %s %d BEGIN: Hardware_Init()\n", __FILE__, __LINE__);
-
-    // CRP_Empty_Exit_Fn2()
-
     EMM_Startup();
-
     VGA_SetModeY();
-
     if (argInputType == -1)
     {
-        VGA_DAC_Init(DEFAULT_FONTS_FILE);
+        Load_Font_File(DEFAULT_FONTS_FILE);
         //SND_Init(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);
         tmpInputType = 1;
     }
     else
     {
-        VGA_DAC_Init(argFontFileName);
+        Load_Font_File(font_file);
         //SND_Init(M_Drv, argSoundChannels, M_IO, M_IRQ, M_DMA, D_Drv, D_IO, D_IRQ, D_DMA);
         tmpInputType = argInputType;
     }
-
     IN_Init(tmpInputType);  // _s34p65
-
     RNG_TimerSeed();
-
     VGA_Set_DSP_Addr();
-
-//    dlvfprintf("DEBUG: %s %d END: Hardware_Init()\n", __FILE__, __LINE__);
 }
 
 // s14p03
@@ -102,126 +91,89 @@ Allocates memory from the far heap...
 /*
     Initialize Font, Palette, Text
 */
-void VGA_DAC_Init(char *PaletteLbxFileName)
+// MoO2 Load_Font_File()
+void Load_Font_File(char * font_file)
 {
-    unsigned int itrPalette;
-    unsigned int itrPaletteFlags;
-    void * pPaletteLbxEntry;
+    int i;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Load_Font_File(font_file = %s)\n", __FILE__, __LINE__, font_file);
 #endif
 
-    strcpy(g_PaletteLbxFileName, PaletteLbxFileName);
+    strcpy(font_name, font_file);
 
-    DLOG("CALL: gsa_FontStyleData    =  LBXE_LoadSingle(PaletteLbxFileName, 0);");
-    gsa_FontStyleData    =  LBXE_LoadSingle(PaletteLbxFileName, 0);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
-    DLOG("CALL: gsa_BorderStyleData    =  LBXE_LoadSingle(PaletteLbxFileName, 1);");
-    gsa_BorderStyleData  =  LBXE_LoadSingle(PaletteLbxFileName, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    /* MoO2 font_ptr */
+    // SM2LM  sa_FontStyleData    =  LBXE_LoadSingle(font_file, 0);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    p_FontStyleData        = LBXE_LoadSingle_LM(font_file, 0);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // SM2LM  sa_FontStyleData = FP_SEG(p_FontStyleData);
 
-    // gsa_PaletteLbxEntry = FP_SEG(SA_Allocate_Space(348));       // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
-    DLOG("CALL: pPaletteLbxEntry = SA_Allocate_Space(348);");
-    pPaletteLbxEntry = SA_Allocate_Space(348);
+    /* MoO2 DNE */
+    // SM2LM  gsa_BorderStyleData  =  LBXE_LoadSingle(font_file, 1);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    p_BorderStyleData      = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // SM2LM  sa_BorderStyleData = FP_SEG(p_BorderStyleData);
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] pPaletteLbxEntry: %p\n", __FILE__, __LINE__, pPaletteLbxEntry);
-// #endif
+    /* MoO2 palette_block */
+    sah1_PaletteLbxEntry   = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    p_Palette              = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
+    p_PaletteFlags         = p_Palette + (48 * 16);             // ~== p_PaletteFlags = &p_Palette[768];
+    // p_PaletteFlags         = PTR_ADD_PARAGRAPH(p_Palette, 48);
 
-    DLOG("gsa_PaletteLbxEntry = FP_SEG(pPaletteLbxEntry);");
-    gsa_PaletteLbxEntry = FP_SEG(pPaletteLbxEntry);
+    UU_p_PaletteSaved      = SA_Allocate_Space(48);             //  48 paragraphs =  48 * 16 bytes =  768 bytes
+    UU_sa_PaletteSaved     = FP_SEG(UU_p_PaletteSaved);
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteLbxEntry: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteLbxEntry);
-// #endif
+    p_ReplacementColors    = SA_Allocate_Space(384);            // 348 paragraphs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
+    sa_ReplacementColors   = FP_SEG(p_ReplacementColors);
 
-    // gsa_Palette = FP_SEG(SA_Allocate_Space(64));                // 64 paragraphcs = 64 * 16 bytes = 1024 bytes
-    DLOG("CALL: pPalette = SA_Allocate_Space(64);");
-    pPalette = SA_Allocate_Space(64);
-    DLOG("gsa_Palette = FP_SEG(pPalette);");
-    gsa_Palette = FP_SEG(pPalette);
-    DLOG("fp_Palette = MK_FP(gsa_Palette, 0);");
-    fp_Palette = MK_FP(gsa_Palette, 0);
+    p_VGAFILEH_Header      = SA_Allocate_Space(2);              //   2 paragraphs =   2 * 16 bytes =   32 bytes
+    sa_VGAFILEH_Header     = FP_SEG(p_VGAFILEH_Header);
+    
+    p_IntensityScaleTable  = SA_Allocate_Space(96);             //  96 paragraphs =  96 * 16 bytes = 1536 bytes / 256 = 6
+    sa_IntensityScaleTable = FP_SEG(p_IntensityScaleTable);
+    
+    TextLine_Init();
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] gsa_Palette: 0x%04X\n", __FILE__, __LINE__, gsa_Palette);
-// #endif
-
-    DLOG("gsa_PaletteFlags = gsa_Palette + 48;");
-    gsa_PaletteFlags = gsa_Palette + 48;                        // 48 paragaphs = 48 * 16 = 768 bytes
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] gsa_PaletteFlags: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteFlags);
-// #endif
-
-    DLOG("CALL: gsa_PaletteSaved = FP_SEG(SA_Allocate_Space(48));");
-    gsa_PaletteSaved = FP_SEG(SA_Allocate_Space(48));           // 48 paragraphcs = 48 * 16 bytes = 768 bytes
-
-    DLOG("gsa_ReplacementColors = FP_SEG(SA_Allocate_Space(384));");
-    gsa_ReplacementColors = FP_SEG(SA_Allocate_Space(384));     // 348 paragraphcs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
-
-    DLOG("gsa_VGAFILEH_Header = FP_SEG(SA_Allocate_Space(2));");
-    gsa_VGAFILEH_Header = FP_SEG(SA_Allocate_Space(2));         // 2 paragraphs = 2 * 16 bytes = 32 bytes
-
-    DLOG("gsa_IntensityScaleTable = FP_SEG(SA_Allocate_Space(2));");
-    gsa_IntensityScaleTable = FP_SEG(SA_Allocate_Space(2));     // 96 paragraphs = 96 * 16 = 1536 bytes / 256 = 6
-
-    DLOG("VGA_TextDraw_Init();");
-    VGA_TextDraw_Init();
-
-    for ( itrPalette = 0; itrPalette < 768; itrPalette++)
+    for ( i = 0; i < 768; i++)
     {
-        farpokeb(gsa_Palette, itrPalette, 0);
+        *(p_Palette + i) = 0;
     }
-
-    for ( itrPaletteFlags = 0; itrPaletteFlags < 256; itrPaletteFlags++)
+    for ( i = 0; i < 256; i++)
     {
-        farpokeb(gsa_PaletteFlags, itrPaletteFlags, 1);
+        *(p_PaletteFlags + i) = 0;
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: VGA_DAC_Init(PaletteLbxFileName = %s)\n", __FILE__, __LINE__, PaletteLbxFileName);
+    dbg_prn("DEBUG: [%s, %d] END: Load_Font_File(font_file = %s)\n", __FILE__, __LINE__, font_file);
 #endif
+
 }
 
 // s14p04
+// MoO2  Module: graphics  Set_Window(signed integer (2 bytes) x1, signed integer (2 bytes) y1, signed integer (2 bytes) x2, signed integer (2 bytes) y2)
 void VGA_SetDrawWindow(int Min_X, int Min_Y, int Max_X, int Max_Y)
 {
+    if ( Min_X < 0 ) { Min_X = 0; }
+    if ( Min_Y < 0 ) { Min_Y = 0; }
+    // if (x2 > screen_pixel_width) { x2 = screen_pixel_width - 1;}
+    // if (y2 > screen_pixel_height) { y2 = screen_pixel_height - 1;}
+    if ( Max_X > 319 ) { Min_X = 319; }
+    if ( Max_Y > 199 ) { Min_Y = 199; }
+    if ( Min_X > Max_X ) { SWAP(Max_X,Min_X); }
+    if ( Min_Y > Max_Y ) { SWAP(Max_Y,Min_Y); }
 
-    if ( Min_X < 0 )
-    {
-        Min_X = 0;
-    }
-    if ( Min_Y < 0 )
-    {
-        Min_Y = 0;
-    }
-    if ( Max_X > 319 )
-    {
-        Min_X = 319;
-    }
-    if ( Max_Y > 199 )
-    {
-        Min_Y = 199;
-    }
-    if ( Min_X > Max_X )
-    {
-        SWAP(Max_X,Min_X);
-    }
-    if ( Min_Y > Max_Y )
-    {
-        SWAP(Max_Y,Min_Y);
-    }
-
-    g_VGA_Min_X = Min_X;
-    g_VGA_Max_X = Max_X;
-    g_VGA_Min_Y = Min_Y;
-    g_VGA_Max_Y = Max_Y;
-
+    g_VGA_Min_X = Min_X;  // screen_window_x1
+    g_VGA_Max_X = Max_X;  // screen_window_x2
+    g_VGA_Min_Y = Min_Y;  // screen_window_y1
+    g_VGA_Max_Y = Max_Y;  // screen_window_y2
 }
 
 // s14p05
+// MoO2  Module: graphics  Reset_Window()
 void VGA_ResetDrawWindow(void)
 {
+    // screen_window_x1 = 0;
+    // screen_window_y1 = 0;
+    // screen_window_x2 = screen_pixel_width - 1;
+    // screen_window_y2 = screen_pixel_height - 1;
     g_VGA_Min_X = 0;
     g_VGA_Max_X = 319;
     g_VGA_Min_Y = 0;

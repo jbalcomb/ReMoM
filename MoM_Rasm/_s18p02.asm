@@ -3,7 +3,7 @@
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 EXTRN gsa_DSP_Addr:WORD
 
 EXTRN VGA_DrawGlyph:PROC
@@ -60,7 +60,7 @@ proc VGA_DrawChar
     add ax, [gsa_DSP_Addr]
     mov es, ax
 
-    mov ax, [gsa_FontStyleData]
+    mov ax, [sa_FontStyleData]
     mov ds, ax
     assume ds:nothing
 

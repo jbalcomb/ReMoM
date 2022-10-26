@@ -12,10 +12,10 @@ extern "C" {
 */
 
 // s20p01
-void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color);
+void PAL_Load_Palette(int Palette_Index, int First_Color, int Last_Color);
 
 // s20p05
-void VGA_SetDACChanged(int First_Color, int Last_Color);
+void PAL_Set_PaletteFlags(int First_Color, int Last_Color);
 
 
 #ifdef __cplusplus

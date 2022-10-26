@@ -6,6 +6,28 @@
 
 // ? #if defined(__DOS16__) ?
 
+#if defined(__SEGMENTED_MEMORY__)
+typedef unsigned char  far * ucp;
+typedef unsigned short far * usp;
+typedef unsigned int   far * uip;
+typedef unsigned long  far * ulp;
+typedef signed   char  far * scp;
+typedef signed   short far * ssp;
+typedef signed   int   far * sip;
+typedef signed   long  far * slp;
+#endif
+#if defined(__LINEAR_MEMORY__)
+typedef unsigned char  * ucp;
+typedef unsigned short * usp;
+typedef unsigned int   * uip;
+typedef unsigned long  * ulp;
+typedef signed   char  * scp;
+typedef signed   short * ssp;
+typedef signed   int   * sip;
+typedef signed   long  * slp;
+#endif
+
+
 
 typedef unsigned char   DB;
 typedef unsigned short  DW;
@@ -20,6 +42,7 @@ typedef unsigned int   word;  // elsewhere, this is `short` (see: root42, bracke
 typedef unsigned long  dword;
 
 
+typedef unsigned char * byte_ptr;
 typedef unsigned int sgmt_addr;
 typedef unsigned int ofst_addr;
 //typedef void seg  * sgmt_ptr;

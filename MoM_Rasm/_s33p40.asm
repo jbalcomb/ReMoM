@@ -2,7 +2,7 @@ TITLE _s33p40.asm VGA_DrawCursor_DSP
 
 .MODEL LARGE, C
 
-EXTRN gsa_Cursor_Array:WORD
+EXTRN sa_Cursor_Array:WORD
 EXTRN g_RSP_Idx:WORD
 
 .CODE
@@ -16,7 +16,7 @@ PUBLIC CRL_Draw_DSP
 proc CRL_Draw_DSP
 
     Draw_Height = word ptr -4
-    gsa_Cursor = word ptr -2
+    sa_Cursor = word ptr -2
 
     push bp
     mov  bp, sp
@@ -47,8 +47,8 @@ DoDrawCursor:
     shl dx, 1
     shl dx, 1
     shl dx, 1
-    add dx, [gsa_Cursor_Array]
-    mov [bp+gsa_Cursor], dx
+    add dx, [sa_Cursor_Array]
+    mov [bp+sa_Cursor], dx
 
     mov dx, cx  ; Y_Pos
     shl dx, 1
@@ -111,7 +111,7 @@ ItrLine_SrcSgmtOfst:
 
     mov si, 0
 
-    mov cx, [bp+gsa_Cursor]
+    mov cx, [bp+sa_Cursor]
     mov ds, cx
 
 LoopPlanes:

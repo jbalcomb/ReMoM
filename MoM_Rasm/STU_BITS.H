@@ -2,9 +2,14 @@
 #define STU_BITS_H
 
 #include "STU_TYPE.H"
-#include "ST_DEF.H"
+#include "ST_DEF.H"     /* MK_FP() */
 
-// #include "STU_BITS.H"
+
+// NOTE(JimBalcomb,20221017): SHOULD BE Not-In-Use (NIU); this has become a rag-tag pile of scraps; it's mostly in ST_DEF now, but 'See Also' BitsBites.md in the docs;
+
+
+
+
 
 
 
@@ -190,6 +195,185 @@ INCLUDE/DOS.H:#define peekb( a,b )( *( (char far* )MK_FP( (a ),( b )) ))
 #define SET_BYTE(_p_,_v_)  ( (*((byte  *)(_p_))) = (_v_) )
 #define SET_WORD(_p_,_v_)  ( (*((word  *)(_p_))) = (_v_) )
 #define SET_DWORD(_p_,_v_) ( (*((dword *)(_p_))) = (_v_) )
+
+// J:\STU\DBWD\developc\1oom-master\src\bits.h
+#define GET_LE_16(_p_) (((uint16_t)(((uint8_t const *)(_p_))[0])) | (((uint16_t)(((uint8_t const *)(_p_))[1])) << 8))
+#define GET_LE_24(_p_) (((uint32_t)GET_LE_16((_p_))) | (((uint32_t)*(((uint8_t const *)(_p_)) + 2)) << 16))
+#define GET_LE_32(_p_) (((uint32_t)GET_LE_16((_p_))) | (((uint32_t)GET_LE_16((_p_) + 2)) << 16))
+#define SET_LE_16(_p_,_v_) (((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu))
+#define SET_LE_32(_p_,_v_) (((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[3] = (((_v_) >> 24) & 0xffu))
+
+
+
+
+// Eh? Pointer vs. Address? 1oom uses address
+// #define GET_LE_16(_ptr_) ( (_ptr_[1] <<  8) |  _ptr_[0] )
+// #define GET_LE_32(_ptr_) ( (_ptr_[3] << 24) | (_ptr_[2] << 16) | (_ptr_[1] << 8) | _ptr_[0] )
+// ((unsigned int)((unsigned char *)_addr_)[1]) ... cast the address to a byte pointer, index the value, cast the value to the desired data type/size, left-shift into position
+// #define GET_LE_16(_addr_) ( (((unsigned int)((unsigned char *)(_addr_))[1]) <<  8) |  ((unsigned int)((unsigned char *)(_addr_))[0]) )
+// #define GET_LE_32(_addr_) ( (((unsigned long)((unsigned char *)(_addr_))[3]) << 24) | (((unsigned long)((unsigned char *)(_addr_))[2]) << 16) | (((unsigned long)((unsigned char *)(_addr_))[1]) <<  8) |  ((unsigned long)((unsigned char *)(_addr_))[0]) )
+// // #define FPGET_WORD(_fp_,_rel_) ( *( (word _FAR *) MK_FP( FP_SEG(_fp_), (FP_OFF(_fp_) + (_rel_)) ) ) )
+
+// //#ifdef __DOS16__
+// ? Nein, danke. ? #define FPGET_WORD(_fp_) ( *((word _FAR *)MK_FP(FP_SEG(_fp_), FP_OFF(_fp_))) )
+
+#define GET_LE_16(_ptr_) ( (((unsigned int)(((unsigned char _FAR *)(_ptr_))[1])) << 8) | ((unsigned int)(((unsigned char _FAR *)(_ptr_))[0])) )
+
+#define GET_LE_32(_ptr_) ( (((unsigned long)((unsigned char _FAR *)(_ptr_))[3]) << 24) | (((unsigned long)((unsigned char _FAR *)(_ptr_))[2]) << 16) | (((unsigned long)((unsigned char _FAR *)(_ptr_))[1]) <<  8) |  ((unsigned long)((unsigned char _FAR *)(_ptr_))[0]) )
+
+// //#endif
+
+// // J:\STU\DBWD\developc\1oom-master\src\bits.h
+// #define GET_LE_16(_p_) (((uint16_t)(((uint8_t const *)(_p_))[0])) | (((uint16_t)(((uint8_t const *)(_p_))[1])) << 8))
+// #define GET_LE_24(_p_) (((uint32_t)GET_LE_16((_p_))) | (((uint32_t)*(((uint8_t const *)(_p_)) + 2)) << 16))
+// #define GET_LE_32(_p_) (((uint32_t)GET_LE_16((_p_))) | (((uint32_t)GET_LE_16((_p_) + 2)) << 16))
+// #define SET_LE_16(_p_,_v_) (((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu))
+// #define SET_LE_32(_p_,_v_) (((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[3] = (((_v_) >> 24) & 0xffu))
+
+
+// // cast _ptr_ to (unsigned char *), index/add offset, set low byte of value with value and high byte cleared, set high byte of value with high byte shifted low and high byte cleared
+// #define SET_2B(_ptr_,_val_) ( *((_ptr_) + 1) = _val_ >> 8 )
+// // ( (uint8_t *) (_p_) )[0] = ((_v_) & 0xffu )
+// // ( (uint8_t *) (_p_) )[1] = (((_v_) >> 8) & 0xffu )
+// // `_val_ >> 8` vs. `(_val_) >> 8` :: protect _val_ from macro expansion operator precence issues
+// // `_val_ >> 8` vs. `(_val_ >> 8) & 0xFF` :: explcitly clear the high byte AFTER the shift ? because sign-bit or 1's complement platforms ?
+
+
+/*
+    HOW-TO: Access multi-byte values through a (unsigned char far *)
+
+    unsigned char far * src;
+    unsigned char baito;
+    baito = *src;
+    unsigned char far * src;
+    unsigned int wordo;
+    wordo = (unsigned int *)src;
+
+
+void lbxgfx_apply_palette(uint8_t *data)
+{
+    if (lbxgfx_has_palette(data)) {
+        uint8_t *p = lbxgfx_get_palptr(data);
+        int first = lbxgfx_get_palfirst(data);
+        int num = lbxgfx_get_palnum(data);
+        lbxpal_set_palette(p, first, num);
+    }
+}
+#define lbxgfx_get_paloffs(_data_) GET_LE_16(&((_data_)[0x0e]))
+#define lbxgfx_get_paldataoffs(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x00]))
+#define lbxgfx_get_palfirst(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x02]))
+#define lbxgfx_get_palnum(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x04]))
+#define lbxgfx_get_palptr(_data_) ((_data_) + lbxgfx_get_paldataoffs(_data_))
+...
+#define lbxgfx_get_palptr(_data_) ( (_data_) + lbxgfx_get_paldataoffs(_data_))
+#define lbxgfx_get_palptr(_data_) ( (_data_) + GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x00])) )
+#define lbxgfx_get_palptr(_data_) ( (_data_) + GET_LE_16(&( (_data_)[ GET_LE_16(&((_data_)[0x0e])) + 0x00 ] )) )
+So, ...
+    lbxgfx_get_palptr takes a pointer and returns a pointer
+    lbxgfx_get_paldataoffs takes a pointer and returns an unsigned integer
+    GET_LE_16 takes an address and returns an unsigned integer
+    GET_LE_16 takes an address, casts it to a pointer, dereferences it to get a value, and then casts that value to an unsigned integer
+
+e.g.,
+0xAD 0xFE
+LBX_Header
+LBX_Header[2] == 0xAD
+LBX_Header[3] == 0xFE
+∵ Little-Endian ∴ (unsigned int) LBX_Header[2] == 0xADFE
+0xFEAD == LBX_Header[3], LBX_Header[2]
+unsigned int is 2 bytes
+LBX_Header[2] == 0xAD == 10101101
+LBX_Header[3] == 0xFE == 11111110
+unsigned int
+00000000 00000000
+(unsigned char) LBX_Header[2] == 10101101
+(unsigned char) LBX_Header[3] == 11111110
+(unsigned int)  LBX_Header[3] == 00000000 11111110
+((unsigned int)  LBX_Header[3]) << 8 == 11111110 00000000
+(((unsigned int)  LBX_Header[3]) << 8) | ((unsigned char) LBX_Header[2]) == 11111110 10101101
+...
+byte pointer to LBX_Header
+get byte at index 3
+explicitly cast 1-byte value to 2-byte value
+left-shift the low-byte into the high-byte
+get byte at index 2
+OR the low-byte of the 2-byte value with the byte at index 2  ( 00000000 | 10101101 == 10101101)
+
+unsigned int(b[1])<<8 | unsigned int(b[0])
+
+#define GET_LE_16(_p_) (((uint16_t)(((uint8_t const *)(_p_))[0])) | (((uint16_t)(((uint8_t const *)(_p_))[1])) << 8))
+...
+static int GetLE16(const uint8_t* const data) {
+  return (data[0] << 0) | (data[1] << 8);
+}
+...
+unsigned int GET_LE_16( unsigned char * fp_Data)
+{
+    return ( (fp_Data[1] << 8) | fp_Data[0] );
+}
+#define GET_LE_16(_ptr_) ( (_ptr_[1] <<  8) |  _ptr_[0] )
+#define GET_LE_24(_ptr_) ( (_ptr_[2] << 16) | (_ptr_[1] <<  8) |  _ptr_[0] )
+#define GET_LE_32(_ptr_) ( (_ptr_[3] << 24) | (_ptr_[2] << 16) | (_ptr_[1] << 8) | _ptr_[0] )
+Eh? GTG?!?
+
+
+
+
+s21p07  FLIC_LoadPalette()
+fptr_Src = (unsigned int *)MK_FP(SrcSgmt, SrcOfst);
+fh_palette_data_offset = fptr_Src[0];  // Offset to FLIC Palette Data
+
+s20p01  VGA_LoadPalette()
+fptr_DstByte = (unsigned char *)MK_FP(DstSgmt, DstOfst);
+fptr_SrcByte = (unsigned char *)MK_FP(SrcSgmt, SrcOfst);
+for(itr_Color_Count = 0; itr_Color_Count < (Color_Count * 3); itr_Color_Count++)
+    *fptr_DstByte++ = *fptr_SrcByte++;
+
+*/
+
+// ST_SA.C
+// //#define SET_LE_16(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu) )
+// //#define SET_LE_32(_p_,_v_) ( ((uint8_t *)(_p_))[0] = ((_v_) & 0xffu), ((uint8_t *)(_p_))[1] = (((_v_) >> 8) & 0xffu), ((uint8_t *)(_p_))[2] = (((_v_) >> 16) & 0xffu), ((uint8_t *)(_p_))[3] = (((_v_) >> 24) & 0xffu))
+
+// //LBX_EntryCount = farpeekw(LBX_Header, 0);
+// // LBX_EntryCount = *((unsigned int *)LBX_Header + 0);
+// // //#define GET_LE_16(_p_) (((uint16_t)(((uint8_t const *)(_p_))[0])) | (((uint16_t)(((uint8_t const *)(_p_))[1])) << 8))
+// // LBX_EntryCount = (((uint16_t)(((uint8_t const *)(LBX_Header))[0])) | (((uint16_t)(((uint8_t const *)(LBX_Header))[1])) << 8));
+// LBX_EntryCount = ((unsigned int)*((unsigned char *)LBX_Header + 0)) | (unsigned int)((unsigned int)*((unsigned char *)LBX_Header + 1) << 8);
+
+// #define GET_LE_16(_p_) (((uint16_t)(((uint8_t const *)(_p_))[0])) | (((uint16_t)(((uint8_t const *)(_p_))[1])) << 8))
+// #define GET_LE_32(_p_) (((uint32_t)GET_LE_16((_p_))) | (((uint32_t)GET_LE_16((_p_) + 2)) << 16))
+// #define lbxgfx_get_w(_data_) GET_LE_16(&((_data_)[0x00]))
+// #define lbxgfx_get_h(_data_) GET_LE_16(&((_data_)[0x02]))
+// #define lbxgfx_get_frame(_data_) GET_LE_16(&((_data_)[0x04]))
+// #define lbxgfx_set_frame(_data_, _v_) SET_LE_16(&((_data_)[0x04]), (_v_))
+// #define lbxgfx_set_frame_0(_data_) lbxgfx_set_frame((_data_), 0)
+// #define lbxgfx_get_frames(_data_) GET_LE_16(&((_data_)[0x06]))
+// #define lbxgfx_get_frames2(_data_) GET_LE_16(&((_data_)[0x08]))
+// #define lbxgfx_get_ehandle(_data_) ((_data_)[0x0a])
+// #define lbxgfx_get_epage(_data_) ((_data_)[0x0b])
+// #define lbxgfx_set_epage(_data_, _v_) ((_data_)[0x0b] = (_v_))
+// #define lbxgfx_get_offs0c(_data_) GET_LE_16(&((_data_)[0x0c]))
+// #define lbxgfx_get_paloffs(_data_) GET_LE_16(&((_data_)[0x0e]))
+// #define lbxgfx_has_palette(_data_) (lbxgfx_get_paloffs(_data_) != 0)
+// #define lbxgfx_get_indep(_data_) ((_data_)[0x10])
+// #define lbxgfx_get_format(_data_) ((_data_)[0x11])
+// #define lbxgfx_get_paldataoffs(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x00]))
+// #define lbxgfx_get_palfirst(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x02]))
+// #define lbxgfx_get_palnum(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x04]))
+// #define lbxgfx_get_paloffs06(_data_) GET_LE_16(&((_data_)[lbxgfx_get_paloffs(_data_)+0x06]))
+// #define lbxgfx_get_palptr(_data_) ((_data_) + lbxgfx_get_paldataoffs(_data_))
+// #define lbxgfx_get_frameoffs0(_data_, _frame_) (GET_LE_32(&((_data_)[0x12 + 4 * (_frame_)])))
+// #define lbxgfx_get_frameoffs1(_data_, _frame_) (GET_LE_32(&((_data_)[0x16 + 4 * (_frame_)])))
+// #define lbxgfx_get_frameptr(_data_, _frame_) ((_data_) + lbxgfx_get_frameoffs0((_data_), (_frame_)))
+// #define lbxgfx_get_frameclearflag(_data_, _frame_) (*lbxgfx_get_frameptr((_data_), (_frame_)))
+
+
+
+
+
+
+
 
 
 // https://chromium.googlesource.com/webm/libwebp/+/v0.6.1-rc2/examples/webpinfo.c

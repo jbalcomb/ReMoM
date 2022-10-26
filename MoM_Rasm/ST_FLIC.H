@@ -367,10 +367,31 @@ FLIC_HDR.EMM_Logical_Page_Offset
                                                 // #define lbxgfx_get_format(_data_) ((_data_)[0x11])
 #define FlicHdr_FrameOffsetTable        0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
 
+#define FlicPalHdr_PaletteDataOffset    0x00
+#define FlicPalHdr_ColorIndex           0x02
+#define FlicPalHdr_ColorCount           0x04
+#define FlicPalHdr_FramesHavePalettes   0x06
+
 #define GET_FLIC_HDR_EMM_HANDLE(_ptr_)              ( (_ptr_)[0x0A] )
 #define GET_FLIC_HDR_EMM_LOGICAL_PAGE(_ptr_)        ( (_ptr_)[0x0B] )
 // #define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( (unsigned char _FAR *)MK_FP(FP_SEG((_ptr_),FP_OFF((_ptr_)) + 0x0C)) ) )
 #define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( ADD_REL((_ptr_),0x0C) ) )
+
+// takes an (unsigned char *) to a FLIC_HDR
+#define FLIC_Get_Width(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_Width) ) )
+
+#define FLIC_Get_EmmHandleNumber(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmHandleNumber)) )
+
+#define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
+
+#define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
+
+#define FLIC_Get_EmmLogicalPageOffset(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageOffset) ) )
+
+#define FLIC_Get_Shading(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_Shading)) )
+
+#define FLIC_Get_FrameDataOffset(_ptr_,_idx_)   ( GET_4B( (unsigned char *)((_ptr_) + FlicHdr_FrameOffsetTable + (4 * (_idx_))) ) )
+
 
 // #define FLIC_LBX_Get_Palette_Header_Offset(_ptr_)   ( GET_LE_16( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), ( FP_OFF((_ptr_)) + 0x0E ) ) ) )
 
@@ -536,8 +557,8 @@ void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
     seg028
 */
 
-// _s28p02a.c
-void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
+// s28p02
+// seg028.H  void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
 
 // s28p11
 // seg028.H  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
@@ -545,14 +566,14 @@ void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
 // s28p13
 //void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg);
 
-// _s28p14c.c
-void FLIC_SetFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
+// s28p14
+// seg028.H  void FLIC_SetFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
 
-// _s28p15.asm
-void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header);
+// s28p15
+// seg028.H  void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header);
 
-// _s28p16c.c
-word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header);
+// s28p16
+// seg028.H  word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header);
 
 
 #ifdef __cplusplus

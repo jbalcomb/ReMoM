@@ -6,23 +6,20 @@
 #include "ST_DEF.H"
 #include "seg001.H"
 
-#include "MOM_DEF.H"
+#include "MOM_DEF.H"    /* EMM_PAGES_REQUIRED, EMM_MIN_KB, RAM_MIN_KB, GAME_FONT_FILE; */
 #include "MGC_DEF.H"
 
-#include "MoX_MoM.H"  /*  EMM_PAGES_REQUIRED, EMM_MIN_KB, RAM_MIN_KB, GAME_FONT_FILE; RAM_SetMinKB() */
-
 #include "seg020.H"
+#include "seg028.H"     /* FLIC_Draw_XY() */
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
 #include "ST_EMM.H"
-#include "MoX_EMM.H"  /* EMM_Pages_Reserved */
-#include "MoX_EXIT.H"  /* Exit() */
+#include "ST_EXIT.H"    /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_GUI.H"
 #include "ST_HLP.H"
-#include "ST_LBX.H"
+#include "ST_LBX.H"     /* RAM_SetMinKB() */
 #include "ST_SA.H"
-#include "MoX_SA.H" /* SA_MK_FP0() */
 #include "ST_SCRN.H"
 #include "ST_TXT.H"
 #include "ST_VGA.H"
@@ -154,8 +151,8 @@ int MGC_Main(int argc, char *argv[])
     
     IN_SetEscOverride();
 
-    //VGA_LoadPalette(0, -1);  // argument missing in dasm
-    VGA_LoadPalette(0, -1, 0);
+    //PAL_Load_Palette(0, -1);  // argument missing in dasm
+    PAL_Load_Palette(0, -1, 0);
     VGA_DAC_Write();
 
     /*
@@ -191,8 +188,8 @@ int MGC_Main(int argc, char *argv[])
         }
     */
 
-    //VGA_LoadPalette(0, -1);  // argument missing in dasm
-    VGA_LoadPalette(0, -1, 0);  // EMPERATO
+    //PAL_Load_Palette(0, -1);  // argument missing in dasm
+    PAL_Load_Palette(0, -1, 0);  // EMPERATO
     VGA_DAC_Write();
 
 
@@ -522,8 +519,8 @@ int SCREEN_Menu(void)
     VGA_Set_DSP_Addr();
 
     // _s20p01a.c  ST_VGA.H
-    // //VGA_LoadPalette(2, -1);  // argument missing in dasm
-    VGA_LoadPalette(2, -1, 0); // ARCANUS - Magic Castle View
+    // //PAL_Load_Palette(2, -1);  // argument missing in dasm
+    PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
 
     // j_GAME_LoadSettings
 
@@ -940,13 +937,13 @@ void SCREEN_Menu_Draw(void)
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
 
-    // // VGA_LoadPalette(2, -1, 0);
+    // // PAL_Load_Palette(2, -1, 0);
     // // VGA_DAC_Write();
     // // STU_VGA_DAC_Dump("MENUDAC.BIN");
     // // //VGA_Set_DSP_Addr();
     // // VGA_PageFlip();
     // // DEBUG(JimBalcomb): doing all of this here does make the screen render correctly
-    // VGA_LoadPalette(2, -1, 0);
+    // PAL_Load_Palette(2, -1, 0);
     // VGA_DAC_Write();
     // DEBUG(JimBalcomb): doing just these two here does make the screen render correctly
     VGA_DAC_Write();

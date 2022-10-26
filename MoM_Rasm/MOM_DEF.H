@@ -2,6 +2,14 @@
 #define MOM_DEF_H
 
 
+#define EMM_PAGES_REQUIRED 158
+#define EMM_MIN_KB 2700  // 168 pages ? 168 = 158 + (1 + 5 + 4) ?
+#define RAM_MIN_KB 583
+
+#define MOM_FONT_FILE "FONTS.LBX"
+#define GAME_FONT_FILE MOM_FONT_FILE
+
+
 struct CONFIG_DATA //; (sizeof=0x12, standard type)
 {
     int M_IO;

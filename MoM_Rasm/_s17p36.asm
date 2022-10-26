@@ -3,7 +3,7 @@ TITLE _s17p36.asm VGA_DrawStyledString
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 EXTRN g_VGA_Outline_Color:WORD
 EXTRN g_VGA_Skip_AA_Pixels:WORD
 
@@ -46,7 +46,7 @@ proc VGA_DrawStyledString
     ;mov ax, FONT_HEADER.Outline_Style
     mov ax, 12h  ; 12h 18d  FONT_HEADER.Outline_Style
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpeekb
     pop cx
     pop cx
@@ -63,7 +63,7 @@ proc VGA_DrawStyledString
 loc_19988:
     push [g_VGA_Outline_Color]
     push [bp+Loop_Var]
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpokeb
     add sp, 6
 
@@ -280,7 +280,7 @@ loc_19B13:
     ;mov ax, FONT_HEADER.Color_Index
     mov ax, 13h  ; 13h 19d  FONT_HEADER.Color_Index
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpeekb
     pop cx
     pop cx

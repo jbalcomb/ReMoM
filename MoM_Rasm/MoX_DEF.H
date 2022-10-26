@@ -1,5 +1,5 @@
-#ifndef win32_MOM_DEF_H
-#define win32_MOM_DEF_H
+#ifndef MoX_DEF_H
+#define MoX_DEF_H
 
 
 #define ST_TRUE  1
@@ -121,4 +121,4 @@
 
 
 
-#endif /* MoX_ST_HEAD_H */
+#endif /* MoX_DEF_H */

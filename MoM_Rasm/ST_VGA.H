@@ -1,12 +1,14 @@
 #ifndef ST_VGA_H
 #define ST_VGA_H
 
+#include "ST_TYPE.H"    /* byte_ptr, SAMB_ptr */
+
 
 #define CLRSCR0() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDrawAddress(); }
 #define CLRSCR1() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDirectDraw();  }
 
-//     VGA_LoadPalette(EMPERATO, -1, 0); VGA_DAC_Write();
-#define SETPAL(_idx_) { VGA_LoadPalette(_idx_, -1, 0); VGA_DAC_Write();  }
+//     PAL_Load_Palette(EMPERATO, -1, 0); VGA_DAC_Write();
+#define SETPAL(_idx_) { PAL_Load_Palette(_idx_, -1, 0); VGA_DAC_Write();  }
 
 
 #define VGAREADPLANE(_plane_) { \
@@ -96,7 +98,7 @@ extern unsigned char g_VGA_WriteMapMasks[];         // dseg:41D0
 // dseg:4214 4A 72 72 3C 6A 6C 33 27 5C 3D+db  2Bh, 66h, 41h, 78h, 2Ch, 79h,   2,   8, 45h, 0Eh, 60h, 51h,   1, 55h, 62h, 0Eh, 3Fh, 7Ch,   6, 16h,   8, 3Ch, 34h,   3, 20h, 18h, 71h, 13h, 5Bh, 65h, 55h, 4Fh, 32h,   6, 3Fh, 6Ah, 16h, 79h, 47h, 6Bh,   5, 16h, 74h, 0Fh, 5Ah, 17h, 30h, 68h, 69h, 55h, 78h,2 dup( 4Bh), 51h, 58h, 69h, 77h; 199
 // dseg:4314 00 00                         VGA_Outline_Color dw 0
 // dseg:4316 00 00                         VGA_Skip_AA_Pixels dw 0
-extern unsigned int UU_g_VGA_TextDraw_Initd;    // dseg:4318
+// seg019.H  extern unsigned int UU_g_VGA_TextDraw_Initd;    // dseg:4318
 // dseg:431A 00 00                         VGA_FltBlock_Count dw 0
 // dseg:431C FF FF                         VGA_BlinkState dw 0FFFFh                ; 0 - normal, 1 - reverse, -1 - disabled
 
@@ -112,39 +114,70 @@ extern unsigned char g_VGA_WriteMapMasks3[]; // dseg:4372  db         1,      10
 // dseg:4386 VGA_WriteMapMasks7 db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
 // /\/\/\ ? VGA, GUI, etc ? /\/\/\
 
-extern unsigned int gsa_VGAFILEH_Header;        // dseg:A7D4    alloc in VGA_DAC_Init
-extern unsigned int gsa_PaletteFlags;           // dseg:A7D6    alloc in VGA_DAC_Init
-extern unsigned int gsa_ShadingColors;          // dseg:A7D8  ; 5,376 bytes (1500h) into the palette record
-extern unsigned int gsa_ReplacementColors;      // dseg:A7DA      alloc in VGA_DAC_Init
-extern unsigned int gsa_PaletteSaved;           // dseg:A7DC    alloc in VGA_DAC_Init
-extern unsigned int gsa_Palette;                // dseg:A7DE    alloc in VGA_DAC_Init
-extern unsigned char * fp_Palette;
-extern void * pPalette;
-extern char g_PaletteLbxFileName[];             // dseg:A7E0  ; set in VGA_DAC_Init
-extern unsigned int gsa_IntensityScaleTable;    // dseg:A7F0    alloc in VGA_DAC_Init
-extern unsigned int gsa_gsa_PaletteLbxEntry;    // dseg:A7F2
-extern unsigned int gsa_PaletteLbxEntry;        // dseg:A7F4    alloc in VGA_DAC_Init
+extern SAMB_ptr p_VGAFILEH_Header;              // SM2LM    // dseg:A7D4    alloc in Load_Font_File
+// SM2LM  
+extern SAMB_addr sa_VGAFILEH_Header;
+
+extern byte_ptr p_PaletteFlags;                 // SM2LM    // dseg:A7D6    alloc in Load_Font_File
+// SM2LM  
+extern sgmt_addr sa_PaletteFlags;
+
+extern byte_ptr p_ShadingColors;                       // SM2LM    // dseg:A7D8    5,376 bytes (1500h) into the palette record
+// SM2LM  
+extern sgmt_addr sa_ShadingColors;
+
+extern SAMB_ptr p_ReplacementColors;                   // SM2LM    // dseg:A7DA    alloc in Load_Font_File
+// SM2LM  
+extern SAMB_addr sa_ReplacementColors;
+
+extern SAMB_ptr UU_p_PaletteSaved;                     // SM2LM    // dseg:A7DC    alloc in Load_Font_File
+// SM2LM  
+extern SAMB_addr UU_sa_PaletteSaved;
+
+extern byte_ptr p_Palette;                      // SM2LM    // dseg:A7DE    alloc in Load_Font_File
+extern char font_name[];                                    // dseg:A7E0    set in Load_Font_File
+extern SAMB_ptr p_IntensityScaleTable;          // SM2LM    // dseg:A7F0    alloc in Load_Font_File
+extern SAMB_addr sa_IntensityScaleTable;
+extern SAMB_ptr sad1_PaletteLbxEntry;           // SM2LM    // dseg:A7F2
+extern SAMB_ptr sah1_PaletteLbxEntry;           // SM2LM    // dseg:A7F4    alloc in Load_Font_File
+
 //dseg:A7F6 VGA_AAColor_Array db 16 dup (0)
 //dseg:A806 VGA_Current_AA_Color db 0
 //dseg:A807 VGA_AA_Color_1 db 0
 //dseg:A808 VGA_AA_Color_2 db 0
 //dseg:A809 VGA_AA_Color_3 db 0
-extern unsigned int VGA_Font_ColorIndex3;                       // dseg:A80A
-extern unsigned int VGA_Font_ColorIndex2;                       // dseg:A80C
-extern unsigned int VGA_Font_ColorIndex1;                       // dseg:A80E
-extern unsigned int VGA_Font_Index;                             // dseg:A810
+extern unsigned int VGA_Font_ColorIndex3;               // dseg:A80A
+extern unsigned int VGA_Font_ColorIndex2;               // dseg:A80C
+extern unsigned int VGA_Font_ColorIndex1;               // dseg:A80E
+extern unsigned int VGA_Font_Index;                     // dseg:A810
 //VGA_TextDraw_Y; // dseg:A812
 //VGA_TextDraw_X; // dseg:A814
-extern unsigned int gsa_FontStyleData;          // dseg:A816    alloc & load in VGA_DAC_Init
-extern unsigned int gsa_BorderStyleData;        // dseg:A818    alloc & load in VGA_DAC_Init
-extern unsigned int gsa_Cursor_Array;    // dseg:A81A  ; 500h into the palette entry
-extern unsigned int UU_gsa_Palette_Data;        // dseg:A81C  ; 400h into the palette entry
-extern unsigned int gsa_Palette_Font_Colors;    // dseg:A81E  ; 300h into the palette entry, 16 arrays of 16 colors
-extern void * gfp_VGA_TextLine_Starts;    // dseg:A820
-extern void * gfp_VGA_TextLine_Tops;      // dseg:A824
-extern void * gfp_VGA_TextLine_Rights;    // dseg:A828
-extern void * gfp_VGA_TextLine_Lefts;     // dseg:A82C
-extern unsigned int gsa_VGA_TextDraw_Lines;     // dseg:A830
+
+extern SAMB_ptr p_FontStyleData;                // SM2LM    // dseg:A816    alloc & load in Load_Font_File
+// SM2LM
+extern SAMB_addr sa_FontStyleData;
+
+extern SAMB_ptr p_BorderStyleData;              // SM2LM    // dseg:A818    alloc & load in Load_Font_File
+// SM2LM  
+extern SAMB_addr sa_BorderStyleData;
+
+extern byte_ptr p_Cursor_Array;                 // SM2LM     // dseg:A81A   500h into the palette entry
+// SM2LM  
+extern sgmt_addr sa_Cursor_Array;
+
+extern byte_ptr UU_p_Palette_Data;              // SM2LM     // dseg:A81C   400h into the palette entry
+// SM2LM  
+extern sgmt_addr UU_sa_Palette_Data;
+
+extern byte_ptr p_Palette_Font_Colors;          // SM2LM     // dseg:A81E   300h into the palette entry, 16 arrays of 16 colors
+// SM2LM  
+extern sgmt_addr sa_Palette_Font_Colors;
+
+// seg019.H  extern SAMB_ptr p_VGA_TextLine_Starts;                  // dseg:A820
+// seg019.H  extern SAMB_ptr p_VGA_TextLine_Tops;                    // dseg:A824
+// seg019.H  extern SAMB_ptr p_VGA_TextLine_Rights;                  // dseg:A828
+// seg019.H  extern SAMB_ptr p_VGA_TextLine_Lefts;                   // dseg:A82C
+// extern unsigned int gsa_VGA_TextDraw_Lines;             // dseg:A830
 
 
 
@@ -178,7 +211,7 @@ void VGA_DrawFilledRect(int x1, int y1, int x2, int y2, char Color);
     seg020  seg020.H
 */
 //_s20p01
-// void VGA_LoadPalette(int Palette_Index, int First_Color, int Last_Color);
+// void PAL_Load_Palette(int Palette_Index, int First_Color, int Last_Color);
 //_s20p05
 // void VGA_SetDACChanged(int First_Color, int Last_Color);
 

@@ -3,7 +3,7 @@
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 
 .CODE
 ;segment seg018 byte public 'CODE' use16
@@ -26,7 +26,7 @@ proc VGA_GetStringWidth
 
     mov si, [bp+String]
 
-    mov ax, [gsa_FontStyleData]
+    mov ax, [sa_FontStyleData]
     mov es, ax
 
     ;mov bx, FONT_HEADER.Horz_Spacing

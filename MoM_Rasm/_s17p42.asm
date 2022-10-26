@@ -3,7 +3,7 @@ TITLE _s17p42.asm VGA_FontColorSelect
 
 .MODEL LARGE, C
 
-EXTRN gsa_FontStyleData:WORD
+EXTRN sa_FontStyleData:WORD
 
 EXTRN farpeekw:PROC
 EXTRN farpokeb:PROC
@@ -42,13 +42,13 @@ loc_19D93:
     mov ax, si
     add ax, [bp+Color_Set_Pointer]
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpeekw
     pop cx
     pop cx
     push ax
     push si
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpokew
     add sp, 6
     add si, 2
@@ -60,7 +60,7 @@ loc_19DB5:
     ;mov ax, FONT_HEADER.Color_Index
     mov ax, 13h  ; 13h 19d  FONT_HEADER.Color_Index
     push ax
-    push [gsa_FontStyleData]
+    push [sa_FontStyleData]
     call farpokeb
     add sp, 6
 

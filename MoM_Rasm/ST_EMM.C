@@ -2,15 +2,13 @@
 #include "ST_DEF.H"
 
 #include "ST_EMM.H"
-#include "MoX_EMM.H"
 
 #include "MOM_DEF.H"
 
-#include "MoX_EXIT.H"  /* Exit() */
+#include "ST_EXIT.H"  /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_LBX.H"
 #include "ST_SA.H"
-#include "MoX_SA.H"  /* SA_Alloc_Error */
 
 // #include <STDIO.H>   /* printf() */
 #include <STDLIB.H>  /* itoa() */
@@ -149,7 +147,7 @@ unsigned int map_unmap;            / * 0 = map, 1 = unmap * /
 */
 
 // align 2                                                      // dseg:40FF
-// MoX_EMM  int EMM_Pages_Reserved = 40;                                  // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
+int EMM_Pages_Reserved = 40;                                  // dseg:4100 ; set to 158 at the start of _main ? 40 pages = 640KB ? WTF ?
 unsigned int g_EMM_Open_Handles = 0;                            // dseg:4102
 char *g_EmmHndlNm_YOMOMA1 = "YO MOMA";                          // dseg:4104 "YO MOMA"
 char *g_EmmHndlNm_YOMOMA2 = "YO MOMA";                          // dseg:410C "YO MOMA"
@@ -901,13 +899,13 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     {
         // HERE("FAILURE: !( EMM_OK == ST_FALSE )");
         EmmHndlNbr = 0;
-        goto Exit;
+        goto Done;
     }
 
     if ( !(g_EMM_Open_Handles < 40) )
     {
         // HERE("FAILURE: !( g_EMM_Open_Handles < 40 )");
-        goto Exit;
+        goto Done;
     }
 
     strcpy(EmmHndlFileName, EmmHndlNm);
@@ -933,7 +931,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     if ( LbxFileSize == 0 )
     {
         // HERE("FAILURE: ( LbxFileSize == 0 )");
-        goto Exit;
+        goto Done;
     }
 
     LbxFileSize16kBlocks = LbxFileSize / 16384; // SZ_16K_B / EMM Page Size
@@ -952,7 +950,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
         {
             // HERE("FAILURE: ( Reserved == 0 ) && ( !(tmp_EMM_Pages_Required < tmp_EMM_Pages_Required) )");
             EmmHndlNbr = 0;
-            goto Exit;
+            goto Done;
         }
     }
 
@@ -961,7 +959,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
    if ( EmmHndlNbr == 0 )
    {
         // HERE("FAILURE: EMM_GetHandle() && ( EmmHndlNbr == 0 )");
-        goto Exit;
+        goto Done;
    }
 
     tmp_EmmPageFrameSgmtAddr = EMM_GetPageFrame();
@@ -971,7 +969,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     if ( tmp_EmmPageFrameSgmtAddr == 0 )
     {
         // HERE("FAILURE: EMM_GetPageFrame() && ( tmp_EmmPageFrameSgmtAddr == 0 )");
-        goto Exit;
+        goto Done;
     }
 
     LbxFileHandle = lbx_open(EmmHndlFileName);
@@ -979,7 +977,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     if ( LbxFileHandle == 0 )
     {
         // HERE("FAILURE: lbx_open(EmmHndlFileName) && ( LbxFileHandle == 0 )");
-        goto Exit;
+        goto Done;
     }
 
     UU_varNbytesRead = 0;
@@ -1019,7 +1017,7 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 //     }
 // #endif
 
-Exit:
+Done:
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File(LbxFileName = %s, EmmRsvd = %d) { EmmHndlNbr = %d }\n", __FILE__, __LINE__, LbxFileName, Reserved, EmmHndlNbr);
@@ -1096,7 +1094,7 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
 //         dlvfprintf("DEBUG: [%s, %d] g_LBX_EmmRsvd: %d, EmmHndlNm: %s, LbxEntry: %d, SgmtAddr: 0x%04X\n", __FILE__, __LINE__, g_LBX_EmmRsvd, EmmHndlNm, LbxEntry, SAMB_data);
 // #endif
 
-        goto Exit;
+        goto Done;
     }
 
     EMMLBXENTRYCOUNT()
@@ -1146,12 +1144,12 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
     /*
         END: Read Data
     */
-    goto Exit;
+    goto Done;
 
 Error:
     SAMB_data = ST_FAILURE;
 
-Exit:
+Done:
 
 // #ifdef STU_DEBUG
 //     //if (bDebugDetail)
@@ -1463,7 +1461,7 @@ Error:
 //     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = ST_FAILURE }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize);
 // #endif
     return ST_FAILURE;
-Exit:
+Done:
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBX_Load_Record(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, RecFirst, RecCount, RecSize, SAMB_data);
 // #endif
@@ -1551,7 +1549,7 @@ Error:
 //     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
 // #endif
     return ST_FAILURE;
-Exit:
+Done:
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d]: END: EMM_LBXR_DirectLoad(EmmHndlNm = %s, LbxEntry = %d, SAMB_data = 0x%04X, RecFirst = %d, RecCount = %d, RecSize = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_data, RecFirst, RecCount, RecSize, SAMB_data);
 // #endif
@@ -1639,7 +1637,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
     if (EmmHandleName == NULL)
     {
         varEmmHndlNbr = 0;
-        goto Exit;
+        goto Done;
     }
 
     /* Loop through our EMM Table, Check for existing handle by name */
@@ -1676,7 +1674,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
         }
         else
         {
-            goto Exit;
+            goto Done;
         }
     }
 
@@ -1733,7 +1731,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
 
     if (varEmmHndlNbr == 0)
     {
-        goto Exit;
+        goto Done;
     }
 
     strcpy(EMM_Table[g_EMM_Open_Handles].eEmmHndlNm, EmmHandleName);
@@ -1760,7 +1758,7 @@ unsigned int EMM_GetHandle(unsigned int EmmLogicalPageCount, char *EmmHandleName
         Exit(Temp_String);
     }
 
-Exit:
+Done:
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] END: EMM_GetHandle(EmmLogicalPageCount = %u, EmmHandleName = %s, EmmRsvdFlag = %d) { EmmHndlNbr = %u }\n", __FILE__, __LINE__, EmmLogicalPageCount, EmmHandleName, EmmRsvdFlag, varEmmHndlNbr);
