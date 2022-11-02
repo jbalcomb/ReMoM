@@ -5,12 +5,12 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 
 #include <DOS.H>
 // #include <CONIO.H>   /* getch(), kbhit() */
-#include <STDARG.H>  /* va_list; va_arg(), va_end(), va_start() */
-#include <STDIO.H>   /* FILE; fclose(), fopen() */
-#include <STDLIB.H>  /* exit() */
+#include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
+#include <STDIO.H>      /* FILE; fclose(), fopen() */
+#include <STDLIB.H>     /* exit() */
 
 #include "STU_DBG.H"
-#include "STU_UTIL.H"
+#include "STU_UTIL.H"   /* get_datetime() */
 
 
 char Debug_Log_FileName[] = "DEBUG.LOG";
@@ -26,14 +26,14 @@ void Debug_Log_Startup(void)
         printf("DEBUG [FATAL]: Unable to open log file: %s", Debug_Log_FileName);
         exit(1);
     }
-    get_datetime(&Debug_Log_ISO8601_DateTime);
+    get_datetime(&Debug_Log_ISO8601_DateTime[0]);
     fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "BEGIN: Debug Log");
     fflush(Debug_Log_File);
 }
 
 void Debug_Log_Shutdown(void)
 {
-    get_datetime(&Debug_Log_ISO8601_DateTime);
+    get_datetime(&Debug_Log_ISO8601_DateTime[0]);
     fprintf(Debug_Log_File, "[%s] DEBUG: %s\n", Debug_Log_ISO8601_DateTime, "END: Debug Log");
     fflush(Debug_Log_File);
     fclose(Debug_Log_File);

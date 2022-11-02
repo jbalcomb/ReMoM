@@ -5,26 +5,6 @@
 #include "MoX_DEF.H"    /* GET_2B() */
 
 
-char *cnst_LBXErr_Common1 = ".LBX [entry ";                                         // MGC dseg:3EA3
-char *cnst_LBXErr_Common2 = "] ";                                                   // MGC dseg:3EB0
-char *cnst_LBX_Error1 = " could not be found.";                                     // MGC dseg:3EB3
-char *cnst_LBX_Error2 = " has been corrupted.";                                     // MGC dseg:3EC8
-char *cnst_LBX_Error31 = "Insufficient memory. You need at least ";                 // MGC dseg:3EDD
-char *cnst_LBX_Error32 = "K free. Try removing all TSR's.";                         // MGC dseg:3F05
-char *cnst_LBX_Error4 = " was not properly allocated or has been corrupted.";       // MGC dseg:3F25
-char *cnst_LBX_Error51 = " failed to reload. Allocation too small by ";             // MGC dseg:3F58
-char *cnst_LBX_Error52 = " pages";                                                  // MGC dseg:3F84
-char *cnst_LBX_Error7 = " is not an LBX file";                                      // MGC dseg:3F8B
-char *cnst_LBX_Error8 = " exceeds number of LBX entries";                           // MGC dseg:3F9F
-char *cnst_LBX_Error9 = " has an incorrect record size";                            // MGC dseg:3FBE
-char *cnst_LBX_ErrorA = " exceeds number of defined records";                       // MGC dseg:3FDC
-char *cnst_LBX_ErrorB = " cannot be reloaded into EMS w/o being first released.";   // MGC dseg:3FFF
-char *cnst_LBX_ErrorC = " EMM loading error. Insufficient EMM.";                    // MGC dseg:4036
-char *cnst_LBX_ErrorD = " Only pictures may be loaded into reserved EMM";           // MGC dseg:405C
-char *cnst_LBX_ErrorE = " (Reserved EMM) ";                                         // MGC dseg:408B
-char *cnst_LBX_ErrorF1 = " LBX to";                                                 // MGC dseg:409C
-char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes";     // MGC dseg:40A4
-
 
 // // #define DOS_UnusedFileHandle 0xFFFF  // Warning: Constant out of range in comparison ...
 // #define DOS_UnusedFileHandle -1
@@ -35,7 +15,7 @@ char *cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes"; 
 // #define SZ_LBX_HDR_PRE_B 8
 // #define SZ_LBX_HDR_OFST_B 4
 // #define SZ_16K_B 16384
-// #define SZ_32K_B 32768
+#define SZ_32K_B 32768
 // #define SZ_32K_PR 2048
 #define SZ_PARAGRAPH_B 16
 // 
@@ -65,14 +45,19 @@ SAMB_ptr MoX_Explore_LBX_Load_Entry(char * LBX_Name, int LBX_Index, SAMB_ptr SAM
     seg010
 */
 
-// s10p01
-SAMB_ptr MoX_LBXE_LoadSingle(char * LBX_Name, int LBX_Index);
+// MGC  s10p01
+SAMB_ptr Farload(char * lbx_name, int entry_num);
+// MGC  s10p02
+SAMB_ptr Far_Reload(char * lbx_name, int entry_num, SAMB_ptr base_seg);
+// MGC  s10p02
+SAMB_ptr Far_Reload_Next(char * lbx_name, int entry_num, SAMB_ptr base_seg);
 
-// _s10p10
+// MGC  s10p10
+SAMB_ptr Farload_Library(char * lbx_name, signed int entry_num, SAMB_ptr base_seg, signed int allocation_type);
 SAMB_ptr MoX_LBX_Load_Entry(char * LBX_Name, int LBX_Index, SAMB_ptr SAMB_head, int LoadType, int LbxHdrFmt);
 
-// s10p15
-void LBX_Error(char * LBX_Name, int LBX_Error_Number, int LBX_Index, int pages);
+// MGC  s10p15
+void Error_Handler(char * file_name, int error_num, int entry_num, int pages);
 
 
 #ifdef __cplusplus

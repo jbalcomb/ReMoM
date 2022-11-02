@@ -5,6 +5,10 @@
 #include "MoX_QUIT.H"  /* dos_memfree_kb() */
 
 
+#include <stdlib.h>
+#include <stdio.h>  /* printf() */
+
+
 int MemFreeWorst_KB = 64000;                    // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
 char * cnst_Quit_Report1 = "Data";              // dseg:3CC4
 char * cnst_Quit_Report2 = " Free: ";           // dseg:3CC9
@@ -83,6 +87,12 @@ void Exit(char * argQuitMessage)
 }
 #endif
 
+void Exit_With_Message(char * string)
+{
+    // Reset_System();
+    printf("%s\n", string);
+    // exit(EXIT_FAILURE);
+}
 
 // s05p05
 #if defined(__DOS16__)

@@ -18,9 +18,21 @@
 extern SAMB_ptr pTmpSAMB;
 
 
-// #define GET_SAMB_USED(_SAMB_Head_) ( GET_LE_16((_SAMB_Head_)) )
-// #define GET_SAMB_SIZE(_SAMB_Head_) ( GET_LE_16((_SAMB_Head_)) )
-// #define SET_SAMB_USED(_SAMB_Head_) ( SET_LE_16((_SAMB_Head_),_value_) )
+#define SA_Get_MemSig1(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  4) )
+
+#define SA_Get_MemSig2(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  6) )
+
+#define SA_Get_Size(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_),  8) )
+
+#define SA_Get_Used(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), 10) )
+
+#define SA_Set_MemSig1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  4, SA_MEMSIG1) )
+
+#define SA_Set_MemSig2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  6, SA_MEMSIG2) )
+
+#define SA_Set_Size(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_),  8, (_nparas_)) )
+
+#define SA_Set_Used(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), 10, (_nparas_)) )
 
 
 #ifdef __cplusplus
@@ -41,18 +53,30 @@ extern "C" {
 // void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);  // s07p09
 // // UU? void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);  // s07p10
 
+// s07p04
+int Check_Allocation(SAMB_ptr SAMB_head);
+
 /*
     seg008
 */
-// SAMB_ptr SA_Allocate_Space(unsigned int nparas);                        // s08p07
-SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas);                       // s08p08/09
-// // unsigned int SA_Allocate_MemBlk_LbxHeader(unsigned int nparas);      // s08p08
-// // unsigned int SA_Allocate_MemBlk_EntrySize(unsigned int nparas);      // s08p09
+
+// s08p07
+SAMB_ptr Allocate_Space(int size);
+
+// s08p08/09
+SAMB_ptr Allocate_Space_No_Header(int size);
+
 // SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
 // SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
-// unsigned int SA_GetFree(SAMB_ptr SAMB_head);                            // s08p15
+
+// s08p15
+unsigned int Get_Free_Blocks(SAMB_ptr SAMB_head);
+
 // SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr);                                // s08p16
-void SA_Alloc_Error(int SA_Error_Number, int blocks);                              // s08p19
+
+// s08p19
+void Allocation_Error(int error_num, int blocks);
+
 
 #ifdef __cplusplus
 }

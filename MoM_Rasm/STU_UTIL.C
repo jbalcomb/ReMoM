@@ -116,7 +116,7 @@ Date and time in UTC
 // int   tm_isdst; /* Nonzero if daylight saving time is in effect. */
 // };
 // char * get_datetime(void)
-void get_datetime(char *datatime)
+void get_datetime(char * datatime)
 {
 	/*
     struct dosdate_t sDosDate;

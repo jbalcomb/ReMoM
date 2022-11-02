@@ -1,7 +1,8 @@
 #ifndef ST_EMM_H
 #define ST_EMM_H
 
-#include "ST_DEF.H" /* _AL, etc. */
+#include "ST_TYPE.H"    /* byte_ptr */
+#include "ST_DEF.H"     /* _AL, etc. */
 
 
 /*
@@ -440,6 +441,9 @@ extern unsigned int g_EmmHndl_FIGUREX;      // dseg:9486
 */
 
 extern unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
+extern sgmt_addr sa_EMM_PFBA;
+extern byte_ptr fp_EMM_PFBA;
+extern byte_ptr p_EMM_PFBA;
 // internal/private  extern char EMM_device_name[];                    // dseg:40E6
 
 // // dseg:40EF g_EMM_Log2Phys_Map EMS_L2P_Map_Record <0, 0> ; This is not in ORION.

@@ -372,27 +372,44 @@ FLIC_HDR.EMM_Logical_Page_Offset
 #define FlicPalHdr_ColorCount           0x04
 #define FlicPalHdr_FramesHavePalettes   0x06
 
+
+/*
+    Manifest Constants
+*/
+
+#define FLIC_HDR                        0x00
+#define FLIC_HDR_Width                  0x00
+#define FLIC_HDR_Height                 0x02
+#define FLIC_HDR_CurrentFrame           0x04
+#define FLIC_HDR_FrameCount             0x06
+#define FLIC_HDR_LoopFrame              0x08
+#define FLIC_HDR_EmmHandleNumber        0x0A
+#define FLIC_HDR_EmmLogicalPageIndex    0x0B
+#define FLIC_HDR_EmmLogicalPageOffset   0x0C
+#define FLIC_HDR_PaletteDataOffset      0x0E
+#define FLIC_HDR_FrameType              0x10
+#define FLIC_HDR_Shading                0x11
+#define FLIC_HDR_FrameOffsetTable       0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
+
+#define FLIC_PAL_HDR_PaletteDataOffset  0x00
+#define FLIC_PAL_HDR_ColorIndex         0x02
+#define FLIC_PAL_HDR_ColorCount         0x04
+#define FLIC_PAL_HDR_FramesHavePalettes 0x06
+
+
 #define GET_FLIC_HDR_EMM_HANDLE(_ptr_)              ( (_ptr_)[0x0A] )
 #define GET_FLIC_HDR_EMM_LOGICAL_PAGE(_ptr_)        ( (_ptr_)[0x0B] )
 // #define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( (unsigned char _FAR *)MK_FP(FP_SEG((_ptr_),FP_OFF((_ptr_)) + 0x0C)) ) )
 #define GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(_ptr_) ( GET_LE_16( ADD_REL((_ptr_),0x0C) ) )
 
 // takes an (unsigned char *) to a FLIC_HDR
-#define FLIC_Get_Width(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_Width) ) )
-
-#define FLIC_Get_EmmHandleNumber(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmHandleNumber)) )
-
-#define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
-
-#define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
-
-#define FLIC_Get_EmmLogicalPageOffset(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageOffset) ) )
-
-#define FLIC_Get_Shading(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_Shading)) )
-
-#define FLIC_Get_FrameDataOffset(_ptr_,_idx_)   ( GET_4B( (unsigned char *)((_ptr_) + FlicHdr_FrameOffsetTable + (4 * (_idx_))) ) )
-
-
+// #define FLIC_Get_Width(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_Width) ) )
+// #define FLIC_Get_EmmHandleNumber(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmHandleNumber)) )
+// #define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
+// #define FLIC_Get_EmmLogicalPageIndex(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageIndex)) )
+// #define FLIC_Get_EmmLogicalPageOffset(_ptr_)   ( GET_2B( (unsigned char *)((_ptr_) + FlicHdr_EmmLogicalPageOffset) ) )
+// #define FLIC_Get_Shading(_ptr_)   ( *((unsigned char *)((_ptr_) + FlicHdr_Shading)) )
+// #define FLIC_Get_FrameDataOffset(_ptr_,_idx_)   ( GET_4B( (unsigned char *)((_ptr_) + FlicHdr_FrameOffsetTable + (4 * (_idx_))) ) )
 // #define FLIC_LBX_Get_Palette_Header_Offset(_ptr_)   ( GET_LE_16( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), ( FP_OFF((_ptr_)) + 0x0E ) ) ) )
 
 #define FLIC_LBX_Get_Palette_Header_Offset(_ptr_) ( GET_LE_16( ADD_REL((_ptr_),0x0E) ) )
@@ -404,6 +421,146 @@ FLIC_HDR.EMM_Logical_Page_Offset
 #define FLIC_LBX_Get_Palette_Color_Count(_ptr_)   ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x04) ]) ) )
 #define FLIC_LBX_Get_Palette_PerFrame_Flag(_ptr_) ( GET_LE_16( &((_ptr_)[ (FLIC_LBX_Get_Palette_Header_Offset(_ptr_) + 0x06) ]) ) )
 #define FLIC_LBX_Has_Palette_PerFrame(_ptr_)      ( FLIC_LBX_Get_Palette_PerFrame_Flag(_ptr_) != 0 )
+
+
+
+#define FLIC_HDR_POS_WIDTH                      0x00
+#define FLIC_HDR_POS_HEIGHT                     0x02
+#define FLIC_HDR_POS_CURRENT_FRAME              0x04
+#define FLIC_HDR_POS_FRAME_COUNT                0x06
+#define FLIC_HDR_POS_LOOP_FRAME                 0x08
+#define FLIC_HDR_POS_EMM_HANDLE_NUMBER          0x0A
+#define FLIC_HDR_POS_EMM_LOGICAL_PAGE_NUMBER    0x0B
+#define FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET    0x0C
+#define FLIC_HDR_POS_PALETTE_HEADER_OFFSET      0x0E    // End of 16-byte FLIC Header / animation_header
+#define FLIC_HDR_POS_FRAME_TYPE                 0x10
+#define FLIC_HDR_POS_SHADING                    0x11
+#define FLIC_HDR_POS_FRAME_OFFSET_TABLE         0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
+
+#define FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET    0x00
+#define FLIC_PAL_HDR_POS_COLOR_START            0x02
+#define FLIC_PAL_HDR_POS_COLOR_COUNT            0x04
+#define FLIC_PAL_HDR_POS_FRAME_PALETTES         0x06
+
+
+#define FLIC_FRM_PAL_HDR_POS_PALETTE_DATA_OFFSET  0x00
+#define FLIC_FRM_PAL_HDR_POS_COLOR_START        0x02
+#define FLIC_FRM_PAL_HDR_POS_COLOR_COUNT        0x03
+
+/*
+    BEGIN: GET/SET FLIC File
+
+    FLIC_Get/Set            Offset from FLIC File / FLIC Header
+    FLIC_PAL_Get/Set        Offset from FLIC File Palette Header
+    FLIC_FRM_PAL_Get/Set    Offset from FLIC Frame Palette Header
+*/
+
+#define SZ_FLIC_PAL_HDR                         8
+#define SZ_FLIC_FRM_PAL_HDR                     4
+
+// #define FLIC_LBX_Has_Palette(_ptr_)               ( FLIC_LBX_Get_Palette_Header_Offset(_ptr_) != 0 )
+// #define FLIC_LBX_Has_Palette_PerFrame(_ptr_)      ( FLIC_LBX_Get_Palette_PerFrame_Flag(_ptr_) != 0 )
+
+// _ptr_ is (Far) Pointer to FLIC File (Header)
+
+#define FLIC_Get_Width(_ptr_)                    ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_WIDTH)                   )
+
+#define FLIC_Get_Height(_ptr_)                   ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_HEIGHT)                  )
+
+#define FLIC_Get_Current_Frame(_ptr_)            ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_CURRENT_FRAME)           )
+
+#define FLIC_Get_Frame_Count(_ptr_)              ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_COUNT)             )
+
+#define FLIC_Get_Loop_Frame(_ptr_)               ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_LOOP_FRAME)              )
+
+#define FLIC_Get_EMM_Handle_Number(_ptr_)        ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_EMM_HANDLE_NUMBER)       )
+
+#define FLIC_Get_EMM_Logical_Page_Number(_ptr_)  ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_EMM_LOGICAL_PAGE_NUMBER) )
+
+#define FLIC_Get_EMM_Logical_Page_Offset(_ptr_)  ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET) )
+
+#define FLIC_Get_Palette_Header_Offset(_ptr_)    ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_PALETTE_HEADER_OFFSET)   )
+
+#define FLIC_Get_Frame_Type(_ptr_)               ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_TYPE)              )
+
+#define FLIC_Get_Shading(_ptr_)                  ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_SHADING)                 )
+
+#define FLIC_Get_Frame_Offset_Table(_ptr_)       ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE)      )
+
+
+#define FLIC_Get_Palette_Data_Offset(_ptr_)   ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) ) )
+
+#define FLIC_Get_Palette_Color_Start(_ptr_)   ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_COLOR_START)         ) )
+
+#define FLIC_Get_Palette_Color_Count(_ptr_)   ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_COLOR_COUNT)         ) )
+
+#define FLIC_Get_Frame_Palettes(_ptr_)        ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_FRAME_PALETTES)      ) )
+
+// _ptr_ is (Far) Pointer to FLIC File Palette Header
+
+#define FLIC_PAL_Get_Data_Offset(_ptr_)          ( GET_2B_OFS( (_ptr_), FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) )
+
+#define FLIC_PAL_Get_Color_Start(_ptr_)          ( GET_2B_OFS( (_ptr_), FLIC_PAL_HDR_POS_COLOR_START)         )
+
+#define FLIC_PAL_Get_Color_Count(_ptr_)          ( GET_2B_OFS( (_ptr_), FLIC_PAL_HDR_POS_COLOR_COUNT)         )
+
+#define FLIC_PAL_Get_Frame_Palettes(_ptr_)       ( GET_1B_OFS( (_ptr_), FLIC_PAL_HDR_POS_FRAME_PALETTES)      )
+
+// frame_palette_header_offset = palette_header_offset + 8 + (4 * (frame_index - 1));
+
+#define FLIC_Get_Frame_Palette_Data_Offset(_ptr_,_idx_)   ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + SZ_FLIC_PAL_HDR + (4 * ((_idx_) - 1)) + FLIC_FRAME_PAL_HDR_POS_PALETTE_DATA_OFFSET) ) )
+
+#define FLIC_Get_Frame_Palette_Color_Index(_ptr_,_idx_)   ( GET_1B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + SZ_FLIC_PAL_HDR + (4 * ((_idx_) - 1)) + FLIC_FRAME_PAL_HDR_POS_COLOR_START ) ) )
+
+#define FLIC_Get_Frame_Palette_Color_Count(_ptr_,_idx_)   ( GET_1B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + SZ_FLIC_PAL_HDR + (4 * ((_idx_) - 1)) + FLIC_FRAME_PAL_HDR_POS_COLOR_COUNT ) ) )
+
+// _ptr_ is (Far) Pointer to FLIC Frame Palette Header
+
+#define FLIC_FRM_PAL_Get_Data_Offset(_ptr_)  ( GET_2B_OFS( (_ptr_), FLIC_FRAME_PAL_HDR_POS_PALETTE_DATA_OFFSET) )
+
+#define FLIC_FRM_PAL_Get_Color_Start(_ptr_)  ( GET_1B_OFS( (_ptr_), FLIC_FRAME_PAL_HDR_POS_COLOR_START)         )
+
+#define FLIC_FRM_PAL_Get_Color_Count(_ptr_)  ( GET_1B_OFS( (_ptr_), FLIC_FRAME_PAL_HDR_POS_COLOR_COUNT)         )
+
+
+// #define FLIC_Set_Width(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_WIDTH) )
+// 
+// #define FLIC_Set_Height(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_HEIGHT) )
+
+#define FLIC_Set_Current_Frame(_ptr_,_frame_index_)  ( SET_2B_OFS((_ptr_), FLIC_HDR_POS_CURRENT_FRAME, (_frame_index_)) )
+
+// #define FLIC_Set_Frame_Count(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_FRAME_COUNT) )
+// 
+// #define FLIC_Set_Loop_Frame(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_LOOP_FRAME) )
+// 
+// #define FLIC_Set_EMM_Handle_Number(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_EMM_HANDLE_NUMBER) )
+// 
+// #define FLIC_Set_EMM_Logical_Page_Number(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_EMM_LOGICAL_PAGE_NUMBER) )
+// 
+// #define FLIC_Set_EMM_Logical_Page_Offset(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET) )
+// 
+// #define FLIC_Set_Palette_Header_Offset(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_PALETTE_HEADER_OFFSET) )
+// 
+// #define FLIC_Set_Frame_Type(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_FRAME_TYPE) )
+// 
+// #define FLIC_Set_Shading(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_SHADING) )
+// 
+// #define FLIC_Set_Frame_Offset_Table(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_FRAME_OFFSET_TABLE) )
+// 
+// #define FLIC_Set_Palette_Data_Offset(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) )
+// 
+// #define FLIC_Set_Color_start(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_COLOR_START) )
+// 
+// #define FLIC_Set_Color_Count(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_COLOR_COUNT) )
+// 
+// #define FLIC_Set_Frame_Palettes(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_PAL_HDR_POS_FRAME_PALETTES) )
+
+/*
+    END: GET/SET FLIC File
+*/
+
+
+
 
 
 #define FLIC_RLE() { \

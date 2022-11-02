@@ -115,7 +115,7 @@ void VGA_DAC_Write(void)
     sa_FLIC_Header OR (EMM_PageFrameBaseAddress + fp_FLIC_Header->EMM_Logical_Page_Offset)
 
 */
-// s21p07
+// // s21p07
 // void FLIC_LoadPalette_Shim(SAMB_addr sa_FLIC_Header, int Frame_Index)
 // {
 //     unsigned int DstSgmt;
@@ -134,11 +134,16 @@ void VGA_DAC_Write(void)
 // 
 //     }
 // }
-// void FLIC_LoadPalette_FP_EMM(SAMB_addr sa_FLIC_Header, int Frame_Index)
+
+// void FLIC_Load_Palette_FP_EMM(SAMB_ptr fp_FLIC_Header, int Frame_Index)
 // {
 // 
 // }
 
+// void FLIC_Load_Palette_EMM(SAMB_ptr fp_FLIC_Header, int Frame_Index)
+// {
+// 
+// }
 
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int frame_index)
 {
@@ -240,7 +245,7 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int frame_index)
         count = GET_1B_OFS(frame_palette_header,0x02);
     }
 
-    for(itr = start; itr < count; itr++)
+    for(itr = 0; itr < count; itr++)
     {
         *(p_Palette + itr) = *(palette_data + itr);
         *(p_Palette + 768 + itr) = 1;
@@ -253,127 +258,19 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int frame_index)
 }
 
 // s21p07
-void FLIC_LoadPalette_ReRedux(SAMB_addr sa_FLIC_Header, int Frame_Index)
-{
-    SAMB_ptr fp_FLIC_Header;
-    SAMB_ptr fp_FLIC_File;
-    unsigned int SrcSgmt;
-    unsigned int SrcOfst;
-    unsigned int SrcOfstBase;
-    unsigned char * fp_Src;
-    unsigned int DstSgmt;
-    unsigned int DstOfst;
-    unsigned char * fp_Dst;
-    // unsigned int FH_Palette_Header_Offset;
-    // unsigned char FH_Frames_Have_Palettes;
-    // unsigned int FH_Palette_Data_Offset;
-    // unsigned int FH_Palette_Color_Index;
-    // unsigned int FH_Palette_Color_Count;
-    unsigned int Color_Index;
-    unsigned int Color_Count;
-    unsigned char * fp_FlicPalette;
-    unsigned int itr_Color_Count;
-    // unsigned char * fp_FLIC_Palette_Header_Offset;
-    // unsigned char * fp_FLIC_Palette_Header;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_LoadPalette_ReRedux(sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, sa_FLIC_Header, Frame_Index);
-#endif
-
-    fp_FLIC_Header = (SAMB_ptr) MK_FP(sa_FLIC_Header, 0);
-    // fp_FLIC_Header = (SAMB_ptr) MK_PTR(sa_FLIC_Header, 0);  // unsigned char * MK_PTR( unsigned char * _ptr_, unsigned short int _ofs_)
-
-    // if ( GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header) == 0 )
-    if ( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) == 0 )
-    {
-        DLOG("( fp_FLIC_Header->EMM_Handle_Number == 0 )");
-        SrcSgmt = sa_FLIC_Header;
-        SrcOfstBase = 0;
-        fp_FLIC_File = (SAMB_ptr) MK_PTR(fp_FLIC_Header, 0);
-    }
-    else
-    {
-        DLOG("( fp_FLIC_Header->EMM_Handle_Number != 0 )");
-        SrcSgmt = EMM_PageFrameBaseAddress;
-        // SrcOfstBase = GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(fp_FLIC_Header);
-        SrcOfstBase = FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header);
-        // EMM_MAP_PAGE(0, GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header), GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header))
-        // EMM_MAP_PAGE(0, FLIC_Get_EMM_Handle_Number(fp_FLIC_Header), FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header))
-        EMM_MAP_PAGE(0, 4, 0);
-        fp_FLIC_File = (SAMB_ptr) MK_PTR(fp_EMM_PFBA, SrcOfstBase);
-        // fp_FLIC_File = (SAMB_ptr) MK_PTR(fp_EMM_PFBA, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header));
-    }
-    // fp_Src = (unsigned char *)MK_FP(SrcSgmt, SrcOfstBase);
-    // fp_FLIC_File = (unsigned char *)MK_FP(SrcSgmt, SrcOfstBase);
-
-    // fp_FLIC_Palette_Header_Offset = (unsigned char *)MK_FP(SrcSgmt, SrcOfstBase + 0x0E);
-    // // fp_FLIC_Palette_Header = (unsigned char *)MK_FP(SrcSgmt, SrcOfstBase + GET_LE_16(fp_FLIC_Palette_Header_Offset));
-    // // FH_Palette_Header_Offset = FLIC_LBX_Get_Palette_Header_Offset(fp_Src);
-    // // // FH_Frames_Have_Palettes = FLIC_LBX_Get_Palette_PerFrame_Flag(fp_Src); ?!? "Error: undefined symbol _FLIC_LBX_Get_Palette_PerFrame_Flag in module seg021.c"
-    // // FH_Frames_Have_Palettes = FLIC_Get_Frame_Palettes(fp_Src);
-    
-    // // if ( (Frame_Index == 0) || (FLIC_LBX_Get_Palette_PerFrame_Flag(fp_Src) == 0) )
-    if ( (Frame_Index == 0) || (FLIC_Get_Frame_Palettes(fp_FLIC_File) == 0) )
-    {
-        DLOG("( (frame_index == 0) || (frame_palettes == 0) )");
-        // // // FH_Palette_Data_Offset = FLIC_LBX_Get_Palette_Data_Offset(fp_Src);
-        // // FH_Palette_Data_Offset = FLIC_LBX_Get_Palette_Data_Offset(fp_FLIC_File);
-        // FH_Palette_Data_Offset = FLIC_Get_Palette_Data_Offset(fp_FLIC_File);
-        // // // // FH_Palette_Color_Index = FLIC_LBX_Get_Palette_Color_Index(fp_Src);
-        // // // // FH_Palette_Color_Count = FLIC_LBX_Get_Palette_Color_Count(fp_Src);
-        // // // Color_Index = FLIC_LBX_Get_Palette_Color_Index(fp_Src);
-        // // // Color_Count = FLIC_LBX_Get_Palette_Color_Count(fp_Src);
-        // // Color_Index = FLIC_LBX_Get_Palette_Color_Index(fp_FLIC_File);
-        // // Color_Count = FLIC_LBX_Get_Palette_Color_Count(fp_FLIC_File);
-        Color_Index = FLIC_PAL_Get_Color_Start(fp_FLIC_File);
-        Color_Count = FLIC_PAL_Get_Color_Count(fp_FLIC_File);
-        // Color_Index = FLIC_Get_Palette_Color_Start(fp_FLIC_File);
-        // Color_Count = FLIC_Get_Palette_Color_Count(fp_FLIC_File);
-        // fp_FlicPalette = (unsigned char *) MK_FP(SrcSgmt, SrcOfstBase + FH_Palette_Data_Offset);
-        // FLIC_Get_Palette_Header_Offset(fp_FLIC_File)
-        // expands to: GET_2B_OFS( (_ptr_), FLIC_HDR_POS_PALETTE_HEADER_OFFSET )
-        // expands to: GET_2B_OFS( (_ptr_), 0x0E )
-        dbg_prn("DEBUG: [%s, %d] fp_FLIC_File: %p\n", __FILE__, __LINE__, fp_FLIC_File);
-        dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_FLIC_File): 0x%04X\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_FLIC_File));
-        dbg_prn("DEBUG: [%s, %d] SrcSgmt: 0x%04X\n", __FILE__, __LINE__, SrcSgmt);
-        dbg_prn("DEBUG: [%s, %d] SrcOfstBase: 0x%04X\n", __FILE__, __LINE__, SrcOfstBase);
-        // FLIC_Get_Palette_Data_Offset(fp_FLIC_File)
-        // expands to: GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) )
-        // expands to: GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + 0x00) )
-        dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Data_Offset(fp_FLIC_File): 0x%04X\n", __FILE__, __LINE__, FLIC_Get_Palette_Data_Offset(fp_FLIC_File));
-        fp_FlicPalette = (unsigned char *) MK_FP(SrcSgmt, SrcOfstBase + FLIC_Get_Palette_Data_Offset(fp_FLIC_File));
-        dbg_prn("DEBUG: [%s, %d] fp_FlicPalette: %p\n", __FILE__, __LINE__, fp_FlicPalette);
-        fp_FlicPalette = (SAMB_ptr) MK_PTR(fp_FLIC_File, FLIC_Get_Palette_Data_Offset(fp_FLIC_File));
-        dbg_prn("DEBUG: [%s, %d] fp_FlicPalette: %p\n", __FILE__, __LINE__, fp_FlicPalette);
-    }
-    else
-    {
-        DLOG("( (frame_index != 0) || (frame_palettes != 0) )");
-    }
-
-    for(itr_Color_Count = Color_Index; itr_Color_Count < Color_Count; itr_Color_Count++)
-    {
-        p_Palette[itr_Color_Count] = fp_FlicPalette[itr_Color_Count];
-        *(p_PaletteFlags + itr_Color_Count) = 1;
-    }
-
-Done:
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_LoadPalette_ReRedux(sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, sa_FLIC_Header, Frame_Index);
-#endif
-}
-
-// s21p07
 void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
 {
-    unsigned char _FAR * fp_FLIC_Header;
+    byte_ptr p_FLIC_Header;
+    byte _FAR * fp_FLIC_Header;
+    byte _FAR * fp_FLIC_File;
+    byte _FAR * fp_FLIC_File_EMM;
     unsigned int SrcSgmt;
     unsigned int SrcOfst;
     unsigned int SrcOfstBase;
-    unsigned char _FAR * fp_Src;
+    byte _FAR * fp_Src;
     unsigned int DstSgmt;
     unsigned int DstOfst;
-    unsigned char _FAR * fp_Dst;
+    byte _FAR * fp_Dst;
     unsigned int FH_Palette_Header_Offset;
     unsigned char FH_Frames_Have_Palettes;
     unsigned int FH_Palette_Data_Offset;
@@ -387,32 +284,64 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
     unsigned char _FAR * fp_FLIC_Palette_Header;
     unsigned long ul_fp_FLIC_Palette_Header_Offset;
 
+    word palette_header_offset;
+    byte_ptr palette_header;
+    word palette_data_offset;
+    byte_ptr palette_data;
+    word start;
+    word count;
+    byte frame_palette_flag;
+    word frame_palette_header_offset;
+    byte_ptr frame_palette_header;
+    word frame_palette_data_offset;
+    byte_ptr frame_palette_data;
+    int itr;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_LoadPalette_Redux(sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, sa_FLIC_Header, Frame_Index);
 #endif
 
-    fp_FLIC_Header = (unsigned char _FAR *) MK_FP(sa_FLIC_Header, 0);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] sa_FLIC_Header: 0x%04X\n", __FILE__, __LINE__, sa_FLIC_Header);
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Header: %Fp\n", __FILE__, __LINE__, fp_FLIC_Header);
-#endif
-
+    fp_FLIC_Header = (byte_ptr) MK_FP(sa_FLIC_Header, 0);
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header): 0x%02X\n", __FILE__, __LINE__, GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header));
-    dbg_prn("DEBUG: [%s, %d] GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header): 0x%02X\n", __FILE__, __LINE__, GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header));
-    dbg_prn("DEBUG: [%s, %d] GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(fp_FLIC_Header): 0x%04X\n", __FILE__, __LINE__, GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Width(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Width(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Height(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Height(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Current_Frame(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Current_Frame(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Count(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Count(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Loop_Frame(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Loop_Frame(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Handle_Number(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Handle_Number(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_FLIC_Header));
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_FLIC_Header));
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Shading(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Shading(fp_FLIC_Header));
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_FLIC_Header));
 #endif
-    if ( GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header) == 0 )
+
+// #define FLIC_Get_Palette_Data_Offset(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) )
+// 
+// #define FLIC_Get_Color_start(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_COLOR_START) )
+// 
+// #define FLIC_Get_Color_Count(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_PAL_HDR_POS_COLOR_COUNT) )
+// 
+// #define FLIC_Get_Frame_Palettes(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_PAL_HDR_POS_FRAME_PALETTES) )
+
+    // if ( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) != 0 )
+    // {
+    //     FLIC_Load_Palette_EMM(sa_FLIC_Header, Frame_Index);
+    // }
+
+    if ( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) == 0 )
     {
-        DLOG("( fp_FLIC_Header->EMM_Handle_Number == 0 )");
+        DLOG("( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) == 0 )");
         SrcSgmt = sa_FLIC_Header;
         SrcOfstBase = 0;
+        fp_FLIC_File = MK_FP(sa_FLIC_Header,0);
     }
     else
     {
-        DLOG("( fp_FLIC_Header->EMM_Handle_Number != 0 )");
+        DLOG("( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) != 0 )");
         SrcSgmt = EMM_PageFrameBaseAddress;
         SrcOfstBase = GET_FLIC_HDR_EMM_LOGICAL_PAGE_OFFSET(fp_FLIC_Header);
         // EMM_MAP_PAGE(0, GET_FLIC_HDR_EMM_HANDLE(fp_FLIC_Header), GET_FLIC_HDR_EMM_LOGICAL_PAGE(fp_FLIC_Header))
@@ -423,78 +352,42 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
         // _AH = EMS_MAPPAGE;
         // geninterrupt(EMS_INT);
         EMM_MAP_PAGE(0, 4, 0);
+        fp_FLIC_File = MK_FP(EMM_PageFrameBaseAddress, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header));
     }
     fp_Src = (unsigned char *)MK_FP(SrcSgmt, SrcOfstBase);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %Fp\n", __FILE__, __LINE__, fp_Src);
-#endif
-#ifdef STU_DEBUG
-    // 40 01 29 00 00 00 14 00 00 00 00 00 00 00 66 00
-    dbg_prn("DEBUG: [%s, %d] fp_Src[0]: 0x%02X\n", __FILE__, __LINE__, fp_Src[0]);
-    dbg_prn("DEBUG: [%s, %d] fp_Src[1]: 0x%02X\n", __FILE__, __LINE__, fp_Src[1]);
-    dbg_prn("DEBUG: [%s, %d] fp_Src[3]: 0x%02X\n", __FILE__, __LINE__, fp_Src[2]);
-    dbg_prn("DEBUG: [%s, %d] fp_Src[4]: 0x%02X\n", __FILE__, __LINE__, fp_Src[3]);
-#endif
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Width(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Width(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Height(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Height(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Current_Frame(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Current_Frame(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Count(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Count(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Loop_Frame(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Loop_Frame(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Handle_Number(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Handle_Number(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_FLIC_File));
+
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Shading(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Shading(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_FLIC_File));
+#endif
 
 
 // #define FLIC_LBX_Get_Palette_Header_Offset(_ptr_)   ( GET_LE_16( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), ( FP_OFF((_ptr_)) + 0x0C ) ) ) )
-    fp_FLIC_Palette_Header_Offset = (unsigned char _FAR *)MK_FP(SrcSgmt, SrcOfstBase + 0x0E);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] ( (unsigned int) (fp_FLIC_Palette_Header_Offset) ): 0x%04X\n", __FILE__, __LINE__, ( (unsigned int) (fp_FLIC_Palette_Header_Offset) ));
-    // dbg_prn("DEBUG: [%s, %d] ( (unsigned int) (fp_FLIC_Palette_Header_Offset) ): %u\n", __FILE__, __LINE__, ( (unsigned int) (fp_FLIC_Palette_Header_Offset) ));
-    dbg_prn("DEBUG: [%s, %d] ( (unsigned int) ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) >> 16) ): 0x%04X\n", __FILE__, __LINE__, ( (unsigned int) ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) >> 16) ));
-    // dbg_prn("DEBUG: [%s, %d] ( (unsigned int) ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) >> 16) ): %u\n", __FILE__, __LINE__, ( (unsigned int) ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) >> 16) ));
-    // no-workie dbg_prn("DEBUG: [%s, %d] ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ): 0x%08X\n", __FILE__, __LINE__, ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ));
-    dbg_prn("DEBUG: [%s, %d] ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ): 0x%08lX\n", __FILE__, __LINE__, ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ));
-    // dbg_prn("DEBUG: [%s, %d] ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ): %lu\n", __FILE__, __LINE__, ( (unsigned long)((void *)(fp_FLIC_Palette_Header_Offset)) ));
-    dbg_prn("DEBUG: [%s, %d] ( (unsigned long)(fp_FLIC_Palette_Header_Offset) ): 0x%08lX\n", __FILE__, __LINE__, ( (unsigned long)(fp_FLIC_Palette_Header_Offset) ));
-    // dbg_prn("DEBUG: [%s, %d] ( (unsigned long)(fp_FLIC_Palette_Header_Offset) ): %lu\n", __FILE__, __LINE__, ( (unsigned long)(fp_FLIC_Palette_Header_Offset) ));
-    // dbg_prn("DEBUG: [%s, %d] ( ((unsigned long)(fp_FLIC_Palette_Header_Offset) << 16) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ): 0x%08lX\n", __FILE__, __LINE__, ( ((unsigned long)(fp_FLIC_Palette_Header_Offset) << 16) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ));
-    // dbg_prn("DEBUG: [%s, %d] ( ((unsigned long)(fp_FLIC_Palette_Header_Offset) << 16) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ): %lu\n", __FILE__, __LINE__, ( ((unsigned long)(fp_FLIC_Palette_Header_Offset) << 16) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ));
-    dbg_prn("DEBUG: [%s, %d] ( ((unsigned long)(fp_FLIC_Palette_Header_Offset)) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ): 0x%08lX\n", __FILE__, __LINE__, ( ((unsigned long)(fp_FLIC_Palette_Header_Offset)) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ));
-    dbg_prn("DEBUG: [%s, %d] ( ((unsigned long)(fp_FLIC_Palette_Header_Offset)) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ): %lu\n", __FILE__, __LINE__, ( ((unsigned long)(fp_FLIC_Palette_Header_Offset)) | ((unsigned int)(fp_FLIC_Palette_Header_Offset)) ));
-#endif
+    // fp_FLIC_Palette_Header_Offset = (unsigned char _FAR *)MK_FP(SrcSgmt, SrcOfstBase + 0x0E);
+
 // #define MK_FP(_sgmt_,_ofst_) ( (void *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
 // #define FP_SEG(_fp_) ( (unsigned int) ( (unsigned long)((void *)(_fp_)) >> 16) )
 // #define FP_OFF(_fp_) ( (unsigned int) (_fp_) )
-    ul_fp_FLIC_Palette_Header_Offset = AddressOf(fp_FLIC_Palette_Header_Offset);
-    fp_FLIC_Palette_Header = (unsigned char _FAR *)MK_FP(SrcSgmt, SrcOfstBase + GET_LE_16(fp_FLIC_Palette_Header_Offset));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Palette_Header_Offset: %Fp\n", __FILE__, __LINE__, fp_FLIC_Palette_Header_Offset);
-    dbg_prn("DEBUG: [%s, %d] ul_fp_FLIC_Palette_Header_Offset: 0x%08lX\n", __FILE__, __LINE__, ul_fp_FLIC_Palette_Header_Offset);
-    // dbg_prn("DEBUG: [%s, %d] ul_fp_FLIC_Palette_Header_Offset: %lu\n", __FILE__, __LINE__, ul_fp_FLIC_Palette_Header_Offset);
-    dbg_prn("DEBUG: [%s, %d] (void _FAR *)ul_fp_FLIC_Palette_Header_Offset: %Fp\n", __FILE__, __LINE__, ((void _FAR *)ul_fp_FLIC_Palette_Header_Offset));
-    dbg_prn("DEBUG: [%s, %d] GET_LE_16(fp_FLIC_Palette_Header_Offset): 0x%04X\n", __FILE__, __LINE__, GET_LE_16(fp_FLIC_Palette_Header_Offset));
-    dbg_prn("DEBUG: [%s, %d] GET_LE_16(fp_FLIC_Palette_Header_Offset): %u\n", __FILE__, __LINE__, GET_LE_16(fp_FLIC_Palette_Header_Offset));
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Palette_Header: %Fp\n", __FILE__, __LINE__, fp_FLIC_Palette_Header);
-#endif
+    // // ul_fp_FLIC_Palette_Header_Offset = AddressOf(fp_FLIC_Palette_Header_Offset);
+    // fp_FLIC_Palette_Header = (unsigned char _FAR *)MK_FP(SrcSgmt, SrcOfstBase + GET_LE_16(fp_FLIC_Palette_Header_Offset));
+
 // #define FPGET_WORD(_fp_) ( *((word _FAR *)MK_FP(FP_SEG(_fp_), FP_OFF(_fp_))) )
 // #define GET_LE_16(_ptr_) ( (((unsigned int)(((unsigned char _FAR *)(_ptr_))[1])) << 8) | ((unsigned int)(((unsigned char _FAR *)(_ptr_))[0])) )
 // FH_Palette_Header_Offset
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Palette_Header_Offset: %Fp\n", __FILE__, __LINE__, fp_FLIC_Palette_Header_Offset);
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Palette_Header_Offset[0]: 0x%02X\n", __FILE__, __LINE__, fp_FLIC_Palette_Header_Offset[0]);
-    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Palette_Header_Offset[1]: 0x%02X\n", __FILE__, __LINE__, fp_FLIC_Palette_Header_Offset[1]);
-#endif
 
 
-
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] SrcSgmt: 0x%04X\n", __FILE__, __LINE__, SrcSgmt);
-    dbg_prn("DEBUG: [%s, %d] SrcOfstBase: 0x%04X\n", __FILE__, __LINE__, SrcOfstBase);
-    dbg_prn("DEBUG: [%s, %d] fp_Src: %Fp\n", __FILE__, __LINE__, fp_Src);
-    dbg_prn("DEBUG: [%s, %d] &fp_Src[0]: 0x%08X\n", __FILE__, __LINE__, &fp_Src[0]);
-#endif
-// DEBUG: [seg021.c, 211] SrcSgmt: 0xE000
-// DEBUG: [seg021.c, 212] SrcOfstBase: 0x02C0
-// DEBUG: [seg021.c, 213] fp_Src: E000:02C0
-// DEBUG: [seg021.c, 214] &fp_Src[0]: 0x000002C0
-// Hrrrmm... taking that address of an index into a far pointer only gets you the offset portion
-// So, this is why the macros have to be far pointer aware?
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] FLIC_LBX_Get_Palette_Header_Offset(fp_Src): 0x%04X\n", __FILE__, __LINE__, FLIC_LBX_Get_Palette_Header_Offset(fp_Src));
@@ -546,17 +439,16 @@ void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index)
         // SrcOfst = SrcOfstBase + ffh_image_offset;
     }
 
-    // for(itr_Color_Count = 0; itr_Color_Count < Color_Count; itr_Color_Count++)
-    for(itr_Color_Count = Color_Index; itr_Color_Count < Color_Count; itr_Color_Count++)
+    for(itr = Color_Index; itr < Color_Count; itr++)
     {
-        p_Palette[itr_Color_Count] = fp_FlicPalette[itr_Color_Count];
-        *(p_PaletteFlags + itr_Color_Count) = 1;
+        *(p_Palette + itr) = *(palette_data + itr);
+        *(p_Palette + 768 + itr) = 1;
     }
 
-Done:
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: FLIC_LoadPalette_Redux(sa_FLIC_Header=0x%04X, Frame_Index=%d)\n", __FILE__, __LINE__, sa_FLIC_Header, Frame_Index);
 #endif
+
 }
 
 // s21p07
@@ -582,9 +474,8 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
     byte fh_frames_have_palettes;
     unsigned int  ffh_image_offset;
     unsigned char ffh_colors_hi_lo;
-    unsigned char ffh_color_index;
+    unsigned char ffh_first_color;
     unsigned char ffh_color_count;
-    unsigned int tmp_Color_Start;
     unsigned int tmp_Color_Count;
     unsigned int ofstPaletteFlags;
     unsigned int itr_Color_Count;
@@ -712,7 +603,6 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
 //         dbg_prn("DEBUG: [%s, %d] fh_palette_color_count: %04Xh %ud\n", __FILE__, __LINE__, fh_palette_color_count, fh_palette_color_count);
 // #endif
 
-        tmp_Color_Start = fh_palette_color_index;
         tmp_Color_Count = fh_palette_color_count;
         SrcOfst = SrcOfstBase + fh_palette_data_offset;
 
@@ -751,7 +641,7 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
         fptr_Src = (unsigned int *)MK_FP(SrcSgmt, SrcOfst);
         ffh_image_offset = fptr_Src[0];
         ffh_color_count = fptr_Src[1];
-        ffh_color_index = fptr_Src[2];
+        ffh_first_color = fptr_Src[2];
 
 // #ifdef STU_DEBUG
 //         dbg_prn("DEBUG: [%s, %d] ffh_image_offset: %04X %u\n", __FILE__, __LINE__, ffh_image_offset, ffh_image_offset);
@@ -766,7 +656,6 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
         }
         // HERE("( ffh_color_count != 0 )");
 
-        tmp_Color_Start = ffh_color_index;
         tmp_Color_Count = ffh_color_count;
         SrcOfst = SrcOfstBase + ffh_image_offset;
 
@@ -789,8 +678,7 @@ void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index)
     fptr_SrcByte = (unsigned char *) MK_FP(SrcSgmt, 0);
 
     tmp_Color_Count_Bytes = (tmp_Color_Count * 3);
-    // for ( itr_Color_Count = 0; itr_Color_Count < tmp_Color_Count_Bytes; itr_Color_Count++ )
-    for ( itr_Color_Count = tmp_Color_Start; itr_Color_Count < tmp_Color_Count_Bytes; itr_Color_Count++ )
+    for ( itr_Color_Count = 0; itr_Color_Count < tmp_Color_Count_Bytes; itr_Color_Count++ )
     {
         // dbg_prn("DEBUG: [%s, %d] fptr_SrcByte[%u]: %02X %u)\n", __FILE__, __LINE__, itr_Color_Count, fptr_SrcByte[(SrcOfst + itr_Color_Count)], fptr_SrcByte[(SrcOfst + itr_Color_Count)]);
         //fptr_Dst[(DstOfst++] = fptr_Src[SrcOfst++];

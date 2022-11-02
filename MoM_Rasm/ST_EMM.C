@@ -1,4 +1,4 @@
-#include "ST_TYPE.H"
+#include "ST_TYPE.H"    /* byte_ptr */
 #include "ST_DEF.H"
 
 #include "ST_EMM.H"
@@ -75,6 +75,9 @@ unsigned int g_EmmHndl_FIGUREX;             // dseg:9486
 */
 
 unsigned int EMM_PageFrameBaseAddress;   // dseg:40E4
+sgmt_addr sa_EMM_PFBA;
+byte_ptr fp_EMM_PFBA;
+byte_ptr p_EMM_PFBA;
 char EMM_device_name[9] = "EMMXXXX0";                      // dseg:40E6
 // //dseg:40EF EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
 // //dseg:40EF                  EMM_L2P_Map_Record <0, 1>
@@ -313,9 +316,13 @@ int EMM_Init(void)
     else
     {
         EMM_PageFrameBaseAddress = outregs6.x.bx;  // BX = segment of page frame (PFBA) ...where in the 1Mb memory address the page frame will be mapped
-// #ifdef STU_DEBUG
-//         dlvfprintf("DEBUG: [%s, %d] EMM_PageFrameBaseAddress: 0x%04X }\n", __FILE__, __LINE__, EMM_PageFrameBaseAddress);
-// #endif
+        sa_EMM_PFBA = outregs6.x.bx;
+        fp_EMM_PFBA = MK_FP(EMM_PageFrameBaseAddress,0);
+        p_EMM_PFBA = MK_FP(EMM_PageFrameBaseAddress,0);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] EMM_PageFrameBaseAddress: 0x%04X\n", __FILE__, __LINE__, EMM_PageFrameBaseAddress);
+    dbg_prn("DEBUG: [%s, %d] p_EMM_PFBA: %p\n", __FILE__, __LINE__, p_EMM_PFBA);
+#endif
     }
 
 Success:
@@ -657,10 +664,10 @@ unsigned int EMM_GetPageFrame(void)
 // s12p11
 void EMM_Map4(unsigned int EMM_Handle, unsigned int EMM_Logical_Page)
 {
-    EMM_MAP_PAGE(0,EMM_Handle,EMM_Logical_Page + 0)
-    EMM_MAP_PAGE(1,EMM_Handle,EMM_Logical_Page + 1)
-    EMM_MAP_PAGE(2,EMM_Handle,EMM_Logical_Page + 2)
-    EMM_MAP_PAGE(3,EMM_Handle,EMM_Logical_Page + 3)
+    EMM_MAP_PAGE(0, EMM_Handle, EMM_Logical_Page + 0)
+    EMM_MAP_PAGE(1, EMM_Handle, EMM_Logical_Page + 1)
+    EMM_MAP_PAGE(2, EMM_Handle, EMM_Logical_Page + 2)
+    EMM_MAP_PAGE(3, EMM_Handle, EMM_Logical_Page + 3)
 }
 
 // s12p12
@@ -674,7 +681,7 @@ void EMM_MapMulti4(unsigned int EMM_Logical_Page, unsigned int EMM_Handle)
     _DS = FP_SEG(EMM_L2P_Map);
     _SI = FP_OFF(EMM_L2P_Map);      // DS:SI = pointer to mapping array
     _DX = EMM_Handle;               // DX = EMM Handle Number
-    _CX = 0x04;                     // CX = number of entries in mapping array
+    _CX = 4;                        // CX = number of entries in mapping array
     _AX = EMM_MAP_MULTIPLE_PAGES;   // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+) // 00 Map/unmap pages
     geninterrupt(EMM_INT);
 }

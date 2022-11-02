@@ -8,7 +8,8 @@ extern "C" {
 
 void wait_for_any_key(void);
 
-void get_datetime(char *datatime);
+void get_datetime(char * datatime);
+
 
 #ifdef __cplusplus
 }

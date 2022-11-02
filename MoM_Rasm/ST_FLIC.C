@@ -45,8 +45,8 @@ unsigned int FLIC_GetCurFrame(unsigned int FlicHdr_SgmtAddr);
 */
 
 
-// 1oom::lbxgfx.c::static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
-void FLIC_RLE_Decode(BYTE * FLIC_Frame_Data)
-{
-    
-}
+// // 1oom::lbxgfx.c::static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
+// void FLIC_RLE_Decode(BYTE * FLIC_Frame_Data)
+// {
+//     
+// }

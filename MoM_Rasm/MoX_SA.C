@@ -1,33 +1,50 @@
 
+/*
+    MoO2
+    Module: allocate
+    Allocate_Space
+    Allocate_Space_No_Header
+    Allocate_First_Block
+    Allocate_Next_Block
+    Allocation_Error
+    Reallocation_Error
+
+    Allocate_Space
+        Num params: 1
+        Return type: pointer (4 bytes) 
+            signed integer (4 bytes) size
+            pointer (4 bytes) name
+            pointer (4 bytes) header
+            signed integer (4 bytes) lsize
+
+*/
+
+#include "MoX_TYPE.H"
+#include "MoX_DEF.H"
+
 #include "MoX_SA.H"
 
-#include "MoX_TYPE.H"   /* SAMB_ptr */
-#include "MoX_DEF.H"    /* PTR_INC_PARAGRAPH() */
-
-#include "MoX_MoM.H"    /*  */
-
-#include "MoX_DBG.H"    /* DBG_IsDisabled() */
-#include "MoX_EXIT.H"   /* Exit() */
-
-
-#if defined(__DOS16__)
-#include <MALLOC.H>
-#include <STDLIB.H>     /* itoa() */
-#include <STRING.H>     /* strcat(), strcpy(); */
-#endif
-#if defined(__WIN32__)
 #include <malloc.h>
 #include <stdlib.h>     /* itoa() */
-#endif
 
 
-#ifdef STU_DEBUG
-#include "STU_DBG.H"  /* DLOG() */
-#endif
+extern int RAM_Min_KB;
 
 
-SAMB_ptr g_SAMB;
 
+// s07p04
+int Check_Allocation(SAMB_ptr SAMB_head);
+
+// s08p07
+SAMB_ptr Allocate_Space(signed int size);
+// s08p08
+SAMB_ptr Allocate_Space_No_Header(signed int size);
+// s08p15
+unsigned int Get_Free_Blocks(SAMB_ptr SAMB_head);
+// _s08p19
+void Allocation_Error(int error_num, int blocks);
+
+SAMB_ptr g_SAMB;  // rename - g_header, tmp_header_ptr, _header_ptr, ?!?
 
 char *cnst_Alloc_Error01 = "Near Allocation too large by ";                     // dseg:3D56
 char *cnst_Alloc_Error02 = " bytes";                                            // dseg:3D74
@@ -43,142 +60,115 @@ char *cnst_Alloc_Error3 = "Allocation space has been corrupted for";            
 char *cnst_Alloc_Error4 = " (EMM) ";                                            // dseg:3E5E
 
 
-// // s07p04
-// /*
-//     pSAMB_head:
-//         pointer to 'SAMB Header', as returned by SA_Allocate_Space()  (~AKA 'Load Type' 1)
-//     Return:
-//         ST_STATUS: ST_SUCCESS, ST_FAILURE
-// */
-// int SA_Alloc_Validate(SAMB_ptr pSAMB_head)
-// {
-//     unsigned int memsig1;
-//     unsigned int memsig2;
-//     int is_valid;
-//  
-//     memsig1 = ((unsigned int)*((unsigned char *)pSAMB_head + 4)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 5) << 8);
-//     memsig2 = ((unsigned int)*((unsigned char *)pSAMB_head + 6)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 7) << 8);
-// 
-//     if (memsig1 != SA_MEMSIG1 || memsig2 != SA_MEMSIG2)
-//     {
-//         is_valid = ST_FAILURE;
-//     }
-//     else
-//     {
-//         is_valid = ST_SUCCESS;
-//     }
-// 
-//     return is_valid;
-// }
 
+/*
+    MAGIC.EXE  seg007
+*/
 
-// s08p08
-SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
+// s07p04
+int Check_Allocation(SAMB_ptr SAMB_head)
 {
-    SAMB_ptr SAMB_data;
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: SA_Allocate_MemBlk(nparas = %u)\n", __FILE__, __LINE__, nparas);
-// #endif
-
-    // g_SAMB = (SAMB_ptr) malloc(((unsigned long)nparas * 16) + 16);
-    g_SAMB = (SAMB_ptr) malloc( ((nparas * 16) + 16) );
-
-    if ( g_SAMB == NULL )
-    {
-        SA_Alloc_Error(0x01, nparas); // Alloc Error #1: Allocation Too Small
-    }
+    int is_valid;
     
-// #ifdef __DOS16__
-//     //pSAMB_data = (g_SAMB + 16);
-//     //pSAMB_data = MK_FP((FP_SEG(g_SAMB) + 1),FP_OFF(g_SAMB));
-//     pSAMB_data = (SAMB_ptr) MK_FP((FP_SEG(g_SAMB) + 1),0);  // add 1 segment/paragraph
-// #endif
-// #ifdef __WIN32__
-//     pSAMB_data = g_SAMB + 16;  // add 16 bytes
-// #endif
-    SAMB_data = (SAMB_ptr) PTR_INC_PARAGRAPH(g_SAMB);  // add 1 paragraph / 16 bytes  // unsigned char * offset = data + 512; // same as &data[512]
-
-    //Update_MemFreeWorst_KB();
-
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: SA_Allocate_MemBlk(nparas = %u) { pSAMB_data = %p }\n", __FILE__, __LINE__, nparas, pSAMB_data);
-// #endif
-
-    return SAMB_data;
-}
-
-
-// _s08p19
-void SA_Alloc_Error(int SA_Error_Number, int blocks)
-{
-    int SA_Error_Index;
-    char str_itoa[20];
-    char str_errmsg[120];
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: SA_Alloc_Error( SA_Error_Number = %d, blocks = %d)\n", __FILE__, __LINE__, SA_Error_Number, blocks);
-#endif
-
-#ifdef STU_DEBUG
-    // strcpy(str_errmsg, "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");  // 120 characters
-    strcpy(str_errmsg, "0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_0123456789_");  // 110 characters
-    dbg_prn("DEBUG: [%s, %d] str_errmsg: %s\n", __FILE__, __LINE__, str_errmsg);
-#endif
-
-    if ( DBG_IsDisabled() != 0 )
+    if (SA_Get_MemSig1(SAMB_head) != SA_MEMSIG1 || SA_Get_MemSig2(SAMB_head) != SA_MEMSIG2)
     {
-        // DLOG("( DBG_IsDisabled() != 0 )");
-        SA_Error_Index = SA_Error_Number - 1;
-        switch(SA_Error_Index)
-        {
-            case 0:
-                strcpy(str_errmsg, cnst_Alloc_Error11);
-                strcat(str_errmsg, cnst_Alloc_Error12);
-                itoa(blocks, str_itoa, 10);
-                break;
-            case 1:
-                strcpy(str_errmsg, cnst_Alloc_Error21);
-                strcat(str_errmsg, cnst_Alloc_Error22);
-                strcat(str_errmsg, cnst_Alloc_Error23);
-                itoa(blocks, str_itoa, 10);
-                break;
-            case 2:
-                strcpy(str_errmsg, cnst_Alloc_Error3);
-                strcat(str_errmsg, cnst_Alloc_Error22);
-                strcat(str_errmsg, cnst_Alloc_Error12);
-                itoa(blocks, str_itoa, 10);
-                break;
-            case 3:
-                strcpy(str_errmsg, cnst_Alloc_Error21);
-                strcat(str_errmsg, cnst_Alloc_Error4);
-                strcat(str_errmsg, cnst_Alloc_Error22);
-                strcat(str_errmsg, cnst_Alloc_Error23);
-                itoa(blocks, str_itoa, 10);
-                break;
-        }
-        strcat(str_errmsg, str_itoa);
-        strcat(str_errmsg, cnst_Alloc_Error13);
-        goto Done;
+        is_valid = ST_FAILURE;
     }
     else
     {
-        // DLOG("( DBG_IsDisabled() == 0 )");
-        strcpy(str_errmsg, cnst_Alloc_Error51);
-        itoa(RAM_Min_KB, str_itoa, 10);
-        strcat(str_errmsg, str_itoa);
-        strcat(str_errmsg, cnst_Alloc_Error52);
-        goto Done;
+        is_valid = ST_SUCCESS;
+    }
+    printf("MemSig1: 0x%04X\n", SA_Get_MemSig1(SAMB_head));
+    printf("MemSig2: 0x%04X\n", SA_Get_MemSig2(SAMB_head));
+    printf("Size: %d\n", SA_Get_Size(SAMB_head));
+    printf("Used: %0d\n", SA_Get_Used(SAMB_head));
+
+    return is_valid;
+}
+
+
+/*
+    MAGIC.EXE  seg008
+*/
+
+// s08p07
+SAMB_ptr Allocate_Space(signed int size)
+{
+    signed long lsize;
+    SAMB_ptr SAMB_head;
+    lsize = (size + 1) * 16;
+    g_SAMB = (SAMB_ptr) malloc(lsize);
+    if ( g_SAMB == NULL ) { Allocation_Error(0x01, size); }
+    SAMB_head = (SAMB_ptr) PTR_ADD_PARAGRAPH(g_SAMB,1);
+    SA_Set_MemSig1(SAMB_head);
+    SA_Set_MemSig2(SAMB_head);
+    SA_Set_Size(SAMB_head,size);
+    SA_Set_Used(SAMB_head,1);
+    // Check_Free();
+    return SAMB_head;
+}
+
+// s08p08
+SAMB_ptr Allocate_Space_No_Header(signed int size)
+{
+    signed long lsize;
+    SAMB_ptr SAMB_data;
+    lsize = (size + 1) * 16;
+    g_SAMB = (SAMB_ptr) malloc(lsize);
+    if ( g_SAMB == NULL ) { Allocation_Error(0x01, size); }
+    SAMB_data = (SAMB_ptr) PTR_ADD_PARAGRAPH(g_SAMB,1);
+    // Update_MemFreeWorst_KB();
+    return SAMB_data;
+}
+
+// s08p15
+unsigned int Get_Free_Blocks(SAMB_ptr SAMB_head)
+{
+    return SA_Get_Size(SAMB_head) - SA_Get_Used(SAMB_head);
+}
+
+// _s08p19
+void Allocation_Error(int error_num, int blocks)
+{
+    char buffer[120] = {0};
+    char buffer2[20] = {0};
+
+    if ( DBG_IsDisabled() != 0 )
+    {
+        switch(error_num)
+        {
+            case 1:
+                strcpy(buffer, cnst_Alloc_Error11);
+                strcat(buffer, cnst_Alloc_Error12);
+                break;
+            case 2:
+                strcpy(buffer, cnst_Alloc_Error21);
+                strcat(buffer, cnst_Alloc_Error22);
+                strcat(buffer, cnst_Alloc_Error23);
+                break;
+            case 3:
+                strcpy(buffer, cnst_Alloc_Error3);
+                strcat(buffer, cnst_Alloc_Error22);
+                strcat(buffer, cnst_Alloc_Error12);
+                break;
+            case 4:
+                strcpy(buffer, cnst_Alloc_Error21);
+                strcat(buffer, cnst_Alloc_Error4);
+                strcat(buffer, cnst_Alloc_Error22);
+                strcat(buffer, cnst_Alloc_Error23);
+                break;
+        }
+        itoa(blocks, buffer2, 10);
+        strcat(buffer, buffer2);
+        strcat(buffer, cnst_Alloc_Error13);
+    }
+    else
+    {
+        strcpy(buffer, cnst_Alloc_Error51);
+        itoa(RAM_Min_KB, buffer2, 10);
+        strcat(buffer, buffer2);
+        strcat(buffer, cnst_Alloc_Error52);
     }
 
-Done:
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] str_errmsg: %s\n", __FILE__, __LINE__, str_errmsg);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: SA_Alloc_Error( SA_Error_Number = %d, blocks = %d)\n", __FILE__, __LINE__, SA_Error_Number, blocks);
-#endif
-    Exit(str_errmsg);
+    Exit_With_Message(buffer);
 }

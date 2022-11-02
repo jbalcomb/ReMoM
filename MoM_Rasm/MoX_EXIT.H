@@ -16,6 +16,7 @@ void Exit_MemBug(void);
 
 // s05p02
 void Exit(char * argQuitMessage);
+void Exit_With_Message(char * string);
 
 // s05p05
 void Update_MemFreeWorst_KB(void);

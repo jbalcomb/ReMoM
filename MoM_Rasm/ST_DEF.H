@@ -65,33 +65,32 @@ static int delete = 0;
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 #define SWAP(x, y) (x ^= y ^= x ^= y)
 
-#ifndef __WIN32__
+// #ifndef __WIN32__
 #if !defined( __DOS_H )
 #include <DOS.H>
 #endif
 #if !defined( __DEFS_H )
 #include <_defs.h>
 #endif
+
 #undef MK_FP
 #undef FP_SEG
 #undef FP_OFF
 #define MK_FP(_sgmt_,_ofst_)    ( (void *) ( ((unsigned long) (_sgmt_) << 16) | (_ofst_) ) )
 #define FP_SEG(_fp_)            ( (unsigned int) ( (unsigned long)((void *)(_fp_)) >> 16) )
 #define FP_OFF(_fp_)            ( (unsigned int) (_fp_) )
-#endif
+// #endif  /* #ifndef __WIN32__ */
 
 // #if defined( __DOS16__ )
 #define PTR_INC_PARAGRAPH(_ptr_) ( (unsigned char *) MK_FP( ( FP_SEG( (_ptr_) ) + 1), 0) )
 #define PTR_DEC_PARAGRAPH(_ptr_) ( (unsigned char *) MK_FP( ( FP_SEG( (_ptr_) ) - 1), 0) )
 #define PTR_ADD_PARAGRAPH(_ptr_,_paras_) ( (unsigned char *) MK_FP( ( FP_SEG( (_ptr_) ) + (_paras_)), 0) )
 #define PTR_SUB_PARAGRAPH(_ptr_,_paras_) ( (unsigned char *) MK_FP( ( FP_SEG( (_ptr_) ) - (_paras_)), 0) )
-// #endif
-
+// #endif  /* #if defined( __DOS16__ ) */
 
 // Far Pointer - Add Relative Offset
 #define ADD_REL(_ptr_,_rel_) ( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), (FP_OFF((_ptr_)) + (_rel_)) ) )
 #define FP_ADD_REL(_ptr_,_rel_) ( (unsigned char _FAR *) MK_FP( FP_SEG((_ptr_)), (FP_OFF((_ptr_)) + (_rel_)) ) )
-
 
 // you can't &fp a Far Pointer - you only get the offset portion - ~== FP_OFF() || (unsigned int)(fp)
 // ? ~== (segment * 16) + offset ?
@@ -99,20 +98,32 @@ static int delete = 0;
 #define AddressOf(_farptr_) ( ((unsigned long)(_farptr_)) | ((unsigned int)(_farptr_)) )
 
 
+// #ifdef __SM__
+
+// unsigned char * MK_PTR( unsigned char * _ptr_, unsigned short int _ofs_)
+// if/when/ever need to add the far pointer's current offset port to the segment portion?
+#define MK_PTR(_ptr_,_ofs_)  ( (unsigned char *) MK_FP(FP_SEG((_ptr_)),(FP_OFF((_ptr_))+(_ofs_))) )
+
+// #ifdef __LM__
+
+// #define MK_PTR(_ptr_,_ofs_)  ( (unsigned char *) ( (_ptr_) + (_ofs_) )  // ~++ &_ptr_[_ofs_]
+
+
+
 #define GET_LE_16(_ptr_) ( (((unsigned int)(((unsigned char _FAR *)(_ptr_))[1])) << 8) | ((unsigned int)(((unsigned char _FAR *)(_ptr_))[0])) )
 
 #define GET_LE_32(_ptr_) ( (((unsigned long)((unsigned char _FAR *)(_ptr_))[3]) << 24) | (((unsigned long)((unsigned char _FAR *)(_ptr_))[2]) << 16) | (((unsigned long)((unsigned char _FAR *)(_ptr_))[1]) <<  8) |  ((unsigned long)((unsigned char _FAR *)(_ptr_))[0]) )
 
 
-#define GET_2B(_ptr_) ( (unsigned int)                                              *((_ptr_) + 1) << 8 | *((_ptr_) + 0) )
+#define GET_2B(_ptr_) ( (unsigned int)                                                *((_ptr_) + 1) << 8 | *((_ptr_) + 0) )
 
-#define GET_4B(_ptr_) ( (unsigned int)*((_ptr_) + 3) << 24 | *((_ptr_) + 2) << 16 | *((_ptr_) + 1) << 8 | *((_ptr_) + 0) )
+#define GET_4B(_ptr_) ( (unsigned long) *((_ptr_) + 3) << 24 | *((_ptr_) + 2) << 16 | *((_ptr_) + 1) << 8 | *((_ptr_) + 0) )
 
 // cast _ptr_ to (unsigned char *), index/add offset, set low byte of value with value and high byte cleared, set high byte of value with high byte shifted low and high byte cleared
 
-#define SET_2B(_ptr_,_val_) (                                                                 *((_ptr_) + 1) = (_val_) >> 8; *((_ptr_) + 0) = (_val_) )
+#define SET_2B(_ptr_,_val_) (                                                                 *((_ptr_) + 1) = (_val_) >> 8; *((_ptr_) + 0) = (_val_); )
 
-#define SET_4B(_ptr_,_val_) ( *((_ptr_) + 3) = (_val_) >> 24; *((_ptr_) + 2) = (_val_) >> 16; *((_ptr_) + 1) = (_val_) >> 8; *((_ptr_) + 0) = (_val_) )
+#define SET_4B(_ptr_,_val_) ( *((_ptr_) + 3) = (_val_) >> 24; *((_ptr_) + 2) = (_val_) >> 16; *((_ptr_) + 1) = (_val_) >> 8; *((_ptr_) + 0) = (_val_); )
 
 // ( (uint8_t *) (_p_) )[0] = ((_v_) & 0xffu )
 // ( (uint8_t *) (_p_) )[1] = (((_v_) >> 8) & 0xffu )
@@ -132,6 +143,15 @@ static int delete = 0;
 
 // replaces farpeekdw()
 #define GET_4B_OFS(_ptr_,_ofs_) ( (unsigned long) *((_ptr_) + _ofs_ + 3) << 24 | *((_ptr_) + _ofs_ + 2) << 16 | *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
+
+// replaces farpokeb()
+#define SET_1B_OFS(_ptr_,_ofs_,_val_) ( (unsigned char)                                                                                             *((_ptr_) + _ofs_ + 0) )
+
+// replaces farpokew()
+#define SET_2B_OFS(_ptr_,_ofs_,_val_) ( *((_ptr_) + (_ofs_) + 1) = (_val_) >> 8, *((_ptr_) + (_ofs_) + 0) = (_val_) )
+
+// replaces farpokedw()
+#define SET_4B_OFS(_ptr_,_ofs_,_val_) ( (unsigned long) *((_ptr_) + _ofs_ + 3) << 24 | *((_ptr_) + _ofs_ + 2) << 16 | *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
 
 
 

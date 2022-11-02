@@ -3,6 +3,8 @@
 // MoO2 Module: graphics
 
 #include "seg014.H"
+#include "seg020.H"     /* palette_block */
+
 
 // #include "ST_HEAD.H"
 // #include "ST_TYPE.H"
@@ -103,17 +105,17 @@ void Load_Font_File(char * font_file)
     strcpy(font_name, font_file);
 
     /* MoO2 font_ptr */
-    // SM2LM  sa_FontStyleData    =  LBXE_LoadSingle(font_file, 0);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
-    p_FontStyleData        = LBXE_LoadSingle_LM(font_file, 0);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // SM2LM  sa_FontStyleData = LBXE_LoadSingle(font_file, 0);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    p_FontStyleData = LBXE_LoadSingle_LM(font_file, 0);
     // SM2LM  sa_FontStyleData = FP_SEG(p_FontStyleData);
 
     /* MoO2 DNE */
-    // SM2LM  gsa_BorderStyleData  =  LBXE_LoadSingle(font_file, 1);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
-    p_BorderStyleData      = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    // SM2LM  gsa_BorderStyleData = LBXE_LoadSingle(font_file, 1);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    p_BorderStyleData = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
     // SM2LM  sa_BorderStyleData = FP_SEG(p_BorderStyleData);
 
     /* MoO2 palette_block */
-    sah1_PaletteLbxEntry   = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    palette_block          = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
     p_Palette              = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);             // ~== p_PaletteFlags = &p_Palette[768];
     // p_PaletteFlags         = PTR_ADD_PARAGRAPH(p_Palette, 48);

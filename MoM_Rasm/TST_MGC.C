@@ -18,7 +18,7 @@
 #include "seg001.H"     /* GAME_LoadMainImages(); */
 #include "seg014.H"     /* Hardware_Init(), Load_Font_File(); */
 #include "seg019.H"     /* VGA_TextDraw_Init() */
-#include "seg020.H"     /* PAL_Load_Palette() */
+#include "seg020.H"     /* palette_block, palette_data; PAL_Load_Palette() */
 #include "seg021.H"     /* FLIC_LoadPalette(); */
 #include "seg022.H"     /* ST_MoveData() */
 #include "seg028.H"     /* FLIC_Draw_XY(); */
@@ -654,42 +654,44 @@ void test_Load_Font_File(void)
     dbg_prn("DEBUG: [%s, %d] font_name: %s\n", __FILE__, __LINE__, GAME_FONT_FILE);
 
     dbg_prn("DEBUG: [%s, %d] font_name: %s\n", __FILE__, __LINE__, font_name);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_FontStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_FontStyleData);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_BorderStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_BorderStyleData);
-    dbg_prn("DEBUG: [%s, %d] sah1_PaletteLbxEntry: %p\n", __FILE__, __LINE__, sah1_PaletteLbxEntry);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_FontStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_FontStyleData);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_BorderStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_BorderStyleData);
+    // dbg_prn("DEBUG: [%s, %d] sah1_PaletteLbxEntry: %p\n", __FILE__, __LINE__, sah1_PaletteLbxEntry);
+    dbg_prn("DEBUG: [%s, %d] palette_block: %p\n", __FILE__, __LINE__, palette_block);
     dbg_prn("DEBUG: [%s, %d] p_Palette: %p\n", __FILE__, __LINE__, p_Palette);
     dbg_prn("DEBUG: [%s, %d] p_PaletteFlags: %p\n", __FILE__, __LINE__, p_PaletteFlags);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_PaletteSaved: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteSaved);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_ReplacementColors: 0x%04X\n", __FILE__, __LINE__, gsa_ReplacementColors);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_VGAFILEH_Header: 0x%04X\n", __FILE__, __LINE__, gsa_VGAFILEH_Header);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_IntensityScaleTable: 0x%04X\n", __FILE__, __LINE__, gsa_IntensityScaleTable);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_PaletteSaved: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteSaved);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_ReplacementColors: 0x%04X\n", __FILE__, __LINE__, gsa_ReplacementColors);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_VGAFILEH_Header: 0x%04X\n", __FILE__, __LINE__, gsa_VGAFILEH_Header);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_IntensityScaleTable: 0x%04X\n", __FILE__, __LINE__, gsa_IntensityScaleTable);
 
-    // SMLM dbg_prn("DEBUG: [%s, %d] UU_g_VGA_TextDraw_Initd: %u\n", __FILE__, __LINE__, UU_g_VGA_TextDraw_Initd);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Lefts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Lefts);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Rights: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Rights);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Tops: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Tops);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Starts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Starts);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] UU_g_VGA_TextDraw_Initd: %u\n", __FILE__, __LINE__, UU_g_VGA_TextDraw_Initd);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Lefts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Lefts);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Rights: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Rights);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Tops: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Tops);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Starts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Starts);
 
 
     Load_Font_File(GAME_FONT_FILE);
 
 
     dbg_prn("DEBUG: [%s, %d] font_name: %s\n", __FILE__, __LINE__, font_name);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_FontStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_FontStyleData);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_BorderStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_BorderStyleData);
-    dbg_prn("DEBUG: [%s, %d] sah1_PaletteLbxEntry: %p\n", __FILE__, __LINE__, sah1_PaletteLbxEntry);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_FontStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_FontStyleData);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_BorderStyleData: 0x%04X\n", __FILE__, __LINE__, gsa_BorderStyleData);
+    // dbg_prn("DEBUG: [%s, %d] sah1_PaletteLbxEntry: %p\n", __FILE__, __LINE__, sah1_PaletteLbxEntry);
+    dbg_prn("DEBUG: [%s, %d] palette_block: %p\n", __FILE__, __LINE__, palette_block);
     dbg_prn("DEBUG: [%s, %d] p_Palette: %p\n", __FILE__, __LINE__, p_Palette);
     dbg_prn("DEBUG: [%s, %d] p_PaletteFlags: %p\n", __FILE__, __LINE__, p_PaletteFlags);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_PaletteSaved: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteSaved);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_ReplacementColors: 0x%04X\n", __FILE__, __LINE__, gsa_ReplacementColors);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_VGAFILEH_Header: 0x%04X\n", __FILE__, __LINE__, gsa_VGAFILEH_Header);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gsa_IntensityScaleTable: 0x%04X\n", __FILE__, __LINE__, gsa_IntensityScaleTable);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_PaletteSaved: 0x%04X\n", __FILE__, __LINE__, gsa_PaletteSaved);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_ReplacementColors: 0x%04X\n", __FILE__, __LINE__, gsa_ReplacementColors);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_VGAFILEH_Header: 0x%04X\n", __FILE__, __LINE__, gsa_VGAFILEH_Header);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gsa_IntensityScaleTable: 0x%04X\n", __FILE__, __LINE__, gsa_IntensityScaleTable);
 
-    // SMLM dbg_prn("DEBUG: [%s, %d] UU_g_VGA_TextDraw_Initd: %u\n", __FILE__, __LINE__, UU_g_VGA_TextDraw_Initd);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Lefts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Lefts);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Rights: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Rights);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Tops: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Tops);
-    // SMLM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Starts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Starts);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] UU_g_VGA_TextDraw_Initd: %u\n", __FILE__, __LINE__, UU_g_VGA_TextDraw_Initd);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Lefts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Lefts);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Rights: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Rights);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Tops: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Tops);
+    // SM2LM dbg_prn("DEBUG: [%s, %d] gfp_VGA_TextLine_Starts: %p\n", __FILE__, __LINE__, gfp_VGA_TextLine_Starts);
 
     // ASSERT()
     if ( strcmp(font_name, "FONTS.LBX") != 0 )

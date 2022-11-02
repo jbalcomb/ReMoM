@@ -1,6 +1,11 @@
 #ifndef ST_SA_H
 #define ST_SA_H
 
+/*
+    "SPACE ALLOC" - STARLORD.EXE
+*/
+
+
 #include "ST_TYPE.H"
 
 
@@ -19,13 +24,13 @@ SEE: ST_SAMB.md
 /*
     SAMB Head
     SAMB Data
-    'Load Type' {0,1,2}
+    'Allocation Type' {0,1,2}
     sah0, sah1, sah2
     sad0, sad1, sad2
 */
 /*
-    SA_Allocate_MemBlk() returns a SAMB Data Type 0
-    SA_Allocate_Space()  returns a SAMB Data Type 1
+    SA_Allocate_Space_No_Header() returns a SAMB Data Type 0
+    SA_Allocate_Space() returns a SAMB Data Type 1
     SA_Alloc_First() returns a SAMB Data Type 2
     SA_Alloc_Next() returns a SAMB Data Type 2
     
@@ -33,7 +38,9 @@ SEE: ST_SAMB.md
     SA_Alloc_First() takes a SAMB Head Type 1
     SA_Alloc_Next() takes a SAMB Head Type 1
 
-    LBX_Load_Entry() takes no SAMB Head or, depending on 'Load Type', a SAMB Head Type 1 or a SAMB Head Type 2
+    LBX_Load_Entry() takes no SAMB Head or, depending on 'Allocation Type', a SAMB Head Type 1 or a SAMB Head Type 2
+        if 'Allocation Type' is allocation_type == 0, it calls SA_Allocate_Space_No_Header(), which calls farmalloc()
+
 
 */
 
@@ -41,6 +48,25 @@ SEE: ST_SAMB.md
 /*
     Manifest Constants
 */
+
+#define SAMB_RESERVED1   0
+#define SAMB_RESERVED2   2
+#define SAMB_MEMSIG1     4
+#define SAMB_MEMSIG2     6
+#define SAMB_SIZE        8
+#define SAMB_USED       10
+#define SAMB_unknown    12
+#define SAMB_MARKED     14
+
+#define SAMB_HDR_RESERVED1   0
+#define SAMB_HDR_RESERVED2   2
+#define SAMB_HDR_MEMSIG1     4
+#define SAMB_HDR_MEMSIG2     6
+#define SAMB_HDR_SIZE        8
+#define SAMB_HDR_USED       10
+#define SAMB_HDR_unknown    12
+#define SAMB_HDR_MARKED     14
+
 #define SA_MEMSIG1      0x12FA
 #define SA_MEMSIG2      0x4ECF
 
@@ -48,32 +74,26 @@ SEE: ST_SAMB.md
 /*
     Macros
 */
-#define SA_FarMalloc(nparas)       { (void far *) farmalloc( ((unsigned long)nparas * 16) + 16 ) }
-#define SA_GetSize(samb)           { farpeekw(samb, 0x08) }
-#define SA_GetUsed(samb)           { farpeekw(samb, 0x0A) }
-#define SA_GetMarked(samb)         { farpeekw(samb, 0x0E) }
-#define SA_SetSize(samb,nparas)    { farpokew(samb, 0x08, nparas) }
-#define SA_SetUsed(samb,nparas)    { farpokew(samb, 0x0A, nparas) }
-#define SA_SetMarked(samb,nparas)  { farpokew(samb, 0x0E, nparas) }
 
-// #define SAMB_SetMemSig1(_SAMB_head_) ( SET_2B(_SAMB_head_, SA_MEMSIG1) )
-// #define SAMB_SetMemSig2(_SAMB_head_) ( SET_2B(_SAMB_head_, SA_MEMSIG2) )
+#define SA_Get_MemSig1(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  4) )
 
-#define SAMB_GetMemSig1(_SAMB_head_) ( ((unsigned int)*((unsigned char *)pSAMB_head + 4)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 5) << 8) )
+#define SA_Get_MemSig2(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  6) )
 
-#define SAMB_GetMemSig2(_SAMB_head_) ( ((unsigned int)*((unsigned char *)pSAMB_head + 6)) | (unsigned int)((unsigned int)*((unsigned char *)pSAMB_head + 7) << 8) )
+#define SA_Get_Size(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_),  8) )
 
-#define SAMB_SetMemSig1(_SAMB_head_)        ( *((_SAMB_head_) +  4) = ((SA_MEMSIG1) & 0xFF);  *((_SAMB_head_) +  5) = (((SA_MEMSIG1) >> 8) & 0xFF); )
+#define SA_Get_Used(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), 10) )
 
-#define SAMB_SetMemSig2(_SAMB_head_)        ( *((_SAMB_head_) +  6) = ((SA_MEMSIG2) & 0xFF);  *((_SAMB_head_) +  7) = (((SA_MEMSIG2) >> 8) & 0xFF); )
+#define SA_Set_MemSig1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  4, SA_MEMSIG1) )
 
-#define SAMB_SetSize(_SAMB_head_,_nparas_)  ( *((_SAMB_head_) +  8) = ((_nparas_)   & 0xFF);  *((_SAMB_head_) +  9) = (((_nparas_)   >> 8) & 0xFF); )
+#define SA_Set_MemSig2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  6, SA_MEMSIG2) )
 
-#define SAMB_SetUsed(_SAMB_head_,_nparas_)  ( *((_SAMB_head_) + 10) = ((_nparas_)   & 0xFF);  *((_SAMB_head_) + 11) = (((_nparas_)   >> 8) & 0xFF); )
+#define SA_Set_Size(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_),  8, (_nparas_)) )
+
+#define SA_Set_Used(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), 10, (_nparas_)) )
 
 
 /*
-    Simtex 'SPACE ALLOC' Memory Block - Header
+    SimTex "SPACE ALLOC" Memory Block - Header
 */
 
 //struct ST_Alloc_Space_Header_Struct {
@@ -105,18 +125,6 @@ struct s_SAMB  // sizeof(0x10)
 //extern struct s_SAMB SAMB;
 typedef struct s_SAMB SAMB;
 
-
-#define SAMB_RESERVED1   0
-#define SAMB_RESERVED2   2
-#define SAMB_MEMSIG1     4
-#define SAMB_MEMSIG2     6
-#define SAMB_SIZE        8
-#define SAMB_USED       10
-#define SAMB_unknown    12
-#define SAMB_MARKED     14
-
-#define SA_MEMSIG1      0x12FA
-#define SA_MEMSIG2      0x4ECF
 
 extern SAMB_ptr g_SAMB;
 

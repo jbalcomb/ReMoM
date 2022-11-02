@@ -1,6 +1,6 @@
 ¿
-∵
-∴
+∵   Because
+∴   Therefore
 ≜
 
 Unicode Character “¿” (U+00BF)

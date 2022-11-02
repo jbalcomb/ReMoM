@@ -122,8 +122,8 @@ Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
     // TODO(casey): Aspect ratio correction
 
     StretchDIBits(DeviceContext, 
-                  0, 0, WindowWidth, WindowHeight, // destination rectangle (window)
-                  0, 0, Buffer->Width, Buffer->Height, // source rectangle (bitmap buffer)
+                  0, 0, WindowWidth, WindowHeight,      /* destination rectangle (window)   */
+                  0, 0, Buffer->Width, Buffer->Height,  /* source rectangle (bitmap buffer) */
                   Buffer->Memory,
                   &Buffer->Info,
                   DIB_RGB_COLORS, SRCCOPY);
@@ -240,6 +240,28 @@ WinMain(HINSTANCE Instance,
                                   CW_USEDEFAULT, CW_USEDEFAULT,
                                   CW_USEDEFAULT, CW_USEDEFAULT,
                                   0, 0, Instance, 0);
+
+
+
+    /*
+        BEGIN: Pre-MainLoop
+    */
+
+    // Set Screen Page Index
+    // Set Screen Page Address
+    // Clear Screen - Back-Buffer
+    // Clear Screen - Front-Buffer
+    // Load Font File
+    // Load Palette
+
+
+    // Load 
+
+    /*
+        END: Pre-MainLoop
+    */
+
+
 
     Win32ResizeDIBSection(&GlobalBackbuffer, 1280, 720);
 

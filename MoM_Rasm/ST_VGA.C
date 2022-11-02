@@ -60,8 +60,8 @@ SAMB_ptr p_IntensityScaleTable;         // SM2LM    // dseg:A7F0
 // SM2LM  
 SAMB_addr sa_IntensityScaleTable;
 
-SAMB_ptr sad1_PaletteLbxEntry;          // SM2LM    // dseg:A7F2
-SAMB_ptr sah1_PaletteLbxEntry;          // SM2LM    // dseg:A7F4
+// seg020  SAMB_ptr sad1_PaletteLbxEntry;          // SM2LM    // dseg:A7F2
+// seg020  SAMB_ptr sah1_PaletteLbxEntry;          // SM2LM    // dseg:A7F4
 
 //dseg:A7F6 VGA_AAColor_Array db 16 dup (0)
 //dseg:A806 VGA_Current_AA_Color db 0

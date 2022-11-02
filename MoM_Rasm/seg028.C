@@ -1,13 +1,47 @@
 // ~== ST_FLIC
 // seg028
 
-#include "ST_TYPE.H"
+#include "ST_TYPE.H"    /* SAMB_ptr */
 #include "ST_DEF.H"
 #include "seg028.H"
+#include "seg021.H"     /* FLIC_Load_Palette() */
 
 #include "ST_FLIC.H"
 #include "ST_SA.H"  /* SAMB_addr; farpokew(); */
 
+#include <STRING.H>     /* memcpy() */
+
+// ~== MoO2
+// void Draw(signed short int x, signed short int y, unsigned char * picture)
+void Draw(signed short int x, signed short int y, SAMB_ptr FLIC_animation)
+{
+    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
+
+    signed short int x2;
+    signed short int y2;
+
+    word Frame_Index;
+
+    // dseg02:001B42A8 animation_header dd ?
+
+    // ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
+    // void *memcpy(void *dest, const void * src, size_t n)
+    memcpy((void *)&PS_FLIC_Header, (void *)FLIC_animation, sizeof(PS_FLIC_Header));
+
+    Frame_Index = PS_FLIC_Header.Current_Frame;
+    PS_FLIC_Header.Current_Frame += 1;
+    if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
+    {
+        // farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
+        FLIC_Set_Current_Frame(FLIC_animation, PS_FLIC_Header.Current_Frame);
+    }
+    else
+    {
+        // farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
+        FLIC_Set_Current_Frame(FLIC_animation, PS_FLIC_Header.Loop_Frame);
+    }
+
+}
 
 
 // s28p02
@@ -40,18 +74,20 @@ void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
 
 }
 
-void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
-{
-    static struct s_FLIC_HDR PS_FLIC_Header;
-    // void * FLIC_Frame;
-    // int Frame_Index;
-    // int Shading;
-
-    // ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-    // ASSERT(sizeof(sa_FLIC_Header) == sizeof(PS_FLIC_Header))  // sizeof(struct s_FLIC_HDR) == 0x10  16 bytes, 1 paragraph/segment
-    memcpy(PS_FLIC_Header, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-
-}
+// void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
+// {
+//     static struct s_FLIC_HDR PS_FLIC_Header;
+//     SAMB_ptr fp_FLIC_Header;
+//     // void * FLIC_Frame;
+//     // int Frame_Index;
+//     // int Shading;
+// 
+//     fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
+//     // ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
+//     // ASSERT(sizeof(sa_FLIC_Header) == sizeof(PS_FLIC_Header))  // sizeof(struct s_FLIC_HDR) == 0x10  16 bytes, 1 paragraph/segment
+//     memcpy((void *)&PS_FLIC_Header, (void *)fp_FLIC_Header, sizeof(PS_FLIC_Header));
+// 
+// }
 
 // s28p11
 /*
@@ -109,105 +145,106 @@ void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
     NOTE: sa_FLIC_Header is the actual header in SRAM or the header copy in EMM
     
 */
-void FLIC_Draw_XY_Shim(int Left, int Top, SAMB_addr sa_FLIC_Header)
-{
-    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
-    unsigned int FLIC_Frame_Sgmt;
-    unsigned int FLIC_Frame_Ofst;
-    int Frame_Index;
-    int Shading;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY_Shim(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
-#endif
-    ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-    Frame_Index = PS_FLIC_Header.Current_Frame;
-    PS_FLIC_Header.Current_Frame += 1;
-    if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
-    {
-        farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
-    }
-    else
-    {
-        farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
-    }
-    if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
-    {
-        FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
-    }
-    if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
-    {
-
-// TODO(JimBalcomb): switch this to the Src/Dst:SgmtOfst approach
-asm {
-    push ds
-    push es
-    mov ax, [sa_FLIC_Header]
-    mov es, ax
-    mov bx, FlicHdr_Shading     //; 11h 17d  1oom :: lbxgfx.h :: #define lbxgfx_get_format(_data_) ((_data_)[0x11])
-    mov al, [es:bx]
-    xor ah, ah
-    mov [Shading], ax
-    inc bx                              //; _BX = 12h 18d - offset in FLIC to FLIC Frame Offset Table
-    mov ax, [Frame_Index]
-    shl ax, 1
-    shl ax, 1
-    add bx, ax                          //; _BX  = _BX + (Frame_Index * 2^2) .. ; _BX  = 18 + (Frame_Index * 4)
-    mov ax, [es:bx]     // loword
-    mov dx, [es:bx+2]   // hiword
-    mov bx, ax
-    //db 81h,0E3h,0Fh,0 ; <BAD>and  bx, 0Fh
-    and bx, 0Fh     // ?!? ~= xor bh, bh; clear the bits in the high byte of the word BX
-    inc bx
-    mov [FLIC_Frame_Ofst], bx
-
-    // [DX:AX] is FLIC Frame Offset High-Word:Low-Word
-    // The Shift Right instruction performs a right shift on the destinations operand, filling the lowest bit with 0. The lowest bit is moved into the Carry Flag.
-    // The RCR (Rotate and Carry Right) instruction shifts each bit to the right, copies the Carry flag to the most significant bit and copies the least significant bit into the Carry flag.
-    // CF <-----[][][][][][][][]<-|
-    // []                         |
-    //  |-------------------------|
-    // SHR DX,1  [][][][][][][][]->CF
-    // RCR AX,1  CF->[][][][][][][][]->CF
-    // ... AX = [DX3][DX2][DX1][DX0][AX15][AX14][AX13][AX12][AX11][AX10][AX9][AX8][AX7][AX6][AX5][AX4]
-    // ? Why bottom 4 bits of DX ? ... max would be F000h 61440d ... /16 = 3840d 0F00h ... /16 = 240d F0h ... /16 = 15d 0Fh
-    // 4, because 20 bit address bus
-    // https://stackoverflow.com/questions/2877417/what-is-meant-by-normalization-in-huge-pointers#:~:text=A%20normalized%20pointer%20is%20one,when%20an%20assignment%20is%20made.
-    // linear = segment * 16 + offset;
-    // ...
-    // / A near pointer contains only the 16 bit offset of the object within the currently selected segment. ?
-
-    shr dx, 1    //; / 4
-    rcr ax, 1    // ? AX = (AX>>1) + CF ?
-    shr dx, 1    //; / 4
-    rcr ax, 1
-    shr dx, 1    //; / 8
-    rcr ax, 1
-    shr dx, 1    //; / 16  ? 16, because segments ... 0000000000000001:0000000000000000 == 0000000000000000:1000000000000000 ?
-    rcr ax, 1
-    add ax, [sa_FLIC_Header]
-    mov [FLIC_Frame_Sgmt], ax
-    pop es
-    pop ds
-}
-
-        if ( Shading != 0 ) {
-            FLIC_Draw_R(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-        } else {
-            FLIC_Draw_A(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-        }
-    } else {
-        FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
-    }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY_Shim()\n", __FILE__, __LINE__);
-#endif
-}
+// void FLIC_Draw_XY_Shim(int Left, int Top, SAMB_addr sa_FLIC_Header)
+// {
+//     static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
+//     unsigned int FLIC_Frame_Sgmt;
+//     unsigned int FLIC_Frame_Ofst;
+//     int Frame_Index;
+//     int Shading;
+// 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY_Shim(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
+// #endif
+//     ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
+//     Frame_Index = PS_FLIC_Header.Current_Frame;
+//     PS_FLIC_Header.Current_Frame += 1;
+//     if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
+//     {
+//         farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
+//     }
+//     else
+//     {
+//         farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
+//     }
+//     if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
+//     {
+//         FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
+//     }
+//     if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
+//     {
+// 
+// // TODO(JimBalcomb): switch this to the Src/Dst:SgmtOfst approach
+// asm {
+//     push ds
+//     push es
+//     mov ax, [sa_FLIC_Header]
+//     mov es, ax
+//     mov bx, FlicHdr_Shading     //; 11h 17d  1oom :: lbxgfx.h :: #define lbxgfx_get_format(_data_) ((_data_)[0x11])
+//     mov al, [es:bx]
+//     xor ah, ah
+//     mov [Shading], ax
+//     inc bx                              //; _BX = 12h 18d - offset in FLIC to FLIC Frame Offset Table
+//     mov ax, [Frame_Index]
+//     shl ax, 1
+//     shl ax, 1
+//     add bx, ax                          //; _BX  = _BX + (Frame_Index * 2^2) .. ; _BX  = 18 + (Frame_Index * 4)
+//     mov ax, [es:bx]     // loword
+//     mov dx, [es:bx+2]   // hiword
+//     mov bx, ax
+//     //db 81h,0E3h,0Fh,0 ; <BAD>and  bx, 0Fh
+//     and bx, 0Fh     // ?!? ~= xor bh, bh; clear the bits in the high byte of the word BX
+//     inc bx
+//     mov [FLIC_Frame_Ofst], bx
+// 
+//     // [DX:AX] is FLIC Frame Offset High-Word:Low-Word
+//     // The Shift Right instruction performs a right shift on the destinations operand, filling the lowest bit with 0. The lowest bit is moved into the Carry Flag.
+//     // The RCR (Rotate and Carry Right) instruction shifts each bit to the right, copies the Carry flag to the most significant bit and copies the least significant bit into the Carry flag.
+//     // CF <-----[][][][][][][][]<-|
+//     // []                         |
+//     //  |-------------------------|
+//     // SHR DX,1  [][][][][][][][]->CF
+//     // RCR AX,1  CF->[][][][][][][][]->CF
+//     // ... AX = [DX3][DX2][DX1][DX0][AX15][AX14][AX13][AX12][AX11][AX10][AX9][AX8][AX7][AX6][AX5][AX4]
+//     // ? Why bottom 4 bits of DX ? ... max would be F000h 61440d ... /16 = 3840d 0F00h ... /16 = 240d F0h ... /16 = 15d 0Fh
+//     // 4, because 20 bit address bus
+//     // https://stackoverflow.com/questions/2877417/what-is-meant-by-normalization-in-huge-pointers#:~:text=A%20normalized%20pointer%20is%20one,when%20an%20assignment%20is%20made.
+//     // linear = segment * 16 + offset;
+//     // ...
+//     // / A near pointer contains only the 16 bit offset of the object within the currently selected segment. ?
+// 
+//     shr dx, 1    //; / 4
+//     rcr ax, 1    // ? AX = (AX>>1) + CF ?
+//     shr dx, 1    //; / 4
+//     rcr ax, 1
+//     shr dx, 1    //; / 8
+//     rcr ax, 1
+//     shr dx, 1    //; / 16  ? 16, because segments ... 0000000000000001:0000000000000000 == 0000000000000000:1000000000000000 ?
+//     rcr ax, 1
+//     add ax, [sa_FLIC_Header]
+//     mov [FLIC_Frame_Sgmt], ax
+//     pop es
+//     pop ds
+// }
+// 
+//         if ( Shading != 0 ) {
+//             FLIC_Draw_R(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+//         } else {
+//             FLIC_Draw_A(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+//         }
+//     } else {
+//         FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+//     }
+// 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY_Shim()\n", __FILE__, __LINE__);
+// #endif
+// }
 
 void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 {
     static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
+    SAMB_ptr fp_FLIC_Header;
     unsigned int FLIC_Frame_Sgmt;
     unsigned int FLIC_Frame_Ofst;
     int Frame_Index;
@@ -217,17 +254,19 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     unsigned char alt_Shading;
     //struct s_FLIC_HDR _FAR *fptr_FlicHeader;
     // struct s_FLIC_HDR _FAR *fptr_PS_FLIC_Header;
-#ifdef STU_DEBUG
-    WORD orig_DS;
-#endif
+// #ifdef STU_DEBUG
+//     WORD orig_DS;
+// #endif
 
-#ifdef STU_DEBUG
-    orig_DS = _DS;
-#endif
+// #ifdef STU_DEBUG
+//     orig_DS = _DS;
+// #endif
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
 // #endif
+
+    fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
 
     // dbg_prn("DEBUG: [%s, %d] FLIC_HDR[0x00]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x00));
     // dbg_prn("DEBUG: [%s, %d] FLIC_HDR[0x02]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x02));
@@ -311,7 +350,9 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
     {
         // HERE("FLIC_LoadPalette()");
         // FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
-        FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
+        // FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
+        FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
+        //FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);
     }
 
     if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
@@ -345,6 +386,7 @@ asm {
     mov al, [es:bx]
     xor ah, ah
     mov [Shading], ax
+
     inc bx                              //; _BX = 12h 18d - offset in FLIC to FLIC Frame Offset Table
     mov ax, [Frame_Index]
     shl ax, 1
@@ -418,30 +460,26 @@ asm {
 }
 
 // s28p14
-void FLIC_SetFrame(unsigned int FlicHdr_SgmtAddr, int Frame_Index)
+void FLIC_SetFrame(unsigned int sa_FLIC_Header, int Frame_Index)
 {
     int Loop_Length;
     int Loop_Frame;
     int Frame_Count;
-    unsigned int tmp_DI;
-    int tmp_SI;
-    tmp_DI = FlicHdr_SgmtAddr;
-    tmp_SI = Frame_Index;
-    tmp_SI = (tmp_SI & 0x7FFF);
-    Frame_Count = farpeekw(tmp_DI, FlicHdr_FrameCount);  // FLIC_HDR.Frame_Count
-    Loop_Frame = farpeekw(tmp_DI, FlicHdr_LoopFrame);  // FLIC_HDR.Loop_Frame
+    Frame_Index = (Frame_Index & 0x7FFF);
+    Frame_Count = farpeekw(sa_FLIC_Header, FlicHdr_FrameCount);  // FLIC_HDR.Frame_Count
+    Loop_Frame = farpeekw(sa_FLIC_Header, FlicHdr_LoopFrame);  // FLIC_HDR.Loop_Frame
     Loop_Length = Frame_Count - Loop_Frame;  // e.g., 20 - 0 = 20
-    if ( !(tmp_SI < Frame_Count) )
+    if ( !(Frame_Index < Frame_Count) )
     {
-        tmp_SI = Loop_Frame + ( (tmp_SI - Frame_Count) % Loop_Length );
+        Frame_Index = Loop_Frame + ( (Frame_Index - Frame_Count) % Loop_Length );
     }
-    farpokew(tmp_DI, FlicHdr_CurrentFrame, tmp_SI);  // FLIC_HDR.Current_Frame
+    farpokew(sa_FLIC_Header, FlicHdr_CurrentFrame, Frame_Index);  // FLIC_HDR.Current_Frame
 }
 
 // s28p15
-void FLIC_ResetFrame(SAMB_addr FlicHdr_SgmtAddr)
+void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header)
 {
-    farpokew(FlicHdr_SgmtAddr, 0x04, 0x00);
+    farpokew(sa_FLIC_Header, 0x04, 0x00);
 }
 
 // s28p16

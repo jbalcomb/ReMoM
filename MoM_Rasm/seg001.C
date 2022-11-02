@@ -170,10 +170,12 @@ int MGC_Main(int argc, char *argv[])
     /*
         Main Menu - Credits
     */
+    // ? MoO2  Load_Credits_()
     // //j_GAME_PrepareCredits()
     // GAME_PrepareCredits();
 
 
+    // MoO2  Fill()
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Draw Screen-Page
     VGA_SetDirectDraw();
     VGA_DrawFilledRect(0, 0, 319, 199, 0);  // ~= Clear Screen, on Render Screen-Page
@@ -565,6 +567,8 @@ int SCREEN_Menu(void)
     }
 
     CTRL_Clear();  // ? 1oom :: uiobj_table_clear(); ?
+    // MoO2  Set_Refresh_Full()
+    // MoO2  Clear_Fields()
 
     Continue_Move_Down = ST_FALSE;
 

@@ -606,12 +606,12 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
         */
 
         /*
-            BEGIN: Load Type
+            BEGIN: Allocation Type
         */
         DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);
         LBXLOADTYPE()  // sets SAMB_data and tmp_SAMB_Size
         /*
-            END: Load Type
+            END: Allocation Type
         */
         tmp_SAMB_data = SAMB_data;
         /*
@@ -786,12 +786,12 @@ SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int 
         */
 
         /*
-            BEGIN: Load Type
+            BEGIN: Allocation Type
         */
         DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);
         LBXLOADTYPE()
         /*
-            END: Load Type
+            END: Allocation Type
         */
         tmp_SAMB_data = SAMB_data;
         /*

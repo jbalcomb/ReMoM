@@ -138,8 +138,8 @@ extern byte_ptr p_Palette;                      // SM2LM    // dseg:A7DE    allo
 extern char font_name[];                                    // dseg:A7E0    set in Load_Font_File
 extern SAMB_ptr p_IntensityScaleTable;          // SM2LM    // dseg:A7F0    alloc in Load_Font_File
 extern SAMB_addr sa_IntensityScaleTable;
-extern SAMB_ptr sad1_PaletteLbxEntry;           // SM2LM    // dseg:A7F2
-extern SAMB_ptr sah1_PaletteLbxEntry;           // SM2LM    // dseg:A7F4    alloc in Load_Font_File
+// seg020  extern SAMB_ptr sad1_PaletteLbxEntry;           // SM2LM    // dseg:A7F2
+// seg020  extern SAMB_ptr sah1_PaletteLbxEntry;           // SM2LM    // dseg:A7F4    alloc in Load_Font_File
 
 //dseg:A7F6 VGA_AAColor_Array db 16 dup (0)
 //dseg:A806 VGA_Current_AA_Color db 0

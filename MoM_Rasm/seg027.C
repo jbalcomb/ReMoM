@@ -10,10 +10,15 @@
 #include "ST_SA.H"  /* SAMB_addr; farpokew(); */
 #include "ST_VGA.H"
 
+
 // #include "STU_BITS.H"   /* fh_FrameDataOffset = FPEEKDW(); fh_Shading = FPEEKB() */
+
 #define FPEEKB( _sgmt_,_ofst_) ( *(( byte _FAR *)MK_FP((_sgmt_),(_ofst_))) )
+
 // NIU #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
+
 #define FPEEKDW(_sgmt_,_ofst_) ( *((dword _FAR *)MK_FP((_sgmt_),(_ofst_))) )
+
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -44,8 +49,9 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     union  REGS  outregs;
     struct SREGS segregs;
     // int result;
-    SAMB_ptr fp_FLIC_Header;
-    unsigned char * fp_FLIC;
+    byte _FAR * fp_FLIC_Header;
+    byte _FAR * fp_FLIC_File;
+    byte _FAR * fp_FLIC;
     word fh_Width;
     byte fh_EmmHandleNumber;
     byte fh_EmmLogicalPageIndex;
@@ -91,16 +97,55 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
 
     fp_FLIC_Header = (SAMB_ptr) MK_FP(sa_FLIC_Header,0);
 
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Width(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Width(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Height(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Height(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Current_Frame(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Current_Frame(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Count(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Count(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Loop_Frame(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Loop_Frame(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Handle_Number(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Handle_Number(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_FLIC_Header));
+
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_FLIC_Header));
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Shading(fp_FLIC_Header): %d)\n", __FILE__, __LINE__, FLIC_Get_Shading(fp_FLIC_Header));
+    // dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_FLIC_Header): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_FLIC_Header));
+#endif
+
+
     // fh_Width = FPEEKW(sa_FLIC_Header, 0x00);                 // FlicHdr_Width                MAINSCRN_LBX_000,0: 320     40 01
     // fh_EmmHandleNumber = FPEEKB(sa_FLIC_Header, 0x0A);       // FlicHdr_EmmHandleNumber      MAINSCRN_LBX_000,0: 6       06
     // fh_EmmLogicalPageIndex = FPEEKB(sa_FLIC_Header, 0x0B);   // FlicHdr_EmmLogicalPageIndex  MAINSCRN_LBX_000,0: 0       00
     // fh_EmmLogicalPageOffset = FPEEKW(sa_FLIC_Header, 0x0C);  // FlicHdr_EmmLogicalPageOffset MAINSCRN_LBX_000,0: 0x02C0  C0 02 00 00
     fh_Width = FLIC_Get_Width(fp_FLIC_Header);
-    fh_EmmHandleNumber = FLIC_Get_EmmHandleNumber(fp_FLIC_Header);
-    fh_EmmLogicalPageIndex = FLIC_Get_EmmLogicalPageIndex(fp_FLIC_Header);
-    fh_EmmLogicalPageOffset = FLIC_Get_EmmLogicalPageOffset(fp_FLIC_Header);
+    fh_EmmHandleNumber = FLIC_Get_EMM_Handle_Number(fp_FLIC_Header);
+    fh_EmmLogicalPageIndex = FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_Header);
+    fh_EmmLogicalPageOffset = FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_Header);
 
     EMM_MapMulti4(fh_EmmLogicalPageIndex, fh_EmmHandleNumber);
+
+    fp_FLIC_File = (byte_ptr)MK_FP(EMM_PageFrameBaseAddress,fh_EmmLogicalPageOffset);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Width(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Width(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Height(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Height(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Current_Frame(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Current_Frame(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Count(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Count(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Loop_Frame(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Loop_Frame(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Handle_Number(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Handle_Number(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Number(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Offset(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_FLIC_File));
+
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Shading(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Shading(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_FLIC_File));
+#endif
+
 
     fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
     // fp_FLIC = (unsigned char *) MK_FP(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset);
@@ -116,10 +161,39 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
     }
 
     fh_Shading = FPEEKB(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset + FlicHdr_Shading);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] fh_Shading: %d\n", __FILE__, __LINE__, fh_Shading);
+#endif
     // // // fh_Shading = FLIC_Get_Shading(fp_FLIC);
     // // fh_Shading = fp_FLIC[17];
     // fp_FlicHeader_Shading = (unsigned char *)MK_FP(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + FlicHdr_Shading));
     // fh_Shading = *fp_FlicHeader_Shading;
+    fh_Shading = GET_2B_OFS(fp_FLIC_File, FLIC_HDR_POS_SHADING);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] fh_Shading: %d\n", __FILE__, __LINE__, fh_Shading);
+#endif
+    fh_Shading = FLIC_Get_Shading(fp_FLIC_File);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] fh_Shading: %d\n", __FILE__, __LINE__, fh_Shading);
+#endif
+
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Width(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Width(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Height(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Height(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Current_Frame(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Current_Frame(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Count(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Count(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Loop_Frame(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Loop_Frame(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Handle_Number(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Handle_Number(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Number(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Number(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_EMM_Logical_Page_Offset(fp_Src): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_EMM_Logical_Page_Offset(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Palette_Header_Offset(fp_Src): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Palette_Header_Offset(fp_Src));
+// 
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Shading(fp_Src): %d)\n", __FILE__, __LINE__, FLIC_Get_Shading(fp_Src));
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_Src): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_Src));
+// #endif
+
 
     inregs.x.dx = fh_EmmHandleNumber;
     inregs.x.bx = tmp_EmmPage;
