@@ -19,7 +19,7 @@
 #include "seg014.H"     /* Hardware_Init(), Load_Font_File(); */
 #include "seg019.H"     /* VGA_TextDraw_Init() */
 #include "seg020.H"     /* palette_block, palette_data; PAL_Load_Palette() */
-#include "seg021.H"     /* FLIC_LoadPalette(); */
+#include "seg021.H"     /* FLIC_Load_Palette(); */
 #include "seg022.H"     /* ST_MoveData() */
 #include "seg028.H"     /* FLIC_Draw_XY(); */
 /* VGA_TextDraw_Init() */
@@ -79,8 +79,8 @@ unsigned char g_Load_Font_File_tested = 0;
 unsigned char g_Load_Font_File_validated = 0;
 unsigned char g_MAINSCRN_LBX_EMM_tested = 0;
 unsigned char g_MAINSCRN_LBX_EMM_validated = 0;
-unsigned char g_FLIC_LoadPalette_tested = 0;
-unsigned char g_FLIC_LoadPalette_validated = 0;
+unsigned char g_FLIC_Load_Palette_tested = 0;
+unsigned char g_FLIC_Load_Palette_validated = 0;
 
 
 void test_MGC_Main(void);
@@ -96,7 +96,7 @@ void test_EMM_Init(void);
 void test_EMM_Startup(void);
 void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
-void test_FLIC_LoadPalette(void);
+void test_FLIC_Load_Palette(void);
 void test_FLIC_Draw_EMM(void);
 void test_FLIC_Draw_XY(void);
 void test_SA_Error(void);
@@ -146,7 +146,7 @@ int main(void)
     // 
     // // test_VGA_VRAM();
     // 
-    // // test_FLIC_LoadPalette();
+    // // test_FLIC_Load_Palette();
     // test_FLIC_Draw_EMM();
     // // test_FLIC_Draw_XY();
 
@@ -782,7 +782,7 @@ void test_EMM_Load_LBX_File(void)
 {
 
     int Title_Frame_Index;  // _s01p06c.c  SCREEN_Menu_Draw()
-    struct s_FLIC_HDR * pFlicHeader; // _s21p07c.c  FLIC_LoadPalette()
+    struct s_FLIC_HDR * pFlicHeader; // _s21p07c.c  FLIC_Load_Palette()
     SAMB_addr SAMB_data;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_EMM_Load_LBX_File()\n", __FILE__, __LINE__);
@@ -867,9 +867,9 @@ void test_EMM_Load_LBX_File(void)
     VGA_SetModeY();
     FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
         // ST_MoveData(destoff=0xB47C, destseg=0x0000, srcoff=0x0000, srcseg=0x20D1, nbytes=16)
-        // FLIC_LoadPalette(FlicHdr_SgmtAddr=0x20D1, Frame_Index=0)
+        // FLIC_Load_Palette(FlicHdr_SgmtAddr=0x20D1, Frame_Index=0)
         // FLIC_Draw_EMM_C(ScreenPage_X=0, ScreenPage_Y=0, SAMB_data_FLIC_HDR=0x20D1, Frame_Index=0)
-    // void FLIC_LoadPalette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
+    // void FLIC_Load_Palette(SAMB_addr FlicHdr_SgmtAddr, int Frame_Index)
 
     DLOG("CALL: VGA_SetTextMode();");
     VGA_SetTextMode();
@@ -957,8 +957,8 @@ void test_GAME_LoadMainImages(void)
 }
 
 
-/*  s21p07  void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index);  */
-void test_FLIC_LoadPalette(void)
+/*  s21p07  void FLIC_Load_Palette(SAMB_addr sa_FLIC_Header, int Frame_Index);  */
+void test_FLIC_Load_Palette(void)
 {
     int test_status;
     //  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
@@ -970,7 +970,7 @@ void test_FLIC_LoadPalette(void)
     struct s_FLIC_HDR _FAR * pPS_FLIC_Header;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_LoadPalette()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_Load_Palette()\n", __FILE__, __LINE__);
 #endif
 
     test_status = 0;  // TEST_UNDEFINED
@@ -996,20 +996,20 @@ void test_FLIC_LoadPalette(void)
     // FLIC_Draw_XY()
     if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
     {
-        TLOG("CALL: FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);");
-        // FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
-        // FLIC_LoadPalette_FP_EMM(sa_FLIC_Header, Frame_Index);
-        FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);  // s21p07
+        TLOG("CALL: FLIC_Load_Palette(sa_FLIC_Header, Frame_Index);");
+        // FLIC_Load_Palette(sa_FLIC_Header, Frame_Index);  // s21p07
+        // FLIC_Load_Palette_FP_EMM(sa_FLIC_Header, Frame_Index);
+        FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);  // s21p07
         if(!validate_PaletteFlags_M00()) { test_status = -1; }  // TEST_FAILURE
         if(!validate_Palette_M00()) { test_status = -1; }  // TEST_FAILURE
     }
 
-    g_FLIC_LoadPalette_tested = 1;
-    // if ( validate_FLIC_LoadPalette() ) { g_FLIC_LoadPalette_validated = 1; }
-    if ( test_status != -1 ) { g_FLIC_LoadPalette_validated = 1; }
+    g_FLIC_Load_Palette_tested = 1;
+    // if ( validate_FLIC_Load_Palette() ) { g_FLIC_Load_Palette_validated = 1; }
+    if ( test_status != -1 ) { g_FLIC_Load_Palette_validated = 1; }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: test_FLIC_LoadPalette()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Load_Palette()\n", __FILE__, __LINE__);
 #endif
 }
 
@@ -1074,7 +1074,7 @@ void test_FLIC_Draw_EMM(void)
     getch();
     VGA_DAC_Write();
     getch();
-    FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);  // s21p07
+    FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);  // s21p07
     getch();
     VGA_DAC_Write();
     getch();

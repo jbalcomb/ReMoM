@@ -275,9 +275,10 @@ void FLIC_Draw_XY_Redux(int x, int y, SAMB_addr sa_FLIC_Header)
 
     if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
     {
-        FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
+        // FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
         // FLIC_LoadPalette_ReRedux(MK_FP(sa_FLIC_Header,0), Frame_Index);
         // FLIC_LoadPalette_ReRedux(fp_FLIC_Header, Frame_Index);
+        FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);
     }
 
     if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
@@ -446,9 +447,10 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
         // HERE("FLIC_LoadPalette()");
         // FLIC_LoadPalette(sa_FLIC_Header, Frame_Index);  // s21p07
         // FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
-        FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
+        // FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
         // FLIC_LoadPalette_ReRedux(MK_FP(sa_FLIC_Header,0), Frame_Index);
         // FLIC_LoadPalette_ReRedux(fp_FLIC_Header, Frame_Index);
+        FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);
     }
 
     if ( PS_FLIC_Header.EMM_Handle_Number == 0 )

@@ -19,11 +19,7 @@ extern "C" {
 void VGA_DAC_Write(void);
 
 // s21p07
-// void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int frame_index);
-void FLIC_LoadPalette_ReRedux(SAMB_addr sa_FLIC_Header, int Frame_Index);
-// void FLIC_LoadPalette_ReRedux(SAMB_ptr fp_FLIC_Header, int Frame_Index);
-// void FLIC_LoadPalette_Redux(SAMB_addr sa_FLIC_Header, int Frame_Index);
-// void FLIC_LoadPalette(SAMB_addr sa_FLIC_Header, int Frame_Index);
+void FLIC_Load_Palette(SAMB_ptr fp_FLIC_Header, int Frame_Index);
 
 
 #ifdef __cplusplus
