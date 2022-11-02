@@ -12,6 +12,47 @@
     EMM - Expanded Memory Manager
 */
 
+
+#define EMS_PAGE_SIZE   16384
+
+#define	EMS_INT			            0x67
+#define EMM_INT                     0x67    // "This is the interrupt vector the Expanded Memory Manager (EMM) uses."
+
+#define	EMS_STATUS		            0x40
+#define	EMS_GETFRAME	            0x41
+#define GET_FRAME_ADDRESS           0x41
+#define	EMS_GETPAGES	            0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
+#define	EMM_GET_PAGE_COUNTS         0x42
+#define GET_UNALLOCATED_PAGE_COUNT  0x42
+#define	EMM_GET_HANDLE_AND_ALLOCATE_PAGES  0x43  // INT 67,43 - Get Handle and Allocate Pages (LIM EMS 3.2+)
+#define	EMS_ALLOCPAGES	            0x43    // Get Handle and Allocate Pages // DX = EMM handle
+#define	EMM_ALLOCATE_PAGES          0x43    // Get Handle and Allocate Pages // DX = EMM handle
+#define	EMS_MAPPAGE		            0x44
+#define EMM_DEALLOCATE_PAGES        0X45    // INT 67,45 - Release Handle and Memory Pages (LIM EMS);  DX = EMM handle
+// #define EMS_FREEPAGES               0x45
+#define	EMS_VERSION		            0x46
+#define EMM_GET_VERSION             0x46    // INT 67,46 - Get EMM Version (LIM EMS);  	AL = EMM version number in BCD  - upper four bits of AL contain the BCD major version - lower four bits of AL contain the BCD minor version
+#define	EMM_GET_HANDLE_COUNT        0x4B    // INT 67,4B - Get Handle Count (LIM EMS);  BX = number of currently active EMM handles (0-256)
+#define	EMS_GETHANDLES              0x4B
+#define	EMM_GET_PAGE_COUNT_FOR_HANDLE  0x4C  // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
+#define	EMM_GET_PAGE_COUNT_HANDLE   0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
+#define	EMM_GET_HANDLE_PAGE_COUNT   0x4C
+#define	EMM_GETHNDLPAGECNT          0x4C
+#define EMM_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D  // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
+#define EMM_GET_PAGE_COUNT_ALL      0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
+#define EMM_MAP_MULTIPLE            0x50    // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
+#define EMM_MAP_MULTIPLE_PAGES      0x5000  // Map/Unmap Multiple Pages; DX = EMM handle,  CX = number of entries in array,  DS:SI = pointer to mapping array [{lpn,ppn}] -1 is 'unmap' (0xFFFF)
+#define MAP_UNMAP_MULTIPLE_PAGES    0x5000
+#define EMM_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
+#define EMM_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8 byte handle name array
+#define EMM_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8 byte handle name
+#define SEARCH_FOR_HANDLE_NAME      0x5401
+#define MOVE_MEMORY_REGION          0x5700
+#define EXCHANGE_MEMORY_REGION      0x5701
+#define EMS_HANDLE_NAME_GET         0x00
+#define EMS_HANDLE_NAME_SET         0x01
+
+
 /*
 J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_PM.C
     /////////////////////////////////////////////////////////////////////////////
@@ -59,50 +100,14 @@ J:\STU\DBWD\developc\wolf3d\WOLFSRC\ID_MM.H
 // #define VGAMAPMASK(x) asm{cli; mov dx,SC_INDEX; mov al,SC_MAPMASK; mov ah,x; out dx,ax; sti;}
 // #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) asm{ mov al, _epp_; mov bx, _elp_; mov dx, _ehn_; mov ah, EMS_MAPPAGE; int EMS_INT; }
 // #define EMM_MAP_PAGE(_epp_,_ehn_,_elp_) { _AL = (_epp_); _BX = (_elp_);  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMS_INT); }
-#define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); }
+// #define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DX = (_ehn_);  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); }
+// #define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DL = (_ehn_);  _DH = 0;  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); }
+// no-workie  #define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) ( _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DL = (_ehn_);  _DH = 0;  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); )
+#define EMM_MAP_PAGE(_eppn_,_ehn_,_elpn_) { _AL = (_eppn_);  _BL = (_elpn_);  _BH = 0;  _DL = (_ehn_);  _DH = 0;  _AH = EMS_MAPPAGE;  geninterrupt(EMM_INT); }
 // ~== void EMM_MAP_PAGE(unsigned int _eppn_, unsigned int _ehn_, unsigned char _elpn_);
 
 
 
-
-#define EMS_PAGE_SIZE   16384
-
-#define	EMS_INT			            0x67
-#define EMM_INT                     0x67    // "This is the interrupt vector the Expanded Memory Manager (EMM) uses."
-
-#define	EMS_STATUS		            0x40
-#define	EMS_GETFRAME	            0x41
-#define GET_FRAME_ADDRESS           0x41
-#define	EMS_GETPAGES	            0x42    // Get Page Counts (LIM EMS 3.2+);      BX = unallocated pages, DX = total pages
-#define	EMM_GET_PAGE_COUNTS         0x42
-#define GET_UNALLOCATED_PAGE_COUNT  0x42
-#define	EMM_GET_HANDLE_AND_ALLOCATE_PAGES  0x43  // INT 67,43 - Get Handle and Allocate Pages (LIM EMS 3.2+)
-#define	EMS_ALLOCPAGES	            0x43    // Get Handle and Allocate Pages // DX = EMM handle
-#define	EMM_ALLOCATE_PAGES          0x43    // Get Handle and Allocate Pages // DX = EMM handle
-#define	EMS_MAPPAGE		            0x44
-#define EMM_DEALLOCATE_PAGES        0X45    // INT 67,45 - Release Handle and Memory Pages (LIM EMS);  DX = EMM handle
-// #define EMS_FREEPAGES               0x45
-#define	EMS_VERSION		            0x46
-#define EMM_GET_VERSION             0x46    // INT 67,46 - Get EMM Version (LIM EMS);  	AL = EMM version number in BCD  - upper four bits of AL contain the BCD major version - lower four bits of AL contain the BCD minor version
-#define	EMM_GET_HANDLE_COUNT        0x4B    // INT 67,4B - Get Handle Count (LIM EMS);  BX = number of currently active EMM handles (0-256)
-#define	EMS_GETHANDLES              0x4B
-#define	EMM_GET_PAGE_COUNT_FOR_HANDLE  0x4C  // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
-#define	EMM_GET_PAGE_COUNT_HANDLE   0x4C    // Get Page Count for Handle (LIM EMS); BX = total allocated page count for handle (1-512)
-#define	EMM_GET_HANDLE_PAGE_COUNT   0x4C
-#define	EMM_GETHNDLPAGECNT          0x4C
-#define EMM_GET_PAGE_COUNT_FOR_ALL_HANDLES  0x4D  // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
-#define EMM_GET_PAGE_COUNT_ALL      0x4D    // BX = number of active EMM handles (0..255); ES:DI = pointer to an array of entries
-#define EMM_MAP_MULTIPLE            0x50    // INT 67,50 - Map/Unmap Multiple Handle Pages (LIM EMS 4.0+)
-#define EMM_MAP_MULTIPLE_PAGES      0x5000  // Map/Unmap Multiple Pages; DX = EMM handle,  CX = number of entries in array,  DS:SI = pointer to mapping array [{lpn,ppn}] -1 is 'unmap' (0xFFFF)
-#define MAP_UNMAP_MULTIPLE_PAGES    0x5000
-#define EMM_GET_SET_HANDLE_NAME     0x53    // AL = 00 get handle name; AL = 01 set handle name;
-#define EMM_GET_HANDLE_NAME         0x5300  // ES:DI = pointer to 8 byte handle name array
-#define EMM_SET_HANDLE_NAME         0x5301  // DX = EMM handle; DS:SI = pointer to 8 byte handle name
-#define SEARCH_FOR_HANDLE_NAME      0x5401
-#define MOVE_MEMORY_REGION          0x5700
-#define EXCHANGE_MEMORY_REGION      0x5701
-#define EMS_HANDLE_NAME_GET         0x00
-#define EMS_HANDLE_NAME_SET         0x01
 
 
 

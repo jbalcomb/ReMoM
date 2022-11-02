@@ -739,10 +739,10 @@ int validate_MAINSCRN_LBX_EMM(void)
         {
             EMM_Physical_Page = 0;
             dbg_prn("DEBUG: [%s, %d]: EMM_Physical_Page: %u  EMM_Logical_Page: %u\n", __FILE__, __LINE__, EMM_Physical_Page, EMM_Logical_Page);
-            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++)
-            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++)
-            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++)
-            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++)
+            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++);
+            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++);
+            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++);
+            EMM_MAP_PAGE(EMM_Physical_Page++,EMM_Handle_Number,EMM_Logical_Page++);
             itr_EmmWindow = 0;
             while(itr_EmmWindow < sz_EmmWindow)
             {

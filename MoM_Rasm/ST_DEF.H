@@ -139,7 +139,8 @@ static int delete = 0;
 #define GET_1B_OFS(_ptr_,_ofs_) ( (unsigned char)                                                                                             *((_ptr_) + _ofs_ + 0) )
 
 // replaces farpeekw()
-#define GET_2B_OFS(_ptr_,_ofs_) ( (unsigned int)                                                                *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
+// #define GET_2B_OFS(_ptr_,_ofs_) ( (unsigned int)                                                                *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
+#define GET_2B_OFS(_ptr_,_ofs_) ( (unsigned int)                                                                (*((_ptr_) + _ofs_ + 1) << 8) | (*((_ptr_) + _ofs_ + 0)) )
 
 // replaces farpeekdw()
 #define GET_4B_OFS(_ptr_,_ofs_) ( (unsigned long) *((_ptr_) + _ofs_ + 3) << 24 | *((_ptr_) + _ofs_ + 2) << 16 | *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )

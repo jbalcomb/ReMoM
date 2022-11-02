@@ -313,11 +313,11 @@ struct s_FLIC_HDR //; (sizeof=0x10)
     /*0Ch*/word EMM_Logical_Page_Offset;           // Run-Time
     /*0Eh*/word Palette_Header_Offset;               // if 0, no palette data
 
-    /*10h*/ // Frame-Type: {0:Delta-Frame, 1:Full-Frame}
-    /*11h*/ // ?shading?
+    /*10h*/ // byte Frame-Type: {0:Delta-Frame, 1:Full-Frame}
+    /*11h*/ // byte ?shading?
 
-    /*12h*/ // Frame Index 0 Offset
-    /*14h*/ // Frame Index 0 Offset
+    /*12h*/ // word Frame Index 0 Offset
+    /*14h*/ // word Frame Index 0 Offset
 
     /*16h*/ // Frame 0 Offset - End / Frame 1 Offset - Begin
             // ...
