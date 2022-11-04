@@ -226,9 +226,9 @@ void main(void)
     // MenuArea_X_Left = 123;
     // MenuArea_Y_Top = 141;
     // if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
-    //     FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
+    //     FLIC_Reset_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS);
     // else
-    //     FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
+    //     FLIC_Set_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
     // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
     // FLIC_Draw_XY(123, (141 + 48), mainmenu_q);
     // s28p11      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage

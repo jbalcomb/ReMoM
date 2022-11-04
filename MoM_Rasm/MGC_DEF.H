@@ -248,6 +248,8 @@ extern unsigned int gsa_WIZARDS_0to13[];            // dseg:52C6
 extern int g_GAME_HaveSaves;                        // dseg:52E4
 // dseg:52E6 NEWG_HaveLastProfile dw 0
 extern unsigned int gsa_MAINSCRN_0_AnimatedLogo;    // dseg:52E8
+extern SAMB_addr sa_MAINSCRN_000;
+extern SAMB_ptr fp_MAINSCRN_000;
 extern int GUI_NewGame_Label;                       // dseg:52EA
 extern unsigned int gsa_VORTEX_4_MenuNewGame;       // dseg:52EC
 extern int GUI_Continue_Label;                      // dseg:52EE

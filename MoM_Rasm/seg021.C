@@ -3,12 +3,12 @@
 #include "ST_DEF.H"
 #include "seg021.H"
 
-#include "ST_EMM.H"
-#include "ST_FLIC.H"  /* accessor macros; */
+#include "ST_EMM.H"     /* fp_EMM_PFBA */
+#include "ST_FLIC.H"    /* accessor macros; */
 #include "ST_SA.H"
-#include "ST_VGA.H"  /* p_Palette  */
+#include "ST_VGA.H"     /* p_Palette  */
 
-#include <CONIO.H>  /* inp(), outp() */
+#include <CONIO.H>      /* inp(), outp() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -116,7 +116,7 @@ void FLIC_Load_Palette(SAMB_ptr fp_FLIC_Header, int Frame_Index)
     unsigned int itr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_LoadPalette_ReRedux(fp_FLIC_Header = %p, Frame_Index = %d)\n", __FILE__, __LINE__, fp_FLIC_Header, Frame_Index);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Load_Palette(fp_FLIC_Header = %p, Frame_Index = %d)\n", __FILE__, __LINE__, fp_FLIC_Header, Frame_Index);
 #endif
 
     if ( FLIC_Get_EMM_Handle_Number(fp_FLIC_Header) == 0 )
@@ -153,7 +153,7 @@ void FLIC_Load_Palette(SAMB_ptr fp_FLIC_Header, int Frame_Index)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_LoadPalette_ReRedux(fp_FLIC_Header = %p, Frame_Index = %d)\n", __FILE__, __LINE__, fp_FLIC_Header, Frame_Index);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Load_Palette(fp_FLIC_Header = %p, Frame_Index = %d)\n", __FILE__, __LINE__, fp_FLIC_Header, Frame_Index);
 #endif
 
 }

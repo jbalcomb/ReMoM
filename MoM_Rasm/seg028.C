@@ -116,7 +116,7 @@ void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
                     gsa_MAINSCRN_0_AnimatedLogo=0x168C
 
         SCREEN_Menu
-            FLIC_ResetFrame(gsa_MAINSCRN_0_AnimatedLogo);
+            FLIC_Reset_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
                 farpokew(IMG_Seg, FLIC_HDR.Current_Frame, 0);
 
         FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo)
@@ -358,9 +358,9 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 //     orig_DS = _DS;
 // #endif
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
+#endif
 
     fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
 
@@ -552,14 +552,15 @@ asm {
         FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
+#endif
 }
 
 // s28p14
-void FLIC_SetFrame(unsigned int sa_FLIC_Header, int Frame_Index)
+void FLIC_Set_CurrentFrame(unsigned int sa_FLIC_Header, int Frame_Index)
 {
+    SAMB_ptr fp_FLIC_Header;
     int Loop_Length;
     int Loop_Frame;
     int Frame_Count;
@@ -572,18 +573,26 @@ void FLIC_SetFrame(unsigned int sa_FLIC_Header, int Frame_Index)
         Frame_Index = Loop_Frame + ( (Frame_Index - Frame_Count) % Loop_Length );
     }
     farpokew(sa_FLIC_Header, FlicHdr_CurrentFrame, Frame_Index);  // FLIC_HDR.Current_Frame
+    // fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
+    // FLIC_Set_Current_Frame(fp_FLIC_Header, Frame_Index);
 }
 
 // s28p15
-void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header)
+void FLIC_Reset_CurrentFrame(SAMB_addr sa_FLIC_Header)
 {
-    farpokew(sa_FLIC_Header, 0x04, 0x00);
+    SAMB_ptr fp_FLIC_Header;
+    // farpokew(sa_FLIC_Header, 0x04, 0x00);
+    fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
+    FLIC_Set_Current_Frame(fp_FLIC_Header, 0);
 }
 
 // s28p16
-word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header)
+word FLIC_Get_CurrentFrame(SAMB_addr sa_FLIC_Header)
 {
+    SAMB_ptr fp_FLIC_Header;
     word Current_Frame;
-    Current_Frame = farpeekw(sa_FLIC_Header, FlicHdr_CurrentFrame);
+    // Current_Frame = farpeekw(sa_FLIC_Header, FlicHdr_CurrentFrame);
+    fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
+    Current_Frame = FLIC_Get_Current_Frame(fp_FLIC_Header);
     return Current_Frame;
 }

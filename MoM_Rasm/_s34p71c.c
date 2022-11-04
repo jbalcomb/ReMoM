@@ -68,9 +68,8 @@ void CTRL_DrawControls(void)
 #ifdef STU_DEBUG
                 dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
 #endif
-                FLIC_ResetFrame(gfp_CTRL_Control_Table[tmp_SI].Param5);
+                FLIC_Reset_CurrentFrame(gfp_CTRL_Control_Table[tmp_SI].Param5);
                 FLIC_Draw_XY(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, gfp_CTRL_Control_Table[tmp_SI].Param5);
-                //VGA_SetFont(..., 0, 0);  // argument missing in dasm
                 VGA_SetFont(gfp_CTRL_Control_Table[tmp_SI].Font_Index, gfp_CTRL_Control_Table[tmp_SI].ColorSet1, 0, 0);
                 Half_Font_Height = ( (VGA_GetFontHeight() - 1) / 2);
                 VGA_DrawCentered(

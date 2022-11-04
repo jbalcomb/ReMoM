@@ -15,7 +15,7 @@
 #include "ST_CTRL.H"
 #include "ST_EMM.H"
 #include "ST_EXIT.H"    /* Exit() */
-#include "ST_FLIC.H"
+#include "ST_FLIC.H"    /* FLIC_Draw() */
 #include "ST_GUI.H"
 #include "ST_HLP.H"
 #include "ST_LBX.H"     /* RAM_SetMinKB() */
@@ -416,6 +416,8 @@ void GAME_LoadMainImages(void)
         LBXE_LoadSingle() |-> LBX_Load_Entry() |-> EMM_Load_LBX_Entry() |-> EMM_LBX_FLIC_header()
    */
     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+    sa_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
+    fp_MAINSCRN_000 = MK_FP(gsa_MAINSCRN_0_AnimatedLogo,0);
 
 // #ifdef STU_DEBUG
 //     // DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
@@ -720,7 +722,7 @@ DEBUG: [_s34p22c.c, 49] CtrlTbl[11].Hotkey=32, InputCode=27
 
     // GUI_MouseEMUMoveTo(GUI_NewGame_Label);
 
-    FLIC_ResetFrame(gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Reset_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
 
     // TODO(JimBalcomb): 2022017: double check it's accurate that this is being set a second time here, and add a note to avoid questioning this again in the future
     g_GUI_MainMenuSelected = ST_UNDEFINED;
@@ -862,15 +864,16 @@ void SCREEN_Menu_Draw(void)
     // HERE("VGA_DrawFilledRect(0, 0, 319, 199, 0);");
     VGA_DrawFilledRect(0, 0, 319, 199, 0);
 
-    // HERE("Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);");
-    Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);
+    // HERE("Title_Frame_Index = FLIC_Get_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);");
+    Title_Frame_Index = FLIC_Get_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
 
 // #ifdef STU_DEBUG
 //     dlvfprintf("DEBUG: [%s, %d] Title_Frame_Index: %d\n", __FILE__, __LINE__, Title_Frame_Index);
 // #endif
 
-    // HERE("FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
-    FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
+    // HERE("FLIC_Set_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);");
+    FLIC_Set_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
+    // MoO2  Reset_Animation_Frame()
 
     // TODO(JimBalcomb): figure out and fix the logic for looping the 20 frames of the "MOM animated logo"
     for ( Loop_Var = 0; Loop_Var <= Title_Frame_Index; Loop_Var++ )
@@ -881,6 +884,7 @@ void SCREEN_Menu_Draw(void)
 //         #endif
 
         // HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
+        FLIC_Draw(0, 0, fp_MAINSCRN_000);
         FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
     }
     //HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
@@ -907,37 +911,37 @@ void SCREEN_Menu_Draw(void)
     else
     {
         if ( MouseOver_ControlIndex == GUI_Load_Lbl_Index )
-            FLIC_ResetFrame(gsa_VORTEX_5_MenuLoadGame);
+            FLIC_Reset_CurrentFrame(gsa_VORTEX_5_MenuLoadGame);
         else
-            FLIC_SetFrame(gsa_VORTEX_5_MenuLoadGame, 1);
+            FLIC_Set_CurrentFrame(gsa_VORTEX_5_MenuLoadGame, 1);
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
     }
 
     if ( g_GAME_HaveContSave != 0 )
     {
         if ( MouseOver_ControlIndex == GUI_Continue_Label )
-            FLIC_ResetFrame(gsa_VORTEX_1_MenuContinue);
+            FLIC_Reset_CurrentFrame(gsa_VORTEX_1_MenuContinue);
         else
-            FLIC_SetFrame(gsa_VORTEX_1_MenuContinue, 1);
+            FLIC_Set_CurrentFrame(gsa_VORTEX_1_MenuContinue, 1);
         FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
     }
 
     if ( MouseOver_ControlIndex == GUI_NewGame_Label )
-        FLIC_ResetFrame(gsa_VORTEX_4_MenuNewGame);
+        FLIC_Reset_CurrentFrame(gsa_VORTEX_4_MenuNewGame);
     else
-        FLIC_SetFrame(gsa_VORTEX_4_MenuNewGame, 1);
+        FLIC_Set_CurrentFrame(gsa_VORTEX_4_MenuNewGame, 1);
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
 
     if ( MouseOver_ControlIndex == GUI_HoF_Lbl_Index )
-        FLIC_ResetFrame(gsa_VORTEX_2_MenuHallOfFame);
+        FLIC_Reset_CurrentFrame(gsa_VORTEX_2_MenuHallOfFame);
     else
-        FLIC_SetFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
+        FLIC_Set_CurrentFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
 
     if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
-        FLIC_ResetFrame(gsa_VORTEX_3_MenuQuitToDOS);
+        FLIC_Reset_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS);
     else
-        FLIC_SetFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
+        FLIC_Set_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
 
 

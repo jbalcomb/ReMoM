@@ -288,7 +288,9 @@ unsigned int gsa_WIZARDS_0to13[14];         // dseg:52C6  GAME_LoadMainImages() 
 // dseg:52E2 IMG_NewG_BtnBorder@ dw 0
 int g_GAME_HaveSaves;                       // dseg:52E4
 // dseg:52E6 NEWG_HaveLastProfile dw 0
-unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8
+unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8    GAME_LoadMainImages()   LBX_Load(file_name=LbxNm_MAINSCRN, entry_num=0);
+SAMB_addr sa_MAINSCRN_000;
+SAMB_ptr fp_MAINSCRN_000;
 int GUI_NewGame_Label;                      // dseg:52EA
 unsigned int gsa_VORTEX_4_MenuNewGame;      // dseg:52EC
 int GUI_Continue_Label;                     // dseg:52EE

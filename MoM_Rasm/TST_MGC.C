@@ -858,11 +858,11 @@ void test_EMM_Load_LBX_File(void)
     dbg_prn("DEBUG: [%s, %d] PaletteDataOffset = 0x%04X\n", __FILE__, __LINE__,    farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
 
     // int SCREEN_Menu(void)
-    FLIC_ResetFrame(gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Reset_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
 
     // SCREEN_Menu() |-> SCREEN_Menu_Draw() |->
-    Title_Frame_Index = FLIC_GetCurFrame(gsa_MAINSCRN_0_AnimatedLogo);
-    FLIC_SetFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
+    Title_Frame_Index = FLIC_Get_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Set_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
     DLOG("CALL: VGA_SetModeY();");
     VGA_SetModeY();
     FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);

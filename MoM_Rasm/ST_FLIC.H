@@ -356,7 +356,7 @@ FLIC_HDR.EMM_Logical_Page_Offset
 #define FlicHdr_EmmLogicalPageOffset    0x0C
 #define FlicHdr_PaletteDataOffset       0x0E
 #define FlicHdr_FrameType               0x10    // ? GUI_CTRL.Param3 ... used in GUI_DrawControls  if not 0 then set FLIC Frame 1 else set FLIC Frame 0
-                                                // FLIC_SetFrame(GUI_CTRL.Param5=FlicHdr_SgmtAddr (_SI + gfp_GUI_Control_Table), Frame_Index=1)
+                                                // FLIC_Set_CurrentFrame(GUI_CTRL.Param5=FlicHdr_SgmtAddr (_SI + gfp_GUI_Control_Table), Frame_Index=1)
 
                                                 // J:\STU\DBWD\developc\1oom-master\src\lbxgfx.h
                                                 // #define lbxgfx_get_indep(_data_) ((_data_)[0x10])
@@ -434,7 +434,7 @@ FLIC_HDR.EMM_Logical_Page_Offset
 #define FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET    0x0C
 #define FLIC_HDR_POS_PALETTE_HEADER_OFFSET      0x0E    // End of 16-byte FLIC Header / animation_header
 #define FLIC_HDR_POS_FRAME_TYPE                 0x10
-#define FLIC_HDR_POS_SHADING                    0x11
+#define FLIC_HDR_POS_REMAP                      0x11
 #define FLIC_HDR_POS_FRAME_OFFSET_TABLE         0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
 
 #define FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET    0x00
@@ -483,7 +483,7 @@ FLIC_HDR.EMM_Logical_Page_Offset
 
 #define FLIC_Get_Frame_Type(_ptr_)               ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_TYPE)              )
 
-#define FLIC_Get_Shading(_ptr_)                  ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_SHADING)                 )
+#define FLIC_Get_Remap(_ptr_)                    ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_REMAP)                   )
 
 #define FLIC_Get_Frame_Offset_Table(_ptr_)       ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE)      )
 
@@ -543,7 +543,7 @@ FLIC_HDR.EMM_Logical_Page_Offset
 // 
 // #define FLIC_Set_Frame_Type(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_FRAME_TYPE) )
 // 
-// #define FLIC_Set_Shading(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_SHADING) )
+// #define FLIC_Set_Shading(_ptr_) ( GET_1B_OFS(_ptr_,FLIC_HDR_POS_REMAP) )
 // 
 // #define FLIC_Set_Frame_Offset_Table(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_FRAME_OFFSET_TABLE) )
 // 
@@ -688,26 +688,21 @@ extern "C" {
 /*
     seg027
 */
-// _s27.asm
-// _s27a.c
-// _s27p01
-void FLIC_Draw(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-void FLIC_Draw_C(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-// s27p02  _s27.asm  //_s27a.c
-void FLIC_Draw_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-// void FLIC_Draw_R_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg);
-// _s27p03
-//void FLIC_Draw_EMM(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
-//void FLIC_Draw_EMM_A2(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
-void FLIC_Draw_EMM_A3(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg, int Frame_Index);
-void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Header, int Frame_Index);
+
+// _s27p01a.c
+void FLIC_Draw_A(int x, int y, int width, unsigned int FLIC_Frame_Data_ofst, unsigned int FLIC_Frame_Data_sgmt);
+
+// _s27p02.asm
+void FLIC_Draw_R(int x, int y, int width, unsigned int FLIC_Frame_Data_ofst, unsigned int FLIC_Frame_Data_sgmt);
+
+// _s27p03c.c
+void FLIC_Draw_EMM_C(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_index);
+
 // _s27p04
-void FLIC_EMM_MapNextPages(void);
-void FLIC_EMM_MapNextPages_A(void);
+// void FLIC_EMM_MapNextPages(void);
+
 // s27p05  _s27.asm  //_s27a.c
-void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
-// void FLIC_Draw_EMM_R_A(int ScreenPage_X, int ScreenPage_Y, unsigned int Img_Seg);
+// void FLIC_Draw_EMM_R(int x, int y);
 
 
 /*
@@ -718,19 +713,20 @@ void FLIC_Draw_EMM_R(int ScreenPage_X, int ScreenPage_Y);
 // seg028.H  void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
 
 // s28p11
-// seg028.H  void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
+// seg028.H  void FLIC_Draw_XY(int x, int y, SAMB_addr sa_FLIC_Header);
+void FLIC_Draw(int x, int y, SAMB_ptr fp_FLIC_Header);
 
 // s28p13
 //void FLIC_BuildFrame(unsigned int FlicHdr_SgmtAddr, unsigned int Target_Seg);
 
 // s28p14
-// seg028.H  void FLIC_SetFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
+// seg028.H  void FLIC_Set_CurrentFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
 
 // s28p15
-// seg028.H  void FLIC_ResetFrame(SAMB_addr sa_FLIC_Header);
+// seg028.H  void FLIC_Reset_CurrentFrame(SAMB_addr sa_FLIC_Header);
 
 // s28p16
-// seg028.H  word FLIC_GetCurFrame(SAMB_addr sa_FLIC_Header);
+// seg028.H  word FLIC_Get_CurrentFrame(SAMB_addr sa_FLIC_Header);
 
 
 #ifdef __cplusplus
