@@ -485,7 +485,9 @@ FLIC_HDR.EMM_Logical_Page_Offset
 
 #define FLIC_Get_Remap(_ptr_)                    ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_REMAP)                   )
 
-#define FLIC_Get_Frame_Offset_Table(_ptr_)       ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE)      )
+// #define FLIC_Get_Frame_Offset_Table(_ptr_)       ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE)      )
+
+#define FLIC_Get_Frame_Offset(_ptr_,_idx_)       ( GET_4B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE + (4 * (_idx_)) )      )
 
 
 #define FLIC_Get_Palette_Data_Offset(_ptr_)   ( GET_2B_OFS( (_ptr_), (FLIC_Get_Palette_Header_Offset(_ptr_) + FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET) ) )
@@ -684,6 +686,11 @@ FLIC_HDR.EMM_Logical_Page_Offset
 extern "C" {
 #endif
     /* C and Asm Function Prototypes */
+
+
+// // ~== MoO2
+// void Draw(signed short int x, signed short int y, unsigned char * picture);
+
 
 /*
     seg027

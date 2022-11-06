@@ -57,11 +57,11 @@ s_FLIC_HDR ends
 ; int __cdecl __far FLIC_Draw_R(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, int Img_Off, int Img_Seg)
 proc FLIC_Draw_R
 
-    ScreenPage_X= word ptr 6
-    ScreenPage_Y= word ptr 8
-    FlicWidth= word ptr 0Ah
-    Img_Off= word ptr 0Ch
-    Img_Seg= word ptr 0Eh
+    ScreenPage_X  = word ptr 6
+    ScreenPage_Y  = word ptr 8
+    FlicWidth     = word ptr 0Ah
+    Img_Off       = word ptr 0Ch
+    Img_Seg       = word ptr 0Eh
 
     push bp
     mov bp, sp
@@ -365,6 +365,7 @@ loc_1EA71:
     movsb
     add di, 4Fh ; same plane, one pixel down
     loop loc_1EA71
+    
     pop ds
     pop si
     pop cx
@@ -377,6 +378,7 @@ loc_1EA8A:
     cmp dx, 1
     jns short loc_1EA51
     jmp loc_1E958
+
     pop ds
     pop es
     pop di

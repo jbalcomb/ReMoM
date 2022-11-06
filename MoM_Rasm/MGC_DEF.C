@@ -279,10 +279,16 @@ char cnst_Credits_DOT = '.'; // dseg:3BEB
 int GUI_Load_Lbl_Index;                     // dseg:52B6
 // dseg:52B8 IMG_FullScreen_BG@ dw 0
 unsigned int gsa_VORTEX_3_MenuQuitToDOS;    // dseg:52BA
+SAMB_addr sa_VORTEX_003;
+SAMB_ptr fp_VORTEX_003;
 int GUI_HoF_Lbl_Index;                      // dseg:52BC
 unsigned int gsa_VORTEX_2_MenuHallOfFame;   // dseg:52BE
+SAMB_addr sa_VORTEX_002;
+SAMB_ptr fp_VORTEX_002;
 int GUI_Quit_Lbl_Index;                     // dseg:52C0
 unsigned int gsa_VORTEX_5_MenuLoadGame;     // dseg:52C2
+SAMB_addr sa_VORTEX_005;
+SAMB_ptr fp_VORTEX_005;
 int g_GUI_MainMenuSelected;                 // dseg:52C4
 unsigned int gsa_WIZARDS_0to13[14];         // dseg:52C6  GAME_LoadMainImages()  gsa_WIZARDS_0to13[itr_wizards] = LBXE_LoadSingle(g_LbxNm_WIZARDS, itr_wizards);
 // dseg:52E2 IMG_NewG_BtnBorder@ dw 0
@@ -293,10 +299,16 @@ SAMB_addr sa_MAINSCRN_000;
 SAMB_ptr fp_MAINSCRN_000;
 int GUI_NewGame_Label;                      // dseg:52EA
 unsigned int gsa_VORTEX_4_MenuNewGame;      // dseg:52EC
+SAMB_addr sa_VORTEX_004;
+SAMB_ptr fp_VORTEX_004;
 int GUI_Continue_Label;                     // dseg:52EE
 unsigned int gsa_VORTEX_1_MenuContinue;     // dseg:52F0
+SAMB_addr sa_VORTEX_001;
+SAMB_ptr fp_VORTEX_001;
 int g_GAME_HaveContSave;                    // dseg:52F2
 unsigned int gsa_MAINSCRN_5_ScreenBottom;   // dseg:52F4
+SAMB_addr sa_MAINSCRN_005;
+SAMB_ptr fp_MAINSCRN_005;
 // dseg:52F6 NEWG_Screen0_Frame dw 0
 // dseg:52F8 IMG_No_Load_Btn@ dw 0
 // dseg:52FA NEWG_LastRetorts@ dw 0

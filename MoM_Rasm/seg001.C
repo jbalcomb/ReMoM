@@ -427,6 +427,8 @@ void GAME_LoadMainImages(void)
 // #endif
 
     gsa_MAINSCRN_5_ScreenBottom = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
+    sa_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
+    fp_MAINSCRN_005 = MK_FP(gsa_MAINSCRN_5_ScreenBottom,0);
 
 // #ifdef STU_DEBUG
 //     // DBG_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
@@ -434,10 +436,21 @@ void GAME_LoadMainImages(void)
 // #endif
 
     gsa_VORTEX_1_MenuContinue    = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
+    sa_VORTEX_001 = gsa_VORTEX_1_MenuContinue;
+    fp_VORTEX_001 = MK_FP(gsa_VORTEX_1_MenuContinue,0);
     gsa_VORTEX_2_MenuHallOfFame  = LBXE_LoadSingle(g_LbxNm_VORTEX, 2);
+    sa_VORTEX_002 = gsa_VORTEX_2_MenuHallOfFame;
+    fp_VORTEX_002 = MK_FP(gsa_VORTEX_2_MenuHallOfFame,0);
     gsa_VORTEX_3_MenuQuitToDOS   = LBXE_LoadSingle(g_LbxNm_VORTEX, 3);
+    sa_VORTEX_003 = gsa_VORTEX_3_MenuQuitToDOS;
+    fp_VORTEX_003 = MK_FP(gsa_VORTEX_3_MenuQuitToDOS,0);
     gsa_VORTEX_4_MenuNewGame     = LBXE_LoadSingle(g_LbxNm_VORTEX, 4);
+    sa_VORTEX_004 = gsa_VORTEX_4_MenuNewGame;
+    fp_VORTEX_004 = MK_FP(gsa_VORTEX_4_MenuNewGame,0);
     gsa_VORTEX_5_MenuLoadGame    = LBXE_LoadSingle(g_LbxNm_VORTEX, 5);
+    sa_VORTEX_005 = gsa_VORTEX_5_MenuLoadGame;
+    fp_VORTEX_005 = MK_FP(gsa_VORTEX_5_MenuLoadGame,0);
+
 
     // TODO(JimBalcomb,20220915): figure out where these end up getting used (WZD?) and if that makes it make sense that these are loaded here
     // NOTE(JimBalcomb,20220919): the WIZARDS and SPELLDAT here are used in the 'New Game' code  (SEE: SCRN_Draw_NewScr5_2)
@@ -885,14 +898,17 @@ void SCREEN_Menu_Draw(void)
 
         // HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
         FLIC_Draw(0, 0, fp_MAINSCRN_000);
-        FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
+        // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
+        // FLIC_Draw_XY_Redux(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
     }
     //HERE("FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);");
     //FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
     // NOTE(JimBalcomb): this LBX Entry/FLIC includes a 256-color palette chunk
 
     // HERE("FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);");
-    FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    // FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    // FLIC_Draw_XY_Redux(0, 41, gsa_MAINSCRN_5_ScreenBottom);
+    FLIC_Draw(0, 41, fp_MAINSCRN_005);
 
     if ( g_ScreenChangeFade == 0 )
     {
@@ -914,7 +930,8 @@ void SCREEN_Menu_Draw(void)
             FLIC_Reset_CurrentFrame(gsa_VORTEX_5_MenuLoadGame);
         else
             FLIC_Set_CurrentFrame(gsa_VORTEX_5_MenuLoadGame, 1);
-        FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
+        // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
+        FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 12), fp_VORTEX_005);
     }
 
     if ( g_GAME_HaveContSave != 0 )
@@ -923,26 +940,31 @@ void SCREEN_Menu_Draw(void)
             FLIC_Reset_CurrentFrame(gsa_VORTEX_1_MenuContinue);
         else
             FLIC_Set_CurrentFrame(gsa_VORTEX_1_MenuContinue, 1);
-        FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
+        // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
+        FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), fp_VORTEX_001);
     }
 
     if ( MouseOver_ControlIndex == GUI_NewGame_Label )
         FLIC_Reset_CurrentFrame(gsa_VORTEX_4_MenuNewGame);
     else
         FLIC_Set_CurrentFrame(gsa_VORTEX_4_MenuNewGame, 1);
-    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
+    // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
+    FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 24), fp_VORTEX_004);
 
     if ( MouseOver_ControlIndex == GUI_HoF_Lbl_Index )
         FLIC_Reset_CurrentFrame(gsa_VORTEX_2_MenuHallOfFame);
     else
         FLIC_Set_CurrentFrame(gsa_VORTEX_2_MenuHallOfFame, 1);
-    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
+    // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
+    FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 36), fp_VORTEX_002);
 
     if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
         FLIC_Reset_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS);
     else
         FLIC_Set_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
-    FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    // FLIC_Draw_XY_Redux(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 48), fp_VORTEX_003);
 
 
     // // PAL_Load_Palette(2, -1, 0);

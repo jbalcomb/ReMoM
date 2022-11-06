@@ -144,13 +144,16 @@ void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Heade
 
     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Type(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Frame_Type(fp_FLIC_File));
     dbg_prn("DEBUG: [%s, %d] FLIC_Get_Remap(fp_FLIC_File): %d)\n", __FILE__, __LINE__, FLIC_Get_Remap(fp_FLIC_File));
-    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset_Table(fp_FLIC_File): 0x%04X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset_Table(fp_FLIC_File));
+    dbg_prn("DEBUG: [%s, %d] FLIC_Get_Frame_Offset(fp_FLIC_File,Frame_Index): 0x%08X)\n", __FILE__, __LINE__, FLIC_Get_Frame_Offset(fp_FLIC_File,Frame_Index));
 #endif
 
 
     fh_FrameDataOffset = FPEEKDW(EMM_PageFrameBaseAddress, (fh_EmmLogicalPageOffset + (4 * Frame_Index) + FlicHdr_FrameOffsetTable));
     // fp_FLIC = (unsigned char *) MK_FP(EMM_PageFrameBaseAddress, fh_EmmLogicalPageOffset);
     // fh_FrameDataOffset = FLIC_Get_FrameDataOffset(fp_FLIC, Frame_Index);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] fh_FrameDataOffset: 0x%08X\n", __FILE__, __LINE__, fh_FrameDataOffset);
+#endif
 
     tmp_EmmPage = fh_EmmLogicalPageIndex  + ( (fh_FrameDataOffset + 1) / 16384 );
     tmp_EmmOfst = fh_EmmLogicalPageOffset + ( (fh_FrameDataOffset + 1) % 16384 );

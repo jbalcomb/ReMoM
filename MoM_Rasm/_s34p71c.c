@@ -69,7 +69,8 @@ void CTRL_DrawControls(void)
                 dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
 #endif
                 FLIC_Reset_CurrentFrame(gfp_CTRL_Control_Table[tmp_SI].Param5);
-                FLIC_Draw_XY(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, gfp_CTRL_Control_Table[tmp_SI].Param5);
+                // FLIC_Draw_XY(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, gfp_CTRL_Control_Table[tmp_SI].Param5);
+                FLIC_Draw(gfp_CTRL_Control_Table[tmp_SI].Left, gfp_CTRL_Control_Table[tmp_SI].Top, (SAMB_ptr)MK_FP(gfp_CTRL_Control_Table[tmp_SI].Param5,0));
                 VGA_SetFont(gfp_CTRL_Control_Table[tmp_SI].Font_Index, gfp_CTRL_Control_Table[tmp_SI].ColorSet1, 0, 0);
                 Half_Font_Height = ( (VGA_GetFontHeight() - 1) / 2);
                 VGA_DrawCentered(

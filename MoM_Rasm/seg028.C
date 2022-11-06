@@ -1,7 +1,7 @@
 // ~== ST_FLIC
 // seg028
 
-#include "ST_TYPE.H"    /* SAMB_ptr */
+#include "ST_TYPE.H"    /* word, SAMB_ptr */
 #include "ST_DEF.H"
 #include "seg028.H"
 #include "seg021.H"     /* FLIC_Load_Palette() */
@@ -9,39 +9,11 @@
 #include "ST_FLIC.H"
 #include "ST_SA.H"  /* SAMB_addr; farpokew(); */
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
 #include <STRING.H>     /* memcpy() */
-
-// ~== MoO2
-// void Draw(signed short int x, signed short int y, unsigned char * picture)
-void Draw(signed short int x, signed short int y, SAMB_ptr FLIC_animation)
-{
-    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
-
-    signed short int x2;
-    signed short int y2;
-
-    word Frame_Index;
-
-    // dseg02:001B42A8 animation_header dd ?
-
-    // ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-    // void *memcpy(void *dest, const void * src, size_t n)
-    memcpy((void *)&PS_FLIC_Header, (void *)FLIC_animation, sizeof(PS_FLIC_Header));
-
-    Frame_Index = PS_FLIC_Header.Current_Frame;
-    PS_FLIC_Header.Current_Frame += 1;
-    if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
-    {
-        // farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
-        FLIC_Set_Current_Frame(FLIC_animation, PS_FLIC_Header.Current_Frame);
-    }
-    else
-    {
-        // farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
-        FLIC_Set_Current_Frame(FLIC_animation, PS_FLIC_Header.Loop_Frame);
-    }
-
-}
 
 
 // s28p02
@@ -74,20 +46,6 @@ void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
 
 }
 
-// void FLIC_Draw_XY_STU0(int X_Pos, int Y_Pos, SAMB_addr sa_FLIC_Header)
-// {
-//     static struct s_FLIC_HDR PS_FLIC_Header;
-//     SAMB_ptr fp_FLIC_Header;
-//     // void * FLIC_Frame;
-//     // int Frame_Index;
-//     // int Shading;
-// 
-//     fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
-//     // ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-//     // ASSERT(sizeof(sa_FLIC_Header) == sizeof(PS_FLIC_Header))  // sizeof(struct s_FLIC_HDR) == 0x10  16 bytes, 1 paragraph/segment
-//     memcpy((void *)&PS_FLIC_Header, (void *)fp_FLIC_Header, sizeof(PS_FLIC_Header));
-// 
-// }
 
 // s28p11
 /*
@@ -137,210 +95,224 @@ void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
 // /* Read and display next frame onto VGA display */ 
 // Errval fli_next_frame(Jfile ff); 
 
-/*
-    FLIC_Draw_XY_Shim
-        Test
-            In-EMM
-            Has-Shading
-    NOTE: sa_FLIC_Header is the actual header in SRAM or the header copy in EMM
-    
-*/
-// void FLIC_Draw_XY_Shim(int Left, int Top, SAMB_addr sa_FLIC_Header)
-// {
-//     static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
-//     unsigned int FLIC_Frame_Sgmt;
-//     unsigned int FLIC_Frame_Ofst;
-//     int Frame_Index;
-//     int Shading;
+
+
+void DELETE__FLIC_Draw_XY_Redux(int x, int y, SAMB_addr sa_FLIC_Header)
+{
+    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
+    SAMB_ptr fp_FLIC_Header;
+    // unsigned int FLIC_Frame_Sgmt;
+    // unsigned int FLIC_Frame_Ofst;
+    int Frame_Index;
+    int current_frame_index;
+    // int Shading;
+    // unsigned int Dst_Sgmt;
+    // unsigned int Dst_Ofst;
+    byte_ptr fp_Dst;
+    // word loword;
+    // word hiword;
+    // word words_shifted;
+    unsigned long int flic_frame_offset;
+    // unsigned long int FLIC_Frame_Data_sgmt;
+    // unsigned long int FLIC_Frame_Data_ofst;
+    // word flic_frame_offset_table_position;
+    word flic_frame_offset_sgmt;
+    word flic_frame_offset_ofst;
+    byte_ptr fp_FLIC_Frame;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY_Redux(x=%d, y=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, x, y, sa_FLIC_Header);
+#endif
+
+    fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
+
+
+    ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
+    // memcpy((void *)&PS_FLIC_Header, (const void *)fp_FLIC_Header, sizeof(PS_FLIC_Header));
+
+
+    Frame_Index = PS_FLIC_Header.Current_Frame;
+    current_frame_index = PS_FLIC_Header.Current_Frame;
+    PS_FLIC_Header.Current_Frame += 1;
+    if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
+    {
+        DLOG("( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )");
+        FLIC_Set_Current_Frame(fp_FLIC_Header, PS_FLIC_Header.Current_Frame);
+    }
+    else
+    {
+        DLOG("( PS_FLIC_Header.Current_Frame >= PS_FLIC_Header.Frame_Count )");
+        FLIC_Set_Current_Frame(fp_FLIC_Header, PS_FLIC_Header.Loop_Frame);
+    }
+
+
+    if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
+    {
+        FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);
+        // FLIC_Load_Palette(fp_FLIC_Header, Frame_Index);
+    }
+
+    if ( PS_FLIC_Header.EMM_Handle_Number != 0 )
+    {
+        DLOG("( PS_FLIC_Header.EMM_Handle_Number != 0 )");
+        FLIC_Draw_EMM_C(x, y, sa_FLIC_Header, current_frame_index);
+        goto Done;
+    }
+
+    // FLIC Frame Data Offset Table
+    // offset to entry in table = offset to table + (size of entry * number of entries) = 18 + (4 * Frame_Index)
+
 // 
+//     Dst_Sgmt = sa_FLIC_Header;
+//     // _BX = 18;
+//     // _AX = Frame_Index;
+//     // _AX = _AX * 2;
+//     // _AX = _AX * 2;
+//     // _BX = _BX + _AX;
+//     Dst_Ofst = 18 + (Frame_Index * 4);
+//     // _AX = GET_2B(_ES:_BX);
+//     // _DX = GET_2B(_ES:_BX+2);
+//     fp_Dst = MK_FP(Dst_Sgmt,Dst_Ofst);
+//     loword = GET_2B_OFS(fp_Dst, 0);
+//     hiword = GET_2B_OFS(fp_Dst, 2);
+//     FLIC_Frame_Ofst = (loword & 0x0F) + 1;
+//     FLIC_Frame_Sgmt = sa_FLIC_Header + (hiword / 16) + (loword / 16);
 // #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY_Shim(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
+//     dbg_prn("DEBUG: [%s, %d] loword: 0x%04X\n", __FILE__, __LINE__, loword);
+//     dbg_prn("DEBUG: [%s, %d] hiword: 0x%04X\n", __FILE__, __LINE__, hiword);
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Frame_Sgmt: 0x%04X\n", __FILE__, __LINE__, FLIC_Frame_Sgmt);
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Frame_Ofst: 0x%04X\n", __FILE__, __LINE__, FLIC_Frame_Ofst);
 // #endif
-//     ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
-//     Frame_Index = PS_FLIC_Header.Current_Frame;
-//     PS_FLIC_Header.Current_Frame += 1;
-//     if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
-//     {
-//         farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
-//     }
-//     else
-//     {
-//         farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
-//     }
-//     if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
-//     {
-//         FLIC_LoadPalette_Redux(sa_FLIC_Header, Frame_Index);
-//     }
-//     if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
-//     {
-// 
-// // TODO(JimBalcomb): switch this to the Src/Dst:SgmtOfst approach
+
+    // _BX = sa_FLIC_Header + 0x12 + (4 * Frame_Index);
+
 // asm {
 //     push ds
 //     push es
+// 
 //     mov ax, [sa_FLIC_Header]
 //     mov es, ax
-//     mov bx, FlicHdr_Shading     //; 11h 17d  1oom :: lbxgfx.h :: #define lbxgfx_get_format(_data_) ((_data_)[0x11])
-//     mov al, [es:bx]
-//     xor ah, ah
-//     mov [Shading], ax
-//     inc bx                              //; _BX = 12h 18d - offset in FLIC to FLIC Frame Offset Table
+// 
+//     mov bx, 0x12
 //     mov ax, [Frame_Index]
 //     shl ax, 1
 //     shl ax, 1
 //     add bx, ax                          //; _BX  = _BX + (Frame_Index * 2^2) .. ; _BX  = 18 + (Frame_Index * 4)
+//     
+//     mov [flic_frame_offset_table_position], bx
+// 
 //     mov ax, [es:bx]     // loword
 //     mov dx, [es:bx+2]   // hiword
+// 
+//     mov [loword], ax
+//     mov [hiword], dx
+// 
 //     mov bx, ax
-//     //db 81h,0E3h,0Fh,0 ; <BAD>and  bx, 0Fh
 //     and bx, 0Fh     // ?!? ~= xor bh, bh; clear the bits in the high byte of the word BX
 //     inc bx
 //     mov [FLIC_Frame_Ofst], bx
 // 
-//     // [DX:AX] is FLIC Frame Offset High-Word:Low-Word
-//     // The Shift Right instruction performs a right shift on the destinations operand, filling the lowest bit with 0. The lowest bit is moved into the Carry Flag.
-//     // The RCR (Rotate and Carry Right) instruction shifts each bit to the right, copies the Carry flag to the most significant bit and copies the least significant bit into the Carry flag.
-//     // CF <-----[][][][][][][][]<-|
-//     // []                         |
-//     //  |-------------------------|
-//     // SHR DX,1  [][][][][][][][]->CF
-//     // RCR AX,1  CF->[][][][][][][][]->CF
-//     // ... AX = [DX3][DX2][DX1][DX0][AX15][AX14][AX13][AX12][AX11][AX10][AX9][AX8][AX7][AX6][AX5][AX4]
-//     // ? Why bottom 4 bits of DX ? ... max would be F000h 61440d ... /16 = 3840d 0F00h ... /16 = 240d F0h ... /16 = 15d 0Fh
-//     // 4, because 20 bit address bus
-//     // https://stackoverflow.com/questions/2877417/what-is-meant-by-normalization-in-huge-pointers#:~:text=A%20normalized%20pointer%20is%20one,when%20an%20assignment%20is%20made.
-//     // linear = segment * 16 + offset;
-//     // ...
-//     // / A near pointer contains only the 16 bit offset of the object within the currently selected segment. ?
+//     shr dx, 1
+//     rcr ax, 1
 // 
-//     shr dx, 1    //; / 4
-//     rcr ax, 1    // ? AX = (AX>>1) + CF ?
-//     shr dx, 1    //; / 4
+//     shr dx, 1
 //     rcr ax, 1
-//     shr dx, 1    //; / 8
+// 
+//     shr dx, 1
 //     rcr ax, 1
-//     shr dx, 1    //; / 16  ? 16, because segments ... 0000000000000001:0000000000000000 == 0000000000000000:1000000000000000 ?
+// 
+//     shr dx, 1
 //     rcr ax, 1
+// 
+//     mov [words_shifted], ax
+// 
 //     add ax, [sa_FLIC_Header]
 //     mov [FLIC_Frame_Sgmt], ax
+// 
 //     pop es
 //     pop ds
 // }
-// 
-//         if ( Shading != 0 ) {
-//             FLIC_Draw_R(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-//         } else {
-//             FLIC_Draw_A(Left, Top, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-//         }
-//     } else {
-//         FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
-//     }
-// 
+
 // #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY_Shim()\n", __FILE__, __LINE__);
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Frame_Sgmt: 0x%04X\n", __FILE__, __LINE__, FLIC_Frame_Sgmt);
+//     dbg_prn("DEBUG: [%s, %d] FLIC_Frame_Ofst: 0x%04X\n", __FILE__, __LINE__, FLIC_Frame_Ofst);
+//     dbg_prn("DEBUG: [%s, %d] (FLIC_Frame_Sgmt - sa_FLIC_Header): 0x%04X\n", __FILE__, __LINE__, (FLIC_Frame_Sgmt - sa_FLIC_Header));
 // #endif
-// }
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset_table_position: 0x%04X\n", __FILE__, __LINE__, flic_frame_offset_table_position);
+//     dbg_prn("DEBUG: [%s, %d] ( 0x12 + (4 * Frame_Index) ): 0x%04X\n", __FILE__, __LINE__, ( 0x12 + (4 * Frame_Index) ));
+//     dbg_prn("DEBUG: [%s, %d] ( sa_FLIC_Header + 0x12 + (4 * Frame_Index) ): 0x%04X\n", __FILE__, __LINE__, ( sa_FLIC_Header + 0x12 + (4 * Frame_Index) ));
+// #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] fp_FLIC_Header[0x12 + (4 * Frame_Index)]: 0x%08X\n", __FILE__, __LINE__, fp_FLIC_Header[0x12 + (4 * Frame_Index)]);
+//     dbg_prn("DEBUG: [%s, %d] fp_FLIC_Header[flic_frame_offset_table_position]: 0x%08X\n", __FILE__, __LINE__, fp_FLIC_Header[flic_frame_offset_table_position]);
+// #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] loword: 0x%04X\n", __FILE__, __LINE__, loword);
+//     dbg_prn("DEBUG: [%s, %d] hiword: 0x%04X\n", __FILE__, __LINE__, hiword);
+//     dbg_prn("DEBUG: [%s, %d] (loword & 0x0F): 0x%04X\n", __FILE__, __LINE__, (loword & 0x0F));
+//     dbg_prn("DEBUG: [%s, %d] ((loword + 1) & 0x0F): 0x%04X\n", __FILE__, __LINE__, ((loword + 1) & 0x0F));
+//     dbg_prn("DEBUG: [%s, %d] words_shifted: 0x%04X\n", __FILE__, __LINE__, words_shifted);
+//     dbg_prn("DEBUG: [%s, %d] (sa_FLIC_Header + words_shifted): 0x%04X\n", __FILE__, __LINE__, (sa_FLIC_Header + words_shifted));
+// #endif
 
-
-// void FLIC_Draw_XY(int x, int y, SAMB_addr sa_FLIC_Header)
-void FLIC_Draw_XY_Redux(int x, int y, SAMB_addr sa_FLIC_Header)
-{
-    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
-    SAMB_ptr fp_FLIC_Header;
-    unsigned int FLIC_Frame_Sgmt;
-    unsigned int FLIC_Frame_Ofst;
-    int Frame_Index;
-    int Shading;
-
+    flic_frame_offset = 0x00000000;
+    // flic_frame_offset = GET_4B_OFS( fp_FLIC_Header, FLIC_HDR_POS_FRAME_OFFSET_TABLE + (4 * current_frame_index) );
+    flic_frame_offset = FLIC_Get_Frame_Offset(fp_FLIC_Header, current_frame_index);
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(x = %d, y = %d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, x, y, sa_FLIC_Header);
+    dbg_prn("DEBUG: [%s, %d] flic_frame_offset: 0x%08X\n", __FILE__, __LINE__, flic_frame_offset);
+    dbg_prn("DEBUG: [%s, %d] ((flic_frame_offset + 1) & 0x0F): 0x%04X\n", __FILE__, __LINE__, ((flic_frame_offset + 1) & 0x0F));
+    dbg_prn("DEBUG: [%s, %d] (flic_frame_offset >> 4): 0x%04X\n", __FILE__, __LINE__, (flic_frame_offset >> 4));
+    dbg_prn("DEBUG: [%s, %d] ( sa_FLIC_Header + (flic_frame_offset >> 4) ): 0x%04X\n", __FILE__, __LINE__, ( sa_FLIC_Header + (flic_frame_offset >> 4) ));
+#endif
+    flic_frame_offset_sgmt = (flic_frame_offset >> 4);          // ~== flic_frame_offset / 16
+    flic_frame_offset_ofst = ((flic_frame_offset & 0x0F) + 1);  // ~== flic_frame_offset % 16
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] flic_frame_offset_sgmt: 0x%04X\n", __FILE__, __LINE__, flic_frame_offset_sgmt);
+    dbg_prn("DEBUG: [%s, %d] flic_frame_offset_ofst: 0x%04X\n", __FILE__, __LINE__, flic_frame_offset_ofst);
+    dbg_prn("DEBUG: [%s, %d] (sa_FLIC_Header + flic_frame_offset_sgmt): 0x%04X\n", __FILE__, __LINE__, (sa_FLIC_Header + flic_frame_offset_sgmt));
 #endif
 
-    fp_FLIC_Header = (SAMB_ptr) MK_FP(sa_FLIC_Header,0);
+    fp_FLIC_Frame = (byte_ptr)MK_FP(FP_SEG(fp_FLIC_Header)+flic_frame_offset_sgmt,flic_frame_offset_ofst);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] fp_FLIC_Frame: %p\n", __FILE__, __LINE__, fp_FLIC_Frame);
+#endif
+
+    // fp_FLIC_Frame
+    // Offset to FLIC File + Offset to FLIC Frame
+    // Far Pointer Offset = (FLIC_Frame_Offset + 1) & 0x0F  AKA (FLIC_Frame_Offset + 1) % 16, where the remainder will be {0,...,15}; +1 so 0000 1111 becomes 0001 0000 
 
 
-    ST_MoveData((unsigned int)&PS_FLIC_Header, 0, 0, sa_FLIC_Header, sizeof(PS_FLIC_Header));
 
-    Frame_Index = PS_FLIC_Header.Current_Frame;
-    PS_FLIC_Header.Current_Frame += 1;
-
-    if ( PS_FLIC_Header.Current_Frame < PS_FLIC_Header.Frame_Count )
+    // if ( Shading != 0 )
+    if ( FLIC_Get_Remap(fp_FLIC_Header) == 0 )
     {
-        farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Current_Frame);
+        DLOG("( FLIC_Get_Remap(fp_FLIC_Header) == 0 )");
+        // FLIC_Draw_R(x, y, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+        // FLIC_Draw_R(x, y, PS_FLIC_Header.Width, flic_frame_offset_ofst, (sa_FLIC_Header + flic_frame_offset_sgmt));
+        // FLIC_Draw_R(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
+        FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
     }
     else
     {
-        farpokew(sa_FLIC_Header, 0x04, PS_FLIC_Header.Loop_Frame);
+        DLOG("( FLIC_Get_Remap(fp_FLIC_Header) != 0 )");
+        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
+        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, flic_frame_offset_ofst, (sa_FLIC_Header + flic_frame_offset_sgmt));
+        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
+        FLIC_Draw_R(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
     }
 
-    if ( PS_FLIC_Header.Palette_Header_Offset != 0 )
-    {
-        // FLIC_LoadPalette_ReRedux(sa_FLIC_Header, Frame_Index);
-        // FLIC_LoadPalette_ReRedux(MK_FP(sa_FLIC_Header,0), Frame_Index);
-        // FLIC_LoadPalette_ReRedux(fp_FLIC_Header, Frame_Index);
-        FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);
-    }
-
-    if ( PS_FLIC_Header.EMM_Handle_Number == 0 )
-    {
-
-// TODO(JimBalcomb): switch this to the Src/Dst:SgmtOfst approach
-asm {
-    push ds
-    push es
-    mov ax, [sa_FLIC_Header]
-    mov es, ax
-    mov bx, FlicHdr_Shading     //; 11h 17d  1oom :: lbxgfx.h :: #define lbxgfx_get_format(_data_) ((_data_)[0x11])
-    mov al, [es:bx]
-    xor ah, ah
-    mov [Shading], ax
-
-    inc bx                              //; _BX = 12h 18d - offset in FLIC to FLIC Frame Offset Table
-    mov ax, [Frame_Index]
-    shl ax, 1
-    shl ax, 1
-    add bx, ax                          //; _BX  = _BX + (Frame_Index * 2^2) .. ; _BX  = 18 + (Frame_Index * 4)
-    mov ax, [es:bx]     // loword
-    mov dx, [es:bx+2]   // hiword
-    mov bx, ax
-    //db 81h,0E3h,0Fh,0 ; <BAD>and  bx, 0Fh
-    and bx, 0Fh     // ?!? ~= xor bh, bh; clear the bits in the high byte of the word BX
-    inc bx
-    mov [FLIC_Frame_Ofst], bx
-    shr dx, 1    //; / 4
-    rcr ax, 1    // ? AX = (AX>>1) + CF ?
-    shr dx, 1    //; / 4
-    rcr ax, 1
-    shr dx, 1    //; / 8
-    rcr ax, 1
-    shr dx, 1    //; / 16  ? 16, because segments ... 0000000000000001:0000000000000000 == 0000000000000000:1000000000000000 ?
-    rcr ax, 1
-    add ax, [sa_FLIC_Header]
-    mov [FLIC_Frame_Sgmt], ax
-    pop es
-    pop ds
-}
-
-        if ( Shading != 0 ) {
-            FLIC_Draw_R(x, y, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-        } else {
-            FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-        }
-
-    } else {
-        FLIC_Draw_EMM_C(x, y, sa_FLIC_Header, Frame_Index);
-    }
-
+Done:
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(x = %d, y = %d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, x, y, sa_FLIC_Header);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_XY_Redux(x=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, x, y, sa_FLIC_Header);
 #endif
 }
 
-// void FLIC_Draw_XY__old0(int Left, int Top, SAMB_addr sa_FLIC_Header)
-void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
+
+
+void DELETE__FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 {
     static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local 
-    SAMB_ptr fp_FLIC_Header;
     unsigned int FLIC_Frame_Sgmt;
     unsigned int FLIC_Frame_Ofst;
     int Frame_Index;
@@ -361,8 +333,6 @@ void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_XY(Left=%d, Top=%d, sa_FLIC_Header=0x%04X)\n", __FILE__, __LINE__, Left, Top, sa_FLIC_Header);
 #endif
-
-    fp_FLIC_Header = (SAMB_ptr)MK_FP(sa_FLIC_Header,0);
 
     // dbg_prn("DEBUG: [%s, %d] FLIC_HDR[0x00]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x00));
     // dbg_prn("DEBUG: [%s, %d] FLIC_HDR[0x02]: 0x%04X\n", __FILE__, __LINE__, farpeekw(sa_FLIC_Header, 0x02));

@@ -824,6 +824,8 @@ void test_EMM_Load_LBX_File(void)
         // |-> EMM_Load_LBX_File(LbxFileName=MAINSCRN, EmmRsvd=1)
 
     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
+    sa_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
+    fp_MAINSCRN_000 = (SAMB_ptr)MK_FP(gsa_MAINSCRN_0_AnimatedLogo, 0);
         // |-> LBX_Load_Entry(LbxName=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, LbxHdrFmt=0)
         // |-> EMM_LBX_Load_Entry(EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, FormatType=0)
         // |-> EMM_LBX_FLIC_Header(EmmHndl=7, EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0)
@@ -865,7 +867,8 @@ void test_EMM_Load_LBX_File(void)
     FLIC_Set_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
     DLOG("CALL: VGA_SetModeY();");
     VGA_SetModeY();
-    FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+    FLIC_Draw(0, 0, fp_MAINSCRN_000);
         // ST_MoveData(destoff=0xB47C, destseg=0x0000, srcoff=0x0000, srcseg=0x20D1, nbytes=16)
         // FLIC_Load_Palette(FlicHdr_SgmtAddr=0x20D1, Frame_Index=0)
         // FLIC_Draw_EMM_C(ScreenPage_X=0, ScreenPage_Y=0, SAMB_data_FLIC_HDR=0x20D1, Frame_Index=0)
