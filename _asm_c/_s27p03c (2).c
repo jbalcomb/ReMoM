@@ -8,7 +8,7 @@
 #include "ST_EMM.H"
 #include "ST_EXIT.H"  /* Exit() */
 #include "ST_SA.H"  /* SAMB_addr; farpokew(); */
-#include "ST_VGA.H"
+#include "ST_VGA.H"     /* e_SC_INDEX, e_SC_DATA, e_SC_MAPMASK, etc. */
 
 
 // #include "STU_BITS.H"   /* fh_FrameDataOffset = FPEEKDW(); fh_Shading = FPEEKB() */
@@ -43,7 +43,7 @@ Part 2:
 
 */
 // void draw_flic_frame(byte * src_buff, byte * dst_buff, word width, byte mask)
-void FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Header, int Frame_Index)
+void DELETE__FLIC_Draw_EMM_C(int ScreenPage_X, int ScreenPage_Y, SAMB_addr sa_FLIC_Header, int Frame_Index)
 {
     
     union  REGS  inregs;
@@ -345,6 +345,6 @@ Next_Column:
 
 Done:
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_EMM_C(ScreenPage_X=%d, ScreenPage_Y=%d, sa_FLIC_Header=0x%03X, Frame_Index=%d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, sa_FLIC_Header, Frame_Index);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_EMM_C(ScreenPage_X = %d, ScreenPage_Y = %d, sa_FLIC_Header = 0x%04X, Frame_Index = %d)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, sa_FLIC_Header, Frame_Index);
 #endif
 }

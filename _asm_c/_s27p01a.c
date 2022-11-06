@@ -76,7 +76,7 @@ FlicHdr_FrameType               0x10
 // ; column by column, decoding its RLE along the way
 
 // s27p01
-void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg)
+void DELETE__FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg)
 {
 
     unsigned int tmp_AX;
@@ -89,8 +89,8 @@ void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int
 // asm push es
 // asm push ds
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: FLIC_Draw_A(ScreenPage_X=%d, ScreenPage_Y=%d, FlicWidth=%d, Img_Off=0x%04X, Img_Seg=0x%04X)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, FlicWidth, Img_Off, Img_Seg);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_A(ScreenPage_X=%d, ScreenPage_Y=%d, FlicWidth=%d, Img_Off=0x%04X, Img_Seg=0x%04X)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, FlicWidth, Img_Off, Img_Seg);
 #endif
 
 asm mov dx, e_SC_INDEX
@@ -305,9 +305,9 @@ asm mov ax, seg DGROUP
 asm mov ds, ax
 asm assume ds:DGROUP
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     // dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_A(ScreenPage_X=%d, ScreenPage_Y=%d, FlicWidth=%d, Img_Off=0x%03X, Img_Seg=0x%04X)\n", __FILE__, __LINE__, ScreenPage_X, ScreenPage_Y, FlicWidth, Img_Off, Img_Seg);
-    dlvfprintf("DEBUG: [%s, %d] END: FLIC_Draw_A()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_A()\n", __FILE__, __LINE__);
 #endif
 
 // asm pop ds

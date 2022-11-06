@@ -105,7 +105,7 @@ extern unsigned char g_VGA_WriteMapMasks[];         // dseg:41D0
 // \/\/\/ ? VGA, GUI, etc ? \/\/\/
 // dseg:436C VGA_WriteMapMasks2 db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
 // dseg:4370 GUI_DS_Save dw 0
-extern unsigned char g_VGA_WriteMapMasks3[]; // dseg:4372  db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
+// ST_FLIC.C  extern unsigned char g_VGA_WriteMapMasks3[]; // dseg:4372  db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
 // dseg:4376 VGA_WriteMapMasks4 db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
 // dseg:437A VGA_WriteMapMasks5 db         1,      10b,     100b,    1000b; 0 ; should use dseg:41d0
 // dseg:437E dw 0

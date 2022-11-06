@@ -1072,7 +1072,8 @@ void test_FLIC_Draw_EMM(void)
     // gsa_DSP_Addr = 0xA000;
     VGA_DrawFilledRect(0,0,319,199,5);
     getch();
-    FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+    // FLIC_Draw_EMM_C(Left, Top, sa_FLIC_Header, Frame_Index);
+    FLIC_Draw_Frame_EMM(Left, Top, sa_FLIC_Header, Frame_Index);
     // VGA_PageFlip();
     getch();
     VGA_DAC_Write();

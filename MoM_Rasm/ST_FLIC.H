@@ -696,14 +696,15 @@ extern "C" {
     seg027
 */
 
-// _s27p01a.c
-void FLIC_Draw_A(int x, int y, int width, unsigned int FLIC_Frame_Data_ofst, unsigned int FLIC_Frame_Data_sgmt);
+// s27p01
+void FLIC_Draw_Frame(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt);
 
 // _s27p02.asm
-void FLIC_Draw_R(int x, int y, int width, unsigned int FLIC_Frame_Data_ofst, unsigned int FLIC_Frame_Data_sgmt);
+void FLIC_Draw_R(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt);
 
 // _s27p03c.c
-void FLIC_Draw_EMM_C(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_index);
+// void DELETE__FLIC_Draw_EMM_C(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_index);
+void FLIC_Draw_Frame_EMM(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_index);
 
 // _s27p04
 // void FLIC_EMM_MapNextPages(void);
@@ -720,7 +721,6 @@ void FLIC_Draw_EMM_C(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_i
 // seg028.H  void FLIC_Prepare(int Width, int Height, SAMB_addr SAMB_head);
 
 // s28p11
-// seg028.H  void FLIC_Draw_XY(int x, int y, SAMB_addr sa_FLIC_Header);
 void FLIC_Draw(int x, int y, SAMB_ptr fp_FLIC_Header);
 
 // s28p13

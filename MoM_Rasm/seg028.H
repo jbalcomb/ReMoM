@@ -21,9 +21,7 @@ extern "C" {
 void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr sa_FLIC_Header);
 
 // s28p11
-void DELETE__FLIC_Draw_XY_Redux(int x, int y, SAMB_addr sa_FLIC_Header);
-void DELETE__FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
-
+// void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
 
 // s28p14
 void FLIC_Set_CurrentFrame(SAMB_addr sa_FLIC_Header, int Frame_Index);
