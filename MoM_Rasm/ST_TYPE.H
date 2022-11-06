@@ -3,6 +3,18 @@
 
 
 // ? stdint.h ? limits.h ? - ? C89, C90, C99, ?
+// C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\inttypes.h
+// C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include\stdint.h
+#define _STDINT
+typedef signed char        int8_t;
+typedef short              int16_t;
+typedef int                int32_t;
+typedef long long          int64_t;
+typedef unsigned char      uint8_t;
+typedef unsigned short     uint16_t;
+typedef unsigned int       uint32_t;
+typedef unsigned long long uint64_t;
+
 
 // ? #if defined(__DOS16__) ?
 

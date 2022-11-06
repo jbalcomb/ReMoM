@@ -691,6 +691,10 @@ extern "C" {
 // // ~== MoO2
 // void Draw(signed short int x, signed short int y, unsigned char * picture);
 
+void FLIC_Frame_RLE_Decode(BYTE * FLIC_Frame_Encoded, BYTE * FLIC_Frame_Decoded);
+static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch);
+void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_data, byte_ptr back_buffer);
+
 
 /*
     seg027

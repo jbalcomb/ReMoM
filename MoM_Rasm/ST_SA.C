@@ -169,7 +169,8 @@ SAMB_ptr SA_Allocate_Space(unsigned int nparas)
 SAMB_ptr SA_Allocate_MemBlk(unsigned int nparas)
 {
     SAMB_ptr SAMB_data;
-    g_SAMB = (SAMB_ptr) malloc( ((nparas + 1 ) * 16) );
+    // g_SAMB = (SAMB_ptr) malloc( ((nparas + 1 ) * 16) );
+    g_SAMB = (SAMB_ptr) farmalloc( ((nparas + 1 ) * 16) );
     if ( g_SAMB == NULL ) { SA_Alloc_Error(0x01, nparas); }
     SAMB_data = (SAMB_ptr) PTR_ADD_PARAGRAPH(g_SAMB,1);
     Update_MemFreeWorst_KB();

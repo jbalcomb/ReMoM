@@ -140,7 +140,7 @@ void Load_Font_File(char * font_file)
     }
     for ( i = 0; i < 256; i++)
     {
-        *(p_PaletteFlags + i) = 0;
+        *(p_PaletteFlags + i) = 1;
     }
 
 #ifdef STU_DEBUG

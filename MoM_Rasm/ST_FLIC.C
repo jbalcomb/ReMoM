@@ -33,11 +33,245 @@
 unsigned char VGA_WriteMapMasks[4] = {0x01, 0x02, 0x04, 0x08}; // dseg:4372
 
 
-// // 1oom::lbxgfx.c::static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
-// void FLIC_RLE_Decode(BYTE * FLIC_Frame_Data)
-// {
-//     
-// }
+void FLIC_Frame_RLE_Decode(BYTE * FLIC_Frame_Encoded, BYTE * FLIC_Frame_Decoded)
+{
+
+}
+
+/*
+    1oom :: lbxgfx.c :: lbxgfx_draw_pixels_fmt0()
+
+    1oom
+        lbxgfx.c
+            #include "types.h"
+                |-> #include <inttypes.h>
+                    |-> #include <corecrt.h>
+                    |-> #include <stdint.h>
+                |-> #include <stdbool.h>
+            static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
+*/
+static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
+{
+    uint8_t *q;
+    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
+    while (w--) {
+        q = pixbuf++;
+        b = *data++;
+        if (b == 0xff) { /* skip column */
+            continue;
+        }
+        mode = b;
+        len_total = *data++;
+        if ((mode & 0x80) == 0) { /* regular data */
+            do {
+                len_run = *data++;
+                q += pitch * *data++;
+                len_total -= len_run + 2;
+                do {
+                    *q = *data++;
+                    q += pitch;
+                } while (--len_run);
+            } while (len_total >= 1);
+        } else {    /* compressed data */
+            do {
+                len_run = *data++;
+                q += pitch * *data++;
+                len_total -= len_run + 2;
+                do {
+                    b = *data++;
+                    if (b > 0xdf) { /* b-0xdf pixels, same color */
+                        uint8_t len_compr;
+                        len_compr = b - 0xdf;
+                        --len_run;
+                        b = *data++;
+                        while (len_compr) {
+                            *q = b;
+                            q += pitch;
+                            --len_compr;
+                        }
+                    } else {
+                        *q = b;
+                        q += pitch;
+                    }
+                } while (--len_run);
+            } while (len_total >= 1);
+        }
+    }
+}
+
+/*
+
+Draw_Animated_Sprite_Back_Diff
+    Address: 01:0012A914
+Draw_No_Glassed_Animated_Sprite
+    Address: 01:0012AAA1
+
+    Num params: 3
+    Return type: void (1 bytes) 
+    signed integer (2 bytes) x_start
+    signed integer (2 bytes) y_start
+    pointer (4 bytes) frame_data
+
+    signed integer (4 bytes) bitmap_size
+    signed integer (4 bytes) pos
+    signed integer (4 bytes) screen_pos
+    signed integer (4 bytes) x
+    signed integer (4 bytes) y
+    signed integer (4 bytes) i
+    signed integer (4 bytes) screen_start
+    signed integer (4 bytes) buffer_pos
+    signed integer (4 bytes) buffer_pos_word
+    signed integer (4 bytes) packet_end
+    signed integer (2 bytes) height
+    signed integer (2 bytes) data_count
+    signed integer (2 bytes) skip_count
+    signed integer (2 bytes) store_type
+    signed integer (2 bytes) line_skip
+    unsigned integer (4 bytes) data
+
+    unsigned integer (4 bytes) copy_size
+
+    pointer (4 bytes) frame_data_word
+
+    unsigned integer (1 bytes) data_byte
+    unsigned integer (1 bytes) screen_byte
+
+*/
+/*
+    if frame_num is -1, uses same current_frame_index logic as FLIC_Draw()
+    no emm, no remap
+*/
+void FLIC_Draw_Back(int x_start, int y_start, int frame_num, SAMB_ptr fp_FLIC_File, byte_ptr back_buffer)
+{
+    int current_frame_index;
+    dword flic_frame_offset;
+    word flic_frame_offset_sgmt;
+    word flic_frame_offset_ofst;
+    byte_ptr fp_FLIC_Frame;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_Header = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
+#endif
+
+    if ( frame_num == -1 )
+    {
+        current_frame_index = FLIC_Get_Current_Frame(fp_FLIC_File) + 1;
+        if ( current_frame_index < FLIC_Get_Frame_Count(fp_FLIC_File) )
+        {
+            FLIC_Set_Current_Frame(fp_FLIC_File, current_frame_index);
+        }
+        else
+        {
+            FLIC_Set_Current_Frame(fp_FLIC_File, FLIC_Get_Loop_Frame(fp_FLIC_File));
+        }
+    }
+    else
+    {
+        current_frame_index = frame_num;
+    }
+
+    if( ( FLIC_Get_Palette_Header_Offset(fp_FLIC_File) != 0 ) )
+    {
+        FLIC_Load_Palette(fp_FLIC_File, current_frame_index);
+    }
+
+
+    flic_frame_offset = FLIC_Get_Frame_Offset(fp_FLIC_File, current_frame_index);
+    flic_frame_offset_sgmt = (flic_frame_offset >> 4);          // ~== flic_frame_offset / 16
+    flic_frame_offset_ofst = ((flic_frame_offset & 0x0F) + 1);  // ~== flic_frame_offset % 16
+    fp_FLIC_Frame = (byte_ptr) MK_FP( (FP_SEG(fp_FLIC_File) + flic_frame_offset_sgmt), flic_frame_offset_ofst );
+
+
+    FLIC_Draw_Frame_Back(x_start, y_start, FLIC_Get_Width(fp_FLIC_File), fp_FLIC_Frame, back_buffer);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_Header = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
+#endif
+}
+void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_data, byte_ptr back_buffer)
+{
+    byte data_byte;
+    byte_ptr bbuff;
+
+    byte packet_byte_count;
+    byte sequence_byte_count;
+    byte delta_byte_count;
+    word width_stride;
+    byte itr_op_repeat;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame_Back(x_start = %d, y_start = %d, width = %d, frame_data = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data, back_buffer);
+#endif
+
+    while (width--)
+    {
+        bbuff = back_buffer++;
+        data_byte = *frame_data++;
+
+        if (data_byte == 0xFF)  /* Type: skip */
+        {
+            continue;
+        }
+
+        packet_byte_count = *frame_data++;
+
+        if(data_byte == 0x80)  /* Type: decode */
+        {
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (width_stride * delta_byte_count);
+                packet_byte_count -= sequence_byte_count + 2;
+                do {
+                    data_byte = *frame_data++;  // this byte is the op-repeat or just the byte to copy
+                    if(data_byte >= 224)  /* op: repeat */
+                    {
+                        itr_op_repeat = (data_byte - 224) + 1;
+                        sequence_byte_count--;
+                        data_byte = *frame_data++;
+                        while(itr_op_repeat--)
+                        {
+                            *bbuff = data_byte;
+                            bbuff += width_stride;
+                        }
+                    }
+                    else  /* op: copy */
+                    {
+                        *bbuff = data_byte;
+                        bbuff += width_stride;
+                    }
+                } while (--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
+            } while (packet_byte_count >= 1);
+        }
+
+        if (data_byte == 0x00)  /* Type: copy */
+        {
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (width_stride * delta_byte_count);
+                packet_byte_count -= sequence_byte_count + 2;
+                do {
+                    *bbuff = *frame_data++;
+                    bbuff += width_stride;
+                } while (--sequence_byte_count);
+            } while ( packet_byte_count >= 1 );
+
+        }
+
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("END: [%s, %d] BEGIN: FLIC_Draw_Frame_Back(x_start = %d, y_start = %d, width = %d, frame_data = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data, back_buffer);
+#endif
+
+}
+
+void Copy_Back_Buffer_To_VGA_VRAM()
+{
+
+}
 
 
 

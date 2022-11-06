@@ -272,7 +272,7 @@ SAMB_ptr LBXE_LoadSingle_LM(char *LbxName, int LbxEntryIndex)
     LoadType = 0;
     LbxHdrFmt = 0;
 
-    SAMB_data = (SAMB_ptr)MK_FP(LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt),0);
+    SAMB_data = (SAMB_ptr) MK_FP( LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt), 0 );
 
     return SAMB_data;
 }
@@ -609,6 +609,9 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
             BEGIN: Allocation Type
         */
         DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] DataSize_Paras: %lu\n", __FILE__, __LINE__, DataSize_Paras);
+#endif
         LBXLOADTYPE()  // sets SAMB_data and tmp_SAMB_Size
         /*
             END: Allocation Type

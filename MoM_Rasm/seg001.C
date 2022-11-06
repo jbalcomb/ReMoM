@@ -26,9 +26,9 @@
 
 #include <STDIO.H>
 
-// #ifdef STU_DEBUG
-// #include "STU_DBG.H"
-// #endif
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 // #ifdef TEST
 // #include "STU_TST.H"
 // #endif
@@ -363,9 +363,9 @@ void GAME_LoadMainImages(void)
 
     int itr_wizards;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#endif
 
     // HERE("BEFORE: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
@@ -419,21 +419,27 @@ void GAME_LoadMainImages(void)
     sa_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
     fp_MAINSCRN_000 = MK_FP(gsa_MAINSCRN_0_AnimatedLogo,0);
 
-// #ifdef STU_DEBUG
-//     // DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
-//     TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
-//     // dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
-//     dlvfprintf("DEBUG: [%s, %d] TST_LBX_MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
+// #ifdef STU_TEST
+//     TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
 // #endif
 
     gsa_MAINSCRN_5_ScreenBottom = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
     sa_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
     fp_MAINSCRN_005 = MK_FP(gsa_MAINSCRN_5_ScreenBottom,0);
 
-// #ifdef STU_DEBUG
-//     // DBG_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
-//     // dlvfprintf("DEBUG: [%s, %d] DBG_MAINSCRN_005: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_005);
+// #ifdef STU_TEST
+//     TST_LBX_MAINSCRN_005.Segment_Address = sa_MAINSCRN_005;
 // #endif
+
+// #ifdef STU_TEST
+    video_back_buffer = SA_Allocate_MemBlk(4000);
+    video_back_buffer_seg = FP_SEG(video_back_buffer);
+// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer_seg: 0x%04X\n", __FILE__, __LINE__, video_back_buffer_seg);
+#endif
+
 
     gsa_VORTEX_1_MenuContinue    = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
     sa_VORTEX_001 = gsa_VORTEX_1_MenuContinue;
@@ -464,9 +470,9 @@ void GAME_LoadMainImages(void)
 
     EMM_Load_LBX_File_1(g_LbxNm_SPELLDAT);
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GAME_LoadMainImages()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -910,6 +916,11 @@ void SCREEN_Menu_Draw(void)
     // FLIC_Draw_XY_Redux(0, 41, gsa_MAINSCRN_5_ScreenBottom);
     FLIC_Draw(0, 41, fp_MAINSCRN_005);
 
+// #ifdef STU_TEST
+    // FLIC_Draw_Back(0, 0, fp_MAINSCRN_000, video_back_buffer);
+    // FLIC_Draw_Back(0, 41, fp_MAINSCRN_005, video_back_buffer);
+// #endif
+
     if ( g_ScreenChangeFade == 0 )
     {
         // j_GAME_DrawCredits()
@@ -965,7 +976,7 @@ void SCREEN_Menu_Draw(void)
     // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
     // FLIC_Draw_XY_Redux(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
     FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 48), fp_VORTEX_003);
-
+    FLIC_Draw_Back(MenuArea_X_Left, (MenuArea_Y_Top + 48), -1, fp_VORTEX_003, video_back_buffer);
 
     // // PAL_Load_Palette(2, -1, 0);
     // // VGA_DAC_Write();

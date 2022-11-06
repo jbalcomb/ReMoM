@@ -237,37 +237,63 @@ extern char cnst_Credits_DOT; // dseg:3BEB  db '.',0               ; should use 
 // dseg:52B4 g_GUI_String_1 dw 0
 extern int GUI_Load_Lbl_Index;                      // dseg:52B6
 // dseg:52B8 IMG_FullScreen_BG@ dw 0
+
 extern unsigned int gsa_VORTEX_3_MenuQuitToDOS;     // dseg:52BA
 extern SAMB_addr sa_VORTEX_003;
 extern SAMB_ptr fp_VORTEX_003;
+extern SAMB_ptr p_VORTEX_003;
+// extern SAMB_ptr _menu_quittodos_seg;
+
 extern int GUI_HoF_Lbl_Index;                       // dseg:52BC
+
 extern unsigned int gsa_VORTEX_2_MenuHallOfFame;    // dseg:52BE
 extern SAMB_addr sa_VORTEX_002;
 extern SAMB_ptr fp_VORTEX_002;
+extern SAMB_ptr p_VORTEX_002;
+
 extern int GUI_Quit_Lbl_Index;                      // dseg:52C0
+
 extern unsigned int gsa_VORTEX_5_MenuLoadGame;      // dseg:52C2
 extern SAMB_addr sa_VORTEX_005;
 extern SAMB_ptr fp_VORTEX_005;
+extern SAMB_ptr p_VORTEX_005;
+
 extern int g_GUI_MainMenuSelected;                  // dseg:52C4
 extern unsigned int gsa_WIZARDS_0to13[];            // dseg:52C6
 // dseg:52E2 IMG_NewG_BtnBorder@ dw 0
 extern int g_GAME_HaveSaves;                        // dseg:52E4
 // dseg:52E6 NEWG_HaveLastProfile dw 0
+
 extern unsigned int gsa_MAINSCRN_0_AnimatedLogo;    // dseg:52E8
 extern SAMB_addr sa_MAINSCRN_000;
 extern SAMB_ptr fp_MAINSCRN_000;
+extern SAMB_ptr p_MAINSCRN_000;
+
 extern int GUI_NewGame_Label;                       // dseg:52EA
+
 extern unsigned int gsa_VORTEX_4_MenuNewGame;       // dseg:52EC
 extern SAMB_addr sa_VORTEX_004;
 extern SAMB_ptr fp_VORTEX_004;
+extern SAMB_ptr p_VORTEX_004;
+
 extern int GUI_Continue_Label;                      // dseg:52EE
+
 extern unsigned int gsa_VORTEX_1_MenuContinue;      // dseg:52F0
 extern SAMB_addr sa_VORTEX_001;
 extern SAMB_ptr fp_VORTEX_001;
+extern SAMB_ptr p_VORTEX_001;
+
 extern int g_GAME_HaveContSave;                     // dseg:52F2
+
 extern unsigned int gsa_MAINSCRN_5_ScreenBottom;    // dseg:52F4
 extern SAMB_addr sa_MAINSCRN_005;
 extern SAMB_ptr fp_MAINSCRN_005;
+extern SAMB_ptr p_MAINSCRN_005;
+// extern SAMB_ptr _menu_bottom_castle_seg;
+
+extern SAMB_ptr video_back_buffer;
+extern SAMB_addr video_back_buffer_seg;
+
 // dseg:52F6 NEWG_Screen0_Frame dw 0
 // dseg:52F8 IMG_No_Load_Btn@ dw 0
 // dseg:52FA NEWG_LastRetorts@ dw 0

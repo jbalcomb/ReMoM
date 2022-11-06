@@ -37,6 +37,8 @@
 #include <CONIO.H>      /* getch() */
 #include <STDLIB.H>     /* abort(), getenv(); */
 #include <STRING.H>     /* strcmp() */
+#include <stdio.h>
+#include <alloc.h>
 
 
 /*
@@ -99,6 +101,8 @@ void test_GAME_LoadMainImages(void);
 void test_FLIC_Load_Palette(void);
 void test_FLIC_Draw_EMM(void);
 void test_FLIC_Draw_XY(void);
+void test_FLIC_Draw_Frame_Back(void);
+void test_FLIC_Draw_Frame_2BMP(void);
 void test_SA_Error(void);
 void test_LBX_Error(void);
 
@@ -151,6 +155,8 @@ int main(void)
     // // test_FLIC_Draw_XY();
 
     test_MGC_Main();
+
+    // test_FLIC_Draw_Frame_Back();
 
     // test_SA_Error();
     // test_LBX_Error();
@@ -1141,6 +1147,113 @@ void test_FLIC_Draw_XY(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Draw_XY()\n", __FILE__, __LINE__);
 #endif
+}
+
+void test_FLIC_Draw_Frame_Back(void)
+{
+    int test_status;
+    static struct s_FLIC_HDR PS_FLIC_Header;  // persistent, local
+    int x;
+    int y;
+    int w;
+    int current_frame_index;
+    SAMB_ptr video_back_buffer;
+    unsigned int dos_largest_memory_block;
+    unsigned long int current_coreleft;
+    unsigned long int current_farcoreleft;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_Draw_Frame_Back()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    _BX = 0xFFFF;
+    _AH = 0x48;             // ALLOCMEM
+    geninterrupt(0x21);     // DOS_INT
+    dos_largest_memory_block = _BX;  // BX = size in paras of the largest block of memory available
+    dbg_prn("DEBUG: [%s, %d] dos_largest_memory_block PR: %u\n", __FILE__, __LINE__, dos_largest_memory_block);
+    dbg_prn("DEBUG: [%s, %d] dos_largest_memory_block B: %u\n", __FILE__, __LINE__, (dos_largest_memory_block * 16));
+    dbg_prn("DEBUG: [%s, %d] dos_largest_memory_block KB: %u\n", __FILE__, __LINE__, (dos_largest_memory_block * 16 / 64));
+#endif
+#ifdef STU_DEBUG
+    current_coreleft = (unsigned long) coreleft();
+    current_farcoreleft = (unsigned long) farcoreleft();
+    dbg_prn("current_coreleft: %lu\n", current_coreleft);
+    dbg_prn("current_farcoreleft: %lu\n", current_farcoreleft);
+#endif
+    // printf("The difference between the highest allocated block and\n");
+    // printf("the top of the heap is: %lu bytes\n", (unsigned long) coreleft());
+    // printf("The difference between the highest allocated block in the far\n");
+    // printf("heap and the top of the far heap is: %lu bytes\n", farcoreleft());
+
+    test_status = 0;  // TEST_UNDEFINED
+
+    if(!g_Load_Font_File_tested) { test_Load_Font_File(); }
+    if(!g_Load_Font_File_validated) { test_status = -1; }  // TEST_FAILURE
+
+    PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+
+
+    p_MAINSCRN_000 = LBXE_LoadSingle_LM(g_LbxNm_MAINSCRN, 0);
+    // p_MAINSCRN_005 = LBXE_LoadSingle_LM(g_LbxNm_MAINSCRN, 5);
+    p_VORTEX_001 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 1); // 70 paragraphs
+    p_VORTEX_002 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 2);
+    p_VORTEX_003 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 3);
+    p_VORTEX_004 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 4);
+    p_VORTEX_005 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 5);
+
+
+    memcpy((void *)&PS_FLIC_Header, (const void *)p_VORTEX_005, sizeof(PS_FLIC_Header));
+
+    // video_back_buffer = SA_Allocate_Space(4000);  // 4000 paragraphs = 64000 bytes / 16 bytes per paragraph
+
+    current_frame_index = 0;
+    x = 0;
+    y = 0;
+
+
+    // VGA_SetModeY();  // HERE: g_RSP_Idx = 0; gsa_DSP_Addr = 0xA000;
+    // VGA_DrawFilledRect(0,0,319,199,5);
+    // getch();
+
+    // FLIC_Draw_Frame_Back(x, y, w, p_VORTEX_005, video_back_buffer);
+
+    // SCREEN_Menu()  seg001.C, Line 540
+    // seg020.C  void PAL_Load_Palette(int entry, int start_color, int end_color)
+    PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+
+    FLIC_Load_Palette(p_VORTEX_005, current_frame_index);
+
+
+
+    // VGA_PageFlip();
+    // getch();
+
+    // VGA_DAC_Write();
+    // getch();
+
+    // FLIC_Load_Palette(MK_FP(sa_FLIC_Header,0), Frame_Index);  // s21p07
+    // getch();
+
+    // VGA_DAC_Write();
+    // getch();
+    
+    // VGA_PageFlip();
+    // getch();
+
+    // // BAD!! STU_VGA_RAM_Dump_1();
+    // STU_VGA_RAM_Dump();
+
+    // VGA_SetTextMode();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_FLIC_Draw_EMM()\n", __FILE__, __LINE__);
+#endif
+}
+
+void test_FLIC_Draw_Frame_2BMP(void)
+{
+
 }
 
 // s08p19  void SA_Alloc_Error(int SA_Error_Number, int blocks);
