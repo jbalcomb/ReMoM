@@ -23,25 +23,28 @@
         GAME_PrepareCredits()
         GAME_DrawCredits()
 */
-void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr FlicHdr_SgmtAddr)
+void FLIC_Prepare(int width, int height, SAMB_addr sa_FLIC_Header)
 {
-    unsigned int FlicSize_B;
-    unsigned int Dst_Sgmt;
-    unsigned int Dst_Ofst;
-    unsigned char * pDst;
-    int itr_FlicSize_B;
-    farpokew(FlicHdr_SgmtAddr, 0x00, FlicWidth);
-    farpokew(FlicHdr_SgmtAddr, 0x02, FlicHeight);
-    farpokew(FlicHdr_SgmtAddr, 0x04, 0xDE0A);  // DE0Ah 56842d; DEh 222d; 0Ah 10d; 0ADEh 2782d;
-    farpokew(FlicHdr_SgmtAddr, 0x06, 0x00);
-    farpokew(FlicHdr_SgmtAddr, 0x08, 0x00);
-    FlicSize_B = FlicWidth * FlicHeight;
-    Dst_Sgmt = FlicHdr_SgmtAddr;
-    Dst_Ofst = 0x10;
-    pDst = (unsigned char *) MK_FP(Dst_Sgmt,Dst_Ofst);
-    for(itr_FlicSize_B = 0; itr_FlicSize_B < FlicSize_B; itr_FlicSize_B++)
+    SAMB_ptr fp_FLIC_Header;
+    unsigned int length;
+    int itr;
+
+    fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
+
+    // farpokew(sa_FLIC_Header, 0x00, width);
+    // farpokew(sa_FLIC_Header, 0x02, height);
+    farpokew(sa_FLIC_Header, 0x04, 0xDE0A);  // DE0Ah 56842d; DEh 222d; 0Ah 10d; 0ADEh 2782d;
+    farpokew(sa_FLIC_Header, 0x06, 0x00);
+    farpokew(sa_FLIC_Header, 0x08, 0x00);
+    FLIC_Set_Width(fp_FLIC_Header, width);
+    FLIC_Set_Height(fp_FLIC_Header, height);
+    
+    length = width * height;
+    
+    fp_FLIC_Header += 0x10;
+    for(itr = 0; itr < length; itr++)
     {
-        *pDst = 0;
+        *(fp_FLIC_Header + itr) = 0;
     }
 
 }
@@ -107,24 +110,22 @@ void FLIC_Set_CurrentFrame(unsigned int sa_FLIC_Header, int Frame_Index)
     int Loop_Length;
     int Loop_Frame;
     int Frame_Count;
+    fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
     Frame_Index = (Frame_Index & 0x7FFF);
-    Frame_Count = farpeekw(sa_FLIC_Header, FlicHdr_FrameCount);  // FLIC_HDR.Frame_Count
-    Loop_Frame = farpeekw(sa_FLIC_Header, FlicHdr_LoopFrame);  // FLIC_HDR.Loop_Frame
+    Frame_Count = FLIC_Get_Frame_Count(fp_FLIC_Header);
+    Loop_Frame = FLIC_Get_Loop_Frame(fp_FLIC_Header);
     Loop_Length = Frame_Count - Loop_Frame;  // e.g., 20 - 0 = 20
     if ( !(Frame_Index < Frame_Count) )
     {
         Frame_Index = Loop_Frame + ( (Frame_Index - Frame_Count) % Loop_Length );
     }
-    farpokew(sa_FLIC_Header, FlicHdr_CurrentFrame, Frame_Index);  // FLIC_HDR.Current_Frame
-    // fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
-    // FLIC_Set_Current_Frame(fp_FLIC_Header, Frame_Index);
+    FLIC_Set_Current_Frame(fp_FLIC_Header, Frame_Index);
 }
 
 // s28p15
 void FLIC_Reset_CurrentFrame(SAMB_addr sa_FLIC_Header)
 {
     SAMB_ptr fp_FLIC_Header;
-    // farpokew(sa_FLIC_Header, 0x04, 0x00);
     fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
     FLIC_Set_Current_Frame(fp_FLIC_Header, 0);
 }
@@ -134,7 +135,6 @@ word FLIC_Get_CurrentFrame(SAMB_addr sa_FLIC_Header)
 {
     SAMB_ptr fp_FLIC_Header;
     word Current_Frame;
-    // Current_Frame = farpeekw(sa_FLIC_Header, FlicHdr_CurrentFrame);
     fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
     Current_Frame = FLIC_Get_Current_Frame(fp_FLIC_Header);
     return Current_Frame;

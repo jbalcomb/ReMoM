@@ -1,6 +1,38 @@
-#ifndef STU_VGA_H
-#define STU_VGA_H
+#ifndef VGA_DEF_H
+#define VGA_DEF_H
 
+/*
+    IBM-PC VGA
+        Text Modes
+        Gaphics Modes
+    
+
+    Manifest Constants
+
+    VGA Hardware
+    Address Registers
+    Data Registers
+    Port Addresses
+    Register Indices
+
+    VGA Graphics Mode Memory
+    Segment Address 0xA000
+    A000:0000
+
+    Mode 13h
+    320 x 200, 256 color
+    "Mode Y"
+    320 x 200, 256 color
+    256 KB VRAM, planar
+
+
+    VGA Palette
+        Color Names
+        
+
+*/
+
+// byte * VGA = (byte *) 0xA0000000L;   /* Far Pointer to IBM-PC VGA Graphics Mode Memory Segment Address */
 
 #ifndef VRAM_BASE
 #define VRAM_BASE 0xA000
@@ -34,15 +66,6 @@
 // ...
 #define SCREENSEG		0xa000
 
-
-
-// J:\STU\DBWD\developc\_root42\letscode-breakout-master\vga.h
-
-// #include "types.h"
-typedef unsigned char byte;
-typedef unsigned int word;
-typedef unsigned long dword;
-typedef unsigned char * byte_ptr;
 
 
 #define NUM_COLORS 256
@@ -108,31 +131,4 @@ extern word vga_width;
 extern word vga_height;
 extern word vga_page[4];
 
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
-
-
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
-
-
-void Fill_VRAM(byte palette_index);
-
-void Fill_Video_Back_Buffer(byte palette_index, byte_ptr video_back_buffer);
-void Draw_Video_Back_Buffer(int x_start, int y_start, int width, int height, byte_ptr video_back_buffer);
-
-void BAD__STU_VGA_RAM_Dump_1(void);
-void STU_VGA_RAM_Dump(void);
-
-void STU_VGA_DAC_Dump(char *PaletteFilename);
-
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* STU_VGA_H */
+#endif /* VGA_DEF_H */

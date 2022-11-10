@@ -7,12 +7,17 @@
 #include "ST_VGA.H"
 
 
+
+SAMB_ptr video_back_buffer;
+SAMB_addr video_back_buffer_seg;
+
 int g_VGA_Min_X = MINX;                             // dseg:41B2
 int g_VGA_Min_Y = MINY;                             // dseg:41B4
 int g_VGA_Max_X = MAXX;                             // dseg:41B6
 int g_VGA_Max_Y = MAXY;                             // dseg:41B8
 char DEFAULT_FONTS_FILE[] = "FONTS.LBX";            // dseg:41BA
 unsigned int gsa_DSP_Addr = 0xA000;                 // dseg:41C4
+byte_ptr p_DSP;
 int g_RSP_Idx = 0;                                  // dseg:41C6
 unsigned char g_VGA_LeftBits[4] = {15,14,12,8};     // dseg:41C8
 unsigned char g_VGA_RightBits[4] = {1,3,7,15};      // dseg:41CC

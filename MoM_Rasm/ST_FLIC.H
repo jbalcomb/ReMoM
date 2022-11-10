@@ -2,6 +2,7 @@
 #define ST_FLIC_H
 
 #include "ST_TYPE.H"  /* byte, word, etc. */
+#include "ST_DEF.H"
 
 #include "ST_SA.H"  /* SAMB_addr */
 
@@ -525,11 +526,11 @@ FLIC_HDR.EMM_Logical_Page_Offset
 // #define FLIC_FRM_PAL_Get_Color_Count(_ptr_)  ( GET_1B_OFS( (_ptr_), FLIC_FRAME_PAL_HDR_POS_COLOR_COUNT)         )
 
 
-// #define FLIC_Set_Width(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_WIDTH) )
-// 
-// #define FLIC_Set_Height(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_HEIGHT) )
+#define FLIC_Set_Width(_ptr_,_width_)                ( SET_2B_OFS( (_ptr_), FLIC_HDR_POS_WIDTH,         (_width_) ) )
 
-#define FLIC_Set_Current_Frame(_ptr_,_frame_index_)  ( SET_2B_OFS((_ptr_), FLIC_HDR_POS_CURRENT_FRAME, (_frame_index_)) )
+#define FLIC_Set_Height(_ptr_,_height_)              ( SET_2B_OFS( (_ptr_), FLIC_HDR_POS_HEIGHT,        (_height_) ) )
+
+#define FLIC_Set_Current_Frame(_ptr_,_frame_index_)  ( SET_2B_OFS( (_ptr_), FLIC_HDR_POS_CURRENT_FRAME, (_frame_index_) ) )
 
 // #define FLIC_Set_Frame_Count(_ptr_) ( GET_2B_OFS(_ptr_,FLIC_HDR_POS_FRAME_COUNT) )
 // 
@@ -688,11 +689,12 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
-// // ~== MoO2
-// void Draw(signed short int x, signed short int y, unsigned char * picture);
+// MoO2  void Draw(signed short int x, signed short int y, unsigned char * picture);
+// 1oom  static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch);
 
-void FLIC_Frame_RLE_Decode(BYTE * FLIC_Frame_Encoded, BYTE * FLIC_Frame_Decoded);
-static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch);
+// void FLIC_Frame_RLE_Decode(BYTE * FLIC_Frame_Encoded, BYTE * FLIC_Frame_Decoded);
+
+void FLIC_Draw_Back(int x_start, int y_start, int frame_num, SAMB_ptr fp_FLIC_File, byte_ptr back_buffer);
 void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_data, byte_ptr back_buffer);
 
 
@@ -701,10 +703,12 @@ void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_da
 */
 
 // s27p01
-void FLIC_Draw_Frame(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt);
+// void FLIC_Draw_Frame(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt);
+void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data);
 
 // _s27p02.asm
 void FLIC_Draw_R(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt);
+// void FLIC_Draw_Frame_Remap(int x_start, int y_start, int width, byte_ptr frame_data);
 
 // _s27p03c.c
 // void DELETE__FLIC_Draw_EMM_C(int x, int y, SAMB_addr sa_FLIC_Header, int current_frame_index);

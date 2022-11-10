@@ -29,6 +29,7 @@ int CRP_Unused_Anim_Var = 0; // dseg:206C CRP_Unused_Anim_Var
 
 char cnst_QUIT_Message[] = "Thank you for playing Master of Magic!";  // dseg:2880
 char g_LbxNm_MAINSCRN[] = "MAINSCRN";       // dseg:28A7
+// char g_LbxNm_MAINSCRN[] = "TESTSCRN";
 char cnst_HOTKEY_N = 'N';                   // dseg:28AE
 char g_LbxNm_VORTEX[] = "VORTEX";           // dseg:28B0
 char g_LbxNm_WIZARDS[] = "WIZARDS";         // dseg:28B7
@@ -330,9 +331,6 @@ unsigned int gsa_MAINSCRN_5_ScreenBottom;   // dseg:52F4
 SAMB_addr sa_MAINSCRN_005;
 SAMB_ptr fp_MAINSCRN_005;
 SAMB_ptr p_MAINSCRN_005;
-
-SAMB_ptr video_back_buffer;
-SAMB_addr video_back_buffer_seg;
 
 // dseg:52F6 NEWG_Screen0_Frame dw 0
 // dseg:52F8 IMG_No_Load_Btn@ dw 0

@@ -8,6 +8,8 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
 
+#include "ST_VGA.H"
+
 #include <DOS.H>
 #include <STDIO.H>
 
@@ -24,6 +26,8 @@ typedef unsigned short WORD;
 #define _FAR far
 #endif
 #endif
+
+unsigned char STU_VGA_WriteMapMasks[4] = {0x01, 0x02, 0x04, 0x08}; // dseg:4372
 
 
 /*
@@ -152,6 +156,295 @@ If more colors are to be read, repeat steps 4-6.
       Scan-Line: + Y * (320/4)
 
 */
+
+
+
+
+                    /* ╔══════════════════════════════════════════════════════════════════╗
+                    ╔══╝  256-Color VGA Programming in C - David Brackeen                 ║
+                    ╠═════════════════════════════════════════════════════════════════════╣
+                    ║                                                                     ║
+                    ║                                                                     ║
+                    ║                                                                     ║
+                    ║                                                                     ║
+                    ║                                                                  ╔══╝
+                    ╚══════════════════════════════════════════════════════════════════╝ */
+
+/*
+http://www.brackeen.com/vga/source/bc31/unchain.c.html
+*/
+
+// ...
+#define INPUT_STATUS_1      0x03DA
+// ...
+
+#define SCREEN_WIDTH        320       /* width in pixels of mode 0x13 */
+#define SCREEN_HEIGHT       200       /* height in pixels of mode 0x13 */
+#define SCREEN_SIZE         (word)(SCREEN_WIDTH*SCREEN_HEIGHT)
+#define NUM_COLORS          256       /* number of colors in mode 0x13 */
+
+#define VERTICAL_RETRACE              /* comment out this line for more accurate timing */
+
+
+/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/
+
+void set_mode(byte mode)
+{
+  union REGS regs;
+
+  // regs.h.ah = SET_MODE;
+  regs.h.ah = 0x00;
+  regs.h.al = mode;
+  // int86(VIDEO_INT, &regs, &regs);
+  int86(0x10, &regs, &regs);
+}
+
+/**************************************************************************
+ *  set_unchained_mode                                                    *
+ *    resets VGA mode 0x13 to unchained mode to access all 256K of memory *
+ **************************************************************************/
+
+void set_unchained_mode(void)
+{
+  word i;
+  dword *ptr=(dword *)VGA;            /* used for faster screen clearing */
+
+  outp(SC_INDEX,  MEMORY_MODE);       /* turn off chain-4 mode */
+  outp(SC_DATA,   0x06);
+
+  outpw(SC_INDEX, ALL_PLANES);        /* set map mask to all 4 planes */
+
+  for(i=0;i<0x4000;i++)               /* clear all 256K of memory */
+    *ptr++ = 0;
+
+  outp(CRTC_INDEX,UNDERLINE_LOCATION);/* turn off long mode */
+  outp(CRTC_DATA, 0x00);
+
+  outp(CRTC_INDEX,MODE_CONTROL);      /* turn on byte mode */
+  outp(CRTC_DATA, 0xe3);
+}
+
+/**************************************************************************
+ *  page_flip                                                             *
+ *    switches the pages at the appropriate time and waits for the        *
+ *    vertical retrace.                                                   *
+ **************************************************************************/
+
+void page_flip(word *page1,word *page2)
+{
+  word high_address,low_address;
+  word temp;
+
+  temp=*page1;
+  *page1=*page2;
+  *page2=temp;
+
+  high_address = HIGH_ADDRESS | (*page1 & 0xff00);
+  low_address  = LOW_ADDRESS  | (*page1 << 8);
+
+  #ifdef VERTICAL_RETRACE
+    while ((inp(INPUT_STATUS_1) & DISPLAY_ENABLE));
+  #endif
+  outpw(CRTC_INDEX, high_address);
+  outpw(CRTC_INDEX, low_address);
+  #ifdef VERTICAL_RETRACE
+    while (!(inp(INPUT_STATUS_1) & VRETRACE));
+  #endif
+}
+
+/**************************************************************************
+ *  show_buffer                                                           *
+ *    displays a memory buffer on the screen                              *
+ **************************************************************************/
+
+void show_buffer(byte *buffer)
+{
+  #ifdef VERTICAL_RETRACE
+    while ((inp(INPUT_STATUS_1) & VRETRACE));
+    while (!(inp(INPUT_STATUS_1) & VRETRACE));
+  #endif
+  memcpy(VGA,buffer,SCREEN_SIZE);
+}
+
+/**************************************************************************
+ *  set_palette                                                           *
+ *    Sets all 256 colors of the palette.                                 *
+ **************************************************************************/
+
+void set_palette(byte *palette)
+{
+  int i;
+
+  outp(PALETTE_INDEX,0);              /* tell the VGA that palette data
+                                         is coming. */
+  for(i=0;i<256*3;i++)
+    outp(PALETTE_DATA,palette[i]);    /* write the data */
+}
+
+/**************************************************************************
+ *  plot_pixel                                                            *
+ *    Plots a pixel in unchained mode                                     *
+ **************************************************************************/
+
+void plot_pixel(int x,int y,byte color)
+{
+  outp(SC_INDEX, MAP_MASK);          /* select plane */
+  outp(SC_DATA,  1 << (x&3) );
+
+  VGA[(y<<6)+(y<<4)+(x>>2)]=color;
+}
+
+// set_mode(VGA_256_COLOR_MODE);       /* set the video mode. */
+// set_palette(bmp.palette);
+// ...
+// set_unchained_mode();               /* set unchained mode */
+// ...
+// set_mode(TEXT_MODE);                /* set the video mode back to text mode. */
+
+// start = *my_clock;                  /* record the starting time. */
+// t2 = (*my_clock - start) / 18.2;    /* calculate how long it took. */
+
+
+
+void Fill_VRAM(byte palette_index)
+{
+    int itr_x;
+    int itr_y;
+    byte_ptr screen_pos;
+    byte mask;
+    byte_ptr bbuff;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Fill_VRAM(palette_index = 0x%02X)\n", __FILE__, __LINE__, palette_index);
+#endif
+
+
+    outportb(e_SC_INDEX, e_SC_MAPMASK);
+    mask = STU_VGA_WriteMapMasks[0];  // 0b00000011  ~== x modulo 4  (x % 4, x|4)
+
+    screen_pos = MK_PTR_SGMT(p_DSP, (0 * (((320/4)/16))), (0 / 4));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] screen_pos: %p\n", __FILE__, __LINE__, screen_pos);
+#endif
+
+    itr_x = 320;
+    itr_y = 200;
+
+    while(itr_x--)
+    {
+        bbuff = screen_pos;
+        outportb(e_SC_DATA, mask);
+        mask = mask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
+        if(mask >= 9)  /* 0b00010000 */
+        {
+            mask = 1;  /* 0b00000001 */
+            screen_pos++;
+        }
+
+        while(itr_y--)
+        {
+            *bbuff = palette_index;
+            bbuff += WIDTH_STRIDE;
+        }
+
+    }  /* while (width--) */
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Fill_VRAM(palette_index = 0x%02X)\n", __FILE__, __LINE__, palette_index);
+#endif
+
+}
+
+void Fill_Video_Back_Buffer(byte palette_index, byte_ptr video_back_buffer)
+{
+    int itr_x;
+    int itr_y;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Fill_Video_Back_Buffer(palette_index = 0x%02X, video_back_buffer = %p)\n", __FILE__, __LINE__, palette_index, video_back_buffer);
+#endif
+
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            *(video_back_buffer + (itr_y * 320 + itr_x)) = palette_index;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Fill_Video_Back_Buffer(palette_index = 0x%02X, video_back_buffer = %p)\n", __FILE__, __LINE__, palette_index, video_back_buffer);
+#endif
+
+}
+
+void Draw_Video_Back_Buffer(int x_start, int y_start, int width, int height, byte_ptr video_back_buffer)
+{
+    byte_ptr vbuf_pos;
+    byte_ptr vbuf;
+    byte_ptr vram_pos;
+    byte_ptr vram;
+    byte mask;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Video_Back_Buffer(x_start = %d, y_start = %d, width = %d, height = %d, video_back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, height, video_back_buffer);
+#endif
+
+    // vbuf = video_back_buffer;
+    vbuf_pos = (byte_ptr) MK_FP(FP_SEG(video_back_buffer),0);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] vbuf: %p\n", __FILE__, __LINE__, vbuf);
+#endif
+
+    outportb(e_SC_INDEX, e_SC_MAPMASK);
+    mask = STU_VGA_WriteMapMasks[(x_start & 0x03)];  // 0b00000011  ~== x modulo 4  (x % 4, x|4)
+
+    vram_pos = MK_PTR_SGMT(p_DSP, (y_start * (((320/4)/16))), (x_start / 4));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] vram_pos: %p\n", __FILE__, __LINE__, vram_pos);
+#endif
+
+    while(width--)
+    {
+        vbuf = vbuf_pos;
+        vram = vram_pos;
+// #ifdef STU_DEBUG
+// HERE: vbuf should be previous vbuf + 200
+//     dbg_prn("DEBUG: [%s, %d] vram: %p\n", __FILE__, __LINE__, vram);
+// #endif
+        outportb(e_SC_DATA, mask);
+        mask = mask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
+        if(mask >= 9)  /* 0b00010000 */
+        {
+            mask = 1;  /* 0b00000001 */
+            vbuf_pos++;
+            vram_pos++;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] vram_pos: %p\n", __FILE__, __LINE__, vram_pos);
+// #endif
+        }
+
+        while(height--)
+        {
+            *vram = *vbuf;
+            vbuf += 320;
+            vram += 80;
+        }
+
+    }  /* while (width--) */
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Draw_Video_Back_Buffer(x_start = %d, y_start = %d, width = %d, height = %d, video_back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, height, video_back_buffer);
+#endif
+
+}
+
+
+
 void STU_VGA_RAM_Read_ScanLine(WORD ScanLine, BYTE * ScanLine_Buffer)
 {
     WORD Src_Sgmt;
@@ -267,7 +560,7 @@ void STU_VGA_RAM_Dump(void)
     //STU_VGA_DAC_Read(&palette);
     for(itr_ScanLines = 0; itr_ScanLines < 200; itr_ScanLines++)
     {
-        STU_VGA_RAM_Read_ScanLine(itr_ScanLines, &ScanLine_Buffer);  // TODO(JimBalcomb,20221004): Suspicious Pointer Conversion!!!!!
+        STU_VGA_RAM_Read_ScanLine(itr_ScanLines, (BYTE *)&ScanLine_Buffer);  // TODO(JimBalcomb,20221004): Suspicious Pointer Conversion!!!!!
         fwrite(&ScanLine_Buffer, 320, 1, fileptr);
     }
 
@@ -515,13 +808,14 @@ word vga_y_pan = 0;
 
 // ...
 
-void set_mode(byte mode)
-{
-    union REGS regs;
-    regs.h.ah = SET_MODE;
-    regs.h.al = mode;
-    int86( VIDEO_INT, &regs, &regs );
-}
+// ? C&P from David Brackeen - 256-Color VGA Programming in C ?
+// void set_mode(byte mode)
+// {
+//     union REGS regs;
+//     regs.h.ah = SET_MODE;
+//     regs.h.al = mode;
+//     int86( VIDEO_INT, &regs, &regs );
+// }
 
 void update_page_offsets()
 {

@@ -367,9 +367,9 @@ void GAME_LoadMainImages(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_LoadMainImages()\n", __FILE__, __LINE__);
 #endif
 
-    // HERE("BEFORE: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
+    // // HERE("BEFORE: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
     EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
-    // HERE("AFTER: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
+    // // HERE("AFTER: EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);");
 
 //#ifdef TEST
     // DELETE HERE("CALL: dl_TST_LBX_MAINSCRN_000();");
@@ -417,7 +417,7 @@ void GAME_LoadMainImages(void)
    */
     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
     sa_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
-    fp_MAINSCRN_000 = MK_FP(gsa_MAINSCRN_0_AnimatedLogo,0);
+    fp_MAINSCRN_000 = MK_FP(sa_MAINSCRN_000,0);
 
 // #ifdef STU_TEST
 //     TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
@@ -425,7 +425,7 @@ void GAME_LoadMainImages(void)
 
     gsa_MAINSCRN_5_ScreenBottom = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 5);
     sa_MAINSCRN_005 = gsa_MAINSCRN_5_ScreenBottom;
-    fp_MAINSCRN_005 = MK_FP(gsa_MAINSCRN_5_ScreenBottom,0);
+    fp_MAINSCRN_005 = MK_FP(sa_MAINSCRN_005,0);
 
 // #ifdef STU_TEST
 //     TST_LBX_MAINSCRN_005.Segment_Address = sa_MAINSCRN_005;
@@ -443,19 +443,23 @@ void GAME_LoadMainImages(void)
 
     gsa_VORTEX_1_MenuContinue    = LBXE_LoadSingle(g_LbxNm_VORTEX, 1);
     sa_VORTEX_001 = gsa_VORTEX_1_MenuContinue;
-    fp_VORTEX_001 = MK_FP(gsa_VORTEX_1_MenuContinue,0);
+    fp_VORTEX_001 = MK_FP(sa_VORTEX_001,0);
+
     gsa_VORTEX_2_MenuHallOfFame  = LBXE_LoadSingle(g_LbxNm_VORTEX, 2);
     sa_VORTEX_002 = gsa_VORTEX_2_MenuHallOfFame;
-    fp_VORTEX_002 = MK_FP(gsa_VORTEX_2_MenuHallOfFame,0);
+    fp_VORTEX_002 = MK_FP(sa_VORTEX_002,0);
+
     gsa_VORTEX_3_MenuQuitToDOS   = LBXE_LoadSingle(g_LbxNm_VORTEX, 3);
     sa_VORTEX_003 = gsa_VORTEX_3_MenuQuitToDOS;
-    fp_VORTEX_003 = MK_FP(gsa_VORTEX_3_MenuQuitToDOS,0);
+    fp_VORTEX_003 = MK_FP(sa_VORTEX_003,0);
+
     gsa_VORTEX_4_MenuNewGame     = LBXE_LoadSingle(g_LbxNm_VORTEX, 4);
     sa_VORTEX_004 = gsa_VORTEX_4_MenuNewGame;
-    fp_VORTEX_004 = MK_FP(gsa_VORTEX_4_MenuNewGame,0);
+    fp_VORTEX_004 = MK_FP(sa_VORTEX_004,0);
+
     gsa_VORTEX_5_MenuLoadGame    = LBXE_LoadSingle(g_LbxNm_VORTEX, 5);
     sa_VORTEX_005 = gsa_VORTEX_5_MenuLoadGame;
-    fp_VORTEX_005 = MK_FP(gsa_VORTEX_5_MenuLoadGame,0);
+    fp_VORTEX_005 = MK_FP(sa_VORTEX_005,0);
 
 
     // TODO(JimBalcomb,20220915): figure out where these end up getting used (WZD?) and if that makes it make sense that these are loaded here
@@ -976,7 +980,7 @@ void SCREEN_Menu_Draw(void)
     // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
     // FLIC_Draw_XY_Redux(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
     FLIC_Draw(MenuArea_X_Left, (MenuArea_Y_Top + 48), fp_VORTEX_003);
-    FLIC_Draw_Back(MenuArea_X_Left, (MenuArea_Y_Top + 48), -1, fp_VORTEX_003, video_back_buffer);
+    // FLIC_Draw_Back(MenuArea_X_Left, (MenuArea_Y_Top + 48), -1, fp_VORTEX_003, video_back_buffer);
 
     // // PAL_Load_Palette(2, -1, 0);
     // // VGA_DAC_Write();

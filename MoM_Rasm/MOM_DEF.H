@@ -9,6 +9,8 @@
 #define MOM_FONT_FILE "FONTS.LBX"
 #define GAME_FONT_FILE MOM_FONT_FILE
 
+#define INPUT_TYPE_KEYBOARD_AND_MOUSE 1
+
 
 struct CONFIG_DATA //; (sizeof=0x12, standard type)
 {

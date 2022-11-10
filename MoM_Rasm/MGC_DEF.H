@@ -291,9 +291,6 @@ extern SAMB_ptr fp_MAINSCRN_005;
 extern SAMB_ptr p_MAINSCRN_005;
 // extern SAMB_ptr _menu_bottom_castle_seg;
 
-extern SAMB_ptr video_back_buffer;
-extern SAMB_addr video_back_buffer_seg;
-
 // dseg:52F6 NEWG_Screen0_Frame dw 0
 // dseg:52F8 IMG_No_Load_Btn@ dw 0
 // dseg:52FA NEWG_LastRetorts@ dw 0

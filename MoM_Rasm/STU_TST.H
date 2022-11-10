@@ -73,6 +73,8 @@ void Test_Log_Startup(void);
 void Test_Log_Shutdown(void);
 void tst_prn(const char * fmt, ...);
 
+void wait_for_esc(void);
+
 void reset_EMM(void);
 void reset_ST_EMM(void);
 
@@ -101,6 +103,12 @@ int validate_GAME_LoadMainImages();
 
 void test_pre__FLIC_Draw_XY__MAINSCRN_000_000(void);
 void test_post__FLIC_Draw_XY__MAINSCRN_000_000(void);
+
+void test_VBB_Pattern_Write(void);
+void test_VBB_Pattern_Read(void);
+void test_VBB_Pattern_Draw(void);
+void test_VBB_Pattern_Print(void);
+void test_VBB_Pattern_Dump(void);
 
 
 #ifdef __cplusplus

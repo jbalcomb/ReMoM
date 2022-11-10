@@ -1,8 +1,4 @@
 
-#include <STDARG.H>  /* va_list; va_arg(), va_end(), va_start() */
-#include <STDIO.H>   /* FILE; fclose(), fopen(), fread(); */
-#include <STRING.H>
-
 #include "ST_TYPE.H"
 #include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
@@ -11,8 +7,16 @@
 #include "ST_SA.H"  /* SAMB_head, SAMB_data, SAMB_addr, SAMB_ptr, etc. */
 #include "ST_VGA.H"  /* p_Palette, etc. */
 
-// #include "STU_DBG.H"
+#include "STU_DBG.H"
 #include "STU_TST.H"
+#include "STU_VGA.H"
+
+#include <ALLOC.H>      /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
+#include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
+#include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fwrite(), printf(); */
+#include <STDLIB.H>     /* itoa() */
+#include <STRING.H>     /* strcat(), strcpy() */
+
 
 
 /*
@@ -72,6 +76,44 @@ void tst_prn(const char * fmt, ...)
         fysnc() flush kernel buffers, as well as userspace buffers, on a POSIX system (i.e., NOT Windows)
     */
    fflush(Test_Log_File);
+}
+
+void wait_for_esc(void)
+{
+    int flag_done;
+    int input_control_index;
+    int _escape_field;
+    int _quit_field;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: wait_for_esc()\n", __FILE__, __LINE__);
+#endif
+
+    flag_done = ST_FALSE;
+
+    _quit_field = CTRL_CreateHotkey('Q', -1);
+    _escape_field = CTRL_CreateHotkey(27, -1);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] _quit_field: %d\n", __FILE__, __LINE__, _quit_field);
+    dbg_prn("DEBUG: [%s, %d] _escape_field: %d\n", __FILE__, __LINE__, _escape_field);
+#endif
+
+    while ( flag_done == ST_FALSE )
+    {
+        input_control_index = IN_GetInput();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] input_control_index: %d\n", __FILE__, __LINE__, input_control_index);
+#endif
+        if ( (input_control_index == _quit_field) || (input_control_index == _escape_field) )
+        {
+            flag_done = ST_TRUE;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: wait_for_esc()\n", __FILE__, __LINE__);
+#endif
+
 }
 
 void reset_EMM(void)
@@ -926,6 +968,331 @@ void test_pre__FLIC_Draw_XY__MAINSCRN_000_000(void)
 
 }
 void test_post__FLIC_Draw_XY__MAINSCRN_000_000(void)
+{
+
+}
+
+/*
+    Video Back Buffer (VBB)
+
+    ST_VGA.C/.H
+    byte far * video_back_buffer;  // segment (far) pointer
+    video_back_buffer = SA_Allocate_Space_MemBlk(4000);  // farmalloc((4000 + 1) * 16)
+    Segment Address : {0,...,63999}
+    VGA [{A000,A400}],[{0,1,2,3}],[{0,...,15999}]
+
+    Sequencer Registers
+        Sequencer Address Register
+        Sequencer Data Register
+        Address Register - port 3C4h
+        Data Register    - port 3C5h
+
+    Map Mask Register (Index 02h)
+    Memory Plane Write Enable
+        Bits 3-0 of this field correspond to planes 3-0 of the VGA display memory.
+        If a bit is set, then write operations will modify the respective plane of display memory.
+        If a bit is not set then write operations will not affect the respective plane of display memory.
+
+        WriteMapMasks[4] = {0x01, 0x02, 0x04, 0x08};
+        {0001,0010,0100,1000}
+        x % 4
+        Enable Write on ONLY memory plane 0 or 1 or 2 or 3
+    ?
+        by definition, the X coordinate simultaneously determines the memory address and the write mask
+
+
+*/
+void test_VBB_Pattern_Write(void)
+{
+    int itr_x;
+    int itr_y;
+    int itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_VBB_Pattern_Write()\n", __FILE__, __LINE__);
+#endif
+
+    // video_back_buffer = SA_Allocate_MemBlk(4000);
+    video_back_buffer = farmalloc(64000);
+    if(video_back_buffer == NULL) { abort(); }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[0]: %02X\n", __FILE__, __LINE__, video_back_buffer[0]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[1]: %02X\n", __FILE__, __LINE__, video_back_buffer[1]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63998]: %02X\n", __FILE__, __LINE__, video_back_buffer[63998]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63999]: %02X\n", __FILE__, __LINE__, video_back_buffer[63999]);
+#endif
+
+    memset(video_back_buffer, 0, 64000);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[0]: %02X\n", __FILE__, __LINE__, video_back_buffer[0]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[1]: %02X\n", __FILE__, __LINE__, video_back_buffer[1]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63998]: %02X\n", __FILE__, __LINE__, video_back_buffer[63998]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63999]: %02X\n", __FILE__, __LINE__, video_back_buffer[63999]);
+#endif
+
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            // video_back_buffer[((itr_y * 320) + itr_x)] = GREEN;
+            // video_back_buffer[((itr_y * 320) + itr_x)] = (((itr_y * 320) + itr_x) % 256);
+            video_back_buffer[((itr_y * 320) + itr_x)] = 0x00;
+        }
+    }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[0]: %02X\n", __FILE__, __LINE__, video_back_buffer[0]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[1]: %02X\n", __FILE__, __LINE__, video_back_buffer[1]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63998]: %02X\n", __FILE__, __LINE__, video_back_buffer[63998]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63999]: %02X\n", __FILE__, __LINE__, video_back_buffer[63999]);
+#endif
+
+    video_back_buffer[0] = MAGENTA;
+    video_back_buffer[63999] = MAGENTA;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[0]: %02X\n", __FILE__, __LINE__, video_back_buffer[0]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[1]: %02X\n", __FILE__, __LINE__, video_back_buffer[1]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63998]: %02X\n", __FILE__, __LINE__, video_back_buffer[63998]);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer[63999]: %02X\n", __FILE__, __LINE__, video_back_buffer[63999]);
+#endif
+
+    // for(itr = 0; itr < 32; itr++)
+    // {
+    //     *(video_back_buffer + itr) = BLUE;
+    // }
+
+    for(itr = 0; itr < 32; itr++)
+    {
+        *(video_back_buffer + (0 * 320) + itr) = BLUE;
+    }
+    
+    for(itr = 0; itr < 32; itr++)
+    {
+        *(video_back_buffer + (19 * 320) + itr) = GREEN;
+    }
+    
+    for(itr = 1; itr < 19; itr++)
+    {
+        *(video_back_buffer + (itr * 320) + 0) = RED;
+    }
+    
+    for(itr = 1; itr < 19; itr++)
+    {
+        *(video_back_buffer + (itr * 320) + 31) = YELLOW;
+    }
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_VBB_Pattern_Write()\n", __FILE__, __LINE__);
+#endif
+}
+void test_VBB_Pattern_Read(void)
+{
+
+}
+void test_VBB_Pattern_Draw(void)
+{
+    int itr_x;
+    int itr_y;
+    byte mask;      /* VGA Memory Plane Write Map Mask */
+    byte * vram;    /* {A000,A400} + Offset to Scan-Line + Offset in Scan-Line */
+    // byte * VGA = (byte *)0xA0000000L;        /* this points to video memory. */
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_VBB_Pattern_Write()\n", __FILE__, __LINE__);
+#endif
+
+    // // mask = STU_VGA_WriteMapMasks[(x_start & 0x03)];  // 0b00000011  ~== x modulo 4  (x % 4, x|4)
+    // mask = 0x01;
+    // outportb(SC_INDEX, SC_MAPMASK);   /* 0x03C4, 0x02   - output the index of the desired Data Register to the Address Register */
+    // outportb(SC_DATA, mask);          /* 0x03C5, 0b0001 - write the value to the Data register */
+
+    // vram = 0xA000 + 0 + 0;
+    // // DEBUG: [stu_tst.c, 1088] vram: 0000:A000
+    // vram = MK_FP((0xA000 + 0), 0);
+    // // DEBUG: [stu_tst.c, 1091] vram: A000:0000
+    // vram = ( (void *) ( ((unsigned long) (0xA000 + 0) << 16) | (0) ) );
+    // // DEBUG: [stu_tst.c, 1093] vram: A000:0000
+    // vram = VGA;
+    // // DEBUG: [stu_tst.c, 1096] vram: A000:0000
+    // vram = &VGA[20*320];
+    // // DEBUG: [stu_tst.c, 1104] vram: A000:1900
+    // vram = (VGA + (20*320));
+    // // DEBUG: [stu_tst.c, 1100] vram: A000:1900
+    // vram = (VGA + 65535);
+    // // DEBUG: [stu_tst.c, 1101] vram: A000:FFFF
+    // vram = (VGA + 65536);
+    // // DEBUG: [stu_tst.c, 1106] vram: A000:0000
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] vram: %p\n", __FILE__, __LINE__, vram);
+// #endif
+
+/*
+    Holly Fer Molly, this actually works - draws the first 32 bytes of the VBB.
+
+    vram = ( (void *) ( ((unsigned long) (0xA000 + 0) << 16) | (0) ) );
+
+    outportb(SC_INDEX, SC_MAPMASK);
+
+    mask = 0x01;
+    outportb(SC_DATA, mask);
+    *(vram + ((0 * 320) + 0)) = *(video_back_buffer + 0);
+    *(vram + ((0 * 320) + 1)) = *(video_back_buffer + 4);
+    *(vram + ((0 * 320) + 2)) = *(video_back_buffer + 8);
+    *(vram + ((0 * 320) + 3)) = *(video_back_buffer + 12);
+    *(vram + ((0 * 320) + 4)) = *(video_back_buffer + 16);
+    *(vram + ((0 * 320) + 5)) = *(video_back_buffer + 20);
+    *(vram + ((0 * 320) + 6)) = *(video_back_buffer + 24);
+    *(vram + ((0 * 320) + 7)) = *(video_back_buffer + 28);
+
+    mask = 0x02;
+    outportb(SC_DATA, mask);
+    *(vram + ((0 * 320) + 0)) = *(video_back_buffer + 1);
+    *(vram + ((0 * 320) + 1)) = *(video_back_buffer + 5);
+    *(vram + ((0 * 320) + 2)) = *(video_back_buffer + 9);
+    *(vram + ((0 * 320) + 3)) = *(video_back_buffer + 13);
+    *(vram + ((0 * 320) + 4)) = *(video_back_buffer + 17);
+    *(vram + ((0 * 320) + 5)) = *(video_back_buffer + 21);
+    *(vram + ((0 * 320) + 6)) = *(video_back_buffer + 25);
+    *(vram + ((0 * 320) + 7)) = *(video_back_buffer + 29);
+
+    mask = 0x04;
+    outportb(SC_DATA, mask);
+    *(vram + ((0 * 320) + 0)) = *(video_back_buffer + 2);
+    *(vram + ((0 * 320) + 1)) = *(video_back_buffer + 6);
+    *(vram + ((0 * 320) + 2)) = *(video_back_buffer + 10);
+    *(vram + ((0 * 320) + 3)) = *(video_back_buffer + 14);
+    *(vram + ((0 * 320) + 4)) = *(video_back_buffer + 18);
+    *(vram + ((0 * 320) + 5)) = *(video_back_buffer + 22);
+    *(vram + ((0 * 320) + 6)) = *(video_back_buffer + 26);
+    *(vram + ((0 * 320) + 7)) = *(video_back_buffer + 30);
+
+    mask = 0x08;
+    outportb(SC_DATA, mask);
+    *(vram + ((0 * 320) + 0)) = *(video_back_buffer + 3);
+    *(vram + ((0 * 320) + 1)) = *(video_back_buffer + 7);
+    *(vram + ((0 * 320) + 2)) = *(video_back_buffer + 11);
+    *(vram + ((0 * 320) + 3)) = *(video_back_buffer + 15);
+    *(vram + ((0 * 320) + 4)) = *(video_back_buffer + 19);
+    *(vram + ((0 * 320) + 5)) = *(video_back_buffer + 23);
+    *(vram + ((0 * 320) + 6)) = *(video_back_buffer + 27);
+    *(vram + ((0 * 320) + 7)) = *(video_back_buffer + 31);
+
+*/
+/*
+    Algorithm
+        set mask
+        draw every 4th byte from the VBB
+        offset into VGA VRAM
+            row = (y * 320)
+            col = x
+        offset into VBB
+            ? row * row length + col ?
+
+    *(vram + ((  0 * 320) +  0)) = *(video_back_buffer + (  0 * 320) + (  0 * 4));
+    *(vram + ((  0 * 320) +  1)) = *(video_back_buffer + (  0 * 320) + (  0 * 4));
+    // ...
+    *(vram + ((  0 * 320) + 79)) = *(video_back_buffer + (  0 * 320) + (319 * 4));
+    *(vram + ((  1 * 320) +  0)) = *(video_back_buffer + (  1 * 320) + (  0 * 4));
+    // ...
+    *(vram + ((199 * 320) + 79)) = *(video_back_buffer + (199 * 320) + (319 * 4));
+                            /\
+                              needs to go up by 1 each iteration, but only to 79
+
+*/
+
+    vram = ( (void *) ( ((unsigned long) (0xA000 + 0) << 16) | (0) ) );
+
+    outportb(SC_INDEX, SC_MAPMASK);
+
+    mask = 0x01;
+    outportb(SC_DATA, mask);
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            *(vram + ((itr_y * (320/4)) + (itr_x % 80))) = *(video_back_buffer + (((itr_y * 320) + ((itr_x % 80) * 4)) + 0));
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d] ((itr_y * 320) = (%d * 320) = %d\n", __FILE__, __LINE__, itr_y, (itr_y * 320));
+    // dbg_prn("DEBUG: [%s, %d] (itr_x % 80) = (%d % 80) = %d\n", __FILE__, __LINE__, itr_x, (itr_x % 80));
+//     dbg_prn("DEBUG: [%s, %d] ((itr_y * 320) + (itr_x mod 80)) = ((%d * 320) + (%d mod 80)) = ((%d) + (%d)) = (%d)\n", __FILE__, __LINE__, itr_y, itr_x, (itr_y * 320), (itr_x % 80), ((itr_y * 320) + (itr_x % 80)));
+//     dbg_prn(
+//         "DEBUG: [%s, %d] ((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((%d * 320) + ((%d mod 80) * 4) + 0) = ((%d) + ((%d) * 4) + 0) = ((%d) + ((%d)) + 0) = ((%d)) + 0) = (%d)\n",
+//          __FILE__, __LINE__,
+//          itr_y,  itr_x,
+//          (itr_y * 320), (itr_x % 80),
+//          (itr_y * 320), ((itr_x % 80) * 4),
+//          ((itr_y * 320) + ((itr_x % 80) * 4)),
+//          (((itr_y * 320) + ((itr_x % 80) * 4)) + 0)
+//         );
+
+#endif
+        }
+    }
+/*
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (0 mod 80)) = ((0) + (0)) = (0)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((0 mod 80) * 4) + 0) = ((0) + ((0) * 4) + 0) = ((0) + ((0)) + 0) = ((0)) + 0) = (0)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (1 mod 80)) = ((0) + (1)) = (1)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((1 mod 80) * 4) + 0) = ((0) + ((1) * 4) + 0) = ((0) + ((4)) + 0) = ((4)) + 0) = (4)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (2 mod 80)) = ((0) + (2)) = (2)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((2 mod 80) * 4) + 0) = ((0) + ((2) * 4) + 0) = ((0) + ((8)) + 0) = ((8)) + 0) = (8)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (3 mod 80)) = ((0) + (3)) = (3)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((3 mod 80) * 4) + 0) = ((0) + ((3) * 4) + 0) = ((0) + ((12)) + 0) = ((12)) + 0) = (12)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (4 mod 80)) = ((0) + (4)) = (4)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((4 mod 80) * 4) + 0) = ((0) + ((4) * 4) + 0) = ((0) + ((16)) + 0) = ((16)) + 0) = (16)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (5 mod 80)) = ((0) + (5)) = (5)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((5 mod 80) * 4) + 0) = ((0) + ((5) * 4) + 0) = ((0) + ((20)) + 0) = ((20)) + 0) = (20)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (6 mod 80)) = ((0) + (6)) = (6)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((6 mod 80) * 4) + 0) = ((0) + ((6) * 4) + 0) = ((0) + ((24)) + 0) = ((24)) + 0) = (24)
+((itr_y * 320) + (itr_x mod 80)) = ((0 * 320) + (7 mod 80)) = ((0) + (7)) = (7)
+((itr_y * 320) + ((itr_x mod 80) * 4) + 0) = ((0 * 320) + ((7 mod 80) * 4) + 0) = ((0) + ((7) * 4) + 0) = ((0) + ((28)) + 0) = ((28)) + 0) = (28)
+*/
+    mask = 0x02;
+    outportb(SC_DATA, mask);
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            *(vram + ((itr_y * (320/4)) + (itr_x % 80))) = *(video_back_buffer + (((itr_y * 320) + ((itr_x % 80) * 4)) + 1));
+        }
+    }
+
+    mask = 0x04;
+    outportb(SC_DATA, mask);
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            *(vram + ((itr_y * (320/4)) + (itr_x % 80))) = *(video_back_buffer + (((itr_y * 320) + ((itr_x % 80) * 4)) + 2));
+        }
+    }
+
+    mask = 0x08;
+    outportb(SC_DATA, mask);
+    for(itr_y = 0; itr_y < 200; itr_y++)
+    {
+        for(itr_x = 0; itr_x < 320; itr_x++)
+        {
+            *(vram + ((itr_y * (320/4)) + (itr_x % 80))) = *(video_back_buffer + (((itr_y * 320) + ((itr_x % 80) * 4)) + 3));
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_VBB_Pattern_Write()\n", __FILE__, __LINE__);
+#endif
+}
+
+void test_VBB_Pattern_Print(void)
+{
+
+}
+void test_VBB_Pattern_Dump(void)
 {
 
 }

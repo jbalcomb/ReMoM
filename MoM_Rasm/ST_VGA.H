@@ -77,11 +77,16 @@ jz @@waitsync; \
 #define PIXX    320
 #define PIXY    200
 #define LINE_STRIDE  80
+#define WIDTH_STRIDE  80
 
 #define IBM_PC_VGA_GRAPHICS_MODE_VIDEO_RAM  0xA000
 #define VRAM_BASE                           0xA000
 
 
+
+
+extern SAMB_ptr video_back_buffer;
+extern SAMB_addr video_back_buffer_seg;
 
 extern int g_VGA_Min_X;                             // dseg:41B2
 extern int g_VGA_Min_Y;                             // dseg:41B4
@@ -89,7 +94,9 @@ extern int g_VGA_Max_X;                             // dseg:41B6
 extern int g_VGA_Max_Y;                             // dseg:41B8
 extern char DEFAULT_FONTS_FILE[];                   // dseg:41BA
 extern unsigned int gsa_DSP_Addr;                   // dseg:41C4
+extern byte_ptr p_DSP;
 extern int g_RSP_Idx;                               // dseg:41C6
+
 extern unsigned char g_VGA_LeftBits[];              // dseg:41C8
 extern unsigned char g_VGA_RightBits[];             // dseg:41CC
 extern unsigned char g_VGA_WriteMapMasks[];         // dseg:41D0
@@ -223,17 +230,20 @@ void VGA_DrawFilledRect(int x1, int y1, int x2, int y2, char Color);
 // _s21p07
 // void FLIC_LoadPalette(unsigned int FlicHdr_SgmtAddr, int Frame_Index);
 
+
 /*
     seg026
 */
-//_s26p01
-void VGA_SetDirectDraw(void);
-//_s26p02
-void VGA_Set_DSP_Addr(void);
-//_s26p03
-int VGA_IsDefaultDrawScreenPage(void);
-//_s26p04
-void VGA_PageFlip(void);
+
+// seg026  //_s26p01
+// seg026  void VGA_SetDirectDraw(void);
+// seg026  //_s26p02
+// seg026  void VGA_Set_DSP_Addr(void);
+// seg026  //_s26p03
+// seg026  int VGA_IsDefaultDrawScreenPage(void);
+// seg026  //_s26p04
+// seg026  void VGA_PageFlip(void);
+
 // _s26p05
 void VGA_Copy_RSP_DSP(void);
 // _s26p06

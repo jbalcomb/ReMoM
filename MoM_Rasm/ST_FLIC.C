@@ -1,10 +1,14 @@
 
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
+
 #include "ST_FLIC.H"
+
 #include "ST_SA.H"
 #include "ST_EMM.H"     /* fp_EMM_PFBA */
-#include "ST_VGA.H"     /* e_SC_INDEX, e_SC_DATA, e_SC_MAPMASK, etc. */
+#include "ST_VGA.H"     /* LINE_STRIDE; e_SC_INDEX, e_SC_DATA, e_SC_MAPMASK, etc. */
+
+#include "seg021.H"     /* FLIC_Load_Palette() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -32,72 +36,6 @@
 
 unsigned char VGA_WriteMapMasks[4] = {0x01, 0x02, 0x04, 0x08}; // dseg:4372
 
-
-void FLIC_Frame_RLE_Decode(BYTE * FLIC_Frame_Encoded, BYTE * FLIC_Frame_Decoded)
-{
-
-}
-
-/*
-    1oom :: lbxgfx.c :: lbxgfx_draw_pixels_fmt0()
-
-    1oom
-        lbxgfx.c
-            #include "types.h"
-                |-> #include <inttypes.h>
-                    |-> #include <corecrt.h>
-                    |-> #include <stdint.h>
-                |-> #include <stdbool.h>
-            static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
-*/
-static void lbxgfx_draw_pixels_fmt0(uint8_t *pixbuf, uint16_t w, uint8_t *data, uint16_t pitch)
-{
-    uint8_t *q;
-    uint8_t b, /*dh*/mode, /*dl*/len_total, len_run;
-    while (w--) {
-        q = pixbuf++;
-        b = *data++;
-        if (b == 0xff) { /* skip column */
-            continue;
-        }
-        mode = b;
-        len_total = *data++;
-        if ((mode & 0x80) == 0) { /* regular data */
-            do {
-                len_run = *data++;
-                q += pitch * *data++;
-                len_total -= len_run + 2;
-                do {
-                    *q = *data++;
-                    q += pitch;
-                } while (--len_run);
-            } while (len_total >= 1);
-        } else {    /* compressed data */
-            do {
-                len_run = *data++;
-                q += pitch * *data++;
-                len_total -= len_run + 2;
-                do {
-                    b = *data++;
-                    if (b > 0xdf) { /* b-0xdf pixels, same color */
-                        uint8_t len_compr;
-                        len_compr = b - 0xdf;
-                        --len_run;
-                        b = *data++;
-                        while (len_compr) {
-                            *q = b;
-                            q += pitch;
-                            --len_compr;
-                        }
-                    } else {
-                        *q = b;
-                        q += pitch;
-                    }
-                } while (--len_run);
-            } while (len_total >= 1);
-        }
-    }
-}
 
 /*
 
@@ -137,6 +75,9 @@ Draw_No_Glassed_Animated_Sprite
     unsigned integer (1 bytes) screen_byte
 
 */
+
+
+
 /*
     if frame_num is -1, uses same current_frame_index logic as FLIC_Draw()
     no emm, no remap
@@ -150,7 +91,7 @@ void FLIC_Draw_Back(int x_start, int y_start, int frame_num, SAMB_ptr fp_FLIC_Fi
     byte_ptr fp_FLIC_Frame;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_Header = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_File = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
 #endif
 
     if ( frame_num == -1 )
@@ -186,44 +127,71 @@ void FLIC_Draw_Back(int x_start, int y_start, int frame_num, SAMB_ptr fp_FLIC_Fi
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_Header = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Back(x_start = %d, y_start = %d, frame_num = %d, fp_FLIC_File = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, frame_num, fp_FLIC_File, back_buffer);
 #endif
 }
+
+/*
+    could use a global for the video_back_buffer, instead of passing one
+    could pass a pointer to the offset, instead of passing x and y  (1oom did this)
+        feels like this better fits the dst,src paradigm
+        and it is congruent with passing the FLIC Frame data pointer
+*/
 void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_data, byte_ptr back_buffer)
 {
-    byte data_byte;
+    byte_ptr bbuff_pos;
     byte_ptr bbuff;
+    byte data_byte;
 
+    byte packet_op;
     byte packet_byte_count;
     byte sequence_byte_count;
     byte delta_byte_count;
-    word width_stride;
     byte itr_op_repeat;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame_Back(x_start = %d, y_start = %d, width = %d, frame_data = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data, back_buffer);
 #endif
 
+    // 1oom  uint8_t *p = hw_video_get_buf() + (y * pitch + x) * scale;
+    //       lbxgfx_draw_frame_do(p, data, pitch, scale);
+    //       lbxgfx_draw_pixels_fmt0(p, w, frameptr, pitch);
+
+    // Screen-Page Offset, in Paragraphs: (y_start * (((320/4)/16)))
+    // Scan-Line Offset, in Pixels per Video Memory Address: (x_start / 4)
+    // bbuff_pos = MK_PTR_SGMT(back_buffer, (y_start * (((320/4)/16))), (x_start / 4));
+    bbuff_pos = MK_PTR_SGMT(back_buffer, (y_start * (((320)/16))), (x_start));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);
+#endif
+
+
     while (width--)
     {
-        bbuff = back_buffer++;
-        data_byte = *frame_data++;
+        bbuff = bbuff_pos++;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] frame_data: %p\n", __FILE__, __LINE__, frame_data);
+//     dbg_prn("DEBUG: [%s, %d] bbuff: %p\n", __FILE__, __LINE__, bbuff);
+// #endif
+        
+        packet_op = *frame_data++;
 
-        if (data_byte == 0xFF)  /* Type: skip */
+        if(packet_op == 0xFF)  /* Type: skip */
         {
             continue;
         }
 
         packet_byte_count = *frame_data++;
 
-        if(data_byte == 0x80)  /* Type: decode */
+        if(packet_op == 0x80)  /* Type: decode */
         {
             do {
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
-                bbuff += (width_stride * delta_byte_count);
+                bbuff += (320 * delta_byte_count);
                 packet_byte_count -= sequence_byte_count + 2;
-                do {
+                while(sequence_byte_count--)
+                {
                     data_byte = *frame_data++;  // this byte is the op-repeat or just the byte to copy
                     if(data_byte >= 224)  /* op: repeat */
                     {
@@ -233,37 +201,37 @@ void FLIC_Draw_Frame_Back(int x_start, int y_start, int width, byte_ptr frame_da
                         while(itr_op_repeat--)
                         {
                             *bbuff = data_byte;
-                            bbuff += width_stride;
+                            bbuff += 320;
                         }
                     }
                     else  /* op: copy */
                     {
                         *bbuff = data_byte;
-                        bbuff += width_stride;
+                        bbuff += 320;
                     }
-                } while (--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
-            } while (packet_byte_count >= 1);
+                }
+            } while(packet_byte_count >= 1);
         }
 
-        if (data_byte == 0x00)  /* Type: copy */
+        if(packet_op == 0x00)  /* Type: copy */
         {
             do {
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
-                bbuff += (width_stride * delta_byte_count);
+                bbuff += (320 * delta_byte_count);
                 packet_byte_count -= sequence_byte_count + 2;
-                do {
+                while(sequence_byte_count--)
+                {
                     *bbuff = *frame_data++;
-                    bbuff += width_stride;
-                } while (--sequence_byte_count);
-            } while ( packet_byte_count >= 1 );
-
+                    bbuff += 320;
+                }
+            } while(packet_byte_count >= 1);
         }
 
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("END: [%s, %d] BEGIN: FLIC_Draw_Frame_Back(x_start = %d, y_start = %d, width = %d, frame_data = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data, back_buffer);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Frame_Back(x_start = %d, y_start = %d, width = %d, frame_data = %p, back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data, back_buffer);
 #endif
 
 }
@@ -276,158 +244,104 @@ void Copy_Back_Buffer_To_VGA_VRAM()
 
 
 // s27p01
-/*
-    Column-Wise
-
-Part 1:
-    set up
-Part 2:
-    read SRAM, write VRAM
-    decode RLE
-*/
-// void draw_flic_frame(byte * src_buff, byte * dst_buff, word width, byte mask)
-// void FLIC_Draw_A(int ScreenPage_X, int ScreenPage_Y, int FlicWidth, unsigned int Img_Off, unsigned int Img_Seg)
-void FLIC_Draw_Frame(int x, int y, int width, unsigned int FLIC_Frame_ofst, unsigned int FLIC_Frame_sgmt)
+void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
 {
-    byte * fp_SrcSgmt;  // EMM_PFBA           : 0
-    byte * fp_DstSgmt;  // VRAM + Row Offset  : 0
-    byte * fp_Src;      // EMM_PFBA           : EMM Offset
-    byte * fp_Dst;      // VRAM + Row Offset  : Column Offset
-    byte * fp_FlicHeader;
-    word row_offset;
+    byte_ptr screen_pos;
     byte mask;
-    word column_count;
-    byte baito;
+    byte_ptr bbuff;
+    byte data_byte;
+
+    byte packet_op;
     byte packet_byte_count;
     byte sequence_byte_count;
     byte delta_byte_count;
-    word width_stride;
     byte itr_op_repeat;
-    unsigned int itr_Src;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x = %d, y = %d, width = %d, FLIC_Frame_ofst=0x%04X, FLIC_Frame_sgmt=0x%04X)\n", __FILE__, __LINE__, x, y, width, FLIC_Frame_ofst, FLIC_Frame_sgmt);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
 #endif
-
-        /* ╔══════════════════════════════════════════════════════════════════╗
-        ╔══╝  PART II: Read, Decode, Write                                    ║
-        ╠═════════════════════════════════════════════════════════════════════╣
-        ║  Preamble:                                                          ║
-        ║      set SC_INDEX to SC_MAPMASK                                     ║
-        ║      calculate VGA Memory-Map Mask for first pixel                  ║
-        ║      calculate Offset in Row for first pixel                        ║
-        ║                                                                     ║
-        ║  Process Column Data:                                               ║
-        ║      set the Column Offset                                          ║
-        ║      set the VGA Memory-Map Mask                                    ║
-        ║      read byte - Column Type                                        ║
-        ║          branch on Column Type                                      ║
-        ║              skip:                                                  ║
-        ║              run:                                                   ║
-        ║              decode:                                                ║
-        ║                  branch on Op                                       ║
-        ║                      copy                                           ║
-        ║                      repeat                                         ║
-        ║                                                                     ║
-        ║  Postamble:                                                         ║
-        ║      decrement the Column Count                                     ║
-        ║      rotate the VGA Memory-Map Mask                                 ║
-        ║      increment the Row Offset                                       ║
-        ║                                                                     ║
-        ║                                                                  ╔══╝
-        ╚══════════════════════════════════════════════════════════════════╝ */
-
-    width_stride = 80;
-    column_count = width;
-    row_offset = (x / 4);  // this gets increment at the end of the column loop to be the start of the next column
-
-    mask = VGA_WriteMapMasks[(x & 0x03)];  // ~== x modulo 4  (x % 4, x|4)
-
-    // fp_Src = (byte *) MK_FP(EMM_PageFrameBaseAddress, tmp_EmmOfst);  // MAINSCRN_LBX_000: E000:0062F (0x02C0 + 0x0000036E + 1)
-    fp_Src = (byte *) MK_FP(FLIC_Frame_sgmt, FLIC_Frame_ofst);
-    fp_Dst = (byte *) MK_FP(gsa_DSP_Addr + (y * (((320/4)/16))), row_offset);  // MAINSCRN_LBX_000: A400:0000
 
     outportb(e_SC_INDEX, e_SC_MAPMASK);
+    mask = VGA_WriteMapMasks[(x_start & 0x03)];  // 0b00000011  ~== x modulo 4  (x % 4, x|4)
 
-Column_Loop:
-    fp_Dst = (byte *) MK_FP(FP_SEG(fp_Dst), row_offset);
-    outportb(e_SC_DATA, mask);
+    screen_pos = MK_PTR_SGMT(p_DSP, (y_start * (((320/4)/16))), (x_start / 4));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] screen_pos: %p\n", __FILE__, __LINE__, screen_pos);
+#endif
 
-    baito = *fp_Src++;
-    if(baito == 0xFF)  /* Type: skip */
+
+    while(width--)
     {
-        goto Next_Column;
-    }
+        bbuff = screen_pos;
+        outportb(e_SC_DATA, mask);
+        mask = mask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
+        if(mask >= 9)  /* 0b00010000 */
+        {
+            mask = 1;  /* 0b00000001 */
+            screen_pos++;
+        }
 
-    if(baito == 0x80)  /* Type: copy */
-    {
-        packet_byte_count = *fp_Src++;
-        do {
-            sequence_byte_count = *fp_Src++;
-            delta_byte_count = *fp_Src++;
-            fp_Dst += (width_stride * delta_byte_count);
-            packet_byte_count -= sequence_byte_count + 2;  // MAINSCRN_000_000, Column Index 0; 0 = 29 - (27 + 2)
+        packet_op = *frame_data++;
+
+        if(packet_op == 0xFF)  /* Type: skip */
+        {
+            continue;
+        }
+
+        packet_byte_count = *frame_data++;
+
+        if(packet_op == 0x80)  /* Type: decode */
+        {
             do {
-                baito = *fp_Src++;  // this byte is the op-repeat or just the byte to copy
-                if(baito >= 224)  /* op: repeat */  /* (& 11100000) */
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (WIDTH_STRIDE * delta_byte_count);
+                packet_byte_count -= sequence_byte_count + 2;
+                while(sequence_byte_count--)
                 {
-                    itr_op_repeat = (baito - 224) + 1;
-                    sequence_byte_count--;  // ? decremented here, because of the byte read immediately following ?
-                    baito = *fp_Src++;
-                    while(itr_op_repeat--)
+                    data_byte = *frame_data++;  // this byte is the op-repeat or just the byte to copy
+                    if(data_byte >= 224)  /* op: repeat */
                     {
-                        *fp_Dst = baito;
-                        fp_Dst += width_stride;
-                        //itr_op_repeat--;
+                        itr_op_repeat = (data_byte - 224) + 1;
+                        sequence_byte_count--;
+                        data_byte = *frame_data++;
+                        while(itr_op_repeat--)
+                        {
+                            *bbuff = data_byte;
+                            bbuff += WIDTH_STRIDE;
+                        }
+                    }
+                    else  /* op: copy */
+                    {
+                        *bbuff = data_byte;
+                        bbuff += WIDTH_STRIDE;
                     }
                 }
-                else  /* op: copy */
-                {
-                    *fp_Dst = baito;
-                    fp_Dst += width_stride;
-                }
-            } while (--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
-        } while (packet_byte_count >= 1);
-        goto Next_Column;
-    }
-
-    if (baito == 0x00)  /* Type: copy */
-    {
-        packet_byte_count = *fp_Src++;
-        do {
-            sequence_byte_count = *fp_Src++;
-            delta_byte_count = *fp_Src++;
-            fp_Dst += (width_stride * delta_byte_count);
-            packet_byte_count -= sequence_byte_count + 2;
-            do {
-                *fp_Dst = *fp_Src++;
-                fp_Dst += width_stride;
-            } while (--sequence_byte_count);  // pre decr sequence_byte_count, not post decr
-        } while(packet_byte_count >= 1);
-        goto Next_Column;
-    }
-
-// decrement column count, increment map mask [, increment offset]
-Next_Column:
-    column_count--;
-    if(column_count != 0)
-    {
-        // itr++;  rot = itr % 4
-        mask = mask * 2;  // {1,2,4,8} * 2 = {2,4,8,16}
-        if(mask >= 9)
-        {
-            mask = 1;
-            row_offset++;
+            } while(packet_byte_count >= 1);
         }
-        goto Column_Loop;
-    }
 
-Done:
+        if(packet_op == 0x00)  /* Type: copy */
+        {
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (WIDTH_STRIDE * delta_byte_count);
+                packet_byte_count -= sequence_byte_count + 2;
+                while(sequence_byte_count--)
+                {
+                    *bbuff = *frame_data++;
+                    bbuff += WIDTH_STRIDE;
+                }
+            } while(packet_byte_count >= 1);
+        }
+
+    }  /* while (width--) */
+
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x = %d, y = %d, width = %d, FLIC_Frame_ofst=0x%04X, FLIC_Frame_sgmt=0x%04X)\n", __FILE__, __LINE__, x, y, width, FLIC_Frame_ofst, FLIC_Frame_sgmt);
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
 #endif
-}
 
+}
 
 
 // s27p03
@@ -816,12 +730,7 @@ void FLIC_Draw(int x, int y, SAMB_ptr fp_FLIC_Header)
     if( (flag_emm == ST_FALSE) && (flag_remap == ST_FALSE) )
     {
         DLOG("( (flag_emm == ST_FALSE) && (flag_remap == ST_FALSE) )");
-        // FLIC_Draw_Frame();
-        // _s27p01a.c  void FLIC_Draw_A(int x, int y, int width, unsigned int FLIC_Frame_Ofst, unsigned int FLIC_Frame_Sgmt);
-        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FLIC_Frame_Ofst, FLIC_Frame_Sgmt);
-        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, flic_frame_offset_ofst, (sa_FLIC_Header + flic_frame_offset_sgmt));
-        // FLIC_Draw_A(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
-        FLIC_Draw_Frame(x, y, PS_FLIC_Header.Width, FP_OFF(fp_FLIC_Frame), FP_SEG(fp_FLIC_Frame));
+        FLIC_Draw_Frame(x, y, PS_FLIC_Header.Width, fp_FLIC_Frame);
     }
     if( (flag_emm == ST_FALSE) && (flag_remap == ST_TRUE) )
     {

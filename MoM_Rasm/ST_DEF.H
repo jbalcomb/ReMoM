@@ -98,13 +98,27 @@ static int delete = 0;
 #define AddressOf(_farptr_) ( ((unsigned long)(_farptr_)) | ((unsigned int)(_farptr_)) )
 
 
-// #ifdef __SM__
+// #ifdef __SEGMENTED_MEMORY__
 
 // unsigned char * MK_PTR( unsigned char * _ptr_, unsigned short int _ofs_)
-// if/when/ever need to add the far pointer's current offset port to the segment portion?
-#define MK_PTR(_ptr_,_ofs_)  ( (unsigned char *) MK_FP(FP_SEG((_ptr_)),(FP_OFF((_ptr_))+(_ofs_))) )
+// if/when/ever need to add the far pointer's current offset portion to the segment portion?
+#define MK_PTR(_ptr_,_ofst_)  ( (unsigned char *) MK_FP(FP_SEG((_ptr_)),(FP_OFF((_ptr_))+(_ofst_))) )
 
-// #ifdef __LM__
+#define MK_PTR_SGMT(_ptr_,_sgmt_,_ofst_)  ( MK_FP( FP_SEG((_ptr_)) + (_sgmt_), (_ofst_) ) )
+
+#define MK_PTR_OFST(_ptr_,_ofst_)         ( MK_FP( FP_SEG((_ptr_)), (FP_OFF((_ptr_))+(_ofst_))) )
+
+// e.g., pointer to VRAM
+// the draw functions need to take the pointer to VRAM and add the screen-page offset to the segment portion of the far pointer
+//   and set the scanline offset in the offset portion of the far pointer
+// LM:  byte * p_VRAM;  p_Vbuf = p_VRAM + (y * pitch + x);
+// SM:  byte * fp_VRAM = 0xA000;  fp_Vbuf = MK_FP( FP_SEG(fp_VRAM) + (y * 80 /16), (x / 4)  )
+// Use-Cases:
+// Use-Case 1: have a Far Pointer, need to add to SGMT and set OFST
+// Use-Case 2: have a Far Pointer, need to add to OFST
+
+
+// #ifdef __LINEAR_MEMORY__
 
 // #define MK_PTR(_ptr_,_ofs_)  ( (unsigned char *) ( (_ptr_) + (_ofs_) )  // ~++ &_ptr_[_ofs_]
 
