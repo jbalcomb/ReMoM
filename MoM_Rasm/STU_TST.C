@@ -18,7 +18,6 @@
 #include <STRING.H>     /* strcat(), strcpy() */
 
 
-
 /*
     EMM - Uninitialized
         ? ALL Xref seg012 and seg013 ?

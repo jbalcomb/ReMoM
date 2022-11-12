@@ -125,6 +125,13 @@ void Fill_VRAM(byte palette_index);
 void Fill_Video_Back_Buffer(byte palette_index, byte_ptr video_back_buffer);
 void Draw_Video_Back_Buffer(int x_start, int y_start, int width, int height, byte_ptr video_back_buffer);
 
+void STU_Export_Palette_XBGR(void);
+
+void STU_Export_VBB_To_BIN(void);
+void STU_Export_VBB_To_BMP(void);
+void STU_Export_DSP_To_BMP(void);
+void STU_Export_VBB_To_BMP32(void);
+
 void BAD__STU_VGA_RAM_Dump_1(void);
 void STU_VGA_RAM_Dump(void);
 

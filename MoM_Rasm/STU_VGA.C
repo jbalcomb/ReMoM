@@ -10,8 +10,10 @@
 
 #include "ST_VGA.H"
 
+// TODO(JimBalcomb,20221111): remvoe all inclusions of DOS.H  (it is included ST_DEF.H)
 #include <DOS.H>
-#include <STDIO.H>
+#include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fwrite(), printf(); */
+
 
 #ifndef BYTE
 typedef unsigned char BYTE;
@@ -28,6 +30,64 @@ typedef unsigned short WORD;
 #endif
 
 unsigned char STU_VGA_WriteMapMasks[4] = {0x01, 0x02, 0x04, 0x08}; // dseg:4372
+
+
+#define BMP_MAGIC 0x4D42                    /* "BM" (0x42, 0x4D; "B", "M") */
+
+struct s_BMP_BITMAP_FILE_HEADER
+{
+    int    bfType;             /* Specifies the type of file. It must be BM. */
+    long   bfSize;             /* Specifies the size in DWORDs of the file.  */
+    int    bfReserved1;        /* Is reserved and must be set to zero. */
+    int    bfReserved2;        /* Is reserved and must be set to zero. */
+    long   bfOffBits;          /* Specifies, in bytes, the offset from the beginning of the file (BOF) to the image data (bitmap) */
+};
+
+struct s_BMP_BITMAP_INFO_HEADER{
+    long   biSize;              /* Specifies the number of bytes required by the BITMAPINFOHEADER structure. */
+    long   biWidth;             /* Specifies the width of the bitmap in pixels. */
+    long   biHeight;            /* Specifies the height of the bitmap in pixels. */
+    int    biPlanes;            /* Specifies the number of planes for the target device and must be set to 1. */
+    int    biBitCount;          /* Specifies the number of bits per pixel. This value must be 1, 4, 8, or 24. */
+    long   biCompression;       /* Specifies the type of compression for a compressed bitmap. */
+    long   biSizeImage;         /* Specifies the size in bytes of the image. */
+    long   biXPelsPerMeter;     /* */
+    long   biYPelsPerMeter;     /* */
+    long   biClrUsed;           /* */
+    long   biClrImportant;      /* */
+};
+
+// #define VBB_BMP_FILE_SIZE  (14 + 40 + (320 * 200))
+// #define VBB_BMP_IMAGE_SIZE (320 * 200)
+// // ? #pragma pack(push,1)
+// struct s_BMP_BITMAP_FILE_HEADER VBB_BMPINFOHEADER = 
+// {
+//     BMP_MAGIC,                      /* Specifies the type of file. It must be BM. */
+//     64054L,                         /* Specifies the size in DWORDs of the file.  */
+//     0,                              /* Is reserved and must be set to zero. */
+//     0,                              /* Is reserved and must be set to zero. */
+//     54                              /* Specifies, in bytes, the offset from the beginning of the file (BOF) to the image data (bitmap) */
+// };
+// // ? #pragma pack(pop)
+// // bmp->bmp_bitmap_file_header->bfOffBits = 14 + 40 + 1024;
+// 
+// // ? #pragma pack(push,1)
+// struct s_BMP_BITMAP_INFO_HEADER VBB_BMPINFOHEADERFILE =
+// {
+//     BMP_BITMAP_INFO_HEADER_LENGTH,  /* Specifies the number of bytes required by the BITMAPINFOHEADER structure. */
+//     320,                            /* Specifies the width of the bitmap in pixels. */
+//     -200,                           /* Specifies the height of the bitmap in pixels. */
+//     1,                              /* Specifies the number of planes for the target device and must be set to 1. */
+//     8,                              /* Specifies the number of bits per pixel. This value must be 1, 4, 8, or 24. */
+//     0,                              /* Specifies the type of compression for a compressed bitmap. */
+//     VBB_BMP_IMAGE_SIZE,             /* Specifies the size in bytes of the image. */
+//     BMP_XPELS_PER_METER_DEFAULT,    /* */
+//     BMP_YPELS_PER_METER_DEFAULT,    /* */
+//     256,                            /* */
+//     256                             /* */
+// };
+// // ? #pragma pack(pop)
+// // bmp->bmp_bitmap_info_header->biSizeImage = element_count; /* (4294967296 - 1) - (14 + 40) - (256 * 4);  / * 2^32 - Headers - Palette * / */
 
 
 /*
@@ -212,19 +272,19 @@ void set_unchained_mode(void)
   word i;
   dword *ptr=(dword *)VGA;            /* used for faster screen clearing */
 
-  outp(SC_INDEX,  MEMORY_MODE);       /* turn off chain-4 mode */
-  outp(SC_DATA,   0x06);
+  outportb(SC_INDEX,  MEMORY_MODE);       /* turn off chain-4 mode */
+  outportb(SC_DATA,   0x06);
 
-  outpw(SC_INDEX, ALL_PLANES);        /* set map mask to all 4 planes */
+  outport(SC_INDEX, ALL_PLANES);        /* set map mask to all 4 planes */
 
   for(i=0;i<0x4000;i++)               /* clear all 256K of memory */
     *ptr++ = 0;
 
-  outp(CRTC_INDEX,UNDERLINE_LOCATION);/* turn off long mode */
-  outp(CRTC_DATA, 0x00);
+  outportb(CRTC_INDEX,UNDERLINE_LOCATION);/* turn off long mode */
+  outportb(CRTC_DATA, 0x00);
 
-  outp(CRTC_INDEX,MODE_CONTROL);      /* turn on byte mode */
-  outp(CRTC_DATA, 0xe3);
+  outportb(CRTC_INDEX,MODE_CONTROL);      /* turn on byte mode */
+  outportb(CRTC_DATA, 0xe3);
 }
 
 /**************************************************************************
@@ -248,8 +308,8 @@ void page_flip(word *page1,word *page2)
   #ifdef VERTICAL_RETRACE
     while ((inp(INPUT_STATUS_1) & DISPLAY_ENABLE));
   #endif
-  outpw(CRTC_INDEX, high_address);
-  outpw(CRTC_INDEX, low_address);
+  outport(CRTC_INDEX, high_address);
+  outport(CRTC_INDEX, low_address);
   #ifdef VERTICAL_RETRACE
     while (!(inp(INPUT_STATUS_1) & VRETRACE));
   #endif
@@ -278,10 +338,10 @@ void set_palette(byte *palette)
 {
   int i;
 
-  outp(PALETTE_INDEX,0);              /* tell the VGA that palette data
+  outportb(PALETTE_INDEX,0);              /* tell the VGA that palette data
                                          is coming. */
   for(i=0;i<256*3;i++)
-    outp(PALETTE_DATA,palette[i]);    /* write the data */
+    outportb(PALETTE_DATA,palette[i]);    /* write the data */
 }
 
 /**************************************************************************
@@ -291,8 +351,8 @@ void set_palette(byte *palette)
 
 void plot_pixel(int x,int y,byte color)
 {
-  outp(SC_INDEX, MAP_MASK);          /* select plane */
-  outp(SC_DATA,  1 << (x&3) );
+  outportb(SC_INDEX, MAP_MASK);          /* select plane */
+  outportb(SC_DATA,  1 << (x&3) );
 
   VGA[(y<<6)+(y<<4)+(x>>2)]=color;
 }
@@ -440,10 +500,280 @@ void Draw_Video_Back_Buffer(int x_start, int y_start, int width, int height, byt
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: Draw_Video_Back_Buffer(x_start = %d, y_start = %d, width = %d, height = %d, video_back_buffer = %p)\n", __FILE__, __LINE__, x_start, y_start, width, height, video_back_buffer);
 #endif
+}
+
+void STU_Export_Palette_XBGR(void)
+{
+    char filename[13] = "PAL_XBGR.BIN";
+    FILE * fileptr;
+    int itr;
+    byte baito;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: STU_Export_Palette_XBGR()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] p_Palette_XBGR: %p\n", __FILE__, __LINE__, p_Palette_XBGR);
+#endif
+
+
+    fileptr = fopen(filename, "wb");
+    if(fileptr == NULL)
+    {
+        abort();
+    }
+
+    fwrite(p_Palette_XBGR, 1024, 1, fileptr);
+
+    fclose(fileptr);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: STU_Export_Palette_XBGR()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+void STU_Export_VBB_To_BIN(void)
+{
+    char filename[13] = "VBB.BIN";
+    FILE * fileptr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: STU_Export_VBB_To_BIN()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);
+#endif
+
+
+    fileptr = fopen(filename, "wb");
+    if(fileptr == NULL)
+    {
+        abort();
+    }
+
+    fwrite(video_back_buffer, 64000, 1, fileptr);
+
+    fclose(fileptr);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: STU_Export_VBB_To_BIN()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+void STU_Export_VBB_To_BMP(void)
+{
+
+    char filename[13] = "VBB.BMP";
+    FILE * fileptr;
+    int itr;
+    unsigned long int bmp_image_size;
+    byte color_table_index;
+    struct s_BMP_BITMAP_FILE_HEADER VBB_BMPINFOHEADER;
+    struct s_BMP_BITMAP_INFO_HEADER VBB_BMPINFOHEADERFILE;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: STU_Export_VBB_To_BMP()\n", __FILE__, __LINE__);
+#endif
+
+    // VBB_BMPINFOHEADER.bfType = BMP_MAGIC;
+    VBB_BMPINFOHEADER.bfType = 0x4D42;
+    VBB_BMPINFOHEADER.bfSize = 65078;
+    VBB_BMPINFOHEADER.bfReserved1 = 0;
+    VBB_BMPINFOHEADER.bfReserved2 = 0;
+    VBB_BMPINFOHEADER.bfOffBits = 1078;
+
+    VBB_BMPINFOHEADERFILE.biSize = 40;
+    VBB_BMPINFOHEADERFILE.biWidth = 320;
+    VBB_BMPINFOHEADERFILE.biHeight = -200;
+    VBB_BMPINFOHEADERFILE.biPlanes = 1;
+    VBB_BMPINFOHEADERFILE.biBitCount = 8;
+    VBB_BMPINFOHEADERFILE.biCompression = 0;
+    VBB_BMPINFOHEADERFILE.biSizeImage = 64000;
+    // VBB_BMPINFOHEADERFILE.biSizeImage = 0;
+    VBB_BMPINFOHEADERFILE.biXPelsPerMeter = 0;
+    VBB_BMPINFOHEADERFILE.biYPelsPerMeter = 0;
+    VBB_BMPINFOHEADERFILE.biClrUsed = 0;
+    VBB_BMPINFOHEADERFILE.biClrImportant = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfType: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfType);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfSize: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfSize, VBB_BMPINFOHEADER.bfSize);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfReserved1: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfReserved1);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfReserved2: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfReserved2);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfOffBits: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfOffBits, VBB_BMPINFOHEADER.bfOffBits);
+
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biSize: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biSize, VBB_BMPINFOHEADERFILE.biSize);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biWidth: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biWidth, VBB_BMPINFOHEADERFILE.biWidth);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biHeight: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biHeight, VBB_BMPINFOHEADERFILE.biHeight);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biPlanes: %04X (%d)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biPlanes, VBB_BMPINFOHEADERFILE.biPlanes);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biBitCount: %04X (%d)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biBitCount, VBB_BMPINFOHEADERFILE.biBitCount);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biCompression: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biCompression, VBB_BMPINFOHEADERFILE.biCompression);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biSizeImage: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biSizeImage, VBB_BMPINFOHEADERFILE.biSizeImage);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biXPelsPerMeter: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biXPelsPerMeter, VBB_BMPINFOHEADERFILE.biXPelsPerMeter);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biYPelsPerMeter: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biYPelsPerMeter, VBB_BMPINFOHEADERFILE.biYPelsPerMeter);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biClrUsed: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biClrUsed, VBB_BMPINFOHEADERFILE.biClrUsed);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biClrImportant: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biClrImportant, VBB_BMPINFOHEADERFILE.biClrImportant);
+#endif
+
+
+    fileptr = fopen(filename, "wb");
+    // if(fileptr == NULL) { }
+
+    // fwrite(&VBB_BMPINFOHEADER, sizeof(VBB_BMPINFOHEADER), 1, fileptr);
+    // fwrite(&VBB_BMPINFOHEADERFILE, sizeof(VBB_BMPINFOHEADERFILE), 1, fileptr);
+    fwrite(&VBB_BMPINFOHEADER, 14, 1, fileptr);
+    fwrite(&VBB_BMPINFOHEADERFILE, 40, 1, fileptr);
+
+    fwrite(p_Palette_XBGR, (256*4), 1, fileptr);
+
+    // bmp_image_size = VBB_BMPINFOHEADERFILE.biWidth * -VBB_BMPINFOHEADERFILE.biHeight;
+    // color_table_index = MAGENTA;
+    // for(itr = 0; itr < bmp_image_size; itr++)
+    // {
+    //     fwrite(&color_table_index, sizeof(color_table_index), 1, fileptr);
+    // }
+
+    fwrite(video_back_buffer, 64000, 1, fileptr);
+
+    fclose(fileptr);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: STU_Export_VBB_To_BMP()\n", __FILE__, __LINE__);
+#endif
 
 }
 
 
+void STU_Export_VBB_To_BMP32(void)
+{
+
+    char filename[13] = "VBB32.BMP";
+    FILE * fileptr;
+    long itr;
+    struct s_BMP_BITMAP_FILE_HEADER VBB_BMPINFOHEADER;
+    struct s_BMP_BITMAP_INFO_HEADER VBB_BMPINFOHEADERFILE;
+    unsigned long color;
+    byte vbb_byte;
+    // byte pixel_XBGR[4] = {1,2,3,4};
+    unsigned long * p_XBGR;
+    unsigned long long_XBGR;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: STU_Export_VBB_To_BMP32()\n", __FILE__, __LINE__);
+#endif
+
+    // VBB_BMPINFOHEADER.bfType = BMP_MAGIC;
+    VBB_BMPINFOHEADER.bfType = 0x4D42;
+    VBB_BMPINFOHEADER.bfSize = 64054;
+    VBB_BMPINFOHEADER.bfReserved1 = 0;
+    VBB_BMPINFOHEADER.bfReserved2 = 0;
+    VBB_BMPINFOHEADER.bfOffBits = 54;
+
+    VBB_BMPINFOHEADERFILE.biSize = 40;
+    VBB_BMPINFOHEADERFILE.biWidth = 320;
+    VBB_BMPINFOHEADERFILE.biHeight = -200;
+    VBB_BMPINFOHEADERFILE.biPlanes = 1;
+    VBB_BMPINFOHEADERFILE.biBitCount = 32;
+    VBB_BMPINFOHEADERFILE.biCompression = 0;
+    VBB_BMPINFOHEADERFILE.biSizeImage = 64000;
+    VBB_BMPINFOHEADERFILE.biXPelsPerMeter = 0;
+    VBB_BMPINFOHEADERFILE.biYPelsPerMeter = 0;
+    VBB_BMPINFOHEADERFILE.biClrUsed = 0;
+    VBB_BMPINFOHEADERFILE.biClrImportant = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfType: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfType);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfSize: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfSize, VBB_BMPINFOHEADER.bfSize);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfReserved1: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfReserved1);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfReserved2: %04X\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfReserved2);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADER.bfOffBits: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADER.bfOffBits, VBB_BMPINFOHEADER.bfOffBits);
+
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biSize: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biSize, VBB_BMPINFOHEADERFILE.biSize);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biWidth: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biWidth, VBB_BMPINFOHEADERFILE.biWidth);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biHeight: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biHeight, VBB_BMPINFOHEADERFILE.biHeight);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biPlanes: %04X (%d)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biPlanes, VBB_BMPINFOHEADERFILE.biPlanes);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biBitCount: %04X (%d)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biBitCount, VBB_BMPINFOHEADERFILE.biBitCount);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biCompression: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biCompression, VBB_BMPINFOHEADERFILE.biCompression);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biSizeImage: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biSizeImage, VBB_BMPINFOHEADERFILE.biSizeImage);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biXPelsPerMeter: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biXPelsPerMeter, VBB_BMPINFOHEADERFILE.biXPelsPerMeter);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biYPelsPerMeter: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biYPelsPerMeter, VBB_BMPINFOHEADERFILE.biYPelsPerMeter);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biClrUsed: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biClrUsed, VBB_BMPINFOHEADERFILE.biClrUsed);
+    dbg_prn("DEBUG: [%s, %d] VBB_BMPINFOHEADERFILE.biClrImportant: %08lX (%ld)\n", __FILE__, __LINE__, VBB_BMPINFOHEADERFILE.biClrImportant, VBB_BMPINFOHEADERFILE.biClrImportant);
+#endif
+
+
+    fileptr = fopen(filename, "wb");
+    // if(fileptr == NULL) { }
+
+    // fwrite(&VBB_BMPINFOHEADER, sizeof(VBB_BMPINFOHEADER), 1, fileptr);
+    // fwrite(&VBB_BMPINFOHEADERFILE, sizeof(VBB_BMPINFOHEADERFILE), 1, fileptr);
+    fwrite(&VBB_BMPINFOHEADER, 14, 1, fileptr);
+    fwrite(&VBB_BMPINFOHEADERFILE, 40, 1, fileptr);
+
+    // color = (unsigned long) 0xFF << 24 | (unsigned long) 0xCC << 16 | (unsigned long) 0x33 << 8 | (unsigned long) 0x00;
+    // for(itr = 0; itr < 64000; itr++)
+    // {
+    //     fwrite(&color, sizeof(color), 1, fileptr);
+    // }
+
+    p_XBGR = p_Palette_XBGR;
+    for(itr = 0; itr < 64000; itr++)
+    {
+        // *(pixel_XBGR + 0) = *(p_Palette_XBGR + *(video_back_buffer + itr) + 0);
+        // *(pixel_XBGR + 1) = *(p_Palette_XBGR + *(video_back_buffer + itr) + 1);
+        // *(pixel_XBGR + 2) = *(p_Palette_XBGR + *(video_back_buffer + itr) + 2);
+        // *(pixel_XBGR + 3) = *(p_Palette_XBGR + *(video_back_buffer + itr) + 3);
+        // fwrite(pixel_XBGR, sizeof(pixel_XBGR), 1, fileptr);
+
+        // vbb_byte = *(video_back_buffer + itr);
+        // // *(p_Palette_XBGR + vbb_byte + 0);
+        // // color = (unsigned long) *(p_Palette_XBGR + vbb_byte + 0) << 24 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 1) << 16 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 2) << 8 | (unsigned long) 0x00;
+        // // // color = (unsigned long) *(p_Palette_XBGR + vbb_byte + 0) << 24 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 1) << 16 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 2) << 8 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 3);
+        // color = (unsigned long) 0x00 << 24 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 0) << 16 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 1) << 8 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 2);
+        // fwrite(&color, sizeof(color), 1, fileptr);
+
+        vbb_byte = *(video_back_buffer + itr);
+        long_XBGR = *(p_XBGR + vbb_byte);
+        fwrite(&long_XBGR, sizeof(long_XBGR), 1, fileptr);
+
+    }
+
+    fclose(fileptr);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: STU_Export_VBB_To_BMP32()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+void STU_Export_DSP_To_BMP(void)
+{
+
+    char filename[13] = "VBB.BMP";
+    FILE * fileptr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: STU_Export_DSP_To_BMP()\n", __FILE__, __LINE__);
+#endif
+
+
+    fileptr = fopen(filename, "wb");
+
+
+    fclose(fileptr);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: STU_Export_DSP_To_BMP()\n", __FILE__, __LINE__);
+#endif
+
+}
 
 void STU_VGA_RAM_Read_ScanLine(WORD ScanLine, BYTE * ScanLine_Buffer)
 {

@@ -115,6 +115,7 @@ void test_EMM_Init(void);
 void test_EMM_Startup(void);
 void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
+
 void test_FLIC_Load_Palette(void);
 void test_FLIC_Draw_EMM(void);
 void test_FLIC_Draw_XY(void);
@@ -122,6 +123,9 @@ void test_FLIC_Draw_XY(void);
 void test_FLIC_Draw_Back(void);
 void test_FLIC_Draw_Frame_Back(void);
 void test_FLIC_Draw_Frame_2BMP(void);
+
+void test_STU_Export_Palette_XBGR(void);
+void test_STU_Export_VBB_To_BMP(void);
 
 void test_SA_Error(void);
 void test_LBX_Error(void);
@@ -174,7 +178,7 @@ int main(void)
     // test_FLIC_Draw_EMM();
     // // test_FLIC_Draw_XY();
 
-    test_MGC_Main();
+    // test_MGC_Main();
 
     // test_wait_for_esc();
     // test_TST_Test_Screen();
@@ -183,6 +187,9 @@ int main(void)
     // // test_VBB_Pattern();
     // test_FLIC_Draw_Back();
     // // test_FLIC_Draw_Frame_Back();
+
+    // test_STU_Export_Palette_XBGR();
+    test_STU_Export_VBB_To_BMP();
 
     // test_SA_Error();
     // test_LBX_Error();
@@ -1785,6 +1792,126 @@ void test_FLIC_Draw_Frame_Back(void)
 void test_FLIC_Draw_Frame_2BMP(void)
 {
 
+}
+
+void test_STU_Export_Palette_XBGR(void)
+{
+    Load_Font_File(GAME_FONT_FILE);
+    PAL_Load_Palette(2,-1,0);
+    STU_Export_Palette_XBGR();
+}
+
+void test_STU_Export_VBB_To_BMP(void)
+{
+//     int MenuArea_X_Left;
+//     int MenuArea_Y_Top;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_STU_Export_VBB_To_BMP()\n", __FILE__, __LINE__);
+#endif
+
+    // Load_Font_File(GAME_FONT_FILE);
+    // PAL_Load_Palette(2,-1,0);
+    // VGA_DAC_Write();
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_FLIC_Draw_Back()\n", __FILE__, __LINE__);
+#endif
+
+//     MenuArea_X_Left = 123;
+//     MenuArea_Y_Top = 141;
+
+    video_back_buffer = SA_Allocate_MemBlk(4000);
+    video_back_buffer_seg = FP_SEG(video_back_buffer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);
+    dbg_prn("DEBUG: [%s, %d] video_back_buffer_seg: 0x%04X\n", __FILE__, __LINE__, video_back_buffer_seg);
+#endif
+    // memset(video_back_buffer, CYAN, 320*200);
+    // STU_Export_VBB_To_BIN();
+    // Load_Font_File(GAME_FONT_FILE);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] p_Palette_XBGR: %p\n", __FILE__, __LINE__, p_Palette_XBGR);
+#endif
+    // STU_Export_Palette_XBGR();
+    // STU_Export_VBB_To_BMP();
+    // STU_Export_VBB_To_BMP32();
+
+    // Fill_Video_Back_Buffer(MAGENTA, video_back_buffer);
+    // STU_Export_VBB_To_BMP();
+
+    // Load_Font_File(GAME_FONT_FILE);
+    // PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    // STU_Export_Palette_XBGR();
+
+
+    // Load_Font_File(GAME_FONT_FILE);
+    // PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    // p_MAINSCRN_000 = LBXE_LoadSingle_LM("TESTSCRN.LBX", 0);   // TESTSCRN.LBX  320 x 40
+    // FLIC_Draw_Back(0, 0, 0, p_MAINSCRN_005, video_back_buffer);
+    // STU_Export_Palette_XBGR();
+
+    // Load_Font_File(GAME_FONT_FILE);
+    // PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    // p_MAINSCRN_000 = LBXE_LoadSingle_LM("TESTSCRN.LBX", 0);   // TESTSCRN.LBX  320 x 40
+    // p_MAINSCRN_005 = LBXE_LoadSingle_LM(g_LbxNm_MAINSCRN, 5);   // TESTSCRN.LBX  320 x 160
+    // p_VORTEX_001 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 1);       // 
+    // p_VORTEX_002 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 2);       // 
+    // p_VORTEX_003 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 3);       // Quit To DOS
+    // p_VORTEX_004 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 4);       // 
+    // p_VORTEX_005 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 5);       // 
+    // FLIC_Draw_Back(0, 0, 0, p_MAINSCRN_005, video_back_buffer);
+    // FLIC_Draw_Back(0, 161, 0, p_MAINSCRN_000, video_back_buffer);
+    // FLIC_Draw_Back(12, 12, 0, p_VORTEX_003, video_back_buffer);  // q
+    // FLIC_Draw_Back(12, 24, 0, p_VORTEX_001, video_back_buffer);  // c
+    // FLIC_Draw_Back(12, 36, 0, p_VORTEX_002, video_back_buffer);  // h
+    // FLIC_Draw_Back(12, 48, 0, p_VORTEX_004, video_back_buffer);  // n
+    // FLIC_Draw_Back(12, 60, 0, p_VORTEX_005, video_back_buffer);  // l
+    // STU_Export_Palette_XBGR();
+    // STU_Export_VBB_To_BIN();
+    // STU_Export_VBB_To_BMP();
+    // STU_Export_VBB_To_BMP32();
+
+
+
+
+    VGA_SetModeY();      // g_RSP_Idx = 0;  gsa_DSP_Addr = 0xA000;
+    VGA_Set_DSP_Addr();  // g_RSP_Idx = 0;  gsa_DSP_Addr = 0xA400;
+
+    Load_Font_File(GAME_FONT_FILE);
+    PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    p_MAINSCRN_000 = LBXE_LoadSingle_LM("TESTSCRN.LBX", 0);   // TESTSCRN.LBX  320 x 40
+    p_MAINSCRN_005 = LBXE_LoadSingle_LM(g_LbxNm_MAINSCRN, 5);   // TESTSCRN.LBX  320 x 160
+    p_VORTEX_001 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 1);       // 
+    p_VORTEX_002 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 2);       // 
+    p_VORTEX_003 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 3);       // Quit To DOS
+    p_VORTEX_004 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 4);       // 
+    p_VORTEX_005 = LBXE_LoadSingle_LM(g_LbxNm_VORTEX, 5);       // 
+    FLIC_Draw_Back(0, 0, 0, p_MAINSCRN_005, video_back_buffer);
+    FLIC_Draw_Back(0, 161, 0, p_MAINSCRN_000, video_back_buffer);
+    FLIC_Draw_Back(12, 12, 0, p_VORTEX_003, video_back_buffer);  // q
+    FLIC_Draw_Back(12, 24, 0, p_VORTEX_001, video_back_buffer);  // c
+    FLIC_Draw_Back(12, 36, 0, p_VORTEX_002, video_back_buffer);  // h
+    FLIC_Draw_Back(12, 48, 0, p_VORTEX_004, video_back_buffer);  // n
+    FLIC_Draw_Back(12, 60, 0, p_VORTEX_005, video_back_buffer);  // l
+    test_VBB_Pattern_Draw();
+    getch();
+    VGA_DAC_Write();
+    getch();
+    VGA_PageFlip();
+    getch();
+    STU_Export_Palette_XBGR();
+    STU_Export_VBB_To_BIN();
+    STU_Export_VBB_To_BMP();
+    STU_Export_VBB_To_BMP32();
+
+
+    VGA_SetTextMode();
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: test_STU_Export_VBB_To_BMP()\n", __FILE__, __LINE__);
+#endif
 }
 
 // s08p19  void SA_Alloc_Error(int SA_Error_Number, int blocks);

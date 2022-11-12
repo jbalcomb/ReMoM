@@ -96,7 +96,7 @@ Allocates memory from the far heap...
 // MoO2 Load_Font_File()
 void Load_Font_File(char * font_file)
 {
-    int i;
+    int itr;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: Load_Font_File(font_file = %s)\n", __FILE__, __LINE__, font_file);
@@ -119,6 +119,7 @@ void Load_Font_File(char * font_file)
     p_Palette              = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);             // ~== p_PaletteFlags = &p_Palette[768];
     // p_PaletteFlags         = PTR_ADD_PARAGRAPH(p_Palette, 48);
+    p_Palette_XBGR         = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
 
     UU_p_PaletteSaved      = SA_Allocate_Space(48);             //  48 paragraphs =  48 * 16 bytes =  768 bytes
     UU_sa_PaletteSaved     = FP_SEG(UU_p_PaletteSaved);
@@ -134,13 +135,17 @@ void Load_Font_File(char * font_file)
     
     TextLine_Init();
 
-    for ( i = 0; i < 768; i++)
+    for(itr = 0; itr < 768; itr++)
     {
-        *(p_Palette + i) = 0;
+        *(p_Palette + itr) = 0;
     }
-    for ( i = 0; i < 256; i++)
+    for(itr = 0; itr < 256; itr++)
     {
-        *(p_PaletteFlags + i) = 1;
+        *(p_PaletteFlags + itr) = 1;
+    }
+    for(itr = 0; itr < 1024; itr++)
+    {
+        *(p_Palette_XBGR + itr) = 0;
     }
 
 #ifdef STU_DEBUG

@@ -93,6 +93,10 @@ void VGA_DAC_Write(void)
         ofstPaletteFlags++;
     } while ( itrVgaDacColors < 256 );
 
+    // NOTE(JimBalcomb,20221110): Presently, this feels like where the palette is a done deal for whatever is being drawn, so the BMP BGRX can be saved/exported/dumped.
+
+
+
     ofstPaletteFlags = 768;
     for ( itrPaletteFlags = 0; itrPaletteFlags < 256; itrPaletteFlags++ )
     {
@@ -141,7 +145,7 @@ void FLIC_Load_Palette(SAMB_ptr fp_FLIC_Header, int Frame_Index)
     else
     {
         DLOG("( (frame_index != 0) || (frame_palettes != 0) )");
-        flic_palette_data = FLIC_Get_Frame_Palette_Data_Offset(fp_FLIC_File,Frame_Index);
+        flic_palette_data = FLIC_Get_Frame_Palette_Data_Offset(fp_FLIC_File,Frame_Index);  // ? nonportable pointer conversion ?
         Color_Index = FLIC_Get_Frame_Palette_Color_Index(fp_FLIC_File,Frame_Index);
         Color_Count = FLIC_Get_Frame_Palette_Color_Count(fp_FLIC_File,Frame_Index);
     }
@@ -150,6 +154,18 @@ void FLIC_Load_Palette(SAMB_ptr fp_FLIC_Header, int Frame_Index)
     {
         *(p_Palette + itr) = *(flic_palette_data + itr);
         *(p_Palette + 768 + itr) = 1;
+    }
+
+    for(itr = 0; itr < Color_Count; itr++)
+    {
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = 0x00;
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = 0x00;
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
     }
 
 #ifdef STU_DEBUG

@@ -91,7 +91,7 @@ RenderWeirdGradient(win32_offscreen_buffer *Buffer, int XOffset, int YOffset)
 internal void
 Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 {
-     if(Buffer->Memory) // Same as writing (BitmapMemory != 0) or (BitmapMemory != NULL)
+    if(Buffer->Memory) // ~== (BitmapMemory != 0) ~== (BitmapMemory != NULL)
     {
         VirtualFree(Buffer->Memory, 0, MEM_RELEASE);
         // Optionally, you can check if the result of VirtualFree is not zero.

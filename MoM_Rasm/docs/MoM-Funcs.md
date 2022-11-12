@@ -454,7 +454,7 @@ _s33p40         CRL_Draw_DSP                        VGA_DrawCursor_DSP          
 
 
 ##### seg034    ST_GUI.H
-[]_s34p01       IN_ProcessInput            _s34p01.asm GUI_ProcessInput
+[]_s34p01       UI_ProcessInput_KD      IN_ProcessInput            _s34p01.asm GUI_ProcessInput
 _s34p08         IN_SetEscOverride          void GUI_SetEscOverride(void)
 
 _s34p12 HLP_SetHelp         void GUI_SetHelp(int Entry_Tbl, int Entry_Count)

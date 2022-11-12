@@ -58,6 +58,7 @@ SAMB_ptr UU_p_PaletteSaved;                // SM2LM    // dseg:A7DC
 SAMB_addr UU_sa_PaletteSaved;
 
 byte_ptr p_Palette;                     // SM2LM    // dseg:A7DE
+byte_ptr p_Palette_XBGR;
 
 char font_name[16];                                 // dseg:A7E0    set in Load_Font_File
 

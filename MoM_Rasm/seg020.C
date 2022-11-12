@@ -31,7 +31,7 @@ void PAL_Load_Palette(int entry, int start_color, int end_color)
     int Color_Count;
     // byte_ptr p_Dst;
     // byte_ptr p_Src;
-    int i;
+    int itr;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: PAL_Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
@@ -60,7 +60,7 @@ void PAL_Load_Palette(int entry, int start_color, int end_color)
     // SM2LM  
     sa_ShadingColors = FP_SEG(p_ShadingColors);
 
-    if ( start_color == -1 )
+    if(start_color == -1)
     {
         Color_Index = 0;
         Color_Count = 256;
@@ -73,10 +73,26 @@ void PAL_Load_Palette(int entry, int start_color, int end_color)
 
     // p_Dst = &p_Palette[(Color_Index * 3)];
     // p_Src = &palette_data[(Color_Index * 3)];  // Warning: Nonportable pointer conversion
-    for(i = 0; i < (Color_Count * 3); i++)
-    {
         // *p_Dst++ = *p_Src++;
-        *(p_Palette + (Color_Index * 3) + i) = *(palette_data + (Color_Index * 3) + i);
+    for(itr = 0; itr < (Color_Count * 3); itr++)
+    {
+        *(p_Palette + (Color_Index * 3) + itr) = *(palette_data + (Color_Index * 3) + itr);
+    }
+
+    // map 768 to 1024
+    // map [256][3] to [256][4]
+    // map [256][{R,G,B] to [256][{X,B,G,R}]
+    // map 3,R to 3,R ... 3*4,+3 = 3*3,+0
+    for(itr = 0; itr < Color_Count; itr++)
+    {
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
+        // *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = 0x00;
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = 0x00;
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
+        *(p_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = (*(palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
     }
 
     // VGA_SetFont(0, 0, 0, 0);
