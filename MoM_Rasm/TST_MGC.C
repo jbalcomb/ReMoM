@@ -178,7 +178,7 @@ int main(void)
     // test_FLIC_Draw_EMM();
     // // test_FLIC_Draw_XY();
 
-    // test_MGC_Main();
+    test_MGC_Main();
 
     // test_wait_for_esc();
     // test_TST_Test_Screen();
@@ -189,7 +189,7 @@ int main(void)
     // // test_FLIC_Draw_Frame_Back();
 
     // test_STU_Export_Palette_XBGR();
-    test_STU_Export_VBB_To_BMP();
+    // test_STU_Export_VBB_To_BMP();
 
     // test_SA_Error();
     // test_LBX_Error();

@@ -25,6 +25,7 @@ TEST-.LOG
 *.MOM
 *.SET
 
+*.BMP
 *.BIN
 *.LOG
 
