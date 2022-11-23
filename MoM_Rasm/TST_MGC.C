@@ -3,6 +3,8 @@
 #include "ST_DEF.H"     /* FP_SEG(), FP_OFF(); */
 #include "MGC_DEF.H"
 
+#include "MGC_main.H"
+
 /*
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     EMM_SetMinKB(EMM_MIN_KB);
@@ -131,7 +133,7 @@ void test_SA_Error(void);
 void test_LBX_Error(void);
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
     char * cstr_ComSpec;
     Debug_Log_Startup();
@@ -178,7 +180,8 @@ int main(void)
     // test_FLIC_Draw_EMM();
     // // test_FLIC_Draw_XY();
 
-    test_MGC_Main();
+    // test_MGC_Main();
+    MGC_main(argc, argv);
 
     // test_wait_for_esc();
     // test_TST_Test_Screen();

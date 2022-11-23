@@ -1,24 +1,23 @@
 
-// #ifdef STU_DEBUG
-// #include "STU_DBG.H"
-// #endif
+#include "MGC_main.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 int main(int argc, char *argv[])
 {
-// #ifdef STU_DEBUG
-//     Debug_Log_Startup();
-// #endif
-
-#if defined(__VSCode__) || defined(__DOS16__) || defined(DEBUG) || defined(TEST) || defined(STU_DEBUG) || defined(STU_TEST)
-    abort();
+#ifdef STU_DEBUG
+    Debug_Log_Startup();
 #endif
 
-    MGC_Main(argc, argv);  // s01p01  seg001.C/H
 
-// #ifdef STU_DEBUG
-//     Debug_Log_Shutdown();
-// #endif
+    MGC_main(argc, argv);
 
+
+#ifdef STU_DEBUG
+    Debug_Log_Shutdown();
+#endif
     return 0;
 }
