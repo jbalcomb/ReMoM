@@ -1,6 +1,8 @@
 
 #include "MGC_main.H"
 
+#include "MAINMENU.H"   /* Main_Menu_Screen_Control() */
+
 #include "MOM_DEF.H"    /* EMM_PAGES_REQUIRED, EMM_MIN_KB, RAM_MIN_KB, GAME_FONT_FILE; */
 
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
@@ -82,7 +84,8 @@ int MGC_main(int argc, char *argv[])
 
 
 
-    GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
+    // GAME_MainMenu();  // MGC s01p03
+    Main_Menu_Screen_Control();
 
 
 

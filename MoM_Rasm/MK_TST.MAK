@@ -18,12 +18,12 @@ LDFLAGS =
 .suffixes: .cpp .c .asm
 
 .c.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ISTU -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -IMAINMENU -ISTU -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 #    BCC -B -c -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 
 .cpp.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ISTU -ml -M -S -U__VSCODE__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -IMAINMENU -ISTU -ml -M -S -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -U__VSCODE__ -v -y $<
 #    BCC -B -c -ml -M -S -U__VSCODE__ -v -y $<
 
@@ -42,7 +42,7 @@ LDFLAGS =
 
 OBJ_STU = \
 .\STU\STU_DBG.OBJ .\STU\STU_TST.OBJ .\STU\STU_UTIL.OBJ .\STU\STU_VGA.OBJ
-OBJ_MGC = MGC_DEF.OBJ MGC_main.OBJ
+OBJ_MGC = MGC_DEF.OBJ MGC_main.OBJ .\MAINMENU\MAINMENU.OBJ
 OBJ_MoM = MOM_DEF.OBJ
 OBJ_ST = ST_DEF.OBJ ST_CRSR.OBJ ST_CTRL.OBJ ST_DBG.OBJ ST_EMM.OBJ ST_EXIT.OBJ ST_FLIC.OBJ ST_GUI.OBJ ST_HLP.OBJ ST_LBX.OBJ ST_SA.OBJ ST_SCRN.OBJ ST_SND.OBJ ST_TXT.OBJ ST_TYPE.OBJ ST_QUIT.OBJ ST_VGA.OBJ
 OBJ_o57 = _o57p01c.obj
