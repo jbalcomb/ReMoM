@@ -79,7 +79,8 @@ int g_TIMER_Count_Hi = 0;                   // dseg:3CBA
 // MoX_EXIT char *cnst_Quit_Report5 = "k   EMM: ";          // dseg:3CEB
 // MoX_EXIT char *cnst_Quit_Report6 = " blocks";            // dseg:3CF5
 
-void * gfp_TBL_Moves_Per_Tile;      // dseg:5BAC
+
+void * gfp_TBL_Moves_Per_Tile;      // dseg:5BAC            // loaded in ST_NEWG
 unsigned int gsa_CRP_SND_Music_Segment; // dseg:5BB0
 void * gfp_CRP_Visibility_Myrror;   // dseg:5BB2
 void * gfp_CRP_Visibility_Arcanus;  // dseg:5BB6
@@ -105,7 +106,7 @@ void * gfp_TBL_HeroStats_P3; // dseg:65B8
 void * gfp_TBL_HeroStats_P4; // dseg:65BC
 void * gfp_TBL_HeroStats_P5; // dseg:65C0
 
-void * gfp_TBL_Spell_Data;   // dseg:662C
+void * gfp_TBL_Spell_Data;   // dseg:662C       // loaded in ST_NEWG
 
 unsigned int g_World_Data_Paras;                // dseg:6750
 unsigned int gsa_World_Data_Extra;              // dseg:6752

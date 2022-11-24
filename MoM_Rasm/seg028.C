@@ -16,38 +16,39 @@
 #include <STRING.H>     /* memcpy() */
 
 
-// s28p02
-// ST_FLIC.H
-/*
-    XREF:
-        GAME_PrepareCredits()
-        GAME_DrawCredits()
-*/
-void FLIC_Prepare(int width, int height, SAMB_addr sa_FLIC_Header)
-{
-    SAMB_ptr fp_FLIC_Header;
-    unsigned int length;
-    int itr;
-
-    fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
-
-    // farpokew(sa_FLIC_Header, 0x00, width);
-    // farpokew(sa_FLIC_Header, 0x02, height);
-    farpokew(sa_FLIC_Header, 0x04, 0xDE0A);  // DE0Ah 56842d; DEh 222d; 0Ah 10d; 0ADEh 2782d;
-    farpokew(sa_FLIC_Header, 0x06, 0x00);
-    farpokew(sa_FLIC_Header, 0x08, 0x00);
-    FLIC_Set_Width(fp_FLIC_Header, width);
-    FLIC_Set_Height(fp_FLIC_Header, height);
-    
-    length = width * height;
-    
-    fp_FLIC_Header += 0x10;
-    for(itr = 0; itr < length; itr++)
-    {
-        *(fp_FLIC_Header + itr) = 0;
-    }
-
-}
+// // w/ MAINMENU CREDITS  // MGC s28p02
+// // s28p02
+// // ST_FLIC.H
+// /*
+//     XREF:
+//         GAME_PrepareCredits()
+//         GAME_DrawCredits()
+// */
+// void FLIC_Prepare(int width, int height, SAMB_addr sa_FLIC_Header)
+// {
+//     SAMB_ptr fp_FLIC_Header;
+//     unsigned int length;
+//     int itr;
+// 
+//     fp_FLIC_Header = MK_FP(sa_FLIC_Header,0);
+// 
+//     // farpokew(sa_FLIC_Header, 0x00, width);
+//     // farpokew(sa_FLIC_Header, 0x02, height);
+//     farpokew(sa_FLIC_Header, 0x04, 0xDE0A);  // DE0Ah 56842d; DEh 222d; 0Ah 10d; 0ADEh 2782d;
+//     farpokew(sa_FLIC_Header, 0x06, 0x00);
+//     farpokew(sa_FLIC_Header, 0x08, 0x00);
+//     FLIC_Set_Width(fp_FLIC_Header, width);
+//     FLIC_Set_Height(fp_FLIC_Header, height);
+//     
+//     length = width * height;
+//     
+//     fp_FLIC_Header += 0x10;
+//     for(itr = 0; itr < length; itr++)
+//     {
+//         *(fp_FLIC_Header + itr) = 0;
+//     }
+// 
+// }
 
 
 // s28p11

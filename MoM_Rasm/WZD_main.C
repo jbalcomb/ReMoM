@@ -1,7 +1,9 @@
 
-#include "MGC_main.H"
-
+// #include "ST_DEF.H"
 #include "MOM_DEF.H"    /* EMM_PAGES_REQUIRED, EMM_MIN_KB, RAM_MIN_KB, GAME_FONT_FILE; */
+// #include "WZD_DEF.H"
+
+#include "WZD_main.H"
 
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
 
@@ -18,7 +20,7 @@ int WZD_main(int argc, char *argv[])
     FILE * fileptr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: WZD_main()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: WZD_main(argc = %d, argv[0] = %s)\n", __FILE__, __LINE__, argc, argv[0]);
 #endif
 
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
@@ -91,4 +93,9 @@ int WZD_main(int argc, char *argv[])
     // RP_Empty_Exit_Fn1()
     // Quit_With_Size();
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: WZD_main(argc = %d, argv[0] = %s)\n", __FILE__, __LINE__, argc, argv[0]);
+#endif
+    return 0;
 }

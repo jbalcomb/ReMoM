@@ -222,13 +222,17 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+
 /*
-    seg033
+    MAGIC.EXE seg033
 */
-// _s33p01
+
+// MGC s33p01
 void GUI_SetWindows(int argWindowCount, struct s_GUI_WINDOW *argWindowArray);
-// _s33p02
+
+// MGC s33p02
 void GUI_FindWindow(int X_Pos, int Y_Pos);
+
 // _s33p03
 int CR_GetIndex(void);
 // _s33p04
@@ -237,8 +241,10 @@ int CR_GetOffset(void);
 int MD_GetButtonStatus(void);
 // _s33p06
 int MD_WaitRelease(void);
-// _s33p07
+
+// MGC s33p07
 int MD_Init(void);
+
 // _s33p09
 void MD_Reset(void);
 // _s33p10
@@ -304,7 +310,7 @@ int GUI_MouseOverControl(void);
 // _s34p57c.c
 void CTRL_Clear(void);
 
-// _s34p65
+// MGC s34p65
 void IN_Init(int Input_Type);
 
 // _s34p66

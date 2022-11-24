@@ -1,114 +1,15 @@
 
-#include "MGC_DEF.H"
-#include "ST_GUI.H"
+#include "CREDITS.H"
+
+
 
 /*
     Initialized Data
 */
 
-// dseg:205E GUI_MainMenuWindow GUI_WINDOW <Crsr_Normal, 0, 0, 0, 319, 199>
-//struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 319, 199, 0};    // dseg:205E
-// dseg:206A align 4
-// MAINMENU  int CRP_Unused_Anim_Var = 0; // dseg:206C CRP_Unused_Anim_Var
-// dseg:206E __ovrbuffer dw 1000h                    ; declared in overlay.lib\OVRBUFF
-
-// \/\/\/\/\/ in MOM_DEF, as are same in WZD
-// dseg:27FF cnst_ConfigFile db 'CONFIG.MOM',0
-// dseg:280A cnst_ConfigErr db 'Run INSTALL to configure MASTER OF MAGIC.',0Ah, 0Ah,0
-// dseg:2836 cnst_RB db 'rb',0
-// dseg:2839 cnst_MIDI_Init db 'Initializing Roland Drivers...$',0
-// dseg:2859 cnst_SAVE db 'SAVE',0
-// dseg:285E cnst_SAVE_ext db '.GAM',0
-// dseg:2863 cnst_Set_File db 'MAGIC.SET',0
-// dseg:286D cnst_WB db 'wb',0
-// dseg:2870 cnst_FONT_File db 'FONTS.LBX',0
-// /\/\/\/\/\ in MOM_DEF, as are same in WZD
-
-// dseg:287A cnst_MUSIC_File db 'music',0  // XREF main() - late addition?
-
-// MAINMENU  char cnst_QUIT_Message[] = "Thank you for playing Master of Magic!";  // dseg:2880
-// MAINMENU  char g_LbxNm_MAINSCRN[] = "MAINSCRN";       // dseg:28A7
-// MAINMENU  // char g_LbxNm_MAINSCRN[] = "TESTSCRN";
-// MAINMENU  char cnst_HOTKEY_N = 'N';                   // dseg:28AE
-// MAINMENU  char g_LbxNm_VORTEX[] = "VORTEX";           // dseg:28B0
-// ST_NEWG  char g_LbxNm_WIZARDS[] = "WIZARDS";         // dseg:28B7
-// ST_NEWG  char g_LbxNm_SPELLDAT[] = "SPELLDAT";       // dseg:28BF
-// MAINMENU  char cnst_HOTKEY_C = 'C';                   // dseg:28C8
-// MAINMENU  char cnst_HOTKEY_L = 'L';                   // dseg:28CA
-// MAINMENU  char cnst_HOTKEY_H = 'H';                   // dseg:28CC
-// MAINMENU  char cnst_HOTKEY_Q = 'Q';                   // dseg:28CE
-// MAINMENU  //char cnst_HOTKEY_Esc = '\x1B';              // dseg:28D0
-// MAINMENU  char cnst_HOTKEY_Esc = 27;
-// ST_NEWG  char g_LbxNm_TERRSTAT[] = "TERRSTAT";       // dseg:28D2
-// dseg:28DB cnst_HLPENTRY_File db 'hlpentry',0
-
-// \/\/\/\/\/ in MOM_DEF, as are same in WZD
-// dseg:28E4 cnst_SAVE2 db 'SAVE',0
-// dseg:28E9 cnst_SAVE_ext2 db '.GAM',0
-// dseg:28EE cnst_WB2 db 'wb',0
-// dseg:28F1 ; char cnst_Set_File2[]
-// dseg:28F1 cnst_Set_File2 db 'MAGIC.SET',0
-// dseg:28FB cnst_RB2 db 'rb',0
-// /\/\/\/\/\ in MOM_DEF, as are same in WZD
-
-/*
-    ? next section all for settings screen ?
-*/
-// MAINMENU  struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 0, 319, 199}; // dseg:205E
-// MAINMENU  int GUI_LoadSave_State = -1; // dseg:290A  ; 3 indicates returning from the settings screen
-// dseg:290C GUI_Settings_Tops dw    53,   64,   75,  102,  113,  124,  135,  153,  146,  157,  167,  163,  174
-// dseg:2926 COL_Settings db 4 dup(62h)
-// dseg:292A cnst_LOAD_File db 'LOAD.LBX'
-// dseg:2932 cnst_ZeroString_3 db 0
-// dseg:2933 cnst_Set_File3 db 'MAGIC.SET',0
-// dseg:293D cnst_RB3 db 'rb',0
-// dseg:2940 cnst_HOTKEY_Esc2 db 1Bh,0
-// dseg:2942 cnst_HOTKEY_O db 'O',0
-// dseg:2944 cnst_WB3 db 'wb',0
-// dseg:2947 cnst_Settings_0 db 'Sound Effects',0
-// dseg:2955 cnst_Settings_1 db 'Background Music',0
-// dseg:2966 cnst_Settings_2 db 'Event Music',0
-// dseg:2972 cnst_Settings_3 db 'City Spell Events',0
-// dseg:2984 cnst_Settings_4 db 'Overland Spell Events',0
-// dseg:299A cnst_Settings_5 db 'Summoning Events',0
-// dseg:29AB cnst_Settings_6 db 'End of Turn Summary',0
-// dseg:29BF cnst_Settings_7 db 'Raze City',0
-// dseg:29C9 cnst_Settings_8 db 'Random Events',0
-// dseg:29D7 cnst_Settings_9 db 'End of Turn Wait',0
-// dseg:29E8 cnst_Settings_A db 'Strategic Combat Only',0
-// dseg:29FE cnst_Settings_B db 'Auto Unit Information',0
-// dseg:2A14 cnst_Settings_C db 'Movement Animations',0
-// dseg:2A28 cnst_Settings_D db 'Enemy Moves',0
-// dseg:2A34 cnst_Settings_E db 'Enemy Spells',0
-// dseg:2A41 cnst_Settings_F db 'Spell Book Ordering',0
-// dseg:2A55 cnst_Settings_10 db 'Spell Animations',0
-// dseg:2A66 cnst_Settings_11 db 'Show Node Owners',0
-// dseg:2A77 cnst_Settings_12 db 'Expanding Help',0
-// dseg:2A86 cnst_SettingsGrp_1 db 'Sound and Music',0
-// dseg:2A96 cnst_SettingsGrp_2 db 'Messages',0
-// dseg:2A9F cnst_SettingsGrp_3 db 'Combat',0
-// dseg:2AA6 cnst_SettingsGrp_4 db 'Display',0
-// dseg:2AAE cnst_HLPENTRY_File2 db 'hlpentry.lbx',0
-// dseg:2ABB db 0
-
-
-// dseg:385E g_TBL_IntroFrameCounts dw    15,   12,   30,   18,   25,   32,   24,   32,   30,   37,   30,   11,   32
-// dseg:3878 cnst_MUSIC_File2 db 'music.lbx'         ; should use dseg:287a
-// dseg:3881 cnst_ZeroString_5 db 0
-// dseg:3882 cnst_SOUNDFX_File db 'soundfx.lbx',0
-// dseg:388E cnst_HOTKEY_Esc5 db 1Bh,0               ; should use dseg:28d0
-// dseg:3890 cnst_INTRO_File db 'INTRO.LBX',0
-// dseg:389A cnst_Simtex_CR2 db 'Copyright  Simtex Software, 1995   V1.31',0 ; should use dseg:3067
-// dseg:38C3 align 2
-// dseg:38C4 COL_HLP_Titles db 0B9h,4 dup( 2Fh)      ; this should ideally have been 16 bytes long
-// dseg:38C9 COL_HLP_Text db 0B8h,4 dup( 37h)        ; this should ideally have been 16 bytes long
-// dseg:38CE cnst_HELP_File db 'HELP',0              ; could use dseg:2a81
-// dseg:38D3 cnst_HELP_File2 db 'help',0             ; should use dseg:38ce
 // MAINMENU CREDITS  int GAME_FirstShownCred = 0;            // dseg:38D8
 // MAINMENU CREDITS  int GAME_CreditTextTop = 0;             // dseg:38DA
 // MAINMENU CREDITS  int GAME_CredsRollTimer = 0;            // dseg:38DC
-
-
 
 // char TBL_Credits_Texts[48][] = {
 //     {"Game Designer"},  {"Steve Barcia"},
@@ -116,9 +17,7 @@
 //     {""},               {"Jim Cowlishaw',"},
 //     {""},               {"Ken Burd',"},
 //     {""},               {"Grissel Barcia"}
-
 // };
-
 
 // MAINMENU CREDITS  
 // struct s_CreditsPairs TBL_Credits_Texts[48] = {
@@ -276,71 +175,155 @@
 /*
     Uninitialized Data
 */
-// dseg:52B2 g_GUI_String_2 dw 0
-// dseg:52B4 g_GUI_String_1 dw 0
-// MAINMENU  int GUI_Load_Lbl_Index;                     // dseg:52B6
-// dseg:52B8 IMG_FullScreen_BG@ dw 0
-
-// MAINMENU  unsigned int gsa_VORTEX_3_MenuQuitToDOS;    // dseg:52BA
-// MAINMENU  SAMB_addr sa_VORTEX_003;
-// MAINMENU  SAMB_ptr fp_VORTEX_003;
-// MAINMENU  SAMB_ptr p_VORTEX_003;
-
-// MAINMENU  int GUI_HoF_Lbl_Index;                      // dseg:52BC
-
-// MAINMENU  unsigned int gsa_VORTEX_2_MenuHallOfFame;   // dseg:52BE
-// MAINMENU  SAMB_addr sa_VORTEX_002;
-// MAINMENU  SAMB_ptr fp_VORTEX_002;
-// MAINMENU  SAMB_ptr p_VORTEX_002;
-
-// MAINMENU  int GUI_Quit_Lbl_Index;                     // dseg:52C0
-
-// MAINMENU  unsigned int gsa_VORTEX_5_MenuLoadGame;     // dseg:52C2
-// MAINMENU  SAMB_addr sa_VORTEX_005;
-// MAINMENU  SAMB_ptr fp_VORTEX_005;
-// MAINMENU  SAMB_ptr p_VORTEX_005;
-
-// MAINMENU  int g_GUI_MainMenuSelected;                 // dseg:52C4
-
-// ST_NEWG  unsigned int gsa_WIZARDS_0to13[14];         // dseg:52C6  GAME_LoadMainImages()  gsa_WIZARDS_0to13[itr_wizards] = LBXE_LoadSingle(g_LbxNm_WIZARDS, itr_wizards);
-// dseg:52E2 IMG_NewG_BtnBorder@ dw 0
-// MAINMENU  int g_GAME_HaveSaves;                       // dseg:52E4
-// dseg:52E6 NEWG_HaveLastProfile dw 0
-
-// MAINMENU  unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8    GAME_LoadMainImages()   LBX_Load(file_name=LbxNm_MAINSCRN, entry_num=0);
-// MAINMENU  SAMB_addr sa_MAINSCRN_000;
-// MAINMENU  SAMB_ptr fp_MAINSCRN_000;
-// MAINMENU  SAMB_ptr p_MAINSCRN_000;
-
-// MAINMENU  int GUI_NewGame_Label;                      // dseg:52EA
-
-// MAINMENU  unsigned int gsa_VORTEX_4_MenuNewGame;      // dseg:52EC
-// MAINMENU  SAMB_addr sa_VORTEX_004;
-// MAINMENU  SAMB_ptr fp_VORTEX_004;
-// MAINMENU  SAMB_ptr p_VORTEX_004;
-
-// MAINMENU  int GUI_Continue_Label;                     // dseg:52EE
-
-// MAINMENU  unsigned int gsa_VORTEX_1_MenuContinue;     // dseg:52F0
-// MAINMENU  SAMB_addr sa_VORTEX_001;
-// MAINMENU  SAMB_ptr fp_VORTEX_001;
-// MAINMENU  SAMB_ptr p_VORTEX_001;
-
-// MAINMENU  int g_GAME_HaveContSave;                    // dseg:52F2
-
-// MAINMENU  unsigned int gsa_MAINSCRN_5_ScreenBottom;   // dseg:52F4
-// MAINMENU  SAMB_addr sa_MAINSCRN_005;
-// MAINMENU  SAMB_ptr fp_MAINSCRN_005;
-// MAINMENU  SAMB_ptr p_MAINSCRN_005;
-
-// dseg:52F6 NEWG_Screen0_Frame dw 0
-// dseg:52F8 IMG_No_Load_Btn@ dw 0
-// dseg:52FA NEWG_LastRetorts@ dw 0
-// MAINMENU  int g_GUI_MAINMENUJump;                   // dseg:52FC  XREF: GAME_MainMenu(), SCREEN_Menu(), SCREEN_LoadSave()
-// MAINMENU  int g_GAME_ValidSaveCount;                  // dseg:52FE
-// MAINMENU  int g_GAME_ValidSaves_Main[8];              // dseg:5300
-
-// TODO(JimBalcomb): figure out what this is for and where it belongs in the code-base
-// MAINMENU  int g_ScreenChangeFade; // dseg:64AE
 
 // MAINMENU CREDITS  unsigned int gsa_GUI_Credits_Text_IMG; // dseg:948C
+
+
+
+
+
+
+
+
+
+
+
+// _o60p01c.c GAME_DrawCredits
+// MGC_DEF.H
+
+#include "MGC_DEF.H"
+
+#include "seg028.H"     /* FLIC_Prepare() */
+
+
+// ./MAINMENU/CREDITS.C/.H
+// void Draw_Credits(void)  // Main Menu Screen
+int GAME_DrawCredits(void)
+{
+
+    int Role_String_Width;
+    int Loop_Var;
+    unsigned char Credit_FadeIn_Colors[10];
+    unsigned char Credit_FadeOut_Colors[10];
+    unsigned char Color_Array[4];
+
+    int tmp_SI;
+    int tmp_DI;
+
+    GAME_CredsRollTimer = GAME_CredsRollTimer + 1;
+
+    if ( GAME_CredsRollTimer > 30000 )
+    {
+        GAME_CredsRollTimer = 70;
+    }
+
+    if ( GAME_CredsRollTimer < 70 )
+    {
+        return 0;
+    }
+
+    Color_Array[0] = 68;  // 0x44
+
+    for ( Loop_Var = 0; Loop_Var < 10; Loop_Var++ )
+    {
+        Credit_FadeOut_Colors[Loop_Var] = 224 + Loop_Var;
+    }
+
+    for ( Loop_Var = 0; Loop_Var < 10; Loop_Var++ )
+    {
+        Credit_FadeOut_Colors[Loop_Var] = 233 - Loop_Var;
+    }
+
+    Credit_FadeIn_Colors[0] = 232;
+
+    // NOTE(JimBalcomb,20221124): This is the only use of FLIC_Prepare() in MGC. It is used regularly in WZD.
+    FLIC_Prepare(280, 122, gsa_GUI_Credits_Text_IMG);  // MGC s28p02  seg028.H
+
+    VGA_SetDrawWindow(0, 40, 319, 137);
+
+    tmp_SI = GAME_CreditTextTop;
+
+    for ( Loop_Var = 0; Loop_Var < 10; Loop_Var++ )
+    {
+        
+        if ( tmp_SI < 99 )
+        {
+
+            if ( GAME_FirstShownCred + Loop_Var < 48 )
+            {
+
+                Color_Array[1] = 224;
+
+                if ( tmp_SI < 10 )
+                {
+                    Color_Array[1] = Credit_FadeOut_Colors[10 - tmp_SI];
+                }
+
+                if ( tmp_SI > 88 )
+                {
+                    Color_Array[1] = Credit_FadeIn_Colors[10 - (tmp_SI + -88)];
+                }
+
+                //VGA_SetFontnColor(2, &Color_Array);
+
+                //LBX_DrawTextLine(0, tmp_SI, TBL_Credits_Texts[GAME_FirstShownCred + Loop_Var].Role, gsa_GUI_Credits_Text_IMG);
+
+                Role_String_Width = VGA_GetStringWidth(TBL_Credits_Texts[GAME_FirstShownCred + Loop_Var].Role);
+
+                if ( Role_String_Width > 1 )
+                {
+                    for ( tmp_DI = Role_String_Width + 1; tmp_DI < 102; tmp_DI += 4 )
+                    {
+                        //LBX_DrawTextLine(tmp_DI, tmp_SI, cnst_Credits_DOT, gsa_GUI_Credits_Text_IMG);
+                    }
+                }
+
+                //LBX_DrawTextLine(105, tmp_SI, TBL_Credits_Texts[GAME_FirstShownCred + Loop_Var].Name, gsa_GUI_Credits_Text_IMG);
+                tmp_SI = tmp_SI + 10;
+
+            }
+        }
+
+    }
+
+    GAME_CreditTextTop = GAME_CreditTextTop - 1;
+
+    if ( GAME_CreditTextTop < 1 )
+    {
+        GAME_FirstShownCred = GAME_FirstShownCred + 1;
+        GAME_CreditTextTop = GAME_CreditTextTop + 10;
+
+        if ( GAME_FirstShownCred > 48 )
+        {
+            GAME_CredsRollTimer = 0;
+            GAME_FirstShownCred = 0;
+            GAME_CreditTextTop = 95;
+        }
+    }
+
+    //VGA_WndOverlayLBX(85, 35, gsa_GUI_Credits_Text_IMG);
+    VGA_ResetDrawWindow();
+
+}
+
+
+
+
+// _o60p02c.c GAME_PrepareCredits
+// MGC_DEF.H
+
+#include "MGC_DEF.H";
+#include "MOM_DEF.H";
+#include "ST_FLIC.H";
+#include "ST_GUI.H";
+#include "ST_SA.H"
+
+// ./MAINMENU/CREDITS.C/.H
+// void Load_Credits(void)  // Main Menu Screen
+void GAME_PrepareCredits(void)
+{
+    GAME_FirstShownCred = 0;
+    GAME_CreditTextTop = 95;
+    gsa_GUI_Credits_Text_IMG = FP_SEG(SA_Alloc_First(MK_FP(gsa_Sandbox,0), 3125));
+    FLIC_Prepare(280, 122, gsa_GUI_Credits_Text_IMG);
+}

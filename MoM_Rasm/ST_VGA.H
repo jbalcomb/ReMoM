@@ -246,6 +246,7 @@ void VGA_DrawFilledRect(int x1, int y1, int x2, int y2, char Color);
 // seg026  //_s26p04
 // seg026  void VGA_PageFlip(void);
 
+// MoO2  Copy_Off_to_On_Page()
 // _s26p05
 void VGA_Copy_RSP_DSP(void);
 // _s26p06

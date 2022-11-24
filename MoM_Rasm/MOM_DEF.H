@@ -164,7 +164,7 @@ extern int g_TIMER_Count_Hi;                // dseg:3CBA
 // MoX_EXIT  extern char *cnst_Quit_Report6;             // dseg:3CF5
 
 
-extern void * gfp_TBL_Moves_Per_Tile;       // dseg:5BAC
+extern void * gfp_TBL_Moves_Per_Tile;       // dseg:5BAC    // loaded in ST_NEWG
 extern unsigned int gsa_CRP_SND_Music_Segment;  // dseg:5BB0
 extern void * gfp_CRP_Visibility_Myrror;    // dseg:5BB2
 extern void * gfp_CRP_Visibility_Arcanus;   // dseg:5BB6
@@ -190,7 +190,7 @@ extern void * gfp_TBL_HeroStats_P3; // dseg:65B8
 extern void * gfp_TBL_HeroStats_P4; // dseg:65BC
 extern void * gfp_TBL_HeroStats_P5; // dseg:65C0
 
-extern void * gfp_TBL_Spell_Data;   // dseg:662C
+extern void * gfp_TBL_Spell_Data;   // dseg:662C    // loaded in ST_NEWG
 
 extern unsigned int g_World_Data_Paras;     // dseg:6750
 extern unsigned int gsa_World_Data_Extra;   // dseg:6752

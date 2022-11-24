@@ -3,12 +3,18 @@
 
 #include "ST_GUI.H"
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
+
 void GUI_SetWindows(int argWindowCount, struct s_GUI_WINDOW *argWindowArray)
 {
     int tmpWindowCount;
     struct s_GUI_WINDOW *tmpGuiWindow;
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] BEGIN: GUI_SetWindows(argWindowCount=%d, argWindowArray=0x%04X)\n", __FILE__, __LINE__, argWindowCount, argWindowArray);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: GUI_SetWindows(argWindowCount = %d, argWindowArray = 0x%04X)\n", __FILE__, __LINE__, argWindowCount, argWindowArray);
 #endif
 
 //    printf("DEBUG: %s %d BEGIN: GUI_SetWindows()\n", __FILE__, __LINE__);
@@ -55,8 +61,8 @@ void GUI_SetWindows(int argWindowCount, struct s_GUI_WINDOW *argWindowArray)
 // mov  [GUI_CursorOffset], ax
 // mov  ax, [bx+GUI_WINDOW.Cursor_Index]
 // mov  [GUI_CurrentCursor], ax
-//    printf("DEBUG: %s %d END: GUI_SetWindows()\n", __FILE__, __LINE__);
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] END: GUI_SetWindows(argWindowCount=%d, argWindowArray=0x%04X)\n", __FILE__, __LINE__, argWindowCount, argWindowArray);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: GUI_SetWindows(argWindowCount = %d, argWindowArray = 0x%04X)\n", __FILE__, __LINE__, argWindowCount, argWindowArray);
 #endif
 }

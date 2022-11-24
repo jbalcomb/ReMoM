@@ -2,22 +2,22 @@
 #include "MAINMENU.H"
 
 #include "MOM_DEF.H"
-#include "MGC_DEF.H"    /* cnst_QUIT_Message */
+#include "MGC_DEF.H"    /* g_GUI_MainMenuWindow */
 
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
-// #include "MoX_DIR.H"
-// #include "MoX_Fiel.H"
-// #include "S2_FLIC.H"
+#include "ST_FLIC.H"    /* FLIC_Draw()) */
+#include "seg028.H"     /* FLIC_Get_CurrentFrame(), FLIC_Reset_CurrentFrame(), FLIC_Set_CurrentFrame() */
 #include "ST_GUI.H"
-// #include "S2_LBX.H"
-// #include "MoX_MD.H"
-// #include "MoX_MISC.H"
+#include "ST_LBX.H"
 #include "ST_SCRN.H"    /* SCRN_Set_Redraw_Function() */
-// _s34p76c.c:void SCRN_Set_Redraw_Function(void (*Refresh_Fn)(void), int Refresh_Timer)  // ~= per 1oom
-// #include "MoX_TXT.H"    /* Set_Outline_Color() */
-#include "ST_TXT.H"
+#include "ST_TXT.H"     /* Set_Outline_Color() */
 #include "ST_VGA.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
 
 #pragma warn -aus   // Identifier is assigned a value that is never used.
 /*
@@ -54,10 +54,22 @@ char cnst_HOTKEY_Esc = '\x1B';              // dseg:28D0
 // MGC  dseg:2077  cnst_ZeroString_4 db 0
 // used as key code for all of the calls to GUI_CreateClickLabel()
 
+/*
+    Initialized Data
+*/
 
+struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 0, 319, 199}; // dseg:205E
 
 char mainscrn_lbx_file[] = "MAINSCRN";          // MGC  dseg:28A7
 char vortex_lbx_file[] = "VORTEX";              // MGC  dseg:28B0
+
+unsigned char * mainmenu_top;  // MAINSCRN.LBX, 0
+unsigned char * mainmenu_bot;  // MAINSCRN.LBX, 5
+unsigned char * mainmenu_c;  // VORTEX.LBX, 1  "Continue"
+unsigned char * mainmenu_h;  // VORTEX.LBX, 2  "Hall Of Fame"
+unsigned char * mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
+unsigned char * mainmenu_n;  // VORTEX.LBX, 4  "New Game"
+unsigned char * mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
 
 
 // MGC  dseg:206C  CRP_Unused_Anim_Var dw 0
@@ -153,7 +165,7 @@ int screen_fade = 0;
 // ST_GUI      signed short x2;
 // ST_GUI      signed short y2;
 // ST_GUI  };
-struct default_mouse_list main_menu_window = {1, 0, 0, 0, 319, 199};
+// TODO  struct default_mouse_list main_menu_window = {1, 0, 0, 0, 319, 199};
 // MoO2
 // struct (12 bytes) default_mouse_list
 // Address: 02:0017C522
@@ -207,16 +219,20 @@ void Main_Menu_Load_Pictures(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Load_Pictures()\n", __FILE__, __LINE__);
 #endif
 
-    // EMM_Load_LBX_File_1(mainscrn_lbx_file);
+// #if defined(__DOS16__)
+    EMM_Load_LBX_File_1(mainscrn_lbx_file);
+// #endif
 
     // Nonportable pointer conversion ...
-    mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
-    mainmenu_bot = LBX_Load(mainscrn_lbx_file, 5);
-    mainmenu_c   = LBX_Load(vortex_lbx_file, 1);
-    mainmenu_h   = LBX_Load(vortex_lbx_file, 2);
-    mainmenu_q   = LBX_Load(vortex_lbx_file, 3);
-    mainmenu_n   = LBX_Load(vortex_lbx_file, 4);
-    mainmenu_l   = LBX_Load(vortex_lbx_file, 5);
+    // TODO(JimBalcomb,20221124): move ST LBXE_LoadSingle_LM() to MoX LBX_Load()
+    mainmenu_top = LBXE_LoadSingle_LM(mainscrn_lbx_file, 0);
+    mainmenu_bot = LBXE_LoadSingle_LM(mainscrn_lbx_file, 5);
+    mainmenu_c   = LBXE_LoadSingle_LM(vortex_lbx_file, 1);
+    mainmenu_h   = LBXE_LoadSingle_LM(vortex_lbx_file, 2);
+    mainmenu_q   = LBXE_LoadSingle_LM(vortex_lbx_file, 3);
+    mainmenu_n   = LBXE_LoadSingle_LM(vortex_lbx_file, 4);
+    mainmenu_l   = LBXE_LoadSingle_LM(vortex_lbx_file, 5);
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Load_Pictures()\n", __FILE__, __LINE__);
@@ -283,7 +299,7 @@ void Main_Menu_Screen_Control(void)
     dbg_prn("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
 #endif
 
-    Exit(cnst_QUIT_Message);  // Exit_With_Message(quit_message);
+    Exit(quit_message);  // Exit_With_Message(quit_message);
 }
 
 // MGC s01p05
@@ -321,12 +337,8 @@ void Main_Menu_Add_Fields(void)
         itoa(itr_save_gams, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, save_file_extension);
-#if defined(__DOS16__)
-        if(DIR(File_Name, Found_File_Name) == 0)
-#endif
-#if defined(__WIN32__)
-        if(0 == 0)
-#endif
+        // if(DIR(match_string, found_file) == 0)
+        if(DISK_FileFind(File_Name, Found_File_Name) == 0)
         {
             save_gams[save_gam_count] = ST_UNDEFINED;
         }
@@ -348,7 +360,7 @@ void Main_Menu_Add_Fields(void)
         save_exists = ST_TRUE;
     }
 
-    Clear_Fields();
+    CTRL_Clear();  // Clear_Fields();
 
     menu_shift = 0;
 
@@ -459,12 +471,12 @@ int Main_Menu_Screen(void)
     // if(screen_fade != ST_FALSE) { /* VGA_Fade_Out */ }
 
     // ? macro ? ~== Clear Both Screen Pages
-    Fill(0, 0, 319, 199, 0);
-    Set_Page_On();
-    Fill(0, 0, 319, 199, 0);
-    Set_Page_Off();
+    VGA_DrawFilledRect(0, 0, 319, 199, 0);  // Fill()
+    VGA_SetDirectDraw();  // Set_Page_On()
+    VGA_DrawFilledRect(0, 0, 319, 199, 0);  // Fill()
+    VGA_Set_DSP_Addr();  // Set_Page_Off();
 
-    Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    PAL_Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
 
     /* GAME_LoadSettings */
 
@@ -484,7 +496,8 @@ int Main_Menu_Screen(void)
         itoa(itr_save_gams, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, save_file_extension);
-        if(DIR(File_Name, Found_File_Name) == 0)
+        // if(DIR(File_Name, Found_File_Name) == 0)
+        if(DISK_FileFind(File_Name, Found_File_Name) == 0)
         {
             save_gams[save_gam_count] = ST_UNDEFINED;
         }
@@ -506,8 +519,7 @@ int Main_Menu_Screen(void)
         save_exists = ST_TRUE;
     }
 
-    // MoO2 Clear_Fields()
-    Clear_Fields();
+    CTRL_Clear();  // Clear_Fields();
 
     menu_shift = 0;
 
@@ -566,7 +578,7 @@ int Main_Menu_Screen(void)
     else
         field_idx_hotkey_C = CTRL_CreateHotkey(hotkey_C, -1);
     if(save_exists == 0)
-        field_idx_hotkey_L = -1000;
+        field_idx_hotkey_L = -1000;  // INVALID
     else
         field_idx_hotkey_L = CTRL_CreateHotkey(hotkey_L, -1);
     field_idx_hotkey_N = CTRL_CreateHotkey(hotkey_N, -1);
@@ -574,13 +586,16 @@ int Main_Menu_Screen(void)
     field_idx_hotkey_Q = CTRL_CreateHotkey(hotkey_Q, -1);
     field_idx_hotkey_ESC = CTRL_CreateHotkey(hotkey_ESC, -1);
 
-    Set_Mouse_List(1, &main_menu_window);
+    // GUI_SetWindows(1, &main_menu_window);  // Set_Mouse_List(1, &main_menu_window);
+    GUI_SetWindows(1, g_GUI_MainMenuWindow);
 
     // TODO(JimBalcomb,20220723): figure out if this SaveCursorArea is just because of the subsequent MouseEmuMoveTo
-    CRL_Save_RSP(MD_Get_X(), MD_Get_Y());
+    CRL_Save_RSP(MD_GetX(), MD_GetY());  // CRL_Save_RSP(MD_Get_X(), MD_Get_Y());
     // GUI_MouseEMUMoveTo(GUI_NewGame_Label);
 
-    FLIC_Reset_CurrentFrame(mainmenu_top);
+    // MGC s28p15  FLIC_Reset_CurrentFrame  FLIC_ResetFrame  LBX_IMG_ResetFrame
+    // FLIC_Reset_CurrentFrame(mainmenu_top);
+    FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_top));
 
     // TODO(JimBalcomb): 2022017: double check it's accurate that this is being set a second time here, and add a note to avoid questioning this again in the future
     main_menu_selection = ST_UNDEFINED;
@@ -589,13 +604,12 @@ int Main_Menu_Screen(void)
 
     // GUI_SetHelp(HLP_IDX_0, 5);
 
-    Set_Input_Delay(4);
+    IN_Set_Skip(4);  // Set_Input_Delay(4);
 
 
     while(flag_done == ST_FALSE)
     {
-        CLK_Save();
-
+        CLK_SaveCounter();  // CLK_Save();
 
         // ST_GUI.H  _s34p66c.c  int IN_GetInput(void)
         input_field_idx = IN_GetInput();  // _s34p66c.c  1oom :: oi1 = uiobj_handle_input_cond();
@@ -637,11 +651,11 @@ int Main_Menu_Screen(void)
         if(flag_done == ST_FALSE)
         {
             Main_Menu_Screen_Draw();
-            Toggle_Pages();
+            SCRN_SimplePageFlip();  // Toggle_Pages();
             if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE)))
             {
-                // j_VGA_Fade_In()
-                Copy_Off_To_On_Page();  // TODO(JimBalcomb,20220117): figure out what Copy_Off_To_On_Page() actually does
+                // Fade_In()
+                VGA_Copy_RSP_DSP();  // Copy_Off_To_On_Page();  // TODO(JimBalcomb,20220117): figure out what Copy_Off_To_On_Page() actually does
                 draw_done = ST_TRUE;
                 screen_fade = ST_FALSE;
             }
@@ -652,7 +666,7 @@ int Main_Menu_Screen(void)
 
     SCRN_DisableRedraw();
 
-    Deactivate_Help_List();
+    HLP_ClearHelp();  // Deactivate_Help_List();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: Main_Menu_Screen()\n", __FILE__, __LINE__);
@@ -679,14 +693,16 @@ void Main_Menu_Screen_Draw(void)
     menu_x_start = 123;
     menu_y_start = 141;
 
-    // MoO2  Get_Mouse_Field_  Address: 01:000857F8
-    mouse_field = GUI_MousedControl();
+    mouse_field = GUI_MousedControl();  // MGC s34p25  Get_Mouse_Field()
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] mouse_field: %d\n", __FILE__, __LINE__, mouse_field);
+#endif
 
-    Set_Page_Off();
-    Fill(0, 0, 319, 199, 0);
+    VGA_DrawFilledRect(0, 0, 319, 199, 0);  // Fill()
+    VGA_Set_DSP_Addr();  // Set_Page_Off();
 
-    Title_Frame_Index = FLIC_Get_CurrentFrame(mainmenu_top);
-    FLIC_Set_CurrentFrame(mainmenu_top, 0);
+    Title_Frame_Index = FLIC_Get_CurrentFrame(FP_SEG(mainmenu_top));
+    FLIC_Set_CurrentFrame(FP_SEG(mainmenu_top), 0);
     for(Loop_Var = 0; Loop_Var <= Title_Frame_Index; Loop_Var++)
     {
         FLIC_Draw(0, 0, mainmenu_top);
@@ -707,40 +723,41 @@ void Main_Menu_Screen_Draw(void)
     else
     {
         if(mouse_field == field_idx_click_L)
-            FLIC_Reset_CurrentFrame(mainmenu_l);
+            FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_l));
         else
-            FLIC_Set_CurrentFrame(mainmenu_l, 1);
+            FLIC_Set_CurrentFrame(FP_SEG(mainmenu_l), 1);
         FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
     }
 
     if(save9_exists != 0)
     {
         if(mouse_field == field_idx_click_C )
-            FLIC_Reset_CurrentFrame(mainmenu_c);
+            FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_c));
         else
-            FLIC_Set_CurrentFrame(mainmenu_c, 1);
+            FLIC_Set_CurrentFrame(FP_SEG(mainmenu_c), 1);
         FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
     }
 
     if(mouse_field == field_idx_click_N)
-        FLIC_Reset_CurrentFrame(mainmenu_n);
+        FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_n));
     else
-        FLIC_Set_CurrentFrame(mainmenu_n, 1);
+        FLIC_Set_CurrentFrame(FP_SEG(mainmenu_n), 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
 
     if(mouse_field == field_idx_click_H)
-        FLIC_Reset_CurrentFrame(mainmenu_h);
+        FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_h));
     else
-        FLIC_Set_CurrentFrame(mainmenu_h, 1);
+        FLIC_Set_CurrentFrame(FP_SEG(mainmenu_h), 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
 
     if(mouse_field == field_idx_click_Q)
-        FLIC_Reset_CurrentFrame(mainmenu_q);
+        FLIC_Reset_CurrentFrame(FP_SEG(mainmenu_q));
     else
-        FLIC_Set_CurrentFrame(mainmenu_q, 1);
+        FLIC_Set_CurrentFrame(FP_SEG(mainmenu_q), 1);
     FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
 
-    // DBG  VGA_DAC_Write();
+    // 
+    VGA_DAC_Write();
 
     // ? CRP_Unused_Anim_Var = ((CRP_Unused_Anim_Var + 1) / 20); ?
 

@@ -7,6 +7,7 @@
 
 #include "ST_GUI.H"
 
+
 int MD_Init(void)
 {
     unsigned short c_sgmt;

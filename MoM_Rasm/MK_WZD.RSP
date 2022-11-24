@@ -1,10 +1,11 @@
 /c /l /s /TDe /v +
 C:\BORLANDC\LIB\C0L.OBJ +
 WZD.OBJ +
-MGC_DEF.OBJ +
 WZD_main.OBJ +
+WZD_DEF.OBJ +
 MOM_DEF.OBJ +
 ST_DEF.OBJ +
+.\MAINMENU\MAINMENU.OBJ +
 ST_CRSR.OBJ +
 ST_CTRL.OBJ +
 ST_DBG.OBJ +
@@ -22,9 +23,6 @@ ST_TYPE.OBJ +
 ST_QUIT.OBJ +
 ST_VGA.OBJ +
 _o57p01c.obj +
-_o60p01c.obj +
-_o60p02c.obj +
-seg001.obj +
 _s02p01.obj +
 _s02p03.obj +
 _s02p05.obj +

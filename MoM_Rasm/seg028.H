@@ -14,11 +14,13 @@ extern "C" {
 
 
 /*
-    seg028
+    MGC  seg028
+    WZD  seg030
 */
 
-// s28p02
-void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr sa_FLIC_Header);
+
+// w/ MAINMENU CREDITS  // MGC s28p02
+// void FLIC_Prepare(int FlicWidth, int FlicHeight, SAMB_addr sa_FLIC_Header);
 
 // s28p11
 // void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);

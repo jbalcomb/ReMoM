@@ -13,24 +13,24 @@ extern	char	configname[13];
 
 
 
-// struc CreditsPairs ; (sizeof=0x4)
-// Role dw ?                               ; offset (00031D10)
-// Name dw ?                               ; offset (00031D10)
-// ends CreditsPairs
-struct s_CreditsPairs //; (sizeof=0x4)
-{
-    char *Role;
-    char *Name;
-};
+// MAINMENU CREDITS  // struc CreditsPairs ; (sizeof=0x4)
+// MAINMENU CREDITS  // Role dw ?                               ; offset (00031D10)
+// MAINMENU CREDITS  // Name dw ?                               ; offset (00031D10)
+// MAINMENU CREDITS  // ends CreditsPairs
+// MAINMENU CREDITS  struct s_CreditsPairs //; (sizeof=0x4)
+// MAINMENU CREDITS  {
+// MAINMENU CREDITS      char *Role;
+// MAINMENU CREDITS      char *Name;
+// MAINMENU CREDITS  };
 
 
 
 /*
     Initialized Data
 */
-extern struct s_GUI_WINDOW g_GUI_MainMenuWindow[]; // dseg:205E
+// MAINMENU  extern struct s_GUI_WINDOW g_GUI_MainMenuWindow[]; // dseg:205E
 // dseg:206A align 4
-extern int CRP_Unused_Anim_Var; // dseg:206C CRP_Unused_Anim_Var
+// MAINMENU  extern int CRP_Unused_Anim_Var; // dseg:206C CRP_Unused_Anim_Var
 // dseg:206E __ovrbuffer dw 1000h                    ; declared in overlay.lib\OVRBUFF
 
 // \/\/\/\/\/ in MOM_DEF, as are same in WZD
@@ -46,18 +46,18 @@ extern int CRP_Unused_Anim_Var; // dseg:206C CRP_Unused_Anim_Var
 // /\/\/\/\/\ in MOM_DEF, as are same in WZD
 
 // dseg:287A cnst_MUSIC_File db 'music',0
-extern char cnst_QUIT_Message[];            // dseg:2880
-extern char g_LbxNm_MAINSCRN[];             // dseg:28A7 
-extern char cnst_HOTKEY_N;                  // dseg:28AE
-extern char g_LbxNm_VORTEX[];               // dseg:28B0 
-extern char g_LbxNm_WIZARDS[];              // dseg:28B7
-extern char g_LbxNm_SPELLDAT[];             // dseg:28BF
-extern char cnst_HOTKEY_C;                  // dseg:28C8
-extern char cnst_HOTKEY_L;                  // dseg:28CA
-extern char cnst_HOTKEY_H;                  // dseg:28CC
-extern char cnst_HOTKEY_Q;                  // dseg:28CE
-extern char cnst_HOTKEY_Esc;                // dseg:28D0
-extern char g_LbxNm_TERRSTAT[];             // dseg:28D2
+// MAINMENU  extern char cnst_QUIT_Message[];            // dseg:2880
+// MAINMENU  extern char g_LbxNm_MAINSCRN[];             // dseg:28A7 
+// MAINMENU  extern char cnst_HOTKEY_N;                  // dseg:28AE
+// MAINMENU  extern char g_LbxNm_VORTEX[];               // dseg:28B0 
+// ST_NEWG  extern char g_LbxNm_WIZARDS[];              // dseg:28B7
+// ST_NEWG  extern char g_LbxNm_SPELLDAT[];             // dseg:28BF
+// MAINMENU  extern char cnst_HOTKEY_C;                  // dseg:28C8
+// MAINMENU  extern char cnst_HOTKEY_L;                  // dseg:28CA
+// MAINMENU  extern char cnst_HOTKEY_H;                  // dseg:28CC
+// MAINMENU  extern char cnst_HOTKEY_Q;                  // dseg:28CE
+// MAINMENU  extern char cnst_HOTKEY_Esc;                // dseg:28D0
+// ST_NEWG  extern char g_LbxNm_TERRSTAT[];             // dseg:28D2
 // dseg:28DB cnst_HLPENTRY_File db 'hlpentry',0
 
 // \/\/\/\/\/ in MOM_DEF, as are same in WZD
@@ -73,7 +73,7 @@ extern char g_LbxNm_TERRSTAT[];             // dseg:28D2
     ? next section all for settings screen ?
 */
 // dseg:28FE GUI_Settings_Wnd GUI_WINDOW <Crsr_Normal, 0, 0, 0, 319, 199>
-extern int GUI_LoadSave_State; // dseg:290A  ; 3 indicates returning from the settings screen
+// MAINMENU  extern int GUI_LoadSave_State; // dseg:290A  ; 3 indicates returning from the settings screen
 // dseg:290C GUI_Settings_Tops dw    53,   64,   75,  102,  113,  124,  135,  153,  146,  157,  167,  163,  174
 // dseg:2926 COL_Settings db 4 dup(62h)
 // dseg:292A cnst_LOAD_File db 'LOAD.LBX'
@@ -122,12 +122,12 @@ extern int GUI_LoadSave_State; // dseg:290A  ; 3 indicates returning from the se
 // dseg:38C9 COL_HLP_Text db 0B8h,4 dup( 37h)        ; this should ideally have been 16 bytes long
 // dseg:38CE cnst_HELP_File db 'HELP',0              ; could use dseg:2a81
 // dseg:38D3 cnst_HELP_File2 db 'help',0             ; should use dseg:38ce
-extern int GAME_FirstShownCred;             // dseg:38D8
-extern int GAME_CreditTextTop;              // dseg:38DA
-extern int GAME_CredsRollTimer;             // dseg:38DC
+// MAINMENU CREDITS  extern int GAME_FirstShownCred;             // dseg:38D8
+// MAINMENU CREDITS  extern int GAME_CreditTextTop;              // dseg:38DA
+// MAINMENU CREDITS  extern int GAME_CredsRollTimer;             // dseg:38DC
 
 
-extern struct s_CreditsPairs TBL_Credits_Texts[];
+// MAINMENU CREDITS  extern struct s_CreditsPairs TBL_Credits_Texts[];
 // dseg:38DE TBL_Credits_Texts CreditsPairs <offset cnst_Credits_00, offset cnst_Credits_01>; 0 ; could use dseg:2947 or the other way around
 // dseg:38DE CreditsPairs <offset cnst_ZeroString_6, offset cnst_ZeroString_6>; 1
 // dseg:38DE CreditsPairs <offset cnst_Credits_20, offset cnst_Credits_21>; 2
@@ -225,7 +225,7 @@ extern struct s_CreditsPairs TBL_Credits_Texts[];
 // dseg:3BCC cnst_Credits_460 db 'Special Thanks',0
 // dseg:3BDB cnst_Credits_461 db 'Jenny Cowlishaw',0
 
-extern char cnst_Credits_DOT; // dseg:3BEB  db '.',0               ; should use dseg:30c9
+// MAINMENU CREDITS  extern char cnst_Credits_DOT; // dseg:3BEB  db '.',0               ; should use dseg:30c9
 // dseg:3BED align 2
 
 
@@ -235,73 +235,73 @@ extern char cnst_Credits_DOT; // dseg:3BEB  db '.',0               ; should use 
 */
 // dseg:52B2 g_GUI_String_2 dw 0
 // dseg:52B4 g_GUI_String_1 dw 0
-extern int GUI_Load_Lbl_Index;                      // dseg:52B6
+// MAINMENU  extern int GUI_Load_Lbl_Index;                      // dseg:52B6
 // dseg:52B8 IMG_FullScreen_BG@ dw 0
 
-extern unsigned int gsa_VORTEX_3_MenuQuitToDOS;     // dseg:52BA
-extern SAMB_addr sa_VORTEX_003;
-extern SAMB_ptr fp_VORTEX_003;
-extern SAMB_ptr p_VORTEX_003;
+// MAINMENU  extern unsigned int gsa_VORTEX_3_MenuQuitToDOS;     // dseg:52BA
+// MAINMENU  extern SAMB_addr sa_VORTEX_003;
+// MAINMENU  extern SAMB_ptr fp_VORTEX_003;
+// MAINMENU  extern SAMB_ptr p_VORTEX_003;
 // extern SAMB_ptr _menu_quittodos_seg;
 
-extern int GUI_HoF_Lbl_Index;                       // dseg:52BC
+// MAINMENU  extern int GUI_HoF_Lbl_Index;                       // dseg:52BC
 
-extern unsigned int gsa_VORTEX_2_MenuHallOfFame;    // dseg:52BE
-extern SAMB_addr sa_VORTEX_002;
-extern SAMB_ptr fp_VORTEX_002;
-extern SAMB_ptr p_VORTEX_002;
+// MAINMENU  extern unsigned int gsa_VORTEX_2_MenuHallOfFame;    // dseg:52BE
+// MAINMENU  extern SAMB_addr sa_VORTEX_002;
+// MAINMENU  extern SAMB_ptr fp_VORTEX_002;
+// MAINMENU  extern SAMB_ptr p_VORTEX_002;
 
-extern int GUI_Quit_Lbl_Index;                      // dseg:52C0
+// MAINMENU  extern int GUI_Quit_Lbl_Index;                      // dseg:52C0
 
-extern unsigned int gsa_VORTEX_5_MenuLoadGame;      // dseg:52C2
-extern SAMB_addr sa_VORTEX_005;
-extern SAMB_ptr fp_VORTEX_005;
-extern SAMB_ptr p_VORTEX_005;
+// MAINMENU  extern unsigned int gsa_VORTEX_5_MenuLoadGame;      // dseg:52C2
+// MAINMENU  extern SAMB_addr sa_VORTEX_005;
+// MAINMENU  extern SAMB_ptr fp_VORTEX_005;
+// MAINMENU  extern SAMB_ptr p_VORTEX_005;
 
-extern int g_GUI_MainMenuSelected;                  // dseg:52C4
-extern unsigned int gsa_WIZARDS_0to13[];            // dseg:52C6
+// MAINMENU  extern int g_GUI_MainMenuSelected;                  // dseg:52C4
+// ST_NEWG  extern unsigned int gsa_WIZARDS_0to13[];            // dseg:52C6
 // dseg:52E2 IMG_NewG_BtnBorder@ dw 0
-extern int g_GAME_HaveSaves;                        // dseg:52E4
+// MAINMENU  extern int g_GAME_HaveSaves;                        // dseg:52E4
 // dseg:52E6 NEWG_HaveLastProfile dw 0
 
-extern unsigned int gsa_MAINSCRN_0_AnimatedLogo;    // dseg:52E8
-extern SAMB_addr sa_MAINSCRN_000;
-extern SAMB_ptr fp_MAINSCRN_000;
-extern SAMB_ptr p_MAINSCRN_000;
+// MAINMENU  extern unsigned int gsa_MAINSCRN_0_AnimatedLogo;    // dseg:52E8
+// MAINMENU  extern SAMB_addr sa_MAINSCRN_000;
+// MAINMENU  extern SAMB_ptr fp_MAINSCRN_000;
+// MAINMENU  extern SAMB_ptr p_MAINSCRN_000;
 
-extern int GUI_NewGame_Label;                       // dseg:52EA
+// MAINMENU  extern int GUI_NewGame_Label;                       // dseg:52EA
 
-extern unsigned int gsa_VORTEX_4_MenuNewGame;       // dseg:52EC
-extern SAMB_addr sa_VORTEX_004;
-extern SAMB_ptr fp_VORTEX_004;
-extern SAMB_ptr p_VORTEX_004;
+// MAINMENU  extern unsigned int gsa_VORTEX_4_MenuNewGame;       // dseg:52EC
+// MAINMENU  extern SAMB_addr sa_VORTEX_004;
+// MAINMENU  extern SAMB_ptr fp_VORTEX_004;
+// MAINMENU  extern SAMB_ptr p_VORTEX_004;
 
-extern int GUI_Continue_Label;                      // dseg:52EE
+// MAINMENU  extern int GUI_Continue_Label;                      // dseg:52EE
 
-extern unsigned int gsa_VORTEX_1_MenuContinue;      // dseg:52F0
-extern SAMB_addr sa_VORTEX_001;
-extern SAMB_ptr fp_VORTEX_001;
-extern SAMB_ptr p_VORTEX_001;
+// MAINMENU  extern unsigned int gsa_VORTEX_1_MenuContinue;      // dseg:52F0
+// MAINMENU  extern SAMB_addr sa_VORTEX_001;
+// MAINMENU  extern SAMB_ptr fp_VORTEX_001;
+// MAINMENU  extern SAMB_ptr p_VORTEX_001;
 
-extern int g_GAME_HaveContSave;                     // dseg:52F2
+// MAINMENU  extern int g_GAME_HaveContSave;                     // dseg:52F2
 
-extern unsigned int gsa_MAINSCRN_5_ScreenBottom;    // dseg:52F4
-extern SAMB_addr sa_MAINSCRN_005;
-extern SAMB_ptr fp_MAINSCRN_005;
-extern SAMB_ptr p_MAINSCRN_005;
+// MAINMENU  extern unsigned int gsa_MAINSCRN_5_ScreenBottom;    // dseg:52F4
+// MAINMENU  extern SAMB_addr sa_MAINSCRN_005;
+// MAINMENU  extern SAMB_ptr fp_MAINSCRN_005;
+// MAINMENU  extern SAMB_ptr p_MAINSCRN_005;
 // extern SAMB_ptr _menu_bottom_castle_seg;
 
 // dseg:52F6 NEWG_Screen0_Frame dw 0
 // dseg:52F8 IMG_No_Load_Btn@ dw 0
 // dseg:52FA NEWG_LastRetorts@ dw 0
-extern int g_GUI_MainScreenJump;                    // dseg:52FC  XREF: GAME_MainMenu(), SCREEN_Menu(), SCREEN_LoadSave()
-extern int g_GAME_ValidSaveCount;                   // dseg:52FE
-extern int g_GAME_ValidSaves_Main[];                // dseg:5300
+// MAINMENU  extern int g_GUI_MAINMENUJump;                    // dseg:52FC  XREF: GAME_MainMenu(), SCREEN_Menu(), SCREEN_LoadSave()
+// MAINMENU  extern int g_GAME_ValidSaveCount;                   // dseg:52FE
+// MAINMENU  extern int g_GAME_ValidSaves_Main[];                // dseg:5300
 
 // TODO(JimBalcomb): figure out what this is for and where it belongs in the code-base
-extern int g_ScreenChangeFade; // dseg:64AE
+// MAINMENU  extern int g_ScreenChangeFade; // dseg:64AE
 
-extern unsigned int gsa_GUI_Credits_Text_IMG; // dseg:948C
+// MAINMENU CREDITS  extern unsigned int gsa_GUI_Credits_Text_IMG; // dseg:948C
 
 
 #ifdef __cplusplus
@@ -309,32 +309,38 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+
 /*
-    seg001
+    MAGIC.EXE seg001
 */
-// _s01p01 MGC_MAIN.C
+
+// MGC s01p01
 // int MGC_Main(void);
-// seg001.H
-// // _s01p03c.c
+
+// MGC s01p03
 // void GAME_MainMenu(void);
-// // _s01p04c.c
+
+// MGC s01p04
 // void GAME_LoadMainImages(void);
-// // _s01p05c.c
+
+// MGC s01p05
 // int SCREEN_Menu(void);
-// // _s01p06c.c
+
+// MGC s01p06
 // void SCREEN_Menu_Draw(void);
-// 
-// // _s01p07c.c
+
+// MGC s01p07
 // void GAME_Load_TERRSTAT_0(void);
-// // _s01p08c.c
+
+// MGC s01p08
 // void GAME_Load_SPELLDAT_0(void);
 
 /*
-    ovl060
+    MAGIC.EXE ovl060
 */
-// _o60p01
+// MGC o60p01
 int GAME_DrawCredits(void);
-// _o60p02c.c
+// MGC o60p02c.c
 void GAME_PrepareCredits(void);
 
 

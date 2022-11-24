@@ -48,14 +48,20 @@ VGA_TextDraw_Init();
 farpokeb()
 */
 
-// #include "STU_DBG.H"
-
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 // s14p01
 // void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
 void Hardware_Init(int argInputType, char * font_file)
 {
     int tmpInputType;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Hardware_Init()\n", __FILE__, __LINE__);
+#endif
+
     EMM_Startup();
     VGA_SetModeY();
     if (argInputType == -1)
@@ -70,9 +76,14 @@ void Hardware_Init(int argInputType, char * font_file)
         //SND_Init(M_Drv, argSoundChannels, M_IO, M_IRQ, M_DMA, D_Drv, D_IO, D_IRQ, D_DMA);
         tmpInputType = argInputType;
     }
-    IN_Init(tmpInputType);  // _s34p65
+    IN_Init(tmpInputType);  // MGC s34p65  ST_GUI.H
     RNG_TimerSeed();
     VGA_Set_DSP_Addr();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Hardware_Init()\n", __FILE__, __LINE__);
+#endif
+
 }
 
 // s14p03

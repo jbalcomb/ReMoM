@@ -9,6 +9,11 @@
 
 #include <STDIO.H>      /* FILE */
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
+
 /*
     MAGIC.EXE seg001
 */
@@ -20,7 +25,7 @@ int MGC_main(int argc, char *argv[])
     FILE * fileptr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: MGC_main()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: MGC_main(argc = %d, argv[0] = %s)\n", __FILE__, __LINE__, argc, argv[0]);
 #endif
     
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
@@ -64,9 +69,10 @@ int MGC_main(int argc, char *argv[])
         if not "JENNY", then Play_Intro()
     */
 
-    GAME_LoadMainImages();
-    GAME_Load_TERRSTAT_0();
-    GAME_Load_SPELLDAT_0();
+    // MAINMENU  GAME_LoadMainImages();  // MGC s01p04
+    Main_Menu_Load_Pictures();
+    // ST_NEWG  GAME_Load_TERRSTAT_0();
+    // ST_NEWG  GAME_Load_SPELLDAT_0();
 
     // Load_Credits();
 
@@ -84,7 +90,7 @@ int MGC_main(int argc, char *argv[])
 
 
 
-    // GAME_MainMenu();  // MGC s01p03
+    // MAINMENU  GAME_MainMenu();  // MGC s01p03
     Main_Menu_Screen_Control();
 
 
@@ -93,7 +99,7 @@ int MGC_main(int argc, char *argv[])
     // Exit_With_Size();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: MGC_main()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: MGC_main(argc = %d, argv[0] = %s)\n", __FILE__, __LINE__, argc, argv[0]);
 #endif
     return 0;
 }

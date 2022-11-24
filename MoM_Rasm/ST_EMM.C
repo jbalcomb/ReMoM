@@ -1033,7 +1033,7 @@ Done:
     return EmmHndlNbr;
 }
 
-// s13p11
+// MGC s13p11
 // TODO(JimBalcomb): add DEBUG for status/why/which failure
 unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int FormatType)
 {
@@ -1073,12 +1073,9 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
 //     }
 // #endif
 
-// #ifdef STU_DEBUG
-//     //if (bDebugDetail)
-//     //{
-//         dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
-//     //}
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: EMM_LBX_Load_Entry(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d)\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType);
+#endif
 
     SAMB_data = ST_FAILURE;
 
@@ -1158,12 +1155,9 @@ Error:
 
 Done:
 
-// #ifdef STU_DEBUG
-//     //if (bDebugDetail)
-//     //{
-//         dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_Load_Entry(EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, FormatType=%d) { SAMB_data=0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
-//     //}
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: EMM_LBX_Load_Entry(EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d, FormatType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndlNm, LbxEntry, SAMB_head, LoadType, FormatType, SAMB_data);
+#endif
     return SAMB_data;
 }
 
