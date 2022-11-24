@@ -1,13 +1,14 @@
 .suffixes: .cpp .c .asm
 
 .c.obj:
-    BCC -B -c -ml -Tm2 $<
+    BCC -B -c -ISTU -ml -Tm2 $<
 #    BCC -B -c -ml -M -S -Tm2 -v -y $<
 #    BCC -B -c -ml -M -S -Tm2 -UDEBUG -USTU_DEBUG -UTEST -USTU_TEST -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -D__DOS16__=1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 
 .cpp.obj:
-    BCC -B -c -ml -Tm2 $<
+    BCC -B -c -ISTU -ml -Tm2 $<
+    BCC -B -c -ISTU -ml -Tm2 $<
 #    BCC -B -c -ml -M -S -Tm2 -v -y $<
 #    BCC -B -c -ml -M -S -Tm2 -UDEBUG -USTU_DEBUG -UTEST -USTU_TEST -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -D__DOS16__=1 -ml -M -S -U__VSCODE__ -v -y $<

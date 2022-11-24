@@ -18,12 +18,12 @@ LDFLAGS =
 .suffixes: .cpp .c .asm
 
 .c.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ISTU -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 #    BCC -B -c -ml -M -S -Tm2 -U__VSCODE__ -v -y $<
 
 .cpp.obj:
-    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ml -M -S -U__VSCODE__ -v -y $<
+    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -ISTU -ml -M -S -U__VSCODE__ -v -y $<
 #    BCC -B -c -DSTU_DEBUG=1 -DSTU_TEST=1 -D__DOS16__=1 -g1 -j1 -ml -M -S -U__VSCODE__ -v -y $<
 #    BCC -B -c -ml -M -S -U__VSCODE__ -v -y $<
 
@@ -40,7 +40,8 @@ LDFLAGS =
 # OBJP_s34 = _s34p01c.obj+_s34p08c.obj+_s34p12c.obj+_s34p13c.obj+_s34p22c.obj+_s34p25.obj+_s34p26.obj+_s34p47.obj+_s34p49c.obj+_s34p57c.obj+_s34p65c.obj+_s34p66c.obj+_s34p67c.obj+_s34p71c.obj+_s34p72c.obj+_s34p73c.obj+_s34p76c.obj+_s34p79c.obj+_s34p81c.obj+_s34p82c.obj+_s34p83c.obj+_s34p85c.obj
 
 
-OBJ_STU = STU_DBG.OBJ STU_TST.OBJ STU_UTIL.OBJ STU_VGA.OBJ
+OBJ_STU = \
+.\STU\STU_DBG.OBJ .\STU\STU_TST.OBJ .\STU\STU_UTIL.OBJ .\STU\STU_VGA.OBJ
 OBJ_MGC = MGC_DEF.OBJ MGC_main.OBJ
 OBJ_MoM = MOM_DEF.OBJ
 OBJ_ST = ST_DEF.OBJ ST_CRSR.OBJ ST_CTRL.OBJ ST_DBG.OBJ ST_EMM.OBJ ST_EXIT.OBJ ST_FLIC.OBJ ST_GUI.OBJ ST_HLP.OBJ ST_LBX.OBJ ST_SA.OBJ ST_SCRN.OBJ ST_SND.OBJ ST_TXT.OBJ ST_TYPE.OBJ ST_QUIT.OBJ ST_VGA.OBJ
