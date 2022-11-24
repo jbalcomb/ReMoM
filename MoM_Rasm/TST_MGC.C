@@ -4,6 +4,7 @@
 #include "MGC_DEF.H"
 
 #include "MGC_main.H"
+#include "WZD_main.H"
 
 /*
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
@@ -181,7 +182,9 @@ int main(int argc, char *argv[])
     // // test_FLIC_Draw_XY();
 
     // test_MGC_Main();
-    MGC_main(argc, argv);
+    // MGC_main(argc, argv);
+    // test_WZD_Main();
+    WZD_main(argc, argv);
 
     // test_wait_for_esc();
     // test_TST_Test_Screen();
