@@ -1,37 +1,43 @@
 
+# Visual Studio Code (VS Code) (VSC)
 .vscode/
-MoM_Rasm.code-workspace
+*.code-workspace
 
+
+# Visual Studio (VS) ~2022
+# VS - cache/options directory
 .vs/
+# VS - build directory
 x64/
-STU-MoM_Rasm.sln
-STU-MoM_Rasm.vcxproj
-STU-MoM_Rasm.vcxproj.filters
-STU-MoM_Rasm.vcxproj.user
-
-win32_mom.sln
+x86/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 
 CppProperties.json
 
 build/
 
-DEBUG.LOG
-DEBUG-.LOG
-TEST.LOG
-TEST-.LOG
+
+# MoM
 
 *.GAM
 *.LBX
 *.MOM
 *.SET
 
-*.BMP
+
+# STU
+
 *.BIN
+*.BMP
 *.LOG
 
 stderr.txt
 stdout.txt
 
+# Borland C++ v3.0 (c) 1992
 *.DSK
 *.EXE
 *.LST
