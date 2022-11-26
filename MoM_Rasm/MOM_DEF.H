@@ -242,15 +242,6 @@ void VGA_WaitSync(void);
 
 
 /*
-    seg003
-*/
-
-// _s03p05
-long DOS_GetFileSize(char *fname);
-//unsigned int C_GetFileSize(const char *filename);
-
-
-/*
     seg005
 */
 

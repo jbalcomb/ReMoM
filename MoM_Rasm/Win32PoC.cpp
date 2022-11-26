@@ -14,6 +14,8 @@
 
 #include "MoX_MAINMENU.C"
 
+#include "win_DIR.C"
+
 #include "MoX_DBG.C"
 #include "MoX_EXIT.C"
 #include "MoX_FLIC.C"
@@ -154,7 +156,9 @@ void main(void)
     char file_name[16] = "MAINSCRN";
     int entry_num = 0;
     char font_file[] = GAME_FONT_FILE;
-
+    char match_string[16] = "MAGIC.SET";
+    char found_file[16] = {0};
+    long file_size = -1;
 
     Debug_Log_Startup();
 
@@ -191,59 +195,80 @@ void main(void)
     // Error_Handler(GAME_FONT_FILE, 15, 0, 111);
     // Error_Handler(GAME_FONT_FILE, 16, 0, 111);
 
-    SAMB_head = Allocate_Space(348);
-    dbg_prn("SAMB_head: %p\n", SAMB_head);    
-    is_valid = Check_Allocation(SAMB_head);
-    dbg_prn("is_valid: %s\n", (is_valid == 0 ? "ST_FAILURE" : "ST_SUCCESS") );
+//     SAMB_head = Allocate_Space(348);
+//     dbg_prn("SAMB_head: %p\n", SAMB_head);    
+//     is_valid = Check_Allocation(SAMB_head);
+//     dbg_prn("is_valid: %s\n", (is_valid == 0 ? "ST_FAILURE" : "ST_SUCCESS") );
+// 
+//     // font_ptr = Farload(GAME_FONT_FILE, 0);
+//     font_ptr = Farload(font_file, 0);
+//     dbg_prn("font_ptr: %p\n", font_ptr);    
+// 
+//     // Load_Font_File(GAME_FONT_FILE);
+//     dbg_prn("Load_Font_File(font_file);");
+//     Load_Font_File(font_file);
+// 
+//     Load_Palette(0, -1, 0);
+// 
+//     // GAME_LoadMainImages();
+//         // MoO2  _bitmap, _mainmenu_last_seg, _mainmenu_first_seg, _main_menu_background_seg, _mainmenu
+//     mainmenu_top = Farload(mainscrn_lbx_file, 0);
+//     mainmenu_bot = Farload(mainscrn_lbx_file, 5);
+//     mainmenu_c   = Farload(vortex_lbx_file, 1);
+//     mainmenu_h   = Farload(vortex_lbx_file, 2);
+//     mainmenu_q   = Farload(vortex_lbx_file, 3);
+//     mainmenu_n   = Farload(vortex_lbx_file, 4);
+//     mainmenu_l   = Farload(vortex_lbx_file, 5);
+// 
+//     // void GAME_MainMenu(void)
+//     //      |-> SCREEN_Menu()
+// 
+//     // int SCREEN_Menu(void)
+//     Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+// 
+//     // SCREEN_Menu_Draw()
+//     // MenuArea_X_Left = 123;
+//     // MenuArea_Y_Top = 141;
+//     // if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
+//     //     FLIC_Reset_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS);
+//     // else
+//     //     FLIC_Set_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
+//     // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+//     // FLIC_Draw_XY(123, (141 + 48), mainmenu_q);
+//     // s28p11      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage
+//     // s28p11   void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
+//     // MoO2  Reset_Animation_Frame() {} WORD picture[4] = 0 }
+//     FLIC_Draw(123, (141 + 48), mainmenu_q);
 
-    // font_ptr = Farload(GAME_FONT_FILE, 0);
-    font_ptr = Farload(font_file, 0);
-    dbg_prn("font_ptr: %p\n", font_ptr);    
 
-    // Load_Font_File(GAME_FONT_FILE);
-    dbg_prn("Load_Font_File(font_file);");
-    Load_Font_File(font_file);
-
-    Load_Palette(0, -1, 0);
-
-    // GAME_LoadMainImages();
-        // MoO2  _bitmap, _mainmenu_last_seg, _mainmenu_first_seg, _main_menu_background_seg, _mainmenu
-    mainmenu_top = Farload(mainscrn_lbx_file, 0);
-    mainmenu_bot = Farload(mainscrn_lbx_file, 5);
-    mainmenu_c   = Farload(vortex_lbx_file, 1);
-    mainmenu_h   = Farload(vortex_lbx_file, 2);
-    mainmenu_q   = Farload(vortex_lbx_file, 3);
-    mainmenu_n   = Farload(vortex_lbx_file, 4);
-    mainmenu_l   = Farload(vortex_lbx_file, 5);
-
-    // void GAME_MainMenu(void)
-    //      |-> SCREEN_Menu()
-
-    // int SCREEN_Menu(void)
-    Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
-
-    // SCREEN_Menu_Draw()
-    // MenuArea_X_Left = 123;
-    // MenuArea_Y_Top = 141;
-    // if ( MouseOver_ControlIndex == GUI_Quit_Lbl_Index )
-    //     FLIC_Reset_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS);
-    // else
-    //     FLIC_Set_CurrentFrame(gsa_VORTEX_3_MenuQuitToDOS, 1);
-    // FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
-    // FLIC_Draw_XY(123, (141 + 48), mainmenu_q);
-    // s28p11      FLIC_Draw_XY            FLIC_Draw_XY(int Left, int Top, unsigned int FlicHdr_SgmtAddr)         VGA_DrawLBXImage
-    // s28p11   void FLIC_Draw_XY(int Left, int Top, SAMB_addr sa_FLIC_Header);
-    // MoO2  Reset_Animation_Frame() {} WORD picture[4] = 0 }
-    FLIC_Draw(123, (141 + 48), mainmenu_q);
+    // Allocate_FLIC_Frame_Buffer();
+    // Clear_FLIC_Frame_Buffer();
+    // Allocate_Palette_Buffer();
+    // Clear_Palette_Buffer();
+    // Allocate_Bitmap_Buffer();
+    // Clear_Bitmap_Buffer();
 
 
-    Allocate_FLIC_Frame_Buffer();
-    Clear_FLIC_Frame_Buffer();
-    Allocate_Palette_Buffer();
-    Clear_Palette_Buffer();
-    Allocate_Bitmap_Buffer();
-    Clear_Bitmap_Buffer();
+    // MoX_DIR.H  win_DIR.C
+    // int DIR(const char * match_string, char * found_file);
+    // long LOF(char * file_name);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] match_string: %s\n", __FILE__, __LINE__, match_string);
+    dbg_prn("DEBUG: [%s, %d] found_file: %s\n", __FILE__, __LINE__, found_file);
+#endif
+    DIR(match_string, found_file);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] match_string: %s\n", __FILE__, __LINE__, match_string);
+    dbg_prn("DEBUG: [%s, %d] found_file: %s\n", __FILE__, __LINE__, found_file);
+#endif
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] file_size: %ld\n", __FILE__, __LINE__, file_size);
+#endif
+    file_size = LOF(found_file);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] file_size: %ld\n", __FILE__, __LINE__, file_size);
+#endif
 
 
 

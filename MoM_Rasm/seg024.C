@@ -6,6 +6,8 @@
 #include "ST_TYPE.H"
 #include "ST_DEF.H"
 
+#include "MoX_DIR.H"    /* DIR() */
+
 #include "ST_VGA.H"  /* gsa_DSP_Addr */
 // extern unsigned int gsa_DSP_Addr;                   // dseg:41C4
 
@@ -105,7 +107,7 @@ void DBG_ScreenDump(void)
 
     Scrdmp_File_Number = 0;
     strcpy(ScreenDump_File, "SCRDMP00.FLI");
-    while( DISK_FileFind(ScreenDump_File, Buffer) != 0 )  // -1 success, 0 failure
+    while( DIR(ScreenDump_File, Buffer) != 0 )  // -1 success, 0 failure
     {
         Scrdmp_File_Number++;
         if( Scrdmp_File_Number < 10 )

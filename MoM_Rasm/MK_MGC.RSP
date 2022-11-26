@@ -22,12 +22,11 @@ ST_TXT.OBJ +
 ST_TYPE.OBJ +
 ST_QUIT.OBJ +
 ST_VGA.OBJ +
+dos_DIR.OBJ +
 _o57p01c.obj +
 _s02p01.obj +
 _s02p03.obj +
 _s02p05.obj +
-_s03p05c.obj +
-_s04p01c.obj +
 seg014.obj +
 _s16p01a.obj +
 _s15p01.obj +

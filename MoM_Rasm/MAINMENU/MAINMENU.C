@@ -4,11 +4,13 @@
 #include "MOM_DEF.H"
 #include "MGC_DEF.H"    /* g_GUI_MainMenuWindow */
 
+#include "MoX_DIR.H"    /* DIR() */
+
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
 #include "ST_FLIC.H"    /* FLIC_Draw()) */
 #include "seg028.H"     /* FLIC_Get_CurrentFrame(), FLIC_Reset_CurrentFrame(), FLIC_Set_CurrentFrame() */
-#include "ST_GUI.H"
+#include "ST_GUI.H"     /* MD_CDraw_Disable(), MD_CDraw_Restore() */
 #include "ST_LBX.H"
 #include "ST_SCRN.H"    /* SCRN_Set_Redraw_Function() */
 #include "ST_TXT.H"     /* Set_Outline_Color() */
@@ -338,7 +340,7 @@ void Main_Menu_Add_Fields(void)
         strcat(File_Name, Conversion_String);
         strcat(File_Name, save_file_extension);
         // if(DIR(match_string, found_file) == 0)
-        if(DISK_FileFind(File_Name, Found_File_Name) == 0)
+        if(DIR(File_Name, Found_File_Name) == 0)
         {
             save_gams[save_gam_count] = ST_UNDEFINED;
         }
@@ -496,8 +498,7 @@ int Main_Menu_Screen(void)
         itoa(itr_save_gams, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, save_file_extension);
-        // if(DIR(File_Name, Found_File_Name) == 0)
-        if(DISK_FileFind(File_Name, Found_File_Name) == 0)
+        if(DIR(File_Name, Found_File_Name) == 0)
         {
             save_gams[save_gam_count] = ST_UNDEFINED;
         }

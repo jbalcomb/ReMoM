@@ -1,6 +1,7 @@
 #ifndef ST_DEF_H
 #define ST_DEF_H
 
+
 // #if defined(__FARFUNCS__)
 // #if     LDATA
 // #if     !defined(__HUGE__)
@@ -179,23 +180,5 @@ static int delete = 0;
 extern unsigned int g_LFSR_LO_bits;         // dseg:431E  3568h  13672d  0011 0101 0110 1000b
 extern unsigned int g_LFSR_HO_bits;         // dseg:4320
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
-
-
-/*
-    seg004
-*/
-
-// _s04p01c.c
-// int __cdecl __far DISK_FileFind(char *FileName_Ptr, char *Read_Buffer)
-
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* ST_DEF_H */

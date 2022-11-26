@@ -19,6 +19,9 @@ mainscrn_lbx_file, vortex_lbx_file
 mainmenu_top, mainmenu_bot, mainmenu_c, mainmenu_h, mainmenu_q, mainmenu_n, mainmenu_l
 */
 
+#include "MoX_DIR.H"    /* DIR(), LOF() */
+
+
 #include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fwrite(); */
 
 
@@ -53,7 +56,7 @@ void TST_Test_Screen(void)
     int Screen_Action;
     FILE *fp;
     int flag_quit;
-    if ( DISK_FileFind(cnst_ConfigFile, Read_Buffer) == 0 )
+    if ( DIR(cnst_ConfigFile, Read_Buffer) == 0 )
     {
         Exit(cnst_ConfigErr);
     }
@@ -138,7 +141,7 @@ int TST_Do_Test_Screen(void)
         itoa(itr_SaveGam, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, cnst_SAVE_ext);
-        if(DISK_FileFind(File_Name, Found_File_Name) == 0)
+        if(DIR(File_Name, Found_File_Name) == 0)
         {
             g_GAME_ValidSaves_Main[g_GAME_ValidSaveCount] = ST_UNDEFINED;
         }

@@ -5,7 +5,9 @@
 
 #include "MOM_DEF.H"
 
-#include "ST_EXIT.H"  /* Exit() */
+#include "MoX_DIR.H"    /* LOF() */
+
+#include "ST_EXIT.H"    /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_LBX.H"
 #include "ST_SA.H"
@@ -808,41 +810,23 @@ void EMM_Startup(void)
 
 }
 
-// _s13p03
+// MGC s13p03
 void EMM_Load_LBX_File_1(char *argLbxFileName)
 {
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File_1(argLbxFileName = %s)\n", __FILE__, __LINE__, argLbxFileName);
+#endif
 
     EMM_Load_LBX_File(argLbxFileName, 1);
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: EMM_Load_LBX_File_1(argLbxFileName=%s)\n", __FILE__, __LINE__, argLbxFileName);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: EMM_Load_LBX_File_1(argLbxFileName = %s)\n", __FILE__, __LINE__, argLbxFileName);
+#endif
 }
 
-// s13p04
-// TODO(JimBalcomb): figure out why signed-long for LbxFielSize gets made negative, like signed-extended cast to int
+// MGC s13p04
 int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
 {
-//     char LBX_FileName[20];
-//     long LBX_FileSize;
-//     strcpy(LBX_FileName, "MAINSCRN.LBX");
-//     LBX_FileSize = DOS_GetFileSize(LBX_FileName);
-//     printf("DEBUG: [%s, %d]: LBX_FileSize: %ld (0x%08X)\n", __FILE__, __LINE__, LBX_FileSize, LBX_FileSize);
-//     printf("DEBUG: [%s, %d]: g_LbxFileSize: %ld (0x%08X)\n", __FILE__, __LINE__, g_LbxFileSize, g_LbxFileSize);
-//     if (LBX_FileSize != 196511 )
-//     {
-//         printf("DEBUG: [%s, %d]: FAILURE: LBX_FileSize: %ld (0x%08X)\n", __FILE__, __LINE__, LBX_FileSize, LBX_FileSize);
-//     }
-//     else
-//     {
-//         printf("DEBUG: [%s, %d]: SUCCESS: LBX_FileSize: %ld (0x%08X)\n", __FILE__, __LINE__, LBX_FileSize, LBX_FileSize);
-//     }
-
-    //long LbxFileSize;
-    //unsigned long LbxFileSize;
     long LbxFileSize;
     long tmp_LbxFileSize;
     char EmmHndlNm[20];
@@ -862,9 +846,9 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     int tmp_EMM_Pages_Available;
     int tmp_EMM_Pages_Required;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File(LbxFileName=%s, EmmRsvd=%d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: EMM_Load_LBX_File(LbxFileName = %s, EmmRsvd = %d)\n", __FILE__, __LINE__, LbxFileName, Reserved);
+#endif
 
     ExtractFileBase(LbxFileName);
     strcpy(EmmHndlNm, LbxFileName);
@@ -918,26 +902,15 @@ int EMM_Load_LBX_File(char * LbxFileName, int Reserved)
     strcpy(EmmHndlFileName, EmmHndlNm);
     strcat(EmmHndlFileName, cnst_LBX_Ext2);
 
-    // LbxFileSize = DOS_GetFileSize(EmmHndlFileName);  // TODO(JimBalcomb): maybe spend another 5 hours trying to figure out why this is getting 2-byte sign-extended
-    // LbxFileSize = C_GetFileSize(EmmHndlFileName);
-    // tmp_LbxFileSize = DOS_GetFileSize(EmmHndlFileName);
-    LbxFileSize = DOS_GetFileSize(EmmHndlFileName);
-    // if ( tmp_LbxFileSize < 0 )
-    // {
-    //     printf("DEBUG: [%s, %d]: ERROR: tmp_LbxFileSize is NEGATIVE!! %ld (0x%08X)\n", __FILE__, __LINE__, tmp_LbxFileSize, tmp_LbxFileSize);
-    //     //LbxFileSize = ((2^31)*2) + tmp_LbxFileSize
-    //     //LbxFileSize = ((2^15)*2) + tmp_LbxFileSize;
-    //     LbxFileSize = ((long)(tmp_LbxFileSize & 0xFFFF) << 15);
-    // }
-    // else
-    // {
-    //     LbxFileSize = tmp_LbxFileSize;
-    // }
-//    printf("DEBUG: [%s, %d]: LbxFileSize = %ld (0x%08X)\n", __FILE__, __LINE__, LbxFileSize, LbxFileSize);
+    LbxFileSize = LOF(EmmHndlFileName);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] LbxFileSize: %ld\n", __FILE__, __LINE__, LbxFileSize);
+#endif
 
     if ( LbxFileSize == 0 )
     {
-        // HERE("FAILURE: ( LbxFileSize == 0 )");
+        DLOG("FAILURE: ( LbxFileSize == 0 )");
         goto Done;
     }
 
