@@ -1,5 +1,5 @@
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 #include "ST_DEF.H"     /* PTR_INC_PARAGRAPH() */
 #include "ST_SA.H"
 

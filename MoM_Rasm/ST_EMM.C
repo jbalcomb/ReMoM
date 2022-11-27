@@ -1,4 +1,4 @@
-#include "ST_TYPE.H"    /* byte_ptr */
+#include "MoX_TYPE.H"    /* byte_ptr */
 #include "ST_DEF.H"
 
 #include "ST_EMM.H"

@@ -1,7 +1,7 @@
 // ~== ST_FLIC
 // seg028
 
-#include "ST_TYPE.H"    /* word, SAMB_ptr */
+#include "MoX_TYPE.H"    /* word, SAMB_ptr */
 #include "ST_DEF.H"
 #include "seg028.H"
 #include "seg021.H"     /* FLIC_Load_Palette() */

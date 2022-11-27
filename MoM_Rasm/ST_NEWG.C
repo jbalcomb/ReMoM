@@ -1,5 +1,5 @@
 
-#include "ST_TYPE.H"    /* SAMB_ptr */
+#include "MoX_TYPE.H"    /* SAMB_ptr */
 #include "ST_DEF.H"     /* MK_FP() */
 
 #include "MOM_DEF.H"    /* gfp_TBL_Moves_Per_Tile, gfp_TBL_Spell_Data */

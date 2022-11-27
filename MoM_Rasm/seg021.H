@@ -1,7 +1,7 @@
 #ifndef SEG021_H
 #define SEG021_H
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 
 #include "ST_SA.H"
 

@@ -1,7 +1,7 @@
 #ifndef SEG020_H
 #define SEG020_H
 
-#include "ST_TYPE.H"    /* SAMB_ptr */
+#include "MoX_TYPE.H"    /* SAMB_ptr */
 
 
 extern SAMB_ptr palette_block;

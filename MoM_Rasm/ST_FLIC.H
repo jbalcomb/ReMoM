@@ -1,7 +1,7 @@
 #ifndef ST_FLIC_H
 #define ST_FLIC_H
 
-#include "ST_TYPE.H"  /* byte, word, etc. */
+#include "MoX_TYPE.H"  /* byte, word, etc. */
 #include "ST_DEF.H"
 
 #include "ST_SA.H"  /* SAMB_addr */

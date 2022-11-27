@@ -1,5 +1,5 @@
 
-#include "ST_TYPE.H"
+#include "Mox_TYPE.H"
 #include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */

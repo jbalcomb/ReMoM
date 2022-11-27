@@ -1,6 +1,8 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
+#include "MoX_TYPE.H"
+
 #include "ST_GUI.H"     /* s_GUI_WINDOW */
 
 /*
@@ -16,13 +18,13 @@ extern struct s_GUI_WINDOW g_GUI_MainMenuWindow[]; // dseg:205E
 extern char mainscrn_lbx_file[];          // MGC  dseg:28A7
 extern char vortex_lbx_file[];            // MGC  dseg:28B0
 
-extern unsigned char * mainmenu_top;  // MAINSCRN.LBX, 0
-extern unsigned char * mainmenu_bot;  // MAINSCRN.LBX, 5
-extern unsigned char * mainmenu_c;  // VORTEX.LBX, 1  "Continue"
-extern unsigned char * mainmenu_h;  // VORTEX.LBX, 2  "Hall Of Fame"
-extern unsigned char * mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
-extern unsigned char * mainmenu_n;  // VORTEX.LBX, 4  "New Game"
-extern unsigned char * mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
+extern SAMB_ptr mainmenu_top;  // MAINSCRN.LBX, 0
+extern SAMB_ptr mainmenu_bot;  // MAINSCRN.LBX, 5
+extern SAMB_ptr mainmenu_c;  // VORTEX.LBX, 1  "Continue"
+extern SAMB_ptr mainmenu_h;  // VORTEX.LBX, 2  "Hall Of Fame"
+extern SAMB_ptr mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
+extern SAMB_ptr mainmenu_n;  // VORTEX.LBX, 4  "New Game"
+extern SAMB_ptr mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
 
 
 #ifdef __cplusplus

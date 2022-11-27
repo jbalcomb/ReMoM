@@ -1,5 +1,5 @@
 
-#include "ST_TYPE.H"    /* byte_ptr, SAMB_ptr */
+#include "MoX_TYPE.H"    /* byte_ptr, SAMB_ptr */
 
 // TODO(JimBalcomb,20221017): remove all usages of ST_HEAD.H
 #include "ST_HEAD.H"

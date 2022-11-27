@@ -26,8 +26,10 @@
 #include "MoX_SA.C"
 #include "MoX_QUIT.C"
 
+#ifdef STU_DEBUG
 #include "STU_DBG.C"
 #include "STU_UTIL.C"   /* get_datetime() */
+#endif
 
 
 /*

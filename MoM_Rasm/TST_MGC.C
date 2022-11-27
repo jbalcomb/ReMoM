@@ -1,5 +1,5 @@
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 #include "ST_DEF.H"     /* FP_SEG(), FP_OFF(); */
 #include "MGC_DEF.H"
 
@@ -615,13 +615,13 @@ void test_EMM_Load_LBX_File(void)
 void test_GAME_LoadMainImages(void)
 {
     int itr_EMM_Table_Index;
-    WORD EMM_Handle_Number;
-    BYTE EMM_Physical_Page_Number;
-    WORD EMM_Logical_Page_Number;
-    WORD LBX_EntryCount;
-    WORD LBX_MagSig_Hi;
-    WORD LBX_MagSig_Lo;
-    WORD LBX_Type;
+    word EMM_Handle_Number;
+    byte EMM_Physical_Page_Number;
+    word EMM_Logical_Page_Number;
+    word LBX_EntryCount;
+    word LBX_MagSig_Hi;
+    word LBX_MagSig_Lo;
+    word LBX_Type;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_GAME_LoadMainImages()\n", __FILE__, __LINE__);
@@ -681,10 +681,10 @@ void test_GAME_LoadMainImages(void)
     // dbg_prn("DEBUG: [%s, %d] LBX_MagSig_Hi: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrameBaseAddress, 2));
     // dbg_prn("DEBUG: [%s, %d] LBX_MagSig_Lo: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrameBaseAddress, 4));
     // dbg_prn("DEBUG: [%s, %d] LBX_Type: 0x%04X\n", __FILE__, __LINE__, farpeekw(EMM_PageFrameBaseAddress, 6));
-    LBX_EntryCount = (WORD)(EMM_PageFrameBaseAddress + 0);
-    LBX_MagSig_Hi  = (WORD)(EMM_PageFrameBaseAddress + 2);
-    LBX_MagSig_Lo  = (WORD)(EMM_PageFrameBaseAddress + 4);
-    LBX_Type       = (WORD)(EMM_PageFrameBaseAddress + 6);
+    LBX_EntryCount = (word)(EMM_PageFrameBaseAddress + 0);
+    LBX_MagSig_Hi  = (word)(EMM_PageFrameBaseAddress + 2);
+    LBX_MagSig_Lo  = (word)(EMM_PageFrameBaseAddress + 4);
+    LBX_Type       = (word)(EMM_PageFrameBaseAddress + 6);
 
 
 #ifdef STU_DEBUG

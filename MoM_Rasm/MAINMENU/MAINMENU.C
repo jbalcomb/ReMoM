@@ -1,4 +1,6 @@
 
+#include "MoX_TYPE.H"
+
 #include "MAINMENU.H"
 
 #include "MOM_DEF.H"
@@ -65,13 +67,13 @@ struct s_GUI_WINDOW g_GUI_MainMenuWindow[1] = {1, 0, 0, 0, 319, 199}; // dseg:20
 char mainscrn_lbx_file[] = "MAINSCRN";          // MGC  dseg:28A7
 char vortex_lbx_file[] = "VORTEX";              // MGC  dseg:28B0
 
-unsigned char * mainmenu_top;  // MAINSCRN.LBX, 0
-unsigned char * mainmenu_bot;  // MAINSCRN.LBX, 5
-unsigned char * mainmenu_c;  // VORTEX.LBX, 1  "Continue"
-unsigned char * mainmenu_h;  // VORTEX.LBX, 2  "Hall Of Fame"
-unsigned char * mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
-unsigned char * mainmenu_n;  // VORTEX.LBX, 4  "New Game"
-unsigned char * mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
+SAMB_ptr mainmenu_top;  // MAINSCRN.LBX, 0
+SAMB_ptr mainmenu_bot;  // MAINSCRN.LBX, 5
+SAMB_ptr mainmenu_c;  // VORTEX.LBX, 1  "Continue"
+SAMB_ptr mainmenu_h;  // VORTEX.LBX, 2  "Hall Of Fame"
+SAMB_ptr mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
+SAMB_ptr mainmenu_n;  // VORTEX.LBX, 4  "New Game"
+SAMB_ptr mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
 
 
 // MGC  dseg:206C  CRP_Unused_Anim_Var dw 0

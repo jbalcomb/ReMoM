@@ -3,7 +3,7 @@
 
 #include "ST_DBG.H"     /* Debug_Disabled */
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 #include "ST_DEF.H"
 
 #include "MoX_DIR.H"    /* DIR() */

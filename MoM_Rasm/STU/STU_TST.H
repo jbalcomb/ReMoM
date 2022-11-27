@@ -1,7 +1,7 @@
 #ifndef STU_TST_H
 #define STU_TST_H
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 
 #include "ST_SA.H"
 

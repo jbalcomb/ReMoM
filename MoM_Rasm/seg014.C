@@ -7,7 +7,7 @@
 
 
 // #include "ST_HEAD.H"
-// #include "ST_TYPE.H"
+// #include "MoX_TYPE.H"
 // #include "ST_DEF.H"  /* SWAP(); */
 
 #include "ST_LBX.H"

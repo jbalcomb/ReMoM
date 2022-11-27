@@ -1,7 +1,7 @@
 #ifndef ST_LBX_H
 #define ST_LBX_H
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 #include "ST_DEF.H"  /* FP_SEG(); */
 
 #include "ST_SA.H"  /* SAMB_data, SAMB_head */

@@ -6,7 +6,7 @@
 */
 
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 
 
 /*

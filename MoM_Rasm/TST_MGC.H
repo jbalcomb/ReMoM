@@ -1,7 +1,7 @@
 #ifndef TST_MGC_H
 #define TST_MGC_H
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 
 /*
     mainmenu_top = Farload(mainscrn_lbx_file, 0);

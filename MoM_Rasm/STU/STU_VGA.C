@@ -5,7 +5,7 @@
 
 #include "STU_VGA.H"
 
-#include "ST_TYPE.H"
+#include "Mox_TYPE.H"
 #include "ST_DEF.H"
 
 #include "ST_VGA.H"

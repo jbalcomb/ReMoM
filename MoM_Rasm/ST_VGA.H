@@ -1,7 +1,7 @@
 #ifndef ST_VGA_H
 #define ST_VGA_H
 
-#include "ST_TYPE.H"    /* byte_ptr, SAMB_ptr */
+#include "MoX_TYPE.H"    /* byte_ptr, SAMB_ptr */
 
 
 #define CLRSCR0() { VGA_DrawFilledRect(0,0,319,199,0); VGA_SetDrawAddress(); }

@@ -1,6 +1,6 @@
 // ~== MoO2  Module:video
 
-#include "ST_TYPE.H"
+#include "MoX_TYPE.H"
 #include "ST_DEF.H"
 
 #include "ST_VGA.H"     /* VRAM_BASE; g_RSP_Idx, gsa_DSP_Addr; */

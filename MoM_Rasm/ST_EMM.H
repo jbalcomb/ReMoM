@@ -1,7 +1,7 @@
 #ifndef ST_EMM_H
 #define ST_EMM_H
 
-#include "ST_TYPE.H"    /* byte_ptr */
+#include "MoX_TYPE.H"    /* byte_ptr, sgmt_addr */
 #include "ST_DEF.H"     /* _AL, etc. */
 
 
