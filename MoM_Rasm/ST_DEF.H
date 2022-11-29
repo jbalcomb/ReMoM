@@ -177,8 +177,4 @@ static int delete = 0;
 #define	ALLOCMEM                0x48        // CF = {success, failure}; AX = segment address or error code; BX = size in paragraphs (16 B) of the largest block of memory available
 
 
-extern unsigned int g_LFSR_LO_bits;         // dseg:431E  3568h  13672d  0011 0101 0110 1000b
-extern unsigned int g_LFSR_HO_bits;         // dseg:4320
-
-
 #endif /* ST_DEF_H */

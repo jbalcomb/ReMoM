@@ -5,6 +5,7 @@
 #include "seg014.H"
 #include "seg020.H"     /* palette_block */
 
+#include "ST_RND.H"     /* RND_TimerSeed() */
 
 // #include "ST_HEAD.H"
 // #include "MoX_TYPE.H"
@@ -77,7 +78,7 @@ void Hardware_Init(int argInputType, char * font_file)
         tmpInputType = argInputType;
     }
     IN_Init(tmpInputType);  // MGC s34p65  ST_GUI.H
-    RNG_TimerSeed();
+    RND_TimerSeed();
     VGA_Set_DSP_Addr();
 
 #ifdef STU_DEBUG

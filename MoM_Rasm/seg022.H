@@ -10,12 +10,10 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+
 /*
     seg022
 */
-
-// s22p07
-void RNG_TimerSeed(void);
 
 // s22p22
 int ST_MoveData_FP(unsigned char _FAR * fp_Dst, unsigned char _FAR * fp_Src, unsigned int nbytes);
