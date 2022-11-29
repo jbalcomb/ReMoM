@@ -45,6 +45,7 @@ OBJ_STU = \
 OBJ_MGC = MGC_DEF.OBJ MGC_main.OBJ .\MAINMENU\MAINMENU.OBJ
 OBJ_MoM = MOM_DEF.OBJ
 OBJ_ST = ST_DEF.OBJ ST_CRSR.OBJ ST_CTRL.OBJ ST_DBG.OBJ ST_EMM.OBJ ST_EXIT.OBJ ST_FLIC.OBJ ST_GUI.OBJ ST_HLP.OBJ ST_LBX.OBJ ST_RND.OBJ ST_SA.OBJ ST_SCRN.OBJ ST_SND.OBJ ST_TXT.OBJ ST_QUIT.OBJ ST_VGA.OBJ
+OBJ_MoX = MoX_SA.OBJ
 OBJ_DOS = dos_DIR.OBJ
 OBJ_o57 = _o57p01c.obj
 # NIU Load_Credits(), Draw_Credits();  OBJ_o60 = _o60p01c.obj _o60p02c.obj
@@ -82,5 +83,5 @@ all: TST.EXE
 # ovl060.obj: _o60p01c.c _o60p02c.c Why does this do nothing at all?
 # seg014.obj: seg014.C seg014.H
 
-TST.EXE: TST_MGC.OBJ $(OBJ_STU) $(OBJ_MGC) $(OBJ_MoM) $(OBJ_ST) $(OBJ_DOS) $(OBJ_o57) $(OBJ_o60) $(OBJ_s02) $(OBJ_s14) $(OBJ_s15) $(OBJ_s16) $(OBJ_s17) $(OBJ_s18) $(OBJ_s19) $(OBJ_s20) $(OBJ_s21) $(OBJ_s22) $(OBJ_s24) $(OBJ_s26) $(OBJ_s27) $(OBJ_s28) $(OBJ_s33) $(OBJ_s34)
+TST.EXE: TST_MGC.OBJ $(OBJ_STU) $(OBJ_MGC) $(OBJ_MoM) $(OBJ_ST) $(OBJ_MoX) $(OBJ_DOS) $(OBJ_o57) $(OBJ_o60) $(OBJ_s02) $(OBJ_s14) $(OBJ_s15) $(OBJ_s16) $(OBJ_s17) $(OBJ_s18) $(OBJ_s19) $(OBJ_s20) $(OBJ_s21) $(OBJ_s22) $(OBJ_s24) $(OBJ_s26) $(OBJ_s27) $(OBJ_s28) $(OBJ_s33) $(OBJ_s34)
     TLINK @MK_TST.RSP

@@ -1,10 +1,11 @@
 
 #include "Mox_TYPE.H"
+
 #include "ST_DEF.H"  /* {ST_FALSE,ST_TRUE}, {ST_FAILURE,ST_SUCCESS} */
 
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
 #include "ST_FLIC.H"  /* s_FLIC_HDR */
-#include "ST_SA.H"  /* SAMB_head, SAMB_data, SAMB_addr, SAMB_ptr, etc. */
+#include "ST_SA.H"  /* SAMB_addr, SAMB_ptr, etc. */
 #include "ST_VGA.H"  /* p_Palette, etc. */
 
 #include "STU_DBG.H"
@@ -620,7 +621,7 @@ int validate_PaletteLbxEntry_2(SAMB_ptr sad1_PaletteLbxEntry)
 int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header)
 {
     int test_status;
-    SAMB_data sa_FLIC_Header;
+    SAMB_addr sa_FLIC_Header;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: validate_FLIC_Header_FP( fp_FLIC_Header == %Fp)\n", __FILE__, __LINE__, fp_FLIC_Header);
 #endif
@@ -631,7 +632,7 @@ int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header)
 #endif
     return test_status;
 }
-int validate_FLIC_Header(SAMB_data sa_FLIC_Header)
+int validate_FLIC_Header(SAMB_addr sa_FLIC_Header)
 {
     int test_status;
     struct s_FLIC_HDR * fp_FLIC_Header;

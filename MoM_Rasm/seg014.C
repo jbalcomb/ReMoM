@@ -11,6 +11,8 @@
 // #include "MoX_TYPE.H"
 // #include "ST_DEF.H"  /* SWAP(); */
 
+#include "MoX_SA.H"
+
 #include "ST_LBX.H"
 #include "ST_SA.H"
 #include "ST_VGA.H"
@@ -105,7 +107,6 @@ Allocates memory from the far heap...
 /*
     Initialize Font, Palette, Text
 */
-// MoO2 Load_Font_File()
 void Load_Font_File(char * font_file)
 {
     int itr;
@@ -127,7 +128,8 @@ void Load_Font_File(char * font_file)
     // SM2LM  sa_BorderStyleData = FP_SEG(p_BorderStyleData);
 
     /* MoO2 palette_block */
-    palette_block          = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    // palette_block          = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    palette_block          = MoX_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
     p_Palette              = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);             // ~== p_PaletteFlags = &p_Palette[768];
     // p_PaletteFlags         = PTR_ADD_PARAGRAPH(p_Palette, 48);

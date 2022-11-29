@@ -1,38 +1,35 @@
 #ifndef MOX_SA_H
 #define MOX_SA_H
 
+/*
+    "SPACE ALLOC" - STARLORD.EXE
+*/
+
 #include "MoX_TYPE.H"
 
-#define SAMB_RESERVED1   0
-#define SAMB_RESERVED2   2
-#define SAMB_MEMSIG1     4
-#define SAMB_MEMSIG2     6
-#define SAMB_SIZE        8
-#define SAMB_USED       10
-#define SAMB_unknown    12
-#define SAMB_MARKED     14
-
-#define SA_MEMSIG1      0x12FA
-#define SA_MEMSIG2      0x4ECF
-
-extern SAMB_ptr pTmpSAMB;
+#include "MoX_BITS.H"   /* MoX_GET_2B_OFS() etc. */
 
 
-#define SA_Get_MemSig1(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  4) )
+#define MoX_SAMB_RESERVED1   0
+#define MoX_SAMB_RESERVED2   2
+#define MoX_SAMB_MEMSIG1     4
+#define MoX_SAMB_MEMSIG2     6
+#define MoX_SAMB_SIZE        8
+#define MoX_SAMB_USED       10
+#define MoX_SAMB_unknown    12
+#define MoX_SAMB_MARKED     14
 
-#define SA_Get_MemSig2(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_),  6) )
+#define MoX_SA_MEMSIG1      0x12FA
+#define MoX_SA_MEMSIG2      0x4ECF
 
-#define SA_Get_Size(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_),  8) )
-
-#define SA_Get_Used(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), 10) )
-
-#define SA_Set_MemSig1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  4, SA_MEMSIG1) )
-
-#define SA_Set_MemSig2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_),  6, SA_MEMSIG2) )
-
-#define SA_Set_Size(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_),  8, (_nparas_)) )
-
-#define SA_Set_Used(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), 10, (_nparas_)) )
+#define MoX_SA_GET_MEMSIG1(_SAMB_head_) ( MoX_GET_2B_OFS((_SAMB_head_),  4) )
+#define MoX_SA_GET_MEMSIG2(_SAMB_head_) ( MoX_GET_2B_OFS((_SAMB_head_),  6) )
+#define MoX_SA_GET_SIZE(_SAMB_head_)    ( MoX_GET_2B_OFS((_SAMB_head_),  8) )
+#define MoX_SA_GET_USED(_SAMB_head_)    ( MoX_GET_2B_OFS((_SAMB_head_), 10) )
+#define MoX_SA_SET_MEMSIG1(_SAMB_head_)        ( MoX_SET_2B_OFS((_SAMB_head_),  4, MoX_SA_MEMSIG1) )
+#define MoX_SA_SET_MEMSIG2(_SAMB_head_)        ( MoX_SET_2B_OFS((_SAMB_head_),  6, MoX_SA_MEMSIG2) )
+#define MoX_SA_SET_SIZE(_SAMB_head_,_nparas_)  ( MoX_SET_2B_OFS((_SAMB_head_),  8, (_nparas_)) )
+#define MoX_SA_SET_USED(_SAMB_head_,_nparas_)  ( MoX_SET_2B_OFS((_SAMB_head_), 10, (_nparas_)) )
 
 
 #ifdef __cplusplus
@@ -40,42 +37,32 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
-/*
-    seg007
-*/
-// //int SA_Alloc_Validate(sgmt_addr SAMB_head)                                  // s07p04
-// //int SA_Alloc_Validate(SAMB_addr pSAMB_head)                                 // s07p04
-// int SA_Alloc_Validate(SAMB_ptr pSAMB_head);  // returns ST_STATUS: SUCCESS -1, FAILURE 0
-// unsigned char farpeekb(unsigned int sgmt, unsigned int ofst);               // s07p05
-// unsigned int farpeekw(unsigned int sgmt, unsigned int ofst);                // s07p06
-// unsigned long farpeekdw(unsigned int sgmt, unsigned int ofst);              // s07p07
-// void farpokeb(unsigned int sgmt, unsigned int ofst, unsigned char value);   // s07p08
-// void farpokew(unsigned int sgmt, unsigned int ofst, unsigned short value);  // s07p09
-// // UU? void farpokedw(unsigned int sgmt, unsigned int ofst, unsigned long val);  // s07p10
-
-// s07p04
-int Check_Allocation(SAMB_ptr SAMB_head);
 
 /*
-    seg008
+    MGC  seg007
 */
 
-// s08p07
-SAMB_ptr Allocate_Space(int size);
+// MGC s07p04
+MoX_word MoX_Check_Allocation(MoX_SAMB_ptr SAMB_head);
+
+/*
+    MGC  seg008
+*/
+
+// MGC s08p07
+MoX_SAMB_ptr MoX_Allocate_Space(MoX_word size);
 
 // s08p08/09
-SAMB_ptr Allocate_Space_No_Header(int size);
+MoX_SAMB_ptr MoX_Allocate_Space_No_Header(MoX_word size);
 
-// SAMB_ptr SA_Alloc_First(SAMB_ptr SAMB_head, int nparas);                // s08p12
-// SAMB_ptr SA_Alloc_Next(SAMB_ptr SAMB_head, int nparas);                 // s08p14
+// MoX_SAMB_ptr MoX_Alloc_First(MoX_SAMB_ptr SAMB_head, int nparas);                // s08p12
+// MoX_SAMB_ptr MoX_Alloc_Next(MoX_SAMB_ptr SAMB_head, int nparas);                 // s08p14
 
-// s08p15
-unsigned int Get_Free_Blocks(SAMB_ptr SAMB_head);
+// MGC s08p15
+MoX_word MoX_Get_Free_Blocks(MoX_SAMB_ptr SAMB_head);
 
-// SAMB_ptr SA_MK_FP0(SAMB_addr sgmt_addr);                                // s08p16
-
-// s08p19
-void Allocation_Error(int error_num, int blocks);
+// MGC s08p19
+void MoX_Allocation_Error(MoX_word error_num, MoX_word blocks);
 
 
 #ifdef __cplusplus

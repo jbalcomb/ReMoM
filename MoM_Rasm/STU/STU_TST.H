@@ -53,7 +53,6 @@ struct s_TST_LBX  // sizeof 109  ... * 101 = 11,009 bytes ... * 127 = 1,398,143 
     unsigned char EMM_Logical_Page;
     unsigned int EMM_Logical_Page_Offset;
     // // struct s_FLIC_HEADER;
-    // SAMB_data SAMB_data_FlicHeader;
     unsigned int SAMB_data_FlicHeader;
     // // DELETE char LBX_Load_Function[32];
 };
@@ -89,7 +88,7 @@ int validate_PaletteLbxEntry_2(SAMB_ptr sad1_PaletteLbxEntry);
 
 // int validate_FLIC_Header_FP(SAMB_ptr fp_FLIC_Header);
 int validate_FLIC_Header_FP(struct s_FLIC_HDR _FAR * fp_FLIC_Header);
-int validate_FLIC_Header(SAMB_data sa_FLIC_Header);
+int validate_FLIC_Header(SAMB_addr sa_FLIC_Header);
 
 int validate_MAINSCRN_LBX_EMM(void);
 

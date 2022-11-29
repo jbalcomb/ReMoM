@@ -26,6 +26,7 @@ ST_SND.OBJ +
 ST_TXT.OBJ +
 ST_QUIT.OBJ +
 ST_VGA.OBJ +
+MoX_SA.OBJ +
 dos_DIR.OBJ +
 _o57p01c.obj +
 _s02p01.obj +

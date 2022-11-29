@@ -55,6 +55,7 @@ char * cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes";
     LBX Globals - Unitialized
 */
 unsigned int RAM_Min_KB;                    // MGC dseg:A5C4  ; set to 583 in _main
+MoX_word MoX_RAM_Min_KB;
 unsigned int g_LBX_EntryCount;              // MGC dseg:A5C6
 unsigned int UU_g_LBX_HdrFmt;               // MGC dseg:A5C8
 SAMB_addr gsa_LBX_Header;                   // MGC dseg:A5CA

@@ -2,6 +2,7 @@
 #define ST_LBX_H
 
 #include "MoX_TYPE.H"
+
 #include "ST_DEF.H"  /* FP_SEG(); */
 
 #include "ST_SA.H"  /* SAMB_data, SAMB_head */
@@ -37,6 +38,7 @@ extern char LBX_File_Extension[];              // dseg:3E9E
     LBX Globals - Unitialized
 */
 extern unsigned int RAM_Min_KB;                 // MGC dseg:A5C4  ; set to 583 in _main
+extern MoX_word MoX_RAM_Min_KB;
 // // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
 // // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
 // // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax

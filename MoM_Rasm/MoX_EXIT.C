@@ -87,7 +87,7 @@ void Exit(char * argQuitMessage)
 }
 #endif
 
-void Exit_With_Message(char * string)
+void MoX_Exit_With_Message(char * string)
 {
     // Reset_System();
     printf("%s\n", string);

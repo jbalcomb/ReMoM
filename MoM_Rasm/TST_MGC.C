@@ -1,5 +1,6 @@
 
 #include "MoX_TYPE.H"
+
 #include "ST_DEF.H"     /* FP_SEG(), FP_OFF(); */
 #include "MGC_DEF.H"
 
@@ -398,7 +399,7 @@ gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
 */
 void test_Load_MAINSCRN_000(void)
 {
-    SAMB_data sa_MAINSCRN_000;
+    SAMB_addr sa_MAINSCRN_000;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_Load_MAINSCRN_000()\n", __FILE__, __LINE__);
@@ -428,7 +429,7 @@ gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
 */
 void test_Load_MAINSCRN_005(void)
 {
-    SAMB_data sa_MAINSCRN_005;
+    SAMB_addr sa_MAINSCRN_005;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: test_Load_MAINSCRN_005()\n", __FILE__, __LINE__);
