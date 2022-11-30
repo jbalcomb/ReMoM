@@ -3,6 +3,9 @@
 #include "ST_DEF.H"     /* PTR_INC_PARAGRAPH() */
 #include "ST_SA.H"
 
+#include "MoX_DBG.H"    /* Check_Release_Version() */
+#include "MoX_LBX.H"    /* MoX_RAM_Min_KB*/
+
 #include "ST_EXIT.H"    /* Exit() */
 #include "ST_DBG.H"     /* DBG_IsDisabled() */
 #include "ST_LBX.H"     /* RAM_Min_KB */
@@ -12,9 +15,9 @@
 #include <STDLIB.H>  /* itoa() */
 #include <STRING.H> /* strcat(), strcpy() */
 
-// #ifdef STU_DEBUG
-// #include "STU_DBG.H"
-// #endif
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 //struct ST_Alloc_Space_Header_Struct LBX_Alloc_Space_Header;
@@ -383,7 +386,8 @@ void SA_Alloc_Error(int SA_Error_Number, int blocks)
     dbg_prn("DEBUG: [%s, %d] str_errmsg: %s\n", __FILE__, __LINE__, str_errmsg);
 #endif
 
-    if ( DBG_IsDisabled() != 0 )
+    // if ( DBG_IsDisabled() != 0 )
+    if ( Check_Release_Version() != ST_TRUE )
     {
         // DLOG("( DBG_IsDisabled() != 0 )");
         SA_Error_Index = SA_Error_Number - 1;
@@ -422,7 +426,8 @@ void SA_Alloc_Error(int SA_Error_Number, int blocks)
     {
         // DLOG("( DBG_IsDisabled() == 0 )");
         strcpy(str_errmsg, cnst_Alloc_Error51);
-        itoa(RAM_Min_KB, str_itoa, 10);
+        // itoa(RAM_Min_KB, str_itoa, 10);
+        itoa(MoX_RAM_Min_KB, str_itoa, 10);
         strcat(str_errmsg, str_itoa);
         strcat(str_errmsg, cnst_Alloc_Error52);
         goto Done;

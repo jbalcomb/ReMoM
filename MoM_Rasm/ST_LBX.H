@@ -38,7 +38,6 @@ extern char LBX_File_Extension[];              // dseg:3E9E
     LBX Globals - Unitialized
 */
 extern unsigned int RAM_Min_KB;                 // MGC dseg:A5C4  ; set to 583 in _main
-extern MoX_word MoX_RAM_Min_KB;
 // // _s08 SA_Alloc_Error+2C      push [g_RAM_Min_KB]
 // // _s10 LBX_Error+9B           push [g_RAM_Min_KB]
 // // _s10 RAM_SetMinKB:loc_16078 mov  [g_RAM_Min_KB], ax
@@ -112,12 +111,12 @@ extern char g_LBX_Name[];                       // dseg:A5CC
 //     if( g_LBX_Header_Allocd == 0 ) \
 //     { \
 //         g_LBX_Header_Allocd = 1; \
-//         gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); \
+//         gsa_LBX_Header = FP_SEG(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); \
 //     } \
 // }
-// #define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); } }
+// #define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); } }
 
-#define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); } }
+#define LBXHEADER() { if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(Allocate_Space(SZ_LBX_HDR_PR)); } }
 
 
 #define LBXHEADEROFFSET() { \
@@ -259,7 +258,7 @@ extern char g_LBX_Name[];                       // dseg:A5CC
     BEGIN: Load Type
 */
 #define LBXLOADTYPE0() { \
-    SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
+    SAMB_data = FP_SEG(Allocate_Space(DataSize_Paras)); \
     if ( SAMB_data == 0 ) \
     { \
         Lbx_Error(LbxName, 0x03, LbxEntry, NULL); /* LBXErr_low_RAM */ \
@@ -271,7 +270,7 @@ extern char g_LBX_Name[];                       // dseg:A5CC
         /*DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);*/ \
         if ( LoadType == 0 ) \
         { \
-            SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
+            SAMB_data = FP_SEG(Allocate_Space(DataSize_Paras)); \
             if ( SAMB_data == 0 ) { LBX_Error(LbxName, 0x03, LbxEntry, NULL); /* LBXErr_low_RAM */ } \
         } \
         if ( (LoadType == 1) || (LoadType == 2) ) \
@@ -320,18 +319,18 @@ extern char g_LBX_Name[];                       // dseg:A5CC
         /*DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);*/ \
         if ( LoadType == 0 ) \
         { \
-            SAMB_data = FP_SEG(SA_Allocate_MemBlk(DataSize_Paras)); \
+            SAMB_data = FP_SEG(Allocate_Space(DataSize_Paras)); \
             if ( SAMB_data == 0 ) { return 0; } \
         } \
         if ( (LoadType == 1) || (LoadType == 2) ) \
         { \
             if ( LoadType == 1 ) \
             { \
-                /* if ( SA_Alloc_Validate(SAMB_head) == 0 ) { return 0; } */ \
+                /* if ( SA_ Alloc_ Validate(SAMB_head) == 0 ) { return 0; } */ \
                 /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
                 /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
-                if ( SA_Alloc_Validate(pSAMB_head) == 0 ) { return 0; } \
+                if ( Check_Allocation(pSAMB_head) == 0 ) { return 0; } \
                 if ( DataSize_Paras > (farpeekw(SAMB_head, 8) - 1) ) /* SAMB_SIZE */ \
                 { \
                     return 0; \
@@ -341,13 +340,14 @@ extern char g_LBX_Name[];                       // dseg:A5CC
             } \
             if ( LoadType == 2 ) \
             { \
-                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                /* if ( SA_ Alloc_ Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
                 /* dlvfprintf("DEBUG: [%s, %d] SAMB_head: 0x%04X\n", __FILE__, __LINE__, SAMB_head); */ \
                 pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0); \
                 /* dlvfprintf("DEBUG: [%s, %d] pSAMB_head: %Fp\n", __FILE__, __LINE__, pSAMB_head); */ \
-                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                /* if ( SA_ Alloc_ Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
                 /* TODO(JimBalcomb,20220907): figure out what the 0 or 1 here actually means... Is it just +0/+1 segments/paragraphs? ...as in SAMB_base/SAMB_sub_head? */ \
-                /* if ( SA_Alloc_Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                /* if ( SA_ Alloc_ Validate(( (SAMB_head != 0) ? 0 : 1 )) == 0 ) { return 0; } */ \
+                if ( Check_Allocation(pSAMB_head) == 0 ) { return 0; } \
                 if ( DataSize_Paras > SA_GetFree(pSAMB_head) ) \
                 { \
                     return 0; \

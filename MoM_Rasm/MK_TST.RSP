@@ -26,6 +26,9 @@ ST_SND.OBJ +
 ST_TXT.OBJ +
 ST_QUIT.OBJ +
 ST_VGA.OBJ +
+MoX_DBG.OBJ +
+MoX_EXIT.OBJ +
+MoX_LBX.OBJ +
 MoX_SA.OBJ +
 dos_DIR.OBJ +
 _o57p01c.obj +

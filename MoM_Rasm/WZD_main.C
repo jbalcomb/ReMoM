@@ -5,6 +5,8 @@
 
 #include "WZD_main.H"
 
+#include "MoX_LBX.H"    /* MoX_RAM_SetMinKB() */
+
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
 
 #include <STDIO.H>      /* FILE */
@@ -38,16 +40,17 @@ int WZD_main(int argc, char *argv[])
     */
 
     EMM_SetMinKB(EMM_MIN_KB);
-    RAM_SetMinKB(RAM_MIN_KB);
+    // RAM_SetMinKB(RAM_MIN_KB);
+    MoX_RAM_SetMinKB(RAM_MIN_KB);
 
     Hardware_Init(1, GAME_FONT_FILE);
     /*
         |-> EMM_Startup()
         |-> VGA_SetModeY()
-        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_MemBlk(); ... VGA_TextDraw_Init()
+        |-> Load_Font_File() |-> ... LBX_Load(), Allocate_Space_No_Header(); ... TextLine_Init()
         |-> SND_Init()
         |-> IN_Init() |-> MD_Init()
-        |-> RNG_TimerSeed()
+        |-> RND_TimerSeed()
         |-> VGA_Set_DSP_Addr()
     */
 

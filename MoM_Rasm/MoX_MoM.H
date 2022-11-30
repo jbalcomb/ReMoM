@@ -19,7 +19,6 @@ extern char mainscrn_lbx_file[];                // MGC  dseg:28A7
 
 extern char vortex_lbx_file[];                  // MGC  dseg:28B0
 
-extern int16_t RAM_Min_KB;                          // MGC  dseg:A5C4  WZD  dseg:E5CE
 
 
 #ifdef __cplusplus
@@ -27,9 +26,6 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
-
-// MGC s10p17
-void RAM_SetMinKB(int Min_KB);
 
 
 #ifdef __cplusplus

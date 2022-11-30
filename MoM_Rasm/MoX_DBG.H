@@ -1,7 +1,6 @@
 #ifndef MOX_DBG_H
 #define MOX_DBG_H
 
-extern int Debug_Disabled;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,7 +8,7 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 /*
-    seg024
+    MGC  seg024
 */
 
 // s24p01
@@ -24,11 +23,11 @@ extern "C" {
 // // s24p04
 // void VGA_ReadScreenLine(unsigned int ScreenLine, unsigned char * Buffer);
 
-// s24p05
-void DBG_Disable(void);
+// MGC s24p05
+void Set_Release_Version(void);
 
-// s24p06
-int DBG_IsDisabled(void);
+// MGC s24p06
+int Check_Release_Version(void);
 
 // // s24p07
 // // UU_VGA_SaveDrawSection()

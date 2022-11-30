@@ -1,20 +1,29 @@
+
 #include "MoX_DBG.H"
 
+#include "MoX_TYPE.H"
+#include "MoX_DEF.H"
+
+
+/*
+    Initialized Data
+*/
+// uint16_t release_version = MoX_ST_FALSE;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
 
 #ifdef STU_DEBUG
-int Debug_Disabled = 0;
+uint16_t release_version = MoX_ST_FALSE;
 #else
-int Debug_Disabled = 1;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
+uint16_t release_version = MoX_ST_TRUE;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
 #endif
 
-// s24p05
-void DBG_Disable(void)
+// MGC s24p05
+void Set_Release_Version(void)
 {
-    Debug_Disabled = 1;
+    release_version = MoX_ST_TRUE;
 }
 
-// s24p06
-int DBG_IsDisabled(void)
+// MGC s24p06
+int Check_Release_Version(void)
 {
-    return Debug_Disabled;
+    return release_version;
 }

@@ -141,8 +141,8 @@ extern SAMB_ptr UU_p_PaletteSaved;                     // SM2LM    // dseg:A7DC 
 // SM2LM  
 extern SAMB_addr UU_sa_PaletteSaved;
 
-extern byte_ptr p_Palette;                      // SM2LM    // dseg:A7DE    alloc in Load_Font_File
-extern byte_ptr p_Palette_XBGR;
+extern SAMB_ptr p_Palette;                      // SM2LM    // dseg:A7DE    alloc in Load_Font_File
+extern SAMB_ptr p_Palette_XBGR;
 
 extern char font_name[];                                    // dseg:A7E0    set in Load_Font_File
 extern SAMB_ptr p_IntensityScaleTable;          // SM2LM    // dseg:A7F0    alloc in Load_Font_File

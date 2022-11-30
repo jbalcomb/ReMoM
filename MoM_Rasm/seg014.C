@@ -112,7 +112,7 @@ void Load_Font_File(char * font_file)
     /* MoO2 font_ptr */
     p_FontStyleData = LBXE_LoadSingle_LM(font_file, 0);
 
-    p_BorderStyleData = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
+    p_BorderStyleData = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ Allocate_Space_No_Header() { SAMB Data Type 0 }
 
     palette_block          = Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
     p_Palette              = Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes

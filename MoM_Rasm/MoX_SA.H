@@ -43,26 +43,29 @@ extern "C" {
 */
 
 // MGC s07p04
-MoX_word MoX_Check_Allocation(MoX_SAMB_ptr SAMB_head);
+int16_t Check_Allocation(MoX_SAMB_ptr SAMB_head);
 
 /*
     MGC  seg008
 */
 
 // MGC s08p07
-MoX_SAMB_ptr Allocate_Space(MoX_word size);
+MoX_SAMB_ptr Allocate_Space(uint16_t size);
 
 // MGC s08p08/09
-MoX_SAMB_ptr Allocate_Space_No_Header(MoX_word size);
+MoX_SAMB_ptr Allocate_Space_No_Header(uint16_t size);
 
-// MoX_SAMB_ptr MoX_Alloc_First(MoX_SAMB_ptr SAMB_head, int nparas);                // s08p12
-// MoX_SAMB_ptr MoX_Alloc_Next(MoX_SAMB_ptr SAMB_head, int nparas);                 // s08p14
+// MGC s08p12
+MoX_SAMB_ptr Allocate_First_Block(MoX_SAMB_ptr SAMB_head, uint16_t size);
+
+// MGC s08p14
+MoX_SAMB_ptr Allocate_Next_Block(MoX_SAMB_ptr SAMB_head, uint16_t size);
 
 // MGC s08p15
-MoX_word Get_Free_Blocks(MoX_SAMB_ptr SAMB_head);
+uint16_t Get_Free_Blocks(MoX_SAMB_ptr SAMB_head);
 
 // MGC s08p19
-void Allocation_Error(MoX_word error_num, MoX_word blocks);
+void Allocation_Error(MoX_word error_num, uint16_t blocks);
 
 
 #ifdef __cplusplus

@@ -1,11 +1,12 @@
 
-#include "MoX_EXIT.H"   /* MoX_dos_memfree_kb() */
-#include "MoX_LBX.H"    /* MoX_MemFreeWorst_KB */
+#include "MoX_EXIT.H"
 
-#include "ST_EXIT.H"
+#include "MoX_EMM.H"  /* EMM_Pages_Reserved */
+#include "MoX_QUIT.H"  /* dos_memfree_kb() */
 
-#include "ST_EMM.H"     /* EMM_Pages_Reserved */
-#include "ST_QUIT.H"    /* dos_memfree_kb(), QuitToDOS(), VGA_SetTextMode() */
+
+#include <stdlib.h>
+#include <stdio.h>  /* printf() */
 
 
 int MemFreeWorst_KB = 64000;                    // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
@@ -18,6 +19,7 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 
 
 // s05p01
+#if defined(__DOS16__)
 void Exit_MemBug(void)
 {
     char TmpConvStr20[20];
@@ -26,10 +28,8 @@ void Exit_MemBug(void)
     unsigned int Worst_LargestFreeBlock_KB;
     unsigned int Current_LargestFreeBlock_KB;
     
-    // Current_LargestFreeBlock_KB = dos_memfree_kb();
-    Current_LargestFreeBlock_KB = MoX_dos_memfree_kb();
-    // Worst_LargestFreeBlock_KB = MemFreeWorst_KB;
-    Worst_LargestFreeBlock_KB = MoX_MemFreeWorst_KB;
+    Current_LargestFreeBlock_KB = dos_memfree_kb();
+    Worst_LargestFreeBlock_KB = MemFreeWorst_KB;
     Current_FreeNearHeap_B = coreleft();
     strcpy(TmpMsgStr120, cnst_Quit_Report1);
     strcat(TmpMsgStr120, cnst_Quit_Report2);
@@ -50,8 +50,16 @@ void Exit_MemBug(void)
 
     Exit(TmpMsgStr120);
 }
+#endif
+#if defined(__WIN32__)
+void Exit_MemBug(void)
+{
+
+}
+#endif
 
 // s05p02
+#if defined(__DOS16__)
 void Exit(char * argQuitMessage)
 {
     //SND_Stop_Music
@@ -71,8 +79,23 @@ void Exit(char * argQuitMessage)
     //DOS_QuitWithMsg(*argQuitMessage); // Error Type mismatch  
     QuitToDOS(argQuitMessage);  // works, on account of now being in C, and using printf()
 }
+#endif
+#if defined(__WIN32__)
+void Exit(char * argQuitMessage)
+{
+
+}
+#endif
+
+void MoX_Exit_With_Message(char * string)
+{
+    // Reset_System();
+    printf("%s\n", string);
+    // exit(EXIT_FAILURE);
+}
 
 // s05p05
+#if defined(__DOS16__)
 void Update_MemFreeWorst_KB(void)
 {
     unsigned int MemFree_KB;
@@ -82,3 +105,10 @@ void Update_MemFreeWorst_KB(void)
         MemFreeWorst_KB = MemFree_KB;
     }
 }
+#endif
+#if defined(__WIN32__)
+void Update_MemFreeWorst_KB(void)
+{
+
+}
+#endif

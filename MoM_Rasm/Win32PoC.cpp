@@ -16,11 +16,11 @@
 
 #include "win_DIR.C"
 
-// #include "MoX_DBG.C"
-// #include "MoX_EXIT.C"
+#include "MoX_DBG.C"
+#include "MoX_EXIT.C"
 // #include "MoX_FLIC.C"
 // #include "MoX_Fonts.C"
-// #include "MoX_LBX.C"
+#include "MoX_LBX.C"
 // #include "MoX_MoM.C"
 // #include "MoX_Palette.C"
 #include "MoX_SA.C"
@@ -201,6 +201,9 @@ void main(void)
     dbg_prn("SAMB_head: %p\n", SAMB_head);    
     is_valid = Check_Allocation(SAMB_head);
     dbg_prn("is_valid: %s\n", (is_valid == 0 ? "ST_FAILURE" : "ST_SUCCESS") );
+
+    SAMB_data = Allocate_Space_No_Header(32);
+    dbg_prn("SAMB_data: %p\n", SAMB_data);    
 
 //     // font_ptr = Farload(GAME_FONT_FILE, 0);
 //     font_ptr = Farload(font_file, 0);

@@ -62,7 +62,7 @@
                         LBX_Load_Entry(LbxName=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, LbxHdrFmt=0)
                             EMM_LBX_Load_Entry(EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, FormatType=0)
                                 EMM_LBX_HdrOnly(EmmHndl=6, EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0)
-                                    SA_Allocate_MemBlk(nparas=1);
+                                    Allocate_Space_No_Header(nparas=1);
                                         gfp_tmpSAMB = (char _FAR *) farmalloc(((unsigned long)nparas * 16) + 16);
                                         SAMB_data = FP_SEG(gfp_tmpSAMB) + 1;
                                     SAMB_data=0x168C

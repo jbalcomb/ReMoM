@@ -1,4 +1,6 @@
+
 #include "MoX_TYPE.H"    /* byte_ptr */
+
 #include "ST_DEF.H"
 
 #include "ST_EMM.H"
@@ -7,6 +9,8 @@
 
 #include "MoX_DIR.H"    /* LOF() */
 
+#include "MoX_SA.H"
+
 #include "ST_EXIT.H"    /* Exit() */
 #include "ST_FLIC.H"
 #include "ST_LBX.H"
@@ -14,7 +18,7 @@
 
 // #include <STDIO.H>   /* printf() */
 #include <STDLIB.H>  /* itoa() */
-#include <STRING.H>  /* strcat(), strcpy() */
+#include <STRING.H>  /* strcat(), strcpy(), stricmp() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -1008,7 +1012,7 @@ Done:
 
 // MGC s13p11
 // TODO(JimBalcomb): add DEBUG for status/why/which failure
-unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int FormatType)
+unsigned int EMM_LBX_Load_Entry(char * EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType, int FormatType)
 {
     //unsigned int tmp_SAMB_head;
     sgmt_addr SAMB_data;
@@ -1052,18 +1056,34 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
 
     SAMB_data = ST_FAILURE;
 
-    EMMLBXHANDLE()
+    // EMMLBXHANDLE()
+    EmmHndl = EMM_CheckHandleOpen(EmmHndlNm);
+    if(EmmHndl == ST_FAILURE)
+    {
+        DLOG("(EmmHndl == ST_FAILURE)");
+        goto Done;
+    }
+    else
+    {
+        DLOG("(EmmHndl != ST_FAILURE)");
+    }
 
     /*
         LBX Type 0: FLIC  ("pictures")
     */
-    if ( g_LBX_EmmRsvd == 1 )
+    if(g_LBX_EmmRsvd == 1)
     {
+        DLOG("(g_LBX_EmmRsvd == ST_TRUE)");
         EMM_MapnRead((unsigned int)&LbxFileType, 0, 6, 0, 2, EmmHndl);
-        if ( LbxFileType != 0 )
+        if(LbxFileType != 0)
         {
+            DLOG("(LbxFileType != 0)");
             //LBX_Error(EmmHndlNm, 0x0D, LbxEntry);  // LbxErrNbr = 13, LbxErrIdx = 12; 'LBXErr_cantload_reserved': cnst_LBX_ErrorD = " Only pictures may be loaded into reserved EMM"
             LBX_Error(EmmHndlNm, 0x0D, LbxEntry, 0);
+        }
+        else
+        {
+            DLOG("(LbxFileType == 0)");
         }
         SAMB_data = EMM_LBX_FLIC_Header(EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
 
@@ -1072,6 +1092,10 @@ unsigned int EMM_LBX_Load_Entry(char *EmmHndlNm, int LbxEntry, unsigned int SAMB
 // #endif
 
         goto Done;
+    }
+    else
+    {
+        DLOG("(g_LBX_EmmRsvd != ST_TRUE)");
     }
 
     EMMLBXENTRYCOUNT()
@@ -1143,7 +1167,7 @@ Done:
     reads sizeof(LBX_FLIC_HDR)
     populates LBX_FLIC_HDR.EMM_Handle_Number, .EMM_Logical_Page_Number, and .EMM_Logical_Page_Offset
 */
-unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType)
+unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char * EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType)
 {
     SAMB_addr SAMB_data;
     static unsigned int LbxEntryCount;  // `static` just to get it put in the 'Data Segment', for EMM_MapnRead()
@@ -1157,31 +1181,13 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     unsigned int tmp_SAMB_Size;     // LBXLOADTYPE()
     unsigned char Entry_Begin_Logical_Page_Number;
     unsigned int Entry_Begin_Logical_Page_Offset;
-    unsigned char *ptr_Byte;
-    unsigned char _FAR *fptr_Dst;
-    void * pSAMB_head;
+    unsigned char * ptr_Byte;
+    unsigned char * fptr_Dst;
+    SAMB_ptr pSAMB_head;
 
-// #ifdef STU_DEBUG
-//     unsigned char bDebugDetail = 0;
-// #endif
-
-// #ifdef STU_DEBUG
-//     if
-//     (
-//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) ) ||
-//         ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 5) )
-//     )
-//     {
-//         bDebugDetail = 1;
-//     }
-// #endif
-
-// #ifdef STU_DEBUG
-//     //if (bDebugDetail)
-//     //{
-//         dlvfprintf("DEBUG: [%s, %d] BEGIN: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d)\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
-//     //}
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: EMM_LBX_FLIC_Header(EmmHndl = %d, EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d)\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType);
+#endif
     
     SAMB_data = ST_FAILURE;
 
@@ -1192,10 +1198,10 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     */
     EMM_MapnRead((unsigned int)&LbxEntryCount, 0, 0, 0, 2, EmmHndl);
 
-    if ( LbxEntryCount < LbxEntry )
+    if(LbxEntryCount < LbxEntry)
     {
-        // LBX_Error(EmmHndlNm, 0x08, LbxEntry);  // LBXErr_entries_exceeded
-        LBX_Error(EmmHndlNm, 0x08, LbxEntry, 0);
+        DLOG("(LbxEntryCount < LbxEntry)");
+        LBX_Error(EmmHndlNm, 0x08, LbxEntry, 0);  // LBXErr_entries_exceeded
     }
 
     /*
@@ -1256,7 +1262,67 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
         BEGIN: Load Type
     */
     DataSize_Paras = 1;  // sizeof FLIC_HDR
-    EMMLBXLOADTYPE()
+    // EMMLBXLOADTYPE()
+    /*DataSize_Paras = 1 + (DataSize_Bytes / SZ_PARAGRAPH_B);*/
+    if(LoadType == 0)
+    {
+        DLOG("(LoadType == 0)");
+        SAMB_data = FP_SEG(Allocate_Space(DataSize_Paras));
+        if(SAMB_data == ST_NULL)
+        {
+            DLOG("(SAMB_data == ST_NULL)");
+            goto Done;
+        }
+    }
+
+    if(LoadType == 1)
+    {
+        DLOG("(LoadType == 1)");
+        pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0);
+        if(Check_Allocation((MoX_SAMB_ptr)pSAMB_head) == ST_FAILURE)
+        {
+            DLOG("(Check_Allocation(pSAMB_head) == ST_FAILURE)");
+            SAMB_data = ST_NULL;
+            goto Done;
+        }
+        // if(DataSize_Paras > (farpeekw(SAMB_head, 8) - 1)) /* SAMB_SIZE */
+        if(DataSize_Paras > (MoX_SA_GET_SIZE(pSAMB_head) - 1))
+        {
+            // DLOG("(DataSize_Paras > (farpeekw(SAMB_head, 8) - 1))");
+            DLOG("(DataSize_Paras > (MoX_SA_GET_SIZE(pSAMB_head) - 1))");
+            SAMB_data = ST_NULL;
+            goto Done;
+        }
+        SAMB_data = SAMB_head + 1;
+        tmp_SAMB_Size = DataSize_Paras + 1;
+        // farpokew(SAMB_head, 10, tmp_SAMB_Size); /* SAMB_USED */
+        MoX_SA_SET_USED(pSAMB_head,tmp_SAMB_Size);
+    }
+
+    if(LoadType == 2)
+    {
+        DLOG("(LoadType == 2)");
+        pSAMB_head = (SAMB_ptr)MK_FP(SAMB_head,0);
+        if(Check_Allocation((MoX_SAMB_ptr)pSAMB_head) == ST_FAILURE)
+        {
+            DLOG("(Check_Allocation((MoX_SAMB_ptr)pSAMB_head) == ST_FAILURE)");
+            SAMB_data = ST_NULL;
+            goto Done;
+        }
+        if(DataSize_Paras > Get_Free_Blocks((MoX_SAMB_ptr)pSAMB_head))
+        {
+            DLOG("(DataSize_Paras > Get_Free_Blocks(pSAMB_head))");
+            SAMB_data = ST_NULL;
+            goto Done;
+        }
+        // SAMB_data = SAMB_head + farpeekw(SAMB_head, 10); /* SAMB_USED */
+        SAMB_data = SAMB_head + MoX_SA_GET_USED(pSAMB_head);
+        tmp_SAMB_Size = DataSize_Paras + farpeekw(SAMB_head, 10); /* SAMB_USED */
+        // farpokew(SAMB_head, 10, tmp_SAMB_Size); /* SAMB_USED */
+        MoX_SA_SET_USED(pSAMB_head,tmp_SAMB_Size);
+
+    }
+    /*tmp_SAMB_data = SAMB_data;*/
     /*
         END: Load Type
     */
@@ -1316,15 +1382,16 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
     farpokeb(SAMB_data, 10, (char)EmmHndl);                          // 10 0x0A LBX_FLIC_HDR.EMM_Handle_Number
     farpokeb(SAMB_data, 11, (char)Entry_Begin_Logical_Page_Number);  // 11 0x0B LBX_FLIC_HDR.EMM_Logical_Page_Number
     farpokew(SAMB_data, 12, Entry_Begin_Logical_Page_Offset);        // 12 0x0C LBX_FLIC_HDR.EMM_Logical_Page_Offset
+    // TODO FLIC_LBX_Set_EmmHandleNumber(MK_FP(SAMB_data,0), EmmHndl);
 
-    // capture the data for debug and testing...
-    // int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType
-    // rather than if, if, if, ... index by LBX Name (EMM Handle Name) and LBX Entry Index
-    // ? enum of LBX Name to LBX Number ? in alphabetical order ? used to index an array ? of structs ?
-    if ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) )
-    {
-        //TST_LBX_MAINSCRN_000.EMM_Logical_Page_Offset = 
-    }
+//    // capture the data for debug and testing...
+//    // int EmmHndl, char *EmmHndlNm, int LbxEntry, unsigned int SAMB_head, int LoadType
+//    // rather than if, if, if, ... index by LBX Name (EMM Handle Name) and LBX Entry Index
+//    // ? enum of LBX Name to LBX Number ? in alphabetical order ? used to index an array ? of structs ?
+//    if ( (strcmp(EmmHndlNm, "MAINSCRN") == 0) && (LbxEntry == 0) )
+//    {
+//        //TST_LBX_MAINSCRN_000.EMM_Logical_Page_Offset = 
+//    }
 
 
 // #ifdef STU_DEBUG
@@ -1342,12 +1409,11 @@ unsigned int EMM_LBX_FLIC_Header(int EmmHndl, char *EmmHndlNm, int LbxEntry, uns
 //     }
 // #endif
 
-// #ifdef STU_DEBUG
-//     //if (bDebugDetail)
-//     //{
-//         dlvfprintf("DEBUG: [%s, %d] END: EMM_LBX_FLIC_Header(EmmHndl=%d, EmmHndlNm=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d) {SAMB_data=0x%04X}\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType, SAMB_data);
-//     //}
-// #endif
+Done:
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: EMM_LBX_FLIC_Header(EmmHndl = %d, EmmHndlNm = %s, LbxEntry = %d, SAMB_head = 0x%04X, LoadType = %d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, EmmHndl, EmmHndlNm, LbxEntry, SAMB_head, LoadType, SAMB_data);
+#endif
     return SAMB_data;
 }
 
@@ -1536,14 +1602,14 @@ Done:
         0   Failure
         EMM Handle Number
 */
-unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
+unsigned int EMM_CheckHandleOpen(char * EmmHndlNm)
 {
     int itrEmmOpenHandles;
     unsigned int EmmHndl;
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: BEGIN: EMM_CheckHandleOpen(EmmHndlNm=%s)\n", __FILE__, __LINE__, EmmHndlNm);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: EMM_CheckHandleOpen(EmmHndlNm = %s)\n", __FILE__, __LINE__, EmmHndlNm);
+#endif
 
     itrEmmOpenHandles = 0;
     EmmHndl = 0;
@@ -1557,9 +1623,9 @@ unsigned int EMM_CheckHandleOpen(char *EmmHndlNm)
         itrEmmOpenHandles++;
     }
 
-// #ifdef STU_DEBUG
-//     dlvfprintf("DEBUG: [%s, %d]: END: EMM_CheckHandleOpen(EmmHndlNm=%s) {EmmHndl=%u}\n", __FILE__, __LINE__, EmmHndlNm, EmmHndl);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: EMM_CheckHandleOpen(EmmHndlNm = %s) { EmmHndl = %u}\n", __FILE__, __LINE__, EmmHndlNm, EmmHndl);
+#endif
 
     return EmmHndl;
 }

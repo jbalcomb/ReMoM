@@ -2,17 +2,20 @@
 #include "ST_LBX.H"
 
 #include "MoX_TYPE.H"
-#include "ST_DEF.H"
+#include "MoX_FAR.H"    /* MoX_FP_SEG() */
+
+#include "ST_DEF.H"     /* MK_FP() */
 
 #include "ST_EMM.H"
 #include "ST_EXIT.H"    /* Update_MemFreeWorst_KB() */
+#include "MoX_SA.H"
 #include "ST_SA.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
-// J:\STU\DBWD\BORLANDC\INCLUDE\
+// J:\STU\DBWD\BORLANDC\INCLUDE
 #include <stdio.h>      /* FILE */
 #include <fcntl.h>      /* O_BINARY, O_RDONLY */
 #include<sys\stat.h>    /* ? */
@@ -55,7 +58,6 @@ char * cnst_LBX_ErrorG = " Vga file animation frames cannot exceed 65536 bytes";
     LBX Globals - Unitialized
 */
 unsigned int RAM_Min_KB;                    // MGC dseg:A5C4  ; set to 583 in _main
-MoX_word MoX_RAM_Min_KB;
 unsigned int g_LBX_EntryCount;              // MGC dseg:A5C6
 unsigned int UU_g_LBX_HdrFmt;               // MGC dseg:A5C8
 SAMB_addr gsa_LBX_Header;                   // MGC dseg:A5CA
@@ -511,10 +513,20 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     LBXTESTNEGATIVEENTRY()
 
     // LBXHEADER()
-    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
-    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
-    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = (unsigned int) ( (unsigned long)((void _FAR *)(SA_Allocate_MemBlk(SZ_LBX_HDR_PR))) >> 16); }
-    if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = (unsigned int) ( (unsigned long)((void *)(SA_Allocate_MemBlk(SZ_LBX_HDR_PR))) >> 16); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = (unsigned int) ( (unsigned long)((void _FAR *)(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR))) >> 16); }
+    if(g_LBX_Header_Allocd == 0)
+    {
+        DLOG("(g_LBX_Header_Allocd == ST_FALSE)");
+        g_LBX_Header_Allocd = 1;
+        // gsa_LBX_Header = (unsigned int) ( (unsigned long)((void *)(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR))) >> 16);
+        gsa_LBX_Header = MoX_FP_SEG(Allocate_Space_No_Header(SZ_LBX_HDR_PR));
+    }
+    else
+    {
+        DLOG("(g_LBX_Header_Allocd != ST_FALSE)");
+    }
     
 
 
@@ -1005,8 +1017,8 @@ unsigned int LBX_GetEntryData(char *LbxName, int LbxEntry, unsigned long *LbxEnt
     LBXTESTNEGATIVEENTRY()
 
     // LBXHEADER()
-    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
-    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_Allocate_MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SEG(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); }
+    // if( g_LBX_Header_Allocd == 0 ) { g_LBX_Header_Allocd = 1; gsa_LBX_Header = FP_SGMT(SA_ Allocate_ MemBlk(SZ_LBX_HDR_PR)); }
     LBXHEADER()
 
     ExtractFileBase(LbxName);
