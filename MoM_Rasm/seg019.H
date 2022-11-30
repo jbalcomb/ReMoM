@@ -1,8 +1,9 @@
 #ifndef SEG019_H
 #define SEG019_H
 
+#include "MoX_TYPE.H"
 
-extern unsigned int UU_TextLine_Initd;              // dseg:4318
+extern uint16_t UU_TextLine_Initd;              // dseg:4318
 // ...
 extern SAMB_ptr p_TextLine_Starts;                  // dseg:A820
 extern SAMB_ptr p_TextLine_Tops;                    // dseg:A824
@@ -24,7 +25,7 @@ extern "C" {
 //[?]_s19p06         VGA_GetTextWidth
 
 // s19p11
-int VGA_GetFontHeight(void);
+int16_t VGA_GetFontHeight(void);
 
 // s19p14
 void VGA_TextDraw_Init(void);

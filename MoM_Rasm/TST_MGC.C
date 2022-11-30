@@ -21,7 +21,7 @@
 #include "ST_FLIC.H"
 #include "ST_HLP.H"     /* HLP_IDX_... */
 #include "ST_LBX.H"     /* LBX_Error(), LBXE_LoadSingle() */
-#include "ST_SA.H"      /* SA_Allocate_MemBlk(), SA_Allocate_Space(); */
+// #include "ST_SA.H"      /* SA_ Allocate_ MemBlk(), SA_ Allocate_ Space(); */
 #include "ST_VGA.H"     /* font_name */
 
 // MAINMENU  #include "seg001.H"     /* GAME_LoadMainImages(); */
@@ -294,8 +294,8 @@ void test_MGC_Main(void)
     // s14p03
     DLOG("CALL: Load_Font_File(GAME_FONT_FILE);");
     Load_Font_File(GAME_FONT_FILE);  // "FONTS.LBX"
-        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), SA_Allocate_MemBlk()
-        // |-> ... LBXE_LoadSingle(FONTS.LBX,1), SA_Allocate_MemBlk()
+        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), Allocate_Space_No_Header()
+        // |-> ... LBXE_LoadSingle(FONTS.LBX,1), Allocate_Space_No_Header()
         // |-> VGA_TextDraw_Init()
 
     // MGC main() |-> Hardware_Init()
@@ -561,7 +561,7 @@ void test_EMM_Load_LBX_File(void)
 //         // |-> LBX_Load_Entry(LbxName=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, LbxHdrFmt=0)
 //         // |-> EMM_LBX_Load_Entry(EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, FormatType=0)
 //         // |-> EMM_LBX_FLIC_Header(EmmHndl=7, EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0)
-//         // |-> SA_Allocate_MemBlk(nparas = 1)
+//         // |-> Allocate_Space_No_Header(nparas = 1)
 // 
 //     // ...
 //     // ...

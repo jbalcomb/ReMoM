@@ -66,12 +66,13 @@ static int delete = 0;
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 #define SWAP(x, y) (x ^= y ^= x ^= y)
 
-// #ifndef __WIN32__
+#if defined (__DOS16__)
 #if !defined( __DOS_H )
 #include <DOS.H>
 #endif
 #if !defined( __DEFS_H )
 #include <_defs.h>
+#endif
 #endif
 
 #undef MK_FP

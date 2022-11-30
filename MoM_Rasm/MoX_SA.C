@@ -32,39 +32,33 @@
 
 #include "ST_DEF.H"
 
+#include "ST_EXIT.H"
+
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
-// #include <malloc.h>
-// #include <stdlib.h>     /* itoa() */
+#if defined(__DOS16__)
 #include <ALLOC.H>      /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */
-// #include <STDIO.H>   /* printf() */
-#include <STDLIB.H>  /* itoa() */
-#include <STRING.H> /* strcat(), strcpy() */
+#include <STDLIB.H>     /* itoa() */
+#include <STRING.H>     /* strcat(), strcpy() */
+#endif
+#if defined(__WIN32__)
+#include <malloc.h>
+#include <stdlib.h>     /* itoa() */
+#include <string.h>     /* strcat(), strcpy() */
+#endif
 
 
 extern MoX_word MoX_RAM_Min_KB;
-extern word RAM_Min_KB;
+extern int16_t RAM_Min_KB;
 
 
-
-// s07p04
-MoX_word MoX_Check_Allocation(MoX_SAMB_ptr SAMB_head);
-
-// s08p07
-MoX_SAMB_ptr MoX_Allocate_Space(MoX_word size);
-// s08p08
-MoX_SAMB_ptr MoX_Allocate_Space_No_Header(MoX_word size);
-// s08p15
-MoX_word MoX_Get_Free_Blocks(MoX_SAMB_ptr SAMB_head);
-// _s08p19
-void MoX_Allocation_Error(MoX_word error_num, MoX_word blocks);
 
 MoX_SAMB_ptr MoX_tmp_SAMB_head;  // rename - ?pTmpSAMB?, g_header, tmp_header_ptr, _header_ptr, ?!?
 
 
-char * error_handler_strings[] =
+char * str_allocation_errors[] =
 {
     "Near Allocation too large by ",
     " bytes",
@@ -86,7 +80,7 @@ char * error_handler_strings[] =
 */
 
 // s07p04
-MoX_word MoX_Check_Allocation(MoX_SAMB_ptr SAMB_head)
+MoX_word Check_Allocation(MoX_SAMB_ptr SAMB_head)
 {
     MoX_word is_valid;
     
@@ -114,7 +108,7 @@ MoX_word MoX_Check_Allocation(MoX_SAMB_ptr SAMB_head)
 */
 
 // MGC s08p07
-MoX_SAMB_ptr MoX_Allocate_Space(MoX_word size)
+MoX_SAMB_ptr Allocate_Space(MoX_word size)
 {
     S32 lsize;
     MoX_SAMB_ptr SAMB_head;
@@ -128,7 +122,7 @@ MoX_SAMB_ptr MoX_Allocate_Space(MoX_word size)
     dbg_prn("DEBUG: [%s, %d] lsize: %ld )\n", __FILE__, __LINE__, lsize);
 #endif
     MoX_tmp_SAMB_head = (MoX_SAMB_ptr) malloc(lsize);
-    if ( MoX_tmp_SAMB_head == NULL ) { MoX_Allocation_Error(0x01, size); }
+    if ( MoX_tmp_SAMB_head == NULL ) { Allocation_Error(0x01, size); }
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] MoX_tmp_SAMB_head: %p\n", __FILE__, __LINE__, MoX_tmp_SAMB_head);
 #endif
@@ -168,7 +162,7 @@ MoX_SAMB_ptr MoX_Allocate_Space(MoX_word size)
 }
 
 // s08p08
-MoX_SAMB_ptr MoX_Allocate_Space_No_Header(MoX_word size)
+MoX_SAMB_ptr Allocate_Space_No_Header(MoX_word size)
 {
     S32 lsize;
     MoX_SAMB_ptr SAMB_data;
@@ -179,7 +173,7 @@ MoX_SAMB_ptr MoX_Allocate_Space_No_Header(MoX_word size)
 
     lsize = (size + 1) * 16;
     MoX_tmp_SAMB_head = (MoX_SAMB_ptr) malloc(lsize);
-    if ( MoX_tmp_SAMB_head == NULL ) { MoX_Allocation_Error(0x01, size); }
+    if ( MoX_tmp_SAMB_head == NULL ) { Allocation_Error(0x01, size); }
     // SAMB_head = (MoX_SAMB_ptr) MoX_PTR_ADD_PARAGRAPH(MoX_tmp_SAMB_head,1);
 #if defined(__DOS16__)
     SAMB_data = (MoX_SAMB_ptr)MoX_MK_FP((MoX_FP_SEG(MoX_tmp_SAMB_head) + 1), 0);
@@ -201,13 +195,13 @@ MoX_SAMB_ptr MoX_Allocate_Space_No_Header(MoX_word size)
 }
 
 // MGC s08p15
-MoX_word MoX_Get_Free_Blocks(MoX_SAMB_ptr SAMB_head)
+MoX_word Get_Free_Blocks(MoX_SAMB_ptr SAMB_head)
 {
     return MoX_SA_GET_SIZE(SAMB_head) - MoX_SA_GET_USED(SAMB_head);
 }
 
 // MGC s08p19
-void MoX_Allocation_Error(MoX_word error_num, MoX_word blocks)
+void Allocation_Error(MoX_word error_num, MoX_word blocks)
 {
     char buffer[120] = {0};
     char buffer2[20] = {0};
@@ -230,29 +224,29 @@ void MoX_Allocation_Error(MoX_word error_num, MoX_word blocks)
         switch(error_num)
         {
             case 1:
-                strcpy(buffer, error_handler_strings[4]);
-                strcat(buffer, error_handler_strings[5]);
+                strcpy(buffer, str_allocation_errors[4]);
+                strcat(buffer, str_allocation_errors[5]);
                 break;
             case 2:
-                strcpy(buffer, error_handler_strings[7]);
-                strcat(buffer, error_handler_strings[8]);
-                strcat(buffer, error_handler_strings[9]);
+                strcpy(buffer, str_allocation_errors[7]);
+                strcat(buffer, str_allocation_errors[8]);
+                strcat(buffer, str_allocation_errors[9]);
                 break;
             case 3:
-                strcpy(buffer, error_handler_strings[10]);
-                strcat(buffer, error_handler_strings[8]);
-                strcat(buffer, error_handler_strings[5]);
+                strcpy(buffer, str_allocation_errors[10]);
+                strcat(buffer, str_allocation_errors[8]);
+                strcat(buffer, str_allocation_errors[5]);
                 break;
             case 4:
-                strcpy(buffer, error_handler_strings[7]);
-                strcat(buffer, error_handler_strings[11]);
-                strcat(buffer, error_handler_strings[8]);
-                strcat(buffer, error_handler_strings[9]);
+                strcpy(buffer, str_allocation_errors[7]);
+                strcat(buffer, str_allocation_errors[11]);
+                strcat(buffer, str_allocation_errors[8]);
+                strcat(buffer, str_allocation_errors[9]);
                 break;
         }
         itoa(blocks, buffer2, 10);
         strcat(buffer, buffer2);
-        strcat(buffer, error_handler_strings[6]);
+        strcat(buffer, str_allocation_errors[6]);
     }
 
 #ifdef STU_DEBUG

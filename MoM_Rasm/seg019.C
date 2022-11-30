@@ -2,12 +2,18 @@
 // v2 #include "ST_DEF.H"     /* _FAR */
 // MoO2: Module: fonts
 
-#include "ST_DEF.H"
+#include "MoX_TYPE.H"
 
-#include "ST_SA.H"      /* farpeekw(), SA_Allocate_Space() */
+// #include "ST_DEF.H"     /* GET_2B_OFS() */
+#include "MoX_DEF.H"
+#include "MoX_BITS.H"   /* MoX_GET_2B_OFS() */
+
+#include "MoX_SA.H"     /* Allocate_Space() */
+
+// #include "ST_SA.H"      /* farpeekw(), SA_ Allocate_ Space() */
 #include "ST_VGA.H"     /* gsa_FontStyleData, etc. */
 
-unsigned int UU_TextLine_Initd = 0;       // dseg:4318
+uint16_t UU_TextLine_Initd = MoX_ST_FALSE;       // dseg:4318
 
 SAMB_ptr p_TextLine_Starts;                 // dseg:A820
 SAMB_ptr p_TextLine_Tops;                   // dseg:A824
@@ -16,9 +22,9 @@ SAMB_ptr p_TextLine_Lefts;                  // dseg:A82C
 
 
 // s19p11
-int VGA_GetFontHeight(void)
+int16_t VGA_GetFontHeight(void)
 {
-    int Font_Height;
+    int16_t Font_Height;
     // v2 int _FAR * pFont_Height;
     
     // SMLM Font_Height = farpeekw(gsa_FontStyleData, 16); // s_FONT_HEADER.Font_Height
@@ -30,7 +36,7 @@ int VGA_GetFontHeight(void)
     // v2 pFont_Height = (int _FAR *)MK_FP(gsa_FontStyleData,16);
     // v2 Font_Height = *pFont_Height;
     // Font_Height = 12;
-    Font_Height = GET_2B_OFS(p_FontStyleData, 16);  // SMLM
+    Font_Height = MoX_GET_2B_OFS(p_FontStyleData, 16);  // SMLM
 
     return Font_Height;
 }
@@ -38,11 +44,11 @@ int VGA_GetFontHeight(void)
 // s19p14
 void TextLine_Init(void)
 {
-    UU_TextLine_Initd = 1;
-    p_TextLine_Lefts   = SA_Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    p_TextLine_Rights  = SA_Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    p_TextLine_Tops    = SA_Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    p_TextLine_Starts  = SA_Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    UU_TextLine_Initd = MoX_ST_TRUE;
+    p_TextLine_Lefts   = Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    p_TextLine_Rights  = Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    p_TextLine_Tops    = Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    p_TextLine_Starts  = Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
 }
 /*
 Module: paragrph

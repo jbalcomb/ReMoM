@@ -5,17 +5,17 @@
 #include "seg014.H"
 #include "seg020.H"     /* palette_block */
 
-#include "ST_RND.H"     /* RND_TimerSeed() */
+#include "ST_DEF.H"     /* SWAP() */
 
-// #include "ST_HEAD.H"
-// #include "MoX_TYPE.H"
-// #include "ST_DEF.H"  /* SWAP(); */
+#include "ST_RND.H"     /* RND_TimerSeed() */
 
 #include "MoX_SA.H"
 
 #include "ST_LBX.H"
 #include "ST_SA.H"
 #include "ST_VGA.H"
+
+#include <STRING.H>    /* strcpy() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -46,9 +46,8 @@ VGA_Set_DSP_Addr()
 strcpy()
 LBXE_LoadSingle()
 FP_SEG()
-SA_Allocate_Space()
+Allocate_Space()
 VGA_TextDraw_Init();
-farpokeb()
 */
 
 #ifdef STU_DEBUG
@@ -57,9 +56,8 @@ farpokeb()
 
 // s14p01
 // void Hardware_Init(int argInputType, int argSoundChannels, char *argFontFileName, int M_Drv, int M_IO, int M_IRQ, int M_DMA, int D_Drv, int D_IO, int D_IRQ, int D_DMA)
-void Hardware_Init(int argInputType, char * font_file)
+void Hardware_Init(int input_type, char * font_file)
 {
-    int tmpInputType;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: Hardware_Init()\n", __FILE__, __LINE__);
@@ -67,19 +65,18 @@ void Hardware_Init(int argInputType, char * font_file)
 
     EMM_Startup();
     VGA_SetModeY();
-    if (argInputType == -1)
+    if (input_type == ST_UNDEFINED)
     {
         Load_Font_File(DEFAULT_FONTS_FILE);
         //SND_Init(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);
-        tmpInputType = 1;
+        input_type = 1;
     }
     else
     {
         Load_Font_File(font_file);
         //SND_Init(M_Drv, argSoundChannels, M_IO, M_IRQ, M_DMA, D_Drv, D_IO, D_IRQ, D_DMA);
-        tmpInputType = argInputType;
     }
-    IN_Init(tmpInputType);  // MGC s34p65  ST_GUI.H
+    IN_Init(input_type);  // MGC s34p65  ST_GUI.H
     RND_TimerSeed();
     VGA_Set_DSP_Addr();
 
@@ -89,12 +86,7 @@ void Hardware_Init(int argInputType, char * font_file)
 
 }
 
-// s14p03
-// TODO(JimBalcomb): move these defs elsewhere - ST_HEAD, MOM_DEF, etc.
-//#define SZ_348PR_5568B 348
-//#define SZ_64PR_1024B 64
-//#define SZ_48PR_768B 48
-//#define SZ_2PR_32B 2
+// MGC s14p03
 /*
 Loads FONTS.LBX records 1 & 2
 Allocates memory from the far heap...
@@ -118,33 +110,26 @@ void Load_Font_File(char * font_file)
     strcpy(font_name, font_file);
 
     /* MoO2 font_ptr */
-    // SM2LM  sa_FontStyleData = LBXE_LoadSingle(font_file, 0);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
     p_FontStyleData = LBXE_LoadSingle_LM(font_file, 0);
-    // SM2LM  sa_FontStyleData = FP_SEG(p_FontStyleData);
 
-    /* MoO2 DNE */
-    // SM2LM  gsa_BorderStyleData = LBXE_LoadSingle(font_file, 1);     // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
     p_BorderStyleData = LBXE_LoadSingle_LM(font_file, 1);  // ∵ Load Type 0 ∴ SA_Allocate_MemBlk() { SAMB Data Type 0 }
-    // SM2LM  sa_BorderStyleData = FP_SEG(p_BorderStyleData);
 
-    /* MoO2 palette_block */
-    // palette_block          = SA_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
-    palette_block          = MoX_Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
-    p_Palette              = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
+    palette_block          = Allocate_Space(348);            // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    p_Palette              = Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);             // ~== p_PaletteFlags = &p_Palette[768];
     // p_PaletteFlags         = PTR_ADD_PARAGRAPH(p_Palette, 48);
-    p_Palette_XBGR         = SA_Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
+    p_Palette_XBGR         = Allocate_Space(64);             //  64 paragraphs =  64 * 16 bytes = 1024 bytes
 
-    UU_p_PaletteSaved      = SA_Allocate_Space(48);             //  48 paragraphs =  48 * 16 bytes =  768 bytes
+    UU_p_PaletteSaved      = Allocate_Space(48);             //  48 paragraphs =  48 * 16 bytes =  768 bytes
     UU_sa_PaletteSaved     = FP_SEG(UU_p_PaletteSaved);
 
-    p_ReplacementColors    = SA_Allocate_Space(384);            // 348 paragraphs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
+    p_ReplacementColors    = Allocate_Space(384);            // 348 paragraphs = 384 * 16 bytes = 6144 bytes / 256 = 24 & 256 - 24 - 232 ? shading colors in _R functions ?
     sa_ReplacementColors   = FP_SEG(p_ReplacementColors);
 
-    p_VGAFILEH_Header      = SA_Allocate_Space(2);              //   2 paragraphs =   2 * 16 bytes =   32 bytes
+    p_VGAFILEH_Header      = Allocate_Space(2);              //   2 paragraphs =   2 * 16 bytes =   32 bytes
     sa_VGAFILEH_Header     = FP_SEG(p_VGAFILEH_Header);
     
-    p_IntensityScaleTable  = SA_Allocate_Space(96);             //  96 paragraphs =  96 * 16 bytes = 1536 bytes / 256 = 6
+    p_IntensityScaleTable  = Allocate_Space(96);             //  96 paragraphs =  96 * 16 bytes = 1536 bytes / 256 = 6
     sa_IntensityScaleTable = FP_SEG(p_IntensityScaleTable);
     
     TextLine_Init();

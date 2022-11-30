@@ -50,6 +50,9 @@ seg001.C/.H
 
 */
 
+#include "MoX_SA.H"     /* Allocate_Space(), Allocate_Space_No_Header() */
+
+
 
 void test_VGA_VRAM(void);
 
@@ -101,7 +104,7 @@ void test_VGA_VRAM(void)
 //     VGA_Set_DSP_Addr();  // Sets Screen-Page Segment Addres, based on Screen-Page Index    gsa_DSP_Addr = VRAM_BASE + ( (1 - g_RSP_Idx) << 10 );
 //     // FLIC_Draw_EMM() uses gsa_DSP_Addr to set the Dst_Sgmt ... Also, Offset to Scan-Line
 //     // NOTE: VGA_PageFlip() is the place that g_RSP_Idx is changed - it sets it to (1 - g_RSP_Idx)
-//     PAL_Load_Palette(0, -1, 0);  // requires Load_Font_File(), LBXE_LoadReplace(), LBX_Load_Entry(), SA_Allocate_MemBlk(), SA_Allocate_Space(), 
+//     PAL_Load_Palette(0, -1, 0);  // requires Load_Font_File(), LBXE_LoadReplace(), LBX_Load_Entry(), Allocate_Space_No_Header(), Allocate_Space(), 
 //     VGA_DAC_Write();
 //         // outportb( 0x3C8, itrVgaDacColors );
 //         // outportb( 0x3C9, ptr_Palette[ofstPalette++] );
@@ -332,8 +335,8 @@ void test_PAL_Load_Palette(void)
 
     // ~== Load_Font_File()
     strcpy(font_name, font_file);
-    sah1_PaletteLbxEntry    = SA_Allocate_Space(348);           // 348 paragraphs = 386 * 16 bytes = 5568 bytes
-    p_Palette               = SA_Allocate_Space(64);            //  64 paragraphs =  64 * 16 bytes = 1024 bytes
+    sah1_PaletteLbxEntry    = Allocate_Space(348);           // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    p_Palette               = Allocate_Space(64);            //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags          = p_Palette + (48 * 16);            // ~== p_PaletteFlags = &p_Palette[768];
     // for ( i = 0; i < 768; i++)
     // {
@@ -376,7 +379,7 @@ void test_PAL_Load_Palette(void)
             |-> Load_Font_File()
     
     Load_Font_File()
-        |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
+        |-> ... LBXE_LoadSingle(), Allocate_Space(), VGA_TextDraw_Init()
     
 */
 void test_Load_Font_File(void)
@@ -667,7 +670,7 @@ void test_FLIC_Draw_Back(void)
     MenuArea_X_Left = 123;
     MenuArea_Y_Top = 141;
 
-    video_back_buffer = SA_Allocate_MemBlk(4000);
+    video_back_buffer = Allocate_Space_No_Header(4000);
     video_back_buffer_seg = FP_SEG(video_back_buffer);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);
@@ -834,7 +837,7 @@ void test_FLIC_Draw_Frame_Back(void)
 
     memcpy((void *)&PS_FLIC_Header, (const void *)mainmenu_l, sizeof(PS_FLIC_Header));
 
-    // video_back_buffer = SA_Allocate_Space(4000);  // 4000 paragraphs = 64000 bytes / 16 bytes per paragraph
+    // video_back_buffer = Allocate_Space(4000);  // 4000 paragraphs = 64000 bytes / 16 bytes per paragraph
 
     current_frame_index = 0;
     x = 0;
@@ -921,7 +924,7 @@ void test_STU_Export_VBB_To_BMP(void)
 //     MenuArea_X_Left = 123;
 //     MenuArea_Y_Top = 141;
 
-    video_back_buffer = SA_Allocate_MemBlk(4000);
+    video_back_buffer = Allocate_Space_No_Header(4000);
     video_back_buffer_seg = FP_SEG(video_back_buffer);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] video_back_buffer: %p\n", __FILE__, __LINE__, video_back_buffer);

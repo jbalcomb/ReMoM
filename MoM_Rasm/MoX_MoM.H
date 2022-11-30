@@ -1,6 +1,8 @@
 #ifndef MOX_MOM_H
 #define MOX_MOM_H
 
+#include <stdint.h>
+
 
 #define EMM_PAGES_REQUIRED 158
 #define EMM_MIN_KB 2700  // 168 pages ? 168 = 158 + (1 + 5 + 4) ?
@@ -17,7 +19,7 @@ extern char mainscrn_lbx_file[];                // MGC  dseg:28A7
 
 extern char vortex_lbx_file[];                  // MGC  dseg:28B0
 
-extern int RAM_Min_KB;                          // MGC  dseg:A5C4  WZD  dseg:E5CE
+extern int16_t RAM_Min_KB;                          // MGC  dseg:A5C4  WZD  dseg:E5CE
 
 
 #ifdef __cplusplus
@@ -25,7 +27,8 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
-// s10p17
+
+// MGC s10p17
 void RAM_SetMinKB(int Min_KB);
 
 

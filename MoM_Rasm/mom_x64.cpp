@@ -43,29 +43,29 @@ int MGC_Main(void)
     /*
         |-> EMM_Startup()
         |-> VGA_SetModeY()
-        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), SA_Allocate_Space(), VGA_TextDraw_Init()
+        |-> VGA_DAC_Init() |-> ... LBXE_LoadSingle(), Allocate_Space(), VGA_TextDraw_Init()
         |-> SND_Init()
         |-> IN_Init() |-> MD_Init()
         |-> RNG_TimerSeed()
         |-> VGA_Set_DSP_Addr()
     */
-    //gsa_PaletteLbxEntry = SA_Allocate_Space(348);      // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
+    //gsa_PaletteLbxEntry = Allocate_Space(348);      // 348 paragraphs = 386 * 16 bytes = 5,568 bytes
 
     /* 
         main() |-> Hardware_Init() |-> VGA_DAC_Init() |-> VGA_TextDraw_Init()
         _s19p14c.c  void VGA_TextDraw_Init(void)
     */
     // UU_g_VGA_TextDraw_Initd = 1;
-    // gfp_VGA_TextLine_Lefts = SA_Allocate_Space(8);   // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    // gfp_VGA_TextLine_Rights = SA_Allocate_Space(8);  // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    // gfp_VGA_TextLine_Tops = SA_Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
-    // gfp_VGA_TextLine_Starts = SA_Allocate_Space(8);  // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    // gfp_VGA_TextLine_Lefts = Allocate_Space(8);   // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    // gfp_VGA_TextLine_Rights = Allocate_Space(8);  // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    // gfp_VGA_TextLine_Tops = Allocate_Space(8);    // 8 paragraphs = 8 * 16 bytes = 128 bytes
+    // gfp_VGA_TextLine_Starts = Allocate_Space(8);  // 8 paragraphs = 8 * 16 bytes = 128 bytes
 
     /* 
         main() |-> Hardware_Init() |-> IN_Init()
         _s34p65c.c IN_Init
     */
-    // gfp_CTRL_Control_Table = SA_Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
+    // gfp_CTRL_Control_Table = Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
 
 
     /*
@@ -77,7 +77,7 @@ int MGC_Main(void)
     /*  DBG_Disable();  */
     /*  MoM_Tables_Init(6100);  */  // TODO(JimBalcomb,20220818): move whatever this 6100 is to a manifest constant
     /*
-        |-> SA_Allocate_Space()
+        |-> Allocate_Space()
         |-> SA_Alloc_First()
         |-> SA_Alloc_Next()
     */

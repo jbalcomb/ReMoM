@@ -12,19 +12,19 @@
 
 #include "MoX_MoM.H"
 
-#include "MoX_MAINMENU.C"
+// #include "MoX_MAINMENU.C"
 
 #include "win_DIR.C"
 
-#include "MoX_DBG.C"
-#include "MoX_EXIT.C"
-#include "MoX_FLIC.C"
-#include "MoX_Fonts.C"
-#include "MoX_LBX.C"
-#include "MoX_MoM.C"
-#include "MoX_Palette.C"
+// #include "MoX_DBG.C"
+// #include "MoX_EXIT.C"
+// #include "MoX_FLIC.C"
+// #include "MoX_Fonts.C"
+// #include "MoX_LBX.C"
+// #include "MoX_MoM.C"
+// #include "MoX_Palette.C"
 #include "MoX_SA.C"
-#include "MoX_QUIT.C"
+// #include "MoX_QUIT.C"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.C"
@@ -166,8 +166,8 @@ void main(void)
 
     // TST_SMLM();  // Test - Segmented Memory vs. Linear Memory
 
-    SAMB_data = MoX_Explore_LBX_Load_Entry(file_name, entry_num, 0, 0, 0);
-    dbg_prn("SAMB_data: %p\n", SAMB_data);
+//    SAMB_data = MoX_Explore_LBX_Load_Entry(file_name, entry_num, 0, 0, 0);
+//    dbg_prn("SAMB_data: %p\n", SAMB_data);
     
     // // void Allocation_Error(int error_num, int blocks)
     // Debug_Disabled = 0;
@@ -197,11 +197,11 @@ void main(void)
     // Error_Handler(GAME_FONT_FILE, 15, 0, 111);
     // Error_Handler(GAME_FONT_FILE, 16, 0, 111);
 
-//     SAMB_head = Allocate_Space(348);
-//     dbg_prn("SAMB_head: %p\n", SAMB_head);    
-//     is_valid = Check_Allocation(SAMB_head);
-//     dbg_prn("is_valid: %s\n", (is_valid == 0 ? "ST_FAILURE" : "ST_SUCCESS") );
-// 
+    SAMB_head = Allocate_Space(348);
+    dbg_prn("SAMB_head: %p\n", SAMB_head);    
+    is_valid = Check_Allocation(SAMB_head);
+    dbg_prn("is_valid: %s\n", (is_valid == 0 ? "ST_FAILURE" : "ST_SUCCESS") );
+
 //     // font_ptr = Farload(GAME_FONT_FILE, 0);
 //     font_ptr = Farload(font_file, 0);
 //     dbg_prn("font_ptr: %p\n", font_ptr);    
