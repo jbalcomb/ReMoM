@@ -59,3 +59,55 @@ Note:
     There are two events that happen before the user gets the application window:
         WM_ACTIVATEAPP
         WM_SIZE
+    ...  
+    also, ...  
+    https://www.informit.com/articles/article.aspx?p=28595&seqNum=4  
+    When a window is resized, not only is a WM_SIZE message sent, but a WM_PAINT message is sent as well!  
+
+
+WINUSERAPI
+HWND
+WINAPI
+CreateWindowExA(
+    _In_ DWORD dwExStyle,
+    _In_opt_ LPCSTR lpClassName,
+    _In_opt_ LPCSTR lpWindowName,
+    _In_ DWORD dwStyle,
+    _In_ int X,
+    _In_ int Y,
+    _In_ int nWidth,
+    _In_ int nHeight,
+    _In_opt_ HWND hWndParent,
+    _In_opt_ HMENU hMenu,
+    _In_opt_ HINSTANCE hInstance,
+    _In_opt_ LPVOID lpParam);
+
+    g_Window =  CreateWindowExA(0,
+                                lpszClassName,
+                                lpszWindowName,
+                                WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                                CW_USEDEFAULT,
+                                CW_USEDEFAULT,
+                                CW_USEDEFAULT,
+                                CW_USEDEFAULT,
+                                0,
+                                0,
+                                hInstance,
+                                0
+                );
+
+dwExStyle  
+    NULL  
+
+dwStyle  
+    WS_OVERLAPPEDWINDOW | WS_VISIBLE  
+
+#### Window Dimensions:
+    X
+        CW_USEDEFAULT
+    Y
+        CW_USEDEFAULT
+    nWidth
+        CW_USEDEFAULT
+    nHeight
+        CW_USEDEFAULT

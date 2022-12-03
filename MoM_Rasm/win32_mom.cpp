@@ -9,7 +9,16 @@ This is because, as our building philosophy, we use the so-called Unity Builds,
 i.e. building everything in one go. You can read more in the subsection 6.1.
 |-> https://yakvi.github.io/handmade-hero-notes/html/day11.html#toc6.1
 */
-#include "mom_x64.cpp"
+#include "win32_init.cpp"
+
+
+static bool g_KbHit;
+
+#if !defined(__DOS16__)
+//#define getch() (kbhit())
+#define getch() { while(!g_KbHit) {} }
+#endif
+
 
 // unsigned integers
 typedef uint8_t u8;     // 1-byte long unsigned integer
@@ -45,15 +54,50 @@ struct win32_window_dimension
     int Height;
 };
 
-global_variable bool GlobalRunning;
+global_variable bool g_State_Run;
 global_variable win32_offscreen_buffer GlobalBackbuffer;
+global_variable win32_offscreen_buffer g_Video_Back_Buffer;
 
-void *
-PlatformLoadFile(char* Filename)
+uint8_t video_back_buffer[64000];
+
+// uint8_t * p_Palette_XBGR;
+uint8_t p_Palette_XBGR[1024];
+
+
+/*
+    MGC
+        {0,1,2,3,4} == {Continue,Load_Game,New_Game,Quit_To_DOS,Hall_Of_Fame}
+*/
+enum e_SCREENS
 {
-    // NOTE(casey): Implements the Win32 file loading
-    // ... 
-    return (0);
+    scr_Main_Menu = 3,
+    scr_Exit = 5
+};
+
+int16_t current_screen;
+
+
+
+void
+Render_VBB(win32_offscreen_buffer * Buffer)
+{
+    uint8_t * bbuf;
+    bbuf = (uint8_t *)video_back_buffer;
+    struct tagRGBQUAD XBGR;
+
+    uint32_t * Pixel = (uint32_t*)Buffer->Memory;
+    int itr;
+    unsigned char vbb_byte;
+    unsigned int * p_XBGR;
+    unsigned int long_XBGR;
+    p_XBGR = (uint32_t *)p_Palette_XBGR;
+    for(itr = 0; itr < 64000; itr++)
+    {
+        vbb_byte = *(video_back_buffer + itr);
+        long_XBGR = *(p_XBGR + vbb_byte);
+        *Pixel++ = long_XBGR;
+    }
+
 }
 
 internal win32_window_dimension
@@ -62,7 +106,7 @@ Win32GetWindowDimension(HWND Window)
     win32_window_dimension Result; 
     
     RECT ClientRect;
-    GetClientRect(Window, &ClientRect);    
+    GetClientRect(Window, &ClientRect);
     Result.Width = ClientRect.right - ClientRect.left;
     Result.Height = ClientRect.bottom - ClientRect.top;
     
@@ -70,26 +114,7 @@ Win32GetWindowDimension(HWND Window)
 }
 
 internal void
-RenderWeirdGradient(win32_offscreen_buffer *Buffer, int XOffset, int YOffset)
-{
-    u8 *Row = (u8 *)Buffer->Memory;
-    for (int Y = 0; Y < Buffer->Height; ++Y)
-    {
-        u32* Pixel = (u32*)Row;
-
-        for(int X = 0; X < Buffer->Width; ++X)
-        {
-        u8 Red = 0;
-        u8 Green = (u8)(Y + YOffset);
-        u8 Blue = (u8)(X + XOffset);
-        *Pixel++ = Red << 16 | Green << 8 | Blue; // << 0
-        }
-        Row += Buffer->Pitch;
-    }
-}
-
-internal void
-Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
+Win32ResizeDIBSection(win32_offscreen_buffer * Buffer, int Width, int Height)
 {
     if(Buffer->Memory) // ~== (BitmapMemory != 0) ~== (BitmapMemory != NULL)
     {
@@ -116,7 +141,7 @@ Win32ResizeDIBSection(win32_offscreen_buffer *Buffer, int Width, int Height)
 }
 
 internal void
-Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer, 
+Win32DisplayBufferInWindow(win32_offscreen_buffer * Buffer, 
                            HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
     // TODO(casey): Aspect ratio correction
@@ -130,6 +155,47 @@ Win32DisplayBufferInWindow(win32_offscreen_buffer *Buffer,
     
 }
 
+void Poll_Messages(void)
+{
+        MSG Message;
+        while(PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
+        {
+            if (Message.message == WM_QUIT)
+            {
+                g_State_Run = false;
+            }
+            TranslateMessage(&Message);
+            DispatchMessageA(&Message);
+        }
+}
+
+void Screen_Control(void)
+{
+    switch(current_screen)
+    {
+        case scr_Main_Menu:
+        {
+            // Main_Menu_Screen();
+        } break;
+    }
+}
+
+void Main_Game_Loop(void)
+{
+    while(g_State_Run)
+    {
+        Poll_Messages();
+
+        Screen_Control();
+
+        // Copy Back-Buffer to Front-Buffer
+        Render_VBB(&GlobalBackbuffer);
+
+        win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
+        Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
+    }
+}
+
 LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)
 {
     LRESULT Result = 0;
@@ -139,14 +205,14 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
         case WM_CLOSE:
         {
             OutputDebugStringA("WM_CLOSE\n");
-            GlobalRunning = false;
+            g_State_Run = false;
 
         } break;
     
         case WM_DESTROY:
         {
             OutputDebugStringA("WM_DESTROY\n");
-            GlobalRunning = false;
+            g_State_Run = false;
         } break;
 
         // https://yakvi.github.io/handmade-hero-notes/html/day6.html#keyboardinput
@@ -210,92 +276,41 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
 }
 
 int CALLBACK
-WinMain(HINSTANCE Instance,
-        HINSTANCE PrevInstance,
-        LPSTR     CommandeLine,
-        int       ShowCode)
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+#ifdef STU_DEBUG
+    Debug_Log_Startup();
+#endif
 
-    // WNDCLASSEXW wcex = {0};
-    // wcex.cbSize = sizeof(WNDCLASSEX);
-    // wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    // wcex.lpfnWndProc    = MainWindowCallback;
-    // wcex.hInstance      = Instance;
-    // // wcex.hIcon
-    // wcex.lpszClassName  = "MomRasmWindowClass";
-    // // wcex.hIconSm
-    // //RegisterClassExW(&wcex);
-
-    WNDCLASSA WindowClass = {0};
-    WindowClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-    WindowClass.lpfnWndProc = MainWindowCallback;
-    WindowClass.hInstance = Instance;
-    // WindowClass.hIcon;  // TODO(JimBalcomb,20220821): create and add icon for MoM-Rasm app
-    WindowClass.lpszClassName = "MomRasmWindowClass";
-
-    RegisterClassA(&WindowClass);
-
-    HWND Window = CreateWindowExA(0, WindowClass.lpszClassName, "MoM Reassembly",
-                                  WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-                                  CW_USEDEFAULT, CW_USEDEFAULT,
-                                  CW_USEDEFAULT, CW_USEDEFAULT,
-                                  0, 0, Instance, 0);
-
+    // Initialize the "Windows Desktop Application"
+    // ~== 'Application-Type' of 'Game'
+    Init_WDA_Game(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 
 
     /*
-        BEGIN: Pre-MainLoop
+        BEGIN: Initialize Application State
     */
-
-    // Set Screen Page Index
-    // Set Screen Page Address
-    // Clear Screen - Back-Buffer
-    // Clear Screen - Front-Buffer
-    // Load Font File
-    // Load Palette
-
-
-    // Load 
+    
+    // Init_STGE()
+    // Init_MGC()
+    // Init_WZD()
+    // Init_MoM()
+    g_State_Run = true;
+    current_screen = scr_Main_Menu;
 
     /*
-        END: Pre-MainLoop
+        END: Initialize Application State
     */
 
 
 
     Win32ResizeDIBSection(&GlobalBackbuffer, 1280, 720);
 
-    // NOTE(casey): Since we specified CS_OWNDC, we can just
-    // get one device context and use it forever because we
-    // are not sharing it with anyone.
-    HDC DeviceContext = GetDC(Window);
+    Main_Game_Loop();
 
-    int XOffset = 0;
-    int YOffset = 0;
-    GlobalRunning = true;
-    while (GlobalRunning)
-    {
-        MSG Message;
-        while(PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
-        {
-            if (Message.message == WM_QUIT)
-            {
-                GlobalRunning = false;
-            }
-            TranslateMessage(&Message);
-            DispatchMessageA(&Message);
-        }
-        // We dealt with our messages, now do the rest of our game loop here.
+#ifdef STU_DEBUG
+    Debug_Log_Shutdown();
+#endif
 
-        RenderWeirdGradient(&GlobalBackbuffer, XOffset, YOffset);
-        ++XOffset;
-
-        win32_window_dimension Dimension = Win32GetWindowDimension(Window);
-        Win32DisplayBufferInWindow(&GlobalBackbuffer, DeviceContext, Dimension.Width, Dimension.Height);
-
-        MainLoop();
-
-    }
-        
     return 0;
 }
