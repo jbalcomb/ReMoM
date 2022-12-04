@@ -4,10 +4,15 @@
 // #include "WZD_DEF.H"
 
 #include "WZD_main.H"
+#include "WZD_scrn.H"
 
 #include "MoX_LBX.H"    /* MoX_RAM_SetMinKB() */
 
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
+
+#ifdef STU_DEBUG
+#include "ST_DBG.H"
+#endif
 
 #include <STDIO.H>      /* FILE */
 
@@ -89,7 +94,7 @@ int WZD_main(int argc, char *argv[])
 
 
 
-    // Screen_Control();
+    WZD_Screen_Control();
 
 
 

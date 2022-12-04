@@ -7,7 +7,9 @@
 #include "MGC_main.H"
 #include "WZD_main.H"
 
-#include "MAINMENU.H"   /* */
+#include "MGC_scrn.H"   /* Screen_Control() */
+
+#include "MAINMENU.H"   /* Main_Menu_Screen() */
 
 // #include "MoX_DIR.H"    /* DIR(), LOF() */
 
@@ -347,9 +349,9 @@ void test_MGC_Main(void)
     VGA_DAC_Write();
 
     // MGC main()
-    DLOG("CALL: GAME_MainMenu();");
+    DLOG("CALL: Screen_Control();");
     // MAINMENU  GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
-    Main_Menu_Screen_Control();
+    MGC_Screen_Control();
     // ...
     //          Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
     // MGC main() |-> GAME_MainMenu() |-> SCREEN_Menu()

@@ -88,6 +88,9 @@ char save_file_name[] = "SAVE";
 // MGC  dseg:285E  cnst_SAVE_ext db '.GAM',0
 char save_file_extension[] = ".GAM";
 
+// MGC  dseg:2880
+char quit_message[] = "Thank you for playing Master of Magic!";
+
 // dseg:28AE 4E 00                   cnst_HOTKEY_N db 'N',0
 // dseg:28C8 43 00                   cnst_HOTKEY_C db 'C',0
 // dseg:28CA 4C 00                   cnst_HOTKEY_L db 'L',0
@@ -241,6 +244,67 @@ void Main_Menu_Load_Pictures(void)
 
 }
 
+
+// s01p03
+// void GAME_MainMenu(void)
+void Main_Menu_Screen_Control(void)
+{
+    // char Read_Buffer[30];
+    int Screen_Action;
+    // FILE *fp;
+    int flag_quit;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen_Control()\n", __FILE__, __LINE__);
+#endif
+
+    // Load_CONFIG_MOM();
+
+    screen_fade = ST_TRUE;
+    main_menu_jump = ST_UNDEFINED;
+    IN_SetEscOverride();  // Set_Global_Esc();
+
+    flag_quit = ST_FALSE;
+    while(flag_quit == ST_FALSE)
+    {
+        VGA_SetOutlineColor(0);  // Set_Outline_Color(0);
+        HLP_ClearHelp();  // Deactivate_Help_List();
+        Screen_Action = Main_Menu_Screen();  // MGC s01p05
+        HLP_ClearHelp();  // Deactivate_Help_List();
+        screen_fade = ST_FALSE;
+        switch(Screen_Action)
+        {
+            case 0:  // "Continue"
+                // SND_Stop_Music()
+                // j_GAME_WizardsLaunch(8)  // e_SAVE9GAM
+                GUI_LoadSave_State = ST_UNDEFINED;
+                break;
+            case 1:  // "Load Game"
+                // j_GAME_LoadSaveScreen
+                break;
+            case 2:  // "New Game"
+                // j_GAME_New_Create
+                GUI_LoadSave_State = ST_UNDEFINED;
+                break;
+            case 3:  // "Quit To DOS"
+                flag_quit = ST_TRUE;
+                GUI_LoadSave_State = ST_UNDEFINED;
+                break;
+            case 4:  // "Hall Of Fame"
+                // j_GAME_Hall_of_Fame
+                // j_GAME_PrepareCredits
+                // jmp  short $+2 ... somehow this jumps back to @@LoopWhileZero
+                break;
+        }
+        
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GAME_MainMenu()\n", __FILE__, __LINE__);
+#endif
+
+    Exit(quit_message);  // Exit_With_Message(quit_message);
+}
 
 // MGC s01p05
 void Main_Menu_Add_Fields(void)

@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef STU_DEBUG
+#if defined(__VSCode__) || defined(DEBUG) || defined(TEST) || defined(STU_DEBUG) || defined(STU_TEST)
     abort();
 #endif
 

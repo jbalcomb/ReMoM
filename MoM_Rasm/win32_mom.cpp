@@ -65,8 +65,12 @@ uint8_t p_Palette_XBGR[1024];
 
 
 /*
+    DNE
+        Main Menu, Settings
     MGC
         {0,1,2,3,4} == {Continue,Load_Game,New_Game,Quit_To_DOS,Hall_Of_Fame}
+    WZD
+        {0,1,2,3,4,5,6,7,8,9,10,11/13,12,11/13,14,15} == {City,Load,Armies,Cities,Quit,MainGame,Magic,RoadBuilding,Production,Items,NextTurn,?default?,Spellbook,?default?,Advisor,Diplomacy}
 */
 enum e_SCREENS
 {

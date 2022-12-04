@@ -1,5 +1,6 @@
 
 #include "MGC_main.H"
+#include "MGC_scrn.H"
 
 #include "MAINMENU.H"   /* Main_Menu_Screen_Control() */
 
@@ -98,8 +99,7 @@ int MGC_main(int argc, char *argv[])
 
 
 
-    // MAINMENU  GAME_MainMenu();  // MGC s01p03
-    Main_Menu_Screen_Control();
+    MGC_Screen_Control();
 
 
 

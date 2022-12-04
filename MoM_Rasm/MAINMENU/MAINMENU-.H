@@ -26,16 +26,6 @@ extern SAMB_ptr mainmenu_q;  // VORTEX.LBX, 3  "Quit To DOS"
 extern SAMB_ptr mainmenu_n;  // VORTEX.LBX, 4  "New Game"
 extern SAMB_ptr mainmenu_l;  // VORTEX.LBX, 5  "Load Game"
 
-// MGC  dseg:290A  GUI_LoadSave_State dw -1                ; 3 indicates returning from the settings screen
-extern int GUI_LoadSave_State;
-
-// MGC  dseg:52FC  main_menu_jump dw 0
-extern int main_menu_jump;
-
-// MGC  dseg:64AE  screen_fade dw 0
-extern int screen_fade;
-
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,6 +40,10 @@ extern "C" {
 // MGC s01p04
 // void GAME_LoadMainImages(void);
 void Main_Menu_Load_Pictures(void);
+
+// MGC s01p03
+// void GAME_MainMenu(void);
+void Main_Menu_Screen_Control(void);
 
 // MGC s01p05
 // int SCREEN_Menu(void);
