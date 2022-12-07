@@ -468,7 +468,7 @@ SAMB_ptr LBXR_LoadAppend_LM(char * LbxName, int LbxEntryIndex, SAMB_ptr SAMB_hea
 // UU SAMB_addr UU_LBXE_LoadAppend2(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head);
 
 // s10p10
-SAMB_addr LBX_Load_Entry(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
+SAMB_addr ST_LBX_Load_Entry(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt);
 
 // s10p11
 SAMB_addr LBX_Load_Record(char * LbxName, int LbxEntryIndex, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize);

@@ -4,12 +4,33 @@
 #include "MoX_TYPE.H"
 
 
-#define MoX_GET_1B_OFS(_ptr_,_ofs_) ( (uint8_t)                                                                                              *((_ptr_) + _ofs_ + 0) )
-#define MoX_GET_2B_OFS(_ptr_,_ofs_) ( (uint16_t)                                                               *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
-#define MoX_GET_4B_OFS(_ptr_,_ofs_) ( (uint32_t) *((_ptr_) + _ofs_ + 3) << 24 | *((_ptr_) + _ofs_ + 2) << 16 | *((_ptr_) + _ofs_ + 1) << 8 | *((_ptr_) + _ofs_ + 0) )
-#define MoX_SET_1B_OFS(_ptr_,_ofs_,_val_) (                                                                                                                                     *((_ptr_) + (_ofs_) + 0) = (_val_) )
-#define MoX_SET_2B_OFS(_ptr_,_ofs_,_val_) (                                                                                          *((_ptr_) + (_ofs_) + 1) = ((_val_) >> 8), *((_ptr_) + (_ofs_) + 0) = (_val_) )
-#define MoX_SET_4B_OFS(_ptr_,_ofs_,_val_) ( *((_ptr_) + (_ofs_) + 3) = ((_val_) >> 24), *((_ptr_) + (_ofs_) + 2) = ((_val_) >> 16),  *((_ptr_) + (_ofs_) + 1) = ((_val_) >> 8), *((_ptr_) + (_ofs_) + 0) = (_val_) )
+#define MoX_GET_1B_OFS(_ptr_,_ofs_) ( \
+  ( (uint8_t)  ( (uint8_t) *( (_ptr_) + (_ofs_) + 0) )       ) \
+)
+#define MoX_GET_2B_OFS(_ptr_,_ofs_) ( \
+  ( (uint16_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 0) )       ) \
+| ( (uint16_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 1) ) <<  8 ) \
+)
+#define MoX_GET_4B_OFS(_ptr_,_ofs_) ( \
+  ( (uint32_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 0) )      ) \
+| ( (uint32_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 1) ) <<  8) \
+| ( (uint32_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 2) ) << 16) \
+| ( (uint32_t) ( (uint8_t) *( (_ptr_) + (_ofs_) + 3) ) << 24) \
+)
+
+#define MoX_SET_1B_OFS(_ptr_,_ofs_,_val_) (    \
+*( (_ptr_) + (_ofs_) + 0 ) = ( (_val_)      )  \
+)
+#define MoX_SET_2B_OFS(_ptr_,_ofs_,_val_) (    \
+*( (_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
+*( (_ptr_) + (_ofs_) + 1 ) = ( (_val_) >> 8 )  \
+)
+#define MoX_SET_4B_OFS(_ptr_,_ofs_,_val_) (    \
+*( (_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
+*( (_ptr_) + (_ofs_) + 1 ) = ( (_val_) >>  8), \
+*( (_ptr_) + (_ofs_) + 2 ) = ( (_val_) >> 16), \
+*( (_ptr_) + (_ofs_) + 3 ) = ( (_val_) >> 24)  \
+)
 
 
 #endif /* MOX_BITS_H */

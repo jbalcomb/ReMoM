@@ -260,7 +260,7 @@ SAMB_addr LBXE_LoadSingle(char *LbxName, int LbxEntryIndex)
     LoadType = 0;
     LbxHdrFmt = 0;
 
-    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+    SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 
     return SAMB_data;
 }
@@ -275,7 +275,7 @@ SAMB_ptr LBXE_LoadSingle_LM(char *LbxName, int LbxEntryIndex)
     LoadType = 0;
     LbxHdrFmt = 0;
 
-    SAMB_data = (SAMB_ptr) MK_FP( LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt), 0 );
+    SAMB_data = (SAMB_ptr) MK_FP( ST_LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt), 0 );
 
     return SAMB_data;
 }
@@ -291,7 +291,7 @@ SAMB_addr LBXE_LoadReplace(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head
     LoadType = 1;
     LbxHdrFmt = 0;
 
-    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+    SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 
     return SAMB_data;
 }
@@ -304,7 +304,7 @@ SAMB_ptr LBXE_LoadReplace_LM(char *LbxName, int LbxEntryIndex, SAMB_ptr SAMB_hea
     LoadType = 1;
     LbxHdrFmt = 0;
 
-    SAMB_data = (SAMB_ptr)MK_FP(LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt),0);
+    SAMB_data = (SAMB_ptr)MK_FP(ST_LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt),0);
 
     return SAMB_data;
 }
@@ -320,7 +320,7 @@ SAMB_addr LBXE_LoadAppend(char *LbxName, int LbxEntryIndex, SAMB_addr SAMB_head)
     LoadType = 2;
     LbxHdrFmt = 0;
 
-    SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+    SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 
     return SAMB_data;
 }
@@ -333,7 +333,7 @@ SAMB_ptr LBXE_LoadAppend_LM(char *LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head
     LoadType = 2;
     LbxHdrFmt = 0;
 
-    SAMB_data = (SAMB_ptr)MK_FP(LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt),0);
+    SAMB_data = (SAMB_ptr)MK_FP(ST_LBX_Load_Entry(LbxName, LbxEntryIndex, (SAMB_addr)FP_SEG(SAMB_head), LoadType, LbxHdrFmt),0);
 
     return SAMB_data;
 }
@@ -430,7 +430,7 @@ SAMB_ptr LBXR_LoadAppend_LM(char *LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head
 // UU     LoadType = 0;
 // UU     LbxHdrFmt = 1;
 // UU 
-// UU     SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+// UU     SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 // UU 
 // UU     return SAMB_data;
 // UU }
@@ -446,7 +446,7 @@ SAMB_ptr LBXR_LoadAppend_LM(char *LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head
 // UU     LoadType = 1;
 // UU     LbxHdrFmt = 1;
 // UU 
-// UU     SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+// UU     SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 // UU 
 // UU     return SAMB_data;
 // UU }
@@ -462,14 +462,14 @@ SAMB_ptr LBXR_LoadAppend_LM(char *LbxName, int LbxEntryIndex, SAMB_ptr SAMB_head
 // UU     LoadType = 2;
 // UU     LbxHdrFmt = 1;
 // UU 
-// UU     SAMB_data = LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
+// UU     SAMB_data = ST_LBX_Load_Entry(LbxName, LbxEntryIndex, SAMB_head, LoadType, LbxHdrFmt);
 // UU 
 // UU     return SAMB_data;
 // UU }
 
 
 // _s10p10
-SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
+SAMB_addr ST_LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int LbxHdrFmt)
 {
     char *tmp_LbxName;
     int tmp_LbxEntry;
@@ -489,7 +489,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     SAMB_ptr pSAMB_head;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: ST_LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 #endif
 
 // //     if
@@ -498,13 +498,13 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 // //         ((strcmp(LbxName, "MAINSCRN") == 0) && (LbxEntry == 0))
 // //     )
 // //     {
-// //         dlvfprintf("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+// //         dlvfprintf("DEBUG: [%s, %d] BEGIN: ST_LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d)\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 // //     }
 // #endif
 
 // #ifdef TEST
 //     // DELETE //TST_LBX[Get_LBX_Name_Index(LbxName)];
-//     // DELETE Populate_TST_LBX("LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
+//     // DELETE Populate_TST_LBX("ST_LBX_Load_Entry", LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt);
 // #endif
 
     tmp_LbxEntry = LbxEntry;
@@ -643,7 +643,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
     Update_MemFreeWorst_KB();
 
 #ifdef STU_DEBUG    
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
+    dbg_prn("DEBUG: [%s, %d] END: ST_LBX_Load_Entry(LbxName=%s, LbxEntry=%d, SAMB_head=0x%04X, LoadType=%d, LbxHdrFmt=%d) { SAMB_data = 0x%04X }\n", __FILE__, __LINE__, LbxName, LbxEntry, SAMB_head, LoadType, LbxHdrFmt, SAMB_data);
 #endif
 
     return SAMB_data;
@@ -651,7 +651,7 @@ SAMB_addr LBX_Load_Entry(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int L
 
 
 // _s10p11
-// ~= c&p LBX_Load_Entry()
+// ~= c&p ST_LBX_Load_Entry()
 SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int LoadType, int RecFirst, int RecCount, int RecSize)
 {
     char *tmp_LbxName;
@@ -739,7 +739,7 @@ SAMB_addr LBX_Load_Record(char *LbxName, int LbxEntry, SAMB_addr SAMB_head, int 
                 }
             }
 
-            // TODO(JimBalcom): this is wierd and not in LBX_Load_Entry
+            // TODO(JimBalcom): this is wierd and not in ST_LBX_Load_Entry
             if ( g_LBX_FileHandle == 0 )
             {
                 LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */
@@ -908,7 +908,7 @@ unsigned int LBXR_DirectLoader(char *LbxName, int LbxEntry, unsigned int SAMB_da
                 }
             }
 
-            // TODO(JimBalcom): this is wierd and not in LBX_Load_Entry
+            // TODO(JimBalcom): this is wierd and not in ST_LBX_Load_Entry
             if ( g_LBX_FileHandle == 0 )
             {
                 LBX_Error(LbxName, 0x01, LbxEntry, NULL);  /* LBXErr_not_found */

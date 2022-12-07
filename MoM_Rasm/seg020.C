@@ -9,7 +9,6 @@
 #include "ST_DEF.H"
 #include "seg020.H"
 
-#include "ST_LBX.H"
 #include "ST_TXT.H"
 #include "ST_VGA.H"
 
@@ -37,12 +36,8 @@ void PAL_Load_Palette(int entry, int start_color, int end_color)
     dbg_prn("DEBUG: [%s, %d] BEGIN: PAL_Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
 #endif
 
-    // palette_data = Far_Reload(file_name = font_name, entry_num = entry+1, base_seg = palette_block)
-    // palette_data  = (SAMB_ptr)MK_FP(LBXE_LoadReplace(font_name, entry+2,(SAMB_addr)FP_SEG(palette_block)),0);
-    palette_data  = LBXE_LoadReplace_LM(font_name, entry+2, palette_block);
+    palette_data = LBX_Reload(font_name, entry+2, palette_block);
 
-    //                                                                          //  48 pr  768 b  0x0000 [  0] 3*256 palette / color-map
-    
     p_Palette_Font_Colors = PTR_ADD_PARAGRAPH(palette_data, 48);                //  48 pr  768 b  0x0300 [768] 16 arrays of 16 colors
     // SM2LM  
     sa_Palette_Font_Colors = FP_SEG(p_Palette_Font_Colors);

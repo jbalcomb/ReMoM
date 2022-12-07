@@ -11,6 +11,13 @@ i.e. building everything in one go. You can read more in the subsection 6.1.
 */
 #include "win32_init.cpp"
 
+#include "MoX_TYPE.H"
+
+#include "MoX_DBG.C"
+#include "MoX_EXIT.C"
+#include "MoX_LBX.C"
+#include "MoX_SA.C"
+
 
 static bool g_KbHit;
 
@@ -74,8 +81,32 @@ uint8_t p_Palette_XBGR[1024];
 */
 enum e_SCREENS
 {
-    scr_Main_Menu = 3,
-    scr_Exit = 5
+    scr_Main_Menu = 0,
+
+    scr_Continue = 10,
+    scr_Load_Game = 11,
+    scr_New_Game = 12,
+    scr_Quit_To_DOS = 13,
+    scr_Hall_Of_Fame = 14,
+    scr_Settings = 15,
+
+    scr_City = 100,
+    scr_Load = 101,
+    scr_Armies = 102,
+    scr_Cities = 103,
+    scr_Quit = 104,
+    scr_MainGame = 105,
+    scr_Magic = 106,
+    scr_RoadBuilding = 107,
+    scr_Production = 108,
+    scr_Items = 109,
+    scr_NextTurn = 110,
+    /* ?default? */
+    scr_Spellbook = 112,
+    /* ?default? */
+    scr_Advisor = 114,
+    scr_Diplomac = 115
+
 };
 
 int16_t current_screen;
@@ -296,6 +327,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
     */
     
     // Init_STGE()
+    // |-> Init_Drivers(GAME_FONT_FILE) |-> Load_Font_File(font_file)
+    // Load_Font_File(font_file);
+    char font_file[] = "FONTS.LBX";
+    MoX_SAMB_ptr font_data = LBX_Load_Entry(font_file, 0, NULL, sa_Single);
     // Init_MGC()
     // Init_WZD()
     // Init_MoM()

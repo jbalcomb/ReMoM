@@ -10,6 +10,7 @@
 #include "STU_DBG.H"
 #endif
 
+#define SZ_PARAGRAPH_B 16
 
 // #define CURSOR_W    16
 // #define CURSOR_H    16

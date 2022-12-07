@@ -56,9 +56,9 @@
     e.g.,
         main()
             GAME_LoadMainImages()
-                EMM_Load_LBX_File_1(g_LbxNm_MAINSCRN);
-                gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(g_LbxNm_MAINSCRN, 0);
-                    LBXE_LoadSingle(LbxName=MAINSCRN, LbxEntryIndex=0)
+                EMM_Load_LBX_File_1(mainscrn_lbx_file);
+                mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
+                    LBX_Load(LbxName=MAINSCRN, LbxEntryIndex=0)
                         LBX_Load_Entry(LbxName=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, LbxHdrFmt=0)
                             EMM_LBX_Load_Entry(EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, FormatType=0)
                                 EMM_LBX_HdrOnly(EmmHndl=6, EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0)
@@ -75,13 +75,13 @@
                                     FlicHdr_EmmLogicalPageIndex=0
                                     FlicHdr_EmmLogicalPageOffset=704
                                     FlicHdr_PaletteDataOffset=102
-                    gsa_MAINSCRN_0_AnimatedLogo=0x168C
+                    mainmenu_top=0x168C
 
         SCREEN_Menu
-            FLIC_Reset_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
+            FLIC_Reset_CurrentFrame(mainmenu_top);
                 farpokew(IMG_Seg, FLIC_HDR.Current_Frame, 0);
 
-        FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo)
+        FLIC_Draw_XY(0, 0, mainmenu_top)
 
 
 */

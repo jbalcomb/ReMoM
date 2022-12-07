@@ -29,12 +29,13 @@
 #include "MoX_BITS.H"   /* MoX_GET_2B_OFS() etc. */
 
 #include "MoX_DBG.H"    /* Check_Release_Version() */
+#include "MoX_EXIT.H"   /* MoX_Update_MemFreeWorst_KB() */
 #include "MoX_LBX.H"    /* MoX_RAM_Min_KB */
 #include "MoX_SA.H"
 
 #include "ST_DEF.H"
 
-#include "ST_EXIT.H"
+#include "ST_EXIT.H"    /* Exit() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"

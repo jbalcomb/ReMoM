@@ -8,12 +8,13 @@
 
 #include "ST_EXIT.H"    /* Exit() */
 #include "ST_DBG.H"     /* DBG_IsDisabled() */
-#include "ST_LBX.H"     /* RAM_Min_KB */
 
+#if defined(__DOS16__)
 #include <ALLOC.H>      /* coreleft(), farcoreleft(), malloc(), farmalloc(), free(), farfree() */    
 // #include <STDIO.H>   /* printf() */
 #include <STDLIB.H>  /* itoa() */
 #include <STRING.H> /* strcat(), strcpy() */
+#endif
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"

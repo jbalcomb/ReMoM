@@ -12,17 +12,17 @@
 #include "MAINMENU.H"   /* Main_Menu_Screen() */
 
 // #include "MoX_DIR.H"    /* DIR(), LOF() */
+#include "MoX_LBX.H"
 
 /*
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     EMM_SetMinKB(EMM_MIN_KB);
-    RAM_SetMinKB(RAM_MIN_KB);
+    MoX_RAM_SetMinKB(RAM_MIN_KB);
 */
 #include "ST_EMM.H"     /* EMM_Pages_Reserved */
 #include "ST_DBG.H"     /* DBG_IsDisabled(), DBG_ScreenDump() */
 #include "ST_FLIC.H"
 #include "ST_HLP.H"     /* HLP_IDX_... */
-#include "ST_LBX.H"     /* LBX_Error(), LBXE_LoadSingle() */
 // #include "ST_SA.H"      /* SA_ Allocate_ MemBlk(), SA_ Allocate_ Space(); */
 #include "ST_VGA.H"     /* font_name */
 
@@ -118,7 +118,7 @@ void test_EMM_Load_LBX_File(void);
 void test_GAME_LoadMainImages(void);
 
 void test_SA_Error(void);
-void test_LBX_Error(void);
+void test_Error_Handler(void);
 
 
 int main(int argc, char *argv[])
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     // test_STU_Export_VBB_To_BMP();
 
     // test_SA_Error();
-    // test_LBX_Error();
+    // test_Error_Handler();
 
 
 #ifdef STU_DEBUG
@@ -234,7 +234,7 @@ void Init_STGE(void)
 
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     EMM_SetMinKB(EMM_MIN_KB);
-    RAM_SetMinKB(RAM_MIN_KB);
+    MoX_RAM_SetMinKB(RAM_MIN_KB);
     /* BEGIN: MGC main() |-> Hardware_Init() */
     EMM_Startup();
     VGA_SetModeY();
@@ -283,8 +283,8 @@ void test_MGC_Main(void)
     DLOG("CALL: EMM_SetMinKB(EMM_MIN_KB);");
     EMM_SetMinKB(EMM_MIN_KB);
     // MGC main()
-    DLOG("CALL: RAM_SetMinKB(RAM_MIN_KB);");
-    RAM_SetMinKB(RAM_MIN_KB);
+    DLOG("CALL: MoX_RAM_SetMinKB(RAM_MIN_KB);");
+    MoX_RAM_SetMinKB(RAM_MIN_KB);
 
     // MGC main() |-> Hardware_Init()
     DLOG("CALL: EMM_Startup();");
@@ -296,8 +296,8 @@ void test_MGC_Main(void)
     // s14p03
     DLOG("CALL: Load_Font_File(GAME_FONT_FILE);");
     Load_Font_File(GAME_FONT_FILE);  // "FONTS.LBX"
-        // |-> ... LBXE_LoadSingle(FONTS.LBX,0), Allocate_Space_No_Header()
-        // |-> ... LBXE_LoadSingle(FONTS.LBX,1), Allocate_Space_No_Header()
+        // |-> ... LBX_Load(FONTS.LBX,0)
+        // |-> ... LBX_Load(FONTS.LBX,1)
         // |-> VGA_TextDraw_Init()
 
     // MGC main() |-> Hardware_Init()
@@ -350,21 +350,21 @@ void test_MGC_Main(void)
 
     // MGC main()
     DLOG("CALL: Screen_Control();");
-    // MAINMENU  GAME_MainMenu();  // MGC_DEF.H  _s01p03c.c
+    // MAINMENU  Screen_Control();  // MGC_DEF.H  _s01p03c.c
     MGC_Screen_Control();
     // ...
-    //          Screen_Action = SCREEN_Menu();  // MGC_DEF.H  _s01p05c.c
-    // MGC main() |-> GAME_MainMenu() |-> SCREEN_Menu()
-    //             SCREEN_Menu_Draw();  // MGC_DEF.H  _s01p06c.c
+    //          Screen_Action = Main_Menu_Screen();  // MGC_DEF.H  _s01p05c.c
+    // MGC main() |-> Screen_Control() |-> Main_Menu_Screen()
+    //             Main_Menu_Screen_Draw();  // MGC_DEF.H  _s01p06c.c
     //             SCRN_SimplePageFlip();
-    // MGC main() |-> GAME_MainMenu() |-> SCREEN_Menu() |-> SCREEN_Menu_Draw()
-    //     FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
-    //     FLIC_Draw_XY(0, 41, gsa_MAINSCRN_5_ScreenBottom);
-    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), gsa_VORTEX_5_MenuLoadGame);
-    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), gsa_VORTEX_1_MenuContinue);
-    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), gsa_VORTEX_4_MenuNewGame);
-    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), gsa_VORTEX_2_MenuHallOfFame);
-    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), gsa_VORTEX_3_MenuQuitToDOS);
+    // MGC main() |-> Screen_Control() |-> Main_Menu_Screen() |-> Main_Menu_Screen_Draw()
+    //     FLIC_Draw_XY(0, 0, mainmenu_top);  // NOTE(JimBalcomb): This is the first call to FLIC_Draw_XY()
+    //     FLIC_Draw_XY(0, 41, mainmenu_bot);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 12), mainmenu_l);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + (12 * Continue_Move_Down)), mainmenu_c);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 24), mainmenu_n);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 36), mainmenu_h);
+    //     FLIC_Draw_XY(MenuArea_X_Left, (MenuArea_Y_Top + 48), mainmenu_q);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: test_MGC_Main()\n", __FILE__, __LINE__);
@@ -396,8 +396,8 @@ void test_Load_MAINSCRN_LBX_EMM(void)
 }
 
 /*
-unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8
-gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
+unsigned int mainmenu_top;   // dseg:52E8
+mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
 */
 void test_Load_MAINSCRN_000(void)
 {
@@ -415,7 +415,7 @@ void test_Load_MAINSCRN_000(void)
     if(!g_MAINSCRN_LBX_EMM_tested) { test_Load_MAINSCRN_LBX_EMM(); }
     if(!g_MAINSCRN_LBX_EMM_validated) { abort(); }
 
-    sa_MAINSCRN_000 = LBXE_LoadSingle(mainscrn_lbx_file, 0);
+    sa_MAINSCRN_000 = FP_SEG(LBX_Load(mainscrn_lbx_file, 0));
     TST_LBX_MAINSCRN_000.Segment_Address = sa_MAINSCRN_000;
 
     validate_FLIC_Header(sa_MAINSCRN_000);
@@ -426,8 +426,8 @@ void test_Load_MAINSCRN_000(void)
 }
 
 /*
-unsigned int gsa_MAINSCRN_0_AnimatedLogo;   // dseg:52E8
-gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
+unsigned int mainmenu_top;   // dseg:52E8
+mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
 */
 void test_Load_MAINSCRN_005(void)
 {
@@ -445,7 +445,7 @@ void test_Load_MAINSCRN_005(void)
     if(!g_MAINSCRN_LBX_EMM_tested) { test_Load_MAINSCRN_LBX_EMM(); }
     if(!g_MAINSCRN_LBX_EMM_validated) { abort(); }
 
-    sa_MAINSCRN_005 = LBXE_LoadSingle(mainscrn_lbx_file, 5);
+    sa_MAINSCRN_005 = FP_SEG(LBX_Load(mainscrn_lbx_file, 5));
     TST_LBX_MAINSCRN_005.Segment_Address = sa_MAINSCRN_005;
 
     validate_FLIC_Header(sa_MAINSCRN_005);
@@ -493,7 +493,7 @@ void test_EMM_Startup(void)
     // MGC main()
     EMM_Pages_Reserved = EMM_PAGES_REQUIRED;
     // EMM_SetMinKB(EMM_MIN_KB);
-    // RAM_SetMinKB(RAM_MIN_KB);
+    // MoX_RAM_SetMinKB(RAM_MIN_KB);
     // MGC main() |-> Hardware_Init() |-> EMM_Startup()
     EMM_Startup();
     g_EMM_tested = 1;
@@ -514,7 +514,7 @@ void test_EMM_Startup(void)
 void test_EMM_Load_LBX_File(void)
 {
 
-    int Title_Frame_Index;  // _s01p06c.c  SCREEN_Menu_Draw()
+    int Title_Frame_Index;  // _s01p06c.c  Main_Menu_Screen_Draw()
     struct s_FLIC_HDR * pFlicHeader; // _s21p07c.c  FLIC_Load_Palette()
     SAMB_addr SAMB_data;
 #ifdef STU_DEBUG
@@ -557,9 +557,9 @@ void test_EMM_Load_LBX_File(void)
         // |-> EMM_Load_LBX_File(LbxFileName=MAINSCRN, EmmRsvd=1)
 
 // TODO(JimBalcomb,20221124): make this test make sense ~== just EMM_Load and assert bytes
-//     gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
-//     sa_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
-//     fmainmenu_top = (SAMB_ptr)MK_FP(gsa_MAINSCRN_0_AnimatedLogo, 0);
+//     mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
+//     sa_MAINSCRN_000 = mainmenu_top;
+//     fmainmenu_top = (SAMB_ptr)MK_FP(mainmenu_top, 0);
 //         // |-> LBX_Load_Entry(LbxName=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, LbxHdrFmt=0)
 //         // |-> EMM_LBX_Load_Entry(EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0, FormatType=0)
 //         // |-> EMM_LBX_FLIC_Header(EmmHndl=7, EmmHndlNm=MAINSCRN, LbxEntry=0, SAMB_head=0x0000, LoadType=0)
@@ -569,20 +569,20 @@ void test_EMM_Load_LBX_File(void)
 //     // ...
 //     // ...
 // 
-//     // DBG_MAINSCRN_000 = gsa_MAINSCRN_0_AnimatedLogo;
-//     TST_LBX_MAINSCRN_000.Segment_Address = gsa_MAINSCRN_0_AnimatedLogo;
+//     // DBG_MAINSCRN_000 = mainmenu_top;
+//     TST_LBX_MAINSCRN_000.Segment_Address = mainmenu_top;
 //     // dbg_prn("DEBUG: [%s, %d] DBG_MAINSCRN_000: 0x%04X\n", __FILE__, __LINE__, DBG_MAINSCRN_000);
 //     dbg_prn("DEBUG: [%s, %d] MAINSCRN_000.Segment_Address: 0x%04X\n", __FILE__, __LINE__, TST_LBX_MAINSCRN_000.Segment_Address);
 // 
 // 
-//     pFlicHeader = (struct s_FLIC_HDR *)MK_FP(gsa_MAINSCRN_0_AnimatedLogo, 0);
-//     //pFlicHeader = (void _FAR *) ( ((unsigned long) (gsa_MAINSCRN_0_AnimatedLogo) << 16) | (0) ) )
+//     pFlicHeader = (struct s_FLIC_HDR *)MK_FP(mainmenu_top, 0);
+//     //pFlicHeader = (void _FAR *) ( ((unsigned long) (mainmenu_top) << 16) | (0) ) )
 //     dbg_prn("DEBUG: [%s, %d] pFlicHeader: %p\n", __FILE__, __LINE__, pFlicHeader);
 //     
 //     dbg_prn("DEBUG: [%s, %d] Width = %d\n", __FILE__, __LINE__, pFlicHeader->Width);
 // 
-//     SAMB_data = gsa_MAINSCRN_0_AnimatedLogo;
-//     dbg_prn("DEBUG: [%s, %d] SAMB_data = gsa_MAINSCRN_0_AnimatedLogo: (0x%04X = 0x%04X) == %s\n", __FILE__, __LINE__, SAMB_data, gsa_MAINSCRN_0_AnimatedLogo, ((SAMB_data == gsa_MAINSCRN_0_AnimatedLogo) ? "TRUE" : "FALSE"));
+//     SAMB_data = mainmenu_top;
+//     dbg_prn("DEBUG: [%s, %d] SAMB_data = mainmenu_top: (0x%04X = 0x%04X) == %s\n", __FILE__, __LINE__, SAMB_data, mainmenu_top, ((SAMB_data == mainmenu_top) ? "TRUE" : "FALSE"));
 //     dbg_prn("DEBUG: [%s, %d] Width = %d\n", __FILE__, __LINE__,                    farpeekw(SAMB_data, FlicHdr_Width));
 //     dbg_prn("DEBUG: [%s, %d] Height = %d\n", __FILE__, __LINE__,                   farpeekw(SAMB_data, FlicHdr_Height));
 //     dbg_prn("DEBUG: [%s, %d] CurrentFrame = %d\n", __FILE__, __LINE__,             farpeekw(SAMB_data, FlicHdr_CurrentFrame));
@@ -593,15 +593,15 @@ void test_EMM_Load_LBX_File(void)
 //     dbg_prn("DEBUG: [%s, %d] EmmLogicalPageOffset = 0x%04X\n", __FILE__, __LINE__, farpeekw(SAMB_data, FlicHdr_EmmLogicalPageOffset));
 //     dbg_prn("DEBUG: [%s, %d] PaletteDataOffset = 0x%04X\n", __FILE__, __LINE__,    farpeekw(SAMB_data, FlicHdr_PaletteDataOffset));
 // 
-//     // int SCREEN_Menu(void)
-//     FLIC_Reset_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
+//     // int Main_Menu_Screen(void)
+//     FLIC_Reset_CurrentFrame(mainmenu_top);
 // 
-//     // SCREEN_Menu() |-> SCREEN_Menu_Draw() |->
-//     Title_Frame_Index = FLIC_Get_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo);
-//     FLIC_Set_CurrentFrame(gsa_MAINSCRN_0_AnimatedLogo, 0);
+//     // Main_Menu_Screen() |-> Main_Menu_Screen_Draw() |->
+//     Title_Frame_Index = FLIC_Get_CurrentFrame(mainmenu_top);
+//     FLIC_Set_CurrentFrame(mainmenu_top, 0);
 //     DLOG("CALL: VGA_SetModeY();");
 //     VGA_SetModeY();
-//     // FLIC_Draw_XY(0, 0, gsa_MAINSCRN_0_AnimatedLogo);
+//     // FLIC_Draw_XY(0, 0, mainmenu_top);
 //     FLIC_Draw(0, 0, fmainmenu_top);
 //         // ST_MoveData(destoff=0xB47C, destseg=0x0000, srcoff=0x0000, srcseg=0x20D1, nbytes=16)
 //         // FLIC_Load_Palette(FlicHdr_SgmtAddr=0x20D1, Frame_Index=0)
@@ -641,7 +641,7 @@ void test_GAME_LoadMainImages(void)
             ?
             EMM_Load_LBX_File_1(mainscrn_lbx_file);
             ?
-            gsa_MAINSCRN_0_AnimatedLogo = LBXE_LoadSingle(mainscrn_lbx_file, 0);
+            mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
             ?
             Did MAINSCRN.LBX load into EMM properly?
             ? 
@@ -722,30 +722,30 @@ void test_SA_Error(void)
 
 
 
-// s10p15  void LBX_Error(char * name, int LBX_Error_Number, int entry, int pages)
-void test_LBX_Error(void)
+// s10p15  void Error_Handler(char * name, int Error_Handler_Number, int entry, int pages)
+void test_Error_Handler(void)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: test_LBX_Error()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: test_Error_Handler()\n", __FILE__, __LINE__);
 #endif
-    LBX_Error("MAINSCRN",  1, 0, 111);
-    LBX_Error("MAINSCRN",  2, 0, 111);
-    LBX_Error("MAINSCRN",  3, 0, 111);
-    LBX_Error("MAINSCRN",  4, 0, 111);
-    LBX_Error("MAINSCRN",  5, 0, 111);
-    LBX_Error("MAINSCRN",  6, 0, 111);
-    LBX_Error("MAINSCRN",  7, 0, 111);
-    LBX_Error("MAINSCRN",  8, 0, 111);
-    LBX_Error("MAINSCRN",  9, 0, 111);
-    LBX_Error("MAINSCRN", 10, 0, 111);
-    LBX_Error("MAINSCRN", 11, 0, 111);
-    LBX_Error("MAINSCRN", 12, 0, 111);
-    LBX_Error("MAINSCRN", 13, 0, 111);
-    LBX_Error("MAINSCRN", 14, 0, 111);
-    LBX_Error("MAINSCRN", 15, 0, 111);
-    LBX_Error("MAINSCRN", 16, 0, 111);
-    // DNE LBX_Error("MAINSCRN", 17, 0, 111);
+    Error_Handler("MAINSCRN",  1, 0, 111);
+    Error_Handler("MAINSCRN",  2, 0, 111);
+    Error_Handler("MAINSCRN",  3, 0, 111);
+    Error_Handler("MAINSCRN",  4, 0, 111);
+    Error_Handler("MAINSCRN",  5, 0, 111);
+    Error_Handler("MAINSCRN",  6, 0, 111);
+    Error_Handler("MAINSCRN",  7, 0, 111);
+    Error_Handler("MAINSCRN",  8, 0, 111);
+    Error_Handler("MAINSCRN",  9, 0, 111);
+    Error_Handler("MAINSCRN", 10, 0, 111);
+    Error_Handler("MAINSCRN", 11, 0, 111);
+    Error_Handler("MAINSCRN", 12, 0, 111);
+    Error_Handler("MAINSCRN", 13, 0, 111);
+    Error_Handler("MAINSCRN", 14, 0, 111);
+    Error_Handler("MAINSCRN", 15, 0, 111);
+    Error_Handler("MAINSCRN", 16, 0, 111);
+    // DNE Error_Handler("MAINSCRN", 17, 0, 111);
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: test_LBX_Error()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: test_Error_Handler()\n", __FILE__, __LINE__);
 #endif
 }

@@ -7,13 +7,13 @@
 #include "MGC_DEF.H"    /* g_GUI_MainMenuWindow */
 
 #include "MoX_DIR.H"    /* DIR() */
+#include "MoX_LBX.H"    /* MoX_LBX_Load() */
 
 #include "ST_CRSR.H"
 #include "ST_CTRL.H"
 #include "ST_FLIC.H"    /* FLIC_Draw()) */
 #include "seg028.H"     /* FLIC_Get_CurrentFrame(), FLIC_Reset_CurrentFrame(), FLIC_Set_CurrentFrame() */
 #include "ST_GUI.H"     /* MD_CDraw_Disable(), MD_CDraw_Restore() */
-#include "ST_LBX.H"
 #include "ST_SCRN.H"    /* SCRN_Set_Redraw_Function() */
 #include "ST_TXT.H"     /* Set_Outline_Color() */
 #include "ST_VGA.H"
@@ -220,19 +220,18 @@ void Main_Menu_Load_Pictures(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Load_Pictures()\n", __FILE__, __LINE__);
 #endif
 
-// #if defined(__DOS16__)
+#if defined(__DOS16__)
     EMM_Load_LBX_File_1(mainscrn_lbx_file);
-// #endif
+#endif
 
-    // Nonportable pointer conversion ...
-    // TODO(JimBalcomb,20221124): move ST LBXE_LoadSingle_LM() to MoX LBX_Load()
-    mainmenu_top = LBXE_LoadSingle_LM(mainscrn_lbx_file, 0);
-    mainmenu_bot = LBXE_LoadSingle_LM(mainscrn_lbx_file, 5);
-    mainmenu_c   = LBXE_LoadSingle_LM(vortex_lbx_file, 1);
-    mainmenu_h   = LBXE_LoadSingle_LM(vortex_lbx_file, 2);
-    mainmenu_q   = LBXE_LoadSingle_LM(vortex_lbx_file, 3);
-    mainmenu_n   = LBXE_LoadSingle_LM(vortex_lbx_file, 4);
-    mainmenu_l   = LBXE_LoadSingle_LM(vortex_lbx_file, 5);
+    mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
+    mainmenu_bot = LBX_Load(mainscrn_lbx_file, 5);
+    mainmenu_c   = LBX_Load(vortex_lbx_file, 1);
+    mainmenu_h   = LBX_Load(vortex_lbx_file, 2);
+    mainmenu_q   = LBX_Load(vortex_lbx_file, 3);
+    mainmenu_n   = LBX_Load(vortex_lbx_file, 4);
+    mainmenu_l   = LBX_Load(vortex_lbx_file, 5);
+
 
 
 #ifdef STU_DEBUG

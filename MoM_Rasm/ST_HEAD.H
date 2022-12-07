@@ -29,7 +29,6 @@
 
 #include "ST_EMM.H"
 #include "ST_GUI.H"
-#include "ST_LBX.H"
 #include "ST_SA.H"
 #include "ST_TXT.H"
 #include "ST_VID.H"
