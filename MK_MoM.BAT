@@ -1,0 +1,9 @@
+@ECHO OFF
+
+if not exist build (mkdir build)
+
+pushd build
+
+cl /DSTU_DEBUG /D__WIN32__ -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\Win32_Main.cpp ..\src\Win32_Init.cpp ..\src\Win32_Evnt.cpp ..\src\MoM_main.C ..\src\LBX_Load.C ..\src\Allocate.C ..\src\MoX_DBG.C ..\src\FLIC_Draw.C ..\src\Fonts.C ..\src\MainMenu.C ..\src\STU\STU_DBG.C ..\src\STU\STU_UTIL.C ..\src\STU\STU_BMP.C user32.lib gdi32.lib
+
+popd
