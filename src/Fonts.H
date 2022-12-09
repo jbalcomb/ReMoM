@@ -1,6 +1,8 @@
 #ifndef FONTS_H
 #define FONTS_H
 
+#include "MoX_TYPE.H"
+
 
 extern byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
 extern byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()

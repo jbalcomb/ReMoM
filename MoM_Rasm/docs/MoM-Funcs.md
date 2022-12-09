@@ -474,10 +474,9 @@ _s34p65         IN_Init                    void GUI_Init(int Input_Type)
 _s34p66c.c      IN_GetInput                int GUI_GetInput(void)
 _s34p67         IN_Set_Skip                void GUI_SetDelay(int Input_Delay)
 
-[]_s34p71 GUI_DrawControls
-[]_s34p72 GUI_DrawControl
-
-_s34p73 CTRL_SetFocus  void GUI_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
+s34p71  Draw_Fields         GUI_DrawControls
+s34p72  Draw_Field          GUI_DrawControl
+s34p73  Push_Field_Down     CTRL_SetFocus  void GUI_SetFocus(int Ctrl_Index, int X_Pos, int Y_Pos)
 
 ##### ST_SCRN
 _s34p76c.c      SCRN_Set_Redraw_Function           GUI_SetRedrawFn

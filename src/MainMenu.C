@@ -95,7 +95,7 @@ void Main_Menu_Screen(void)
 
     while(flag_done == ST_FALSE)
     {
-        // // input_field_idx = Get_Input();
+        // // input_field_idx = Get_Input();  // MGC s34p66
         // input_field_idx = field_idx_hotkey_Q;
         // // if(input_field_idx != ST_FALSE) { flag_done = ST_TRUE; }
         // if((input_field_idx == field_idx_hotkey_Q) || (input_field_idx == field_idx_click_Q) || (input_field_idx == field_idx_hotkey_ESC))

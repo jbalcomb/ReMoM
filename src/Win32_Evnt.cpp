@@ -9,9 +9,12 @@
         1 Window's Event Message Handler
 */
 
-#include "MoX_Type.H"
+#include "MoX_TYPE.H"
+#include "MoX_DEF.H"
 
 #include "MoM_main.H"
+
+#include "Input.H"
 
 #include "Win32.hpp"
 
@@ -64,11 +67,34 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
         {
             uint32_t VKCode = WParam;  // the virtual-key code of the key
 
-            if (VKCode == VK_SPACE)
+            int16_t key_shift = GetKeyState(VK_SHIFT);    // VK_SHIFT    0x10  SHIFT key
+            int16_t key_ctrl = GetKeyState(VK_CONTROL);  // VK_CONTROL  0x11  CTRL key
+            int16_t key_alt = GetKeyState(VK_MENU);     // VK_MENU     0x12  ALT key
+
+
+            if (key_ctrl && key_alt && VKCode == 'Q')
+            {
+                g_State_Run = false;
+                OutputDebugStringA("Ctrl-Alt-Q\n");
+            }
+
+            if (VKCode == VK_ESCAPE)  // 0x1B
+            {
+                g_State_Run = false;
+                g_KbHit = TRUE;
+                g_Key_Pressed = ST_TRUE;
+                g_Last_Key_Pressed = 0x1B;
+                OutputDebugStringA("ESCAPE\n");
+            } 
+
+            if (VKCode == VK_SPACE)  // 0x20
             {
                 g_KbHit = TRUE;
+                g_Key_Pressed = ST_TRUE;
+                g_Last_Key_Pressed = 0x20;
                 OutputDebugStringA("SPACEBAR\n");
             } 
+
             if (VKCode == 'W')
             {
                 OutputDebugStringA("W\n");
