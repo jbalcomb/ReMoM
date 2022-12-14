@@ -102,13 +102,9 @@ void Main_Game_Loop(void)
     {
         Poll_Messages();
 
-        // Screen_Control();
+        Screen_Control();
 
-        // Copy Back-Buffer to Front-Buffer
-        Render_VBB(&GlobalBackbuffer);
-
-        win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
-        Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
+        Render();
     }
 }
 
@@ -133,6 +129,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 
     MoM_main();
+
+    // Copy Back-Buffer to Front-Buffer
+    Render_VBB(&GlobalBackbuffer);
+    win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
+    Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
 
     /*
         END: Initialize Game State

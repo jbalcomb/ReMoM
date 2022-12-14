@@ -10,8 +10,10 @@ Init Mouse
 Check Key Press
 Get Key Press
 
-Check Mouse Button Click
-Get Mouse Button Click
+Check Mouse Button Status
+Get Mouse Button Status
+Get Mouse Position - X,Y
+Get Mouse Button Click - L,R
 
 
 
@@ -22,13 +24,72 @@ Loop to match string to multiple key hot-keys
 
 
 
-Get_Input()
-Process_Input()
-Interpret_Keyboard_Input()
-Interpret_Mouse_Input()
-
-
 int16_t Interpret_Keyboard_Input(int16_t field_num)
+
+
+
+Get_Input()
+Interpret_Mouse_Input()
+Interpret_Keyboard_Input()
+Keyboard_Status()
+Read_Key()
+
+
+
+
+Get_Input()
+    |-> Interpret_Mouse_Input()
+        |-> Keyboard_Status()
+        |-> Interpret_Keyboard_Input()
+            |-> Read_Key()
+
+Program Path:
+    return ZERO         Get_Input() |-> input_delay >= 1
+    return field_index  Get_Input() |-> Interpret_Mouse_Input()
+
+    ? Get_Input() |-> Interpret_Mouse_Input() |-> Keyboar_Status() != ST_FALSE
+    character & field_num  Get_Input() |-> Interpret_Mouse_Input() |-> Interpret_Keyboard_Input()
+    ❗❓❗ { {NAY character, NAY field_num}, {YAY character, NAY field_num}, {NAY character, YAY field_num}, {YAY character, YAY field_num}, } ❓❗❓
+    BRANCH: character != 0 || character == 0
+        ~== Global Hot-Key
+        ... F11, F12, ESCAPCE, BACKTICK, TILDE ...
+    
+
+
+Interpret_Mouse_Input()
+returns 0, -1, field_index, negative field_index, s_Field.Param0, ...
+
+
+
+
+
+## Per Screen
+Add Fields
+table of indexes of fields - rect, key, type, ...
+Input -> Fields
+Key Code & Field Index
+
+Get_Input()
+    returns ZERO on input_delay
+
+
+assumption: have key_pressed
+    Interpret_Keyboard_Input()
+        out field_num
+        ret character
+
+
+Return type: signed integer (2 bytes) 
+Parameters:
+    pointer (4 bytes) field_num
+Locals:
+	signed integer (2 bytes) key
+	signed integer (2 bytes) character
+	signed integer (2 bytes) original_character
+
+
+
+
 
 
 

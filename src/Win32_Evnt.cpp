@@ -80,8 +80,8 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
 
             if (VKCode == VK_ESCAPE)  // 0x1B
             {
-                g_State_Run = false;
-                g_KbHit = TRUE;
+                // g_State_Run = false;
+                // g_KbHit = TRUE;
                 g_Key_Pressed = ST_TRUE;
                 g_Last_Key_Pressed = 0x1B;
                 OutputDebugStringA("ESCAPE\n");
@@ -95,19 +95,26 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
                 OutputDebugStringA("SPACEBAR\n");
             } 
 
+            if (VKCode == 'Q')
+            {
+                g_Key_Pressed = ST_TRUE;
+                g_Last_Key_Pressed = 'Q';
+                OutputDebugStringA("Q\n");
+            } 
+
             if (VKCode == 'W')
             {
                 OutputDebugStringA("W\n");
             } 
-            else if (VKCode == 'A')
+            if (VKCode == 'A')
             {
                 OutputDebugStringA("A\n");
             } 
-            else if (VKCode == 'S')
+            if (VKCode == 'S')
             {
                 OutputDebugStringA("S\n");
             } 
-            else if (VKCode == 'D')
+            if (VKCode == 'D')
             {
                 OutputDebugStringA("D\n");
             } 

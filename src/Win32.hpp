@@ -68,10 +68,12 @@ void Poll_Messages(void);
 LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam);
 
 // Win32_Main.cpp
-
 void Render_VBB(win32_offscreen_buffer * Buffer);
 win32_window_dimension Win32GetWindowDimension(HWND Window);
 void Win32ResizeDIBSection(win32_offscreen_buffer * Buffer, int Width, int Height);
 void Win32DisplayBufferInWindow(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Main_Game_Loop(void);
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
+
+// Win32_Render.cpp
+void Render(void);

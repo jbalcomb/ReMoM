@@ -1,10 +1,12 @@
 
 #include "MoX_TYPE.H"
+#include "MoX_DEF.H"
 
 #include "MoM_main.H"
 
-#include "LBX_Load.H"
 #include "Allocate.H"
+#include "Fonts.H"
+#include "LBX_Load.H"
 
 #include "MainMenu.H"
 
@@ -46,7 +48,7 @@ void Screen_Control(void)
         case scr_Quit_To_DOS:
         {
             DLOG("case scr_Quit_To_DOS:");
-            Main_Menu_Screen();
+            g_State_Run = ST_FALSE;
         } break;
     }
 
@@ -69,6 +71,7 @@ void MoM_main(void)
     // Init_STGE()
     // |-> Init_Drivers(GAME_FONT_FILE) |-> Load_Font_File(font_file)
     Load_Font_File(font_file);
+    Init_Mouse_Keyboard(1);
 
     // Init_MGC()
     // Init_WZD()
@@ -80,19 +83,19 @@ void MoM_main(void)
     g_State_Run = 1;  // ST_TRUE
 
 
-    Main_Menu_Load_Pictures();
-    // FLIC_Draw(int x_start, int y_start, SAMB_ptr p_FLIC_File)
-    FLIC_Draw(0, 0, mainmenu_top);
-    FLIC_Draw(0, 41, mainmenu_bot);
-    int menu_x_start = 123;
-    int menu_y_start = 141;
-    int menu_shift = 0;
-    FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
-    FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
-    FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
-    FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
-    FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
-    STU_Export_VBB_To_BMP32();
+    // DBG  Main_Menu_Load_Pictures();
+    // DBG  // FLIC_Draw(int x_start, int y_start, SAMB_ptr p_FLIC_File)
+    // DBG  FLIC_Draw(0, 0, mainmenu_top);
+    // DBG  FLIC_Draw(0, 41, mainmenu_bot);
+    // DBG  int menu_x_start = 123;
+    // DBG  int menu_y_start = 141;
+    // DBG  int menu_shift = 0;
+    // DBG  FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
+    // DBG  FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
+    // DBG  FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
+    // DBG  FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
+    // DBG  FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
+    // DBG  STU_Export_VBB_To_BMP32();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: MoM_main()\n", __FILE__, __LINE__);

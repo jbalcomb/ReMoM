@@ -487,8 +487,8 @@ _s34p83c.c      SCRN_Redraw_WaitTimer        void GUI_NormalRedraw(void)        
 _s34p85c.c      SCRN_SimplePageFlip
 
 ##### ST_CTRL
-_s34p47         CTRL_CreateClickLabel        GUI_CreateClickLabel(int Left, int Top, int Right, int Bottom, char *varKeyCode, char *Hlp)
-_s34p49         CTRL_CreateHotkey            GUI_CreateHotkey(char *Hotkey)
+s34p47  Add_Hidden_Field        CTRL_CreateClickLabel        GUI_CreateClickLabel(int Left, int Top, int Right, int Bottom, char *varKeyCode, char *Hlp)
+s34p49  Add_Hot_Key             CTRL_CreateHotkey            GUI_CreateHotkey(char *Hotkey)
 
 
 ##### seg035    ST_SND.H

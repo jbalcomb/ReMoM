@@ -97,29 +97,29 @@ void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
 #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] g_Video_Back_Buffer: %p\n", __FILE__, __LINE__, g_Video_Back_Buffer);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] g_Video_Back_Buffer: %p\n", __FILE__, __LINE__, g_Video_Back_Buffer);
+// #endif
 
     bbuff_pos = g_Video_Back_Buffer + ((y_start * 320) + x_start);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);
+// #endif
 
 
     while (width--)
     {
         bbuff = bbuff_pos++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] frame_data: %p\n", __FILE__, __LINE__, frame_data);
-    dbg_prn("DEBUG: [%s, %d] bbuff: %p\n", __FILE__, __LINE__, bbuff);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] frame_data: %p\n", __FILE__, __LINE__, frame_data);
+//     dbg_prn("DEBUG: [%s, %d] bbuff: %p\n", __FILE__, __LINE__, bbuff);
+// #endif
         
         packet_op = *frame_data++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_op: 0x%02X\n", __FILE__, __LINE__, packet_op);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] packet_op: 0x%02X\n", __FILE__, __LINE__, packet_op);
+// #endif
 
         if(packet_op == 0xFF)  /* Type: skip */
         {
@@ -128,9 +128,9 @@ void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
 
         packet_byte_count = *frame_data++;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] packet_byte_count: 0x%02X\n", __FILE__, __LINE__, packet_byte_count);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] packet_byte_count: 0x%02X\n", __FILE__, __LINE__, packet_byte_count);
+// #endif
 
         if(packet_op == 0x80)  /* Type: decode */
         {
@@ -164,16 +164,16 @@ void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
 
         if(packet_op == 0x00)  /* Type: copy */
         {
-            DLOG("BEGIN: (packet_op == 0x00)");
+            // DLOG("BEGIN: (packet_op == 0x00)");
             do {
                 sequence_byte_count = *frame_data++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] sequence_byte_count: 0x%02X\n", __FILE__, __LINE__, sequence_byte_count);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] sequence_byte_count: 0x%02X\n", __FILE__, __LINE__, sequence_byte_count);
+// #endif
                 delta_byte_count = *frame_data++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] delta_byte_count: 0x%02X\n", __FILE__, __LINE__, delta_byte_count);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] delta_byte_count: 0x%02X\n", __FILE__, __LINE__, delta_byte_count);
+// #endif
                 bbuff += (320 * delta_byte_count);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
@@ -182,7 +182,7 @@ void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
                     bbuff += 320;
                 }
             } while(packet_byte_count >= 1);
-            DLOG("END: (packet_op == 0x00)");
+            // DLOG("END: (packet_op == 0x00)");
         }
 
     }

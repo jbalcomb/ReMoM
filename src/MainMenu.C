@@ -6,6 +6,7 @@
 
 #include "MoM_main.H"
 
+#include "Fields.H"
 #include "LBX_Load.H"
 #include "FLIC_Draw.H"
 
@@ -70,12 +71,38 @@ void Main_Menu_Load_Pictures(void)
 
 }
 
+
+// MGC ⊆ s01p05 Main_Menu_Screen()
+void Main_Menu_Add_Fields(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
+#endif
+
+    Clear_Fields();
+
+    // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
+    // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
+    // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
+    // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
+    // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
+
+    field_idx_hotkey_C = Add_Hot_Key('C');
+    field_idx_hotkey_L = Add_Hot_Key('L');
+    field_idx_hotkey_N = Add_Hot_Key('N');
+    field_idx_hotkey_H = Add_Hot_Key('H');
+    field_idx_hotkey_Q = Add_Hot_Key('Q');
+    field_idx_hotkey_ESC = Add_Hot_Key('\x1B');
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
+#endif
+}
+
+
 // MGC s01p05
-// int Main_Menu_Screen(void)
 void Main_Menu_Screen(void)
 {
-    uint8_t flag_done;
-    // int16_t main_menu_selection;
     int16_t input_field_idx;
 
 #ifdef STU_DEBUG
@@ -83,54 +110,41 @@ void Main_Menu_Screen(void)
 #endif
 
     input_field_idx = ST_FALSE;
-    // main_menu_selection = ST_UNDEFINED;
-    flag_done = ST_FALSE;
 
 
     Main_Menu_Load_Pictures();
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: fields_count: %d\n", __FILE__, __LINE__, fields_count);
+#endif
     Main_Menu_Add_Fields();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: fields_count: %d\n", __FILE__, __LINE__, fields_count);
+#endif
 
-    field_idx_hotkey_Q = 1;
+    input_field_idx = Get_Input();
 
-    while(flag_done == ST_FALSE)
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
+#endif
+
+    if(input_field_idx == field_idx_hotkey_Q)
     {
-        // // input_field_idx = Get_Input();  // MGC s34p66
-        // input_field_idx = field_idx_hotkey_Q;
-        // // if(input_field_idx != ST_FALSE) { flag_done = ST_TRUE; }
-        // if((input_field_idx == field_idx_hotkey_Q) || (input_field_idx == field_idx_click_Q) || (input_field_idx == field_idx_hotkey_ESC))
-        // {
-        //     flag_done = ST_TRUE;
-        //     // main_menu_selection = 3;
-        //     g_Current_Screen = scr_Quit_To_DOS;
-        // }
-        // // if(main_menu_selection == ST_UNDEFINED) { flag_done = ST_FALSE; }
+        g_Current_Screen = scr_Quit_To_DOS;
+    }
 
-        if(flag_done == ST_FALSE)
-        {
-            Main_Menu_Screen_Draw();
-            // Toggle_Pages();
-            // STU_Export_VBB_To_BMP32();
-        }
-    }  /* while(flag_done == ST_FALSE) */
+
+    Main_Menu_Screen_Draw();
+    // // Toggle_Pages();
+    // Render();
+    // // STU_Export_VBB_To_BMP32();
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Screen()\n", __FILE__, __LINE__);
 #endif
 
-}
-
-void Main_Menu_Add_Fields(void)
-{
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
-#endif
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
-#endif
 }
 
 // MGC s01p06
