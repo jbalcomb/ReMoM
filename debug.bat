@@ -1,3 +1,7 @@
+
+REM https://yakvi.github.io/handmade-hero-notes/html/day1.html#debugginginremedybgorvisualstudio/setupvisualstudiodebugger
+
 @ECHO OFF
 
-start devenv misc\win32_mom.sln
+REM devenv build\MoM.exe
+start devenv misc\MoM.sln
