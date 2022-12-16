@@ -113,23 +113,31 @@ extern "C" {
     MGC  seg021
 */
 
-// // MGC s21p07
-// void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
-// 
-// // MGC s27p01
-// void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
-// 
-// // MGC s28p11
-// void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
-// 
-// // MGC s28p14
-// void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
-// 
-// // MGC s28p15
-// void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
-// 
-// // MGC s28p16
-// int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
+// MGC s21p07
+void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
+
+/*
+    MGC  seg027
+*/
+
+// MGC s27p01
+void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
+
+/*
+    MGC  seg028
+*/
+
+// MGC s28p11
+void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
+
+// MGC s28p14
+void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
+
+// MGC s28p15
+void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
+
+// MGC s28p16
+int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
 
 
 #ifdef __cplusplus

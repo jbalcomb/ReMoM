@@ -38,6 +38,9 @@ int16_t field_idx_click_N;
 int16_t field_idx_click_H;
 int16_t field_idx_click_Q;
 
+int16_t main_menu_loaded = ST_FALSE;
+
+
 
 // MGC s01p04
 void Main_Menu_Load_Pictures(void)
@@ -109,36 +112,69 @@ void Main_Menu_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen()\n", __FILE__, __LINE__);
 #endif
 
-    input_field_idx = ST_FALSE;
+    // TODO  ~== Clear Both Screen Pages
+    // TODO  Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
 
-
-    Main_Menu_Load_Pictures();
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fields_count: %d\n", __FILE__, __LINE__, fields_count);
-#endif
-    Main_Menu_Add_Fields();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fields_count: %d\n", __FILE__, __LINE__, fields_count);
-#endif
-
-    input_field_idx = Get_Input();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-#endif
-
-    if(input_field_idx == field_idx_hotkey_Q)
+    if(!main_menu_loaded)
     {
-        g_Current_Screen = scr_Quit_To_DOS;
+        Main_Menu_Load_Pictures();
+        main_menu_loaded = ST_TRUE;
     }
 
+    input_field_idx = ST_FALSE;
 
-    Main_Menu_Screen_Draw();
-    // // Toggle_Pages();
-    // Render();
-    // // STU_Export_VBB_To_BMP32();
+    // TODO  Clear_Help()
+
+    // ¿ TODO  Clear_Fields() ?
+    Main_Menu_Add_Fields();
+
+    // TODO  Set_Help(HLP_IDX_0, 5);
+
+    // TODO  Set_Mouse_List(1, &main_menu_window);
+
+    // ? being here breaks the animation frame cycling ? FLIC_Reset_CurrentFrame(mainmenu_top);
+
+    // TODO  Set_Redraw_Function(Main_Menu_Screen_Draw, 2);
+
+    // TODO  Set_Input_Delay(4);
+
+
+
+//  while(flag_done == ST_FALSE) {
+
+        // TODO  CLK_Save();
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == field_idx_hotkey_Q)
+        {
+            g_Current_Screen = scr_Quit_To_DOS;
+        }
+
+//      if(flag_done == ST_FALSE) {
+    
+            Main_Menu_Screen_Draw();
+            // TODO  Toggle_Pages();
+
+//          if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE))) {
+
+                // TODO  Fade_In()
+                // TODO  Copy_Off_To_On_Page();
+                // TODO  draw_done = ST_TRUE;
+                // TODO  screen_fade = ST_FALSE;
+
+//          }  /* if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE))) */
+
+            // TODO  CLK_Wait(2);
+
+//      }  /* if(flag_done == ST_FALSE) */
+
+//  }  /* while ( flag_done == ST_FALSE ) */
+
+    // TODO  Disable_Redraw();
+
+    // TODO  Deactivate_Help_List();
+
 
 
 #ifdef STU_DEBUG
@@ -150,6 +186,8 @@ void Main_Menu_Screen(void)
 // MGC s01p06
 void Main_Menu_Screen_Draw(void)
 {
+    int16_t logo_frame_index;
+    int16_t itr_logo;
     uint16_t menu_x_start;
     uint16_t menu_y_start;
     uint8_t menu_shift;
@@ -160,10 +198,21 @@ void Main_Menu_Screen_Draw(void)
 
     menu_x_start = 123;
     menu_y_start = 141;
-    menu_shift = 0;
 
-    FLIC_Draw(0, 0, mainmenu_top);
+    // TODO  mouse_field = Get_Mouse_Field();  // MGC s34p25 GUI_MousedControl()
+
+    logo_frame_index = FLIC_Get_CurrentFrame(mainmenu_top);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] logo_frame_index: %d\n", __FILE__, __LINE__, logo_frame_index);
+#endif
+    FLIC_Set_CurrentFrame(mainmenu_top, 0);
+    for(itr_logo = 0; itr_logo <= logo_frame_index; itr_logo++)
+    {
+        FLIC_Draw(0, 0, mainmenu_top);
+    }
     FLIC_Draw(0, 41, mainmenu_bot);
+
+    menu_shift = 0;
 
     FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
     FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);

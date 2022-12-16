@@ -21,13 +21,13 @@ extern uint8_t g_Palette_XBGR[];
 
 
 // MGC s21p07
-void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, short frame_index)
+void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
     SAMB_ptr p_FLIC_File;
-    unsigned int Color_Index;
-    unsigned int Color_Count;
+    int16_t start;
+    int16_t count;
     byte_ptr flic_palette_data;
-    unsigned int itr;
+    int16_t itr;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
@@ -38,34 +38,30 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, short frame_index)
     if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
     {
         DLOG("( (frame_index == 0) || (frame_palettes == 0) )");
-        Color_Index = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
-        Color_Count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
+        start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
+        count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
     }
     else
     {
         DLOG("( (frame_index != 0) || (frame_palettes != 0) )");
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
-        Color_Index = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
-        Color_Count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
+        start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
+        count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
     }
 
-    for(itr = Color_Index; itr < Color_Count; itr++)
+    for(itr = start; itr < count; itr++)
     {
         *(p_Palette + itr) = *(flic_palette_data + itr);
         *(p_Palette + 768 + itr) = 1;
     }
 
-    for(itr = 0; itr < Color_Count; itr++)
+    for(itr = 0; itr < count; itr++)
     {
-        // *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
-        // *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
-        // *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
-        // *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = 0x00;
-        *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 3) = 0x00;
-        *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 2) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 0) << 2);
-        *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 1) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 1) << 2);
-        *(g_Palette_XBGR + (Color_Index * 4) + (itr * 4) + 0) = (*(flic_palette_data + (Color_Index * 3) + (itr * 3) + 2) << 2);
+        *(g_Palette_XBGR + (start * 4) + (itr * 4) + 3) = 0x00;
+        *(g_Palette_XBGR + (start * 4) + (itr * 4) + 2) = (*(flic_palette_data + (start * 3) + (itr * 3) + 0) << 2);
+        *(g_Palette_XBGR + (start * 4) + (itr * 4) + 1) = (*(flic_palette_data + (start * 3) + (itr * 3) + 1) << 2);
+        *(g_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
     }
 
 #ifdef STU_DEBUG
@@ -81,7 +77,7 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, short frame_index)
 */
 
 // MGC s27p01
-void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
+void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data)
 {
     unsigned char * bbuff_pos;
     unsigned char * bbuff;
@@ -200,10 +196,10 @@ void FLIC_Draw_Frame(int x_start, int y_start, int width, byte_ptr frame_data)
 */
 
 // MGC s28p11
-void FLIC_Draw(int x_start, int y_start, SAMB_ptr p_FLIC_File)
+void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
 {
-    short current_frame_index;
-    short next_frame_index;
+    int16_t current_frame_index;
+    int16_t next_frame_index;
     unsigned int flic_frame_offset;
     unsigned short flic_frame_offset_sgmt;
     unsigned short flic_frame_offset_ofst;
@@ -214,15 +210,26 @@ void FLIC_Draw(int x_start, int y_start, SAMB_ptr p_FLIC_File)
 #endif
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] current_frame_index: %d\n", __FILE__, __LINE__, current_frame_index);
+#endif
     next_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File) + 1;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] next_frame_index: %d\n", __FILE__, __LINE__, next_frame_index);
+#endif
     if(next_frame_index < FLIC_GET_FRAME_COUNT(p_FLIC_File))
     {
+        DLOG("(next_frame_index < FLIC_GET_FRAME_COUNT(p_FLIC_File))");
         FLIC_SET_CURRENT_FRAME(p_FLIC_File, next_frame_index);
     }
     else
     {
+        DLOG("(next_frame_index >= FLIC_GET_FRAME_COUNT(p_FLIC_File))");
         FLIC_SET_CURRENT_FRAME(p_FLIC_File, FLIC_GET_LOOP_FRAME(p_FLIC_File));
     }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_GET_CURRENT_FRAME(p_FLIC_File): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(p_FLIC_File));
+#endif
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(p_FLIC_File) != 0))
     {
@@ -256,40 +263,100 @@ void FLIC_Draw(int x_start, int y_start, SAMB_ptr p_FLIC_File)
 }
 
 // MGC s28p14
-void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, short frame_index)
+void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
-    short loop_length;
-    short loop_frame;
-    short frame_count;
+    int16_t loop_length;
+    int16_t loop_frame;
+    int16_t frame_count;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+#endif
 
     frame_index = (frame_index & 0x7fff);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] frame_index: %d\n", __FILE__, __LINE__, frame_index);
+#endif
+
     frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] frame_count: %d\n", __FILE__, __LINE__, frame_count);
+#endif
 
     loop_frame = FLIC_GET_LOOP_FRAME(p_FLIC_Header);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] loop_frame: %d\n", __FILE__, __LINE__, loop_frame);
+#endif
+
     loop_length = frame_count - loop_frame;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] loop_length: %d\n", __FILE__, __LINE__, loop_length);
+#endif
+
+    // if(frame_index >= frame_count)
     if(!(frame_index < frame_count))
     {
         frame_index = loop_frame + ((frame_index - frame_count) % loop_length);
     }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] frame_index: %d\n", __FILE__, __LINE__, frame_index);
+#endif
+
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, frame_index);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+#endif
+
 }
 
 // MGC s28p15
 void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_GET_CURRENT_FRAME(p_FLIC_Header): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(p_FLIC_Header));
+#endif
+
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, 0);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] FLIC_GET_CURRENT_FRAME(p_FLIC_Header): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(p_FLIC_Header));
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
+
 }
 
 // MGC s28p16
-short FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
+int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
-    short current_frame_index;
+    int16_t current_frame_index;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] current_frame_index: %d\n", __FILE__, __LINE__, current_frame_index);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_CurrentFrame(p_FLIC_Header = %p) { current_frame_index = %d }\n", __FILE__, __LINE__, p_FLIC_Header, current_frame_index);
+#endif
 
     return current_frame_index;
 }
