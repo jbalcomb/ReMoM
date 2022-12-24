@@ -7,8 +7,10 @@
 #include "MoM_main.H"
 
 #include "Fields.H"
-#include "LBX_Load.H"
 #include "FLIC_Draw.H"
+#include "Input.H"
+#include "LBX_Load.H"
+#include "Mouse.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -39,6 +41,12 @@ int16_t field_idx_click_H;
 int16_t field_idx_click_Q;
 
 int16_t main_menu_loaded = ST_FALSE;
+
+
+int16_t mouse_list_menu_count = 1;
+struct s_mouse_list mouse_list_menu[1] = {
+    {1, 0, 0, 0, 319, 199}
+};
 
 
 
@@ -107,6 +115,8 @@ void Main_Menu_Add_Fields(void)
 void Main_Menu_Screen(void)
 {
     int16_t input_field_idx;
+    int16_t mouse_x;
+    int16_t mouse_y;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen()\n", __FILE__, __LINE__);
@@ -123,18 +133,36 @@ void Main_Menu_Screen(void)
 
     input_field_idx = ST_FALSE;
 
+
+
+    // TODO  if(screen_change) { Fade_Out(); }
+
+    // TODO  Fill(0, 0, 319,199);
+    // TODO  Set_Page_On();
+    // TODO  Fill(0, 0, 319,199);
+    // TODO  Set_Page_Off();
+
+    Load_Palette(2, -1, 0);
+
+    // TODO  Load_Settings()
+
     // TODO  Clear_Help()
 
     // ¿ TODO  Clear_Fields() ?
     Main_Menu_Add_Fields();
 
-    // TODO  Set_Help(HLP_IDX_0, 5);
+    Set_Mouse_List(1, mouse_list_menu);
 
-    // TODO  Set_Mouse_List(1, &main_menu_window);
+
+    // CRL_Save_RSP(Pointer_X, Pointer_Y)
+    // GUI_MouseEmuMove(g_GUI_NewGame_Label)
+
 
     // ? being here breaks the animation frame cycling ? FLIC_Reset_CurrentFrame(mainmenu_top);
 
     // TODO  Set_Redraw_Function(Main_Menu_Screen_Draw, 2);
+
+    // TODO  Set_Help(HLP_IDX_0, 5);
 
     // TODO  Set_Input_Delay(4);
 
@@ -154,7 +182,15 @@ void Main_Menu_Screen(void)
 //      if(flag_done == ST_FALSE) {
     
             Main_Menu_Screen_Draw();
-            // TODO  Toggle_Pages();
+            Toggle_Pages();
+            mouse_x = Pointer_X();
+            mouse_y = Pointer_Y();
+            Check_Mouse_Shape(mouse_x, mouse_y);  // AKA GUI_FindWindow();  // MGC s33p02  ST_GUI.H
+            Draw_Mouse(mouse_x, mouse_y);
+            // STU_Export_VBB_To_BMP32();
+
+            // // Save_Mouse(mouse_x, mouse_y);
+            // // Restore_Mouse();
 
 //          if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE))) {
 

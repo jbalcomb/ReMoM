@@ -18,6 +18,7 @@
 char font_name[16];                             // MGC dseg:A7E0    set in Load_Font_File
 SAMB_ptr font_style_data;                       // MGC dseg:A816    alloc & load in Load_Font_File
 SAMB_ptr border_style_data;                     // MGC dseg:A818    alloc & load in Load_Font_File
+byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_Palette()  16 (16*16) cursor images
 
 SAMB_ptr palette_block;                         // ? seg020  // dseg:A7F4 ?
 SAMB_ptr palette_data;                          // ? seg020  // dseg:A7F2 ?
@@ -83,6 +84,8 @@ void Load_Palette(int entry, int start_color, int end_color)
 #endif
 
     palette_data = LBX_Reload(font_name, entry+2, palette_block);
+
+    mouse_palette = (palette_data + 1280);
 
     if(start_color == -1)
     {

@@ -2,13 +2,31 @@
 
 
 
+#include "MoX_TYPE.H"
+
+
+
 struct game_offscreen_buffer
 {
-    void *Memory;
+    void * Memory;
     int Width;
     int Height;
     int Pitch;
 };
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern int16_t draw_page_num;
+extern uint8_t * video_page_buffer[2];
+extern uint8_t * draw_page;
+
+#ifdef __cplusplus
+}
+#endif
 
 
 

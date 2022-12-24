@@ -4,6 +4,8 @@
 #include "MoX_TYPE.H"
 
 
+extern byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_Palette()  16 (16*16) cursor images
+
 extern byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
 extern byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
 extern byte_ptr p_Palette_XBGR;                        // STU/Win32

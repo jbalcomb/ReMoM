@@ -56,8 +56,23 @@ Program Path:
     
 
 
-Interpret_Mouse_Input()
+#### Interpret_Mouse_Input()
 returns 0, -1, field_index, negative field_index, s_Field.Param0, ...
+
+sets pointer_offset with call to Get_Pointer_Offset()
+so, ...
+    pointer_offset is exposed to the Input module, but current_mouse_list is not
+    
+
+
+
+
+
+
+## Initialization
+
+// MGC _s33p01  ST_GUI.H
+Set_Mouse_List(1, default_mouse);       AKA GUI_SetWindows(1, g_GUI_VirtualScreen);
 
 
 

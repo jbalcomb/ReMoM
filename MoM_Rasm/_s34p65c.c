@@ -5,6 +5,7 @@
 
 #include "ST_HEAD.H"
 
+#include "ST_CRSR.H"
 #include "ST_GUI.H"
 
 #ifdef STU_DEBUG

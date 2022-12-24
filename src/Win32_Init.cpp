@@ -66,6 +66,8 @@
 
 #include <windows.h>
 
+#include <Win32.hpp>
+
 // extern const char lpszClassName[];
 // extern const char lpszWindowName[];
 const char lpszClassName[] = "STU_MoM_WindowClass";
@@ -122,8 +124,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
                                 WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                 CW_USEDEFAULT,
                                 CW_USEDEFAULT,
-                                320, /* int nWidth   CW_USEDEFAULT, */
-                                200, /* int nHeight  CW_USEDEFAULT, */
+                                window_width, /* int nWidth   CW_USEDEFAULT, */
+                                window_height, /* int nHeight  CW_USEDEFAULT, */
                                 0,
                                 0,
                                 hInstance,

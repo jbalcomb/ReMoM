@@ -164,7 +164,9 @@ void CR_Store_C(int CR_X, int CR_Y, int ScreenPage_Idx)
                 //*pCRSR_Save_RSP++ = FPEEKW(FP_SEG(pScreenPage),Src_Ofst);
                 // wordo = FPEEKW(FP_SEG(pScreenPage),Src_Ofst);
                 // #define FPEEKW( _sgmt_,_ofst_) ( *(( word _FAR *)MK_FP((_sgmt_),(_ofst_))) )
-                wordo = ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 0) ) ) | ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 1) ) << 8 );
+                wordo = \
+                ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 0) ) ) | \
+                ( (unsigned int) *( (((unsigned char *)pScreenPage) + Src_Ofst + 1) ) << 8 );
 
 // #ifdef STU_DEBUG
 //                 dlvfprintf("DEBUG: [%s, %d] %Fp[0x%04X (%u)][%d]: wordo: 0x%04X (%u)\n", __FILE__, __LINE__, pScreenPage, (Src_Ofst - Column_Offset), (Src_Ofst - Column_Offset), itr_plane, wordo, wordo);

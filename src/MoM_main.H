@@ -51,7 +51,7 @@ extern uint8_t g_State_Run;
 
 extern int16_t g_Current_Screen;
 
-extern uint8_t g_Video_Back_Buffer[];
+// extern uint8_t g_Video_Back_Buffer[];
 extern uint8_t g_Palette_XBGR[];
 
 

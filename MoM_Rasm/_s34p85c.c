@@ -56,14 +56,14 @@ void SCRN_SimplePageFlip(void)
     dbg_prn("DEBUG: [%s, %d] g_CRSR_Offset: %d\n", __FILE__, __LINE__, g_CRSR_Offset);
 #endif
 
-    CRL_Save_DSP(mouse_x, mouse_y);
-    CRH_Draw_DSP(mouse_x, mouse_y);
+    CRL_Save_DSP(mouse_x, mouse_y);  // MGC s33p31
+    CRH_Draw_DSP(mouse_x, mouse_y);  // MGC s33p38 |-> CRL_Draw_DSP() s33p40
     //CRH_Draw_DSP_A(mouse_x, mouse_y);
     //CRH_Draw_DSP_C(mouse_x, mouse_y);
 
     VGA_PageFlip();  // MGC _s26p04a.c
     
-    CRL_Restore_DSP();
+    CRL_Restore_DSP();   // MGC s33p35
     CRL_Copy_DSP2RSP();  // MGC _s33p33.asm
 
     MD_CDraw_Restore();

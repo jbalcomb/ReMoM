@@ -408,14 +408,19 @@ s28p16      FLIC_GetCurFrame      void FLIC_GetCurFrame(unsigned int FlicHdr_Sgm
 [?] FLIC_DecPrepare      LBX_IMG_DecPrepare
 
 
-##### seg033    ST_GUI.H
+##### MGC seg033
+##### WZD seg035
+ST_GUI.H
 _s33p01         GUI_SetWindows              
 _s33p02         GUI_FindWindow
 _s33p03         GUI_GetCursorIndex          int GUI_GetCursorIndex(void)
 _s33p04c.c      GUI_GetCursorOffset
 _s33p05.asm     MD_GetButtonStatus       int MD_GetButtonStatus(void)     MOUSE_ReadStatus
 _s33p06         MOUSE_WaitRelease           int MOUSE_WaitRelease(void)
-_s33p07         MD_Init()                   int MD_Init(void)               MOUSE_Init
+_s33p07         Init_Mouse_Driver()
+                MD_Init()
+                MOUSE_Init
+
 []_s33p09         MOUSE_Reset
 []_s33p10         MOUSE_INTSet_MvOnly
 []_s33p11         MOUSE_INTSet_MvBtns
@@ -444,9 +449,11 @@ _s33p30         CRL_Save_RSP                        GUI_SaveCursorArea_RSP      
 _s33p31         CRL_Save_DSP                        GUI_SaveCursorArea_DSP          void GUI_SaveCursorArea_DSP(int X_Pos, int Y_Pos)       GUI_SaveDrawCrsrArea          
 _s33p32         IN_CRL_Save_RSP                     VGA_SaveCursorArea_RSP          void VGA_SaveCursorArea_RSP(int X_Pos, int Y_Pos)       VGA_SaveCursorArea
 _s33p33         CRL_Copy_DSP2RSP                    GUI_CursorCopy_Bkup2Main        void GUI_CursorCopy_Bkup2Main(void)
+
 _s33p34         CRL_Restore_RSP                     GUI_RestoreCursorArea_RSP       VGA_RestoreCursrArea
 _s33p35         CRL_Restore_DSP                     GUI_RestoreCursorArea_DSP       VGA_RestoreDrawCArea
 // UU _s33p36      UU_CRL_Restore_SP3                                                     UU_VGA_RestoreCursorArea_SP3
+
 _s33p37         CRH_Draw_RSP |-> CRL_Draw_RSP       GUI_DrawCursor_RSP              GUI_DisplayCursor
 _s33p38         CRH_Draw_DSP |-> CRL_Draw_DSP       GUI_DrawCursor_DSP              GUI_DrawCursor
 _s33p39         CRL_Draw_RSP                        VGA_DrawCursor_RSP              VGA_DisplayCursor
@@ -484,7 +491,7 @@ _s34p79c.c      SCRN_DisableRedraw           void GUI_DisableRedraw(void)
 _s34p81c.c      SCRN_CallRedrawFn
 _s34p82c.c      SCRN_Redraw_WaitOne          void GUI_Redraw_WaitOne(void)       GUI_1TickRedraw
 _s34p83c.c      SCRN_Redraw_WaitTimer        void GUI_NormalRedraw(void)         GUI_NormalRedraw      
-_s34p85c.c      SCRN_SimplePageFlip
+_s34p85c.c      Toggle_Pages()  SCRN_SimplePageFlip
 
 ##### ST_CTRL
 s34p47  Add_Hidden_Field        CTRL_CreateClickLabel        GUI_CreateClickLabel(int Left, int Top, int Right, int Bottom, char *varKeyCode, char *Hlp)

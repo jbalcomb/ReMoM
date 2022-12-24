@@ -5,8 +5,9 @@
 #include "FLIC_Draw.H"
 
 #include "Fonts.H"    /* p_Palette() */
+#include "Video.H"
 
-extern uint8_t g_Video_Back_Buffer[];
+// extern uint8_t g_Video_Back_Buffer[];
 extern uint8_t g_Palette_XBGR[];
 
 #ifdef STU_DEBUG
@@ -97,7 +98,8 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
 //     dbg_prn("DEBUG: [%s, %d] g_Video_Back_Buffer: %p\n", __FILE__, __LINE__, g_Video_Back_Buffer);
 // #endif
 
-    bbuff_pos = g_Video_Back_Buffer + ((y_start * 320) + x_start);
+    // bbuff_pos = g_Video_Back_Buffer + ((y_start * 320) + x_start);
+    bbuff_pos = current_video_page + ((y_start * 320) + x_start);
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);

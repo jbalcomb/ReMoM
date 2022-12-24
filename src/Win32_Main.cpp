@@ -33,9 +33,17 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
+
 // global_variable win32_offscreen_buffer GlobalBackbuffer;
 win32_offscreen_buffer GlobalBackbuffer;
 global_variable s64 GlobalPerfCountFrequency;  // HMH Day 18
+
+// uint16_t window_width = 320;
+// uint16_t window_height = 200;
+uint16_t window_width = 640;
+uint16_t window_height = 400;
+// uint16_t window_width = 1280;
+// uint16_t window_height = 800;
 
 
 
@@ -118,6 +126,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     Debug_Log_Startup();
 #endif
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
+#endif
+
     // Initialize the "Windows Desktop Application"
     // ~== 'Application-Type' of 'Game'
     Init_WDA_Game(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
@@ -134,11 +146,14 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     b32 SleepIsGranular = (timeBeginPeriod(DesiredSchedulerMS) == TIMERR_NOERROR);
 
     Win32ResizeDIBSection(&GlobalBackbuffer, 320, 200);
+    // Win32ResizeDIBSection(&GlobalBackbuffer, 640, 400);
 
     // TODO(casey): How do we reliably query on this on Windows?
     int MonitorRefreshHz = 60;
-    int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
+    // int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
     // int GameUpdateHz = MonitorRefreshHz / 4;  // 15 FPS
+    // int GameUpdateHz = MonitorRefreshHz / 6;  // 10 FPS
+    int GameUpdateHz = MonitorRefreshHz / 12;  // 5 FPS
     f32 TargetSecondsPerFrame = 1.0f / (f32)GameUpdateHz;
 
     /*
@@ -148,6 +163,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     g_State_Run = 1;  // ST_TRUE
     g_Current_Screen = scr_Main_Menu;
 
+    video_page_buffer[0] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    video_page_buffer[1] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    draw_page_num = 0;
+    draw_page = video_page_buffer[draw_page_num];
 
     MoM_main();
 
@@ -287,6 +306,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     }
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: WinMain()\n", __FILE__, __LINE__);
+#endif
 
 #ifdef STU_DEBUG
     Debug_Log_Shutdown();

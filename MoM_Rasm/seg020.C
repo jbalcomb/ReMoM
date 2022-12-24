@@ -46,7 +46,8 @@ void PAL_Load_Palette(int entry, int start_color, int end_color)
     UU_p_Palette_Data = PTR_ADD_PARAGRAPH(palette_data, (48 + 16));             //  16 pr  256 b  0x0400 [1024] ? UnUsed ? DNE in MoO1 ?
     // SM2LM  
     UU_sa_Palette_Data = FP_SEG(UU_p_Palette_Data);
-    
+
+    // MoO2  mouse_palette = (palette_data + 1024)
     p_Cursor_Array = PTR_ADD_PARAGRAPH(palette_data, (48 + 16 + 16));           //  16 pr  256 b  0x0500 [1280] 16 16x16 cursor bitmap images
     // SM2LM  
     sa_Cursor_Array = FP_SEG(p_Cursor_Array);

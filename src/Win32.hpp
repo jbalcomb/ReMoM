@@ -55,6 +55,9 @@ struct win32_window_dimension
 
 extern win32_offscreen_buffer GlobalBackbuffer;
 
+extern uint16_t window_width;
+extern uint16_t window_height;
+
 
 
 // Win32_Init.cpp

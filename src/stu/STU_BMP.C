@@ -42,7 +42,9 @@ http://www.winprog.org/tutorial/transparency.html
 
 #include "MoX_TYPE.H"
 
-extern uint8_t g_Video_Back_Buffer[];
+#include "Video.H"
+
+// extern uint8_t g_Video_Back_Buffer[];
 extern uint8_t g_Palette_XBGR[];
 
 #include <stdio.h>          /* FILE; fclose(), fopen(), fread(), fwrite(), printf(); */
@@ -168,7 +170,8 @@ void STU_Export_VBB_To_BMP32(void)
         // color = (unsigned long) 0x00 << 24 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 0) << 16 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 1) << 8 | (unsigned long) *(p_Palette_XBGR + vbb_byte + 2);
         // fwrite(&color, sizeof(color), 1, fileptr);
 
-        vbb_byte = *(g_Video_Back_Buffer + itr);
+        // vbb_byte = *(g_Video_Back_Buffer + itr);
+        vbb_byte = *(current_video_page + itr);
         long_XBGR = *(p_XBGR + vbb_byte);
         fwrite(&long_XBGR, sizeof(long_XBGR), 1, fileptr);
 

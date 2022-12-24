@@ -6,7 +6,9 @@
 
 #include "Allocate.H"
 #include "Fonts.H"
+#include "Input.H"
 #include "LBX_Load.H"
+#include "Video.H"
 
 #include "MainMenu.H"
 
@@ -24,8 +26,7 @@ uint8_t g_State_Run;
 
 int16_t g_Current_Screen;
 
-
-uint8_t g_Video_Back_Buffer[64000];
+// uint8_t g_Video_Back_Buffer[64000];
 
 uint8_t g_Palette_XBGR[1024];
 
@@ -72,11 +73,31 @@ void MoM_main(void)
     // |-> Init_Drivers(GAME_FONT_FILE) |-> Load_Font_File(font_file)
     Load_Font_File(font_file);
     Init_Mouse_Keyboard(1);
+    // TODO  Release_Version()
+    // TODO  MoM_Tables_Init()
+    // TODO  Set_Global_Escape()
+    Load_Palette(0, -1, 0);
+    // TODO  Apply_Palette()
 
+    // ?
     // Init_MGC()
     // Init_WZD()
     // Init_MoM()
+    // ?
+
+    // HERE:  draw_page_num = 0; current_video_page = 0xA000;
+    // TODO  Fill(0,0,319,199);  // Clear Off-Screen
+    // TODO  Set_Page_On()
+    // TODO  Fill(0,0,319,199);  // Clear On-Screen
+    // TODO  Set_Page_Off()
+    draw_page_num = 0;
+    current_video_page = video_page_buffer[0];    
+    Set_Page_Off();
+
+
     Load_Palette(0, -1, 0);
+    // TODO  Apply_Palette()
+
     g_Current_Screen = scr_Main_Menu;
 
 

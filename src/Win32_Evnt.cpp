@@ -16,10 +16,16 @@
 
 #include "Input.H"
 
+#define STU_DEBUG 1
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
 #include "Win32.hpp"
 
 #include "windows.h"
-
+#include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
+#include "winuser.h"
 
 
 uint8_t g_KbHit;
@@ -118,6 +124,31 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             {
                 OutputDebugStringA("D\n");
             } 
+        } break;
+
+        case WM_MOUSEMOVE:
+        {
+            // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousemove
+            // Do not use the LOWORD or HIWORD macros to extract the x- and y- coordinates of the cursor position ...
+            // https://learn.microsoft.com/en-us/windows/win32/api/windowsx/nf-windowsx-get_x_lparam
+            // Use GET_X_LPARAM instead of LOWORD to extract signed coordinate data. Negative screen coordinates may be returned on multiple monitor systems.
+            int win32_mouse_x = GET_X_LPARAM(LParam); 
+            int win32_mouse_y = GET_Y_LPARAM(LParam);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] win32_mouse_x: %d\n", __FILE__, __LINE__, win32_mouse_x);
+    dbg_prn("DEBUG: [%s, %d] win32_mouse_y: %d\n", __FILE__, __LINE__, win32_mouse_y);
+#endif
+            POINTS win32_mouse_points = MAKEPOINTS(LParam);
+            POINT ptMouse;
+            GetCursorPos(&ptMouse);
+            ScreenToClient(g_Window, &ptMouse);
+            g_Mouse_X = (int16_t)ptMouse.x;
+            g_Mouse_Y = (int16_t)ptMouse.y;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] g_Mouse_X: %d\n", __FILE__, __LINE__, g_Mouse_X);
+    dbg_prn("DEBUG: [%s, %d] g_Mouse_Y: %d\n", __FILE__, __LINE__, g_Mouse_Y);
+#endif
+
         } break;
 
         case WM_PAINT:
