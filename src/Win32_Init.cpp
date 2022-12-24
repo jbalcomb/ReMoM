@@ -121,7 +121,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     g_Window =  CreateWindowExA(0,
                                 lpszClassName,
                                 lpszWindowName,
-                                WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                                /* WS_OVERLAPPEDWINDOW | WS_VISIBLE, */
+                                /* WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_POPUP, */
+                                /* WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_POPUP | WS_CLIPCHILDREN, */
+                                /* WS_OVERLAPPEDWINDOW | WS_VISIBLE & ~WS_CAPTION, */
+                                WS_POPUP,
                                 CW_USEDEFAULT,
                                 CW_USEDEFAULT,
                                 window_width, /* int nWidth   CW_USEDEFAULT, */
@@ -131,6 +135,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
                                 hInstance,
                                 0
                 );
+
+    // TODO(JimBalcomb,20221223): target client-area size, rather that window size
+    // AdjustWindowRect function (winuser.h)
 
     OutputDebugStringA("CALL: ShowWindow()\n");
     ShowWindow(g_Window, nCmdShow);  // nCmdShow: default == SW_SHOWDEFAULT

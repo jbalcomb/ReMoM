@@ -207,7 +207,8 @@ int16_t Pointer_X(void)
     // return mouse_x;
     // return g_Mouse_X;
     // return g_Mouse_X/320;
-    return (g_Mouse_X % 320);
+    // return (g_Mouse_X % 320);
+    return (g_Mouse_X / 2);
 }
 
 // MGC s33p19
@@ -216,7 +217,8 @@ int16_t Pointer_Y(void)
     // return mouse_y;
     // return g_Mouse_Y;
     // return g_Mouse_Y/200;
-    return (g_Mouse_Y % 200);
+    // return (g_Mouse_Y % 200);
+    return (g_Mouse_Y / 2);
 }
 
 

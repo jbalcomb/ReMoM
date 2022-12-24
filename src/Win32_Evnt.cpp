@@ -141,6 +141,10 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             POINTS win32_mouse_points = MAKEPOINTS(LParam);
             POINT ptMouse;
             GetCursorPos(&ptMouse);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] ptMouse.x: %d\n", __FILE__, __LINE__, ptMouse.x);
+    dbg_prn("DEBUG: [%s, %d] ptMouse.y: %d\n", __FILE__, __LINE__, ptMouse.y);
+#endif
             ScreenToClient(g_Window, &ptMouse);
             g_Mouse_X = (int16_t)ptMouse.x;
             g_Mouse_Y = (int16_t)ptMouse.y;
