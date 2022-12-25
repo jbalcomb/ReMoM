@@ -130,6 +130,18 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
 #endif
 
+    // TCHAR tszBuffer[MAX_PATH];
+    // DWORD dwRet;
+    // dwRet = GetCurrentDirectory(MAX_PATH, tszBuffer);
+    // if(dwRet == 0) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): function failed\n"); }
+    // if(dwRet > MAX_PATH) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): buffer too short\n"); }
+    // // char Buffer[256];
+    // // sprintf(Buffer, "%s\n", tszBuffer);
+    // // OutputDebugStringA(Buffer);
+    // // OutputDebugStringA(tszBuffer);  // TCHAR * vs. LPCSTR
+    // OutputDebugString(tszBuffer);
+    // // "J:\STU\devel\STU-MoM_Rasm\data"
+
     // Initialize the "Windows Desktop Application"
     // ~== 'Application-Type' of 'Game'
     Init_WDA_Game(hInstance, hPrevInstance, lpCmdLine, nShowCmd);

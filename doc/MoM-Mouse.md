@@ -64,6 +64,10 @@ Copy_Off_To_Back()
 VGA_Copy_RSP_DSP_NM
 Copy_On_To_Off_Page - Nay Mouse
 
+VGA_Copy_RSP_DSP_YM
+
+VGA_SaveDraw_Frame3
+
 
 
 

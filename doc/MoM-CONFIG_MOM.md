@@ -1,6 +1,93 @@
 
 
 
+18 bytes, 9 words
+
+NOTE(JimBalcomb,20221120):
+    can't find my notes
+    did a mass of reserach on INSTALL.EXE and comparing this to MoO1
+NOTE(JimBalcomb,20221120):
+    grep'd the entire STU dir, found this
+        J:\STU\DBWD\MoM131_I\MoM131-Install-Notes.txt
+    Per MoO1,
+        "CONFIG.MOO"
+        "Keyboard Only"
+        "Microsoft Compatible Mouse"
+
+
+
+MoO2
+Module: sound
+AIL_dig_driver
+    pointer (4 bytes)
+    Address: 02:0017C388
+AIL_mdi_driver
+    pointer (4 bytes)
+    Address: 02:0017C38C
+
+
+
+INSTALL.EXE
+
+
+INSTALL.DAT
+Does not run without INSTALL.DAT present,
+  prints "Install.dat not found!" and exits.
+
+
+INSTALL.GIF
+Runs without INSTALL.GIF present,
+  just does not display image.
+				 
+
+MAGIC.EXE
+Runs without MAGIC.EXE present,
+  but does not show "Configuration" button.
+
+CONFIG.MOM
+Runs without CONFIG.MOM present,
+  no apparent impact.
+
+If you run it without CONFIG.MOM present and simply accept the defaults, the bytes are:
+20 02 20 00 07 00 20 02 20 00 07 00 01 00 00 00 00 00 00 00
+
+If you run it without CONFIG.MOM present and select "No Sound" , the bytes are:
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+
+PS.
+There is a mild oddity in that it seems the INSTALL.EXE program writes 20 bytes,
+ but in MAGIC.EXE the code to read CONFIF.MOM only reads 18 bytes.
+
+
+
+00000000 struc CONFIG_DATA ; (sizeof=0x12, standard type)
+00000000 MIDI_IO dw ?
+00000002 MIDI_HW dw ?
+00000004 MIDI_IRQ dw ?
+00000006 SFX_IO dw ?
+00000008 SFX_HW dw ?
+0000000A SFX_IRQ dw ?
+0000000C SFX_DMA dw ?
+0000000E Unused_0E dw ?
+00000010 Unused_10 dw ?
+00000012 ends CONFIG_DATA
+
+CONFIG_DATA struc ; (sizeof=0x12, standard type)
+MIDI_IO	dw ?
+MIDI_HW	dw ?
+MIDI_IRQ dw ?
+SFX_IO dw ?
+SFX_HW dw ?
+SFX_IRQ	dw ?
+SFX_DMA	dw ?
+Unused_0E dw ?
+Unused_10 dw ?
+CONFIG_DATA ends
+
+
+
+
 
 INSTALL.EXE
 
@@ -487,64 +574,3 @@ AIL_startup     PROC                    ;Initialize AIL API
                 mov cx,16*2
                 mov ax,0
                 rep stosw
-
-MoO2
-Module: sound
-AIL_dig_driver
-    pointer (4 bytes)
-    Address: 02:0017C388
-AIL_mdi_driver
-    pointer (4 bytes)
-    Address: 02:0017C38C
-
-
-
-
-
-
-
-
-18 bytes, 9 words
-
-NOTE(JimBalcomb,20221120):
-    can't find my notes
-    did a mass of reserach on INSTALL.EXE and comparing this to MoO1
-NOTE(JimBalcomb,20221120):
-    grep'd the entire STU dir, found this
-        J:\STU\DBWD\MoM131_I\MoM131-Install-Notes.txt
-    Per MoO1,
-        "CONFIG.MOO"
-        "Keyboard Only"
-        "Microsoft Compatible Mouse"
-
-
-
-
-
-
-
-
-
-00000000 struc CONFIG_DATA ; (sizeof=0x12, standard type)
-00000000 MIDI_IO dw ?
-00000002 MIDI_HW dw ?
-00000004 MIDI_IRQ dw ?
-00000006 SFX_IO dw ?
-00000008 SFX_HW dw ?
-0000000A SFX_IRQ dw ?
-0000000C SFX_DMA dw ?
-0000000E Unused_0E dw ?
-00000010 Unused_10 dw ?
-00000012 ends CONFIG_DATA
-
-CONFIG_DATA struc ; (sizeof=0x12, standard type)
-MIDI_IO	dw ?
-MIDI_HW	dw ?
-MIDI_IRQ dw ?
-SFX_IO dw ?
-SFX_HW dw ?
-SFX_IRQ	dw ?
-SFX_DMA	dw ?
-Unused_0E dw ?
-Unused_10 dw ?
-CONFIG_DATA ends

@@ -59,10 +59,13 @@ void Screen_Control(void);
 
 void MoM_main(void);
 
+void MoM_Tables_Init(void);
+
+
 
 #ifdef __cplusplus
 }
 #endif
 
 
-#endif /* MOM_MAIN_H */
+#endif  /* MOM_MAIN_H */

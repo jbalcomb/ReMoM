@@ -27,7 +27,7 @@ enum e_SA_Allocation_Type
 #define SAMB_SIZE        8
 #define SAMB_USED       10
 #define SAMB_unknown    12
-#define SAMB_MARKED     14
+#define SAMB_MARK       14
 
 #define SA_MEMSIG1      0x12FA
 #define SA_MEMSIG2      0x4ECF
@@ -40,6 +40,7 @@ enum e_SA_Allocation_Type
 #define SA_SET_MEMSIG2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2, SA_MEMSIG2) )
 #define SA_SET_SIZE(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_SIZE, (_nparas_))    )
 #define SA_SET_USED(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_USED, (_nparas_))    )
+#define SA_SET_MARK(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_MARK, (_nparas_))    )
 
 
 #ifdef __cplusplus

@@ -84,13 +84,6 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("MemSig1: 0x%04X\n", SA_GET_MEMSIG1(SAMB_head));
-    dbg_prn("MemSig2: 0x%04X\n", SA_GET_MEMSIG2(SAMB_head));
-    dbg_prn("Size: %d\n",        SA_GET_SIZE(SAMB_head));
-    dbg_prn("Used: %0d\n",       SA_GET_USED(SAMB_head));
-#endif
-
-#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: Check_Allocation( SAMB_head = %p ) { is_valid = %d }\n", __FILE__, __LINE__, SAMB_head, is_valid);
 #endif
 
@@ -113,9 +106,6 @@ SAMB_ptr Allocate_Space(uint16_t size)
 #endif
 
     lsize = (size + 1) * 16;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] lsize: %ld\n", __FILE__, __LINE__, lsize);
-#endif
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
@@ -146,9 +136,6 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 #endif
 
     lsize = (size + 1) * 16;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] lsize: %ld\n", __FILE__, __LINE__, lsize);
-#endif
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
@@ -167,27 +154,101 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 // MGC s08p12
 SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
-    SAMB_ptr SAMB_data;
+    SAMB_ptr sub_SAMB_head;
+    SAMB_ptr sub_SAMB_data;
 
-    SAMB_data = ST_NULL;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_First_Block( SAMB_head = % p, size = %u )\n", __FILE__, __LINE__, SAMB_head, size);
+#endif
 
-    return SAMB_data;
+    if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size+1); }
+    if(SA_GET_SIZE(SAMB_head) < size) { Allocation_Error(0x02, size+1); }
+
+    SA_SET_USED(SAMB_head,size+1+1);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
+    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+#endif
+
+    sub_SAMB_head = SAMB_head + 16;  // ~== &SAMB_head[16]
+
+    SA_SET_MEMSIG1(sub_SAMB_head);
+    SA_SET_MEMSIG2(sub_SAMB_head);
+    SA_SET_SIZE(sub_SAMB_head,size);
+    SA_SET_USED(sub_SAMB_head,1);
+    SA_SET_MARK(sub_SAMB_head,1);
+
+    sub_SAMB_data = sub_SAMB_head + 16;  // ~== &sub_SAMB_head[16]
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Allocate_First_Block( SAMB_head = % p, size = %u ) { sub_SAMB_data = %p }\n", __FILE__, __LINE__, SAMB_head, size, sub_SAMB_data);
+#endif
+
+    return sub_SAMB_data;
 }
 
 // MGC s08p14
 SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
-    SAMB_ptr SAMB_data;
+    SAMB_ptr sub_SAMB_head;
+    SAMB_ptr sub_SAMB_data;
+    uint16_t new_used;
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_Next_Block( SAMB_head = % p, size = %u )\n", __FILE__, __LINE__, SAMB_head, size);
+#endif
 
-    SAMB_data = ST_NULL;
+    if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size); }
+    if(Get_Free_Blocks(SAMB_head) < size+1) { Allocation_Error(0x02, size + 1); }
 
-    return SAMB_data;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] (SA_GET_USED(SAMB_head) + size + 1): %d\n", __FILE__, __LINE__, (SA_GET_USED(SAMB_head) + size + 1));
+#endif
+
+//    SA_SET_USED(
+//        SAMB_head,
+//        (uint16_t)(SA_GET_USED(SAMB_head) + size + 1)
+//    );
+
+    new_used = (SA_GET_USED(SAMB_head) + size + 1);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] new_used: %u\n", __FILE__, __LINE__, new_used);
+// #endif
+    SA_SET_USED(SAMB_head, new_used);
+    
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
+    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+#endif
+
+    sub_SAMB_head = SAMB_head + SA_GET_USED(SAMB_head);  // ~== &SAMB_head[SAMB->used]
+
+    SA_SET_MEMSIG1(sub_SAMB_head);
+    SA_SET_MEMSIG2(sub_SAMB_head);
+    SA_SET_SIZE(sub_SAMB_head,size);
+    SA_SET_USED(sub_SAMB_head,1);
+    // SA_SET_MARK(sub_SAMB_head,1);
+
+    sub_SAMB_data = sub_SAMB_head + 16;  // ~== &sub_SAMB_head[16]
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Allocate_Next_Block( SAMB_head = % p, size = %u ) { sub_SAMB_data = %p }\n", __FILE__, __LINE__, SAMB_head, size, sub_SAMB_data);
+#endif
+
+    return sub_SAMB_data;
 }
 
 
 // MGC s08p15
 uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
 {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
+    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+#endif
+
     return SA_GET_SIZE(SAMB_head) - SA_GET_USED(SAMB_head);
 }
 

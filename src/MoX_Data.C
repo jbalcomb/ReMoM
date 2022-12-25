@@ -1,0 +1,125 @@
+
+#include "MoX_TYPE.H"
+
+#include "MoX_Data.H"
+
+
+
+// WZD dseg:9136
+SAMB_ptr TBL_Items;
+// WZD dseg:913A
+SAMB_ptr TBL_Premade_Items;
+// WZD dseg:913E
+// IMG_USW_Items ITEM_ICONS
+// WZD dseg:9226
+// Active_Unit
+// WZD dseg:922A
+// TBL_BattleUnits
+// WZD dseg:922E
+// TBL_CombatEnchants
+
+
+// WZD dseg:9232
+SAMB_ptr p0_heroes;
+// WZD dseg:9236
+SAMB_ptr p1_heroes;
+// WZD dseg:923A
+SAMB_ptr p2_heroes;
+// WZD dseg:923E
+SAMB_ptr p3_heroes;
+// WZD dseg:9242
+SAMB_ptr p4_heroes;
+// WZD dseg:9246
+SAMB_ptr p5_heroes;
+
+
+// WZD dseg:9392
+SAMB_ptr Visibility_Myrror;
+// WZD dseg:9396
+SAMB_ptr Visibility_Arcanus;
+
+
+// WZD dseg:9998
+SAMB_ptr TBL_Events;
+
+
+// WZD dseg:9C90
+SAMB_ptr TBL_OvlMovePaths_EMS;
+// WZD dseg:9C94
+// CONTX_Arc_NmeStrMap
+// WZD dseg:9C98
+// CONTX_Myr_NmeStrMap
+// WZD dseg:9C9C
+SAMB_ptr TBL_Catchments_EMS;
+// WZD dseg:9CA0
+SAMB_ptr TBL_SharedTiles_EMS;
+// WZD dseg:9CA4
+SAMB_ptr TBL_TempMoveMap_EMS;
+// WZD dseg:9CA8
+// COL_MinimapTiles
+// WZD dseg:9CAC
+SAMB_ptr TBL_MoveMaps_EMS;
+
+
+// WZD dseg:9CB0  
+SAMB_ptr TBL_Scouting;
+// WZD dseg:9CB4  
+SAMB_ptr TBL_Terrain_Flags;
+// WZD dseg:9CB8  
+SAMB_ptr TBL_Terr_Specials;
+// WZD dseg:9CBC  
+SAMB_ptr TBL_Cities;
+// WZD dseg:9CC0  
+SAMB_ptr TBL_Encounters;
+// WZD dseg:9CC4  
+SAMB_ptr TBL_Towers;
+// WZD dseg:9CC8  
+SAMB_ptr TBL_Fortresses;
+// WZD dseg:9CCC  
+SAMB_ptr TBL_Nodes;
+// WZD dseg:9CD0
+SAMB_ptr TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
+// WZD dseg:9CD4
+SAMB_ptr UU_TBL_2;
+// WZD dseg:9CD8
+SAMB_ptr UU_TBL_1;
+// WZD dseg:9CDC
+SAMB_ptr TBL_Maps;
+
+
+// WZD dseg:9D1A
+uint16_t tmp_World_Data_Paras;
+
+// WZD dseg:9D1C
+SAMB_ptr World_Data_Extra;
+
+// WZD dseg:9D1E
+// Gfx_Swap
+
+// WZD dseg:9D20
+SAMB_ptr World_Data;
+
+// WZD dseg:9D22
+uint16_t grand_vizier;
+
+
+// WZD dseg:9EC2
+SAMB_ptr TBL_Units;
+// WZD dseg:9EC6
+SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
+// WZD dseg:9ECA
+struct s_WIZARD_DATA TBL_Wizards[6];
+
+
+// WZD dseg:BD8E
+int16_t _unit;
+int16_t _turn;
+int16_t _units;
+int16_t _cities;
+int16_t _difficulty;
+int16_t _magic;
+int16_t _landsize;
+int16_t _wizards;
+struct s_GAME_DATA game_data;
+// WZD dseg:BD9E
+// magic_set s_MAGIC_SET
