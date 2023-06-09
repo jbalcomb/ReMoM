@@ -64,8 +64,26 @@ SAMB_ptr LBX_Reload(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
 // MGC s10p03
 SAMB_ptr LBX_Reload_Next(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
 
+// WZD s10p04
+// MoO2 Farload_Data
+SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size);
+// WZD s10p05
+// MoO2 Far_Reload_Data
+SAMB_ptr LBX_Reload_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size);
+// WZD s10p06
+// MoO2 Far_Reload_Next_Data
+SAMB_ptr LBX_Reload_Next_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size);
+
+
+
 // MGC s10p10
+// WZD s10p10
 SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type);
+
+// MGC s10p11
+// WZD s10p11
+SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
+
 
 // MGC s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages);

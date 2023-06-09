@@ -84,7 +84,7 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Check_Allocation( SAMB_head = %p ) { is_valid = %d }\n", __FILE__, __LINE__, SAMB_head, is_valid);
+    dbg_prn("DEBUG: [%s, %d] END: Check_Allocation( SAMB_head = %p ) { is_valid = %d }\n", __FILE__, __LINE__, SAMB_head, is_valid);
 #endif
 
     return is_valid;
@@ -164,7 +164,8 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
     if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size+1); }
     if(SA_GET_SIZE(SAMB_head) < size) { Allocation_Error(0x02, size+1); }
 
-    SA_SET_USED(SAMB_head,size+1+1);
+    // block header + sub block header + sub block size
+    SA_SET_USED(SAMB_head,1+(1+size));
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
@@ -193,6 +194,7 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
     SAMB_ptr sub_SAMB_head;
     SAMB_ptr sub_SAMB_data;
+    uint16_t old_used;
     uint16_t new_used;
     
 #ifdef STU_DEBUG
@@ -205,6 +207,8 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] (SA_GET_USED(SAMB_head) + size + 1): %d\n", __FILE__, __LINE__, (SA_GET_USED(SAMB_head) + size + 1));
 #endif
+
+    old_used = SA_GET_USED(SAMB_head);
 
 //    SA_SET_USED(
 //        SAMB_head,
@@ -223,7 +227,8 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
     dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
 #endif
 
-    sub_SAMB_head = SAMB_head + SA_GET_USED(SAMB_head);  // ~== &SAMB_head[SAMB->used]
+
+    sub_SAMB_head = SAMB_head + (old_used * 16);  // ~== &SAMB_head[SAMB->used]
 
     SA_SET_MEMSIG1(sub_SAMB_head);
     SA_SET_MEMSIG2(sub_SAMB_head);

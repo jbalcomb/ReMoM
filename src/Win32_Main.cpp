@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdio.h>      /* sprintf() */
 
-#define STU_DEBUG 1
+// #define STU_DEBUG 1
 #ifdef STU_DEBUG
 // #include "J:\STU\devel\STU-MoM_Rasm\MoM_Rasm\STU\STU_DBG.H"
 // // .\win_mom\src
@@ -130,17 +130,20 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
 #endif
 
-    // TCHAR tszBuffer[MAX_PATH];
-    // DWORD dwRet;
-    // dwRet = GetCurrentDirectory(MAX_PATH, tszBuffer);
+    TCHAR tszBuffer[MAX_PATH];
+    DWORD dwRet;
+    dwRet = GetCurrentDirectory(MAX_PATH, tszBuffer);
     // if(dwRet == 0) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): function failed\n"); }
     // if(dwRet > MAX_PATH) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): buffer too short\n"); }
-    // // char Buffer[256];
-    // // sprintf(Buffer, "%s\n", tszBuffer);
+    char Buffer[MAX_PATH];
+    sprintf(Buffer, "%s\n", tszBuffer);
     // // OutputDebugStringA(Buffer);
     // // OutputDebugStringA(tszBuffer);  // TCHAR * vs. LPCSTR
     // OutputDebugString(tszBuffer);
     // // "J:\STU\devel\STU-MoM_Rasm\data"
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Current Working Directory: %s\n", __FILE__, __LINE__, Buffer);
+#endif
 
     // Initialize the "Windows Desktop Application"
     // ~== 'Application-Type' of 'Game'
@@ -173,7 +176,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     */
 
     g_State_Run = 1;  // ST_TRUE
-    g_Current_Screen = scr_Main_Menu;
+    g_Current_Screen = scr_Main_Menu_Screen;
 
     video_page_buffer[0] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     video_page_buffer[1] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -205,7 +208,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
         Screen_Control();
 
-        game_offscreen_buffer Buffer = {}; // clear to zero!
+        game_offscreen_buffer Buffer = {0};  // clear/set to zero!
         Buffer.Memory = GlobalBackbuffer.Memory;
         Buffer.Width = GlobalBackbuffer.Width;
         Buffer.Height = GlobalBackbuffer.Height;

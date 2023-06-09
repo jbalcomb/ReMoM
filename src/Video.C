@@ -20,13 +20,13 @@
 */
 
 
-// int16_t screen_window_x1
-// int16_t screen_window_x2
-// int16_t screen_window_y1
-// int16_t screen_window_y2
 
 
+// dseg:76E2 46 4F 4E 54 53 2E 4C 42+cnst_FONT_File2 db 'FONTS.LBX',0        ; should use dseg:28f2
+// dseg:76EC 00 A0                   g_VGA_DisplayBuffer_Page_SgmtAddr dw 0A000h
+// WZD dseg:76EE
 int16_t draw_page_num;
+
 // // char current_page_flag
 // // int16_t copy_to_on_page_flag
 uint8_t * current_video_page;
@@ -120,7 +120,15 @@ void Set_Page_Off(void)
 }
 
 
+// MGC s26p03
+// WZD s28p03
+void Check_Default_Video_Page(void)
+{
+
+}
+
 // MGC s26p04
+// WZD s28p04
 void Page_Flip(void)
 {
 #ifdef STU_DEBUG
@@ -150,7 +158,6 @@ void Page_Flip(void)
     dbg_prn("DEBUG: [%s, %d]: draw_page: %p\n", __FILE__, __LINE__, draw_page);
 #endif
 
-    // VGA_Set_DSP_Addr();  // MGC s26p02
     Set_Page_Off();
 
 #ifdef STU_DEBUG
@@ -158,3 +165,24 @@ void Page_Flip(void)
 #endif
 
 }
+
+// // MGC s26p04
+// // WZD s28p04
+// void Copy_On_to_Off_Page(void)
+// {
+// 
+// }
+// 
+// // MGC s26p05
+// // WZD s28p05
+// void Copy_On_to_Off_YM(void)
+// {
+// 
+// }
+// 
+// // MGC s26p04
+// // WZD s28p04
+// void Copy_On_to_Off_NM(void)
+// {
+// 
+// }

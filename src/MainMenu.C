@@ -8,6 +8,7 @@
 
 #include "Fields.H"
 #include "FLIC_Draw.H"
+#include "Fonts.H"
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
@@ -40,13 +41,7 @@ int16_t field_idx_click_N;
 int16_t field_idx_click_H;
 int16_t field_idx_click_Q;
 
-int16_t main_menu_loaded = ST_FALSE;
-
-
-int16_t mouse_list_menu_count = 1;
-struct s_mouse_list mouse_list_menu[1] = {
-    {1, 0, 0, 0, 319, 199}
-};
+int16_t main_menu_screen_loaded = ST_FALSE;
 
 
 
@@ -106,6 +101,15 @@ void Main_Menu_Add_Fields(void)
     field_idx_hotkey_ESC = Add_Hot_Key('\x1B');
 
 #ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_C: %d\n", __FILE__, __LINE__, field_idx_hotkey_C);
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_L: %d\n", __FILE__, __LINE__, field_idx_hotkey_L);
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_N: %d\n", __FILE__, __LINE__, field_idx_hotkey_N);
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_H: %d\n", __FILE__, __LINE__, field_idx_hotkey_H);
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_Q: %d\n", __FILE__, __LINE__, field_idx_hotkey_Q);
+    dbg_prn("DEBUG: [%s, %d]: field_idx_hotkey_ESC: %d\n", __FILE__, __LINE__, field_idx_hotkey_ESC);
+#endif
+
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
 #endif
 }
@@ -117,18 +121,21 @@ void Main_Menu_Screen(void)
     int16_t input_field_idx;
     int16_t mouse_x;
     int16_t mouse_y;
+    int16_t first_draw_done_flag;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen()\n", __FILE__, __LINE__);
 #endif
 
+    first_draw_done_flag = ST_FALSE;
+
     // TODO  ~== Clear Both Screen Pages
     // TODO  Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
 
-    if(!main_menu_loaded)
+    if(!main_menu_screen_loaded)
     {
         Main_Menu_Load_Pictures();
-        main_menu_loaded = ST_TRUE;
+        main_menu_screen_loaded = ST_TRUE;
     }
 
     input_field_idx = ST_FALSE;
@@ -151,7 +158,7 @@ void Main_Menu_Screen(void)
     // ¿ TODO  Clear_Fields() ?
     Main_Menu_Add_Fields();
 
-    Set_Mouse_List(1, mouse_list_menu);
+    Set_Mouse_List(1, mouse_list_default);
 
 
     // CRL_Save_RSP(Pointer_X, Pointer_Y)
@@ -174,10 +181,30 @@ void Main_Menu_Screen(void)
 
         input_field_idx = Get_Input();
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
+#endif
+
+        if(input_field_idx == field_idx_hotkey_C)
+        {
+            DLOG("(input_field_idx == field_idx_hotkey_C)");
+            g_Current_Screen = scr_Continue;
+        }
+
         if(input_field_idx == field_idx_hotkey_Q)
         {
+            DLOG("(input_field_idx == field_idx_hotkey_Q)");
             g_Current_Screen = scr_Quit_To_DOS;
         }
+
+        if(
+            (input_field_idx != field_idx_hotkey_C) &&
+            (input_field_idx != field_idx_hotkey_Q)
+        )
+        {
+            DLOG("input_field_idx != VALID");
+        }
+
 
 //      if(flag_done == ST_FALSE) {
     
@@ -185,7 +212,7 @@ void Main_Menu_Screen(void)
             Toggle_Pages();
             mouse_x = Pointer_X();
             mouse_y = Pointer_Y();
-            Check_Mouse_Shape(mouse_x, mouse_y);  // AKA GUI_FindWindow();  // MGC s33p02  ST_GUI.H
+            Check_Mouse_Shape(mouse_x, mouse_y);
             Draw_Mouse(mouse_x, mouse_y);
             // STU_Export_VBB_To_BMP32();
 
@@ -200,6 +227,13 @@ void Main_Menu_Screen(void)
                 // TODO  screen_fade = ST_FALSE;
 
 //          }  /* if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE))) */
+
+        if(first_draw_done_flag == ST_FALSE)
+        {
+            // Copy_Off_To_On_Page();
+            Page_Flip();
+            first_draw_done_flag = ST_TRUE;
+        }
 
             // TODO  CLK_Wait(2);
 

@@ -67,12 +67,30 @@ SAMB_ptr LBX_Reload_Next(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head)
     return LBX_Load_Entry(lbx_name, entry_num, SAMB_head, sa_Next);
 }
 
-
+// WZD s10p04
+// MoO2 Farload_Data
+SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size)
+{
+    return LBX_Load_Library_Data(lbx_name, entry_num, ST_NULL, sa_Single, start_rec, num_recs, record_size);
+}
+// WZD s10p05
+// MoO2 Far_Reload_Data
+SAMB_ptr LBX_Reload_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size)
+{
+    return LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_First, start_rec, num_recs, record_size);
+}
+// WZD s10p06
+// MoO2 Far_Reload_Next_Data
+SAMB_ptr LBX_Reload_Next_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size)
+{
+    return LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_Next, start_rec, num_recs, record_size);
+}
 
 // MGC s10p10
 SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type)
 {
     uint16_t num_blocks;
+    uint16_t num_blocks_used;
     uint16_t read_size;
     uint32_t entry_start;
     uint32_t entry_end;
@@ -137,6 +155,12 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     entry_start = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4)    ) ) );
     entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
     entry_length = entry_end - entry_start;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: entry_start: %08X\n", __FILE__, __LINE__, entry_start);
+    dbg_prn("DEBUG: [%s, %d]: entry_end: %08X\n", __FILE__, __LINE__, entry_end);
+    dbg_prn("DEBUG: [%s, %d]: entry_length: %u\n", __FILE__, __LINE__, entry_length);
+#endif
+
     fseek(lbxload_fptr, entry_start, 0);
     /*
         END: Entry - Offset Start, End, Length
@@ -147,23 +171,75 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
         BEGIN: Allocation Type
     */
     num_blocks = 1 + (entry_length / SZ_PARAGRAPH_B);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: allocation_type: %d\n", __FILE__, __LINE__, allocation_type);
+#endif
     switch(allocation_type)
     {
         case 0:
+            DLOG("switch(allocation_type) case 0:");
             SAMB_data = Allocate_Space_No_Header(num_blocks);
             if(SAMB_data == NULL) { Error_Handler(lbx_name, 3, entry_num, ST_NULL); }
             break;
         case 1:
+            DLOG("switch(allocation_type) case 1:");
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > (SA_GET_SIZE(SAMB_head) - 1)) { Error_Handler(lbx_name, 4, entry_num, (num_blocks - (SA_GET_SIZE(SAMB_head) + 1))); }
             SAMB_data = SAMB_head + 12;
             SA_SET_USED(SAMB_head, (num_blocks + 1));
             break;
         case 2:
-            if(Check_Allocation(SAMB_head) == 0) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
+            DLOG("switch(allocation_type) case 2:");
+            if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > Get_Free_Blocks(SAMB_head)) { Error_Handler(lbx_name, 5, entry_num, (num_blocks - Get_Free_Blocks(SAMB_head))); }
-            SAMB_data = SAMB_head + 12;
-            SA_SET_USED(SAMB_head, (num_blocks + SA_GET_USED(SAMB_head)));
+            SAMB_data = SAMB_head + 12 + (16 * SA_GET_USED(SAMB_head));
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: num_blocks: %u\n", __FILE__, __LINE__, num_blocks);
+//     dbg_prn("DEBUG: [%s, %d]: SA_GET_USED(SAMB_head)): %u\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+//     dbg_prn("DEBUG: [%s, %d]: num_blocks + SA_GET_USED(SAMB_head)): %u\n", __FILE__, __LINE__, (num_blocks + SA_GET_USED(SAMB_head)));
+// #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: num_blocks + SA_GET_USED(SAMB_head)): %04X\n", __FILE__, __LINE__, (num_blocks + SA_GET_USED(SAMB_head)));
+// 
+//     uint16_t new_used_blocks;
+//     uint8_t new_used_blocks_hi;
+//     uint8_t new_used_blocks_lo;
+// 
+//     new_used_blocks = num_blocks + SA_GET_USED(SAMB_head);
+// 
+//     new_used_blocks_hi = new_used_blocks;
+//     new_used_blocks_lo = new_used_blocks >> 8;
+// 
+//     dbg_prn("DEBUG: [%s, %d]: new_used_blocks: %04X\n", __FILE__, __LINE__, new_used_blocks);
+//     dbg_prn("DEBUG: [%s, %d]: new_used_blocks_hi: %02X\n", __FILE__, __LINE__, new_used_blocks_hi);
+//     dbg_prn("DEBUG: [%s, %d]: new_used_blocks_lo: %02X\n", __FILE__, __LINE__, new_used_blocks_lo);
+// 
+// 
+//             // FAILURE: 
+//             // SA_SET_USED(SAMB_head, (num_blocks + SA_GET_USED(SAMB_head)));
+//             *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (new_used_blocks)      );
+//             *( (SAMB_head) + (SAMB_USED) + 1 ) = ( (new_used_blocks) >> 8 );
+// 
+// // #define SET_2B_OFS(_ptr_,_ofs_,_val_) (        \
+// // *( (_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
+// // *( (_ptr_) + (_ofs_) + 1 ) = ( (_val_) >> 8 )  \
+// // )
+// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: num_blocks: %u\n", __FILE__, __LINE__, num_blocks);
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_USED(SAMB_head)): %u\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+    dbg_prn("DEBUG: [%s, %d]: num_blocks + SA_GET_USED(SAMB_head)): %u\n", __FILE__, __LINE__, (num_blocks + SA_GET_USED(SAMB_head)));
+#endif
+            num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: num_blocks_used: %u\n", __FILE__, __LINE__, num_blocks_used);
+#endif
+            *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (num_blocks_used)      );
+            *( (SAMB_head) + (SAMB_USED) + 1 ) = ( (num_blocks_used) >> 8 );
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_USED(SAMB_head)): %u\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
+#endif
             break;
     }
     /*
@@ -207,6 +283,34 @@ Done:
 
     return SAMB_data;
 }
+
+
+
+
+// WZD s10p11
+SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size)
+{
+    SAMB_ptr SAMB_data;
+
+#ifdef STU_DEBUG    
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %u, num_recs = %u, record_size = %u)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size);
+#endif
+
+
+
+    SAMB_data = ST_NULL;
+
+
+
+#ifdef STU_DEBUG    
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %u, num_recs = %u, record_size = %u) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size, SAMB_data);
+#endif
+
+    return SAMB_data;
+}
+
+
+
 
 // MGC s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages)

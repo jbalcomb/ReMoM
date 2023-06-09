@@ -125,7 +125,32 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
 
 /*
     MGC  seg028
+    WZD  seg030
 */
+
+// WZD s30p01
+// LBX_Image_Copy
+// WZD s30p02
+// FLIC_prepare
+// WZD s30p03
+// LBX_IMG_VShiftRect
+// WZD s30p04
+// LBX_IMG_VertWarp
+// WZD s30p05
+// LBX_IMG_HorzWarp
+
+// WZD s30p06
+void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color);
+
+// WZD s30p07
+// UU_LBX_IMG_ColorShift
+// WZD s30p08
+// UU_LBX_IMG_CReplaceRect
+// WZD s30p09
+// LBX_IMG_ClearGraphic
+// WZD s30p10
+// LBX_IMG_LoadPalette
+
 
 // MGC s28p11
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
@@ -138,6 +163,35 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
 
 // MGC s28p16
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
+
+
+/*
+    WIZARDS.EXE  seg030
+*/
+
+// WZD s30p13
+// AKA LBX_IMG_BuildFrame();
+Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
+
+
+// WZD s30p24
+void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg);
+
+/*
+    WIZARDS.EXE  seg033
+*/
+
+// WZD s33p01
+// AKA LBX_IMG_DecPrepare()
+void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg, int16_t frame_idx);
+
+// WZD s33p02
+// AKA LBX_IMB_LoadFrame()
+void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap);
+
+
+// WZD s33p05
+void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
 
 #ifdef __cplusplus

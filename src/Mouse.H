@@ -5,6 +5,23 @@
 
 
 
+//enum Cursor_Types
+//crsr_None  = 0
+//crsr_Finger  = 1
+//crsr_CastBase  = 2
+//crsr_RedCross  = 3
+//crsr_Ranged  = 4
+//crsr_Melee  = 5
+//crsr_Hourglass  = 6
+//crsr_WingedBoot  = 7
+//crsr_Empty  = 8
+//crsr_CastAnim1  = 9
+//crsr_CastAnim2  = 0Ah
+//crsr_CastAnim3  = 0Bh
+//crsr_CastAnim4  = 0Ch
+//crsr_CastAnim5  = 0Dh
+
+
 struct s_mouse_list {
     int16_t image_num;
     int16_t center_offset;
@@ -15,7 +32,12 @@ struct s_mouse_list {
 };
 
 
-extern int16_t current_pointer_offset;
+// WZD dseg:00EE    mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+extern struct s_mouse_list mouse_list_default[];
+// WZD dseg:00FA    mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+// WZD dseg:0106    mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
+// WZD dseg:0112    NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:011E    NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
 
 
 

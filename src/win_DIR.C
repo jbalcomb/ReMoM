@@ -53,7 +53,8 @@ int32_t LOF(char * file_name)
     // if(hfile && hfile != INVALID_HANDLE_VALUE)
     
     // TODO  WTF? warning C4047: '==': 'void *' differs in levels of indirection from 'DWORD'
-    if(lodwFileSize == INVALID_FILE_SIZE && NULL == hidwFileSize)
+    // if(lodwFileSize == INVALID_FILE_SIZE && NULL == hidwFileSize)
+    if(lodwFileSize == INVALID_FILE_SIZE && 0 == hidwFileSize)
     {
         size = 0;  // ST_FAILURE
     }

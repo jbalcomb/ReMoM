@@ -94,9 +94,6 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Keyboard_Input()\n", __FILE__, __LINE__);
 #endif
 
-    // // character = 27;  // 0x1B ESCAPE
-    // character = g_Last_Key_Pressed;
-
     character = Read_Key();
 
 #ifdef STU_DEBUG

@@ -12,7 +12,7 @@
 // extern uint8_t g_Video_Back_Buffer[];  // MoM_main.C
 
 
-
+/*
 int16_t example_mouse_list_count = 2;
 struct s_mouse_list example_mouse_list[2] = {
     {0, 0, 0, 0, 319, 199},
@@ -28,8 +28,11 @@ int16_t mouse_list_default_count = 1;
 struct s_mouse_list mouse_list_default[1] = {
     {1, 0, 0, 0, 319, 199}
 };
-
+*/
 // TODO  _mouse_list_arrow
+struct s_mouse_list mouse_list_default[1] = {
+    {1, 0, 0, 0, 319, 199}
+};
 
 
 int16_t init_mouse_x = 158;                     // MGC dseg:43AA
@@ -42,8 +45,6 @@ int16_t mouse_state = ST_FALSE;                 // MGC dseg:43AE
 
 int16_t mouse_x = 158;
 int16_t mouse_y = 100;
-int16_t current_mouse_list_count = 1;
-struct s_mouse_list * current_mouse_list;
 
 // MoM dseg:43B2 00 00 00 00 00 00 00 00+    CR_Save_RSP db 1200 dup(  0)
 // MoM dseg:4862 00 00 00 00 00 00 00 00+    CR_Save_DSP db 1200 dup(  0)
@@ -53,9 +54,33 @@ uint16_t mouse_background_buffer[600];
 uint16_t mouse_off_page_buffer[600];
 
 
+// WZD dseg:78B8
 int16_t current_pointer_image_number = 0;
+// WZD dseg:78BA
 int16_t previous_pointer_image_number = 0;
+// WZD dseg:78BC 00 00                   MOUSE_CursorDraw dw 0
+// WZD dseg:78BE 00 00                   MOUSE_DriverPresent dw 0
+// WZD dseg:78C0 00 00                   MOUSE_Usable dw 0
+// WZD dseg:78C2 9E 00                   MOUSE_CurrentX dw 9Eh
+// WZD dseg:78C4 64 00                   MOUSE_CurrentY dw 64h
+// WZD dseg:78C6
+int16_t current_mouse_list_count = 1;
+// WZD dseg:78C8
 int16_t current_pointer_offset = 0;
+// WZD dseg:78CA 00 00                   MOUSE_ClickRec1 dw 0
+// WZD dseg:78CC 00 00                   MOUSE_ClickX dw 0
+// WZD dseg:78CE 00 00                   MOUSE_ClickY dw 0
+// WZD dseg:78D0 00 00                   MOUSE_ClickBtns dw 0
+// WZD dseg:78D2 00 00                   MOUSE_ClickRec2 dw 0
+// WZD dseg:78D4 00 00                   MOUSE_INT_Process dw 0
+// WZD dseg:78D6 00 00                   GUI_HaveAreaSave dw 0
+// WZD dseg:78D8 9E 00                   MOUSE_InitX dw 9Eh
+// WZD dseg:78DA 64 00                   MOUSE_InitY dw 64h
+// WZD dseg:78DC 00 00                   MOUSE_CDraw_Save dw 0
+// WZD dseg:78DE
+struct s_mouse_list * current_mouse_list;
+
+
 
 
 

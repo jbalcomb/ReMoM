@@ -16,7 +16,7 @@
 
 #include "Input.H"
 
-#define STU_DEBUG 1
+// #define STU_DEBUG 1
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
@@ -75,7 +75,16 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
 
             int16_t key_shift = GetKeyState(VK_SHIFT);    // VK_SHIFT    0x10  SHIFT key
             int16_t key_ctrl = GetKeyState(VK_CONTROL);  // VK_CONTROL  0x11  CTRL key
+            // "(The virtual-key code for the ALT key is named VK_MENU for historical reasons.)"
             int16_t key_alt = GetKeyState(VK_MENU);     // VK_MENU     0x12  ALT key
+            if (GetKeyState(VK_LMENU) & 0x8000)
+            {
+                    // Left ALT key is down.
+            }
+            if (GetKeyState(VK_RMENU) & 0x8000)
+            {
+                    // Right ALT key is down.
+            }
 
 
             if (key_ctrl && key_alt && VKCode == 'Q')
@@ -101,7 +110,21 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
                 OutputDebugStringA("SPACEBAR\n");
             } 
 
-            if (VKCode == 'Q')
+            if (VKCode == 'C')  /* 67 */
+            {
+                g_Key_Pressed = ST_TRUE;
+                g_Last_Key_Pressed = 'C';
+                OutputDebugStringA("C\n");
+            } 
+
+            if (VKCode == 'G')  /* 71 */
+            {
+                g_Key_Pressed = ST_TRUE;
+                g_Last_Key_Pressed = 'G';
+                OutputDebugStringA("G\n");
+            } 
+
+            if (VKCode == 'Q')  /* 81 */
             {
                 g_Key_Pressed = ST_TRUE;
                 g_Last_Key_Pressed = 'Q';
