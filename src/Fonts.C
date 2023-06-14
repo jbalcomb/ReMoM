@@ -394,6 +394,58 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 }
 
 
+// WZD s17p53
+// MoO2  Get_Current_Font_Style() ...happenstance, has the same odd extra copy to 'return vlaue' ? dereferencing a pointer ? exported by ASM ?
+int16_t Get_Current_Font_Index(void)
+{
+    int16_t current_font_index;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
+#endif
+
+    current_font_index = Font_Index;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] current_font_index: %d\n", __FILE__, __LINE__, current_font_index);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_index = %d }\n", __FILE__, __LINE__, current_font_index);
+#endif
+
+    return current_font_index;
+}
+
+// WZD s17p54
+// Get_Font_Color1
+int16_t Get_Current_Font_Color(void)
+{
+    int16_t current_font_color;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
+#endif
+
+    current_font_color = Font_ColorIndex1;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] current_font_color: %d\n", __FILE__, __LINE__, current_font_color);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_color = %d }\n", __FILE__, __LINE__, current_font_color);
+#endif
+
+    return current_font_color;
+}
+
+// WZD s17p55
+// Get_Font_Color2
+// WZD s17p56
+// Get_Font_Color3
+
+
 
 /*
     WIZARDS.EXE  seg018

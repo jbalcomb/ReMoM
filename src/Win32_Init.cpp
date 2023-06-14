@@ -107,6 +107,7 @@ BOOL InitApplication(HINSTANCE hInstance)
     WindowClass.lpfnWndProc = MainWindowCallback;
     WindowClass.hInstance = hInstance;
     // WindowClass.hIcon;  // TODO(JimBalcomb,20220821): create and add icon for MoM-Rasm app
+    // WindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     WindowClass.lpszClassName = lpszClassName;
     return(RegisterClassA(&WindowClass));
 }

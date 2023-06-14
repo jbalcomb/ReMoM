@@ -93,6 +93,18 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag);
 // WZD s17p37
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag);
 
+// WZD s17p53
+int16_t Get_Current_Font_Index(void);
+
+// WZD s17p54
+// Get_Font_Color1
+int16_t Get_Current_Font_Color(void);
+// WZD s17p55
+// Get_Font_Color2
+// WZD s17p56
+// Get_Font_Color3
+
+
 /*
     WIZARDS.EXE  seg018
 */

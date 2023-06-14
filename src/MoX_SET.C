@@ -68,7 +68,7 @@ void Load_MAGIC_SET(void)
     FILE * file_pointer;
     int itr;
 
-    if( (DIR(&file_name, "MAGIC.SET") == 0) || (LOF("MAGIC_SET") != 466) )
+    if( (DIR(&file_name, "MAGIC.SET") == 0) || (LOF("MAGIC.SET") != 466) )
     {
         Set_Default_Game_Settings();
         file_pointer = fopen("MAGIC_SET","wb");
@@ -76,7 +76,7 @@ void Load_MAGIC_SET(void)
     }
     else
     {
-        file_pointer = fopen("MAGIC_SET","rb");
+        file_pointer = fopen("MAGIC.SET","rb");
         fread(&magic_set, 466, 1, file_pointer);
     }
     fclose(file_pointer);

@@ -126,8 +126,8 @@ SAMB_ptr terrain_lbx_000;
 ; Minimap_IMG_Seg allocation, according to the passed
 ; parameters:
 ;   x/y - main display pixel coordinates
-;   H/VTiles - horizontal/vertical window size in tiles
-;   XPos/YPos/Plane - top left map coordinates
+;   H/VTiles - horizontal/vertical map size, in squares
+;   XPos/YPos/Plane - top left map coordinates, in squares, of world
 ;   MapX@/MapY@ - return values to set
 ; resets the draw window after finishing
 */
@@ -261,7 +261,7 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * m
     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
 #endif
-    Minimap_Coords(&minimap_x, &minimap_y, ((cur_map_xpos + 6) / 60), (cur_map_ypos + 5), minimap_width, minimap_height);
+    Minimap_Coords(&minimap_x, &minimap_y, ((cur_map_xpos + (12/2)) / 60), (cur_map_ypos + (10/2)), minimap_width, minimap_height);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
@@ -392,6 +392,11 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
     int16_t tmp_minimap_x;
     int16_t tmp_minimap_y;
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Minimap_Coords(*minimap_x = %d, *minimap_y = %d, mid_x = %d, mid_y = %d, minimap_width = %d, minimap_height = %d)\n", __FILE__, __LINE__, *minimap_x, *minimap_y, mid_x, mid_y, minimap_width, minimap_height);
+#endif
+
     tmp_minimap_x = mid_x - (minimap_width / 2);
     if(tmp_minimap_x > 0)
     {
@@ -405,6 +410,11 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
     tmp_minimap_y = mid_y - (minimap_height / 2);
 
     *minimap_y = tmp_minimap_y;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Minimap_Coords(*minimap_x = %d, *minimap_y = %d, mid_x = %d, mid_y = %d, minimap_width = %d, minimap_height = %d)\n", __FILE__, __LINE__, *minimap_x, *minimap_y, mid_x, mid_y, minimap_width, minimap_height);
+#endif
+
 }
 
 // WZD o67p09
@@ -1050,6 +1060,7 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
             if(minimap_square_x < 0) { minimap_square_x += WORLD_WIDTH; }
             if(minimap_square_x > WORLD_WIDTH) { minimap_square_x -= WORLD_WIDTH; }
 
+            // the reduced map is centered relative to the movement map, so skip until we get to the start of the world
             if(minimap_square_y < 0 || minimap_square_y >= WORLD_HEIGHT)
             {
                 continue;
@@ -1069,6 +1080,9 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
 
             // terrain_type_idx = *(world_data_ptr + (minimap_square_y * 120) + (minimap_square_x * 2));
             terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: terrain_type_idx: %d\n", __FILE__, __LINE__, terrain_type_idx);
+#endif
             terrain_type_idx += terrain_type_idx_base;
             minimap_terrain_color = terrain_lbx_002[terrain_type_idx];
 

@@ -580,6 +580,11 @@ extern struct s_WIZARD _players[6];
 // extern struct s_WIZARD * _players;
 
 
+// WZD dseg:974A
+extern int16_t G_OVL_MapDisplay_Y;
+// WZD dseg:974C
+extern int16_t G_OVL_MapDisplay_X;
+
 // WZD dseg:BD82 
 extern int16_t OVL_Map_CenterY;
 // WZD dseg:BD84 

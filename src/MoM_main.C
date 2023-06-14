@@ -2,6 +2,8 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
+#include "MoX_Data.H"
+
 #include "MoM_main.H"
 
 #include "MoX_CFG.H"
@@ -123,6 +125,15 @@ void Screen_Control(void)
             Set_Page_On();
             Fill(0, 0, 319, 199, 5);
             Set_Page_Off();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
 
             Main_Screen();
         } break;
@@ -455,7 +466,7 @@ SA_GET_USED(SAMB_head): 2345
     
     TBL_Nodes = Allocate_Space(92);
     
-    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);  // 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
     
     _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
     
@@ -581,6 +592,8 @@ void WZD_Startup_MainGame(void)
 
 
 // WZD o51p01
+// _main() |-> WZD_Startup_MainGame() |-> GAME_Overland_Init()
+// Load_Screen |-> [WZD ovr160] Loaded_Game_Update() |-> GAME_Overland_Init()
 void GAME_Overland_Init(void)
 {
     int16_t itr_cities;
@@ -591,7 +604,7 @@ void GAME_Overland_Init(void)
 #endif
 
 
-    // G_WLD_StaticAssetRfrsh();
+    G_WLD_StaticAssetRfrsh();
 
 
     itr_cities = 0;
@@ -642,6 +655,10 @@ void GAME_Overland_Init(void)
     // _active_world_y = _FORTRESSES[0].world_y;
     OVL_Map_CenterX = _FORTRESSES[0].world_x;
     OVL_Map_CenterY = _FORTRESSES[0].world_y;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: OVL_Map_CenterX: %d\n", __FILE__, __LINE__, OVL_Map_CenterX);
+    dbg_prn("DEBUG: [%s, %d]: OVL_Map_CenterY: %d\n", __FILE__, __LINE__, OVL_Map_CenterY);
+#endif
 
     // OVL_STKUnitCards_Lft = 247;
     // OVL_STKUnitCards_Top = 79;
@@ -649,7 +666,16 @@ void GAME_Overland_Init(void)
     _unit_window_start_y = 79;
 
     // _world_plane = _FORTRESSES[0].world_plane;
-    _map_plane = _FORTRESSES[0].world_plane;
+    // _map_plane = _FORTRESSES[0].world_plane;  // TOIDO(JimBalcomb,20230614): Why is this getting set to 100?
+    _map_plane = 0;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
 
 
     // TODO  j_TILE_VisibilityUpdt
@@ -705,8 +731,43 @@ void GAME_Overland_Init(void)
 }
 
 // WZD o51p02
+// WZD_Startup_MainGame()  |-> GAME_Overland_Init()
+// Loaded_Game_Update()    |-> GAME_Overland_Init()
+// GAME_Overland_Init()  |-> G_WLD_StaticAssetRfrsh()
+// NOTE: no XREFs to j_G_WLD_StaticAssetRfrsh()
 void G_WLD_StaticAssetRfrsh(void)
 {
+    int16_t itr_cities;
+    int16_t itr_players;
+
+//    RNG_TimerSeed();
+//    LFSR_HI = 0;
+//    LFSR_LO = 0x03E8;
+//    if(!Check_Release_Version())
+//    {
+//        RNG_SetSeed(LFSR_LO, LFSR_HI)
+//    }
+
+    all_units_moved = ST_FALSE;
+    // G_OVL_MapVar4 = 1;  // ? ST_TRUE ?
+    // Reset_Active_Stack_Draw()
+    _map_plane = 0;  // Arcanus
+
+//    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+//    {
+//        CTY_Recalculate(itr_cities);
+//    }
+
+//    for(itr_players = 0; itr_players < _num_players; itr_players++)
+//    {
+//        WIZ_RefreshResearch(itr_players);
+//    }
+
+//    _WIZ_SetPowerBases();
+
+//    SBK_SomePageSaveVar = 0;
+//    CMB_SpellBookPage = 0;
+//    SBK_Candidate_Page = 0;
 
 }
 
@@ -989,41 +1050,41 @@ void Load_Unit_StatFigs(void)
         _unit_type_table[itr_unit_types].pict_seg = LBX_Reload_Next("UNITS2", itr_unit_types-120, GFX_Swap_Seg);
     }
     
-#ifdef STU_DEBUG
-    for(itr_unit_types = 0; itr_unit_types < 198; itr_unit_types++)
-    {
-        pict_seg = _unit_type_table[itr_unit_types].pict_seg;
-        pict_seg_width = GET_2B_OFS(pict_seg, 0);
-        pict_seg_height = GET_2B_OFS(pict_seg, 2);
-    // // dbg_prn("DEBUG: [%s, %d]: pict_seg: %p\n", __FILE__, __LINE__, pict_seg);
-    // dbg_prn("DEBUG: [%s, %d]: pict_seg_width: %d\n", __FILE__, __LINE__, pict_seg_width);
-    // dbg_prn("DEBUG: [%s, %d]: pict_seg_height: %d\n", __FILE__, __LINE__, pict_seg_height);
-
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  0): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 0));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  2): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 2));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  4): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 4));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  6): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 6));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  8): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 8));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 10): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 10));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 12): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 12));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 14): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 14));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 16): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 16));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 18): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 18));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 20): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 20));
-        dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 22): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 22));
-
-        if(GET_2B_OFS(pict_seg, 0) != 18)
-        {
-            dbg_prn("DEBUG: [%s, %d]: FAILURE: Load_Unit_StatFigs(): %u\n", __FILE__, __LINE__, itr_unit_types);
-        }
-        if(GET_2B_OFS(pict_seg, 2) != 16)
-        {
-            dbg_prn("DEBUG: [%s, %d]: FAILURE: Load_Unit_StatFigs(): %u\n", __FILE__, __LINE__, itr_unit_types);
-        }
-
-
-    }
-#endif
+// #ifdef STU_DEBUG
+//     for(itr_unit_types = 0; itr_unit_types < 198; itr_unit_types++)
+//     {
+//         pict_seg = _unit_type_table[itr_unit_types].pict_seg;
+//         pict_seg_width = GET_2B_OFS(pict_seg, 0);
+//         pict_seg_height = GET_2B_OFS(pict_seg, 2);
+//     // // dbg_prn("DEBUG: [%s, %d]: pict_seg: %p\n", __FILE__, __LINE__, pict_seg);
+//     // dbg_prn("DEBUG: [%s, %d]: pict_seg_width: %d\n", __FILE__, __LINE__, pict_seg_width);
+//     // dbg_prn("DEBUG: [%s, %d]: pict_seg_height: %d\n", __FILE__, __LINE__, pict_seg_height);
+// 
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  0): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 0));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  2): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 2));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  4): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 4));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  6): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 6));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg,  8): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 8));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 10): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 10));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 12): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 12));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 14): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 14));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 16): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 16));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 18): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 18));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 20): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 20));
+//         dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(pict_seg, 22): %02X\n", __FILE__, __LINE__, GET_2B_OFS(pict_seg, 22));
+// 
+//         if(GET_2B_OFS(pict_seg, 0) != 18)
+//         {
+//             dbg_prn("DEBUG: [%s, %d]: FAILURE: Load_Unit_StatFigs(): %u\n", __FILE__, __LINE__, itr_unit_types);
+//         }
+//         if(GET_2B_OFS(pict_seg, 2) != 16)
+//         {
+//             dbg_prn("DEBUG: [%s, %d]: FAILURE: Load_Unit_StatFigs(): %u\n", __FILE__, __LINE__, itr_unit_types);
+//         }
+// 
+// 
+//     }
+// #endif
 
 // #ifdef STU_DEBUG
 //     // pict_seg = _unit_type_table[0].pict_seg;  // Dwarf / BRAX

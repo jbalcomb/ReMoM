@@ -63,9 +63,11 @@ struct s_mouse_list mouse_list_init[1] = {
 
 
 /*
+    WZD  seg036
     MGC  seg034
 */
 
+// WZD s36p01
 // MGC s34p01
 int16_t Interpret_Mouse_Input(void)
 {
@@ -152,6 +154,7 @@ void Init_Mouse_Keyboard(int16_t input_type)
 // #endif
 }
 
+// WZD s36p66
 // MGC s34p66
 int16_t Get_Input(void)
 {
@@ -166,7 +169,9 @@ int16_t Get_Input(void)
     // TODO if(input_delay < 0)
     // TODO if(fields_count <= 1)
 
-    field_index = Interpret_Mouse_Input();  // MGC s34p01
+    // DONT if(mouse_installed == ST_FALSE) { field_index = CRP_GUI_KeyInputOnly(); }
+
+    field_index = Interpret_Mouse_Input();  // WZD s36p01
 
     // TODO Set_Page_Off();  // MGC s26p02
 

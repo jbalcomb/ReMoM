@@ -306,7 +306,7 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
 // WZD s30p13
 // AKA LBX_IMG_BuildFrame()
 // NOTE: Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg) ~== FLIC_Draw(SAMB_ptr p_FLIC_File)
-Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
+void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
 {
     int16_t current_frame_index;
     int16_t next_frame_index;
@@ -542,6 +542,54 @@ int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
     return current_frame_index;
 }
 
+// WZD s30p17
+// ?NIU? int16_t FLIC_Get_FrameCount()
+
+// WZD s30p18
+int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
+{
+    int16_t flic_width;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Width(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
+
+    flic_width = FLIC_GET_WIDTH(p_FLIC_Header);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] flic_width: %d\n", __FILE__, __LINE__, flic_width);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Width(p_FLIC_Header = %p) { flic_width = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_width);
+#endif
+
+    return flic_width;
+}
+
+// WZD s30p19
+int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
+{
+    int16_t flic_height;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Height(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
+
+    flic_height = FLIC_GET_HEIGHT(p_FLIC_Header);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] flic_height: %d\n", __FILE__, __LINE__, flic_height);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Height(p_FLIC_Header = %p) { flic_height = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_height);
+#endif
+
+    return flic_height;
+}
+
+
 // WZD s30p24
 void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
 {
@@ -567,6 +615,30 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
 #endif
 }
+
+
+// WZD s30p40
+int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
+{
+    int16_t full_store_flag;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Full_Store_Flag(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+#endif
+
+    full_store_flag = FLIC_GET_FRAME_TYPE(p_FLIC_Header);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] full_store_flag: %d\n", __FILE__, __LINE__, full_store_flag);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Get_Full_Store_Flag(p_FLIC_Header = %p) { full_store_flag = %d }\n", __FILE__, __LINE__, p_FLIC_Header, full_store_flag);
+#endif
+
+    return full_store_flag;
+}
+
 
 
 

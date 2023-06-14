@@ -24,6 +24,22 @@
 
 
 
+void Main_Screen_Load_Pictures(void);
+// WZD o57p02
+void Main_Screen_Add_Fields(void);
+// WZD o57p03
+void Add_Unit_Action_Fields(void);
+// WZD o57p04
+// Main_Screen_Draw_Unit_Actions()
+// WZD o57p05
+void Add_Game_Button_Fields(void);
+// WZD o57p06
+// Main_Screen_Draw_Game_Buttons()
+// WZD o57p07
+void Add_Unit_Window_Fields(void);
+
+
+
 // int16_t field_idx_hotkey_C;
 // int16_t field_idx_hotkey_L;
 // int16_t field_idx_hotkey_N;
@@ -39,6 +55,131 @@ int16_t field_idx_hotkey_G;
 // OVL_GAME_Button
 // _game_button
 // _main_game_button_seg
+
+
+// dseg:2E10                                                 BEGIN: Main Screen
+
+// WZD dseg:2E10
+// CRP_DBG_Alt_K_State dw 0
+// WZD dseg:2E12
+// DBG_Alt_A_State dw 0
+// WZD dseg:2E14
+// IDK_FirstTurnFlag_w398B4 dw 0
+// WZD dseg:2E16
+// hotkey_MainScrn_X db 'X'
+// WZD dseg:2E17
+// cnst_ZeroString_31 db 0
+// WZD dseg:2E18
+// cnst_HOTKEY_S1 db '!',0
+// WZD dseg:2E1A
+// cnst_HOTKEY_S2 db '@',0
+// WZD dseg:2E1C
+// cnst_HOTKEY_S3 db '#',0
+// WZD dseg:2E1E
+// cnst_HOTKEY_C_2 db 'C',0
+// WZD dseg:2E20
+// cnst_HOTKEY_T db 'T',0
+// WZD dseg:2E22
+char hotkey_NextTurn[] = "N";
+// WZD dseg:2E24
+char hotkey_PlaneButton[] = "P";
+// WZD dseg:2E26
+// cnst_HOTKEY_Q db 'Q',0
+// WZD dseg:2E28
+// cnst_HOTKEY_U db 'U',0
+// WZD dseg:2E2A
+// cnst_HOTKEY_Home dw KP_Home
+// WZD dseg:2E2C
+// cnst_HOTKEY_Up dw KP_Up
+// WZD dseg:2E2E
+// cnst_HOTKEY_PgUp dw KP_PgUp
+// WZD dseg:2E30
+// cnst_HOTKEY_Left dw KP_Left
+// WZD dseg:2E32
+// cnst_HOTKEY_Right dw KP_Right
+// WZD dseg:2E34
+// cnst_HOTKEY_End dw KP_End
+// WZD dseg:2E36
+// cnst_HOTKEY_Down dw KP_Down
+// WZD dseg:2E38
+// cnst_HOTKEY_PgDn dw KP_PgDn
+// WZD dseg:2E3A
+// cnst_HOTKEY_F10 dw KP_F10
+// WZD dseg:2E3C
+// cnst_HOTKEY_F1 dw KP_F1
+// WZD dseg:2E3E
+// cnst_HOTKEY_F2 dw KP_F2
+// WZD dseg:2E40
+// cnst_HOTKEY_F3 dw KP_F3
+// WZD dseg:2E42
+// cnst_HOTKEY_F4 dw KP_F4
+// WZD dseg:2E44
+// cnst_HOTKEY_F5 dw KP_F5
+// WZD dseg:2E46
+// cnst_HOTKEY_F6 dw KP_F6
+// WZD dseg:2E48
+// cnst_HOTKEY_F7 dw KP_F7
+// WZD dseg:2E4A
+// cnst_HOTKEY_F8 dw KP_F8
+// WZD dseg:2E4C
+// cnst_HOTKEY_F9 dw KP_F9
+// WZD dseg:2E4E
+// cnst_HOTKEY_K db 'K',0
+// WZD dseg:2E50
+// cnst_HOTKEY_A db 'A',0
+// WZD dseg:2E52
+// aYouMayNotThrowAnySp db 'You may not throw any spells while you are banished.  There are at least ',0
+// WZD dseg:2E9C
+// aTurnsRemainingUntil db ' turns remaining until you may return.',0
+// WZD dseg:2EC3
+// aSomeUnitsDoNotHaveE db 'Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?',0
+// WZD dseg:2F42
+// aTheSelectedUnitsCan db 'The selected units cannot move on this plane.',0
+// WZD dseg:2F70
+// aTurn_1 db 'turn',0
+
+// WZD dseg:2F75 cnst_HOTKEY_D db 'D',0
+// WZD dseg:2F77 cnst_HOTKEY_W db 'W',0
+// WZD dseg:2F79 cnst_HOTKEY_B_2 db 'B',0
+// WZD dseg:2F7B 
+char hotkey_GameButton[] = "G";
+// WZD dseg:2F7D 
+char hotkey_SpellsButton[] = "S";
+// WZD dseg:2F7F 
+char hotkey_MagicButton[] = "M";
+// WZD dseg:2F81 
+char hotkey_InfoButton[] = "I";
+
+
+// WZD dseg:C03E                                                 BEGIN: Main_Screen
+// WZD dseg:C03E
+// CRP_OverlandVar_2 dw 0
+// WZD dseg:C040
+// CRP_OverlandVar_4 dw 0
+// WZD dseg:C042
+// OVL_MapVar3 dw 0
+// WZD dseg:C044
+// CRP_OVL_Obstacle_Var1 dw 0
+// WZD dseg:C046
+// CRP_OVL_UU_Control_1 dw 0
+// WZD dseg:C048
+// CRP_OVL_UU_Control_2 dw 0
+// WZD dseg:C04A
+// CRP_OVL_UU_Control_3 dw 0
+// WZD dseg:C04C
+// CRP_OVL_UU_Control_4 dw 0
+// WZD dseg:C04E
+int16_t special_action_flag;  // AKA OVL_ExtraUnitAction
+// WZD dseg:C050
+int16_t _next_turn_button;
+// WZD dseg:C052
+int16_t Unit_Window_Fields[9];
+// WZD dseg:C064
+// CRP_OverlandVar_3 dw 0
+// WZD dseg:C066
+// OVL_Path_Length dw 0
+// WZD dseg:C068
+// OVL_StackHasPath dw 0
 
 // WZD dseg:C06A
 int16_t _done_button;
@@ -111,14 +252,15 @@ char cstr_Mana_Short[] = "Mana Short";
 // WZD dseg:31F0 00                      db    0
 
 
-// WZD dseg:974A
-int16_t G_OVL_MapDisplay_Y;
-// WZD dseg:974C
-int16_t G_OVL_MapDisplay_X;
+// MoX_Data  // WZD dseg:974A
+// MoX_Data  int16_t G_OVL_MapDisplay_Y;
+// MoX_Data  // WZD dseg:974C
+// MoX_Data  int16_t G_OVL_MapDisplay_X;
 
 
-// WZD dseg:BD86
-int16_t map_plane;
+// How did I get to duplicating these here/Mox_Data?
+// MoX_Data  // WZD dseg:BD86
+// MoX_Data  int16_t map_plane;
 // WZD dseg:BD88
 int16_t map_y;
 // WZD dseg:BD8A
@@ -218,15 +360,28 @@ SAMB_ptr goto_booty_icon;
 // MAIN.LBX,50  GOTO        goto booty
 
 
+
+// WZD dseg:973E
+int16_t _minimap_grid_field;
+// WZD dseg:9740
+int16_t _main_map_grid_field;
+// WZD dseg:9742
+int16_t _minimap_grid_x;
+// WZD dseg:9744
+int16_t _minimap_grid_y;
+// WZD dseg:9746 CRP_OVL_MapWindowY dw 0
+// WZD dseg:9748 CRP_OVL_MapWindowX dw 0
+
+
 // WZD dseg:974A
 int16_t _prev_world_y;
 // WZD dseg:974C
 int16_t _prev_world_x;
 
-// dseg:974E _main_map_grid_x dw 0                   ; DATA XREF: Main_Screen+C79r ...
-// dseg:9750 _main_map_grid_y dw 0                   ; DATA XREF: Main_Screen+C87r ...
-
-
+// WZD dseg:974E 
+int16_t _main_map_grid_x;
+// WZD dseg:9750 
+int16_t _main_map_grid_y;
 
 
 // WZD dseg:9922
@@ -352,12 +507,12 @@ void Main_Screen_Load_Pictures(void)
     main_info_button = LBX_Load(main_lbx_file, 6);
     main_plane_button = LBX_Load(main_lbx_file, 7);
 
-//     main_done_button = LBX_Load(main_lbx_file, 8);
-//     main_patrol_button = LBX_Load(main_lbx_file, 9);
-//     main_wait_button = LBX_Load(main_lbx_file, 10);
-//     main_build_button = LBX_Load(main_lbx_file, 11);
-//     main_purify_button = LBX_Load(main_lbx_file, 42);
-//     main_meld_button = LBX_Load(main_lbx_file, 49);
+    main_done_button = LBX_Load(main_lbx_file, 8);
+    main_patrol_button = LBX_Load(main_lbx_file, 9);
+    main_wait_button = LBX_Load(main_lbx_file, 10);
+    main_build_button = LBX_Load(main_lbx_file, 11);
+    main_purify_button = LBX_Load(main_lbx_file, 42);
+    main_meld_button = LBX_Load(main_lbx_file, 49);
 //     main_lock_done_button = LBX_Load(main_lbx_file, 12);
 //     main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
 //     main_lock_wait_button = LBX_Load(main_lbx_file, 14);
@@ -428,26 +583,82 @@ void Main_Screen_Load_Pictures(void)
 }
 
 
+// WZD o57p02
 void Main_Screen_Add_Fields(void)
 {
+    int16_t itr_unit_stack;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
 #endif
 
-    Clear_Fields();
+    // CRP_OVL_UU_Control_4 = -1000;
+    // CRP_OVL_UU_Control_3 = -1000;
+    // CRP_OVL_UU_Control_2 = -1000;
+    // CRP_OVL_UU_Control_1 = -1000;
+    _main_map_grid_field = -1000;
+    _minimap_grid_field = -1000;
+    _next_turn_button = -1000;
+    _special_button = -1000;
+    _patrol_button = -1000;
+    _wait_button = -1000;
+    _done_button = -1000;
+    _game_button = -1000;
+    _spells_button = -1000;
+    _armies_button = -1000;
+    _cities_button = -1000;
+    _magic_button = -1000;
+    _info_button = -1000;
+    _plane_button = -1000;
 
-    // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
-    // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
-    // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
-    // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
-    // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
+    for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
+    {
+        Unit_Window_Fields[itr_unit_stack] = -1000;
+    }
 
-    // int16_t Add_Hot_Key(int16_t select_char)
-    field_idx_hotkey_G = Add_Hot_Key('G');
-    field_idx_hotkey_Q = Add_Hot_Key('Q');
+    if(_unit_stack_count > 0)
+    {
+        Add_Unit_Window_Fields();
+    }
+    
+    if(all_units_moved == ST_TRUE)
+    {
+        // _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, hotkey_NextTurn, ST_UNDEFINED);
+        _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
+    }
 
-    // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
-    _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
+    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
+    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    {
+        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
+        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
+    }
+
+    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
+    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    {
+        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
+        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+    }
+
+    // OVL_SetMenuButtons()
+    // OVL_SetUnitButtons()
+    Add_Game_Button_Fields();
+    Add_Unit_Action_Fields();
+
+
+//     // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
+//     // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
+//     // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
+//     // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
+//     // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
+// 
+//     // int16_t Add_Hot_Key(int16_t select_char)
+//     field_idx_hotkey_G = Add_Hot_Key('G');
+//     field_idx_hotkey_Q = Add_Hot_Key('Q');
+// 
+//     // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
+//     _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
 
 
 
@@ -456,7 +667,74 @@ void Main_Screen_Add_Fields(void)
 #endif
 }
 
+// WZD o57p03
+void Add_Unit_Action_Fields(void)
+{
+    if(_unit_stack_count > 0)
+    {
+        _done_button = Add_Button_Field(246, 176, '0', main_done_button, 'D', ST_UNDEFINED);
+        _patrol_button = Add_Button_Field(280, 176, '0', main_patrol_button, '0', ST_UNDEFINED);
+        _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+    }
 
+    _special_button  = -1000;
+    if(special_action_flag != ST_UNDEFINED)
+    {
+        if(special_action_flag == 2)
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_purify_button, '0', ST_UNDEFINED);
+        }
+        else if(special_action_flag == 9)
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_meld_button, '0', ST_UNDEFINED);
+        }
+        else
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_build_button, 'B', ST_UNDEFINED);
+        }
+    }
+
+    if(_unit_stack_count < 1)
+    {
+        _done_button = -1000;
+        _patrol_button = -1000;
+        _wait_button = -1000;
+        _special_button = -1000;
+
+        if(all_units_moved == ST_FALSE)
+        {
+            _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+        }
+    }
+}
+
+// WZD o57p04
+// Main_Screen_Draw_Unit_Actions()
+
+// WZD o57p05
+// OVL_SetMenuButtons
+void Add_Game_Button_Fields(void)
+{
+    // cnst_ZeroString_31 ... hotkey_GameButton, etc.
+    _game_button    = Add_Button_Field(  7, 4, '0', main_game_button,   'G', ST_UNDEFINED);
+    _spells_button  = Add_Button_Field( 47, 4, '0', main_spells_button, 'S', ST_UNDEFINED);
+    _armies_button  = Add_Button_Field( 89, 4, '0', main_armies_button, 'A', ST_UNDEFINED);
+    _cities_button  = Add_Button_Field(140, 4, '0', main_cities_button, '0', ST_UNDEFINED);
+    _magic_button   = Add_Button_Field(184, 4, '0', main_magic_button,  'M', ST_UNDEFINED);
+    _info_button    = Add_Button_Field(226, 4, '0', main_info_button,   'I', ST_UNDEFINED);
+    _plane_button   = Add_Button_Field(270, 4, '0', main_plane_button,  'P', ST_UNDEFINED);
+}
+
+// WZD o57p06
+// Main_Screen_Draw_Game_Buttons()
+
+// WZD o57p07
+void Add_Unit_Window_Fields(void)
+{
+
+}
+
+// WZD 
 void Main_Screen(void)
 {
     int16_t finished;
@@ -470,8 +748,49 @@ void Main_Screen(void)
 
     int16_t itr_units;
 
+    int16_t Unused_Button_Index;
+    int16_t hotkey_idx_C;
+    int16_t hotkey_idx_Q;
+    int16_t hotkey_idx_U;
+    int16_t hotkey_idx_X;
+    int16_t hotkey_idx_Shift_1;
+    int16_t hotkey_idx_Shift_2;
+    int16_t hotkey_idx_Shift_3;
+    int16_t hotkey_idx_Alt_A;
+    int16_t hotkey_idx_Alt_K;
+    int16_t hotkey_idx_Alt_N;
+    int16_t hotkey_idx_Alt_P;
+    int16_t hotkey_idx_Alt_T;
+    int16_t hotkey_idx_Up;
+    int16_t hotkey_idx_Down;
+    int16_t hotkey_idx_Left;
+    int16_t hotkey_idx_Right;
+    int16_t hotkey_idx_PgUp;
+    int16_t hotkey_idx_PgDn;
+    int16_t hotkey_idx_Home;
+    int16_t hotkey_idx_End;
+    int16_t hotkey_idx_F1;
+    int16_t hotkey_idx_F2;
+    int16_t hotkey_idx_F3;
+    int16_t hotkey_idx_F4;
+    int16_t hotkey_idx_F5;
+    int16_t hotkey_idx_F6;
+    int16_t hotkey_idx_F7;
+    int16_t hotkey_idx_F8;
+    int16_t hotkey_idx_F9;
+    int16_t hotkey_idx_F10;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
 #endif
 
 #ifdef STU_DEBUG
@@ -567,7 +886,17 @@ void Main_Screen(void)
     // TODO  Main_Screen_Help();
     // DBG_Alt_A__TurnCount = ST_UNDEFINED
 
+    // about to call Main_Screen_Draw_Do_Draw(), with ...
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
     Main_Screen_Draw();
+
     // PageFlip_FX();  // WZD s01p03
     // WZD dseg:9C8E PageFlipEffect dw 0
     // WZD_StartUp_MainGame() { ... PageFlipEffect = 0; ... } 
@@ -581,11 +910,45 @@ void Main_Screen(void)
 //     while(!finished)
 //     {
 //         // CLK_Save
-//         // Clear_Fields
+
+        Clear_Fields();
         Main_Screen_Add_Fields();
-//         // ... add hot-keys ...
+
+        hotkey_idx_X = Add_Hot_Key('X');
+        Unused_Button_Index = -1000;
+        hotkey_idx_Shift_1 = Add_Hot_Key('!');
+        hotkey_idx_Shift_2 = Add_Hot_Key('@');
+        hotkey_idx_Shift_3 = Add_Hot_Key('#');
+        hotkey_idx_C = Add_Hot_Key('C');
+        hotkey_idx_Alt_T = Add_Multi_Hot_Key_Field("T");
+        hotkey_idx_Alt_N = Add_Multi_Hot_Key_Field("N");
+        hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
+        hotkey_idx_Q = Add_Hot_Key('Q');
+        hotkey_idx_U = Add_Hot_Key('U');
+        hotkey_idx_Home = Add_Hot_Key(KP_Home);
+        hotkey_idx_Up = Add_Hot_Key(KP_Up);
+        hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
+        hotkey_idx_Left = Add_Hot_Key(KP_Left);
+        hotkey_idx_Right = Add_Hot_Key(KP_Right);
+        hotkey_idx_End = Add_Hot_Key(KP_End);
+        hotkey_idx_Down = Add_Hot_Key(KP_Down);
+        hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
+        hotkey_idx_F10 = Add_Hot_Key(KP_F10);
+        hotkey_idx_F1 = Add_Hot_Key(KP_F1);
+        hotkey_idx_F2 = Add_Hot_Key(KP_F2);
+        hotkey_idx_F3 = Add_Hot_Key(KP_F3);
+        hotkey_idx_F4 = Add_Hot_Key(KP_F4);
+        hotkey_idx_F5 = Add_Hot_Key(KP_F5);
+        hotkey_idx_F6 = Add_Hot_Key(KP_F6);
+        hotkey_idx_F7 = Add_Hot_Key(KP_F7);
+        hotkey_idx_F8 = Add_Hot_Key(KP_F8);
+        hotkey_idx_F9 = Add_Hot_Key(KP_F9);
+        hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
+        hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
+
+
         input_field_idx = Get_Input();
-// 
+
         if(input_field_idx == field_idx_hotkey_G)
         {
             DLOG("(input_field_idx == field_idx_hotkey_G)");
@@ -599,7 +962,17 @@ void Main_Screen(void)
             g_Current_Screen = scr_Quit_To_DOS;
         }
 
+    // about to call Main_Screen_Draw_Do_Draw(), with ...
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
+    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
             Main_Screen_Draw();
+
             Toggle_Pages();
             mouse_x = Pointer_X();
             mouse_y = Pointer_Y();

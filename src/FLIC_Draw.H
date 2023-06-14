@@ -152,30 +152,39 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 // LBX_IMG_LoadPalette
 
 
-// MGC s28p11
+// WZD s30p11
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
-
-// MGC s28p14
-void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
-
-// MGC s28p15
-void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
-
-// MGC s28p16
-int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
-
-
-/*
-    WIZARDS.EXE  seg030
-*/
 
 // WZD s30p13
 // AKA LBX_IMG_BuildFrame();
-Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
+void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
+
+// WZD s30p14
+void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index);
+
+// WZD s30p15
+void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
+
+// WZD s30p16
+int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
+
+// WZD s30p17
+// int16_t FLIC_Get_FrameCount()
+
+// WZD s30p18
+int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header);
+
+// WZD s30p19
+int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 
 
 // WZD s30p24
 void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg);
+
+// WZD s30p40
+// MoO2  Get_Full_Store_Flag()
+int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
+
 
 /*
     WIZARDS.EXE  seg033

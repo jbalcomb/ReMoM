@@ -52,6 +52,11 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
 
     switch (Message)
     {
+        case WM_CREATE:
+        {
+            ShowCursor(FALSE);
+        } break;
+
         case WM_CLOSE:
         {
             OutputDebugStringA("WM_CLOSE\n");

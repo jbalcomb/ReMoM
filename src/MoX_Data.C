@@ -172,23 +172,21 @@ struct s_WIZARD _players[6];
 // struct s_WIZARD * _players;
 
 
-// dseg:BD82 _active_world_y dw 0                    ; DATA XREF: GAME_Overland_Init+127w ...
-// dseg:BD84 _active_world_x dw 0                    ; DATA XREF: GAME_Overland_Init+11Bw ...
-// dseg:BD86 _world_plane dw 0                       ; DATA XREF: GAME_Overland_Init+13Fw ...
-// dseg:BD88 _curr_world_y dw 0                      ; DATA XREF: GAME_Overland_Init+FDw ...
-// dseg:BD8A _curr_world_x dw 0                      ; DATA XREF: GAME_Overland_Init+F7w ...
-// dseg:BD8C _human_player_idx dw 0                  ; DATA XREF: WZD_Startup_MainGame+Aw ...
+// WZD dseg:974A
+int16_t G_OVL_MapDisplay_Y;
+// WZD dseg:974C
+int16_t G_OVL_MapDisplay_X;
 
 // WZD dseg:BD82 
-int16_t OVL_Map_CenterY;
+int16_t OVL_Map_CenterY;  // AKA _active_world_y
 // WZD dseg:BD84 
-int16_t OVL_Map_CenterX;
+int16_t OVL_Map_CenterX;  // AKA _active_world_x
 // WZD dseg:BD86 
-int16_t _map_plane;
+int16_t _map_plane;  // AKA _world_plane
 // WZD dseg:BD88 
-int16_t _map_y;
+int16_t _map_y;  // AKA _curr_world_y
 // WZD dseg:BD8A 
-int16_t _map_x;
+int16_t _map_x;  // AKA _curr_world_x
 
 // WZD dseg:BD8C
 int16_t _human_player_idx = 0;

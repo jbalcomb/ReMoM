@@ -11,7 +11,7 @@ extern struct s_Field * p_fields;
 
 enum e_Field_Type
 {
-    ft_ClickButton,     /*  0  0x00 */
+    ft_Button,          /*  0  0x00 */
     ft_ToggleButton,    /*  1  0x01 */
     ft_LockableButton,  /*  2  0x02 */
     ft_MStateButton,    /*  3  0x03 */
@@ -19,11 +19,11 @@ enum e_Field_Type
     ft_ImageLabel,      /*  5  0x05 */
     ft_Slidebar,        /*  6  0x06 */
     ft_HotKey,          /*  7  0x07 */
-    ft_AltString,       /*  8  0x08 */
+    ft_MultiHotKey,     /*  8  0x08 */
     ft_ClickLink,       /*  9  0x09 */
     ft_DialogLine,      /* 10  0x0A */
     ft_EditSelect,      /* 11  0x0B */
-    ft_ClickGrid        /* 12  0x0C */
+    ft_Grid             /* 12  0x0C */
 };
 
 struct s_Field
@@ -39,15 +39,22 @@ struct s_Field
     int16_t Rect_FX;    // 
     int16_t Selectable; // 
     int16_t ColorSet2;  // 
-    int16_t Param0;     // Text@        (6:Min_Val, 9:Parent)
-    int16_t Param1;     // Trig_State   (6:Max_Val, 9/A:Index, B:IMG, C:CellW)
-    int16_t Param2;     // State@       (4/B:BG_Color, 6:StSeg, 8:Len, C:CellH)
-    int16_t Param3;     // FullFrames   (4:Align, 6:MinSlide, A:CBlock, C:Col@)
-    int16_t Param4;     // MaxSlide     (4:CStyle, C:Row@)
-    int16_t Param5;     // IMG_Seg      (4/B:MaxLen, 6:Orient)
-    int16_t Param6;     // CursorColors (6:StOff, B:Outline)
+    int16_t Param0;     // Text@                     6:Min_Val,  8:char* 9:Parent
+    int16_t Param1;     // Trig_State                6:Max_Val,          9:Index, A:Index,  B:IMG,      C:box_width
+    int16_t Param2;     // State@        4:BG_Color, 6:StSeg,    8:Len,                    B:BG_Color, C:box_height
+    int16_t Param3;     // FullFrames    4:Align,    6:MinSlide,                 A:CBlock,             C:xpos
+    int16_t Param4;     // MaxSlide      4:CStyle,                                                     C:ypos
+    int16_t Param5;     // IMG_Seg       4:MaxLen,   6:Orient,                             B:MaxLen
+    union {
+        SAMB_ptr pict_seg;  // ft_Button
+        int16_t MaxLen;     // ft_EditBox, ft_EditSelect
+        int16_t Orient;     // ft_SlideBar
+    };
+    int16_t Param6;     // CursorColors              6:StOff,                              B:Outline
     int16_t hotkey;     // ASCII Character *Code*
     int16_t Unused_25h; // ?IDK/IDGI?
+    // union { int16_t Param1, Max_Val, Index, IMG, box_width; };
+
 };
 
 
@@ -82,11 +89,27 @@ extern "C" {
 // TODO  // MGC s34p26
 // TODO  int16_t Scan_Field(void);
 
+
+// WZD s36p38
+int16_t Add_Multi_Hot_Key_Field(char * string);
+
+
+// WZD s36p42
+void Add_Button_Info(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+
+// WZD s36p43
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+
+// WZD s36p47
 // MGC s34p47
 int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
 
+// WZD s36p49
 // MGC s34p49
 int16_t Add_Hot_Key(int16_t select_char);
+
+// WZD s36p49
+int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
 
 // MGC s34p57
 void Clear_Fields(void);
