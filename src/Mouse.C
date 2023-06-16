@@ -9,9 +9,6 @@
 #include "Video.H"
 
 
-// extern uint8_t g_Video_Back_Buffer[];  // MoM_main.C
-
-
 /*
 int16_t example_mouse_list_count = 2;
 struct s_mouse_list example_mouse_list[2] = {
@@ -96,10 +93,6 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     int tmp_count;
     struct s_mouse_list * tmp_list;
 
-#ifdef DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Set_Mouse_List(count = %d, list = %p)\n", __FILE__, __LINE__, count, list);
-#endif
-
     tmp_list = list;
     tmp_count = count;
 
@@ -126,9 +119,6 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     current_pointer_offset = list[tmp_count].center_offset;
     current_pointer_image_number = list[tmp_count].image_num;
 
-#ifdef DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Set_Mouse_List(count = %d, list = %p)\n", __FILE__, __LINE__, count, list);
-#endif
 }
 
 
@@ -139,14 +129,7 @@ void Check_Mouse_Shape(int16_t x, int16_t y)
     int16_t count;
     int16_t list_index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Check_Mouse_Shape(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
-
     previous_pointer_image_number = current_pointer_image_number;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: previous_pointer_image_number: %d\n", __FILE__, __LINE__, previous_pointer_image_number);
-#endif
 
     list_index = 0;
     count = current_mouse_list_count;
@@ -163,17 +146,8 @@ void Check_Mouse_Shape(int16_t x, int16_t y)
     }
 
     current_pointer_offset = current_mouse_list[list_index].center_offset;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: current_pointer_offset: %d\n", __FILE__, __LINE__, current_pointer_offset);
-#endif
     current_pointer_image_number = current_mouse_list[list_index].image_num;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: current_pointer_image_number: %d\n", __FILE__, __LINE__, current_pointer_image_number);
-#endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Check_Mouse_Shape(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
 }
 
 // MGC s33p03
@@ -233,7 +207,8 @@ int16_t Pointer_X(void)
     // return g_Mouse_X;
     // return g_Mouse_X/320;
     // return (g_Mouse_X % 320);
-    return (g_Mouse_X / 2);
+    // return (g_Mouse_X / 2);
+    return g_Mouse_X;
 }
 
 // MGC s33p19
@@ -243,16 +218,17 @@ int16_t Pointer_Y(void)
     // return g_Mouse_Y;
     // return g_Mouse_Y/200;
     // return (g_Mouse_Y % 200);
-    return (g_Mouse_Y / 2);
+    // return (g_Mouse_Y / 2);
+    return g_Mouse_Y;
 }
 
 
 // ? DSP & RSP ? Front & Back || On & Off || "draw_page_num" vs. "current_page_flag" {1,2,3} ?
 
 
-// MGC s33p30
-// MGC s33p31
-// MGC s33p32
+// MGC s33p30  AKA CRL_Save_RSP();
+// MGC s33p31  AKA Save_Mouse_Off_Page();
+// MGC s33p32  AKA IN_CRL_Save_RSP();  VGA_SaveCursorArea();
 void Save_Mouse(int16_t x, int16_t y)
 {
     uint8_t * page_buffer;
@@ -262,9 +238,6 @@ void Save_Mouse(int16_t x, int16_t y)
     uint16_t height;
     uint16_t itr_width;
     uint16_t itr_height;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Save_Mouse(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
 
     if(x + 16 < 320) { width  = 16; } else { width  = 320 - x; }
     if(y + 16 < 200) { height = 16; } else { height = 200 - y; }
@@ -276,7 +249,6 @@ void Save_Mouse(int16_t x, int16_t y)
     *mouse_buffer++ = width;
     *mouse_buffer++ = height;
 
-    // page_buffer = g_Video_Back_Buffer + screen_page_offset;
     page_buffer = current_video_page + screen_page_offset;
 
     itr_height = 0;
@@ -289,9 +261,6 @@ void Save_Mouse(int16_t x, int16_t y)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Save_Mouse(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
 }
 
 // MGC s33p33
@@ -344,7 +313,6 @@ void Restore_Mouse(void)
     width = *mouse_buffer++;
     height = *mouse_buffer++;
 
-    // page_buffer = g_Video_Back_Buffer + screen_page_offset;
     page_buffer = current_video_page + screen_page_offset;
 
     itr_height = 0;
@@ -373,38 +341,17 @@ void Draw_Mouse(int16_t x, int16_t y)
     int16_t itr_height;
     uint8_t pixel;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Mouse(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] mouse_palette: %p\n", __FILE__, __LINE__, mouse_palette);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] current_pointer_image_number: %d\n", __FILE__, __LINE__, current_pointer_image_number);
-#endif
     // mouse_image_width  =  16
     // mouse_image_height =  16
-    // mouse_image_pixers = 256  (100h)
+    // mouse_image_pixels = 256  (100h)
     mouse_image = mouse_palette + ((current_pointer_image_number - 1) * (16 * 16));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] mouse_image: %p\n", __FILE__, __LINE__, mouse_image);
-#endif
 
     // CURSOR_WIDTH  PIXX
     // CURSOR_HEIGHT PIXY
     if(x + 16 < 320) { width  = 16; } else { width  = 320 - x; }
     if(y + 16 < 200) { height = 16; } else { height = 200 - y; }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] width: %d\n", __FILE__, __LINE__, width);
-    dbg_prn("DEBUG: [%s, %d] height: %d\n", __FILE__, __LINE__, height);
-#endif
 
-    // bbuff_pos = g_Video_Back_Buffer + ((y * 320) + x);
     bbuff_pos = current_video_page + ((y * 320) + x);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);
-#endif
 
 
 // int width = 20;   // total width of patch
@@ -427,22 +374,12 @@ void Draw_Mouse(int16_t x, int16_t y)
         while(itr_width < width)
         {
             pixel = *(mouse_image + (itr_height * 16) + itr_width);
-// #ifdef STU_DEBUG
-//     // dbg_prn("DEBUG: [%s, %d] pixel: %02X\n", __FILE__, __LINE__, pixel);
-//     dbg_prn("DEBUG: [%s, %d] pixel[%d]: %02X\n", __FILE__, __LINE__, ((itr_height * 16) + itr_width), pixel);
-// #endif
-            if(pixel != 0x00)
+            if(pixel != 0x00)  /* Palette Index 0: TRANSPARENT */
             {
                 *(bbuff_pos + (itr_height * 320) + itr_width) = pixel;
             }
-
             itr_width++;
         }
         itr_height++;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Draw_Mouse(x = %d, y = %d)\n", __FILE__, __LINE__, x, y);
-#endif
-
 }

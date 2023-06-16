@@ -39,23 +39,25 @@ struct s_Field
     int16_t Rect_FX;    // 
     int16_t Selectable; // 
     int16_t ColorSet2;  // 
-    int16_t Param0;     // Text@                     6:Min_Val,  8:char* 9:Parent
-    int16_t Param1;     // Trig_State                6:Max_Val,          9:Index, A:Index,  B:IMG,      C:box_width
-    int16_t Param2;     // State@        4:BG_Color, 6:StSeg,    8:Len,                    B:BG_Color, C:box_height
-    int16_t Param3;     // FullFrames    4:Align,    6:MinSlide,                 A:CBlock,             C:xpos
-    int16_t Param4;     // MaxSlide      4:CStyle,                                                     C:ypos
-    int16_t Param5;     // IMG_Seg       4:MaxLen,   6:Orient,                             B:MaxLen
+                        // ? ft 0 ?      ft 4      ft 6     ft 8    ft 9    ft 10   ft 11     ft 12
+    int16_t Param0;     // Text@                   Min_Val  Str*    Parent
+    int16_t Param1;     // Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
+    int16_t Param2;     // State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
+    int16_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
+    int16_t Param4;     // MaxSlide      CStyle                                               ypos
+    int16_t Param5;     // IMG_Seg       MaxLen    Orient                           MaxLen
     union {
         SAMB_ptr pict_seg;  // ft_Button
         int16_t MaxLen;     // ft_EditBox, ft_EditSelect
         int16_t Orient;     // ft_SlideBar
     };
-    int16_t Param6;     // CursorColors              6:StOff,                              B:Outline
+    int16_t Param6;     // CursorColors            StOff                            Outline
     int16_t hotkey;     // ASCII Character *Code*
     int16_t Unused_25h; // ?IDK/IDGI?
     // union { int16_t Param1, Max_Val, Index, IMG, box_width; };
 
 };
+// TODO(JimBalcomb,20230614): ASSERT sizeof(struct s_Field)
 
 
 
@@ -128,8 +130,9 @@ void Clear_Fields(void);
 // TODO  // MGC s34p72
 // TODO  Push_Field_Down();
 
-// TODO  // MGC s34p85
-// TODO  void Toggle_Pages(void);
+// WZD s36p85
+// MGC s34p85
+// in Input  void Toggle_Pages(void);
 
 
 

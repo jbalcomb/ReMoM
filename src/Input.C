@@ -17,17 +17,34 @@
 
 uint8_t g_Key_Pressed;
 uint16_t g_Last_Key_Pressed;
+uint16_t scan_code_char_code;  // Platform
 int16_t g_Mouse_X;
 int16_t g_Mouse_Y;
 
 
-// DONT  mouse_installed = ST_FALSE;                     // MGC dseg:4D20
+
+// WZD dseg:824E
+// MGC dseg:4D20
+// DONT  mouse_installed = ST_FALSE;                     
+
+// WZD dseg:8250
+// ? click, hold drag ? e.g., magic staves ?
+int16_t down_mouse_button = ST_UNDEFINED;
+
+// WZD dseg:8272
+// MGC dseg:4D44
+int16_t _global_esc = ST_FALSE;
 
 
 int16_t mouse_list_init_count = 1;
+// WZD dseg:825C
 struct s_mouse_list mouse_list_init[1] = {
     {0, 0, 0, 0, 319, 199}
 };
+
+
+// WZD dseg:E898
+int16_t input_delay;
 
 
 
@@ -123,29 +140,59 @@ int16_t Interpret_Mouse_Input(void)
     return field_num;
 }
 
-// MGC s34p65
 // WZD s36p65
+// IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type)
 {
-// #ifdef DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] BEGIN: Init_Mouse_Keyboard(Input_Type=%d)\n", __FILE__, __LINE__, Input_Type);
-// #endif
 
-    p_fields = (void *)Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
+    p_fields = (struct s_Field *)Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
+
+//     // The if else / switch in the DASM is borked
+//     if(input_type == 0)
+//     {
+//         RP_MOUSE_SetUsable();
+//         mouse_installed = ST_FALSE;
+//         MOUSE_Emu_X = 158;
+//         MOUSE_Emu_Y = 100;
+//         MD_MoveCursor(158, 100);
+//     }
+//     if(input_type == 1)
+//     {
+//         Set_Mouse_List(1, mouse_list_init);
+//         mouse_installed = Init_Mouse_Driver();
+//         if(mouse_installed != ST_FALSE)
+//         {
+//             mouse_installed = ST_TRUE;
+//         }
+//         else
+//         {
+//             RP_MOUSE_SetUsable();
+//             MOUSE_Emu_X = 158;
+//             MOUSE_Emu_Y = 100;
+//             MD_MoveCursor(158, 100);
+//         }
+// 
+//     }
+//     if(input_type == 2)
+//     {
+// 
+//     }
+//     else
+//     {
+// 
+//     }
+//     VGA_SaveCursorArea(158, 100);
+//     input_delay = 0;
+//     down_mouse_button = ST_UNDEFINED;
+//     _global_esc = ST_FALSE;
+//     Clear_Fields();
 
     Set_Mouse_List(1, mouse_list_init);
-
-    // DONT  if(Init_Mouse_Driver() != ST_FAILURE)
-    // DONT  {
-    // DONT      mouse_installed = ST_TRUE;
-    // DONT  }
-    // DONT  // ... else { Initialize Mouse Emulation }
     Init_Mouse_Driver();
-
     // TODO  IN_CRL_Save_RSP(158, 100);
-    // TODO  input_delay = 0;
+    input_delay = 0;
     // TODO  g_CTRL_Focused = ST_UNDEFINED;
-    // TODO  _global_esc = ST_FALSE;
+    _global_esc = ST_FALSE;
     Clear_Fields();
 
     
@@ -182,6 +229,28 @@ int16_t Get_Input(void)
     return field_index;
 }
 
+// WZD s36p67
+// MGC s34p67
+void Set_Input_Delay(int16_t delay_count)
+{
+
+    input_delay = delay_count;
+
+    // MOUSE_GetClick();
+    // RP_MOUSE_GetSecClick();
+
+}
+
+// WZD s36p68
+// MGC s34p68
+int16_t Get_Input_Delay(void)
+{
+    return input_delay;
+}
+
+
+
+// WZD s36p85
 // MGC s34p85
 void Toggle_Pages(void)
 {
@@ -200,11 +269,6 @@ void Toggle_Pages(void)
 
     mouse_x = Pointer_X();
     mouse_y = Pointer_Y();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: mouse_x: %d\n", __FILE__, __LINE__, mouse_x);
-    dbg_prn("DEBUG: [%s, %d]: mouse_y: %d\n", __FILE__, __LINE__, mouse_y);
-#endif
 
     // NOTE(JimBalcomb,20221110): Presently, this feels like where what has been drawn is everything, so the draw-screen-page can be saved/exported/dumped.
     // STU_Export_DSP_To_BMP();
@@ -228,7 +292,7 @@ void Toggle_Pages(void)
     Page_Flip();
     
     // // Restore_Mouse_Off()  AKA CRL_Restore_DSP();
-    // Restore_Mouse();
+    Restore_Mouse();
     // // CRL_Copy_DSP2RSP();  // MGC _s33p33.asm
     // Copy_Mouse();
 

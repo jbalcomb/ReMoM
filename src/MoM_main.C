@@ -13,6 +13,7 @@
 #include "MoX_GAM.H"
 
 #include "Allocate.H"
+#include "Fields.H"
 #include "Fonts.H"
 #include "Input.H"
 #include "LBX_Load.H"
@@ -126,15 +127,6 @@ void Screen_Control(void)
             Fill(0, 0, 319, 199, 5);
             Set_Page_Off();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
-
             Main_Screen();
         } break;
     // scr_Magic = 106,
@@ -154,6 +146,68 @@ void Screen_Control(void)
     dbg_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);
 #endif
 
+}
+
+
+
+// WZD s01p03
+// ; executes a VGA page flip using a special effect for
+// ; screen transition set through VGA_PageFlipEffect,
+// ; which is zeroed out afterward:
+// ;   0 - simple flip, no extra effect
+// ;   1 - left to right cut (not used in the game)
+// ;   2 - black cut with the new image fading in
+// ;   3 - mosaic effect
+// ;   4 - grow out from a tile (not used in the game)
+// ;   5 - writes out the DAC, but DOES NOT do a page flip
+// Default: Apply_Palette(); Toggle_Pages();
+// WZD s01p03
+void PageFlip_FX(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: PageFlip_FX()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: PageFlipEffect: %d\n", __FILE__, __LINE__, PageFlipEffect);
+#endif
+
+    switch(PageFlipEffect)
+    {
+        case 0:
+        {
+            Apply_Palette();
+            Toggle_Pages();  // |-> Page_Flip()
+        } break;
+        case 1:
+        {
+            // RP_VGA_CutRight();
+        } break;
+        case 2:
+        {
+            // Toggle_Pages();  // |-> Page_Flip()
+            // Fade_In();
+        } break;
+        case 3:
+        {
+            // Apply_Palette();
+            // VGA_MosaicFlip();  // |-> GUI_PageFlip() |-> Page_Flip()
+        } break;
+        case 4:
+        {
+            // RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
+        } break;
+        default:
+        {
+            // Apply_Palette();
+        } break;
+    }
+
+    PageFlipEffect = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: PageFlip_FX()\n", __FILE__, __LINE__);
+#endif
 }
 
 
@@ -272,33 +326,6 @@ void MoM_main(void)
 
 }
 
-
-// WZD s01p03
-// ; executes a VGA page flip using a special effect for
-// ; screen transition set through VGA_PageFlipEffect,
-// ; which is zeroed out afterward:
-// ;   0 - simple flip, no extra effect
-// ;   1 - left to right cut (not used in the game)
-// ;   2 - black cut with the new image fading in
-// ;   3 - mosaic effect
-// ;   4 - grow out from a tile (not used in the game)
-// ;   5 - writes out the DAC, but DOES NOT do a page flip
-// Default: Apply_Palette(); Toggle_Pages();
-void PageFlip_FX(void)
-{
-    int16_t current_pageflip_effect;
-
-    current_pageflip_effect = PageFlipEffect;
-
-    switch(current_pageflip_effect)
-    {
-        case 0:
-        break;
-
-    }
-
-    PageFlipEffect = 0;
-}
 
 void MoM_Tables_Init(int16_t gfx_buff_nparas)
 {
@@ -523,7 +550,7 @@ void WZD_Startup_MainGame(void)
 
 // mov     [GAME_RazeCity], 0
     _human_player_idx = HUMAN_PLAYER_IDX;
-// mov     [VGA_PageFlipEffect], 0
+    PageFlipEffect = 0;
 // call    j_CTY_CatchmentRefresh          ; clears and recalculates the bitfield lookup tables
 
     GAME_Overland_Init();
@@ -533,7 +560,7 @@ void WZD_Startup_MainGame(void)
 // call    j_LD_MAP_TFUnk40_Eval           ; not sure what this resource is or would have been,
 // call    j_CTY_CheckMinFarmers           ; ensures that every city has at least the minimum
 
-    // _unit_stack_count = 0;
+    _unit_stack_count = 0;
 
 // call    j_SND_PlayBkgrndTrack           ; stops all sound playback and, if background music is
 
@@ -594,6 +621,17 @@ void WZD_Startup_MainGame(void)
 // WZD o51p01
 // _main() |-> WZD_Startup_MainGame() |-> GAME_Overland_Init()
 // Load_Screen |-> [WZD ovr160] Loaded_Game_Update() |-> GAME_Overland_Init()
+/*
+    Does this not feel like ~ Init Main Screen?
+    There are a few oddities...
+        city buildings
+        staff lock flags
+        nominal skill calc
+        ! City Recalculate All - Main Screen needs that for the Resources Window
+        GFX_Swap_Cities(), which has a terribly misleading name, loads other screens stuff
+        ? G_WLD_StaticAssetRfrsh() Meh. More oddities...
+
+*/
 void GAME_Overland_Init(void)
 {
     int16_t itr_cities;

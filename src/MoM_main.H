@@ -56,7 +56,16 @@ extern uint8_t g_Palette[];
 extern uint8_t g_Palette_XBGR[];
 
 
+/*
+    WIZARDS.EXE seg001
+*/
+
+// WZD s01p02
 void Screen_Control(void);
+
+// WZD s01p03
+void PageFlip_FX(void);
+
 
 void MoM_main(void);
 
@@ -66,14 +75,15 @@ void MoM_Tables_Init(int16_t gfx_buff_nparas);
 void WZD_Startup_MainGame(void);
 
 
+/*
+    WIZARDS.EXE  ovr052
+*/
+
 // WZD o51p01
 void GAME_Overland_Init(void);
+
 // WZD o51p02
 void G_WLD_StaticAssetRfrsh(void);
-// WZD o67p15
-int16_t IsPassableTower(int16_t world_x, int16_t world_y);
-// WZD o63p15
-int16_t Check_Planar_Seal(void);
 
 
 /*
@@ -91,11 +101,27 @@ void Terrain_Init(void);
 
 // WZD o52p20
 void GFX_Swap_Reset(void);
+
 // WZD o52p22
 // AKA GFX_Swap_AppendUnits()
 void Load_Unit_StatFigs(void);
 // WZD o52p30
 void GFX_Swap_Cities(void);
+
+
+/*
+    WIZARDS.EXE  ovr063
+*/
+
+// WZD o63p15
+int16_t Check_Planar_Seal(void);
+
+/*
+    WIZARDS.EXE  ovr067
+*/
+
+// WZD o67p15
+int16_t IsPassableTower(int16_t world_x, int16_t world_y);
 
 
 #ifdef __cplusplus

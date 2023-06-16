@@ -204,7 +204,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     while(g_State_Run)
     {
-        Poll_Messages();
+        // Do I still need this around for any reason?
+        // Poll_Messages();
 
         Screen_Control();
 

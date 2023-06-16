@@ -1,4 +1,6 @@
 
+// #include "MoM.hpp"  /* Pump_Events() */
+
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
@@ -22,6 +24,7 @@
 #include "STU_DBG.H"
 #endif
 
+extern void Pump_Events(void);
 
 
 void Main_Screen_Load_Pictures(void);
@@ -64,7 +67,7 @@ int16_t field_idx_hotkey_G;
 // WZD dseg:2E12
 // DBG_Alt_A_State dw 0
 // WZD dseg:2E14
-// IDK_FirstTurnFlag_w398B4 dw 0
+int16_t UU_first_turn_done_flag = ST_FALSE;
 // WZD dseg:2E16
 // hotkey_MainScrn_X db 'X'
 // WZD dseg:2E17
@@ -223,7 +226,7 @@ char cstr_GP[] = "GP";
 char cstr_MP[] = "MP";
 
 // WZD dseg:31A3 50 00                   UNIT_Purifying_Mark db 'P',0
-// WZD dseg:31A8 42 00                   UNIT_Building_Mark db 'B',0             ; could use dseg:2c50
+// WZD dseg:31A8 42 00                   UNIT_Building_Mark db 'B',0
 // WZD dseg:31AA 47 00                   UNIT_Going_Mark db 'G',0
 // WZD dseg:31AC 43 00                   UNIT_Unk_C_Mark db 'C',0
 // WZD dseg:31AE 4D 6F 76 65 73 3A 00    cnst_Moves db 'Moves:',0
@@ -737,7 +740,8 @@ void Add_Unit_Window_Fields(void)
 // WZD 
 void Main_Screen(void)
 {
-    int16_t finished;
+    int16_t leave_screen_flag;
+    int16_t screen_changed;
     int16_t input_field_idx;
     int16_t mouse_x;
     int16_t mouse_y;
@@ -848,69 +852,44 @@ void Main_Screen(void)
 
     Reset_Window();
     Clear_Fields();
-    // WZD ovr058 j_Set_Mouse_List_Normal() |-> Set_Mouse_List_Normal() |-> Set_Mouse_List(1, normal_mouse_list)
-    // WZD dseg:00EE  normal_mouse_list GUI_WINDOW <Crsr_Normal, 0, 0, 0, 319, 199>
-    // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
-    Set_Mouse_List(1, mouse_list_default);
-    // Set_Outline_Color(0)
-
-    // Disable_Redraw_Function()
-    // Set_Redraw_Function(Main_Screen_Draw(), 1)
-
-    // Allocate_Reduced_Map__2()
-    // j_OVL_ResetStackDraw
-    // j_UNIT_DrawPriorities
-    // j_STK_NoUnitDraw
-    // j_OVL_MapDrawRenew
-    // j_OVL_PrepMinimap
-    // j_OVL_SetUnitsOnMap(map_x, map_y, map_plane)
-    // j_STK_GetExtraActions()
-
-    // OVL_STKUnitCards_Lft = 247;  // F7h
-    // OVL_STKUnitCards_Top = 79;   // 4Fh
+    // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+    // j_Allocate_Reduced_Map__2();  byte-identical to LBX_Minimap_Alloc, should not exist
+    // j_Reset_Active_Stack_Draw();  // AKA j_OVL_ResetStackDraw()
+    Set_Outline_Color(0);
+    // j_UNIT_DrawPriorities();
+    // j_STK_NoUnitDraw();
+    // Disable_Redraw_Function();
+    // Set_Redraw_Function(j_Main_Screen_Draw, 1);
+    // _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
+    // _unit_window_start_y = 79;  // AKA OVL_STKUnitCards_Top
     // G_Some_OVL_Var_1 = 0;  // ? ST_FALSE ?
     // CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
     // CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
     // OVL_MapVar3 = 1;  // ? ST_TRUE ?
-
-    // if (CRP_OverlandVar_3 != ST_TRUE) { CRP_OverlandVar_3 = ST_FALSE; }
-    // if (CRP_OverlandVar_4 != ST_TRUE) { CRP_OverlandVar_4 = ST_FALSE; }
-
-    // screen_changed = ST_FALSE;
-
+    // j_Undef_Prev_Map_Draw_XY();  // j_OVL_MapDrawRenew()
+    // j_OVL_PrepMinimap();
+    // j_Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);  // AKA j_OVL_SetUnitsOnMap()
+    Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
+    // j_STK_GetExtraActions();
+    // if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
+    // if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
+    screen_changed = ST_FALSE;
     // Local_0 = 0;  // ? ST_FALSE ?
-
-    // TODO  Set_Input_Delay(1);
-    // TODO  VGA_BlinkReset()
+    Set_Input_Delay(1);
+    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
     // TODO  Clear_Help_Fields();
     // TODO  Main_Screen_Help();
-    // DBG_Alt_A__TurnCount = ST_UNDEFINED
-
-    // about to call Main_Screen_Draw_Do_Draw(), with ...
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
+    // DBG_Alt_A__TurnCount = -1
     Main_Screen_Draw();
+    PageFlip_FX();
+    leave_screen_flag = ST_FALSE;
+    while(leave_screen_flag == ST_FALSE)
+    {
+        // TODO  CLK_Save();
 
-    // PageFlip_FX();  // WZD s01p03
-    // WZD dseg:9C8E PageFlipEffect dw 0
-    // WZD_StartUp_MainGame() { ... PageFlipEffect = 0; ... } 
-    // Loaded_Game_Update() { ... PageFlipEffect = 0; ... }
-    // So, ... PageFlip_FX(PageFlipEffect = 0) |-> Apply_Palette(); Toggle_Pages()
-    Apply_Palette();
-    Toggle_Pages();
-
-    // DNE input_field_idx = ST_FALSE;
-//     finished = ST_FALSE;
-//     while(!finished)
-//     {
-//         // CLK_Save
-
+        /*
+            BEGIN: Add Fields
+        */
         Clear_Fields();
         Main_Screen_Add_Fields();
 
@@ -925,66 +904,92 @@ void Main_Screen(void)
         hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
         hotkey_idx_Q = Add_Hot_Key('Q');
         hotkey_idx_U = Add_Hot_Key('U');
-        hotkey_idx_Home = Add_Hot_Key(KP_Home);
-        hotkey_idx_Up = Add_Hot_Key(KP_Up);
-        hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
-        hotkey_idx_Left = Add_Hot_Key(KP_Left);
-        hotkey_idx_Right = Add_Hot_Key(KP_Right);
-        hotkey_idx_End = Add_Hot_Key(KP_End);
-        hotkey_idx_Down = Add_Hot_Key(KP_Down);
-        hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
-        hotkey_idx_F10 = Add_Hot_Key(KP_F10);
-        hotkey_idx_F1 = Add_Hot_Key(KP_F1);
-        hotkey_idx_F2 = Add_Hot_Key(KP_F2);
-        hotkey_idx_F3 = Add_Hot_Key(KP_F3);
-        hotkey_idx_F4 = Add_Hot_Key(KP_F4);
-        hotkey_idx_F5 = Add_Hot_Key(KP_F5);
-        hotkey_idx_F6 = Add_Hot_Key(KP_F6);
-        hotkey_idx_F7 = Add_Hot_Key(KP_F7);
-        hotkey_idx_F8 = Add_Hot_Key(KP_F8);
-        hotkey_idx_F9 = Add_Hot_Key(KP_F9);
+        // hotkey_idx_Home = Add_Hot_Key(KP_Home);
+        // hotkey_idx_Up = Add_Hot_Key(KP_Up);
+        // hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
+        // hotkey_idx_Left = Add_Hot_Key(KP_Left);
+        // hotkey_idx_Right = Add_Hot_Key(KP_Right);
+        // hotkey_idx_End = Add_Hot_Key(KP_End);
+        // hotkey_idx_Down = Add_Hot_Key(KP_Down);
+        // hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
+        // hotkey_idx_F10 = Add_Hot_Key(KP_F10);
+        // hotkey_idx_F1 = Add_Hot_Key(KP_F1);
+        // hotkey_idx_F2 = Add_Hot_Key(KP_F2);
+        // hotkey_idx_F3 = Add_Hot_Key(KP_F3);
+        // hotkey_idx_F4 = Add_Hot_Key(KP_F4);
+        // hotkey_idx_F5 = Add_Hot_Key(KP_F5);
+        // hotkey_idx_F6 = Add_Hot_Key(KP_F6);
+        // hotkey_idx_F7 = Add_Hot_Key(KP_F7);
+        // hotkey_idx_F8 = Add_Hot_Key(KP_F8);
+        // hotkey_idx_F9 = Add_Hot_Key(KP_F9);
         hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
         hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
+        /*
+            END: Add Fields
+        */
 
 
         input_field_idx = Get_Input();
 
+        /*
+            BEGIN: Check Input against Fields
+        */
         if(input_field_idx == field_idx_hotkey_G)
         {
             DLOG("(input_field_idx == field_idx_hotkey_G)");
-            finished = ST_TRUE;
+            leave_screen_flag = ST_TRUE;
             g_Current_Screen = scr_Main_Menu_Screen;
         }
         if(input_field_idx == field_idx_hotkey_Q)
         {
-            DLOG("(input_field_idx == field_idx_hotkey_G)");
-            finished = ST_TRUE;
+            DLOG("(input_field_idx == field_idx_hotkey_Q)");
+            leave_screen_flag = ST_TRUE;
             g_Current_Screen = scr_Quit_To_DOS;
         }
 
-    // about to call Main_Screen_Draw_Do_Draw(), with ...
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
-            Main_Screen_Draw();
+        /*
+            END: Check Input against Fields
+        */
 
-            Toggle_Pages();
-            mouse_x = Pointer_X();
-            mouse_y = Pointer_Y();
-            Check_Mouse_Shape(mouse_x, mouse_y);
-            Draw_Mouse(mouse_x, mouse_y);
-//         
-//     }
+
+        if( (leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
+        {
+            Main_Screen_Draw();
+            if(_turn == 0)
+            {
+                // TODO  j_NameStartingCity_Dialog_Popup(0);
+                // TODO  Set_Redraw_Function(j_Main_Screen_Draw, 1);
+                UU_first_turn_done_flag = ST_TRUE;
+            }
+            else
+            {
+                UU_first_turn_done_flag = ST_TRUE;
+            }
+            // j_nulsub_D50FF();
+            // j_nulsub_87A9A();
+            PageFlip_FX();
+            // TODO  CLK_Wait(1);
+        }
+        screen_changed = ST_FALSE;
+
+        /*
+        PageFlip_FX();
+        Main_Screen_Draw();
+        Toggle_Pages();
+        mouse_x = Pointer_X();
+        mouse_y = Pointer_Y();
+        Check_Mouse_Shape(mouse_x, mouse_y);
+        Draw_Mouse(mouse_x, mouse_y);
+        */
+
+        // HACK: hard-coded to get back around to the Windows Message Loop
+        leave_screen_flag = ST_TRUE;
+        Pump_Events();
+    }
 
     // TODO  Disable_Redraw_Function()
     // TODO  Clear_Help_Fields()
     // TODO  Reset_Window()  AKA VGA_ResetDrawWindow()
-
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen()\n", __FILE__, __LINE__);

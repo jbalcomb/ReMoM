@@ -124,6 +124,14 @@ void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t widt
 int16_t Get_String_Width(char * string);
 
 
+/*
+    WIZARDS.EXE  seg021
+*/
+
+// WZD s21p01
+void Apply_Palette(void);
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,6 @@
 
+// #include "MoM.hpp"  /* Pump_Events() */
+
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
@@ -12,10 +14,13 @@
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
+#include "Video.H"  /* Page_Flip() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
+
+extern void Pump_Events(void);
 
 
 char mainscrn_lbx_file[] = "MAINSCRN";          // MGC  dseg:28A7
@@ -122,7 +127,8 @@ void Main_Menu_Screen(void)
     int16_t mouse_x;
     int16_t mouse_y;
     int16_t first_draw_done_flag;
-
+    int16_t leave_screen_flag;
+    
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen()\n", __FILE__, __LINE__);
 #endif
@@ -174,8 +180,9 @@ void Main_Menu_Screen(void)
     // TODO  Set_Input_Delay(4);
 
 
-
-//  while(flag_done == ST_FALSE) {
+    leave_screen_flag = ST_FALSE;
+    while(leave_screen_flag == ST_FALSE)
+    {
 
         // TODO  CLK_Save();
 
@@ -206,8 +213,9 @@ void Main_Menu_Screen(void)
         }
 
 
-//      if(flag_done == ST_FALSE) {
-    
+        if(leave_screen_flag == ST_FALSE)
+        {
+
             Main_Menu_Screen_Draw();
             Toggle_Pages();
             mouse_x = Pointer_X();
@@ -228,24 +236,24 @@ void Main_Menu_Screen(void)
 
 //          }  /* if(!((screen_fade == ST_FALSE) & (draw_done != ST_FALSE))) */
 
-        if(first_draw_done_flag == ST_FALSE)
-        {
-            // Copy_Off_To_On_Page();
-            Page_Flip();
-            first_draw_done_flag = ST_TRUE;
-        }
+            if(first_draw_done_flag == ST_FALSE)
+            {
+                // Copy_Off_To_On_Page();
+                Page_Flip();
+                first_draw_done_flag = ST_TRUE;
+            }
 
             // TODO  CLK_Wait(2);
 
-//      }  /* if(flag_done == ST_FALSE) */
+        }  /* if(leave_screen_flag == ST_FALSE) */
 
-//  }  /* while ( flag_done == ST_FALSE ) */
+        // HACK: hard-coded to get back around to the Windows Message Loop
+        leave_screen_flag = ST_TRUE;
+        Pump_Events();
+    }  /* while(leave_screen_flag == ST_FALSE) */
 
     // TODO  Disable_Redraw();
-
     // TODO  Deactivate_Help_List();
-
-
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Screen()\n", __FILE__, __LINE__);

@@ -12,7 +12,7 @@
 /*
     Initialized Data
 */
-// TODO  int16_t _global_esc = ST_FALSE;
+// INPUT  _global_esc = ST_FALSE;
 // TODO  int16_t help_list_active = ST_FALSE;
 // TODO  int16_t help_list_count = 0;
 // TODO  int16_t focused_field = ST_UNDEFINED;
@@ -23,10 +23,13 @@
     Uninitialized Data
 */
 // TODO  int help_list;
-// TODO  int16_t input_delay;
+// INPUT  int16_t input_delay;
 // TODO  int16_t cursor_offset;
 int16_t fields_count;
 struct s_Field * p_fields;
+
+// INPUT
+extern int16_t down_mouse_button;
 
 
 /*
@@ -242,7 +245,7 @@ void Clear_Fields(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Clear_Fields()\n", __FILE__, __LINE__);
 #endif
 
-    /* ? down_mouse_button = ST_UNDEFINED; ? */
+    down_mouse_button = ST_UNDEFINED;
     fields_count = 1;
     // TODO  focused_field = ST_UNDEFINED;
     // TODO  mouse_field = ST_FALSE;

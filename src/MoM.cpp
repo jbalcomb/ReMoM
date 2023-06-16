@@ -1,6 +1,8 @@
 
 #include "MoM.hpp"
 
+#include "Input.H"  /* g_Mouse_X, g_Mouse_Y */
+#include "Mouse.H"  /* Check_Mouse_Shape(), Draw_Mouse() */
 #include "Video.H"
 
 /*
@@ -35,6 +37,7 @@ uint16_t screen_pixel_width   =  320;
 uint16_t screen_pixel_height  =  200;
 uint16_t screen_pixel_size    =  (screen_pixel_width * screen_pixel_height);
 
+
 void Render_VBB(game_offscreen_buffer * Buffer)
 {
 
@@ -54,8 +57,20 @@ void Render_VBB(game_offscreen_buffer * Buffer)
 
 }
 
-
 void GameUpdateAndRender(game_offscreen_buffer * Buffer)
 {
     Render_VBB(Buffer);
+}
+
+void Update_Mouse_Position(int16_t mouse_x, int16_t mouse_y)
+{
+    g_Mouse_X = mouse_x / 2;
+    g_Mouse_Y = mouse_y / 2;
+    // // // mouse_x = Pointer_X();
+    // // // mouse_y = Pointer_Y();
+    // Check_Mouse_Shape(g_Mouse_X, g_Mouse_Y);
+    // // Save_Mouse(g_Mouse_X, g_Mouse_Y);
+    // Draw_Mouse(g_Mouse_X, g_Mouse_Y);
+    // // Page_Flip();
+    // // Restore_Mouse();
 }
