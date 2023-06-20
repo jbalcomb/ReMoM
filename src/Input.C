@@ -2,6 +2,8 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
+#include "MoM.hpp"
+
 #include "Allocate.H"
 #include "Fields.H"
 #include "Input.H"
@@ -13,14 +15,24 @@
 #include "STU_DBG.H"
 #endif
 
+/*
+    WIZARDS.EXE
+    seg035
+    seg036
+
+    ? seg0035 vs. seg036 ?
+    Hi/Lo?
+    C/Asm?
+    
+    Input vs. Keyboard vs. Mouse vs. Fields vs. ?
+    ?!? redraw functions and Toggle_Pages() ?!?
+
+*/
 
 
-uint8_t g_Key_Pressed;
-uint16_t g_Last_Key_Pressed;
-uint16_t scan_code_char_code;  // Platform
-int16_t g_Mouse_X;
-int16_t g_Mouse_Y;
-
+uint8_t g_Key_Pressed;          // Platform - Decl in MoM.hpp
+uint16_t g_Last_Key_Pressed;    // Platform - Decl in MoM.hpp
+uint16_t scan_code_char_code;   // Platform - Decl in MoM.hpp
 
 
 // WZD dseg:824E
@@ -90,12 +102,13 @@ int16_t Interpret_Mouse_Input(void)
 {
     int16_t field_num;
     int16_t character;
-    int16_t mouse_x;
-    int16_t mouse_y;
+    int16_t mx;
+    int16_t my;
     int16_t pointer_offset;
     int16_t down_mouse_button;
     int16_t mouse_field;
-
+    int16_t MD_ButtonStatus;
+    
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
 #endif
@@ -105,8 +118,8 @@ int16_t Interpret_Mouse_Input(void)
     // MD_ButtonStatus = 0;
     mouse_field = 0;
 
-    mouse_x = Pointer_X();
-    mouse_y = Pointer_Y();
+    mx = Pointer_X();
+    my = Pointer_Y();
     pointer_offset = Get_Pointer_Offset();
 
 
@@ -118,6 +131,38 @@ int16_t Interpret_Mouse_Input(void)
     else
     {
         DLOG("(Keyboard_Status() != ST_TRUE)");
+        // Mouse_Movement_Handler();
+        // WZD seg035
+        if(MD_GetButtonStatus() == ST_FALSE)
+        {
+            // if(MD_Get_ClickRec1() == ST_FALSE)
+            // {
+            //     Mouse_Button_Handler();
+            //     return 0;
+            // }
+            // else
+            // {
+            //     Mouse_Btn_Clicked = MD_GetClickedBtns();
+            //     // if ...
+            //     // Mouse_Btn_Clicked == 2
+            //     // have_help == ST_FALSE
+            //     // GUI_ContextBasedHelp() != ST_FALSE
+            //     // _global_esc != ST_FALSE
+            // }
+            // TODO(JimBalcomb,20230619): Y/N/M do the whole ClickRec business here (there's a whole to it)
+        }
+        else
+        {
+            /*
+                ProgramPath:
+                    KBD_CheckBuffer == 0
+                    MDI_Mv()
+                    MD_INT_SetMvOnly()
+                    MD_GetButtonStatus() != 0
+            */
+            MD_ButtonStatus = MD_GetButtonStatus();
+        }
+
     }
 
 #ifdef DEBUG
@@ -138,6 +183,131 @@ int16_t Interpret_Mouse_Input(void)
 #endif
 
     return field_num;
+}
+
+// WZD s36p25
+int16_t Scan_Field(void)
+{
+    int16_t mx;
+    int16_t my;
+    int16_t itr;
+    int16_t current_field;
+    int16_t xmin;
+    int16_t ymin;
+    int16_t xmax;
+    int16_t ymax;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Scan_Field()\n", __FILE__, __LINE__);
+#endif
+
+    mx = Pointer_X();
+    my = Pointer_Y();
+
+    current_field = 0;  // ? ST_NULL ?
+
+    Check_Mouse_Shape(mx, my);
+    cursor_offset = Get_Pointer_Offset();
+
+    for(itr= 1; itr < fields_count; itr++)
+    {
+        xmin = p_fields[itr].x1;
+        ymin = p_fields[itr].y1;
+        xmax = p_fields[itr].x2;
+        ymax = p_fields[itr].y2;
+
+        if(
+            (mx + cursor_offset >= xmin) &&
+            (mx + cursor_offset <= xmax) &&
+            (my + cursor_offset >= ymin) &&
+            (my + cursor_offset <= ymax)
+        )
+        {
+            current_field = itr;
+            break;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Scan_Field() { current_field = %d }\n", __FILE__, __LINE__, current_field);
+#endif
+
+    return current_field;
+}
+
+// WZD s36p26
+int16_t Scan_Input(void)
+{
+    int16_t mx;
+    int16_t my;
+    int16_t itr;
+    int16_t current_field;
+    // MoO2 int16_t xmin;
+    // MoO2 int16_t ymin;
+    // MoO2 int16_t xpos;
+    // MoO2 int16_t ypos;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Scan_Field()\n", __FILE__, __LINE__);
+#endif
+
+    mx = Pointer_X();
+    my = Pointer_Y();
+
+    current_field = 0;  // ? ST_NULL ?
+
+    Check_Mouse_Shape(mx, my);
+    cursor_offset = Get_Pointer_Offset();
+
+    current_field = Scan_Field();
+
+    /*
+        Field Type: ? //drake178 ClickLink  DNE in MoO2
+    */
+    if(p_fields[current_field].type == ft_ClickLink)
+    {
+        *((int16_t *)p_fields[itr].Param2) = p_fields[itr].Param1;
+        current_field = p_fields[itr].Param0;
+    }
+
+    /*
+        Field Type: String List
+    */
+    /*
+        Field Type: Grid
+    */
+    /*
+        Another climb up Mt. Ifferest...
+
+        p_fields[current_field].type == ft_StringList
+        p_fields[itr].Selectable != ST_FALSE
+        ...return 0
+        p_fields[current_field].type == ft_Grid
+        down_mouse_button == ST_UNDEFINED
+        p_fields[down_mouse_button].type == ft_Grid
+        ...return current_field
+
+    */
+    // TODO(JimBalcomb,20230620): make a home for notes like this - code oddities, program-flow for (major) components, gotchas, 
+    /*
+        What's up with the casting of the pointers/values for the field parameters?
+
+        e.g.,
+            the Grid Field for the Movement Map
+                in the call to add Add_Grid_Field() it passes the address for _main_map_grid_x and _main_map_grid_y
+                Add_Grid_Field() then sets the value for Param3 and Param4 as the address of _main_map_grid_x and _main_map_grid_y, respectively
+                later, here in the call to Scan_Input() ...
+                ? it updates the values stored in _main_map_grid_x and _main_map_grid_y ?
+
+    */
+    // if(p_fields[current_field].type == ft_StringList && p_fields[itr].Selectable != ST_FALSE)
+    if(p_fields[current_field].type == ft_Grid)
+    {
+        *((int16_t *)p_fields[itr].Param3) = ( (Pointer_X() - p_fields[itr].x1) / p_fields[itr].Param1 );
+        *((int16_t *)p_fields[itr].Param4) = ( (Pointer_Y() - p_fields[itr].y1) / p_fields[itr].Param2 );
+    }
+
+    return current_field;
 }
 
 // WZD s36p65

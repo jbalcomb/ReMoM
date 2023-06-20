@@ -1,9 +1,13 @@
 
+#include "MoM.hpp"
+
 #include "MoX_DEF.H"
 
 #include "Keyboard.H"
 
 #include "Input.H"
+
+
 
 /*
 typedef __int64 LONG_PTR, *PLONG_PTR;
@@ -109,6 +113,13 @@ int16_t Keyboard_Status(void)
 
 
 */
+/*
+    To add/edit a key;
+        the SCCC and ST_KEY enums are in Input.H
+        the VK_to_SCCS array is in Win32_Evnt.cpp
+    
+    * Reminder: Key Labels are (generally) capitalized, so (safely) assume "C" is 'c', "Shift-C" is 'C'
+*/
 uint8_t Read_Key(void)
 {
     int8_t return_key;
@@ -121,28 +132,26 @@ uint8_t Read_Key(void)
     dbg_prn("DEBUG: [%s, %d]: scan_code_char_code: %d\n", __FILE__, __LINE__, scan_code_char_code);
 #endif
 
+    // Clear the Keyboard Status ~== INT 16,10
+    g_Key_Pressed = ST_FALSE;
+
+    // treat 1-byte scan code and 1-byte character code as a 2-byte value
+    // short int / int16_t
+    // ? array of 65536 values ?
+    // ? loop thorugh array of stuct ?
+    // ? procedurally generate a switch statement code block ?
     switch(scan_code_char_code)
     {
         case SCCC_ESC: { return_key = ST_KEY_ESCAPE; } break;
 
         case SCCC_A: { return_key = 'a'; } break;
         
-        case SCCC_C:
-        {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: case SCCC_C:\n", __FILE__, __LINE__);
-#endif
-            return_key = 'c';
-        } break;
+        case SCCC_C: { return_key = 'c'; } break;
 
         case SCCC_Q: { return_key = 'q'; } break;
 
         default: { return_key = ST_NULL; }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Read_Key() { return_key = %d }\n", __FILE__, __LINE__, return_key);

@@ -16,7 +16,7 @@ extern uint8_t g_Palette_XBGR[];
 #endif
 
 #include <string.h>         /* strcpy() */
-
+// ? itoa() ?
 
 
 // WZD dseg:783C
@@ -343,9 +343,9 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] string: %s\n", __FILE__, __LINE__, string);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] string: %s\n", __FILE__, __LINE__, string);
+// #endif
 
 //     // /* If the string doesn't exist or is empty, EOF found */
 //     // if (c_str && *c_str) {
@@ -369,14 +369,14 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
     {
         // if(file_name[itr] == '.') { file_name[itr] = '\0'; }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] string[itr]: %u\n", __FILE__, __LINE__, string[itr]);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] string[itr]: %u\n", __FILE__, __LINE__, string[itr]);
+// #endif
 
         character = string[itr];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] character: %u\n", __FILE__, __LINE__, character);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] character: %u\n", __FILE__, __LINE__, character);
+// #endif
 
         print_xpos = Print_Character(print_xpos, print_ypos, character);
 
@@ -400,15 +400,15 @@ int16_t Get_Current_Font_Index(void)
 {
     int16_t current_font_index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
+// #endif
 
     current_font_index = Font_Index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] current_font_index: %d\n", __FILE__, __LINE__, current_font_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] current_font_index: %d\n", __FILE__, __LINE__, current_font_index);
+// #endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_index = %d }\n", __FILE__, __LINE__, current_font_index);
@@ -423,15 +423,15 @@ int16_t Get_Current_Font_Color(void)
 {
     int16_t current_font_color;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
+// #endif
 
     current_font_color = Font_ColorIndex1;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] current_font_color: %d\n", __FILE__, __LINE__, current_font_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] current_font_color: %d\n", __FILE__, __LINE__, current_font_color);
+// #endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_color = %d }\n", __FILE__, __LINE__, current_font_color);
@@ -582,10 +582,10 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
         // _SI_SrcOfst = font_header.current_data_offsets[char_num]
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] font_header->current_font_widths[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_font_widths[char_num]);
-    dbg_prn("DEBUG: [%s, %d] font_header->current_data_offsets[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_data_offsets[char_num]);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] font_header->current_font_widths[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_font_widths[char_num]);
+//     dbg_prn("DEBUG: [%s, %d] font_header->current_data_offsets[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_data_offsets[char_num]);
+// #endif
 
         width = font_header->current_font_widths[char_num];
         font_data_offset = (font_style_data + font_header->current_data_offsets[char_num]);
@@ -657,30 +657,30 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
     // add     ax, [current_video_page]
     // mov     es, ax
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] current_video_page: %p\n", __FILE__, __LINE__, current_video_page);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] current_video_page: %p\n", __FILE__, __LINE__, current_video_page);
+// #endif
 
     screen_start = current_video_page + ((y_start * 320) + x_start);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] screen_start: %p\n", __FILE__, __LINE__, screen_start);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] screen_start: %p\n", __FILE__, __LINE__, screen_start);
+// #endif
 
 
     screen_pos = screen_start;
     while(width)
     {
         
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] screen_pos: %p\n", __FILE__, __LINE__, screen_pos);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] screen_pos: %p\n", __FILE__, __LINE__, screen_pos);
+// #endif
 
         font_data_byte = *font_data_offset++;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] font_data_byte: %02X  %u\n", __FILE__, __LINE__, font_data_byte, font_data_byte);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] font_data_byte: %02X  %u\n", __FILE__, __LINE__, font_data_byte, font_data_byte);
+// #endif
 
         /* Type: next column */
         if(font_data_byte == 0x80)
@@ -699,9 +699,9 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
         )
         {
             skip_count = (font_data_byte & 0x7F);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] skip_count: %u\n", __FILE__, __LINE__, skip_count);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] skip_count: %u\n", __FILE__, __LINE__, skip_count);
+// #endif
             while(skip_count--)
             {
                 screen_pos += 320;
@@ -711,15 +711,15 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
         if((font_data_byte & 0x80) == 0)
         {
             repeat_count = ((font_data_byte & 0xF0) >> 4);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] repeat_count: %u\n", __FILE__, __LINE__, repeat_count);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] repeat_count: %u\n", __FILE__, __LINE__, repeat_count);
+// #endif
             while(repeat_count--)
             {
                 color_index = (font_data_byte & 0x0F);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] color_index: %u\n", __FILE__, __LINE__, color_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] color_index: %u\n", __FILE__, __LINE__, color_index);
+// #endif
                 *screen_pos = font_header->current_colors[color_index];
                 screen_pos += 320;
             }

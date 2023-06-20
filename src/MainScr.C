@@ -5,6 +5,7 @@
 #include "MoX_DEF.H"
 
 #include "MoX_Data.H"
+#include "MoX_GAM.H"
 #include "UNITTYPE.H"
 
 #include "MoM_main.H"
@@ -19,27 +20,80 @@
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
+#include "UnitMove.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
+
 extern void Pump_Events(void);
 
 
 void Main_Screen_Load_Pictures(void);
+
+/*
+    WIZARDS.EXE  ovr057
+*/
+// WZD o57p01
+// PUBLIC void Main_Screen(void);
 // WZD o57p02
 void Main_Screen_Add_Fields(void);
 // WZD o57p03
 void Add_Unit_Action_Fields(void);
 // WZD o57p04
-// Main_Screen_Draw_Unit_Actions()
+void Main_Screen_Draw_Unit_Action_Buttons(void);
 // WZD o57p05
 void Add_Game_Button_Fields(void);
 // WZD o57p06
-// Main_Screen_Draw_Game_Buttons()
+void Main_Screen_Draw_Game_Buttons(void);
 // WZD o57p07
 void Add_Unit_Window_Fields(void);
+// WZD o57p08
+void Main_Screen_Draw(void);
+// WZD o57p09
+void Main_Screen_Reset(void);
+// WZD o57p10
+void IDK_UnitMoves_and_PlanarTravel(void);
+/*
+    WIZARDS.EXE  ovr058
+*/
+// WZD o58p01
+void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
+/*
+    WIZARDAS.EXE  ovr062
+*/
+// WZD o62p04
+void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
+/*
+    WIZARDAS.EXE  ovr063
+*/
+// WZD o063p01
+void Main_Screen_Draw_Status_Window(void);
+// WZD o063p02
+void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
+// WZD o063p04
+void Cycle_Unit_Enchantment_Animation(void);
+// WZD o063p05
+void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
+// WZD o063p05
+// AKA OVL_DrawUnitImage()
+void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
+// WZD o63p12
+int16_t OVL_GetStackHMoves(void);
+/*
+    WIZARDS.EXE  ovr064
+*/
+// WZD o64p01
+void Allocate_Reduced_Map__1(void);
+// WZD o064p04
+void Main_Screen_Draw_Summary_Window(void);
+// WZD o064p05
+void Main_Screen_Draw_Next_Turn_Button(void);
+// WZD o64p08
+void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
+// WZD o64p09
+void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 
 
@@ -153,8 +207,22 @@ char hotkey_MagicButton[] = "M";
 // WZD dseg:2F81 
 char hotkey_InfoButton[] = "I";
 
+// WZD dseg:305B  align 2
+
+// WZD dseg:305C                                                 ? BEGIN: Draw Unit Window ?
+
+// WZD dseg:305C 
+int16_t WP_Quality_Anim_Stg;
+// WZD dseg:305E
+// AKA UE_Anim_State
+int16_t unit_enchantment_animation_count;
+// WZD dseg:3060
+// AKA UE_Anim_Skip
+int16_t unit_enchantment_animation_flag;  
+
 
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
+
 // WZD dseg:C03E
 // CRP_OverlandVar_2 dw 0
 // WZD dseg:C040
@@ -180,9 +248,9 @@ int16_t Unit_Window_Fields[9];
 // WZD dseg:C064
 // CRP_OverlandVar_3 dw 0
 // WZD dseg:C066
-// OVL_Path_Length dw 0
+int16_t OVL_Path_Length;
 // WZD dseg:C068
-// OVL_StackHasPath dw 0
+int16_t OVL_StackHasPath;
 
 // WZD dseg:C06A
 int16_t _done_button;
@@ -206,6 +274,25 @@ int16_t _armies_button;
 int16_t _spells_button;
 // WZD dseg:C07E
 int16_t _game_button;
+
+
+// WZD dseg:C080 dw 0
+// WZD dseg:C082 _unit_window_start_y dw 0
+// WZD dseg:C084 _unit_window_start_x dw 0
+// WZD dseg:C086 _reduced_map_seg dw 0
+// WZD dseg:C088 NIU_MainScreen_local_flag dw 0
+// WZD dseg:C08A SND_Bkgrnd_Track dw 0
+// WZD dseg:C08C word_42B2C dw 0
+
+
+// WZD dseg:C08E
+int16_t STK_HMoves_Left;
+    // XREF  OVL_GetStackHMoves+D3      mov     ax, [STK_HMoves_Left]                
+    // XREF  OVL_GetStackHMoves:@@Done  mov     [STK_HMoves_Left], _SI_MovementPoints
+    // XREF  STK_GetMovesLeft+A3        mov     ax, [STK_HMoves_Left]                
+    // XREF  STK_GetMovesLeft:loc_7E717 mov     [STK_HMoves_Left], si                
+    // XREF  sub_56B56+132              mov     [STK_HMoves_Left], ax                
+    // XREF  sub_56B56+135              mov     ax, [STK_HMoves_Left]                
 
 
 int16_t main_screen_loaded = ST_FALSE;
@@ -492,6 +579,43 @@ SAMB_ptr _unit_colored_backgrounds_seg[6];
 
 
 
+
+/*
+    WIZARDS.EXE  ovr057
+
+  Name, Start,  End, R, W, X, D, L, Align, Base,   Type,   Class, AD,   es,   ss,   ds,  fs,  gs
+ovr057,  0000, 1C77, ?, ?, ?, ., L,  para, 4FB6, public, OVERLAY, 16, FFFF, FFFF, 36AA, N/A, N/A
+
+0x0000
+0x1C77
+
+0x4FB6
+
+0x36AA
+
+
+; Segment type: Pure code
+segment ovr057 para public 'OVERLAY' use16
+assume cs:ovr057
+assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
+; Attributes: bp-based frame
+proc Main_Screen far
+? 00042F20                 "Current offset in the input file"
+? 0004FB60: Main_Screen    "Current location"
+
+
+o57p01  Main_Screen()
+o57p02  Main_Screen_Add_Fields()
+o57p03  Add_Unit_Action_Fields()
+o57p04  Main_Screen_Draw_Unit_Action_Buttons()
+o57p05  Add_Game_Button_Fields()
+o57p06  Main_Screen_Draw_Game_Buttons()
+o57p07  Add_Unit_Window_Fields()
+o57p08  Main_Screen_Draw()
+o57p09  Main_Screen_Reset()
+o57p10  ? IDK_UnitMoves_and_PlanarTravel() ? 
+*/
+
 void Main_Screen_Load_Pictures(void)
 {
     int16_t itr;
@@ -516,12 +640,13 @@ void Main_Screen_Load_Pictures(void)
     main_build_button = LBX_Load(main_lbx_file, 11);
     main_purify_button = LBX_Load(main_lbx_file, 42);
     main_meld_button = LBX_Load(main_lbx_file, 49);
-//     main_lock_done_button = LBX_Load(main_lbx_file, 12);
-//     main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
-//     main_lock_wait_button = LBX_Load(main_lbx_file, 14);
-//     main_lock_build_button = LBX_Load(main_lbx_file, 15);
-//     main_lock_purify_button = LBX_Load(main_lbx_file, 43);
-// 
+
+    main_lock_done_button = LBX_Load(main_lbx_file, 12);
+    main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
+    main_lock_wait_button = LBX_Load(main_lbx_file, 14);
+    main_lock_build_button = LBX_Load(main_lbx_file, 15);
+    main_lock_purify_button = LBX_Load(main_lbx_file, 43);
+
 //     main_white_medal_icon = LBX_Load(main_lbx_file, 51);
 //     main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
 //     main_red_medal_icon = LBX_Load(main_lbx_file, 53);
@@ -586,203 +711,73 @@ void Main_Screen_Load_Pictures(void)
 }
 
 
-// WZD o57p02
-void Main_Screen_Add_Fields(void)
-{
-    int16_t itr_unit_stack;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
-
-    // CRP_OVL_UU_Control_4 = -1000;
-    // CRP_OVL_UU_Control_3 = -1000;
-    // CRP_OVL_UU_Control_2 = -1000;
-    // CRP_OVL_UU_Control_1 = -1000;
-    _main_map_grid_field = -1000;
-    _minimap_grid_field = -1000;
-    _next_turn_button = -1000;
-    _special_button = -1000;
-    _patrol_button = -1000;
-    _wait_button = -1000;
-    _done_button = -1000;
-    _game_button = -1000;
-    _spells_button = -1000;
-    _armies_button = -1000;
-    _cities_button = -1000;
-    _magic_button = -1000;
-    _info_button = -1000;
-    _plane_button = -1000;
-
-    for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
-    {
-        Unit_Window_Fields[itr_unit_stack] = -1000;
-    }
-
-    if(_unit_stack_count > 0)
-    {
-        Add_Unit_Window_Fields();
-    }
-    
-    if(all_units_moved == ST_TRUE)
-    {
-        // _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, hotkey_NextTurn, ST_UNDEFINED);
-        _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
-    }
-
-    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
-    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
-    {
-        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
-        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
-    }
-
-    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
-    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
-    {
-        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
-        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
-    }
-
-    // OVL_SetMenuButtons()
-    // OVL_SetUnitButtons()
-    Add_Game_Button_Fields();
-    Add_Unit_Action_Fields();
-
-
-//     // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
-//     // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
-//     // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
-//     // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
-//     // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
-// 
-//     // int16_t Add_Hot_Key(int16_t select_char)
-//     field_idx_hotkey_G = Add_Hot_Key('G');
-//     field_idx_hotkey_Q = Add_Hot_Key('Q');
-// 
-//     // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
-//     _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
-}
-
-// WZD o57p03
-void Add_Unit_Action_Fields(void)
-{
-    if(_unit_stack_count > 0)
-    {
-        _done_button = Add_Button_Field(246, 176, '0', main_done_button, 'D', ST_UNDEFINED);
-        _patrol_button = Add_Button_Field(280, 176, '0', main_patrol_button, '0', ST_UNDEFINED);
-        _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
-    }
-
-    _special_button  = -1000;
-    if(special_action_flag != ST_UNDEFINED)
-    {
-        if(special_action_flag == 2)
-        {
-            _special_button = Add_Button_Field(280, 186, '0', main_purify_button, '0', ST_UNDEFINED);
-        }
-        else if(special_action_flag == 9)
-        {
-            _special_button = Add_Button_Field(280, 186, '0', main_meld_button, '0', ST_UNDEFINED);
-        }
-        else
-        {
-            _special_button = Add_Button_Field(280, 186, '0', main_build_button, 'B', ST_UNDEFINED);
-        }
-    }
-
-    if(_unit_stack_count < 1)
-    {
-        _done_button = -1000;
-        _patrol_button = -1000;
-        _wait_button = -1000;
-        _special_button = -1000;
-
-        if(all_units_moved == ST_FALSE)
-        {
-            _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
-        }
-    }
-}
-
-// WZD o57p04
-// Main_Screen_Draw_Unit_Actions()
-
-// WZD o57p05
-// OVL_SetMenuButtons
-void Add_Game_Button_Fields(void)
-{
-    // cnst_ZeroString_31 ... hotkey_GameButton, etc.
-    _game_button    = Add_Button_Field(  7, 4, '0', main_game_button,   'G', ST_UNDEFINED);
-    _spells_button  = Add_Button_Field( 47, 4, '0', main_spells_button, 'S', ST_UNDEFINED);
-    _armies_button  = Add_Button_Field( 89, 4, '0', main_armies_button, 'A', ST_UNDEFINED);
-    _cities_button  = Add_Button_Field(140, 4, '0', main_cities_button, '0', ST_UNDEFINED);
-    _magic_button   = Add_Button_Field(184, 4, '0', main_magic_button,  'M', ST_UNDEFINED);
-    _info_button    = Add_Button_Field(226, 4, '0', main_info_button,   'I', ST_UNDEFINED);
-    _plane_button   = Add_Button_Field(270, 4, '0', main_plane_button,  'P', ST_UNDEFINED);
-}
-
-// WZD o57p06
-// Main_Screen_Draw_Game_Buttons()
-
-// WZD o57p07
-void Add_Unit_Window_Fields(void)
-{
-
-}
-
-// WZD 
+// WZD 057p01
 void Main_Screen(void)
 {
+    int16_t hotkey_idx_Alt_P;
+    int16_t hotkey_idx_U;
+// strP= byte ptr -6Ch
+    int16_t hotkey_idx_F9;
+    int16_t hotkey_idx_F8;
+    int16_t hotkey_idx_F7;
+    int16_t hotkey_idx_F6;
+    int16_t hotkey_idx_F5;
+    int16_t hotkey_idx_F4;
+    int16_t hotkey_idx_F3;
+    int16_t hotkey_idx_F2;
+    int16_t hotkey_idx_F1;
+// Local_0= word ptr -50h
+// DBG_Alt_A__TurnCount= word ptr -4Eh
+    int16_t hotkey_idx_Alt_A;
+    int16_t hotkey_idx_PgDn;
+    int16_t hotkey_idx_Down;
+    int16_t hotkey_idx_End;
+    int16_t hotkey_idx_Right;
+    int16_t hotkey_idx_Left;
+    int16_t hotkey_idx_PgUp;
+    int16_t hotkey_idx_Home;
+    int16_t hotkey_idx_Up;
+    int16_t gold;
+    int16_t food;
+    int16_t mana;
+    int16_t hotkey_idx_Alt_N;
+    int16_t hotkey_idx_Shift_3;
+    int16_t hotkey_idx_Alt_K;
+    int16_t hotkey_idx_F10;
+    int16_t hotkey_idx_Alt_T;
+    int16_t unit_stack_hmoves;
+    int16_t unit_stack_world_y;
+    int16_t unit_stack_world_x;
+    int16_t IDK_unit_stack_in_view;
+// input= word ptr -22h
+    int16_t hotkey_idx_Q;
+    int16_t hotkey_idx_C;
+    int16_t hotkey_idx_Shift_2;
+    int16_t hotkey_idx_Shift_1;
+    int16_t Unused_Button_Index;
+    int16_t hotkey_idx_X;
+// Unit_Y= word ptr -14h
+// Unit_X= word ptr -12h
+// Bottom@= word ptr -10h
+// Right@= word ptr -0Eh
+    int16_t target_world_y;
+    int16_t target_world_x;
+    int16_t unit_idx;
+// var_ConfirmDialogResponse= word ptr -6
+    int16_t Stack_Index;
     int16_t leave_screen_flag;
+    
     int16_t screen_changed;
     int16_t input_field_idx;
     int16_t mouse_x;
     int16_t mouse_y;
 
-    int16_t gold;
-    int16_t food;
-    int16_t mana;
-
     int16_t itr_units;
 
-    int16_t Unused_Button_Index;
-    int16_t hotkey_idx_C;
-    int16_t hotkey_idx_Q;
-    int16_t hotkey_idx_U;
-    int16_t hotkey_idx_X;
-    int16_t hotkey_idx_Shift_1;
-    int16_t hotkey_idx_Shift_2;
-    int16_t hotkey_idx_Shift_3;
-    int16_t hotkey_idx_Alt_A;
-    int16_t hotkey_idx_Alt_K;
-    int16_t hotkey_idx_Alt_N;
-    int16_t hotkey_idx_Alt_P;
-    int16_t hotkey_idx_Alt_T;
-    int16_t hotkey_idx_Up;
-    int16_t hotkey_idx_Down;
-    int16_t hotkey_idx_Left;
-    int16_t hotkey_idx_Right;
-    int16_t hotkey_idx_PgUp;
-    int16_t hotkey_idx_PgDn;
-    int16_t hotkey_idx_Home;
-    int16_t hotkey_idx_End;
-    int16_t hotkey_idx_F1;
-    int16_t hotkey_idx_F2;
-    int16_t hotkey_idx_F3;
-    int16_t hotkey_idx_F4;
-    int16_t hotkey_idx_F5;
-    int16_t hotkey_idx_F6;
-    int16_t hotkey_idx_F7;
-    int16_t hotkey_idx_F8;
-    int16_t hotkey_idx_F9;
-    int16_t hotkey_idx_F10;
+
+
+    
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
@@ -912,16 +907,16 @@ void Main_Screen(void)
         // hotkey_idx_End = Add_Hot_Key(KP_End);
         // hotkey_idx_Down = Add_Hot_Key(KP_Down);
         // hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
-        // hotkey_idx_F10 = Add_Hot_Key(KP_F10);
-        // hotkey_idx_F1 = Add_Hot_Key(KP_F1);
-        // hotkey_idx_F2 = Add_Hot_Key(KP_F2);
-        // hotkey_idx_F3 = Add_Hot_Key(KP_F3);
-        // hotkey_idx_F4 = Add_Hot_Key(KP_F4);
-        // hotkey_idx_F5 = Add_Hot_Key(KP_F5);
-        // hotkey_idx_F6 = Add_Hot_Key(KP_F6);
-        // hotkey_idx_F7 = Add_Hot_Key(KP_F7);
-        // hotkey_idx_F8 = Add_Hot_Key(KP_F8);
-        // hotkey_idx_F9 = Add_Hot_Key(KP_F9);
+        hotkey_idx_F10 = Add_Hot_Key(ST_KEY_F10);
+        hotkey_idx_F1 = Add_Hot_Key(ST_KEY_F1);
+        hotkey_idx_F2 = Add_Hot_Key(ST_KEY_F2);
+        hotkey_idx_F3 = Add_Hot_Key(ST_KEY_F3);
+        hotkey_idx_F4 = Add_Hot_Key(ST_KEY_F4);
+        hotkey_idx_F5 = Add_Hot_Key(ST_KEY_F5);
+        hotkey_idx_F6 = Add_Hot_Key(ST_KEY_F6);
+        hotkey_idx_F7 = Add_Hot_Key(ST_KEY_F7);
+        hotkey_idx_F8 = Add_Hot_Key(ST_KEY_F8);
+        hotkey_idx_F9 = Add_Hot_Key(ST_KEY_F9);
         hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
         hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
         /*
@@ -931,9 +926,14 @@ void Main_Screen(void)
 
         input_field_idx = Get_Input();
 
-        /*
-            BEGIN: Check Input against Fields
-        */
+
+
+
+
+/*
+    BEGIN: Check Input against Fields
+*/
+
         if(input_field_idx == field_idx_hotkey_G)
         {
             DLOG("(input_field_idx == field_idx_hotkey_G)");
@@ -947,9 +947,346 @@ void Main_Screen(void)
             g_Current_Screen = scr_Quit_To_DOS;
         }
 
+        // Advisor - Surveyor
+        if(input_field_idx == hotkey_idx_F1)
+        {
+            // Advisor_Screen(0);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Cartographer
+        if(input_field_idx == hotkey_idx_F2)
+        {
+            // Advisor_Screen(1);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Apprentice
+        if(input_field_idx == hotkey_idx_F3)
+        {
+            // Advisor_Screen(2);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Historian
+        if(input_field_idx == hotkey_idx_F4)
+        {
+            // Advisor_Screen(3);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Astrologer
+        if(input_field_idx == hotkey_idx_F5)
+        {
+            // Advisor_Screen(4);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Chancellor
+        if(input_field_idx == hotkey_idx_F6)
+        {
+            // Advisor_Screen(5);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Tax Collector
+        if(input_field_idx == hotkey_idx_F7)
+        {
+            // Advisor_Screen(6);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Grand Vizier
+        if(input_field_idx == hotkey_idx_F8)
+        {
+            // Advisor_Screen(7);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+        // Advisor - Mirror
+        if(input_field_idx == hotkey_idx_F9)
+        {
+            // Advisor_Screen(8);
+            // Set_Redraw_Function(Main_Screen_Draw, 1);
+            // Main_Screen_Reset();
+        }
+
+        /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
+        /* Alt-P   */
+        /* Alt-K   */
+        /* Shift-3 */
+        /* Alt-T   */
+        /* Alt-N   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_ShowTileInfo=1-DBG_ShowTileInfo;}} */
+
+        // Quick-Save
+        if(input_field_idx == hotkey_idx_F10)
+        {
+            Save_SAVE_GAM(8);
+        }
+
+        // empty MACRO / null-function-pointer
+        if(input_field_idx == hotkey_idx_X)
+        {
+            
+        }
+
+        // Center Map
+        if(input_field_idx == hotkey_idx_C)
+        {
+            if(_unit_stack_count > 0)
+            {
+                unit_idx = _unit_stack[0].unit_idx;
+                _map_plane = _UNITS[unit_idx].world_plane;
+                Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane);
+                MainScr_Prepare_Reduced_Map();
+                Set_Mouse_List(1, mouse_list_default);
+                Undef_Prev_Map_Draw_XY();
+            }
+        }
+        
+        // ? Quit Action / Unselect Unit ?
+        if( (input_field_idx == hotkey_idx_Q) || (input_field_idx == hotkey_idx_U) )
+        {
+            // _unit_stack_count = 0;
+            // OVL_ShowActiveStack();
+            // UNIT_DrawPriorities();
+            // STK_NoUnitDraw();
+            // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+            // Undef_Prev_Map_Draw_XY();
+            // screen_changed = ST_TRUE;
+        }
+
         /*
-            END: Check Input against Fields
+            BEGIN: Mouse Click
         */
+
+        // Info Button
+        /* if(input_field_idx == _info_button) { SND_LeftClickSound(); _current_screen = scr_Info_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _game_button) { SND_LeftClickSound(); _current_screen = scr_Load_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _cities_button) { SND_LeftClickSound(); _current_screen = scr_Cities_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _magic_button) { SND_LeftClickSound(); _current_screen = scr_Magic_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _armies_button) { SND_LeftClickSound(); _current_screen = scr_Armies_Screen; leave_screen_flag = ST_TRUE; } */
+        if(input_field_idx == _spells_button)
+        {
+            // SND_LeftClickSound();
+            if(_players[_human_player_idx].Spell_Cast == 0xD6) /* Spell of Return */
+            {
+                // You may not throw any spells while you are banished.
+                // GUI_NearMsgString
+                // strcpy()
+                // strcat()
+                // strcat()
+                // GUI_WarningType0()
+                // Set_Redraw_Function(Main_Screen_Draw, 1);
+            }
+            else
+            {
+                // OVL_ShowActiveStack();
+                // UNIT_DrawPriorities();
+                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+                // leave_screen_flag = ST_TRUE;
+                // _current_screen = scr_Spellbook_Screen;
+            }
+        }
+
+        if(input_field_idx == _patrol_button)
+        {
+            
+        }
+
+        if(input_field_idx == _special_button)
+        {
+            // SND_LeftClickSound();
+            // switch(special_action_flag)
+            //     -1: no extra action possible
+            //      0: road building possible
+            //      1: settling possible
+            //      2: purifying possible
+            //      9: melding
+        }
+
+        if(input_field_idx == _done_button)
+        {
+            
+        }
+
+        if(input_field_idx == _wait_button)
+        {
+            
+        }
+
+        if(input_field_idx == _plane_button)
+        {
+            
+        }
+
+        // Left-Click Unit Window Grid Field
+        for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
+        {
+            if(Unit_Window_Fields[Stack_Index] = input_field_idx)
+            {
+                // RP_SND_LeftClickSound2();  // byte-identical to SND_LeftClickSound() 
+                // IDK_ActiveUnitStack_MovesOrPath_s53150(Stack_Index);
+                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+                // NIU_MainScreen_local_flag = 1;
+            }
+        }
+        
+        // Right-Click Unit Window Grid Field
+        for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
+        {
+            if(Unit_Window_Fields[Stack_Index] = -input_field_idx)
+            {
+                // OVL_ShowActiveStack();
+                // UNIT_DrawPriorities();
+                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+                // Main_Screen_Draw();
+                // PageFlip_FX();
+                // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
+                // USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
+                // Set_Redraw_Function(Main_Screen_Draw, 1);
+                // Allocate_Reduced_Map__2();
+                // Set_Mouse_List_Normal();
+                // Reset_Active_Stack_Draw();
+                // UNIT_DrawPriorities();
+                // STK_NoUnitDraw();
+                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+                // Undef_Prev_Map_Draw_XY();
+                // MainScr_Prepare_Reduced_Map();
+                // screen_changed = ST_TRUE;
+                // Clear_Help_Fields();
+                // Main_Screen_Help();
+            }
+        }
+
+        // Next Turn Button ... and time-stuff ? end of turn wait ?
+        // if(
+        //     (input_field_idx == _next_turn_button) ||
+        //     ((g_TimeStop_PlayerNum > 0) && (g_TimeStop_PlayerNum == _human_player_idx+1)) ||
+        //     ((all_units_moved = ST_TRUE) && (Local_0 == 0) && (magic_set.EoT_Wait == ST_FALSE) && (j_IDK_Check_Unit_Status_BUSY() == ST_TRUE))
+        // )
+        if(input_field_idx == _next_turn_button)
+        {
+            /* BIG EFFORT */
+        }
+
+        // hotkey_idx_Up
+        // hotkey_idx_Home
+        // hotkey_idx_PgUp
+        // hotkey_idx_Left
+        // hotkey_idx_Right
+        // hotkey_idx_End
+        // hotkey_idx_Down
+        // hotkey_idx_PgDn
+
+        /*
+            Movement Map Grid Field
+                Left-Click
+                Right-Click
+        */
+
+        /*
+            Left-Click Movement Map Grid Field
+                In IDA, color #42 (~Gold)
+            - only if unit/stack active/selected
+        */
+        if( (input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
+        {
+            unit_stack_hmoves = OVL_GetStackHMoves();
+            if(unit_stack_hmoves < 1)
+            {
+                // j_IDK_MainScr_SUA_s553C3()
+                // j_UNIT_SetGlobalPath()  // calcs OVL_Path_Length; sets OVL_StackHasPath
+                if(OVL_Path_Length < 1)
+                {
+                    // j_IDK_MainScr_SUA_s553C3()
+                }
+                // j_Set_Mouse_List_Normal();
+                // j_Undef_Prev_Map_Draw_XY();
+                // NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
+            }
+            if(OVL_StackHasPath == ST_TRUE)
+            {
+                // NIU_MainScreen_local_flag = 1
+                unit_idx = _unit_stack[0].unit_idx;
+                if(_UNITS[unit_idx].world_plane == _map_plane)
+                {
+                    unit_stack_world_y = _UNITS[unit_idx].world_y;
+                    if(unit_stack_world_y >= _map_y && unit_stack_world_y <= _map_y + MAP_WIDTH)
+                    {
+                        IDK_unit_stack_in_view = ST_FALSE;
+                        unit_stack_world_x = _UNITS[unit_idx].world_x;
+                        if(
+                            ( unit_stack_world_x >= _map_x && unit_stack_world_x <= (_map_x + MAP_HEIGHT) ) ||
+                            ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) <= (_map_x + MAP_HEIGHT) )
+                        )
+                        {
+                            unit_stack_world_x = unit_stack_world_x - _map_x;
+                            IDK_unit_stack_in_view = ST_TRUE;
+                        }
+                        if(IDK_unit_stack_in_view == ST_TRUE)
+                        {
+                            if(_main_map_grid_x == unit_stack_world_x)
+                            {
+                                unit_stack_world_y = unit_stack_world_y - _map_y;
+                                if(_main_map_grid_y == unit_stack_world_y)
+                                {
+                                    // j_IDK_MainScr_SUA_s553C3(_human_player_idx, &_map_x, &_map_y, &_map_plane, 0, 0, 0)
+                                    // CRP_OverlandVar_3 == ST_FALSE;
+                                    // OVL_StackHasPath == ST_FALSE;
+                                }
+                            }
+
+
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // NIU_MainScreen_local_flag = 1; // ? ST_TRUE ?
+                if(all_units_moved == ST_FALSE)
+                {
+                    target_world_x = (_map_x + _main_map_grid_x) % 60;  // world_x of click
+                    target_world_y = _map_y + _main_map_grid_y;         // world_y of click
+                    // ovr062
+                    // x,y,p for dst; gets src from _UNITS[_unit_stack[0].unit_idx]
+                    // if(EarthGateTeleport(target_world_x, target_world_y, _map_plane) == ST_FALSE)
+                    // {
+                    //     // if ...
+                    //     /// j_OVL_CanPlanarTravel() == ST_FALSE
+                    //     // _UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane;
+                    //     // _UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE;
+                    //     // WZD o61p02
+                    //     // j_IDK_DoMoveStack_s5336C(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane)
+                    //     // else
+                    //     // "The selected units cannot move on this plane."
+                    //     // ; displays the passed message in a red warning dialog
+                    //     // j_GUI_WarningType0(cstrWarnNoPlaneMove)
+                    // }
+                }
+            }
+        }
+
+        /*
+            Right-Click Movement Map Grid Field
+                In IDA, color #43 (~Dark0Gold)
+        */
+
+
+
+
+
+        /*
+            END: Mouse Click
+        */
+
+/*
+    END: Check Input against Fields
+*/
+
+
+
 
 
         if( (leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
@@ -997,6 +1334,255 @@ void Main_Screen(void)
 }
 
 
+// WZD o57p02
+void Main_Screen_Add_Fields(void)
+{
+    int16_t itr_unit_stack;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
+#endif
+
+    // CRP_OVL_UU_Control_4 = -1000;
+    // CRP_OVL_UU_Control_3 = -1000;
+    // CRP_OVL_UU_Control_2 = -1000;
+    // CRP_OVL_UU_Control_1 = -1000;
+    _main_map_grid_field = -1000;
+    _minimap_grid_field = -1000;
+    _next_turn_button = -1000;
+    _special_button = -1000;
+    _patrol_button = -1000;
+    _wait_button = -1000;
+    _done_button = -1000;
+    _game_button = -1000;
+    _spells_button = -1000;
+    _armies_button = -1000;
+    _cities_button = -1000;
+    _magic_button = -1000;
+    _info_button = -1000;
+    _plane_button = -1000;
+
+    for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
+    {
+        Unit_Window_Fields[itr_unit_stack] = -1000;
+    }
+
+    if(_unit_stack_count > 0)
+    {
+        Add_Unit_Window_Fields();
+    }
+    
+    if(all_units_moved == ST_TRUE)
+    {
+        // _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, hotkey_NextTurn, ST_UNDEFINED);
+        _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
+    }
+
+    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
+    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    {
+        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
+        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
+    }
+
+    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
+    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    {
+        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
+        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+    }
+
+    // OVL_SetMenuButtons()
+    // OVL_SetUnitButtons()
+    Add_Game_Button_Fields();
+    Add_Unit_Action_Fields();
+
+
+//     // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
+//     // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
+//     // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
+//     // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
+//     // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
+// 
+//     // int16_t Add_Hot_Key(int16_t select_char)
+//     field_idx_hotkey_G = Add_Hot_Key('G');
+//     field_idx_hotkey_Q = Add_Hot_Key('Q');
+// 
+//     // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
+//     _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o57p03
+void Add_Unit_Action_Fields(void)
+{
+    if(_unit_stack_count > 0)
+    {
+        _done_button = Add_Button_Field(246, 176, '0', main_done_button, 'D', ST_UNDEFINED);
+        _patrol_button = Add_Button_Field(280, 176, '0', main_patrol_button, '0', ST_UNDEFINED);
+        _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+    }
+
+    if(special_action_flag != ST_UNDEFINED)
+    {
+        if(special_action_flag == 2)
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_purify_button, '0', ST_UNDEFINED);
+        }
+        else if(special_action_flag == 9)
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_meld_button, '0', ST_UNDEFINED);
+        }
+        else
+        {
+            _special_button = Add_Button_Field(280, 186, '0', main_build_button, 'B', ST_UNDEFINED);
+        }
+    }
+
+    if(_unit_stack_count < 1)
+    {
+        _done_button = -1000;
+        _patrol_button = -1000;
+        _wait_button = -1000;
+        _special_button = -1000;
+
+        if(all_units_moved == ST_FALSE)
+        {
+            _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+        }
+    }
+}
+
+// WZD o57p04
+// AKA Main_Screen_Draw_Unit_Actions()
+// AKA j_OVL_DrawUnitActnBtns()
+void Main_Screen_Draw_Unit_Action_Buttons(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
+#endif
+
+    if(_unit_stack_count > 0)
+    {
+        FLIC_Set_CurrentFrame(main_done_button, 0);
+        FLIC_Draw(246, 176, main_done_button);
+        // _help_entries.Entry_Index+46h = HLP_DONE;
+        FLIC_Set_CurrentFrame(main_patrol_button, 0);
+        FLIC_Draw(280, 176, main_patrol_button);
+        // _help_entries.Entry_Index+50h = HLP_PATROL;
+        FLIC_Set_CurrentFrame(main_wait_button, 0);
+        FLIC_Draw(246, 186, main_wait_button);
+        /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
+
+        if(special_action_flag != ST_UNDEFINED)
+        {
+            if(special_action_flag == 2)
+            {
+                FLIC_Set_CurrentFrame(main_purify_button, 0);
+                FLIC_Draw(280, 186, main_purify_button);
+                // _help_entries.Entry_Index+64h = HLP_PURIFY;
+            }
+            else if(special_action_flag == 9)
+            {
+                FLIC_Set_CurrentFrame(main_meld_button, 0);
+                FLIC_Draw(280, 186, main_meld_button);
+                // _help_entries.Entry_Index+64h = HLP_MELD;
+            }
+            else
+            {
+                FLIC_Set_CurrentFrame(main_build_button, 0);
+                FLIC_Draw(280, 186, main_build_button);
+                // _help_entries.Entry_Index+64h = HLP_BUILD;
+            }
+
+        }
+        else
+        {
+            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+            FLIC_Draw(280, 186, main_lock_build_button);
+            // _help_entries.Entry_Index+64h = ST_UNDEFINED;
+        }
+    }
+    else
+    {
+        FLIC_Set_CurrentFrame(main_lock_done_button, 0);
+        FLIC_Draw(246, 176, main_lock_done_button);
+        // _help_entries.Entry_Index+46h = ST_UNDEFINED;
+        FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
+        FLIC_Draw(280, 176, main_lock_patrol_button);
+        // _help_entries.Entry_Index+50h = ST_UNDEFINED;
+        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+        FLIC_Draw(280, 186, main_lock_build_button);
+        // _help_entries.Entry_Index+64h = ST_UNDEFINED;
+        FLIC_Set_CurrentFrame(main_wait_button, 0);
+        FLIC_Draw(246, 186, main_wait_button);
+        /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o57p05
+// OVL_SetMenuButtons
+void Add_Game_Button_Fields(void)
+{
+    // cnst_ZeroString_31 ... hotkey_GameButton, etc.
+    _game_button    = Add_Button_Field(  7, 4, '0', main_game_button,   'G', ST_UNDEFINED);
+    _spells_button  = Add_Button_Field( 47, 4, '0', main_spells_button, 'S', ST_UNDEFINED);
+    _armies_button  = Add_Button_Field( 89, 4, '0', main_armies_button, 'A', ST_UNDEFINED);
+    _cities_button  = Add_Button_Field(140, 4, '0', main_cities_button, '0', ST_UNDEFINED);
+    _magic_button   = Add_Button_Field(184, 4, '0', main_magic_button,  'M', ST_UNDEFINED);
+    _info_button    = Add_Button_Field(226, 4, '0', main_info_button,   'I', ST_UNDEFINED);
+    _plane_button   = Add_Button_Field(270, 4, '0', main_plane_button,  'P', ST_UNDEFINED);
+}
+
+
+// WZD o57p06
+// MoO2: ~Add_Map_Fields_()
+void Main_Screen_Draw_Game_Buttons(void)
+{
+    FLIC_Set_CurrentFrame(main_game_button, 0);
+    FLIC_Draw((7 + (40 * 0)), 4, main_game_button);
+    FLIC_Set_CurrentFrame(main_spells_button, 0);
+    FLIC_Draw(47, 4, main_spells_button);
+    FLIC_Set_CurrentFrame(main_armies_button, 0);
+    FLIC_Draw(89, 4, main_armies_button);
+    FLIC_Set_CurrentFrame(main_cities_button, 0);
+    FLIC_Draw(140, 4, main_cities_button);
+    FLIC_Set_CurrentFrame(main_magic_button, 0);
+    FLIC_Draw(184, 4, main_magic_button);
+    FLIC_Set_CurrentFrame(main_info_button, 0);
+    FLIC_Draw(226, 4, main_info_button);
+    FLIC_Set_CurrentFrame(main_plane_button, 0);
+    FLIC_Draw(270, 4, main_plane_button);
+}
+
+
+// WZD o57p07
+void Add_Unit_Window_Fields(void)
+{
+    int16_t itr_unit_stack_count;
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
+
+    for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+    {
+        Unit_Window_Picture_Coords(itr_unit_stack_count, &x1, &y1, &x2, &y2);
+        Unit_Window_Fields[itr_unit_stack_count] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, '0', ST_UNDEFINED);
+    }
+
+}
+
+
 // WZD o57p08
 void Main_Screen_Draw(void)
 {
@@ -1013,43 +1599,6 @@ void Main_Screen_Draw(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw()\n", __FILE__, __LINE__);
 #endif
-}
-
-
-// WZD o57p06
-// MoO2: ~Add_Map_Fields_()
-void Main_Screen_Draw_Game_Buttons(void)
-{
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Main_Screen_Draw_Game_Buttons()\n", __FILE__, __LINE__);
-#endif
-
-FLIC_Set_CurrentFrame(main_game_button, 0);
-FLIC_Draw((7 + (40 * 0)), 4, main_game_button);
-
-FLIC_Set_CurrentFrame(main_spells_button, 0);
-FLIC_Draw(47, 4, main_spells_button);
-
-FLIC_Set_CurrentFrame(main_armies_button, 0);
-FLIC_Draw(89, 4, main_armies_button);
-
-FLIC_Set_CurrentFrame(main_cities_button, 0);
-FLIC_Draw(140, 4, main_cities_button);
-
-FLIC_Set_CurrentFrame(main_magic_button, 0);
-FLIC_Draw(184, 4, main_magic_button);
-
-FLIC_Set_CurrentFrame(main_info_button, 0);
-FLIC_Draw(226, 4, main_info_button);
-
-FLIC_Set_CurrentFrame(main_plane_button, 0);
-FLIC_Draw(270, 4, main_plane_button);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Main_Screen_Draw_Game_Buttons()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
@@ -1089,6 +1638,19 @@ void Main_Screen_Reset(void)
 #endif
 }
 
+// WZD o57p10
+void IDK_UnitMoves_and_PlanarTravel(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_UnitMoves_and_PlanarTravel()\n", __FILE__, __LINE__);
+#endif
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: IDK_UnitMoves_and_PlanarTravel()\n", __FILE__, __LINE__);
+#endif
+}
 
 
 
@@ -1307,14 +1869,17 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Do_Draw(*map_x = %d, *map_y = %d, map_plane = %d, x_pos = %d , y_pos = %d, player_idx = %d)\n", __FILE__, __LINE__, *map_x, *map_y, map_plane, x_pos, y_pos, player_idx);
 #endif
 
-    // AKA j_Unset_LastMapDraw_XY();
-    
-    Minimap_Set_Dims(58, 30);
+    /*
+        Undef_Prev_Map_Draw_XY()
+            _prev_map_draw_x = e_ST_UNDEFINED;
+            _prev_map_draw_y = e_ST_UNDEFINED;
+        
+        _prev_map_draw_x = ST_UNDEFINED;  // WZD dseg:6FFE  AKA Map_LastDraw_X
+        _prev_map_draw_y = ST_UNDEFINED;  // WZD dseg:7000  AKA Map_LastDraw_Y
+    */
+    // j_Undef_Prev_Map_Draw_XY()  // AKA j_Unset_LastMapDraw_XY();
 
-    // WZD dseg:6FFE Map_LastDraw_X dw 0FFFFh
-    // WZD dseg:7000 Map_LastDraw_Y dw 0FFFFh
-    // Map_LastDraw_X = e_ST_UNDEFINED
-    // Map_LastDraw_Y = e_ST_UNDEFINED
+    Minimap_Set_Dims(58, 30);
 
 
     Draw_Maps(0, 20, 12, 10, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
@@ -1328,10 +1893,10 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     // WZD o67p09
     Draw_Minimap_Window(251, 21, 58, 30);
 
-    // unk_42688 = ST_UNDEFINED;
-    // word_426B0 = ST_UNDEFINED;
-    // unk_426BA = ST_UNDEFINED;
-    // unk_4270A = ST_UNDEFINED;
+    // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
+    // _help_entries.Entry_Index+96h = ST_UNDEFINED;
+    // _help_entries.Entry_Index+0A0h = ST_UNDEFINED;
+    // _help_entries.Entry_Index+0F0h = ST_UNDEFINED;
 
 
 
@@ -1343,38 +1908,56 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     if(_unit_stack_count > 0)
     {
-        DLOG("(_unit_stack_count > 0)");
-        // j_OVL_DrawStackSelect(OVL_STKUnitCards_Lft, OVL_STKUnitCards_Top)
-        Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y);
-        // j_OVL_DrawUnitActnBtns
-        // TODO  Main_Screen_Draw_Unit_Action_Buttons();
+        Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y);  // AKA j_OVL_DrawStackSelect(OVL_STKUnitCards_Lft, OVL_STKUnitCards_Top)
+        /*
+        ; draws the unit action buttons into the current draw
+; frame, locking everything but "WAIT" if no stack is
+; selected, otherwise the extra action is based on the
+; value stored in OVL_ExtraUnitAction
+; Attributes: thunk
+WZD o57p04
+*/
+        // TODO(JimBalcomb,20230616): make note of the drawing of locked buttons in here  ? program-flow oddities ? screen component drawing graph ?
+        Main_Screen_Draw_Unit_Action_Buttons();  // AKA j_OVL_DrawUnitActnBtns
     }
     else
     {
-        DLOG("(_unit_stack_count <= 0)");
-        // AKA  j_OVL_DrawDeselectIMG();
-        Main_Screen_Draw_Summary_Window();
-
-        // AKA  j_OVL_DrawLockedActns();
-        // Main_Screen_Draw_Locked_Actions();
-
-        // AKA  j_OVL_DrawNextTurnBtn();
-        Main_Screen_Draw_Next_Turn_Button();
+        Main_Screen_Draw_Summary_Window();  // AKA  j_OVL_DrawDeselectIMG()
+        Main_Screen_Draw_Unit_Action_Locked_Buttons();  // AKA  j_OVL_DrawLockedActns()
+        Main_Screen_Draw_Next_Turn_Button();  // AKA  j_OVL_DrawNextTurnBtn()
     }
 
-    // AKA  OVL_DrawGoldnMana();
-    Main_Screen_Draw_Status_Window();
+    Main_Screen_Draw_Status_Window();  // AKA  OVL_DrawGoldnMana()
 
     // if(OVL_StackHasPath == ST_TRUE)
-    // j_OVL_DrawPath(OVL_Path_Length, OVL_Path_Xs, OVL_Path_Ys);
+    // TODO  j_OVL_DrawPath(OVL_Path_Length, OVL_Path_Xs, OVL_Path_Ys);
 
     Main_Screen_Draw_Game_Buttons();
 
-    // OVL_DrawStackMoves
+    // TODO  OVL_DrawStackMoves();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Do_Draw()\n", __FILE__, __LINE__);
 #endif
+}
+
+// WZD o063p04
+void Cycle_Unit_Enchantment_Animation(void)
+{
+    unit_enchantment_animation_flag++;
+    if(unit_enchantment_animation_flag > 1)
+    {
+        unit_enchantment_animation_flag = 0;
+    }
+    if(unit_enchantment_animation_flag < 1)
+    {
+        unit_enchantment_animation_count++;
+    }
+    if(unit_enchantment_animation_count > 7)
+    {
+        unit_enchantment_animation_count = 0;
+    }
+
 }
 
 // WZD o063p05
@@ -1585,6 +2168,89 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
 
 }
 
+// WZD o63p12
+// OVL_GetStackHMoves
+int16_t OVL_GetStackHMoves(void)
+{
+/*
+XREFs
+    j_OVL_GetStackHMoves()
+    OVL_DrawStackMoves()
+j_OVL_GetStackHMoves
+    Main_Screen()
+    IDK_UnitMoves_and_PlanarTravel
+    IDK_ActiveUnitStack_MovesOrPath_s53150
+
+
+    loops through current unit stack
+        checks for active
+        checks if the unit type is/has/does transport/carries units
+            breaks and assigns units current HMoves
+        checks for wind walking - ability or enchantment
+            does not break, but assigns units current HMoves
+    Scenarios/Use-Cases:
+        stack does not have a 'carries units' and does not have a 'has wind walking'
+        stack does have a 'carries units' but does not have a 'has wind walking'
+        stack does not have a 'carries units' but does have a 'has wind walking'
+        
+        if stack does have a 'carries units', that is that and its are the movement points
+        ...
+        ? nay 'carries units', nay 'has wind walking' ?
+            returns lowest HMoves of 'active' units
+
+NOTE: you can have multiple transport units in a stack
+
+almost the same code as in WZD ovr097 STK_GetMovesLeft()
+STK_GetMovesLeft() breaks after UNIT_HasWindWalking(); does have StackHasWindWalkingUnit or WindWalkingUnitIdx
+OON XREF STK_move() WZD o95p01
+
+*/
+    int16_t StackHasWindWalkingUnit;
+    int16_t WindWalkingUnitIdx;
+    int16_t tmp_half_move_points; // In Dasm, SI
+    int16_t tmp_unit_idx;  // In Dasm, DI
+    int16_t itr_unit_stack;
+    int8_t tmp_unit_type;  // In Dasm, DNE
+
+    tmp_half_move_points = 1000;
+
+    StackHasWindWalkingUnit = ST_FALSE;
+
+    for(itr_unit_stack = 0; itr_unit_stack < _unit_stack_count; itr_unit_stack++)
+    {
+        tmp_unit_idx = _unit_stack[itr_unit_stack].unit_idx;
+        if(_unit_stack[itr_unit_stack].active == ST_TRUE)
+        {
+            if(_UNITS[tmp_unit_idx].HMoves < tmp_half_move_points)
+            {
+                tmp_half_move_points = _UNITS[tmp_unit_idx].HMoves;
+            }
+
+            tmp_unit_type = _UNITS[tmp_unit_idx].type;
+            if(_unit_type_table[tmp_unit_type].Transport == ST_TRUE)
+            {
+                tmp_half_move_points = _UNITS[tmp_unit_idx].HMoves;
+                break;
+            }
+
+            if(UNIT_HasWindWalking(tmp_unit_idx) == ST_TRUE)
+            {
+                StackHasWindWalkingUnit = ST_TRUE;
+                WindWalkingUnitIdx = tmp_unit_idx;
+                tmp_half_move_points = _UNITS[tmp_unit_idx].HMoves;
+            }
+        }
+    }
+
+    if(tmp_half_move_points == 1000)
+    {
+        tmp_half_move_points = 0;
+    }
+
+    STK_HMoves_Left = tmp_half_move_points;
+
+    return STK_HMoves_Left;
+}
 
 
 /* 
@@ -1600,6 +2266,31 @@ void Allocate_Reduced_Map__1(void)
     dbg_prn("DEBUG: [%s, %d]: _reduced_map_seg: %p\n", __FILE__, __LINE__, _reduced_map_seg);
 #endif
 
+}
+
+// WZD o64p02
+// PRIVATE  void Allocate_Reduced_Map__2(void);
+
+// WZD o64p03
+// ? subset of Draw_Maps() ?
+// AKA OVL_PrepMinimap()
+void MainScr_Prepare_Reduced_Map(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
+#endif
+    int16_t minimap_x;
+    int16_t minimap_y;
+    int16_t minimap_width;
+    int16_t minimap_height;
+    minimap_width = 58;
+    minimap_height = 30;
+    Minimap_Set_Dims(minimap_width, minimap_height);
+    Minimap_Coords(&minimap_x, &minimap_y, ((_map_x+6)%60), (_map_y+5), minimap_width, minimap_height);
+    Draw_Minimap(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
+#endif
 }
 
 // WZD o064p04
@@ -1903,28 +2594,25 @@ void Main_Screen_Draw_Next_Turn_Button(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
 #endif
 
-//     // [_help_entries.Entry_Index+6Eh], -1
-// 
-//     if(all_units_moved == ST_TRUE)
-//     {
-//         // [_help_entries.Entry_Index+6Eh], HLP_NEXT_TURN
-// 
-//         FLIC_Draw(240, 173, next_turn_background_seg);
-// 
-//         // TODO j_OVL_HideActiveStack
-// 
-//         if(g_Current_Screen == ST_UNDEFINED)
-//         {
-//             FLIC_Draw(246, 178, next_turn_button_seg);
-//         }
-//         else
-//         {
-//             // TODO j_GAME_Animate_UEs
-//         }
-//     }
+    // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
 
-    FLIC_Draw(240, 173, next_turn_background_seg);
-    FLIC_Draw(246, 178, next_turn_button_seg);
+    if(all_units_moved == ST_TRUE)
+    {
+        // _help_entries.Entry_Index+6Eh = HLP_NEXT_TURN
+
+        FLIC_Draw(240, 173, next_turn_background_seg);
+
+        Set_Draw_Active_Stack_Never();
+
+        if(g_Current_Screen == ST_UNDEFINED)
+        {
+            FLIC_Draw(246, 178, next_turn_button_seg);  // ? offset by 6,5 to support the 3-D illusion of being depressed
+        }
+        else
+        {
+            Cycle_Unit_Enchantment_Animation();
+        }
+    }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
@@ -1932,27 +2620,54 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
 }
 
+// WZD o64p08
+void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Locked_Buttons()\n", __FILE__, __LINE__);
+#endif
+
+    FLIC_Set_CurrentFrame(main_lock_done_button, 0);
+    FLIC_Draw(246, 176, main_lock_done_button);
+
+    FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
+    FLIC_Draw(280, 176, main_lock_patrol_button);
+
+    FLIC_Set_CurrentFrame(main_wait_button, 0);
+    FLIC_Draw(246, 186, main_wait_button);
+
+    if(special_action_flag == ST_UNDEFINED)
+    {
+        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
+        FLIC_Draw(280, 186, main_lock_purify_button);
+    }
+    else
+    {
+        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+        FLIC_Draw(280, 186, main_lock_build_button);
+    }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Unit_Action_Locked_Buttons()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Picture_Coords(unit_stack_unit_idx = %d, *x1 =%d, *y1 = %d, *x2 = %d, *y2 = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, *x1, *y1, *x2, *y2);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Picture_Coords()\n", __FILE__, __LINE__);
 #endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_window_start_x: %d\n", __FILE__, __LINE__, _unit_window_start_x);
-    dbg_prn("DEBUG: [%s, %d]: _unit_window_start_y: %d\n", __FILE__, __LINE__, _unit_window_start_y);
-    dbg_prn("DEBUG: [%s, %d]: (unit_stack_unit_idx \\% 3): %d\n", __FILE__, __LINE__, (unit_stack_unit_idx % 3));
-    dbg_prn("DEBUG: [%s, %d]: ((unit_stack_unit_idx \\% 3) * 23): %d\n", __FILE__, __LINE__, ((unit_stack_unit_idx % 3) * 23));
-    dbg_prn("DEBUG: [%s, %d]: ((unit_stack_unit_idx / 3) * 29): %d\n", __FILE__, __LINE__, ((unit_stack_unit_idx / 3) * 29));
-#endif
-
+    // TODO(JimBalcomb,20230616): add module-scoped (manifest) contstants for the magic-numbers used here-in
+    // 3 for figures width, 3 for figures height
+    // ? 23 for figures background width, 29 for figures background height ?
+    // ? 22 for figrues width, 28 for figures height ?
     *x1 = _unit_window_start_x + ((unit_stack_unit_idx % 3) * 23);
     *y1 = _unit_window_start_y + ((unit_stack_unit_idx / 3) * 29);
     *x2 = *x1 + 22;
     *y2 = *y1 + 28;
-
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Picture_Coords(unit_stack_unit_idx = %d, *x1 =%d, *y1 = %d, *x2 = %d, *y2 = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, *x1, *y1, *x2, *y2);
+    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Picture_Coords()\n", __FILE__, __LINE__);
 #endif
 }

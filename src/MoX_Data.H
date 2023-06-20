@@ -378,7 +378,7 @@ struct s_UNIT
     /* 16 */ int8_t Sight_Range;
     /* 17 */ int8_t Mutations;  // ; enum MUT_FLAGS
     /* 18 */ int16_t Enchants_LO;  // ; enum UE_FLAGS_L
-    /* 1A */ int16_t Enchants_HO;  // ; enum UE_FLAGS_H
+    /* 1A */ int16_t Enchants_HI;  // ; enum UE_FLAGS_H
     /* 1C */ int8_t Rd_Constr_Left;
     /* 1D */ int8_t Rd_From_X;
     /* 1E */ int8_t Rd_From_Y;
@@ -408,7 +408,7 @@ struct s_FORTRESS
 
 
 
-// sizeof=0x4
+// sizeof 04h 4d
 struct s_STACK
 {
     /* 00 */ int16_t unit_idx;
@@ -417,6 +417,25 @@ struct s_STACK
 
 
 
+// // sizeof 0Ah 10d
+// struct s_HLP_ENTRY
+// {
+//     int16_t help_idx;
+//     int16_t x1;
+//     int16_t y1;
+//     int16_t x2;
+//     int16_t y2;
+// };
+// 
+// // sizeof 0418h 1048d
+// struct HLP_DATA
+// {
+//     char Title[30];
+//     char IMG_File[14];
+//     int16_t IMG_Entry;
+//     int16_t Include_Entry;
+//     char Help_Text[1000];
+// }
 
 
 
@@ -463,15 +482,30 @@ extern SAMB_ptr Visibility_Myrror;
 // WZD dseg:9396
 extern SAMB_ptr Visibility_Arcanus;
 
+/* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
+// ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
+// WZD dseg:9442
+extern int16_t draw_active_stack_flag;  // AKA Active_Stack_Draw
 
 // WZD dseg:9444
 extern int16_t all_units_moved;
 
 
+// dseg:9644 00 00                                           _city_idx dw 0                          ; DATA XREF: City_Screen+55r ...
+// dseg:9646 00                                              db    0
+// dseg:9647 00                                              db    0
 
 // WZD dseg:9648
 extern SAMB_ptr UnitDraw_WorkArea;
 
+// dseg:964A 00                                              db    0
+// dseg:964B 00                                              db    0
+
+// WZD dseg:964C
+extern int16_t entities_on_movement_map[];
+
+// dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
+// dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
 
 
 // dseg:998A END:  Main Screen Pictures

@@ -6,6 +6,7 @@
 #include "FLIC_Draw.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
+#include "SCastScr.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -63,6 +64,29 @@ char mapback_lbx_file[] = "MAPBACK";
 // dseg:2A81     END: ovr052
 
 
+// WZD dseg:6FF4                                                 BEGIN: ovr150
+
+// WZD dseg:6FF4
+// int16_t OVL_TileAnim_Stage = 0;
+// WZD dseg:6FF6
+// int16_t OVL_EnchRoad_Stage = 0;
+// WZD dseg:6FF8
+// int16_t OVL_NodeSprkl_Stage = 0;
+// WZD dseg:6FFA db    0
+// WZD dseg:6FFB db    0
+// WZD dseg:6FFC
+// int16_t OVL_Anim_Stepper = 0;
+// WZD dseg:6FFE
+int16_t _prev_map_draw_x = ST_UNDEFINED;
+// WZD dseg:7000
+int16_t _prev_map_draw_y = ST_UNDEFINED;
+// WZD dseg:7002
+// int16_t OVL_NewMapSustain = 2;
+
+// WZD dseg:7002                                                 END: ovr150
+
+
+
 
 // BEGIN: Draw_Minimap()
 // WZD dseg:700A
@@ -70,7 +94,6 @@ uint8_t COL_MinimapBanners[6] = {171, 216, 205, 201, 210, 50};  // 0xAB, 0xD8, 0
 // WZD dseg:7010
 uint8_t COL_MinimapNeutral = 50;  // 0x32
 // END: Draw_Minimap()
-
 
 
 
@@ -257,15 +280,15 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * m
         END: Map-Moved!!
     */
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
-    dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
+//     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
+// #endif
     Minimap_Coords(&minimap_x, &minimap_y, ((cur_map_xpos + (12/2)) / 60), (cur_map_ypos + (10/2)), minimap_width, minimap_height);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
-    dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
+//     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
+// #endif
 
     Draw_Minimap(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
 
@@ -296,11 +319,191 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * m
 }
 
 
+// WZD o67p04
+// AKA OVL_ShowActiveStack
+void Set_Draw_Active_Stack_Always(void)
+{
+    draw_active_stack_flag = -1;
+}
+
+
+// WZD o67p05
+// AKA OVL_HideActiveStack
+void Set_Draw_Active_Stack_Never(void)
+{
+    draw_active_stack_flag = -2;
+}
+
+// WZD o67p06
+// Reset_Active_Stack_Draw
+void Reset_Draw_Active_Stack(void)
+{
+    if( (all_units_moved == 0) && (_unit_stack_count == 0) )
+    {
+        draw_active_stack_flag = 0;
+    }
+    Undef_Prev_Map_Draw_XY();
+}
+
+// WZD o67p07
+// AKA OVL_DrawActiveStack
+void Draw_Active_Unit_Stack(int16_t mmap_xw, int16_t mmap_yw, int16_t world_plane)
+{
+/*
+draws the top movable unit's card from the active
+stack into the current draw segment based on the
+specified starting map tile parameters, unless stack
+drawing is disabled, or the view is on the opposite
+plane; also redraws the minimap with a white marker
+
+contains a BUG that may unintentionally draw the
+stack over other units/cities already on the tile
+when always draw (-1) is set for OVL_ActiveStackDraw
+*/
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Active_Unit_Stack(mmap_xw = %d, mmap_yw = %d, world_plane = %d)\n", __FILE__, __LINE__, mmap_xw, mmap_yw, world_plane);
+#endif
+
+    int16_t in_view;
+    int16_t first_active_stack_unit_idx;
+    int16_t unit_xw;
+    int16_t unit_yw;
+    int16_t unit_idx;  // ? DNE ?
+    int16_t itr_unit_stack_count;
+
+    unit_idx = _unit_stack[0].unit_idx;
+
+    if(
+        (draw_active_stack_flag != -2) &&
+        (_UNITS[unit_idx].owner_idx != ST_UNDEFINED) &&
+        ( (_UNITS[unit_idx].world_plane == world_plane) || (_UNITS[unit_idx].In_Tower == ST_TRUE) )
+    )
+    {
+        unit_xw = _UNITS[unit_idx].world_x;
+        unit_yw = _UNITS[unit_idx].world_y;
+
+        in_view = World_To_Screen(mmap_xw, mmap_yw, &unit_xw, &unit_yw);
+
+        // not never, not always, so must be set for draw-cycling, so increment the cycle
+        if(draw_active_stack_flag != -1)  /* always draw */
+        {
+            draw_active_stack_flag = ((draw_active_stack_flag + 1) % 8);
+        }
+
+        /*
+            WTF, Mate?!?
+
+                ...test success is the jump branch...
+
+                draw_active_stack_flag == -1
+                draw_active_stack_flag > 3
+                    one must pass, both can't fail ... OR
+                
+                draw_active_stack_flag != -1
+                entities_on_movement_map[] == -1
+                draw_active_stack_flag != -1
+                    one must pass, all can't fail ... OR
+
+                if( ((...)||(...) && ((...)||(...)||(...)) )
+                So, ...
+                    if 1of2 & 1of3 ...
+            ...
+            WRONG!!!!!
+        */
+        // Test 1: not set to always draw, but is in a draw phase
+        // Test 2: is set to always, but there is no entity at our calulated coordinates
+        // Test 3: is within the boundaries of the movement map
+        if( 
+            ( (draw_active_stack_flag != -1) && (draw_active_stack_flag > 3) ) ||
+            ( (draw_active_stack_flag == -1) && (entities_on_movement_map[( ((unit_xw - mmap_yw) * 24) + (unit_yw * 2) )] == -1) )
+        )
+        {
+                /*
+                    //drake178
+                    BUG: variable type mismatch - these coordinates
+                    have already been converted into pixel draw
+                    coordinates and can't be used to index into the array
+                */
+            if(in_view == ST_TRUE)
+            {
+                first_active_stack_unit_idx = 0;
+                for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+                {
+                    if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+                    {
+                        first_active_stack_unit_idx = itr_unit_stack_count;
+                        break;
+                    }
+                }
+                unit_idx = _unit_stack[first_active_stack_unit_idx].unit_idx;
+                Unit_Window_Draw_Unit_Picture(unit_xw, unit_yw, unit_idx, 2);
+
+            }
+
+            unit_idx = _unit_stack[0].unit_idx;
+            Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
+        // Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark)
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Active_Unit_Stack(mmap_xw = %d, mmap_yw = %d, world_plane = %d)\n", __FILE__, __LINE__, mmap_xw, mmap_yw, world_plane);
+#endif
+}
+
 // WZD o67p08
 void Minimap_Set_Dims(int16_t width, int16_t height)
 {
     minimap_width = width;
     minimap_height = height;
+}
+
+
+// WZD o67p09
+void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
+{
+    int16_t reduced_map_box_color;
+    int16_t line_x;
+    int16_t line_y;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Minimap_Window()\n", __FILE__, __LINE__);
+#endif
+
+    Reset_Window();
+
+    Draw_Picture(start_x, start_y, _reduced_map_seg);
+
+
+    reduced_map_box_color = 13;
+    line_x = start_x + ( width / 2) + ( MOVEMENT_MAP_WIDTH / 2);
+    line_y = start_y + (height / 2) + (MOVEMENT_MAP_HEIGHT / 2);
+
+    // TODO  // VGA_Draw_Line(line_x, line_y, line_x, line_y);
+    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x+1, line_y-1);
+    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x-1, line_y+1);
+    // TODO  VGA_Draw_Line(line_x+10, line_y-1, line_x+12, line_y-1);
+    // TODO  VGA_Draw_Line(line_x+12, line_y-1, line_x+12, line_y+1);
+    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x-1, line_y+8);
+    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x+1, line_y+10);
+    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+12, line_y+8);
+    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+10, line_y+10);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Minimap_Window()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o67p10
+void Set_Entities_On_Map_Window(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
+#endif
 }
 
 
@@ -417,48 +620,17 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 
 }
 
-// WZD o67p09
-void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
-{
-    int16_t reduced_map_box_color;
-    int16_t line_x;
-    int16_t line_y;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Minimap_Window()\n", __FILE__, __LINE__);
-#endif
-
-    Reset_Window();
-
-    Draw_Picture(start_x, start_y, _reduced_map_seg);
-
-
-    reduced_map_box_color = 13;
-    line_x = start_x + ( width / 2) + ( MOVEMENT_MAP_WIDTH / 2);
-    line_y = start_y + (height / 2) + (MOVEMENT_MAP_HEIGHT / 2);
-
-    // TODO  // VGA_Draw_Line(line_x, line_y, line_x, line_y);
-    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x+1, line_y-1);
-    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x-1, line_y+1);
-    // TODO  VGA_Draw_Line(line_x+10, line_y-1, line_x+12, line_y-1);
-    // TODO  VGA_Draw_Line(line_x+12, line_y-1, line_x+12, line_y+1);
-    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x-1, line_y+8);
-    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x+1, line_y+10);
-    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+12, line_y+8);
-    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+10, line_y+10);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Minimap_Window()\n", __FILE__, __LINE__);
-#endif
-
-}
-
-
-
 
 /*
     WIZARDS.EXE  ovr150
 */
+
+// WZD o150p01
+void Undef_Prev_Map_Draw_XY(void)
+{
+    _prev_map_draw_x = ST_UNDEFINED;
+    _prev_map_draw_y = ST_UNDEFINED;
+}
 
 // WZD o150p04
 void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
@@ -671,6 +843,8 @@ void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, 
 #endif
 }
 
+
+// WZD o150p05
 void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
 {
     int16_t terrain_tile_base;
@@ -702,12 +876,12 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
 
     if(map_plane == 0)
     {
-        DLOG("(map_plane == 0)");
+//         DLOG("(map_plane == 0)");
         terrain_tile_base = 0;
     }
     else
     {
-        DLOG("(map_plane != 0)");
+//         DLOG("(map_plane != 0)");
         terrain_tile_base = 762; // 0x2FA
     }
 
@@ -748,44 +922,44 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
             // world_maps_offset += (world_y * SZ_WORLD_WIDTH);
             // world_maps_offset += world_x
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
+// #endif
             // world_maps_ptr = (int16_t *)_world_maps;
             world_maps_ptr = (uint16_t *)_world_maps;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: world_maps_ptr: %p\n", __FILE__, __LINE__, world_maps_ptr);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: world_maps_ptr: %p\n", __FILE__, __LINE__, world_maps_ptr);
+// #endif
             // terrain_001_index = *(world_map_ptr + (map_plane * 2400) + (itr_map_ypos * 60) + (DrawTile_X));
             // world_maps_offset = ((map_plane * 2400) + (itr_map_ypos * 60) + (DrawTile_X));
             world_maps_offset = ((map_plane * 4800) + (itr_map_ypos * 120) + (DrawTile_X * 2));
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: world_maps_offset: %04X  %d\n", __FILE__, __LINE__, world_maps_offset, world_maps_offset);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(_world_maps,world_maps_offset): %04X\n", __FILE__, __LINE__, GET_2B_OFS(_world_maps,world_maps_offset));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: world_maps_offset: %04X  %d\n", __FILE__, __LINE__, world_maps_offset, world_maps_offset);
+// #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(_world_maps,world_maps_offset): %04X\n", __FILE__, __LINE__, GET_2B_OFS(_world_maps,world_maps_offset));
+// #endif
             world_map_value = GET_2B_OFS(_world_maps,world_maps_offset);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: world_map_value: %04X\n", __FILE__, __LINE__, world_map_value);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: world_map_value: %04X\n", __FILE__, __LINE__, world_map_value);
+// #endif
             // // terrain_001_index = *(world_maps_ptr + world_maps_offset);
             // // terrain_001_index = world_maps_ptr[world_maps_offset];
             // terrain_001_index = (uint16_t)*(world_maps_ptr + world_maps_offset);
             terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
-#endif
+// #ifdef STU_DEBUG
+//     // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
+// #endif
             terrain_001_index += terrain_tile_base;
             terrain_001_index *= 2;  // because, sizeof(int16_t)
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
-#endif
+// #ifdef STU_DEBUG
+//     // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
+// #endif
 
 // WZD dseg:CC22 gfp_TER_TileTypeOffsets@ dd 0           ; single-loaded full entry
 // LBX_Terrain_Init()
@@ -797,10 +971,11 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
             // terrain_001_1 = terrain_lbx_001[world_map_value + 1];
             terrain_001_0 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 0);
             terrain_001_1 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 1);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_0: %02X\n", __FILE__, __LINE__, terrain_001_0);
-    dbg_prn("DEBUG: [%s, %d]: terrain_001_1: %02X\n", __FILE__, __LINE__, terrain_001_1);
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_0: %02X\n", __FILE__, __LINE__, terrain_001_0);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_1: %02X\n", __FILE__, __LINE__, terrain_001_1);
+// #endif
 
 
 
@@ -808,65 +983,65 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
 
             if(terrain_001_0 & 0x80)
             {
-                DLOG("(terrain_001_0 & 0x80)");
+//                 DLOG("(terrain_001_0 & 0x80)");
                 terrain_001_0 = terrain_001_0 & 0x7F;
             }
             if(OVL_NewMapDrawing != ST_FALSE)
             {
-                DLOG("OVL_NewMapDrawing != ST_FALSE)");
+//                 DLOG("OVL_NewMapDrawing != ST_FALSE)");
             }
-//             // if animated and not new, skip draw
-//             if(terrain_001_0 & 0x80 == 0 || OVL_NewMapDrawing != ST_FALSE)
-//             {
-//                 // TODO  if(terrain_001_0 & 0x80 == 0)
-//                 // TODO  {
-//                 // TODO      // WZD dseg:6FF4 OVL_TileAnim_Stage dw 0
-//                 // TODO      terrain_001_1 += map_animation_frame;  // AKA OVL_TileAnim_Stage
-//                 // TODO      terrain_001_0 = (terrain_001_0 & 0x7F);
-//                 // TODO  }
-// 
-// //     // mov     ax, [terrain_001_1]
-// //     // mov     bx, ax
-// //     // shl     ax, 1
-// //     // add     ax, bx
-// //     // shl     ax, 1
-// //     // shl     ax, 1
-// //     // shl     ax, 1                           ; * 180h, from FILE start, not entry start!
-// //     // add     ax, [EMM_PageFrame]             ; contains the segment address of the EMS page frame
-// //     // mov     [bp+terrain_pict_seg], ax
+// //             // if animated and not new, skip draw
+// //             if(terrain_001_0 & 0x80 == 0 || OVL_NewMapDrawing != ST_FALSE)
+// //             {
+// //                 // TODO  if(terrain_001_0 & 0x80 == 0)
+// //                 // TODO  {
+// //                 // TODO      // WZD dseg:6FF4 OVL_TileAnim_Stage dw 0
+// //                 // TODO      terrain_001_1 += map_animation_frame;  // AKA OVL_TileAnim_Stage
+// //                 // TODO      terrain_001_0 = (terrain_001_0 & 0x7F);
+// //                 // TODO  }
 // // 
-// //     if(terrain_001_0 != terrain_000_elpn)
-// //     {
-// //         EMM_Map4Pages(Image_Page, g_EmmHndl_TERRAIN);
-// //     }
-// 
-//                 // terrain_pict_seg = terrain_lbx_000 + (terrain_001_1 * 384);
-//                 terrain_pict_seg = terrain_lbx_000 + 0xC0;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
-// #endif
-//                 Draw_Picture(_DI_x, _SI_y, terrain_pict_seg);
-// 
-//                 Draw_Picture(0, (7 * 18), terrain_pict_seg);
-// 
-// 
-//             }
-                // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_1 * 384);
-                // // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
-                // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_0 * 16384) + terrain_001_1;
-                // if(terrain_001_0 == 0)
-                // {
-                //     // map index in terrain_001_1 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
-                //     // 0xC0 + ((terrain_001_1 - 2) * 384)
-                //     terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
-                // }
-                // loading entry 0, instead of whole file
-                // so
-                //     EMM Page * 16K
-                //     plus terrain index * 384
-                //     minus difference in header size
-                // terrain_pict_seg = terrain_lbx_000 + ( (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0);
-                // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0;
+// // //     // mov     ax, [terrain_001_1]
+// // //     // mov     bx, ax
+// // //     // shl     ax, 1
+// // //     // add     ax, bx
+// // //     // shl     ax, 1
+// // //     // shl     ax, 1
+// // //     // shl     ax, 1                           ; * 180h, from FILE start, not entry start!
+// // //     // add     ax, [EMM_PageFrame]             ; contains the segment address of the EMS page frame
+// // //     // mov     [bp+terrain_pict_seg], ax
+// // // 
+// // //     if(terrain_001_0 != terrain_000_elpn)
+// // //     {
+// // //         EMM_Map4Pages(Image_Page, g_EmmHndl_TERRAIN);
+// // //     }
+// // 
+// //                 // terrain_pict_seg = terrain_lbx_000 + (terrain_001_1 * 384);
+// //                 terrain_pict_seg = terrain_lbx_000 + 0xC0;
+// // #ifdef STU_DEBUG
+// //     dbg_prn("DEBUG: [%s, %d] terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
+// // #endif
+// //                 Draw_Picture(_DI_x, _SI_y, terrain_pict_seg);
+// // 
+// //                 Draw_Picture(0, (7 * 18), terrain_pict_seg);
+// // 
+// // 
+// //             }
+                // // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_1 * 384);
+                // // // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
+                // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_0 * 16384) + terrain_001_1;
+                // // if(terrain_001_0 == 0)
+                // // {
+                // //     // map index in terrain_001_1 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
+                // //     // 0xC0 + ((terrain_001_1 - 2) * 384)
+                // //     terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
+                // // }
+                // // loading entry 0, instead of whole file
+                // // so
+                // //     EMM Page * 16K
+                // //     plus terrain index * 384
+                // //     minus difference in header size
+                // // terrain_pict_seg = terrain_lbx_000 + ( (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0);
+                // // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0;
                 if(terrain_001_0 == 0)
                 {
                     terrain_lbx_000_offset = 0xC0 + ((terrain_001_1 - 2) * 384);
@@ -876,37 +1051,37 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
                     terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
                 }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %u\n", __FILE__, __LINE__, terrain_lbx_000_offset);
-    dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %04X\n", __FILE__, __LINE__, terrain_lbx_000_offset);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %u\n", __FILE__, __LINE__, terrain_lbx_000_offset);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %04X\n", __FILE__, __LINE__, terrain_lbx_000_offset);
+// #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: terrain_id: %u\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
-    dbg_prn("DEBUG: [%s, %d]: terrain_id: %04X\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_id: %u\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
+//     dbg_prn("DEBUG: [%s, %d]: terrain_id: %04X\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
+// #endif
 
 
                 terrain_pict_seg = terrain_lbx_000 + terrain_lbx_000_offset;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
+// #endif
                 Draw_Picture(_DI_x, _SI_y, terrain_pict_seg);
 
 
 
 
 
-//         if(DBG_ShowTileInfo != ST_FALSE)
-//         {
-//             j_EMM_Map_CONTXXX()
-//             // ; maps in the EMM_ContXXX_H handle (all 4 pages), and
-//             // ; resets its corresponding global pointers
-//             Set_Font(0,0);
-//             VGA_DrawNumber(_DI_x, _SI_y + 12, TBL_Landmasses[(_map_plane * 2400) + (itr_map_ypos * 60) + DrawTile_X])
-//             Set_Font(0, 2);
-//             VGA_DrawNumber(_DI_x, _SI_y, DrawTile_X)
-//         }
+// //         if(DBG_ShowTileInfo != ST_FALSE)
+// //         {
+// //             j_EMM_Map_CONTXXX()
+// //             // ; maps in the EMM_ContXXX_H handle (all 4 pages), and
+// //             // ; resets its corresponding global pointers
+// //             Set_Font(0,0);
+// //             VGA_DrawNumber(_DI_x, _SI_y + 12, TBL_Landmasses[(_map_plane * 2400) + (itr_map_ypos * 60) + DrawTile_X])
+// //             Set_Font(0, 2);
+// //             VGA_DrawNumber(_DI_x, _SI_y, DrawTile_X)
+// //         }
 
             _DI_x += 20;  // terrain image width
             itr_map_xpos++;
@@ -1010,31 +1185,31 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
 
     terrain_type_idx_base = world_plane * TERRAIN_COUNT;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: TBL_Scouting: %p\n", __FILE__, __LINE__, TBL_Scouting);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: TBL_Scouting: %p\n", __FILE__, __LINE__, TBL_Scouting);
+// #endif
     // explore_data_ptr = (uint8_t *)TBL_Scouting[(world_plane * 2400)];
     explore_data_ptr = (TBL_Scouting + (world_plane * 2400));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: explore_data_ptr: %p\n", __FILE__, __LINE__, explore_data_ptr);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: explore_data_ptr: %p\n", __FILE__, __LINE__, explore_data_ptr);
+// #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
+// #endif
     // world_data_ptr = (uint16_t *)_world_maps[(world_plane * 4800)];
     world_data_ptr = (_world_maps + (world_plane * 4800));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: world_data_ptr: %p\n", __FILE__, __LINE__, world_data_ptr);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: world_data_ptr: %p\n", __FILE__, __LINE__, world_data_ptr);
+// #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: minimap_pict_seg: %p\n", __FILE__, __LINE__, minimap_pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: minimap_pict_seg: %p\n", __FILE__, __LINE__, minimap_pict_seg);
+// #endif
     minimap_pict_data_ptr = minimap_pict_seg + 16;  // +1 paragraph
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: minimap_pict_data_ptr: %p\n", __FILE__, __LINE__, minimap_pict_data_ptr);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: minimap_pict_data_ptr: %p\n", __FILE__, __LINE__, minimap_pict_data_ptr);
+// #endif
 
     // WZD s30p06
     // void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, int16_t color);
@@ -1066,9 +1241,9 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
                 continue;
             }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ((minimap_square_y * WORLD_WIDTH) + minimap_square_x): %d\n", __FILE__, __LINE__, ((minimap_square_y * WORLD_WIDTH) + minimap_square_x));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: ((minimap_square_y * WORLD_WIDTH) + minimap_square_x): %d\n", __FILE__, __LINE__, ((minimap_square_y * WORLD_WIDTH) + minimap_square_x));
+// #endif
 
 //             explored_flag = explore_data_ptr[((minimap_square_y * WORLD_WIDTH) + minimap_square_x)];
 // 
@@ -1080,16 +1255,15 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
 
             // terrain_type_idx = *(world_data_ptr + (minimap_square_y * 120) + (minimap_square_x * 2));
             terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: terrain_type_idx: %d\n", __FILE__, __LINE__, terrain_type_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_type_idx: %d\n", __FILE__, __LINE__, terrain_type_idx);
+// #endif
             terrain_type_idx += terrain_type_idx_base;
             minimap_terrain_color = terrain_lbx_002[terrain_type_idx];
 
             *(minimap_pict_data_ptr + ((itr_minimap_width * minimap_height) + itr_minimap_height)) = minimap_terrain_color;
 
         }
-    
     }
 
     /*
@@ -1169,4 +1343,3 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
 // WZD o150p17
 
 // WZD o150p18
-

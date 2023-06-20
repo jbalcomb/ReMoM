@@ -278,6 +278,7 @@ void Main_Menu_Screen_Draw(void)
     menu_y_start = 141;
 
     // TODO  mouse_field = Get_Mouse_Field();  // MGC s34p25 GUI_MousedControl()
+    
 
     logo_frame_index = FLIC_Get_CurrentFrame(mainmenu_top);
 #ifdef STU_DEBUG

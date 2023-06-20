@@ -78,6 +78,23 @@ int16_t current_pointer_offset = 0;
 struct s_mouse_list * current_mouse_list;
 
 
+/* BEGIN: Initialized Data [Data Segment - DSEG]*/
+// ...
+
+// WZD dseg:78BC  MOUSE_CursorDraw dw 0
+// WZD dseg:78BE
+// MGC dseg:4390
+// drake178 MOUSE_DriverPresent
+// MoO2 mouse_driver_installed
+int16_t mouse_driver_installed;
+// WZD dseg:78C0  MOUSE_Usable dw 0
+// WZD dseg:78C2  MOUSE_CurrentX dw 9Eh
+// WZD dseg:78C4  MOUSE_CurrentY dw 64h
+
+// ...
+/* END: Initialized Data [Data Segment - DSEG]*/
+
+
 
 
 
@@ -162,26 +179,35 @@ int16_t Get_Pointer_Offset(void)
     return current_pointer_offset;
 }
 
+// WZD s35p05
+// Platform-Layer int16_t MD_GetButtonStatus(void)
 
+// WZD s35p07
 // MGC s33p07
+// AKA MD_Init()
 int16_t Init_Mouse_Driver(void)
 {
+    // INT 33, 0
+    // if _AX != 0x000
+    // INT 33, 3
+    mouse_driver_installed = ST_TRUE;
+    // mouse_interrupt_active = ST_FALSE;  // AKA g_MD_INT_InProcess
 
-    // DONT  mouse_installed = ST_TRUE;
-
-    // TODO  g_MD_INT_InProcess = ST_FALSE;
-    // mouse_interrupt_active
+    // INT 33, 7  638
+    // INT 33, 8  199
 
     // ~== MoO2 Set_Pointer_Position
     mouse_x = init_mouse_x;
     mouse_y = init_mouse_y;
 
-    // TODO  Mouse_Wait()  AKA MD_WaitRelease()  // MGC s33p06
+    // Mouse_Wait()  AKA MD_WaitRelease()
+
+    // INT 33, C  MD_INT_Handler
 
     mouse_enabled = ST_FALSE;
 
-    // TODO  g_MD_ClickRec1 = 0;  /* ? ST_FALSE ? */
-    // TODO  g_MD_ClickRec2 = 0;  /* ? ST_FALSE ? */
+    // g_MD_ClickRec1 = 0;  /* ? ST_FALSE ? */
+    // g_MD_ClickRec2 = 0;  /* ? ST_FALSE ? */
 
     return ST_SUCCESS;
 }
@@ -203,24 +229,41 @@ void Restore_Mouse_State(void)
 // MGC s33p18
 int16_t Pointer_X(void)
 {
-    // return mouse_x;
-    // return g_Mouse_X;
-    // return g_Mouse_X/320;
-    // return (g_Mouse_X % 320);
-    // return (g_Mouse_X / 2);
-    return g_Mouse_X;
+    return mouse_x;
 }
 
 // MGC s33p19
 int16_t Pointer_Y(void)
 {
-    // return mouse_y;
-    // return g_Mouse_Y;
-    // return g_Mouse_Y/200;
-    // return (g_Mouse_Y % 200);
-    // return (g_Mouse_Y / 2);
-    return g_Mouse_Y;
+    return mouse_y;
 }
+
+// WZD s35p20
+// MD_MoveCursor
+void Set_Pointer_Position(int16_t x, int16_t y)
+{
+//     MOUSE_CurrentX = x;
+//     MOUSE_CurrentY = y;
+// 
+//     if(MOUSE_DriverPresent != ST_FALSE)
+//     {
+//         Set_Mouse_Position(x, y);
+//     }
+}
+
+// WZD s35p21
+// AKA MD_MoveCursorINT() AKA MOUSE_MoveCursorINT()
+void Set_Mouse_Position(int16_t x, int16_t y)
+{
+// asm mov cx, [bp+x]
+// asm shl cx, 1
+// asm mov dx, [bp+y]
+// asm mov ax, 4
+// asm cli
+// asm int 33h
+// asm sti
+}
+
 
 
 // ? DSP & RSP ? Front & Back || On & Off || "draw_page_num" vs. "current_page_flag" {1,2,3} ?

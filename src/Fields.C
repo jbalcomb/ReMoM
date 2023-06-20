@@ -10,6 +10,17 @@
 
 
 /*
+    WIZARDS.EXE
+    Data Segment (DSEG)
+    Initialized Data
+    Uninitialized Data
+    seg035
+    seg036
+    Begin: dseg:E872
+    End:   dseg:E8B0
+    Last:  dseg:E8AC
+*/
+/*
     Initialized Data
 */
 // INPUT  _global_esc = ST_FALSE;
@@ -19,17 +30,47 @@
 // TODO  int16_t mouse_field = ST_FALSE;
 // TODO  int16_t input_field_active = ST_FALSE;
 // TODO  int16_t active_input_field_number = ST_UNDEFINED;
-/*
-    Uninitialized Data
-*/
-// TODO  int help_list;
-// INPUT  int16_t input_delay;
-// TODO  int16_t cursor_offset;
-int16_t fields_count;
-struct s_Field * p_fields;
 
 // INPUT
 extern int16_t down_mouse_button;
+
+/*
+    seg035
+    seg036
+    Uninitialized Data
+    WZD dseg:E872
+*/
+
+// WZD dseg:E872
+// _help_list dw 0
+// WZD dseg:E874
+// GUI_Processed_Btns dw 0
+// WZD dseg:E876
+// GUI_Processed_LastY dw 0
+// WZD dseg:E878
+// GUI_Processed_LastX dw 0
+// WZD dseg:E87A
+// GUI_EditString db 30 dup(0)
+// WZD dseg:E898
+int16_t input_delay;
+// WZD dseg:E89A
+// MOUSE_Emu_Y dw 0
+// WZD dseg:E89C
+// MOUSE_Emu_X dw 0
+// WZD dseg:E89E
+int16_t cursor_offset;
+// WZD dseg:E8A0
+// GUI_PrevControlCount dw 0
+// WZD dseg:E8A2
+int16_t fields_count;
+// WZD dseg:E8A4
+// GUI_Prev_Redraw_Fn dd 0
+// WZD dseg:E8A8
+// GUI_Redraw_Function dd 0
+// WZD dseg:E8AC
+struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
+
+// WZD dseg:E8AC                                                 ? END: fields, input, ... ?
 
 
 /*
@@ -145,7 +186,7 @@ int16_t Add_Button_Field(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pi
 int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Add_Hidden_Field(xmin = %d, ymin = %d, xmax = %d, ymax = %d, hotkey = %s, button_sound = %d)\n", __FILE__, __LINE__, xmin, ymin, xmax, ymax, hotkey, help);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Add_Hidden_Field(xmin = %d, ymin = %d, xmax = %d, ymax = %d, hotkey = %d, button_sound = %d)\n", __FILE__, __LINE__, xmin, ymin, xmax, ymax, hotkey, help);
 #endif
 
     p_fields[fields_count].x1 = xmin;
@@ -164,7 +205,7 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
     fields_count += 1;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Add_Hidden_Field(xmin = %d, ymin = %d, xmax = %d, ymax = %d, hotkey = %s, button_sound = %d) { (fields_count - 1) = %d }\n", __FILE__, __LINE__, xmin, ymin, xmax, ymax, hotkey, help, (fields_count - 1));
+    dbg_prn("DEBUG: [%s, %d] END: Add_Hidden_Field(xmin = %d, ymin = %d, xmax = %d, ymax = %d, hotkey = %d, button_sound = %d) { (fields_count - 1) = %d }\n", __FILE__, __LINE__, xmin, ymin, xmax, ymax, hotkey, help, (fields_count - 1));
 #endif
 
     return (fields_count - 1);
@@ -221,8 +262,11 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
 
     p_fields[fields_count].hotkey = ST_NULL;
 
-    p_fields[fields_count].Param3 = *xpos;
-    p_fields[fields_count].Param4 = *ypos;
+    // p_fields[fields_count].Param3 = *xpos;
+    // p_fields[fields_count].Param4 = *ypos;
+    // NOTE: We are storing the addresses of the pointers, to later be recast and dereferenced.
+    p_fields[fields_count].Param3 = (int16_t)xpos;
+    p_fields[fields_count].Param4 = (int16_t)ypos;
 
     if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
     {

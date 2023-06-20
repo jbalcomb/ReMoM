@@ -39,6 +39,8 @@ enum Key_Press
     KP_PgDn = 0x1D
 };
 
+
+// WZD s34p22
 // MGC s34p22
 int16_t Interpret_Keyboard_Input(int16_t * field_num)
 {

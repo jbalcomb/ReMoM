@@ -48,14 +48,30 @@ SAMB_ptr Visibility_Myrror;
 SAMB_ptr Visibility_Arcanus;
 
 
+/* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
+// ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
+// WZD dseg:9442
+int16_t draw_active_stack_flag;  // AKA Active_Stack_Draw
+
 // WZD dseg:9444
 int16_t all_units_moved;
 
 
+// dseg:9644 00 00                                           _city_idx dw 0                          ; DATA XREF: City_Screen+55r ...
+// dseg:9646 00                                              db    0
+// dseg:9647 00                                              db    0
 
 // WZD dseg:9648
 SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 
+// dseg:964A 00                                              db    0
+// dseg:964B 00                                              db    0
+
+// WZD dseg:964C
+int16_t entities_on_movement_map[120];
+
+// dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
+// dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
 
 
 // dseg:998A END:  Main Screen Pictures
@@ -171,6 +187,13 @@ SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
 struct s_WIZARD _players[6];
 // struct s_WIZARD * _players;
 
+// WZD dseg:BB7A
+// struct s_HLP_ENTRY _help_entries[50];
+
+// WZD dseg:BD6E 
+// config_mom s_CONFIG_MOM
+// WZD dseg:BD80 
+// UU_IMG_OVL_WorkMark@
 
 // WZD dseg:974A
 int16_t G_OVL_MapDisplay_Y;

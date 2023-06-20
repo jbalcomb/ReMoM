@@ -14,7 +14,7 @@
 
 #include "MoM_main.H"   /* g_State_Run, g_Current_Screen, */
 #include "Input.H"      /* g_Key_Pressed, scan_code_char_code */
-#include "MoM.hpp"      /* Update_Mouse_Position */
+#include "MoM.hpp"      /* platform_mouse_click_x, platform_mouse_click_y, platform_mouse_button_status; Update_Mouse_Position() */
 
 // #define STU_DEBUG 1
 #ifdef STU_DEBUG
@@ -724,6 +724,55 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
 
         } break;
+
+
+        /*
+            Windows Mouse Clicks
+
+            platform_mouse_click_x |-> Pointer_X() <-| mouse_x
+            platform_mouse_click_y |-> Pointer_Y() <-| mouse_y
+            platform_mouse_button_status |-> MD_GetButtonStatus()
+
+            ? ~ Process_Mouse_Click() ?
+            Mouse Buttons - Left, Right, Middle, x1, x2
+            Mouse Wheel
+            ? Client Area vs. Non Client Area ?
+        */
+        case WM_LBUTTONDOWN:
+        {
+            OutputDebugStringA("WM_LBUTTONDOWN\n");
+            POINT pt;
+            pt.x = GET_X_LPARAM(LParam);
+            pt.y = GET_Y_LPARAM(LParam);
+            platform_mouse_click_x = (int16_t)pt.x;
+            platform_mouse_click_y = (int16_t)pt.y;
+            platform_mouse_button_status = 0b00000001;
+        } break;
+        case WM_LBUTTONUP:
+        {
+            OutputDebugStringA("WM_LBUTTONUP\n");
+            platform_mouse_click_x = 0;
+            platform_mouse_click_y = 0;
+            platform_mouse_button_status = 0b00000000;
+        } break;
+        case WM_RBUTTONDOWN:
+        {
+            OutputDebugStringA("WM_RBUTTONDOWN\n");
+            POINT pt;
+            pt.x = GET_X_LPARAM(LParam);
+            pt.y = GET_Y_LPARAM(LParam);
+            platform_mouse_click_x = (int16_t)pt.x;
+            platform_mouse_click_y = (int16_t)pt.y;
+            platform_mouse_button_status = 0b00000010;
+        } break;
+        case WM_RBUTTONUP:
+        {
+            OutputDebugStringA("WM_RBUTTONUP\n");
+            platform_mouse_click_x = 0;
+            platform_mouse_click_y = 0;
+            platform_mouse_button_status = 0b00000000;
+        } break;
+
 
         case WM_PAINT:
         {

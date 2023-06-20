@@ -1,8 +1,7 @@
 
 #include "MoM.hpp"
 
-#include "Input.H"  /* g_Mouse_X, g_Mouse_Y */
-#include "Mouse.H"  /* Check_Mouse_Shape(), Draw_Mouse() */
+#include "Mouse.H"  /* mouse_x, mouse_y */
 #include "Video.H"
 
 /*
@@ -62,15 +61,8 @@ void GameUpdateAndRender(game_offscreen_buffer * Buffer)
     Render_VBB(Buffer);
 }
 
-void Update_Mouse_Position(int16_t mouse_x, int16_t mouse_y)
+void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
 {
-    g_Mouse_X = mouse_x / 2;
-    g_Mouse_Y = mouse_y / 2;
-    // // // mouse_x = Pointer_X();
-    // // // mouse_y = Pointer_Y();
-    // Check_Mouse_Shape(g_Mouse_X, g_Mouse_Y);
-    // // Save_Mouse(g_Mouse_X, g_Mouse_Y);
-    // Draw_Mouse(g_Mouse_X, g_Mouse_Y);
-    // // Page_Flip();
-    // // Restore_Mouse();
+    mouse_x = platform_mouse_x / 2;
+    mouse_y = platform_mouse_y / 2;
 }

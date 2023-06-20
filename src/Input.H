@@ -299,14 +299,6 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
-
-extern uint8_t g_Key_Pressed;
-extern uint16_t g_Last_Key_Pressed;
-extern uint16_t scan_code_char_code;  // Platform
-extern int16_t g_Mouse_X;
-extern int16_t g_Mouse_Y;
-
-
 /*
     WIZARDS.EXE seg036
     MAGIC.EXE seg034
@@ -314,6 +306,14 @@ extern int16_t g_Mouse_Y;
 
 // WZD s36p01
 int16_t Interpret_Mouse_Input(void);
+
+
+// WZD s34p25
+int16_t Scan_Field(void);
+
+// WZD s34p26
+int16_t Scan_Input(void);
+
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type);

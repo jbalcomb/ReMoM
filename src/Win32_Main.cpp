@@ -1,4 +1,6 @@
 
+#include "MoM.hpp"
+
 #include "MoX_TYPE.H"
 
 #include "MoM_main.H"

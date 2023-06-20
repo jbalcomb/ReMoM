@@ -4,7 +4,6 @@
 #include "MoX_TYPE.H"
 
 
-
 //enum Cursor_Types
 //crsr_None  = 0
 //crsr_Finger  = 1
@@ -40,6 +39,31 @@ extern struct s_mouse_list mouse_list_default[];
 // WZD dseg:011E    NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
 
 
+/* BEGIN: Initialized Data [Data Segment - DSEG]*/
+// ...
+// dseg:78B8                                                 BEGIN: Fields, Input, Mouse, Keyboard
+
+// WZD dseg:78B8 current_pointer_image_number dw 0
+// WZD dseg:78BA previous_pointer_image_number dw 0
+// WZD dseg:78BC MOUSE_CursorDraw dw 0
+// WZD dseg:78BE
+// drake178 MOUSE_DriverPresent
+// MoO2 mouse_driver_installed
+int16_t mouse_driver_installed;
+
+// WZD dseg:78C0 MOUSE_Usable dw 0
+// WZD dseg:78C2
+// MOUSE_CurrentX dw 9Eh  158
+extern int16_t mouse_x;
+// WZD dseg:78C4 MOUSE_CurrentY dw 64h  100
+extern int16_t mouse_y;
+
+
+// ...
+/* END: Initialized Data [Data Segment - DSEG]*/
+
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,6 +89,8 @@ int16_t Get_Pointer_Image_Number(void);
 // MGC s33p04
 int16_t Get_Pointer_Offset(void);
 
+// WZD s35p05
+int16_t MD_GetButtonStatus(void);
 
 // MGC s33p07
 int16_t Init_Mouse_Driver(void);
@@ -82,7 +108,13 @@ int16_t Pointer_X(void);
 // MGC s33p19
 int16_t Pointer_Y(void);
 
+// WZD s35p20
+// MD_MoveCursor
+void Set_Pointer_Position(int16_t x, int16_t y);
 
+// WZD s35p21
+// AKA MD_MoveCursorINT() AKA MOUSE_MoveCursorINT()
+void Set_Mouse_Position(int16_t x, int16_t y);
 
 // MGC s33p30
 // MGC s33p31

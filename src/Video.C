@@ -135,13 +135,7 @@ void Page_Flip(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Page_Flip()\n", __FILE__, __LINE__);
 #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: draw_page_num: %d\n", __FILE__, __LINE__, draw_page_num);
-#endif
     draw_page_num = (1 - draw_page_num);  // NOTE: this is the only code that changes 'draw_page_num'
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: draw_page_num: %d\n", __FILE__, __LINE__, draw_page_num);
-#endif
 
     // ? Meh ? current_video_page = off_page_buffer;
 
@@ -150,20 +144,13 @@ void Page_Flip(void)
         // VGA_WaitSync();
     // MS Windows
         // pointer to buffer to render/present
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: draw_page: %p\n", __FILE__, __LINE__, draw_page);
-#endif
     draw_page = video_page_buffer[draw_page_num];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: draw_page: %p\n", __FILE__, __LINE__, draw_page);
-#endif
 
     Set_Page_Off();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Page_Flip()\n", __FILE__, __LINE__);
 #endif
-
 }
 
 // // MGC s26p04

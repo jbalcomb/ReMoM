@@ -4,6 +4,14 @@
 #include "MoX_TYPE.H"
 
 
+/*
+    WIZARDS.EXE
+    ovr067
+    ovr068
+    ovr150
+*/
+
+
 
 #define WORLD_WIDTH 60
 #define WORLD_HEIGHT 40
@@ -129,11 +137,30 @@ extern "C" {
 */
 void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
 
+// WZD o67p04
+// AKA OVL_ShowActiveStack
+void Set_Draw_Active_Stack_Always(void);
+
+// WZD o67p05
+// AKA OVL_HideActiveStack
+void Set_Draw_Active_Stack_Never(void);
+
+// WZD o67p06
+// Reset_Active_Stack_Draw
+void Reset_Draw_Active_Stack(void);
+
+// WZD o67p07
+// AKA OVL_DrawActiveStack
+void Draw_Active_Unit_Stack(int16_t world_x, int16_t world_y, int16_t world_plane);
+
 // WZD o67p08
 void Minimap_Set_Dims(int16_t width, int16_t height);
 
 // WZD o67p09
 void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
+
+// WZD o67p10
+void Set_Entities_On_Map_Window(void);
 
 
 /*
@@ -141,8 +168,8 @@ void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_
 */
 
 // WZD o68p01
-void OVL_Map_Init(int16_t * map_x, int16_t map_y, int16_t xpos, int16_t ypos, int16_t plane);
-
+// void OVL_Map_Init(int16_t * map_x, int16_t map_y, int16_t xpos, int16_t ypos, int16_t plane);
+void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p03
 void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height);
@@ -151,6 +178,9 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 /*
     WIZARDS.EXE  ovr150
 */
+
+// WZD o150p01
+void Undef_Prev_Map_Draw_XY(void);
 
 // WZD o150p04
 void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
