@@ -18,6 +18,7 @@ x86/
 CppProperties.json
 
 build/
+Debug/
 
 
 # MoM
