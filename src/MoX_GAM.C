@@ -39,6 +39,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
+#pragma warning(suppress : 4996)
         itoa(save_gam_idx, a_idx, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, a_idx);
@@ -153,6 +154,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
+#pragma warning(suppress : 4996)
         itoa(save_gam_idx, a_idx, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, a_idx);

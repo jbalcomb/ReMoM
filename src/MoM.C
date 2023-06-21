@@ -1,5 +1,7 @@
 
-#include "MoM.hpp"
+#include "MoM.H"
+
+#include "MoM_main.H"
 
 #include "Mouse.H"  /* mouse_x, mouse_y */
 #include "Video.H"
@@ -34,10 +36,12 @@ Set_Page_On()
 
 uint16_t screen_pixel_width   =  320;
 uint16_t screen_pixel_height  =  200;
-uint16_t screen_pixel_size    =  (screen_pixel_width * screen_pixel_height);
+// error C2099: initializer is not a constant
+// uint16_t screen_pixel_size    =  (screen_pixel_width * screen_pixel_height);
+uint16_t screen_pixel_size    =  64000;
 
 
-void Render_VBB(game_offscreen_buffer * Buffer)
+void Render_VBB(struct game_offscreen_buffer * Buffer)
 {
 
     uint32_t * Pixel = (uint32_t*)Buffer->Memory;
@@ -56,7 +60,7 @@ void Render_VBB(game_offscreen_buffer * Buffer)
 
 }
 
-void GameUpdateAndRender(game_offscreen_buffer * Buffer)
+void GameUpdateAndRender(struct game_offscreen_buffer * Buffer)
 {
     Render_VBB(Buffer);
 }

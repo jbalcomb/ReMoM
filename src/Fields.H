@@ -40,6 +40,38 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 // WZD dseg:E8AC                                                 ? END: fields, input, ... ?
 
 
+// dseg:E872                                                 ? BEGIN: fields, intput, ... ?
+
+// WZD dseg:E872
+// AKA _help_list
+// HELP int16_t help_struct_pointer;
+
+
+
+
+// WZD dseg:8296
+// AKA have_help
+// HELP int16_t help_list_active = ST_FALSE;
+// WZD dseg:8298
+// AKA _help_count
+// HELP int16_t help_list_count = 0;
+// dseg:829A 00 00                                           KD_ActiveStringTrig dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
+// dseg:829C                                                 ; char UU_cnst_RB7[]
+// dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
+// dseg:829C                                                                                         ; should use dseg:28b8
+// dseg:829E                                                 ; char cnst_ZeroString_12[]
+// dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: GUI_TextEditDialog+3Bo ...
+// dseg:829F                                                 ; char UU_cnst_WB8[]
+// dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
+// dseg:829F                                                                                         ; should use dseg:28ef
+// dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
+// dseg:82A4 06 00                                           UU_GUI_Down_Hotkey db 6, 0              ; DATA XREF: UU_GUI_ScrollableTxtDlg+240o ...
+// dseg:82A6 5F 00                                           GUI_EditCursor db '_',0                 ; DATA XREF: Draw_Fields+117Do
+// dseg:82A6
+// dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// dseg:82A6
+
+
 
 
 enum e_Field_Type
@@ -52,7 +84,7 @@ enum e_Field_Type
     ft_ImageLabel,              /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
     ft_Scroll,                  /*  6  0x06 */  //drake178: SlideBar
     ft_HotKey,                  /*  7  0x07 */  //drake178: Label
-    ft_MultiHotKey,             /*  8  0x08 */  //drake178: TODO
+    ft_MultiHotKey,             /*  8  0x08 */  //drake178: Ctrl_AltString
     ft_ClickLink,               /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
     ft_StringList,              /* 10  0x0A */  //drake178: DialogLine
     ft_ContinuousStringInput,   /* 11  0x0B */  //drake178: EditSelect
@@ -135,11 +167,20 @@ extern "C" {
 // WZD s36p08
 // TODO  void Set_Global_Esc(void);
 
+/*
+    BEGIN: Help
+*/
 // WZD s36p12
-// TODO  void Set_Help_List(uint16_t help_seg, int16_t count);
-
+// HELP  void Set_Help_List(struct s_Help_Entry * help_pointer, int16_t count);
 // WZD s36p13
-// TODO  void Deactivate_Help_List(void);
+// HELP  void Deactivate_Help_List(void);
+// WZD s36p14
+// HELP  void Check_Help_List(void);
+// WZD o159p01
+// HELP Draw_Help_Entry_()
+/*
+    END: Help
+*/
 
 // WZD s36p22
 // KD int16_t Interpret_Keyboard_Input(char  * character);

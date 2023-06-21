@@ -117,7 +117,9 @@ void get_datetime(char * datatime)
     struct tm *edt;
     char ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";
 
+#pragma warning(suppress : 4996)
     putenv(tzstr);
+#pragma warning(suppress : 4996)
     tzset();
     edtt = time(NULL);
     edt = localtime(&edtt);

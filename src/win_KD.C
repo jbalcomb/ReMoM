@@ -1,11 +1,15 @@
 
-#include "MoM.hpp"
+#include "MoM.H"
 
 #include "MoX_DEF.H"
 
 #include "Keyboard.H"
 
 #include "Input.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 

@@ -1,7 +1,7 @@
 
 #include "MoX_TYPE.H"
 
-#include "MoM.hpp"
+#include "MoM.H"
 
 #include "windows.h"
 
@@ -14,7 +14,6 @@
 #include "STU_DBG.H"
 #endif
 
-// extern "C" void Pump_Events(void);
 
 void Pump_Events(void)
 {

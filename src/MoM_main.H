@@ -47,6 +47,8 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
+extern int16_t PageFlipEffect;
+
 extern uint8_t g_State_Run;
 
 extern int16_t g_Current_Screen;

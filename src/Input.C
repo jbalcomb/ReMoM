@@ -2,10 +2,11 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
-#include "MoM.hpp"
+#include "MoM.H"
 
 #include "Allocate.H"
 #include "Fields.H"
+#include "Help.H"
 #include "Input.H"
 #include "Keyboard.H"
 #include "Mouse.H"
@@ -127,14 +128,58 @@ int16_t Interpret_Mouse_Input(void)
     {
         DLOG("(Keyboard_Status() == ST_TRUE)");
         character = Interpret_Keyboard_Input(&field_num);  // MGC s34p22
+
+        /*
+            Global Debug Keys
+        */
+
+        if(p_fields[field_num].type == ft_MultiHotKey)
+        {
+
+        }
+        else if(field_num == 0  || p_fields[field_num].hotkey != character)
+        {
+
+        }
     }
     else
     {
         DLOG("(Keyboard_Status() != ST_TRUE)");
+
         // Mouse_Movement_Handler();
-        // WZD seg035
-        if(MD_GetButtonStatus() == ST_FALSE)
+
+        
+        if(MD_GetButtonStatus() != ST_FALSE)
         {
+            DLOG("(MD_GetButtonStatus() != ST_FALSE)");
+            /*
+                ProgramPath:
+                    KBD_CheckBuffer == 0
+                    MDI_Mv()
+                    MD_INT_SetMvOnly()
+                    MD_GetButtonStatus() != 0
+            */
+            MD_ButtonStatus = MD_GetButtonStatus();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
+#endif
+            /*
+                ? Right Click for Help ?
+
+                Check_Help_List() draws the help, if it can, then wait for a key press or button click...
+                so, nothing needs to happen after this?
+            */
+            if(MD_ButtonStatus == 2 && help_list_active != ST_FALSE && Check_Help_List() == 0)
+            {
+
+            }
+
+        }
+        // else if(MD_GetClickRec1() != ST_FALSE)
+        else if(ST_FALSE)
+        {
+            DLOG("(MD_GetButtonStatus() == ST_FALSE)");
+            DLOG("(MD_GetClickRec1() != ST_FALSE)");
             // if(MD_Get_ClickRec1() == ST_FALSE)
             // {
             //     Mouse_Button_Handler();
@@ -153,15 +198,12 @@ int16_t Interpret_Mouse_Input(void)
         }
         else
         {
-            /*
-                ProgramPath:
-                    KBD_CheckBuffer == 0
-                    MDI_Mv()
-                    MD_INT_SetMvOnly()
-                    MD_GetButtonStatus() != 0
-            */
-            MD_ButtonStatus = MD_GetButtonStatus();
+            DLOG("(MD_GetButtonStatus() == ST_FALSE)");
+            DLOG("(MD_GetClickRec1() == ST_FALSE)");
+            // Mouse_Button_Handler();
+            field_num = 0;
         }
+        
 
     }
 
@@ -266,8 +308,8 @@ int16_t Scan_Input(void)
     */
     if(p_fields[current_field].type == ft_ClickLink)
     {
-        *((int16_t *)p_fields[itr].Param2) = p_fields[itr].Param1;
-        current_field = p_fields[itr].Param0;
+        *((int16_t *)p_fields[current_field].Param2) = p_fields[current_field].Param1;
+        current_field = p_fields[current_field].Param0;
     }
 
     /*
@@ -303,8 +345,8 @@ int16_t Scan_Input(void)
     // if(p_fields[current_field].type == ft_StringList && p_fields[itr].Selectable != ST_FALSE)
     if(p_fields[current_field].type == ft_Grid)
     {
-        *((int16_t *)p_fields[itr].Param3) = ( (Pointer_X() - p_fields[itr].x1) / p_fields[itr].Param1 );
-        *((int16_t *)p_fields[itr].Param4) = ( (Pointer_Y() - p_fields[itr].y1) / p_fields[itr].Param2 );
+        *((int16_t *)p_fields[current_field].Param3) = ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 );
+        *((int16_t *)p_fields[current_field].Param4) = ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 );
     }
 
     return current_field;

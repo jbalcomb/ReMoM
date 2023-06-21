@@ -19,29 +19,16 @@
     
 */
 
-
+#include "MoX_TYPE.H"
 
 struct game_offscreen_buffer
 {
-    void * Memory;
+    void* Memory;
     int Width;
     int Height;
     int Pitch;
 };
 
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-#include "MoX_TYPE.H"
-
-
-extern int16_t draw_page_num;
-extern uint8_t * video_page_buffer[2];
-extern uint8_t * draw_page;
 
 /*
     Input
@@ -52,24 +39,29 @@ extern uint8_t * draw_page;
             Click
 */
 
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// set in Win32_Evnt.cpp, get in win_MD.C
+extern int16_t platform_mouse_button_status;
+extern int16_t platform_mouse_click_x;
+extern int16_t platform_mouse_click_y;
+
 extern uint8_t g_Key_Pressed;
 extern uint16_t g_Last_Key_Pressed;
 extern uint16_t scan_code_char_code;  // Platform
-
-// set in Win32_Evnt.cpp, get in win_MD.C
-int16_t platform_mouse_button_status;
-int16_t platform_mouse_click_x;
-int16_t platform_mouse_click_y;
-
 
 
 // TODO(JimBalcomb,20221216): Services that the *platform layer* provides to the *game*
 void Pump_Events(void);
 
 // TODO(JimBalcomb,20221216): Services that the *game* provides to the *platform layer*
-void GameUpdateAndRender(game_offscreen_buffer * Buffer);
+void GameUpdateAndRender(struct game_offscreen_buffer * Buffer);
 
-void Update_Mouse_Position(int16_t mouse_x, int16_t mouse_y);
+void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
 
 
 #ifdef __cplusplus

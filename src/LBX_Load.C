@@ -103,6 +103,10 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Entry(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type);
 #endif
 
+    // Meh.
+    // Error	C4703	potentially uninitialized local pointer variable 'SAMB_data' used	STU - MoM_Rasm	C : \devel\STU - MoM_Rasm\src\LBX_Load.C	255
+    SAMB_data = NULL;
+
     // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }
 
     if(lbxload_lbx_header_flag == ST_FALSE)
@@ -117,6 +121,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     /*
         BEGIN: Current vs. Previous
     */
+#pragma warning(suppress : 4996)
     if((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))
     {
         DLOG("((lbxload_fptr == NULL) || (stricmp(lbx_name, lbxload_lbx_name) != 0))");
@@ -250,6 +255,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     /*
         BEGIN: Read Data
     */
+#pragma warning(suppress : 4703)
     rvr_SAMB_data = SAMB_data;
     read_size = SZ_32K_B;
     while(entry_length >= read_size)
@@ -323,6 +329,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 #endif
 
     strcpy(buffer, file_name);
+#pragma warning(suppress : 4996)
     itoa(entry_num, buffer2, 10);
     strcat(buffer, str_error_handler[0]);
     strcat(buffer, buffer2);
@@ -338,6 +345,8 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             break;
         case 3:
             strcpy(buffer, str_error_handler[4]);
+            
+#pragma warning(suppress : 4996)
             itoa(640, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[5]);
@@ -347,6 +356,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             break;
         case 5:
             strcat(buffer, str_error_handler[7]);
+#pragma warning(suppress : 4996)
             itoa(pages, buffer2, 10);
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[8]);

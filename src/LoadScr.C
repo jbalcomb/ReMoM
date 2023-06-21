@@ -1,4 +1,9 @@
 
+#include "MoX_TYPE.H"
+
+#include "MoX_Data.H"
+#include "MoM_main.H"
+
 #include "LoadScr.H"
 
 
@@ -47,7 +52,7 @@ void Load_Screen_Help(void)
 // WZD o160p04
 void Loaded_Game_Update(void)
 {
-        int16_t itr;
+    ; int16_t itr;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif

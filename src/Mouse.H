@@ -54,9 +54,9 @@ int16_t mouse_driver_installed;
 // WZD dseg:78C0 MOUSE_Usable dw 0
 // WZD dseg:78C2
 // MOUSE_CurrentX dw 9Eh  158
-extern int16_t mouse_x;
+// extern int16_t mouse_x;
 // WZD dseg:78C4 MOUSE_CurrentY dw 64h  100
-extern int16_t mouse_y;
+// extern int16_t mouse_y;
 
 
 // ...
@@ -69,6 +69,9 @@ extern int16_t mouse_y;
 extern "C" {
 #endif
     /* C and Asm Function Prototypes */
+
+extern int16_t mouse_x;
+extern int16_t mouse_y;
 
 
 /*

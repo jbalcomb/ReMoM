@@ -1,17 +1,32 @@
+// itoa() #define _CRT_NONSTDC_NO_DEPRECATE
+// ... use scanf_s instead of the standard function scanf
+// #define _CRT_SECURE_NO_WARNINGS
+// #define _CRT_SECURE_NO_DEPRECATE  
+// ...deprecated...
+// #pragma warning(suppress : 4996)
+// Error  C4703  potentially uninitialized local pointer variable used
+// #pragma warning(suppress : 4703)
 
-#include "MoM.hpp"
+// timeBeginPeriod() is defined in the Windows Multimedia Library(winmm.lib)
+// make sure that this library is linked to your project
+// e.g., cl ... ... user32.lib gdi32.lib winmm.lib
+// VS > Project Settings > Configuration Properties > Linker > Input > Additional Dependencies
+
 
 #include "MoX_TYPE.H"
 
 #include "MoM_main.H"
 
-#include "MoM.cpp"
+#include "VIDEO.H"  /*  video_page_buffer, draw_page_num, draw_page */
+
+#include "MoM.H"
 
 #include "Win32.hpp"
 
 #include <windows.h>
 #include <stdint.h>
 #include <stdio.h>      /* sprintf() */
+#include <timeapi.h>  /* timeBeginPeriod() */
 
 // #define STU_DEBUG 1
 #ifdef STU_DEBUG
@@ -21,6 +36,7 @@
 // #include "..\src\STU\STU_UTIL.C"   /* get_datetime() */
 #include "STU_DBG.H"
 #endif
+
 
 typedef int8_t s8;
 typedef int16_t s16;
@@ -211,7 +227,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
         Screen_Control();
 
-        game_offscreen_buffer Buffer = {0};  // clear/set to zero!
+        struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
         Buffer.Memory = GlobalBackbuffer.Memory;
         Buffer.Width = GlobalBackbuffer.Width;
         Buffer.Height = GlobalBackbuffer.Height;

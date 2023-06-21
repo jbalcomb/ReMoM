@@ -3,6 +3,23 @@
 
 
 
+Hrrrmm... coulda sworn I'd a done bunch of work getting the main menu button highlight code working with the mouse...
+but, I don't see nothing about it...
+Nop. I did. Found some.
+C:\devel\STU-MoM_Rasm\MoM_Rasm\_s34p01c.c
+Also, in the STU-MoM_Rasm-NotGit mess, ST_Mouse.md
+Looks like I have figured I'd come back for this code after I got the move to ./src and WinAPI done, but I neglected to make a note and then I fergetted.
+
+
+
+
+
+
+
+
+
+
+
 
 
 

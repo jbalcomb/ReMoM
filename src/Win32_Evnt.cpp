@@ -14,7 +14,7 @@
 
 #include "MoM_main.H"   /* g_State_Run, g_Current_Screen, */
 #include "Input.H"      /* g_Key_Pressed, scan_code_char_code */
-#include "MoM.hpp"      /* platform_mouse_click_x, platform_mouse_click_y, platform_mouse_button_status; Update_Mouse_Position() */
+#include "MoM.H"      /* platform_mouse_click_x, platform_mouse_click_y, platform_mouse_button_status; Update_Mouse_Position() */
 
 // #define STU_DEBUG 1
 #ifdef STU_DEBUG
