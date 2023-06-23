@@ -31,9 +31,9 @@
 */
 
 
-uint8_t g_Key_Pressed;          // Platform - Decl in MoM.hpp
-uint16_t g_Last_Key_Pressed;    // Platform - Decl in MoM.hpp
-uint16_t scan_code_char_code;   // Platform - Decl in MoM.hpp
+uint8_t g_Key_Pressed = ST_FALSE;   // Platform - Decl in MoM.hpp
+uint16_t g_Last_Key_Pressed = 0;    // Platform - Decl in MoM.hpp
+uint16_t scan_code_char_code = 0;   // Platform - Decl in MoM.hpp
 
 
 // WZD dseg:824E
@@ -207,11 +207,11 @@ int16_t Interpret_Mouse_Input(void)
 
     }
 
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
 #endif
-#ifdef DEBUG
-    dlvfprintf("DEBUG: [%s, %d] field_num: %d\n", __FILE__, __LINE__, field_num);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] field_num: %d\n", __FILE__, __LINE__, field_num);
 #endif
 
     // TODO  if(character != 0)
@@ -353,7 +353,6 @@ int16_t Scan_Input(void)
 }
 
 // WZD s36p65
-// IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type)
 {
 
@@ -401,20 +400,24 @@ void Init_Mouse_Keyboard(int16_t input_type)
 
     Set_Mouse_List(1, mouse_list_init);
     Init_Mouse_Driver();
-    // TODO  IN_CRL_Save_RSP(158, 100);
+    // DONT  mouse_installed = ST_TRUE;
+
+    Save_Mouse_On_Page_(158, 100);
     input_delay = 0;
-    // TODO  g_CTRL_Focused = ST_UNDEFINED;
+    down_mouse_button = ST_UNDEFINED;
     _global_esc = ST_FALSE;
     Clear_Fields();
 
-    
-// #ifdef DEBUG
-//     dlvfprintf("DEBUG: [%s, %d] END: Init_Mouse_Keyboard()\n", __FILE__, __LINE__);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: Init_Mouse_Keyboard()\n", __FILE__, __LINE__);
 // #endif
 }
 
 // WZD s36p66
 // MGC s34p66
+/*
+    returns field_idx/num
+*/
 int16_t Get_Input(void)
 {
 
@@ -463,7 +466,6 @@ int16_t Get_Input_Delay(void)
 
 
 // WZD s36p85
-// MGC s34p85
 void Toggle_Pages(void)
 {
     int16_t mouse_x;
@@ -473,44 +475,24 @@ void Toggle_Pages(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Toggle_Pages()\n", __FILE__, __LINE__);
 #endif
 
-    // TODO  Save_Mouse_State()  AKA MD_CDraw_Disable();
-
-    // MoO2
-    // old_mouse_x = mouse_x;
-    // old_mouse_y = mouse_y;
+    Save_Mouse_State();
 
     mouse_x = Pointer_X();
     mouse_y = Pointer_Y();
 
-    // NOTE(JimBalcomb,20221110): Presently, this feels like where what has been drawn is everything, so the draw-screen-page can be saved/exported/dumped.
-    // STU_Export_DSP_To_BMP();
+    // TODO  Draw_Visible_Fields()
 
+    Check_Mouse_Shape(mouse_x, mouse_y);
 
-    // TODO  Draw_Visible_Fields()  AKA CTRL_DrawControls();  // MGC s34p71c  ST_CTRL.H
+    Save_Mouse_Off_Page(mouse_x, mouse_y);  // [1 - draw_page_num] -> mouse_off_page_buffer
+    Draw_Mouse_Off_Page(mouse_x, mouse_y);  // mouse_palette -> [1 - draw_page_num]
 
-    Check_Mouse_Shape(mouse_x, mouse_y);  // AKA GUI_FindWindow();  // MGC s33p02  ST_GUI.H
+    Page_Flip();  // draw_page_num = 1 - draw_page_num
 
-    // TODO  Save_Mouse_Off()  AKA CRL_Save_DSP(mouse_x, mouse_y);
-    // TODO  Draw_Mouse_Off()  AKA CRH_Draw_DSP(mouse_x, mouse_y);
-    Save_Mouse(mouse_x, mouse_y);
-    Draw_Mouse(mouse_x, mouse_y);
+    // Restore_Mouse_Off_Page();  // mouse_background_buffer -> [1 - draw_page_num]
+    // Copy_Mouse_Off_To_Mouse_Back();  // mouse_off_page_buffer -> mouse_background_buffer
 
-
-    // STU_Export_VBB_To_BMP32();
-
-
-    // ? MoO2 Switch_Video_Pages() ?
-    // TODO Page_Flip()  AKA VGA_PageFlip();  // MGC _s26p04a.c
-    Page_Flip();
-    
-    // // Restore_Mouse_Off()  AKA CRL_Restore_DSP();
-    Restore_Mouse();
-    // // CRL_Copy_DSP2RSP();  // MGC _s33p33.asm
-    // Copy_Mouse();
-
-
-    // TODO  Restore_Mouse_State()  AKA MD_CDraw_Restore();
-
+    Restore_Mouse_State();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Toggle_Pages()\n", __FILE__, __LINE__);

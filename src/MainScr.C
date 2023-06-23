@@ -96,22 +96,6 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
 
 
 
-// int16_t field_idx_hotkey_C;
-// int16_t field_idx_hotkey_L;
-// int16_t field_idx_hotkey_N;
-// int16_t field_idx_hotkey_H;
-int16_t field_idx_hotkey_Q;
-// int16_t field_idx_hotkey_ESC;
-// int16_t field_idx_click_C;
-// int16_t field_idx_click_L;
-// int16_t field_idx_click_N;
-// int16_t field_idx_click_H;
-// int16_t field_idx_click_Q;
-int16_t field_idx_hotkey_G;
-// OVL_GAME_Button
-// _game_button
-// _main_game_button_seg
-
 
 // dseg:2E10                                                 BEGIN: Main Screen
 
@@ -933,18 +917,6 @@ void Main_Screen(void)
     BEGIN: Check Input against Fields
 */
 
-        if(input_field_idx == field_idx_hotkey_G)
-        {
-            DLOG("(input_field_idx == field_idx_hotkey_G)");
-            leave_screen_flag = ST_TRUE;
-            g_Current_Screen = scr_Main_Menu_Screen;
-        }
-        if(input_field_idx == field_idx_hotkey_Q)
-        {
-            DLOG("(input_field_idx == field_idx_hotkey_Q)");
-            leave_screen_flag = ST_TRUE;
-            g_Current_Screen = scr_Quit_To_DOS;
-        }
 
         // Advisor - Surveyor
         if(input_field_idx == hotkey_idx_F1)

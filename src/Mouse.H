@@ -4,21 +4,23 @@
 #include "MoX_TYPE.H"
 
 
-//enum Cursor_Types
-//crsr_None  = 0
-//crsr_Finger  = 1
-//crsr_CastBase  = 2
-//crsr_RedCross  = 3
-//crsr_Ranged  = 4
-//crsr_Melee  = 5
-//crsr_Hourglass  = 6
-//crsr_WingedBoot  = 7
-//crsr_Empty  = 8
-//crsr_CastAnim1  = 9
-//crsr_CastAnim2  = 0Ah
-//crsr_CastAnim3  = 0Bh
-//crsr_CastAnim4  = 0Ch
-//crsr_CastAnim5  = 0Dh
+// "cursor image"
+enum e_Cursor_Image
+{
+    crsr_None,
+    crsr_CastBase,
+    crsr_RedCross,
+    crsr_Ranged,
+    crsr_Melee,
+    crsr_Hourglass,
+    crsr_WingedBoot,
+    crsr_Empty,
+    crsr_CastAnim1,
+    crsr_CastAnim2,
+    crsr_CastAnim3,
+    crsr_CastAnim4,
+    crsr_CastAnim5
+};
 
 
 struct s_mouse_list {
@@ -75,40 +77,41 @@ extern int16_t mouse_y;
 
 
 /*
+    WZD  seg035
     MGC  seg033
 */
 
 
-// MGC s33p01
 // WZD s35p01
 void Set_Mouse_List(int16_t count, struct s_mouse_list * list);
 
-// MGC s33p02
+// WZD s35p02
 void Check_Mouse_Shape(int16_t x, int16_t y);
 
-// MGC s33p03
+// WZD s35p03
 int16_t Get_Pointer_Image_Number(void);
 
-// MGC s33p04
+// WZD s35p04
 int16_t Get_Pointer_Offset(void);
 
 // WZD s35p05
 int16_t MD_GetButtonStatus(void);
 
-// MGC s33p07
+// WZD s35p07
 int16_t Init_Mouse_Driver(void);
 
 
-// MGC s33p13
-void MD_Draw_Disable(void);
+// WZD s35p13
+void Save_Mouse_State(void);
 
-// MGC s33p14
-void MD_Draw_Restore(void);
+// WZD s35p14
+void Restore_Mouse_State(void);
 
-// MGC s33p18
+
+// WZD s35p18
 int16_t Pointer_X(void);
 
-// MGC s33p19
+// WZD s35p19
 int16_t Pointer_Y(void);
 
 // WZD s35p20
@@ -119,21 +122,75 @@ void Set_Pointer_Position(int16_t x, int16_t y);
 // AKA MD_MoveCursorINT() AKA MOUSE_MoveCursorINT()
 void Set_Mouse_Position(int16_t x, int16_t y);
 
-// MGC s33p30
-// MGC s33p31
-// MGC s33p32
-void Save_Mouse(int16_t x, int16_t y);
 
-// MGC s33p34
-// MGC s33p35
-// MGC s33p36
-void Restore_Mouse(void);
 
-// MGC s33p37
-// MGC s33p38
-// MGC s33p39
-// MGC s33p40
-void Draw_Mouse(int16_t x, int16_t y);
+// WZD s35p30  Save_Mouse_On_Page   CRL_Save_RSP  GUI_SaveCursorArea
+// WZD s35p31  Save_Mouse_Off_Page  CRL_Save_DSP  GUI_SaveDrawCrsrArea
+// WZD s35p32  IN_CRL_Save_RSP  VGA_SaveCursorArea
+
+/*
+    [draw_page_num -> mouse_background_buffer
+*/
+void Save_Mouse_On_Page(int16_t x, int16_t y);
+
+/*
+    [1 - draw_page_num] -> mouse_off_page_buffer
+*/
+void Save_Mouse_Off_Page(int16_t x, int16_t y);
+
+/*
+    [draw_page_num -> mouse_background_buffer
+    nearly same as Save_Mouse_On_Page(), without none/save check
+*/
+void Save_Mouse_On_Page_(int16_t x, int16_t y);
+
+
+// WZD s35p33  Copy_Mouse_Off_To_Mouse_Back  CRL_Copy_DSP2RSP  GUI_CursorCopy_Bkup2Main
+/*
+    mouse_off_page_buffer -> mouse_background_buffer
+*/
+void Copy_Mouse_Off_To_Mouse_Back(void);
+
+
+// WZD s35p34  Restore_Mouse_On_Page   CRL_Restore_RSP     VGA_RestoreCursrArea
+// WZD s35p35  Restore_Mouse_Off_Page  CRL_Restore_DSP     VGA_RestoreDrawCArea
+// WZD s35p36  ???                     UU_CRL_Restore_SP3  UU_VGA_RestoreCursorArea_SP3
+
+/*
+    mouse_background_buffer -> [draw_page_num]
+*/
+void Restore_Mouse_On_Page(void);
+
+/*
+    mouse_background_buffer -> [1 - draw_page_num]
+*/
+void Restore_Mouse_Off_Page(void);
+
+
+// WZD s35p37  Draw_Mouse_On_Page    CRH_Draw_RSP  GUI_DisplayCursor
+// WZD s35p38  Draw_Mouse_Off_Page   CRH_Draw_DSP  GUI_DrawCursor
+// WZD s35p39  Draw_Mouse_On_Page_   CRL_Draw_RSP  VGA_DisplayCursor
+// WZD s35p40  Draw_Mouse_Off_Page_  CRL_Draw_DSP  VGA_DrawCursor
+
+/*
+    mouse_palette -> [draw_page_num]
+*/
+void Draw_Mouse_On_Page(int16_t x, int16_t y);
+
+/*
+    mouse_palette -> [1 - draw_page_num]
+*/
+void Draw_Mouse_Off_Page(int16_t x, int16_t y);
+
+/*
+    mouse_palette -> [draw_page_num]
+*/
+void Draw_Mouse_On_Page_(int16_t x, int16_t y);
+
+/*
+    mouse_palette -> [1 - draw_page_num]
+*/
+void Draw_Mouse_Off_Page_(int16_t x, int16_t y);
 
 
 #ifdef __cplusplus

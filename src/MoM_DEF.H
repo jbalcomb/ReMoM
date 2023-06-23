@@ -9,26 +9,36 @@
 
 */
 
+#define SCREEN_WIDTH    320
+#define SCREEN_HEIGHT   200
+
+#define CURSOR_WIDTH    16
+#define CURSOR_HEIGHT   16
+
+// ? /* Palette Index 0: TRANSPARENT */ ?
+#define TRANSPARENT 0x00
+
+
 /*
     World Map Dimensions
 */
-#define WMAP_WIDTH  60  // in Squares
-#define WMAP_HEIGHT 40  // in Squares
+#define WMAP_WIDTH      60  // in Squares
+#define WMAP_HEIGHT     40  // in Squares
 /*
     Main Screen Movement Map Dimensions
 */
-#define MMAP_WIDTH  12  // in Squares
-#define MMAP_HEIGHT 10  // in Squares
+#define MMAP_WIDTH      12  // in Squares
+#define MMAP_HEIGHT     10  // in Squares
 /*
     Main Screen Reduced Map Dimensions
 */
-#define RMAP_WIDTH  58  // in Squares
-#define RMAP_HEIGHT 30  // in Squares
+#define RMAP_WIDTH      58  // in Squares
+#define RMAP_HEIGHT     30  // in Squares
 /*
     World / Movement-Map Square Dimensions
 */
-#define SQUARE_WIDTH  20  // in Pixels
-#define SQUARE_HEIGHT 18  // in Pixels
+#define SQUARE_WIDTH    20  // in Pixels
+#define SQUARE_HEIGHT   18  // in Pixels
 
 
 

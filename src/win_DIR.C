@@ -7,8 +7,15 @@
 #include <stdio.h>
 
 #include "MoX_TYPE.H"
+#include "MoX_DEF.H"
 
-// #include "ST_GUI.H"     /* MD_CDraw_Disable(), MD_CDraw_Restore() */
+#include "MoX_DIR.H"
+
+#include "Mouse.H"
+
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 
@@ -19,7 +26,7 @@ int32_t LOF(char * file_name)
     HANDLE hFile;
     int32_t size;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: LOF(file_name = %s)\n", __FILE__, __LINE__, file_name);
 #endif
 
@@ -68,7 +75,7 @@ int32_t LOF(char * file_name)
 
     // MD_CDraw_Restore();
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: LOF(file_name = %s) { size = %ld } \n", __FILE__, __LINE__, file_name, size);
 #endif
 
@@ -78,6 +85,9 @@ int32_t LOF(char * file_name)
 
 // MGC s04p01
 // WZD s04p01
+/*
+    returns ST_SUCCESS(0), ST_FAILURE(1)
+*/
 int16_t DIR(char * match_string, char * found_file)
 {
     int16_t st_status;
@@ -85,12 +95,11 @@ int16_t DIR(char * match_string, char * found_file)
     HANDLE hFind;
     char * rvr_cFileName;
 
-#ifdef DEBUG
+#ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] BEGIN: DIR(match_string = %s, found_file = %s)\n", __FILE__, __LINE__, match_string, found_file);
 #endif
 
-    // MD_CDraw_Disable();
-
+    Save_Mouse_State();
 
     // NIU TBD TODO if(match_string == NULL) { findnext() }
 
@@ -98,7 +107,7 @@ int16_t DIR(char * match_string, char * found_file)
     if(hFind == INVALID_HANDLE_VALUE)
     {
         found_file[0] = '\0';
-        st_status = 0;  // ST_FAILURE
+        st_status = ST_FAILURE;
     }
     else
     {
@@ -108,14 +117,13 @@ int16_t DIR(char * match_string, char * found_file)
             *(found_file++) = *(rvr_cFileName++);
         }
         *found_file = '\0';
-        st_status = 1;  // ST_SUCCESS
+        st_status = ST_SUCCESS;
     }
 
+    Restore_Mouse_State();
 
-    // MD_CDraw_Restore();
-
-#ifdef DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: DIR(match_string = %s, found_file = %s)\n", __FILE__, __LINE__, match_string, found_file);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: DIR(match_string = %s, found_file = %s) { st_status = %d }\n", __FILE__, __LINE__, match_string, found_file, st_status);
 #endif
 
     return st_status;

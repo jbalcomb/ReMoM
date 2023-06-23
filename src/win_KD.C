@@ -154,7 +154,7 @@ uint8_t Read_Key(void)
 
         case SCCC_Q: { return_key = 'q'; } break;
 
-        default: { return_key = ST_NULL; }
+        default: { return_key = ST_KEY_OVERRUN; }
     }
 
 #ifdef STU_DEBUG

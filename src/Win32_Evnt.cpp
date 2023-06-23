@@ -700,8 +700,14 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             g_Key_Pressed = ST_TRUE;
             scan_code_char_code = VK_to_SCCS[VKCode];
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: g_Key_Pressed: %d\n", __FILE__, __LINE__, g_Key_Pressed);
+    // MapVirtualKey() does not work with extended keys, try using MapVirtualKeyEx()
+    char keyName[10];
+    int length = GetKeyNameTextA(LParam, keyName, sizeof(keyName));
+    dbg_prn("DEBUG: [%s, %d]: VKCode: %d\n", __FILE__, __LINE__, VKCode);
+    dbg_prn("DEBUG: [%s, %d]: keyName: %s\n", __FILE__, __LINE__, keyName);
+
     dbg_prn("DEBUG: [%s, %d]: scan_code_char_code: %d\n", __FILE__, __LINE__, scan_code_char_code);
+    dbg_prn("DEBUG: [%s, %d]: g_Key_Pressed: %d\n", __FILE__, __LINE__, g_Key_Pressed);
 #endif
 
         } break;

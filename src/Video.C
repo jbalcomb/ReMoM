@@ -1,6 +1,10 @@
 
 #include "MoX_TYPE.H"
 
+#include "Video.H"
+
+#include "Mouse.H"  /* e_Cursor_Image; Get_Pointer_Image_Numeber(), Restore_Mouse_State(), Save_Mouse_State(); */
+
 
 // pointer (4 bytes) Copy_Off_To_On_Page
 // Address: 02:001B3888
@@ -24,6 +28,7 @@
 
 // dseg:76E2 46 4F 4E 54 53 2E 4C 42+cnst_FONT_File2 db 'FONTS.LBX',0        ; should use dseg:28f2
 // dseg:76EC 00 A0                   g_VGA_DisplayBuffer_Page_SgmtAddr dw 0A000h
+
 // WZD dseg:76EE
 int16_t draw_page_num;
 
@@ -78,6 +83,10 @@ uint8_t * draw_page;
 // MGC s26p01
 void Set_Page_On(void)
 {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Page_On()\n", __FILE__, __LINE__);
+#endif
+
     /*
         ~== VRAM + ((draw_page_num) * 4)  {0xA000, 0xA400}
     */
@@ -88,6 +97,9 @@ void Set_Page_On(void)
     // current_video_page = off_page_buffer;
     // // copy_to_on_page_flag = 1;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Set_Page_On()\n", __FILE__, __LINE__);
+#endif
 }
 
 
@@ -102,13 +114,7 @@ void Set_Page_Off(void)
         ~== VRAM + ((1 - draw_page_num) * 4)  {0xA000, 0xA400}
     */
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: current_video_page: %p\n", __FILE__, __LINE__, current_video_page);
-#endif
     current_video_page = video_page_buffer[(1 - draw_page_num)];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: current_video_page: %p\n", __FILE__, __LINE__, current_video_page);
-#endif
 
     // // current_page_flag = 1;
     // current_video_page = off_page_buffer;
@@ -120,15 +126,14 @@ void Set_Page_Off(void)
 }
 
 
-// MGC s26p03
 // WZD s28p03
 void Check_Default_Video_Page(void)
 {
 
 }
 
-// MGC s26p04
 // WZD s28p04
+// MGC s26p04
 void Page_Flip(void)
 {
 #ifdef STU_DEBUG
@@ -153,23 +158,47 @@ void Page_Flip(void)
 #endif
 }
 
-// // MGC s26p04
-// // WZD s28p04
-// void Copy_On_to_Off_Page(void)
-// {
-// 
-// }
-// 
-// // MGC s26p05
-// // WZD s28p05
-// void Copy_On_to_Off_YM(void)
-// {
-// 
-// }
-// 
-// // MGC s26p04
-// // WZD s28p04
-// void Copy_On_to_Off_NM(void)
-// {
-// 
-// }
+// WZD s28p05
+// MGC s26p05
+void Copy_On_to_Off_Page(void)
+{
+
+    if(Get_Pointer_Image_Number() != crsr_None)
+    {
+        Copy_On_to_Off_YM();
+    }
+    else
+    {
+        Copy_On_to_Off_NM();
+    }
+
+}
+
+// WZD s28p06
+// MGC s26p06
+void Copy_On_to_Off_YM(void)
+{
+
+}
+
+// WZD s28p07
+// MGC s26p07
+void Copy_On_to_Off_NM(void)
+{
+    uint16_t * src;
+    uint16_t * dst;
+    int16_t itr;
+
+    Save_Mouse_State();
+
+    src = (uint16_t *)video_page_buffer[draw_page_num];
+    dst = (uint16_t *)video_page_buffer[1 - draw_page_num];
+
+    itr = 0;
+    while(itr++ < 16000)
+    {
+        *dst++ = *src++;
+    }
+
+    Restore_Mouse_State();
+}

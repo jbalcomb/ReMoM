@@ -61,6 +61,10 @@ void Screen_Control(void)
     Clear_Fields();
     Set_Mouse_List(1, mouse_list_default);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: g_Current_Screen: %d\n", __FILE__, __LINE__, g_Current_Screen);
+#endif
+
     switch(g_Current_Screen)
     {
         case scr_Main_Menu_Screen:
@@ -79,16 +83,19 @@ void Screen_Control(void)
             // Main_Screen();
             g_Current_Screen = scr_Main_Screen;
         } break;
+
         case scr_Load_Screen:
         {
             DLOG("case scr_Load_Game:");
             // TODO  Load_Screen();
         } break;
+
         // case scr_New_Game:
         // {
         //     DLOG("case scr_New_Game:");
         //     New_Game_Screen();
         // } break;
+
         case scr_Quit_To_DOS:
         {
             DLOG("case scr_Quit_To_DOS:");
@@ -266,12 +273,12 @@ void MoM_main(void)
 
 
 
-    Read_CONFIG_MOM();
-    // Write_CONFIG_MOM();
-    Read_MAGIC_SET();
-    // Write_MAGIC_SET();
-    // Read_SAVE_GAM();
-    // Write_SAVE_GAM();
+    // Read_CONFIG_MOM();
+    // // Write_CONFIG_MOM();
+    // Read_MAGIC_SET();
+    // // Write_MAGIC_SET();
+    // // Read_SAVE_GAM();
+    // // Write_SAVE_GAM();
 
     Load_CONFIG_MOM();
     Load_MAGIC_SET();

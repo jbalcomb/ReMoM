@@ -2,6 +2,11 @@
 
 
 
+20230622:
+started another run-through in MoX-MouseCursor.md
+
+
+
 20220805:
 What am I still missing?
 1st calls to Restore, Store, Draw

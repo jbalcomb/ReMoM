@@ -14,10 +14,12 @@
 #endif
 
 
-//  WZD dseg:829A  MGC dseg:4D6C
-int16_t KD_ActiveStringTrig;
-//  WZD dseg:824C  MGC dseg:4D1E
-int16_t KD_prev_field_idx;
+// WZD dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?
+// WZD dseg:824C  MGC dseg:4D1E
+int16_t KD_prev_field_idx = 0;
+// WZD dseg:829A                                                 ? BEGIN: Mouse Buffer ?
+// WZD dseg:829A  MGC dseg:4D6C
+int16_t KD_ActiveStringTrig = 0;
 
 
 // Platform:  // WZD s35p14
@@ -59,23 +61,24 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
 #endif
 
     return_key = Read_Key();
+    // assert(return_key != 0);
 
-    if(KD_prev_field_idx >= fields_count)
-    {
-        KD_prev_field_idx = ST_NULL;
-    }
-
+    if(KD_prev_field_idx >= fields_count) { KD_prev_field_idx = 0; } // maybe not FALSE/NULL, because it gets incremement below
     _SI_field_idx = KD_prev_field_idx;
-
     Original_Key = return_key;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+#endif
+    if ((return_key > 96) && (return_key < 123) ) { return_key -= 32; }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+#endif
 
-    if ((return_key > 96) && (return_key < 123) )
-    {
-        return_key -= 32;
-    }
+
 
     if(KD_ActiveStringTrig != ST_NULL)
     {
+        DLOG("KD_ActiveStringTrig");
         _SI_field_idx = KD_ActiveStringTrig;
         return_key -= 95;  // treat Alt-A as A
         if(return_key == p_fields[_SI_field_idx].hotkey)
@@ -85,84 +88,74 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
         else
         {
             return_key += 95;
-            _SI_field_idx = fields_count;
+            _SI_field_idx = fields_count;  // this reset field_idx so it gets reprocessed in the next section
         }
     }
     else
     {
         _SI_field_idx = fields_count;
     }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
+#endif
 
+
+
+    /* From previous, Multi Character HotKey Fields */
     if(_SI_field_idx == fields_count)
     {
+        DLOG("From previous, Multi Character HotKey Fields");
         KD_ActiveStringTrig = ST_NULL;  // clear it, because we just failed to match it
 
-        /*
-            From previous, Multi Character HotKey Fields
-        */
         _SI_field_idx = KD_prev_field_idx + 1;
-        while(_SI_field_idx < fields_count)
+        while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
         {
-            if( (return_key == p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type != ft_MultiHotKey) )
+            // treat Alt-A as A  //MoO2 "Alt_Alpha"
+            if( (p_fields[_SI_field_idx].type == ft_MultiHotKey) && (p_fields[_SI_field_idx].hotkey == (return_key + 95)) )
             {
+                DLOG("got MultiHotKey");
                 break;
             }
-
-            if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
             {
-                return_key -= 95;  // treat Alt-A as A
-                if(return_key == p_fields[_SI_field_idx].hotkey)
-                {
-                    return_key += 95;
-                    break;
-                }
-                else
-                {
-                    return_key += 95;
-                }
+                _SI_field_idx++;
             }
-
-            _SI_field_idx++;
         }
     }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
+#endif
 
+    /* From first, Multi Character HotKey Fields */
     if(_SI_field_idx == fields_count)
     {
-        /*
-            From first, Multi Character HotKey Fields
-        */
+        DLOG("From first, Multi Character HotKey Fields");
         _SI_field_idx = 1;
-        while(_SI_field_idx < fields_count)
+        while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
         {
-            if( (return_key == p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type != ft_MultiHotKey) )
+            // treat Alt-A as A  //MoO2 "Alt_Alpha"
+            if( (p_fields[_SI_field_idx].type == ft_MultiHotKey) && (p_fields[_SI_field_idx].hotkey == (return_key + 95)) )
             {
+                DLOG("got MultiHotKey");
                 break;
             }
-
-            if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
             {
-                return_key -= 95;  // treat Alt-A as A
-                if(return_key == p_fields[_SI_field_idx].hotkey)
-                {
-                    return_key += 95;
-                    break;
-                }
-                else
-                {
-                    return_key += 95;
-                }
+                _SI_field_idx++;
             }
-
-            _SI_field_idx++;
         }
-
     }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
+#endif
+
 
     KD_prev_field_idx = _SI_field_idx;
     Reset_String_Triggers = ST_TRUE;
 
+
+
     if(_SI_field_idx < fields_count)
     {
+        DLOG("if(_SI_field_idx < fields_count)");
         *field_num = _SI_field_idx;
 
 //         /*
@@ -212,6 +205,7 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     }
     else  /* if(_SI_field_idx < fields_count) */
     {
+        DLOG("if(_SI_field_idx >= fields_count)");
 //         Control_Index = *field_num;
 //         Input_Key_Extended = return_key;
 //         switch(Input_Key_Extended)
@@ -244,14 +238,8 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
 //         }
 //     }
 
-    if(return_key != p_fields[*field_num].hotkey)
-    {
-        return_key = Original_Key;
-    }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-#endif
+
 
 //     for(itr = 0; itr < fields_count; itr++)
 //     {
@@ -260,6 +248,51 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
 //             *field_num = itr;
 //         }
 //     }
+
+    // HACK: force the match of character and hotkey
+    if(_SI_field_idx == fields_count)
+    {
+        DLOG("HACK: force the match of character and hotkey");
+        _SI_field_idx = 1;
+        while(_SI_field_idx != fields_count)
+        {
+            if(return_key == p_fields[_SI_field_idx].hotkey)
+            {
+                *field_num = _SI_field_idx;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+    dbg_prn("DEBUG: [%s, %d]: p_fields[_SI_field_idx].hotkey: %d\n", __FILE__, __LINE__, p_fields[_SI_field_idx].hotkey);
+    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
+    dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
+#endif
+            }
+            _SI_field_idx++;
+        }
+    }
+    else
+    {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: ~END: Interpret_Keyboard_Input\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: (_SI_field_idx != fields_count)\n", __FILE__, __LINE__);
+#endif
+    }
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+    dbg_prn("DEBUG: [%s, %d]: p_fields[*field_num].hotkey: %d\n", __FILE__, __LINE__, p_fields[*field_num].hotkey);
+#endif
+    if(return_key != p_fields[*field_num].hotkey)
+    {
+        DLOG("if(return_key != p_fields[*field_num].hotkey)");
+        return_key = Original_Key;
+    }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Original_Key: %d\n", __FILE__, __LINE__, Original_Key);
+    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+#endif
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);

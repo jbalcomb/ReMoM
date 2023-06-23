@@ -14,7 +14,7 @@
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdlib.h>     /* itoa() */
-
+#include <string.h>     /* strcat(), strcpy() */
 
 
 uint8_t _save_gam[123300];

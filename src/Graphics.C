@@ -1,6 +1,7 @@
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
+#include "MoM_DEF.H"
 
 #include "Video.H"
 
@@ -59,11 +60,11 @@ void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
     int16_t itr_y;
     // void ZeroMemory([in] PVOID  Destination, [in] SIZE_T Length);
 
-    for(itr_y = 0; itr_y < 200; itr_y++)
+    for(itr_y = 0; itr_y < SCREEN_HEIGHT; itr_y++)
     {
-        for(itr_x = 0; itr_x < 320; itr_x++)
+        for(itr_x = 0; itr_x < SCREEN_WIDTH; itr_x++)
         {
-            *(current_video_page + (itr_y * 320) + itr_x) = color;
+            *(current_video_page + (itr_y * SCREEN_WIDTH) + itr_x) = color;
         }
     }
 

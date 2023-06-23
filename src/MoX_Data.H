@@ -450,6 +450,8 @@ extern int16_t Map_LastDraw_Y;
 // WZD dseg:7002
 extern int16_t OVL_NewMapSustain;
 
+// in MGC, screen_change for Main_Menu_Screen() is the next one up fro TBL_Items
+// but there is nothing of the sort in WZD
 
 // WZD dseg:9136
 extern SAMB_ptr TBL_Items;

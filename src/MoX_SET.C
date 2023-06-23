@@ -4,9 +4,14 @@
 
 #include "MoX_SET.H"
 
+#include "MoX_DIR.H"
+
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <string.h>     /* strcpy() */
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
 
 
 uint8_t _magic_set[466];
@@ -17,6 +22,10 @@ uint8_t _magic_set[466];
 void Set_Default_Game_Settings(void)
 {
     int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Default_Game_Settings()\n", __FILE__, __LINE__);
+#endif
 
     magic_set.SoundFX = 1;
     magic_set.BG_Music = 1;
@@ -58,20 +67,27 @@ void Set_Default_Game_Settings(void)
         strcpy(magic_set.HallofFame_Names[itr], "");
     }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Set_Default_Game_Settings()\n", __FILE__, __LINE__);
+#endif
 }
 
 
 // WZD o125p03
 void Load_MAGIC_SET(void)
 {
-    char file_name[30];
+    char file_name[30] = {0};
     FILE * file_pointer;
     int itr;
 
-    if( (DIR(&file_name, "MAGIC.SET") == 0) || (LOF("MAGIC.SET") != 466) )
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_MAGIC_SET()\n", __FILE__, __LINE__);
+#endif
+
+    if( (DIR("MAGIC.SET", file_name) == ST_FAILURE) || (LOF("MAGIC.SET") != 466) )
     {
         Set_Default_Game_Settings();
-        file_pointer = fopen("MAGIC_SET","wb");
+        file_pointer = fopen("MAGIC.SET","wb");
         fwrite(&magic_set, 466, 1, file_pointer);
     }
     else
@@ -96,10 +112,13 @@ void Load_MAGIC_SET(void)
         }
     }
 
-    file_pointer = fopen("MAGIC_SET","wb");
+    file_pointer = fopen("MAGIC.SET","wb");
     fwrite(&magic_set, 466, 1, file_pointer);
     fclose(file_pointer);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Load_MAGIC_SET()\n", __FILE__, __LINE__);
+#endif
 }
 
 
