@@ -1,8 +1,13 @@
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
-#include "MoX_Data.H"
+#include "MoM_DEF.H"
 
+#include "MoX_Data.H"
+#include "UnitType.H"
+#include "UnitMove.H"
+
+#include "Explore.H"
 #include "FLIC_Draw.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
@@ -77,11 +82,12 @@ char mapback_lbx_file[] = "MAPBACK";
 // WZD dseg:6FFC
 // int16_t OVL_Anim_Stepper = 0;
 // WZD dseg:6FFE
-int16_t _prev_map_draw_x = ST_UNDEFINED;
+int16_t map_draw_prev_x = ST_UNDEFINED;
 // WZD dseg:7000
-int16_t _prev_map_draw_y = ST_UNDEFINED;
+int16_t map_draw_prev_y = ST_UNDEFINED;
 // WZD dseg:7002
-// int16_t OVL_NewMapSustain = 2;
+// AKA OVL_NewMapSustain
+int16_t map_draw_sustain = 2;
 
 // WZD dseg:7002                                                 END: ovr150
 
@@ -144,30 +150,43 @@ SAMB_ptr terrain_lbx_000;
 
 // WZD o67p01
 /*
+
+screen x,y                   0,20
+map w,h                     12,10
+(current) map x,y           _map_x,y
+(current) plane             _map_plane
+target x,y                  _prev_world_x,y
+player idx                  _human_player_idx
+
+    Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+
+
+
 ; draws the visible sections of the overland into the
 ; current draw segment, and the minimap into the
 ; Minimap_IMG_Seg allocation, according to the passed
 ; parameters:
 ;   x/y - main display pixel coordinates
-;   H/VTiles - horizontal/vertical map size, in squares
+;   H/map_height - horizontal/vertical map size, in squares
 ;   XPos/YPos/Plane - top left map coordinates, in squares, of world
 ;   MapX@/MapY@ - return values to set
 ; resets the draw window after finishing
 */
-void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * map_xpos, int16_t * map_ypos, int16_t map_plane, int16_t xpos, int16_t ypos, int16_t player_idx)
+// void Draw_Maps(int16_t x, int16_t y, int16_t map_width, int16_t map_height, int16_t * map_xpos, int16_t * map_ypos, int16_t map_plane, int16_t xpos, int16_t ypos, int16_t player_idx)
+void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t map_height, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t xpos, int16_t ypos, int16_t player_idx)
 {
-    int16_t cur_map_xpos;
-    int16_t cur_map_ypos;
+    int16_t l_map_x;
+    int16_t l_map_y;
     int16_t map_moved_flag;
     int16_t shift_right_flag;
     int16_t half_swap_flag;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Maps(x = %d, y = %d, HTiles = %d, VTiles = %d , *map_xpos = %d, *map_ypos = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, *map_xpos, *map_ypos, map_plane, xpos, ypos, player_idx);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Maps(screen_x = %d, screen_y = %d, map_width = %d, map_height = %d , *map_x = %d, *map_y = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_width, map_height, *map_x, *map_y, map_plane, xpos, ypos, player_idx);
 #endif
 
-    cur_map_xpos = *map_xpos;
-    cur_map_ypos = *map_ypos;
+    l_map_x = *map_x;
+    l_map_y = *map_y;
 
 
     /*
@@ -175,104 +194,97 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * m
     */
     map_moved_flag = ST_FALSE;
 
-    if(xpos != cur_map_xpos)
+    if(xpos != l_map_x)
     {
         map_moved_flag = ST_TRUE;
-
-        if(xpos < cur_map_xpos)
+        shift_right_flag = ST_FALSE;
+        if(xpos < l_map_x)
         {
             shift_right_flag = ST_FALSE;
         }
-        if(xpos > cur_map_xpos)
+        else
         {
             shift_right_flag = ST_TRUE;
         }
 
-        if(xpos > 50 && cur_map_xpos < 20)
+        if(xpos > 50 && l_map_x < 20)
         {
             shift_right_flag = ST_FALSE;
             half_swap_flag = ST_TRUE;
         }
-        if(cur_map_xpos > 50 && xpos < 20)
+        if(l_map_x > 50 && xpos < 20)
         {
             shift_right_flag = ST_TRUE;
             half_swap_flag = ST_TRUE;
         }
 
+        /* ¿ shift 1 map square to the right or left ? */
         if(shift_right_flag != ST_FALSE)
         {
             // NIU?  CRP_OVL_MapWindowX += 20;
-            cur_map_xpos++;
-            if(cur_map_xpos == 60)
+            l_map_x++;
+            if(l_map_x == 60)
             {
-                cur_map_xpos = 0;
+                l_map_x = 0;
                 // NIU?  CRP_OVL_MapWindowX = 0;
             }
-            if(half_swap_flag == ST_FALSE && cur_map_xpos > xpos)
+            if(half_swap_flag == ST_FALSE && l_map_x > xpos)
             {
-                cur_map_xpos = xpos;
-                // NIU?  CRP_OVL_MapWindowX = xpos * 20;
+                l_map_x = xpos;
+                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
             }
         }
         else  /* if(shift_right_flag == ST_FALSE) */
         {
             // NIU?  CRP_OVL_MapWindowX -= 20;
-            cur_map_xpos--;
-            if(cur_map_xpos == 0)
+            l_map_x--;
+            if(l_map_x == 0)
             {
-                cur_map_xpos = 59;  // ? MoO2 _MAP_MAX_X ?
-                // NIU?  CRP_OVL_MapWindowX = cur_map_xpos * 20;
+                l_map_x = 59;  // ? MoO2 _MAP_MAX_X ?
+                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
             }
-            if(half_swap_flag == ST_FALSE && cur_map_xpos < xpos)
+            if(half_swap_flag == ST_FALSE && l_map_x < xpos)
             {
-                // NIU?  CRP_OVL_MapWindowX = cur_map_xpos * 20;
+                l_map_x = xpos;
+                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
             }
         }
     }
 
-    if(ypos != cur_map_ypos)
+    if(ypos != l_map_y)
     {
         map_moved_flag = ST_TRUE;
 
-        if(ypos > cur_map_ypos)
+        if(ypos < l_map_y)
         {
-            // NIU?  CRP_OVL_MapWindowY += 18;
-            cur_map_ypos++;
-            if(cur_map_ypos > ypos)
+            // NIU?  CRP_OVL_MapWindowY -= 18;
+            l_map_y--;
+            if(l_map_y < ypos)
             {
-                cur_map_ypos = ypos;
+                l_map_y = ypos;
             }
         }
         else
         {
-            // NIU?  CRP_OVL_MapWindowY -= 18;
-            cur_map_ypos--;
-            if(cur_map_ypos < ypos)
+            // NIU?  CRP_OVL_MapWindowY += 18;
+            l_map_y++;
+            if(l_map_y > ypos)
             {
-                cur_map_ypos = ypos;
+                l_map_y = ypos;
             }
         }
     }
 
     if(map_moved_flag == ST_TRUE)
     {
-        // UNIT_DrawPriorities()
-        // // ; sets the draw priority field of each unit record
-        // // ; based on attack strength, transport capability, and
-        // // ; visibility (in the case of AI units)
-
-        // STK_NoUnitDraw()
-        // // ; set the draw priority of all units in the active unit stack to zero
-
-        // OVL_SetUnitsOnMap(cur_map_xpos, cur_map_ypos);
-        // // ; fills out the OVL_UnitsOnMap array with the unit or
-        // // ; city shown on each of the map tiles visible in the
-        // // ; 12 by 10 map window of the main overland display
+        Set_Unit_Draw_Priority();
+        Reset_Stack_Draw_Priority();
+        Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
 
         if(player_idx == _human_player_idx)
         {
-            _map_x = cur_map_xpos;
-            _map_y = cur_map_ypos;
+            _map_x = l_map_x;
+            _map_y = l_map_y;
         }
 
     }
@@ -280,41 +292,30 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t * m
         END: Map-Moved!!
     */
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
-//     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
-// #endif
-    Minimap_Coords(&minimap_x, &minimap_y, ((cur_map_xpos + (12/2)) / 60), (cur_map_ypos + (10/2)), minimap_width, minimap_height);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: minimap_x: %d\n", __FILE__, __LINE__, minimap_x);
-//     dbg_prn("DEBUG: [%s, %d]: minimap_y: %d\n", __FILE__, __LINE__, minimap_y);
-// #endif
+    Minimap_Coords(&minimap_x, &minimap_y, ((l_map_x + (MAP_WIDTH/2)) / WORLD_WIDTH), (l_map_y + (MAP_HEIGHT/2)), minimap_width, minimap_height);
 
     Draw_Minimap(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
 
-    Draw_Map_Window(x, y, HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
+    Draw_Map_Window(screen_x, screen_y, map_width, map_height, l_map_x, l_map_y, map_plane);
 
 
     if(map_moved_flag == ST_FALSE)
     {
-        // OVL_DrawActiveStack(cur_map_xpos, cur_map_ypos, map_plane);
-        // // ; draws the top movable unit's card from the active
-        // // ; stack into the current draw segment based on the
+        Draw_Active_Unit_Stack(*map_x, *map_y, map_plane);
     }
 
 
-// j_OVL_RedrawScouting(x, y, HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
-// // ; redraws the unscouted area coverage into the current
-// // ; draw segment based on the specified map parameters
-// // ; this is always a full draw, unlike OVL_DrawScouting,
-// // ; and will refresh the black rectangles covering
-// // ; unscouted tiles in addition to drawing the edges
+    // j_OVL_RedrawScouting(x, y, map_width, map_height, l_map_x, l_map_y, map_plane);
 
 
     Reset_Window();
 
-    *map_xpos = cur_map_xpos;
-    *map_ypos = cur_map_ypos;
+    *map_x = l_map_x;
+    *map_y = l_map_y;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Maps(screen_x = %d, screen_y = %d, map_width = %d, map_height = %d , *map_x = %d, *map_y = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_width, map_height, *map_x, *map_y, map_plane, xpos, ypos, player_idx);
+#endif
 
 }
 
@@ -342,7 +343,7 @@ void Reset_Draw_Active_Stack(void)
     {
         draw_active_stack_flag = 0;
     }
-    Undef_Prev_Map_Draw_XY();
+    Reset_Map_Draw();
 }
 
 // WZD o67p07
@@ -495,15 +496,184 @@ void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_
 }
 
 // WZD o67p10
-void Set_Entities_On_Map_Window(void)
+void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane)
 {
+    int16_t Unit_On_Tile;
+    int16_t City_Visible;
+    int16_t entity_world_y;
+    int16_t entity_world_x;
+    int16_t itr_map_width;
+    int16_t itr_map_height;
+    int16_t itr_units;
+    int16_t itr_cities;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
 #endif
 
+    for(itr_map_height = 0; itr_map_height < MAP_HEIGHT; itr_map_height++)
+    {
+        for(itr_map_width = 0; itr_map_width < MAP_WIDTH; itr_map_width++)
+        {
+            entities_on_movement_map[itr_map_height * MAP_WIDTH + itr_map_width] = ST_UNDEFINED;
+        }
+    }
+
+    for(itr_units =0; itr_units < _units; itr_units++)
+    {
+        if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+        {
+            if(TILE_IsVisible(world_x, world_y, world_plane) == ST_TRUE)
+            {
+                if( (_UNITS[itr_units].world_plane == world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) )
+                {
+
+                    entity_world_y = _UNITS[itr_units].world_y;
+
+                    if( (entity_world_y >= world_y) && (world_y + MAP_HEIGHT > entity_world_y) )
+                    {
+                        
+                        entity_world_x = _UNITS[itr_units].world_x;
+
+                        if(
+                             ( (world_x < entity_world_x) && (world_x + MAP_WIDTH > entity_world_x) ) ||
+                             ( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                        )
+                        {
+                            // HACK: because the Dasm reassigns the value in the middle of the comparisson branches - not sure if/what this could be like in C code
+                            if(( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) ))
+                            {
+                                entity_world_x = entity_world_x + WORLD_WIDTH;
+                            }
+
+
+                            Unit_On_Tile = entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )];
+
+                            if(Unit_On_Tile != ST_UNDEFINED)
+                            {
+                                if(_UNITS[itr_units].Draw_Priority > _UNITS[Unit_On_Tile].Draw_Priority)
+                                {
+                                    entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = itr_units;
+                                }
+                            }
+                            else
+                            {
+                                if(_UNITS[itr_units].Draw_Priority > 0)
+                                {
+                                    entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = itr_units;
+                                }
+                                else
+                                {
+                                    if( (_UNITS[itr_units].Draw_Priority == 0) && (draw_active_stack_flag != ST_UNDEFINED) )
+                                    {
+                                        entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = itr_units;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(
+            ( (_CITIES[itr_cities].world_plane == world_plane) || (_CITIES[itr_cities].world_plane = 2) ) &&
+            (TBL_Scouting[( (_CITIES[itr_cities].world_plane * 2400) + (_CITIES[itr_cities].world_y * 60) + _CITIES[itr_cities].world_x )] != ST_FALSE)
+        )
+        {
+                entity_world_y = _CITIES[itr_cities].world_y;
+
+                if( (entity_world_y >= world_y) && (world_y + MAP_HEIGHT > entity_world_y) )
+                {
+                    entity_world_x = _CITIES[itr_cities].world_x;
+
+                    if(
+                        ( (world_x < entity_world_x) && (world_x + MAP_WIDTH > entity_world_x) ) ||
+                            ( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                    )
+                    {
+                        // HACK: because the Dasm reassigns the value in the middle of the comparisson branches - not sure if/what this could be like in C code
+                        if(( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) ))
+                        {
+                            entity_world_x = entity_world_x + WORLD_WIDTH;
+                        }
+
+                        entity_world_x = entity_world_x - world_x;
+                        City_Visible = ST_TRUE;
+                    }
+            }
+        }
+
+        if(City_Visible == ST_TRUE)
+        {
+            entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = (itr_cities + 1000);
+        }
+    }
+
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
 #endif
+}
+
+// WZD o67p13
+void Set_Unit_Draw_Priority(void)
+{
+    int16_t draw_priority;
+    int16_t itr_units;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_DrawPriorities()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        draw_priority = _unit_type_table[_UNITS[itr_units].type].Melee + _unit_type_table[_UNITS[itr_units].type].Ranged;
+
+        if(draw_priority == 0)
+        {
+            draw_priority = 1;
+        }
+
+        if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
+        {
+            draw_priority = 50;
+        }
+
+        if(_UNITS[itr_units].owner_idx == -1)
+        {
+            draw_priority = -1;
+        }
+
+        if(_UNITS[itr_units].owner_idx == _human_player_idx && UNIT_HasInvisibility(itr_units) == ST_TRUE)
+        {
+            draw_priority = -1;
+        }
+
+        _UNITS[itr_units].Draw_Priority = draw_priority;
+
+
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: UNIT_DrawPriorities()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o67p14
+// drake178: STK_NoUnitDraw
+void Reset_Stack_Draw_Priority(void)
+{
+    int16_t itr_unit_stack_count;
+    int16_t unit_idx;
+
+    for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+    {
+        unit_idx = _unit_stack[itr_unit_stack_count].unit_idx;
+        _UNITS[unit_idx].Draw_Priority = 0;
+    }
 }
 
 
@@ -626,68 +796,72 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 */
 
 // WZD o150p01
-void Undef_Prev_Map_Draw_XY(void)
+// AKA Undef_Prev_Map_Draw_XY
+void Reset_Map_Draw(void)
 {
-    _prev_map_draw_x = ST_UNDEFINED;
-    _prev_map_draw_y = ST_UNDEFINED;
+    map_draw_prev_x = ST_UNDEFINED;
+    map_draw_prev_y = ST_UNDEFINED;
 }
 
 // WZD o150p04
-void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
+void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p)
 {
-    int16_t cur_map_xpos;
-    int16_t cur_map_ypos;
+    int16_t map_draw_curr_x;
+    int16_t map_draw_curr_y;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Window(x = %d, y = %d, HTiles = %d, VTiles = %d, map_xpos = %d, map_ypos = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Window(screen_x = %d, screen_y = %d, map_w = %d, map_h = %d, map_x = %d, map_y = %d, map_p = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_w, map_h, map_x, map_y, map_p);
 #endif
 
-    cur_map_xpos = map_xpos;
-    cur_map_ypos = map_ypos;
+    /*
+        x,y for the last time it thinks we drew the movement map
+        x,y for the target of this request to draw the movement
+        ~== curr. vs. prev.
+    */
+    map_draw_curr_x = map_x;
+    map_draw_curr_y = map_y;
 
 
-    if(cur_map_xpos != Map_LastDraw_X || cur_map_ypos != Map_LastDraw_Y)
+    if(map_draw_curr_x != map_draw_prev_x || map_draw_prev_y != map_draw_prev_y)
     {
-        OVL_NewMapDrawing = ST_TRUE;
-        OVL_NewMapSustain = 1;
+        map_draw_full = ST_TRUE;
+        map_draw_sustain = 1;
     }
     else
     {
-        OVL_NewMapSustain--;
+        map_draw_sustain--;
 
-        if(OVL_NewMapSustain >= 0)
+        if(map_draw_sustain >= 0)
         {
-            OVL_NewMapDrawing = ST_TRUE;
+            map_draw_full = ST_TRUE;
         }
         else
         {
-            OVL_NewMapDrawing = ST_FALSE;
+            map_draw_full = ST_FALSE;
         }
     }
 
+    map_draw_prev_x = map_draw_curr_x;
+    map_draw_prev_y = map_draw_curr_y;
 
 
-    Map_LastDraw_X = cur_map_xpos;
-    Map_LastDraw_Y = cur_map_ypos;
-
-
-    // TST_Draw_Map_Terrain(        0, 20 + (18 * 0), HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 0), HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain(        0, 20 + (18 * 9), HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 9), HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
-    Draw_Map_Terrain(x, y, HTiles, VTiles, cur_map_xpos, cur_map_ypos, map_plane);
+    // TST_Draw_Map_Terrain(        0, 20 + (18 * 0), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
+    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 0), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
+    // TST_Draw_Map_Terrain(        0, 20 + (18 * 9), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
+    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 9), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
+    Draw_Map_Terrain(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     // ; draws map terrain tiles into the current draw segment
     // ; according to the passed parameters:
     // ;   Top/Left - display pixel coordinates
-    // ;   H/VTiles - horizontal/vertical window size in tiles
+    // ;   H/map_height - horizontal/vertical window size in tiles
     // ;   XPos/YPos/Plane - top left map coordinates
     // ; tiles that are not scouted are painted with color $00
 
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawMinerals()
@@ -698,8 +872,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawTerrSpecials()
@@ -713,8 +887,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawRoads()
@@ -728,8 +902,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawCities()
@@ -744,8 +918,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawTowers()
@@ -758,8 +932,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawEncounters
@@ -770,8 +944,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawUnits()
@@ -782,8 +956,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawNodeFX()
@@ -794,8 +968,8 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // push    [bp+map_plane]                  ; Plane
 // push    _DI_cur_map_ypos                ; YPos
 // push    _SI_cur_map_xpos                ; XPos
-// push    [bp+VTiles]                     ; VTiles
-// push    [bp+HTiles]                     ; HTiles
+// push    [bp+map_height]                     ; map_height
+// push    [bp+map_width]                     ; map_width
 // push    [bp+y]                          ; Top
 // push    [bp+x]                          ; Left
 // OVL_DrawScouting()
@@ -808,17 +982,21 @@ void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16
 // // ; stages of the overland map display (tiles, node
 // // ; sparkles, and enchanted roads)
 
+#ifdef STU_DEBUG
+dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Window(screen_x = %d, screen_y = %d, map_w = %d, map_h = %d, map_x = %d, map_y = %d, map_p = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_w, map_h, map_x, map_y, map_p);
+#endif
+
 }
 
 
 
 // WZD o150p05
-void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
+void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_height, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
 {
     byte_ptr terrain_pict_seg;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
 #endif
     /*
         Image, if you will...
@@ -839,13 +1017,13 @@ void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, 
 #endif
     Draw_Picture(x, y, terrain_pict_seg);
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: END: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
 #endif
 }
 
 
 // WZD o150p05
-void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
+void Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_height, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
 {
     int16_t terrain_tile_base;
     int16_t itr_map_ypos;
@@ -865,7 +1043,7 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
     uint32_t terrain_lbx_000_offset;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
 #endif
 
     // DLOG("DRAW_THE_ONE");
@@ -889,11 +1067,11 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
 
     _SI_y = y;
     itr_map_ypos = map_ypos;
-    while(itr_map_ypos < (map_ypos + VTiles))
+    while(itr_map_ypos < (map_ypos + map_height))
     {
         _DI_x = x;
         itr_map_xpos = map_xpos;
-        while(itr_map_xpos < (map_xpos + HTiles))
+        while(itr_map_xpos < (map_xpos + map_width))
         {
             if(itr_map_xpos >= 60)
             {
@@ -986,9 +1164,9 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
 //                 DLOG("(terrain_001_0 & 0x80)");
                 terrain_001_0 = terrain_001_0 & 0x7F;
             }
-            if(OVL_NewMapDrawing != ST_FALSE)
+            if(map_draw_full != ST_FALSE)
             {
-//                 DLOG("OVL_NewMapDrawing != ST_FALSE)");
+//                 DLOG("map_draw_full != ST_FALSE)");
             }
 // //             // if animated and not new, skip draw
 // //             if(terrain_001_0 & 0x80 == 0 || OVL_NewMapDrawing != ST_FALSE)
@@ -1085,14 +1263,14 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int1
 
             _DI_x += 20;  // terrain image width
             itr_map_xpos++;
-        }  /* while(itr_map_xpos < (map_xpos + HTiles)) */
+        }  /* while(itr_map_xpos < (map_xpos + map_width)) */
 
         _SI_y += 18;  // terrain image height
         itr_map_ypos++;
-    }  /* while(itr_map_ypos < (map_ypos + VTiles)) */
+    }  /* while(itr_map_ypos < (map_ypos + map_height)) */
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, HTiles, VTiles, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
 #endif
 
 }

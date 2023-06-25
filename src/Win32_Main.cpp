@@ -148,21 +148,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
 #endif
 
-    TCHAR tszBuffer[MAX_PATH];
-    DWORD dwRet;
-    dwRet = GetCurrentDirectory(MAX_PATH, tszBuffer);
-    // if(dwRet == 0) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): function failed\n"); }
-    // if(dwRet > MAX_PATH) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): buffer too short\n"); }
-    char Buffer[MAX_PATH];
-    sprintf(Buffer, "%s\n", tszBuffer);
-    // // OutputDebugStringA(Buffer);
-    // // OutputDebugStringA(tszBuffer);  // TCHAR * vs. LPCSTR
-    // OutputDebugString(tszBuffer);
-    // // "J:\STU\devel\STU-MoM_Rasm\data"
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Current Working Directory: %s\n", __FILE__, __LINE__, Buffer);
-#endif
-
     // Initialize the "Windows Desktop Application"
     // ~== 'Application-Type' of 'Game'
     Init_WDA_Game(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
@@ -193,6 +178,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         BEGIN: Initialize Game State
     */
 
+    Check_Game_Files();
+
     g_State_Run = 1;  // ST_TRUE
     g_Current_Screen = scr_Main_Menu_Screen;
 
@@ -202,6 +189,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     draw_page = video_page_buffer[draw_page_num];
 
     MoM_main();
+
+    // MoM.C  struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
+    Buffer.Memory = GlobalBackbuffer.Memory;
+    Buffer.Width = GlobalBackbuffer.Width;
+    Buffer.Height = GlobalBackbuffer.Height;
+    Buffer.Pitch = GlobalBackbuffer.Pitch;
+    // TODO  buffer.Pitch = buffer.width * BYTES_PER_PIXEL;
 
     // // Copy Back-Buffer to Front-Buffer
     // Render_VBB(&GlobalBackbuffer);
@@ -227,17 +221,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
         Screen_Control();
 
-        struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
-        Buffer.Memory = GlobalBackbuffer.Memory;
-        Buffer.Width = GlobalBackbuffer.Width;
-        Buffer.Height = GlobalBackbuffer.Height;
-        Buffer.Pitch = GlobalBackbuffer.Pitch;
-        // TODO  buffer.Pitch = buffer.width * BYTES_PER_PIXEL;
-
         // // Copy Back-Buffer to Front-Buffer
         // Render_VBB(&GlobalBackbuffer);
         win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
-        GameUpdateAndRender(&Buffer);
+        // GameUpdateAndRender(&Buffer);
         Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
 
 // HMH Day 10

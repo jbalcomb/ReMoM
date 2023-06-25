@@ -6,6 +6,16 @@
 #include "Mouse.H"  /* mouse_x, mouse_y */
 #include "Video.H"
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
+#include <stdio.h>
+#include <stdbool.h>
+
+#include <windows.h>
+// #include <debugapi.h>  /* OutputDebugStringA() */
+
 /*
 
 screen_pixel_width1   =      0
@@ -41,6 +51,35 @@ uint16_t screen_pixel_height  =  200;
 uint16_t screen_pixel_size    =  64000;
 
 
+struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
+
+
+// char game_files[] = {
+//     "SAVETEST.GAM";
+//     "SAVE1.GAM";
+//     "SAVE9.GAM"
+// };
+
+#define GAME_FILE_COUNT 13
+char * game_file_names[GAME_FILE_COUNT] = {
+    "CONFIG.MOM",
+    "FONTS.LBX",
+    "MAGIC.SET",
+    "MAIN.LBX",
+    "MAINSCRN.LBX",
+    "MAPBACK.LBX",
+    "SAVE1.GAM",
+    "SAVE9.GAM",
+    "SAVETEST.GAM",
+    "TERRAIN.LBX",
+    "UNITS1.LBX",
+    "UNITS2.LBX",
+    "VORTEX.LBX"
+};
+
+
+
+
 void Render_VBB(struct game_offscreen_buffer * Buffer)
 {
 
@@ -69,4 +108,73 @@ void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
 {
     mouse_x = platform_mouse_x / 2;
     mouse_y = platform_mouse_y / 2;
+}
+
+
+char Debug_Message_Buffer[4096];
+
+void Get_Current_Working_Direct(void)
+{
+
+    TCHAR tszBuffer[MAX_PATH];
+    DWORD dwRet;
+    dwRet = GetCurrentDirectory(MAX_PATH, tszBuffer);
+    // if(dwRet == 0) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): function failed\n"); }
+    // if(dwRet > MAX_PATH) { OutputDebugStringA("FAILURE: GetCurrentDirectory(): buffer too short\n"); }
+
+    char Current_Working_Directory[MAX_PATH];
+    sprintf(Current_Working_Directory, "%s\n", tszBuffer);
+    // // OutputDebugStringA(Current_Working_Directory);
+    // // OutputDebugStringA(tszBuffer);  // TCHAR * vs. LPCSTR
+    // OutputDebugString(tszBuffer);
+    // // "J:\STU\devel\STU-MoM_Rasm\data"
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Current Working Directory: %s\n", __FILE__, __LINE__, Current_Working_Directory);
+#endif
+
+}
+
+// https://www.learnc.net/c-tutorial/c-file-exists/
+// return true if the file specified by the filename exists
+bool file_exists(const char* filename)
+{
+    sprintf(Debug_Message_Buffer, "filename: %s\n", filename);
+    OutputDebugStringA(Debug_Message_Buffer);
+
+    FILE* fp = fopen(filename, "r");
+    bool is_exist = false;
+    if (fp != NULL)
+    {
+        is_exist = true;
+        fclose(fp); // close the file
+    }
+    return is_exist;
+}
+
+void Check_Game_Files(void)
+{
+    int itr_game_file_count;
+    char game_file_name[30];
+
+    char Current_Working_Directory[4096];
+    GetCurrentDirectoryA(MAX_PATH, Current_Working_Directory);
+
+    for (itr_game_file_count = 0; itr_game_file_count < GAME_FILE_COUNT; itr_game_file_count++)
+    {
+        // strcpy(game_file_name, game_file_names[itr_game_file_count]);
+        if(!file_exists(game_file_names[itr_game_file_count]))
+        {
+            printf("File %s doesn't exist.", game_file_names[itr_game_file_count]);
+            OutputDebugStringA("File XXXXXXXX.XXX doesn't exist.\n");
+            char Error_Message_Buffer[4096];
+            sprintf(Error_Message_Buffer, "Hey, Buddy. Hey!! The file - %s - doesn't exist in %s.\n", game_file_names[itr_game_file_count], Current_Working_Directory);
+            OutputDebugStringA(Error_Message_Buffer);
+
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: File %s doesn't exist.\n", __FILE__, __LINE__, game_file_names[itr_game_file_count]);
+#endif
+
+            exit(1);  // ~EXIT_FAILURE
+        }
+    }
 }

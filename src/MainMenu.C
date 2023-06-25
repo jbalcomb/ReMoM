@@ -4,6 +4,8 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
+#include "MoM.H"  /* Buffer; Render_VBB(); */
+
 #include "MainMenu.H"
 
 #include "MoM_main.H"
@@ -357,6 +359,7 @@ int16_t Main_Menu_Screen(void)
     for(itr_saves__retval = 1; itr_saves__retval < 10; itr_saves__retval++)
     {
         strcpy(File_Name, "SAVE");
+#pragma warning(suppress : 4996)
         itoa(itr_saves__retval, Conversion_String, 10);
         strcat(File_Name, Conversion_String);
         strcat(File_Name, ".GAM");
@@ -546,7 +549,8 @@ int16_t Main_Menu_Screen(void)
             DLOG("(leave_screen_flag == ST_FALSE)");
             Main_Menu_Screen_Draw();
             Toggle_Pages();  // |-> Page_Flip()
-
+            Render_VBB(&Buffer);
+            Pump_Events();
 
             // // HACK:
             // mouse_x = Pointer_X();
@@ -581,7 +585,6 @@ int16_t Main_Menu_Screen(void)
         // HACK: hard-coded to get back around to the Windows Message Loop
         leave_screen_flag = ST_TRUE;
 
-        Pump_Events();
 
     }  /* while(leave_screen_flag == ST_FALSE) */
 

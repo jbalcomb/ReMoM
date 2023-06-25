@@ -700,10 +700,6 @@ void GAME_Overland_Init(void)
     // _active_world_y = _FORTRESSES[0].world_y;
     OVL_Map_CenterX = _FORTRESSES[0].world_x;
     OVL_Map_CenterY = _FORTRESSES[0].world_y;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: OVL_Map_CenterX: %d\n", __FILE__, __LINE__, OVL_Map_CenterX);
-    dbg_prn("DEBUG: [%s, %d]: OVL_Map_CenterY: %d\n", __FILE__, __LINE__, OVL_Map_CenterY);
-#endif
 
     // OVL_STKUnitCards_Lft = 247;
     // OVL_STKUnitCards_Top = 79;
@@ -713,14 +709,6 @@ void GAME_Overland_Init(void)
     // _world_plane = _FORTRESSES[0].world_plane;
     // _map_plane = _FORTRESSES[0].world_plane;  // TOIDO(JimBalcomb,20230614): Why is this getting set to 100?
     _map_plane = 0;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
 
 
     // TODO  j_TILE_VisibilityUpdt
@@ -738,17 +726,9 @@ void GAME_Overland_Init(void)
     // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _world_plane);
     Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
 
-
-    // TODO  j_UNIT_DrawPriorities
-    // ; duplicate instructions just executed by GUI_OvlMapInit
-
-    // TODO  j_STK_NoUnitDraw
-    // ; set the draw priority of all units in the active unit stack to zero
-
-    // TODO  Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-    // ; fills out the OVL_UnitsOnMap array with the unit or
-    // ; city shown on each of the map tiles visible in the
-    // ; 12 by 10 map window of the main overland display
+    // TODO  Set_Unit_Draw_Priority();
+    // TODO  Reset_Stack_Draw_Priority();
+    // TODO  Set_Entities_On_Map_Window();
 
     GFX_Swap_Cities();
 

@@ -480,9 +480,9 @@ extern SAMB_ptr p4_heroes;
 extern SAMB_ptr p5_heroes;
 
 // WZD dseg:9392
-extern SAMB_ptr Visibility_Myrror;
+extern SAMB_ptr Visibility_Myrror;      // alloc in MoM_Tables_Init()
 // WZD dseg:9396
-extern SAMB_ptr Visibility_Arcanus;
+extern SAMB_ptr Visibility_Arcanus;     // alloc in MoM_Tables_Init()
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
 // ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
@@ -506,7 +506,7 @@ extern SAMB_ptr UnitDraw_WorkArea;
 // WZD dseg:964C
 extern int16_t entities_on_movement_map[];
 
-// dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
+
 // dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
 
 
@@ -617,9 +617,11 @@ extern struct s_WIZARD _players[6];
 
 
 // WZD dseg:974A
-extern int16_t G_OVL_MapDisplay_Y;
+// AKA G_OVL_MapDisplay_Y
+extern int16_t _prev_world_y;
 // WZD dseg:974C
-extern int16_t G_OVL_MapDisplay_X;
+// AKA G_OVL_MapDisplay_X
+extern int16_t _prev_world_x;
 
 // WZD dseg:BD82 
 extern int16_t OVL_Map_CenterY;
@@ -651,7 +653,8 @@ extern struct s_GAME_DATA game_data;
 
 
 // WZD dseg:CB5C
-extern int16_t OVL_NewMapDrawing;  //; determines whether non-animated terrain tiles will be redrawn or not
+// AKA OVL_NewMapDrawing
+extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
 
 
 

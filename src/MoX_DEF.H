@@ -16,7 +16,8 @@
 #define ST_SUCCESS      -1
 #define ST_FAILURE       0
 
-
+#define MOUSE_BUTTON_LEFT 1
+#define MOUSE_BUTTON_RIGHT 2
 
 // Define macro to swap two numbers
 // #define SWAP(x, y, temp) temp = x; x = y; y = temp;  ... macro expansion(temp = x; x = y; y = temp;)

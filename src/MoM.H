@@ -21,6 +21,7 @@
 
 #include "MoX_TYPE.H"
 
+
 struct game_offscreen_buffer
 {
     void* Memory;
@@ -45,6 +46,9 @@ struct game_offscreen_buffer
 extern "C" {
 #endif
 
+
+extern struct game_offscreen_buffer Buffer;
+
 // set in Win32_Evnt.cpp, get in win_MD.C
 extern int16_t platform_mouse_button_status;
 extern int16_t platform_mouse_click_x;
@@ -53,6 +57,11 @@ extern int16_t platform_mouse_click_y;
 extern uint8_t g_Key_Pressed;
 extern uint16_t g_Last_Key_Pressed;
 extern uint16_t scan_code_char_code;  // Platform
+
+
+void Render_VBB(struct game_offscreen_buffer * Buffer);
+
+void Check_Game_Files(void);
 
 
 // TODO(JimBalcomb,20221216): Services that the *platform layer* provides to the *game*

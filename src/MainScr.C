@@ -2,6 +2,7 @@
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
+#include "MoM_DEF.H"
 
 #include "MoX_Data.H"
 #include "MoX_GAM.H"
@@ -16,10 +17,12 @@
 #include "FLIC_Draw.H"
 #include "Fields.H"
 #include "Fonts.H"
+#include "Help.H"
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
 #include "UnitMove.H"
+#include "Video.H"  /* Set_Page_Off() */
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -324,11 +327,6 @@ char cstr_Mana_Short[] = "Mana Short";
 // WZD dseg:31EF 00                      db    0
 // WZD dseg:31F0 00                      db    0
 
-
-// MoX_Data  // WZD dseg:974A
-// MoX_Data  int16_t G_OVL_MapDisplay_Y;
-// MoX_Data  // WZD dseg:974C
-// MoX_Data  int16_t G_OVL_MapDisplay_X;
 
 
 // How did I get to duplicating these here/Mox_Data?
@@ -758,62 +756,12 @@ void Main_Screen(void)
 
     int16_t itr_units;
 
-
-
-    
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_X: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_X);
-    dbg_prn("DEBUG: [%s, %d]: G_OVL_MapDisplay_Y: %d\n", __FILE__, __LINE__, G_OVL_MapDisplay_Y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _units: %d\n", __FILE__, __LINE__, _units);
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit].owner_idx: %d\n", __FILE__, __LINE__, _UNITS[_unit].owner_idx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit].world_x: %d\n", __FILE__, __LINE__, _UNITS[_unit].world_x);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit].world_y: %d\n", __FILE__, __LINE__, _UNITS[_unit].world_y);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit].world_plane: %d\n", __FILE__, __LINE__, _UNITS[_unit].world_plane);
-#endif
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 476]: _units: 778
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 477]: _unit: 176
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 478]: _unit_stack_count: 0
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 480]: _UNITS[_unit].owner_idx: 1
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 481]: _UNITS[_unit].world_x: 36
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 482]: _UNITS[_unit].world_y: 14
-// DEBUG: [J:\STU\devel\STU-MoM_Rasm\src\MainScr.C, 483]: _UNITS[_unit].world_plane: 0
-#ifdef STU_DEBUG
-    for(itr_units = 0; itr_units < _units; itr_units++)
-    {
-        if(_UNITS[itr_units].owner_idx == 0)
-        {
-            // dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_x: %02X\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_x);
-            // dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_y: %02X\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_y);
-            // dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_plane: %02X\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_plane);
-            dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_x: %d\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_x);
-            dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_y: %d\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_y);
-            dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].world_plane: %d\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].world_plane);
-        }
-    }
-#endif
-
+    // HACK:
     _unit = 46;
     Build_Unit_Stack(0, 0, 18, 17);
-    
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-
     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].active: %d\n", __FILE__, __LINE__, _unit_stack[0].active);
 #endif
@@ -832,10 +780,10 @@ void Main_Screen(void)
     Clear_Fields();
     // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
     // j_Allocate_Reduced_Map__2();  byte-identical to LBX_Minimap_Alloc, should not exist
-    // j_Reset_Active_Stack_Draw();  // AKA j_OVL_ResetStackDraw()
+    Reset_Draw_Active_Stack();  // AKA j_OVL_ResetStackDraw()
     Set_Outline_Color(0);
-    // j_UNIT_DrawPriorities();
-    // j_STK_NoUnitDraw();
+    // TODO  Set_Unit_Draw_Priority();
+    // TODO  Reset_Stack_Draw_Priority();
     // Disable_Redraw_Function();
     // Set_Redraw_Function(j_Main_Screen_Draw, 1);
     // _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
@@ -844,19 +792,19 @@ void Main_Screen(void)
     // CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
     // CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
     // OVL_MapVar3 = 1;  // ? ST_TRUE ?
-    // j_Undef_Prev_Map_Draw_XY();  // j_OVL_MapDrawRenew()
-    // j_OVL_PrepMinimap();
-    // j_Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);  // AKA j_OVL_SetUnitsOnMap()
+    Reset_Map_Draw();  // Undef_Prev_Map_Draw_XY()  j_OVL_MapDrawRenew()
+    // TODO  j_OVL_PrepMinimap();
+    // TODO  Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);  // AKA j_OVL_SetUnitsOnMap()
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
-    // j_STK_GetExtraActions();
+    // TODO  j_STK_GetExtraActions();
     // if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
     // if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
     screen_changed = ST_FALSE;
     // Local_0 = 0;  // ? ST_FALSE ?
     Set_Input_Delay(1);
     // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
-    // TODO  Clear_Help_Fields();
-    // TODO  Main_Screen_Help();
+    Deactivate_Help_List();
+    // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
     // DBG_Alt_A__TurnCount = -1
     Main_Screen_Draw();
     PageFlip_FX();
@@ -1011,7 +959,7 @@ void Main_Screen(void)
                 Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane);
                 MainScr_Prepare_Reduced_Map();
                 Set_Mouse_List(1, mouse_list_default);
-                Undef_Prev_Map_Draw_XY();
+                Reset_Map_Draw();
             }
         }
         
@@ -1023,7 +971,7 @@ void Main_Screen(void)
             // UNIT_DrawPriorities();
             // STK_NoUnitDraw();
             // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-            // Undef_Prev_Map_Draw_XY();
+            // Reset_Map_Draw();
             // screen_changed = ST_TRUE;
         }
 
@@ -1122,7 +1070,7 @@ void Main_Screen(void)
                 // UNIT_DrawPriorities();
                 // STK_NoUnitDraw();
                 // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-                // Undef_Prev_Map_Draw_XY();
+                // Reset_Map_Draw();
                 // MainScr_Prepare_Reduced_Map();
                 // screen_changed = ST_TRUE;
                 // Clear_Help_Fields();
@@ -1173,7 +1121,7 @@ void Main_Screen(void)
                     // j_IDK_MainScr_SUA_s553C3()
                 }
                 // j_Set_Mouse_List_Normal();
-                // j_Undef_Prev_Map_Draw_XY();
+                // j_Reset_Map_Draw();
                 // NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
             }
             if(OVL_StackHasPath == ST_TRUE)
@@ -1296,8 +1244,8 @@ void Main_Screen(void)
     }
 
     // TODO  Disable_Redraw_Function()
-    // TODO  Clear_Help_Fields()
-    // TODO  Reset_Window()  AKA VGA_ResetDrawWindow()
+    Deactivate_Help_List();
+    Reset_Window();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen()\n", __FILE__, __LINE__);
@@ -1557,6 +1505,10 @@ void Add_Unit_Window_Fields(void)
 // WZD o57p08
 void Main_Screen_Draw(void)
 {
+    int16_t before_map_x;
+    int16_t before_map_y;
+    int16_t after_map_x;
+    int16_t after_map_y;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw()\n", __FILE__, __LINE__);
 #endif
@@ -1564,8 +1516,38 @@ void Main_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
 
-    Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, G_OVL_MapDisplay_X, G_OVL_MapDisplay_Y, _human_player_idx);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+    dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
 
+    before_map_x = _map_x;
+    before_map_y = _map_y;
+
+    Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+
+    after_map_x = _map_x;
+    after_map_y = _map_y;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: before_map_x: %d\n", __FILE__, __LINE__, before_map_x);
+    dbg_prn("DEBUG: [%s, %d]: before_map_y: %d\n", __FILE__, __LINE__, before_map_y);
+    dbg_prn("DEBUG: [%s, %d]: after_map_x: %d\n", __FILE__, __LINE__, after_map_x);
+    dbg_prn("DEBUG: [%s, %d]: after_map_y: %d\n", __FILE__, __LINE__, after_map_y);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+    dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+    dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw()\n", __FILE__, __LINE__);
@@ -1841,14 +1823,14 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 #endif
 
     /*
-        Undef_Prev_Map_Draw_XY()
+        Reset_Map_Draw()
             _prev_map_draw_x = e_ST_UNDEFINED;
             _prev_map_draw_y = e_ST_UNDEFINED;
         
         _prev_map_draw_x = ST_UNDEFINED;  // WZD dseg:6FFE  AKA Map_LastDraw_X
         _prev_map_draw_y = ST_UNDEFINED;  // WZD dseg:7000  AKA Map_LastDraw_Y
     */
-    // j_Undef_Prev_Map_Draw_XY()  // AKA j_Unset_LastMapDraw_XY();
+    // j_Reset_Map_Draw()  // AKA j_Unset_LastMapDraw_XY();
 
     Minimap_Set_Dims(58, 30);
 
@@ -1989,85 +1971,83 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
     int16_t unit_owner_idx;
     int16_t banner;
     uint16_t itr_banner_colors;
-#ifdef STU_DEBUG
-    SAMB_ptr pict_seg;
-    int16_t pict_seg_width;
-    int16_t pict_seg_height;
-    uint16_t itr_pict_seg;
-    uint16_t itr_UnitDraw_WorkArea;
-#endif
+// #ifdef STU_DEBUG
+//     SAMB_ptr pict_seg;
+//     int16_t pict_seg_width;
+//     int16_t pict_seg_height;
+//     uint16_t itr_pict_seg;
+//     uint16_t itr_UnitDraw_WorkArea;
+// #endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Draw_Unit_StatFig()\n", __FILE__, __LINE__);
 #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
+// #endif
     // unit_type_idx = _UNITS[unit_idx].type;
     // unit_type_idx = 0;  // ? UNITS1.LBX, Entry 0 "Dwarf" BRAX ?
     // unit_type_idx = 35;  // ? UNITS1.LBX, Entry 34  "Trireme" ?
     unit_type_idx = _UNITS[unit_idx].type;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_type_idx: %d\n", __FILE__, __LINE__, unit_type_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: unit_type_idx: %d\n", __FILE__, __LINE__, unit_type_idx);
+// #endif
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: _unit_type_table[unit_type_idx].Name: %s\n", __FILE__, __LINE__, _unit_type_table[unit_type_idx].Name);
 // #endif
 
 
-#ifdef STU_DEBUG
-    pict_seg = _unit_type_table[unit_type_idx].pict_seg;
-    pict_seg_width = GET_2B_OFS(pict_seg, 0);
-    pict_seg_height = GET_2B_OFS(pict_seg, 2);
-    dbg_prn("DEBUG: [%s, %d]: pict_seg: %p\n", __FILE__, __LINE__, pict_seg);
-    dbg_prn("DEBUG: [%s, %d]: pict_seg_width: %d\n", __FILE__, __LINE__, pict_seg_width);
-    dbg_prn("DEBUG: [%s, %d]: pict_seg_height: %d\n", __FILE__, __LINE__, pict_seg_height);
-#endif
+// #ifdef STU_DEBUG
+//     pict_seg = _unit_type_table[unit_type_idx].pict_seg;
+//     pict_seg_width = GET_2B_OFS(pict_seg, 0);
+//     pict_seg_height = GET_2B_OFS(pict_seg, 2);
+//     dbg_prn("DEBUG: [%s, %d]: pict_seg: %p\n", __FILE__, __LINE__, pict_seg);
+//     dbg_prn("DEBUG: [%s, %d]: pict_seg_width: %d\n", __FILE__, __LINE__, pict_seg_width);
+//     dbg_prn("DEBUG: [%s, %d]: pict_seg_height: %d\n", __FILE__, __LINE__, pict_seg_height);
+// #endif
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
+// #endif
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
+// #endif
     /*
         weird bit of business with branch on flag
         but paths are code equivalent
         maybe related to setting frame 0 or 1
     */
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
+// #endif
 
     // WZD s30p13
     // src  _unit_type_table[unit_type_idx].pict_seg
     // dst  UnitDraw_WorkArea
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: GFX_Swap_Seg: %p\n", __FILE__, __LINE__, GFX_Swap_Seg);
-    dbg_prn("DEBUG: [%s, %d]: _unit_type_table[unit_type_idx].pict_seg: %p\n", __FILE__, __LINE__, _unit_type_table[unit_type_idx].pict_seg);
-    dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: GFX_Swap_Seg: %p\n", __FILE__, __LINE__, GFX_Swap_Seg);
+//     dbg_prn("DEBUG: [%s, %d]: _unit_type_table[unit_type_idx].pict_seg: %p\n", __FILE__, __LINE__, _unit_type_table[unit_type_idx].pict_seg);
+//     dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
+// #endif
     Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 0));
-    dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 2));
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
+// #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 0));
+//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 2));
+// #endif
 
-#ifdef STU_DEBUG
-
-    for(itr_UnitDraw_WorkArea = 0; itr_UnitDraw_WorkArea < 18*16; itr_UnitDraw_WorkArea++)
-    {
-        dbg_prn("%02x\n", *(UnitDraw_WorkArea + 16 + itr_UnitDraw_WorkArea));
-    }
-
-#endif
+// #ifdef STU_DEBUG
+//     for(itr_UnitDraw_WorkArea = 0; itr_UnitDraw_WorkArea < 18*16; itr_UnitDraw_WorkArea++)
+//     {
+//         dbg_prn("%02x\n", *(UnitDraw_WorkArea + 16 + itr_UnitDraw_WorkArea));
+//     }
+// #endif
 
 
     unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
@@ -2117,7 +2097,7 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
     // TODO  }
 
 
-    DLOG("Draw_Picture(x+1, y+1, UnitDraw_WorkArea);");
+//     DLOG("Draw_Picture(x+1, y+1, UnitDraw_WorkArea);");
     // ? UnitDraw_WorkArea = 00000192402C352C ?
     Draw_Picture(x+1, y+1, UnitDraw_WorkArea);
 

@@ -270,7 +270,7 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
     if(Check_Release_Version() == ST_TRUE)
     {
         strcpy(buffer, "Insufficient memory. You need at least ");
-        #pragma warning(suppress : 4996)
+#pragma warning(suppress : 4996)
         itoa(640, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, "K free. Try removing all TSR's.");

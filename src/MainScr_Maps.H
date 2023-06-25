@@ -13,24 +13,6 @@
 
 
 
-#define WORLD_WIDTH 60
-#define WORLD_HEIGHT 40
-
-#define MAP_WIDTH 12
-#define MAP_HEIGHT 10
-#define MAP_WIDTH_HALF 6
-#define MAP_HEIGHT_HALF 5
-
-#define TILE_WIDTH 20
-#define TILE_HEIGHT 18
-
-#define _MAP_MAX_X 60
-#define _MAP_MAX_Y 40
-
-#define TERRAIN_COUNT 762
-
-
-
 // dseg:291E     BEGIN: ovr052
 // dseg:291E
 // dseg:291E Load/Init Main Game
@@ -112,6 +94,16 @@ extern byte_ptr terrain_001_1;
 extern SAMB_ptr terrain_lbx_000;
 
 
+// dseg:CB56                                                 ovr150
+// WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
+// WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...
+// WZD dseg:CB5A 00 00                                           OVL_NewMapSust_Save dw 0; DATA XREF : OVL_MapStateSave + 12w ...
+// WZD dseg:CB5C
+int16_t map_draw_full;
+
+
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,7 +152,17 @@ void Minimap_Set_Dims(int16_t width, int16_t height);
 void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
 
 // WZD o67p10
-void Set_Entities_On_Map_Window(void);
+void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
+
+// WZD o67p13
+/*
+    updates draw priority on ALL units in _UNITS
+*/
+void Set_Unit_Draw_Priority(void);
+
+// WZD o67p14
+// drake178: STK_NoUnitDraw
+void Reset_Stack_Draw_Priority(void);
 
 
 /*
@@ -180,10 +182,11 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 */
 
 // WZD o150p01
-void Undef_Prev_Map_Draw_XY(void);
+// AKA Undef_Prev_Map_Draw_XY()
+void Reset_Map_Draw(void);
 
 // WZD o150p04
-void Draw_Map_Window(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
+void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p);
 
 // WZD o150p05
 void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);

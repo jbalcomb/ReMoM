@@ -114,6 +114,11 @@ int16_t Interpret_Mouse_Input(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
 #endif
 
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
+#endif
+
     field_num = 0;
     down_mouse_button = ST_UNDEFINED;
     // MD_ButtonStatus = 0;
@@ -169,10 +174,108 @@ int16_t Interpret_Mouse_Input(void)
                 Check_Help_List() draws the help, if it can, then wait for a key press or button click...
                 so, nothing needs to happen after this?
             */
-            if(MD_ButtonStatus == 2 && help_list_active != ST_FALSE && Check_Help_List() == 0)
+            if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT && help_list_active != ST_FALSE && Check_Help_List() == 0)
             {
 
+
             }
+
+
+            // HACK: 
+            if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)
+            {
+                mouse_x = Pointer_X();
+                mouse_y = Pointer_Y();
+                cursor_offset = Get_Pointer_Offset();
+                field_num = 0;
+                character = 0;
+                field_num = Scan_Field();
+                if(field_num != 0)
+                {
+                    field_num = (field_num * -1);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+#endif
+                }
+
+            }
+
+
+            // HACK: 
+            if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
+            {
+                mouse_x = Pointer_X();
+                mouse_y = Pointer_Y();
+                cursor_offset = Get_Pointer_Offset();
+                field_num = 0;
+                character = 0;
+                field_num = Scan_Field();
+                if(field_num != 0)
+                {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+#endif
+                }
+                
+            }
+
+
+
+            // if(MD_GetButtonStatus() != 0)
+            if(ST_FALSE)
+            {
+                // HERE: ¿ != 2 && != 0 ?
+                mouse_x = Pointer_X();
+                mouse_y = Pointer_Y();
+                cursor_offset = Get_Pointer_Offset();
+                field_num = 0;
+                // Unused_Local = ST_UNDEFINED
+                character = 0;
+                field_num = Scan_Field();
+                if(field_num != 0)
+                {
+                    if( (down_mouse_button == ST_FALSE) && (p_fields[field_num].type != ft_Input) && (p_fields[field_num].type != ft_ContinuousStringInput) )
+                    {
+                        // if ...
+                        // (down_mouse_button != ST_UNDEFINED) &&||
+                        // (p_fields[field_num].type != ft_Grid) &&||
+                        // (p_fields[down_mouse_button].type != ft_Grid) &&||
+                        // (p_fields[down_mouse_button].type != ft_Slidebar)
+                        // GUI_CallRedrawFn()
+                        // else Push_Field_Down(field_num, mouse_x, mouse_y)
+
+
+
+                    }
+
+
+                    // if...
+                    // p_fields[field_num].type != ft_ContinuousStringInput  &&||
+                    // input_field_active !=/== ST_FALSE
+                    // ... Param0 ... edit string ... edit cursor ... animation ... GUI_Active_EditSlct = field_num ...
+
+
+                    // GUI_MouseFocusCtrl = field_num;
+                    // if(GUI_ClickActivate !=/== ST_FALSE)
+
+
+                    // ft_Slider
+
+
+                    // MD_GetClickRec1()
+                    // MD_Get_ClickRec2()
+                    // GUI_Processed_LastX = mouse_x;
+                    // GUI_Processed_LastY = mouse_y;
+                    // GUI_Processed_Btns = MD_ButtonStatus;
+
+                    // switch(p_fields[field_num].type)
+
+
+                }
+
+
+            }
+
 
         }
         // else if(MD_GetClickRec1() != ST_FALSE)
@@ -198,6 +301,7 @@ int16_t Interpret_Mouse_Input(void)
         }
         else
         {
+            DLOG("(Keyboard_Status() != ST_TRUE)");
             DLOG("(MD_GetButtonStatus() == ST_FALSE)");
             DLOG("(MD_GetClickRec1() == ST_FALSE)");
             // Mouse_Button_Handler();

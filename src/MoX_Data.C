@@ -7,11 +7,14 @@
 
 
 // WZD dseg:6FFE
-int16_t Map_LastDraw_X = ST_UNDEFINED;
+// AKA Map_LastDraw_X
+int16_t prev_map_x = ST_UNDEFINED;
 // WZD dseg:7000
-int16_t Map_LastDraw_Y = ST_UNDEFINED;
+// AKA Map_LastDraw_Y
+int16_t prev_map_y = ST_UNDEFINED;
 // WZD dseg:7002
-int16_t OVL_NewMapSustain = 2;
+// AKA OVL_NewMapSustain
+int16_t map_sustain = 2;
 
 
 // WZD dseg:9136
@@ -43,9 +46,9 @@ SAMB_ptr p5_heroes;
 
 
 // WZD dseg:9392
-SAMB_ptr Visibility_Myrror;
+SAMB_ptr Visibility_Myrror;         // alloc in MoM_Tables_Init()
 // WZD dseg:9396
-SAMB_ptr Visibility_Arcanus;
+SAMB_ptr Visibility_Arcanus;        // alloc in MoM_Tables_Init()
 
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
@@ -196,9 +199,11 @@ struct s_WIZARD _players[6];
 // UU_IMG_OVL_WorkMark@
 
 // WZD dseg:974A
-int16_t G_OVL_MapDisplay_Y;
+// AKA G_OVL_MapDisplay_Y
+int16_t _prev_world_y;
 // WZD dseg:974C
-int16_t G_OVL_MapDisplay_X;
+// G_OVL_MapDisplay_X
+int16_t _prev_world_x;
 
 // WZD dseg:BD82 
 int16_t OVL_Map_CenterY;  // AKA _active_world_y
@@ -227,5 +232,6 @@ struct s_GAME_DATA game_data;
 // WZD dseg:BD9E
 // magic_set s_MAGIC_SET
 
-// WZD dseg:CB5C
-int16_t OVL_NewMapDrawing;  //; determines whether non-animated terrain tiles will be redrawn or not
+// ovr150 MainScr_Maps  // WZD dseg:CB5C
+// ovr150 MainScr_Maps  // AKA OVL_NewMapDrawing
+// ovr150 MainScr_Maps  int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not

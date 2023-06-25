@@ -31,9 +31,9 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     byte_ptr flic_palette_data;
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
 
     p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
 
@@ -66,9 +66,9 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
         *(p_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
 
 }
 
@@ -91,9 +91,9 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d] g_Video_Back_Buffer: %p\n", __FILE__, __LINE__, g_Video_Back_Buffer);
@@ -187,9 +187,9 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
 
 }
 
@@ -206,9 +206,9 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
     int16_t length;
     int16_t itr_length;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
+// #endif
 
     // FLIC_SET_WIDTH(pict_seg, width);
     // FLIC_SET_HEIGHT(pict_seg, height);
@@ -230,9 +230,9 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
         *(pict_seg + 16 + itr_length) = color;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
+// #endif
 }
 
 // MGC s28p11
@@ -246,9 +246,9 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
     unsigned short flic_frame_offset_ofst;
     byte_ptr p_FLIC_Frame;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
+// #endif
 
     // ? MEM_Copy_Far(&flic_hdr, 0, 0, p_FLIC_File, 16) ?
 
@@ -300,9 +300,9 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
     FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(p_FLIC_File), p_FLIC_Frame);
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
+// #endif
 }
 
 
@@ -320,9 +320,9 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
     uint32_t flic_frame_offset;
     byte_ptr p_FLIC_Frame;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 
     /*
         BEGIN: same as FLIC_Draw()
@@ -440,9 +440,9 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // WZD s30p14
@@ -453,9 +453,9 @@ void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     int16_t loop_frame;
     int16_t frame_count;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
 
     frame_index = (frame_index & 0x7fff);
     frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
@@ -467,9 +467,9 @@ void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     }
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, frame_index);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
 
 }
 
@@ -477,15 +477,15 @@ void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, 0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
 }
 
@@ -494,15 +494,15 @@ int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
     int16_t current_frame_index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_CurrentFrame(p_FLIC_Header = %p) { current_frame_index = %d }\n", __FILE__, __LINE__, p_FLIC_Header, current_frame_index);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_CurrentFrame(p_FLIC_Header = %p) { current_frame_index = %d }\n", __FILE__, __LINE__, p_FLIC_Header, current_frame_index);
+// #endif
 
     return current_frame_index;
 }
@@ -515,15 +515,15 @@ int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_width;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Width(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Width(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
     flic_width = FLIC_GET_WIDTH(p_FLIC_Header);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Width(p_FLIC_Header = %p) { flic_width = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_width);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Width(p_FLIC_Header = %p) { flic_width = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_width);
+// #endif
 
     return flic_width;
 }
@@ -533,15 +533,15 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_height;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Height(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Height(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
     flic_height = FLIC_GET_HEIGHT(p_FLIC_Header);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Height(p_FLIC_Header = %p) { flic_height = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_height);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Height(p_FLIC_Header = %p) { flic_height = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_height);
+// #endif
 
     return flic_height;
 }
@@ -553,9 +553,9 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     int16_t height;
     int16_t width;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
+// #endif
 
     width = GET_2B_OFS(pict_seg, 0);
     height = GET_2B_OFS(pict_seg, 2);
@@ -568,9 +568,9 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     // void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
     Draw_Picture_ASM(x, y, 16, pict_seg, width, height, 0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
+// #endif
 }
 
 
@@ -579,9 +579,9 @@ int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 {
     int16_t full_store_flag;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Full_Store_Flag(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Full_Store_Flag(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
+// #endif
 
     full_store_flag = FLIC_GET_FRAME_TYPE(p_FLIC_Header);
 
@@ -589,9 +589,9 @@ int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 //     dbg_prn("DEBUG: [%s, %d] full_store_flag: %d\n", __FILE__, __LINE__, full_store_flag);
 // #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Get_Full_Store_Flag(p_FLIC_Header = %p) { full_store_flag = %d }\n", __FILE__, __LINE__, p_FLIC_Header, full_store_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: Get_Full_Store_Flag(p_FLIC_Header = %p) { full_store_flag = %d }\n", __FILE__, __LINE__, p_FLIC_Header, full_store_flag);
+// #endif
 
     return full_store_flag;
 }
@@ -626,9 +626,9 @@ void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_se
     int16_t word_length;
     uint16_t * word_ptr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 
     src_width = GET_2B_OFS(src_pict_seg, 0);
     src_height = GET_2B_OFS(src_pict_seg, 2);
@@ -691,9 +691,9 @@ void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_se
 // #endif
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 }
 
 
@@ -723,9 +723,9 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
     int16_t dst_x;
     int16_t dst_y;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: source_picture: %p\n", __FILE__, __LINE__, source_picture);
@@ -920,9 +920,9 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
+// #endif
 }
 
 
@@ -930,9 +930,9 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
+// #endif
 
     byte_ptr screen_start;
     byte_ptr screen_pos;
@@ -981,7 +981,7 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
         itr_width--;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
+// #endif
 }

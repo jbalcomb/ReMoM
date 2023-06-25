@@ -65,6 +65,10 @@ void Deactivate_Help_List(void)
     dbg_prn("DEBUG: [%s, %d] BEGIN: Deactivate_Help_List()\n", __FILE__, __LINE__);
 #endif
 
+    help_list_active = ST_FALSE;
+    help_list_count = 0;
+    help_struct_pointer = ST_NULL;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] END: Deactivate_Help_List()\n", __FILE__, __LINE__);
 #endif

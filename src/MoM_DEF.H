@@ -41,6 +41,22 @@
 #define SQUARE_HEIGHT   18  // in Pixels
 
 
+#define WORLD_WIDTH 60
+#define WORLD_HEIGHT 40
+
+#define MAP_WIDTH 12
+#define MAP_HEIGHT 10
+#define MAP_WIDTH_HALF 6
+#define MAP_HEIGHT_HALF 5
+
+#define TILE_WIDTH 20
+#define TILE_HEIGHT 18
+
+#define _MAP_MAX_X 60
+#define _MAP_MAX_Y 40
+
+#define TERRAIN_COUNT 762
+
 
 /*
 hanging out in MoX_DEF.H
@@ -67,26 +83,6 @@ hanging out in MoX_DEF.H
 
 #define ST_BLACK 1
 #define ST_WHITE 15
-*/
-/*
-hanging out in MainScrn_Maps.H
-
-
-#define WORLD_WIDTH 60
-#define WORLD_HEIGHT 40
-
-#define MAP_WIDTH 12
-#define MAP_HEIGHT 10
-#define MAP_WIDTH_HALF 6
-#define MAP_HEIGHT_HALF 5
-
-#define TILE_WIDTH 20
-#define TILE_HEIGHT 18
-
-#define _MAP_MAX_X 60
-#define _MAP_MAX_Y 40
-
-#define TERRAIN_COUNT 762
 */
 
 
