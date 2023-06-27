@@ -12,6 +12,11 @@
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 
+#define SCREEN_XMIN       0
+#define SCREEN_YMIN       0
+#define SCREEN_XMAX     319
+#define SCREEN_YMAX     199
+
 #define CURSOR_WIDTH    16
 #define CURSOR_HEIGHT   16
 

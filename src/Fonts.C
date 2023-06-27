@@ -15,8 +15,10 @@ extern uint8_t g_Palette_XBGR[];
 #include "STU_DBG.H"
 #endif
 
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdlib.h>     /* itoa() */
+// #include <string.h>     /* strcat(), strcpy() */
 #include <string.h>         /* strcpy() */
-// ? itoa() ?
 
 
 // WZD dseg:783C
@@ -101,10 +103,6 @@ void Load_Font_File(char * font_file)
 {
     int itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Load_Font_File(font_file = %s)\n", __FILE__, __LINE__, font_file);
-#endif
-
     strcpy(font_name, font_file);
 
     font_style_data = LBX_Load(font_file, 0);
@@ -129,10 +127,6 @@ void Load_Font_File(char * font_file)
     {
         *(p_Palette_XBGR + itr) = 0;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Load_Font_File(font_file = %s)\n", __FILE__, __LINE__, font_file);
-#endif
 
 }
 
@@ -268,17 +262,10 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Integer_Right(x = %d, y = %d, val = %d)\n", __FILE__, __LINE__, x, y, val);
-#endif
-
+#pragma warning(suppress : 4996)
     itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Integer_Right(x = %d, y = %d, val = %d) { next_x = %d }\n", __FILE__, __LINE__, x, y, val, next_x);
-#endif
 
     return next_x;
 }
@@ -288,15 +275,7 @@ int16_t Print(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print(x = %d, y = %d, string = %s)\n", __FILE__, __LINE__, x, y, string);
-#endif
-
     next_x = Print_Display(x, y, string, ST_FALSE);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print(x = %d, y = %d, string = %s) { next_x = %d }\n", __FILE__, __LINE__, x, y, string, next_x);
-#endif
 
     return next_x;
 }
@@ -327,10 +306,6 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 //     char * ptr;
     uint8_t character;
     int16_t itr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Print_String()\n", __FILE__, __LINE__);
-#endif
 
     print_xpos = x;
     print_ypos = y;
@@ -386,10 +361,6 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
     next_x = print_xpos;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Print_String()\n", __FILE__, __LINE__);
-#endif
-
     return next_x;
 }
 
@@ -400,42 +371,18 @@ int16_t Get_Current_Font_Index(void)
 {
     int16_t current_font_index;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
-// #endif
-
     current_font_index = Font_Index;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] current_font_index: %d\n", __FILE__, __LINE__, current_font_index);
-// #endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_index = %d }\n", __FILE__, __LINE__, current_font_index);
-#endif
 
     return current_font_index;
 }
 
 // WZD s17p54
-// Get_Font_Color1
+// AKA Get_Font_Color1
 int16_t Get_Current_Font_Color(void)
 {
     int16_t current_font_color;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Current_Font_Index()\n", __FILE__, __LINE__);
-// #endif
-
     current_font_color = Font_ColorIndex1;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] current_font_color: %d\n", __FILE__, __LINE__, current_font_color);
-// #endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Get_Current_Font_Index() { current_font_color = %d }\n", __FILE__, __LINE__, current_font_color);
-#endif
 
     return current_font_color;
 }
@@ -525,13 +472,6 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
         font_header->current_data_offsets[itr] = font_header->data_offsets[((font_idx * 96) + itr)];
     }
 
-// #ifdef STU_DEBUG
-//     for(itr = 0; itr < 96; itr++)
-//     {
-//         dbg_prn("DEBUG: [%s, %d] %d: %04X\n", __FILE__, __LINE__, (itr + 32), font_header->data_offsets[((font_idx * 96) + itr)]);
-//     }
-// #endif
-
 }
 
 
@@ -558,10 +498,6 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
     int16_t width;
     byte_ptr font_data_offset;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-#endif
-
     _CS_skip_x = x;
 
     if(char_num < 32 || char_num > 126)
@@ -582,11 +518,6 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
         // _SI_SrcOfst = font_header.current_data_offsets[char_num]
 
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] font_header->current_font_widths[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_font_widths[char_num]);
-//     dbg_prn("DEBUG: [%s, %d] font_header->current_data_offsets[char_num]: %04X\n", __FILE__, __LINE__, font_header->current_data_offsets[char_num]);
-// #endif
-
         width = font_header->current_font_widths[char_num];
         font_data_offset = (font_style_data + font_header->current_data_offsets[char_num]);
 
@@ -605,10 +536,6 @@ Done_NaySkip:
     next_x = _CS_next_x;
     goto Done;
 Done:
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Print_Character(x = %d, y = %d, char_num = %d) { next_x = %d }\n", __FILE__, __LINE__, x, y, char_num, next_x);
-#endif
-
     return next_x;
 }
 
@@ -635,10 +562,6 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
     uint8_t skip_count;
     uint8_t repeat_count;
     uint8_t color_index;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
 
 
     // src: _DS_SI
@@ -726,10 +649,6 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
-
 }
 
 
@@ -748,10 +667,6 @@ int16_t Get_String_Width(char * string)
     int16_t width;
     int16_t char_num;
     int16_t horizontal_spacing;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_String_Width( string = %s )\n", __FILE__, __LINE__, string);
-#endif
 
     pos = 0;
     width = 0;
@@ -809,10 +724,6 @@ Next_Char:
 Done:
     width = width - horizontal_spacing;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_String_Width( string = %s ) { width = %d }\n", __FILE__, __LINE__, string, width);
-#endif
-
     return width;
 }
 
@@ -829,10 +740,6 @@ void Load_Palette(int entry, int start_color, int end_color)
     int color_start;
     int color_count;
     int itr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
-#endif
 
     palette_data = LBX_Reload(font_name, entry+2, palette_block);
 
@@ -885,18 +792,12 @@ void Load_Palette(int entry, int start_color, int end_color)
         Set_Palette_Changes(start_color, end_color);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Load_Palette(entry = %d, start_color = %d, end_color = %d)\n", __FILE__, __LINE__, entry, start_color, end_color);
-#endif
 }
 
 // WZD s20p05
 void Set_Palette_Changes(int start_color, int end_color)
 {
     int itr;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Set_Palette_Changes(start_color = %d, end_color = %d)\n", __FILE__, __LINE__, start_color, end_color);
-#endif
 
 //     for(itr = start_color; itr < end_color; itr++)
 //     {
@@ -908,9 +809,6 @@ void Set_Palette_Changes(int start_color, int end_color)
         *(p_PaletteFlags + itr) = ST_TRUE;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Set_Palette_Changes(start_color = %d, end_color = %d)\n", __FILE__, __LINE__, start_color, end_color);
-#endif
 }
 
 /*

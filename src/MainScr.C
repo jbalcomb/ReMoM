@@ -17,7 +17,7 @@
 #include "FLIC_Draw.H"
 #include "Fields.H"
 #include "Fonts.H"
-#include "Help.H"
+#include "Graphics.H"
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
@@ -731,7 +731,7 @@ void Main_Screen(void)
     int16_t unit_stack_world_y;
     int16_t unit_stack_world_x;
     int16_t IDK_unit_stack_in_view;
-// input= word ptr -22h
+    int16_t entity_idx;  // AKA "input"
     int16_t hotkey_idx_Q;
     int16_t hotkey_idx_C;
     int16_t hotkey_idx_Shift_2;
@@ -756,15 +756,22 @@ void Main_Screen(void)
 
     int16_t itr_units;
 
-    // HACK:
-    _unit = 46;
-    Build_Unit_Stack(0, 0, 18, 17);
+
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].active: %d\n", __FILE__, __LINE__, _unit_stack[0].active);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
 #endif
+
+
+//     // HACK:
+//     _unit = 46;  // ¿ Where'd I get this _unit from or the x,y's ? 
+//     // Build_Unit_Stack(0, 0, 18, 17);
+//     Build_Unit_Stack(0, 0, _UNITS[_unit].world_x, _UNITS[_unit].world_y);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
+//     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
+//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
+//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].active: %d\n", __FILE__, __LINE__, _unit_stack[0].active);
+// #endif
 
 
     // WZD main() |-> WZD_Load_Init_MainGame() |-> Main_Screen_Load_Pictures()
@@ -782,8 +789,8 @@ void Main_Screen(void)
     // j_Allocate_Reduced_Map__2();  byte-identical to LBX_Minimap_Alloc, should not exist
     Reset_Draw_Active_Stack();  // AKA j_OVL_ResetStackDraw()
     Set_Outline_Color(0);
-    // TODO  Set_Unit_Draw_Priority();
-    // TODO  Reset_Stack_Draw_Priority();
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
     // Disable_Redraw_Function();
     // Set_Redraw_Function(j_Main_Screen_Draw, 1);
     // _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
@@ -792,9 +799,9 @@ void Main_Screen(void)
     // CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
     // CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
     // OVL_MapVar3 = 1;  // ? ST_TRUE ?
-    Reset_Map_Draw();  // Undef_Prev_Map_Draw_XY()  j_OVL_MapDrawRenew()
-    // TODO  j_OVL_PrepMinimap();
-    // TODO  Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);  // AKA j_OVL_SetUnitsOnMap()
+    Reset_Map_Draw();
+    // TODO  j_MainScr_Prepare_Reduced_Map();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
     // TODO  j_STK_GetExtraActions();
     // if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
@@ -803,11 +810,18 @@ void Main_Screen(void)
     // Local_0 = 0;  // ? ST_FALSE ?
     Set_Input_Delay(1);
     // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
-    Deactivate_Help_List();
+    // TODO  Deactivate_Help_List();
     // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
     // DBG_Alt_A__TurnCount = -1
     Main_Screen_Draw();
     PageFlip_FX();
+
+
+
+    /*
+        BEGIN: Screen-Loop
+    */
+
     leave_screen_flag = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
     {
@@ -1086,6 +1100,7 @@ void Main_Screen(void)
         // )
         if(input_field_idx == _next_turn_button)
         {
+            DLOG("if(input_field_idx == _next_turn_button)");
             /* BIG EFFORT */
         }
 
@@ -1187,10 +1202,78 @@ void Main_Screen(void)
             }
         }
 
+
+
         /*
             Right-Click Movement Map Grid Field
-                In IDA, color #43 (~Dark0Gold)
+                In IDA, color #45 (~SeaFoamGreen)
+            
+            Scroll Map
+            Select Entity
+                Unit
+                    Own - Active Stack
+                    Other - Unit List Window
+                City
+                    Own
+                        Size
+                            0 - Outpost Screen
+                            1+ - City Screen
+                    Other - Enemy City Window
+
         */
+       if(-input_field_idx == _main_map_grid_field)
+       {
+            DLOG("if(-input_field_idx == _main_map_grid_field)");
+            DLOG("@@RightClickMovementMap");
+
+            // TODO  rename this variable to something more sensible - maybe add more if it gets reused - here ~entity_idx, was "input"
+            entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: entity_idx: %d\n", __FILE__, __LINE__, entity_idx);
+#endif
+
+            if(entity_idx == ST_UNDEFINED)
+            {
+                DLOG("if(entity_idx == ST_UNDEFINED)");
+                _prev_world_x = _main_map_grid_x - (MAP_WIDTH / 2);  // ¿ grid x - (map width / 2) = map x ?
+                _prev_world_y = _main_map_grid_y - (MAP_HEIGHT / 2);  // ¿ grid y - (map height / 2) = map y ?
+                IDK_CheckSet_MapDisplay_XY();
+            }
+            else
+            {
+                DLOG("if(entity_idx != ST_UNDEFINED)");
+
+                // RP_SND_LeftClickSound2()
+
+                // entity_idx = abs(entity_idx);
+                entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: entity_idx: %d\n", __FILE__, __LINE__, entity_idx);
+#endif
+
+                if(entity_idx >= 1000)
+                {
+                    DLOG("if(entity_idx >= 1000)");
+
+                }
+                else
+                {
+                    DLOG("if(entity_idx < 1000)");
+                    if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+                    {
+                        DLOG("if(_UNITS[entity_idx].owner_idx == _human_player_idx)");
+                        // Select Stack
+                    }
+                    else
+                    {
+                        DLOG("if(_UNITS[entity_idx].owner_idx != _human_player_idx)");
+                        // Enemy Unit - Unit List Screen (Pop-Up)
+                    }
+                }
+
+            }
+
+       }
 
 
 
@@ -1244,7 +1327,7 @@ void Main_Screen(void)
     }
 
     // TODO  Disable_Redraw_Function()
-    Deactivate_Help_List();
+    // TODO  Deactivate_Help_List();
     Reset_Window();
 
 #ifdef STU_DEBUG
@@ -1257,10 +1340,6 @@ void Main_Screen(void)
 void Main_Screen_Add_Fields(void)
 {
     int16_t itr_unit_stack;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
 
     // CRP_OVL_UU_Control_4 = -1000;
     // CRP_OVL_UU_Control_3 = -1000;
@@ -1297,22 +1376,39 @@ void Main_Screen_Add_Fields(void)
         _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
     }
 
-    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
     if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
-        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
+        DLOG("Yay - Movement Map Grid Field");
+        // (xmin, ymin, box_width, box_height, horizontal_count, vertical_count, *xpos, *ypos, help)
+        // TODO  add defines for the map dims/coords
+        // TODO  confirm what these values/calculations should end up being
         _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_field: %d\n", __FILE__, __LINE__, _main_map_grid_field);
+        DBG_movement_map_grid_field_idx = _main_map_grid_field;
+        strcpy(field_names[_main_map_grid_field], "Movement Map"); // 12+1 char
+#endif
+    }
+    else
+    {
+        DLOG("Nay - Movement Map Grid Field");
     }
 
-    // if( (_curr_world_x == _prev_world_x) && (_curr_world_x == _prev_world_x) )
     if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
+        DLOG("Yay - Reduced Map Grid Field");
         // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
         _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+#ifdef STU_DEBUG
+        DBG_reduced_map_grid_field_idx = _minimap_grid_field;
+        strcpy(field_names[_minimap_grid_field], "Reduced Map"); // 11+1 char
+#endif
+    }
+    else
+    {
+        DLOG("Nay - Reduced Map Grid Field");
     }
 
-    // OVL_SetMenuButtons()
-    // OVL_SetUnitButtons()
     Add_Game_Button_Fields();
     Add_Unit_Action_Fields();
 
@@ -1330,11 +1426,6 @@ void Main_Screen_Add_Fields(void)
 //     // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
 //     _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
 
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o57p03
@@ -1496,7 +1587,7 @@ void Add_Unit_Window_Fields(void)
     for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
     {
         Unit_Window_Picture_Coords(itr_unit_stack_count, &x1, &y1, &x2, &y2);
-        Unit_Window_Fields[itr_unit_stack_count] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, '0', ST_UNDEFINED);
+        Unit_Window_Fields[itr_unit_stack_count] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, 0, ST_UNDEFINED);
     }
 
 }
@@ -1919,9 +2010,6 @@ void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit
     int16_t unit_owner_idx;
     int16_t unit_colored_backgrounds_idx;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Draw_Unit_Picture(x = %d, y = %d, unit_stack_unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_stack_unit_idx, flag);
-#endif
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -1956,9 +2044,6 @@ void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit
 
     Unit_Window_Draw_Unit_StatFig(x, y, unit_stack_unit_idx, flag);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Draw_Unit_Picture(x = %d, y = %d, unit_stack_unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_stack_unit_idx, flag);
-#endif
 }
 
 
@@ -1971,84 +2056,12 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
     int16_t unit_owner_idx;
     int16_t banner;
     uint16_t itr_banner_colors;
-// #ifdef STU_DEBUG
-//     SAMB_ptr pict_seg;
-//     int16_t pict_seg_width;
-//     int16_t pict_seg_height;
-//     uint16_t itr_pict_seg;
-//     uint16_t itr_UnitDraw_WorkArea;
-// #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Draw_Unit_StatFig()\n", __FILE__, __LINE__);
-#endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-// #endif
-    // unit_type_idx = _UNITS[unit_idx].type;
-    // unit_type_idx = 0;  // ? UNITS1.LBX, Entry 0 "Dwarf" BRAX ?
-    // unit_type_idx = 35;  // ? UNITS1.LBX, Entry 34  "Trireme" ?
     unit_type_idx = _UNITS[unit_idx].type;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: unit_type_idx: %d\n", __FILE__, __LINE__, unit_type_idx);
-// #endif
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: _unit_type_table[unit_type_idx].Name: %s\n", __FILE__, __LINE__, _unit_type_table[unit_type_idx].Name);
-// #endif
 
-
-// #ifdef STU_DEBUG
-//     pict_seg = _unit_type_table[unit_type_idx].pict_seg;
-//     pict_seg_width = GET_2B_OFS(pict_seg, 0);
-//     pict_seg_height = GET_2B_OFS(pict_seg, 2);
-//     dbg_prn("DEBUG: [%s, %d]: pict_seg: %p\n", __FILE__, __LINE__, pict_seg);
-//     dbg_prn("DEBUG: [%s, %d]: pict_seg_width: %d\n", __FILE__, __LINE__, pict_seg_width);
-//     dbg_prn("DEBUG: [%s, %d]: pict_seg_height: %d\n", __FILE__, __LINE__, pict_seg_height);
-// #endif
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-// #endif
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-// #endif
-    /*
-        weird bit of business with branch on flag
-        but paths are code equivalent
-        maybe related to setting frame 0 or 1
-    */
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(_unit_type_table[unit_type_idx].pict_seg));
-// #endif
-
-    // WZD s30p13
-    // src  _unit_type_table[unit_type_idx].pict_seg
-    // dst  UnitDraw_WorkArea
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: GFX_Swap_Seg: %p\n", __FILE__, __LINE__, GFX_Swap_Seg);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_type_table[unit_type_idx].pict_seg: %p\n", __FILE__, __LINE__, _unit_type_table[unit_type_idx].pict_seg);
-//     dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
-// #endif
     Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: UnitDraw_WorkArea: %p\n", __FILE__, __LINE__, UnitDraw_WorkArea);
-// #endif
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 0));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(UnitDraw_WorkArea, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(UnitDraw_WorkArea, 2));
-// #endif
-
-// #ifdef STU_DEBUG
-//     for(itr_UnitDraw_WorkArea = 0; itr_UnitDraw_WorkArea < 18*16; itr_UnitDraw_WorkArea++)
-//     {
-//         dbg_prn("%02x\n", *(UnitDraw_WorkArea + 16 + itr_UnitDraw_WorkArea));
-//     }
-// #endif
-
 
     unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
 
@@ -2061,13 +2074,10 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
         banner = 5;
     }
 
-    // for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
-    // {
-    //     LBX_IMG_ColorReplace(UnitDraw_WorkArea, itr_banner_colors + 214, COL_Banners_P0[itr_banner_colors * 5]);
-    // }
-
-
-
+    // TODO  for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
+    // TODO  {
+    // TODO      LBX_IMG_ColorReplace(UnitDraw_WorkArea, itr_banner_colors + 214, COL_Banners_P0[itr_banner_colors * 5]);
+    // TODO  }
 
     /*
         flag: {0,1,2,3}
@@ -2096,26 +2106,18 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
     // TODO      UNIT_Draw_UE_Outline(unit_idx);
     // TODO  }
 
-
-//     DLOG("Draw_Picture(x+1, y+1, UnitDraw_WorkArea);");
-    // ? UnitDraw_WorkArea = 00000192402C352C ?
     Draw_Picture(x+1, y+1, UnitDraw_WorkArea);
-
 
     /*
         BEGIN: Unit Status - Icon/Text
     */
-    if(unit_owner_idx == _human_player_idx)
-    {
-
-    }
+    // TODO  if(unit_owner_idx == _human_player_idx)
+    // TODO  {
+    // TODO  
+    // TODO  }
     /*
         END: Unit Status - Icon/Text
     */
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Draw_Unit_StatFig()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -2212,11 +2214,6 @@ OON XREF STK_move() WZD o95p01
 void Allocate_Reduced_Map__1(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 * 16 = 4848 bytes
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _reduced_map_seg: %p\n", __FILE__, __LINE__, _reduced_map_seg);
-#endif
-
 }
 
 // WZD o64p02
@@ -2568,7 +2565,6 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
 #endif
-
 }
 
 // WZD o64p08
@@ -2597,19 +2593,17 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
         FLIC_Set_CurrentFrame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
     }
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Unit_Action_Locked_Buttons()\n", __FILE__, __LINE__);
 #endif
-
 }
 
 
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Picture_Coords()\n", __FILE__, __LINE__);
-#endif
+
     // TODO(JimBalcomb,20230616): add module-scoped (manifest) contstants for the magic-numbers used here-in
     // 3 for figures width, 3 for figures height
     // ? 23 for figures background width, 29 for figures background height ?
@@ -2618,7 +2612,5 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
     *y1 = _unit_window_start_y + ((unit_stack_unit_idx / 3) * 29);
     *x2 = *x1 + 22;
     *y2 = *y1 + 28;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Picture_Coords()\n", __FILE__, __LINE__);
-#endif
+
 }

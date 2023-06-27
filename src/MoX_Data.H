@@ -441,6 +441,9 @@ struct s_STACK
 
 
 
+// WZD dseg:599C
+// TODO  extern char hlpentry_lbx_file[];
+
 
 
 // WZD dseg:6FFE
@@ -449,6 +452,19 @@ extern int16_t Map_LastDraw_X;
 extern int16_t Map_LastDraw_Y;
 // WZD dseg:7002
 extern int16_t OVL_NewMapSustain;
+
+
+
+// dseg:76DA
+extern int16_t screen_window_x1;
+// dseg:76DC
+extern int16_t screen_window_y1;
+// dseg:76DE
+extern int16_t screen_window_x2;
+// dseg:76E0
+extern int16_t screen_window_y2;
+
+
 
 // in MGC, screen_change for Main_Menu_Screen() is the next one up fro TBL_Items
 // but there is nothing of the sort in WZD
@@ -614,6 +630,10 @@ extern SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
 // WZD dseg:9ECA
 extern struct s_WIZARD _players[6];
 // extern struct s_WIZARD * _players;
+
+// WZD dseg:BB7A
+// extern struct s_HLP_ENTRY * _help_entries;
+extern uint8_t _help_entries[];
 
 
 // WZD dseg:974A

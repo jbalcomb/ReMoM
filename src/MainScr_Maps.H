@@ -129,6 +129,10 @@ extern "C" {
 */
 void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
 
+// WZD o67p0
+// AKA IDK_CheckSet_MapDisplay_XY
+void IDK_CheckSet_MapDisplay_XY(void);
+
 // WZD o67p04
 // AKA OVL_ShowActiveStack
 void Set_Draw_Active_Stack_Always(void);

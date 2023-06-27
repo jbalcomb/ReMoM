@@ -285,39 +285,7 @@ void Set_Mouse_Position(int16_t x, int16_t y)
 // WZD s35p30  AKA CRL_Save_RSP();
 // WZD s35p31  AKA Save_Mouse_Off_Page();  CRL_Save_DSP();
 // WZD s35p32  AKA IN_CRL_Save_RSP();  VGA_SaveCursorArea();
-// DELETE  void Save_Mouse(int16_t x, int16_t y)
-// DELETE  {
-// DELETE      uint8_t * page_buffer;
-// DELETE      uint16_t * mouse_buffer;
-// DELETE      uint16_t screen_page_offset;
-// DELETE      uint16_t width;
-// DELETE      uint16_t height;
-// DELETE      uint16_t itr_width;
-// DELETE      uint16_t itr_height;
-// DELETE  
-// DELETE      if(x + 16 < 320) { width  = 16; } else { width  = 320 - x; }
-// DELETE      if(y + 16 < 200) { height = 16; } else { height = 200 - y; }
-// DELETE  
-// DELETE      screen_page_offset = ((y * 320) + x);
-// DELETE  
-// DELETE      mouse_buffer = &mouse_off_page_buffer[0];
-// DELETE      *mouse_buffer++ = screen_page_offset;
-// DELETE      *mouse_buffer++ = width;
-// DELETE      *mouse_buffer++ = height;
-// DELETE  
-// DELETE      page_buffer = current_video_page + screen_page_offset;
-// DELETE  
-// DELETE      itr_height = 0;
-// DELETE      while(itr_height++ < height)
-// DELETE      {
-// DELETE          itr_width = 0;
-// DELETE          while(itr_width++ < width)
-// DELETE          {
-// DELETE              *mouse_buffer++ = *(page_buffer + (itr_height * 320) + itr_width);
-// DELETE          }
-// DELETE      }
-// DELETE  
-// DELETE  }
+
 void Save_Mouse_On_Page(int16_t x, int16_t y)
 {
     uint8_t * screen_page;
@@ -436,36 +404,7 @@ void Save_Mouse_On_Page_(int16_t x, int16_t y)
 }
 
 // WZD s35p33
-// DELETE  void Copy_Mouse(void)
-// DELETE  {
-// DELETE      uint16_t * src_mouse_buffer;
-// DELETE      uint16_t * dst_mouse_buffer;
-// DELETE      int16_t itr;
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: BEGIN: Copy_Mouse()\n", __FILE__, __LINE__);
-// DELETE  #endif
-// DELETE  
-// DELETE  /*
-// DELETE      mov     si, offset CR_Save_DSP
-// DELETE      mov     di, offset CR_Save_RSP
-// DELETE      mov     cx, 600                 ; 600 words, 1200 bytes
-// DELETE      rep movsw                       ; Move Byte(s) from String to String
-// DELETE  */
-// DELETE  
-// DELETE      src_mouse_buffer = &mouse_off_page_buffer[0];
-// DELETE      dst_mouse_buffer = &mouse_background_buffer[0];
-// DELETE  
-// DELETE      for(itr = 0; itr < 600; itr++)
-// DELETE      {
-// DELETE          *dst_mouse_buffer++ = *src_mouse_buffer++;
-// DELETE      }
-// DELETE  
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: END: Copy_Mouse()\n", __FILE__, __LINE__);
-// DELETE  #endif
-// DELETE  }
+
 void Copy_Mouse_Off_To_Mouse_Back(void)
 {
     uint16_t * src_mouse_buffer;
@@ -483,35 +422,7 @@ void Copy_Mouse_Off_To_Mouse_Back(void)
 
 // WZD s35p34  Restore_Mouse_On_Page   CRL_Restore_RSP     VGA_RestoreCursrArea
 // WZD s35p35  Restore_Mouse_Off_Page  CRL_Restore_DSP     VGA_RestoreDrawCArea
-// DELETE  void Restore_Mouse(void)
-// DELETE  {
-// DELETE      uint8_t * screen_page;
-// DELETE      uint16_t * mouse_buffer;
-// DELETE      uint16_t screen_page_offset;
-// DELETE      uint16_t width;
-// DELETE      uint16_t height;
-// DELETE      uint16_t itr_width;
-// DELETE      uint16_t itr_height;
-// DELETE  
-// DELETE      mouse_buffer = &mouse_background_buffer[0];
-// DELETE      screen_page_offset = *mouse_buffer++;
-// DELETE      width = *mouse_buffer++;
-// DELETE      height = *mouse_buffer++;
-// DELETE  
-// DELETE      // screen_page = current_video_page + screen_page_offset;
-// DELETE      screen_page = video_page_buffer[1 - draw_page_num] + screen_page_offset;
-// DELETE  
-// DELETE      itr_height = 0;
-// DELETE      while(itr_height++ < height)
-// DELETE      {
-// DELETE          itr_width = 0;
-// DELETE          while(itr_width++ < width)
-// DELETE          {
-// DELETE              *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = *mouse_buffer++;
-// DELETE          }
-// DELETE      }
-// DELETE  
-// DELETE  }
+
 void Restore_Mouse_On_Page(void)
 {
     uint8_t * screen_page;
@@ -575,56 +486,6 @@ void Restore_Mouse_Off_Page(void)
 // WZD s35p38  Draw_Mouse_Off_Page   CRH_Draw_DSP  GUI_DrawCursor
 // WZD s35p39  Draw_Mouse_On_Page_   CRL_Draw_RSP  VGA_DisplayCursor
 // WZD s35p40  Draw_Mouse_Off_Page_  CRL_Draw_DSP  VGA_DrawCursor
-// DELETE  void Draw_Mouse(int16_t x, int16_t y)
-// DELETE  {
-// DELETE      uint8_t * mouse_image;
-// DELETE      uint8_t * bbuff_pos;
-// DELETE      int16_t width;
-// DELETE      int16_t height;
-// DELETE      int16_t itr_width;
-// DELETE      int16_t itr_height;
-// DELETE      uint8_t pixel;
-// DELETE  
-// DELETE      // mouse_image_width  =  16
-// DELETE      // mouse_image_height =  16
-// DELETE      // mouse_image_pixels = 256  (100h)
-// DELETE      mouse_image = mouse_palette + ((current_pointer_image_number - 1) * (16 * 16));
-// DELETE  
-// DELETE      if(x + 16 < 320) { width  = 16; } else { width  = 320 - x; }
-// DELETE      if(y + 16 < 200) { height = 16; } else { height = 200 - y; }
-// DELETE  
-// DELETE      bbuff_pos = current_video_page + ((y * 320) + x);
-// DELETE  
-// DELETE  
-// DELETE  // int width = 20;   // total width of patch
-// DELETE  // int height = 10;  // total height of patch
-// DELETE  // int wt;           // temporary width
-// DELETE  // while (height-- > 0)
-// DELETE  // {
-// DELETE  //     wt = width;
-// DELETE  //     while (wt-- > 0)
-// DELETE  //     {
-// DELETE  //         puts("*");
-// DELETE  //     }
-// DELETE  //     puts("\n");
-// DELETE  // }
-// DELETE  
-// DELETE      itr_height = 0;
-// DELETE      while(itr_height < height)
-// DELETE      {
-// DELETE          itr_width = 0;
-// DELETE          while(itr_width < width)
-// DELETE          {
-// DELETE              pixel = *(mouse_image + (itr_height * 16) + itr_width);
-// DELETE              if(pixel != 0x00)  /* Palette Index 0: TRANSPARENT */
-// DELETE              {
-// DELETE                  *(bbuff_pos + (itr_height * 320) + itr_width) = pixel;
-// DELETE              }
-// DELETE              itr_width++;
-// DELETE          }
-// DELETE          itr_height++;
-// DELETE      }
-// DELETE  }
 
 void Draw_Mouse_On_Page(int16_t x, int16_t y)
 {

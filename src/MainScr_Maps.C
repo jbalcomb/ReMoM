@@ -9,6 +9,7 @@
 
 #include "Explore.H"
 #include "FLIC_Draw.H"
+#include "Graphics.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "SCastScr.H"
@@ -198,6 +199,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     {
         map_moved_flag = ST_TRUE;
         shift_right_flag = ST_FALSE;
+        half_swap_flag = ST_FALSE;
+
         if(xpos < l_map_x)
         {
             shift_right_flag = ST_FALSE;
@@ -316,6 +319,38 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Maps(screen_x = %d, screen_y = %d, map_width = %d, map_height = %d , *map_x = %d, *map_y = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_width, map_height, *map_x, *map_y, map_plane, xpos, ypos, player_idx);
 #endif
+
+}
+
+// WZD o67p0
+// AKA IDK_CheckSet_MapDisplay_XY
+void IDK_CheckSet_MapDisplay_XY(void)
+{
+    if(_prev_world_y + MAP_HEIGHT >= WORLD_HEIGHT)
+    {
+        _prev_world_y = WORLD_HEIGHT - MAP_HEIGHT;
+    }
+
+    if(_prev_world_x >= WORLD_WIDTH)
+    {
+        _prev_world_x = _prev_world_x - WORLD_WIDTH;
+    }
+
+    if(_prev_world_x < 0)
+    {
+        _prev_world_x = _prev_world_x + 60;
+    }
+
+    if(_prev_world_y < 0)
+    {
+        _prev_world_y = 0;
+    }
+
+    if(_map_x == 0 && _prev_world_x > 49)
+    {
+        _map_x = 60;
+    }
+
 
 }
 
@@ -510,6 +545,9 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
 #endif
+
+    City_Visible = ST_FALSE;
+
 
     for(itr_map_height = 0; itr_map_height < MAP_HEIGHT; itr_map_height++)
     {
@@ -1037,7 +1075,7 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_heigh
     uint8_t terrain_001_0;
     uint8_t terrain_001_1;
     byte_ptr terrain_pict_seg;
-    int16_t * world_maps_ptr;
+    uint16_t * world_maps_ptr;
     int16_t world_maps_offset;
     // uint16_t terrain_lbx_000_offset;
     uint32_t terrain_lbx_000_offset;

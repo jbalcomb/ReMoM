@@ -1,16 +1,9 @@
 
 #include "MoM.H"
-
 #include "MoX_DEF.H"
 
 #include "Keyboard.H"
-
 #include "Input.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-
 
 
 /*
@@ -82,10 +75,6 @@ int16_t Keyboard_Status(void)
 {
     int16_t keyboard_status;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Keyboard_Status()\n", __FILE__, __LINE__);
-#endif
-
     // TODO  MD_Draw_Disable()
 
     if(g_Key_Pressed == ST_TRUE)
@@ -98,10 +87,6 @@ int16_t Keyboard_Status(void)
     }
 
     // TODO  MD_Draw_Restore()
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Keyboard_Status() { keyboard_status = %d }\n", __FILE__, __LINE__, keyboard_status);
-#endif
 
     return keyboard_status;
 }
@@ -128,14 +113,6 @@ uint8_t Read_Key(void)
 {
     int8_t return_key;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Read_Key()\n", __FILE__, __LINE__);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: scan_code_char_code: %d\n", __FILE__, __LINE__, scan_code_char_code);
-#endif
-
     // Clear the Keyboard Status ~== INT 16,10
     g_Key_Pressed = ST_FALSE;
 
@@ -156,10 +133,6 @@ uint8_t Read_Key(void)
 
         default: { return_key = ST_KEY_OVERRUN; }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Read_Key() { return_key = %d }\n", __FILE__, __LINE__, return_key);
-#endif
 
     return return_key;
 }

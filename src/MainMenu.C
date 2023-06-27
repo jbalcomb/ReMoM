@@ -17,7 +17,6 @@
 #include "FLIC_Draw.H"
 #include "Fonts.H"
 #include "Graphics.H"  /* Fill() */
-#include "Help.H"
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
@@ -205,10 +204,6 @@ switch(current_screen)
 void Main_Menu_Load_Pictures(void)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
-
     mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
     mainmenu_bot = LBX_Load(mainscrn_lbx_file, 5);
     mainmenu_c   = LBX_Load(vortex_lbx_file, 1);
@@ -217,29 +212,12 @@ void Main_Menu_Load_Pictures(void)
     mainmenu_n   = LBX_Load(vortex_lbx_file, 4);
     mainmenu_l   = LBX_Load(vortex_lbx_file, 5);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] mainmenu_top: %p\n", __FILE__, __LINE__, mainmenu_top);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_bot: %p\n", __FILE__, __LINE__, mainmenu_bot);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_c: %p\n", __FILE__, __LINE__, mainmenu_c);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_h: %p\n", __FILE__, __LINE__, mainmenu_h);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_q: %p\n", __FILE__, __LINE__, mainmenu_q);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_n: %p\n", __FILE__, __LINE__, mainmenu_n);
-    dbg_prn("DEBUG: [%s, %d] mainmenu_l: %p\n", __FILE__, __LINE__, mainmenu_l);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
 // MGC ⊆ s01p05 Main_Menu_Screen()
 void Main_Menu_Add_Fields(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
-#endif
 
     Clear_Fields();
 
@@ -256,18 +234,6 @@ void Main_Menu_Add_Fields(void)
     _quit_hotkey = Add_Hot_Key('Q');
     _esc_hotkey = Add_Hot_Key('\x1B');
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _continue_hotkey: %d\n", __FILE__, __LINE__, _continue_hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _load_hotkey: %d\n", __FILE__, __LINE__, _load_hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _new_hotkey: %d\n", __FILE__, __LINE__, _new_hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _hof_hotkey: %d\n", __FILE__, __LINE__, _hof_hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _quit_hotkey: %d\n", __FILE__, __LINE__, _quit_hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _esc_hotkey: %d\n", __FILE__, __LINE__, _esc_hotkey);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Add_Fields()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -365,17 +331,14 @@ int16_t Main_Menu_Screen(void)
         strcat(File_Name, ".GAM");
         if(DIR(File_Name, Found_File_Name) != ST_FAILURE)
         {
-            DLOG("if(DIR(File_Name, Found_File_Name) != ST_FAILURE)");
             if(itr_saves__retval < 9)
             {
-                DLOG("if(itr_saves__retval < 9)");
                 // ; save_gam[array idx] = file slot idx
                 save_game_slots[save_game_count] = itr_saves__retval;
                 save_game_count++;
             }
             else
             {
-                DLOG("if(itr_saves__retval >= 9)");
                 cont_flag = ST_TRUE;
             }
         }
@@ -549,7 +512,7 @@ int16_t Main_Menu_Screen(void)
             DLOG("(leave_screen_flag == ST_FALSE)");
             Main_Menu_Screen_Draw();
             Toggle_Pages();  // |-> Page_Flip()
-            Render_VBB(&Buffer);
+            // When? Render_VBB(&Buffer);
             Pump_Events();
 
             // // HACK:
@@ -692,10 +655,3 @@ void Main_Menu_Screen_Draw(void)
 #endif
 
 }
-
-
-// MGC s01p07
-// Load_TERRSTAT
-
-// MGC s01p08
-// Load_SPELLDAT

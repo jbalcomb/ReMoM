@@ -5,6 +5,8 @@
 
 #include "Mouse.H"  /* e_Cursor_Image; Get_Pointer_Image_Numeber(), Restore_Mouse_State(), Save_Mouse_State(); */
 
+#include "MoM.H"  /* Buffer; Render_VBB(); */
+
 
 // pointer (4 bytes) Copy_Off_To_On_Page
 // Address: 02:001B3888
@@ -83,9 +85,6 @@ uint8_t * draw_page;
 // MGC s26p01
 void Set_Page_On(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Page_On()\n", __FILE__, __LINE__);
-#endif
 
     /*
         ~== VRAM + ((draw_page_num) * 4)  {0xA000, 0xA400}
@@ -97,18 +96,12 @@ void Set_Page_On(void)
     // current_video_page = off_page_buffer;
     // // copy_to_on_page_flag = 1;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Set_Page_On()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // MGC s26p02
 void Set_Page_Off(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Page_Off()\n", __FILE__, __LINE__);
-#endif
 
     /*
         ~== VRAM + ((1 - draw_page_num) * 4)  {0xA000, 0xA400}
@@ -120,9 +113,6 @@ void Set_Page_Off(void)
     // current_video_page = off_page_buffer;
     // // copy_to_on_page_flag = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Set_Page_Off()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -136,9 +126,9 @@ void Check_Default_Video_Page(void)
 // MGC s26p04
 void Page_Flip(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Page_Flip()\n", __FILE__, __LINE__);
-#endif
+
+    // HACK: 
+    Render_VBB(&Buffer);
 
     draw_page_num = (1 - draw_page_num);  // NOTE: this is the only code that changes 'draw_page_num'
 
@@ -153,9 +143,6 @@ void Page_Flip(void)
 
     Set_Page_Off();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Page_Flip()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD s28p05

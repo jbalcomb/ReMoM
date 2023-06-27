@@ -1,8 +1,17 @@
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
+#include "MoM_DEF.H"
 
 #include "MoX_Data.H"
+
+
+
+
+
+
+// WZD dseg:599C
+// TODO  char hlpentry_lbx_file[] = "hlpentry";
 
 
 
@@ -15,6 +24,18 @@ int16_t prev_map_y = ST_UNDEFINED;
 // WZD dseg:7002
 // AKA OVL_NewMapSustain
 int16_t map_sustain = 2;
+
+
+
+// dseg:76DA
+int16_t screen_window_x1 = SCREEN_XMIN;
+// dseg:76DC
+int16_t screen_window_y1 = SCREEN_YMIN;
+// dseg:76DE
+int16_t screen_window_x2 = SCREEN_XMAX;
+// dseg:76E0
+int16_t screen_window_y2 = SCREEN_YMAX;
+
 
 
 // WZD dseg:9136
@@ -71,7 +92,7 @@ SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 // dseg:964B 00                                              db    0
 
 // WZD dseg:964C
-int16_t entities_on_movement_map[120];
+int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 
 // dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
 // dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
@@ -192,6 +213,8 @@ struct s_WIZARD _players[6];
 
 // WZD dseg:BB7A
 // struct s_HLP_ENTRY _help_entries[50];
+uint8_t _help_entries[500];
+
 
 // WZD dseg:BD6E 
 // config_mom s_CONFIG_MOM

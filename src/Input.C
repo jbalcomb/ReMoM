@@ -6,7 +6,6 @@
 
 #include "Allocate.H"
 #include "Fields.H"
-#include "Help.H"
 #include "Input.H"
 #include "Keyboard.H"
 #include "Mouse.H"
@@ -14,7 +13,148 @@
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
+int16_t DBG_In_MouseButtonLeft = ST_FALSE;
+int16_t DBG_In_MouseButtonRight = ST_FALSE;
+int16_t DBG_movement_map_grid_field_idx = 0;
+int16_t DBG_reduced_map_grid_field_idx = 0;
+
+// char field_names[127][30];
+char * field_names[FIELD_COUNT_MAX] = {
+    /* 000 */   "NOT IN USE",
+    /* 001 */   "NOT IN USE",
+    /* 002 */   "NOT IN USE",
+    /* 003 */   "NOT IN USE",
+    /* 004 */   "NOT IN USE",
+    /* 005 */   "NOT IN USE",
+    /* 006 */   "NOT IN USE",
+    /* 007 */   "NOT IN USE",
+    /* 008 */   "NOT IN USE",
+    /* 009 */   "NOT IN USE",
+    /* 010 */   "NOT IN USE",
+    /* 011 */   "NOT IN USE",
+    /* 012 */   "NOT IN USE",
+    /* 013 */   "NOT IN USE",
+    /* 014 */   "NOT IN USE",
+    /* 015 */   "NOT IN USE",
+    /* 016 */   "NOT IN USE",
+    /* 017 */   "NOT IN USE",
+    /* 018 */   "NOT IN USE",
+    /* 019 */   "NOT IN USE",
+    /* 020 */   "NOT IN USE",
+    /* 021 */   "NOT IN USE",
+    /* 022 */   "NOT IN USE",
+    /* 023 */   "NOT IN USE",
+    /* 024 */   "NOT IN USE",
+    /* 025 */   "NOT IN USE",
+    /* 026 */   "NOT IN USE",
+    /* 027 */   "NOT IN USE",
+    /* 028 */   "NOT IN USE",
+    /* 029 */   "NOT IN USE",
+    /* 030 */   "NOT IN USE",
+    /* 031 */   "NOT IN USE",
+    /* 032 */   "NOT IN USE",
+    /* 033 */   "NOT IN USE",
+    /* 034 */   "NOT IN USE",
+    /* 035 */   "NOT IN USE",
+    /* 036 */   "NOT IN USE",
+    /* 037 */   "NOT IN USE",
+    /* 038 */   "NOT IN USE",
+    /* 039 */   "NOT IN USE",
+    /* 040 */   "NOT IN USE",
+    /* 041 */   "NOT IN USE",
+    /* 042 */   "NOT IN USE",
+    /* 043 */   "NOT IN USE",
+    /* 044 */   "NOT IN USE",
+    /* 045 */   "NOT IN USE",
+    /* 046 */   "NOT IN USE",
+    /* 047 */   "NOT IN USE",
+    /* 048 */   "NOT IN USE",
+    /* 049 */   "NOT IN USE",
+    /* 050 */   "NOT IN USE",
+    /* 051 */   "NOT IN USE",
+    /* 052 */   "NOT IN USE",
+    /* 053 */   "NOT IN USE",
+    /* 054 */   "NOT IN USE",
+    /* 055 */   "NOT IN USE",
+    /* 056 */   "NOT IN USE",
+    /* 057 */   "NOT IN USE",
+    /* 058 */   "NOT IN USE",
+    /* 059 */   "NOT IN USE",
+    /* 060 */   "NOT IN USE",
+    /* 061 */   "NOT IN USE",
+    /* 062 */   "NOT IN USE",
+    /* 063 */   "NOT IN USE",
+    /* 064 */   "NOT IN USE",
+    /* 065 */   "NOT IN USE",
+    /* 066 */   "NOT IN USE",
+    /* 067 */   "NOT IN USE",
+    /* 068 */   "NOT IN USE",
+    /* 069 */   "NOT IN USE",
+    /* 070 */   "NOT IN USE",
+    /* 071 */   "NOT IN USE",
+    /* 072 */   "NOT IN USE",
+    /* 073 */   "NOT IN USE",
+    /* 074 */   "NOT IN USE",
+    /* 075 */   "NOT IN USE",
+    /* 076 */   "NOT IN USE",
+    /* 077 */   "NOT IN USE",
+    /* 078 */   "NOT IN USE",
+    /* 079 */   "NOT IN USE",
+    /* 080 */   "NOT IN USE",
+    /* 081 */   "NOT IN USE",
+    /* 082 */   "NOT IN USE",
+    /* 083 */   "NOT IN USE",
+    /* 084 */   "NOT IN USE",
+    /* 085 */   "NOT IN USE",
+    /* 086 */   "NOT IN USE",
+    /* 087 */   "NOT IN USE",
+    /* 088 */   "NOT IN USE",
+    /* 089 */   "NOT IN USE",
+    /* 090 */   "NOT IN USE",
+    /* 091 */   "NOT IN USE",
+    /* 092 */   "NOT IN USE",
+    /* 093 */   "NOT IN USE",
+    /* 094 */   "NOT IN USE",
+    /* 095 */   "NOT IN USE",
+    /* 096 */   "NOT IN USE",
+    /* 097 */   "NOT IN USE",
+    /* 098 */   "NOT IN USE",
+    /* 099 */   "NOT IN USE",
+    /* 100 */   "NOT IN USE",
+    /* 101 */   "NOT IN USE",
+    /* 102 */   "NOT IN USE",
+    /* 103 */   "NOT IN USE",
+    /* 104 */   "NOT IN USE",
+    /* 105 */   "NOT IN USE",
+    /* 106 */   "NOT IN USE",
+    /* 107 */   "NOT IN USE",
+    /* 108 */   "NOT IN USE",
+    /* 109 */   "NOT IN USE",
+    /* 110 */   "NOT IN USE",
+    /* 111 */   "NOT IN USE",
+    /* 112 */   "NOT IN USE",
+    /* 113 */   "NOT IN USE",
+    /* 114 */   "NOT IN USE",
+    /* 115 */   "NOT IN USE",
+    /* 116 */   "NOT IN USE",
+    /* 117 */   "NOT IN USE",
+    /* 118 */   "NOT IN USE",
+    /* 119 */   "NOT IN USE",
+    /* 120 */   "NOT IN USE",
+    /* 121 */   "NOT IN USE",
+    /* 122 */   "NOT IN USE",
+    /* 123 */   "NOT IN USE",
+    /* 124 */   "NOT IN USE",
+    /* 125 */   "NOT IN USE",
+    /* 126 */   "NOT IN USE",
+    /* 127 */   "NOT IN USE"
+};
+
 #endif
+
+
+
+
 
 /*
     WIZARDS.EXE
@@ -102,7 +242,7 @@ int16_t input_delay;
 int16_t Interpret_Mouse_Input(void)
 {
     int16_t field_num;
-    int16_t character;
+    int16_t character = 0;
     int16_t mx;
     int16_t my;
     int16_t pointer_offset;
@@ -168,22 +308,53 @@ int16_t Interpret_Mouse_Input(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
 #endif
-            /*
-                ? Right Click for Help ?
 
-                Check_Help_List() draws the help, if it can, then wait for a key press or button click...
-                so, nothing needs to happen after this?
-            */
-            if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT && help_list_active != ST_FALSE && Check_Help_List() == 0)
+//              /*
+//                  ? Right Click for Help ?
+//  
+//                  Check_Help_List() draws the help, if it can, then wait for a key press or button click...
+//                  so, nothing needs to happen after this?
+//              */
+//              if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT && help_list_active != ST_FALSE && Check_Help_List() == 0)
+//              {
+//  
+//  
+//              }
+
+
+
+            // HACK: 
+            if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
             {
-
-
+#ifdef STU_DEBUG
+                DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)");
+                DBG_In_MouseButtonLeft = ST_TRUE;
+#endif
+                mouse_x = Pointer_X();
+                mouse_y = Pointer_Y();
+                cursor_offset = Get_Pointer_Offset();
+                field_num = 0;
+                character = 0;
+                field_num = Scan_Field();
+                if(field_num != 0)
+                {
+                    field_num = field_num;
+                }
+#ifdef STU_DEBUG
+                dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+                DBG_In_MouseButtonLeft = ST_FALSE;
+#endif
+                
             }
 
 
             // HACK: 
             if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)
             {
+#ifdef STU_DEBUG
+                DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)");
+                DBG_In_MouseButtonRight = ST_TRUE;
+#endif
                 mouse_x = Pointer_X();
                 mouse_y = Pointer_Y();
                 cursor_offset = Get_Pointer_Offset();
@@ -193,30 +364,11 @@ int16_t Interpret_Mouse_Input(void)
                 if(field_num != 0)
                 {
                     field_num = (field_num * -1);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
-#endif
                 }
-
-            }
-
-
-            // HACK: 
-            if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
-            {
-                mouse_x = Pointer_X();
-                mouse_y = Pointer_Y();
-                cursor_offset = Get_Pointer_Offset();
-                field_num = 0;
-                character = 0;
-                field_num = Scan_Field();
-                if(field_num != 0)
-                {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+                dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+                DBG_In_MouseButtonRight = ST_FALSE;
 #endif
-                }
-                
             }
 
 
@@ -343,10 +495,6 @@ int16_t Scan_Field(void)
     int16_t xmax;
     int16_t ymax;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Scan_Field()\n", __FILE__, __LINE__);
-#endif
-
     mx = Pointer_X();
     my = Pointer_Y();
 
@@ -362,6 +510,45 @@ int16_t Scan_Field(void)
         xmax = p_fields[itr].x2;
         ymax = p_fields[itr].y2;
 
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: fields_names[%d]: %s\n", __FILE__, __LINE__, itr, field_names[itr]);
+#endif
+
+#ifdef STU_DEBUG
+        if(DBG_In_MouseButtonLeft == ST_TRUE)
+        {
+            DLOG("if(DBG_In_MouseButtonLeft == ST_TRUE)");
+            dbg_prn("DEBUG: [%s, %d]: xmin xmax: %d > %d < %d\n", __FILE__, __LINE__, xmin, (mx + cursor_offset), xmax);
+            dbg_prn("DEBUG: [%s, %d]: xmin xmax: %d > %d < %d\n", __FILE__, __LINE__, ymin, (my + cursor_offset), ymax);
+        }
+        if(DBG_In_MouseButtonLeft == ST_TRUE && itr == DBG_movement_map_grid_field_idx)
+        {
+            DLOG("if(DBG_In_MouseButtonLeft == ST_TRUE && itr == DBG_movement_map_grid_field_idx)");
+            // dbg_prn("DEBUG: [%s, %d]: (xmin > mx + cursor_offset): (%d > %d): %d\n"), __FILE__, __LINE__, xmin, (mx + cursor_offset), (xmin > (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (xmax < mx + cursor_offset): (%d < %d): %d\n"), __FILE__, __LINE__, xmax, (mx + cursor_offset), (xmax < (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (ymin > mx + cursor_offset): (%d > %d): %d\n"), __FILE__, __LINE__, ymin, (mx + cursor_offset), (ymin > (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (ymax > mx + cursor_offset): (%d < %d): %d\n"), __FILE__, __LINE__, ymax, (mx + cursor_offset), (ymax < (mx + cursor_offset));
+        }
+        if(DBG_In_MouseButtonRight == ST_TRUE)
+        {
+            DLOG("if(DBG_In_MouseButtonRight == ST_TRUE)");
+            dbg_prn("DEBUG: [%s, %d]: xmin xmax: %d > %d < %d\n", __FILE__, __LINE__, xmin, (mx + cursor_offset), xmax);
+            dbg_prn("DEBUG: [%s, %d]: xmin xmax: %d > %d < %d\n", __FILE__, __LINE__, ymin, (my + cursor_offset), ymax);
+        }
+        if(DBG_In_MouseButtonRight == ST_TRUE && itr == DBG_movement_map_grid_field_idx)
+        {
+            DLOG("if(DBG_In_MouseButtonRight == ST_TRUE && itr == DBG_movement_map_grid_field_idx)");
+            // dbg_prn("DEBUG: [%s, %d]: (xmin > mx + cursor_offset): (%d > %d): %d\n"), __FILE__, __LINE__, xmin, (mx + cursor_offset), (xmin > (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (xmax < mx + cursor_offset): (%d < %d): %d\n"), __FILE__, __LINE__, xmax, (mx + cursor_offset), (xmax < (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (ymin > mx + cursor_offset): (%d > %d): %d\n"), __FILE__, __LINE__, ymin, (mx + cursor_offset), (ymin > (mx + cursor_offset));
+            // dbg_prn("DEBUG: [%s, %d]: (ymax > mx + cursor_offset): (%d < %d): %d\n"), __FILE__, __LINE__, ymax, (mx + cursor_offset), (ymax < (mx + cursor_offset));
+            dbg_prn("DEBUG: [%s, %d]: (mx + cursor_offset >= xmin): %d\n", __FILE__, __LINE__, (mx + cursor_offset >= xmin));
+            dbg_prn("DEBUG: [%s, %d]: (mx + cursor_offset <= xmax): %d\n", __FILE__, __LINE__, (mx + cursor_offset <= xmax));
+            dbg_prn("DEBUG: [%s, %d]: (my + cursor_offset >= ymin): %d\n", __FILE__, __LINE__, (my + cursor_offset >= ymin));
+            dbg_prn("DEBUG: [%s, %d]: (my + cursor_offset <= ymax): %d\n", __FILE__, __LINE__, (my + cursor_offset <= ymax));
+        }
+#endif
+
         if(
             (mx + cursor_offset >= xmin) &&
             (mx + cursor_offset <= xmax) &&
@@ -375,7 +562,7 @@ int16_t Scan_Field(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Scan_Field() { current_field = %d }\n", __FILE__, __LINE__, current_field);
+    dbg_prn("DEBUG: [%s, %d]: current_field: %d\n", __FILE__, __LINE__, current_field);
 #endif
 
     return current_field;
@@ -392,10 +579,8 @@ int16_t Scan_Input(void)
     // MoO2 int16_t ymin;
     // MoO2 int16_t xpos;
     // MoO2 int16_t ypos;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Scan_Field()\n", __FILE__, __LINE__);
-#endif
+//     int16_t new_Param3;
+//     int16_t new_Param4;
 
     mx = Pointer_X();
     my = Pointer_Y();
@@ -412,6 +597,7 @@ int16_t Scan_Input(void)
     */
     if(p_fields[current_field].type == ft_ClickLink)
     {
+        DLOG("if(p_fields[current_field].type == ft_ClickLink)");
         *((int16_t *)p_fields[current_field].Param2) = p_fields[current_field].Param1;
         current_field = p_fields[current_field].Param0;
     }
@@ -447,11 +633,50 @@ int16_t Scan_Input(void)
 
     */
     // if(p_fields[current_field].type == ft_StringList && p_fields[itr].Selectable != ST_FALSE)
-    if(p_fields[current_field].type == ft_Grid)
-    {
-        *((int16_t *)p_fields[current_field].Param3) = ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 );
-        *((int16_t *)p_fields[current_field].Param4) = ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 );
-    }
+
+    /*
+        Field Type: Grid Field
+
+        ...target code-block, by way of...
+            p_fields[current_field].type == ft_Grid && down_mouse_button == ST_UNDEFINED
+            p_fields[current_field].type == ft_Grid && p_fields[down_mouse_button].type != ft_Grid
+    */
+    // &_main_map_grid_y, &_main_map_grid_x
+    // Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help)
+    //     p_fields[fields_count].Param3 = (int16_t)xpos;
+    //     p_fields[fields_count].Param4 = (int16_t)ypos;
+
+//    new_Param3 = ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 );
+//    new_Param4 = ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 );
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].type: %d\n", __FILE__, __LINE__, p_fields[current_field].type);
+//     dbg_prn("DEBUG: [%s, %d]: Pointer_X(): %d\n", __FILE__, __LINE__, Pointer_X());
+//     dbg_prn("DEBUG: [%s, %d]: Pointer_Y(): %d\n", __FILE__, __LINE__, Pointer_Y());
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].x1: %d\n", __FILE__, __LINE__, p_fields[current_field].x1);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].y1: %d\n", __FILE__, __LINE__, p_fields[current_field].y1);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param1: %d\n", __FILE__, __LINE__, p_fields[current_field].Param1);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param2: %d\n", __FILE__, __LINE__, p_fields[current_field].Param2);
+//     dbg_prn("DEBUG: [%s, %d]: (Pointer_X() - p_fields[current_field].x1): %d\n", __FILE__, __LINE__, (Pointer_X() - p_fields[current_field].x1));
+//     dbg_prn("DEBUG: [%s, %d]: (Pointer_Y() - p_fields[current_field].y1): %d\n", __FILE__, __LINE__, (Pointer_Y() - p_fields[current_field].y1));
+//     dbg_prn("DEBUG: [%s, %d]: ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 ): %d\n", __FILE__, __LINE__, ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 ));
+//     dbg_prn("DEBUG: [%s, %d]: ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 ): %d\n", __FILE__, __LINE__, ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 ));
+//     dbg_prn("DEBUG: [%s, %d]: new_Param3: %d\n", __FILE__, __LINE__, new_Param3);
+//     dbg_prn("DEBUG: [%s, %d]: new_Param4: %d\n", __FILE__, __LINE__, new_Param4);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param3: %d\n", __FILE__, __LINE__, p_fields[current_field].Param3);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param4: %d\n", __FILE__, __LINE__, p_fields[current_field].Param4);
+//     dbg_prn("DEBUG: [%s, %d]: *((int16_t *)(p_fields[current_field].Param3)): %d\n", __FILE__, __LINE__, *((int16_t *)(p_fields[current_field].Param3)));
+//     dbg_prn("DEBUG: [%s, %d]: *((int16_t *)(p_fields[current_field].Param4)): %d\n", __FILE__, __LINE__, *((int16_t *)(p_fields[current_field].Param4)));
+// #endif
+//     if(p_fields[current_field].type == ft_Grid)
+//     {
+//         DLOG("if(p_fields[current_field].type == ft_Grid)");
+//         *((int16_t *)p_fields[current_field].Param3) = ( (Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1 );
+//         *((int16_t *)p_fields[current_field].Param4) = ( (Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2 );
+//     }
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param3: %d\n", __FILE__, __LINE__, p_fields[current_field].Param3);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[current_field].Param4: %d\n", __FILE__, __LINE__, p_fields[current_field].Param4);
+// #endif
 
     return current_field;
 }
@@ -512,9 +737,6 @@ void Init_Mouse_Keyboard(int16_t input_type)
     _global_esc = ST_FALSE;
     Clear_Fields();
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: Init_Mouse_Keyboard()\n", __FILE__, __LINE__);
-// #endif
 }
 
 // WZD s36p66
@@ -575,16 +797,12 @@ void Toggle_Pages(void)
     int16_t mouse_x;
     int16_t mouse_y;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Toggle_Pages()\n", __FILE__, __LINE__);
-#endif
-
     Save_Mouse_State();
 
     mouse_x = Pointer_X();
     mouse_y = Pointer_Y();
 
-    // TODO  Draw_Visible_Fields()
+    Draw_Fields();
 
     Check_Mouse_Shape(mouse_x, mouse_y);
 
@@ -598,7 +816,4 @@ void Toggle_Pages(void)
 
     Restore_Mouse_State();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Toggle_Pages()\n", __FILE__, __LINE__);
-#endif
 }

@@ -16,7 +16,6 @@
 #include "Input.H"      /* g_Key_Pressed, scan_code_char_code */
 #include "MoM.H"      /* platform_mouse_click_x, platform_mouse_click_y, platform_mouse_button_status; Update_Mouse_Position() */
 
-// #define STU_DEBUG 1
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
@@ -753,6 +752,12 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             platform_mouse_click_x = (int16_t)pt.x;
             platform_mouse_click_y = (int16_t)pt.y;
             platform_mouse_button_status = 0b00000001;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: WM_LBUTTONDOWN\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_x: %d\n", __FILE__, __LINE__, platform_mouse_click_x);
+    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_y: %d\n", __FILE__, __LINE__, platform_mouse_click_y);
+    dbg_prn("DEBUG: [%s, %d]: platform_mouse_button_status: %d\n", __FILE__, __LINE__, platform_mouse_button_status);
+#endif
         } break;
         case WM_LBUTTONUP:
         {

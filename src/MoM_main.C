@@ -119,7 +119,7 @@ void Screen_Control(void)
         case scr_Main_Screen:
         {
             DLOG("case scr_MainGame:");
-            Load_SAVE_GAM(-1);  // SAVETEST.GAM
+            // Load_SAVE_GAM(-1);  // SAVETEST.GAM
             // WZD main()  _main+32F
             Load_Palette(0, -1, 0);
             Apply_Palette();
@@ -169,15 +169,9 @@ void Screen_Control(void)
 // ;   5 - writes out the DAC, but DOES NOT do a page flip
 // Default: Apply_Palette(); Toggle_Pages();
 // WZD s01p03
+// ¿ MoO2: Set_Palette_Changes() ?
 void PageFlip_FX(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: PageFlip_FX()\n", __FILE__, __LINE__);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: PageFlipEffect: %d\n", __FILE__, __LINE__, PageFlipEffect);
-#endif
 
     switch(PageFlipEffect)
     {
@@ -210,11 +204,8 @@ void PageFlip_FX(void)
         } break;
     }
 
-    PageFlipEffect = 0;
+    PageFlipEffect = 0;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: PageFlip_FX()\n", __FILE__, __LINE__);
-#endif
 }
 
 

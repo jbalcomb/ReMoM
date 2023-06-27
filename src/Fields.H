@@ -220,10 +220,15 @@ void Clear_Fields(void);
 // WZD s36p67
 // INPUT  void Set_Input_Delay(int16_t input_delay);
 
+
+// MoO2: Draw_Visible_Fields()
 // WZD s36p71
-// TODO  Draw_Fields();
+void Draw_Fields(void);
 // WZD s36p72
-// TODO  Draw_Field();
+void Draw_Field(int16_t field_num, int16_t up_down_flag);
+
+
+
 // WZD s36p72
 // TODO  Push_Field_Down();
 

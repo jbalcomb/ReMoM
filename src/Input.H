@@ -3,6 +3,19 @@
 
 #include "MoX_TYPE.H"
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+extern int16_t DBG_In_MouseButtonLeft;
+extern int16_t DBG_In_MouseButtonRight;
+extern int16_t DBG_movement_map_grid_field_idx;
+extern int16_t DBG_reduced_map_grid_field_idx;
+
+//char field_names[][];  // ¿ ~== char ** field_names; ?
+#define FIELD_COUNT_MAX 128
+// char field_names[][];
+char * field_names[];
+#endif
+
 
 /*! @defgroup keys Keyboard keys
  *  @brief Keyboard key IDs.

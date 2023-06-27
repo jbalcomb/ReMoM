@@ -31,10 +31,6 @@
 
 #include "Allocate.H"
 
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-
 #include <malloc.h>     /* malloc() */
 #include <stdlib.h>     /* itoa() */
 #include <string.h>     /* strcat(), strcpy() */
@@ -70,10 +66,6 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
 {
     int16_t is_valid;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Check_Allocation( SAMB_head = %p )\n", __FILE__, __LINE__, SAMB_head);
-#endif
-
     if (SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
     {
         is_valid = ST_FAILURE;
@@ -82,10 +74,6 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
     {
         is_valid = ST_SUCCESS;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Check_Allocation( SAMB_head = %p ) { is_valid = %d }\n", __FILE__, __LINE__, SAMB_head, is_valid);
-#endif
 
     return is_valid;
 }
@@ -101,10 +89,6 @@ SAMB_ptr Allocate_Space(uint16_t size)
     int32_t lsize;
     SAMB_ptr SAMB_head;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_Space( size = %u )\n", __FILE__, __LINE__, size);
-#endif
-
     lsize = (size + 1) * 16;
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
@@ -118,10 +102,6 @@ SAMB_ptr Allocate_Space(uint16_t size)
 
     // Update_MemFreeWorst_KB();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Allocate_Space( size = %u ) { SAMB_head = %p }\n", __FILE__, __LINE__, size, SAMB_head);
-#endif
-
     return SAMB_head;
 }
 
@@ -131,10 +111,6 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
     int32_t lsize;
     SAMB_ptr SAMB_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_Space_No_Header( size = %u )\n", __FILE__, __LINE__, size);
-#endif
-
     lsize = (size + 1) * 16;
 
     tmp_SAMB_head = (SAMB_ptr) malloc(lsize);
@@ -142,10 +118,6 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
     SAMB_data = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
 
     // Update_MemFreeWorst_KB();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Allocate_Space_No_Header( size = %u ) { SAMB_data = %p }\n", __FILE__, __LINE__, size, SAMB_data);
-#endif
 
     return SAMB_data;
 }
@@ -157,20 +129,11 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
     SAMB_ptr sub_SAMB_head;
     SAMB_ptr sub_SAMB_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_First_Block( SAMB_head = % p, size = %u )\n", __FILE__, __LINE__, SAMB_head, size);
-#endif
-
     if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size+1); }
     if(SA_GET_SIZE(SAMB_head) < size) { Allocation_Error(0x02, size+1); }
 
     // block header + sub block header + sub block size
     SA_SET_USED(SAMB_head,1+(1+size));
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
-    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
-#endif
 
     sub_SAMB_head = SAMB_head + 16;  // ~== &SAMB_head[16]
 
@@ -181,10 +144,6 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
     SA_SET_MARK(sub_SAMB_head,1);
 
     sub_SAMB_data = sub_SAMB_head + 16;  // ~== &sub_SAMB_head[16]
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Allocate_First_Block( SAMB_head = % p, size = %u ) { sub_SAMB_data = %p }\n", __FILE__, __LINE__, SAMB_head, size, sub_SAMB_data);
-#endif
 
     return sub_SAMB_data;
 }
@@ -197,37 +156,15 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
     uint16_t old_used;
     uint16_t new_used;
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Allocate_Next_Block( SAMB_head = % p, size = %u )\n", __FILE__, __LINE__, SAMB_head, size);
-#endif
-
     if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size); }
     if(Get_Free_Blocks(SAMB_head) < size+1) { Allocation_Error(0x02, size + 1); }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] (SA_GET_USED(SAMB_head) + size + 1): %d\n", __FILE__, __LINE__, (SA_GET_USED(SAMB_head) + size + 1));
-#endif
-
     old_used = SA_GET_USED(SAMB_head);
 
-//    SA_SET_USED(
-//        SAMB_head,
-//        (uint16_t)(SA_GET_USED(SAMB_head) + size + 1)
-//    );
-
     new_used = (SA_GET_USED(SAMB_head) + size + 1);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] new_used: %u\n", __FILE__, __LINE__, new_used);
-// #endif
+
     SA_SET_USED(SAMB_head, new_used);
     
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
-    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
-#endif
-
-
     sub_SAMB_head = SAMB_head + (old_used * 16);  // ~== &SAMB_head[SAMB->used]
 
     SA_SET_MEMSIG1(sub_SAMB_head);
@@ -238,10 +175,6 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 
     sub_SAMB_data = sub_SAMB_head + 16;  // ~== &sub_SAMB_head[16]
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Allocate_Next_Block( SAMB_head = % p, size = %u ) { sub_SAMB_data = %p }\n", __FILE__, __LINE__, SAMB_head, size, sub_SAMB_data);
-#endif
-
     return sub_SAMB_data;
 }
 
@@ -249,23 +182,15 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 // MGC s08p15
 uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] SA_GET_SIZE(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_SIZE(SAMB_head));
-    dbg_prn("DEBUG: [%s, %d] SA_GET_USED(SAMB_head): %d\n", __FILE__, __LINE__, SA_GET_USED(SAMB_head));
-#endif
-
     return SA_GET_SIZE(SAMB_head) - SA_GET_USED(SAMB_head);
 }
+
 
 // MGC s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks)
 {
     char buffer[120] = {0};
     char buffer2[20] = {0};
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: MoX_Allocation_Error( error_num = %d, blocks = %d)\n", __FILE__, __LINE__, error_num, blocks);
-#endif
 
     if(Check_Release_Version() == ST_TRUE)
     {
@@ -306,9 +231,5 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
         strcat(buffer, str_allocation_errors[6]);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: MoX_Allocation_Error( error_num = %d, blocks = %d)\n", __FILE__, __LINE__, error_num, blocks);
-#endif
-
-    // Exit_With_Message(buffer);
+    // TODO  Exit_With_Message(buffer);
 }

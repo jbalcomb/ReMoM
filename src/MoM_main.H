@@ -58,6 +58,13 @@ extern uint8_t g_Palette[];
 extern uint8_t g_Palette_XBGR[];
 
 
+
+/*
+    ~== MAGIC/WIZARDS.EXE |-> main()
+*/
+void MoM_main(void);
+
+
 /*
     WIZARDS.EXE seg001
 */
@@ -69,12 +76,21 @@ void Screen_Control(void);
 void PageFlip_FX(void);
 
 
-void MoM_main(void);
-
 void MoM_Tables_Init(int16_t gfx_buff_nparas);
 
 // WZD s01p06
 void WZD_Startup_MainGame(void);
+
+
+/*
+    MAGIC.EXE seg001
+*/
+
+// MGC s01p07
+// Load_TERRSTAT
+
+// MGC s01p08
+// Load_SPELLDAT
 
 
 /*

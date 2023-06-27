@@ -60,10 +60,11 @@ struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
 //     "SAVE9.GAM"
 // };
 
-#define GAME_FILE_COUNT 13
+#define GAME_FILE_COUNT 14
 char * game_file_names[GAME_FILE_COUNT] = {
     "CONFIG.MOM",
     "FONTS.LBX",
+    "HLPENTRY.LBX",
     "MAGIC.SET",
     "MAIN.LBX",
     "MAINSCRN.LBX",

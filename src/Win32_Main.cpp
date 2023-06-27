@@ -28,12 +28,7 @@
 #include <stdio.h>      /* sprintf() */
 #include <timeapi.h>  /* timeBeginPeriod() */
 
-// #define STU_DEBUG 1
 #ifdef STU_DEBUG
-// #include "J:\STU\devel\STU-MoM_Rasm\MoM_Rasm\STU\STU_DBG.H"
-// // .\win_mom\src
-// #include "..\src\STU\STU_DBG.C"
-// #include "..\src\STU\STU_UTIL.C"   /* get_datetime() */
 #include "STU_DBG.H"
 #endif
 
@@ -168,10 +163,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     // TODO(casey): How do we reliably query on this on Windows?
     int MonitorRefreshHz = 60;
-    // int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
+    int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
     // int GameUpdateHz = MonitorRefreshHz / 4;  // 15 FPS
     // int GameUpdateHz = MonitorRefreshHz / 6;  // 10 FPS
-    int GameUpdateHz = MonitorRefreshHz / 12;  // 5 FPS
+    // int GameUpdateHz = MonitorRefreshHz / 12;  // 5 FPS
     f32 TargetSecondsPerFrame = 1.0f / (f32)GameUpdateHz;
 
     /*
@@ -188,7 +183,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     draw_page_num = 0;
     draw_page = video_page_buffer[draw_page_num];
 
-    MoM_main();
+    MoM_main();  // ~== MAGIC/WIZARDS.EXE |-> main()
 
     // MoM.C  struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
     Buffer.Memory = GlobalBackbuffer.Memory;

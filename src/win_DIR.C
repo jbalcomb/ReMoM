@@ -13,11 +13,6 @@
 
 #include "Mouse.H"
 
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-
-
 
 // MGC s03p05
 // WZD s03p05
@@ -26,11 +21,7 @@ int32_t LOF(char * file_name)
     HANDLE hFile;
     int32_t size;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LOF(file_name = %s)\n", __FILE__, __LINE__, file_name);
-#endif
-
-    // MD_CDraw_Disable();
+    Save_Mouse_State();
 
     // HANDLE CreateFileA(
     //   [in]           LPCSTR                lpFileName,
@@ -72,12 +63,7 @@ int32_t LOF(char * file_name)
 
     CloseHandle(hFile);
 
-
-    // MD_CDraw_Restore();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LOF(file_name = %s) { size = %ld } \n", __FILE__, __LINE__, file_name, size);
-#endif
+    Restore_Mouse_State();
 
     return size;
 
@@ -94,10 +80,6 @@ int16_t DIR(char * match_string, char * found_file)
     WIN32_FIND_DATAA FindFileData;
     HANDLE hFind;
     char * rvr_cFileName;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: DIR(match_string = %s, found_file = %s)\n", __FILE__, __LINE__, match_string, found_file);
-#endif
 
     Save_Mouse_State();
 
@@ -122,10 +104,5 @@ int16_t DIR(char * match_string, char * found_file)
 
     Restore_Mouse_State();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: DIR(match_string = %s, found_file = %s) { st_status = %d }\n", __FILE__, __LINE__, match_string, found_file, st_status);
-#endif
-
     return st_status;
-
 }

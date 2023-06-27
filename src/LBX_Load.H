@@ -53,42 +53,53 @@ extern "C" {
 
 
 /*
-    MGC  seg010
     WZD  seg010
+    MGC  seg010
 */
 
-// MGC s10p01
+// WZD s10p01
+// MoO2: Farload()
 SAMB_ptr LBX_Load(char * lbx_name, int16_t entry_num);
-// MGC s10p02
+// WZD s10p02
+// MoO2: Far_Reload()
 SAMB_ptr LBX_Reload(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
-// MGC s10p03
+// WZD s10p03
+// MoO2: Far_Reload_Next()
 SAMB_ptr LBX_Reload_Next(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
 
 // WZD s10p04
-// MoO2 Farload_Data
+// MoO2: Farload_Data()
 SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size);
 // WZD s10p05
-// MoO2 Far_Reload_Data
+// MoO2: Far_Reload_Data()
 SAMB_ptr LBX_Reload_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size);
 // WZD s10p06
-// MoO2 Far_Reload_Next_Data
+// MoO2: Far_Reload_Next_Data()
 SAMB_ptr LBX_Reload_Next_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size);
 
 
-
-// MGC s10p10
 // WZD s10p10
+// ¿ MoO2: Farload_Library() ?
 SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type);
 
-// MGC s10p11
 // WZD s10p11
+// MoO2: Farload_Library_Data()
 SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
+    
+// WZD s10p12
+    // LBXR_DirectLoader( LBX_FileName@, Entry_Index, LoadTo@, FirstRec, RecCount, RecSize )
+    // Main_Screen_Help() LBXR_DirectLoader("helpentry", 1, &_help_entries, 0, 25, 10);
+// MoO2: Farload_Data_Static() ?  |-> Farload_Library_Data() ... in MoO2, they just added Allocation Type: 3 - No Allocation / Pre-Allocated
+// TODO  void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
 
+// WZD s10p13
+// ¿ MoO2: Get_Farload_Data_Record_Count() ?
+// LBX_GetEntryData()
 
-// MGC s10p15
+// WZD s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages);
 
-// MGC s10p16
+// WZD s10p16
 void File_Name_Base(char * file_name);
 
 
