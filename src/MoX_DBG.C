@@ -16,13 +16,13 @@ uint16_t release_version = ST_FALSE;
 uint16_t release_version = ST_TRUE;                  // dseg:434E    XREF: DBG_Quit; DBG_ScreenDump; DBG_Disable; DBG_IsDisabled
 #endif
 
-// MGC s24p05
-void Set_Release_Version(void)
+// WZD s24p05
+void Release_Version(void)
 {
     release_version = ST_TRUE;
 }
 
-// MGC s24p06
+// WZD s24p06
 int Check_Release_Version(void)
 {
     return release_version;

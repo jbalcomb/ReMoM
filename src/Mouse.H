@@ -100,6 +100,20 @@ int16_t MD_GetButtonStatus(void);
 // WZD s35p07
 int16_t Init_Mouse_Driver(void);
 
+// WZD s35p08
+// RP_Mouse_SetUsable
+
+// WZD s35p09
+// MOUSE_Reset
+
+// WZD s35p10
+void Mouse_Movement_Handler(void);
+
+// WZD s35p11
+void Mouse_Button_Handler(void);
+
+// WZD s35p12
+// MOUSE_INT_Handler
 
 // WZD s35p13
 void Save_Mouse_State(void);

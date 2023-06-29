@@ -715,6 +715,8 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
 
         case WM_MOUSEMOVE:
         {
+            // OutputDebugStringA("WM_MOUSEMOVE\n");
+            
             // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousemove
             // Do not use the LOWORD or HIWORD macros to extract the x- and y- coordinates of the cursor position ...
             // https://learn.microsoft.com/en-us/windows/win32/api/windowsx/nf-windowsx-get_x_lparam
@@ -743,28 +745,28 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             Mouse Wheel
             ? Client Area vs. Non Client Area ?
         */
+        /*
+            WM_LBUTTONDOWN
+            WM_LBUTTONUP
+            WM_RBUTTONDOWN
+            WM_RBUTTONUP
+        */
         case WM_LBUTTONDOWN:
         {
             OutputDebugStringA("WM_LBUTTONDOWN\n");
             POINT pt;
             pt.x = GET_X_LPARAM(LParam);
             pt.y = GET_Y_LPARAM(LParam);
-            platform_mouse_click_x = (int16_t)pt.x;
-            platform_mouse_click_y = (int16_t)pt.y;
-            platform_mouse_button_status = 0b00000001;
+            // platform_mouse_click_x = (int16_t)pt.x;
+            // platform_mouse_click_y = (int16_t)pt.y;
+            // platform_mouse_button_status = 0b00000001;
+            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000001);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: WM_LBUTTONDOWN\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_x: %d\n", __FILE__, __LINE__, platform_mouse_click_x);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_y: %d\n", __FILE__, __LINE__, platform_mouse_click_y);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_button_status: %d\n", __FILE__, __LINE__, platform_mouse_button_status);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_x: %d\n", __FILE__, __LINE__, platform_mouse_click_x);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_y: %d\n", __FILE__, __LINE__, platform_mouse_click_y);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_button_status: %d\n", __FILE__, __LINE__, platform_mouse_button_status);
 #endif
-        } break;
-        case WM_LBUTTONUP:
-        {
-            OutputDebugStringA("WM_LBUTTONUP\n");
-            platform_mouse_click_x = 0;
-            platform_mouse_click_y = 0;
-            platform_mouse_button_status = 0b00000000;
         } break;
         case WM_RBUTTONDOWN:
         {
@@ -772,24 +774,19 @@ LRESULT CALLBACK MainWindowCallback(HWND Window, UINT Message, WPARAM WParam, LP
             POINT pt;
             pt.x = GET_X_LPARAM(LParam);
             pt.y = GET_Y_LPARAM(LParam);
-            platform_mouse_click_x = (int16_t)pt.x;
-            platform_mouse_click_y = (int16_t)pt.y;
-            platform_mouse_button_status = 0b00000010;
+            // platform_mouse_click_x = (int16_t)pt.x;
+            // platform_mouse_click_y = (int16_t)pt.y;
+            // platform_mouse_button_status = 0b00000010;
+            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000010);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: WM_RBUTTONDOWN\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_x: %d\n", __FILE__, __LINE__, platform_mouse_click_x);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_y: %d\n", __FILE__, __LINE__, platform_mouse_click_y);
-    dbg_prn("DEBUG: [%s, %d]: platform_mouse_button_status: %d\n", __FILE__, __LINE__, platform_mouse_button_status);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_x: %d\n", __FILE__, __LINE__, platform_mouse_click_x);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_click_y: %d\n", __FILE__, __LINE__, platform_mouse_click_y);
+    // dbg_prn("DEBUG: [%s, %d]: platform_mouse_button_status: %d\n", __FILE__, __LINE__, platform_mouse_button_status);
 #endif
 
         } break;
-        case WM_RBUTTONUP:
-        {
-            OutputDebugStringA("WM_RBUTTONUP\n");
-            platform_mouse_click_x = 0;
-            platform_mouse_click_y = 0;
-            platform_mouse_button_status = 0b00000000;
-        } break;
+
 
 
         case WM_PAINT:

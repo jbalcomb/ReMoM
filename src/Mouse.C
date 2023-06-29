@@ -226,6 +226,13 @@ int16_t Init_Mouse_Driver(void)
 }
 
 
+// WZD s35p10
+// PLATFORM  void Mouse_Movement_Handler(void)
+
+// WZD s35p11
+// PLATFORM void Mouse_Button_Handler(void)
+
+
 // WZD s35p13
 void Save_Mouse_State(void)
 {

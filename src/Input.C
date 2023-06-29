@@ -171,33 +171,10 @@ char * field_names[FIELD_COUNT_MAX] = {
 */
 
 
+
 uint8_t g_Key_Pressed = ST_FALSE;   // Platform - Decl in MoM.hpp
 uint16_t g_Last_Key_Pressed = 0;    // Platform - Decl in MoM.hpp
 uint16_t scan_code_char_code = 0;   // Platform - Decl in MoM.hpp
-
-
-// WZD dseg:824E
-// MGC dseg:4D20
-// DONT  mouse_installed = ST_FALSE;                     
-
-// WZD dseg:8250
-// ? click, hold drag ? e.g., magic staves ?
-int16_t down_mouse_button = ST_UNDEFINED;
-
-// WZD dseg:8272
-// MGC dseg:4D44
-int16_t _global_esc = ST_FALSE;
-
-
-int16_t mouse_list_init_count = 1;
-// WZD dseg:825C
-struct s_mouse_list mouse_list_init[1] = {
-    {0, 0, 0, 0, 319, 199}
-};
-
-
-// WZD dseg:E898
-int16_t input_delay;
 
 
 
@@ -237,12 +214,87 @@ int16_t input_delay;
     MGC  seg034
 */
 
+
+
+
+
+void Handle_Key_Press(void)
+{
+
+}
+
+void Handle_Right_Click(void)
+{
+
+}
+
+void Handle_Left_Click(void)
+{
+    
+}
+
+
+//             // HACK: 
+//             if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
+//             {
+// #ifdef STU_DEBUG
+//                 DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)");
+//                 DBG_In_MouseButtonLeft = ST_TRUE;
+// #endif
+//                 mouse_x = Pointer_X();
+//                 mouse_y = Pointer_Y();
+//                 cursor_offset = Get_Pointer_Offset();
+//                 field_num = 0;
+//                 character = 0;
+//                 field_num = Scan_Field();
+//                 if(field_num != 0)
+//                 {
+//                     field_num = field_num;
+//                 }
+// #ifdef STU_DEBUG
+//                 dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+//                 DBG_In_MouseButtonLeft = ST_FALSE;
+// #endif
+//             }
+
+
+//             // HACK: 
+//             if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)
+//             {
+// #ifdef STU_DEBUG
+//                 DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)");
+//                 DBG_In_MouseButtonRight = ST_TRUE;
+// #endif
+//                 mouse_x = Pointer_X();
+//                 mouse_y = Pointer_Y();
+//                 cursor_offset = Get_Pointer_Offset();
+//                 field_num = 0;
+//                 character = 0;
+//                 field_num = Scan_Field();
+//                 if(field_num != 0)
+//                 {
+//                     field_num = (field_num * -1);
+//                 }
+// #ifdef STU_DEBUG
+//                 dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
+//                 DBG_In_MouseButtonRight = ST_FALSE;
+// #endif
+//             }
+
+
 // WZD s36p01
 // MGC s34p01
+/*
+
+@@EndOfTheClickRoad
+IDA Color #14 ~ DarkSkyBlue
+5 incoming branches
+
+*/
 int16_t Interpret_Mouse_Input(void)
 {
     int16_t field_num;
-    int16_t character = 0;
+    int16_t character;
     int16_t mx;
     int16_t my;
     int16_t pointer_offset;
@@ -255,13 +307,10 @@ int16_t Interpret_Mouse_Input(void)
 #endif
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
-#endif
-
+    character = 0;
     field_num = 0;
     down_mouse_button = ST_UNDEFINED;
-    // MD_ButtonStatus = 0;
+    MD_ButtonStatus = 0;
     mouse_field = 0;
 
     mx = Pointer_X();
@@ -269,199 +318,213 @@ int16_t Interpret_Mouse_Input(void)
     pointer_offset = Get_Pointer_Offset();
 
 
+
     if(Keyboard_Status() == ST_TRUE)  // MGC s33p16
     {
         DLOG("(Keyboard_Status() == ST_TRUE)");
         character = Interpret_Keyboard_Input(&field_num);  // MGC s34p22
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
+    dbg_prn("DEBUG: [%s, %d] field_num: %d\n", __FILE__, __LINE__, field_num);
+#endif
 
         /*
             Global Debug Keys
         */
 
-        if(p_fields[field_num].type == ft_MultiHotKey)
-        {
 
-        }
-        else if(field_num == 0  || p_fields[field_num].hotkey != character)
-        {
 
-        }
     }
     else
     {
         DLOG("(Keyboard_Status() != ST_TRUE)");
 
-        // Mouse_Movement_Handler();
+        Mouse_Movement_Handler();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Mouse_Movement_Handler()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: MD_GetButtonStatus(): %d\n", __FILE__, __LINE__, MD_GetButtonStatus());
+    dbg_prn("DEBUG: [%s, %d]: Pointer_X(): %d\n", __FILE__, __LINE__, Pointer_X());
+    dbg_prn("DEBUG: [%s, %d]: Pointer_Y(): %d\n", __FILE__, __LINE__, Pointer_Y());
+#endif
 
         
         if(MD_GetButtonStatus() != ST_FALSE)
         {
             DLOG("(MD_GetButtonStatus() != ST_FALSE)");
-            /*
-                ProgramPath:
-                    KBD_CheckBuffer == 0
-                    MDI_Mv()
-                    MD_INT_SetMvOnly()
-                    MD_GetButtonStatus() != 0
-            */
+
             MD_ButtonStatus = MD_GetButtonStatus();
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
 #endif
 
-//              /*
-//                  ? Right Click for Help ?
-//  
-//                  Check_Help_List() draws the help, if it can, then wait for a key press or button click...
-//                  so, nothing needs to happen after this?
-//              */
-//              if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT && help_list_active != ST_FALSE && Check_Help_List() == 0)
-//              {
-//  
-//  
-//              }
+            /*
+                Right Click for Help
+                OR
+                ¿ _global_esc ? */
+            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(_global_esc == ST_FALSE) { while(MD_GetButtonStatus = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
 
-
-
-            // HACK: 
-            if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)
+            // IDA: @@IDK_Loop_GetButtonStatus
+            // Begin Block: Loop MD_GetButtonStatus()
+            if(MD_GetButtonStatus() != 0)
             {
-#ifdef STU_DEBUG
-                DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_LEFT)");
-                DBG_In_MouseButtonLeft = ST_TRUE;
-#endif
+
                 mouse_x = Pointer_X();
                 mouse_y = Pointer_Y();
                 cursor_offset = Get_Pointer_Offset();
                 field_num = 0;
+                // Unused_Local == ST_UNDEFINED
                 character = 0;
                 field_num = Scan_Field();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
+#endif
+
                 if(field_num != 0)
                 {
-                    field_num = field_num;
-                }
-#ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: Left-Click field_num: %d\n", __FILE__, __LINE__, field_num);
-                DBG_In_MouseButtonLeft = ST_FALSE;
-#endif
-                
-            }
 
-
-            // HACK: 
-            if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)
-            {
-#ifdef STU_DEBUG
-                DLOG("if(MD_ButtonStatus == MOUSE_BUTTON_RIGHT)");
-                DBG_In_MouseButtonRight = ST_TRUE;
-#endif
-                mouse_x = Pointer_X();
-                mouse_y = Pointer_Y();
-                cursor_offset = Get_Pointer_Offset();
-                field_num = 0;
-                character = 0;
-                field_num = Scan_Field();
-                if(field_num != 0)
-                {
-                    field_num = (field_num * -1);
-                }
-#ifdef STU_DEBUG
-                dbg_prn("DEBUG: [%s, %d]: Right-Click field_num: %d\n", __FILE__, __LINE__, field_num);
-                DBG_In_MouseButtonRight = ST_FALSE;
-#endif
-            }
-
-
-
-            // if(MD_GetButtonStatus() != 0)
-            if(ST_FALSE)
-            {
-                // HERE: ¿ != 2 && != 0 ?
-                mouse_x = Pointer_X();
-                mouse_y = Pointer_Y();
-                cursor_offset = Get_Pointer_Offset();
-                field_num = 0;
-                // Unused_Local = ST_UNDEFINED
-                character = 0;
-                field_num = Scan_Field();
-                if(field_num != 0)
-                {
-                    if( (down_mouse_button == ST_FALSE) && (p_fields[field_num].type != ft_Input) && (p_fields[field_num].type != ft_ContinuousStringInput) )
+                    // Begin Block: Push_Field_Down()
+                    if(field_num != down_mouse_button)
                     {
-                        // if ...
-                        // (down_mouse_button != ST_UNDEFINED) &&||
-                        // (p_fields[field_num].type != ft_Grid) &&||
-                        // (p_fields[down_mouse_button].type != ft_Grid) &&||
-                        // (p_fields[down_mouse_button].type != ft_Slidebar)
-                        // GUI_CallRedrawFn()
-                        // else Push_Field_Down(field_num, mouse_x, mouse_y)
+                        if(p_fields[field_num].type != ft_Input)
+                        {
+                            if(p_fields[field_num].type != ft_ContinuousStringInput)
+                            {
+                                if(down_mouse_button == ST_UNDEFINED)
+                                {
+                                    // ¿ (p_fields[field_num].type != ft_Grid) && (p_fields[down_mouse_button].type != ft_Grid) ?
+                                    
+                                    // if(p_fields[down_mouse_button].type == ft_Scroll)
+                                    // {
+                                    //     GUI_CallRedrawFn();
+                                    // }
 
+                                    Push_Field_Down(field_num, mouse_x, mouse_y);
 
-
+                                }
+                            }
+                        }
                     }
+                    // End Block: Push_Field_Down()
 
-
-                    // if...
-                    // p_fields[field_num].type != ft_ContinuousStringInput  &&||
-                    // input_field_active !=/== ST_FALSE
-                    // ... Param0 ... edit string ... edit cursor ... animation ... GUI_Active_EditSlct = field_num ...
-
-
-                    // GUI_MouseFocusCtrl = field_num;
-                    // if(GUI_ClickActivate !=/== ST_FALSE)
-
-
-                    // ft_Slider
-
-
-                    // MD_GetClickRec1()
-                    // MD_Get_ClickRec2()
-                    // GUI_Processed_LastX = mouse_x;
-                    // GUI_Processed_LastY = mouse_y;
-                    // GUI_Processed_Btns = MD_ButtonStatus;
-
-                    // switch(p_fields[field_num].type)
-
-
+                    if(p_fields[field_num].type != ft_ContinuousStringInput)
+                    {
+                        if(input_field_active == ST_FALSE)
+                        {
+                            GUI_MouseFocusCtrl = field_num;
+                            if(GUI_ClickActivate == ST_FALSE)
+                            {
+                                // HERE: Re-Draw, cause your're gonna go back
+                                // if(MD_GetButtonStatus() != 0)
+                                // {
+                                //     GUI_NormalRedraw();
+                                // }
+                            }
+                            // else { ??? }
+                        }
+                    }
                 }
+            }
+            // End Block: Loop MD_GetButtonStatus()
+            // IDA: @@IDK_After_Loop_GetButtonStatus
 
+            // if(p_fields[GUI_MouseFocusCtrl].type == ft_Scroll)
+            // {
+            //     GUI_CallRedrawFn();
+            // }
+
+            GUI_MouseFocusCtrl = ST_FALSE;
+
+            if(field_num != 0)
+            {
+                // DONT  MD_Get_ClickRec1();
+                // DONT  MD_Get_ClickRec2();
+                // DONT  GUI_Processed_LastX = mouse_x;
+                // DONT  GUI_Processed_LastY = mouse_y;
+                // DONT  GUI_Processed_Btns = MD_ButtonStatus;
+
+                // TODO says switch 9 cases, but only actually handles 4 - figure out which, including the odd (type - 1) part
+                switch(p_fields[field_num].type)
+                {
+                    /*  0  0x00 */  //drake178: TODO
+                    case ft_Button:
+                    {
+
+                    } break;
+
+                    /*  1  0x01 */  //drake178: ToggleButton
+                    case ft_RadioButton:
+                    {
+
+                    } break;
+
+                    /*  2  0x02 */  //drake178: LockableButton
+                    case ft_LockedButton:
+                    {
+
+                    } break;
+
+                    /*  3  0x03 */  //drake178: MStateButton
+                    case ft_MultiButton:
+                    {
+
+                    } break;
+
+                    /*  4  0x04 */  //drake178: EditBox
+                    case ft_Input:
+                    {
+
+                    } break;
+
+                    /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
+                    case ft_ImageLabel:
+                    {
+
+                    } break;
+
+                    /*  6  0x06 */  //drake178: SlideBar
+                    case ft_Scroll:
+                    {
+
+                    } break;
+
+                    /*  7  0x07 */  //drake178: Label
+                    case ft_HotKey:
+                    {
+
+                    } break;
+
+                    /*  8  0x08 */  //drake178: Ctrl_AltString
+                    case ft_MultiHotKey:
+                    {
+
+                    } break;
+                }
 
             }
 
 
         }
-        // else if(MD_GetClickRec1() != ST_FALSE)
-        else if(ST_FALSE)
+
+        // IDA: @@EndOfTheClickRoad
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: MD_GetButtonStatus(): %d\n", __FILE__, __LINE__, MD_GetButtonStatus());
+    dbg_prn("DEBUG: [%s, %d]: Pointer_X(): %d\n", __FILE__, __LINE__, Pointer_X());
+    dbg_prn("DEBUG: [%s, %d]: Pointer_Y(): %d\n", __FILE__, __LINE__, Pointer_Y());
+    dbg_prn("DEBUG: [%s, %d]: Mouse_Button_Handler()\n", __FILE__, __LINE__);
+#endif
+        Mouse_Button_Handler();
+        down_mouse_button = ST_UNDEFINED;
+        switch(MD_ButtonStatus)
         {
-            DLOG("(MD_GetButtonStatus() == ST_FALSE)");
-            DLOG("(MD_GetClickRec1() != ST_FALSE)");
-            // if(MD_Get_ClickRec1() == ST_FALSE)
-            // {
-            //     Mouse_Button_Handler();
-            //     return 0;
-            // }
-            // else
-            // {
-            //     Mouse_Btn_Clicked = MD_GetClickedBtns();
-            //     // if ...
-            //     // Mouse_Btn_Clicked == 2
-            //     // have_help == ST_FALSE
-            //     // GUI_ContextBasedHelp() != ST_FALSE
-            //     // _global_esc != ST_FALSE
-            // }
-            // TODO(JimBalcomb,20230619): Y/N/M do the whole ClickRec business here (there's a whole to it)
-        }
-        else
-        {
-            DLOG("(Keyboard_Status() != ST_TRUE)");
-            DLOG("(MD_GetButtonStatus() == ST_FALSE)");
-            DLOG("(MD_GetClickRec1() == ST_FALSE)");
-            // Mouse_Button_Handler();
-            field_num = 0;
-        }
-        
+            case 0: { field_num = 0; goto Done; } break;
+            case 1: { field_num = 0; goto Done; } break;
+            case 2: { field_num = -field_num; goto Done; } break;
+        }        
 
     }
+    // else if(MD_Get_ClickRec1()
+    // ¿ ...else... Mouse_Button_Handler(); field_num = 0;
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
@@ -476,12 +539,22 @@ int16_t Interpret_Mouse_Input(void)
     // TODO  }
 
 
+Done:
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Interpret_Mouse_Input() { field_num = %d }\n", __FILE__, __LINE__, field_num);
 #endif
 
     return field_num;
 }
+
+
+// WZD s36p08
+void Set_Global_ESC(void)
+{
+    _global_esc = ST_TRUE;
+}
+
 
 // WZD s36p25
 int16_t Scan_Field(void)
@@ -761,7 +834,7 @@ int16_t Get_Input(void)
 
     field_index = Interpret_Mouse_Input();  // WZD s36p01
 
-    // TODO Set_Page_Off();  // MGC s26p02
+    Set_Page_Off();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Get_Input() { field_index = %d }\n", __FILE__, __LINE__, field_index);

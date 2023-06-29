@@ -542,7 +542,8 @@ extern SAMB_ptr _screen_seg;
 // WZD dseg:9996 RP_GUI_GrowOutLeft dw 0                 ; DATA XREF: VGA_PageFlip_FX+49r ...
 
 // WZD dseg:9998
-extern SAMB_ptr _events_table;  // AKA TBL_Events;
+// AKA TBL_Events
+extern uint8_t * _events_table;  // alloc in MoM_Tables_Init()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
 
 // WZD dseg:999C
 extern int16_t _unit_stack_count;

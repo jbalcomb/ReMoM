@@ -25,6 +25,15 @@ win_MD.C includes Mouse.H
 anything else that needs to know about anything specific to the mouse includes Mouse.H
 
 
+20230629:
+I am feeling like Pointer_X() and Pointer_Y() should be in the platform layer, along with MD_GetButtonStatus()
+Then, the platform can set mouse x,y,buttons of its own, its own way, with the getters translating to the MoX API specification.
+Caveat? MoX Mouse expects mouse_x,mouse_y to be available internally/privately?
+    OON XREF: Init_Mouse_Driver() sets it directly
+
+
+
+
 
 
 Keyboard_Status()

@@ -50,9 +50,10 @@ extern "C" {
 extern struct game_offscreen_buffer Buffer;
 
 // set in Win32_Evnt.cpp, get in win_MD.C
+// YNM  extern int16_t platform_mouse_click_x;
+// YNM  extern int16_t platform_mouse_click_y;
 extern int16_t platform_mouse_button_status;
-extern int16_t platform_mouse_click_x;
-extern int16_t platform_mouse_click_y;
+extern int16_t lock_mouse_button_status_flag;
 
 extern uint8_t g_Key_Pressed;
 extern uint16_t g_Last_Key_Pressed;
@@ -71,6 +72,7 @@ void Pump_Events(void);
 void GameUpdateAndRender(struct game_offscreen_buffer * Buffer);
 
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
+void Update_Mouse_Button_Status(int16_t mouse_click_x, int16_t mouse_click_y, int16_t mouse_button_status);
 
 
 #ifdef __cplusplus

@@ -437,9 +437,12 @@ int16_t _minimap_grid_field;
 // WZD dseg:9740
 int16_t _main_map_grid_field;
 // WZD dseg:9742
-int16_t _minimap_grid_x;
+// int16_t _minimap_grid_x;
+int64_t _minimap_grid_x;
 // WZD dseg:9744
-int16_t _minimap_grid_y;
+// int16_t _minimap_grid_y;
+int64_t _minimap_grid_y;
+
 // WZD dseg:9746 CRP_OVL_MapWindowY dw 0
 // WZD dseg:9748 CRP_OVL_MapWindowX dw 0
 
@@ -450,9 +453,11 @@ int16_t _prev_world_y;
 int16_t _prev_world_x;
 
 // WZD dseg:974E 
-int16_t _main_map_grid_x;
+// int16_t _main_map_grid_x;
+int64_t _main_map_grid_x;
 // WZD dseg:9750 
-int16_t _main_map_grid_y;
+int64_t _main_map_grid_y;
+// int16_t _main_map_grid_y;
 
 
 // WZD dseg:9922
@@ -759,6 +764,16 @@ void Main_Screen(void)
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
+#endif
+
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: MainScreen - InitialMapValues\n", __FILE__, __LINE__);
+        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+        dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
 #endif
 
 
@@ -1235,9 +1250,26 @@ void Main_Screen(void)
             if(entity_idx == ST_UNDEFINED)
             {
                 DLOG("if(entity_idx == ST_UNDEFINED)");
-                _prev_world_x = _main_map_grid_x - (MAP_WIDTH / 2);  // ¿ grid x - (map width / 2) = map x ?
-                _prev_world_y = _main_map_grid_y - (MAP_HEIGHT / 2);  // ¿ grid y - (map height / 2) = map y ?
+                DLOG("ScrollTheMap");
+                // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
+                // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
+                _prev_world_x = _prev_world_x + (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
+                _prev_world_y = _prev_world_y + (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x - (MAP_WIDTH / 2): %d\n", __FILE__, __LINE__, _main_map_grid_x - (MAP_WIDTH / 2));
+        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y - (MAP_HEIGHT / 2): %d\n", __FILE__, __LINE__, _main_map_grid_y - (MAP_HEIGHT / 2));
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+#endif
                 IDK_CheckSet_MapDisplay_XY();
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+#endif
             }
             else
             {
@@ -1382,7 +1414,7 @@ void Main_Screen_Add_Fields(void)
         // (xmin, ymin, box_width, box_height, horizontal_count, vertical_count, *xpos, *ypos, help)
         // TODO  add defines for the map dims/coords
         // TODO  confirm what these values/calculations should end up being
-        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
+        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
 #ifdef STU_DEBUG
         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_field: %d\n", __FILE__, __LINE__, _main_map_grid_field);
         DBG_movement_map_grid_field_idx = _main_map_grid_field;
@@ -1926,7 +1958,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     Minimap_Set_Dims(58, 30);
 
 
-    Draw_Maps(0, 20, 12, 10, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
+    Draw_Maps(MAP_START_X, MAP_START_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
     // x and y origin for screen
     // width and height of map in squares
     // ? x, y, plane for world ?
@@ -2394,12 +2426,12 @@ void Main_Screen_Draw_Summary_Window(void)
     // s_EVENT_DATA.Good_Moon.Status], 2
     // s_EVENT_DATA.Mana_Short.Status], 2
 
-    if(_events_table[92] == 2)
-    if(_events_table[84] == 2)
-    if(_events_table[88] == 2)
-    if(_events_table[80] == 2)
-    if(_events_table[76] == 2)
-    if(_events_table[96] == 2)
+    // TODO  Access Violation  if(_events_table[92] == 2)
+    // TODO  Access Violation  if(_events_table[84] == 2)
+    // TODO  Access Violation  if(_events_table[88] == 2)
+    // TODO  Access Violation  if(_events_table[80] == 2)
+    // TODO  Access Violation  if(_events_table[76] == 2)
+    // TODO  Access Violation  if(_events_table[96] == 2)
 
 
 
@@ -2409,6 +2441,8 @@ void Main_Screen_Draw_Summary_Window(void)
     */
     // TBL_Events
     // s_EVENT_DATA.Conjunction_Sorcery.Status], 2
+    // 0x0403af5c  access violation: 0x403AF5C
+    // _events_table[]  0x0403af5c
     if(_events_table[92] == 2)
     {
         colors[0] = 0;

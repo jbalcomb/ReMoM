@@ -6,71 +6,28 @@
 #include "assert.h"
 
 
-// WZD dseg:E872                                                 ? BEGIN: fields, intput, ... ?
 
-// WZD dseg:E872
-// help_list dw 0
-// WZD dseg:E874
-// GUI_Processed_Btns dw 0
-// WZD dseg:E876
-// GUI_Processed_LastY dw 0
-// WZD dseg:E878
-// GUI_Processed_LastX dw 0
-// WZD dseg:E87A
-// GUI_EditString db 30 dup(0)
-// WZD dseg:E898
-extern int16_t input_delay;
-// WZD dseg:E89A
-// MOUSE_Emu_Y dw 0
-// WZD dseg:E89C
-// MOUSE_Emu_X dw 0
-// WZD dseg:E89E
-extern int16_t cursor_offset;
-// WZD dseg:E8A0
-// GUI_PrevControlCount dw 0
-// WZD dseg:E8A2
-extern int16_t fields_count;
-// WZD dseg:E8A4
-// GUI_Prev_Redraw_Fn dd 0
-// WZD dseg:E8A8
-// GUI_Redraw_Function dd 0
-// WZD dseg:E8AC
-extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
+// NOTE(JimBalcomb,20230628): Don't recall how/why I got to putting this in here. Should be with notes about C arrays, strings, char *'s, **'s?
+/*
+C:\STU\developc\moo2x-master\src\moo2x\Platform.cpp
 
-// WZD dseg:E8AC                                                 ? END: fields, input, ... ?
+Line 5194
+#define ESTRINGS__strings ((i32**)(0x0056B788))
+i32 __cdecl ESTRINGS_E_Strings_(__int16 index) // 0x004A0050
+{
+	char* addr = (char*)(ESTRINGS__strings[index]);
+	//pLog.Printf("%d = %s\n",index,addr);
+  return (i32)ESTRINGS__strings[index];
+}
 
+Line 5227
+p=&ESTRINGS__strings[368];
+*p = (i32*)maintextlbxs[k];
 
-// dseg:E872                                                 ? BEGIN: fields, intput, ... ?
+Line 5265
+sprintf(v13, (char*)ESTRINGS_E_Strings_(42));
 
-// WZD dseg:E872
-// AKA _help_list
-// HELP int16_t help_struct_pointer;
-
-
-
-
-// WZD dseg:8296
-// AKA have_help
-// HELP int16_t help_list_active = ST_FALSE;
-// WZD dseg:8298
-// AKA _help_count
-// HELP int16_t help_list_count = 0;
-// dseg:829A 00 00                                           KD_ActiveStringTrig dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
-// dseg:829C                                                 ; char UU_cnst_RB7[]
-// dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-// dseg:829C                                                                                         ; should use dseg:28b8
-// dseg:829E                                                 ; char cnst_ZeroString_12[]
-// dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: GUI_TextEditDialog+3Bo ...
-// dseg:829F                                                 ; char UU_cnst_WB8[]
-// dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
-// dseg:829F                                                                                         ; should use dseg:28ef
-// dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
-// dseg:82A4 06 00                                           UU_GUI_Down_Hotkey db 6, 0              ; DATA XREF: UU_GUI_ScrollableTxtDlg+240o ...
-// dseg:82A6 5F 00                                           GUI_EditCursor db '_',0                 ; DATA XREF: Draw_Fields+117Do
-// dseg:82A6
-// dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
-// dseg:82A6
-
+*/
 
 
 
@@ -111,8 +68,10 @@ struct s_Field
     int16_t Param0;     // Text@                   Min_Val  Str*    Parent
     int16_t Param1;     // Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
     int16_t Param2;     // State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
-    int16_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
-    int16_t Param4;     // MaxSlide      CStyle                                               ypos
+    // int16_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
+    // int16_t Param4;     // MaxSlide      CStyle                                               ypos
+    int64_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
+    int64_t Param4;     // MaxSlide      CStyle                                               ypos
     int16_t Param5;     // IMG_Seg       MaxLen    Orient                           MaxLen
     union {
         SAMB_ptr pict_seg;  // ft_Button
@@ -127,25 +86,157 @@ struct s_Field
 };
 // TODO(JimBalcomb,20230614): ASSERT sizeof(struct s_Field)
 
+
+
 /*
-C:\STU\developc\moo2x-master\src\moo2x\Platform.cpp
+    WZD dseg:78B8                           BEGIN: Fields - Initialized Data
+*/
 
-Line 5194
-#define ESTRINGS__strings ((i32**)(0x0056B788))
-i32 __cdecl ESTRINGS_E_Strings_(__int16 index) // 0x004A0050
-{
-	char* addr = (char*)(ESTRINGS__strings[index]);
-	//pLog.Printf("%d = %s\n",index,addr);
-  return (i32)ESTRINGS__strings[index];
-}
+// WZD dseg:78B8 current_pointer_image_number dw 0       
+// WZD dseg:78BA previous_pointer_image_number dw 0      
+// WZD dseg:78BC mouse_enabled dw 0                      
+// WZD dseg:78BE mouse_driver_installed dw 0             
+// WZD dseg:78C0 MOUSE_Usable dw 0                       
+// WZD dseg:78C2 mouse_x dw 158                          
+// WZD dseg:78C4 mouse_y dw 100                          
+// WZD dseg:78C6 current_mouse_list_count dw 1           
+// WZD dseg:78C8 current_pointer_offset dw 0             
+// WZD dseg:78CA MOUSE_ClickRec1 dw 0                    
+// WZD dseg:78CC MOUSE_ClickX dw 0                       
+// WZD dseg:78CE MOUSE_ClickY dw 0                       
+// WZD dseg:78D0 MOUSE_ClickBtns dw 0                    
+// WZD dseg:78D2 MOUSE_ClickRec2 dw 0                    
+// WZD dseg:78D4 MOUSE_INT_Process dw 0                  
+// WZD dseg:78D6 mouse_save_flag dw 0                    
+// WZD dseg:78D8 MOUSE_InitX dw 158                      
+// WZD dseg:78DA MOUSE_InitY dw 100                      
+// WZD dseg:78DC mouse_state dw 0                        
+// WZD dseg:78DE current_mouse_list_0 dw 0               
+// WZD dseg:78E0 mouse_background_buffer dw 600 dup(0)
+// WZD dseg:7D90 mouse_off_page_buffer dw 600 dup(0) 
+// WZD dseg:8240 UU_GUI_ClickBufferX dw 0                
+// WZD dseg:8242 UU_GUI_ClickBuffNext dw 0               
+// WZD dseg:8244 UU_GUI_ClickBuffVar1 dw 0               
+// WZD dseg:8246 UU_GUI_ClickBuffer@ dw 0                
+// WZD dseg:8248 UU_GUI_ClickBufCount dw 0               
+// WZD dseg:824A GUI_RedrawFn_Present dw 0               
+// WZD dseg:824C KD_prev_field_idx dw 0                  
 
-Line 5227
-p=&ESTRINGS__strings[368];
-*p = (i32*)maintextlbxs[k];
+// WZD dseg:824E
+// DONT  mouse_installed = ST_FALSE;                     
 
-Line 5265
-sprintf(v13, (char*)ESTRINGS_E_Strings_(42));
+// WZD dseg:8250
+extern int16_t down_mouse_button;
 
+// WZD dseg:8252
+extern int16_t down_x;
+
+// WZD dseg:8254
+extern int16_t down_y;
+
+// WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
+// WZD dseg:8258 GUI_DialogDirections dw 0               
+// WZD dseg:825A GUI_Redraw_Timer dw 2                   
+
+// WZD dseg:825C
+// AKA mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
+// ¿ int16_t mouse_list_init_count = 1; ?
+// WZD dseg:825C
+// DEDUCE: only XREF in Init_Mouse_Keyboard() ?
+extern struct s_mouse_list mouse_list_init[];
+
+// WZD dseg:8268
+// AKA GUI_MouseFocusCtrl
+extern int16_t GUI_MouseFocusCtrl;
+// ¿ int16_t focused_field = ST_UNDEFINED; ?
+// ¿ int16_t mouse_field = ST_FALSE; ?
+
+// WZD dseg:826A GUI_MouseHighlight dw 1                 
+// WZD dseg:826C GUI_NoDialogWrap dw 0                   
+// WZD dseg:826E GUI_NoTxtSelectColor dw 0               
+// WZD dseg:8270 GUI_OnLastDialogLine dw 0               
+
+// WZD dseg:8272
+extern int16_t _global_esc;
+
+// WZD dseg:8274
+extern int16_t GUI_ClickActivate;
+// WZD dseg:8276 aNotInUse db 'NOT IN USE',0
+// WZD dseg:8281 db    0
+// WZD dseg:8282 GUI_Edit_Position dw 0                  
+// WZD dseg:8284 GUI_EditAnimStage dw 0                  
+// WZD dseg:8286 GUI_EditCursorOn dw 0                   
+
+// WZD dseg:8288
+extern int16_t input_field_active;
+
+// WZD dseg:828A
+extern int16_t DBG_ControlHighlight;
+// WZD dseg:828C
+extern int16_t DBG_HelpHighlight;
+
+// WZD dseg:828E
+// AKA GUI_Active_EditSlct
+extern int16_t active_input_field_number;
+
+// WZD dseg:8290 GUI_EditTimeOutType dw 0                
+// WZD dseg:8292 UU_GUI_UUClickBufVar dw 0               
+// WZD dseg:8294 UU_GUI_ClickBuffer dw 0                 
+
+// WZD dseg:8296
+// HELP  int16_t help_list_active = ST_FALSE;
+
+// WZD dseg:8298
+// HELP  int16_t help_list_count = 0;
+
+// WZD dseg:829A KD_ActiveStringTrig dw 0                
+// WZD dseg:829C UU_cnst_RB7 db 'rb'                     
+// WZD dseg:829E cnst_ZeroString_12 db 0                 
+// WZD dseg:829F UU_cnst_WB8 db 'wb',0                   
+// WZD dseg:82A2 UU_GUI_Up_Hotkey db 5, 0                
+// WZD dseg:82A4 UU_GUI_Down_Hotkey db 6, 0              
+// WZD dseg:82A6 GUI_EditCursor db '_',0                 
+
+/*
+    WZD dseg:82A6                           END: Fields - Initialized Data
+*/
+
+
+/*
+    WZD dseg:E872                           BEGIN: Fields - Uninitialized Data
+*/
+
+// WZD dseg:E872
+// AKA _help_list
+// HELP  help_struct_pointer
+
+// dseg:E874 GUI_Processed_Btns dw 0    
+// dseg:E876 GUI_Processed_LastY dw 0   
+// dseg:E878 GUI_Processed_LastX dw 0   
+// dseg:E87A GUI_EditString db 30 dup(0)
+
+// WZD dseg:E898
+extern int16_t input_delay;
+
+// dseg:E89A MOUSE_Emu_Y dw 0           
+// dseg:E89C MOUSE_Emu_X dw 0           
+
+// WZD dseg:E89E
+extern int16_t cursor_offset;
+
+// dseg:E8A0 GUI_PrevControlCount dw 0  
+
+// WZD dseg:E8A2
+extern int16_t fields_count;
+
+// dseg:E8A4 GUI_Prev_Redraw_Fn dd 0    
+// dseg:E8A8 GUI_Redraw_Function dd 0   
+
+// WZD dseg:E8AC
+extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
+
+/*
+    WZD dseg:E8AC                           END: Fields - Uninitialized Data
 */
 
 
@@ -208,7 +299,8 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
 int16_t Add_Hot_Key(int16_t select_char);
 
 // WZD s36p49
-int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
+// int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
+int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
 
 // WZD s36p57
 void Clear_Fields(void);
@@ -224,8 +316,12 @@ void Clear_Fields(void);
 // MoO2: Draw_Visible_Fields()
 // WZD s36p71
 void Draw_Fields(void);
+
 // WZD s36p72
 void Draw_Field(int16_t field_num, int16_t up_down_flag);
+
+// WZD s36p73
+void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y);
 
 
 

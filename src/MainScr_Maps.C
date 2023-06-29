@@ -18,6 +18,8 @@
 #include "STU_DBG.H"
 #endif
 
+#include <assert.h>
+
 
 
 // dseg:291E     BEGIN: ovr052
@@ -326,29 +328,34 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 // AKA IDK_CheckSet_MapDisplay_XY
 void IDK_CheckSet_MapDisplay_XY(void)
 {
+    // bind Y on the bottom
     if(_prev_world_y + MAP_HEIGHT >= WORLD_HEIGHT)
     {
         _prev_world_y = WORLD_HEIGHT - MAP_HEIGHT;
     }
 
+    // wrap X around to the right
     if(_prev_world_x >= WORLD_WIDTH)
     {
         _prev_world_x = _prev_world_x - WORLD_WIDTH;
     }
 
+    // wrap X around to the left
     if(_prev_world_x < 0)
     {
-        _prev_world_x = _prev_world_x + 60;
+        _prev_world_x = _prev_world_x + WORLD_WIDTH;
     }
 
+    // bind Y on the top
     if(_prev_world_y < 0)
     {
         _prev_world_y = 0;
     }
 
+    // ¿ reorient X if scroll will wrap ?
     if(_map_x == 0 && _prev_world_x > 49)
     {
-        _map_x = 60;
+        _map_x = WORLD_WIDTH;
     }
 
 
@@ -541,13 +548,15 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
     int16_t itr_map_height;
     int16_t itr_units;
     int16_t itr_cities;
+    int16_t entity_table_idx;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
 #endif
 
     City_Visible = ST_FALSE;
-
+    entity_world_y = 0;
+    entity_world_x = 0;
 
     for(itr_map_height = 0; itr_map_height < MAP_HEIGHT; itr_map_height++)
     {
@@ -557,7 +566,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         }
     }
 
-    for(itr_units =0; itr_units < _units; itr_units++)
+    for(itr_units = 0; itr_units < _units; itr_units++)
     {
         if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
         {
@@ -618,37 +627,42 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         if(
-            ( (_CITIES[itr_cities].world_plane == world_plane) || (_CITIES[itr_cities].world_plane = 2) ) &&
+            ( (_CITIES[itr_cities].world_plane == world_plane) || (_CITIES[itr_cities].world_plane == 2) ) &&
             (TBL_Scouting[( (_CITIES[itr_cities].world_plane * 2400) + (_CITIES[itr_cities].world_y * 60) + _CITIES[itr_cities].world_x )] != ST_FALSE)
         )
         {
                 entity_world_y = _CITIES[itr_cities].world_y;
 
-                if( (entity_world_y >= world_y) && (world_y + MAP_HEIGHT > entity_world_y) )
+                if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
                 {
                     entity_world_x = _CITIES[itr_cities].world_x;
 
-                    if(
-                        ( (world_x < entity_world_x) && (world_x + MAP_WIDTH > entity_world_x) ) ||
-                            ( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
-                    )
+                    if ( (entity_world_x >= world_x) && (entity_world_x < world_x + MAP_WIDTH) )
                     {
-                        // HACK: because the Dasm reassigns the value in the middle of the comparisson branches - not sure if/what this could be like in C code
-                        if(( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) ))
-                        {
-                            entity_world_x = entity_world_x + WORLD_WIDTH;
-                        }
-
                         entity_world_x = entity_world_x - world_x;
                         City_Visible = ST_TRUE;
                     }
+                    else if( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                    {
+                        // entity_world_x = entity_world_x + WORLD_WIDTH;
+                        // entity_world_x = entity_world_x - world_x;
+                        // City_Visible = ST_TRUE;
+                    }
             }
         }
+        assert(entity_world_x >= 0);
+        assert(entity_world_x < 60);
+        assert(entity_world_y >= 0);
+        assert(entity_world_y < 40);
 
         if(City_Visible == ST_TRUE)
         {
-            entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = (itr_cities + 1000);
+            // Movement Map Entity Table
+            // entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = (itr_cities + 1000);
+            entity_table_idx = (((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x));
+            entities_on_movement_map[entity_table_idx] = (itr_cities + 1000);
         }
+
     }
 
 

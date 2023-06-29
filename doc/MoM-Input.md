@@ -18,6 +18,92 @@ Help
 
 
 
+NOTE(JimBalcomb,20230628):
+Just finished a lengthy session with DOSBox Debug to track down the ProgramPath for 'Right-Click, Scroll Map'.
+Started a new ODG - MoM-ProgramFlow-Input.
+Can't seem to figure out how to organize and track my notes or tie it back to IDA or the code.
+Elsewhere, trying to see about breaking up or just breaking away from the Dasm for the Input Handler.
+    'keyboard or mouse or nothing'
+        if mouse...
+            if mouse right and help or global_esc
+            if mouse, still...
+
+
+
+if !keyboard and !mouse and !clickrec then return 0
+
+
+if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; }
+branches off at help_list_active for _global_esc
+so, maybe,
+    if(MD_ButtonStatus = ST_RIGHTBUTTON)
+    {
+        if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; }
+        else
+        {
+            if(_global_esc == ST_FALSE) { while(MD_GetButtonStatus() = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; }
+        }
+    }
+
+Then, tests MD_GetButtonStatus() again...  which is odd, cause it already stored the result locally...
+More odd, this is a loop of some sort... with multiple reentry points?
+Anyway, ...
+    @@IDK_Loop_GetButtonStatus
+    field_num = Scan_Field()
+    // Begin Block: Push_Field_Down()
+    if (field_num != 0)
+        AND
+            (field_num != down_mouse_button) && (p_fields[field_num].type != ft_Input) && (p_fields[field_num].type != ft_ContinuousStringInput)
+            OR
+            (down_mouse_button != ST_UNDEFINED) && (p_fields[field_num].type != ft_Grid) && (p_fields[down_mouse_button].type != ft_Grid) )
+        
+            if(p_fields[down_mouse_button].type == ft_Slidebar)
+            {
+                GUI_CallRedrawFn()
+            }
+
+            Push_Field_Down()
+
+    // End Block: Push_Field_Down()
+
+    if(p_fields[field_num].type == ft_ContinuousStringInput)
+        input_field_active != ST_FALSE
+            active_input_field_number == field_num
+                strcpy(GUI_EditString, Param0)
+                GUI_EditAnimStage = 0
+                GUI_EditCursorOn = 0
+                input_field_active = e_ST_TRUE
+                active_input_field_number = field_num
+                Meh. Does a bunch more stuff...
+    ...looks like 2-3 other block branches..
+
+    @@IDK_After_Loop_GetButtonStatus
+
+
+
+
+
+There's some block that iterate through all the fields - it checks the bounds and breaks on a match.
+Looks like it sets field_num to the itr outside of the loop, but probably not, because the next line is checking if field_num is 0.
+if field_num != and !ft_ContinuousStringInput
+    Push_Field_Down(); GUI_1TickRedrw();
+
+The block after that looks to be the only path forward, and starts with down_mouse_button = ST_UNDEFINED; if(field_num != 0)...
+
+
+There appears to be another blok at loc_2744E, where it checks *GUI_MouseFocusCtrl* for ft_Slidebar and calls GUI_CallRedrawFn()
+¿ mayhap, this is just the fall-through / end of the if block ?
+But, also, does the use of *GUI_MouseFocusCtrl* here mean it expects to have one? Or, does it bail somewhere else?
+
+
+For _global_esc, both Button and Buffer jump to the same block, which is odd. And, that block has MD_Get_ClickRec1/2(), which is nuts for the Button path.
+
+
+
+
+
+
+
 
 
 WZD dseg:8296 have_help
@@ -327,4 +413,127 @@ mov     _scanned_field, ax
 
 mov     eax, _mainmenu                  ; ? Table of Fields  ; for the Main Menu Screen ?
 cmp     cx, [eax+0Ch]
+
+
+
+
+
+
+
+
+
+
+## down_mouse_button
+## GUI_MouseFocusCtrl
+
+
+
+## down_mouse_button
+
+Init_Mouse_Keyboard
+
+
+Interpret_Mouse_Input+D                                      mov     [down_mouse_button], -1                            
+Interpret_Mouse_Input+2C0                                    mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input:@@UnsetDownMouseButton_Return_ITR_     mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input:@@UnsetDownMouseButton_Return_ITR      mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input:@@UNDEF_DownMouseButton                mov     [down_mouse_button], -1                            
+Interpret_Mouse_Input:loc_27035                              mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input+A57                                    mov     [down_mouse_button], -1                            
+Interpret_Mouse_Input:@@Check_DownMouseButton                cmp     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input:loc_271F1                              mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input:loc_2720B                              mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input+BB4                                    mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input+BC9                                    mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input+BEB                                    push    [down_mouse_button]             ; field_idx        
+Interpret_Mouse_Input:loc_2728E                              mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input+C3B                                    cmp     ax, [down_mouse_button]                            
+Interpret_Mouse_Input+C6E                                    cmp     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input+C8A                                    mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input:loc_2730B                              mov     ax, [down_mouse_button]                            
+Interpret_Mouse_Input:@@UnsetDownMouseButton                 mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input+E94                                    mov     [down_mouse_button], -1                            
+Interpret_Mouse_Input:@@UnsetDownMouseButton_Return_FieldNum mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+Interpret_Mouse_Input+F2F                                    mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+
+RP_GUI_KeyInputOnly:loc_27B0D                                mov     [down_mouse_button], -1                            
+RP_GUI_KeyInputOnly:loc_27B67                                mov     [down_mouse_button], -1                            
+RP_GUI_KeyInputOnly+509                                      mov     [down_mouse_button], -1                            
+
+Scan_Input:loc_29481                                         cmp     [down_mouse_button], e_ST_UNDEFINED_DW             
+Scan_Input+CF                                                mov     ax, [down_mouse_button]                            
+
+GUI_EditBoxControl+413                                       mov     [down_mouse_button], -1                            
+GUI_TextEditDialog+68                                        mov     [down_mouse_button], ax                            
+GUI_TextEditDialog:loc_2A1D4                                 mov     [down_mouse_button], -1                            
+
+Clear_Fields+9                                               mov     [down_mouse_button], -1                            
+
+GUI_SetLastControl+A                                         mov     [down_mouse_button], -1                            
+
+Init_Mouse_Keyboard+B7                                       mov     [down_mouse_button], e_ST_UNDEFINED_DW             
+
+Draw_Fields:loc_2D32F                                        cmp     [down_mouse_button], _SI_itr_fields_count          
+Draw_Fields:field_type_04                                    cmp     [down_mouse_button], _SI_itr_fields_count; case 0x4
+
+Push_Field_Down+3D                                           cmp     _SI_field_num, [down_mouse_button]; _SI = field_num
+Push_Field_Down:loc_2F90E                                    cmp     [down_mouse_button], -1                            
+Push_Field_Down+52                                           mov     [down_mouse_button], _SI_field_num                 
+Push_Field_Down:loc_2F970                                    cmp     [down_mouse_button], _SI_field_num                 
+Push_Field_Down+B6                                           mov     ax, [down_mouse_button]                            
+Push_Field_Down:loc_2F9A7                                    mov     ax, [down_mouse_button]                            
+Push_Field_Down+11F                                          push    [down_mouse_button]             ; field_idx        
+Push_Field_Down+12E                                          push    [down_mouse_button]             ; field_idx        
+Push_Field_Down:loc_2FA00                                    mov     [down_mouse_button], _SI_field_num                 
+Push_Field_Down+19C                                          mov     [down_mouse_button], _SI_field_num                 
+Push_Field_Down+1AB                                          mov     [down_mouse_button], -1                            
+
+
+
+
+
+
+## GUI_MouseFocusCtrl
+WZD dseg:8268
+
+
+In Interpret_Mouse_Input(), this gets set to field_num, after the call to Push_Field_Down()...
+...on the program-path for a right-click, no help, !ft_Input, !ft_ContinuousStringInput, ??? ...
+
+
+
+GUI_GetMouseFocus()
+     return GUI_MouseFocusCtrl;
+XREF:
+     Settings_Screen_Draw()
+     Load_Screen_Draw()
+
+Interpret_Mouse_Input()
+     On-Entry:
+          down_mouse_button = -1
+          GUI_MouseFocusCtrl = 0
+     ~ Mouse Buffer
+          ...
+          ...
+          ...
+          field_num != 0
+          p_fields[field_num].type != ft_ContinuousStringInput
+               GUI_MouseFocusCtrl = field_num
+               Push_Field_Down(field_num, mouse_x, mouse_y)
+               GUI_1TickRedraw()
+
+
+
+
+
+Up w Interpret_Mouse_Input+18        mov     [GUI_MouseFocusCtrl], 0         
+Up w Interpret_Mouse_Input+862       mov     [GUI_MouseFocusCtrl], ax        
+Up w Interpret_Mouse_Input+AE4       mov     [GUI_MouseFocusCtrl], e_ST_FALSE
+Up w Interpret_Mouse_Input+DBC       mov     [GUI_MouseFocusCtrl], ax        
+Up r Interpret_Mouse_Input:loc_2744E mov     ax, [GUI_MouseFocusCtrl]        
+Up w Interpret_Mouse_Input:loc_27468 mov     [GUI_MouseFocusCtrl], 0         
+Up r GUI_GetMouseFocus+3             mov     ax, [GUI_MouseFocusCtrl]        
+Up w G_GUI_ClearInput+3              mov     [GUI_MouseFocusCtrl], 0         
+   w Clear_Fields+F                  mov     [GUI_MouseFocusCtrl], 0         
+
 

@@ -17,6 +17,220 @@
         Mouse X,Y => Grid Field X,Y => World X,Y  ¿ mx,my; gx,gy; wx,wy ?
 
 
+`Center_Map`            Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+
+    uses the world x,y to calculate the top-left corner coordinates for the movement map
+
+    ~ *map_x = world_x - (MAP_WIDTH/2)
+    ~ *map_y = world_y - (MAP_HEIGHT/2)
+
+    _prev_world_x,y = map_x,y
+
+    passes to Set_Entities_On_Map_Window()
+
+
+GAME_Overland_Init()
+    ...
+    _prev_world_x = 0
+    _prev_world_y = 0
+    _map_x = 0
+    _map_y = 0
+    ...
+    _active_world_x = _FORTRESSES[0].world_x
+    _active_world_y = _FORTRESSES[0].world_y
+    _map_plane = _FORTRESSES[0].world_plane
+    ...
+    Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane)
+    ...
+    WIZ_NextIdleStack(_human_player_idx, _map_x, _map_y, _map_plane)
+
+
+Main_Screen() 'C'
+    ...
+    Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane)
+    ...
+    Reset_Map_Draw()
+        map_draw_prev_x = ST_UNDEFINED_DW
+        map_draw_prev_y = ST_UNDEFINED_DW
+
+
+IDK_CheckSet_MapDisplay_XY()
+    bounds Y
+    wraps X
+    updates _prev_world_x,y and _map_x
+
+Main_Screen_Draw() |->
+Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx)
+
+So, ...
+    for Center_Map()
+        it uses world x,y to set map x,y
+        also, sets _prev_world_x,y to be the same as map_x,y
+        the world x,y here is that of the stack on which it wants to center the movement map
+        with the (-half), it is setting map x,y for the top-left corner world coordinates to draw the movement map
+        What is the impact of setting _prev_world_x,y to be the same as map_x,y?
+            ?
+    for right-click Scroll Map
+        it sets _prev_world_x,y to _main_map_grid_x,y (-half)
+        no change to _map_x,y
+        so, _prev_world_x,y is also the top-left corner of the movement map
+        and, here, _main_map_grid_x,y is equivalent to the Unit world x,y in Center_Map()
+        So, the difference is in not setting _map_x,y
+
+                _prev_world_x = _main_map_grid_x - (MAP_WIDTH / 2);  // ¿ grid x - (map width / 2) = map x ?
+                _prev_world_y = _main_map_grid_y - (MAP_HEIGHT / 2);  // ¿ grid y - (map height / 2) = map y ?
+
+Main_Screen_Draw()
+Main_Screen_Draw_Do_Draw()
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 2006]: END: Main_Screen_Draw_Do_Draw()
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1650]: before_map_x: 26
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1651]: before_map_y: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1652]: after_map_x: 27
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1653]: after_map_y: 1
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1657]: _map_x: 27
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1658]: _map_y: 1
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1659]: _map_plane: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1660]: _prev_world_x: 54
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1661]: _prev_world_y: 4
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1662]: _human_player_idx: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1666]: END: Main_Screen_Draw()
+
+The impact from changing _prev_world_x,y is in the path from Main_Screen_Draw() through Main_Screen_Draw_Do_Draw()
+    if _map_x,y is not the same as _prev_world_x,y
+        it changes _map_x,y to be 1 square closer to _prev_world_x,y
+
+is _prev_world_x,y only job to facilitate the map scrolling?
+
+didn't I see code somewhere on the game side that skips changing the coords if they are the same as last time?
+like, right-clicking in the same spot is a No-Op?
+
+this would be equivalent to the code on the engine side that does not do a full draw if the map hasn't moved
+    with the caveat that there are a lot of calls around to force a full draw,
+        presumably because that chunk of code feels that it has changed the state of the something that impacts the movement map
+
+Back to the business at-hand, ...
+    for my current purposes - right-click scroll map -
+    I need to *see* the right-click mouse x,y to screen x,y to movement map window x,y to world x,y to map TL x,y
+    So, ...
+        what should mouse x,y be?
+            starts at 158,100
+            if I click on the bottom-left-most square, it should be ~ {0,182} ... {19,199}  >=(0+(20 * 0)+0) <(0+(20 * 0)+20), >=(20+(18 * 9)+0) <(20+(18 * 9)+18)
+        where can I *see* this?
+            Interpret_Mouse_Input()
+                Mouse_Movement_Handler()
+                    MD_GetButtonStatus()
+                    Pointer_X()
+                    Pointer_Y()
+        Should change until after the call to Mouse_Button_Handler()?
+
+
+Going into Main_Screen(), values are correct - as set by MoM_Main()/game initialization...
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 771]: _map_x: 18
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 772]: _map_y: 11
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 773]: _prev_world_x: 18
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 774]: _prev_world_y: 11
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 775]: _main_map_grid_x: 0
+    DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 776]: _main_map_grid_y: 0
+
+
+values are correct and holding throughout Interpret_Mouse_Input()
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 344]: Mouse_Movement_Handler()
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 345]: MD_GetButtonStatus(): 2
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 346]: Pointer_X(): 6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 347]: Pointer_Y(): 192
+...
+...
+...
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 510]: MD_GetButtonStatus(): 2
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 511]: Pointer_X(): 6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 512]: Pointer_Y(): 192
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 513]: Mouse_Button_Handler()
+
+
+Point to Screen to Field to Grid is correct
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 344]: Mouse_Movement_Handler()
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 345]: MD_GetButtonStatus(): 2
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 346]: Pointer_X(): 6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Input.C, 347]: Pointer_Y(): 192
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 805]: screen_x: 6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 806]: screen_y: 192
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 808]: p_fields[field_num].x1: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 809]: p_fields[field_num].y1: 20
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 811]: field_x: 6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 812]: field_y: 172
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 814]: p_fields[field_num].Param1: 20
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 815]: p_fields[field_num].Param2: 18
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 817]: grid_x: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 818]: grid_y: 9
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 853]: *((int64_t *)p_fields[field_num].Param3): 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\Fields.C, 854]: *((int64_t *)p_fields[field_num].Param4): 9
+
+
+_main_map_grid_x,y is the value as set by Push_Down_Field(), by way of the memory address in Param3,4 members of the Grid Field
+so, shouldn't translating that into _prev_world_x,y includ translatin the map square coordinats to world square coordinates?
+but, _main_map_grid_x,y is what is used to index into _entities_on_movement_map[], so it should already be in world square coordinates?
+No, entities_on_movement_map[] is entities_on_movement_map[(MAP_WIDTH*MAP_HEIGHT)].
+...
+It sets _prev_world_x,y to _main_map_grid_x,y (-half) and calls j_IDK_CheckSet_MapDisplay_XY()
+So, IDK_CheckSet_MapDisplay_XY() knows that _prev_world_x,y needs translated from map squares to world squares?
+
+Alright. So, the map was at 18,11 and I right-clicked at 0,9...
+0,9 (-half) = -6,4
+This'd be translating from the clicked map square to where the top-left should end up
+e.g., treats the clicked map square as the new map center
+Seems like you'd need the current map TL to translate that into world squares / new map TL
+the existing center would be map TL + half ... 18,11 + 6,5 = 24,16
+map TL x,y + 0,9 would be the new center
+the new map TL would map TL x,y + 0,9 - 6,5  AKA map TL x,y + -6,4
+...
+Doh!!
+The code in Main_Screen() for 'Scroll Map' is not assigning to _prev_world_x,y, it is ADDing to _prev_world_x,y.
+
+
+_map_x: 18
+_map_y: 11
+
+_main_map_grid_x: 0
+_main_map_grid_y: 9
+
+_prev_world_x: 12  =  18 + -6  =  18 + (0 - (12/2))
+_prev_world_y: 15  =  11 +  4  =  11 + (9 - (10/2))
+
+
+
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1253]: ScrollTheMap
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1259]: _main_map_grid_x: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1260]: _main_map_grid_y: 9
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1261]: _main_map_grid_x - (MAP_WIDTH / 2): -6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1262]: _main_map_grid_y - (MAP_HEIGHT / 2): 4
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1263]: _prev_world_x: -6
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1264]: _prev_world_y: 4
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1265]: _map_x: 18
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1269]: _prev_world_x: 54
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1270]: _prev_world_y: 4
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1271]: _map_x: 18
+
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1636]: BEGIN: Main_Screen_Draw()
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1643]: _map_x: 18
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1644]: _map_y: 11
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1645]: _map_plane: 0
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1646]: _prev_world_x: 54
+DEBUG: [C:\devel\STU-MoM_Rasm\src\MainScr.C, 1647]: _prev_world_y: 4
+
+
+
+
+
+
+
+
+
 
 
 Program-Flow

@@ -1,4 +1,7 @@
 
+#include "MoX_TYPE.H"
+#include "MoX_DEF.H"
+
 #include "MoM.H"
 
 #include "MoM_main.H"
@@ -107,8 +110,21 @@ void GameUpdateAndRender(struct game_offscreen_buffer * Buffer)
 
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
 {
-    mouse_x = platform_mouse_x / 2;
-    mouse_y = platform_mouse_y / 2;
+    if(lock_mouse_button_status_flag != ST_TRUE)
+    {
+        mouse_x = platform_mouse_x / 2;
+        mouse_y = platform_mouse_y / 2;
+    }
+}
+
+void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status)
+{
+    if(lock_mouse_button_status_flag != ST_TRUE)
+    {
+        mouse_x = platform_mouse_x / 2;
+        mouse_y = platform_mouse_y / 2;
+        platform_mouse_button_status = mouse_button_status;
+    }
 }
 
 

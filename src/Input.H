@@ -321,10 +321,14 @@ extern "C" {
 int16_t Interpret_Mouse_Input(void);
 
 
-// WZD s34p25
+// WZD s36p08
+void Set_Global_ESC(void);
+
+
+// WZD s36p25
 int16_t Scan_Field(void);
 
-// WZD s34p26
+// WZD s36p26
 int16_t Scan_Input(void);
 
 

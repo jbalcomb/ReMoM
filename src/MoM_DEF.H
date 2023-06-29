@@ -46,21 +46,24 @@
 #define SQUARE_HEIGHT   18  // in Pixels
 
 
-#define WORLD_WIDTH 60
-#define WORLD_HEIGHT 40
+#define WORLD_WIDTH         60  // in Squares
+#define WORLD_HEIGHT        40  // in Squares
 
-#define MAP_WIDTH 12
-#define MAP_HEIGHT 10
-#define MAP_WIDTH_HALF 6
-#define MAP_HEIGHT_HALF 5
+#define MAP_WIDTH           12  // in Squares
+#define MAP_HEIGHT          10  // in Squares
+#define MAP_WIDTH_HALF       6  // in Squares
+#define MAP_HEIGHT_HALF      5  // in Squares
 
-#define TILE_WIDTH 20
-#define TILE_HEIGHT 18
+#define MAP_START_X          0  // in Pixels
+#define MAP_START_Y         20  // in Pixels
 
-#define _MAP_MAX_X 60
-#define _MAP_MAX_Y 40
+#define TILE_WIDTH      20
+#define TILE_HEIGHT     18
 
-#define TERRAIN_COUNT 762
+#define _MAP_MAX_X      60
+#define _MAP_MAX_Y      40
+
+#define TERRAIN_COUNT   762
 
 
 /*

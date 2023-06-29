@@ -1,6 +1,11 @@
 
 
 
+This is just the code for the mouse, not the handling of mouse input.
+SEE ALSO: MoM-Input.md
+
+
+
 
 
 Hrrrmm... coulda sworn I'd a done bunch of work getting the main menu button highlight code working with the mouse...

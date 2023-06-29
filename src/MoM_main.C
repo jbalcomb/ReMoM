@@ -7,6 +7,7 @@
 #include "MoM_main.H"
 
 #include "MoX_CFG.H"
+#include "MoX_DBG.H"
 #include "MoX_Data.H"
 #include "UNITTYPE.H"
 #include "MoX_SET.H"
@@ -230,15 +231,15 @@ void MoM_main(void)
     // |-> Init_Drivers(GAME_FONT_FILE) |-> Load_Font_File(font_file)
     Load_Font_File(font_file);
     Init_Mouse_Keyboard(1);
-    // TODO  Release_Version()
-    // TODO  Set_Global_ESC()
+    Release_Version();
+    Set_Global_ESC();
     MoM_Tables_Init(4600);  // 4600 * 16 = 73600 bytes
     // NOTE(JimBalcomb,20230111): this load game is only here because 'Continue' is the default behavior of WIZARDS.EXE
     // Load_SAVE_GAM(8)
     // j_LBX_Tables_LoadMain
     Load_Init_MainGame();  // ovr052
 
-    // g_EmmHndl_OVERXYZ ... __OvrInitEms() ... EMS Unallocatred Raw Page Count
+    // g_EmmHndl_OVERXYZ ... __OvrInitEms() ... EMS Unallocated Raw Page Count
 
     // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
     Load_Palette(0, -1, 0);
@@ -255,7 +256,7 @@ void MoM_main(void)
     // GAME_RazeCity = 0
     // player_idx = 0
     PageFlipEffect = 0;
-    // _unit_stack_count = 0
+    _unit_stack_count = 0;
     // GAME_TimeStopTracker = 0
 
     // GAME_SoM_Cast_By = ST_UNDEFINED
@@ -274,7 +275,8 @@ void MoM_main(void)
     Load_CONFIG_MOM();
     Load_MAGIC_SET();
     Load_SAVE_GAM(-1);
-    Save_SAVE_GAM(0);
+    // TODO(JimBalcomb,20230629): add test code for load and save SAVE_GAM
+    // Save_SAVE_GAM(0);
 
 
 
@@ -292,7 +294,6 @@ void MoM_main(void)
     // TODO  Apply_Palette()
 
     g_Current_Screen = scr_Main_Menu_Screen;
-    // g_Current_Screen = scr_Main_Screen;
 
     g_State_Run = 1;  // ST_TRUE
 
@@ -497,7 +498,7 @@ SA_GET_USED(SAMB_head): 2345
     
     TBL_Encounters = Allocate_Space(351);
     
-    _events_table = Allocate_Space(7);
+    _events_table = (uint8_t *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
     
     TBL_Hero_Names = Allocate_Space(37);
     
@@ -687,18 +688,20 @@ void GAME_Overland_Init(void)
 
     _unit = 0;  // 0: None / No Unit
 
-    // _active_world_x = _FORTRESSES[0].world_x;
-    // _active_world_y = _FORTRESSES[0].world_y;
-    OVL_Map_CenterX = _FORTRESSES[0].world_x;
-    OVL_Map_CenterY = _FORTRESSES[0].world_y;
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // // _active_world_x = _FORTRESSES[0].world_x;
+    // // _active_world_y = _FORTRESSES[0].world_y;
+    // OVL_Map_CenterX = _FORTRESSES[0].world_x;
+    // OVL_Map_CenterY = _FORTRESSES[0].world_y;
+    OVL_Map_CenterX = 24;
+    OVL_Map_CenterY = 16;
 
-    // OVL_STKUnitCards_Lft = 247;
-    // OVL_STKUnitCards_Top = 79;
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
 
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
     // _world_plane = _FORTRESSES[0].world_plane;
-    // _map_plane = _FORTRESSES[0].world_plane;  // TOIDO(JimBalcomb,20230614): Why is this getting set to 100?
+    // _map_plane = _FORTRESSES[0].world_plane;  // TODO(JimBalcomb,20230614): Why is this getting set to 100?
     _map_plane = 0;
 
 
@@ -715,7 +718,9 @@ void GAME_Overland_Init(void)
     Allocate_Reduced_Map__1();
 
     // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _world_plane);
-    Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
+    Center_Map(&_map_x, &_map_y, 24, 16, 0);
 
     // TODO  Set_Unit_Draw_Priority();
     // TODO  Reset_Stack_Draw_Priority();

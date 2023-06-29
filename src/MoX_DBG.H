@@ -8,14 +8,15 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 /*
+    WZD  seg024
     MGC  seg024
 */
 
 
-// MGC s24p05
-void Set_Release_Version(void);
+// WZD s24p05
+void Release_Version(void);
 
-// MGC s24p06
+// WZD s24p06
 int Check_Release_Version(void);
 
 

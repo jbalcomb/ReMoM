@@ -163,9 +163,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     // TODO(casey): How do we reliably query on this on Windows?
     int MonitorRefreshHz = 60;
-    int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
+    // int GameUpdateHz = MonitorRefreshHz / 2;  // 30 FPS
     // int GameUpdateHz = MonitorRefreshHz / 4;  // 15 FPS
-    // int GameUpdateHz = MonitorRefreshHz / 6;  // 10 FPS
+    int GameUpdateHz = MonitorRefreshHz / 6;  // 10 FPS
     // int GameUpdateHz = MonitorRefreshHz / 12;  // 5 FPS
     f32 TargetSecondsPerFrame = 1.0f / (f32)GameUpdateHz;
 
