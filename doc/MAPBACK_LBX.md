@@ -109,6 +109,7 @@ MAGIC����city worked area�������
 SITES����hunter's lodge���������
 SITES����nightshade�������������
 SITES����wild game��������������
+
 WARPED���warped mask������������
 
 

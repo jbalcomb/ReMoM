@@ -10,6 +10,29 @@
 
 
 
+// WZD dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
+
+
+// ¿ MoO2: ~ remap_picture_colors ?
+// WZD dseg:00AA 69 6A 6B 6C 6D                                  COL_Banners_P0 db 105, 106, 107, 108, 109
+// WZD dseg:00AF 49 4A 4B 4C 4D                                  COL_Banners_P1 db 73, 74, 75, 76, 77
+// WZD dseg:00B4 79 7A 7B 7C 7D                                  COL_Banners_P2 db 121, 122, 123, 124, 125
+// WZD dseg:00B9 C9 A5 CB A6 2D                                  COL_Banners_P3 db 201, 165, 203, 166, 45
+// WZD dseg:00BE A0 A1 A2 B2 B4                                  COL_Banners_P4 db 160, 161, 162, 178, 180
+// WZD dseg:00C3 30 31 32 33 34                                  COL_Banners_P5 db 48, 49, 50, 51, 52
+uint8_t COL_Banners[] = {
+    0x69, 0x6A, 0x6B, 0x6C, 0x6D,
+    0x49, 0x4A, 0x4B, 0x4C, 0x4D,
+    0x79, 0x7A, 0x7B, 0x7C, 0x7D,
+    0xC9, 0xA5, 0xCB, 0xA6, 0x2D,
+    0xA0, 0xA1, 0xA2, 0xB2, 0xB4,
+    0x30, 0x31, 0x32, 0x33, 0x34
+};
+
+
+
+
+
 // WZD dseg:599C
 // TODO  char hlpentry_lbx_file[] = "hlpentry";
 

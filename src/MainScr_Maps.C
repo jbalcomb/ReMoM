@@ -1335,7 +1335,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
     int16_t screen_start_y;
     SAMB_ptr city_pict_seg;
     int8_t city_size;
-    int16_t itr_color_replacement;
+    int16_t itr_color_remap;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Cities(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
@@ -1399,9 +1399,9 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     }
                                     FLIC_Set_CurrentFrame(city_pict_seg, city_size);
                                     Draw_Picture_To_Bitmap(city_pict_seg, gsa_OVL_Tile_WorkArea);
-                                    for(itr_color_replacement = 0; itr_color_replacement < 5; itr_color_replacement++)
+                                    for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_replacement, (COL_City_Banner[((_players[city_owner].Banner * 5) + itr_color_replacement)] - 1));
+                                        FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].Banner * 5) + itr_color_remap)] - 1));
                                     }
                                 }
                                 else
@@ -1421,9 +1421,9 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     }
                                     FLIC_Set_CurrentFrame(city_pict_seg, city_size);
                                     Draw_Picture_To_Bitmap(city_pict_seg, gsa_OVL_Tile_WorkArea);
-                                    for(itr_color_replacement = 0; itr_color_replacement < 5; itr_color_replacement++)
+                                    for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_replacement, 51 + itr_color_replacement);
+                                        FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_remap, 51 + itr_color_remap);
                                     }
                                 }
 
@@ -1445,68 +1445,71 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 // WZD o150p09
 void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t itr_screen_x;
-    int16_t itr_screen_y;
-    int16_t itr_world_x;
-    int16_t itr_world_y;
-    int16_t curr_world_x;
-    uint8_t unexplored_area;
-    int16_t itr_cities;
-    int16_t has_city;
+    int16_t itr_towers;
+    int16_t tower_x;
+    int16_t tower_y;
+    uint8_t unexplored_flag;
+    int16_t tower_owner_idx;
+    int16_t start_x;
+    int16_t start_y;
+    int16_t itr_color_remap;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Towers(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    itr_screen_y = screen_y;
-    itr_world_y = world_grid_y;
-    while(world_grid_y + map_grid_height > itr_world_y)
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
     {
-        itr_screen_x = screen_x;
-        itr_world_x = world_grid_x;
-        while(world_grid_x + map_grid_width > itr_world_x)
+        tower_x = _TOWERS[itr_towers].world_x;
+        tower_y = _TOWERS[itr_towers].world_y;
+
+        unexplored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (tower_y * WORLD_WIDTH) + tower_x];
+        if(unexplored_flag != ST_FALSE)
         {
-            if(itr_world_x < WORLD_WIDTH)
+            tower_x = tower_x - world_grid_x;
+            if(tower_x < 0)
             {
-                curr_world_x = itr_world_x;
+                tower_x = tower_x + WORLD_WIDTH;
             }
-            else
+            tower_y = tower_y - world_grid_y;
+            if( !(tower_y < 0) )
             {
-                curr_world_x = itr_world_x - WORLD_WIDTH;
-            }
-
-            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
-            if(unexplored_area != ST_FALSE)
-            {
-                /*
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
-                if(Terrain_Special != 0)
-                */
+                if(tower_y < map_grid_height)
                 {
-
-                    has_city = ST_FALSE;
-                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    if( !(tower_x < 0) )
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        if(tower_x < map_grid_width)
                         {
-                            has_city = ST_TRUE;
+                            tower_owner_idx = _TOWERS[itr_towers].owner_idx;
+                            start_x = screen_x + (tower_x * SQUARE_WIDTH);
+                            start_y = screen_y + (tower_y * SQUARE_HEIGHT);
+                            if(tower_owner_idx != ST_UNDEFINED)
+                            {
+                                // SITES    unowned tower
+                                // SITES    owned tower
+                                Draw_Picture_To_Bitmap(tower_owned_seg, gsa_OVL_Tile_WorkArea);
+                                for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+                                {
+                                    // ; BUG: parameter mismatch, passing a pointer instead of an actual color index!
+                                    // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
+                                    // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Big-List'
+                                    // ~== FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
+                                    //     FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
+                                    FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].Banner * 5)));
+                                }
+                            }
+                            else
+                            {
+                                Draw_Picture_To_Bitmap(tower_unowned_seg, gsa_OVL_Tile_WorkArea);
+                            }
+
+                            Draw_Picture(start_x, start_y, gsa_OVL_Tile_WorkArea);
+
                         }
-                    }
-                    if(has_city == ST_FALSE)
-                    {
-                        /*
-                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
-                        */
                     }
                 }
             }
-            itr_screen_x += SQUARE_WIDTH;
-            itr_world_x += 1;
         }
-        itr_screen_y += SQUARE_HEIGHT;
-        itr_world_y += 1;
     }
 
 #ifdef STU_DEBUG

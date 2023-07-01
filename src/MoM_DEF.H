@@ -9,6 +9,12 @@
 
 */
 
+#define NUM_TOWERS        6
+#define NUM_FORTRESSES    6
+
+
+
+
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 

@@ -441,6 +441,35 @@ struct s_STACK
 
 
 
+// WZD dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
+
+// ¿ MoO2: ~ remap_picture_colors ?
+// WZD dseg:00AA 69 6A 6B 6C 6D                                  COL_Banners_P0 db 105, 106, 107, 108, 109
+// WZD dseg:00AF 49 4A 4B 4C 4D                                  COL_Banners_P1 db 73, 74, 75, 76, 77
+// WZD dseg:00B4 79 7A 7B 7C 7D                                  COL_Banners_P2 db 121, 122, 123, 124, 125
+// WZD dseg:00B9 C9 A5 CB A6 2D                                  COL_Banners_P3 db 201, 165, 203, 166, 45
+// WZD dseg:00BE A0 A1 A2 B2 B4                                  COL_Banners_P4 db 160, 161, 162, 178, 180
+// WZD dseg:00C3 30 31 32 33 34                                  COL_Banners_P5 db 48, 49, 50, 51, 52
+extern uint8_t COL_Banners[];
+
+
+
+
+// WZD dseg:00C8 62 D8 7B 2B B3 32                               COL_Cartographer db 98, 216, 123, 43, 179, 50
+// WZD dseg:00CE C9 00 A5 00 CB 00                               UU_COL_Setof3_1 db 201,  0,165,  0,203,  0
+// WZD dseg:00D4 79 00 7A 00 7B 00                               UU_COL_Setof3_2 db 121,  0,122,  0,123,  0
+// WZD dseg:00DA 0D 00 0E 00 0F 00                               UU_COL_Setof3_3 db  13,  0, 14,  0, 15,  0
+// WZD dseg:00E0 49 00 4A 00 4B 00                               UU_COL_Setof3_4 db  73,  0, 74,  0, 75,  0
+// WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
+// WZD dseg:00EC 00                                              db    0
+// WZD dseg:00ED 00                                              db    0
+
+
+
+
+
+
+
 // WZD dseg:599C
 // TODO  extern char hlpentry_lbx_file[];
 

@@ -111,10 +111,12 @@ extern SAMB_ptr road_lone_seg;              // ; array of 8 reserved EMM header 
 // WZD dseg:CBD0 00 00                                           IMG_OVL_EZ_FTmpl@ dw 0                  ; DATA XREF: Terrain_Init+1C0w
 // WZD dseg:CBD0                                                                                         ; reserved EMM header pointer for a single image
 // WZD dseg:CBD2 00 00                                           word_43672 dw 0
-// WZD dseg:CBD4 00 00                                           IMG_OVL_IntactTower@ dw 0               ; DATA XREF: Terrain_Init+130w ...
-// WZD dseg:CBD4                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBD6 00 00                                           IMG_OVL_PoppedTower@ dw 0               ; DATA XREF: Terrain_Init+142w ...
-// WZD dseg:CBD6                                                                                         ; reserved EMM header pointer for a single image
+
+// WZD dseg:CBD4
+extern SAMB_ptr tower_unowned_seg;                 // ; reserved EMM header pointer for a single image
+
+// WZD dseg:CBD6
+extern SAMB_ptr tower_owned_seg;                   // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CBD8
 extern SAMB_ptr IMG_OVL_Walled_City;               // ; reserved EMM header pointer for a 5 frame image

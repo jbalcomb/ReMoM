@@ -941,13 +941,11 @@ void Terrain_Init(void)
         _unit_colored_backgrounds_seg[itr] = LBX_Load(mapback_lbx_file, 14 + itr);
     }
 
-    IMG_OVL_Walled_City = LBX_Load(mapback_lbx_file, 20);  // ; reserved EMM header pointer for a 5 frame image
-    IMG_OVL_NoWall_City = LBX_Load(mapback_lbx_file, 21);  // ; reserved EMM header pointer for a 5 frame image
+    IMG_OVL_Walled_City = LBX_Load(mapback_lbx_file, 20);   // ; reserved EMM header pointer for a 5 frame image
+    IMG_OVL_NoWall_City = LBX_Load(mapback_lbx_file, 21);   // ; reserved EMM header pointer for a 5 frame image
 
-//     IMG_OVL_IntactTower = LBX_Load(mapback_lbx_file, 69);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_PoppedTower = LBX_Load(mapback_lbx_file, 70);
-//     // ; reserved EMM header pointer for a single image
+    tower_unowned_seg = LBX_Load(mapback_lbx_file, 69);     // ; reserved EMM header pointer for a single image
+    tower_owned_seg = LBX_Load(mapback_lbx_file, 70);       // ; reserved EMM header pointer for a single image
 
 //     IMG_OVL_EZ_Cave = LBX_Load(mapback_lbx_file, 71);
 //     // ; reserved EMM header pointer for a single image
