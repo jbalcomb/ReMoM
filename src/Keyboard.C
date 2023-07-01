@@ -56,9 +56,9 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     int16_t _SI_field_idx;
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Keyboard_Input(*field_num = %d)\n", __FILE__, __LINE__, *field_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Keyboard_Input(*field_num = %d)\n", __FILE__, __LINE__, *field_num);
+// #endif
 
     return_key = Read_Key();
     // assert(return_key != 0);
@@ -66,19 +66,12 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     if(KD_prev_field_idx >= fields_count) { KD_prev_field_idx = 0; } // maybe not FALSE/NULL, because it gets incremement below
     _SI_field_idx = KD_prev_field_idx;
     Original_Key = return_key;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-#endif
     if ((return_key > 96) && (return_key < 123) ) { return_key -= 32; }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-#endif
 
 
 
     if(KD_ActiveStringTrig != ST_NULL)
     {
-        DLOG("KD_ActiveStringTrig");
         _SI_field_idx = KD_ActiveStringTrig;
         return_key -= 95;  // treat Alt-A as A
         if(return_key == p_fields[_SI_field_idx].hotkey)
@@ -95,16 +88,12 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     {
         _SI_field_idx = fields_count;
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
-#endif
 
 
 
     /* From previous, Multi Character HotKey Fields */
     if(_SI_field_idx == fields_count)
     {
-        DLOG("From previous, Multi Character HotKey Fields");
         KD_ActiveStringTrig = ST_NULL;  // clear it, because we just failed to match it
 
         _SI_field_idx = KD_prev_field_idx + 1;
@@ -121,14 +110,10 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
             }
         }
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
-#endif
 
     /* From first, Multi Character HotKey Fields */
     if(_SI_field_idx == fields_count)
     {
-        DLOG("From first, Multi Character HotKey Fields");
         _SI_field_idx = 1;
         while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
         {
@@ -143,19 +128,15 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
             }
         }
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
-#endif
 
 
     KD_prev_field_idx = _SI_field_idx;
     Reset_String_Triggers = ST_TRUE;
 
 
-
     if(_SI_field_idx < fields_count)
     {
-        DLOG("if(_SI_field_idx < fields_count)");
+//         DLOG("if(_SI_field_idx < fields_count)");
         *field_num = _SI_field_idx;
 
 //         /*
@@ -205,7 +186,8 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     }
     else  /* if(_SI_field_idx < fields_count) */
     {
-        DLOG("if(_SI_field_idx >= fields_count)");
+//         DLOG("if(_SI_field_idx >= fields_count)");
+
 //         Control_Index = *field_num;
 //         Input_Key_Extended = return_key;
 //         switch(Input_Key_Extended)
@@ -252,55 +234,55 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     // HACK: force the match of character and hotkey
     if(_SI_field_idx == fields_count)
     {
-        DLOG("HACK: force the match of character and hotkey");
+//         DLOG("HACK: force the match of character and hotkey");
         _SI_field_idx = 1;
         while(_SI_field_idx != fields_count)
         {
             if(return_key == p_fields[_SI_field_idx].hotkey)
             {
                 *field_num = _SI_field_idx;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[_SI_field_idx].hotkey: %d\n", __FILE__, __LINE__, p_fields[_SI_field_idx].hotkey);
-    dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
-    dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[_SI_field_idx].hotkey: %d\n", __FILE__, __LINE__, p_fields[_SI_field_idx].hotkey);
+//     dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
+//     dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
+// #endif
             }
             _SI_field_idx++;
         }
     }
     else
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ~END: Interpret_Keyboard_Input\n", __FILE__, __LINE__);
-    dbg_prn("DEBUG: [%s, %d]: (_SI_field_idx != fields_count)\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: ~END: Interpret_Keyboard_Input\n", __FILE__, __LINE__);
+//     dbg_prn("DEBUG: [%s, %d]: (_SI_field_idx != fields_count)\n", __FILE__, __LINE__);
+// #endif
     }
 
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[*field_num].hotkey: %d\n", __FILE__, __LINE__, p_fields[*field_num].hotkey);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[*field_num].hotkey: %d\n", __FILE__, __LINE__, p_fields[*field_num].hotkey);
+// #endif
     if(return_key != p_fields[*field_num].hotkey)
     {
-        DLOG("if(return_key != p_fields[*field_num].hotkey)");
+//         DLOG("if(return_key != p_fields[*field_num].hotkey)");
         return_key = Original_Key;
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Original_Key: %d\n", __FILE__, __LINE__, Original_Key);
-    dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: Original_Key: %d\n", __FILE__, __LINE__, Original_Key);
+//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
+// #endif
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
+// #endif
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Interpret_Keyboard_Input(*field_num = %d) { return_key = %d }\n", __FILE__, __LINE__, *field_num, return_key);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Interpret_Keyboard_Input(*field_num = %d) { return_key = %d }\n", __FILE__, __LINE__, *field_num, return_key);
+// #endif
 
     return return_key;
 }

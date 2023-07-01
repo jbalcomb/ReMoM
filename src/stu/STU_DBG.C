@@ -11,6 +11,17 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 #include "STU_UTIL.H"   /* get_datetime() */
 
 
+
+/*
+    ¿ Game-State Debug Variables ?
+*/
+int DBG_Draw_Map_Cities = 0;
+/*
+    ¿ Game-State Debug Variables ?
+*/
+
+
+
 char Debug_Log_FileName[] = "DEBUG.LOG";
 FILE * Debug_Log_File = NULL;
 char Debug_Log_ISO8601_DateTime[21] = "1583-01-01T00:00:00Z";  // earliest possible, compliant ISO-8601 DateTime/timestamp

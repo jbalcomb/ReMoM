@@ -3,6 +3,18 @@
 
 #include <stdio.h>
 
+
+
+/*
+    ¿ Game-State Debug Variables ?
+*/
+extern int DBG_Draw_Map_Cities;
+/*
+    ¿ Game-State Debug Variables ?
+*/
+
+
+
 extern FILE * Debug_Log_File;
 
 #ifdef STU_DEBUG

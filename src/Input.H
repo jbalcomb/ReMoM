@@ -183,11 +183,17 @@ enum ScanCodeCharCode
     SCCC_ESC = 0x011B,      // "Esc" key
 
     SCCC_A = 0x1E61,        // "A" key
-    SCCC_Shift_A = 0x1E41,  // "Shift" key + "A" key
-
+    SCCC_B = 0x3062,        // "B" key
     SCCC_C = 0x2E63,        // "C" key
+    SCCC_D = 0x2064,        // "D" key
 
     SCCC_Q = 0x1071,        // "Q" key
+
+    SCCC_T = 0x1474,        // "T" key
+
+
+    SCCC_Shift_A = 0x1E41,  // "Shift" key + "A" key
+
 
     SCCC_OVERRUN
 };

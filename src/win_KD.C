@@ -126,10 +126,14 @@ uint8_t Read_Key(void)
         case SCCC_ESC: { return_key = ST_KEY_ESCAPE; } break;
 
         case SCCC_A: { return_key = 'a'; } break;
-        
+        case SCCC_B: { return_key = 'b'; } break;
         case SCCC_C: { return_key = 'c'; } break;
+        case SCCC_D: { return_key = 'd'; } break;
 
         case SCCC_Q: { return_key = 'q'; } break;
+
+        case SCCC_T: { return_key = 't'; } break;
+
 
         default: { return_key = ST_KEY_OVERRUN; }
     }

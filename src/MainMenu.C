@@ -420,6 +420,7 @@ int16_t Main_Menu_Screen(void)
     _quit_hotkey = Add_Hot_Key('Q');
     _esc_hotkey = Add_Hot_Key(27); // ? '\1B' = 322?
 
+
     Set_Mouse_List(1, mouse_list_mainmenu);
 
     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
@@ -451,15 +452,15 @@ int16_t Main_Menu_Screen(void)
 
         input_field_idx = Get_Input();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
+// #endif
 
         if(input_field_idx != ST_FALSE) { leave_screen_flag = ST_TRUE; }
 
         if((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))
         {
-            DLOG("((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))");
+//             DLOG("((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))");
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 0;
             // HACK:
@@ -467,7 +468,7 @@ int16_t Main_Menu_Screen(void)
         }
         if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))
         {
-            DLOG("((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))");
+//             DLOG("((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))");
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 1;
             // HACK:
@@ -475,7 +476,7 @@ int16_t Main_Menu_Screen(void)
         }
         if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
         {
-            DLOG("((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))");
+//             DLOG("((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))");
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 2;
             // HACK:
@@ -483,7 +484,7 @@ int16_t Main_Menu_Screen(void)
         }
         if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
         {
-            DLOG("((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))");
+//             DLOG("((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))");
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 3;
             // HACK:
@@ -491,7 +492,7 @@ int16_t Main_Menu_Screen(void)
         }
         if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
         {
-            DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
+//             DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 4;
             // HACK:
@@ -500,16 +501,16 @@ int16_t Main_Menu_Screen(void)
 
         if(current_menu_screen == ST_UNDEFINED) { leave_screen_flag = ST_FALSE; }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-    dbg_prn("DEBUG: [%s, %d]: leave_screen_flag: %d\n", __FILE__, __LINE__, leave_screen_flag);
-    dbg_prn("DEBUG: [%s, %d]: current_menu_screen: %d\n", __FILE__, __LINE__, current_menu_screen);
-    dbg_prn("DEBUG: [%s, %d]: g_Current_Screen: %d\n", __FILE__, __LINE__, g_Current_Screen);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
+//     dbg_prn("DEBUG: [%s, %d]: leave_screen_flag: %d\n", __FILE__, __LINE__, leave_screen_flag);
+//     dbg_prn("DEBUG: [%s, %d]: current_menu_screen: %d\n", __FILE__, __LINE__, current_menu_screen);
+//     dbg_prn("DEBUG: [%s, %d]: g_Current_Screen: %d\n", __FILE__, __LINE__, g_Current_Screen);
+// #endif
 
         if(leave_screen_flag == ST_FALSE)
         {
-            DLOG("(leave_screen_flag == ST_FALSE)");
+//             DLOG("(leave_screen_flag == ST_FALSE)");
             Main_Menu_Screen_Draw();
             Toggle_Pages();  // |-> Page_Flip()
             // When? Render_VBB(&Buffer);
@@ -529,7 +530,7 @@ int16_t Main_Menu_Screen(void)
             // do a full draw - initial or on-change
             if((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))
             {
-                DLOG("((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))");
+//                 DLOG("((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))");
                 // TODO  Fade_In()
                 // TODO  Copy_Off_To_On_Page();
                 first_draw_done_flag = ST_TRUE;

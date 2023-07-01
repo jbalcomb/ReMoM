@@ -908,20 +908,23 @@ void Main_Screen(void)
 
     int16_t itr_units;
 
+    int16_t hotkey_idx_D ;  // debug_hotkey
+    int16_t hotkey_idx_T ;  // test_hotkey
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
 #endif
 
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: MainScreen - InitialMapValues\n", __FILE__, __LINE__);
-        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-        dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
-#endif
+// #ifdef STU_DEBUG
+//         dbg_prn("DEBUG: [%s, %d]: MainScreen - InitialMapValues\n", __FILE__, __LINE__);
+//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+//         dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
+// #endif
 
 
 //     // HACK:
@@ -1026,6 +1029,10 @@ void Main_Screen(void)
         hotkey_idx_F9 = Add_Hot_Key(ST_KEY_F9);
         hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
         hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
+
+        hotkey_idx_D = Add_Hot_Key('D');  // debug_hotkey
+        hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
+
         /*
             END: Add Fields
         */
@@ -1112,6 +1119,22 @@ void Main_Screen(void)
         /* Shift-3 */
         /* Alt-T   */
         /* Alt-N   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_ShowTileInfo=1-DBG_ShowTileInfo;}} */
+
+        // ST_DEBUG Hot-Keys
+        if(input_field_idx == hotkey_idx_D)  /* Debug Hot-Key */
+        {
+            DLOG("STU_DEBUG: debug_hotkey");
+
+        }
+        if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
+        {
+            DLOG("STU_DEBUG: test_hotkey");
+            // city in last column / on right edge Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
+            Center_Map(&_map_x, &_map_y, 8+6, 3+5, 0);
+            // ¿ Req'd ? MainScr_Prepare_Reduced_Map();
+            // ¿ Req'd ? Set_Mouse_List(1, mouse_list_default);
+            // ¿ Req'd ? Reset_Map_Draw();
+        }
 
         // Quick-Save
         if(input_field_idx == hotkey_idx_F10)
@@ -1402,21 +1425,21 @@ void Main_Screen(void)
                 // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
                 _prev_world_x = _prev_world_x + (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
                 _prev_world_y = _prev_world_y + (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x - (MAP_WIDTH / 2): %d\n", __FILE__, __LINE__, _main_map_grid_x - (MAP_WIDTH / 2));
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y - (MAP_HEIGHT / 2): %d\n", __FILE__, __LINE__, _main_map_grid_y - (MAP_HEIGHT / 2));
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-#endif
+// #ifdef STU_DEBUG
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x - (MAP_WIDTH / 2): %d\n", __FILE__, __LINE__, _main_map_grid_x - (MAP_WIDTH / 2));
+//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y - (MAP_HEIGHT / 2): %d\n", __FILE__, __LINE__, _main_map_grid_y - (MAP_HEIGHT / 2));
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+// #endif
                 IDK_CheckSet_MapDisplay_XY();
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-        dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-        dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-#endif
+// #ifdef STU_DEBUG
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
+//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+// #endif
             }
             else
             {
@@ -1551,41 +1574,19 @@ void Main_Screen_Add_Fields(void)
     
     if(all_units_moved == ST_TRUE)
     {
-        // _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, hotkey_NextTurn, ST_UNDEFINED);
         _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
     }
 
     if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
-        DLOG("Yay - Movement Map Grid Field");
-        // (xmin, ymin, box_width, box_height, horizontal_count, vertical_count, *xpos, *ypos, help)
         // TODO  add defines for the map dims/coords
         // TODO  confirm what these values/calculations should end up being
         _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: _main_map_grid_field: %d\n", __FILE__, __LINE__, _main_map_grid_field);
-        DBG_movement_map_grid_field_idx = _main_map_grid_field;
-        strcpy(field_names[_main_map_grid_field], "Movement Map"); // 12+1 char
-#endif
-    }
-    else
-    {
-        DLOG("Nay - Movement Map Grid Field");
     }
 
     if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
-        DLOG("Yay - Reduced Map Grid Field");
-        // screen x, screen y, cell w, cell h, grid w, grid h, grid x, grid y, help
         _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
-#ifdef STU_DEBUG
-        DBG_reduced_map_grid_field_idx = _minimap_grid_field;
-        strcpy(field_names[_minimap_grid_field], "Reduced Map"); // 11+1 char
-#endif
-    }
-    else
-    {
-        DLOG("Nay - Reduced Map Grid Field");
     }
 
     Add_Game_Button_Fields();
@@ -1661,9 +1662,11 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
         FLIC_Set_CurrentFrame(main_done_button, 0);
         FLIC_Draw(246, 176, main_done_button);
         // _help_entries.Entry_Index+46h = HLP_DONE;
+
         FLIC_Set_CurrentFrame(main_patrol_button, 0);
         FLIC_Draw(280, 176, main_patrol_button);
         // _help_entries.Entry_Index+50h = HLP_PATROL;
+
         FLIC_Set_CurrentFrame(main_wait_button, 0);
         FLIC_Draw(246, 186, main_wait_button);
         /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
@@ -1702,12 +1705,15 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
         FLIC_Set_CurrentFrame(main_lock_done_button, 0);
         FLIC_Draw(246, 176, main_lock_done_button);
         // _help_entries.Entry_Index+46h = ST_UNDEFINED;
+
         FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
         FLIC_Draw(280, 176, main_lock_patrol_button);
         // _help_entries.Entry_Index+50h = ST_UNDEFINED;
+
         FLIC_Set_CurrentFrame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
         // _help_entries.Entry_Index+64h = ST_UNDEFINED;
+
         FLIC_Set_CurrentFrame(main_wait_button, 0);
         FLIC_Draw(246, 186, main_wait_button);
         /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
@@ -1775,10 +1781,6 @@ void Add_Unit_Window_Fields(void)
 // WZD o57p08
 void Main_Screen_Draw(void)
 {
-    int16_t before_map_x;
-    int16_t before_map_y;
-    int16_t after_map_x;
-    int16_t after_map_y;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw()\n", __FILE__, __LINE__);
 #endif
@@ -1786,38 +1788,7 @@ void Main_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-    dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
-
-    before_map_x = _map_x;
-    before_map_y = _map_y;
-
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
-
-    after_map_x = _map_x;
-    after_map_y = _map_y;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: before_map_x: %d\n", __FILE__, __LINE__, before_map_x);
-    dbg_prn("DEBUG: [%s, %d]: before_map_y: %d\n", __FILE__, __LINE__, before_map_y);
-    dbg_prn("DEBUG: [%s, %d]: after_map_x: %d\n", __FILE__, __LINE__, after_map_x);
-    dbg_prn("DEBUG: [%s, %d]: after_map_y: %d\n", __FILE__, __LINE__, after_map_y);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-    dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-    dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-    dbg_prn("DEBUG: [%s, %d]: _human_player_idx: %d\n", __FILE__, __LINE__, _human_player_idx);
-#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw()\n", __FILE__, __LINE__);
@@ -2037,11 +2008,11 @@ void Main_Screen_Draw_Status_Window(void)
 
     Set_Outline_Color(0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] player_idx: %d\n", __FILE__, __LINE__, player_idx);
-    dbg_prn("DEBUG: [%s, %d] _players[player_idx].gold_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].gold_reserve);
-    dbg_prn("DEBUG: [%s, %d] _players[player_idx].mana_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].mana_reserve);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d] player_idx: %d\n", __FILE__, __LINE__, player_idx);
+//     dbg_prn("DEBUG: [%s, %d] _players[player_idx].gold_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].gold_reserve);
+//     dbg_prn("DEBUG: [%s, %d] _players[player_idx].mana_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].mana_reserve);
+// #endif
 
     if(_players[player_idx].gold_reserve > 9999 || _players[player_idx].mana_reserve > 9999)
     {

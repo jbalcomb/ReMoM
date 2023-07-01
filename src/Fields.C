@@ -616,10 +616,10 @@ void Draw_Fields()
             // p_fields[itr_fields_count].x2
             // p_fields[itr_fields_count].y2
 
-            // VGA_WndDrawLine()
-            // VGA_WndDrawLine()
-            // VGA_WndDrawLine()
-            // VGA_WndDrawLine()
+            // TODO  VGA_WndDrawLine()
+            // TODO  VGA_WndDrawLine()
+            // TODO  VGA_WndDrawLine()
+            // TODO  VGA_WndDrawLine()
         }
 
     }
@@ -798,45 +798,45 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
                 grid_x = field_x / p_fields[field_num].Param1;  // box_width
                 grid_y = field_y / p_fields[field_num].Param2;  // box_height
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].type: %d\n", __FILE__, __LINE__, p_fields[field_num].type);
-
-    dbg_prn("DEBUG: [%s, %d]: screen_x: %d\n", __FILE__, __LINE__, screen_x);
-    dbg_prn("DEBUG: [%s, %d]: screen_y: %d\n", __FILE__, __LINE__, screen_y);
-    
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].x1: %d\n", __FILE__, __LINE__, p_fields[field_num].x1);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].y1: %d\n", __FILE__, __LINE__, p_fields[field_num].y1);
-    
-    dbg_prn("DEBUG: [%s, %d]: field_x: %d\n", __FILE__, __LINE__, field_x);
-    dbg_prn("DEBUG: [%s, %d]: field_y: %d\n", __FILE__, __LINE__, field_y);
-
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param1: %d\n", __FILE__, __LINE__, p_fields[field_num].Param1);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param2: %d\n", __FILE__, __LINE__, p_fields[field_num].Param2);
-
-    dbg_prn("DEBUG: [%s, %d]: grid_x: %d\n", __FILE__, __LINE__, grid_x);
-    dbg_prn("DEBUG: [%s, %d]: grid_y: %d\n", __FILE__, __LINE__, grid_y);
-
-    // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: %d\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-    // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: %d\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-    // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-    // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-    dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-
-    // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param3);
-    // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param4);
-    dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param3);
-    dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param4);
-
-    // ~ get the value in Param3, as an unsigned 2-byte value, treat it as a pointer to a signed 2-byte value
-    // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
-    // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
-    dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
-    dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
-    // ¿ should show addresses of _main_map_grid_x and _main_map_grid_y, correct?
-
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].type: %d\n", __FILE__, __LINE__, p_fields[field_num].type);
+// 
+//     dbg_prn("DEBUG: [%s, %d]: screen_x: %d\n", __FILE__, __LINE__, screen_x);
+//     dbg_prn("DEBUG: [%s, %d]: screen_y: %d\n", __FILE__, __LINE__, screen_y);
+//     
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].x1: %d\n", __FILE__, __LINE__, p_fields[field_num].x1);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].y1: %d\n", __FILE__, __LINE__, p_fields[field_num].y1);
+//     
+//     dbg_prn("DEBUG: [%s, %d]: field_x: %d\n", __FILE__, __LINE__, field_x);
+//     dbg_prn("DEBUG: [%s, %d]: field_y: %d\n", __FILE__, __LINE__, field_y);
+// 
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param1: %d\n", __FILE__, __LINE__, p_fields[field_num].Param1);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param2: %d\n", __FILE__, __LINE__, p_fields[field_num].Param2);
+// 
+//     dbg_prn("DEBUG: [%s, %d]: grid_x: %d\n", __FILE__, __LINE__, grid_x);
+//     dbg_prn("DEBUG: [%s, %d]: grid_y: %d\n", __FILE__, __LINE__, grid_y);
+// 
+//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: %d\n", __FILE__, __LINE__, p_fields[field_num].Param3);
+//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: %d\n", __FILE__, __LINE__, p_fields[field_num].Param4);
+//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
+//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
+//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
+// 
+//     // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param3);
+//     // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param4);
+//     dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param3);
+//     dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param4);
+// 
+//     // ~ get the value in Param3, as an unsigned 2-byte value, treat it as a pointer to a signed 2-byte value
+//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
+//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
+//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
+//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
+//     // ¿ should show addresses of _main_map_grid_x and _main_map_grid_y, correct?
+// 
+// #endif
 
             // ¿ same code as in Add_Grid_Field() ?
             // NO!! Here, assigning value, there assigning memory address
@@ -847,12 +847,12 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             *((int64_t *)p_fields[field_num].Param3) = grid_x;
             *((int64_t *)p_fields[field_num].Param4) = grid_y;
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
-    // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
-    dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
-    dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
-#endif
+// #ifdef STU_DEBUG
+//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
+//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
+//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
+//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
+// #endif
 
             }
         } break;

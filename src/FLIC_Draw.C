@@ -2,27 +2,28 @@
 #include "MoX_TYPE.H"     /* byte_ptr, SAMB_ptr */
 #include "MoX_DEF.H"      /* DLOG() */
 
+#include "MoX_Data.H"
+
 #include "FLIC_Draw.H"
 
 #include "Fonts.H"    /* p_Palette() */
 #include "Video.H"
-
-// extern uint8_t g_Video_Back_Buffer[];
-extern uint8_t g_Palette[];
-extern uint8_t g_Palette_XBGR[];
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
 
 
+extern uint8_t g_Palette[];
+extern uint8_t g_Palette_XBGR[];
+
+
 
 /*
-    MGC  seg021
+    WZD  seg021
 */
 
-
-// MGC s21p07
+// WZD s21p07
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
     SAMB_ptr p_FLIC_File;
@@ -31,22 +32,16 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     byte_ptr flic_palette_data;
     int16_t itr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
-
     p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
 
     if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
     {
-//         DLOG("( (frame_index == 0) || (frame_palettes == 0) )");
         start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
         count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
     }
     else
     {
-//         DLOG("( (frame_index != 0) || (frame_palettes != 0) )");
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
         start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
         count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
@@ -66,19 +61,15 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
         *(p_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
-
 }
 
 
 
 /*
-    MAGIC.EXE  seg027
+    WZD  seg029
 */
 
-// MGC s27p01
+// WZD s29p01
 void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data)
 {
     unsigned char * bbuff_pos;
@@ -91,46 +82,17 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] g_Video_Back_Buffer: %p\n", __FILE__, __LINE__, g_Video_Back_Buffer);
-// #endif
-
-    // bbuff_pos = g_Video_Back_Buffer + ((y_start * 320) + x_start);
     bbuff_pos = current_video_page + ((y_start * 320) + x_start);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] bbuff_pos: %p\n", __FILE__, __LINE__, bbuff_pos);
-// #endif
-
 
     while (width--)
     {
         bbuff = bbuff_pos++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] frame_data: %p\n", __FILE__, __LINE__, frame_data);
-//     dbg_prn("DEBUG: [%s, %d] bbuff: %p\n", __FILE__, __LINE__, bbuff);
-// #endif
-        
         packet_op = *frame_data++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] packet_op: 0x%02X\n", __FILE__, __LINE__, packet_op);
-// #endif
-
         if(packet_op == 0xFF)  /* Type: skip */
         {
             continue;
         }
-
         packet_byte_count = *frame_data++;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] packet_byte_count: 0x%02X\n", __FILE__, __LINE__, packet_byte_count);
-// #endif
-
         if(packet_op == 0x80)  /* Type: decode */
         {
             do {
@@ -141,7 +103,6 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                 while(sequence_byte_count--)
                 {
                     data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
-                    
                     if(data_byte >= 224)  /* op: repeat */
                     {
                         itr_op_repeat = (data_byte - 224) + 1;
@@ -161,19 +122,11 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                 }
             } while(packet_byte_count >= 1);
         }
-
         if(packet_op == 0x00)  /* Type: copy */
         {
-            // DLOG("BEGIN: (packet_op == 0x00)");
             do {
                 sequence_byte_count = *frame_data++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] sequence_byte_count: 0x%02X\n", __FILE__, __LINE__, sequence_byte_count);
-// #endif
                 delta_byte_count = *frame_data++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] delta_byte_count: 0x%02X\n", __FILE__, __LINE__, delta_byte_count);
-// #endif
                 bbuff += (320 * delta_byte_count);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
@@ -182,22 +135,15 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                     bbuff += 320;
                 }
             } while(packet_byte_count >= 1);
-            // DLOG("END: (packet_op == 0x00)");
         }
-
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
 
 }
 
 
 
 /*
-    MAGIC.EXE   seg028
-    WIZARDS.EXE seg030
+    WZD seg030
 */
 
 // WZD s30p06
@@ -206,10 +152,7 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
     int16_t length;
     int16_t itr_length;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
-// #endif
-
+    // TODO(JimBalcomb,20230701): fix up the Macros
     // FLIC_SET_WIDTH(pict_seg, width);
     // FLIC_SET_HEIGHT(pict_seg, height);
     // FLIC_SET_CURRENT_FRAME(pict_seg,0xDE0A);  // LBX_DecodedIMG
@@ -230,12 +173,9 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
         *(pict_seg + 16 + itr_length) = color;
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Create_Blank_Picture(width = %d, height = %d, pict_seg = %p, color = %d)\n", __FILE__, __LINE__, width, height, pict_seg, color);
-// #endif
 }
 
-// MGC s28p11
+
 // WZD s30p11
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
 {
@@ -246,63 +186,29 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
     unsigned short flic_frame_offset_ofst;
     byte_ptr p_FLIC_Frame;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
-// #endif
-
     // ? MEM_Copy_Far(&flic_hdr, 0, 0, p_FLIC_File, 16) ?
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] current_frame_index: %d\n", __FILE__, __LINE__, current_frame_index);
-// #endif
     next_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File) + 1;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] next_frame_index: %d\n", __FILE__, __LINE__, next_frame_index);
-// #endif
     if(next_frame_index < FLIC_GET_FRAME_COUNT(p_FLIC_File))
     {
-//         DLOG("(next_frame_index < FLIC_GET_FRAME_COUNT(p_FLIC_File))");
         FLIC_SET_CURRENT_FRAME(p_FLIC_File, next_frame_index);
     }
     else
     {
-//         DLOG("(next_frame_index >= FLIC_GET_FRAME_COUNT(p_FLIC_File))");
         FLIC_SET_CURRENT_FRAME(p_FLIC_File, FLIC_GET_LOOP_FRAME(p_FLIC_File));
     }
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] FLIC_GET_CURRENT_FRAME(p_FLIC_File): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(p_FLIC_File));
-// #endif
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(p_FLIC_File) != 0))
     {
         FLIC_Load_Palette(p_FLIC_File, current_frame_index);
     }
 
-
-//     flic_frame_offset = FLIC_GET_FRAME_OFFSET(p_FLIC_File, current_frame_index);
-//     flic_frame_offset_sgmt = (flic_frame_offset >> 4);          // ~== flic_frame_offset / 16
-//     flic_frame_offset_ofst = ((flic_frame_offset & 0x0F) + 1);  // ~== flic_frame_offset % 16
-//     p_FLIC_Frame = p_FLIC_File + (flic_frame_offset_sgmt + flic_frame_offset_ofst);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset: 0x%08X\n", __FILE__, __LINE__, flic_frame_offset);
-//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset_sgmt: 0x%04X\n", __FILE__, __LINE__, flic_frame_offset_sgmt);
-//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset_ofst: 0x%04X\n", __FILE__, __LINE__, flic_frame_offset_ofst);
-//     dbg_prn("DEBUG: [%s, %d] p_FLIC_Frame: %p\n", __FILE__, __LINE__, p_FLIC_Frame);
-// #endif
     flic_frame_offset = FLIC_GET_FRAME_OFFSET(p_FLIC_File, current_frame_index);
     p_FLIC_Frame = p_FLIC_File + (flic_frame_offset) + 1;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset: 0x%08X\n", __FILE__, __LINE__, flic_frame_offset);
-//     dbg_prn("DEBUG: [%s, %d] p_FLIC_Frame: %p\n", __FILE__, __LINE__, p_FLIC_Frame);
-// #endif
 
     FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(p_FLIC_File), p_FLIC_Frame);
 
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Draw(x_start = %d, y_start = %d, p_FLIC_File = %p)\n", __FILE__, __LINE__, x_start, y_start, p_FLIC_File);
-// #endif
 }
 
 
@@ -320,10 +226,6 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
     uint32_t flic_frame_offset;
     byte_ptr p_FLIC_Frame;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-// #endif
-
     /*
         BEGIN: same as FLIC_Draw()
     */
@@ -331,26 +233,15 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
     // ? MEM_Copy_Far(&flic_hdr, 0, 0, p_FLIC_File, 16) ?
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] current_frame_index: %d\n", __FILE__, __LINE__, current_frame_index);
-// #endif
     next_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg) + 1;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] next_frame_index: %d\n", __FILE__, __LINE__, next_frame_index);
-// #endif
     if(next_frame_index < FLIC_GET_FRAME_COUNT(src_pict_seg))
     {
-//         DLOG("(next_frame_index < FLIC_GET_FRAME_COUNT(src_pict_seg))");
         FLIC_SET_CURRENT_FRAME(src_pict_seg, next_frame_index);
     }
     else
     {
-//         DLOG("(next_frame_index >= FLIC_GET_FRAME_COUNT(src_pict_seg))");
         FLIC_SET_CURRENT_FRAME(src_pict_seg, FLIC_GET_LOOP_FRAME(src_pict_seg));
     }
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] FLIC_GET_CURRENT_FRAME(src_pict_seg): %d\n", __FILE__, __LINE__, FLIC_GET_CURRENT_FRAME(src_pict_seg));
-// #endif
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(src_pict_seg) != 0))
     {
@@ -360,25 +251,7 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
         END: same as FLIC_Draw()
     */
 
-   // WZD s33p01
-   // AKA LBX_IMG_DecPrepare()
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: dst_pict_seg: %p\n", __FILE__, __LINE__, dst_pict_seg);
-// #endif
    Create_Multi_Frame_Blank_Bitmap(src_pict_seg, dst_pict_seg, current_frame_index);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: dst_pict_seg: %p\n", __FILE__, __LINE__, dst_pict_seg);
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 0));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 2));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 4): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 4));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 6): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 6));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 8): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 7));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 10): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 10));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 12): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 12));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 14): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 14));
-// #endif
-
 
    /*
         if header.ehn != 0
@@ -395,28 +268,17 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
         else, build up to current frame
     */
     full_store_flag = GET_1B_OFS(src_pict_seg, 16);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] full_store_flag: %d\n", __FILE__, __LINE__, full_store_flag);
-// #endif
 
     if(full_store_flag != ST_FALSE)
     {
-        // _DI = _SI  (_SI = src_pict_seg->CurrentFrame)
         frame_start = current_frame_index;
     }
     else
     {
-        // _DI = 0
         frame_start = 0;
     }
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] frame_start: %d\n", __FILE__, __LINE__, frame_start);
-// #endif
 
     frame_idx = current_frame_index;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] frame_idx: %d\n", __FILE__, __LINE__, frame_idx);
-// #endif
 
     for(itr_frames = frame_start; itr_frames <= frame_idx; itr_frames++)
     {
@@ -424,124 +286,81 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
             BEGIN: same as FLIC_Draw()
         */
         flic_frame_offset = FLIC_GET_FRAME_OFFSET(src_pict_seg, current_frame_index);
-        // should be 0000001A for all UNITS_.LBX
         p_FLIC_Frame = (src_pict_seg + (flic_frame_offset + 1));
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] flic_frame_offset: 0x%08X\n", __FILE__, __LINE__, flic_frame_offset);
-//     dbg_prn("DEBUG: [%s, %d] p_FLIC_Frame: %p\n", __FILE__, __LINE__, p_FLIC_Frame);
-// #endif
         /*
             END: same as FLIC_Draw()
         */
 
-        // src frame data
-        // dst bitmap seg, with header
         Add_Picture_To_Bitmap(p_FLIC_Frame, dst_pict_seg);
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-// #endif
 }
 
+
 // WZD s30p14
-// MGC s28p14
 void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
     int16_t loop_length;
     int16_t loop_frame;
     int16_t frame_count;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
-
     frame_index = (frame_index & 0x7fff);
     frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
     loop_frame = FLIC_GET_LOOP_FRAME(p_FLIC_Header);
     loop_length = frame_count - loop_frame;
-    if(!(frame_index < frame_count))
+
+    if( !(frame_index < frame_count) )
     {
         frame_index = loop_frame + ((frame_index - frame_count) % loop_length);
     }
-    FLIC_SET_CURRENT_FRAME(p_FLIC_Header, frame_index);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Set_CurrentFrame(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
+    FLIC_SET_CURRENT_FRAME(p_FLIC_Header, frame_index);
 
 }
 
-// MGC s28p15
+
+// WZD s30p15
 void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
-
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, 0);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Reset_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
 
 }
 
-// MGC s28p16
+
+// WZD s30p16
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
     int16_t current_frame_index;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_CurrentFrame(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
-
     current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_CurrentFrame(p_FLIC_Header = %p) { current_frame_index = %d }\n", __FILE__, __LINE__, p_FLIC_Header, current_frame_index);
-// #endif
 
     return current_frame_index;
 }
 
+
 // WZD s30p17
 // ?NIU? int16_t FLIC_Get_FrameCount()
+
 
 // WZD s30p18
 int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_width;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Width(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
-
     flic_width = FLIC_GET_WIDTH(p_FLIC_Header);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Width(p_FLIC_Header = %p) { flic_width = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_width);
-// #endif
 
     return flic_width;
 }
+
 
 // WZD s30p19
 int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_height;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: FLIC_Get_Height(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
-
     flic_height = FLIC_GET_HEIGHT(p_FLIC_Header);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: FLIC_Get_Height(p_FLIC_Header = %p) { flic_height = %d }\n", __FILE__, __LINE__, p_FLIC_Header, flic_height);
-// #endif
 
     return flic_height;
 }
@@ -553,30 +372,97 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     int16_t height;
     int16_t width;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-// #endif
-
     width = GET_2B_OFS(pict_seg, 0);
     height = GET_2B_OFS(pict_seg, 2);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] width: %d\n", __FILE__, __LINE__, width);
-//     dbg_prn("DEBUG: [%s, %d] height: %d\n", __FILE__, __LINE__, height);
-// #endif
+    Draw_Picture_ASM(x, y, SZ_FLIC_HDR, pict_seg, width, height, 0);
 
-    // void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
-    Draw_Picture_ASM(x, y, 16, pict_seg, width, height, 0);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-// #endif
 }
 
 
 // WZD s30p25
-void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg)
+// MoO2: ~ Clipped_Draw_Picture()
+void Draw_Picture_Windowed(int16_t x1, int16_t y1, byte_ptr pict_seg)
 {
+    int16_t height;
+    int16_t width;
+    int16_t x2;
+    int16_t y2;
+    int16_t skip_x;
+    int16_t start_x;
+    int16_t skip_y;
+    int16_t start_y;
+    int16_t actual_width;
+    int16_t actual_height;
+    int16_t buffer_add;
+    int16_t skip_add;
+
+    // Test - completely off on the right
+    if( !(x1 > screen_window_x2) )
+    {
+        // Test - completely off on the bottom
+        if( !(y1 > screen_window_y2) )
+        {
+            width = GET_2B_OFS(pict_seg, 0);
+            height = GET_2B_OFS(pict_seg, 2);
+            x2 = x1 + width - 1;
+            // Test - completely off on the left
+            if( !(x2 < screen_window_x1) )
+            {
+                y2 = y1 + height - 1;
+                // Test - completely off on the top
+                if( !(y2 < screen_window_y1) )
+                {
+                    // Test - partially off on the left
+                    if(x1 >= screen_window_x1)
+                    {
+                        skip_x = 0;
+                        start_x = x1;
+                    }
+                    else
+                    {
+                        skip_x = screen_window_x1 - x1;
+                        start_x = screen_window_x1;
+                    }
+                    // Test - partially off on the top
+                    if(y1 >= screen_window_y1)
+                    {
+                        skip_y = 0;
+                        start_y = y1;
+                    }
+                    else
+                    {
+                        skip_y = screen_window_y1 - y1;
+                        start_y = screen_window_y1;
+                    }
+                    // Test - partially off on the right
+                    if(x2 < screen_window_x2)
+                    {
+                        actual_width = x2 - start_x + 1;
+                    }
+                    else
+                    {
+                        actual_width = screen_window_x2 - start_x + 1;
+                    }
+                    // Test - partially off on the bottom
+                    if(y2 < screen_window_y2)
+                    {
+                        actual_height = y2 - start_y + 1;
+                    }
+                    else
+                    {
+                        actual_height = screen_window_y2 - start_y + 1;
+                    }
+
+                    buffer_add = SZ_FLIC_HDR + skip_y + (skip_x * height);
+                    skip_add = height - actual_height;
+
+                    Draw_Picture_ASM(start_x, start_y, buffer_add, pict_seg, actual_width, actual_height, skip_add);
+
+                }
+            }
+        }
+    }
 
 }
 
@@ -586,23 +472,10 @@ int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 {
     int16_t full_store_flag;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: Get_Full_Store_Flag(p_FLIC_Header = %p)\n", __FILE__, __LINE__, p_FLIC_Header);
-// #endif
-
     full_store_flag = FLIC_GET_FRAME_TYPE(p_FLIC_Header);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] full_store_flag: %d\n", __FILE__, __LINE__, full_store_flag);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: Get_Full_Store_Flag(p_FLIC_Header = %p) { full_store_flag = %d }\n", __FILE__, __LINE__, p_FLIC_Header, full_store_flag);
-// #endif
 
     return full_store_flag;
 }
-
 
 
 
@@ -633,18 +506,8 @@ void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_se
     int16_t word_length;
     uint16_t * word_ptr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
-// #endif
-
     src_width = GET_2B_OFS(src_pict_seg, 0);
     src_height = GET_2B_OFS(src_pict_seg, 2);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: src_width: %d\n", __FILE__, __LINE__, src_width);
-//     dbg_prn("DEBUG: [%s, %d]: src_height: %d\n", __FILE__, __LINE__, src_height);
-// #endif
-
 
     /*
         animation_header
@@ -669,38 +532,16 @@ void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_se
     // SET_2B_OFS(dst_pict_seg, 12, 0);
     // SET_2B_OFS(dst_pict_seg, 14, 0);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: dst_pict_seg: %p\n", __FILE__, __LINE__, dst_pict_seg);
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 0));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 2));
-// #endif
-
-
     length = src_width * src_height;
     word_length = ((length + 1) / 2);
-    word_ptr = (uint16_t *)(dst_pict_seg + 16);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: length: %d\n", __FILE__, __LINE__, length);
-//     dbg_prn("DEBUG: [%s, %d]: word_length: %d\n", __FILE__, __LINE__, word_length);
-//     dbg_prn("DEBUG: [%s, %d]: word_ptr: %p\n", __FILE__, __LINE__, word_ptr);
-// #endif
+    word_ptr = (uint16_t *)(dst_pict_seg + SZ_FLIC_HDR);
+
     while(word_length)
     {
-        *word_ptr = 0;
+        *word_ptr++ = 0;
         word_length--;
     }
 
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: dst_pict_seg: %p\n", __FILE__, __LINE__, dst_pict_seg);
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 0): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 0));
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(dst_pict_seg, 2): %d\n", __FILE__, __LINE__, GET_2B_OFS(dst_pict_seg, 2));
-// #endif
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Create_Multi_Frame_Blank_Bitmap()\n", __FILE__, __LINE__);
-// #endif
 }
 
 
@@ -710,18 +551,15 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 {
     int16_t width;
     int16_t height;
-
     byte_ptr src;
     byte_ptr dst;
     byte_ptr dst_pos;
-
     byte packet_op;
     byte packet_byte_count;
     byte sequence_byte_count;
     byte delta_byte_count;
     byte data_byte;
     byte itr_op_repeat;
-
     byte_ptr dst_base;
     byte_ptr dst_curr;
     uint16_t dst_diff;
@@ -730,22 +568,8 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
     int16_t dst_x;
     int16_t dst_y;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: source_picture: %p\n", __FILE__, __LINE__, source_picture);
-//     dbg_prn("DEBUG: [%s, %d]: destination_bitmap: %p\n", __FILE__, __LINE__, destination_bitmap);
-// #endif
-
     width = FLIC_GET_WIDTH(destination_bitmap);
     height = FLIC_GET_HEIGHT(destination_bitmap);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: width: %d\n", __FILE__, __LINE__, width);
-//     dbg_prn("DEBUG: [%s, %d]: height: %d\n", __FILE__, __LINE__, height);
-// #endif
 
     src = source_picture;
     dst = (destination_bitmap + 16);
@@ -760,79 +584,28 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
     dst_x = dst_diff / dst_h;
     // ? diff - (x * height) ?
     dst_y = dst_diff - (dst_x * dst_h);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: dst_base: %p\n", __FILE__, __LINE__, dst_base);
-//     dbg_prn("DEBUG: [%s, %d]: dst_curr: %p\n", __FILE__, __LINE__, dst_curr);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_w: %d\n", __FILE__, __LINE__, dst_w);
-//     dbg_prn("DEBUG: [%s, %d]: dst_h: %d\n", __FILE__, __LINE__, dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
-
-
 
     while(width--)
     {
         dst = dst_pos;
         dst_pos += height;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: src: %p\n", __FILE__, __LINE__, src);
-//     dbg_prn("DEBUG: [%s, %d]: dst: %p\n", __FILE__, __LINE__, dst);
-// #endif
-
         packet_op = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: packet_op: %02X\n", __FILE__, __LINE__, packet_op);
-// #endif
-
         if(packet_op == 0xFF)
         {
             dst += height;
-
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dst_x = dst_diff / dst_h;
-//     dst_y = dst_diff - (dst_x * dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
-            // width--;
             continue;
         }
-
         packet_byte_count = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: packet_byte_count: %02X\n", __FILE__, __LINE__, packet_byte_count);
-// #endif
-
         if(packet_op == 0x80)  /* Type: decode */
         {
-//             DLOG("BEGIN: (packet_op == 0x80)");
-
             do {
                 sequence_byte_count = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: sequence_byte_count: %02X\n", __FILE__, __LINE__, sequence_byte_count);
-// #endif
                 delta_byte_count = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: delta_byte_count: %02X\n", __FILE__, __LINE__, delta_byte_count);
-// #endif
                 dst += delta_byte_count;
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-// #endif
                 packet_byte_count -= sequence_byte_count + 2;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: packet_byte_count: %02X\n", __FILE__, __LINE__, packet_byte_count);
-// #endif
                 while(sequence_byte_count--)
                 {
                     data_byte = *src++;
-                    
                     if(data_byte >= 224)  /* op: repeat */
                     {
                         itr_op_repeat = (data_byte - 224) + 1;
@@ -842,105 +615,39 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
                         {
                             *dst = data_byte;
                             dst++;
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dst_x = dst_diff / dst_h;
-//     dst_y = dst_diff - (dst_x * dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
                         }
                     }
                     else  /* op: copy */
                     {
                         *dst = data_byte;
                         dst++;
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dst_x = dst_diff / dst_h;
-//     dst_y = dst_diff - (dst_x * dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
                     }
-
                 }
             } while(packet_byte_count >= 1);
-
-//             DLOG("END: (packet_op == 0x80)");
         }
-
         if(packet_op == 0x00)  /* Type: copy */
         {
-//             DLOG("BEGIN: (packet_op == 0x00)");
-
             do {
                 sequence_byte_count = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: sequence_byte_count: %02X\n", __FILE__, __LINE__, sequence_byte_count);
-// #endif
                 delta_byte_count = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: delta_byte_count: %02X\n", __FILE__, __LINE__, delta_byte_count);
-// #endif
                 dst += delta_byte_count;
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dst_x = dst_diff / dst_h;
-//     dst_y = dst_diff - (dst_x * dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
-
                 packet_byte_count -= sequence_byte_count + 2;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: packet_byte_count: %02X\n", __FILE__, __LINE__, packet_byte_count);
-// #endif
                 while(sequence_byte_count--)
                 {
-                    // *dst++ = *src++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: *src: %02X\n", __FILE__, __LINE__, *src);
-// #endif
                     *dst = *src;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: *dst: %02X\n", __FILE__, __LINE__, *dst);
-// #endif
                     src++;
                     dst++;
-// #ifdef STU_DEBUG
-//     dst_diff = dst - dst_base;
-//     dst_x = dst_diff / dst_h;
-//     dst_y = dst_diff - (dst_x * dst_h);
-//     dbg_prn("DEBUG: [%s, %d]: dst_diff: %u\n", __FILE__, __LINE__, dst_diff);
-//     dbg_prn("DEBUG: [%s, %d]: dst_x: %d\n", __FILE__, __LINE__, dst_x);
-//     dbg_prn("DEBUG: [%s, %d]: dst_y: %d\n", __FILE__, __LINE__, dst_y);
-// #endif
                 }
             } while(packet_byte_count >= 1);
-
-//             DLOG("END: (packet_op == 0x00)");
         }
-
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Add_Picture_To_Bitmap()\n", __FILE__, __LINE__);
-// #endif
 }
 
 
 // WZD s33p05
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
 {
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] BEGIN: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-// #endif
-
     byte_ptr screen_start;
     byte_ptr screen_pos;
     byte_ptr data;
@@ -948,19 +655,8 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
     int16_t itr_width;
     int16_t itr_height;
     
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] current_video_page: %p\n", __FILE__, __LINE__, current_video_page);
-// #endif
     screen_start = current_video_page + (y_start * 320) + x_start;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] screen_start: %p\n", __FILE__, __LINE__, screen_start);
-// #endif
-
     data = pict_seg + ofst;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] data: %p\n", __FILE__, __LINE__, data);
-// #endif
-
     screen_pos = screen_start;
     itr_width = width;
     while(itr_width)
@@ -970,10 +666,6 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
         while(itr_height)
         {
             data_byte = *data++;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] data_byte: %02X\n", __FILE__, __LINE__, data_byte);
-// #endif
-
             if(data_byte != 0x00)  /* color index 0 TRANSPARENT */
             {
                 *screen_pos = data_byte;
@@ -982,16 +674,13 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 
             itr_height--;
         }
-        // TODO(jimBalcomb,20230127): ? add skip_x ?
-        // data_pos += skipx
+        data += skip_x;
 
         itr_width--;
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-// #endif
 }
+
 
 // WZD s33p09
 // drake178: LBX_IMG_ColorReplace
