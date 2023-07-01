@@ -1,3 +1,9 @@
+/*
+    WIZARDS.EXE
+    seg050
+    
+    MoO2: Module: LOADSAVE
+*/
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
@@ -20,6 +26,92 @@
 uint8_t _save_gam[123300];
 
 
+void TST_Validate_GameData(void)
+{
+    int16_t itr;
+    int16_t is_bjorked;
+    int8_t * ptr_TBL_Terr_Specials;
+    int8_t terrain_special;
+    int8_t terrain_special_min;
+    int8_t terrain_special_max;
+
+    int8_t * ptr_TBL_Scouting;
+    int8_t unexplored;
+    int8_t unexplored_min;
+    int8_t unexplored_max;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Validate_GameData()\n", __FILE__, __LINE__);
+#endif
+
+
+// terrain_special_min: -128
+// terrain_special_max: 64
+    is_bjorked = ST_FALSE;
+    ptr_TBL_Terr_Specials = (int8_t *)TBL_Terr_Specials;
+    terrain_special_min = 0;
+    terrain_special_max = 0;
+    for(itr = 0; itr < 4800; itr++)
+    {
+        terrain_special = *(ptr_TBL_Terr_Specials + itr);
+#ifdef STU_DEBUG
+        dbg_prn("terrain_special: 0x%02X  %d\n", terrain_special, terrain_special);
+#endif
+        if(terrain_special < terrain_special_min) { terrain_special_min = terrain_special; }
+        if(terrain_special > terrain_special_max) { terrain_special_max = terrain_special; }
+        // if( !(terrain_special >= 0) || !(terrain_special <= 9) )
+        // {
+        //     is_bjorked = ST_TRUE;
+        // }
+    }
+#ifdef STU_DEBUG
+        dbg_prn("terrain_special_min: %d\n", terrain_special_min);
+        dbg_prn("terrain_special_max: %d\n", terrain_special_max);
+#endif
+//     if(is_bjorked == ST_TRUE)
+//     {
+// #ifdef STU_DEBUG
+//         dbg_prn("DEBUG: [%s, %d]: TBL_Terr_Specials is bjorked!!\n", __FILE__, __LINE__);
+// #endif
+//     }
+
+
+// unexplored_min: 0
+// unexplored_max: 15
+    is_bjorked = ST_FALSE;
+    ptr_TBL_Scouting = (int8_t *)(TBL_Scouting);
+    unexplored_min = 0;
+    unexplored_max = 0;
+    for(itr = 0; itr < 4800; itr++)
+    {
+        unexplored = *(ptr_TBL_Scouting + itr);
+#ifdef STU_DEBUG
+        dbg_prn("unexplored: 0x%02X  %d\n", unexplored, unexplored);
+#endif
+        if(unexplored < unexplored_min) { unexplored_min = unexplored; }
+        if(unexplored > unexplored_max) { unexplored_max = unexplored; }
+        // if( !(unexplored == 0) || !(unexplored == 1) )
+        // {
+        //     is_bjorked = ST_TRUE;
+        // }
+    }
+#ifdef STU_DEBUG
+        dbg_prn("unexplored_min: %d\n", unexplored_min);
+        dbg_prn("unexplored_max: %d\n", unexplored_max);
+#endif
+//     if(is_bjorked == ST_TRUE)
+//     {
+// #ifdef STU_DEBUG
+//         dbg_prn("DEBUG: [%s, %d]: TBL_Scounting is bjorked!!\n", __FILE__, __LINE__);
+// #endif
+//     }
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: TST_Validate_GameData()\n", __FILE__, __LINE__);
+#endif
+}
 
 // WZD o50p01
 void Save_SAVE_GAM(int16_t save_gam_idx)
@@ -292,9 +384,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
 #endif
 
-    fread(TBL_Terr_Specials, 2, 2400, file_pointer);
+    fread(TBL_Terr_Specials, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
 
-    fread(TBL_Scouting, 2, 2400, file_pointer);
+    fread(TBL_Scouting, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
 
 #ifdef STU_DEBUG
     file_pointer_position = ftell(file_pointer);

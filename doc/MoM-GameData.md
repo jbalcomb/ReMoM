@@ -98,6 +98,93 @@ The settings structure is in the same order as the Settings Screen, except for M
 123,300 bytes
 
 
+## Heroes - Per Wizard - 12*35=420 Bytes 0x1A4
+    p0_heroes
+    p1_heroes
+    p2_heroes
+    p3_heroes
+    p4_heroes
+    p5_heroes
+~== struct s_HERO p0_heroes[12]
+// sizeof=0x1C  28d
+struct s_HERO
+{
+    /* 1  0x00 */ int16_t Unit_Index dw ?
+    /* 2  0x02 */ char Name[14]
+    /* 3  0x10 */ int16_t Items[3]
+    /* 4  0x16 */ int16_t Item_Slots[2]
+    /* 0x1C */
+};
+
+
+
+¿ {0, ..., 8} + 5 bit flags ?
+0001000
+0010000
+0100000
+1000000
+
+; enum Terrain_Flags (bitfield)
+TF_Road  = 8
+TF_Enc_Road  = 10h
+TF_Corruption  = 20h
+TF_Unk_40  = 40h
+TF_NoRoad80  = 80h
+
+
+¿ {0, ..., 16} + 4 bit flags ?
+; enum enum_Terrain_Specials
+TS_IronOre  = 1
+TS_Coal  = 2
+TS_SilverOre  = 3
+TS_GoldOre  = 4
+TS_Gems  = 5
+TS_MithrilOre  = 6
+TS_AdamantiumOre  = 7
+TS_QuorkCrystals  = 8
+TS_CrysxCrystals  = 9
+TS_HuntersLodge  = 10h
+TS_Unknown_20  = 20h
+TS_Wild_Game  = 40h
+TS_Nightshade  = 80h
+
+¿ anything test for 0x40 or 0x80 ?
+terrain_special_min: -128
+terrain_special_max: 64
+terrain_special: 0x00  0
+terrain_special: 0x01  1
+terrain_special: 0x02  2
+terrain_special: 0x03  3
+terrain_special: 0x04  4
+terrain_special: 0x05  5
+terrain_special: 0x06  6
+terrain_special: 0x07  7
+terrain_special: 0x08  8
+terrain_special: 0x09  9
+terrain_special: 0x40  64
+terrain_special: 0x80  -128
+
+
+
+¿ why not just yay/nay ?
+¿ why no 5 or 10 ?
+unexplored_min: 0
+unexplored_max: 15
+unexplored: 0x00  0
+unexplored: 0x01  1
+unexplored: 0x02  2
+unexplored: 0x03  3
+unexplored: 0x04  4
+unexplored: 0x06  6
+unexplored: 0x07  7
+unexplored: 0x08  8
+unexplored: 0x09  9
+unexplored: 0x0B  11
+unexplored: 0x0C  12
+unexplored: 0x0D  13
+unexplored: 0x0E  14
+unexplored: 0x0F  15
+
 
 
 

@@ -72,6 +72,28 @@ extern char mapback_lbx_file[];
 // // END: Draw_Minimap()
 
 
+// ; the colors to replace indices $D6-DA in the city
+// ; images with for the corresponding banner colors;
+// ; this is actually a single array of 7 * 5 bytes, the
+// ; last two groups of fives not being used in the game
+// WZD dseg:7011 60 61 62 63 64                                  COL_City_Banner0 db 60h, 61h, 62h, 63h, 64h
+// WZD dseg:7016 48 49 4A 4B 4C                                  COL_City_Banner1 db 48h, 49h, 4Ah, 4Bh, 4Ch
+// WZD dseg:701B CD CE CF D0 D1                                  COL_City_Banner2 db 0CDh, 0CEh, 0CFh, 0D0h, 0D1h
+// WZD dseg:7020 C9 A5 CB A6 2D                                  COL_City_Banner3 db 0C9h, 0A5h, 0CBh, 0A6h, 2Dh
+// WZD dseg:7025 D1 D2 D3 D4 D5                                  COL_City_Banner4 db 0D1h, 0D2h, 0D3h, 0D4h, 0D5h
+// WZD dseg:702A 1D 1D 1C 1C 1B                                  UU_COL_City_Banner5 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
+// WZD dseg:702F 1D 1D 1C 1C 1B                                  UU_COL_City_Banner6 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
+// WZD dseg:7011
+ // PRIVATE uint8_t COL_City_Banner[];
+ 
+// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Warp_GFX_Lines db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
+// WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
+// WZD dseg:7048 9B 9F                                           WarpNode_SeedSave_LO dw 9F9Bh           ; DATA XREF: Draw_Map_Nodes+271w ...
+// WZD dseg:704A 0F 00                                           WarpNode_SeedSave_HO dw 0Fh             ; DATA XREF: Draw_Map_Nodes+26Dw ...
+// WZD dseg:704A                                                 ? END:  ovr150 ?
+
+
+
 
 // WZD dseg:974A
 extern int16_t _prev_world_y;
@@ -86,12 +108,12 @@ extern SAMB_ptr terrain_lbx_002;
 
 
 // WZD dseg:CC22
-extern SAMB_ptr terrain_lbx_001;
+extern SAMB_ptr terrain_lbx_001;            // load in Terrain_Init() ovr052
 // WZD dseg:CC26
-extern byte_ptr terrain_001_1;
+extern byte_ptr terrain_001_1;              // load in Terrain_Init() ovr052
 // WZD dseg:CC28
-// g_EmmHndl_TERRAIN dw 0                  ; EMM_Load_LBX handle
-extern SAMB_ptr terrain_lbx_000;
+// g_EmmHndl_TERRAIN dw 0  ; EMM_Load_LBX handle
+extern SAMB_ptr terrain_lbx_000;            // load in Terrain_Init() ovr052
 
 
 // dseg:CB56                                                 ovr150
@@ -189,6 +211,9 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 // AKA Undef_Prev_Map_Draw_XY()
 void Reset_Map_Draw(void);
 
+// WZD o150p02 OVL_MapStateSave          
+// WZD o150p03 OVL_MapStateRestore       
+
 // WZD o150p04
 void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p);
 
@@ -196,9 +221,42 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
 void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
 void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
 
+// WZD o150p06
+void Cycle_Map_Animations(void);
+// WZD o150p07
+void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+// WZD o150p08
+void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+// WZD o150p09
+void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+// WZD o150p10
+void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+// WZD o150p11
+void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+// WZD o150p12
+/*
+    draws Terrain Specials - Biota - Wild Game, Hunters Lodge, Nightshade
+*/
+void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+// WZD o150p13
+/*
+    draws Terrain Specials - Minerals
+*/
+void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+// WZD o150p14
+void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+// WZD o150p15
+void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
 // WZD o150p16
 void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 
+// WZD o150p17 IDK_Prepare_TileMap_sDAB1A
+// WZD o150p18 sub_DAFF4                 
 
 
 #ifdef __cplusplus

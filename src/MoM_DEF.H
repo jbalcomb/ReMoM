@@ -45,6 +45,9 @@
 #define SQUARE_WIDTH    20  // in Pixels
 #define SQUARE_HEIGHT   18  // in Pixels
 
+#define WORLD_SIZE          2400
+#define WORLD_SIZE_DB       2400  // 1-byte values
+#define WORLD_SIZE_DW       4800  // 2-byte values
 
 #define WORLD_WIDTH         60  // in Squares
 #define WORLD_HEIGHT        40  // in Squares

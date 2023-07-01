@@ -7,6 +7,8 @@
 #include "UnitType.H"
 #include "UnitMove.H"
 
+#include "MoM_main.H"  /* g_Current_Screen */
+
 #include "Explore.H"
 #include "FLIC_Draw.H"
 #include "Graphics.H"
@@ -75,15 +77,19 @@ char mapback_lbx_file[] = "MAPBACK";
 // WZD dseg:6FF4                                                 BEGIN: ovr150
 
 // WZD dseg:6FF4
-// int16_t OVL_TileAnim_Stage = 0;
+// drake178: OVL_TileAnim_Stage
+int16_t terrain_anim_ctr = 0;
 // WZD dseg:6FF6
-// int16_t OVL_EnchRoad_Stage = 0;
+// drake178: OVL_EnchRoad_Stage
+int16_t road_anim_ctr = 0;
 // WZD dseg:6FF8
-// int16_t OVL_NodeSprkl_Stage = 0;
+// drake178: OVL_NodeSprkl_Stage
+int16_t node_anim_ctr = 0;
 // WZD dseg:6FFA db    0
 // WZD dseg:6FFB db    0
 // WZD dseg:6FFC
-// int16_t OVL_Anim_Stepper = 0;
+// drake178: OVL_Anim_Stepper
+int16_t map_anim_cycle = 0;
 // WZD dseg:6FFE
 int16_t map_draw_prev_x = ST_UNDEFINED;
 // WZD dseg:7000
@@ -104,6 +110,33 @@ uint8_t COL_MinimapBanners[6] = {171, 216, 205, 201, 210, 50};  // 0xAB, 0xD8, 0
 uint8_t COL_MinimapNeutral = 50;  // 0x32
 // END: Draw_Minimap()
 
+// ; the colors to replace indices $D6-DA in the city
+// ; images with for the corresponding banner colors;
+// ; this is actually a single array of 7 * 5 bytes, the
+// ; last two groups of fives not being used in the game
+// WZD dseg:7011 60 61 62 63 64                                  COL_City_Banner0 db 60h, 61h, 62h, 63h, 64h
+// WZD dseg:7016 48 49 4A 4B 4C                                  COL_City_Banner1 db 48h, 49h, 4Ah, 4Bh, 4Ch
+// WZD dseg:701B CD CE CF D0 D1                                  COL_City_Banner2 db 0CDh, 0CEh, 0CFh, 0D0h, 0D1h
+// WZD dseg:7020 C9 A5 CB A6 2D                                  COL_City_Banner3 db 0C9h, 0A5h, 0CBh, 0A6h, 2Dh
+// WZD dseg:7025 D1 D2 D3 D4 D5                                  COL_City_Banner4 db 0D1h, 0D2h, 0D3h, 0D4h, 0D5h
+// WZD dseg:702A 1D 1D 1C 1C 1B                                  UU_COL_City_Banner5 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
+// WZD dseg:702F 1D 1D 1C 1C 1B                                  UU_COL_City_Banner6 db 1Dh, 1Dh, 1Ch, 1Ch, 1Bh
+// WZD dseg:7011
+ uint8_t COL_City_Banner[] = {
+    0x60, 0x61, 0x62, 0x63, 0x64, 
+    0x48, 0x49, 0x4A, 0x4B, 0x4C, 
+    0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 
+    0xC9, 0xA5, 0xCB, 0xA6, 0x2D, 
+    0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 
+    0x1D, 0x1D, 0x1C, 0x1C, 0x1B, 
+    0x1D, 0x1D, 0x1C, 0x1C, 0x1B, 
+};
+
+// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Warp_GFX_Lines db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
+// WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
+// WZD dseg:7048 9B 9F                                           WarpNode_SeedSave_LO dw 9F9Bh           ; DATA XREF: Draw_Map_Nodes+271w ...
+// WZD dseg:704A 0F 00                                           WarpNode_SeedSave_HO dw 0Fh             ; DATA XREF: Draw_Map_Nodes+26Dw ...
+// WZD dseg:704A                                                 ? END:  ovr150 ?
 
 
 // WZD dseg:974A
@@ -136,12 +169,12 @@ int16_t minimap_x;
 
 
 // WZD dseg:CC22
-SAMB_ptr terrain_lbx_001;
+SAMB_ptr terrain_lbx_001;                   // load in Terrain_Init() ovr052
 // WZD dseg:CC26
-byte_ptr terrain_001_1;
+byte_ptr terrain_001_1;                     // load in Terrain_Init() ovr052
 // WZD dseg:CC28
-// g_EmmHndl_TERRAIN dw 0                  ; EMM_Load_LBX handle
-SAMB_ptr terrain_lbx_000;
+// g_EmmHndl_TERRAIN dw 0  ; EMM_Load_LBX handle
+SAMB_ptr terrain_lbx_000;                   // load in Terrain_Init() ovr052
 
 
 
@@ -642,11 +675,11 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                         entity_world_x = entity_world_x - world_x;
                         City_Visible = ST_TRUE;
                     }
-                    else if( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                    else if( (entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH) )
                     {
-                        // entity_world_x = entity_world_x + WORLD_WIDTH;
-                        // entity_world_x = entity_world_x - world_x;
-                        // City_Visible = ST_TRUE;
+                        entity_world_x = entity_world_x + WORLD_WIDTH;
+                        entity_world_x = entity_world_x - world_x;
+                        City_Visible = ST_TRUE;
                     }
             }
         }
@@ -659,7 +692,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         {
             // Movement Map Entity Table
             // entities_on_movement_map[( ((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x) )] = (itr_cities + 1000);
-            entity_table_idx = (((entity_world_y - world_y) * MAP_WIDTH) + (entity_world_x - world_x));
+            entity_table_idx = (entity_world_y * MAP_WIDTH) + entity_world_x;
             entities_on_movement_map[entity_table_idx] = (itr_cities + 1000);
         }
 
@@ -896,143 +929,21 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
     map_draw_prev_x = map_draw_curr_x;
     map_draw_prev_y = map_draw_curr_y;
 
-
-    // TST_Draw_Map_Terrain(        0, 20 + (18 * 0), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 0), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain(        0, 20 + (18 * 9), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
-    // TST_Draw_Map_Terrain((20 * 11), 20 + (18 * 9), map_width, map_height, cur_map_xpos, cur_map_ypos, map_plane);
+    // void Draw_Map_... (int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+    // Draw_Map_... (screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Terrain(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
-    // ; draws map terrain tiles into the current draw segment
-    // ; according to the passed parameters:
-    // ;   Top/Left - display pixel coordinates
-    // ;   H/map_height - horizontal/vertical window size in tiles
-    // ;   XPos/YPos/Plane - top left map coordinates
-    // ; tiles that are not scouted are painted with color $00
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawMinerals()
-// // ; draws mineral type terrain specials into the current
-// // ; draw segment based on the specified map parameters,
-// // ; unless the tile is unscouted or also has a city
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawTerrSpecials()
-// // ; draws corruption, wild games, and nightshades into
-// // ; the current draw segment based on the specified map
-// // ; parameters, unless the tile is unscouted (would also
-// // ; draw the hunters' lodge if it still existed)
-// // ; unlike other specials, nightshades and corruption get
-// // ; drawn under a city, but wild games do not
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawRoads()
-// // ; draws roads and enchanted roads into the current draw
-// // ; segment based on the specified map parameters, unless
-// // ; the tile is unscouted
-// // ; BUG: this code will read out of bounds if roads are
-// // ; built on the top row of the arcanus map, or the
-// // ; bottom row of the myrror map
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawCities()
-// // ; draws cities into the current draw segment based on
-// // ; the specified map parameters, unless the tile they
-// // ; are on is unscouted
-// // ; contains 2 BUGs: non-walled cities use the wrong
-// // ; graphics due to an outdated value check, and cities
-// // ; at a relative X coordinate of -1 don't get their
-// // ; image flowing into the screen as they should
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawTowers()
-// // ; draws towers of wizardry into the current draw
-// // ; segment based on the specified map parameters, unless
-// // ; the tile they are on is unscouted
-// // ; BUG: fails to color the towers according to their
-// // ; last controller as originally intended
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawEncounters
-// // ; draws encounter zones into the current draw segment
-// // ; based on the specified map parameters, unless the
-// // ; tile they are on is unscouted; skips all nodes and
-// // ; towers of wizardry (which are drawn separately)
-
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawUnits()
-// // ; draws unit cards into the current draw segment from
-// // ; OVL_UnitsOnMap based on the specified map parameters
-// ? MoO2 Draw_Ship_Icons_ ?
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawNodeFX()
-// // ; draws node effects into the current draw segment
-// // ; based on the specified map parameters, unless the
-// // ; tile they are on is unscouted
-
-// push    [bp+map_plane]                  ; Plane
-// push    _DI_cur_map_ypos                ; YPos
-// push    _SI_cur_map_xpos                ; XPos
-// push    [bp+map_height]                     ; map_height
-// push    [bp+map_width]                     ; map_width
-// push    [bp+y]                          ; Top
-// push    [bp+x]                          ; Left
-// OVL_DrawScouting()
-// // ; draws the black edges of partially-scouted tiles into
-// // ; the current draw segment based on the specified map
-// // ; parameters
-
-// OVL_StepMapAnims()
-// // ; on every second call, will advance the animation
-// // ; stages of the overland map display (tiles, node
-// // ; sparkles, and enchanted roads)
+    Draw_Map_Minerals(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Biota(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Roads(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    
+    Draw_Map_Cities(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    
+    Draw_Map_Towers(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Lairs(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Units(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Nodes(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Draw_Map_Unexplored_Area(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+    Cycle_Map_Animations();
 
 #ifdef STU_DEBUG
 dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Window(screen_x = %d, screen_y = %d, map_w = %d, map_h = %d, map_x = %d, map_y = %d, map_p = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_w, map_h, map_x, map_y, map_p);
@@ -1327,62 +1238,919 @@ void Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_heigh
 
 }
 
+
 // WZD o150p06
-// Map Anims
+void Cycle_Map_Animations(void)
+{
+    map_anim_cycle = (1 - map_anim_cycle);  // toggle {1-0=1,1-1=0}
+    if(map_anim_cycle == 0)
+    {
+        terrain_anim_ctr = (terrain_anim_ctr + 1) % 4;
+        node_anim_ctr = (node_anim_ctr + 1) % 30000;
+        road_anim_ctr = (road_anim_ctr + 1) % 6;
+    }
+}
 
 // WZD o150p07
-// Draw Unexplored
+void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p08
-// Draw Cities
+void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_cities;
+    int16_t city_x;
+    int16_t city_y;
+    int16_t city_owner;
+    int16_t screen_start_x;
+    int16_t screen_start_y;
+    SAMB_ptr city_pict_seg;
+    int16_t city_size;
+    int16_t itr_color_replacement;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Cities(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    if(g_Current_Screen = scr_City_Screen)
+    {
+        Set_Window(215, 4, 454, 183);
+    }
+    else
+    {
+        Set_Window(0, 20, 239, 199);
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].world_plane == world_plane)
+        {
+            city_x = _CITIES[itr_cities].world_x;
+            city_y = _CITIES[itr_cities].world_y;
+            if(TBL_Scouting[((world_plane * WORLD_SIZE) + (city_y * WORLD_WIDTH) + city_x)] != ST_FALSE)
+            {
+                city_x = city_x - world_grid_x;
+                if(city_x < 0)
+                {
+                    city_x = city_x + WORLD_WIDTH;
+                }
+                city_y = city_y - world_grid_y;
+                // TODO(JimBalcomb,20230630): What is this Asm even doing?  mov ax, [bp+city_y]; inc ax; jge ...
+                if(city_y - 1 < map_grid_height)
+                {
+                    // TODO(JimBalcomb,20230630): What is this Asm even doing?  mov ax, [bp+city_x]; inc ax; jge ...
+                    if(city_x - 1 < map_grid_width)
+                    {
+                        city_owner = _CITIES[itr_cities].owner_idx;
+                        screen_start_x = screen_x + (city_x * SQUARE_WIDTH) - (MAP_WIDTH / 2);
+                        screen_start_y = screen_y + (city_y * SQUARE_HEIGHT) - (MAP_HEIGHT / 2);
+
+                        if(city_owner != 5)  /* Neutral Player */
+                        {
+                            if(_CITIES[itr_cities].buildings.City_Walls == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                            {
+                                city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+                            }
+                            else
+                            {
+                                city_pict_seg = IMG_OVL_Walled_City;
+                            }
+                            city_size = (_CITIES[itr_cities].Pop_K - 1) / 4;
+                            if(city_size > 4)
+                            {
+                                city_size = 4;
+                            }
+                            FLIC_Set_CurrentFrame(city_pict_seg, city_size);
+                            Draw_Picture_To_Bitmap(city_pict_seg, gsa_OVL_Tile_WorkArea);
+                            for(itr_color_replacement = 0; itr_color_replacement < 5; itr_color_replacement++)
+                            {
+                                FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_replacement, (COL_City_Banner[((_players[city_owner].Banner * 5) + itr_color_replacement)] - 1));
+                            }
+                        }
+                        else
+                        {
+                            if(_CITIES[itr_cities].buildings.City_Walls == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                            {
+                                city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+                            }
+                            else
+                            {
+                                city_pict_seg = IMG_OVL_Walled_City;
+                            }
+                            city_size = (_CITIES[itr_cities].Pop_K - 1) / 4;
+                            if(city_size > 4)
+                            {
+                                city_size = 4;
+                            }
+                            FLIC_Set_CurrentFrame(city_pict_seg, city_size);
+                            Draw_Picture_To_Bitmap(city_pict_seg, gsa_OVL_Tile_WorkArea);
+                            for(itr_color_replacement = 0; itr_color_replacement < 5; itr_color_replacement++)
+                            {
+                                FLIC_Remap_Color(gsa_OVL_Tile_WorkArea, 214 + itr_color_replacement, 51 + itr_color_replacement);
+                            }
+                        }
+
+                        Draw_Picture_Windowed(screen_start_x, screen_start_y, gsa_OVL_Tile_WorkArea);
+
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Cities(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p09
-// Draw Towers
+void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Towers(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Towers(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p10
-// Draw Encounters
+void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Lairs(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Lairs(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p11
-// Draw Node FX
+void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Nodes(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Nodes(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p12
-// Draw Terrain Specials
+void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+    int16_t terrain_special;
+    int16_t terrain_flag;
+    SAMB_ptr site_pict_seg;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Biota(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                terrain_special = TBL_Terr_Specials[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: terrain_special: 0x%04X\n", __FILE__, __LINE__, terrain_special);
+    if(terrain_special != 0)
+    {
+        dbg_prn("DEBUG: [%s, %d]: terrain_special: 0x%04X\n", __FILE__, __LINE__, terrain_special);
+        dbg_prn("DEBUG: [%s, %d]: Corruption: %d\n", __FILE__, __LINE__, ((terrain_special & 0x20) != 0));
+        dbg_prn("DEBUG: [%s, %d]: Wild Game: %d\n", __FILE__, __LINE__, ((terrain_special & 0x40) != 0));
+        dbg_prn("DEBUG: [%s, %d]: Hunters Lodge: %d\n", __FILE__, __LINE__, ((terrain_special & 0x10) != 0));
+        dbg_prn("DEBUG: [%s, %d]: Nightshade: %d\n", __FILE__, __LINE__, ((terrain_special & 0x80) != 0));
+    }
+#endif
+                terrain_flag = TBL_Terrain_Flags[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+
+                if((terrain_flag & 0x20) != 0)  /* Corruption */
+                {
+                    site_pict_seg = IMG_OVL_Corruption;
+                    FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                }
+
+                if((terrain_special & 0x40) != 0)  /* Wild Game */
+                {
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+
+                    if(has_city == ST_FALSE)
+                    {
+                        site_pict_seg = IMG_OVL_WildGame;
+                        FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+
+                        if((terrain_special & 0x10) != 0)  /* Hunters Lodge */
+                        {
+                            site_pict_seg = UU_IMG_OVL_Empty3;
+                            FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+
+                        }
+                    }
+                }
+
+                if((terrain_special & 0x80) != 0)  /* Nightshade */
+                {
+                    site_pict_seg = IMG_OVL_Nightshade;
+                    FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                }
+
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Biota(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+}
 
 // WZD o150p13
-// Draw Minerls
+void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    uint8_t * ptr_TBL_Scouting;
+    uint8_t * ptr_TBL_Terr_Specials;
+    int16_t Terrain_Special;
+    int16_t City_Cover;
+    int16_t curr_world_x;
+    int16_t tmp_screen_x;
+    int16_t tmp_screen_y;
+    int16_t tmp_world_grid_x;
+    int16_t tmp_world_grid_y;
+    int16_t itr_cities;
+    int16_t unexplored_area;
+    SAMB_ptr site_pict_seg;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Minerals(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    tmp_screen_y = screen_y;
+    tmp_world_grid_y = world_grid_y;
+
+    while(world_grid_y + map_grid_height > tmp_world_grid_y)
+    {
+        tmp_screen_x = screen_x;
+
+        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (world_plane * 2400) + (tmp_world_grid_y * 60));
+
+        ptr_TBL_Scouting = (uint8_t *)(TBL_Scouting + (world_plane * 2400) + (tmp_world_grid_y * 60));
+
+        tmp_world_grid_x = world_grid_x;
+
+        while(world_grid_x + map_grid_width > tmp_world_grid_x)
+        {
+            if(tmp_world_grid_x < 60)
+            {
+                curr_world_x = tmp_world_grid_x;
+            }
+            else
+            {
+                curr_world_x = tmp_world_grid_x - WORLD_WIDTH;
+            }
+
+            // Draw_Map_Terrain()
+            // if(TBL_Scouting[(map_plane * 2400) + (itr_map_ypos * 60) + (curr_world_x)] == ST_FALSE)
+            unexplored_area = *(ptr_TBL_Scouting + curr_world_x);
+
+            // if(*(ptr_TBL_Scouting + curr_world_x) != ST_FALSE)
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                // mov     al, [es:bx]
+                // mov     ah, 0
+                // and     ax, 0Fh                         ; ¿ clearing sign-extended ?
+                // TODO: What's with the 0x40 and 0x80?
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + curr_world_x)) & 0x0F);
+                if(Terrain_Special != 0)
+                {
+                    City_Cover = 0;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == tmp_world_grid_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            City_Cover = 1;
+                        }
+                    }
+
+                    if(City_Cover == 0)
+                    {
+                        site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(tmp_screen_x, tmp_screen_y, site_pict_seg);
+                    }
+                }
+            }
+
+
+            tmp_screen_x += 20;
+            tmp_world_grid_x += 1;
+        }
+
+
+        tmp_screen_y += 18;
+        tmp_world_grid_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Minerals(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+}
 
 // WZD o150p14
-// Draw Roads
+void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    uint8_t * terrain_flags_table_sgmt;
+    int16_t terrain_flags_table_ofst;
+    uint8_t terrain_flag;
+    uint8_t has_road;
+    uint8_t has_eroad;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Roads(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                terrain_flags_table_sgmt = (uint8_t *)TBL_Terrain_Flags;
+                terrain_flags_table_ofst = (world_plane * WORLD_SIZE) + ((itr_world_y - 1) * WORLD_WIDTH) + (curr_world_x - 1);
+                // -------------
+                // |  0|  1|  2|
+                // -------------
+                // | 60| 61| 62|
+                // -------------
+                // |120|121|122|
+                // -------------
+                // test order: N, NE, E, SE, S, SW, W, NW  (1, 2, 62, 122, 121, 120, 60, 0)
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: terrain_flags_table_ofst: %d\n", __FILE__, __LINE__, terrain_flags_table_ofst);
+#endif
+                terrain_flag = *(terrain_flags_table_sgmt + terrain_flags_table_ofst + 61);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: terrain_flag: %d\n", __FILE__, __LINE__, terrain_flag);
+#endif
+
+                has_road = (*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 61) & 0x08); /* Road Flag */
+                if(has_road != 0)
+                {
+                    has_eroad = (*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 61) & 0x10); /* Enchanted Road Flag */
+                    if(has_eroad == 0)
+                    {
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   1) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[0]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   2) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[1]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  62) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[2]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 122) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[3]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 121) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[4]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 120) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[5]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  60) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[6]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   0) & 0x08) != 0)
+                        {
+                            FLIC_Draw(itr_screen_x, itr_screen_y, roads_seg[7]);
+                        }                        
+                    }
+                    else
+                    {
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   1) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[0], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[0]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   2) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[1], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[1]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  62) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[2], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[2]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 122) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[3], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[3]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 121) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[4], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[4]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst + 120) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[5], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[5]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +  60) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[6], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[6]);
+                        }
+                        if((*(terrain_flags_table_sgmt + terrain_flags_table_ofst +   0) & 0x08) != 0)
+                        {
+                            FLIC_Set_CurrentFrame(eroads_seg[7], road_anim_ctr);
+                            FLIC_Draw(itr_screen_x, itr_screen_y, eroads_seg[7]);
+                        }                        
+                    }
+
+                }
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Roads(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
 
 // WZD o150p15
-// Draw Units/Stacks
+void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint8_t unexplored_area;
+    int16_t itr_cities;
+    int16_t has_city;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Units(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = ST_TRUE;
+            if(unexplored_area != ST_FALSE)
+            {
+                /*
+                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
+                if(Terrain_Special != 0)
+                */
+                {
+
+                    has_city = ST_FALSE;
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    {
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        {
+                            has_city = ST_TRUE;
+                        }
+                    }
+                    if(has_city == ST_FALSE)
+                    {
+                        /*
+                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
+                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
+                        */
+                    }
+                }
+            }
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Units(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+}
+
 
 // WZD o150p16
-/*
-Draw_Maps()
-
-xor     ax, ax
-push    ax                              ; Mark
-xor     ax, ax
-push    ax                              ; Mark_Y
-xor     ax, ax
-push    ax                              ; Mark_X
-push    [minimap_height]                ; Height
-push    [minimap_width]                 ; Width
-push    [_reduced_map_seg]              ; IMG_Seg
-push    [bp+world_plane]                  ; Plane
-push    [minimap_y]                     ; Map_Y
-push    [minimap_x]                     ; Map_X
-Draw_Minimap
-; draws a mini map (1 pixel per tile) into the passed
-; image segment, matching its top left corner to the
-; map coordinates specified, and displaying tiles that
-; are out of bounds or unexplored with color index $01;
-; if a mark is specified that will use color index $0F
-
-minimap_x & y are the calculated coordinates of the top-left corner
-world_plane is [0,1] [Arcanus,Myrror], as passed in from Main_Screen_Draw_Do_Draw()
-*/
 void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark)
 {
     int16_t terrain_type_idx_base;

@@ -28,6 +28,7 @@
 // #define STU_DEBUG 1
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
+#include "TST_GameData.H"
 #endif
 
 
@@ -81,6 +82,7 @@ void Screen_Control(void)
             DLOG("case scr_Continue:");
             // Load_SAVE_GAM(9);
             Load_SAVE_GAM(-1);  // SAVETEST.GAM
+            // TST_Validate_GameData();
             // Main_Screen();
             g_Current_Screen = scr_Main_Screen;
         } break;
@@ -277,7 +279,9 @@ void MoM_main(void)
     Load_SAVE_GAM(-1);
     // TODO(JimBalcomb,20230629): add test code for load and save SAVE_GAM
     // Save_SAVE_GAM(0);
-
+#ifdef STU_DEBUG
+    Export_GameData();
+#endif
 
 
     // HERE:  draw_page_num = 0; current_video_page = 0xA000;
@@ -366,21 +370,20 @@ void MoM_Tables_Init(int16_t gfx_buff_nparas)
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);
     // 714 paragraphs = 16 * 714 = 11,424 bytes
-    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
+    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
     // 602 paragraphs = 16 * 602 = 9632 bytes
-    // TBL_Maps = Allocate_Next_Block(World_Data, 602);
-    _world_maps = Allocate_Next_Block(World_Data, 602);
+    _world_maps = Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
 
-    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);
-    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);
+    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
+    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
 
-    TBL_Landmasses = Allocate_Next_Block(World_Data, 302);
-    TBL_Terr_Specials = Allocate_Next_Block(World_Data, 302);
-    TBL_Terrain_Flags = Allocate_Next_Block(World_Data, 302);
-    TBL_Scouting = Allocate_Next_Block(World_Data, 302);
+    TBL_Landmasses = (uint8_t *)Allocate_Next_Block(World_Data, 302);      // 302 Paragraphs, 4832 Bytes
+    TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
+    TBL_Terrain_Flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
+    TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
 
-    Visibility_Arcanus = Allocate_Next_Block(World_Data, 19);
-    Visibility_Myrror = Allocate_Next_Block(World_Data, 19);
+    Visibility_Arcanus = Allocate_Next_Block(World_Data, 19);   // 19 Paragraphs, 304 Bytes
+    Visibility_Myrror = Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
 
     World_Data_Extra = Allocate_Next_Block(World_Data, Get_Free_Blocks(World_Data) - 1);
 
@@ -488,7 +491,7 @@ SA_GET_USED(SAMB_head): 2345
 
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
 
-    // Active_Unit = Allocate_Space(8);  // 8 paragraphs = 128 bytes
+    Active_Unit = Allocate_Space(8);  // 8 paragraphs = 128 bytes
     
     TBL_Nodes = Allocate_Space(92);
     
@@ -899,15 +902,20 @@ void UNIT_Upkeep_Reset(void)
 }
 
 // WZD o52p03
+/*
+    All Terrain
+        TERRAIN.LBX, TERRSTAT.LBX, MAPBACK.LBX
+
+*/
 void Terrain_Init(void)
 {
     int16_t itr;
 
-    // gsa_OVL_Tile_WorkArea = Allocate_Space(70);  // ; 70 * 16 = 1120 bytes
-
     terrain_lbx_001 = LBX_Load(terrain_lbx_file, 1);
+    gsa_OVL_Tile_WorkArea = Allocate_Space(70);  // ; 70 * 16 = 1120 bytes
     terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
     // g_EmmHndl_TERRAIN = EMM_Load_LBX_File("TERRAIN.LBX", 1);
+    // HACK: no EMM, so just load entry and monkey with offset adjustments
     terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);
 
 
@@ -917,7 +925,8 @@ void Terrain_Init(void)
 //     // {
 //     //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
 //     // }
-// 
+
+
 //     // Loop MAPBACK 0 to 13:
 //     for(itr = 1; itr < 15; itr++)
 //     {
@@ -925,98 +934,105 @@ void Terrain_Init(void)
 //         // ; array of 14 reserved EMM header pointers
 //     }
 
+
     // Loop MAPBACK 14 to 19:
     for(itr = 0; itr < 6; itr++)
     {
         _unit_colored_backgrounds_seg[itr] = LBX_Load(mapback_lbx_file, 14 + itr);
     }
 
-//     IMG_OVL_Walled_City = LBX_Load(cnst_MAPBACK_File, 20);
-//     IMG_OVL_NoWall_City = LBX_Load(cnst_MAPBACK_File, 21);
-//     // ; reserved EMM header pointer for a 5 frame image
-//     IMG_OVL_IntactTower = LBX_Load(cnst_MAPBACK_File, 69);
+    IMG_OVL_Walled_City = LBX_Load(mapback_lbx_file, 20);  // ; reserved EMM header pointer for a 5 frame image
+    IMG_OVL_NoWall_City = LBX_Load(mapback_lbx_file, 21);  // ; reserved EMM header pointer for a 5 frame image
+
+//     IMG_OVL_IntactTower = LBX_Load(mapback_lbx_file, 69);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_PoppedTower = LBX_Load(cnst_MAPBACK_File, 70);
+//     IMG_OVL_PoppedTower = LBX_Load(mapback_lbx_file, 70);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_Cave = LBX_Load(cnst_MAPBACK_File, 71);
+
+//     IMG_OVL_EZ_Cave = LBX_Load(mapback_lbx_file, 71);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_Dung = LBX_Load(cnst_MAPBACK_File, 74);
+//     IMG_OVL_EZ_Dung = LBX_Load(mapback_lbx_file, 74);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_ATmpl = LBX_Load(cnst_MAPBACK_File, 72);
+//     IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_AKeep = LBX_Load(cnst_MAPBACK_File, 73);
+//     IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_MLair = LBX_Load(cnst_MAPBACK_File, 71);
+//     IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_Ruins = LBX_Load(cnst_MAPBACK_File, 74);
+//     IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);
 //     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_FTmpl = LBX_Load(cnst_MAPBACK_File, 75);
+//     IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);
 //     // ; reserved EMM header pointer for a single image
-// 
-//     // Loop MAPBACK 78 to 86:
-//     for(itr = 1; itr < 10; itr++)
-//     {
-//         IMG_OVL_Minerals[itr] = LBX_Load(cnst_MAPBACK_File, 77 + itr);
-//         // ; array of 9 reserved EMM header pointers
-//     }
-// 
-//     UU_IMG_OVL_Mud = LBX_Load(cnst_MAPBACK_File, 76);
+
+        /*
+            MAPBACK 78 to 86:
+            78  SITES   coal
+            79  SITES   iron
+            80  SITES   silver
+            81  SITES   gold
+            82  SITES   gems
+            83  SITES   mithril
+            84  SITES   adamantium
+            85  SITES   quork
+            86  SITES   crysx
+        */
+        for(itr = 1; itr < 10; itr++)
+        {
+            _mineral_sites_seg[itr] = LBX_Load(mapback_lbx_file, 77 + itr);
+        }
+
+
+//     UU_IMG_OVL_Mud = LBX_Load(mapback_lbx_file, 76);
 //     // ; reserved EMM header pointer (unused in the game?)
-//     IMG_OVL_Corruption = LBX_Load(cnst_MAPBACK_File, 77);
-//     // ; reserved EMM header pointer for a single image
-//     UU_IMG_OVL_Empty1 = LBX_Load(cnst_MAPBACK_File, 87);
+
+        IMG_OVL_Corruption = LBX_Load(mapback_lbx_file, 77);    // ; reserved EMM header pointer for a single image
+
+//     UU_IMG_OVL_Empty1 = LBX_Load(mapback_lbx_file, 87);
 //     // ; single-loaded image, called "mine" in the file
-//     UU_IMG_OVL_Empty2 = LBX_Load(cnst_MAPBACK_File, 88);
+//     UU_IMG_OVL_Empty2 = LBX_Load(mapback_lbx_file, 88);
 //     // ; single-loaded image, called "lumber camp" in the file
-//     IMG_OVL_Rd_NoConn = LBX_Load(cnst_MAPBACK_File, 45);
-//     // ; reserved EMM header pointer for a single image
-//     // ; no connection normal road
-// 
-// 
-//     // Loop MAPBACK 46 to 53:
-//     for(itr = 0; itr < 8; itr++)
-//     {
-//         IMG_OVL_Roads[itr] = LBX_Load(cnst_MAPBACK_File, 46 + itr);
-//         // ; array of 8 reserved EMM header pointers
-//         // ; clockwise 1-connection roads starting up
-//     }
-// 
-//     IMG_OVL_ERd_NoConn = LBX_Load(cnst_MAPBACK_File, 54);
-//     // ; reserved EMM header pointer for a 6 frame animation
-//     // ; no connection enchanted road
-// 
-// 
-//     // Loop MAPBACK 55 to 62:
-//     for(itr = 0; itr < 8; itr++)
-//     {
-//         IMG_OVL_EnchRoads[itr] = LBX_Load(cnst_MAPBACK_File, 55 + itr);
-//         // ; array of 8 reserved EMM header pointers
-//         // ; for 6 frame animations
-//         // ; clockwise 1-connection e.roads starting up
-//     }
-// 
+
+
+        road_lone_seg = LBX_Load(mapback_lbx_file, 45);  // ; reserved EMM header pointer for a single image  ; no connection normal road
+
+        // Loop MAPBACK 46 to 53:
+        for(itr = 0; itr < 8; itr++)
+        {
+            roads_seg[itr] = LBX_Load(mapback_lbx_file, 46 + itr);  // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
+        }
+
+        eroad_lone_seg = LBX_Load(mapback_lbx_file, 54);  // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
+        // Loop MAPBACK 55 to 62:
+        for(itr = 0; itr < 8; itr++)
+        {
+            eroads_seg[itr] = LBX_Load(mapback_lbx_file, 55 + itr);  // ; array of 8 reserved EMM header pointers  ; for 6 frame animations  ; clockwise 1-connection e.roads starting up
+        }
+
+
 //     OVL_WarpNodeFX_Prep = Allocate_Space(24);
 //     // ; used to save and manipulate the tile graphics to
 //     // ; display the warp node effect
-// 
+
+
 //     // Loop MAPBACK 63 to 67:
 //     for(itr = 0; itr < 8; itr++)
 //     {
-//         IMG_OVL_Sparkles[itr] = LBX_Load(cnst_MAPBACK_File, 63 + itr);
+//         IMG_OVL_Sparkles[itr] = LBX_Load(mapback_lbx_file, 63 + itr);
 //         // ; array of 5 reserved EMM header pointers for
 //         // ; 6 frame animations
 //     }
-// 
-//     UU_IMG_OVL_WorkMark = LBX_Load(cnst_MAPBACK_File, 89);
+
+
+//     UU_IMG_OVL_WorkMark = LBX_Load(mapback_lbx_file, 89);
 //     // ; single-loaded 6 frame animation, unused afaik
 //     // ; (blue tile frame called "city work area")
-//     UU_IMG_OVL_Empty3 = LBX_Load(cnst_MAPBACK_File, 90);
-//     // ; single-loaded image, called "hunter's lodge"
-//     IMG_OVL_Nightshade = LBX_Load(cnst_MAPBACK_File, 91);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_WildGame = LBX_Load(cnst_MAPBACK_File, 92);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_WarpedMask = LBX_Load(cnst_MAPBACK_File, 93);
+
+        UU_IMG_OVL_Empty3 = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
+        IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);    // ; reserved EMM header pointer for a single image
+        IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);      // ; reserved EMM header pointer for a single image
+
+
+//     IMG_OVL_WarpedMask = LBX_Load(mapback_lbx_file, 93);
 //     // ; reserved EMM header pointer for a single image
 
 }

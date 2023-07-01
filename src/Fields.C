@@ -391,7 +391,7 @@ int16_t Add_Button_Field(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pi
 
     p_fields[fields_count].type = ft_Button;
 
-    fields_count +=1;
+    fields_count += 1;
 
     return (fields_count - 1);
 }

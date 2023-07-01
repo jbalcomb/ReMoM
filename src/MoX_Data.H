@@ -476,29 +476,29 @@ extern SAMB_ptr TBL_Premade_Items;
 // WZD dseg:913E
 // IMG_USW_Items ITEM_ICONS
 // WZD dseg:9226
-// Active_Unit
+extern SAMB_ptr Active_Unit;                // alloc in MoM_Tables_Init()
 // WZD dseg:922A
 // TBL_BattleUnits
 // WZD dseg:922E
 // TBL_CombatEnchants
 
 // WZD dseg:9232
-extern SAMB_ptr p0_heroes;
+extern SAMB_ptr p0_heroes;                  // alloc in MoM_Tables_Init()
 // WZD dseg:9236
-extern SAMB_ptr p1_heroes;
+extern SAMB_ptr p1_heroes;                  // alloc in MoM_Tables_Init()
 // WZD dseg:923A
-extern SAMB_ptr p2_heroes;
+extern SAMB_ptr p2_heroes;                  // alloc in MoM_Tables_Init()
 // WZD dseg:923E
-extern SAMB_ptr p3_heroes;
+extern SAMB_ptr p3_heroes;                  // alloc in MoM_Tables_Init()
 // WZD dseg:9242
-extern SAMB_ptr p4_heroes;
+extern SAMB_ptr p4_heroes;                  // alloc in MoM_Tables_Init()
 // WZD dseg:9246
-extern SAMB_ptr p5_heroes;
+extern SAMB_ptr p5_heroes;                  // alloc in MoM_Tables_Init()
 
 // WZD dseg:9392
-extern SAMB_ptr Visibility_Myrror;      // alloc in MoM_Tables_Init()
+extern SAMB_ptr Visibility_Myrror;          // alloc in MoM_Tables_Init()
 // WZD dseg:9396
-extern SAMB_ptr Visibility_Arcanus;     // alloc in MoM_Tables_Init()
+extern SAMB_ptr Visibility_Arcanus;         // alloc in MoM_Tables_Init()
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
 // ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
@@ -570,11 +570,12 @@ extern SAMB_ptr TBL_MoveMaps_EMS;
 
 
 // WZD dseg:9CB0  
-extern SAMB_ptr TBL_Scouting;
+extern uint8_t * TBL_Scouting;              // alloc in MoM_Tables_Init()
 // WZD dseg:9CB4
-extern SAMB_ptr TBL_Terrain_Flags;
+extern uint8_t * TBL_Terrain_Flags;         // alloc in MoM_Tables_Init()
 // WZD dseg:9CB8
-extern SAMB_ptr TBL_Terr_Specials;
+extern SAMB_ptr TBL_Terr_Specials;          // alloc in MoM_Tables_Init()
+
 // WZD dseg:9CBC
 // extern SAMB_ptr _CITIES;
 // extern struct s_CITY _CITIES[];
@@ -595,7 +596,7 @@ extern struct s_FORTRESS * _FORTRESSES;
 // WZD dseg:9CCC
 extern SAMB_ptr TBL_Nodes;
 // WZD dseg:9CD0
-extern SAMB_ptr TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
+extern uint8_t * TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
 // WZD dseg:9CD4
 extern SAMB_ptr UU_TBL_2;
 // WZD dseg:9CD8

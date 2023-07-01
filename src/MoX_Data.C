@@ -45,7 +45,7 @@ SAMB_ptr TBL_Premade_Items;
 // WZD dseg:913E
 // IMG_USW_Items ITEM_ICONS
 // WZD dseg:9226
-// Active_Unit
+SAMB_ptr Active_Unit;
 // WZD dseg:922A
 // TBL_BattleUnits
 // WZD dseg:922E
@@ -146,12 +146,17 @@ SAMB_ptr TBL_TempMoveMap_EMS;
 SAMB_ptr TBL_MoveMaps_EMS;
 
 
-// WZD dseg:9CB0  
-SAMB_ptr TBL_Scouting;
+// WZD dseg:9CB0
+/*
+    302 Paragraphs, 4832 Bytes
+    4800 bytes used - 1-byte value, 2400 world squares, 2 planes
+*/
+uint8_t * TBL_Scouting;                     // load in Load_SAVE_GAM()
 // WZD dseg:9CB4  
-SAMB_ptr TBL_Terrain_Flags;
+uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
 // WZD dseg:9CB8  
-SAMB_ptr TBL_Terr_Specials;
+SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
+
 // WZD dseg:9CBC  
 // SAMB_ptr _CITIES;
 // struct s_CITY _CITIES[CITY_COUNT_MAX];  // 100 * sizeof(114)
@@ -173,7 +178,7 @@ struct s_FORTRESS * _FORTRESSES;
 // WZD dseg:9CCC  
 SAMB_ptr TBL_Nodes;
 // WZD dseg:9CD0
-SAMB_ptr TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
+uint8_t * TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
 // WZD dseg:9CD4
 SAMB_ptr UU_TBL_2;
 // WZD dseg:9CD8

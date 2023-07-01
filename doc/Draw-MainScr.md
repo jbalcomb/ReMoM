@@ -1,5 +1,79 @@
 
+Draw Maps
+* Draw Movement Map
+    * Main Screen
+    * City Screen
+* Draw Reduced Map
+    * Main Screen
+    * Cities Screen
+    * Armies Screen
+~ Draw Cartographer Screen
 
+Draw Main Screen Movement Map
+    Units
+    Cities
+    Terrain
+    Terrain Specials
+    ¿ Towers of Wizardy, Monster Lairs ?
+    Nodes
+    Roads
+    Unexplored Area
+    ¿ Corruption ?
+
+
+
+Draw_Maps()
+    Draw_Minimap()
+    Draw_Map_Window()
+        Draw_Map_Terrain()
+        Draw_Map_Minerals()
+        Draw_Map_Terrain_Specials()
+        Draw_Map_Roads()
+        Draw_Map_Cities()
+        Draw_Map_Towers()  /* Towers of Wizardry */
+        Draw_Map_Lairs()  /* Monster Lairs - Ancient Ruins, Ancient Temples, Underround Lairs */
+        Draw_Map_Units()
+        Draw_Map_Nodes()
+        Draw_Map_Unexplored_Area()
+        Cycle_Map_Animations()
+    Draw_Active_Unit_Stack()
+
+
+OVL_DrawMinerals
+Draw_Map_Minerals
+
+OVL_DrawTerrSpecials
+Draw_Map_Terrain_Specials
+corruption, wild games, and nightshades
+
+OVL_DrawRoads
+Draw_Map_Roads
+
+OVL_DrawCities
+Draw_Map_Cities
+
+OVL_DrawTowers
+Draw_Map_Towers
+
+OVL_DrawEncounters
+Draw_Map_Lairs
+
+OVL_DrawUnits
+Draw_Map_Units
+
+OVL_DrawNodeFX
+Draw_Map_Nodes
+
+OVL_DrawScouting
+Draw_Map_Unexplored_Area
+
+OVL_StepMapAnims
+Cycle_Map_Animations
+    ...
+    OVL_Anim_Stepper = (1 - OVL_Anim_Stepper)
+    OVL_TileAnim_Stage
+    OVL_NodeSprkl_Stage
+    OVL_EnchRoad_Stage
 
 
 ¿ Conclusions ?

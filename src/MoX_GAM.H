@@ -3,6 +3,8 @@
 
 #include "MoX_TYPE.H"    /* word */
 
+
+// Game Option - Difficulty
 enum e_Difficulty
 {
     god_Intro,
@@ -30,6 +32,7 @@ enum e_Magic
     gom_Normal,
     gom_Powerful
 };
+
 
 /*
 Level and Status (signed integer)
@@ -98,15 +101,16 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
+void TST_Validate_GameData(void);
+void Read_SAVE_GAM(void);
+void Write_SAVE_GAM(void);
+
+
 // WZD o50p01
 void Save_SAVE_GAM(int16_t save_gam_idx);
 
 // WZD o50p02
 void Load_SAVE_GAM(int16_t save_gam_idx);
-
-
-void Read_SAVE_GAM(void);
-void Write_SAVE_GAM(void);
 
 
 #ifdef __cplusplus

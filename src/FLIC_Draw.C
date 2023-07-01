@@ -574,6 +574,13 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
 }
 
 
+// WZD s30p25
+void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg)
+{
+
+}
+
+
 // WZD s30p40
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 {
@@ -985,3 +992,31 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 //     dbg_prn("DEBUG: [%s, %d] END: Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
 // #endif
 }
+
+// WZD s33p09
+// drake178: LBX_IMG_ColorReplace
+void FLIC_Remap_Color(SAMB_ptr pict_seg, uint8_t color, uint8_t remap_color)
+{
+    int16_t loop_counter;
+    uint8_t * src;
+    uint8_t * dst;
+    uint8_t pixel;
+
+    loop_counter = FLIC_GET_WIDTH(pict_seg) * FLIC_GET_HEIGHT(pict_seg);
+
+    src = pict_seg + 16;
+    dst = pict_seg + 16;
+
+    while(loop_counter--)
+    {
+        pixel = *src++;
+        dst++;
+        if(pixel == color)
+        {
+            dst--;
+            *dst++ = remap_color;
+        }
+    }
+
+}
+

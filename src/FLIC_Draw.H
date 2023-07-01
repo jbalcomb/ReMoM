@@ -181,6 +181,9 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 // WZD s30p24
 void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg);
 
+// WZD s30p25
+void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg);
+
 // WZD s30p40
 // MoO2  Get_Full_Store_Flag()
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
@@ -201,6 +204,10 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 
 // WZD s33p05
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
+
+// WZD s33p09
+// drake178: LBX_IMG_ColorReplace
+void FLIC_Remap_Color(SAMB_ptr pict_seg, uint8_t color, uint8_t remap_color);
 
 
 #ifdef __cplusplus

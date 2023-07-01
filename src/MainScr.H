@@ -25,8 +25,158 @@ extern SAMB_ptr _reduced_map_seg;
 // ; 12Fh LBX_Alloc_First paragraphs in the LBX_Sandbox_Segment
 
 
+/*
+                                        ¿ BEGIN: ovr052 Terrain_Init() ?
+*/
+// WZD dseg:CB5E                                                 ovr052
+// WZD dseg:CB5E 00 00                                           IMG_OVL_WarpedMask@ dw 0                ; DATA XREF: Terrain_Init+320w ...
+// WZD dseg:CB5E                                                                                         ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB60
+extern SAMB_ptr gsa_OVL_Tile_WorkArea;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
+
+
+// WZD dseg:CB62
+extern SAMB_ptr UU_IMG_OVL_Empty3;                 // ; single-loaded image, called "hunter's lodge"
+
+// WZD dseg:CB64
+extern SAMB_ptr IMG_OVL_Nightshade;                // ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB66
+extern SAMB_ptr IMG_OVL_WildGame;                  // ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB68 00 00                                           UU_IMG_OVL_Empty1@ dw 0                 ; DATA XREF: Terrain_Init:loc_46318w
+// WZD dseg:CB68                                                                                         ; single-loaded image, called "mine" in the file
+
+// WZD dseg:CB6A
+SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB6C 00 00                                           UU_IMG_OVL_Mud@ dw 0                    ; DATA XREF: Terrain_Init+1F6w
+// WZD dseg:CB6C                                                                                         ; reserved EMM header pointer (unused in the game?)
+
+// WZD dseg:CB6E
+/*
+    load in Terrain_Init()
+    MAPBACK.LBX  78-86
+    SITES - coal, iron, silver, gold, gems, mithril, adamantium, quork, crysx
+*/
+extern SAMB_ptr _mineral_sites_seg[];
+
+// WZD dseg:CB80 00                                              db    0
+// WZD dseg:CB81 00                                              db    0
+// WZD dseg:CB82 00 00 00 00 00 00 00 00 00 00                   IMG_OVL_Sparkles@ dw 5 dup(0)           ; DATA XREF: Terrain_Init+2BFw ...
+// WZD dseg:CB82                                                                                         ; array of 5 reserved EMM header pointers for
+// WZD dseg:CB82                                                                                         ; 6 frame animations
+// WZD dseg:CB8C 00                                              db    0
+// WZD dseg:CB8D 00                                              db    0
+// WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cw
+// WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
+// WZD dseg:CB90 00 00                                           OVL_WarpNodeFX_Prep@ dw 0               ; DATA XREF: Terrain_Init+2A3w ...
+// WZD dseg:CB90                                                                                         ; 18h LBX_Alloc_Space paragraphs
+// WZD dseg:CB90                                                                                         ; used to save and manipulate the tile graphics to
+// WZD dseg:CB90                                                                                         ; display the warp node effect
+
 // WZD dseg:CB92
-extern SAMB_ptr _unit_colored_backgrounds_seg[];
+extern SAMB_ptr _unit_colored_backgrounds_seg[];    // load in Terrain_Init() ovr052
+
+// WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init+F3w ...
+// WZD dseg:CB92                                                                                         ; array of 6 reserved EMM header pointers
+// WZD dseg:CB92                                                                                         ; (1 per banner color)
+// WZD dseg:CB9E 00                                              db    0
+// WZD dseg:CB9F 00                                              db    0
+
+// WZD dseg:CBA0
+extern SAMB_ptr eroads_seg[];               // ; array of 8 reserved EMM header pointers  ; for 6 frame animations  ; clockwise 1-connection e.roads starting up
+// WZD dseg:CBB0
+extern SAMB_ptr eroad_lone_seg;             // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
+// WZD dseg:CBB0
+extern SAMB_ptr roads_seg[];                // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
+// WZD dseg:CBB2
+extern SAMB_ptr road_lone_seg;              // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
+
+// WZD dseg:CBC2                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBC2                                                                                         ; no connection normal road
+// WZD dseg:CBC4 00 00                                           IMG_OVL_EZ_Cave@ dw 0                   ; DATA XREF: Terrain_Init+154w ...
+// WZD dseg:CBC4                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBC6 00 00                                           IMG_OVL_EZ_Dung@ dw 0                   ; DATA XREF: Terrain_Init+166w
+// WZD dseg:CBC6                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBC8 00 00                                           IMG_OVL_EZ_ATmpl@ dw 0                  ; DATA XREF: Terrain_Init+178w
+// WZD dseg:CBC8                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBCA 00 00                                           IMG_OVL_EZ_AKeep@ dw 0                  ; DATA XREF: Terrain_Init+18Aw
+// WZD dseg:CBCA                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBCC 00 00                                           IMG_OVL_EZ_MLair@ dw 0                  ; DATA XREF: Terrain_Init+19Cw
+// WZD dseg:CBCC                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBCE 00 00                                           IMG_OVL_EZ_Ruins@ dw 0                  ; DATA XREF: Terrain_Init+1AEw
+// WZD dseg:CBCE                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBD0 00 00                                           IMG_OVL_EZ_FTmpl@ dw 0                  ; DATA XREF: Terrain_Init+1C0w
+// WZD dseg:CBD0                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBD2 00 00                                           word_43672 dw 0
+// WZD dseg:CBD4 00 00                                           IMG_OVL_IntactTower@ dw 0               ; DATA XREF: Terrain_Init+130w ...
+// WZD dseg:CBD4                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBD6 00 00                                           IMG_OVL_PoppedTower@ dw 0               ; DATA XREF: Terrain_Init+142w ...
+// WZD dseg:CBD6                                                                                         ; reserved EMM header pointer for a single image
+
+// WZD dseg:CBD8
+extern SAMB_ptr IMG_OVL_Walled_City;               // ; reserved EMM header pointer for a 5 frame image
+
+// WZD dseg:CBDA
+extern SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header pointer for a 5 frame image
+
+// WZD dseg:CBDC 00                                              db    0
+// WZD dseg:CBDD 00                                              db    0
+// WZD dseg:CBDE 00                                              db    0
+// WZD dseg:CBDF 00                                              db    0
+// WZD dseg:CBE0 00                                              db    0
+// WZD dseg:CBE1 00                                              db    0
+// WZD dseg:CBE2 00                                              db    0
+// WZD dseg:CBE3 00                                              db    0
+// WZD dseg:CBE4 00                                              db    0
+// WZD dseg:CBE5 00                                              db    0
+// WZD dseg:CBE6 00                                              db    0
+// WZD dseg:CBE7 00                                              db    0
+// WZD dseg:CBE8 00                                              unk_43688 db    0
+// WZD dseg:CBE9 00                                              db    0
+// WZD dseg:CBEA 00                                              db    0
+// WZD dseg:CBEB 00                                              db    0
+// WZD dseg:CBEC 00                                              unk_4368C db    0
+// WZD dseg:CBED 00                                              db    0
+// WZD dseg:CBEE 00                                              db    0
+// WZD dseg:CBEF 00                                              db    0
+// WZD dseg:CBF0 00                                              db    0
+// WZD dseg:CBF1 00                                              db    0
+// WZD dseg:CBF2 00                                              db    0
+// WZD dseg:CBF3 00                                              db    0
+// WZD dseg:CBF4 00                                              db    0
+// WZD dseg:CBF5 00                                              db    0
+// WZD dseg:CBF6 00                                              db    0
+// WZD dseg:CBF7 00                                              db    0
+// WZD dseg:CBF8 00                                              db    0
+// WZD dseg:CBF9 00                                              db    0
+// WZD dseg:CBFA 00                                              db    0
+// WZD dseg:CBFB 00                                              db    0
+// WZD dseg:CBFC 00                                              db    0
+// WZD dseg:CBFD 00                                              db    0
+// WZD dseg:CBFE 00                                              db    0
+// WZD dseg:CBFF 00                                              db    0
+// WZD dseg:CC00 00                                              db    0
+// WZD dseg:CC01 00                                              db    0
+// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+gsa_IMG_OVL_Exploration@ dw 0Eh dup(0)  ; DATA XREF: Terrain_Init+D0w ...
+// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 reserved EMM header pointers
+// WZD dseg:CC1E 00                                              db    0
+// WZD dseg:CC1F 00                                              db    0
+// WZD dseg:CC20 00                                              db    0
+// WZD dseg:CC21 00                                              db    0
+// WZD dseg:CC22 00 00 00 00                                     terrain_lbx_001 dd 0                    ; DATA XREF: Terrain_Init+21w ...
+// WZD dseg:CC26 00 00                                           terrain_001_1 dw 0                      ; DATA XREF: Draw_Map_Terrain+C0w ...
+// WZD dseg:CC28 00 00                                           g_EmmHndl_TERRAIN dw 0                  ; DATA XREF: Terrain_Init:loc_4615Bw ...
+// WZD dseg:CC28                                                                                         ; EMM_Load_LBX handle
+// WZD dseg:CC2A 00                                              db    0
+// WZD dseg:CC2B 00                                              db    0
+// WZD dseg:CC2C 00                                              db    0
+// WZD dseg:CC2D 00                                              db    0
+/*
+                                        ¿ END: ovr052 Terrain_Init() ?
+*/
 
 
 
