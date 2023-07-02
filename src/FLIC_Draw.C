@@ -479,6 +479,15 @@ int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 
 
 
+// WZD s30p41
+// drake178: LBX_IMG_SetLoop1
+void FLIC_Set_LoopFrame_1(SAMB_ptr p_FLIC_Header)
+{
+    FLIC_SET_LOOP_FRAME(p_FLIC_Header, 1);
+}
+
+
+
 /*
     WIZARDS.EXE  seg033
 

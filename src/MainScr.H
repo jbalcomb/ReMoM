@@ -273,7 +273,7 @@ o57p10  ? IDK_UnitMoves_and_PlanarTravel() ?
 // WZD o63p04
 // PRIVATE  void Cycle_Unit_Enchantment_Animation(void);
 // WZD o63p05
-void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
+void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // called from WZD o67p07 Draw_Active_Unit_Stack()
 // WZD o63p05
 // AKA OVL_DrawUnitImage()

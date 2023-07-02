@@ -29,7 +29,7 @@
 
 #define HUMAN_PLAYER_IDX 0
 #define NEUTRAL_PLAYER_IDX 5
-
+#define NEUTRAL_PLAYER_BANNER_COLOR_IDX 5
 
 // World (Grid) Dimensions, in Map Sqaures
 #define WORLD_WIDTH 60

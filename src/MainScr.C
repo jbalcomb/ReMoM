@@ -77,10 +77,10 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 // WZD o063p04
 void Cycle_Unit_Enchantment_Animation(void);
 // WZD o063p05
-void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
+void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
 // WZD o063p05
 // AKA OVL_DrawUnitImage()
-void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
+void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // WZD o63p12
 int16_t OVL_GetStackHMoves(void);
 /*
@@ -1887,7 +1887,7 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
 
             Unit_Window_Picture_Coords(itr_unit_stack_count, &x1, &y1, &x2, &y2);
             FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_unit_stack_count]);
-            Unit_Window_Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, _unit_stack[itr_unit_stack_count].active);
+            Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, _unit_stack[itr_unit_stack_count].active);
             // DEBUG 'active' Unit_Window_Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, 1);
             // TODO  Unit_Window_Draw_Unit_Attributes(x1, y1, unit_stack_unit_idx);
         }
@@ -2066,35 +2066,20 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Do_Draw(*map_x = %d, *map_y = %d, map_plane = %d, x_pos = %d , y_pos = %d, player_idx = %d)\n", __FILE__, __LINE__, *map_x, *map_y, map_plane, x_pos, y_pos, player_idx);
 #endif
 
-    /*
-        Reset_Map_Draw()
-            _prev_map_draw_x = e_ST_UNDEFINED;
-            _prev_map_draw_y = e_ST_UNDEFINED;
-        
-        _prev_map_draw_x = ST_UNDEFINED;  // WZD dseg:6FFE  AKA Map_LastDraw_X
-        _prev_map_draw_y = ST_UNDEFINED;  // WZD dseg:7000  AKA Map_LastDraw_Y
-    */
-    // j_Reset_Map_Draw()  // AKA j_Unset_LastMapDraw_XY();
+    Reset_Map_Draw();
 
     Minimap_Set_Dims(58, 30);
 
-
     Draw_Maps(MAP_START_X, MAP_START_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
-    // x and y origin for screen
-    // width and height of map in squares
-    // ? x, y, plane for world ?
-    // player_idx of current/human_player_idx
 
     FLIC_Draw(0, 0, main_background);
 
-    // WZD o67p09
     Draw_Minimap_Window(251, 21, 58, 30);
 
     // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
     // _help_entries.Entry_Index+96h = ST_UNDEFINED;
     // _help_entries.Entry_Index+0A0h = ST_UNDEFINED;
     // _help_entries.Entry_Index+0F0h = ST_UNDEFINED;
-
 
 
     // DEBUG
@@ -2105,29 +2090,23 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     if(_unit_stack_count > 0)
     {
-        Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y);  // AKA j_OVL_DrawStackSelect(OVL_STKUnitCards_Lft, OVL_STKUnitCards_Top)
-        /*
-        ; draws the unit action buttons into the current draw
-; frame, locking everything but "WAIT" if no stack is
-; selected, otherwise the extra action is based on the
-; value stored in OVL_ExtraUnitAction
-; Attributes: thunk
-WZD o57p04
-*/
+        Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y);
         // TODO(JimBalcomb,20230616): make note of the drawing of locked buttons in here  ? program-flow oddities ? screen component drawing graph ?
-        Main_Screen_Draw_Unit_Action_Buttons();  // AKA j_OVL_DrawUnitActnBtns
+        Main_Screen_Draw_Unit_Action_Buttons();
     }
     else
     {
-        Main_Screen_Draw_Summary_Window();  // AKA  j_OVL_DrawDeselectIMG()
-        Main_Screen_Draw_Unit_Action_Locked_Buttons();  // AKA  j_OVL_DrawLockedActns()
-        Main_Screen_Draw_Next_Turn_Button();  // AKA  j_OVL_DrawNextTurnBtn()
+        Main_Screen_Draw_Summary_Window();
+        Main_Screen_Draw_Unit_Action_Locked_Buttons();
+        Main_Screen_Draw_Next_Turn_Button();
     }
 
-    Main_Screen_Draw_Status_Window();  // AKA  OVL_DrawGoldnMana()
+    Main_Screen_Draw_Status_Window();
 
-    // if(OVL_StackHasPath == ST_TRUE)
-    // TODO  j_OVL_DrawPath(OVL_Path_Length, OVL_Path_Xs, OVL_Path_Ys);
+    // TODO  if(OVL_StackHasPath == ST_TRUE)
+    // TODO  {
+    // TODO      j_OVL_DrawPath(OVL_Path_Length, OVL_Path_Xs, OVL_Path_Ys);
+    // TODO  }
 
     Main_Screen_Draw_Game_Buttons();
 
@@ -2158,11 +2137,14 @@ void Cycle_Unit_Enchantment_Animation(void)
 }
 
 // WZD o063p05
-void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag)
+void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     int16_t unit_owner_idx;
     int16_t unit_colored_backgrounds_idx;
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+// #endif
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -2178,7 +2160,7 @@ void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit
     */
     if(flag != 0)
     {
-        unit_owner_idx = _UNITS[unit_stack_unit_idx].owner_idx;
+        unit_owner_idx = _UNITS[unit_idx].owner_idx;
         if(unit_owner_idx != ST_UNDEFINED)
         {
             if(unit_owner_idx != NEUTRAL_PLAYER_IDX)
@@ -2195,42 +2177,59 @@ void Unit_Window_Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit
         FLIC_Draw(x, y, _unit_colored_backgrounds_seg[unit_colored_backgrounds_idx]);
     }
 
-    Unit_Window_Draw_Unit_StatFig(x, y, unit_stack_unit_idx, flag);
+    Draw_Unit_StatFig(x, y, unit_idx, flag);
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+// #endif
 }
 
 
 // WZD o063p05
 // AKA OVL_DrawUnitImage()
 // pict_seg is 
-void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
+void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
-    int16_t unit_type_idx;
+    uint8_t unit_type_idx;
     int16_t unit_owner_idx;
-    int16_t banner;
-    uint16_t itr_banner_colors;
+    int16_t banner_idx;
+    uint16_t itr_color_remap;
+    uint8_t Color_1;
+    uint8_t Color_2;
+    
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+// #endif
+
 
     unit_type_idx = _UNITS[unit_idx].type;
 
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
+
+    // TODO  if(flag == 0)
+    // TODO  {
+
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
     Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
 
     unit_owner_idx = (int16_t)_UNITS[unit_idx].owner_idx;
 
-    if(unit_owner_idx != NEUTRAL_PLAYER_IDX)
+    if(unit_owner_idx == NEUTRAL_PLAYER_IDX)
     {
-        banner = (int16_t)_players[unit_owner_idx].Banner;
+        banner_idx = NEUTRAL_PLAYER_BANNER_COLOR_IDX;
     }
     else
     {
-        banner = 5;
+        banner_idx = (int16_t)_players[unit_owner_idx].Banner;
     }
 
-    // TODO  for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
-    // TODO  {
-    // TODO      LBX_IMG_ColorReplace(UnitDraw_WorkArea, itr_banner_colors + 214, COL_Banners_P0[itr_banner_colors * 5]);
-    // TODO  }
+    // TODO: add contstants for the color index and color count
+    for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+    {
+        FLIC_Remap_Color(UnitDraw_WorkArea, itr_color_remap + 214, COL_Banners[ ((banner_idx * 5) + itr_color_remap) ]);
+    }
+
+    // TODO  } /* if(flag == 0) */
 
     /*
         flag: {0,1,2,3}
@@ -2240,38 +2239,84 @@ void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16
         ? Inactive / Finished / Patrol ?
             ?
     */
-    // TODO  if(flag == 0 || flag == 1 || flag == 2 || flag == 3)
-    // TODO  {
-    // TODO      if(Unit_Is_Invisible() == ST_TRUE)
-    // TODO      {
-    // TODO          LBX_IMG_ClearGraphic(UnitDraw_WorkArea, 233);
-    // TODO          LBX_IMG_OutlineOvr(UnitDraw_WorkArea, 1);
-    // TODO      }
-    // TODO  
-    // TODO      if(flag != 3 && 
-    // TODO      _UNITS[unit_idx].Status == 1 /* US_Patrol */ && 
-    // TODO      Unit_Is_Invisible() != ST_FALSE  && 
-    // TODO      unit_owner_idx == _human_player_idx)
-    // TODO      {
-    // TODO          LBX_IMG_Grayscale(UnitDraw_WorkArea, 1);
-    // TODO      }
-    // TODO  
-    // TODO      UNIT_Draw_UE_Outline(unit_idx);
-    // TODO  }
+    if(flag == 0 || flag == 1 || flag == 2 || flag == 3)
+    {
+        if(UNIT_HasInvisibility(unit_idx) == ST_TRUE)
+        {
+            // TODO  LBX_IMG_ClearGraphic(UnitDraw_WorkArea, 233);
+            // TODO  LBX_IMG_OutlineOvr(UnitDraw_WorkArea, 1);
+        }
+    
+        if( (flag != 3) && 
+            (_UNITS[unit_idx].Status == 1) /* US_Patrol */ && 
+            (UNIT_HasInvisibility(unit_idx) == ST_FALSE)  && 
+            (unit_owner_idx == _human_player_idx)
+        )
+        {
+            // TODO  LBX_IMG_Grayscale(UnitDraw_WorkArea, 1);
+        }
+    
+        // TODO  UNIT_Draw_UE_Outline(unit_idx);
+    }
 
+    FLIC_Set_LoopFrame_1(UnitDraw_WorkArea);
     Draw_Picture(x+1, y+1, UnitDraw_WorkArea);
 
     /*
         BEGIN: Unit Status - Icon/Text
     */
-    // TODO  if(unit_owner_idx == _human_player_idx)
-    // TODO  {
-    // TODO  
-    // TODO  }
+    if( (unit_owner_idx == _human_player_idx) && ( (flag == 0) || (flag == 1) ) )
+    {
+        Color_1 = 10;
+        Color_2 = 15;
+
+        // ; stores the passed colors into the last font color block ($F0-$FF of Palette_Font_Colors@), sets it as color #1, and selects the specified font for drawing with it
+        // font_idx, colors
+        Set_Font_Colors_15(0, &Color_1);
+
+        // ; sets the color that will be used for outlining or shadowing text displayed with an outline style
+        // ; Color_Index
+        Set_Outline_Color(4);
+
+        // ; calls VGA_SetFont with the passed parameters, then sets the outline style to 1 (bottom right)
+        // Font_Index, Color_1, Color_2, Color_3
+        Set_Font_Style1(0, 15, 0, 0);
+
+
+        switch( (_UNITS[unit_idx].Status - 2) )
+        {
+            case 0:  /* ¿ US_BuildRoad == 2 ? */
+            {
+                Print(x+2, y+2, "B");  // drak178: UNIT_Building_Mark
+            } break;
+            case 1:  /* ¿ US_GoingTo == 3 ? */
+            {
+                if(_UNITS[unit_idx].Rd_Constr_Left == ST_UNDEFINED)
+                {
+                    Print(x+2, y+2, "G");  // drak178: UNIT_Going_Mark
+                }
+                else
+                {
+                    Print(x+2, y+2, "B");  // drak178: UNIT_Building_Mark
+                }
+            } break;
+            case 4:
+            {
+                Print(x+4, y+5, "C");  // drak178: UNIT_Unk_C_Mark
+            } break;
+            case 6:  /* ¿ US_Purify == 8 ? */
+            {
+                Print(x+2, y+2, "P");  // drak178: UNIT_Purifying_Mark
+            } break;
+        }
+    }
     /*
         END: Unit Status - Icon/Text
     */
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+// #endif
 }
 
 // WZD o63p12

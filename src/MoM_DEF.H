@@ -26,8 +26,16 @@
 #define CURSOR_WIDTH    16
 #define CURSOR_HEIGHT   16
 
+
 // ? /* Palette Index 0: TRANSPARENT */ ?
 #define TRANSPARENT 0x00
+
+
+// Banner Color Remapping
+// 5 Banners (banner_idx)
+// Units - 5 color indices
+// 214 + {0,1,2,3,4} = {214,215,216,218,219}
+// Different than array remap colors for other things - e.g., Towers(Owned,Unowned)
 
 
 /*
