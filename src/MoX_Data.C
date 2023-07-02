@@ -185,8 +185,14 @@ SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
 // struct s_CITY _CITIES[CITY_COUNT_MAX];  // 100 * sizeof(114)
 struct s_CITY * _CITIES;
 
-// WZD dseg:9CC0  
-SAMB_ptr TBL_Encounters;
+// WZD dseg:9CC0
+// drake178: TBL_Encounters
+/*
+    alloc in MoM_Tables_Init()
+    load in Load_SAVE_GAM() - read 102 of 24
+
+*/
+struct s_LAIR * TBL_Lairs;
 
 // WZD dseg:9CC4  
 // SAMB_ptr TBL_Towers;

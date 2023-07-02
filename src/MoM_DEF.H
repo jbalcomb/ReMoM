@@ -9,9 +9,9 @@
 
 */
 
-#define NUM_TOWERS        6
 #define NUM_FORTRESSES    6
-
+#define NUM_TOWERS        6
+#define NUM_LAIRS       102
 
 
 

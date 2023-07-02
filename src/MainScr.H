@@ -90,26 +90,25 @@ extern SAMB_ptr eroads_seg[];               // ; array of 8 reserved EMM header 
 // WZD dseg:CBB0
 extern SAMB_ptr eroad_lone_seg;             // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
 // WZD dseg:CBB0
-extern SAMB_ptr roads_seg[];                // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
+extern SAMB_ptr roads_seg[];                // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
 // WZD dseg:CBB2
-extern SAMB_ptr road_lone_seg;              // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
+extern SAMB_ptr road_lone_seg;              // ; reserved EMM header pointer for a single image  ; no connection normal road
 
-// WZD dseg:CBC2                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBC2                                                                                         ; no connection normal road
-// WZD dseg:CBC4 00 00                                           IMG_OVL_EZ_Cave@ dw 0                   ; DATA XREF: Terrain_Init+154w ...
-// WZD dseg:CBC4                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBC6 00 00                                           IMG_OVL_EZ_Dung@ dw 0                   ; DATA XREF: Terrain_Init+166w
-// WZD dseg:CBC6                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBC8 00 00                                           IMG_OVL_EZ_ATmpl@ dw 0                  ; DATA XREF: Terrain_Init+178w
-// WZD dseg:CBC8                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBCA 00 00                                           IMG_OVL_EZ_AKeep@ dw 0                  ; DATA XREF: Terrain_Init+18Aw
-// WZD dseg:CBCA                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBCC 00 00                                           IMG_OVL_EZ_MLair@ dw 0                  ; DATA XREF: Terrain_Init+19Cw
-// WZD dseg:CBCC                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBCE 00 00                                           IMG_OVL_EZ_Ruins@ dw 0                  ; DATA XREF: Terrain_Init+1AEw
-// WZD dseg:CBCE                                                                                         ; reserved EMM header pointer for a single image
-// WZD dseg:CBD0 00 00                                           IMG_OVL_EZ_FTmpl@ dw 0                  ; DATA XREF: Terrain_Init+1C0w
-// WZD dseg:CBD0                                                                                         ; reserved EMM header pointer for a single image
+// WZD dseg:CBC4
+extern SAMB_ptr IMG_OVL_EZ_Cave;            // ; reserved EMM header pointer for a single image
+// WZD dseg:CBC6
+extern SAMB_ptr IMG_OVL_EZ_Dung;                   // ; reserved EMM header pointer for a single image
+// WZD dseg:CBC8
+extern SAMB_ptr IMG_OVL_EZ_ATmpl;                   // ; reserved EMM header pointer for a single image
+// WZD dseg:CBCA
+extern SAMB_ptr IMG_OVL_EZ_AKeep;                   // ; reserved EMM header pointer for a single image
+// WZD dseg:CBCC
+extern SAMB_ptr IMG_OVL_EZ_MLair;                   // ; reserved EMM header pointer for a single image
+// WZD dseg:CBCE
+extern SAMB_ptr IMG_OVL_EZ_Ruins;                   // ; reserved EMM header pointer for a single image
+// WZD dseg:CBD0
+extern SAMB_ptr IMG_OVL_EZ_FTmpl;                   // ; reserved EMM header pointer for a single image
+
 // WZD dseg:CBD2 00 00                                           word_43672 dw 0
 
 // WZD dseg:CBD4

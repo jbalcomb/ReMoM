@@ -936,10 +936,10 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
     Draw_Map_Biota(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Roads(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Cities(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
-    
     Draw_Map_Towers(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
 
     Draw_Map_Lairs(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
+
     Draw_Map_Units(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Nodes(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Unexplored_Area(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
@@ -1520,68 +1520,83 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 // WZD o150p10
 void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t itr_screen_x;
-    int16_t itr_screen_y;
-    int16_t itr_world_x;
-    int16_t itr_world_y;
-    int16_t curr_world_x;
-    uint8_t unexplored_area;
-    int16_t itr_cities;
-    int16_t has_city;
+    int16_t itr_lairs;
+    int16_t lair_x;
+    int16_t lair_y;
+    uint8_t unexplored_flag;
+    int16_t start_x;
+    int16_t start_y;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Lairs(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    itr_screen_y = screen_y;
-    itr_world_y = world_grid_y;
-    while(world_grid_y + map_grid_height > itr_world_y)
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
-        itr_screen_x = screen_x;
-        itr_world_x = world_grid_x;
-        while(world_grid_x + map_grid_width > itr_world_x)
+        if(TBL_Lairs[itr_lairs].world_plane == world_plane)
         {
-            if(itr_world_x < WORLD_WIDTH)
+            if(TBL_Lairs[itr_lairs].Intact == 1)
             {
-                curr_world_x = itr_world_x;
-            }
-            else
-            {
-                curr_world_x = itr_world_x - WORLD_WIDTH;
-            }
-
-            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
-            if(unexplored_area != ST_FALSE)
-            {
-                /*
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
-                if(Terrain_Special != 0)
-                */
+                if(TBL_Lairs[itr_lairs].Type > EZ_Sorcery_Node)
                 {
-
-                    has_city = ST_FALSE;
-                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    lair_x = TBL_Lairs[itr_lairs].world_x;
+                    lair_y = TBL_Lairs[itr_lairs].world_y;
+                    unexplored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (lair_y * WORLD_WIDTH) + lair_x];
+                    if(unexplored_flag != ST_FALSE)
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        lair_x = lair_x - world_grid_x;
+                        if(lair_x < 0)
                         {
-                            has_city = ST_TRUE;
+                            lair_x = lair_x + WORLD_WIDTH;
                         }
-                    }
-                    if(has_city == ST_FALSE)
-                    {
-                        /*
-                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
-                        */
+                        lair_y = lair_y - world_grid_y;
+                        if( !(lair_y < 0) )
+                        {
+                            if(lair_y < map_grid_height)
+                            {
+                                if( !(lair_x < 0) )
+                                {
+                                    if( lair_x < map_grid_width)
+                                    {
+                                        start_x = screen_x + (lair_x * SQUARE_WIDTH);
+                                        start_y = screen_y + (lair_y * SQUARE_HEIGHT);
+                                        /*
+                                        mov     ax, _SI_itr_lairs
+                                        mov     dx, 18h
+                                        imul    dx
+                                        les     bx, [TBL_Lairs]
+                                        add     bx, ax
+                                        mov     al, [es:bx+s_LAIR.Type]
+                                        cbw
+                                        shl     ax, 1
+                                        mov     bx, ax
+                                        push    (IMG_OVL_EZ_Cave@ - (2*EZ_Cave))[bx]
+                                        push    (IMG_OVL_EZ_Cave@ - (2*EZ_Cave))[bx] ; sa_FLIC_Header
+                                        */
+                                        // TODO(JimBalcomb,20230701): figure out what is going on with this approach to the pict seg
+                                        // FWIW, they are in the same order in the Data Segment, Terrain_Init(), and enum (though I assume the enum is derived)
+                                        // No-Workie  FLIC_Draw(start_x, start_y, (SAMB_ptr)(IMG_OVL_EZ_Cave + ((TBL_Lairs[itr_lairs].Type - EZ_Cave) * sizeof(SAMB_ptr))));
+                                        // No-Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave + 1);
+                                        // Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);
+                                        switch(TBL_Lairs[itr_lairs].Type)
+                                        {
+                                            case EZ_Cave: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);  } break;
+                                            case EZ_Dungeon: {        FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Dung);  } break;
+                                            case EZ_Ancient_Temple: { FLIC_Draw(start_x, start_y, IMG_OVL_EZ_ATmpl); } break;
+                                            case EZ_Keep: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_AKeep); } break;
+                                            case EZ_Monster_Lair: {   FLIC_Draw(start_x, start_y, IMG_OVL_EZ_MLair); } break;
+                                            case EZ_Ruins: {          FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Ruins); } break;
+                                            case EZ_Fallen_Temple: {  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_FTmpl); } break;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            itr_screen_x += SQUARE_WIDTH;
-            itr_world_x += 1;
         }
-        itr_screen_y += SQUARE_HEIGHT;
-        itr_world_y += 1;
     }
 
 #ifdef STU_DEBUG

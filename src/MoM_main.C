@@ -499,7 +499,7 @@ SA_GET_USED(SAMB_head): 2345
     
     _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
     
-    TBL_Encounters = Allocate_Space(351);
+    TBL_Lairs = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
     
     _events_table = (uint8_t *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
     
@@ -947,20 +947,40 @@ void Terrain_Init(void)
     tower_unowned_seg = LBX_Load(mapback_lbx_file, 69);     // ; reserved EMM header pointer for a single image
     tower_owned_seg = LBX_Load(mapback_lbx_file, 70);       // ; reserved EMM header pointer for a single image
 
-//     IMG_OVL_EZ_Cave = LBX_Load(mapback_lbx_file, 71);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_Dung = LBX_Load(mapback_lbx_file, 74);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);
-//     // ; reserved EMM header pointer for a single image
-//     IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);
-//     // ; reserved EMM header pointer for a single image
+// 71  SITES    mound
+    IMG_OVL_EZ_Cave = LBX_Load(mapback_lbx_file, 71);       // ; reserved EMM header pointer for a single image
+// 74  SITES    ruins
+    IMG_OVL_EZ_Dung = LBX_Load(mapback_lbx_file, 74);       // ; reserved EMM header pointer for a single image
+// 72  SITES    temple
+    IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);      // ; reserved EMM header pointer for a single image
+// 73  SITES    keep
+    IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);      // ; reserved EMM header pointer for a single image
+// 71  SITES    mound
+    IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);      // ; reserved EMM header pointer for a single image
+// 74  SITES    ruins
+    IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);      // ; reserved EMM header pointer for a single image
+// 75  SITES    fallen temple
+    IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);      // ; reserved EMM header pointer for a single image
+//     EZ_Cave,
+//     EZ_Dungeon,
+//     EZ_Ancient_Temple,
+//     EZ_Keep,
+//     EZ_Monster_Lair,
+//     EZ_Ruins,
+//     EZ_Fallen_Temple
+// SAMB_ptr IMG_OVL_EZ_Cave;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBC6
+// SAMB_ptr IMG_OVL_EZ_Dung;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBC8
+// SAMB_ptr IMG_OVL_EZ_ATmpl;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBCA
+// SAMB_ptr IMG_OVL_EZ_AKeep;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBCC
+// SAMB_ptr IMG_OVL_EZ_MLair;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBCE
+// SAMB_ptr IMG_OVL_EZ_Ruins;                   // ; reserved EMM header pointer for a single image
+// // WZD dseg:CBD0
+// SAMB_ptr IMG_OVL_EZ_FTmpl;                   // ; reserved EMM header pointer for a single image
 
         /*
             MAPBACK 78 to 86:

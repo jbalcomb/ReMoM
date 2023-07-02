@@ -4,14 +4,39 @@
 #include "MoX_TYPE.H"
 
 
+enum EZ_Types
+{
+    EZ_Tower,
+    EZ_Chaos_Node,
+    EZ_Nature_Node,
+    EZ_Sorcery_Node,
+    EZ_Cave,
+    EZ_Dungeon,
+    EZ_Ancient_Temple,
+    EZ_Keep,
+    EZ_Monster_Lair,
+    EZ_Ruins,
+    EZ_Fallen_Temple
+};
 
+
+
+ // sizeof:  03h  3d
+struct LOC_8BIT
+{
+    /* 1 00 */ int8_t X_Coord;
+    /* 2 01 */ int8_t Y_Coord;
+    /* 3 02 */ int8_t Plane;
+};
 // sizeof:  06h  6d
 struct s_LOC_16BIT
 {
-    /* 00 */ int16_t X_Coord;
-    /* 02 */ int16_t Y_Coord;
-    /* 04 */ int16_t Plane;
+    /* 1 00 */ int16_t X_Coord;
+    /* 2 02 */ int16_t Y_Coord;
+    /* 3 04 */ int16_t Plane;
 };
+
+
 
 // sizeof=0xA
 struct s_BOOKSHELF
@@ -286,6 +311,7 @@ struct s_CITY_BUILDINGS
 
 
 
+
 // sizeof=0x19
 struct s_CITY_ENCHANTMENTS
 {
@@ -349,6 +375,32 @@ struct s_CITY
     /* 64 */ int8_t Food;
     /* 65 */ int8_t RoadConn_BitField[13];
 };
+
+
+
+// sizeof=0x18 24d
+struct s_LAIR
+{
+    /* 00 */  int8_t   world_x;
+    /* 01 */  int8_t   world_y;
+    /* 02 */  int8_t   world_plane;
+    /* 03 */  int8_t   Intact;
+    /* 04 */  int8_t   Type;
+    /* 05 */  int8_t   Defender1_Index;
+    /* 06 */  int8_t   Def1_Had_n_Left;
+    /* 07 */  int8_t   Defender2_Index;
+    /* 08 */  int8_t   Def2_Had_n_Left;
+    /* 09 */  int8_t   Unused_09h;
+    /* 0A */  int16_t  Loot_Gold;
+    /* 0C */  int16_t  Loot_Mana;
+    /* 0E */  int8_t   Spell_n_Special;
+    /* 0F */  int8_t   Misc_Flags;
+    /* 10 */  int8_t   Item_Count;
+    /* 11 */  int8_t   Unused_11h;
+    /* 12 */  int16_t  Item_Values[3];
+    /* 18 */
+};
+
 
 
 
@@ -611,7 +663,8 @@ extern SAMB_ptr TBL_Terr_Specials;          // alloc in MoM_Tables_Init()
 extern struct s_CITY * _CITIES;
 
 // WZD dseg:9CC0
-extern SAMB_ptr TBL_Encounters;
+// drake178: TBL_Encounters
+extern struct s_LAIR * TBL_Lairs;
 
 // WZD dseg:9CC4
 // extern SAMB_ptr TBL_Towers;
