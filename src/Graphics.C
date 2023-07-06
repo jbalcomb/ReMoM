@@ -44,16 +44,42 @@ void Reset_Window(void)
 // WZD s16p01
 void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 {
-    int16_t itr_x;
-    int16_t itr_y;
-    // void ZeroMemory([in] PVOID  Destination, [in] SIZE_T Length);
+//     int16_t itr_x;
+//     int16_t itr_y;
+//     // void ZeroMemory([in] PVOID  Destination, [in] SIZE_T Length);
+// 
+//     for(itr_y = 0; itr_y < SCREEN_HEIGHT; itr_y++)
+//     {
+//         for(itr_x = 0; itr_x < SCREEN_WIDTH; itr_x++)
+//         {
+//             *(current_video_page + (itr_y * SCREEN_WIDTH) + itr_x) = color;
+//         }
+//     }
 
-    for(itr_y = 0; itr_y < SCREEN_HEIGHT; itr_y++)
+    byte_ptr screen_page;
+    int16_t width;
+    int16_t height;
+    uint16_t screen_page_offset;
+    uint16_t itr_width;
+    uint16_t itr_height;
+    
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    screen_page_offset = ((y1 * SCREEN_WIDTH) + x1);
+
+    screen_page = current_video_page + screen_page_offset;
+
+    itr_height = 0;
+    while(itr_height < height)
     {
-        for(itr_x = 0; itr_x < SCREEN_WIDTH; itr_x++)
+        itr_width = 0;
+        while(itr_width < width)
         {
-            *(current_video_page + (itr_y * SCREEN_WIDTH) + itr_x) = color;
+            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = color;
+            itr_width++;
         }
+        itr_height++;
     }
 
 }

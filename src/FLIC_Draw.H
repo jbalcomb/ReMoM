@@ -110,11 +110,23 @@ extern "C" {
 
 
 /*
-    MGC  seg021
+    WZD  seg021
 */
 
-// MGC s21p07
+// WZD s21p07
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
+
+
+/*
+    WZD seg024
+*/
+// WZD s24p08
+void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr pict_seg);
+
+// WZD s24p09
+void Capture_Screen_Block(SAMB_ptr pict_seg, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+
+
 
 /*
     WZD  seg029
@@ -123,14 +135,18 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index);
 // WZD s29p01
 void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
 
+
+
 /*
     WZD  seg030
 */
 
 // WZD s30p01
 // LBX_Image_Copy
+
 // WZD s30p02
-// FLIC_prepare
+void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
+
 // WZD s30p03
 // LBX_IMG_VShiftRect
 // WZD s30p04

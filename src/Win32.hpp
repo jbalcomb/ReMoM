@@ -64,7 +64,9 @@ extern uint16_t window_height;
 BOOL Init_WDA_Game(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 BOOL InitApplication(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow);
-
+// void ErrorExit(LPTSTR lpszFunction);
+// void ErrorExit(const wchar_t * lpszFunction);
+void ErrorExit(LPCTSTR lpszFunction);
 
 // Win32_Evnt.cpp
 void Poll_Messages(void);

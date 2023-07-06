@@ -64,7 +64,21 @@ extern char mapback_lbx_file[];
 
 
 
-// // BEGIN: Draw_Minimap()
+// WZD dseg:7002                                                 END: ovr150
+// WZD dseg:7002
+// WZD dseg:7004                                                 ovr057
+// WZD dseg:7004                                                 ovr150
+// WZD dseg:7004
+extern int16_t DBG_ShowTileInfo;
+
+// WZD dseg:7006 00                                              db    0
+// WZD dseg:7007 00                                              db    0
+// WZD dseg:7008 00                                              db    0
+// WZD dseg:7009 00                                              db    0
+
+
+// WZD dseg:700A                                                 BEGIN: Draw_Minimap()
+
 // // WZD dseg:700A
 // uint8_t COL_MinimapBanners[6] = {171, 216, 205, 201, 210, 50};  // 0xAB, 0xD8, 0xCD, 0xC9, 0xD2, 0x32
 // // WZD dseg:7010
@@ -88,8 +102,12 @@ extern char mapback_lbx_file[];
  
 // WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Warp_GFX_Lines db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
 // WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
-// WZD dseg:7048 9B 9F                                           WarpNode_SeedSave_LO dw 9F9Bh           ; DATA XREF: Draw_Map_Nodes+271w ...
-// WZD dseg:704A 0F 00                                           WarpNode_SeedSave_HO dw 0Fh             ; DATA XREF: Draw_Map_Nodes+26Dw ...
+
+// WZD dseg:7048  9B 9F        WarpNode_SeedSave_LO dw 9F9Bh
+// WZD dseg:704A  0F 00        WarpNode_SeedSave_HO dw 0Fh
+// WZD dseg:7048  9B 9F 0F 00
+extern uint32_t WarpNode_SeedSave;
+
 // WZD dseg:704A                                                 ? END:  ovr150 ?
 
 

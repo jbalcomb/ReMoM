@@ -1,5 +1,52 @@
 
 
+
+
+Platform-Layer
+API Specification
+MoM-Platform.H
+-includes MoM Headers
+
+Platform-Side:
+    FS
+        Find, Open, Read, Write, Close
+    MM
+        Allocate, Deallocate
+    KD
+        Key Press
+    MD
+        Mouse Move
+        Mouse Button
+    VD
+        Translate From Game Video Buffer Format to Platform Video Buffer Format
+        *Paint* *Canvas* to *Display*
+    CLK
+        Timer Ticks
+
+Game-Side:
+    API Specification
+        Set Expectations for the Platform-Layer
+    Pump Events
+        Trigger the Processing of Awaiting Events on the Platform-Layer
+    Video Back-Buffer
+        ...provide bytes to be rendered on the display device...
+    
+
+Win Main
+    Init
+    Evnt
+
+MoM Main
+
+MoM Platform
+
+
+
+
+
+
+
+
 # MoM - Platform-Layer
 
 ya see, what it is is...

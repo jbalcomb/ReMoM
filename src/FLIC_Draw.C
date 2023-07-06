@@ -1,6 +1,12 @@
+/*
+    WIZARDS.EXE
+    
+
+*/
 
 #include "MoX_TYPE.H"     /* byte_ptr, SAMB_ptr */
 #include "MoX_DEF.H"      /* DLOG() */
+#include "MoM_DEF.H"
 
 #include "MoX_Data.H"
 
@@ -66,6 +72,77 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 
 
 /*
+    WZD seg024
+*/
+// WZD s24p08
+// drake178: VGA_SaveDrawSection
+/*
+    calls Set_Page_Off(), so ~ Copy Off To Picture
+    MoO2: Screen_Bitmap_Capture() |-> Create_Bitmap_Header(); Capture_Screen_Block_();
+*/
+void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr pict_seg)
+{
+    int16_t width;
+    int16_t height;
+
+    Set_Page_Off();
+
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    if(width < 0)
+    {
+        width = width * -1;
+    }
+    if(height < 0)
+    {
+        height = height * -1;
+    }
+
+    Create_Picture(width, height, pict_seg);
+
+    Capture_Screen_Block((pict_seg + 16), x1, y1, x2, y2);
+
+}
+
+
+// WZD s24p09
+/*
+    x1,y1,x2,y2 of screen
+*/
+void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+    byte_ptr buffer;
+    byte_ptr screen_page;
+    int16_t width;
+    int16_t height;
+    uint16_t screen_page_offset;
+    uint16_t itr_width;
+    uint16_t itr_height;
+    
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    screen_page_offset = ((y1 * SCREEN_WIDTH) + x1);
+
+    buffer = frame_data;
+
+    screen_page = current_video_page + screen_page_offset;
+
+    itr_height = 0;
+    while(itr_height++ < height)
+    {
+        itr_width = 0;
+        while(itr_width++ < width)
+        {
+            *buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
+        }
+    }
+
+}
+
+
+/*
     WZD  seg029
 */
 
@@ -82,7 +159,7 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
 
-    bbuff_pos = current_video_page + ((y_start * 320) + x_start);
+    bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
     while (width--)
     {
@@ -98,7 +175,7 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
             do {
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
-                bbuff += (320 * delta_byte_count);
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
                 {
@@ -111,13 +188,13 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
                         while(itr_op_repeat--)
                         {
                             *bbuff = data_byte;
-                            bbuff += 320;
+                            bbuff += SCREEN_WIDTH;
                         }
                     }
                     else  /* op: copy */
                     {
                         *bbuff = data_byte;
-                        bbuff += 320;
+                        bbuff += SCREEN_WIDTH;
                     }
                 }
             } while(packet_byte_count >= 1);
@@ -127,12 +204,12 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
             do {
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
-                bbuff += (320 * delta_byte_count);
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
                 packet_byte_count -= sequence_byte_count + 2;
                 while(sequence_byte_count--)
                 {
                     *bbuff = *frame_data++;
-                    bbuff += 320;
+                    bbuff += SCREEN_WIDTH;
                 }
             } while(packet_byte_count >= 1);
         }
@@ -146,7 +223,44 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     WZD seg030
 */
 
+
+// WZD s30p02
+/*
+    ¿ FLIC_Prepare() vs. Create_Blank_Picture() ?
+    same header values, just default transparent vs. specified color
+*/
+void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
+{
+    int16_t length;
+    int16_t itr_length;
+
+    // TODO(JimBalcomb,20230701): fix up the Macros
+    // FLIC_SET_WIDTH(pict_seg, width);
+    // FLIC_SET_HEIGHT(pict_seg, height);
+    // FLIC_SET_CURRENT_FRAME(pict_seg,0xDE0A);  // LBX_DecodedIMG
+    // FLIC_SET_FRAME_COUNT(pict_seg, 0);
+    // FLIC_SET_LOOP_FRAME(pict_seg,0);
+
+    SET_2B_OFS(pict_seg,0,width);
+    SET_2B_OFS(pict_seg,2,height);
+    SET_2B_OFS(pict_seg,4,0xDE0A);  /* e_FLIC_Decoded */
+    SET_2B_OFS(pict_seg,6,0);
+    SET_2B_OFS(pict_seg,8,0);
+
+    length = width * height;
+    
+    itr_length = 0;
+    while(itr_length++ < length)
+    {
+        *(pict_seg + 16 + itr_length) = TRANSPARENT;  /* Color-Map Index 0 */
+    }
+
+}
+
 // WZD s30p06
+/*
+    ¿ FLIC_Prepare() vs. Create_Blank_Picture() ?
+*/
 void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color)
 {
     int16_t length;
@@ -161,7 +275,7 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 
     SET_2B_OFS(pict_seg,0,width);
     SET_2B_OFS(pict_seg,2,height);
-    SET_2B_OFS(pict_seg,4,0xDE0A);
+    SET_2B_OFS(pict_seg,4,0xDE0A);  /* e_FLIC_Decoded */
     SET_2B_OFS(pict_seg,6,0);
     SET_2B_OFS(pict_seg,8,0);
 
@@ -664,7 +778,7 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
     int16_t itr_width;
     int16_t itr_height;
     
-    screen_start = current_video_page + (y_start * 320) + x_start;
+    screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
     data = pict_seg + ofst;
     screen_pos = screen_start;
     itr_width = width;
@@ -679,7 +793,7 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
             {
                 *screen_pos = data_byte;
             }
-            screen_pos += 320;  // add screen line stride - same column, one row down
+            screen_pos += SCREEN_WIDTH;  // add screen line stride - same column, one row down
 
             itr_height--;
         }

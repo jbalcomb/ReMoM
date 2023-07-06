@@ -231,6 +231,25 @@ void Set_Alias_Color(int16_t color)
 }
 
 
+// WZD s17p21
+int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
+{
+    int16_t next_x;
+    char buffer[10];
+
+#pragma warning(suppress : 4996)
+    itoa(val, buffer, 10);
+
+    next_x = Print(x, y, buffer);
+
+    return next_x;
+}
+
+
+// WZD s17p22
+// int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
+
+
 // WZD s17p23
 int16_t Print_Right(int16_t x, int16_t y, char * string)
 {
@@ -244,6 +263,8 @@ int16_t Print_Right(int16_t x, int16_t y, char * string)
     return next_x;
 }
 
+
+// WZD s17p24
 int16_t Print_Centered(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
@@ -255,6 +276,7 @@ int16_t Print_Centered(int16_t x, int16_t y, char * string)
 
     return next_x;
 }
+
 
 // WZD s17p25
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
@@ -270,6 +292,22 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     return next_x;
 }
 
+
+// WZD s17p26
+int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
+{
+    int16_t next_x;
+    char buffer[10];
+
+#pragma warning(suppress : 4996)
+    itoa(val, buffer, 10);
+
+    next_x = Print_Centered(x, y, buffer);
+
+    return next_x;
+}
+
+
 // WZD s17p35
 int16_t Print(int16_t x, int16_t y, char * string)
 {
@@ -279,6 +317,7 @@ int16_t Print(int16_t x, int16_t y, char * string)
 
     return next_x;
 }
+
 
 // WZD s17p36
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
@@ -375,6 +414,7 @@ int16_t Get_Current_Font_Index(void)
 
     return current_font_index;
 }
+
 
 // WZD s17p54
 // AKA Get_Font_Color1

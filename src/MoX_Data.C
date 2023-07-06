@@ -33,6 +33,54 @@ uint8_t COL_Banners[] = {
 
 
 
+// WZD dseg:291E                                                     BEGIN: ovr052
+// WZD dseg:291E
+// WZD dseg:291E                                                 Load/Init Main Game
+// WZD dseg:291E
+// WZD dseg:291E 4D 41 49 4E 2E 4C 42 58 00                      rsc01_MAIN_LBX db 'MAIN.LBX',0          ; DATA XREF: Load_Init_MainGame:loc_45FC8o
+// WZD dseg:291E                                                                                         ; should use dseg:29ef (reused in cud thrown/breath,
+// WZD dseg:291E                                                                                         ; with the first two bytes still free)
+// WZD dseg:2927 42 41 43 4B 47 52 4E 44 2E 4C 42 58 00          rsc02_BACKGRND_LBX db 'BACKGRND.LBX',0  ; DATA XREF: Load_Init_MainGame:loc_45FD2o
+// WZD dseg:2927                                                                                         ; should use dseg:29f4 (reused in cud thrown/breath)
+// WZD dseg:2934 55 4E 49 54 53 31 2E 4C 42 58 00                rsc03_UNITS1_LBX db 'UNITS1.LBX',0      ; DATA XREF: Load_Init_MainGame:loc_45FDCo
+// WZD dseg:2934                                                                                         ; should use dseg:2a1f (reused in cud thrown/breath)
+// WZD dseg:293F 55 4E 49 54 53 32 2E 4C 42 58 00                rsc04_UNITS2_LBX db 'UNITS2.LBX',0      ; DATA XREF: Load_Init_MainGame+26o
+// WZD dseg:293F                                                                                         ; should use dseg:2a26 (reused in cud thrown/breath)
+// WZD dseg:294A 55 4E 49 54 56 49 45 57 2E 4C 42 58 00          rsc05_UNITVIEW_LBX db 'UNITVIEW.LBX',0  ; DATA XREF: Load_Init_MainGame+30o
+// WZD dseg:294A                                                                                         ; should use dseg:2a59 (reused in cud thrown/breath)
+// WZD dseg:2957 53 50 45 43 49 41 4C 2E 4C 42 58 00             rsc06_SPECIAL_LBX db 'SPECIAL.LBX',0    ; DATA XREF: Load_Init_MainGame+3Ao
+// WZD dseg:2957                                                                                         ; should use dseg:2a62 (reused in cud thrown/breath)
+// WZD dseg:2963 53 50 45 43 49 41 4C 32 2E 4C 42 58 00          rsc07_SPECIAL2_LBX db 'SPECIAL2.LBX',0  ; DATA XREF: Load_Init_MainGame+44o
+// WZD dseg:2963                                                                                         ; should use dseg:2a6a (reused in cud thrown/breath)
+// WZD dseg:2970 49 54 45 4D 53 2E 4C 42 58 00                   rsc08_ITEMS_LBX db 'ITEMS.LBX',0        ; DATA XREF: Load_Init_MainGame+4Eo
+// WZD dseg:2970                                                                                         ; should use dseg:2a73 (reused in cud thrown/breath)
+// WZD dseg:297A 43 48 52 49 56 45 52 2E 4C 42 58 00             rsc09_CHRIVER_LBX db 'CHRIVER.LBX',0    ; DATA XREF: Load_Init_MainGame+58o
+// WZD dseg:297A                                                                                         ; should use dseg:2a3f (reused in cud thrown/breath)
+// WZD dseg:2986 49 54 45 4D 49 53 43 2E 4C 42 58 00             rsc0A_ITEMISC_LBX db 'ITEMISC.LBX',0    ; DATA XREF: Load_Init_MainGame+62o
+// WZD dseg:2986                                                                                         ; should use dseg:2a79 (first 9 bytes reused in cud
+// WZD dseg:2986                                                                                         ; thrown/breath, last 3 in word of recall at circle)
+// WZD dseg:2992 43 49 54 59 53 43 41 50 2E 4C 42 58 00          rsc0B_CITYSCAP_LBX db 'CITYSCAP.LBX',0  ; DATA XREF: Load_Init_MainGame+6Co
+// WZD dseg:2992                                                                                         ; should use dseg:2a50 (reused in recall at circle)
+
+// WZD dseg:299F                                                 Init_Terrain()
+// WZD dseg:299F 4D 41 50 42 41 43 4B 2E 4C 42 58 00             rsc0C_MAPBACK_LBX db 'MAPBACK.LBX',0
+char rsc0C_MAPBACK_LBX[] = "MAPBACK.LBX";   // ; should use dseg:29e7 (reused in recall at circle)
+
+// WZD dseg:29AB 43 4D 42 4D 41 47 49 43 2E 4C 42 58 00          rsc0D_CMBMAGIC_LBX db 'CMBMAGIC.LBX',0  ; DATA XREF: Load_Init_MainGame+80o
+// WZD dseg:29AB                                                                                         ; should use dseg:2a2d
+// WZD dseg:29B8 43 4D 42 54 43 49 54 59 2E 4C 42 58 00          rsc0E_CMBTCITY_LBX db 'CMBTCITY.LBX',0  ; DATA XREF: Load_Init_MainGame+8Ao
+// WZD dseg:29B8                                                                                         ; should use dseg:2a36
+// WZD dseg:29C5 43 49 54 59 57 41 4C 4C 2E 4C 42 58 00          rsc0F_CITYWALL_LBX db 'CITYWALL.LBX',0  ; DATA XREF: Load_Init_MainGame+94o
+// WZD dseg:29C5                                                                                         ; should use dseg:2a47
+// WZD dseg:29D2                                                 Init_Terrain()
+// WZD dseg:29D2 54 45 52 52 41 49 4E 2E 4C 42 58 00             terrain_lbx_file db 'TERRAIN.LBX',0     ; DATA XREF: Terrain_Init+Bo ...
+// WZD dseg:29DE 54 45 52 52 53 54 41 54 00                      terrstat_lbx_file db 'TERRSTAT',0       ; DATA XREF: Terrain_Init+6Fo
+// WZD dseg:29E7 4D 41 50 42 41 43 4B 00                         mapback_lbx_file db 'MAPBACK',0         ; DATA XREF: Terrain_Init+E4o ...
+
+
+
+
+
 // WZD dseg:599C
 // TODO  char hlpentry_lbx_file[] = "hlpentry";
 
@@ -58,6 +106,41 @@ int16_t screen_window_y1 = SCREEN_YMIN;
 int16_t screen_window_x2 = SCREEN_XMAX;
 // dseg:76E0
 int16_t screen_window_y2 = SCREEN_YMAX;
+
+
+
+
+
+// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+
+// MoX_Util  // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
+// MoX_Util  // WZD dseg:784A                                                                                         ; DATA XREF: Test_Bit_Field_+1Cr ...
+// MoX_Util  uint16_t bit_field_test_bits[8] = {
+// MoX_Util      0x0001,
+// MoX_Util      0x0002,
+// MoX_Util      0x0004,
+// MoX_Util      0x0008,
+// MoX_Util      0x0010,
+// MoX_Util      0x0020,
+// MoX_Util      0x0040,
+// MoX_Util      0x0080
+// MoX_Util  };
+
+// WZD dseg:785A 64 00                                           UU_DBG_OptionBoxColor dw 64h            ; DATA XREF: UU_DBG_SetSelectSetting+Cw ...
+// WZD dseg:785C 32 00                                           UU_DBG_UnknownOValue dw 32h             ; DATA XREF: UU_DBG_SetSelectSetting+12w
+// WZD dseg:785E 00 00                                           UU_DBG_OptionsFontColor dw 0            ; DATA XREF: UU_DBG_SetSelectSetting+18w ...
+// WZD dseg:7860 00 00                                           UU_DBG_OptionsFont dw 0                 ; DATA XREF: UU_DBG_SetSelectSetting+6w ...
+// WZD dseg:7862 52 4E 44 20 6E 6F 20 30 27 73                   cnst_RND_Error db 'RND no 0',27h,'s'    ; DATA XREF: Random+Eo
+// WZD dseg:786C 00                                              cnst_ZeroString_2 db 0                  ; DATA XREF: UU_DBG_SelectDialog+138o ...
+// WZD dseg:786D 4E 4F 5F 48 45 4C 50 00                         UU_cnst_NoHelp db 'NO_HELP',0           ; DATA XREF: UU_DBG_SelectDialog+134o ...
+// WZD dseg:7875 00                                              db    0
+// WZD dseg:7876 00 00                                           release_version dw 0                    ; DATA XREF: DBG_Quit:loc_1E469r ...
+// WZD dseg:7878 53 43 52 44 4D 50 30 30                         cnst_Scrdmp00_Full db 'SCRDMP00'        ; DATA XREF: DBG_ScreenDump+24o
+// WZD dseg:7880 2E 46 4C 49 00                                  cnst_Scrdmp_Ext db '.FLI',0             ; DATA XREF: DBG_ScreenDump+AAo
+// WZD dseg:7885 30 00                                           cnst_Scrdmp_0 db '0',0                  ; DATA XREF: DBG_ScreenDump+3Eo
+// WZD dseg:7887 53 43 52 44 4D 50 00                            cnst_Scrdmp_Base db 'SCRDMP',0          ; DATA XREF: DBG_ScreenDump:loc_1E504o
+// WZD dseg:788E 77 62 00                                        cnst_WB7 db 'wb',0                      ; DATA XREF: DBG_ScreenDump:loc_1E54Do
+
 
 
 
@@ -89,10 +172,22 @@ SAMB_ptr p4_heroes;
 SAMB_ptr p5_heroes;
 
 
+/*
+    scouted / scouting - Unit Ability, Unit Special Ability, Building Effect, Spell Effect (City Enchantment)
+    ~ scouted_table
+    ~ TBL_scouted
+    updated per turn and on move
+    300 byte bit-field
+    Set,Clear,Test Bit Field
+    boolean {F,T} flag for Fog-of-War feature
+    ~ IsScouted()
+*/
 // WZD dseg:9392
-SAMB_ptr Visibility_Myrror;         // alloc in MoM_Tables_Init()
+// drake178: Visibility_Myrror
+uint8_t * square_scouted_p0;                // Bit_Field  alloc in MoM_Tables_Init()
 // WZD dseg:9396
-SAMB_ptr Visibility_Arcanus;        // alloc in MoM_Tables_Init()
+// drake178: Visibility_Arcanus
+uint8_t * square_scouted_p1;                // Bit_Field  alloc in MoM_Tables_Init()
 
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
@@ -115,6 +210,7 @@ SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 // dseg:964B 00                                              db    0
 
 // WZD dseg:964C
+// MoO2: ~== _ship_node
 int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 
 // dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
@@ -195,17 +291,16 @@ struct s_CITY * _CITIES;
 struct s_LAIR * TBL_Lairs;
 
 // WZD dseg:9CC4  
-// SAMB_ptr TBL_Towers;
-// struct s_TOWER _TOWERS[TOWER_COUNT_MAX];  // 6 * sizeof(4)
+// struct s_TOWER _TOWERS[NUM_TOWERS];  // 6 * sizeof(4)
 // struct s_TOWER _TOWERS[];
 struct s_TOWER * _TOWERS;
 
 // WZD dseg:9CC8  
-// SAMB_ptr TBL_Fortresses;
 struct s_FORTRESS * _FORTRESSES;
 
 // WZD dseg:9CCC  
-SAMB_ptr TBL_Nodes;
+struct s_NODE * TBL_Nodes;
+
 // WZD dseg:9CD0
 uint8_t * TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
 // WZD dseg:9CD4

@@ -65,8 +65,13 @@ void Render_VBB(struct game_offscreen_buffer * Buffer);
 void Check_Game_Files(void);
 
 
+
 // TODO(JimBalcomb,20221216): Services that the *platform layer* provides to the *game*
 void Pump_Events(void);
+
+uint32_t Get_System_Clock_Counter(void);
+
+
 
 // TODO(JimBalcomb,20221216): Services that the *game* provides to the *platform layer*
 void GameUpdateAndRender(struct game_offscreen_buffer * Buffer);

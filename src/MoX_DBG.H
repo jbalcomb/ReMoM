@@ -1,6 +1,11 @@
 #ifndef MOX_DBG_H
 #define MOX_DBG_H
 
+#include "MoX_TYPE.H"
+
+extern uint8_t DBG_debug_flag;
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +16,11 @@ extern "C" {
     WZD  seg024
     MGC  seg024
 */
+
+
+
+void Main_Screen_Draw_Debug_Information(void);
+
 
 
 // WZD s24p05

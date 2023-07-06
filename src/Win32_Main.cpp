@@ -12,6 +12,22 @@
 // e.g., cl ... ... user32.lib gdi32.lib winmm.lib
 // VS > Project Settings > Configuration Properties > Linker > Input > Additional Dependencies
 
+#undef UNICODE
+#undef _UNICODE
+#undef MBCS
+#undef _MBCS
+/*
+https://devblogs.microsoft.com/oldnewthing/20040212-00/?p=40643
+
+UNICODE  is used by Windows headers
+_UNICODE is used by C-runtime/MFC headers
+...affect the character set the Windows header files treat as default.
+...affect the character set the C runtime header files treat as default.
+...if you define UNICODE,
+    GetWindowText will map to GetWindowTextW instead of GetWindowTextA ... the TEXT macro will map to L"..." instead of "..."
+...if you define _UNICODE,
+    _tcslen will map to wcslen instead of strlen ... _TEXT macro will map to L"..." instead of "..."
+*/
 
 #include "MoX_TYPE.H"
 
@@ -26,7 +42,9 @@
 #include <windows.h>
 #include <stdint.h>
 #include <stdio.h>      /* sprintf() */
-#include <timeapi.h>  /* timeBeginPeriod() */
+#include <strsafe.h>    /* StringCchPrintf */
+#include <timeapi.h>    /* timeBeginPeriod() */
+
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -117,6 +135,14 @@ void Win32ResizeDIBSection(win32_offscreen_buffer * Buffer, int Width, int Heigh
     int BitmapMemorySize = Buffer->BytesPerPixel * (Buffer->Width * Buffer->Height);
     
     Buffer->Memory = VirtualAlloc(0, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    if(Buffer->Memory == NULL)
+    {
+        // _Post_equals_last_error_ DWORD GetLastError();
+        // ErrorExit(TEXT("VirtualAlloc"));
+        // ErrorExit("VirtualAlloc");
+        ErrorExit(TEXT("VirtualAlloc"));
+    }
+
 }
 
 void Win32DisplayBufferInWindow(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
@@ -332,4 +358,53 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #endif
 
     return 0;
+}
+
+
+// void ErrorExit(LPTSTR lpszFunction)
+// void ErrorExit(const wchar_t * lpszFunction)
+void ErrorExit(LPCTSTR lpszFunction)
+{
+    // Retrieve the system error message for the last-error code
+
+    LPVOID lpMsgBuf;
+    LPVOID lpDisplayBuf;
+    DWORD dw = GetLastError();
+
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        dw,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR)&lpMsgBuf,
+        0, NULL);
+
+    // Display the error message and exit the process
+
+    lpDisplayBuf = (LPVOID)LocalAlloc(
+        LMEM_ZEROINIT,
+        (lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR)
+    );
+
+    StringCchPrintf(
+        (LPTSTR)lpDisplayBuf,
+        LocalSize(lpDisplayBuf) / sizeof(TCHAR),
+        TEXT("%s failed with error %d: %s"),
+        lpszFunction,
+        dw,
+        lpMsgBuf
+    );
+
+    MessageBox(
+        NULL,
+        (LPCTSTR)lpDisplayBuf,
+        TEXT("Error"),
+        MB_OK
+    );
+
+    LocalFree(lpMsgBuf);
+    LocalFree(lpDisplayBuf);
+    ExitProcess(dw);
 }

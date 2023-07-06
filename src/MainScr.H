@@ -12,6 +12,18 @@
 */
 
 
+
+// WZD dseg:974E 
+// int16_t _main_map_grid_x;
+extern int64_t _main_map_grid_x;
+// WZD dseg:9750 
+// int16_t _main_map_grid_y;
+extern int64_t _main_map_grid_y;
+
+
+
+
+
 // WZD dseg:C082
 // AKA OVL_STKUnitCards_Top
 extern int16_t _unit_window_start_y;
@@ -29,8 +41,9 @@ extern SAMB_ptr _reduced_map_seg;
                                         ¿ BEGIN: ovr052 Terrain_Init() ?
 */
 // WZD dseg:CB5E                                                 ovr052
-// WZD dseg:CB5E 00 00                                           IMG_OVL_WarpedMask@ dw 0                ; DATA XREF: Terrain_Init+320w ...
-// WZD dseg:CB5E                                                                                         ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB5E
+extern SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CB60
 extern SAMB_ptr gsa_OVL_Tile_WorkArea;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
@@ -64,17 +77,17 @@ extern SAMB_ptr _mineral_sites_seg[];
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
-// WZD dseg:CB82 00 00 00 00 00 00 00 00 00 00                   IMG_OVL_Sparkles@ dw 5 dup(0)           ; DATA XREF: Terrain_Init+2BFw ...
-// WZD dseg:CB82                                                                                         ; array of 5 reserved EMM header pointers for
-// WZD dseg:CB82                                                                                         ; 6 frame animations
+
+// WZD dseg:CB82 
+extern SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM header pointers for  ; 6 frame animations
+
 // WZD dseg:CB8C 00                                              db    0
 // WZD dseg:CB8D 00                                              db    0
 // WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cw
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
-// WZD dseg:CB90 00 00                                           OVL_WarpNodeFX_Prep@ dw 0               ; DATA XREF: Terrain_Init+2A3w ...
-// WZD dseg:CB90                                                                                         ; 18h LBX_Alloc_Space paragraphs
-// WZD dseg:CB90                                                                                         ; used to save and manipulate the tile graphics to
-// WZD dseg:CB90                                                                                         ; display the warp node effect
+
+// WZD dseg:CB90
+extern SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the tile graphics to ; display the warp node effect
 
 // WZD dseg:CB92
 extern SAMB_ptr _unit_colored_backgrounds_seg[];    // load in Terrain_Init() ovr052
@@ -161,8 +174,10 @@ extern SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header poin
 // WZD dseg:CBFF 00                                              db    0
 // WZD dseg:CC00 00                                              db    0
 // WZD dseg:CC01 00                                              db    0
-// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+gsa_IMG_OVL_Exploration@ dw 0Eh dup(0)  ; DATA XREF: Terrain_Init+D0w ...
-// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 reserved EMM header pointers
+
+// WZD dseg:CC02
+extern SAMB_ptr unexplored_mask_seg[];       // ; array of 14 reserved EMM header pointers
+
 // WZD dseg:CC1E 00                                              db    0
 // WZD dseg:CC1F 00                                              db    0
 // WZD dseg:CC20 00                                              db    0
@@ -284,9 +299,10 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
     WIZARDS.EXE  ovr064
 */
 // WZD o64p01
-// PRIVATE  void Allocate_Reduced_Map__1(void);
+// void Allocate_Reduced_Map__1(void);
 // WZD o64p02
-// PRIVATE  void Allocate_Reduced_Map__2(void);
+// void Allocate_Reduced_Map__2(void);
+void Allocate_Reduced_Map(void);  // called from GAME_Overland_Init()  <-|  WZD_Startup_MainGame()  <-|  _main()
 // WZD o64p03
 // AKA OVL_PrepMinimap()
 void MainScr_Prepare_Reduced_Map(void);

@@ -166,6 +166,7 @@ terrain_special: 0x80  -128
 
 
 
+NOTE: Scouted vs. Explored: Scouted data is transient - updated Per Turn and On Stack Move
 ¿ why not just yay/nay ?
 ¿ why no 5 or 10 ?
 unexplored_min: 0

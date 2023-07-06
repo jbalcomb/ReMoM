@@ -94,7 +94,7 @@ void WZD_Startup_MainGame(void);
 
 
 /*
-    WIZARDS.EXE  ovr052
+    WIZARDS.EXE  ovr051
 */
 
 // WZD o51p01
@@ -125,6 +125,14 @@ void GFX_Swap_Reset(void);
 void Load_Unit_StatFigs(void);
 // WZD o52p30
 void GFX_Swap_Cities(void);
+
+
+/*
+    WZD ovr060
+*/
+
+// WZD o60p07
+void TILE_VisibilityUpdt(void);
 
 
 /*

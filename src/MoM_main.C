@@ -1,4 +1,14 @@
+/*
+    WIZARDS.EXE
+    seg001
+    
+    ovr051
+    ovr052
+    ovr060
+    ovr063
+    ovr067
 
+*/
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
@@ -16,6 +26,7 @@
 #include "Allocate.H"
 #include "Fields.H"
 #include "Fonts.H"
+#include "Explore.H"
 #include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
@@ -30,6 +41,7 @@
 #include "STU_DBG.H"
 #include "TST_GameData.H"
 #endif
+#include "TST_GameState.H"
 
 
 #define MOM_FONT_FILE "FONTS.LBX"
@@ -80,10 +92,10 @@ void Screen_Control(void)
         case scr_Continue:
         {
             DLOG("case scr_Continue:");
-            // Load_SAVE_GAM(9);
-            Load_SAVE_GAM(-1);  // SAVETEST.GAM
-            // TST_Validate_GameData();
-            // Main_Screen();
+            // // Load_SAVE_GAM(9);
+            // Load_SAVE_GAM(-1);  // SAVETEST.GAM
+            // // TST_Validate_GameData();
+            // // Main_Screen();
             g_Current_Screen = scr_Main_Screen;
         } break;
 
@@ -237,8 +249,8 @@ void MoM_main(void)
     Set_Global_ESC();
     MoM_Tables_Init(4600);  // 4600 * 16 = 73600 bytes
     // NOTE(JimBalcomb,20230111): this load game is only here because 'Continue' is the default behavior of WIZARDS.EXE
-    // Load_SAVE_GAM(8)
-    // j_LBX_Tables_LoadMain
+    // Load_SAVE_GAM(8);
+    Load_SAVE_GAM(-1);  // SAVETEST.GAM
     Load_Init_MainGame();  // ovr052
 
     // g_EmmHndl_OVERXYZ ... __OvrInitEms() ... EMS Unallocated Raw Page Count
@@ -382,8 +394,8 @@ void MoM_Tables_Init(int16_t gfx_buff_nparas)
     TBL_Terrain_Flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
     TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
 
-    Visibility_Arcanus = Allocate_Next_Block(World_Data, 19);   // 19 Paragraphs, 304 Bytes
-    Visibility_Myrror = Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
+    square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);   // 19 Paragraphs, 304 Bytes
+    square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
 
     World_Data_Extra = Allocate_Next_Block(World_Data, Get_Free_Blocks(World_Data) - 1);
 
@@ -493,7 +505,7 @@ SA_GET_USED(SAMB_head): 2345
 
     Active_Unit = Allocate_Space(8);  // 8 paragraphs = 128 bytes
     
-    TBL_Nodes = Allocate_Space(92);
+    TBL_Nodes = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
     
     _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);  // 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
     
@@ -708,17 +720,10 @@ void GAME_Overland_Init(void)
     _map_plane = 0;
 
 
-    // TODO  j_TILE_VisibilityUpdt
-    // ; marks all AI wizards as having contacted the human
-    // ; player (one-sided), processes Nature Awareness
-    // ; contacting wizards whose units are visible, and calls
-    // ; TILE_VisibilityReset to refresh the bit maps
-    // ;
-    // ; Invisibility BUG: only checks the enchantment in the
-    // ; Nature Awareness loop, ignoring both natural ability
-    // ; and item power
+    TILE_VisibilityUpdt();
 
-    Allocate_Reduced_Map__1();
+
+    Allocate_Reduced_Map();
 
     // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _world_plane);
     // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
@@ -851,6 +856,7 @@ int16_t Check_Planar_Seal(void)
 
 
 // WZD o52p01
+// drake178: LBX_Tables_LoadMain()
 void Load_Init_MainGame(void)
 {
 
@@ -927,12 +933,13 @@ void Terrain_Init(void)
 //     // }
 
 
-//     // Loop MAPBACK 0 to 13:
-//     for(itr = 1; itr < 15; itr++)
-//     {
-//         gsa_IMG_OVL_Exploration[itr - 1] = LBX_Load(rsc0C_MAPBACK_LBX, itr - 1)
-//         // ; array of 14 reserved EMM header pointers
-//     }
+    // Loop MAPBACK 0 to 13:
+    for(itr = 1; itr < 15; itr++)
+    {
+        itr--;
+        unexplored_mask_seg[itr] = LBX_Load(rsc0C_MAPBACK_LBX, itr);  // ; array of 14 reserved EMM header pointers
+        itr++;
+    }
 
 
     // Loop MAPBACK 14 to 19:
@@ -1027,18 +1034,13 @@ void Terrain_Init(void)
         }
 
 
-//     OVL_WarpNodeFX_Prep = Allocate_Space(24);
-//     // ; used to save and manipulate the tile graphics to
-//     // ; display the warp node effect
+        Warp_Node_WorkArea = Allocate_Space(24);               // ; used to save and manipulate the tile graphics to ; display the warp node effect
 
-
-//     // Loop MAPBACK 63 to 67:
-//     for(itr = 0; itr < 8; itr++)
-//     {
-//         IMG_OVL_Sparkles[itr] = LBX_Load(mapback_lbx_file, 63 + itr);
-//         // ; array of 5 reserved EMM header pointers for
-//         // ; 6 frame animations
-//     }
+        // Loop MAPBACK 63 to 67:
+        for(itr = 0; itr < 5; itr++)
+        {
+            node_auras_seg[itr] = LBX_Load(mapback_lbx_file, 63 + itr);  // ; array of 5 reserved EMM header pointers for // ; 6 frame animations
+        }
 
 
 //     UU_IMG_OVL_WorkMark = LBX_Load(mapback_lbx_file, 89);
@@ -1048,10 +1050,8 @@ void Terrain_Init(void)
         UU_IMG_OVL_Empty3 = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
         IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);    // ; reserved EMM header pointer for a single image
         IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);      // ; reserved EMM header pointer for a single image
-
-
-//     IMG_OVL_WarpedMask = LBX_Load(mapback_lbx_file, 93);
-//     // ; reserved EMM header pointer for a single image
+        
+        node_warped_seg = LBX_Load(mapback_lbx_file, 93);    // ; reserved EMM header pointer for a single image
 
 }
 
@@ -1186,4 +1186,52 @@ void GFX_Swap_Cities(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
 #endif
+}
+
+
+
+/*
+    WZD ovr060
+*/
+
+// WZD o60p07
+void TILE_VisibilityUpdt(void)
+{
+    int16_t itr_players;
+    int16_t itr_units;
+    int16_t tmp_unit_enchantments_hiword;
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        // TODO(JimBalcomb,2023075): figure out the indexing in the Dasm - doesn't look like array of struct  also, this'll set the neutral player?
+        _players[itr_players + 1].Dipl.Contacted[0] = 1;
+
+        if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
+        {
+            for(itr_units = 0; itr_units < _units; itr_units++)
+            {
+                if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+                {
+                    if(_UNITS[itr_units].owner_idx != itr_players)
+                    {
+                        if(_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
+                        {
+                            // BUG: only checks enchantment, not ability or item
+                            tmp_unit_enchantments_hiword = _UNITS[itr_units].Enchants_HI;  // // ; enum UE_FLAGS_H
+                            // UE_Invisibility 0x8000
+                            if( (tmp_unit_enchantments_hiword & 0x8000) != 0 )
+                            {
+                                _players[itr_players].Dipl.Contacted[_UNITS[itr_units].owner_idx] = 1;
+                                _players[_UNITS[itr_units].owner_idx].Dipl.Contacted[itr_players] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Update_Scouted_And_Contacted();
+    Validate_Square_Scouted(18,11,0);
+
 }

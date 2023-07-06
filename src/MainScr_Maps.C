@@ -1,6 +1,7 @@
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
+#include "MoX_BITS.H"
 #include "MoM_DEF.H"
 
 #include "MoX_Data.H"
@@ -8,9 +9,12 @@
 #include "UnitMove.H"
 
 #include "MoM_main.H"  /* g_Current_Screen */
+#include "MoX_RNG.H"
+#include "MoX_SET.H"
 
 #include "Explore.H"
 #include "FLIC_Draw.H"
+#include "Fonts.H"
 #include "Graphics.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
@@ -19,6 +23,7 @@
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
+#include "TST_GameState.H"
 
 #include <assert.h>
 
@@ -87,6 +92,7 @@ int16_t road_anim_ctr = 0;
 int16_t node_anim_ctr = 0;
 // WZD dseg:6FFA db    0
 // WZD dseg:6FFB db    0
+
 // WZD dseg:6FFC
 // drake178: OVL_Anim_Stepper
 int16_t map_anim_cycle = 0;
@@ -100,10 +106,17 @@ int16_t map_draw_sustain = 2;
 
 // WZD dseg:7002                                                 END: ovr150
 
+// WZD dseg:7004                                                 ovr057
+// WZD dseg:7004                                                 ovr150
+// WZD dseg:7004
+int16_t DBG_ShowTileInfo = ST_FALSE;
 
+// WZD dseg:7006 00                                              db    0
+// WZD dseg:7007 00                                              db    0
+// WZD dseg:7008 00                                              db    0
+// WZD dseg:7009 00                                              db    0
 
-
-// BEGIN: Draw_Minimap()
+// WZD dseg:700A                                                 BEGIN: Draw_Minimap()
 // WZD dseg:700A
 uint8_t COL_MinimapBanners[6] = {171, 216, 205, 201, 210, 50};  // 0xAB, 0xD8, 0xCD, 0xC9, 0xD2, 0x32
 // WZD dseg:7010
@@ -132,11 +145,16 @@ uint8_t COL_MinimapNeutral = 50;  // 0x32
     0x1D, 0x1D, 0x1C, 0x1C, 0x1B, 
 };
 
-// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Warp_GFX_Lines db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
-// WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
-// WZD dseg:7048 9B 9F                                           WarpNode_SeedSave_LO dw 9F9Bh           ; DATA XREF: Draw_Map_Nodes+271w ...
-// WZD dseg:704A 0F 00                                           WarpNode_SeedSave_HO dw 0Fh             ; DATA XREF: Draw_Map_Nodes+26Dw ...
+
+// WZD dseg:7034
+int8_t TBL_Warp_GFX_Lines[20] = {0};              // ; 20 bytes randomized between -1, 0, or +1
+// WZD dseg:7048  9B 9F        WarpNode_SeedSave_LO dw   9F9Bh
+// WZD dseg:704A  0F 00        WarpNode_SeedSave_HO dw     0Fh
+// WZD dseg:7048  9B 9F 0F 00  WarpNode_SeedSave    dd 0F9F9Bh
+uint32_t WarpNode_SeedSave = 0x000F9F9B;
+
 // WZD dseg:704A                                                 ? END:  ovr150 ?
+
 
 
 // WZD dseg:974A
@@ -317,14 +335,36 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     {
         Set_Unit_Draw_Priority();
         Reset_Stack_Draw_Priority();
+//         // TEST
+//         Clear_Square_Scouted_Flags(map_plane);
+// //         Set_Square_Scouted(0,0,0);
+// //         // Check_Square_Scouted(0,0,0);
+// //         // square_scouted_flag = Test_Bit_Field(world_square_idx, square_scouted_p0);
+// // #ifdef STU_DEBUG
+// //         // dbg_prn("DEBUG: [%s, %d]: Check_Square_Scouted(0,0,0): %d\n", __FILE__, __LINE__, Check_Square_Scouted(0,0,0));
+// //         dbg_prn("DEBUG: [%s, %d]: Test_Bit_Field(0, square_scouted_p0): %d\n", __FILE__, __LINE__, Test_Bit_Field(0, square_scouted_p0));
+// // #endif
+// //         UU_Clear_Square_Scouted(0,0,0);
+// // #ifdef STU_DEBUG
+// //         // dbg_prn("DEBUG: [%s, %d]: Check_Square_Scouted(0,0,0): %d\n", __FILE__, __LINE__, Check_Square_Scouted(0,0,0));
+// //         dbg_prn("DEBUG: [%s, %d]: Test_Bit_Field(0, square_scouted_p0): %d\n", __FILE__, __LINE__, Test_Bit_Field(0, square_scouted_p0));
+// // #endif
+// //         Set_Square_Scouted(l_map_x, l_map_y, map_plane);
+// //         Set_Square_Scouted(l_map_x+1, l_map_y, map_plane);
+// //         Set_Square_Scouted(l_map_x, l_map_y+1, map_plane);
+// //         Set_Square_Scouted(l_map_x+1, l_map_y+1, map_plane);
+//         // Set_Square_Scouted_Flags(l_map_x, l_map_y, map_plane, 3);
+//         Set_Square_Scouted_Flags(l_map_x, l_map_y, map_plane, 30);
+//         Validate_Square_Scouted(l_map_x, l_map_y, map_plane);
         Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
-
+        // // TEST
+        // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
+        // Validate_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
         if(player_idx == _human_player_idx)
         {
             _map_x = l_map_x;
             _map_y = l_map_y;
         }
-
     }
     /*
         END: Map-Moved!!
@@ -556,7 +596,7 @@ void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_
     line_x = start_x + ( width / 2) + ( MOVEMENT_MAP_WIDTH / 2);
     line_y = start_y + (height / 2) + (MOVEMENT_MAP_HEIGHT / 2);
 
-    // TODO  // VGA_Draw_Line(line_x, line_y, line_x, line_y);
+    // TODO  VGA_Draw_Line(line_x, line_y, line_x, line_y);
     // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x+1, line_y-1);
     // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x-1, line_y+1);
     // TODO  VGA_Draw_Line(line_x+10, line_y-1, line_x+12, line_y-1);
@@ -574,56 +614,62 @@ void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane)
 {
-    int16_t Unit_On_Tile;
-    int16_t City_Visible;
+    int16_t city_in_view;
+    int16_t entity_owner_idx;
     int16_t entity_world_y;
     int16_t entity_world_x;
-    int16_t itr_map_width;
-    int16_t itr_map_height;
+    int16_t entity_world_p;
+    int16_t square_is_explored;
+    int16_t square_is_scouted;
+    int16_t itr_map_x;
+    int16_t itr_map_y;
     int16_t itr_units;
     int16_t itr_cities;
     int16_t entity_map_x;
     int16_t entity_map_y;
     int16_t entity_table_idx;
+    int16_t prior_entity_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
 #endif
 
-    City_Visible = ST_FALSE;
+    city_in_view = ST_FALSE;
     entity_world_y = 0;
     entity_world_x = 0;
 
-    for(itr_map_height = 0; itr_map_height < MAP_HEIGHT; itr_map_height++)
+    for(itr_map_y = 0; itr_map_y < MAP_HEIGHT; itr_map_y++)
     {
-        for(itr_map_width = 0; itr_map_width < MAP_WIDTH; itr_map_width++)
+        for(itr_map_x = 0; itr_map_x < MAP_WIDTH; itr_map_x++)
         {
-            entities_on_movement_map[(itr_map_height * MAP_WIDTH) + itr_map_width] = ST_UNDEFINED;
+            entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x] = ST_UNDEFINED;
         }
     }
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+        entity_owner_idx = _UNITS[itr_units].owner_idx;
+        entity_world_x = _UNITS[itr_units].world_x;
+        entity_world_y = _UNITS[itr_units].world_y;
+        entity_world_p = _UNITS[itr_units].world_plane;
+        square_is_scouted = Check_Square_Scouted(entity_world_x, entity_world_y, world_plane);
+        
+        if(entity_owner_idx != ST_UNDEFINED)
         {
-            if(TILE_IsVisible(world_x, world_y, world_plane) == ST_TRUE)
+            if(square_is_scouted == ST_TRUE)
             {
                 if( (_UNITS[itr_units].world_plane == world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) )
                 {
-
-                    entity_world_y = _UNITS[itr_units].world_y;
-
-                    if( (world_y < entity_world_y) && (world_y + MAP_HEIGHT > entity_world_y) )
+                    // entity_world_y = _UNITS[itr_units].world_y;
+                    if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
                     {
-                        
-                        entity_world_x = _UNITS[itr_units].world_x;
-
+                        // entity_world_x = _UNITS[itr_units].world_x;
                         if(
-                             ( (world_x < entity_world_x) && (world_x + MAP_WIDTH > entity_world_x) ) ||
-                             ( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                             ((entity_world_x >= world_x) && (entity_world_x < world_x + MAP_WIDTH)) ||
+                             ((entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH))
                         )
                         {
-                            if( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                            if((entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH))
                             {
                                 entity_world_x = entity_world_x + WORLD_WIDTH;
                             }
@@ -632,11 +678,11 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                             entity_map_y = entity_world_y - world_y;
                             entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
 
-                            Unit_On_Tile = entities_on_movement_map[entity_table_idx];
+                            prior_entity_idx = entities_on_movement_map[entity_table_idx];
 
-                            if(Unit_On_Tile != ST_UNDEFINED)
+                            if(prior_entity_idx != ST_UNDEFINED)
                             {
-                                if(_UNITS[itr_units].Draw_Priority > _UNITS[Unit_On_Tile].Draw_Priority)
+                                if(_UNITS[itr_units].Draw_Priority > _UNITS[prior_entity_idx].Draw_Priority)
                                 {
                                     entities_on_movement_map[entity_table_idx] = itr_units;
                                 }
@@ -664,38 +710,33 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(
-            ( (_CITIES[itr_cities].world_plane == world_plane) || (_CITIES[itr_cities].world_plane == 2) ) &&
-            (TBL_Scouting[( (_CITIES[itr_cities].world_plane * WORLD_SIZE) + (_CITIES[itr_cities].world_y * WORLD_WIDTH) + _CITIES[itr_cities].world_x )] != ST_FALSE)
-        )
+        entity_world_x = _CITIES[itr_cities].world_x;
+        entity_world_y = _CITIES[itr_cities].world_y;
+        entity_world_p = _CITIES[itr_cities].world_plane;
+        square_is_explored = TBL_Scouting[((entity_world_p * WORLD_SIZE) + (entity_world_y * WORLD_WIDTH) + entity_world_x)];
+        if( ((entity_world_p == world_plane) || (entity_world_p == 2)) && (square_is_explored!= ST_FALSE) )
         {
             entity_world_y = _CITIES[itr_cities].world_y;
-            if( (world_y < entity_world_y) && (world_y + MAP_HEIGHT > entity_world_y) )
+            if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
             {
-                City_Visible = ST_FALSE;
-
+                city_in_view = ST_FALSE;
                 entity_map_y = entity_world_y - world_y;
-
                 entity_world_x = _CITIES[itr_cities].world_x;
-
                 if(
-                    ( (world_x < entity_world_x) && (world_x + MAP_WIDTH > entity_world_x) ) ||
-                    ( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                    ( (entity_world_x >= world_x) && (entity_world_x < world_x + MAP_WIDTH) ) ||
+                    ( (entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH) )
                 )
                 {
-                    if( (world_x < entity_world_x + WORLD_WIDTH) && (world_x + MAP_WIDTH > entity_world_x + WORLD_WIDTH) )
+                    if( (entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH) )
                     {
                         entity_world_x = entity_world_x + WORLD_WIDTH;
                     }
-
                     entity_map_x = entity_world_x - world_x;
-
-                    City_Visible = ST_TRUE;
+                    city_in_view = ST_TRUE;
                 }
             }
         }
-
-        if(City_Visible == ST_TRUE)
+        if(city_in_view == ST_TRUE)
         {
             entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
             entities_on_movement_map[entity_table_idx] = (itr_cities + 1000);
@@ -705,7 +746,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
 #endif
 }
 
@@ -934,8 +975,6 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
     map_draw_prev_x = map_draw_curr_x;
     map_draw_prev_y = map_draw_curr_y;
 
-    // void Draw_Map_... (int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
-    // Draw_Map_... (screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Terrain(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Minerals(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Biota(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
@@ -944,9 +983,7 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
     Draw_Map_Towers(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Lairs(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Draw_Map_Units(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y);
-
     Draw_Map_Nodes(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
-    
     Draw_Map_Unexplored_Area(screen_x, screen_y, map_w, map_h, map_draw_curr_x, map_draw_curr_y, map_p);
     Cycle_Map_Animations();
 
@@ -957,288 +994,131 @@ dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Window(screen_x = %d, screen_y = %d, map
 }
 
 
-
 // WZD o150p05
-void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_height, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
-{
-    byte_ptr terrain_pict_seg;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
-#endif
-    /*
-        Image, if you will...
-        terrain_type_idx = _world_maps[0] == 0x00
-        terrain_001_0 = terrain_lbx_001[terrain_type_idx] == 0x00
-        terrain_001_1 = terrain_lbx_001[terrain_type_idx] == 0x02
-
-    */
-    // terrrain_type_idx = 0; // ocean
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] terrain_lbx_000: %p\n", __FILE__, __LINE__, terrain_lbx_000);
-#endif
-    // terrain_pict_seg = terrain_lbx_000 + (2 * 384);
-    // // TERRAIN.LBX, offset 0x0300  768  (2 * 0x0180  384)  sizeof terrain image
-    terrain_pict_seg = terrain_lbx_000 + 0xC0;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
-#endif
-    Draw_Picture(x, y, terrain_pict_seg);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: TST_Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
-#endif
-}
-
-
-// WZD o150p05
-void Draw_Map_Terrain(int16_t x, int16_t y, int16_t map_width, int16_t map_height, int16_t map_xpos, int16_t map_ypos, int16_t map_plane)
+void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
     int16_t terrain_tile_base;
-    int16_t itr_map_ypos;
-    int16_t itr_map_xpos;
-    int16_t _SI_y;
-    int16_t _DI_x;
-    int16_t DrawTile_X;
-    // int16_t terrain_001_index;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t itr_screen_y;
+    int16_t itr_screen_x;
+    int16_t curr_world_x;
+    uint8_t unexplored_area_flag;
+    int16_t world_maps_offset;
+    uint32_t terrain_lbx_000_offset;
     uint16_t terrain_001_index;
-    uint16_t world_map_value;
     uint8_t terrain_001_0;
     uint8_t terrain_001_1;
     byte_ptr terrain_pict_seg;
-    uint16_t * world_maps_ptr;
-    int16_t world_maps_offset;
-    // uint16_t terrain_lbx_000_offset;
-    uint32_t terrain_lbx_000_offset;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Terrain(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_width = %d, world_grid_x = %d, world_grid_x = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    // DLOG("DRAW_THE_ONE");
-    // terrain_pict_seg = terrain_lbx_000 + 0xC0;
-    // Draw_Picture(x, y, terrain_pict_seg);
-
-
-
-    if(map_plane == 0)
+    if(world_plane == 0)
     {
-//         DLOG("(map_plane == 0)");
         terrain_tile_base = 0;
     }
     else
     {
-//         DLOG("(map_plane != 0)");
         terrain_tile_base = 762; // 0x2FA
     }
 
-// mov     [bp+Current_Logical_Page], -1
+    // MS-DOS  terrain_000_elpn = ST_UNDEFINED;
 
-    _SI_y = y;
-    itr_map_ypos = map_ypos;
-    while(itr_map_ypos < (map_ypos + map_height))
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    // while(world_grid_y + map_grid_height > itr_world_y)
+    while(itr_world_y < (world_grid_y + map_grid_height))
     {
-        _DI_x = x;
-        itr_map_xpos = map_xpos;
-        while(itr_map_xpos < (map_xpos + map_width))
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(itr_world_x < (world_grid_x + map_grid_width))
         {
-            if(itr_map_xpos >= 60)
+            if(itr_world_x >= WORLD_WIDTH)
             {
-                DrawTile_X = itr_map_xpos - 60;
+                curr_world_x = itr_world_x - WORLD_WIDTH;
             }
             else
             {
-                DrawTile_X = itr_map_xpos;
+                curr_world_x = itr_world_x;
             }
 
-            /*
-                if NOT explored, fill black
-            */
-            // if(TBL_Scouting[(map_plane * 2400) + (itr_map_ypos * 60) + (DrawTile_X)] == ST_FALSE)
-            // {
-            //     Fill(_DI_x, _SI_y, (_DI_x + 19), (_SI_y + 17), 0);
-            //     continue;
-            // }
 
-            // // world_map_base = map_plane * SZ_WORLD_MAP;  // {0 * 2400, 1 * 2400}
-            // terrain_001_index = _world_maps[(map_plane * 4800) + (itr_map_ypos * 120) + (DrawTile_X * 2)];
-            // terrain_001_index += terrain_tile_base;
-
-            // world_maps_offset = 0;
-            // world_maps_offset += (world_z * SA_WORLD_PLANE);
-            // world_maps_offset += (world_y * SZ_WORLD_WIDTH);
-            // world_maps_offset += world_x
-
+            unexplored_area_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 // #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
+//     dbg_prn("DEBUG: [%s, %d]: (%d, %d) unexplored: 0x%02X\n", __FILE__, __LINE__, curr_world_x, itr_world_y, unexplored_area_flag);
 // #endif
-            // world_maps_ptr = (int16_t *)_world_maps;
-            world_maps_ptr = (uint16_t *)_world_maps;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: world_maps_ptr: %p\n", __FILE__, __LINE__, world_maps_ptr);
-// #endif
-            // terrain_001_index = *(world_map_ptr + (map_plane * 2400) + (itr_map_ypos * 60) + (DrawTile_X));
-            // world_maps_offset = ((map_plane * 2400) + (itr_map_ypos * 60) + (DrawTile_X));
-            world_maps_offset = ((map_plane * 4800) + (itr_map_ypos * 120) + (DrawTile_X * 2));
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: world_maps_offset: %04X  %d\n", __FILE__, __LINE__, world_maps_offset, world_maps_offset);
-// #endif
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: GET_2B_OFS(_world_maps,world_maps_offset): %04X\n", __FILE__, __LINE__, GET_2B_OFS(_world_maps,world_maps_offset));
-// #endif
-            world_map_value = GET_2B_OFS(_world_maps,world_maps_offset);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: world_map_value: %04X\n", __FILE__, __LINE__, world_map_value);
-// #endif
-            // // terrain_001_index = *(world_maps_ptr + world_maps_offset);
-            // // terrain_001_index = world_maps_ptr[world_maps_offset];
-            // terrain_001_index = (uint16_t)*(world_maps_ptr + world_maps_offset);
-            terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
-// #ifdef STU_DEBUG
-//     // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
-// #endif
-            terrain_001_index += terrain_tile_base;
-            terrain_001_index *= 2;  // because, sizeof(int16_t)
-// #ifdef STU_DEBUG
-//     // dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %d\n", __FILE__, __LINE__, terrain_001_index);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %u\n", __FILE__, __LINE__, terrain_001_index);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: %04X\n", __FILE__, __LINE__, terrain_001_index);
-// #endif
-
-// WZD dseg:CC22 gfp_TER_TileTypeOffsets@ dd 0           ; single-loaded full entry
-// LBX_Terrain_Init()
-//     gfp_TER_TileTypeOffsets = LBX_Load("TERRAIN.LBX", 1)
-            terrain_001_0 = 0;
-            // // terrain_001_0 = terrain_lbx_001[terrain_001_index + 0];
-            // // terrain_001_1 = terrain_lbx_001[terrain_001_index + 1];
-            // terrain_001_0 = terrain_lbx_001[world_map_value + 0];
-            // terrain_001_1 = terrain_lbx_001[world_map_value + 1];
-            terrain_001_0 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 0);
-            terrain_001_1 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 1);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_0: %02X\n", __FILE__, __LINE__, terrain_001_0);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_1: %02X\n", __FILE__, __LINE__, terrain_001_1);
-// #endif
-
-
-
-
-
-            if(terrain_001_0 & 0x80)
+            if(unexplored_area_flag == ST_FALSE)
             {
-//                 DLOG("(terrain_001_0 & 0x80)");
-                terrain_001_0 = terrain_001_0 & 0x7F;
+                Fill(itr_screen_x, itr_screen_y, (itr_screen_x + 19), (itr_screen_y + 17), 0);
             }
-            if(map_draw_full != ST_FALSE)
+            else
             {
-//                 DLOG("map_draw_full != ST_FALSE)");
-            }
-// //             // if animated and not new, skip draw
-// //             if(terrain_001_0 & 0x80 == 0 || OVL_NewMapDrawing != ST_FALSE)
-// //             {
-// //                 // TODO  if(terrain_001_0 & 0x80 == 0)
-// //                 // TODO  {
-// //                 // TODO      // WZD dseg:6FF4 OVL_TileAnim_Stage dw 0
-// //                 // TODO      terrain_001_1 += map_animation_frame;  // AKA OVL_TileAnim_Stage
-// //                 // TODO      terrain_001_0 = (terrain_001_0 & 0x7F);
-// //                 // TODO  }
-// // 
-// // //     // mov     ax, [terrain_001_1]
-// // //     // mov     bx, ax
-// // //     // shl     ax, 1
-// // //     // add     ax, bx
-// // //     // shl     ax, 1
-// // //     // shl     ax, 1
-// // //     // shl     ax, 1                           ; * 180h, from FILE start, not entry start!
-// // //     // add     ax, [EMM_PageFrame]             ; contains the segment address of the EMS page frame
-// // //     // mov     [bp+terrain_pict_seg], ax
-// // // 
-// // //     if(terrain_001_0 != terrain_000_elpn)
-// // //     {
-// // //         EMM_Map4Pages(Image_Page, g_EmmHndl_TERRAIN);
-// // //     }
-// // 
-// //                 // terrain_pict_seg = terrain_lbx_000 + (terrain_001_1 * 384);
-// //                 terrain_pict_seg = terrain_lbx_000 + 0xC0;
-// // #ifdef STU_DEBUG
-// //     dbg_prn("DEBUG: [%s, %d] terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
-// // #endif
-// //                 Draw_Picture(_DI_x, _SI_y, terrain_pict_seg);
-// // 
-// //                 Draw_Picture(0, (7 * 18), terrain_pict_seg);
-// // 
-// // 
-// //             }
-                // // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_1 * 384);
-                // // // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
-                // // // terrain_pict_seg = terrain_lbx_000 + 0xC0 + (terrain_001_0 * 16384) + terrain_001_1;
-                // // if(terrain_001_0 == 0)
-                // // {
-                // //     // map index in terrain_001_1 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
-                // //     // 0xC0 + ((terrain_001_1 - 2) * 384)
-                // //     terrain_pict_seg = terrain_lbx_000 + 0xC0 + ((terrain_001_1 - 2) * 384);
-                // // }
-                // // loading entry 0, instead of whole file
-                // // so
-                // //     EMM Page * 16K
-                // //     plus terrain index * 384
-                // //     minus difference in header size
-                // // terrain_pict_seg = terrain_lbx_000 + ( (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0);
-                // // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0;
-                if(terrain_001_0 == 0)
+                world_maps_offset = ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2));
+                terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
+                terrain_001_index += terrain_tile_base;
+                terrain_001_index *= 2;  // because, sizeof(int16_t)
+                terrain_001_0 = 0;
+                terrain_001_0 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 0);
+                terrain_001_1 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 1);
+
+                map_draw_full = ST_TRUE;
+                if( ((terrain_001_0 & 0x80) == 0) || (map_draw_full == ST_TRUE) )
                 {
-                    terrain_lbx_000_offset = 0xC0 + ((terrain_001_1 - 2) * 384);
-                }
-                else
-                {
-                    terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
+                    if((terrain_001_0 & 0x80) != 0)
+                    {
+                        terrain_001_0 = terrain_001_0 & 0x7F;  // ~== -128
+                        terrain_001_1 += terrain_anim_ctr;
+                    }
+
+                    // MS-DOS  // Dasm  terrain_pict_seg = ( (((((terrain_001_1 * 2) + terrain_001_1) * 2) * 2) *2) ) + EMM_PageFrame;
+                    // MS-DOS  terrain_pict_seg = EMM_PageFrame + (terrain_001_1 * 24);  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
+                    // MS-DOS  if(terrain_000_elpn != terrain_001_0)
+                    // MS-DOS  {
+                    // MS-DOS      EMM_Map4Pages(terrain_001_0, g_EmmHndl_TERRAIN); // First Logical Page, EMM Handle Name
+                    // MS-DOS  }
+
+                    // map index in terrain_001_1 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
+                    // loading entry 0, instead of whole file
+                    // ( EMM Page * 16K ) + (terrain pict index * 384) - (difference in header size)
+                    if(terrain_001_0 == 0)
+                    {
+                        terrain_lbx_000_offset = 0xC0 + ((terrain_001_1 - 2) * 384);
+                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + ((terrain_001_1 - 2) * 384) + 0xC0;
+                    }
+                    else
+                    {
+                        terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
+                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
+                    }
+
+                    terrain_pict_seg = terrain_lbx_000 + terrain_lbx_000_offset;
+                    Draw_Picture(itr_screen_x, itr_screen_y, terrain_pict_seg);
                 }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %u\n", __FILE__, __LINE__, terrain_lbx_000_offset);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_lbx_000_offset: %04X\n", __FILE__, __LINE__, terrain_lbx_000_offset);
-// #endif
+            } /* if(unexplored_area_flag == ST_FALSE) */
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_id: %u\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
-//     dbg_prn("DEBUG: [%s, %d]: terrain_id: %04X\n", __FILE__, __LINE__, (((terrain_001_0 / 3) * 127) + terrain_001_1));
-// #endif
+            if(DBG_ShowTileInfo == ST_TRUE)
+            {
+                // TODO  j_EMM_Map_CONTXXX();  // ; maps in the EMM_ContXXX_H handle (all 4 pages), and resets its corresponding global pointers
+                // TODO  Set_Font(0,0);
+                // Print_Integer(itr_screen_x, itr_screen_y + 12, TBL_Landmasses[(_map_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + curr_world_x]);
+                // TODO  Set_Font(0, 2);
+                // Print_Integer(itr_screen_x, itr_screen_y, curr_world_x);
+            }
 
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x++;
+        }
 
-                terrain_pict_seg = terrain_lbx_000 + terrain_lbx_000_offset;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_pict_seg: %p\n", __FILE__, __LINE__, terrain_pict_seg);
-// #endif
-                Draw_Picture(_DI_x, _SI_y, terrain_pict_seg);
-
-
-
-
-
-// //         if(DBG_ShowTileInfo != ST_FALSE)
-// //         {
-// //             j_EMM_Map_CONTXXX()
-// //             // ; maps in the EMM_ContXXX_H handle (all 4 pages), and
-// //             // ; resets its corresponding global pointers
-// //             Set_Font(0,0);
-// //             VGA_DrawNumber(_DI_x, _SI_y + 12, TBL_Landmasses[(_map_plane * 2400) + (itr_map_ypos * 60) + DrawTile_X])
-// //             Set_Font(0, 2);
-// //             VGA_DrawNumber(_DI_x, _SI_y, DrawTile_X)
-// //         }
-
-            _DI_x += 20;  // terrain image width
-            itr_map_xpos++;
-        }  /* while(itr_map_xpos < (map_xpos + map_width)) */
-
-        _SI_y += 18;  // terrain image height
-        itr_map_ypos++;
-    }  /* while(itr_map_ypos < (map_ypos + map_height)) */
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y++;
+    }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Terrain(x = %d, y = %d, h = %d, w = %d, map_x = %d, map_y = %d, map_plane = %d)\n", __FILE__, __LINE__, x, y, map_width, map_height, map_xpos, map_ypos, map_plane);
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Terrain(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_width = %d, world_grid_x = %d, world_grid_x = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
 }
@@ -1251,7 +1131,7 @@ void Cycle_Map_Animations(void)
     if(map_anim_cycle == 0)
     {
         terrain_anim_ctr = (terrain_anim_ctr + 1) % 4;
-        node_anim_ctr = (node_anim_ctr + 1) % 30000;
+        node_anim_ctr = (node_anim_ctr + 1) % 6;
         road_anim_ctr = (road_anim_ctr + 1) % 6;
     }
 }
@@ -1264,9 +1144,11 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
     int16_t itr_world_x;
     int16_t itr_world_y;
     int16_t curr_world_x;
-    uint8_t unexplored_area;
-    int16_t itr_cities;
-    int16_t has_city;
+    uint16_t terrain_001_index;
+    uint8_t terrain_001_0;
+    uint8_t animated_terrain_flag;
+    uint8_t square_explored_flag;
+    SAMB_ptr unexplored_mask_pict_seg;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
@@ -1290,36 +1172,37 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
-            if(unexplored_area != ST_FALSE)
-            {
-                /*
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
-                if(Terrain_Special != 0)
-                */
-                {
+            terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            terrain_001_0 = GET_1B_OFS(terrain_lbx_001, (terrain_001_index * 2) + 0);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: 0x%04X %d\n", __FILE__, __LINE__, terrain_001_index, terrain_001_index);
+//     dbg_prn("DEBUG: [%s, %d]: terrain_001_0: 0x%02X %d\n", __FILE__, __LINE__, terrain_001_0, terrain_001_0);
+// #endif
+            animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: animated_terrain_flag: 0x%02X %d\n", __FILE__, __LINE__, animated_terrain_flag, animated_terrain_flag);
+// #endif
 
-                    has_city = ST_FALSE;
-                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
-                    {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
-                        {
-                            has_city = ST_TRUE;
-                        }
-                    }
-                    if(has_city == ST_FALSE)
-                    {
-                        /*
-                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
-                        */
-                    }
+            if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
+            {
+                square_explored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: curr_world_x, itr_world_y: %d %d\n", __FILE__, __LINE__, curr_world_x, itr_world_y);
+    dbg_prn("DEBUG: [%s, %d]: square_explored_flag: %d\n", __FILE__, __LINE__, square_explored_flag);
+#endif
+                // TODO(JimBalcomb,20230703): figure out why this additional `cmp 0F` is here - I haven't seen it anywhere else
+                // actually, ¿ 15, cause there's 14 picts ?
+                if( (square_explored_flag != ST_FALSE) && (square_explored_flag != 0x0F) )
+                {
+                    unexplored_mask_pict_seg = unexplored_mask_seg[square_explored_flag - 1];
+                    FLIC_Draw(itr_screen_x, itr_screen_y, unexplored_mask_pict_seg);
                 }
             }
+
             itr_screen_x += SQUARE_WIDTH;
             itr_world_x += 1;
         }
+
         itr_screen_y += SQUARE_HEIGHT;
         itr_world_y += 1;
     }
@@ -1612,69 +1495,159 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // WZD o150p11
 void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t itr_screen_x;
-    int16_t itr_screen_y;
-    int16_t itr_world_x;
-    int16_t itr_world_y;
-    int16_t curr_world_x;
+    int16_t itr_nodes;
+    int16_t node_owner_idx;
+    uint8_t node_owner_banner_idx;
+    SAMB_ptr node_anim_seg;
+    int8_t node_power;
+    int16_t Tile_Index;
     uint8_t unexplored_area;
-    int16_t itr_cities;
-    int16_t has_city;
+    int8_t node_aura_world_x;
+    int8_t node_aura_world_y;
+    int8_t node_aura_map_x;
+    int8_t node_aura_map_y;
+    int16_t start_x;
+    int16_t start_y;
+    int16_t node_anim_frame_idx;
+// TODO      int16_t Warp_Byte_Index;
+// TODO      int16_t Warp_Line_Value;
+// TODO      uint32_t tmp_random_seed;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Nodes(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    itr_screen_y = screen_y;
-    itr_world_y = world_grid_y;
-    while(world_grid_y + map_grid_height > itr_world_y)
+    for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
     {
-        itr_screen_x = screen_x;
-        itr_world_x = world_grid_x;
-        while(world_grid_x + map_grid_width > itr_world_x)
+        if(world_plane == TBL_Nodes[itr_nodes].world_plane)
         {
-            if(itr_world_x < WORLD_WIDTH)
+            node_owner_idx = TBL_Nodes[itr_nodes].Owner;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_owner_idx: %d\n", __FILE__, __LINE__, node_owner_idx);
+// #endif
+            if(node_owner_idx != ST_UNDEFINED)
             {
-                curr_world_x = itr_world_x;
-            }
-            else
-            {
-                curr_world_x = itr_world_x - WORLD_WIDTH;
-            }
-
-            unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
-            if(unexplored_area != ST_FALSE)
-            {
-                /*
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
-                if(Terrain_Special != 0)
-                */
+                if(magic_set.Show_Node_Owners == ST_TRUE)
                 {
-
-                    has_city = ST_FALSE;
-                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                    node_owner_banner_idx = _players[node_owner_idx].Banner;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_owner_banner_idx: %d\n", __FILE__, __LINE__, node_owner_banner_idx);
+// #endif
+                    assert(node_owner_banner_idx <= 5);
+                    node_anim_seg = node_auras_seg[node_owner_banner_idx];
+                    node_power = TBL_Nodes[itr_nodes].Power;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_power: %d\n", __FILE__, __LINE__, node_power);
+// #endif
+                    Tile_Index = 0;
+                    while(Tile_Index < node_power)
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        node_aura_world_x = TBL_Nodes[itr_nodes].Aura_Xs[Tile_Index];
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_aura_world_x: %d\n", __FILE__, __LINE__, node_aura_world_x);
+// #endif
+                        node_aura_world_y = TBL_Nodes[itr_nodes].Aura_Ys[Tile_Index];
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_aura_world_y: %d\n", __FILE__, __LINE__, node_aura_world_y);
+// #endif
+                        unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE) + (node_aura_world_y * WORLD_WIDTH) + (node_aura_world_x)];
+                        if(unexplored_area != ST_FALSE)
                         {
-                            has_city = ST_TRUE;
+                            node_aura_map_x = node_aura_world_x - world_grid_x;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_aura_map_x: %d\n", __FILE__, __LINE__, node_aura_map_x);
+// #endif
+                            if(node_aura_map_x < 0)
+                            {
+                                node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
+                            }
+                            node_aura_map_y = node_aura_world_y - world_grid_y;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_aura_map_y: %d\n", __FILE__, __LINE__, node_aura_map_y);
+// #endif
+                            if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
+                            {
+                                start_x = screen_x + (node_aura_map_x * SQUARE_WIDTH);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: start_x: %d\n", __FILE__, __LINE__, start_x);
+// #endif
+                                start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: start_y: %d\n", __FILE__, __LINE__, start_y);
+// #endif
+                                node_anim_frame_idx = ((node_anim_ctr + Tile_Index) % 6);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: node_anim_frame_idx: %d\n", __FILE__, __LINE__, node_anim_frame_idx);
+// #endif
+                                FLIC_Set_CurrentFrame(node_anim_seg, node_anim_frame_idx);
+                                FLIC_Draw(start_x, start_y, node_anim_seg);
+                            }
                         }
+                        Tile_Index++;
                     }
-                    if(has_city == ST_FALSE)
-                    {
-                        /*
-                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
-                        */
-                    }
+
+// TODO                      if( (TBL_Nodes[itr_nodes].Meld_Flags & 0x01) != 0 )/* M_Warped */
+// TODO                      {
+// TODO                          node_aura_world_x = TBL_Nodes[itr_nodes].Aura_Xs[Tile_Index];
+// TODO                          node_aura_world_y = TBL_Nodes[itr_nodes].Aura_Ys[Tile_Index];
+// TODO                          unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
+// TODO                          if(unexplored_area != ST_FALSE)
+// TODO                          {
+// TODO                              node_aura_map_x = node_aura_world_x - world_grid_x;
+// TODO                              if(node_aura_map_x < 0)
+// TODO                              {
+// TODO                                  node_aura_map_x = node_aura_map_x + WORLD_WIDTH;
+// TODO                              }
+// TODO                              node_aura_map_y = node_aura_world_y - world_grid_y;
+// TODO                              if( (node_aura_map_y >= 0) && (node_aura_map_y < map_grid_height) && (node_aura_map_x >= 0) && (node_aura_map_x < map_grid_width) )
+// TODO                              {
+// TODO                                  start_x = screen_x + (node_aura_map_y * SQUARE_WIDTH) + node_aura_map_x;
+// TODO                                  start_y = screen_y + (node_aura_map_y * SQUARE_HEIGHT) + node_aura_map_x;
+// TODO                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
+// TODO                                  Draw_Picture_To_Bitmap(node_warped_seg, gsa_OVL_Tile_WorkArea);
+// TODO                                  FLIC_Set_CurrentFrame(node_warped_seg, 0);
+// TODO                                  Screen_Picture_Capture(start_x, start_y, start_x + 19, start_y + 17, Warp_Node_WorkArea);
+// TODO                                  if(terrain_anim_ctr >= 0)
+// TODO                                  {
+// TODO                                      WarpNode_SeedSave = Get_Random_Seed();
+// TODO                                      for(Warp_Byte_Index = 0; Warp_Byte_Index < 20; Warp_Byte_Index++)
+// TODO                                      {
+// TODO                                          Warp_Line_Value = (int16_t)TBL_Warp_GFX_Lines[Warp_Byte_Index];
+// TODO                                          if(Random(4) == 1)
+// TODO                                          {
+// TODO                                              Warp_Line_Value++;
+// TODO                                          }
+// TODO                                          if(Random(4) == 1)
+// TODO                                          {
+// TODO                                              Warp_Line_Value--;
+// TODO                                          }
+// TODO                                          if(Warp_Line_Value < -1)
+// TODO                                          {
+// TODO                                              Warp_Line_Value = -1;
+// TODO                                          }
+// TODO                                          if(Warp_Line_Value > 1)
+// TODO                                          {
+// TODO                                              Warp_Line_Value = 1;
+// TODO                                          }
+// TODO                                          TBL_Warp_GFX_Lines[Warp_Byte_Index] = Warp_Line_Value;
+// TODO                                      }
+// TODO                                  }
+// TODO                                  tmp_random_seed = Get_Random_Seed();
+// TODO                                  Set_Random_Seed(WarpNode_SeedSave);
+// TODO                                  // TODO  LBX_IMG_RandomDelete(Warp_Node_WorkArea, 50);
+// TODO                                  Set_Random_Seed(tmp_random_seed);
+// TODO                                  // TODO  LBX_IMG_HorzWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
+// TODO                                  // TODO  LBX_IMG_VertWarp(&TBL_Warp_GFX_Lines, Warp_Node_WorkArea);
+// TODO                                  // TODO  LBX_IMG_Overlay(0, 0, Warp_Node_WorkArea, gsa_OVL_Tile_WorkArea);
+// TODO                                  Draw_Picture(start_x, start_y, Warp_Node_WorkArea);
+// TODO                              }
+// TODO                          }
+// TODO                      }
                 }
             }
-            itr_screen_x += SQUARE_WIDTH;
-            itr_world_x += 1;
         }
-        itr_screen_y += SQUARE_HEIGHT;
-        itr_world_y += 1;
     }
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Draw_Map_Nodes(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
@@ -1717,7 +1690,6 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
             unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
             if(unexplored_area != ST_FALSE)
             {
                 terrain_special = TBL_Terr_Specials[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
@@ -1793,48 +1765,43 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
     int16_t Terrain_Special;
     int16_t City_Cover;
     int16_t curr_world_x;
-    int16_t tmp_screen_x;
-    int16_t tmp_screen_y;
-    int16_t tmp_world_grid_x;
-    int16_t tmp_world_grid_y;
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
     int16_t itr_cities;
-    int16_t unexplored_area;
+    uint8_t unexplored_area;
     SAMB_ptr site_pict_seg;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Minerals(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    tmp_screen_y = screen_y;
-    tmp_world_grid_y = world_grid_y;
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
 
-    while(world_grid_y + map_grid_height > tmp_world_grid_y)
+    while(world_grid_y + map_grid_height > itr_world_y)
     {
-        tmp_screen_x = screen_x;
+        itr_screen_x = screen_x;
 
-        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (world_plane * 2400) + (tmp_world_grid_y * 60));
+        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
-        ptr_TBL_Scouting = (uint8_t *)(TBL_Scouting + (world_plane * 2400) + (tmp_world_grid_y * 60));
+        ptr_TBL_Scouting = (uint8_t *)(TBL_Scouting + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
-        tmp_world_grid_x = world_grid_x;
+        itr_world_x = world_grid_x;
 
-        while(world_grid_x + map_grid_width > tmp_world_grid_x)
+        while(world_grid_x + map_grid_width > itr_world_x)
         {
-            if(tmp_world_grid_x < 60)
+            if(itr_world_x < WORLD_WIDTH)
             {
-                curr_world_x = tmp_world_grid_x;
+                curr_world_x = itr_world_x;
             }
             else
             {
-                curr_world_x = tmp_world_grid_x - WORLD_WIDTH;
+                curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            // Draw_Map_Terrain()
-            // if(TBL_Scouting[(map_plane * 2400) + (itr_map_ypos * 60) + (curr_world_x)] == ST_FALSE)
             unexplored_area = *(ptr_TBL_Scouting + curr_world_x);
-
-            // if(*(ptr_TBL_Scouting + curr_world_x) != ST_FALSE)
-            unexplored_area = ST_TRUE;
             if(unexplored_area != ST_FALSE)
             {
                 // mov     al, [es:bx]
@@ -1847,7 +1814,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
                     City_Cover = 0;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == tmp_world_grid_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
                         {
                             City_Cover = 1;
                         }
@@ -1856,19 +1823,19 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
                     if(City_Cover == 0)
                     {
                         site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(tmp_screen_x, tmp_screen_y, site_pict_seg);
+                        FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
                     }
                 }
             }
 
 
-            tmp_screen_x += 20;
-            tmp_world_grid_x += 1;
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
         }
 
 
-        tmp_screen_y += 18;
-        tmp_world_grid_y += 1;
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
     }
 
 #ifdef STU_DEBUG
@@ -1916,7 +1883,6 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
             }
 
             unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = ST_TRUE;
             if(unexplored_area != ST_FALSE)
             {
                 terrain_flags_table_sgmt = (uint8_t *)TBL_Terrain_Flags;
@@ -2021,32 +1987,12 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     }
 
                 }
-                /*
-                Terrain_Special = (((int16_t)*(ptr_TBL_Terr_Specials + DrawTile_X)) & 0x0F);
-                if(Terrain_Special != 0)
-                */
-                {
-
-                    has_city = ST_FALSE;
-                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
-                    {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
-                        {
-                            has_city = ST_TRUE;
-                        }
-                    }
-                    if(has_city == ST_FALSE)
-                    {
-                        /*
-                        mineral_site_pict_seg = _mineral_sites_seg[Terrain_Special];
-                        FLIC_Draw(itr_screen_x, itr_screen_y, mineral_site_pict_seg);
-                        */
-                    }
-                }
             }
+
             itr_screen_x += SQUARE_WIDTH;
             itr_world_x += 1;
         }
+
         itr_screen_y += SQUARE_HEIGHT;
         itr_world_y += 1;
     }

@@ -22,6 +22,43 @@ Draw Main Screen Movement Map
 
 
 
+Draw Units
+world square is explored
+world square is scouted
+300 byte bit-field for scouted
+updated in Next_Turn_Proc() and Move_Stack()
+if Explored, then Scouted
+Per City - Scounting Range
+Per Unit - Scouting Range
+-Scouting Ability
+-Patrolling Status (+1 scouting ability)
+-Scouting Range
+--1 for walking units
+--2 for flying units
+Special Unit Abilities - Scouting
+"Increases the range a unit can see overland by the ability's level. Flying units normal have a scouting levell of two, others have a level of one."
+Standard and Race-Specific Units
+Creature    Special Abilities
+Rangers     Scouting (Range 2)
+Building Types
+Building Type   Effects
+City Walls      Detect enemy units up to 3 squares away
+Oracle          Detects enemu units up to 4 squares away
+Master of Magic Spellbook
+Spell Name:                     Nature's Eye
+Necessary Magic Realm:          Nature
+Category of Effect:             City Enchantment
+Casting Cost:                   75 mana
+Upkeep Cost:                    1 mana/turn
+Degree of Rarity:               Uncommon
+Description of Spell's Effect:  Extends the scouting range of a friendly target city to five squares in any direction, 
+                                revealing all lands and all non-invisible enemy troops within that radius.
+
+
+
+
+
+
 Draw_Maps()
     Draw_Minimap()
     Draw_Map_Window()

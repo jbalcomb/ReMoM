@@ -73,19 +73,37 @@ void Set_Font_Style3(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16
 void Set_Font_Style4(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p05
 void Set_Font_Style5(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
-
 // WZD s17p06
 void Set_Outline_Color(int16_t color_num);
+
+// WZD s17p08
+void Set_Font_Spacing_Width(int16_t spacing);
+// WZD s17p09
+void Set_Font_Spacing(int16_t spacing);
 
 // WZD s17p11
 void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors);
 
 // WZD s17p12
 void Set_Alias_Color(int16_t color);
+
+
+// WZD s17p21
+int16_t Print_Integer(int16_t x, int16_t y, int16_t val);
+
+// WZD s17p22
+// int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
+
 // WZD s17p23
 int16_t Print_Right(int16_t x, int16_t y, char * string);
+// WZD s17p24
+int16_t Print_Centered(int16_t x, int16_t y, char * string);
 // WZD s17p25
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
+// WZD s17p26
+int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
+
+
 // WZD s17p35
 int16_t Print(int16_t x, int16_t y, char * string);
 // WZD s17p36
@@ -93,9 +111,9 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag);
 // WZD s17p37
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag);
 
+
 // WZD s17p53
 int16_t Get_Current_Font_Index(void);
-
 // WZD s17p54
 // Get_Font_Color1
 int16_t Get_Current_Font_Color(void);

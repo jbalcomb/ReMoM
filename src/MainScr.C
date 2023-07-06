@@ -3,7 +3,7 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 #include "MoM_DEF.H"
-
+#include "MoX_DBG.H"
 #include "MoX_Data.H"
 #include "MoX_GAM.H"
 #include "UNITTYPE.H"
@@ -27,6 +27,7 @@
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
+#include "TST_GameState.H"
 
 
 extern void Pump_Events(void);
@@ -87,7 +88,10 @@ int16_t OVL_GetStackHMoves(void);
     WIZARDS.EXE  ovr064
 */
 // WZD o64p01
-void Allocate_Reduced_Map__1(void);
+// void Allocate_Reduced_Map__1(void);
+// WZD o64p02
+// void Allocate_Reduced_Map__2(void);
+void Allocate_Reduced_Map(void);
 // WZD o064p04
 void Main_Screen_Draw_Summary_Window(void);
 // WZD o064p05
@@ -457,7 +461,6 @@ int16_t _prev_world_x;
 int64_t _main_map_grid_x;
 // WZD dseg:9750 
 int64_t _main_map_grid_y;
-// int16_t _main_map_grid_y;
 
 
 // WZD dseg:9922
@@ -563,8 +566,10 @@ int16_t cycle_incomes; //  dw 0                      ; -1 draws negative incomes
                                         ¿ BEGIN: ovr052 Terrain_Init() ?
 */
 // WZD dseg:CB5E                                                 ovr052
-// WZD dseg:CB5E 00 00                                           IMG_OVL_WarpedMask@ dw 0                ; DATA XREF: Terrain_Init+320w ...
-// WZD dseg:CB5E                                                                                         ; reserved EMM header pointer for a single image
+
+// WZD dseg:CB5E
+// MAPBACK.LBX  93  WARPED  warped mask
+SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CB60
 SAMB_ptr gsa_OVL_Tile_WorkArea;             // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
@@ -597,17 +602,17 @@ SAMB_ptr _mineral_sites_seg[9];
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
-// WZD dseg:CB82 00 00 00 00 00 00 00 00 00 00                   IMG_OVL_Sparkles@ dw 5 dup(0)           ; DATA XREF: Terrain_Init+2BFw ...
-// WZD dseg:CB82                                                                                         ; array of 5 reserved EMM header pointers for
-// WZD dseg:CB82                                                                                         ; 6 frame animations
+
+// WZD dseg:CB82 
+SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM header pointers for  ; 6 frame animations
+
 // WZD dseg:CB8C 00                                              db    0
 // WZD dseg:CB8D 00                                              db    0
 // WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cw
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
-// WZD dseg:CB90 00 00                                           OVL_WarpNodeFX_Prep@ dw 0               ; DATA XREF: Terrain_Init+2A3w ...
-// WZD dseg:CB90                                                                                         ; 18h LBX_Alloc_Space paragraphs
-// WZD dseg:CB90                                                                                         ; used to save and manipulate the tile graphics to
-// WZD dseg:CB90                                                                                         ; display the warp node effect
+
+// WZD dseg:CB90
+SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the tile graphics to ; display the warp node effect
 
 
 // WZD dseg:CB92
@@ -695,8 +700,10 @@ SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header pointer for
 // WZD dseg:CBFF 00                                              db    0
 // WZD dseg:CC00 00                                              db    0
 // WZD dseg:CC01 00                                              db    0
-// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+gsa_IMG_OVL_Exploration@ dw 0Eh dup(0)  ; DATA XREF: Terrain_Init+D0w ...
-// WZD dseg:CC02 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 reserved EMM header pointers
+
+// WZD dseg:CC02
+SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
+
 // WZD dseg:CC1E 00                                              db    0
 // WZD dseg:CC1F 00                                              db    0
 // WZD dseg:CC20 00                                              db    0
@@ -954,33 +961,37 @@ void Main_Screen(void)
     Reset_Window();
     Clear_Fields();
     // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
-    // j_Allocate_Reduced_Map__2();  byte-identical to LBX_Minimap_Alloc, should not exist
-    Reset_Draw_Active_Stack();  // AKA j_OVL_ResetStackDraw()
-    Set_Outline_Color(0);
+    Allocate_Reduced_Map();
+    Reset_Draw_Active_Stack();
+    Set_Outline_Color(0);  // ¿ NONE / TRANSPARENT ?
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-    // Disable_Redraw_Function();
-    // Set_Redraw_Function(j_Main_Screen_Draw, 1);
-    // _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
-    // _unit_window_start_y = 79;  // AKA OVL_STKUnitCards_Top
-    // G_Some_OVL_Var_1 = 0;  // ? ST_FALSE ?
-    // CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
-    // CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
-    // OVL_MapVar3 = 1;  // ? ST_TRUE ?
+    // TODO  Disable_Redraw_Function();
+    // TODO  Set_Redraw_Function(j_Main_Screen_Draw, 1);
+    // IDK   _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
+    // IDK   _unit_window_start_y = 79;  // AKA OVL_STKUnitCards_Top
+    // DONT  G_Some_OVL_Var_1 = 0;  // ? ST_FALSE ?
+    // DONT  CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
+    // DONT  CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
+    // DONT  OVL_MapVar3 = 1;  // ? ST_TRUE ?
     Reset_Map_Draw();
-    // TODO  j_MainScr_Prepare_Reduced_Map();
+    MainScr_Prepare_Reduced_Map();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+    // // TEST
+    // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
+    // Validate_Entities_On_Movement_Map(_map_x, _map_y, _map_plane);
+
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
     // TODO  j_STK_GetExtraActions();
-    // if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
-    // if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
+    // DONT  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
+    // DONT  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
     screen_changed = ST_FALSE;
-    // Local_0 = 0;  // ? ST_FALSE ?
+    // DONT  Local_0 = 0;  // ? ST_FALSE ?
     Set_Input_Delay(1);
     // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
     // TODO  Deactivate_Help_List();
     // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
-    // DBG_Alt_A__TurnCount = -1
+    // TODO  DBG_Alt_A__TurnCount = -1
     Main_Screen_Draw();
     PageFlip_FX();
 
@@ -1012,14 +1023,14 @@ void Main_Screen(void)
         hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
         hotkey_idx_Q = Add_Hot_Key('Q');
         hotkey_idx_U = Add_Hot_Key('U');
-        // hotkey_idx_Home = Add_Hot_Key(KP_Home);
-        // hotkey_idx_Up = Add_Hot_Key(KP_Up);
-        // hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
-        // hotkey_idx_Left = Add_Hot_Key(KP_Left);
-        // hotkey_idx_Right = Add_Hot_Key(KP_Right);
-        // hotkey_idx_End = Add_Hot_Key(KP_End);
-        // hotkey_idx_Down = Add_Hot_Key(KP_Down);
-        // hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
+        // TODO  hotkey_idx_Home = Add_Hot_Key(KP_Home);
+        // TODO  hotkey_idx_Up = Add_Hot_Key(KP_Up);
+        // TODO  hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
+        // TODO  hotkey_idx_Left = Add_Hot_Key(KP_Left);
+        // TODO  hotkey_idx_Right = Add_Hot_Key(KP_Right);
+        // TODO  hotkey_idx_End = Add_Hot_Key(KP_End);
+        // TODO  hotkey_idx_Down = Add_Hot_Key(KP_Down);
+        // TODO  hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
         hotkey_idx_F10 = Add_Hot_Key(ST_KEY_F10);
         hotkey_idx_F1 = Add_Hot_Key(ST_KEY_F1);
         hotkey_idx_F2 = Add_Hot_Key(ST_KEY_F2);
@@ -1127,16 +1138,27 @@ void Main_Screen(void)
         if(input_field_idx == hotkey_idx_D)  /* Debug Hot-Key */
         {
             DLOG("STU_DEBUG: debug_hotkey");
+            DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
+            if(DBG_debug_flag)
+            {
+
+            }
 
         }
         if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
         {
             DLOG("STU_DEBUG: test_hotkey");
             // city in last column / on right edge Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
-            Center_Map(&_map_x, &_map_y, 8+6, 3+5, 0);
-            // ¿ Req'd ? MainScr_Prepare_Reduced_Map();
-            // ¿ Req'd ? Set_Mouse_List(1, mouse_list_default);
-            // ¿ Req'd ? Reset_Map_Draw();
+            // TST?  Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
+            // Center_Map(&_map_x, &_map_y, 18+6, 11+5, 0);  // TST: Validate_Entities_On_Movement_Map()
+            // // ¿ Req'd ? MainScr_Prepare_Reduced_Map();
+            // // ¿ Req'd ? Set_Mouse_List(1, mouse_list_default);
+            // // ¿ Req'd ? Reset_Map_Draw();
+            // _prev_world_x = 18 + (_main_map_grid_x - (MAP_WIDTH  / 2));
+            // _prev_world_y = 11 + (_main_map_grid_y - (MAP_HEIGHT / 2));
+            // IDK_CheckSet_MapDisplay_XY(); // translates _prev_world_x,y coordinates
+            _prev_world_x = 18;
+            _prev_world_y = 11;
         }
 
         // Quick-Save
@@ -1182,10 +1204,10 @@ void Main_Screen(void)
         */
 
         // Info Button
-        /* if(input_field_idx == _info_button) { SND_LeftClickSound(); _current_screen = scr_Info_Screen; leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _game_button) { SND_LeftClickSound(); _current_screen = scr_Load_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _info_button)   { SND_LeftClickSound(); _current_screen = scr_Info_Screen;   leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _game_button)   { SND_LeftClickSound(); _current_screen = scr_Load_Screen;  leave_screen_flag = ST_TRUE; } */
         /* if(input_field_idx == _cities_button) { SND_LeftClickSound(); _current_screen = scr_Cities_Screen; leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _magic_button) { SND_LeftClickSound(); _current_screen = scr_Magic_Screen; leave_screen_flag = ST_TRUE; } */
+        /* if(input_field_idx == _magic_button)  { SND_LeftClickSound(); _current_screen = scr_Magic_Screen;  leave_screen_flag = ST_TRUE; } */
         /* if(input_field_idx == _armies_button) { SND_LeftClickSound(); _current_screen = scr_Armies_Screen; leave_screen_flag = ST_TRUE; } */
         if(input_field_idx == _spells_button)
         {
@@ -1264,9 +1286,9 @@ void Main_Screen(void)
                 // Main_Screen_Draw();
                 // PageFlip_FX();
                 // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
-                // USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
+                // TODO  USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
                 // Set_Redraw_Function(Main_Screen_Draw, 1);
-                // Allocate_Reduced_Map__2();
+                // Allocate_Reduced_Map();
                 // Set_Mouse_List_Normal();
                 // Reset_Active_Stack_Draw();
                 // UNIT_DrawPriorities();
@@ -1276,7 +1298,7 @@ void Main_Screen(void)
                 // MainScr_Prepare_Reduced_Map();
                 // screen_changed = ST_TRUE;
                 // Clear_Help_Fields();
-                // Main_Screen_Help();
+                // TODO  Main_Screen_Help();
             }
         }
 
@@ -1323,9 +1345,9 @@ void Main_Screen(void)
                 {
                     // j_IDK_MainScr_SUA_s553C3()
                 }
-                // j_Set_Mouse_List_Normal();
-                // j_Reset_Map_Draw();
-                // NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
+                // IDK   Set_Mouse_List_Normal();
+                Reset_Map_Draw();
+                // DONT  NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
             }
             if(OVL_StackHasPath == ST_TRUE)
             {
@@ -1515,16 +1537,6 @@ void Main_Screen(void)
             // TODO  CLK_Wait(1);
         }
         screen_changed = ST_FALSE;
-
-        /*
-        PageFlip_FX();
-        Main_Screen_Draw();
-        Toggle_Pages();
-        mouse_x = Pointer_X();
-        mouse_y = Pointer_Y();
-        Check_Mouse_Shape(mouse_x, mouse_y);
-        Draw_Mouse(mouse_x, mouse_y);
-        */
 
         // HACK: hard-coded to get back around to the Windows Message Loop
         leave_screen_flag = ST_TRUE;
@@ -1806,29 +1818,23 @@ void Main_Screen_Reset(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Reset()\n", __FILE__, __LINE__);
 #endif
 
-// call    j_RP_LBX_Minimap_Alloc2         ; byte-identical to LBX_Minimap_Alloc, should not exist
-// call    Disable_Redraw_Function         ; disables any active redraw function
-// call    Clear_Fields                    ; resets the main GUI control variables, removing all
-// call    j_OVL_ResetStackDraw            ; sets the overland map drawing to renew everything on
-// call    j_UNIT_DrawPriorities           ; sets the draw priority field of each unit record
-// call    j_STK_NoUnitDraw                ; set the draw priority of all units in the active
+// j_RP_LBX_Minimap_Alloc2         ; byte-identical to LBX_Minimap_Alloc, should not exist
+// Disable_Redraw_Function         ; disables any active redraw function
+// Clear_Fields                    ; resets the main GUI control variables, removing all
+// j_OVL_ResetStackDraw            ; sets the overland map drawing to renew everything on
+// j_UNIT_DrawPriorities           ; sets the draw priority field of each unit record
+// j_STK_NoUnitDraw                ; set the draw priority of all units in the active
 // push    [OVL_Map_Plane]                 ; Plane
 // push    [OVL_Map_TopY]                  ; TopY
 // push    [OVL_Map_LeftX]                 ; LeftX
 // call    j_OVL_SetUnitsOnMap             ; fills out the OVL_UnitsOnMap array with the unit or
-// call    j_CRP_GUI_NormalFullscreen      ; sets the Normal_Fullscreen window (GUI_SetWindows)
-// call    j_OVL_PrepMinimap               ; draws a minimap into the Minimap_IMG_Seg allocation
-// mov     ax, 1
-// push    ax                              ; Refresh_Timer
-// mov     ax, seg stub057
-// push    ax
-// mov     ax, offset j_Main_Screen_Draw   ; a wrapper for OVL_DrawMainScreen that passes the
-// push    ax                              ; Refresh_Fn
-// call    Set_Redraw_Function             ; sets the passed function as the current screen redraw
-// call    j_OVL_MapDrawRenew              ; ensures that any subsequent map drawing is treated as
-// call    Clear_Help_Fields               ; disables the context-based help by zeroing out its
-// call    j_Main_Screen_Help              ; loads and sets the GUI help entry area array for the
-// mov     [CRP_OverlandVar], 1
+// j_CRP_GUI_NormalFullscreen      ; sets the Normal_Fullscreen window (GUI_SetWindows)
+// j_OVL_PrepMinimap               ; draws a minimap into the Minimap_IMG_Seg allocation
+// Set_Redraw_Function(Main_Screen_Draw, 1);
+// j_OVL_MapDrawRenew              ; ensures that any subsequent map drawing is treated as
+// Clear_Help_Fields               ; disables the context-based help by zeroing out its
+// j_Main_Screen_Help              ; loads and sets the GUI help entry area array for the
+// DONT  CRP_OverlandVar = 1;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Reset()\n", __FILE__, __LINE__);
@@ -1878,6 +1884,8 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
 #endif
 
+    assert(_unit_stack_count >= 0);
+    assert(_unit_stack_count <= 9);
     if(_unit != ST_UNDEFINED && _unit_stack_count != 0)
     {
 
@@ -2030,8 +2038,6 @@ void Main_Screen_Draw_Status_Window(void)
 
     Print_Integer_Right(265, 68, _players[_human_player_idx].gold_reserve);
     Print_Integer_Right(303, 68, _players[_human_player_idx].mana_reserve);
-    // Print_Integer_Right(265, 68, 111);
-    // Print_Integer_Right(303, 68, 111);
 
     Set_Font_Style1(0, 0, 0, 0);
 
@@ -2111,6 +2117,12 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     Main_Screen_Draw_Game_Buttons();
 
     // TODO  OVL_DrawStackMoves();
+
+    if(DBG_debug_flag)
+    {
+        Main_Screen_Draw_Debug_Information();
+    }
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Do_Draw()\n", __FILE__, __LINE__);
@@ -2409,13 +2421,14 @@ OON XREF STK_move() WZD o95p01
 */
 
 // WZD o64p01
-void Allocate_Reduced_Map__1(void)
+// void Allocate_Reduced_Map__1(void)
+// WZD o64p02
+// PRIVATE  void Allocate_Reduced_Map__2(void);
+void Allocate_Reduced_Map(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 * 16 = 4848 bytes
 }
 
-// WZD o64p02
-// PRIVATE  void Allocate_Reduced_Map__2(void);
 
 // WZD o64p03
 // ? subset of Draw_Maps() ?
@@ -2719,6 +2732,7 @@ void Main_Screen_Draw_Summary_Window(void)
     }
 
 
+    // cycles reds for negative values
     if(cycle_incomes != ST_UNDEFINED)
     {
         // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);

@@ -102,7 +102,7 @@ int16_t UNIT_HasInvisibility(int16_t unit_idx)
     tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;  // // ; enum UE_FLAGS_L
     tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;  // // ; enum UE_FLAGS_H
     // UE_Invisibility 0x8000  Ab_Invisibility 0x40
-    if( ((tmp_unit_enchantments_hiword & 0x1) == ST_TRUE) || ((_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x1000) == ST_TRUE) )
+    if( ((tmp_unit_enchantments_hiword & 0x8000) != 0) || ((_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) != 0) )
     {
         has_invisibility = ST_TRUE;
     }

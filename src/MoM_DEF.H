@@ -9,10 +9,12 @@
 
 */
 
+#define NUM_PLANES        2
+
 #define NUM_FORTRESSES    6
 #define NUM_TOWERS        6
 #define NUM_LAIRS       102
-
+#define NUM_NODES        30
 
 
 #define SCREEN_WIDTH    320
@@ -38,6 +40,13 @@
 // Different than array remap colors for other things - e.g., Towers(Owned,Unowned)
 
 
+// MainScr_Maps.C
+// reduced_map_box_color = 13;
+// MoX_DEF.H
+// #define MINIMAP_MARK_COLOR 15
+
+
+
 /*
     World Map Dimensions
 */
@@ -59,15 +68,17 @@
 #define SQUARE_WIDTH    20  // in Pixels
 #define SQUARE_HEIGHT   18  // in Pixels
 
+#define WORLD_WIDTH         60  // in Squares
+#define WORLD_HEIGHT        40  // in Squares
 #define WORLD_SIZE          2400
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
 
-#define WORLD_WIDTH         60  // in Squares
-#define WORLD_HEIGHT        40  // in Squares
 
 #define MAP_WIDTH           12  // in Squares
 #define MAP_HEIGHT          10  // in Squares
+#define MAP_SIZE           120  // in Squares
+
 #define MAP_WIDTH_HALF       6  // in Squares
 #define MAP_HEIGHT_HALF      5  // in Squares
 

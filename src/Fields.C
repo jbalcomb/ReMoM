@@ -792,11 +792,11 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
                 screen_x = Pointer_X();
                 screen_y = Pointer_Y();
                 // ~ translate screen coordinates to field coordinates
-                field_x = screen_x - p_fields[field_num].x1;
-                field_y = screen_y - p_fields[field_num].y1;
+                field_x = screen_x - p_fields[field_num].x1;  // always  0
+                field_y = screen_y - p_fields[field_num].y1;  // always 20
                 // ~ translate field coordinates to grid coordinates  (from pixels to squares)
-                grid_x = field_x / p_fields[field_num].Param1;  // box_width
-                grid_y = field_y / p_fields[field_num].Param2;  // box_height
+                grid_x = field_x / p_fields[field_num].Param1;  // always 12  box_width
+                grid_y = field_y / p_fields[field_num].Param2;  // always 10  box_height
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
