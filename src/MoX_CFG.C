@@ -14,12 +14,20 @@ uint8_t _config_mom[20];
 void Load_CONFIG_MOM(void)
 {
     FILE * file_pointer;
-    
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_CONFIG_MOM()\n", __FILE__, __LINE__);
+#endif
+
     file_pointer = fopen("CONFIG.MOM", "rb");
 
     fread(&config_mom, 18, 1, file_pointer);
 
     fclose(file_pointer);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Load_CONFIG_MOM()\n", __FILE__, __LINE__);
+#endif
 }
 
 

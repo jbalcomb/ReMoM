@@ -49,9 +49,7 @@ extern "C" {
 
 extern int16_t PageFlipEffect;
 
-extern uint8_t g_State_Run;
-
-extern int16_t g_Current_Screen;
+extern int16_t current_screen;
 
 // extern uint8_t g_Video_Back_Buffer[];
 extern uint8_t g_Palette[];
@@ -62,7 +60,9 @@ extern uint8_t g_Palette_XBGR[];
 /*
     ~== MAGIC/WIZARDS.EXE |-> main()
 */
-void MoM_main(void);
+// MGC s01p01
+// WZD s01p01
+// MoM_Init:  void MoM_main(void)
 
 
 /*
@@ -76,31 +76,17 @@ void Screen_Control(void);
 void PageFlip_FX(void);
 
 
-void MoM_Tables_Init(int16_t gfx_buff_nparas);
-
-// WZD s01p06
-void WZD_Startup_MainGame(void);
-
-
-/*
-    MAGIC.EXE seg001
-*/
-
-// MGC s01p07
-// Load_TERRSTAT
-
-// MGC s01p08
-// Load_SPELLDAT
-
 
 /*
     WIZARDS.EXE  ovr051
 */
 
 // WZD o51p01
+// OON XREF: Loaded_Game_Update()
 void GAME_Overland_Init(void);
 
 // WZD o51p02
+// OON XREF: GAME_Overland_Init()
 void G_WLD_StaticAssetRfrsh(void);
 
 
@@ -108,14 +94,6 @@ void G_WLD_StaticAssetRfrsh(void);
     WIZARDS.EXE  ovr052
 */
 
-// WZD o52p01
-void Load_Init_MainGame(void);
-
-// WZD o52p02
-void UNIT_Upkeep_Reset(void);
-
-// WZD o52p03
-void Terrain_Init(void);
 
 // WZD o52p20
 void GFX_Swap_Reset(void);

@@ -1,4 +1,39 @@
 
+p0_heroes
+p1_heroes
+p2_heroes
+p3_heroes
+p4_heroes
+p5_heroes
+_num_players
+_landsize
+_magic
+_difficulty
+_cities
+_units
+_turn
+_unit
+_players
+_world_maps
+UU_TBL_1
+UU_TBL_2
+TBL_Landmasses
+TBL_Nodes
+_FORTRESSES
+_TOWERS
+TBL_Lairs
+TBL_Items
+_CITIES
+_UNITS
+TBL_Terr_Specials
+TBL_Scouting
+TBL_MoveMaps_EMS
+_events_table
+TBL_Terrain_Flags
+grand_vizier
+TBL_Premade_Items
+TBL_Hero_Names
+
 
 
 
@@ -346,6 +381,12 @@ SAVE9.GAM
 
 SAVE9.GAM is the auto-save
 it is checked for to see if "Continue" should be on the Main Menu
+
+
+
+
+
+
 
 
 

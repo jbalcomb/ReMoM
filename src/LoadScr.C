@@ -52,12 +52,19 @@ void Load_Screen_Help(void)
 // WZD o160p04
 void Loaded_Game_Update(void)
 {
-    ; int16_t itr;
+    int16_t itr;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
+
+// DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
+    // mov     [GAME_RazeCity], 0
+
     _human_player_idx = 0;
+
     PageFlipEffect = 0;
+    
     // j_CTY_CatchmentRefresh();
     GAME_Overland_Init();
     // j_RP_GAME_UnitTypesUpdate();
@@ -70,6 +77,14 @@ void Loaded_Game_Update(void)
     // j_CTY_ResetRoadConns();
     // j_GAME_DeleteDeadUnits();
     // j_AI_ResetUnitMoves();
+
+// DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
+    // for(itr = 1; itr < NUM_PLAYERS; itr++)
+    // {
+    //     TBL_Wizards[itr].Avg_Unit_Value = 0;
+    // }
+
+
     // j_GAME_NextHumanStack();
     // if(_difficulty = 0 /* "Intro" */) { magic_set.Random_Events = ST_FALSE; }
     // for(itr = 0; itr < 100; itr++)

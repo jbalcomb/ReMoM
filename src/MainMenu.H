@@ -37,6 +37,7 @@ extern "C" {
 void Main_Menu_Screen_Control(void);
 
 // MGC s01p04
+// MoO2: Reload_Main_Menu_Screen()
 void Main_Menu_Load_Pictures(void);
 
 // MGC s01p05

@@ -572,10 +572,12 @@ int16_t cycle_incomes; //  dw 0                      ; -1 draws negative incomes
 SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CB60
-SAMB_ptr gsa_OVL_Tile_WorkArea;             // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
+// AKA gsa_OVL_Tile_WorkArea
+SAMB_ptr Map_Square_WorkArea;               // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
 
 // WZD dseg:CB62
-SAMB_ptr UU_IMG_OVL_Empty3;                 // ; single-loaded image, called "hunter's lodge"
+// AKA UU_IMG_OVL_Empty3
+SAMB_ptr UU_hunters_lodge_seg;                 // ; single-loaded image, called "hunter's lodge"
 
 // WZD dseg:CB64
 SAMB_ptr IMG_OVL_Nightshade;                // ; reserved EMM header pointer for a single image
@@ -598,7 +600,7 @@ SAMB_ptr IMG_OVL_Corruption;                // ; reserved EMM header pointer for
     MAPBACK.LBX  78-86
     SITES - coal, iron, silver, gold, gems, mithril, adamantium, quork, crysx
 */
-SAMB_ptr _mineral_sites_seg[9];
+SAMB_ptr mineral_site_segs[9];
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
@@ -2766,7 +2768,7 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
         Set_Draw_Active_Stack_Never();
 
-        if(g_Current_Screen == ST_UNDEFINED)
+        if(current_screen == ST_UNDEFINED)
         {
             FLIC_Draw(246, 178, next_turn_button_seg);  // ? offset by 6,5 to support the 3-D illusion of being depressed
         }

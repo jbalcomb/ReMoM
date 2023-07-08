@@ -59,6 +59,9 @@ extern uint8_t g_Key_Pressed;
 extern uint16_t g_Last_Key_Pressed;
 extern uint16_t scan_code_char_code;  // Platform
 
+extern uint8_t g_State_Run;
+
+
 
 void Render_VBB(struct game_offscreen_buffer * Buffer);
 

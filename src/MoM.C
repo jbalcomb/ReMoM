@@ -57,6 +57,9 @@ uint16_t screen_pixel_size    =  64000;
 struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
 
 
+uint8_t g_State_Run;
+
+
 // char game_files[] = {
 //     "SAVETEST.GAM";
 //     "SAVE1.GAM";

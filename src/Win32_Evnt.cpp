@@ -12,7 +12,7 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
-#include "MoM_main.H"   /* g_State_Run, g_Current_Screen, */
+#include "MoM_main.H"   /* g_State_Run, current_screen, */
 #include "Input.H"      /* g_Key_Pressed, scan_code_char_code */
 #include "MoM.H"      /* platform_mouse_click_x, platform_mouse_click_y, platform_mouse_button_status; Update_Mouse_Position() */
 

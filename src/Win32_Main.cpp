@@ -31,6 +31,8 @@ _UNICODE is used by C-runtime/MFC headers
 
 #include "MoX_TYPE.H"
 
+#include "MoM_Init.H"  /*  OON MoM_Init() */
+
 #include "MoM_main.H"
 
 #include "VIDEO.H"  /*  video_page_buffer, draw_page_num, draw_page */
@@ -201,15 +203,15 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     Check_Game_Files();
 
-    g_State_Run = 1;  // ST_TRUE
-    g_Current_Screen = scr_Main_Menu_Screen;
-
     video_page_buffer[0] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     video_page_buffer[1] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     draw_page_num = 0;
     draw_page = video_page_buffer[draw_page_num];
 
-    MoM_main();  // ~== MAGIC/WIZARDS.EXE |-> main()
+    MoM_Init();  // ~== MAGIC/WIZARDS.EXE |-> main()
+
+    g_State_Run = 1;  // ST_TRUE
+    current_screen = scr_Main_Menu_Screen;
 
     // MoM.C  struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
     Buffer.Memory = GlobalBackbuffer.Memory;

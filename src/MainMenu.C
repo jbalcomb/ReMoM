@@ -94,7 +94,8 @@ int16_t _quit_button;
 // MGC dseg:52C2 gsa_VORTEX_5_MenuLoadGame dw 0
 // MGC dseg:52C4
 int16_t current_menu_screen;
-// MGC dseg:52C6 gsa_WIZARDS_0to13 dw 14 dup(0)
+// MGC dseg:52C6
+// MGC dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+wizard_portrait_segs dw 14 dup(    0)   ; array of 14 single-loaded images
 // MGC dseg:52E2 IMG_NewG_BtnBorder@ dw 0
 // MGC dseg:52E4
 int16_t load_flag;
@@ -253,7 +254,7 @@ void Main_Menu_Add_Fields(void)
         move save game check loop to Check_For_Saved_Games()
         ? need to set current_screen here instead of passing a menu selection back to Screen_Control() ?
             ? add that code here or wrap this in another function ~ Main_Menu_Screen_Control() ?
-            HACK:'d in g_Current_Screen
+            HACK:'d in current_screen
 
 */
 int16_t Main_Menu_Screen(void)
@@ -464,7 +465,7 @@ int16_t Main_Menu_Screen(void)
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 0;
             // HACK:
-            g_Current_Screen = scr_Continue;
+            current_screen = scr_Continue;
         }
         if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))
         {
@@ -472,7 +473,7 @@ int16_t Main_Menu_Screen(void)
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 1;
             // HACK:
-            g_Current_Screen = scr_Load_Screen;
+            current_screen = scr_Load_Screen;
         }
         if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
         {
@@ -480,7 +481,7 @@ int16_t Main_Menu_Screen(void)
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 2;
             // HACK:
-            g_Current_Screen = scr_New_Game_Screen;
+            current_screen = scr_New_Game_Screen;
         }
         if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
         {
@@ -488,7 +489,7 @@ int16_t Main_Menu_Screen(void)
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 3;
             // HACK:
-            g_Current_Screen = scr_Quit_To_DOS;
+            current_screen = scr_Quit_To_DOS;
         }
         if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
         {
@@ -496,7 +497,7 @@ int16_t Main_Menu_Screen(void)
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 4;
             // HACK:
-            g_Current_Screen = scr_Hall_Of_Fame_Screen;
+            current_screen = scr_Hall_Of_Fame_Screen;
         }
 
         if(current_menu_screen == ST_UNDEFINED) { leave_screen_flag = ST_FALSE; }
@@ -505,7 +506,7 @@ int16_t Main_Menu_Screen(void)
 //     dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
 //     dbg_prn("DEBUG: [%s, %d]: leave_screen_flag: %d\n", __FILE__, __LINE__, leave_screen_flag);
 //     dbg_prn("DEBUG: [%s, %d]: current_menu_screen: %d\n", __FILE__, __LINE__, current_menu_screen);
-//     dbg_prn("DEBUG: [%s, %d]: g_Current_Screen: %d\n", __FILE__, __LINE__, g_Current_Screen);
+//     dbg_prn("DEBUG: [%s, %d]: current_screen: %d\n", __FILE__, __LINE__, current_screen);
 // #endif
 
         if(leave_screen_flag == ST_FALSE)

@@ -32,11 +32,11 @@
 // dseg:76EC 00 A0                   g_VGA_DisplayBuffer_Page_SgmtAddr dw 0A000h
 
 // WZD dseg:76EE
-int16_t draw_page_num;
+int16_t draw_page_num = 0;
 
 // // char current_page_flag
 // // int16_t copy_to_on_page_flag
-uint8_t * current_video_page;
+uint8_t * current_video_page;  // = video_page_buffer[0];
 // uint8_t off_page_buffer[64000];
 // uint8_t back_page_buffer[64000];
 uint8_t * video_page_buffer[2];

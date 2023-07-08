@@ -46,11 +46,13 @@ extern SAMB_ptr _reduced_map_seg;
 extern SAMB_ptr node_warped_seg;                // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CB60
-extern SAMB_ptr gsa_OVL_Tile_WorkArea;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
+// AKA gsa_OVL_Tile_WorkArea
+extern SAMB_ptr Map_Square_WorkArea;              // alloc in Terrain_Init  // ; 70 * 16 = 1120 bytes
 
 
 // WZD dseg:CB62
-extern SAMB_ptr UU_IMG_OVL_Empty3;                 // ; single-loaded image, called "hunter's lodge"
+// AKA UU_IMG_OVL_Empty3
+extern SAMB_ptr UU_hunters_lodge_seg;                 // ; single-loaded image, called "hunter's lodge"
 
 // WZD dseg:CB64
 extern SAMB_ptr IMG_OVL_Nightshade;                // ; reserved EMM header pointer for a single image
@@ -73,7 +75,7 @@ SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM header poi
     MAPBACK.LBX  78-86
     SITES - coal, iron, silver, gold, gems, mithril, adamantium, quork, crysx
 */
-extern SAMB_ptr _mineral_sites_seg[];
+extern SAMB_ptr mineral_site_segs[];
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
