@@ -77,8 +77,6 @@ void MoM_Main(void)
 
 
     // MoO2: Draw_Logos()
-
-
     // TODO  c0argv == 'J','E','N','N','Y'
     // TODO  j_GAME_PlayIntro()
 
@@ -102,6 +100,7 @@ void MoM_Main(void)
 
 // WZD s01p02
 // ~== MGC s01p03  Menu_Screen_Control()
+// MoO2 Module: MOX2
 void Screen_Control(void)
 {
 #ifdef STU_DEBUG

@@ -1,18 +1,7 @@
 #ifndef MOX_CFG_H
 #define MOX_CFG_H
 
-#include "MoX_TYPE.H"    /* word */
-
-uint16_t CFG_MDI_IO;     // Sound Card Address / Music Card Address
-uint16_t CFG_MDI_ID;     // ID - Sound Card / Music Card
-uint16_t CFG_MDI_IRQ;    // Music IRQ
-uint16_t CFG_DIG_IO;     // Digital Card Address
-uint16_t CFG_DIG_ID;     // ID - Digital Card
-uint16_t CFG_DIG_IRQ;    // Digital IRQ
-uint16_t CFG_DIG_DRQ;    // Digital DRQ
-uint16_t CFG_NIU_0E;     // 
-uint16_t CFG_NIU_10;     //
-uint16_t CFG_NIU_12;     // 
+#include "MoX_TYPE.H"
 
 struct s_CONFIG_MOM
 {
@@ -28,13 +17,26 @@ struct s_CONFIG_MOM
     /*12*/ uint16_t NIU_12;     // 
 };
 
-struct s_CONFIG_MOM config_mom;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
+extern uint8_t _config_mom[20];
+
+extern struct s_CONFIG_MOM config_mom;
+
+extern uint16_t CFG_MDI_IO;     // Sound Card Address / Music Card Address
+extern uint16_t CFG_MDI_ID;     // ID - Sound Card / Music Card
+extern uint16_t CFG_MDI_IRQ;    // Music IRQ
+extern uint16_t CFG_DIG_IO;     // Digital Card Address
+extern uint16_t CFG_DIG_ID;     // ID - Digital Card
+extern uint16_t CFG_DIG_IRQ;    // Digital IRQ
+extern uint16_t CFG_DIG_DRQ;    // Digital DRQ
+extern uint16_t CFG_NIU_0E;     // 
+extern uint16_t CFG_NIU_10;     //
+extern uint16_t CFG_NIU_12;     // 
 
 
 void Load_CONFIG_MOM(void);

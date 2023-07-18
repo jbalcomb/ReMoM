@@ -8,7 +8,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
 
 
 

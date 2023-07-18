@@ -16,6 +16,7 @@
 
 uint8_t _magic_set[466];
 
+struct s_MAGIC_SET magic_set;
 
 
 // WZD o125p04

@@ -10,6 +10,8 @@
 
 uint8_t _config_mom[20];
 
+struct s_CONFIG_MOM config_mom;
+
 
 void Load_CONFIG_MOM(void)
 {

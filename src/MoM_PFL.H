@@ -1,5 +1,5 @@
-#ifndef MOM_HPP
-#define MOM_HPP
+#ifndef MOM_PFL_H
+#define MOM_PFL_H
 
 /*
     ~ MoM Platform-Layer API
@@ -21,14 +21,8 @@
 
 #include "MoX_TYPE.H"
 
+#include <windows.h>
 
-struct game_offscreen_buffer
-{
-    void* Memory;
-    int Width;
-    int Height;
-    int Pitch;
-};
 
 
 /*
@@ -47,7 +41,6 @@ extern "C" {
 #endif
 
 
-extern struct game_offscreen_buffer Buffer;
 
 // set in Win32_Evnt.cpp, get in win_MD.C
 // YNM  extern int16_t platform_mouse_click_x;
@@ -59,11 +52,11 @@ extern uint8_t g_Key_Pressed;
 extern uint16_t g_Last_Key_Pressed;
 extern uint16_t scan_code_char_code;  // Platform
 
+extern HWND g_Window;
+
 extern uint8_t g_State_Run;
 
 
-
-void Render_VBB(struct game_offscreen_buffer * Buffer);
 
 void Check_Game_Files(void);
 
@@ -71,13 +64,12 @@ void Check_Game_Files(void);
 
 // TODO(JimBalcomb,20221216): Services that the *platform layer* provides to the *game*
 void Pump_Events(void);
-
+void Pump_Paints(void);
 uint32_t Get_System_Clock_Counter(void);
 
 
 
 // TODO(JimBalcomb,20221216): Services that the *game* provides to the *platform layer*
-void GameUpdateAndRender(struct game_offscreen_buffer * Buffer);
 
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
 void Update_Mouse_Button_Status(int16_t mouse_click_x, int16_t mouse_click_y, int16_t mouse_button_status);
@@ -88,4 +80,4 @@ void Update_Mouse_Button_Status(int16_t mouse_click_x, int16_t mouse_click_y, in
 #endif
 
 
-#endif /* MOM_HPP */
+#endif /* MOM_PFL_H */

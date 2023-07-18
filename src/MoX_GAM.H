@@ -1,7 +1,7 @@
 #ifndef MOX_GAM_H
 #define MOX_GAM_H
 
-#include "MoX_TYPE.H"    /* word */
+#include "MoX_TYPE.H"
 
 
 // Game Option - Difficulty
@@ -92,13 +92,13 @@ struct s_SAVE_GAM
 
 };
 
-struct s_SAVE_GAM save_gam;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
+extern struct s_SAVE_GAM save_gam;
 
 
 void TST_Validate_GameData(void);

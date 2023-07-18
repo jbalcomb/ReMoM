@@ -51,14 +51,17 @@ struct s_MAGIC_SET
     /* 1BE */ uint16_t HallofFame_Races[NUM_HOF_ENTRIES];
 };
 
-struct s_MAGIC_SET magic_set;
 
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
+
+extern uint8_t _magic_set[];
+
+extern struct s_MAGIC_SET magic_set;
 
 
 // WZD o125p03

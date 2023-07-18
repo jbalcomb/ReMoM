@@ -3,6 +3,15 @@
 
 #include "MoX_TYPE.H"
 
+/*
+    MoO2
+    Module: fontdraw
+    Print_Character_No_Alias_ASM_
+    Address: 01:00144A06
+    Print_Character_ASM_
+    Address: 01:001449CC
+*/
+
 
 
 // 96 characters; ASCII: {32, ..., 126}

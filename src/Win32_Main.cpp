@@ -35,7 +35,10 @@ _UNICODE is used by C-runtime/MFC headers
 
 #include "MoM_main.H"
 
-#include "VIDEO.H"  /*  video_page_buffer, draw_page_num, draw_page */
+#include "MoX.H"
+
+#include "MoX_DIR.H"
+#include "Video.H"  /*  video_page_buffer, draw_page_num, draw_page */
 
 #include "MoM_PFL.H"
 
@@ -53,30 +56,17 @@ _UNICODE is used by C-runtime/MFC headers
 #endif
 
 
-typedef int8_t s8;
-typedef int16_t s16;
-typedef int32_t s32;
-typedef int64_t s64;
-typedef s32 b32;
 
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef float f32;
-typedef double f64;
+HINSTANCE g_Instance;
+HWND g_Window;
+HDC g_DeviceContext;
 
+const char lpszClassName[] = "STU_MoM_WindowClass";
+const char lpszWindowName[] = "MoM - STU";
 
 // global_variable win32_offscreen_buffer GlobalBackbuffer;
 win32_offscreen_buffer GlobalBackbuffer;
 global_variable s64 GlobalPerfCountFrequency;  // HMH Day 18
-
-// uint16_t window_width = 320;
-// uint16_t window_height = 200;
-uint16_t window_width = 640;
-uint16_t window_height = 400;
-// uint16_t window_width = 1280;
-// uint16_t window_height = 800;
 
 
 
@@ -149,7 +139,15 @@ void Win32ResizeDIBSection(win32_offscreen_buffer * Buffer, int Width, int Heigh
 
 void Win32DisplayBufferInWindow(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-    // TODO(casey): Aspect ratio correction
+
+    uint32_t* Pixel = (uint32_t*)Buffer->Memory;
+    int itr;
+    unsigned int* p_XBGR;
+    p_XBGR = (uint32_t*)g_Palette_XBGR;
+    for (itr = 0; itr < screen_pixel_size; itr++)
+    {
+        *Pixel++ = *(p_XBGR + *(video_page_buffer[draw_page_num] + itr));
+    }
 
     StretchDIBits(DeviceContext, 
                   0, 0, WindowWidth, WindowHeight,      /* destination rectangle (window)   */
@@ -171,9 +169,23 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
 #endif
 
+
+
+    Check_Game_Files();
+
+    // ~== MAGIC.EXE && WIZARDS.EXE |-> main()
+    // ~== MoX::Init() ~ Initialize SimTex Game Engine
+    MoM_Init();
+
+    current_screen = scr_Main_Menu_Screen;
+
+    Win32ResizeDIBSection(&GlobalBackbuffer, screen_pixel_width, screen_pixel_height);
+
+    
+
     // Initialize the "Windows Desktop Application"
     // ~== 'Application-Type' of 'Game'
-    Init_WDA_Game(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
+    Init_WDA_Game(hInstance, nShowCmd);
 
     // Getting the performance frequency.
     LARGE_INTEGER PerfCountFrequencyResult;
@@ -186,8 +198,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     UINT DesiredSchedulerMS = 1;
     b32 SleepIsGranular = (timeBeginPeriod(DesiredSchedulerMS) == TIMERR_NOERROR);
 
-    Win32ResizeDIBSection(&GlobalBackbuffer, 320, 200);
-    // Win32ResizeDIBSection(&GlobalBackbuffer, 640, 400);
 
     // TODO(casey): How do we reliably query on this on Windows?
     int MonitorRefreshHz = 60;
@@ -197,37 +207,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     // int GameUpdateHz = MonitorRefreshHz / 12;  // 5 FPS
     f32 TargetSecondsPerFrame = 1.0f / (f32)GameUpdateHz;
 
-    /*
-        BEGIN: Initialize Game State
-    */
 
-    Check_Game_Files();
 
-    video_page_buffer[0] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    video_page_buffer[1] = (uint8_t *)VirtualAlloc(NULL, (320*200*1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    draw_page_num = 0;
-    draw_page = video_page_buffer[draw_page_num];
 
-    MoM_Init();  // ~== MAGIC/WIZARDS.EXE |-> main()
 
-    g_State_Run = 1;  // ST_TRUE
-    current_screen = scr_Main_Menu_Screen;
-
-    // MoM.C  struct game_offscreen_buffer Buffer = {0};  // clear/set to zero!
-    Buffer.Memory = GlobalBackbuffer.Memory;
-    Buffer.Width = GlobalBackbuffer.Width;
-    Buffer.Height = GlobalBackbuffer.Height;
-    Buffer.Pitch = GlobalBackbuffer.Pitch;
-    // TODO  buffer.Pitch = buffer.width * BYTES_PER_PIXEL;
-
-    // // Copy Back-Buffer to Front-Buffer
-    // Render_VBB(&GlobalBackbuffer);
     win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
     Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
 
-    /*
-        END: Initialize Game State
-    */
+
+
+
 
     /*
         Main Game Loop
@@ -236,18 +225,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     // QueryPerformanceCounter(&LastCounter);
     LARGE_INTEGER LastCounter = Win32GetWallClock();
     uint64_t LastCycleCount = __rdtsc();
-
+    g_State_Run = 1;  // ST_TRUE
     while(g_State_Run)
     {
-        // Do I still need this around for any reason?
-        // Poll_Messages();
 
         Screen_Control();
 
-        // // Copy Back-Buffer to Front-Buffer
-        // Render_VBB(&GlobalBackbuffer);
         win32_window_dimension Dimension = Win32GetWindowDimension(g_Window);
-        // GameUpdateAndRender(&Buffer);
         Win32DisplayBufferInWindow(&GlobalBackbuffer, g_DeviceContext, Dimension.Width, Dimension.Height);
 
 // HMH Day 10

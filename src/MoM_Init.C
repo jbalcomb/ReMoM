@@ -40,10 +40,11 @@ OON XREF:
 
 #include "MoX_Data.H"
 
-#include "MOM_Init.H"
+#include "MoM_Init.H"
 #include "MoM_main.H"
 
 #include "Allocate.H"
+#include "Init.H"
 #include "LBX_Load.H"
 #include "MoX_DBG.H"
 #include "MoX_CFG.H"
@@ -62,9 +63,12 @@ OON XREF:
 
 
 
-#define MOM_FONT_FILE "FONTS.LBX"
+// #define MOM_FONT_FILE "FONTS.LBX"
+char MOM_FONT_FILE[] = "FONTS.LBX";
 #define GAME_FONT_FILE MOM_FONT_FILE
-
+char mom_font_file[] = "FONTS.LBX";
+// Create a pointer to the string at compile time.
+char* game_font_file = &mom_font_file[0];
 
 
 
@@ -102,43 +106,54 @@ void Terrain_Init(void);
 
 
 
-// ~== MGC & WZD main()
+// ~== MAGIC.EXE && WIZARDS.EXE |-> main()
 void MoM_Init(void)
 {
-    char font_file[] = GAME_FONT_FILE;
+    char found_file[30];
+    // char font_file[] = GAME_FONT_FILE;
+    int input_type;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: MoM_Init()\n", __FILE__, __LINE__);
 #endif
 
-    Load_CONFIG_MOM();
+    // EMM_Pages_Reserved = 158;
 
+    // if (DIR("CONFIG.MOM", found_file) == 0)
+    // {
+    //     Exit_With_Message("Run INSTALL to configure MASTER OF MAGIC.");
+    // }
+
+    // MoO2  Load_Game_Settings()
+    Load_CONFIG_MOM();
     Load_MAGIC_SET();
 
     /*
         MIDI Driver
         SFX Driver
     */
+    // if (magic_set.Snd_Channels > 2 || magic_set.Snd_Channels < 0)
+    // {
+    //     magic_set.Snd_Channels = 0;
+    // }
+    // magic_set.Input_Type = 1;
+
 
     // TODO  Check_For_Saved_Games()
 
+    // EMS_SetMinKB(2700);;
+    // RAM_SetMinKB(583);
 
-    // MoO2  Module: init
-    // Init_Drivers(GAME_FONT_FILE) |-> 
-    // CRP_Empty_Exit_Fn2()
-    // EMS_Startup()
-    // VGA_SetModeY()
-    Load_Font_File(font_file);
-    // TODO  Audio_Init()
-    Init_Mouse_Keyboard(1);
-    Randomize();
-    Set_Page_Off();  // initializes `current_video_page`
 
+    // magic_set.Input_Type = 1;
+    // magic_set.Snd_Channels = 2;
+    // Init_Drivers(magic_set.Input_Type, magic_set.Snd_Channels, &font_file, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, SFX_DRV, SFX_IO, SFX_IRQ, SFX_DMA);
+    Init_Drivers(1, MOM_FONT_FILE);
 
     Release_Version();
     Set_Global_ESC();
 
-
+    // MoO2 Allocate_Data_Space()
     // MoM_Tables_Init(6100);  // MGC  6100 PR * 16 B = 97600 bytes
     MoM_Tables_Init(4600);  // WZD  4600 PR * 16 B = 73600 bytes
 
@@ -151,6 +166,7 @@ void MoM_Init(void)
     Apply_Palette();
 
 
+    // MoO2  Load_Pictures()
     Load_MGC_Resources();  // MGC s01p04
     Load_WZD_Resources();  // WZD o52p01
 
