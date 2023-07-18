@@ -322,11 +322,9 @@ void Save_Mouse_On_Page(int16_t x, int16_t y)
 
     screen_page = video_page_buffer[draw_page_num] + screen_page_offset;
 
-    itr_height = 0;
-    while(itr_height++ < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width++ < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             *mouse_buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
         }
@@ -363,11 +361,9 @@ void Save_Mouse_Off_Page(int16_t x, int16_t y)
 
     screen_page = video_page_buffer[1 - draw_page_num] + screen_page_offset;
 
-    itr_height = 0;
-    while(itr_height++ < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width++ < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             *mouse_buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
         }
@@ -398,11 +394,9 @@ void Save_Mouse_On_Page_(int16_t x, int16_t y)
 
     screen_page = video_page_buffer[draw_page_num] + screen_page_offset;
 
-    itr_height = 0;
-    while(itr_height++ < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width++ < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             *mouse_buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
         }
@@ -447,11 +441,9 @@ void Restore_Mouse_On_Page(void)
 
     screen_page = video_page_buffer[draw_page_num] + screen_page_offset;
 
-    itr_height = 0;
-    while(itr_height++ < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width++ < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = *mouse_buffer++;
         }
@@ -477,11 +469,9 @@ void Restore_Mouse_Off_Page(void)
 
     screen_page = video_page_buffer[1 - draw_page_num] + screen_page_offset;
 
-    itr_height = 0;
-    while(itr_height++ < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width++ < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = *mouse_buffer++;
         }
@@ -534,23 +524,19 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
 
     screen_page = video_page_buffer[draw_page_num] + screen_page_offset;
     
-    itr_height = 0;
-    while(itr_height < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             pixel = *(mouse_image + (itr_height * CURSOR_HEIGHT) + itr_width);
             if(pixel != TRANSPARENT)
             {
                 *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = pixel;
             }
-            itr_width++;
         }
-        itr_height++;
     }
-
 }
+
 void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
 {
 
@@ -573,20 +559,16 @@ void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
 
     screen_page = video_page_buffer[1 - draw_page_num] + screen_page_offset;
     
-    itr_height = 0;
-    while(itr_height < height)
+    for(itr_height = 0; itr_height < height; itr_height++)
     {
-        itr_width = 0;
-        while(itr_width < width)
+        for(itr_width = 0; itr_width < width; itr_width++)
         {
             pixel = *(mouse_image + (itr_height * CURSOR_HEIGHT) + itr_width);
             if(pixel != TRANSPARENT)
             {
                 *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = pixel;
             }
-            itr_width++;
         }
-        itr_height++;
     }
 
 }
