@@ -37,7 +37,7 @@ _UNICODE is used by C-runtime/MFC headers
 
 #include "VIDEO.H"  /*  video_page_buffer, draw_page_num, draw_page */
 
-#include "MoM.H"
+#include "MoM_PFL.H"
 
 #include "Win32.hpp"
 

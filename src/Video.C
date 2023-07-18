@@ -5,7 +5,7 @@
 
 #include "Mouse.H"  /* e_Cursor_Image; Get_Pointer_Image_Numeber(), Restore_Mouse_State(), Save_Mouse_State(); */
 
-#include "MoM.H"  /* Buffer; Render_VBB(); */
+#include "MoM_PFL.H"  /* Buffer; Render_VBB(); */
 
 
 // pointer (4 bytes) Copy_Off_To_On_Page
@@ -138,6 +138,10 @@ void Page_Flip(void)
         // pointer to buffer to render/present
     draw_page_num = (1 - draw_page_num);  // NOTE: this is the only code that changes 'draw_page_num'
     draw_page = video_page_buffer[draw_page_num];
+    // HERE: what was drawn should now be displayed
+    // InvalidateRect(g_Window, NULL, TRUE);
+    // Pump_Paints();
+    
     Set_Page_Off();
 }
 

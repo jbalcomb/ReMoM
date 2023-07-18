@@ -2,7 +2,7 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
-#include "MoM.H"
+#include "MoM_PFL.H"
 
 #include "Allocate.H"
 #include "Fields.H"
@@ -787,7 +787,6 @@ int16_t Get_Input_Delay(void)
 }
 
 
-
 // WZD s36p85
 void Toggle_Pages(void)
 {
@@ -803,13 +802,13 @@ void Toggle_Pages(void)
 
     Check_Mouse_Shape(mouse_x, mouse_y);
 
-    Save_Mouse_Off_Page(mouse_x, mouse_y);  // [1 - draw_page_num] -> mouse_off_page_buffer
-    Draw_Mouse_Off_Page(mouse_x, mouse_y);  // mouse_palette -> [1 - draw_page_num]
+    Save_Mouse_Off_Page(mouse_x, mouse_y);  // video_page_buffer[1 - draw_page_num] -> mouse_off_page_buffer
+    Draw_Mouse_Off_Page(mouse_x, mouse_y);  // mouse_palette -> video_page_buffer[1 - draw_page_num]
 
-    Page_Flip();  // draw_page_num = 1 - draw_page_num
+    Page_Flip();                            // draw_page_num = 1 - draw_page_num
 
-    // Restore_Mouse_Off_Page();  // mouse_background_buffer -> [1 - draw_page_num]
-    // Copy_Mouse_Off_To_Mouse_Back();  // mouse_off_page_buffer -> mouse_background_buffer
+    Restore_Mouse_Off_Page();               // mouse_background_buffer -> video_page_buffer[1 - draw_page_num]
+    Copy_Mouse_Off_To_Mouse_Back();         // mouse_off_page_buffer -> mouse_background_buffer
 
     Restore_Mouse_State();
 

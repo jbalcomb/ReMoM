@@ -47,7 +47,11 @@ extern struct s_mouse_list mouse_list_default[];
 
 // WZD dseg:78B8 current_pointer_image_number dw 0
 // WZD dseg:78BA previous_pointer_image_number dw 0
-// WZD dseg:78BC MOUSE_CursorDraw dw 0
+
+// WZD dseg:78BC
+// drake178: MOUSE_CursorDraw
+extern int16_t mouse_enabled;
+
 // WZD dseg:78BE
 // drake178 MOUSE_DriverPresent
 // MoO2 mouse_driver_installed
@@ -59,6 +63,23 @@ int16_t mouse_driver_installed;
 // extern int16_t mouse_x;
 // WZD dseg:78C4 MOUSE_CurrentY dw 64h  100
 // extern int16_t mouse_y;
+
+
+// WZD dseg:78C6
+extern int16_t current_mouse_list_count;
+
+// WZD dseg:78C8
+extern int16_t current_pointer_offset;
+
+// WZD dseg:78CA 00 00                   MOUSE_ClickRec1 dw 0
+// WZD dseg:78CC 00 00                   MOUSE_ClickX dw 0
+// WZD dseg:78CE 00 00                   MOUSE_ClickY dw 0
+// WZD dseg:78D0 00 00                   MOUSE_ClickBtns dw 0
+// WZD dseg:78D2 00 00                   MOUSE_ClickRec2 dw 0
+// WZD dseg:78D4 00 00                   MOUSE_INT_Process dw 0
+
+// WZD dseg:78D4
+extern int16_t MOUSE_INT_Process;
 
 
 // ...

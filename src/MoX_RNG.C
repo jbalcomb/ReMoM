@@ -14,7 +14,7 @@
 
 #include "MoX_TYPE.H"
 
-#include "MoM.H"
+#include "MoM_PFL.H"  /* Get_System_Clock_Counter() */
 
 
 /*

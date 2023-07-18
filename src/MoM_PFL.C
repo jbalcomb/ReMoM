@@ -2,7 +2,7 @@
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
-#include "MoM.H"
+#include "MoM_PFL.H"
 
 #include "MoM_main.H"
 
@@ -111,12 +111,33 @@ void GameUpdateAndRender(struct game_offscreen_buffer * Buffer)
     Render_VBB(Buffer);
 }
 
+// ¿ ~== Mouse_Int_Handler() ?
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
 {
-    if(lock_mouse_button_status_flag != ST_TRUE)
+    if (lock_mouse_button_status_flag != ST_TRUE)
     {
         mouse_x = platform_mouse_x / 2;
         mouse_y = platform_mouse_y / 2;
+        // mouse_x = platform_mouse_x / display_scale;
+        // mouse_y = platform_mouse_y / display_scale;
+    }
+    if (MOUSE_INT_Process == ST_FALSE)
+    {
+        MOUSE_INT_Process = ST_TRUE;
+        // TODO  MOUSE_SaveClick();
+        if (mouse_enabled != ST_FALSE)
+        {
+            mouse_enabled = ST_FALSE;
+            if (current_mouse_list_count >= 2)
+            {
+                Check_Mouse_Shape(mouse_x, mouse_y);
+            }
+            Restore_Mouse_On_Page();                // mouse_background_buffer -> video_page_buffer[draw_page_num]
+            Save_Mouse_On_Page(mouse_x, mouse_y);   // video_page_buffer[draw_page_num] -> mouse_background_buffer
+            Draw_Mouse_On_Page(mouse_x, mouse_y);   // mouse_palette -> video_page_buffer[draw_page_num]
+            mouse_enabled = ST_TRUE;
+        }
+        MOUSE_INT_Process = ST_FALSE;
     }
 }
 
@@ -126,6 +147,8 @@ void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse
     {
         mouse_x = platform_mouse_x / 2;
         mouse_y = platform_mouse_y / 2;
+        // mouse_x = platform_mouse_x / display_scale;
+        // mouse_y = platform_mouse_y / display_scale;
         platform_mouse_button_status = mouse_button_status;
     }
 }

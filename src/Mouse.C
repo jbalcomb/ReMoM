@@ -73,6 +73,9 @@ int16_t current_pointer_offset = 0;
 // WZD dseg:78D2 00 00                   MOUSE_ClickRec2 dw 0
 // WZD dseg:78D4 00 00                   MOUSE_INT_Process dw 0
 
+// WZD dseg:78D4
+int16_t MOUSE_INT_Process = ST_FALSE;
+
 // WZD dseg:78D6
 // drake178: GUI_HaveAreaSave
 int16_t mouse_save_flag = ST_FALSE;
