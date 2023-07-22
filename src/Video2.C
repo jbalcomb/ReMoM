@@ -10,6 +10,8 @@
 #include "STU_DBG.H"
 #endif
 
+#include <string.h>  /* memset() */
+
 
 
 // TODO  uint8_t * video_page_buffer[2];
@@ -172,8 +174,13 @@ void Create_Screen_Buffers(int size)
     // video_page_buffer[1] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     video_page_buffer[0] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
     video_page_buffer[1] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
+    memset(video_page_buffer[0], 0, screen_pixel_size);
+    memset(video_page_buffer[1], 0, screen_pixel_size);
     video_page_buffer_XBGR[0] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
     video_page_buffer_XBGR[1] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
+    memset(video_page_buffer_XBGR[0], 0, (window_pixel_size * 4));
+    memset(video_page_buffer_XBGR[1], 0, (window_pixel_size * 4));
+
 }
 
 void Assign_Video_Function_Pointers(int mode_num)

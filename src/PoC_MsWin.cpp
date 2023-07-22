@@ -7,6 +7,17 @@
 
 
 
+#define POC_MODE 4
+// #define POC_MODE_1
+// #define POC_MODE_2
+// #define POC_MODE_3
+#define POC_MODE_4
+
+int Pump_Events_Cnt = 0;
+int Pump_Paints_Cnt = 0;
+
+
+
 struct win32_window_dimension
 {
     int Width;
@@ -37,10 +48,6 @@ static int64_t GlobalPerfCountFrequency;  // HMH Day 18
 struct win32_offscreen_buffer PlatformVideoBackBuffer;  // Platform - Video Back Buffer
 void * convert_320x200xVGA_320x200xXBGR;
 void * convert_320x200xXBGR_640x400xXBGR;
-
-
-int Pump_Events_Cnt = 0;
-int Pump_Paints_Cnt = 0;
 
 
 
@@ -286,6 +293,32 @@ void Update_Window_Display_PreConvert_2x(win32_offscreen_buffer * Buffer, HDC De
     
 }
 
+
+void Update_Window_Display_XBGR(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
+{
+    int width = 640;
+    int height = 400;
+
+    StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+
+    // works? StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, video_page_buffer_XBGR[draw_page_num], &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+
+    // int itr_width;
+    // int itr_height;
+    // uint32_t* p_VBB;
+    // uint32_t* p_PFL_VBB;
+    // p_VBB = (uint32_t *)video_page_buffer_XBGR[draw_page_num];
+    // p_PFL_VBB  = (uint32_t*)Buffer->Memory;
+    // for(itr_height = 0; itr_height < height; itr_height++)
+    // {
+    //     for(itr_width = 0; itr_width < width; itr_width++)
+    //     {
+    //         *(p_PFL_VBB + (itr_height * width) + itr_width) = *(p_VBB + (itr_height * width) + itr_width);
+    //     }
+    // }
+    // StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+}
+
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_320x200xXBGR)
 {
     unsigned int* p_XBGR;
@@ -472,11 +505,29 @@ void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse
 void Init_Platform(HINSTANCE hInstance, int nCmdShow)
 {
 
-    // Init_Video_Back_Buffer(&PlatformVideoBackBuffer, screen_pixel_width, screen_pixel_height);
-    // Init_Window_Back_Buffer(&PlatformVideoBackBuffer, screen_pixel_width, screen_pixel_height);
-    Init_Window_Back_Buffer(&PlatformVideoBackBuffer, window_pixel_width, window_pixel_height);
-    convert_320x200xVGA_320x200xXBGR  = VirtualAlloc(nullptr, (320*200*4), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    convert_320x200xXBGR_640x400xXBGR = VirtualAlloc(nullptr, (640*400*4), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    switch(POC_MODE)
+    {
+        case 1:
+        {
+            Init_Window_Back_Buffer(&PlatformVideoBackBuffer, 320, 200);
+        } break;
+        case 2:
+        {
+            Init_Window_Back_Buffer(&PlatformVideoBackBuffer, 320, 200);
+            convert_320x200xVGA_320x200xXBGR = VirtualAlloc(nullptr, (320*200*4), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+        } break;
+        case 3:
+        {
+            Init_Window_Back_Buffer(&PlatformVideoBackBuffer, 640, 400);
+            convert_320x200xVGA_320x200xXBGR = VirtualAlloc(nullptr, (320*200*4), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+            convert_320x200xXBGR_640x400xXBGR = VirtualAlloc(nullptr, (640*400*4), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+        } break;
+        case 4:
+        {
+            Init_Video_Back_Buffer(&PlatformVideoBackBuffer, 640, 400);
+        } break;
+        
+    }
 
     WndInit(hInstance, nCmdShow);
 
@@ -519,6 +570,9 @@ void Init_Video_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, i
     Buffer->Info.bmiHeader.biHeight = -Buffer->Height; // negative value: top-down
 
     Buffer->Memory = video_page_buffer_XBGR[draw_page_num];
+    
+    // int BitmapMemorySize = Buffer->BytesPerPixel * (Buffer->Width * Buffer->Height);
+    // Buffer->Memory = VirtualAlloc(nullptr, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 }
 
 // ¿ this one makes sense for when the platform layer is handling the conversion from *notive* MoX code ?
@@ -603,9 +657,27 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // int ClientAreaHeight = ClientAreaRect.bottom - ClientAreaRect.top;
 
             struct win32_window_dimension WndDim = Get_Window_Dimensions(hWnd);
-            // Update_Window_Display(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
-            // Update_Window_Display_PreConvert(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
-            Update_Window_Display_PreConvert_2x(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+
+            switch(POC_MODE)
+            {
+                case 1:
+                {
+                    Update_Window_Display(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                } break;
+                case 2:
+                {
+                    Update_Window_Display_PreConvert(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                } break;
+                case 3:
+                {
+                    Update_Window_Display_PreConvert_2x(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                } break;
+                case 4:
+                {
+                    Update_Window_Display_XBGR(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                } break;
+                
+            }
 
             EndPaint(hWnd, &ps);
         } break;

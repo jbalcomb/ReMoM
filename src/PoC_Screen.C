@@ -2,6 +2,8 @@
 #include "MoX.H"
 #include "MoM_main.H"  /* current_screen; enum e_SCREENS */
 #include "PoC_Screen.h"
+#include "PNG_Draw.H"
+#include "PNG_Load.H"
 
 
 
@@ -20,7 +22,7 @@ void Load_PoC_Resources(void)
 {
     PoC_main_background = (uint8_t * )LBX_Load(PoC_main_lbx_file, 0);
 
-    // magic_spirit_png_pict = PNG_Load(png_file_magic_spirit);
+    magic_spirit_png_pict = PNG_Load(png_file_magic_spirit);
 }
 
 void PoC_Screen_Add_Fields(void)
@@ -89,10 +91,39 @@ void PoC_Screen_Draw(void)
     // test_screen_background_seg = LBX_Reload(halofam_lbx_file, 0, _screen_seg);
     // FLIC_Draw(0, 0, test_screen_background_seg);
 
-    FLIC_Draw(0, 0, PoC_main_background);
-    // FLIC_Draw_2x(0, 0, PoC_main_background);
-    // FLIC_Draw_XBGR(0, 0, PoC_main_background);
-    // FLIC_Draw_2x_XBGR(0, 0, PoC_main_background);
+    // FLIC_Draw(0, 0, PoC_main_background);
+    // // FLIC_Draw_2x(0, 0, PoC_main_background);
+    // // FLIC_Draw_XBGR(0, 0, PoC_main_background);
+    // // FLIC_Draw_2x_XBGR(0, 0, PoC_main_background);
 
     // PNG_Draw(0, 40, magic_spirit_png_pict);
+
+    // bbuff_pos = (uint32_t * )((video_page_buffer_XBGR[1 - draw_page_num]) + ((y_start * screen_pixel_width) + x_start));
+    
+    int itr_x;
+    int itr_y;
+    for(itr_y = 0; itr_y < (10*36); itr_y++)
+    {
+        for(itr_x = 0; itr_x < (10*40); itr_x++)
+        {
+            // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 0) = 0xFF;
+            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 1) = 0xFF;
+            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 2) = 0xFF;
+            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 3) = 0xFF;
+        }
+    }
+
+    // for (itr_y = 0; itr_y < (10*36); itr_y++)
+    // {
+    //     for (itr_x = 0; itr_x < (10*40); itr_x++)
+    //     {
+    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 0) = 0xFF;
+    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 1) = 0xFF;
+    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 2) = 0xFF;
+    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 3) = 0xFF;
+    //     }
+    // }
+
+    PNG_Draw(0, 40, magic_spirit_png_pict);
+
 }

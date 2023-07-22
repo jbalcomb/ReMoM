@@ -1,13 +1,13 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoX_BITS.H"
+#include "MoX.H"
 
-#include "Allocate.H"
 #include "PNG_Draw.H"
 #include "PNG_Load.H"
 
-#include "lodepng.h"
+#include "..\3PL\lodepng\lodepng.h"
+
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
 
 
 
@@ -39,7 +39,7 @@ struct s_PNG_PICT* PNG_Load(char* png_file_name)
         if (png_pict != ST_NULL)
         {
             png_pict->png_width = png_width;
-            png_pict->png_width = png_height;
+            png_pict->png_height = png_height;
             png_pict->png_pixels = png_image;
         }
         else
