@@ -22,8 +22,15 @@
 
 uint8_t g_State_Run;
 
+
 int Pump_Events_Cnt = 0;
 int Pump_Paints_Cnt = 0;
+
+
+// TODO  move this and Load_Font_File(), Load_Palette(), and Apply_Pallete() to the platform-layer
+uint8_t g_Palette[768];  // ~== IBM-PC/MS-DOS Video Card's hardware VGA-DAC buffer
+uint8_t g_Palette_XBGR[1024];
+
 
 
 
@@ -57,14 +64,18 @@ char * game_file_names[GAME_FILE_COUNT] = {
 void Pump_Events(void)
 {
     Pump_Events_Cnt++;
-    // InvalidateRect(g_Window, NULL, TRUE);
-    // InvalidateRect(g_Window, NULL, FALSE);
     MSG Message;
     while (PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
     {
         if (Message.message == WM_QUIT)
         {
+            // ¿ WM_CLOSE vs. WM_DESTROY vs. WM_QUIT ?
+            // how do we communicate this back/all the way down to the Screen-Loop?
+            // ¿ some global input_field_idx that means (leave_screen_flag == ST_TRUE && quit_flag == ST_TRUE) ?
+            // ¿ make gow-ballz of Screen's leave_screen_flag && Screen_Control()'s quit_flag ?
+            // ¿ add ~== platform_quit_flag ?
             // quit_flag = ST_TRUE;
+            current_screen = scr_Quit_To_DOS;
             g_State_Run = false;
         }
         TranslateMessage(&Message);

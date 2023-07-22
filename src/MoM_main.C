@@ -16,6 +16,9 @@
 
 #include "MoM_main.H"
 
+// #include "TST_Screen.H"
+#include "PoC_Screen.H"
+
 #include "MoX_CFG.H"
 #include "MoX_DBG.H"
 #include "MoX_Data.H"
@@ -49,7 +52,9 @@
 
 
 
+
 int16_t current_screen;
+int quit_game_flag;
 
 // WZD dseg:9C8E
 // ...unitialized data...after MSG's, before TBL's...
@@ -57,8 +62,7 @@ int16_t PageFlipEffect;
 
 // uint8_t g_Video_Back_Buffer[64000];
 
-uint8_t g_Palette[768];
-uint8_t g_Palette_XBGR[1024];
+
 
 
 
@@ -103,6 +107,8 @@ void MoM_Main(void)
 // MoO2 Module: MOX2
 void Screen_Control(void)
 {
+    int quit_flag;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Screen_Control()\n", __FILE__, __LINE__);
 #endif
@@ -114,99 +120,121 @@ void Screen_Control(void)
     dbg_prn("DEBUG: [%s, %d]: current_screen: %d\n", __FILE__, __LINE__, current_screen);
 #endif
 
-    switch(current_screen)
+    quit_flag = ST_FALSE;
+    while(quit_flag == ST_FALSE)
     {
-        case scr_Main_Menu_Screen:
+
+        switch(current_screen)
         {
-            DLOG("case scr_Main_Menu:");
-            Load_Palette(2, -1, 0);
-            Apply_Palette();
-            // TODO  Main_Menu_Screen_Control();
-            Main_Menu_Screen();
-        } break;
 
-        case scr_Continue:
-        {
-            DLOG("case scr_Continue:");
-            // BEGIN: WZD main()
-            Load_SAVE_GAM(-1);  // SAVETEST.GAM
-            Loaded_Game_Update();
-            // END: WZD main()
-            current_screen = scr_Main_Screen;
-        } break;
+            case scr_Main_Menu_Screen:
+            {
+                DLOG("case scr_Main_Menu:");
+                Load_Palette(2, -1, 0);
+                Apply_Palette();
+                // TODO  Main_Menu_Screen_Control();
+                Main_Menu_Screen();
+                // MoO2  previous_screen = scr_Main_Menu_Screen
+            } break;
 
-        case scr_Load_Screen:
-        {
-            DLOG("case scr_Load_Game:");
-            // TODO  Load_Screen();
-        } break;
+            case scr_Continue:
+            {
+                DLOG("case scr_Continue:");
+                // BEGIN: WZD main()
+                Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                Loaded_Game_Update();
+                // END: WZD main()
+                current_screen = scr_Main_Screen;
+            } break;
 
-        // case scr_New_Game:
-        // {
-        //     DLOG("case scr_New_Game:");
-        //     New_Game_Screen();
-        // } break;
+            case scr_Load_Screen:
+            {
+                DLOG("case scr_Load_Game:");
+                // TODO  Load_Screen();
+            } break;
 
-        case scr_Quit_To_DOS:
-        {
-            DLOG("case scr_Quit_To_DOS:");
-            g_State_Run = ST_FALSE;
-        } break;
-        // case scr_Hall_Of_Fame:
-        // {
-        //     DLOG("case scr_Hall_Of_Fame:");
-        //     Hall_Of_Fame_Screen();
-        // } break;
-        // case scr_Settings:
-        // {
-        //     DLOG("case scr_Settings:");
-        //     Settings_Screen();
-        // } break;
-    // scr_City = 100,
-    // scr_Load = 101,
-    // scr_Armies = 102,
-    // scr_Cities = 103,
-    // scr_Quit = 104,
-        case scr_Main_Screen:
-        {
-            DLOG("case scr_MainGame:");
-            // BEGIN: WZD main()
-            // WZD  main()  j_Load_SAVE_GAM(8)
-            // WZD  main()  j_Load_WZD_Resources()
-            Load_Palette(0, -1, 0);  // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
-            // VGA_SetShades_Grey0()
-            // Set_Button_Down_Offsets(1, 1)
-            // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
-            Apply_Palette();
-            // Fade_In()
-            // Clear_Fields()
-            // Loaded_Game_Update_WZD()
-            // END: WZD main()
+            // case scr_New_Game:
+            // {
+            //     DLOG("case scr_New_Game:");
+            //     New_Game_Screen();
+            // } break;
 
-            Set_Outline_Color(0);
-            Set_Alias_Color(0);
-            Set_Font_Style1(0, 0, 0, 0);
+            case scr_Quit_To_DOS:
+            {
+                DLOG("case scr_Quit_To_DOS:");
+                // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
+                quit_flag = ST_TRUE;
+                g_State_Run = ST_FALSE;
+                // Exit_With_Message("Thank you for playing Master of Magic!\n\n");
+            } break;
+            // case scr_Hall_Of_Fame:
+            // {
+            //     DLOG("case scr_Hall_Of_Fame:");
+            //     Hall_Of_Fame_Screen();
+            // } break;
+            // case scr_Settings:
+            // {
+            //     DLOG("case scr_Settings:");
+            //     Settings_Screen();
+            // } break;
+        // scr_City = 100,
+        // scr_Load = 101,
+        // scr_Armies = 102,
+        // scr_Cities = 103,
+        // scr_Quit = 104,
+            case scr_Main_Screen:
+            {
+                DLOG("case scr_MainGame:");
+                // BEGIN: WZD main()
+                // WZD  main()  j_Load_SAVE_GAM(8)
+                // WZD  main()  j_Load_WZD_Resources()
+                Load_Palette(0, -1, 0);  // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
+                // VGA_SetShades_Grey0()
+                // Set_Button_Down_Offsets(1, 1)
+                // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
+                Apply_Palette();
+                // Fade_In()
+                // Clear_Fields()
+                // Loaded_Game_Update_WZD()
+                // END: WZD main()
 
-            Set_Page_Off();
-            Fill(0, 0, 319, 199, 7);
-            Set_Page_On();
-            Fill(0, 0, 319, 199, 5);
-            Set_Page_Off();
+                Set_Outline_Color(0);
+                Set_Alias_Color(0);
+                Set_Font_Style1(0, 0, 0, 0);
 
-            Main_Screen();
-        } break;
-    // scr_Magic = 106,
-    // scr_RoadBuilding = 107,
-    // scr_Production = 108,
-    // scr_Items = 109,
-    // scr_NextTurn = 110,
-    // /* ?default? */
-    // scr_Spellbook = 112,
-    // /* ?default? */
-    // scr_Advisor = 114,
-    // scr_Diplomac = 115
+                Set_Page_Off();
+                Fill(0, 0, 319, 199, 7);
+                Set_Page_On();
+                Fill(0, 0, 319, 199, 5);
+                Set_Page_Off();
 
-    }
+                Main_Screen();
+                // MoO2  previous_screen = scr_Main_Screen
+            } break;
+            // scr_Magic = 106,
+            // scr_RoadBuilding = 107,
+            // scr_Production = 108,
+            // scr_Items = 109,
+            // scr_NextTurn = 110,
+            // /* ?default? */
+            // scr_Spellbook = 112,
+            // /* ?default? */
+            // scr_Advisor = 114,
+            // scr_Diplomac = 115
+            case scr_Test_Screen:
+            {
+                DLOG("case scr_Test_Screen:");
+                // Test_Screen();
+            } break;
+            case scr_PoC_Screen:
+            {
+                DLOG("case scr_PoC_Screen:");
+                PoC_Screen();
+            } break;
+
+        }  /* switch(current_screen) */
+
+    }  /* while(quit_flag == ST_FALSE) */
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Screen_Control()\n", __FILE__, __LINE__);

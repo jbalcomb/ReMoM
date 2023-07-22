@@ -6,6 +6,11 @@
 #include "assert.h"
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 // NOTE(JimBalcomb,20230628): Don't recall how/why I got to putting this in here. Should be with notes about C arrays, strings, char *'s, **'s?
 /*
@@ -240,11 +245,6 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 */
 
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
 
 
 /*

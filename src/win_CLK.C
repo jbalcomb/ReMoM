@@ -1,5 +1,6 @@
 
 #include "Mox_TYPE.H"
+#include "Timer.H"
 
 #include "Windows.h"
 #include "sysinfoapi.h"
@@ -40,13 +41,137 @@ https://stackoverflow.com/questions/76149260/synchronizing-a-game-loop-to-a-desi
 
 */
 
+uint32_t tick_count;
 
-
+// ~== INT 1A,0 - Read System Clock Timer
 uint32_t Get_System_Clock_Counter(void)
 {
     uint32_t dos_tick_count;
     DWORD win_tick_count;
     win_tick_count = GetTickCount();
-    dos_tick_count = win_tick_count / 1000 / 18;
+    dos_tick_count = win_tick_count / 54.92540;
     return dos_tick_count;
+}
+
+void Release_Time(int ticks)
+{
+    uint32_t current_tick_count;
+    do
+    {
+        current_tick_count = Get_System_Clock_Counter();
+    } while(current_tick_count < tick_count + ticks);
+    
+// TODO  // HMH Day 10
+// TODO  // HMH Day 10          LARGE_INTEGER EndCounter;
+// TODO  // HMH Day 10          QueryPerformanceCounter(&EndCounter);
+// TODO  // HMH Day 10          uint64_t EndCycleCount = __rdtsc();
+// TODO  // HMH Day 10          // Calculating the time difference between the end of the previous frame, and the end of the current frame.
+// TODO  // HMH Day 10          int64_t CounterElapsed = EndCounter.QuadPart - LastCounter.QuadPart;
+// TODO  // HMH Day 10          int64_t CyclesElapsed = EndCycleCount - LastCycleCount;
+// TODO  // HMH Day 10          // Calculating milliseconds per frame.
+// TODO  // HMH Day 10          // int32_t MSPerFrame = (s32)((1000*CounterElapsed) / PerfCountFrequency);
+// TODO  // HMH Day 10          // int32_t FPS = (s32)(PerfCountFrequency / CounterElapsed);
+// TODO  // HMH Day 10          // int32_t MegaCyclesPerFrame = CyclesElapsed / (1000 * 1000);
+// TODO  // HMH Day 10          f32 MSPerFrame = 1000.0f*(f32)CounterElapsed / (f32)PerfCountFrequency;
+// TODO  // HMH Day 10          f32 FPS = (f32)PerfCountFrequency / (f32)CounterElapsed;
+// TODO  // HMH Day 10          f32 MegaCyclesPerFrame = (f32)CyclesElapsed / (1000.0f * 1000.0f);
+// TODO  // HMH Day 10  #if 0
+// TODO  // HMH Day 10          char Buffer[256];
+// TODO  // HMH Day 10          // wsprintfA(Buffer, "ms/frame: %dms\n", MSPerFrame);
+// TODO  // HMH Day 10          // wsprintfA(Buffer, "ms/frame: %dms / %dFPS\n", MSPerFrame, FPS);
+// TODO  // HMH Day 10          // wsprintfA(Buffer, "%dms/f, %df/s, %dMc/f \n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO  // HMH Day 10          // sprintf(Buffer, "%dms/f, %df/s, %dMc/f \n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO  // HMH Day 10          // sprintf(Buffer, "%fms/f, %ff/s, %fMc/f\n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO  // HMH Day 10          sprintf(Buffer, "%.02fms/f, %.02ff/s, %.02fMc/f\n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO  // HMH Day 10          OutputDebugStringA(Buffer);
+// TODO  // HMH Day 10  #endif
+// TODO  // HMH Day 10          LastCounter = EndCounter;
+// TODO  // HMH Day 10          LastCycleCount = EndCycleCount;
+// TODO  
+// TODO  // HMH Day 18
+// TODO  
+// TODO          // LARGE_INTEGER EndCounter;
+// TODO          // QueryPerformanceCounter(&EndCounter);
+// TODO  
+// TODO          // s64 CounterElapsed = EndCounter.QuadPart - LastCounter.QuadPart;
+// TODO          // f32 SecondsElapsedForWork = (f32)CounterElapsed / (f32)PerfCountFrequency;
+// TODO          LARGE_INTEGER WorkCounter = Win32GetWallClock();
+// TODO          f32 WorkSecondsElapsed = Win32GetSecondsElapsed(LastCounter, WorkCounter);
+// TODO          // ...wait until we're over our target...
+// TODO          // the simplest, CPU-melting, solution - simply sit in a while loop
+// TODO          // f32 SecondsElapsedForFrame = SecondsElapsedForWork;
+// TODO          f32 SecondsElapsedForFrame = WorkSecondsElapsed;
+// TODO          if (SecondsElapsedForFrame < TargetSecondsPerFrame)
+// TODO          {
+// TODO              while (SecondsElapsedForFrame < TargetSecondsPerFrame)
+// TODO              {
+// TODO                  // QueryPerformanceCounter(&EndCounter);
+// TODO                  // CounterElapsed = EndCounter.QuadPart - LastCounter.QuadPart;
+// TODO                  // SecondsElapsedForFrame = (f32)CounterElapsed / (f32)PerfCountFrequency;
+// TODO                  DWORD SleepMS = (DWORD)(1000.0f * (TargetSecondsPerFrame - SecondsElapsedForFrame));
+// TODO                  if (SleepMS > 0)
+// TODO                  {
+// TODO                      Sleep(SleepMS);
+// TODO                  }
+// TODO                  SecondsElapsedForFrame = Win32GetSecondsElapsed(LastCounter, Win32GetWallClock());
+// TODO              }
+// TODO          }
+// TODO          else
+// TODO          {
+// TODO              // TODO(casey): MISSED FRAME RATE!
+// TODO              // TODO(casey): Logging
+// TODO          }
+// TODO  
+// TODO          #if 0
+// TODO          // debug timing output
+// TODO  
+// TODO          f32 MSPerFrame = 1000.0f * (f32)CounterElapsed / (f32)PerfCountFrequency;
+// TODO          f32 FPS = (f32)PerfCountFrequency / (f32)CounterElapsed;
+// TODO          f32 MegaCyclesPerFrame = (f32)CyclesElapsed / (1000.0f * 1000.0f);
+// TODO  
+// TODO          char Buffer[256];
+// TODO          sprintf(Buffer, "%.02fms/f, %.02ff/s, %.02fMc/f\n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO          OutputDebugStringA(Buffer);
+// TODO          #endif
+// TODO  
+// TODO          // ? HMH Day 10 ?  LastCounter = EndCounter;
+// TODO          // ? HMH Day 10 ?  LastCycleCount = EndCycleCount;
+// TODO  
+// TODO          // ?  game_input *Temp = NewInput;
+// TODO          // ?  NewInput = OldInput;
+// TODO          // ?  OldInput = Temp;
+// TODO  
+// TODO          LARGE_INTEGER EndCounter = Win32GetWallClock();
+// TODO          f32 MSPerFrame = 1000.0f * Win32GetSecondsElapsed(LastCounter, EndCounter);
+// TODO          LastCounter = EndCounter;
+// TODO  
+// TODO          u64 EndCycleCount = __rdtsc();
+// TODO          s64 CyclesElapsed = EndCycleCount - LastCycleCount;
+// TODO          LastCycleCount = EndCycleCount;
+// TODO  
+// TODO  #if 1
+// TODO          // debug timing output
+// TODO          f32 FPS = 0.0f; // To be fixed later
+// TODO          f32 MegaCyclesPerFrame = (f32)CyclesElapsed / (1000.0f * 1000.0f);
+// TODO  
+// TODO          char FPSBuffer[256];
+// TODO          sprintf_s(FPSBuffer, sizeof(FPSBuffer), "%.02fms/f, %.02ff/s, %.02fMc/f\n", MSPerFrame, FPS, MegaCyclesPerFrame);
+// TODO          OutputDebugStringA(FPSBuffer);
+// TODO  #endif
+
+}
+
+void Mark_Time(void)
+{
+    tick_count = Get_System_Clock_Counter();
+}
+
+uint32_t Time_Passed(void)
+{
+    return Get_System_Clock_Counter() - tick_count;
+}
+
+uint32_t Timer_Value(void)
+{
+    return Get_System_Clock_Counter();
 }

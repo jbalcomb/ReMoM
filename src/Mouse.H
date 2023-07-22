@@ -3,6 +3,11 @@
 
 #include "MoX_TYPE.H"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 // "cursor image"
 enum e_Cursor_Image
@@ -23,7 +28,8 @@ enum e_Cursor_Image
 };
 
 
-struct s_mouse_list {
+struct s_mouse_list
+{
     int16_t image_num;
     int16_t center_offset;
     int16_t x1;
@@ -55,15 +61,17 @@ extern int16_t mouse_enabled;
 // WZD dseg:78BE
 // drake178 MOUSE_DriverPresent
 // MoO2 mouse_driver_installed
-int16_t mouse_driver_installed;
+extern int16_t mouse_driver_installed;
 
 // WZD dseg:78C0 MOUSE_Usable dw 0
+
 // WZD dseg:78C2
 // MOUSE_CurrentX dw 9Eh  158
 // extern int16_t mouse_x;
 // WZD dseg:78C4 MOUSE_CurrentY dw 64h  100
 // extern int16_t mouse_y;
-
+extern int16_t mouse_x;
+extern int16_t mouse_y;
 
 // WZD dseg:78C6
 extern int16_t current_mouse_list_count;
@@ -85,16 +93,6 @@ extern int16_t MOUSE_INT_Process;
 // ...
 /* END: Initialized Data [Data Segment - DSEG]*/
 
-
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
-
-extern int16_t mouse_x;
-extern int16_t mouse_y;
 
 
 /*
@@ -228,9 +226,9 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y);
 void Draw_Mouse_Off_Page_(int16_t x, int16_t y);
 
 
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  /* MOUSE_H */

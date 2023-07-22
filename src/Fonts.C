@@ -113,7 +113,7 @@ void Load_Font_File(char * font_file)
     palette_block          = Allocate_Space(348);    // 348 paragraphs = 386 * 16 bytes = 5568 bytes
     p_Palette              = Allocate_Space(64);     //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);  // ~== p_PaletteFlags = &p_Palette[768];
-    p_Palette_XBGR         = Allocate_Space(64);     // STU/Win32
+    p_Palette_XBGR         = Allocate_Space(64);     // STU/Win32  4 bytes per pixel * 256 colors / 16 bytes per paragraph
 
     for(itr = 0; itr < 768; itr++)
     {

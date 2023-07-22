@@ -35,6 +35,7 @@ void Check_Default_Video_Page(void);
 
 // WZD s28p04
 // MGC s26p04
+// PLATFORM
 void Page_Flip(void);
 
 

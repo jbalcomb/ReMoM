@@ -6,7 +6,7 @@
 void Init_Drivers(int input_type, char * font_file)
 {
 
-    // CRP_Empty_Exit_Fn2()
+    // s06p05_Empty_pFxn()
 
     // EMS_Startup()
 

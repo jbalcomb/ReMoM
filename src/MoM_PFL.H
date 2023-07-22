@@ -57,6 +57,12 @@ extern HWND g_Window;
 extern uint8_t g_State_Run;
 
 
+// TODO  move this and Load_Font_File(), Load_Palette(), and Apply_Pallete() to the platform-layer
+// extern uint8_t g_Video_Back_Buffer[];
+extern uint8_t g_Palette[];
+extern uint8_t g_Palette_XBGR[];
+
+
 
 void Check_Game_Files(void);
 

@@ -36,8 +36,12 @@ enum e_SCREENS
     scr_Spellbook = 112,
     /* ?default? */
     scr_Advisor_Screen = 114,
-    scr_Diplomac = 115  /* ?!? */
+    scr_Diplomac = 115,  /* ?!? */
     // ?!? Surveyor, Cartographer, etc.
+
+    scr_Test_Screen = 200,
+
+    scr_PoC_Screen = 240
 };
 
 
@@ -50,10 +54,7 @@ extern "C" {
 extern int16_t PageFlipEffect;
 
 extern int16_t current_screen;
-
-// extern uint8_t g_Video_Back_Buffer[];
-extern uint8_t g_Palette[];
-extern uint8_t g_Palette_XBGR[];
+extern int quit_game_flag;
 
 
 

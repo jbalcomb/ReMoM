@@ -6,6 +6,10 @@
 #include "MoX.H"
 #include "Video2.H"
 
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#endif
+
 
 
 // TODO  uint8_t * video_page_buffer[2];
@@ -116,6 +120,7 @@ void Init_Video_Drivers(int mode_num)
         } break;
         case vm_Mode_Y:
         {
+            DLOG("case vm_Mode_Y:");
             screen_pixel_width = 320;
             screen_pixel_height = 200;
             bytes_per_pixel = 1;
@@ -141,9 +146,10 @@ void Init_Video_Drivers(int mode_num)
     }
 
     screen_pixel_size = screen_pixel_width * screen_pixel_height;
-    window_pixel_size = screen_pixel_width * screen_pixel_height;
+    window_pixel_size = window_pixel_width * window_pixel_height;
     Create_Screen_Buffers(screen_pixel_size);
 
+    current_video_page = 0;
     current_video_page = video_page_buffer[1 - draw_page_num];
 
     Assign_Video_Function_Pointers(mode_num);
@@ -166,8 +172,8 @@ void Create_Screen_Buffers(int size)
     // video_page_buffer[1] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     video_page_buffer[0] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
     video_page_buffer[1] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
-    video_page_buffer_XBGR[0] = (uint8_t*)Allocate_Space((((screen_pixel_size * 4) + 1) / 16));
-    video_page_buffer_XBGR[1] = (uint8_t*)Allocate_Space((((screen_pixel_size * 4) + 1) / 16));
+    video_page_buffer_XBGR[0] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
+    video_page_buffer_XBGR[1] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
 }
 
 void Assign_Video_Function_Pointers(int mode_num)

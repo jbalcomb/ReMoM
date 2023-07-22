@@ -2,6 +2,71 @@
 
 
 
+OS
+Window
+canvas/surface/texture
+...just some bytes of memory...
+...represents what to *display* on the *output device*...
+For MS-DOS (IBM-PC, VGA), ...
+    ...those bytes are the video memory on the video card...
+    ...this comes with a hardware-based specification of the structure of the representation...
+    ...the byte is an *index* into a *color-map* of 256 colors...
+    ...the structure of the *color-map* is 3 6-bit values representing Red, Green, and Blue...
+    ...what is *displayed* on the *output device* changes whenever you change any of the color values or any of the color indecies...
+Moving to MS-Windows (MWA+GDI), ...
+    ...those bytes are yours to allocate and make use of...
+    ...the structure of the representation is dictated by the requirements of the *drawing* functions e.g., StretchDIBits()
+    ...the structure is that the bytes represent color values directly, in sets of 3 or 4, with 1 byte each, as {Red, Green, Blue} or {Red, Green, Blue, Alpha}
+
+Carrying forward to SDL2, ...
+
+SDL_Window * window = SDL_CreateWindow()
+SDL_Surface * window_surface = SDL_GetWindowSurface();
+SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
+SDL_UpdateWindowSurface( window );
+
+
+    SDL_Surface* loadedSurface = SDL_LoadBMP( path.c_str() );
+
+    optimizedSurface = SDL_ConvertSurface( loadedSurface, gScreenSurface->format, 0 );
+
+
+So, ...
+    How do I move beyond thinking about the platform-layer as being specific to MS-Windows?
+    The game code just wants some memory to write to for *drawing*
+    elsewhere, something needs to care about the *structure* of that memory,
+        the structure required by the platform
+        and the relationship between the *screen* and the *window*
+    surely, that'd be in the platform-layer
+        meaning, the MS-Windows specific code just needs to meet the expectations set by the Platform-Layer Specification
+    MoX sets the width, height, size, *pixel format*, etc. and shares that with the game as well as the platform
+    the platform is responsible for the *window*
+    MoX-PFL must handle dealing with *window* vs. *screen*
+
+Circling back,
+    How to abstract away the concept of a *window* in the MS-DOS code?
+    Page_Flip() and Apply_Palette() both qualify as some platform equivalent of Update_Display/Window/Surface()
+        as do the mouse "..._On_Page()" functions used by the mouse movement handler
+    ¿ factoring in the v-sync changes the conceptualization here ?
+
+
+Elsewhere,
+    quit from the game vs. close the the platform window
+    use the quit flag in the game, expose it to the platform
+    what should the game code do when a user closes the window?
+        auto-save?
+        same as Game > Quit > Quit To DOS?
+        
+
+
+    
+
+
+
+
+
+
+
 Platform-Layer
 API Specification
 MoM-Platform.H

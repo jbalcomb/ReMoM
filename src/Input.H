@@ -341,11 +341,16 @@ int16_t Scan_Input(void);
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type);
 
+
+
+// PLATFORM
 // WZD s36p66
 /*
     returns field_idx/num
 */
 int16_t Get_Input(void);
+
+
 
 // WZD s36p67
 void Set_Input_Delay(int16_t delay);
