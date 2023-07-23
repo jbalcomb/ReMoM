@@ -9,8 +9,11 @@
 
 
 #define VIDEO_MODE_MODE_Y
+// #define VIDEO_MODE_MODE_Y_2x
+// #define VIDEO_MODE_MODE_Y_2x_XBGR
 #define VIDEO_MODE       3  // vm_Mode_Y
-
+// #define VIDEO_MODE       5  // vm_Mode_Y_2x
+// #define VIDEO_MODE       6  // vm_Mode_Y_2x_XBGR
 
 #define ST_NULL          0
 #define ST_TRUE          1
@@ -62,7 +65,7 @@
 #define CURSOR_WIDTH     16
 #define CURSOR_HEIGHT    16
 #endif
-#ifdef VIDEO_MODE_HI_RES
+#ifdef VIDEO_MODE_MODE_Y_2x
 #define SCREEN_WIDTH    640
 #define SCREEN_HEIGHT   400
 #define SCREEN_XMIN       0
@@ -72,7 +75,7 @@
 #define CURSOR_WIDTH     32
 #define CURSOR_HEIGHT    32
 #endif
-#ifdef VIDEO_MODE_HI_RES_HI_COL
+#ifdef VIDEO_MODE_MODE_Y_2x_XBGR
 #define SCREEN_WIDTH    640
 #define SCREEN_HEIGHT   400
 #define SCREEN_XMIN       0
@@ -82,6 +85,7 @@
 #define CURSOR_WIDTH     32
 #define CURSOR_HEIGHT    32
 #endif
+
 
 
 #define ST_TRANSPARENT   0

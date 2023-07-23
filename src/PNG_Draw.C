@@ -35,7 +35,7 @@ void PNG_Draw(int x_start, int y_start, struct s_PNG_PICT* png_pict)
     //     printf("Failed to allocate pixels\n");
     //     return 0;
     // }
-    bbuff_pos = (uint32_t * )((video_page_buffer_XBGR[1 - draw_page_num]) + ((y_start * window_pixel_width) + x_start));
+    bbuff_pos = (uint32_t * )( (video_page_buffer_2x_XBGR[1 - draw_page_num]) + ((y_start * 640 * 4) + (x_start * 4)) );
 
 //get DIB bits
 //for each pixel
@@ -65,14 +65,15 @@ void PNG_Draw(int x_start, int y_start, struct s_PNG_PICT* png_pict)
             // ? r = ( a * r + (255 - a) ) / 255;
             // ? g = ( a * g + (255 - a) ) / 255;
             // ? b = ( a * b + (255 - a) ) / 255;
-            r = r * a / 255;
-            g = g * a / 255;
-            b = b * a / 255;
+            r = (r * a) / 255;
+            g = (g * a) / 255;
+            b = (b * a) / 255;
 
             /* give the color value to the pixel of the screenbuffer */
             // sdl_pixels[(y * screenw + x) / jump] = 65536 * r + 256 * g + b;
             // IDGI  bbuff_pos[(y * screenw + x) / jump] = 65536 * r + 256 * g + b;
-            bbuff_pos[(y * screenw + x)] = 65536 * r + 256 * g + b;
+            if( !((r == 0) && (g == 0) && (b == 0)) )
+                bbuff_pos[(y * screenw + x)] = 65536 * r + 256 * g + b;
         }
     }
 

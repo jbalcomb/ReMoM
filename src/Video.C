@@ -11,7 +11,6 @@ int16_t draw_page_num = 0;
 
 uint8_t * current_video_page;
 uint8_t * video_page_buffer[2];
-uint8_t * video_page_buffer_XBGR[2];
 uint8_t * draw_page;
 
 

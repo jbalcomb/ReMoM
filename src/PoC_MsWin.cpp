@@ -7,11 +7,12 @@
 
 
 
-#define POC_MODE 4
+#define POC_MODE 5
 // #define POC_MODE_1
 // #define POC_MODE_2
 // #define POC_MODE_3
-#define POC_MODE_4
+// #define POC_MODE_4
+// #define POC_MODE_5
 
 int Pump_Events_Cnt = 0;
 int Pump_Paints_Cnt = 0;
@@ -59,9 +60,10 @@ void Pump_Paints(void);
 struct win32_window_dimension Get_Window_Dimensions(HWND Window);
 // void Resize_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, int Height);
 void Update_Window_Display(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
-// void Update_Window_Display_2x(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Update_Window_Display_PreConvert(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Update_Window_Display_PreConvert_2x(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
+void Update_Window_Display_2x(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
+void Update_Window_Display_2x_XBGR(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_DrawPage, uint32_t* p_Buffer);
 void Convert_320x200xXBGR_To_640x400xXBGR(uint32_t* p_320x200xXBGR, uint32_t* p_640x400xXBGR);
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
@@ -95,8 +97,6 @@ inline float Win32GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
 void Pump_Events(void)
 {
     Pump_Events_Cnt++;
-    // InvalidateRect(g_Window, NULL, TRUE);
-    // InvalidateRect(g_Window, NULL, FALSE);
     MSG Message;
     while (PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
     {
@@ -184,34 +184,6 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
     
 }
 
-void Update_Window_Display_2x(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
-{
-    uint32_t * p_Buffer;
-    int itr;
-    uint32_t * p_Palette;
-    // TODO  int window_center_x;
-    // TODO  int window_center_y;
-
-    p_Buffer  = (uint32_t*)Buffer->Memory;
-    p_Palette = (uint32_t*)g_Palette_XBGR;
-
-    for (itr = 0; itr < screen_pixel_size; itr++)
-    {
-        *p_Buffer++ = *(p_Palette + *(video_page_buffer[draw_page_num] + itr));  // on-screen buffer
-    }
-
-    // TODO  window_center_x = (WindowWidth - window_pixel_width) / 2;
-    // TODO  window_center_y = (WindowHeight - window_pixel_height) / 2;
-
-    StretchDIBits(DeviceContext, 
-                  0, 0, Buffer->Width, Buffer->Height,      /* destination rectangle (window)   */
-                  0, 0, Buffer->Width, Buffer->Height,  /* source rectangle (bitmap buffer) */
-                  Buffer->Memory,
-                  &Buffer->Info,
-                  DIB_RGB_COLORS, SRCCOPY);
-
-}
-
 void Update_Window_Display_PreConvert(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
     uint8_t * p_DrawPage;
@@ -294,29 +266,47 @@ void Update_Window_Display_PreConvert_2x(win32_offscreen_buffer * Buffer, HDC De
 }
 
 
-void Update_Window_Display_XBGR(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
+void Update_Window_Display_2x(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-    int width = 640;
-    int height = 400;
+    uint32_t* p_BufferMemory;
+    unsigned int* p_XBGR;
+    int itr;
+    int width;
+    int height;
+    int itr_width;
+    int itr_height;
+    uint8_t * p_DrawPage;
+
+    p_DrawPage = video_page_buffer_2x[draw_page_num];
+    p_XBGR = (uint32_t*)g_Palette_XBGR;
+    p_BufferMemory  = (uint32_t*)Buffer->Memory;
+
+    width = 640;
+    height = 400;
+
+    for(itr_height = 0; itr_height < height; itr_height++)
+    {
+        for(itr_width = 0; itr_width < width; itr_width++)
+        {
+            *(p_BufferMemory + (itr_height * width) + itr_width) = *(p_XBGR + *(p_DrawPage + (itr_height * width) + itr_width));
+        }
+    }
 
     StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
 
-    // works? StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, video_page_buffer_XBGR[draw_page_num], &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+}
 
-    // int itr_width;
-    // int itr_height;
-    // uint32_t* p_VBB;
-    // uint32_t* p_PFL_VBB;
-    // p_VBB = (uint32_t *)video_page_buffer_XBGR[draw_page_num];
-    // p_PFL_VBB  = (uint32_t*)Buffer->Memory;
-    // for(itr_height = 0; itr_height < height; itr_height++)
-    // {
-    //     for(itr_width = 0; itr_width < width; itr_width++)
-    //     {
-    //         *(p_PFL_VBB + (itr_height * width) + itr_width) = *(p_VBB + (itr_height * width) + itr_width);
-    //     }
-    // }
-    // StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+void Update_Window_Display_2x_XBGR(struct win32_offscreen_buffer* Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
+{
+    int width;
+    int height;
+    width = 640;
+    height = 400;
+
+            // *(p_BufferMemory + (itr_height * width) + itr_width) = *(p_XBGR + *(p_DrawPage + (itr_height * width) + itr_width));
+    
+    StretchDIBits(DeviceContext, 0, 0, width, height, 0, 0, width, height, Buffer->Memory, &Buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+
 }
 
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_320x200xXBGR)
@@ -526,6 +516,10 @@ void Init_Platform(HINSTANCE hInstance, int nCmdShow)
         {
             Init_Video_Back_Buffer(&PlatformVideoBackBuffer, 640, 400);
         } break;
+        case 5:
+        {
+            Init_Video_Back_Buffer(&PlatformVideoBackBuffer, 640, 400);
+        } break;
         
     }
 
@@ -569,10 +563,7 @@ void Init_Video_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, i
     Buffer->Info.bmiHeader.biWidth = Buffer->Width;
     Buffer->Info.bmiHeader.biHeight = -Buffer->Height; // negative value: top-down
 
-    Buffer->Memory = video_page_buffer_XBGR[draw_page_num];
-    
-    // int BitmapMemorySize = Buffer->BytesPerPixel * (Buffer->Width * Buffer->Height);
-    // Buffer->Memory = VirtualAlloc(nullptr, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    Buffer->Memory = video_page_buffer_2x_XBGR[draw_page_num];
 }
 
 // ¿ this one makes sense for when the platform layer is handling the conversion from *notive* MoX code ?
@@ -674,7 +665,11 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 } break;
                 case 4:
                 {
-                    Update_Window_Display_XBGR(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                    Update_Window_Display_2x(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
+                } break;
+                case 5:
+                {
+                    Update_Window_Display_2x_XBGR(&PlatformVideoBackBuffer, hdc, WndDim.Width, WndDim.Height);
                 } break;
                 
             }
@@ -707,15 +702,19 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         } break;
 
-        // case WM_SIZE:
-        // {
-        //     OutputDebugStringA("WM_SIZE\n");
-        //     // RECT ClientAreaRect;
-        //     // GetClientRect(hWnd, &ClientAreaRect);
-        //     // int ClientAreaWidth = ClientAreaRect.right - ClientAreaRect.left;
-        //     // int ClientAreaHeight = ClientAreaRect.bottom - ClientAreaRect.top;
-        //     // Resize_Window_Back_Buffer(&PlatformVideoBackBuffer, ClientAreaWidth, ClientAreaHeight);
-        // } break;
+        case WM_SIZE:
+        {
+            OutputDebugStringA("WM_SIZE\n");
+            RECT ClientAreaRect;
+            GetClientRect(g_Window, &ClientAreaRect);
+            // int ClientAreaWidth = ClientAreaRect.right - ClientAreaRect.left;
+            // int ClientAreaHeight = ClientAreaRect.bottom - ClientAreaRect.top;
+            // Resize_Window_Back_Buffer(&PlatformVideoBackBuffer, ClientAreaWidth, ClientAreaHeight);
+            HBRUSH hBrush = CreateSolidBrush(RGB(106, 90, 205));  // "Slate Blue"
+            FillRect(g_DeviceContext, &ClientAreaRect, hBrush);
+            DeleteObject(hBrush);
+
+        } break;
 
         // case WM_ACTIVATEAPP:
         // {

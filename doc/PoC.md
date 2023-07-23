@@ -31,10 +31,18 @@ convert 320x200 XBGR to 640x400 XBGR
         PFL VBB 640*400*4
         Nay-Stretch
     PoC Mode 4:
+        MoX draws to video_page_buffer_x2
+        convert, on-the-fly, from video_page_buffer_x2[draw_page_num], using g_Palette_XBGR, to Buffer->Memory, which is allocated by the PFL
+        PFL VBB 640*400*4
+        Nay-Stretch
+        *** can not use native draw functions ***  
+    PoC Mode 5:
         MoX draws to video_page_buffer_XBGR
         video_page_buffer_XBGR is assigned to PFL VBB
         PFL Update_Window_Display() uses video_page_buffer_XBGR
         *** can not use native draw functions ***  
+        
+
 
 
 Init_Platform()
@@ -44,6 +52,7 @@ Init_Platform()
 Update_Window_Display()
 Update_Window_Display_Pre()
 Update_Window_Display_Pre_x2()
+Update_Window_Display_XBGR()
 
 
 

@@ -14,15 +14,17 @@
 
 
 
-// TODO  uint8_t * video_page_buffer[2];
-// TODO  uint8_t * video_page_buffer_XBGR[2];
+uint8_t * video_page_buffer_2x[2];
+uint8_t * video_page_buffer_2x_XBGR[2];
 
 int screen_pixel_width = 320;
 int screen_pixel_height = 200;
 int screen_pixel_size = 64000;
 int bytes_per_pixel = 1;
 int screen_scale = 2;
-int video_mode = vm_Mode_Y;  // OG-MoM
+// int video_mode = vm_Mode_Y;  // OG-MoM
+// int video_mode = vm_Mode_Y_2x;
+int video_mode = vm_Mode_Y_2x_XBGR;
 int window_pixel_width = 640;
 int window_pixel_height = 400;
 int window_pixel_size = 256000;
@@ -49,44 +51,45 @@ int window_pixel_size = 256000;
                     Clipped_Draw_Glassed_Bitmap_Sprite()
                     Clipped_Draw_Stenciled_Animated_Sprite()
 */
-// ~== WZD s30p11  FLIC_Draw()
-void (*Draw)(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
-void (*Draw_Frame)(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
 
-// ~== WZD s29p01  FLIC_Draw_Frame()
-void Draw_Frame_Data_Hi_Res(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
-
-void Save_Mouse_Hi_Res(void);
-void Restore_Mouse_Hi_Res(void);
-void Draw_Mouse_Hi_Res(void);
-
-void Full_Screen_Dump_Hi_Res(void);
-void Partial_Screen_Dump_Hi_Res(void);
-void Masked_Screen_Dump_Hi_Res(void);
-void Copy_Off_To_On_Hi_Res(void);
-void Set_Bank_Write_Vesa(void);
-void Set_Bank_Read_Vesa(void);
-void Switch_Video_Pages_Vesa(void);
-void Save_Mouse_Hi_Res(void);
-void Restore_Mouse_Hi_Res(void);
-void Draw_Mouse_Hi_Res(void);
-void Save_Video_State_Hi_Res(void);
-void Restore_Video_State_Hi_Res(void);
-void Get_Bank_Write_Vesa_(void);
-
-//void (*Full_Screen_Dump)(void);
-//void (*Partial_Screen_Dump)(void);
-//void (*Masked_Screen_Dump )(void);
-//void (*Copy_Off_To_On_Page)(void);
-//void (*Set_Bank_Write)(void);
-//void (*Set_Bank_Read)(void);
-//void (*Switch_Video_Pages)(void);
-//void (*Save_Mouse)(void);
-//void (*Restore_Mouse)(void);
-//void (*Draw_Mouse)(void);
-//void (*Save_Video_State)(void);
-//void (*Restore_Video_State)(void);
-//void (*Get_Bank_Write)(void);
+// // ~== WZD s30p11  FLIC_Draw()
+// void (*Draw)(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
+// void (*Draw_Frame)(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
+// 
+// // ~== WZD s29p01  FLIC_Draw_Frame()
+// void Draw_Frame_Data_Hi_Res(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
+// 
+// void Save_Mouse_Hi_Res(void);
+// void Restore_Mouse_Hi_Res(void);
+// void Draw_Mouse_Hi_Res(void);
+// 
+// void Full_Screen_Dump_Hi_Res(void);
+// void Partial_Screen_Dump_Hi_Res(void);
+// void Masked_Screen_Dump_Hi_Res(void);
+// void Copy_Off_To_On_Hi_Res(void);
+// void Set_Bank_Write_Vesa(void);
+// void Set_Bank_Read_Vesa(void);
+// void Switch_Video_Pages_Vesa(void);
+// void Save_Mouse_Hi_Res(void);
+// void Restore_Mouse_Hi_Res(void);
+// void Draw_Mouse_Hi_Res(void);
+// void Save_Video_State_Hi_Res(void);
+// void Restore_Video_State_Hi_Res(void);
+// void Get_Bank_Write_Vesa_(void);
+// 
+// void (*Full_Screen_Dump)(void);
+// void (*Partial_Screen_Dump)(void);
+// void (*Masked_Screen_Dump )(void);
+// void (*Copy_Off_To_On_Page)(void);
+// void (*Set_Bank_Write)(void);
+// void (*Set_Bank_Read)(void);
+// void (*Switch_Video_Pages)(void);
+// void (*Save_Mouse)(void);
+// void (*Restore_Mouse)(void);
+// void (*Draw_Mouse)(void);
+// void (*Save_Video_State)(void);
+// void (*Restore_Video_State)(void);
+// void (*Get_Bank_Write)(void);
 
 void Init_Video_Drivers(int mode_num)
 {
@@ -99,26 +102,16 @@ void Init_Video_Drivers(int mode_num)
         {
             screen_pixel_width = 320;
             screen_pixel_height = 200;
-            bytes_per_pixel = 1;
-            screen_scale = 2;
-            window_pixel_width = 640;
-            window_pixel_height = 400;
         } break;
         case vm_Mode_X:
         {
             screen_pixel_width = 320;
             screen_pixel_height = 200;
-            bytes_per_pixel = 1;
-            window_pixel_width = 640;
-            window_pixel_height = 400;
         } break;
         case vm_Mode_X240:
         {
             screen_pixel_width = 320;
             screen_pixel_height = 240;
-            bytes_per_pixel = 1;
-            window_pixel_width = 640;
-            window_pixel_height = 480;
         } break;
         case vm_Mode_Y:
         {
@@ -133,12 +126,21 @@ void Init_Video_Drivers(int mode_num)
         {
             screen_pixel_width = 640;
             screen_pixel_height = 480;
+        } break;
+        case vm_Mode_Y_2x:
+        {
+            DLOG("case vm_Mode_Y_2x:");
+            screen_scale = 2;
+            screen_pixel_width = 640;
+            screen_pixel_height = 400;
             bytes_per_pixel = 1;
             window_pixel_width = 640;
-            window_pixel_height = 480;
+            window_pixel_height = 400;
         } break;
-        case vm_Hi_Res_Hi_Col:
+        case vm_Mode_Y_2x_XBGR:
         {
+            DLOG("case vm_Mode_Y_2x_XBGR:");
+            screen_scale = 2;
             screen_pixel_width = 640;
             screen_pixel_height = 400;
             bytes_per_pixel = 4;
@@ -176,10 +178,29 @@ void Create_Screen_Buffers(int size)
     video_page_buffer[1] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
     memset(video_page_buffer[0], 0, screen_pixel_size);
     memset(video_page_buffer[1], 0, screen_pixel_size);
-    video_page_buffer_XBGR[0] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
-    video_page_buffer_XBGR[1] = (uint8_t*)Allocate_Space((((window_pixel_size * 4) + 1) / 16));
-    memset(video_page_buffer_XBGR[0], 0, (window_pixel_size * 4));
-    memset(video_page_buffer_XBGR[1], 0, (window_pixel_size * 4));
+
+    video_page_buffer_2x[0] = (uint8_t*)Allocate_Space(((640 * 400 * 1) / 16));  // 640 * 400 * 1Bpp = 256000  / 16 = 16000 PR
+    video_page_buffer_2x[1] = (uint8_t*)Allocate_Space(((640 * 400 * 1) / 16));
+    video_page_buffer_2x[2] = (uint8_t*)Allocate_Space(((640 * 400 * 1) / 16));
+    memset(video_page_buffer_2x[0], 0, screen_pixel_size * 2);
+    memset(video_page_buffer_2x[1], 0, screen_pixel_size * 2);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[0]);
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x[1]);
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[0] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[0] + (640*400*1)));
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x[1] + (640*400*1): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x[1] + (640*400*1)));
+#endif
+
+    video_page_buffer_2x_XBGR[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );  // 640 * 400 * 4Bpp = 1000000  / 16 = 64000 PR
+    video_page_buffer_2x_XBGR[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    memset(video_page_buffer_2x_XBGR[0], 0, (640 * 400 * 4));
+    memset(video_page_buffer_2x_XBGR[1], 0, (640 * 400 * 4));
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[0]);
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1]: %p\n", __FILE__, __LINE__, video_page_buffer_2x_XBGR[1]);
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[0] + (320*200*2): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[0] + (640*400*4)));
+    dbg_prn("DEBUG: [%s, %d]: video_page_buffer_2x_XBGR[1] + (320*200*2): %p\n", __FILE__, __LINE__, (uint8_t *)(video_page_buffer_2x_XBGR[1] + (640*400*4)));
+#endif
 
 }
 
@@ -200,13 +221,13 @@ void Assign_Video_Function_Pointers(int mode_num)
         case vm_Mode_Y:
         {
             // Draw = FLIC_Draw_1x;
-            Draw_Frame = FLIC_Draw_Frame;
+            // Draw_Frame = FLIC_Draw_Frame;
 
         } break;
         case vm_Hi_Res:
         {
             // Draw = FLIC_Draw_2x;
-            Draw_Frame = FLIC_Draw_Frame_2x;
+            // TODO  different paramters  Draw_Frame = FLIC_Draw_Frame_2x;
 
             // MoO2
             // Full_Screen_Dump = Full_Screen_Dump_Hi_Res;
@@ -223,7 +244,10 @@ void Assign_Video_Function_Pointers(int mode_num)
             // Restore_Video_State = Restore_Video_State_Hi_Res;
             // Get_Bank_Write = Get_Bank_Write_Vesa_;
         } break;
-        case vm_Hi_Res_Hi_Col:
+        case vm_Mode_Y_2x:
+        {
+        } break;
+        case vm_Mode_Y_2x_XBGR:
         {
         } break;
     }

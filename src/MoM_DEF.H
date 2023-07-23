@@ -29,9 +29,6 @@
 #define CURSOR_HEIGHT   16
 
 
-// ? /* Palette Index 0: TRANSPARENT */ ?
-#define TRANSPARENT 0x00
-
 
 // Banner Color Remapping
 // 5 Banners (banner_idx)
@@ -117,8 +114,6 @@ hanging out in MoX_DEF.H
 
 #define MINIMAP_MARK_COLOR 15
 
-#define ST_BLACK 1
-#define ST_WHITE 15
 */
 
 

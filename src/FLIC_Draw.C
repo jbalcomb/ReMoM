@@ -252,7 +252,7 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
     itr_length = 0;
     while(itr_length++ < length)
     {
-        *(pict_seg + 16 + itr_length) = TRANSPARENT;  /* Color-Map Index 0 */
+        *(pict_seg + 16 + itr_length) = ST_TRANSPARENT;  /* Color-Map Index 0 */
     }
 
 }

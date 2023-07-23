@@ -4,7 +4,12 @@
 #include "PoC_Screen.h"
 #include "PNG_Draw.H"
 #include "PNG_Load.H"
-
+#include "FLIC_Draw2.H"
+#ifdef STU_DEBUG
+#include "STU_DBG.H"
+#include "STU_TST.H"
+#endif
+// #include <assert.h>
 
 
 struct s_mouse_list mouse_list_poc[1] = { {1, 0, 0, 0, 319, 199} };
@@ -14,7 +19,9 @@ uint8_t * PoC_main_background;
 uint8_t * test_screen_background_seg;
 
 char png_file_magic_spirit[] = "MagicSpirit.png";
+char png_file_grassland_a[] = "00000000a.png";
 struct s_PNG_PICT* magic_spirit_png_pict;
+struct s_PNG_PICT* grassland_a_png_pict;
 
 
 
@@ -22,7 +29,12 @@ void Load_PoC_Resources(void)
 {
     PoC_main_background = (uint8_t * )LBX_Load(PoC_main_lbx_file, 0);
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: STU_TST: Validate_MAIN_LBX_000(): %d\n", __FILE__, __LINE__, Validate_MAIN_LBX_000(PoC_main_background));
+#endif
+
     magic_spirit_png_pict = PNG_Load(png_file_magic_spirit);
+    grassland_a_png_pict = PNG_Load(png_file_grassland_a);
 }
 
 void PoC_Screen_Add_Fields(void)
@@ -87,43 +99,33 @@ void PoC_Screen(void)
 
 void PoC_Screen_Draw(void)
 {
-
     // test_screen_background_seg = LBX_Reload(halofam_lbx_file, 0, _screen_seg);
     // FLIC_Draw(0, 0, test_screen_background_seg);
-
-    // FLIC_Draw(0, 0, PoC_main_background);
-    // // FLIC_Draw_2x(0, 0, PoC_main_background);
-    // // FLIC_Draw_XBGR(0, 0, PoC_main_background);
-    // // FLIC_Draw_2x_XBGR(0, 0, PoC_main_background);
-
-    // PNG_Draw(0, 40, magic_spirit_png_pict);
-
-    // bbuff_pos = (uint32_t * )((video_page_buffer_XBGR[1 - draw_page_num]) + ((y_start * screen_pixel_width) + x_start));
     
+    // switch (video_mode)
+    // {
+    //     case vm_Mode_Y:
+    //     {
+    //         FLIC_Draw(0, 0, PoC_main_background);
+    //     } break;
+    //     case vm_Mode_Y_2x:
+    //     case vm_Mode_Y_2x_XBGR:
+    //     {
+    //         Draw(0, 0, PoC_main_background, 640, 2);
+    //     } break;
+    // }
+    Draw(0, 0, PoC_main_background, 640, 2);
+
     int itr_x;
     int itr_y;
-    for(itr_y = 0; itr_y < (10*36); itr_y++)
+    for(itr_y = 0; itr_y < 10; itr_y++)
     {
-        for(itr_x = 0; itr_x < (10*40); itr_x++)
+        for(itr_x = 0; itr_x < 12; itr_x++)
         {
-            // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 0) = 0xFF;
-            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 1) = 0xFF;
-            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 2) = 0xFF;
-            // // *(video_page_buffer_XBGR[1 - draw_page_num] + ((itr_y * 640) + itr_x) + 3) = 0xFF;
+            PNG_Draw((0+(40*itr_x)), (40+(36*itr_y)), grassland_a_png_pict);
         }
     }
 
-    // for (itr_y = 0; itr_y < (10*36); itr_y++)
-    // {
-    //     for (itr_x = 0; itr_x < (10*40); itr_x++)
-    //     {
-    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 0) = 0xFF;
-    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 1) = 0xFF;
-    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 2) = 0xFF;
-    //         *(video_page_buffer_XBGR[draw_page_num] + ((itr_y * 640) + itr_x) + 3) = 0xFF;
-    //     }
-    // }
-
-    PNG_Draw(0, 40, magic_spirit_png_pict);
-
+    PNG_Draw(21, 61, magic_spirit_png_pict);
+    
 }

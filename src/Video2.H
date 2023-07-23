@@ -21,12 +21,14 @@ enum e_Video_Mode
     vm_Mode_X240,
     vm_Mode_Y,
     vm_Hi_Res,
-    vm_Hi_Res_Hi_Col
+    vm_Mode_Y_2x,
+    vm_Mode_Y_2x_XBGR
 };
 
 
 
-extern uint8_t * video_page_buffer_XBGR[];
+extern uint8_t * video_page_buffer_2x[];
+extern uint8_t * video_page_buffer_2x_XBGR[];
 
 extern int screen_pixel_width;
 extern int screen_pixel_height;
