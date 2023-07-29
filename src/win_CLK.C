@@ -1,6 +1,5 @@
 
-#include "Mox_TYPE.H"
-#include "Timer.H"
+#include "Mox.H"
 
 #include "Windows.h"
 #include "sysinfoapi.h"
@@ -48,7 +47,7 @@ uint32_t Get_System_Clock_Counter(void)
 {
     uint32_t dos_tick_count;
     DWORD win_tick_count;
-    win_tick_count = GetTickCount();
+    win_tick_count = GetTickCount();  // TODO  "Consider using GetTickCount64() ..."
     dos_tick_count = win_tick_count / 54.92540;
     return dos_tick_count;
 }

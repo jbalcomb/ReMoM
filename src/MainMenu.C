@@ -1,35 +1,13 @@
 
 // #include "MoM.hpp"  /* Pump_Events() */
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-
-#include "MoM_PFL.H"  /* Buffer; Render_VBB(); */
+#include "MoX.H"
 
 #include "MainMenu.H"
-
-#include "MoM_main.H"
-
-#include "MoX_DIR.H"
-#include "MoX_SET.H"
-
-#include "Fields.H"
-#include "FLIC_Draw.H"
-#include "Fonts.H"
-#include "Graphics.H"  /* Fill() */
-#include "Input.H"
-#include "LBX_Load.H"
-#include "Mouse.H"
-#include "Video.H"  /* Set_Page_Off(), Page_Flip() */
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
 
 #include <stdlib.h>     /* itoa() */
 #include <string.h>     /* strcat(), strcpy() */
 
-extern void Pump_Events(void);
 
 
 char mainscrn_lbx_file[] = "MAINSCRN";          // MGC  dseg:28A7
@@ -304,17 +282,16 @@ int16_t Main_Menu_Screen(void)
     load_flag = ST_FALSE;
     // IDK_frame_count = 0;
     leave_screen_flag = ST_FALSE;
-    // screen_change = ST_TRUE;
-    // if(screen_change == ST_FALSE)
-    // {
-    //     VGA_Fade_Out(); // MGC s50
-    // }
-    // Fill(0, 0, 319, 199, 0);
-    // Set_Page_On();
-    // Fill(0, 0, 319, 199, 0);
-    // Set_Page_Off();
-    // Load_Palette(2, -1);
-    // TODO  Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+    screen_change = ST_TRUE;
+    if(screen_change == ST_FALSE)
+    {
+        // TODO  VGA_Fade_Out(); // MGC s50
+    }
+    Fill(0, 0, 319, 199, 0);
+    Set_Page_On();
+    Fill(0, 0, 319, 199, 0);
+    Set_Page_Off();
+    Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
     Load_MAGIC_SET();
     // _help_entries.entry_num], -1     ; ? [0] ?
     // _help_entries.entry_num+0Ah], -1 ; ? [1] ?
@@ -449,107 +426,87 @@ int16_t Main_Menu_Screen(void)
     while(leave_screen_flag == ST_FALSE)
     {
 
-        // TODO  CLK_Save();
+        Mark_Time();
 
         input_field_idx = Get_Input();
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-// #endif
-
-        if(input_field_idx != ST_FALSE) { leave_screen_flag = ST_TRUE; }
-
-        if((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))
+        if(quit_game_flag == ST_TRUE)
         {
-//             DLOG("((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))");
-            leave_screen_flag = ST_TRUE;
-            current_menu_screen = 0;
-            // HACK:
-            current_screen = scr_Continue;
-        }
-        if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))
-        {
-//             DLOG("((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))");
-            leave_screen_flag = ST_TRUE;
-            current_menu_screen = 1;
-            // HACK:
-            current_screen = scr_Load_Screen;
-        }
-        if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
-        {
-//             DLOG("((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))");
-            leave_screen_flag = ST_TRUE;
-            current_menu_screen = 2;
-            // HACK:
-            current_screen = scr_New_Game_Screen;
-        }
-        if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
-        {
-//             DLOG("((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))");
-            leave_screen_flag = ST_TRUE;
-            current_menu_screen = 3;
-            // HACK:
+            DLOG("(quit_game_flag == ST_TRUE)");
             current_screen = scr_Quit_To_DOS;
-        }
-        if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
-        {
-//             DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
             leave_screen_flag = ST_TRUE;
-            current_menu_screen = 4;
-            // HACK:
-            current_screen = scr_Hall_Of_Fame_Screen;
+            current_menu_screen = 3;  // Quit To DOS
+        }
+        else
+        {
+            if(input_field_idx != ST_FALSE)
+            {
+                DLOG("(input_field_idx != ST_FALSE)");
+                leave_screen_flag = ST_TRUE;
+            }
+
+            if((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))
+            {
+                DLOG("((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))");
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 0;
+                // HACK:
+                current_screen = scr_Continue;
+            }
+            if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))
+            {
+                DLOG("((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))");
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 1;
+                // HACK:
+                current_screen = scr_Load_Screen;
+            }
+            if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
+            {
+                DLOG("((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))");
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 2;
+                // HACK:
+                current_screen = scr_New_Game_Screen;
+            }
+            if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
+            {
+                DLOG("((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))");
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 3;
+                // HACK:
+                current_screen = scr_Quit_To_DOS;
+            }
+            if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
+            {
+                DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
+                leave_screen_flag = ST_TRUE;
+                current_menu_screen = 4;
+                // HACK:
+                current_screen = scr_Hall_Of_Fame_Screen;
+            }
         }
 
-        if(current_menu_screen == ST_UNDEFINED) { leave_screen_flag = ST_FALSE; }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-//     dbg_prn("DEBUG: [%s, %d]: leave_screen_flag: %d\n", __FILE__, __LINE__, leave_screen_flag);
-//     dbg_prn("DEBUG: [%s, %d]: current_menu_screen: %d\n", __FILE__, __LINE__, current_menu_screen);
-//     dbg_prn("DEBUG: [%s, %d]: current_screen: %d\n", __FILE__, __LINE__, current_screen);
-// #endif
+        if(current_menu_screen == ST_UNDEFINED)
+        {
+            leave_screen_flag = ST_FALSE;
+        }
 
         if(leave_screen_flag == ST_FALSE)
         {
-//             DLOG("(leave_screen_flag == ST_FALSE)");
             Main_Menu_Screen_Draw();
-            Toggle_Pages();  // |-> Page_Flip()
-            // When? Render_VBB(&Buffer);
-            Pump_Events();
-
-            // // HACK:
-            // mouse_x = Pointer_X();
-            // mouse_y = Pointer_Y();
-            // Check_Mouse_Shape(mouse_x, mouse_y);
-            // Draw_Mouse(mouse_x, mouse_y);
-            // // STU_Export_VBB_To_BMP32();
-            // // // Save_Mouse(mouse_x, mouse_y);
-            // // // Restore_Mouse();
-
-
+            Toggle_Pages();
 
             // do a full draw - initial or on-change
             if((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))
             {
-//                 DLOG("((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))");
                 // TODO  Fade_In()
                 // TODO  Copy_Off_To_On_Page();
                 first_draw_done_flag = ST_TRUE;
                 screen_change = ST_FALSE;
-
-
-                // // HACK: 
-                // Page_Flip();
-
-
-
             }
-            // TODO  CLK_Wait(2);
+            Release_Time(2);
         }
-
-        // HACK: hard-coded to get back around to the Windows Message Loop
-        leave_screen_flag = ST_TRUE;
-
 
     }  /* while(leave_screen_flag == ST_FALSE) */
 

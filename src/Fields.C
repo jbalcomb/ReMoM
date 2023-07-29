@@ -1,21 +1,8 @@
 
 #include <string.h>
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
+#include "MoX.H"
 
-#include "MoX_Data.H"
-
-#include "Fields.H"
-#include "FLIC_Draw.H"
-#include "Fonts.H"
-#include "Graphics.H"
-#include "Mouse.H"
-#include "Video.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"    /* DLOG() */
-#endif
 
 
 /*
@@ -183,7 +170,16 @@ dseg:82A6                                                 END: Fields, Input, Mo
 // WZD dseg:8244 UU_GUI_ClickBuffVar1 dw 0               
 // WZD dseg:8246 UU_GUI_ClickBuffer@ dw 0                
 // WZD dseg:8248 UU_GUI_ClickBufCount dw 0               
-// WZD dseg:824A GUI_RedrawFn_Present dw 0               
+
+
+// WZD dseg:824A
+// drake178: GUI_RedrawFn_Present
+// AKA g_SCRN_RedrawFn_Present
+// AKA redraw_function_flag
+// MoO2  Module: fields  auto_active_flag
+uint16_t auto_active_flag = ST_FALSE;
+
+
 // WZD dseg:824C KD_prev_field_idx dw 0                  
 
 // WZD dseg:824E
@@ -200,7 +196,15 @@ int16_t down_y = -1;
 
 // WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
 // WZD dseg:8258 GUI_DialogDirections dw 0               
-// WZD dseg:825A GUI_Redraw_Timer dw 2                   
+
+
+// WZD dseg:825A
+// drake178: GUI_Redraw_Timer
+// AKA g_SCRN_Redraw_Timer
+// AKA redraw_timer
+// MoO2  Module: fields  auto_function_delay
+uint16_t auto_function_delay = 2;
+
 
 // WZD dseg:825C
 // AKA mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
@@ -223,7 +227,8 @@ int16_t GUI_MouseFocusCtrl = 0;
 // WZD dseg:8270 GUI_OnLastDialogLine dw 0               
 
 // WZD dseg:8272
-int16_t _global_esc = ST_FALSE;
+int16_t _global_esc = ST_FALSE;  // ERROR: mistook for mouse_cancel_disabled, for many moons
+int16_t mouse_cancel_disabled = ST_FALSE;
 
 // WZD dseg:8274
 int16_t GUI_ClickActivate;
@@ -280,7 +285,10 @@ int16_t active_input_field_number = ST_UNDEFINED;
 // dseg:E874 GUI_Processed_Btns dw 0    
 // dseg:E876 GUI_Processed_LastY dw 0   
 // dseg:E878 GUI_Processed_LastX dw 0   
-// dseg:E87A GUI_EditString db 30 dup(0)
+
+// WZD dseg:E87A
+// drake178: GUI_EditString
+char continuous_string[30];
 
 // WZD dseg:E898
 int16_t input_delay;
@@ -296,8 +304,26 @@ int16_t cursor_offset;
 // WZD dseg:E8A2
 int16_t fields_count;
 
-// dseg:E8A4 GUI_Prev_Redraw_Fn dd 0    
-// dseg:E8A8 GUI_Redraw_Function dd 0   
+
+
+// WZD dseg:E8A4 
+// drake178: GUI_Prev_Redraw_Fn
+// AKA gfp_GUI_Prev_Redraw_Fn
+// AKA gfp_CTRL_Prev_Redraw_Fn
+// MoO2  Module: fields  function2
+void (*function2)(void);
+
+// WZD dseg:E8A8
+// drake178: GUI_Redraw_Fn
+// AKA GUI_Redraw_Function
+// AKA gfp_GUI_Redraw_Function
+// AKA gfp_SCRN_Redraw_Function
+// AKA Redraw_Function
+// 1oom  void (*uiobj_callback)(void *) = NULL;
+// MoO2  Module: fields  function
+void (*function)(void);
+
+
 
 // WZD dseg:E8AC
 struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
@@ -309,9 +335,23 @@ struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 
 /*
-    WZD  seg036
-    MGC  seg034
+    WIZARDS.EXE     seg036
+    MAGIC.EXE       seg034
 */
+
+// WZD s36p08
+// TODO  void Set_Global_Esc(void);
+void Enable_Cancel(void)
+{
+    mouse_cancel_disabled = ST_FALSE;
+}
+// WZD s36p09
+//drake178: UU_GUI_ClearEscOverride
+void Disable_Cancel(void)
+{
+    mouse_cancel_disabled = ST_TRUE;
+}
+
 
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * argString)
@@ -977,3 +1017,155 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
     dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
 #endif
 }
+
+
+
+// WZD s36p74
+// UU_GUI_SetDlgTitleHelp()
+
+// WZD s36p75
+// UU_GUI_ClearTitleHelp()
+
+
+
+// WZD s36p76
+// drake178: 
+// AKA Set_Redraw_Function()
+// AKA SCRN_Set_Redraw_Function()
+// AKA GUI_Set_Redraw_Function()
+// MoO2  Module: fields  Assign_Auto_Function()
+void Assign_Auto_Function(void (*auto_function)(void), uint16_t delay)
+{
+
+    function = auto_function;  // in MoG, this works, as `void (*fxnptr)(void);` ... `fxnptr = &fxn;`
+
+    auto_active_flag = ST_TRUE;
+
+    if ( (delay <= 0) || (delay >= 10) )
+    {
+        auto_function_delay = 2;
+    }
+    else
+    {
+        auto_function_delay = delay;
+    }
+
+}
+
+
+// WZD s36p77
+// drake178: GUI_SaveRedrawFn()
+// AKA SCRN_SaveRedrawFn()
+// MoO2  Module: fields  Save_Auto_Function()
+void Save_Auto_Function(void)
+{
+    function2 = function;
+}
+
+// WZD s36p78
+// drake178: GUI_LoadRedrawFn
+// AKA SCRN_LoadRedrawFn()
+// MoO2  Module: fields  Restore_Auto_Function()
+void Restore_Auto_Function(void)
+{
+    function = function2;
+    auto_active_flag = ST_TRUE;
+}
+
+
+// WZD s36p79
+// drake178: GUI_DisableRedraw()
+// AKA Disable_Redraw_Function()
+// AKA SCRN_DisableRedraw()
+// MoO2  Module: fields  Deactivate_Auto_Function()
+void Deactivate_Auto_Function(void)
+{
+    auto_active_flag = ST_FALSE;
+}
+
+// WZD s36p80
+// drake178: UU_GUI_EnableRedraw(void)
+// MoO2  Module: fields  Activate_Auto_Function()
+void UU_Activate_Auto_Function(void)
+{
+    auto_active_flag = ST_TRUE;
+}
+
+
+// WZD s36p81
+// drake178: GUI_CallRedrawFn
+// AKA Call_Redraw_Function()
+// AKA SCRN_CallRedrawFn()
+// MoO2  Module: fields  Invoke_auto_function()
+void Invoke_Auto_Function(void)
+{
+    if(auto_active_flag == ST_TRUE)
+    {
+        function();
+    }
+}
+
+
+// WZD s36p82
+// drake178: 
+// AKA SCRN_Redraw_WaitOne
+// AKA GUI_Redraw_WaitOne()
+// AKA GUI_1TickRedraw()
+// MoO2  Module: fields  Quick_Call_Auto_Function()
+void Quick_Call_Auto_Function(void)
+{
+    if(auto_active_flag == ST_TRUE)
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Invoke_Auto_Function();
+        Apply_Palette();
+        Toggle_Pages();
+        Release_Time(1);
+    }
+    else
+    {
+        Apply_Palette();
+        Toggle_Pages();
+    }
+}
+
+
+// WZD s36p83
+// drake178: GUI_NormalRedraw()
+// AKA GUI_Redraw_WaitTimer
+// AKA SCRN_Redraw_WaitTimer
+// MoO2  Module: fields  Call_Auto_Function()
+void Call_Auto_Function(void)
+{
+    if(auto_active_flag == ST_TRUE)
+    {
+        Mark_Time();
+        Set_Page_Off();
+        Invoke_Auto_Function();
+        Apply_Palette();
+        Toggle_Pages();
+        Release_Time(auto_function_delay);
+    }
+    else
+    {
+        Apply_Palette();
+        Toggle_Pages();
+    }
+
+}
+
+
+
+// WZD s36p84
+// drake178: UU_GUI_ExtClear()
+void UU_GUI_ExtClear(void)
+{
+    Clear_Fields();
+    Set_Input_Delay(1);
+}
+
+
+
+// WZD s36p85
+// INPUT  void Toggle_Pages(void);

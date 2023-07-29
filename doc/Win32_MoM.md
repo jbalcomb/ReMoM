@@ -1,4 +1,36 @@
 
+20230725:
+These notes are so out of date as to be useless, if not misleading?
+Just looking for a place to make sense of moving from Interrupts to Events w/w/o Polling?
+...moving to win_PFL.cpp, don't want to just throw out Win32_Evnt.cpp
+
+WM_MOUSEMOVE
+
+WM_SYSKEYDOWN
+WM_SYSKEYUP
+WM_KEYDOWN
+WM_KEYUP
+
+WM_LBUTTONDOWN
+WM_RBUTTONDOWN
+
+
+
+WM_MOUSEMOVE    Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
+                    MoX/MoM MOUSE_INT_Process and mouse_enabled flag control whether the cursor image get updated with the retore-save-draw procedures
+                    but, also, my sad hack of lock_mouse_button_status_flag
+WM_LBUTTONDOWN  Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000001);
+WM_RBUTTONDOWN  Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000010);
+
+Where stick the map of MS Window's Virtual-Keys to IBM-PC Scan-Code/Character-Code?
+    for now, win_PFL.hpp
+    probably should move to an odd, one-off of various platform's key codes
+        ¿ more like SDL, less like GLFW ?
+
+Elsewhere, ...
+    uint16_t WindowsVirtualKeyCode_to_ScanCodeCharCode(uint16_t VK_Code, uint16_t Shift, uint16_t Control, uint16_t Alt)
+    Get_Key_Modifiers()
+
 
 
 

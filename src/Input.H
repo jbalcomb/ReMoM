@@ -360,6 +360,9 @@ int16_t Get_Input_Delay(void);
 
 
 // WZD s36p85
+// drake178: GUI_SimplePageFlip()
+// AKA SCRN_SimplePageFlip()
+// MoO2  Module: video  Toggle_Pages()  &&  Module: MOX2  _TOGGLE_PAGES_
 void Toggle_Pages(void);
 
 

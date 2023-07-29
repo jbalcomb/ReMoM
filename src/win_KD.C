@@ -1,9 +1,6 @@
 
-#include "MoM_PFL.H"
-#include "MoX_DEF.H"
+#include "MoX.H"
 
-#include "Keyboard.H"
-#include "Input.H"
 
 
 /*
@@ -75,9 +72,9 @@ int16_t Keyboard_Status(void)
 {
     int16_t keyboard_status;
 
-    // TODO  MD_Draw_Disable()
+    Save_Mouse_State();
 
-    if(g_Key_Pressed == ST_TRUE)
+    if(key_pressed == ST_TRUE)
     {
         keyboard_status = ST_TRUE;
     }
@@ -86,7 +83,7 @@ int16_t Keyboard_Status(void)
         keyboard_status = ST_FALSE;
     }
 
-    // TODO  MD_Draw_Restore()
+    Restore_Mouse_State();
 
     return keyboard_status;
 }
@@ -114,7 +111,7 @@ uint8_t Read_Key(void)
     int8_t return_key;
 
     // Clear the Keyboard Status ~== INT 16,10
-    g_Key_Pressed = ST_FALSE;
+    key_pressed = ST_FALSE;
 
     // treat 1-byte scan code and 1-byte character code as a 2-byte value
     // short int / int16_t

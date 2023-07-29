@@ -20,8 +20,8 @@
 #endif
 
 
-extern uint8_t g_Palette[];
-extern uint8_t g_Palette_XBGR[];
+// DELETE  extern uint8_t g_Palette[];
+// DELETE  extern uint8_t g_Palette_XBGR[];
 
 
 
@@ -59,13 +59,13 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
         *(p_Palette + 768 + itr) = 1;
     }
 
-    for(itr = start; itr < count; itr++)
-    {
-        *(p_Palette_XBGR + (start * 4) + (itr * 4) + 3) = 0x00;
-        *(p_Palette_XBGR + (start * 4) + (itr * 4) + 2) = (*(flic_palette_data + (start * 3) + (itr * 3) + 0) << 2);
-        *(p_Palette_XBGR + (start * 4) + (itr * 4) + 1) = (*(flic_palette_data + (start * 3) + (itr * 3) + 1) << 2);
-        *(p_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
-    }
+// DELETE      for(itr = start; itr < count; itr++)
+// DELETE      {
+// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 3) = 0x00;
+// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 2) = (*(flic_palette_data + (start * 3) + (itr * 3) + 0) << 2);
+// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 1) = (*(flic_palette_data + (start * 3) + (itr * 3) + 1) << 2);
+// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
+// DELETE      }
 
 }
 

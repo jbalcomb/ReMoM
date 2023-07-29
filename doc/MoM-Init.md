@@ -1,6 +1,59 @@
 
 
 
+
+¿ Main vs. Init ?
+
+MGC seg001
+WZD seg001
+
+MGC main()
+WZD main()
+
+SEEALSO: gDrive > SimTexUni > MoM-MGC-vs-WZD.gsheet > Main
+
+Almost as-is, just add Init_Platform()
+remove Load_Game_Update_WZD(), just use Load_Game_Update()
+move WZD Load_SAVE_GAM(8) and Load_Game_Update()
+separate WZD: Load_WZD_Resources() and MGC: Load_MGC_Resources(), Load_TERRSTAT(), Load_SPELLDAT()
+    Per-Screen
+shift down Menu_Screen_Control(), under Screen_Control()
+
+Now, ...
+    fold-in the TST/PoC code...
+
+~ MoM Main & MoX PFL & MsWin
+
+ditch MoM_main.C, MoM_Init.C, Win32_Main.cpp, Win32_Init.cpp, Win32_Evnt.cpp
+
+New Entry-Point:
+    Per Platform
+        dos_MoM  (dos_MGC.C, dos_WZD.C) || (MAGIC.C, WIZARDS.C)
+        win_MoM  + win_PFL.cpp/.hpp
+        sdl_MoM  + sdl_PFL.cpp/.hpp
+
+MoX_PFL
+    replace MoM_PFL & PoC_PFL
+
+.cpp/.hpp just for MS-Windows code?
+vs. .cpp/.hpp for Platform-Layer code?
+
+¿ VIDEO_MODE ?
+
+¿ MGC/WZD seg001 ?
+    ...would have just been in ~MAGIC.C/WIZARDS.C
+    ...so, now, would have just been in MoM.C
+    ...in MoO2, in MoX.C and MoX2.C
+    kinda like what I had meant for MoM_main.C
+    
+
+
+
+
+
+
+
+
 OG-MoM
 IBM-PC, VGA, MS-DOS, 16-bit, EMS, Segmented Memory, Base/Far Pointers
 dos_MGC.C/.H
@@ -214,7 +267,7 @@ Loads MAGIC.SET     ¿ Req'd: saves, save_name in ~Check_For_Saved_Games() ?
 
 ### MoM_Tables_Init()
 
-exact same in MGC& WZD
+exact same in MGC & WZD
 
 ¿ everything from a SAVE_GAM ? ¿ ~== World_Data ?
 

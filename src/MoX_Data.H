@@ -565,53 +565,6 @@ extern uint8_t COL_Banners[];
 
 
 
-// WZD dseg:291E                                                     BEGIN: ovr052
-// WZD dseg:291E
-// WZD dseg:291E                                                 Load/Init Main Game
-// WZD dseg:291E
-// WZD dseg:291E 4D 41 49 4E 2E 4C 42 58 00                      rsc01_MAIN_LBX db 'MAIN.LBX',0          ; DATA XREF: Load_Init_MainGame:loc_45FC8o
-// WZD dseg:291E                                                                                         ; should use dseg:29ef (reused in cud thrown/breath,
-// WZD dseg:291E                                                                                         ; with the first two bytes still free)
-// WZD dseg:2927 42 41 43 4B 47 52 4E 44 2E 4C 42 58 00          rsc02_BACKGRND_LBX db 'BACKGRND.LBX',0  ; DATA XREF: Load_Init_MainGame:loc_45FD2o
-// WZD dseg:2927                                                                                         ; should use dseg:29f4 (reused in cud thrown/breath)
-// WZD dseg:2934 55 4E 49 54 53 31 2E 4C 42 58 00                rsc03_UNITS1_LBX db 'UNITS1.LBX',0      ; DATA XREF: Load_Init_MainGame:loc_45FDCo
-// WZD dseg:2934                                                                                         ; should use dseg:2a1f (reused in cud thrown/breath)
-// WZD dseg:293F 55 4E 49 54 53 32 2E 4C 42 58 00                rsc04_UNITS2_LBX db 'UNITS2.LBX',0      ; DATA XREF: Load_Init_MainGame+26o
-// WZD dseg:293F                                                                                         ; should use dseg:2a26 (reused in cud thrown/breath)
-// WZD dseg:294A 55 4E 49 54 56 49 45 57 2E 4C 42 58 00          rsc05_UNITVIEW_LBX db 'UNITVIEW.LBX',0  ; DATA XREF: Load_Init_MainGame+30o
-// WZD dseg:294A                                                                                         ; should use dseg:2a59 (reused in cud thrown/breath)
-// WZD dseg:2957 53 50 45 43 49 41 4C 2E 4C 42 58 00             rsc06_SPECIAL_LBX db 'SPECIAL.LBX',0    ; DATA XREF: Load_Init_MainGame+3Ao
-// WZD dseg:2957                                                                                         ; should use dseg:2a62 (reused in cud thrown/breath)
-// WZD dseg:2963 53 50 45 43 49 41 4C 32 2E 4C 42 58 00          rsc07_SPECIAL2_LBX db 'SPECIAL2.LBX',0  ; DATA XREF: Load_Init_MainGame+44o
-// WZD dseg:2963                                                                                         ; should use dseg:2a6a (reused in cud thrown/breath)
-// WZD dseg:2970 49 54 45 4D 53 2E 4C 42 58 00                   rsc08_ITEMS_LBX db 'ITEMS.LBX',0        ; DATA XREF: Load_Init_MainGame+4Eo
-// WZD dseg:2970                                                                                         ; should use dseg:2a73 (reused in cud thrown/breath)
-// WZD dseg:297A 43 48 52 49 56 45 52 2E 4C 42 58 00             rsc09_CHRIVER_LBX db 'CHRIVER.LBX',0    ; DATA XREF: Load_Init_MainGame+58o
-// WZD dseg:297A                                                                                         ; should use dseg:2a3f (reused in cud thrown/breath)
-// WZD dseg:2986 49 54 45 4D 49 53 43 2E 4C 42 58 00             rsc0A_ITEMISC_LBX db 'ITEMISC.LBX',0    ; DATA XREF: Load_Init_MainGame+62o
-// WZD dseg:2986                                                                                         ; should use dseg:2a79 (first 9 bytes reused in cud
-// WZD dseg:2986                                                                                         ; thrown/breath, last 3 in word of recall at circle)
-// WZD dseg:2992 43 49 54 59 53 43 41 50 2E 4C 42 58 00          rsc0B_CITYSCAP_LBX db 'CITYSCAP.LBX',0  ; DATA XREF: Load_Init_MainGame+6Co
-// WZD dseg:2992                                                                                         ; should use dseg:2a50 (reused in recall at circle)
-
-// WZD dseg:299F                                                 Init_Terrain()
-// WZD dseg:299F 4D 41 50 42 41 43 4B 2E 4C 42 58 00             rsc0C_MAPBACK_LBX db 'MAPBACK.LBX',0
-extern char rsc0C_MAPBACK_LBX[];            // ; should use dseg:29e7 (reused in recall at circle)
-
-// WZD dseg:29AB 43 4D 42 4D 41 47 49 43 2E 4C 42 58 00          rsc0D_CMBMAGIC_LBX db 'CMBMAGIC.LBX',0  ; DATA XREF: Load_Init_MainGame+80o
-// WZD dseg:29AB                                                                                         ; should use dseg:2a2d
-// WZD dseg:29B8 43 4D 42 54 43 49 54 59 2E 4C 42 58 00          rsc0E_CMBTCITY_LBX db 'CMBTCITY.LBX',0  ; DATA XREF: Load_Init_MainGame+8Ao
-// WZD dseg:29B8                                                                                         ; should use dseg:2a36
-// WZD dseg:29C5 43 49 54 59 57 41 4C 4C 2E 4C 42 58 00          rsc0F_CITYWALL_LBX db 'CITYWALL.LBX',0  ; DATA XREF: Load_Init_MainGame+94o
-// WZD dseg:29C5                                                                                         ; should use dseg:2a47
-// WZD dseg:29D2                                                 Init_Terrain()
-// WZD dseg:29D2 54 45 52 52 41 49 4E 2E 4C 42 58 00             terrain_lbx_file db 'TERRAIN.LBX',0     ; DATA XREF: Terrain_Init+Bo ...
-// WZD dseg:29DE 54 45 52 52 53 54 41 54 00                      terrstat_lbx_file db 'TERRSTAT',0       ; DATA XREF: Terrain_Init+6Fo
-// WZD dseg:29E7 4D 41 50 42 41 43 4B 00                         mapback_lbx_file db 'MAPBACK',0         ; DATA XREF: Terrain_Init+E4o ...
-
-
-
-
 
 // MGC dseg:52C6
 // AKA gsa_WIZARDS_0to13

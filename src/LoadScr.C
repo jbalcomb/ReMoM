@@ -1,11 +1,10 @@
 
-#include "MoX_TYPE.H"
-
-#include "MoX_Data.H"
-#include "MoM_main.H"
+#include "MoX.H"
 
 #include "LoadScr.H"
 
+#include "MainScr.H"
+#include "MainScr_Maps.H"
 
 
 
@@ -109,4 +108,173 @@ void Loaded_Game_Update(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
+}
+
+
+// WZD o51p01
+// _main() |-> Loaded_Game_Update_WZD() |-> GAME_Overland_Init()
+// Load_Screen |-> [WZD ovr160] Loaded_Game_Update() |-> GAME_Overland_Init()
+/*
+    Does this not feel like ~ Init Main Screen?
+    There are a few oddities...
+        city buildings
+        staff lock flags
+        nominal skill calc
+        ! City Recalculate All - Main Screen needs that for the Resources Window
+        GFX_Swap_Cities(), which has a terribly misleading name, loads other screens stuff
+        ? G_WLD_StaticAssetRfrsh() Meh. More oddities...
+
+*/
+void GAME_Overland_Init(void)
+{
+    int16_t itr_cities;
+    int16_t itr_units;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_Overland_Init()\n", __FILE__, __LINE__);
+#endif
+
+
+    G_WLD_StaticAssetRfrsh();
+
+
+    itr_cities = 0;
+    while(itr_cities++ < _cities)
+    {
+        _CITIES[itr_cities].buildings.None = 0; // ? ~ enum City Building Status B_Replaced;
+    }
+
+
+    itr_units = 0;
+    while(itr_units++ < _units)
+    {
+        if(_UNITS[itr_units].world_plane == 2) {_UNITS[itr_units].world_plane = 0; }
+
+        // NOTE: the DASM thinks world_plane is passed here as well, but IsPassableTower() makes no xref to it
+        if(IsPassableTower(_UNITS[itr_units].world_x, _UNITS[itr_units].world_y) == ST_TRUE)
+        {
+            _UNITS[itr_units].In_Tower = ST_TRUE;
+        }
+        else
+        {
+            _UNITS[itr_units].In_Tower = ST_FALSE;
+        }
+
+    }
+
+
+    // TODO  skill_staff_lock_flag = 0;
+    // TODO  mana_staff_lock_flag = 0;
+    // TODO  research_staff_lock_flag = 0;
+
+    // _players[0].Nominal_Skill = Calc_Nominal_Skill(0);
+
+    // NIU?  CRP_OVL_MapWindowX = 0;
+    // NIU?  CRP_OVL_MapWindowY = 0;
+    _prev_world_x = 0;
+    _prev_world_y = 0;
+    // _curr_world_x = 0;
+    // _curr_world_y = 0;
+    _map_x = 0;
+    _map_y = 0;
+
+    // j_RP_WIZ_ReturnZero(_human_player_idx)
+
+    _unit = 0;  // 0: None / No Unit
+
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // // _active_world_x = _FORTRESSES[0].world_x;
+    // // _active_world_y = _FORTRESSES[0].world_y;
+    // OVL_Map_CenterX = _FORTRESSES[0].world_x;
+    // OVL_Map_CenterY = _FORTRESSES[0].world_y;
+    OVL_Map_CenterX = 24;
+    OVL_Map_CenterY = 16;
+
+    _unit_window_start_x = 247;
+    _unit_window_start_y = 79;
+
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // _world_plane = _FORTRESSES[0].world_plane;
+    // _map_plane = _FORTRESSES[0].world_plane;  // TODO(JimBalcomb,20230614): Why is this getting set to 100?
+    _map_plane = 0;
+
+
+    TILE_VisibilityUpdt();
+
+
+    Allocate_Reduced_Map();
+
+    // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _world_plane);
+    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
+    Center_Map(&_map_x, &_map_y, 24, 16, 0);
+
+    // TODO  Set_Unit_Draw_Priority();
+    // TODO  Reset_Stack_Draw_Priority();
+    // TODO  Set_Entities_On_Map_Window();
+
+    GFX_Swap_Cities();
+
+    // TODO  j_WIZ_NextIdleStack(_human_player_idx, &_curr_world_x, &_curr_world_y, &_world_plane)
+    // ; selects the next idle stack of the specified player,
+    // ; if any, moving any other stacks marked as going to
+    // ; while iterating over them
+
+    // j_RP_Empty_Load_FnA
+
+    // j_CTY_RecalculateAll
+    // ; calls CTY_Recalculate for all cities  ; (with all its BUGs)
+
+
+    // TODO  if(Check_Release_Version() != ST_FALSE)
+    // TODO  {
+    // TODO      // WZD s22p05
+    // TODO      RNG_SetSeed(0x2737, 0);  // LFSR_LO, LFSR_HI
+    // TODO      // ; sets the linear feedback shift register
+    // TODO  }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GAME_Overland_Init()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o51p02
+// Loaded_Game_Update_WZD()  |-> GAME_Overland_Init()
+// Loaded_Game_Update()    |-> GAME_Overland_Init()
+// GAME_Overland_Init()  |-> G_WLD_StaticAssetRfrsh()
+// NOTE: no XREFs to j_G_WLD_StaticAssetRfrsh()
+void G_WLD_StaticAssetRfrsh(void)
+{
+    int16_t itr_cities;
+    int16_t itr_players;
+
+//    RNG_TimerSeed();
+//    LFSR_HI = 0;
+//    LFSR_LO = 0x03E8;
+//    if(!Check_Release_Version())
+//    {
+//        RNG_SetSeed(LFSR_LO, LFSR_HI)
+//    }
+
+    all_units_moved = ST_FALSE;
+    // G_OVL_MapVar4 = 1;  // ? ST_TRUE ?
+    // Reset_Active_Stack_Draw()
+    _map_plane = 0;  // Arcanus
+
+//    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+//    {
+//        CTY_Recalculate(itr_cities);
+//    }
+
+//    for(itr_players = 0; itr_players < _num_players; itr_players++)
+//    {
+//        WIZ_RefreshResearch(itr_players);
+//    }
+
+//    _WIZ_SetPowerBases();
+
+//    SBK_SomePageSaveVar = 0;
+//    CMB_SpellBookPage = 0;
+//    SBK_Candidate_Page = 0;
+
 }

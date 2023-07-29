@@ -95,7 +95,7 @@ byte_ptr font_colors;  // 300h into the palette entry, 16 arrays of 16 colors
 
 byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
 byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
-byte_ptr p_Palette_XBGR;                        // STU/Win32
+// DELETE  byte_ptr p_Palette_XBGR;                        // STU/Win32
 
 
 
@@ -113,7 +113,7 @@ void Load_Font_File(char * font_file)
     palette_block          = Allocate_Space(348);    // 348 paragraphs = 386 * 16 bytes = 5568 bytes
     p_Palette              = Allocate_Space(64);     //  64 paragraphs =  64 * 16 bytes = 1024 bytes
     p_PaletteFlags         = p_Palette + (48 * 16);  // ~== p_PaletteFlags = &p_Palette[768];
-    p_Palette_XBGR         = Allocate_Space(64);     // STU/Win32  4 bytes per pixel * 256 colors / 16 bytes per paragraph
+// DELETE      p_Palette_XBGR         = Allocate_Space(64);     // STU/Win32  4 bytes per pixel * 256 colors / 16 bytes per paragraph
 
     for(itr = 0; itr < 768; itr++)
     {
@@ -123,10 +123,10 @@ void Load_Font_File(char * font_file)
     {
         *(p_PaletteFlags + itr) = 1;
     }
-    for(itr = 0; itr < 1024; itr++)
-    {
-        *(p_Palette_XBGR + itr) = 0;
-    }
+// DELETE       for(itr = 0; itr < 1024; itr++)
+// DELETE       {
+// DELETE           *(p_Palette_XBGR + itr) = 0;
+// DELETE       }
 
 }
 
@@ -813,13 +813,13 @@ void Load_Palette(int entry, int start_color, int end_color)
         *(p_Palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
     }
 
-    for(itr = 0; itr < color_count; itr++)
-    {
-        *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 3) = 0x00;
-        *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 2) = (*(palette_data + (color_start * 3) + (itr * 3) + 0) << 2);
-        *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 1) = (*(palette_data + (color_start * 3) + (itr * 3) + 1) << 2);
-        *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 0) = (*(palette_data + (color_start * 3) + (itr * 3) + 2) << 2);
-    }
+// DELETE      for(itr = 0; itr < color_count; itr++)
+// DELETE      {
+// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 3) = 0x00;
+// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 2) = (*(palette_data + (color_start * 3) + (itr * 3) + 0) << 2);
+// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 1) = (*(palette_data + (color_start * 3) + (itr * 3) + 1) << 2);
+// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 0) = (*(palette_data + (color_start * 3) + (itr * 3) + 2) << 2);
+// DELETE      }
 
     Set_Font(0, 0, 0, 0);
 
@@ -857,23 +857,27 @@ void Set_Palette_Changes(int start_color, int end_color)
 
 // WZD s21p01
 // MoO2: Refresh_Palette |-> Store_Palette_Block_
-void Apply_Palette(void)
-{
-
-    int16_t itr;
-
-    for(itr = 0; itr < 256; itr++)
-    {
-        if(*(p_Palette + 768 + itr) == 1)
-        {
-            *(g_Palette + itr) = *(p_Palette + itr);
-
-            *(g_Palette_XBGR + (itr * 4) + 3) = 0x00;
-            *(g_Palette_XBGR + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
-            *(g_Palette_XBGR + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);
-            *(g_Palette_XBGR + (itr * 4) + 0) = (*(p_Palette + (itr * 3) + 2) << 2);
-        }
-
-    }
-
-}
+// 1oom :: uipal.c :: void ui_palette_set_n(void)
+// AKA VGA_DAC_Write()
+// IBM-PC, VGA, MS-DOS: write to the VGA-DAC
+// MS-Windows: write to PFL-provded palette buffer
+// PLATFORM  void Apply_Palette(void)
+// PLATFORM  {
+// PLATFORM  
+// PLATFORM      int16_t itr;
+// PLATFORM  
+// PLATFORM      for(itr = 0; itr < 256; itr++)
+// PLATFORM      {
+// PLATFORM          if(*(p_Palette + 768 + itr) == 1)
+// PLATFORM          {
+// PLATFORM              *(g_Palette + itr) = *(p_Palette + itr);
+// PLATFORM  
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 3) = 0x00;
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 0) = (*(p_Palette + (itr * 3) + 2) << 2);
+// PLATFORM          }
+// PLATFORM  
+// PLATFORM      }
+// PLATFORM  
+// PLATFORM  }

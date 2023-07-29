@@ -1,15 +1,7 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
+#include "MoX.H"
 
-#include "MoM_PFL.H"
-
-#include "Allocate.H"
-#include "Fields.H"
-#include "Input.H"
-#include "Keyboard.H"
-#include "Mouse.H"
-#include "Video.H"
+#include <string.h>
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -172,9 +164,9 @@ char * field_names[FIELD_COUNT_MAX] = {
 
 
 
-uint8_t g_Key_Pressed = ST_FALSE;   // Platform - Decl in MoM.hpp
-uint16_t g_Last_Key_Pressed = 0;    // Platform - Decl in MoM.hpp
-uint16_t scan_code_char_code = 0;   // Platform - Decl in MoM.hpp
+// DELETE  uint8_t g_Key_Pressed = ST_FALSE;   // Platform - Decl in MoM.hpp
+// DELETE  uint16_t g_Last_Key_Pressed = 0;    // Platform - Decl in MoM.hpp
+// DELETE  uint16_t scan_code_char_code = 0;   // Platform - Decl in MoM.hpp
 
 
 
@@ -286,9 +278,19 @@ void Handle_Left_Click(void)
 // MGC s34p01
 /*
 
-@@EndOfTheClickRoad
-IDA Color #14 ~ DarkSkyBlue
-5 incoming branches
+ProgramPath (Button-Up) - @@EndOfTheClickRoad
+    IDA Color #14 ~ DarkSkyBlue
+    5 incoming branches
+
+
+ProgramPath - Nay KD, Yay MD, Nay Help, Nay Cancel, Yay Button, Yay Field
+Color #45  64,128,128  ~ Light Forest Green
+ProgramPath - Nay KD, Yay MD, Nay Help, Nay Cancel, Yay Button, Yay Field, YNM ft_ContinuousStringInput
+Color #15  128,128,192  ~ Light Grey-Purple
+
+
+ProgramPath - Mouse_Buffer()
+Color #34 128,64,0 ~PooEmoji Brown
 
 */
 int16_t Interpret_Mouse_Input(void)
@@ -301,7 +303,8 @@ int16_t Interpret_Mouse_Input(void)
     int16_t down_mouse_button;
     int16_t mouse_field;
     int16_t MD_ButtonStatus;
-    
+    uint16_t itr_continuous_string;
+
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
 // #endif
@@ -321,50 +324,23 @@ int16_t Interpret_Mouse_Input(void)
 
     if(Keyboard_Status() == ST_TRUE)  // MGC s33p16
     {
-//         DLOG("(Keyboard_Status() == ST_TRUE)");
         character = Interpret_Keyboard_Input(&field_num);  // MGC s34p22
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
-//     dbg_prn("DEBUG: [%s, %d] field_num: %d\n", __FILE__, __LINE__, field_num);
-// #endif
-
         /*
             Global Debug Keys
         */
-
-
-
     }
     else
     {
-//         DLOG("(Keyboard_Status() != ST_TRUE)");
-
         Mouse_Movement_Handler();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: Mouse_Movement_Handler()\n", __FILE__, __LINE__);
-//     dbg_prn("DEBUG: [%s, %d]: MD_GetButtonStatus(): %d\n", __FILE__, __LINE__, MD_GetButtonStatus());
-//     dbg_prn("DEBUG: [%s, %d]: Pointer_X(): %d\n", __FILE__, __LINE__, Pointer_X());
-//     dbg_prn("DEBUG: [%s, %d]: Pointer_Y(): %d\n", __FILE__, __LINE__, Pointer_Y());
-// #endif
-
-        
         if(MD_GetButtonStatus() != ST_FALSE)
         {
-//             DLOG("(MD_GetButtonStatus() != ST_FALSE)");
-
             MD_ButtonStatus = MD_GetButtonStatus();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: MD_ButtonStatus: %d\n", __FILE__, __LINE__, MD_ButtonStatus);
-// #endif
 
-            /*
-                Right Click for Help
-                OR
-                ¿ _global_esc ? */
-            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(_global_esc == ST_FALSE) { while(MD_GetButtonStatus = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
+            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(MD_GetButtonStatus = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
 
             // IDA: @@IDK_Loop_GetButtonStatus
             // Begin Block: Loop MD_GetButtonStatus()
+            // TODO  make this be the loop that it looks like - need some Input Field that makes use of the feature  e.g., Magic Screen Power Distribution Staves
             if(MD_GetButtonStatus() != 0)
             {
 
@@ -375,64 +351,144 @@ int16_t Interpret_Mouse_Input(void)
                 // Unused_Local == ST_UNDEFINED
                 character = 0;
                 field_num = Scan_Field();
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
-// #endif
 
+
+
+                /*
+                    BEGIN BLOCK: field_num = Scan_Field() != 0
+                */
                 if(field_num != 0)
                 {
+                    
+                    // Begin Block: field_num = Scan_Field() != 0 && != down_mouse_button
 
                     // Begin Block: Push_Field_Down()
-                    if(field_num != down_mouse_button)
+                    if(
+                        (field_num != down_mouse_button) &&
+                        (p_fields[field_num].type != ft_Input) &&
+                        (p_fields[field_num].type != ft_ContinuousStringInput) &&
+                        !( (down_mouse_button != ST_UNDEFINED) && (p_fields[field_num].type == ft_Grid) && (p_fields[down_mouse_button].type == ft_Grid) )
+                    )
                     {
-                        if(p_fields[field_num].type != ft_Input)
+                        if(p_fields[down_mouse_button].type == ft_Scroll)
                         {
-                            if(p_fields[field_num].type != ft_ContinuousStringInput)
-                            {
-                                if(down_mouse_button == ST_UNDEFINED)
-                                {
-                                    // ¿ (p_fields[field_num].type != ft_Grid) && (p_fields[down_mouse_button].type != ft_Grid) ?
-                                    
-                                    // if(p_fields[down_mouse_button].type == ft_Scroll)
-                                    // {
-                                    //     GUI_CallRedrawFn();
-                                    // }
-
-                                    Push_Field_Down(field_num, mouse_x, mouse_y);
-
-                                }
-                            }
+                            // Invoke_Auto_Function();  // TODO  get to getting the Magic Screen Power Distribution Staves in the mix
                         }
+
+                        Push_Field_Down(field_num, mouse_x, mouse_y);
+
                     }
                     // End Block: Push_Field_Down()
+
+                    // End Block: field_num = Scan_Field() != 0 && != down_mouse_button
+
+                    // HERE:    Nay KD, Yay MD, No Help, No Cancel, Yay Field, field_num !=/== down_mouse_button
+                    // Unhandled Conditions:
+                    //     field_num == down_mouse_button
+                    //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_Input)
+                    //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_ContinuousStringInput)
+                    //     (field_num != down_mouse_button) && (down_mouse_button != ST_UNDEFINED) && ¿ ... ?
+
+                    // Yay/Nay click on an edit field that is the active edit field
+                    // NOTE: In MoM, if you click off of an active edit field, it restores the string in the previous edit field and activates the new one
+                    //       the activation includes, e.g., for the save game name the arrow/marker icon and the blicking underscore cursor
+
+                    /*
+                        BEGIN BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                    */
+
+                    // if( 
+                    //     !(
+                    //         (p_fields[field_num].type != ft_ContinuousStringInput)
+                    //         && (input_field_active == ST_FALSE)
+                    //     )
+                    //     &&
+                    //     !(
+                    //         (p_fields[field_num].type == ft_ContinuousStringInput)
+                    //         && (input_field_active != ST_FALSE)
+                    //         && (field_num == active_input_field_number)
+                    //     )
+                    // )
 
                     if(p_fields[field_num].type != ft_ContinuousStringInput)
                     {
                         if(input_field_active == ST_FALSE)
                         {
-                            GUI_MouseFocusCtrl = field_num;
-                            if(GUI_ClickActivate == ST_FALSE)
-                            {
-                                // HERE: Re-Draw, cause your're gonna go back
-                                // if(MD_GetButtonStatus() != 0)
-                                // {
-                                //     GUI_NormalRedraw();
-                                // }
-                            }
-                            // else { ??? }
+                            // `DO NOTHING`
+                        }
+                        else  /* if(input_field_active != ST_FALSE) */
+                        {
+                            // `Exit Edit-State`
+                            
+                            // TODO  itr_continuous_string = 0;
+                            // TODO  while( (continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].Param5 < itr_continuous_string) )
+                            // TODO  {
+                            // TODO      itr_continuous_string++;
+                            // TODO  }
+                            // TODO  if(continuous_string[(itr_continuous_string - 1)] == '_')
+                            // TODO  {
+                            // TODO      itr_continuous_string--;
+                            // TODO  }
+                            // TODO  continuous_string[itr_continuous_string] = '\0';
+                            // TODO  strcpy((char *)p_fields[active_input_field_number].Param0, continuous_string);
+                            // TODO  input_field_active = ST_FALSE;
+                            // TODO  active_input_field_number = ST_UNDEFINED;
                         }
                     }
+                    else  /* if(p_fields[field_num].type == ft_ContinuousStringInput) */
+                    {
+                        if(input_field_active == ST_FALSE)
+                        {
+                            // `Enter Edit-State`
+                        }
+                        else  /* if(input_field_active != ST_FALSE) */
+                        {
+                            if(field_num == active_input_field_number)
+                            {
+                                // `DO NOTHING`
+                            }
+                            else /* if(field_num != active_input_field_number) */
+                            {
+                                // `Exit Edit-State`
+                                // `Enter Edit-State`
+                            }
+                        }
+                    }
+                    /*
+                        END BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                    */
+
+
+                    GUI_MouseFocusCtrl = field_num;  // MoO2: auto_input_variable
+
+                    // MoO2: mouse_auto_exit
+                    if(GUI_ClickActivate == ST_FALSE)
+                    {
+                        // HERE: Re-Draw, cause your're gonna go back
+                        if(MD_GetButtonStatus() != 0)
+                        {
+                            // Call_Auto_Function();
+                        }
+                    }
+
                 }
+                /*
+                    END BLOCK: field_num = Scan_Field() != 0
+                */
+
             }
-            // End Block: Loop MD_GetButtonStatus()
+            /*
+                END BLOCK: Loop MD_GetButtonStatus()
+            */
             // IDA: @@IDK_After_Loop_GetButtonStatus
 
-            // if(p_fields[GUI_MouseFocusCtrl].type == ft_Scroll)
-            // {
-            //     GUI_CallRedrawFn();
-            // }
 
-            GUI_MouseFocusCtrl = ST_FALSE;
+            if(p_fields[GUI_MouseFocusCtrl].type == ft_Scroll)
+            {
+                // Invoke_Auto_Function();
+            }
+
+            GUI_MouseFocusCtrl = 0;
 
             if(field_num != 0)
             {
@@ -506,18 +562,13 @@ int16_t Interpret_Mouse_Input(void)
         }
 
         // IDA: @@EndOfTheClickRoad
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: MD_GetButtonStatus(): %d\n", __FILE__, __LINE__, MD_GetButtonStatus());
-//     dbg_prn("DEBUG: [%s, %d]: Pointer_X(): %d\n", __FILE__, __LINE__, Pointer_X());
-//     dbg_prn("DEBUG: [%s, %d]: Pointer_Y(): %d\n", __FILE__, __LINE__, Pointer_Y());
-//     dbg_prn("DEBUG: [%s, %d]: Mouse_Button_Handler()\n", __FILE__, __LINE__);
-// #endif
+
         Mouse_Button_Handler();
         down_mouse_button = ST_UNDEFINED;
         switch(MD_ButtonStatus)
         {
             case 0: { field_num = 0; goto Done; } break;
-            case 1: { field_num = 0; goto Done; } break;
+            case 1: { field_num = field_num; goto Done; } break;
             case 2: { field_num = -field_num; goto Done; } break;
         }        
 
@@ -721,7 +772,7 @@ void Init_Mouse_Keyboard(int16_t input_type)
 //     VGA_SaveCursorArea(158, 100);
 //     input_delay = 0;
 //     down_mouse_button = ST_UNDEFINED;
-//     _global_esc = ST_FALSE;
+//     mouse_cancel_disabled = ST_FALSE;
 //     Clear_Fields();
 
     Set_Mouse_List(1, mouse_list_init);
@@ -731,7 +782,8 @@ void Init_Mouse_Keyboard(int16_t input_type)
     Save_Mouse_On_Page_(158, 100);
     input_delay = 0;
     down_mouse_button = ST_UNDEFINED;
-    _global_esc = ST_FALSE;
+    _global_esc = ST_FALSE;  // TODO  fixup the mixup of _global_esc with mouse_cancel_disabled
+    mouse_cancel_disabled = ST_FALSE;
     Clear_Fields();
 
 }
@@ -768,6 +820,9 @@ int16_t Get_Input_Delay(void)
 
 
 // WZD s36p85
+// drake178: GUI_SimplePageFlip()
+// AKA SCRN_SimplePageFlip()
+// MoO2  Module: video  Toggle_Pages()  &&  Module: MOX2  _TOGGLE_PAGES_
 void Toggle_Pages(void)
 {
     int16_t mouse_x;

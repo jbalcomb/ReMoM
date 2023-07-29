@@ -1,6 +1,5 @@
 #include <windows.h>
 #include "MoX.H"
-#include "MoM_Main.H"
 #include "PoC_PFL.H"
 #include "PoC_MsWin.hpp"
 #include <timeapi.h>    /* timeBeginPeriod() */

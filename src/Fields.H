@@ -73,8 +73,8 @@ struct s_Field
     int16_t Param0;     // Text@                   Min_Val  Str*    Parent
     int16_t Param1;     // Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
     int16_t Param2;     // State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
-    // int16_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
-    // int16_t Param4;     // MaxSlide      CStyle                                               ypos
+    // int16_t Param3;  // FullFrames    Align     MinSlide                 CBlock            xpos
+    // int16_t Param4;  // MaxSlide      CStyle                                               ypos
     int64_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
     int64_t Param4;     // MaxSlide      CStyle                                               ypos
     int16_t Param5;     // IMG_Seg       MaxLen    Orient                           MaxLen
@@ -124,7 +124,16 @@ struct s_Field
 // WZD dseg:8244 UU_GUI_ClickBuffVar1 dw 0               
 // WZD dseg:8246 UU_GUI_ClickBuffer@ dw 0                
 // WZD dseg:8248 UU_GUI_ClickBufCount dw 0               
-// WZD dseg:824A GUI_RedrawFn_Present dw 0               
+
+
+// WZD dseg:824A
+// drake178: GUI_RedrawFn_Present
+// AKA g_SCRN_RedrawFn_Present
+// AKA redraw_function_flag
+// MoO2  Module: fields  auto_active_flag
+// PRIVATE  extern uint16_t auto_active_flag;
+
+
 // WZD dseg:824C KD_prev_field_idx dw 0                  
 
 // WZD dseg:824E
@@ -141,7 +150,15 @@ extern int16_t down_y;
 
 // WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
 // WZD dseg:8258 GUI_DialogDirections dw 0               
-// WZD dseg:825A GUI_Redraw_Timer dw 2                   
+
+
+// WZD dseg:825A
+// drake178: GUI_Redraw_Timer
+// AKA g_SCRN_Redraw_Timer
+// AKA redraw_timer
+// MoO2  Module: fields  auto_function_delay
+// PIVATE  extern uint16_t auto_function_delay;
+
 
 // WZD dseg:825C
 // AKA mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
@@ -162,7 +179,8 @@ extern int16_t GUI_MouseFocusCtrl;
 // WZD dseg:8270 GUI_OnLastDialogLine dw 0               
 
 // WZD dseg:8272
-extern int16_t _global_esc;
+extern int16_t _global_esc;  // ERROR: mistook for mouse_cancel_disabled, for many moons
+extern int16_t mouse_cancel_disabled;
 
 // WZD dseg:8274
 extern int16_t GUI_ClickActivate;
@@ -218,7 +236,10 @@ extern int16_t active_input_field_number;
 // dseg:E874 GUI_Processed_Btns dw 0    
 // dseg:E876 GUI_Processed_LastY dw 0   
 // dseg:E878 GUI_Processed_LastX dw 0   
-// dseg:E87A GUI_EditString db 30 dup(0)
+
+// WZD dseg:E87A
+// drake178: GUI_EditString
+extern char continuous_string[];
 
 // WZD dseg:E898
 extern int16_t input_delay;
@@ -234,11 +255,36 @@ extern int16_t cursor_offset;
 // WZD dseg:E8A2
 extern int16_t fields_count;
 
-// dseg:E8A4 GUI_Prev_Redraw_Fn dd 0    
-// dseg:E8A8 GUI_Redraw_Function dd 0   
+
+
+// WZD dseg:E8A4 
+// drake178: GUI_Prev_Redraw_Fn
+// AKA gfp_GUI_Prev_Redraw_Fn
+// AKA gfp_CTRL_Prev_Redraw_Fn
+// MoO2  Module: fields  function2
+// PRIVATE  void (*function2)(void);
+
+// WZD dseg:E8A8
+// drake178: GUI_Redraw_Fn
+// AKA GUI_Redraw_Function
+// AKA gfp_GUI_Redraw_Function
+// AKA gfp_SCRN_Redraw_Function
+// AKA Redraw_Function
+// 1oom  void (*uiobj_callback)(void *) = NULL;
+// MoO2  Module: fields  function
+// PRIVATE  void (*function)(void);
+
+
 
 // WZD dseg:E8AC
 extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
+// MoO2  Module: fields
+// array (13750 bytes) sfields
+// Address: 02:001A8848
+// Num elements:  250, Type:        unsigned integer (4 bytes) 
+// 13750 / 250 = 55  sizeof(struct field)
+// Why the pointer `p_fields` if `sfields` is statically-allocated?
+
 
 /*
     WZD dseg:E8AC                           END: Fields - Uninitialized Data
@@ -257,6 +303,11 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 // WZD s36p08
 // TODO  void Set_Global_Esc(void);
+void Enable_Cancel(void);
+// WZD s36p09
+//drake178: UU_GUI_ClearEscOverride
+void Disable_Cancel(void);
+
 
 /*
     BEGIN: Help
@@ -325,12 +376,83 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y);
 
 
 
-// WZD s36p72
-// TODO  Push_Field_Down();
+
+// WZD s36p74
+// UU_GUI_SetDlgTitleHelp()
+
+// WZD s36p75
+// UU_GUI_ClearTitleHelp()
+
+
+// WZD s36p76
+// drake178: GUI_SetRedrawFn()
+// AKA Set_Redraw_Function()
+// AKA SCRN_Set_Redraw_Function()
+// AKA GUI_Set_Redraw_Function()
+// MoO2  Module: fields  Assign_Auto_Function()
+void Assign_Auto_Function(void (*auto_function)(void), uint16_t delay);
+
+
+// WZD s36p77
+// drake178: GUI_SaveRedrawFn()
+// AKA SCRN_SaveRedrawFn()
+// MoO2  Module: fields  Save_Auto_Function()
+void Save_Auto_Function(void);
+
+// WZD s36p78
+// drake178: GUI_LoadRedrawFn
+// AKA SCRN_LoadRedrawFn()
+// MoO2  Module: fields  Restore_Auto_Function()
+void Restore_Auto_Function(void);
+
+
+// WZD s36p79
+// drake178: GUI_DisableRedraw()
+// AKA Disable_Redraw_Function()
+// AKA SCRN_DisableRedraw()
+// MoO2  Module: fields  Deactivate_Auto_Function()
+void Deactivate_Auto_Function(void);
+
+// WZD s36p80
+// drake178: UU_GUI_EnableRedraw(void)
+// MoO2  Module: fields  Activate_Auto_Function()
+void UU_Activate_Auto_Function(void);
+
+
+// WZD s36p81
+// drake178: GUI_CallRedrawFn
+// AKA Call_Redraw_Function()
+// AKA SCRN_CallRedrawFn()
+// MoO2  Module: fields  Invoke_Auto_Function()
+void Invoke_Auto_Function(void);
+
+
+// WZD s36p82
+// drake178: 
+// AKA SCRN_Redraw_WaitOne
+// AKA GUI_Redraw_WaitOne()
+// AKA GUI_1TickRedraw()
+// MoO2  Module: fields  Quick_Call_Auto_Function()
+void Quick_Call_Auto_Function(void);
+
+
+// WZD s36p83
+// drake178: GUI_NormalRedraw()
+// AKA GUI_Redraw_WaitTimer
+// AKA SCRN_Redraw_WaitTimer
+// MoO2  Module: fields  Call_Auto_Function()
+void Call_Auto_Function(void);
+
+
+
+// WZD s36p84
+// drake178: UU_GUI_ExtClear()
+void UU_GUI_ExtClear(void);
+
+
 
 // WZD s36p85
 // INPUT  void Toggle_Pages(void);
-
 
 
 

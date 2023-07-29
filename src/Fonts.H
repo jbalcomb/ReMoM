@@ -38,6 +38,12 @@ struct s_FONT_HEADER
 
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
 // WZD dseg:783C
 // extern int16_toutline_color = 0;
 
@@ -46,14 +52,10 @@ extern byte_ptr mouse_palette;                         // MGC dseg:A81A    set i
 
 extern byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
 extern byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
-extern byte_ptr p_Palette_XBGR;                        // STU/Win32
+// DELETE  extern byte_ptr p_Palette_XBGR;                        // STU/Win32
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
 
 
 void Load_Font_File(char * font_file);
@@ -156,6 +158,7 @@ int16_t Get_String_Width(char * string);
 */
 
 // WZD s21p01
+// PLATFORM
 void Apply_Palette(void);
 
 

@@ -245,7 +245,8 @@ void FLIC_Draw_Frame_2x_XBGR(int16_t x_start, int16_t y_start, int16_t width, by
     dbg_prn("DEBUG: [%s, %d]: STU_TST: Validate_MAIN_LBX_000(): %d\n", __FILE__, __LINE__, Validate_MAIN_LBX_000_00(frame_data));
 #endif
 
-    p_XBGR = (uint32_t*)g_Palette_XBGR;
+    // DELETE  p_XBGR = (uint32_t*)g_Palette_XBGR;
+    p_XBGR = (uint32_t*)PFL_Palette;
 
     // bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
     // bbuff_pos = current_video_page + ((y_start * pitch) + x_start);

@@ -1,8 +1,5 @@
 
-#include "MoX_TYPE.H"
-#include "Video.H"
-#include "Mouse.H"  /* e_Cursor_Image; Get_Pointer_Image_Numeber(), Restore_Mouse_State(), Save_Mouse_State(); */
-#include "MoM_PFL.H"  /* Buffer; Render_VBB(); */
+#include "MoX.H"
 
 
 

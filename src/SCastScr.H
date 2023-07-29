@@ -8,14 +8,10 @@
     ovr070
 */
 
-
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
 
 
 /*
@@ -58,6 +54,5 @@ int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  /* SCASTSCR_H */

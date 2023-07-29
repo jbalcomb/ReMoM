@@ -1,6 +1,9 @@
 #ifndef LOADSCR_H
 #define LOADSCR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 WZD
@@ -11,12 +14,6 @@ Load_Screen_Help
 Loaded_Game_Update
 */
 
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    /* C and Asm Function Prototypes */
 
 
 /*
@@ -36,9 +33,22 @@ void Load_Screen_Help(void);
 void Loaded_Game_Update(void);
 
 
+/*
+    WIZARDS.EXE  ovr051
+*/
+
+// WZD o51p01
+// OON XREF: Loaded_Game_Update()
+void GAME_Overland_Init(void);
+
+// WZD o51p02
+// OON XREF: Loaded_Game_Update() |-> GAME_Overland_Init()
+void G_WLD_StaticAssetRfrsh(void);
+
+
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  /* LOADSCR_H */

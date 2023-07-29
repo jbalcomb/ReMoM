@@ -1,5 +1,16 @@
 
 
+
+
+DEPRECATED
+SEEALSO: MoX_Input.md
+
+
+
+
+
+
+
 WIZARDS.EXE
 seg035
 seg036
@@ -13,6 +24,20 @@ Help
 
 ? Data Segment ?
 
+
+
+
+
+20230725:
+#SRSLY Why are my notes on this so terribly bad?
+Interpret_Mouse_Input()
+    ¿¿¿
+        if Keyboard_Status()
+        else if MD_GetButtonStatus()
+        else if MD_GetClickRec1()
+        else
+    ???
+    ... else if MD_GetButtonStatus() ...
 
 
 

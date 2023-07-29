@@ -1,36 +1,11 @@
 
+#include "MoX.H"
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
 #include "MoM_DEF.H"
-#include "MoX_DBG.H"
-#include "MoX_Data.H"
-#include "MoX_GAM.H"
-#include "UNITTYPE.H"
-
-#include "MoM_main.H"
 
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 
-#include "Allocate.H"
-#include "FLIC_Draw.H"
-#include "Fields.H"
-#include "Fonts.H"
-#include "Graphics.H"
-#include "Input.H"
-#include "LBX_Load.H"
-#include "Mouse.H"
-#include "UnitMove.H"
-#include "Video.H"  /* Set_Page_Off() */
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-#include "TST_GameState.H"
-
-
-extern void Pump_Events(void);
 
 
 void Main_Screen_Load_Pictures(void);
@@ -968,8 +943,8 @@ void Main_Screen(void)
     Set_Outline_Color(0);  // ¿ NONE / TRANSPARENT ?
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-    // TODO  Disable_Redraw_Function();
-    // TODO  Set_Redraw_Function(j_Main_Screen_Draw, 1);
+    // Deactivate_Auto_Function();
+    // Assign_Auto_Function(Main_Screen_Draw, 1);
     // IDK   _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
     // IDK   _unit_window_start_y = 79;  // AKA OVL_STKUnitCards_Top
     // DONT  G_Some_OVL_Var_1 = 0;  // ? ST_FALSE ?
@@ -1006,7 +981,8 @@ void Main_Screen(void)
     leave_screen_flag = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
     {
-        // TODO  CLK_Save();
+
+        Mark_Time();
 
         /*
             BEGIN: Add Fields
@@ -1056,6 +1032,13 @@ void Main_Screen(void)
 
         input_field_idx = Get_Input();
 
+        if(quit_game_flag == ST_TRUE)
+        {
+            current_screen = scr_Quit_To_DOS;
+            leave_screen_flag = ST_TRUE;
+        }
+        else
+        {
 
 
 
@@ -1289,7 +1272,7 @@ void Main_Screen(void)
                 // PageFlip_FX();
                 // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
                 // TODO  USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
-                // Set_Redraw_Function(Main_Screen_Draw, 1);
+                // Assign_Auto_Function(Main_Screen_Draw, 1);
                 // Allocate_Reduced_Map();
                 // Set_Mouse_List_Normal();
                 // Reset_Active_Stack_Draw();
@@ -1516,7 +1499,7 @@ void Main_Screen(void)
     END: Check Input against Fields
 */
 
-
+        }
 
 
 
@@ -1533,17 +1516,15 @@ void Main_Screen(void)
             {
                 UU_first_turn_done_flag = ST_TRUE;
             }
-            // j_nulsub_D50FF();
-            // j_nulsub_87A9A();
+            // o146p04_Empty_pFxn();
+            // o108p03_Empty_pFxn();
             PageFlip_FX();
-            // TODO  CLK_Wait(1);
+            Release_Time(1);
         }
+        
         screen_changed = ST_FALSE;
 
-        // HACK: hard-coded to get back around to the Windows Message Loop
-        leave_screen_flag = ST_TRUE;
-        Pump_Events();
-    }
+    }  /* while(leave_screen_flag == ST_FALSE) */
 
     // TODO  Disable_Redraw_Function()
     // TODO  Deactivate_Help_List();
@@ -1821,7 +1802,8 @@ void Main_Screen_Reset(void)
 #endif
 
 // j_RP_LBX_Minimap_Alloc2         ; byte-identical to LBX_Minimap_Alloc, should not exist
-// Disable_Redraw_Function         ; disables any active redraw function
+// Deactivate_Auto_Function();
+
 // Clear_Fields                    ; resets the main GUI control variables, removing all
 // j_OVL_ResetStackDraw            ; sets the overland map drawing to renew everything on
 // j_UNIT_DrawPriorities           ; sets the draw priority field of each unit record
@@ -1832,7 +1814,7 @@ void Main_Screen_Reset(void)
 // call    j_OVL_SetUnitsOnMap             ; fills out the OVL_UnitsOnMap array with the unit or
 // j_CRP_GUI_NormalFullscreen      ; sets the Normal_Fullscreen window (GUI_SetWindows)
 // j_OVL_PrepMinimap               ; draws a minimap into the Minimap_IMG_Seg allocation
-// Set_Redraw_Function(Main_Screen_Draw, 1);
+// Assign_Auto_Function(Main_Screen_Draw, 1);
 // j_OVL_MapDrawRenew              ; ensures that any subsequent map drawing is treated as
 // Clear_Help_Fields               ; disables the context-based help by zeroing out its
 // j_Main_Screen_Help              ; loads and sets the GUI help entry area array for the

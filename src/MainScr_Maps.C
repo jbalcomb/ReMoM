@@ -1,82 +1,14 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoX_BITS.H"
+#include "MoX.H"
+
 #include "MoM_DEF.H"
 
-#include "MoX_Data.H"
-#include "UnitType.H"
-#include "UnitMove.H"
-
-#include "MoM_main.H"  /* current_screen */
-#include "MoX_RNG.H"
-#include "MoX_SET.H"
-
-#include "Explore.H"
-#include "FLIC_Draw.H"
-#include "Fonts.H"
-#include "Graphics.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "SCastScr.H"
 
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-#include "TST_GameState.H"
-
 #include <assert.h>
 
-
-
-// dseg:291E     BEGIN: ovr052
-// dseg:291E
-// dseg:291E Load/Init Main Game
-// dseg:291E
-// dseg:291E rsc01_MAIN_LBX db 'MAIN.LBX',0          ; should use dseg:29ef (reused in cud thrown/breath,
-// dseg:291E                                         ; with the first two bytes still free)
-// dseg:2927 rsc02_BACKGRND_LBX db 'BACKGRND.LBX',0  ; should use dseg:29f4 (reused in cud thrown/breath)
-// dseg:2934 rsc03_UNITS1_LBX db 'UNITS1.LBX',0      ; should use dseg:2a1f (reused in cud thrown/breath)
-// dseg:293F rsc04_UNITS2_LBX db 'UNITS2.LBX',0      ; should use dseg:2a26 (reused in cud thrown/breath)
-// dseg:294A rsc05_UNITVIEW_LBX db 'UNITVIEW.LBX',0  ; should use dseg:2a59 (reused in cud thrown/breath)
-// dseg:2957 rsc06_SPECIAL_LBX db 'SPECIAL.LBX',0    ; should use dseg:2a62 (reused in cud thrown/breath)
-// dseg:2963 rsc07_SPECIAL2_LBX db 'SPECIAL2.LBX',0  ; should use dseg:2a6a (reused in cud thrown/breath)
-// dseg:2970 rsc08_ITEMS_LBX db 'ITEMS.LBX',0        ; should use dseg:2a73 (reused in cud thrown/breath)
-// dseg:297A rsc09_CHRIVER_LBX db 'CHRIVER.LBX',0    ; should use dseg:2a3f (reused in cud thrown/breath)
-// dseg:2986 rsc0A_ITEMISC_LBX db 'ITEMISC.LBX',0    ; should use dseg:2a79 (first 9 bytes reused in cud
-// dseg:2986                                         ; thrown/breath, last 3 in word of recall at circle)
-// dseg:2992 rsc0B_CITYSCAP_LBX db 'CITYSCAP.LBX',0  ; should use dseg:2a50 (reused in recall at circle)
-// dseg:299F rsc0C_MAPBACK_LBX db 'MAPBACK.LBX',0    ; should use dseg:29e7 (reused in recall at circle)
-// dseg:29AB rsc0D_CMBMAGIC_LBX db 'CMBMAGIC.LBX',0  ; should use dseg:2a2d
-// dseg:29B8 rsc0E_CMBTCITY_LBX db 'CMBTCITY.LBX',0  ; should use dseg:2a36
-// dseg:29C5 rsc0F_CITYWALL_LBX db 'CITYWALL.LBX',0  ; should use dseg:2a47
-// dseg:29D2 Init_Terrain()
-// WZD dseg:29D2
-char terrain_lbx_file[] = "TERRAIN.LBX";
-// dseg:29DE terrstat_lbx_file db 'TERRSTAT',0
-// WZD dseg:29E7
-char mapback_lbx_file[] = "MAPBACK";
-// dseg:29EF Menu_Screen_Load_Pictures()
-// dseg:29EF main_lbx_file db 'MAIN',0
-// dseg:29F4 backgrnd_lbx_file db 'BACKGRND',0
-// dseg:29FD cnst_SOUNDFX_File db 'SOUNDFX',0
-// dseg:2A05 spelldat_lbx_file db 'SPELLDAT.LBX',0
-// dseg:2A12 cnst_BUILDDAT_File db 'BUILDDAT.LBX',0
-// dseg:2A1F cnst_Units1_File db 'UNITS1',0
-// dseg:2A26 cnst_Units2_File db 'UNITS2',0
-// dseg:2A2D cnst_CMBMAGIC_File db 'CMBMAGIC',0
-// dseg:2A36 cnst_CMBTCITY_File db 'CMBTCITY',0
-// dseg:2A3F cnst_CHRIVER_File db 'CHRIVER',0
-// dseg:2A47 cnst_CITYWALL_File db 'CITYWALL',0
-// dseg:2A50 cnst_CITYSCAP_File db 'CITYSCAP',0
-// dseg:2A59 cnst_UNITVIEW_File db 'UNITVIEW',0
-// dseg:2A62 cnst_SPECIAL1_File db 'SPECIAL',0
-// dseg:2A6A cnst_SPECIAL2_File db 'SPECIAL2',0
-// dseg:2A73 cnst_ITEMS_File db 'ITEMS',0
-// dseg:2A79 cnst_ITEMISC_File db 'ITEMISC',0
-// dseg:2A81 special2_lbx_file db 'special2',0       ; should use dseg:2a6a
-// dseg:2A81
-// dseg:2A81     END: ovr052
 
 
 // WZD dseg:6FF4                                                 BEGIN: ovr150
@@ -1186,10 +1118,10 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
             if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             {
                 square_explored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: curr_world_x, itr_world_y: %d %d\n", __FILE__, __LINE__, curr_world_x, itr_world_y);
-    dbg_prn("DEBUG: [%s, %d]: square_explored_flag: %d\n", __FILE__, __LINE__, square_explored_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: curr_world_x, itr_world_y: %d %d\n", __FILE__, __LINE__, curr_world_x, itr_world_y);
+//     dbg_prn("DEBUG: [%s, %d]: square_explored_flag: %d\n", __FILE__, __LINE__, square_explored_flag);
+// #endif
                 // TODO(JimBalcomb,20230703): figure out why this additional `cmp 0F` is here - I haven't seen it anywhere else
                 // actually, ¿ 15, cause there's 14 picts ?
                 if( (square_explored_flag != ST_FALSE) && (square_explored_flag != 0x0F) )
