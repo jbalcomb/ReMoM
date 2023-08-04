@@ -6,7 +6,10 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 #include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
 #include <STDIO.H>      /* FILE; fclose(), fopen() */
 #include <STDLIB.H>     /* exit() */
+// C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt\corecrt_wstdio.h
+// C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h
 
+#include "STU_TYPE.H"
 #include "STU_DBG.H"
 #include "STU_UTIL.H"   /* get_datetime() */
 
@@ -16,6 +19,40 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
     ¿ Game-State Debug Variables ?
 */
 int DBG_Draw_Map_Cities = 0;
+int DBG_TST_Made_Map_Move = 0;
+int DBG_TST_Selected_Stack = 0;
+int DBG_TST_Validate_Entities = 0;  // test is _UNITS[55] ? wx,wy,wp 
+
+int DBG_TST_Set_Entities_On_Map_Window = 0;
+int DBG_TST_Select_Unit_Stack = 0;
+int DBG_TST_Build_Unit_Stack = 0;
+int DBG_TST_Draw_Map_Units = 0;
+
+int16_t DBG_TST_unit_stack[18] =
+{
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0, 
+    0, 0
+};
+int16_t DBG_TST_entities_on_movement_map[120] =
+{
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 /*
     ¿ Game-State Debug Variables ?
 */

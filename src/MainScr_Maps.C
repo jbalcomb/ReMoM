@@ -11,6 +11,16 @@
 
 
 
+/*
+    Forward Declare Private Functions
+*/
+
+// WZD o68p04
+void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+
+
+
 // WZD dseg:6FF4                                                 BEGIN: ovr150
 
 // WZD dseg:6FF4
@@ -263,40 +273,37 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         }
     }
 
+#ifdef STU_DEBUG
+    if(DBG_TST_Made_Map_Move == 1 && map_moved_flag != ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE (DBG_Made_Map_Move == 1 && map_moved_flag != ST_TRUE)\n", __FILE__, __LINE__);
+    }
+    if(DBG_TST_Made_Map_Move == 1 && map_moved_flag == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_SUCCESS (DBG_Made_Map_Move == 1 && map_moved_flag == ST_TRUE)\n", __FILE__, __LINE__);
+        DBG_TST_Validate_Entities = 1;
+    }
+#endif
     if(map_moved_flag == ST_TRUE)
     {
+        DLOG("(map_moved_flag == ST_TRUE)");
         Set_Unit_Draw_Priority();
         Reset_Stack_Draw_Priority();
-//         // TEST
-//         Clear_Square_Scouted_Flags(map_plane);
-// //         Set_Square_Scouted(0,0,0);
-// //         // Check_Square_Scouted(0,0,0);
-// //         // square_scouted_flag = Test_Bit_Field(world_square_idx, square_scouted_p0);
-// // #ifdef STU_DEBUG
-// //         // dbg_prn("DEBUG: [%s, %d]: Check_Square_Scouted(0,0,0): %d\n", __FILE__, __LINE__, Check_Square_Scouted(0,0,0));
-// //         dbg_prn("DEBUG: [%s, %d]: Test_Bit_Field(0, square_scouted_p0): %d\n", __FILE__, __LINE__, Test_Bit_Field(0, square_scouted_p0));
-// // #endif
-// //         UU_Clear_Square_Scouted(0,0,0);
-// // #ifdef STU_DEBUG
-// //         // dbg_prn("DEBUG: [%s, %d]: Check_Square_Scouted(0,0,0): %d\n", __FILE__, __LINE__, Check_Square_Scouted(0,0,0));
-// //         dbg_prn("DEBUG: [%s, %d]: Test_Bit_Field(0, square_scouted_p0): %d\n", __FILE__, __LINE__, Test_Bit_Field(0, square_scouted_p0));
-// // #endif
-// //         Set_Square_Scouted(l_map_x, l_map_y, map_plane);
-// //         Set_Square_Scouted(l_map_x+1, l_map_y, map_plane);
-// //         Set_Square_Scouted(l_map_x, l_map_y+1, map_plane);
-// //         Set_Square_Scouted(l_map_x+1, l_map_y+1, map_plane);
-//         // Set_Square_Scouted_Flags(l_map_x, l_map_y, map_plane, 3);
-//         Set_Square_Scouted_Flags(l_map_x, l_map_y, map_plane, 30);
-//         Validate_Square_Scouted(l_map_x, l_map_y, map_plane);
         Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
-        // // TEST
-        // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
-        // Validate_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
+
         if(player_idx == _human_player_idx)
         {
             _map_x = l_map_x;
             _map_y = l_map_y;
         }
+#ifdef STU_DEBUG
+    DBG_TST_Made_Map_Move = 0;
+    DBG_TST_Validate_Entities = 0;
+#endif
+    }
+    else
+    {
+        DLOG("(map_moved_flag != ST_TRUE)");
     }
     /*
         END: Map-Moved!!
@@ -316,7 +323,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 
 
     // j_OVL_RedrawScouting(x, y, map_width, map_height, l_map_x, l_map_y, map_plane);
-
+    Redraw_Map_Unexplored_Area(screen_x,screen_y, map_width, map_height, l_map_x, l_map_y, map_plane);
 
     Reset_Window();
 
@@ -324,7 +331,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     *map_y = l_map_y;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Maps(screen_x = %d, screen_y = %d, map_width = %d, map_height = %d , *map_x = %d, *map_y = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_width, map_height, *map_x, *map_y, map_plane, xpos, ypos, player_idx);
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Maps(screen_x = %d, screen_y = %d, map_width = %d, map_height = %d , *map_x = %d, *map_y = %d, map_plane = %d, xpos = %d, ypos = %d, player_idx = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_width, map_height, *map_x, *map_y, map_plane, xpos, ypos, player_idx);
 #endif
 
 }
@@ -386,7 +393,7 @@ void Set_Draw_Active_Stack_Never(void)
 // Reset_Active_Stack_Draw
 void Reset_Draw_Active_Stack(void)
 {
-    if( (all_units_moved == 0) && (_unit_stack_count == 0) )
+    if( (all_units_moved == ST_FALSE) && (_unit_stack_count > 0) )
     {
         draw_active_stack_flag = 0;
     }
@@ -416,82 +423,86 @@ when always draw (-1) is set for OVL_ActiveStackDraw
     int16_t first_active_stack_unit_idx;
     int16_t unit_xw;
     int16_t unit_yw;
-    int16_t unit_idx;  // ? DNE ?
+    int16_t unit_idx;
     int16_t itr_unit_stack_count;
 
-    unit_idx = _unit_stack[0].unit_idx;
 
-    if(
-        (draw_active_stack_flag != -2) &&
-        (_UNITS[unit_idx].owner_idx != ST_UNDEFINED) &&
-        ( (_UNITS[unit_idx].world_plane == world_plane) || (_UNITS[unit_idx].In_Tower == ST_TRUE) )
-    )
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
     {
-        unit_xw = _UNITS[unit_idx].world_x;
-        unit_yw = _UNITS[unit_idx].world_y;
+        dbg_prn("DEBUG: [%s, %d]: Draw_Active_Unit_Stack()  (DBG_TST_Selected_Stack == 1)\n", __FILE__, __LINE__);
+    }
+#endif
 
-        in_view = World_To_Screen(mmap_xw, mmap_yw, &unit_xw, &unit_yw);
 
-        // not never, not always, so must be set for draw-cycling, so increment the cycle
-        if(draw_active_stack_flag != -1)  /* always draw */
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: draw_active_stack_flag: %d\n", __FILE__, __LINE__, draw_active_stack_flag);
+    dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].owner_idx: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].owner_idx);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].world_plane: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].world_plane);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].In_Tower: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].In_Tower);
+    dbg_prn("DEBUG: [%s, %d]: world_plane: %d\n", __FILE__, __LINE__, world_plane);
+#endif
+
+
+    if(draw_active_stack_flag != -2)
+    {
+        if((_UNITS[_unit_stack[0].unit_idx].owner_idx != ST_UNDEFINED))
         {
-            draw_active_stack_flag = ((draw_active_stack_flag + 1) % 8);
-        }
-
-        /*
-            WTF, Mate?!?
-
-                ...test success is the jump branch...
-
-                draw_active_stack_flag == -1
-                draw_active_stack_flag > 3
-                    one must pass, both can't fail ... OR
-                
-                draw_active_stack_flag != -1
-                entities_on_movement_map[] == -1
-                draw_active_stack_flag != -1
-                    one must pass, all can't fail ... OR
-
-                if( ((...)||(...) && ((...)||(...)||(...)) )
-                So, ...
-                    if 1of2 & 1of3 ...
-            ...
-            WRONG!!!!!
-        */
-        // Test 1: not set to always draw, but is in a draw phase
-        // Test 2: is set to always, but there is no entity at our calculated coordinates
-        // Test 3: is within the boundaries of the movement map
-        if( 
-            ( (draw_active_stack_flag != -1) && (draw_active_stack_flag > 3) ) ||
-            ( (draw_active_stack_flag == -1) && (entities_on_movement_map[( ((unit_xw - mmap_yw) * 24) + (unit_yw * 2) )] == -1) )
-        )
-        {
-                /*
-                    //drake178
-                    BUG: variable type mismatch - these coordinates
-                    have already been converted into pixel draw
-                    coordinates and can't be used to index into the array
-                */
-            if(in_view == ST_TRUE)
+            unit_idx = _unit_stack[0].unit_idx;
+            if( (_UNITS[_unit_stack[0].unit_idx].world_plane == world_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
             {
-                first_active_stack_unit_idx = 0;
-                for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+                unit_xw = _UNITS[unit_idx].world_x;
+                unit_yw = _UNITS[unit_idx].world_y;
+                in_view = World_To_Screen(mmap_xw, mmap_yw, &unit_xw, &unit_yw);
+
+                // not never, not always, so must be set for draw-cycling, so increment the cycle
+                if(draw_active_stack_flag != -1)  /* always draw */
                 {
-                    if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
-                    {
-                        first_active_stack_unit_idx = itr_unit_stack_count;
-                        break;
-                    }
+                    draw_active_stack_flag = ((draw_active_stack_flag + 1) % 8);
                 }
-                unit_idx = _unit_stack[first_active_stack_unit_idx].unit_idx;
-                Draw_Unit_Picture(unit_xw, unit_yw, unit_idx, 2);
+
+                if((draw_active_stack_flag == -1) || (draw_active_stack_flag > 3))  /* always draw OR draw if counter is {4,5,6,7} */
+                {
+                    /*
+                        WTF?
+                        
+                        draw_active_stack_flag != -1
+                        && draw_active_stack_flag != -1
+                        OR
+                        draw_active_stack_flag == -1
+                        && entities_on_movement_map != -1
+                        OR
+                        draw_active_stack_flag == -1
+                        && entities_on_movement_map == -1
+                        && draw_active_stack_flag == -1
+
+                        if ... entities_on_movement_map[ ( ((unit_yw - mmap_yw) * MAP_WIDTH) + unit_xw ) ]; ==/!= ST_UNDEFINED
+                    */
+
+                    if(in_view == ST_TRUE)
+                    {
+                        first_active_stack_unit_idx = 0;
+                        for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+                        {
+                            if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+                            {
+                                first_active_stack_unit_idx = itr_unit_stack_count;
+                                break;
+                            }
+                        }
+                        unit_idx = _unit_stack[first_active_stack_unit_idx].unit_idx;
+                        Draw_Unit_Picture(unit_xw, unit_yw, unit_idx, 2);  /* 2: Nay status text; Nay Grayscale; Yay owner background banner color; enchantment outline? invisible? */
+                    }
+                    unit_idx = _unit_stack[0].unit_idx;
+                    Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
+                }
+
+
+
 
             }
-
-            unit_idx = _unit_stack[0].unit_idx;
-
-            Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
-
         }
     }
 
@@ -566,6 +577,13 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
 #endif
 
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: Set_Entities_On_Map_Window()  (DBG_TST_Selected_Stack == 1)\n", __FILE__, __LINE__);
+    }
+#endif
+
     city_in_view = ST_FALSE;
     entity_world_y = 0;
     entity_world_x = 0;
@@ -585,7 +603,33 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         entity_world_y = _UNITS[itr_units].world_y;
         entity_world_p = _UNITS[itr_units].world_plane;
         square_is_scouted = Check_Square_Scouted(entity_world_x, entity_world_y, world_plane);
-        
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        if(entity_owner_idx != _human_player_idx)
+        {
+            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_owner_idx: %d\n", __FILE__, __LINE__, entity_owner_idx);
+        }
+        if(entity_world_x != 19)
+        {
+            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_x: %d\n", __FILE__, __LINE__, entity_world_x);
+        }
+        if(entity_world_y != 10)
+        {
+            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_y: %d\n", __FILE__, __LINE__, entity_world_y);
+        }
+        if(entity_world_p != 0)
+        {
+            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_p: %d\n", __FILE__, __LINE__, entity_world_p);
+        }
+
+        if(square_is_scouted != ST_TRUE)
+        {
+            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: square_is_scouted: %d\n", __FILE__, __LINE__, square_is_scouted);
+        }
+    }
+#endif
+
         if(entity_owner_idx != ST_UNDEFINED)
         {
             if(square_is_scouted == ST_TRUE)
@@ -612,10 +656,20 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
                             prior_entity_idx = entities_on_movement_map[entity_table_idx];
 
+                            /*
+                                Add UNIT to entities_on_movement_map[]
+                            */
                             if(prior_entity_idx != ST_UNDEFINED)
                             {
                                 if(_UNITS[itr_units].Draw_Priority > _UNITS[prior_entity_idx].Draw_Priority)
                                 {
+                                    // Add UNIT to entities_on_movement_map[]
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
+    }
+#endif
                                     entities_on_movement_map[entity_table_idx] = itr_units;
                                 }
                             }
@@ -623,12 +677,26 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                             {
                                 if(_UNITS[itr_units].Draw_Priority > 0)
                                 {
+                                    // Add UNIT to entities_on_movement_map[]
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
+    }
+#endif
                                     entities_on_movement_map[entity_table_idx] = itr_units;
                                 }
                                 else
                                 {
-                                    if( (_UNITS[itr_units].Draw_Priority == 0) && (draw_active_stack_flag != ST_UNDEFINED) )
+                                    if( (_UNITS[itr_units].Draw_Priority == 0) && (draw_active_stack_flag == -1) )  /* ALWAYS draw active stack */
                                     {
+                                        // Add UNIT to entities_on_movement_map[]
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
+    }
+#endif
                                         entities_on_movement_map[entity_table_idx] = itr_units;
                                     }
                                 }
@@ -676,6 +744,23 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
     }
 
+#ifdef STU_DEBUG
+    if(DBG_TST_Validate_Entities == 1)
+    {
+        DLOG("(DBG_TST_Validate_Entities == 1)");
+        for(itr_map_y = 0; itr_map_y < MAP_HEIGHT; itr_map_y++)
+        {
+            for(itr_map_x = 0; itr_map_x < MAP_WIDTH; itr_map_x++)
+            {
+                // if(entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x] != DBG_TST_entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x])
+                // {
+                //     dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entities_on_movement_map[] != DBG_TST_entities_on_movement_map[]\n", __FILE__, __LINE__);
+                // }
+            }
+        }
+    }
+    DBG_TST_Validate_Entities = 0;
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
@@ -688,7 +773,7 @@ void Set_Unit_Draw_Priority(void)
     int16_t draw_priority;
     int16_t itr_units;
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_DrawPriorities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Unit_Draw_Priority()\n", __FILE__, __LINE__);
 #endif
 
     for(itr_units = 0; itr_units < _units; itr_units++)
@@ -721,7 +806,7 @@ void Set_Unit_Draw_Priority(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: UNIT_DrawPriorities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Set_Unit_Draw_Priority()\n", __FILE__, __LINE__);
 #endif
 }
 
@@ -755,19 +840,23 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
     int16_t tmp_map_x;
     int16_t tmp_map_y;
 
-    if(world_gird_x >= 60)
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Center_Map(*map_x, *map_y, world_gird_x, world_grid_y, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_gird_x, world_grid_y, world_plane);
+#endif
+
+    if(world_gird_x >= WORLD_WIDTH)
     {
-        world_gird_x -= 60;
+        world_gird_x -= WORLD_WIDTH;
     }
     if(world_gird_x < 0)
     {
-        world_gird_x += 60;
+        world_gird_x += WORLD_WIDTH;
     }
 
     *map_x = world_gird_x - MAP_WIDTH_HALF;
     if(*map_x <= 0)
     {
-        *map_x = ((*map_x + 60) / 60);
+        *map_x = ((*map_x + WORLD_WIDTH) / WORLD_WIDTH);
     }
 
     *map_y = world_grid_y - MAP_HEIGHT_HALF;
@@ -776,9 +865,9 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
         *map_y = 0;
     }
 
-    if(*map_y + 10 >= 40)
+    if(*map_y + MAP_HEIGHT >= WORLD_HEIGHT)
     {
-        *map_y = 30;  // 40 - 10  World Width - Map Width
+        *map_y = (WORLD_HEIGHT - MAP_HEIGHT);  // 40 - 10  World Height - Map Height
     }
 
     _prev_world_x = *map_x;
@@ -787,18 +876,13 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
     // NIU CRP_OVL_MapWindowX = G_OVL_MapDisplay_X * TILE_WIDTH;
     // NIU CRP_OVL_MapWindowY = G_OVL_MapDisplay_Y * TILE_HEIGHT;
     
-// j_UNIT_DrawPriorities
-// ; sets the draw priority field of each unit record
-// ; based on attack strength, transport capability, and
-// ; visibility (in the case of AI units)
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(*map_x, *map_y, world_plane);
 
-// j_STK_NoUnitDraw
-// ; set the draw priority of all units in the active
-// ; unit stack to zero
-
-// j_OVL_SetUnitsOnMap(*map_x, *map_y, plane_);
-// ; fills out the OVL_UnitsOnMap array with the unit or
-
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Center_Map(*map_x, *map_y, world_gird_x, world_grid_y, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_gird_x, world_grid_y, world_plane);
+#endif
 }
 
 // WZD o68p03
@@ -852,6 +936,81 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
 #endif
 
 }
+
+
+// WZD o68p04
+// drake178: OVL_RedrawScouting()
+void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t itr_screen_x;
+    int16_t itr_screen_y;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t curr_world_x;
+    uint16_t terrain_001_index;
+    uint8_t terrain_001_0;
+    uint8_t animated_terrain_flag;
+    uint8_t square_explored_flag;
+    SAMB_ptr unexplored_mask_pict_seg;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Redraw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+    itr_screen_y = screen_y;
+    itr_world_y = world_grid_y;
+    while(world_grid_y + map_grid_height > itr_world_y)
+    {
+        itr_screen_x = screen_x;
+        itr_world_x = world_grid_x;
+        while(world_grid_x + map_grid_width > itr_world_x)
+        {
+            if(itr_world_x < WORLD_WIDTH)
+            {
+                curr_world_x = itr_world_x;
+            }
+            else
+            {
+                curr_world_x = itr_world_x - WORLD_WIDTH;
+            }
+
+            terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            terrain_001_0 = GET_1B_OFS(terrain_lbx_001, (terrain_001_index * 2) + 0);
+
+            animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
+
+            // if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
+            // {
+                square_explored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+
+                if( (square_explored_flag != 0) && (square_explored_flag != 15) )
+                {
+                    unexplored_mask_pict_seg = unexplored_mask_seg[square_explored_flag - 1];
+                    FLIC_Draw(itr_screen_x, itr_screen_y, unexplored_mask_pict_seg);
+                }
+            // }
+            // NOTE: not in Draw_Map_Unexplored_Area(), but in Draw_Map_Terrain(), which uses Fill()
+            if(square_explored_flag == 0)
+            {
+                Clipped_Fill(itr_screen_x, itr_screen_y, (itr_screen_x + SQUARE_WIDTH - 1), (itr_screen_y + SQUARE_HEIGHT - 1), 0);
+            }
+
+
+            itr_screen_x += SQUARE_WIDTH;
+            itr_world_x += 1;
+        }
+
+        itr_screen_y += SQUARE_HEIGHT;
+        itr_world_y += 1;
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Redraw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
+#endif
+
+}
+
 
 
 /*
@@ -996,6 +1155,8 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
                 terrain_001_0 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 0);
                 terrain_001_1 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 1);
 
+                assert( (terrain_001_0 == 0 && terrain_001_1 >= 2) || (terrain_001_0 != 0) );
+
                 map_draw_full = ST_TRUE;
                 if( ((terrain_001_0 & 0x80) == 0) || (map_draw_full == ST_TRUE) )
                 {
@@ -1086,6 +1247,12 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Unexplored_Area(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y, world_plane);
 #endif
 
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Unexplored_Area (DBG_TST_Selected_Stack == 1)\n", __FILE__, __LINE__);
+    }
+#endif
 
     itr_screen_y = screen_y;
     itr_world_y = world_grid_y;
@@ -1106,25 +1273,16 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
 
             terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
             terrain_001_0 = GET_1B_OFS(terrain_lbx_001, (terrain_001_index * 2) + 0);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_index: 0x%04X %d\n", __FILE__, __LINE__, terrain_001_index, terrain_001_index);
-//     dbg_prn("DEBUG: [%s, %d]: terrain_001_0: 0x%02X %d\n", __FILE__, __LINE__, terrain_001_0, terrain_001_0);
-// #endif
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: animated_terrain_flag: 0x%02X %d\n", __FILE__, __LINE__, animated_terrain_flag, animated_terrain_flag);
-// #endif
+
+
+            // HERE: Redraw_Map_Unexplored_Area() does not test m_draw_full or animated terrain type bit
 
             if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             {
                 square_explored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: curr_world_x, itr_world_y: %d %d\n", __FILE__, __LINE__, curr_world_x, itr_world_y);
-//     dbg_prn("DEBUG: [%s, %d]: square_explored_flag: %d\n", __FILE__, __LINE__, square_explored_flag);
-// #endif
-                // TODO(JimBalcomb,20230703): figure out why this additional `cmp 0F` is here - I haven't seen it anywhere else
-                // actually, ¿ 15, cause there's 14 picts ?
-                if( (square_explored_flag != ST_FALSE) && (square_explored_flag != 0x0F) )
+
+                if( (square_explored_flag != 0) && (square_explored_flag != 15) )
                 {
                     unexplored_mask_pict_seg = unexplored_mask_seg[square_explored_flag - 1];
                     FLIC_Draw(itr_screen_x, itr_screen_y, unexplored_mask_pict_seg);
@@ -1949,6 +2107,16 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Units(screen_x = %d, screen_y = %d, map_grid_width = %d, map_grid_height = %d, world_grid_x = %d, world_grid_y = %d)\n", __FILE__, __LINE__, screen_x, screen_y, map_grid_width, map_grid_height, world_grid_x, world_grid_y);
 #endif
 
+#ifdef STU_DEBUG
+    if(DBG_TST_Draw_Map_Units == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Map_Units()  (DBG_TST_Draw_Map_Units == 1)\n", __FILE__, __LINE__);
+
+    }
+#endif
+
+
+
     if(map_grid_width == 3)
     {
         map_start_x = world_grid_x - _map_x;
@@ -1979,6 +2147,13 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
             // unit_idx = entities_on_movement_map[ ((itr_map_y + map_start_y) * MAP_WIDTH) + (itr_map_x + map_start_x) ];
             entities_index = ( ((itr_map_y + map_start_y) * MAP_WIDTH) + (itr_map_x + map_start_x) );
             unit_idx = entities_on_movement_map[entities_index];
+#ifdef STU_DEBUG
+    if(DBG_TST_Selected_Stack == 1)
+    {
+        if(unit_idx == 55 || unit_idx == 536 || unit_idx == 828)
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
+    }
+#endif
 
             if( (unit_idx != ST_UNDEFINED) && (unit_idx < 1000) )
             {

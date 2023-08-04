@@ -1,6 +1,8 @@
 
 #include "MoX.H"
 
+#include <string.h>  /* memset() */
+
 /*
     MGC o57p01 (1of1)
     WZD o152p01 (1of1)
@@ -45,16 +47,20 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // used to load all 198 StatFigs from UNIT1.LBX and UNITS2.LBX 
     /// lots of XREFs from City, Cmb, SplBk, ...
 
+    // tmp_World_Data_Paras = 3519;
     tmp_World_Data_Paras = 3519;
+
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);
+
     // also used for COMBAT.TMP
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
 
     // 714 paragraphs = 16 * 714 = 11,424 bytes
     _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
-    // 602 paragraphs = 16 * 602 = 9632 bytes
-    _world_maps = Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
+
+                                                                        // 602 paragraphs = 16 * 602 = 9632 bytes
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
 
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes

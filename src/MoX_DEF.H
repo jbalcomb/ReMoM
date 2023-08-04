@@ -42,10 +42,17 @@
 // World (Grid) Dimensions, in Map Sqaures
 #define WORLD_WIDTH         60
 #define WORLD_HEIGHT        40
+#define MAP_WIDTH           12
+#define MAP_HEIGHT          10
 #define MOVEMENT_MAP_WIDTH  12
 #define MOVEMENT_MAP_HEIGHT 10
 #define REDUCED_MAP_WIDTH   58
 #define REDUCED_MAP_HEIGTH  30
+/*
+    World / Movement-Map Square Dimensions
+*/
+#define SQUARE_WIDTH        20  // in Pixels
+#define SQUARE_HEIGHT       18  // in Pixels
 
 #define PLAYER_COUNT_MAX       6
 #define CITY_COUNT_MAX       100

@@ -33,7 +33,7 @@ int32_t LOF(char * file_name)
     //   [in, optional] HANDLE                hTemplateFile
     // );
     // dwDesiredAccess (GENERIC_READ | GENERIC_WRITE)
-    hFile = CreateFile(
+    hFile = CreateFileA(
                 file_name,
                 GENERIC_READ,
                 FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -42,26 +42,43 @@ int32_t LOF(char * file_name)
                 FILE_ATTRIBUTE_NORMAL,
                 NULL
     );
-
-    DWORD lodwFileSize = 0;
-    DWORD hidwFileSize = 0;
-
-    lodwFileSize = GetFileSize(hFile, &hidwFileSize);
-
-    // if(hfile && hfile != INVALID_HANDLE_VALUE)
-    
-    // TODO  WTF? warning C4047: '==': 'void *' differs in levels of indirection from 'DWORD'
-    // if(lodwFileSize == INVALID_FILE_SIZE && NULL == hidwFileSize)
-    if(lodwFileSize == INVALID_FILE_SIZE && 0 == hidwFileSize)
+    if (hFile == INVALID_HANDLE_VALUE)
     {
-        size = 0;  // ST_FAILURE
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: FAILURE CreateFile(%s): %d\n", __FILE__, __LINE__, file_name, GetLastError());
+        // ERROR_FILE_NOT_FOUND
+        // 2 (0x2)
+#endif
+        return 0;  // ST_FAILURE
+    }
+
+    if (hFile && hFile != INVALID_HANDLE_VALUE)
+    {
+
+        DWORD lodwFileSize = 0;
+        DWORD hidwFileSize = 0;
+
+        lodwFileSize = GetFileSize(hFile, &hidwFileSize);
+
+
+        // TODO  WTF? warning C4047: '==': 'void *' differs in levels of indirection from 'DWORD'
+        // if(lodwFileSize == INVALID_FILE_SIZE && NULL == hidwFileSize)
+        if (lodwFileSize == INVALID_FILE_SIZE && 0 == hidwFileSize)
+        {
+            size = 0;  // ST_FAILURE
+        }
+        else
+        {
+            size = (long)lodwFileSize;
+        }
+
+        CloseHandle(hFile);
+
     }
     else
     {
-        size = (long)lodwFileSize;
+        size = 0;  // ST_FAILURE
     }
-
-    CloseHandle(hFile);
 
     Restore_Mouse_State();
 

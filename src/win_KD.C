@@ -122,15 +122,34 @@ uint8_t Read_Key(void)
     {
         case SCCC_ESC: { return_key = ST_KEY_ESCAPE; } break;
 
+        case SCCC_F10: { return_key = ST_KEY_F10; } break;
+
         case SCCC_A: { return_key = 'a'; } break;
         case SCCC_B: { return_key = 'b'; } break;
         case SCCC_C: { return_key = 'c'; } break;
         case SCCC_D: { return_key = 'd'; } break;
-
+        case SCCC_E: { return_key = 'e'; } break;
+        case SCCC_F: { return_key = 'f'; } break;
+        case SCCC_G: { return_key = 'g'; } break;
+        case SCCC_H: { return_key = 'h'; } break;
+        case SCCC_I: { return_key = 'i'; } break;
+        case SCCC_J: { return_key = 'j'; } break;
+        case SCCC_K: { return_key = 'k'; } break;
+        case SCCC_L: { return_key = 'l'; } break;
+        case SCCC_M: { return_key = 'm'; } break;
+        case SCCC_N: { return_key = 'n'; } break;
+        case SCCC_O: { return_key = 'o'; } break;
+        case SCCC_P: { return_key = 'p'; } break;
         case SCCC_Q: { return_key = 'q'; } break;
-
+        case SCCC_R: { return_key = 'r'; } break;
+        case SCCC_S: { return_key = 's'; } break;
         case SCCC_T: { return_key = 't'; } break;
-
+        case SCCC_U: { return_key = 'u'; } break;
+        case SCCC_V: { return_key = 'v'; } break;
+        case SCCC_W: { return_key = 'w'; } break;
+        case SCCC_X: { return_key = 'x'; } break;
+        case SCCC_Y: { return_key = 'y'; } break;
+        case SCCC_Z: { return_key = 'z'; } break;
 
         default: { return_key = ST_KEY_OVERRUN; }
     }

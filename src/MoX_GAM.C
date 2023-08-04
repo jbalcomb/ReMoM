@@ -5,22 +5,12 @@
     MoO2: Module: LOADSAVE
 */
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-
-#include "MoX_GAM.H"
-
-#include "MoX_Data.H"
-#include "MoX_DIR.H"
-#include "MoX_SET.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
+#include "MoX.H"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdlib.h>     /* itoa() */
-#include <string.h>     /* strcat(), strcpy() */
+#include <string.h>     /* memset(), strcat(), strcpy() */
+
 
 
 uint8_t _save_gam[123300];
@@ -234,11 +224,6 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     FILE * file_pointer;
     int32_t file_size;
     int16_t file_size_flag;
-    long file_pointer_position;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_SAVE_GAM( save_gam_idx = %d )\n", __FILE__, __LINE__, save_gam_idx);
-#endif
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -255,27 +240,12 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     file_size = LOF(file_name);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: file_size: %d\n", __FILE__, __LINE__, file_size);
-#endif
-
     if(file_size != 57764)
     {
         file_size_flag = ST_TRUE;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: file_name: %s\n", __FILE__, __LINE__, file_name);
-#endif
-
-    // TODO  test balance of sizeof(structs)  DLOG("Y U NO DIE?!?");
-
     file_pointer = fopen(file_name, "rb");
-#ifdef STU_DEBUG
-    if(NULL == file_pointer) { DLOG("(NULL == file_pointer)"); }
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 0) { DLOG("(file_pointer_position != 0)"); }
-#endif
 
     fread(p0_heroes, 12, 35, file_pointer);
     fread(p1_heroes, 12, 35, file_pointer);
@@ -283,15 +253,6 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     fread(p3_heroes, 12, 35, file_pointer);
     fread(p4_heroes, 12, 35, file_pointer);
     fread(p5_heroes, 12, 35, file_pointer);
-
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 2520)
-    {
-        DLOG("(file_pointer_position != 2520)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
 
     fread(&_num_players, 1, 2, file_pointer);
     fread(&_landsize, 1, 2, file_pointer);
@@ -302,60 +263,17 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     fread(&_turn, 1, 2, file_pointer);
     fread(&_unit, 1, 2, file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 2536)
-    {
-        DLOG("(file_pointer_position != 2536)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
     fread(_players, 6, 1224, file_pointer);
     // fread(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 9880)
-    {
-        DLOG("(file_pointer_position != 9880)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
+    // memset(_world_maps, 0, 9600); // 602 * 16 = 9632
+    // � unhandled exception: invalid parameter ?
     fread(_world_maps, 2, 4800, file_pointer);
-
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 19480)
-    {
-        DLOG("(file_pointer_position != 19480)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
 
     fread(UU_TBL_1, 2, 96, file_pointer);
     fread(UU_TBL_2, 2, 96, file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 19864)
-    {
-        DLOG("(file_pointer_position != 19864)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
     fread(TBL_Landmasses, 2, 2400, file_pointer);
-
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 24664)
-    {
-        DLOG("(file_pointer_position != 24664)");
-    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
 
     fread(TBL_Nodes, 30, 48, file_pointer);
 
@@ -375,38 +293,11 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     fread(_UNITS, 1009, 32, file_pointer);
     // fread(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 79188)
-    {
-        DLOG("(file_pointer_position != 79188)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
     fread(TBL_Terr_Specials, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
 
     fread(TBL_Scouting, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 88788)
-    {
-        DLOG("(file_pointer_position != 88788)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
     fread(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
-
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 117588)
-    {
-        DLOG("(file_pointer_position != 117588)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
 
     fread(_events_table, 1, 100, file_pointer);
 
@@ -416,36 +307,11 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     fread(TBL_Premade_Items, 250, 1, file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 122740)
-    {
-        DLOG("(file_pointer_position != 122740)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
     // if (file_size_flag == ST_TRUE) { MEM_Clear_Far(TBL_Hero_Names, 545); } else { ... }
     fread(TBL_Hero_Names, 16, 35, file_pointer);
 
-#ifdef STU_DEBUG
-    file_pointer_position = ftell(file_pointer);
-    if(file_pointer_position != 123300)
-    {
-        DLOG("(file_pointer_position != 123300)");
-        dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-    }
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %ld\n", __FILE__, __LINE__, file_pointer_position);
-#endif
-
     fclose(file_pointer);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_SAVE_GAM( save_gam_idx = %d )\n", __FILE__, __LINE__, save_gam_idx);
-#endif
 }
 
 

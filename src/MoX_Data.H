@@ -101,6 +101,18 @@ struct s_RETORTS
     /* 11 */ int8_t Artificer;
 };
 
+//  ; (sizeof=0xC, standard type)
+struct s_HERO
+{
+    /* 00 */  int16_t  Level;  // ¿ experience (level) ?
+    /* 02 */  uint16_t Abilities_LO;  // ; enum Hero_Ability_LO
+    /* 04 */  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
+    /* 06 */  int8_t   Casting_Skill;
+    /* 07 */  uint8_t  Spells[4];
+    /* 0B */  uint8_t  Unused_0Bh;
+    /* 0C */
+};
+
 // sizeof:  1Ch  28d
 struct s_HIRED_HERO
 {
@@ -108,6 +120,7 @@ struct s_HIRED_HERO
     /* 02 */ char Name[14];
     /* 10 */ int16_t Items[3];
     /* 16 */ int16_t Item_Slots[3];
+    /* 1C */
 };
 
 // sizeof:  132h  306d
@@ -773,31 +786,31 @@ extern SAMB_ptr TBL_Premade_Items;
 // WZD dseg:913E
 // IMG_USW_Items ITEM_ICONS
 // WZD dseg:9226
-extern SAMB_ptr Active_Unit;                // alloc in MoM_Tables_Init()
+extern SAMB_ptr Active_Unit;                // alloc in Allocate_Data_Space()
 // WZD dseg:922A
 // TBL_BattleUnits
 // WZD dseg:922E
 // TBL_CombatEnchants
 
 // WZD dseg:9232
-extern SAMB_ptr p0_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p0_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:9236
-extern SAMB_ptr p1_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p1_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:923A
-extern SAMB_ptr p2_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p2_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:923E
-extern SAMB_ptr p3_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p3_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:9242
-extern SAMB_ptr p4_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p4_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:9246
-extern SAMB_ptr p5_heroes;                  // alloc in MoM_Tables_Init()
+extern SAMB_ptr p5_heroes;                  // alloc in Allocate_Data_Space()
 
 // WZD dseg:9392
 // drake178: Visibility_Myrror
-extern uint8_t * square_scouted_p0;         // Bit_Field  alloc in MoM_Tables_Init()
+extern uint8_t * square_scouted_p0;         // Bit_Field  alloc in Allocate_Data_Space()
 // WZD dseg:9396
 // drake178: Visibility_Arcanus
-extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in MoM_Tables_Init()
+extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data_Space()
 
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
@@ -844,7 +857,7 @@ extern SAMB_ptr _screen_seg;
 
 // WZD dseg:9998
 // AKA TBL_Events
-extern uint8_t * _events_table;  // alloc in MoM_Tables_Init()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
+extern uint8_t * _events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
 
 // WZD dseg:999C
 extern int16_t _unit_stack_count;
@@ -871,11 +884,11 @@ extern SAMB_ptr TBL_MoveMaps_EMS;
 
 
 // WZD dseg:9CB0  
-extern uint8_t * TBL_Scouting;              // alloc in MoM_Tables_Init()
+extern uint8_t * TBL_Scouting;              // alloc in Allocate_Data_Space()
 // WZD dseg:9CB4
-extern uint8_t * TBL_Terrain_Flags;         // alloc in MoM_Tables_Init()
+extern uint8_t * TBL_Terrain_Flags;         // alloc in Allocate_Data_Space()
 // WZD dseg:9CB8
-extern SAMB_ptr TBL_Terr_Specials;          // alloc in MoM_Tables_Init()
+extern SAMB_ptr TBL_Terr_Specials;          // alloc in Allocate_Data_Space()
 
 // WZD dseg:9CBC
 // extern SAMB_ptr _CITIES;
@@ -904,8 +917,9 @@ extern SAMB_ptr UU_TBL_2;
 // WZD dseg:9CD8
 extern SAMB_ptr UU_TBL_1;
 // WZD dseg:9CDC
-// extern SAMB_ptr TBL_Maps;
-extern SAMB_ptr _world_maps;
+// AKA TBL_Maps;
+// extern SAMB_ptr _world_maps;
+extern uint8_t * _world_maps;
 
 
 // WZD dseg:9D1A
@@ -932,7 +946,8 @@ extern struct s_UNIT * _UNITS;
 // WZD dseg:9EC6
 extern SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
 // WZD dseg:9ECA
-extern struct s_WIZARD _players[6];
+// extern struct s_WIZARD _players[6];
+extern struct s_WIZARD _players[];
 // extern struct s_WIZARD * _players;
 
 // WZD dseg:BB7A

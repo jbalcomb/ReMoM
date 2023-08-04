@@ -5,6 +5,8 @@
 
 #include "Mox_Data.H"
 
+#include "Graphics.H"
+
 #include "Video.H"
 
 
@@ -38,6 +40,38 @@ void Reset_Window(void)
     screen_window_x2 = SCREEN_XMAX;
     screen_window_y1 = SCREEN_YMIN;
     screen_window_y2 = SCREEN_YMAX;
+}
+
+
+// WZD s14p06
+// drake178: VGA_WndDrawFilldRect
+// MoO2 Fill() just uses a clip flag
+void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+{
+
+    if( x2 >= screen_window_x1 && x1 <= screen_window_x2 && y2 >= screen_window_y1 && y1 <= screen_window_y2)
+    {
+        if(x1 < screen_window_x1)
+        {
+            x1 = screen_window_x1;
+        }
+        if(y1 < screen_window_y1)
+        {
+            y1 = screen_window_y1;
+        }
+        if(x2 > screen_window_x2)
+        {
+            x2 = screen_window_x2;
+        }
+        if(y2 > screen_window_y2)
+        {
+            y2 = screen_window_y2;
+        }
+
+        Fill(x1, y1, x2, y2, color);
+    }
+    // else { return 0; }
+    
 }
 
 

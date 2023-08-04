@@ -1,4 +1,37 @@
 
+
+6 words (12 bytes)
+Far Pointer
+fread() as 35 records of size 12
+...420 bytes total  (420 / 16 = 26.25 PR)
+...for 6 wizards = 2520 bytes
+
+00000000 struc HERO_REC ; (sizeof=0xC, standard type)
+00000000 Level dw ?
+00000002 Abilities_LO dw ?                       ; enum Hero_Ability_LO
+00000004 Abilities_HO dw ?                       ; enum Hero_Ability_HO
+00000006 Casting_Skill db ?
+00000007 Spells db 4 dup(?)
+0000000B Unused_0Bh db ?
+
+experience_level
+{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+["Hero", "Myrmidon", "Captain", "Commander", "Champion", "Lord", "Grand Lord", "Super Hero", "Demi-God"]
+
+
+LOAD__p0_heroes()
+{
+    FILE * file_pointer;
+    file_name[] = "SAVETEST.GAM";
+    file_pointer = fopen(file_name, "rb");
+    fseek(file_pointer, 0, SEEK_SET);
+    fread(p0_heroes, 12, 35, file_pointer);
+    fclose(file_pointer);
+}
+
+
+
+
 p0_heroes
 p1_heroes
 p2_heroes
@@ -127,22 +160,22 @@ Load_SAVE_GAM()
 420 + 420 + 420 + 420 + 420 + 420 + 420 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 7344 + 9600 + 192 + 192 + 4800 + 1440 + 24 + 24 + 2448 + 6900 + 4800 + 4800 + 28800 + 100 + 4800 + 2 + 250 + 560
 80032
 
-*p0_heroes = read (35 * 12) = 420   420
-*p1_heroes = read (35 * 12) = 420   840
-*p2_heroes = read (35 * 12) = 420  1260
-*p3_heroes = read (35 * 12) = 420  1680
-*p4_heroes = read (35 * 12) = 420  2100
-*p5_heroes = read (35 * 12) = 420  2520
-wizards    = read ( 1 *  2) =   2  2522
-land_size  = read ( 1 *  2) =   2  2524
-magic      = read ( 1 *  2) =   2  2526
-difficulty = read ( 1 *  2) =   2  2528
-cities     = read ( 1 *  2) =   2  2530
-units      = read ( 1 *  2) =   2  2532
-turn       = read ( 1 *  2) =   2  2534
-unit       = read ( 1 *  2) =   2  2536
-*p_wizards = read ( 6 * 1224) = 7344  9880
- 2 * 4800 = 9600
+*p0_heroes = read (35 *   12) =  420    420
+*p1_heroes = read (35 *   12) =  420    840
+*p2_heroes = read (35 *   12) =  420   1260
+*p3_heroes = read (35 *   12) =  420   1680
+*p4_heroes = read (35 *   12) =  420   2100
+*p5_heroes = read (35 *   12) =  420   2520
+wizards    = read ( 1 *    2) =    2   2522
+land_size  = read ( 1 *    2) =    2   2524
+magic      = read ( 1 *    2) =    2   2526
+difficulty = read ( 1 *    2) =    2   2528
+cities     = read ( 1 *    2) =    2   2530
+units      = read ( 1 *    2) =    2   2532
+turn       = read ( 1 *    2) =    2   2534
+unit       = read ( 1 *    2) =    2   2536
+*p_wizards = read ( 6 * 1224) = 7344   9880
+word_maps  = read ( 2 * 4800) = 9600  19480
  2 *  96 = 192
  2 *  96 = 192
 2 * 2400 = 4800

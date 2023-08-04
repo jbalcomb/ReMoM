@@ -19,6 +19,10 @@ void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 // MoO2  Module: graphics  Reset_Window()
 void Reset_Window(void);
 
+// WZD s14p06
+// drake178: VGA_WndDrawFilldRect
+void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+
 
 // WZD s16p01
 void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);

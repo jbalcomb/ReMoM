@@ -186,14 +186,177 @@ enum ScanCodeCharCode
     SCCC_B = 0x3062,        // "B" key
     SCCC_C = 0x2E63,        // "C" key
     SCCC_D = 0x2064,        // "D" key
-
+    SCCC_E = 0x1265,        // "E" key
+    SCCC_F = 0x2166,        // "F" key
+    SCCC_G = 0x2267,        // "G" key
+    SCCC_H = 0x2368,        // "H" key
+    SCCC_I = 0x1769,        // "I" key
+    SCCC_J = 0x246A,        // "J" key
+    SCCC_K = 0x256B,        // "K" key
+    SCCC_L = 0x266C,        // "L" key
+    SCCC_M = 0x326D,        // "M" key
+    SCCC_N = 0x316E,        // "N" key
+    SCCC_O = 0x186F,        // "O" key
+    SCCC_P = 0x1970,        // "P" key
     SCCC_Q = 0x1071,        // "Q" key
-
+    SCCC_R = 0x1372,        // "R" key
+    SCCC_S = 0x1F73,        // "S" key
     SCCC_T = 0x1474,        // "T" key
-
+    SCCC_U = 0x1675,        // "U" key
+    SCCC_V = 0x2F76,        // "V" key
+    SCCC_W = 0x1177,        // "W" key
+    SCCC_X = 0x2D78,        // "X" key
+    SCCC_Y = 0x1579,        // "Y" key
+    SCCC_Z = 0x2C7A,        // "Z" key
 
     SCCC_Shift_A = 0x1E41,  // "Shift" key + "A" key
+    SCCC_Shift_B = 0x3042,  // "Shift" key + "B" key
+    SCCC_Shift_C = 0x2E42,  // "Shift" key + "C" key
+    SCCC_Shift_D = 0x2044,  // "Shift" key + "D" key
+    SCCC_Shift_E = 0x1245,  // "Shift" key + "E" key
+    SCCC_Shift_F = 0x2146,  // "Shift" key + "F" key
+    SCCC_Shift_G = 0x2247,  // "Shift" key + "G" key
+    SCCC_Shift_H = 0x2348,  // "Shift" key + "H" key
+    SCCC_Shift_I = 0x1749,  // "Shift" key + "I" key
+    SCCC_Shift_J = 0x244A,  // "Shift" key + "J" key
+    SCCC_Shift_K = 0x254B,  // "Shift" key + "K" key
+    SCCC_Shift_L = 0x264C,  // "Shift" key + "L" key
+    SCCC_Shift_M = 0x324D,  // "Shift" key + "M" key
+    SCCC_Shift_N = 0x314E,  // "Shift" key + "N" key
+    SCCC_Shift_O = 0x184F,  // "Shift" key + "O" key
+    SCCC_Shift_P = 0x1950,  // "Shift" key + "P" key
+    SCCC_Shift_Q = 0x1051,  // "Shift" key + "Q" key
+    SCCC_Shift_R = 0x1352,  // "Shift" key + "R" key
+    SCCC_Shift_S = 0x1F53,  // "Shift" key + "S" key
+    SCCC_Shift_T = 0x1454,  // "Shift" key + "T" key
+    SCCC_Shift_U = 0x1655,  // "Shift" key + "U" key
+    SCCC_Shift_V = 0x2F56,  // "Shift" key + "V" key
+    SCCC_Shift_W = 0x1157,  // "Shift" key + "W" key
+    SCCC_Shift_X = 0x2D58,  // "Shift" key + "X" key
+    SCCC_Shift_Y = 0x1559,  // "Shift" key + "Y" key
+    SCCC_Shift_Z = 0x2C5A,  // "Shift" key + "Z" key
 
+    SCCC_Ctrl_A = 0x1E01,   // "Control" key + "A" key
+    SCCC_Ctrl_B = 0x3002,   // "Control" key + "B" key
+    SCCC_Ctrl_C = 0x2E03,   // "Control" key + "C" key
+    SCCC_Ctrl_D = 0x2004,   // "Control" key + "D" key
+    SCCC_Ctrl_E = 0x1205,   // "Control" key + "E" key
+    SCCC_Ctrl_F = 0x2106,   // "Control" key + "F" key
+    SCCC_Ctrl_G = 0x2207,   // "Control" key + "G" key
+    SCCC_Ctrl_H = 0x2308,   // "Control" key + "H" key
+    SCCC_Ctrl_I = 0x1709,   // "Control" key + "I" key
+    SCCC_Ctrl_J = 0x240A,   // "Control" key + "J" key
+    SCCC_Ctrl_K = 0x250B,   // "Control" key + "K" key
+    SCCC_Ctrl_L = 0x260C,   // "Control" key + "L" key
+    SCCC_Ctrl_M = 0x320D,   // "Control" key + "M" key
+    SCCC_Ctrl_N = 0x310E,   // "Control" key + "N" key
+    SCCC_Ctrl_O = 0x180F,   // "Control" key + "O" key
+    SCCC_Ctrl_P = 0x1910,   // "Control" key + "P" key
+    SCCC_Ctrl_Q = 0x1011,   // "Control" key + "Q" key
+    SCCC_Ctrl_R = 0x1312,   // "Control" key + "R" key
+    SCCC_Ctrl_S = 0x1F13,   // "Control" key + "S" key
+    SCCC_Ctrl_T = 0x1414,   // "Control" key + "T" key
+    SCCC_Ctrl_U = 0x1615,   // "Control" key + "U" key
+    SCCC_Ctrl_V = 0x2F16,   // "Control" key + "V" key
+    SCCC_Ctrl_W = 0x1117,   // "Control" key + "W" key
+    SCCC_Ctrl_X = 0x2D18,   // "Control" key + "X" key
+    SCCC_Ctrl_Y = 0x1519,   // "Control" key + "Y" key
+    SCCC_Ctrl_Z = 0x2C1A,   // "Control" key + "Z" key
+
+    SCCC_Alt_A = 0x1E00,    // "Alt" key + "A" key
+    SCCC_Alt_B = 0x3000,    // "Alt" key + "B" key
+    SCCC_Alt_C = 0x2E00,    // "Alt" key + "C" key
+    SCCC_Alt_D = 0x2000,    // "Alt" key + "D" key
+    SCCC_Alt_E = 0x1200,    // "Alt" key + "E" key
+    SCCC_Alt_F = 0x2100,    // "Alt" key + "F" key
+    SCCC_Alt_G = 0x2200,    // "Alt" key + "G" key
+    SCCC_Alt_H = 0x2300,    // "Alt" key + "H" key
+    SCCC_Alt_I = 0x1700,    // "Alt" key + "I" key
+    SCCC_Alt_J = 0x2400,    // "Alt" key + "J" key
+    SCCC_Alt_K = 0x2500,    // "Alt" key + "K" key
+    SCCC_Alt_L = 0x2600,    // "Alt" key + "L" key
+    SCCC_Alt_M = 0x3200,    // "Alt" key + "M" key
+    SCCC_Alt_N = 0x3100,    // "Alt" key + "N" key
+    SCCC_Alt_O = 0x1800,    // "Alt" key + "O" key
+    SCCC_Alt_P = 0x1900,    // "Alt" key + "P" key
+    SCCC_Alt_Q = 0x1000,    // "Alt" key + "Q" key
+    SCCC_Alt_R = 0x1300,    // "Alt" key + "R" key
+    SCCC_Alt_S = 0x1F00,    // "Alt" key + "S" key
+    SCCC_Alt_T = 0x1400,    // "Alt" key + "T" key
+    SCCC_Alt_U = 0x1600,    // "Alt" key + "U" key
+    SCCC_Alt_V = 0x2F00,    // "Alt" key + "V" key
+    SCCC_Alt_W = 0x1100,    // "Alt" key + "W" key
+    SCCC_Alt_X = 0x2D00,    // "Alt" key + "X" key
+    SCCC_Alt_Y = 0x1500,    // "Alt" key + "Y" key
+    SCCC_Alt_Z = 0x2C00,    // "Alt" key + "Z" key
+
+/*
+Key	 Normal    Shifted   w/Ctrl    w/Alt
+1	  0231	    0221		7800
+2	  0332	    0340      0300	7900
+3	  0433	    0423		7A00
+4	  0534	    0524		7B00
+5	  0635	    0625		7C00
+6	  0736	    075E      071E	7D00
+7	  0837	    0826		7E00
+8	  0938	    092A		7F00
+9	  0A39	    0A28		8000
+0	  0B30	    0B29		8100
+*/
+/*
+Key	 Normal    Shifted   w/Ctrl    w/Alt
+-	  0C2D	    0C5F      0C1F	8200
+=	  0D3D	    0D2B		8300
+[	  1A5B	    1A7B      1A1B	1A00
+]	  1B5D	    1B7D      1B1D	1B00
+;	  273B	    273A		2700
+'	  2827	    2822
+`	  2960	    297E
+\	  2B5C	    2B7C      2B1C	2600 (same as Alt L)
+,	  332C	    333C
+.	  342E	    343E
+/	  352F	    353F
+*/
+    SCCC_F10 = 0x4400,    // "F10" key
+/*
+Key	 Normal    Shifted   w/Ctrl    w/Alt
+F1	  3B00	    5400      5E00	6800
+F2	  3C00	    5500      5F00	6900
+F3	  3D00	    5600      6000	6A00
+F4	  3E00	    5700      6100	6B00
+F5	  3F00	    5800      6200	6C00
+F6	  4000	    5900      6300	6D00
+F7	  4100	    5A00      6400	6E00
+F8	  4200	    5B00      6500	6F00
+F9	  4300	    5C00      6600	7000
+F10	  4400	    5D00      6700	7100
+F11	  8500	    8700      8900	8B00
+F12	  8600	    8800      8A00	8C00
+*/
+/*
+Key	    Normal    Shifted	w/Ctrl	  w/Alt
+BackSpace    0E08      0E08	 0E7F	  0E00
+Del	     5300      532E	 9300	  A300
+Down Arrow   5000      5032	 9100	  A000
+End	     4F00      4F31	 7500	  9F00
+Enter	     1C0D      1C0D	 1C0A	  A600
+Esc	     011B      011B	 011B	  0100
+Home	     4700      4737	 7700	  9700
+Ins	     5200      5230	 9200	  A200
+Keypad 5		4C35	 8F00
+Keypad *     372A		 9600	  3700
+Keypad -     4A2D      4A2D	 8E00	  4A00
+Keypad +     4E2B      4E2B		  4E00
+Keypad /     352F      352F	 9500	  A400
+Left Arrow   4B00      4B34	 7300	  9B00
+PgDn	     5100      5133	 7600	  A100
+PgUp	     4900      4939	 8400	  9900
+PrtSc				 7200
+Right Arrow  4D00      4D36	 7400	  9D00
+SpaceBar     3920      3920	 3920	  3920
+Tab	     0F09      0F00	 9400	  A500
+Up Arrow     4800      4838	 8D00	  9800
+*/
 
     SCCC_OVERRUN
 };
@@ -241,8 +404,8 @@ enum Simtex_Key_Codes
 //     KP_NumMult         = 0x00,
     ST_KEY_KP_4             = 0x01,  /* LEFT */
     ST_KEY_KP_6             = 0x02,  /* RIGHT */
-    STU_KEY_KP_8            = 0x03,  /* UP */
-    STU_KEY_KP_2            = 0x04,  /* DOWN */
+    ST_KEY_KP_8             = 0x03,  /* UP */
+    ST_KEY_KP_2             = 0x04,  /* DOWN */
 //     KP_RightUp         = 0x05,
 //     KP_RightDown       = 0x06,
 //     KP_LeftUp          = 0x07,

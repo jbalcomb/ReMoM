@@ -266,18 +266,47 @@ o57p10  ? IDK_UnitMoves_and_PlanarTravel() ?
 // PRIVATE  void Main_Screen_Reset(void);
 // WZD o57p10
 // PRIVATE  void IDK_UnitMoves_and_PlanarTravel(void);
+
 /*
     WIZARDS.EXE  ovr058
 */
 // WZD o58p01
 // PRIVATE  void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
+
+// WZD o58p02
+void Set_Mouse_List_Default(void);
+
+
 /*
-    WIZARDAS.EXE  ovr062
+    WIZARDS.EXE  ovr062
 */
+
+// WZD o62p01
+// int16_t RP_WIZ_ReturnZero(int16_t player_idx)
+
+// WZD o62p02
+// AKA OVL_StackSelect()
+void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y);
+
+
+// WZD o62p03
+// drake178: STK_DisplaySort
+// OON XREF: Select_Unit_Stack()
+// PRIVATE  void Sort_Unit_Stack(void);
+
 // WZD o62p04
 // PRIVATE  void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
+
+// WZD o62p05
+// PRIVATE void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane)
+
+// WZD o62p06
+// drake178: OVL_TileOffScrnEdge()
+// PRIVATE int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
+
+
 /*
-    WIZARDAS.EXE  ovr063
+    WIZARDS.EXE  ovr063
 */
 // WZD o63p01
 // PRIVATE  void Main_Screen_Draw_Status_Window(void);
@@ -288,6 +317,7 @@ o57p10  ? IDK_UnitMoves_and_PlanarTravel() ?
 // ???
 
 // WZD o63p04
+// drake178: j_GAME_Animate_UEs()
 // PRIVATE  void Cycle_Unit_Enchantment_Animation(void);
 // WZD o63p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);

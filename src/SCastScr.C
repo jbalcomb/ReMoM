@@ -1,7 +1,9 @@
 
-#include "MoM_DEF.H"
-#include "MoX_DEF.H"
-#include "MoX_TYPE.H"
+#include "MoX.H"
+
+#include <assert.h>
+
+
 
 /*
     Spell Casting Screen
@@ -39,26 +41,42 @@ int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16
 {
     int16_t in_view;
     int16_t unit_ym;
+    int16_t unit_xm;
+#ifdef STU_DEBUG
+    int16_t ORIG_unit_xw;
+    int16_t ORIG_unit_yw;
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: World_To_Screen(map_xw = %d, map_yw = %d, *unit_xw = %d, *unit_yw = %d)\n", __FILE__, __LINE__, map_xw, map_yw, *unit_xw, *unit_yw);
 #endif
+    assert(map_xw >= 0 && map_xw <= 60);
+    assert(map_yw >= 0 && map_yw <= 40);
+    assert(*unit_xw >= 0 && *unit_xw <= 40);
+    assert(*unit_yw >= 0 && *unit_yw <= 40);
+
+#ifdef STU_DEBUG
+    ORIG_unit_xw = *unit_xw;
+    ORIG_unit_yw = *unit_yw;
+#endif
 
     in_view = ST_FALSE;
 
-    if( (*unit_yw >= map_yw) && (*unit_yw <= (map_yw + MMAP_WIDTH)) )
+    if( (*unit_yw >= map_yw) && (*unit_yw <= (map_yw + MAP_HEIGHT)) )
     {
         unit_ym = *unit_yw - map_yw;  // e.g, unit is at 37,21 and move-map is at 29,12; this Y is 21-12=9, which is Y relative to the move-map viewport 
 
-        if((*unit_xw >= map_xw) && (*unit_xw <= (map_xw + MMAP_HEIGHT)))
+        if( (*unit_xw >= map_xw) && (*unit_xw <= (map_xw + MAP_WIDTH)) )
         {
+            unit_xm = *unit_xw - map_xw;
             in_view = ST_TRUE;
         }
         else
         {
-            *unit_xw += WMAP_WIDTH;
-            if((*unit_xw >= map_xw) && (*unit_xw <= (map_xw + MMAP_HEIGHT)))
+            *unit_xw += WORLD_WIDTH;
+            if((*unit_xw >= map_xw) && (*unit_xw <= (map_xw + MAP_WIDTH)))
             {
+                unit_xm = *unit_xw - map_xw;
                 in_view = ST_TRUE;
             }
         }
@@ -66,14 +84,17 @@ int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16
 
     if(in_view == ST_TRUE)
     {
-        *unit_xw = *unit_xw * SQUARE_WIDTH;  // movement-map square width, pixels
-        *unit_yw = (unit_ym * SQUARE_HEIGHT) + (*unit_xw + SQUARE_WIDTH);  // movement-map square height, in pixels
+        *unit_xw = (unit_xm * SQUARE_WIDTH);  // movement-map square width, pixels
+        *unit_yw = (unit_ym * SQUARE_HEIGHT) + SQUARE_WIDTH;  // movement-map square height, in pixels
     }
     else
     {
         *unit_xw = 0;  // ? ST_NULL ?
         *unit_yw = 0;  // ? ST_NULL ?
     }
+
+    assert(*unit_xw >= 0 && *unit_xw <= 320);
+    assert(*unit_yw >= 0 && *unit_yw <= 200);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: World_To_Screen(map_xw = %d, map_yw = %d, *unit_xw = %d, *unit_yw = %d) {in_view = %d}\n", __FILE__, __LINE__, map_xw, map_yw, *unit_xw, *unit_yw, in_view);

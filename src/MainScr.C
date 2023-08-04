@@ -6,7 +6,13 @@
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 
+#include <assert.h>
 
+
+
+/*
+    Forward Declare Private Functions
+*/
 
 void Main_Screen_Load_Pictures(void);
 
@@ -38,13 +44,22 @@ void IDK_UnitMoves_and_PlanarTravel(void);
 */
 // WZD o58p01
 void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
+// WZD o58p02
+void Set_Mouse_List_Default(void);
 /*
-    WIZARDAS.EXE  ovr062
+    WIZARDS.EXE  ovr062
 */
+// WZD o62p03
+void Sort_Unit_Stack(void);
 // WZD o62p04
 void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
+// WZD o62p05
+void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
+// WZD o62p06
+int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
+
 /*
-    WIZARDAS.EXE  ovr063
+    WIZARDS.EXE  ovr063
 */
 // WZD o063p01
 void Main_Screen_Draw_Status_Window(void);
@@ -177,8 +192,11 @@ char hotkey_InfoButton[] = "I";
 // WZD dseg:305C                                                 ? BEGIN: Draw Unit Window ?
 
 // WZD dseg:305C 
-int16_t WP_Quality_Anim_Stg;
+// XREF: Main_Screen_Draw_Unit_Window(); Unit_Window_Draw_Unit_Attributes();
+// drake178: WP_Quality_Anim_Stg
+int16_t unit_weapon_type_animation_count;
 // WZD dseg:305E
+// XREF:: UNIT_Draw_UE_Outline(); Cycle_Unit_Enchantment_Animation(); LBX_IMG_UE_Outline();
 // AKA UE_Anim_State
 int16_t unit_enchantment_animation_count;
 // WZD dseg:3060
@@ -877,8 +895,8 @@ void Main_Screen(void)
     int16_t hotkey_idx_Shift_1;
     int16_t Unused_Button_Index;
     int16_t hotkey_idx_X;
-// Unit_Y= word ptr -14h
-// Unit_X= word ptr -12h
+    int16_t Unit_Y;
+    int16_t Unit_X;
 // Bottom@= word ptr -10h
 // Right@= word ptr -0Eh
     int16_t target_world_y;
@@ -1144,6 +1162,24 @@ void Main_Screen(void)
             // IDK_CheckSet_MapDisplay_XY(); // translates _prev_world_x,y coordinates
             _prev_world_x = 18;
             _prev_world_y = 11;
+#ifdef STU_DEBUG
+            DBG_TST_Made_Map_Move = 1;
+#endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: DBG_TST_Made_Map_Move: %d\n", __FILE__, __LINE__, DBG_TST_Made_Map_Move);
+#endif
+            /*
+                DBG_TST
+                    Right-Click Movement Map Grid Field
+                    Entity - Unit - Human Player
+            */
+            // _unit = entity_idx;
+            // unit_idx = _unit;
+            // Unit_X = _UNITS[unit_idx].world_x;
+            // Unit_Y = _UNITS[unit_idx].world_y;
+            // OVL_Map_CenterX = _UNITS[unit_idx].world_x;
+            // OVL_Map_CenterY = _UNITS[unit_idx].world_y;
+            // Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
         }
 
         // Quick-Save
@@ -1175,13 +1211,16 @@ void Main_Screen(void)
         // ? Quit Action / Unselect Unit ?
         if( (input_field_idx == hotkey_idx_Q) || (input_field_idx == hotkey_idx_U) )
         {
-            // _unit_stack_count = 0;
-            // OVL_ShowActiveStack();
-            // UNIT_DrawPriorities();
-            // STK_NoUnitDraw();
-            // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-            // Reset_Map_Draw();
-            // screen_changed = ST_TRUE;
+            _unit_stack_count = 0;
+            Set_Draw_Active_Stack_Always();     // OVL_ShowActiveStack();
+            Set_Unit_Draw_Priority();           // UNIT_DrawPriorities();
+            Reset_Stack_Draw_Priority();        // STK_NoUnitDraw();
+            Set_Entities_On_Map_Window(_map_x, _map_y,_map_plane);
+            Reset_Map_Draw();
+            screen_changed = ST_TRUE;
+#ifdef STU_DEBUG
+            DBG_TST_Selected_Stack = 0;
+#endif
         }
 
         /*
@@ -1271,6 +1310,8 @@ void Main_Screen(void)
                 // Main_Screen_Draw();
                 // PageFlip_FX();
                 // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
+                // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
+                //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
                 // TODO  USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
                 // Assign_Auto_Function(Main_Screen_Draw, 1);
                 // Allocate_Reduced_Map();
@@ -1418,7 +1459,7 @@ void Main_Screen(void)
         */
        if(-input_field_idx == _main_map_grid_field)
        {
-            DLOG("if(-input_field_idx == _main_map_grid_field)");
+            DLOG("(-input_field_idx == _main_map_grid_field)");
             DLOG("@@RightClickMovementMap");
 
             // TODO  rename this variable to something more sensible - maybe add more if it gets reused - here ~entity_idx, was "input"
@@ -1429,7 +1470,7 @@ void Main_Screen(void)
 
             if(entity_idx == ST_UNDEFINED)
             {
-                DLOG("if(entity_idx == ST_UNDEFINED)");
+                DLOG("(entity_idx == ST_UNDEFINED)");
                 DLOG("ScrollTheMap");
                 // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
                 // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
@@ -1453,7 +1494,7 @@ void Main_Screen(void)
             }
             else
             {
-                DLOG("if(entity_idx != ST_UNDEFINED)");
+                DLOG("(entity_idx != ST_UNDEFINED)");
 
                 // RP_SND_LeftClickSound2()
 
@@ -1465,22 +1506,89 @@ void Main_Screen(void)
 
                 if(entity_idx >= 1000)
                 {
-                    DLOG("if(entity_idx >= 1000)");
+                    DLOG("(entity_idx >= 1000)");
 
                 }
                 else
                 {
-                    DLOG("if(entity_idx < 1000)");
+                    DLOG("(entity_idx < 1000)");
                     if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                     {
-                        DLOG("if(_UNITS[entity_idx].owner_idx == _human_player_idx)");
-                        // Select Stack
+                        DLOG("(_UNITS[entity_idx].owner_idx == _human_player_idx)");
+                        DLOG("@@SelectedUnitStack");
+#ifdef STU_DEBUG
+                        DBG_TST_Selected_Stack = 0;
+                        DBG_TST_Select_Unit_Stack = 0;
+                        DBG_TST_Build_Unit_Stack = 0;
+                        DBG_TST_Draw_Map_Units = 0;
+#endif
+                        _unit = entity_idx;
+                        unit_idx = _unit;
+                        Unit_X = _UNITS[unit_idx].world_x;
+                        Unit_Y = _UNITS[unit_idx].world_y;
+                        // _active_world_x = _UNITS[unit_idx].world_x;
+                        // _active_world_y = _UNITS[unit_idx].world_y;
+                        OVL_Map_CenterX = _UNITS[unit_idx].world_x;
+                        OVL_Map_CenterY = _UNITS[unit_idx].world_y;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
+    dbg_prn("DEBUG: [%s, %d]: Unit_X: %d\n", __FILE__, __LINE__, Unit_X);
+    dbg_prn("DEBUG: [%s, %d]: Unit_Y: %d\n", __FILE__, __LINE__, Unit_Y);
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
+
+    if(_UNITS[unit_idx].world_x == 19 && _UNITS[unit_idx].world_y == 10)
+    {
+        DBG_TST_Selected_Stack = 1;
+        DBG_TST_Select_Unit_Stack = 1;
+        DBG_TST_Build_Unit_Stack = 1;
+        DBG_TST_Draw_Map_Units = 1;
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Selected_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Selected_Stack);
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Select_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Select_Unit_Stack);
+        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Build_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Build_Unit_Stack);
+    }
+#endif
+                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
+#ifdef STU_DEBUG
+        DBG_TST_Selected_Stack = 0;
+        DBG_TST_Select_Unit_Stack = 0;
+        DBG_TST_Build_Unit_Stack = 0;
+#endif
+                        if(all_units_moved != ST_TRUE)
+                        {
+                            all_units_moved = ST_FALSE;
+                        }
+
+                        Reset_Draw_Active_Stack();
+                        draw_active_stack_flag = 0;
+                        Set_Unit_Draw_Priority();
+                        Reset_Stack_Draw_Priority();
+                        Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                        Set_Mouse_List_Default();
+                        Reset_Map_Draw();
+
                     }
                     else
                     {
                         DLOG("if(_UNITS[entity_idx].owner_idx != _human_player_idx)");
                         // Enemy Unit - Unit List Screen (Pop-Up)
+                        // target_world_x = _main_map_grid_x * SQUARE_WIDTH;
+                        // target_world_y = (_main_map_grid_y * SQUARE_HEIGHT) + SQUARE_WIDTH;
+                        // TODO  Deactivate_Help_List();
+                        // TODO  Unit_List_Window_Pup(input__entity_idx, 0, target_world_x, target_world_y);
+                        // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
+                        // Allocate_Reduced_Map();
+                        // Set_Mouse_List_Default();
+                        // Reset_Map_Draw();
+                        // MainScr_Prepare_Reduced_Map();
+                        // TODO  Deactivate_Help_List();
+                        // TODO  Main_Screen_Help();
                     }
+
+                    DLOG("@@DidRightClickUnit");
+                    screen_changed = ST_TRUE;
+                    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
                 }
 
             }
@@ -1801,24 +1909,20 @@ void Main_Screen_Reset(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Reset()\n", __FILE__, __LINE__);
 #endif
 
-// j_RP_LBX_Minimap_Alloc2         ; byte-identical to LBX_Minimap_Alloc, should not exist
-// Deactivate_Auto_Function();
-
-// Clear_Fields                    ; resets the main GUI control variables, removing all
-// j_OVL_ResetStackDraw            ; sets the overland map drawing to renew everything on
-// j_UNIT_DrawPriorities           ; sets the draw priority field of each unit record
-// j_STK_NoUnitDraw                ; set the draw priority of all units in the active
-// push    [OVL_Map_Plane]                 ; Plane
-// push    [OVL_Map_TopY]                  ; TopY
-// push    [OVL_Map_LeftX]                 ; LeftX
-// call    j_OVL_SetUnitsOnMap             ; fills out the OVL_UnitsOnMap array with the unit or
-// j_CRP_GUI_NormalFullscreen      ; sets the Normal_Fullscreen window (GUI_SetWindows)
-// j_OVL_PrepMinimap               ; draws a minimap into the Minimap_IMG_Seg allocation
-// Assign_Auto_Function(Main_Screen_Draw, 1);
-// j_OVL_MapDrawRenew              ; ensures that any subsequent map drawing is treated as
-// Clear_Help_Fields               ; disables the context-based help by zeroing out its
-// j_Main_Screen_Help              ; loads and sets the GUI help entry area array for the
-// DONT  CRP_OverlandVar = 1;
+    Allocate_Reduced_Map();
+    // TODO  Deactivate_Auto_Function();
+    Clear_Fields();
+    Reset_Draw_Active_Stack();
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+    Set_Mouse_List_Default();
+    MainScr_Prepare_Reduced_Map();
+    // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
+    Reset_Map_Draw();
+    // TODO  Deactivate_Help_List(0;)
+    // TODO  Main_Screen_Help();
+    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Reset()\n", __FILE__, __LINE__);
@@ -1880,15 +1984,15 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
             Unit_Window_Picture_Coords(itr_unit_stack_count, &x1, &y1, &x2, &y2);
             FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_unit_stack_count]);
             Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, _unit_stack[itr_unit_stack_count].active);
-            // DEBUG 'active' Unit_Window_Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, 1);
             // TODO  Unit_Window_Draw_Unit_Attributes(x1, y1, unit_stack_unit_idx);
         }
 
-        // TODO  j_GAME_Animate_UEs
-        // TODO  // ; on every second call, advances the unit enchantment
-        // TODO  // ; animation stage by one, wrapping from 7 to 0
-        // TODO  WP_Quality_Anim_Stg++;
-        // TODO  if(WP_Quality_Anim_Stg > 3) { WP_Quality_Anim_Stg = 0; }
+        Cycle_Unit_Enchantment_Animation();
+        unit_weapon_type_animation_count++;
+        if(unit_weapon_type_animation_count > 3)
+        {
+            unit_weapon_type_animation_count = 0;
+        }
 
     }
 
@@ -1899,10 +2003,181 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
 }
 
 
+// WZD o58p02
+void Set_Mouse_List_Default(void)
+{
+    Set_Mouse_List(1, mouse_list_default);
+}
+
+
 
 /*
-    WIZARDAS.EXE  ovr062
+    WIZARDS.EXE  ovr062
 */
+
+// WZD o62p01
+// int16_t RP_WIZ_ReturnZero(int16_t player_idx)
+
+// WZD o62p02
+/*
+//drake178
+builds a stack from the units on the tile, selects
+the one with the highest draw priority that can move
+as the current unit, brings the stack into view, sets
+In_Tower flags, calculates GUI_ExtraUnitAction and,
+if all the units belong to the human player and have
+a destination already set, loads their path into the
+global arrays, setting GUI_StackHasPath to 1
+*/
+// MoO2  Module: SHIPSTK  Find_Ship_Stacks_()
+// _NUM_SHIPS, _ship_stack_count, _PLAYER_NUM, _ship, _ship_stack_start, _ship_node
+// Remove_Non_Detected_Ships_(), Sort_Ships_In_Stack_()
+// AKA OVL_StackSelect()
+void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y)
+{
+    int16_t GoingTo_Unit_idx;
+    int16_t itr_unit_stack_count;
+    int16_t unit_idx;
+    int16_t unit_list[9];
+    int16_t unit_count;
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Select_Unit_Stack(player_idx = %d, *map_x = %d, *map_y = %d, map_plane = %d, unit_x = %d, unit_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, map_plane, unit_x, unit_y);
+#endif
+
+    // G_OVL_MapVar4 = 1;
+
+#ifdef STU_DEBUG
+    if(DBG_TST_Select_Unit_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: (DBG_TST_Select_Unit_Stack == 1)\n", __FILE__, __LINE__);
+    }
+#endif
+
+    Build_Unit_Stack(player_idx, map_plane, unit_x, unit_y);
+
+    if(_unit_stack_count != 0)
+    {
+        Sort_Unit_Stack();
+
+        OVL_StackHasPath = ST_FALSE;
+
+        GoingTo_Unit_idx = ST_UNDEFINED;
+
+        if(player_idx == _human_player_idx)
+        {
+
+            for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+            {
+                unit_idx = _unit_stack[itr_unit_stack_count].unit_idx;
+                if(_UNITS[unit_idx].Status == 3) /* US_GoingTo */
+                {
+                    GoingTo_Unit_idx = unit_idx;
+                }
+                else
+                {
+                    GoingTo_Unit_idx = ST_UNDEFINED;
+                    break;
+                }
+            }
+        }
+
+        if(GoingTo_Unit_idx != ST_UNDEFINED)
+        {
+            // TODO  UNIT_SetGlobalPath(GoingTo_Unit_idx);
+        }
+
+        unit_idx = _unit;
+        unit_x = _UNITS[unit_idx].world_x;
+        unit_y = _UNITS[unit_idx].world_y;
+        OVL_BringIntoView(map_x, map_y, unit_x, unit_y, map_plane);
+        
+        // TODO  STK_GetExtraActions();
+        // TODO  STK_GetMovableUnits(*unit_count, *unit_list);
+        // DONT  RP_STK_ReturnZero(unit_count, *unit_list);
+        // TODO  STK_CheckTower(unit_count, *unit_list);
+
+        if(_unit_stack_count < 1)
+        {
+            OVL_StackHasPath = ST_FALSE;
+        }
+
+    }
+    // ¿ else { return 0; } ?
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Select_Unit_Stack(player_idx = %d, *map_x = %d, *map_y = %d, map_plane = %d, unit_x = %d, unit_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, map_plane, unit_x, unit_y);
+#endif
+}
+
+// WZD o62p03
+// drake178: STK_DisplaySort
+// OON XREF: Select_Unit_Stack()
+void Sort_Unit_Stack(void)
+{
+    int16_t itr_stack_outer;
+    int16_t itr_stack_inner;
+    int16_t itr_unit_stack_count;
+    int16_t unit_idx_1;
+    int16_t unit_idx_2;
+    int16_t unit_1_priority;
+    int16_t unit_2_priority;
+    int16_t tmp_stack_unit_idx;
+    int16_t tmp_stack_active_flag;
+
+    for(itr_stack_outer = 0; itr_stack_outer < _unit_stack_count; itr_stack_outer++)
+    {
+        for(itr_stack_inner = 0; itr_stack_inner < (_unit_stack_count - 1); itr_stack_inner++)
+        {
+
+            unit_idx_1 = _unit_stack[itr_stack_inner].unit_idx;
+            unit_idx_2 = _unit_stack[itr_stack_inner + 1].unit_idx;
+
+            // ¿ Melee Attack Strength + Ranged Attack Strength ?
+            // ...index into the _unit_type_table[] based on the _UNITS[].type
+
+            unit_1_priority = _unit_type_table[_UNITS[unit_idx_1].type].Melee + _unit_type_table[_UNITS[unit_idx_1].type].Ranged;
+
+            unit_2_priority = _unit_type_table[_UNITS[unit_idx_2].type].Melee + _unit_type_table[_UNITS[unit_idx_2].type].Ranged;
+
+            if(_unit_type_table[_UNITS[unit_idx_1].type].Transport > 0)
+            {
+                unit_1_priority = 50;  // ¿ Maximum Stack Sort Priority ?
+            }
+
+            if(_unit_type_table[_UNITS[unit_idx_2].type].Transport > 0)
+            {
+                unit_2_priority = 50;  // ¿ Maximum Stack Sort Priority ?
+            }
+
+            if(unit_1_priority < unit_2_priority)
+            {
+                // ; exchanges an amount of bytes between near addresses
+                // MEM_SwapBytes(_unit_stack[unit_idx_2], _unit_stack[unit_idx_2 + 1], 4);
+
+                tmp_stack_unit_idx = _unit_stack[itr_stack_inner].unit_idx;
+                tmp_stack_active_flag = _unit_stack[itr_stack_inner].active;
+                _unit_stack[itr_stack_inner].unit_idx = _unit_stack[itr_stack_inner + 1].unit_idx;
+                _unit_stack[itr_stack_inner].active = _unit_stack[itr_stack_inner + 1].active;
+                _unit_stack[itr_stack_inner + 1].unit_idx = tmp_stack_unit_idx;
+                _unit_stack[itr_stack_inner + 1].active = tmp_stack_active_flag;
+
+            }
+
+        }
+    }
+
+    _unit = _unit_stack[0].unit_idx;
+    for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+    {
+        if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+        {
+            _unit = _unit_stack[itr_unit_stack_count].unit_idx;
+            break;
+        }
+    }
+
+}
 
 // WZD o62p04
 void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y)
@@ -1917,80 +2192,293 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Build_Unit_Stack()\n", __FILE__, __LINE__);
 #endif
 
-    unit_stack_idx = 0;
+#ifdef STU_DEBUG
+    // if(DBG_TST_Selected_Stack == 1)
+    if(DBG_TST_Build_Unit_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: (DBG_TST_Build_Unit_Stack == 1)\n", __FILE__, __LINE__);
+    }
+#endif
 
+    unit_stack_idx = 0;
 
     for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
     {
         _unit_stack[itr_unit_stack].active = ST_FALSE;
     }
 
+#ifdef STU_DEBUG
+    // if(DBG_TST_Selected_Stack == 1)
+    if(DBG_TST_Build_Unit_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: _units: %d\n", __FILE__, __LINE__, _units);
+    }
+#endif
+
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         current_unit_idx = itr_units;
 
-        if(_UNITS[current_unit_idx].owner_idx != player_idx)
-        {
-            continue;
-        }
-        if(_UNITS[current_unit_idx].world_x != world_x)
-        {
-            continue;
-        }
-        if(_UNITS[current_unit_idx].world_y != world_y)
-        {
-            continue;
-        }
-        if(_UNITS[current_unit_idx].owner_idx == ST_UNDEFINED)
-        {
-            continue;
-        }
-        if( (_UNITS[current_unit_idx].world_plane != world_plane) && (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
-        {
-            continue;
-        }
+#ifdef STU_DEBUG
+    // if(DBG_TST_Selected_Stack == 1)
+    if(DBG_TST_Build_Unit_Stack == 1)
+    {
+        //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
+        //    _UNITS[current_unit_idx].owner_idx,
+        //    _UNITS[current_unit_idx].world_x,
+        //    _UNITS[current_unit_idx].world_y,
+        //    _UNITS[current_unit_idx].world_plane,
+        //    _UNITS[current_unit_idx].In_Tower
+        // );
 
-        _unit_stack[unit_stack_idx].unit_idx = current_unit_idx;
+        //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
+        //    (_UNITS[current_unit_idx].owner_idx != player_idx),
+        //    (_UNITS[current_unit_idx].world_x != world_x),
+        //    (_UNITS[current_unit_idx].world_y != world_y),
+        //    (_UNITS[current_unit_idx].owner_idx == ST_UNDEFINED),
+        //    ( (_UNITS[current_unit_idx].world_plane != world_plane) && (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
+        //);
+    }
+#endif
 
-        // ? inactive: no moves, finished, or purify ?
-        // ? what about patrol ?
-        if(_UNITS[current_unit_idx].HMoves > 0)
+        if( (_UNITS[current_unit_idx].owner_idx == player_idx) && 
+            (_UNITS[current_unit_idx].world_x == world_x) &&
+            (_UNITS[current_unit_idx].world_y == world_y) &&
+            (_UNITS[current_unit_idx].owner_idx != ST_UNDEFINED) && 
+            ( (_UNITS[current_unit_idx].world_plane == world_plane) || (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
+        )
         {
-            if(_UNITS[current_unit_idx].Finished == ST_FALSE)
+            /*
+                Add Unit to Stack
+            */
+            DLOG("@@AddUnitToStack");
+            _unit_stack[unit_stack_idx].unit_idx = current_unit_idx;
+
+            // ? inactive: no moves, finished, or purify ?
+            // ? what about patrol ?
+#ifdef STU_DEBUG
+    // if(DBG_TST_Selected_Stack == 1)
+    if(DBG_TST_Build_Unit_Stack == 1)
+    {
+        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
+        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
+        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
+    }
+#endif
+            if(_UNITS[current_unit_idx].HMoves > 0)
             {
-                _unit_stack[unit_stack_idx].active = ST_TRUE;
-
-                if(_UNITS[current_unit_idx].Status == 5)  // enum Unit Status - Wait
+                if(_UNITS[current_unit_idx].Finished == ST_FALSE)
                 {
-                    _UNITS[current_unit_idx].Status = 0;  // enum Unit Status - Ready
+                    _unit_stack[unit_stack_idx].active = ST_TRUE;
+
+                    if(_UNITS[current_unit_idx].Status == 5)  // enum Unit Status - Wait
+                    {
+                        _UNITS[current_unit_idx].Status = 0;  // enum Unit Status - Ready
+                    }
                 }
             }
+
+            if(_UNITS[current_unit_idx].Status == 8)  // enum Unit Status - Purify
+            {
+                _unit_stack[unit_stack_idx].active = ST_FALSE;
+            }
+
+            unit_stack_idx++;
         }
 
-        if(_UNITS[current_unit_idx].Status == 8)  // enum Unit Status - Purify
-        {
-
-        }
-
-        _unit_stack->active = ST_FALSE;
-
-
-        unit_stack_idx++;
     }
-
-
 
     _unit_stack_count = unit_stack_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Build_Unit_Stack()\n", __FILE__, __LINE__);
+    // if(DBG_TST_Selected_Stack == 1)
+    if(DBG_TST_Build_Unit_Stack == 1)
+    {
+        for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
+        {
+            dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].unit_idx:  %d\n", __FILE__, __LINE__, itr_unit_stack, _unit_stack[itr_unit_stack].unit_idx);
+            dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active:    %d\n", __FILE__, __LINE__, itr_unit_stack, _unit_stack[itr_unit_stack].active);
+        }
+    }
 #endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Build_Unit_Stack()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o62p05
+// Select_Unit_Stack(... *map_x, *map_y, map_plane ...) |-> OVL_BringIntoView(*map_x, *map_y, unit_x, unit_y, map_plane);
+// MoO2  ¿ Star_On_Screen_(); Ship_Completely_On_Screen_(); Ship_On_Screen_(); ?
+void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane)
+{
+    int16_t l_map_x;
+    int16_t l_map_y;
+    int16_t l_unit_x;
+    int16_t l_unit_y;
+    int16_t in_view;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
+#endif
+
+    l_map_x = *map_x;
+    l_map_y = *map_y;
+
+    l_unit_y = unit_y;
+
+    in_view = ST_FALSE;
+
+    // test in-bounds
+    if(l_unit_y >= l_map_y && l_unit_y < l_map_y + MAP_HEIGHT)
+    {
+        l_unit_x = unit_x;
+        if( (l_unit_x >= l_map_x && l_unit_x < l_map_x + MAP_WIDTH) ||
+            (l_unit_x + WORLD_WIDTH >= l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH)
+        )
+        {
+            if( (l_unit_x + WORLD_WIDTH > l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH) )
+            {
+                l_unit_x += WORLD_WIDTH;
+            }
+            l_unit_x = l_unit_x - l_map_x;
+            in_view = ST_TRUE;
+        }
+    }
+
+    if(in_view == ST_FALSE)
+    {
+        // ¿ same logic as Center_Map() ?
+        l_unit_x = unit_x - (MAP_WIDTH / 2);
+        if(l_unit_x > 0)
+        {
+            l_map_x = l_unit_x;
+        }
+        else
+        {
+            l_map_x = (l_unit_x + WORLD_WIDTH) % WORLD_WIDTH;
+        }
+        l_unit_y = unit_y - (MAP_HEIGHT / 2);
+        if(l_unit_y > 0)
+        {
+            l_map_y = l_unit_y;
+        }
+        else
+        {
+            l_map_y = 0;
+        }
+        if(l_map_y + MAP_HEIGHT >= WORLD_HEIGHT)
+        {
+            l_map_y = WORLD_HEIGHT - MAP_HEIGHT;
+        }
+
+        _prev_world_x = l_map_x;
+        _prev_world_y = l_map_y;
+
+        // CRP_OVL_MapWindowX = _prev_world_x * SQUARE_WIDTH;
+        // CRP_OVL_MapWindowY = _prev_world_y * SQUARE_HEIGHT;
+
+    }
+    else
+    {
+        // HERE: map_x, map_y, unit_x, unit_y are as they were passed in
+        OVL_TileOffScrnEdge(l_map_x, l_map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT);
+    }
+
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
+#endif
+
 }
 
 
 
+// WZD o62p06
+// drake178: OVL_TileOffScrnEdge()
+// MoO2  ¿ Star_On_Screen_(); Ship_Completely_On_Screen_(); Ship_On_Screen_(); ?
 /*
-    WIZARDAS.EXE  ovr063
+    tests if Stack is in First or Last Column and Last or First Row
+    prev_world_x,y to scroll Movement Map 1 world-sqaure right, left, down, or up
+*/
+int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
+{
+    int16_t l_map_x;
+    int16_t l_map_y;
+    int16_t move_map_flag;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height);
+#endif
+
+    l_map_x = map_x;
+    l_map_y = map_y;
+
+    move_map_flag = ST_FALSE;
+
+    // ¿ Stack is in Fst Column of Movement Map ?
+    if(l_map_x == unit_x)
+    {
+        // ¿ map_x == 0 ?
+        l_map_x = l_map_x - 1;  // move Map left 1 world-square
+        if(l_map_x < 0)
+        {
+            l_map_x = l_map_x + WORLD_WIDTH;  // move Map right 1 world-square
+        }
+        move_map_flag = ST_TRUE;  // set flag - map x,y changed
+    }
+
+    // ¿ Stack is in Lst Column of Movement Map ?
+    if( (l_map_x + map_width - 1) % WORLD_WIDTH == unit_x)
+    {
+        l_map_x = ((l_map_x + 1) % WORLD_WIDTH);
+        move_map_flag = ST_TRUE;  // set flag - map x,y changed
+    }
+
+    // ¿ Stack is in Lst Row of Movement Map ?
+    if( (l_map_y + map_height - 1) == unit_y)
+    {
+        // ¿ Movement Map is not already at the botton edge of the World  i.e., the map is able to be moved down ?
+        if( (l_map_y + map_height + 1) < WORLD_HEIGHT)
+        {
+            l_map_y = l_map_y + 1;  // move Map down 1 world-square
+            move_map_flag = ST_TRUE;  // set flag - map x,y changed
+        }
+    }
+
+    // ¿ Stack is in Fst Row of Movement Map ?
+    if(l_map_y == unit_y)
+    {
+        // ¿ Movement Map is not already at the top edge of the World  i.e., the map is able to be moved up ?
+        if(l_map_y != 0)
+        {
+            l_map_y = l_map_y - 1;  // move Map up 1 world-square
+            move_map_flag = ST_TRUE;  // set flag - map x,y changed
+        }
+    }
+
+
+    if(move_map_flag = ST_TRUE)
+    {
+        _prev_world_x = l_map_x;
+        _prev_world_y = l_map_y;
+        // NIU? CRP_OVL_MapWindowX = _prev_world_x * SQUARE_WIDTH;
+        // NIU? CRP_OVL_MapWindowY = _prev_world_y * SQUARE_HEIGHT;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { move_map_flag = %d }\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height, move_map_flag);
+#endif
+
+    return move_map_flag;
+}
+
+
+/*
+    WIZARDS.EXE  ovr063
 */
 
 // WZD o063p01
@@ -2114,6 +2602,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 }
 
 // WZD o063p04
+// drake178: j_GAME_Animate_UEs()
 void Cycle_Unit_Enchantment_Animation(void)
 {
     unit_enchantment_animation_flag++;
@@ -2138,9 +2627,9 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     int16_t unit_owner_idx;
     int16_t unit_colored_backgrounds_idx;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+#endif
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -2175,9 +2664,9 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 
     Draw_Unit_StatFig(x, y, unit_idx, flag);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+#endif
 }
 
 
@@ -2408,6 +2897,7 @@ OON XREF STK_move() WZD o95p01
 // void Allocate_Reduced_Map__1(void)
 // WZD o64p02
 // PRIVATE  void Allocate_Reduced_Map__2(void);
+// drake178: j_RP_LBX_Minimap_Alloc2
 void Allocate_Reduced_Map(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 * 16 = 4848 bytes

@@ -1,7 +1,7 @@
 #ifndef MOX_GAM_H
 #define MOX_GAM_H
 
-#include "MoX_TYPE.H"
+#include "MoX.H"
 
 
 // Game Option - Difficulty
@@ -74,17 +74,6 @@ dead hero
 0x02	Prayermaster*
 0x01	Prayermaster
 */
-
-struct s_HERO /* ; (sizeof=0xC, standard type) */
-{
-    /* 00 */ uint16_t Level;
-    /* 02 */ uint16_t Abilities_LO;     // enum Hero_Ability_LO
-    /* 04 */ uint16_t Abilities_HI;     // enum Hero_Ability_HI
-    /* 06 */ uint8_t Casting_Skill;
-    /* 07 */ uint8_t Spells[4];
-    /* 0B */ uint8_t Unused_0B;
-};
-
 
 struct s_SAVE_GAM
 {

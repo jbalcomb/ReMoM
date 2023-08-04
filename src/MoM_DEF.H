@@ -47,8 +47,8 @@
 /*
     World Map Dimensions
 */
-#define WMAP_WIDTH      60  // in Squares
-#define WMAP_HEIGHT     40  // in Squares
+// #define WMAP_WIDTH      60  // in Squares
+// #define WMAP_HEIGHT     40  // in Squares
 /*
     Main Screen Movement Map Dimensions
 */

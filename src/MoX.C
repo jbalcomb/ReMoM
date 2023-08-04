@@ -5,6 +5,8 @@
 #include "MainMenu.H"
 #include "MainScr.H"
 
+void TST_Load_SAVE_GAM(void);
+
 
 
 int16_t current_screen;
@@ -51,6 +53,7 @@ void Screen_Control(void)
                 DLOG("case scr_Continue:");
                 // BEGIN: WZD main()
                 Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                // TST_Load_SAVE_GAM();
                 Loaded_Game_Update();
                 // END: WZD main()
                 current_screen = scr_Main_Screen;

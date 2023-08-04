@@ -284,10 +284,10 @@ SAMB_ptr p5_heroes;
 */
 // WZD dseg:9392
 // drake178: Visibility_Myrror
-uint8_t * square_scouted_p0;                // Bit_Field  alloc in MoM_Tables_Init()
+uint8_t * square_scouted_p0;                // Bit_Field  alloc in Allocate_Data_Space()
 // WZD dseg:9396
 // drake178: Visibility_Arcanus
-uint8_t * square_scouted_p1;                // Bit_Field  alloc in MoM_Tables_Init()
+uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data_Space()
 
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
@@ -337,7 +337,7 @@ SAMB_ptr _screen_seg;
 
 // WZD dseg:9998
 // AKA TBL_Events
-uint8_t * _events_table;  // alloc in MoM_Tables_Init()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events? Hrrm... all the indexing is in evens, so 2-byte?
+uint8_t * _events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events? Hrrm... all the indexing is in evens, so 2-byte?
 
 // WZD dseg:999C
 int16_t _unit_stack_count;
@@ -384,7 +384,7 @@ struct s_CITY * _CITIES;
 // WZD dseg:9CC0
 // drake178: TBL_Encounters
 /*
-    alloc in MoM_Tables_Init()
+    alloc in Allocate_Data_Space()
     load in Load_SAVE_GAM() - read 102 of 24
 
 */
@@ -408,9 +408,9 @@ SAMB_ptr UU_TBL_2;
 // WZD dseg:9CD8
 SAMB_ptr UU_TBL_1;
 // WZD dseg:9CDC
-// SAMB_ptr TBL_Maps;
-SAMB_ptr _world_maps;
-
+// AKA TBL_Maps;
+// SAMB_ptr _world_maps;
+uint8_t * _world_maps;
 
 // WZD dseg:9D1A
 uint16_t tmp_World_Data_Paras;
@@ -437,9 +437,11 @@ struct s_UNIT * _UNITS;
 
 // WZD dseg:9EC6
 SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
+
 // WZD dseg:9ECA
 struct s_WIZARD _players[6];
 // struct s_WIZARD * _players;
+
 
 // WZD dseg:BB7A
 // struct s_HLP_ENTRY _help_entries[50];
@@ -475,12 +477,12 @@ int16_t _human_player_idx = 0;
 // WZD dseg:BD8E
 int16_t _unit;
 int16_t _turn;
-int16_t _units;
+int16_t _units;  // MoO2 _NUM_SHIPS
 int16_t _cities;
 int16_t _difficulty;
 int16_t _magic;
 int16_t _landsize;
-int16_t _num_players;  // New Game: magic_set.opponents + 1
+int16_t _num_players;  // MoO2 _NUM_PLAYERS    New Game: magic_set.opponents + 1
 struct s_GAME_DATA game_data;
 // WZD dseg:BD9E
 // magic_set s_MAGIC_SET
