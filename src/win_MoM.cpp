@@ -6,6 +6,7 @@
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
+#include "STU_TST.H"
 #endif
 
 
@@ -84,8 +85,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     // MoM_Tables_Init(6100);  // MGC  6100 PR * 16 B = 97600 bytes
     // MoM_Tables_Init(4600);  // WZD  4600 PR * 16 B = 73600 bytes
     Allocate_Data_Space(6100);
-
-
+#ifdef STU_DEBUG
+    TST_Validate_Allocate_Data_Space();
+#endif
+    Load_SAVE_GAM(-1);
+    
     // WZD: Load_SAVE_GAM(8);
 
 

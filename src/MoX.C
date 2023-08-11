@@ -52,7 +52,7 @@ void Screen_Control(void)
             {
                 DLOG("case scr_Continue:");
                 // BEGIN: WZD main()
-                Load_SAVE_GAM(-1);  // SAVETEST.GAM
+                // Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 // TST_Load_SAVE_GAM();
                 Loaded_Game_Update();
                 // END: WZD main()
@@ -113,9 +113,9 @@ void Screen_Control(void)
                 // Loaded_Game_Update_WZD()
                 // END: WZD main()
 
-                Set_Outline_Color(0);
-                Set_Alias_Color(0);
-                Set_Font_Style1(0, 0, 0, 0);
+                // IDK  Set_Outline_Color(0);
+                // IDK  Set_Alias_Color(0);
+                // IDK  Set_Font_Style1(0, 0, 0, 0);
 
                 Set_Page_Off();
                 Fill(0, 0, 319, 199, 7);

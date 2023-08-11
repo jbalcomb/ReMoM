@@ -1779,9 +1779,11 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
             {
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
+            assert(TBL_Scouting = DBG_ORIG_TBL_Scouting);
             unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
             if(unexplored_area != ST_FALSE)
             {
+                assert(TBL_Terr_Specials == DBG_ORIG_TBL_Terr_Specials);
                 terrain_special = TBL_Terr_Specials[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 // #ifdef STU_DEBUG
 //     // dbg_prn("DEBUG: [%s, %d]: terrain_special: 0x%04X\n", __FILE__, __LINE__, terrain_special);
@@ -1794,6 +1796,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 //         dbg_prn("DEBUG: [%s, %d]: Nightshade: %d\n", __FILE__, __LINE__, ((terrain_special & 0x80) != 0));
 //     }
 // #endif
+                assert(TBL_Terrain_Flags == DBG_ORIG_TBL_Terrain_Flags);
                 terrain_flag = TBL_Terrain_Flags[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
                 if((terrain_flag & 0x20) != 0)  /* Corruption */
@@ -1873,6 +1876,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
     {
         itr_screen_x = screen_x;
 
+        assert(TBL_Terr_Specials == DBG_ORIG_TBL_Terr_Specials);
         ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
         ptr_TBL_Scouting = (uint8_t *)(TBL_Scouting + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));

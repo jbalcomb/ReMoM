@@ -1,6 +1,6 @@
 #include "MoX.H"
 
-unsigned char TEST_SAVE_GAM[];
+uint8_t TEST_SAVE_GAM[];
 
 // https://docs.google.com/spreadsheets/d/1gNOyqrm5IMt_DQ9pnJsxcc-Nx8KWgVd1kl81eBSs8yE/edit?usp=sharing
 // gDrive > SimTexUnit > MoMv131_SaveGam
@@ -63,7 +63,7 @@ TBL_Hero_Names = &TEST_SAVE_GAM[122740];
 #endif
 }
 
-unsigned char TEST_SAVE_GAM[123300] =
+uint8_t TEST_SAVE_GAM[123300] =
 {
 	0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0xF8, 0xFF, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

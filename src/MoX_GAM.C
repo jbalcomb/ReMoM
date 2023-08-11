@@ -11,6 +11,8 @@
 #include <stdlib.h>     /* itoa() */
 #include <string.h>     /* memset(), strcat(), strcpy() */
 
+#include <assert.h>
+
 
 
 uint8_t _save_gam[123300];
@@ -224,6 +226,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     FILE * file_pointer;
     int32_t file_size;
     int16_t file_size_flag;
+    long file_pointer_position;
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -247,12 +250,25 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer = fopen(file_name, "rb");
 
-    fread(p0_heroes, 12, 35, file_pointer);
-    fread(p1_heroes, 12, 35, file_pointer);
-    fread(p2_heroes, 12, 35, file_pointer);
-    fread(p3_heroes, 12, 35, file_pointer);
-    fread(p4_heroes, 12, 35, file_pointer);
-    fread(p5_heroes, 12, 35, file_pointer);
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 0);  // BoF
+
+
+    fread(p0_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+    fread(p1_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+    fread(p2_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+    fread(p3_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+    fread(p4_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+    fread(p5_heroes, 12, 35, file_pointer);  // 12 * 35 = 420
+
+    file_pointer_position = ftell(file_pointer);  // 12 * 35 * 6 = 420 * 6 = 2520
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 2520);  // BoF + (12 * 35 * 6)
 
     fread(&_num_players, 1, 2, file_pointer);
     fread(&_landsize, 1, 2, file_pointer);
@@ -263,52 +279,172 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     fread(&_turn, 1, 2, file_pointer);
     fread(&_unit, 1, 2, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);  // 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2 = 16
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 2536);  // 7344
+
     fread(_players, 6, 1224, file_pointer);
     // fread(_players, PLAYER_COUNT_MAX, sizeof(struct s_WIZARD), file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 9880);
+
     // memset(_world_maps, 0, 9600); // 602 * 16 = 9632
     // � unhandled exception: invalid parameter ?
-    fread(_world_maps, 2, 4800, file_pointer);
+    fread(_world_maps, 2, 4800, file_pointer); // 9600
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 19480);
 
     fread(UU_TBL_1, 2, 96, file_pointer);
     fread(UU_TBL_2, 2, 96, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 19864);
+
     fread(TBL_Landmasses, 2, 2400, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 24664);
+
     fread(TBL_Nodes, 30, 48, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 26104);
 
     fread(_FORTRESSES, 6, 4, file_pointer);
     // fread(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 26128);
+
     fread(_TOWERS, 6, 4, file_pointer);
     // fread(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 26152);
+
     fread(TBL_Lairs, 102, 24, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 28600);
+
     fread(TBL_Items, 138, 50, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 35500);
 
     fread(_CITIES, 100, 114, file_pointer);
     // fread(_CITIES, CITY_COUNT_MAX, sizeof(struct s_CITY), file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 46900);
+
     fread(_UNITS, 1009, 32, file_pointer);
     // fread(_UNITS, UNIT_COUNT_MAX, sizeof(struct s_UNIT), file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 79188);
+
     fread(TBL_Terr_Specials, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 83988);
 
     fread(TBL_Scouting, 2, 2400, file_pointer);  // 1 byte per world map square per plane; 60*40 world map * 2 planes
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 88788);
+
     fread(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 117588);
 
     fread(_events_table, 1, 100, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 117688);
+
     fread(TBL_Terrain_Flags, 2, 2400, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 122488);
 
     fread(&grand_vizier, 1, 2, file_pointer);
 
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 122490);
+
     fread(TBL_Premade_Items, 250, 1, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 122740);
 
     // if (file_size_flag == ST_TRUE) { MEM_Clear_Far(TBL_Hero_Names, 545); } else { ... }
     fread(TBL_Hero_Names, 16, 35, file_pointer);
+
+    file_pointer_position = ftell(file_pointer);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: file_pointer_position: %d\n", __FILE__, __LINE__, file_pointer_position);
+#endif
+    assert(file_pointer_position == 123300);
 
     fclose(file_pointer);
 

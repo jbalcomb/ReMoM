@@ -246,14 +246,18 @@ uint8_t * spell_data_table;
 
 // WZD dseg:9136
 SAMB_ptr TBL_Items;
+
 // WZD dseg:913A
 SAMB_ptr TBL_Premade_Items;
 // WZD dseg:913E
 // IMG_USW_Items ITEM_ICONS
+
 // WZD dseg:9226
 SAMB_ptr Active_Unit;
+
 // WZD dseg:922A
 // TBL_BattleUnits
+
 // WZD dseg:922E
 // TBL_CombatEnchants
 
@@ -361,6 +365,7 @@ SAMB_ptr TBL_SharedTiles_EMS;
 SAMB_ptr TBL_TempMoveMap_EMS;
 // WZD dseg:9CA8
 // COL_MinimapTiles
+
 // WZD dseg:9CAC
 SAMB_ptr TBL_MoveMaps_EMS;
 

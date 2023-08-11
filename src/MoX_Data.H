@@ -4,6 +4,72 @@
 #include "MoX_TYPE.H"
 
 
+
+
+#define SAVEGAM_RECORD_SIZE 123300
+#define MOXSET_RECORD_SIZE 466
+
+// sizeof(struct s_CITY)
+#define CITY_RECORD_SIZE         114
+// sizeof(struct s_FORTRESS)
+#define FORTRESS_RECORD_SIZE       4
+// sizeof(struct s_HERO)
+#define HERO_RECORD_SIZE          12
+// sizeof(struct s_LAIR)
+#define LAIR_RECORD_SIZE          24
+// sizeof(struct s_NODE)
+#define NODE_RECORD_SIZE          48
+// sizeof(struct s_STACK)
+#define STACK_RECORD_SIZE          4
+// sizeof(struct s_TOWER)
+#define TOWER_RECORD_SIZE          4
+// sizeof(struct s_UNIT)
+#define UNIT_RECORD_SIZE          32
+// sizeof(struct s_WIZARD)
+#define WIZARD_RECORD_SIZE      1224
+
+
+#define HERO_NAME_RECORD_SIZE 16
+
+
+// 6 * 35 * 12
+#define PLAYER_HEROES_RECORD_SIZE      35*HERO_RECORD_SIZE
+
+// #define NUM_PLAYERS_RECORD_SIZE 2
+// #define LANDSIZE_RECORD_SIZE 2
+// #define MAGIC_RECORD_SIZE 2
+// #define DIFFICULTY_RECORD_SIZE 2
+// #define NUM_CITIES_RECORD_SIZE 2
+// #define NUM_UNITS_RECORD_SIZE 2
+// #define TURN_RECORD_SIZE 2
+// #define UNIT_RECORD_SIZE 2
+
+// MAX_PLAYERS * sizeof(struct s_WIZARD)
+#define WIZARDS_RECORD_SIE              6*WIZARD_RECORD_SIZE
+#define WORLD_MAPS_RECORD_SIZE          2*2400*2
+#define UU_TBL_1_RECORD_SIZE            2*96
+#define UU_TBL_2_RECORD_SIZE            2*96
+#define LANDMASSES_RECORD_SIZE          2*2400
+#define NODES_RECORD_SIZE               30*NODE_RECORD_SIZE
+// MAX_PLAYERS * sizeof(struct s_FORTRESS)
+#define FORTRESSES_RECORD_SIZE          6*FORTRESS_RECORD_SIZE
+// MAX_PLAYERS * sizeof(struct s_TOWER)
+#define TOWERS_RECORD_SIZE              6*TOWER_RECORD_SIZE
+#define LAIRS_RECORD_SIZE               102*LAIR_RECORD_SIZE
+#define ITEMS_RECORD_SIZE               138*50
+#define CITIES_RECORD_SIZE              100*CITY_RECORD_SIZE
+#define UNITS_RECORD_SIZE               1009*UNIT_RECORD_SIZE
+#define TERRAIN_SPECIALS_RECORD_SIZE    2*2400
+#define UNEXPLORED_AREA_RECORD_SIZE     2*2400
+#define MOVEMAPS_RECORD_SIZE            2*14400
+#define EVENTS_TABLE_RECORD_SIZE        1*100
+#define TERRAIN_FLAGS_RECORD_SIZE       2*2400
+// #define GRAND_VIZIER_RECORD_SIZE     2
+#define PREMADE_ITEMS_RECORD_SIZE       250*1
+#define HERO_NAMES_RECORD_SIZE          35*HERO_NAME_RECORD_SIZE
+
+
+
 enum Meld_Flags
 {
     M_Warped,
@@ -101,7 +167,7 @@ struct s_RETORTS
     /* 11 */ int8_t Artificer;
 };
 
-//  ; (sizeof=0xC, standard type)
+// sizeof:  0Ch  12d
 struct s_HERO
 {
     /* 00 */  int16_t  Level;  // ¿ experience (level) ?
@@ -213,6 +279,7 @@ struct s_GAME_DATA
     and it was messing with my head
     when I was trying to debug the struct for the file read
 */
+
 #pragma pack(push)
 #pragma pack(2)
 // sizeof:  4C8  1224d
@@ -419,8 +486,6 @@ struct s_CITY
     /* 65 */ int8_t RoadConn_BitField[13];
 };
 
-
-
 // sizeof:  18h  24d
 struct s_LAIR
 {
@@ -444,7 +509,6 @@ struct s_LAIR
     /* 18 */
 };
 
-
 // sizeof:  30h  48d
 struct s_NODE
 {
@@ -459,7 +523,6 @@ struct s_NODE
     /* 2E */  int8_t  Meld_Flags;
     /* 2F */  int8_t  Unused_2Fh;
 };
-
 
 
 
@@ -498,6 +561,7 @@ struct s_UNIT
 };
 
 
+
 // sizeof=0x4
 struct s_TOWER
 {
@@ -507,7 +571,6 @@ struct s_TOWER
     /* 03 */ int8_t Unused_03h;
 };
 
-
 // sizeof=0x4
 struct s_FORTRESS
 {
@@ -516,7 +579,6 @@ struct s_FORTRESS
     /* 02 */ int8_t world_plane;
     /* 03 */ int8_t Active;
 };
-
 
 
 // sizeof 04h 4d

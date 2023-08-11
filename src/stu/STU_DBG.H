@@ -12,14 +12,80 @@ extern "C" {
 /*
     ¿ Game-State Debug Variables ?
 */
+
+// WZD dseg:9136
+extern SAMB_ptr DBG_ORIG_TBL_Items;
+// WZD dseg:913A
+extern SAMB_ptr DBG_ORIG_TBL_Premade_Items;
+// WZD dseg:9232
+extern SAMB_ptr DBG_ORIG_p0_heroes;
+// WZD dseg:9236
+extern SAMB_ptr DBG_ORIG_p1_heroes;
+// WZD dseg:923A
+extern SAMB_ptr DBG_ORIG_p2_heroes;
+// WZD dseg:923E
+extern SAMB_ptr DBG_ORIG_p3_heroes;
+// WZD dseg:9242
+extern SAMB_ptr DBG_ORIG_p4_heroes;
+// WZD dseg:9246
+extern SAMB_ptr DBG_ORIG_p5_heroes;
+// WZD dseg:9998
+extern uint8_t * DBG_ORIG__events_table;
+// WZD dseg:9CAC
+extern SAMB_ptr DBG_ORIG_TBL_MoveMaps_EMS;
+// WZD dseg:9CB0
+extern uint8_t * DBG_ORIG_TBL_Scouting;
+// WZD dseg:9CB4  
+extern uint8_t * DBG_ORIG_TBL_Terrain_Flags;
+// WZD dseg:9CB8  
+extern SAMB_ptr  DBG_ORIG_TBL_Terr_Specials;
+// WZD dseg:9CBC  
+extern struct s_CITY * DBG_ORIG__CITIES;
+// WZD dseg:9CC0
+extern struct s_LAIR * DBG_ORIG_TBL_Lairs;
+// WZD dseg:9CC4  
+extern struct s_TOWER * DBG_ORIG__TOWERS;
+// WZD dseg:9CC8  
+extern struct s_FORTRESS * DBG_ORIG__FORTRESSES;
+// WZD dseg:9CCC  
+extern struct s_NODE * DBG_ORIG_TBL_Nodes;
+// WZD dseg:9CD0
+extern uint8_t * DBG_ORIG_TBL_Landmasses;
+// WZD dseg:9CD4
+extern SAMB_ptr DBG_ORIG_UU_TBL_2;
+// WZD dseg:9CD8
+extern SAMB_ptr DBG_ORIG_UU_TBL_1;
+// WZD dseg:9CDC
+extern uint8_t * DBG_ORIG__world_maps;
+// WZD dseg:9EC2
+extern struct s_UNIT * DBG_ORIG__UNITS;
+// WZD dseg:9EC6
+extern SAMB_ptr DBG_ORIG_TBL_Hero_Names;
+// WZD dseg:9ECA
+// extern struct s_WIZARD DBG_ORIG__players[];
+
+
 extern int DBG_Draw_Map_Cities;
 extern int DBG_TST_Made_Map_Move;
 extern int DBG_TST_Selected_Stack;
 extern int DBG_TST_Validate_Entities;
+
+/* DBG Function Flags */
 extern int DBG_TST_Set_Entities_On_Map_Window;
 extern int DBG_TST_Select_Unit_Stack;
 extern int DBG_TST_Build_Unit_Stack;
 extern int DBG_TST_Draw_Map_Units;
+extern int DBG_Main_Screen_Draw_Summary_Window;
+extern int DBG_Print_Integer_Right;
+extern int DBG_Print_Right;
+extern int DBG_Get_String_Width;
+extern int DBG_Print;
+extern int DBG_Print_Display;
+extern int DBG_Print_String;
+extern int DBG_Print_Character;
+extern int DBG_Print_Character_ASM;
+extern int DBG_Print_Character_No_Alias;
+extern int DBG_Print_Character_No_Alias_ASM;
 
 extern int16_t DBG_TST_unit_stack[];
 extern int16_t DBG_TST_entities_on_movement_map[];

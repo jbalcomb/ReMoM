@@ -593,7 +593,8 @@ SAMB_ptr IMG_OVL_Corruption;                // ; reserved EMM header pointer for
     MAPBACK.LBX  78-86
     SITES - coal, iron, silver, gold, gems, mithril, adamantium, quork, crysx
 */
-SAMB_ptr mineral_site_segs[9];
+SAMB_ptr mineral_site_segs[10];  // ¿ loops from 1 to 10 ?
+
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
@@ -958,7 +959,7 @@ void Main_Screen(void)
     // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
     Allocate_Reduced_Map();
     Reset_Draw_Active_Stack();
-    Set_Outline_Color(0);  // ¿ NONE / TRANSPARENT ?
+    Set_Outline_Color(0);  // ¿ BLACK / NONE / TRANSPARENT ?
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
     // Deactivate_Auto_Function();
@@ -2934,6 +2935,7 @@ void Main_Screen_Draw_Summary_Window(void)
     int16_t mana;
     uint8_t colors[16] = {0};
     int16_t active_event_id;
+    uint8_t color_index;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Summary_Window()\n", __FILE__, __LINE__);
@@ -2968,9 +2970,9 @@ void Main_Screen_Draw_Summary_Window(void)
 
 
 //     // Get_Incomes(_human_player_idx, &gold, &food, &mana);
-    gold = -12;
-    food = 34;
-    mana = 56;
+    gold = 142;
+    food = 5;
+    mana = 35;
 
 
 // // // mov     [bp+Color_0], 198
@@ -2985,46 +2987,93 @@ void Main_Screen_Draw_Summary_Window(void)
     colors[1] = 198;
     colors[2] = 198;
     Set_Font_Colors_15(0, colors);
+    // ¿ this only impacts gold < 0 and cycle_incomes != ST_UNDEFINED ?
 
-
-    Set_Outline_Color(0);
+    Set_Outline_Color(ST_BLACK);
 
 
 
     if(gold >= 0)
     {
-        Set_Font_Style4(0, 4, 0, 0);
-        Set_Alias_Color(184);
+        DLOG("(gold >= 0)");
+        Set_Font_Style_Outline(0, 4, 0, 0);
+
+#ifdef STU_DEBUG
+    for(color_index = 0; color_index < 16; color_index++)
+    {
+        dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
+    }
+#endif
+
+        Set_Alias_Color(184);  // 184d  B8h  ~"dark gold"
+
+#ifdef STU_DEBUG
+    for(color_index = 0; color_index < 16; color_index++)
+    {
+        dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
+    }
+#endif
+
     }
     else
     {
+        DLOG("(gold < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
-            Set_Font_Style4(0, 2, 0, 0);
+            Set_Font_Style_Outline(0, 2, 0, 0);
         }
         else
         {
-            Set_Font_Style4(0, 15, 0, 0);
+            Set_Font_Style_Outline(0, 15, 0, 0);
         }
     }
+// #ifdef STU_DEBUG
+//     DBG_Main_Screen_Draw_Summary_Window = 1;
+//     DBG_Print_Integer_Right = 1;
+//     DBG_Print_Right = 1;
+//     DBG_Get_String_Width = 1;
+//     DBG_Print = 1;
+//     DBG_Print_Display = 1;
+//     DBG_Print_String = 1;
+//     DBG_Print_Character = 1;
+//     DBG_Print_Character_ASM = 1;
+//     DBG_Print_Character_No_Alias = 1;
+//     DBG_Print_Character_No_Alias_ASM = 1;
+// #endif
     Print_Integer_Right(273, 101, gold);
+#ifdef STU_DEBUG
+    DBG_Main_Screen_Draw_Summary_Window = 0;
+    DBG_Print_Integer_Right = 0;
+    DBG_Print_Right = 0;
+    DBG_Get_String_Width = 0;
+    DBG_Print = 0;
+    DBG_Print_Display = 0;
+    DBG_Print_String = 0;
+    DBG_Print_Character = 0;
+    DBG_Print_Character_ASM = 0;
+    DBG_Print_Character_No_Alias = 0;
+    DBG_Print_Character_No_Alias_ASM = 0;
+#endif
+
     Print(278, 101, cstr_Gold);
 
 
     if(food >= 0)
     {
-        Set_Font_Style4(0, 4, 0, 0);
+        DLOG("(food >= 0)");
+        Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
     }
     else
     {
+        DLOG("(food < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
-            Set_Font_Style4(0, 2, 0, 0);
+            Set_Font_Style_Outline(0, 2, 0, 0);
         }
         else
         {
-            Set_Font_Style4(0, 15, 0, 0);
+            Set_Font_Style_Outline(0, 15, 0, 0);
         }
     }
     Print_Integer_Right(273, 133, food);
@@ -3033,18 +3082,20 @@ void Main_Screen_Draw_Summary_Window(void)
 
     if(mana >= 0)
     {
-        Set_Font_Style4(0, 4, 0, 0);
+        DLOG("(mana >= 0)");
+        Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
     }
     else
     {
+        DLOG("(mana < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
-            Set_Font_Style4(0, 2, 0, 0);
+            Set_Font_Style_Outline(0, 2, 0, 0);
         }
         else
         {
-            Set_Font_Style4(0, 15, 0, 0);
+            Set_Font_Style_Outline(0, 15, 0, 0);
         }
     }
     Print_Integer_Right(273, 165, mana);
@@ -3102,7 +3153,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 172;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 157, cstr_Conjunction);
         active_event_id = 0;
     }
@@ -3114,7 +3165,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 201;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 158, cstr_Conjunction);
         active_event_id = 1;
     }
@@ -3126,7 +3177,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 217;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 158, cstr_Conjunction);
         active_event_id = 2;
     }
@@ -3142,7 +3193,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 9;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 158, cstr_Bad_Moon);
         active_event_id = 3;
     }
@@ -3155,7 +3206,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 15;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 158, cstr_Good_Moon);
         active_event_id = 4;
     }
@@ -3168,7 +3219,7 @@ void Main_Screen_Draw_Summary_Window(void)
         colors[1] = 123;
         Set_Font_Colors_15(0, colors);
         Set_Outline_Color(0);
-        Set_Font_Style4(0, 15, 0, 0);
+        Set_Font_Style_Outline(0, 15, 0, 0);
         Print_Centered(280, 158, cstr_Mana_Short);
         active_event_id = 5;
     }
