@@ -6,7 +6,7 @@
     ovr071
 */
 
-#include "MoX_TYPE.H"
+#include "MoX.H"
 
 
 
@@ -20,8 +20,16 @@ extern "C" {
     WIZARDS.EXE  ovr071
 */
 
-// WZD o71p01 OVL_GetMoveTypes   ();
-// WZD o71p02 STK_GetMoveTypes   ();
+
+// WZD o71p01
+// drake178: OVL_GetMoveTypes()
+// void Active_Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags);
+void Active_Stack_Movement_Modes(int16_t movement_mode_flags[]);
+
+// WZD o71p02
+// drake178: STK_GetMoveTypes()
+// void Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags, int16_t * stack_array, int16_t stack_size);
+void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size);
 
 // WZD o71p03
 // int16_t UNIT_IsFlying(int16_t unit_idx);
@@ -48,8 +56,11 @@ int16_t UNIT_HasInvisibility(int16_t unit_idx);
 
 // WZD o71p012
 // int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
+
 // WZD o71p013
-// int16_t UNIT_HasPlanarItem (int16_t unit_idx);
+// drake178: UNIT_HasPlanarItem()
+int16_t Unit_Has_Planar_Travel_Item(int16_t unit_idx);
+
 // WZD o71p014
 // int16_t UNIT_IsNonCorporeal(int16_t unit_idx);
 

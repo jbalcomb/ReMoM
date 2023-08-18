@@ -2,7 +2,7 @@
 #define MOX_DATA_H
 
 #include "MoX_TYPE.H"
-
+#include "MoM_DEF.H"
 
 
 
@@ -114,6 +114,151 @@ enum Unit_Status
     US_Unknown_100 = 100,  // 64h  100d  01100100b
     US_PurifyDone = 111    // 6Fh  111d  01101111b
 };
+
+
+
+/*
+    Magic Realm
+*/
+
+/*
+enum Magic Realm
+mr_Chaos = 0,
+mr_Death = 1,
+mr_Life = 2,
+mr_Nature = 3,
+mr_Sorcery = 4,
+*/
+
+
+/*
+    Enchantment
+
+struct s_UNIT
+    / * 18 * /  int16_t Enchants_LO;  // ; enum UE_FLAGS_L
+    / * 1A * /  int16_t Enchants_HI;  // ; enum UE_FLAGS_H
+
+DX:AX LO:HI
+~ uint32_t
+
+*/
+//         if( (Unit_Enchantments_LO & 0x40) != 0)  /* UE_Regeneration */
+//         {
+//             outline_color_index = 3;  // Nature
+//         }
+//         if( (Unit_Enchantments_HI & 0x40) != 0)  /* UE_Resist_Magic */
+//         {
+//             outline_color_index = 3;  // Sorcery
+//         }
+
+/*
+; enum UE_FLAGS_L (bitfield)
+UE_Immolation  = 1
+UE_Guardian_Wind  = 2
+UE_Berserk  = 4
+UE_Cloak_of_Fear  = 8
+UE_Black_Channels  = 10h
+UE_Wraith_Form  = 20h
+UE_Regeneration  = 40h
+UE_Path_Finding  = 80h
+UE_Water_Walking  = 100h
+UE_Resist_Elements  = 200h
+UE_Elemental_Armor  = 400h
+UE_Stone_Skin  = 800h
+UE_Iron_Skin  = 1000h
+UE_Endurance  = 2000h
+UE_Spell_Lock  = 4000h
+UE_Invisibility  = 8000h
+*/
+/*
+; enum UE_FLAGS_H (bitfield)
+UE_Wind_Walking  = 1
+UE_Flight  = 2
+UE_Resist_Magic  = 4
+UE_Magic_Immunity  = 8
+UE_Flame_Blade  = 10h
+UE_Eldritch_Weapon  = 20h
+UE_True_Sight  = 40h
+UE_Holy_Weapon  = 80h
+UE_Heroism  = 100h
+UE_Bless  = 200h
+UE_Lionheart  = 400h
+UE_Giant_Strength  = 800h
+UE_Planar_Travel  = 1000h
+UE_Holy_Armor  = 2000h
+UE_Righteousness  = 4000h
+UE_Invulnerability  = 8000h
+*/
+
+// #define UE_Immolation       0x0001
+// #define UE_Guardian_Wind    0x0002
+// #define UE_Berserk          0x0004
+// #define UE_Cloak_of_Fear    0x0008
+// #define UE_Black_Channels   0x0010
+// #define UE_Wraith_Form      0x0020
+// #define UE_Regeneration     0x0040
+// #define UE_Path_Finding     0x0080
+// #define UE_Water_Walking    0x0100
+// #define UE_Resist_Elements  0x0200
+// #define UE_Elemental_Armor  0x0400
+// #define UE_Stone_Skin       0x0800
+// #define UE_Iron_Skin        0x1000
+// #define UE_Endurance        0x2000
+// #define UE_Spell_Lock       0x4000
+// #define UE_Invisibility     0x8000
+
+// #define UE_Wind_Walking     0x0001
+// #define UE_Flight           0x0002
+// #define UE_Resist_Magic     0x0004
+// #define UE_Magic_Immunity   0x0008
+// #define UE_Flame_Blade      0x0010
+// #define UE_Eldritch_Weapon  0x0020
+// #define UE_True_Sight       0x0040
+// #define UE_Holy_Weapon      0x0080
+// #define UE_Heroism          0x0100
+// #define UE_Bless            0x0200
+// #define UE_Lionheart        0x0400
+// #define UE_Giant_Strength   0x0800
+// #define UE_Planar_Travel    0x1000
+// #define UE_Holy_Armor       0x2000
+// #define UE_Righteousness    0x4000
+// #define UE_Invulnerability  0x8000
+// 
+// #define UE_Immolation       0x00010000
+// #define UE_Guardian_Wind    0x00020000
+// #define UE_Berserk          0x00040000
+// #define UE_Cloak_of_Fear    0x00080000
+// #define UE_Black_Channels   0x00100000
+// #define UE_Wraith_Form      0x00200000
+// #define UE_Regeneration     0x00400000
+// #define UE_Path_Finding     0x00800000
+// #define UE_Water_Walking    0x01000000
+// #define UE_Resist_Elements  0x02000000
+// #define UE_Elemental_Armor  0x04000000
+// #define UE_Stone_Skin       0x08000000
+// #define UE_Iron_Skin        0x10000000
+// #define UE_Endurance        0x20000000
+// #define UE_Spell_Lock       0x40000000
+// #define UE_Invisibility     0x80000000
+// 
+// #define UE_Wind_Walking     0x00000001
+// #define UE_Flight           0x00000002
+// #define UE_Resist_Magic     0x00000004
+// #define UE_Magic_Immunity   0x00000008
+// #define UE_Flame_Blade      0x00000010
+// #define UE_Eldritch_Weapon  0x00000020
+// #define UE_True_Sight       0x00000040
+// #define UE_Holy_Weapon      0x00000080
+// #define UE_Heroism          0x00000100
+// #define UE_Bless            0x00000200
+// #define UE_Lionheart        0x00000400
+// #define UE_Giant_Strength   0x00000800
+// #define UE_Planar_Travel    0x00001000
+// #define UE_Holy_Armor       0x00002000
+// #define UE_Righteousness    0x00004000
+// #define UE_Invulnerability  0x00008000
+// 
+// #define GET_ENCHANTMENT_MAGIC_REALM((Unit_Enchantments_HI),(Unit_Enchantments_LO)) (  )
 
 
 
@@ -550,7 +695,7 @@ struct s_UNIT
     /* 13 */  int8_t  Unknown_13h;
     /* 14 */  int16_t In_Tower;
     /* 16 */  int8_t  Sight_Range;
-    /* 17 */  int8_t  Mutations;  // ; enum MUT_FLAGS
+    /* 17 */  int8_t  Mutations;    // ; enum MUT_FLAGS
     /* 18 */  int16_t Enchants_LO;  // ; enum UE_FLAGS_L
     /* 1A */  int16_t Enchants_HI;  // ; enum UE_FLAGS_H
     /* 1C */  int8_t  Rd_Constr_Left;
@@ -636,6 +781,52 @@ extern uint8_t COL_Banners[];
 // WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
 // WZD dseg:00EC 00                                              db    0
 // WZD dseg:00ED 00                                              db    0
+
+
+
+
+// WZD dseg:33B8
+// drake178: MoveFlag_Array
+// 01 00 20 00 40 00 04 00 02 00 08 00             
+// MoveFlag_Array dw M_Cavalry, M_Forester, M_Mntnr, M_Swimming, M_Sailing, M_Flying
+// OON XREF: STK_GetMoveTypes()
+extern int16_t MoveType_Flags[6];  // = { 0x0001, 0x0020, 0x0040, 0x0004, 0x0002, 0x0008 }
+// struct s_Movement_Modes
+// {
+//     /* 0x00 */  uint16_t Cavalry = 0x0001;
+//     /* 0x02 */  uint16_t Forester = 0x0020;
+//     /* 0x04 */  uint16_t Mountaineer = 0x0040;
+//     /* 0x06 */  uint16_t Swimming = 0x0004;
+//     /* 0x08 */  uint16_t Sailing = 0x0002;
+//     /* 0x0A */  uint16_t Flying = 0x0008;
+//     /* 0x0C */  uint16_t PlanarTravel;
+//     /* 0x0E */
+// };
+
+struct s_Movement_Modes
+{
+    /* 0x00 */  uint16_t Cavalry;
+    /* 0x02 */  uint16_t Forester;
+    /* 0x04 */  uint16_t Mountaineer;
+    /* 0x06 */  uint16_t Swimming;
+    /* 0x08 */  uint16_t Sailing;
+    /* 0x0A */  uint16_t Flying;
+    /* 0x0C */  uint16_t PlanarTravel;
+    /* 0x0E */  uint16_t Walking;
+};
+
+// struct s_Movement_Modes movement_modes_array = 
+// {
+//     Cavalry = 0x0001
+//     Forester = 0x0020,
+//     Mountaineer = 0x0040,
+//     Swimming = 0x0004,
+//     Sailing = 0x0002,
+//     Flying = 0x0008
+// };
+// struct s_Movement_Modes movement_modes_array = { 0x0001, 0x0020, 0x0040, 0x0004, 0x0002, 0x0008 };
+// extern struct s_Movement_Modes movement_modes_array = { CAVALRY, FORESTER, MOUNTAINEER, SWIMMING, SAILING, FLYING };
+extern struct s_Movement_Modes movement_modes_array;
 
 
 
@@ -854,6 +1045,11 @@ extern SAMB_ptr Active_Unit;                // alloc in Allocate_Data_Space()
 // WZD dseg:922E
 // TBL_CombatEnchants
 
+
+// extern struct s_HERO p_heroes[][];
+// extern struct s_HERO ** p_heroes;
+// extern struct s_HERO p_heroes[6][35];
+extern struct s_HERO * p_heroes[6];
 // WZD dseg:9232
 extern SAMB_ptr p0_heroes;                  // alloc in Allocate_Data_Space()
 // WZD dseg:9236
@@ -889,6 +1085,7 @@ extern int16_t all_units_moved;
 // dseg:9647 00                                              db    0
 
 // WZD dseg:9648
+// MoO2:  _draw_ship_bitmap 0018A83C  _ship_bitmap 0018A840
 extern SAMB_ptr UnitDraw_WorkArea;
 
 // dseg:964A 00                                              db    0

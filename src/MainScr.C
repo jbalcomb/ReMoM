@@ -1,3 +1,16 @@
+/*
+    WIZARDS.EXE
+    ovr057
+    ovr058
+    ovr061
+    ovr062
+    ovr063
+    ovr064
+    ovr097
+
+¿ MoO2  Module: SHIPSTK ?
+
+*/
 
 #include "MoX.H"
 
@@ -47,6 +60,10 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
 // WZD o58p02
 void Set_Mouse_List_Default(void);
 /*
+    WIZARDS.EXE  ovr061
+*/
+void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+/*
     WIZARDS.EXE  ovr062
 */
 // WZD o62p03
@@ -65,6 +82,8 @@ int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_
 void Main_Screen_Draw_Status_Window(void);
 // WZD o063p02
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
+// WZD o063p03
+void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
 // WZD o063p04
 void Cycle_Unit_Enchantment_Animation(void);
 // WZD o063p05
@@ -72,6 +91,21 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_
 // WZD o063p05
 // AKA OVL_DrawUnitImage()
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
+// WZD o063p06
+void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx);
+
+// WZD o63p07
+// drake178: OVL_DrawStackMoves
+void Main_Screen_Draw_Movement_Bar();
+
+// WZD o63p08
+// drake178: OVL_DrawMoveTypes()
+void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
+
+// WZD o63p09
+// drake178: OVL_CanPlanarTravel()
+int16_t Stack_Has_Planar_Travel(void);
+
 // WZD o63p12
 int16_t OVL_GetStackHMoves(void);
 /*
@@ -91,6 +125,11 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
+/*
+    WIZARDS.EXE  ovr097
+*/
+// WZD o97p08
+void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);
 
 
 
@@ -204,6 +243,10 @@ int16_t unit_enchantment_animation_count;
 int16_t unit_enchantment_animation_flag;  
 
 
+// WZD  dseg:31AE
+char cnst_Moves[] = "Moves:";
+
+
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
 
 // WZD dseg:C03E
@@ -290,6 +333,50 @@ char backgrnd_lbx_file[] = "BACKGRND";          // WZD dseg:29F4
 char cstr_1st5[] = " !\"$#";
 char cstr_ABC[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 char cstr_WarGames[] = "WOULD YOU LIKE TO PLAY A GAME?";
+
+
+
+// array used for color outline for enchanted units
+// 5 magic realms {Chaos, Death, Life, Nature, Sorcery}
+// ? 8 animation stages ?
+// ? 3 colors for each stages ?
+// 5 * 8 * 3 = 120
+// WZD dseg:3062
+// drake178: COL_UE_Chaos
+// WZD dseg:30A2
+// drake178: COL_UE_Death
+// WZD dseg:30E2
+// drake178: COL_UE_Life
+// WZD dseg:3122
+// drake178: COL_UE_Nature
+// WZD dseg:3162
+// drake178: COL_UE_Sorcery
+uint8_t enchantment_outline_colors[320] = 
+{
+    0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D,
+    0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B,
+    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29,
+    0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B,
+    0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24,
+    0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22,
+    0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20,
+    0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22,
+    0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
+    0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D,
+    0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+    0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D,
+    0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44,
+    0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42,
+    0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40,
+    0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42,
+    0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64,
+    0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62,
+    0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60,
+    0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62
+};
+
+
+
 // WZD dseg:31A2
 char cstr_GP[] = "GP";
 // WZD dseg:31A5
@@ -511,8 +598,9 @@ SAMB_ptr main_game_button;
 SAMB_ptr main_armies_button;
 SAMB_ptr main_plane_button;
 
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawMoveTypes()
+// XREF: Main_Screen_Load_Pictures(); Draw_Movement_Mode_Icons()
 // single-loaded image
+// gets indexed like an array of pictures in Draw_Movement_Mode_Icons()
 SAMB_ptr move_sail_icon;
 SAMB_ptr move_swim_icon;
 SAMB_ptr move_mt_icon;
@@ -522,6 +610,8 @@ SAMB_ptr move_path_icon;
 SAMB_ptr move_astral_icon;
 SAMB_ptr move_wind_icon;
 SAMB_ptr move_boot_icon;
+SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
+
 
 // WZD dseg:998C 00 00                   GUI_SmallWork_IMG@ dw 0                 ; 96h LBX_Alloc_Space paragraphs
 // WZD dseg:998E 00 00                   gsa_Sandbox dw 0                        ; 203h + 11F8h LBX_Alloc_Space paragraphs
@@ -786,22 +876,34 @@ void Main_Screen_Load_Pictures(void)
     main_lock_build_button = LBX_Load(main_lbx_file, 15);
     main_lock_purify_button = LBX_Load(main_lbx_file, 43);
 
-//     main_white_medal_icon = LBX_Load(main_lbx_file, 51);
-//     main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
-//     main_red_medal_icon = LBX_Load(main_lbx_file, 53);
-//     main_magic_weapon_icon = LBX_Load(main_lbx_file, 54);
-//     main_mithril_weapon_icon = LBX_Load(main_lbx_file, 55);
-//     main_adamantium_weapon_icon = LBX_Load(main_lbx_file, 56);
-// 
-//     move_sail_icon = LBX_Load(main_lbx_file, 18);
-//     move_swim_icon = LBX_Load(main_lbx_file, 19);
-//     move_mt_icon = LBX_Load(main_lbx_file, 20);
-//     move_forest_icon = LBX_Load(main_lbx_file, 21);
-//     move_fly_icon = LBX_Load(main_lbx_file, 22);
-//     move_path_icon = LBX_Load(main_lbx_file, 23);
-//     move_astral_icon = LBX_Load(main_lbx_file, 36);
-//     move_wind_icon = LBX_Load(main_lbx_file, 37);
-//     move_boot_icon = LBX_Load(main_lbx_file, 38);
+    main_white_medal_icon = LBX_Load(main_lbx_file, 51);
+    main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
+    main_red_medal_icon = LBX_Load(main_lbx_file, 53);
+    main_magic_weapon_icon = LBX_Load(main_lbx_file, 54);
+    main_mithril_weapon_icon = LBX_Load(main_lbx_file, 55);
+    main_adamantium_weapon_icon = LBX_Load(main_lbx_file, 56);
+
+    move_sail_icon = LBX_Load(main_lbx_file, 18);
+    move_swim_icon = LBX_Load(main_lbx_file, 19);
+    move_mt_icon = LBX_Load(main_lbx_file, 20);
+    move_forest_icon = LBX_Load(main_lbx_file, 21);
+    move_fly_icon = LBX_Load(main_lbx_file, 22);
+    move_path_icon = LBX_Load(main_lbx_file, 23);
+    move_astral_icon = LBX_Load(main_lbx_file, 36);
+    move_wind_icon = LBX_Load(main_lbx_file, 37);
+    move_boot_icon = LBX_Load(main_lbx_file, 38);
+
+    movement_mode_icons[0] = LBX_Load(main_lbx_file, 18);
+    movement_mode_icons[1] = LBX_Load(main_lbx_file, 19);
+    movement_mode_icons[2] = LBX_Load(main_lbx_file, 20);
+    movement_mode_icons[3] = LBX_Load(main_lbx_file, 21);
+    movement_mode_icons[4] = LBX_Load(main_lbx_file, 22);
+    movement_mode_icons[5] = LBX_Load(main_lbx_file, 23);
+    movement_mode_icons[6] = LBX_Load(main_lbx_file, 36);
+    movement_mode_icons[7] = LBX_Load(main_lbx_file, 37);
+    movement_mode_icons[8] = LBX_Load(main_lbx_file, 38);
+    // movement_mode_icons[9] ¿ drake178: "Cavalry"
+
 
     for(itr = 0; itr < 9; itr++)
     {
@@ -1210,7 +1312,7 @@ void Main_Screen(void)
         }
         
         // ? Quit Action / Unselect Unit ?
-        if( (input_field_idx == hotkey_idx_Q) || (input_field_idx == hotkey_idx_U) )
+        if((input_field_idx == hotkey_idx_Q) || (input_field_idx == hotkey_idx_U) )
         {
             _unit_stack_count = 0;
             Set_Draw_Active_Stack_Always();     // OVL_ShowActiveStack();
@@ -1361,7 +1463,7 @@ void Main_Screen(void)
                 In IDA, color #42 (~Gold)
             - only if unit/stack active/selected
         */
-        if( (input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
+        if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
         {
             unit_stack_hmoves = OVL_GetStackHMoves();
             if(unit_stack_hmoves < 1)
@@ -1598,6 +1700,69 @@ void Main_Screen(void)
 
 
 
+        /*
+            BEGIN: Reduced Map Grid Field
+                In IDA, custom color #1 (~MoM's Lighest Purpleish (154,117,190))
+        */
+        // Left-Click Reduced Map Grid Field
+        // Right-Click Reduced Map Grid Field
+
+        if(abs(input_field_idx) == _minimap_grid_field)
+        {
+            // TODO  SND_LeftClickSound();
+
+            // Main_Screen+123E               call    j_Minimap_Coords
+            // MainScr_Prepare_Reduced_Map+35 call    j_Minimap_Coords
+            // Draw_Maps+146                  call    j_Minimap_Coords
+            // Road_Build_Screen+2F7          call    j_Minimap_Coords
+            // IDK_Spell_Casting_Screen+52F   call    j_Minimap_Coords
+            // Surveyor_Screen+17D            call    j_Minimap_Coords
+            Minimap_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _minimap_grid_x: %d\n", __FILE__, __LINE__, _minimap_grid_x);
+            dbg_prn("DEBUG: [%s, %d]: _minimap_grid_y: %d\n", __FILE__, __LINE__, _minimap_grid_y);
+            dbg_prn("DEBUG: [%s, %d]: target_world_x: %d\n", __FILE__, __LINE__, target_world_x);
+            dbg_prn("DEBUG: [%s, %d]: target_world_y: %d\n", __FILE__, __LINE__, target_world_y);
+#endif
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+#endif
+            _prev_world_x = _minimap_grid_x + target_world_x;
+            _prev_world_y = _minimap_grid_y + target_world_y;
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
+#endif
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+#endif
+            _map_x = _prev_world_x;
+            _map_y = _prev_world_y;
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+#endif
+            Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
+#ifdef STU_DEBUG
+            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
+            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
+#endif
+            // Hot-Key 'C'
+                // unit_idx = _unit_stack[0].unit_idx;
+                // _map_plane = _UNITS[unit_idx].world_plane;
+                // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane);
+                // MainScr_Prepare_Reduced_Map();
+                // Set_Mouse_List(1, mouse_list_default);
+                // Reset_Map_Draw();
+
+        }
+
+        /*
+            END: Reduced Map Grid Field
+        */
+
 
 
         /*
@@ -1612,7 +1777,7 @@ void Main_Screen(void)
 
 
 
-        if( (leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
+        if((leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
         {
             Main_Screen_Draw();
             if(_turn == 0)
@@ -1684,16 +1849,16 @@ void Main_Screen_Add_Fields(void)
         _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
     }
 
-    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
         // TODO  add defines for the map dims/coords
         // TODO  confirm what these values/calculations should end up being
-        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
+        _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
     }
 
-    if( (_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
-        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+        _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
     Add_Game_Button_Fields();
@@ -1985,7 +2150,7 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
             Unit_Window_Picture_Coords(itr_unit_stack_count, &x1, &y1, &x2, &y2);
             FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_unit_stack_count]);
             Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, _unit_stack[itr_unit_stack_count].active);
-            // TODO  Unit_Window_Draw_Unit_Attributes(x1, y1, unit_stack_unit_idx);
+            Unit_Window_Draw_Unit_Attributes(x1, y1, unit_stack_unit_idx);
         }
 
         Cycle_Unit_Enchantment_Animation();
@@ -2010,6 +2175,74 @@ void Set_Mouse_List_Default(void)
     Set_Mouse_List(1, mouse_list_default);
 }
 
+
+
+/*
+    WIZARDS.EXE  ovr061
+*/
+
+// o061p04
+void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
+{
+    // Unused_Local= word ptr -10h
+    // Dest_Y= word ptr -0Eh
+    // Dest_X= word ptr -0Ch
+    int16_t Current_Y;
+    int16_t Current_X;
+    // AllUnitsMoved= word ptr -6
+    int16_t Finished;
+    int16_t Current_Unit;
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+    // di, [bp+player_idx]
+    // si, [bp+map_plane]
+    // Unused_Local = 0;
+    // AllUnitsMoved =  0;
+    Finished = ST_FALSE;
+
+    Reset_Map_Draw();
+
+    // j_RP_WIZ_ReturnZero(player_idx);
+
+
+    while(Finished == ST_FALSE)
+    {
+        // ...
+        all_units_moved = ST_TRUE;
+        // ...
+        Finished = ST_TRUE;
+    }
+
+
+    if(all_units_moved == ST_FALSE)
+    {
+        DLOG("(all_units_moved == ST_FALSE)");
+        // Current_Unit = _unit;
+        // Current_X = _UNITS[Current_Unit].world_x;
+        // Current_Y = _UNITS[Current_Unit].world_y;
+        // j_Select_Unit_Stack(player_idx, *map_x, *map_y, *map_plane, Current_X, Current_Y);
+    }
+    else
+    {
+        DLOG("(all_units_moved != ST_FALSE)");
+        _unit_stack_count = 0;
+        Set_Draw_Active_Stack_Always();
+        Set_Entities_On_Map_Window(*map_x, *map_y, *map_plane);
+    }
+
+
+    // OVL_MapVar3 = ST_TRUE;
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+}
 
 
 /*
@@ -2242,7 +2475,7 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
     }
 #endif
 
-        if( (_UNITS[current_unit_idx].owner_idx == player_idx) && 
+        if((_UNITS[current_unit_idx].owner_idx == player_idx) && 
             (_UNITS[current_unit_idx].world_x == world_x) &&
             (_UNITS[current_unit_idx].world_y == world_y) &&
             (_UNITS[current_unit_idx].owner_idx != ST_UNDEFINED) && 
@@ -2334,11 +2567,11 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     if(l_unit_y >= l_map_y && l_unit_y < l_map_y + MAP_HEIGHT)
     {
         l_unit_x = unit_x;
-        if( (l_unit_x >= l_map_x && l_unit_x < l_map_x + MAP_WIDTH) ||
+        if((l_unit_x >= l_map_x && l_unit_x < l_map_x + MAP_WIDTH) ||
             (l_unit_x + WORLD_WIDTH >= l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH)
         )
         {
-            if( (l_unit_x + WORLD_WIDTH > l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH) )
+            if((l_unit_x + WORLD_WIDTH > l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH) )
             {
                 l_unit_x += WORLD_WIDTH;
             }
@@ -2433,17 +2666,17 @@ int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_
     }
 
     // ¿ Stack is in Lst Column of Movement Map ?
-    if( (l_map_x + map_width - 1) % WORLD_WIDTH == unit_x)
+    if((l_map_x + map_width - 1) % WORLD_WIDTH == unit_x)
     {
         l_map_x = ((l_map_x + 1) % WORLD_WIDTH);
         move_map_flag = ST_TRUE;  // set flag - map x,y changed
     }
 
     // ¿ Stack is in Lst Row of Movement Map ?
-    if( (l_map_y + map_height - 1) == unit_y)
+    if((l_map_y + map_height - 1) == unit_y)
     {
         // ¿ Movement Map is not already at the botton edge of the World  i.e., the map is able to be moved down ?
-        if( (l_map_y + map_height + 1) < WORLD_HEIGHT)
+        if((l_map_y + map_height + 1) < WORLD_HEIGHT)
         {
             l_map_y = l_map_y + 1;  // move Map down 1 world-square
             move_map_flag = ST_TRUE;  // set flag - map x,y changed
@@ -2507,7 +2740,7 @@ void Main_Screen_Draw_Status_Window(void)
         Set_Font_Style1(1, 0, 0, 0);
     }
 
-    Set_Alias_Color(8);
+    Set_Alias_Color(ST_GRAY);
 
     Print_Integer_Right(265, 68, _players[_human_player_idx].gold_reserve);
     Print_Integer_Right(303, 68, _players[_human_player_idx].mana_reserve);
@@ -2547,13 +2780,17 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     Reset_Map_Draw();
 
-    Minimap_Set_Dims(58, 30);
+    // Minimap_Set_Dims(58, 30);
+    Minimap_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
 
-    Draw_Maps(MAP_START_X, MAP_START_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
+    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
     FLIC_Draw(0, 0, main_background);
 
-    Draw_Minimap_Window(251, 21, 58, 30);
+    // Draw_Minimap_Window(251, 21, 58, 30);
+    // Draw_Reduced_Map(251, 21, 58, 30);
+    // Draw_Reduced_Map(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
+    Draw_World_Window(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
 
     // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
     // _help_entries.Entry_Index+96h = ST_UNDEFINED;
@@ -2590,6 +2827,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     Main_Screen_Draw_Game_Buttons();
 
     // TODO  OVL_DrawStackMoves();
+    Main_Screen_Draw_Movement_Bar();
 
     if(DBG_debug_flag)
     {
@@ -2601,6 +2839,207 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Do_Draw()\n", __FILE__, __LINE__);
 #endif
 }
+
+
+// WZD o063p03
+void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
+{
+    int16_t Unit_Enchantments_LO;
+    int16_t Unit_Enchantments_HI;
+    int8_t enchantment_magic_realm;
+    uint32_t unit_enchantments;
+    uint8_t * color_list;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Enchantment_Outline(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+#endif
+
+    Unit_Enchantments_HI = _UNITS[unit_idx].Enchants_HI;
+    Unit_Enchantments_LO = _UNITS[unit_idx].Enchants_LO;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Unit_Enchantments_HI: %04X\n", __FILE__, __LINE__, Unit_Enchantments_HI);
+    dbg_prn("DEBUG: [%s, %d]: Unit_Enchantments_LO: %04X\n", __FILE__, __LINE__, Unit_Enchantments_LO);
+#endif
+    // unit_enchantments = (Unit_Enchantments_HI || Unit_Enchantments_LO << 16);
+    unit_enchantments = (Unit_Enchantments_LO || Unit_Enchantments_HI << 16);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: unit_enchantments: %08X\n", __FILE__, __LINE__, unit_enchantments);
+#endif
+
+    enchantment_magic_realm = ST_UNDEFINED;
+
+    if(UNIT_HasInvisibility(unit_idx) == ST_TRUE)
+    {
+        DLOG("(UNIT_HasInvisibility(unit_idx) == ST_TRUE)");
+        Unit_Enchantments_HI = 0x0000;
+        Unit_Enchantments_LO = 0x0000;
+    }
+
+/*
+enum Magic Realm
+mr_Chaos = 0,
+mr_Death = 1,
+mr_Life = 2,
+mr_Nature = 3,
+mr_Sorcery = 4,
+*/
+
+    if( (Unit_Enchantments_HI || Unit_Enchantments_LO) != 0 )
+    {
+        DLOG("( (Unit_Enchantments_HI || Unit_Enchantments_LO) != 0 )");
+
+        if((Unit_Enchantments_LO & 0x40) != 0)  /* UE_Regeneration */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_HI & 0x4) != 0)  /* UE_Resist_Magic */
+        {
+            DLOG("((Unit_Enchantments_HI & 0x4) != 0)  /* UE_Resist_Magic */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_HI & 0x4000) != 0)  /* UE_Righteousness */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_HI & 0x1000) != 0)  /* UE_Planar_Travel */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x10) != 0)  /* UE_Black_Channels */
+        {
+            enchantment_magic_realm = 1;  /* Death */
+        }
+        else if((Unit_Enchantments_HI & 0x400) != 0)  /* UE_Lionheart*/
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x1000) != 0) /* UE_Iron_Skin*/
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_HI & 0x8) != 0)  /* UE_Magic_Immunity */
+        {
+            DLOG("((Unit_Enchantments_HI & 0x8) != 0)  /* UE_Magic_Immunity */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_HI & 0x1) != 0)  /* UE_Wind_Walking */
+        {
+            DLOG("((Unit_Enchantments_HI & 0x1) != 0)  /* UE_Wind_Walking */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_LO & 0x400) != 0)  /* UE_Elemental_Armor */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_HI & 0x40) != 0)  /* UE_True_Sight */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_HI & 0x8000) != 0)  /* UE_Invulnerability */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x80) != 0)  /* UE_Path_Finding */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_HI & 0x2) != 0)  /* UE_Flight */
+        {
+            DLOG("((Unit_Enchantments_HI & 0x2) != 0)  /* UE_Flight */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_HI & 0x20) != 0)  /* UE_Eldritch_Weapon */
+        {
+            enchantment_magic_realm = 0;  /* Chaos */
+        }
+        else if((Unit_Enchantments_LO & 0x20) != 0) /* UE_Wraith_Form */
+        {
+            enchantment_magic_realm = 1;  /* Death */
+        }
+        else if((Unit_Enchantments_HI & 0x800) != 0)  /* UE_Giant_Strength */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_LO & 0x1) != 0)  /* UE_Immolation */
+        {
+            enchantment_magic_realm = 0;  /* Chaos */
+        }
+        else if((Unit_Enchantments_LO & 0x2) != 0)  /* UE_Guardian_Wind */
+        {
+            DLOG("((Unit_Enchantments_LO & 0x2) != 0)  /* UE_Guardian_Wind */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_LO & 0x4000) != 0)  /* UE_Spell_Lock */
+        {
+            DLOG("((Unit_Enchantments_LO & 0x4000) != 0)  /* UE_Spell_Lock */");
+            enchantment_magic_realm = 4;  /* Sorcery */
+        }
+        else if((Unit_Enchantments_HI & 0x100) != 0)  /* UE_Heroism */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x4) != 0)  /* UE_Berserk */
+        {
+            enchantment_magic_realm = 1;  /* Death */
+        }
+        else if((Unit_Enchantments_HI & 0x2000) != 0)  /* UE_Holy_Armor */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x100) != 0)  /* UE_Water_Walking */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_LO & 0x2000) != 0)  /* UE_Endurance */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x8) != 0)  /* UE_Cloak_of_Fear */
+        {
+            enchantment_magic_realm = 1;  /* Death */
+        }
+        else if((Unit_Enchantments_LO & 0x800) != 0)  /* UE_Stone_Skin */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+        else if((Unit_Enchantments_HI & 0x10) != 0)  /* UE_Flame_Blade */
+        {
+            enchantment_magic_realm = 0;  /* Chaos */
+        }
+        else if((Unit_Enchantments_HI & 0x200) != 0)  /* UE_Bless */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_HI & 0x80) != 0)  /* UE_Holy_Weapon */
+        {
+            enchantment_magic_realm = 2;  /* Life */
+        }
+        else if((Unit_Enchantments_LO & 0x200) != 0)  /* UE_Resist_Elements */
+        {
+            enchantment_magic_realm = 3;  /* Nature */
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: enchantment_magic_realm: %d\n", __FILE__, __LINE__, enchantment_magic_realm);
+#endif
+
+    if(enchantment_magic_realm != ST_UNDEFINED)
+    {
+        DLOG("(enchantment_magic_realm != ST_UNDEFINED)");
+        Outline_Bitmap_Pixels_No_Glass(UnitDraw_WorkArea, 255);
+        // Bitmap_Aura_Pixels(UnitDraw_WorkArea, 255, (enchantment_outline_colors + ((enchantment_magic_realm * 64) + (unit_enchantment_animation_count * 8))));
+        color_list = (uint8_t *)(enchantment_outline_colors + ((enchantment_magic_realm * 64) + (unit_enchantment_animation_count * 8)));
+        Bitmap_Aura_Pixels(UnitDraw_WorkArea, 255, color_list);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Enchantment_Outline(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+#endif
+}
+
+
+
 
 // WZD o063p04
 // drake178: j_GAME_Animate_UEs()
@@ -2627,10 +3066,36 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     int16_t unit_owner_idx;
     int16_t unit_colored_backgrounds_idx;
+#ifdef STU_DEBUG
+    int16_t screen_x;
+    int16_t screen_y;
+    uint16_t screen_page;
+    uint16_t screen_ofst;
+    int16_t itr_width;
+    int16_t itr_height;
+    uint8_t * vbb_ptr;
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
 #endif
+
+#ifdef STU_DEBUG
+    // if(unit_idx == 79)  /* Unit Enchantment Outline */
+    // {
+    //     DBG_Outline_Bitmap_Pixels_No_Glass = 1;
+    // }
+    // dbg_prn("DEBUG: [%s, %d]: DBG_Outline_Bitmap_Pixels_No_Glass = 1\n", __FILE__, __LINE__);
+    // if(unit_idx == 156)  /* Unit Has Invisibility */
+    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
+    {
+        DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
+        DBG_Draw_Invisibility = 1;
+        DBG_Remap_Draw_Picture_ASM = 1;
+    }
+#endif
+
+
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -2661,9 +3126,65 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         }
 
         FLIC_Draw(x, y, _unit_colored_backgrounds_seg[unit_colored_backgrounds_idx]);
+// #ifdef STU_DEBUG
+//     if(DBG_Draw_Invisibility == 1)  /* Unit Has Invisibility */
+//     {
+//         DLOG("Unit Colored Background");
+//         // screen_page = (video_page_buffer[1 - draw_page_num]);
+//         // screen_ofst = (80 * SCREEN_WIDTH) + 248;
+//         screen_x = 121;
+//         screen_y = 111;
+//         vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((screen_y * SCREEN_WIDTH) + screen_x));
+//         for(itr_height = 0; itr_height < STATFIG_HEIGHT; itr_height++)
+//         {
+//             for(itr_width = 0; itr_width < STATFIG_WIDTH; itr_width++)
+//             {
+//                 dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
+//             }
+//         }
+//     }
+// #endif
+
     }
 
     Draw_Unit_StatFig(x, y, unit_idx, flag);
+
+// #ifdef STU_DEBUG
+//     if(DBG_Draw_Invisibility == 1)  /* Unit Has Invisibility */
+//     {
+//         DLOG("(DBG_Draw_Invisibility == 1)");
+//         // screen_page = (video_page_buffer[1 - draw_page_num]);
+//         // screen_ofst = (80 * SCREEN_WIDTH) + 248;
+//         // vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((80 * SCREEN_WIDTH) + 248));
+//         screen_x = 121;
+//         screen_y = 111;
+//         vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((screen_y * SCREEN_WIDTH) + screen_x));
+//         
+//         for(itr_height = 0; itr_height < 16; itr_height++)
+//         {
+//             for(itr_width = 0; itr_width < 18; itr_width++)
+//             {
+//                 dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
+//             }
+//         }
+//     }
+// #endif
+
+#ifdef STU_DEBUG
+    // if(unit_idx == 79)  /* Unit Enchantment Outline */
+    // {
+    //     DBG_Outline_Bitmap_Pixels_No_Glass = 1;
+    // }
+    // dbg_prn("DEBUG: [%s, %d]: DBG_Outline_Bitmap_Pixels_No_Glass = 1\n", __FILE__, __LINE__);
+    // if(unit_idx == 156)  /* Unit Has Invisibility */
+    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
+    {
+        DBG_Draw_Invisibility = 0;
+        DBG_Remap_Draw_Picture_ASM = 0;
+    }
+    DBG_Draw_Invisibility = 0;
+    DBG_Remap_Draw_Picture_ASM = 0;
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
@@ -2674,18 +3195,32 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 // WZD o063p05
 // AKA OVL_DrawUnitImage()
 // pict_seg is 
+// MoO2  Draw_Ship_Icon()
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     uint8_t unit_type_idx;
     int16_t unit_owner_idx;
     int16_t banner_idx;
     uint16_t itr_color_remap;
-    uint8_t Color_1;
-    uint8_t Color_2;
-    
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
+    // uint8_t Color_1;
+    // uint8_t Color_2;
+    uint8_t color_array[2];
+    uint8_t * vbb_ptr;
+    int16_t itr_width;
+    int16_t itr_height;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+#endif
+
+#ifdef STU_DEBUG
+    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
+    {
+        DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
+        // DBG_Draw_Unit_StatFig = 1;
+        DBG_Remap_Draw_Picture_ASM = 1;
+    }
+#endif
 
 
     unit_type_idx = _UNITS[unit_idx].type;
@@ -2712,7 +3247,7 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     // TODO: add contstants for the color index and color count
     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
     {
-        FLIC_Remap_Color(UnitDraw_WorkArea, itr_color_remap + 214, COL_Banners[ ((banner_idx * 5) + itr_color_remap) ]);
+        Replace_Color(UnitDraw_WorkArea, 214 + itr_color_remap, COL_Banners[ ((banner_idx * 5) + itr_color_remap) ]);
     }
 
     // TODO  } /* if(flag == 0) */
@@ -2727,47 +3262,60 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     */
     if(flag == 0 || flag == 1 || flag == 2 || flag == 3)
     {
+
         if(UNIT_HasInvisibility(unit_idx) == ST_TRUE)
         {
-            // TODO  LBX_IMG_ClearGraphic(UnitDraw_WorkArea, 233);
-            // TODO  LBX_IMG_OutlineOvr(UnitDraw_WorkArea, 1);
+            DLOG("(UNIT_HasInvisibility(unit_idx) == ST_TRUE)");
+            Replace_Color_All(UnitDraw_WorkArea, 233); // sets every non-transparent pixel; 233 means use remap colors - (233-232=1) remap color block 1
+            Outline_Bitmap_Pixels(UnitDraw_WorkArea, ST_BLACK);
         }
-    
-        if( (flag != 3) && 
+
+        if((flag != 3) && 
             (_UNITS[unit_idx].Status == 1) /* US_Patrol */ && 
             (UNIT_HasInvisibility(unit_idx) == ST_FALSE)  && 
             (unit_owner_idx == _human_player_idx)
         )
         {
-            // TODO  LBX_IMG_Grayscale(UnitDraw_WorkArea, 1);
+            DLOG("Unit is Inactive/Finished");
+            Gray_Scale_Bitmap(UnitDraw_WorkArea, 1);  // ¿ 1 means ... ?
         }
     
-        // TODO  UNIT_Draw_UE_Outline(unit_idx);
+        Draw_Unit_Enchantment_Outline(unit_idx);
     }
 
-    FLIC_Set_LoopFrame_1(UnitDraw_WorkArea);
+    FLIC_Set_LoopFrame_1(UnitDraw_WorkArea);  // sets for/enables remap colors
     Draw_Picture(x+1, y+1, UnitDraw_WorkArea);
+
+#ifdef STU_DEBUG
+    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
+    {
+        DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
+        // vbb_ptr = (video_page_buffer[1 - draw_page_num] + (((y+1) * SCREEN_WIDTH) + (x+1)));
+        vbb_ptr = (video_page_buffer[draw_page_num] + (((y+1) * SCREEN_WIDTH) + (x+1)));
+        
+        for(itr_height = 0; itr_height < 16; itr_height++)
+        {
+            for(itr_width = 0; itr_width < 18; itr_width++)
+            {
+                dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
+            }
+        }
+    }
+#endif
 
     /*
         BEGIN: Unit Status - Icon/Text
     */
-    if( (unit_owner_idx == _human_player_idx) && ( (flag == 0) || (flag == 1) ) )
+    if((unit_owner_idx == _human_player_idx) && ( (flag == 0) || (flag == 1) ) )
     {
-        Color_1 = 10;
-        Color_2 = 15;
-
-        // ; stores the passed colors into the last font color block ($F0-$FF of Palette_Font_Colors@), sets it as color #1, and selects the specified font for drawing with it
-        // font_idx, colors
-        Set_Font_Colors_15(0, &Color_1);
-
-        // ; sets the color that will be used for outlining or shadowing text displayed with an outline style
-        // ; Color_Index
+        // Color_1 = 10;
+        // Color_2 = 15;
+        // Set_Font_Colors_15(0, &Color_1);
+        color_array[0] = 10;  // ¿ palette index 10 0x0A  [0A] 2B 29 28 ?
+        color_array[1] = 15;  // ¿ palette index 15 0x0F  [0F] 3F 3F 3F ?
+        Set_Font_Colors_15(0, &color_array[0]); // set font style num 0; set font colors block 15
         Set_Outline_Color(4);
-
-        // ; calls VGA_SetFont with the passed parameters, then sets the outline style to 1 (bottom right)
-        // Font_Index, Color_1, Color_2, Color_3
-        Set_Font_Style1(0, 15, 0, 0);
-
+        Set_Font_Style1(0, 15, 0, 0); // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
 
         switch( (_UNITS[unit_idx].Status - 2) )
         {
@@ -2800,10 +3348,438 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         END: Unit Status - Icon/Text
     */
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
+
+#ifdef STU_DEBUG
+    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
+    {
+        DBG_Remap_Draw_Picture_ASM = 0;
+    }
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
+#endif
 }
+
+
+// WZD o063p06
+void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
+{
+    int8_t Weapon_Quality;
+    int16_t Relative_Zero_Level;
+    int16_t Icons_Drawn;
+    int16_t bar_length;
+    int16_t current_hits;
+    int16_t max_hits;
+    int16_t Wpn_Top;
+    int16_t Wpn_Left;
+    int16_t Exp_Top;
+    int16_t Exp_Left;
+    int16_t Level_Index;
+    uint8_t Unit_Type;
+    uint8_t Color;
+    SAMB_ptr experience_level_icon_seg;
+    // SAMB_ptr weapon_type_icon_seg;
+    SAMB_ptr weapon_type_icon_seg = NULL;  // Error	C4703	potentially uninitialized local pointer variable 'weapon_type_icon_seg' used
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Draw_Unit_Attributes(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
+#endif
+
+    Unit_Type = _UNITS[unit_idx].type;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Unit_Type: %d\n", __FILE__, __LINE__, Unit_Type);
+#endif
+
+    /*
+        BEGIN: Draw Unit Damaged Bar
+    */
+    // MoO2  Module: AIPOWER  Current_Ship_Hits_  Address: 01:0005F2C3
+    // MoO2  Module: AIPOWER  Max_Ship_Hits_      Address: 01:0005F2F6
+    // MoO2  Module: CMBTAI   Get_Total_Hits_     Address: 01:0002BB06
+    max_hits = UNIT_GetHitsPerFig(unit_idx) * _unit_type_table[Unit_Type].Figures;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: max_hits: %d\n", __FILE__, __LINE__, max_hits);
+#endif
+    current_hits = max_hits - _UNITS[unit_idx].Damage;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_idx].Damage: %d\n", __FILE__, __LINE__, _UNITS[unit_idx].Damage);
+    dbg_prn("DEBUG: [%s, %d]: current_hits: %d\n", __FILE__, __LINE__, current_hits);
+#endif
+    // cmp  current_hits, max_hits; jz ... So, != OR just <
+    if((current_hits != max_hits) && (current_hits > 0) )
+    {
+        // NOTE: `CWD; IDIV;` is 'divide', 'not 'modulus'
+        bar_length = (((current_hits * 10) / max_hits) - 1);  // `- 1`, because Line() will draw one pixel, then this length
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: bar_length: %d\n", __FILE__, __LINE__, bar_length);
+#endif
+        if(bar_length >= 6)
+        {
+            DLOG("(bar_length >= 6)");
+            Color = DAMAGE_BAR_GREEN;  /* Damage Bar Green */
+        }
+        else if(bar_length >= 3)
+        {
+            DLOG("(bar_length >= 3)");
+            Color = DAMAGE_BAR_YELLOW;  /* Damage Bar Yellow */
+        }
+        else
+        {
+            DLOG("(bar_length < 3)");
+            Color = DAMAGE_BAR_RED;  /* Damage Bar Red */
+        }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Color: %d\n", __FILE__, __LINE__, Color);
+#endif
+        Line(x + 5, y + 19, x + bar_length + 5, y + 19, Color);
+    }
+    /*
+        END: Draw Unit Damaged Bar
+    */
+
+    /*
+        BEGIN: Experience Level - "Circle"/"Ring"/"Medal"/"Icon"
+    */
+    if(_UNITS[unit_idx].Level > 0)
+    {
+        if(_UNITS[unit_idx].Level > 6)  /* ¿ Only Hero - Super Hero - Ring Symbol - {1 Red, 2 Red} */
+        {
+            experience_level_icon_seg = main_red_medal_icon;
+            Relative_Zero_Level = 6;
+        }
+        else if(_UNITS[unit_idx].Level > 6)
+        {
+            experience_level_icon_seg = main_gold_medal_icon;
+            Relative_Zero_Level = 3;
+        }
+        else
+        {
+            experience_level_icon_seg = main_white_medal_icon;
+            Relative_Zero_Level = 0;
+        }
+        Icons_Drawn = 0;
+        Level_Index = Relative_Zero_Level;
+        while(_UNITS[unit_idx].Level > Level_Index)
+        {
+            Exp_Left = 2 + x + (Icons_Drawn * 4);
+            Exp_Top = y + 21;
+            FLIC_Draw(Exp_Left, Exp_Top, experience_level_icon_seg);
+            Icons_Drawn++;
+            Level_Index++;
+        }
+    }
+    /*
+        END: Experience Level - "Circle"/"Ring"/"Medal"/"Icon"
+    */
+
+    /*
+        BEGIN: Weapon - "magic", "mithril", "adamantium"
+    */
+        Weapon_Quality = (_UNITS[unit_idx].Mutations & 0x03);  /* bit set - 1st and/or 2nd  OR  2^2 values {0,1,2,3} */
+        if(Weapon_Quality > 0)
+        {
+            Wpn_Left = x + 13;
+            Wpn_Top = y + 19;
+
+            switch(Weapon_Quality)
+            {
+                case 1:
+                {
+                    /* WQ_Magic */
+                    weapon_type_icon_seg = main_magic_weapon_icon;
+                } break;
+                case 2:
+                {
+                    /* WQ_Mithril */
+                    weapon_type_icon_seg = main_mithril_weapon_icon;
+                } break;
+                case 3:
+                {
+                    /* WQ_Adamantium */
+                    weapon_type_icon_seg = main_adamantium_weapon_icon;
+                } break;
+            }
+            FLIC_Set_CurrentFrame(weapon_type_icon_seg, unit_weapon_type_animation_count);
+            FLIC_Draw(Wpn_Left, Wpn_Top, weapon_type_icon_seg);
+        }
+    /*
+        END: Weapon - "Circle"/"Ring"/"Medal"/"Icon"
+    */
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Draw_Unit_Attributes(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
+#endif
+
+}
+
+// WZD o63p07
+// drake178: OVL_DrawStackMoves
+void Main_Screen_Draw_Movement_Bar(void)
+{
+    uint16_t movement_points;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Movement_Bar()\n", __FILE__, __LINE__);
+#endif
+
+
+    // _help_entries+0AAh = ST_UNDEFINED
+
+    if(_unit_stack_count > 0)
+    {
+        movement_points = OVL_GetStackHMoves();
+        // movement_points = 17;
+        if(movement_points != 0)
+        {
+            // _help_entries+0AAh = HLP_MOVES
+            Set_Font_Style1(1,1,0,0);
+            Set_Outline_Color(0);
+            Set_Alias_Color(0);
+            Print(246, 167, cnst_Moves);
+            Print_Moves_String(275, 167, movement_points, ST_FALSE);
+
+            Set_Font(1,1,0,0);
+            Set_Outline_Color(0);
+            Set_Alias_Color(0);
+            Print(246, 168, cnst_Moves);
+            Print_Moves_String(275, 168, movement_points, ST_FALSE);
+
+            Set_Font(1,0,0,0);
+            Set_Alias_Color(0);
+            Print(246, 167, cnst_Moves);
+            Print_Moves_String(275, 167, movement_points, ST_FALSE);
+
+            Draw_Movement_Mode_Icons(286, 167, ST_UNDEFINED);
+        }
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Movement_Bar()\n", __FILE__, __LINE__);
+#endif
+}
+
+
+// WZD o63p08
+// drake178: OVL_DrawMoveTypes()
+/*
+    if called with unit_idx = -1, _unit_stack_count MUST BE >= 1
+    Main_Screen_Draw_Movement_Bar() calls with unit_idx = ST_UNDEFINED
+*/
+void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
+{
+    int16_t movement_icons[9];
+    // struct s_Movement_Modes movement_mode_flags;
+    int16_t movement_mode_flags[9];
+    int16_t stack;
+    int16_t x_start;
+    int itr;
+    int movement_mode_icon_count;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
+#endif
+
+    /*
+        set array of movement mode flags to false
+    */
+    if(_unit_stack_count >= 1 || unit_idx != ST_UNDEFINED)
+    {
+#ifdef STU_DEBUG
+        if(_unit_stack_count >= 1)
+            DLOG("(_unit_stack_count >= 1)");
+        if(unit_idx != ST_UNDEFINED)
+            DLOG("(unit_idx != ST_UNDEFINED)");
+#endif
+
+        for(itr = 0; itr < 9; itr++)  /* TODO: add define for 9 - (Special) Movemenet Mode Count/Max */
+        {
+            movement_mode_flags[itr] = ST_FALSE;
+        }
+
+
+        if(unit_idx == ST_UNDEFINED)
+        {
+            // Active_Stack_Movement_Modes(&movement_mode_flags);
+            Active_Stack_Movement_Modes(&movement_mode_flags[0]);
+        }
+        else
+        {
+            stack = unit_idx;
+            // Stack_Movement_Modes(&movement_mode_flags, &stack, 1);
+            Stack_Movement_Modes(&movement_mode_flags[0], &stack, 1);
+        }
+
+    }
+
+    // ¿ drake178: BUG: this won't work for the single unit version ?
+    if(Stack_Has_Planar_Travel() == ST_TRUE)
+    {
+        // movement_mode_flags.mm_PlanarTravel = ST_TRUE;
+        movement_mode_flags[OFS_PLANARTRAVEL] = ST_TRUE;
+    }
+
+
+    movement_mode_icon_count = 0;
+    // if(movement_mode_flags.mm_PlanarTravel == ST_TRUE)
+    if(movement_mode_flags[OFS_PLANARTRAVEL] == ST_TRUE)
+    {
+        movement_icons[movement_mode_icon_count] = 6;  /* M_PShift_Icon */
+        movement_mode_icon_count++;
+    }
+    // if(movement_mode_flags.mm_Flying == ST_TRUE)
+    if(movement_mode_flags[OFS_FLYING] == ST_TRUE)
+    {
+        movement_icons[movement_mode_icon_count] = 4;  /* M_Fly_Icon */
+        movement_mode_icon_count++;
+    }
+    else
+    {
+        // if(movement_mode_flags.mm_Sailing == ST_TRUE)
+        if(movement_mode_flags[OFS_SAILING] == ST_TRUE)
+        {
+            movement_icons[movement_mode_icon_count] = 0;  /* M_Sail_Icon */
+            movement_mode_icon_count++;
+        }
+        else
+        {
+            // if( (movement_mode_flags.mm_Forester == ST_TRUE) && (movement_mode_flags.mm_Mountaineer == ST_TRUE) )
+            if( (movement_mode_flags[OFS_FORESTER] == ST_TRUE) && (movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE) )
+            {
+                movement_icons[movement_mode_icon_count] = 5;  /* M_Pathf_Icon */
+                movement_mode_icon_count++;
+            }
+            else
+            {
+                // if(movement_mode_flags.mm_Forester == ST_TRUE)
+                if(movement_mode_flags[OFS_FORESTER] == ST_TRUE)
+                {
+                    movement_icons[movement_mode_icon_count] = 3;  /* M_Forest_Icon */
+                    movement_mode_icon_count++;
+
+                }
+                else
+                {
+                    // if(movement_mode_flags.mm_Mountaineer == ST_TRUE)
+                    if(movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE)
+                    {
+                        movement_icons[movement_mode_icon_count] = 2;  /* M_Mntn_Icon */
+                        movement_mode_icon_count++;
+
+                    }
+                }
+            }
+
+            // if(movement_mode_flags.mm_Swimming == ST_TRUE)
+            if(movement_mode_flags[OFS_SWIMMING] == ST_TRUE)
+            {
+                movement_icons[movement_mode_icon_count] = 1;  /* M_Swim_Icon */
+                movement_mode_icon_count++;
+            }
+
+        }
+    }
+    if(movement_mode_icon_count == 0)
+    {
+        movement_icons[movement_mode_icon_count] = 8;  /* M_Grnd_Icon */
+        movement_mode_icon_count++;
+    }
+
+
+    x += ((3 - movement_mode_icon_count) * 10);
+
+    for(itr = 0; itr < movement_mode_icon_count; itr++)
+    {
+        x_start = x + (itr * 10);
+        FLIC_Draw(x_start, y, movement_mode_icons[movement_icons[itr]]);
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
+#endif
+}
+
+
+// WZD o63p09
+// drake178: OVL_CanPlanarTravel()
+int16_t Stack_Has_Planar_Travel(void)
+{
+    int16_t itr;
+    int16_t stack_has_no_active_units;
+    int16_t stack_has_planar_travel;
+    int16_t stack_on_astral_gate;
+    int16_t unit_idx;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_CanPlanarTravel()\n", __FILE__, __LINE__);
+#endif
+
+
+    stack_has_no_active_units = ST_TRUE;
+
+    for(itr = 0; (itr < _unit_stack_count) && (stack_has_no_active_units == ST_TRUE); itr++)
+    {
+        if(_unit_stack[itr].active != ST_FALSE)
+        {
+            stack_has_no_active_units = ST_FALSE;
+        }
+    }
+
+    if(stack_has_no_active_units == ST_TRUE)
+    {
+        for(itr = 0; itr < _unit_stack_count; itr++)
+        {
+            _unit_stack[itr].active = ST_TRUE;
+        }
+    }
+
+
+    stack_has_planar_travel = ST_FALSE;
+
+    // drake178: returns 1 if the active stack is on a tile that has a city equipped with an Astral Gate (cast by the human player) on either plane; or 0 otherwise
+    // OVL_CheckAstralGate()
+    // TODO  stack_on_astral_gate = Active_Stack_On_Astral_Gate()
+    stack_on_astral_gate = ST_FALSE;
+
+    // Unused_Local = 0
+
+    for(itr = 0; itr < _unit_stack_count; itr++)
+    {
+        unit_idx = _unit_stack[itr].unit_idx;
+        if(_unit_stack[unit_idx].active == ST_TRUE)
+        {
+            if(
+                ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ) ||
+                ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ) ||
+                ( Unit_Has_Planar_Travel_Item(unit_idx == ST_TRUE) )
+            )
+            {
+                stack_has_planar_travel = ST_TRUE;
+            }
+            else
+            {
+                stack_has_planar_travel = ST_FALSE;
+            }
+        }
+    }
+
+
+    if(stack_has_no_active_units == ST_TRUE)
+    {
+        for(itr = 0; itr < _unit_stack_count; itr++)
+        {
+            _unit_stack[itr].active = ST_FALSE;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_CanPlanarTravel()\n", __FILE__, __LINE__);
+#endif
+    return stack_has_planar_travel;
+}
+
+
 
 // WZD o63p12
 // OVL_GetStackHMoves
@@ -2913,15 +3889,28 @@ void MainScr_Prepare_Reduced_Map(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
 #endif
-    int16_t minimap_x;
-    int16_t minimap_y;
+    int16_t minimap_x = 0;
+    int16_t minimap_y = 0;
     int16_t minimap_width;
     int16_t minimap_height;
-    minimap_width = 58;
-    minimap_height = 30;
+
+    // minimap_width = 58;
+    // minimap_height = 30;
+    minimap_width = REDUCED_MAP_W;
+    minimap_height = REDUCED_MAP_H;
+
     Minimap_Set_Dims(minimap_width, minimap_height);
-    Minimap_Coords(&minimap_x, &minimap_y, ((_map_x+6)%60), (_map_y+5), minimap_width, minimap_height);
-    Draw_Minimap(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _map_x: %d  _map_y: %d\n", __FILE__, __LINE__, _map_x, _map_y);
+#endif
+
+    // Minimap_Coords(&minimap_x, &minimap_y, ((_map_x+6)%60), (_map_y+5), minimap_width, minimap_height);
+    Minimap_Coords(&minimap_x, &minimap_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), minimap_width, minimap_height);
+    
+    // Draw_Minimap(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+    Draw_Reduced_Map(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
 #endif
@@ -2998,21 +3987,21 @@ void Main_Screen_Draw_Summary_Window(void)
         DLOG("(gold >= 0)");
         Set_Font_Style_Outline(0, 4, 0, 0);
 
-#ifdef STU_DEBUG
-    for(color_index = 0; color_index < 16; color_index++)
-    {
-        dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      for(color_index = 0; color_index < 16; color_index++)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
+// DELETE      }
+// DELETE  #endif
 
         Set_Alias_Color(184);  // 184d  B8h  ~"dark gold"
 
-#ifdef STU_DEBUG
-    for(color_index = 0; color_index < 16; color_index++)
-    {
-        dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      for(color_index = 0; color_index < 16; color_index++)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
+// DELETE      }
+// DELETE  #endif
 
     }
     else
@@ -3352,4 +4341,76 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
     *x2 = *x1 + 22;
     *y2 = *y1 + 28;
 
+}
+
+
+
+/*
+    WIZARDS.EXE  ovr097
+*/
+// WZD o97p08
+// drake178: VGA_DrawHalfValue()
+// OON XREF: j_VGA_DrawHalfValue()
+// Main_Screen_Draw_Movement_Bar
+// Main_Screen_Draw_Movement_Bar
+// Main_Screen_Draw_Movement_Bar
+// CMB_DrawAUWStats+10F         
+// CMB_DrawUnitDisplay+278      
+void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag)
+{
+    char buffer[8];
+    char string[8];
+    int16_t whole_value;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Moves_String(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
+#endif
+
+    if(half_value < 0)
+    {
+        DLOG("(half_value < 0)");
+        whole_value = 0;
+    }
+    else
+    {
+        DLOG("(half_value >= 0)");
+        whole_value = half_value / 2;
+    }
+    
+    strcpy(string, "");  // WZD dseg:569A cnst_Nullstring[] = {'\0'}
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
+#endif
+
+    if(whole_value > 0)
+    {
+        DLOG("(whole_value > 0)");
+        itoa(whole_value, buffer, 10);
+        strcat(string, buffer);
+    }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
+#endif
+
+    if(half_value % 2 != 0)
+    {
+        DLOG("(half_value % 2 != 0)");
+        strcat(string, ".5");  // WZD dseg:56C9 cnst_Half_2[] = ".5"
+    }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
+#endif
+
+    if(right_align_flag == ST_FALSE)
+    {
+        Print(x_start, y_start, string);
+    }
+    else if(right_align_flag == ST_TRUE)
+    {
+        Print_Right(x_start, y_start, string);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: VGA_DrawHalfValue(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
+#endif
 }

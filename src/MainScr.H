@@ -6,10 +6,17 @@
     WIZARDS.EXE
     ovr057
     ovr058
+    ovr061
     ovr062
     ovr063
     ovr064
 */
+
+
+// WZD  dseg:31AE
+// char cnst_Moves[]  = "Moves:";
+
+
 
 
 
@@ -313,8 +320,8 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // WZD o063p02
 // PRIVATE  void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
 
-// WZD o63p04
-// ???
+// WZD o063p03
+// PRIVATE  void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
 
 // WZD o63p04
 // drake178: j_GAME_Animate_UEs()
@@ -325,8 +332,22 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // WZD o63p05
 // AKA OVL_DrawUnitImage()
 // PRIVATE  void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
+
+// WZD o063p06
+// PRIVATE  void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
+
+// WZD o63p07
+// drake178: OVL_DrawStackMoves
+void Main_Screen_Draw_Movement_Bar();
+
+// WZD o63p08
+// drake178: OVL_DrawMoveTypes()
+// void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
+
 // WZD o63p12
 // PRIVATE int16_t OVL_GetStackHMoves(void);
+
+
 /*
     WIZARDS.EXE  ovr064
 */

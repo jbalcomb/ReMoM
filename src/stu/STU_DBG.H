@@ -86,6 +86,12 @@ extern int DBG_Print_Character;
 extern int DBG_Print_Character_ASM;
 extern int DBG_Print_Character_No_Alias;
 extern int DBG_Print_Character_No_Alias_ASM;
+extern int DBG_Remap_Draw_Picture_ASM;
+
+extern int DBG_Outline_Bitmap_Pixels_No_Glass;
+extern int DBG_Draw_Invisibility;
+extern int DBG_Create_Remap_Palette;
+extern int DBG_Find_Closest_Color;
 
 extern int16_t DBG_TST_unit_stack[];
 extern int16_t DBG_TST_entities_on_movement_map[];

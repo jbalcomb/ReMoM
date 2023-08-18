@@ -1,4 +1,143 @@
 
+UnitDraw_WorkArea
+    UNIT_Draw_UE_Outline+2F8          
+    UNIT_Draw_UE_Outline+31B          
+    Draw_Unit_StatFig+63              
+    Draw_Unit_StatFig+CC              
+    Draw_Unit_StatFig:loc_56286       
+    Draw_Unit_StatFig+163             
+    Draw_Unit_StatFig+19F             
+    Draw_Unit_StatFig+1AE             
+    Draw_Unit_StatFig+1EA             
+    Draw_Unit_StatFig:@@Do_DrawPicture
+    Draw_Unit_StatFig+207             
+    UNIT_Draw+B2                      
+    UNIT_Draw+DE                      
+    UNIT_Draw+106                     
+    UNIT_Draw+130                     
+    UNIT_Draw:loc_753BF               
+    UNIT_Draw+15B                     
+    Allocate_Data_Space+3A4           
+
+
+
+... Window (GP,MP)
+(PS. MoO2 *gold* = "BC")
+
+Draw Unit Window
+Draw *Movement Bar*
+
+if(_unit_stack_count > 0)
+    Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y)
+    Main_Screen_Draw_Unit_Action_Buttons()  o57p074
+
+Unit_Window_Draw_Unit_Attributes(x1,y1,unit_idx)
+
+
+
+Cycle_Unit_Enchantment_Animation()
+unit_weapon_type_animation_count++;
+if(unit_weapon_type_animation_count > 3)
+    unit_weapon_type_animation_count = 0;
+
+
+
+    flag: {0,1,2,3}
+        0, 1 - status text, partol grayscaling, and unit enchantment outlines
+        2 - no status text
+        3 - no status text or patrol grayscaling
+        4+: none of the above
+Draw_Unit_StatFig()
+    FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
+    FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
+    Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
+    Replace_Color(UnitDraw_WorkArea, itr_color_remap + 214, COL_Banners[ ((banner_idx * 5) + itr_color_remap) ]);
+    if(flag == 0)
+    {
+
+    }
+    else
+    {
+
+    }
+    ...
+        j_UNIT_HasInvisibility() ==/!= ST_FALSE/ST_TRUE
+        Replace_Color_All()
+        Outline_Bitmap_Pixels_()
+        _UNIT[].Status  ==/!= US_Patrol
+        unit_owner_idx ==/!= _human_player_idx
+        LBX_IMG_Grayscale()
+        UNIT_Draw_UE_Outline()
+    ...
+    Draw_Picture()  // MoO2  Draw(x,y,_ship_bitmap)
+    So, checked flag for 0 or 1, though to no effect...
+    Then, checked flag for 0,1,2,3? ... 
+
+    Invisible is NOT only for current/human player, just Unit Has Invisibility, and flag == {0,1,2,3}
+    Gray-Scaled is only for current/human player, and flag != 3
+    Status Mark is only for current/human player, and flag == {0,1}
+
+
+Draw_Unit_StatFig()
+XREF:
+    j_Draw_Unit_StatFig()
+    Draw_Unit_Picture()
+
+j_Draw_Unit_StatFig()
+XREF:
+    IDK_DrawEnemyCityWindow_s4A90D()
+    IDK_ArmiesScreen_s58CD2()
+    Outpost_Screen_Draw()
+
+Draw_Unit_Picture()
+XREF:
+    j_Draw_Unit_Picture()
+
+j_Draw_Unit_Picture()
+XREF:
+    sub_49E50()
+    Main_Screen_Draw_Unit_Window()
+    Draw_Active_Unit_Stack()
+    Draw_Unit_List_Window_Pup()
+    OVL_MoveUnitStack()
+    Draw_Map_Units()
+
+
+IDK_DrawEnemyCityWindow_s4A90D()
+    calls j_Draw_Unit_StatFig() with flag = 1
+IDK_ArmiesScreen_s58CD2()
+    calls j_Draw_Unit_StatFig() with flag = 1
+Outpost_Screen_Draw()
+    calls j_Draw_Unit_StatFig() with flag = 1
+
+Draw_Unit_Picture()
+    calls Draw_Unit_StatFig() with the flag passed through
+
+sub_49E50()
+    calls j_Draw_Unit_Picture() with flag = 1
+
+Main_Screen_Draw_Unit_Window()
+    calls j_Draw_Unit_Picture() with flag = _unit_stack[].active
+Draw_Active_Unit_Stack()
+    calls j_Draw_Unit_Picture() with flag = 2
+Draw_Unit_List_Window_Pup()
+    calls j_Draw_Unit_Picture() with flag = (unit_owner_idx = current/human_player_idx ? 1 : 3)  (turns off gray-scale for Enemy Unit List Window)
+OVL_MoveUnitStack()
+    calls j_Draw_Unit_Picture() with flag = 2
+Draw_Map_Units()
+    calls j_Draw_Unit_Picture() with flag = 2
+
+
+Armies Screen Unit Figures includes invisible, gray-scaled, and status mark
+"G" for Go-To, "B" for Build-Road, "P" for Purify-Corruption
+
+Does it just not for the Enemy Unit List Window and Enemy City Screen?
+(is there an enemy outpost screen?)
+
+
+
+
+
 Draw Maps
 * Draw Movement Map
     * Main Screen

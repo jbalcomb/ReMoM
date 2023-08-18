@@ -3,7 +3,7 @@
 
 #include "MoX_TYPE.H"
 
-#include "assert.h"
+#include <assert.h>
 
 
 #ifdef __cplusplus

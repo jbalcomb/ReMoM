@@ -161,8 +161,12 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 // UU_LBX_IMG_ColorShift
 // WZD s30p08
 // UU_LBX_IMG_CReplaceRect
+
 // WZD s30p09
-// LBX_IMG_ClearGraphic
+// drake178: LBX_IMG_ClearGraphic()
+// MoO2  Module: replace  Replace_Color_All()
+void Replace_Color_All(SAMB_ptr picture, uint8_t replacement_color);
+
 // WZD s30p10
 // LBX_IMG_LoadPalette
 
@@ -207,6 +211,23 @@ int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
 // drake178: LBX_IMG_SetLoop1
 void FLIC_Set_LoopFrame_1(SAMB_ptr p_FLIC_Header);
 
+// WZD s30p42
+// drake178: LBX_IMG_OutlineOvr()
+// MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_()
+// checks transparent, outline color  (NOT > 223)
+void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color);
+
+// WZD s30p43
+// drake178: LBX_IMG_OutlineOvr_R()
+// MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_No_Glass_()
+// checks transparent, outline color, and > 223
+void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color);
+
+// WZD s30p44
+// drake178: LBX_IMG_ColorScrmblr
+// MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
+void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t color, uint8_t * color_list);
+
 
 /*
     WIZARDS.EXE  seg033
@@ -224,9 +245,24 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 // WZD s33p05
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
+
+// WZD s33p06
+void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
+
+
 // WZD s33p09
+// AKA FLIC_Remap_Color()
 // drake178: LBX_IMG_ColorReplace
-void FLIC_Remap_Color(SAMB_ptr pict_seg, uint8_t color, uint8_t remap_color);
+// MoO2:  Replace_Color()
+void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacement_color);
+
+
+// WZD s33p16
+// drake178: LBX_IMG_Grayscale()
+// MoO2: Gray_Scale_Bitmap()
+void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start);
+
+
 
 
 #ifdef __cplusplus

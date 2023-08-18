@@ -93,6 +93,12 @@ int DBG_Print_Character = 0;
 int DBG_Print_Character_ASM = 0;
 int DBG_Print_Character_No_Alias = 0;
 int DBG_Print_Character_No_Alias_ASM = 0;
+int DBG_Remap_Draw_Picture_ASM = 0;
+
+int DBG_Outline_Bitmap_Pixels_No_Glass = 0;
+int DBG_Draw_Invisibility = 0;
+int DBG_Create_Remap_Palette = 0;
+int DBG_Find_Closest_Color = 0;
 
 int16_t DBG_TST_unit_stack[18] =
 {

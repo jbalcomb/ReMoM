@@ -31,6 +31,7 @@
 #include "LOADER.H"
 #include "Mouse.H"
 #include "MoX_CFG.H"
+#include "MoX_CMB.H"
 #include "MoX_DBG.H"
 #include "MoX_DIR.H"
 #include "MoX_GAM.H"

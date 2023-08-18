@@ -196,6 +196,9 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         shift_right_flag = ST_FALSE;
         half_swap_flag = ST_FALSE;
 
+        // Which direction to scroll the movement map?
+        // if the new x is greater than the old x, scroll right
+        // if the new x is less than the old x, scroll left
         if(xpos < l_map_x)
         {
             shift_right_flag = ST_FALSE;
@@ -205,6 +208,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
             shift_right_flag = ST_TRUE;
         }
 
+        // World-Wrap:
+        // 
         if(xpos > 50 && l_map_x < 20)
         {
             shift_right_flag = ST_FALSE;
@@ -221,7 +226,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         {
             // NIU?  CRP_OVL_MapWindowX += 20;
             l_map_x++;
-            if(l_map_x == 60)
+            if(l_map_x == WORLD_WIDTH)
             {
                 l_map_x = 0;
                 // NIU?  CRP_OVL_MapWindowX = 0;
@@ -238,7 +243,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
             l_map_x--;
             if(l_map_x == 0)
             {
-                l_map_x = 59;  // ? MoO2 _MAP_MAX_X ?
+                l_map_x = WORLD_WIDTH - 1;  // ? MoO2 _MAP_MAX_X ?
                 // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
             }
             if(half_swap_flag == ST_FALSE && l_map_x < xpos)
@@ -309,9 +314,11 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         END: Map-Moved!!
     */
 
-    Minimap_Coords(&minimap_x, &minimap_y, ((l_map_x + (MAP_WIDTH/2)) / WORLD_WIDTH), (l_map_y + (MAP_HEIGHT/2)), minimap_width, minimap_height);
+    Minimap_Coords(&minimap_x, &minimap_y, ((l_map_x + (MAP_WIDTH/2)) % WORLD_WIDTH), (l_map_y + (MAP_HEIGHT/2)), minimap_width, minimap_height);
 
-    Draw_Minimap(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+    // Draw_Minimap(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+    Draw_Reduced_Map(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);  // mark_x = 0, mark_y = 0, mark_flag = 0
+
 
     Draw_Map_Window(screen_x, screen_y, map_width, map_height, l_map_x, l_map_y, map_plane);
 
@@ -446,7 +453,7 @@ when always draw (-1) is set for OVL_ActiveStackDraw
 #endif
 
 
-    if(draw_active_stack_flag != -2)
+    if(draw_active_stack_flag != -2)  /* -2: never draw*/
     {
         if((_UNITS[_unit_stack[0].unit_idx].owner_idx != ST_UNDEFINED))
         {
@@ -458,7 +465,7 @@ when always draw (-1) is set for OVL_ActiveStackDraw
                 in_view = World_To_Screen(mmap_xw, mmap_yw, &unit_xw, &unit_yw);
 
                 // not never, not always, so must be set for draw-cycling, so increment the cycle
-                if(draw_active_stack_flag != -1)  /* always draw */
+                if(draw_active_stack_flag != -1)  /* -1: always draw */
                 {
                     draw_active_stack_flag = ((draw_active_stack_flag + 1) % 8);
                 }
@@ -481,27 +488,30 @@ when always draw (-1) is set for OVL_ActiveStackDraw
                         if ... entities_on_movement_map[ ( ((unit_yw - mmap_yw) * MAP_WIDTH) + unit_xw ) ]; ==/!= ST_UNDEFINED
                     */
 
-                    if(in_view == ST_TRUE)
+                    if(draw_active_stack_flag != -1)
                     {
-                        first_active_stack_unit_idx = 0;
-                        for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+
+                        if(in_view == ST_TRUE)
                         {
-                            if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+                            first_active_stack_unit_idx = 0;
+                            for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
                             {
-                                first_active_stack_unit_idx = itr_unit_stack_count;
-                                break;
+                                if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+                                {
+                                    first_active_stack_unit_idx = itr_unit_stack_count;
+                                    break;
+                                }
                             }
+                            unit_idx = _unit_stack[first_active_stack_unit_idx].unit_idx;
+                            Draw_Unit_Picture(unit_xw, unit_yw, unit_idx, 2);  /* 2: Nay status text; Nay Grayscale; Yay owner background banner color; enchantment outline? invisible? */
                         }
-                        unit_idx = _unit_stack[first_active_stack_unit_idx].unit_idx;
-                        Draw_Unit_Picture(unit_xw, unit_yw, unit_idx, 2);  /* 2: Nay status text; Nay Grayscale; Yay owner background banner color; enchantment outline? invisible? */
+
+                        unit_idx = _unit_stack[0].unit_idx;
+                        // Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
+                        Draw_Reduced_Map(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
+
                     }
-                    unit_idx = _unit_stack[0].unit_idx;
-                    Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
                 }
-
-
-
-
             }
         }
     }
@@ -520,37 +530,41 @@ void Minimap_Set_Dims(int16_t width, int16_t height)
 
 
 // WZD o67p09
-void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
+// void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
+void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
 {
-    int16_t reduced_map_box_color;
+    int16_t color;
     int16_t line_x;
     int16_t line_y;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Minimap_Window()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_World_Window()\n", __FILE__, __LINE__);
 #endif
+
+    color = REDUCED_MAP_BOX_COLOR;  // 0Dh  13d  Light Magenta / Bright Magenta
 
     Reset_Window();
 
     Draw_Picture(start_x, start_y, _reduced_map_seg);
 
+    line_x = width / 2;
+    line_y = height / 2;
+    line_x = line_x - (MAP_WIDTH  / 2);
+    line_y = line_y - (MAP_HEIGHT / 2);
+    line_x = line_x + start_x;
+    line_y = line_y + start_y;
 
-    reduced_map_box_color = 13;
-    line_x = start_x + ( width / 2) + ( MOVEMENT_MAP_WIDTH / 2);
-    line_y = start_y + (height / 2) + (MOVEMENT_MAP_HEIGHT / 2);
-
-    // TODO  VGA_Draw_Line(line_x, line_y, line_x, line_y);
-    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x+1, line_y-1);
-    // TODO  VGA_Draw_Line(line_x-1, line_y-1, line_x-1, line_y+1);
-    // TODO  VGA_Draw_Line(line_x+10, line_y-1, line_x+12, line_y-1);
-    // TODO  VGA_Draw_Line(line_x+12, line_y-1, line_x+12, line_y+1);
-    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x-1, line_y+8);
-    // TODO  VGA_Draw_Line(line_x-1, line_y+10, line_x+1, line_y+10);
-    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+12, line_y+8);
-    // TODO  VGA_Draw_Line(line_x+12, line_y+10, line_x+10, line_y+10);
+    Line(line_x - 1            , line_y - 1         , line_x + 1            , line_y - 1             , color);  // top left
+    Line(line_x - 1            , line_y - 1         , line_x - 1            , line_y + 1             , color);  // left upper
+    Line(line_x + MAP_WIDTH - 2, line_y - 1         , line_x + MAP_WIDTH    , line_y - 1             , color);  // top right
+    Line(line_x + MAP_WIDTH    , line_y - 1         , line_x + MAP_WIDTH    , line_y + 1             , color);  // upper right
+    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x - 1            , line_y + MAP_HEIGHT - 2, color);  // left lower
+    Line(line_x - 1            , line_y + MAP_HEIGHT, line_x + 1            , line_y + MAP_HEIGHT    , color);  // bottom left
+    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH    , line_y + MAP_HEIGHT - 2, color);  // right lower
+    Line(line_x + MAP_WIDTH    , line_y + MAP_HEIGHT, line_x + MAP_WIDTH - 2, line_y + MAP_HEIGHT    , color);  // bottom right
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Minimap_Window()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_World_Window()\n", __FILE__, __LINE__);
 #endif
 }
 
@@ -795,13 +809,12 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        if(_UNITS[itr_units].owner_idx == _human_player_idx && UNIT_HasInvisibility(itr_units) == ST_TRUE)
+        if(_UNITS[itr_units].owner_idx != _human_player_idx && UNIT_HasInvisibility(itr_units) == ST_TRUE)
         {
             draw_priority = ST_UNDEFINED;
         }
 
         _UNITS[itr_units].Draw_Priority = draw_priority;
-
 
     }
 
@@ -912,7 +925,6 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
     int16_t tmp_minimap_x;
     int16_t tmp_minimap_y;
 
-
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Minimap_Coords(*minimap_x = %d, *minimap_y = %d, mid_x = %d, mid_y = %d, minimap_width = %d, minimap_height = %d)\n", __FILE__, __LINE__, *minimap_x, *minimap_y, mid_x, mid_y, minimap_width, minimap_height);
 #endif
@@ -924,7 +936,7 @@ void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int
     }
     else
     {
-        *minimap_x = (tmp_minimap_x + 60) / 60;
+        *minimap_x = (tmp_minimap_x + WORLD_WIDTH) % WORLD_WIDTH;
     }
 
     tmp_minimap_y = mid_y - (minimap_height / 2);
@@ -1379,7 +1391,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].Banner * 5) + itr_color_remap)] - 1));
+                                        Replace_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].Banner * 5) + itr_color_remap)] - 1));
                                     }
                                 }
                                 else
@@ -1401,7 +1413,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     Draw_Picture_To_Bitmap(city_pict_seg, Map_Square_WorkArea);
                                     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
                                     {
-                                        FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, 51 + itr_color_remap);
+                                        Replace_Color(Map_Square_WorkArea, 214 + itr_color_remap, 51 + itr_color_remap);
                                     }
                                 }
 
@@ -1470,10 +1482,10 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                 {
                                     // ; BUG: parameter mismatch, passing a pointer instead of an actual color index!
                                     // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
-                                    // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Big-List'
+                                    // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Bug-List'
                                     // ~== FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
                                     //     FLIC_Remap_Color(Map_Square_WorkArea, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
-                                    FLIC_Remap_Color(Map_Square_WorkArea, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].Banner * 5)));
+                                    Replace_Color(Map_Square_WorkArea, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].Banner * 5)));
                                 }
                             }
                             else
@@ -2179,12 +2191,13 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
 
 // WZD o150p16
-void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark)
+// "Reduced Map"/"World Window"
+// AKA Draw_Minimap()
+void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 {
     int16_t terrain_type_idx_base;
     int16_t terrain_type_idx;
     uint8_t * explore_data_ptr;
-    // uint16_t * world_data_ptr;
     uint8_t * world_data_ptr;
     uint8_t * minimap_pict_data_ptr;
     int16_t itr_minimap_height;
@@ -2205,37 +2218,15 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
     uint8_t banner_color;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Minimap(minimap_start_x = %d, minimap_start_y = %d, world_plane = %d, minimap_pict_seg = %p, minimap_width = %d, minimap_height = %d, Mark_X = %d, Mark_Y = %d, Mark = %d)\n", __FILE__, __LINE__, minimap_start_x, minimap_start_y, world_plane, minimap_pict_seg, minimap_width, minimap_height, Mark_X, Mark_Y, Mark);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Reduced_Map(minimap_start_x = %d, minimap_start_y = %d, world_plane = %d, minimap_pict_seg = %p, minimap_width = %d, minimap_height = %d, mark_x = %d, mark_y = %d, mark_flag = %d)\n", __FILE__, __LINE__, minimap_start_x, minimap_start_y, world_plane, minimap_pict_seg, minimap_width, minimap_height, mark_x, mark_y, mark_flag);
 #endif
 
 
     terrain_type_idx_base = world_plane * TERRAIN_COUNT;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: TBL_Scouting: %p\n", __FILE__, __LINE__, TBL_Scouting);
-// #endif
-    // explore_data_ptr = (uint8_t *)TBL_Scouting[(world_plane * 2400)];
-    explore_data_ptr = (TBL_Scouting + (world_plane * 2400));
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: explore_data_ptr: %p\n", __FILE__, __LINE__, explore_data_ptr);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: _world_maps: %p\n", __FILE__, __LINE__, _world_maps);
-// #endif
-    // world_data_ptr = (uint16_t *)_world_maps[(world_plane * 4800)];
+    explore_data_ptr = (TBL_Scouting + (world_plane * WORLD_SIZE));
     world_data_ptr = (_world_maps + (world_plane * 4800));
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: world_data_ptr: %p\n", __FILE__, __LINE__, world_data_ptr);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: minimap_pict_seg: %p\n", __FILE__, __LINE__, minimap_pict_seg);
-// #endif
-    minimap_pict_data_ptr = minimap_pict_seg + 16;  // +1 paragraph
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: minimap_pict_data_ptr: %p\n", __FILE__, __LINE__, minimap_pict_data_ptr);
-// #endif
+    minimap_pict_data_ptr = minimap_pict_seg + 16;  // +1 segment (paragraph)
 
     // WZD s30p06
     // void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, int16_t color);
@@ -2249,6 +2240,10 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
     // 201 ~ red
     // 210 ~ yellow
     //  50 ~ brown
+    // WZD dseg:700A AB D8 CD C9 D2 32                               COL_MinimapBanners db 171, 216, 205, 201, 210, 50
+    // WZD dseg:7010 32                                              COL_MinimapNeutral db 50
+
+
 
     
     for(itr_minimap_height = 0; itr_minimap_height < minimap_height; itr_minimap_height++)
@@ -2261,34 +2256,13 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
             if(minimap_square_x < 0) { minimap_square_x += WORLD_WIDTH; }
             if(minimap_square_x > WORLD_WIDTH) { minimap_square_x -= WORLD_WIDTH; }
 
-            // the reduced map is centered relative to the movement map, so skip until we get to the start of the world
-            if(minimap_square_y < 0 || minimap_square_y >= WORLD_HEIGHT)
+            if( (minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x) != ST_FALSE )
             {
-                continue;
+                terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
+                terrain_type_idx += terrain_type_idx_base;
+                minimap_terrain_color = terrain_lbx_002[terrain_type_idx];
+                *(minimap_pict_data_ptr + ((itr_minimap_width * minimap_height) + itr_minimap_height)) = minimap_terrain_color;
             }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: ((minimap_square_y * WORLD_WIDTH) + minimap_square_x): %d\n", __FILE__, __LINE__, ((minimap_square_y * WORLD_WIDTH) + minimap_square_x));
-// #endif
-
-//             explored_flag = explore_data_ptr[((minimap_square_y * WORLD_WIDTH) + minimap_square_x)];
-// 
-//             // map square is explored
-//             if(explored_flag == ST_FALSE)
-//             {
-//                 continue;
-//             }
-
-            // terrain_type_idx = *(world_data_ptr + (minimap_square_y * 120) + (minimap_square_x * 2));
-            terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: terrain_type_idx: %d\n", __FILE__, __LINE__, terrain_type_idx);
-// #endif
-            terrain_type_idx += terrain_type_idx_base;
-            minimap_terrain_color = terrain_lbx_002[terrain_type_idx];
-
-            *(minimap_pict_data_ptr + ((itr_minimap_width * minimap_height) + itr_minimap_height)) = minimap_terrain_color;
-
         }
     }
 
@@ -2297,71 +2271,65 @@ void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t worl
     */
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-
-//         // city plane vs. world plane
-//         if(_CITIES[itr_cities].world_plane != world_plane)
-//         {
-//             continue;
-//         }
-// 
-//         city_world_x = _CITIES[itr_cities].world_x;
-//         city_world_y = _CITIES[itr_cities].world_y;
-// 
-// //         explored_flag = explore_data_ptr[(city_world_y * WORLD_WIDTH + city_world_x)];
-// // 
-// //         // map square is explored / city is visible
-// //         if(explored_flag == ST_FALSE)
-// //         {
-// //             continue;
-// //         }
-// 
-//         // city coords in minimap dims
-//         city_minimap_x = city_world_x - minimap_start_x;
-//         if(city_minimap_x < 0) { city_minimap_x += WORLD_WIDTH; }
-//         city_minimap_y = city_world_y - minimap_start_y;
-//         if(city_minimap_x >= minimap_width || city_minimap_x < 0 || city_minimap_y >= minimap_height || city_minimap_y < 0)
-//         {
-//             continue;
-//         }
-// 
-//         city_owner_idx = _CITIES[itr_cities].owner_idx;
-// 
-//         if(city_owner_idx != NEUTRAL_PLAYER_IDX)
-//         {
-// 
-// //             city_owner_player_banner = _players[city_owner_idx].Banner;
-// // #ifdef STU_DEBUG
-// //     dbg_prn("DEBUG: [%s, %d]: city_owner_player_banner: %02X\n", __FILE__, __LINE__, city_owner_player_banner);
-// // #endif
-// //             banner_color = COL_MinimapBanners[_players[city_owner_idx].Banner];
-// // #ifdef STU_DEBUG
-// //     dbg_prn("DEBUG: [%s, %d]: banner_color: %02X\n", __FILE__, __LINE__, banner_color);
-// // #endif
-// 
-//             *(minimap_pict_data_ptr + ((city_minimap_x * minimap_height) + city_minimap_y)) = COL_MinimapBanners[_players[city_owner_idx].Banner];
-//         }
-//         else
-//         {
-//             *(minimap_pict_data_ptr + ((city_minimap_x * minimap_height) + city_minimap_y)) = COL_MinimapNeutral;
-//         }
-
+        if(_CITIES[itr_cities].world_plane == world_plane)
+        {
+            city_world_x = _CITIES[itr_cities].world_x;
+            city_world_y = _CITIES[itr_cities].world_y;
+            if(*(explore_data_ptr + (city_world_y * WORLD_WIDTH) + city_world_x) != ST_FALSE)
+            {
+                city_minimap_x = city_world_x - minimap_start_x;
+                if(city_minimap_x < 0)
+                {
+                    city_minimap_x += WORLD_WIDTH;
+                }
+                city_minimap_y = city_world_y - minimap_start_y;
+                if(city_minimap_y >= 0)
+                {
+                    if(city_minimap_y < minimap_height)
+                    {
+                        if(city_minimap_x >= 0)
+                        {
+                            if(city_minimap_x < minimap_width)
+                            {
+                                city_owner_idx = _CITIES[itr_cities].owner_idx;
+                                if(city_owner_idx == NEUTRAL_PLAYER_IDX)
+                                {
+                                    *(minimap_pict_data_ptr + ((city_minimap_x * minimap_height) + city_minimap_y)) = COL_MinimapNeutral;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: NEUTRAL_PLAYER: %d, %d\n", __FILE__, __LINE__, city_world_x, city_world_y);
+    dbg_prn("DEBUG: [%s, %d]: NEUTRAL_PLAYER: %d, %d\n", __FILE__, __LINE__, city_minimap_x, city_minimap_y);
+#endif
+                                }
+                                else
+                                {
+                                    *(minimap_pict_data_ptr + ((city_minimap_x * minimap_height) + city_minimap_y)) = COL_MinimapBanners[_players[city_owner_idx].Banner];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     /*
         END: Loop Cities
     */
 
 
-//     if(Mark != 0)
-//     {
-//         mark_minimap_x = Mark_X - minimap_start_x;
-//         mark_minimap_y = Mark_Y - minimap_start_y;
-//         if(mark_minimap_x < 0) { mark_minimap_x += 60; }
-//         if(mark_minimap_x > 60) { mark_minimap_x -= 60; }
-//         if(mark_minimap_y < 0) { mark_minimap_y += 40; }
-//         if(mark_minimap_y > 40) { mark_minimap_y -= 40; }
-// 
-//         *(minimap_pict_data_ptr + ((city_minimap_x * minimap_height) + city_minimap_y)) = MINIMAP_MARK_COLOR;
-//     }
+    if(mark_flag != ST_FALSE)
+    {
+        mark_minimap_x = mark_x - minimap_start_x;
+        mark_minimap_y = mark_y - minimap_start_y;
+        if(mark_minimap_x < 0) { mark_minimap_x += WORLD_WIDTH; }
+        if(mark_minimap_x > WORLD_WIDTH) { mark_minimap_x -= WORLD_WIDTH; }
+        if(mark_minimap_y < 0) { mark_minimap_y += WORLD_HEIGHT; }
+        if(mark_minimap_y > WORLD_HEIGHT) { mark_minimap_y -= WORLD_HEIGHT; }
+        *(minimap_pict_data_ptr + ((mark_minimap_x * minimap_height) + mark_minimap_y)) = MINIMAP_MARK_COLOR;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Draw_Reduced_Map(minimap_start_x = %d, minimap_start_y = %d, world_plane = %d, minimap_pict_seg = %p, minimap_width = %d, minimap_height = %d, mark_x = %d, mark_y = %d, mark_flag = %d)\n", __FILE__, __LINE__, minimap_start_x, minimap_start_y, world_plane, minimap_pict_seg, minimap_width, minimap_height, mark_x, mark_y, mark_flag);
+#endif
 
 }
 

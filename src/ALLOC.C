@@ -190,6 +190,14 @@ SA_GET_USED(SAMB_head): 2345
     p5_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
     DBG_ORIG_p5_heroes = p5_heroes;
 
+    p_heroes[0] = (struct s_HERO *)p0_heroes;
+    p_heroes[1] = (struct s_HERO *)p1_heroes;
+    p_heroes[2] = (struct s_HERO *)p2_heroes;
+    p_heroes[3] = (struct s_HERO *)p3_heroes;
+    p_heroes[4] = (struct s_HERO *)p4_heroes;
+    p_heroes[5] = (struct s_HERO *)p5_heroes;
+
+
 
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
     DBG_ORIG__UNITS = _UNITS;

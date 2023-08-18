@@ -32,8 +32,16 @@ void Apply_Palette(void)
 
     for(itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
     {
-        if(*(p_Palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
+        if( *(p_Palette + 768 + itr) == 1 )  // TODO  ~ #define Palette Flags Offset
         {
+#ifdef STU_DEBUG
+    if(itr == 0x72)
+    {
+        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 0): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 0));
+        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 1): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 1));
+        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 2): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 2));
+    }
+#endif
             *(PFL_Palette + (itr * 4) + 3) = 0x00;
             *(PFL_Palette + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
             *(PFL_Palette + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);

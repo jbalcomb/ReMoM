@@ -1,6 +1,40 @@
 
 
 
+### Color-Map Re-Map
+
+...before, during, after, ...
+
+function to *dump* portion of frame-buffer
+pointer to the current/target frame-buffer
+x,y offset in frame-buffer
+width, height of portion
+stride/pitch/line-width of frame-buffer
+(re-)scale
+
+memory allocation to build-up bitmap image data for debug *dump*
+
+
+#ifdef STU_DEBUG
+    if(DBG_Draw_Invisibility = 1)  /* Unit Has Invisibility */
+    {
+        DLOG("(DBG_Draw_Invisibility = 1)");
+        // screen_page = (video_page_buffer[1 - draw_page_num]);
+        // screen_ofst = (80 * SCREEN_WIDTH) + 248;
+        vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((80 * SCREEN_WIDTH) + 248));
+        for(itr_height = 0; itr_height < STATFIG_HEIGHT; itr_height++)
+        {
+            for(itr_width = 0; itr_width < STATFIG_WIDTH; itr_width++)
+            {
+                dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
+            }
+        }
+    }
+#endif
+
+
+
+
 
 
 

@@ -55,6 +55,35 @@ void Screen_Control(void)
                 // Load_SAVE_GAM(-1);  // SAVETEST.GAM
                 // TST_Load_SAVE_GAM();
                 Loaded_Game_Update();
+                // FTW, still dont exists  // HACK:  (4) Magicians  @  {18, 11}
+                // FTW, still dont exists  _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI || 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  _UNITS[162].Enchants_HI = _UNITS[162].Enchants_HI || 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  _UNITS[194].Enchants_HI = _UNITS[194].Enchants_HI || 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  _UNITS[203].Enchants_HI = _UNITS[203].Enchants_HI || 0x8000;  // UE_Invisibility 0x8000
+
+                // FTW, still dont exists  // FTW, made the unit not exist  _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  // FTW, made the unit not exist  _UNITS[162].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  // FTW, made the unit not exist  _UNITS[194].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // FTW, still dont exists  // FTW, made the unit not exist  _UNITS[203].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+
+                // HACK:  (4) Magicians  @  {18, 11}
+                _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // _UNITS[162].Enchants_HI = _UNITS[162].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // _UNITS[194].Enchants_HI = _UNITS[194].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+                // _UNITS[203].Enchants_HI = _UNITS[203].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+
+
+                // _unit_stack[]
+                // _unit_stack_count
+                // draw_active_stack_flag
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
+        dbg_prn("DEBUG: [%s, %d]: draw_active_stack_flag: %d\n", __FILE__, __LINE__, draw_active_stack_flag);
+        dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
+        dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
+        dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].owner_idx: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].owner_idx);
+#endif
+
                 // END: WZD main()
                 current_screen = scr_Main_Screen;
             } break;
@@ -104,7 +133,7 @@ void Screen_Control(void)
                 // Load_SAVE_GAM(8)
                 // Load_WZD_Resources()
                 Load_Palette(0, -1, 0);  // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
-                // VGA_SetShades_Grey0()
+                // Calculate_Remap_Colors();
                 // Set_Button_Down_Offsets(1, 1)
                 // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
                 Apply_Palette();

@@ -178,8 +178,10 @@ struct win32_offscreen_buffer
 
 
 
-const WCHAR szWindowClass[] = L"MoM_Wnd_Cls";
-const WCHAR szTitle[] = L"(MoM-Rasm) Master of Magic v1.31 - Reassembly";
+// const WCHAR szWindowClass[] = L"MoM_Wnd_Cls";
+// const WCHAR szTitle[] = L"(MoM-Rasm) Master of Magic v1.31 - Reassembly";
+const CHAR szWindowClass[] = "MoM_Wnd_Cls";
+const CHAR szTitle[] = "(MoM-Rasm) Master of Magic v1.31 - Reassembly";
 HINSTANCE g_Instance;
 HWND g_Window;
 HDC g_DeviceContext;
@@ -340,6 +342,18 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
         {
             color_map_index = *(p_320x200xVGA + (itr_height * width) + itr_width);
             color = p_XBGR[color_map_index];
+            // assert(color != 0);
+// #ifdef STU_DEBUG
+// //     if(color_map_index == 0x72)
+// //     {
+// //         dbg_prn("DEBUG: [%s, %d]: PFL_Palette[%d]: %08X\n", __FILE__, __LINE__, color_map_index, color);
+// //     }
+//     // if( ((itr_height >= 111) || (itr_height <= 111+16)) && ((itr_width >= 121) || (itr_height <= 121+18)) )
+//     if( ((itr_height >= 111) || (itr_height < 111+16)) && ((itr_width >= 121) || (itr_height < 121+18)) )
+//     {
+//         dbg_prn("DEBUG: [%s, %d]: PFL_Palette[%d]: %08X\n", __FILE__, __LINE__, color_map_index, color);
+//     }
+// #endif
             *(p_320x200xXBGR + (itr_height * width) + itr_width) = color;
         }
     }
@@ -435,12 +449,15 @@ void Init_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, 
     {
         // ErrorExit(TEXT("VirtualAlloc"));
     }
+    memset(Buffer->Memory, 1, BitmapMemorySize);
 }
 
 void WndInit(HINSTANCE hInstance, int nCmdShow)
 {
     g_Instance = hInstance;
-    WNDCLASSEXW wcex = { 0 };
+//     WNDCLASSEXW wcex = { 0 };
+    WNDCLASSEX wcex = { 0 };
+//     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc = WndEvnt;
@@ -453,14 +470,18 @@ void WndInit(HINSTANCE hInstance, int nCmdShow)
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = NULL;
-    RegisterClassExW(&wcex);
+//     RegisterClassExW(&wcex);
+    RegisterClassEx(&wcex);
     RECT   rect = {0, 0, default_window_width, default_window_height};
     DWORD  dwStyle = WS_OVERLAPPEDWINDOW;
     BOOL   bMenu = false;
     DWORD  dwExStyle = NULL;
     AdjustWindowRectEx(&rect, dwStyle, bMenu, dwExStyle);
 
-    g_Window = CreateWindowExW(NULL, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, 
+//     g_Window = CreateWindowExW(NULL, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, 
+//                                 CW_USEDEFAULT, CW_USEDEFAULT, (rect.right - rect.left), (rect.bottom - rect.top), 
+//                                 NULL, NULL, g_Instance, NULL);
+    g_Window = CreateWindowEx(NULL, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, 
                                 CW_USEDEFAULT, CW_USEDEFAULT, (rect.right - rect.left), (rect.bottom - rect.top), 
                                 NULL, NULL, g_Instance, NULL);
     if (!g_Window)

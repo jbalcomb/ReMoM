@@ -1,6 +1,27 @@
 
 # Screen Layouts
 
+#SRSLY
+How do I go about getting all of the screen coordinates into variables, so they can supporting the screen scale and UI ratio?
+¿ compile-time vs. run-time ?
+
+X,Y of Top-Left Corner of UI Elements
+
+Main Menu
+    Menu Buttons
+
+Main Screen
+    Game Buttons
+    Movement Map
+    Reduced Map
+    Status Window
+    Summary Window    AND  Unit Window
+    Next Turn Button  AND  Unit Action Buttons
+
+
+
+
+
 
 Main Menu Screen
 

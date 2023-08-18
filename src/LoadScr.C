@@ -209,18 +209,19 @@ void GAME_Overland_Init(void)
     // Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
     Center_Map(&_map_x, &_map_y, 24, 16, 0);
 
-    // TODO  Set_Unit_Draw_Priority();
-    // TODO  Reset_Stack_Draw_Priority();
-    // TODO  Set_Entities_On_Map_Window();
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
 
     GFX_Swap_Cities();
 
-    // TODO  j_WIZ_NextIdleStack(_human_player_idx, &_curr_world_x, &_curr_world_y, &_world_plane)
-    // ; selects the next idle stack of the specified player,
-    // ; if any, moving any other stacks marked as going to
-    // ; while iterating over them
 
-    // j_RP_Empty_Load_FnA
+    // TODO  j_WIZ_NextIdleStack(_human_player_idx, &_curr_world_x, &_curr_world_y, &_world_plane)
+    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+
+
+    // j_o108p02_Empty_pFxn()
 
     // j_CTY_RecalculateAll
     // ; calls CTY_Recalculate for all cities  ; (with all its BUGs)
@@ -248,7 +249,8 @@ void G_WLD_StaticAssetRfrsh(void)
     int16_t itr_cities;
     int16_t itr_players;
 
-//    RNG_TimerSeed();
+//    Randomize();
+
 //    LFSR_HI = 0;
 //    LFSR_LO = 0x03E8;
 //    if(!Check_Release_Version())
@@ -258,7 +260,7 @@ void G_WLD_StaticAssetRfrsh(void)
 
     all_units_moved = ST_FALSE;
     // G_OVL_MapVar4 = 1;  // ? ST_TRUE ?
-    // Reset_Active_Stack_Draw()
+    Reset_Draw_Active_Stack();
     _map_plane = 0;  // Arcanus
 
 //    for(itr_cities = 0; itr_cities < _cities; itr_cities++)

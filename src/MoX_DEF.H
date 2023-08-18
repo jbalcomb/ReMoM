@@ -27,11 +27,17 @@
 #define MOUSE_BUTTON_RIGHT  2
 
 
+#define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
+
 // Define macro to swap two numbers
 // #define SWAP(x, y, temp) temp = x; x = y; y = temp;  ... macro expansion(temp = x; x = y; y = temp;)
 // x = x + y - ( y = x );
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 #define SWAP(x, y) (x ^= y ^= x ^= y)
+
+
+
+#define REMAP_THRESHOLD  21
 
 
 
@@ -47,7 +53,7 @@
 #define MOVEMENT_MAP_WIDTH  12
 #define MOVEMENT_MAP_HEIGHT 10
 #define REDUCED_MAP_WIDTH   58
-#define REDUCED_MAP_HEIGTH  30
+#define REDUCED_MAP_HEIGHT  30
 /*
     World / Movement-Map Square Dimensions
 */
@@ -59,8 +65,6 @@
 #define UNIT_COUNT_MAX      1009
 #define TOWER_COUNT_MAX        6
 #define FORTRESS_COUNT_MAX     6
-
-#define MINIMAP_MARK_COLOR  15
 
 #ifdef VIDEO_MODE_MODE_Y
 #define SCREEN_WIDTH    320
@@ -94,11 +98,53 @@
 #endif
 
 
+/*
+    SimTex Colors
+*/
 
-#define ST_TRANSPARENT   0
-#define ST_BLACK         1
-#define ST_WHITE        15
+#define MINIMAP_MARK_COLOR  15
+#define REDUCED_MAP_BOX_COLOR   13
 
+// Unit_Window_Draw_Unit_Attributes()
+#define DAMAGE_BAR_GREEN        0xD9  // 217
+#define DAMAGE_BAR_YELLOW       0xD3  // 211
+#define DAMAGE_BAR_RED          0xCA  // 202
 
+/* ¿ Normal vs. Hero ? */
+#define EXPERIENCE_LEVEL_SILVER     
+#define EXPERIENCE_LEVEL_GOLD       
+#define EXPERIENCE_LEVEL_RED        
+
+#define ST_TRANSPARENT       0  /*  */
+#define ST_BLACK             1  /*  */
+
+#define ST_GRAY              8
+
+#define ST_LIGHT_MAGENTA    13
+
+#define ST_WHITE            15
+// "silver" used for experience level rings/circles?
+// same as reduced map box?
+// white/bright white for reduced map mark, and GP/MP font color, and outline/aura color for unit enchantment outline?
+
+/*
+    EGA / VGA Colors
+        $00 Black
+        $01 Blue
+        $02 Green
+        $03 Cyan
+        $04 Red
+        $05 Magenta
+        $06 Brown
+        $07 White
+        $08 Gray
+        $09 Light Blue
+        $0A Light Green
+        $0B Light Cyan
+        $0C Light Red
+        $0D Light Magenta
+        $0E Yellow
+        $0F Bright White
+*/
 
 #endif /* MOX_DEF_H */

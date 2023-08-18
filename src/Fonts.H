@@ -3,6 +3,12 @@
 
 #include "MoX_TYPE.H"
 
+
+
+#define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (p_Palette), (768 + (_palette_index_)) ) )
+
+
+
 /*
     MoO2
     Module: fontdraw
@@ -111,23 +117,56 @@ extern "C" {
 // AKA gsa_Palette_Font_Colors
 extern byte_ptr font_colors;  // 300h into the palette entry, 16 arrays of 16 colors
 
+
+
+/*
+    BEGIN:  Fonts
+*/
+// WZD  dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0 
+// WZD  dseg:E7E0 00 00                                           p_PaletteFlags dw 0      
+
+// WZD  dseg:E7E2 00 00                                           
+// drake178: 1500h into the palette entry, an array of 24 color fractions (B-G-R-Percent) used to set shaded replacement colors for each color index
+// extern byte_ptr gsa_ShadingColors;
+extern byte_ptr remap_colors;
+
+// WZD  dseg:E7E4
+// extern SAMB_ptr Replacement_Colors;  // Replacement_Colors[24][256] ¿ or 224 ?
+// 384 paragraphs = 384 * 16 = 6,144 bytes  (24 * 256  ~'remap color tables')
+extern byte_ptr remap_color_palettes;   // alloc in Load_Font_File()  set in Create_Remap_Palette()
+
+// WZD  dseg:E7E6 00 00                                           UU_DAC_Save_Seg dw 0     
+
+// WZD dseg:E7E8
+// current_palette
+
+// WZD dseg:E7EA
+// char font_name[16];                             // set in Load_Font_File()
+
+// WZD  dseg:E7FA
+// 96 paragraphs = 96 * 16 = 1,536 bytes  (1536 / 256 = 6)
+extern SAMB_ptr Intensity_Scale_Tbl;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
+// ¿ MoO2 ~ remap_gray_scale_palette ?
+
+
 // WZD dseg:E820
 extern SAMB_ptr font_style_data;                       // alloc & load in Load_Font_File()
-
-
 
 extern byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_Palette()  16 (16*16) cursor images
 
 extern byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
+extern byte_ptr current_palette;
+
 extern byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
 // DELETE  extern byte_ptr p_Palette_XBGR;                        // STU/Win32
+extern byte_ptr palette_flags;
 
 
 
 
 
 void Load_Font_File(char * font_file);
-void Load_Palette(int entry, int start_color, int end_color);
+
 void Set_Palette_Changes(int start_color, int end_color);
 
 
@@ -248,12 +287,69 @@ int16_t Get_String_Width(char * string);
 
 
 /*
+    WIZARDS.EXE  seg020
+*/
+
+// WZD s20p01
+void Load_Palette(int entry, int start_color, int end_color);
+
+// WZD s20p02
+// drake178: VGA_ResetShade0()
+// MoO2: ~ Calculate_Remap_Gray_Palettes_()
+// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
+// void Update_Remap_Gray_Palette(void);
+
+// WZD s20p02
+// drake178: VGA_ResetShade0()
+// MoO2: ~ Calculate_Remap_Gray_Palettes_()
+// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
+// void Update_Remap_Gray_Palette(void);
+
+// WZD s20p03
+// drake178: VGA_SetShades_Grey0()
+// MoO2: ~ Update_Glass_Remap_Colors()
+// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors table 0 is set to shades of 50% black instead of whatever the palette originally had (the same)
+void Calculate_Remap_Colors(void);
+void Bogus_Calculate_Remap_Colors(void);
+
+// WZD s20p04
+// drake178: VGA_SetShades_Range()
+// MoO2: ~ Update_Glass_Remap_Color_Range()
+// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors, but only for the color sets indicated by the confines table 0 is set to shades of 50% black instead of whatever the palette originally had, if included
+// Update_Remap_Color_Range
+
+
+/*
     WIZARDS.EXE  seg021
+    (assembly code)
 */
 
 // WZD s21p01
 // PLATFORM
 void Apply_Palette(void);
+
+// WZD s21p06
+// drake178: VGA_ShadeColorMatch
+// void VGA_ShadeColorMatch(int16_t Tbl_Index, int16_t Red, int16_t Green, int16_t Blue, int16_t Percent);
+// void Create_Remap_Palette(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent);
+// WZD s21p06
+// drake178: VGA_ShadeColorMatch
+// MoO2: 
+// 1oom: lbxpal_build_colortable()
+// ANI: make_cfit_table()
+void Create_Remap_Palette(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent);
+void Create_Remap_Palette_0(int16_t block);
+void Create_Remap_Palette_1(int16_t block, uint8_t red, uint8_t green, uint8_t blue);
+void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent);
+uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue);
+// DELETE  void Create_Remap_Palette_ASM(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent);
+
+
+// void lbxpal_build_colortables(void);
+// void lbxpal_build_colortable(int ctablei, uint8_t pr, uint8_t pg, uint8_t pb, uint8_t percent);
+// uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b);
+// uint8_t Find_Closest_Color(uint8_t r, uint8_t g, uint8_t b);
+
 
 
 #ifdef __cplusplus

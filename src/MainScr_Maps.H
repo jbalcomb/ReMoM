@@ -142,7 +142,9 @@ void Draw_Active_Unit_Stack(int16_t world_x, int16_t world_y, int16_t world_plan
 void Minimap_Set_Dims(int16_t width, int16_t height);
 
 // WZD o67p09
-void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
+// "Reduced Map"/"World Window"
+// AKA Draw_Minimap_Window()
+void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
 
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
@@ -170,6 +172,7 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
 // IDK_CityScreen_Map_s5A97D()
 
 // WZD o68p03
+// AKA Minimap_Coords()
 void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height);
 
 // WZD o68p04
@@ -227,7 +230,9 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y);
 
 // WZD o150p16
-void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
+// AKA Draw_Minimap()
+// void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
+void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 
 // WZD o150p17 IDK_Prepare_TileMap_sDAB1A
 // WZD o150p18 sub_DAFF4                 

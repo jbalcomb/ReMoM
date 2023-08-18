@@ -24,7 +24,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 {
     char found_file[30];
     int input_type;
-
+#ifdef STU_DEBUG
+    int itr_remap_pal_num;
+    int itr_remap_pal_num_index;
+#endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();
 #endif
@@ -89,7 +92,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     TST_Validate_Allocate_Data_Space();
 #endif
     Load_SAVE_GAM(-1);
-    
+    // _unit_stack[]
+    // _unit_stack_count
+    // draw_active_stack_flag
+
     // WZD: Load_SAVE_GAM(8);
 
 
@@ -100,7 +106,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 
     Load_Palette(0, -1, 0);
-    // VGA_SetShades_Grey0()
+    Calculate_Remap_Colors();
     // Set_Button_Down_Offsets(1, 1);
     // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
     Apply_Palette();

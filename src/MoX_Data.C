@@ -31,6 +31,49 @@ uint8_t COL_Banners[] = {
 
 
 
+// WZD dseg:33B8
+// drake178: MoveFlag_Array
+// 01 00 20 00 40 00 04 00 02 00 08 00             
+// MoveFlag_Array dw M_Cavalry, M_Forester, M_Mntnr, M_Swimming, M_Sailing, M_Flying
+// OON XREF: STK_GetMoveTypes()
+int16_t MoveType_Flags[6];  // = { 0x0001, 0x0020, 0x0040, 0x0004, 0x0002, 0x0008 }
+
+// // struct s_Movement_Modes
+// // {
+// //     /* 0x00 */  uint16_t Cavalry = 0x0001;
+// //     /* 0x02 */  uint16_t Forester = 0x0020;
+// //     /* 0x04 */  uint16_t Mountaineer = 0x0040;
+// //     /* 0x06 */  uint16_t Swimming = 0x0004;
+// //     /* 0x08 */  uint16_t Sailing = 0x0002;
+// //     /* 0x0A */  uint16_t Flying = 0x0008;
+// //     /* 0x0C */  uint16_t PlanarTravel;
+// //     /* 0x0E */
+// // };
+// 
+// struct s_Movement_Modes
+// {
+//     /* 0x00 */  uint16_t Cavalry;
+//     /* 0x02 */  uint16_t Forester;
+//     /* 0x04 */  uint16_t Mountaineer;
+//     /* 0x06 */  uint16_t Swimming;
+//     /* 0x08 */  uint16_t Sailing;
+//     /* 0x0A */  uint16_t Flying;
+//     /* 0x0C */  uint16_t PlanarTravel;
+//     /* 0x0E */  uint16_t Walking;
+// };
+
+// struct s_Movement_Modes movement_modes_array = 
+// {
+//     Cavalry = 0x0001
+//     Forester = 0x0020,
+//     Mountaineer = 0x0040,
+//     Swimming = 0x0004,
+//     Sailing = 0x0002,
+//     Flying = 0x0008
+// };
+// struct s_Movement_Modes movement_modes_array = { 0x0001, 0x0020, 0x0040, 0x0004, 0x0002, 0x0008 };
+struct s_Movement_Modes movement_modes_array = { CAVALRY, FORESTER, MOUNTAINEER, SWIMMING, SAILING, FLYING };
+
 
 
 // MGC dseg:52C6
@@ -262,6 +305,8 @@ SAMB_ptr Active_Unit;
 // TBL_CombatEnchants
 
 
+// struct s_HERO p_heroes[6][35];
+struct s_HERO * p_heroes[6];
 // WZD dseg:9232
 SAMB_ptr p0_heroes;
 // WZD dseg:9236

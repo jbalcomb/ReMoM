@@ -1,5 +1,30 @@
 
 
+Mouse Buttom
+Left/Right
+Help
+Movement Map
+Reduced Map
+Right-Click Movement Map
+Left-Click Movement Map
+Scroll Map
+Move Stack  (1 square: Move; 2+ squares: Goto)
+Right-Click Stack on Movement Map
+Left-Click Stack on Movement Map
+Right-Click City on Movement Map
+Left-Click City on Movement Map
+Yay/Nay Active Stack
+Owned / Unowned
+Right-Click Unit Picture on Unit Window
+Left-Click Unit Picture on Unit Window
+Unit Action Button
+Next Turn Button
+Game Buttons
+
+
+
+
+
 Game Buttons
 G   Game
 S   Spells
@@ -82,9 +107,38 @@ Right-Click Movement Map
 
 
 
+_info_button
+_game_button
+_cities_button
+_magic_button
+_armies_button
+_spells_button
+_patrol_button
+_special_button
+_done_button
+_wait_button
+_plane_button
+// Left-Click Unit Window Grid Field
+// Right-Click Unit Window Grid Field
+_next_turn_button
+
+
+
 Settle < Special < Unit Action
 input_idx = Get_Input()
 input_idx == _special_button
 
 j_IDK_Settle_s82061
 
+
+## Source Code Navigation
+
+### "BEGIN: Mouse Click"
+### "BEGIN: Reduced Map Grid Field"
+Left-Click Movement Map Grid Field
+Right-Click Movement Map Grid Field
+
+
+
+END: Mouse Click
+END: Check Input against Fields

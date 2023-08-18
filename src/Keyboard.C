@@ -116,7 +116,8 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
     if(_SI_field_idx == fields_count)
     {
         _SI_field_idx = 1;
-        while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
+        // while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
+        while ((_SI_field_idx != fields_count))
         {
             // treat Alt-A as A  //MoO2 "Alt_Alpha"
             if( (p_fields[_SI_field_idx].type == ft_MultiHotKey) && (p_fields[_SI_field_idx].hotkey == (return_key + 95)) )
