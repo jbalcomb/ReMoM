@@ -1,3 +1,11 @@
+/*
+    WIZARDS.EXE
+        seg017
+        seg018
+        seg019
+        seg020
+        seg021
+*/
 #ifndef FONTS_H
 #define FONTS_H
 
@@ -195,38 +203,64 @@ void Set_Font_Style_Outline(int16_t style_num, int16_t Color_1, int16_t Color_2,
 void Set_Font_Style5(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p06
 void Set_Outline_Color(int16_t color_num);
-
+// WZD s17p07
+void Set_Font_LF(int16_t spacing);
 // WZD s17p08
 void Set_Font_Spacing_Width(int16_t spacing);
 // WZD s17p09
 void Set_Font_Spacing(int16_t spacing);
 
+// WZD s17p10
+// drake178: ?
+// Set_Font_Highlight_Colors()
+
 // WZD s17p11
+// drake178: ?
 void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors);
 
 // WZD s17p12
+// drake178: ?
 void Set_Alias_Color(int16_t color);
+
+// WZD s17p13
+// drake178: ?
+// Save_Alias_Colors()
+
+// WZD s17p14
+// drake178: ?
+// Restore_Alias_Colors()
+
+// WZD s17p15
+// drake178: VGA_DrawFarString()
+// PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, char * string);
 
 
 // WZD s17p21
+// drake178: ?
 int16_t Print_Integer(int16_t x, int16_t y, int16_t val);
 
 // WZD s17p22
+// drake178: ?
 // int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
 
 // WZD s17p23
+// drake178: VGA_DrawRightAligned()
 int16_t Print_Right(int16_t x, int16_t y, char * string);
 // WZD s17p24
+// drake178: VGA_DrawCentered()
 int16_t Print_Centered(int16_t x, int16_t y, char * string);
 // WZD s17p25
+// drake178: VGA_DrawRtAlgNumber()
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
 // WZD s17p26
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
 
 // WZD s17p35
+// drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string);
 // WZD s17p36
+// drake178: VGA_DrawStyledString()
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag);
 // WZD s17p37
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag);
@@ -287,6 +321,31 @@ int16_t Get_String_Width(char * string);
 
 
 /*
+    WIZARDS.EXE  seg019
+*/
+
+// WZD s19p01
+// Print_Paragraph()
+
+// WZD s19p02
+// WZD s19p03
+// WZD s19p04
+// WZD s19p05
+// WZD s19p06
+// WZD s19p07
+// WZD s19p08
+// WZD s19p09
+
+// WZD s19p10
+int16_t Get_Font_Height(void);
+
+// WZD s19p11
+// WZD s19p12
+// WZD s19p13
+// WZD s19p14
+
+
+/*
     WIZARDS.EXE  seg020
 */
 
@@ -316,7 +375,14 @@ void Bogus_Calculate_Remap_Colors(void);
 // drake178: VGA_SetShades_Range()
 // MoO2: ~ Update_Glass_Remap_Color_Range()
 // fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors, but only for the color sets indicated by the confines table 0 is set to shades of 50% black instead of whatever the palette originally had, if included
-// Update_Remap_Color_Range
+void Update_Remap_Color_Range(int16_t first_set, int16_t last_set);
+
+// WZD s20p05
+void Set_Palette_Changes(int start_color, int end_color);
+
+// WZD s20p06
+void Clear_Palette_Changes(int start_color, int end_color);
+
 
 
 /*
@@ -327,6 +393,13 @@ void Bogus_Calculate_Remap_Colors(void);
 // WZD s21p01
 // PLATFORM
 void Apply_Palette(void);
+
+// WZD s21p02
+// drake178: VGA_DAC_DimWrite()
+// ¿ MoO2  Module: palstore  Cycle_Palette_() Darken_Palette_() Tint_Palette_() ?
+void Cycle_Palette(int16_t percent);
+
+
 
 // WZD s21p06
 // drake178: VGA_ShadeColorMatch

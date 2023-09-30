@@ -48,7 +48,7 @@ SAMB_ptr  DBG_ORIG_TBL_Terr_Specials;
 // WZD dseg:9CBC  
 struct s_CITY * DBG_ORIG__CITIES;
 // WZD dseg:9CC0
-struct s_LAIR * DBG_ORIG_TBL_Lairs;
+struct s_LAIR * DBG_ORIG__LAIRS;
 // WZD dseg:9CC4  
 struct s_TOWER * DBG_ORIG__TOWERS;
 // WZD dseg:9CC8  

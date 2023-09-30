@@ -1,4 +1,9 @@
-
+/*
+    WIZARDS.EXE
+        seg017
+        seg018
+        seg019
+*/
 #include "MoX.H"
 
 
@@ -169,6 +174,8 @@ void Load_Font_File(char * font_file)
 */
 
 // WZD s17p01
+// MoO2: Set_Font_Style_Shadow_Down()
+// ¿ Color1 == 15 ~== MoO2 Set_Remap_Font_Style_Shadow_Down() ?
 void Set_Font_Style1(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
     Set_Font(Font_Index, Color_1, Color_2, Color_3);
@@ -231,10 +238,18 @@ void Set_Font_Spacing(int16_t spacing)
 
 
 // WZD s17p10
-// ? MoO2 Set_Font_Highlight_Colors ?
+// drake178: ?
+// MoO2  Set_Font_Highlight_Colors()
+
 
 // WZD s17p11
-// ? MoO2 Set_Font_Special_Colors ?
+// ¿ MoO2:  Set_Remap_Font_Style ?
+// TODO  Set_Remap_Font_Style...(style_num, colors)
+// Set_Alias_Color(int16_t palette_num) ... int16_t i;  int16_t start_offset
+/*
+    sets 16 colors, starting at font colors index 240
+    ¿ font colors block 15 is font remap colors ?
+*/
 void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors)
 {
     int16_t itr;
@@ -255,6 +270,7 @@ void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors)
 
 
 // WZD s17p12
+// drake178: ?
 /*
     sets font_colors[][0] to alias color
     sets current[0],normal[0],highlight[0],special[0] to alias color
@@ -275,6 +291,30 @@ void Set_Alias_Color(int16_t color)
     SET_1B_OFS(font_style_data, FONT_HDR_POS_SPECIAL_COLORS, color);
 
 }
+
+// WZD s17p13
+// drake178: ?
+// Save_Alias_Colors()
+
+// WZD s17p14
+// drake178: ?
+// Restore_Alias_Colors()
+
+// PLATFORM  MSDOS  // WZD s17p15
+// PLATFORM  MSDOS  // drake178: VGA_DrawFarString()
+// PLATFORM  MSDOS  // PLATFORM
+// PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+// PLATFORM  MSDOS  {
+// PLATFORM  MSDOS      int16_t next_x;
+// PLATFORM  MSDOS  
+// PLATFORM  MSDOS      String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+// PLATFORM  MSDOS  
+// PLATFORM  MSDOS      next_x = Print(x, y, near_buffer);
+// PLATFORM  MSDOS  
+// PLATFORM  MSDOS      return next_x;
+// PLATFORM  MSDOS  }
+
+
 
 
 // WZD s17p21
@@ -297,6 +337,7 @@ int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
 
 
 // WZD s17p23
+// drake178: VGA_DrawRightAligned()
 int16_t Print_Right(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
@@ -319,6 +360,7 @@ int16_t Print_Right(int16_t x, int16_t y, char * string)
 
 
 // WZD s17p24
+// drake178: VGA_DrawCentered()
 int16_t Print_Centered(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
@@ -333,6 +375,7 @@ int16_t Print_Centered(int16_t x, int16_t y, char * string)
 
 
 // WZD s17p25
+// drake178: VGA_DrawRtAlgNumber()
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
 {
     int16_t next_x;
@@ -363,6 +406,7 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 
 
 // WZD s17p35
+// drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
@@ -374,15 +418,16 @@ int16_t Print(int16_t x, int16_t y, char * string)
 
 
 // WZD s17p36
+// drake178: VGA_DrawStyledString()
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 {
     int16_t itr;
     int16_t next_x;
     uint16_t outline_style;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
+// #endif
 
     // // outline_style = farpeekb(font_style_data, FONT_HEADER_SHADOW_FLAG);
     // outline_style = 0;  // ~None
@@ -393,7 +438,7 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 
     if(outline_style != 0)  /* ¿ ST_NONE ? */
     {
-        DLOG("(outline_style != 0)");
+        // DLOG("(outline_style != 0)");
         for(itr = 0; itr < 16; itr++)
         {
             // farpokeb(font_style_data, itr, outline_color);
@@ -403,34 +448,34 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
         
         if(outline_style != 2) /* Shadow_TopLeft */
         {
-            DLOG("(outline_style != 2)");
+            // DLOG("(outline_style != 2)");
             Print_String(x + 1, y + 1, string, ST_FALSE, full_flag);  // overdraw right + botton
             Print_String(x    , y + 1, string, ST_FALSE, full_flag);  // overdraw bottom
             Print_String(x + 1, y    , string, ST_FALSE, full_flag);  // overdraw right
         }
         if( outline_style != 1 && outline_style != 3)  /* Shadow_BtmRight || Shadow_BtmRight_2px */
         {
-            DLOG("( outline_style != 1 && outline_style != 3)");
+            // DLOG("( outline_style != 1 && outline_style != 3)");
             Print_String(x - 1, y    , string, ST_FALSE, full_flag);  // overdraw left
             Print_String(x - 1, y - 1, string, ST_FALSE, full_flag);  // overdraw left + top
             Print_String(x    , y - 1, string, ST_FALSE, full_flag);  // overdraw top
         }
         if(outline_style == 3 || outline_style == 5)  /* Shadow_BtmRight_2px || Outline_Plus_BR2px */
         {
-            DLOG("(outline_style == 3 || outline_style == 5)");
+            // DLOG("(outline_style == 3 || outline_style == 5)");
             Print_String(x + 2, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 1, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 2, y + 1, string, ST_FALSE, full_flag);
         }
         if(outline_style > 3)  /* Shadow_BtmRight_2px */
         {
-            DLOG("(outline_style > 3)");
+            // DLOG("(outline_style > 3)");
             Print_String(x + 1, y - 1, string, ST_FALSE, full_flag);  // overdraw right + top
             Print_String(x - 1, y + 1, string, ST_FALSE, full_flag);  // overdraw left + bottom
         }
         if(outline_style == 5)  /* Outline_Plus_BR2px */
         {
-            DLOG("(outline_style == 5)");
+            // DLOG("(outline_style == 5)");
             Print_String(x + 2, y    , string, ST_FALSE, full_flag);
             Print_String(x    , y + 2, string, ST_FALSE, full_flag);
         }
@@ -445,9 +490,9 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 
         next_x = Print_String(x, y, string, ST_TRUE, full_flag);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
+// #endif
 
     return next_x;
 }
@@ -466,9 +511,9 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
     char character;
     uint16_t ptr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
+// #endif
 
     ptr = 0;
 
@@ -477,7 +522,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
     if(full_flag != ST_FALSE)
     {
-        DLOG("(full_flag != ST_FALSE)");
+        // DLOG("(full_flag != ST_FALSE)");
         current_space = 0;
         space_remainder = 0;
         // Char_Index = 0;
@@ -511,57 +556,57 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         {
             case 1:
             {
-                DLOG("case 1:");
+                // DLOG("case 1:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    DLOG("case 1: && change_color_ok_flag != ST_FALSE)");
+                    // DLOG("case 1: && change_color_ok_flag != ST_FALSE)");
                     Set_Normal_Colors_On();
                 }
             } break;
             case 2:
             {
-                DLOG("case 2:");
+                // DLOG("case 2:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    DLOG("case 2: && change_color_ok_flag != ST_FALSE)");
+                    // DLOG("case 2: && change_color_ok_flag != ST_FALSE)");
                     Set_Highlight_Colors_On();
                 }
             } break;
             case 3:
             {
-                DLOG("case 3:");
+                // DLOG("case 3:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    DLOG("case 3: && change_color_ok_flag != ST_FALSE)");
+                    // DLOG("case 3: && change_color_ok_flag != ST_FALSE)");
                     Set_Special_Colors_On();
                 }
             } break;
             case 4:
             {
-                DLOG("case 4:");
+                // DLOG("case 4:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    DLOG("case 4: && change_color_ok_flag != ST_FALSE)");
+                    // DLOG("case 4: && change_color_ok_flag != ST_FALSE)");
                     Set_Highlight_Colors_On();
                 }
             } break;
             case 13:
-                DLOG("case 13:");
+                // DLOG("case 13:");
             case 20:
             {
-                DLOG("case 20:");
+                // DLOG("case 20:");
                 print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
                 print_xpos += x;
             } break;
             case 21:
             {
-                DLOG("case 21:");
+                // DLOG("case 21:");
             } break;
             case 25:
-                DLOG("case 25:");
+                // DLOG("case 25:");
             case 29:
             {
-                DLOG("case 29:");
+                // DLOG("case 29:");
                 print_xpos += x + string[ptr++];
             } break;
 
@@ -570,18 +615,18 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
         if(draw_alias_flag != ST_FALSE)
         {
-            DLOG("(draw_alias_flag != ST_FALSE)");
+            // DLOG("(draw_alias_flag != ST_FALSE)");
             print_xpos = Print_Character_No_Alias(print_xpos, print_ypos, character);
         }
         else
         {
-            DLOG("(draw_alias_flag == ST_FALSE)");
+            // DLOG("(draw_alias_flag == ST_FALSE)");
             print_xpos = Print_Character(print_xpos, print_ypos, character);
         }
 
         if(full_flag != ST_FALSE)
         {
-            DLOG("(full_flag != ST_FALSE)");
+            // DLOG("(full_flag != ST_FALSE)");
             if(character == 32)  /* ASCII SPACE 0x20 ' ' */
             {
                 print_xpos += space_add;
@@ -600,9 +645,9 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
     next_x = print_xpos;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
+// #endif
 
     return next_x;
 }
@@ -753,13 +798,19 @@ int16_t _CS_width;
 
 // WZD s18p01
 // MoO2: Set_Font_Style(style_num, colors)
+/*
+    sets font style
+    sets color1 as current & normal colors
+    sets color2 as highlight colors
+    sets color3 as special colors
+*/
 void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
+// #endif
 
     color1 = (color1 < 16) ? color1 : 0;
     color2 = (color2 < 16) ? color2 : 0;
@@ -812,9 +863,9 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
         font_header->current_data_offsets[itr] = font_header->data_offsets[((font_idx * 96) + itr)];
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
+// #endif
 
 }
 
@@ -842,9 +893,10 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
     int16_t width;
     byte_ptr font_data_offset;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
+// #endif
+
 // DELETE  #ifdef STU_DEBUG
 // DELETE      // if(x == 271 && y == 101 && char_num == 50)
 // DELETE      if(
@@ -901,9 +953,10 @@ Done:
 // DELETE          DBG_Print_Character_ASM = 0;
 // DELETE      }
 // DELETE  #endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
+// #endif
 
     return next_x;
 }
@@ -916,9 +969,10 @@ int16_t Print_Character_No_Alias(int16_t x, int16_t y, int16_t char_num)
     int16_t width;
     byte_ptr font_data_offset;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
+// #endif
+
 // DELETE  #ifdef STU_DEBUG
 // DELETE      if(x == 272 && y == 100 && char_num == 50)
 // DELETE      {
@@ -966,9 +1020,10 @@ Done:
 // DELETE          DBG_Print_Character_No_Alias_ASM = 0;
 // DELETE      }
 // DELETE  #endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
+// #endif
     return next_x;
 }
 
@@ -986,9 +1041,10 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
     uint8_t color_index;
     uint8_t palette_index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
+// #endif
+
 // DELETE  #ifdef STU_DEBUG
 // DELETE      for(color_index = 0; color_index < 16; color_index++)
 // DELETE      {
@@ -1071,9 +1127,9 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
+// #endif
 
 }
 
@@ -1092,9 +1148,9 @@ byte_ptr screen_start;
     uint8_t color_index;
     uint8_t palette_index;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
+// #endif
 
 // DELETE  #ifdef STU_DEBUG
 // DELETE      if(DBG_Print_Character_No_Alias == 1)
@@ -1198,9 +1254,9 @@ byte_ptr screen_start;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
+// #endif
 
 }
 
@@ -1214,9 +1270,9 @@ int16_t Get_String_Width(char * string)
     int16_t char_num;
     int16_t horizontal_spacing;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_String_Width(string = %s)\n", __FILE__, __LINE__, string);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_String_Width(string = %s)\n", __FILE__, __LINE__, string);
+// #endif
 
     pos = 0;
     width = 0;
@@ -1226,9 +1282,9 @@ int16_t Get_String_Width(char * string)
     // horizontal_spacing = font_style_data[72];
     horizontal_spacing = GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: horizontal_spacing: %d\n", __FILE__, __LINE__, horizontal_spacing);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: horizontal_spacing: %d\n", __FILE__, __LINE__, horizontal_spacing);
+// #endif
 
 
 Next_Char:
@@ -1293,13 +1349,48 @@ goto Next_Char;
 Done:
     width = width - horizontal_spacing;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_String_Width(string = %s) { width = %d }\n", __FILE__, __LINE__, string, width);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Get_String_Width(string = %s) { width = %d }\n", __FILE__, __LINE__, string, width);
+// #endif
 
     return width;
 }
 
+
+
+
+/*
+    WIZARDS.EXE  seg019
+*/
+
+// WZD s19p01
+// Print_Paragraph()
+
+// WZD s19p02
+// WZD s19p03
+// WZD s19p04
+// WZD s19p05
+// WZD s19p06
+// WZD s19p07
+// WZD s19p08
+// WZD s19p09
+
+// WZD s19p10
+int16_t Get_Font_Height(void)
+{
+    int16_t font_height;
+
+    // DOS  farpeekw(font_style_data, 0x10); // s_FONT_HEADER.height
+
+    font_height = GET_2B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
+
+    return font_height;
+}
+
+// WZD s19p11
+// WZD s19p12
+// WZD s19p13
+// WZD s19p14
 
 
 
@@ -1449,11 +1540,11 @@ void Calculate_Remap_Colors(void)
 {
     int16_t itr_blocks;
     int16_t block;
+    uint16_t block_ofst;
     uint8_t red;
     uint8_t green;
     uint8_t blue;
     uint8_t percent;
-    uint16_t block_ofst;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Calculate_Remap_Colors()\n", __FILE__, __LINE__);
@@ -1469,12 +1560,11 @@ void Calculate_Remap_Colors(void)
 
     for(itr_blocks = 1; itr_blocks < 24; itr_blocks++)
     {
-        block_ofst = itr_blocks * 4;  // sizeof: uint8_t r,g,b,%
-
         block = itr_blocks;
-        red = GET_1B_OFS(remap_colors, block_ofst + 0);
-        green = GET_1B_OFS(remap_colors, block_ofst + 1);
-        blue = GET_1B_OFS(remap_colors, block_ofst + 2);
+        block_ofst = block * 4;  // sizeof: uint8_t r,g,b,%
+        red     = GET_1B_OFS(remap_colors, block_ofst + 0);
+        green   = GET_1B_OFS(remap_colors, block_ofst + 1);
+        blue    = GET_1B_OFS(remap_colors, block_ofst + 2);
         percent = GET_1B_OFS(remap_colors, block_ofst + 3);
         Create_Remap_Palette(block, red, green, blue, percent);
     }
@@ -1484,11 +1574,54 @@ void Calculate_Remap_Colors(void)
 #endif
 }
 
+
 // WZD s20p04
 // drake178: VGA_SetShades_Range()
 // MoO2: ~ Update_Glass_Remap_Color_Range()
-// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors, but only for the color sets indicated by the confines table 0 is set to shades of 50% black instead of whatever the palette originally had, if included
-// Update_Remap_Color_Range
+// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors,
+//   but only for the color sets indicated by the confines table 0 is set to shades of 50% black instead of whatever the palette originally had, if included
+void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
+{
+    int16_t itr_blocks;
+    int16_t block;
+    uint16_t block_ofst;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    uint8_t percent;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Remap_Color_Range(first_set = %d, last_set = %d)\n", __FILE__, __LINE__, first_set, last_set);
+#endif
+
+    if(last_set < first_set)
+    {
+        // TODO  MEM_SwapWord(first_set, last_set);
+    }
+
+    if(first_set == 0)
+    {
+        Create_Remap_Palette(0, 0, 0, 0, 50);  // same as default in Calculate_Remap_Colors()
+
+        first_set = 1;
+    }
+
+    // NOTE: LTE, therefore "inclusive"
+    for(itr_blocks = first_set; itr_blocks <= last_set; itr_blocks++)
+    {
+        block = itr_blocks;
+        block_ofst = block * 4;  // sizeof: uint8_t r,g,b,%
+        red     = GET_1B_OFS(remap_colors, block_ofst + 0);
+        green   = GET_1B_OFS(remap_colors, block_ofst + 1);
+        blue    = GET_1B_OFS(remap_colors, block_ofst + 2);
+        percent = GET_1B_OFS(remap_colors, block_ofst + 3);
+        Create_Remap_Palette(block, red, green, blue, percent);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Update_Remap_Color_Range(first_set = %d, last_set = %d)\n", __FILE__, __LINE__, first_set, last_set);
+#endif
+}
 
 
 // WZD s20p05
@@ -1496,14 +1629,21 @@ void Set_Palette_Changes(int start_color, int end_color)
 {
     int itr;
 
-//     for(itr = start_color; itr < end_color; itr++)
-//     {
-//         current_palette[itr * 4] = ST_TRUE;
-//     }
-
     for(itr = start_color; itr < end_color; itr++)
     {
         *(p_PaletteFlags + itr) = ST_TRUE;
+    }
+
+}
+
+// WZD s20p06
+void Clear_Palette_Changes(int start_color, int end_color)
+{
+    int itr;
+
+    for(itr = start_color; itr < end_color; itr++)
+    {
+        *(p_PaletteFlags + itr) = ST_FALSE;
     }
 
 }
@@ -1597,6 +1737,101 @@ void Set_Palette_Changes(int start_color, int end_color)
 // PLATFORM      }
 // PLATFORM  
 // PLATFORM  }
+
+
+// WZD s21p02
+// drake178: VGA_DAC_DimWrite()
+// ¿ MoO2  Module: palstore  Cycle_Palette_() Darken_Palette_() Tint_Palette_() ?
+/*
+    percent <= 0:       just Apply_Palette()
+    percent >= 100:     set VGA DAC to all zeroes, if palette change flag is true
+    1 <= percent <= 99: 
+*/
+void Cycle_Palette(int16_t percent)
+{
+    int16_t vpercent;
+    uint16_t color_multiplier;
+    int16_t itr;
+    uint8_t palette_change_flag;
+    uint8_t * current_palette;
+    uint16_t ofst;
+    uint8_t color_red;
+    uint8_t color_grn;
+    uint8_t color_blu;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
+#endif
+
+    vpercent = 100 - percent;
+
+    
+    if(vpercent > 0)                    /* percent < 100 */
+    {
+        DLOG("(vpercent > 0)  (percent < 100)");
+        if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
+        {
+            DLOG("(vpercent < 100)");
+            color_multiplier = (( percent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
+            current_palette = (uint8_t *)(p_Palette);
+            for(itr = 0; itr < 256; itr++)
+            {
+                palette_change_flag = PALETTE_FLAG(itr);
+                if(palette_change_flag != ST_FALSE)
+                {
+                    ofst = itr * 3;
+
+                    *(PFL_Palette + (itr * 4) + 3) = 0x00;
+
+                    color_red = *(current_palette + ofst++);
+                    *(PFL_Palette + (itr * 4) + 2) = (((color_red * color_multiplier) >> 8) << 2);
+
+                    color_grn = *(current_palette + ofst++);
+                    *(PFL_Palette + (itr * 4) + 1) = (((color_grn * color_multiplier) >> 8) << 2);
+
+                    color_blu = *(current_palette + ofst++);
+                    *(PFL_Palette + (itr * 4) + 0) = (((color_blu * color_multiplier) >> 8) << 2);
+
+                }
+            }
+
+
+        }
+        else                            /* (percent < 100) && (percent < 0) */
+        {
+            DLOG("(vpercent >= 100)  (percent <= 0)");
+            Apply_Palette();
+            goto Done;
+        }
+    }
+    else
+    {
+        DLOG("(vpercent <= 0)  (percent >= 100)");        /* (percent >= 100) */
+        for(itr = 0; itr < 256; itr++)
+        {
+            palette_change_flag = PALETTE_FLAG(itr);
+            if(palette_change_flag != ST_FALSE)
+            {
+                // set hardware palette color to {0,0,0} black
+                // ¿ ~== set PFL_Palette color to {0,0,0} black ?
+                *(PFL_Palette + (itr * 4) + 3) = 0x00;
+                *(PFL_Palette + (itr * 4) + 2) = 0x00;
+                *(PFL_Palette + (itr * 4) + 1) = 0x00;
+                *(PFL_Palette + (itr * 4) + 0) = 0x00;
+            }
+        }
+
+    }
+
+    // ~== REP STOSW
+    memset((uint8_t *)(p_Palette + 768), 0x00, 256);  // ~== `REP STOSB`
+
+Done:
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
+#endif
+}
 
 
 // WZD s21p06

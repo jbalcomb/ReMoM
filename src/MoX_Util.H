@@ -33,6 +33,15 @@ extern "C" {
     WZD seg022
 */
 
+// WZD s22p09
+// drake178: STR_ToUpper()
+// MoO2  Module: strings  String_To_Upper()
+void String_To_Upper(char * string);
+
+// WZD s22p10
+// drake178: UU_STR_ToLower()
+// MoO2  Module: strings  String_To_Lower()
+
 // WZD s22p23
 int16_t Test_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 

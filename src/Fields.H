@@ -70,14 +70,18 @@ struct s_Field
     int16_t Selectable; // 
     int16_t ColorSet2;  // 
                         // ? ft 0 ?      ft 4      ft 6     ft 8    ft 9    ft 10   ft 11     ft 12
-    int16_t Param0;     // Text@                   Min_Val  Str*    Parent
+    // int16_t Param0;     // Text@                   Min_Val  Str*    Parent
+    union {
+        int16_t Param0;
+        char * string;
+    };
     int16_t Param1;     // Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
     int16_t Param2;     // State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
     // int16_t Param3;  // FullFrames    Align     MinSlide                 CBlock            xpos
     // int16_t Param4;  // MaxSlide      CStyle                                               ypos
     int64_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
     int64_t Param4;     // MaxSlide      CStyle                                               ypos
-    int16_t Param5;     // IMG_Seg       MaxLen    Orient                           MaxLen
+    int16_t Param5;     // pict_seg      MaxLen    Orient                           MaxLen
     union {
         SAMB_ptr pict_seg;  // ft_Button
         int16_t MaxLen;     // ft_EditBox, ft_EditSelect
@@ -90,6 +94,16 @@ struct s_Field
 
 };
 // TODO(JimBalcomb,20230614): ASSERT sizeof(struct s_Field)
+
+//         Button        Input     Scroll   MultiHotKey  ClickLink  StringList  ContinuousStringInput Grid
+//         ? ft 0 ?      ft 4      ft 6     ft 8    ft 9    ft 10   ft 11     ft 12
+// Param0  Text@                   Min_Val  Str*    Parent
+// Param1  Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
+// Param2  State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
+// Param3  FullFrames    Align     MinSlide                 CBlock            xpos
+// Param4  MaxSlide      CStyle                                               ypos
+// Param5  pict_seg      MaxLen    Orient                           MaxLen
+// Param6  CursorColors            StOff                            Outline
 
 
 
@@ -324,6 +338,10 @@ void Disable_Cancel(void);
     END: Help
 */
 
+// WZD s36p20
+// drake178: GUI_GetMouseFocus()
+int16_t Get_Mouse_Field(void);
+
 // WZD s36p22
 // KD int16_t Interpret_Keyboard_Input(char  * character);
 
@@ -338,10 +356,10 @@ int16_t Add_Multi_Hot_Key_Field(char * string);
 
 
 // WZD s36p42
-void Add_Button_Info(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
 // WZD s36p43
-int16_t Add_Button_Field(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
 // WZD s36p47
 int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
@@ -356,6 +374,15 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
 // WZD s36p57
 void Clear_Fields(void);
 
+
+// WZD s36p63
+// drake178: GUI_SetLastControl()
+void Clear_Fields_Above(int16_t field_num);
+
+// WZD s36p64
+
+// WZD s36p65  AKA GUI_Init()  AKA IN_Init()
+// INPUT  void Init_Mouse_Keyboard(int16_t input_type);
 
 // WZD s36p66
 // INPUT  int16_t Get_Input(void);

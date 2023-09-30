@@ -2,6 +2,12 @@
 
 
 
+Set_Font_Colors_15() sets 16 font colors starting at palette index 240
+
+
+
+
+
 
 Create_Remap_Palette()
         Create_Remap_Palette_0()

@@ -15,16 +15,25 @@
 // #define VIDEO_MODE       5  // vm_Mode_Y_2x
 // #define VIDEO_MODE       6  // vm_Mode_Y_2x_XBGR
 
-#define ST_NULL          0
-#define ST_TRUE          1
-#define ST_FALSE         0
-#define ST_UNDEFINED    -1
-#define ST_SUCCESS      -1
+
+
 #define ST_FAILURE       0
+#define ST_SUCCESS      -1
+
+#define ST_FALSE         0
+#define ST_TRUE          1
+
+#define ST_NULL          0
+
+#define ST_UNDEFINED    -1  /* ¿ "Empty" ? (// Army List Screen - "Empty Hero Slot") */
+/* Elsewhere, "NOT IN USE" ¿ for Fields ? ¿ Debug for outline of fields on screen */
+
 
 
 #define MOUSE_BUTTON_LEFT   1
 #define MOUSE_BUTTON_RIGHT  2
+
+#define INVALID_FIELD       -1000
 
 
 #define AbsVal(_val_) ( (_val_) < 0 ? (-(_val_)) : (_val_) )
@@ -60,11 +69,6 @@
 #define SQUARE_WIDTH        20  // in Pixels
 #define SQUARE_HEIGHT       18  // in Pixels
 
-#define PLAYER_COUNT_MAX       6
-#define CITY_COUNT_MAX       100
-#define UNIT_COUNT_MAX      1009
-#define TOWER_COUNT_MAX        6
-#define FORTRESS_COUNT_MAX     6
 
 #ifdef VIDEO_MODE_MODE_Y
 #define SCREEN_WIDTH    320

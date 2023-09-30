@@ -158,9 +158,9 @@ int16_t UNIT_HasInvisibility(int16_t unit_idx)
     int16_t tmp_unit_enchantments_loword;
     int16_t tmp_unit_enchantments_hiword;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_HasInvisibility(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_HasInvisibility(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+// #endif
 
     has_invisibility = ST_FALSE;
 
@@ -184,36 +184,26 @@ int16_t UNIT_HasInvisibility(int16_t unit_idx)
 
     if( (tmp_unit_enchantments_hiword & UE_INVISIBILITY) != 0 )
     {
-        DLOG("( (tmp_unit_enchantments_hiword & 0x8000) != 0 )");
+        // DELETE  DLOG("( (tmp_unit_enchantments_hiword & 0x8000) != 0 )");
         has_invisibility = ST_TRUE;
     }
     else
     {
-        DLOG("( (tmp_unit_enchantments_hiword & 0x8000) == 0 )");
+        // DELETE  DLOG("( (tmp_unit_enchantments_hiword & 0x8000) == 0 )");
     }
     if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_INVISIBILITY) != 0 )
     {
-        DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) != 0 )");
+        // DELETE  DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) != 0 )");
         has_invisibility = ST_TRUE;
     }
     else
     {
-        DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) == 0 )");
+        // DELETE  DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) == 0 )");
     }
 
-//    if(
-//        (unit_idx == 156) ||
-//        (unit_idx == 162) ||
-//        (unit_idx == 194) ||
-//        (unit_idx == 203)
-//    )
-//    {
-//        has_invisibility = ST_TRUE;
-//    }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: UNIT_HasInvisibility(unit_idx = %d)  { has_invisibility = %d }\n", __FILE__, __LINE__, unit_idx, has_invisibility);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: UNIT_HasInvisibility(unit_idx = %d)  { has_invisibility = %d }\n", __FILE__, __LINE__, unit_idx, has_invisibility);
+// #endif
 
     return has_invisibility;
 }

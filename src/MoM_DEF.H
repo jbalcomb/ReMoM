@@ -38,13 +38,26 @@
 
 */
 
-#define NUM_PLANES        2
+#define NUM_MAGIC_TYPES        5
 
-#define NUM_FORTRESSES    6
-#define NUM_TOWERS        6
-#define NUM_LAIRS       102
-#define NUM_NODES        30
-
+// MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
+#define PLANE_COUNT_MAX        2
+#define PLAYER_COUNT_MAX       6
+#define CITY_COUNT_MAX       100
+#define UNIT_COUNT_MAX      1009
+#define TOWER_COUNT_MAX        6
+#define FORTRESS_COUNT_MAX     6
+// #define NODE_COUNT_MAX        30
+// #define LAIR_COUNT_MAX       102
+#define NUM_PLANES             2
+#define NUM_PLAYERS            6
+#define NUM_CITIES           100
+#define NUM_UNITS           1009
+#define NUM_HEROES             6  // "Hero Slots"
+#define NUM_TOWERS             6
+#define NUM_FORTRESSES         6
+#define NUM_NODES             30
+#define NUM_LAIRS            102
 
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
@@ -77,6 +90,52 @@
 // MoX_DEF.H
 // #define MINIMAP_MARK_COLOR 15
 
+// LILWIZ.LBX
+// WIZARDS.LBX
+// ¿ order of wizards ?
+// ¿ order of colors ?
+/*
+LILWIZ.LBX
+    blue
+    green
+    purple
+    red
+    yellow
+*/
+/*
+LILWIZ.LBX
+    MERLE2
+    SHAMAN2
+    VOODOO2
+    EASTERN2
+    ARAB2
+    WHITEH2
+    REDEYES2
+    LIZARD2
+    BARON2
+    BLOND2
+    GALEN2
+    HEDBAND2
+    AZTEC2
+    WITCH2
+*/
+/*
+WIZARDS.LBX
+    MERLIN
+    SHAMAN
+    PRIESTES
+    WU
+    ARAB
+    OBERIC
+    WRAITH
+    DRACONIA
+    EVILWIZ
+    FREYA
+    GALE
+    ARIEL
+    AZTEC
+    KARLA
+*/
 
 
 /*
@@ -136,8 +195,19 @@
 #define REDUCED_MAP_W    58
 #define REDUCED_MAP_H    30
 
+#define ARMYLIST_REDUCED_MAP_X    86
+#define ARMYLIST_REDUCED_MAP_Y   164
+#define ARMYLIST_REDUCED_MAP_W    49
+#define ARMYLIST_REDUCED_MAP_H    33
+
+#define CITYLIST_REDUCED_MAP_X    42
+#define CITYLIST_REDUCED_MAP_Y   162
+#define CITYLIST_REDUCED_MAP_W    49
+#define CITYLIST_REDUCED_MAP_H    33
+
 
 #define TERRAIN_COUNT   762
+#define TERRAIN_TYPE_COUNT   762
 
 #define STATFIG_WIDTH       18  // in Pixels
 #define STATFIG_HEIGHT      16  // in Pixels
@@ -230,6 +300,17 @@ hanging out in MoX_DEF.H
 #define OFS_PLANARTRAVEL     7
 #define OFS_WALKING          8
 
+// MM: Movement Mode
+#define MM_CAVALRY          0
+#define MM_FORESTER         1
+#define MM_MOUNTAINEER      2
+#define MM_SWIMMING         3
+#define MM_SAILING          4
+#define MM_FLYING           5
+#define MM_PLANARTRAVEL     6
+#define MM_WALKING          7
+
+
 /*
     Unit Abilities
 */
@@ -287,6 +368,16 @@ hanging out in MoX_DEF.H
 /*
     Screen Layout Variables
 */
+
+/*
+    Army List Screen
+*/
+#define NUM_ARMY_LIST   6
+#define NUM_HERO_PORTRAIT   6
+/*
+    City List Screen
+*/
+#define NUM_CITY_LIST   9
 
 /*
     Main Screen

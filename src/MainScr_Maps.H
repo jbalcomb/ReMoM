@@ -1,15 +1,14 @@
+/*
+    WIZARDS.EXE
+        ovr067
+        ovr068
+        ovr150
+*/
+
 #ifndef MAINSCR_MAPS_H
 #define MAINSCR_MAPS_H
 
-#include "MoX_TYPE.H"
-
-
-/*
-    WIZARDS.EXE
-    ovr067
-    ovr068
-    ovr150
-*/
+#include "MoX.H"
 
 
 
@@ -83,7 +82,35 @@ extern byte_ptr terrain_001_1;              // load in Terrain_Init() ovr052
 extern SAMB_ptr terrain_lbx_000;            // load in Terrain_Init() ovr052
 
 
-// dseg:CB56                                                 ovr150
+
+//                                          ¿ BEGIN: ~ Reduced/World Map  - Uninitialized Data ?
+
+// WZD dseg:C11C
+extern int16_t minimap_height;
+extern int16_t reduced_map_height;
+
+// WZD dseg:C11E
+extern int16_t minimap_width;
+extern int16_t reduced_map_width;
+
+// WZD dseg:C120
+extern int16_t minimap_y;
+extern int16_t reduced_map_y;
+
+// WZD dseg:C122
+extern int16_t minimap_x;
+extern int16_t reduced_map_x;
+
+// WZD dseg:C124 00 00                                           dw 0
+
+// WZD dseg:C126
+extern int16_t reduced_map_mark_cycle;
+
+//                                          ¿ END: ~ Reduced/World Map  - Uninitialized Data ?
+
+
+
+//                                          ovr150
 // WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
 // WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...
 // WZD dseg:CB5A 00 00                                           OVL_NewMapSust_Save dw 0; DATA XREF : OVL_MapStateSave + 12w ...
@@ -139,7 +166,8 @@ void Reset_Draw_Active_Stack(void);
 void Draw_Active_Unit_Stack(int16_t world_x, int16_t world_y, int16_t world_plane);
 
 // WZD o67p08
-void Minimap_Set_Dims(int16_t width, int16_t height);
+// AKA Minimap_Set_Dims()
+void Reduced_Map_Set_Dims(int16_t width, int16_t height);
 
 // WZD o67p09
 // "Reduced Map"/"World Window"
@@ -172,12 +200,22 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
 // IDK_CityScreen_Map_s5A97D()
 
 // WZD o68p03
+// drake178: OVL_GetMinimapStart()
 // AKA Minimap_Coords()
-void Minimap_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height);
+void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height);
 
 // WZD o68p04
 // drake178: OVL_RedrawScouting()
 // PRIVATE  void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+
+// WZD o68p05
+// WZD o68p06
+// WZD o68p07
+// WZD o68p08
+
+// WZD o68p09
+void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, int16_t wp, int16_t wx, int16_t wy);
+
 
 
 /*

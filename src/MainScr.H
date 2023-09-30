@@ -6,6 +6,7 @@
     WIZARDS.EXE
     ovr057
     ovr058
+    ovr059
     ovr061
     ovr062
     ovr063
@@ -27,21 +28,6 @@ extern int64_t _main_map_grid_x;
 // int16_t _main_map_grid_y;
 extern int64_t _main_map_grid_y;
 
-
-
-
-
-// WZD dseg:C082
-// AKA OVL_STKUnitCards_Top
-extern int16_t _unit_window_start_y;
-// WZD dseg:C084
-// AKA OVL_STKUnitCards_Lft
-extern int16_t _unit_window_start_x;
-
-
-// WZD dseg:C086 
-extern SAMB_ptr _reduced_map_seg;
-// ; 12Fh LBX_Alloc_First paragraphs in the LBX_Sandbox_Segment
 
 
 /*
@@ -268,7 +254,8 @@ o57p10  ? IDK_UnitMoves_and_PlanarTravel() ?
 // WZD o57p07
 // PRIVATE  void Add_Unit_Window_Fields(void);
 // WZD o57p08
-// PRIVATE  void Main_Screen_Draw(void);
+// called by `Spellbook_Screen()`, to create its background
+void Main_Screen_Draw(void);
 // WZD o57p09
 // PRIVATE  void Main_Screen_Reset(void);
 // WZD o57p10
@@ -282,6 +269,19 @@ o57p10  ? IDK_UnitMoves_and_PlanarTravel() ?
 
 // WZD o58p02
 void Set_Mouse_List_Default(void);
+
+
+/*
+    WIZARDS.EXE  ovr059
+*/
+
+// WZD o59p18
+// AKA IDK_MaybeSwitchStackPlane_s52514()
+void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+// WZD o59p18
+// AKA IDK_PlanarTravel_TestWaterCity_s52774()
+int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
+
 
 
 /*
@@ -325,13 +325,16 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
 // WZD o63p04
 // drake178: j_GAME_Animate_UEs()
-// PRIVATE  void Cycle_Unit_Enchantment_Animation(void);
+void Cycle_Unit_Enchantment_Animation(void);
+
 // WZD o63p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // called from WZD o67p07 Draw_Active_Unit_Stack()
+
 // WZD o63p05
 // AKA OVL_DrawUnitImage()
-// PRIVATE  void Unit_Window_Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
+// AKA Unit_Window_Draw_Unit_StatFig()
+void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 
 // WZD o063p06
 // PRIVATE  void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
@@ -369,9 +372,23 @@ void MainScr_Prepare_Reduced_Map(void);
 // PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 
+/*
+    WIZARDS.EXE  ovr097
+*/
+
+// WZD o97p03
+// drake178: TILE_HasCity()
+// PRIVATE?  int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
+
+// WZD o97p08
+// PRIVATE?  void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);
+
+
+
 #ifdef __cplusplus
 }
 #endif
+
 
 
 #endif  /* MAINSCR_H */

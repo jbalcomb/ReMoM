@@ -4,6 +4,14 @@
 #include "MoX_TYPE.H"
 #include "MoX_BITS.H"
 
+/*
+"FRM"   "frame"
+"HDR"   "header"
+"LC"    "line compressed"  ~== Run-Length Encoded (RLE)
+"PAL"   "palette"
+"POS"   "position"
+"SZ"    "size"
+*/
 
 #define SZ_FLIC_HDR                             16
 #define SZ_FLIC_PAL_HDR                          8
@@ -19,7 +27,7 @@
 #define FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET    0x0C
 #define FLIC_HDR_POS_PALETTE_HEADER_OFFSET      0x0E    // End of 16-byte FLIC Header / animation_header
 #define FLIC_HDR_POS_FRAME_TYPE                 0x10
-#define FLIC_HDR_POS_REMAP                      0x11
+#define FLIC_HDR_POS_REMAP_FLAG                 0x11    // Remap Colors Flag
 #define FLIC_HDR_POS_FRAME_OFFSET_TABLE         0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
 
 #define FLIC_PAL_HDR_POS_PALETTE_DATA_OFFSET    0x00
@@ -27,9 +35,9 @@
 #define FLIC_PAL_HDR_POS_COLOR_COUNT            0x04
 #define FLIC_PAL_HDR_POS_FRAME_PALETTES         0x06
 
-#define FLIC_FRM_PAL_HDR_POS_PALETTE_DATA_OFFSET  0x00
-#define FLIC_FRM_PAL_HDR_POS_COLOR_START        0x02
-#define FLIC_FRM_PAL_HDR_POS_COLOR_COUNT        0x03
+#define FLIC_FRM_PAL_HDR_POS_PALETTE_DATA_OFFSET    0x00
+#define FLIC_FRM_PAL_HDR_POS_COLOR_START            0x02
+#define FLIC_FRM_PAL_HDR_POS_COLOR_COUNT            0x03
 
 /*
     BEGIN: GET/SET FLIC File
@@ -54,7 +62,7 @@
 #define FLIC_GET_EMM_LOGICAL_PAGE_OFFSET(_ptr_)  ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET) )
 #define FLIC_GET_PALETTE_HEADER_OFFSET(_ptr_)    ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_PALETTE_HEADER_OFFSET)   )
 #define FLIC_GET_FRAME_TYPE(_ptr_)               ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_TYPE)              )
-#define FLIC_GET_REMAP(_ptr_)                    ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_REMAP)                   )
+#define FLIC_GET_REMAP_FLAG(_ptr_)               ( GET_1B_OFS( (_ptr_), FLIC_HDR_POS_REMAP_FLAG)              )
 // #define FLIC_GET_FRAME_OFFSET_TABLE(_ptr_)       ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE)      )
 #define FLIC_GET_FRAME_OFFSET(_ptr_,_idx_)       ( GET_4B_OFS( (_ptr_), FLIC_HDR_POS_FRAME_OFFSET_TABLE + (4 * (_idx_)) )      )
 
@@ -135,6 +143,9 @@ void Capture_Screen_Block(SAMB_ptr pict_seg, int16_t x1, int16_t y1, int16_t x2,
 // WZD s29p01
 void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
 
+// WZD s29p02
+// MoO2  Module: animate  Remap_Draw() |-> Remap_Draw_Animated_Sprite(); ... Module: remap  unsigned int picture_remap_color_list[256]  Address: 02:001B479C
+void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
 
 
 /*
@@ -168,7 +179,8 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 void Replace_Color_All(SAMB_ptr picture, uint8_t replacement_color);
 
 // WZD s30p10
-// LBX_IMG_LoadPalette
+// drake178: LBX_IMG_LoadPalette()
+void Load_Palette_From_Animation(SAMB_ptr picture);
 
 
 // WZD s30p11

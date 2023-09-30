@@ -18,15 +18,20 @@
 /* ~ MoX ~ MoM v1.31*/
 #include "ALLOC.H"
 #include "Allocate.H"
+#include "ArmyList.H"
+#include "CityList.H"
 #include "Explore.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
 #include "FLIC_Draw2.H"
 #include "Fonts.H"
+#include "GENDRAW.H"
 #include "Graphics.H"
+#include "Help.H"
 #include "Init.H"
 #include "Input.H"
 #include "Keyboard.H"
+#include "Lair.H"
 #include "LBX_Load.H"
 #include "LOADER.H"
 #include "Mouse.H"
@@ -39,6 +44,9 @@
 #include "MoX_SET.H"
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "MoX_Util.H"   // WTFMATE
+#include "SCORE.H"      // Hall Of Fame
+#include "Spellbook.H"
+#include "Terrain.H"
 #include "Timer.H"
 #include "UnitMove.H"   // WTFMATE
 #include "UNITTYPE.H"   // WTFMATE
@@ -50,6 +58,12 @@
 #endif
 
 #include "MoX_PFL.H"
+
+#include <assert.h>
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdlib.h>     /* itoa(); */
+#include <string.h>     /* memset(), strcat(), strcpy(); */
 
 
 
@@ -78,6 +92,7 @@ enum e_SCREENS
     scr_Hall_Of_Fame_Screen = 14,
     scr_Settings_Screen = 15,
 
+    /* WZD */
     scr_City_Screen = 100,
     /* scr_Load_Screen = 101, */
     scr_Armies_Screen = 102,
@@ -86,14 +101,15 @@ enum e_SCREENS
     scr_Main_Screen = 105,
     scr_Magic_Screen = 106,
     scr_RoadBuilding = 107,  /* ?!? */
-    scr_Production = 108,
+    scr_Production = 108,  /* Production Pop-Up - ¿ from the City List Screen and City Screen ? */
     scr_Item_Screen = 109,
     scr_NextTurn = 110,  /* ¿ drake187: NextTurnProc ? ¿ MoO2: Do_Next_Turn_() ? */
     /* ¿default? */
-    scr_Spellbook = 112,
+    scr_Spellbook_Screen = 112,
     /* ¿default? */
-    scr_Advisor_Screen = 114,
-    scr_Diplomac = 115,  /* ?!? */
+    scr_Advisor_Screen = 114,   /* WZD 0x0E */
+    // scr_Diplomac = 115,  /* ?!? */
+    scr_Diplomacy_Screen = 115,
     // ¿!? Surveyor, Cartographer, etc.
 
     scr_Test_Screen = 200,
@@ -104,6 +120,7 @@ enum e_SCREENS
 
 
 extern int16_t current_screen;
+extern int16_t previous_screen;
 
 
 

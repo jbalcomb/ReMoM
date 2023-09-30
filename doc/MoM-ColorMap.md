@@ -93,3 +93,33 @@ Draw_Unit_StatFig()
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 1);
     Draw_Picture_To_Bitmap(_unit_type_table[unit_type_idx].pict_seg, UnitDraw_WorkArea);
     Replace_Color(UnitDraw_WorkArea, itr_color_remap + 214, COL_Banners[ ((banner_idx * 5) + itr_color_remap) ]);
+
+
+## Per Screen
+
+### Army List Screen
+    "The Armies Of"
+    "UPKEEP"
+    unit name
+    scanned unit highlight rectangle
+
+¿ starts with main game palette ?
+loads palette from ARMYLIST,1 - 20 colors, starting at color-map index 224
+
+outline color:  16,12,32   4,3,8     0x10,0x0C,0x20  0x04,0x03,0x08  almost black, but purplish-blue
+alias color:    81,77,113  20,19,28  0x51,0x4D,0x71  0x14,0x13,0x1C  purplish gray
+
+    Set_Outline_Color(231);
+    colors2[0] = 236;
+    colors2[1] = 129;
+    colors2[2] = 129;
+    Set_Font_Colors_15(1, &colors2[0]);
+    Set_Font_Style1(1, 15, 0, 0);
+    Print_Integer_Centered(45, 173, armylist_upkeep_gold);
+    Print_Integer_Centered(45, 183, armylist_upkeep_mana);
+    Print_Integer_Centered(45, 192, armylist_upkeep_food);
+    Print_Centered(30, 162, cnst_Upkeep);
+
+outline style is normal shadow - bottom and right
+
+text is anti-aliased

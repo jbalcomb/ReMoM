@@ -1,3 +1,14 @@
+/*
+    WIZARDS.EXE
+        seg014
+        seg015
+        seg016
+
+MoO2:
+Module: graphcis
+Module: regions
+Module: shear
+*/
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
@@ -10,18 +21,73 @@ extern "C" {
 #endif
     /* C and Asm Function Prototypes */
 
+// WZD s14p01
+// drake178: 
+// MoO2  
+
+// WZD s14p02
+// drake178: 
+// MoO2  
+
+// WZD s14p03
+// drake178: 
+// MoO2  
+
 
 // WZD s14p04
+// drake178: 
 // MoO2  Module: graphics  Set_Window(signed integer (2 bytes) x1, signed integer (2 bytes) y1, signed integer (2 bytes) x2, signed integer (2 bytes) y2)
 void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 // WZD s14p05
+// drake178: 
 // MoO2  Module: graphics  Reset_Window()
 void Reset_Window(void);
 
 // WZD s14p06
 // drake178: VGA_WndDrawFilldRect
 void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+
+// WZD s14p07
+// drake178: 
+// MoO2  
+
+// WZD s14p08
+// drake178: 
+// MoO2  
+
+// WZD s14p09
+// drake178: 
+// MoO2  
+
+// WZD s14p10
+// drake178: 
+// MoO2  
+
+// WZD s14p11
+// drake178: UU_VGA_DrawBiColorRect()
+// MoO2  Module: graphics  Interlaced_Fill()
+
+// WZD s14p12
+// drake178: 
+// MoO2  
+// WZD s14p13
+// drake178: 
+// MoO2  
+// WZD s14p14
+// drake178: 
+// MoO2  
+
+// WZD s14p15
+// drake178: VGA_RectangleFX()
+// MoO2  Module: graphics  Gradient_Fill()
+void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_type, int16_t remap_block, int16_t Slope, int16_t Scale, int16_t Seed);
+
+// WZD s14p16
+// drake178: DOS_PrintString()
+// MoO2  
+// DOS_PrintString
+
 
 
 /*
@@ -33,6 +99,8 @@ void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 
 // WZD s16p02
+// drake178: VGA_PutPixel()
+// MoO2  
 // VGA_PutPixel
 
 // WZD s16p03
@@ -41,27 +109,43 @@ void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 
 // WZD s16p04
+// drake178: VGA_DrawPatternLine90
+// MoO2  
 // VGA_DrawPatternLine
 
 // WZD s16p05
+// drake178: UU_VGA_CreateColorWave()
+// MoO2  
 // UU_VGA_CreateColorWave
 
 // WZD s16p06
+// drake178: UU_VGA_DiagColumns()
+// MoO2  
 // UU_VGA_DiagColumns
 
 // WZD s16p07
+// drake178: 
+// MoO2  
 // RNG_Direct_LFSR
 
 // WZD s16p08
-// VGA_Shade_Rect
+// drake178: VGA_Shade_Rect()
+// MoO2  Module: graphics  Tint_Fill()
+void Tint_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t remap_block);
 
 // WZD s16p09
+// drake178: VGA_Grayscale_Rect()
+// MoO2  Module: graphics  Gray_Scale_Fill()
 // VGA_Grayscale_Rect
 
 // WZD s16p10
+// drake178: UU_VGA_Columns()
+// MoO2  
 // UU_VGA_Columns
 
 // WZD s16p11
+// drake178: UU_VGA_ScrambleRect()
+// MoO2  
 // UU_VGA_ScrambleRect
 
 

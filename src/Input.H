@@ -1,3 +1,7 @@
+/*
+    WIZARDS.EXE
+        seg036
+*/
 #ifndef INPUT_H
 #define INPUT_H
 
@@ -492,6 +496,20 @@ int16_t Interpret_Mouse_Input(void);
 
 // WZD s36p08
 void Set_Global_ESC(void);
+
+
+// WZD s36p12
+// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer, int16_t count);
+// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer[], int16_t count);
+// // void Set_Help_List(struct s_HLP_ENTRY ** help_pointer, int16_t count);
+// void Set_Help_List(int16_t * help_pointer, int16_t count);
+void Set_Help_List(char * help_pointer, int16_t count);
+
+// WZD s36p13
+void Deactivate_Help_List(void);
+
+// WZD s36p14
+int16_t Check_Help_List(void);
 
 
 // WZD s36p25

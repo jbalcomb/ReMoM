@@ -1,17 +1,16 @@
+/*
+    WIZARDS.EXE
+        seg014
+        seg015
+        seg016
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoM_DEF.H"
+MoO2:
+Module: graphcis
+Module: regions
+Module: shear
+*/
 
-#include "Mox_Data.H"
-
-#include "Graphics.H"
-
-#include "Video.H"
-
-#include <stdio.h>
-#include <stdlib.h>
-// #include <dos.h>
+#include "MoX.H"
 
 
 void plot_pixel(int x, int y, byte color);
@@ -19,7 +18,22 @@ void line_slow(int x1, int y1, int x2, int y2, byte color);
 void line_fast(int x1, int y1, int x2, int y2, byte color);
 
 
+
+// WZD s14p01
+// drake178: 
+// MoO2  
+
+// WZD s14p02
+// drake178: 
+// MoO2  
+
+// WZD s14p03
+// drake178: 
+// MoO2  
+
+
 // WZD s14p04
+// drake178: 
 // MoO2  Module: graphics  Set_Window(signed integer (2 bytes) x1, signed integer (2 bytes) y1, signed integer (2 bytes) x2, signed integer (2 bytes) y2)
 void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
@@ -38,7 +52,9 @@ void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
     screen_window_y2 = y2;
 }
 
+
 // WZD s14p05
+// drake178: 
 // MoO2  Module: graphics  Reset_Window()
 void Reset_Window(void)
 {
@@ -52,7 +68,7 @@ void Reset_Window(void)
 
 
 // WZD s14p06
-// drake178: VGA_WndDrawFilldRect
+// drake178: VGA_WndDrawFilldRect()
 // MoO2 Fill() just uses a clip flag
 void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 {
@@ -81,6 +97,141 @@ void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
     // else { return 0; }
     
 }
+
+
+// WZD s14p07
+// drake178: 
+// MoO2  
+
+// WZD s14p08
+// drake178: 
+// MoO2  
+
+// WZD s14p09
+// drake178: 
+// MoO2  
+
+// WZD s14p10
+// drake178: 
+// MoO2  
+
+// WZD s14p11
+// drake178: UU_VGA_DrawBiColorRect()
+// MoO2  Module: graphics  Interlaced_Fill()
+
+// WZD s14p12
+// drake178: 
+// MoO2  
+// WZD s14p13
+// drake178: 
+// MoO2  
+// WZD s14p14
+// drake178: 
+// MoO2  
+
+
+// WZD s14p15
+// drake178: VGA_RectangleFX()
+// MoO2  Module: graphics  Gradient_Fill()
+/*
+    fill_type 3 and 15 are the same except 3 always uses color block 0 (grayscale?)
+
+*/
+// MoO2  void Gradient_Fill(int x1, int y1, int x2, int y2, int fill_type, int * color_array, int color_count, int ripple_count, int seed)
+// MoO2  fill_type {1,3,     15,16}
+// MoM   fill_type {1,3,7,14,15,16}
+// 3: "darken"
+void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_type, int16_t remap_block, int16_t Slope, int16_t Scale, int16_t Seed)
+{
+    switch(fill_type)
+    {
+        case 0:
+        {
+            DLOG("switch(fill_type)  case 0:");
+
+        } break;
+        case 1:
+        {
+
+        } break;
+        case 2:
+        {
+
+        } break;
+        case 3:
+        {
+            // ¿ ~== MoO2  Darken_Fill() ?  Yup. Exact same call.
+            DLOG("switch(fill_type)  case 3:");
+            Tint_Fill(x1, y1, x2, y2, 0);
+        } break;
+        case 4:
+        {
+
+        } break;
+        case 5:
+        {
+
+        } break;
+        case 6:
+        {
+
+        } break;
+        case 7:
+        {
+
+        } break;
+        case 8:
+        {
+
+        } break;
+        case 9:
+        {
+
+        } break;
+        case 10:
+        {
+
+        } break;
+        case 11:
+        {
+
+        } break;
+        case 12:
+        {
+
+        } break;
+        case 13:
+        {
+
+        } break;
+        case 14:
+        {
+
+        } break;
+        case 15:
+        {
+            DLOG("switch(fill_type)  case 15:");
+            Tint_Fill(x1, y1, x2, y2, remap_block);
+        } break;
+        case 16:
+        {
+            DLOG("switch(fill_type)  case 16:");
+
+        } break;
+        default:
+        {
+            DLOG("switch(fill_type)  default:");
+
+        } break;
+        
+    }
+}
+
+// WZD s14p16
+// drake178: DOS_PrintString()
+// MoO2  
+// DOS_PrintString
+
 
 
 // WZD s16p01
@@ -128,6 +279,8 @@ void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 
 
 // WZD s16p02
+// drake178: VGA_PutPixel()
+// MoO2  
 // VGA_PutPixel
 
 
@@ -296,25 +449,75 @@ void line_fast(int x1, int y1, int x2, int y2, byte color)
 
 
 // WZD s16p04
+// drake178: VGA_DrawPatternLine90
+// MoO2  
 // VGA_DrawPatternLine
 
 // WZD s16p05
+// drake178: UU_VGA_CreateColorWave()
+// MoO2  
 // UU_VGA_CreateColorWave
 
 // WZD s16p06
+// drake178: UU_VGA_DiagColumns()
+// MoO2  
 // UU_VGA_DiagColumns
 
 // WZD s16p07
+// drake178: 
+// MoO2  
 // RNG_Direct_LFSR
 
+
 // WZD s16p08
-// VGA_Shade_Rect
+// drake178: VGA_Shade_Rect()
+// MoO2  Module: graphics  Tint_Fill()
+void Tint_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t remap_block)
+{
+    
+    byte_ptr screen_page;
+    int16_t width;
+    int16_t height;
+    uint16_t screen_page_offset;
+    uint16_t itr_width;
+    uint16_t itr_height;
+    uint8_t remap_block_index;
+    uint8_t remap_color;
+
+    width = x2 - x1 + 1;
+    height = y2 - y1 + 1;
+
+    screen_page_offset = ((y1 * SCREEN_WIDTH) + x1);
+
+    screen_page = current_video_page + screen_page_offset;
+
+    itr_height = 0;
+    while(itr_height < height)
+    {
+        itr_width = 0;
+        while(itr_width < width)
+        {
+            remap_block_index = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
+            remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
+            *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = remap_color;
+            itr_width++;
+        }
+        itr_height++;
+    }
+
+}
 
 // WZD s16p09
+// drake178: VGA_Grayscale_Rect()
+// MoO2  Module: graphics  Gray_Scale_Fill()
 // VGA_Grayscale_Rect
 
 // WZD s16p10
+// drake178: UU_VGA_Columns()
+// MoO2  
 // UU_VGA_Columns
 
 // WZD s16p11
+// drake178: UU_VGA_ScrambleRect()
+// MoO2  
 // UU_VGA_ScrambleRect

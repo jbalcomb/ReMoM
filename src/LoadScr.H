@@ -1,18 +1,28 @@
+/*
+    WIZARDS.EXE
+        ovr160
+    MAGIC.EXE
+        ovr050
+
+WZD
+    Load_Screen
+    Load_Screen_Draw
+    Load_Screen_Help
+    Loaded_Game_Update
+MGC
+    Load_Screen
+    Load_Screen_Draw
+
+MoO2  Module: LOADSAVE
+
+*/
+
 #ifndef LOADSCR_H
 #define LOADSCR_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
-WZD
-ovr160
-Load_Screen
-Load_Screen_Draw
-Load_Screen_Help
-Loaded_Game_Update
-*/
 
 
 

@@ -1,7 +1,8 @@
-
+/*
+    WIZARDS.EXE
+        seg036
+*/
 #include "MoX.H"
-
-#include <string.h>
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
@@ -604,6 +605,68 @@ Done:
 void Set_Global_ESC(void)
 {
     _global_esc = ST_TRUE;
+}
+
+
+
+// WZD s36p12
+/*
+function (0 bytes) Set_Help_List
+Address: 01:001196B8
+Return type: void (1 bytes) 
+pointer (4 bytes) help_pointer
+signed integer (2 bytes) count
+*/
+// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer, int16_t count)
+// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer[], int16_t count)
+// // void Set_Help_List(struct s_HLP_ENTRY ** help_pointer, int16_t count)
+// void Set_Help_List(int16_t * help_pointer, int16_t count)
+void Set_Help_List(char * help_pointer, int16_t count)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Set_Help_List()\n", __FILE__, __LINE__);
+#endif
+
+    help_struct_pointer = (struct s_HLP_ENTRY *)help_pointer;
+    help_list_count = count;
+    help_list_active = ST_TRUE;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Set_Help_List()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD s36p13
+void Deactivate_Help_List(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Deactivate_Help_List()\n", __FILE__, __LINE__);
+#endif
+
+    help_list_active = ST_FALSE;
+    help_list_count = 0;
+    help_struct_pointer = ST_NULL;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Deactivate_Help_List()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD s36p14
+// CAUTION: returns ZERO on SUCCESS
+int16_t Check_Help_List(void)
+{
+    int16_t help_entry_found;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Check_Help_List()\n", __FILE__, __LINE__);
+#endif
+
+    help_entry_found = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Check_Help_List()\n", __FILE__, __LINE__);
+#endif
+    return help_entry_found;
 }
 
 

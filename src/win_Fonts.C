@@ -34,14 +34,14 @@ void Apply_Palette(void)
     {
         if( *(p_Palette + 768 + itr) == 1 )  // TODO  ~ #define Palette Flags Offset
         {
-#ifdef STU_DEBUG
-    if(itr == 0x72)
-    {
-        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 0): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 0));
-        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 1): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 1));
-        dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 2): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 2));
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      if(itr == 0x72)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 0): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 0));
+// DELETE          dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 1): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 1));
+// DELETE          dbg_prn("DEBUG: [%s, %d]: *(p_Palette + (itr * 3) + 2): %02X\n", __FILE__, __LINE__, *(p_Palette + (itr * 3) + 2));
+// DELETE      }
+// DELETE  #endif
             *(PFL_Palette + (itr * 4) + 3) = 0x00;
             *(PFL_Palette + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
             *(PFL_Palette + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);

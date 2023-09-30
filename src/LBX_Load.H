@@ -85,12 +85,13 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
 // WZD s10p11
 // MoO2: Farload_Library_Data()
 SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
-    
+
 // WZD s10p12
     // LBXR_DirectLoader( LBX_FileName@, Entry_Index, LoadTo@, FirstRec, RecCount, RecSize )
     // Main_Screen_Help() LBXR_DirectLoader("helpentry", 1, &_help_entries, 0, 25, 10);
 // MoO2: Farload_Data_Static() ?  |-> Farload_Library_Data() ... in MoO2, they just added Allocation Type: 3 - No Allocation / Pre-Allocated
 // TODO  void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
+void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
 
 // WZD s10p13
 // ¿ MoO2: Get_Farload_Data_Record_Count() ?

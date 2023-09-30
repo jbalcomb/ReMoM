@@ -173,7 +173,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     fwrite(_TOWERS, 6, 4, file_pointer);
     // fwrite(_TOWERS, TOWER_COUNT_MAX, sizeof(struct s_TOWER), file_pointer);
 
-    fwrite(TBL_Lairs, 102, 24, file_pointer);
+    fwrite(_LAIRS, 102, 24, file_pointer);
 
     fwrite(TBL_Items, 138, 50, file_pointer);
 
@@ -347,7 +347,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 #endif
     assert(file_pointer_position == 26152);
 
-    fread(TBL_Lairs, 102, 24, file_pointer);
+    fread(_LAIRS, 102, 24, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
 #ifdef STU_DEBUG

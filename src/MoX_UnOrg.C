@@ -139,9 +139,13 @@ int16_t PageFlipEffect;
 // ;   3 - mosaic effect
 // ;   4 - grow out from a tile (not used in the game)
 // ;   5 - writes out the DAC, but DOES NOT do a page flip
-// Default: Apply_Palette(); Toggle_Pages();
-// WZD s01p03
-// ¿ MoO2: Set_Palette_Changes() ?
+// 
+/*
+    Default: Apply_Palette(); Toggle_Pages();
+    Main Screen sets it to 4 before calling Outpost_Screen()
+    NameStartingCity_Dialog_Popup sets it to 3 before returning to Main Screen
+    Load Screen sets it to 2 when preparing to loop back to Main Screen
+*/
 void PageFlip_FX(void)
 {
 
@@ -158,13 +162,13 @@ void PageFlip_FX(void)
         } break;
         case 2:
         {
-            // Toggle_Pages();  // |-> Page_Flip()
-            // Fade_In();
+            Toggle_Pages();  // |-> Page_Flip()
+            Fade_In();
         } break;
         case 3:
         {
             // Apply_Palette();
-            // VGA_MosaicFlip();  // |-> GUI_PageFlip() |-> Page_Flip()
+            // VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
         } break;
         case 4:
         {
@@ -179,6 +183,108 @@ void PageFlip_FX(void)
     PageFlipEffect = 0;  // DEDUCE: PageFlipEffect 0 is the default PageFlipEffect
 
 }
+
+
+
+// WZD s01p04
+void Fade_Out(void)
+{
+    int16_t fade_percent;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Fade_Out()\n", __FILE__, __LINE__);
+#endif
+
+    for(fade_percent = 25; fade_percent < 101; fade_percent += 25)
+    {
+        Mark_Time();
+        Set_Palette_Changes(0, 255);
+        Cycle_Palette(fade_percent);
+        Release_Time(1);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Fade_Out()\n", __FILE__, __LINE__);
+#endif
+}
+
+
+// WZD s01p05
+void Fade_In(void)
+{
+    int16_t fade_percent;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Fade_In()\n", __FILE__, __LINE__);
+#endif
+    
+    for(fade_percent = 75; fade_percent >= 0; fade_percent -= 25)
+    {
+        Mark_Time();
+        Set_Palette_Changes(0, 255);
+        Cycle_Palette(fade_percent);
+        Release_Time(1);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Fade_In()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
+
+/*
+    WIZARDS.EXE  seg009
+*/
+
+// WZD s09p07
+void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
+{
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: String_Copy_Far()\n", __FILE__, __LINE__);
+#endif
+
+//     if(dst_sgmt == 0)
+//     {
+//         dst_sgmt = _DS_;
+//     }
+// 
+//     if(src_sgmt == 0)
+//     {
+//         src_sgmt = _DS_;
+//     }
+// 
+//     _ES_ = dst_sgmt;
+//     _SI_ = src_ofst;
+//     _DI_ = dst_ofst;
+//     _DS_ = src_sgmt;
+// 
+//     
+//     do {
+//         *(dst_sgmt + dst_ofst++) = *(src_sgmt + src_ofst++);
+// 
+//     } while(*(src_sgmt + src_ofst) != '\0')
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: String_Copy_Far()\n", __FILE__, __LINE__);
+#endif
+}
+
+
+
+/*
+    WIZARDS.EXE  ovr052
+*/
+
+// WZD o52p017
+// drake178: ?
+void Load_BUILDDAT(void)
+{
+    build_data_table = (struct s_BUILDDAT *)LBX_Load_Data(cnst_BUILDDAT_File, 0, 0, 36, 52);
+}
+
 
 
 /*

@@ -95,6 +95,9 @@ void GFX_Swap_Reset(void);
 // AKA GFX_Swap_AppendUnits()
 void Load_Unit_StatFigs(void);
 
+// WZD o52p29
+void Spellbook_Load_Small_Pictures(void);
+
 // WZD o52p30
 void GFX_Swap_Cities(void);
 

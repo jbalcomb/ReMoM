@@ -2,6 +2,7 @@
     WIZARDS.EXE
     ovr057
     ovr058
+    ovr059
     ovr061
     ovr062
     ovr063
@@ -59,6 +60,18 @@ void IDK_UnitMoves_and_PlanarTravel(void);
 void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
 // WZD o58p02
 void Set_Mouse_List_Default(void);
+/*
+    WIZARDS.EXE  ovr059
+*/
+
+// WZD o59p18
+// AKA IDK_MaybeSwitchStackPlane_s52514()
+void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+
+// WZD o59p19
+// AKA IDK_PlanarTravel_TestWaterCity_s52774()
+int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane);
+
 /*
     WIZARDS.EXE  ovr061
 */
@@ -128,6 +141,19 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
 /*
     WIZARDS.EXE  ovr097
 */
+
+// WZD o97p03
+// drake178: TILE_HasCity()
+int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
+
+// WZD o97p05
+// drake178: RP_CTY_CheckSpellWard()
+int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
+
+// WZD o97p06
+// drake178: CTY_CheckSpellWard()
+int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
+
 // WZD o97p08
 void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);
 
@@ -627,22 +653,6 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 // WZD dseg:999E
 // struct STK_UNIT UNIT_Stack[9];
 
-
-
-// WZD dseg:C082
-// AKA OVL_STKUnitCards_Top
-int16_t _unit_window_start_y;
-// WZD dseg:C084
-// AKA OVL_STKUnitCards_Lft
-int16_t _unit_window_start_x;
-
-// WZD dseg:C086
-SAMB_ptr _reduced_map_seg;
-// ; 12Fh LBX_Alloc_First paragraphs in the LBX_Sandbox_Segment
-
-
-// WZD dseg:C092
-int16_t cycle_incomes; //  dw 0                      ; -1 draws negative incomes with a static color instead
 
 
 /*
@@ -1236,7 +1246,7 @@ void Main_Screen(void)
         /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
         /* Alt-P   */
         /* Alt-K   */
-        /* Shift-3 */
+        /* Shift-3 '#' */
         /* Alt-T   */
         /* Alt-N   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_ShowTileInfo=1-DBG_ShowTileInfo;}} */
 
@@ -1330,34 +1340,77 @@ void Main_Screen(void)
             BEGIN: Mouse Click
         */
 
-        // Info Button
-        /* if(input_field_idx == _info_button)   { SND_LeftClickSound(); _current_screen = scr_Info_Screen;   leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _game_button)   { SND_LeftClickSound(); _current_screen = scr_Load_Screen;  leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _cities_button) { SND_LeftClickSound(); _current_screen = scr_Cities_Screen; leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _magic_button)  { SND_LeftClickSound(); _current_screen = scr_Magic_Screen;  leave_screen_flag = ST_TRUE; } */
-        /* if(input_field_idx == _armies_button) { SND_LeftClickSound(); _current_screen = scr_Armies_Screen; leave_screen_flag = ST_TRUE; } */
-        if(input_field_idx == _spells_button)
+        /*
+            BEGIN: Game Buttons - Info Button
+        */
+// DEMO          if(input_field_idx == _info_button)
+// DEMO          {
+// DEMO              // TODO  SND_LeftClickSound();
+// DEMO              current_screen = scr_Advisor_Screen;
+// DEMO              leave_screen_flag = ST_TRUE;
+// DEMO          }
+
+        /*
+            BEGIN: Game Buttons - Game Button
+        */
+        if(input_field_idx == _game_button)
         {
-            // SND_LeftClickSound();
-            if(_players[_human_player_idx].Spell_Cast == 0xD6) /* Spell of Return */
-            {
-                // You may not throw any spells while you are banished.
-                // GUI_NearMsgString
-                // strcpy()
-                // strcat()
-                // strcat()
-                // GUI_WarningType0()
-                // Set_Redraw_Function(Main_Screen_Draw, 1);
-            }
-            else
-            {
-                // OVL_ShowActiveStack();
-                // UNIT_DrawPriorities();
-                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-                // leave_screen_flag = ST_TRUE;
-                // _current_screen = scr_Spellbook_Screen;
-            }
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Load_Screen;
+            leave_screen_flag = ST_TRUE;
         }
+        /*
+            BEGIN: Game Buttons - Cities Button
+        */
+        if(input_field_idx == _cities_button)
+        {
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Cities_Screen;
+            leave_screen_flag = ST_TRUE;
+        }
+        /*
+            BEGIN: Game Buttons - Magic Button
+        */
+        if(input_field_idx == _magic_button)
+        {
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Magic_Screen;
+            leave_screen_flag = ST_TRUE;
+        }
+        /*
+            BEGIN: Game Buttons - Armies Button
+        */
+        if(input_field_idx == _armies_button)
+        {
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Armies_Screen;
+            leave_screen_flag = ST_TRUE;
+        }
+        /*
+            BEGIN: Game Buttons - Spells Button
+        */
+// DEMO          if(input_field_idx == _spells_button)
+// DEMO          {
+// DEMO              // SND_LeftClickSound();
+// DEMO              if(_players[_human_player_idx].Spell_Cast == 0xD6) /* Spell of Return */
+// DEMO              {
+// DEMO                  // You may not throw any spells while you are banished.
+// DEMO                  // GUI_NearMsgString
+// DEMO                  // strcpy()
+// DEMO                  // strcat()
+// DEMO                  // strcat()
+// DEMO                  // GUI_WarningType0()
+// DEMO                  // Set_Redraw_Function(Main_Screen_Draw, 1);
+// DEMO              }
+// DEMO              else
+// DEMO              {
+// DEMO                  Set_Draw_Active_Stack_Always();
+// DEMO                  Set_Unit_Draw_Priority();
+// DEMO                  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+// DEMO                  leave_screen_flag = ST_TRUE;
+// DEMO                  current_screen = scr_Spellbook_Screen;
+// DEMO              }
+// DEMO          }
 
         if(input_field_idx == _patrol_button)
         {
@@ -1385,10 +1438,24 @@ void Main_Screen(void)
             
         }
 
+        /*
+            BEGIN: Game Buttons - Plane Button
+        */
         if(input_field_idx == _plane_button)
         {
-            
+            DLOG("(input_field_idx == _plane_button)");
+            // TODO  SND_LeftClickSound();
+            Do_Plane_Button(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Main_Screen_Reset();
+            Reset_Map_Draw();
+            MainScr_Prepare_Reduced_Map();
+            // TODO  Deactivate_Auto_Function
+            // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+            Set_Mouse_List_Default();
         }
+        /*
+            END: Game Button - Plane Button
+        */
 
         // Left-Click Unit Window Grid Field
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
@@ -1711,13 +1778,7 @@ void Main_Screen(void)
         {
             // TODO  SND_LeftClickSound();
 
-            // Main_Screen+123E               call    j_Minimap_Coords
-            // MainScr_Prepare_Reduced_Map+35 call    j_Minimap_Coords
-            // Draw_Maps+146                  call    j_Minimap_Coords
-            // Road_Build_Screen+2F7          call    j_Minimap_Coords
-            // IDK_Spell_Casting_Screen+52F   call    j_Minimap_Coords
-            // Surveyor_Screen+17D            call    j_Minimap_Coords
-            Minimap_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+            Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
 #ifdef STU_DEBUG
             dbg_prn("DEBUG: [%s, %d]: _minimap_grid_x: %d\n", __FILE__, __LINE__, _minimap_grid_x);
             dbg_prn("DEBUG: [%s, %d]: _minimap_grid_y: %d\n", __FILE__, __LINE__, _minimap_grid_y);
@@ -1885,24 +1946,24 @@ void Add_Unit_Action_Fields(void)
 {
     if(_unit_stack_count > 0)
     {
-        _done_button = Add_Button_Field(246, 176, '0', main_done_button, 'D', ST_UNDEFINED);
-        _patrol_button = Add_Button_Field(280, 176, '0', main_patrol_button, '0', ST_UNDEFINED);
-        _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+        _done_button = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
+        _patrol_button = Add_Button_Field(280, 176, "", main_patrol_button, '0', ST_UNDEFINED);
+        _wait_button = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
     }
 
     if(special_action_flag != ST_UNDEFINED)
     {
         if(special_action_flag == 2)
         {
-            _special_button = Add_Button_Field(280, 186, '0', main_purify_button, '0', ST_UNDEFINED);
+            _special_button = Add_Button_Field(280, 186, "", main_purify_button, '0', ST_UNDEFINED);
         }
         else if(special_action_flag == 9)
         {
-            _special_button = Add_Button_Field(280, 186, '0', main_meld_button, '0', ST_UNDEFINED);
+            _special_button = Add_Button_Field(280, 186, "", main_meld_button, '0', ST_UNDEFINED);
         }
         else
         {
-            _special_button = Add_Button_Field(280, 186, '0', main_build_button, 'B', ST_UNDEFINED);
+            _special_button = Add_Button_Field(280, 186, "", main_build_button, 'B', ST_UNDEFINED);
         }
     }
 
@@ -1915,7 +1976,7 @@ void Add_Unit_Action_Fields(void)
 
         if(all_units_moved == ST_FALSE)
         {
-            _wait_button = Add_Button_Field(246, 186, '0', main_wait_button, 'W', ST_UNDEFINED);
+            _wait_button = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
         }
     }
 }
@@ -2001,13 +2062,13 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
 void Add_Game_Button_Fields(void)
 {
     // cnst_ZeroString_31 ... hotkey_GameButton, etc.
-    _game_button    = Add_Button_Field(  7, 4, '0', main_game_button,   'G', ST_UNDEFINED);
-    _spells_button  = Add_Button_Field( 47, 4, '0', main_spells_button, 'S', ST_UNDEFINED);
-    _armies_button  = Add_Button_Field( 89, 4, '0', main_armies_button, 'A', ST_UNDEFINED);
-    _cities_button  = Add_Button_Field(140, 4, '0', main_cities_button, '0', ST_UNDEFINED);
-    _magic_button   = Add_Button_Field(184, 4, '0', main_magic_button,  'M', ST_UNDEFINED);
-    _info_button    = Add_Button_Field(226, 4, '0', main_info_button,   'I', ST_UNDEFINED);
-    _plane_button   = Add_Button_Field(270, 4, '0', main_plane_button,  'P', ST_UNDEFINED);
+    _game_button    = Add_Button_Field(  7, 4, "", main_game_button,   'G', ST_UNDEFINED);
+    _spells_button  = Add_Button_Field( 47, 4, "", main_spells_button, 'S', ST_UNDEFINED);
+    _armies_button  = Add_Button_Field( 89, 4, "", main_armies_button, 'A', ST_UNDEFINED);
+    _cities_button  = Add_Button_Field(140, 4, "", main_cities_button, '0', ST_UNDEFINED);
+    _magic_button   = Add_Button_Field(184, 4, "", main_magic_button,  'M', ST_UNDEFINED);
+    _info_button    = Add_Button_Field(226, 4, "", main_info_button,   'I', ST_UNDEFINED);
+    _plane_button   = Add_Button_Field(270, 4, "", main_plane_button,  'P', ST_UNDEFINED);
 }
 
 
@@ -2178,6 +2239,306 @@ void Set_Mouse_List_Default(void)
 
 
 /*
+    WIZARDS.EXE  ovr059
+*/
+
+// WZD o59p18
+// AKA IDK_MaybeSwitchStackPlane_s52514()
+void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
+{
+    int16_t stack_is_on_tower;
+    int16_t stack_plane_shift;
+// Radius= word ptr -0Eh
+    int16_t unit_world_x;
+    int16_t unit_world_y;
+    int16_t stack_planar_travel;
+    int16_t unit_stack_unit_idx;
+    int16_t itr_towers;
+    int16_t orig_map_plane;
+    // int16_t curr_map_plane;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_Plane_Button(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+    // curr_map_plane = *map_plane;
+    OVL_StackHasPath = 0;
+    // orig_map_plane = curr_map_plane;
+    orig_map_plane = *map_plane;
+    // curr_map_plane = ((curr_map_plane + 1) % PLANE_COUNT_MAX);
+    *map_plane = ((*map_plane + 1) % PLANE_COUNT_MAX);
+    stack_planar_travel = ST_FALSE;
+
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
+    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
+#endif
+
+    /*
+        Active Stack && Can Travel && Sealed
+    */
+    if(all_units_moved == ST_FALSE)
+    {
+        DLOG("(all_units_moved == ST_FALSE)");
+        if(_unit_stack_count > 0)
+        {
+            DLOG("(_unit_stack_count > 0)");
+            stack_planar_travel = Stack_Has_Planar_Travel();
+            if(stack_planar_travel == ST_TRUE)
+            {
+                DLOG("(stack_planar_travel == ST_TRUE)");
+                if(Check_Planar_Seal() == ST_TRUE)
+                {
+                    DLOG("(Check_Planar_Seal() == ST_TRUE)");
+                    // TODO GUI_WarningType0(aPlanarSealPrev);  // "Planar Seal prevents your units from changing planes."
+                    // curr_map_plane = orig_map_plane;
+                    *map_plane = orig_map_plane;
+                    stack_planar_travel = 99;  // ¿ `99` means 'Yay Planar Trav, Yay Planar Seal' ?
+                }
+                else
+                {
+                    DLOG("(Check_Planar_Seal() != ST_TRUE)");
+                }
+            }
+            else
+            {
+                DLOG("(stack_planar_travel != ST_TRUE)");
+            }
+        }
+        else
+        {
+            DLOG("(_unit_stack_count <= 0)");
+        }
+    }
+    else
+    {
+        DLOG("(all_units_moved != ST_FALSE)");
+    }
+    /*
+        HERE: stack_planar_travel = {-1, 0, 1, 99}
+        -1: default/undefined
+         0: Stack_Has_Planar_Travel() == ST_FALSE && _unit_stack_count > 0 && all_units_moved == ST_FALSE
+         1: Stack_Has_Planar_Travel() == ST_TRUE && Check_Planar_Seal() == ST_FALSE && _unit_stack_count > 0 && all_units_moved == ST_FALSE
+        99: Stack_Has_Planar_Travel() == ST_TRUE && Check_Planar_Seal() == ST_TRUE && _unit_stack_count > 0 && all_units_moved == ST_FALSE
+    */
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
+    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
+#endif
+
+    /*
+        BEGIN: Yay PlanarTravel, Nay PlanarSeal
+    */
+    if(stack_planar_travel == ST_TRUE)
+    {
+        DLOG("(stack_planar_travel == ST_TRUE)");
+        // stack_plane_shift = Check_Stack_Plane_Shift(_unit_stack[0].unit_idx, curr_map_plane);
+        stack_plane_shift = Check_Stack_Plane_Shift(_unit_stack[0].unit_idx, *map_plane);
+
+        if(stack_plane_shift == -2)
+        {
+            DLOG("(stack_plane_shift == -2)");
+            // curr_map_plane = orig_map_plane;
+            *map_plane = orig_map_plane;
+            // TODO  GUI_WarningType0(aTheSelectedUni); // "The selected units cannot Planar Travel at this location."
+        }
+        else
+        {
+            DLOG("(stack_plane_shift != -2)");
+        }
+        if(stack_plane_shift == -1)
+        {
+            DLOG("(stack_plane_shift == -1)");
+
+        }
+        else
+        {
+            DLOG("(stack_plane_shift != -1)");
+        }
+
+        Reset_Map_Draw();
+    }
+    /*
+        END: Yay PlanarTravel, Nay PlanarSeal
+    */
+    /*
+        BEGIN: Nay Active Stack OR Nay PlanarTravel OR Yay PlanarTravel, Yay PlanarSeal
+    */
+    else
+    {
+        DLOG("(stack_planar_travel != ST_TRUE)");
+        // HERE: Yay PlanarTravel, Yay PlanarSeal falls through to '@@Done'
+        if(stack_planar_travel != 99)
+        {
+            // HERE: Nay Active Stack OR Nay PlanarTravel NOT Yay PlanarTravel, Yay PlanarSeal
+            // if(curr_map_plane == orig_map_plane)  /* ¿ ~== stack_planar_travel = 99 ? ¿ couln't possibly, but would only happens if Check_Stack_Plane_Shift() returned -2 ? */
+            if(*map_plane == orig_map_plane)
+            {
+                // curr_map_plane = ((curr_map_plane + 1) % PLANE_COUNT_MAX);
+                *map_plane = ((*map_plane + 1) % PLANE_COUNT_MAX);
+                _unit_stack_count = 0;
+            }
+
+            if(_unit_stack_count > 0)
+            {
+                // HERE: Yay Active Stack, Nay Astral Gate, Nay All Unit Have Planar Travel
+                // THEN: Reset Plane, Red Notify
+                if(Check_Planar_Seal() == ST_TRUE)
+                {
+                    stack_is_on_tower = ST_FALSE;
+                    unit_stack_unit_idx = _unit_stack[0].unit_idx;
+                    unit_world_x = _UNITS[unit_stack_unit_idx].world_x;
+                    unit_world_y = _UNITS[unit_stack_unit_idx].world_y;
+                    for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX && stack_is_on_tower == ST_FALSE; itr_towers++)
+                    {
+                        if(_TOWERS[itr_towers].world_x == unit_world_x && _TOWERS[itr_towers].world_y == unit_world_y)
+                        {
+                            stack_is_on_tower = ST_TRUE;
+                        }
+                    }
+                    // HERE: Yay/Nay Active Stack is on/inside a Tower of Wizardy
+                    if(stack_is_on_tower == ST_TRUE)
+                    {
+                        // curr_map_plane = orig_map_plane;
+                        *map_plane = orig_map_plane;
+                        // TODO  GUI_WarningType0(aPlanarSealPrev);  // "Planar Seal prevents your units from changing planes."
+                    }
+                }
+            }
+        }
+    }
+    /*
+        END: Nay PlanarTravel OR Yay PlanarTravel, Yay PlanarSeal
+    */
+
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
+    dbg_prn("DEBUG: [%s, %d]: *map_plane: %d\n", __FILE__, __LINE__, *map_plane);
+#endif
+
+// @@Done:
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    // Set_Entities_On_Map_Window(*map_x, *map_y, curr_map_plane);
+    Set_Entities_On_Map_Window(*map_x, *map_y, *map_plane);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Do_Plane_Button(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+}
+
+// WZD o59p19
+// AKA IDK_PlanarTravel_TestWaterCity_s52774()
+/*
+    returns {-2, -1, ¿ ... ?}
+    -2: terrain is ocean||shore||river && 
+*/
+int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
+{
+    int16_t movement_mode_flags[6];
+    int16_t stack_array[9];
+    int16_t city_has_spellward;
+    // int16_t laird_idx__city_idx;
+    int16_t lair_idx;
+    int16_t city_idx;
+    int16_t unit_world_x;
+    int16_t unit_world_y;
+    int16_t stack_size;
+
+    int16_t unit_idx;
+    int16_t _DI_return_value;
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
+#endif
+
+    unit_idx = unit_stack_unit_idx;
+
+    _DI_return_value = -1;  // ¿ ST_SUCCESS ?
+
+    Active_Stack_Movement_Modes(&movement_mode_flags[0]);
+
+    if(Terrain_Is_Sailable(_UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, map_plane) == ST_TRUE)
+    {
+        _DI_return_value = -2;  // ¿ -2 ~== Non-Walking Terrain ?
+        if(movement_mode_flags[MM_SWIMMING] == ST_TRUE || movement_mode_flags[MM_SAILING] == ST_TRUE || movement_mode_flags[MM_FLYING] == ST_TRUE)
+        {
+            _DI_return_value = -1;  // ¿ ST_SUCCESS ?
+        }
+    }
+
+    if(_DI_return_value == -1)
+    {
+        unit_world_x = _UNITS[unit_stack_unit_idx].world_x;
+        unit_world_y = _UNITS[unit_stack_unit_idx].world_y;
+        lair_idx = Square_Has_Lair(unit_world_x, unit_world_y, map_plane);
+        if(lair_idx == -1)
+        {
+            city_idx = Square_Has_City(unit_world_x, unit_world_y, map_plane);
+            if(city_idx == -1)
+            {
+                stack_size = 0;
+                // drake178: fills the return variables with the count and indices of all units on the selected tile that do not belong to the specified player
+                // TODO  TILE_GetEnemyStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                if(stack_size > 0)
+                {
+                    _DI_return_value = -2;
+                }
+                else
+                {
+                    stack_size = 0;
+                    // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
+                    // TODO  TILE_GetUnitStack(_UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                    stack_size = stack_size + _unit_stack_count;
+                    if(stack_size > 9)
+                    {
+                        _DI_return_value = -2;
+                    }
+                }
+            }
+            else
+            {
+                city_has_spellward = RP_CTY_CheckSpellWard__STUB(city_idx, &stack_size, &stack_array[0]);
+                if(city_has_spellward == ST_TRUE)
+                {
+                    _DI_return_value = -2;
+                }
+                else
+                {
+                    if(_CITIES[city_idx].owner_idx != _UNITS[unit_idx].owner_idx)
+                    {
+                        _DI_return_value = -2;
+                    }
+                    else
+                    {
+                        // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
+                        // TODO  TILE_GetUnitStack(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                        stack_size = stack_size + _unit_stack_count;
+
+                        if(stack_size > 9)
+                        {
+                            _DI_return_value = -2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
+#endif
+    return _DI_return_value;
+}
+
+
+
+/*
     WIZARDS.EXE  ovr061
 */
 
@@ -2206,7 +2567,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     Reset_Map_Draw();
 
-    // j_RP_WIZ_ReturnZero(player_idx);
+    // TODO  RP_WIZ_ReturnZero(player_idx);
 
 
     while(Finished == ST_FALSE)
@@ -2221,10 +2582,10 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     if(all_units_moved == ST_FALSE)
     {
         DLOG("(all_units_moved == ST_FALSE)");
-        // Current_Unit = _unit;
-        // Current_X = _UNITS[Current_Unit].world_x;
-        // Current_Y = _UNITS[Current_Unit].world_y;
-        // j_Select_Unit_Stack(player_idx, *map_x, *map_y, *map_plane, Current_X, Current_Y);
+        Current_Unit = _unit;
+        Current_X = _UNITS[Current_Unit].world_x;
+        Current_Y = _UNITS[Current_Unit].world_y;
+        Select_Unit_Stack(player_idx, map_x, map_y, *map_plane, Current_X, Current_Y);
     }
     else
     {
@@ -2780,8 +3141,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     Reset_Map_Draw();
 
-    // Minimap_Set_Dims(58, 30);
-    Minimap_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
+    Reduced_Map_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
@@ -3116,12 +3476,12 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         {
             if(unit_owner_idx != NEUTRAL_PLAYER_IDX)
             {
-                unit_colored_backgrounds_idx = _players[unit_owner_idx].Banner;
+                unit_colored_backgrounds_idx = _players[unit_owner_idx].banner_id;
             }
             else
             {
                 unit_colored_backgrounds_idx = 5;
-                _players[unit_owner_idx].Banner = 5;
+                _players[unit_owner_idx].banner_id = 5;
             }
         }
 
@@ -3222,7 +3582,6 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     }
 #endif
 
-
     unit_type_idx = _UNITS[unit_idx].type;
 
     FLIC_Set_CurrentFrame(_unit_type_table[unit_type_idx].pict_seg, 0);
@@ -3241,7 +3600,7 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     }
     else
     {
-        banner_idx = (int16_t)_players[unit_owner_idx].Banner;
+        banner_idx = (int16_t)_players[unit_owner_idx].banner_id;
     }
 
     // TODO: add contstants for the color index and color count
@@ -3703,6 +4062,11 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
 
 // WZD o63p09
 // drake178: OVL_CanPlanarTravel()
+/*
+    checks if Active Stack is on City with Astral Gate
+    or if all Units have Planar Travel, by Enchantment, Ability, or Item
+    returns ST_TRUE or ST_FALSE
+*/
 int16_t Stack_Has_Planar_Travel(void)
 {
     int16_t itr;
@@ -3712,7 +4076,7 @@ int16_t Stack_Has_Planar_Travel(void)
     int16_t unit_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_CanPlanarTravel()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Has_Planar_Travel()\n", __FILE__, __LINE__);
 #endif
 
 
@@ -3774,7 +4138,7 @@ int16_t Stack_Has_Planar_Travel(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_CanPlanarTravel()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Has_Planar_Travel()\n", __FILE__, __LINE__);
 #endif
     return stack_has_planar_travel;
 }
@@ -3899,16 +4263,14 @@ void MainScr_Prepare_Reduced_Map(void)
     minimap_width = REDUCED_MAP_W;
     minimap_height = REDUCED_MAP_H;
 
-    Minimap_Set_Dims(minimap_width, minimap_height);
+    Reduced_Map_Set_Dims(minimap_width, minimap_height);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: _map_x: %d  _map_y: %d\n", __FILE__, __LINE__, _map_x, _map_y);
 #endif
 
-    // Minimap_Coords(&minimap_x, &minimap_y, ((_map_x+6)%60), (_map_y+5), minimap_width, minimap_height);
-    Minimap_Coords(&minimap_x, &minimap_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), minimap_width, minimap_height);
+    Reduced_Map_Coords(&minimap_x, &minimap_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), minimap_width, minimap_height);
     
-    // Draw_Minimap(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
     Draw_Reduced_Map(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
 
 #ifdef STU_DEBUG
@@ -4348,6 +4710,94 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
 /*
     WIZARDS.EXE  ovr097
 */
+
+// WZD o97p03
+// drake178: TILE_HasCity()
+int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane)
+{
+    int16_t square_has_city;
+    int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Square_Has_City(world_x = %d, world_y = %d, map_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, map_plane);
+#endif
+
+    square_has_city = ST_UNDEFINED;
+
+    for(itr = 0; itr < _cities && square_has_city == ST_UNDEFINED; itr++)
+    {
+        if( (_CITIES[itr].world_plane == map_plane) && (_CITIES[itr].world_x = world_x) && (_CITIES[itr].world_y == world_y) )
+        {
+            square_has_city = itr;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Square_Has_City(world_x = %d, world_y = %d, map_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, map_plane);
+#endif
+    return square_has_city;
+}
+
+
+// WZD o97p05
+// drake178: RP_CTY_CheckSpellWard()
+/*
+    determines if Stack is prohibited from entering the City due to Spell Ward
+    returns {ST_FALSE,ST_TRUE}
+*/
+int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+{
+// Unused_Array= word ptr -1Ch
+// Cant_Enter= word ptr -0Ah
+// Retn_Value= word ptr -8
+// Unused_Local= word ptr -6
+// Stack_Size= word ptr -4
+// Unit_Owner= word ptr -2
+    int16_t city_has_spellward;
+
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+#endif
+
+    city_has_spellward = ST_FALSE;
+
+
+
+    // TODO  CTY_CheckSpellWard(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+
+
+
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
+    dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
+#endif
+
+    return city_has_spellward;
+}
+
+
+// WZD o97p06
+// drake178: CTY_CheckSpellWard()
+int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+{
+    int16_t city_has_spellward;
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+#endif
+
+    city_has_spellward = ST_FALSE;
+
+#ifdef STU_DEBUG
+    // dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
+    dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
+#endif
+    return city_has_spellward;
+}
+
+
+
 // WZD o97p08
 // drake178: VGA_DrawHalfValue()
 // OON XREF: j_VGA_DrawHalfValue()

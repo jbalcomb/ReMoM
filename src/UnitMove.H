@@ -9,11 +9,24 @@
 #include "MoX.H"
 
 
+// ... in MoM_DEF.H  :shrug:
+// 00000000 struc s_Movement_Modes ; (sizeof=0x12)
+// 00000000 mm_UU_Cavalry dw ?
+// 00000002 mm_Forester dw ?
+// 00000004 mm_Mountaineer dw ?
+// 00000006 mm_Swimming dw ?
+// 00000008 mm_Sailing dw ?
+// 0000000A mm_Flying dw ?
+// 0000000C mm_PlanarTravel dw ?
+// 0000000E mm_WindWalking dw ?
+// 00000010 mm_Walking dw ?
+// 00000012 ends s_Movement_Modes
+
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
 
 
 /*

@@ -8,6 +8,8 @@
         ...
         Module: struct
         ...
+        Module: strings
+        ...
 */
 
 #include "MoX_TYPE.H"
@@ -31,6 +33,30 @@ uint16_t bit_field_test_bits[8] = {
 /*
     WZD seg022
 */
+
+
+// WZD s22p09
+// drake178: STR_ToUpper()
+// MoO2  Module: strings  String_To_Upper()
+void String_To_Upper(char * string)
+{
+    int16_t itr;
+
+    itr = 0;
+    while(string[itr] != '\0')
+    {
+        if(string[itr] >= 'a')
+        {
+            if(string[itr] <= 'z')
+            {
+                string[itr] = string[itr] + ('A' - 'a');
+            }
+        }
+        itr++;
+    }
+
+}
+
 
 // WZD s22p23
 int16_t Test_Bit_Field(int16_t bit_idx, uint8_t * bit_field)

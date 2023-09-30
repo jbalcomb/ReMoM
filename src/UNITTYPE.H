@@ -35,7 +35,19 @@ struct s_UNIT_TYPE
     /* 22 */  int16_t  Sound;
 };
 
+// sizeof=0x18  24
+struct s_RACE_TYPE
+{
+    /* 00 */ char ** Name;
+    /* 02 */ int16_t CantBuild_Count;
+    /* 04 */ int16_t CantBuild[7];  // enum BLD_TYPE
+    /* 12 */ int16_t Outpost_Growth_Pcnt;  // base 10
+    /* 14 */ int16_t Growth_Mod;
+    /* 16 */ int16_t HouseType;
+    /* 18 */
+};
 
+extern struct s_RACE_TYPE _unit_race_table[];
 
 /*
 

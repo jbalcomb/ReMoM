@@ -353,15 +353,22 @@ void Disable_Cancel(void)
 }
 
 
-// WZD s36p38
-int16_t Add_Multi_Hot_Key_Field(char * argString)
+// WZD s36p20
+// drake178: GUI_GetMouseFocus()
+int16_t Get_Mouse_Field(void)
 {
-    char varString[30];
+    return GUI_MouseFocusCtrl;
+}
+
+// WZD s36p38
+int16_t Add_Multi_Hot_Key_Field(char * string)
+{
+    char hotkey_string[30];
     int16_t itr_string_length = 0;
 
-    strcpy(varString, argString);
+    strcpy(hotkey_string, string);
 
-    while(varString[itr_string_length] != '\0' && itr_string_length < 30) itr_string_length++;
+    while(hotkey_string[itr_string_length] != '\0' && itr_string_length < 30) itr_string_length++;
 
     p_fields[fields_count].x1 = 500;
     p_fields[fields_count].y1 = 500;
@@ -369,33 +376,35 @@ int16_t Add_Multi_Hot_Key_Field(char * argString)
     p_fields[fields_count].y2 = 500;
     p_fields[fields_count].type = ft_MultiHotKey;
     p_fields[fields_count].help = ST_UNDEFINED;
-    p_fields[fields_count].Param0 = argString[0];  // TODO(JimBalcomb,20230612): fix Param0 - ? need char * ?
+    // p_fields[fields_count].Param0 = string[0];  // TODO(JimBalcomb,20230612): fix Param0 - ? need char * ?
+    p_fields[fields_count].string = string;
     p_fields[fields_count].Param1 = 0;
     p_fields[fields_count].Param2 = itr_string_length;
-    p_fields[fields_count].hotkey = varString[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
+    p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
 
     if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
     {
         p_fields[fields_count].hotkey -= 32;
     }
 
-    fields_count +=1;
+    fields_count += 1;
 
     return (fields_count - 1);
 }
 
 
 // WZD s36p42
-void Add_Button_Info(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
 {
 
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
 
-    p_fields[fields_count].Param0 = string;
+    // p_fields[fields_count].Param0 = string;
+    p_fields[fields_count].string = string;
 
-    p_fields[fields_count].x2 = FLIC_Get_Width(pict_seg) + p_fields[fields_count].x1 - 1;
-    p_fields[fields_count].y2 = FLIC_Get_Height(pict_seg) + p_fields[fields_count].y1 - 1;
+    p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg) - 1;
+    p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg) - 1;
 
     p_fields[fields_count].Font_Index = Get_Current_Font_Index();
     p_fields[fields_count].ColorSet1 = Get_Current_Font_Color();
@@ -424,7 +433,7 @@ void Add_Button_Info(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_s
 
 
 // WZD s36p43
-int16_t Add_Button_Field(int16_t xmin, int16_t ymin, int16_t string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
 {
 
     Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
@@ -531,6 +540,25 @@ void Clear_Fields(void)
     active_input_field_number = ST_UNDEFINED;
 
 }
+
+
+// WZD s36p63
+// drake178: GUI_SetLastControl()
+// MoO2  Module: fields  Clear_Fields_Above()
+void Clear_Fields_Above(int16_t field_num)
+{
+    fields_count = field_num + 1;
+    down_mouse_button = ST_UNDEFINED;
+}
+
+
+// WZD s36p64
+
+
+// WZD s36p65  AKA GUI_Init()  AKA IN_Init()
+// INPUT  void Init_Mouse_Keyboard(int16_t input_type);
+
+
 
 /*
 Moo2
@@ -717,6 +745,9 @@ signed integer (2 bytes) temp_value
 // WZD s36p72
 void Draw_Field(int16_t field_num, int16_t up_down_flag)
 {
+// Half_V_Spacing= word ptr -4
+    int16_t Half_Font_Height;
+
     int16_t screen_x;  // ~ Pointer_X()
     int16_t screen_y;  // ~ Pointer_Y()
     // ~ translate screen coordinates to field coordinates
@@ -734,7 +765,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
     {
         case ft_Button:                 /*  0  0x00 */  //drake178: TODO
         {
-
+            DLOG("switch(p_fields[field_num].type) case ft_Button");
 // Old-Code: .\MoM_Rasm\_s34p71c.c
 // #ifdef STU_DEBUG
 //                 dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
@@ -749,6 +780,45 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 //                     (((p_fields[field_num].Bottom - p_fields[field_num].Top) / 2) + p_fields[field_num].Top - Half_Font_Height),
 //                     p_fields[field_num].Param0
 //                 );
+            if(up_down_flag == 0)
+            {
+                DLOG("(up_down_flag == 0)");
+
+                FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
+                FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
+
+                Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
+                Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                Print_Centered(
+                    ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
+                    (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
+                    (char *)p_fields[field_num].string
+                );
+            }
+            else
+            {
+                DLOG("(up_down_flag != 0)");
+                if(p_fields[field_num].Param3 == 0)
+                {
+                    DLOG("(p_fields[field_num].Param3 == 0)");
+                    FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
+                    FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
+                }
+                else
+                {
+                    DLOG("(p_fields[field_num].Param3 != 0)");
+                    FLIC_Set_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg, 1);
+                }
+                FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
+
+                Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
+                Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                Print_Centered(
+                    (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
+                    ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
+                    (char *)p_fields[field_num].string
+                );
+            }
 
         } break;
         case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
@@ -800,7 +870,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             DLOG("switch(p_fields[field_num].type) case ft_Grid");
             if(up_down_flag == 1)  /* ¿ field up/down state: down ? */
             {
-                DLOG("if(up_down_flag == 1)");
+                DLOG("(up_down_flag == 1)");
 
                 /*
                     What it is, what is what, what is up?

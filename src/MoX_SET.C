@@ -1,17 +1,6 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
+#include "MoX.H"
 
-#include "MoX_SET.H"
-
-#include "MoX_DIR.H"
-
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <string.h>     /* strcpy() */
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
 
 
 uint8_t _magic_set[466];

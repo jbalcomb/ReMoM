@@ -71,19 +71,55 @@ SAMB_ptr LBX_Reload_Next(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head)
 // MoO2 Farload_Data
 SAMB_ptr LBX_Load_Data(char * lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size)
 {
-    return LBX_Load_Library_Data(lbx_name, entry_num, ST_NULL, sa_Single, start_rec, num_recs, record_size);
+    SAMB_ptr SAMB_data;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Data(lbx_name = %s, entry_num = %d, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, start_rec, num_recs, record_size);
+#endif
+
+    SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, ST_NULL, sa_Single, start_rec, num_recs, record_size);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Data(lbx_name = %s, entry_num = %d, start_rec = %d, num_recs = %d, record_size = %) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, start_rec, num_recs, record_size, SAMB_data);
+#endif
+
+    return SAMB_data;
 }
 // WZD s10p05
 // MoO2 Far_Reload_Data
 SAMB_ptr LBX_Reload_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size)
 {
-    return LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_First, start_rec, num_recs, record_size);
+    SAMB_ptr SAMB_data;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Reload_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
+#endif
+
+    SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_First, start_rec, num_recs, record_size);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Reload_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size, SAMB_data);
+#endif
+
+    return SAMB_data;
 }
 // WZD s10p06
 // MoO2 Far_Reload_Next_Data
 SAMB_ptr LBX_Reload_Next_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t start_rec, int16_t num_recs, int16_t record_size)
 {
-    return LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_Next, start_rec, num_recs, record_size);
+    SAMB_ptr SAMB_data;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Reload_Next_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
+#endif
+
+    SAMB_data = LBX_Load_Library_Data(lbx_name, entry_num, SAMB_head, sa_Next, start_rec, num_recs, record_size);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Reload_Next_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size, SAMB_data);
+#endif
+
+    return SAMB_data;
 }
 
 // MGC s10p10
@@ -173,19 +209,19 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     num_blocks = 1 + (entry_length / SZ_PARAGRAPH_B);
     switch(allocation_type)
     {
-        case 0:
+        case 0:  /* sa_Single */
         {
             SAMB_data = Allocate_Space_No_Header(num_blocks);
             if(SAMB_data == NULL) { Error_Handler(lbx_name, 3, entry_num, ST_NULL); }
         } break;
-        case 1:
+        case 1:  /* sa_First */
         {
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > (SA_GET_SIZE(SAMB_head) - 1)) { Error_Handler(lbx_name, 4, entry_num, (num_blocks - (SA_GET_SIZE(SAMB_head) + 1))); }
             SAMB_data = SAMB_head + 12;
             SA_SET_USED(SAMB_head, (num_blocks + 1));
         } break;
-        case 2:
+        case 2:  /* sa_Next */
         {
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > Get_Free_Blocks(SAMB_head)) { Error_Handler(lbx_name, 5, entry_num, (num_blocks - Get_Free_Blocks(SAMB_head))); }
@@ -240,14 +276,22 @@ Done:
 
 
 // WZD s10p11
+// MoO2  Module: farload  Farload_Data() |-> Farload_Library_Data()
 SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, int16_t allocation_type, uint16_t start_rec, uint16_t num_recs, uint16_t record_size)
 {
     SAMB_ptr SAMB_data;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size);
+#endif
 
 
     SAMB_data = ST_NULL;
 
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size);
+#endif
     return SAMB_data;
 }
 
@@ -298,11 +342,10 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     uint16_t read_size;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Data_Static()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: LBX_Load_Data_Static(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
 #endif
 
-
-    // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }
+    // if(entry_num < 0) { LBX_Error(lbx_name, 1, entry_num, NULL); }  // "<lbx_name>.LBX [entry <entry_num>] could not be found."
 
     if(lbxload_lbx_header_flag == ST_FALSE)
     {
@@ -312,9 +355,9 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
     File_Name_Base(lbx_name);
 
-    // SAMB_data = EMM_LBXR_DirectLoad(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
-    // file_hdr_fmt = 0;
-    // if(SAMB_data == 0)
+    // UU_SAMB_data = EMM_LBXR_DirectLoad(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
+    // current_extended_flag = ST_FALSE;
+    // if(UU_SAMB_data == 0)
 
     /*
         BEGIN: Current vs. Previous
@@ -351,7 +394,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
             END: Current != Previous
         */
     }
-    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, 8, entry_num, ST_NULL); }
+    if(lbxload_num_entries < entry_num) { Error_Handler(lbx_name, 8, entry_num, ST_NULL); }  // " exceeds number of LBX entries"
     /*
         END: Current vs. Previous
     */
@@ -390,7 +433,10 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     record_start = entry_start + (start_rec * rec_size);
     fseek(lbxload_fptr, record_start, 0);
 
-    // num_recs = max_records - start_rec
+
+    // entry_length = num_recs * rec_size;
+    // read_size = mod(entry_length, 60000);
+    // // num_recs = max_records - start_rec
     read_size = num_recs * rec_size;
 
 
@@ -414,7 +460,7 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     // MoO2: Check_Free();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Data_Static()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Data_Static(lbx_name = %s, entry_num = %d, SAMB_head = %p, start_rec = %d, num_recs = %d, record_size = %)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, start_rec, num_recs, record_size);
 #endif
 
 }

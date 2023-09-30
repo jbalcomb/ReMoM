@@ -86,7 +86,9 @@ char mapback_lbx_file[] = "MAPBACK";
 // WZD dseg:2A6A cnst_SPECIAL2_File db 'SPECIAL2',0
 // WZD dseg:2A73 cnst_ITEMS_File db 'ITEMS',0
 // WZD dseg:2A79 cnst_ITEMISC_File db 'ITEMISC',0
-// WZD dseg:2A81 special2_lbx_file db 'special2',0
+
+// WZD dseg:2A81
+char special2_lbx_file[] = "special2";
 
 // WZD dseg:2A81                            END: ovr052
 
@@ -175,8 +177,9 @@ void Load_WZD_Resources(void)
 // fxn_o52p14():
 // fxn_o52p15();
 // Load_SPELLDAT();  // ; loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
-// drake178: j_LBX_Load_Bldng_Data
-// Load_BUILDDAT();  // ; loads all records from BUILDDAT.LBX into a single allocation
+
+    Load_BUILDDAT();  // loads all records from BUILDDAT.LBX
+
 // fxn_o52p18();
 // drake178: LBX_Load_Click_SFX
 // Load_Button_Sounds();  // ; loads the standard and left click sounds
@@ -462,6 +465,34 @@ void Load_Unit_StatFigs(void)
 #endif
 
 }
+
+
+// WZD o52p29
+void Spellbook_Load_Small_Pictures(void)
+{
+    int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures()\n", __FILE__, __LINE__);
+#endif
+
+    _spellbook_small_seg = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);  // "SMLBOOK", ""
+    _spellbook_small_left_corner_seg = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);  // "BCORNERS", ""
+    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);  // "BCORNERS", ""
+
+    for(itr = 0; itr < 5; itr++)
+    {
+        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);  // "BOOKSYMB", ""
+    }
+
+    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);  // "SMALTEXT", ""
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o52p30
 void GFX_Swap_Cities(void)

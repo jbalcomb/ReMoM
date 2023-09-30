@@ -1,3 +1,10 @@
+/*
+    WIZARDS.EXE
+        ...
+        ovr052
+        ...
+*/
+
 #ifndef MOX_UNORG_H
 #define MOX_UNORG_H
 
@@ -20,9 +27,34 @@ extern int16_t PageFlipEffect;
 // WZD s01p03
 void PageFlip_FX(void);
 
+// WZD s01p04
+void Fade_Out(void);
+
+// WZD s01p05
+void Fade_In(void);
+
+
 
 /*
-    WIZARDS.EXE seg001 ovr060
+    WIZARDS.EXE  seg009
+*/
+
+// WZD s09p07
+void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt);
+
+
+
+/*
+    WIZARDS.EXE  ovr052
+*/
+
+// WZD o52p017
+// drake178: ?
+void Load_BUILDDAT(void);
+
+
+/*
+    WIZARDS.EXE  ovr060
 */
 
 // WZD o60p07

@@ -142,3 +142,21 @@ Right-Click Movement Map Grid Field
 
 END: Mouse Click
 END: Check Input against Fields
+
+
+### Section 4.1
+Game Buttons            {_info_button, _game_button, _cities_button, _magic_button, _armies_button, _spells_button}
+### Section 4.2
+Game Buttons            {_plane_button}
+
+### BEGIN: Game Buttons - Game Button
+
+### BEGIN: Game Buttons - Cities Button
+
+### BEGIN: Game Buttons - Magic Button
+
+### BEGIN: Game Buttons - Armies Button
+
+
+### BEGIN: Game Buttons - Plane Button
+

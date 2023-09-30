@@ -30,6 +30,8 @@
 */
 
 // WZD s21p07
+// ¿ MoO2  Module: animate  Set_Animation_Palette() ?
+// ¿ vs. MoO2  Draw_Palette() ?
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
     SAMB_ptr p_FLIC_File;
@@ -38,35 +40,61 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     byte_ptr flic_palette_data;
     int16_t itr;
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
+
     p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
 
     if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
     {
+        // DLOG("((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))");
         start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
         count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File): %04X\n", __FILE__, __LINE__, FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
+// #endif
     }
     else
     {
+        // DLOG("((frame_index != 0) && (FLIC_GET_FRAME_PALETTES(p_FLIC_File) != 0))");
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
         start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
         count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index): %04X\n", __FILE__, __LINE__, FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
+// #endif
     }
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: start: %d\n", __FILE__, __LINE__, start);
+//     dbg_prn("DEBUG: [%s, %d]: count: %d\n", __FILE__, __LINE__, count);
+//     dbg_prn("DEBUG: [%s, %d]: flic_palette_data: %p\n", __FILE__, __LINE__, flic_palette_data);
+// #endif
 
-    for(itr = start; itr < count; itr++)
+    // // for(itr = start; itr < count; itr++)
+    // for(itr = start; itr < (start + count); itr++)
+    // {
+    //     *(p_Palette + itr) = *(flic_palette_data + itr);
+    //     *(p_Palette + 768 + itr) = 1;
+    // }
+    for(itr = 0; itr < count; itr++)
     {
-        *(p_Palette + itr) = *(flic_palette_data + itr);
-        *(p_Palette + 768 + itr) = 1;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: *(flic_palette_data + itr): %02X\n", __FILE__, __LINE__, *(flic_palette_data + itr));
+// #endif
+        // DASM: MOVSW; MOVSB;
+        // ¿ ~== ? SET_2B, SET_1B ... rvr++;
+        *(p_Palette + (start * 3) + (itr * 3) + 0) = *(flic_palette_data + (itr * 3) + 0);
+        *(p_Palette + (start * 3) + (itr * 3) + 1) = *(flic_palette_data + (itr * 3) + 1);
+        *(p_Palette + (start * 3) + (itr * 3) + 2) = *(flic_palette_data + (itr * 3) + 2);
+
+        *(p_Palette + 768 + start + itr) = ST_TRUE;  // TODO  review, remaster, add manifest-constant for palette change flags offset
     }
 
-// DELETE      for(itr = start; itr < count; itr++)
-// DELETE      {
-// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 3) = 0x00;
-// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 2) = (*(flic_palette_data + (start * 3) + (itr * 3) + 0) << 2);
-// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 1) = (*(flic_palette_data + (start * 3) + (itr * 3) + 1) << 2);
-// DELETE          *(p_Palette_XBGR + (start * 4) + (itr * 4) + 0) = (*(flic_palette_data + (start * 3) + (itr * 3) + 2) << 2);
-// DELETE      }
-
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
+// #endif
 }
 
 
@@ -159,6 +187,10 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
+
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
     while (width--)
@@ -215,6 +247,163 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
         }
     }
 
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
+}
+
+
+// WZD s29p02
+// MoO2  Module: animate  Remap_Draw() |-> Remap_Draw_Animated_Sprite(); ... Module: remap  unsigned int picture_remap_color_list[256]  Address: 02:001B479C
+/*
+    MoO2
+    Module: animate
+    Remap_Draw_Animated_Sprite()  Address: 01:0012BAEB
+        signed integer (2 bytes) x_start
+        signed integer (2 bytes) y_start
+        pointer (4 bytes) frame_data
+            Locals:
+                signed integer (4 bytes) bitmap_size
+                signed integer (4 bytes) pos
+                signed integer (4 bytes) screen_pos
+                signed integer (4 bytes) x
+                signed integer (4 bytes) y
+                signed integer (4 bytes) i
+                signed integer (4 bytes) screen_start
+                signed integer (4 bytes) buffer_pos
+                signed integer (4 bytes) buffer_pos_word
+                signed integer (4 bytes) packet_end
+                signed integer (2 bytes) height
+                signed integer (2 bytes) data_count
+                signed integer (2 bytes) skip_count
+                signed integer (2 bytes) store_type
+                signed integer (2 bytes) line_skip
+                unsigned integer (4 bytes) data
+                pointer (4 bytes) frame_data_word
+    Module: remap
+    unsigned int picture_remap_color_list[256]  Address: 02:001B479C
+
+*/
+/*
+    draw a FLIC frame, using the remap colors
+*/
+void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data)
+{
+    unsigned char * bbuff_pos;  // TODO rename all these to screen_start
+    unsigned char * bbuff;  // TODO rename all these to screen_pos
+    unsigned char data_byte;
+
+    unsigned char packet_op;
+    unsigned char packet_byte_count;
+    unsigned char sequence_byte_count;
+    unsigned char delta_byte_count;
+    unsigned char itr_op_repeat;
+
+    uint8_t remap_block;
+    uint8_t remap_block_index;
+    uint8_t remap_color;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+#endif
+
+    bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
+//     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
+// 
+//     data = pict_seg + ofst;
+//     screen_pos = screen_start;
+//     itr_width = width;
+
+    while (width--)
+    {
+        bbuff = bbuff_pos++;
+        packet_op = *frame_data++;  // Frame Byte #1: Op/Count
+        if(packet_op == 0xFF)  /* Type: skip */
+        {
+            continue;
+        }
+        // HERE: not actually 0x80 and 0x00, just sign-bit set or unset
+        // not skip, so copy or decode  (MoO2 ¿ "store_type" ?)
+        packet_byte_count = *frame_data++;
+        if(packet_op == 0x80)  /* Type: decode */
+        {
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
+                packet_byte_count -= sequence_byte_count + 2;
+                while(sequence_byte_count--)
+                {
+                    data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
+                    if(data_byte >= 224)  /* op: repeat */
+                    {
+                        itr_op_repeat = (data_byte - 224) + 1;
+                        sequence_byte_count--;
+                        data_byte = *frame_data++;
+                        if(data_byte >= 232)
+                        {
+                            remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
+                            while(itr_op_repeat--)
+                            {
+                                // repeatedly, get the existing palette index; remap it; replace it; move down;
+                                remap_block_index = *bbuff;
+                                remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
+                                *bbuff = remap_color;
+                                bbuff += SCREEN_WIDTH;
+                            }
+                        }
+                        else
+                        {
+                            while(itr_op_repeat--)
+                            {
+                                *bbuff = data_byte;
+                                bbuff += SCREEN_WIDTH;
+                            }
+                        }
+                    }
+                    else  /* op: copy */
+                    {
+                        *bbuff = data_byte;
+                        bbuff += SCREEN_WIDTH;
+                    }
+                }
+            } while(packet_byte_count >= 1);
+        }
+        if(packet_op == 0x00)  /* Type: copy */
+        {
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
+                packet_byte_count -= sequence_byte_count + 2;
+
+                /* ¿  ? */
+
+                while(sequence_byte_count--)
+                {
+                    // *bbuff = *frame_data++;
+                    // data_byte = *data++;
+                    data_byte = *frame_data++;
+                    if(data_byte >= 232)
+                    {
+                        remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
+                        remap_block_index = *bbuff;
+                        remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
+                        *bbuff = remap_color;
+                    }
+                    else
+                    {
+                        *bbuff = data_byte;
+                    }
+                    bbuff += SCREEN_WIDTH;
+                }
+            } while(packet_byte_count >= 1);
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+#endif
 }
 
 
@@ -351,39 +540,103 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 }
 
 
-// WZD s30p11
-void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File)
+// WZD s30p10
+// drake178: LBX_IMG_LoadPalette()
+// ¿ MoO2  Module: animate  Draw_Palette() ?
+/*
+    tests 'frames have palettes'
+    loads palette from frame 0
+*/
+void Load_Palette_From_Animation(SAMB_ptr picture)
 {
-    int16_t current_frame_index;
-    int16_t next_frame_index;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
+#endif
+
+    // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
+
+    if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
+    {
+        DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
+        FLIC_Load_Palette(picture, 0);
+    }
+    else
+    {
+        DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
+#endif
+}
+
+
+// WZD s30p11
+// MoO2  Module: animate  Draw(); |-> Remap_Draw(); Draw_No_Glass(); ... Remap_Draw_Animated_Sprite();
+void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
+{
+    int16_t current_frame;
+    int16_t next_frame;
     unsigned int flic_frame_offset;
     unsigned short flic_frame_offset_sgmt;
     unsigned short flic_frame_offset_ofst;
     byte_ptr p_FLIC_Frame;
+    uint8_t remap_flag;
 
-    // ? MEM_Copy_Far(&flic_hdr, 0, 0, p_FLIC_File, 16) ?
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Draw(x_start = %d, y_start = %d, picture = %p)\n", __FILE__, __LINE__, x_start, y_start, picture);
+// #endif
 
-    current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File);
-    next_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_File) + 1;
-    if(next_frame_index < FLIC_GET_FRAME_COUNT(p_FLIC_File))
+    // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
+
+    current_frame = FLIC_GET_CURRENT_FRAME(picture);
+    next_frame = FLIC_GET_CURRENT_FRAME(picture) + 1;
+    if(next_frame < FLIC_GET_FRAME_COUNT(picture))
     {
-        FLIC_SET_CURRENT_FRAME(p_FLIC_File, next_frame_index);
+        // DLOG("(next_frame < FLIC_GET_FRAME_COUNT(picture))");
+        FLIC_SET_CURRENT_FRAME(picture, next_frame);
     }
     else
     {
-        FLIC_SET_CURRENT_FRAME(p_FLIC_File, FLIC_GET_LOOP_FRAME(p_FLIC_File));
+        // DLOG("(next_frame >= FLIC_GET_FRAME_COUNT(picture))");
+        FLIC_SET_CURRENT_FRAME(picture, FLIC_GET_LOOP_FRAME(picture));
     }
 
-    if((FLIC_GET_PALETTE_HEADER_OFFSET(p_FLIC_File) != 0))
+    if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
-        FLIC_Load_Palette(p_FLIC_File, current_frame_index);
+        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
+        FLIC_Load_Palette(picture, current_frame);
+    }
+    else
+    {
+        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
     }
 
-    flic_frame_offset = FLIC_GET_FRAME_OFFSET(p_FLIC_File, current_frame_index);
-    p_FLIC_Frame = p_FLIC_File + (flic_frame_offset) + 1;
+    /*
+        Test EMM_Handle_Number
+            FLIC_Draw_Frame_EMM()
+    */
 
-    FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(p_FLIC_File), p_FLIC_Frame);
+    flic_frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
+    p_FLIC_Frame = picture + (flic_frame_offset) + 1;
 
+    remap_flag = FLIC_GET_REMAP_FLAG(picture);
+
+    if(remap_flag == ST_FALSE)
+    {
+        // DLOG("(remap_flag == ST_FALSE)");
+        FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+    }
+    else
+    {
+        DLOG("(remap_flag != ST_FALSE)");
+        // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
+        FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+    }
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Draw(x_start = %d, y_start = %d, picture = %p)\n", __FILE__, __LINE__, x_start, y_start, picture);
+// #endif
 }
 
 
@@ -767,10 +1020,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
-            DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
+            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                DLOG("transition: outside pixel, inside state");
+                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -778,10 +1031,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
+            // Struggle-Mode  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
             if(outside_state != ST_FALSE)
             {
-                DLOG("transition: inside pixel, outside state");
+                // Struggle-Mode  DLOG("transition: inside pixel, outside state");
                 src_ofst -= height;  /* previous column */
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
                 src_ofst += height;
@@ -856,10 +1109,10 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)  /* outside pixel */
         {
-            DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
+            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                DLOG("transition: outside pixel, inside state");
+                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -867,10 +1120,10 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color && pixel < 224)");
+            // Struggle-Mode  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color && pixel < 224)");
             if(outside_state != ST_FALSE)
             {
-                DLOG("transition: inside pixel, outside state");
+                // Struggle-Mode  DLOG("transition: inside pixel, outside state");
                 *(src_sgmt + (src_ofst - 2)) = outline_color;
             }
             outside_state = ST_FALSE;
@@ -898,19 +1151,19 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// Struggle-Mode  #ifdef STU_DEBUG
+// Struggle-Mode      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+// Struggle-Mode      {
+// Struggle-Mode          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+// Struggle-Mode      }
+// Struggle-Mode  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)  /* outside pixel */
         {
-            DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
+            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                DLOG("transition: outside pixel, inside state");
+                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -918,10 +1171,10 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color && pixel < 224)");
+            // Struggle-Mode  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color && pixel < 224)");
             if(outside_state != ST_FALSE)
             {
-                DLOG("transition: inside pixel, outside state");
+                // Struggle-Mode  DLOG("transition: inside pixel, outside state");
                 src_ofst -= height;  /* previous column */
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
                 src_ofst += height;
@@ -1262,6 +1515,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 // #endif
             if(data_byte != ST_TRANSPARENT)  /* skip */
             {
+                // TODO  ¿ should be `if(data_byte >= 232) ?
                 if(data_byte >= 233)  /* remap colors */
                 {
                     remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
