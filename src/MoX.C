@@ -56,6 +56,8 @@ void Screen_Control(void)
 
             case scr_Continue:
             {
+                int16_t itr_world_size;
+
                 DLOG("switch(current_screen)  case scr_Continue:");
                 // BEGIN: WZD main()
                 // Load_SAVE_GAM(-1);  // SAVETEST.GAM
@@ -66,7 +68,6 @@ void Screen_Control(void)
                 _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
 
                 // HACK:  visibility to support highlighting the Plane shift feature, for the public alpha demo release video
-                int16_t itr_world_size;
                 for(itr_world_size = 0; itr_world_size < WORLD_SIZE; itr_world_size++)
                 {
                     TBL_Scouting[((1 * WORLD_SIZE) + itr_world_size)] = TBL_Scouting[((0 * WORLD_SIZE) + itr_world_size)];

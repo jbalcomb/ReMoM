@@ -2,7 +2,6 @@
 #include "Mox.H"
 
 #include "Windows.h"
-#include "sysinfoapi.h"
 
 /*
 https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-gettickcount

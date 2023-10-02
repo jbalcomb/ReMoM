@@ -1831,6 +1831,7 @@ Done:
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
 #endif
+	return;
 }
 
 

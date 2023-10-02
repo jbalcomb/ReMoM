@@ -14,11 +14,15 @@ x86/
 # TBD//Collab  *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.ncb
+*.suo
+*.user
 
 CppProperties.json
 
 build/
 Debug/
+Release/
 MoM-Rasm/
 
 # local debug  //Hand-Made Hero

@@ -1,6 +1,5 @@
 #include <windows.h>
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
-#include <timeapi.h>    /* timeBeginPeriod() */
 #include <stdint.h>
 
 #include "win_PFL.hpp"
@@ -444,7 +443,7 @@ void Init_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, 
     Buffer->Info.bmiHeader.biWidth = Buffer->Width;
     Buffer->Info.bmiHeader.biHeight = -Buffer->Height; // negative value: top-down
     BitmapMemorySize = Buffer->BytesPerPixel * (Buffer->Width * Buffer->Height);
-    Buffer->Memory = VirtualAlloc(nullptr, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    Buffer->Memory = VirtualAlloc(NULL, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if(Buffer->Memory == NULL)
     {
         // ErrorExit(TEXT("VirtualAlloc"));
@@ -576,7 +575,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT pt;
             pt.x = GET_X_LPARAM(lParam);
             pt.y = GET_Y_LPARAM(lParam);
-            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000001);
+            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 1 /*0b00000001*/);
         } break;
         case WM_RBUTTONDOWN:
         {
@@ -584,7 +583,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT pt;
             pt.x = GET_X_LPARAM(lParam);
             pt.y = GET_Y_LPARAM(lParam);
-            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000010);
+            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 2 /*0b00000010*/);
         } break;
 
 

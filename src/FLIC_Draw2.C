@@ -313,7 +313,7 @@ void FLIC_Draw_Frame_2x_XBGR(int16_t x_start, int16_t y_start, int16_t width, by
                         // // *bbuff = data_byte;
                         // // bbuff += SCREEN_WIDTH;
                         // bbuff = gfxscale_draw_pixel(bbuff, data_byte, pitch, scale);
-                        for (int sy = 0; sy < scale; sy++)
+                        for (sy = 0; sy < scale; sy++)
                         {
                             for (sx = 0; sx < scale; sx++)
                             {
@@ -342,7 +342,7 @@ void FLIC_Draw_Frame_2x_XBGR(int16_t x_start, int16_t y_start, int16_t width, by
                     // data_byte = *frame_data++;
                     // bbuff = gfxscale_draw_pixel(bbuff, data_byte, pitch, scale);
                     data_byte = *frame_data++;
-                    for (int sy = 0; sy < scale; sy++)
+                    for (sy = 0; sy < scale; sy++)
                     {
                         for (sx = 0; sx < scale; sx++)
                         {

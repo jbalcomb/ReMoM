@@ -17,6 +17,7 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
 
 */
 #include "MoM.H"
+#include "stu_dbg.h"
 
 #include "MainScr.H"
 #include "MainScr_Maps.H"
