@@ -10,8 +10,8 @@
 # VS - build directory
 x64/
 x86/
-*.sln
-*.vcxproj
+# TBD//Collab  *.sln
+# TBD//Collab  *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
 
@@ -20,6 +20,14 @@ CppProperties.json
 build/
 Debug/
 MoM-Rasm/
+
+# local debug  //Hand-Made Hero
+misc/
+
+# DELETE - old VS hack-job
+MoM-Rasm/
+MoM_Rasm.sln
+MoM_Rasm.vcxproj
 
 
 # MoM
