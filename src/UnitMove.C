@@ -111,11 +111,42 @@ void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, 
 
 
 // WZD o71p03
-// int16_t UNIT_IsFlying(int16_t unit_idx);
+int16_t UNIT_HasAirTravel(int16_t unit_idx)
+{
+    int16_t unit_type;
+    int16_t has_air_travel;
+    int16_t tmp_unit_enchantments_loword;
+    int16_t tmp_unit_enchantments_hiword;
+
+    has_air_travel = ST_FALSE;
+
+    unit_type = _UNITS[unit_idx].type;
+
+    if((_unit_type_table[unit_type].Move_Flags & M_Flying) != 0)
+    {
+        has_air_travel = ST_TRUE;
+    }
+
+    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;
+    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;
+
+    if(
+        ((tmp_unit_enchantments_hiword & UE_WINDWALKING) != 0) || 
+        ((tmp_unit_enchantments_hiword & UE_FLIGHT) != 0)
+    )
+    {
+        has_air_travel = ST_TRUE;
+    }
+    
+    if( (_UNITS[unit_idx].Mutations & CC_Flight) != 0)
+    {
+        has_air_travel = ST_TRUE;
+    }
+
+    return has_air_travel;
+}
 
 // WZD o71p04
-// AKA UNIT_IsWindWalker()
-// "HasWindWalking", because manual says that is the name of the "Movement Type"
 int16_t UNIT_HasWindWalking(int16_t unit_idx)
 {
     int16_t has_wind_walking;
@@ -128,7 +159,10 @@ int16_t UNIT_HasWindWalking(int16_t unit_idx)
     tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;  // // ; enum UE_FLAGS_L
     tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;  // // ; enum UE_FLAGS_H
 
-    if( ((tmp_unit_enchantments_hiword & UE_WINDWALKING) == ST_TRUE) || ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) == ST_TRUE) )
+    if(
+        ((tmp_unit_enchantments_hiword & UE_WINDWALKING) == ST_TRUE) ||
+        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) == ST_TRUE)
+    )
     {
         has_wind_walking = ST_TRUE;
     }
@@ -136,21 +170,140 @@ int16_t UNIT_HasWindWalking(int16_t unit_idx)
     return has_wind_walking;
 }
 
+
 // WZD o71p05
-// int16_t UNIT_IsOceanFaring(int16_t unit_idx);
+int16_t UNIT_HasWaterTravel(int16_t unit_idx)
+{
+    int16_t unit_type;
+    int16_t has_water_travel;
+    int16_t tmp_unit_enchantments_loword;
+    int16_t tmp_unit_enchantments_hiword;
+
+    has_water_travel = ST_FALSE;
+
+    unit_type = _UNITS[unit_idx].type;
+
+    if((_unit_type_table[unit_type].Move_Flags & M_Sailing) != 0)
+    {
+        has_water_travel = ST_TRUE;
+    }
+    
+    if((_unit_type_table[unit_type].Move_Flags & M_Swimming) != 0)
+    {
+        has_water_travel = ST_TRUE;
+    }
+
+    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;
+    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;
+
+    if(
+        ((tmp_unit_enchantments_loword & UE_WATERWALKING) != 0)
+    )
+    {
+        has_water_travel = ST_TRUE;
+    }
+    
+    return has_water_travel;
+}
+
+
 // WZD o71p06
 // int16_t UNIT_IsSailing(int16_t unit_idx);
 // WZD o71p07
 // int16_t UNIT_IsSwimming(int16_t unit_idx);
 // WZD o71p08
 // int16_t UNIT_ReturnZero(int16_t unit_idx);
+
 // WZD o71p09
-// int16_t UNIT_HasItemSwim(int16_t unit_idx);
+int16_t UNIT_HasWaterTravelItem(int16_t unit_idx)
+{
+    uint32_t UU_item_enchantments;
+    int16_t has_water_travel_item;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_HasWaterTravelItem(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+#endif
+
+
+    if(_UNITS[unit_idx].Hero_Slot != -1)
+    {
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
+#endif
+
+    // // tmp_item_enchantments_loword = Active_Unit->BU_REC.Item_UEs_L;
+    // // tmp_item_enchantments_hiword = Active_Unit->BU_REC.Item_UEs_H;
+    // uint32_t items_enchantments = Active_Unit->BU_REC.Item_UEs;
+
+    if(
+        ( (Active_Unit->Item_UEs & UE_WINDWALKING) != 0) ||
+        ( (Active_Unit->Item_UEs & UE_FLIGHT) != 0)
+    )
+    {
+        has_water_travel_item = ST_TRUE;
+    }
+    }
+    else
+    {
+        has_water_travel_item = ST_FALSE;
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: UNIT_HasWaterTravelItem(unit_idx = %d) { has_water_travel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_water_travel_item);
+#endif
+
+    return has_water_travel_item;
+}
+
+
 // WZD o71p010
-// int16_t UNIT_HasItemFlight(int16_t unit_idx);
+int16_t UNIT_HasAirTravelItem(int16_t unit_idx)
+{
+    uint32_t UU_item_enchantments;
+    int16_t has_air_travel_item;
+
+    // // int16_t tmp_item_enchantments_loword;
+    // // int16_t tmp_item_enchantments_hiword;
+    // uint32_t items_enchantments;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_HasAirTravelItem(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+#endif
+
+    if(_UNITS[unit_idx].Hero_Slot != -1)
+    {
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
+#endif
+
+    // // tmp_item_enchantments_loword = Active_Unit->BU_REC.Item_UEs_L;
+    // // tmp_item_enchantments_hiword = Active_Unit->BU_REC.Item_UEs_H;
+    // uint32_t items_enchantments = Active_Unit->BU_REC.Item_UEs;
+
+    if(
+        ( (Active_Unit->Item_UEs & UE_WINDWALKING) != 0) ||
+        ( (Active_Unit->Item_UEs & UE_FLIGHT) != 0)
+    )
+    {
+        has_air_travel_item = ST_TRUE;
+    }
+    }
+    else
+    {
+        has_air_travel_item = ST_FALSE;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: UNIT_HasAirTravelItem(unit_idx = %d) { has_air_travel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_air_travel_item);
+#endif
+
+    return has_air_travel_item;
+}
 
 // WZD o71p011
-// AKA UNIT_HasInvisibility()
 int16_t UNIT_HasInvisibility(int16_t unit_idx)
 {
     int16_t has_invisibility;
@@ -212,36 +365,39 @@ int16_t UNIT_HasInvisibility(int16_t unit_idx)
 // int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
 
 // WZD o71p013
-// drake178: UNIT_HasPlanarItem()
 int16_t Unit_Has_Planar_Travel_Item(int16_t unit_idx)
 {
     int16_t has_planar_travel_item;
-    uint32_t UU_item_attribute_flags;
+    uint32_t UU_item_enchantments;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_Planar_Travel_Item(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
 #endif
 
-// TODO      if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
-// TODO      {
-// TODO  //         // drake178: ; converts item powers into attack and enchantment flags, applying them to the battle unit along with any stat boosts from items; with the flags being zeroed instead if no effects apply or the unit is not a hero  ; returns the item unit enchantment flags
-// TODO  //         UU_item_attribute_flags = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
-// TODO  // 
-// TODO  //         // drake178: ; 8 LBX_Alloc_Space paragraphs (128 bytes)  ; contains a single battle unit record (110 bytes)
-// TODO  // 
-// TODO  // les     bx, [Active_Unit@]              
-// TODO  // mov     ax, [es:bx+BU_REC.Item_UEs_H]
-// TODO  // mov     dx, [es:bx+BU_REC.Item_UEs_L]
-// TODO  // and     dx, 0
-// TODO  // and     ax, UE_Planar_Travel
-// TODO  // or      dx, ax
-// TODO      }
-// TODO      else
-// TODO      {
-// TODO          has_planar_travel_item = ST_FALSE;
-// TODO      }
+    if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
+    {
 
-    has_planar_travel_item = ST_FALSE;
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
+#endif
+
+        if(
+            ( (Active_Unit->Item_UEs & UE_PLANARTRAVEL) != 0)
+        )
+        {
+            has_planar_travel_item = ST_TRUE;
+        }
+        else
+        {
+            has_planar_travel_item = ST_FALSE;
+        }
+        
+    }
+    else
+    {
+        has_planar_travel_item = ST_FALSE;
+    }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_Planar_Travel_Item(unit_idx = %d)  { has_planar_travel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_planar_travel_item);

@@ -1,10 +1,178 @@
 /*
     WIZARDS.EXE
-    ovr116
+        ovr116
 */
 
 #include "MoX.H"
 
+
+
+/*
+    WIZARDS.EXE  ovr116
+*/
+
+// WZD o116p01
+// drake178: UNIT_BU_ApplyItems()
+uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec)
+{
+    int16_t hero_slot_idx;
+    int16_t unit_owner_idx;
+    uint32_t Item_Flags;
+
+    int16_t itr_item_count;
+    int16_t item_idx;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_BU_ApplyItems()\n", __FILE__, __LINE__);
+#endif
+
+    BU_Rec->Item_UEs = 0;
+    BU_Rec->Melee_ATK_Flags = 0;
+    BU_Rec->Ranged_ATK_Flags = 0;
+
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    hero_slot_idx = _UNITS[unit_idx].Hero_Slot;
+
+
+    if(hero_slot_idx == ST_UNDEFINED)
+    {
+        goto Return_Zero;
+    }
+    else
+    {
+        Item_Flags = 0;
+
+        for(itr_item_count = 0; itr_item_count < 3; itr_item_count++)
+        {
+
+            if(_players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_item_count] != ST_UNDEFINED)
+            {
+                item_idx = _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_item_count];
+
+                BU_Item_To_UEFlags(item_idx, BU_Rec);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BU_Rec->Item_UEs: 0x%08X\n", __FILE__, __LINE__, BU_Rec->Item_UEs);
+#endif
+
+
+
+            }
+
+        }
+
+        goto Return_Flags;
+    }
+
+    goto Done;
+
+Return_Zero:
+    Item_Flags = 0;
+    goto Done;
+
+Return_Flags:
+// les     bx, [bp+BU_Rec@]
+// mov     ax, [word ptr bp+Return_Flags+2]
+// mov     dx, [word ptr bp+Return_Flags]
+// or      dx, [word ptr es:bx+BU_REC.Item_UEs]
+// or      ax, [word ptr es:bx+(BU_REC.Item_UEs+2)]
+// mov     [word ptr bp+Return_Flags+2], ax
+// mov     [word ptr bp+Return_Flags], dx
+// mov     dx, [word ptr bp+Return_Flags+2]
+// mov     ax, [word ptr bp+Return_Flags]
+
+Done:
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_BU_ApplyItems()\n", __FILE__, __LINE__);
+#endif
+
+    return Item_Flags;
+}
+
+// WZD o116p02
+// drake178: BU_Item_To_UEFlags()
+void BU_Item_To_UEFlags(int16_t item_idx, struct s_BU_REC * BU_Rec)
+{
+    uint32_t item_enchants;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: BU_Item_To_UEFlags()\n", __FILE__, __LINE__);
+#endif
+
+    // IP_Cloak_Of_Fear
+
+    // IP_Wraith_Form
+
+    // IP_Regeneration
+
+    // IP_Pathfinding
+
+    if((TBL_Items[item_idx].Powers & 0x01000000) != 0)  /* IP_Water_Walking */
+    {
+        item_enchants = item_enchants | 0x01000000;  /* UE_Water_Walking */
+    }
+
+    // IP_Resist_Elements
+
+    // IP_Elemental_Armour
+
+    // IP_Endurance
+
+    if((TBL_Items[item_idx].Powers & 0x80000000) != 0)  /* IP_Invisibility */
+    {
+        item_enchants = item_enchants | 0x80000000;  /* UE_Flight */
+    }
+
+    if((TBL_Items[item_idx].Powers & 0x00000002) != 0)  /* IP_Flight */
+    {
+        item_enchants = item_enchants | 0x00000002;  /* UE_Flight */
+    }
+
+    // IP_Resist_Magic
+
+    // IP_Guardian_Wind
+
+    // IP_Magic_Immunity
+
+    // IP_True_Sight
+
+    // IP_Bless
+
+    // IP_Lion_Heart
+
+    if((TBL_Items[item_idx].Powers & 0x00001000) != 0)  /* IP_Planar_Travel */
+    {
+        item_enchants = item_enchants | 0x00001000;  /* UE_Planar_Travel */
+    }
+
+    // IP_Righteousness
+
+    // IP_Invulnerability
+
+    // IP_Holy_Avenger
+
+
+// les     bx, [bp+BU_Rec@]
+// mov     ax, [word ptr es:bx+(BU_REC.Item_UEs+2)]
+// mov     dx, [word ptr es:bx+BU_REC.Item_UEs]
+// or      dx, [word ptr bp+item_enchants]
+// or      ax, [word ptr bp+item_enchants+2]
+// les     bx, [bp+BU_Rec@]
+// mov     [word ptr es:bx+(BU_REC.Item_UEs+2)], ax
+// mov     [word ptr es:bx+BU_REC.Item_UEs], dx
+
+    BU_Rec->Item_UEs = item_enchants;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: BU_Item_To_UEFlags()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
+// WZD o116p03
 
 
 // WZD o116p04
@@ -135,3 +303,12 @@ int16_t UNIT_GetHitsPerFig(int16_t unit_idx)
     return hit_points;
 
 }
+
+// WZD o116p05
+// WZD o116p06
+// WZD o116p07
+// WZD o116p08
+// WZD o116p09
+// WZD o116p10
+// WZD o116p11
+// WZD o116p12

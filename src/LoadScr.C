@@ -20,6 +20,7 @@ MoO2  Module: LOADSAVE
 #include "MoX.H"
 #include "LoadScr.H"
 #include "MainScr.H"
+#include "MainScr_Maps.H"
 
 
 
@@ -797,13 +798,15 @@ void GAME_Overland_Init(void)
 
     _unit = 0;  // 0: None / No Unit
 
-    // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // // _active_world_x = _FORTRESSES[0].world_x;
-    // // _active_world_y = _FORTRESSES[0].world_y;
-    // OVL_Map_CenterX = _FORTRESSES[0].world_x;
-    // OVL_Map_CenterY = _FORTRESSES[0].world_y;
-    OVL_Map_CenterX = 24;
-    OVL_Map_CenterY = 16;
+    // // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
+    // // // _active_world_x = _FORTRESSES[0].world_x;
+    // // // _active_world_y = _FORTRESSES[0].world_y;
+    // // OVL_Map_CenterX = _FORTRESSES[0].world_x;
+    // // OVL_Map_CenterY = _FORTRESSES[0].world_y;
+    // OVL_Map_CenterX = 24;
+    // OVL_Map_CenterY = 16;
+    _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].world_x;
+    _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].world_y;
 
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
@@ -832,7 +835,6 @@ void GAME_Overland_Init(void)
     GFX_Swap_Cities();
 
 
-    // TODO  j_WIZ_NextIdleStack(_human_player_idx, &_curr_world_x, &_curr_world_y, &_world_plane)
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
 
@@ -861,10 +863,13 @@ void GAME_Overland_Init(void)
 // NOTE: no XREFs to j_G_WLD_StaticAssetRfrsh()
 void G_WLD_StaticAssetRfrsh(void)
 {
+// LFSR_LO= word ptr -4
+// LFSR_HI= word ptr -2
+
     int16_t itr_cities;
     int16_t itr_players;
 
-//    Randomize();
+    Randomize();
 
 //    LFSR_HI = 0;
 //    LFSR_LO = 0x03E8;
@@ -874,24 +879,28 @@ void G_WLD_StaticAssetRfrsh(void)
 //    }
 
     all_units_moved = ST_FALSE;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
+#endif
+
     // G_OVL_MapVar4 = 1;  // ? ST_TRUE ?
     Reset_Draw_Active_Stack();
     _map_plane = 0;  // Arcanus
 
-//    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
-//    {
-//        CTY_Recalculate(itr_cities);
-//    }
-
-//    for(itr_players = 0; itr_players < _num_players; itr_players++)
-//    {
-//        WIZ_RefreshResearch(itr_players);
-//    }
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        // TODO  CTY_Recalculate(itr_cities);
+    }
 
 //    _WIZ_SetPowerBases();
 
 //    SBK_SomePageSaveVar = 0;
 //    CMB_SpellBookPage = 0;
 //    SBK_Candidate_Page = 0;
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        // TODO  WIZ_RefreshResearch(itr_players);
+    }
 
 }

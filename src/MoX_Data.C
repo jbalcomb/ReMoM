@@ -328,7 +328,7 @@ uint8_t * spell_data_table;
 
 
 // WZD dseg:9136
-SAMB_ptr TBL_Items;
+struct s_ITEM * TBL_Items;
 
 // WZD dseg:913A
 SAMB_ptr TBL_Premade_Items;
@@ -336,7 +336,7 @@ SAMB_ptr TBL_Premade_Items;
 // IMG_USW_Items ITEM_ICONS
 
 // WZD dseg:9226
-SAMB_ptr Active_Unit;
+struct s_BU_REC * Active_Unit;                       // alloc in Allocate_Data_Space()
 
 // WZD dseg:922A
 // TBL_BattleUnits
@@ -860,9 +860,12 @@ int16_t _prev_world_y;
 int16_t _prev_world_x;
 
 // WZD dseg:BD82 
-int16_t OVL_Map_CenterY;  // AKA _active_world_y
+// int16_t OVL_Map_CenterY;  // AKA _active_world_y
+int16_t _active_world_y;  // AKA _active_world_y
 // WZD dseg:BD84 
-int16_t OVL_Map_CenterX;  // AKA _active_world_x
+// int16_t OVL_Map_CenterX;  // AKA _active_world_x
+int16_t _active_world_x;  // AKA _active_world_x
+
 // WZD dseg:BD86 
 int16_t _map_plane;  // AKA _world_plane
 // WZD dseg:BD88 

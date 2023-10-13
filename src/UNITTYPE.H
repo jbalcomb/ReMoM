@@ -27,7 +27,7 @@ struct s_UNIT_TYPE
     /* 15 */  int8_t   Figures;                 /* base 10 */
     /* 16 */  int8_t   Construction;            /* base 10 */
     /* 17 */  int8_t   Spec_Att_Attr;           /* base 10 */
-    /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */
+    /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
     /* 1A */  uint16_t Attribs_1;               /* enum ATTRIB_1 */
     /* 1C */  uint16_t Attribs_2;               /* enum ATTRIB_2 */
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */
