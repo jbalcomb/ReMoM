@@ -180,7 +180,14 @@ char * field_names[];
     normal, shift, control, alt
     ~ [4][128]
     enum Keystroke_Modifier { none, shift, control, alt }, provided by Platform
+    
     NOTE: for SCCC, "a" is normal, "A" is shifted
+
+    Keypad  NumPad
+    ¿ Num Lock ?
+    ¿ Arrow Keys vs. NumPad ?
+
+
 */
 enum ScanCodeCharCode
 {
@@ -295,71 +302,102 @@ enum ScanCodeCharCode
     SCCC_Alt_Z = 0x2C00,    // "Alt" key + "Z" key
 
 /*
-Key	 Normal    Shifted   w/Ctrl    w/Alt
-1	  0231	    0221		7800
-2	  0332	    0340      0300	7900
-3	  0433	    0423		7A00
-4	  0534	    0524		7B00
-5	  0635	    0625		7C00
-6	  0736	    075E      071E	7D00
-7	  0837	    0826		7E00
-8	  0938	    092A		7F00
-9	  0A39	    0A28		8000
-0	  0B30	    0B29		8100
+Key     Normal    Shifted   w/Ctrl    w/Alt
+1      0231        0221        7800
+2      0332        0340      0300    7900
+3      0433        0423        7A00
+4      0534        0524        7B00
+5      0635        0625        7C00
+6      0736        075E      071E    7D00
+7      0837        0826        7E00
+8      0938        092A        7F00
+9      0A39        0A28        8000
+0      0B30        0B29        8100
 */
 /*
-Key	 Normal    Shifted   w/Ctrl    w/Alt
--	  0C2D	    0C5F      0C1F	8200
-=	  0D3D	    0D2B		8300
-[	  1A5B	    1A7B      1A1B	1A00
-]	  1B5D	    1B7D      1B1D	1B00
-;	  273B	    273A		2700
-'	  2827	    2822
-`	  2960	    297E
-\	  2B5C	    2B7C      2B1C	2600 (same as Alt L)
-,	  332C	    333C
-.	  342E	    343E
-/	  352F	    353F
+Key     Normal    Shifted   w/Ctrl    w/Alt
+-      0C2D        0C5F      0C1F    8200
+=      0D3D        0D2B        8300
+[      1A5B        1A7B      1A1B    1A00
+]      1B5D        1B7D      1B1D    1B00
+;      273B        273A        2700
+'      2827        2822
+`      2960        297E
+\      2B5C        2B7C      2B1C    2600 (same as Alt L)
+,      332C        333C
+.      342E        343E
+/      352F        353F
 */
-    SCCC_F10 = 0x4400,    // "F10" key
+    SCCC_F10 = 0x4400,      // "F10" key
 /*
-Key	 Normal    Shifted   w/Ctrl    w/Alt
-F1	  3B00	    5400      5E00	6800
-F2	  3C00	    5500      5F00	6900
-F3	  3D00	    5600      6000	6A00
-F4	  3E00	    5700      6100	6B00
-F5	  3F00	    5800      6200	6C00
-F6	  4000	    5900      6300	6D00
-F7	  4100	    5A00      6400	6E00
-F8	  4200	    5B00      6500	6F00
-F9	  4300	    5C00      6600	7000
-F10	  4400	    5D00      6700	7100
-F11	  8500	    8700      8900	8B00
-F12	  8600	    8800      8A00	8C00
+Key     Normal      Shifted   w/Ctrl  w/Alt
+F1      3B00        5400      5E00    6800
+F2      3C00        5500      5F00    6900
+F3      3D00        5600      6000    6A00
+F4      3E00        5700      6100    6B00
+F5      3F00        5800      6200    6C00
+F6      4000        5900      6300    6D00
+F7      4100        5A00      6400    6E00
+F8      4200        5B00      6500    6F00
+F9      4300        5C00      6600    7000
+F10     4400        5D00      6700    7100
+F11     8500        8700      8900    8B00
+F12     8600        8800      8A00    8C00
 */
+
+    // BackSpace   0E08
+    // Del         5300
+    SCCC_KP_2       = 0x5000,   // Numeric Keypad 2 (Down)
+    SCCC_DOWN       = 0x50E0,   // Down Arrow  ||  NumLock + Numeric Keypad 2 (Down)
+    SCCC_KP_1       = 0x4F00,   // Numeric Keypad 1 (End)
+    SCCC_DOWNLEFT   = 0x4FE0,   // NumLock + Numeric Keypad 1 (DownLeft)
+    // Enter       1C0D
+    // Esc         011B
+    SCCC_KP_7       = 0x4700,   // Numeric Keypad 7 (Home)
+    SCCC_UPLEFT     = 0x47E0,   // NumLock + Numeric Keypad 7 (UpLeft)
+    // Ins         5200
+    // Keypad 5        
+    // Keypad *    372A
+    // Keypad -    4A2D
+    // Keypad +    4E2B
+    // Keypad /    352F
+    SCCC_KP_4       = 0x4B00,   // Numeric Keypad 4 (Left)
+    SCCC_LEFT       = 0x4BE0,   // Left Arrow  ||  NumLock + Numeric Keypad 4 (Left)
+    SCCC_KP_3       = 0x5100,   // Numeric Keypad 3 (PgDn)
+    SCCC_DOWNRIGHT  = 0x51E0,   // NumLock + Numeric Keypad 3 (DownRight)
+    SCCC_KP_9       = 0x4900,   // Numeric Keypad 9 (PgUp)
+    SCCC_UPRIGHT    = 0x49E0,   // NumLock + Numeric Keypad 9 (UpRight)
+    // PrtSc           
+    SCCC_KP_6       = 0x4D00,   // Numeric Keypad 6 (Right)
+    SCCC_RIGHT      = 0x4DE0,   // Right Arrow  ||  NumLock + Numeric Keypad 6 (Right)
+    // SpaceBar    3920
+    // Tab         0F09
+    SCCC_KP_8       = 0x4800,   // Numeric Keypad 8 (Up)
+    SCCC_UP         = 0x48E0,   // Up Arrow  ||  NumLock + Numeric Keypad 8 (Up)
+
 /*
-Key	    Normal    Shifted	w/Ctrl	  w/Alt
-BackSpace    0E08      0E08	 0E7F	  0E00
-Del	     5300      532E	 9300	  A300
-Down Arrow   5000      5032	 9100	  A000
-End	     4F00      4F31	 7500	  9F00
-Enter	     1C0D      1C0D	 1C0A	  A600
-Esc	     011B      011B	 011B	  0100
-Home	     4700      4737	 7700	  9700
-Ins	     5200      5230	 9200	  A200
-Keypad 5		4C35	 8F00
-Keypad *     372A		 9600	  3700
-Keypad -     4A2D      4A2D	 8E00	  4A00
-Keypad +     4E2B      4E2B		  4E00
-Keypad /     352F      352F	 9500	  A400
-Left Arrow   4B00      4B34	 7300	  9B00
-PgDn	     5100      5133	 7600	  A100
-PgUp	     4900      4939	 8400	  9900
-PrtSc				 7200
-Right Arrow  4D00      4D36	 7400	  9D00
-SpaceBar     3920      3920	 3920	  3920
-Tab	     0F09      0F00	 9400	  A500
-Up Arrow     4800      4838	 8D00	  9800
+Key         Normal  Shifted     w/Ctrl  w/Alt
+BackSpace   0E08    0E08        0E7F    0E00
+Del         5300    532E        9300    A300
+Down Arrow  5000    5032        9100    A000
+End         4F00    4F31        7500    9F00
+Enter       1C0D    1C0D        1C0A    A600
+Esc         011B    011B        011B    0100
+Home        4700    4737        7700    9700
+Ins         5200    5230        9200    A200
+Keypad 5            4C35        8F00
+Keypad *    372A                9600    3700
+Keypad -    4A2D    4A2D        8E00    4A00
+Keypad +    4E2B    4E2B                4E00
+Keypad /    352F    352F        9500    A400
+Left Arrow  4B00    4B34        7300    9B00
+PgDn        5100    5133        7600    A100
+PgUp        4900    4939        8400    9900
+PrtSc                           7200
+Right Arrow 4D00    4D36        7400    9D00
+SpaceBar    3920    3920        3920    3920
+Tab         0F09    0F00        9400    A500
+Up Arrow    4800    4838        8D00    9800
 */
 
     SCCC_OVERRUN
@@ -403,17 +441,52 @@ Up Arrow     4800      4838	 8D00	  9800
 //     /*  89 0x59 */  0x1579,  /* VK_Y */
 //     /*  90 0x5A */  0x2C7A,  /* VK_Z */
 
+/*
+
+    the manual says "by hitting the keys on the numeric keypad"
+    {1,2,3,4,5,6,7,8}
+    {KP_Left, KP_Right, KP_Up, KP_Down, KP_RightUp, KP_RightDown, KP_LeftUp, KP_LeftDown}
+
+KP_Left  = 1
+KP_Right  = 2
+KP_Up  = 3
+KP_Down  = 4
+KP_RightUp  = 5
+KP_RightDown  = 6
+KP_LeftUp  = 7
+KP_LeftDown  = 8
+
+The regular Home, End, PgUp, PgDn keys do not doing anything.
+Not sure what 'Enter' is doing with Unit Movement, or why it is even matching an input field.
+
+
+SCANCODES FOR SCANCODE SET 1 (XT)
+US 104-key keyboard, set 1 scancodes
+When the kayboard's internal NumLock is active:
+    two-byte repeat code  = E0nn
+
+4 (L)  4B
+(L) E04B
+
+So, ...
+Numeric Keypad 4 is 0x4B
+Left is 0xE04B
+Anywhoodle, ...
+    just map Numeric Keypard 4 and Left to SimTex Left
+
+*/
+
 enum Simtex_Key_Codes
 {
 //     KP_NumMult         = 0x00,
-    ST_KEY_KP_4             = 0x01,  /* LEFT */
-    ST_KEY_KP_6             = 0x02,  /* RIGHT */
-    ST_KEY_KP_8             = 0x03,  /* UP */
-    ST_KEY_KP_2             = 0x04,  /* DOWN */
-//     KP_RightUp         = 0x05,
-//     KP_RightDown       = 0x06,
-//     KP_LeftUp          = 0x07,
-//     KP_LeftDown        = 0x08,
+    ST_KEY_LEFT             = 0x01,
+    ST_KEY_RIGHT            = 0x02,
+    ST_KEY_UP               = 0x03,
+    ST_KEY_DOWN             = 0x04,
+    ST_KEY_RIGHTUP          = 0x05,
+    ST_KEY_RIGHTDOWN        = 0x06,
+    ST_KEY_LEFTUP           = 0x07,
+    ST_KEY_LEFTDOWN         = 0x08,
 //     KP_Insert          = 0x09,
 //     KP_Delete          = 0x0A,
 //     KP_Backspace       = 0x0B,
@@ -429,11 +502,11 @@ enum Simtex_Key_Codes
     ST_KEY_F8               = 0x15,
     ST_KEY_F9               = 0x16,
     ST_KEY_F10              = 0x17,
-    ST_KEY_KP_9             = 0x19,  /* PAGEUP */
-    ST_KEY_KP_7             = 0x1A,  /* HOME */
+    // IDK ST_KEY_KP_9             = 0x19,  /* PAGEUP */
+    // IDK ST_KEY_KP_7             = 0x1A,  /* HOME */
     ST_KEY_ESCAPE           = 0x1B,
 //     KP_End             = 0x1C,
-    ST_KEY_KP_3             = 0x1D,  /* PAGEDOWN */
+    // IDK ST_KEY_KP_3             = 0x1D,  /* PAGEDOWN */
 //     KP_Center          = 0x1E,
 //     KP_NumPlus         = 0x2B,
 //     KP_NumMinus        = 0x2D,
@@ -476,6 +549,89 @@ enum Simtex_Key_Codes
 //     KP_Alt_z           = 0xB9,
     ST_KEY_OVERRUN
 };
+
+
+/*
+enum EKEYCODES
+EKey_Num7_Home  = 47h
+EKey_Num8_Up  = 48h
+EKey_Num9_PgUp  = 49h
+EKey_NumMinus  = 4Ah
+EKey_Num4_Left  = 4Bh
+EKey_Num5  = 4Ch
+EKey_Num6_Right  = 4Dh
+EKey_NumPlus  = 4Eh
+EKey_Num1_End  = 4Fh
+EKey_Num2_Down  = 50h
+EKey_Num3_PgDn  = 51h
+EKey_Esc  = 11Bh
+EKey_NumMult  = 92Ah
+EKey_Backspace  = 0E08h
+EKey_Tab  = 0F09h
+EKey_Alt_q  = 1000h
+EKey_Alt_w  = 1100h
+EKey_Alt_e  = 1200h
+EKey_Alt_r  = 1300h
+EKey_Alt_t  = 1400h
+EKey_Alt_y  = 1500h
+EKey_Alt_u  = 1600h
+EKey_Alt_i  = 1700h
+EKey_Alt_o  = 1800h
+EKey_Alt_p  = 1900h
+EKey_Enter  = 1C0Dh
+EKey_Alt_a  = 1E00h
+EKey_Alt_s  = 1F00h
+EKey_Ctrl_s  = 1F13h
+EKey_Alt_d  = 2000h
+EKey_Alt_f  = 2100h
+EKey_Alt_g  = 2200h
+EKey_Alt_h  = 2300h
+EKey_Alt_j  = 2400h
+EKey_Alt_k  = 2500h
+EKey_Alt_l  = 2600h
+EKey_Alt_z  = 2C00h
+EKey_Alt_x  = 2D00h
+EKey_Alt_c  = 2E00h
+EKey_Alt_v  = 2F00h
+EKey_Alt_b  = 3000h
+EKey_Alt_n  = 3100h
+EKey_Alt_m  = 3200h
+EKey_F1  = 3B00h
+EKey_F2  = 3C00h
+EKey_F3  = 3D00h
+EKey_F4  = 3E00h
+EKey_F5  = 3F00h
+EKey_F6  = 4000h
+EKey_F7  = 4100h
+EKey_F8  = 4200h
+EKey_F9  = 4300h
+EKey_F10  = 4400h
+EKey_Home  = 47E0h
+EKey_Up  = 48E0h
+EKey_PgUp  = 49E0h
+EKey_Left  = 4BE0h
+EKey_Right  = 4DE0h
+EKey_End  = 4FE0h
+EKey_Down  = 50E0h
+EKey_PgDn  = 51E0h
+EKey_Ins  = 52E0h
+EKey_Del  = 53E0h
+EKey_Ctrl_Num4  = 7300h
+EKey_Ctrl_Left  = 73E0h
+EKey_Ctrl_Num6  = 7400h
+EKey_Ctrl_Right  = 74E0h
+EKey_Ctrl_Num1  = 7500h
+EKey_Ctrl_Num3  = 7600h
+EKey_Ctrl_Num7  = 7700h
+EKey_Ctrl_Num9  = 8400h
+EKey_F11  = 8500h
+EKey_F12  = 8600h
+EKey_Ctrl_Num8  = 8D00h
+EKey_Ctrl_Up  = 8DE0h
+EKey_Ctrl_Num2  = 9100h
+EKey_Ctrl_Down  = 91E0h
+EKey_NumEnter  = 0E00Dh
+*/
 
 
 

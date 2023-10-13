@@ -960,19 +960,19 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+// DELETE      }
+// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
-            DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
+            // DELETE  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                DLOG("transition: outside pixel, inside state");
+                // DELETE  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -980,10 +980,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
+            // DELETE  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
             if(outside_state != ST_FALSE)
             {
-                DLOG("transition: inside pixel, outside state");
+                // DELETE  DLOG("transition: inside pixel, outside state");
                 *(src_sgmt + (src_ofst - 2)) = outline_color;
             }
             outside_state = ST_FALSE;
@@ -1011,12 +1011,12 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+// DELETE      }
+// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {

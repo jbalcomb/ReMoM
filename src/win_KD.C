@@ -151,6 +151,36 @@ uint8_t Read_Key(void)
         case SCCC_Y: { return_key = 'y'; } break;
         case SCCC_Z: { return_key = 'z'; } break;
 
+        // BackSpace   0E08
+        // Del         5300
+        case SCCC_KP_2:     { return_key = ST_KEY_DOWN; } break;
+        case SCCC_DOWN:     { return_key = ST_KEY_DOWN; } break;
+        case SCCC_KP_1:     { return_key = ST_KEY_LEFTDOWN; } break;
+        case SCCC_DOWNLEFT: { return_key = ST_KEY_LEFTDOWN; } break;
+        // Enter       1C0D
+        // Esc         011B
+        case SCCC_KP_7:     { return_key = ST_KEY_LEFTUP; } break;
+        case SCCC_UPLEFT:   { return_key = ST_KEY_LEFTUP; } break;
+        // Ins         5200
+        // Keypad 5        
+        // Keypad *    372A
+        // Keypad -    4A2D
+        // Keypad +    4E2B
+        // Keypad /    352F
+        case SCCC_KP_4:         { return_key = ST_KEY_LEFT; } break;
+        case SCCC_LEFT:         { return_key = ST_KEY_LEFT; } break;
+        case SCCC_KP_3:         { return_key = ST_KEY_RIGHTDOWN; } break;
+        case SCCC_DOWNRIGHT:    { return_key = ST_KEY_RIGHTDOWN; } break;
+        case SCCC_KP_9:         { return_key = ST_KEY_RIGHTUP; } break;
+        case SCCC_UPRIGHT:      { return_key = ST_KEY_RIGHTUP; } break;
+        // PrtSc           
+        case SCCC_KP_6:         { return_key = ST_KEY_RIGHT; } break;
+        case SCCC_RIGHT:        { return_key = ST_KEY_RIGHT; } break;
+        // SpaceBar    3920
+        // Tab         0F09
+        case SCCC_KP_8:         { return_key = ST_KEY_UP; } break;
+        case SCCC_UP:           { return_key = ST_KEY_UP; } break;
+
         default: { return_key = ST_KEY_OVERRUN; }
     }
 

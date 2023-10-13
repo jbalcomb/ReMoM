@@ -367,6 +367,66 @@ struct s_HIRED_HERO
     /* 1C */
 };
 
+//  ; (sizeof=0x32, standard type)
+struct s_ITEM
+{
+    /* 00 */  char Name[30];
+    /* 1E */  int16_t Icon_Index;
+    /* 20 */  int8_t Slot_Type;
+    /* 21 */  int8_t Item_Type;
+    /* 22 */  int16_t Mana_Value;
+    /* 24 */  int8_t Bonus_Attack;
+    /* 25 */  int8_t Bonus_To_Hit;
+    /* 26 */  int8_t Bonus_Defense;
+    /* 27 */  int8_t Bonus_HalfMoves;
+    /* 28 */  int8_t Bonus_Resist;
+    /* 29 */  int8_t Bonus_Mana;
+    /* 2A */  int8_t Spell_Save;
+    /* 2B */  int8_t Charged_Spell;
+    /* 2C */  int16_t Charges;
+    // TODO  /* 2E */  Powers_LOWord dw ?                      // ; enum IPOW_LO
+    // TODO  /* 30 */  Powers_HOWord dw ?                      // ; enum IPOW_HO
+    /* 2E */  uint32_t Powers;                      // ; enum IPOW_LO
+    /* 32 */
+};
+
+// 00000001 ; enum IPOW_LO (bitfield)
+// 00000001 IP_Vampiric  = 1
+// 00000002 IP_Guardian_Wind  = 2
+// 00000004 IP_Lightning  = 4
+// 00000008 IP_Cloak_Of_Fear  = 8
+// 00000010 IP_Destruction  = 10h
+// 00000020 IP_Wraith_Form  = 20h
+// 00000040 IP_Regeneration  = 40h
+// 00000080 IP_Pathfinding  = 80h
+// 00000100 IP_Water_Walking  = 100h
+// 00000200 IP_Resist_Elements  = 200h
+// 00000400 IP_Elemental_Armour  = 400h
+// 00000800 IP_Chaos  = 800h
+// 00001000 IP_Stoning  = 1000h
+// 00002000 IP_Endurance  = 2000h
+// 00004000 IP_Haste  = 4000h
+// 00008000 IP_Invisibility  = 8000h
+// 
+// 00000001 ; enum IPOW_HI (bitfield)
+// 00000001 IP_Death  = 1
+// 00000002 IP_Flight  = 2
+// 00000004 IP_Resist_Magic  = 4
+// 00000008 IP_Magic_Immunity  = 8
+// 00000010 IP_Flaming  = 10h
+// 00000020 IP_Holy_Avenger  = 20h
+// 00000040 IP_True_Sight  = 40h
+// 00000080 IP_Phantasmal  = 80h
+// 00000100 IP_Power_Drain  = 100h
+// 00000200 IP_Bless  = 200h
+// 00000400 IP_Lion_Heart  = 400h
+// 00000800 IP_Giant_Strength  = 800h
+// 00001000 IP_Planar_Travel  = 1000h
+// 00002000 IP_Merging  = 2000h
+// 00004000 IP_Righteousness  = 4000h
+// 00008000 IP_Invulnerability  = 8000h
+
+
 // sizeof:  132h  306d
 struct s_WIZ_DIPL
 {
@@ -762,6 +822,97 @@ struct s_UNIT
 };
 
 
+//  ; (sizeof=0x6E)
+struct s_BU_REC
+{
+    /* 0x00 */  int8_t Melee;
+    /* 0x01 */  int8_t Ranged;
+    /* 0x02 */  int8_t Ranged_Type;
+    /* 0x03 */  int8_t Shots_Left;
+    /* 0x04 */  int8_t To_Hit;
+    /* 0x05 */  int8_t Defense;
+    /* 0x06 */  int8_t Resist;
+    /* 0x07 */  int8_t MoveHalves;
+    /* 0x08 */  int8_t Cost;
+    /* 0x0A */  int8_t Upkeep;
+    /* 0x0B */  int8_t Race;                                // ; enum Race_Code
+    /* 0x0C */  int8_t Unused_0Ch;
+    /* 0x0D */  int8_t Cur_Figures;
+    /* 0x0E */  int16_t Fig_IMG_Index;
+    /* 0x10 */  int8_t Hits;
+    /* 0x11 */  int8_t Sight;
+    /* 0x12 */  int8_t Transport;
+    /* 0x13 */  int8_t Max_Figures;
+    /* 0x14 */  int8_t Construction;
+    /* 0x15 */  int8_t Spec_Att_Attrib;
+    /* 0x16 */  int8_t Move_Flags;                          // ; enum MOVEFLAGS
+    /* 0x17 */  int8_t Unused_17h;
+    /* 0x18 */  int16_t Attribs_1;                          // ; enum ATTRIB_1
+    /* 0x1A */  int8_t Attribs_2;
+    /* 0x1B */  int8_t Unused_1Bh;
+    /* 0x1C */  int16_t Abilities;                          // ; enum ABL_FLAGS
+    /* 0x1E */  int16_t Attack_Flags;                       // ; enum ATK_FLAGS
+    /* 0x20 */  int16_t Sound;
+    /* 0x22 */  int16_t Combat_Effects;                     // ; enum Combat_Effect
+    /* 0x24 */  int8_t Melee_To_Hit;
+    /* 0x25 */  int8_t Ranged_To_Hit;
+    /* 0x26 */  int8_t To_Block;
+    /* 0x27 */  int8_t Weapon_Plus1;
+    /* 0x28 */  int16_t Melee_ATK_Flags;                    // ; enum ATK_FLAGS
+    /* 0x2A */  int16_t Ranged_ATK_Flags;                   // ; enum ATK_FLAGS
+    // TODO  /* 0x2C */  int16_t Item_UEs_L;                         // ; enum UE_FLAGS_L
+    // TODO  /* 0x2E */  int16_t Item_UEs_H;                         // ; enum UE_FLAGS_H
+    /* 0x2C */  uint32_t Item_UEs;                         // ; enum UE_FLAGS
+    /* 0x30 */  int16_t Unit_Index;
+    /* 0x32 */  int8_t Extra_Hits;
+    /* 0x33 */  int8_t Web_HP;
+    /* 0x34 */  int8_t Status;
+    /* 0x35 */  int8_t Owner;
+    /* 0x36 */  int8_t Regular_Dmg;
+    /* 0x37 */  int8_t Undeath_Dmg;
+    /* 0x38 */  int8_t Irreversible_Dmg;
+    /* 0x39 */  int8_t TopFig_Dmg;
+    // TODO  /* 0x3A */  int16_t Unit_Enchants_L;                    // ; enum UE_FLAGS_L
+    // TODO  /* 0x3C */  int16_t Unit_Enchants_H;                    // ; enum UE_FLAGS_H
+    /* 0x3A */  uint32_t Unit_Enchants;                    // ; enum UE_FLAGS
+    /* 0x3E */  int8_t Suppression;
+    /* 0x3F */  int8_t Max_Mana;
+    /* 0x40 */  int8_t Mana;
+    /* 0x41 */  int8_t Item_Charges;
+    /* 0x42 */  int8_t Poison_Strength;
+    /* 0x43 */  int8_t Target_BU;
+    /* 0x44 */  int16_t X_Pos;
+    /* 0x46 */  int16_t Y_Pos;
+    /* 0x48 */  int16_t Target_X;
+    /* 0x4A */  int16_t Target_Y;
+    /* 0x4C */  int16_t MoveStage;
+    /* 0x4E */  int16_t Atk_FigLoss;
+    /* 0x50 */  int16_t UE_Color;
+    /* 0x52 */  int16_t Moving;
+    /* 0x54 */  int16_t Action;
+    /* 0x56 */  int8_t Confusion_State;
+    /* 0x57 */  int8_t Unknown_57h;
+    /* 0x58 */  int16_t Blood_Amount;
+    /* 0x5A */  int16_t Unknown_5Ah;
+    /* 0x5C */  int16_t Always_Animate;
+    /* 0x5E */  int16_t Melee_Anim;
+    /* 0x60 */  int16_t Image_Effect;
+    /* 0x62 */  int16_t Move_Bob;
+    /* 0x64 */  int8_t Gold_Melee;
+    /* 0x65 */  int8_t Gold_Ranged;
+    /* 0x66 */  int8_t Gold_Defense;
+    /* 0x67 */  int8_t Gold_Resist;
+    /* 0x68 */  int8_t Gold_Hits;
+    /* 0x69 */  int8_t Grey_Melee;
+    /* 0x6A */  int8_t Grey_Ranged;
+    /* 0x6B */  int8_t Grey_Defense;
+    /* 0x6C */  int8_t Grey_Resist;
+    /* 0x6D */  int8_t Unused_Grey_Hits;
+    /* 0x6E */
+};
+
+
+
 
 // sizeof=0x4
 struct s_TOWER
@@ -1118,13 +1269,16 @@ extern uint8_t * spell_data_table;
 // but there is nothing of the sort in WZD
 
 // WZD dseg:9136
-extern SAMB_ptr TBL_Items;
+extern struct s_ITEM * TBL_Items;
+
 // WZD dseg:913A
 extern SAMB_ptr TBL_Premade_Items;
 // WZD dseg:913E
 // IMG_USW_Items ITEM_ICONS
+
 // WZD dseg:9226
-extern SAMB_ptr Active_Unit;                // alloc in Allocate_Data_Space()
+extern struct s_BU_REC * Active_Unit;                // alloc in Allocate_Data_Space()
+
 // WZD dseg:922A
 // TBL_BattleUnits
 // WZD dseg:922E
@@ -1621,9 +1775,12 @@ extern int16_t _prev_world_y;
 extern int16_t _prev_world_x;
 
 // WZD dseg:BD82 
-extern int16_t OVL_Map_CenterY;
+extern int16_t OVL_Map_CenterY;  // AKA _active_world_y
+extern int16_t _active_world_y;  // AKA _active_world_y
 // WZD dseg:BD84 
-extern int16_t OVL_Map_CenterX;
+extern int16_t OVL_Map_CenterX;  // AKA _active_world_x
+extern int16_t _active_world_x;  // AKA _active_world_x
+
 // WZD dseg:BD86 
 extern int16_t _map_plane;
 // WZD dseg:BD88 

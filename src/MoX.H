@@ -45,6 +45,7 @@
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "MoX_Util.H"   // WTFMATE
 #include "SCORE.H"      // Hall Of Fame
+#include "special.H"
 #include "Spellbook.H"
 #include "Terrain.H"
 #include "Timer.H"

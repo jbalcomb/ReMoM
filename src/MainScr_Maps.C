@@ -433,6 +433,7 @@ void Reset_Draw_Active_Stack(void)
 {
     if( (all_units_moved == ST_FALSE) && (_unit_stack_count > 0) )
     {
+        DLOG("( (all_units_moved == ST_FALSE) && (_unit_stack_count > 0) )");
         draw_active_stack_flag = 0;
     }
     Reset_Map_Draw();

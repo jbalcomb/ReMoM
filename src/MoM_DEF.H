@@ -270,15 +270,35 @@ hanging out in MoX_DEF.H
 0b1000000000000000  0x8000  32768
 */
 
+
+/*
+    Unit Type - Movement Type
+    s_UNIT_TYPE.Move_Flags
+    enum MOVEFLAGS
+*/
+// 0b00000000  0x00      0
+#define M_Cavalry           0x01      // 0b00000001  0x01      1
+#define M_Sailing           0x02      // 0b00000010  0x02      2
+#define M_Swimming          0x04      // 0b00000100  0x04      4
+#define M_Flying            0x08      // 0b00001000  0x08      8
+#define M_Teleport          0x10      // 0b00010000  0x10     16
+#define M_Forester          0x20      // 0b00100000  0x20     32
+#define M_Mntnr             0x40      // 0b01000000  0x40     64
+#define M_Merging           0x80      // 0b10000000  0x80    128
+
 /*
     Movement Modes
 */
-#define CAVALRY         0x0001
-#define SAILING         0x0002
-#define SWIMMING        0x0004
-#define FLYING          0x0008
-#define FORESTER        0x0020
-#define MOUNTAINEER     0x0040
+// 0b00000000  0x00      0
+#define CAVALRY             0x0001      // 0b00000001  0x01      1
+#define SAILING             0x0002      // 0b00000010  0x02      2
+#define SWIMMING            0x0004      // 0b00000100  0x04      4
+#define FLYING              0x0008      // 0b00001000  0x08      8
+// 0b00010000  0x10     16
+#define FORESTER            0x0020      // 0b00100000  0x20     32
+#define MOUNTAINEER         0x0040      // 0b01000000  0x40     64
+// 0b10000000  0x80    128
+
 // "Planar Travel" -000A Move_PlaneShift dw ?
 // "Wind Walking"  -0008 Move_WindWalk dw ?
 // "walking"       -0006 Move_Ground dw ?
@@ -337,19 +357,19 @@ hanging out in MoX_DEF.H
     Unit Enchantments
 */
 // 0b0000000000000000  0x0000      0
-#define UE_WINDWALKING     0x0001      // 0b0000000000000001  0x0001      1
-// 0b0000000000000010  0x0002      2
+#define UE_WINDWALKING      0x0001      // 0b0000000000000001  0x0001      1
+#define UE_FLIGHT           0x0002      // 0b0000000000000010  0x0002      2
 // 0b0000000000000100  0x0004      4
 // 0b0000000000001000  0x0008      8
 // 0b0000000000010000  0x0010     16
 // 0b0000000000100000  0x0020     32
 // 0b0000000001000000  0x0040     64
 // 0b0000000010000000  0x0080    128
-// 0b0000000100000000  0x0100    256
+#define UE_WATERWALKING     0x0100      // 0b0000000100000000  0x0100    256
 // 0b0000001000000000  0x0200    512
 // 0b0000010000000000  0x0400   1024
 // 0b0000100000000000  0x0800   2048
-#define UE_PLANARTRAVEL    0x1000       // 0b0001000000000000  0x1000   4096
+#define UE_PLANARTRAVEL     0x1000      // 0b0001000000000000  0x1000   4096
 // 0b0010000000000000  0x2000   8192
 // 0b0100000000000000  0x4000  16384
 #define UE_INVISIBILITY     0x8000      // 0b1000000000000000  0x8000  32768
@@ -358,6 +378,27 @@ hanging out in MoX_DEF.H
 /*
     Unit Mutations
 */
+// 00000003 ; enum MUT_FLAGS (bitfield)
+// 00000003 WQ_MASK        = 3
+// 00000003 Wp_Magic  = 1
+// 00000003 Wp_Mithril  = 2
+// 00000003 Wp_Adamantium  = 3
+// 00000004 CC_Defense  = 4                         ; Chaos Channels - demon skin armor
+// 00000008 CC_Flight  = 8                          ; Chaos Channels - demon wings
+// 00000010 CC_Breath  = 10h                        ; Chaos Channels - fire breathing
+// 00000020 R_Undead  = 20h
+// 00000040 C_StasisInit  = 40h
+// 00000080 C_StasisLinger  = 80h
+// 0b00000000  0x00      0
+// 0b00000001  0x01      1
+// 0b00000010  0x02      2
+// 0b00000100  0x04      4
+#define CC_Flight           0x08    // 0b00001000  0x08      8
+// 0b00010000  0x10     16
+// 0b00100000  0x20     32
+// 0b01000000  0x40     64
+// 0b10000000  0x80    128
+
 
 /*
     Item Enchantments / Attributes / Effects

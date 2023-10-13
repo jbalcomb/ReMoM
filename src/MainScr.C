@@ -7,6 +7,7 @@
     ovr062
     ovr063
     ovr064
+    ovr095
     ovr097
 
 ¿ MoO2  Module: SHIPSTK ?
@@ -52,7 +53,8 @@ void Main_Screen_Draw(void);
 // WZD o57p09
 void Main_Screen_Reset(void);
 // WZD o57p10
-void IDK_UnitMoves_and_PlanarTravel(void);
+void IDK_UnitMoves_and_PlanarTravel(int16_t movement_direction);
+
 /*
     WIZARDS.EXE  ovr058
 */
@@ -75,10 +77,31 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane);
 /*
     WIZARDS.EXE  ovr061
 */
+// WZD o61p01
+// IDK_ActiveUnitStack_MovesOrPath_s53150()
+// WZD o61p02
+int16_t IDK_DoMoveStack_s5336C(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+// WZD o61p03
+// UNIT_MoveStack()
+// WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+// WZD o61p05
+int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
+// WZD o61p06
+// STK_GetExtraActions()
+// WZD o61p07
+// STK_GetMovableUnits()
+// WZD o61p08
+void IDK_StackPassable_s53D3F(int16_t * unit_count, int16_t unit_array[]);
+
 /*
     WIZARDS.EXE  ovr062
 */
+// WZD o62p01
+// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
+// WZD o62p02
+// AKA OVL_StackSelect()
+void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y);
 // WZD o62p03
 void Sort_Unit_Stack(void);
 // WZD o62p04
@@ -87,6 +110,14 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
 void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
 // WZD o62p06
 int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
+// WZD o62p07
+// DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
+// WZD o62p08
+void IDK_MainScr_SUA_s553C3(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t IDK_status, int16_t IDK_what1, int16_t IDK_what2);
+// WZD o62p09
+// EarthGateTeleport()
+// WZD o62p10
+// USW_FullDisplay()
 
 /*
     WIZARDS.EXE  ovr063
@@ -138,6 +169,30 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
+
+/*
+    WIZARDS.EXE  ovr095
+*/
+
+// WZD o95p01
+// STK_Move()
+
+// WZD o95p02
+// OVL_MoveUnitStack()
+
+// WZD o95p03
+// AI_ContactWizards()
+
+// WZD o95p04
+// G_STK_OvlObstacles()
+
+// WZD o95p05
+int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+
+// WZD o95p06
+// G_STK_SetPatrol()
+
+
 /*
     WIZARDS.EXE  ovr097
 */
@@ -169,6 +224,10 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, in
 int16_t UU_first_turn_done_flag = ST_FALSE;
 // WZD dseg:2E16
 // hotkey_MainScrn_X db 'X'
+
+// WZD dseg:2E16                                                 the 4 above maybe are DBG ?             ; should use dseg:2a8a
+// WZD dseg:2E16                                                 below here, maybe compiler added as encountered?
+
 // WZD dseg:2E17
 // cnst_ZeroString_31 db 0
 // WZD dseg:2E18
@@ -189,22 +248,32 @@ char hotkey_PlaneButton[] = "P";
 // cnst_HOTKEY_Q db 'Q',0
 // WZD dseg:2E28
 // cnst_HOTKEY_U db 'U',0
+
 // WZD dseg:2E2A
 // cnst_HOTKEY_Home dw KP_Home
+// enum Key_Press  KP_Home  = 1Ah
 // WZD dseg:2E2C
 // cnst_HOTKEY_Up dw KP_Up
+// enum Key_Press  KP_Up  = 3
 // WZD dseg:2E2E
 // cnst_HOTKEY_PgUp dw KP_PgUp
+// enum Key_Press  KP_PgUp  = 19h
 // WZD dseg:2E30
 // cnst_HOTKEY_Left dw KP_Left
+// enum Key_Press  KP_Left  = 1
 // WZD dseg:2E32
 // cnst_HOTKEY_Right dw KP_Right
+// enum Key_Press  KP_Right  = 2
 // WZD dseg:2E34
 // cnst_HOTKEY_End dw KP_End
+// enum Key_Press  KP_End  = 1Ch
 // WZD dseg:2E36
 // cnst_HOTKEY_Down dw KP_Down
+// enum Key_Press  KP_Down  = 4
 // WZD dseg:2E38
 // cnst_HOTKEY_PgDn dw KP_PgDn
+// enum Key_Press  KP_PgDn  = 1Dh
+
 // WZD dseg:2E3A
 // cnst_HOTKEY_F10 dw KP_F10
 // WZD dseg:2E3C
@@ -981,13 +1050,13 @@ void Main_Screen(void)
 // Local_0= word ptr -50h
 // DBG_Alt_A__TurnCount= word ptr -4Eh
     int16_t hotkey_idx_Alt_A;
-    int16_t hotkey_idx_PgDn;
+    int16_t hotkey_idx_RightDown;
     int16_t hotkey_idx_Down;
-    int16_t hotkey_idx_End;
+    int16_t hotkey_idx_LeftDown;
     int16_t hotkey_idx_Right;
     int16_t hotkey_idx_Left;
-    int16_t hotkey_idx_PgUp;
-    int16_t hotkey_idx_Home;
+    int16_t hotkey_idx_RightUp;
+    int16_t hotkey_idx_LeftUp;
     int16_t hotkey_idx_Up;
     int16_t gold;
     int16_t food;
@@ -1132,14 +1201,22 @@ void Main_Screen(void)
         hotkey_idx_Alt_P = Add_Multi_Hot_Key_Field("P");
         hotkey_idx_Q = Add_Hot_Key('Q');
         hotkey_idx_U = Add_Hot_Key('U');
-        // TODO  hotkey_idx_Home = Add_Hot_Key(KP_Home);
-        // TODO  hotkey_idx_Up = Add_Hot_Key(KP_Up);
-        // TODO  hotkey_idx_PgUp = Add_Hot_Key(KP_PgUp);
-        // TODO  hotkey_idx_Left = Add_Hot_Key(KP_Left);
-        // TODO  hotkey_idx_Right = Add_Hot_Key(KP_Right);
-        // TODO  hotkey_idx_End = Add_Hot_Key(KP_End);
-        // TODO  hotkey_idx_Down = Add_Hot_Key(KP_Down);
-        // TODO  hotkey_idx_PgDn = Add_Hot_Key(KP_PgDn);
+
+        /*
+            {UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight}
+            Read_Key()  {}
+            the manual says "by hitting the keys on the numeric keypad"
+
+        */
+        hotkey_idx_LeftUp     = Add_Hot_Key(ST_KEY_LEFTUP);  // cnst_HOTKEY_Home
+        hotkey_idx_Up         = Add_Hot_Key(ST_KEY_UP);
+        hotkey_idx_RightUp    = Add_Hot_Key(ST_KEY_RIGHTUP);
+        hotkey_idx_Left       = Add_Hot_Key(ST_KEY_LEFT);
+        hotkey_idx_Right      = Add_Hot_Key(ST_KEY_RIGHT);
+        hotkey_idx_LeftDown   = Add_Hot_Key(ST_KEY_LEFTDOWN);
+        hotkey_idx_Down       = Add_Hot_Key(ST_KEY_DOWN);
+        hotkey_idx_RightDown  = Add_Hot_Key(ST_KEY_RIGHTDOWN);
+
         hotkey_idx_F10 = Add_Hot_Key(ST_KEY_F10);
         hotkey_idx_F1 = Add_Hot_Key(ST_KEY_F1);
         hotkey_idx_F2 = Add_Hot_Key(ST_KEY_F2);
@@ -1435,7 +1512,17 @@ void Main_Screen(void)
 
         if(input_field_idx == _wait_button)
         {
-            
+            // TODO  SND_LeftClickSound();
+            Reset_Draw_Active_Stack();
+            IDK_MainScr_SUA_s553C3(_human_player_idx, &_map_x, &_map_y, &_map_plane, 5, 0, 0);
+            WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Main_Screen_Reset();
+            if(all_units_moved == ST_TRUE)
+            {
+                Set_Unit_Draw_Priority();
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                // TODO  IDK_screen_changed = ST_TRUE;
+            }
         }
 
         /*
@@ -1510,14 +1597,35 @@ void Main_Screen(void)
             /* BIG EFFORT */
         }
 
-        // hotkey_idx_Up
-        // hotkey_idx_Home
-        // hotkey_idx_PgUp
-        // hotkey_idx_Left
-        // hotkey_idx_Right
-        // hotkey_idx_End
-        // hotkey_idx_Down
-        // hotkey_idx_PgDn
+
+
+
+        /*
+            BEGIN: Direction Keys
+        */
+
+        // hotkey_idx_Up    NumPad 8    ↑
+        // hotkey_idx_Home  NumPad 7    ↖
+        // hotkey_idx_PgUp  NumPad 9    ↗
+        // hotkey_idx_Left  NumPad 4    ←
+        // hotkey_idx_Right NumPad 6    →
+        // hotkey_idx_End   NumPad 1    ↙
+        // hotkey_idx_Down  NumPad 2    ↓
+        // hotkey_idx_PgDn  NumPad 3    ↘
+        if(input_field_idx == hotkey_idx_Up)    { IDK_UnitMoves_and_PlanarTravel(8); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_LeftUp)  { IDK_UnitMoves_and_PlanarTravel(7); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_RightUp)  { IDK_UnitMoves_and_PlanarTravel(9); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_Left)  { IDK_UnitMoves_and_PlanarTravel(4); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_Right) { IDK_UnitMoves_and_PlanarTravel(6); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_LeftDown)   { IDK_UnitMoves_and_PlanarTravel(1); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_Down)  { IDK_UnitMoves_and_PlanarTravel(2); screen_changed = ST_TRUE; }
+        if(input_field_idx == hotkey_idx_RightDown)  { IDK_UnitMoves_and_PlanarTravel(3); screen_changed = ST_TRUE; }
+
+        /*
+            END: Direction Keys
+        */
+
+
 
         /*
             Movement Map Grid Field
@@ -1545,6 +1653,7 @@ void Main_Screen(void)
                 Reset_Map_Draw();
                 // DONT  NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
             }
+
             if(OVL_StackHasPath == ST_TRUE)
             {
                 // NIU_MainScreen_local_flag = 1
@@ -1587,6 +1696,7 @@ void Main_Screen(void)
                 // NIU_MainScreen_local_flag = 1; // ? ST_TRUE ?
                 if(all_units_moved == ST_FALSE)
                 {
+                    DLOG("(all_units_moved == ST_FALSE)");
                     target_world_x = (_map_x + _main_map_grid_x) % 60;  // world_x of click
                     target_world_y = _map_y + _main_map_grid_y;         // world_y of click
                     // ovr062
@@ -1696,10 +1806,10 @@ void Main_Screen(void)
                         unit_idx = _unit;
                         Unit_X = _UNITS[unit_idx].world_x;
                         Unit_Y = _UNITS[unit_idx].world_y;
-                        // _active_world_x = _UNITS[unit_idx].world_x;
-                        // _active_world_y = _UNITS[unit_idx].world_y;
-                        OVL_Map_CenterX = _UNITS[unit_idx].world_x;
-                        OVL_Map_CenterY = _UNITS[unit_idx].world_y;
+                        // OVL_Map_CenterX = _UNITS[unit_idx].world_x;
+                        // OVL_Map_CenterY = _UNITS[unit_idx].world_y;
+                        _active_world_x = _UNITS[unit_idx].world_x;
+                        _active_world_y = _UNITS[unit_idx].world_y;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
     dbg_prn("DEBUG: [%s, %d]: Unit_X: %d\n", __FILE__, __LINE__, Unit_X);
@@ -1727,6 +1837,7 @@ void Main_Screen(void)
 #endif
                         if(all_units_moved != ST_TRUE)
                         {
+                            DLOG("(all_units_moved != ST_TRUE)");
                             all_units_moved = ST_FALSE;
                         }
 
@@ -2157,16 +2268,135 @@ void Main_Screen_Reset(void)
 }
 
 // WZD o57p10
-void IDK_UnitMoves_and_PlanarTravel(void)
+void IDK_UnitMoves_and_PlanarTravel(int16_t movement_direction)
 {
+    int16_t movement_points;
+    int16_t move_x;
+    int16_t move_y;
+
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_UnitMoves_and_PlanarTravel()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_UnitMoves_and_PlanarTravel(movement_direction = %d)\n", __FILE__, __LINE__, movement_direction);
 #endif
 
+    if(_unit_stack_count != 0)
+    {
+        DLOG("(_unit_stack_count != 0)");
+        // movement_points = OVL_GetStackHMoves();
+        if(movement_points = OVL_GetStackHMoves() != 0)
+        {
+            DLOG("(OVL_GetStackHMoves() != 0))");
+            if(all_units_moved == ST_FALSE)
+            {
+                DLOG("(all_units_moved == ST_FALSE)");
 
+        // if(input_field_idx == hotkey_idx_LeftDown)   { IDK_UnitMoves_and_PlanarTravel(1); screen_changed = ST_TRUE; }
+        // if(input_field_idx == hotkey_idx_Down)  { IDK_UnitMoves_and_PlanarTravel(2); screen_changed = ST_TRUE; }
+        // if(input_field_idx == hotkey_idx_RightDown)  { IDK_UnitMoves_and_PlanarTravel(3); screen_changed = ST_TRUE; }
+
+        // if(input_field_idx == hotkey_idx_Left)  { IDK_UnitMoves_and_PlanarTravel(4); screen_changed = ST_TRUE; }
+        // if(input_field_idx == hotkey_idx_Right) { IDK_UnitMoves_and_PlanarTravel(6); screen_changed = ST_TRUE; }
+
+        // if(input_field_idx == hotkey_idx_LeftUp)  { IDK_UnitMoves_and_PlanarTravel(7); screen_changed = ST_TRUE; }
+        // if(input_field_idx == hotkey_idx_Up)    { IDK_UnitMoves_and_PlanarTravel(8); screen_changed = ST_TRUE; }
+        // if(input_field_idx == hotkey_idx_RightUp)  { IDK_UnitMoves_and_PlanarTravel(9); screen_changed = ST_TRUE; }
+
+                switch(movement_direction)
+                {
+                    case 1:  /* LeftDown  -x,+y */
+                    {
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x - 1) % 60);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                    } break;
+                    case 2:  /* Down  +y */
+                    {
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                    } break;
+                    case 3:  /* RightDown  +x,+y */
+                    {
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x + 1) % 60);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                    } break;
+                    case 4:  /* Left  -x */
+                    {
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x - 1);
+                    } break;
+                    // DNE case 5:
+                    case 6:  /* Right  +x */
+                    {
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x + 1);
+                    } break;
+                    case 7:  /* LeftUp  -x,-y */
+                    {
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x - 1) % 60);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                    } break;
+                    case 8:  /* Up  -y */
+                    {
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                    } break;
+                    case 9:  /* RightUp  +x,-y */
+                    {
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x + 1) % 60);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                    } break;
+
+                }
+
+                if(move_y < 0)
+                {
+                    move_y = 0;  /* WORLD_Y_MIN */
+                }
+                if(move_y >= 40)
+                {
+                    move_y = 39;  /* WORLD_Y_MAX */
+                }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: IDK_UnitMoves_and_PlanarTravel()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: Stack_Has_Planar_Travel(): %d\n", __FILE__, __LINE__, Stack_Has_Planar_Travel());
+
+    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane));
+
+    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE));
+
+#endif
+
+                if(Stack_Has_Planar_Travel() == ST_TRUE)
+                {
+                    DLOG("(Stack_Has_Planar_Travel() == ST_TRUE)");
+                    IDK_DoMoveStack_s5336C(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+                }
+                else
+                {
+                    DLOG("(Stack_Has_Planar_Travel() != ST_TRUE)");
+                    if( (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
+                    {
+                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )");
+                        IDK_DoMoveStack_s5336C(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+                    }
+                    else
+                    {
+                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].world_plane != _map_plane) && (_UNITS[_unit_stack[0].unit_idx].In_Tower != ST_TRUE) )");
+                        // TODO  GUI_WarningType0(cstrWarnNoPlaneMove);
+                    }
+                }
+            }
+            else
+            {
+                DLOG("(all_units_moved == ST_TRUE)");
+            }
+        }
+        else
+        {
+            DLOG("(OVL_GetStackHMoves() == 0))");
+        }
+    }
+    else
+    {
+        DLOG("(_unit_stack_count == 0)");
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: IDK_UnitMoves_and_PlanarTravel(movement_direction = %d)\n", __FILE__, __LINE__, movement_direction);
 #endif
 }
 
@@ -2542,15 +2772,71 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
     WIZARDS.EXE  ovr061
 */
 
-// o061p04
+// WZD o61p01
+// IDK_ActiveUnitStack_MovesOrPath_s53150()
+
+// WZD o61p02
+int16_t IDK_DoMoveStack_s5336C(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
+{
+    int16_t UList[9];
+    int16_t UCount;
+// var_C= word ptr -0Ch
+// Unit_Y= word ptr -0Ah
+// Unit_X= word ptr -8
+// var_6= word ptr -6
+// Spec= word ptr -4
+// var_2= word ptr -2
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_DoMoveStack_s5336C(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+// mov     _SI_map_plane, [bp+_map_plane@]
+// mov     [bp+Spec], 0
+
+    if(move_y != 0 && move_y != 39)
+    {
+        IDK_StackPassable_s53D3F(&UCount, &UList[0]);
+
+        _unit = UList[0];
+
+//         if(OVL_MapVar3 == 1)
+//         {
+//             OVL_MapVar3 = 0;
+//             CRP_OVL_Obstacle_Var1 = 0;
+//         }
+// 
+//         if(CRP_OVL_Obstacle_Var1 == 0)
+//         {
+//             sub_3417A();
+//         }
+
+
+    }
+// IDGI    else
+// IDGI    {
+// IDGI        return ST_FALSE;
+// IDGI    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: IDK_DoMoveStack_s5336C(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_plane);
+#endif
+
+    return ST_TRUE;
+}
+
+// WZD o61p03
+// UNIT_MoveStack()
+
+// WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
 {
     // Unused_Local= word ptr -10h
-    // Dest_Y= word ptr -0Eh
-    // Dest_X= word ptr -0Ch
+    int16_t Dest_Y;
+    int16_t Dest_X;
     int16_t Current_Y;
     int16_t Current_X;
-    // AllUnitsMoved= word ptr -6
+    int16_t AllUnitsMoved;
     int16_t Finished;
     int16_t Current_Unit;
 
@@ -2559,24 +2845,70 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
 #endif
 
-    // di, [bp+player_idx]
-    // si, [bp+map_plane]
     // Unused_Local = 0;
-    // AllUnitsMoved =  0;
+    AllUnitsMoved = ST_FALSE;
     Finished = ST_FALSE;
 
     Reset_Map_Draw();
 
-    // TODO  RP_WIZ_ReturnZero(player_idx);
-
+    // TODO  o62p01_Empty_pFxn(player_idx);
 
     while(Finished == ST_FALSE)
     {
-        // ...
-        all_units_moved = ST_TRUE;
-        // ...
-        Finished = ST_TRUE;
+        // CRP_OverlandVar_3 = 0;
+
+        AllUnitsMoved = WIZ_NextUnit(player_idx, map_plane);
+
+        if(AllUnitsMoved == ST_TRUE)
+        {
+            DLOG("(AllUnitsMoved == ST_TRUE)");
+            all_units_moved = ST_TRUE;
+            OVL_StackHasPath = ST_FALSE;
+            Finished = ST_TRUE;
+        }
+        else
+        {
+            DLOG("(AllUnitsMoved != ST_TRUE)");
+            Current_Unit = _unit;
+            Current_X = _UNITS[Current_Unit].world_x;
+            Current_Y = _UNITS[Current_Unit].world_y;
+            Select_Unit_Stack(player_idx, map_x, map_y, *map_plane, Current_X, Current_Y);
+        }
+
+
+        if(Finished == ST_FALSE)
+        {
+            Finished = ST_TRUE;
+
+            if( (_UNITS[_unit].Status & 0x03) != 0)  /* US_GoingTo */
+            {
+                Dest_X = _UNITS[_unit].Target_X;
+                Dest_Y = _UNITS[_unit].Target_Y;
+
+                // CRP_OverlandVar_3 = ST_TRUE;
+
+                if(
+                    (_UNITS[_unit].world_x != Dest_X) ||
+                    (_UNITS[_unit].world_y != Dest_Y) ||
+                    (_UNITS[_unit].Rd_Constr_Left != ST_UNDEFINED)
+                )
+                {
+                    Allocate_Reduced_Map();
+                    // TODO  UNIT_MoveStack(player_idx, _unit, Dest_X, Dest_Y, map_x, map_y, *map_plane);
+                    Allocate_Reduced_Map();
+                }
+                else
+                {
+                    _UNITS[_unit].Status = 0x00;  /* US_Ready */
+                }
+
+                Finished = ST_FALSE;
+
+            }
+        }
+
     }
+
 
 
     if(all_units_moved == ST_FALSE)
@@ -2589,7 +2921,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     }
     else
     {
-        DLOG("(all_units_moved != ST_FALSE)");
+        DLOG("(all_units_moved == ST_TRUE)");
         _unit_stack_count = 0;
         Set_Draw_Active_Stack_Always();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_plane);
@@ -2606,12 +2938,245 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 }
 
 
+
+// WZD o61p05
+int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
+{
+    int16_t Unused_Local;
+    int16_t tried_other_plane;
+    int16_t itr_wait_units;
+    int16_t Closest_Active_Unit;
+    int16_t Closest_Active_Dist;
+    int16_t Closest_Waiting_Unit;
+    int16_t Closest_Waiting_Dist;
+    int16_t itr_units;
+    int16_t Distance_From_Center;
+    int16_t Return_Value;
+    int16_t Finished;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextUnit(player_idx = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_plane);
+#endif
+
+    Closest_Waiting_Dist = 1000;
+    Closest_Waiting_Unit = ST_UNDEFINED;
+    Closest_Active_Dist = 1000;
+    Closest_Active_Unit = ST_UNDEFINED;
+
+    tried_other_plane = ST_FALSE;
+
+    Unused_Local = ST_UNDEFINED;
+    Return_Value = ST_FALSE;
+
+    Finished = ST_FALSE;
+    itr_units = 0;
+
+    while(Finished == ST_FALSE)
+    {
+
+        if(
+            (_UNITS[itr_units].owner_idx == player_idx) &&
+            ( (_UNITS[itr_units].world_plane == *map_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) ) &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&
+            (_UNITS[itr_units].Finished == ST_FALSE)
+        )
+        {
+            Distance_From_Center = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].world_x, _UNITS[itr_units].world_y, WORLD_WIDTH);
+
+            if( (_UNITS[itr_units].Status & 0x05) != 0)  /* US_Wait */
+            {
+                if(Closest_Waiting_Dist > Distance_From_Center)
+                {
+                    Closest_Waiting_Dist = Distance_From_Center;
+                    Closest_Waiting_Unit = itr_units;
+                }
+            }
+            else
+            {
+                if( ((_UNITS[itr_units].Status & 0x08) == 0) /* US_Purify */ && ((_UNITS[itr_units].Status & 0x64) == 0) /* US_Unkown_100 */ )
+                {
+                    if(Closest_Waiting_Dist > Distance_From_Center)
+                    {
+                        Closest_Active_Dist = Distance_From_Center;
+                        Closest_Active_Unit = itr_units;
+                    }
+                }
+            }
+        }
+
+        itr_units++;
+        if(itr_units == _units)
+        {
+            if(Closest_Active_Unit != ST_UNDEFINED)
+            {
+                Finished = ST_TRUE;
+                if(*map_plane == 2)
+                {
+                    *map_plane = 0;
+                }
+                _unit = Closest_Active_Unit;
+                _active_world_x = _UNITS[_unit].world_x;
+                _active_world_y = _UNITS[_unit].world_y;
+            }
+            else if(Closest_Waiting_Unit != ST_UNDEFINED)
+            {
+                if(*map_plane == 2)
+                {
+                    *map_plane = 0;
+                }
+                _unit = Closest_Active_Unit;
+                Finished = ST_TRUE;
+                _active_world_x = _UNITS[_unit].world_x;
+                _active_world_y = _UNITS[_unit].world_y;
+                for(itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
+                {
+                    if(_UNITS[itr_wait_units].owner_idx == player_idx)
+                    {
+                        if( (_UNITS[itr_wait_units].Status & 0x05) != 0)
+                        {
+                            _UNITS[itr_wait_units].Status = 0x00;  /* US_Ready */
+                        }
+                    }
+                }
+            }
+            else if(tried_other_plane != ST_TRUE)
+            {
+                tried_other_plane = ST_TRUE;
+                *map_plane = ((*map_plane + 1) % 2);
+                Closest_Waiting_Dist = 1000;
+                Closest_Waiting_Unit = ST_UNDEFINED;
+                Closest_Active_Dist = 1000;
+                Closest_Active_Unit = ST_UNDEFINED;
+                Unused_Local = ST_UNDEFINED;
+                itr_units = 0;
+            }
+            else
+            {
+                Finished = ST_TRUE;
+                Return_Value = ST_TRUE;
+            }
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextUnit(player_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, player_idx, map_plane);
+#endif
+
+    return Return_Value;
+}
+
+// WZD o61p06
+// STK_GetExtraActions()
+
+// WZD o61p07
+// STK_GetMovableUnits()
+
+// WZD o61p08
+void IDK_StackPassable_s53D3F(int16_t * unit_count, int16_t unit_array[])
+{
+    int16_t Stack_Array[9];
+    int16_t LL_Array[9];
+// var_E= word ptr -0Eh
+// var_C= word ptr -0Ch
+    int16_t IDK_transport_capacity;
+    int16_t IDK_CountOfNonOceanFairingUnitsInStack;
+    int16_t IDK_transport_flag;
+    int16_t IDK_unit_array_cnt;
+    int16_t IDK_Stack_Array_cnt;
+
+    int16_t itr_unit_stack_count;
+    int16_t itr_LL_Array;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_StackPassable_s53D3F()\n", __FILE__, __LINE__);
+#endif
+
+    IDK_transport_flag = ST_FALSE;
+    IDK_transport_capacity = 0;
+
+    for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+    {
+        if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+        {
+            if(_UNITS[_unit_stack[itr_unit_stack_count].unit_idx].Status != 0x03) /* US_GoingTo */
+            {
+                if(_unit_type_table[_UNITS[_unit_stack[itr_unit_stack_count].unit_idx].type].Transport > 0)
+                {
+                    IDK_transport_flag = ST_TRUE;
+                    IDK_transport_capacity = _unit_type_table[_UNITS[_unit_stack[itr_unit_stack_count].unit_idx].type].Transport;
+                }
+            }
+        }
+    }
+
+    if(IDK_transport_flag == ST_TRUE)
+    {
+        IDK_Stack_Array_cnt = 0;
+        IDK_unit_array_cnt = 0;
+
+        for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
+        {
+            if(_unit_stack[itr_unit_stack_count].active == ST_TRUE)
+            {
+                if(_UNITS[_unit_stack[itr_unit_stack_count].unit_idx].Status != 0x03) /* US_GoingTo */
+                {
+                    if(_unit_type_table[_UNITS[_unit_stack[itr_unit_stack_count].unit_idx].type].Transport > 0)
+                    {
+                        unit_array[IDK_unit_array_cnt] = _unit_stack[itr_unit_stack_count].unit_idx;
+                        IDK_unit_array_cnt++;
+                    }
+                }
+            }
+            Stack_Array[IDK_Stack_Array_cnt] = _unit_stack[itr_unit_stack_count].unit_idx;
+            IDK_Stack_Array_cnt++;
+        }
+
+        IDK_Stack_Array_cnt = IDK_unit_array_cnt;
+        
+        if(Square_Has_City(_UNITS[_unit_stack[0].unit_idx].world_x, _UNITS[_unit_stack[0].unit_idx].world_y, _UNITS[_unit_stack[0].unit_idx].world_plane) == ST_UNDEFINED)
+        {
+            for(itr_LL_Array = 0; itr_LL_Array < 9; itr_LL_Array++)
+            {
+                LL_Array[itr_LL_Array] = ST_UNDEFINED;
+            }
+
+            IDK_CountOfNonOceanFairingUnitsInStack = STK_GetLandlubbers(_unit_stack_count, &Stack_Array[0], &LL_Array[0]);
+// ; returns a count of the units in a stack who can not
+// ; move over ocean tiles, and lists their indices into
+// ; the return array
+// ;
+// ; BUG: ignores non-corporeal units, considering them
+// ; landlubbers as well
+
+// cmp     [bp+IDK_CountOfNonOceanFairingUnitsInStack], 0
+// jg      short loc_53F07
+
+
+        }
+        else
+        {
+            goto Done;
+        }
+
+    }
+
+Done:
+    *unit_count = IDK_Stack_Array_cnt;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: IDK_StackPassable_s53D3F()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
+
 /*
     WIZARDS.EXE  ovr062
 */
 
 // WZD o62p01
-// int16_t RP_WIZ_ReturnZero(int16_t player_idx)
+// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
 
 // WZD o62p02
 /*
@@ -3006,7 +3571,7 @@ int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_
     int16_t move_map_flag;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_TileOffScrnEdge(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height);
 #endif
 
     l_map_x = map_x;
@@ -3065,11 +3630,205 @@ int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { move_map_flag = %d }\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height, move_map_flag);
+    dbg_prn("DEBUG: [%s, %d]: END: OVL_TileOffScrnEdge(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { move_map_flag = %d }\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height, move_map_flag);
 #endif
 
     return move_map_flag;
 }
+
+
+// WZD o62p07
+// DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
+
+
+// WZD o62p08
+void IDK_MainScr_SUA_s553C3(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t IDK_status, int16_t IDK_what1, int16_t IDK_what2)
+{
+    int16_t unit_type_idx;
+    int16_t var_2;
+    int16_t itr_stack;
+    int16_t unit_idx;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: IDK_MainScr_SUA_s553C3(player_idx = %d, *map_x = %d, *map_y =%d, *map_p = %d, IDK_status = %d, IDK_what1 = %d, IDK_what2 = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p, IDK_status, IDK_what1, IDK_what2);
+#endif
+
+    var_2 = 0;
+// mov     [OVL_MapVar3], 1
+// mov     [CRP_OVL_Obstacle_Var1], 0
+
+    /*
+        ¿ no 2 or 7 ?
+        ¿ cmp's 8, says switch 9 cases ?
+        ¿ says default is 6 ?
+        shl, but no sub 1
+    */
+    switch(IDK_status)
+    {
+        case 0:
+        {
+            DLOG("switch(IDK_status)  case 0:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                unit_idx = _unit_stack[itr_stack].unit_idx;
+                _UNITS[unit_idx].Status = 0x00;  /* US_Ready */
+                _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                if(_UNITS[unit_idx].HMoves > 0)
+                {
+                    _unit_stack[itr_stack].active = ST_TRUE;
+                    _UNITS[unit_idx].Finished = ST_FALSE;
+                }
+                else
+                {
+                    _UNITS[unit_idx].Status = 0x04;  /* US_ReachedDest */
+                    _UNITS[unit_idx].Finished = ST_TRUE;
+                }
+                _UNITS[unit_idx].Target_X = 0;
+                _UNITS[unit_idx].Target_Y = 0;
+            }
+        } break;
+        case 1:
+        {
+            DLOG("switch(IDK_status)  case 1:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                unit_idx = _unit_stack[itr_stack].unit_idx;
+                if (
+                    (_unit_stack[itr_stack].active == ST_TRUE) &&
+                    (_UNITS[unit_idx].HMoves > 0) &&
+                    (_UNITS[unit_idx].Finished == ST_FALSE)
+                )
+                {
+                    _UNITS[unit_idx].Status = IDK_status;
+                    _UNITS[unit_idx].Finished = ST_TRUE;
+                    _unit_stack[itr_stack].active = ST_FALSE;
+                    _UNITS[unit_idx].Target_X = 0;
+                    _UNITS[unit_idx].Target_Y = 0;
+                    var_2++;
+                }
+            }
+        } break;
+        case 2:
+        {
+            DLOG("switch(IDK_status)  case 2:");
+
+        } break;
+        case 3:
+        {
+            DLOG("switch(IDK_status)  case 3:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                unit_idx = _unit_stack[itr_stack].unit_idx;
+                if(
+                    ((_UNITS[unit_idx].Status & 0x04) != 0) ||  /* US_ReachedDest */
+                    ((_UNITS[unit_idx].Status & 0x03) != 0) ||  /* US_GoingTo */
+                    ((_UNITS[unit_idx].Status & 0x00) != 0)     /* US_Ready */
+                )
+                {
+                    _UNITS[unit_idx].Status = 0x03;  /* US_GoingTo */
+                    _UNITS[unit_idx].Target_X = IDK_what1;
+                    _UNITS[unit_idx].Target_Y = IDK_what2;
+                }
+            }
+        } break;
+        case 4:
+        {
+            DLOG("switch(IDK_status)  case 4:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                if(
+                    (_unit_stack[itr_stack].active == ST_TRUE) &&
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x03) == 0) &&  /* US_GoingTo */
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x08) == 0)     /* US_Purify  */
+                )
+                {
+                    unit_idx = _unit_stack[itr_stack].unit_idx;
+                    _unit_stack[itr_stack].active = ST_FALSE;
+                    _UNITS[unit_idx].Finished = ST_TRUE;
+                    _UNITS[unit_idx].Status = 0x04;  /* US_ReachedDest */
+                    _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                    _UNITS[unit_idx].HMoves = 0;
+                    _UNITS[unit_idx].Target_X = 0;
+                    _UNITS[unit_idx].Target_Y = 0;
+                }
+            }
+        } break;
+        case 5:
+        {
+            DLOG("switch(IDK_status)  case 5:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                unit_idx = _unit_stack[itr_stack].unit_idx;
+                if(
+                    (_unit_stack[itr_stack].active != ST_FALSE) &&
+                    (_UNITS[unit_idx].HMoves > 0) &&
+                    (_UNITS[unit_idx].Finished == ST_FALSE)
+                )
+                {
+                    _UNITS[unit_idx].Status = 0x05;  /* US_Wait */
+                    _unit_stack[itr_stack].active = ST_FALSE;
+                    _UNITS[unit_idx].Target_X = 0;
+                    _UNITS[unit_idx].Target_Y = 0;
+                }
+            }
+        } break;
+        case 6:
+        {
+            DLOG("switch(IDK_status)  case 6:");
+
+        } break;
+        case 7:
+        {
+            DLOG("switch(IDK_status)  case 7:");
+
+        } break;
+        case 8:
+        {
+            DLOG("switch(IDK_status)  case 8:");
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                if(_unit_stack[itr_stack].active == ST_TRUE)
+                {
+                    unit_idx = _unit_stack[itr_stack].unit_idx;
+                    unit_type_idx = _UNITS[unit_idx].type;
+                    if( (_unit_type_table[unit_type_idx].Abilities & 0x4000) != 0)  /* Unit Type Ability: Purify / Purification */
+                    {
+                        _unit_stack[itr_stack].active = ST_FALSE;
+                        _UNITS[unit_idx].Finished = ST_TRUE;
+                        _UNITS[unit_idx].Status = 0x08;  /* US_Purify */
+                        _UNITS[unit_idx].HMoves = 0;
+                        _UNITS[unit_idx].Target_X = 0;
+                        _UNITS[unit_idx].Target_Y = 0;
+                        _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+                    }
+                }
+            }
+        } break;
+
+    }
+
+
+    /* ¿ "sus_06:                                 ; default" ? */
+    Reset_Draw_Active_Stack();
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: IDK_MainScr_SUA_s553C3(player_idx = %d, *map_x = %d, *map_y =%d, *map_p = %d, IDK_status = %d, IDK_what1 = %d, IDK_what2 = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p, IDK_status, IDK_what1, IDK_what2);
+#endif
+
+}
+
+
+// WZD o62p09
+// EarthGateTeleport()
+
+
+// WZD o62p10
+// USW_FullDisplay()
+
 
 
 /*
@@ -4092,10 +4851,15 @@ int16_t Stack_Has_Planar_Travel(void)
 
     if(stack_has_no_active_units == ST_TRUE)
     {
+        DLOG("(stack_has_no_active_units == ST_TRUE)");
         for(itr = 0; itr < _unit_stack_count; itr++)
         {
             _unit_stack[itr].active = ST_TRUE;
         }
+    }
+    else
+    {
+        DLOG("(stack_has_no_active_units == ST_FALSE)");
     }
 
 
@@ -4111,12 +4875,17 @@ int16_t Stack_Has_Planar_Travel(void)
     for(itr = 0; itr < _unit_stack_count; itr++)
     {
         unit_idx = _unit_stack[itr].unit_idx;
-        if(_unit_stack[unit_idx].active == ST_TRUE)
+        if(_unit_stack[itr].active == ST_TRUE)
         {
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ): %d\n", __FILE__, __LINE__, ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ));
+    dbg_prn("DEBUG: [%s, %d]: ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ): %d\n", __FILE__, __LINE__, ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ));
+    dbg_prn("DEBUG: [%s, %d]: Unit_Has_Planar_Travel_Item(unit_idx): %d\n", __FILE__, __LINE__, Unit_Has_Planar_Travel_Item(unit_idx));
+#endif
             if(
                 ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ) ||
                 ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ) ||
-                ( Unit_Has_Planar_Travel_Item(unit_idx == ST_TRUE) )
+                ( Unit_Has_Planar_Travel_Item(unit_idx) == ST_TRUE )
             )
             {
                 stack_has_planar_travel = ST_TRUE;
@@ -4138,7 +4907,7 @@ int16_t Stack_Has_Planar_Travel(void)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Has_Planar_Travel()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Stack_Has_Planar_Travel() { stack_has_planar_travel = %d }\n", __FILE__, __LINE__, stack_has_planar_travel);
 #endif
     return stack_has_planar_travel;
 }
@@ -4189,6 +4958,10 @@ OON XREF STK_move() WZD o95p01
     int16_t itr_unit_stack;
     int8_t tmp_unit_type;  // In Dasm, DNE
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_GetStackHMoves()\n", __FILE__, __LINE__);
+#endif
+
     tmp_half_move_points = 1000;
 
     StackHasWindWalkingUnit = ST_FALSE;
@@ -4225,6 +4998,10 @@ OON XREF STK_move() WZD o95p01
     }
 
     STK_HMoves_Left = tmp_half_move_points;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: OVL_GetStackHMoves() { STK_HMoves_Left = %d }\n", __FILE__, __LINE__, STK_HMoves_Left);
+#endif
 
     return STK_HMoves_Left;
 }
@@ -4707,6 +5484,97 @@ void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16
 
 
 
+
+/*
+    WIZARDS.EXE  ovr095
+*/
+
+// WZD o95p01
+// STK_Move()
+
+// WZD o95p02
+// OVL_MoveUnitStack()
+
+// WZD o95p03
+// AI_ContactWizards()
+
+// WZD o95p04
+// G_STK_OvlObstacles()
+
+// WZD o95p05
+int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[])
+{
+    int16_t Landlubber_Count;
+
+    int16_t itr_Stack_Size;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetLandlubbers()\n", __FILE__, __LINE__);
+#endif
+
+    Landlubber_Count = 0;
+
+    for(itr_Stack_Size = 0; itr_Stack_Size < Stack_Size; itr_Stack_Size++)
+    {
+        // drake178: returns 1 if the unit has wind walking, whether natural or through an enchantment; or 0 otherwise
+        // WZD o71p04
+        if(UNIT_HasWindWalking(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        {
+            goto Return_Zero;
+        }
+// DONT          // drake178: does nothing and returns zero, at some point must have been a unit ability or enchantment check
+// DONT          // WZD o71p08
+// DONT          if(UNIT_ReturnZero(*Stack_Array[itr_Stack_Size]) == ST_TRUE)
+// DONT          {
+// DONT              return 0;
+// DONT          }
+        // WZD o71p03
+        if(UNIT_HasAirTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        {
+            continue;
+        }
+        // WZD o71p05
+        if(UNIT_HasWaterTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        {
+            continue;
+        }
+        // WZD o71p010
+        if(UNIT_HasAirTravelItem(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        {
+            continue;
+        }
+        // WZD o71p09
+        if(UNIT_HasWaterTravelItem(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        {
+            continue;
+        }
+
+        LL_Array[Landlubber_Count] = Stack_Array[itr_Stack_Size];
+        Landlubber_Count++;
+    }
+    goto Return_Count;
+
+Return_Zero:
+    Landlubber_Count = 0;
+    goto Done;
+
+Return_Count:
+    goto Done;
+
+Done:
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: STK_GetLandlubbers()\n", __FILE__, __LINE__);
+#endif
+
+    return Landlubber_Count;
+}
+
+// WZD o95p06
+// G_STK_SetPatrol()
+
+
+
 /*
     WIZARDS.EXE  ovr097
 */
@@ -4855,12 +5723,12 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, in
     {
         Print(x_start, y_start, string);
     }
-    else if(right_align_flag == ST_TRUE)
+    else  /* ¿ WTF:  else if(right_align_flag == ST_TRUE) ? */
     {
         Print_Right(x_start, y_start, string);
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: VGA_DrawHalfValue(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
+    dbg_prn("DEBUG: [%s, %d]: END: Print_Moves_String(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
 #endif
 }

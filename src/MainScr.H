@@ -11,7 +11,10 @@
     ovr062
     ovr063
     ovr064
+    ovr095
+    ovr097
 */
+
 
 
 // WZD  dseg:31AE
@@ -259,7 +262,7 @@ void Main_Screen_Draw(void);
 // WZD o57p09
 // PRIVATE  void Main_Screen_Reset(void);
 // WZD o57p10
-// PRIVATE  void IDK_UnitMoves_and_PlanarTravel(void);
+// PRIVATE  void IDK_UnitMoves_and_PlanarTravel(int16_t movement_direction);
 
 /*
     WIZARDS.EXE  ovr058
@@ -285,11 +288,42 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
 
 /*
+    WIZARDS.EXE  ovr061
+*/
+
+
+// WZD o61p01
+// IDK_ActiveUnitStack_MovesOrPath_s53150()
+
+// WZD o61p02
+int16_t IDK_DoMoveStack_s5336C(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+
+// WZD o61p03
+// UNIT_MoveStack()
+
+// WZD o61p04
+// ¿PRIVATE?  void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
+
+// WZD o61p05
+// ¿PRIVATE?  int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
+
+// WZD o61p06
+// STK_GetExtraActions()
+
+// WZD o61p07
+// STK_GetMovableUnits()
+
+// WZD o61p08
+void IDK_StackPassable_s53D3F(int16_t * unit_count, int16_t unit_array[]);
+
+
+
+/*
     WIZARDS.EXE  ovr062
 */
 
 // WZD o62p01
-// int16_t RP_WIZ_ReturnZero(int16_t player_idx)
+// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
 
 // WZD o62p02
 // AKA OVL_StackSelect()
@@ -310,6 +344,18 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // WZD o62p06
 // drake178: OVL_TileOffScrnEdge()
 // PRIVATE int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
+
+// WZD o62p07
+// DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
+
+// WZD o62p08
+// ¿PRIVATE?  void IDK_MainScr_SUA_s553C3(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t IDK_status, int16_t IDK_what1, int16_t IDK_what2);
+
+// WZD o62p09
+// EarthGateTeleport()
+
+// WZD o62p10
+// USW_FullDisplay()
 
 
 /*
@@ -370,6 +416,31 @@ void MainScr_Prepare_Reduced_Map(void);
 // PRIVATE  void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 // PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
+
+
+
+/*
+    WIZARDS.EXE  ovr095
+*/
+
+// WZD o95p01
+// STK_Move()
+
+// WZD o95p02
+// OVL_MoveUnitStack()
+
+// WZD o95p03
+// AI_ContactWizards()
+
+// WZD o95p04
+// G_STK_OvlObstacles()
+
+// WZD o95p05
+// ¿PRIVATE? int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+
+// WZD o95p06
+// G_STK_SetPatrol()
+
 
 
 /*
