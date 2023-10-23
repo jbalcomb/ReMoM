@@ -367,6 +367,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\SETTLE.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\special.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Spellbook.C"
 				>
 			</File>
@@ -670,6 +678,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SCORE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SETTLE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\special.H"
 				>
 			</File>
 			<File
