@@ -842,7 +842,7 @@ void Set_Unit_Draw_Priority(void)
             draw_priority = ST_UNDEFINED;
         }
 
-        if(_UNITS[itr_units].owner_idx != _human_player_idx && UNIT_HasInvisibility(itr_units) == ST_TRUE)
+        if(_UNITS[itr_units].owner_idx != _human_player_idx && Unit_Has_Invisibility(itr_units) == ST_TRUE)
         {
             draw_priority = ST_UNDEFINED;
         }
@@ -1060,9 +1060,180 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 
 
 // WZD o68p05
+// RP_OVL_DrawCities2()
+
+
 // WZD o68p06
+/*
+    called from Units_In_Tower()
+        only for human_player_idx
+
+*/
+void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    uint8_t * ptr_square_explored;
+    int16_t X_LoopVar;
+    int16_t Y_Up_2;
+    int16_t Y_Down_2;
+    int16_t X_Left_2;
+    int16_t X_Right_2;
+    int16_t Y_Up_1;
+    int16_t Y_Down_1;
+    int16_t X_Left_1;
+    int16_t X_Right_1;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: TILE_Explore(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+#endif
+
+    // ptr_square_explored = (square_explored + (2400 * wp));
+    ptr_square_explored = (TBL_Scouting + (2400 * wp));
+
+    if(wy == 0)
+    {
+        // ; BX = (wy * WORLD_WIDTH) + wx
+        // mov     [byte ptr es:bx], SCT_BottomLeft or SCT_TopLeft or SCT_TopRight or SCT_BottomRight
+        // *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)) = (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight);
+// 01 ; enum SCOUT_BITS (bitfield)
+// 01 SCT_BottomLeft  = 1
+// 02 SCT_TopLeft  = 2
+// 04 SCT_TopRight  = 4
+// 08 SCT_BottomRight  = 8
+        *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)) = (0x01 | 0x02 | 0x04 | 0x08);  // ... sets all four corners ...
+    }
+    else
+    {
+
+        /*
+            BEGIN: sanitize wy & wx
+        */
+        if(wy == 0)
+        {
+            Y_Up_1 = 0;
+            Y_Up_2 = 0;
+        }
+        else
+        {
+            Y_Up_1 = wy - 1;
+            Y_Up_2 = wy - 2;
+            if(Y_Up_2 < 0)
+            {
+                Y_Up_2 = 0;
+            }
+        }
+
+        if(wy == WORLD_Y_MAX)
+        {
+            Y_Down_1 = WORLD_WIDTH - 1;  // 40 - 1 = 39
+            Y_Down_2 = WORLD_WIDTH - 2;  // 40 - 2 = 38
+        }
+        else
+        {
+            Y_Down_1 = wy + 1;
+            Y_Down_2 = wy + 2;
+            if(Y_Down_2 > WORLD_WIDTH)
+            {
+                Y_Down_2 = WORLD_Y_MAX;
+            }
+        }
+
+        if(wx == 0)
+        {
+            X_Left_1 = WORLD_WIDTH - 1;  // 60 - 1 = 59
+            X_Left_2 = WORLD_WIDTH - 2;  // 60 - 2 = 58
+        }
+        else
+        {
+            X_Left_2 = wx + 2;
+            if(X_Left_2 < 0)
+            {
+                X_Left_2 = WORLD_X_MAX;
+            }
+        }
+
+        if(wx == WORLD_X_MAX)
+        {
+            X_Right_1 = 0;
+            X_Right_2 = 1;
+        }
+        else
+        {
+            X_Right_1 = wx + 1;
+            X_Right_2 = wx + 2;
+        }
+        /*
+            END: sanitize wy & wx
+        */
+
+        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 ))                      | 0x08;  //                                               SCT_BottomRight
+        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) | 0x01               | 0x08;  // SCT_BottomLeft                              | SCT_BottomRight
+        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) | 0x01                     ;  // SCT_BottomLeft
+        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 ))               | 0x04 | 0x08;  //                                SCT_TopRight | SCT_BottomRight
+        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) | 0x01 | 0x02 | 0x04 | 0x08;  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
+        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) | 0x01 | 0x02              ;  // SCT_BottomLeft | SCT_TopLeft
+        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 ))               | 0x04       ;  //                                SCT_TopRight
+        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       ))        | 0x02 | 0x04       ;  //                  SCT_TopLeft | SCT_TopRight
+        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1))        | 0x02              ;  //                  SCT_TopLeft
+
+
+
+            // drake178:  ; entirely redundant, TILE_ExploreCorners, if it was
+            // drake178:  ; implemented correctly, would deal with each and every
+            // drake178:  ; one of these cases, and then some
+            // drake178:  ;
+            // drake178:  ; performs exploration matching of neighboring tiles
+            // drake178:  ; in a 5-by-5 rectangle around the selected tile in an
+            // drake178:  ; attempt to remove fog of war from between tiles that
+            // drake178:  ; are already explored
+            // drake178:  ;
+            // drake178:  ; BUG: the array contains many elements that are only
+            // drake178:  ; intended to bugfix artifacts that the developers
+            // drake178:  ; could not track down, but is missing 10 valid and
+            // drake178:  ; occuring configurations, and has wrong values for 4
+            // drake178:  ; of the ones it does include
+        // TODO  RP_TILE_ExploreMatch(wx, wy, wp);
+
+
+
+        for(X_LoopVar = X_Left_2; X_LoopVar < X_Right_2; X_LoopVar++)
+        {
+                // drake178:  ; compares the tile and it's bottom, right, and
+                // drake178:  ; diagonal bottom-right neighbors to NoSide_Explores,
+                // drake178:  ; and if all match one of them, removes the corner
+                // drake178:  ; corresponding to the original tile's bottom right one
+                // drake178:  ;
+                // drake178:  ; conceptually flawed, it should simply check whether
+                // drake178:  ; there is any exploration on all 4 tiles, rather than
+                // drake178:  ; comparing them against the corner only masks
+            // TODO  TILE_ExploreCorners(X_LoopVar, Y_Up_2, wp);
+        }
+        // TODO  TILE_ExploreCorners(X_Right_1, Y_Up_1, wp);
+        // TODO  TILE_ExploreCorners(X_Right_1, wy, wp);
+        for(X_LoopVar = X_Left_2; X_LoopVar < X_Right_2; X_LoopVar++)
+        {
+            // TODO  TILE_ExploreCorners(X_LoopVar, Y_Down_1, wp);
+        }
+
+
+
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: TILE_Explore(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+#endif
+
+}
+
+
 // WZD o68p07
+// TILE_ExploreCorners()
+
+
 // WZD o68p08
+// RP_TILE_ExploreMatch()
+
 
 // WZD o68p09
 // AKA IDK_Draw_MiniMap_s5B828()

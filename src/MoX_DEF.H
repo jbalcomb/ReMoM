@@ -45,7 +45,30 @@
 #define SWAP(x, y) (x ^= y ^= x ^= y)
 
 
+/*
+    Macros to translate coordinates from/to 'Movement Map', 'World Map', 'Reduced Map'
+        ...
+        ¿ including main_map_grid ?
+        ¿ including reduced_map_grid ?
+    
+    MMAPX2WMAPX vs. MMX2WMX vs. MX2WX
+    MMAPY2WMAPY vs. MMY2WMY vs. MY2WY
+    ¿ congnitive effort to visually differentiate between MMAP, WMAP, RMAP, given the one character difference ?
+    ¿ congnitive effort to eschew 'mx' as 'Mouse X', given the generally accepted practice in the industry ?
+    ¿ lazy cunts and thier retarded concern for typing less characters ?
 
+*/
+#define MMAPX2WMAPX(_mmap_x_) { ( (_map_x + _main_map_grid_x) / WORLD_WIDTH ) }
+#define MMAPY2WMAPY(_mmap_y_) { ( (_map_y + _main_map_grid_y) / WORLD_HEIGHT ) }
+#define MMX2WMX(_mmx_) { ( (_map_x + _main_map_grid_x) / WORLD_WIDTH  ) }
+#define MMY2WMY(_mmy_) { ( (_map_y + _main_map_grid_y) / WORLD_HEIGHT  ) }
+#define MX2WX(_mx_) { ( (_map_x + _main_map_grid_x) / WORLD_WIDTH  ) }
+#define MY2WY(_my_) { ( (_map_y + _main_map_grid_y) / WORLD_HEIGHT  ) }
+
+
+
+
+// something or other for color difference/distance
 #define REMAP_THRESHOLD  21
 
 

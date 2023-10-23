@@ -209,9 +209,16 @@ void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x,
 // PRIVATE  void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p05
+// RP_OVL_DrawCities2()
+
 // WZD o68p06
+void TILE_Explore(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o68p07
+// TILE_ExploreCorners()
+
 // WZD o68p08
+// RP_TILE_ExploreMatch()
 
 // WZD o68p09
 void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, int16_t wp, int16_t wx, int16_t wy);
