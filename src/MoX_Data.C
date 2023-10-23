@@ -763,9 +763,10 @@ SAMB_ptr TBL_MoveMaps_EMS;
 // WZD dseg:9CB0
 /*
     302 Paragraphs, 4832 Bytes
-    4800 bytes used - 1-byte value, 2400 world squares, 2 planes
+    4800 bytes used - 1-byte values, 2400 world squares, 2 planes
 */
 uint8_t * TBL_Scouting;                     // load in Load_SAVE_GAM()
+
 // WZD dseg:9CB4  
 uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
 // WZD dseg:9CB8  
@@ -1088,6 +1089,105 @@ byte_ptr armylist_world_x_1000;
 
 // WZD dseg:C11C 00 00                                           minimap_height dw 0                     ; DATA XREF: Draw_Maps:loc_59CF4r ...
 // WZD dseg:C11C 00 00                                           reduced_map_height dw 0                 ; DATA XREF: Draw_Maps:loc_59CF4r ...
+
+
+
+
+
+// WZD dseg:C47C
+int16_t OVL_Action_Plane;
+// WZD dseg:C47E
+int16_t OVL_Action_YPos;
+// WZD dseg:C480
+int16_t OVL_Action_XPos;
+
+
+
+// WZD dseg:C5DC                                                 ¿ BEGIN: Move_Stack() || UNITMOVE ?
+
+// WZD dseg:C5DC 00 00                                           OVL_SWardTriggered dw 0                 ; DATA XREF: Move_Stack+42Cw ...
+
+// WZD dseg:C5DE
+// drake178: set to the path tile before the last before moving units overland
+int16_t OVL_Action_OriginY;
+
+// WZD dseg:C5E0
+// drake178: set to the path tile before the last before moving units overland
+int16_t OVL_Action_OriginX;
+
+// WZD dseg:C5E2 00                                              db    0
+// WZD dseg:C5E3 00                                              db    0
+// WZD dseg:C5E4 00                                              db    0
+// WZD dseg:C5E5 00                                              db    0
+// WZD dseg:C5E6 00                                              db    0
+// WZD dseg:C5E7 00                                              db    0
+// WZD dseg:C5E8 00                                              db    0
+// WZD dseg:C5E9 00                                              db    0
+// WZD dseg:C5EA 00                                              db    0
+// WZD dseg:C5EB 00                                              db    0
+// WZD dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Stack+50Dw
+// WZD dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Stack+507w
+
+// IDGI  // WZD dseg:C5F0
+// IDGI  /*
+// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
+// IDGI  */
+// IDGI  uint8_t OVL_Path_Costs[35];
+// IDGI  // WZD dseg:C5F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        
+// IDGI  // WZD dseg:C613 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_Cost_Array db 55h dup(0)
+// IDGI  // WZD dseg:C667 00                                              
+// IDGI  uint8_t IDK_MovePath_DestinationY[36];  // DATA XREF: OVL_MoveUnitStack+2C9r
+// IDGI  // WZD dseg:C668
+// IDGI  /*
+// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
+// IDGI  */
+// IDGI  // uint8_t OVL_Path_Ys[35];
+// IDGI  // WZD dseg:C68B 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_Y_Array db 55h dup(0)
+// IDGI  // WZD dseg:C6DF 00                                              
+// IDGI  uint8_t IDK_MovePath_DestinationX[36];  // DATA XREF: OVL_MoveUnitStack+2BEr
+// IDGI  // WZD dseg:C6E0
+// IDGI  /*
+// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
+// IDGI  */
+// IDGI  // uint8_t OVL_Path_Xs[35];
+// IDGI  WZD dseg:C703 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_X_Array db 55h dup(0)
+
+// WZD dseg:C5F0
+uint8_t OVL_Path_Costs[118];
+// WZD dseg:C666
+uint8_t Fst_Dst_Y;
+// WZD dseg:C667
+uint8_t Scd_Dst_Y;
+// WZD dseg:C668
+uint8_t MovePath_Y[118];
+// WZD dseg:C6DE
+uint8_t Fst_Dst_X;
+// WZD dseg:C6DF
+uint8_t Scd_Dst_X;
+// WZD dseg:C6E0
+uint8_t MovePath_X[118];
+// WZD dseg:C756
+uint8_t IDK_MovePath[62];
+
+
+
+// WZD dseg:C794 00                                              STK_HasNatureUnits db 0                 ; DATA XREF: CTY_CheckSpellWard:loc_7E798w ...
+// WZD dseg:C795 00                                              STK_HasSorceryUnits db 0                ; DATA XREF: CTY_CheckSpellWard+C3w
+// WZD dseg:C796 00                                              STK_HasChaosUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+121w ...
+// WZD dseg:C797 00                                              STK_HasLifeUnits db 0                   ; DATA XREF: CTY_CheckSpellWard+1A2w
+// WZD dseg:C798 00                                              STK_HasDeathUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+200w ...
+// WZD dseg:C799 00                                              UU_Global_Byte db 0
+
+// WZD dseg:C799                                                 ¿ END: Move_Stack() || UNITMOVE ?
+
+// WZD dseg:C79A 00 00                                           CMB_HumanTurn dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
+
+
+
+
+
+
+
 
 
 

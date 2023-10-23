@@ -163,6 +163,10 @@ WIZARDS.LBX
 
 #define WORLD_WIDTH         60  // in Squares
 #define WORLD_HEIGHT        40  // in Squares
+#define WORLD_X_MIN          0  // in Squares
+#define WORLD_X_MAX         59  // in Squares
+#define WORLD_Y_MIN          0  // in Squares
+#define WORLD_Y_MAX         39  // in Squares
 #define _MAP_MAX_X      60
 #define _MAP_MAX_Y      40
 #define WORLD_SIZE          2400
@@ -271,10 +275,37 @@ hanging out in MoX_DEF.H
 */
 
 
+
+/*
+    Unit Action / Status / State
+    - per 'MoM Demo'
+
+    ¿ vs. enum Unit_Status {} in MoX_Data.H ?
+
+    ¿ "UA" for "Unit Action" ?
+    ¿ "US" for "Unit Status" ?
+
+PS.  'MoM Demo' looks to have an array of strings for the defines / enum
+*/
+#define NO_ORDERS       0x00
+#define PATROL          0x01
+#define BUILD           0x02    // "BUILD", as in "Build Road"
+#define GOTO            0x03
+#define DONE            0x04
+#define WAIT            0x05
+#define CASTING         0x06
+#define PURIFY          0x07
+#define MELD            0x08
+#define BUILD_OUTPOST   0x09    // ¿ "Build Outpost", like MoO1, rather than "Settle", for "Settlers" ?
+#define WEIGHT_ANCHOR   0x0A
+#define BOAT_RIDER      0x0B
+
 /*
     Unit Type - Movement Type
     s_UNIT_TYPE.Move_Flags
     enum MOVEFLAGS
+
+PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 */
 // 0b00000000  0x00      0
 #define M_Cavalry           0x01      // 0b00000001  0x01      1

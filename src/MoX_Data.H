@@ -793,14 +793,14 @@ struct s_UNIT
     /* 00 */  int8_t  world_x;
     /* 01 */  int8_t  world_y;
     /* 02 */  int8_t  world_plane;
-    /* 03 */  int8_t  owner_idx;
+    /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
     /* 04 */  int8_t  HalfMoves_Max;
-    /* 05 */  uint8_t type;
+    /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
     /* 06 */  int8_t  Hero_Slot;
-    /* 07 */  int8_t  Finished;
-    /* 08 */  int8_t  HMoves;
-    /* 09 */  int8_t  Target_X;
-    /* 0A */  int8_t  Target_Y;
+    /* 07 */  int8_t  Finished;     /* FALSE/TRUE; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
+    /* 08 */  int8_t  HMoves;       /* Movement Points, as half-points */
+    /* 09 */  int8_t  dst_wx;     /* Go-To Destination World X */
+    /* 0A */  int8_t  dst_wy;     /* Go-To Destination World Y */
     /* 0B */  int8_t  Status;
     /* 0C */  int8_t  Level;
     /* 0D */  int8_t  Unused_0Dh;
@@ -809,7 +809,7 @@ struct s_UNIT
     /* 11 */  int8_t  Damage;
     /* 12 */  int8_t  Draw_Priority;
     /* 13 */  int8_t  Unknown_13h;
-    /* 14 */  int16_t In_Tower;
+    /* 14 */  int16_t In_Tower;     /* FALSE/TRUE;  Unit is in a Tower of Wizardry */
     /* 16 */  int8_t  Sight_Range;
     /* 17 */  int8_t  Mutations;    // ; enum MUT_FLAGS
     /* 18 */  int16_t Enchants_LO;  // ; enum UE_FLAGS_L
@@ -2004,6 +2004,79 @@ extern byte_ptr armylist_world_x_1000;
 
 // WZD dseg:C11C 00 00                                           minimap_height dw 0                     ; DATA XREF: Draw_Maps:loc_59CF4r ...
 // WZD dseg:C11C 00 00                                           reduced_map_height dw 0                 ; DATA XREF: Draw_Maps:loc_59CF4r ...
+
+
+
+
+
+// WZD dseg:C47C
+extern int16_t OVL_Action_Plane;
+// WZD dseg:C47E
+extern int16_t OVL_Action_YPos;
+// WZD dseg:C480
+extern int16_t OVL_Action_XPos;
+
+
+
+// WZD dseg:C5DC                                                 ¿ BEGIN: Move_Stack() || UNITMOVE ?
+
+// WZD dseg:C5DC 00 00                                           OVL_SWardTriggered dw 0                 ; DATA XREF: Move_Stack+42Cw ...
+
+// WZD dseg:C5DE
+// drake178: set to the path tile before the last before moving units overland
+extern int16_t OVL_Action_OriginY;
+
+// WZD dseg:C5E0
+// drake178: set to the path tile before the last before moving units overland
+extern int16_t OVL_Action_OriginX;
+
+// WZD dseg:C5E2 00                                              db    0
+// WZD dseg:C5E3 00                                              db    0
+// WZD dseg:C5E4 00                                              db    0
+// WZD dseg:C5E5 00                                              db    0
+// WZD dseg:C5E6 00                                              db    0
+// WZD dseg:C5E7 00                                              db    0
+// WZD dseg:C5E8 00                                              db    0
+// WZD dseg:C5E9 00                                              db    0
+// WZD dseg:C5EA 00                                              db    0
+// WZD dseg:C5EB 00                                              db    0
+
+// WZD dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Stack+50Dw
+// WZD dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Stack+507w
+
+
+
+// WZD dseg:C5F0
+extern uint8_t OVL_Path_Costs[118];
+// WZD dseg:C666
+extern uint8_t Fst_Dst_Y;
+// WZD dseg:C667
+extern uint8_t Scd_Dst_Y;
+// WZD dseg:C668
+extern uint8_t MovePath_Y[118];
+// WZD dseg:C6DE
+extern uint8_t Fst_Dst_X;
+// WZD dseg:C6DF
+extern uint8_t Scd_Dst_X;
+// WZD dseg:C6E0
+extern uint8_t MovePath_X[118];
+// WZD dseg:C756
+extern uint8_t IDK_MovePath[62];
+
+
+
+// WZD dseg:C794 00                                              STK_HasNatureUnits db 0                 ; DATA XREF: CTY_CheckSpellWard:loc_7E798w ...
+// WZD dseg:C795 00                                              STK_HasSorceryUnits db 0                ; DATA XREF: CTY_CheckSpellWard+C3w
+// WZD dseg:C796 00                                              STK_HasChaosUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+121w ...
+// WZD dseg:C797 00                                              STK_HasLifeUnits db 0                   ; DATA XREF: CTY_CheckSpellWard+1A2w
+// WZD dseg:C798 00                                              STK_HasDeathUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+200w ...
+// WZD dseg:C799 00                                              UU_Global_Byte db 0
+
+// WZD dseg:C799                                                 ¿ END: Move_Stack() || UNITMOVE ?
+
+// WZD dseg:C79A 00 00                                           CMB_HumanTurn dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
+
+
 
 
 

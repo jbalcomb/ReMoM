@@ -234,7 +234,7 @@ o57p06  Main_Screen_Draw_Game_Buttons()
 o57p07  Add_Unit_Window_Fields()
 o57p08  Main_Screen_Draw()
 o57p09  Main_Screen_Reset()
-o57p10  ? IDK_UnitMoves_and_PlanarTravel() ? 
+o57p10  ? Move_Stack_DirKey() ? 
 
 */
 
@@ -262,7 +262,8 @@ void Main_Screen_Draw(void);
 // WZD o57p09
 // PRIVATE  void Main_Screen_Reset(void);
 // WZD o57p10
-// PRIVATE  void IDK_UnitMoves_and_PlanarTravel(int16_t movement_direction);
+// AKA Do_Move_Stack_DirKey()
+// PRIVATE  void Move_Stack_DirKey(int16_t movement_direction);
 
 /*
     WIZARDS.EXE  ovr058
@@ -278,10 +279,34 @@ void Set_Mouse_List_Default(void);
     WIZARDS.EXE  ovr059
 */
 
+// WZD o59p01
+// WZD o59p02
+// WZD o59p03
+// WZD o59p04
+// WZD o59p05
+// WZD o59p06
+// WZD o59p07
+// WZD o59p08
+// WZD o59p09
+// WZD o59p10
+// WZD o59p11
+// WZD o59p12
+
+// WZD o59p13
+// drake178: STK_CheckTower()
+// ¿PRIVATE?  int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
+
+// WZD o59p14
+// WZD o59p15
+// WZD o59p16
+// WZD o59p17
 // WZD o59p18
+
+// WZD o59p19
 // AKA IDK_MaybeSwitchStackPlane_s52514()
 void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
-// WZD o59p18
+
+// WZD o59p20
 // AKA IDK_PlanarTravel_TestWaterCity_s52774()
 int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
@@ -296,7 +321,8 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 // IDK_ActiveUnitStack_MovesOrPath_s53150()
 
 // WZD o61p02
-int16_t IDK_DoMoveStack_s5336C(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+// AKA Do_Move_Stack()
+// ¿PRIVATE?  int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p03
 // UNIT_MoveStack()
@@ -314,7 +340,7 @@ int16_t IDK_DoMoveStack_s5336C(int16_t move_x, int16_t move_y, int16_t player_id
 // STK_GetMovableUnits()
 
 // WZD o61p08
-void IDK_StackPassable_s53D3F(int16_t * unit_count, int16_t unit_array[]);
+void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
 
 
@@ -349,7 +375,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
 
 // WZD o62p08
-// ¿PRIVATE?  void IDK_MainScr_SUA_s553C3(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t IDK_status, int16_t IDK_what1, int16_t IDK_what2);
+// ¿PRIVATE?  void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
 
 // WZD o62p09
 // EarthGateTeleport()
@@ -394,7 +420,20 @@ void Main_Screen_Draw_Movement_Bar();
 // void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
 
 // WZD o63p12
-// PRIVATE int16_t OVL_GetStackHMoves(void);
+// AKA OVL_GetStackHMoves()
+// AKA OVL_GetStackHMoves_1()
+// PRIVATE int16_t Stack_Moves_Active(void);
+
+// WZD o63p13
+// AKA OVL_GetStackHMoves_2()
+// PRIVATE int16_t Stack_Moves(void);
+
+// WZD o63p14
+// RP_TILE_HasCity2()
+
+// WZD o63p14
+// Check_Planar_Seal()
+
 
 
 /*
@@ -424,10 +463,13 @@ void MainScr_Prepare_Reduced_Map(void);
 */
 
 // WZD o95p01
-// STK_Move()
+// AKA Move_Stack()
+// ¿PRIVATE? int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
 
 // WZD o95p02
-// OVL_MoveUnitStack()
+// AKA OVL_MoveUnitStack()
+// AKA Move_Units()
+// ¿PRIVATE? void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
 // AI_ContactWizards()
@@ -447,9 +489,30 @@ void MainScr_Prepare_Reduced_Map(void);
     WIZARDS.EXE  ovr097
 */
 
+// WZD o97p01
+// STK_EvaluatePath()
+
+// WZD o97p02
+// sub_7E597()
+
 // WZD o97p03
 // drake178: TILE_HasCity()
 // PRIVATE?  int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
+
+// WZD o97p04
+// AKA STK_GetMovesLeft()
+// ¿ vs. WZD o63p12  Stack_Moves_Active() ?
+// ¿ vs. WZD o63p13  Stack_Moves() ?
+// ¿PRIVATE? int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count);
+
+// WZD o97p05
+// RP_CTY_CheckSpellWard()
+
+// WZD o97p06
+// CTY_CheckSpellWard()
+
+// WZD o97p07
+// OVL_SpellWardError()
 
 // WZD o97p08
 // PRIVATE?  void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);

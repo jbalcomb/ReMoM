@@ -1,12 +1,13 @@
-#ifndef UNITMOVE_H
-#define UNITMOVE_H
-
 /*
     WIZARDS.EXE
     ovr071
 */
 
+#ifndef UNITMOVE_H
+#define UNITMOVE_H
+
 #include "MoX.H"
+
 
 
 // ... in MoM_DEF.H  :shrug:
@@ -62,11 +63,11 @@ void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, 
     Unit Mutation - Chaos Channels - Demon Wings
     returns ST_FALSE/ST_TRUE
 */
-int16_t UNIT_HasAirTravel(int16_t unit_idx);
+int16_t Unit_Has_AirTravel(int16_t unit_idx);
 
 // WZD o71p04
 // "HasWindWalking", because the manual says that is the name of the "Movement Type"
-int16_t UNIT_HasWindWalking(int16_t unit_idx);
+int16_t Unit_Has_WindWalking(int16_t unit_idx);
 
 // WZD o71p05
 /*
@@ -75,39 +76,66 @@ int16_t UNIT_HasWindWalking(int16_t unit_idx);
     Unit Enchantment - WaterWalking
     returns ST_FALSE/ST_TRUE
 */
-int16_t UNIT_HasWaterTravel(int16_t unit_idx);
+int16_t Unit_Has_WaterTravel(int16_t unit_idx);
 
 // WZD o71p06
 // int16_t UNIT_IsSailing(int16_t unit_idx);
+
 // WZD o71p07
-// int16_t UNIT_IsSwimming(int16_t unit_idx);
+int16_t Unit_Has_Swimming(int16_t unit_idx);
+
 // WZD o71p08
 // int16_t UNIT_ReturnZero(int16_t unit_idx);
 
 // WZD o71p09
-int16_t UNIT_HasWaterTravelItem(int16_t unit_idx);
+int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx);
 
 // WZD o71p010
-int16_t UNIT_HasAirTravelItem(int16_t unit_idx);
+int16_t Unit_Has_AirTravel_Item(int16_t unit_idx);
 
 // WZD o71p011
-int16_t UNIT_HasInvisibility(int16_t unit_idx);
+int16_t Unit_Has_Invisibility(int16_t unit_idx);
 
 // WZD o71p012
 // int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
 
 // WZD o71p013
 // drake178: UNIT_HasPlanarItem()
-int16_t Unit_Has_Planar_Travel_Item(int16_t unit_idx);
+int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o71p014
 // int16_t UNIT_IsNonCorporeal(int16_t unit_idx);
 
 
 
+/*
+    WIZARDS.EXE  ovr148
+*/
+
+// WZD o148p01
+// UU_OVL_Return_2()
+// WZD o148p02
+// UU_OVL_GetLinePath()
+
+// WZD o148p03
+// drake178: STK_GetPath()
+int16_t STK_GetPath(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Plane, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t LLCnt, int16_t UCnt, int16_t player_idx);
+
+// WZD o148p04
+// TILE_ExtendRange()
+// WZD o148p05
+// sub_D601B()
+// WZD o148p06
+// STK_SetOvlMoveMap()
+// WZD o148p07
+// OVL_ClearUnitPath()
+// WZD o148p08
+// OVL_StoreLongPath()
+
+
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  /* UNITMOVE_H */
