@@ -14,7 +14,7 @@ extern "C" {
 */
 
 // WZD dseg:9136
-extern SAMB_ptr DBG_ORIG_TBL_Items;
+extern struct s_ITEM * DBG_ORIG_TBL_Items;
 // WZD dseg:913A
 extern SAMB_ptr DBG_ORIG_TBL_Premade_Items;
 // WZD dseg:9232

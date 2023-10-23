@@ -303,9 +303,9 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
     uint8_t remap_block_index;
     uint8_t remap_color;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
 
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 //     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
@@ -401,9 +401,9 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
+// #endif
 }
 
 
@@ -492,22 +492,22 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
     uint8_t * dst_ptr;
     uint8_t pixel;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
+// #endif
 
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
-#ifdef STU_DEBUG
-    if(DBG_Draw_Invisibility = 1)  /* Unit Has Invisibility */
-    {
-        DLOG("(DBG_Draw_Invisibility = 1)");
-        dbg_prn("DEBUG: [%s, %d]: width: %d\n", __FILE__, __LINE__, width);
-        dbg_prn("DEBUG: [%s, %d]: height: %d\n", __FILE__, __LINE__, height);
-        dbg_prn("DEBUG: [%s, %d]: pict_size: %d\n", __FILE__, __LINE__, pict_size);
-    }
-#endif
+// #ifdef STU_DEBUG
+//     if(DBG_Draw_Invisibility = 1)  /* Unit Has Invisibility */
+//     {
+//         DLOG("(DBG_Draw_Invisibility = 1)");
+//         dbg_prn("DEBUG: [%s, %d]: width: %d\n", __FILE__, __LINE__, width);
+//         dbg_prn("DEBUG: [%s, %d]: height: %d\n", __FILE__, __LINE__, height);
+//         dbg_prn("DEBUG: [%s, %d]: pict_size: %d\n", __FILE__, __LINE__, pict_size);
+//     }
+// #endif
 
 
     src_ptr = (uint8_t *)(pict_seg + 16);
@@ -533,9 +533,9 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
+// #endif
 
 }
 
@@ -549,25 +549,25 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 */
 void Load_Palette_From_Animation(SAMB_ptr picture)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
+// #endif
 
     // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
-        DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
+        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
         FLIC_Load_Palette(picture, 0);
     }
     else
     {
-        DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
+        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
+// #endif
 }
 
 
@@ -629,7 +629,7 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     }
     else
     {
-        DLOG("(remap_flag != ST_FALSE)");
+        // DLOG("(remap_flag != ST_FALSE)");
         // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
         FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
     }
@@ -800,18 +800,18 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     int16_t height;
     int16_t width;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
+// #endif
 
     width = GET_2B_OFS(pict_seg, 0);
     height = GET_2B_OFS(pict_seg, 2);
 
     Draw_Picture_ASM(x, y, SZ_FLIC_HDR, pict_seg, width, height, 0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
+// #endif
 
 }
 
@@ -939,9 +939,9 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     uint16_t src_ofst;
     int16_t itr_pict_size;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
+// #endif
     
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
@@ -960,19 +960,19 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+// DELETE      }
+// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
-            DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
+            // DELETE  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                DLOG("transition: outside pixel, inside state");
+                // DELETE  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -980,10 +980,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
+            // DELETE  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
             if(outside_state != ST_FALSE)
             {
-                DLOG("transition: inside pixel, outside state");
+                // DELETE  DLOG("transition: inside pixel, outside state");
                 *(src_sgmt + (src_ofst - 2)) = outline_color;
             }
             outside_state = ST_FALSE;
@@ -1011,12 +1011,12 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+// DELETE      {
+// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+// DELETE      }
+// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
@@ -1055,9 +1055,9 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
+// #endif
 
 }
 
@@ -1079,9 +1079,9 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     uint16_t src_ofst;
     int16_t itr_pict_size;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
+// #endif
     
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
@@ -1100,12 +1100,12 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-#ifdef STU_DEBUG
-    if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-    }
-#endif
+// #ifdef STU_DEBUG
+//     if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
+//     {
+//         dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
+//     }
+// #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)  /* outside pixel */
         {
@@ -1195,9 +1195,9 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
+// #endif
 }
 
 
@@ -1215,9 +1215,9 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
     uint8_t color_list_idx;
     uint8_t color_list_ctr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
+// #endif
     
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
@@ -1241,9 +1241,9 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
     }
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
+// #endif
 }
 
 
@@ -1426,9 +1426,9 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
     int16_t itr_width;
     int16_t itr_height;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
+// #endif
 
     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
     data = pict_seg + ofst;
@@ -1437,12 +1437,12 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 
     if(FLIC_GET_LOOP_FRAME(pict_seg) != 0)
     {
-        DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) != 0)");
+        // DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) != 0)");
         Remap_Draw_Picture_ASM(x_start, y_start, ofst, pict_seg, width, height, skip_x);
     }
     else
     {
-        DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) == 0)");
+        // DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) == 0)");
         while(itr_width)
         {
             screen_pos = screen_start++;
@@ -1464,9 +1464,9 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
+// #endif
 
 }
 
@@ -1485,9 +1485,9 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
     int16_t itr_width;
     int16_t itr_height;
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
+// #endif
 
     // // // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
     // // screen_page_offset = ((y * SCREEN_WIDTH) + x);
@@ -1535,9 +1535,9 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
         itr_width--;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
+// #endif
 
 }
 
@@ -1602,9 +1602,9 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
     uint8_t data;
     uint8_t intensity_value;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
+// #endif
 
     // DS:SI  src  p_Palette[0]
     // ES:DI  dst  Intensity_Scale_Tbl@[0]
@@ -1664,8 +1664,8 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
+// #endif
 
 }

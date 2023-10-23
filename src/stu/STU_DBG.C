@@ -20,7 +20,7 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
 */
 
 // WZD dseg:9136
-SAMB_ptr DBG_ORIG_TBL_Items;
+struct s_ITEM * DBG_ORIG_TBL_Items;
 // WZD dseg:913A
 SAMB_ptr DBG_ORIG_TBL_Premade_Items;
 // WZD dseg:9232

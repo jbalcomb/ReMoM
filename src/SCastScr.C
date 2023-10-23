@@ -1,7 +1,6 @@
 
 #include "MoX.H"
-
-#include <assert.h>
+#include "SCastScr.H"
 
 
 
@@ -50,10 +49,10 @@ int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: World_To_Screen(map_xw = %d, map_yw = %d, *unit_xw = %d, *unit_yw = %d)\n", __FILE__, __LINE__, map_xw, map_yw, *unit_xw, *unit_yw);
 #endif
-    assert(map_xw >= 0 && map_xw <= 60);
-    assert(map_yw >= 0 && map_yw <= 40);
-    assert(*unit_xw >= 0 && *unit_xw <= 40);
-    assert(*unit_yw >= 0 && *unit_yw <= 40);
+    assert(map_xw >= 0 && map_xw <= WORLD_WIDTH);
+    assert(map_yw >= 0 && map_yw <= WORLD_HEIGHT);
+    assert(*unit_xw >= 0 && *unit_xw <= WORLD_HEIGHT);
+    assert(*unit_yw >= 0 && *unit_yw <= WORLD_HEIGHT);
 
 #ifdef STU_DEBUG
     ORIG_unit_xw = *unit_xw;
@@ -93,8 +92,8 @@ int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16
         *unit_yw = 0;  // ? ST_NULL ?
     }
 
-    assert(*unit_xw >= 0 && *unit_xw <= 320);
-    assert(*unit_yw >= 0 && *unit_yw <= 200);
+    assert(*unit_xw >= 0 && *unit_xw <= SCREEN_WIDTH);
+    assert(*unit_yw >= 0 && *unit_yw <= SCREEN_HEIGHT);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: World_To_Screen(map_xw = %d, map_yw = %d, *unit_xw = %d, *unit_yw = %d) {in_view = %d}\n", __FILE__, __LINE__, map_xw, map_yw, *unit_xw, *unit_yw, in_view);

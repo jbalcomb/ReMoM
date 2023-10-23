@@ -1,5 +1,33 @@
 
 
+
+Left Arrow
+←
+U+02190
+Up Arrow
+↑
+U+02191
+Right Arrow
+→
+U+02192
+Down Arrow
+↓
+U+02193
+
+North West Arrow
+↖
+U+02196
+North East Arrow
+↗
+U+02197
+South East Arrow
+↘
+U+02198
+South West Arrow
+↙
+U+02199
+
+
 Mouse Buttom
 Left/Right
 Help
@@ -159,4 +187,88 @@ Game Buttons            {_plane_button}
 
 
 ### BEGIN: Game Buttons - Plane Button
+
+
+
+
+### Section 8
+Direction Keys          {hotkey_idx_Up, hotkey_idx_Home, hotkey_idx_PgUp, hotkey_idx_Left, hotkey_idx_Right, hotkey_idx_End, hotkey_idx_Down, hotkey_idx_PgDn}
+field order: {UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight}
+enum: {KP_Left, KP_Right, KP_Up, KP_Down, KP_RightUp, KP_RightDown, KP_LeftUp, KP_LeftDown}
+
+the manual says "by hitting the keys on the numeric keypad"
+
+WZD  seg035
+Read_Key()
+    mov     ah, 10h
+    int     16h
+    ; KEYBOARD - GET ENHANCED KEYSTROKE (AT model 339,XT2,XT286,PS)
+    ; Return: AH = scan code, AL = character
+
+seg035:040C 3D E0 4B                                        cmp     ax, EKey_Left
+seg035:0411 B8 01 00                                        mov     ax, KP_Left
+seg035:0417 3D E0 4D                                        cmp     ax, EKey_Right
+seg035:041C B8 02 00                                        mov     ax, KP_Right
+seg035:0422 3D E0 48                                        cmp     ax, EKey_Up
+seg035:0427 B8 03 00                                        mov     ax, KP_Up
+seg035:042D 3D E0 50                                        cmp     ax, EKey_Down
+seg035:0432 B8 04 00                                        mov     ax, KP_Down
+seg035:0438 3D E0 49                                        cmp     ax, EKey_PgUp
+seg035:043D B8 05 00                                        mov     ax, KP_RightUp
+seg035:0443 3D E0 51                                        cmp     ax, EKey_PgDn
+seg035:0448 B8 06 00                                        mov     ax, KP_RightDown
+seg035:044E 3D E0 47                                        cmp     ax, EKey_Home
+seg035:0453 B8 07 00                                        mov     ax, KP_LeftUp
+seg035:0459 3D E0 4F                                        cmp     ax, EKey_End
+seg035:045E B8 08 00                                        mov     ax, KP_LeftDown
+
+seg035:0509 80 FC 47                                        cmp     ah, EKey_Num7_Home
+seg035:050E B8 1A 00                                        mov     ax, KP_Home
+seg035:0514 80 FC 49                                        cmp     ah, EKey_Num9_PgUp
+seg035:0519 B8 19 00                                        mov     ax, KP_PgUp
+seg035:051F 80 FC 4F                                        cmp     ah, EKey_Num1_End
+seg035:0524 B8 1C 00                                        mov     ax, KP_End
+seg035:052A 80 FC 51                                        cmp     ah, EKey_Num3_PgDn
+seg035:052F B8 1D 00                                        mov     ax, KP_PgDn
+seg035:0535 80 FC 48                                        cmp     ah, EKey_Num8_Up
+seg035:053A B8 03 00                                        mov     ax, KP_Up
+seg035:0540 80 FC 50                                        cmp     ah, EKey_Num2_Down
+seg035:0545 B8 04 00                                        mov     ax, KP_Down
+seg035:054B 80 FC 4B                                        cmp     ah, EKey_Num4_Left
+seg035:0550 B8 01 00                                        mov     ax, KP_Left
+seg035:0556 80 FC 4D                                        cmp     ah, EKey_Num6_Right
+seg035:055B B8 02 00                                        mov     ax, KP_Right
+
+
+
+// enum Key_Press  KP_Home  = 1Ah
+// WZD dseg:2E2C
+// cnst_HOTKEY_Up dw KP_Up
+// enum Key_Press  KP_Up  = 3
+// WZD dseg:2E2E
+// cnst_HOTKEY_PgUp dw KP_PgUp
+// enum Key_Press  KP_PgUp  = 19h
+// WZD dseg:2E30
+// cnst_HOTKEY_Left dw KP_Left
+// enum Key_Press  KP_Left  = 1
+// WZD dseg:2E32
+// cnst_HOTKEY_Right dw KP_Right
+// enum Key_Press  KP_Right  = 2
+// WZD dseg:2E34
+// cnst_HOTKEY_End dw KP_End
+// enum Key_Press  KP_End  = 1Ch
+// WZD dseg:2E36
+// cnst_HOTKEY_Down dw KP_Down
+// enum Key_Press  KP_Down  = 4
+// WZD dseg:2E38
+// cnst_HOTKEY_PgDn dw KP_PgDn
+// enum Key_Press  KP_PgDn  = 1Dh
+
+
+
+
+### Section 9.1
+Left-Click Movement Map
+IIF *Stack Selected*
+
 

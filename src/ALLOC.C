@@ -2,8 +2,6 @@
 #include "MoX.H"
 #include "STU_DBG.H"
 
-#include <string.h>  /* memset() */
-
 /*
     MGC o57p01 (1of1)
     WZD o152p01 (1of1)
@@ -60,7 +58,9 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // 714 paragraphs = 16 * 714 = 11,424 bytes
     _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
+#ifdef STU_DEBUG
     DBG_ORIG__CITIES = _CITIES;
+#endif
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
     DBG_ORIG__world_maps = _world_maps;
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
@@ -202,7 +202,7 @@ SA_GET_USED(SAMB_head): 2345
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
     DBG_ORIG__UNITS = _UNITS;
 
-    Active_Unit = Allocate_Space(8);  // 8 paragraphs = 128 bytes
+    Active_Unit = (struct s_BU_REC *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
 
     TBL_Nodes = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
     DBG_ORIG_TBL_Nodes = TBL_Nodes;
@@ -216,7 +216,7 @@ SA_GET_USED(SAMB_head): 2345
     DBG_ORIG__events_table = _events_table;
     TBL_Hero_Names = Allocate_Space(37);
     DBG_ORIG_TBL_Hero_Names = TBL_Hero_Names;
-    TBL_Items = Allocate_Space(433);
+    TBL_Items = (struct s_ITEM *)Allocate_Space(433);
     DBG_ORIG_TBL_Items = TBL_Items;
     TBL_Premade_Items = Allocate_Space(17);
     DBG_ORIG_TBL_Premade_Items = TBL_Premade_Items;
