@@ -238,15 +238,8 @@ void Pump_Events(void)
 void Pump_Paints(void)
 {
     Pump_Paints_Cnt++;
-    InvalidateRect(g_Window, NULL, FALSE);
-    MSG Message;
-    while (PeekMessageA(&Message, 0, WM_PAINT, WM_PAINT, PM_REMOVE))
-    {
-        TranslateMessage(&Message);
-        DispatchMessageA(&Message);
-    }
+	RedrawWindow(g_Window, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
-
 
 // ¿ ~== Mouse_Int_Handler() ?
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)

@@ -137,7 +137,7 @@ void ArmyList_Screen(void)
 // ORgt= word ptr -1Ch
 // OTop= word ptr -1Ah
 // OLft= word ptr -18h
-    int16_t screen_changed;
+    int16_t screen_changed = ST_FALSE;
     int16_t button_armylist_items;
     int16_t button_armylist_ok;
     int16_t hotkey_D;
@@ -841,7 +841,7 @@ void ArmyList_Draw_Reduced_Map(void)
 */
 int16_t Get_List_Armies_Index(int16_t armylist_hero_portrait_unit_idx)
 {
-    int16_t list_armies_itr;
+    int16_t list_armies_itr = 0;
     int16_t found_unit_flag;
     int16_t itr;
     int16_t first_time_done;
