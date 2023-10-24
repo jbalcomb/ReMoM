@@ -204,6 +204,11 @@ void Screen_Control(void)
             // scr_Production = 108,
             // scr_Items = 109,
             // scr_NextTurn = 110,
+            case scr_NextTurn:
+            {
+                DLOG("switch(current_screen)  case scr_NextTurn:");
+                Next_Turn_Proc();
+            } break;
             // /* ?default? */
             case scr_Spellbook_Screen:
             {

@@ -286,7 +286,8 @@ int16_t UNIT_GetHitsPerFig(int16_t unit_idx)
         hit_points += 1;
     }
 
-    if(_players[_UNITS[unit_idx].owner_idx].Globals.Charm_of_Life > 0)
+    // if(_players[_UNITS[unit_idx].owner_idx].Globals.Charm_of_Life > 0)
+    if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
     {
         Charm_of_Life_Bonus = hit_points / 4;
         if(Charm_of_Life_Bonus < 1)

@@ -130,6 +130,18 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
 // WZD o61p08
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
+// WZD o61p09
+
+// WZD o61p10
+// WZD o61p11
+// WZD o61p12
+// WZD o61p13
+// WZD o61p14
+// WZD o61p15
+
+// WZD o61p16
+int16_t Any_Units_Not_Busy();
+
 /*
     WIZARDS.EXE  ovr062
 */
@@ -1124,7 +1136,7 @@ void Main_Screen(void)
     int16_t hotkey_idx_F3;
     int16_t hotkey_idx_F2;
     int16_t hotkey_idx_F1;
-// Local_0= word ptr -50h
+    int16_t IDK_EoT_flag;
 // DBG_Alt_A__TurnCount= word ptr -4Eh
     int16_t hotkey_idx_Alt_A;
     int16_t hotkey_idx_RightDown;
@@ -1161,7 +1173,7 @@ void Main_Screen(void)
     int16_t target_world_y;
     int16_t target_world_x;
     int16_t unit_idx;
-// var_ConfirmDialogResponse= word ptr -6
+    int16_t allow_units_to_die;
     int16_t Stack_Index;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
     int16_t leave_screen_flag;
     
@@ -1762,18 +1774,96 @@ void Main_Screen(void)
             }
         }
 
+
+
+        /*
+            BEGIN: Next Turn
+        */
+
         // Next Turn Button ... and time-stuff ? end of turn wait ?
-        // if(
-        //     (input_field_idx == _next_turn_button) ||
-        //     ((g_TimeStop_PlayerNum > 0) && (g_TimeStop_PlayerNum == _human_player_idx+1)) ||
-        //     ((all_units_moved = ST_TRUE) && (Local_0 == 0) && (magic_set.EoT_Wait == ST_FALSE) && (j_IDK_Check_Unit_Status_BUSY() == ST_TRUE))
-        // )
-        if(input_field_idx == _next_turn_button)
+        // IDA: Main_Screen+AB0
+        // @@Check_Input_NextTurnButton
+        if(
+            (input_field_idx == _next_turn_button) ||
+            ( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) ) ||
+            ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
+        )
         {
             DLOG("if(input_field_idx == _next_turn_button)");
-            /* BIG EFFORT */
+
+            // TODO  SND_LeftClickSound();
+
+            // ; fills the return values with the player's gold, food, and mana incomes, positive or negative
+            Get_Incomes(_human_player_idx, &gold, &food, &mana);
+
+            // TODO  IDK_screen_changed == ST_TRUE;
+
+            if(food < 0)
+            {
+                if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
+                {
+                    if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
+                    {
+                        allow_units_to_die = ST_TRUE;
+                    }
+                    else
+                    {
+                        if(food < 0)
+                        {
+                            // "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?"
+                            //   [YES]  [NO]
+                            // ; loads and displays the provided message in a
+                            // ; confirmation dialog box, providing "Yes" and "No"
+                            // ; option buttons, and halting all other screen
+                            // ; animation until a result is selected
+                            // ; returns 1 if "Yes" is selected, or 0 otherwise
+                            // TODO  allow_units_to_die = GUI_Confirm_Dialog(aSomeUnitsDoNotHaveE);
+                            allow_units_to_die = ST_FALSE;
+                        }
+                    }
+
+                    if(allow_units_to_die != ST_TRUE)
+                    {
+                        IDK_EoT_flag = ST_TRUE;
+                    }
+                    else
+                    {
+                        leave_screen_flag = ST_UNDEFINED;
+
+                        current_screen = ST_UNDEFINED;
+                        Main_Screen_Draw();
+                        Clear_Fields();
+                        PageFlip_FX();
+                        // current_screen = scr_Next_Turn_Proc;
+                        current_screen = scr_NextTurn;
+                        IDK_EoT_flag = ST_FALSE;
+                    }
+                }
+                else
+                {
+                    IDK_EoT_flag = ST_TRUE;
+                }
+
+            }
+            else
+            {
+                current_screen = ST_UNDEFINED;
+                Main_Screen_Draw();
+                Clear_Fields();
+                PageFlip_FX();
+                // current_screen = scr_Next_Turn_Proc;
+                current_screen = scr_NextTurn;
+                IDK_EoT_flag = ST_FALSE;
+
+                leave_screen_flag = ST_UNDEFINED;
+            }
+
+            // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
         }
 
+        /*
+            END: Next Turn
+        */
 
 
 
@@ -3606,6 +3696,67 @@ Done:
     dbg_prn("DEBUG: [%s, %d]: END: Build_Moveable_Stack()\n", __FILE__, __LINE__);
 #endif
 
+}
+
+
+
+// WZD o61p09
+
+// WZD o61p10
+// WZD o61p11
+// WZD o61p12
+// WZD o61p13
+// WZD o61p14
+// WZD o61p15
+
+// WZD o61p16
+/*
+    counts units that are not busy
+    returns ST_TRUE if any of the player's units are not *busy*
+    logic feels inverted for the way it is tested
+*/
+int16_t Any_Units_Not_Busy()
+{
+    int16_t unit_count;
+    int16_t itr_units;
+    int16_t return_value;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
+#endif
+
+    unit_count = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(_UNITS[itr_units].owner_idx == _human_player_idx)
+        {
+            // NOT Patrol, GoTo, or Patrol
+            if(
+                ( (_UNITS[itr_units].Status & 0x01 /* Patrol */) == 0 ) &&
+                ( (_UNITS[itr_units].Status & 0x03 /* GoTo   */) == 0 ) &&
+                ( (_UNITS[itr_units].Status & 0x08 /* Purify */) == 0 )
+            )
+            {
+                unit_count++;
+            }
+        }
+    }
+
+    if(unit_count > 0)
+    {
+        return_value = ST_TRUE;
+    }
+    else
+    {
+        return_value = ST_FALSE;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
+#endif
+
+    return return_value;
 }
 
 

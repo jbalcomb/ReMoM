@@ -303,7 +303,8 @@ void TILE_VisibilityUpdt(void)
         // TODO(JimBalcomb,2023075): figure out the indexing in the Dasm - doesn't look like array of struct  also, this'll set the neutral player?
         _players[itr_players + 1].Dipl.Contacted[0] = 1;
 
-        if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
+        // if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
+        if(_players[itr_players + 1].Globals[NATURE_AWARENESS] != ST_FALSE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
@@ -351,7 +352,8 @@ int16_t Check_Planar_Seal(void)
 
         if(active_planar_seal == ST_FALSE)
         {
-            if(_players[itr_players].Globals.Planar_Seal == ST_TRUE)
+            // if(_players[itr_players].Globals.Planar_Seal == ST_TRUE)
+            if(_players[itr_players].Globals[PLANAR_SEAL] == ST_TRUE)
             {
                 active_planar_seal = ST_TRUE;
             }

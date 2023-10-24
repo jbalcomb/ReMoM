@@ -4,35 +4,6 @@
 #include "MoX.H"
 
 
-// Game Option - Difficulty
-enum e_Difficulty
-{
-    god_Intro,
-    god_Easy,
-    god_Normal,
-    god_Hard,
-    god_Impossible
-};
-enum e_Opponents
-{
-    goo_One,
-    goo_Two,
-    goo_Three,
-    goo_Four
-};
-enum e_LandSize
-{
-    gol_Small,
-    gol_Medium,
-    gol_Large
-};
-enum e_Magic
-{
-    gom_Weak,
-    gom_Normal,
-    gom_Powerful
-};
-
 
 /*
 Level and Status (signed integer)

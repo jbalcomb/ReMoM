@@ -342,6 +342,18 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 // WZD o61p08
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
+// WZD o61p09
+
+// WZD o61p10
+// WZD o61p11
+// WZD o61p12
+// WZD o61p13
+// WZD o61p14
+// WZD o61p15
+
+// WZD o61p16
+// ¿PRIVATE?  int16_t Any_Units_Not_Busy();
+
 
 
 /*
