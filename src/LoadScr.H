@@ -26,6 +26,30 @@ extern "C" {
 
 
 
+
+/*
+    WIZARDS.EXE  ovr051
+*/
+
+// WZD o51p01
+// OON XREF: Loaded_Game_Update()
+void GAME_Overland_Init(void);
+
+// WZD o51p02
+// OON XREF: Loaded_Game_Update() |-> GAME_Overland_Init()
+void G_WLD_StaticAssetRfrsh(void);
+
+
+
+/*
+    WIZARDS.EXE ovr101
+*/
+
+// WZD o101p01  [1 of 1]
+void GAME_NextHumanStack(void);
+
+
+
 /*
     WIZARDS.EXE ovr160
 */
@@ -42,18 +66,6 @@ void Load_Screen_Help(void);
 // WZD o160p04
 void Loaded_Game_Update(void);
 
-
-/*
-    WIZARDS.EXE  ovr051
-*/
-
-// WZD o51p01
-// OON XREF: Loaded_Game_Update()
-void GAME_Overland_Init(void);
-
-// WZD o51p02
-// OON XREF: Loaded_Game_Update() |-> GAME_Overland_Init()
-void G_WLD_StaticAssetRfrsh(void);
 
 
 

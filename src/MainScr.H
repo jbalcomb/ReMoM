@@ -326,9 +326,10 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
 // WZD o61p03
 // UNIT_MoveStack()
+// ¿PRIVATE?  int16_t RdBd_UNIT_MoveStack_STUB(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p)
 
 // WZD o61p04
-// ¿PRIVATE?  void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane)
+void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p05
 // ¿PRIVATE?  int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
@@ -343,6 +344,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o61p09
+// ¿PRIVATE?  void RdBd_UNIT_SelectStack_STUB(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
 // WZD o61p11

@@ -22,6 +22,23 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
 
 
+WIZ_NextIdleStack()
+    |-> RdBd_UNIT_MoveStack_STUB()
+        |-> RdBd_UNIT_SelectStack_STUB()
+
+
+
+// WZD o61p03
+RdBd_UNIT_MoveStack_STUB()
+// WZD o61p09
+RdBd_UNIT_SelectStack_STUB()
+
+
+
+
+
+
+
 
 
 Do_Move_Stack_DirKey()

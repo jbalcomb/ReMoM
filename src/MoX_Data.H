@@ -162,14 +162,14 @@ enum EZ_Types
 
 enum Unit_Status
 {
-    US_Ready,
+    US_Ready,  /* "NO ORDERS" in 'MoM Demo' */
     US_Patrol,
     US_BuildRoad,
     US_GoingTo,
     US_ReachedDest,
     US_Wait,
-    US_Unknown_6,
-    US_Unknown_7,
+    US_Casting,  /* drake178: US_Unknown_6; "CASTING" in 'MoM Demo' */
+    US_Unknown_7,  /* "PURIFY" in 'MoM Demo' */
     US_Purify,
     US_Meld,
     US_Settle,
@@ -348,7 +348,7 @@ struct s_LOC_16BIT
 
 
 
-// sizeof=0xA
+// sizeof:  0Ah  10d
 struct s_BOOKSHELF
 {
     /* 00 */ int16_t Nature;
@@ -358,7 +358,7 @@ struct s_BOOKSHELF
     /* 08 */ int16_t Death;
 };
 
-// sizeof=0x12
+// sizeof:  12h  18d
 struct s_RETORTS
 {
     /* 00 */ int8_t Alchemy;
@@ -381,7 +381,7 @@ struct s_RETORTS
     /* 11 */ int8_t Artificer;
 };
 
-// sizeof: 24h 36d)
+// sizeof:  24h  36d
 struct s_SPELL_DATA
 {
     /* 00 */ char Name[19];
@@ -410,21 +410,21 @@ struct s_HERO
     /* 04 */  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
     /* 06 */  int8_t   Casting_Skill;
     /* 07 */  uint8_t  Spells[4];
-    /* 0B */  uint8_t  Unused_0Bh;
+    /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
     /* 0C */
 };
 
 // sizeof:  1Ch  28d
 struct s_HIRED_HERO
 {
-    /* 00 */ int16_t Unit_Index;
+    /* 00 */ int16_t Unit_Index;  /* unit_dx, back into _UNITS[] */
     /* 02 */ char Name[14];
-    /* 10 */ int16_t Items[3];
+    /* 10 */ int16_t Items[3];      /* ¿ index into TBL_Items ? */
     /* 16 */ int16_t Item_Slots[3];
     /* 1C */
 };
 
-//  ; (sizeof=0x32, standard type)
+// sizeof:  32h  50d
 struct s_ITEM
 {
     /* 00 */  char Name[30];
@@ -516,7 +516,7 @@ struct s_WIZ_DIPL
 /*
     computer player wizards - difficulty level modifiers
 */
-// sizeof:  10h  16d)
+// sizeof:  10h  16d
 struct s_DIFFICULTY_MODIFIERS
 {
     /* 00 */  int16_t population_growth;
@@ -570,6 +570,7 @@ struct s_GLOBALE
 
 
 
+// sizeof:  10h  16d
 struct s_GAME_DATA
 {
     /* 00 */ uint16_t Current_Unit;
@@ -580,6 +581,7 @@ struct s_GAME_DATA
     /* 0A */ uint16_t Magic;
     /* 0C */ uint16_t Land_Size;
     /* 0E */ uint16_t Total_Wizards;
+    /* 10 */
 };
 
 
@@ -653,7 +655,7 @@ struct s_WIZARD
     /* 074 */ int8_t charismatic;
     /* 075 */ int8_t artificer;
 
-    /* 0076 */ struct s_HIRED_HERO Heroes[6];
+    /* 0076 */ struct s_HIRED_HERO Heroes[6];  /* indexed by Hero_Slot, from s_UNIT */
     /* 011E */ uint16_t Unknown_11Eh;
     /* 0120 */ uint16_t Vault_Items[4];
     /* 0128 */ struct s_WIZ_DIPL Dipl;
@@ -690,7 +692,7 @@ struct s_WIZARD
 #pragma pack(pop)
 
 
-// sizeof=0x34  52 vbytes
+// sizeof:  34h  52d
 struct s_BUILDDAT
 {
     /* 00 */  char * name[20];
@@ -714,7 +716,7 @@ struct s_BUILDDAT
 };
 
 
-// sizeof=0x24
+// sizeof:  24h  36d
 struct s_CITY_BUILDINGS
 {
     /* 00 */ int8_t None;
@@ -758,7 +760,7 @@ struct s_CITY_BUILDINGS
 
 
 
-// sizeof=0x19
+// sizeof:  19h  25d
 struct s_CITY_ENCHANTMENTS
 {
     /* 00 */ int8_t Wall_of_Fire;
@@ -786,11 +788,12 @@ struct s_CITY_ENCHANTMENTS
     /* 16 */ int8_t Consecration;
     /* 17 */ int8_t Wall_of_Darkness;
     /* 18 */ int8_t Altar_of_Battle;
+    /* 19 */
 };
 
 
 
-// sizeof=0x72
+// sizeof:  72h  114d
 struct s_CITY
 {
     /* 00 */ char name[14];
@@ -863,7 +866,7 @@ struct s_NODE
 
 
 
-// sizeof=0x20
+// sizeof:  20h  32d
 struct s_UNIT
 {
     /* 00 */  int8_t  world_x;
@@ -872,11 +875,11 @@ struct s_UNIT
     /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
     /* 04 */  int8_t  HalfMoves_Max;
     /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
-    /* 06 */  int8_t  Hero_Slot;
+    /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* FALSE/TRUE; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  HMoves;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;     /* Go-To Destination World X */
-    /* 0A */  int8_t  dst_wy;     /* Go-To Destination World Y */
+    /* 09 */  int8_t  dst_wx;       /* Go-To Destination World X */
+    /* 0A */  int8_t  dst_wy;       /* Go-To Destination World Y */
     /* 0B */  int8_t  Status;
     /* 0C */  int8_t  Level;
     /* 0D */  int8_t  Unused_0Dh;

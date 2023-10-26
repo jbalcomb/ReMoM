@@ -229,8 +229,8 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
         {
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
-                City_Gold_Balance = (_CITIES[itr_cities].Gold - _CITIES[itr_cities].Upkeep);
-                City_Food_Surplus = (_CITIES[itr_cities].Food - _CITIES[itr_cities].Pop_K);
+                City_Gold_Balance += (_CITIES[itr_cities].Gold - _CITIES[itr_cities].Upkeep);
+                City_Food_Surplus += (_CITIES[itr_cities].Food - _CITIES[itr_cities].Pop_K);
             }
         }
 
@@ -255,6 +255,11 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
 
 
         *food = City_Food_Surplus - Food_Upkeep;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: City_Food_Surplus: %d\n", __FILE__, __LINE__, City_Food_Surplus);
+    dbg_prn("DEBUG: [%s, %d]: Food_Upkeep: %d\n", __FILE__, __LINE__, Food_Upkeep);
+    dbg_prn("DEBUG: [%s, %d]: *food: %d\n", __FILE__, __LINE__, *food);
+#endif
 
         // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+City_Gold_Balance], ax
         City_Gold_Balance += (*food > 0) ? 0 : *food / 2;

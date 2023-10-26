@@ -12,6 +12,40 @@ Yay "Main_Screen+B9E"
 
 
 
+
+
+
+## Next Turn vs. Init/New/Load
+
+
+WZD ovr101
+WZD o101p01  [1 of 1]
+GAME_NextHumanStack()
+XREF:
+j_GAME_NextHumanStack()
+j_GAME_NextHumanStack()
+XREF:
+Loaded_Game_Update_WZD+6E call    j_GAME_NextHumanStack           ; a wrapper for WIZ_NextIdleStack hard-coded for the human-player
+Loaded_Game_Update+4D     call    j_GAME_NextHumanStack           ; a wrapper for WIZ_NextIdleStack hard-coded for the human-player
+
+
+
+
+
+
+all_units_moved
+    controls both displaying the next turn button and adding the next turn button input field
+set by WIZ_NextIdleStack()
+based on return value from WIZ_NextUnit
+
+
+
+
+
+
+
+
+
 MoX.H
 scr_NextTurn = 110,  /* ¿ drake187: NextTurnProc ? ¿ MoO2: Do_Next_Turn_() ? */
 
