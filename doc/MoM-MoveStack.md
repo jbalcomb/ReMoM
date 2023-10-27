@@ -38,6 +38,32 @@ RdBd_UNIT_SelectStack_STUB()
 
 
 
+Main_Screen() |-> Move_Stack_DirKey() |-> Move_Stack() |-> Move_Units() |-> Move_Units_Draw()
+BEGIN: Direction Keys
+@@BEGIN_DirectionKeys
+Main_Screen+BC2
+
+Move_Units_Draw()
+    ¿ build road ?
+    ¿ display moves ?
+
+TILE_ExploreRadius()
+OVL_DrawMapSection()
+RP_OVL_DrawCities2()  ~==  OVL_DrawCities()
+
+TILE_ExploreRadius()
+    |-> TILE_Explore()
+        |-> RP_TILE_ExploreMatch()
+        |-> TILE_ExploreCorners()
+
+
+
+
+
+
+
+
+
 
 
 

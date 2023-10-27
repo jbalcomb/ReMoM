@@ -1921,6 +1921,9 @@ void Main_Screen(void)
             BEGIN: Direction Keys
         */
 
+        // @@BEGIN_DirectionKeys
+        // Main_Screen+BC2
+
         // hotkey_idx_Up    NumPad 8    ↑
         // hotkey_idx_Home  NumPad 7    ↖
         // hotkey_idx_PgUp  NumPad 9    ↗
@@ -2936,7 +2939,83 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
 // WZD o59p15
 // WZD o59p16
 // WZD o59p17
+
 // WZD o59p18
+void TILE_ExploreRadius(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
+{
+// Top_Y= word ptr -8
+// Left_X= word ptr -6
+// Tile_X= word ptr -4
+// Tile_Y= word ptr -2
+    int16_t y_start;
+    int16_t x_start;
+    int16_t itr_world_x;
+    int16_t itr_world_y;
+    int16_t world_x;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: TILE_ExploreRadius(wx = %d, wy = %d, wp = %d, scout_range = %d)\n", __FILE__, __LINE__, wx, wy, wp, scout_range);
+#endif
+
+
+    if(scout_range != 0)
+    {
+        if(scout_range != 1)
+        {
+            scout_range--;
+            y_start = wy - scout_range;
+            if(y_start < 0)
+            {
+                y_start = 0;
+            }
+            x_start = wx - scout_range;
+            if(x_start < 0)
+            {
+                x_start += WORLD_WIDTH;
+            }
+            scout_range = (scout_range * 2) + 1;
+
+            itr_world_y = y_start;
+            while((y_start + scout_range) > itr_world_y)
+            {
+
+                if(itr_world_y < WORLD_HEIGHT)
+                {
+                    itr_world_x = x_start;
+                    while((x_start + scout_range) > itr_world_x)
+                    {
+                        
+                        if(itr_world_x < WORLD_WIDTH)
+                        {
+                            world_x = itr_world_x;
+                        }
+                        else
+                        {
+                            world_x = itr_world_x - WORLD_WIDTH;
+                        }
+
+                        TILE_Explore(world_x, itr_world_y, wp);
+
+                        itr_world_x++;
+                    }
+
+                }
+
+                itr_world_y++;
+            }
+
+        }
+        else
+        {
+            TILE_Explore(wx, wy, wp);
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: TILE_ExploreRadius(wx = %d, wy = %d, wp = %d, scout_range = %d)\n", __FILE__, __LINE__, wx, wy, wp, scout_range);
+#endif
+
+}
 
 // WZD o59p19
 // AKA IDK_MaybeSwitchStackPlane_s52514()
@@ -6896,7 +6975,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
         }
         _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
     }
-    unit_idx = Highest_Priority_Unit__Loop_Var;
+    unit_idx = unit_array[Highest_Priority_Unit__Loop_Var];
     unit_x = _UNITS[unit_idx].world_x;
     unit_y = _UNITS[unit_idx].world_y;
 
@@ -6980,6 +7059,10 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     dbg_prn("DEBUG: [%s, %d]: curr_dst_wy: %d\n", __FILE__, __LINE__, curr_dst_wy);
 #endif
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: unit_x: %d\n", __FILE__, __LINE__, unit_x);
+    dbg_prn("DEBUG: [%s, %d]: unit_y: %d\n", __FILE__, __LINE__, unit_y);
+#endif
 
         unit_pict_shift_sx = 0;
         if(curr_dst_wx > unit_x)  /* ¿ moving to the right ? */
@@ -6988,7 +7071,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
             if(unit_x == 0 && curr_dst_wx == WORLD_X_MAX)
             {
                 unit_pict_shift_sx = -4;  // MAP_WIDTH / 3
-                unit_x--;
+                unit_x -= 1;
                 if(unit_x == 0)
                 {
                     unit_x = WORLD_X_MAX;
@@ -6997,19 +7080,20 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
             else
             {
                 unit_pict_shift_sx = 4;  // MAP_WIDTH / 3
-                unit_x++;
+                unit_x += 1;
                 if(unit_x == WORLD_WIDTH)
                 {
                     unit_x = 0;
                 }
             }
         }
-        else  /* (curr_dst_wx <= unit_x)  ¿ moving to the left ? */
+
+        if(curr_dst_wx < unit_x)  /* ¿ moving to the left ? */
         {
             if(unit_x == WORLD_X_MAX && curr_dst_wx == 0)
             {
                 unit_pict_shift_sx = 4;  // MAP_WIDTH / 3
-                unit_x++;
+                unit_x += 1;
                 if(unit_x == WORLD_WIDTH)
                 {
                     unit_x = 0;
@@ -7018,7 +7102,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
             else
             {
                 unit_pict_shift_sx = -4;  // MAP_WIDTH / 3
-                unit_x--;
+                unit_x -= 1;
                 if(unit_x == 0)
                 {
                     unit_x = WORLD_X_MAX;
@@ -7027,16 +7111,22 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
         }
 
         unit_pict_shift_sy = 0;
-        if(curr_dst_wy > unit_y)
+        if(curr_dst_wy > unit_y)  /* ¿ moving down ? */
         {
             unit_pict_shift_sy = 3;  // MAP_HEIGHT / 3
-            unit_y++;
+            unit_y += 1;
         }
-        else
+        if(curr_dst_wy < unit_y)  /* ¿ moving up ? */
         {
             unit_pict_shift_sy = -3;  // MAP_HEIGHT / 3
-            unit_y--;
+            unit_y -= 1;
         }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: unit_x: %d\n", __FILE__, __LINE__, unit_x);
+    dbg_prn("DEBUG: [%s, %d]: unit_y: %d\n", __FILE__, __LINE__, unit_y);
+#endif
+
 
         Move_Stages = 0;
         if(unit_pict_shift_sx == 0)
@@ -7090,7 +7180,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
                 if(player_idx == _human_player_idx)
                 {
-                    // TODO  TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
+                    // ; the same call with the same parameters is repeated below, except it more appropriately also updates the minimap after the call
+                    // ; explores map tiles in the specified radius, usually referred to as the scouting range
+                    TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
                 }
 
             }
@@ -7123,7 +7215,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
                 if( (itr_move_stages == 1) && (player_idx == _human_player_idx) )
                 {
                     Reset_Map_Draw();
-                    // TODO  TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
+                    TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
                     MainScr_Prepare_Reduced_Map();
                 }
 

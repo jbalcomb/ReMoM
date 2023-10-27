@@ -1067,6 +1067,7 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 /*
     called from Units_In_Tower()
         only for human_player_idx
+    called from TILE_ExploreRadius()
 
 */
 void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
@@ -1088,14 +1089,14 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
 #endif
 
     // ptr_square_explored = (square_explored + (2400 * wp));
-    ptr_square_explored = (TBL_Scouting + (2400 * wp));
+    ptr_square_explored = (uint8_t *)(TBL_Scouting + (2400 * wp));
 
     if(wy == 0)
     {
         // ; BX = (wy * WORLD_WIDTH) + wx
         // mov     [byte ptr es:bx], SCT_BottomLeft or SCT_TopLeft or SCT_TopRight or SCT_BottomRight
         // *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)) = (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight);
-// 01 ; enum SCOUT_BITS (bitfield)
+// enum SCOUT_BITS (bitfield)
 // 01 SCT_BottomLeft  = 1
 // 02 SCT_TopLeft  = 2
 // 04 SCT_TopRight  = 4
@@ -1145,7 +1146,8 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
         }
         else
         {
-            X_Left_2 = wx + 2;
+            X_Left_1 = wx - 1;
+            X_Left_2 = wx - 2;
             if(X_Left_2 < 0)
             {
                 X_Left_2 = WORLD_X_MAX;
@@ -1166,15 +1168,28 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
             END: sanitize wy & wx
         */
 
-        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 ))                      | 0x08;  //                                               SCT_BottomRight
-        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) | 0x01               | 0x08;  // SCT_BottomLeft                              | SCT_BottomRight
-        *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) | 0x01                     ;  // SCT_BottomLeft
-        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 ))               | 0x04 | 0x08;  //                                SCT_TopRight | SCT_BottomRight
-        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) | 0x01 | 0x02 | 0x04 | 0x08;  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
-        *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) | 0x01 | 0x02              ;  // SCT_BottomLeft | SCT_TopLeft
-        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 ))               | 0x04       ;  //                                SCT_TopRight
-        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       ))        | 0x02 | 0x04       ;  //                  SCT_TopLeft | SCT_TopRight
-        *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1))        | 0x02              ;  //                  SCT_TopLeft
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: X_Left_1 = %d, wx = %d, X_Right_1 = %d)\n", __FILE__, __LINE__, X_Left_1, wx, X_Right_1);
+    dbg_prn("DEBUG: [%s, %d]: Y_Up_1 = %d, wy = %d, X_Right_1 = %d)\n", __FILE__, __LINE__, Y_Up_1, wy, Y_Down_1);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)): %d)\n", __FILE__, __LINE__, *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)));
+#endif
+
+    *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 ))                      | 0x08;  //                                               SCT_BottomRight
+    *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) | 0x01               | 0x08;  // SCT_BottomLeft                              | SCT_BottomRight
+    *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) | 0x01                     ;  // SCT_BottomLeft
+    *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 ))               | 0x04 | 0x08;  //                                SCT_TopRight | SCT_BottomRight
+    *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) | 0x01 | 0x02 | 0x04 | 0x08;  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
+    *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) | 0x01 | 0x02              ;  // SCT_BottomLeft | SCT_TopLeft
+    *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 ))               | 0x04       ;  //                                SCT_TopRight
+    *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       ))        | 0x02 | 0x04       ;  //                  SCT_TopLeft | SCT_TopRight
+    *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1))        | 0x02              ;  //                  SCT_TopLeft
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)): %d)\n", __FILE__, __LINE__, *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)));
+#endif
 
 
 
