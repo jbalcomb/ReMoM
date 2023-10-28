@@ -294,7 +294,7 @@ void Set_Mouse_List_Default(void);
 
 // WZD o59p13
 // drake178: STK_CheckTower()
-// ¿PRIVATE?  int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
+// ¿PRIVATE?  void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
 
 // WZD o59p14
 // WZD o59p15

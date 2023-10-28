@@ -84,7 +84,7 @@ void Set_Mouse_List_Default(void);
 
 // WZD o59p13
 // drake178: STK_CheckTower()
-int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
+void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
 
 // WZD o59p14
 // WZD o59p15
@@ -1750,23 +1750,41 @@ void Main_Screen(void)
             END: Game Button - Plane Button
         */
 
+        /*
+            BEGIN: Left-Click Unit Window Grid Field
+        */
+        // TODO:  rename Unit_Window_Fields to something like _main_map_grid_field
+        // Custom Color: 255, 192, 128 ~light orange  DESC:"input field select relation - secondary/ignoreable/background noise"
+        // Node Group Name: Left-Click on Unit/Stack
         // Left-Click Unit Window Grid Field
+        // Left-Click Unit Window
+        // ovr057:097B
+        // Main_Screen+097B
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
             if(Unit_Window_Fields[Stack_Index] = input_field_idx)
             {
-                // RP_SND_LeftClickSound2();  // byte-identical to SND_LeftClickSound() 
+                DLOG("(Unit_Window_Fields[Stack_Index] = input_field_idx)");
+
+                // TODO  RP_SND_LeftClickSound2();  // drake178: byte-identical to SND_LeftClickSound()
+
                 // IDK_ActiveUnitStack_MovesOrPath_s53150(Stack_Index);
                 // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
                 // NIU_MainScreen_local_flag = 1;
             }
         }
+        /*
+            END: Left-Click Unit Window Grid Field
+        */
         
-        // Right-Click Unit Window Grid Field
+        /*
+            BEGIN: Right-Click Unit Window Grid Field
+        */
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
             if(Unit_Window_Fields[Stack_Index] = -input_field_idx)
             {
+                DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
                 // OVL_ShowActiveStack();
                 // UNIT_DrawPriorities();
                 // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
@@ -1790,6 +1808,9 @@ void Main_Screen(void)
                 // TODO  Main_Screen_Help();
             }
         }
+        /*
+            END: Right-Click Unit Window Grid Field
+        */
 
 
 
@@ -1839,7 +1860,7 @@ void Main_Screen(void)
                 DLOG("(food < 0)");
                 if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
                 {
-                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )")
+                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )");
                     if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
                     {
                         allow_units_to_die = ST_TRUE;
@@ -1889,7 +1910,7 @@ void Main_Screen(void)
                 }
                 else
                 {
-                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )")
+                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )");
                     IDK_EoT_flag = ST_TRUE;
                     DLOG("IDK_EoT_flag = ST_TRUE");
                 }
@@ -2854,7 +2875,7 @@ void Set_Mouse_List_Default(void)
 
 // WZD o59p13
 // drake178: STK_CheckTower()
-int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p)
+void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p)
 {
     int16_t units_y;
     int16_t units_x;
@@ -2864,18 +2885,13 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
 
     int16_t itr_towers;
     int16_t itr_units;
-    int16_t return_value;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
 #endif
 
 
-    if(unit_array_count < 1)
-    {
-        return_value = ST_FALSE;
-    }
-    else
+    if(unit_array_count >= 1)
     {
         units_x = _UNITS[unit_array[0]].world_x;
         units_y = _UNITS[unit_array[0]].world_y;
@@ -2931,8 +2947,6 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
 #endif
-
-    return return_value;
 
 }
 

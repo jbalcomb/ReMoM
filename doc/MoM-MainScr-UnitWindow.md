@@ -39,6 +39,9 @@ after
 before
     BEGIN: Next Turn
 
+        // Left-Click Unit Window Grid Field
+        // ovr057:097B
+        // Main_Screen+097B
 
         // Left-Click Unit Window Grid Field
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
