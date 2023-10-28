@@ -171,20 +171,61 @@ NOTE: Scouted vs. Explored: Scouted data is transient - updated Per Turn and On 
 ¿ why no 5 or 10 ?
 unexplored_min: 0
 unexplored_max: 15
-unexplored: 0x00  0
-unexplored: 0x01  1
-unexplored: 0x02  2
-unexplored: 0x03  3
-unexplored: 0x04  4
-unexplored: 0x06  6
-unexplored: 0x07  7
-unexplored: 0x08  8
-unexplored: 0x09  9
+
+unexplored: 0x00   0
+
+unexplored: 0x01   1
+unexplored: 0x02   2
+unexplored: 0x03   3
+unexplored: 0x04   4
+
+unexplored: 0x06   6
+unexplored: 0x07   7
+unexplored: 0x08   8
+unexplored: 0x09   9
+
 unexplored: 0x0B  11
 unexplored: 0x0C  12
 unexplored: 0x0D  13
 unexplored: 0x0E  14
+
 unexplored: 0x0F  15
+
+ 0 is UNEXPLORED
+15 is EXPLORED
+
+TILE_Explore() sets the square at wx,wy to (0x01 | 0x02 | 0x04 | 0x08), which is 15 - fully explored, where you're standing
+
+in between, ...
+
+ 7 6 5 4 3 2 1 0
+| | | | | | | | | 
+                \- unexplored
+             \- bottom left corner is explored
+           \- top left corner is explored
+         \- left side is explored  (bottom left corner + top left corner)
+       \- top right corner is explored
+   \- top side is explored  (top left corner + top right corner)
+   
+
++--+--+--+
+|08|09|01|
++--+--+--+
+|0C|0F|03|
++--+--+--+
+|04|06|02|
++--+--+--+
+
+in TILE_Explore()
+0x01 | 0x02 | 0x04 | 0x08;  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
+
+
+in Draw_Map_Unexplored_Area()
+                if( (square_explored_flag != 0) && (square_explored_flag != 15) )
+                {
+                    unexplored_mask_pict_seg = unexplored_mask_seg[square_explored_flag - 1];
+                    FLIC_Draw(itr_screen_x, itr_screen_y, unexplored_mask_pict_seg);
+                }
 
 
 

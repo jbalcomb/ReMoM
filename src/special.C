@@ -36,6 +36,10 @@ int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16
     int16_t delta_y;
     int16_t range;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Delta_XY_With_Wrap(x1 = %d, y1 = %d, x2 = %d, y2 = %d, wrap_x = %d)\n", __FILE__, __LINE__, x1, y1, x2, y2, wrap_x);
+#endif
+
     delta_x1 = x2 - x1;
     delta_y = y2 - y1;
 
@@ -76,6 +80,10 @@ int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16
     {
         range = delta_y;
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Delta_XY_With_Wrap(x1 = %d, y1 = %d, x2 = %d, y2 = %d, wrap_x = %d) { range = %d }\n", __FILE__, __LINE__, x1, y1, x2, y2, wrap_x, range);
+#endif
 
     return range;
 }

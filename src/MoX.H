@@ -19,6 +19,7 @@
 #include "ALLOC.H"
 #include "Allocate.H"
 #include "ArmyList.H"
+#include "CITYCALC.H"
 #include "CityList.H"
 #include "Explore.H"
 #include "Fields.H"
@@ -44,7 +45,8 @@
 #include "MoX_SET.H"
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "MoX_Util.H"   // WTFMATE
-#include "SCORE.H"      // Hall Of Fame
+#include "NEXTTURN.H"
+#include "SCORE.H"      // Hall Of Fame (HoF)
 #include "special.H"
 #include "Spellbook.H"
 #include "Terrain.H"
@@ -61,7 +63,6 @@
 #include "MoX_PFL.H"
 
 #include <assert.h>
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdlib.h>     /* itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */

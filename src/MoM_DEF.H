@@ -43,6 +43,10 @@
 // MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
 #define PLANE_COUNT_MAX        2
 #define PLAYER_COUNT_MAX       6
+#define NUM_DIFFICULTY_LEVEL   5  /* Intro, Easy, Normal, Hard, Impossible */
+#define NUM_UNIT_ENCHANTMENTS  32
+#define NUM_CITY_ENCHANTMENTS 26
+#define NUM_OVERLAND_ENCHANTMENTS 24
 #define CITY_COUNT_MAX       100
 #define UNIT_COUNT_MAX      1009
 #define TOWER_COUNT_MAX        6
@@ -434,6 +438,66 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 /*
     Item Enchantments / Attributes / Effects
 */
+
+
+
+/*
+    Overland Enchantments
+*/
+// ¿ enum ? ¿ seo_ for Spell - Enchantment - Overland; oe_ for Overland Enchantment vs. ue_ and ce_ for Unit and City ?
+#define ETERNAL_NIGHT       0x00
+#define EVIL_OMENS          0x01
+#define ZOMBIE_MASTERY      0x02
+#define AURA_OF_MAJESTY     0x03
+#define WIND_MASTERY        0x04
+#define SUPPRESS_MAGIC      0x05
+#define TIME_STOP           0x06
+#define NATURE_AWARENESS    0x07
+#define NATURES_WRATH       0x08
+#define HERB_MASTERY        0x09
+#define CHAOS_SURGE         0x0A
+#define DOOM_MASTERY        0x0B
+#define GREAT_WASTING       0x0C
+#define METEOR_STORM        0x0D
+#define ARMAGEDDON          0x0E
+#define TRANQUILITY         0x0F
+#define LIFE_FORCE          0x10
+#define CRUSADE             0x11
+#define JUST_CAUSE          0x12
+#define HOLY_ARMS           0x13
+#define PLANAR_SEAL         0x14
+#define CHARM_OF_LIFE       0x15
+#define DETECT_MAGIC        0x16
+#define AWARENESS           0x17
+
+/*
+    City Enchantments
+*/
+#define WALL_OF_FIRE        0x00
+#define CHAOS_RIFT          0x01
+#define DARK_RITUALS        0x02
+#define EVIL_PRESENCE       0x03
+#define CURSED_LANDS        0x04
+#define PESTILENCE          0x05
+#define CLOUD_OF_SHADOW     0x06
+#define FAMINE              0x07
+#define FLYING_FORTRESS     0x08
+#define NATURE_WARD         0x09
+#define SORCERY_WARD        0x0A
+#define CHAOS_WARD          0x0B
+#define LIFE_WARD           0x0C
+#define DEATH_WARD          0x0D
+#define NATURES_EYE         0x0E
+#define EARTH_GATE          0x0F
+#define STREAM_OF_LIFE      0x10
+#define GAIAS_BLESSING      0x11
+#define INSPIRATIONS        0x12
+#define PROSPERITY          0x13
+#define ASTRAL_GATE         0x14
+#define HEAVENLY_LIGHT      0x15
+#define CONSECRATION        0x16
+#define WALL_OF_DARKNESS    0x17
+#define ALTAR_OF_BATTLE     0x18
 
 
 

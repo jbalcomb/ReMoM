@@ -221,7 +221,8 @@ void Update_Scouted_And_Contacted(void)
         curr_world_p = itr_planes;
         Clear_Square_Scouted_Flags(itr_planes);
 
-        if(_players[_human_player_idx].Globals.Nature_Awareness == ST_FALSE)
+        // if(_players[_human_player_idx].Globals.Nature_Awareness == ST_FALSE)
+        if(_players[_human_player_idx].Globals[NATURE_AWARENESS] == ST_FALSE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
@@ -264,7 +265,8 @@ void Update_Scouted_And_Contacted(void)
                     {
                         scout_level = 3;
                     }
-                    if(_CITIES[itr_cities].enchantments.Natures_Eye != ST_FALSE)
+                    // if(_CITIES[itr_cities].enchantments.Natures_Eye != ST_FALSE)
+                    if(_CITIES[itr_cities].enchantments[NATURES_EYE] != ST_FALSE)
                     {
                         scout_level = 5;
                     }

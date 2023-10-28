@@ -44,6 +44,185 @@ uint8_t COL_Banners[] = {
 
 
 
+// WZD dseg:1F18
+// drake178: TBL_UE_Upkeep
+// ; Unit Enchantment upkeeps in bit order, from Immolation to Invulnerability
+// ; DATA XREF: UNIT_GetManaUpkeep+13B
+// 02 00 02 00 00 00 01 00 01 00 03 00 0A 00 01 00
+// 01 00 01 00 05 00 01 00 05 00 01 00 01 00 0A 00
+// 0A 00 03 00 01 00 05 00 02 00 01 00 02 00 01 00
+// 02 00 01 00 04 00 01 00 05 00 02 00 02 00 05 00
+// dw 2   ; 0
+// dw 2   ; 1 
+// dw 0   ; 2 
+// dw 1   ; 3
+// dw 1   ; 4
+// dw 3   ; 5
+// dw 10  ; 6
+// dw 1   ; 7
+// dw 1   ; 8
+// dw 1   ; 9
+// dw 5   ; 10
+// dw 1   ; 11
+// dw 5   ; 12
+// dw 1   ; 13
+// dw 1   ; 14
+// dw 10  ; 15
+// dw 10  ; 16
+// dw 3   ; 17
+// dw 1   ; 18
+// dw 5   ; 19
+// dw 2   ; 20
+// dw 1   ; 21
+// dw 2   ; 22
+// dw 1   ; 23
+// dw 2   ; 24
+// dw 1   ; 25
+// dw 4   ; 26
+// dw 1   ; 27
+// dw 5   ; 28
+// dw 2   ; 29
+// dw 2   ; 30
+// dw 5   ; 31
+int16_t unit_enchantment_upkeep_table[32] = {2, 2, 0, 1, 1, 3, 10, 1, 1, 1, 5, 1, 5, 1, 1, 10, 10, 3, 1, 5, 2, 1, 2, 1, 2, 1, 4, 1, 5, 2, 2, 5};
+
+// WZD dseg:1F58
+// drake178: TBL_CE_Upkeep
+// ; City Enchantment upkeeps in byte order, from Wall of Fire to Altar of Battle, plus Nightshade
+// ; DATA XREF: CTY_EnchantsUpkeep+3D
+// 02 00 0A 00 00 00 04 00 02 00 05 00 03 00 05 00
+// 19 00 05 00 05 00 05 00 05 00 05 00 01 00 05 00
+// 08 00 03 00 02 00 02 00 05 00 02 00 08 00 05 00
+// 05 00 00 00
+// dw 2   ; 0
+// dw 10  ; 1 
+// dw 0   ; 2 
+// dw 4   ; 3
+// dw 2   ; 4
+// dw 5   ; 5
+// dw 3   ; 6
+// dw 5   ; 7
+// dw 25  ; 8
+// dw 5   ; 9
+// dw 5   ; 10
+// dw 5   ; 11
+// dw 5   ; 12
+// dw 5   ; 13
+// dw 1   ; 14
+// dw 5   ; 15
+// dw 8   ; 16
+// dw 3   ; 17
+// dw 2   ; 18
+// dw 2   ; 19
+// dw 5   ; 20
+// dw 2   ; 21
+// dw 8   ; 22
+// dw 5   ; 23
+// dw 5   ; 24
+// dw 0   ; 25
+int16_t city_enchantment_upkeep_table[26] = {2, 10, 0, 4, 2, 5, 3, 5, 25, 5, 5, 5, 5, 5, 1, 5, 8, 3, 2, 2, 5, 2, 8, 5, 5, 0};
+
+// WZD dseg:1F8C
+/// drake178: TBL_GE_Upkeep
+// ; Global Enchantment upkeeps in byte order, from Eternal Night to Awareness
+// DATA XREF: WIZ_GlobalsUpkeep+29
+// 0F 00 0A 00 28 00 05 00 05 00 32 00 C8 00 07 00
+// 0A 00 0A 00 28 00 0F 00 14 00 0A 00 28 00 0A 00
+// 0A 00 0A 00 03 00 0A 00 05 00 0A 00 03 00 03 00
+// dw 15   ; 0
+// dw 10   ; 1 
+// dw 40   ; 2 
+// dw 5    ; 3
+// dw 5    ; 4
+// dw 50   ; 5
+// dw 200  ; 6
+// dw 7    ; 7
+// dw 10   ; 8
+// dw 10   ; 9
+// dw 40   ; 10
+// dw 15   ; 11
+// dw 20   ; 12
+// dw 10   ; 13
+// dw 40   ; 14
+// dw 10   ; 15
+// dw 10   ; 16
+// dw 10   ; 17
+// dw 3    ; 18
+// dw 10   ; 19
+// dw 5    ; 20
+// dw 10   ; 21
+// dw 3    ; 22
+// dw 3    ; 23
+int16_t overland_enchantment_upkeep_table[24] = {15, 10, 40, 5, 5, 50, 200, 7, 10, 10, 40, 15, 20, 10, 40, 10, 10, 10, 3, 10, 5, 10, 3, 3};
+
+
+
+
+
+// MoX_Data.H
+// struct s_DIFFICULTY_MODIFIERS
+// {
+//     /* 00 */  int16_t population_growth;
+//     /* 02 */  int16_t outpost_growth;
+//     /* 04 */  int16_t production;
+//     /* 06 */  int16_t gold;
+//     /* 08 */  int16_t power;
+//     /* 0A */  int16_t research;
+//     /* 0C */  int16_t food;
+//     /* 0E */  int16_t maintenance;
+//     /* 10 */
+// };
+
+// WZD dseg:1FDC 74 28                                           dw offset aExpansionist                 ; "Expansionist"
+// WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
+// WZD dseg:1FDE                                                                                         ; DATA XREF: AI_OVL_SplCat_Picker+9CEr ...
+
+// WZD dseg:1FEA 
+// drake178: TBL_AI_DIFF_Mods 
+
+// 64 00 64 00 64 00 64 00 64 00 64 00 64 00 64 00 
+// 64 00 64 00 7D 00 7D 00 7D 00 64 00 7D 00 5A 00 
+// 96 00 96 00 96 00 96 00 96 00 64 00 96 00 4B 00 
+// C8 00 C8 00 C8 00 C8 00 C8 00 6E 00 C8 00 3C 00 
+// 90 01 90 01 90 01 90 01 90 01 96 00 90 01 1E 00 
+
+// TBL_AI_DIFF_Mods 
+// DIFF_REC <100, 100, 100, 100, 100, 100, 100, 100>; 0
+// DIFF_REC <100, 100, 125, 125, 125, 100, 125, 90>; 1
+// DIFF_REC <150, 150, 150, 150, 150, 100, 150, 75>; 2
+// DIFF_REC <200, 200, 200, 200, 200, 110, 200, 60>; 3
+// DIFF_REC <400, 400, 400, 400, 400, 150, 400, 30>; 4
+
+
+/* Intro, Easy, Normal, Hard, Impossible */
+/* population_growth, outpost_growth, production, gold, mana, research, food, maintenance */
+struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
+{
+    {100, 100, 100, 100, 100, 100, 100, 100},
+    {100, 100, 125, 125, 125, 100, 125,  90},
+    {150, 150, 150, 150, 150, 100, 150,  75},
+    {200, 200, 200, 200, 200, 110, 200,  60},
+    {400, 400, 400, 400, 400, 150, 400,  30}
+};
+
+
+// WZD dseg:203A 00 00 00 05 00 00 00 00 05 00 00 00 0A 00 00 00+TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities <<0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 0, 10, 0, 0>, <0, 0, 10, 0, 0>, <0, 10, 0, 0, 2>, <0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 5, 0, 0, 5>, <0, 5, 0, 0, 3>, <0, 0, 0, 0, 10>>
+// WZD dseg:203A 00 0A 00 00 00 0A 00 00 02 00 00 00 05 00 00 00+                                        ; DATA XREF: AI_CTY_SetProduction+49Fr ...
+// WZD dseg:206C 0A 00 0F 00 1E 00 0A 00 0A 00 0F 00 0F 00 0A 00+TBL_AI_BLD_BaseWgts dw 10, 15, 30, 10, 10, 15, 15, 10, 10, 10
+// WZD dseg:206C 0A 00 0A 00                                                                             ; DATA XREF: AI_CTY_SetProduction+4C2r ...
+
+
+// WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
+// WZD dseg:2080 00 10                                           __ovrbuffer dw 4096
+// ; DATA XREF: __OvrPrepare+19r ...
+// ; declared in overlay.lib\OVRBUFF
+// WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
+
+// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_nameso
+
+
+
+
 
 // WZD dseg:2A12
 char cnst_BUILDDAT_File[] = "BUILDDAT.LBX";
@@ -306,14 +485,17 @@ int16_t help_list_count = 0;
 // WZD dseg:9126                                                                                         ; 200 LBX_NearAlloc_Next bytes
 // WZD dseg:9128 00 00                                           AI_Own_City_Values dw 0                 ; DATA XREF: AI_Continent_Eval+351r ...
 // WZD dseg:9128                                                                                         ; 200 LBX_NearAlloc_Next bytes
-// WZD dseg:912A
+
 // WZD dseg:912A                                                 ¿ BEGIN: ?
+
+
+
 // WZD dseg:912A
-// WZD dseg:912A 00 00                                           g_TimeStop_PlayerNum dw 0               ; DATA XREF: Loaded_Game_Update_WZD+C5w ...
-// WZD dseg:912A                                                                                         ; index of the Time Stop wizard plus 1 (0 if none)
+// index of the Time Stop wizard plus 1 (0 if none)
+int16_t g_TimeStop_PlayerNum;
 
 // WZD dseg:912C
-uint8_t * spell_data_table;
+struct s_SPELL_DATA * spell_data_table;
 
 // WZD dseg:912C                                                                                         ; 215 records of 36 bytes
 // WZD dseg:9130 00 00                                           IMG_GAME_SpellAnim@ dw 0                ; DATA XREF: GAME_LearnSpellAnim+374w ...

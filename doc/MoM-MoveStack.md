@@ -22,6 +22,65 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
 
 
+WIZ_NextIdleStack()
+    |-> RdBd_UNIT_MoveStack_STUB()
+        |-> RdBd_UNIT_SelectStack_STUB()
+
+
+
+// WZD o61p03
+RdBd_UNIT_MoveStack_STUB()
+// WZD o61p09
+RdBd_UNIT_SelectStack_STUB()
+
+
+
+
+
+
+Main_Screen() |-> Move_Stack_DirKey() |-> Move_Stack() |-> Move_Units() |-> Move_Units_Draw()
+BEGIN: Direction Keys
+@@BEGIN_DirectionKeys
+Main_Screen+BC2
+
+Move_Units_Draw()
+    ¿ build road ?
+    ¿ display moves ?
+
+TILE_ExploreRadius()
+OVL_DrawMapSection()
+RP_OVL_DrawCities2()  ~==  OVL_DrawCities()
+
+TILE_ExploreRadius()
+    |-> TILE_Explore()
+        |-> RP_TILE_ExploreMatch()
+        |-> TILE_ExploreCorners()
+
+
+
+
+
+## WIZ_NextIdleStack() & WIZ_NextUnit()
+
+WIZ_NextIdleStack()
+    while(Finished == ST_FALSE)
+        WIZ_NextUnit()
+
+WIZ_NextUnit()
+    returns ST_TRUE if there are not Units *available*
+
+WIZ_NextUnit()
+    while(Finished == ST_FALSE)
+        Delta_XY_With_Wrap()
+            starts from _active_world_x, _active_world_y
+        sets *map_plane = current_world_plane;
+        _unit = Closest_Active_Unit; _unit = Closest_Waiting_Unit;
+        _active_world_x = _UNITS[_unit].world_x;
+        _active_world_y = _UNITS[_unit].world_y;
+
+
+
+
 
 
 Do_Move_Stack_DirKey()

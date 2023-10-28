@@ -70,6 +70,42 @@
 
 
 
+
+
+
+
+// Game Option - Difficulty
+enum e_Difficulty
+{
+    god_Intro,
+    god_Easy,
+    god_Normal,
+    god_Hard,
+    god_Impossible
+};
+enum e_Opponents
+{
+    goo_One,
+    goo_Two,
+    goo_Three,
+    goo_Four
+};
+enum e_LandSize
+{
+    gol_Small,
+    gol_Medium,
+    gol_Large
+};
+enum e_Magic
+{
+    gom_Weak,
+    gom_Normal,
+    gom_Powerful
+};
+
+
+
+
 // _unit_type_table[].Attribs_1
 // 00000000 struc s_UNIT_TYPE ; (sizeof=0x24)
 // 0000001A Attribs_1 dw ?                          ; enum ATTRIB_1
@@ -126,14 +162,14 @@ enum EZ_Types
 
 enum Unit_Status
 {
-    US_Ready,
+    US_Ready,  /* "NO ORDERS" in 'MoM Demo' */
     US_Patrol,
     US_BuildRoad,
     US_GoingTo,
     US_ReachedDest,
     US_Wait,
-    US_Unknown_6,
-    US_Unknown_7,
+    US_Casting,  /* drake178: US_Unknown_6; "CASTING" in 'MoM Demo' */
+    US_Unknown_7,  /* "PURIFY" in 'MoM Demo' */
     US_Purify,
     US_Meld,
     US_Settle,
@@ -312,7 +348,7 @@ struct s_LOC_16BIT
 
 
 
-// sizeof=0xA
+// sizeof:  0Ah  10d
 struct s_BOOKSHELF
 {
     /* 00 */ int16_t Nature;
@@ -322,7 +358,7 @@ struct s_BOOKSHELF
     /* 08 */ int16_t Death;
 };
 
-// sizeof=0x12
+// sizeof:  12h  18d
 struct s_RETORTS
 {
     /* 00 */ int8_t Alchemy;
@@ -345,6 +381,27 @@ struct s_RETORTS
     /* 11 */ int8_t Artificer;
 };
 
+// sizeof:  24h  36d
+struct s_SPELL_DATA
+{
+    /* 00 */ char Name[19];
+    /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
+    /* 14 */  int8_t AI_Value;
+    /* 15 */  int8_t Type;                  //  ; enum SPELLTYPES
+    /* 16 */  int8_t Book_Section;
+    /* 17 */  int8_t Realm;
+    /* 18 */  int8_t Eligibility;
+    /* 19 */  int8_t Unknown_19h;
+    /* 1A */  int16_t Casting_Cost;
+    /* 1C */  int16_t Resrch_Cost;
+    /* 1E */  int8_t Sound;
+    /* 1F */  int8_t Unknown_1Fh;
+    /* 20 */  int8_t Param0;                //  ; unit type, base damage, UE flag, or CE index
+    /* 21 */  int8_t Param1;
+    /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
+    /* 24 */
+};
+
 // sizeof:  0Ch  12d
 struct s_HERO
 {
@@ -353,21 +410,21 @@ struct s_HERO
     /* 04 */  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
     /* 06 */  int8_t   Casting_Skill;
     /* 07 */  uint8_t  Spells[4];
-    /* 0B */  uint8_t  Unused_0Bh;
+    /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
     /* 0C */
 };
 
 // sizeof:  1Ch  28d
 struct s_HIRED_HERO
 {
-    /* 00 */ int16_t Unit_Index;
+    /* 00 */ int16_t Unit_Index;  /* unit_dx, back into _UNITS[] */
     /* 02 */ char Name[14];
-    /* 10 */ int16_t Items[3];
+    /* 10 */ int16_t Items[3];      /* ¿ index into TBL_Items ? */
     /* 16 */ int16_t Item_Slots[3];
     /* 1C */
 };
 
-//  ; (sizeof=0x32, standard type)
+// sizeof:  32h  50d
 struct s_ITEM
 {
     /* 00 */  char Name[30];
@@ -456,6 +513,23 @@ struct s_WIZ_DIPL
     /* 0132 */
 };
 
+/*
+    computer player wizards - difficulty level modifiers
+*/
+// sizeof:  10h  16d
+struct s_DIFFICULTY_MODIFIERS
+{
+    /* 00 */  int16_t population_growth;
+    /* 02 */  int16_t outpost_growth;
+    /* 04 */  int16_t production;
+    /* 06 */  int16_t gold;
+    /* 08 */  int16_t mana;
+    /* 0A */  int16_t research;
+    /* 0C */  int16_t food;
+    /* 0E */  int16_t maintenance;
+    /* 10 */
+};
+
 // sizeof:  06h  6d
 struct s_Astr_Data
 {
@@ -496,6 +570,7 @@ struct s_GLOBALE
 
 
 
+// sizeof:  10h  16d
 struct s_GAME_DATA
 {
     /* 00 */ uint16_t Current_Unit;
@@ -506,6 +581,7 @@ struct s_GAME_DATA
     /* 0A */ uint16_t Magic;
     /* 0C */ uint16_t Land_Size;
     /* 0E */ uint16_t Total_Wizards;
+    /* 10 */
 };
 
 
@@ -579,7 +655,7 @@ struct s_WIZARD
     /* 074 */ int8_t charismatic;
     /* 075 */ int8_t artificer;
 
-    /* 0076 */ struct s_HIRED_HERO Heroes[6];
+    /* 0076 */ struct s_HIRED_HERO Heroes[6];  /* indexed by Hero_Slot, from s_UNIT */
     /* 011E */ uint16_t Unknown_11Eh;
     /* 0120 */ uint16_t Vault_Items[4];
     /* 0128 */ struct s_WIZ_DIPL Dipl;
@@ -594,7 +670,8 @@ struct s_WIZARD
     /* 035A */ struct s_Astr_Data Astr;
     /* 0360 */ uint16_t Pop_div_10k;
     /* 0362 */ uint8_t Historian[288];
-    /* 0482 */ struct s_GLOBALE Globals;
+    /* 0482 */ // struct s_GLOBALE Globals;
+               uint8_t Globals[24];
     /* 049A */ uint16_t Magic_Strategy;
     /* 049C */ uint16_t Unknown_49Ch;
     /* 049E */ uint16_t Hostility[6];
@@ -615,7 +692,7 @@ struct s_WIZARD
 #pragma pack(pop)
 
 
-// sizeof=0x34  52 vbytes
+// sizeof:  34h  52d
 struct s_BUILDDAT
 {
     /* 00 */  char * name[20];
@@ -639,7 +716,7 @@ struct s_BUILDDAT
 };
 
 
-// sizeof=0x24
+// sizeof:  24h  36d
 struct s_CITY_BUILDINGS
 {
     /* 00 */ int8_t None;
@@ -683,7 +760,7 @@ struct s_CITY_BUILDINGS
 
 
 
-// sizeof=0x19
+// sizeof:  19h  25d
 struct s_CITY_ENCHANTMENTS
 {
     /* 00 */ int8_t Wall_of_Fire;
@@ -711,11 +788,12 @@ struct s_CITY_ENCHANTMENTS
     /* 16 */ int8_t Consecration;
     /* 17 */ int8_t Wall_of_Darkness;
     /* 18 */ int8_t Altar_of_Battle;
+    /* 19 */
 };
 
 
 
-// sizeof=0x72
+// sizeof:  72h  114d
 struct s_CITY
 {
     /* 00 */ char name[14];
@@ -735,7 +813,8 @@ struct s_CITY
     /* 1C */ int16_t Producing;  /* < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t Building_Count;
     /* 1F */ struct s_CITY_BUILDINGS buildings;
-    /* 43 */ struct s_CITY_ENCHANTMENTS enchantments;
+    /* 43 */ // struct s_CITY_ENCHANTMENTS enchantments;
+             uint8_t enchantments[25];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
     /* 5C */ int8_t Nightshade;
     /* 5D */ int8_t Production;
     /* 5E */ int16_t Prod_Accu;
@@ -787,7 +866,7 @@ struct s_NODE
 
 
 
-// sizeof=0x20
+// sizeof:  20h  32d
 struct s_UNIT
 {
     /* 00 */  int8_t  world_x;
@@ -796,11 +875,11 @@ struct s_UNIT
     /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
     /* 04 */  int8_t  HalfMoves_Max;
     /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
-    /* 06 */  int8_t  Hero_Slot;
+    /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* FALSE/TRUE; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  HMoves;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;     /* Go-To Destination World X */
-    /* 0A */  int8_t  dst_wy;     /* Go-To Destination World Y */
+    /* 09 */  int8_t  dst_wx;       /* Go-To Destination World X */
+    /* 0A */  int8_t  dst_wy;       /* Go-To Destination World Y */
     /* 0B */  int8_t  Status;
     /* 0C */  int8_t  Level;
     /* 0D */  int8_t  Unused_0Dh;
@@ -990,6 +1069,49 @@ extern uint8_t COL_Banners[];
 // WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
 // WZD dseg:00EC 00                                              db    0
 // WZD dseg:00ED 00                                              db    0
+
+
+
+
+
+
+// WZD dseg:1F18
+// drake178: TBL_UE_Upkeep
+extern int16_t unit_enchantment_upkeep_table[32];
+
+// WZD dseg:1F58
+// drake178: TBL_CE_Upkeep
+extern int16_t city_enchantment_upkeep_table[26];
+
+// WZD dseg:1F8C
+// drake178: TBL_GE_Upkeep
+extern int16_t overland_enchantment_upkeep_table[24];
+
+
+
+
+
+// WZD dseg:1FDC 74 28                                           dw offset aExpansionist                 ; "Expansionist"
+// WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
+// WZD dseg:1FDE                                                                                         ; DATA XREF: AI_OVL_SplCat_Picker+9CEr ...
+
+// WZD dseg:1FEA 
+// drake178: TBL_AI_DIFF_Mods 
+extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL];
+
+// WZD dseg:203A 00 00 00 05 00 00 00 00 05 00 00 00 0A 00 00 00+TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities <<0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 0, 10, 0, 0>, <0, 0, 10, 0, 0>, <0, 10, 0, 0, 2>, <0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 5, 0, 0, 5>, <0, 5, 0, 0, 3>, <0, 0, 0, 0, 10>>
+// WZD dseg:203A 00 0A 00 00 00 0A 00 00 02 00 00 00 05 00 00 00+                                        ; DATA XREF: AI_CTY_SetProduction+49Fr ...
+// WZD dseg:206C 0A 00 0F 00 1E 00 0A 00 0A 00 0F 00 0F 00 0A 00+TBL_AI_BLD_BaseWgts dw 10, 15, 30, 10, 10, 15, 15, 10, 10, 10
+// WZD dseg:206C 0A 00 0A 00                                                                             ; DATA XREF: AI_CTY_SetProduction+4C2r ...
+
+
+// WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
+// WZD dseg:2080 00 10                                           __ovrbuffer dw 4096
+// ; DATA XREF: __OvrPrepare+19r ...
+// ; declared in overlay.lib\OVRBUFF
+// WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
+
+// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_nameso
 
 
 
@@ -1244,14 +1366,17 @@ extern int16_t help_list_count;
 // WZD dseg:9126                                                                                         ; 200 LBX_NearAlloc_Next bytes
 // WZD dseg:9128 00 00                                           AI_Own_City_Values dw 0                 ; DATA XREF: AI_Continent_Eval+351r ...
 // WZD dseg:9128                                                                                         ; 200 LBX_NearAlloc_Next bytes
-// WZD dseg:912A
+
 // WZD dseg:912A                                                 ¿ BEGIN: ?
+
+
+
 // WZD dseg:912A
-// WZD dseg:912A 00 00                                           g_TimeStop_PlayerNum dw 0               ; DATA XREF: Loaded_Game_Update_WZD+C5w ...
-// WZD dseg:912A                                                                                         ; index of the Time Stop wizard plus 1 (0 if none)
+// index of the Time Stop wizard plus 1 (0 if none)
+extern int16_t g_TimeStop_PlayerNum;
 
 // WZD dseg:912C
-extern uint8_t * spell_data_table;
+extern struct s_SPELL_DATA * spell_data_table;
 
 // WZD dseg:912C                                                                                         ; 215 records of 36 bytes
 // WZD dseg:9130 00 00                                           IMG_GAME_SpellAnim@ dw 0                ; DATA XREF: GAME_LearnSpellAnim+374w ...

@@ -222,7 +222,7 @@ SA_GET_USED(SAMB_head): 2345
     DBG_ORIG_TBL_Premade_Items = TBL_Premade_Items;
     
     // AKA TBL_Spell_Data
-    spell_data_table = Allocate_Space(485);  // 485 PR  7760 B; actual: 215 * 36 = 7740
+    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR  7760 B; actual: 215 * 36 = 7740
 
     UnitDraw_WorkArea = Allocate_Space(60);  // 60 paragraphs = 960 bytes
     

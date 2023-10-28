@@ -1,5 +1,6 @@
 /*
     WIZARDS.EXE
+        ovr101
         ovr160
     MAGIC.EXE
         ovr050
@@ -183,6 +184,54 @@ SAMB_ptr save_active;
 
 
 
+
+
+
+/*
+    WIZARDS.EXE ovr101
+*/
+
+// WZD o101p01  [1 of 1]
+void GAME_NextHumanStack(void)
+{
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_NextHumanStack()\n", __FILE__, __LINE__);
+#endif
+
+
+    _unit_window_start_x = 247;
+    _unit_window_start_y = 79;
+
+
+    OVL_Action_XPos = ST_UNDEFINED;
+    OVL_Action_YPos = ST_UNDEFINED;
+
+
+    // ; recalculates the visibility arrays for both planes
+    // ; after clearing them entirely, and marks contacted
+    // ; players accordingly if they haven't been already
+    Update_Scouted_And_Contacted();
+
+
+    // ; does nothing and returns zero; at some point must have been some wizard data refresh function
+    // DONT  o62p01_Empty_pFxn(_human_player_idx);
+
+
+    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+
+
+    // ; recalculates the visibility arrays for both planes
+    // ; after clearing them entirely, and marks contacted
+    // ; players accordingly if they haven't been already
+    Update_Scouted_And_Contacted();
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GAME_NextHumanStack()\n", __FILE__, __LINE__);
+#endif
+
+}
 
 
 
@@ -668,6 +717,7 @@ void Load_Screen_Help(void)
 void Loaded_Game_Update(void)
 {
     int16_t itr;
+    int16_t itr_players;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
@@ -681,16 +731,27 @@ void Loaded_Game_Update(void)
     PageFlipEffect = 0;
     
     // j_CTY_CatchmentRefresh();
+
     GAME_Overland_Init();
+
     // j_RP_GAME_UnitTypesUpdate();
+
     // j_LD_CTY_ResRefresh();
+
     // j_LD_MAP_TFUnk40_Eval();           ; not sure what this resource is or would have been, this function enumerates the first five tiles that have it, and records their coordinates
+
     // j_CTY_CheckMinFarmers();
+
     _unit_stack_count = 0;
+
     // j_SND_PlayBkgrndTrack();
-    // j_GFX_Swap_Cities();
+
+    GFX_Swap_Cities();
+
     // j_CTY_ResetRoadConns();
+
     // j_GAME_DeleteDeadUnits();
+
     // j_AI_ResetUnitMoves();
 
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
@@ -700,8 +761,10 @@ void Loaded_Game_Update(void)
     // }
 
 
-    // j_GAME_NextHumanStack();
+    GAME_NextHumanStack();
+
     // if(_difficulty = 0 /* "Intro" */) { magic_set.Random_Events = ST_FALSE; }
+
     // for(itr = 0; itr < 100; itr++)
     // {
     //     TBL_OvlMovePathsEMS[itr] = ST_UNDEFINED;
@@ -713,14 +776,17 @@ void Loaded_Game_Update(void)
     // {
     //     AI_CONTX_Reevals[itr] = ST_FALSE;
     // }
-    // g_TimeStop_PlayerNum = 0;
-    // for(itr = 0; itr < _num_players; itr++)
-    // {
-    //     if(_players.Globals.Time_Stop == ST_FALSE)
-    //     {
-    //         g_TimeStop_PlayerNum = itr + 1;
-    //     }
-    // }
+
+    g_TimeStop_PlayerNum = ST_NONE;
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        // if(_players[itr].Globals.Time_Stop > 0)
+        if(_players[itr_players].Globals[TIME_STOP] > 0)
+        {
+            g_TimeStop_PlayerNum = itr_players + 1;
+        }
+    }
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
 #endif
