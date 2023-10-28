@@ -13,6 +13,35 @@ Yay "Main_Screen+B9E"
 
 
 
+### Reset Movement Points
+
+// WZD o60p06
+// ¿ AI version ?
+void Update_Units_MvsSts(void)
+
+Next_Turn_Proc()
+    Next_Turn_Proc+299
+    |-> Update_Units_MvsSts()
+
+
+
+## Unit Status Changes:
+
+In Main_Screen(), 'Right-Click - Movement Map - Select Stack'
+    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y)
+            Build_Unit_Stack(_human_player_idx, _map_plane, selected_unit_x, selected_unit_y)
+                checks HMoves & Finished to set active to ST_TRUE
+                    and if status is 'Wait', changes status to 'No Orders'
+
+Update_Units_MvsSts()
+    iterates over ALL _units
+        sets Finished to ST_FALSE, by default
+        sets Finished to S_TRUE, if 'Patrol', 'Build Road', 'Casting'
+        sets Status  to 'No Orders', if 'Wait' or 'Done
+
+
+
+
 
 
 ## Next Turn vs. Init/New/Load
@@ -143,7 +172,6 @@ Screen_Control()
 
 
 
-0
 ? _Next_Turn_Proc (0Ah 10d) ?
 
 

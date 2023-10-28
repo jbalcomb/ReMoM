@@ -106,8 +106,10 @@ void Update_Units_MvsSts(void)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+        // default all to 'orderable'
         _UNITS[itr_units].Finished = ST_FALSE;
 
+        // if *busy* doing "PATROL", "BUILD", or "CASTING", (re-)set to 'unorderable'
         if(
             ((_UNITS[itr_units].Status & US_Patrol) != 0) ||
             ((_UNITS[itr_units].Status & US_BuildRoad) != 0) ||
@@ -117,12 +119,16 @@ void Update_Units_MvsSts(void)
             _UNITS[itr_units].Finished = ST_TRUE;
         }
 
-        if(
-            ((_UNITS[itr_units].Status & US_Wait) != 0) ||
-            ((_UNITS[itr_units].Status & US_ReachedDest) != 0)
-        )
+        // if(
+        //     ((_UNITS[itr_units].Status & US_Wait) != 0) ||
+        //     ((_UNITS[itr_units].Status & US_ReachedDest) != 0)
+        // )
+        // 'Unit Status'  4  0x04  "DONE"       enum US_ReachedDest
+        // 'Unit Status'  5  0x05  "WAIT"       enum US_Wait
+        // 'Unit Status'  0  0x00  "NO ORDERS"  enum US_Ready
+        if( (_UNITS[itr_units].Status == US_Wait) || (_UNITS[itr_units].Status == US_ReachedDest) )
         {
-            _UNITS[itr_units].Status = US_Ready;
+            _UNITS[itr_units].Status = US_Ready;  // "NO ORDERS"
         }
 
 

@@ -60,7 +60,23 @@ TILE_ExploreRadius()
 
 
 
+## WIZ_NextIdleStack() & WIZ_NextUnit()
 
+WIZ_NextIdleStack()
+    while(Finished == ST_FALSE)
+        WIZ_NextUnit()
+
+WIZ_NextUnit()
+    returns ST_TRUE if there are not Units *available*
+
+WIZ_NextUnit()
+    while(Finished == ST_FALSE)
+        Delta_XY_With_Wrap()
+            starts from _active_world_x, _active_world_y
+        sets *map_plane = current_world_plane;
+        _unit = Closest_Active_Unit; _unit = Closest_Waiting_Unit;
+        _active_world_x = _UNITS[_unit].world_x;
+        _active_world_y = _UNITS[_unit].world_y;
 
 
 
