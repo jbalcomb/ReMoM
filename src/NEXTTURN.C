@@ -512,7 +512,7 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
     int16_t * ptr_players_heroes_items;
 // Wind_Mastery_Total= word ptr -6
     int16_t Item_HalfMoves;
-    int16_t Endurance;
+    int16_t Endurance = ST_FALSE;
 
     int16_t movement_points;
 

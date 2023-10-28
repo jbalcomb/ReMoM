@@ -1839,11 +1839,11 @@ void Main_Screen(void)
                 DLOG("(food < 0)");
                 if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
                 {
-                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )")
+                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )");
                     if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
                     {
                         allow_units_to_die = ST_TRUE;
-                        DLOG("allow_units_to_die = ST_TRUE")
+                        DLOG("allow_units_to_die = ST_TRUE");
                     }
                     else
                     {
@@ -1859,7 +1859,7 @@ void Main_Screen(void)
                             // ; returns 1 if "Yes" is selected, or 0 otherwise
                             // TODO  allow_units_to_die = GUI_Confirm_Dialog(aSomeUnitsDoNotHaveE);
                             allow_units_to_die = ST_FALSE;
-                            DLOG("allow_units_to_die = ST_FALSE")
+                            DLOG("allow_units_to_die = ST_FALSE");
                         }
                         else
                         {
@@ -1889,7 +1889,7 @@ void Main_Screen(void)
                 }
                 else
                 {
-                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )")
+                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )");
                     IDK_EoT_flag = ST_TRUE;
                     DLOG("IDK_EoT_flag = ST_TRUE");
                 }
@@ -2864,18 +2864,13 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
 
     int16_t itr_towers;
     int16_t itr_units;
-    int16_t return_value;
+    int16_t return_value = ST_FALSE;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
 #endif
 
-
-    if(unit_array_count < 1)
-    {
-        return_value = ST_FALSE;
-    }
-    else
+    if(unit_array_count > 0)
     {
         units_x = _UNITS[unit_array[0]].world_x;
         units_y = _UNITS[unit_array[0]].world_y;
@@ -2912,7 +2907,6 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
                 TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 0);
                 TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 1);
             }
-
         }
         else
         {
@@ -2925,7 +2919,6 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
                 }
             }
         }
-
     }
 
 #ifdef STU_DEBUG
@@ -2933,7 +2926,6 @@ int16_t Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t m
 #endif
 
     return return_value;
-
 }
 
 // WZD o59p14

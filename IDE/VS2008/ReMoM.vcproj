@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\CITYCALC.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\CityList.C"
 				>
 			</File>
@@ -332,6 +336,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\NewGame.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\NEXTTURN.C"
 				>
 			</File>
 			<File
@@ -474,6 +482,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ArmyList.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\CITYCALC.H"
 				>
 			</File>
 			<File
@@ -646,6 +658,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\NewGame.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\NEXTTURN.H"
 				>
 			</File>
 			<File
