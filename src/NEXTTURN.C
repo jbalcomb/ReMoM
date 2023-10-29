@@ -520,6 +520,8 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_GetHalfMoves(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
 #endif
 
+    /* ¿DNE? */ Endurance = ST_FALSE;
+
     /*
         BEGIN: Hero Items
     */

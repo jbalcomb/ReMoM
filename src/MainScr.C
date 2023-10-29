@@ -106,7 +106,8 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
     WIZARDS.EXE  ovr061
 */
 // WZD o61p01
-// IDK_ActiveUnitStack_MovesOrPath_s53150()
+// AKA IDK_ActiveUnitStack_MovesOrPath_s53150()
+// UNITSTK  void Update_Stack_Active(int16_t stack_idx);
 
 // WZD o61p02
 // AKA Do_Move_Stack()
@@ -123,10 +124,12 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
-// STK_GetExtraActions()
+// drake178: STK_GetExtraActions()
+void STK_GetExtraActions(void);
 
 // WZD o61p07
-// STK_GetMovableUnits()
+// drake178: STK_GetMovableUnits()
+void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[]);
 
 // WZD o61p08
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
@@ -425,6 +428,9 @@ int16_t unit_enchantment_animation_flag;
 char cnst_Moves[] = "Moves:";
 
 
+
+
+
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
 
 // WZD dseg:C03E
@@ -478,7 +484,6 @@ int16_t _armies_button;
 int16_t _spells_button;
 // WZD dseg:C07E
 int16_t _game_button;
-
 
 // WZD dseg:C080 dw 0
 // WZD dseg:C082 _unit_window_start_y dw 0
@@ -1718,6 +1723,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _wait_button)
         {
+            DLOG("(input_field_idx == _wait_button)");
             // TODO  SND_LeftClickSound();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 5, 0, 0);  /* Action 5: 'Wait' */
@@ -1750,6 +1756,8 @@ void Main_Screen(void)
             END: Game Button - Plane Button
         */
 
+
+
         /*
             BEGIN: Left-Click Unit Window Grid Field
         */
@@ -1762,14 +1770,17 @@ void Main_Screen(void)
         // Main_Screen+097B
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
-            if(Unit_Window_Fields[Stack_Index] = input_field_idx)
+            if(Unit_Window_Fields[Stack_Index] == input_field_idx)
             {
                 DLOG("(Unit_Window_Fields[Stack_Index] = input_field_idx)");
 
                 // TODO  RP_SND_LeftClickSound2();  // drake178: byte-identical to SND_LeftClickSound()
 
-                // IDK_ActiveUnitStack_MovesOrPath_s53150(Stack_Index);
-                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
+                // HERE:  itr_stack ~== unit window field idx
+                Update_Stack_Active(Stack_Index);
+
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
                 // NIU_MainScreen_local_flag = 1;
             }
         }
@@ -1780,9 +1791,11 @@ void Main_Screen(void)
         /*
             BEGIN: Right-Click Unit Window Grid Field
         */
+        // Right-Click Unit Window Grid Field
+        // Right-Click Unit Window
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
-            if(Unit_Window_Fields[Stack_Index] = -input_field_idx)
+            if(Unit_Window_Fields[Stack_Index] == -input_field_idx)
             {
                 DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
                 // OVL_ShowActiveStack();
@@ -1793,7 +1806,9 @@ void Main_Screen(void)
                 // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
                 // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
                 //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
+
                 // TODO  USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
+
                 // Assign_Auto_Function(Main_Screen_Draw, 1);
                 // Allocate_Reduced_Map();
                 // Set_Mouse_List_Normal();
@@ -1864,7 +1879,7 @@ void Main_Screen(void)
                     if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
                     {
                         allow_units_to_die = ST_TRUE;
-                        DLOG("allow_units_to_die = ST_TRUE")
+                        DLOG("allow_units_to_die = ST_TRUE");
                     }
                     else
                     {
@@ -1880,7 +1895,7 @@ void Main_Screen(void)
                             // ; returns 1 if "Yes" is selected, or 0 otherwise
                             // TODO  allow_units_to_die = GUI_Confirm_Dialog(aSomeUnitsDoNotHaveE);
                             allow_units_to_die = ST_FALSE;
-                            DLOG("allow_units_to_die = ST_FALSE")
+                            DLOG("allow_units_to_die = ST_FALSE");
                         }
                         else
                         {
@@ -2576,12 +2591,22 @@ void Add_Unit_Window_Fields(void)
     int16_t x2;
     int16_t y2;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Add_Unit_Window_Fields()\n", __FILE__, __LINE__);
+#endif
+
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
         Unit_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
         Unit_Window_Fields[itr_stack] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, 0, ST_UNDEFINED);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Unit_Window_Fields[%d]: %d\n", __FILE__, __LINE__, itr_stack, Unit_Window_Fields[itr_stack]);
+#endif
     }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Add_Unit_Window_Fields()\n", __FILE__, __LINE__);
+#endif
 }
 
 
@@ -2890,7 +2915,6 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
 #endif
 
-
     if(unit_array_count >= 1)
     {
         units_x = _UNITS[unit_array[0]].world_x;
@@ -2918,17 +2942,13 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
                 unit_idx = unit_array[itr_units];
                 _UNITS[unit_idx].In_Tower = ST_TRUE;
             }
-
             unit_idx = unit_array[0];
-
             _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
-
             if(_UNITS[unit_idx].owner_idx == _human_player_idx)
             {
                 TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 0);
                 TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 1);
             }
-
         }
         else
         {
@@ -2941,13 +2961,11 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
                 }
             }
         }
-
     }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
 #endif
-
 }
 
 // WZD o59p14
@@ -3702,6 +3720,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     next nearest available unit
         from _active_world_x, _active_world_y
     sets _unit, _active_world_x, _active_world_y
+
+    ~== *available* / *selectable*
+        Finished != ST_TRUE
 */
 int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 {
@@ -3713,7 +3734,7 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
     int16_t Closest_Waiting_Unit;
     int16_t Closest_Waiting_Dist;
     int16_t itr_units;
-    int16_t Distance_From_Center;
+    int16_t delta;
     int16_t Return_Value;
     int16_t Finished;
 
@@ -3748,24 +3769,31 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
             (_UNITS[itr_units].Finished == ST_FALSE)
         )
         {
-            Distance_From_Center = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].world_x, _UNITS[itr_units].world_y, WORLD_WIDTH);
+            // TODO  figure out how to deal with delta being 0 for the previously select stack that set _active_world_x,y
+            delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].world_x, _UNITS[itr_units].world_y, WORLD_WIDTH);
 
             if( (_UNITS[itr_units].Status & 0x05) != 0)  /* US_Wait */
             {
-                if(Closest_Waiting_Dist > Distance_From_Center)
+                if(Closest_Waiting_Dist > delta)
                 {
-                    Closest_Waiting_Dist = Distance_From_Center;
-                    Closest_Waiting_Unit = itr_units;
+                    if(delta != 0)
+                    {
+                        Closest_Waiting_Dist = delta;
+                        Closest_Waiting_Unit = itr_units;
+                    }
                 }
             }
             else
             {
                 if( ((_UNITS[itr_units].Status & 0x08) == 0) /* US_Purify */ && ((_UNITS[itr_units].Status & 0x64) == 0) /* US_Unkown_100 */ )
                 {
-                    if(Closest_Active_Dist > Distance_From_Center)
+                    if(Closest_Active_Dist > delta)
                     {
-                        Closest_Active_Dist = Distance_From_Center;
-                        Closest_Active_Unit = itr_units;
+                        if(delta != 0)
+                        {
+                            Closest_Active_Dist = delta;
+                            Closest_Active_Unit = itr_units;
+                        }
                     }
                 }
             }
@@ -3852,10 +3880,94 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 }
 
 // WZD o61p06
-// STK_GetExtraActions()
+void STK_GetExtraActions(void)
+{
+    int16_t unit_array[9];
+    int16_t unit_array_count;
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions()\n", __FILE__, __LINE__);
+#endif
+
+    // ; set to indicate any extra action possible for the
+    // ; selected stack
+    // ;   -1: no extra action possible
+    // ;    0: road building possible
+    // ;    1: settling possible
+    // ;    2: purifying possible
+    // ;    9: melding possible
+    special_action_flag = ST_UNDEFINED;
+
+
+    Active_UnitGroup(&unit_array_count, &unit_array[0]);
+
+
+    // ; returns 1 if the stack is on a non-sailable tile and
+    // ; has at least one unit with the construction ability;
+    // ; or 0 otherwise
+    // ; sets GUI_ExtraUnitAction to 0 if returning 1
+    // TODO  STK_BuildingPossible(&unit_array_count, &unit_array[0]);
+
+
+    // ; returns 1 if the stack is on a tile that can be
+    // ; settled and has at least one settler; or 0 otherwise
+    // ; sets GUI_ExtraUnitAction to 1 if returning 1
+    // TODO  STK_SettlingPossible(&unit_array_count, &unit_array[0]);
+
+
+    // ; returns 1 if the stack is on a corrupted tile and has
+    // ; at least one unit that can purify; or 0 otherwise
+    // ; sets GUI_ExtraUnitAction to 2 if returning 1
+    // TODO  STK_PurifyPossible(&unit_array_count, &unit_array[0]);
+
+
+    // ; returns 1 if the stack is on a node tile and has at
+    // ; least one magic- or guardian spirit; or 0 otherwise
+    // ; sets GUI_ExtraUnitAction to 9 if returning 1
+    // TODO  STK_MeldingPossible(&unit_array_count, &unit_array[0]);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions()\n", __FILE__, __LINE__);
+#endif
+
+}
 
 // WZD o61p07
-// STK_GetMovableUnits()
+// drake178: STK_GetMovableUnits()
+/*
+    count of Units in Stack with 'active'
+    inout of count
+    inout of array of unit indices
+*/
+void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[])
+{
+    int16_t itr_stack;
+    int16_t unit_count;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Active_UnitGroup()\n", __FILE__, __LINE__);
+#endif
+
+    unit_count = 0;
+
+    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+    {
+        if(_unit_stack[itr_stack].active == ST_TRUE)
+        {
+            unit_array[unit_count] = _unit_stack[itr_stack].unit_idx;
+            unit_count++;
+        }
+    }
+
+    *unit_array_count = unit_count;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Active_UnitGroup()\n", __FILE__, __LINE__);
+#endif
+
+}
 
 // WZD o61p08
 /*
@@ -4146,14 +4258,14 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     int16_t GoingTo_Unit_idx;
     int16_t itr_stack;
     int16_t unit_idx;
-    int16_t unit_list[9];
-    int16_t unit_count;
+    int16_t unit_array[9];
+    int16_t unit_array_count;
     
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Select_Unit_Stack(player_idx = %d, *map_x = %d, *map_y = %d, map_plane = %d, unit_x = %d, unit_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, map_plane, unit_x, unit_y);
 #endif
 
-    // G_OVL_MapVar4 = 1;
+    reset_active_stack = ST_TRUE;
 
 #ifdef STU_DEBUG
     if(DBG_TST_Select_Unit_Stack == 1)
@@ -4200,10 +4312,13 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         unit_y = _UNITS[unit_idx].world_y;
         OVL_BringIntoView(map_x, map_y, unit_x, unit_y, map_plane);
         
-        // TODO  STK_GetExtraActions();
-        // TODO  STK_GetMovableUnits(*unit_count, *unit_list);
-        // DONT  RP_STK_ReturnZero(unit_count, *unit_list);
-        // TODO  STK_CheckTower(unit_count, *unit_list);
+        STK_GetExtraActions();
+        
+        Active_UnitGroup(&unit_array_count, &unit_array[0]);
+
+        // DONT  o62p07_Empty_pFxn(unit_array_count, &unit_array[0]);
+
+        Units_In_Tower(unit_array_count, &unit_array[0], map_plane);
 
         if(_unit_stack_count < 1)
         {
@@ -4353,7 +4468,7 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
             (_UNITS[current_unit_idx].world_x == world_x) &&
             (_UNITS[current_unit_idx].world_y == world_y) &&
             (_UNITS[current_unit_idx].owner_idx != ST_UNDEFINED) && 
-            ( (_UNITS[current_unit_idx].world_plane == world_plane) || (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
+            ( (_UNITS[current_unit_idx].world_plane == world_plane) || (_UNITS[current_unit_idx].In_Tower == ST_TRUE) )
         )
         {
             /*
@@ -4373,6 +4488,13 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
         dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
     }
 #endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
+    dbg_prn("DEBUG: [%s, %d]: _unit_stack[unit_stack_idx].active:    %d\n", __FILE__, __LINE__, _unit_stack[unit_stack_idx].active);
+#endif
+
             if(_UNITS[current_unit_idx].HMoves > 0)
             {
                 if(_UNITS[current_unit_idx].Finished == ST_FALSE)
@@ -4390,6 +4512,13 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
             {
                 _unit_stack[unit_stack_idx].active = ST_FALSE;
             }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
+    dbg_prn("DEBUG: [%s, %d]: _unit_stack[unit_stack_idx].active:    %d\n", __FILE__, __LINE__, _unit_stack[unit_stack_idx].active);
+#endif
 
             unit_stack_idx++;
         }
@@ -4665,12 +4794,21 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
-                if (
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
+#endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active: %d\n", __FILE__, __LINE__, itr_stack, _unit_stack[itr_stack].active);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
+#endif
+                if(
                     (_unit_stack[itr_stack].active == ST_TRUE) &&
                     (_UNITS[unit_idx].HMoves > 0) &&
                     (_UNITS[unit_idx].Finished == ST_FALSE)
                 )
                 {
+                    DLOG("( (_unit_stack[itr_stack].active == ST_TRUE) && (_UNITS[unit_idx].HMoves > 0) && (_UNITS[unit_idx].Finished == ST_FALSE) )");
                     _UNITS[unit_idx].Status = action;
                     _UNITS[unit_idx].Finished = ST_TRUE;
                     _unit_stack[itr_stack].active = ST_FALSE;
@@ -4678,6 +4816,14 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                     _UNITS[unit_idx].dst_wy = 0;
                     case_1_count++;
                 }
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
+#endif
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active: %d\n", __FILE__, __LINE__, itr_stack, _unit_stack[itr_stack].active);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
+#endif
             }
         } break;
         case 2:
@@ -4703,7 +4849,7 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                 }
             }
         } break;
-        case 4:  /* ¿ completed on-going action (move path, pave path, purify) ? */
+        case 4:  /* "DONE"  ¿ completed on-going action (move path, pave path, purify) ? */
         {
             DLOG("switch(action)  case 4:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)

@@ -52,6 +52,7 @@
 #include "Terrain.H"
 #include "Timer.H"
 #include "UnitMove.H"   // WTFMATE
+#include "UNITSTK.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "Video.H"
 #include "Video2.H"

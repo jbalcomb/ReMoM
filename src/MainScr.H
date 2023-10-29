@@ -33,6 +33,43 @@ extern int64_t _main_map_grid_y;
 
 
 
+
+
+// WZD dseg:C03E                                                 BEGIN: Main_Screen
+
+// WZD dseg:C03E
+// CRP_OverlandVar_2 dw 0
+// WZD dseg:C040
+// CRP_OverlandVar_4 dw 0
+// WZD dseg:C042
+// OVL_MapVar3 dw 0
+// WZD dseg:C044
+// CRP_OVL_Obstacle_Var1 dw 0
+// WZD dseg:C046
+// CRP_OVL_UU_Control_1 dw 0
+// WZD dseg:C048
+// CRP_OVL_UU_Control_2 dw 0
+// WZD dseg:C04A
+// CRP_OVL_UU_Control_3 dw 0
+// WZD dseg:C04C
+// CRP_OVL_UU_Control_4 dw 0
+// WZD dseg:C04E
+// int16_t special_action_flag;  // AKA OVL_ExtraUnitAction
+// WZD dseg:C050
+// int16_t _next_turn_button;
+// WZD dseg:C052
+// int16_t Unit_Window_Fields[9];
+// WZD dseg:C064
+// CRP_OverlandVar_3 dw 0
+// WZD dseg:C066
+// int16_t OVL_Path_Length;
+// WZD dseg:C068
+extern int16_t OVL_StackHasPath;
+
+
+
+
+
 /*
                                         ¿ BEGIN: ovr052 Terrain_Init() ?
 */
@@ -318,7 +355,8 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
 
 // WZD o61p01
-// IDK_ActiveUnitStack_MovesOrPath_s53150()
+// AKA IDK_ActiveUnitStack_MovesOrPath_s53150()
+// UNITSTK  void Update_Stack_Active(int16_t stack_idx);
 
 // WZD o61p02
 // AKA Do_Move_Stack()
@@ -335,10 +373,13 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // ¿PRIVATE?  int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
-// STK_GetExtraActions()
+// ¿PRIVATE?  
+void STK_GetExtraActions(void);
 
 // WZD o61p07
-// STK_GetMovableUnits()
+// drake178: STK_GetMovableUnits()
+// ¿PRIVATE?  
+void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[]);
 
 // WZD o61p08
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
