@@ -949,7 +949,7 @@ void G_WLD_StaticAssetRfrsh(void)
     dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
 #endif
 
-    // G_OVL_MapVar4 = 1;  // ? ST_TRUE ?
+    reset_active_stack = ST_TRUE;
     Reset_Draw_Active_Stack();
     _map_plane = 0;  // Arcanus
 

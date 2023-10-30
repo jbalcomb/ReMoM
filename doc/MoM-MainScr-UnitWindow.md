@@ -6,6 +6,76 @@
 
 
 
+## Left-Click Unit Window Grid Field
+
+Update_Stack_Active()
+
+IIF
+    Status != DONE  and  HMoves >= 1
+So, ...
+    a Unit in the Stack can not be made Active if its Status is Done or it has no movement points
+
+(G_OVL_MapVar4 == ST_TRUE) && (_unit_stack_count > 1) && (_UNITS[stack_unit_idx].Status != US_Casting)
+
+still don't know G_OVL_MapVar4 is all about
+can't even get here if _unit_stack_count isn't greater than 1
+What's so special about casting?
+
+Then, get a count of units in the stack that are set to active
+And, if more then one is set to active, set them all to inactive
+
+In-game, when the stack is selected, all the active units are as-is
+    but, when you left click on one of them, the others get set to inactive / deselected
+    after that, though, left clicking on another *adds* it as active
+    what's controlling the behavior being different for the first left-click vs. subsequent left-clicks?
+    G_OVL_MapVar4?
+
+May be that G_OVL_MapVar4 exists soley for controlling the behavior of the 'Unit Window' Stack Unit Activation?
+    the first time you left-click on any Unit in the Stack in the 'Unit Window'
+        it deactivates all the other Units in the Stack
+    after that, when you click on another unit,
+        it adds it to the Selection of Active Stack Units
+
+¿ defaulted to ST_TRUE in G_WLD_StaticAssetRfrsh() ?
+¿ reset in Select_Unit_Stack() ?
+¿ unset in Update_Stack_Active() ?
+renamed to reset_active_stack
+
+
+
+
+
+## Right-Click Unit Window Grid Field
+
+
+
+
+
+
+
+
+
+IDK_ActiveUnitStack_MovesOrPath_s53150()
+XREF:
+    j_IDK_ActiveUnitStack_MovesOrPath_s53150()
+
+j_IDK_ActiveUnitStack_MovesOrPath_s53150()
+XREF:
+    Main_Screen+995
+
+IDK_ActiveUnitStack_MovesOrPath_s53150()
+    ¿ getting passed stack_idx or unit_window_field_idx ?
+
+
+
+
+
+
+
+
+
+
+
 // WZD o57p07
 void Add_Unit_Window_Fields(void);
 
@@ -39,6 +109,9 @@ after
 before
     BEGIN: Next Turn
 
+        // Left-Click Unit Window Grid Field
+        // ovr057:097B
+        // Main_Screen+097B
 
         // Left-Click Unit Window Grid Field
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
