@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\UNITSTK.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\UNITTYPE.C"
 				>
 			</File>
@@ -730,6 +734,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\UnitMove.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\UNITSTK.H"
 				>
 			</File>
 			<File
