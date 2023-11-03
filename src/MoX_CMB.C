@@ -3,7 +3,8 @@
         ovr116
 */
 
-#include "MoX.H"
+#include "MoM.H"
+#include "MoX_CMB.H"
 
 
 
@@ -306,8 +307,195 @@ int16_t UNIT_GetHitsPerFig(int16_t unit_idx)
 }
 
 // WZD o116p05
+
 // WZD o116p06
+void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit)
+{
+    int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_Create_BURecord(unit_idx = %d, BattleUnit = %p)\n", __FILE__, __LINE__, unit_idx, BattleUnit);
+#endif
+
+    memcpy(BattleUnit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
+
+    BattleUnit->Combat_Effects = 0;
+    BattleUnit->Melee_To_Hit = 0;
+    BattleUnit->Ranged_To_Hit = 0;
+    BattleUnit->tohit = 0;
+    BattleUnit->To_Block = 0;
+    BattleUnit->Weapon_Plus1 = 0;
+    BattleUnit->Melee_ATK_Flags = 0;
+    BattleUnit->Ranged_ATK_Flags = 0;
+    BattleUnit->Item_UEs = 0;
+    BattleUnit->Extra_Hits = 0;
+    BattleUnit->unit_idx = unit_idx;
+    BattleUnit->Web_HP = 0;
+    BattleUnit->Gold_Melee = 0;
+    BattleUnit->Gold_Ranged = 0;
+    BattleUnit->Gold_Defense = 0;
+    BattleUnit->Gold_Resist = 0;
+    BattleUnit->Gold_Hits = 0;
+    BattleUnit->Grey_Melee = 0;
+    BattleUnit->Grey_Ranged = 0;
+    BattleUnit->Grey_Defense = 0;
+    BattleUnit->Grey_Resist = 0;
+    BattleUnit->Fig_IMG_Index = -1;
+    BattleUnit->Status = 0;
+    BattleUnit->owner_idx = _UNITS[unit_idx].owner_idx;
+    for(itr = 0; itr < 3; itr++)
+    {
+        // BattleUnit->Regular_Dmg[itr] = 0;
+        *((&BattleUnit->Regular_Dmg) + itr) = 0;
+    }
+    BattleUnit->Unit_Enchants = 0;
+    BattleUnit->Suppression = 0;
+    BattleUnit->mana_max = 0;
+    BattleUnit->Item_Charges = 0;
+    BattleUnit->Target_BU = -1;
+    BattleUnit->Poison_Strength = 0;
+    // ; returns the unit's gold Upkeep Cost, 0 for Noble
+    // ; Heroes, Torin, and undead units; 1/2 for AI units
+    // ; on Impossible; and 3/4 for AI units on Hard
+    BattleUnit->upkeep = UNIT_GetGoldUpkeep(unit_idx);
+    if( (BattleUnit->Attack_Flags & 0x04 /* Att_Poison */) != 0)
+    {
+        BattleUnit->Poison_Strength = BattleUnit->Spec_Att_Attrib;
+    }
+    if( (BattleUnit->ranged_type & 0x68 /* SR_MultiGaze */) != 0)
+    {
+        BattleUnit->Spec_Att_Attrib = 0;
+    }
+
+    BU_SetBaseStats(BattleUnit);
+
+    BattleUnit->mana = BattleUnit->mana_max;
+    BattleUnit->Regular_Dmg = _UNITS[unit_idx].Damage;
+
+
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: UNIT_Create_BURecord(unit_idx = %d, BattleUnit = %p)\n", __FILE__, __LINE__, unit_idx, BattleUnit);
+#endif
+
+}
+
 // WZD o116p07
+/*
+
+    calls out for Level Stats, Hero Ability Stats, Item Stats, Enchantment Stats
+    
+    ...
+    Chaos Surge
+    ...
+
+    ...
+    movement_points
+    Hits
+*/
+void BU_SetBaseStats(struct s_BU_REC * BattleUnit)
+{
+    int16_t unit_idx;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: BU_SetBaseStats(BattleUnit = %p)\n", __FILE__, __LINE__, BattleUnit);
+#endif
+
+    unit_idx = BattleUnit->unit_idx;
+
+    // ...
+    // ...
+    // ...
+
+    // TODO  UNIT_BU_LevelStats()
+
+    // ...
+    // ...
+    // ...
+
+    // if(_UNITS[unit_idx].Hero_Slot > -1)
+    // TODO  UNIT_BU_HeroAbStats()
+    // TODO  UNIT_BU_ApplyItems()
+
+    // ...
+    // ...
+    // ...
+
+    // Weapon Quality
+
+    // ...
+    // ...
+    // ...
+
+    // Chaos Surge
+
+    // ...
+    // ...
+    // ...
+    
+    // ...
+    // ...
+    // ...
+    
+    // ...
+    // ...
+    // ...
+
+    // TODO  BU_ApplyEnchants()    
+
+    // ...
+    // ...
+    // ...
+    
+
+    BattleUnit->movement_points = UNIT_GetHalfMoves_WIP(unit_idx);
+// mov     ax, _SI_unit_idx
+// mov     cl, 5
+// shl     ax, cl
+// les     bx, [_UNITS]                    ; 7ECh LBX_Alloc_Space paragraphs
+// add     bx, ax
+// mov     ax, [es:bx+s_UNIT.Enchants_HI]
+// mov     dx, [es:bx+s_UNIT.Enchants_LO]
+// les     bx, [bp+fp_BattleUnit]
+// or      dx, [word ptr es:bx+BU_REC.Item_UEs]
+// or      ax, [word ptr es:bx+(BU_REC.Item_UEs+2)]
+// mov     [bp+Enchants_HO], ax
+// mov     [bp+Enchants_LO], dx
+// 
+// 
+// les     bx, [bp+fp_BattleUnit]
+// cmp     [es:bx+BU_REC.movement_points], 3 ; BUG: value not in halves, but if it was, it would
+//                                         ; cause a display bug below
+//                                         ; this entire check is completely redundant, as the
+//                                         ; above function already incorporates it, while any
+//                                         ; overland movement calculations will IGNORE this
+//                                         ; value, causing a discrepancy between the displayed
+//                                         ; and the actual movement allowance of the unit
+//                                         ; it could also only ever trigger if an opposing Wind
+//                                         ; Mastery has reduced the moves of a ship with Flight
+// jge     short @@Done_Almost
+// mov     ax, [bp+Enchants_HO]
+// mov     dx, [bp+Enchants_LO]
+// and     dx, 0
+// and     ax, UE_Flight
+// or      dx, ax
+// jz      short @@Done_Almost
+// les     bx, [bp+fp_BattleUnit]          ; BUG: could override Wind Mastery malus overland, but
+//                                         ; only for display, causing a discrepancy
+// mov     [es:bx+BU_REC.movement_points], 6
+
+
+    BattleUnit->hits = UNIT_GetHitsPerFig(unit_idx);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: BU_SetBaseStats(BattleUnit = %p)\n", __FILE__, __LINE__, BattleUnit);
+#endif
+
+}
+
+
 // WZD o116p08
 // WZD o116p09
 // WZD o116p10

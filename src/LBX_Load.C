@@ -225,6 +225,8 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
         {
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > Get_Free_Blocks(SAMB_head)) { Error_Handler(lbx_name, 5, entry_num, (num_blocks - Get_Free_Blocks(SAMB_head))); }
+            // assert(Check_Allocation(SAMB_head) != ST_FAILURE));
+            
             SAMB_data = SAMB_head + 12 + (16 * SA_GET_USED(SAMB_head));
 
             num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
@@ -472,6 +474,10 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     char buffer[120];
     char buffer2[20];
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Error_Handler(file_name = %s, error_num = %d, entry_num = %d, pages = %)\n", __FILE__, __LINE__, file_name, error_num, entry_num, pages);
+#endif
+
     strcpy(buffer, file_name);
 #pragma warning(suppress : 4996)
     itoa(entry_num, buffer2, 10);
@@ -543,9 +549,17 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             break;
     }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] Exit_With_Message(buffer): %s\n", __FILE__, __LINE__, buffer);
+#endif
+
     // Exit_With_Message(buffer);
 #if defined(__DOS16__)
     Exit(buffer);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: Error_Handler(file_name = %s, error_num = %d, entry_num = %d, pages = %)\n", __FILE__, __LINE__, file_name, error_num, entry_num, pages);
 #endif
 
 }

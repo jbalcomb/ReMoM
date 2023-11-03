@@ -615,6 +615,9 @@ void Draw_Fields()
             {
                 case ft_Button:                 /*  0  0x00 */  //drake178: TODO
                 {
+                    DLOG("switch(p_fields[itr_fields_count].type)  case ft_Button");
+
+                    Draw_Field(itr_fields_count, 0);
 
                 } break;
                 case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
@@ -780,7 +783,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 //                     (((p_fields[field_num].Bottom - p_fields[field_num].Top) / 2) + p_fields[field_num].Top - Half_Font_Height),
 //                     p_fields[field_num].Param0
 //                 );
-            if(up_down_flag == 0)
+            if(up_down_flag == 0)  /* up */
             {
                 DLOG("(up_down_flag == 0)");
 
@@ -789,8 +792,13 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 
                 Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
                 Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                // Print_Centered(
+                //     ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
+                //     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
+                //     (char *)p_fields[field_num].string
+                // );
                 Print_Centered(
-                    ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
+                    (((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1),
                     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
                     (char *)p_fields[field_num].string
                 );
@@ -798,7 +806,8 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             else
             {
                 DLOG("(up_down_flag != 0)");
-                if(p_fields[field_num].Param3 == 0)
+
+                if(p_fields[field_num].Param3 == 0)  /* FullFrames */
                 {
                     DLOG("(p_fields[field_num].Param3 == 0)");
                     FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
@@ -813,8 +822,13 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 
                 Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
                 Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                // Print_Centered(
+                //     (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
+                //     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
+                //     (char *)p_fields[field_num].string
+                // );
                 Print_Centered(
-                    (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
+                    ((((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1) + down_x),
                     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
                     (char *)p_fields[field_num].string
                 );

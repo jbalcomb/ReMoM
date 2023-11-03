@@ -43,8 +43,13 @@ void BU_Item_To_UEFlags(int16_t item_idx, struct s_BU_REC * BU_Rec);
 int16_t UNIT_GetHitsPerFig(int16_t unit_idx);
 
 // WZD o116p05
+
 // WZD o116p06
+void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit);
+
 // WZD o116p07
+void BU_SetBaseStats(struct s_BU_REC * BattleUnit);
+
 // WZD o116p08
 // WZD o116p09
 // WZD o116p10
