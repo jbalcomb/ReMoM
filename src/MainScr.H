@@ -448,7 +448,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // PRIVATE  void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
 
 // WZD o063p03
-// PRIVATE  void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
+void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
 
 // WZD o63p04
 // drake178: j_GAME_Animate_UEs()

@@ -895,6 +895,241 @@ int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 // dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
 
 
+
+
+
+
+
+
+
+
+// WZD dseg:92B6 00 00                                           
+// IMG_USW_GrassBase@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+57Ew ...
+SAMB_ptr IMG_USW_GrassBase;
+
+
+
+// WZD dseg:9498 00 00                                           
+// IMG_CTY_RED_Btn@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+115w ...
+// BACKGRND.LBX, 24  REDBUTT red button
+SAMB_ptr red_button_seg;
+// WZD dseg:9498                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9498                                                                                         ; 2 frame image (normal - clicked)
+
+// WZD dseg:949A 00 00                                           
+// IMG_CTY_RightBldTab@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+1E9w ...
+SAMB_ptr IMG_CTY_RightBldTab;
+// WZD dseg:949A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:949C 00 00                                           
+// IMG_CTY_LeftBldTab@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+1D2w ...
+SAMB_ptr IMG_CTY_LeftBldTab;
+// WZD dseg:949C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:949E 00 00                                           IMG_OVL_EnemyCityBG@ dw 0               ; DATA XREF: IDK_EnemyCityScreen_s4A3F0+115w ...
+
+// WZD dseg:94A0 00 00                                           
+// IMG_CTY_10_Food@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+1EDw ...
+SAMB_ptr IMG_CTY_10_Food[6];
+// WZD dseg:94A0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:94A2 00 00                                           IMG_CTY_10_Prod@ dw 0                   ; DATA XREF: sub_4DA19+2CEr
+// WZD dseg:94A2                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94A4 00 00                                           IMG_CTY_10_Gold@ dw 0                   ; DATA XREF: sub_4DA19+484r ...
+// WZD dseg:94A4                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94A6 00 00                                           IMG_CTY_10_Power@ dw 0                  ; DATA XREF: sub_4DA19+7A6r ...
+// WZD dseg:94A6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94A8 00 00                                           IMG_CTY_10_Books@ dw 0                  ; DATA XREF: sub_4DA19+9B2r
+// WZD dseg:94A8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94AA 00 00                                           IMG_CTY_Neg_10_Gold@ dw 0               ; DATA XREF: IDK_CityScreen_AddResourcesFields+44Er ...
+// WZD dseg:94AA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:94AC 00 00                                           
+// IMG_CTY_Neg_10_Food@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+20Bw ...
+SAMB_ptr IMG_CTY_Neg_10_Food;
+// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Rebels@ dw 0Eh dup(0)           ; DATA XREF: City_Screen_Load_Pictures+186w ...
+// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
+
+// WZD dseg:94AE                                                                                         ; GFX_Swap_Seg, 1 rebel image per header
+// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Farmers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures:loc_46923w ...
+// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
+// WZD dseg:94CA                                                                                         ; GFX_Swap_Seg, 1 farmer image per header
+
+// WZD dseg:94E6 00 00                                           
+// IMG_CTY_1_Food@ dw 0                    ; DATA XREF: City_Screen_Load_Pictures+1AEw ...
+SAMB_ptr IMG_CTY_1_Food[5];
+// WZD dseg:94E6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:94E8 00 00                                           IMG_CTY_1_Prod@ dw 0                    ; DATA XREF: sub_4DA19+2D2r
+// WZD dseg:94E8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94EA 00 00                                           IMG_CTY_1_Gold@ dw 0                    ; DATA XREF: sub_4DA19+488r ...
+// WZD dseg:94EA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94EC 00 00                                           IMG_CTY_1_Power@ dw 0                   ; DATA XREF: sub_4DA19+7AAr ...
+// WZD dseg:94EC                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:94EE 00 00                                           IMG_CTY_1_Book@ dw 0                    ; DATA XREF: sub_4DA19+9B6r
+// WZD dseg:94EE                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:94F0 00 00                                           
+// IMG_CTY_Neg_1_Food@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+1CCw ...
+SAMB_ptr IMG_CTY_Neg_1_Food;
+
+
+
+// WZD dseg:952E                                                 END:  Main Screen Pictures
+// WZD dseg:952E
+// WZD dseg:952E
+// WZD dseg:952E
+// WZD dseg:9530 00 00 00 00 00 00                               IMG_CTY_EmptyHuts@ dw 3 dup(0)          ; DATA XREF: City_Screen_Load_Pictures:loc_46A47w ...
+// WZD dseg:9530                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
+// WZD dseg:9536 00 00 00 00 00 00                               IMG_CTY_FilledHuts@ dw 3 dup(0)         ; DATA XREF: City_Screen_Load_Pictures+25Aw ...
+// WZD dseg:9536                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
+// WZD dseg:953C 00 00                                           namecity_background_seg dw 0            ; DATA XREF: City_Screen_Load_Pictures+239w ...
+// WZD dseg:953E 00 00                                           IMG_CTY_Outpost_BG@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+222w ...
+
+// WZD dseg:9540 00 00                                           
+// IMG_USW_SideBtns_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+8Bw ...
+SAMB_ptr unitview_button_background_seg;
+
+// WZD dseg:9542 00 00                                           dw 0
+// WZD dseg:9544 00 00                                           dw 0
+// WZD dseg:9546 00 00                                           dw 0
+
+// WZD dseg:9548 00 00                                           
+// IMG_OVL_BuildBtn_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+176w
+SAMB_ptr IMG_OVL_BuildBtn_BG;
+// WZD dseg:9548                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
+// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
+// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+
+
+
+// WZD dseg:9750                                                 ¿ END: maps / map grid fields - Uninitialized Data ?
+// WZD dseg:9750
+// WZD dseg:9752
+// WZD dseg:9752                                                 ? BEGIN: City Screen ?
+// WZD dseg:9752
+// WZD dseg:9752 00 00                                           scanned_field__G_CTY_ClickedLabel dw 0  ; DATA XREF: City_Screen+2A9w ...
+
+// WZD dseg:9754 00 00                                           
+// IMG_OVL_UnitListBtm@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+15Fw ...
+SAMB_ptr IMG_OVL_UnitListBtm;
+// WZD dseg:9754                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:9756 00 00                                           
+// IMG_OVL_UnitList_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+148w ...
+SAMB_ptr IMG_OVL_UnitList_BG;
+// WZD dseg:9756                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:9758 00 00                                           IMG_CTY_NewBuild_BG@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+74w ...
+// WZD dseg:9758                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:975A 00 00                                           IMG_CTY_SplScrlDn@ dw 0                 ; DATA XREF: City_Screen_Load_Pictures+FEw ...
+// WZD dseg:975A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:975A                                                                                         ; 2 frame image (normal - clicked)
+// WZD dseg:975C 00 00                                           IMG_CTY_SplScrlUp@ dw 0                 ; DATA XREF: City_Screen_Load_Pictures+E7w ...
+// WZD dseg:975C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:975C                                                                                         ; 2 frame image (normal - clicked)
+// WZD dseg:975E 00 00 00 00 00 00 00 00 00 00 00 00             IMG_USW_ItemSlots ISLT_ICONS <0>        ; DATA XREF: GFX_Swap_AppendItems+15Bw ...
+// WZD dseg:975E                                                                                         ; array of 6 appended reserved EMM headers in
+// WZD dseg:975E                                                                                         ; GFX_Swap_Seg, each with one item slot image
+// WZD dseg:976A 00 00                                           IMG_USW_ItemHelpBlt@ dw 0               ; DATA XREF: GFX_Swap_AppendItems+144w ...
+// WZD dseg:976A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:976C 00 00                                           IMG_USW_ItemHelp_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendItems+12Dw ...
+// WZD dseg:976C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_ItemPowers IPOW_ICONS <0>       ; DATA XREF: GFX_Swap_AppendItems+40w ...
+// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 22 appended reserved EMM headers in
+// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; GFX_Swap_Seg, each with one item power image
+// WZD dseg:979A 00 00                                           IMG_MOODWIZPortrait@ dw 0               ; DATA XREF: IDK_DiplAnim_s6FDA1+4Cr ...
+// WZD dseg:979A                                                                                         ; 3 frame image (good, bad, neutral)
+
+// WZD dseg:979C 00 00                                           
+// IMG_USW_WaterBase@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+567w ...
+SAMB_ptr IMG_USW_WaterBase;
+// WZD dseg:979C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:979E 00 00                                           
+// IMG_USW_Portrt_Brdr@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+200w ...
+SAMB_ptr IMG_USW_Portrt_Brdr;
+// WZD dseg:979E                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:97A0 00 00                                           
+// IMG_USW_1_Gold@ dw 0                    ; DATA XREF: GFX_Swap_AppendUView+1BBw ...
+SAMB_ptr IMG_USW_1_Gold;
+// WZD dseg:97A0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:97A0                                                                                         ; should have put this in the dseg:94ea pointer
+
+// WZD dseg:97A2 00 00                                           
+// IMG_CTY_Neg_1_Gold@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+619w ...
+SAMB_ptr IMG_CTY_Neg_1_Gold;
+// WZD dseg:97A2                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:97A4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+// IMG_USW_AbBorders@ dw 8 dup(0)          ; DATA XREF: GFX_Swap_AppendUView+DAw ...
+SAMB_ptr IMG_USW_AbBorders[8];
+// WZD dseg:97A4                                                                                         ; array of 8 appended reserved EMM headers in
+// WZD dseg:97A4                                                                                         ; GFX_Swap_Seg, one for around each list slot
+
+// WZD dseg:97B4 00 00                                           
+// IMG_USW_ArrowDown@ dw 0                 ; DATA XREF: GFX_Swap_AppendUView+B9w ...
+SAMB_ptr unitview_down_arrow_seg;
+// WZD dseg:97B4                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:97B4                                                                                         ; 2 images (normal - clicked)
+
+// WZD dseg:97B6 00 00                                           
+// IMG_USW_ArrowUp@ dw 0                   ; DATA XREF: GFX_Swap_AppendUView+A2w ...
+SAMB_ptr unitview_up_arrow_seg;
+// WZD dseg:97B6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:97B6                                                                                         ; 2 images (normal - clicked)
+
+// WZD dseg:97B8 00 00                                           
+// IMG_USW_Background@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+74w ...
+SAMB_ptr unitview_large_background_seg;
+// WZD dseg:97B8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:97BA 00 00                                           
+// IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
+SAMB_ptr unitview_small_background_seg;
+// WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:97BC 00 00                                           
+// IMG_USW_Stats_Gold dw 0                 ; DATA XREF: GFX_Swap_AppendUView+12Aw ...
+SAMB_ptr IMG_USW_Stats_Gold[15];
+
+// WZD dseg:97DA 00 00                                           
+// IMG_USW_Stat_Icons dw 0                 ; DATA XREF: GFX_Swap_AppendUView+102w ...
+SAMB_ptr IMG_USW_Stat_Icons[15];
+// WZD dseg:97DA                                                                                         ; array of 15 appended reserved EMM header in
+// WZD dseg:97DA                                                                                         ; GFX_Swap_Seg, each with one regular attribute image
+
+// WZD dseg:97F8 00                                              
+// special_seg db    0                     ; DATA XREF: GFX_Swap_AppendUView+1Dw ...
+SAMB_ptr special_seg[111];
+// WZD dseg:97F8                                                                                         ; array of 145 appended reserved EMM headers in
+// WZD dseg:97F8                                                                                         ; GFX_Swap_Seg, each with one image
+// WZD dseg:97F8                                                                                         ; UU_Guises@ is also used to hold the diplomacy mirror
+// WZD dseg:97F8                                                                                         ; image (BACKGRND.LBX entry 18, 5740 bytes in sandbox)
+
+// WZD dseg:98D6 00                                              
+// special2_seg db    0                    ; DATA XREF: GFX_Swap_AppendUView+40w
+SAMB_ptr special2_seg[34];
+
+// WZD dseg:991A 00 00                                           IMG_OVL_EZConfirmBG@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+2A0w ...
+// WZD dseg:991A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:991C 00 00                                           IMG_OVL_EZBtm_BG@ dw 0                  ; DATA XREF: City_Screen_Load_Pictures+2CEw ...
+// WZD dseg:991C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:991E 00 00                                           IMG_OVL_EZBtn_BG@ dw 0                  ; DATA XREF: City_Screen_Load_Pictures+2B7w ...
+// WZD dseg:991E                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9920 00 00                                           CRP_DBG_Alt_T_State dw 0                ; DATA XREF: Main_Screen+47Fr ...
+
+// WZD dseg:9920                                                 ? END: City Screen ?
+
+// WZD dseg:9922                                                 BEGIN:  Main Screen Pictures
+
+
+
+
+
 // dseg:998A END:  Main Screen Pictures
 
 // WZD dseg:998C
@@ -1405,6 +1640,10 @@ uint8_t IDK_MovePath[62];
 // WZD dseg:C79A 00 00                                           CMB_HumanTurn dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
 
 
+// WZD dseg:C79E
+SAMB_ptr IMG_USW_HeroPortrt;
+
+
 
 
 
@@ -1451,6 +1690,8 @@ uint8_t IDK_MovePath[62];
 // WZD dseg:E5F0                                                                                         ; 4 reserved pages
 // WZD dseg:E5F2 00 00                                           dw 0
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
+byte_ptr _VGAFILEH_seg;
+
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
 // WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...

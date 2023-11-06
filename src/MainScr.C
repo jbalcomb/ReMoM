@@ -21,6 +21,7 @@
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "SCastScr.H"  /* World_To_Screen() */
+#include "UnitStat.H"
 
 
 
@@ -170,7 +171,8 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 // WZD o62p09
 // EarthGateTeleport()
 // WZD o62p10
-// USW_FullDisplay()
+// drake178: USW_FullDisplay()
+void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 /*
     WIZARDS.EXE  ovr063
@@ -180,9 +182,9 @@ void Main_Screen_Draw_Status_Window(void);
 // WZD o063p02
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
 // WZD o063p03
-void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
+// PUBLIC  void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
 // WZD o063p04
-void Cycle_Unit_Enchantment_Animation(void);
+// PUBLIC  void Cycle_Unit_Enchantment_Animation(void);
 // WZD o063p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
 // WZD o063p05
@@ -1175,10 +1177,10 @@ void Main_Screen(void)
     int16_t hotkey_idx_X;
     int16_t Unit_Y;
     int16_t Unit_X;
-// Bottom@= word ptr -10h
-// Right@= word ptr -0Eh
-    int16_t target_world_y;
-    int16_t target_world_x;
+    int16_t usw_y2;
+    int16_t usw_x2;
+    int16_t target_world_y;  // doubles as usw_y1
+    int16_t target_world_x;  // doubles as usw_x1
     int16_t unit_idx;
     int16_t allow_units_to_die;
     int16_t Stack_Index;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
@@ -1369,65 +1371,65 @@ void Main_Screen(void)
         // Advisor - Surveyor
         if(input_field_idx == hotkey_idx_F1)
         {
-            // Advisor_Screen(0);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(0);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Cartographer
         if(input_field_idx == hotkey_idx_F2)
         {
-            // Advisor_Screen(1);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(1);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Apprentice
         if(input_field_idx == hotkey_idx_F3)
         {
-            // Advisor_Screen(2);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(2);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Historian
         if(input_field_idx == hotkey_idx_F4)
         {
-            // Advisor_Screen(3);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(3);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Astrologer
         if(input_field_idx == hotkey_idx_F5)
         {
-            // Advisor_Screen(4);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(4);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Chancellor
         if(input_field_idx == hotkey_idx_F6)
         {
-            // Advisor_Screen(5);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(5);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Tax Collector
         if(input_field_idx == hotkey_idx_F7)
         {
-            // Advisor_Screen(6);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(6);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Grand Vizier
         if(input_field_idx == hotkey_idx_F8)
         {
-            // Advisor_Screen(7);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(7);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Mirror
         if(input_field_idx == hotkey_idx_F9)
         {
-            // Advisor_Screen(8);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(8);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
 
         /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
@@ -1530,12 +1532,12 @@ void Main_Screen(void)
         /*
             BEGIN: Game Buttons - Info Button
         */
-// DEMO          if(input_field_idx == _info_button)
-// DEMO          {
-// DEMO              // TODO  SND_LeftClickSound();
-// DEMO              current_screen = scr_Advisor_Screen;
-// DEMO              leave_screen_flag = ST_TRUE;
-// DEMO          }
+        if(input_field_idx == _info_button)
+        {
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Advisor_Screen;
+            leave_screen_flag = ST_TRUE;
+        }
 
         /*
             BEGIN: Game Buttons - Game Button
@@ -1611,7 +1613,7 @@ void Main_Screen(void)
             {
                 Set_Unit_Draw_Priority();
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                // TODO  IDK_screen_changed = ST_TRUE;
+                screen_changed = ST_TRUE;
             }
         }
 
@@ -1644,7 +1646,7 @@ void Main_Screen(void)
                     // TODO      Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y);
                     // TODO      WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
                     // TODO      Main_Screen_Reset()
-                    // TODO      // TODO  IDK_screen_changed = ST_TRUE;
+                    // TODO      screen_changed = ST_TRUE;
                     // TODO  }
                     // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
                 } break;
@@ -1660,7 +1662,7 @@ void Main_Screen(void)
                     {
                         // DNE  Set_Unit_Draw_Priority();
                         // DNE  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                        // TODO  IDK_screen_changed = ST_TRUE;
+                        screen_changed = ST_TRUE;
                     }
 
                 } break;
@@ -1717,7 +1719,7 @@ void Main_Screen(void)
             {
                 Set_Unit_Draw_Priority();
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                // TODO  IDK_screen_changed = ST_TRUE;
+                screen_changed = ST_TRUE;
             }
         }
 
@@ -1733,7 +1735,7 @@ void Main_Screen(void)
             {
                 Set_Unit_Draw_Priority();
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                // TODO  IDK_screen_changed = ST_TRUE;
+                screen_changed = ST_TRUE;
             }
         }
 
@@ -1798,29 +1800,33 @@ void Main_Screen(void)
             if(Unit_Window_Fields[Stack_Index] == -input_field_idx)
             {
                 DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
-                // OVL_ShowActiveStack();
-                // UNIT_DrawPriorities();
-                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-                // Main_Screen_Draw();
-                // PageFlip_FX();
+                Set_Draw_Active_Stack_Always();
+                Set_Unit_Draw_Priority();
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                Main_Screen_Draw();
+                PageFlip_FX();
+
                 // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
+                Unit_Window_Picture_Coords(Stack_Index, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
+
                 // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
                 //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
 
-                // TODO  USW_FullDisplay(_unit_stack[unit_idx].unit_idx, OLft, OTop, OLft+18, OTop+18);
+                USW_FullDisplay(_unit_stack[Stack_Index].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
 
-                // Assign_Auto_Function(Main_Screen_Draw, 1);
-                // Allocate_Reduced_Map();
-                // Set_Mouse_List_Normal();
-                // Reset_Active_Stack_Draw();
-                // UNIT_DrawPriorities();
-                // STK_NoUnitDraw();
-                // Set_Entities_On_Map_Window(_curr_world_x, _curr_world_y, _world_plane);
-                // Reset_Map_Draw();
-                // MainScr_Prepare_Reduced_Map();
-                // screen_changed = ST_TRUE;
-                // Clear_Help_Fields();
-                // TODO  Main_Screen_Help();
+                // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
+
+                Allocate_Reduced_Map();
+                Set_Mouse_List_Default();
+                Reset_Draw_Active_Stack();
+                Set_Unit_Draw_Priority();
+                Reset_Stack_Draw_Priority();
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                Reset_Map_Draw();
+                MainScr_Prepare_Reduced_Map();
+                screen_changed = ST_TRUE;
+                Deactivate_Help_List();
+                Set_Main_Screen_Help_List();
             }
         }
         /*
@@ -1868,7 +1874,7 @@ void Main_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: mana: %d\n", __FILE__, __LINE__, mana);
 #endif
 
-            // TODO  IDK_screen_changed == ST_TRUE;
+            screen_changed = ST_TRUE;
 
             if(food < 0)
             {
@@ -4944,7 +4950,30 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 
 
 // WZD o62p10
-// USW_FullDisplay()
+void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] BEGIN: USW_FullDisplay()\n", __FILE__, __LINE__);
+#endif
+
+    // ; creates a battle unit record for the specified unit,
+    // ; calculating and setting its overland statistics, and
+    // ; saving the struct to the passed destination pointer
+    UNIT_Create_BURecord(unit_idx, Active_Unit);
+
+
+    // ; a wrapper for USW_Display that swaps in the overland
+    // ; graphics, loads the figure or portrait image of the
+    // ; unit, and allocates the USW structure memory,
+    // ; swapping back the city graphics afterwards
+    // ; inherits all the BUGs
+    USW_LoadAndShow(31, 6, x1, y1, x2, y2, 1, unit_idx);
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] END: USW_FullDisplay()\n", __FILE__, __LINE__);
+#endif
+}
 
 
 

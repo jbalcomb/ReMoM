@@ -224,11 +224,11 @@ void Set_Alias_Color(int16_t color);
 
 // WZD s17p13
 // drake178: ?
-// Save_Alias_Colors()
+void Save_Alias_Colors(void);
 
 // WZD s17p14
 // drake178: ?
-// Restore_Alias_Colors()
+void Restore_Alias_Colors(void);
 
 // WZD s17p15
 // drake178: VGA_DrawFarString()
@@ -306,6 +306,7 @@ int16_t Get_Current_Font_Color(void);
 */
 // WZD s18p01
 void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
+
 // WZD s18p02
 int16_t Print_Character(int16_t x, int16_t y, int16_t char_num);
 // WZD s18p03

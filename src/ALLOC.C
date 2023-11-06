@@ -43,7 +43,15 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // 635 paragraphs = 16 * 635 = 10,160 bytes
     // GFX_Swap_Seg = Allocate_Space(635);
-    GFX_Swap_Seg = Allocate_Space(4092);
+    // GFX_Swap_Seg = Allocate_Space(4092);
+    // GFX_Swap_Seg = Allocate_Space(4092);
+    // GFX_Swap_Seg = Allocate_Space((65536 * 3));
+    GFX_Swap_Seg = Allocate_Space(65535);
+    /*
+        1024 * 1024 = 1048576
+        1048576 / 16 = 65536
+        Min EMS is 2700 KB
+    */
     // used to load all 198 StatFigs from UNIT1.LBX and UNITS2.LBX 
     /// lots of XREFs from City, Cmb, SplBk, ...
 
