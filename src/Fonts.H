@@ -384,6 +384,23 @@ void Set_Palette_Changes(int start_color, int end_color);
 // WZD s20p06
 void Clear_Palette_Changes(int start_color, int end_color);
 
+// WZD s20p07
+// WZD s20p08
+// WZD s20p09
+// WZD s20p10
+
+// WZD s20p11
+// void Reset_Cycle_Palette_Color(void);
+
+// WZD s20p12
+ // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+
+// WZD s20p13
+// Update_Cycle(int *color_min, int *color_max)
+
+// WZD s20p14
+// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
+
 
 
 /*

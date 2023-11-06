@@ -20,6 +20,8 @@
 
 #include "MainScr.H"
 #include "MainScr_Maps.H"
+
+#include "AdvsrScr.H"
 #include "SCastScr.H"  /* World_To_Screen() */
 #include "UnitStat.H"
 
@@ -126,7 +128,7 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
 // drake178: STK_GetExtraActions()
-void STK_GetExtraActions(void);
+void STK_GetExtraActions__WIP(void);
 
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
@@ -1261,9 +1263,10 @@ void Main_Screen(void)
     // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
     // Validate_Entities_On_Movement_Map(_map_x, _map_y, _map_plane);
 
+    // TODO  j_Set_Mouse_List_Default()        ; sets the Normal_Fullscreen window (GUI_SetWindows)
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
 
-    // TODO  j_STK_GetExtraActions();
+    STK_GetExtraActions__WIP();
 
     // DONT  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
     // DONT  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
@@ -1277,7 +1280,9 @@ void Main_Screen(void)
     // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
 
     // TODO  Deactivate_Help_List();
+    Deactivate_Help_List();
     // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
+    Set_Main_Screen_Help_List();
 
     // TODO  DBG_Alt_A__TurnCount = -1
 
@@ -3886,14 +3891,14 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 }
 
 // WZD o61p06
-void STK_GetExtraActions(void)
+void STK_GetExtraActions__WIP(void)
 {
     int16_t unit_array[9];
     int16_t unit_array_count;
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions__WIP()\n", __FILE__, __LINE__);
 #endif
 
     // ; set to indicate any extra action possible for the
@@ -3935,7 +3940,7 @@ void STK_GetExtraActions(void)
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: STK_GetExtraActions__WIP()\n", __FILE__, __LINE__);
 #endif
 
 }
@@ -4318,7 +4323,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         unit_y = _UNITS[unit_idx].world_y;
         OVL_BringIntoView(map_x, map_y, unit_x, unit_y, map_plane);
         
-        STK_GetExtraActions();
+        STK_GetExtraActions__WIP();
         
         Active_UnitGroup(&unit_array_count, &unit_array[0]);
 

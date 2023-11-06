@@ -146,7 +146,7 @@ void Update_Stack_Active(int16_t stack_idx)
         }
 
         Stack_Moves_Active();
-        STK_GetExtraActions();
+        STK_GetExtraActions__WIP();
     }
 
 #ifdef STU_DEBUG

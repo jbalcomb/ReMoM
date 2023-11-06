@@ -1730,6 +1730,40 @@ void Clear_Palette_Changes(int start_color, int end_color)
 
 
 
+// WZD s20p07
+// WZD s20p08
+// WZD s20p09
+// WZD s20p10
+
+// WZD s20p11
+// void Reset_Cycle_Palette_Color(void);
+
+// WZD s20p12
+ // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+/*
+$ grep Cycle_Palette_Color *
+LoadScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
+MainScr.C:    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
+MainScr.C:    Reset_Cycle_Palette_Color();
+MainScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);
+MoX.C:                // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
+PoC_Main.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+SBookScr.C:    // TODO  Reset_Cycle_Palette_Color();
+SCORE.C:    // TODO  UU_Reset_Cycle_Palette_Color();
+grep: msdos: Is a directory
+grep: mswin: Is a directory
+grep: stu: Is a directory
+win_MoM.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+*/
+
+// WZD s20p13
+// Update_Cycle(int *color_min, int *color_max)
+
+// WZD s20p14
+// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
+
+
+
 // /*
 //     WIZARDS.EXE  seg021
 //     (assembly code)

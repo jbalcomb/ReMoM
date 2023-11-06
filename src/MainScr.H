@@ -374,7 +374,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
 // WZD o61p06
 // ¿PRIVATE?  
-void STK_GetExtraActions(void);
+void STK_GetExtraActions__WIP(void);
 
 // WZD o61p07
 // drake178: STK_GetMovableUnits()

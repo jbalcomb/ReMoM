@@ -444,7 +444,8 @@ void Init_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, 
     Buffer->Info.bmiHeader.biWidth = Buffer->Width;
     Buffer->Info.bmiHeader.biHeight = -Buffer->Height; // negative value: top-down
     BitmapMemorySize = Buffer->BytesPerPixel * (Buffer->Width * Buffer->Height);
-    Buffer->Memory = VirtualAlloc(nullptr, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    // Buffer->Memory = VirtualAlloc(nullptr, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    Buffer->Memory = VirtualAlloc(NULL, BitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if(Buffer->Memory == NULL)
     {
         // ErrorExit(TEXT("VirtualAlloc"));
