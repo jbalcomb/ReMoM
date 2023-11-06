@@ -240,7 +240,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
     int16_t hotkey_idx_X;
     int16_t hotkey_idx_ESC;
 // Item_Index= word ptr -10h
-    int16_t screen_changed;
+    int16_t screen_changed = ST_FALSE;
 // Shown_Effect_Count= word ptr -0Ch
     int16_t Enable_Remove_Unit_Enchantment;  /* T/F - if T, match left-clicks to unit ability/effect input fields */
     int16_t scanned_field;

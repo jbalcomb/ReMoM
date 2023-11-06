@@ -411,11 +411,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\UnitStat.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\UNITSTK.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\UNITTYPE.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\UnitView.C"
 				>
 			</File>
 			<File
@@ -432,6 +440,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\win_DIR.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\win_EMS.C"
 				>
 			</File>
 			<File
@@ -737,11 +749,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\UnitStat.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\UNITSTK.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\UNITTYPE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\UnitView.H"
 				>
 			</File>
 			<File
