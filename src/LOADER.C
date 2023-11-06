@@ -554,11 +554,11 @@ void GFX_Swap_AppendUView(void)
     // load {0,1,2,3,4} from UNITVIEW.LBX
 
     // UNITBACK small unit backgrn
-    IMG_USW_UnitHire_BG = LBX_Reload_Next("UNITVIEW", 0, GFX_Swap_Seg);
+    unitview_small_background_seg = LBX_Reload_Next("UNITVIEW", 0, GFX_Swap_Seg);
     // FULLUNIT large unit backgrn
-    IMG_USW_Background = LBX_Reload_Next("UNITVIEW", 1, GFX_Swap_Seg);
+    unitview_large_background_seg = LBX_Reload_Next("UNITVIEW", 1, GFX_Swap_Seg);
     // BLDBUTBK button background
-    IMG_USW_SideBtns_BG = LBX_Reload_Next("UNITVIEW", 2, GFX_Swap_Seg);
+    unitview_button_background_seg = LBX_Reload_Next("UNITVIEW", 2, GFX_Swap_Seg);
     // UNITBUTT up arrow
     unitview_up_arrow_seg = LBX_Reload_Next("UNITVIEW", 3, GFX_Swap_Seg);
     // UNITBUTT down arrow

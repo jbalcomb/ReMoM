@@ -1371,65 +1371,65 @@ void Main_Screen(void)
         // Advisor - Surveyor
         if(input_field_idx == hotkey_idx_F1)
         {
-            // Advisor_Screen(0);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(0);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Cartographer
         if(input_field_idx == hotkey_idx_F2)
         {
-            // Advisor_Screen(1);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(1);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Apprentice
         if(input_field_idx == hotkey_idx_F3)
         {
-            // Advisor_Screen(2);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(2);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Historian
         if(input_field_idx == hotkey_idx_F4)
         {
-            // Advisor_Screen(3);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(3);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Astrologer
         if(input_field_idx == hotkey_idx_F5)
         {
-            // Advisor_Screen(4);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(4);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Chancellor
         if(input_field_idx == hotkey_idx_F6)
         {
-            // Advisor_Screen(5);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(5);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Tax Collector
         if(input_field_idx == hotkey_idx_F7)
         {
-            // Advisor_Screen(6);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(6);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Grand Vizier
         if(input_field_idx == hotkey_idx_F8)
         {
-            // Advisor_Screen(7);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(7);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
         // Advisor - Mirror
         if(input_field_idx == hotkey_idx_F9)
         {
-            // Advisor_Screen(8);
-            // Set_Redraw_Function(Main_Screen_Draw, 1);
-            // Main_Screen_Reset();
+            Advisor_Screen(8);
+            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
+            Main_Screen_Reset();
         }
 
         /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
@@ -1532,12 +1532,12 @@ void Main_Screen(void)
         /*
             BEGIN: Game Buttons - Info Button
         */
-// DEMO          if(input_field_idx == _info_button)
-// DEMO          {
-// DEMO              // TODO  SND_LeftClickSound();
-// DEMO              current_screen = scr_Advisor_Screen;
-// DEMO              leave_screen_flag = ST_TRUE;
-// DEMO          }
+        if(input_field_idx == _info_button)
+        {
+            // TODO  SND_LeftClickSound();
+            current_screen = scr_Advisor_Screen;
+            leave_screen_flag = ST_TRUE;
+        }
 
         /*
             BEGIN: Game Buttons - Game Button

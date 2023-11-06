@@ -1901,7 +1901,7 @@ extern SAMB_ptr IMG_CTY_Neg_1_Food;
 
 // WZD dseg:9540 00 00                                           
 // IMG_USW_SideBtns_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+8Bw ...
-extern SAMB_ptr IMG_USW_SideBtns_BG;
+extern SAMB_ptr unitview_button_background_seg;
 
 // WZD dseg:9542 00 00                                           dw 0
 // WZD dseg:9544 00 00                                           dw 0
@@ -1997,12 +1997,12 @@ extern SAMB_ptr unitview_up_arrow_seg;
 
 // WZD dseg:97B8 00 00                                           
 // IMG_USW_Background@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+74w ...
-extern SAMB_ptr IMG_USW_Background;
+extern SAMB_ptr unitview_large_background_seg;
 // WZD dseg:97B8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:97BA 00 00                                           
 // IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
-extern SAMB_ptr IMG_USW_UnitHire_BG;
+extern SAMB_ptr unitview_small_background_seg;
 // WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:97BC 00 00                                           
@@ -2532,6 +2532,7 @@ extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles
 // WZD dseg:E5F0                                                                                         ; 4 reserved pages
 // WZD dseg:E5F2 00 00                                           dw 0
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
+extern byte_ptr _VGAFILEH_seg;
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
 // WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...

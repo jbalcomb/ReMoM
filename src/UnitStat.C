@@ -307,7 +307,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
         Enable_Remove_Unit_Enchantment = ST_FALSE;
     }
 
-    Load_Palette_From_Animation(IMG_USW_Background);
+    Load_Palette_From_Animation(unitview_large_background_seg);
     Apply_Palette();
     Set_Palette_Changes(244, 255);
     Calculate_Remap_Colors();
@@ -589,14 +589,14 @@ void Unit_Statistics_Popup_Draw__WIP(int16_t x_start, int16_t y_start, int16_t V
 
     if(ViewTypeFlag == 0)
     {
-        FLIC_Draw(UV_x_start, UV_y_start, IMG_USW_UnitHire_BG);
+        FLIC_Draw(UV_x_start, UV_y_start, unitview_small_background_seg);
     }
     else
     {
-        FLIC_Draw(UV_x_start, UV_y_start, IMG_USW_Background);
+        FLIC_Draw(UV_x_start, UV_y_start, unitview_large_background_seg);
         if(ViewTypeFlag != 2)
         {
-            FLIC_Draw((UV_x_start + 213), (UV_y_start + 133), IMG_USW_SideBtns_BG);
+            FLIC_Draw((UV_x_start + 213), (UV_y_start + 133), unitview_button_background_seg);
         }
     }
 

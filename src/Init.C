@@ -13,6 +13,7 @@ void Init_Drivers(int input_type, char * font_file)
     // s06p05_Empty_pFxn()
 
     // EMS_Startup()
+    EMS_Startup();
 
     // VGA_SetModeY()  // MoO2  Init_Video_Drivers() ... |-> Set_Video_Mode()
     Init_Video_Drivers(VIDEO_MODE);
