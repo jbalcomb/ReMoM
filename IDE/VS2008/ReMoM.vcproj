@@ -343,6 +343,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\paragrph.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\PNG_Draw.C"
 				>
 			</File>
@@ -678,6 +682,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\NEXTTURN.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\paragrph.H"
 				>
 			</File>
 			<File

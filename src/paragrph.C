@@ -201,7 +201,6 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 */
 void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 {
-    
     uint8_t * string_widths;
     int16_t x_override;
     int16_t Line_Width;
@@ -502,17 +501,16 @@ Done:
     dbg_prn("DEBUG: [%s, %d]: END: Mark_Paragraph(x = %d, y = %d, full_width = %d, string = %s)\n", __FILE__, __LINE__, x, y, full_width, string);
 #endif
 
+	return;
 }
 
 // WZD s19p05
 // drake178: VGA_GetTextHeight
 int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 {
-
     int16_t paragraph_max_height;
     int16_t font_height;
-
-    int16_t text_height;
+    //int16_t text_height;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Paragraph_Max_Height(max_width = %d, string = %s)\n", __FILE__, __LINE__, max_width, string);

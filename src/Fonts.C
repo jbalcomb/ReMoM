@@ -582,7 +582,7 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 */
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag)
 {
-    int16_t next_x;
+    int16_t next_x = 0;
     // char character_;
     int16_t str_idx;
     int16_t space_add;
