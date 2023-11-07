@@ -138,6 +138,14 @@ void Set_Alchemy_Screen_Help_List(void)
 
 // WZD o104p22
 // HLPENTRY.LBX, 38  "Tax Help"
+void Set_TaxCollector_Window_Help_List(void)
+{
+    // TODO  add manifest-constant for help entry record size
+    // TODO  add manifest-constant for help list count
+    LBX_Load_Data_Static(hlpentry_lbx_file, 38, (SAMB_ptr)_help_entries, 0, 1, 10);
+    Set_Help_List(_help_entries, 1);
+}
+
 
 // WZD o104p23
 // HLPENTRY.LBX, 39  "advisor Help"
