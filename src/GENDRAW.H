@@ -18,9 +18,13 @@ extern "C" {
 
 
 // WZD o149p01
-// GUI_Confirm_Dialog  
+// drake178: GUI_Confirm_Dialog()
+int16_t Confirmation_Box(char * text_string);
+
 // WZD o149p02
-// GUI_DrawConfrmDialog
+// drake178: GUI_DrawConfrmDialog()
+void Confirmation_Box_Draw(void);
+
 // WZD o149p03
 // GUI_WarningType1    
 

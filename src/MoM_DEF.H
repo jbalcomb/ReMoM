@@ -167,16 +167,13 @@ WIZARDS.LBX
 
 #define WORLD_WIDTH         60  // in Squares
 #define WORLD_HEIGHT        40  // in Squares
-#define WORLD_X_MIN          0  // in Squares
-#define WORLD_X_MAX         59  // in Squares
-#define WORLD_Y_MIN          0  // in Squares
-#define WORLD_Y_MAX         39  // in Squares
-#define _MAP_MAX_X      60
-#define _MAP_MAX_Y      40
+
+#define _MAP_MAX_X      60  // MoO2
+#define _MAP_MAX_Y      40  // MoO2
+
 #define WORLD_SIZE          2400
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
-
 
 #define MAP_WIDTH           12  // in Squares
 #define MAP_HEIGHT          10  // in Squares
@@ -192,6 +189,28 @@ WIZARDS.LBX
 #define REDUCED_MAP_SCREEN_Y         21  // in Pixels
 #define REDUCED_MAP_SQUARE_WIDTH      1  // in Pixels
 #define REDUCED_MAP_SQUARE_HEIGHT     1  // in Pixels
+
+#define WORLD_X_MIN          0  // in Squares
+// #define WORLD_X_MAX         59  // in Squares
+#define WORLD_X_MAX         (WORLD_WIDTH - 1)  // in Squares
+#define WORLD_Y_MIN          0  // in Squares
+// #define WORLD_Y_MAX         39  // in Squares
+#define WORLD_Y_MAX         (WORLD_HEIGHT - 1)  // in Squares
+
+#define MAP_X_MIN          0  // in Squares
+#define MAP_X_MAX         (MAP_WIDTH - 1)  // in Squares
+#define MAP_Y_MIN          0  // in Squares
+#define MAP_Y_MAX         (MAP_HEIGHT - 1)  // in Squares
+
+// {}
+#define MAP_SQUARE_SCREEN_X_MIN          0  // in Pixels
+// #define MAP_SQUARE_SCREEN_X_MAX        300  // in Pixels
+#define MAP_SQUARE_SCREEN_X_MAX        (MAP_SCREEN_X + ((MAP_WIDTH - 1) * SQUARE_WIDTH))  // in Pixels
+#define MAP_SQUARE_SCREEN_Y_MIN          0  // in Pixels
+// #define MAP_SQUARE_SCREEN_Y_MAX        180  // in Pixels
+#define MAP_SQUARE_SCREEN_Y_MAX        (MAP_SCREEN_Y + ((MAP_HEIGHT - 1) * SQUARE_HEIGHT))   // in Pixels
+
+
 
 #define MOVEMENT_MAP_SCREEN_X         0
 #define MOVEMENT_MAP_SCREEN_Y        20

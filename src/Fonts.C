@@ -445,11 +445,43 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 }
 
 
+
+// WZD s17p26
+// WZD s17p27
+// WZD s17p28
+// WZD s17p29
+// WZD s17p30
+// WZD s17p31
+// WZD s17p32
+// WZD s17p33
+
+
+
+// WZD s17p34
+int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side)
+{
+    int16_t next_x;
+
+    if(right_side < 0)
+    {
+        right_side = 0;
+    }
+
+    next_x = Print_Display(x, y, string, right_side);
+
+    return next_x;
+
+}
+
+
 // WZD s17p35
 // drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Print() string: %s\n", __FILE__, __LINE__, string);
+#endif
 
     next_x = Print_Display(x, y, string, ST_FALSE);
 
@@ -590,7 +622,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
         if(space_count == 0)
         {
-            full_flag = 0;
+            full_flag = ST_FALSE;
         }
 
         full_flag -= Get_String_Width(string);
@@ -602,7 +634,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         }
         else
         {
-            full_flag = 0;
+            full_flag = ST_FALSE;
         }
     }
 
@@ -677,6 +709,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
             case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
             {
                 // DLOG("case 21:");
+                goto Done;
             } break;
             case 25:  /*  ASCII  19h  25d  EM (end of medium)          */
                 // DLOG("case 25:");
@@ -704,7 +737,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         if(full_flag != ST_FALSE)
         {
             // DLOG("(full_flag != ST_FALSE)");
-            if(character == 32)  /* ASCII SPACE 0x20 ' ' */
+            if(character == 0x20)  /* ASCII SPACE 0x20 ' ' */
             {
                 print_xpos += space_add;
 
@@ -721,6 +754,8 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
 
     next_x = print_xpos;
+
+Done:
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
@@ -1727,6 +1762,40 @@ void Clear_Palette_Changes(int start_color, int end_color)
     }
 
 }
+
+
+
+// WZD s20p07
+// WZD s20p08
+// WZD s20p09
+// WZD s20p10
+
+// WZD s20p11
+// void Reset_Cycle_Palette_Color(void);
+
+// WZD s20p12
+ // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+/*
+$ grep Cycle_Palette_Color *
+LoadScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
+MainScr.C:    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
+MainScr.C:    Reset_Cycle_Palette_Color();
+MainScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);
+MoX.C:                // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
+PoC_Main.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+SBookScr.C:    // TODO  Reset_Cycle_Palette_Color();
+SCORE.C:    // TODO  UU_Reset_Cycle_Palette_Color();
+grep: msdos: Is a directory
+grep: mswin: Is a directory
+grep: stu: Is a directory
+win_MoM.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+*/
+
+// WZD s20p13
+// Update_Cycle(int *color_min, int *color_max)
+
+// WZD s20p14
+// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
 
 
 

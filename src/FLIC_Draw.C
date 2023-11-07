@@ -1450,6 +1450,7 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
     unsigned char itr_op_repeat;
 
     int16_t tmp_skip_y;
+    int16_t tmp_height;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
@@ -1466,40 +1467,58 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
 
 
 
-    if(skip_x != 0)
-    {
-        packet_op = *frame_data++;
-        packet_byte_count = *frame_data++;
-        if(packet_op == 0xFF)  /* Type: skip */
-        {
-            frame_data--;
-        }
-        else
-        {
-            frame_data += packet_byte_count;
-        }
-    }
+//     if(skip_x != 0)
+//     {
+//         packet_op = *frame_data++;
+//         packet_byte_count = *frame_data++;
+//         if(packet_op == 0xFF)  /* Type: skip */
+//         {
+//             frame_data--;
+//         }
+//         else
+//         {
+//             frame_data += packet_byte_count;
+//         }
+//     }
+
+    // if we have more pixels to draw than the height allows
+    // we need to stop drawing, where we should, but also skip the rest of the frame data bytes for this column
+
 
 
     bbuff_pos = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
 
     while (width--)
     {
+        tmp_height = CS031_height;
         bbuff = bbuff_pos++;
+
         packet_op = *frame_data++;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
+#endif
+
         if(packet_op == 0xFF)  /* Type: skip */
         {
             continue;
         }
+
         packet_byte_count = *frame_data++;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
+#endif
+
         if(packet_op == 0x80)  /* Type: decode */
         {
+
             do {
                 sequence_byte_count = *frame_data++;
                 delta_byte_count = *frame_data++;
                 bbuff += (delta_byte_count * SCREEN_WIDTH);
+                tmp_height -= delta_byte_count;
                 packet_byte_count -= sequence_byte_count + 2;
-                while(sequence_byte_count--)
+                // while(sequence_byte_count--)
+                while(tmp_height && sequence_byte_count)
                 {
                     data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
                     if(data_byte >= 224)  /* op: repeat */
@@ -1507,18 +1526,23 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
                         itr_op_repeat = (data_byte - 224) + 1;
                         sequence_byte_count--;
                         data_byte = *frame_data++;
-                        while(itr_op_repeat--)
+                        while(tmp_height && itr_op_repeat)
                         {
+                            tmp_height--;
                             *bbuff = data_byte;
                             bbuff += SCREEN_WIDTH;
+                            itr_op_repeat--;
                         }
                     }
                     else  /* op: copy */
                     {
+                        tmp_height--;
                         *bbuff = data_byte;
                         bbuff += SCREEN_WIDTH;
                     }
+                    sequence_byte_count--;
                 }
+                frame_data += sequence_byte_count;
             } while(packet_byte_count >= 1);
         }
         if(packet_op == 0x00)  /* Type: copy */
@@ -1533,12 +1557,23 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
                 sequence_byte_count = *frame_data++;  // size_count - Count of Bytes to Copy
                 delta_byte_count = *frame_data++;  // skip_count
                 bbuff += (delta_byte_count * SCREEN_WIDTH);
+                tmp_height -= delta_byte_count;
                 packet_byte_count -= sequence_byte_count + 2;  // A Packet can have multiples Sequences, so deduct the 2-byte *header* and the size of the Sequence
-                while(sequence_byte_count--)
+
+                // while(sequence_byte_count--)
+                // {
+                //     *bbuff = *frame_data++;
+                //     bbuff += SCREEN_WIDTH;
+                // }
+                while(tmp_height && sequence_byte_count)
                 {
+                    tmp_height--;
                     *bbuff = *frame_data++;
                     bbuff += SCREEN_WIDTH;
+                    sequence_byte_count--;
                 }
+                frame_data += sequence_byte_count;
+
             } while(packet_byte_count >= 1);
         }
     }

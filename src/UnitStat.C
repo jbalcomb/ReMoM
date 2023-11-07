@@ -314,7 +314,10 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
     Set_Page_Off();
     Copy_On_To_Off_Page();
     Copy_Off_To_Back();
+    screen_changed = ST_FALSE;  // DNE in Dasm
     Set_Input_Delay(4);
+
+    
     USW_TransparentBase = ST_TRUE;
     Set_Page_Off();
     // ; draws the unit statistics window into the current

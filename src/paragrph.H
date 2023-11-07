@@ -1,0 +1,71 @@
+/*
+    WIZARDS.EXE
+        seg019
+
+    MoO2
+        paragrph
+*/
+
+#ifndef PARAGRPH_H
+#define PARAGRPH_H
+
+#include "MoX.H"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
+/*
+    WIZARDS.EXE  seg019
+*/
+
+// WZD s19p01
+// drake178: VGA_DrawText()
+void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int16_t print_type);
+
+// WZD s19p02
+// UU_VGA_WndDrawText()
+
+// WZD s19p03
+// UU_GUI_CreateHelpLinks()
+
+// WZD s19p04
+// drake178: VGA_TextSetup()
+void Mark_Paragraph(int16_t x, int16_t y, int16_t text_width, char * text_string);
+
+// WZD s19p05
+// drake178: VGA_GetTextHeight
+int16_t Get_Paragraph_Max_Height(int16_t text_width, char * text_string);
+
+// WZD s19p06
+// drake178: VGA_GetTextWidth
+// VGA_GetTextWidth
+
+// WZD s19p07
+// drake178: VGA_ResetFltBlocks()
+void Reset_Paragraph_Exclusions(void);
+
+// WZD s19p08
+// VGA_AddFloatingBlock()
+
+// WZD s19p09
+// UU_VGA_AddFltIMGSpace()
+
+// WZD s19p10
+// drake178: STR_RemoveLBSPs
+void Remove_Paragraph_Marks(char * string);
+
+// WZD s19p11
+// WZD s19p12
+// WZD s19p13
+// WZD s19p14
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif  /* PARAGRPH_H */
