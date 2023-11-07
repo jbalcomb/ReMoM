@@ -8,27 +8,122 @@
         Message_Box_() |-> Do_Text_Box()
 
 */
-
+/*
+    ¿ Data Segment Layout ?
+        multiple groupings, but grouped and continguous
+            so, ...
+        any/all in order    
+*/
 #include "MoX.H"
 
 
 
+// WZD dseg:6F78
+uint8_t COL_ConfirmShadows[5] = {0x11, 0x11, 0x11, 0x11, 0x11};
+// WZD dseg:6F7D
+uint8_t COL_Dialog_Text[5] = {0x06, 0x09, 0x0B, 0x0D, 0x0F};
+
+
+
+/*
+    BEGIN:  Selection Box
+*/
 // WZD dseg:6F82 14 B2 B3 B4 B4                                  
-uint8_t COL_ListSel_Shadows[5] = {0x14, 0xB2, 0xB3, 0xB4, 0xB4 };
+uint8_t COL_ListSel_Shadows[5] = {0x14, 0xB2, 0xB3, 0xB4, 0xB4};
 // WZD dseg:6F82                                                                                         ; DATA XREF: Selection_Box_Draw+5E6o
 // WZD dseg:6F87 66 FB FB FB FB                                  
-uint8_t COL_ListSel_Titles[5] = {0x66, 0xFB, 0xFB, 0xFB, 0xFB };
+uint8_t COL_ListSel_Titles[5] = {0x66, 0xFB, 0xFB, 0xFB, 0xFB};
+/*
+    END:  Selection Box
+*/
 
+// WZD dseg:6F87                                                 END:  Selection Box
+// WZD dseg:6F8C E4 E4 E4 E4 E4                                  COL_Warning1 db 0E4h, 0E4h, 0E4h, 0E4h, 0E4h
+// WZD dseg:6F8C                                                                                         ; DATA XREF: GUI_DrawRedMessage+76o
+// WZD dseg:6F91 2D 2D 2D 2D 2D                                  COL_Warning2 db 2Dh, 2Dh, 2Dh, 2Dh, 2Dh ; DATA XREF: GUI_DrawRedMessage:loc_D6C3Do
 
+// WZD dseg:6F96
+// drake178: RP_GUI_Confirm_XShift
+int16_t confirmation_box_x_offset = 0;
 
+// WZD dseg:6F98
+// drake178: RP_GUI_Confirm_YShift
+int16_t confirmation_box_y_offset = 0;
 
+// WZD dseg:6F9A 00 00                                           GUI_Notify_Compose dw 0                 ; DATA XREF: EZ_Resolve+13w ...
+// WZD dseg:6F9A                                                                                         ; 1 - notify dialogs are drawn but not displayed
+// WZD dseg:6F9A                                                                                         ; 2 - notify dialogs save the current display frame as the image they will draw on
+// WZD dseg:6F9C F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 14+COL_Notify_Shadows db 0Fh dup(0F0h), 5 dup(14h)
+// WZD dseg:6F9C 14 14 14 14                                                                             ; DATA XREF: GUI_DrawNotifyDialog+264o ...
+// WZD dseg:6FB0 19 B2 B3 B4 B4 19 B2 B3 B4 B4 19 B2 B3 B4 B4 19+COL_Notify_Text db 19h, 0B2h, 0B3h, 0B4h, 0B4h, 19h, 0B2h, 0B3h, 0B4h, 0B4h, 19h, 0B2h, 0B3h, 0B4h, 0B4h, 19h, 0B2h, 0B3h, 0B4h, 0B4h
+// WZD dseg:6FB0 B2 B3 B4 B4                                                                             ; DATA XREF: GUI_DrawNotifyDialog+2D5o ...
+// WZD dseg:6FC4 FE FF 00 00 EA FF 08 00 02 00                   GUI_Familiar_IMGLeft dw 0FFFEh, 0, 0FFEAh, 8, 2
+// WZD dseg:6FC4                                                                                         ; DATA XREF: GUI_Familiar_Notify+159r ...
+// WZD dseg:6FCE 02 00 EC FF FC FF F4 FF FD FF                   GUI_Familiar_IMGTop dw 2, 0FFECh, 0FFFCh, 0FFF4h, 0FFFDh
+// WZD dseg:6FCE                                                                                         ; DATA XREF: GUI_DrawFamiliarNtfy+ADr
+// WZD dseg:6FD8 46 00 49 00 3E 00 44 00 46 00                   GUI_Familiar_IMGText dw 46h, 49h, 3Eh, 44h, 46h
+// WZD dseg:6FD8                                                                                         ; DATA XREF: GUI_DrawFamiliarNtfy+62r ...
+// WZD dseg:6FE2 01 00                                           ITEM_ViewGrowStage dw 1                 ; DATA XREF: ITEM_GetViewDrawPos:loc_D9474r ...
+
+/*
+    BEGIN:
+        Confirmation Box
+        Selection Box
+*/
 // WZD dseg:6FE4
 char cnst_RESOURCE_File4[] = "RESOURCE";
 // WZD dseg:6FEC 00                                              
 char cnst_ZeroString_5[] = "";
+/*
+    END:
+        Confirmation Box
+        Selection Box
+*/
+
+/*
+    BEGIN:
+        Confirmation Box
+*/
+// WZD dseg:6FED
+char cnst_HOTKEY_Y_3[] = "Y";
+
+// WZD dseg:6FEF
+char cnst_HOTKEY_N_5[] = "N";
+
+/*
+    BEGIN:
+        Confirmation Box
+*/
+
+/*
+    BEGIN:
+        Confirmation Box
+        Selection Box
+*/
+// WZD dseg:6FF1
+char cnst_HOTKEY_Esc21[] = "\x1B";
+/*
+    END:
+        Confirmation Box
+        Selection Box
+*/
+
+// align 2?
+// WZD dseg:6FF3 00                                              db    0
+// WZD dseg:6FF3                                                 ? END: ?
 
 
 
+
+
+
+
+
+
+
+/*
+    BEGIN:  Selection Box
+*/
 // WZD dseg:CAA0
 int16_t selectbox_fields[10];
 // WZD dseg:CAB4 00 00                                           
@@ -56,8 +151,31 @@ int16_t selectbox_x1;
 int16_t selectbox_multi;
 // WZD dseg:CACA 00 00                                           
 int16_t GUI_ListSel_Count;
+/*
+    END:  Selection Box
+*/
 
 
+
+// WZD dseg:CACC 00 00                                           
+SAMB_ptr confirmation_button_no_seg;
+// WZD dseg:CACC                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// WZD dseg:CACE 00 00                                           
+SAMB_ptr confirmation_button_yes_seg;
+// WZD dseg:CACE                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
+// WZD dseg:CAD0 00 00                                           
+SAMB_ptr confirmation_background_bottom_seg;
+// WZD dseg:CAD0                                                                                         ; single image appended in the LBX_Sandbox_Segment
+// WZD dseg:CAD2 00 00                                           
+SAMB_ptr confirmation_background_top_seg;
+// WZD dseg:CAD2                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+
+
+
+
+/*
+    BEGIN:  Selection Box
+*/
 // WZD dseg:CB0A
 SAMB_ptr selectbk_scroll_locked_down_seg;
 // WZD dseg:CB0C
@@ -92,15 +210,180 @@ SAMB_ptr selectbd_top_seg;
 SAMB_ptr selectbd_bottom_left_seg;
 // WZD dseg:CB4A
 SAMB_ptr selectbd_left_seg;
+/*
+    END:  Selection Box
+*/
+
+
+
+// WZD dseg:CB4C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: GUI_Notify_Dialog+16w ...
+
+// WZD dseg:CB4E
+char * confirmation_box_text;
+
+// WZD dseg:CB50 00 00                                           
+// drake178:  GUI_Dialog_Top;
+int16_t confirmation_box_y;
+// WZD dseg:CB52 00 00                                           
+// drake178: GUI_Dialog_Left;
+int16_t confirmation_box_x;
+
+// WZD dseg:CB54 00 00                                           GUI_RedMsg_Type dw 0                    ; DATA XREF: GUI_WarningType1+3w ...
+// WZD dseg:CB54                                                                                         ; determines whether to use the first or the second
+// WZD dseg:CB54                                                                                         ; of the two different warning message backgrounds
+// WZD dseg:CB54                                                                                         ; (both of which are red, but slightly different and
+// WZD dseg:CB54                                                                                         ; use a different font color)
+// WZD dseg:CB56                                                 ovr150
 
 
 
 
 
 // WZD o149p01
-// GUI_Confirm_Dialog  
+// drake178: GUI_Confirm_Dialog()
+int16_t Confirmation_Box(char * text_string)
+{
+
+    int16_t choice;
+    int16_t Text_Label_Index;
+    int16_t hotkey_ESC;
+    int16_t confirmation_button_no;
+    int16_t confirmation_button_yes;
+    int16_t input_field_idx;
+    int16_t Box_Height;
+
+    int16_t paragraph_height;
+    int16_t leave_screen;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Confirmation_Box(text_string = %s)\n", __FILE__, __LINE__, text_string);
+#endif
+
+    Save_Alias_Colors();
+
+    Set_Font_Colors_15(0, &COL_Dialog_Text[0]);
+
+    Save_ScreenSeg();
+
+ 
+    // RESOURCE.LBX, 0  "CONFMBAK", ""
+    confirmation_background_top_seg = LBX_Reload(cnst_RESOURCE_File4, 0, _screen_seg);
+    // RESOURCE.LBX, 1  "CONFMBAK", ""
+    confirmation_background_bottom_seg = LBX_Reload_Next(cnst_RESOURCE_File4, 1, _screen_seg);
+    // RESOURCE.LBX, 3  CONFMBUT    yes
+    confirmation_button_yes_seg = LBX_Reload_Next(cnst_RESOURCE_File4, 3, _screen_seg);
+    // RESOURCE.LBX, 4  CONFMBUT    no
+    confirmation_button_no_seg = LBX_Reload_Next(cnst_RESOURCE_File4, 4, _screen_seg);
+
+    confirmation_box_text = text_string;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: confirmation_box_text: %s)\n", __FILE__, __LINE__, confirmation_box_text);
+#endif
+
+
+    Set_Font(4, 4, 15, 0);
+
+
+    paragraph_height = Get_Paragraph_Max_Height(166, text_string);
+
+    Box_Height = paragraph_height + 34;
+    confirmation_box_x = 68 + confirmation_box_x_offset;
+    confirmation_box_y = ((SCREEN_HEIGHT - Box_Height) / 2) + confirmation_box_y_offset;
+
+    Clear_Fields();
+
+    // confirmation_button_yes = Add_Button_Field((confirmation_box_x + 101), (confirmation_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_yes_seg, cnst_HOTKEY_Y_3, -1);
+    confirmation_button_yes = Add_Button_Field((confirmation_box_x + 101), (confirmation_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_yes_seg, 'Y', -1);
+
+    // confirmation_button_no = Add_Button_Field((confirmation_box_x + 18), (confirmation_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_no_seg, cnst_HOTKEY_N_5, -1);
+    confirmation_button_no = Add_Button_Field((confirmation_box_x + 18), (confirmation_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_no_seg, 'N', -1);
+
+    // Text_Label_Index = Add_Hidden_Field(confirmation_box_x, confirmation_box_y, (confirmation_box_x + 185), (confirmation_box_y + 63), cnst_ZeroString_5, -1);
+    Text_Label_Index = Add_Hidden_Field(confirmation_box_x, confirmation_box_y, (confirmation_box_x + 185), (confirmation_box_y + 63), 0, -1);
+
+    // hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc21, -1);
+    hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
+
+    // TODO  Assign_Auto_Function(Confirmation_Box_Draw, 1);
+
+
+    leave_screen = ST_FALSE;
+    while(leave_screen == ST_FALSE)
+    {
+
+        // NOTE: This `abs()` means right-clicking on a Confirmation Box is equivalent to left-clicking
+        input_field_idx = abs(Get_Input());
+
+        if( (input_field_idx == ST_UNDEFINED) || (input_field_idx == confirmation_button_no) )
+        {
+            leave_screen = ST_TRUE;
+            choice = ST_FALSE;
+        }
+
+        if(input_field_idx == confirmation_button_yes)
+        {
+            leave_screen = ST_TRUE;
+            choice = ST_TRUE;
+        }
+
+        Confirmation_Box_Draw();
+        PageFlip_FX();
+    }
+
+    // TODO  Deactivate_Auto_Function();
+    Clear_Fields();
+    Restore_Alias_Colors();
+    Reset_Window();
+    Restore_ScreenSeg();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Confirmation_Box(text_string = %s)\n", __FILE__, __LINE__, text_string);
+#endif
+
+    return choice;
+}
+
 // WZD o149p02
-// GUI_DrawConfrmDialog
+// drake178: GUI_DrawConfrmDialog()
+void Confirmation_Box_Draw(void)
+{
+    int16_t paragraph_height;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Confirmation_Box_Draw()\n", __FILE__, __LINE__);
+#endif
+
+    Set_Font(4, 4, 15, 0);
+
+    paragraph_height = Get_Paragraph_Max_Height(166, confirmation_box_text);
+
+    Set_Page_Off();
+
+    Set_Window(0, 0, SCREEN_XMAX, (confirmation_box_y + paragraph_height + 12));
+
+    Clipped_Draw(confirmation_box_x, confirmation_box_y, confirmation_background_top_seg);
+
+    Reset_Window();
+
+    FLIC_Draw(confirmation_box_x, (confirmation_box_y + paragraph_height + 10), confirmation_background_bottom_seg);
+
+    Set_Font_Colors_15(4, &COL_ConfirmShadows[0]);
+    Set_Font(4, 15, 15, 0);
+    Print_Paragraph((confirmation_box_x + 10), (confirmation_box_y + 10), 166, confirmation_box_text, 0);  // print_type 0: Print Left Aligned
+    Print_Paragraph((confirmation_box_x + 9), (confirmation_box_y + 10), 166, confirmation_box_text, 0);  // print_type 0: Print Left Aligned
+
+    Set_Alias_Color(18);
+    Set_Font_Colors_15(4, &COL_Dialog_Text[0]);
+    Set_Font(4, 4, 15, 0);
+    Print_Paragraph((confirmation_box_x + 9), (confirmation_box_y + 9), 166, confirmation_box_text, 0);  // print_type 0: Print Left Aligned
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Confirmation_Box_Draw()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD o149p03
 // GUI_WarningType1    
 
@@ -573,6 +856,9 @@ void Selection_Box_Draw(void)
     Clipped_Draw((selectbox_x1 + FLIC_Get_Width(selectbd_left_seg)), selectbox_y1, selectbd_top_seg);
 
 
+    /*
+        BEGIN: Draw Button Background
+    */
     Set_Window(selectbox_x1, selectbox_y1, (selectbox_x2 - 5), selectbox_y2);
     if(selectbox_multi == ST_FALSE)
     {

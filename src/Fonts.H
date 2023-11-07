@@ -256,6 +256,10 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
 
+
+// WZD s17p34
+int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side);
+
 // WZD s17p35
 // drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string);

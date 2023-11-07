@@ -87,6 +87,13 @@ char cnst_Info_Msg_0_3[] = "Select An Advisor";
 
 
 
+// WZD dseg:3983
+char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select what buildings your cities create?";
+
+
+
+
+
 /*
     WIZARDS.EXE  ovr076
 */
@@ -330,49 +337,58 @@ void Advisor_Screen(int16_t advisor_idx)
 
     switch(input_advisor_idx)
     {
-        case 0:
+        case 0:  /* Surveyor      (F1) */
         {
             DLOG("switch(input_advisor_idx))  case 0:");
-            
+            // TODO  j_IDK_Surveyor_s7A3C0()
+
         } break;
-        case 1:
+        case 1:  /* Cartographer  (F2) */
         {
             DLOG("switch(input_advisor_idx))  case 1:");
+            // TODO  IDK_Cartographer_Screen()
 
         } break;
-        case 2:
+        case 2:  /* Apprentice    (F3) */
         {
             DLOG("switch(input_advisor_idx))  case 2:");
+            // TODO  IDK_AdvsrScr_Apprentice()
 
         } break;
-        case 3:
+        case 3:  /* Historian     (F4) */
         {
             DLOG("switch(input_advisor_idx))  case 3:");
+            // TODO  IDK_AdvsrScr_Historian()
 
         } break;
-        case 4:
+        case 4:  /* Astrologer    (F5) */
         {
             DLOG("switch(input_advisor_idx))  case 4:");
+            // TODO  IDK_AdvsrScr_Astrologer()
 
         } break;
-        case 5:
+        case 5:  /* Chancellor    (F6) */
         {
             DLOG("switch(input_advisor_idx))  case 5:");
+            // TODO  j_IDK_Chancellor_EoTSummary_EventsAnimScroll(1);
 
         } break;
-        case 6:
+        case 6:  /* Tax Collector (F7) */
         {
             DLOG("switch(input_advisor_idx))  case 6:");
+            // TODO  IDK_AdvsrScr_TaxCollector()
 
         } break;
-        case 7:
+        case 7:  /* Grand Vizier  (F8) */
         {
             DLOG("switch(input_advisor_idx))  case 7:");
+            GrandVizier_Window();
 
         } break;
-        case 8:
+        case 8:  /* Mirror        (F9 )*/
         {
             DLOG("switch(input_advisor_idx))  case 8:");
+            // TODO  Mirror_Screen(0, 150, 60, 180, 90);
 
         } break;        
     }
@@ -395,4 +411,25 @@ void Advisor_Screen(int16_t advisor_idx)
 // WZD o76p08
 // WZD o76p09
 // WZD o76p10
+
 // WZD o76p11
+void GrandVizier_Window(void)
+{
+    if(grand_vizier != ST_FALSE)
+    {
+        grand_vizier = ST_FALSE;
+    }
+    else
+    {
+        // ; loads and displays the provided message in a
+        // ; confirmation dialog box, providing "Yes" and "No"
+        // ; option buttons, and halting all other screen
+        // ; animation until a result is selected
+        // ; returns 1 if "Yes" is selected, or 0 otherwise
+        if(Confirmation_Box(aDoYouWishToAllowThe) == ST_TRUE)
+        {
+            grand_vizier = ST_TRUE;
+        }
+
+    }
+}
