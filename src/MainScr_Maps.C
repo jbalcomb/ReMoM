@@ -1660,7 +1660,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     // {1,4}-1/4=0 {5,8}-1/4=1 {9,12}-1/4=2 {13,16}-1/4=3  {17,20}-1/4=4 {21,24}-1/4=5 {25}-1/4=6
                                     // NOTE: this would seems to indicate than an 'Outpost' is not even in the cities table
                                     // TODO: figure out where Outposts get drawn on the map
-                                    city_size = (_CITIES[itr_cities].Pop_K - 1) / 4;  
+                                    city_size = (_CITIES[itr_cities].population - 1) / 4;  
                                     if(city_size > 4)
                                     {
                                         city_size = 4;
@@ -1682,7 +1682,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     {
                                         city_pict_seg = IMG_OVL_Walled_City;
                                     }
-                                    city_size = (_CITIES[itr_cities].Pop_K - 1) / 4;
+                                    city_size = (_CITIES[itr_cities].population - 1) / 4;
                                     if(city_size > 4)
                                     {
                                         city_size = 4;

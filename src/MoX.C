@@ -8,6 +8,7 @@
 #include "MainMenu.H"
 #include "MainScr.H"
 #include "MagicScr.H"
+#include "SBookScr.H"
 
 void TST_Load_SAVE_GAM(void);
 

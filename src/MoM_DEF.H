@@ -45,7 +45,7 @@
 #define PLAYER_COUNT_MAX       6
 #define NUM_DIFFICULTY_LEVEL   5  /* Intro, Easy, Normal, Hard, Impossible */
 #define NUM_UNIT_ENCHANTMENTS  32
-#define NUM_CITY_ENCHANTMENTS 26
+#define NUM_CITY_ENCHANTMENTS 26  // ¿ wha'hapen? CTY_EnchantsUpkeep() has 26, but s_CITY has 25 ? Includes Nightshade!
 #define NUM_OVERLAND_ENCHANTMENTS 24
 #define CITY_COUNT_MAX       100
 #define UNIT_COUNT_MAX      1009
@@ -461,9 +461,26 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 
 
 /*
+    Spells
+*/
+
+/*
+// ¿ enum ? ¿ seo_ for Spell - Enchantment - Overland; oe_ for Overland Enchantment vs. ue_ and ce_ for Unit and City ?
+¿ spaces ?
+¿ articles ?
+¿ as seen in the LBX's ?
+
+SPL_
+SPL_UE_
+SPL_CE_
+SPL_OE_
+
+*/
+
+/*
     Overland Enchantments
 */
-// ¿ enum ? ¿ seo_ for Spell - Enchantment - Overland; oe_ for Overland Enchantment vs. ue_ and ce_ for Unit and City ?
+
 #define ETERNAL_NIGHT       0x00
 #define EVIL_OMENS          0x01
 #define ZOMBIE_MASTERY      0x02

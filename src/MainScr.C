@@ -6342,10 +6342,7 @@ void Main_Screen_Draw_Summary_Window(void)
 
 
 
-//     // Get_Incomes(_human_player_idx, &gold, &food, &mana);
-    gold = 142;
-    food = 5;
-    mana = 35;
+    Get_Incomes(_human_player_idx, &gold, &food, &mana);
 
 
 // // // mov     [bp+Color_0], 198

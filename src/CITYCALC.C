@@ -3,6 +3,7 @@
 
     WIZARDS.EXE
         ovr120
+        ovr142
 */
 
 #include "MoM.H"
@@ -16,7 +17,45 @@
 
 
 // WZD o120p01
-// CTY_Recalculate()
+// drake178: CTY_Recalculate()
+/*
+    sets
+    _CITIES[].food2_units
+    _CITIES[].Production
+    _CITIES[].Gold
+    _CITIES[].Upkeep
+    _CITIES[].Research
+    _CITIES[].Power
+*/
+void Do_City_Calculations(int16_t city_idx)
+{
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_City_Calculations()\n", __FILE__, __LINE__);
+#endif
+
+    // drake178: ; maps the EMM Data block into the page frame
+    // TODO  EMM_Map_DataH();
+
+
+    _CITIES[city_idx].food2_units = City_Food_Production(city_idx);
+    // TOOD  _CITIES[city_idx].Production  = j_CTY_GetProd(city_idx);
+    // TOOD  _CITIES[city_idx].Gold        = j_CTY_GetGold(city_idx);
+    // TOOD  _CITIES[city_idx].Upkeep      = CTY_GetGoldUpkeep(city_idx);
+    // TOOD  _CITIES[city_idx].Research    = j_CTY_GetResearch(city_idx);
+    // TOOD  _CITIES[city_idx].Power       = j_CTY_GetPower(city_idx);
+
+    if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
+    {
+        _CITIES[city_idx].food2_units = ((_CITIES[city_idx].food2_units * difficulty_modifiers_table[_difficulty].food) / 100);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Do_City_Calculations()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o120p02
 
@@ -181,19 +220,21 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Incomes()\n", __FILE__, __LINE__);
 #endif
 
+    // a wrapper for WIZ_GetPowerIncomes that
+    // also applies research bonuses based on the current research target,
+    // zeroes out any negative incomes,
+    // and zeroes out all incomes while casting the Spell of Return
+    // ; the passed parameter order is different for the two!
+    // WZD o120p18
+    // void Get_Power_Incomes(int16_t * Mana, int16_t * Research, int16_t * Skill, int16_t player_idx)
+    // expects Mana, Research, Skill
+    // so, we're just taking this track to get Mana, 
     Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);
-// ; a wrapper for WIZ_GetPowerIncomes that also applies
-// ; research bonuses based on the current research
-// ; target, zeroes out any negative incomes, and zeroes
-// ; out all incomes while casting the Spell of Return
-// ;
-// ; the passed parameter order is different for the two!
-
 
     Gold_Upkeep = 0;
-    City_Gold_Balance = 0;
+    City_Gold_Balance = 0;  // clear the bogus value we just got from Get_Power_Incomes()
     Food_Upkeep = 0;
-    City_Food_Surplus = 0;
+    City_Food_Surplus = 0;  // clear the bogus value we just got from Get_Power_Incomes()
     Mana_Upkeep = 0;
 
 
@@ -206,10 +247,8 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
     else
     {
         Mana_Upkeep = WIZ_TotalUpkeep_Mana(player_idx);
-            // ; calculates and returns the player's total mana
-            // ; upkeep value, including units and their enchantments,
-            // ; city enchantments, and global enchantments; halved
-            // ; if they have the channeler retort
+            // ; calculates and returns the player's total manau pkeep value, 
+            // ; including units and their enchantments, city enchantments, and overland enchantments; halved if they have the channeler retort
 
         Gold_Upkeep = WIZ_ArmyUpkeep_Gold(player_idx);
             // ; returns the gold upkeep sum of the player's armies, minus their total Fame
@@ -230,7 +269,7 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
                 City_Gold_Balance += (_CITIES[itr_cities].Gold - _CITIES[itr_cities].Upkeep);
-                City_Food_Surplus += (_CITIES[itr_cities].Food - _CITIES[itr_cities].Pop_K);
+                City_Food_Surplus += (_CITIES[itr_cities].food2_units - _CITIES[itr_cities].population);
             }
         }
 
@@ -418,6 +457,7 @@ int16_t CTY_EnchantsUpkeep(int16_t city_idx, int16_t player_idx)
 
     CITY_Enchants = _CITIES[city_idx].enchantments;
 
+    // NOTE: the city_enchantment_upkeep_table has the 25 enchantments plus Nightshade
     for(itr_city_enchantments = 0; itr_city_enchantments < NUM_CITY_ENCHANTMENTS; itr_city_enchantments++)
     {
         if(CITY_Enchants[itr_city_enchantments] == (player_idx + 1))
@@ -449,7 +489,7 @@ int16_t WIZ_GlobalsUpkeep(int16_t player_idx)
     global_mana_upkeep_cost = 0;
 
 
-    for(itr_overland_enchantments = 0; itr_overland_enchantments < NUM_CITY_ENCHANTMENTS; itr_overland_enchantments++)
+    for(itr_overland_enchantments = 0; itr_overland_enchantments < NUM_OVERLAND_ENCHANTMENTS; itr_overland_enchantments++)
     {
         if(_player_Globals[itr_overland_enchantments] > 0)
         {
@@ -582,9 +622,9 @@ void Get_Power_Incomes(int16_t * Mana, int16_t * Research, int16_t * Skill, int1
             // ; retorts to any of the incomes except Mana Focusing
 
         Research_Bonus = Get_Research_Bonus(player_idx, _players[player_idx].Researching);
-        // ; calculates and returns the research bonus percentage
-        // ; that applies to the target spell based on the
-        // ; wizard's profile traits (spellbooks & retorts)
+            // ; calculates and returns the research bonus percentage
+            // ; that applies to the target spell based on the
+            // ; wizard's profile traits (spellbooks & retorts)
 
         if(Base_Research_Income < 0)
         {
@@ -778,3 +818,346 @@ int16_t WIZ_GetFame(int16_t player_idx)
 // WZD o120p24
 // WZD o120p25
 // WZD o120p26
+
+
+
+
+/*
+    WIZARDS.EXE  ovr120
+*/
+
+// WZD s142p01
+// WZD s142p02
+// WZD s142p03
+// WZD s142p04
+// WZD s142p05
+
+// WZD s142p06
+// drake178: CTY_GetTileFood()
+int16_t City_Food_Terrain(int16_t city_idx)
+{
+    int16_t wy_array[25];
+    int16_t wx_array[25];
+    int16_t city_wp;
+    int16_t useable_map_squares;
+    
+    int16_t food2_units;  // _DI_
+    int16_t itr;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Terrain()\n", __FILE__, __LINE__);
+#endif
+
+    city_wp = _CITIES[city_idx].world_plane;
+
+    // NOTE: Accounts for 'Corruption'
+    // useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].world_x, _CITIES[city_idx].world_y, city_wp, &wx_array[0], &wy_array[0]);
+    useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+
+    food2_units = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+        food2_units += Map_Square_Food2(wx_array[itr], wy_array[itr], city_wp);
+    }
+
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != ST_FALSE)
+    {
+        food2_units = ((food2_units * 3) / 2);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Food_Terrain()\n", __FILE__, __LINE__);
+#endif
+
+    return food2_units / 4;
+}
+
+// WZD s142p07
+// drake178: CTY_GetWildGameFood()
+int16_t City_Food_WildGame(int16_t city_idx)
+{
+    int16_t wy_array[25];
+    int16_t wx_array[25];
+    int16_t bit_index;
+    int16_t city_wp;
+    int16_t useable_map_squares;
+    
+    int16_t food_units;  // _DI_
+    int16_t itr;  // _SI_
+    uint8_t * bit_field;  // _DX_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_WildGame()\n", __FILE__, __LINE__);
+#endif
+
+    city_wp = _CITIES[city_idx].world_plane;
+
+    // NOTE: Accounts for 'Corruption'
+    // useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].world_x, _CITIES[city_idx].world_y, city_wp, &wx_array[0], &wy_array[0]);
+    useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+
+    food_units = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+        if( (*((uint8_t *)&TBL_Terr_Specials[((city_wp * WORLD_SIZE) + (wx_array[itr] * WORLD_WIDTH) + wx_array[itr])]) & 0x40 /* TS_Wild_Game */) != 0)
+        {
+            bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+            bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
+            if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
+            {
+                food_units += 2;
+            }
+            else
+            {
+                food_units += 1;
+            }
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Food_WildGame()\n", __FILE__, __LINE__);
+#endif
+
+    return food_units;
+
+}
+
+
+// WZD s142p08
+// drake178: CTY_GetCatchment()
+// does like Draw_Map_Roads() with itr_world_x and curr_world_x
+/*
+    in-out wx_array
+    in-out wy_array
+    returns count of elements in arrays  AKA map_square_count
+
+    NOTE: Accounts for 'Corruption'
+*/
+int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
+{
+    int16_t TFlags_RowBase;
+    uint8_t * terrain_flags_table_row;
+    int16_t square_y;
+    int16_t itr_world_x;
+    int16_t square_x_max;
+    int16_t square_x_min;
+    int16_t map_square_count;
+
+    int16_t itr_city_area_squares;
+    int16_t square_x;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Useable_City_Area()\n", __FILE__, __LINE__);
+#endif
+
+    map_square_count = 0;
+
+    for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
+    {
+        square_y = city_wy + itr_city_area_squares;
+
+        if( (square_y >= 0) && (square_y < WORLD_HEIGHT) )
+        {
+            square_x_min = -2;
+            square_x_max = 2;
+
+            if(
+                (itr_city_area_squares == -2) ||
+                (itr_city_area_squares ==  2)
+            )
+            {
+                square_x_min = -1;
+                square_x_max =  1;
+            }
+
+            terrain_flags_table_row = (uint8_t *)&TBL_Terrain_Flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
+
+            itr_world_x = square_x_min;
+
+            while(itr_world_x < square_x_max)
+            {
+                square_x = city_wx + itr_world_x;
+                if(square_x < 0)
+                {
+                    square_x += WORLD_WIDTH;
+                }
+                if(square_x > WORLD_WIDTH)
+                {
+                    square_x -= WORLD_WIDTH;
+                }
+                if( (*(terrain_flags_table_row + square_x) & 0x20 == 0) ) /* TF_Corruption */
+                {
+                    wx_array[map_square_count] = square_x;
+                    wy_array[map_square_count] = square_y;
+                    map_square_count++;
+                }
+                itr_world_x++;
+            }
+        }
+    }
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Get_Useable_City_Area()\n", __FILE__, __LINE__);
+#endif
+
+    return map_square_count;
+}
+
+
+// WZD s142p09
+// drake178: CTY_GetFood()
+int16_t City_Food_Production(int16_t city_idx)
+{
+    int16_t city_area_food_units;
+
+    int16_t food_units;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Production()\n", __FILE__, __LINE__);
+#endif
+
+    if(_CITIES[city_idx].population == 0)
+    {
+        food_units = 0;
+    }
+    else
+    {
+        city_area_food_units = City_Food_Terrain(city_idx);
+
+        // ¿ someone died ?
+        if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
+        {
+            _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+        }
+
+        if(
+            (_CITIES[city_idx].race == 0x06 /* R_Halfling */) ||
+            (_CITIES[city_idx].buildings.Animists_Gld == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings.Animists_Gld == 0x00 /* B_Replaced */)
+        )
+        {
+            food_units = _CITIES[city_idx].farmer_count * 3;
+        }
+        else
+        {
+            food_units = _CITIES[city_idx].farmer_count * 2;
+        }
+
+
+        /*
+            Forester's Guild
+            Famine
+            Over-Farming Adjustment
+            Granary
+            Farmer's Market
+            Wild Game
+        */
+
+        if(
+            (_CITIES[city_idx].buildings.Foresters_Gld == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings.Foresters_Gld == 0x00 /* B_Replaced */)
+        )
+        {
+            food_units += 2;
+        }
+
+        if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
+        {
+            food_units = food_units / 2;
+        }
+
+        // Over-Farming Adjustment
+        if(food_units > city_area_food_units)
+        {
+            food_units += ((food_units - city_area_food_units) / 2);
+        }
+
+        if(
+            (_CITIES[city_idx].buildings.Granary == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings.Granary == 0x00 /* B_Replaced */)
+        )
+        {
+            food_units += 2;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings.Farmers_Mrkt == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings.Farmers_Mrkt == 0x00 /* B_Replaced */)
+        )
+        {
+            food_units += 2;
+        }
+
+        food_units += City_Food_WildGame(city_idx);
+
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Food_Production()\n", __FILE__, __LINE__);
+#endif
+
+    return food_units;
+}
+
+
+// WZD s142p10
+// WZD s142p11
+// WZD s142p12
+// WZD s142p13
+// WZD s142p14
+// WZD s142p15
+// WZD s142p16
+// WZD s142p17
+// WZD s142p18
+// WZD s142p19
+// WZD s142p20
+// WZD s142p21
+// WZD s142p22
+// WZD s142p23
+// WZD s142p24
+// WZD s142p25
+// WZD s142p26
+// WZD s142p27
+// WZD s142p28
+// WZD s142p29
+
+
+// WZD s142p30
+// drake178: TILE_IsShared
+/*
+    ~== Check_Square_Scouted() in Explore.C for square_scouted_p0/p1
+
+*/
+int16_t City_Map_Square_Is_Shared(int16_t city_wx, int16_t city_wy, int16_t city_wp)
+{
+    int16_t bit_index;
+
+    uint8_t * bit_field;
+    int16_t is_shared;
+
+    bit_index = ((city_wy * WORLD_WIDTH) + city_wx);
+
+    bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
+
+    if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
+    {
+        is_shared = ST_FALSE;
+    }
+    else
+    {
+        is_shared = ST_TRUE;
+    }
+
+    return is_shared;
+}
+
+
+// WZD s142p31
+// WZD s142p32
+// WZD s142p33
+// WZD s142p34
+// WZD s142p35
+// WZD s142p36

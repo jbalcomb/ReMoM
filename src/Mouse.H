@@ -13,6 +13,7 @@ extern "C" {
 enum e_Cursor_Image
 {
     crsr_None,
+    crsr_Finger,
     crsr_CastBase,
     crsr_RedCross,
     crsr_Ranged,
