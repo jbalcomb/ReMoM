@@ -85,7 +85,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
     DBG_ORIG_TBL_Scouting = TBL_Scouting;
 
-    square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);   // 19 Paragraphs, 304 Bytes
+    square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes  ¿ (((2400 / 8) + 1) + 1) / 16) ?
     square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
 
     World_Data_Extra = Allocate_Next_Block(World_Data, Get_Free_Blocks(World_Data) - 1);
@@ -175,7 +175,10 @@ SA_GET_USED(SAMB_head): 2345
     TBL_TempMoveMap_EMS = Allocate_Space(632);
     TBL_MoveMaps_EMS = Allocate_Space(1802);  // 1802 PR, 28832 B
     DBG_ORIG_TBL_MoveMaps_EMS = TBL_MoveMaps_EMS;
-    TBL_SharedTiles_EMS = Allocate_Space(301);
+
+    // ¿ ~== TBL_Scouting or square_scouted_p0/p1 ?
+    square_shared_bits = (uint8_t *)Allocate_Space(301);  // 301 * 16 = 4816  ¿ 301 would be the byte count need for one worlds worth of bits, +1 to cover the paragraph boundary, like with square_scouted_p0/p1 ?
+
     TBL_Catchments_EMS = Allocate_Space(301);
     TBL_OvlMovePaths_EMS = Allocate_Space(1033);
 

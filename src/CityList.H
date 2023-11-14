@@ -24,7 +24,7 @@ extern "C" {
 */
 
 // WZD o65p01
-void Cities_Screen(void);
+void CityList_Screen(void);
 
 // WZD o65p02
 void CityList_Draw_Reduced_Map(void);

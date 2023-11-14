@@ -62,32 +62,56 @@ char cnst_Info_Msg_9_2[] = "9)";
 // WZD dseg:3847
 char cnst_Info_Msg_0_3[] = "Select An Advisor";
 
-// WZD dseg:3859 20 67 6F 6C 64 2C 00                            cnst_Info_Msg_7_3 db ' gold,',0
-// WZD dseg:3860 25 20 75 6E 72 65 73 74 00                      cnst_Info_Msg_7_4 db '% unrest',0
-// WZD dseg:3869 30 00                                           a0_0 db '0',0
-// WZD dseg:386B 1D                                              db  1Dh
-// WZD dseg:386C 3B 00                                           asc_3A30C db ';',0
-// WZD dseg:386E 2E 35 00                                        cnst_Half db '.5',0
-// WZD dseg:3871 1D                                              db  1Dh
-// WZD dseg:3872 36 00                                           a6_0 db '6',0
-// WZD dseg:3874 31 30 00                                        a10 db '10',0
-// WZD dseg:3877 31 00                                           a1_0 db '1',0
-// WZD dseg:3879 1D                                              db  1Dh
-// WZD dseg:387A 34 00                                           a4_0 db '4',0
-// WZD dseg:387C 32 30 00                                        a20 db '20',0
-// WZD dseg:387F 31 2E 35 00                                     a1_5 db '1.5',0
-// WZD dseg:3883 33 30 00                                        a30 db '30',0
-// WZD dseg:3886 32 00                                           a2_0 db '2',0
-// WZD dseg:3888 34 35 00                                        a45 db '45',0
-// WZD dseg:388B 32 2E 35 00                                     a2_5 db '2.5',0
-// WZD dseg:388F 36 30 00                                        a60 db '60',0
-// WZD dseg:3892 33 00                                           a3_0 db '3',0
-// WZD dseg:3894 37 35 00                                        a75 db '75',0
-// WZD dseg:3897 20 54 61 78 20 50 65 72 20 50 6F 70 75 6C 61 74+aTaxPerPopulation db ' Tax Per Population ',0
+/*
+    BEGIN: Tax Collector
+*/
+// WZD dseg:3859
+char cnst_Info_Msg_7_3[] = " gold,";
+// WZD dseg:3860
+char cnst_Info_Msg_7_4[] = "% unrest";
+// WZD dseg:3869
+char str_0[] = "0";
+// WZD dseg:386B
+char tab_59[] = "\x1D\x3B";
+// WZD dseg:386E
+char cnst_Half[] = ".5";
+// WZD dseg:3871
+char tab_54[] = "\x1D\x36";
+// WZD dseg:3874
+char a10[] = "10";
+// WZD dseg:3877
+char a1_0[] = "1";
+// WZD dseg:3879
+char tab_52[] = "\x1D\x34";
+// WZD dseg:387C
+char a20[] = "20";
+// WZD dseg:387F
+char a1_5[] = "1.5";
+// WZD dseg:3883
+char a30[] = "30";
+// WZD dseg:3886
+char a2_0[] = "2";
+// WZD dseg:3888
+char a45[] = "45";
+// WZD dseg:388B
+char a2_5[] = "2.5";
+// WZD dseg:388F
+char a60[] = "60";
+// WZD dseg:3892
+char a3_0[] = "3";
+// WZD dseg:3894
+char a75[] = "75";
+// WZD dseg:3897
+// Selection Box - Title Text
+char aTaxPerPopulation[] = " Tax Per Population ";
+/*
+    END: Tax Collector
+*/
 
 
 
 // WZD dseg:3983
+// Confirmation Box - Message Text
 char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select what buildings your cities create?";
 
 
@@ -330,7 +354,7 @@ void Advisor_Screen(int16_t advisor_idx)
 
         Deactivate_Help_List();
     }
-    else
+    else  /* if(advisor_idx == ST_UNDEFINED) */
     {
         input_advisor_idx = advisor_idx;
     }
@@ -376,7 +400,7 @@ void Advisor_Screen(int16_t advisor_idx)
         case 6:  /* Tax Collector (F7) */
         {
             DLOG("switch(input_advisor_idx))  case 6:");
-            // TODO  IDK_AdvsrScr_TaxCollector()
+            TaxCollector_Window();
 
         } break;
         case 7:  /* Grand Vizier  (F8) */
@@ -403,6 +427,168 @@ void Advisor_Screen(int16_t advisor_idx)
 }
 
 // WZD o76p02
+/*
+    Tax Collector - Advisor
+    "Tax Per Population"
+    
+    ¿ Relationship ?
+        Count of List Items := Count of Tax Rates
+
+no idea why there are some many additional bytes allocated
+probably meaningful that they fit the 30 chars def
+same for UU_IDK_var_20
+    ¿ some other string piece ? would have been after "unrest", if the 'compiler reverses order' theory holds
+    ¿ someone designed it with hot-keys ?
+*/
+void TaxCollector_Window(void)
+{
+// box_list_stings__00= byte ptr -1B6h
+// box_list_stings__01= byte ptr -198h
+// box_list_stings__02= byte ptr -17Ah
+// box_list_stings__03= byte ptr -15Ch
+// box_list_stings__04= byte ptr -13Eh
+// box_list_stings__05= byte ptr -120h
+// box_list_stings__06= byte ptr -102h
+// box_list_stings__07= byte ptr -0E4h
+    char box_list_stings[10][26];
+// NX_line9= byte ptr -0C6h
+// NX_line10= byte ptr -0A8h
+// NX_line11= byte ptr -8Ah
+// NX_line12= byte ptr -6Ch
+// NX_line13= byte ptr -4Eh
+    char * str_list[8];
+// UU_IDK_var_20= byte ptr -20h
+    char str_unrest[10];
+    char str_gold[10];
+    int16_t selection;
+
+    int16_t tax_rate;
+    int16_t itr_list;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: TaxCollector_Window()\n", __FILE__, __LINE__);
+#endif
+
+    strcpy(str_gold, cnst_Info_Msg_7_3); // " gold,"
+
+    strcpy(str_unrest, cnst_Info_Msg_7_4); // "% unrest"
+
+
+    tax_rate = _players[_human_player_idx].tax_rate;
+
+
+
+    // tax_rate: 0  "0 gold,    0% unrest "
+    // tax_rate: 1  ".5 gold,  10% unrest "
+    // tax_rate: 2  "1 gold,   20% unrest "
+    // tax_rate: 3  "1.5 gold, 30% unrest*"
+    // tax_rate: 4  "2 gold,   45% unrest "
+    // tax_rate: 5  "2.5 gold, 60% unrest "
+    // tax_rate: 6  "3 gold,   75% unrest "
+
+    strcpy(box_list_stings[0], str_0);
+    strcat(box_list_stings[0], str_gold);
+    strcat(box_list_stings[0], tab_59);
+    strcat(box_list_stings[0], str_0);
+    strcat(box_list_stings[0], str_unrest);
+
+    strcpy(box_list_stings[1], cnst_Half);
+    strcat(box_list_stings[1], str_gold);
+    strcat(box_list_stings[1], tab_54);
+    strcat(box_list_stings[1], a10);
+    strcat(box_list_stings[1], str_unrest);
+
+    strcpy(box_list_stings[2], a1_0);
+    strcat(box_list_stings[2], str_gold);
+    strcat(box_list_stings[2], tab_52);
+    strcat(box_list_stings[2], a20);
+    strcat(box_list_stings[2], str_unrest);
+
+    strcpy(box_list_stings[3], a1_5);
+    strcat(box_list_stings[3], str_gold);
+    strcat(box_list_stings[3], tab_52);
+    strcat(box_list_stings[3], a30);
+    strcat(box_list_stings[3], str_unrest);
+
+    strcpy(box_list_stings[4], a2_0);
+    strcat(box_list_stings[4], str_gold);
+    strcat(box_list_stings[4], tab_52);
+    strcat(box_list_stings[4], a45);
+    strcat(box_list_stings[4], str_unrest);
+
+    strcpy(box_list_stings[5], a2_5);
+    strcat(box_list_stings[5], str_gold);
+    strcat(box_list_stings[5], tab_52);
+    strcat(box_list_stings[5], a60);
+    strcat(box_list_stings[5], str_unrest);
+
+    strcpy(box_list_stings[6], a3_0);
+    strcat(box_list_stings[6], str_gold);
+    strcat(box_list_stings[6], tab_52);
+    strcat(box_list_stings[6], a75);
+    strcat(box_list_stings[6], str_unrest);
+
+
+
+    if(tax_rate > 6)
+    {
+        tax_rate = 6;
+    }
+
+
+    for(itr_list = 0; itr_list < 7; itr_list++)
+    {
+        if(itr_list == tax_rate)
+        {
+            strcat(box_list_stings[itr_list], cnst_Info_Msg_0_2);
+        }
+        str_list[itr_list] = box_list_stings[itr_list];
+    }
+
+    // ¿ why not set before and included in the loop like in 'Advisor Screen'
+    // strcpy(box_list_stings[7] = *(asc_3A261 + 2));  // '\x00' BCPP3 string optimizer
+    strcpy(box_list_stings[7], "");
+    // str_list[7] = &box_list_stings[7];
+    // str_list[7] = (char *)(box_list_stings + (30 * 7));  // sizeof(box_list_stings[0])
+    str_list[7] = box_list_stings[7];
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
+    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
+#endif
+
+
+    // TODO  Set_TaxCollector_Window_Help_List();
+
+
+    // selection = Selection_Box(7, &str_list[0], ST_FALSE, aTaxPerPopulation);
+    selection = Selection_Box(7, &str_list[0], ST_FALSE, " Tax Per Population ");
+
+
+    Deactivate_Help_List();
+
+
+    if(selection != ST_UNDEFINED)
+    {
+        _players[_human_player_idx].tax_rate = selection;
+    }
+
+
+    // TODO  CTY_RecalculateAll();
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: TaxCollector_Window()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 // WZD o76p03
 // WZD o76p04
 // WZD o76p05

@@ -5,6 +5,8 @@
 
 #include "MoX_Data.H"
 
+#include "Mouse.H"  /* struct s_mouse_list */
+
 
 
 
@@ -28,6 +30,38 @@ uint8_t COL_Banners[] = {
     0xA0, 0xA1, 0xA2, 0xB2, 0xB4,
     0x30, 0x31, 0x32, 0x33, 0x34
 };
+
+// WZD dseg:00C8 62 D8 7B 2B B3 32                               COL_Cartographer db 98, 216, 123, 43, 179, 50
+// WZD dseg:00CE C9 00 A5 00 CB 00                               UU_COL_Setof3_1 db 201,  0,165,  0,203,  0
+// WZD dseg:00D4 79 00 7A 00 7B 00                               UU_COL_Setof3_2 db 121,  0,122,  0,123,  0
+// WZD dseg:00DA 0D 00 0E 00 0F 00                               UU_COL_Setof3_3 db  13,  0, 14,  0, 15,  0
+// WZD dseg:00E0 49 00 4A 00 4B 00                               UU_COL_Setof3_4 db  73,  0, 74,  0, 75,  0
+// WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
+// WZD dseg:00EC 00                                              db    0
+// WZD dseg:00ED 00                                              db    0
+
+
+// WZD dseg:00EE 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// struct s_mouse_list mouse_list_default[1] = {
+//     {crsr_Finger, 0, 0, 0, 319, 199}
+// };
+// WZD dseg:00FA 00 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+// struct s_mouse_list mouse_list_none[1] = {
+//     {crsr_None, 0, 0, 0, 319, 199}
+// };
+// WZD dseg:0106 06 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
+struct s_mouse_list mouse_list_hourglass[1] = {
+    {crsr_Hourglass, 0, 0, 0, 319, 199}
+};
+// WZD dseg:0112 01 00 00 00 00 00 00 00 3F 01 C7 00             NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:011E 07 00 04 00 00 00 00 00 3F 01 9E 00             NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
+
+// WZD dseg:012A 01 02 04 08 10 20                               byte_36BCA db   1,  2,  4,  8, 16, 32
+// WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
+// WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
+// WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
+// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
+
 
 
 
@@ -290,6 +324,10 @@ SAMB_ptr wizard_portrait_segs[14];  // ¿ here, because used by MGC Newgame_Scre
 char hlpentry_lbx_file[] = "hlpentry";
 
 
+
+// WZD dseg:6E9E
+// drake178: TBL_Tax_Unrest_Pcnts
+int16_t tax_unrest_pct_table[7] = {0,10,20,30,45,60,75};
 
 
 
@@ -1168,8 +1206,11 @@ SAMB_ptr TBL_OvlMovePaths_EMS;
 // CONTX_Myr_NmeStrMap
 // WZD dseg:9C9C
 SAMB_ptr TBL_Catchments_EMS;
+
 // WZD dseg:9CA0
-SAMB_ptr TBL_SharedTiles_EMS;
+// drake178: TBL_SharedTiles_EMS
+uint8_t * square_shared_bits;               // alloc'd in Allocate_Data_Space()
+
 // WZD dseg:9CA4
 SAMB_ptr TBL_TempMoveMap_EMS;
 // WZD dseg:9CA8
@@ -1228,6 +1269,14 @@ SAMB_ptr UU_TBL_1;
 // AKA TBL_Maps;
 // SAMB_ptr _world_maps;
 uint8_t * _world_maps;
+
+// WZD dseg:9CE0
+// drake178: 14 individual pointers, one to each row of the table
+SAMB_ptr TBL_Unrest[14];
+SAMB_ptr TBL_Unrest_Hack;
+
+// WZD dseg:9D18 00 00                                           IMG_CTY_Bldngs_Wall@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+602w ...
+// WZD dseg:9D18                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:9D1A
 uint16_t tmp_World_Data_Paras;

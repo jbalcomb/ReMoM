@@ -24,10 +24,15 @@ extern "C" {
 // TILE_ClearCorruption 
 // WZD s161p02
 // TILE_IsNode          
+
 // WZD s161p03
-// TILE_GetFood         
+// drake178: TILE_GetFood()
+int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p04
-// TILE_GetProd         
+// drake178: TILE_GetProd()
+int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
+
 // WZD s161p05
 // TILE_GetWaterGold    
 // WZD s161p06

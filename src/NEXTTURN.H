@@ -77,6 +77,45 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx);
 
 
 
+/*
+    WIZARDS.EXE  ovr140
+*/
+
+// WZD s140p01
+// drake178: CTY_RecalculateAll()
+void All_City_Calculations(void);
+
+// WZD s140p02
+// WZD s140p03
+// WZD s140p04
+// WZD s140p05
+// WZD s140p06
+// WZD s140p07
+// WZD s140p08
+// WZD s140p09
+// WZD s140p10
+// WZD s140p11
+// WZD s140p12
+// WZD s140p13
+// WZD s140p14
+// WZD s140p15
+// WZD s140p16
+// WZD s140p17
+// WZD s140p18
+// WZD s140p19
+// WZD s140p20
+// WZD s140p21
+// WZD s140p22
+// WZD s140p23
+// WZD s140p24
+// WZD s140p25
+// WZD s140p26
+// WZD s140p27
+// WZD s140p28
+// Cool_Off_Volcanoes
+
+
+
 #ifdef __cplusplus
 }
 #endif
