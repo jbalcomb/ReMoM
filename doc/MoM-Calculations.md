@@ -94,12 +94,12 @@ Next_Turn_Proc()
     |-> Next_Turn_Calc()
     |-> All_City_Calculations()
         |-> Do_City_Calculations()
-            _CITIES[] s_CITY.Power
-            _CITIES[] s_CITY.Research
-            _CITIES[] s_CITY.Upkeep
-            _CITIES[] s_CITY.Gold
-            _CITIES[] s_CITY.Production
             _CITIES[] s_CITY.Food
+            _CITIES[] s_CITY.Production
+            _CITIES[] s_CITY.Gold
+            _CITIES[] s_CITY.Upkeep
+            _CITIES[] s_CITY.Research
+            _CITIES[] s_CITY.Power
 
         |-> WIZ_GoldIncomes()
             |-> j_WIZ_GetNUCounts()

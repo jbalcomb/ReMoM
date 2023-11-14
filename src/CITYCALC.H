@@ -105,7 +105,11 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 int16_t City_Food_Production(int16_t city_idx);
 
 // WZD s142p10
+
 // WZD s142p11
+// drake178: CTY_GetProd()
+int16_t City_Production_Production(int16_t city_idx);
+
 // WZD s142p12
 // WZD s142p13
 // WZD s142p14
@@ -121,7 +125,11 @@ int16_t City_Food_Production(int16_t city_idx);
 // WZD s142p24
 // WZD s142p25
 // WZD s142p26
+
 // WZD s142p27
+// drake178: CTY_GetRebelCount()
+int16_t City_Rebel_Count(int16_t city_idx);
+
 // WZD s142p28
 // WZD s142p29
 

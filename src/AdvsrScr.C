@@ -474,7 +474,7 @@ void TaxCollector_Window(void)
     strcpy(str_unrest, cnst_Info_Msg_7_4); // "% unrest"
 
 
-    tax_rate = _players[_human_player_idx].Tax_Rate;
+    tax_rate = _players[_human_player_idx].tax_rate;
 
 
 
@@ -576,7 +576,7 @@ void TaxCollector_Window(void)
 
     if(selection != ST_UNDEFINED)
     {
-        _players[_human_player_idx].Tax_Rate = selection;
+        _players[_human_player_idx].tax_rate = selection;
     }
 
 

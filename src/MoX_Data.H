@@ -626,7 +626,7 @@ struct s_WIZARD
     /* 0052 */ uint16_t Spell_Cast;
     /* 0054 */ uint16_t Skill_Left;
     /* 0056 */ uint16_t Nominal_Skill;
-    /* 0058 */ uint16_t Tax_Rate;
+    /* 0058 */ uint16_t tax_rate;
 
 /* 005A struct s_BOOKSHELF Books; */
     /* 005A */ int16_t spellrank_nature;
@@ -817,13 +817,13 @@ struct s_CITY
              // uint8_t enchantments[26];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
     /* 5C */ // int8_t Nightshade;  as seens in CTY_EnchantsUpkeep() for city_enchantment_upkeep_table
              uint8_t enchantments[26];
-    /* 5D */ int8_t Production;
+    /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;
     /* 60 */ int8_t Gold;
     /* 61 */ int8_t Upkeep;
     /* 62 */ int8_t Power;
     /* 63 */ int8_t Research;
-    /* 64 */ int8_t food2_units;
+    /* 64 */ int8_t food_units;
     /* 65 */ int8_t RoadConn_BitField[13];
 };
 
@@ -1228,6 +1228,10 @@ extern SAMB_ptr wizard_portrait_segs[];  // ¿ here, because used by MGC Newgame
 extern char hlpentry_lbx_file[];
 
 
+
+// WZD dseg:6E9E
+// drake178: TBL_Tax_Unrest_Pcnts
+extern int16_t tax_unrest_pct_table[7];
 
 
 
@@ -2157,6 +2161,13 @@ extern SAMB_ptr UU_TBL_1;
 // extern SAMB_ptr _world_maps;
 extern uint8_t * _world_maps;
 
+// WZD dseg:9CE0
+// drake178: 14 individual pointers, one to each row of the table
+extern SAMB_ptr TBL_Unrest[14];
+extern SAMB_ptr TBL_Unrest_Hack;
+
+// WZD dseg:9D18 00 00                                           IMG_CTY_Bldngs_Wall@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+602w ...
+// WZD dseg:9D18                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:9D1A
 extern uint16_t tmp_World_Data_Paras;

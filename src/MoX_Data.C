@@ -325,6 +325,10 @@ char hlpentry_lbx_file[] = "hlpentry";
 
 
 
+// WZD dseg:6E9E
+// drake178: TBL_Tax_Unrest_Pcnts
+int16_t tax_unrest_pct_table[7] = {0,10,20,30,45,60,75};
+
 
 
 // WZD dseg:6FFE
@@ -1265,6 +1269,14 @@ SAMB_ptr UU_TBL_1;
 // AKA TBL_Maps;
 // SAMB_ptr _world_maps;
 uint8_t * _world_maps;
+
+// WZD dseg:9CE0
+// drake178: 14 individual pointers, one to each row of the table
+SAMB_ptr TBL_Unrest[14];
+SAMB_ptr TBL_Unrest_Hack;
+
+// WZD dseg:9D18 00 00                                           IMG_CTY_Bldngs_Wall@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+602w ...
+// WZD dseg:9D18                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:9D1A
 uint16_t tmp_World_Data_Paras;

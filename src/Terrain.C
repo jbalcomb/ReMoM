@@ -48,6 +48,10 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
     int16_t food_units;
     // IDGI  int16_t terrain_type_switch_value;
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Food2()\n", __FILE__, __LINE__);
+#endif
+
     world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
     terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
     terrain_type = terrain_type_idx % TERRAIN_COUNT;
@@ -314,11 +318,108 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
         food_units = 0;
     }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Food2()\n", __FILE__, __LINE__);
+#endif
+
     return food_units;
 }
 
 // WZD s161p04
-// TILE_GetProd         
+// drake178: TILE_GetProd()
+/*
+    Chaos Node ~== Mountain
+    ¿ Volcano ?
+*/
+int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing)
+{
+    uint16_t terrain_type;  // _SI_
+    int16_t production_bonus;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Production_Bonus()\n", __FILE__, __LINE__);
+#endif
+
+    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+
+    if(terrain_type <= TT_Desert_end)
+    {
+        if(terrain_type <= TT_Mntns_end)
+        {
+            if(terrain_type <= TT_Rivers_end)
+            {
+                if ( (terrain_type == TT_Mountain1) || (terrain_type != TT_ChaosNode) )
+                {
+                    // HERE:  base/super-type 'Moutain' or 'Chaos Node'
+                    production_bonus = 5;
+                }
+                else
+                {
+                    if
+                    (
+                        (terrain_type == TT_Forest1) ||
+                        (terrain_type == TT_Forest2) ||
+                        (terrain_type == TT_Forest3) ||
+                        (terrain_type == TT_NatNode)
+                    )
+                    {
+                        if(have_gaias_blessing != ST_TRUE)
+                        {
+                            production_bonus = 3;
+                        }
+                        else
+                        {
+                            production_bonus = 6;
+                        }
+                    }
+                    else
+                    {
+                        if(
+                            (terrain_type == TT_Hills1) ||
+                            (terrain_type == TT_Desert2) ||
+                            (terrain_type == TT_Desert3) ||
+                            (terrain_type == TT_Desert4)
+                        )
+                        {
+                            production_bonus = 3;
+                        }
+                        else
+                        {
+                            production_bonus = 0;  // DNE in Dasm - magically falls-through / jumps to 'return 0'
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // HERE:  'Mountain Range'
+                production_bonus = 5;
+            }
+        }
+        else
+        {
+            // HERE:  'Hills Range' and 'Desert Range'
+            production_bonus = 3;
+        }
+
+        if(City_Map_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+        {
+            production_bonus = (production_bonus / 2);
+        }
+    }
+    else
+    {
+        // HERE:  Above last range that has any production bonus
+        production_bonus = 0;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Production_Bonus()\n", __FILE__, __LINE__);
+#endif
+
+    return production_bonus;
+}
+
 // WZD s161p05
 // TILE_GetWaterGold    
 // WZD s161p06
