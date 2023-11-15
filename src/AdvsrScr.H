@@ -25,6 +25,8 @@ extern "C" {
 void Advisor_Screen(int16_t advisor_idx);
 
 // WZD o76p02
+void TaxCollector_Window(void);
+
 // WZD o76p03
 // WZD o76p04
 // WZD o76p05
@@ -33,7 +35,9 @@ void Advisor_Screen(int16_t advisor_idx);
 // WZD o76p08
 // WZD o76p09
 // WZD o76p10
+
 // WZD o76p11
+void GrandVizier_Window(void);
 
 
 

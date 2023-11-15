@@ -4,6 +4,7 @@
 
 */
 
+#include "MoX.H"
 #include "MoX_TYPE.H"     /* byte_ptr, SAMB_ptr */
 #include "MoX_DEF.H"      /* DLOG() */
 #include "MoM_DEF.H"
@@ -639,6 +640,177 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 // #endif
 }
 
+// WZD s30p12
+// drake178: 
+// AKA AKA FLIC_Draw_XY_Wnd()
+// AKA FLIC_Draw_Windowed()
+// MoO2  
+void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
+{
+    struct s_FLIC_HDR animation_header;
+// var_16= word ptr -16h
+// frame_offset_sgmt= word ptr -14h
+// frame_offset_ofst= word ptr -12h
+    int16_t skip_y;
+    int16_t skip_x;
+    int16_t actual_height;
+    int16_t actual_width;
+    int16_t y2;
+    int16_t x2;
+    int16_t current_frame;
+    int16_t remap_flag;
+
+    int16_t start_x;
+    int16_t start_y;
+
+    uint16_t frame_offset;
+    byte_ptr frame_data;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Draw(x = %d, y = %d, picture = %p)\n", __FILE__, __LINE__, x, y, picture);
+#endif
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: screen_window_x1: %d\n", __FILE__, __LINE__, screen_window_x1);
+    dbg_prn("DEBUG: [%s, %d]: screen_window_y1: %d\n", __FILE__, __LINE__, screen_window_y1);
+    dbg_prn("DEBUG: [%s, %d]: screen_window_x2: %d\n", __FILE__, __LINE__, screen_window_x2);
+    dbg_prn("DEBUG: [%s, %d]: screen_window_y2: %d\n", __FILE__, __LINE__, screen_window_y2);
+#endif
+
+    if( (x <= screen_window_x2) && (y <= screen_window_y2) )
+    {
+        DLOG("( (x <= screen_window_x2) && (y <= screen_window_y2) )");
+        // _fmemcpy(animation_header, 0, 0, picture, 16)
+        memcpy(&animation_header, picture, 16);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: animation_header.width: %d\n", __FILE__, __LINE__, animation_header.width);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.height: %d\n", __FILE__, __LINE__, animation_header.height);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.current_frame: %d\n", __FILE__, __LINE__, animation_header.current_frame);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.frame_count: %d\n", __FILE__, __LINE__, animation_header.frame_count);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.loop_frame: %d\n", __FILE__, __LINE__, animation_header.loop_frame);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_handle_number: %02X\n", __FILE__, __LINE__, animation_header.emm_handle_number);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_logical_page_number: %02X\n", __FILE__, __LINE__, animation_header.emm_logical_page_number);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_logical_page_offset: %04X\n", __FILE__, __LINE__, animation_header.emm_logical_page_offset);
+    dbg_prn("DEBUG: [%s, %d]: animation_header.palette_header_offset: %04X\n", __FILE__, __LINE__, animation_header.palette_header_offset);
+#endif
+
+        x2 = x + animation_header.width - 1;
+
+        if(x2 >= screen_window_x1)
+        {
+            
+            y2 = y + animation_header.height - 1;
+
+            if(y2 >= screen_window_y1)
+            {
+
+                if(x < screen_window_x1)
+                {
+                    skip_x = screen_window_x1 - x;
+                    start_x = screen_window_x1;
+                }
+                else
+                {
+                    skip_x = 0;
+                    start_x = x;
+                }
+
+                if(y < screen_window_y1)
+                {
+                    skip_y = screen_window_y1 - y;
+                    start_y = screen_window_y1;
+                }
+                else
+                {
+                    skip_y = 0;
+                    start_y = y;
+                }
+
+                if(x2 >= screen_window_x2)
+                {
+                    DLOG("(x2 >= screen_window_x2)");
+                    actual_width = screen_window_x2 - start_x + 1;
+                }
+                else
+                {
+                    actual_width = x2 - start_x + 1;
+                }
+
+                if(y2 >= screen_window_y2)
+                {
+                    DLOG("(y2 >= screen_window_y2)");
+                    actual_height = screen_window_y2 - start_y + 1;
+                }
+                else
+                {
+                    actual_height = y2 - start_y + 1;
+                }
+
+                current_frame = animation_header.current_frame;
+                animation_header.current_frame += 1;
+
+                if(animation_header.current_frame < animation_header.frame_count)
+                {
+                    // DLOG("(next_frame < FLIC_GET_FRAME_COUNT(picture))");
+                    FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
+                }
+                else
+                {
+                    // DLOG("(next_frame >= FLIC_GET_FRAME_COUNT(picture))");
+                    FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
+                }
+
+
+                // if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
+                if(animation_header.palette_header_offset != 0)
+                {
+                    // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
+                    FLIC_Load_Palette(picture, current_frame);
+                }
+                else
+                {
+                    // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
+                }
+
+
+
+                /*
+                    Test EMM_Handle_Number
+                        VGA_DrawPartEmsImg()
+                */
+
+
+
+                frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
+                frame_data = picture + (frame_offset) + 1;
+
+                remap_flag = FLIC_GET_REMAP_FLAG(picture);
+
+                if(remap_flag == ST_FALSE)
+                {
+                    DLOG("(remap_flag == ST_FALSE)");
+                    // TODO  VGA_DrawPartialImage(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+                    Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+                }
+                else
+                {
+                    DLOG("(remap_flag != ST_FALSE)");
+                    // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
+                    // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+                    Clipped_Remap_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+                }
+
+            }
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Draw(x = %d, y = %d, picture = %p)\n", __FILE__, __LINE__, x, y, picture);
+#endif
+
+}
+
 
 // WZD s30p13
 // AKA LBX_IMG_BuildFrame()
@@ -1246,6 +1418,211 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
 // #endif
 }
 
+
+
+
+/*
+    WIZARDS.EXE  seg031
+*/
+
+// WZD seg031:000A 00 00                                           
+int16_t CS031_skip_y;
+// WZD seg031:000C 00 00                                           CS031_UU_skip_x dw 0
+// WZD seg031:000E 00 00                                           
+int16_t CS031_height;
+// WZD seg031:0010 00 00                                           
+int16_t CS031_width;
+// WZD seg031:0012
+
+// WZD s31p01
+// drake178: VGA_DrawPartialImage()
+// MoO2  Clipped_Draw_Animated_Sprite()
+void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
+{
+    unsigned char * bbuff_pos;
+    unsigned char * bbuff;
+    unsigned char data_byte;
+
+    unsigned char packet_op;
+    unsigned char packet_byte_count;
+    unsigned char sequence_byte_count;
+    unsigned char delta_byte_count;
+    unsigned char itr_op_repeat;
+
+    int16_t tmp_skip_y;
+    int16_t tmp_height;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
+#endif
+
+    assert(skip_x == 0);
+    assert(skip_y == 0);
+
+
+
+    CS031_skip_y = skip_y;
+    CS031_width  = width;   // actual_width;
+    CS031_height = height;  // actual_height;
+
+
+
+//     if(skip_x != 0)
+//     {
+//         packet_op = *frame_data++;
+//         packet_byte_count = *frame_data++;
+//         if(packet_op == 0xFF)  /* Type: skip */
+//         {
+//             frame_data--;
+//         }
+//         else
+//         {
+//             frame_data += packet_byte_count;
+//         }
+//     }
+
+    // if we have more pixels to draw than the height allows
+    // we need to stop drawing, where we should, but also skip the rest of the frame data bytes for this column
+
+
+
+    bbuff_pos = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
+
+    while (width--)
+    {
+        tmp_height = CS031_height;
+        bbuff = bbuff_pos++;
+
+        packet_op = *frame_data++;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
+#endif
+
+        if(packet_op == 0xFF)  /* Type: skip */
+        {
+            continue;
+        }
+
+        packet_byte_count = *frame_data++;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
+#endif
+
+        if(packet_op == 0x80)  /* Type: decode */
+        {
+
+            do {
+                sequence_byte_count = *frame_data++;
+                delta_byte_count = *frame_data++;
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
+                tmp_height -= delta_byte_count;
+                packet_byte_count -= sequence_byte_count + 2;
+                // while(sequence_byte_count--)
+                while(tmp_height && sequence_byte_count)
+                {
+                    data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
+                    if(data_byte >= 224)  /* op: repeat */
+                    {
+                        itr_op_repeat = (data_byte - 224) + 1;
+                        sequence_byte_count--;
+                        data_byte = *frame_data++;
+                        while(tmp_height && itr_op_repeat)
+                        {
+                            tmp_height--;
+                            *bbuff = data_byte;
+                            bbuff += SCREEN_WIDTH;
+                            itr_op_repeat--;
+                        }
+                    }
+                    else  /* op: copy */
+                    {
+                        tmp_height--;
+                        *bbuff = data_byte;
+                        bbuff += SCREEN_WIDTH;
+                    }
+                    sequence_byte_count--;
+                }
+                frame_data += sequence_byte_count;
+            } while(packet_byte_count >= 1);
+        }
+        if(packet_op == 0x00)  /* Type: copy */
+        {
+            // tmp_skip_y = CS031_skip_y;
+            // if(tmp_skip_y == 0)
+            // {
+            //     tmp_skip_y = CS031_height;
+            // }
+
+            do {
+                sequence_byte_count = *frame_data++;  // size_count - Count of Bytes to Copy
+                delta_byte_count = *frame_data++;  // skip_count
+                bbuff += (delta_byte_count * SCREEN_WIDTH);
+                tmp_height -= delta_byte_count;
+                packet_byte_count -= sequence_byte_count + 2;  // A Packet can have multiples Sequences, so deduct the 2-byte *header* and the size of the Sequence
+
+                // while(sequence_byte_count--)
+                // {
+                //     *bbuff = *frame_data++;
+                //     bbuff += SCREEN_WIDTH;
+                // }
+                while(tmp_height && sequence_byte_count)
+                {
+                    tmp_height--;
+                    *bbuff = *frame_data++;
+                    bbuff += SCREEN_WIDTH;
+                    sequence_byte_count--;
+                }
+                frame_data += sequence_byte_count;
+
+            } while(packet_byte_count >= 1);
+        }
+    }
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
+#endif
+
+}
+
+// WZD s31p02
+// drake178: VGA_DrawPartImage_R()
+// MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
+void Clipped_Remap_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
+{
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Remap_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
+#endif
+    // assert(false & "Not Yet Implemented: Clipped_Remap_Draw_Frame()");
+    // assert(false);
+    assert(0);
+
+    assert(skip_x == 0);
+    assert(skip_y == 0);
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Remap_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
+#endif
+
+}
+
+
+/*
+    WIZARDS.EXE  seg032
+*/
+
+// WZD s32p01
+// drake178: VGA_DrawPartEmsImg()
+
+// WZD s32p02
+// drake178: EMM_MapNextIMGPages()
+
+// WZD s32p03
+// drake178: VGA_DrawPartEmsImg_R()
 
 
 

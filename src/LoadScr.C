@@ -823,7 +823,7 @@ void GAME_Overland_Init(void)
     itr_cities = 0;
     while(itr_cities++ < _cities)
     {
-        _CITIES[itr_cities].buildings.None = 0; // ? ~ enum City Building Status B_Replaced;
+        _CITIES[itr_cities].buildings[NONE] = 0; // ? ~ enum City Building Status B_Replaced;
     }
 
 

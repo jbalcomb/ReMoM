@@ -4,6 +4,12 @@
 MGC s01p04
 Load_MGC_Resources()
 
+*/
+/*
+    WIZARDS.EXE
+        ovr052
+            34
+
 WZD o52p01
 Load_WZD_Resources()
 
@@ -13,14 +19,52 @@ UNIT_Upkeep_Reset()
 WZD o52p03
 Terrain_Init()
 
+// WZD o52p04
+// WZD o52p05
+// WZD o52p06
+// WZD o52p07
+// WZD o52p08
+// WZD o52p09
+// WZD o52p10
+// WZD o52p11
+// WZD o52p12
+// WZD o52p13
+// WZD o52p14
+// WZD o52p15
+// WZD o52p16
+// WZD o52p17
+// WZD o52p18
+// WZD o52p19
+
 WZD o52p20
 void GFX_Swap_Reset()
+
+WZD o52p21
 
 WZD o52p22
 Load_Unit_StatFigs()
 
+// WZD o52p23
+// WZD o52p24
+// WZD o52p25
+// WZD o52p26
+// WZD o52p27
+// WZD o52p28
+
+// WZD o52p29
+void Spellbook_Load_Small_Pictures(void);
+
 WZD o52p30
 GFX_Swap_Cities()
+
+// WZD o52p31
+void GFX_Swap_Overland(void);
+
+// WZD o52p32
+// WZD o52p33
+
+// WZD o52p34
+// GFX_Swap_Combat()
 
 */
 
@@ -62,7 +106,8 @@ char rsc0C_MAPBACK_LBX[] = "MAPBACK.LBX";
 // WZD dseg:29D2
 char terrain_lbx_file[] = "TERRAIN.LBX";
 
-// dseg:29DE terrstat_lbx_file db 'TERRSTAT',0
+// WZD dseg:29DE
+char terrstat_lbx_file[] = "TERRSTAT";
 
 // WZD dseg:29E7
 char mapback_lbx_file[] = "MAPBACK";
@@ -222,12 +267,18 @@ void Terrain_Init(void)
     terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);
 
 
-//     // TBL_Unrest = LBX_Load_Data("TERRSTAT.LBX", 1, 0, 1, 196);
-//     // ; 14 individual pointers, one to each row of the table
-//     // for(itr = 1; itr < 14; itr++)
-//     // {
-//     //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
-//     // }
+    // // TBL_Unrest[0] = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
+    // TBL_Unrest[0] = LBX_Load_Data("TERRSTAT.LBX", 1, 0, 1, 196);
+    // for(itr = 1; itr < 14; itr++)
+    // {
+    //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
+    // }
+    // can't do like they did, because pointers are 8 bytes now
+    TBL_Unrest_Hack = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
+    for(itr = 0; itr < 14; itr++)
+    {
+        TBL_Unrest[itr] = (SAMB_ptr)(TBL_Unrest_Hack + (14 * itr));
+    }
 
 
     // Loop MAPBACK 0 to 13:
@@ -364,7 +415,21 @@ void GFX_Swap_Reset(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_Reset()\n", __FILE__, __LINE__);
 #endif
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Check_Allocation(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, Check_Allocation(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: Get_Free_Blocks(SAMB_head): %d\n", __FILE__, __LINE__, Get_Free_Blocks(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_SIZE(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, SA_GET_SIZE(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_USED(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, SA_GET_USED(GFX_Swap_Seg));
+#endif
+
     Allocate_First_Block(GFX_Swap_Seg, 1);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Check_Allocation(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, Check_Allocation(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: Get_Free_Blocks(SAMB_head): %d\n", __FILE__, __LINE__, Get_Free_Blocks(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_SIZE(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, SA_GET_SIZE(GFX_Swap_Seg));
+    dbg_prn("DEBUG: [%s, %d]: SA_GET_USED(GFX_Swap_Seg): %d\n", __FILE__, __LINE__, SA_GET_USED(GFX_Swap_Seg));
+#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Reset()\n", __FILE__, __LINE__);
@@ -466,6 +531,194 @@ void Load_Unit_StatFigs(void)
 
 }
 
+// WZD o52p27
+void GFX_Swap_AppendUView(void)
+{
+    int16_t itr;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
+#endif
+
+    // load [111of111] from SPECIAL.LBX
+    for(itr = 0; itr < 111; itr++)
+    {
+        // IMG_USW_Abilities.Teleporting@
+        // IMG_USW_Abilities[itr] = LBX_Reload_Next("SPECIAL", itr, GFX_Swap_Seg);
+        special_seg[itr] = LBX_Reload_Next("SPECIAL", itr, GFX_Swap_Seg);
+    }
+
+    // load [(0to33)of44] from SPECIAL2.LBX
+    for(itr = 0; itr < 34; itr++)
+    {
+        // IMG_USW_Abilities.Confusion@
+        // IMG_USW_Abilities[itr] = LBX_Reload_Next("SPECIAL2", itr, GFX_Swap_Seg);
+        special2_seg[itr] = LBX_Reload_Next("SPECIAL2", itr, GFX_Swap_Seg);
+    }
+
+
+
+    // load {0,1,2,3,4} from UNITVIEW.LBX
+
+    // UNITBACK small unit backgrn
+    unitview_small_background_seg = LBX_Reload_Next("UNITVIEW", 0, GFX_Swap_Seg);
+    // FULLUNIT large unit backgrn
+    unitview_large_background_seg = LBX_Reload_Next("UNITVIEW", 1, GFX_Swap_Seg);
+    // BLDBUTBK button background
+    unitview_button_background_seg = LBX_Reload_Next("UNITVIEW", 2, GFX_Swap_Seg);
+    // UNITBUTT up arrow
+    unitview_up_arrow_seg = LBX_Reload_Next("UNITVIEW", 3, GFX_Swap_Seg);
+    // UNITBUTT down arrow
+    unitview_down_arrow_seg = LBX_Reload_Next("UNITVIEW", 4, GFX_Swap_Seg);
+
+
+    // load [5,12] from UNITVIEW.LBX
+    /*
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+        UNITDARK dark special borde
+    */
+    for(itr = 0; itr < 8; itr++)
+    {
+        // IMG_USW_AbBorders@
+        IMG_USW_AbBorders[itr] = LBX_Reload_Next("UNITVIEW", (5 + itr), GFX_Swap_Seg);
+    }
+
+
+    // load [13,27] from UNITVIEW.LBX
+    /*
+        SMALICON    sword
+        SMALICON    fireball
+        SMALICON    mithril sword
+        SMALICON    magic sword
+        SMALICON    adamantium sword
+        SMALICON    bow
+        SMALICON    rock
+        SMALICON    flame breath
+        SMALICON    thrown axe
+        SMALICON    defense
+        SMALICON    hits
+        SMALICON    walking
+        SMALICON    fly
+        SMALICON    swim
+        SMALICON    resistance
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        // IMG_USW_Stat_Icons.Melee@
+        IMG_USW_Stat_Icons[itr] = LBX_Reload_Next("UNITVIEW", (13 + itr), GFX_Swap_Seg);
+    }
+
+
+    // load [35,49] from UNITVIEW.LBX
+    /*
+        SMALICON    sword
+        SMALICON    fireball
+        SMALICON    mithril
+        SMALICON    magic sword
+        SMALICON    adam
+        SMALICON    bow
+        SMALICON    rock
+        SMALICON    breath
+        SMALICON    axe
+        SMALICON    shield
+        SMALICON    hits
+        SMALICON    blank
+        SMALICON    blank
+        SMALICON    blank
+        SMALICON    resist
+    */
+    for(itr = 0; itr < 15; itr++)
+    {
+        // IMG_USW_Stats_Gold.Melee@
+        IMG_USW_Stats_Gold[itr] = LBX_Reload_Next("UNITVIEW", (35 + itr), GFX_Swap_Seg);
+    }
+
+
+    IMG_OVL_UnitList_BG = LBX_Reload_Next("UNITVIEW", 28, GFX_Swap_Seg);
+    IMG_OVL_UnitListBtm = LBX_Reload_Next("UNITVIEW", 29, GFX_Swap_Seg);
+    IMG_OVL_BuildBtn_BG = LBX_Reload_Next("UNITVIEW", 30, GFX_Swap_Seg);
+
+
+    red_button_seg = LBX_Reload_Next("BACKGRND", 24, GFX_Swap_Seg);
+    IMG_CTY_Neg_1_Gold = LBX_Reload_Next("BACKGRND", 73, GFX_Swap_Seg);
+    IMG_USW_1_Gold = LBX_Reload_Next("BACKGRND", 42, GFX_Swap_Seg);
+
+
+    IMG_CTY_LeftBldTab = LBX_Reload_Next("UNITVIEW", 31, GFX_Swap_Seg);
+    IMG_CTY_RightBldTab = LBX_Reload_Next("UNITVIEW", 32, GFX_Swap_Seg);
+    IMG_USW_Portrt_Brdr = LBX_Reload_Next("UNITVIEW", 33, GFX_Swap_Seg);
+    IMG_USW_WaterBase = LBX_Reload_Next("UNITVIEW", 34, GFX_Swap_Seg);
+
+    // ¿ BUILDS4    untit base ?
+    IMG_USW_GrassBase = LBX_Reload_Next("CITYSCAP", 103, GFX_Swap_Seg);
+
+
+
+    /*
+        40  CITYICON    food icon
+        41  CITYICON    production icon
+        42  CITYICON    gold icon
+        43  CITYICON    power icon
+        44  CITYICON    research icon
+    */
+    for(itr = 0; itr < 5; itr++)
+    {
+        // IMG_CTY_1_Food@
+        IMG_CTY_1_Food[itr] = LBX_Reload_Next("BACKGRND", (40 + itr), GFX_Swap_Seg);
+    }
+
+    /*
+        94  CITYICON    grey lil bread
+    */
+    IMG_CTY_Neg_1_Food = LBX_Reload_Next("BACKGRND", 94, GFX_Swap_Seg);
+
+    /*
+        88  CITYICO3    10 food
+        89  CITYICO3    10 prod
+        90  CITYICO3    10 gold
+        91  CITYICO3    10 power
+        92  CITYICO3    10 research
+        93  CITYICO3    10 black gold
+    */
+    for(itr = 0; itr < 6; itr++)
+    {
+        // IMG_CTY_10_Food@
+        IMG_CTY_10_Food[itr] = LBX_Reload_Next("BACKGRND", (88 + itr), GFX_Swap_Seg);
+    }
+
+    /*
+        95  CITYICO3    grey big bread
+    */
+    IMG_CTY_Neg_10_Food = LBX_Reload_Next("BACKGRND", 95, GFX_Swap_Seg);
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendUView()\n", __FILE__, __LINE__);
+#endif
+}
+
+// WZD o52p28
+void GFX_Swap_AppendItems(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
+#endif
+
+
+
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
+#endif
+}
 
 // WZD o52p29
 void Spellbook_Load_Small_Pictures(void)
@@ -498,7 +751,7 @@ void Spellbook_Load_Small_Pictures(void)
 void GFX_Swap_Cities(void)
 {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_Cities()\n", __FILE__, __LINE__);
 #endif
 
     GFX_Swap_Reset();
@@ -512,3 +765,42 @@ void GFX_Swap_Cities(void)
     dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
 #endif
 }
+
+// WZD o52p31
+void GFX_Swap_Overland(void)
+{
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+#endif
+
+    // ; resets the suballocations in GFX_Swap_Seg,
+    // ; effectively removing all of the data references
+    GFX_Swap_Reset();
+
+    // ; appends unit view and list graphics to GFX_Swap_Seg
+    // ; these are all in reserved EMM handles, so only
+    // ; headers will be created in the allocation
+    GFX_Swap_AppendUView();
+
+    // ; appends item and item power graphics to GFX_Swap_Seg
+    // ; these are all in reserved EMM handles, so only
+    // ; headers will be created in the allocation
+    // TODO  GFX_Swap_AppendItems();
+
+    // ; appends city scape graphics to GFX_Swap_Seg
+    // ; these are all in reserved EMM handles, so only
+    // ; headers will be created in the allocation
+    // TODO  GFX_Swap_AppndCtScap();
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_Cities()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+// WZD o52p32
+// WZD o52p33
+
+// WZD o52p34
+// GFX_Swap_Combat()

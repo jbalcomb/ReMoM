@@ -615,6 +615,9 @@ void Draw_Fields()
             {
                 case ft_Button:                 /*  0  0x00 */  //drake178: TODO
                 {
+                    // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Button");
+
+                    Draw_Field(itr_fields_count, 0);
 
                 } break;
                 case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
@@ -663,7 +666,7 @@ void Draw_Fields()
                 } break;
                 case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
                 {
-                    DLOG("switch(p_fields[itr_fields_count].type)  case ft_Grid");
+                    // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Grid");
                     
                 } break;
 
@@ -757,15 +760,16 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
     int16_t grid_x;  // grid_x = field_x % box_width
     int16_t grid_y;  // grid_y = field_y % box_height
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Field()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Field()\n", __FILE__, __LINE__);
+// #endif
 
     switch(p_fields[field_num].type)
     {
         case ft_Button:                 /*  0  0x00 */  //drake178: TODO
         {
-            DLOG("switch(p_fields[field_num].type) case ft_Button");
+            // DLOG("switch(p_fields[field_num].type) case ft_Button");
+
 // Old-Code: .\MoM_Rasm\_s34p71c.c
 // #ifdef STU_DEBUG
 //                 dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
@@ -780,41 +784,52 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 //                     (((p_fields[field_num].Bottom - p_fields[field_num].Top) / 2) + p_fields[field_num].Top - Half_Font_Height),
 //                     p_fields[field_num].Param0
 //                 );
-            if(up_down_flag == 0)
+            if(up_down_flag == 0)  /* up */
             {
-                DLOG("(up_down_flag == 0)");
+                // DLOG("(up_down_flag == 0)");
 
                 FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
 
                 Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
                 Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                // Print_Centered(
+                //     ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
+                //     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
+                //     (char *)p_fields[field_num].string
+                // );
                 Print_Centered(
-                    ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
+                    (((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1),
                     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
                     (char *)p_fields[field_num].string
                 );
             }
             else
             {
-                DLOG("(up_down_flag != 0)");
-                if(p_fields[field_num].Param3 == 0)
+                // DLOG("(up_down_flag != 0)");
+
+                if(p_fields[field_num].Param3 == 0)  /* FullFrames */
                 {
-                    DLOG("(p_fields[field_num].Param3 == 0)");
+                    // DLOG("(p_fields[field_num].Param3 == 0)");
                     FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
                     FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
                 }
                 else
                 {
-                    DLOG("(p_fields[field_num].Param3 != 0)");
+                    // DLOG("(p_fields[field_num].Param3 != 0)");
                     FLIC_Set_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg, 1);
                 }
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
 
                 Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
                 Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
+                // Print_Centered(
+                //     (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
+                //     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
+                //     (char *)p_fields[field_num].string
+                // );
                 Print_Centered(
-                    (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
+                    ((((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1) + down_x),
                     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
                     (char *)p_fields[field_num].string
                 );
@@ -867,10 +882,10 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
         {
-            DLOG("switch(p_fields[field_num].type) case ft_Grid");
+            // DLOG("switch(p_fields[field_num].type) case ft_Grid");
             if(up_down_flag == 1)  /* ¿ field up/down state: down ? */
             {
-                DLOG("(up_down_flag == 1)");
+                // DLOG("(up_down_flag == 1)");
 
                 /*
                     What it is, what is what, what is up?
@@ -969,20 +984,20 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Field()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Field()\n", __FILE__, __LINE__);
+// #endif
 }
 
 // WZD s36p73
 void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Push_Field_Down()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Push_Field_Down()\n", __FILE__, __LINE__);
+// #endif
 
 
-    if( (mouse_x >= 0) && (mouse_x < 320) && (mouse_y >= 0) && (mouse_y < 200) )
+    if( (mouse_x >= 0) && (mouse_x < SCREEN_WIDTH) && (mouse_y >= 0) && (mouse_y < SCREEN_HEIGHT) )
     {
         // DONT  if(mouse_installed != ST_FALSE)
         // DONT  {
@@ -1083,9 +1098,9 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
         Restore_Mouse_State();
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
+// #endif
 }
 
 

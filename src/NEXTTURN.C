@@ -8,6 +8,8 @@
 */
 
 #include "MoM.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
 #include "NEXTTURN.H"
 
 
@@ -168,27 +170,18 @@ MoX_UnOrg.H:void TILE_VisibilityUpdt(void);
 // WZD o119p01
 void Next_Turn_Calc(void)
 {
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
 #endif
 
+    // TOOD  Set_Random_Seed(RNG_AI_Turn_Seed);
+
+    Set_Mouse_List(1, mouse_list_hourglass);
 
 
-// push    [word ptr RNG_AI_Turn_Seed+2]   ; LFSR_HI
-// push    [word ptr RNG_AI_Turn_Seed]     ; LFSR_LO
-// call    Set_Random_Seed                 ; sets the linear feedback shift register to the
-//                                         ; specified state
+    All_City_Calculations();
 
-
-// mov     ax, offset mouse_list_hourglass
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
-
-
-// call    j_CTY_RecalculateAll            ; calls CTY_Recalculate for all cities
-//                                         ; (with all its BUGs)
 
 // call    j_AI_CullTheWeak                ; after turn 99, disbands any non-garrison AI unit that
 //                                         ; costs less than its wizard's average, and every 25
@@ -256,8 +249,8 @@ void Next_Turn_Calc(void)
     else
     {
 
-// loc_9EC56:                              ; decreases the peace counters for all wizards towards
-// call    j_WIZ_DecreasePeaceCs           ; all others
+    // drake178: decreases the peace counters for all wizards towards all others
+    // call    j_WIZ_DecreasePeaceCs
 
 // call    j_WIZ_GoldIncomes               ; calculate and apply each wizard's gold income from
 //                                         ; heroes, cities, and excess food, also including
@@ -279,8 +272,7 @@ void Next_Turn_Calc(void)
 //                                         ; WARNING: can temporarily store a negative spell index
 //                                         ; as the player's researched spell
 
-// call    j_OVL_DisableIncmBlink          ; sets OVL_BlinkNegIncomes to -1, which causes negative
-//                                         ; incomes to be drawn with a static color instead
+    // TODO  OVL_DisableIncmBlink();
 
 
 
@@ -343,11 +335,9 @@ void Next_Turn_Calc(void)
 // call    j_EVNT_RandomOffers             ; for hire offers for all players
 //                                         ; has multiple BUGs, both own and inherited
 
-// mov     ax, offset mouse_list_hourglass
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
+
+    Set_Mouse_List(1, mouse_list_hourglass);
+
 
 // call    j_CTY_CountNightshades          ; counts and sets the amount of Nightshades affecting
 //                                         ; every city (returns the last count)
@@ -364,30 +354,23 @@ void Next_Turn_Calc(void)
 //                                         ; wizards - if progress is 0, but contacted is 1,
 //                                         ; set progress to 1 and relations to no treaty
 
-// mov     ax, offset mouse_list_hourglass
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
 
-// call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside
-//                                         ; RE-EXPLORE in more context!
+    Set_Mouse_List(1, mouse_list_hourglass);
 
-// mov     ax, offset mouse_list_hourglass
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
+
+// call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
+
+
+    Set_Mouse_List(1, mouse_list_hourglass);
+
 
 // call    j_IDK_Dipl_s7373B
 
 // call    j_IDK_Dipl_s73FBF
 
-// mov     ax, offset mouse_list_hourglass
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
+
+    Set_Mouse_List(1, mouse_list_hourglass);
+
 
 // call    j_IDK_Dipl_s_7436F
 
@@ -399,22 +382,15 @@ void Next_Turn_Calc(void)
 
     }
 
-// loc_9EDF3:
+
 // call    j_IDK_SplCst_SplSkl_sC5AB1
 
-// call    j_GAME_DeleteDeadUnits          ; deletes all removed units from the unit table,
-//                                         ; updating the indices of all hired heroes accordingly
+// call    j_GAME_DeleteDeadUnits          ; deletes all removed units from the unit table, updating the indices of all hired heroes accordingly
 
-// call    j_Set_Unit_Draw_Priority        ; sets the draw priority field of each unit record
-//                                         ; based on attack strength, transport capability, and
-//                                         ; visibility (in the case of AI units)
 
-// push    [_map_plane]                    ; Plane
-// push    [_map_y]                        ; TopY
-// push    [_map_x]                        ; LeftX
-// call    j_Set_Entities_On_Map_Window    ; fills out the OVL_UnitsOnMap array with the unit or
-//                                         ; city shown on each of the map tiles visible in the
-//                                         ; 12 by 10 map window of the main overland display
+    Set_Unit_Draw_Priority();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
 
 // call    j_IDK_CtyBld_s4D357
 
@@ -445,28 +421,22 @@ void Next_Turn_Calc(void)
     // TODO  cap gold, mana 30000
 
 
-// call    j_OVL_EnableIncmBlink           ; sets OVL_BlinkNegIncomes to 0, enabling negative
-//                                         ; incomes to be drawn with their default blinking color
+    // TODO  OVL_EnableIncmBlink();
+    
 
 // call    j_GAME_AutoSave                 ; if the current turn is divisible by 4, saves the game
 //                                         ; into slot index 8 (SAVE9.GAM), the "continue" save
 //                                         ; that can not be loaded from the save/load screen, but
 //                                         ; is started automatically by wizards.exe
 
-// call    j_CTY_RecalculateAll            ; calls CTY_Recalculate for all cities
-//                                         ; (with all its BUGs)
 
-// call    Get_Random_Seed                 ; returns the current state of the linear feedback
-//                                         ; shift register in dx:ax
-// mov     [word ptr RNG_AI_Turn_Seed+2], dx
-// mov     [word ptr RNG_AI_Turn_Seed], ax
+    All_City_Calculations();
 
-// mov     ax, offset mouse_list_default
-// push    ax                              ; list
-// mov     ax, 1
-// push    ax                              ; count
-// call    Set_Mouse_List
 
+    // TODO  Get_Random_Seed(RNG_AI_Turn_Seed);
+
+
+    Set_Mouse_List(1, mouse_list_default);
 
 
 #ifdef STU_DEBUG
@@ -594,3 +564,61 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 // WZD o121p12
 // WZD o121p13
 // WZD o121p14
+
+
+
+
+/*
+    WIZARDS.EXE  ovr140
+*/
+
+// WZD s140p01
+// drake178: CTY_RecalculateAll()
+void All_City_Calculations(void)
+{
+    int16_t itr_cities;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: All_City_Calculations()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        Do_City_Calculations(itr_cities);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: All_City_Calculations()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
+// WZD s140p02
+// WZD s140p03
+// WZD s140p04
+// WZD s140p05
+// WZD s140p06
+// WZD s140p07
+// WZD s140p08
+// WZD s140p09
+// WZD s140p10
+// WZD s140p11
+// WZD s140p12
+// WZD s140p13
+// WZD s140p14
+// WZD s140p15
+// WZD s140p16
+// WZD s140p17
+// WZD s140p18
+// WZD s140p19
+// WZD s140p20
+// WZD s140p21
+// WZD s140p22
+// WZD s140p23
+// WZD s140p24
+// WZD s140p25
+// WZD s140p26
+// WZD s140p27
+// WZD s140p28
+// Cool_Off_Volcanoes

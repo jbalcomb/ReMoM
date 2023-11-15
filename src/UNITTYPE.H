@@ -3,7 +3,7 @@
 
 #include "MoX_TYPE.H"
 
-// sizeof=0x24
+// sizeof:  24h  36d
 struct s_UNIT_TYPE
 {
     /* 00 */  char **  Name;                    /* offset (00036AA0) */

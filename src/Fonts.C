@@ -52,11 +52,22 @@ SAMB_ptr palette_data;
 // WZD dseg:E7FE0                               ; 15Ch paragraphs
 SAMB_ptr palette_block;
 
-// WZD dseg:E800 00 00 00 00 00 00 00 00+VGA_AAColor_Array db 10h dup(0)
-// WZD dseg:E810 00                      VGA_Current_AA_Color db 0
-// WZD dseg:E811 00                      VGA_AA_Color_1 db 0
-// WZD dseg:E812 00                      VGA_AA_Color_2 db 0
-// WZD dseg:E813 00                      VGA_AA_Color_3 db 0
+// WZD dseg:E800
+// drake178: VGA_AAColor_Array
+uint8_t old_alias_colors[16];
+
+// WZD dseg:E810 00                      
+uint8_t VGA_Current_AA_Color;
+
+// WZD dseg:E811 00                      
+uint8_t VGA_AA_Color_1;
+
+// WZD dseg:E812 00                      
+uint8_t VGA_AA_Color_2;
+
+// WZD dseg:E813 00                      
+uint8_t VGA_AA_Color_3;
+
 // WZD dseg:E814
 int16_t Font_ColorIndex3;
 // WZD dseg:E816
@@ -225,6 +236,7 @@ void Set_Font_LF(int16_t spacing)
 }
 
 // WZD s17p08
+// overrides the default width of the SPACE character
 void Set_Font_Spacing_Width(int16_t spacing)
 {
     font_header->current_font_widths[0] = spacing;
@@ -294,11 +306,39 @@ void Set_Alias_Color(int16_t color)
 
 // WZD s17p13
 // drake178: ?
-// Save_Alias_Colors()
+void Save_Alias_Colors(void)
+{
+    int16_t itr_color_count;
+
+    for(itr_color_count = 0; itr_color_count < 16; itr_color_count++)
+    {
+        old_alias_colors[itr_color_count] = *(font_colors + (itr_color_count * 16) );
+    }
+
+    VGA_Current_AA_Color = GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS);
+    VGA_AA_Color_1 = GET_1B_OFS(font_style_data, FONT_HDR_POS_NORMAL_COLORS);
+    VGA_AA_Color_2 = GET_1B_OFS(font_style_data, FONT_HDR_POS_HIGHLIGHT_COLORS);
+    VGA_AA_Color_3 = GET_1B_OFS(font_style_data, FONT_HDR_POS_SPECIAL_COLORS);
+
+}
 
 // WZD s17p14
 // drake178: ?
-// Restore_Alias_Colors()
+void Restore_Alias_Colors(void)
+{
+    int16_t itr_color_count;
+
+    for(itr_color_count = 0; itr_color_count < 16; itr_color_count++)
+    {
+        *(font_colors + (itr_color_count * 16) ) = old_alias_colors[itr_color_count];
+    }
+
+    GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS) = VGA_Current_AA_Color;
+    GET_1B_OFS(font_style_data, FONT_HDR_POS_NORMAL_COLORS) = VGA_AA_Color_1;
+    GET_1B_OFS(font_style_data, FONT_HDR_POS_HIGHLIGHT_COLORS) = VGA_AA_Color_2;
+    GET_1B_OFS(font_style_data, FONT_HDR_POS_SPECIAL_COLORS) = VGA_AA_Color_3;
+
+}
 
 // PLATFORM  MSDOS  // WZD s17p15
 // PLATFORM  MSDOS  // drake178: VGA_DrawFarString()
@@ -405,11 +445,43 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 }
 
 
+
+// WZD s17p26
+// WZD s17p27
+// WZD s17p28
+// WZD s17p29
+// WZD s17p30
+// WZD s17p31
+// WZD s17p32
+// WZD s17p33
+
+
+
+// WZD s17p34
+int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side)
+{
+    int16_t next_x;
+
+    if(right_side < 0)
+    {
+        right_side = 0;
+    }
+
+    next_x = Print_Display(x, y, string, right_side);
+
+    return next_x;
+
+}
+
+
 // WZD s17p35
 // drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: Print() string: %s\n", __FILE__, __LINE__, string);
+#endif
 
     next_x = Print_Display(x, y, string, ST_FALSE);
 
@@ -499,11 +571,20 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 
 
 // WZD s17p37
+/*
+    handles text drawing control codes
+    if the string contains non-printable ASCII values, other than '\0', behavior changes
+        '\x01'  Set_Normal_Colors_On();
+        '\x02'  Set_Highlight_Colors_On();
+        '\x03'  Set_Special_Colors_On();
+        '\x04'  Set_Highlight_Colors_On();
+
+*/
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag)
 {
-    int16_t next_x;
+    int16_t next_x = 0;
     // char character_;
-    // Char_Index
+    int16_t str_idx;
     int16_t space_add;
     int16_t space_remainder;
     int16_t current_space;
@@ -525,16 +606,33 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         // DLOG("(full_flag != ST_FALSE)");
         current_space = 0;
         space_remainder = 0;
-        // Char_Index = 0;
+        str_idx = 0;
         space_count = 0;
 
-
-        // ...
-        space_add = 0;
-        // ...
-
+        while(str_idx++)
+        {
+            if(string[str_idx] != '\x00') { break; }            /*  ASCII  00h  00d  NUL (null)                  */
+            if(string[str_idx] != '\x0D') { break; }            /*  ASCII  0Dh  13d  CR (carriage return)        */
+            if(string[str_idx] != '\x14') { break; }            /*  ASCII  14h  20d  DC4 (device control 4)      */
+            if(string[str_idx] != '\x19') { break; }            /*  ASCII  15h  21d  NAK (negative acknowledge)  */
+            if(string[str_idx] != '\x15') { break; }            /*  ASCII  19h  25d  EM (end of medium)          */
+            if(string[str_idx] != '\x1D') { break; }            /*  ASCII  1Dh  29d  GS (group separator)        */
+            if(string[str_idx] == '\x20') { space_count++; }    /*  ASCII  20h  32d  SPACE                       */
+        }
 
         if(space_count == 0)
+        {
+            full_flag = ST_FALSE;
+        }
+
+        full_flag -= Get_String_Width(string);
+
+        if(full_flag > 0)
+        {
+            space_remainder = full_flag % space_count;
+            space_add = full_flag / space_count;
+        }
+        else
         {
             full_flag = ST_FALSE;
         }
@@ -546,15 +644,25 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
     while(string[ptr] != '\0')
     {
         character = string[ptr];
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
-// DELETE      dbg_prn("DEBUG: [%s, %d]: string[%d]: %d\n", __FILE__, __LINE__, ptr, string[ptr]);
-// DELETE      dbg_prn("DEBUG: [%s, %d]: character: %d\n", __FILE__, __LINE__, character);
-// DELETE  #endif
+
+// sw_character_values[9] = {1, 2, 3, 4, 13, 20, 21, 25, 29}
+// seg017:0AD1
+// 01 00 02 00 03 00 04 00 0D 00 14 00 15 00 19 00 1D 00
+// seg017:0AE3
+// switch_character
+// offset character_01
+// offset character_02
+// offset character_03
+// offset character_04
+// offset character_13_20
+// offset character_13_20
+// offset character_21
+// offset character_25_29
+// offset character_25_29
 
         switch(character)
         {
-            case 1:
+            case 1:  /* character == '\x01' */  /* ASCII   1h  1d  SOH (start of heading)  */  /* sw_character_values[0] == character */
             {
                 // DLOG("case 1:");
                 if(change_color_ok_flag != ST_FALSE)
@@ -590,24 +698,26 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
                     Set_Highlight_Colors_On();
                 }
             } break;
-            case 13:
+            case 13:  /*  ASCII  0Dh  13d  CR (carriage return)        */
                 // DLOG("case 13:");
-            case 20:
+            case 20:  /*  ASCII  14h  20d  DC4 (device control 4)      */
             {
                 // DLOG("case 20:");
                 print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
                 print_xpos += x;
             } break;
-            case 21:
+            case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
             {
                 // DLOG("case 21:");
+                goto Done;
             } break;
-            case 25:
+            case 25:  /*  ASCII  19h  25d  EM (end of medium)          */
                 // DLOG("case 25:");
-            case 29:
+            case 29:  /*  ASCII  1Dh  29d  GS (group separator)        */
             {
                 // DLOG("case 29:");
-                print_xpos += x + string[ptr++];
+                print_xpos = x + string[ptr+1];
+                ptr++;
             } break;
 
         }
@@ -627,7 +737,7 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         if(full_flag != ST_FALSE)
         {
             // DLOG("(full_flag != ST_FALSE)");
-            if(character == 32)  /* ASCII SPACE 0x20 ' ' */
+            if(character == 0x20)  /* ASCII SPACE 0x20 ' ' */
             {
                 print_xpos += space_add;
 
@@ -644,6 +754,8 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
 
     next_x = print_xpos;
+
+Done:
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
@@ -1289,36 +1401,37 @@ int16_t Get_String_Width(char * string)
 
 Next_Char:
     char_num = string[pos++];  // ~== LODSB
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: char_num: %d\n", __FILE__, __LINE__, char_num);
-// DELETE  #endif
-    char_num -= 32;
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: char_num: %d\n", __FILE__, __LINE__, char_num);
+//     dbg_prn("DEBUG: [%s, %d]: char: %c\n", __FILE__, __LINE__, char_num);
+// #endif
+    char_num -= 32;  // subtract the offset to the first printable character to get the index into the font data tables
 
     // Non-Printable Character
     if(char_num < 0)
     {
         char_num += 32;
-        if(char_num == 0)
+        if(char_num == 0)        /* ASCII  00h  00d  NUL (null) */
         {
             goto Done;
         }
-        else if(char_num == 13)
+        else if(char_num == 13)  /* ASCII  0Dh  13d  CR (carriage return) */
         {
             goto Done;
         }
-        else if(char_num == 20)
+        else if(char_num == 20)  /* ASCII  14h  20d  DC4 (device control 4) */
         {
             goto Done;
         }
-        else if(char_num == 21)
+        else if(char_num == 21)  /* ASCII  15h  21d  NAK (negative acknowledge) */
         {
             goto Done;
         }
-        else if(char_num == 25)
+        else if(char_num == 25)  /* ASCII  19h  25d  EM (end of medium) */
         {
             goto Done;
         }
-        else if(char_num == 29)
+        else if(char_num == 29)  /* ASCII  1Dh  29d  GS (group separator) */
         {
             goto Done;
         }
@@ -1336,18 +1449,20 @@ Next_Char:
     // MoO2: font_header.current_font_widths[char_num]
     // width = width + font_style_data[74 + char_num];
 
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + %d): %d\n", __FILE__, __LINE__, char_num, GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num));
-// DELETE  #endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + %d): %d\n", __FILE__, __LINE__, char_num, GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num));
+//     dbg_prn("DEBUG: [%s, %d]: font_header->current_font_widths[%d]: %d\n", __FILE__, __LINE__, char_num, font_header->current_font_widths[char_num]);
+// #endif
 
-    width = width + GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num);
-    width = width + horizontal_spacing;  // MoO2:    ax, font_header.current_horizontal_spacing
+    // width += GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num);
+    width += font_header->current_font_widths[char_num];
+    width += horizontal_spacing;  // MoO2:    ax, font_header.current_horizontal_spacing
 
 goto Next_Char;
 
 
 Done:
-    width = width - horizontal_spacing;
+    width = width - horizontal_spacing;  // remove the extra one that was added to the last character
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: END: Get_String_Width(string = %s) { width = %d }\n", __FILE__, __LINE__, string, width);
@@ -1647,6 +1762,40 @@ void Clear_Palette_Changes(int start_color, int end_color)
     }
 
 }
+
+
+
+// WZD s20p07
+// WZD s20p08
+// WZD s20p09
+// WZD s20p10
+
+// WZD s20p11
+// void Reset_Cycle_Palette_Color(void);
+
+// WZD s20p12
+ // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+/*
+$ grep Cycle_Palette_Color *
+LoadScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
+MainScr.C:    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
+MainScr.C:    Reset_Cycle_Palette_Color();
+MainScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);
+MoX.C:                // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
+PoC_Main.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+SBookScr.C:    // TODO  Reset_Cycle_Palette_Color();
+SCORE.C:    // TODO  UU_Reset_Cycle_Palette_Color();
+grep: msdos: Is a directory
+grep: mswin: Is a directory
+grep: stu: Is a directory
+win_MoM.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+*/
+
+// WZD s20p13
+// Update_Cycle(int *color_min, int *color_max)
+
+// WZD s20p14
+// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
 
 
 

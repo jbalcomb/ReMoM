@@ -224,11 +224,11 @@ void Set_Alias_Color(int16_t color);
 
 // WZD s17p13
 // drake178: ?
-// Save_Alias_Colors()
+void Save_Alias_Colors(void);
 
 // WZD s17p14
 // drake178: ?
-// Restore_Alias_Colors()
+void Restore_Alias_Colors(void);
 
 // WZD s17p15
 // drake178: VGA_DrawFarString()
@@ -255,6 +255,10 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
 // WZD s17p26
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
+
+
+// WZD s17p34
+int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side);
 
 // WZD s17p35
 // drake178: VGA_DrawTextLine()
@@ -306,6 +310,7 @@ int16_t Get_Current_Font_Color(void);
 */
 // WZD s18p01
 void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
+
 // WZD s18p02
 int16_t Print_Character(int16_t x, int16_t y, int16_t char_num);
 // WZD s18p03
@@ -382,6 +387,23 @@ void Set_Palette_Changes(int start_color, int end_color);
 
 // WZD s20p06
 void Clear_Palette_Changes(int start_color, int end_color);
+
+// WZD s20p07
+// WZD s20p08
+// WZD s20p09
+// WZD s20p10
+
+// WZD s20p11
+// void Reset_Cycle_Palette_Color(void);
+
+// WZD s20p12
+ // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+
+// WZD s20p13
+// Update_Cycle(int *color_min, int *color_max)
+
+// WZD s20p14
+// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
 
 
 

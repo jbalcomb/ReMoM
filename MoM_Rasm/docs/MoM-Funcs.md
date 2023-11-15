@@ -58,6 +58,23 @@ https://jrgraphix.net/r/Unicode/2500-257F
 ╪       256A
 ╫       256B
 
+¿ Light vs. Heavy ?
+
+│       2502
+─       2500
+┼       253C
+
+https://www.compart.com/en/unicode/U+2502
+Unicode Character “│” (U+2502)
+Name:	Box Drawings Light Vertical
+
+https://www.compart.com/en/unicode/U+2500
+Unicode Character “─” (U+2500)
+Name:	Box Drawings Light Horizontal
+
+https://www.compart.com/en/unicode/U+253C
+Unicode Character “┼” (U+253C)
+Name:	Box Drawings Light Vertical and Horizontal
 
 
 

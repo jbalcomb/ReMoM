@@ -13,6 +13,19 @@
 "SZ"    "size"
 */
 
+struct s_FLIC_HDR
+{
+    /* 00 */ int16_t width;
+    /* 02 */ int16_t height;
+    /* 04 */ int16_t current_frame;
+    /* 06 */ int16_t frame_count;
+    /* 08 */ int16_t loop_frame;
+    /* 0A */ int8_t emm_handle_number;
+    /* 0B */ int8_t emm_logical_page_number;
+    /* 0C */ uint16_t emm_logical_page_offset;
+    /* 0E */ int16_t palette_header_offset;
+};
+
 #define SZ_FLIC_HDR                             16
 #define SZ_FLIC_PAL_HDR                          8
 #define SZ_FLIC_FRM_PAL_HDR                      4
@@ -186,6 +199,10 @@ void Load_Palette_From_Animation(SAMB_ptr picture);
 // WZD s30p11
 void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr p_FLIC_File);
 
+// WZD s30p12
+void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture);
+
+
 // WZD s30p13
 // AKA LBX_IMG_BuildFrame();
 void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
@@ -239,6 +256,36 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color);
 // drake178: LBX_IMG_ColorScrmblr
 // MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
 void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t color, uint8_t * color_list);
+
+
+
+/*
+    WIZARDS.EXE  seg031
+*/
+
+// WZD s31p01
+// drake178: VGA_DrawPartialImage()
+void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
+
+// WZD s31p02
+// drake178: VGA_DrawPartImage_R()
+// MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
+void Clipped_Remap_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
+
+
+/*
+    WIZARDS.EXE  seg032
+*/
+
+// WZD s32p01
+// drake178: VGA_DrawPartEmsImg()
+
+// WZD s32p02
+// drake178: EMM_MapNextIMGPages()
+
+// WZD s32p03
+// drake178: VGA_DrawPartEmsImg_R()
+
 
 
 /*

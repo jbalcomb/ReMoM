@@ -41,27 +41,28 @@
 #define NUM_MAGIC_TYPES        5
 
 // MoO2: _NUM_SHIPS, _NUM_COLONIES, _NUM_PLAYERS, _NUM_STARS, _NUM_NEBULAS
-#define PLANE_COUNT_MAX        2
-#define PLAYER_COUNT_MAX       6
-#define NUM_DIFFICULTY_LEVEL   5  /* Intro, Easy, Normal, Hard, Impossible */
-#define NUM_UNIT_ENCHANTMENTS  32
-#define NUM_CITY_ENCHANTMENTS 26
-#define NUM_OVERLAND_ENCHANTMENTS 24
-#define CITY_COUNT_MAX       100
-#define UNIT_COUNT_MAX      1009
-#define TOWER_COUNT_MAX        6
-#define FORTRESS_COUNT_MAX     6
-// #define NODE_COUNT_MAX        30
-// #define LAIR_COUNT_MAX       102
-#define NUM_PLANES             2
-#define NUM_PLAYERS            6
-#define NUM_CITIES           100
-#define NUM_UNITS           1009
-#define NUM_HEROES             6  // "Hero Slots"
-#define NUM_TOWERS             6
-#define NUM_FORTRESSES         6
-#define NUM_NODES             30
-#define NUM_LAIRS            102
+#define PLANE_COUNT_MAX             2
+#define PLAYER_COUNT_MAX            6
+#define NUM_DIFFICULTY_LEVEL        5   /* Intro, Easy, Normal, Hard, Impossible */
+#define NUM_UNIT_ENCHANTMENTS      32
+#define NUM_CITY_ENCHANTMENTS      26   // ¿ wha'hapen? CTY_EnchantsUpkeep() has 26, but s_CITY has 25 ? Includes Nightshade!
+#define NUM_OVERLAND_ENCHANTMENTS  24
+#define NUM_BUILDINGS              36
+#define CITY_COUNT_MAX            100
+#define UNIT_COUNT_MAX           1009
+#define TOWER_COUNT_MAX             6
+#define FORTRESS_COUNT_MAX          6
+// #define NODE_COUNT_MAX          30
+// #define LAIR_COUNT_MAX         102
+#define NUM_PLANES                  2
+#define NUM_PLAYERS                 6
+#define NUM_CITIES                100
+#define NUM_UNITS                1009
+#define NUM_HEROES                  6   // "Hero Slots"
+#define NUM_TOWERS                  6
+#define NUM_FORTRESSES              6
+#define NUM_NODES                  30
+#define NUM_LAIRS                 102
 
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
@@ -167,16 +168,13 @@ WIZARDS.LBX
 
 #define WORLD_WIDTH         60  // in Squares
 #define WORLD_HEIGHT        40  // in Squares
-#define WORLD_X_MIN          0  // in Squares
-#define WORLD_X_MAX         59  // in Squares
-#define WORLD_Y_MIN          0  // in Squares
-#define WORLD_Y_MAX         39  // in Squares
-#define _MAP_MAX_X      60
-#define _MAP_MAX_Y      40
+
+#define _MAP_MAX_X      60  // MoO2
+#define _MAP_MAX_Y      40  // MoO2
+
 #define WORLD_SIZE          2400
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
-
 
 #define MAP_WIDTH           12  // in Squares
 #define MAP_HEIGHT          10  // in Squares
@@ -192,6 +190,28 @@ WIZARDS.LBX
 #define REDUCED_MAP_SCREEN_Y         21  // in Pixels
 #define REDUCED_MAP_SQUARE_WIDTH      1  // in Pixels
 #define REDUCED_MAP_SQUARE_HEIGHT     1  // in Pixels
+
+#define WORLD_X_MIN          0  // in Squares
+// #define WORLD_X_MAX         59  // in Squares
+#define WORLD_X_MAX         (WORLD_WIDTH - 1)  // in Squares
+#define WORLD_Y_MIN          0  // in Squares
+// #define WORLD_Y_MAX         39  // in Squares
+#define WORLD_Y_MAX         (WORLD_HEIGHT - 1)  // in Squares
+
+#define MAP_X_MIN          0  // in Squares
+#define MAP_X_MAX         (MAP_WIDTH - 1)  // in Squares
+#define MAP_Y_MIN          0  // in Squares
+#define MAP_Y_MAX         (MAP_HEIGHT - 1)  // in Squares
+
+// {}
+#define MAP_SQUARE_SCREEN_X_MIN          0  // in Pixels
+// #define MAP_SQUARE_SCREEN_X_MAX        300  // in Pixels
+#define MAP_SQUARE_SCREEN_X_MAX        (MAP_SCREEN_X + ((MAP_WIDTH - 1) * SQUARE_WIDTH))  // in Pixels
+#define MAP_SQUARE_SCREEN_Y_MIN          0  // in Pixels
+// #define MAP_SQUARE_SCREEN_Y_MAX        180  // in Pixels
+#define MAP_SQUARE_SCREEN_Y_MAX        (MAP_SCREEN_Y + ((MAP_HEIGHT - 1) * SQUARE_HEIGHT))   // in Pixels
+
+
 
 #define MOVEMENT_MAP_SCREEN_X         0
 #define MOVEMENT_MAP_SCREEN_Y        20
@@ -366,6 +386,55 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 #define MM_WALKING          7
 
 
+
+
+
+/*
+    Buildings
+*/
+// drake178: struc BLD_LIST
+#define NONE                0x00
+#define HOUSING             0x01
+#define TRADE_GOODS         0x02
+#define BARRACKS            0x03
+#define ARMORY              0x04
+#define FIGHTERS_GUILD      0x05
+#define ARMORERS_GUILD      0x06
+#define WAR_COLLEGE         0x07
+#define SMITHY              0x08
+#define STABLE              0x09
+#define ANIMISTS_GUILD      0x0A
+#define FANTASTIC_STABLE    0x0B
+#define SHIPWRIGHT_GUILD    0x0C
+#define SHIP_YARD           0x0D
+#define MARITIME_GUILD      0x0E
+#define SAWMILL             0x0F
+#define LIBRARY             0x10
+#define SAGES_GUILD         0x11
+#define ORACLE              0x12
+#define ALCHEMISTS_GUILD    0x13
+#define UNIVERSITY          0x14
+#define WIZARDS_GUILD       0x15
+#define SHRINE              0x16
+#define TEMPLE              0x17
+#define PARTHENON           0x18
+#define CATHEDRAL           0x19
+#define MARKETPLACE         0x1A
+#define BANK                0x1B
+#define MERCHANTS_GUILD     0x1C
+#define GRANARY             0x1D
+#define FARMERS_MARKET      0x1E
+#define FORESTERS_GUILD     0x1F
+#define BUILDERS_HALL       0x20
+#define MECHANICIANS_GUILD  0x21
+#define MINERS_GUILD        0x22
+#define CITY_WALLS          0x23
+
+
+
+
+
+
 /*
     Unit Abilities
 */
@@ -442,9 +511,26 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 
 
 /*
+    Spells
+*/
+
+/*
+// ¿ enum ? ¿ seo_ for Spell - Enchantment - Overland; oe_ for Overland Enchantment vs. ue_ and ce_ for Unit and City ?
+¿ spaces ?
+¿ articles ?
+¿ as seen in the LBX's ?
+
+SPL_
+SPL_UE_
+SPL_CE_
+SPL_OE_
+
+*/
+
+/*
     Overland Enchantments
 */
-// ¿ enum ? ¿ seo_ for Spell - Enchantment - Overland; oe_ for Overland Enchantment vs. ue_ and ce_ for Unit and City ?
+
 #define ETERNAL_NIGHT       0x00
 #define EVIL_OMENS          0x01
 #define ZOMBIE_MASTERY      0x02

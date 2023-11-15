@@ -59,6 +59,9 @@ void Pump_Events(void);
 void Pump_Paints(void);
 
 
+// win_EMS.C
+void EMS_Startup(void);
+
 
 // win_MD.C
 extern int16_t platform_mouse_button_status;

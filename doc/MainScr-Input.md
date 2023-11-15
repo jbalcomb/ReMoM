@@ -177,6 +177,9 @@ Game Buttons            {_info_button, _game_button, _cities_button, _magic_butt
 ### Section 4.2
 Game Buttons            {_plane_button}
 
+### BEGIN: Game Buttons - Info Button
+
+
 ### BEGIN: Game Buttons - Game Button
 
 ### BEGIN: Game Buttons - Cities Button

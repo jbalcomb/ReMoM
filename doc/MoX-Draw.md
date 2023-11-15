@@ -9,6 +9,32 @@ Draw_Picture()
     |-> Draw_Picture_ASM()
     |-> Remap_Draw_Picture_ASM()
 
+Clipped_Draw()
+    |-> Clipped_Draw_Frame()
+    |-> Clipped_Remap_Draw_Frame()
+
+
+AKA FLIC_Draw_XY_Wnd()
+AKA FLIC_Draw_Windowed()
+    |-> VGA_DrawPartialImage()
+    |-> VGA_DrawPartImage_R()
+    |-> VGA_DrawPartEmsImg()
+
+// WZD s31p01
+void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, SAMB_ptr frame_data);
+// WZD s31p02
+void Clipped_Remap_Draw_Frame(int16_t x2, int16_t y2, int16_t width, SAMB_ptr frame_data);
+
+¿ RLE ?
+¿ ASM ?
+
+
+
+
+
+
+¿ MoO2  "Draw" ... "Animated_Sprite" vs. "Picture" vs. "Bitmap" ?
+
 
 
 ¿¿¿
@@ -19,6 +45,14 @@ Remap Colors Flag
 ???
 OON 'getter' Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)  ... full_store_flag = FLIC_GET_FRAME_TYPE(p_FLIC_Header);
     then Add_Button_Info() ... p_fields[fields_count].Param3 = Get_Full_Store_Flag(pict_seg);
+
+
+lodsb                                   ; Frame Byte #1: Op/Count
+
+
+cmp     al, 0FFh                        ; Op = 255 = Skip Column
+jz      short @@NextColumn2
+
 
 
 
