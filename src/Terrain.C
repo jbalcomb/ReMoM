@@ -694,8 +694,64 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_GetGoldOreGold  
 // WZD s161p10
 // TILE_GetGemGold      
+
 // WZD s161p11
-// TILE_GetSpecialPower 
+// drake178: TILE_GetSpecialPower()
+int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
+{
+    int16_t terrain_special;  // _DI_
+    int16_t mana_units;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+
+    mana_units = 0;
+
+    if(terrain_special == 0x06 /* TS_MithrilOre */)
+    {
+        mana_units = 1;
+    }
+
+    if(terrain_special == 0x07 /* TS_AdamantiumOre */)
+    {
+        mana_units = 2;
+    }
+
+    if(terrain_special == 0x08 /* TS_QuorkCrystals */)
+    {
+        mana_units = 3;
+    }
+
+    if(terrain_special == 0x09 /* TS_CrysxCrystals */)
+    {
+        mana_units = 5;
+    }
+
+    if(are_dwarf != ST_FALSE)
+    {
+        mana_units = (mana_units * 2);
+    }
+
+    if(have_miners_guild != ST_FALSE)
+    {
+        mana_units = ((mana_units * 3) / 2);
+    }
+
+    if(City_Map_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+        mana_units = (mana_units / 2);
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+    return mana_units;
+}
+
 // WZD s161p12
 // TILE_GetMithrilPower 
 // WZD s161p13

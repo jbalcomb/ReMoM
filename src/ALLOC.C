@@ -223,8 +223,9 @@ SA_GET_USED(SAMB_head): 2345
     DBG_ORIG__TOWERS = _TOWERS;
     _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
     DBG_ORIG__LAIRS = _LAIRS;
-    _events_table = (uint8_t *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
-    DBG_ORIG__events_table = _events_table;
+    // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
+    events_table = (int16_t *)Allocate_Space(7);
+    DBG_ORIG__events_table = events_table;
     TBL_Hero_Names = Allocate_Space(37);
     DBG_ORIG_TBL_Hero_Names = TBL_Hero_Names;
     TBL_Items = (struct s_ITEM *)Allocate_Space(433);

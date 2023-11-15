@@ -123,6 +123,9 @@ int16_t City_Gold_Production(int16_t city_idx);
 int16_t City_Research_Production(int16_t city_idx);
 
 // WZD s142p14
+// drake178: CTY_GetPower()
+int16_t City_Mana_Production(int16_t city_idx);
+
 // WZD s142p15
 // WZD s142p16
 // WZD s142p17

@@ -6517,7 +6517,12 @@ void Main_Screen_Draw_Summary_Window(void)
     // s_EVENT_DATA.Conjunction_Sorcery.Status], 2
     // 0x0403af5c  access violation: 0x403AF5C
     // _events_table[]  0x0403af5c
-    if(_events_table[92] == 2)
+    // // // // if(events_table[92] == 2)
+    // // // if(*((int16_t *)(events_table + 92)) == 2)
+    // // int16_t * ptr_events_table;
+    // // ptr_events_table = (int16_t *)(&events_table + 92);
+    // if(*((int16_t *)(&events_table + 92)) == 2)
+    if(*(events_table + 46) == 2)
     {
         colors[0] = 0;
         colors[1] = 172;
@@ -6529,7 +6534,9 @@ void Main_Screen_Draw_Summary_Window(void)
     }
     // TBL_Events
     // s_EVENT_DATA.Conjunction_Chaos.Status], 2
-    if(_events_table[84] == 2)
+    // if(events_table[84] == 2)
+    // if(*((int16_t *)(&events_table + 84)) == 2)
+    if(*(events_table + 42) == 2)
     {
         colors[0] = 0;
         colors[1] = 201;
@@ -6541,7 +6548,9 @@ void Main_Screen_Draw_Summary_Window(void)
     }
     // TBL_Events
     // s_EVENT_DATA.Conjunction_Nature.Status], 2
-    if(_events_table[88] == 2)
+    // if(_events_table[88] == 2)
+    // if(*((int16_t *)(&events_table + 88)) == 2)
+    if(*(events_table + 44) == 2)
     {
         colors[0] = 0;
         colors[1] = 217;
@@ -6557,7 +6566,9 @@ void Main_Screen_Draw_Summary_Window(void)
 
     // TBL_Events
     // s_EVENT_DATA.Bad_Moon.Status], 2
-    if(_events_table[80] == 2)
+    // if(events_table[80] == 2)
+    // if(*((int16_t *)(&events_table + 80)) == 2)
+    if(*(events_table + 40) == 2)
     {
         colors[0] = 0;
         colors[1] = 9;
@@ -6570,7 +6581,9 @@ void Main_Screen_Draw_Summary_Window(void)
 
     // TBL_Events
     // s_EVENT_DATA.Good_Moon.Status], 2
-    if(_events_table[76] == 2)
+    // if(events_table[76] == 2)
+    // if(*((int16_t *)(&events_table + 76)) == 2)
+    if(*(events_table + 38) == 2)
     {
         colors[0] = 0;
         colors[1] = 15;
@@ -6583,7 +6596,9 @@ void Main_Screen_Draw_Summary_Window(void)
 
     // TBL_Events
     // s_EVENT_DATA.Mana_Short.Status], 2
-    if(_events_table[96] == 2)
+    // if(events_table[96] == 2)
+    // if(*((int16_t *)(&events_table + 96)) == 2)
+    if(*(events_table + 48) == 2)
     {
         colors[0] = 0;
         colors[1] = 123;

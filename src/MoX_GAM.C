@@ -189,7 +189,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     fwrite(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
 
-    fwrite(_events_table, 1, 100, file_pointer);
+    fwrite(events_table, 1, 100, file_pointer);
 
     fwrite(TBL_Terrain_Flags, 2, 2400, file_pointer);
 
@@ -405,7 +405,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 #endif
     assert(file_pointer_position == 117588);
 
-    fread(_events_table, 1, 100, file_pointer);
+    fread(events_table, 1, 100, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
 #ifdef STU_DEBUG
