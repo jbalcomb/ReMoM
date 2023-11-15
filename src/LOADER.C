@@ -106,7 +106,8 @@ char rsc0C_MAPBACK_LBX[] = "MAPBACK.LBX";
 // WZD dseg:29D2
 char terrain_lbx_file[] = "TERRAIN.LBX";
 
-// dseg:29DE terrstat_lbx_file db 'TERRSTAT',0
+// WZD dseg:29DE
+char terrstat_lbx_file[] = "TERRSTAT";
 
 // WZD dseg:29E7
 char mapback_lbx_file[] = "MAPBACK";
@@ -273,31 +274,11 @@ void Terrain_Init(void)
     //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
     // }
     // can't do like they did, because pointers are 8 bytes now
-    TBL_Unrest_Hack = LBX_Load_Data("TERRSTAT.LBX", 1, 0, 1, 196);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest_Hack: %p\n", __FILE__, __LINE__, TBL_Unrest_Hack);
-#endif
-
+    TBL_Unrest_Hack = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
     for(itr = 0; itr < 14; itr++)
     {
         TBL_Unrest[itr] = (SAMB_ptr)(TBL_Unrest_Hack + (14 * itr));
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[0]: %p\n", __FILE__, __LINE__, TBL_Unrest[0]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[1]: %p\n", __FILE__, __LINE__, TBL_Unrest[1]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[2]: %p\n", __FILE__, __LINE__, TBL_Unrest[2]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[3]: %p\n", __FILE__, __LINE__, TBL_Unrest[3]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[4]: %p\n", __FILE__, __LINE__, TBL_Unrest[4]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[5]: %p\n", __FILE__, __LINE__, TBL_Unrest[5]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[6]: %p\n", __FILE__, __LINE__, TBL_Unrest[6]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[7]: %p\n", __FILE__, __LINE__, TBL_Unrest[7]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[8]: %p\n", __FILE__, __LINE__, TBL_Unrest[8]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[9]: %p\n", __FILE__, __LINE__, TBL_Unrest[9]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[10]: %p\n", __FILE__, __LINE__, TBL_Unrest[10]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[11]: %p\n", __FILE__, __LINE__, TBL_Unrest[11]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[12]: %p\n", __FILE__, __LINE__, TBL_Unrest[12]);
-    dbg_prn("DEBUG: [%s, %d]: TBL_Unrest[13]: %p\n", __FILE__, __LINE__, TBL_Unrest[13]);
-#endif
 
 
     // Loop MAPBACK 0 to 13:

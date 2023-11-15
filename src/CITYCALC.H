@@ -111,6 +111,9 @@ int16_t City_Food_Production(int16_t city_idx);
 int16_t City_Production_Production(int16_t city_idx);
 
 // WZD s142p12
+// drake178: CTY_GetGold()
+int16_t City_Gold_Production(int16_t city_idx);
+
 // WZD s142p13
 // WZD s142p14
 // WZD s142p15

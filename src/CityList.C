@@ -332,7 +332,7 @@ void CityList_Screen_Draw(void)
     uint8_t colors2[6];
     int16_t production_time;
     int16_t production_cost;
-    int16_t city_producing;
+    int16_t city_construction;
     int16_t unit_type;
     int16_t city_idx;
 
@@ -484,20 +484,20 @@ void CityList_Screen_Draw(void)
         // DEMO  Print_Integer_Right(168, (27 + 14 * itr_list_item_count), (_CITIES[city_idx].Gold - _CITIES[city_idx].Upkeep));
         // DEMO  Print_Integer_Right(188, (27 + 14 * itr_list_item_count), _CITIES[city_idx].Production);
 
-        city_producing = _CITIES[city_idx].Producing;
-        if(city_producing < 100)  /* building */
+        city_construction = _CITIES[city_idx].construction;
+        if(city_construction < 100)  /* building */
         {
-            // DOS  String_Copy_Far(GUI_String_1, 0, (FP_OFF(build_data_table) + (sizeof(build_data_table) * city_producing)), FP_SEG(build_data_table));
-            // DEMO  strcpy(GUI_String_1, build_data_table[city_producing].name);
+            // DOS  String_Copy_Far(GUI_String_1, 0, (FP_OFF(build_data_table) + (sizeof(build_data_table) * city_construction)), FP_SEG(build_data_table));
+            // DEMO  strcpy(GUI_String_1, build_data_table[city_construction].name);
         }
         else  /* unit */
         {
-            unit_type = city_producing - 100;
+            unit_type = city_construction - 100;
             // TODO  strcpy(GUI_String_1, *_unit_type_table[unit_type].Name);
         }
         // DEMO  Print(196, (27 + 14 * itr_list_item_count), GUI_String_1);
 
-        // TODO  production_cost = CTY_GetProduceCost(city_producing, city_idx);
+        // TODO  production_cost = CTY_GetProduceCost(city_construction, city_idx);
         // TODO  production_time = sub_340E2(production_cost, city_idx);
         // DEMO  Print_Integer_Right(287, (27 + 14 * itr_list_item_count), production_time);
 
@@ -545,9 +545,9 @@ void Build_City_List(void)
 
             citylist_city_count++;
 
-            if(_CITIES[itr_cities].Producing == 0)  /* ¿ None/Nothing/Unset ? */
+            if(_CITIES[itr_cities].construction == 0x00)  /* ¿ None/Nothing/Unset ? */
             {
-                _CITIES[itr_cities].Producing = 2;  /* ¿ Housing ? */
+                _CITIES[itr_cities].construction = 0x02;  /* ¿ Housing ? */
             }
         }
     }

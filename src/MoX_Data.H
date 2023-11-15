@@ -810,7 +810,7 @@ struct s_CITY
     /* 18 */ int16_t Pop_10s;
     /* 1A */ int8_t PlayerBits;
     /* 1B */ int8_t Unused_1Bh;
-    /* 1C */ int16_t Producing;  /* < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
+    /* 1C */ int16_t construction;  /* < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t Building_Count;
     /* 1F */ struct s_CITY_BUILDINGS buildings;
     /* 43 */ // struct s_CITY_ENCHANTMENTS enchantments;
@@ -819,12 +819,12 @@ struct s_CITY
              uint8_t enchantments[26];
     /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;
-    /* 60 */ int8_t Gold;
+    /* 60 */ int8_t gold_units;
     /* 61 */ int8_t Upkeep;
     /* 62 */ int8_t Power;
     /* 63 */ int8_t Research;
     /* 64 */ int8_t food_units;
-    /* 65 */ int8_t RoadConn_BitField[13];
+    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
 };
 
 // sizeof:  18h  24d
