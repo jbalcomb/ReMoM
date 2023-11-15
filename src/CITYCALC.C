@@ -41,7 +41,7 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].production_units      = City_Production_Production(city_idx);
     _CITIES[city_idx].gold_units            = City_Gold_Production(city_idx);
     _CITIES[city_idx].building_maintenance  = City_Gold_Mainanence(city_idx);
-    // TOOD  _CITIES[city_idx].Research    = j_CTY_GetResearch(city_idx);
+    _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
     // TOOD  _CITIES[city_idx].Power       = j_CTY_GetPower(city_idx);
 
     if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
@@ -267,7 +267,7 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
         {
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
-                City_Gold_Balance += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].Upkeep);
+                City_Gold_Balance += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
                 City_Food_Surplus += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
             }
         }
@@ -681,7 +681,7 @@ void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research,
     {
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
-            City_Research += _CITIES[itr_cities].Research;
+            City_Research += _CITIES[itr_cities].research_units;
         }
     }
 
@@ -1392,6 +1392,73 @@ int16_t City_Production_Production(int16_t city_idx)
 
 
 // WZD s142p13
+// drake178: CTY_GetResearch()
+int16_t City_Research_Production(int16_t city_idx)
+{
+    int16_t city_owner_idx;
+
+    int16_t research_units;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+#endif
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    if(
+        (_CITIES[city_idx].population == 0) &&
+        (city_owner_idx != NEUTRAL_PLAYER_IDX)
+    )
+    {
+
+        research_units = 0;
+
+        if(
+            (_CITIES[city_idx].buildings[LIBRARY] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[LIBRARY] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 2;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[SAGES_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[SAGES_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 3;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[UNIVERSITY] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[UNIVERSITY] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 5;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 8;
+        }
+
+    }
+    else
+    {
+        research_units = 0;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+#endif
+
+    return research_units;
+}
+
+
 // WZD s142p14
 // WZD s142p15
 // WZD s142p16

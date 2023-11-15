@@ -10,68 +10,76 @@ Spell Casting Skill
 
 
 
-food
-production
-gold
-mana
-research
+food  
+production  
+gold  
+mana  
+research  
 
-production
-maintenance
+production  
+maintenance  
 
-income
-reserves
+income  
+reserves  
 
 
 
 ## ¿ Per City ?
 
-~ Current
-    Population
-    Population Growth
-    Farmers
-    Workers
-    Rebels
-    Food
-    Production
-    Gold
-    Mana
-    Research
+~ Current  
+    Population  
+    Population Growth  
+    Farmers  
+    Workers  
+    Rebels  
+    Food  
+    Production  
+    Gold  
+    Mana  
+    Research  
 
-'Resource Window' - Food, Production, Gold, Mana, Research
-
-
-Gold Maintenance
+'Resource Window' - Food, Production, Gold, Mana, Research  
 
 
-Food Required  (Minimum Amount to support Population)
-Gold Required  (Upkeed Cost of Buildings)  ("[net gold income (income - maintenance)]")
+Gold Maintenance  
 
 
-Food Per Farmer
-Production Per Farmer
-Production Per Worker
+Food Required  (Minimum Amount to support Population)  
+Gold Required  (Upkeed Cost of Buildings)  ("[net gold income (income - maintenance)]")  
 
-Race Modifier for Unrest
-Race Modifier for Food Units
-Race Modifier for Production Units
-Race Modifier for Gold Units
-Race Modifier for Mana Units
-Race Modifier for Research Units
 
-Unrest From Buildings
-Food From Buildings
-Production From Buildings
-Gold From Buildings
-Mana From Buildings
-Research From Buildings
+Food Per Farmer  
+Production Per Farmer  
+Production Per Worker  
 
-Building Modifier for Unrest
-Building Modifier for Food Units
-Building Modifier for Production Units
-Building Modifier for Gold Units
-Building Modifier for Mana Units
-Building Modifier for Research Units
+Race Modifier for Unrest  
+Race Modifier for Food Units  
+Race Modifier for Production Units  
+Race Modifier for Gold Units  
+Race Modifier for Mana Units  
+Race Modifier for Research Units  
+
+Unrest From Buildings  
+Food From Buildings  
+Production From Buildings  
+Gold From Buildings  
+Mana From Buildings  
+Research From Buildings  
+
+Building Modifier for Unrest  
+Building Modifier for Food Units  
+Building Modifier for Production Units  
+Building Modifier for Gold Units  
+Building Modifier for Mana Units  
+Building Modifier for Research Units  
+
+Building Contribution for Unrest  
+Building Contribution for Food Units  
+Building Contribution for Production Units  
+Building Contribution for Gold Units  
+Building Contribution for Mana Units  
+Building Contribution for Research Units  
+
 
 
 ## ||==>> Reserves <<==||
@@ -97,8 +105,8 @@ Next_Turn_Proc()
             _CITIES[] s_CITY.food_units  
             _CITIES[] s_CITY.production_units  
             _CITIES[] s_CITY.gold_units  
-            _CITIES[] s_CITY.Upkeep  
-            _CITIES[] s_CITY.Research  
+            _CITIES[] s_CITY.building_maintenance  
+            _CITIES[] s_CITY.research_units  
             _CITIES[] s_CITY.Power  
 
         |-> WIZ_GoldIncomes()  

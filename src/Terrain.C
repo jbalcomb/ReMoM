@@ -1,3 +1,4 @@
+// #pragma runtime_checks( "", off )
 /*
     Terrain
     Terrain Types
@@ -514,6 +515,8 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Road_Trade_Bonus()\n", __FILE__, __LINE__);
 #endif
 
+    trade_bonus = 0;  // DNE in Dasm;  RTC used, but uninitialized
+
     for(itr_roadconn = 0; itr_roadconn < 13; itr_roadconn++)
     {
         if(_CITIES[city_idx].road_connections[itr_roadconn] != 0)
@@ -540,6 +543,7 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
     }
 
     // Maximum Road Connection Trade Bonus
+    // Run-Time Check Failure #3 - The variable 'trade_bonus' is being used without being initialized.
     if( (_CITIES[city_idx].population * 3) < trade_bonus)
     {
         trade_bonus = (_CITIES[city_idx].population * 3);

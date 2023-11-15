@@ -825,7 +825,7 @@ struct s_CITY
     /* 60 */ int8_t gold_units;  // AKA Income
     /* 61 */ int8_t building_maintenance;  // AKA Upkeep
     /* 62 */ int8_t Power;
-    /* 63 */ int8_t Research;
+    /* 63 */ int8_t research_units;
     /* 64 */ int8_t food_units;
     /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
 };
