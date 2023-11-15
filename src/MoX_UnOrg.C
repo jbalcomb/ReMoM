@@ -282,7 +282,15 @@ void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, u
 // drake178: ?
 void Load_BUILDDAT(void)
 {
-    build_data_table = (struct s_BUILDDAT *)LBX_Load_Data(cnst_BUILDDAT_File, 0, 0, 36, 52);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_BUILDDAT()\n", __FILE__, __LINE__);
+#endif
+
+    build_data_table = (struct s_BUILDDAT *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Load_BUILDDAT()\n", __FILE__, __LINE__);
+#endif
 }
 
 

@@ -34,13 +34,21 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp);
 int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
 
 // WZD s161p05
-// TILE_GetWaterGold    
+// drake178: TILE_GetWaterGold()
+int16_t Map_Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p06
-// CTY_GetRoadGold      
+// drake178: CTY_GetRoadGold()
+int16_t City_Road_Trade_Bonus(int16_t city_idx);
+
 // WZD s161p07
-// TILE_IsRiver         
+// drake178: TILE_IsRiver()
+int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p08
-// TILE_GetSpecialGold  
+// drake178: TILE_GetSpecialGold()
+int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
+
 // WZD s161p08
 // TILE_GetSilverGold   
 // WZD s161p09
@@ -76,7 +84,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
 
 // WZD s161p24
 // drake178: TILE_IsSailable()
-int16_t Terrain_Is_Sailable(int16_t world_x, int16_t world_y, int16_t map_plane);
+int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p25
 // TILE_IsDeepOcean     

@@ -70,7 +70,11 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx);
 int16_t WIZ_GetFame(int16_t player_idx);
 
 // WZD o120p21
+
 // WZD o120p22
+// drake178: CTY_GetGoldUpkeep()
+int16_t City_Gold_Mainanence(int16_t city_idx);
+
 // WZD o120p23
 // WZD o120p24
 // WZD o120p25
@@ -111,6 +115,9 @@ int16_t City_Food_Production(int16_t city_idx);
 int16_t City_Production_Production(int16_t city_idx);
 
 // WZD s142p12
+// drake178: CTY_GetGold()
+int16_t City_Gold_Production(int16_t city_idx);
+
 // WZD s142p13
 // WZD s142p14
 // WZD s142p15

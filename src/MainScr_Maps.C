@@ -1648,7 +1648,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 
                                 if(city_owner != 5)  /* Neutral Player */
                                 {
-                                    if(_CITIES[itr_cities].buildings.City_Walls == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                                    if(_CITIES[itr_cities].buildings[CITY_WALLS] == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
                                     {
                                         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
                                     }
@@ -1675,7 +1675,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                 }
                                 else
                                 {
-                                    if(_CITIES[itr_cities].buildings.City_Walls == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                                    if(_CITIES[itr_cities].buildings[CITY_WALLS] == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
                                     {
                                         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
                                     }

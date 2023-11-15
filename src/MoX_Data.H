@@ -692,26 +692,28 @@ struct s_WIZARD
 #pragma pack(pop)
 
 
+// drake178: struc BLD_REC
 // sizeof:  34h  52d
+
 struct s_BUILDDAT
 {
-    /* 00 */  char * name[20];
-    /* 14 */  int16_t field_14;
-    /* 16 */  int16_t field_16;
-    /* 18 */  int16_t field_18;
-    /* 1A */  int16_t field_1A;
-    /* 1C */  int16_t field_1C;
-    /* 1E */  int16_t field_1E;
-    /* 20 */  int16_t field_20;
-    /* 22 */  int16_t field_22;
-    /* 24 */  int16_t field_24;
-    /* 26 */  int16_t field_26;
-    /* 28 */  int16_t field_28;
-    /* 2A */  int16_t field_2A;
-    /* 2C */  int16_t field_2C;
-    /* 2E */  int16_t field_2E;
-    /* 30 */  int16_t field_30;
-    /* 32 */  int16_t field_32;
+    /* 00 */  char name[20];
+    /* 14 */  int16_t Prereq_1;         // ; enum BLD_TYPE
+    /* 16 */  int16_t Prereq_2;         // ; enum BLD_TYPE
+    /* 18 */  int16_t Replaces;         // ; enum BLD_TYPE
+    /* 1A */  int16_t Grants20XP;
+    /* 1C */  int16_t Grants60XP;
+    /* 1E */  int16_t Alchemist;
+    /* 20 */  int16_t maintenance_cost;  // in gold units  AKA upkeep cost
+    /* 22 */  int16_t AIVal_Growth;
+    /* 24 */  int16_t Unknown_24h;
+    /* 26 */  int16_t Unknown_26h;
+    /* 28 */  int16_t AIVal_Religion;
+    /* 2A */  int16_t AIVal_Research;
+    /* 2C */  int16_t construction_cost;  // in production units
+    /* 2E */  int16_t Unknown_2Eh;
+    /* 30 */  int16_t G_Animation;
+    /* 32 */  int16_t Category;
     /* 34 */
 };
 
@@ -810,21 +812,22 @@ struct s_CITY
     /* 18 */ int16_t Pop_10s;
     /* 1A */ int8_t PlayerBits;
     /* 1B */ int8_t Unused_1Bh;
-    /* 1C */ int16_t Producing;  /* < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
+    /* 1C */ int16_t construction;  /* < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t Building_Count;
-    /* 1F */ struct s_CITY_BUILDINGS buildings;
+    /* 1F */ // struct s_CITY_BUILDINGS buildings;
+             int8_t buildings[NUM_BUILDINGS];  // ¿ {..., -1, 0, 1, ...} ?
     /* 43 */ // struct s_CITY_ENCHANTMENTS enchantments;
              // uint8_t enchantments[26];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
     /* 5C */ // int8_t Nightshade;  as seens in CTY_EnchantsUpkeep() for city_enchantment_upkeep_table
-             uint8_t enchantments[26];
+             uint8_t enchantments[NUM_CITY_ENCHANTMENTS];
     /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;
-    /* 60 */ int8_t Gold;
-    /* 61 */ int8_t Upkeep;
+    /* 60 */ int8_t gold_units;  // AKA Income
+    /* 61 */ int8_t building_maintenance;  // AKA Upkeep
     /* 62 */ int8_t Power;
     /* 63 */ int8_t Research;
     /* 64 */ int8_t food_units;
-    /* 65 */ int8_t RoadConn_BitField[13];
+    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
 };
 
 // sizeof:  18h  24d
@@ -1163,7 +1166,7 @@ extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_L
 
 
 // WZD dseg:2A12
-extern char cnst_BUILDDAT_File[];
+extern char builddat_lbx_file[];
 
 
 
