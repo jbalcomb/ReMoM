@@ -315,6 +315,9 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     }
 
     File_Name_Base(lbx_name);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] lbx_name: %s\n", __FILE__, __LINE__, lbx_name);
+#endif
 
     // SAMB_data = EMM_LBX_RecLoader(file_name, entry_num, SAMB_head@, start_rec, num_recs, record_size)
     // current_extended_flag = ST_FALSE;
@@ -371,6 +374,11 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     entry_start = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4)    ) ) );
     entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
     entry_length = entry_end - entry_start;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] entry_start: %d\n", __FILE__, __LINE__, entry_start);
+    dbg_prn("DEBUG: [%s, %d] entry_end: %d\n", __FILE__, __LINE__, entry_end);
+    dbg_prn("DEBUG: [%s, %d] entry_length: %d\n", __FILE__, __LINE__, entry_length);
+#endif
 
     fseek(lbxload_fptr, entry_start, 0);
     /*
@@ -392,8 +400,17 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     }
 
     // ¿ MoO2: foffset ?
-    record_start = entry_start + (start_rec * rec_size);
+    // record_start = entry_start + (start_rec * rec_size);
+    record_start = entry_start + (start_rec * rec_size) + 4;
     fseek(lbxload_fptr, record_start, 0);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] max_records: %d\n", __FILE__, __LINE__, max_records);
+    dbg_prn("DEBUG: [%s, %d] rec_size: %d\n", __FILE__, __LINE__, rec_size);
+    dbg_prn("DEBUG: [%s, %d] (record_size != rec_size): %d\n", __FILE__, __LINE__, (record_size != rec_size));
+    dbg_prn("DEBUG: [%s, %d] (start_rec + num_recs > max_records): %d\n", __FILE__, __LINE__, (start_rec + num_recs > max_records));
+    dbg_prn("DEBUG: [%s, %d] record_start: %d\n", __FILE__, __LINE__, record_start);
+#endif
 
 
 
@@ -404,6 +421,9 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
         BEGIN: Allocation Type
     */
     num_blocks = 1 + (entry_length / SZ_PARAGRAPH_B);
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d] num_blocks: %d\n", __FILE__, __LINE__, num_blocks);
+#endif
     switch(allocation_type)
     {
         case 0:  /* sa_Single */
@@ -473,7 +493,7 @@ Done:
 #endif
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %d)\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size);
+    dbg_prn("DEBUG: [%s, %d] END: LBX_Load_Library_Data(lbx_name = %s, entry_num = %d, SAMB_head = %p, allocation_type = %d, start_rec = %d, num_recs = %d, record_size = %d) { SAMB_data = %p }\n", __FILE__, __LINE__, lbx_name, entry_num, SAMB_head, allocation_type, start_rec, num_recs, record_size, SAMB_data);
 #endif
 
     return SAMB_data;
@@ -615,7 +635,8 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
     }
 
     // ¿ MoO2: foffset ?
-    record_start = entry_start + (start_rec * rec_size);
+    // record_start = entry_start + (start_rec * rec_size);
+    record_start = entry_start + (start_rec * rec_size) + 4;
     fseek(lbxload_fptr, record_start, 0);
 
 

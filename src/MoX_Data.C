@@ -259,7 +259,7 @@ struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
 
 
 // WZD dseg:2A12
-char cnst_BUILDDAT_File[] = "BUILDDAT.LBX";
+char builddat_lbx_file[] = "BUILDDAT.LBX";
 
 
 

@@ -261,7 +261,7 @@ void Update_Scouted_And_Contacted(void)
                 {
                     scout_level = 2;
 
-                    if(_CITIES[itr_cities].buildings.City_Walls != -1)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].buildings[CITY_WALLS] != -1)  /* B_Not_Built */
                     {
                         scout_level = 3;
                     }
@@ -271,7 +271,7 @@ void Update_Scouted_And_Contacted(void)
                         scout_level = 5;
                     }
                     // BUG: Overrides Nature's Eye
-                    if(_CITIES[itr_cities].buildings.Oracle != -1)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].buildings[ORACLE] != -1)  /* B_Not_Built */
                     {
                         scout_level = 4;
                     }
