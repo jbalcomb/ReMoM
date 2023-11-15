@@ -267,7 +267,7 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
         {
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
-                City_Gold_Balance += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].Upkeep);
+                City_Gold_Balance += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
                 City_Food_Surplus += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
             }
         }
