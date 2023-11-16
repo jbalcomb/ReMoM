@@ -252,6 +252,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     {
         entry_length -= read_size;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+// #pragma warning(suppress : 28183)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
         rvr_SAMB_data += read_size;
     }
@@ -259,6 +260,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     {
         read_size = entry_length;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+#pragma warning(suppress : 28183 6387)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
     }
     /*
@@ -464,8 +466,15 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     /*
         BEGIN: Read Data
     */
-#pragma warning(suppress : 4703)
+// #pragma warning(suppress : 4703)
+// Save warning levels, and drop it to level 3 
+#pragma warning (push, 3)
+// turn two warnings off
+#pragma warning (disable : 4701 4703 6001)
+// screwy code goes here
     rvr_SAMB_data = SAMB_data;
+// restore original warning levels.
+#pragma warning (pop)
     read_size = SZ_32K_B;
     while(entry_length >= read_size)
     {
@@ -478,13 +487,14 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     {
         read_size = entry_length;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
+#pragma warning(suppress : 28183)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
     }
     /*
         END: Read Data
     */
 
-
+    
     // Update_MemFreeWorst_KB();
     // MoO2: Check_Free();
 

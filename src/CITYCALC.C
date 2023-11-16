@@ -42,7 +42,7 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].gold_units            = City_Gold_Production(city_idx);
     _CITIES[city_idx].building_maintenance  = City_Gold_Mainanence(city_idx);
     _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
-    // TOOD  _CITIES[city_idx].Power       = j_CTY_GetPower(city_idx);
+    _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
 
     if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
     {

@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+#include "STU_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

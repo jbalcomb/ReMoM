@@ -502,6 +502,7 @@ Done:
     dbg_prn("DEBUG: [%s, %d]: END: Mark_Paragraph(x = %d, y = %d, full_width = %d, string = %s)\n", __FILE__, __LINE__, x, y, full_width, string);
 #endif
 
+    return;  // DNE in Dasm - VSBS
 }
 
 // WZD s19p05

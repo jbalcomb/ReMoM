@@ -1908,9 +1908,9 @@ void Cycle_Palette(int16_t percent)
     uint8_t color_grn;
     uint8_t color_blu;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
+// #endif
 
     vpercent = 100 - percent;
 
@@ -1920,7 +1920,7 @@ void Cycle_Palette(int16_t percent)
         DLOG("(vpercent > 0)  (percent < 100)");
         if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
         {
-            DLOG("(vpercent < 100)");
+            // DLOG("(vpercent < 100)");
             color_multiplier = (( percent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
             current_palette = (uint8_t *)(p_Palette);
             for(itr = 0; itr < 256; itr++)
@@ -1948,14 +1948,14 @@ void Cycle_Palette(int16_t percent)
         }
         else                            /* (percent < 100) && (percent < 0) */
         {
-            DLOG("(vpercent >= 100)  (percent <= 0)");
+            // DLOG("(vpercent >= 100)  (percent <= 0)");
             Apply_Palette();
             goto Done;
         }
     }
     else
     {
-        DLOG("(vpercent <= 0)  (percent >= 100)");        /* (percent >= 100) */
+        // DLOG("(vpercent <= 0)  (percent >= 100)");        /* (percent >= 100) */
         for(itr = 0; itr < 256; itr++)
         {
             palette_change_flag = PALETTE_FLAG(itr);
@@ -1971,15 +1971,17 @@ void Cycle_Palette(int16_t percent)
         }
 
     }
-
+    ;
     // ~== REP STOSW
     memset((uint8_t *)(p_Palette + 768), 0x00, 256);  // ~== `REP STOSB`
 
 Done:
+    return;  // DNE in Dasm - VSBS
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
+// #endif
+
 }
 
 
