@@ -46,8 +46,9 @@ uint32_t Get_System_Clock_Counter(void)
 {
     uint32_t dos_tick_count;
     DWORD win_tick_count;
+#pragma warning(suppress : 28159)
     win_tick_count = GetTickCount();  // TODO  "Consider using GetTickCount64() ..."
-    dos_tick_count = win_tick_count / 54.92540;
+    dos_tick_count = win_tick_count / (uint32_t)54.92540;  // TODO(JimBalcomb,20231115): maybe identify castings that are purposeful and/or reasonable... macro? IMA_UINT32
     return dos_tick_count;
 }
 

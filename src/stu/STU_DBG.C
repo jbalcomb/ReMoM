@@ -36,7 +36,8 @@ SAMB_ptr DBG_ORIG_p4_heroes;
 // WZD dseg:9246
 SAMB_ptr DBG_ORIG_p5_heroes;
 // WZD dseg:9998
-uint8_t * DBG_ORIG__events_table;
+// struct s_EVENT_DATA * DBG_ORIG__events_table;
+int16_t * DBG_ORIG__events_table;
 // WZD dseg:9CAC
 SAMB_ptr DBG_ORIG_TBL_MoveMaps_EMS;
 // WZD dseg:9CB0

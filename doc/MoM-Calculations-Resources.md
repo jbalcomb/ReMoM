@@ -120,15 +120,14 @@ Income_Food[] - Normal_Unit_Counts[]
 
 
 ## Magic Screen
-Mana, Research, Skill
-Casting Skill
-Magic Reserve
-Power Base
-...
-"Magic Reserve" here is the same as "Total Mana" in 'Status Window' on the 'Main Screen'
-...
-Power Distribution
-Mana Points Ratio
-Research Ratio
-Casting Skill Ratio
-
+Mana, Research, Skill  
+Casting Skill  
+Magic Reserve  
+Power Base  
+...  
+"Magic Reserve" here is the same as "Total Mana" in 'Status Window' on the   'Main Screen'
+...  
+Power Distribution  
+Mana Points Ratio  
+Research Ratio  
+Casting Skill Ratio  

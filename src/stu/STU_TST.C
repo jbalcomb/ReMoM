@@ -164,7 +164,7 @@ void TST_Validate_Allocate_Data_Space(void)
         ptr[itr] = 0;
     }
 
-    ptr = (uint8_t *)_events_table;
+    ptr = (uint8_t *)events_table;
     for(itr = 0; itr < EVENTS_TABLE_RECORD_SIZE; itr++)
     {
         ptr[itr] = 0;

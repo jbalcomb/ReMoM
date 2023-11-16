@@ -308,9 +308,13 @@ SAMB_ptr Allocate_Space(uint16_t size)
     if(tmp_SAMB_head == NULL) { Allocation_Error(1, size); }
     SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
 
+#pragma warning(suppress : 6011)
     SA_SET_MEMSIG1(SAMB_head);
+#pragma warning(suppress : 6011)
     SA_SET_MEMSIG2(SAMB_head);
+#pragma warning(suppress : 6011)
     SA_SET_SIZE(SAMB_head,size);
+#pragma warning(suppress : 6011)
     SA_SET_USED(SAMB_head,1);
 
     // Update_MemFreeWorst_KB();
@@ -390,9 +394,8 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
 // drake178: LBX_Alloc_Flush()
 void Reset_First_Block(SAMB_ptr block)
 {
-    SAMB_ptr header;
-    uint16_t size;
-
+    // MSDOS  SAMB_ptr header;
+    // MSDOS  uint16_t size;
     // MSDOS  header = block + (1 * 16);  // SZ_SEGMENT
     // MSDOS  size = farpeekw(block, SAMB_HDR_POS_SIZE);
     // MSDOS  farpokew(block, SAMB_HDR_POS_USED, 1);

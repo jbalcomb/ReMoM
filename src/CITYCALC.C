@@ -41,8 +41,8 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].production_units      = City_Production_Production(city_idx);
     _CITIES[city_idx].gold_units            = City_Gold_Production(city_idx);
     _CITIES[city_idx].building_maintenance  = City_Gold_Mainanence(city_idx);
-    // TOOD  _CITIES[city_idx].Research    = j_CTY_GetResearch(city_idx);
-    // TOOD  _CITIES[city_idx].Power       = j_CTY_GetPower(city_idx);
+    _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
+    _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
 
     if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
     {
@@ -140,7 +140,10 @@ int16_t WIZ_ArmyUpkeep_Gold(int16_t player_idx)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        gold_upkeep_cost += UNIT_GetGoldUpkeep(itr_units);
+        if (_UNITS[itr_units].owner_idx == player_idx)
+        {
+            gold_upkeep_cost += UNIT_GetGoldUpkeep(itr_units);
+        }
     }
 
     gold_upkeep_cost -= fame_points;
@@ -200,7 +203,43 @@ int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx)
     return food_upkeep_cost;
 }
 
+
 // WZD o120p06
+// drake178: WIZ_GetNUCounts()
+void Players_Normal_Units(int16_t normal_units[])
+{
+
+    int16_t itr_players;  // _SI_
+    int16_t itr_units;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    {
+        normal_units[itr_players] = 0;
+    }
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x01 /* Ab_Summoned */) == 0) &&
+            (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
+            (_UNITS[itr_units].owner_idx < _num_players) &&
+            ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+        )
+        {
+            normal_units[_UNITS[itr_units].owner_idx]++;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o120p07
 void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)
@@ -681,7 +720,7 @@ void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research,
     {
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
-            City_Research += _CITIES[itr_cities].Research;
+            City_Research += _CITIES[itr_cities].research_units;
         }
     }
 
@@ -1392,7 +1431,286 @@ int16_t City_Production_Production(int16_t city_idx)
 
 
 // WZD s142p13
+// drake178: CTY_GetResearch()
+int16_t City_Research_Production(int16_t city_idx)
+{
+    int16_t city_owner_idx;
+
+    int16_t research_units;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+#endif
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    if(
+        (_CITIES[city_idx].population == 0) &&
+        (city_owner_idx != NEUTRAL_PLAYER_IDX)
+    )
+    {
+
+        research_units = 0;
+
+        if(
+            (_CITIES[city_idx].buildings[LIBRARY] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[LIBRARY] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 2;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[SAGES_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[SAGES_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 3;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[UNIVERSITY] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[UNIVERSITY] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 5;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            research_units += 8;
+        }
+
+    }
+    else
+    {
+        research_units = 0;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+#endif
+
+    return research_units;
+}
+
+
 // WZD s142p14
+// drake178: CTY_GetPower()
+int16_t City_Mana_Production(int16_t city_idx)
+{
+    int16_t wy_array[25];
+    int16_t wx_array[25];
+    int16_t spell_ranks;
+    int16_t have_miners_guild;
+    int16_t are_dwarf;
+    int16_t city_wp;
+    int16_t useable_map_squares;
+    int16_t building_magic_power;
+    int16_t building_magic_power_modifier;
+    int16_t city_owner_idx;
+    int16_t itr;
+
+    int16_t mana_units;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
+#endif
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    // s_EVENT_DATA.Mana_Short.Status
+    if(
+        // (*((int16_t *)(&events_table + 0x60)) != 2) &&
+        (*(events_table + 0x60) != 2) &&
+        (_CITIES[city_idx].population == 0) &&
+        (city_owner_idx != NEUTRAL_PLAYER_IDX)
+    )
+    {
+        building_magic_power = 0;
+        building_magic_power_modifier = 100;
+
+        if(_players[city_owner_idx].divine_power != ST_FALSE)
+        {
+            building_magic_power_modifier = 150;
+        }
+
+        if(_CITIES[city_idx].enchantments[DARK_RITUALS] != ST_FALSE)
+        {
+            building_magic_power_modifier = (building_magic_power_modifier * 2);
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[SHRINE] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[SHRINE] == 0x00 /* B_Replaced */)
+        )
+        {
+            building_magic_power += 1;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[TEMPLE] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[TEMPLE] == 0x00 /* B_Replaced */)
+        )
+        {
+            building_magic_power += 2;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[PARTHENON] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[PARTHENON] == 0x00 /* B_Replaced */)
+        )
+        {
+            building_magic_power += 3;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[CATHEDRAL] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[CATHEDRAL] == 0x00 /* B_Replaced */)
+        )
+        {
+            building_magic_power += 4;
+        }
+
+        building_magic_power = ((building_magic_power * building_magic_power_modifier) / 100);
+
+        mana_units = building_magic_power;
+
+        if(
+            (_CITIES[city_idx].buildings[ANIMISTS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[ANIMISTS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            mana_units += 3;
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[WIZARDS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            mana_units += 3;
+        }
+
+        city_wp = _CITIES[city_idx].world_plane;
+
+        if(_CITIES[city_idx].race = 0x02 /* R_Dark_Elf */)
+        {
+            mana_units += _CITIES[city_idx].population;
+        }
+
+        if(
+            (_CITIES[city_idx].race = 0x07 /* R_High_Elf */) ||
+            (_CITIES[city_idx].race = 0x01 /* R_Beastman */) ||
+            (_CITIES[city_idx].race = 0x03 /* R_Draconian */)
+        )
+        {
+            mana_units += (_CITIES[city_idx].population / 2);
+        }
+
+        if(
+            (_FORTRESSES[city_owner_idx].world_x == _CITIES[city_idx].world_x) &&
+            (_FORTRESSES[city_owner_idx].world_y == _CITIES[city_idx].world_y) &&
+            (_FORTRESSES[city_owner_idx].world_plane == city_wp)
+        )
+        {
+            spell_ranks = (
+                _players[city_owner_idx].spellrank_nature + 
+                _players[city_owner_idx].spellrank_sorcery +
+                _players[city_owner_idx].spellrank_chaos +
+                _players[city_owner_idx].spellrank_life +
+                _players[city_owner_idx].spellrank_death
+            );
+
+            if(city_wp != 0)
+            {
+                mana_units += spell_ranks + 5;
+            }
+            else
+            {
+                mana_units += spell_ranks;
+            }
+
+            if(_CITIES[city_idx].race == 0x04 /* R_Dwarf */)
+            {
+                are_dwarf = ST_TRUE;
+            }
+
+            if(
+                (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x01 /* B_Built */) ||
+                (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x00 /* B_Replaced */)
+            )
+            {
+                have_miners_guild = ST_TRUE;
+            }
+
+            useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+
+            for(itr = 0; itr < useable_map_squares; itr++)
+            {
+                mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+            }
+
+            if(
+                (_players[city_owner_idx].spellrank_death != 0) &&
+                // (events_table->Good_Moon.Status == 2)
+                (*(events_table + 0x4C) != 2)
+            )
+            {
+                mana_units = (mana_units - (building_magic_power / 2));
+            }
+
+            if(
+                (_players[city_owner_idx].spellrank_life != 0) &&
+                // (events_table->Bad_Moon.Status == 2)
+                (*(events_table + 0x50) != 2)
+            )
+            {
+                mana_units = (mana_units - (building_magic_power / 2));
+            }
+
+            if(mana_units < 0)
+            {
+                mana_units = 0;
+            }
+
+            if(
+                (_players[city_owner_idx].spellrank_life != 0) &&
+                // (events_table->Good_Moon.Status == 2)
+                (*(events_table + 0x4C) != 2)
+            )
+            {
+                mana_units += building_magic_power;
+            }
+
+            if(
+                (_players[city_owner_idx].spellrank_death != 0) &&
+                // (events_table->Bad_Moon.Status == 2)
+                (*(events_table + 0x50) != 2)
+            )
+            {
+                mana_units += building_magic_power;
+            }
+
+        }
+
+    }
+    else
+    {
+        mana_units = 0;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Mana_Production()\n", __FILE__, __LINE__);
+#endif
+
+    return mana_units;
+}
+
+
 // WZD s142p15
 // WZD s142p16
 // WZD s142p17

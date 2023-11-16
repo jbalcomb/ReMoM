@@ -1188,7 +1188,17 @@ SAMB_ptr _screen_seg;
 
 // WZD dseg:9998
 // AKA TBL_Events
-uint8_t * _events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events? Hrrm... all the indexing is in evens, so 2-byte?
+/*
+    Allocate_Data_Space()
+        Allocate_Space(7)
+            7 PR 112 B
+            type? 1-byte,2-byte signed,unsigned
+            Hrrrmm... all the indexing is in evens, so 2-byte?
+    Load_SAVE_GAME()
+        fread 1 of 100 
+*/
+// struct s_EVENT_DATA * events_table;
+int16_t * events_table;
 
 // WZD dseg:999C
 int16_t _unit_stack_count;

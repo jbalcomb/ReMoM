@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+#include "STU_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,7 +33,8 @@ extern SAMB_ptr DBG_ORIG_p4_heroes;
 // WZD dseg:9246
 extern SAMB_ptr DBG_ORIG_p5_heroes;
 // WZD dseg:9998
-extern uint8_t * DBG_ORIG__events_table;
+// extern struct s_EVENT_DATA * DBG_ORIG__events_table;
+extern int16_t * DBG_ORIG__events_table;
 // WZD dseg:9CAC
 extern SAMB_ptr DBG_ORIG_TBL_MoveMaps_EMS;
 // WZD dseg:9CB0

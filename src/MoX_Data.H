@@ -824,8 +824,8 @@ struct s_CITY
     /* 5E */ int16_t Prod_Accu;
     /* 60 */ int8_t gold_units;  // AKA Income
     /* 61 */ int8_t building_maintenance;  // AKA Upkeep
-    /* 62 */ int8_t Power;
-    /* 63 */ int8_t Research;
+    /* 62 */ int8_t mana_units;
+    /* 63 */ int8_t research_units;
     /* 64 */ int8_t food_units;
     /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
 };
@@ -1054,6 +1054,64 @@ struct s_STACK
     /* 02 */ int16_t active;  // AKA Can_Move
 };
 
+
+// drake178: struc STD_EVENT
+// sizeof:  6h  6d
+struct STD_EVENT
+{
+    /* 0x00 */ int16_t Status;
+    /* 0x02 */ int16_t Player;
+    /* 0x04 */ int16_t Data;
+    /* 0x06 */
+};
+
+// drake178: struc REV_EVENT
+// sizeof:  6h  6d
+struct REV_EVENT
+{
+    /* 0x00 */ int16_t Status;
+    /* 0x02 */ int16_t Data;
+    /* 0x04 */ int16_t Player;
+    /* 0x06 */
+};
+
+// drake178: struc CON_EVENT
+// sizeof:  4h  4d
+struct CON_EVENT
+{
+    /* 0x00 */ int16_t Status;
+    /* 0x02 */ int16_t Duration;
+    /* 0x04 */
+};
+
+// drake178: ¿ ?
+// sizeof:  64h  100d
+struct s_EVENT_DATA
+{
+    /* 0x00 */  int16_t Last_Event_Turn;
+    /* 0x02 */  struct STD_EVENT Meteor;
+    /* 0x08 */  struct STD_EVENT Gift;
+    /* 0x0E */  int16_t Disjunction;
+    /* 0x10 */  struct STD_EVENT Dpl_Marriage;
+    /* 0x16 */  int16_t Unused_16h;
+    /* 0x18 */  struct STD_EVENT Earthquake;
+    /* 0x1E */  struct STD_EVENT Pirates;
+    /* 0x24 */  struct STD_EVENT Plague;
+    /* 0x2A */  int16_t Plague_Duration;
+    /* 0x2C */  struct STD_EVENT Rebellion;
+    /* 0x32 */  struct STD_EVENT Donation;
+    /* 0x38 */  struct STD_EVENT Depletion;
+    /* 0x3E */  struct REV_EVENT New_Mine;
+    /* 0x44 */  struct REV_EVENT Pop_Boom;
+    /* 0x4A */  int16_t Pop_Boom_Duration;
+    /* 0x4C */  struct CON_EVENT Good_Moon;
+    /* 0x50 */  struct CON_EVENT Bad_Moon;
+    /* 0x54 */  struct CON_EVENT Conjunction_Chaos;
+    /* 0x58 */  struct CON_EVENT Conjunction_Nature;
+    /* 0x5C */  struct CON_EVENT Conjunction_Sorcery;
+    /* 0x60 */  struct CON_EVENT Mana_Short;
+    /* 0x64 */
+};
 
 
 // records from HLPENTRY.LBX
@@ -2096,7 +2154,8 @@ extern SAMB_ptr _screen_seg;
 
 // WZD dseg:9998
 // AKA TBL_Events
-extern uint8_t * _events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
+// extern struct s_EVENT_DATA * events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
+extern int16_t * events_table;
 
 // WZD dseg:999C
 extern int16_t _unit_stack_count;

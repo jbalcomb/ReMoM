@@ -55,8 +55,11 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_GetGoldOreGold  
 // WZD s161p10
 // TILE_GetGemGold      
+
 // WZD s161p11
-// TILE_GetSpecialPower 
+// drake178: TILE_GetSpecialPower()
+int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
+
 // WZD s161p12
 // TILE_GetMithrilPower 
 // WZD s161p13
