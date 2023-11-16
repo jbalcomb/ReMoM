@@ -5,6 +5,7 @@
         ovr060
         ovr119
         ovr121
+        ovr140
 */
 
 #include "MoM.H"
@@ -252,10 +253,7 @@ void Next_Turn_Calc(void)
     // drake178: decreases the peace counters for all wizards towards all others
     // call    j_WIZ_DecreasePeaceCs
 
-// call    j_WIZ_GoldIncomes               ; calculate and apply each wizard's gold income from
-//                                         ; heroes, cities, and excess food, also including
-//                                         ; maintenance costs paid for town buildings
-//                                         ; INCONSISTENT: allows gold up to 32000
+    Update_Players_Gold_Reserve();
 
 // call    j_WIZ_SetPowerBases             ; zeroes and recalculates the power base for every
 //                                         ; wizard, although cities are not reset, but instead
@@ -596,7 +594,94 @@ void All_City_Calculations(void)
 
 // WZD s140p02
 // WZD s140p03
+
 // WZD s140p04
+// drake178: WIZ_GoldIncomes()
+void Update_Players_Gold_Reserve(void)
+{
+    int16_t normal_units[6];
+    int16_t food_incomes[6];
+    int16_t gold_incomes[6];
+    int16_t Excess_Food;
+
+
+    int16_t itr_players;  // _SI_
+    int16_t itr_heroes;  // _DI_
+    int16_t itr_cities;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Players_Gold_Reserve()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        gold_incomes[itr_players] = 0;
+        food_incomes[itr_players] = 0;
+
+        for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+        {
+            if(_players[itr_players].Heroes[itr_heroes].Unit_Index > -1)
+            {
+
+                if( (p_heroes[itr_players][_UNITS[_players[itr_players].Heroes[itr_heroes].Unit_Index].type].Abilities_HI & 0x2000 /* Ab_Noble */) != 0)
+                {
+                    gold_incomes[itr_players] += 10;
+                }
+            }
+        }
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx != -1)
+        {
+            gold_incomes[_CITIES[itr_cities].owner_idx] += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
+
+            Excess_Food = _CITIES[itr_cities].food_units - _CITIES[itr_cities].population;
+
+            if(Excess_Food < 0)
+            {
+                Excess_Food = 0;
+            }
+
+            food_incomes[_CITIES[itr_cities].owner_idx] += (Excess_Food / 2);
+
+        }
+    }
+
+    Players_Normal_Units(&normal_units[0]);
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        food_incomes[itr_players] -= normal_units[itr_players];
+        
+        if(food_incomes[itr_players] < 0)
+        {
+            food_incomes[itr_players] = 0;
+        }
+
+        if((gold_incomes[itr_players] + food_incomes[itr_players]) < 32000)
+        {
+            _players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);
+        }
+        else
+        {
+            _players[itr_players].gold_reserve = 32000;
+        }
+
+        if(_players[itr_players].gold_reserve < 0)
+        {
+            _players[itr_players].gold_reserve = 0;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Update_Players_Gold_Reserve()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD s140p05
 // WZD s140p06
 // WZD s140p07

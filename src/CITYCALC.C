@@ -140,7 +140,10 @@ int16_t WIZ_ArmyUpkeep_Gold(int16_t player_idx)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        gold_upkeep_cost += UNIT_GetGoldUpkeep(itr_units);
+        if (_UNITS[itr_units].owner_idx == player_idx)
+        {
+            gold_upkeep_cost += UNIT_GetGoldUpkeep(itr_units);
+        }
     }
 
     gold_upkeep_cost -= fame_points;
@@ -200,7 +203,43 @@ int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx)
     return food_upkeep_cost;
 }
 
+
 // WZD o120p06
+// drake178: WIZ_GetNUCounts()
+void Players_Normal_Units(int16_t normal_units[])
+{
+
+    int16_t itr_players;  // _SI_
+    int16_t itr_units;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    {
+        normal_units[itr_players] = 0;
+    }
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x01 /* Ab_Summoned */) == 0) &&
+            (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
+            (_UNITS[itr_units].owner_idx < _num_players) &&
+            ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+        )
+        {
+            normal_units[_UNITS[itr_units].owner_idx]++;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o120p07
 void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)

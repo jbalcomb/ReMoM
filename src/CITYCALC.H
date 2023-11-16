@@ -9,6 +9,8 @@
 #ifndef CITYCALC_H
 #define CITYCALC_H
 
+#include "MoX.H"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -35,6 +37,8 @@ int16_t WIZ_ArmyUpkeep_Gold(int16_t player_idx);
 int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx);
 
 // WZD o120p06
+// drake178: WIZ_GetNUCounts()
+void Players_Normal_Units(int16_t normal_units[]);
 
 // WZD o120p07
 void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);

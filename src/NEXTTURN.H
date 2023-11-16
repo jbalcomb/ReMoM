@@ -5,6 +5,7 @@
         ovr060
         ovr119
         ovr121
+        ovr140
 */
 
 #ifndef NEXTTURN_H
@@ -87,7 +88,11 @@ void All_City_Calculations(void);
 
 // WZD s140p02
 // WZD s140p03
+
 // WZD s140p04
+// drake178: WIZ_GoldIncomes()
+void Update_Players_Gold_Reserve(void);
+
 // WZD s140p05
 // WZD s140p06
 // WZD s140p07
