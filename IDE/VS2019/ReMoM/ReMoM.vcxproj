@@ -85,7 +85,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
@@ -117,7 +117,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
@@ -134,7 +134,7 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\..\src\MoX_Util.H" />
     <ClInclude Include="..\..\..\src\NewGame.H" />
     <ClInclude Include="..\..\..\src\NEXTTURN.H" />
+    <ClInclude Include="..\..\..\src\paragrph.H" />
     <ClInclude Include="..\..\..\src\PNG_Draw.H" />
     <ClInclude Include="..\..\..\src\PNG_Load.H" />
     <ClInclude Include="..\..\..\src\PoC_MsWin.hpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="..\..\..\src\TST_GameData.H" />
     <ClInclude Include="..\..\..\src\TST_GameState.H" />
     <ClInclude Include="..\..\..\src\UnitMove.H" />
+    <ClInclude Include="..\..\..\src\UnitStat.H" />
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
     <ClInclude Include="..\..\..\src\UNITTYPE.H" />
     <ClInclude Include="..\..\..\src\Video.H" />
@@ -261,6 +263,7 @@
     <ClCompile Include="..\..\..\src\MoX_Util.C" />
     <ClCompile Include="..\..\..\src\NewGame.C" />
     <ClCompile Include="..\..\..\src\NEXTTURN.C" />
+    <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\SAVETEST.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
@@ -274,12 +277,14 @@
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
     <ClCompile Include="..\..\..\src\UnitMove.C" />
+    <ClCompile Include="..\..\..\src\UnitStat.C" />
     <ClCompile Include="..\..\..\src\UNITSTK.C" />
     <ClCompile Include="..\..\..\src\UNITTYPE.C" />
     <ClCompile Include="..\..\..\src\Video.C" />
     <ClCompile Include="..\..\..\src\Video2.C" />
     <ClCompile Include="..\..\..\src\win_CLK.C" />
     <ClCompile Include="..\..\..\src\win_DIR.C" />
+    <ClCompile Include="..\..\..\src\win_EMS.C" />
     <ClCompile Include="..\..\..\src\win_Fonts.C" />
     <ClCompile Include="..\..\..\src\win_Input.C" />
     <ClCompile Include="..\..\..\src\win_KD.C" />

@@ -57,6 +57,199 @@ void Do_City_Calculations(int16_t city_idx)
 
 
 // WZD o120p02
+// drake178: WIZ_SetPowerBases()
+/*
+    sets
+    _players[].magic_power
+
+    nodes
+        conjunctions
+        mastery
+
+    sum of s_CITY.mana_units
+
+    _players[].Volcano_Count
+
+    _players.Spell_Cast Spell_Of_Return
+
+*/
+void Players_Update_Magic_Power(void)
+{
+    int16_t UU_players_power_base_array[6];
+    int16_t node_owner_idx;
+
+    int16_t itr;  // _SI_
+    int16_t node_magic_power_points;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        UU_players_power_base_array[itr] = 0;
+    }
+
+    if(*(events_table + 0x60) != 2)  /* s_EVENT_DATA.Mana_Short.Status */
+    {
+        for(itr = 0; itr < NUM_NODES; itr++)
+        {
+            if(TBL_Nodes[itr].Owner > -1)
+            {
+                node_owner_idx = TBL_Nodes[itr].Owner;
+
+                if( (TBL_Nodes[itr].Meld_Flags & 0x01 /* M_Warped */) != 1)
+                {
+                    node_magic_power_points = (TBL_Nodes[itr].Power * _magic);
+                    
+                    /*
+                        Conjunction - Chaos (Red)
+                    */
+                    if(*(events_table + 0x54) != 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
+                    {
+                        if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 1)  /* NODE_Nature */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 2)  /* NODE_Chaos */
+                        {
+                            node_magic_power_points = (node_magic_power_points * 2);
+                        }
+                    }
+
+                    /*
+                        Conjunction - Sorcery (Blue)
+                    */
+                    if(*(events_table + 0x5C) != 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
+                    {
+                        if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
+                        {
+                            node_magic_power_points = (node_magic_power_points * 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 1)  /* NODE_Nature */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 2)  /* NODE_Chaos */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                    }
+
+                    /*
+                        Conjunction - Nature (Green)
+                    */
+                    if(*(events_table + 0x58) != 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
+                    {
+                        if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 1)  /* NODE_Nature */
+                        {
+                            node_magic_power_points = (node_magic_power_points * 2);
+                        }
+                        if(TBL_Nodes[itr].Node_Type == 2)  /* NODE_Chaos */
+                        {
+                            node_magic_power_points = (node_magic_power_points / 2);
+                        }
+                    }
+
+                    /*
+                        Sorcery Mastery
+                    */
+                    if(
+                        (TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */ &&
+                        (_players[node_owner_idx].sorcery_mastery != ST_FALSE)
+                    )
+                    {
+                        node_magic_power_points = (node_magic_power_points * 2);
+                    }
+
+                    /*
+                        Chaos Mastery
+                    */
+                    if(
+                        (TBL_Nodes[itr].Node_Type == 2)  /* NODE_Chaos */ &&
+                        (_players[node_owner_idx].chaos_mastery != ST_FALSE)
+                    )
+                    {
+                        node_magic_power_points = (node_magic_power_points * 2);
+                    }
+
+                    /*
+                        Nature Mastery
+                    */
+                    if(
+                        (TBL_Nodes[itr].Node_Type == 1)  /* NODE_Nature */ &&
+                        (_players[node_owner_idx].nature_mastery != ST_FALSE)
+                    )
+                    {
+                        node_magic_power_points = (node_magic_power_points * 2);
+                    }
+
+                    /*
+                        Node Mastery
+                    */
+                    if(_players[node_owner_idx].node_mastery != ST_FALSE)
+                    {
+                        node_magic_power_points = (node_magic_power_points * 2);
+                    }
+
+                    _players[node_owner_idx].Power_Base += node_magic_power_points;
+
+                }
+                else
+                {
+                    _players[node_owner_idx].Power_Base -= 5;
+                }
+            }
+        }  /* END: for(itr = 0; itr < NUMTBL_Nodes; itr++) */
+
+        for(itr = 1; itr < _num_players; itr++)
+        {
+            _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);
+        }
+
+        for(itr = 0; itr < _cities; itr++)
+        {
+            if(
+                (_CITIES[itr].owner_idx > -1) &&
+                (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
+            )
+            {
+                _players[_CITIES[itr].owner_idx].Power_Base += _CITIES[itr].mana_units;
+            }
+        }
+
+        for(itr = 0; itr < _num_players; itr++)
+        {
+            if(_players[itr].Spell_Cast != 0xD6)  /* Spell_Of_Return */
+            {
+                _players[itr].Power_Base += _players[itr].Volcano_Count;
+
+                if(_players[itr].Power_Base < 0)
+                {
+                    _players[itr].Power_Base = 0;
+                }
+            }
+            else
+            {
+                _players[itr].Power_Base = 0;
+            }
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 
 // WZD o120p03
 int16_t UNIT_GetGoldUpkeep(int16_t unit_idx)

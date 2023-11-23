@@ -26,6 +26,8 @@ extern "C" {
 void Do_City_Calculations(int16_t city_idx);
 
 // WZD o120p02
+// drake178: WIZ_SetPowerBases()
+void Players_Update_Magic_Power(void);
 
 // WZD o120p03
 int16_t UNIT_GetGoldUpkeep(int16_t unit_idx);

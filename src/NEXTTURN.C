@@ -255,9 +255,7 @@ void Next_Turn_Calc(void)
 
     Update_Players_Gold_Reserve();
 
-// call    j_WIZ_SetPowerBases             ; zeroes and recalculates the power base for every
-//                                         ; wizard, although cities are not reset, but instead
-//                                         ; will use the power income they have defined already
+    Players_Update_Magic_Power();
 
 // call    j_WIZ_PowerIncomes              ; apply the power incomes of each wizard to their
 //                                         ; current research, mana reserves, and casting skill
