@@ -59,7 +59,11 @@ void Next_Turn_Calc(void);
 */
 
 // WZD o121p01
+
 // WZD o121p02
+// AKAK Calc_Nominal_Skill()
+int16_t Player_Base_Casting_Skill(int16_t player_idx);
+
 // WZD o121p03
 // WZD o121p04
 // WZD o121p05
