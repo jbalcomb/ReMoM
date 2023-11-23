@@ -93,7 +93,11 @@ void All_City_Calculations(void);
 // drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void);
 
-// WZD s140p05
+// WZD o140p05
+// drake178: WIZ_PowerIncomes()
+// OON XREF Next_Turn_Calc()
+void Players_Apply_Magic_Power(void);
+
 // WZD s140p06
 // WZD s140p07
 // WZD s140p08

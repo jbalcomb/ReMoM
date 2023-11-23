@@ -257,9 +257,7 @@ void Next_Turn_Calc(void)
 
     Players_Update_Magic_Power();
 
-// call    j_WIZ_PowerIncomes              ; apply the power incomes of each wizard to their
-//                                         ; current research, mana reserves, and casting skill
-//                                         ; INCONSISTENT: allows mana up to 32000
+    Players_Apply_Magic_Power();
 
 // call    j_WIZ_ResearchProgress          ; checks whether any of the wizards has finished their
 //                                         ; current research, and if so, allows picking a new one
@@ -680,7 +678,72 @@ void Update_Players_Gold_Reserve(void)
 }
 
 
-// WZD s140p05
+// WZD o140p05
+// drake178: WIZ_PowerIncomes()
+// OON XREF: Next_Turn_Calc()
+/*
+    sets
+    _players[itr_players].Research_Left
+    _players[itr_players].mana_reserve
+    _players[itr_players].Casting_Skill
+
+*/
+void Players_Apply_Magic_Power(void)
+{
+    int16_t Research_Income;
+    int16_t Mana_Income;
+    int16_t Skill_Income;
+
+    int16_t itr_players;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Spell_Cast != 0xD6 /* Spell_Of_Return */)
+        {
+            Get_Power_Incomes(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
+        }
+
+        if(_players[itr_players].Research_Left <= Research_Income)
+        {
+            _players[itr_players].Research_Left = 0;
+        }
+        else
+        {
+            _players[itr_players].Research_Left -= Research_Income;
+        }
+
+        if((32000 - _players[itr_players].mana_reserve) >= Mana_Income)
+        {
+            _players[itr_players].mana_reserve += Mana_Income;
+        }
+        else
+        {
+            _players[itr_players].mana_reserve = 32000;
+        }
+
+        // 'Archmage' Special Ability 50% bonus to all mana spent on increasing skill
+        // ¿ vs. Calc_Nominal_Skill() ?
+        if(_players[itr_players].archmage <= 0)
+        {
+            _players[itr_players].Casting_Skill += Skill_Income;
+        }
+        else
+        {
+            _players[itr_players].Casting_Skill += ((Skill_Income * 3) / 2);
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD s140p06
 // WZD s140p07
 // WZD s140p08
