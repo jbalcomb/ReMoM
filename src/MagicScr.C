@@ -698,8 +698,7 @@ void Magic_Screen_Draw(void)
         "Casting Skill:"
     */
     Print(5, 177, aCastingSkill);
-    // itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
-    itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_1, 10);
+    itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
     itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
     strcat(GUI_String_1, cnst_OpeningBrace_2);
     strcat(GUI_String_1, GUI_String_2);

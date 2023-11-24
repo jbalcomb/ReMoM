@@ -782,7 +782,49 @@ void Players_Apply_Magic_Power(void)
 // WZD s140p14
 // WZD s140p15
 // WZD s140p16
-// WZD s140p17
+
+
+// WZD o140p17
+// drake178: WIZ_SkillFromHeroes()
+int16_t Player_Hero_Casting_Skill(int16_t player_idx)
+{
+    int16_t heroes_spell_casting_skill_points;
+    int16_t half_hero_spell_casting_skill_points;
+
+    int16_t itr_heroes;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    half_hero_spell_casting_skill_points = 0;
+    heroes_spell_casting_skill_points = 0;
+
+    for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+    {
+        if(
+            (_players[player_idx].Heroes[itr_heroes].Unit_Index > -1) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_x == _FORTRESSES[player_idx].world_x) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_y == _FORTRESSES[player_idx].world_y) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_plane == _FORTRESSES[player_idx].world_plane)
+        )
+        {
+            UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, Active_Unit);
+
+            half_hero_spell_casting_skill_points = (Active_Unit->mana_max / 2);
+
+            heroes_spell_casting_skill_points += half_hero_spell_casting_skill_points;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    return heroes_spell_casting_skill_points;
+}
+
+
 // WZD s140p18
 // WZD s140p19
 // WZD s140p20

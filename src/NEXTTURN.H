@@ -113,7 +113,11 @@ void Players_Apply_Magic_Power(void);
 // WZD s140p14
 // WZD s140p15
 // WZD s140p16
-// WZD s140p17
+
+// WZD o140p17
+// drake178: WIZ_SkillFromHeroes()
+int16_t Player_Hero_Casting_Skill(int16_t player_idx);
+
 // WZD s140p18
 // WZD s140p19
 // WZD s140p20
