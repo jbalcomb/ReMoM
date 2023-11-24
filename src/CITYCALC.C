@@ -868,6 +868,16 @@ int16_t City_Gold_Production(int16_t city_idx)
 
 
 // WZD o120p17
+/*
+    in:
+        player_idx
+    in-out:
+        mana, skill, research
+    out:
+        N/A
+    
+
+*/
 void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research, int16_t player_idx)
 {
     int16_t City_Research;
@@ -952,6 +962,31 @@ void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research,
 }
 
 // WZD o120p18
+/*
+Get_Power_Incomes()
+XREF:
+j_Get_Power_Incomes()
+Get_Incomes()
+
+j_Get_Power_Incomes()
+XREF:
+    Magic_Screen_Draw()
+    WIZ_PowerIncomes()
+    AI_Research_Picker()
+
+Get_Incomes()
+XREF:
+    Main_Screen()
+    Main_Screen_Draw_Summary_Window()
+    AI_Tax_And_Farmers()
+    AI_OVL_SpellPicker()
+    AI_Balance_Upkeep()
+*/
+/*
+
+
+    NOT *base* spell research, because it includes the research bonus, given the specific spell and special abilities
+*/
 void Get_Power_Incomes(int16_t * Mana, int16_t * Research, int16_t * Skill, int16_t player_idx)
 {
     int16_t Base_Skill_Income;

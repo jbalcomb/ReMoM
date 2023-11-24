@@ -586,12 +586,6 @@ void Magic_Screen_Draw(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Magic_Screen_Draw()\n", __FILE__, __LINE__);
 #endif
 
-
-    research = 57;  // DEMO
-    skill = 35;  // DEMO
-    mana = 35;  // DEMO
-
-
     colors1[0] = 172;
     colors1[1] = 216;
     colors1[2] = 123;
@@ -659,10 +653,14 @@ void Magic_Screen_Draw(void)
 
     Reset_Window();
 
-    // TODO  _players[0].Mana_Pnct = mana_stave_pct_pos;
-    // TODO  _players[0].Research_Pcnt = research_stave_pct_pos;
-    // TODO  _players[0].Skill_Pcnt = skill_stave_pct_pos;
-    // TODO  WIZ_GetPwrIncomes(&Mana, &Research, &Skill, 0);
+
+    // Ummm... Why is the screen draw function update the player data?
+    _players[0].Mana_Pnct = mana_stave_pct_pos;
+    _players[0].Research_Pcnt = research_stave_pct_pos;
+    _players[0].Skill_Pcnt = skill_stave_pct_pos;
+    // WIZ_GetPwrIncomes(&mana, &research, &skill, 0);
+    Get_Power_Incomes(&mana, &research, &skill, 0);
+
 
     Set_Font_Style1(2, 3, 0, 0);
     Set_Outline_Color(19);
