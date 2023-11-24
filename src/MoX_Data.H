@@ -661,7 +661,7 @@ struct s_WIZARD
     /* 0128 */ struct s_WIZ_DIPL Dipl;
     /* 025A */ uint16_t Research_Left;
     /* 025C */ uint16_t mana_reserve;  /*  */
-    /* 025E */ uint32_t Casting_Skill;
+    /* 025E */ int32_t Casting_Skill;
     /* 0262 */ uint16_t Researching;
     /* 0264 */ uint8_t Spells_Known[240];
     /* 0354 */ uint16_t Defeated_Wizards;

@@ -255,13 +255,9 @@ void Next_Turn_Calc(void)
 
     Update_Players_Gold_Reserve();
 
-// call    j_WIZ_SetPowerBases             ; zeroes and recalculates the power base for every
-//                                         ; wizard, although cities are not reset, but instead
-//                                         ; will use the power income they have defined already
+    Players_Update_Magic_Power();
 
-// call    j_WIZ_PowerIncomes              ; apply the power incomes of each wizard to their
-//                                         ; current research, mana reserves, and casting skill
-//                                         ; INCONSISTENT: allows mana up to 32000
+    Players_Apply_Magic_Power();
 
 // call    j_WIZ_ResearchProgress          ; checks whether any of the wizards has finished their
 //                                         ; current research, and if so, allows picking a new one
@@ -456,7 +452,34 @@ void Next_Turn_Calc(void)
 */
 
 // WZD o121p01
+
+
 // WZD o121p02
+// AKAK Calc_Nominal_Skill()
+int16_t Player_Base_Casting_Skill(int16_t player_idx)
+{
+
+    int16_t casting_skill;  // _CX_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Base_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    casting_skill = sqrt(_players[player_idx].Casting_Skill);
+
+    if(_players[player_idx].archmage > 0)
+    {
+        casting_skill += 10;
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Base_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    return casting_skill;
+}
+
+
 // WZD o121p03
 // WZD o121p04
 // WZD o121p05
@@ -682,7 +705,72 @@ void Update_Players_Gold_Reserve(void)
 }
 
 
-// WZD s140p05
+// WZD o140p05
+// drake178: WIZ_PowerIncomes()
+// OON XREF: Next_Turn_Calc()
+/*
+    sets
+    _players[itr_players].Research_Left
+    _players[itr_players].mana_reserve
+    _players[itr_players].Casting_Skill
+
+*/
+void Players_Apply_Magic_Power(void)
+{
+    int16_t Research_Income;
+    int16_t Mana_Income;
+    int16_t Skill_Income;
+
+    int16_t itr_players;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[itr_players].Spell_Cast != 0xD6 /* Spell_Of_Return */)
+        {
+            Get_Power_Incomes(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
+        }
+
+        if(_players[itr_players].Research_Left <= Research_Income)
+        {
+            _players[itr_players].Research_Left = 0;
+        }
+        else
+        {
+            _players[itr_players].Research_Left -= Research_Income;
+        }
+
+        if((32000 - _players[itr_players].mana_reserve) >= Mana_Income)
+        {
+            _players[itr_players].mana_reserve += Mana_Income;
+        }
+        else
+        {
+            _players[itr_players].mana_reserve = 32000;
+        }
+
+        // 'Archmage' Special Ability 50% bonus to all mana spent on increasing skill
+        // ¿ vs. Calc_Nominal_Skill() ?
+        if(_players[itr_players].archmage <= 0)
+        {
+            _players[itr_players].Casting_Skill += Skill_Income;
+        }
+        else
+        {
+            _players[itr_players].Casting_Skill += ((Skill_Income * 3) / 2);
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD s140p06
 // WZD s140p07
 // WZD s140p08
@@ -694,7 +782,49 @@ void Update_Players_Gold_Reserve(void)
 // WZD s140p14
 // WZD s140p15
 // WZD s140p16
-// WZD s140p17
+
+
+// WZD o140p17
+// drake178: WIZ_SkillFromHeroes()
+int16_t Player_Hero_Casting_Skill(int16_t player_idx)
+{
+    int16_t heroes_spell_casting_skill_points;
+    int16_t half_hero_spell_casting_skill_points;
+
+    int16_t itr_heroes;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    half_hero_spell_casting_skill_points = 0;
+    heroes_spell_casting_skill_points = 0;
+
+    for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+    {
+        if(
+            (_players[player_idx].Heroes[itr_heroes].Unit_Index > -1) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_x == _FORTRESSES[player_idx].world_x) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_y == _FORTRESSES[player_idx].world_y) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_plane == _FORTRESSES[player_idx].world_plane)
+        )
+        {
+            UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, Active_Unit);
+
+            half_hero_spell_casting_skill_points = (Active_Unit->mana_max / 2);
+
+            heroes_spell_casting_skill_points += half_hero_spell_casting_skill_points;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
+#endif
+
+    return heroes_spell_casting_skill_points;
+}
+
+
 // WZD s140p18
 // WZD s140p19
 // WZD s140p20

@@ -586,12 +586,6 @@ void Magic_Screen_Draw(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Magic_Screen_Draw()\n", __FILE__, __LINE__);
 #endif
 
-
-    research = 57;  // DEMO
-    skill = 35;  // DEMO
-    mana = 35;  // DEMO
-
-
     colors1[0] = 172;
     colors1[1] = 216;
     colors1[2] = 123;
@@ -659,10 +653,14 @@ void Magic_Screen_Draw(void)
 
     Reset_Window();
 
-    // TODO  _players[0].Mana_Pnct = mana_stave_pct_pos;
-    // TODO  _players[0].Research_Pcnt = research_stave_pct_pos;
-    // TODO  _players[0].Skill_Pcnt = skill_stave_pct_pos;
-    // TODO  WIZ_GetPwrIncomes(&Mana, &Research, &Skill, 0);
+
+    // Ummm... Why is the screen draw function update the player data?
+    _players[0].Mana_Pnct = mana_stave_pct_pos;
+    _players[0].Research_Pcnt = research_stave_pct_pos;
+    _players[0].Skill_Pcnt = skill_stave_pct_pos;
+    // WIZ_GetPwrIncomes(&mana, &research, &skill, 0);
+    Get_Power_Incomes(&mana, &research, &skill, 0);
+
 
     Set_Font_Style1(2, 3, 0, 0);
     Set_Outline_Color(19);
@@ -694,20 +692,22 @@ void Magic_Screen_Draw(void)
     Set_Font_Spacing_Width(1);
 
 
+    /*
+        "Casting Skill:"
+    */
     Print(5, 177, aCastingSkill);
-
-    // itoa((Calc_Nominal_Skill(_human_player_idx) + WIZ_SkillFromHeroes(_human_player_idx)), GUI_String_1), 10);
-    strcpy(GUI_String_1, "71");
+    itoa((Player_Base_Casting_Skill(_human_player_idx) + Player_Hero_Casting_Skill(_human_player_idx)), GUI_String_1, 10);
+    itoa(Player_Base_Casting_Skill(_human_player_idx), GUI_String_2, 10);
     strcat(GUI_String_1, cnst_OpeningBrace_2);
-    // itoa(Calc_Nominal_Skill(_human_player_idx), GUI_String_2), 10);
-    strcpy(GUI_String_2, "71");
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, cnst_ClosingBrace_2);
     Print_Right(90, 177, GUI_String_1);
 
 
+    /*
+        "Magic Reserve:"
+    */
     Print(5, 185, aMagicReserve);
-
     if(_players[0].mana_reserve > 19999)
     {
         Set_Font_Style1(0, 3, 0, 0);
@@ -717,24 +717,39 @@ void Magic_Screen_Draw(void)
     }
     Print_Integer_Right(90, 185, _players[0].mana_reserve);
 
+
     Set_Font_Style1(1, 3, 0, 0);
     Set_Outline_Color(240);
     Set_Alias_Color(228);
     Set_Font_Spacing_Width(1);
 
+
+    /*
+        "Power Base:"
+    */
     Print(5, 193, aPowerBase);
     Print_Integer_Right(90, 193, _players[0].Power_Base);
 
+
+    /*
+        "Casting:"
+    */
     Print(100, 177, aCasting_0);
     // Print_Far(156, 177, spell_data_table[_players[_human_player_idx].Spell_Cast]);
     Print(156, 177, "None");  // DEMO
 
 
+    /*
+        "Researching:"
+    */
     Print(100, 185, aResearching);
     // Print_Far(156, 185, spell_data_table[_players[_human_player_idx].Researching]);
     Print(156, 185, "Stasis");  // DEMO
 
 
+    /*
+        "Summon To:"
+    */
     Print(100, 193, aSummonTo);
     // TODO  if(human_player_summoning_circle_city_idx == ST_UNDEFINED)
     // TODO  {

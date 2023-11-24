@@ -65,6 +65,7 @@
 #include "MoX_PFL.H"
 
 #include <assert.h>
+#include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 #include <stdlib.h>     /* itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */

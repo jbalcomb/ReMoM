@@ -59,7 +59,11 @@ void Next_Turn_Calc(void);
 */
 
 // WZD o121p01
+
 // WZD o121p02
+// AKAK Calc_Nominal_Skill()
+int16_t Player_Base_Casting_Skill(int16_t player_idx);
+
 // WZD o121p03
 // WZD o121p04
 // WZD o121p05
@@ -93,7 +97,11 @@ void All_City_Calculations(void);
 // drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void);
 
-// WZD s140p05
+// WZD o140p05
+// drake178: WIZ_PowerIncomes()
+// OON XREF Next_Turn_Calc()
+void Players_Apply_Magic_Power(void);
+
 // WZD s140p06
 // WZD s140p07
 // WZD s140p08
@@ -105,7 +113,11 @@ void Update_Players_Gold_Reserve(void);
 // WZD s140p14
 // WZD s140p15
 // WZD s140p16
-// WZD s140p17
+
+// WZD o140p17
+// drake178: WIZ_SkillFromHeroes()
+int16_t Player_Hero_Casting_Skill(int16_t player_idx);
+
 // WZD s140p18
 // WZD s140p19
 // WZD s140p20
