@@ -109,11 +109,16 @@ Next_Turn_Proc()
             _CITIES[] s_CITY.research_units  
             _CITIES[] s_CITY.Power  
 
-        |-> WIZ_GoldIncomes()  
-            |-> j_WIZ_GetNUCounts()  
+        |-> Update_Players_Gold_Reserve()  
+            |-> Players_Normal_Units()  
 
-j_WIZ_SetPowerBases()  
-j_WIZ_PowerIncomes()  
+        |-> Players_Update_Magic_Power()  
+        |-> Players_Apply_Magic_Power()  
+            |-> Get_Power_Incomes()
+                |-> Get_Power_Incomes_Base()
+                |-> Spell_Research_Bonus()
+                
+
 j_WIZ_ResearchProgress()  
 j_WIZ_ProcessUpkeep()  
     food, gold, mana  
