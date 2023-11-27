@@ -191,10 +191,10 @@ void ArmyList_Screen(void)
 
     ArmyList_Draw_Reduced_Map();
 
-    // TODO  armylist_upkeep_gold = WIZ_ArmyUpkeep_Gold(_human_player_idx);
+    armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_human_player_idx);
     // TODO  armylist_upkeep_mana = WIZ_TotalUpkeep_Mana(_human_player_idx);
     // TODO  armylist_upkeep_food = WIZ_ArmyUpkeep_Food(_human_player_idx);
-    armylist_upkeep_gold = 70;
+    // armylist_upkeep_gold = 70;
     armylist_upkeep_mana =  0;
     armylist_upkeep_food = 64;
 
@@ -216,6 +216,8 @@ void ArmyList_Screen(void)
     */
 
     armylist_item_scanned_field = 0;  /* ¿ Field NONE ?*/
+
+    screen_changed = ST_FALSE;  // DNE in Dasm
 
     leave_screen_flag = ST_FALSE;
 

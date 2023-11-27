@@ -287,7 +287,8 @@ void Load_MGC_Resources(void);
 void Load_WZD_Resources(void);
 
 // WZD o52p02
-void UNIT_Upkeep_Reset(void);
+// drake178: UNIT_Upkeep_Reset()
+void Units_Upkeeps(void);
 
 // WZD o52p03
 void Terrain_Init(void);

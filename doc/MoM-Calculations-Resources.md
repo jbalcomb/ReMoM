@@ -69,7 +69,7 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
     // ¿ exactly as presented on the 'ArmyList Screen' ?
     // ¿ "total" vs. "army" upkeep - equivalent for gold and food, but mana has non-armies Overland and City Enchantments ?
     Mana_Upkeep = WIZ_TotalUpkeep_Mana(player_idx);
-    Gold_Upkeep = WIZ_ArmyUpkeep_Gold(player_idx);
+    Gold_Upkeep = Player_Armies_Gold_Upkeep(player_idx);
     Food_Upkeep = WIZ_ArmyUpkeep_Food(player_idx);
     ...
     adjusted for Computer-Players by Difficulty Modifier
@@ -109,6 +109,14 @@ WIZ_GoldIncomes()
         s_CITY.Food
         s_CITY.Pop_K
 
+## Gold Income
+
+_CITIES[].gold_units  
+    set in Do_City_Calculations() using City_Gold_Production()  
+_CITIES[].building_maintenance  
+    set in Do_City_Calculations() using City_Gold_Mainanence()  
+
+
 ## Food Reserve
     Sum of (Food - Pop_K) for each City minus the Count of Normal Units
     Surplus Food = Food Harvested - Food Eaten
@@ -117,6 +125,9 @@ WIZ_GoldIncomes()
 
 
 Income_Food[] - Normal_Unit_Counts[]
+
+
+
 
 
 ## Magic Screen

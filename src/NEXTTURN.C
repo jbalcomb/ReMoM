@@ -583,7 +583,280 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 // WZD o121p10
 // WZD o121p11
 // WZD o121p12
+
+
 // WZD o121p13
+// drake178: RP_GAME_UnitTypesUpdate()
+/*
+    sets Gold Upkeep Cost for 'Standard Units' (< 'Summoned Units' / 'Fantastic Creatures')
+    sets Sound for all Unit Types
+*/
+void Patch_Units_Upkeep_And_Sound(void)
+{
+    int16_t itr_unit_types;  // _SI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Patch_Units_Upkeep_And_Sound()\n", __FILE__, __LINE__);
+#endif
+
+/*
+ovr121:1347
+27 00 2E 00 39 00 42 00 4C 00 53 00 59 00 5F 00 68 00 72 00 78 00 7F 00 89 00 93 00
+Zero_Gold_Units
+_BarbSpearmen,
+_BeastSpearmen,
+_DrowSpearmen,
+_DracSpearmen
+_DwarfSwordsmen,
+_GnollSpearmen,
+_HflngSpearmen,
+_HElfSpearmen
+_HMenSpearmen,
+_KlckSpearmen,
+_LizSpearmen,
+_NmdSpearmen
+_OrcSpearmen,
+_TrlSpearmen
+*/
+    for(itr_unit_types = 0; itr_unit_types < 154; itr_unit_types++)
+    {
+        switch(itr_unit_types)
+        {
+            case 0x27: /* _BarbSpearmen    */ 
+            case 0x2E: /* _BeastSpearmen   */ 
+            case 0x39: /* _DrowSpearmen    */ 
+            case 0x42: /* _DracSpearme     */ 
+            case 0x4C: /* _DwarfSwordsmen  */ 
+            case 0x53: /* _GnollSpearmen   */ 
+            case 0x59: /* _HflngSpearmen   */ 
+            case 0x5F: /* _HElfSpearme     */ 
+            case 0x68: /* _HMenSpearmen    */ 
+            case 0x72: /* _KlckSpearmen    */ 
+            case 0x78: /* _LizSpearmen     */ 
+            case 0x7F: /* _NmdSpearme      */ 
+            case 0x89: /* _OrcSpearmen     */ 
+            case 0x93: /* _TrlSpearmen     */
+            {
+                _unit_type_table[itr_unit_types].Upkeep = 0;
+            } break;
+            default:
+            {
+                _unit_type_table[itr_unit_types].Upkeep = ((_unit_type_table[itr_unit_types].Cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
+            }
+        }
+    }
+
+/*
+[byte ptr _unit_type_table.Sound], 102
+[byte ptr _unit_type_table.Sound+24h], 102
+[byte ptr _unit_type_table.Sound+48h], 103
+[byte ptr _unit_type_table.Sound+6Ch], 102
+[byte ptr _unit_type_table.Sound+90h], 102
+[byte ptr _unit_type_table.Sound+0B4h], 102
+[byte ptr _unit_type_table.Sound+0D8h], 102
+[byte ptr _unit_type_table.Sound+0FCh], 102
+[byte ptr _unit_type_table.Sound+120h], 102
+[byte ptr _unit_type_table.Sound+144h], 102
+[byte ptr _unit_type_table.Sound+168h], 103
+[byte ptr _unit_type_table.Sound+18Ch], 102
+[byte ptr _unit_type_table.Sound+1B0h], 102
+[byte ptr _unit_type_table.Sound+1D4h], 103
+[byte ptr _unit_type_table.Sound+1F8h], 102
+[byte ptr _unit_type_table.Sound+21Ch], 103
+[byte ptr _unit_type_table.Sound+240h], 102
+[byte ptr _unit_type_table.Sound+264h], 134
+[byte ptr _unit_type_table.Sound+288h], 103
+[byte ptr _unit_type_table.Sound+2ACh], 102
+[byte ptr _unit_type_table.Sound+2D0h], 102
+[byte ptr _unit_type_table.Sound+2F4h], 102
+[byte ptr _unit_type_table.Sound+318h], 102
+[byte ptr _unit_type_table.Sound+33Ch], 103
+[byte ptr _unit_type_table.Sound+360h], 102
+[byte ptr _unit_type_table.Sound+384h], 103
+[byte ptr _unit_type_table.Sound+3A8h], 102
+[byte ptr _unit_type_table.Sound+3CCh], 103
+[byte ptr _unit_type_table.Sound+3F0h], 102
+[byte ptr _unit_type_table.Sound+414h], 102
+[byte ptr _unit_type_table.Sound+438h], 102
+[byte ptr _unit_type_table.Sound+45Ch], 102
+[byte ptr _unit_type_table.Sound+480h], 103
+[byte ptr _unit_type_table.Sound+4A4h], 102
+[byte ptr _unit_type_table.Sound+4C8h], 102
+[byte ptr _unit_type_table.Sound+4ECh], 134
+[byte ptr _unit_type_table.Sound+510h], 134
+[byte ptr _unit_type_table.Sound+534h], 134
+[byte ptr _unit_type_table.Sound+558h], 134
+[byte ptr _unit_type_table.Sound+57Ch], 86
+[byte ptr _unit_type_table.Sound+5A0h], 86
+[byte ptr _unit_type_table.Sound+5C4h], 86
+[byte ptr _unit_type_table.Sound+5E8h], 102
+[byte ptr _unit_type_table.Sound+60Ch], 151
+[byte ptr _unit_type_table.Sound+630h], 150
+[byte ptr _unit_type_table.Sound+654h], 86
+[byte ptr _unit_type_table.Sound+678h], 86
+[byte ptr _unit_type_table.Sound+69Ch], 86
+[byte ptr _unit_type_table.Sound+6C0h], 86
+[byte ptr _unit_type_table.Sound+6E4h], 86
+[byte ptr _unit_type_table.Sound+708h], 151
+[byte ptr _unit_type_table.Sound+72Ch], 151
+[byte ptr _unit_type_table.Sound+750h], 86
+[byte ptr _unit_type_table.Sound+774h], 150
+[byte ptr _unit_type_table.Sound+798h], 102
+[byte ptr _unit_type_table.Sound+7BCh], 131
+[byte ptr _unit_type_table.Sound+7E0h], 85
+[byte ptr _unit_type_table.Sound+804h], 86
+[byte ptr _unit_type_table.Sound+828h], 86
+[byte ptr _unit_type_table.Sound+84Ch], 86
+[byte ptr _unit_type_table.Sound+870h], 102
+[byte ptr _unit_type_table.Sound+894h], 151
+[byte ptr _unit_type_table.Sound+8B8h], 150
+[byte ptr _unit_type_table.Sound+8DCh], 6
+[byte ptr _unit_type_table.Sound+900h], 151
+[byte ptr _unit_type_table.Sound+924h], 134
+[byte ptr _unit_type_table.Sound+948h], 134
+[byte ptr _unit_type_table.Sound+96Ch], 134
+[byte ptr _unit_type_table.Sound+990h], 134
+[byte ptr _unit_type_table.Sound+9B4h], 134
+[byte ptr _unit_type_table.Sound+9D8h], 135
+[byte ptr _unit_type_table.Sound+9FCh], 135
+[byte ptr _unit_type_table.Sound+0A20h], 134
+[byte ptr _unit_type_table.Sound+0A44h], 150
+[byte ptr _unit_type_table.Sound+0A68h], 116
+[byte ptr _unit_type_table.Sound+0A8Ch], 134
+[byte ptr _unit_type_table.Sound+0AB0h], 86
+[byte ptr _unit_type_table.Sound+0AD4h], 86
+[byte ptr _unit_type_table.Sound+0AF8h], 86
+[byte ptr _unit_type_table.Sound+0B1Ch], 86
+[byte ptr _unit_type_table.Sound+0B40h], 150
+[byte ptr _unit_type_table.Sound+0B64h], 214
+[byte ptr _unit_type_table.Sound+0B88h], 150
+[byte ptr _unit_type_table.Sound+0BACh], 86
+[byte ptr _unit_type_table.Sound+0BD0h], 86
+[byte ptr _unit_type_table.Sound+0BF4h], 86
+[byte ptr _unit_type_table.Sound+0C18h], 86
+[byte ptr _unit_type_table.Sound+0C3Ch], 150
+[byte ptr _unit_type_table.Sound+0C60h], 150
+[byte ptr _unit_type_table.Sound+0C84h], 86
+[byte ptr _unit_type_table.Sound+0CA8h], 86
+[byte ptr _unit_type_table.Sound+0CCCh], 86
+[byte ptr _unit_type_table.Sound+0CF0h], 151
+[byte ptr _unit_type_table.Sound+0D14h], 150
+[byte ptr _unit_type_table.Sound+0D38h], 150
+[byte ptr _unit_type_table.Sound+0D5Ch], 86
+[byte ptr _unit_type_table.Sound+0D80h], 86
+[byte ptr _unit_type_table.Sound+0DA4h], 86
+[byte ptr _unit_type_table.Sound+0DC8h], 102
+[byte ptr _unit_type_table.Sound+0DECh], 151
+[byte ptr _unit_type_table.Sound+0E10h], 150
+[byte ptr _unit_type_table.Sound+0E34h], 86
+[byte ptr _unit_type_table.Sound+0E58h], 102
+[byte ptr _unit_type_table.Sound+0E7Ch], 134
+[byte ptr _unit_type_table.Sound+0EA0h], 86
+[byte ptr _unit_type_table.Sound+0EC4h], 86
+[byte ptr _unit_type_table.Sound+0EE8h], 86
+[byte ptr _unit_type_table.Sound+0F0Ch], 102
+[byte ptr _unit_type_table.Sound+0F30h], 151
+[byte ptr _unit_type_table.Sound+0F54h], 151
+[byte ptr _unit_type_table.Sound+0F78h], 86
+[byte ptr _unit_type_table.Sound+0F9Ch], 150
+[byte ptr _unit_type_table.Sound+0FC0h], 86
+[byte ptr _unit_type_table.Sound+0FE4h], 102
+[byte ptr _unit_type_table.Sound+1008h], 150
+[byte ptr _unit_type_table.Sound+102Ch], 150
+[byte ptr _unit_type_table.Sound+1050h], 150
+[byte ptr _unit_type_table.Sound+1074h], 150
+[byte ptr _unit_type_table.Sound+1098h], 150
+[byte ptr _unit_type_table.Sound+10BCh], 150
+[byte ptr _unit_type_table.Sound+10E0h], 86
+[byte ptr _unit_type_table.Sound+1104h], 86
+[byte ptr _unit_type_table.Sound+1128h], 86
+[byte ptr _unit_type_table.Sound+114Ch], 86
+[byte ptr _unit_type_table.Sound+1170h], 151
+[byte ptr _unit_type_table.Sound+1194h], 150
+[byte ptr _unit_type_table.Sound+11B8h], 214
+[byte ptr _unit_type_table.Sound+11DCh], 86
+[byte ptr _unit_type_table.Sound+1200h], 86
+[byte ptr _unit_type_table.Sound+1224h], 86
+[byte ptr _unit_type_table.Sound+1248h], 151
+[byte ptr _unit_type_table.Sound+126Ch], 151
+[byte ptr _unit_type_table.Sound+1290h], 150
+[byte ptr _unit_type_table.Sound+12B4h], 102
+[byte ptr _unit_type_table.Sound+12D8h], 86
+[byte ptr _unit_type_table.Sound+12FCh], 86
+[byte ptr _unit_type_table.Sound+1320h], 132
+[byte ptr _unit_type_table.Sound+1344h], 86
+[byte ptr _unit_type_table.Sound+1368h], 86
+[byte ptr _unit_type_table.Sound+138Ch], 86
+[byte ptr _unit_type_table.Sound+13B0h], 86
+[byte ptr _unit_type_table.Sound+13D4h], 102
+[byte ptr _unit_type_table.Sound+13F8h], 151
+[byte ptr _unit_type_table.Sound+141Ch], 151
+[byte ptr _unit_type_table.Sound+1440h], 86
+[byte ptr _unit_type_table.Sound+1464h], 150
+[byte ptr _unit_type_table.Sound+1488h], 116
+[byte ptr _unit_type_table.Sound+14ACh], 85
+[byte ptr _unit_type_table.Sound+14D0h], 85
+[byte ptr _unit_type_table.Sound+14F4h], 85
+[byte ptr _unit_type_table.Sound+1518h], 151
+[byte ptr _unit_type_table.Sound+153Ch], 149
+[byte ptr _unit_type_table.Sound+1560h], 85
+[byte ptr _unit_type_table.Sound+1584h], 162
+[byte ptr _unit_type_table.Sound+15A8h], 147
+[byte ptr _unit_type_table.Sound+15CCh], 147
+[byte ptr _unit_type_table.Sound+15F0h], 130
+[byte ptr _unit_type_table.Sound+1614h], 213
+[byte ptr _unit_type_table.Sound+1638h], 131
+[byte ptr _unit_type_table.Sound+165Ch], 130
+[byte ptr _unit_type_table.Sound+1680h], 130
+[byte ptr _unit_type_table.Sound+16A4h], 130
+[byte ptr _unit_type_table.Sound+16C8h], 134
+[byte ptr _unit_type_table.Sound+16ECh], 161
+[byte ptr _unit_type_table.Sound+1710h], 112
+[byte ptr _unit_type_table.Sound+1734h], 150
+[byte ptr _unit_type_table.Sound+1758h], 150
+[byte ptr _unit_type_table.Sound+177Ch], 147
+[byte ptr _unit_type_table.Sound+17A0h], 147
+[byte ptr _unit_type_table.Sound+17C4h], 130
+[byte ptr _unit_type_table.Sound+17E8h], 130
+[byte ptr _unit_type_table.Sound+180Ch], 130
+[byte ptr _unit_type_table.Sound+1830h], 102
+[byte ptr _unit_type_table.Sound+1854h], 113
+[byte ptr _unit_type_table.Sound+1878h], 150
+[byte ptr _unit_type_table.Sound+189Ch], 179
+[byte ptr _unit_type_table.Sound+18C0h], 131
+[byte ptr _unit_type_table.Sound+18E4h], 134
+[byte ptr _unit_type_table.Sound+1908h], 134
+[byte ptr _unit_type_table.Sound+192Ch], 147
+[byte ptr _unit_type_table.Sound+1950h], 135
+[byte ptr _unit_type_table.Sound+1974h], 135
+[byte ptr _unit_type_table.Sound+1998h], 210
+[byte ptr _unit_type_table.Sound+19BCh], 147
+[byte ptr _unit_type_table.Sound+19E0h], 213
+[byte ptr _unit_type_table.Sound+1A04h], 165
+[byte ptr _unit_type_table.Sound+1A28h], 114
+[byte ptr _unit_type_table.Sound+1A4Ch], 161
+[byte ptr _unit_type_table.Sound+1A70h], 161
+[byte ptr _unit_type_table.Sound+1A94h], 192
+[byte ptr _unit_type_table.Sound+1AB8h], 8
+[byte ptr _unit_type_table.Sound+1ADCh], 8
+[byte ptr _unit_type_table.Sound+1B00h], 8
+[byte ptr _unit_type_table.Sound+1B24h], 165
+[byte ptr _unit_type_table.Sound+1B48h], 130
+[byte ptr _unit_type_table.Sound+1B6Ch], 182
+[byte ptr _unit_type_table.Sound+1B90h], 112
+[byte ptr _unit_type_table.Sound+1BB4h], 146
+
+1BB4h  7092d
+7092 / 36 = 197
+
+*/
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Patch_Units_Upkeep_And_Sound()\n", __FILE__, __LINE__);
+#endif
+
+}
+
 // WZD o121p14
 
 

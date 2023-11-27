@@ -822,7 +822,7 @@ struct s_CITY
              uint8_t enchantments[NUM_CITY_ENCHANTMENTS];
     /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;
-    /* 60 */ int8_t gold_units;  // AKA Income
+    /* 60 */ uint8_t gold_units;  // AKA Income
     /* 61 */ int8_t building_maintenance;  // AKA Upkeep
     /* 62 */ int8_t mana_units;
     /* 63 */ int8_t research_units;
@@ -869,6 +869,17 @@ struct s_NODE
 };
 
 
+// sizeof: 18h  24d
+struct s_RACE
+{
+    /* 0x00 */ int16_t Name;  // offset
+    /* 0x02 */ int16_t CantBuild_Count;
+    /* 0x04 */ int16_t CantBuild[7];  // enum BLD_TYPE
+    /* 0x12 */ int16_t Outpost_Growth_Pcnt;
+    /* 0x14 */ int16_t Growth_Mod;
+    /* 0x16 */ int16_t HouseType;
+    /* 0x18 */
+};
 
 // sizeof:  20h  32d
 struct s_UNIT

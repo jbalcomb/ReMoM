@@ -33,7 +33,7 @@ void Players_Update_Magic_Power(void);
 int16_t UNIT_GetGoldUpkeep(int16_t unit_idx);
 
 // WZD o120p04
-int16_t WIZ_ArmyUpkeep_Gold(int16_t player_idx);
+int16_t Player_Armies_Gold_Upkeep(int16_t player_idx);
 
 // WZD o120p05
 int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx);

@@ -6314,9 +6314,9 @@ void Main_Screen_Draw_Summary_Window(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Summary_Window()\n", __FILE__, __LINE__);
 #endif
 
-    gold = 0;
-    food = 0;
-    mana = 0;
+    gold = 0;  // DNE in Dasm
+    food = 0;  // DNE in Dasm
+    mana = 0;  // DNE in Dasm
 
 
 

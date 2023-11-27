@@ -1,6 +1,53 @@
 
 
 
+Main Screen  
+    Status Window  
+        Gold Reserve  (Total Gold)  
+        Mana Reserve  (Total Mana)  
+    Summary Window  
+        Gold Income  
+        Food Reserve  (Excess Food)  
+        Mana Income  
+
+Main_Screen()  
+    Main_Screen_Draw()  
+        Main_Screen_Draw_Do_Draw()  
+            Main_Screen_Draw_Summary_Window()  
+                Get_Incomes()  
+                    Get_Power_Incomes()  
+                    WIZ_TotalUpkeep_Mana()  
+                    Player_Armies_Gold_Upkeep()  
+                        WIZ_GetFame()  
+                        UNIT_GetGoldUpkeep()  
+                    WIZ_ArmyUpkeep_Food()  
+            Main_Screen_Draw_Status_Window()  
+                _players[_human_player_idx].gold_reserve  
+                _players[_human_player_idx].mana_reserve  
+
+Gold Income
+    WIZARDS.EXE  
+        unit_types_tables  .Cost  .Upkeep  
+    main()  
+        |-> Load_WZD_Resources()  
+            |-> Units_Upkeeps()  
+    Loaded_Game_Update()  
+        |-> Patch_Units_Upkeep_And_Sound()  
+    ...  
+    Player_Armies_Gold_Upkeep()  
+        WIZ_GetFame()  
+            Legendary Heroes  
+            Just_Cause Overland Enchantment  
+            _players[player_idx].Fame  
+        UNIT_GetGoldUpkeep()  
+            unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;  
+        SUM[units upkeeps - fames]  
+
+Get_Incomes()  
+
+
+
+
 
 Spell Casting Skill
     Total
@@ -303,7 +350,7 @@ Get_Incomes()
     Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);  
 
     Mana_Upkeep = WIZ_TotalUpkeep_Mana(player_idx);  
-    Gold_Upkeep = WIZ_ArmyUpkeep_Gold(player_idx);  
+    Gold_Upkeep = Player_Armies_Gold_Upkeep(player_idx);  
     Food_Upkeep = WIZ_ArmyUpkeep_Food(player_idx);  
 
 Per City  

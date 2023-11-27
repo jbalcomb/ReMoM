@@ -77,7 +77,11 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx);
 // WZD o121p10
 // WZD o121p11
 // WZD o121p12
+
 // WZD o121p13
+// drake178: RP_GAME_UnitTypesUpdate()
+void Patch_Units_Upkeep_And_Sound(void);
+
 // WZD o121p14
 
 
