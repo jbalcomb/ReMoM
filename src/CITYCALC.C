@@ -252,13 +252,14 @@ void Players_Update_Magic_Power(void)
 
 
 // WZD o120p03
-int16_t UNIT_GetGoldUpkeep(int16_t unit_idx)
+// drake178: UNIT_GetGoldUpkeep()
+int16_t Unit_Gold_Upkeep(int16_t unit_idx)
 {
     int16_t unit_gold_upkeep;
     int16_t unit_owner_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_GetGoldUpkeep()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Gold_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
@@ -302,7 +303,7 @@ int16_t UNIT_GetGoldUpkeep(int16_t unit_idx)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: UNIT_GetGoldUpkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
+    dbg_prn("DEBUG: [%s, %d]: END: Unit_Gold_Upkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
 #endif
 
     return unit_gold_upkeep;
@@ -328,13 +329,13 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
     
     gold_upkeep_cost = 0;
 
-    fame_points = WIZ_GetFame(player_idx);
+    fame_points = Player_Fame(player_idx);
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         if (_UNITS[itr_units].owner_idx == player_idx)
         {
-            gold_upkeep_cost += UNIT_GetGoldUpkeep(itr_units);
+            gold_upkeep_cost += Unit_Gold_Upkeep(itr_units);
         }
     }
 
@@ -434,63 +435,64 @@ void Players_Normal_Units(int16_t normal_units[])
 
 
 // WZD o120p07
-void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)
+/*
+    Player
+    Resources - Gold, Food, Mana
+
+    calls out for player's magic power incomes - mana, research, skill
+    calls out for player's (total) upkeep - mana, gold, food
+    applies difficulty level modifiers
+    loops for all cities' surplus gold and food
+    loops for all heroes' 'Noble' special ((hero)unit) ability
+    applies 'excess food' 'gold income'
+    sets inouts to (income - expense)
+
+    these are the values that get displayed in the 'Summary Window' on the 'Main Screen'
+*/
+void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int16_t * food_total, int16_t * mana_total)
 {
     int16_t Mana;
-    int16_t City_Food_Surplus;
-    int16_t City_Gold_Balance;
-    int16_t Mana_Upkeep;
-    int16_t Food_Upkeep;
-    int16_t Gold_Upkeep;
+    int16_t food_income;
+    int16_t gold_income;
+    int16_t mana_expense;
+    int16_t food_expense;
+    int16_t gold_expense;
 
     int16_t itr_cities;
     int16_t itr_heroes;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Incomes()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Resource_Income_Total()\n", __FILE__, __LINE__);
 #endif
 
-    // a wrapper for WIZ_GetPowerIncomes that
-    // also applies research bonuses based on the current research target,
-    // zeroes out any negative incomes,
-    // and zeroes out all incomes while casting the Spell of Return
-    // ; the passed parameter order is different for the two!
-    // WZD o120p18
-    // void Get_Power_Incomes(int16_t * Mana, int16_t * Research, int16_t * Skill, int16_t player_idx)
-    // expects Mana, Research, Skill
-    // so, we're just taking this track to get Mana, 
-    Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);
+    Player_Magic_Power_Income_Total(&Mana, &food_income, &gold_income, player_idx);
 
-    Gold_Upkeep = 0;
-    City_Gold_Balance = 0;  // clear the bogus value we just got from Get_Power_Incomes()
-    Food_Upkeep = 0;
-    City_Food_Surplus = 0;  // clear the bogus value we just got from Get_Power_Incomes()
-    Mana_Upkeep = 0;
+    gold_expense = 0;
+    gold_income = 0;  // clear the bogus value we just got from Player_Magic_Power_Income_Total()
+    food_expense = 0;
+    food_income = 0;  // clear the bogus value we just got from Player_Magic_Power_Income_Total()
+    mana_expense = 0;
 
 
     if((g_TimeStop_PlayerNum - 1) == player_idx)
     {
-        *food = 0;
-        *gold = 0;
-        *mana = -200;
+        *food_total = 0;
+        *gold_total = 0;
+        *mana_total = -200;
     }
     else
     {
-        Mana_Upkeep = WIZ_TotalUpkeep_Mana(player_idx);
-            // ; calculates and returns the player's total manau pkeep value, 
-            // ; including units and their enchantments, city enchantments, and overland enchantments; halved if they have the channeler retort
+        mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);
 
-        Gold_Upkeep = Player_Armies_Gold_Upkeep(player_idx);
-            // ; returns the gold upkeep sum of the player's armies, minus their total Fame
+        gold_expense = Player_Armies_Gold_Upkeep(player_idx);
 
-        Food_Upkeep = WIZ_ArmyUpkeep_Food(player_idx);
-            // ; returns the amount of normal units under the player's control (which is their food upkeep)
+        food_expense = Player_Armies_Food_Upkeep(player_idx);
 
         if(player_idx != HUMAN_PLAYER_IDX)
         {
-            Mana_Upkeep = ((difficulty_modifiers_table[_difficulty].maintenance * Mana_Upkeep) / 100);
-            Gold_Upkeep = ((difficulty_modifiers_table[_difficulty].maintenance * Gold_Upkeep) / 100);
-            Food_Upkeep = ((difficulty_modifiers_table[_difficulty].maintenance * Food_Upkeep) / 100);
+            mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
+            gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
+            food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
         }
 
 
@@ -498,13 +500,8 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
         {
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _CITIES[%d].gold_units: %02X\n", __FILE__, __LINE__, itr_cities, _CITIES[itr_cities].gold_units);
-    dbg_prn("DEBUG: [%s, %d]: _CITIES[%d].building_maintenance: %02X\n", __FILE__, __LINE__, itr_cities, _CITIES[itr_cities].building_maintenance);
-    dbg_prn("DEBUG: [%s, %d]: (_CITIES[].gold_units - _CITIES[].building_maintenance): %d\n", __FILE__, __LINE__, (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance));
-#endif
-                City_Gold_Balance += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
-                City_Food_Surplus += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
+                gold_income += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
+                food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
             }
         }
 
@@ -521,42 +518,24 @@ void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * m
                 // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
                 if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x2000) != 0 )  /* Ab_Noble */
                 {
-                    City_Gold_Balance += 10;
+                    gold_income += 10;
                 }
             }
         }
 
 
 
-        *food = City_Food_Surplus - Food_Upkeep;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: City_Food_Surplus: %d\n", __FILE__, __LINE__, City_Food_Surplus);
-    dbg_prn("DEBUG: [%s, %d]: Food_Upkeep: %d\n", __FILE__, __LINE__, Food_Upkeep);
-    dbg_prn("DEBUG: [%s, %d]: *food: %d\n", __FILE__, __LINE__, *food);
-#endif
+        *food_total = food_income - food_expense;
+        // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+gold_income], ax
+        gold_income += (*food_total > 0) ? *food_total / 2 : 0;
+        *gold_total = gold_income - gold_expense;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: City_Gold_Balance: %d\n", __FILE__, __LINE__, City_Gold_Balance);
-    dbg_prn("DEBUG: [%s, %d]: ((*food > 0) ? 0 : (*food / 2)): %d\n", __FILE__, __LINE__, ((*food > 0) ? (*food / 2) : 0));
-    dbg_prn("DEBUG: [%s, %d]: Gold_Upkeep: %d\n", __FILE__, __LINE__, Gold_Upkeep);
-    dbg_prn("DEBUG: [%s, %d]: *gold: %d\n", __FILE__, __LINE__, *gold);
-#endif
-        // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+City_Gold_Balance], ax
-        City_Gold_Balance += (*food > 0) ? *food / 2 : 0;
-        *gold = City_Gold_Balance + Gold_Upkeep;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: City_Gold_Balance: %d\n", __FILE__, __LINE__, City_Gold_Balance);
-    dbg_prn("DEBUG: [%s, %d]: *gold: %d\n", __FILE__, __LINE__, *gold);
-#endif
-
-        *mana = Mana - Mana_Upkeep;
+        *mana_total = Mana - mana_expense;
 
     }
 
-
-
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Incomes()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Resource_Income_Total()\n", __FILE__, __LINE__);
 #endif
 
 }
@@ -1164,7 +1143,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         Wizard's Fame Points
         NOT 'Famous'
 */
-int16_t WIZ_GetFame(int16_t player_idx)
+int16_t Player_Fame(int16_t player_idx)
 {
     int16_t hero_unit_idx;
     int16_t fame_points;
@@ -1173,7 +1152,7 @@ int16_t WIZ_GetFame(int16_t player_idx)
     int16_t hero_unit_type;  // DNE in Dasm
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_GetFame()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Fame()\n", __FILE__, __LINE__);
 #endif
 
     fame_points = 0;
@@ -1209,21 +1188,13 @@ int16_t WIZ_GetFame(int16_t player_idx)
     // if(_players[player_idx].Globals[0x12] > 0)  /* Just_Cause */
     if(_players[player_idx].Globals[JUST_CAUSE] > 0)  /* Just_Cause */
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fame_points: %d\n", __FILE__, __LINE__, fame_points);
-#endif
         fame_points += 10;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fame_points: %d\n", __FILE__, __LINE__, fame_points);
-    dbg_prn("DEBUG: [%s, %d]: _players[player_idx].Fame: %d\n", __FILE__, __LINE__, _players[player_idx].Fame);
-#endif
 
     fame_points += _players[player_idx].Fame;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_GetFame() { fame_points = %d }\n", __FILE__, __LINE__, fame_points);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Fame() { fame_points = %d }\n", __FILE__, __LINE__, fame_points);
 #endif
 
     return fame_points;

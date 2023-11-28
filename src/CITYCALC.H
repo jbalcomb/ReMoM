@@ -30,7 +30,7 @@ void Do_City_Calculations(int16_t city_idx);
 void Players_Update_Magic_Power(void);
 
 // WZD o120p03
-int16_t UNIT_GetGoldUpkeep(int16_t unit_idx);
+int16_t Unit_Gold_Upkeep(int16_t unit_idx);
 
 // WZD o120p04
 int16_t Player_Armies_Gold_Upkeep(int16_t player_idx);
@@ -43,7 +43,7 @@ int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx);
 void Players_Normal_Units(int16_t normal_units[]);
 
 // WZD o120p07
-void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);
+void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);
 
 // WZD o120p08
 int16_t WIZ_TotalUpkeep_Mana(int16_t player_idx);
@@ -73,7 +73,7 @@ void Get_Power_Incomes(int16_t * Mana, int16_t * City_Food_Surplus, int16_t * Ci
 int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx);
 
 // WZD o120p20
-int16_t WIZ_GetFame(int16_t player_idx);
+int16_t Player_Fame(int16_t player_idx);
 
 // WZD o120p21
 

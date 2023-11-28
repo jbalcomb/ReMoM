@@ -14,7 +14,7 @@ Main_Screen()
     Main_Screen_Draw()  
         Main_Screen_Draw_Do_Draw()  
             Main_Screen_Draw_Summary_Window()  
-                Get_Incomes()  
+                Player_Resource_Income_Total()  
                     Get_Power_Incomes()  
                     WIZ_TotalUpkeep_Mana()  
                     Player_Armies_Gold_Upkeep()  
@@ -43,7 +43,7 @@ Gold Income
             unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;  
         SUM[units upkeeps - fames]  
 
-Get_Incomes()  
+Player_Resource_Income_Total()  
 
 
 
@@ -345,7 +345,7 @@ MoM-Manual:
 
 
 
-Get_Incomes()  
+Player_Resource_Income_Total()  
 
     Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);  
 

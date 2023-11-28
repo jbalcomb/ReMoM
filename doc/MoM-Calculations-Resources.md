@@ -57,10 +57,10 @@ main()
 
 ## Main_Screen_Draw_Summary_Window()
 
-Get_Incomes(_human_player_idx, &gold, &food, &mana);
+Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
 CITYCALC.C
 // WZD o120p07
-void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)
+void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana)
 
     Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);
     City_Gold_Balance = 0;
