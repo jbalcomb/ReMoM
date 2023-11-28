@@ -90,7 +90,7 @@ void Players_Update_Magic_Power(void)
         UU_players_power_base_array[itr] = 0;
     }
 
-    if(*(events_table + 0x60) != 2)  /* s_EVENT_DATA.Mana_Short.Status */
+    if(*(events_table + 48) != 2)  /* s_EVENT_DATA.Mana_Short.Status */
     {
         for(itr = 0; itr < NUM_NODES; itr++)
         {
@@ -105,7 +105,7 @@ void Players_Update_Magic_Power(void)
                     /*
                         Conjunction - Chaos (Red)
                     */
-                    if(*(events_table + 0x54) != 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
+                    if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
                     {
                         if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
                         {
@@ -124,7 +124,7 @@ void Players_Update_Magic_Power(void)
                     /*
                         Conjunction - Sorcery (Blue)
                     */
-                    if(*(events_table + 0x5C) != 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
+                    if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
                     {
                         if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
                         {
@@ -143,7 +143,7 @@ void Players_Update_Magic_Power(void)
                     /*
                         Conjunction - Nature (Green)
                     */
-                    if(*(events_table + 0x58) != 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
+                    if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
                     {
                         if(TBL_Nodes[itr].Node_Type == 0)  /* NODE_Sorcery */
                         {
@@ -1749,7 +1749,7 @@ int16_t City_Mana_Production(int16_t city_idx)
     // s_EVENT_DATA.Mana_Short.Status
     if(
         // (*((int16_t *)(&events_table + 0x60)) != 2) &&
-        (*(events_table + 0x60) != 2) &&
+        (*(events_table + 48) != 2) &&
         (_CITIES[city_idx].population == 0) &&
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
     )
@@ -1881,7 +1881,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             if(
                 (_players[city_owner_idx].spellrank_death != 0) &&
                 // (events_table->Good_Moon.Status == 2)
-                (*(events_table + 0x4C) != 2)
+            (*(events_table + 38) == 2)
             )
             {
                 mana_units = (mana_units - (building_magic_power / 2));
@@ -1890,7 +1890,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             if(
                 (_players[city_owner_idx].spellrank_life != 0) &&
                 // (events_table->Bad_Moon.Status == 2)
-                (*(events_table + 0x50) != 2)
+            (*(events_table + 40) == 2)
             )
             {
                 mana_units = (mana_units - (building_magic_power / 2));
@@ -1904,7 +1904,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             if(
                 (_players[city_owner_idx].spellrank_life != 0) &&
                 // (events_table->Good_Moon.Status == 2)
-                (*(events_table + 0x4C) != 2)
+            (*(events_table + 38) == 2)
             )
             {
                 mana_units += building_magic_power;
@@ -1913,7 +1913,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             if(
                 (_players[city_owner_idx].spellrank_death != 0) &&
                 // (events_table->Bad_Moon.Status == 2)
-                (*(events_table + 0x50) != 2)
+            (*(events_table + 40) == 2)
             )
             {
                 mana_units += building_magic_power;
