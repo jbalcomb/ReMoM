@@ -354,6 +354,7 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
 }
 
 // WZD o120p05
+// drake178: WIZ_ArmyUpkeep_Food()
 /*
     Calculate Normal Units Food Maintenance
     Normal Units
@@ -361,13 +362,13 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
     Food
     (normal units - one food unit)
 */
-int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx)
+int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
 {
     int16_t food_upkeep_cost;
     int16_t itr_units;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_ArmyUpkeep_Food()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
     food_upkeep_cost = 0;
@@ -390,7 +391,7 @@ int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx)
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_ArmyUpkeep_Food()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
     return food_upkeep_cost;
@@ -959,7 +960,7 @@ void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research,
 Get_Power_Incomes()
 XREF:
 j_Get_Power_Incomes()
-Get_Incomes()
+Player_Resource_Income_Total()
 
 j_Get_Power_Incomes()
 XREF:
@@ -967,7 +968,7 @@ XREF:
     WIZ_PowerIncomes()
     AI_Research_Picker()
 
-Get_Incomes()
+Player_Resource_Income_Total()
 XREF:
     Main_Screen()
     Main_Screen_Draw_Summary_Window()
@@ -1135,6 +1136,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
 }
 
 // WZD o120p20
+// drake178: WIZ_GetFame()
 /*
     Calculate Fame Points
         Hero - Legendary

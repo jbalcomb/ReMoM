@@ -36,7 +36,7 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx);
 int16_t Player_Armies_Gold_Upkeep(int16_t player_idx);
 
 // WZD o120p05
-int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx);
+int16_t Player_Armies_Food_Upkeep(int16_t player_idx);
 
 // WZD o120p06
 // drake178: WIZ_GetNUCounts()
