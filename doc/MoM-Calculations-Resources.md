@@ -142,3 +142,91 @@ Power Distribution
 Mana Points Ratio  
 Research Ratio  
 Casting Skill Ratio  
+
+
+Where does the 'Power Base' get set?  
+    Players_Update_Magic_Power()  
+
+Where does _CITIES[].mana_units get set?  
+
+
+```
+_players[player_idx].Power_Base;
+_players[player_idx].Research_Pcnt
+_players[player_idx].Mana_Pnct
+_players[player_idx].Skill_Pcnt
+```
+```
+mana_portion   = (((magic_power * 100) + 50) / _players[player_idx].Mana_Pnct)
+skill_portion  = (((magic_power * 100) + 50) / _players[player_idx].Skill_Pcnt)
+research_portion = magic_power - mana_portion - skill_portion;
+```
+```
+_players[player_idx].mana_focusing
+```
+```
+city_research_points += _CITIES[itr_cities].research_units
+```
+```
+if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+_UNITS[].type
+Abilities_HI & 0x20 != 0  /* Ab_Sage */
+Abilities_HI & 0x40 != 0  /* Ab_Sage2 */
+```
+4d 02 00 00 fa 12 cf 4e 00 00 00 00 00 00 00 00 00 00 03 00 1f 00 0a 00 00 00 03 00 0a 00 00 00 01 00 aa 00 00 00 00 00 00 00 00 00 00 00 04 00 1f 00 00 00 02 00 78 00 00 00 00 00 00  M...ú.ÏN..........................ª...................x......
+  00 00 00 00 00 00 00 00 00 0e 00 00 00 0d 00 00 00 08 00 00 00 00 00 00 00 09 00 00 00 00 00 00 00 0a 00 00 00 00 00
+
+
+4d 02 
+00 00 
+fa 12 
+cf 4e 
+00 00 
+00 00 
+00 00 
+00 00 
+00 00 
+03 00 
+1f 00 
+0a 00 
+00 00 
+03 00 
+0a 00 
+00 00 
+01 00 
+aa 00 
+00 00 
+00 00 
+00 00 
+00 00   40 s_EVENT_DATA.Conjunction_Chaos.Status
+00 00 
+04 00 
+
+1f 00 
+00 00 
+02 00 
+78 00 
+00 00 
+00 00 
+00 00 
+00 00 
+
+00 00 
+00 00 
+00 00 
+0e 00 
+00 00 
+0d 00 
+00 00 
+08 00 
+
+00 00 
+00 00 
+00 00 
+09 00 
+00 00 
+00 00 
+00 00 
+0a 00 
+00 00 
+00 00

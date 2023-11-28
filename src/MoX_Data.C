@@ -81,7 +81,7 @@ struct s_mouse_list mouse_list_hourglass[1] = {
 // WZD dseg:1F18
 // drake178: TBL_UE_Upkeep
 // ; Unit Enchantment upkeeps in bit order, from Immolation to Invulnerability
-// ; DATA XREF: UNIT_GetManaUpkeep+13B
+// ; DATA XREF: Unit_Mana_Upkeep+13B
 // 02 00 02 00 00 00 01 00 01 00 03 00 0A 00 01 00
 // 01 00 01 00 05 00 01 00 05 00 01 00 01 00 0A 00
 // 0A 00 03 00 01 00 05 00 02 00 01 00 02 00 01 00
@@ -123,7 +123,7 @@ int16_t unit_enchantment_upkeep_table[32] = {2, 2, 0, 1, 1, 3, 10, 1, 1, 1, 5, 1
 // WZD dseg:1F58
 // drake178: TBL_CE_Upkeep
 // ; City Enchantment upkeeps in byte order, from Wall of Fire to Altar of Battle, plus Nightshade
-// ; DATA XREF: CTY_EnchantsUpkeep+3D
+// ; DATA XREF: Player_City_Enchantments_Upkeep+3D
 // 02 00 0A 00 00 00 04 00 02 00 05 00 03 00 05 00
 // 19 00 05 00 05 00 05 00 05 00 05 00 01 00 05 00
 // 08 00 03 00 02 00 02 00 05 00 02 00 08 00 05 00
@@ -159,7 +159,7 @@ int16_t city_enchantment_upkeep_table[26] = {2, 10, 0, 4, 2, 5, 3, 5, 25, 5, 5, 
 // WZD dseg:1F8C
 /// drake178: TBL_GE_Upkeep
 // ; Global Enchantment upkeeps in byte order, from Eternal Night to Awareness
-// DATA XREF: WIZ_GlobalsUpkeep+29
+// DATA XREF: Player_Overland_Enchantments_Upkeep+29
 // 0F 00 0A 00 28 00 05 00 05 00 32 00 C8 00 07 00
 // 0A 00 0A 00 28 00 0F 00 14 00 0A 00 28 00 0A 00
 // 0A 00 0A 00 03 00 0A 00 05 00 0A 00 03 00 03 00

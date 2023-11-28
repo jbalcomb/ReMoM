@@ -192,11 +192,8 @@ void ArmyList_Screen(void)
     ArmyList_Draw_Reduced_Map();
 
     armylist_upkeep_gold = Player_Armies_Gold_Upkeep(_human_player_idx);
-    // TODO  armylist_upkeep_mana = WIZ_TotalUpkeep_Mana(_human_player_idx);
+    armylist_upkeep_mana = Player_Armies_And_Enchantments_Mana_Upkeep(_human_player_idx);
     armylist_upkeep_food = Player_Armies_Food_Upkeep(_human_player_idx);
-    // armylist_upkeep_gold = 70;
-    armylist_upkeep_mana =  0;
-    armylist_upkeep_food = 64;
 
     // ; loads the palette for an LBX image, if it contains  ; one (frame 0 only)
     // ¿ using 'armylist_up_button_seg, because it gets loaded as the first sub-allocation in _screen_seg ?

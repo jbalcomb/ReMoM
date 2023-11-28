@@ -658,8 +658,8 @@ void Magic_Screen_Draw(void)
     _players[0].Mana_Pnct = mana_stave_pct_pos;
     _players[0].Research_Pcnt = research_stave_pct_pos;
     _players[0].Skill_Pcnt = skill_stave_pct_pos;
-    // WIZ_GetPwrIncomes(&mana, &research, &skill, 0);
-    Get_Power_Incomes(&mana, &research, &skill, 0);
+    
+    Player_Magic_Power_Income_Total(&mana, &research, &skill, 0);
 
 
     Set_Font_Style1(2, 3, 0, 0);

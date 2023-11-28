@@ -818,7 +818,7 @@ struct s_CITY
              int8_t buildings[NUM_BUILDINGS];  // ¿ {..., -1, 0, 1, ...} ?
     /* 43 */ // struct s_CITY_ENCHANTMENTS enchantments;
              // uint8_t enchantments[26];  /* ¿ 0 for NONE, (player_idx + 1) for which wizard has which spell on this city ? */
-    /* 5C */ // int8_t Nightshade;  as seens in CTY_EnchantsUpkeep() for city_enchantment_upkeep_table
+    /* 5C */ // int8_t Nightshade;  as seens in Player_City_Enchantments_Upkeep() for city_enchantment_upkeep_table
              uint8_t enchantments[NUM_CITY_ENCHANTMENTS];
     /* 5D */ int8_t production_units;
     /* 5E */ int16_t Prod_Accu;

@@ -31,7 +31,7 @@ void Do_City_Calculations(int16_t city_idx)
 {
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_City_Calculations()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
 #endif
 
     // drake178: ; maps the EMM Data block into the page frame
@@ -50,7 +50,7 @@ void Do_City_Calculations(int16_t city_idx)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Do_City_Calculations()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
 #endif
 
 }
@@ -87,6 +87,8 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 0; itr < _num_players; itr++)
     {
+        _players[itr].Power_Base = 0;
+
         UU_players_power_base_array[itr] = 0;
     }
 
@@ -100,7 +102,10 @@ void Players_Update_Magic_Power(void)
 
                 if( (TBL_Nodes[itr].Meld_Flags & 0x01 /* M_Warped */) != 1)
                 {
-                    node_magic_power_points = (TBL_Nodes[itr].Power * _magic);
+
+                    // mov al, [es:bx+s_NODE.Power]; cbw; mov dx, [_magic]; inc dx; imul dx; cwd; sub ax, dx; sar ax, 1; mov _DI_node_magic_power_points, ax
+                    // node_magic_power_points = ((TBL_Nodes[itr].Power * (_magic + 1)) / 2);
+                    node_magic_power_points = ((TBL_Nodes[itr].Power * (_magic)) / 2);
                     
                     /*
                         Conjunction - Chaos (Red)
@@ -549,14 +554,14 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
         Overland Enchantments
         -50% for Channeler
 */
-int16_t WIZ_TotalUpkeep_Mana(int16_t player_idx)
+int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx)
 {
     int16_t mana_upkeep_cost;
     int16_t itr_units;
     int16_t itr_cities;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_TotalUpkeep_Mana()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_And_Enchantments_Mana_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
     mana_upkeep_cost = 0;
@@ -565,16 +570,16 @@ int16_t WIZ_TotalUpkeep_Mana(int16_t player_idx)
     {
         if(_UNITS[itr_units].owner_idx == player_idx)
         {
-            mana_upkeep_cost += UNIT_GetManaUpkeep(itr_units);
+            mana_upkeep_cost += Unit_Mana_Upkeep(itr_units);
         }
     }
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        mana_upkeep_cost += CTY_EnchantsUpkeep(itr_cities, player_idx);
+        mana_upkeep_cost += Player_City_Enchantments_Upkeep(itr_cities, player_idx);
     }
 
-    mana_upkeep_cost += WIZ_GlobalsUpkeep(player_idx);
+    mana_upkeep_cost += Player_Overland_Enchantments_Upkeep(player_idx);
 
     if(_players[player_idx].channeler > 0)
     {
@@ -582,20 +587,21 @@ int16_t WIZ_TotalUpkeep_Mana(int16_t player_idx)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_TotalUpkeep_Mana()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_And_Enchantments_Mana_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
     return mana_upkeep_cost;
 }
 
 // WZD o120p09
+// drake178: UNIT_GetManaUpkeep()
 /*
 
     +50% Undead Fantastic Unit
 */
-int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
+int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 {
-    int16_t unit_mana_upkeep_cost;
+    int16_t mana_upkeep;
     int16_t Enchant_Bit;
     // int16_t Enchants_LO;
     // int16_t Enchants_HI;
@@ -603,10 +609,10 @@ int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
     int16_t itr_unit_enchantments;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_TotalUpkeep_Mana()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    unit_mana_upkeep_cost = 0;
+    mana_upkeep = 0;
 
     // Enchants_HI = _UNITS[unit_idx].Enchants_HI;
     // Enchants_LO = _UNITS[unit_idx].Enchants_LO;
@@ -616,18 +622,18 @@ int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
     {
         if((_UNITS[unit_idx].Mutations & 0x20) != 0)  /* R_Undead */
         {
-            unit_mana_upkeep_cost += ((_unit_type_table[_UNITS[unit_idx].type].Upkeep * 3) / 2);  /* + 50% */
+            mana_upkeep += ((_unit_type_table[_UNITS[unit_idx].type].Upkeep * 3) / 2);  /* + 50% */
         }
         else
         {
-            unit_mana_upkeep_cost += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
+            mana_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
         }
     }
 
     // ¿ Torin The Chosen has no mana upkeep ?  ¿ why not just get it from the table ?
     if((_UNITS[unit_idx].type & 0x22) == 0)  /* _Chosen */
     {
-        unit_mana_upkeep_cost += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
+        mana_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
     }
 
     if(
@@ -635,7 +641,7 @@ int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
         (_players[_UNITS[unit_idx].owner_idx].conjurer > 0)
     )
     {
-        unit_mana_upkeep_cost = (((unit_mana_upkeep_cost * 3) + 3) / 4);
+        mana_upkeep = (((mana_upkeep * 3) + 3) / 4);
     }
 
     for(itr_unit_enchantments = 0; itr_unit_enchantments < NUM_UNIT_ENCHANTMENTS; itr_unit_enchantments++)
@@ -645,7 +651,7 @@ int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
 
         if(Enchant_Bit == 1)
         {
-            unit_mana_upkeep_cost += unit_enchantment_upkeep_table[itr_unit_enchantments];
+            mana_upkeep += unit_enchantment_upkeep_table[itr_unit_enchantments];
 
 // mov     ax, [bp+Enchants_HI]
 // mov     dx, [bp+Enchants_LO]
@@ -661,72 +667,73 @@ int16_t UNIT_GetManaUpkeep(int16_t unit_idx)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_TotalUpkeep_Mana()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    return unit_mana_upkeep_cost;
+    return mana_upkeep;
 }
 
 // WZD o120p10
-int16_t CTY_EnchantsUpkeep(int16_t city_idx, int16_t player_idx)
+// drake178: CTY_EnchantsUpkeep()
+int16_t Player_City_Enchantments_Upkeep(int16_t city_idx, int16_t player_idx)
 {
-    int16_t city_mana_upkeep_cost;
-    uint8_t * CITY_Enchants;
+    int16_t mana_upkeep;
+    uint8_t * city_enchantments;
     int16_t itr_city_enchantments;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_EnchantsUpkeep()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_City_Enchantments_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    city_mana_upkeep_cost = 0;
+    mana_upkeep = 0;
 
-    CITY_Enchants = _CITIES[city_idx].enchantments;
+    city_enchantments = _CITIES[city_idx].enchantments;
 
     // NOTE: the city_enchantment_upkeep_table has the 25 enchantments plus Nightshade
     for(itr_city_enchantments = 0; itr_city_enchantments < NUM_CITY_ENCHANTMENTS; itr_city_enchantments++)
     {
-        if(CITY_Enchants[itr_city_enchantments] == (player_idx + 1))
+        if(city_enchantments[itr_city_enchantments] == (player_idx + 1))
         {
-            city_mana_upkeep_cost += city_enchantment_upkeep_table[itr_city_enchantments];
+            mana_upkeep += city_enchantment_upkeep_table[itr_city_enchantments];
         }
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CTY_EnchantsUpkeep()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_City_Enchantments_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    return city_mana_upkeep_cost;
+    return mana_upkeep;
 }
 
 // WZD o120p11
-int16_t WIZ_GlobalsUpkeep(int16_t player_idx)
+// drake178: WIZ_GlobalsUpkeep()
+int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 {
-    int16_t global_mana_upkeep_cost;
-    uint8_t * _player_Globals;
+    int16_t mana_upkeep;
+    uint8_t * overland_enchantments;
     int16_t itr_overland_enchantments;
 
-    _player_Globals = _players[player_idx].Globals;
+    overland_enchantments = _players[player_idx].Globals;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_GlobalsUpkeep()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Overland_Enchantments_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    global_mana_upkeep_cost = 0;
-
+    mana_upkeep = 0;
 
     for(itr_overland_enchantments = 0; itr_overland_enchantments < NUM_OVERLAND_ENCHANTMENTS; itr_overland_enchantments++)
     {
-        if(_player_Globals[itr_overland_enchantments] > 0)
+        if(overland_enchantments[itr_overland_enchantments] > 0)
         {
-            global_mana_upkeep_cost += overland_enchantment_upkeep_table[itr_overland_enchantments];
+            mana_upkeep += overland_enchantment_upkeep_table[itr_overland_enchantments];
         }
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_GlobalsUpkeep()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Overland_Enchantments_Upkeep()\n", __FILE__, __LINE__);
 #endif
 
-    return global_mana_upkeep_cost;
+    return mana_upkeep;
 }
 
 
@@ -870,58 +877,63 @@ int16_t City_Gold_Production(int16_t city_idx)
     out:
         N/A
     
+    skill > mana > research
+
+    mana, skill, research from Magic Power Distribution
+    'Mana Focusing' bonus to mana drawn from magic power reserves for mana reserves
+    research points bonus for Heroes with 'Sage' Special Ability
 
 */
-void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research, int16_t player_idx)
+void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_points, int16_t * research_points, int16_t player_idx)
 {
-    int16_t City_Research;
-    int16_t Research_Income;
-    int16_t Skill_Income;
-    int16_t Mana_Income;
-    int16_t Power_Base;
+    int16_t city_research_points;
+    int16_t research_portion;
+    int16_t skill_portion;
+    int16_t mana_portion;
+    int16_t magic_power;
 
     int16_t itr_cities;
     int16_t itr_heroes;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Power_Incomes_Base()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
 #endif
 
-    Power_Base = _players[player_idx].Power_Base;
+    magic_power = _players[player_idx].Power_Base;
 
-    Mana_Income = (((Power_Base * 100) + 50) / _players[player_idx].Mana_Pnct);
-    Skill_Income = (((Power_Base * 100) + 50) / _players[player_idx].Skill_Pcnt);
-    Research_Income = Power_Base - Mana_Income - Skill_Income;
+    mana_portion     = (((magic_power * 100) + 50) / _players[player_idx].Mana_Pnct);
+    skill_portion    = (((magic_power * 100) + 50) / _players[player_idx].Skill_Pcnt);
+    research_portion = magic_power - mana_portion - skill_portion;
 
-    if( (_players[player_idx].Research_Pcnt == 0) && (Research_Income > 0) )
+    if( (_players[player_idx].Research_Pcnt == 0) && (research_portion > 0) )
     {
         if(_players[player_idx].Skill_Pcnt == 0)
         {
-            Mana_Income += Research_Income;
+            mana_portion += research_portion;
         }
         else
         {
-            Skill_Income += Research_Income;
+            skill_portion += research_portion;
         }
-        Research_Income = 0;
+        research_portion = 0;
     }
 
     if(_players[player_idx].mana_focusing > 0)
     {
-        Mana_Income += (Mana_Income / 4);  /* +25% */
+        mana_portion += (mana_portion / 4);  /* +25% */
     }
 
-    City_Research = 0;
+    city_research_points = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         if(_CITIES[itr_cities].owner_idx == player_idx)
         {
-            City_Research += _CITIES[itr_cities].research_units;
+            city_research_points += _CITIES[itr_cities].research_units;
         }
     }
 
-    Research_Income += City_Research;
+    research_portion += city_research_points;
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
@@ -936,26 +948,27 @@ void Get_Power_Incomes_Base(int16_t * Mana, int16_t * Skill, int16_t * Research,
             // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
             if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x20) != 0 )  /* Ab_Sage */
             {
-                Research_Income += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 3);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 3);
             }
             if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x40) != 0 )  /* Ab_Sage2 */
             {
-                Research_Income += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 9);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 9);
             }
         }
     }
 
-    *Mana = Mana_Income;
-    *Skill = Skill_Income;
-    *Research = Research_Income;
+    *mana_points = mana_portion;
+    *skill_points = skill_portion;
+    *research_points = research_portion;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Power_Incomes_Base()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
 #endif
 
 }
 
 // WZD o120p18
+// drake178: WIZ_GetPwrIncomes()
 /*
 Get_Power_Incomes()
 XREF:
@@ -977,82 +990,76 @@ XREF:
     AI_Balance_Upkeep()
 */
 /*
-
+    these values are what gets displayed on the 'Magic Screen' as "MP", "RP", "SP"
+    the mana value is also what gets displayed on the 'Main Screen' as "Mana Income"
 
     NOT *base* spell research, because it includes the research bonus, given the specific spell and special abilities
 */
-void Get_Power_Incomes(int16_t * Mana, int16_t * Research, int16_t * Skill, int16_t player_idx)
+void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_total, int16_t * skill_total, int16_t player_idx)
 {
-    int16_t Base_Skill_Income;
-    int16_t Base_Research_Income;
-    int16_t Base_Mana_Income;
-    int16_t Research_Bonus;
+    int16_t skill_income;
+    int16_t research_income;
+    int16_t mana_income;
+    int16_t spell_research_bonus;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Power_Incomes()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
 #endif
 
 
     if( (_players[player_idx].Spell_Cast & 0xD6 /* Spell_Of_Return */) != 0 )
     {
-        *Mana = 0;
-        *Research = 0;
-        *Skill = 0;
+        *mana_total = 0;
+        *research_total = 0;
+        *skill_total = 0;
     }
     else
     {
-        Get_Power_Incomes_Base(&Base_Research_Income, &Base_Skill_Income, &Base_Mana_Income, player_idx);
-            // ; converts and fills out the return values with the
-            // ; Mana, Skill, and Research Point incomes, adding
-            // ; RPs from cities and Heroes, but not applying any
-            // ; retorts to any of the incomes except Mana Focusing
+        Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);
 
-        Research_Bonus = Get_Research_Bonus(player_idx, _players[player_idx].Researching);
-            // ; calculates and returns the research bonus percentage
-            // ; that applies to the target spell based on the
-            // ; wizard's profile traits (spellbooks & retorts)
+        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].Researching);
 
-        if(Base_Research_Income < 0)
+        if(research_income < 0)
         {
-            Base_Research_Income = 0;
+            research_income = 0;
         }
-        if(Base_Mana_Income < 0)
+        if(mana_income < 0)
         {
-            Base_Mana_Income = 0;
+            mana_income = 0;
         }
-        if(Base_Skill_Income < 0)
+        if(skill_income < 0)
         {
-            Base_Skill_Income = 0;
+            skill_income = 0;
         }
 
-        Base_Research_Income = (Base_Research_Income + ( (Base_Research_Income * Research_Bonus) / 100));
+        research_income += ((research_income * spell_research_bonus) / 100);
 
-        *Mana = Base_Mana_Income;
-        *Research = Base_Research_Income;
-        *Skill = Base_Skill_Income;
+        *mana_total = mana_income;
+        *research_total = research_income;
+        *skill_total = skill_income;
 
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Power_Incomes()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
 #endif
 
 }
 
 // WZD o120p19
-int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
+int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
 {
-    int16_t Spell_Realm;
+    int16_t magic_realm;
 
     int16_t research_bonus;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Research_Bonus()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Spell_Research_Bonus()\n", __FILE__, __LINE__);
 #endif
 
     research_bonus = 0;
 
-    Spell_Realm = spell_data_table[spell_idx].Realm;
+    magic_realm = spell_data_table[spell_idx].Realm;
 
     if(_players[player_idx].sage_master > 0)
     {
@@ -1064,11 +1071,11 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus += 25;
     }
 
-    switch(Spell_Realm)
+    switch(magic_realm)
     {
         case 0:  /* Nature */
         {
-            DLOG("switch(Spell_Realm)  case 0:");
+            DLOG("switch(magic_realm)  case 0:");
             if(_players[player_idx].nature_mastery > 0)
             {
                 research_bonus += 15;
@@ -1080,7 +1087,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         } break;
         case 1:  /* Sorcery */
         {
-            DLOG("switch(Spell_Realm)  case 1:");
+            DLOG("switch(magic_realm)  case 1:");
             if(_players[player_idx].sorcery_mastery > 0)
             {
                 research_bonus += 15;
@@ -1092,7 +1099,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         } break;
         case 2:  /* Chaos */
         {
-            DLOG("switch(Spell_Realm)  case 2:");
+            DLOG("switch(magic_realm)  case 2:");
             if(_players[player_idx].chaos_mastery > 0)
             {
                 research_bonus += 15;
@@ -1104,7 +1111,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         } break;
         case 3:  /* Life */
         {
-            DLOG("switch(Spell_Realm)  case 3:");
+            DLOG("switch(magic_realm)  case 3:");
             if(_players[player_idx].spellrank_life > 7)
             {
                 research_bonus += ((_players[player_idx].spellrank_life - 7) * 10);
@@ -1112,7 +1119,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         } break;
         case 4:  /* Death */
         {
-            DLOG("switch(Spell_Realm)  case 4:");
+            DLOG("switch(magic_realm)  case 4:");
             if(_players[player_idx].spellrank_death > 7)
             {
                 research_bonus += ((_players[player_idx].spellrank_death - 7) * 10);
@@ -1120,7 +1127,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         } break;
         case 5:  /* Arcane */
         {
-            DLOG("switch(Spell_Realm)  case 5:");
+            DLOG("switch(magic_realm)  case 5:");
             if(_players[player_idx].runemaster > 0)
             {
                 research_bonus += 25;
@@ -1129,7 +1136,7 @@ int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx)
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Research_Bonus()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Player_Spell_Research_Bonus()\n", __FILE__, __LINE__);
 #endif
 
     return research_bonus;
@@ -1742,17 +1749,51 @@ int16_t City_Mana_Production(int16_t city_idx)
 
     int16_t mana_units;  // _DI_
 
+    int16_t do_debug = ST_FALSE;
+    int16_t map_square_magic_power;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
 #endif
+/*
+_CITIES[0]
+_CITIES[13]
+_CITIES[33]
+_CITIES[48]
+_CITIES[52]
+_CITIES[54]
+*/
+if(
+    (city_idx == 0) ||
+    (city_idx == 13) ||
+    (city_idx == 33) ||
+    (city_idx == 48) ||
+    (city_idx == 52) ||
+    (city_idx == 54)
+)
+{
+    do_debug = ST_TRUE;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: HUMAN: City_Mana_Production()\n", __FILE__, __LINE__);
+#endif
+}
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
+
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: city_owner_idx: %d\n", __FILE__, __LINE__, city_owner_idx);
+        dbg_prn("DEBUG: [%s, %d]: _CITIES[%d].population: %d\n", __FILE__, __LINE__, city_idx, _CITIES[city_idx].population);
+        dbg_prn("DEBUG: [%s, %d]: *(events_table + 48): %d\n", __FILE__, __LINE__, *(events_table + 48));
+    }
+#endif
 
     // s_EVENT_DATA.Mana_Short.Status
     if(
         // (*((int16_t *)(&events_table + 0x60)) != 2) &&
         (*(events_table + 48) != 2) &&
-        (_CITIES[city_idx].population == 0) &&
+        (_CITIES[city_idx].population != 0) &&
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
@@ -1801,9 +1842,35 @@ int16_t City_Mana_Production(int16_t city_idx)
             building_magic_power += 4;
         }
 
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: building_magic_power: %d\n", __FILE__, __LINE__, building_magic_power);
+        dbg_prn("DEBUG: [%s, %d]: building_magic_power_modifier: %d\n", __FILE__, __LINE__, building_magic_power_modifier);
+    }
+#endif
+
         building_magic_power = ((building_magic_power * building_magic_power_modifier) / 100);
 
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: building_magic_power: %d\n", __FILE__, __LINE__, building_magic_power);
+    }
+#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+// #endif
+
         mana_units = building_magic_power;
+
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
 
         if(
             (_CITIES[city_idx].buildings[ANIMISTS_GUILD] == 0x01 /* B_Built */) ||
@@ -1821,21 +1888,42 @@ int16_t City_Mana_Production(int16_t city_idx)
             mana_units += 3;
         }
 
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
+
         city_wp = _CITIES[city_idx].world_plane;
 
-        if(_CITIES[city_idx].race = 0x02 /* R_Dark_Elf */)
+        if(_CITIES[city_idx].race == 0x02 /* R_Dark_Elf */)
         {
             mana_units += _CITIES[city_idx].population;
         }
 
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
+
         if(
-            (_CITIES[city_idx].race = 0x07 /* R_High_Elf */) ||
-            (_CITIES[city_idx].race = 0x01 /* R_Beastman */) ||
-            (_CITIES[city_idx].race = 0x03 /* R_Draconian */)
+            (_CITIES[city_idx].race == 0x07 /* R_High_Elf */) ||
+            (_CITIES[city_idx].race == 0x01 /* R_Beastman */) ||
+            (_CITIES[city_idx].race == 0x03 /* R_Draconian */)
         )
         {
             mana_units += (_CITIES[city_idx].population / 2);
         }
+
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
 
         if(
             (_FORTRESSES[city_owner_idx].world_x == _CITIES[city_idx].world_x) &&
@@ -1843,6 +1931,7 @@ int16_t City_Mana_Production(int16_t city_idx)
             (_FORTRESSES[city_owner_idx].world_plane == city_wp)
         )
         {
+            DLOG("Fortress City");
             spell_ranks = (
                 _players[city_owner_idx].spellrank_nature + 
                 _players[city_owner_idx].spellrank_sorcery +
@@ -1859,73 +1948,102 @@ int16_t City_Mana_Production(int16_t city_idx)
             {
                 mana_units += spell_ranks;
             }
+        }
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
 
-            if(_CITIES[city_idx].race == 0x04 /* R_Dwarf */)
-            {
-                are_dwarf = ST_TRUE;
-            }
+        if(_CITIES[city_idx].race == 0x04 /* R_Dwarf */)
+        {
+            are_dwarf = ST_TRUE;
+        }
 
-            if(
-                (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x01 /* B_Built */) ||
-                (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x00 /* B_Replaced */)
-            )
-            {
-                have_miners_guild = ST_TRUE;
-            }
+        if(
+            (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            have_miners_guild = ST_TRUE;
+        }
 
-            useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+        useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
 
-            for(itr = 0; itr < useable_map_squares; itr++)
-            {
-                mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
-            }
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: useable_map_squares: %d\n", __FILE__, __LINE__, useable_map_squares);
+    }
+#endif
 
-            if(
-                (_players[city_owner_idx].spellrank_death != 0) &&
-                // (events_table->Good_Moon.Status == 2)
+        for(itr = 0; itr < useable_map_squares; itr++)
+        {
+            // mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+            map_square_magic_power = Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: map_square_magic_power: %d\n", __FILE__, __LINE__, map_square_magic_power);
+    }
+#endif
+
+            mana_units += map_square_magic_power;
+        }
+
+#ifdef STU_DEBUG
+    if(do_debug == ST_TRUE)
+    {
+        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
+    }
+#endif
+
+        if(
+            (_players[city_owner_idx].spellrank_death != 0) &&
+            // (events_table->Good_Moon.Status == 2)
             (*(events_table + 38) == 2)
-            )
-            {
-                mana_units = (mana_units - (building_magic_power / 2));
-            }
+        )
+        {
+            mana_units = (mana_units - (building_magic_power / 2));
+        }
 
-            if(
-                (_players[city_owner_idx].spellrank_life != 0) &&
-                // (events_table->Bad_Moon.Status == 2)
+        if(
+            (_players[city_owner_idx].spellrank_life != 0) &&
+            // (events_table->Bad_Moon.Status == 2)
             (*(events_table + 40) == 2)
-            )
-            {
-                mana_units = (mana_units - (building_magic_power / 2));
-            }
+        )
+        {
+            mana_units = (mana_units - (building_magic_power / 2));
+        }
 
-            if(mana_units < 0)
-            {
-                mana_units = 0;
-            }
+        if(mana_units < 0)
+        {
+            mana_units = 0;
+        }
 
-            if(
-                (_players[city_owner_idx].spellrank_life != 0) &&
-                // (events_table->Good_Moon.Status == 2)
+        if(
+            (_players[city_owner_idx].spellrank_life != 0) &&
+            // (events_table->Good_Moon.Status == 2)
             (*(events_table + 38) == 2)
-            )
-            {
-                mana_units += building_magic_power;
-            }
+        )
+        {
+            mana_units += building_magic_power;
+        }
 
-            if(
-                (_players[city_owner_idx].spellrank_death != 0) &&
-                // (events_table->Bad_Moon.Status == 2)
+        if(
+            (_players[city_owner_idx].spellrank_death != 0) &&
+            // (events_table->Bad_Moon.Status == 2)
             (*(events_table + 40) == 2)
-            )
-            {
-                mana_units += building_magic_power;
-            }
-
+        )
+        {
+            mana_units += building_magic_power;
         }
 
     }
     else
     {
+        DLOG("Mana Short OR Ghost City OR Neutral Player");
         mana_units = 0;
     }
 

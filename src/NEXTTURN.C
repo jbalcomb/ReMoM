@@ -1004,7 +1004,7 @@ void Players_Apply_Magic_Power(void)
     {
         if(_players[itr_players].Spell_Cast != 0xD6 /* Spell_Of_Return */)
         {
-            Get_Power_Incomes(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
+            Player_Magic_Power_Income_Total(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
         }
 
         if(_players[itr_players].Research_Left <= Research_Income)
