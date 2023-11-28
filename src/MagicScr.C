@@ -655,9 +655,9 @@ void Magic_Screen_Draw(void)
 
 
     // Ummm... Why is the screen draw function update the player data?
-    _players[0].Mana_Pnct = mana_stave_pct_pos;
-    _players[0].Research_Pcnt = research_stave_pct_pos;
-    _players[0].Skill_Pcnt = skill_stave_pct_pos;
+    _players[0].Mana_Pnct     = (mana_stave_pct_pos     * 2);
+    _players[0].Research_Pcnt = (research_stave_pct_pos * 2);
+    _players[0].Skill_Pcnt    = (skill_stave_pct_pos    * 2);
     
     Player_Magic_Power_Income_Total(&mana, &research, &skill, 0);
 

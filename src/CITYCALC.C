@@ -457,7 +457,7 @@ void Players_Normal_Units(int16_t normal_units[])
 */
 void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int16_t * food_total, int16_t * mana_total)
 {
-    int16_t Mana;
+    int16_t mana_income;
     int16_t food_income;
     int16_t gold_income;
     int16_t mana_expense;
@@ -471,7 +471,7 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Resource_Income_Total()\n", __FILE__, __LINE__);
 #endif
 
-    Player_Magic_Power_Income_Total(&Mana, &food_income, &gold_income, player_idx);
+    Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
     gold_expense = 0;
     gold_income = 0;  // clear the bogus value we just got from Player_Magic_Power_Income_Total()
@@ -536,7 +536,7 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
         gold_income += (*food_total > 0) ? *food_total / 2 : 0;
         *gold_total = gold_income - gold_expense;
 
-        *mana_total = Mana - mana_expense;
+        *mana_total = mana_income - mana_expense;
 
     }
 
@@ -901,8 +901,8 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
 
     magic_power = _players[player_idx].Power_Base;
 
-    mana_portion     = (((magic_power * 100) + 50) / _players[player_idx].Mana_Pnct);
-    skill_portion    = (((magic_power * 100) + 50) / _players[player_idx].Skill_Pcnt);
+    mana_portion     = (((magic_power * _players[player_idx].Mana_Pnct ) + 50) / 100);
+    skill_portion    = (((magic_power * _players[player_idx].Skill_Pcnt) + 50) / 100);
     research_portion = magic_power - mana_portion - skill_portion;
 
     if( (_players[player_idx].Research_Pcnt == 0) && (research_portion > 0) )
@@ -1015,7 +1015,7 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     }
     else
     {
-        Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);
+        Player_Magic_Power_Distribution(&mana_income, &skill_income, &research_income, player_idx);
 
         spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].Researching);
 
@@ -1678,7 +1678,7 @@ int16_t City_Research_Production(int16_t city_idx)
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
     if(
-        (_CITIES[city_idx].population == 0) &&
+        (_CITIES[city_idx].population != 0) &&
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {

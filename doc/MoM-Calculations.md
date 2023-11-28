@@ -35,15 +35,30 @@ Gold Income
         |-> Patch_Units_Upkeep_And_Sound()  
     ...  
     Player_Armies_Gold_Upkeep()  
-        WIZ_GetFame()  
+        PLayer_Fame()  
             Legendary Heroes  
             Just_Cause Overland Enchantment  
             _players[player_idx].Fame  
-        UNIT_GetGoldUpkeep()  
+        Unit_Gold_Upkeep()  
             unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;  
         SUM[units upkeeps - fames]  
 
 Player_Resource_Income_Total()  
+
+Mana Income & MP,RP,SP  
+Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);  
+    Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);  
+    mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);  
+    *mana_total = mana_income - mana_expense;  
+Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);  
+    Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);  
+Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);  
+    mana_portion     = (((magic_power * 100) + 50) / _players[player_idx].Mana_Pnct);  
+    skill_portion    = (((magic_power * 100) + 50) / _players[player_idx].Skill_Pcnt);  
+    research_portion = magic_power - mana_portion - skill_portion;  
+
+_CITIES[itr_cities].research_units  
+    City_Research_Production()  
 
 
 
