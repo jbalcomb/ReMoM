@@ -49,9 +49,9 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
     int16_t food_units;
     // IDGI  int16_t terrain_type_switch_value;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Food2()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Food2()\n", __FILE__, __LINE__);
+// #endif
 
     world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
     terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
@@ -301,7 +301,7 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
             food_units *= 2;
 
-            if(City_Map_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
+            if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) == ST_TRUE)
             {
                 food_units /= 2;
             }                               
@@ -319,9 +319,9 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
         food_units = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Food2()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Food2()\n", __FILE__, __LINE__);
+// #endif
 
     return food_units;
 }
@@ -337,11 +337,16 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
     uint16_t terrain_type;  // _SI_
     int16_t production_bonus;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Production_Bonus()\n", __FILE__, __LINE__);
-#endif
+    int16_t world_maps_offset;
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Production_Bonus(wx = %d, wy = %d, wp = %d, have_gaias_blessing = %d)\n", __FILE__, __LINE__, wx, wy, wp, have_gaias_blessing);
+// #endif
+
+    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+    // terrain_type = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx * 2)));
+    world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
+    terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
 
     if(terrain_type <= TT_Desert_end)
     {
@@ -349,7 +354,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
         {
             if(terrain_type <= TT_Rivers_end)
             {
-                if ( (terrain_type == TT_Mountain1) || (terrain_type != TT_ChaosNode) )
+                if ( (terrain_type == TT_Mountain1) || (terrain_type == TT_ChaosNode) )
                 {
                     // HERE:  base/super-type 'Moutain' or 'Chaos Node'
                     production_bonus = 5;
@@ -403,7 +408,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
             production_bonus = 3;
         }
 
-        if(City_Map_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+        if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
         {
             production_bonus = (production_bonus / 2);
         }
@@ -414,9 +419,9 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
         production_bonus = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Production_Bonus()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Production_Bonus(wx = %d, wy = %d, wp = %d, have_gaias_blessing = %d) { production_bonus = %d }\n", __FILE__, __LINE__, wx, wy, wp, have_gaias_blessing, production_bonus);
+// #endif
 
     return production_bonus;
 }
@@ -432,9 +437,9 @@ int16_t Map_Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
     int16_t itr_wy;  // _SI_
     int16_t itr_wx;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Gold_Bonus()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Gold_Bonus()\n", __FILE__, __LINE__);
+// #endif
 
     on_river = ST_FALSE;
     on_coast = ST_FALSE;
@@ -493,9 +498,9 @@ int16_t Map_Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Gold_Bonus()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Gold_Bonus()\n", __FILE__, __LINE__);
+// #endif
 
     return gold_bonus;
 }
@@ -511,9 +516,9 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 
     int16_t trade_bonus;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Road_Trade_Bonus()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Road_Trade_Bonus(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
 
     trade_bonus = 0;  // DNE in Dasm;  RTC used, but uninitialized
 
@@ -523,18 +528,18 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
         {
             for(itr_bit_index = 0; itr_bit_index < 8; itr_bit_index++)
             {
-                bit_index = ((itr_roadconn * 8) + itr_roadconn);
+                bit_index = ((itr_roadconn * 8) + itr_bit_index);
                 if( (bit_index < _cities) && (bit_index != city_idx) )
                 {
                     if(Test_Bit_Field(bit_index, (uint8_t *)&_CITIES[city_idx].road_connections[0]) != ST_FALSE)
                     {
                         if(_CITIES[city_idx].race != _CITIES[bit_index].race)
                         {
-                            trade_bonus = _CITIES[bit_index].population;
+                            trade_bonus += _CITIES[bit_index].population;
                         }
                         else
                         {
-                            trade_bonus = (_CITIES[bit_index].population / 2);
+                            trade_bonus += (_CITIES[bit_index].population / 2);
                         }
                     }
                 }
@@ -549,9 +554,9 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
         trade_bonus = (_CITIES[city_idx].population * 3);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Road_Trade_Bonus()\n", __FILE__, __LINE__);;
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Road_Trade_Bonus(city_idx = %d) { trade_bonus = %d }\n", __FILE__, __LINE__, city_idx, trade_bonus);
+// #endif
 
     return trade_bonus;
 }
@@ -564,9 +569,9 @@ int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
     int16_t terrain_type;  // _SI_
     int16_t is_river;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+// #endif
 
     is_river = ST_FALSE;  // DNE in Dasm
 
@@ -628,10 +633,9 @@ int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
         }
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+// #endif
 
     return is_river;
 }
@@ -645,11 +649,17 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
     int16_t terrain_special;  // _DI_
     int16_t gold_units;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Gold_Income()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Gold_Income(wx = %d, wy = %d, wp = %d, have_miners_guild = %d, are_dwarf = %d)\n", __FILE__, __LINE__, wx, wy, wp, have_miners_guild, are_dwarf);
+// #endif
 
     terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: terrain_special: %04X\n", __FILE__, __LINE__, terrain_special);
+// #endif
+
+    gold_units = 0;
 
     if(terrain_special == 0x03 /* TS_SilverOre */)
     {
@@ -676,14 +686,14 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         gold_units = ((gold_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
     {
         gold_units = (gold_units / 2);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Gold_Income()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Gold_Income(wx = %d, wy = %d, wp = %d, have_miners_guild = %d, are_dwarf = %d) { gold_units = %d }\n", __FILE__, __LINE__, wx, wy, wp, have_miners_guild, are_dwarf, gold_units);
+// #endif
 
     return gold_units;
 }
@@ -702,9 +712,9 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
     int16_t terrain_special;  // _DI_
     int16_t mana_units;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
+// #endif
 
     terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
 
@@ -740,14 +750,14 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         mana_units = ((mana_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
     {
         mana_units = (mana_units / 2);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Map_Square_Magic_Power()\n", __FILE__, __LINE__);
+// #endif
 
     return mana_units;
 }
@@ -787,9 +797,9 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     uint16_t world_map_value;
     uint16_t terrain_type;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+// #endif
 
     // les  bx, [_world_maps]
     // ~== ES = (&_world_maps[0] / 16); BX = (&_world_maps[0] % 16);
@@ -869,9 +879,9 @@ Return_True:
 
 Done:
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
+// #endif
 
     return return_value;
 }

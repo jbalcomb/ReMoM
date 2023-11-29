@@ -107,6 +107,9 @@ void Update_Players_Gold_Reserve(void);
 void Players_Apply_Magic_Power(void);
 
 // WZD s140p06
+// drake178: WIZ_ProcessUpkeep()
+void Players_Apply_Upkeeps__WIP(void);
+
 // WZD s140p07
 // WZD s140p08
 // WZD s140p09

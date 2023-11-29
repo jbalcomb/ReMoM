@@ -263,9 +263,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
     int16_t unit_gold_upkeep;
     int16_t unit_owner_idx;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Gold_Upkeep()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Gold_Upkeep()\n", __FILE__, __LINE__);
+// #endif
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
@@ -307,9 +307,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Gold_Upkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Gold_Upkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
+// #endif
 
     return unit_gold_upkeep;
 }
@@ -608,9 +608,9 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
     uint32_t Enchants;
     int16_t itr_unit_enchantments;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
+// #endif
 
     mana_upkeep = 0;
 
@@ -666,9 +666,9 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
+// #endif
 
     return mana_upkeep;
 }
@@ -753,9 +753,9 @@ int16_t City_Gold_Production(int16_t city_idx)
 
     int16_t gold_units;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -776,10 +776,18 @@ int16_t City_Gold_Production(int16_t city_idx)
             gold_modifier += 50;
         }
 
-        // Maximum Road Connection Trade Bonus
+        // Maximum Trade Bonus  (Shore/River/River-Mouth + Road Connection + Nomad Race)
         if( (_CITIES[city_idx].population * 3) < gold_modifier)
         {
             gold_modifier = (_CITIES[city_idx].population * 3);
+        }
+
+        if(
+            (_CITIES[city_idx].buildings[MERCHANTS_GUILD] == 0x01 /* B_Built */) ||
+            (_CITIES[city_idx].buildings[MERCHANTS_GUILD] == 0x00 /* B_Replaced */)
+        )
+        {
+            gold_modifier += 100;
         }
 
         if(
@@ -817,7 +825,8 @@ int16_t City_Gold_Production(int16_t city_idx)
 
         if(city_owner_idx != NEUTRAL_PLAYER_IDX)
         {
-            gold_units = (((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) * _players[city_owner_idx].tax_rate) /2);
+            gold_units = (((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) * _players[city_owner_idx].tax_rate) / 2);
+
         }
         else
         {
@@ -836,7 +845,8 @@ int16_t City_Gold_Production(int16_t city_idx)
         for(itr = 0; itr < useable_map_squares; itr++)
         {
 
-            gold_units += Map_Square_Gold_Income(CITYX(), CITYY(), CITYP(), have_miners_guild, are_dwarf);
+            gold_units += Map_Square_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+
         }
 
         // not sure why this is adding 100 to the modifier, instead of just doing +=
@@ -854,9 +864,9 @@ int16_t City_Gold_Production(int16_t city_idx)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Production() { gold_units = %d }\n", __FILE__, __LINE__, gold_units);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
 
     return gold_units;
 }
@@ -1220,9 +1230,9 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
     int16_t gold_units;  // _DI_
     int16_t itr;  //  _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Mainanence()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Mainanence()\n", __FILE__, __LINE__);
+// #endif
 
     gold_units = 0;
 
@@ -1240,9 +1250,9 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Mainanence()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Mainanence()\n", __FILE__, __LINE__);
+// #endif
 
     return gold_units;
 }
@@ -1278,9 +1288,9 @@ int16_t City_Food_Terrain(int16_t city_idx)
     int16_t food2_units;  // _DI_
     int16_t itr;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Terrain()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Terrain()\n", __FILE__, __LINE__);
+// #endif
 
     city_wp = _CITIES[city_idx].world_plane;
 
@@ -1300,9 +1310,9 @@ int16_t City_Food_Terrain(int16_t city_idx)
         food2_units = ((food2_units * 3) / 2);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Food_Terrain()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_Terrain()\n", __FILE__, __LINE__);
+// #endif
 
     return food2_units / 4;
 }
@@ -1321,9 +1331,13 @@ int16_t City_Food_WildGame(int16_t city_idx)
     int16_t itr;  // _SI_
     uint8_t * bit_field;  // _DX_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_WildGame()\n", __FILE__, __LINE__);
-#endif
+    uint16_t terrain_specials_offset;
+    uint8_t terrain_special;
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_WildGame(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
+
 
     city_wp = _CITIES[city_idx].world_plane;
 
@@ -1335,7 +1349,11 @@ int16_t City_Food_WildGame(int16_t city_idx)
 
     for(itr = 0; itr < useable_map_squares; itr++)
     {
-        if( (*((uint8_t *)&TBL_Terr_Specials[((city_wp * WORLD_SIZE) + (wx_array[itr] * WORLD_WIDTH) + wx_array[itr])]) & 0x40 /* TS_Wild_Game */) != 0)
+        terrain_specials_offset = ((city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + (wx_array[itr]));
+        terrain_special = GET_1B_OFS(TBL_Terr_Specials,terrain_specials_offset);
+
+        // if( (*((uint8_t *)&TBL_Terr_Specials[((city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr])]) & 0x40 /* TS_Wild_Game */) != 0)
+        if((terrain_special & 0x40) != 0)  /* TS_Wild_Game */
         {
             bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
             bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
@@ -1350,9 +1368,9 @@ int16_t City_Food_WildGame(int16_t city_idx)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Food_WildGame()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_WildGame(city_idx = %d) { food_units = %d }\n", __FILE__, __LINE__, city_idx, food_units);
+// #endif
 
     return food_units;
 
@@ -1363,6 +1381,9 @@ int16_t City_Food_WildGame(int16_t city_idx)
 // drake178: CTY_GetCatchment()
 // does like Draw_Map_Roads() with itr_world_x and curr_world_x
 /*
+    loops over city area 5x5
+    checks for corruption
+
     in-out wx_array
     in-out wy_array
     returns count of elements in arrays  AKA map_square_count
@@ -1371,7 +1392,6 @@ int16_t City_Food_WildGame(int16_t city_idx)
 */
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array)
 {
-    int16_t TFlags_RowBase;
     uint8_t * terrain_flags_table_row;
     int16_t square_y;
     int16_t itr_world_x;
@@ -1379,12 +1399,12 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
     int16_t square_x_min;
     int16_t map_square_count;
 
-    int16_t itr_city_area_squares;
-    int16_t square_x;
+    int16_t itr_city_area_squares;  // _DI_
+    int16_t square_x;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Useable_City_Area()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Useable_City_Area(city_wx = %d, city_wy = %d, city_wp = %d)\n", __FILE__, __LINE__, city_wx, city_wy, city_wp);
+// #endif
 
     map_square_count = 0;
 
@@ -1410,7 +1430,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
             itr_world_x = square_x_min;
 
-            while(itr_world_x < square_x_max)
+            while(itr_world_x <= square_x_max)
             {
                 square_x = city_wx + itr_world_x;
                 if(square_x < 0)
@@ -1421,21 +1441,22 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
                 {
                     square_x -= WORLD_WIDTH;
                 }
-                if( (*(terrain_flags_table_row + square_x) & 0x20 == 0) ) /* TF_Corruption */
+
+                if( (*(terrain_flags_table_row + square_x) & 0x20) == 0 ) /* TF_Corruption */
                 {
                     wx_array[map_square_count] = square_x;
                     wy_array[map_square_count] = square_y;
                     map_square_count++;
                 }
+
                 itr_world_x++;
             }
         }
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Useable_City_Area()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: Get_Useable_City_Area(city_wx = %d, city_wy = %d, city_wp = %d) { map_square_count = %d }\n", __FILE__, __LINE__, city_wx, city_wy, city_wp, map_square_count);
+// #endif
 
     return map_square_count;
 }
@@ -1449,9 +1470,9 @@ int16_t City_Food_Production(int16_t city_idx)
 
     int16_t food_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1480,7 +1501,6 @@ int16_t City_Food_Production(int16_t city_idx)
             food_units = _CITIES[city_idx].farmer_count * 2;
         }
 
-
         /*
             Forester's Guild
             Famine
@@ -1506,7 +1526,7 @@ int16_t City_Food_Production(int16_t city_idx)
         // Over-Farming Adjustment
         if(food_units > city_area_food_units)
         {
-            food_units += ((food_units - city_area_food_units) / 2);
+            food_units = (city_area_food_units + ((food_units - city_area_food_units) / 2));
         }
 
         if(
@@ -1522,16 +1542,16 @@ int16_t City_Food_Production(int16_t city_idx)
             (_CITIES[city_idx].buildings[FARMERS_MARKET] == 0x00 /* B_Replaced */)
         )
         {
-            food_units += 2;
+            food_units += 3;
         }
 
         food_units += City_Food_WildGame(city_idx);
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Food_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_Production(city_idx = %d) { food_units = %d }\n", __FILE__, __LINE__, city_idx, food_units);
+// #endif
 
     return food_units;
 }
@@ -1557,9 +1577,9 @@ int16_t City_Production_Production(int16_t city_idx)
 
     int16_t production_modifier;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Production_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
+// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1591,7 +1611,7 @@ int16_t City_Production_Production(int16_t city_idx)
             production2_per_worker = 4;
         }
 
-        production_units = ((((worker_count * production2_per_worker) + _CITIES[city_idx].farmer_count) + 1) /2);
+        production_units = ((((worker_count * production2_per_worker) + _CITIES[city_idx].farmer_count) + 1) / 2);
 
         if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != ST_FALSE)
         {
@@ -1655,9 +1675,9 @@ int16_t City_Production_Production(int16_t city_idx)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Production_Production(city_idx = %d) { production_units = %d }\n", __FILE__, __LINE__, city_idx, production_units);
+// #endif
 
     return production_units;
 }
@@ -1671,9 +1691,9 @@ int16_t City_Research_Production(int16_t city_idx)
 
     int16_t research_units;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+// #endif
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -1723,9 +1743,9 @@ int16_t City_Research_Production(int16_t city_idx)
         research_units = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Production_Production()\n", __FILE__, __LINE__);
+// #endif
 
     return research_units;
 }
@@ -1749,50 +1769,14 @@ int16_t City_Mana_Production(int16_t city_idx)
 
     int16_t mana_units;  // _DI_
 
-    int16_t do_debug = ST_FALSE;
-    int16_t map_square_magic_power;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
-#endif
-/*
-_CITIES[0]
-_CITIES[13]
-_CITIES[33]
-_CITIES[48]
-_CITIES[52]
-_CITIES[54]
-*/
-if(
-    (city_idx == 0) ||
-    (city_idx == 13) ||
-    (city_idx == 33) ||
-    (city_idx == 48) ||
-    (city_idx == 52) ||
-    (city_idx == 54)
-)
-{
-    do_debug = ST_TRUE;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: HUMAN: City_Mana_Production()\n", __FILE__, __LINE__);
-#endif
-}
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
+// #endif
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: city_owner_idx: %d\n", __FILE__, __LINE__, city_owner_idx);
-        dbg_prn("DEBUG: [%s, %d]: _CITIES[%d].population: %d\n", __FILE__, __LINE__, city_idx, _CITIES[city_idx].population);
-        dbg_prn("DEBUG: [%s, %d]: *(events_table + 48): %d\n", __FILE__, __LINE__, *(events_table + 48));
-    }
-#endif
-
-    // s_EVENT_DATA.Mana_Short.Status
     if(
-        // (*((int16_t *)(&events_table + 0x60)) != 2) &&
-        (*(events_table + 48) != 2) &&
+        (*(events_table + 48) != 2) &&  /* Mana_Short.Status */
         (_CITIES[city_idx].population != 0) &&
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
     )
@@ -1842,35 +1826,9 @@ if(
             building_magic_power += 4;
         }
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: building_magic_power: %d\n", __FILE__, __LINE__, building_magic_power);
-        dbg_prn("DEBUG: [%s, %d]: building_magic_power_modifier: %d\n", __FILE__, __LINE__, building_magic_power_modifier);
-    }
-#endif
-
         building_magic_power = ((building_magic_power * building_magic_power_modifier) / 100);
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: building_magic_power: %d\n", __FILE__, __LINE__, building_magic_power);
-    }
-#endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-// #endif
-
         mana_units = building_magic_power;
-
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
 
         if(
             (_CITIES[city_idx].buildings[ANIMISTS_GUILD] == 0x01 /* B_Built */) ||
@@ -1888,26 +1846,12 @@ if(
             mana_units += 3;
         }
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
-
         city_wp = _CITIES[city_idx].world_plane;
 
         if(_CITIES[city_idx].race == 0x02 /* R_Dark_Elf */)
         {
             mana_units += _CITIES[city_idx].population;
         }
-
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
 
         if(
             (_CITIES[city_idx].race == 0x07 /* R_High_Elf */) ||
@@ -1918,20 +1862,12 @@ if(
             mana_units += (_CITIES[city_idx].population / 2);
         }
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
-
         if(
             (_FORTRESSES[city_owner_idx].world_x == _CITIES[city_idx].world_x) &&
             (_FORTRESSES[city_owner_idx].world_y == _CITIES[city_idx].world_y) &&
             (_FORTRESSES[city_owner_idx].world_plane == city_wp)
         )
         {
-            DLOG("Fortress City");
             spell_ranks = (
                 _players[city_owner_idx].spellrank_nature + 
                 _players[city_owner_idx].spellrank_sorcery +
@@ -1949,60 +1885,38 @@ if(
                 mana_units += spell_ranks;
             }
         }
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
 
-        if(_CITIES[city_idx].race == 0x04 /* R_Dwarf */)
+        if(_CITIES[city_idx].race != 0x04 /* R_Dwarf */)
+        {
+            are_dwarf = ST_FALSE;
+        }
+        else
         {
             are_dwarf = ST_TRUE;
         }
 
         if(
-            (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x01 /* B_Built */) ||
-            (_CITIES[city_idx].buildings[MINERS_GUILD] == 0x00 /* B_Replaced */)
+            (_CITIES[city_idx].buildings[MINERS_GUILD] != 0x01 /* B_Built */) &&
+            (_CITIES[city_idx].buildings[MINERS_GUILD] != 0x00 /* B_Replaced */)
         )
+        {
+            have_miners_guild = ST_FALSE;
+        }
+        else
         {
             have_miners_guild = ST_TRUE;
         }
 
         useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
 
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: useable_map_squares: %d\n", __FILE__, __LINE__, useable_map_squares);
-    }
-#endif
-
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            // mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
-            map_square_magic_power = Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: map_square_magic_power: %d\n", __FILE__, __LINE__, map_square_magic_power);
-    }
-#endif
-
-            mana_units += map_square_magic_power;
+            mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
         }
-
-#ifdef STU_DEBUG
-    if(do_debug == ST_TRUE)
-    {
-        dbg_prn("DEBUG: [%s, %d]: mana_units: %d\n", __FILE__, __LINE__, mana_units);
-    }
-#endif
 
         if(
             (_players[city_owner_idx].spellrank_death != 0) &&
-            // (events_table->Good_Moon.Status == 2)
-            (*(events_table + 38) == 2)
+            (*(events_table + 38) == 2)  /* Good_Moon.Status */
         )
         {
             mana_units = (mana_units - (building_magic_power / 2));
@@ -2010,8 +1924,7 @@ if(
 
         if(
             (_players[city_owner_idx].spellrank_life != 0) &&
-            // (events_table->Bad_Moon.Status == 2)
-            (*(events_table + 40) == 2)
+            (*(events_table + 40) == 2)  /* Bad_Moon.Status */
         )
         {
             mana_units = (mana_units - (building_magic_power / 2));
@@ -2024,8 +1937,7 @@ if(
 
         if(
             (_players[city_owner_idx].spellrank_life != 0) &&
-            // (events_table->Good_Moon.Status == 2)
-            (*(events_table + 38) == 2)
+            (*(events_table + 38) == 2)  /* Good_Moon.Status */
         )
         {
             mana_units += building_magic_power;
@@ -2033,8 +1945,7 @@ if(
 
         if(
             (_players[city_owner_idx].spellrank_death != 0) &&
-            // (events_table->Bad_Moon.Status == 2)
-            (*(events_table + 40) == 2)
+            (*(events_table + 40) == 2)  /* Bad_Moon.Status */
         )
         {
             mana_units += building_magic_power;
@@ -2043,13 +1954,12 @@ if(
     }
     else
     {
-        DLOG("Mana Short OR Ghost City OR Neutral Player");
         mana_units = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Mana_Production()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Mana_Production()\n", __FILE__, __LINE__);
+// #endif
 
     return mana_units;
 }
@@ -2085,9 +1995,9 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
     int16_t itr_units;  // DNE in Dasm
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
+// #endif
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
     city_wx = _CITIES[city_idx].world_x;
@@ -2269,17 +2179,50 @@ int16_t City_Rebel_Count(int16_t city_idx)
         _CITIES[city_idx].farmer_count = 0;
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
+// #endif
 
     return rebel_count;
 }
 
 
 // WZD s142p28
+
+
 // WZD s142p29
+// drake178: CTY_CatchmentRefresh()
+void CTY_CatchmentRefresh__NOOP(void)
+{
+    // int16_t Tile_Index;
+    // int16_t Tile_Y;
+    // int16_t Tile_X;
+    // int16_t city_wy;
+    // int16_t city_wx;
+    // int16_t city_wp;
+    // int16_t Y_Modifier;
+    int16_t itr_plane;
+
+    int16_t itr_cities;  // _SI_
+    
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr_plane = 0; itr_plane < NUM_PLANES; itr_plane++)
+    {
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+            // TBL_Catchments_EMS + (itr_plane * 2400) + itr_cities = 0;
+            *(square_shared_bits + (itr_plane * WORLD_SIZE) + itr_cities) = 0;
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
+#endif
+
+}
 
 
 // WZD s142p30
@@ -2288,20 +2231,20 @@ int16_t City_Rebel_Count(int16_t city_idx)
     ~== Check_Square_Scouted() in Explore.C for square_scouted_p0/p1
 
 */
-int16_t City_Map_Square_Is_Shared(int16_t city_wx, int16_t city_wy, int16_t city_wp)
+int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp)
 {
     int16_t bit_index;
 
     uint8_t * bit_field;
     int16_t is_shared;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d)\n", __FILE__, __LINE__, city_wx, city_wy, city_wp);
+// #endif
 
     bit_index = ((city_wy * WORLD_WIDTH) + city_wx);
 
-    bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
+    bit_field = (square_shared_bits + (city_wp * WORLD_SIZE));
 
     if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
     {
@@ -2311,10 +2254,14 @@ int16_t City_Map_Square_Is_Shared(int16_t city_wx, int16_t city_wy, int16_t city
     {
         is_shared = ST_TRUE;
     }
+    
+    // TODO: code up CTY_CatchmentRefresh__NOOP()
+    is_shared = ST_FALSE;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-#endif
+
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d) { is_shared = %d }\n", __FILE__, __LINE__, city_wx, city_wy, city_wp, is_shared);
+// #endif
 
     return is_shared;
 }

@@ -283,11 +283,11 @@ void Next_Turn_Calc(void)
 // call    j_EVNT_Progress                 ;
 //                                         ; has several BUGs relating to specific events
 
-// call    j_WIZ_ProcessUpkeep             ; processes food, gold, and mana upkeep for all
-//                                         ; wizards, and for the human player also attempts to
-//                                         ; remove sources of upkeep if they can not be paid for
-//                                         ; BUG: AI players can ignore negative income
-//                                         ; also inherits a severe BUG from UNIT_GetDependants
+
+
+    Players_Apply_Upkeeps__WIP();
+
+
 
 // call    EMM_Map_DataH                   ; maps the EMM Data block into the page frame
 
@@ -507,9 +507,9 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 
     int16_t movement_points;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_GetHalfMoves(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_GetHalfMoves(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
+// #endif
 
     /* ¿DNE? */ Endurance = ST_FALSE;
 
@@ -570,9 +570,9 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 
 
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: UNIT_GetHalfMoves(unit_idx = %d) { movement_points = %d }\n", __FILE__, __LINE__, unit_idx, movement_points);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: END: UNIT_GetHalfMoves(unit_idx = %d) { movement_points = %d }\n", __FILE__, __LINE__, unit_idx, movement_points);
+// #endif
 
     return movement_points;
 }
@@ -900,7 +900,6 @@ void Update_Players_Gold_Reserve(void)
     int16_t gold_incomes[6];
     int16_t Excess_Food;
 
-
     int16_t itr_players;  // _SI_
     int16_t itr_heroes;  // _DI_
     int16_t itr_cities;  // _SI_
@@ -909,6 +908,10 @@ void Update_Players_Gold_Reserve(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Players_Gold_Reserve()\n", __FILE__, __LINE__);
 #endif
 
+    // for(itr_players = 0; itr_players < _num_players; itr_players++)
+    // VS complains about leaving elements in the array uninitialized, even though they can never be accessed
+    // for (itr_players = 0; itr_players < 6; itr_players++)
+    // NM. Access Violation for player 5
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         gold_incomes[itr_players] = 0;
@@ -932,16 +935,9 @@ void Update_Players_Gold_Reserve(void)
         if(_CITIES[itr_cities].owner_idx != -1)
         {
             gold_incomes[_CITIES[itr_cities].owner_idx] += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
-
             Excess_Food = _CITIES[itr_cities].food_units - _CITIES[itr_cities].population;
-
-            if(Excess_Food < 0)
-            {
-                Excess_Food = 0;
-            }
-
+            if(Excess_Food < 0) { Excess_Food = 0; }
             food_incomes[_CITIES[itr_cities].owner_idx] += (Excess_Food / 2);
-
         }
     }
 
@@ -949,7 +945,7 @@ void Update_Players_Gold_Reserve(void)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        food_incomes[itr_players] -= normal_units[itr_players];
+        food_incomes[itr_players] -= (normal_units[itr_players] / 2);
         
         if(food_incomes[itr_players] < 0)
         {
@@ -1045,6 +1041,110 @@ void Players_Apply_Magic_Power(void)
 
 
 // WZD s140p06
+// drake178: WIZ_ProcessUpkeep()
+/*
+    Applies Upkeeps to Gold and Mana
+    updates _players[itr].gold_reserve
+    updates _players[itr].mana_reserve
+
+*/
+void Players_Apply_Upkeeps__WIP(void)
+{
+    int16_t excess_foods[6];
+    int16_t mana_upkeeps[6];
+    int16_t gold_upkeeps[6];
+    int16_t food_upkeep;
+
+    int16_t itr;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Apply_Upkeeps()\n", __FILE__, __LINE__);
+#endif
+
+    for(itr = 0; itr < 6; itr++)
+    {
+        excess_foods[itr] = 0;
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(
+            (_CITIES[itr].owner_idx != -1) &&
+            (_CITIES[itr].food_units > _CITIES[itr].population)
+        )
+        {
+            excess_foods[_CITIES[itr].owner_idx] += (_CITIES[itr].food_units - _CITIES[itr].population);
+        }
+    }
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        food_upkeep = Player_Armies_Food_Upkeep(itr);
+
+        if(
+            (excess_foods[itr] < food_upkeep) &&
+            (itr == 0)
+        )
+        {
+        // TODO  WIZ_MatchFoodUpkeep(itr, excess_foods[itr], food_upkeep);
+            // ; attempts to disband non-hero, non-transport normal
+            // ; units until the food upkeep matches or is less than
+            // ; the food income
+            // ; inherits a severe BUG from UNIT_GetDependants
+        }
+
+        gold_upkeeps[itr] = Player_Armies_Gold_Upkeep(itr);
+
+        if(
+            (gold_upkeeps[itr] > _players[itr].gold_reserve) &&
+            (itr == 0)
+        )
+        {
+        // TODO  gold_upkeeps[itr] = WIZ_MatchGoldUpkeep(itr, gold_upkeeps[itr]);
+            // ; attempts to disband non-hero, non-transport normal
+            // ; units until the gold upkeep matches or is less than
+            // ; the wizard's current gold
+            // ; inherits a severe BUG from UNIT_GetDependants
+        }
+
+        _players[itr].gold_reserve = (_players[itr].gold_reserve - gold_upkeeps[itr]);
+
+        if(_players[itr].gold_reserve < 0)
+        {
+            _players[itr].gold_reserve = 0;
+        }
+
+        mana_upkeeps[itr] = Player_Armies_And_Enchantments_Mana_Upkeep(itr);
+
+        if(
+            (mana_upkeeps[itr] > _players[itr].mana_reserve) &&
+            (itr == 0)
+        )
+        {
+        // TODO  mana_upkeeps[itr] = WIZ_MatchManaUpkeep(itr, mana_upkeeps[itr]);
+            // ; attempts to remove unit enchantments, global
+            // ; enchantments, city enchantments, or summoned units
+            // ; until the mana upkeep matches or is less than the
+            // ; wizard's current mana
+            // ; inherits multiple BUGs from the subfunctions
+        }
+
+        _players[itr].mana_reserve = (_players[itr].mana_reserve - mana_upkeeps[itr]);
+
+        if(_players[itr].mana_reserve < 0)
+        {
+            _players[itr].mana_reserve = 0;
+        }
+
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Players_Apply_Upkeeps()\n", __FILE__, __LINE__);
+#endif
+
+}
+
+
 // WZD s140p07
 // WZD s140p08
 // WZD s140p09

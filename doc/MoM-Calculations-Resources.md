@@ -1,6 +1,191 @@
 
 
 
+TESTSAVE.GAM  
+
+Banbury     HM  21  44  17  
+Bremen      HM  21  90  95  
+Birmingham  HM  17  10  24  
+New Haven   HM  22  57  17  
+York        HM  13   7  62  
+Cantebury   HM   6   2  21  
+
+44+90+10+57+7+2=210
++2 excess food  
+-70 upkeep  
+210+2-70=142  
+430 GR + 142 GI = 572 GR
+
+Banbury     HM  21  44  17  
+Bremen      HM  21  90  95  
+Birmingham  HM  17  10  24  
+New Haven   HM  22  57  17  
+York        HM  13   7  62  
+Cantebury   HM   6   2  21  
+
+44+90+10+57+7+2=210  
++2 excess food  
+-70 upkeep  
+210+2-70=142  
+
+_CITIES[0]  Banbury  
+_CITIES[13] Bremen  
+_CITIES[33] Birmingham  
+_CITIES[48] New Haven  
+_CITIES[52] York  
+_CITIES[54] Cantebury  
+
+_CITIES[0]  Banbury  
+[x] 96 - 52 = 44  
+
+_CITIES[13] Bremen  
+159 - 69 = 90
+
+got 169 - 69 = 100  
+probably should be 159  
+g2g  Surveyor says +263%  
+g2g  pop * tax = 31  
+g2g  map_square_gold_income: 0  
+Trade Goods
+got production_units 115, should be 95  
+
+Surveyor shows +173% Prod Bonus
+
+21 pop
+5 farmers
+16 workers
+16 * 4 / 2 = 32
+5 / 2 + 1 = 3
+
+8 terrain
+8 sawmill
+8 foresters
+17 miners
+17 mechanicians
+
+city screen shows 95
+but, break-down shows 93
+32+3+8+8+8+17+17=93
+
+
+
+
+_CITIES[33] Birmingham  
+[x] 77 - 67 = 10
+
+_CITIES[48] New Haven  
+[x] 102 - 45 = 57
+
+_CITIES[52] York  
+[x] 64 - 57 = 7  
+
+_CITIES[54] Cantebury  
+[x] 22 - 20 = 2
+
+
+
+_CITIES[52] York  
+64 - 57 = 7  
+19 + 7 + 9 + 9 + 19 = 63  
+
+Surveyor: Gold Bonus + 239%  
+100 + 50 + 50 = 200  
+need 39 from city_road_trade_bonus + map_square_gold_bonus  
+has 4 shore  
+1 road, connected to enemy city, with pop ~24  
+
+
+```
+_CITIES[52].road_connections[0]:     4  
+_CITIES[52].road_connections[1]:    32  
+_CITIES[52].road_connections[2]:     0  
+_CITIES[52].road_connections[3]:    48  
+_CITIES[52].road_connections[4]:    64  
+_CITIES[52].road_connections[5]:    36  
+_CITIES[52].road_connections[6]:     0  
+_CITIES[52].road_connections[7]:     0  
+_CITIES[52].road_connections[8]:     0  
+_CITIES[52].road_connections[9]:     0  
+_CITIES[52].road_connections[10]:    0  
+_CITIES[52].road_connections[11]:    0  
+_CITIES[52].road_connections[12]:    0  
+```
+
+
+
+
+
+
+
+
+
+_CITIES[0]
+ 65 - 52 =  13
+101 - 21 =  80
+_CITIES[13]
+113 - 69 =  44
+ 29 - 21 =   8
+_CITIES[33]
+ 52 - 67 = -15
+ 83 - 17 =  66
+_CITIES[48]
+ 69 - 45 =  14
+106 - 22 =  84
+_CITIES[52]
+ 42 - 57 = -15
+ 16 - 13 =   3
+_CITIES[54]
+ 14 - 20 =  -6
+  7 - 6 =    1
+
+13+44-15+14-15-6=35
+
+Banbury (capital)
+Food: 21 + 29 = 50
+Gold: 52 + 44 = 96
+(31 + 3 + 15 + 15 + 31 = 95)
+the 44 here is what shows on the CityList Screen, which is the Net Goild Income on the City Screen  
+So, the 52 for mainenance looks right, but gold units should be ~96?
+
+_CITIES[0].gold_units: 65  
+_CITIES[0].building_maintenance: 52  
+_CITIES[0].production_units: 22  
+_CITIES[0].food_units: 101  
+_CITIES[0].population: 21  
+
+_CITIES[13].gold_units: 113  
+_CITIES[13].building_maintenance: 69  
+_CITIES[13].production_units: 115  
+_CITIES[13].food_units: 29  
+_CITIES[13].population: 21  
+
+_CITIES[33].gold_units: 52  
+_CITIES[33].building_maintenance: 67  
+_CITIES[33].production_units: 29  
+_CITIES[33].food_units: 83  
+_CITIES[33].population: 17  
+
+_CITIES[48].gold_units: 69  
+_CITIES[48].building_maintenance: 45  
+_CITIES[48].production_units: 24  
+_CITIES[48].food_units: 106  
+_CITIES[48].population: 22  
+
+_CITIES[52].gold_units: 42  
+_CITIES[52].building_maintenance: 57  
+_CITIES[52].production_units: 72  
+_CITIES[52].food_units: 16  
+_CITIES[52].population: 13  
+
+_CITIES[54].gold_units: 14  
+_CITIES[54].building_maintenance: 20  
+_CITIES[54].production_units: 26  
+_CITIES[54].food_units: 7  
+_CITIES[54].population: 6  
+
+
+
+
 
 Main Screen
 ArmyList Screen
@@ -127,6 +312,29 @@ _CITIES[].building_maintenance
 Income_Food[] - Normal_Unit_Counts[]
 
 
+## Accumulate Gold Income
+NOTE: happens after city calculations  
+'Next Turn': add 'Gold Income' to 'Gold Reserve'  
+Next_Turn_Proc()  
+Next_Turn_Calc()  
+Update_Players_Gold_Reserve()  
+gold_reserve + gold_income + food_income  
+gold_income  
+    Per Hero, +10 for each Hero Noble  
+    Per City, gold_units - _CITIES[itr_cities].building_maintenance  
+
+gold_incomes[_CITIES[itr_cities].owner_idx] += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);  
+Excess_Food = _CITIES[itr_cities].food_units - _CITIES[itr_cities].population;  
+food_incomes[_CITIES[itr_cities].owner_idx] += (Excess_Food / 2);  
+food_incomes[itr_players] -= normal_units[itr_players];  
+_players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);  
+
+Do_City_Calculations()
+    _CITIES[city_idx].food_units            = City_Food_Production(city_idx);
+    _CITIES[city_idx].gold_units            = City_Gold_Production(city_idx);
+    _CITIES[city_idx].building_maintenance  = City_Gold_Mainanence(city_idx);
+
+
 
 
 
@@ -173,60 +381,3 @@ _UNITS[].type
 Abilities_HI & 0x20 != 0  /* Ab_Sage */
 Abilities_HI & 0x40 != 0  /* Ab_Sage2 */
 ```
-4d 02 00 00 fa 12 cf 4e 00 00 00 00 00 00 00 00 00 00 03 00 1f 00 0a 00 00 00 03 00 0a 00 00 00 01 00 aa 00 00 00 00 00 00 00 00 00 00 00 04 00 1f 00 00 00 02 00 78 00 00 00 00 00 00  M...ú.ÏN..........................ª...................x......
-  00 00 00 00 00 00 00 00 00 0e 00 00 00 0d 00 00 00 08 00 00 00 00 00 00 00 09 00 00 00 00 00 00 00 0a 00 00 00 00 00
-
-
-4d 02 
-00 00 
-fa 12 
-cf 4e 
-00 00 
-00 00 
-00 00 
-00 00 
-00 00 
-03 00 
-1f 00 
-0a 00 
-00 00 
-03 00 
-0a 00 
-00 00 
-01 00 
-aa 00 
-00 00 
-00 00 
-00 00 
-00 00   40 s_EVENT_DATA.Conjunction_Chaos.Status
-00 00 
-04 00 
-
-1f 00 
-00 00 
-02 00 
-78 00 
-00 00 
-00 00 
-00 00 
-00 00 
-
-00 00 
-00 00 
-00 00 
-0e 00 
-00 00 
-0d 00 
-00 00 
-08 00 
-
-00 00 
-00 00 
-00 00 
-09 00 
-00 00 
-00 00 
-00 00 
-0a 00 
-00 00 
-00 00

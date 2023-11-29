@@ -150,11 +150,14 @@ int16_t City_Mana_Production(int16_t city_idx);
 int16_t City_Rebel_Count(int16_t city_idx);
 
 // WZD s142p28
+
 // WZD s142p29
+// drake178: CTY_CatchmentRefresh()
+void CTY_CatchmentRefresh__NOOP(void);
 
 // WZD s142p30
 // drake178: TILE_IsShared
-int16_t City_Map_Square_Is_Shared(int16_t city_wx, int16_t city_wy, int16_t city_wp);
+int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp);
 
 // WZD s142p31
 // WZD s142p32
