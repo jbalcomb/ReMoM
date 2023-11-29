@@ -228,7 +228,10 @@ void Load_WZD_Resources(void)
 // fxn_o52p18();
 // drake178: LBX_Load_Click_SFX
 // Load_Button_Sounds();  // ; loads the standard and left click sounds
-// UNIT_Upkeep_Reset();  // ; resets the Upkeep Cost of Normal Units and Heroes  ; returns void (probably 4)
+
+
+    Units_Upkeeps();
+
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
@@ -237,8 +240,52 @@ void Load_WZD_Resources(void)
 
 
 // WZD o52p02
-void UNIT_Upkeep_Reset(void)
+// drake178: UNIT_Upkeep_Reset()
+/*
+    UNIT_Upkeep_Reset()
+    XREF:
+        NX_j_UNIT_Upkeep_Reset()
+        Load_WZD_Resources()
+
+*/
+void Units_Upkeeps(void)
 {
+
+    int16_t itr;  // _CX_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_Upkeeps()\n", __FILE__, __LINE__);
+#endif
+
+    // TODO(JimBalcomb,20231127): figure out where/what this value is that it is using to iterate over
+    
+    // C4 1E 2C 91                                     les     bx, [spell_data_table]
+    // 26 39 8F 64 1C                                  cmp     [es:bx+1C64h], cx
+    // 7F BB                                           jg      short loc_460B7
+    // AKA
+    // C4 1E 2C 91                                     les     bx, [spell_data_table]
+    // 26 39 8F 64 1C                                  cmp     [es:(_unit_type_table.pict_seg+1AB8h)+bx], cx
+    // 7F BB                                           jg      short loc_460B7
+    // ...
+    // dseg:912C
+    // + 1C64
+    // 912C + 1C64 = AD90  44,432
+
+    for(itr = 0; itr < 198; itr++)
+    {
+        if(itr >= 0x23 /* Trireme */)
+        {
+            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].Cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
+        }
+        else
+        {
+            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].Cost + 99) / 100);  // Dasm is doing a ceil(), somehow?
+        }
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Units_Upkeeps()\n", __FILE__, __LINE__);
+#endif
 
 }
 

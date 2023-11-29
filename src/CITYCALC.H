@@ -30,32 +30,32 @@ void Do_City_Calculations(int16_t city_idx);
 void Players_Update_Magic_Power(void);
 
 // WZD o120p03
-int16_t UNIT_GetGoldUpkeep(int16_t unit_idx);
+int16_t Unit_Gold_Upkeep(int16_t unit_idx);
 
 // WZD o120p04
-int16_t WIZ_ArmyUpkeep_Gold(int16_t player_idx);
+int16_t Player_Armies_Gold_Upkeep(int16_t player_idx);
 
 // WZD o120p05
-int16_t WIZ_ArmyUpkeep_Food(int16_t player_idx);
+int16_t Player_Armies_Food_Upkeep(int16_t player_idx);
 
 // WZD o120p06
 // drake178: WIZ_GetNUCounts()
 void Players_Normal_Units(int16_t normal_units[]);
 
 // WZD o120p07
-void Get_Incomes(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);
+void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);
 
 // WZD o120p08
-int16_t WIZ_TotalUpkeep_Mana(int16_t player_idx);
+int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx);
 
 // WZD o120p09
-int16_t UNIT_GetManaUpkeep(int16_t unit_idx);
+int16_t Unit_Mana_Upkeep(int16_t unit_idx);
 
 // WZD o120p10
-int16_t CTY_EnchantsUpkeep(int16_t city_idx, int16_t player_idx);
+int16_t Player_City_Enchantments_Upkeep(int16_t city_idx, int16_t player_idx);
 
 // WZD o120p11
-int16_t WIZ_GlobalsUpkeep(int16_t player_idx);
+int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p12
 // WZD o120p13
@@ -64,16 +64,16 @@ int16_t WIZ_GlobalsUpkeep(int16_t player_idx);
 // WZD o120p16
 
 // WZD o120p17
-void Get_Power_Incomes_Base(int16_t * Base_Research_Income, int16_t * Base_Skill_Income, int16_t * Base_Mana_Income, int16_t player_idx);
+void Player_Magic_Power_Distribution(int16_t * Base_Research_Income, int16_t * Base_Skill_Income, int16_t * Base_Mana_Income, int16_t player_idx);
 
 // WZD o120p18
-void Get_Power_Incomes(int16_t * Mana, int16_t * City_Food_Surplus, int16_t * City_Gold_Balance, int16_t player_idx);
+void Player_Magic_Power_Income_Total(int16_t * Mana, int16_t * City_Food_Surplus, int16_t * City_Gold_Balance, int16_t player_idx);
 
 // WZD o120p19
-int16_t Get_Research_Bonus(int16_t player_idx, int16_t spell_idx);
+int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx);
 
 // WZD o120p20
-int16_t WIZ_GetFame(int16_t player_idx);
+int16_t Player_Fame(int16_t player_idx);
 
 // WZD o120p21
 
@@ -150,11 +150,14 @@ int16_t City_Mana_Production(int16_t city_idx);
 int16_t City_Rebel_Count(int16_t city_idx);
 
 // WZD s142p28
+
 // WZD s142p29
+// drake178: CTY_CatchmentRefresh()
+void CTY_CatchmentRefresh__NOOP(void);
 
 // WZD s142p30
 // drake178: TILE_IsShared
-int16_t City_Map_Square_Is_Shared(int16_t city_wx, int16_t city_wy, int16_t city_wp);
+int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp);
 
 // WZD s142p31
 // WZD s142p32

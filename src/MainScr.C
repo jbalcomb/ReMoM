@@ -1872,7 +1872,7 @@ void Main_Screen(void)
             // TODO  SND_LeftClickSound();
 
             // ; fills the return values with the player's gold, food, and mana incomes, positive or negative
-            Get_Incomes(_human_player_idx, &gold, &food, &mana);
+            Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: gold: %d\n", __FILE__, __LINE__, gold);
     dbg_prn("DEBUG: [%s, %d]: food: %d\n", __FILE__, __LINE__, food);
@@ -6314,9 +6314,9 @@ void Main_Screen_Draw_Summary_Window(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Summary_Window()\n", __FILE__, __LINE__);
 #endif
 
-    gold = 0;
-    food = 0;
-    mana = 0;
+    gold = 0;  // DNE in Dasm
+    food = 0;  // DNE in Dasm
+    mana = 0;  // DNE in Dasm
 
 
 
@@ -6342,7 +6342,7 @@ void Main_Screen_Draw_Summary_Window(void)
 
 
 
-    Get_Incomes(_human_player_idx, &gold, &food, &mana);
+    Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
 
 
 // // // mov     [bp+Color_0], 198

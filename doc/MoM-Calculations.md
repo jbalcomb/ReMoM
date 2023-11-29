@@ -1,6 +1,68 @@
 
 
 
+Main Screen  
+    Status Window  
+        Gold Reserve  (Total Gold)  
+        Mana Reserve  (Total Mana)  
+    Summary Window  
+        Gold Income  
+        Food Reserve  (Excess Food)  
+        Mana Income  
+
+Main_Screen()  
+    Main_Screen_Draw()  
+        Main_Screen_Draw_Do_Draw()  
+            Main_Screen_Draw_Summary_Window()  
+                Player_Resource_Income_Total()  
+                    Player_Magic_Power_Income_Total()  
+                    WIZ_TotalUpkeep_Mana()  
+                    Player_Armies_Gold_Upkeep()  
+                        WIZ_GetFame()  
+                        UNIT_GetGoldUpkeep()  
+                    WIZ_ArmyUpkeep_Food()  
+            Main_Screen_Draw_Status_Window()  
+                _players[_human_player_idx].gold_reserve  
+                _players[_human_player_idx].mana_reserve  
+
+Gold Income
+    WIZARDS.EXE  
+        unit_types_tables  .Cost  .Upkeep  
+    main()  
+        |-> Load_WZD_Resources()  
+            |-> Units_Upkeeps()  
+    Loaded_Game_Update()  
+        |-> Patch_Units_Upkeep_And_Sound()  
+    ...  
+    Player_Armies_Gold_Upkeep()  
+        PLayer_Fame()  
+            Legendary Heroes  
+            Just_Cause Overland Enchantment  
+            _players[player_idx].Fame  
+        Unit_Gold_Upkeep()  
+            unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;  
+        SUM[units upkeeps - fames]  
+
+Player_Resource_Income_Total()  
+
+Mana Income & MP,RP,SP  
+Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);  
+    Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);  
+    mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);  
+    *mana_total = mana_income - mana_expense;  
+Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);  
+    Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);  
+Player_Magic_Power_Distribution(&research_income, &skill_income, &mana_income, player_idx);  
+    mana_portion     = (((magic_power * 100) + 50) / _players[player_idx].Mana_Pnct);  
+    skill_portion    = (((magic_power * 100) + 50) / _players[player_idx].Skill_Pcnt);  
+    research_portion = magic_power - mana_portion - skill_portion;  
+
+_CITIES[itr_cities].research_units  
+    City_Research_Production()  
+
+
+
+
 
 Spell Casting Skill
     Total
@@ -114,9 +176,9 @@ Next_Turn_Proc()
 
         |-> Players_Update_Magic_Power()  
         |-> Players_Apply_Magic_Power()  
-            |-> Get_Power_Incomes()
-                |-> Get_Power_Incomes_Base()
-                |-> Spell_Research_Bonus()
+            |-> Player_Magic_Power_Income_Total()  
+                |-> Player_Magic_Power_Distribution()  
+                |-> Player_Spell_Research_Bonus()  
                 
 
 j_WIZ_ResearchProgress()  
@@ -298,12 +360,12 @@ MoM-Manual:
 
 
 
-Get_Incomes()  
+Player_Resource_Income_Total()  
 
     Get_Power_Incomes(&Mana, &City_Food_Surplus, &City_Gold_Balance, player_idx);  
 
     Mana_Upkeep = WIZ_TotalUpkeep_Mana(player_idx);  
-    Gold_Upkeep = WIZ_ArmyUpkeep_Gold(player_idx);  
+    Gold_Upkeep = Player_Armies_Gold_Upkeep(player_idx);  
     Food_Upkeep = WIZ_ArmyUpkeep_Food(player_idx);  
 
 Per City  

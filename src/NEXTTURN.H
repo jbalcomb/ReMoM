@@ -77,7 +77,11 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx);
 // WZD o121p10
 // WZD o121p11
 // WZD o121p12
+
 // WZD o121p13
+// drake178: RP_GAME_UnitTypesUpdate()
+void Patch_Units_Upkeep_And_Sound(void);
+
 // WZD o121p14
 
 
@@ -103,6 +107,9 @@ void Update_Players_Gold_Reserve(void);
 void Players_Apply_Magic_Power(void);
 
 // WZD s140p06
+// drake178: WIZ_ProcessUpkeep()
+void Players_Apply_Upkeeps__WIP(void);
+
 // WZD s140p07
 // WZD s140p08
 // WZD s140p09

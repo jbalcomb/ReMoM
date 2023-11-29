@@ -730,11 +730,11 @@ void Loaded_Game_Update(void)
 
     PageFlipEffect = 0;
     
-    // j_CTY_CatchmentRefresh();
+    CTY_CatchmentRefresh__NOOP();
 
     GAME_Overland_Init();
 
-    // j_RP_GAME_UnitTypesUpdate();
+    Patch_Units_Upkeep_And_Sound();
 
     // j_LD_CTY_ResRefresh();
 

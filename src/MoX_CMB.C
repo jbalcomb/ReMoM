@@ -357,7 +357,7 @@ void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit)
     // ; returns the unit's gold Upkeep Cost, 0 for Noble
     // ; Heroes, Torin, and undead units; 1/2 for AI units
     // ; on Impossible; and 3/4 for AI units on Hard
-    BattleUnit->upkeep = UNIT_GetGoldUpkeep(unit_idx);
+    BattleUnit->upkeep = Unit_Gold_Upkeep(unit_idx);
     if( (BattleUnit->Attack_Flags & 0x04 /* Att_Poison */) != 0)
     {
         BattleUnit->Poison_Strength = BattleUnit->Spec_Att_Attrib;
