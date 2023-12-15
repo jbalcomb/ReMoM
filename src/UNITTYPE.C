@@ -150,6 +150,51 @@ char unit_type_name_118[] = "Sky Drake";
 char unit_type_name_119[] = "Nagas";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 char * _unit_type_names[] =
 {
     unit_type_name_000,
@@ -217,7 +262,7 @@ char * _unit_type_names[] =
     unit_type_name_062,
     unit_type_name_063,
     unit_type_name_064,
-    unit_type_name_065,
+    unit_type_name_065,  /* [65] */
     unit_type_name_066,
     unit_type_name_067,
     unit_type_name_068,
@@ -421,8 +466,8 @@ struct s_UNIT_TYPE _unit_type_table[] =
 /* 110 */ {&_unit_type_names[49],    1,  0,  -1,   0,   0,   1,   4,   2,  40,   1,   8,  32,   0, 0x0000,  1,   1,   0,   6,   1,    0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000,   0}, 
 /* 111 */ {&_unit_type_names[44],    0,  0,  -1,   0,   0,   1,   4,   2,  60,   2,   8,   0,   0, 0x0000, 10,   1,   0,   1,   0,    0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000,   0}, 
 /* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
-{&_unit_type_names[66],    5,   0, -1,   0,   0,   3,   5,   2,  80,   2,   8,   5,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x0000, 0x0000, 0x8000, 0x0001,   0},  /* Paladin, High-Men */
-{&_unit_type_names[67],    6,  0,  -1,   0,   0,   5,   8,   4, 200,   3,   8,  25,   6, 0x0000,  4,   1,   0,   4,   0,    1, 0x0001, 0x0020, 0x0080, 0x0000, 0x0003,   0}, 
+/* 112 */ {&_unit_type_names[65],    5,   0, -1,   0,   0,   3,   5,   2,  80,   2,   8,   5,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x0000, 0x0000, 0x8000, 0x0001,   0},  /* Pikemen, High-Men */
+/* 113 */ {&_unit_type_names[66],    6,  0,  -1,   0,   0,   5,   8,   4, 200,   3,   8,  25,   6, 0x0000,  4,   1,   0,   4,   0,    1, 0x0001, 0x0020, 0x0080, 0x0000, 0x0003,   0},   /* Paladin, High-Men */
 {&_unit_type_names[39],    1,  0,  -1,   0,   0,   4,   5,   2,  20,   1,   9,   0,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000,   0}, 
 {&_unit_type_names[40],    3,  0,  -1,   0,   0,   4,   5,   2,  40,   1,   9,   3,   8, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000,   0}, 
 /* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
@@ -509,177 +554,3 @@ struct s_UNIT_TYPE _unit_type_table[] =
 {&_unit_type_names[119],  20, 20, 102,   0,   3, 10, 14, 8, 1000, 25, 17, 6, 0, 0x0000, 25, 1, 0, 1, 0, 0, 0x0008, 0x0228, 0x0000, 0x0001, 0x0000, 0}, 
 {&_unit_type_names[119],   4,  0,  -1,   0,   1, 3, 7, 2, 120, 2, 17, 6, 0, 0x0000, 6, 1, 0, 2, 0, 4, 0x0004, 0x0000, 0x0000, 0x0001, 0x0006, 0}, 
 };
-
-
-
-// TODO  struct s_RACE_TYPE _unit_race_table[] =
-// TODO  {
-// TODO      {&_unit_type_names[17], 3, 0, 0, 0, 0, 0, 0, 0, 15, 2, 0}
-// TODO  };
-
-// WZD dseg:1D86 D9 21 03 00 14 00 0A 00 19 00 00 00 00 00 00 00+TBL_Races  = RACE_DATA ptr $            ; DATA XREF: IDK_DrawEnemyCityWindow_s4A90D+1F6r ...
-// WZD dseg:1D86 00 00 0F 00 02 00 00 00 81 26 02 00 0B 00 0D 00+dw offset cnst_Barbarian                ; Name ; "Barbarian"
-// WZD dseg:1D86 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00+dw 3                                    ; CantBuild_Count
-// WZD dseg:1D86 8A 26 02 00 19 00 0E 00 00 00 00 00 00 00 00 00+dw _University, _AnimistsGuild, _Cathedral, 4 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86 00 00 02 00 FE FF 01 00 62 22 03 00 21 00 0B 00+dw 15                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86 0E 00 00 00 00 00 00 00 00 00 05 00 FF FF 00 00+dw 2                                    ; Growth_Mod
-// WZD dseg:1D86 93 26 04 00 09 00 0D 00 14 00 18 00 00 00 00 00+dw 0                                    ; HouseType
-
-// WZD dseg:1D86 00 00 07 00 FE FF 00 00 9B 26 05 00 0A 00 11 00+dw offset cnst_Beastmen                 ; Name
-// WZD dseg:1D86 18 00 06 00 0E 00 00 00 00 00 05 00 FF FF 02 00+dw 2                                    ; CantBuild_Count
-// WZD dseg:1D86 A1 26 04 00 14 00 06 00 09 00 0D 00 00 00 00 00+dw _FantasticStable, _ShipYard, 5 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86 00 00 0F 00 00 00 00 00 AA 26 02 00 18 00 0E 00+dw 5                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86 00 00 00 00 00 00 00 00 00 00 05 00 FE FF 01 00+dw 0                                    ; Growth_Mod
-// WZD dseg:1D86 B3 26 01 00 0B 00 00 00 00 00 00 00 00 00 00 00+dw 0                                    ; HouseType
-// WZD dseg:1D86 00 00 0A 00 00 00 00 00 BC 26 03 00 17 00 11 00+dw offset cnst_DarkElf                  ; Name
-// WZD dseg:1D86 0D 00 00 00 00 00 00 00 00 00 05 00 FF FF 02 00+dw 2                                    ; CantBuild_Count
-// WZD dseg:1D86 C4 26 07 00 07 00 0A 00 11 00 18 00 22 00 0C 00+dw _Cathedral, _MaritimeGuild, 5 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86 0F 00 0A 00 01 00 02 00 CE 26 02 00 0E 00 15 00+dw 2                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86 00 00 00 00 00 00 00 00 00 00 0A 00 FF FF 00 00+dw 0FFFEh                               ; Growth_Mod
-// WZD dseg:1D86 D4 26 00 00 00 00 00 00 00 00 00 00 00 00 00 00+dw 1                                    ; HouseType
-// WZD dseg:1D86 00 00 0A 00 00 00 00 00 D8 26 04 00 0B 00 11 00+dw offset cnst_Draconian                ; Name
-// WZD dseg:1D86 22 00 0D 00 00 00 00 00 00 00 03 00 FE FF 02 00 dw 3                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _MechaniciansGuild, _FantasticStable, _MaritimeGuild, 4 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 5                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFFh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Dwarven                  ; Name
-// WZD dseg:1D86                                                 dw 4                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _Stable, _ShipYard, _University, _Parthenon, 3 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 7                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFEh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Gnoll                    ; Name
-// WZD dseg:1D86                                                 dw 5                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _AnimistsGuild, _SagesGuild, _Parthenon, _ArmorersGuild, _MaritimeGuild, 2 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 5                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFFh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 2                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Halfling                 ; Name
-// WZD dseg:1D86                                                 dw 4                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _University, _ArmorersGuild, _Stable, _ShipYard, 3 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 15                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0                                    ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_HighElf                  ; Name
-// WZD dseg:1D86                                                 dw 2                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _Parthenon, _MaritimeGuild, 5 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 5                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFEh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 1                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_HighMen                  ; Name
-// WZD dseg:1D86                                                 dw 1                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _FantasticStable, 6 dup(_NoBuilding) ; CantBuild
-// WZD dseg:1D86                                                 dw 10                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0                                    ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Klackon                  ; Name
-// WZD dseg:1D86                                                 dw 3                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _Temple, _SagesGuild, _ShipYard, 4 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 5                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFFh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 2                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Lizardman                ; Name
-// WZD dseg:1D86                                                 dw 7                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _WarCollege, _AnimistsGuild, _SagesGuild, _Parthenon, _MinersGuild, _Shipwright, _Sawmill; CantBuild
-// WZD dseg:1D86                                                 dw 10                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 1                                    ; Growth_Mod
-// WZD dseg:1D86                                                 dw 2                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Nomad                    ; Name
-// WZD dseg:1D86                                                 dw 2                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _MaritimeGuild, _WizardsGuild, 5 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 10                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFFh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Orc                      ; Name
-// WZD dseg:1D86                                                 dw 0                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw 7 dup(_NoBuilding)                   ; CantBuild
-// WZD dseg:1D86                                                 dw 10                                   ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0                                    ; Growth_Mod
-// WZD dseg:1D86                                                 dw 0                                    ; HouseType
-// WZD dseg:1D86                                                 dw offset cnst_Troll                    ; Name
-// WZD dseg:1D86                                                 dw 4                                    ; CantBuild_Count
-// WZD dseg:1D86                                                 dw _FantasticStable, _SagesGuild, _MinersGuild, _ShipYard, 3 dup(_NoBuilding); CantBuild
-// WZD dseg:1D86                                                 dw 3                                    ; Outpost_Growth_Pcnt
-// WZD dseg:1D86                                                 dw 0FFFEh                               ; Growth_Mod
-// WZD dseg:1D86                                                 dw 2                                    ; HouseType
-// WZD dseg:1ED6 89 20                                           STR_USW_NoRace@ dw offset cnst_ZeroString_3
-// WZD dseg:1ED8 DE 26 E5 26 EC 26 F4 26 9C 21 FA 26             STR_USW_MagicRaces@ dw offset cnst_Rlm5_Arcane, offset cnst_Rlm0_Nature, offset cnst_Rlm1_Sorcery, offset cnst_Rlm2_Chaos, offset cnst_Rlm3_Life, offset cnst_Rlm4_Death
-// WZD dseg:1ED8                                                                                         ; DATA XREF: USW_DrawView+453t ...
-// WZD dseg:1ED8                                                                                         ; "Life"
-
-
-// TODO  char race_name_summoned_unit_NONE[] = "";
-// TODO  char race_name_summoned_unit_00[] = "Arcane";
-// TODO  char race_name_summoned_unit_01[] = "Nature";
-// TODO  char race_name_summoned_unit_02[] = "Sorcery";
-// TODO  char race_name_summoned_unit_03[] = "Chaos";
-// TODO  char race_name_summoned_unit_04[] = "CLife";
-// TODO  char race_name_summoned_unit_05[] = "Death";
-// TODO  
-// TODO  char * _race_name_summoned_unit[] =
-// TODO  {
-// TODO      race_name_summoned_unit_NONE,
-// TODO      race_name_summoned_unit_00,
-// TODO      race_name_summoned_unit_01,
-// TODO      race_name_summoned_unit_02,
-// TODO      race_name_summoned_unit_03,
-// TODO      race_name_summoned_unit_04,
-// TODO      race_name_summoned_unit_05
-// TODO  };
-// TODO  
-// TODO  char * _race_name_summoned_units[] =
-// TODO  {
-// TODO      /* 00 00 */ /* 0x0000 */  &_race_name_summoned_unit[0],
-// TODO      /* 00 00 */ /* 0x0000 */  &_race_name_summoned_unit[0],
-// TODO      /* D8 26 */ /* 0x26D8 */  &_race_name_summoned_unit[0],  /* ¿ offset of end of Race-Type array ? */
-// TODO      /* 04 00 */ /* 0x0004 */  &_race_name_summoned_unit[0],
-// TODO      /* 0B 00 */ /* 0x000B */  &_race_name_summoned_unit[0],
-// TODO      /* 11 00 */ /* 0x0011 */  &_race_name_summoned_unit[0],
-// TODO      /* 22 00 */ /* 0x0022 */  &_race_name_summoned_unit[0],
-// TODO      /* 0D 00 */ /* 0x000D */  &_race_name_summoned_unit[0],
-// TODO      /* 00 00 */ /* 0x0000 */  &_race_name_summoned_unit[0],
-// TODO      /* 00 00 */ /* 0x0000 */  &_race_name_summoned_unit[0],
-// TODO      /* 00 00 */ /* 0x0000 */  &_race_name_summoned_unit[0],
-// TODO      /* 03 00 */ /* 0x0003 */  &_race_name_summoned_unit[0],
-// TODO      /* FE FF */ /* 0xFFFE */  &_race_name_summoned_unit[0],
-// TODO      /* 02 00 */ /* 0x0002 */  &_race_name_summoned_unit[0],
-// TODO      /* 89 20 */ /* 0x2089 */  /*  0 ¿ NONE ?  */  &_race_name_summoned_unit[0],
-// TODO      /* DE 26 */ /* 0x26DE */  /*  "Arcane"    */  &_race_name_summoned_unit[1],
-// TODO      /* E5 26 */ /* 0x26E5 */  /*  "Nature"    */  &_race_name_summoned_unit[2],
-// TODO      /* EC 26 */ /* 0x26EC */  /*  "Sorcery"   */  &_race_name_summoned_unit[3],
-// TODO      /* F4 26 */ /* 0x26F4 */  /*  "Chaos"     */  &_race_name_summoned_unit[4],
-// TODO      /* 9C 21 */ /* 0x219C */  /*  "Life"      */  &_race_name_summoned_unit[5],
-// TODO      /* FA 26 */ /* 0x26FA */  /*  "Death"     */  &_race_name_summoned_unit[6],
-// TODO  }
-
-// WZD dseg:26DE                                                 ¿ BEGIN:Summoned Units Race Names ?
-// WZD dseg:26DE 41 72 63 61 6E 65 00                            cnst_Rlm5_Arcane db 'Arcane',0          ; DATA XREF: dseg:IDK_race_name_GTE_16o
-// WZD dseg:26E5 4E 61 74 75 72 65 00                            cnst_Rlm0_Nature db 'Nature',0          ; DATA XREF: dseg:IDK_race_name_GTE_16o
-// WZD dseg:26EC 53 6F 72 63 65 72 79 00                         cnst_Rlm1_Sorcery db 'Sorcery',0        ; DATA XREF: dseg:IDK_race_name_GTE_16o
-// WZD dseg:26F4 43 68 61 6F 73 00                               cnst_Rlm2_Chaos db 'Chaos',0            ; DATA XREF: dseg:IDK_race_name_GTE_16o
-// WZD dseg:26FA 44 65 61 74 68 00                               cnst_Rlm4_Death db 'Death',0            ; DATA XREF: dseg:IDK_race_name_GTE_16o
-// WZD dseg:26FA                                                 ¿ END:Summoned Units Race Names ?
-
-// WZD dseg:1EBA 00 00 00 00 D8 26 04 00 0B 00 11 00 22 00 0D 00+IDK_race_name_GTE_16 dw offset NullPtr_Logic_Var
-// WZD dseg:1EBA 00 00 00 00 00 00 03 00 FE FF 02 00 89 20 DE 26+                                        ; DATA XREF: ArmyList_Screen_Draw+589r ...
-// WZD dseg:1EBA E5 26 EC 26 F4 26 9C 21 FA 26                   dw offset NullPtr_Logic_Var             ; word ptr IDK_race_name_GTE_16 + (unit_race * 2)
-// WZD dseg:1EBA                                                 dw offset cnst_Troll
-// WZD dseg:1EBA                                                 dw offset Copyright_Msg
-// WZD dseg:1EBA                                                 dw offset Copyright_Msg+7
-// WZD dseg:1EBA                                                 dw offset Copyright_Msg+0Dh
-// WZD dseg:1EBA                                                 dw offset Copyright_Msg+1Eh
-// WZD dseg:1EBA                                                 dw offset Copyright_Msg+9
-// WZD dseg:1EBA                                                 dw offset NullPtr_Logic_Var
-// WZD dseg:1EBA                                                 dw offset NullPtr_Logic_Var
-// WZD dseg:1EBA                                                 dw offset NullPtr_Logic_Var
-// WZD dseg:1EBA                                                 dw offset NullPtr_Logic_Var+3
-// WZD dseg:1EBA                                                 dw 0FFFEh
-// WZD dseg:1EBA                                                 dw offset NullPtr_Logic_Var+2
-// WZD dseg:1EBA                                                 dw offset cnst_ZeroString_3
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm5_Arcane
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm0_Nature
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm1_Sorcery
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm2_Chaos
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm3_Life
-// WZD dseg:1EBA                                                 dw offset cnst_Rlm4_Death

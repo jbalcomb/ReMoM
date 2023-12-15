@@ -165,7 +165,7 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
 // WZD o62p05
 void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
 // WZD o62p06
-int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
+int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
 // WZD o62p07
 // DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
 // WZD o62p08
@@ -237,7 +237,7 @@ void Main_Screen_Draw_Next_Turn_Button(void);
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
-void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
+void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 
 /*
@@ -520,9 +520,6 @@ int16_t main_screen_loaded = ST_FALSE;
 
 
 
-char main_lbx_file[] = "MAIN";                  // WZD dseg:29EF
-char backgrnd_lbx_file[] = "BACKGRND";          // WZD dseg:29F4
-
 
 
 char cstr_1st5[] = " !\"$#";
@@ -641,61 +638,6 @@ int16_t skill_staff_lock_flag;
 
 
 
-// WZD dseg:9516
-SAMB_ptr next_turn_button_seg;
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawNextTurnBtn()
-// MAIN.LBX,58  DESELECT    next turn button..
-
-// WZD dseg:9518
-SAMB_ptr survey_background;
-// XREF: Main_Screen_Load_Pictures(); sub_7A6A9()
-// MAIN.LBX,57  MAINSRVY    survey backgrnd
-
-// WZD dseg:951A
-SAMB_ptr road_button_border;
-// XREF: Main_Screen_Load_Pictures(); sub_5BDCE()
-// MAIN.LBX,48  C&RBORDR    road button border
-
-// WZD dseg:951C
-SAMB_ptr road_background;
-// XREF: Main_Screen_Load_Pictures(); sub_5BDCE()
-// MAIN.LBX,45  MAINROAD    road background
-
-// WZD dseg:951E
-SAMB_ptr road_ok_button;
-// XREF: Main_Screen_Load_Pictures(); sub_5BC57()
-// MAIN.LBX,46  CASTCNCL    road ok button
-
-// WZD dseg:9522
-SAMB_ptr DESELECT_button_blockout;
-// XREF: Main_Screen_Load_Pictures(); sub_5BDCE(); sub_5D5D5(); sub_7A6A9()
-// MAIN.LBX,44    DESELECT    button blockout
-
-// WZD dseg:9524
-SAMB_ptr cast_button_border;
-// XREF: Main_Screen_Load_Pictures(); sub_5D5D5(); sub_7A6A9()
-// MAIN.LBX,47  C&RBORDR    cast button border
-
-// WZD dseg:9526
-SAMB_ptr cast_cancel_button;
-// XREF: Main_Screen_Load_Pictures(); sub_5BC57(); sub_5CDB2(); sub_5CE84(); sub_7A5EF()
-// MAIN.LBX,41  CASTCNCL    cast cancel button
-
-// WZD dseg:9528
-SAMB_ptr cast_background;
-// XREF: Main_Screen_Load_Pictures(); sub_5D5D5()
-// MAIN.LBX,40  MAINCAST    cast background
-
-// WZD dseg:952C
-SAMB_ptr next_turn_background_seg;
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawNextTurnBtn()
-// MAIN.LBX,35  DESELECT    next turn backgrnd
-
-// WZD dseg:952E
-SAMB_ptr deselect_background;
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawDeselectIMG()
-// MAIN.LBX,34  DESELECT    deselect backgrnd
-
 // WZD dseg:9548  IMG_OVL_BuildBtn_BG  ; DATA XREF: GFX_Swap_AppendUView() ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:954A  IMG_WIZ_BookBinders dw 12h dup(0)  ; DATA XREF: sub_6343B()
 // WZD dseg:956E
@@ -738,74 +680,9 @@ int64_t _main_map_grid_x;
 int64_t _main_map_grid_y;
 
 
-// WZD dseg:9922
-SAMB_ptr main_background;
-
-// WZD dseg:9924
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawStackSelect()
-// ; array of 9 single-loaded images
-SAMB_ptr unit_backgrounds[9];
 
 
 
-
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawUnitAttribs()
-// single-loaded image
-SAMB_ptr main_red_medal_icon;
-SAMB_ptr main_gold_medal_icon;
-SAMB_ptr main_white_medal_icon;
-SAMB_ptr main_adamantium_weapon_icon;
-SAMB_ptr main_mithril_weapon_icon;
-SAMB_ptr main_magic_weapon_icon;
-
-// Screen Layout: L-R, T-B
-//     Done, Patrol, Wait, Build
-// XREF: Main_Screen_Load_Pictures(); OVL_DrawUnitActnBtns(); OVL_DrawLockedActns()
-// single-loaded image
-SAMB_ptr main_lock_purify_button;
-SAMB_ptr main_lock_build_button;
-SAMB_ptr main_lock_wait_button;
-SAMB_ptr main_lock_patrol_button;
-SAMB_ptr main_lock_done_button;
-
-// XREF: Main_Screen_Load_Pictures(); OVL_SetUnitButtons(); OVL_DrawUnitActnBtns()
-// ; single-loaded 2 frame image (normal - clicked)
-SAMB_ptr main_meld_button;
-SAMB_ptr main_purify_button;
-SAMB_ptr main_build_button;
-SAMB_ptr main_done_button;
-SAMB_ptr main_wait_button;
-SAMB_ptr main_patrol_button;
-
-// ? block of Main Screen - Top Buttons Bar ?
-// XREF: Main_Screen_Load_Pictures(); OVL_SetMenuButtons(); OVL_DrawMainMenu()
-// ; single-loaded 2 frame image (normal - clicked)
-// Code Order:   ?
-// Data Order:   S,I,M,C,G,A,P
-// Load Order:   G,S,A,C,M,I,P
-// LBX Order:    G,S,A,C,M,I,P
-// Screen Order: G,S,A,C,M,I,P
-SAMB_ptr main_spells_button;
-SAMB_ptr main_info_button;
-SAMB_ptr main_magic_button;
-SAMB_ptr main_cities_button;
-SAMB_ptr main_game_button;
-SAMB_ptr main_armies_button;
-SAMB_ptr main_plane_button;
-
-// XREF: Main_Screen_Load_Pictures(); Draw_Movement_Mode_Icons()
-// single-loaded image
-// gets indexed like an array of pictures in Draw_Movement_Mode_Icons()
-SAMB_ptr move_sail_icon;
-SAMB_ptr move_swim_icon;
-SAMB_ptr move_mt_icon;
-SAMB_ptr move_forest_icon;
-SAMB_ptr move_fly_icon;
-SAMB_ptr move_path_icon;
-SAMB_ptr move_astral_icon;
-SAMB_ptr move_wind_icon;
-SAMB_ptr move_boot_icon;
-SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 
 
 // WZD dseg:998C 00 00                   GUI_SmallWork_IMG@ dw 0                 ; 96h LBX_Alloc_Space paragraphs
@@ -873,7 +750,7 @@ SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM header po
 
 // WZD dseg:CB8C 00                                              db    0
 // WZD dseg:CB8D 00                                              db    0
-// WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cw
+// WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
 
 // WZD dseg:CB90
@@ -883,7 +760,7 @@ SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the
 // WZD dseg:CB92
 SAMB_ptr _unit_colored_backgrounds_seg[6];  // load in Terrain_Init() ovr052
 
-// WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init+F3w ...
+// WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init
 // WZD dseg:CB92                                                                                         ; array of 6 reserved EMM header pointers
 // WZD dseg:CB92                                                                                         ; (1 per banner color)
 // WZD dseg:CB9E 00                                              db    0
@@ -973,9 +850,9 @@ SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header poi
 // WZD dseg:CC1F 00                                              db    0
 // WZD dseg:CC20 00                                              db    0
 // WZD dseg:CC21 00                                              db    0
-// WZD dseg:CC22 00 00 00 00                                     terrain_lbx_001 dd 0                    ; DATA XREF: Terrain_Init+21w ...
-// WZD dseg:CC26 00 00                                           terrain_001_1 dw 0                      ; DATA XREF: Draw_Map_Terrain+C0w ...
-// WZD dseg:CC28 00 00                                           g_EmmHndl_TERRAIN dw 0                  ; DATA XREF: Terrain_Init:loc_4615Bw ...
+// WZD dseg:CC22 00 00 00 00                                     terrain_lbx_001 dd 0                    ; DATA XREF: Terrain_Init
+// WZD dseg:CC26 00 00                                           terrain_001_1 dw 0                      ; DATA XREF: Draw_Map_Terrain
+// WZD dseg:CC28 00 00                                           g_EmmHndl_TERRAIN dw 0                  ; DATA XREF: Terrain_Init
 // WZD dseg:CC28                                                                                         ; EMM_Load_LBX handle
 // WZD dseg:CC2A 00                                              db    0
 // WZD dseg:CC2B 00                                              db    0
@@ -1023,113 +900,6 @@ o57p08  Main_Screen_Draw()
 o57p09  Main_Screen_Reset()
 o57p10  ? Move_Stack_DirKey() ? 
 */
-
-void Main_Screen_Load_Pictures(void)
-{
-    int16_t itr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
-
-    main_background = LBX_Load(main_lbx_file,  0);
-
-    main_game_button = LBX_Load(main_lbx_file, 1);
-    main_spells_button = LBX_Load(main_lbx_file, 2);
-    main_armies_button = LBX_Load(main_lbx_file, 3);
-    main_cities_button = LBX_Load(main_lbx_file, 4);
-    main_magic_button = LBX_Load(main_lbx_file, 5);
-    main_info_button = LBX_Load(main_lbx_file, 6);
-    main_plane_button = LBX_Load(main_lbx_file, 7);
-
-    main_done_button = LBX_Load(main_lbx_file, 8);
-    main_patrol_button = LBX_Load(main_lbx_file, 9);
-    main_wait_button = LBX_Load(main_lbx_file, 10);
-    main_build_button = LBX_Load(main_lbx_file, 11);
-    main_purify_button = LBX_Load(main_lbx_file, 42);
-    main_meld_button = LBX_Load(main_lbx_file, 49);
-
-    main_lock_done_button = LBX_Load(main_lbx_file, 12);
-    main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
-    main_lock_wait_button = LBX_Load(main_lbx_file, 14);
-    main_lock_build_button = LBX_Load(main_lbx_file, 15);
-    main_lock_purify_button = LBX_Load(main_lbx_file, 43);
-
-    main_white_medal_icon = LBX_Load(main_lbx_file, 51);
-    main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
-    main_red_medal_icon = LBX_Load(main_lbx_file, 53);
-    main_magic_weapon_icon = LBX_Load(main_lbx_file, 54);
-    main_mithril_weapon_icon = LBX_Load(main_lbx_file, 55);
-    main_adamantium_weapon_icon = LBX_Load(main_lbx_file, 56);
-
-    move_sail_icon = LBX_Load(main_lbx_file, 18);
-    move_swim_icon = LBX_Load(main_lbx_file, 19);
-    move_mt_icon = LBX_Load(main_lbx_file, 20);
-    move_forest_icon = LBX_Load(main_lbx_file, 21);
-    move_fly_icon = LBX_Load(main_lbx_file, 22);
-    move_path_icon = LBX_Load(main_lbx_file, 23);
-    move_astral_icon = LBX_Load(main_lbx_file, 36);
-    move_wind_icon = LBX_Load(main_lbx_file, 37);
-    move_boot_icon = LBX_Load(main_lbx_file, 38);
-
-    movement_mode_icons[0] = LBX_Load(main_lbx_file, 18);
-    movement_mode_icons[1] = LBX_Load(main_lbx_file, 19);
-    movement_mode_icons[2] = LBX_Load(main_lbx_file, 20);
-    movement_mode_icons[3] = LBX_Load(main_lbx_file, 21);
-    movement_mode_icons[4] = LBX_Load(main_lbx_file, 22);
-    movement_mode_icons[5] = LBX_Load(main_lbx_file, 23);
-    movement_mode_icons[6] = LBX_Load(main_lbx_file, 36);
-    movement_mode_icons[7] = LBX_Load(main_lbx_file, 37);
-    movement_mode_icons[8] = LBX_Load(main_lbx_file, 38);
-    // movement_mode_icons[9] ¿ drake178: "Cavalry"
-
-
-    for(itr = 0; itr < 9; itr++)
-    {
-        unit_backgrounds[itr] = LBX_Load(main_lbx_file, 24 + itr);
-    }
-
-    next_turn_button_seg = LBX_Load(main_lbx_file, 58);
-
-    deselect_background = LBX_Load(main_lbx_file, 34);
-    next_turn_background_seg = LBX_Load(main_lbx_file, 35);
-
-//     cast_background = LBX_Load(main_lbx_file, 40);
-//     cast_cancel_button = LBX_Load(main_lbx_file, 41);
-//     cast_button_border = LBX_Load(main_lbx_file, 47);
-// 
-//     DESELECT_button_blockout = LBX_Load(main_lbx_file, 44);
-// 
-//     road_background = LBX_Load(main_lbx_file, 45);
-//     road_ok_button = LBX_Load(main_lbx_file, 46);
-//     road_button_border = LBX_Load(main_lbx_file, 48);
-// 
-//     survey_background = LBX_Load(main_lbx_file, 57);
-// 
-//     mirror_screen_background = LBX_Load(backgrnd_lbx_file, 4);
-// 
-//     goto_booty_icon = LBX_Load(main_lbx_file, 50);
-// 
-// 
-//     // LILEVENT blue
-//     // LILEVENT red
-//     // LILEVENT grn
-//     // LILEVENT bad
-//     // LILEVENT good
-//     // LILEVENT short
-// 
-// 
-//     for(itr = 0; itr < 6; itr++)
-//     {
-//         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, 59 + itr);
-//     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
-
-}
-
 
 
 // WZD 057p01
@@ -1217,7 +987,7 @@ void Main_Screen(void)
 //     // HACK:
 //     _unit = 46;  // ¿ Where'd I get this _unit from or the x,y's ? 
 //     // Build_Unit_Stack(0, 0, 18, 17);
-//     Build_Unit_Stack(0, 0, _UNITS[_unit].world_x, _UNITS[_unit].world_y);
+//     Build_Unit_Stack(0, 0, _UNITS[_unit].wx, _UNITS[_unit].wy);
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
 //     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
@@ -1482,10 +1252,10 @@ void Main_Screen(void)
             */
             // _unit = entity_idx;
             // unit_idx = _unit;
-            // Unit_X = _UNITS[unit_idx].world_x;
-            // Unit_Y = _UNITS[unit_idx].world_y;
-            // OVL_Map_CenterX = _UNITS[unit_idx].world_x;
-            // OVL_Map_CenterY = _UNITS[unit_idx].world_y;
+            // Unit_X = _UNITS[unit_idx].wx;
+            // Unit_Y = _UNITS[unit_idx].wy;
+            // OVL_Map_CenterX = _UNITS[unit_idx].wx;
+            // OVL_Map_CenterY = _UNITS[unit_idx].wy;
             // Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
         }
 
@@ -1507,8 +1277,8 @@ void Main_Screen(void)
             if(_unit_stack_count > 0)
             {
                 unit_idx = _unit_stack[0].unit_idx;
-                _map_plane = _UNITS[unit_idx].world_plane;
-                Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane);
+                _map_plane = _UNITS[unit_idx].wp;
+                Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
                 MainScr_Prepare_Reduced_Map();
                 Set_Mouse_List(1, mouse_list_default);
                 Reset_Map_Draw();
@@ -2031,13 +1801,13 @@ void Main_Screen(void)
             {
                 // NIU_MainScreen_local_flag = 1
                 unit_idx = _unit_stack[0].unit_idx;
-                if(_UNITS[unit_idx].world_plane == _map_plane)
+                if(_UNITS[unit_idx].wp == _map_plane)
                 {
-                    unit_stack_world_y = _UNITS[unit_idx].world_y;
+                    unit_stack_world_y = _UNITS[unit_idx].wy;
                     if(unit_stack_world_y >= _map_y && unit_stack_world_y <= _map_y + MAP_WIDTH)
                     {
                         IDK_unit_stack_in_view = ST_FALSE;
-                        unit_stack_world_x = _UNITS[unit_idx].world_x;
+                        unit_stack_world_x = _UNITS[unit_idx].wx;
                         if(
                             ( unit_stack_world_x >= _map_x && unit_stack_world_x <= (_map_x + MAP_HEIGHT) ) ||
                             ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) <= (_map_x + MAP_HEIGHT) )
@@ -2078,7 +1848,7 @@ void Main_Screen(void)
                     // {
                     //     // if ...
                     //     /// j_OVL_CanPlanarTravel() == ST_FALSE
-                    //     // _UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane;
+                    //     // _UNITS[_unit_stack[0].unit_idx].wp == _map_plane;
                     //     // _UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE;
                     //     // WZD o61p02
                     //     // Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane)
@@ -2117,9 +1887,6 @@ void Main_Screen(void)
 
             // TODO  rename this variable to something more sensible - maybe add more if it gets reused - here ~entity_idx, was "input"
             entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: entity_idx: %d\n", __FILE__, __LINE__, entity_idx);
-#endif
 
             if(entity_idx == ST_UNDEFINED)
             {
@@ -2127,23 +1894,11 @@ void Main_Screen(void)
                 DLOG("ScrollTheMap");
                 // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
                 // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
-                _prev_world_x = _prev_world_x + (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
-                _prev_world_y = _prev_world_y + (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x - (MAP_WIDTH / 2): %d\n", __FILE__, __LINE__, _main_map_grid_x - (MAP_WIDTH / 2));
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y - (MAP_HEIGHT / 2): %d\n", __FILE__, __LINE__, _main_map_grid_y - (MAP_HEIGHT / 2));
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-// #endif
+                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
+                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
+
                 IDK_CheckSet_MapDisplay_XY();
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-// #endif
+
             }
             else
             {
@@ -2153,13 +1908,52 @@ void Main_Screen(void)
 
                 // entity_idx = abs(entity_idx);
                 entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: entity_idx: %d\n", __FILE__, __LINE__, entity_idx);
-#endif
 
                 if(entity_idx >= 1000)
                 {
                     DLOG("(entity_idx >= 1000)");
+
+                    if(entity_idx < 1100)
+                    {
+                        DLOG("(entity_idx < 1100)");
+
+                        _city_idx = entity_idx - 1000;
+
+                        if(_CITIES[_city_idx].owner_idx == _human_player_idx)
+                        {
+                            DLOG("(_CITIES[_city_idx].owner_idx == _human_player_idx)");
+
+                            if(_CITIES[_city_idx].size == 0)
+                            {
+                                DLOG("(_CITIES[_city_idx].size == 0)");
+
+                            }
+                            else
+                            {
+                                DLOG("(_CITIES[_city_idx].size != 0)");
+
+                                PageFlipEffect = 4;
+                                // TODO  RP_GUI_GrowOutLeft = (_main_map_grid_x * 20);
+                                // TODO  RP_GUI_GrowOutTop = ((_main_map_grid_y * 18) + 20);
+                                // TODO  RP_GUI_GrowOutFrames = 8;
+                                current_screen = scr_City_Screen;
+                                leave_screen_flag = ST_TRUE;
+
+                            }
+
+                        }
+                        else
+                        {
+                            DLOG("(_CITIES[_city_idx].owner_idx != _human_player_idx)");
+
+                        }
+
+                    }
+                    else
+                    {
+                        DLOG("(entity_idx >= 1100)");
+
+                    }
 
                 }
                 else
@@ -2177,12 +1971,12 @@ void Main_Screen(void)
 #endif
                         _unit = entity_idx;
                         unit_idx = _unit;
-                        Unit_X = _UNITS[unit_idx].world_x;
-                        Unit_Y = _UNITS[unit_idx].world_y;
-                        // OVL_Map_CenterX = _UNITS[unit_idx].world_x;
-                        // OVL_Map_CenterY = _UNITS[unit_idx].world_y;
-                        _active_world_x = _UNITS[unit_idx].world_x;
-                        _active_world_y = _UNITS[unit_idx].world_y;
+                        Unit_X = _UNITS[unit_idx].wx;
+                        Unit_Y = _UNITS[unit_idx].wy;
+                        // OVL_Map_CenterX = _UNITS[unit_idx].wx;
+                        // OVL_Map_CenterY = _UNITS[unit_idx].wy;
+                        _active_world_x = _UNITS[unit_idx].wx;
+                        _active_world_y = _UNITS[unit_idx].wy;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
     dbg_prn("DEBUG: [%s, %d]: Unit_X: %d\n", __FILE__, __LINE__, Unit_X);
@@ -2191,7 +1985,7 @@ void Main_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
     dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
 
-    if(_UNITS[unit_idx].world_x == 19 && _UNITS[unit_idx].world_y == 10)
+    if(_UNITS[unit_idx].wx == 19 && _UNITS[unit_idx].wy == 10)
     {
         DBG_TST_Selected_Stack = 1;
         DBG_TST_Select_Unit_Stack = 1;
@@ -2296,8 +2090,8 @@ void Main_Screen(void)
 #endif
             // Hot-Key 'C'
                 // unit_idx = _unit_stack[0].unit_idx;
-                // _map_plane = _UNITS[unit_idx].world_plane;
-                // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, _UNITS[unit_idx].world_plane);
+                // _map_plane = _UNITS[unit_idx].wp;
+                // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
                 // MainScr_Prepare_Reduced_Map();
                 // Set_Mouse_List(1, mouse_list_default);
                 // Reset_Map_Draw();
@@ -2695,26 +2489,26 @@ void Move_Stack_DirKey(int16_t movement_direction)
                     case 1:  /* LeftDown  -x,+y */
                     {
                         DLOG("switch(movement_direction)  case 1:  LeftDown");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x - 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
                     } break;
                     case 2:  /* Down  +y */
                     {
                         DLOG("switch(movement_direction)  case 2:  Down");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
                     } break;
                     case 3:  /* RightDown  +x,+y */
                     {
                         DLOG("switch(movement_direction)  case 3:  RightDown");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x + 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y + 1);
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
                     } break;
                     case 4:  /* Left  -x */
                     {
                         DLOG("switch(movement_direction)  case 4:  Left");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x - 1);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y);
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx - 1);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
                     } break;
                     case 5:  /* DNE */
                     {
@@ -2723,33 +2517,33 @@ void Move_Stack_DirKey(int16_t movement_direction)
                     case 6:  /* Right  +x */
                     {
                         DLOG("switch(movement_direction)  case 6:  Right");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x + 1);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y);
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx + 1);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
                     } break;
                     case 7:  /* LeftUp  -x,-y */
                     {
                         DLOG("switch(movement_direction)  case 7:  LeftUp");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x - 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
                     } break;
                     case 8:  /* Up  -y */
                     {
                         DLOG("switch(movement_direction)  case 8:  Up");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].world_x);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
                     } break;
                     case 9:  /* RightUp  +x,-y */
                     {
                         DLOG("switch(movement_direction)  case 9:  RightUp");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].world_x + 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].world_y - 1);
+                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
+                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
                     } break;
 
                 }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].world_x: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].world_x);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].world_y: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].world_y);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].wx: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].wx);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].wy: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].wy);
 #endif
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: move_x: %d\n", __FILE__, __LINE__, move_x);
@@ -2768,7 +2562,7 @@ void Move_Stack_DirKey(int16_t movement_direction)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: Stack_Has_PlanarTravel(): %d\n", __FILE__, __LINE__, Stack_Has_PlanarTravel());
 
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane));
+    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane));
 
     dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE));
 
@@ -2782,9 +2576,9 @@ void Move_Stack_DirKey(int16_t movement_direction)
                 else
                 {
                     DLOG("(Stack_Has_PlanarTravel() != ST_TRUE)");
-                    if( (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
+                    if( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
                     {
-                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].world_plane == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )");
+                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )");
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: &_map_x: %p\n", __FILE__, __LINE__, &_map_x);
     dbg_prn("DEBUG: [%s, %d]: &_map_y: %p\n", __FILE__, __LINE__, &_map_y);
@@ -2799,7 +2593,7 @@ void Move_Stack_DirKey(int16_t movement_direction)
                     }
                     else
                     {
-                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].world_plane != _map_plane) && (_UNITS[_unit_stack[0].unit_idx].In_Tower != ST_TRUE) )");
+                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].wp != _map_plane) && (_UNITS[_unit_stack[0].unit_idx].In_Tower != ST_TRUE) )");
                         // TODO  GUI_WarningType0(cstrWarnNoPlaneMove);
                     }
                 }
@@ -2834,38 +2628,28 @@ void Move_Stack_DirKey(int16_t movement_direction)
 void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
 {
     int16_t itr_stack;
-    int16_t unit_stack_unit_idx;
+    int16_t unit_idx;
     int16_t x1;
     int16_t y1;
     int16_t x2;
     int16_t y2;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Window(start_x = %d, start_y = %d)\n", __FILE__, __LINE__, start_x, start_y);
-#endif
 
     x1 = 0;
     y1 = 0;
     x2 = 0;
     y2 = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-#endif
-
-    assert(_unit_stack_count >= 0);
-    assert(_unit_stack_count <= 9);
     if(_unit != ST_UNDEFINED && _unit_stack_count != 0)
     {
 
         for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
-            unit_stack_unit_idx = _unit_stack[itr_stack].unit_idx;
+            unit_idx = _unit_stack[itr_stack].unit_idx;
 
             Unit_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
             FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_stack]);
-            Draw_Unit_Picture(x1, y1, unit_stack_unit_idx, _unit_stack[itr_stack].active);
-            Unit_Window_Draw_Unit_Attributes(x1, y1, unit_stack_unit_idx);
+            Draw_Unit_Picture(x1, y1, unit_idx, _unit_stack[itr_stack].active);
+            Unit_Window_Draw_Unit_Attributes(x1, y1, unit_idx);
         }
 
         Cycle_Unit_Enchantment_Animation();
@@ -2876,10 +2660,6 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
         }
 
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Unit_Window(start_x = %d, start_y = %d)\n", __FILE__, __LINE__, start_x, start_y);
-#endif
 
 }
 
@@ -2928,13 +2708,13 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
 
     if(unit_array_count >= 1)
     {
-        units_x = _UNITS[unit_array[0]].world_x;
-        units_y = _UNITS[unit_array[0]].world_y;
+        units_x = _UNITS[unit_array[0]].wx;
+        units_y = _UNITS[unit_array[0]].wy;
         units_in_tower = ST_FALSE;
 
         for(itr_towers = 0; (itr_towers < NUM_TOWERS) && (units_in_tower == ST_FALSE); itr_towers++)
         {
-            if( (_TOWERS[itr_towers].world_x == units_x) && (_TOWERS[itr_towers].world_y == units_y) )
+            if( (_TOWERS[itr_towers].wx == units_x) && (_TOWERS[itr_towers].wy == units_y) )
             {
                 units_in_tower = ST_TRUE;
                 tower_idx = itr_towers;
@@ -2957,8 +2737,8 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
             _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
             if(_UNITS[unit_idx].owner_idx == _human_player_idx)
             {
-                TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 0);
-                TILE_Explore(_TOWERS[tower_idx].world_x, _TOWERS[tower_idx].world_y, 1);
+                TILE_Explore(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
+                TILE_Explore(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
             }
         }
         else
@@ -3206,11 +2986,11 @@ void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16
                 {
                     stack_is_on_tower = ST_FALSE;
                     unit_stack_unit_idx = _unit_stack[0].unit_idx;
-                    unit_world_x = _UNITS[unit_stack_unit_idx].world_x;
-                    unit_world_y = _UNITS[unit_stack_unit_idx].world_y;
+                    unit_world_x = _UNITS[unit_stack_unit_idx].wx;
+                    unit_world_y = _UNITS[unit_stack_unit_idx].wy;
                     for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX && stack_is_on_tower == ST_FALSE; itr_towers++)
                     {
-                        if(_TOWERS[itr_towers].world_x == unit_world_x && _TOWERS[itr_towers].world_y == unit_world_y)
+                        if(_TOWERS[itr_towers].wx == unit_world_x && _TOWERS[itr_towers].wy == unit_world_y)
                         {
                             stack_is_on_tower = ST_TRUE;
                         }
@@ -3280,7 +3060,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
     Active_Stack_Movement_Modes(&movement_mode_flags[0]);
 
-    if(Terrain_Is_Sailable(_UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, map_plane) == ST_TRUE)
+    if(Terrain_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane) == ST_TRUE)
     {
         _DI_return_value = -2;  // ¿ -2 ~== Non-Walking Terrain ?
         if(movement_mode_flags[MM_SWIMMING] == ST_TRUE || movement_mode_flags[MM_SAILING] == ST_TRUE || movement_mode_flags[MM_FLYING] == ST_TRUE)
@@ -3291,8 +3071,8 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
     if(_DI_return_value == -1)
     {
-        unit_world_x = _UNITS[unit_stack_unit_idx].world_x;
-        unit_world_y = _UNITS[unit_stack_unit_idx].world_y;
+        unit_world_x = _UNITS[unit_stack_unit_idx].wx;
+        unit_world_y = _UNITS[unit_stack_unit_idx].wy;
         lair_idx = Square_Has_Lair(unit_world_x, unit_world_y, map_plane);
         if(lair_idx == -1)
         {
@@ -3310,7 +3090,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
                 {
                     stack_size = 0;
                     // drake178: fills the return variables with the count and indices of all units on the selected tile that belong to the specified player
-                    // TODO  TILE_GetUnitStack(_UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                    // TODO  TILE_GetUnitStack(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
                     stack_size = stack_size + _unit_stack_count;
                     if(stack_size > 9)
                     {
@@ -3409,9 +3189,9 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
 
         unit_idx = _unit;
-        unit_x = _UNITS[unit_idx].world_x;
-        unit_y = _UNITS[unit_idx].world_y;
-        unit_p = _UNITS[unit_idx].world_plane;
+        unit_x = _UNITS[unit_idx].wx;
+        unit_y = _UNITS[unit_idx].wy;
+        unit_p = _UNITS[unit_idx].wp;
 
 
         // DONT  o62p01_Empty_pFxn(player_idx);
@@ -3520,8 +3300,8 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
         }
     
 
-        unit_wx = _UNITS[unit_idx].world_x;
-        unit_wy = _UNITS[unit_idx].world_y;
+        unit_wx = _UNITS[unit_idx].wx;
+        unit_wy = _UNITS[unit_idx].wy;
 
 
         // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
@@ -3532,8 +3312,8 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
         for(itr_units = 0; itr_units < unit_array_count; itr_units++)
         {
             if(
-                (_UNITS[unit_array[itr_units]].world_x == unit_wx) &&
-                (_UNITS[unit_array[itr_units]].world_y == unit_wy) &&
+                (_UNITS[unit_array[itr_units]].wx == unit_wx) &&
+                (_UNITS[unit_array[itr_units]].wy == unit_wy) &&
                 (_UNITS[unit_array[itr_units]].Rd_Constr_Left == -1) &&
                 ((_UNITS[unit_array[itr_units]].Status & 0x03 /* US_GoingTo */) != 0) || (((_UNITS[unit_array[itr_units]].Status & 0x10 /* US_Move */) != 0)) &&
                 (_UNITS[unit_array[itr_units]].Finished == ST_FALSE)
@@ -3564,7 +3344,7 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
                 else
                 {
                     // TODO  EMM_Map_DataH();
-                    // TODO  OVL_StoreLongPath(player_idx, _UNITS[unit_array[itr_units]].world_x, _UNITS[unit_array[itr_units]].world_y, _UNITS[unit_array[itr_units]].dst_wx, _UNITS[unit_array[itr_units]].dst_wy, map_p, &MovePath_X, &MovePath_Y, &OVL_Path_Costs);
+                    // TODO  OVL_StoreLongPath(player_idx, _UNITS[unit_array[itr_units]].wx, _UNITS[unit_array[itr_units]].wy, _UNITS[unit_array[itr_units]].dst_wx, _UNITS[unit_array[itr_units]].dst_wy, map_p, &MovePath_X, &MovePath_Y, &OVL_Path_Costs);
                         // ; attempts to store a multi-turn path into EMS,
                         // ; provided that both the source and destination
                         // ; locations are on it, and there is space left in the
@@ -3642,8 +3422,8 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         {
             DLOG("(AllUnitsMoved != ST_TRUE)");
             next_unit_idx = _unit;  // just updated by WIZ_NextUnit()
-            next_unit_wx = _UNITS[next_unit_idx].world_x;
-            next_unit_wy = _UNITS[next_unit_idx].world_y;
+            next_unit_wx = _UNITS[next_unit_idx].wx;
+            next_unit_wy = _UNITS[next_unit_idx].wy;
             Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
             // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
             // ¿ this block is useless in that it gets redone / overlayed by the subsequent block below, because the flags are equivalent ?
@@ -3667,8 +3447,8 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // TODO  
 // TODO                  // TODO  flip this logic around - it's actually just handling the end of the 'Go To' & 'Build Road'
 // TODO                  if(
-// TODO                      (_UNITS[_unit].world_x != next_unit_dst_wx) ||
-// TODO                      (_UNITS[_unit].world_y != next_unit_dst_wy) ||
+// TODO                      (_UNITS[_unit].wx != next_unit_dst_wx) ||
+// TODO                      (_UNITS[_unit].wy != next_unit_dst_wy) ||
 // TODO                      (_UNITS[_unit].Rd_Constr_Left != ST_UNDEFINED)
 // TODO                  )
 // TODO                  {
@@ -3698,8 +3478,8 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     {
         DLOG("(all_units_moved == ST_FALSE)");
         next_unit_idx = _unit;
-        next_unit_wx = _UNITS[next_unit_idx].world_x;
-        next_unit_wy = _UNITS[next_unit_idx].world_y;
+        next_unit_wx = _UNITS[next_unit_idx].wx;
+        next_unit_wy = _UNITS[next_unit_idx].wy;
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
         // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
 #ifdef STU_DEBUG
@@ -3775,13 +3555,13 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 
         if(
             (_UNITS[itr_units].owner_idx == player_idx) &&
-            ( (_UNITS[itr_units].world_plane == current_world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) ) &&
+            ( (_UNITS[itr_units].wp == current_world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) ) &&
             (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&  /* ¿ not dead / disbanded / banished / unsommoned ? */
             (_UNITS[itr_units].Finished == ST_FALSE)
         )
         {
             // TODO  figure out how to deal with delta being 0 for the previously select stack that set _active_world_x,y
-            delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].world_x, _UNITS[itr_units].world_y, WORLD_WIDTH);
+            delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].wx, _UNITS[itr_units].wy, WORLD_WIDTH);
 
             if( (_UNITS[itr_units].Status & 0x05) != 0)  /* US_Wait */
             {
@@ -3831,8 +3611,8 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
 #endif
 
-                _active_world_x = _UNITS[_unit].world_x;
-                _active_world_y = _UNITS[_unit].world_y;
+                _active_world_x = _UNITS[_unit].wx;
+                _active_world_y = _UNITS[_unit].wy;
             }
             else if(Closest_Waiting_Unit != ST_UNDEFINED)
             {
@@ -3850,8 +3630,8 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
 #endif
                 Finished = ST_TRUE;
-                _active_world_x = _UNITS[_unit].world_x;
-                _active_world_y = _UNITS[_unit].world_y;
+                _active_world_x = _UNITS[_unit].wx;
+                _active_world_y = _UNITS[_unit].wy;
                 for(itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
                 {
                     if(_UNITS[itr_wait_units].owner_idx == player_idx)
@@ -4045,7 +3825,7 @@ void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[])
 
         IDK_Stack_Array_cnt = IDK_unit_array_cnt;
         
-        if(Square_Has_City(_UNITS[_unit_stack[0].unit_idx].world_x, _UNITS[_unit_stack[0].unit_idx].world_y, _UNITS[_unit_stack[0].unit_idx].world_plane) == ST_UNDEFINED)
+        if(Square_Has_City(_UNITS[_unit_stack[0].unit_idx].wx, _UNITS[_unit_stack[0].unit_idx].wy, _UNITS[_unit_stack[0].unit_idx].wp) == ST_UNDEFINED)
         {
             for(itr_LL_Array = 0; itr_LL_Array < 9; itr_LL_Array++)
             {
@@ -4319,8 +4099,8 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         }
 
         unit_idx = _unit;
-        unit_x = _UNITS[unit_idx].world_x;
-        unit_y = _UNITS[unit_idx].world_y;
+        unit_x = _UNITS[unit_idx].wx;
+        unit_y = _UNITS[unit_idx].wy;
         OVL_BringIntoView(map_x, map_y, unit_x, unit_y, map_plane);
         
         STK_GetExtraActions__WIP();
@@ -4459,27 +4239,27 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
     {
         //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
         //    _UNITS[current_unit_idx].owner_idx,
-        //    _UNITS[current_unit_idx].world_x,
-        //    _UNITS[current_unit_idx].world_y,
-        //    _UNITS[current_unit_idx].world_plane,
+        //    _UNITS[current_unit_idx].wx,
+        //    _UNITS[current_unit_idx].wy,
+        //    _UNITS[current_unit_idx].wp,
         //    _UNITS[current_unit_idx].In_Tower
         // );
 
         //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
         //    (_UNITS[current_unit_idx].owner_idx != player_idx),
-        //    (_UNITS[current_unit_idx].world_x != world_x),
-        //    (_UNITS[current_unit_idx].world_y != world_y),
+        //    (_UNITS[current_unit_idx].wx != world_x),
+        //    (_UNITS[current_unit_idx].wy != world_y),
         //    (_UNITS[current_unit_idx].owner_idx == ST_UNDEFINED),
-        //    ( (_UNITS[current_unit_idx].world_plane != world_plane) && (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
+        //    ( (_UNITS[current_unit_idx].wp != world_plane) && (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
         //);
     }
 #endif
 
         if((_UNITS[current_unit_idx].owner_idx == player_idx) && 
-            (_UNITS[current_unit_idx].world_x == world_x) &&
-            (_UNITS[current_unit_idx].world_y == world_y) &&
+            (_UNITS[current_unit_idx].wx == world_x) &&
+            (_UNITS[current_unit_idx].wy == world_y) &&
             (_UNITS[current_unit_idx].owner_idx != ST_UNDEFINED) && 
-            ( (_UNITS[current_unit_idx].world_plane == world_plane) || (_UNITS[current_unit_idx].In_Tower == ST_TRUE) )
+            ( (_UNITS[current_unit_idx].wp == world_plane) || (_UNITS[current_unit_idx].In_Tower == ST_TRUE) )
         )
         {
             /*
@@ -4560,36 +4340,56 @@ void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, 
 // MoO2  ¿ Star_On_Screen_(); Ship_Completely_On_Screen_(); Ship_On_Screen_(); ?
 void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane)
 {
-    int16_t l_map_x;
-    int16_t l_map_y;
-    int16_t l_unit_x;
-    int16_t l_unit_y;
     int16_t in_view;
+    int16_t l_unit_y;
+    int16_t l_unit_x;
+
+    // int16_t l_map_x;  // _SI_
+    // int16_t l_map_y;  // _DI_
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
 #endif
 
-    l_map_x = *map_x;
-    l_map_y = *map_y;
+    // l_map_x = *map_x;
+    // l_map_y = *map_y;
 
     l_unit_y = unit_y;
 
     in_view = ST_FALSE;
 
     // test in-bounds
-    if(l_unit_y >= l_map_y && l_unit_y < l_map_y + MAP_HEIGHT)
+    if(
+        (l_unit_y >= *map_y)
+        &&
+        (l_unit_y < (*map_y + MAP_HEIGHT))
+    )
     {
         l_unit_x = unit_x;
-        if((l_unit_x >= l_map_x && l_unit_x < l_map_x + MAP_WIDTH) ||
-            (l_unit_x + WORLD_WIDTH >= l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH)
+        if(
+            (
+                (l_unit_x >= *map_x)
+                &&
+                (l_unit_x < *map_x + MAP_WIDTH)
+            )
+            ||
+            (
+                ((l_unit_x + WORLD_WIDTH) >= *map_x)
+                &&
+                ((l_unit_x + WORLD_WIDTH) < (*map_x + MAP_WIDTH))
+            )
         )
         {
-            if((l_unit_x + WORLD_WIDTH > l_map_x && l_unit_x + WORLD_WIDTH < l_map_x + MAP_WIDTH) )
+            if(
+                ((l_unit_x + WORLD_WIDTH) >= *map_x)
+                &&
+                ((l_unit_x + WORLD_WIDTH) < (*map_x + MAP_WIDTH))
+            )
             {
                 l_unit_x += WORLD_WIDTH;
             }
-            l_unit_x = l_unit_x - l_map_x;
+
+            l_unit_x = l_unit_x - *map_x;  // translate unit's x coordinate from the world view to the map view
             in_view = ST_TRUE;
         }
     }
@@ -4597,31 +4397,31 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     if(in_view == ST_FALSE)
     {
         // ¿ same logic as Center_Map() ?
-        l_unit_x = unit_x - (MAP_WIDTH / 2);
+        l_unit_x = unit_x - (MAP_WIDTH / 2);  // get the wx for the map, assuming we're centering on the unit
         if(l_unit_x > 0)
         {
-            l_map_x = l_unit_x;
+            *map_x = l_unit_x;
         }
         else
         {
-            l_map_x = (l_unit_x + WORLD_WIDTH) % WORLD_WIDTH;
+            *map_x = ((l_unit_x + WORLD_WIDTH) % WORLD_WIDTH);
         }
-        l_unit_y = unit_y - (MAP_HEIGHT / 2);
+        l_unit_y = unit_y - (MAP_HEIGHT / 2);  // get the wy for the map, assuming we're centering on the unit
         if(l_unit_y > 0)
         {
-            l_map_y = l_unit_y;
+            *map_y = l_unit_y;
         }
         else
         {
-            l_map_y = 0;
+            *map_y = 0;
         }
-        if(l_map_y + MAP_HEIGHT >= WORLD_HEIGHT)
+        if(*map_y + MAP_HEIGHT >= WORLD_HEIGHT)
         {
-            l_map_y = WORLD_HEIGHT - MAP_HEIGHT;
+            *map_y = (WORLD_HEIGHT - MAP_HEIGHT);  // (40 - 10) = 30
         }
 
-        _prev_world_x = l_map_x;
-        _prev_world_y = l_map_y;
+        _prev_world_x = *map_x;
+        _prev_world_y = *map_y;
 
         // CRP_OVL_MapWindowX = _prev_world_x * SQUARE_WIDTH;
         // CRP_OVL_MapWindowY = _prev_world_y * SQUARE_HEIGHT;
@@ -4630,12 +4430,12 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     else
     {
         // HERE: map_x, map_y, unit_x, unit_y are as they were passed in
-        OVL_TileOffScrnEdge(l_map_x, l_map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT);
+        OVL_TileOffScrnEdge(map_x, map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT);
     }
 
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-    Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
+    Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
@@ -4652,76 +4452,76 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     tests if Stack is in First or Last Column and Last or First Row
     prev_world_x,y to scroll Movement Map 1 world-sqaure right, left, down, or up
 */
-int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
+int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
 {
-    int16_t l_map_x;
-    int16_t l_map_y;
-    int16_t move_map_flag;
+    // int16_t l_map_x;  // _SI_
+    // int16_t l_map_y;  // _DI_
+    int16_t off_map_flag;  // _CX_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_TileOffScrnEdge(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_TileOffScrnEdge(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_width, map_height);
 #endif
 
-    l_map_x = map_x;
-    l_map_y = map_y;
+    // l_map_x = map_x;
+    // l_map_y = map_y;
 
-    move_map_flag = ST_FALSE;
+    off_map_flag = ST_FALSE;
 
     // ¿ Stack is in Fst Column of Movement Map ?
-    if(l_map_x == unit_x)
+    if(*map_x == unit_x)
     {
         // ¿ map_x == 0 ?
-        l_map_x = l_map_x - 1;  // move Map left 1 world-square
-        if(l_map_x < 0)
+        *map_x = *map_x - 1;  // move Map left 1 world-square
+        if(*map_x < 0)
         {
-            l_map_x = l_map_x + WORLD_WIDTH;  // move Map right 1 world-square
+            *map_x = *map_x + WORLD_WIDTH;  // move Map right 1 world-square
         }
-        move_map_flag = ST_TRUE;  // set flag - map x,y changed
+        off_map_flag = ST_TRUE;  // set flag - map x,y changed
     }
 
     // ¿ Stack is in Lst Column of Movement Map ?
-    if((l_map_x + map_width - 1) % WORLD_WIDTH == unit_x)
+    if(((*map_x + map_width - 1) % WORLD_WIDTH) == unit_x)
     {
-        l_map_x = ((l_map_x + 1) % WORLD_WIDTH);
-        move_map_flag = ST_TRUE;  // set flag - map x,y changed
+        *map_x = ((*map_x + 1) % WORLD_WIDTH);
+        off_map_flag = ST_TRUE;  // set flag - map x,y changed
     }
 
     // ¿ Stack is in Lst Row of Movement Map ?
-    if((l_map_y + map_height - 1) == unit_y)
+    if((*map_y + map_height - 1) == unit_y)
     {
         // ¿ Movement Map is not already at the botton edge of the World  i.e., the map is able to be moved down ?
-        if((l_map_y + map_height + 1) < WORLD_HEIGHT)
+        if((*map_y + map_height + 1) < WORLD_HEIGHT)
         {
-            l_map_y = l_map_y + 1;  // move Map down 1 world-square
-            move_map_flag = ST_TRUE;  // set flag - map x,y changed
+            *map_y = *map_y + 1;  // move Map down 1 world-square
+            off_map_flag = ST_TRUE;  // set flag - map x,y changed
         }
     }
 
     // ¿ Stack is in Fst Row of Movement Map ?
-    if(l_map_y == unit_y)
+    if(*map_y == unit_y)
     {
         // ¿ Movement Map is not already at the top edge of the World  i.e., the map is able to be moved up ?
-        if(l_map_y != 0)
+        if(*map_y != 0)
         {
-            l_map_y = l_map_y - 1;  // move Map up 1 world-square
-            move_map_flag = ST_TRUE;  // set flag - map x,y changed
+            *map_y = *map_y - 1;  // move Map up 1 world-square
+            off_map_flag = ST_TRUE;  // set flag - map x,y changed
         }
     }
 
-
-    if(move_map_flag = ST_TRUE)
+    if(off_map_flag == ST_TRUE)
     {
-        _prev_world_x = l_map_x;
-        _prev_world_y = l_map_y;
+        _prev_world_x = *map_x;
+        _prev_world_y = *map_y;
+
         // NIU? CRP_OVL_MapWindowX = _prev_world_x * SQUARE_WIDTH;
         // NIU? CRP_OVL_MapWindowY = _prev_world_y * SQUARE_HEIGHT;
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: OVL_TileOffScrnEdge(map_x = %d, map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { move_map_flag = %d }\n", __FILE__, __LINE__, map_x, map_y, unit_x, unit_y, map_width, map_height, move_map_flag);
+    dbg_prn("DEBUG: [%s, %d]: END: OVL_TileOffScrnEdge(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { off_map_flag = %d }\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_width, map_height, off_map_flag);
 #endif
 
-    return move_map_flag;
+    return off_map_flag;
 }
 
 
@@ -5072,7 +4872,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     // void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y)
     // Build_Unit_Stack(0, 0, 0, 0);
     // Build_Unit_Stack(0, 0, 0, 0);
-    // Build_Unit_Stack(0, _UNITS[46].world_plane, _UNITS[46].world_x, _UNITS[46].world_y);
+    // Build_Unit_Stack(0, _UNITS[46].wp, _UNITS[46].wx, _UNITS[46].wy);
 
     if(_unit_stack_count > 0)
     {
@@ -6725,15 +6525,15 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
 
 
 // WZD o64p09
-void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2)
+void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2)
 {
 
     // TODO(JimBalcomb,20230616): add module-scoped (manifest) contstants for the magic-numbers used here-in
     // 3 for figures width, 3 for figures height
     // ? 23 for figures background width, 29 for figures background height ?
     // ? 22 for figrues width, 28 for figures height ?
-    *x1 = _unit_window_start_x + ((unit_stack_unit_idx % 3) * 23);
-    *y1 = _unit_window_start_y + ((unit_stack_unit_idx / 3) * 29);
+    *x1 = _unit_window_start_x + ((stack_idx % 3) * 23);
+    *y1 = _unit_window_start_y + ((stack_idx / 3) * 29);
     *x2 = *x1 + 22;
     *y2 = *y1 + 28;
 
@@ -6782,9 +6582,9 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 #endif
 
     unit_idx = unit_array[0];
-    unit_x = _UNITS[unit_idx].world_x;
-    unit_y = _UNITS[unit_idx].world_y;
-    UU_unit_p = _UNITS[unit_idx].world_plane;
+    unit_x = _UNITS[unit_idx].wx;
+    unit_y = _UNITS[unit_idx].wy;
+    UU_unit_p = _UNITS[unit_idx].wp;
 
     UU_flag_FALSE = ST_FALSE;
 
@@ -7051,8 +6851,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 
                         if(
                             ( (_UNITS[unit_idx].Status & 0x03 /* US_GoingTo */) == 0) &&
-                            ( _UNITS[unit_idx].world_x == _UNITS[unit_idx].dst_wx ) &&
-                            ( _UNITS[unit_idx].world_y == _UNITS[unit_idx].dst_wy )
+                            ( _UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx ) &&
+                            ( _UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy )
                         )
                         {
                             // ¿ logic to land here ?
@@ -7254,7 +7054,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     if(display_moves == ST_TRUE)
     {
         DLOG("(display_moves == ST_TRUE)");
-        OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, map_p);
+        OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
         _map_x = *map_x;
         _map_y = *map_y;
         Set_Unit_Draw_Priority();
@@ -7310,8 +7110,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
         _UNITS[unit_array[itr_unit_array_count]].Draw_Priority = 0;
     }
     unit_idx = unit_array[Highest_Priority_Unit__Loop_Var];
-    unit_x = _UNITS[unit_idx].world_x;
-    unit_y = _UNITS[unit_idx].world_y;
+    unit_x = _UNITS[unit_idx].wx;
+    unit_y = _UNITS[unit_idx].wy;
 
 // IDGI  // TODO: ¿ why the OVL_Path_Xs-1[bx] ? getting the hi-byte of a word? casting? because the sizeof() OVL_Path_Xs[] is DW?
 // IDGI  // mov     bx, [bp+Path_Length]
@@ -7336,14 +7136,14 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].world_x: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].world_x);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].world_y: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].world_y);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wx: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wx);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wy: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wy);
 #endif
-        _UNITS[unit_array[itr_units]].world_x = destination_x;
-        _UNITS[unit_array[itr_units]].world_y = destination_y;
+        _UNITS[unit_array[itr_units]].wx = destination_x;
+        _UNITS[unit_array[itr_units]].wy = destination_y;
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].world_x: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].world_x);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].world_y: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].world_y);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wx: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wx);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wy: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wy);
 #endif
     }
 
@@ -7496,7 +7296,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
         if(display_moves == ST_TRUE)
         {
-            if(OVL_TileOffScrnEdge(*map_x, *map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT) == ST_TRUE)
+            if(OVL_TileOffScrnEdge(map_x, map_y, unit_x, unit_y, MAP_WIDTH, MAP_HEIGHT) == ST_TRUE)
             {
                 Reset_Map_Draw();
 
@@ -7724,7 +7524,7 @@ int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane)
 
     for(itr = 0; itr < _cities && square_has_city == ST_UNDEFINED; itr++)
     {
-        if( (_CITIES[itr].world_plane == map_plane) && (_CITIES[itr].world_x = world_x) && (_CITIES[itr].world_y == world_y) )
+        if( (_CITIES[itr].wp == map_plane) && (_CITIES[itr].wx = world_x) && (_CITIES[itr].wy == world_y) )
         {
             square_has_city = itr;
         }

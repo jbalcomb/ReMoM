@@ -1250,7 +1250,8 @@ void Set_CityList_Screen_Help(void);
 void Set_Magic_Screen_Help_List(void);
 
 // WZD o104p06
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX, 6  "city scrn Help"
+void Set_City_Screen_Help_List(void);
 
 // WZD o104p07
 // HLPENTRY.LBX  ""

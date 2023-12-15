@@ -1,6 +1,17 @@
 /*
     WIZARDS.EXE
-    
+        seg030
+        seg031
+        seg032
+        seg033
+        seg034
+
+seg030    
+MoO2 Module: bitmap
+
+seg033
+MoO2 Module: bitmap
+MoO2 Module: shear
 
 */
 
@@ -932,16 +943,24 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 // WZD s30p16
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
-    int16_t current_frame_index;
+    int16_t current_frame;
 
-    current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
+    current_frame = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
 
-    return current_frame_index;
+    return current_frame;
 }
 
 
 // WZD s30p17
-// ?NIU? int16_t FLIC_Get_FrameCount()
+int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
+{
+    int16_t frame_count;
+
+    frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
+
+    return frame_count;
+
+}
 
 
 // WZD s30p18
@@ -1418,6 +1437,75 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
 // #endif
 }
 
+
+// WZD s30p45
+// drake178: UU_LBX_IMG_DrawRect()
+
+
+// WZD s30p46
+// drake178: LBX_IMG_GetGFXSize()
+// EXACT  MoO2  Module: bitmap  Get_Bitmap_Actual_Size()
+/*
+    No RLE, therefore "Bitmap", per MoO2
+
+*/
+void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height)
+{
+    uint8_t * bitmap;
+    int16_t offset;
+    int16_t itr_height;
+    int16_t itr_width;
+    int16_t length;
+    int16_t x2;
+    int16_t y2;
+    int16_t flic_width;
+    int16_t flic_height;
+
+    // flic_width  = farpeekw(pict_seg, s_FLIC_HDR.Width);
+    // flic_height = farpeekw(pict_seg, s_FLIC_HDR.Height);
+    flic_width  = FLIC_GET_WIDTH(bitmap_addr);
+    flic_height = FLIC_GET_HEIGHT(bitmap_addr);
+
+    length = flic_height * flic_width;
+
+    bitmap = (uint8_t *)bitmap_addr;
+
+    *x1 = 1000;
+    *y1 = 1000;
+
+    x2 = 0;
+    y2 = 0;
+
+    offset = 16;
+
+    for(itr_width = 0; itr_width < flic_width; itr_width++)
+    {
+        for(itr_height = 0; itr_height < flic_height; itr_height++)
+        {
+            if(bitmap[offset] != ST_TRANSPARENT)
+            {
+                if(*x1 > itr_width)
+                {
+                    *x1 = itr_width;
+                }
+                if(*y1 > itr_height)
+                {
+                    *y1 = itr_height;
+                }
+                if(x2 < itr_width)
+                {
+                    x2 = itr_width;
+                }
+
+            }
+            offset++;
+        }
+    }
+
+    *height = (y2 - *y1 + 1);
+    *width  = (x2 - *x1 + 1);
+
+}
 
 
 
@@ -1952,6 +2040,34 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
     }
 
 }
+
+
+// WZD s33p10
+// WZD s33p11
+// WZD s33p12
+// WZD s33p13
+// WZD s33p14
+
+// WZD s33p15
+// drak178: LBX_IMG_RandomDelete()
+// MoO2  Module: bitmap  Vanish_Bitmap()
+// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
+/*
+push    [Percent]                       ; percent
+push    [GfxBuf_2400B]                  ; bitmap
+call    Jumble_Bitmap  
+
+bitmap is a segment address
+
+*/
+void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent)
+{
+
+    // TODO  RNG_GFX_Random(1000);
+
+
+}
+
 
 
 // WZD s33p16

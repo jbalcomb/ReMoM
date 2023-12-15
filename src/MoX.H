@@ -11,7 +11,7 @@
 /* ~ STGE */
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
-#include "Mox_BITS.H"
+#include "MoX_BITS.H"
 
 #include "MoX_Data.H"   // WTFMATE
 
@@ -47,6 +47,7 @@
 #include "MoX_Util.H"   // WTFMATE
 #include "NEXTTURN.H"
 #include "paragrph.H"
+#include "RACETYPE.H"
 #include "SCORE.H"      // Hall Of Fame (HoF)
 #include "special.H"
 #include "Spellbook.H"

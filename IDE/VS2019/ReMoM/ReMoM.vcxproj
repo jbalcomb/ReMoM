@@ -154,6 +154,9 @@
     <ClInclude Include="..\..\..\src\ArmyList.H" />
     <ClInclude Include="..\..\..\src\CITYCALC.H" />
     <ClInclude Include="..\..\..\src\CityList.H" />
+    <ClInclude Include="..\..\..\src\CITYSCAP.H" />
+    <ClInclude Include="..\..\..\src\CityScr.H" />
+    <ClInclude Include="..\..\..\src\City_ovr55.H" />
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
     <ClInclude Include="..\..\..\src\Exit.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
@@ -201,6 +204,8 @@
     <ClInclude Include="..\..\..\src\PoC_MsWin.hpp" />
     <ClInclude Include="..\..\..\src\PoC_PFL.H" />
     <ClInclude Include="..\..\..\src\PoC_Screen.H" />
+    <ClInclude Include="..\..\..\src\ProdScr.H" />
+    <ClInclude Include="..\..\..\src\RACETYPE.H" />
     <ClInclude Include="..\..\..\src\SBookScr.H" />
     <ClInclude Include="..\..\..\src\SCastScr.H" />
     <ClInclude Include="..\..\..\src\SCORE.H" />
@@ -229,6 +234,9 @@
     <ClCompile Include="..\..\..\src\ArmyList.C" />
     <ClCompile Include="..\..\..\src\CITYCALC.C" />
     <ClCompile Include="..\..\..\src\CityList.C" />
+    <ClCompile Include="..\..\..\src\CITYSCAP.C" />
+    <ClCompile Include="..\..\..\src\CityScr.C" />
+    <ClCompile Include="..\..\..\src\City_ovr55.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Fields.C" />
     <ClCompile Include="..\..\..\src\FLIC_Draw.C" />
@@ -264,6 +272,8 @@
     <ClCompile Include="..\..\..\src\NewGame.C" />
     <ClCompile Include="..\..\..\src\NEXTTURN.C" />
     <ClCompile Include="..\..\..\src\paragrph.C" />
+    <ClCompile Include="..\..\..\src\ProdScr.C" />
+    <ClCompile Include="..\..\..\src\RACETYPE.C" />
     <ClCompile Include="..\..\..\src\SAVETEST.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />

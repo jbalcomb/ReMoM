@@ -22,6 +22,11 @@
 
 
 
+// WZD dseg:973E
+extern int16_t _minimap_grid_field;
+// WZD dseg:9740
+extern int16_t _main_map_grid_field;
+
 
 
 // WZD dseg:974E 
@@ -58,7 +63,7 @@ extern int64_t _main_map_grid_y;
 // WZD dseg:C050
 // int16_t _next_turn_button;
 // WZD dseg:C052
-// int16_t Unit_Window_Fields[9];
+extern int16_t Unit_Window_Fields[9];
 // WZD dseg:C064
 // CRP_OverlandVar_3 dw 0
 // WZD dseg:C066

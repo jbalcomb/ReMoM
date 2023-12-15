@@ -89,7 +89,7 @@ int16_t City_Gold_Mainanence(int16_t city_idx);
 
 
 /*
-    WIZARDS.EXE  ovr120
+    WIZARDS.EXE  ovr142
 */
 
 // WZD s142p01
@@ -115,6 +115,8 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 int16_t City_Food_Production(int16_t city_idx);
 
 // WZD s142p10
+// drake178: CTY_GetMaxPop()
+int16_t City_Maximum_Size(int16_t city_idx);
 
 // WZD s142p11
 // drake178: CTY_GetProd()
@@ -133,11 +135,23 @@ int16_t City_Research_Production(int16_t city_idx);
 int16_t City_Mana_Production(int16_t city_idx);
 
 // WZD s142p15
+// drake178: CTY_GetPopGrowth()
+int16_t City_Growth_Rate(int16_t city_idx);
+
 // WZD s142p16
+// drake178: CTY_GetProdCost()
+// MoO2  Module:  COLCALC  Colony_Current_Product_Cost_()  Colony_Product_Cost_()
+int16_t City_Current_Product_Cost(int16_t city_idx);
+
+
 // WZD s142p17
 // WZD s142p18
 // WZD s142p19
+
 // WZD s142p20
+// drake178: CTY_GetMinFarmers()
+int16_t City_Minimum_Farmers(int16_t city_idx);
+
 // WZD s142p21
 // WZD s142p22
 // WZD s142p23

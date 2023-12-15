@@ -30,7 +30,7 @@ int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane)
 
     for(itr = 0; itr < NUM_LAIRS && square_has_lair == -1; itr++)
     {
-        if( (_LAIRS[itr].world_plane == map_plane) && (_LAIRS[itr].Intact == ST_TRUE) && (_LAIRS[itr].world_y = world_y) && (_LAIRS[itr].world_x = world_x) )
+        if( (_LAIRS[itr].wp == map_plane) && (_LAIRS[itr].Intact == ST_TRUE) && (_LAIRS[itr].wy = world_y) && (_LAIRS[itr].wx = world_x) )
         {
             square_has_lair = itr;
         }

@@ -67,9 +67,9 @@
 #define MY2WY(_my_) { ( (_map_y + _main_map_grid_y) / WORLD_HEIGHT  ) }
 
 
-#define CITYX() ( _CITIES[city_idx].world_x     )
-#define CITYY() ( _CITIES[city_idx].world_y     )
-#define CITYP() ( _CITIES[city_idx].world_plane )
+#define CITYX() ( _CITIES[city_idx].wx     )
+#define CITYY() ( _CITIES[city_idx].wy     )
+#define CITYP() ( _CITIES[city_idx].wp )
 
 
 

@@ -18,8 +18,18 @@ struct s_UNIT_TYPE
     /* 0A */  int16_t  Cost;                    /* base 10 */
     /* 0C */  int8_t   Upkeep;                  /* base 10 */
     /* 0D */  int8_t   Race;                    /* enum Race_Code */
-    /* 0E */  int8_t   Bldng1_or_Portrait;      /* enum BLD_TYPE */
-    /* 0F */  int8_t   Bldng2_or_HeroType;      /* enum BLD_TYPE */
+    /* 0E */  // int8_t   Bldng1_or_Portrait;      /* enum BLD_TYPE */
+    union
+    {
+        int8_t   reqd_bldg_1;
+        int8_t   hero_portrait;
+    };
+    /* 0F */  // int8_t   Bldng2_or_HeroType;      /* enum BLD_TYPE */
+    union
+    {
+        int8_t   reqd_bldg_2;
+        int8_t   hero_type;
+    };
     /* 10 */  SAMB_ptr pict_seg;                /* segment pointers to LBX_Alloc_Space headers for reserved EMM file links */
     /* 12 */  int8_t   Hits;                    /* base 10 */
     /* 13 */  int8_t   Sight;                   /* base 10 */
@@ -35,19 +45,7 @@ struct s_UNIT_TYPE
     /* 22 */  int16_t  Sound;
 };
 
-// sizeof=0x18  24
-struct s_RACE_TYPE
-{
-    /* 00 */ char ** Name;
-    /* 02 */ int16_t CantBuild_Count;
-    /* 04 */ int16_t CantBuild[7];  // enum BLD_TYPE
-    /* 12 */ int16_t Outpost_Growth_Pcnt;  // base 10
-    /* 14 */ int16_t Growth_Mod;
-    /* 16 */ int16_t HouseType;
-    /* 18 */
-};
 
-extern struct s_RACE_TYPE _unit_race_table[];
 
 /*
 

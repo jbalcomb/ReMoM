@@ -1,3 +1,20 @@
+/*
+    WIZARDS.EXE
+        seg030
+        seg031
+        seg032
+        seg033
+        seg034
+
+seg030    
+MoO2 Module: bitmap
+
+seg033
+MoO2 Module: bitmap
+MoO2 Module: shear
+
+*/
+
 #ifndef FLIC_DRAW_H
 #define FLIC_DRAW_H
 
@@ -217,7 +234,7 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p17
-// int16_t FLIC_Get_FrameCount()
+int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p18
 int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header);
@@ -256,6 +273,13 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color);
 // drake178: LBX_IMG_ColorScrmblr
 // MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
 void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t color, uint8_t * color_list);
+
+// WZD s30p45
+// drake178: UU_LBX_IMG_DrawRect()
+
+// WZD s30p46
+// drake178: LBX_IMG_GetGFXSize()
+void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height);
 
 
 
@@ -300,14 +324,19 @@ void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_se
 // AKA LBX_IMB_LoadFrame()
 void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap);
 
+// WZD s33p03
+
+// WZD s33p04
 
 // WZD s33p05
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
-
 // WZD s33p06
 void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
+// WZD s33p07
+
+// WZD s33p08
 
 // WZD s33p09
 // AKA FLIC_Remap_Color()
@@ -315,11 +344,38 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 // MoO2:  Replace_Color()
 void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacement_color);
 
+// WZD s33p10
+// WZD s33p11
+// WZD s33p12
+// WZD s33p13
+// WZD s33p14
+
+// WZD s33p15
+// drak178: LBX_IMG_RandomDelete()
+// MoO2  Module: bitmap  Vanish_Bitmap()
+// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
+void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent);
+
 
 // WZD s33p16
 // drake178: LBX_IMG_Grayscale()
 // MoO2: Gray_Scale_Bitmap()
 void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start);
+
+// WZD s33p17
+
+// WZD s33p18
+
+// WZD s33p19
+/*
+drake178:
+    a secondary linear feedback shift register using the
+    same feedback polynomial as RNG_Random, also shifted
+    9 states per call, but actually returning the lowest
+    order 10 bits of the resulting state (1-1023) rather
+    than the shifted out return value
+*/
+int16_t RNG_GFX_Random(int16_t max);
 
 
 

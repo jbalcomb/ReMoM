@@ -132,33 +132,49 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
     {
         switch(print_type)
         {
-            case 0:
+
+            case 0:  // ¿ Align-Left ?
             {
                 DLOG("switch(print_type)  case 0:");
                 Print(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
             } break;
-            case 1:
+
+            case 1:  // ¿ Align-Right ?
             {
                 DLOG("switch(print_type)  case 1:");
                 // Print_Right(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width);
                 Print_Centered(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
             } break;
-            case 2:
+
+            case 2:  // ¿ Center ?
             {
                 DLOG("switch(print_type)  case 2:");
-                // Print_Right(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width);
-                Print_Centered(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
+                Print_Centered(
+                    ((paragraph_line_x_start[itr] + paragraph_line_x_end[itr]) / 2),
+                    paragraph_line_y_start[itr],
+                    &string[paragraph_line_offset[itr]]
+                );
             } break;
-            case 3:
+            
+            case 3:  // ¿ Justify ?
             {
                 DLOG("switch(print_type)  case 3:");
                 if((paragraph_max_lines - 1) == itr)
                 {
-                    Print(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
+                    Print(
+                        paragraph_line_x_start[itr],
+                        paragraph_line_y_start[itr],
+                        &string[paragraph_line_offset[itr]]
+                    );
                 }
                 else
                 {
-                    Print_Full(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], (paragraph_line_x_end[itr] - paragraph_line_x_start[itr]));
+                    Print_Full(
+                        paragraph_line_x_start[itr],
+                        paragraph_line_y_start[itr],
+                        &string[paragraph_line_offset[itr]],
+                        (paragraph_line_x_end[itr] - paragraph_line_x_start[itr])
+                    );
                 }
 
             } break;
@@ -507,13 +523,12 @@ Done:
 
 // WZD s19p05
 // drake178: VGA_GetTextHeight
+// EXACT  MoO2  Module: paragrph  Get_Paragraph_Max_Height()
 int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 {
 
-    int16_t paragraph_max_height;
+    int16_t ymax;
     int16_t font_height;
-
-    int16_t text_height;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Paragraph_Max_Height(max_width = %d, string = %s)\n", __FILE__, __LINE__, max_width, string);
@@ -521,49 +536,100 @@ int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 
     font_height = GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: font_height: %d\n", __FILE__, __LINE__, font_height);
-#endif
-
     Mark_Paragraph(0, 0, max_width, string);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: paragraph_max_lines: %d\n", __FILE__, __LINE__, paragraph_max_lines);
-#endif
-
-    if(paragraph_max_lines >= 1)  /* ; the amount of elements in the VGA_TextLine_ arrays */
+    if(paragraph_max_lines >= 1)
     {
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: paragraph_max_lines: %d\n", __FILE__, __LINE__, paragraph_max_lines);
-#endif
-
-        paragraph_max_height = (paragraph_line_y_start[(paragraph_max_lines - 1)] + font_height);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: paragraph_max_height: %d\n", __FILE__, __LINE__, paragraph_max_height);
-#endif
-
-        // drake178: removes the line-breaking spaces inserted into a string by VGA_TextSetup to mark line breaks
+        ymax = (paragraph_line_y_start[(paragraph_max_lines - 1)] + font_height);
         Remove_Paragraph_Marks(string);
-
     }
     else
     {
-        paragraph_max_height = 0;
+        ymax = 0;
     }
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Paragraph_Max_Height(max_width = %d, string = %s) { paragraph_max_height = %d }\n", __FILE__, __LINE__, max_width, string, paragraph_max_height);
+    dbg_prn("DEBUG: [%s, %d]: END: Get_Paragraph_Max_Height(max_width = %d, string = %s) { ymax = %d }\n", __FILE__, __LINE__, max_width, string, ymax);
 #endif
 
-    return paragraph_max_height;
+    return ymax;
 }
 
 
 // WZD s19p06
 // drake178: VGA_GetTextWidth
-// VGA_GetTextWidth
+// EXACT  MoO2  Module: paragrph  Get_Paragraph_Max_Width()
+int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_type)
+{
+    int16_t x2max;
+    int16_t x1min;
+    int16_t width;
+    int16_t xc;
+    int16_t x2;
+    int16_t xmax;
+    int16_t itr;  // _SI_
+    int16_t x1;  // _DI_
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Paragraph_Max_Width(max_width = %d, string = %s, print_type = %d)\n", __FILE__, __LINE__, max_width, string, print_type);
+#endif
+
+    Mark_Paragraph(0, 0, max_width, string);
+
+    x1min = 1000;
+    x2max = 0;
+
+    for(itr = 0; itr < paragraph_max_lines; itr++)
+    {
+        width = Get_String_Width(&string[paragraph_line_offset[itr]]);
+
+        switch(print_type)
+        {
+            case 0:  // ¿ Left-Align ?
+            {
+                x1 = paragraph_line_x_start[itr];
+                x2 = (x1 + width);
+            } break;
+            case 1:  // ¿ Right-Align ?
+            {
+                x2 = paragraph_line_x_end[itr];
+                x1 = (x2 - width);
+            } break;
+            case 2:
+            {
+                xc = ((paragraph_line_x_end[itr] - paragraph_line_x_start[itr]) / 2);
+                x1 = (xc - (width / 2));
+                x2 = (xc + (width / 2));
+            } break;
+            case 3:
+            {
+                x1 = paragraph_line_x_start[itr];
+                x2 = paragraph_line_x_end[itr];
+            } break;
+        }
+
+        if(x1 < x1min)
+        {
+            x1min = x1;
+        }
+        if(x2 > x2max)
+        {
+            x2max = x2;
+        }
+
+    }
+
+    Remove_Paragraph_Marks(string);
+
+    xmax = ((x2max - x1min) + 1);
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Get_Paragraph_Max_Width(max_width = %d, string = %s, print_type = %d) { xmax = %d }\n", __FILE__, __LINE__, max_width, string, print_type, xmax);
+#endif
+
+    return xmax;
+}
+
 
 // WZD s19p07
 // drake178: VGA_ResetFltBlocks()

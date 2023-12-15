@@ -106,6 +106,9 @@ Terrain_Is_Sailable()
     world_map_value = GET_2B_OFS(src_sgmt, src_ofst);
     terrain_type = world_map_value % TERRAIN_TYPE_COUNT;
 
+Terrain_Is_River()
+    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+
 
 Map_Square_Production_Bonus()
     ¿ no word ptr or byte ptr ?

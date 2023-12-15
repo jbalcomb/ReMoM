@@ -291,7 +291,7 @@ void ArmyList_Screen(void)
         }
         else
         {
-            Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].world_x, _UNITS[_unit].world_y);
+            Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
         }
     }
 
@@ -805,9 +805,9 @@ void ArmyList_Draw_Reduced_Map(void)
     dbg_prn("DEBUG: [%s, %d]: list_armies[armylist_item_scanned_field]: %d\n", __FILE__, __LINE__, list_armies[armylist_item_scanned_field]);
 #endif
 
-    unit_world_x = _UNITS[list_armies[armylist_item_scanned_field]].world_x;
-    unit_world_y = _UNITS[list_armies[armylist_item_scanned_field]].world_y;
-    unit_world_p = _UNITS[list_armies[armylist_item_scanned_field]].world_plane;
+    unit_world_x = _UNITS[list_armies[armylist_item_scanned_field]].wx;
+    unit_world_y = _UNITS[list_armies[armylist_item_scanned_field]].wy;
+    unit_world_p = _UNITS[list_armies[armylist_item_scanned_field]].wp;
 
     List_Screen_Draw_Reduced_Map(ARMYLIST_REDUCED_MAP_X, ARMYLIST_REDUCED_MAP_Y, ARMYLIST_REDUCED_MAP_W, ARMYLIST_REDUCED_MAP_H, unit_world_p, unit_world_x, unit_world_y);
 
@@ -904,9 +904,9 @@ void Build_Army_List(void)
             for(itr_armylist_army_count = 0; itr_armylist_army_count < armylist_army_count; itr_armylist_army_count++)
             {
                 if(
-                    (_UNITS[itr_units].world_x == armylist_world_x_1000[itr_armylist_army_count]) &&
-                    (_UNITS[itr_units].world_y == armylist_world_y_1000[itr_armylist_army_count]) &&
-                    ((_UNITS[itr_units].world_plane == armylist_world_p_1000[itr_armylist_army_count]) || (_UNITS[itr_units].In_Tower == ST_TRUE))
+                    (_UNITS[itr_units].wx == armylist_world_x_1000[itr_armylist_army_count]) &&
+                    (_UNITS[itr_units].wy == armylist_world_y_1000[itr_armylist_army_count]) &&
+                    ((_UNITS[itr_units].wp == armylist_world_p_1000[itr_armylist_army_count]) || (_UNITS[itr_units].In_Tower == ST_TRUE))
                 )
                 {
                     same_stack = ST_TRUE;
@@ -914,9 +914,9 @@ void Build_Army_List(void)
             }
             if(same_stack == ST_UNDEFINED)
             {
-                armylist_world_x_1000[armylist_army_count] = _UNITS[itr_units].world_x;
-                armylist_world_y_1000[armylist_army_count] = _UNITS[itr_units].world_y;
-                armylist_world_p_1000[armylist_army_count] = _UNITS[itr_units].world_plane;
+                armylist_world_x_1000[armylist_army_count] = _UNITS[itr_units].wx;
+                armylist_world_y_1000[armylist_army_count] = _UNITS[itr_units].wy;
+                armylist_world_p_1000[armylist_army_count] = _UNITS[itr_units].wp;
                 armylist_army_count++;
             }
         }
@@ -953,11 +953,11 @@ void Build_Army_List_Counts(void)
         {
             if( _UNITS[itr_units].owner_idx == _human_player_idx)
             {
-                if(_UNITS[itr_units].world_x == armylist_world_x_1000[(list_first_item + itr_list_item_count)])
+                if(_UNITS[itr_units].wx == armylist_world_x_1000[(list_first_item + itr_list_item_count)])
                 {
-                    if(_UNITS[itr_units].world_y == armylist_world_y_1000[(list_first_item + itr_list_item_count)])
+                    if(_UNITS[itr_units].wy == armylist_world_y_1000[(list_first_item + itr_list_item_count)])
                     {
-                        if(_UNITS[itr_units].world_plane == armylist_world_p_1000[(list_first_item + itr_list_item_count)])
+                        if(_UNITS[itr_units].wp == armylist_world_p_1000[(list_first_item + itr_list_item_count)])
                         {
                             list_armies[armylist_unit_count] = itr_units;  // ¿ ~== unit_idx ? Yup. SEE: 'left-click army list unit'
                             armylist_unit_count++;
@@ -1066,11 +1066,11 @@ void ArmyList_Screen_Load(void)
             if(_UNITS[hero_unit_idx].owner_idx != ST_UNDEFINED)
             {
                 // IMG_Hero_Portraits[itr] = LBX_Reload_Next(cnst_PORTRAIT_File, _unit_type_table[_UNITS[hero_unit_idx].type].Bldng1_or_Portrait, _screen_seg);
-                hero_portrait_lbx_entry_num = _unit_type_table[_UNITS[hero_unit_idx].type].Bldng1_or_Portrait;
+                hero_portrait_lbx_entry_num = _unit_type_table[_UNITS[hero_unit_idx].type].hero_portrait;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: hero_portrait_lbx_entry_num: %d\n", __FILE__, __LINE__, hero_portrait_lbx_entry_num);
 #endif
-                hero_portraits_seg[itr] = LBX_Reload_Next("PORTRAIT", _unit_type_table[_UNITS[hero_unit_idx].type].Bldng1_or_Portrait, _screen_seg);
+                hero_portraits_seg[itr] = LBX_Reload_Next("PORTRAIT", _unit_type_table[_UNITS[hero_unit_idx].type].hero_portrait, _screen_seg);
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: hero_portraits_seg[%d]: %p\n", __FILE__, __LINE__, itr, hero_portraits_seg[itr]);
 #endif

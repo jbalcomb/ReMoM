@@ -1,7 +1,13 @@
 /*
     WIZARDS.EXE
         ...
-        ovr052
+        seg001
+        ...
+        seg009
+        ...
+        ovr063
+        ...
+        ovr067
         ...
 */
 
@@ -41,23 +47,6 @@ void Fade_In(void);
 
 // WZD s09p07
 void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt);
-
-
-
-/*
-    WIZARDS.EXE  ovr052
-*/
-
-// WZD o52p01
-// Load_WZD_Resources()
-
-
-// WZD o52p17
-// drake178: ?
-void Load_BUILDDAT(void);
-
-// WZD o52p34
-// GFX_Swap_Combat()
 
 
 

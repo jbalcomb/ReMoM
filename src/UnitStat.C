@@ -93,7 +93,8 @@ int16_t UV_IsHeroUnit;
 int16_t USW_TransparentBase;
 
 // dseg:C17C
-SAMB_ptr IMG_USW_UnitFigure;
+// XREFs: Load_Unit_Figure()  Draw_Unit_Figure()
+SAMB_ptr unit_figure_seg;  // loaded into screen_seg
 
 // dseg:C17E
 int16_t unitview_down_arrow_button;
@@ -186,7 +187,7 @@ void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, i
 
     Sandbox_Paragraph = Allocate_First_Block(_screen_seg, 1);
 
-     Mark_Block(_screen_seg);
+    Mark_Block(_screen_seg);
 
     USW_MemAlloc();
 // ; resets the near allocation buffer, creates a 100
@@ -196,7 +197,7 @@ void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, i
 // ; work area
 
     // UV_InCombat = 0;
-
+    
     if(_UNITS[unit_idx].type <= 0x22 /* _Chosen */)
     {
         // ; loads an LBX entry into an existing LBX_Alloc_Space
@@ -204,16 +205,11 @@ void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, i
         // ; returns a segment pointer to the data
         // ; quits on failure
         // IMG_USW_HeroPortrt = LBX_Reload_Next(cnst_PORTRAIT_File2, _unit_type_table[_UNITS[unit_idx].type].Bldng1_or_Portrait, _screen_seg);
-        IMG_USW_HeroPortrt = LBX_Reload_Next("PORTRAIT", _unit_type_table[_UNITS[unit_idx].type].Bldng1_or_Portrait, _screen_seg);
+        IMG_USW_HeroPortrt = LBX_Reload_Next("PORTRAIT", _unit_type_table[_UNITS[unit_idx].type].hero_portrait, _screen_seg);
     }
     else
     {
-        // ; appends a figure image of the specified unit type
-        // ; into the LBX_Sandbox_Seg - expects a unit type index
-        // ; if TypePass is 1, or a unit index otherwise
-        // ; returns the segment address for the image in
-        // ; addition to setting it into IMG_USW_UnitFigure@
-        USW_LoadFigureImage(unit_idx, 0);
+        Load_Unit_Figure(unit_idx, 0);
     }
 
     // ; displays the unit statistics window for the specified
@@ -688,8 +684,8 @@ void Unit_Statistics_Popup_Draw__WIP(int16_t x_start, int16_t y_start, int16_t V
 
             */
             // HACK: hard-coded to assume unit view, nonhero unit
-            FLIC_Set_CurrentFrame(IMG_USW_GrassBase, 0);
-            FLIC_Draw(( UV_x_start_offset + (UV_x_start + 5)), (UV_y_start + 5), IMG_USW_GrassBase);
+            FLIC_Set_CurrentFrame(unit_grass_diamond_seg, 0);
+            FLIC_Draw(( UV_x_start_offset + (UV_x_start + 5)), (UV_y_start + 5), unit_grass_diamond_seg);
             Draw_Unit_Figure((UV_x_start_offset + (UV_x_start + 11)), (UV_y_start - 3), unit_idx, ViewTypeFlag);
 
 
@@ -728,9 +724,9 @@ void Unit_Statistics_Popup_Draw__WIP(int16_t x_start, int16_t y_start, int16_t V
     WIZARDS.EXE  ovr089
 */
 
-// WZD s89p01
+// WZD o89p01
 
-// WZD s89p02
+// WZD o89p02
 void USW_MemAlloc(void)
 {
 
@@ -748,55 +744,63 @@ void USW_MemAlloc(void)
 
 }
 
-// WZD s89p03
+// WZD o89p03
 /*
     loads a unit figure picture
 
 */
-void USW_LoadFigureImage(int16_t unit_idx, int16_t TypePass)
-{
-    char FileName[20];
-    char Conversion_String[6];
-    int16_t Entry_Index;
+// void USW_LoadFigureImage(int16_t unit_idx, int16_t TypePass)
+/*
+    Loads a 'Unit Figure' entry into the screen_seg
+    takes unit_idx or unit_type
+    type_flag:  0 == unit_idx  1 == unit_type
 
-    int16_t FigureLbxNbr;
+USW_LoadAndShow() calls this with the 'Type Flag' unset
+USW_LoadHireScreen calls this with the 'Type Flag' set
+*/
+void Load_Unit_Figure(int16_t index, int16_t type)
+{
+    char file_name[20];
+    char buffer[6];
+    int16_t entry_num;
+
+    int16_t figure_num;  // _SI_
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: USW_LoadFigureImage()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] BEGIN: Load_Unit_Figure()\n", __FILE__, __LINE__);
 #endif
 
-    if(TypePass != ST_TRUE)
+    if(type != ST_TRUE)
     {
-        FigureLbxNbr = _UNITS[unit_idx].type;
+        figure_num = _UNITS[index].type;  // got passed unit_idx
     }
     else
     {
-        FigureLbxNbr = unit_idx;
+        figure_num = index;  // got passed unit_type
     }
 
-    itoa(((FigureLbxNbr % 15) + 1), Conversion_String, 10);
-    strcpy(FileName, "FIGURE");
-    if( ((FigureLbxNbr % 15) + 1) < 10)
+    itoa(((figure_num % 15) + 1), buffer, 10);
+    strcpy(file_name, "FIGURE");
+    if( ((figure_num % 15) + 1) < 10)
     {
-        strcat(FileName, "S");
+        strcat(file_name, "S");
     }
-    strcat(FileName, Conversion_String);
-    strcat(FileName, ".LBX");
+    strcat(file_name, buffer);
+    strcat(file_name, ".LBX");
 
-    Entry_Index = (((FigureLbxNbr % 15) * 8) + 2);
+    entry_num = (((figure_num % 15) * 8) + 2);  // TODO  document this algo to the unit figure picture  (knows how many figures are in each figure lbx)
 
-    IMG_USW_UnitFigure = LBX_Reload_Next(FileName, Entry_Index, _screen_seg);
-
+    unit_figure_seg = LBX_Reload_Next(file_name, entry_num, _screen_seg);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: USW_LoadFigureImage()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d] END: Load_Unit_Figure()\n", __FILE__, __LINE__);
 #endif
 
 }
 
-// WZD s89p04
+// WZD o89p04
 
-// WZD s89p05
+// WZD o89p05
 // drake178: UNIT_Draw()
 /*
     if VType == 0, assumes _human_player_idx
@@ -849,8 +853,8 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_idx, int16_
 
     for(itr_figure_count = 0; itr_figure_count < unit_figure_count; itr_figure_count++)
     {
-        FLIC_Set_CurrentFrame(IMG_USW_UnitFigure, 2);
-        Draw_Picture_To_Bitmap(IMG_USW_UnitFigure, UnitDraw_WorkArea);
+        FLIC_Set_CurrentFrame(unit_figure_seg, 2);
+        Draw_Picture_To_Bitmap(unit_figure_seg, UnitDraw_WorkArea);
         for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
         {
             Replace_Color(UnitDraw_WorkArea, (214 + itr_banner_colors), (COL_Banners[unit_owner_banner_idx] + itr_banner_colors));
@@ -885,7 +889,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_idx, int16_
 
 }
 
-// WZD s89p06
+// WZD o89p06
 void USW_GetFigPosition(int16_t figure_count, int16_t current_figure, int16_t * Fig_Left, int16_t * Fig_Top)
 {
     int16_t figure_x;
@@ -987,6 +991,6 @@ void USW_GetFigPosition(int16_t figure_count, int16_t current_figure, int16_t * 
 }
 
 
-// WZD s89p07
-// WZD s89p08
-// WZD s89p09
+// WZD o89p07
+// WZD o89p08
+// WZD o89p09

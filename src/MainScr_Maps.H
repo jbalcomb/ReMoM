@@ -194,10 +194,10 @@ void Reset_Stack_Draw_Priority(void);
 
 // WZD o68p01
 // void OVL_Map_Init(int16_t * map_x, int16_t map_y, int16_t xpos, int16_t ypos, int16_t plane);
-void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t world_grid_y, int16_t world_plane);
+void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p02
-// IDK_CityScreen_Map_s5A97D()
+void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p03
 // drake178: OVL_GetMinimapStart()
@@ -206,7 +206,7 @@ void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x,
 
 // WZD o68p04
 // drake178: OVL_RedrawScouting()
-// PRIVATE  void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p05
 // RP_OVL_DrawCities2()

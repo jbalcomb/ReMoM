@@ -4,6 +4,7 @@
 #include "AdvsrScr.H"
 #include "ArmyList.H"
 #include "CityList.H"
+#include "CityScr.H"
 #include "LoadScr.H"
 #include "MainMenu.H"
 #include "MainScr.H"
@@ -153,6 +154,11 @@ void Screen_Control(void)
             } break;
 
         // scr_City = 100,
+        case scr_City_Screen: /* WZD 0x00 */
+        {
+            DLOG("switch(current_screen)  case scr_City_Screen:");
+            City_Screen__WIP();
+        } break;
         // scr_Load = 101,
         case scr_Armies_Screen: /* WZD 0x02 */
         {

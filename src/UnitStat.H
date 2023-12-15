@@ -1,8 +1,10 @@
 /*
     Unit Statistics Window
+    ~& Unit Figure
 
     WIZARDS.EXE
         ovr072
+        ovr089
 */
 
 #ifndef UNITSTAT_H
@@ -55,26 +57,27 @@ void Unit_Statistics_Popup_Draw__WIP(int16_t x_start, int16_t y_start, int16_t V
     WIZARDS.EXE  ovr089
 */
 
-// WZD s89p01
+// WZD o89p01
 
-// WZD s89p02
+// WZD o89p02
 void USW_MemAlloc(void);
 
-// WZD s89p03
-void USW_LoadFigureImage(int16_t unit_idx, int16_t TypePass);
+// WZD o89p03
+// drake178: ¿ USW_LoadFigureImage() ?
+void Load_Unit_Figure(int16_t unit_idx, int16_t TypePass);
 
-// WZD s89p04
+// WZD o89p04
 
-// WZD s89p05
+// WZD o89p05
 // drake178: UNIT_Draw()
 void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_idx, int16_t VType);
 
-// WZD s89p06
+// WZD o89p06
 void USW_GetFigPosition(int16_t figure_count, int16_t current_figure, int16_t * Fig_Left, int16_t * Fig_Top);
 
-// WZD s89p07
-// WZD s89p08
-// WZD s89p09
+// WZD o89p07
+// WZD o89p08
+// WZD o89p09
 
 
 #ifdef __cplusplus

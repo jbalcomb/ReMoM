@@ -1,8 +1,20 @@
+/*
+    WIZARDS.EXE
+        ...
+        seg001
+        ...
+        seg009
+        ...
+        ovr063
+        ...
+        ovr067
+        ...
+*/
 
 /*
     Meh.
     ...was part of MoM_Init.C
-    not sure what to do with ovr052
+    __not sure what to do with ovr052__
     ...or ovr51
     or how they relate to Init, Loader, Loaded_Game_Update, etc.
 
@@ -275,27 +287,6 @@ void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, u
 
 
 /*
-    WIZARDS.EXE  ovr052
-*/
-
-// WZD o52p017
-// drake178: ?
-void Load_BUILDDAT(void)
-{
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-
-    build_data_table = (struct s_BUILDDAT *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-}
-
-
-
-/*
     WIZARDS.EXE ovr060
 */
 
@@ -389,7 +380,7 @@ int16_t IsPassableTower(int16_t world_x, int16_t world_y)
     itr_towers = 0;
     while(itr_towers++ < TOWER_COUNT_MAX)
     {
-        if(world_x == _TOWERS[itr_towers].world_x && world_y == _TOWERS[itr_towers].world_y)
+        if(world_x == _TOWERS[itr_towers].wx && world_y == _TOWERS[itr_towers].wy)
         {
             is_passible_tower = ST_TRUE;
         }

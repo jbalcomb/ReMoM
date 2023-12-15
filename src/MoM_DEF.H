@@ -48,6 +48,7 @@
 #define NUM_CITY_ENCHANTMENTS      26   // ¿ wha'hapen? CTY_EnchantsUpkeep() has 26, but s_CITY has 25 ? Includes Nightshade!
 #define NUM_OVERLAND_ENCHANTMENTS  24
 #define NUM_BUILDINGS              36
+#define NUM_RESOURCE_TYPES          5
 #define CITY_COUNT_MAX            100
 #define UNIT_COUNT_MAX           1009
 #define TOWER_COUNT_MAX             6
@@ -234,8 +235,7 @@ WIZARDS.LBX
 #define CITYLIST_REDUCED_MAP_H    33
 
 
-#define TERRAIN_COUNT   762
-#define TERRAIN_TYPE_COUNT   762
+#define NUM_TERRAIN_TYPES   762
 
 #define STATFIG_WIDTH       18  // in Pixels
 #define STATFIG_HEIGHT      16  // in Pixels
@@ -265,6 +265,11 @@ hanging out in MoX_DEF.H
 
 */
 
+/*
+    Worlds / Planes
+*/
+#define ARCANUS_PLANE  0
+#define MYRROR_PLANE   1
 
 
 /*

@@ -455,7 +455,7 @@ void Next_Turn_Calc(void)
 
 
 // WZD o121p02
-// AKAK Calc_Nominal_Skill()
+// drake178: Calc_Nominal_Skill()
 int16_t Player_Base_Casting_Skill(int16_t player_idx)
 {
 
@@ -1177,9 +1177,9 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
     {
         if(
             (_players[player_idx].Heroes[itr_heroes].Unit_Index > -1) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_x == _FORTRESSES[player_idx].world_x) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_y == _FORTRESSES[player_idx].world_y) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].world_plane == _FORTRESSES[player_idx].world_plane)
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wx == _FORTRESSES[player_idx].wx) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wy == _FORTRESSES[player_idx].wy) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wp == _FORTRESSES[player_idx].wp)
         )
         {
             UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, Active_Unit);

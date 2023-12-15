@@ -215,8 +215,8 @@ SA_GET_USED(SAMB_head): 2345
 
     Active_Unit = (struct s_BU_REC *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
 
-    TBL_Nodes = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
-    DBG_ORIG_TBL_Nodes = TBL_Nodes;
+    _NODES = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
+    DBG_ORIG__NODES = _NODES;
     _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);  // 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
     DBG_ORIG__FORTRESSES = _FORTRESSES;
     _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
