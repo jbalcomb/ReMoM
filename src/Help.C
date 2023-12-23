@@ -103,7 +103,7 @@ void Set_City_Screen_Help_List(void)
 
 
 // WZD o104p11
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "alchemy scrn Help"
 void Set_Alchemy_Screen_Help_List(void)
 {
     // TODO  add manifest-constant for help entry record size
@@ -114,7 +114,15 @@ void Set_Alchemy_Screen_Help_List(void)
 
 
 // WZD o104p12
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "build Help"
+void Set_Production_Screen_Help(void)
+{
+    // TODO  add manifest-constant for help entry record size
+    // TODO  add manifest-constant for help list count
+    LBX_Load_Data_Static(hlpentry_lbx_file, 12, (SAMB_ptr)_help_entries, 0, 43, 10);
+    Set_Help_List(_help_entries, 43);
+}
+
 
 // WZD o104p13
 // HLPENTRY.LBX  ""

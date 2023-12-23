@@ -159,6 +159,17 @@
 // same as reduced map box?
 // white/bright white for reduced map mark, and GP/MP font color, and outline/aura color for unit enchantment outline?
 
+// ¿ which palette ?
+// Production Screen / Build Table
+#define PAL_GREY_DARK  4  // ¿ font color ?
+#define PAL_GREY_LIGHT 5  // ¿ font color ?
+
+#define PAL_TURQUOISE_LIGHT  244
+#define PAL_TURQUOISE_DARK   248
+#define PAL_TURQUOISE_DIM    251
+#define PAL_TURQUOISE_BRIGHT 255
+
+
 /*
     EGA / VGA Colors
         $00 Black

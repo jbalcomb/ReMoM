@@ -10,6 +10,67 @@
 
 
 
+// WZD dseg:2A8A                                                 ¿ BEGIN: ovr054 - Strings ?
+
+
+char cnst_HOTKEY_X[] = "X";
+
+// aPopulation db 'population',0
+// aProduction db 'production',0
+// aCity_0 db 'city',0
+// aWalls db 'walls',0
+// aDoYouWishToSpend db 'Do you wish to spend '
+// db    2
+// db    0
+// aGold_3 db ' Gold',0
+// unk_3956A db    1
+// aByPurchasing db ' by purchasing'
+// cnst_Space db ' ',0
+// cnst_QuestionMark db '?',0
+// cnst_SpellCancel_Msg db 'Do you wish to turn off the ',2,0
+// cnst_SpellCnclMsg_12 db 1
+// cnst_SpellCnclMsg_13 db ' spell?',0
+// aYouCanOnlySellBackO db 'You can only sell back one building each turn'
+// cnst_Dot db '.',0
+// aSellingBackYour db 'Selling back your '
+// db    2
+// db    0
+// unk_395E7 db    1
+// aWillCeaseProductionOfYour db ' will cease production of your ',2,0
+// unk_39609 db    1
+// a_ db '.',0
+// aDoYouWishToSellBackThe db 'Do you wish to sell back the ',2,0
+// unk_3962B db    1
+// aFor db ' for ',0
+// aGold? db ' gold?',0
+// aYouCannotSellBackTh db 'You cannot sell back the ',0
+// aBecauseItIsRequired db ' because it is required by the ',0
+char proddescr_tradegoods[] = "Converts production to gold.";
+char proddescr_housing[] = "Increases population growth rate.";
+// cnst_Sp_Of_Sp db ' of ',0
+// aPlague db ' (Plague)',0
+// aPop_Boom db ' (Pop. Boom)',0
+// aPopulation_0 db 'Population: ',0
+// cnst_Comma_0 db ',',0
+// a00 db '00',0
+// cnst_SpaceOpenBrace db ' (',0
+// cnst_Plus db '+',0
+// aTurns_0 db 'Turns',0
+// aTurn_0 db 'Turn',0
+// cnst_HOTKEY_B db 'B',0
+// cnst_HOTKEY_C db 'C',0
+// cnst_HOTKEY_O db 'O',0
+// cnst_HOTKEY_Esc db 1Bh,0
+// aThe_2 db 'The ',0
+// aHasCompletedTheCons db ' has completed the construction of ',0
+// cnst_MUSIC_File db 'MUSIC',0
+// cstr_NameStartingCity db 'Name Starting City',0
+
+// WZD dseg:2C87                                                 ¿ END: ovr054 - Strings ?
+
+
+
+
 // WZD dseg:92B0
 // drake178: G_TBL_CityscapeBldngs@
 
@@ -73,13 +134,9 @@ void City_Screen__WIP(void)
     int16_t leave_screen_flag;
     int16_t input_field_idx;  // _DI_
 
-
-
-    // Fill(0, 0, 319, 199, 0);
-    // Set_Page_On();
-    // Fill(0, 0, 319, 199, 0);
-    // Set_Page_Off();
-
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Screen()\n", __FILE__, __LINE__);
+#endif
 
 
     Set_City_Screen_Help_List();
@@ -175,7 +232,7 @@ void City_Screen__WIP(void)
 
     city_screen_scanned_field = ST_UNDEFINED;
 
-    Allocate_Reduced_Map_Load_Unit_Figure();
+    City_Screen_Allocate_First_Block();
 
     Do_City_Calculations(_city_idx);
 
@@ -241,9 +298,35 @@ void City_Screen__WIP(void)
         /*
             Left-Click Change Button
         */
-        // TODO  SND_LeftClickSound();
-        // production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
-        // Production_Screen();
+        if(input_field_idx == city_sceen_change_button)
+        {
+            // TODO  SND_LeftClickSound();
+            production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
+            Production_Screen();
+
+            City_Screen_Load();
+            // TODO  Deactivate_Help_List();
+            // TODO  Set_City_Screen_Help_List();
+            // TODO  Assign_Auto_Function(City_Screen_Draw(), 1);
+            Do_City_Calculations(_city_idx);
+            IDK_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+            IDK_city_n_turns_to_produce = City_N_Turns_To_Produce(IDK_city_production_cost, _city_idx);
+            City_Can_Buy_Product();
+            if(_CITIES[_city_idx].construction < 100)
+            {
+                // TODO  String_Copy_Far(IDK_production_title, bldg_data_table[_CITIES[_city_idx].construction]);
+                strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+            }
+            else
+            {
+                Row = (_CITIES[_city_idx].construction - 100);
+                strcpy(city_screen_product_name, *_unit_type_table[Row].Name);
+            }
+            City_Screen_Allocate_First_Block();
+
+            production_screen_return_screen = 2;
+            screen_changed = ST_TRUE;
+        }
 
 
 
@@ -327,6 +410,7 @@ void City_Screen__WIP(void)
             Release_Time(1);
         }
 
+        screen_changed = ST_FALSE;
     }
 
 
@@ -337,6 +421,10 @@ void City_Screen__WIP(void)
     Clear_Fields();
     Reset_Window();
     Reset_Draw_Active_Stack();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Screen()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -349,7 +437,11 @@ void City_Screen_Draw__WIP(void)
 
 
     /*
-        Help Entries
+        BEGIN:  Help Entries
+    */
+
+    /*
+        END:  Help Entries
     */
 
 
@@ -364,7 +456,7 @@ void City_Screen_Draw__WIP(void)
 
     FLIC_Draw(0, 0, city_background_seg);
 
-    City_Screen_Draw___WIP();
+    City_Screen_Draw2__WIP();
 
     City_Screen_Draw_Buttons();
 
@@ -385,39 +477,30 @@ void City_Screen_Draw__WIP(void)
         (_CITIES[_city_idx].construction == bt_Housing)
     )
     {
-
         FLIC_Draw(260, 149, city_block_out_seg);
-
         Set_Font_Style2(0, 0, 0, 0);
-
         Set_Outline_Color(4);
         Set_Alias_Color(26);
         Set_Font_LF(0);
-
         if(_CITIES[_city_idx].construction != 0x01)  /* _Trade_Goods */
         {
-            // WZD dseg:2BD3  str_CityScr_ProdDescr_TradeGoods  "Converts production to gold."
-            Print_Paragraph(262, 159, 50, "Converts production to gold.", 2);
+            Print_Paragraph(262, 159, 50, proddescr_tradegoods, 2);
         }
         else
         {
-            // WZD dseg:2BF0  str_CityScr_ProdDescr_Housing  "Increases population growth rate."
-            Print_Paragraph(262, 159, 50, "Increases population growth rate.", 2);
+            Print_Paragraph(262, 159, 50, proddescr_housing, 2);
         }
-
     }
     else
     {
-
         City_Screen_Draw_Production_Coins(_city_idx);
-
     }
 
 }
 
 
 // WZD o54p03
-void City_Screen_Draw___WIP(void)
+void City_Screen_Draw2__WIP(void)
 {
     uint8_t colors[6];
     int16_t y;
@@ -593,6 +676,12 @@ void City_Screen_Draw___WIP(void)
 
         Draw_Building_Picture_To_Bitmap(_city_idx, product_idx, &bitm_x, &bitm_y, &bitm_w, &bitm_h, bitmap);
 
+        // bldg_pict_draw_x -= (((44 - bldg_pict_w) / 2) - bldg_pict_x1);
+        // bldg_pict_draw_y += (((36 - bldg_pict_h) / 2) - bldg_pict_y1);
+        // 44 is width of building picture space
+        // (44 - bitm_w) is how much of the space the picture will take up
+        // ... / 2) is half of the balance, so the picture will be centered horizontally
+        // ¿ ... - bitm_x) ? 
         x += (((44 - bitm_w) / 2) - bitm_x);
         y += (((31 - bitm_h) / 2) - bitm_y );
 
@@ -711,7 +800,6 @@ void City_Add_Fields_Buildings__WIP(void)
         x2 = G_TBL_CityscapeBldngs[itr].x2;
         y2 = G_TBL_CityscapeBldngs[itr].y2;
 
-        // G_CTY_ClickLabelArray[G_CTY_ClickLabelCount] = Add_Hidden_Field(x1, y1, x2, y2, cnst_ZeroString_25, 0xFFFF)
         G_CTY_ClickLabelArray[G_CTY_ClickLabelCount] = Add_Hidden_Field(x1, y1, x2, y2, 0, ST_UNDEFINED);
 
         G_CTY_ClickLabelCount++;
@@ -887,13 +975,13 @@ void City_Screen_Load(void)
 
 
 // WZD o54p14
-// WZD o54p14
+// MoO2  Module: MAINSCR  Allocate_First_Block_()
 /*
     allocates the reduced_map_seg, resetting the screen_seg
     if the city's current contruction project is a Unit,
       loads the unit figure picture, into the UV/USW unit_figure_seg
 */
-void Allocate_Reduced_Map_Load_Unit_Figure(void)
+void City_Screen_Allocate_First_Block(void)
 {
     int16_t unit_type;
 
@@ -945,8 +1033,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
     else
     {
         // Building Type / Product Idx:  {3, ..., 34}
-        current_frame = FLIC_Get_CurrentFrame(IDK_buildings_35[bldg_idx]);
-        frame_count = FLIC_Get_FrameCount(IDK_buildings_35[bldg_idx]);
+        current_frame = FLIC_Get_CurrentFrame(bldg_pics_seg[bldg_idx]);
+        frame_count = FLIC_Get_FrameCount(bldg_pics_seg[bldg_idx]);
     }
 
     min_x1 = 0;
@@ -978,8 +1066,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
         else
         {
             // Building Type / Product Idx:  {3, ..., 34}
-            FLIC_Set_CurrentFrame(IDK_buildings_35[bldg_idx], itr_frames);
-            Draw_Picture_To_Bitmap(IDK_buildings_35[bldg_idx], bitmap);
+            FLIC_Set_CurrentFrame(bldg_pics_seg[bldg_idx], itr_frames);
+            Draw_Picture_To_Bitmap(bldg_pics_seg[bldg_idx], bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
 
@@ -1016,8 +1104,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
     else
     {
         // Building Type / Product Idx:  {3, ..., 34}
-        FLIC_Set_CurrentFrame(IDK_buildings_35[bldg_idx], current_frame);
-        Draw_Picture_To_Bitmap(IDK_buildings_35[bldg_idx], bitmap);
+        FLIC_Set_CurrentFrame(bldg_pics_seg[bldg_idx], current_frame);
+        Draw_Picture_To_Bitmap(bldg_pics_seg[bldg_idx], bitmap);
     }
 
 }

@@ -30,13 +30,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     dbg_prn("DEBUG: [%s, %d]: _screen_seg: %p\n", __FILE__, __LINE__, _screen_seg);
 #endif
 
-    // 150 * 16 = 2400 bytes
-    // TODO  GUI_SmallWork_IMG = Allocate_Space(150);
-    // ; 96h LBX_Alloc_Space paragraphs
-    // ; used for building GUI notification images (although
-    // ; the pointer variable is also used for building combat
-    // ; figure images, after which it is reassigned)
-
+    GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B
 
 // World_Data
 // ¿ everything from a SAVE_GAM ? also, COMBAT.TMP ? 
@@ -213,7 +207,7 @@ SA_GET_USED(SAMB_head): 2345
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
     DBG_ORIG__UNITS = _UNITS;
 
-    Active_Unit = (struct s_BU_REC *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
+    global_strategic_unit = (struct s_STRATEGIC_UNIT *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
 
     _NODES = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
     DBG_ORIG__NODES = _NODES;

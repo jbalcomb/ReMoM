@@ -16,6 +16,8 @@
 */
 
 
+// WZD dseg:3062
+extern uint8_t enchantment_outline_colors[320];
 
 // WZD  dseg:31AE
 // char cnst_Moves[]  = "Moves:";
@@ -62,16 +64,15 @@ extern int64_t _main_map_grid_y;
 // int16_t special_action_flag;  // AKA OVL_ExtraUnitAction
 // WZD dseg:C050
 // int16_t _next_turn_button;
+
 // WZD dseg:C052
 extern int16_t Unit_Window_Fields[9];
+
 // WZD dseg:C064
 // CRP_OverlandVar_3 dw 0
+
 // WZD dseg:C066
 // int16_t OVL_Path_Length;
-// WZD dseg:C068
-extern int16_t OVL_StackHasPath;
-
-
 
 
 
@@ -315,42 +316,6 @@ void Main_Screen_Draw(void);
 
 // WZD o58p02
 void Set_Mouse_List_Default(void);
-
-
-/*
-    WIZARDS.EXE  ovr059
-*/
-
-// WZD o59p01
-// WZD o59p02
-// WZD o59p03
-// WZD o59p04
-// WZD o59p05
-// WZD o59p06
-// WZD o59p07
-// WZD o59p08
-// WZD o59p09
-// WZD o59p10
-// WZD o59p11
-// WZD o59p12
-
-// WZD o59p13
-// drake178: STK_CheckTower()
-// ¿PRIVATE?  void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
-
-// WZD o59p14
-// WZD o59p15
-// WZD o59p16
-// WZD o59p17
-// WZD o59p18
-
-// WZD o59p19
-// AKA IDK_MaybeSwitchStackPlane_s52514()
-void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
-
-// WZD o59p20
-// AKA IDK_PlanarTravel_TestWaterCity_s52774()
-int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
 
 

@@ -58,137 +58,97 @@ char unit_type_name_027[] = "Priestess";
 char unit_type_name_028[] = "Paladin";
 char unit_type_name_029[] = "Black Knight";
 char unit_type_name_030[] = "Elven Archer";
-char unit_type_name_031[] = "Necromancer";
-char unit_type_name_032[] = "Chaos Warrior";
-char unit_type_name_033[] = "Chosen";
+char unit_type_name_031[] = "Knight";
+char unit_type_name_032[] = "Necromancer";
+char unit_type_name_033[] = "Chaos Warrior";
+char unit_type_name_034[] = "Chosen";
 
-char unit_type_name_034[] = "Trireme";
-char unit_type_name_035[] = "Galley";
-char unit_type_name_036[] = "Catapult";
-char unit_type_name_037[] = "Warship";
-char unit_type_name_038[] = "Spearmen";
-char unit_type_name_039[] = "Swordsmen";
-char unit_type_name_040[] = "Bowmen";
-char unit_type_name_041[] = "Cavalry";
-char unit_type_name_042[] = "Shaman";
-char unit_type_name_043[] = "Settlers";
-char unit_type_name_044[] = "Berserkers";
-char unit_type_name_045[] = "Halberdiers";
-char unit_type_name_046[] = "Priests";
-char unit_type_name_047[] = "Magicians";
-char unit_type_name_048[] = "Engineers";
-char unit_type_name_049[] = "Centaurs";
-char unit_type_name_050[] = "Manticores";
-char unit_type_name_051[] = "Minotaurs";
-char unit_type_name_052[] = "Nightblades";
-char unit_type_name_053[] = "Warlocks";
-char unit_type_name_054[] = "Nightmares";
-char unit_type_name_055[] = "Doom Drakes";
-char unit_type_name_056[] = "Air Ship";
-char unit_type_name_057[] = "Hammerhands";
-char unit_type_name_058[] = "Steam Cannon";
-char unit_type_name_059[] = "Golem";
-char unit_type_name_060[] = "Wolf Riders";
-char unit_type_name_061[] = "Slingers";
-char unit_type_name_062[] = "Longbowmen";
-char unit_type_name_063[] = "Elven Lords";
-char unit_type_name_064[] = "Pegasai";
-char unit_type_name_065[] = "Pikemen";
-char unit_type_name_066[] = "Paladins";
-char unit_type_name_067[] = "Stag Beetle";
-char unit_type_name_068[] = "Javelineers";
-char unit_type_name_069[] = "Dragon Turtle";
-char unit_type_name_070[] = "Horsebowmen";
-char unit_type_name_071[] = "Rangers";
-char unit_type_name_072[] = "Griffins";
-char unit_type_name_073[] = "Wyvern Riders";
-char unit_type_name_074[] = "War Trolls";
-char unit_type_name_075[] = "War Mammoths";
-char unit_type_name_076[] = "Magic Spirit";
-char unit_type_name_077[] = "Hell Hounds";
-char unit_type_name_078[] = "Gargoyles";
-char unit_type_name_079[] = "Fire Giant";
-char unit_type_name_080[] = "Fire Elemental";
-char unit_type_name_081[] = "Chaos Spawn";
-char unit_type_name_082[] = "Chimera";
-char unit_type_name_083[] = "Doom Bat";
-char unit_type_name_084[] = "Efreet";
-char unit_type_name_085[] = "Hydra";
-char unit_type_name_086[] = "Great Drake";
-char unit_type_name_087[] = "Skeletons";
-char unit_type_name_088[] = "Ghouls";
-char unit_type_name_089[] = "Night Stalker";
-char unit_type_name_090[] = "Werewolves";
-char unit_type_name_091[] = "Demon";
-char unit_type_name_092[] = "Wraiths";
-char unit_type_name_093[] = "Shadow Demons";
-char unit_type_name_094[] = "Death Knights";
-char unit_type_name_095[] = "Demon Lord";
-char unit_type_name_096[] = "Zombies";
-char unit_type_name_097[] = "Unicorns";
-char unit_type_name_098[] = "Guardian Spirit";
-char unit_type_name_099[] = "Angel";
-char unit_type_name_100[] = "Arch Angel";
-char unit_type_name_101[] = "War Bears";
-char unit_type_name_102[] = "Sprites";
-char unit_type_name_103[] = "Cockatrices";
-char unit_type_name_104[] = "Basilisk";
-char unit_type_name_105[] = "Giant Spiders";
-char unit_type_name_106[] = "Stone Giant";
-char unit_type_name_107[] = "Colossus";
-char unit_type_name_108[] = "Gorgons";
-char unit_type_name_109[] = "Earth Elemental";
-char unit_type_name_110[] = "Behemoth";
-char unit_type_name_111[] = "Great Wyrm";
-char unit_type_name_112[] = "Floating Island";
-char unit_type_name_113[] = "Phantom Beast";
-char unit_type_name_114[] = "Phantom Warriors";
-char unit_type_name_115[] = "Storm Giant";
-char unit_type_name_116[] = "Air Elemental";
-char unit_type_name_117[] = "Djinn";
-char unit_type_name_118[] = "Sky Drake";
-char unit_type_name_119[] = "Nagas";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+char unit_type_name_035[] = "Trireme";
+char unit_type_name_036[] = "Galley";
+char unit_type_name_037[] = "Catapult";
+char unit_type_name_038[] = "Warship";
+char unit_type_name_039[] = "Spearmen";
+char unit_type_name_040[] = "Swordsmen";
+char unit_type_name_041[] = "Bowmen";
+char unit_type_name_042[] = "Cavalry";
+char unit_type_name_043[] = "Shaman";
+char unit_type_name_044[] = "Settlers";
+char unit_type_name_045[] = "Berserkers";
+char unit_type_name_046[] = "Halberdiers";
+char unit_type_name_047[] = "Priests";
+char unit_type_name_048[] = "Magicians";
+char unit_type_name_049[] = "Engineers";
+char unit_type_name_050[] = "Centaurs";
+char unit_type_name_051[] = "Manticores";
+char unit_type_name_052[] = "Minotaurs";
+char unit_type_name_053[] = "Nightblades";
+char unit_type_name_054[] = "Warlocks";
+char unit_type_name_055[] = "Nightmares";
+char unit_type_name_056[] = "Doom Drakes";
+char unit_type_name_057[] = "Air Ship";
+char unit_type_name_058[] = "Hammerhands";
+char unit_type_name_059[] = "Steam Cannon";
+char unit_type_name_060[] = "Golem";
+char unit_type_name_061[] = "Wolf Riders";
+char unit_type_name_062[] = "Slingers";
+char unit_type_name_063[] = "Longbowmen";
+char unit_type_name_064[] = "Elven Lords";
+char unit_type_name_065[] = "Pegasai";
+char unit_type_name_066[] = "Pikemen";
+char unit_type_name_067[] = "Paladins";
+char unit_type_name_068[] = "Stag Beetle";
+char unit_type_name_069[] = "Javelineers";
+char unit_type_name_070[] = "Dragon Turtle";
+char unit_type_name_071[] = "Horsebowmen";
+char unit_type_name_072[] = "Rangers";
+char unit_type_name_073[] = "Griffins";
+char unit_type_name_074[] = "Wyvern Riders";
+char unit_type_name_075[] = "War Trolls";
+char unit_type_name_076[] = "War Mammoths";
+char unit_type_name_077[] = "Magic Spirit";
+char unit_type_name_078[] = "Hell Hounds";
+char unit_type_name_079[] = "Gargoyles";
+char unit_type_name_080[] = "Fire Giant";
+char unit_type_name_081[] = "Fire Elemental";
+char unit_type_name_082[] = "Chaos Spawn";
+char unit_type_name_083[] = "Chimera";
+char unit_type_name_084[] = "Doom Bat";
+char unit_type_name_085[] = "Efreet";
+char unit_type_name_086[] = "Hydra";
+char unit_type_name_087[] = "Great Drake";
+char unit_type_name_088[] = "Skeletons";
+char unit_type_name_089[] = "Ghouls";
+char unit_type_name_090[] = "Night Stalker";
+char unit_type_name_091[] = "Werewolves";
+char unit_type_name_092[] = "Demon";
+char unit_type_name_093[] = "Wraiths";
+char unit_type_name_094[] = "Shadow Demons";
+char unit_type_name_095[] = "Death Knights";
+char unit_type_name_096[] = "Demon Lord";
+char unit_type_name_097[] = "Zombies";
+char unit_type_name_098[] = "Unicorns";
+char unit_type_name_099[] = "Guardian Spirit";
+char unit_type_name_100[] = "Angel";
+char unit_type_name_101[] = "Arch Angel";
+char unit_type_name_102[] = "War Bears";
+char unit_type_name_103[] = "Sprites";
+char unit_type_name_104[] = "Cockatrices";
+char unit_type_name_105[] = "Basilisk";
+char unit_type_name_106[] = "Giant Spiders";
+char unit_type_name_107[] = "Stone Giant";
+char unit_type_name_108[] = "Colossus";
+char unit_type_name_109[] = "Gorgons";
+char unit_type_name_110[] = "Earth Elemental";
+char unit_type_name_111[] = "Behemoth";
+char unit_type_name_112[] = "Great Wyrm";
+char unit_type_name_113[] = "Floating Island";
+char unit_type_name_114[] = "Phantom Beast";
+char unit_type_name_115[] = "Phantom Warriors";
+char unit_type_name_116[] = "Storm Giant";
+char unit_type_name_117[] = "Air Elemental";
+char unit_type_name_118[] = "Djinn";
+char unit_type_name_119[] = "Sky Drake";
+char unit_type_name_120[] = "Nagas";
 
 
 
@@ -316,7 +276,8 @@ char * _unit_type_names[] =
     unit_type_name_116,
     unit_type_name_117,
     unit_type_name_118,
-    unit_type_name_119
+    unit_type_name_119,
+    unit_type_name_120
 };
 
 
@@ -386,27 +347,28 @@ struct s_UNIT_TYPE _unit_type_table[] =
     {&_unit_type_names[34],   12,   0,  -1,   0,   0,   8,  12,   4, 600,   0,  19,   0,   0, 0x0000, 12,   1,   0,   1,   0,    0, 0x0001, 0x0024, 0x0000, 0x0000, 0x0000, 0}, 
     /* END: Hero Unit Type */
 
-/* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
-{&_unit_type_names[35],    6,   0, -1,   0,   0,   4,   4,   4,  60,   2,  14,  12,   0, 0x0000, 10,   1,   2,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[36],    8,   2, 20,   8,   0,   4,   6,   6, 100,   2,  14,  13,   0, 0x0000, 20,   1,   5,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[37],    0,  10, 10,  10,   0,   2,   4,   2, 100,   2,  14,  33,   0, 0x0000, 10,   1,   0,   1,   0,    0, 0x0000, 0x8000, 0x0000, 0x0108, 0x0000, 0}, 
-{&_unit_type_names[38],   10,  10, 10,  99,   0,   5,   7,   8, 160,   2,  14,  14,   3, 0x0000, 30,   1,   3,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0100, 0x0000, 0}, 
-{&_unit_type_names[39],    1,  1, 100,   0,   0,   2,   5,   2,  15,   1,   0,   0,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[40],    3,  1, 100,   0,   0,   2,   5,   2,  30,   1,   0,   8,   3, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
-{&_unit_type_names[41],    1,  1,  20,   8,   0,   1,   5,   2,  30,   1,   0,  15,   3, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[42],    4,  1, 100,   0,   0,   2,   5,   4,  60,   1,   0,   9,   3, 0x0000,  3,   1,   0,   4,   0,    0, 0x0001, 0x8000, 0x0000, 0x0000, 0x0002, 0}, 
-{&_unit_type_names[43],    2,  2,  35,   4,   0,   3,   7,   2,  50,   1,   0,  22,   0, 0x0000,  1,   1,   0,   4,   0,    0, 0x0000, 0x8000, 0x0000, 0x4010, 0x0000, 0}, 
-{&_unit_type_names[44],    0,  0,  -1,   0,   0, 1, 5, 2, 60, 2, 0, 0, 0, 0x0000, 10, 1, 0, 1, 0, 0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000, 0}, 
-{&_unit_type_names[45],    7,  3, 100,   0,   0, 3, 7, 2, 120, 2, 0, 6, 0, 0x0000, 3, 1, 0, 6, 0, 0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[39],    2,  0,  -1,   0,   0, 2, 5, 2, 20, 1, 1, 0, 0, 0x0000, 2, 1, 0, 8, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[40],    4,  0,  -1,   0,   0, 2, 5, 2, 40, 1, 1, 3, 8, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
-{&_unit_type_names[46],    5,  0,  -1,   0,   0, 3, 5, 2, 80, 2, 1, 4, 0, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[41],    2,  1,  20,   8,   0, 1, 5, 2, 60, 2, 1, 15, 3, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[47],    4,  4,  35,   4,   0, 4, 8, 2, 150, 3, 1, 24, 0, 0x0000, 2, 1, 0, 4, 0, 0, 0x0000, 0x8000, 0x0001, 0x4010, 0x0000, 0}, 
-{&_unit_type_names[48],    2,  5,  31,   4,   0, 3, 9, 2, 180, 4, 1, 21, 0, 0x0000, 2, 1, 0, 4, 0, 0, 0x0000, 0x8004, 0x0002, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[49],    2,  0,  -1,   0,   0, 1, 5, 2, 60, 2, 1, 32, 0, 0x0000, 2, 1, 0, 6, 1, 0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000, 0}, 
-{&_unit_type_names[44],    1,  0,  -1,   0,   0, 1, 5, 2, 120, 4, 1, 0, 0, 0x0000, 20, 1, 0, 1, 0, 0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000, 0}, 
-{&_unit_type_names[50],    3,  2,  20,   6,   0, 3, 5, 4, 100, 2, 1, 9, 3, 0x0000, 3, 1, 0, 4, 0, 0, 0x0001, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
+/*                                      Name,  mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
+/*  35 ST Trireme  */ {&_unit_type_names[35],    6,   0, -1,   0,   0,   4,   4,   4,  60,   2,  14,  12,   0, 0x0000, 10,   1,   2,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  36 ST Galley   */ {&_unit_type_names[36],    8,   2, 20,   8,   0,   4,   6,   6, 100,   2,  14,  13,   0, 0x0000, 20,   1,   5,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  37 ST Catapult */ {&_unit_type_names[37],    0,  10, 10,  10,   0,   2,   4,   2, 100,   2,  14,  33,   0, 0x0000, 10,   1,   0,   1,   0,    0, 0x0000, 0x8000, 0x0000, 0x0108, 0x0000, 0}, 
+/*  38 ST Warship  */ {&_unit_type_names[38],   10,  10, 10,  99,   0,   5,   7,   8, 160,   2,  14,  14,   3, 0x0000, 30,   1,   3,   1,   0,    0, 0x0002, 0x8000, 0x0000, 0x0100, 0x0000, 0}, 
+/*                               Name,  mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
+/* Spearmen */ {&_unit_type_names[39],    1,  1, 100,   0,   0,   2,   5,   2,  15,   1,   0,   0,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[40],    3,  1, 100,   0,   0,   2,   5,   2,  30,   1,   0,   8,   3, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
+/*  */ {&_unit_type_names[41],    1,  1,  20,   8,   0,   1,   5,   2,  30,   1,   0,  15,   3, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[42],    4,  1, 100,   0,   0,   2,   5,   4,  60,   1,   0,   9,   3, 0x0000,  3,   1,   0,   4,   0,    0, 0x0001, 0x8000, 0x0000, 0x0000, 0x0002, 0}, 
+/*  */ {&_unit_type_names[43],    2,  2,  35,   4,   0,   3,   7,   2,  50,   1,   0,  22,   0, 0x0000,  1,   1,   0,   4,   0,    0, 0x0000, 0x8000, 0x0000, 0x4010, 0x0000, 0}, 
+/*  */ {&_unit_type_names[44],    0,  0,  -1,   0,   0, 1, 5, 2, 60, 2, 0, 0, 0, 0x0000, 10, 1, 0, 1, 0, 0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000, 0}, 
+/*  */ {&_unit_type_names[45],    7,  3, 100,   0,   0, 3, 7, 2, 120, 2, 0, 6, 0, 0x0000, 3, 1, 0, 6, 0, 0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
+/* Spearmen */ {&_unit_type_names[39],    2,  0,  -1,   0,   0, 2, 5, 2, 20, 1, 1, 0, 0, 0x0000, 2, 1, 0, 8, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[40],    4,  0,  -1,   0,   0, 2, 5, 2, 40, 1, 1, 3, 8, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
+/*  */ {&_unit_type_names[46],    5,  0,  -1,   0,   0, 3, 5, 2, 80, 2, 1, 4, 0, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[41],    2,  1,  20,   8,   0, 1, 5, 2, 60, 2, 1, 15, 3, 0x0000, 2, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[47],    4,  4,  35,   4,   0, 4, 8, 2, 150, 3, 1, 24, 0, 0x0000, 2, 1, 0, 4, 0, 0, 0x0000, 0x8000, 0x0001, 0x4010, 0x0000, 0}, 
+/*  */ {&_unit_type_names[48],    2,  5,  31,   4,   0, 3, 9, 2, 180, 4, 1, 21, 0, 0x0000, 2, 1, 0, 4, 0, 0, 0x0000, 0x8004, 0x0002, 0x0000, 0x0000, 0}, 
+/*  */ {&_unit_type_names[49],    2,  0,  -1,   0,   0, 1, 5, 2, 60, 2, 1, 32, 0, 0x0000, 2, 1, 0, 6, 1, 0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000, 0}, 
+/*  */ {&_unit_type_names[44],    1,  0,  -1,   0,   0, 1, 5, 2, 120, 4, 1, 0, 0, 0x0000, 20, 1, 0, 1, 0, 0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000, 0}, 
+/*  */ {&_unit_type_names[50],    3,  2,  20,   6,   0, 3, 5, 4, 100, 2, 1, 9, 3, 0x0000, 3, 1, 0, 4, 0, 0, 0x0001, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
 /* 55 */ {&_unit_type_names[51],    5,  0,  -1,   0,   0, 3, 6, 4, 160, 3, 1, 10, 3, 0x0000, 7, 2, 0, 2, 0, 6, 0x0008, 0x0200, 0x0000, 0x0000, 0x0004, 0}, 
 {&_unit_type_names[52],   12,  0,  -1,   0,   2, 4, 7, 2, 200, 4, 1, 6, 0, 0x0000, 12, 1, 0, 2, 0, 0, 0x0000, 0x0000, 0x0000, 0x0002, 0x0000, 0}, 
 {&_unit_type_names[39],    1,  1,  36,   4,   0, 2, 7, 2, 25, 1, 2, 0, 0, 0x0000, 1, 1, 0, 8, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
@@ -447,7 +409,7 @@ struct s_UNIT_TYPE _unit_type_table[] =
 {&_unit_type_names[43],    1,  2,  35,   4,   0, 3, 8, 2, 75, 1, 6, 22, 0, 0x0000, 1, 1, 0, 4, 0, 0, 0x0000, 0x8400, 0x0000, 0x4010, 0x0000, 0}, 
 {&_unit_type_names[44],    0,  0,  -1,   0,   0, 1, 6, 2, 90, 1, 6, 0, 0, 0x0000, 10, 1, 0, 1, 0, 0, 0x0000, 0x8400, 0x0000, 0x0020, 0x0000, 0}, 
 {&_unit_type_names[62],    1,  2,  21,   6,   0, 2, 6, 2, 100, 1, 6, 4, 0, 0x0000, 1, 1, 0, 8, 0, 0, 0x0000, 0x0400, 0x0000, 0x0000, 0x0000, 0}, 
-/* 95 */ {&_unit_type_names[39],    1,  0,  -1,   0,   1, 2, 6, 2, 15, 1, 7, 0, 0, 0x0000, 1, 1, 0, 8, 0, 0, 0x0020, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
+/*  95 */ {&_unit_type_names[39],    1,  0,  -1,   0,   1, 2, 6, 2, 15, 1, 7, 0, 0, 0x0000, 1, 1, 0, 8, 0, 0, 0x0020, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
 {&_unit_type_names[40],    3,  0,  -1,   0,   1, 2, 6, 2, 30, 1, 7, 3, 8, 0x0000, 1, 1, 0, 6, 0, 0, 0x0020, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
 {&_unit_type_names[46],    4,  0,  -1,   0,   1, 3, 6, 2, 60, 1, 7, 4, 0, 0x0000, 1, 1, 0, 6, 0, 0, 0x0020, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
 {&_unit_type_names[42],    4,  0,  -1,   0,   1, 2, 6, 4, 60, 1, 7, 3, 9, 0x0000, 3, 1, 0, 4, 0, 0, 0x0021, 0x8000, 0x0000, 0x0000, 0x0002, 0}, 
@@ -456,25 +418,25 @@ struct s_UNIT_TYPE _unit_type_table[] =
 {&_unit_type_names[63],    1,  3,  20,   8,   1, 2, 6, 2, 80, 2, 7, 15, 3, 0x0000, 1, 1, 0, 6, 0, 0, 0x0020, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
 {&_unit_type_names[64],    5,  0,  -1,   0,   2, 4, 9, 4, 160, 3, 7, 6, 0, 0x0000, 3, 1, 0, 4, 0, 0, 0x0021, 0x0000, 0x0000, 0x0000, 0x0003, 0}, 
 {&_unit_type_names[65],    5,  3,  20,   8,   1, 4, 8, 6, 160, 3, 7, 11, 3, 0x0000, 5, 2, 0, 2, 0, 0, 0x0008, 0x0200, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[39],    1,  0,  -1,   0,   0, 2, 4, 2, 10, 1, 8, 0, 0, 0x0000, 1, 1, 0, 8, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-/* 105 */ {&_unit_type_names[40],    3,  0,  -1,   0,   0, 2, 4, 2, 20, 1, 8, 3, 8, 0x0000, 1, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
-{&_unit_type_names[41],    1,  1,  20,   8,   0, 1, 4, 2, 30, 1, 8, 15, 3, 0x0000, 1, 1, 0, 6, 0, 0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
-{&_unit_type_names[42],    4,  0,  -1,   0,   0, 2, 4, 4, 40, 1, 8,  3, 9, 0x0000, 3, 1, 0, 4, 0, 0, 0x0001, 0x8000, 0x0000, 0x0000, 0x0002, 0}, 
-/*                          Name,  mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
-/* 108 */ {&_unit_type_names[47],    3,  4,  35,   4,   0,   4,   7,   2, 100,   2,   8,  24,   0, 0x0000,  1,   1,   0,   4,   0,    0, 0x0000, 0x8000, 0x0001, 0x4010, 0x0000,   0},  /* Priests, High Men */
-/* 109 */ {&_unit_type_names[48],    1,  5,  31,   4,   0,   3,   8,   2, 120,   3,   8,  21,   0, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8004, 0x0002, 0x0000, 0x0000,   0},  /* Magicians, High-Men */ 
-/* 110 */ {&_unit_type_names[49],    1,  0,  -1,   0,   0,   1,   4,   2,  40,   1,   8,  32,   0, 0x0000,  1,   1,   0,   6,   1,    0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000,   0}, 
-/* 111 */ {&_unit_type_names[44],    0,  0,  -1,   0,   0,   1,   4,   2,  60,   2,   8,   0,   0, 0x0000, 10,   1,   0,   1,   0,    0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000,   0}, 
-/* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
-/* 112 */ {&_unit_type_names[65],    5,   0, -1,   0,   0,   3,   5,   2,  80,   2,   8,   5,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x0000, 0x0000, 0x8000, 0x0001,   0},  /* Pikemen, High-Men */
-/* 113 */ {&_unit_type_names[66],    6,  0,  -1,   0,   0,   5,   8,   4, 200,   3,   8,  25,   6, 0x0000,  4,   1,   0,   4,   0,    1, 0x0001, 0x0020, 0x0080, 0x0000, 0x0003,   0},   /* Paladin, High-Men */
+/*                                       Name,  mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
+/* 104 HM           */ {&_unit_type_names[39],    1,  0,  -1,   0,   0,   2,   4,   2,  10,   1,   8,   0,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000,   0}, 
+/* 105 HM           */ {&_unit_type_names[40],    3,  0,  -1,   0,   0,   2,   4,   2,  20,   1,   8,   3,   8, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000,   0}, 
+/* 106 HM           */ {&_unit_type_names[41],    1,  1,  20,   8,   0,   1,   4,   2,  30,   1,   8,  15,   3, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000,   0}, 
+/* 107 HM Cavalry   */ {&_unit_type_names[42],    4,  0,  -1,   0,   0,   2,   4,   4,  40,   1,   8,   3,   9, 0x0000,  3,   1,   0,   4,   0,    0, 0x0001, 0x8000, 0x0000, 0x0000, 0x0002,   0}, 
+/* 108 HM Priests   */ {&_unit_type_names[47],    3,  4,  35,   4,   0,   4,   7,   2, 100,   2,   8,  24,   0, 0x0000,  1,   1,   0,   4,   0,    0, 0x0000, 0x8000, 0x0001, 0x4010, 0x0000,   0},
+/* 109 HM Magicians */ {&_unit_type_names[48],    1,  5,  31,   4,   0,   3,   8,   2, 120,   3,   8,  21,   0, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8004, 0x0002, 0x0000, 0x0000,   0},
+/* 110 HM           */ {&_unit_type_names[49],    1,  0,  -1,   0,   0,   1,   4,   2,  40,   1,   8,  32,   0, 0x0000,  1,   1,   0,   6,   1,    0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000,   0}, 
+/* 111 HM           */ {&_unit_type_names[44],    0,  0,  -1,   0,   0,   1,   4,   2,  60,   2,   8,   0,   0, 0x0000, 10,   1,   0,   1,   0,    0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000,   0}, 
+/* 112 HM Pikemen   */ {&_unit_type_names[66],    5,   0, -1,   0,   0,   3,   5,   2,  80,   2,   8,   5,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x0000, 0x0000, 0x8000, 0x0001,   0},
+/* 113 HM Paladin   */ {&_unit_type_names[67],    6,  0,  -1,   0,   0,   5,   8,   4, 200,   3,   8,  25,   6, 0x0000,  4,   1,   0,   4,   0,    1, 0x0001, 0x0020, 0x0080, 0x0000, 0x0003,   0},
+/*                                     Name,  mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
 {&_unit_type_names[39],    1,  0,  -1,   0,   0,   4,   5,   2,  20,   1,   9,   0,   0, 0x0000,  1,   1,   0,   8,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000,   0}, 
 {&_unit_type_names[40],    3,  0,  -1,   0,   0,   4,   5,   2,  40,   1,   9,   3,   8, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0002, 0x0000,   0}, 
-/* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
 {&_unit_type_names[46],    4,  0,  -1,   0,   0,   5,   5,   2,  80,   1,   9,   4,   0, 0x0000,  1,   1,   0,   6,   0,    0, 0x0000, 0x8000, 0x0000, 0x0000, 0x0000,   0},
 {&_unit_type_names[49],    1,  0,  -1,   0,   0,   1,   5,   2,  80,   1,   9,  32,   0, 0x0000,  1,   1,   0,   6,   1,    0, 0x0000, 0x8000, 0x0000, 0x0008, 0x0000,   0}, 
 {&_unit_type_names[44],    0,  0,  -1,   0,   0,   1,   5,   2, 120, 2, 9, 0, 0, 0x0000, 10, 1, 0, 1, 0, 0, 0x0000, 0x8000, 0x0000, 0x0020, 0x0000, 0}, 
 {&_unit_type_names[68],   15,  5, 101,   0,   0,   7,   6,   4, 160, 2, 9, 9, 6, 0x0000, 20, 1, 0, 1, 0, 0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0}, 
+/* Name,                 mel, rng, rt, amm, hit, def, res, mov, cos, upk, rac, bl1, bl2,   pict, hp, sco, tra, fig, con, spec,   mvfl,   att1,   att2,    abl,   atfl, snd */
 {&_unit_type_names[39],    1,  0,  -1,   0,   0,   3,   4,   2, 10, 1, 10, 0, 0, 0x0000, 2, 1, 0, 8, 0, 0, 0x0004, 0x8000, 0x0000, 0x0000, 0x0000, 0}, 
 {&_unit_type_names[40],    3,  0,  -1,   0,   0,   3,   4,   2, 20, 1, 10, 3, 8, 0x0000, 2, 1, 0, 6, 0, 0, 0x0004, 0x8000, 0x0000, 0x0002, 0x0000, 0}, 
 {&_unit_type_names[46],    4,  0,  -1,   0,   0,   4,   4,   2, 40, 1, 10, 4, 0, 0x0000, 2, 1, 0, 6, 0, 0, 0x0004, 0x8000, 0x0000, 0x8000, 0x0000, 0}, 

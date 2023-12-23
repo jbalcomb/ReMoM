@@ -249,6 +249,10 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg);
 // WZD s30p25
 void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg);
 
+// WZD s30p26
+void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg);
+
+
 // WZD s30p40
 // MoO2  Get_Full_Store_Flag()
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
@@ -335,6 +339,9 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
 // WZD s33p07
+// drake178: LBX_IMG_RawOverlay()
+// MoO2  Module: draw  Color_Stream_Copy_()
+void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p08
 

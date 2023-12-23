@@ -169,6 +169,7 @@
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
     <ClInclude Include="..\..\..\src\Input.H" />
+    <ClInclude Include="..\..\..\src\ItemView.H" />
     <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
     <ClInclude Include="..\..\..\src\LBX_Load.H" />
@@ -223,9 +224,11 @@
     <ClInclude Include="..\..\..\src\UnitStat.H" />
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
     <ClInclude Include="..\..\..\src\UNITTYPE.H" />
+    <ClInclude Include="..\..\..\src\UnitView.H" />
     <ClInclude Include="..\..\..\src\Video.H" />
     <ClInclude Include="..\..\..\src\Video2.H" />
     <ClInclude Include="..\..\..\src\win_PFL.hpp" />
+    <ClInclude Include="..\..\..\src\WZD_o059.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AdvsrScr.C" />
@@ -247,6 +250,7 @@
     <ClCompile Include="..\..\..\src\Help.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
     <ClCompile Include="..\..\..\src\Input.C" />
+    <ClCompile Include="..\..\..\src\ItemView.C" />
     <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
     <ClCompile Include="..\..\..\src\LBX_Load.C" />
@@ -290,6 +294,7 @@
     <ClCompile Include="..\..\..\src\UnitStat.C" />
     <ClCompile Include="..\..\..\src\UNITSTK.C" />
     <ClCompile Include="..\..\..\src\UNITTYPE.C" />
+    <ClCompile Include="..\..\..\src\UnitView.C" />
     <ClCompile Include="..\..\..\src\Video.C" />
     <ClCompile Include="..\..\..\src\Video2.C" />
     <ClCompile Include="..\..\..\src\win_CLK.C" />
@@ -302,6 +307,7 @@
     <ClCompile Include="..\..\..\src\win_MoM.cpp" />
     <ClCompile Include="..\..\..\src\win_PFL.cpp" />
     <ClCompile Include="..\..\..\src\win_Video.C" />
+    <ClCompile Include="..\..\..\src\WZD_o059.C" />
     <ClCompile Include="..\..\..\src\WZD_s001.C" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

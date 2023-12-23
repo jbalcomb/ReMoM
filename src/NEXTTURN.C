@@ -1182,9 +1182,9 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
             (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wp == _FORTRESSES[player_idx].wp)
         )
         {
-            UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, Active_Unit);
+            UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, global_strategic_unit);
 
-            half_hero_spell_casting_skill_points = (Active_Unit->mana_max / 2);
+            half_hero_spell_casting_skill_points = (global_strategic_unit->mana_max / 2);
 
             heroes_spell_casting_skill_points += half_hero_spell_casting_skill_points;
         }

@@ -157,6 +157,7 @@ int16_t PageFlipEffect;
     Main Screen sets it to 4 before calling Outpost_Screen()
     NameStartingCity_Dialog_Popup sets it to 3 before returning to Main Screen
     Load Screen sets it to 2 when preparing to loop back to Main Screen
+    Production Screen sets it to 3 before returning to City Screen / CityList Screen
 */
 void PageFlip_FX(void)
 {
@@ -170,7 +171,7 @@ void PageFlip_FX(void)
         } break;
         case 1:
         {
-            // RP_VGA_CutRight();
+            // TODO  RP_VGA_CutRight();
         } break;
         case 2:
         {
@@ -179,12 +180,13 @@ void PageFlip_FX(void)
         } break;
         case 3:
         {
-            // Apply_Palette();
-            // VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
+            Apply_Palette();
+            Toggle_Pages();  // |-> Page_Flip()
+            // TODO  VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
         } break;
         case 4:
         {
-            // RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
+            // TODO  RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
         } break;
         default:
         {

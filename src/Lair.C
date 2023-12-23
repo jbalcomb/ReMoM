@@ -54,8 +54,31 @@ int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane)
 // EZ_TreasureDialog   ();
 // WZD o83p07
 // EZ_GoldManaReward   ();
+
 // WZD o83p08
-// STR_ListSeparator   ();
+// drake178: STR_ListSeparator()
+void STR_ListSeparator(int16_t * size, int16_t count, char * list)
+{
+    *size++;
+
+    if(*size == count)
+    {
+        if(*size > 1)
+        {
+            strcat(list, " and ");
+        }
+    }
+    else
+    {
+        if(*size > 1)
+        {
+            strcat(list, ", ");
+        }
+    }
+
+}
+
+
 // WZD o83p09
 // STR_GetIndefinite   ();
 // WZD o83p10
@@ -68,3 +91,4 @@ int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane)
 // EZ_SpecialTreasure  ();
 // WZD o83p14
 // EZ_GetBookRealm     ();
+

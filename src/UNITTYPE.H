@@ -3,21 +3,58 @@
 
 #include "MoX_TYPE.H"
 
+/*
+    (Special) Ranged Attack Types
+
+2-Byte, Signed
+"Special"   {100, 101, 102, 103, 104, 105}
+
+*/
+enum e_RANGED_ATTACK_TYPE
+{
+    rat_None         =  -1,
+
+    rat_Rock         =  10,
+    rat_Cannon       =  11,
+    rat_Bow          =  20,
+    rat_Sling        =  21,
+    rat_Unknown      =  22,
+    rat_Lightning    =  30,
+    rat_Fireball     =  31,
+    rat_Sorcery      =  32,
+    rat_Deathbolt    =  33,
+    rat_Icebolt      =  34,
+    rat_Pr_Shaman    =  35,
+    rat_Drow         =  36,
+    rat_Sprite       =  37,
+    rat_Nat_Bolt     =  38,
+
+    srat_Thrown      = 100,
+    srat_FireBreath  = 101,
+    srat_Lightning   = 102,
+    srat_StoneGaze   = 103,
+    srat_MultiGaze   = 104,
+    srat_DeathGaze   = 105
+};
+
+
 // sizeof:  24h  36d
+#pragma pack(push)
+#pragma pack(2)
 struct s_UNIT_TYPE
 {
     /* 00 */  char **  Name;                    /* offset (00036AA0) */
-    /* 02 */  int8_t   Melee;                   /* base 10 */
-    /* 03 */  int8_t   Ranged;                  /* base 10 */
-    /* 04 */  int8_t   Ranged_Type;
-    /* 05 */  int8_t   Ammo;                    /* base 10 */
-    /* 06 */  int8_t   To_Hit;                  /* base 10 */
-    /* 07 */  int8_t   Defense;                 /* base 10 */
-    /* 08 */  int8_t   Resist;                  /* base 10 */
-    /* 09 */  int8_t   Move_Halves;             /* base 10 */
-    /* 0A */  int16_t  Cost;                    /* base 10 */
-    /* 0C */  int8_t   Upkeep;                  /* base 10 */
-    /* 0D */  int8_t   Race;                    /* enum Race_Code */
+    /* 02 */  int8_t   Melee;
+    /* 03 */  int8_t   Ranged;
+    /* 04 */  int8_t   Ranged_Type;             // enum e_RANGED_ATTACK_TYPE
+    /* 05 */  int8_t   Ammo;
+    /* 06 */  int8_t   To_Hit;
+    /* 07 */  int8_t   Defense;
+    /* 08 */  int8_t   Resist;
+    /* 09 */  int8_t   Move_Halves;
+    /* 0A */  int16_t  Cost;
+    /* 0C */  int8_t   Upkeep;
+    /* 0D */  int8_t   Race;
     /* 0E */  // int8_t   Bldng1_or_Portrait;      /* enum BLD_TYPE */
     union
     {
@@ -31,19 +68,21 @@ struct s_UNIT_TYPE
         int8_t   hero_type;
     };
     /* 10 */  SAMB_ptr pict_seg;                /* segment pointers to LBX_Alloc_Space headers for reserved EMM file links */
-    /* 12 */  int8_t   Hits;                    /* base 10 */
-    /* 13 */  int8_t   Sight;                   /* base 10 */
-    /* 14 */  int8_t   Transport;               /* base 10 */
-    /* 15 */  int8_t   Figures;                 /* base 10 */
-    /* 16 */  int8_t   Construction;            /* base 10 */
-    /* 17 */  int8_t   Spec_Att_Attr;           /* base 10 */
+    /* 12 */  int8_t   Hits;
+    /* 13 */  int8_t   Sight;
+    /* 14 */  int8_t   Transport;
+    /* 15 */  int8_t   Figures;
+    /* 16 */  int8_t   Construction;
+    /* 17 */  int8_t   Spec_Att_Attr;
     /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
-    /* 1A */  uint16_t Attribs_1;               /* enum ATTRIB_1 */
-    /* 1C */  uint16_t Attribs_2;               /* enum ATTRIB_2 */
+    /* 1A */  int16_t Attribs_1;               /* enum ATTRIB_1 */
+    /* 1C */  int8_t Attribs_2;               /* enum ATTRIB_2 */
+    /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */
     /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */
     /* 22 */  int16_t  Sound;
 };
+#pragma pack(pop)
 
 
 

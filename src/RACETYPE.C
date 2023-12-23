@@ -57,7 +57,7 @@ char * _race_type_names[21] =
     race_type_name_020
 };
 
-
+// sizeof:  18h  24d
 struct s_RACE_TYPE _race_type_table[14] =
 {
     /*                D9 21   03 00  14 00  0A 00  19 00  00 00  00 00  00 00  00 00  0F 00  02 00  00 00 */

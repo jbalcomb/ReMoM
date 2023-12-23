@@ -64,6 +64,7 @@
 #define NUM_FORTRESSES              6
 #define NUM_NODES                  30
 #define NUM_LAIRS                 102
+#define MAX_STACK                   9
 
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
@@ -333,18 +334,24 @@ PS.  'MoM Demo' looks to have an array of strings for the defines / enum
     Unit Type - Movement Type
     s_UNIT_TYPE.Move_Flags
     enum MOVEFLAGS
+    data and code looks like a bitfield
+
+    UnitView & UnitList
+        Movement Type |-> Movement Type Icon  UNITVIEW.LBX, {11,12,13}
+        can't handle multiples - only tests 1 bit, in-order
 
 PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 */
 // 0b00000000  0x00      0
-#define M_Cavalry           0x01      // 0b00000001  0x01      1
-#define M_Sailing           0x02      // 0b00000010  0x02      2
-#define M_Swimming          0x04      // 0b00000100  0x04      4
-#define M_Flying            0x08      // 0b00001000  0x08      8
-#define M_Teleport          0x10      // 0b00010000  0x10     16
-#define M_Forester          0x20      // 0b00100000  0x20     32
-#define M_Mntnr             0x40      // 0b01000000  0x40     64
-#define M_Merging           0x80      // 0b10000000  0x80    128
+#define MV_WALKING           0x00      // 0b00000000  0x00      0
+#define MV_CAVALRY           0x01      // 0b00000001  0x01      1
+#define MV_SAILING           0x02      // 0b00000010  0x02      2
+#define MV_SWIMMING          0x04      // 0b00000100  0x04      4
+#define MV_FLYING            0x08      // 0b00001000  0x08      8
+#define MV_TELEPORT          0x10      // 0b00010000  0x10     16
+#define MV_FORESTER          0x20      // 0b00100000  0x20     32
+#define MV_MOUNTAINEER       0x40      // 0b01000000  0x40     64
+#define MV_MERGING           0x80      // 0b10000000  0x80    128
 
 /*
     Movement Modes
@@ -354,7 +361,7 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 #define SAILING             0x0002      // 0b00000010  0x02      2
 #define SWIMMING            0x0004      // 0b00000100  0x04      4
 #define FLYING              0x0008      // 0b00001000  0x08      8
-// 0b00010000  0x10     16
+#define TELEPORTING         0x0010      // 0b00010000  0x10     16
 #define FORESTER            0x0020      // 0b00100000  0x20     32
 #define MOUNTAINEER         0x0040      // 0b01000000  0x40     64
 // 0b10000000  0x80    128
@@ -531,6 +538,233 @@ SPL_CE_
 SPL_OE_
 
 */
+
+/*
+
+struc s_SPELL_DATA
+00000020 Param0 db ?                             ; unit type, base damage, UE flag, or CE index
+*/
+
+#define SPL_HYDRA 111
+/*
+; enum Spells
+No_spell  = 0
+Earth_to_Mud  = 1
+Resist_Elements  = 2
+Wall_of_Stone  = 3
+Giant_Strength  = 4
+Web  = 5
+War_Bears  = 6
+Stone_Skin  = 7
+Water_Walking  = 8
+Sprites  = 9
+Earth_Lore  = 10
+Cracks_Call  = 11
+Natures_eye  = 12
+Ice_Bolt  = 13
+Giant_Spiders  = 14
+Change_Terrain  = 15
+Path_Finding  = 16
+Cockatrices  = 17
+Transmute  = 18
+Natures_Cures  = 19
+Basilisk  = 20
+Elemental_Armor  = 21
+Petrify  = 22
+Stone_Giant  = 23
+Iron_Skin  = 24
+Ice_Storm  = 25
+Earthquake  = 26
+Gorgons  = 27
+Move_Fortress  = 28
+Gaias_Blessing  = 29
+Earth_Elemental  = 30
+Regeneration  = 31
+Behemoth  = 32
+Entangle  = 33
+Nature_Awareness  = 34
+Call_Lightning  = 35
+Colossus  = 36
+Earth_Gate  = 37
+Herb_Mastery  = 38
+Great_Wyrm  = 39
+Natures_Wrath  = 40
+Resist_Magic  = 41
+Dispel_Magic_True  = 42
+Floating_Island  = 43
+Guardian_Wind  = 44
+Phantom_Warriors  = 45
+Confusion  = 46
+Word_of_Recall  = 47
+Counter_Magic  = 48
+Nagas  = 49
+Psionic_Blast  = 50
+Blur  = 51
+Disenchant_True  = 52
+Vertigo  = 53
+Spell_Lock  = 54
+Enchant_Road  = 55
+Flight  = 56
+Wind_Mastery  = 57
+Spell_Blast  = 58
+Aura_of_Majesty  = 59
+Phantom_Beast  = 60
+Disjunction_True  = 61
+Invisibility  = 62
+Wind_Walking  = 63
+Banish  = 64
+Storm_Giant  = 65
+Air_Elemental  = 66
+Mind_Storm  = 67
+Stasis  = 68
+Magic_Immunity  = 69
+Haste  = 70
+Djinn  = 71
+Spell_Ward  = 72
+Creature_Binding  = 73
+Mass_Invisibility  = 74
+Great_Unsummoning  = 75
+Spell_Binding  = 76
+Flying_Fortress  = 77
+Sky_Drake  = 78
+Suppress_Magic  = 79
+Time_Stop  = 80
+Warp_Wood  = 81
+Disrupt  = 82
+Fire_Bolt  = 83
+Hell_Hounds  = 84
+Corruption  = 85
+Eldritch_Weapon  = 86
+Wall_of_Fire  = 87
+Shatter  = 88
+Warp_Creature  = 89
+Fire_Elemental  = 90
+Lightning_Bolt  = 91
+Fire_Giant  = 92
+Chaos_Channels  = 93
+Flame_Blade  = 94
+Gargoyles  = 95
+Fireball  = 96
+Doombat  = 97
+Raise_Volcano  = 98
+Immolation  = 99
+Chimeras  = 100
+Warp_Lightning  = 101
+Metal_Fires  = 102
+Chaos_Spawn  = 103
+Doom_Bolt  = 104
+Magic_Vortex  = 105
+Efreet  = 106
+Fire_Storm  = 107
+Warp_Reality  = 108
+Flame_Strike  = 109
+Chaos_Rift  = 110
+Hydra  = 111
+Disintegrate  = 112
+Meteor_Storm  = 113
+Great_Wasting  = 114
+Call_Chaos  = 115
+Chaos_Surge  = 116
+Doom_Mastery  = 117
+Great_Drake  = 118
+Call_The_Void  = 119
+Armageddon  = 120
+Bless  = 121
+Star_Fires  = 122
+Endurance  = 123
+Holy_Weapon  = 124
+Healing  = 125
+Holy_Armor  = 126
+Just_Cause  = 127
+True_Light  = 128
+Guardian_Spirit  = 129
+Heroism  = 130
+True_Sight  = 131
+Plane_Shift  = 132
+Resurrection  = 133
+Dispel_Evil  = 134
+Planar_Seal  = 135
+Unicorns  = 136
+Raise_Dead  = 137
+Planar_Travel  = 138
+Heavenly_Light  = 139
+Prayer  = 140
+Lionheart  = 141
+Incarnation  = 142
+Invulnerability  = 143
+Righteousness  = 144
+Prosperity  = 145
+Altar_of_Battle  = 146
+Angel  = 147
+Stream_of_Life  = 148
+Mass_Healing  = 149
+Holy_Word  = 150
+High_Prayer  = 151
+Inspirations  = 152
+Astral_Gate  = 153
+Holy_Arms  = 154
+Consecration  = 155
+Life_Force  = 156
+Tranquility  = 157
+Crusade  = 158
+Arch_Angel  = 159
+Charm_of_Life  = 160
+Skeletons  = 161
+Weakness  = 162
+Dark_Rituals  = 163
+Cloak_of_Fear  = 164
+Black_Sleep  = 165
+Ghouls  = 166
+Life_Drain  = 167
+Terror  = 168
+Darkness  = 169
+Mana_Leak  = 170
+Drain_Power  = 171
+Possession  = 172
+Lycantrophy  = 173
+Black_Prayer  = 174
+Black_Channels  = 175
+Night_Stalker  = 176
+Subversion  = 177
+Wall_of_Darkness  = 178
+Berserk  = 179
+Shadow_Demons  = 180
+Wraith_Form  = 181
+Wrack  = 182
+Evil_Presence  = 183
+Wraiths  = 184
+Cloud_of_Shadow  = 185
+Warp_Node  = 186
+Black_Wind  = 187
+Zombie_Mastery  = 188
+Famine  = 189
+Cursed_Lands  = 190
+Cruel_Unminding  = 191
+Word_of_Death  = 192
+Death_Knights  = 193
+Death_Spell  = 194
+Animate_Dead  = 195
+Pestilence  = 196
+Eternal_Night  = 197
+Evil_Omens  = 198
+Death_Wish  = 199
+Demon_Lord  = 200
+Magic_Spirit  = 201
+Dispel_Magic  = 202
+Summoning_Circle  = 203
+Disenchant_Area  = 204
+Recall_Hero  = 205
+Detect_Magic  = 206
+Enchant_Item  = 207
+Summon_Hero  = 208
+Awareness  = 209
+Disjunction  = 210
+Create_Artifact  = 211
+Summon_Champion  = 212
+Spell_Of_Mastery  = 213
+Spell_Of_Return  = 214
+*/
+
 
 /*
     Overland Enchantments

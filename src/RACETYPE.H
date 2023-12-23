@@ -5,6 +5,34 @@
 
 
 
+// drake178: enum Race_Code
+enum e_RACE_TYPE
+{
+    rt_Barbarian,
+    rt_Beastman,
+    rt_Dark_Elf,
+    rt_Draconian,
+    rt_Dwarf,
+    rt_Gnoll,
+    rt_Halfling,
+    rt_High_Elf,
+    rt_High_Man,
+    rt_Klackon,
+    rt_Lizardman,
+    rt_Nomad,
+    rt_Orc,
+    rt_Troll,
+    rt_Standard,
+    rt_Arcane,
+    rt_Nature,
+    rt_Sorcery,
+    rt_Chaos,
+    rt_Life,
+    rt_Death
+};
+
+
+
 // sizeof=0x18  24
 struct s_RACE_TYPE
 {

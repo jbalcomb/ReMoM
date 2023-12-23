@@ -346,7 +346,7 @@ void Enable_Cancel(void)
     mouse_cancel_disabled = ST_FALSE;
 }
 // WZD s36p09
-//drake178: UU_GUI_ClearEscOverride
+// drake178: UU_GUI_ClearEscOverride
 void Disable_Cancel(void)
 {
     mouse_cancel_disabled = ST_TRUE;
@@ -383,6 +383,34 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
     p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
 
     if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
+    {
+        p_fields[fields_count].hotkey -= 32;
+    }
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+}
+
+
+// WZD s36p39
+// drake178: GUI_CreateImageLabel()
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+{
+    p_fields[fields_count].x1 = xmin;
+    p_fields[fields_count].y1 = ymin;
+
+    p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg);
+    p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg);
+
+    p_fields[fields_count].help = help;
+
+    // p_fields[fields_count].Param5 = pict_seg;
+    p_fields[fields_count].pict_seg = pict_seg;
+
+    p_fields[fields_count].type = ft_Picture;
+
+    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
     {
         p_fields[fields_count].hotkey -= 32;
     }
@@ -613,58 +641,58 @@ void Draw_Fields()
             // DEDUCE: ¿ does this not include field types 05, 07, 08, 09, and 12 ?
             switch(p_fields[itr_fields_count].type)
             {
-                case ft_Button:                 /*  0  0x00 */  //drake178: TODO
+                case ft_Button:                 /*  0  0x00 */  // drake178: TODO
                 {
                     // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Button");
 
                     Draw_Field(itr_fields_count, 0);
 
                 } break;
-                case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
+                case ft_RadioButton:            /*  1  0x01 */  // drake178: ToggleButton
                 {
 
                 } break;
-                case ft_LockedButton:           /*  2  0x02 */  //drake178: LockableButton
+                case ft_LockedButton:           /*  2  0x02 */  // drake178: LockableButton
                 {
 
                 } break;
-                case ft_MultiButton:            /*  3  0x03 */  //drake178: MStateButton
+                case ft_MultiButton:            /*  3  0x03 */  // drake178: MStateButton
                 {
 
                 } break;
-                case ft_Input:                  /*  4  0x04 */  //drake178: EditBox
+                case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
                 {
 
                 } break;
-                case ft_ImageLabel:             /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
+                case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
                 {
 
                 } break;
-                case ft_Scroll:                 /*  6  0x06 */  //drake178: SlideBar
+                case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
                 {
 
                 } break;
-                case ft_HotKey:                 /*  7  0x07 */  //drake178: Label
+                case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
                 {
 
                 } break;
-                case ft_MultiHotKey:            /*  8  0x08 */  //drake178: Ctrl_AltString
+                case ft_MultiHotKey:            /*  8  0x08 */  // drake178: Ctrl_AltString
                 {
 
                 } break;
-                case ft_ClickLink:              /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
+                case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
                 {
 
                 } break;
-                case ft_StringList:             /* 10  0x0A */  //drake178: DialogLine
+                case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
                 {
 
                 } break;
-                case ft_ContinuousStringInput:  /* 11  0x0B */  //drake178: EditSelect
+                case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
                 {
 
                 } break;
-                case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
+                case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
                 {
                     // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Grid");
                     
@@ -766,7 +794,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 
     switch(p_fields[field_num].type)
     {
-        case ft_Button:                 /*  0  0x00 */  //drake178: TODO
+        case ft_Button:                 /*  0  0x00 */  // drake178: TODO
         {
             // DLOG("switch(p_fields[field_num].type) case ft_Button");
 
@@ -836,51 +864,51 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             }
 
         } break;
-        case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
+        case ft_RadioButton:            /*  1  0x01 */  // drake178: ToggleButton
         {
 
         } break;
-        case ft_LockedButton:           /*  2  0x02 */  //drake178: LockableButton
+        case ft_LockedButton:           /*  2  0x02 */  // drake178: LockableButton
         {
 
         } break;
-        case ft_MultiButton:            /*  3  0x03 */  //drake178: MStateButton
+        case ft_MultiButton:            /*  3  0x03 */  // drake178: MStateButton
         {
 
         } break;
-        case ft_Input:                  /*  4  0x04 */  //drake178: EditBox
+        case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
 
         } break;
-        case ft_ImageLabel:             /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
+        case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {
 
         } break;
-        case ft_Scroll:                 /*  6  0x06 */  //drake178: SlideBar
+        case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
         {
 
         } break;
-        case ft_HotKey:                 /*  7  0x07 */  //drake178: Label
+        case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
         {
 
         } break;
-        case ft_MultiHotKey:            /*  8  0x08 */  //drake178: Ctrl_AltString
+        case ft_MultiHotKey:            /*  8  0x08 */  // drake178: Ctrl_AltString
         {
 
         } break;
-        case ft_ClickLink:              /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
+        case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
         {
 
         } break;
-        case ft_StringList:             /* 10  0x0A */  //drake178: DialogLine
+        case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
         {
 
         } break;
-        case ft_ContinuousStringInput:  /* 11  0x0B */  //drake178: EditSelect
+        case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
         {
 
         } break;
-        case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
+        case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
         {
             // DLOG("switch(p_fields[field_num].type) case ft_Grid");
             if(up_down_flag == 1)  /* ¿ field up/down state: down ? */

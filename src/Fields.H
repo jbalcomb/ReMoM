@@ -38,19 +38,19 @@ sprintf(v13, (char*)ESTRINGS_E_Strings_(42));
 
 enum e_Field_Type
 {
-    ft_Button,                  /*  0  0x00 */  //drake178: TODO
-    ft_RadioButton,             /*  1  0x01 */  //drake178: ToggleButton
-    ft_LockedButton,            /*  2  0x02 */  //drake178: LockableButton
-    ft_MultiButton,             /*  3  0x03 */  //drake178: MStateButton
-    ft_Input,                   /*  4  0x04 */  //drake178: EditBox
-    ft_ImageLabel,              /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
-    ft_Scroll,                  /*  6  0x06 */  //drake178: SlideBar
-    ft_HotKey,                  /*  7  0x07 */  //drake178: Label
-    ft_MultiHotKey,             /*  8  0x08 */  //drake178: Ctrl_AltString
-    ft_ClickLink,               /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
-    ft_StringList,              /* 10  0x0A */  //drake178: DialogLine
-    ft_ContinuousStringInput,   /* 11  0x0B */  //drake178: EditSelect
-    ft_Grid                     /* 12  0x0C */  //drake178: TODO
+    ft_Button,                  /*  0  0x00 */  // drake178: TODO
+    ft_RadioButton,             /*  1  0x01 */  // drake178: ToggleButton
+    ft_LockedButton,            /*  2  0x02 */  // drake178: LockableButton
+    ft_MultiButton,             /*  3  0x03 */  // drake178: MStateButton
+    ft_Input,                   /*  4  0x04 */  // drake178: EditBox
+    ft_Picture,                 /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
+    ft_Scroll,                  /*  6  0x06 */  // drake178: SlideBar
+    ft_HotKey,                  /*  7  0x07 */  // drake178: Label
+    ft_MultiHotKey,             /*  8  0x08 */  // drake178: Ctrl_AltString
+    ft_ClickLink,               /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
+    ft_StringList,              /* 10  0x0A */  // drake178: DialogLine
+    ft_ContinuousStringInput,   /* 11  0x0B */  // drake178: EditSelect
+    ft_Grid                     /* 12  0x0C */  // drake178: TODO
     // MoO2 ft_IrregularButton  /* 13  0x0D */
     // MoO2 ft_Circle           /* 14  0x0E */
     // MoO2 ?!? Add_String_Field() ?!?
@@ -319,7 +319,7 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 // TODO  void Set_Global_Esc(void);
 void Enable_Cancel(void);
 // WZD s36p09
-//drake178: UU_GUI_ClearEscOverride
+// drake178: UU_GUI_ClearEscOverride
 void Disable_Cancel(void);
 
 
@@ -354,6 +354,9 @@ int16_t Get_Mouse_Field(void);
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * string);
 
+// WZD s36p39
+// drake178: GUI_CreateImageLabel()
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
 // WZD s36p42
 void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);

@@ -502,55 +502,55 @@ int16_t Interpret_Mouse_Input(void)
                 // TODO says switch 9 cases, but only actually handles 4 - figure out which, including the odd (type - 1) part
                 switch(p_fields[field_num].type)
                 {
-                    /*  0  0x00 */  //drake178: TODO
+                    /*  0  0x00 */  // drake178: TODO
                     case ft_Button:
                     {
 
                     } break;
 
-                    /*  1  0x01 */  //drake178: ToggleButton
+                    /*  1  0x01 */  // drake178: ToggleButton
                     case ft_RadioButton:
                     {
 
                     } break;
 
-                    /*  2  0x02 */  //drake178: LockableButton
+                    /*  2  0x02 */  // drake178: LockableButton
                     case ft_LockedButton:
                     {
 
                     } break;
 
-                    /*  3  0x03 */  //drake178: MStateButton
+                    /*  3  0x03 */  // drake178: MStateButton
                     case ft_MultiButton:
                     {
 
                     } break;
 
-                    /*  4  0x04 */  //drake178: EditBox
+                    /*  4  0x04 */  // drake178: EditBox
                     case ft_Input:
                     {
 
                     } break;
 
-                    /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
-                    case ft_ImageLabel:
+                    /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
+                    case ft_Picture:
                     {
 
                     } break;
 
-                    /*  6  0x06 */  //drake178: SlideBar
+                    /*  6  0x06 */  // drake178: SlideBar
                     case ft_Scroll:
                     {
 
                     } break;
 
-                    /*  7  0x07 */  //drake178: Label
+                    /*  7  0x07 */  // drake178: Label
                     case ft_HotKey:
                     {
 
                     } break;
 
-                    /*  8  0x08 */  //drake178: Ctrl_AltString
+                    /*  8  0x08 */  // drake178: Ctrl_AltString
                     case ft_MultiHotKey:
                     {
 

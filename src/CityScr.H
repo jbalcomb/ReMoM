@@ -62,7 +62,7 @@ void City_Screen__WIP(void);
 void City_Screen_Draw__WIP(void);
 
 // WZD o54p03
-void City_Screen_Draw___WIP(void);
+void City_Screen_Draw2__WIP(void);
 
 // WZD o54p04
 void City_Screen_Add_Fields__WIP(void);
@@ -95,7 +95,7 @@ void City_Screen_Draw_Garrison_Window(void);
 void City_Screen_Load(void);
 
 // WZD o54p14
-void Allocate_Reduced_Map_Load_Unit_Figure(void);
+void City_Screen_Allocate_First_Block(void);
 
 // WZD o54p15
 // drake178: CTY_GetBldngGFXSize()

@@ -14,7 +14,7 @@
 
 // WZD o116p01
 // drake178: UNIT_BU_ApplyItems()
-uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec)
+uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_STRATEGIC_UNIT * strategic_unit)
 {
     int16_t hero_slot_idx;
     int16_t unit_owner_idx;
@@ -27,9 +27,9 @@ uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_BU_ApplyItems()\n", __FILE__, __LINE__);
 #endif
 
-    BU_Rec->Item_UEs = 0;
-    BU_Rec->Melee_ATK_Flags = 0;
-    BU_Rec->Ranged_ATK_Flags = 0;
+    strategic_unit->Item_UEs = 0;
+    strategic_unit->Melee_ATK_Flags = 0;
+    strategic_unit->Ranged_ATK_Flags = 0;
 
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
@@ -51,10 +51,10 @@ uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec)
             {
                 item_idx = _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_item_count];
 
-                BU_Item_To_UEFlags(item_idx, BU_Rec);
+                BU_Item_To_UEFlags(item_idx, strategic_unit);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BU_Rec->Item_UEs: 0x%08X\n", __FILE__, __LINE__, BU_Rec->Item_UEs);
+    dbg_prn("DEBUG: [%s, %d]: strategic_unit->Item_UEs: 0x%08X\n", __FILE__, __LINE__, strategic_unit->Item_UEs);
 #endif
 
 
@@ -73,7 +73,7 @@ Return_Zero:
     goto Done;
 
 Return_Flags:
-// les     bx, [bp+BU_Rec@]
+// les     bx, [bp+strategic_unit@]
 // mov     ax, [word ptr bp+Return_Flags+2]
 // mov     dx, [word ptr bp+Return_Flags]
 // or      dx, [word ptr es:bx+BU_REC.Item_UEs]
@@ -94,7 +94,7 @@ Done:
 
 // WZD o116p02
 // drake178: BU_Item_To_UEFlags()
-void BU_Item_To_UEFlags(int16_t item_idx, struct s_BU_REC * BU_Rec)
+void BU_Item_To_UEFlags(int16_t item_idx, struct s_STRATEGIC_UNIT * strategic_unit)
 {
     uint32_t item_enchants;
 
@@ -155,16 +155,16 @@ void BU_Item_To_UEFlags(int16_t item_idx, struct s_BU_REC * BU_Rec)
     // IP_Holy_Avenger
 
 
-// les     bx, [bp+BU_Rec@]
+// les     bx, [bp+strategic_unit@]
 // mov     ax, [word ptr es:bx+(BU_REC.Item_UEs+2)]
 // mov     dx, [word ptr es:bx+BU_REC.Item_UEs]
 // or      dx, [word ptr bp+item_enchants]
 // or      ax, [word ptr bp+item_enchants+2]
-// les     bx, [bp+BU_Rec@]
+// les     bx, [bp+strategic_unit@]
 // mov     [word ptr es:bx+(BU_REC.Item_UEs+2)], ax
 // mov     [word ptr es:bx+BU_REC.Item_UEs], dx
 
-    BU_Rec->Item_UEs = item_enchants;
+    strategic_unit->Item_UEs = item_enchants;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: BU_Item_To_UEFlags()\n", __FILE__, __LINE__);
@@ -309,75 +309,75 @@ int16_t UNIT_GetHitsPerFig(int16_t unit_idx)
 // WZD o116p05
 
 // WZD o116p06
-void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit)
+void UNIT_Create_BURecord(int16_t unit_idx, struct s_STRATEGIC_UNIT * strategic_unit)
 {
     int16_t itr;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_Create_BURecord(unit_idx = %d, BattleUnit = %p)\n", __FILE__, __LINE__, unit_idx, BattleUnit);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_Create_BURecord(unit_idx = %d, strategic_unit = %p)\n", __FILE__, __LINE__, unit_idx, strategic_unit);
 #endif
 
-    memcpy(BattleUnit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
+    memcpy(strategic_unit, &_unit_type_table[_UNITS[unit_idx].type].Melee, sizeof(struct s_UNIT_TYPE));
 
-    BattleUnit->Combat_Effects = 0;
-    BattleUnit->Melee_To_Hit = 0;
-    BattleUnit->Ranged_To_Hit = 0;
-    BattleUnit->tohit = 0;
-    BattleUnit->To_Block = 0;
-    BattleUnit->Weapon_Plus1 = 0;
-    BattleUnit->Melee_ATK_Flags = 0;
-    BattleUnit->Ranged_ATK_Flags = 0;
-    BattleUnit->Item_UEs = 0;
-    BattleUnit->Extra_Hits = 0;
-    BattleUnit->unit_idx = unit_idx;
-    BattleUnit->Web_HP = 0;
-    BattleUnit->Gold_Melee = 0;
-    BattleUnit->Gold_Ranged = 0;
-    BattleUnit->Gold_Defense = 0;
-    BattleUnit->Gold_Resist = 0;
-    BattleUnit->Gold_Hits = 0;
-    BattleUnit->Grey_Melee = 0;
-    BattleUnit->Grey_Ranged = 0;
-    BattleUnit->Grey_Defense = 0;
-    BattleUnit->Grey_Resist = 0;
-    BattleUnit->Fig_IMG_Index = -1;
-    BattleUnit->Status = 0;
-    BattleUnit->owner_idx = _UNITS[unit_idx].owner_idx;
+    strategic_unit->Combat_Effects = 0;
+    strategic_unit->Melee_To_Hit = 0;
+    strategic_unit->Ranged_To_Hit = 0;
+    strategic_unit->tohit = 0;
+    strategic_unit->To_Block = 0;
+    strategic_unit->Weapon_Plus1 = 0;
+    strategic_unit->Melee_ATK_Flags = 0;
+    strategic_unit->Ranged_ATK_Flags = 0;
+    strategic_unit->Item_UEs = 0;
+    strategic_unit->Extra_Hits = 0;
+    strategic_unit->unit_idx = unit_idx;
+    strategic_unit->Web_HP = 0;
+    strategic_unit->Gold_Melee = 0;
+    strategic_unit->Gold_Ranged = 0;
+    strategic_unit->Gold_Defense = 0;
+    strategic_unit->Gold_Resist = 0;
+    strategic_unit->Gold_Hits = 0;
+    strategic_unit->Grey_Melee = 0;
+    strategic_unit->Grey_Ranged = 0;
+    strategic_unit->Grey_Defense = 0;
+    strategic_unit->Grey_Resist = 0;
+    strategic_unit->Fig_IMG_Index = -1;
+    strategic_unit->Status = 0;
+    strategic_unit->owner_idx = _UNITS[unit_idx].owner_idx;
     for(itr = 0; itr < 3; itr++)
     {
-        // BattleUnit->Regular_Dmg[itr] = 0;
-        *((&BattleUnit->Regular_Dmg) + itr) = 0;
+        // strategic_unit->Regular_Dmg[itr] = 0;
+        *((&strategic_unit->Regular_Dmg) + itr) = 0;
     }
-    BattleUnit->Unit_Enchants = 0;
-    BattleUnit->Suppression = 0;
-    BattleUnit->mana_max = 0;
-    BattleUnit->Item_Charges = 0;
-    BattleUnit->Target_BU = -1;
-    BattleUnit->Poison_Strength = 0;
+    strategic_unit->Unit_Enchants = 0;
+    strategic_unit->Suppression = 0;
+    strategic_unit->mana_max = 0;
+    strategic_unit->Item_Charges = 0;
+    strategic_unit->Target_BU = -1;
+    strategic_unit->Poison_Strength = 0;
     // ; returns the unit's gold Upkeep Cost, 0 for Noble
     // ; Heroes, Torin, and undead units; 1/2 for AI units
     // ; on Impossible; and 3/4 for AI units on Hard
-    BattleUnit->upkeep = Unit_Gold_Upkeep(unit_idx);
-    if( (BattleUnit->Attack_Flags & 0x04 /* Att_Poison */) != 0)
+    strategic_unit->upkeep = Unit_Gold_Upkeep(unit_idx);
+    if( (strategic_unit->Attack_Flags & 0x04 /* Att_Poison */) != 0)
     {
-        BattleUnit->Poison_Strength = BattleUnit->Spec_Att_Attrib;
+        strategic_unit->Poison_Strength = strategic_unit->Spec_Att_Attrib;
     }
-    if( (BattleUnit->ranged_type & 0x68 /* SR_MultiGaze */) != 0)
+    if( (strategic_unit->ranged_type & 0x68 /* SR_MultiGaze */) != 0)
     {
-        BattleUnit->Spec_Att_Attrib = 0;
+        strategic_unit->Spec_Att_Attrib = 0;
     }
 
-    BU_SetBaseStats(BattleUnit);
+    BU_SetBaseStats(strategic_unit);
 
-    BattleUnit->mana = BattleUnit->mana_max;
-    BattleUnit->Regular_Dmg = _UNITS[unit_idx].Damage;
+    strategic_unit->mana = strategic_unit->mana_max;
+    strategic_unit->Regular_Dmg = _UNITS[unit_idx].Damage;
 
 
 
 
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: UNIT_Create_BURecord(unit_idx = %d, BattleUnit = %p)\n", __FILE__, __LINE__, unit_idx, BattleUnit);
+    dbg_prn("DEBUG: [%s, %d]: END: UNIT_Create_BURecord(unit_idx = %d, strategic_unit = %p)\n", __FILE__, __LINE__, unit_idx, strategic_unit);
 #endif
 
 }
@@ -395,15 +395,15 @@ void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit)
     movement_points
     Hits
 */
-void BU_SetBaseStats(struct s_BU_REC * BattleUnit)
+void BU_SetBaseStats(struct s_STRATEGIC_UNIT * strategic_unit)
 {
     int16_t unit_idx;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: BU_SetBaseStats(BattleUnit = %p)\n", __FILE__, __LINE__, BattleUnit);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: BU_SetBaseStats(strategic_unit = %p)\n", __FILE__, __LINE__, strategic_unit);
 #endif
 
-    unit_idx = BattleUnit->unit_idx;
+    unit_idx = strategic_unit->unit_idx;
 
     // ...
     // ...
@@ -450,7 +450,7 @@ void BU_SetBaseStats(struct s_BU_REC * BattleUnit)
     // ...
     
 
-    BattleUnit->movement_points = UNIT_GetHalfMoves_WIP(unit_idx);
+    strategic_unit->movement_points = UNIT_GetHalfMoves_WIP(unit_idx);
 // mov     ax, _SI_unit_idx
 // mov     cl, 5
 // shl     ax, cl
@@ -458,14 +458,14 @@ void BU_SetBaseStats(struct s_BU_REC * BattleUnit)
 // add     bx, ax
 // mov     ax, [es:bx+s_UNIT.Enchants_HI]
 // mov     dx, [es:bx+s_UNIT.Enchants_LO]
-// les     bx, [bp+fp_BattleUnit]
+// les     bx, [bp+fp_CombatUnit]
 // or      dx, [word ptr es:bx+BU_REC.Item_UEs]
 // or      ax, [word ptr es:bx+(BU_REC.Item_UEs+2)]
 // mov     [bp+Enchants_HO], ax
 // mov     [bp+Enchants_LO], dx
 // 
 // 
-// les     bx, [bp+fp_BattleUnit]
+// les     bx, [bp+fp_CombatUnit]
 // cmp     [es:bx+BU_REC.movement_points], 3 ; BUG: value not in halves, but if it was, it would
 //                                         ; cause a display bug below
 //                                         ; this entire check is completely redundant, as the
@@ -482,15 +482,15 @@ void BU_SetBaseStats(struct s_BU_REC * BattleUnit)
 // and     ax, UE_Flight
 // or      dx, ax
 // jz      short @@Done_Almost
-// les     bx, [bp+fp_BattleUnit]          ; BUG: could override Wind Mastery malus overland, but
+// les     bx, [bp+fp_CombatUnit]          ; BUG: could override Wind Mastery malus overland, but
 //                                         ; only for display, causing a discrepancy
 // mov     [es:bx+BU_REC.movement_points], 6
 
 
-    BattleUnit->hits = UNIT_GetHitsPerFig(unit_idx);
+    strategic_unit->hits = UNIT_GetHitsPerFig(unit_idx);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: BU_SetBaseStats(BattleUnit = %p)\n", __FILE__, __LINE__, BattleUnit);
+    dbg_prn("DEBUG: [%s, %d]: END: BU_SetBaseStats(strategic_unit = %p)\n", __FILE__, __LINE__, strategic_unit);
 #endif
 
 }
