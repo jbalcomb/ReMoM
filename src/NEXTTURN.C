@@ -12,6 +12,32 @@
 #include "MainScr.H"
 #include "MainScr_Maps.H"
 #include "NEXTTURN.H"
+#include "WZD_o059.H"
+
+
+
+// WZD dseg:5E96                                                 ¿ BEGIN:  ovr121 - Strings ?
+
+// WZD dseg:5E96
+// message_lbx_file__121[] = "message";
+char message_lbx_file[] = "message";
+
+// WZD dseg:5E96                                                 ¿ END:  ovr121 - Strings ?              ; should use dseg:5aea
+
+
+
+// WZD dseg:6E4C                                                 ¿ BEGIN:  ovr140 - Strings ?
+
+// WZD dseg:6E4C
+// message_lbx_file__ovr140[] = "message";
+
+// WZD dseg:6E54
+char cnst_TooManyUnits[] = ". You must disband some units if you wish to build or summon any more.";
+// WZD dseg:6E9B 00                                              db    0
+// WZD dseg:6E9C 00                                              db    0
+// WZD dseg:6E9D 00                                              db    0
+
+// WZD dseg:6E9D                                                 ¿ END:  ovr140 - Strings ?
 
 
 
@@ -60,9 +86,10 @@ void Next_Turn_Proc(void)
     /*
         BEGIN: Messages
     */
+    if(MSG_Building_Complete_Count > 0)
+    {
 
-
-
+    }
     /*
         END: Messages
     */
@@ -72,7 +99,7 @@ void Next_Turn_Proc(void)
 // @@Done_WrapItUp
     current_screen = scr_Main_Screen;
 
-    // TODO  MSG_BuildDone_Count = 0;
+    // TODO  MSG_Building_Complete_Count = 0;
 
     Update_Units_MvsSts();
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
@@ -202,8 +229,8 @@ void Next_Turn_Calc(void)
 //                                         ; WARNING: the Target_X field may not be the best
 //                                         ; place to hold this information?
 
-// call    j_MSG_Clear                     ; zeroes the counters of all chancellor (scroll)
-//                                         ; message types, clearing all event messages
+    MSG_Clear();
+
 
     if(g_TimeStop_PlayerNum != 0)
     {
@@ -299,9 +326,9 @@ void Next_Turn_Calc(void)
 //                                         ; BUG: difficulty-based outpost growth modifiers are
 //                                         ; applied to both AI and human player outposts
 
-// call    j_CTY_ProgressTurn              ; processes population growth, production, and
-//                                         ; persistent city enchantment effects for all cities
-//                                         ; contains a host of BUGs, both own and inherited
+
+    CTY_ProgressTurn();
+
 
 // call    j_WIZ_ProcessGlobals            ; processes the diplomatic reactions and persistent
 //                                         ; effects of global enchantments and the Spell of
@@ -452,6 +479,169 @@ void Next_Turn_Calc(void)
 */
 
 // WZD o121p01
+// drake178: UNIT_Create()
+// MoO2  Module: COLBLDG  Colbldg_Create_Ship_() |-> Create_Ship_()
+/*
+
+    CTY_ProdProgress()
+        UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+
+R_Param
+    if >= 0 && < 2000
+        treats it as city_idx
+    if < -1
+        takes abs()-1 to index into TBL_Experience[9] = {0, 20, 60, 120, 200, 300, 450, 600, 1000}
+        {-2, -3, -4, -5, -6, -7, -8, -9 }
+        { 1,  2,  3,  4,  5,  6,  7,  8 }
+        then, updates s_UNIT.level from UNIT_GetLevel()
+
+*/
+int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
+{
+    
+    int16_t did_create_unit;  // DNE in Dasm
+    int16_t itr;  // _DI_
+
+    did_create_unit = ST_FALSE;
+
+    if(
+        (owner_idx == HUMAN_PLAYER_IDX) ||
+        (_units <= 950) ||
+        (R_Param == 2000)
+    )
+    {
+        if(
+            (R_Param == 2000) ||
+            (_units <= 980)
+        )
+        {
+            if(_units != 1000)
+            {
+                _UNITS[_units].wx = wx;
+                _UNITS[_units].wy = wy;
+                _UNITS[_units].wp = wp;
+                _UNITS[_units].owner_idx = owner_idx;
+                _UNITS[_units].HalfMoves_Max = _unit_type_table[unit_type].Move_Halves;
+                _UNITS[_units].type = unit_type;
+                _UNITS[_units].Hero_Slot = -1;
+                _UNITS[_units].In_Tower = ST_FALSE;
+                _UNITS[_units].Finished = ST_TRUE;
+                _UNITS[_units].HMoves = 0;
+                _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
+                _UNITS[_units].dst_wx = 0;
+                _UNITS[_units].dst_wy = 0;
+                _UNITS[_units].Status = 0;
+                _UNITS[_units].Level = 0;
+                _UNITS[_units].XP = 0;
+                _UNITS[_units].Damage = 0;
+                _UNITS[_units].Draw_Priority = 0;
+                _UNITS[_units].Enchants_HI = 0;
+                _UNITS[_units].Enchants_LO = 0;
+                _UNITS[_units].Mutations = 0;
+                _UNITS[_units].Move_Failed = 0;
+                _UNITS[_units].Rd_Constr_Left = -1;
+
+                if((R_Param < 0) || R_Param >= 2000)
+                {
+                    if(R_Param < -1)
+                    {
+                        R_Param = (abs(R_Param) - 1);
+                        _UNITS[_units].XP = TBL_Experience[R_Param];
+                        _UNITS[_units].Level = Unit_Level(_units);
+                    }
+                }
+                else  /* ((R_Param >= 0) && R_Param < 2000) */
+                {
+                    if(
+                        (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Built) ||
+                        (_CITIES[R_Param].bldg_status[bt_FightersGuild] == bs_Replaced)
+                    )
+                    {
+                        _UNITS[_units].XP = TBL_Experience[UL_REGULAR];
+                    }
+
+                    if(
+                        (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Built) ||
+                        (_CITIES[R_Param].bldg_status[bt_WarCollege] == bs_Replaced)
+                    )
+                    {
+                        _UNITS[_units].XP = TBL_Experience[UL_VETERAN];
+                    }
+
+                    if(_CITIES[R_Param].enchantments[ALTAR_OF_BATTLE] > 0)
+                    {
+                        _UNITS[_units].XP = TBL_Experience[UL_ELITE];
+                    }
+
+                    _UNITS[_units].Mutations = City_Best_Weapon(R_Param);
+
+                    if((_unit_type_table[unit_type].Abilities & 0x20) != 0)  /* Ab_CrOutpost */
+                    {
+                        _CITIES[R_Param].population -= 1;
+                        if(_CITIES[R_Param].population == 0)
+                        {
+                            _CITIES[R_Param].Pop_10s = 3;
+                            if(_CITIES[R_Param].owner_idx >= _num_players)
+                            {
+                                for(itr = 0; itr < _num_players; itr++)
+                                {
+                                    if(
+                                        (_CITIES[R_Param].wx == _FORTRESSES[itr].wx) &&
+                                        (_CITIES[R_Param].wy == _FORTRESSES[itr].wy) &&
+                                        (_CITIES[R_Param].wp == _FORTRESSES[itr].wp)
+                                    )
+                                    {
+                                        _CITIES[R_Param].population += 1;
+                                        if(itr == HUMAN_PLAYER_IDX)
+                                        {
+                                            LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);
+                                            // TODO  GUI_WarningType0(GUI_NearMsgString);
+                                            goto Done_Failure;
+                                        }
+                                    }
+                                }
+                            }
+                            // TODO  CTY_Remove(R_Param);
+                        }
+                    }
+
+                    if(
+                        (_players[owner_idx].alchemy > 0) &&
+                        (_UNITS[_units].Mutations == 0)
+                    )
+                    {
+                        _UNITS[_units].Mutations = wq_Magic;                        
+                    }
+
+                    if(
+                        (_players[owner_idx].Globals[CHAOS_SURGE] > 0) &&
+                        ((_unit_type_table[unit_type].Abilities & 0x01) == 0)  /* attr_FantasticUnit */
+                    )
+                    {
+                        // TODO  UNIT_ChaosChannel(_units);
+                    }
+
+                    _UNITS[_units].Level = Unit_Level(_units);
+                }
+
+                goto Done_Success;
+            }
+        }
+    }
+
+Done_Failure:
+    did_create_unit = ST_FALSE;
+    goto Done;
+
+Done_Success:
+    _units += 1;
+    did_create_unit = ST_TRUE;
+    goto Done;
+
+Done:
+
+    return did_create_unit;
+}
 
 
 // WZD o121p02
@@ -481,10 +671,24 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
 
 
 // WZD o121p03
+// drake178: WIZ_GetCastingCost()
+// WIZ_GetCastingCost()
+
 // WZD o121p04
+// drake178: WIZ_CastingCostBonus()
+// WIZ_CastingCostBonus()
+
 // WZD o121p05
+// drake178: WIZ_GetHeroCount()
+// WIZ_GetHeroCount()
+
 // WZD o121p06
+// drake178: WIZ_DeadHeroCount()
+// WIZ_DeadHeroCount()
+
 // WZD o121p07
+// drake178: WIZ_GetRandomHero()
+// WIZ_GetRandomHero()
 
 
 // WZD o121p08
@@ -579,10 +783,20 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 
 
 // WZD o121p09
+// drake178: UNIT_IsNormalUnit()
+// UNIT_IsNormalUnit()
 
 // WZD o121p10
+// drake178: ¿ ?
+// IDK_MagicScreen_PWR()
+
 // WZD o121p11
+// drake178: AI_GetThreat_UType()
+// AI_GetThreat_UType()
+
 // WZD o121p12
+// drake178: AI_GetThreat_UNIT()
+// AI_GetThreat_UNIT()
 
 
 // WZD o121p13
@@ -857,8 +1071,10 @@ _TrlSpearmen
 
 }
 
-// WZD o121p14
 
+// WZD o121p14
+// drake178: CTY_RemoveMessages()
+// CTY_RemoveMessages()
 
 
 
@@ -866,7 +1082,7 @@ _TrlSpearmen
     WIZARDS.EXE  ovr140
 */
 
-// WZD s140p01
+// WZD o140p01
 // drake178: CTY_RecalculateAll()
 void All_City_Calculations(void)
 {
@@ -888,10 +1104,206 @@ void All_City_Calculations(void)
 }
 
 
-// WZD s140p02
-// WZD s140p03
+// WZD o140p02
+// drake178: MSG_Clear()
+/*
+    Unit: Lost, Killed
+    UE, CE, OE: Lost
+    City: Loss, Gain
+    City: Grow, Shrink
+    Building: Lost
 
-// WZD s140p04
+    does not reset MSG_Building_Complete_Count
+*/
+void MSG_Clear(void)
+{
+    MSG_UnitLost_Count = 0;
+    MSG_UnitKilled_Count = 0;
+    MSG_UEsLost_Count = 0;
+    MSG_CEsLost_Count = 0;
+    MSG_GEs_Lost = 0;
+    MSG_CityGrowth_Count = 0;
+    MSG_CityDeath_Count = 0;
+    MSG_BldLost_Count = 0;
+    MSG_CityLost_Count = 0;
+    MSG_CityGained_Count = 0;
+}
+
+
+// WZD o140p03
+// drake178: CTY_ProdProgress()
+/*
+    accumulate production points
+        apply production points
+            create building
+            create unit
+    do 'Grand Vizier' // do 'Computer Player' product decision/selection
+
+*/
+void CTY_ProdProgress(int16_t city_idx)
+{
+    char city_name[20];
+    int16_t UU_garrison_units[9];
+    int16_t UU_garrison_count;
+    int16_t curr_prod_cost;  // _SI_
+
+    curr_prod_cost = City_Current_Product_Cost(city_idx);
+
+    if(_CITIES[city_idx].population > 0)
+    {
+        if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
+        {
+            _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+
+            if(_CITIES[city_idx].Prod_Accu >= curr_prod_cost)
+            {
+                if((_units + 1) < MAX_UNIT_COUNT)
+                {
+                    Create_Unit__WIP(
+                        (_CITIES[city_idx].construction - 100), 
+                        _CITIES[city_idx].owner_idx,
+                        _CITIES[city_idx].wx,
+                        _CITIES[city_idx].wy,
+                        _CITIES[city_idx].wp,
+                        city_idx
+                    );
+
+                    // TODO  UNIT_RemoveExcess(_units - 1);
+
+                    Get_Units_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
+
+                    if(
+                        (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) ||
+                        (grand_vizier == ST_TRUE)
+                    )
+                    {
+                        _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                    }
+
+                }
+                else
+                {
+                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                    {
+                        _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                    }
+                    else
+                    {
+                        LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);
+                        // TODO  String_Copy_Far(city_name, _CITIES[city_idx].name)
+                        strcpy(city_name, _CITIES[city_idx].name);
+                        strcat(GUI_NearMsgString, city_name);
+                        strcat(GUI_NearMsgString, cnst_TooManyUnits);
+                        // TODO  GUI_WarningType0(GUI_NearMsgString);
+
+                        if(
+                            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) &&
+                            (grand_vizier == ST_TRUE)
+                        )
+                        {
+                            _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                        }
+                        else
+                        {
+                            _CITIES[city_idx].construction = bt_TradeGoods;
+                        }
+                    }
+                }
+
+                _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
+            }
+
+        }
+        else  /* *Product* is 'Building' */
+        {
+            if(_CITIES[city_idx].construction < bt_Barracks)
+            {
+                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                {
+                    _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                }
+            }
+            else
+            {
+                if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+                {
+                    _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
+                }
+                else
+                {
+                    _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+                }
+
+                if(_CITIES[city_idx].Prod_Accu >= curr_prod_cost)
+                {
+
+                    assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
+                    // IDGI:  ¿ impossible state - unreachable code ?
+                    // #CRASHME
+                    if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)
+                    {
+                        _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+                    }
+                    else
+                    {
+                        _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+                        if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != -1)
+                        {
+                            _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+                        }
+
+                        if(
+                            (_CITIES[city_idx].construction == bt_Oracle) &&
+                            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                        )
+                        {
+                            TILE_ExploreRadius(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                        }
+
+                        _CITIES[city_idx].bldg_cnt += 1;
+
+                        _CITIES[city_idx].Prod_Accu = 0;
+
+                        if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                        {
+                            _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                        }
+                        else
+                        {
+                            if(MSG_Building_Complete_Count < 20)
+                            {
+                                MSG_Building_Complete[MSG_Building_Complete_Count].city_idx = city_idx;
+                                MSG_Building_Complete[MSG_Building_Complete_Count].bldg_type_idx = _CITIES[city_idx].construction;
+                            }
+
+                            if(grand_vizier == ST_TRUE)
+                            {
+                                _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                            }
+                            else
+                            {
+                                _CITIES[city_idx].construction = bt_Housing;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(
+            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) &&
+            (grand_vizier == ST_TRUE) &&
+            (_CITIES[city_idx].construction != -4)
+        )
+        {
+            // TODO  CTY_GrandVizier(city_idx);
+        }
+    }
+
+}
+
+
+// WZD o140p04
 // drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void)
 {
@@ -1040,7 +1452,7 @@ void Players_Apply_Magic_Power(void)
 }
 
 
-// WZD s140p06
+// WZD o140p06
 // drake178: WIZ_ProcessUpkeep()
 /*
     Applies Upkeeps to Gold and Mana
@@ -1145,16 +1557,151 @@ void Players_Apply_Upkeeps__WIP(void)
 }
 
 
-// WZD s140p07
-// WZD s140p08
-// WZD s140p09
-// WZD s140p10
-// WZD s140p11
-// WZD s140p12
-// WZD s140p13
-// WZD s140p14
-// WZD s140p15
-// WZD s140p16
+// WZD o140p07
+// drake178: WIZ_MatchFoodUpkeep()
+// WIZ_MatchFoodUpkeep()
+
+// WZD o140p08
+// drake178: WIZ_MatchGoldUpkeep()
+// WIZ_MatchGoldUpkeep()
+
+// WZD o140p09
+// drake178: WIZ_MatchManaUpkeep()
+// WIZ_MatchManaUpkeep()
+
+// WZD o140p10
+// drake178: WIZ_DisbandSummons()
+// WIZ_DisbandSummons()
+
+// WZD o140p11
+// drake178: WIZ_RemoveCEs()
+// WIZ_RemoveCEs()
+
+// WZD o140p12
+// drake178: WIZ_RemoveGEs()
+// WIZ_RemoveGEs()
+
+// WZD o140p13
+// drake178: WIZ_RemoveUEs()
+// WIZ_RemoveUEs()
+
+// WZD o140p14
+// drake178: N/A
+// sub_C538E()
+
+// WZD o140p15
+// drake178: N/A
+// sub_C53FA()
+
+
+// WZD o140p16
+// drake178: CTY_ProgressTurn()
+/*
+    Outpost loss
+    Outpost graduation  (NOT growth)
+    City population growth
+    City size increase
+    ¿ City size 1 Pop_10s default 5 ?
+    City size decrease
+    Pestilence City size decrease
+
+
+*/
+void CTY_ProgressTurn(void)
+{
+    int16_t Surplus_Farmers;
+    int16_t New_Min_Farmers;
+    int16_t Population_Growth;
+    int16_t itr;
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(_CITIES[itr].population == 0)
+        {
+            if(_CITIES[itr].Pop_10s <= 0)
+            {
+                if((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
+                {
+                    // TODO  String_Copy_Far(&MSG_CityLost_Names[(MSG_CityLost_Count], _CITIES[itr].name);
+                    strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr].name);
+                    MSG_CityLost_Count++;
+                }
+                // TODO  CTY_Remove(itr);
+            }
+
+            if(_CITIES[itr].Pop_10s >= 10)
+            {
+                _CITIES[itr].population = 1;
+                _CITIES[itr].size = 1;  /* CTY_Hamlet */
+                _CITIES[itr].farmer_count = City_Minimum_Farmers(itr);
+                Do_City_Calculations(itr);
+                if((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityGained_Count < 20))
+                {
+                    MSG_CityGained_Array[MSG_CityGained_Count] = itr;
+                    MSG_CityGained_Count++;
+                }
+            }
+        }
+        else
+        {
+            Population_Growth = City_Growth_Rate(itr);
+            _CITIES[itr].Pop_10s += Population_Growth;
+
+            if((_CITIES[itr].Pop_10s >= 100) && (_CITIES[itr].population < 25))
+            {
+                // TODO  grow city, add message
+            }
+
+            if(_CITIES[itr].Pop_10s < 0)
+            {
+                if(_CITIES[itr].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
+                {
+                    _CITIES[itr].Pop_10s = 5;
+                }
+                else
+                {
+                    // TODO  shrink city, add message
+                }
+            }
+
+            if(_CITIES[itr].enchantments[PESTILENCE] > 0)
+            {
+                if(_CITIES[itr].population > Random(10))
+                {
+                    // TODO  shrink city, add message
+                }
+            }
+            
+            CTY_ProdProgress(itr);
+
+        }
+
+
+        if(_CITIES[itr].enchantments[CONSECRATION] > 0)
+        {
+            // TODO  CTY_Consecration(itr);
+        }
+        if(_CITIES[itr].enchantments[STREAM_OF_LIFE] > 0)
+        {
+            // TODO  CTY_StreamOfLife(itr);
+        }
+        if(_CITIES[itr].enchantments[CHAOS_RIFT] > 0)
+        {
+            // TODO  CTY_ChaosRift(itr);
+        }
+        if(_CITIES[itr].enchantments[GAIAS_BLESSING] > 0)
+        {
+            // TODO  CTY_GaiasBlessing(itr);
+        }
+        if(_CITIES[itr].enchantments[NIGHTSHADE] > 0)
+        {
+            // TODO  CTY_NightshadeDispel(itr);
+        }
+    }
+
+    // TODO  TILE_CountVolcanoes()
+
+}
 
 
 // WZD o140p17
@@ -1198,15 +1745,46 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
 }
 
 
-// WZD s140p18
-// WZD s140p19
-// WZD s140p20
-// WZD s140p21
-// WZD s140p22
-// WZD s140p23
-// WZD s140p24
-// WZD s140p25
-// WZD s140p26
-// WZD s140p27
-// WZD s140p28
-// Cool_Off_Volcanoes
+// WZD o140p18
+// drake178: N/A
+// IDK_SplCst_SplSkl_sC5AB1()
+
+// WZD o140p19
+// drake178: EVNT_RandomOffers()
+// EVNT_RandomOffers()
+
+// WZD o140p20
+// drake178: WIZ_ResearchProgress()
+// WIZ_ResearchProgress()
+
+// WZD o140p21
+// drake178: WIZ_LearnSpell()
+// WIZ_LearnSpell()
+
+// WZD o140p22
+// drake178: G_UNIT_OvlHealing()
+// G_UNIT_OvlHealing()
+
+// WZD o140p23
+// drake178: N/A
+// IDK_Unit_Heal_sC6572()
+
+// WZD o140p24
+// drake178: WIZ_ProcessGlobals()
+// WIZ_ProcessGlobals()
+
+// WZD o140p25
+// drake178: N/A
+// IDK_Unit_XP_sC6BCF()
+
+// WZD o140p26
+// drake178: ¿ ?
+// Cool_Off_Volcanoes()
+
+// WZD o140p27
+// drake178: AI_CullTheWeak()
+// AI_CullTheWeak()
+
+// WZD o140p28
+// drake178: AI_GetAvgUnitCosts()
+// AI_GetAvgUnitCosts()

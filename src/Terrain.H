@@ -78,7 +78,8 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
 // WZD s161p19
-// CTY_GetWeaponQuality 
+int16_t City_Best_Weapon(int16_t city_idx);
+
 // WZD s161p20
 // TILE_GetRoadBldTime  
 // WZD s161p21

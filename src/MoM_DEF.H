@@ -66,6 +66,15 @@
 #define NUM_LAIRS                 102
 #define MAX_STACK                   9
 
+#define FST_HERO                    0
+#define LST_HERO                   34
+#define FST_NORM                   35
+#define LST_NORM                  153
+#define FST_FANT                  154
+#define LST_FANT                  192
+
+#define UNIT_LEVEL_MAX              8
+
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
 
@@ -306,6 +315,30 @@ hanging out in MoX_DEF.H
 
 
 
+
+/*
+    Normal Unit Level
+    Hero Unit Level
+*/
+
+#define UL_RECRUIT      0
+#define UL_REGULAR      1
+#define UL_VETERAN      2
+#define UL_ELITE        3
+#define UL_ULTRAELITE   4
+#define UL_CHAMPION     5
+
+#define HL_HERO         0
+#define HL_MYRMIDON     1
+#define HL_CAPTAIN      2
+#define HL_COMMANDER    3
+#define HL_CHAMPION     4
+#define HL_LORD         5
+#define HL_GRANDLORD    6
+#define HL_SUPERHERO    7
+#define HL_DEMIGOD      8
+
+
 /*
     Unit Action / Status / State
     - per 'MoM Demo'
@@ -489,6 +522,25 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 // 0b0010000000000000  0x2000   8192
 // 0b0100000000000000  0x4000  16384
 #define UE_INVISIBILITY     0x8000      // 0b1000000000000000  0x8000  32768
+
+// TODO(JimBalcomb,20231224): fix these up - got something mixed up somewhere
+// 0001 ; enum UE_FLAGS_H (bitfield)
+// 0001 UE_Wind_Walking  = 1
+// 0002 UE_Flight  = 2
+// 0004 UE_Resist_Magic  = 4
+// 0008 UE_Magic_Immunity  = 8
+// 0010 UE_Flame_Blade  = 10h
+// 0020 UE_Eldritch_Weapon  = 20h
+// 0040 UE_True_Sight  = 40h
+// 0080 UE_Holy_Weapon  = 80h
+// 0100 UE_Heroism  = 100h
+// 0200 UE_Bless  = 200h
+// 0400 UE_Lionheart  = 400h
+// 0800 UE_Giant_Strength  = 800h
+// 1000 UE_Planar_Travel  = 1000h
+// 2000 UE_Holy_Armor  = 2000h
+// 4000 UE_Righteousness  = 4000h
+// 8000 UE_Invulnerability  = 8000h
 
 
 /*
@@ -823,7 +875,7 @@ Spell_Of_Return  = 214
 #define CONSECRATION        0x16
 #define WALL_OF_DARKNESS    0x17
 #define ALTAR_OF_BATTLE     0x18
-
+#define NIGHTSHADE          0x19
 
 
 /*

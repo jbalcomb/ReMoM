@@ -66,7 +66,8 @@ void Screen_Control(void)
 
                 // HACK:  (4) Magicians  @  {18, 11}
                 _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
-
+                _CITIES[54].Prod_Accu = 280;
+                
                 // HACK:  visibility to support highlighting the Plane shift feature, for the public alpha demo release video
                 int16_t itr_world_size;
                 for(itr_world_size = 0; itr_world_size < WORLD_SIZE; itr_world_size++)

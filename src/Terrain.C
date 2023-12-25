@@ -836,7 +836,56 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
 
 
 // WZD s161p19
-// CTY_GetWeaponQuality 
+// drake178: CTY_GetWeaponQuality()
+// MoO2  Module: INITSHIP  Best_..._Weapon_()
+int16_t City_Best_Weapon(int16_t city_idx)
+{
+    int16_t wy_array[25];
+    int16_t wx_array[25];
+    int16_t weapon_quality;
+    int16_t city_wp;
+    int16_t useable_map_squares;
+    int16_t terrain_special;
+    int16_t itr;  // _DI_
+
+    weapon_quality = wq_Normal;
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Built) ||
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Replaced)
+    )
+    {
+        weapon_quality = wq_Magic;
+
+        city_wp = _CITIES[city_idx].wp;
+
+        useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+
+        for(itr = 0; itr < useable_map_squares; itr++)
+        {
+            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
+            if(terrain_special == 7)  /* TS_AdamantiumOre */
+            {
+                weapon_quality = wq_Adamantium;
+            }
+
+            if(
+                (terrain_special == 6) &&  /* TS_MithrilOre */
+                (weapon_quality != wq_Adamantium)
+            )
+            {
+                weapon_quality = wq_Mithril;
+            }
+
+        }
+
+    }
+
+    return weapon_quality;
+}
+
+
 // WZD s161p20
 // TILE_GetRoadBldTime  
 // WZD s161p21

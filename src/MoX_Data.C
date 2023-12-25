@@ -79,6 +79,24 @@ char * STR_TownSizes[6] =
 
 
 
+// WZD dseg:1D74
+// drake178: struct XP_TABLE TBL_Experience
+int16_t TBL_Experience[9] = {0, 20, 60, 120, 200, 300, 450, 600, 1000};
+// 00 struc XP_TABLE ; (sizeof=0x12, standard type)
+// 00 Hero_or_Recruit dw ?                    ; base 10
+// 02 Myrmidon_or_Regular dw ?                ; base 10
+// 04 Captain_or_Veteran dw ?                 ; base 10
+// 06 Cmdr_or_Elite dw ?                      ; base 10
+// 08 Champion dw ?                           ; base 10
+// 0A Lord_or_Ultra_Elite dw ?                ; base 10
+// 0C Grand_Lord dw ?                         ; base 10
+// 0E Super_Hero dw ?                         ; base 10
+// 10 Demi_God dw ?                           ; base 10
+// 12 ends XP_TABLE
+
+
+
+
 
 // WZD dseg:1D86                                                 dw 2                                    ; HouseType
 // WZD dseg:1ED6 89 20                                           STR_USW_NoRace@ dw offset cnst_ZeroString_3
@@ -1524,6 +1542,94 @@ int16_t _unit_stack_count;
 // WZD dseg:999E
 struct s_STACK _unit_stack[9];
 
+
+
+// WZD dseg:99C2
+// drake178: MSG_CityLost_Count
+int8_t MSG_CityLost_Count;
+
+// WZD dseg:99C3
+// drake178: MSG_CityLost_Names db 118h dup(0)
+char MSG_CityLost_Names[280];
+
+// WZD dseg:9ADB
+// drake178: MSG_CityGained_Count
+int8_t MSG_CityGained_Count;
+
+// WZD dseg:9ADC
+// drake178: MSG_CityGained_Array
+int8_t MSG_CityGained_Array[20];
+
+// WZD dseg:9AF0
+// drake178: MSG_BuildDone_Count
+int8_t MSG_Building_Complete_Count;
+
+// WZD dseg:9AF1 00                                              db    0
+
+// WZD dseg:9AF2
+// drake178: MSG_BuildDone_Array Building_Done_Msg_Item 14h dup(<0>)
+struct s_MSG_BUILDING_COMPLETE MSG_Building_Complete[20];
+
+// WZD dseg:9B42
+// drake178: MSG_BldLost_Count
+int8_t MSG_BldLost_Count;
+
+// WZD dseg:9B43 00                                              db    0
+
+// WZD dseg:9B44
+// drake178: MSG_BldLost_Array Building_Lost_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9B94
+// drake178: MSG_UnitLost_Count
+int8_t MSG_UnitLost_Count;
+
+// WZD dseg:9B95 00                                              db    0
+
+// WZD dseg:9B96
+// drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9BE6
+// drake178: MSG_UnitKilled_Count
+int8_t MSG_UnitKilled_Count;
+
+// WZD dseg:9BE7 00                                              db    0
+
+// WZD dseg:9BE8
+// drake178: MSG_UnitKilled_Array Unit_Killed_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9C38
+// drake178: MSG_CityGrowth_Count
+int8_t MSG_CityGrowth_Count;
+
+// WZD dseg:9C39
+// drake178: MSG_CityGrowth_Array db 14h dup(0)
+
+// WZD dseg:9C4D
+// drake178: MSG_CityDeath_Count
+int8_t MSG_CityDeath_Count;
+
+// WZD dseg:9C4E
+// drake178: MSG_CityDeath_Array db 14h dup(0) 
+
+// WZD dseg:9C62
+// drake178: MSG_UEsLost_Count
+int8_t MSG_UEsLost_Count;
+
+// WZD dseg:9C63
+// drake178: MSG_UEsLost_Array db 14h dup(0)   
+
+// WZD dseg:9C77
+// drake178: MSG_CEsLost_Count
+int8_t MSG_CEsLost_Count;
+
+// WZD dseg:9C78
+// drake178: MSG_CEsLost_Array db 14h dup(0)   
+
+// WZD dseg:9C8C
+// drake178: MSG_GEs_Lost
+int8_t MSG_GEs_Lost;
+
+// WZD dseg:9C8D 00                                              db    0
 
 
 

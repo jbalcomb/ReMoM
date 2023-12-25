@@ -5,7 +5,7 @@
 
 #include "MoM.H"
 #include "WZD_o059.H"
-
+#include "MainScr_Maps.H"  /* TILE_Explore(); */
 
 
 /*
@@ -68,7 +68,7 @@ void Get_Units_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[]
 Get Units - Unowned
 
 */
-void Get_Units_Other(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
+void Get_Units_Other__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
 {
 
 }
@@ -553,10 +553,9 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
         }
     }
 
-
-
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)\n", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
 #endif
+
     return _DI_return_value;
 }
