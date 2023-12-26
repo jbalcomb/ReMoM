@@ -13,7 +13,7 @@
 #include "MainScr_Maps.H"
 #include "NEXTTURN.H"
 #include "WZD_o059.H"
-
+#include "CityScr.H"  /* City_Screen__WIP(); */
 
 
 // WZD dseg:5E96                                                 ¿ BEGIN:  ovr121 - Strings ?
@@ -53,7 +53,11 @@ char cnst_TooManyUnits[] = ". You must disband some units if you wish to build o
 // WZD o60p04
 void Next_Turn_Proc(void)
 {
-    
+    char temp_string[20];
+    int16_t orig_map_plane;
+    int16_t itr_msg;  // _SI_
+    int16_t curr_prod_idx;  // _DI_
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()\n", __FILE__, __LINE__);
 #endif
@@ -88,7 +92,61 @@ void Next_Turn_Proc(void)
     */
     if(MSG_Building_Complete_Count > 0)
     {
+        // DONT  j_o62p01_Empty_pFxn(_human_player_idx);  // drake178: does nothing and returns zero; at some point must have been some wizard data refresh function
+        for(itr_msg = 0; itr_msg < MSG_Building_Complete_Count; itr_msg++)
+        {
+            if(MSG_Building_Complete[itr_msg].city_idx != -1)
+            {
+                _city_idx = MSG_Building_Complete[itr_msg].city_idx;
+                orig_map_plane = _map_plane;
+                _map_plane = _CITIES[_city_idx].wp;
+                if(MSG_Building_Complete[itr_msg].bldg_type_idx >= bt_NONE)
+                {
+                    city_built_bldg_idx = MSG_Building_Complete[itr_msg].bldg_type_idx;
+                    Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _map_plane);
+                    City_Built_Building_Message(5, 101, city_built_bldg_idx);
+                }
+                else  /* (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE) */
+                {
+                    if(_CITIES[_city_idx].construction == bt_GRANDVIZIER)
+                    {
+                        _CITIES[_city_idx].construction = bt_Housing;
+                    }
+                    else
+                    {
+                        strcpy(GUI_NearMsgString, "The ");
+                        strcat(GUI_NearMsgString, STR_TownSizes[_CITIES[_city_idx].size]);
+                        strcat(GUI_NearMsgString, " of ");
+                        // TODO  String_Copy_Far(near_buffer, _CITIES[_city_idx].name);
+                        strcpy(near_buffer, _CITIES[_city_idx].name);
+                        strcat(GUI_NearMsgString, near_buffer);
+                        strcat(GUI_NearMsgString, " can no longer produce ");
+                        curr_prod_idx = _CITIES[_city_idx].construction;
+                        if(curr_prod_idx >= 100)
+                        {
+                            curr_prod_idx -= 100;
+                            strcat(GUI_NearMsgString, *_unit_type_table[curr_prod_idx].Name);
+                        }
+                        else
+                        {
+                            // String_Copy_Far(temp_string, bldg_data_table[curr_prod_idx].name);
+                            strcpy(temp_string, bldg_data_table[curr_prod_idx].name);
+                            strcat(GUI_NearMsgString, STR_GetIndefinite(&temp_string[0]));
+                            strcat(GUI_NearMsgString, " ");
+                            strcat(GUI_NearMsgString, temp_string);
+                        }
+                        strcat(GUI_NearMsgString, ".");
+                        // TODO  GUI_WarningType0(GUI_NearMsgString);
+                    }
+                }
 
+                current_screen = scr_City_Screen;
+                City_Screen__WIP();
+                Set_Draw_Active_Stack_Always();
+                _map_plane = orig_map_plane;
+                MSG_Building_Complete[itr_msg].city_idx = -1;
+            }
+        }
     }
     /*
         END: Messages
@@ -1274,6 +1332,7 @@ void CTY_ProdProgress(int16_t city_idx)
                             {
                                 MSG_Building_Complete[MSG_Building_Complete_Count].city_idx = city_idx;
                                 MSG_Building_Complete[MSG_Building_Complete_Count].bldg_type_idx = _CITIES[city_idx].construction;
+                                MSG_Building_Complete_Count++;
                             }
 
                             if(grand_vizier == ST_TRUE)

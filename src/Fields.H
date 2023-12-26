@@ -120,11 +120,11 @@ struct s_Field
 // WZD dseg:78C4 mouse_y dw 100                          
 // WZD dseg:78C6 current_mouse_list_count dw 1           
 // WZD dseg:78C8 current_pointer_offset dw 0             
-// WZD dseg:78CA MOUSE_ClickRec1 dw 0                    
-// WZD dseg:78CC MOUSE_ClickX dw 0                       
-// WZD dseg:78CE MOUSE_ClickY dw 0                       
-// WZD dseg:78D0 MOUSE_ClickBtns dw 0                    
-// WZD dseg:78D2 MOUSE_ClickRec2 dw 0                    
+// WZD dseg:78CA mouse_buffer_flag dw 0                    
+// WZD dseg:78CC mouse_buffer_x dw 0                       
+// WZD dseg:78CE mouse_buffer_y dw 0                       
+// WZD dseg:78D0 mouse_buffer_button dw 0                    
+// WZD dseg:78D2 mouse_buffer_flag2 dw 0                    
 // WZD dseg:78D4 MOUSE_INT_Process dw 0                  
 // WZD dseg:78D6 mouse_save_flag dw 0                    
 // WZD dseg:78D8 MOUSE_InitX dw 158                      
@@ -151,7 +151,7 @@ struct s_Field
 // WZD dseg:824C KD_prev_field_idx dw 0                  
 
 // WZD dseg:824E
-// DONT  mouse_installed = ST_FALSE;                     
+extern int16_t mouse_installed;
 
 // WZD dseg:8250
 extern int16_t down_mouse_button;
@@ -182,10 +182,10 @@ extern int16_t down_y;
 extern struct s_mouse_list mouse_list_init[];
 
 // WZD dseg:8268
-// AKA GUI_MouseFocusCtrl
-extern int16_t GUI_MouseFocusCtrl;
-// ¿ int16_t focused_field = ST_UNDEFINED; ?
-// ¿ int16_t mouse_field = ST_FALSE; ?
+// drake178: GUI_MouseFocusCtrl
+// AKA mouse_field
+// MoO2  Module: fields  auto_input_variable
+extern int16_t auto_input_variable;
 
 // WZD dseg:826A GUI_MouseHighlight dw 1                 
 // WZD dseg:826C GUI_NoDialogWrap dw 0                   
@@ -262,9 +262,10 @@ extern int16_t input_delay;
 // dseg:E89C MOUSE_Emu_X dw 0           
 
 // WZD dseg:E89E
-extern int16_t cursor_offset;
+extern int16_t pointer_offset;
 
-// dseg:E8A0 GUI_PrevControlCount dw 0  
+// WZD dseg:E8A0
+extern int16_t temp_field_count;
 
 // WZD dseg:E8A2
 extern int16_t fields_count;
@@ -340,7 +341,9 @@ void Disable_Cancel(void);
 
 // WZD s36p20
 // drake178: GUI_GetMouseFocus()
-int16_t Get_Mouse_Field(void);
+// AKA Get_Mouse_Field()
+// MoO2  Module: fields  Auto_Input()
+int16_t Auto_Input(void);
 
 // WZD s36p22
 // KD int16_t Interpret_Keyboard_Input(char  * character);
@@ -349,6 +352,12 @@ int16_t Get_Mouse_Field(void);
 // INPUT  int16_t Scan_Input(void);
 // WZD s36p26
 // INPUT  int16_t Scan_Field(void);
+// WZD s36p27
+// INPUT  UU_GUI_KeyWaitLoop()
+// WZD s36p28
+// INPUT  G_GUI_ClearInput()
+// WZD s36p29
+// INPUT  G_GUI_PressAnyKey()
 
 
 // WZD s36p38

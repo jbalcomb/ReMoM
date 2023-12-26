@@ -17,6 +17,16 @@ extern "C" {
 
 
 
+enum e_TEXTBOX_BACKGROUND_COLOR
+{
+    tb_Blue,
+    tb_Red,
+    tb_Green,
+    tb_Brown
+};
+
+
+
 // WZD o149p01
 // drake178: GUI_Confirm_Dialog()
 int16_t Confirmation_Box(char * text_string);
@@ -52,15 +62,25 @@ void Selection_Box_Draw(void);
 void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_string);
 
 // WZD o149p10
-// GUI_LoadNotifyGfx   
+// drake178: GUI_LoadNotifyGfx()
+void Notify_Load(int16_t notify_color, SAMB_ptr notiy_pict_seg);
+
 // WZD o149p11
-// GUI_Notify_Dialog   
+// drake178: GUI_Notify_Dialog
+void Notify1__STUB(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int16_t Gem, SAMB_ptr notiy_pict_seg, int16_t IMGLeft, int16_t IMGTop, SAMB_ptr IMG2, int16_t IMG2Left, int16_t IMG2Top, int16_t CSlide, int16_t BGShade);
+
 // WZD o149p12
-// GUI_DrawNotifyDialog
+// drake178: GUI_DrawNotifyDialog
+void Notify1_Draw(void);
+
 // WZD o149p13
-// GUI_Familiar_Notify 
+// drake178: GUI_Familiar_Notify()
+void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int16_t Gem, SAMB_ptr notiy_pict_seg, int16_t IMGLeft, int16_t IMGTop, SAMB_ptr IMG2, int16_t IMG2Left, int16_t IMG2Top, int16_t CSlide, int16_t BGShade);
+
 // WZD o149p14
-// GUI_DrawFamiliarNtfy
+// drake178: GUI_DrawFamiliarNtfy()
+void Notify2_Draw(void);
+
 // WZD o149p15
 // HLP_NoResizeExpand  
 // WZD o149p16

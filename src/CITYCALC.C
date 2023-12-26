@@ -970,9 +970,9 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
             {
                 research_bonus += 15;
             }
-            if(_players[player_idx].spellrank_nature > 7)
+            if(_players[player_idx].spellranks[sbr_Nature] > 7)
             {
-                research_bonus += ((_players[player_idx].spellrank_nature - 7) * 10);
+                research_bonus += ((_players[player_idx].spellranks[sbr_Nature] - 7) * 10);
             }
         } break;
         case 1:  /* Sorcery */
@@ -982,9 +982,9 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
             {
                 research_bonus += 15;
             }
-            if(_players[player_idx].spellrank_sorcery > 7)
+            if(_players[player_idx].spellranks[sbr_Sorcery] > 7)
             {
-                research_bonus += ((_players[player_idx].spellrank_sorcery - 7) * 10);
+                research_bonus += ((_players[player_idx].spellranks[sbr_Sorcery] - 7) * 10);
             }
         } break;
         case 2:  /* Chaos */
@@ -994,25 +994,25 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
             {
                 research_bonus += 15;
             }
-            if(_players[player_idx].spellrank_chaos > 7)
+            if(_players[player_idx].spellranks[sbr_Chaos] > 7)
             {
-                research_bonus += ((_players[player_idx].spellrank_chaos - 7) * 10);
+                research_bonus += ((_players[player_idx].spellranks[sbr_Chaos] - 7) * 10);
             }
         } break;
         case 3:  /* Life */
         {
             DLOG("switch(magic_realm)  case 3:");
-            if(_players[player_idx].spellrank_life > 7)
+            if(_players[player_idx].spellranks[sbr_Life] > 7)
             {
-                research_bonus += ((_players[player_idx].spellrank_life - 7) * 10);
+                research_bonus += ((_players[player_idx].spellranks[sbr_Life] - 7) * 10);
             }
         } break;
         case 4:  /* Death */
         {
             DLOG("switch(magic_realm)  case 4:");
-            if(_players[player_idx].spellrank_death > 7)
+            if(_players[player_idx].spellranks[sbr_Death] > 7)
             {
-                research_bonus += ((_players[player_idx].spellrank_death - 7) * 10);
+                research_bonus += ((_players[player_idx].spellranks[sbr_Death] - 7) * 10);
             }
         } break;
         case 5:  /* Arcane */
@@ -2013,11 +2013,11 @@ int16_t City_Mana_Production(int16_t city_idx)
         )
         {
             spell_ranks = (
-                _players[city_owner_idx].spellrank_nature + 
-                _players[city_owner_idx].spellrank_sorcery +
-                _players[city_owner_idx].spellrank_chaos +
-                _players[city_owner_idx].spellrank_life +
-                _players[city_owner_idx].spellrank_death
+                _players[city_owner_idx].spellranks[0] + 
+                _players[city_owner_idx].spellranks[1] +
+                _players[city_owner_idx].spellranks[2] +
+                _players[city_owner_idx].spellranks[3] +
+                _players[city_owner_idx].spellranks[4]
             );
 
             if(city_wp != 0)
@@ -2059,7 +2059,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].spellrank_death != 0) &&
+            (_players[city_owner_idx].spellranks[sbr_Death] != 0) &&
             (*(events_table + 38) == 2)  /* Good_Moon.Status */
         )
         {
@@ -2067,7 +2067,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].spellrank_life != 0) &&
+            (_players[city_owner_idx].spellranks[sbr_Life] != 0) &&
             (*(events_table + 40) == 2)  /* Bad_Moon.Status */
         )
         {
@@ -2080,7 +2080,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].spellrank_life != 0) &&
+            (_players[city_owner_idx].spellranks[sbr_Life] != 0) &&
             (*(events_table + 38) == 2)  /* Good_Moon.Status */
         )
         {
@@ -2088,7 +2088,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].spellrank_death != 0) &&
+            (_players[city_owner_idx].spellranks[sbr_Death] != 0) &&
             (*(events_table + 40) == 2)  /* Bad_Moon.Status */
         )
         {
@@ -2508,7 +2508,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
     if(
         (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE) &&
-        (_players[city_owner_idx].spellrank_death == 0)
+        (_players[city_owner_idx].spellranks[sbr_Death] == 0)
     )
     {
 

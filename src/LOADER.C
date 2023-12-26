@@ -1140,9 +1140,9 @@ mov     [IMG_CTY_WallofFire@], ax
 
     /*
         loads building picts in of bldg idx
-            bldg_pics_seg[{3, ..., 30}]
-            bldg_pics_seg[31]
-            bldg_pics_seg[{32,33}]
+            bldg_picts_seg[{3, ..., 30}]
+            bldg_picts_seg[31]
+            bldg_picts_seg[{32,33}]
         the array skips elements {0,1,2} for None, Housing, and TradeGoods
     */
     // CITYSCAP.LBX,  45  ANIBUILD    barracks
@@ -1151,11 +1151,11 @@ mov     [IMG_CTY_WallofFire@], ax
     // CITYSCAP.LBX,  72  BUILDS3     farmer's market
     for(itr1 = 3; itr1 <= 30; itr1++)
     {
-        bldg_pics_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (42 + itr1), GFX_Swap_Seg);
+        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (42 + itr1), GFX_Swap_Seg);
     }
 
     // CITYSCAP.LBX,  78  BUILDS2     forester's guild
-    bldg_pics_seg[31] = LBX_Reload_Next(cityscap_lbx_file, 78, GFX_Swap_Seg);
+    bldg_picts_seg[31] = LBX_Reload_Next(cityscap_lbx_file, 78, GFX_Swap_Seg);
     // 34th element  bt_ForestersGuild     = 31
 
     // CITYSCAP.LBX,  73  BUILDS2     builder's hall
@@ -1163,7 +1163,7 @@ mov     [IMG_CTY_WallofFire@], ax
     // CITYSCAP.LBX,  75  BUILDS2     miner's guild
     for(itr1 = 32; itr1 <= 34; itr1++)
     {
-        bldg_pics_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (41 + itr1), GFX_Swap_Seg);
+        bldg_picts_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (41 + itr1), GFX_Swap_Seg);
     }
 
 

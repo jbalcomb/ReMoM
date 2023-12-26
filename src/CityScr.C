@@ -415,7 +415,7 @@ void City_Screen__WIP(void)
 
 
 
-    IDK_completed_bldg_idx = ST_UNDEFINED;
+    cityscreen_city_built_bldg_idx = ST_UNDEFINED;
     Deactivate_Auto_Function();
     Deactivate_Help_List();
     Clear_Fields();
@@ -462,12 +462,12 @@ void City_Screen_Draw__WIP(void)
 
     Reset_Window();
 
-    if(IDK_completed_bldg_idx != ST_UNDEFINED)
+    if(cityscreen_city_built_bldg_idx != ST_UNDEFINED)
     {
         /* jmp  short $+2 */
     }
 
-    Cityscape_Draw__WIP(_city_idx, 4, 101, IDK_completed_bldg_idx, IDK_completed_bldg_idx);
+    Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
 
     // TODO  IDK_City_Cityscape_Draw_MouseOver(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
@@ -866,7 +866,90 @@ void City_Screen_Draw_Buttons(void)
 }
 
 // WZD o54p08
-// IDK_BuilingCompletedMessage
+void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx)
+{
+    SAMB_ptr dst_pict_seg;
+    int16_t tmp_strlen;
+    int16_t Sound_Data_Seg;
+    int16_t width;
+    int16_t height;
+    int16_t ystart;
+    int16_t xstart;
+
+    int16_t bitm_x;  // _SI_
+    int16_t bitm_y;  // _DI_
+
+    // TODO  SND_Silence();
+    Allocate_Reduced_Map();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+
+    // TODO  OVL_DisplayMainScrn();
+
+
+    Copy_On_To_Off_Page();
+    GUI_String_1 = (char *)Near_Allocate_First(100);
+    GUI_String_2 = (char *)Near_Allocate_Next(100);
+    dst_pict_seg = Allocate_First_Block(_screen_seg, 500);
+    strcpy(GUI_String_1, "The ");
+    strcat(GUI_String_1, STR_TownSizes[_CITIES[_city_idx].size]);
+    strcat(GUI_String_1, " of ");
+    // TODO  String_Copy_Far(GUI_String_2, _CITIES[_city_idx].name);
+    strcpy(GUI_String_2, _CITIES[_city_idx].name);
+    strcat(GUI_String_1, GUI_String_2);
+    strcat(GUI_String_1, " has completed the construction of ");
+    // String_Copy_Far(GUI_String_2, bldg_data_table[city_built_bldg_idx].name);
+    strcpy(GUI_String_2, bldg_data_table[city_built_bldg_idx].name);
+    strcat(GUI_String_1, STR_GetIndefinite(&GUI_String_2[0]));
+    strcat(GUI_String_1, " ");
+    if(city_built_bldg_idx == bt_CityWalls)
+    {
+        tmp_strlen = strlen(GUI_String_2);
+        GUI_String_2[(tmp_strlen - 1)] = 0;
+    }
+    strcat(GUI_String_1, GUI_String_2);
+    strcat(GUI_String_1, ".");
+
+    if(magic_set.Event_Music == ST_TRUE)
+    {
+        // TODO  Sound_Data_Seg = LBX_Reload(music_lbx_file, MUSIC_Bldng_Finished, SND_Music_Segment);
+        // TODO  SND_PlayFile(Sound_Data_Seg);
+    }
+
+    bitm_x = 0;
+    bitm_y = 8;
+
+    if(city_built_bldg_idx == bt_CityWalls)
+    {
+        Draw_Picture_To_Bitmap(cityscape_big_city_wall_seg, dst_pict_seg);
+    }
+    else
+    {
+        Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], dst_pict_seg);
+    }
+
+    Get_Bitmap_Actual_Size(dst_pict_seg, &xstart, &ystart, &width, &height);
+
+    bitm_x += (xstart - ((41 - width) / 2));
+    bitm_y += (ystart - ((43 - height) / 2));
+
+    Copy_On_To_Off_Page();
+
+    if(city_built_bldg_idx == bt_CityWalls)
+    {
+        Notify2(160, 60, tb_Green, GUI_String_1, 0, city_new_build_notify_grass_seg, 0, 8, cityscape_big_city_wall_seg, bitm_x, bitm_y, 0, 0);
+    }
+    else
+    {
+        Notify2(160, 60, tb_Green, GUI_String_1, 0, city_new_build_notify_grass_seg, 0, 8, bldg_picts_seg[bldg_idx],    bitm_x, bitm_y, 0, 0);
+    }
+
+    // TODO  SND_PlayBkgrndTrack();
+
+    IDK_Clear_Cityscape_Vanish_Percent();
+    cityscreen_city_built_bldg_idx = bldg_idx;
+}
+
 
 // WZD o54p09
 // NameStartingCity_Dialog_Popup
@@ -1033,8 +1116,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
     else
     {
         // Building Type / Product Idx:  {3, ..., 34}
-        current_frame = FLIC_Get_CurrentFrame(bldg_pics_seg[bldg_idx]);
-        frame_count = FLIC_Get_FrameCount(bldg_pics_seg[bldg_idx]);
+        current_frame = FLIC_Get_CurrentFrame(bldg_picts_seg[bldg_idx]);
+        frame_count = FLIC_Get_FrameCount(bldg_picts_seg[bldg_idx]);
     }
 
     min_x1 = 0;
@@ -1066,8 +1149,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
         else
         {
             // Building Type / Product Idx:  {3, ..., 34}
-            FLIC_Set_CurrentFrame(bldg_pics_seg[bldg_idx], itr_frames);
-            Draw_Picture_To_Bitmap(bldg_pics_seg[bldg_idx], bitmap);
+            FLIC_Set_CurrentFrame(bldg_picts_seg[bldg_idx], itr_frames);
+            Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], bitmap);
             Get_Bitmap_Actual_Size(bitmap, &l_x1, &l_y1, &l_width, &l_height);
         }
 
@@ -1104,8 +1187,8 @@ void Draw_Building_Picture_To_Bitmap(int16_t city_idx, int16_t bldg_idx, int16_t
     else
     {
         // Building Type / Product Idx:  {3, ..., 34}
-        FLIC_Set_CurrentFrame(bldg_pics_seg[bldg_idx], current_frame);
-        Draw_Picture_To_Bitmap(bldg_pics_seg[bldg_idx], bitmap);
+        FLIC_Set_CurrentFrame(bldg_picts_seg[bldg_idx], current_frame);
+        Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], bitmap);
     }
 
 }

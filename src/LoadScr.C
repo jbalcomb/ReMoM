@@ -568,13 +568,13 @@ void Load_Screen_Draw(void)
 
     /*
         MGC
-            current_menu_screen = Get_Mouse_Field();
+            current_menu_screen = Auto_Input();
     */
     /*
         WZD
-            moused_field = Get_Mouse_Field();
+            moused_field = Auto_Input();
     */
-    moused_field = Get_Mouse_Field();
+    moused_field = Auto_Input();
 
 
     x_start = 43;

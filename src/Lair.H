@@ -45,7 +45,8 @@ int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane);
 void STR_ListSeparator(int16_t * size, int16_t count, char * list);
 
 // WZD o83p09
-// STR_GetIndefinite   ();
+char * STR_GetIndefinite(char * word);
+
 // WZD o83p10
 // EZ_GenerateRewards  ();
 // WZD o83p11

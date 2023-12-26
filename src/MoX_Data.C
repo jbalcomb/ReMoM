@@ -761,7 +761,7 @@ SAMB_ptr unit_grass_diamond_seg;
 
 // WZD dseg:92B8
 // drake178: IMG_CTY_Buildings BLDNG_GFX
-SAMB_ptr bldg_pics_seg[35];
+SAMB_ptr bldg_picts_seg[35];
 
 // WZD dseg:92FE
 // drake178: IMG_CTY_CITYSPL4
@@ -1886,7 +1886,7 @@ int16_t IDK_city_production_cost;
 int16_t IDK_city_n_turns_to_produce;
 
 // WZD dseg:BFB4
-int16_t IDK_completed_bldg_idx;
+int16_t cityscreen_city_built_bldg_idx;
 
 // WZD dseg:BFB6
 int16_t production_screen_return_screen;
@@ -1981,7 +1981,10 @@ SAMB_ptr _reduced_map_seg;
 // WZD dseg:C088                                                                                         ; only XREF Main_Screen(), sets TRUE, never tests
 // WZD dseg:C08A 00 00                                           SND_Bkgrnd_Track dw 0                   ; DATA XREF: IDK_SND_BkGrnd_s518AE+1Er ...
 // WZD dseg:C08A                                                                                         ; the current power-based background music track index
-// WZD dseg:C08C 00 00                                           word_42B2C dw 0                         ; DATA XREF: sub_499B1+E0r ...
+
+// WZD dseg:C08C
+int16_t city_built_bldg_idx;
+
 // WZD dseg:C08E 00 00                                           STK_HMoves_Left dw 0                    ; DATA XREF: OVL_GetStackHMoves:@@Donew ...
 // WZD dseg:C090 00 00                                           dw 0
 

@@ -312,16 +312,30 @@ enum e_BUILDING_STATUS
 
 /*
     Magic Realm
-*/
 
-/*
-enum Magic Realm
-mr_Chaos = 0,
-mr_Death = 1,
-mr_Life = 2,
-mr_Nature = 3,
-mr_Sorcery = 4,
+not in order of S_WIZARD.spellranks[]  {nature, sorcery, chaos, life, death}
+in MsgBox, xlats from idx to mr  
 */
+enum e_MAGIC_REALM
+{
+    mr_Chaos    = 0,
+    mr_Death    = 1,
+    mr_Life     = 2,
+    mr_Nature   = 3,
+    mr_Sorcery  = 4
+};
+/*
+    s_WIZARD.spellranks
+    'Message Box' - type/color
+*/
+enum e_SPELLBOOK_RANK
+{
+    sbr_Nature   = 0,
+    sbr_Sorcery  = 1,
+    sbr_Chaos    = 2,
+    sbr_Life     = 3,
+    sbr_Death    = 4
+};
 
 
 /*
@@ -750,11 +764,12 @@ struct s_WIZARD
     /* 0058 */ uint16_t tax_rate;
 
 /* 005A struct s_BOOKSHELF Books; */
-    /* 005A */ int16_t spellrank_nature;
-    /* 005C */ int16_t spellrank_sorcery;
-    /* 005E */ int16_t spellrank_chaos;
-    /* 0060 */ int16_t spellrank_life;
-    /* 0062 */ int16_t spellrank_death;
+//     /* 005A */ int16_t spellrank_nature;   +0
+//     /* 005C */ int16_t spellrank_sorcery;  +2
+//     /* 005E */ int16_t spellrank_chaos;    +4
+//     /* 0060 */ int16_t spellrank_life;     +6
+//     /* 0062 */ int16_t spellrank_death;    +8
+    /* 005A */ int16_t spellranks[5];
 
 /* 0064 struct s_RETORTS Retorts; */
     /* 064 */ int8_t alchemy;
@@ -1911,7 +1926,7 @@ extern SAMB_ptr unit_grass_diamond_seg;
 
 // WZD dseg:92B8
 // drake178: IMG_CTY_Buildings BLDNG_GFX
-extern SAMB_ptr bldg_pics_seg[35];
+extern SAMB_ptr bldg_picts_seg[35];
 
 // WZD dseg:92FE
 // drake178: IMG_CTY_CITYSPL4
@@ -2997,7 +3012,7 @@ extern int16_t IDK_city_production_cost;
 extern int16_t IDK_city_n_turns_to_produce;
 
 // WZD dseg:BFB4
-extern int16_t IDK_completed_bldg_idx;
+extern int16_t cityscreen_city_built_bldg_idx;
 
 // WZD dseg:BFB6
 extern int16_t production_screen_return_screen;
@@ -3093,7 +3108,10 @@ extern SAMB_ptr _reduced_map_seg;
 // WZD dseg:C088                                                                                         ; only XREF Main_Screen(), sets TRUE, never tests
 // WZD dseg:C08A 00 00                                           SND_Bkgrnd_Track dw 0                   ; DATA XREF: IDK_SND_BkGrnd_s518AE+1Er ...
 // WZD dseg:C08A                                                                                         ; the current power-based background music track index
-// WZD dseg:C08C 00 00                                           word_42B2C dw 0                         ; DATA XREF: sub_499B1+E0r ...
+
+// WZD dseg:C08C
+extern int16_t city_built_bldg_idx;
+
 // WZD dseg:C08E 00 00                                           STK_HMoves_Left dw 0                    ; DATA XREF: OVL_GetStackHMoves:@@Donew ...
 // WZD dseg:C090 00 00                                           dw 0
 
