@@ -900,6 +900,7 @@ int16_t Wait_For_Input(void)
             }
         }
         Mouse_Button_Handler();
+        Call_Auto_Function();
     }
 
     if(mouse_button_flag != ST_FALSE)

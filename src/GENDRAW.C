@@ -1392,13 +1392,13 @@ void Notify1_Draw(void)
     if(IMG_GUI_Dialog_Pic != ST_NULL)
     {
         Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic, GfxBuf_2400B);
-        FLIC_Draw((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
+        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
     }
 
     if(IMG_GUI_Dialog_Pic2 != ST_NULL)
     {
         Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic2, GfxBuf_2400B);
-        FLIC_Draw((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
+        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
     }
 
     if(GUI_Notify_Color == 3)
@@ -1545,7 +1545,7 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
 
     message_box_y = Top;
 
-    // Assign_Auto_Function(Notify2_Draw(), 1);
+    Assign_Auto_Function(&Notify2_Draw, 1);
 
     Load_Palette_From_Animation(notify_seg[GUI_Notify_Color]);
 
@@ -1573,7 +1573,7 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
     Set_Palette_Changes(0, 223);
     Clear_Palette_Changes(198, 198);
     // TODO  Update_Remap_Gray_Palette();
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Restore_Alias_Colors();
     Reset_Window();
     Restore_ScreenSeg();
@@ -1648,15 +1648,15 @@ void Notify2_Draw(void)
     if(IMG_GUI_Dialog_Pic != ST_NULL)
     {
         Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic, GfxBuf_2400B);
-// not1        FLIC_Draw((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
-        FLIC_Draw((xadd + GUI_Notify_IMG_Left + 7), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
+// not1        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
+        Draw_Picture((xadd + GUI_Notify_IMG_Left + 7), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
     }
 
     if(IMG_GUI_Dialog_Pic2 != ST_NULL)
     {
         Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic2, GfxBuf_2400B);
-// not1        FLIC_Draw((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
-        FLIC_Draw((GUI_Notify_IMG2_Left + xadd + 7), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
+// not1        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
+        Draw_Picture((GUI_Notify_IMG2_Left + xadd + 7), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
     }
 
 // not1    if(GUI_Notify_Color == 3)

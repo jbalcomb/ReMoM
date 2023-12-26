@@ -21,6 +21,8 @@ int16_t Mouse_Button(void)
     //     mouse_button_status = mouse_right_button + mouse_left_button;
     // }
 
+    Pump_Events();
+
     return platform_mouse_button_status;
 }
 
