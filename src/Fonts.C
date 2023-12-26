@@ -1642,32 +1642,16 @@ void Load_Palette(int entry, int start_color, int end_color)
 }
 
 
-
-
 // WZD s20p02
 // drake178: VGA_ResetShade0()
-// MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
+void Update_Remap_Gray_Palette(void)
+{
+    Create_Remap_Palette(0, 0, 0, 0, 50);
+}
 
-// WZD s20p02
-// drake178: VGA_ResetShade0()
-// MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
 
 // WZD s20p03
 // drake178: VGA_SetShades_Grey0()
-// MoO2: ~ Update_Glass_Remap_Colors()
-// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors table 0 is set to shades of 50% black instead of whatever the palette originally had (the same)
-// MoO2: Calculate_Remap_Gray_Palettes_
-    // 1oom: lbxpal_build_colortables();
-    // MoO2: Calculate_Picture_Remap_Colors() |-> Create_Picture_Remap_Palette()
-// ¿ remaps colors based on the on the data in the screen buffer ? ¿ for animations, pictures, bitmaps, and sprites ?
-// drake178: Replacement_Colors@ table by combining
-// drake178: Shading_Colors@
-// gsa_ShadingColors ~== glass_colors
-// Replacement_Colors ~== glass_remap_colors[16][256]
 void Calculate_Remap_Colors(void)
 {
     int16_t itr_blocks;
@@ -1678,17 +1662,7 @@ void Calculate_Remap_Colors(void)
     uint8_t blue;
     uint8_t percent;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Calculate_Remap_Colors()\n", __FILE__, __LINE__);
-#endif
-
-    // Create_Remap_Palette(0, 0, 0, 0, 50);
-    block = 0;
-    red = 0;
-    green = 0;
-    blue = 0;
-    percent = 50;
-    Create_Remap_Palette(block, red, green, blue, percent);
+    Create_Remap_Palette(0, 0, 0, 0, 50);
 
     for(itr_blocks = 1; itr_blocks < 24; itr_blocks++)
     {
@@ -1701,17 +1675,11 @@ void Calculate_Remap_Colors(void)
         Create_Remap_Palette(block, red, green, blue, percent);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Calculate_Remap_Colors()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD s20p04
 // drake178: VGA_SetShades_Range()
-// MoO2: ~ Update_Glass_Remap_Color_Range()
-// fills out the Replacement_Colors@ table by combining Shading_Colors@ with any changed palette colors,
-//   but only for the color sets indicated by the confines table 0 is set to shades of 50% black instead of whatever the palette originally had, if included
 void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
 {
     int16_t itr_blocks;
@@ -1722,13 +1690,11 @@ void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
     uint8_t blue;
     uint8_t percent;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Remap_Color_Range(first_set = %d, last_set = %d)\n", __FILE__, __LINE__, first_set, last_set);
-#endif
+    assert((first_set >= last_set));
 
     if(last_set < first_set)
     {
-        // TODO  MEM_SwapWord(first_set, last_set);
+        MEM_SwapWord(&first_set, &last_set);
     }
 
     if(first_set == 0)
@@ -1750,9 +1716,6 @@ void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
         Create_Remap_Palette(block, red, green, blue, percent);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Remap_Color_Range(first_set = %d, last_set = %d)\n", __FILE__, __LINE__, first_set, last_set);
-#endif
 }
 
 
@@ -2037,35 +2000,37 @@ void Create_Remap_Palette(int16_t block, uint8_t red, uint8_t green, uint8_t blu
 {
     uint8_t vpercent;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Remap_Palette(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-#endif
-
     vpercent = (100 - percent);
 
-    if(vpercent > 0)                    /* percent < 100 */
+    if(vpercent <= 0)               /* (percent >= 100) */
     {
-        DLOG("(vpercent > 0)  (percent < 100)");
-        if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
-        {
-            DLOG("(vpercent < 100)");
-            Create_Remap_Palette_(block, red, green, blue, percent);
-        }
-        else                            /* (percent < 100) && (percent < 0) */
-        {
-            DLOG("(vpercent >= 100)  (percent <= 0)");
-            Create_Remap_Palette_0(block);
-        }
-    }
-    else
-    {
-        DLOG("(vpercent <= 0)  (percent >= 100)");        /* (percent >= 100) */
         Create_Remap_Palette_1(block, red, green, blue);
     }
+    else if(vpercent >= 100)         /* (percent <= 0) */
+    {
+        Create_Remap_Palette_0(block);
+    }
+    else                            /* (percent > 0) && (percent < 100) */
+    {
+        Create_Remap_Palette_(block, red, green, blue, percent);
+    }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Remap_Palette(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-#endif
+//     if(vpercent > 0)                    /* percent < 100 */
+//     {
+//         if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
+//         {
+//             Create_Remap_Palette_(block, red, green, blue, percent);
+//         }
+//         else                            /* (percent < 100) && (percent < 0) */
+//         {
+//             Create_Remap_Palette_0(block);
+//         }
+//     }
+//     else                                /* (percent >= 100) */
+//     {
+//         Create_Remap_Palette_1(block, red, green, blue);
+//     }
+
 }
 
 void Create_Remap_Palette_0(int16_t block)
@@ -2073,10 +2038,6 @@ void Create_Remap_Palette_0(int16_t block)
     uint8_t * remap_palette;
     uint8_t colormap_idx;
     uint16_t counter;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Remap_Palette_0(block = %d)\n", __FILE__, __LINE__, block);
-#endif
 
     remap_palette = (uint8_t *)(remap_color_palettes + (block * 256));
 
@@ -2087,9 +2048,6 @@ void Create_Remap_Palette_0(int16_t block)
         *remap_palette++ = colormap_idx++;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Remap_Palette_0(block = %d)\n", __FILE__, __LINE__, block);
-#endif
 }
 
 /*
@@ -2102,17 +2060,10 @@ void Create_Remap_Palette_1(int16_t block, uint8_t red, uint8_t green, uint8_t b
     uint8_t * remap_palette;
     uint8_t closest;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Remap_Palette_1(block = %d, red = %02X, green = %02X, blue = %02X)\n", __FILE__, __LINE__, block, red, green, blue);
-#endif
-
     remap_palette   = (uint8_t *)(remap_color_palettes + (block * 256));
     closest = Find_Closest_Color(red, green, blue);
     memset(remap_palette, closest, 256);  // ~== `REP STOSB`
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Remap_Palette_1(block = %d, red = %02X, green = %02X, blue = %02X)\n", __FILE__, __LINE__, block, red, green, blue);
-#endif
 }
 
 /*
@@ -2136,87 +2087,39 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
     uint8_t * remap_palette;
     uint8_t * current_palette;
     uint16_t ofst;
-
     uint8_t vpercent;
-
     uint16_t color2_multiplier;
-
     uint16_t color1_multiplier;
-
     uint8_t color2_red;
     uint8_t color2_grn;
     uint8_t color2_blu;
-
     uint8_t color1_red;
     uint8_t color1_grn;
     uint8_t color1_blu;
-
     uint8_t color2_red_portion;
     uint8_t color2_grn_portion;
     uint8_t color2_blu_portion;
-
     uint8_t color1_red_portion;
     uint8_t color1_grn_portion;
     uint8_t color1_blu_portion;
-
     uint8_t color3_red;
     uint8_t color3_grn;
     uint8_t color3_blu;
-
     uint8_t closest;
     
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Remap_Palette_(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-#endif
-
-#ifdef STU_DEBUG
-    if(block == 1)  /* DEBUG.LOG: "BEGIN: Create_Remap_Palette_(block = 1, red = 3F, green = 3F, blue = 3F, percent = 25)" */
-    {
-        DBG_Create_Remap_Palette = 1;
-        DBG_Find_Closest_Color = 1;
-        dbg_prn("DEBUG: [%s, %d]: DBG_Create_Remap_Palette: %d\n", __FILE__, __LINE__, DBG_Create_Remap_Palette);
-        dbg_prn("DEBUG: [%s, %d]: DBG_Find_Closest_Color: %d\n", __FILE__, __LINE__, DBG_Find_Closest_Color);
-    }
-#endif
-
     color2_red = red;
     color2_grn = green;
     color2_blu = blue;
 
     vpercent = (100 - percent);
-#ifdef STU_DEBUG
-    if(DBG_Create_Remap_Palette == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: percent: %d\n", __FILE__, __LINE__, percent);
-        dbg_prn("DEBUG: [%s, %d]: vpercent: %d\n", __FILE__, __LINE__, vpercent);
-    }
-#endif
-
-
 
     color2_multiplier = (( percent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
     color1_multiplier = ((vpercent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
-#ifdef STU_DEBUG
-    if(DBG_Create_Remap_Palette == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: color2_multiplier: %d\n", __FILE__, __LINE__, color2_multiplier);
-        dbg_prn("DEBUG: [%s, %d]: color1_multiplier: %d\n", __FILE__, __LINE__, color1_multiplier);
-    }
-#endif
 
     // MoO2: tint_red = glass_colors[].red * glass_colors[].percent
     color2_red_portion = ((color2_red * color2_multiplier) >> 8);
     color2_grn_portion = ((color2_grn * color2_multiplier) >> 8);
     color2_blu_portion = ((color2_blu * color2_multiplier) >> 8);
-#ifdef STU_DEBUG
-    if(DBG_Create_Remap_Palette == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: color2_red_portion: %02X\n", __FILE__, __LINE__, color2_red_portion);
-        dbg_prn("DEBUG: [%s, %d]: color2_grn_portion: %02X\n", __FILE__, __LINE__, color2_grn_portion);
-        dbg_prn("DEBUG: [%s, %d]: color2_blu_portion: %02X\n", __FILE__, __LINE__, color2_blu_portion);
-    }
-#endif
 
     remap_palette   = (uint8_t *)(remap_color_palettes + (block * 256));
     current_palette = (uint8_t *)(p_Palette);
@@ -2232,61 +2135,22 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
             color1_red = *(current_palette + ofst++);
             color1_grn = *(current_palette + ofst++);
             color1_blu = *(current_palette + ofst++);
-#ifdef STU_DEBUG
-    if(DBG_Find_Closest_Color == 1 && itr == 0x74)
-    {
-        DLOG("(DBG_Find_Closest_Color == 1 && itr == 0x74)");
-        dbg_prn("DEBUG: [%s, %d]: color1_red: %02X\n", __FILE__, __LINE__, color1_red);
-        dbg_prn("DEBUG: [%s, %d]: color1_grn: %02X\n", __FILE__, __LINE__, color1_grn);
-        dbg_prn("DEBUG: [%s, %d]: color1_blu: %02X\n", __FILE__, __LINE__, color1_blu);
-    }
-#endif
 
             color1_red_portion = ((color1_red * color1_multiplier) >> 8);
             color1_grn_portion = ((color1_grn * color1_multiplier) >> 8);
             color1_blu_portion = ((color1_blu * color1_multiplier) >> 8);
-#ifdef STU_DEBUG
-    if(DBG_Find_Closest_Color == 1 && itr == 0x74)
-    {
-        dbg_prn("DEBUG: [%s, %d]: color1_red_portion: %02X\n", __FILE__, __LINE__, color1_red_portion);
-        dbg_prn("DEBUG: [%s, %d]: color1_grn_portion: %02X\n", __FILE__, __LINE__, color1_grn_portion);
-        dbg_prn("DEBUG: [%s, %d]: color1_blu_portion: %02X\n", __FILE__, __LINE__, color1_blu_portion);
-    }
-#endif
 
             color3_red = color1_red_portion + color2_red_portion;
             color3_grn = color1_grn_portion + color2_grn_portion;
             color3_blu = color1_blu_portion + color2_blu_portion;
-#ifdef STU_DEBUG
-    if(DBG_Find_Closest_Color == 1 && itr == 0x74)
-    {
-        dbg_prn("DEBUG: [%s, %d]: color3_red: %02X\n", __FILE__, __LINE__, color3_red);
-        dbg_prn("DEBUG: [%s, %d]: color3_grn: %02X\n", __FILE__, __LINE__, color3_grn);
-        dbg_prn("DEBUG: [%s, %d]: color3_blu: %02X\n", __FILE__, __LINE__, color3_blu);
-    }
-#endif
 
             closest = 0;
             closest = Find_Closest_Color(color3_red, color3_grn, color3_blu);
         }
-#ifdef STU_DEBUG
-    if(DBG_Find_Closest_Color == 1 && itr == 0x74)
-    {
-        DLOG("(DBG_Find_Closest_Color == 1 && itr == 0x74)");
-        dbg_prn("DEBUG: [%s, %d]: closest: %02X\n", __FILE__, __LINE__, closest);
-    }
-#endif
+
         *(remap_palette + itr) = closest;
     }
 
-#ifdef STU_DEBUG
-        DBG_Create_Remap_Palette = 0;
-        DBG_Find_Closest_Color = 0;
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Create_Remap_Palette_(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-#endif
 }
 
 /*
@@ -2495,435 +2359,3 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
 // #endif
     return found_color;
 }
-
-// TODO  // 1oom: uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b)
-// TODO  uint8_t Find_Closest_Color(uint8_t r, uint8_t g, uint8_t b)
-// TODO  {
-// TODO      uint8_t min_c = 0;
-// TODO      int min_dist = 10000;
-// TODO      // uint8_t *p = lbxpal_palette;
-// TODO      uint8_t *p = p_Palette;
-// TODO      for (int i = 0; i < 256; ++i) {
-// TODO          int dist;
-// TODO          dist = abs(r - *p++);
-// TODO          dist += abs(g - *p++);
-// TODO          dist += abs(b - *p++);
-// TODO          if (dist < min_dist) {
-// TODO              min_dist = dist;
-// TODO              min_c = i;
-// TODO              if (dist == 0) {
-// TODO                  break;
-// TODO              }
-// TODO          }
-// TODO      }
-// TODO      return min_c;
-// TODO  }
-
-
-
-// DELETE  void Create_Remap_Palette_ASM(int16_t block, uint8_t red, uint8_t green, uint8_t blue, uint8_t percent)
-// DELETE  {
-// DELETE      uint8_t vpercent;
-// DELETE      uint16_t src_sgmt;
-// DELETE      uint16_t src_ofst;
-// DELETE      uint8_t * src_ptr;
-// DELETE      uint16_t dst_sgmt;
-// DELETE      uint16_t dst_ofst;
-// DELETE      uint8_t * dst_ptr;
-// DELETE      uint8_t colormap_idx;
-// DELETE      int16_t counter;
-// DELETE      int16_t dc;
-// DELETE      uint8_t color;
-// DELETE      uint16_t red2;
-// DELETE      uint16_t green2;
-// DELETE      uint16_t blue2;
-// DELETE      int16_t dif_red;
-// DELETE      int16_t dif_green;
-// DELETE      int16_t dif_blue;
-// DELETE      uint16_t current_dif;
-// DELETE      uint8_t closest;
-// DELETE      uint8_t palette_flag;
-// DELETE  
-// DELETE      uint16_t color1_multiplier;
-// DELETE      uint16_t color2_multiplier;
-// DELETE      uint8_t color1_red;
-// DELETE      uint8_t color1_green;
-// DELETE      uint8_t color1_blue;
-// DELETE      uint8_t color2_red;
-// DELETE      uint8_t color2_green;
-// DELETE      uint8_t color2_blue;
-// DELETE      uint8_t color1_red_portion;
-// DELETE      uint8_t color1_green_portion;
-// DELETE      uint8_t color1_blue_portion;
-// DELETE      uint8_t color2_red_portion;
-// DELETE      uint8_t color2_green_portion;
-// DELETE      uint8_t color2_blue_portion;
-// DELETE      uint8_t color3_red;
-// DELETE      uint8_t color3_green;
-// DELETE      uint8_t color3_blue;
-// DELETE      uint8_t palette_red;
-// DELETE      uint8_t palette_green;
-// DELETE      uint8_t palette_blue;
-// DELETE      // uint16_t CS_closest;
-// DELETE      // uint16_t CS_closest_dif;
-// DELETE      uint16_t closest_dif;
-// DELETE      int16_t itr_remap_palette;
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: BEGIN: Create_Remap_Palette(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-// DELETE  #endif
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(block == 1)
-// DELETE      {
-// DELETE          DBG_Create_Remap_Palette = 1;
-// DELETE          dbg_prn("DEBUG: [%s, %d]: DBG_Create_Remap_Palette: %d\n", __FILE__, __LINE__, DBG_Create_Remap_Palette);
-// DELETE      }
-// DELETE  #endif
-// DELETE      // CS_red1 = red;
-// DELETE      // CS_green1 = green;
-// DELETE      // CS_blue1 = blue;
-// DELETE      color2_red = red;
-// DELETE      color2_green = green;
-// DELETE      color2_blue = blue;
-// DELETE  
-// DELETE      vpercent = (100 - percent);
-// DELETE  
-// DELETE      if(vpercent > 0)  /* percent < 100 */
-// DELETE      {
-// DELETE          DLOG("(vpercent > 0)");
-// DELETE          if(vpercent < 100)
-// DELETE          {
-// DELETE              DLOG("(vpercent < 100)");
-// DELETE              // // uint8_t temp_scale = (vpercent * 256) / 100;
-// DELETE              // // uint8_t temp_mul = (percent * 256) / 100;
-// DELETE              // // uint8_t r_add = (pr * temp_mul) >> 8;
-// DELETE              // // uint8_t g_add = (pg * temp_mul) >> 8;
-// DELETE              // // uint8_t b_add = (pb * temp_mul) >> 8;
-// DELETE              // CS_Orig_Multiplier   = (vpercent * 256) / 100;  // e.g., 100 - 25 = 75 * 256 = 19200 / 100 = 192
-// DELETE              // CS_Perc_Target_Red   = ((red   * ((percent * 256) / 100)) >> 8);  // e.g., 63 * (25 * 256) / 100 = 63 * 6400 / 100 = 403200 / 100 = 4032 / 256 = 15.75
-// DELETE              // CS_Perc_Target_Green = ((green * ((percent * 256) / 100)) >> 8);
-// DELETE              // CS_Perc_Target_Blue  = ((blue  * ((percent * 256) / 100)) >> 8);
-// DELETE              // // e.g., rmap block 1: percent == 25; vpercent == 100-25=75
-// DELETE              color1_multiplier = (vpercent * 256) / 100;
-// DELETE              color2_multiplier = ( percent * 256) / 100;
-// DELETE  
-// DELETE              color2_red_portion   = ((red   * color2_multiplier) >> 8);
-// DELETE              color2_green_portion = ((green * color2_multiplier) >> 8);
-// DELETE              color2_blue_portion  = ((blue  * color2_multiplier) >> 8);
-// DELETE  
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Create_Remap_Palette == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_multiplier: %d\n", __FILE__, __LINE__, color1_multiplier);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color2_multiplier: %d\n", __FILE__, __LINE__, color2_multiplier);
-// DELETE  
-// DELETE      }
-// DELETE  #endif
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Create_Remap_Palette == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color2_red_portion: %d\n", __FILE__, __LINE__, color2_red_portion);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color2_green_portion: %d\n", __FILE__, __LINE__, color2_green_portion);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color2_blue_portion: %d\n", __FILE__, __LINE__, color2_blue_portion);
-// DELETE  
-// DELETE      }
-// DELETE  #endif
-// DELETE  
-// DELETE              // dst_ofst = (remap_color_palettes + (block * 16));
-// DELETE              // src_ofst = (p_Palette);
-// DELETE              dst_ptr = (uint8_t *)( (remap_color_palettes + (block * (16 * 16))) + 0 );
-// DELETE              src_ptr = (uint8_t *)( (p_Palette) + 0);
-// DELETE  
-// DELETE              itr_remap_palette = 0;
-// DELETE              while(itr_remap_palette < 256)
-// DELETE              {
-// DELETE                  src_ofst = 768 + itr_remap_palette;
-// DELETE                  if(*(src_ptr + src_ofst++) != 0)  /* palette change flag */
-// DELETE                  {
-// DELETE                      // DLOG("(*(src_ptr + src_ofst++) != 0)");
-// DELETE  
-// DELETE                      src_ofst = itr_remap_palette * 3;
-// DELETE  
-// DELETE                      // // r = (((*p++ * temp_scale) >> 8) + r_add) & 0xff;
-// DELETE                      // // g = (((*p++ * temp_scale) >> 8) + g_add) & 0xff;
-// DELETE                      // // b = (((*p++ * temp_scale) >> 8) + b_add) & 0xff;
-// DELETE                      // CS_Total_Target_Red = (*(src_ptr + src_ofst++) * CS_Orig_Multiplier) + CS_Perc_Target_Red;
-// DELETE                      // CS_Total_Target_Green = (*(src_ptr + src_ofst++) * CS_Orig_Multiplier) + CS_Perc_Target_Green;
-// DELETE                      // CS_Total_Target_Blue = (*(src_ptr + src_ofst++) * CS_Orig_Multiplier) + CS_Perc_Target_Blue;
-// DELETE                      color1_red = *(src_ptr + src_ofst++);
-// DELETE                      color1_green = *(src_ptr + src_ofst++);
-// DELETE                      color1_blue = *(src_ptr + src_ofst++);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_red: %d\n", __FILE__, __LINE__, color1_red);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_green: %d\n", __FILE__, __LINE__, color1_green);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_blue: %d\n", __FILE__, __LINE__, color1_blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE  
-// DELETE                      color1_red_portion   = ((color1_red   * color1_multiplier) >> 8);
-// DELETE                      color1_green_portion = ((color1_green * color1_multiplier) >> 8);
-// DELETE                      color1_blue_portion  = ((color1_blue  * color1_multiplier) >> 8);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_red_portion: %d\n", __FILE__, __LINE__, color1_red_portion);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_green_portion: %d\n", __FILE__, __LINE__, color1_green_portion);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color1_blue_portion: %d\n", __FILE__, __LINE__, color1_blue_portion);
-// DELETE      }
-// DELETE  #endif
-// DELETE  
-// DELETE                      color3_red   = color1_red_portion   + color2_red_portion;
-// DELETE                      color3_green = color1_green_portion + color2_green_portion;
-// DELETE                      color3_blue  = color1_blue_portion  + color2_blue_portion;
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Create_Remap_Palette == 1)
-// DELETE      {
-// DELETE          // dbg_prn("DEBUG: [%s, %d]: CS_Total_Target_Red: %d\n", __FILE__, __LINE__, CS_Total_Target_Red);
-// DELETE          // dbg_prn("DEBUG: [%s, %d]: CS_Total_Target_Green: %d\n", __FILE__, __LINE__, CS_Total_Target_Green);
-// DELETE          // dbg_prn("DEBUG: [%s, %d]: CS_Total_Target_Blue: %d\n", __FILE__, __LINE__, CS_Total_Target_Blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color3_red: %d\n", __FILE__, __LINE__, color3_red);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color3_green: %d\n", __FILE__, __LINE__, color3_green);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color3_blue: %d\n", __FILE__, __LINE__, color3_blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE  
-// DELETE                      /*
-// DELETE                          BEGIN: Find Closest Color
-// DELETE                      */
-// DELETE                      closest = 0;
-// DELETE                      closest_dif = 10000;
-// DELETE                      counter = 256;
-// DELETE                      src_ofst = 0;
-// DELETE                      dst_ofst = 0;
-// DELETE  
-// DELETE                      while(counter--)
-// DELETE                      {
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: counter: %d\n", __FILE__, __LINE__, counter);
-// DELETE      }
-// DELETE  #endif
-// DELETE                          palette_flag = *(src_ptr + 768 + dst_ofst);
-// DELETE                          src_ofst += 3;
-// DELETE                          if(palette_flag != 0)  /* palette change flag */
-// DELETE                          {
-// DELETE                              // DLOG("(palette_flag != 0)");
-// DELETE                              src_ofst -= 3;
-// DELETE                              // red2 = *(src_ptr + src_ofst++);
-// DELETE                              // dif_red = red2 - CS_Total_Target_Red;
-// DELETE                              palette_red = *(src_ptr + src_ofst++);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: palette_red: %d\n", __FILE__, __LINE__, palette_red);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              dif_red = palette_red - color3_red;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_red: %d\n", __FILE__, __LINE__, dif_red);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              if(dif_red < 0) { dif_red = -dif_red; }
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_red: %d\n", __FILE__, __LINE__, dif_red);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              src_ofst += 2;
-// DELETE                              if(dif_red >= 21) { continue; }
-// DELETE                              src_ofst -= 2;
-// DELETE                              // green2 = *(src_ptr + src_ofst++);
-// DELETE                              // dif_green = green2 - CS_green1;
-// DELETE                              palette_green = *(src_ptr + src_ofst++);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: palette_green: %d\n", __FILE__, __LINE__, palette_green);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              dif_green = palette_green - color3_green;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_green: %d\n", __FILE__, __LINE__, dif_green);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              if(dif_green < 0) { dif_green = -dif_green; }
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_green: %d\n", __FILE__, __LINE__, dif_green);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              src_ofst += 1;
-// DELETE                              if(dif_green >= 21) { continue; }
-// DELETE                              src_ofst -= 1;
-// DELETE                              // blue2 = *(src_ptr + src_ofst++);
-// DELETE                              // dif_blue = blue2 - CS_blue1;
-// DELETE                              palette_blue = *(src_ptr + src_ofst++);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: palette_blue: %d\n", __FILE__, __LINE__, palette_blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              dif_blue = palette_blue - color3_blue;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_blue: %d\n", __FILE__, __LINE__, dif_blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              if(dif_blue < 0) { dif_blue = -dif_blue; }
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: dif_blue: %d\n", __FILE__, __LINE__, dif_blue);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              if(dif_blue >= 21) { continue; }
-// DELETE  
-// DELETE                              current_dif = dif_red * dif_red;
-// DELETE                              current_dif += dif_green * dif_green;
-// DELETE                              current_dif += dif_blue * dif_blue;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: current_dif: %d\n", __FILE__, __LINE__, current_dif);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: closest_dif: %d\n", __FILE__, __LINE__, closest_dif);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              if(current_dif < closest_dif)
-// DELETE                              {
-// DELETE                                  // DLOG("(current_dif < closest_dif)");
-// DELETE                                  closest_dif = current_dif;
-// DELETE                                  closest = counter;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: closest_dif: %d\n", __FILE__, __LINE__, closest_dif);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: closest: %d\n", __FILE__, __LINE__, closest);
-// DELETE      }
-// DELETE  #endif
-// DELETE                              }
-// DELETE                          }
-// DELETE                          dst_ofst++;
-// DELETE                      }
-// DELETE                      /*
-// DELETE                          END: Find Closest Color
-// DELETE                      */
-// DELETE  
-// DELETE                      // *((remap_color_palettes + (block * 16)) + itr) = closest;
-// DELETE                      *(dst_ptr + itr_remap_palette) = closest;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: remap_color_palettes[%d][%d] = p_Palette[%d]\n", __FILE__, __LINE__, block, itr_remap_palette, closest);
-// DELETE      }
-// DELETE  #endif
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if( (DBG_Create_Remap_Palette == 1) && (itr_remap_palette == 116) )
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: GET_1B_OFS(remap_color_palettes, ((block * 16) + itr_remap_palette)): %02X\n", __FILE__, __LINE__, GET_1B_OFS(remap_color_palettes, ((block * (16 * 16)) + itr_remap_palette)));
-// DELETE      }
-// DELETE  #endif
-// DELETE                      assert( (GET_1B_OFS(remap_color_palettes, ((1 * (16 * 16)) + 116)) == 0xC0) || (GET_1B_OFS(remap_color_palettes, ((1 * (16 * 16)) + 116)) == 140) );
-// DELETE  
-// DELETE                  }
-// DELETE                  itr_remap_palette++;
-// DELETE              }
-// DELETE              /*
-// DELETE                  END: Remap All
-// DELETE              */
-// DELETE          }
-// DELETE          else  /* vpercent >= 100  ~==  percent <= 0 */
-// DELETE          {
-// DELETE              DLOG("(vpercent >= 100)");
-// DELETE              // dst_ofst = (remap_color_palettes + (block * 16));
-// DELETE              // dst_ofst = 0;
-// DELETE              dst_ptr = (uint8_t *)( (remap_color_palettes + (block * (16 * 16))) + 0 );
-// DELETE              colormap_idx = 0;
-// DELETE              counter = 256;
-// DELETE              while(counter--)
-// DELETE              {
-// DELETE                  *dst_ptr++ = colormap_idx++;
-// DELETE              }
-// DELETE  
-// DELETE          }
-// DELETE      }
-// DELETE      else  /* vpercent <= 0  ~==  percent >= 100 */
-// DELETE      {
-// DELETE          DLOG("(vpercent <= 0)");
-// DELETE          // dst_ofst = (remap_color_palettes + (block * 16));
-// DELETE          // src_ofst = (p_Palette);
-// DELETE          dst_ptr = (uint8_t *)( (remap_color_palettes + (block * (16 * 16))) + 0 );
-// DELETE          src_ptr = (uint8_t *)( (p_Palette) + 0);
-// DELETE          closest = 0;
-// DELETE          closest_dif = 10000;
-// DELETE          counter = 256;
-// DELETE          // src_ofst = 0;
-// DELETE          // dst_ofst = 0;
-// DELETE  
-// DELETE          while(counter--)
-// DELETE          {
-// DELETE              // red2 = *src_ptr++;
-// DELETE              // dif_red = red2 - CS_red1;
-// DELETE              palette_red = *src_ptr++;
-// DELETE              dif_red = palette_red - color2_red;
-// DELETE  
-// DELETE              if(dif_red < 0) { dif_red = -dif_red; }
-// DELETE              src_ptr += 2;
-// DELETE              if(dif_red >= 21) { continue; }
-// DELETE              src_ptr -= 2;
-// DELETE              // green2 = *src_ptr++;
-// DELETE              // dif_green = green2 - CS_green1;
-// DELETE              palette_green = *src_ptr++;
-// DELETE              dif_green = palette_green - color2_green;
-// DELETE  
-// DELETE              if(dif_green < 0) { dif_green = -dif_green; }
-// DELETE              src_ptr += 1;
-// DELETE              if(dif_green >= 21) { continue; }
-// DELETE              src_ptr -= 1;
-// DELETE              // blue2 = *src_ptr++;
-// DELETE              // dif_blue = blue2 - CS_blue1;
-// DELETE              palette_blue = *src_ptr++;
-// DELETE              dif_blue = palette_blue - color2_blue;
-// DELETE  
-// DELETE              if(dif_blue < 0) { dif_blue = -dif_blue; }
-// DELETE              if(dif_blue >= 21) { continue; }
-// DELETE  
-// DELETE              current_dif = dif_red * dif_red;
-// DELETE              current_dif += dif_green * dif_green;
-// DELETE              current_dif += dif_blue * dif_blue;
-// DELETE  
-// DELETE              if(current_dif < closest_dif)
-// DELETE              {
-// DELETE                  closest_dif = current_dif;
-// DELETE                  closest = counter;
-// DELETE              }
-// DELETE          }
-// DELETE  
-// DELETE      }
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      DBG_Create_Remap_Palette = 0;
-// DELETE  #endif
-// DELETE  
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: END: Create_Remap_Palette(block = %d, red = %02X, green = %02X, blue = %02X, percent = %d)\n", __FILE__, __LINE__, block, red, green, blue, percent);
-// DELETE  #endif
-// DELETE  }

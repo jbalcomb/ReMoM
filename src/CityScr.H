@@ -77,7 +77,7 @@ void City_Screen_Add_Fields_Production_Window(void);
 void City_Screen_Draw_Buttons(void);
 
 // WZD o54p08
-void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx);
+void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t bldg_idx);
 
 // WZD o54p09
 // NameStartingCity_Dialog_Popup

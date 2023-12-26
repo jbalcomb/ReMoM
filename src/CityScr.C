@@ -866,9 +866,14 @@ void City_Screen_Draw_Buttons(void)
 }
 
 // WZD o54p08
-void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx)
+/*
+    ignored params: x, y, city_idx
+    bldg_bitm_seg is only used to get the x,y,w,h of the bldg pict
+
+*/
+void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t bldg_idx)
 {
-    SAMB_ptr dst_pict_seg;
+    SAMB_ptr bldg_bitm_seg;
     int16_t tmp_strlen;
     int16_t Sound_Data_Seg;
     int16_t width;
@@ -890,7 +895,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx)
     Copy_On_To_Off_Page();
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
-    dst_pict_seg = Allocate_First_Block(_screen_seg, 500);
+    bldg_bitm_seg = Allocate_First_Block(_screen_seg, 500);
     strcpy(GUI_String_1, "The ");
     strcat(GUI_String_1, STR_TownSizes[_CITIES[_city_idx].size]);
     strcat(GUI_String_1, " of ");
@@ -918,21 +923,18 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx)
 
     bitm_x = 0;
     bitm_y = 8;
-
     if(city_built_bldg_idx == bt_CityWalls)
     {
-        Draw_Picture_To_Bitmap(cityscape_big_city_wall_seg, dst_pict_seg);
+        Draw_Picture_To_Bitmap(cityscape_big_city_wall_seg, bldg_bitm_seg);
     }
     else
     {
-        Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], dst_pict_seg);
+        Draw_Picture_To_Bitmap(bldg_picts_seg[bldg_idx], bldg_bitm_seg);
     }
-
-    Get_Bitmap_Actual_Size(dst_pict_seg, &xstart, &ystart, &width, &height);
-
-    bitm_x += (xstart - ((41 - width) / 2));
-    bitm_y += (ystart - ((43 - height) / 2));
-
+    Get_Bitmap_Actual_Size(bldg_bitm_seg, &xstart, &ystart, &width, &height);  // 0, 7, 23, 25
+    bitm_x += (((41 -  width) / 2) - xstart);  // (0 + (((41 - 23) / 2) - 0)) = (0 + ((18 / 2) - 0)( = (0 + (9 - 0)) = (0 + 9) =  9
+    bitm_y += (((43 - height) / 2) - ystart);  // (8 + (((43 - 25) / 2) - 7)) = (8 + ((18 / 2) - 7)) = (8 + (9 - 7)) = (8 + 2) = 10
+    
     Copy_On_To_Off_Page();
 
     if(city_built_bldg_idx == bt_CityWalls)
@@ -941,7 +943,21 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t bldg_idx)
     }
     else
     {
-        Notify2(160, 60, tb_Green, GUI_String_1, 0, city_new_build_notify_grass_seg, 0, 8, bldg_picts_seg[bldg_idx],    bitm_x, bitm_y, 0, 0);
+        Notify2(
+            160,                              /* UU x ¿ (320 / 2) ?        */
+            60,                               /* UU y ¿ ((200 - 20) / 3) ? */
+            tb_Green,                         /* notify color/type   */
+            GUI_String_1,                     /* notify message text */
+            0,                                /* pict border {pict box, gem box} */
+            city_new_build_notify_grass_seg,  /* pict1   */
+            0,                                /* pict1 x */
+            8,                                /* pict1 y */
+            bldg_picts_seg[bldg_idx],         /* pict2   */
+            bitm_x,                           /* pict2 x */
+            bitm_y,                           /* pict2 y */
+            0,                                /* CSlide {none, mod 8, mod 11} */
+            0                                 /* UU BGShade <NO> */
+        );
     }
 
     // TODO  SND_PlayBkgrndTrack();

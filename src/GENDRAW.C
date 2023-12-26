@@ -58,7 +58,7 @@ int16_t confirmation_box_y_offset = 0;
 
 // WZD dseg:6F9A
 // drake178: GUI_Notify_Compose
-int16_t GUI_Notify_Compose = 0;  // 1 - notify dialogs are drawn but not displayed; 2 - notify dialogs save the current display frame as the image they will draw on;
+int16_t notify_draw_offscr = 0;
 
 // WZD dseg:6F9C
 // drake178: COL_Notify_Shadows
@@ -86,9 +86,9 @@ uint8_t notify_text_colors[4][5] =
 // drake178: GUI_Familiar_IMGTop
 // WZD dseg:6FD8
 // drake178: GUI_Familiar_IMGText
-int16_t GUI_Familiar_IMGLeft[5] = { -2,   0, -22,   8,  2};
-int16_t GUI_Familiar_IMGTop[5]  = {  2, -20,  -4, -12, -3};
-int16_t GUI_Familiar_IMGText[5] = { 70,  73,  62,  68, 70};
+int16_t notify2_mascot_x1[5] = { -2,   0, -22,   8,  2};
+int16_t notify2_mascot_y1[5]  = {  2, -20,  -4, -12, -3};
+int16_t notify2_text_x1[5] = { 70,  73,  62,  68, 70};
 
 // WZD dseg:6FE2 01 00                                           ITEM_ViewGrowStage dw 1                 ; DATA XREF: ITEM_GetViewDrawPos:loc_D9474r ...
 
@@ -204,35 +204,35 @@ SAMB_ptr confirmation_background_top_seg;
 
 // WZD dseg:CAD4
 // drake178: GUI_Notify_IMG2_Left
-int16_t GUI_Notify_IMG2_Left;
+int16_t notify_pict2_x;
 
 // WZD dseg:CAD6
 // drake178: GUI_Notify_IMG2_Top
-int16_t GUI_Notify_IMG2_Top;
+int16_t notify_pict2_y;
 
 // WZD dseg:CAD8
 // drake178: GUI_Notify_IMG_Top
-int16_t GUI_Notify_IMG_Top;
+int16_t notify_pict1_y;
 
 // WZD dseg:CADA
 // drake178: GUI_Notify_IMG_Left
-int16_t GUI_Notify_IMG_Left;
+int16_t notify_pict1_x;
 
 // WZD dseg:CADC
 // drake178: GUI_Notify_GemBorder
-int16_t GUI_Notify_GemBorder;
+int16_t notify_box_border;
 
 // WZD dseg:CADE
 // drake178: IMG_GUI_Dialog_Pic2@
-SAMB_ptr IMG_GUI_Dialog_Pic2;
+SAMB_ptr notify_pict2;
 
 // WZD dseg:CAE0
 // drake178: IMG_GUI_Dialog_Pic@
-SAMB_ptr IMG_GUI_Dialog_Pic;
+SAMB_ptr notify_pict1;
 
 // WZD dseg:CAE2
 // drake178: GUI_Notify_Color
-int16_t GUI_Notify_Color;
+int16_t notify_type;
 
 // WZD dseg:CAE4 00                                              db    0
 // WZD dseg:CAE5 00                                              db    0
@@ -251,11 +251,11 @@ SAMB_ptr notify_seg[4];
 
 // WZD dseg:CAFE
 // drake178: GUI_ColorSlideType
-int16_t GUI_ColorSlideType;
+int16_t notify_color_slide;
 
 // WZD dseg:CB00
 // drake178: GUI_ColorSlide_State
-int16_t GUI_ColorSlide_State;
+int16_t notify_color_slide_cycle;
 
 // WZD dseg:CB02 00 00                                           IMG_GUI_RedMsg2Btm@ dw 0                ; DATA XREF: GUI_ShowRedMessage+68w ...
 // WZD dseg:CB04 00 00                                           IMG_GUI_RedMessage2@ dw 0               ; DATA XREF: GUI_ShowRedMessage+51w ...
@@ -463,12 +463,12 @@ void Confirmation_Box_Draw(void)
     Set_Font_Colors_15(4, &COL_ConfirmShadows[0]);
     Set_Font(4, 15, 15, 0);
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
-    Print_Paragraph((message_box_x + 9), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
+    Print_Paragraph((message_box_x +  9), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
 
     Set_Alias_Color(18);
     Set_Font_Colors_15(4, &COL_Dialog_Text[0]);
     Set_Font(4, 4, 15, 0);
-    Print_Paragraph((message_box_x + 9), (message_box_y + 9), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
+    Print_Paragraph((message_box_x +  9), (message_box_y +  9), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Confirmation_Box_Draw()\n", __FILE__, __LINE__);
@@ -1249,13 +1249,13 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
 
 // WZD o149p10
 // drake178: GUI_LoadNotifyGfx()
-void Notify_Load(int16_t notify_color, SAMB_ptr notiy_pict_seg)
+void Notify_Load(int16_t type, SAMB_ptr pict1)
 {
     int16_t itr;  // _SI_
 
     Save_ScreenSeg();
 
-// IDGI    if( !((_screen_seg + 1500) < notiy_pict_seg) )
+// IDGI    if( !((_screen_seg + 1500) < pict1) )
 // IDGI    {
 // IDGI        farpokew(_screen_seg, SAMB.used, 1500);
 // IDGI    }
@@ -1277,7 +1277,7 @@ void Notify_Load(int16_t notify_color, SAMB_ptr notiy_pict_seg)
 // RESOURCE.LBX,  57  BRNOTIFY    
 // RESOURCE.LBX,  58  BRNOTIFY    
 
-    switch(notify_color)
+    switch(type)
     {
         case 0:
         {
@@ -1326,7 +1326,7 @@ void Notify_Load(int16_t notify_color, SAMB_ptr notiy_pict_seg)
 
 // WZD o149p11
 // drake178: GUI_Notify_Dialog
-void Notify1__STUB(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int16_t Gem, SAMB_ptr notiy_pict_seg, int16_t IMGLeft, int16_t IMGTop, SAMB_ptr IMG2, int16_t IMG2Left, int16_t IMG2Top, int16_t CSlide, int16_t BGShade)
+void Notify1__STUB(int16_t center_x, int16_t Top, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
 {
 
 }
@@ -1339,7 +1339,7 @@ void Notify1_Draw(void)
     int16_t xadd;  // _SI_
     int16_t max_para_width;  // _DI_
 
-    if(GUI_Notify_Color == 2)
+    if(notify_type == 2)
     {
         xadd = 50;
     }
@@ -1348,15 +1348,15 @@ void Notify1_Draw(void)
         xadd = 0;
     }
 
-    if(GUI_ColorSlideType == 1)
+    if(notify_color_slide == 1)
     {
-        // TODO  VGA_SlideColors(244, 11, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 11);
+        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
-    if(GUI_ColorSlideType == 2)
+    if(notify_color_slide == 2)
     {
-        // TODO  VGA_SlideColors(247, 8, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 8);
+        // TODO  VGA_SlideColors(247, 8, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 8);
     }
 
     Copy_Back_To_Off();
@@ -1369,9 +1369,9 @@ void Notify1_Draw(void)
 
     Set_Window(0, 0, (message_box_x + xadd + 12), 199);
 
-    Clipped_Draw(message_box_x, message_box_y, notify_seg[GUI_Notify_Color]);
+    Clipped_Draw(message_box_x, message_box_y, notify_seg[notify_type]);
 
-    if(GUI_Notify_Color == 2)
+    if(notify_type == 2)
     {
         FLIC_Draw((message_box_x - 23), (message_box_y - 19), notify_magic_picts_seg[notify_magic_idx]);
     }
@@ -1380,57 +1380,57 @@ void Notify1_Draw(void)
 
     Fill((message_box_x + max_para_width + xadd + 12), message_box_y, (message_box_x + max_para_width + xadd + 62), (message_box_y + 55), 0);
 
-    if(GUI_Notify_GemBorder != 0)
+    if(notify_box_border != 0)
     {
-        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_gem_box_seg[GUI_Notify_Color]);
+        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_gem_box_seg[notify_type]);
     }
     else
     {
-        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_pict_box_seg[GUI_Notify_Color]);
+        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_pict_box_seg[notify_type]);
     }
 
-    if(IMG_GUI_Dialog_Pic != ST_NULL)
+    if(notify_pict1 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic, GfxBuf_2400B);
-        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict1, GfxBuf_2400B);
+        Draw_Picture((message_box_x + max_para_width + notify_pict1_x + xadd + 16), (message_box_y + notify_pict1_y), GfxBuf_2400B);
     }
 
-    if(IMG_GUI_Dialog_Pic2 != ST_NULL)
+    if(notify_pict2 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic2, GfxBuf_2400B);
-        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict2, GfxBuf_2400B);
+        Draw_Picture((message_box_x + max_para_width + notify_pict2_x + xadd + 16), (message_box_y + notify_pict2_y), GfxBuf_2400B);
     }
 
-    if(GUI_Notify_Color == 3)
+    if(notify_type == 3)
     {
         Set_Font_Colors_15(4, COL_ConfirmShadows);
-        Set_Font(4, 15, 15, ST_NULL);  // ...color3
+        Set_Font(4, 15, 15, ST_NULL);
         Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Set_Font(4, 4, 15, ST_NULL);  // ...color3
+        Set_Font(4, 4, 15, ST_NULL);
         Set_Alias_Color(21);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
     }
     else
     {
-        Set_Font_Colors_15(4, notify_shadow_colors[GUI_Notify_Color]);
-        Set_Font(4, 15, 15, ST_NULL);  // ...color3
+        Set_Font_Colors_15(4, notify_shadow_colors[notify_type]);
+        Set_Font(4, 15, 15, ST_NULL);
         Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Set_Font(4, 4, 15, ST_NULL);  // ...color3
-        Set_Font_Colors_15(4, notify_text_colors[GUI_Notify_Color]);
+        Set_Font(4, 4, 15, ST_NULL);
+        Set_Font_Colors_15(4, notify_text_colors[notify_type]);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
     }
 
-    if(GUI_ColorSlideType == 1)
+    if(notify_color_slide == 1)
     {
-        // VGA_SlideColors(244, 11, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 11);
+        // VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
-    if(GUI_ColorSlideType == 2)
+    if(notify_color_slide == 2)
     {
-        // VGA_SlideColors(247, 8, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 8);
+        // VGA_SlideColors(247, 8, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 8);
     }
 
 }
@@ -1438,14 +1438,17 @@ void Notify1_Draw(void)
 
 // WZD o149p13
 // drake178: GUI_Familiar_Notify()
-void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int16_t Gem, SAMB_ptr notiy_pict_seg, int16_t IMGLeft, int16_t IMGTop, SAMB_ptr IMG2, int16_t IMG2Left, int16_t IMG2Top, int16_t CSlide, int16_t BGShade)
+/*
+
+*/
+void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
 {
-    int16_t Unused_Local;
+    int16_t UU_var2;
     int16_t UU_max_para_width;
 
-    Notify_Load(notify_color, notiy_pict_seg);
+    Notify_Load(type, pict1);
 
-    BGShade = 0;
+    do_dim_back = ST_FALSE;
 
     notify_magic_idx = 3;  // Life
 
@@ -1493,77 +1496,76 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
         } break;
     }
 
-    GUI_ColorSlideType = CSlide;
-    GUI_ColorSlide_State = 0;
+    notify_color_slide = do_cslide;
+    notify_color_slide_cycle = 0;
 
     Save_Alias_Colors();
 
-// ; 1 - notify dialogs are drawn but not displayed
-// ; 2 - notify dialogs save the current display frame as the image they will draw on
-    if(GUI_Notify_Compose == 2)
+    if(notify_draw_offscr == 2)
     {
         Copy_On_To_Off_Page();
     }
 
-    if(BGShade == 1)
+    if(do_dim_back == ST_TRUE)
     {
         Set_Page_Off();
-        Gradient_Fill(0, 0, 319, 199, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ...remap_block, Slope, Scale, Seed
+        Gradient_Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
     }
 
     Copy_Off_To_Back();
 
-    message_box_text = Msg;
+    message_box_text = message_text;
 
-    IMG_GUI_Dialog_Pic = notiy_pict_seg;
+    notify_pict1 = pict1;
 
-    IMG_GUI_Dialog_Pic2 = IMG2;
+    notify_pict2 = pict2;
 
-    GUI_Notify_Color = notify_color;  // ; blue - red - green - brown
+    notify_type = type;
 
-    GUI_Notify_GemBorder = Gem;
+    notify_box_border = box_border;
 
-    GUI_Notify_IMG_Left = IMGLeft;
-    GUI_Notify_IMG_Top = IMGTop;
-    GUI_Notify_IMG2_Left = IMG2Left;
-    GUI_Notify_IMG2_Top = IMG2Top;
+    notify_pict1_x = pict1_x;
+    notify_pict1_y = pict1_y;
+    notify_pict2_x = pict2_x;
+    notify_pict2_y = pict2_y;
 
-    GUI_ColorSlide_State = 0;
+    notify_color_slide_cycle = 0;
 
     Set_Font(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
 
-    UU_max_para_width = Get_Paragraph_Max_Width(175, Msg, 0);
+    UU_max_para_width = Get_Paragraph_Max_Width(175, message_text, 0);
 
-    if(GUI_Familiar_IMGLeft[notify_magic_idx] < 0)
+    if(notify2_mascot_x1[notify_magic_idx] < 0)
     {
-        message_box_x = (6 - GUI_Familiar_IMGLeft[notify_magic_idx]);  // { -2,   0, -22,   8,  2}
+        message_box_x = (6 - notify2_mascot_x1[notify_magic_idx]);  // { -2,   0, -22,   8,  2}
     }
     else
     {
         message_box_x = 6;
     }
 
-    message_box_y = Top;
+    message_box_y = box_top_y;
 
     Assign_Auto_Function(&Notify2_Draw, 1);
 
-    Load_Palette_From_Animation(notify_seg[GUI_Notify_Color]);
+    Load_Palette_From_Animation(notify_seg[notify_type]);
 
-    if(notiy_pict_seg != 0)
+    if(pict1 != ST_NULL)
     {
-        Load_Palette_From_Animation(notiy_pict_seg);
+        Load_Palette_From_Animation(pict1);
     }
 
     Apply_Palette();
     Set_Palette_Changes(0, 243);
     Clear_Palette_Changes(198, 198);
-    // TODO  Update_Remap_Gray_Palette();
-    Unused_Local = 0;
+    Update_Remap_Gray_Palette();
 
-    if(GUI_Notify_Compose == 1)
+    UU_var2 = 0;
+
+    if(notify_draw_offscr == 1)
     {
         Set_Page_Off();
-        Notify1_Draw();
+        Notify1_Draw();  // BUGBUG  should be Notify2_Draw() - hot sloppy copy pasta
     }
     else
     {
@@ -1572,7 +1574,7 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
 
     Set_Palette_Changes(0, 223);
     Clear_Palette_Changes(198, 198);
-    // TODO  Update_Remap_Gray_Palette();
+    Update_Remap_Gray_Palette();
     Deactivate_Auto_Function();
     Restore_Alias_Colors();
     Reset_Window();
@@ -1583,116 +1585,87 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
 
 // WZD o149p14
 // drake178: GUI_DrawFamiliarNtfy()
+/*
+
+*/
 void Notify2_Draw(void)
 {
-    int16_t xadd;  // _SI_
+    int16_t text_x2;  // _SI_
     int16_t max_para_width;  // _DI_
 
-// not1    if(GUI_Notify_Color == 2)
-// not1    {
-// not1        xadd = 50;
-// not1    }
-// not1    else
-// not1    {
-// not1        xadd = 0;
-// not1    }
-
-    if(GUI_ColorSlideType == 1)
+    if(notify_color_slide == 1)
     {
-        // TODO  VGA_SlideColors(244, 11, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 11);
+        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
-// not1    if(GUI_ColorSlideType == 2)
-// not1    {
-// not1        // TODO  VGA_SlideColors(247, 8, GUI_ColorSlide_State);
-// not1        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 8);
-// not1    }
 
     Copy_Back_To_Off();
 
-    Set_Font(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
+    Set_Font(4, 0, ST_NULL, ST_NULL);
 
     max_para_width = Get_Paragraph_Max_Width(175, message_box_text, 0);
 
-/* not2 */  xadd = GUI_Familiar_IMGText[notify_magic_idx] + message_box_x + max_para_width;
+    text_x2 = notify2_text_x1[notify_magic_idx] + message_box_x + max_para_width;  // pict box x1 = msg box start x + text x1 + text w
 
     Set_Page_Off();
 
-// not1    Set_Window(0, 0, (message_box_x + xadd + 12), 199);
-    Set_Window(0, 0, (message_box_x + xadd + 12), 199);
+    Set_Window(0, 0, (message_box_x + text_x2 + 12), SCREEN_YMAX);
 
-    Clipped_Draw(message_box_x, message_box_y, notify_seg[GUI_Notify_Color]);
+    Clipped_Draw(message_box_x, message_box_y, notify_seg[notify_type]);
 
-// not1    if(GUI_Notify_Color == 2)
-// not1    {
-// not1        FLIC_Draw((message_box_x - 23), (message_box_y - 19), notify_magic_picts_seg[notify_magic_idx]);
-// not1    }
-    FLIC_Draw((GUI_Familiar_IMGLeft[notify_magic_idx] + message_box_x - 1), (GUI_Familiar_IMGTop[notify_magic_idx] + message_box_y - 19), notify_magic_picts_seg[notify_magic_idx]);
+    FLIC_Draw((message_box_x + notify2_mascot_x1[notify_magic_idx] - 1), (message_box_y + notify2_mascot_y1[notify_magic_idx]), notify_magic_picts_seg[notify_magic_idx]);
 
     Reset_Window();
 
-// not1    Fill((message_box_x + max_para_width + xadd + 12), message_box_y, (message_box_x + max_para_width + xadd + 62), (message_box_y + 55), 0);
-    Fill((xadd + 2), message_box_y, (xadd + 47), (message_box_y + 55), 0);
 
-    if(GUI_Notify_GemBorder != ST_NULL)
+    /*
+        BEGIN:  'Pict Box'
+    */
+    Fill((text_x2 + 2), message_box_y, (text_x2 + 47), (message_box_y + 55), 0);
+
+    // pict border - {pict box, gem box}  F/T ~== 'type'
+    if(notify_box_border != ST_FALSE)
     {
-// not1        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_gem_box_seg[GUI_Notify_Color]);
-        FLIC_Draw((xadd + 1), message_box_y, notify_gem_box_seg[GUI_Notify_Color]);
+        FLIC_Draw((text_x2 + 1), message_box_y, notify_gem_box_seg[notify_type]);
     }
     else
     {
-// not1        FLIC_Draw((message_box_x + max_para_width + xadd + 12), message_box_y, notify_pict_box_seg[GUI_Notify_Color]);
-        FLIC_Draw((xadd + 1), message_box_y, notify_pict_box_seg[GUI_Notify_Color]);
+        FLIC_Draw((text_x2 + 1), message_box_y, notify_pict_box_seg[notify_type]);
     }
 
-    if(IMG_GUI_Dialog_Pic != ST_NULL)
+    if(notify_pict1 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic, GfxBuf_2400B);
-// not1        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG_Left + xadd + 16), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
-        Draw_Picture((xadd + GUI_Notify_IMG_Left + 7), (message_box_y + GUI_Notify_IMG_Top), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict1, GfxBuf_2400B);
+        Draw_Picture((text_x2 + notify_pict1_x + 7), (message_box_y + notify_pict1_y), GfxBuf_2400B);
     }
 
-    if(IMG_GUI_Dialog_Pic2 != ST_NULL)
+    if(notify_pict2 != ST_NULL)
     {
-        Draw_Picture_To_Bitmap(IMG_GUI_Dialog_Pic2, GfxBuf_2400B);
-// not1        Draw_Picture((message_box_x + max_para_width + GUI_Notify_IMG2_Left + xadd + 16), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
-        Draw_Picture((GUI_Notify_IMG2_Left + xadd + 7), (message_box_y + GUI_Notify_IMG2_Top), GfxBuf_2400B);
+        Draw_Picture_To_Bitmap(notify_pict2, GfxBuf_2400B);
+        Draw_Picture((notify_pict2_x + text_x2 + 7), (message_box_y + notify_pict2_y), GfxBuf_2400B);
     }
+    /*
+        END:  'Pict Box'
+    */
 
-// not1    if(GUI_Notify_Color == 3)
-// not1    {
-// not1        Set_Font_Colors_15(4, COL_ConfirmShadows);
-// not1        Set_Font(4, 15, 15, ST_NULL);  // ...color3
-// not1        Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-// not1        Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-// not1        Set_Font(4, 4, 15, ST_NULL);  // ...color3
-// not1        Set_Alias_Color(21);
-// not1        Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
-// not1    }
-// not1    else
-// not1    {
-        Set_Font_Colors_15(4, notify_shadow_colors[GUI_Notify_Color]);
-        Set_Font(4, 15, 15, ST_NULL);  // ...color3
-// not1        Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Print_Paragraph((message_box_x + GUI_Familiar_IMGText[notify_magic_idx] + 1), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-// not1        Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Print_Paragraph((message_box_x + GUI_Familiar_IMGText[notify_magic_idx]), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Set_Font(4, 4, 15, ST_NULL);  // ...color3
-        Set_Font_Colors_15(4, notify_text_colors[GUI_Notify_Color]);
-// not1        Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
-        Print_Paragraph((message_box_x + GUI_Familiar_IMGText[notify_magic_idx]), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
-// not1    }
 
-    if(GUI_ColorSlideType == 1)
+    // draw outline/shadow
+    Set_Font_Colors_15(4, notify_shadow_colors[notify_type]);
+    Set_Font(4, 15, 15, ST_NULL);
+    Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx] + 1), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
+    Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx]    ), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
+
+    // draw text
+    Set_Font(4, 4, 15, ST_NULL);
+    Set_Font_Colors_15(4, notify_text_colors[notify_type]);
+    Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx]    ), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
+
+
+    if(notify_color_slide == 1)
     {
-        // VGA_SlideColors(244, 11, GUI_ColorSlide_State);
-        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 11);
+        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
-// not1    if(GUI_ColorSlideType == 2)
-// not1    {
-// not1        // VGA_SlideColors(247, 8, GUI_ColorSlide_State);
-// not1        GUI_ColorSlide_State = ((GUI_ColorSlide_State + 1) % 8);
-// not1    }
 
 }
 

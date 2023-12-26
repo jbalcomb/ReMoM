@@ -379,14 +379,7 @@ void Load_Palette(int entry, int start_color, int end_color);
 // WZD s20p02
 // drake178: VGA_ResetShade0()
 // MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
-
-// WZD s20p02
-// drake178: VGA_ResetShade0()
-// MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
+void Update_Remap_Gray_Palette(void);
 
 // WZD s20p03
 // drake178: VGA_SetShades_Grey0()

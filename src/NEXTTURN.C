@@ -104,7 +104,7 @@ void Next_Turn_Proc(void)
                 {
                     city_built_bldg_idx = MSG_Building_Complete[itr_msg].bldg_type_idx;
                     Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _map_plane);
-                    City_Built_Building_Message(5, 101, city_built_bldg_idx);
+                    City_Built_Building_Message(5, 101, _city_idx, city_built_bldg_idx);
                 }
                 else  /* (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE) */
                 {

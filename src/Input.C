@@ -841,10 +841,7 @@ int16_t Wait_For_Input(void)
         if(mouse_installed != ST_FALSE)
         {
             Mouse_Movement_Handler();
-            if(
-                (Mouse_Button() != 0) || 
-                (Mouse_Buffer() != 0)
-            )
+            if((Mouse_Button() != 0) || (Mouse_Buffer() != 0))
             {
                 mouse_button_flag = ST_TRUE;
                 keyboard_flag = ST_TRUE;
