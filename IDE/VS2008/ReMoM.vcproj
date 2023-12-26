@@ -199,11 +199,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\City_ovr55.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\CITYCALC.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\CityList.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\CITYSCAP.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\CityScr.C"
 				>
 			</File>
 			<File
@@ -244,6 +256,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Input.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemView.C"
 				>
 			</File>
 			<File
@@ -356,6 +372,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\PoC_PFL.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ProdScr.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\RACETYPE.C"
 				>
 			</File>
 			<File
@@ -479,6 +503,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\WZD_o059.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\WZD_s001.C"
 				>
 			</File>
@@ -505,11 +533,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\City_ovr55.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\CITYCALC.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\CityList.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\CITYSCAP.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\CityScr.H"
 				>
 			</File>
 			<File
@@ -558,6 +598,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Input.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemView.H"
 				>
 			</File>
 			<File
@@ -709,6 +753,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\ProdScr.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\RACETYPE.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\SBookScr.H"
 				>
 			</File>
@@ -782,6 +834,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\win_PFL.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\WZD_o059.H"
 				>
 			</File>
 		</Filter>
