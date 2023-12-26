@@ -6,7 +6,8 @@
 #include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
 
 
-#include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+// #include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdio.h>
 
 
 

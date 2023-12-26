@@ -1,6 +1,17 @@
 /*
     WIZARDS.EXE
-    
+        seg030
+        seg031
+        seg032
+        seg033
+        seg034
+
+seg030    
+MoO2 Module: bitmap
+
+seg033
+MoO2 Module: bitmap
+MoO2 Module: shear
 
 */
 
@@ -825,6 +836,8 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
     int16_t itr_frames;
     uint32_t flic_frame_offset;
     byte_ptr p_FLIC_Frame;
+    int16_t loop_frame_index;  // DNE in Dasm
+    int16_t frame_count;  // DNE in Dasm
 
     /*
         BEGIN: same as FLIC_Draw()
@@ -834,13 +847,17 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
 
     current_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg);
     next_frame_index = FLIC_GET_CURRENT_FRAME(src_pict_seg) + 1;
-    if(next_frame_index < FLIC_GET_FRAME_COUNT(src_pict_seg))
+    loop_frame_index = FLIC_GET_LOOP_FRAME(src_pict_seg);
+    frame_count = FLIC_GET_FRAME_COUNT(src_pict_seg);
+    // if(next_frame_index < FLIC_GET_FRAME_COUNT(src_pict_seg))
+    if (next_frame_index < frame_count)
     {
         FLIC_SET_CURRENT_FRAME(src_pict_seg, next_frame_index);
     }
     else
     {
-        FLIC_SET_CURRENT_FRAME(src_pict_seg, FLIC_GET_LOOP_FRAME(src_pict_seg));
+        // FLIC_SET_CURRENT_FRAME(src_pict_seg, FLIC_GET_LOOP_FRAME(src_pict_seg));
+        FLIC_SET_CURRENT_FRAME(src_pict_seg, loop_frame_index);
     }
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(src_pict_seg) != 0))
@@ -885,7 +902,7 @@ void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
         /*
             BEGIN: same as FLIC_Draw()
         */
-        flic_frame_offset = FLIC_GET_FRAME_OFFSET(src_pict_seg, current_frame_index);
+        flic_frame_offset = FLIC_GET_FRAME_OFFSET(src_pict_seg, itr_frames);
         p_FLIC_Frame = (src_pict_seg + (flic_frame_offset + 1));
         /*
             END: same as FLIC_Draw()
@@ -932,16 +949,24 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 // WZD s30p16
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
-    int16_t current_frame_index;
+    int16_t current_frame;
 
-    current_frame_index = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
+    current_frame = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
 
-    return current_frame_index;
+    return current_frame;
 }
 
 
 // WZD s30p17
-// ?NIU? int16_t FLIC_Get_FrameCount()
+int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
+{
+    int16_t frame_count;
+
+    frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
+
+    return frame_count;
+
+}
 
 
 // WZD s30p18
@@ -1068,6 +1093,124 @@ void Draw_Picture_Windowed(int16_t x1, int16_t y1, byte_ptr pict_seg)
                     Draw_Picture_ASM(start_x, start_y, buffer_add, pict_seg, actual_width, actual_height, skip_add);
 
                 }
+            }
+        }
+    }
+
+}
+
+
+// WZD s30p26
+/*
+    no RLE
+        so, ~"bitmap"
+    is "Clipped"
+    accomodates transparent pixels
+        so, "sprite"?
+
+
+MoO2  Module: bitmap   Copy_Bitmap_To_Bitmap()
+MoO2  Module: draw     Color_Stream_Copy_()
+MoO2  Module: draw     Draw_Bitmap_Sprite_()
+MoO2  Module: clipped  Clipped_Draw_Bitmap_Sprite()
+Draw()
+    |->Clipped_Draw_Bitmap_Sprite()
+
+So, ...
+    ¿ ~ Clipped Copy Bitmap Sprite ?
+
+*/
+void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg)
+{
+    int16_t dst_ofst;
+    int16_t src_ofst;
+    int16_t cwidth;
+    int16_t cy1;
+    int16_t cx1;
+    int16_t skip_y;
+    int16_t skip_x;
+    int16_t dst_width;
+    int16_t dst_skip_y;
+    int16_t src_skip_y;
+    int16_t y2;
+    int16_t x2;
+    int16_t dst_height;  // _SI_
+    int16_t cheight;  // _DI_
+    byte_ptr dst;  // DNE in Dasm
+    byte_ptr src;  // DNE in Dasm
+
+    dst_width = FLIC_GET_WIDTH(dst_pict_seg);
+    dst_height = FLIC_GET_HEIGHT(dst_pict_seg);
+
+    if(
+        ((dst_width - 1) > x) &&
+        ((dst_height - 1) > y)
+    )
+    {
+        x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
+        if(x2 > 0)
+        {
+            y2 = (y = FLIC_GET_HEIGHT(src_pict_seg) - 1);
+            if(y2 > 0)
+            {
+                if(x < 0)
+                {
+                    skip_x = (-x);
+                    cx1 = 0;
+                }
+                else
+                {
+                    skip_x = 0;
+                    cx1 = x;
+                }
+                if(y < 0)
+                {
+                    skip_y = (-y);
+                    cy1 = 0;
+                }
+                else
+                {
+                    skip_y = 0;
+                    cy1 = y;
+                }
+
+                if((dst_width - 1) > x2)
+                {
+                    cwidth = (x2 - cx1 + 1);
+                }
+                else
+                {
+                    cwidth = (dst_width - cx1);
+                }
+                if(cwidth > dst_width)
+                {
+                    cwidth = dst_width;
+                }
+
+                if((dst_height - 1) > y2)
+                {
+                    cheight = (y2 - cy1 + 1);
+                }
+                else
+                {
+                    cheight = (dst_height - cy1);
+                }
+                if(cheight > dst_height)
+                {
+                    cheight = dst_height;
+                }
+
+                dst_ofst = (16 + ((cx1 * dst_height) + cy1));
+                dst_skip_y = (dst_height - cheight);
+
+                src_ofst = (16 + (FLIC_GET_HEIGHT(src_pict_seg) * skip_x) + skip_y);
+                src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
+
+                dst = (dst_pict_seg + dst_ofst);
+                src = (src_pict_seg + src_ofst);
+
+                Color_Stream_Copy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
+
             }
         }
     }
@@ -1418,6 +1561,79 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
 // #endif
 }
 
+
+// WZD s30p45
+// drake178: UU_LBX_IMG_DrawRect()
+
+
+// WZD s30p46
+// drake178: LBX_IMG_GetGFXSize()
+// EXACT  MoO2  Module: bitmap  Get_Bitmap_Actual_Size()
+/*
+    No RLE, therefore "Bitmap", per MoO2
+
+*/
+void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height)
+{
+    uint8_t * bitmap;
+    int16_t offset;
+    int16_t itr_height;
+    int16_t itr_width;
+    int16_t length;
+    int16_t x2;
+    int16_t y2;
+    int16_t flic_width;
+    int16_t flic_height;
+
+    // flic_width  = farpeekw(pict_seg, s_FLIC_HDR.Width);
+    // flic_height = farpeekw(pict_seg, s_FLIC_HDR.Height);
+    flic_width  = FLIC_GET_WIDTH(bitmap_addr);
+    flic_height = FLIC_GET_HEIGHT(bitmap_addr);
+
+    length = flic_height * flic_width;
+
+    bitmap = (uint8_t *)bitmap_addr;
+
+    *x1 = 1000;
+    *y1 = 1000;
+
+    x2 = 0;
+    y2 = 0;
+
+    offset = 16;
+
+    for(itr_width = 0; itr_width < flic_width; itr_width++)
+    {
+        for(itr_height = 0; itr_height < flic_height; itr_height++)
+        {
+            if(bitmap[offset] != ST_TRANSPARENT)
+            {
+                if(*x1 > itr_width)
+                {
+                    *x1 = itr_width;
+                }
+                if(*y1 > itr_height)
+                {
+                    *y1 = itr_height;
+                }
+                if(x2 < itr_width)
+                {
+                    x2 = itr_width;
+                }
+                if(y2 < itr_height)
+                {
+                    y2 = itr_height;
+                }
+
+            }
+            offset++;
+        }
+    }
+
+    *height = (y2 - *y1 + 1);
+    *width  = (x2 - *x1 + 1);
+
+}
 
 
 
@@ -1792,6 +2008,14 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 }
 
 
+// WZD seg033:024D
+int16_t CS_height;
+// WZD seg033:024F
+int16_t CS_width;
+// WZD seg033:0251
+int16_t CS_skip_add;
+
+
 // WZD s33p05
 // MoO2 Draw_Bitmap_Sprite_
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
@@ -1918,6 +2142,42 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 
 }
 
+// WZD s33p07
+// drake178: LBX_IMG_RawOverlay()
+// MoO2  Module: draw  Color_Stream_Copy_()
+void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+{
+    int16_t itr_height;  // _CX_
+    uint8_t pixel;  // _AL_
+
+    CS_height = height;
+    CS_width = width;
+
+    itr_height = CS_height;
+
+    while(CS_width)
+    {
+        while(itr_height)
+        {
+            pixel = *src++;
+            dst++;
+            if(pixel != ST_TRANSPARENT)
+            {
+                dst--;
+                *dst++ = pixel;
+            }
+            itr_height--;
+        }
+        dst += dst_skip_y;
+        src += src_skip_y;
+        CS_width--;
+    }
+
+}
+
+
+// WZD s33p08
+
 
 // WZD s33p09
 // AKA FLIC_Remap_Color()
@@ -1952,6 +2212,34 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
     }
 
 }
+
+
+// WZD s33p10
+// WZD s33p11
+// WZD s33p12
+// WZD s33p13
+// WZD s33p14
+
+// WZD s33p15
+// drak178: LBX_IMG_RandomDelete()
+// MoO2  Module: bitmap  Vanish_Bitmap()
+// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
+/*
+push    [Percent]                       ; percent
+push    [GfxBuf_2400B]                  ; bitmap
+call    Jumble_Bitmap  
+
+bitmap is a segment address
+
+*/
+void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent)
+{
+
+    // TODO  RNG_GFX_Random(1000);
+
+
+}
+
 
 
 // WZD s33p16

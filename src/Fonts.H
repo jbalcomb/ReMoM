@@ -3,7 +3,7 @@
         seg017
         seg018
         seg019
-        seg020
+        seg020  MoO2 Module: palette
         seg021
 */
 #ifndef FONTS_H
@@ -118,8 +118,27 @@ extern "C" {
 
 
 
+// WZD dseg:783C                                                 seg017  MoO2 Module: fonts
+
 // WZD dseg:783C
 // extern int16_t outline_color = 0;
+// uint16_t outline_color = 0;
+
+// WZD dseg:783E
+// int16_t draw_alias_flag;
+
+// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4w
+// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181w ...
+
+// WZD dseg:7844                                                 seg020  MoO2 Module: palette
+// WZD dseg:7844
+// PRIVATE  int16_t cycle_direction_flag;
+
+// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+
+
+
+
 
 // WZD dseg:A81E
 // AKA gsa_Palette_Font_Colors
@@ -394,7 +413,7 @@ void Clear_Palette_Changes(int start_color, int end_color);
 // WZD s20p10
 
 // WZD s20p11
-// void Reset_Cycle_Palette_Color(void);
+void Reset_Cycle_Palette_Color(void);
 
 // WZD s20p12
  // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)

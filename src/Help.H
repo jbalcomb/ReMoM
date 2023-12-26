@@ -1250,7 +1250,8 @@ void Set_CityList_Screen_Help(void);
 void Set_Magic_Screen_Help_List(void);
 
 // WZD o104p06
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX, 6  "city scrn Help"
+void Set_City_Screen_Help_List(void);
 
 // WZD o104p07
 // HLPENTRY.LBX  ""
@@ -1265,11 +1266,12 @@ void Set_Magic_Screen_Help_List(void);
 // HLPENTRY.LBX  ""
 
 // WZD o104p11
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "alchemy scrn Help"
 void Set_Alchemy_Screen_Help_List(void);
 
 // WZD o104p12
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "build Help"
+void Set_Production_Screen_Help(void);
 
 // WZD o104p13
 // HLPENTRY.LBX  ""

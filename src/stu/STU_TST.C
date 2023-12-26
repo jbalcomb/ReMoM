@@ -140,7 +140,7 @@ void TST_Validate_Allocate_Data_Space(void)
         ptr[itr] = 0;
     }
 
-    ptr = (uint8_t *)TBL_Nodes;
+    ptr = (uint8_t *)_NODES;
     for(itr = 0; itr < NODES_RECORD_SIZE; itr++)
     {
         ptr[itr] = 0;

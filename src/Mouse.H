@@ -78,14 +78,19 @@ extern int16_t mouse_y;
 extern int16_t current_mouse_list_count;
 
 // WZD dseg:78C8
+// DNE in MoO2 uses s_mouse_list.center_offset
 extern int16_t current_pointer_offset;
 
-// WZD dseg:78CA 00 00                   MOUSE_ClickRec1 dw 0
-// WZD dseg:78CC 00 00                   MOUSE_ClickX dw 0
-// WZD dseg:78CE 00 00                   MOUSE_ClickY dw 0
-// WZD dseg:78D0 00 00                   MOUSE_ClickBtns dw 0
-// WZD dseg:78D2 00 00                   MOUSE_ClickRec2 dw 0
-// WZD dseg:78D4 00 00                   MOUSE_INT_Process dw 0
+// WZD dseg:78CA
+extern int16_t mouse_buffer_flag;
+// WZD dseg:78CC
+extern int16_t mouse_buffer_x;
+// WZD dseg:78CE
+extern int16_t mouse_buffer_y;
+// WZD dseg:78D0
+extern int16_t mouse_buffer_button;
+// WZD dseg:78D2
+extern int16_t mouse_buffer_flag2;
 
 // WZD dseg:78D4
 extern int16_t MOUSE_INT_Process;
@@ -115,7 +120,7 @@ int16_t Get_Pointer_Image_Number(void);
 int16_t Get_Pointer_Offset(void);
 
 // WZD s35p05
-int16_t MD_GetButtonStatus(void);
+int16_t Mouse_Button(void);
 
 // WZD s35p07
 int16_t Init_Mouse_Driver(void);
@@ -155,6 +160,23 @@ void Set_Pointer_Position(int16_t x, int16_t y);
 // WZD s35p21
 // AKA MD_MoveCursorINT() AKA MOUSE_MoveCursorINT()
 void Set_Mouse_Position(int16_t x, int16_t y);
+
+
+
+// WZD s35p22
+int16_t Mouse_Buffer_X(void);
+
+// WZD s35p23
+int16_t Mouse_Buffer_Y(void);
+
+// WZD s35p24
+int16_t Mouse_Buffer_Button(void);
+
+// WZD s35p25
+int16_t Mouse_Buffer(void);
+
+// WZD s35p26
+int16_t Mouse_Buffer2(void);
 
 
 

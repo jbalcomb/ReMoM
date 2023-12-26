@@ -130,7 +130,7 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
 
     unit_type = _UNITS[unit_idx].type;
 
-    if((_unit_type_table[unit_type].Move_Flags & M_Flying) != 0)
+    if((_unit_type_table[unit_type].Move_Flags & MV_FLYING) != 0)
     {
         has_airtravel = ST_TRUE;
     }
@@ -207,12 +207,12 @@ int16_t Unit_Has_WaterTravel(int16_t unit_idx)
 
     unit_type = _UNITS[unit_idx].type;
 
-    if((_unit_type_table[unit_type].Move_Flags & M_Sailing) != 0)
+    if((_unit_type_table[unit_type].Move_Flags & MV_SAILING) != 0)
     {
         has_watertravel = ST_TRUE;
     }
     
-    if((_unit_type_table[unit_type].Move_Flags & M_Swimming) != 0)
+    if((_unit_type_table[unit_type].Move_Flags & MV_SWIMMING) != 0)
     {
         has_watertravel = ST_TRUE;
     }
@@ -284,18 +284,18 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
 // #endif
 
-    // // tmp_item_enchantments_loword = Active_Unit->BU_REC.Item_UEs_L;
-    // // tmp_item_enchantments_hiword = Active_Unit->BU_REC.Item_UEs_H;
-    // uint32_t items_enchantments = Active_Unit->BU_REC.Item_UEs;
+    // // tmp_item_enchantments_loword = global_strategic_unit->BU_REC.Item_UEs_L;
+    // // tmp_item_enchantments_hiword = global_strategic_unit->BU_REC.Item_UEs_H;
+    // uint32_t items_enchantments = global_strategic_unit->BU_REC.Item_UEs;
 
     if(
-        ( (Active_Unit->Item_UEs & UE_WINDWALKING) != 0) ||
-        ( (Active_Unit->Item_UEs & UE_FLIGHT) != 0)
+        ( (global_strategic_unit->Item_UEs & UE_WINDWALKING) != 0) ||
+        ( (global_strategic_unit->Item_UEs & UE_FLIGHT) != 0)
     )
     {
         has_watertravel_item = ST_TRUE;
@@ -330,18 +330,18 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
 
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
 // #endif
 
-    // // tmp_item_enchantments_loword = Active_Unit->BU_REC.Item_UEs_L;
-    // // tmp_item_enchantments_hiword = Active_Unit->BU_REC.Item_UEs_H;
-    // uint32_t items_enchantments = Active_Unit->BU_REC.Item_UEs;
+    // // tmp_item_enchantments_loword = global_strategic_unit->BU_REC.Item_UEs_L;
+    // // tmp_item_enchantments_hiword = global_strategic_unit->BU_REC.Item_UEs_H;
+    // uint32_t items_enchantments = global_strategic_unit->BU_REC.Item_UEs;
 
     if(
-        ( (Active_Unit->Item_UEs & UE_WINDWALKING) != 0) ||
-        ( (Active_Unit->Item_UEs & UE_FLIGHT) != 0)
+        ( (global_strategic_unit->Item_UEs & UE_WINDWALKING) != 0) ||
+        ( (global_strategic_unit->Item_UEs & UE_FLIGHT) != 0)
     )
     {
         has_airtravel_item = ST_TRUE;
@@ -377,9 +377,9 @@ int16_t Unit_Has_Invisibility(int16_t unit_idx)
 
     if(_UNITS[unit_idx].Hero_Slot != ST_FALSE)
     {
-        // Unused_PowerFlags = j_UNIT_BU_ApplyItems(Active_Unit@);
+        // Unused_PowerFlags = j_UNIT_BU_ApplyItems(global_strategic_unit@);
 
-        // les     bx, [Active_Unit@]              ; 8 LBX_Alloc_Space paragraphs (128 bytes) ; contains a single battle unit record (110 bytes)
+        // les     bx, [global_strategic_unit@]              ; 8 LBX_Alloc_Space paragraphs (128 bytes) ; contains a single battle unit record (110 bytes)
         // mov     ax, [es:bx+BU_REC.Item_UEs_H]
         // mov     dx, [es:bx+BU_REC.Item_UEs_L]
         // and     dx, UE_Invisibility
@@ -433,13 +433,13 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
 
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, Active_Unit);
+        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
 // #endif
 
         if(
-            ( (Active_Unit->Item_UEs & UE_PLANARTRAVEL) != 0)
+            ( (global_strategic_unit->Item_UEs & UE_PLANARTRAVEL) != 0)
         )
         {
             has_planartravel_item = ST_TRUE;

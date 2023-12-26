@@ -4,6 +4,7 @@
 #include "AdvsrScr.H"
 #include "ArmyList.H"
 #include "CityList.H"
+#include "CityScr.H"
 #include "LoadScr.H"
 #include "MainMenu.H"
 #include "MainScr.H"
@@ -67,7 +68,9 @@ void Screen_Control(void)
 
                 // HACK:  (4) Magicians  @  {18, 11}
                 _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
-
+                // HACK: set Cantebury up to complete the 'Miners Guild' on the next 'Next Turn'
+                _CITIES[54].Prod_Accu = 280;
+                
                 // HACK:  visibility to support highlighting the Plane shift feature, for the public alpha demo release video
                 for(itr_world_size = 0; itr_world_size < WORLD_SIZE; itr_world_size++)
                 {
@@ -154,6 +157,11 @@ void Screen_Control(void)
             } break;
 
         // scr_City = 100,
+        case scr_City_Screen: /* WZD 0x00 */
+        {
+            DLOG("switch(current_screen)  case scr_City_Screen:");
+            City_Screen__WIP();
+        } break;
         // scr_Load = 101,
         case scr_Armies_Screen: /* WZD 0x02 */
         {

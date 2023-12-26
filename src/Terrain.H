@@ -72,10 +72,14 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_HasMithril      
 // WZD s161p17
 // TILE_HasAdamantium   
+
 // WZD s161p18
-// TILE_GetNUCostReduce 
+// drake178: TILE_GetNUCostReduce()
+int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
+
 // WZD s161p19
-// CTY_GetWeaponQuality 
+int16_t City_Best_Weapon(int16_t city_idx);
+
 // WZD s161p20
 // TILE_GetRoadBldTime  
 // WZD s161p21
@@ -95,10 +99,15 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 // G_TILE_IsAIEmbarkable
 // WZD s161p27
 // TILE_BuildingReqType 
+
 // WZD s161p28
-// TILE_IsHills         
+// drake178: TILE_IsHills()
+int16_t Terrain_Is_Hills(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p29
-// TILE_IsMountains     
+// drake178: TILE_IsMountains()
+int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p30
 // TILE_IsDesert        
 // WZD s161p31
@@ -117,8 +126,11 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 // CTY_CountNightshades 
 // WZD s161p38
 // TILE_IsLand          
+
 // WZD s161p39
-// TILE_IsAISailable2   
+// drake178: TILE_IsAISailable2()
+int16_t TILE_IsAISailable2(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p40
 // UU_TILE_BotchedResFn 
 

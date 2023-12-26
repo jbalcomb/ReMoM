@@ -236,7 +236,7 @@ void Handle_Left_Click(void)
 // #endif
 //                 mouse_x = Pointer_X();
 //                 mouse_y = Pointer_Y();
-//                 cursor_offset = Get_Pointer_Offset();
+//                 pointer_offset = Get_Pointer_Offset();
 //                 field_num = 0;
 //                 character = 0;
 //                 field_num = Scan_Field();
@@ -260,7 +260,7 @@ void Handle_Left_Click(void)
 // #endif
 //                 mouse_x = Pointer_X();
 //                 mouse_y = Pointer_Y();
-//                 cursor_offset = Get_Pointer_Offset();
+//                 pointer_offset = Get_Pointer_Offset();
 //                 field_num = 0;
 //                 character = 0;
 //                 field_num = Scan_Field();
@@ -333,21 +333,21 @@ int16_t Interpret_Mouse_Input(void)
     else
     {
         Mouse_Movement_Handler();
-        if(MD_GetButtonStatus() != ST_FALSE)
+        if(Mouse_Button() != ST_FALSE)
         {
-            MD_ButtonStatus = MD_GetButtonStatus();
+            MD_ButtonStatus = Mouse_Button();
 
-            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(MD_GetButtonStatus = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
+            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
 
             // IDA: @@IDK_Loop_GetButtonStatus
-            // Begin Block: Loop MD_GetButtonStatus()
+            // Begin Block: Loop Mouse_Button()
             // TODO  make this be the loop that it looks like - need some Input Field that makes use of the feature  e.g., Magic Screen Power Distribution Staves
-            if(MD_GetButtonStatus() != 0)
+            if(Mouse_Button() != 0)
             {
 
                 mouse_x = Pointer_X();
                 mouse_y = Pointer_Y();
-                cursor_offset = Get_Pointer_Offset();
+                pointer_offset = Get_Pointer_Offset();
                 field_num = 0;
                 // Unused_Local == ST_UNDEFINED
                 character = 0;
@@ -460,13 +460,13 @@ int16_t Interpret_Mouse_Input(void)
                     */
 
 
-                    GUI_MouseFocusCtrl = field_num;  // MoO2: auto_input_variable
+                    auto_input_variable = field_num;  // MoO2: auto_input_variable
 
                     // MoO2: mouse_auto_exit
                     if(GUI_ClickActivate == ST_FALSE)
                     {
                         // HERE: Re-Draw, cause your're gonna go back
-                        if(MD_GetButtonStatus() != 0)
+                        if(Mouse_Button() != 0)
                         {
                             // Call_Auto_Function();
                         }
@@ -479,17 +479,17 @@ int16_t Interpret_Mouse_Input(void)
 
             }
             /*
-                END BLOCK: Loop MD_GetButtonStatus()
+                END BLOCK: Loop Mouse_Button()
             */
             // IDA: @@IDK_After_Loop_GetButtonStatus
 
 
-            if(p_fields[GUI_MouseFocusCtrl].type == ft_Scroll)
+            if(p_fields[auto_input_variable].type == ft_Scroll)
             {
                 // Invoke_Auto_Function();
             }
 
-            GUI_MouseFocusCtrl = 0;
+            auto_input_variable = 0;
 
             if(field_num != 0)
             {
@@ -502,55 +502,55 @@ int16_t Interpret_Mouse_Input(void)
                 // TODO says switch 9 cases, but only actually handles 4 - figure out which, including the odd (type - 1) part
                 switch(p_fields[field_num].type)
                 {
-                    /*  0  0x00 */  //drake178: TODO
+                    /*  0  0x00 */  // drake178: TODO
                     case ft_Button:
                     {
 
                     } break;
 
-                    /*  1  0x01 */  //drake178: ToggleButton
+                    /*  1  0x01 */  // drake178: ToggleButton
                     case ft_RadioButton:
                     {
 
                     } break;
 
-                    /*  2  0x02 */  //drake178: LockableButton
+                    /*  2  0x02 */  // drake178: LockableButton
                     case ft_LockedButton:
                     {
 
                     } break;
 
-                    /*  3  0x03 */  //drake178: MStateButton
+                    /*  3  0x03 */  // drake178: MStateButton
                     case ft_MultiButton:
                     {
 
                     } break;
 
-                    /*  4  0x04 */  //drake178: EditBox
+                    /*  4  0x04 */  // drake178: EditBox
                     case ft_Input:
                     {
 
                     } break;
 
-                    /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
-                    case ft_ImageLabel:
+                    /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
+                    case ft_Picture:
                     {
 
                     } break;
 
-                    /*  6  0x06 */  //drake178: SlideBar
+                    /*  6  0x06 */  // drake178: SlideBar
                     case ft_Scroll:
                     {
 
                     } break;
 
-                    /*  7  0x07 */  //drake178: Label
+                    /*  7  0x07 */  // drake178: Label
                     case ft_HotKey:
                     {
 
                     } break;
 
-                    /*  8  0x08 */  //drake178: Ctrl_AltString
+                    /*  8  0x08 */  // drake178: Ctrl_AltString
                     case ft_MultiHotKey:
                     {
 
@@ -688,7 +688,7 @@ int16_t Scan_Field(void)
     current_field = 0;  // ? ST_NULL ?
 
     Check_Mouse_Shape(mx, my);
-    cursor_offset = Get_Pointer_Offset();
+    pointer_offset = Get_Pointer_Offset();
 
     for(itr= 1; itr < fields_count; itr++)
     {
@@ -698,10 +698,10 @@ int16_t Scan_Field(void)
         ymax = p_fields[itr].y2;
 
         if(
-            (mx + cursor_offset >= xmin) &&
-            (mx + cursor_offset <= xmax) &&
-            (my + cursor_offset >= ymin) &&
-            (my + cursor_offset <= ymax)
+            (mx + pointer_offset >= xmin) &&
+            (mx + pointer_offset <= xmax) &&
+            (my + pointer_offset >= ymin) &&
+            (my + pointer_offset <= ymax)
         )
         {
             current_field = itr;
@@ -732,7 +732,7 @@ int16_t Scan_Input(void)
     current_field = 0;  // ? ST_NULL ?
 
     Check_Mouse_Shape(mx, my);
-    cursor_offset = Get_Pointer_Offset();
+    pointer_offset = Get_Pointer_Offset();
 
     current_field = Scan_Field();
 
@@ -792,55 +792,188 @@ int16_t Scan_Input(void)
     return current_field;
 }
 
+
+// WZD s36p28
+// drake178: G_GUI_ClearInput()
+// MoO2  Module: fields  Reset_Wait_For_Input()
+void Reset_Wait_For_Input(void)
+{
+
+    auto_input_variable = 0;
+
+    while(Keyboard_Status() != 0)
+    {
+        Read_Key();
+    }
+
+    if(mouse_installed != ST_FALSE)
+    {
+        while(Mouse_Button() != 0)
+        {
+            Call_Auto_Function();
+        }
+    }
+
+    Mouse_Buffer();
+    Mouse_Buffer2();
+
+}
+
+
+// WZD s36p29
+// drake178: G_GUI_PressAnyKey()
+// MoO2  Module: fields  Wait_For_Input()
+int16_t Wait_For_Input(void)
+{
+    char charcode;
+    int16_t keyboard_flag;
+    int16_t mouse_button_flag;
+
+    Reset_Wait_For_Input();
+
+    keyboard_flag = ST_FALSE;
+    mouse_button_flag = ST_FALSE;
+
+    temp_field_count = fields_count;
+
+    while(keyboard_flag == ST_FALSE)
+    {
+        if(mouse_installed != ST_FALSE)
+        {
+            Mouse_Movement_Handler();
+            if(
+                (Mouse_Button() != 0) || 
+                (Mouse_Buffer() != 0)
+            )
+            {
+                mouse_button_flag = ST_TRUE;
+                keyboard_flag = ST_TRUE;
+            }
+            if(Keyboard_Status() != 0)
+            {
+                charcode = Read_Key();
+                if(charcode == ST_KEY_F11)
+                {
+                    // TODO  DBG_Quit();
+                }
+                else if(charcode == ST_KEY_F12)
+                {
+                    Save_Mouse_State();
+                    Restore_Mouse_On_Page();
+                    // TODO  DBG_ScreenDump();
+                    Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
+                    Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
+                    Set_Pointer_Position(Pointer_X(), Pointer_Y());
+                    Restore_Mouse_State();
+                }
+                else
+                {
+                    Mouse_Buffer();
+                    keyboard_flag = ST_TRUE;
+                }
+            }
+        }
+        else
+        {
+            if(Keyboard_Status() != 0)
+            {
+                charcode = Read_Key();
+                if(charcode == ST_KEY_F11)
+                {
+                    // TODO  DBG_Quit();
+                }
+                else if(charcode == ST_KEY_F12)
+                {
+                    Save_Mouse_State();
+                    Restore_Mouse_On_Page();
+                    // TODO  DBG_ScreenDump();
+                    Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
+                    Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
+                    Set_Pointer_Position(Pointer_X(), Pointer_Y());
+                    Restore_Mouse_State();
+                }
+                else
+                {
+                    Mouse_Buffer();
+                    keyboard_flag = ST_TRUE;
+                }
+            }
+        }
+        Mouse_Button_Handler();
+        Call_Auto_Function();
+    }
+
+    if(mouse_button_flag != ST_FALSE)
+    {
+        Mouse_Movement_Handler();
+        while(Mouse_Button() != 0)
+        {
+            Call_Auto_Function();
+        }
+    }
+
+    fields_count = temp_field_count;
+    Mouse_Button_Handler();
+    Mouse_Buffer();
+    Mouse_Buffer2();
+
+    return ST_SUCCESS;
+}
+
+
 // WZD s36p65
 void Init_Mouse_Keyboard(int16_t input_type)
 {
 
     p_fields = (struct s_Field *)Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
 
-//     // The if else / switch in the DASM is borked
-//     if(input_type == 0)
-//     {
-//         RP_MOUSE_SetUsable();
-//         mouse_installed = ST_FALSE;
-//         MOUSE_Emu_X = 158;
-//         MOUSE_Emu_Y = 100;
-//         MD_MoveCursor(158, 100);
-//     }
-//     if(input_type == 1)
-//     {
-//         Set_Mouse_List(1, mouse_list_init);
-//         mouse_installed = Init_Mouse_Driver();
-//         if(mouse_installed != ST_FALSE)
-//         {
-//             mouse_installed = ST_TRUE;
-//         }
-//         else
-//         {
-//             RP_MOUSE_SetUsable();
-//             MOUSE_Emu_X = 158;
-//             MOUSE_Emu_Y = 100;
-//             MD_MoveCursor(158, 100);
-//         }
-// 
-//     }
-//     if(input_type == 2)
-//     {
-// 
-//     }
-//     else
-//     {
-// 
-//     }
-//     VGA_SaveCursorArea(158, 100);
-//     input_delay = 0;
-//     down_mouse_button = ST_UNDEFINED;
-//     mouse_cancel_disabled = ST_FALSE;
-//     Clear_Fields();
+    switch(input_type)
+    {
+        case 0:
+        {
+            goto Nay_Mouse;
+        } break;
+        case 1:
+        {
+            goto Yay_Mouse;
+        } break;
+        case 2:
+        {
+            goto Nay_Mouse;
+        } break;
+    }
+
+    goto Done;
+
+
+Nay_Mouse:
+    // TODO  RP_MOUSE_SetUsable();
+    // TODO  mouse_installed = ST_FALSE;
+    // TODO  MOUSE_Emu_X = 158;
+    // TODO  MOUSE_Emu_Y = 100;
+    // TODO  MD_MoveCursor(158, 100);
+    goto Done;
+
+
+Yay_Mouse:
+    Set_Mouse_List(1, mouse_list_init);
+    mouse_installed = Init_Mouse_Driver();
+    if(mouse_installed != ST_FAILURE)
+    {
+        mouse_installed = ST_TRUE;
+    }
+    else
+    {
+        goto Nay_Mouse;
+    }
+    goto Done;
+
+
+Done:
 
     Set_Mouse_List(1, mouse_list_init);
     Init_Mouse_Driver();
-    // DONT  mouse_installed = ST_TRUE;
+    mouse_installed = ST_TRUE;
 
     Save_Mouse_On_Page_(158, 100);
     input_delay = 0;

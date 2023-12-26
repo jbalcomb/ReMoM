@@ -227,16 +227,16 @@ void Update_Scouted_And_Contacted(void)
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
 // #ifdef STU_DEBUG
-//     if( (_UNITS[itr_units].world_x == 20) && (_UNITS[itr_units].world_y == 16) )
+//     if( (_UNITS[itr_units].wx == 20) && (_UNITS[itr_units].wy == 16) )
 //     {
 //     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].owner_idx == _human_player_idx): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].owner_idx == _human_player_idx));
-//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].world_plane == curr_world_p): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].world_plane == curr_world_p));
+//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].wp == curr_world_p): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].wp == curr_world_p));
 //     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].In_Tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].In_Tower == ST_TRUE));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].world_plane == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].world_plane == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].world_plane == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].world_plane == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ));
+//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ));
+//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ));
 //     }
 // #endif
-                if( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].world_plane == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) )
+                if( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) )
                 {
                     scout_level = _UNITS[itr_units].Sight_Range;
                     // TODO  UNIT_IsFlying
@@ -249,7 +249,7 @@ void Update_Scouted_And_Contacted(void)
                         scout_level++;
                     }
 
-                    Set_Square_Scouted_Flags(_UNITS[itr_units].world_x, _UNITS[itr_units].world_y, curr_world_p, scout_level);
+                    Set_Square_Scouted_Flags(_UNITS[itr_units].wx, _UNITS[itr_units].wy, curr_world_p, scout_level);
 
                 }
                 
@@ -257,11 +257,11 @@ void Update_Scouted_And_Contacted(void)
 
             for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
-                if( (_CITIES[itr_cities].owner_idx == _human_player_idx) && ( (_CITIES[itr_cities].world_plane == curr_world_p) || (_CITIES[itr_cities].world_plane == 2) ) )
+                if( (_CITIES[itr_cities].owner_idx == _human_player_idx) && ( (_CITIES[itr_cities].wp == curr_world_p) || (_CITIES[itr_cities].wp == 2) ) )
                 {
                     scout_level = 2;
 
-                    if(_CITIES[itr_cities].buildings[CITY_WALLS] != -1)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] != bs_NotBuilt)  /* B_Not_Built */
                     {
                         scout_level = 3;
                     }
@@ -271,20 +271,20 @@ void Update_Scouted_And_Contacted(void)
                         scout_level = 5;
                     }
                     // BUG: Overrides Nature's Eye
-                    if(_CITIES[itr_cities].buildings[ORACLE] != -1)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].bldg_status[ORACLE] != bs_NotBuilt)  /* B_Not_Built */
                     {
                         scout_level = 4;
                     }
 
-                    Set_Square_Scouted_Flags(_CITIES[itr_cities].world_x, _CITIES[itr_cities].world_y, curr_world_p, scout_level);
+                    Set_Square_Scouted_Flags(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, curr_world_p, scout_level);
                 }
             }
 
             for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
-                if( (_CITIES[itr_cities].owner_idx != _human_player_idx) && (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX) && ( (_CITIES[itr_cities].world_plane == curr_world_p) || (_CITIES[itr_cities].world_plane == 2) ) )
+                if( (_CITIES[itr_cities].owner_idx != _human_player_idx) && (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX) && ( (_CITIES[itr_cities].wp == curr_world_p) || (_CITIES[itr_cities].wp == 2) ) )
                 {
-                    if( (Check_Square_Scouted(_CITIES[itr_cities].world_x, _CITIES[itr_cities].world_y, curr_world_p)) && (_CITIES[itr_cities].owner_idx < 5) )
+                    if( (Check_Square_Scouted(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, curr_world_p)) && (_CITIES[itr_cities].owner_idx < 5) )
                     {
                         _players[_human_player_idx].Dipl.Contacted[_CITIES[itr_cities].owner_idx];
                         _players[_CITIES[itr_cities].owner_idx].Dipl.Contacted[_human_player_idx];

@@ -10,7 +10,7 @@ extern "C" {
 
 
 
-// WZD dseg:97A4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 IMG_USW_AbBorders@ dw 8 dup(0)          ; DATA XREF: GFX_Swap_AppendUView+DAw ...
+// WZD dseg:97A4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 unitview_specials_borders_seg@ dw 8 dup(0)          ; DATA XREF: GFX_Swap_AppendUView+DAw ...
 // WZD dseg:97A4                                                                                         ; array of 8 appended reserved EMM headers in
 // WZD dseg:97A4                                                                                         ; GFX_Swap_Seg, one for around each list slot
 // WZD dseg:97B4 00 00                                           unitview_down_arrow_seg@ dw 0                 ; DATA XREF: GFX_Swap_AppendUView+B9w ...
@@ -23,11 +23,11 @@ extern "C" {
 // WZD dseg:97B8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:97BA 00 00                                           unitview_small_background_seg@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
 // WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:97BC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_Stats_Gold STAT_ICONS <0>       ; DATA XREF: GFX_Swap_AppendUView+12Aw ...
+// WZD dseg:97BC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+unitview_stat_gold_icons_seg STAT_ICONS <0>       ; DATA XREF: GFX_Swap_AppendUView+12Aw ...
 // WZD dseg:97BC 00 00 00 00 00 00 00 00 00 00 00 00 00 00                                               ; array of 15 appended reserved EMM header in
 // WZD dseg:97BC                                                                                         ; GFX_Swap_Seg, each with one gold attribute image,
 // WZD dseg:97BC                                                                                         ; although the movement ones are empty
-// WZD dseg:97DA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_Stat_Icons STAT_ICONS <0>       ; DATA XREF: GFX_Swap_AppendUView+102w ...
+// WZD dseg:97DA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+unitview_stat_icons_seg STAT_ICONS <0>       ; DATA XREF: GFX_Swap_AppendUView+102w ...
 // WZD dseg:97DA 00 00 00 00 00 00 00 00 00 00 00 00 00 00                                               ; array of 15 appended reserved EMM header in
 // WZD dseg:97DA                                                                                         ; GFX_Swap_Seg, each with one regular attribute image
 // WZD dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_Abilities USWICONS <0>          ; DATA XREF: GFX_Swap_AppendUView+1Dw ...
@@ -294,44 +294,84 @@ void Units_Upkeeps(void);
 void Terrain_Init(void);
 
 // WZD o52p04
+// fxn_o52p04()
+
 // WZD o52p05
+void Main_Screen_Load_Pictures(void);
+
 // WZD o52p06
+void City_Screen_Load_Pictures(void);
+
 // WZD o52p07
+// fxn_o52p07()
+
 // WZD o52p08
+// fxn_o52p08()
+
 // WZD o52p09
+// fxn_o52p09()
+
 // WZD o52p10
+// fxn_o52p10()
+
 // WZD o52p11
+// fxn_o52p11()
+
 // WZD o52p12
+// fxn_o52p12()
+
 // WZD o52p13
+// Load_Button_Sounds()
+
 // WZD o52p14
+// fxn_o52p14()
+
 // WZD o52p15
+// fxn_o52p15()
+
 // WZD o52p16
+void Load_SPELLDAT(void);
+
 // WZD o52p17
+// drake178: ?
+void Load_BUILDDAT(void);
+
 // WZD o52p18
+// fxn_o52p18()
+
 // WZD o52p19
+// Load_Combat_Background_Bottom()
 
 // WZD o52p20
 void GFX_Swap_Reset(void);
 
 // WZD o52p21
+// UU_WrldDatBuf_Reset()
 
 // WZD o52p22
 // AKA GFX_Swap_AppendUnits()
 void Load_Unit_StatFigs(void);
 
 // WZD o52p23
+// GFX_Swap_AppendCmbt()
+
 // WZD o52p24
+// fxn_o52p24()
+
 // WZD o52p25
+void GFX_Swap_AppndCtScap__WIP(void);
+
 // WZD o52p26
+// fxn_o52p6()
 
 // WZD o52p27
 void GFX_Swap_AppendUView(void);
 
 // WZD o52p28
-void GFX_Swap_AppendItems(void);
+void GFX_Swap_AppendItems__WIP(void);
 
 // WZD o52p29
-void Spellbook_Load_Small_Pictures(void);
+void Spellbook_Load_Small_Pictures__WIP(void);
 
 // WZD o52p30
 void GFX_Swap_Cities(void);
@@ -340,7 +380,10 @@ void GFX_Swap_Cities(void);
 void GFX_Swap_Overland(void);
 
 // WZD o52p32
+// U_GFX_Swap_Units()
+
 // WZD o52p33
+// U_GFX_Swap_Empty()
 
 // WZD o52p34
 // GFX_Swap_Combat()

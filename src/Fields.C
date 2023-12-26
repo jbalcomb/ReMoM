@@ -38,8 +38,8 @@ dseg:E87A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_EditString db 30 d
 dseg:E898 00 00                                           input_delay dw 0                        ; DATA XREF: Init_Mouse_Keyboard+B1w ...
 dseg:E89A 00 00                                           MOUSE_Emu_Y dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+Er ...
 dseg:E89C 00 00                                           MOUSE_Emu_X dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+8r ...
-dseg:E89E 00 00                                           cursor_offset dw 0                      ; DATA XREF: Interpret_Mouse_Input+33w ...
-dseg:E8A0 00 00                                           GUI_PrevControlCount dw 0               ; DATA XREF: G_GUI_PressAnyKey+13w ...
+dseg:E89E 00 00                                           pointer_offset dw 0                      ; DATA XREF: Interpret_Mouse_Input+33w ...
+dseg:E8A0 00 00                                           temp_field_count dw 0               ; DATA XREF: G_GUI_PressAnyKey+13w ...
 dseg:E8A2 00 00                                           fields_count dw 0                       ; DATA XREF: Interpret_Mouse_Input:loc_26C37r ...
 dseg:E8A4 00 00 00 00                                     GUI_Prev_Redraw_Fn dd 0                 ; DATA XREF: GUI_SaveRedrawFn+Dw ...
 dseg:E8A8 00 00 00 00                                     GUI_Redraw_Function dd 0                ; DATA XREF: Set_Redraw_Function+Fw ...
@@ -56,17 +56,17 @@ dseg:78B8
 dseg:78B8 00 00                                           current_pointer_image_number dw 0       ; DATA XREF: Set_Mouse_List:loc_2583Aw ...
 dseg:78BA 00 00                                           previous_pointer_image_number dw 0      ; DATA XREF: Check_Mouse_Shape+Fw ...
 dseg:78BC 00 00                                           mouse_enabled dw 0                      ; DATA XREF: Init_Mouse_Driver+78w ...
-dseg:78BE 00 00                                           mouse_driver_installed dw 0             ; DATA XREF: MD_GetButtonStatus+7r ...
+dseg:78BE 00 00                                           mouse_driver_installed dw 0             ; DATA XREF: Mouse_Button+7r ...
 dseg:78C0 00 00                                           MOUSE_Usable dw 0                       ; DATA XREF: RP_MOUSE_SetUsable+6w ...
 dseg:78C2 9E 00                                           mouse_x dw 158                          ; DATA XREF: Init_Mouse_Driver+40w ...
 dseg:78C4 64 00                                           mouse_y dw 100                          ; DATA XREF: Init_Mouse_Driver+44w ...
 dseg:78C6 01 00                                           current_mouse_list_count dw 1           ; DATA XREF: Set_Mouse_List+Cw ...
 dseg:78C8 00 00                                           current_pointer_offset dw 0             ; DATA XREF: Set_Mouse_List+39w ...
-dseg:78CA 00 00                                           MOUSE_ClickRec1 dw 0                    ; DATA XREF: Init_Mouse_Driver+7Ew ...
-dseg:78CC 00 00                                           MOUSE_ClickX dw 0                       ; DATA XREF: MOUSE_GetClickX+6r ...
-dseg:78CE 00 00                                           MOUSE_ClickY dw 0                       ; DATA XREF: MOUSE_GetClickY+6r ...
-dseg:78D0 00 00                                           MOUSE_ClickBtns dw 0                    ; DATA XREF: MD_GetClickedBtns+6r ...
-dseg:78D2 00 00                                           MOUSE_ClickRec2 dw 0                    ; DATA XREF: Init_Mouse_Driver+84w ...
+dseg:78CA 00 00                                           mouse_buffer_flag dw 0                    ; DATA XREF: Init_Mouse_Driver+7Ew ...
+dseg:78CC 00 00                                           mouse_buffer_x dw 0                       ; DATA XREF: Mouse_Buffer_X+6r ...
+dseg:78CE 00 00                                           mouse_buffer_y dw 0                       ; DATA XREF: Mouse_Buffer_Y+6r ...
+dseg:78D0 00 00                                           mouse_buffer_button dw 0                    ; DATA XREF: Mouse_Buffer_Button+6r ...
+dseg:78D2 00 00                                           mouse_buffer_flag2 dw 0                    ; DATA XREF: Init_Mouse_Driver+84w ...
 dseg:78D4 00 00                                           MOUSE_INT_Process dw 0                  ; DATA XREF: Init_Mouse_Driver+32w ...
 dseg:78D6 00 00                                           mouse_save_flag dw 0                    ; DATA XREF: Save_Mouse_On_Page+16r ...
 dseg:78D8 9E 00                                           MOUSE_InitX dw 158                      ; DATA XREF: Init_Mouse_Driver+3Cr ...
@@ -152,11 +152,11 @@ dseg:82A6                                                 END: Fields, Input, Mo
 // WZD dseg:78C4 mouse_y dw 100                          
 // WZD dseg:78C6 current_mouse_list_count dw 1           
 // WZD dseg:78C8 current_pointer_offset dw 0             
-// WZD dseg:78CA MOUSE_ClickRec1 dw 0                    
-// WZD dseg:78CC MOUSE_ClickX dw 0                       
-// WZD dseg:78CE MOUSE_ClickY dw 0                       
-// WZD dseg:78D0 MOUSE_ClickBtns dw 0                    
-// WZD dseg:78D2 MOUSE_ClickRec2 dw 0                    
+// WZD dseg:78CA mouse_buffer_flag dw 0                    
+// WZD dseg:78CC mouse_buffer_x dw 0                       
+// WZD dseg:78CE mouse_buffer_y dw 0                       
+// WZD dseg:78D0 mouse_buffer_button dw 0                    
+// WZD dseg:78D2 mouse_buffer_flag2 dw 0                    
 // WZD dseg:78D4 MOUSE_INT_Process dw 0                  
 // WZD dseg:78D6 mouse_save_flag dw 0                    
 // WZD dseg:78D8 MOUSE_InitX dw 158                      
@@ -183,7 +183,7 @@ uint16_t auto_active_flag = ST_FALSE;
 // WZD dseg:824C KD_prev_field_idx dw 0                  
 
 // WZD dseg:824E
-// DONT  mouse_installed = ST_FALSE;                     
+int16_t mouse_installed = ST_FALSE;                     
 
 // WZD dseg:8250
 int16_t down_mouse_button = ST_UNDEFINED;
@@ -216,10 +216,10 @@ struct s_mouse_list mouse_list_init[1] = {
 };
 
 // WZD dseg:8268
-// AKA GUI_MouseFocusCtrl
-int16_t GUI_MouseFocusCtrl = 0;
-// ¿ int16_t focused_field = ST_UNDEFINED; ?
-// ¿ int16_t mouse_field = ST_FALSE; ?
+// drake178: GUI_MouseFocusCtrl
+// AKA mouse_field
+// MoO2  Module: fields  auto_input_variable
+int16_t auto_input_variable = 0;
 
 // WZD dseg:826A GUI_MouseHighlight dw 1                 
 // WZD dseg:826C GUI_NoDialogWrap dw 0                   
@@ -297,9 +297,10 @@ int16_t input_delay;
 // dseg:E89C MOUSE_Emu_X dw 0           
 
 // WZD dseg:E89E
-int16_t cursor_offset;
+int16_t pointer_offset;
 
-// dseg:E8A0 GUI_PrevControlCount dw 0  
+// WZD dseg:E8A0
+int16_t temp_field_count;
 
 // WZD dseg:E8A2
 int16_t fields_count;
@@ -346,7 +347,7 @@ void Enable_Cancel(void)
     mouse_cancel_disabled = ST_FALSE;
 }
 // WZD s36p09
-//drake178: UU_GUI_ClearEscOverride
+// drake178: UU_GUI_ClearEscOverride
 void Disable_Cancel(void)
 {
     mouse_cancel_disabled = ST_TRUE;
@@ -355,9 +356,11 @@ void Disable_Cancel(void)
 
 // WZD s36p20
 // drake178: GUI_GetMouseFocus()
-int16_t Get_Mouse_Field(void)
+// AKA Get_Mouse_Field()
+// MoO2  Module: fields  Auto_Input()
+int16_t Auto_Input(void)
 {
-    return GUI_MouseFocusCtrl;
+    return auto_input_variable;
 }
 
 // WZD s36p38
@@ -383,6 +386,34 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
     p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
 
     if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
+    {
+        p_fields[fields_count].hotkey -= 32;
+    }
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+}
+
+
+// WZD s36p39
+// drake178: GUI_CreateImageLabel()
+int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+{
+    p_fields[fields_count].x1 = xmin;
+    p_fields[fields_count].y1 = ymin;
+
+    p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg);
+    p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg);
+
+    p_fields[fields_count].help = help;
+
+    // p_fields[fields_count].Param5 = pict_seg;
+    p_fields[fields_count].pict_seg = pict_seg;
+
+    p_fields[fields_count].type = ft_Picture;
+
+    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
     {
         p_fields[fields_count].hotkey -= 32;
     }
@@ -613,58 +644,58 @@ void Draw_Fields()
             // DEDUCE: ¿ does this not include field types 05, 07, 08, 09, and 12 ?
             switch(p_fields[itr_fields_count].type)
             {
-                case ft_Button:                 /*  0  0x00 */  //drake178: TODO
+                case ft_Button:                 /*  0  0x00 */  // drake178: TODO
                 {
                     // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Button");
 
                     Draw_Field(itr_fields_count, 0);
 
                 } break;
-                case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
+                case ft_RadioButton:            /*  1  0x01 */  // drake178: ToggleButton
                 {
 
                 } break;
-                case ft_LockedButton:           /*  2  0x02 */  //drake178: LockableButton
+                case ft_LockedButton:           /*  2  0x02 */  // drake178: LockableButton
                 {
 
                 } break;
-                case ft_MultiButton:            /*  3  0x03 */  //drake178: MStateButton
+                case ft_MultiButton:            /*  3  0x03 */  // drake178: MStateButton
                 {
 
                 } break;
-                case ft_Input:                  /*  4  0x04 */  //drake178: EditBox
+                case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
                 {
 
                 } break;
-                case ft_ImageLabel:             /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
+                case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
                 {
 
                 } break;
-                case ft_Scroll:                 /*  6  0x06 */  //drake178: SlideBar
+                case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
                 {
 
                 } break;
-                case ft_HotKey:                 /*  7  0x07 */  //drake178: Label
+                case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
                 {
 
                 } break;
-                case ft_MultiHotKey:            /*  8  0x08 */  //drake178: Ctrl_AltString
+                case ft_MultiHotKey:            /*  8  0x08 */  // drake178: Ctrl_AltString
                 {
 
                 } break;
-                case ft_ClickLink:              /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
+                case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
                 {
 
                 } break;
-                case ft_StringList:             /* 10  0x0A */  //drake178: DialogLine
+                case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
                 {
 
                 } break;
-                case ft_ContinuousStringInput:  /* 11  0x0B */  //drake178: EditSelect
+                case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
                 {
 
                 } break;
-                case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
+                case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
                 {
                     // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Grid");
                     
@@ -766,7 +797,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 
     switch(p_fields[field_num].type)
     {
-        case ft_Button:                 /*  0  0x00 */  //drake178: TODO
+        case ft_Button:                 /*  0  0x00 */  // drake178: TODO
         {
             // DLOG("switch(p_fields[field_num].type) case ft_Button");
 
@@ -836,51 +867,51 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             }
 
         } break;
-        case ft_RadioButton:            /*  1  0x01 */  //drake178: ToggleButton
+        case ft_RadioButton:            /*  1  0x01 */  // drake178: ToggleButton
         {
 
         } break;
-        case ft_LockedButton:           /*  2  0x02 */  //drake178: LockableButton
+        case ft_LockedButton:           /*  2  0x02 */  // drake178: LockableButton
         {
 
         } break;
-        case ft_MultiButton:            /*  3  0x03 */  //drake178: MStateButton
+        case ft_MultiButton:            /*  3  0x03 */  // drake178: MStateButton
         {
 
         } break;
-        case ft_Input:                  /*  4  0x04 */  //drake178: EditBox
+        case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
 
         } break;
-        case ft_ImageLabel:             /*  5  0x05 */  //drake178: ImageLabel      DNE/NIU in MoO2
+        case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {
 
         } break;
-        case ft_Scroll:                 /*  6  0x06 */  //drake178: SlideBar
+        case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
         {
 
         } break;
-        case ft_HotKey:                 /*  7  0x07 */  //drake178: Label
+        case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
         {
 
         } break;
-        case ft_MultiHotKey:            /*  8  0x08 */  //drake178: Ctrl_AltString
+        case ft_MultiHotKey:            /*  8  0x08 */  // drake178: Ctrl_AltString
         {
 
         } break;
-        case ft_ClickLink:              /*  9  0x09 */  //drake178: ClickLink       DNE/NIU in MoO2
+        case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
         {
 
         } break;
-        case ft_StringList:             /* 10  0x0A */  //drake178: DialogLine
+        case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
         {
 
         } break;
-        case ft_ContinuousStringInput:  /* 11  0x0B */  //drake178: EditSelect
+        case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
         {
 
         } break;
-        case ft_Grid:                   /* 12  0x0C */  //drake178: TODO
+        case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
         {
             // DLOG("switch(p_fields[field_num].type) case ft_Grid");
             if(up_down_flag == 1)  /* ¿ field up/down state: down ? */

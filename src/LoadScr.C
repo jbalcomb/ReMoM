@@ -568,13 +568,13 @@ void Load_Screen_Draw(void)
 
     /*
         MGC
-            current_menu_screen = Get_Mouse_Field();
+            current_menu_screen = Auto_Input();
     */
     /*
         WZD
-            moused_field = Get_Mouse_Field();
+            moused_field = Auto_Input();
     */
-    moused_field = Get_Mouse_Field();
+    moused_field = Auto_Input();
 
 
     x_start = 43;
@@ -823,17 +823,17 @@ void GAME_Overland_Init(void)
     itr_cities = 0;
     while(itr_cities++ < _cities)
     {
-        _CITIES[itr_cities].buildings[NONE] = 0; // ? ~ enum City Building Status B_Replaced;
+        _CITIES[itr_cities].bldg_status[NONE] = bs_Built; // ? ~ enum City Building Status B_Replaced;
     }
 
 
     itr_units = 0;
     while(itr_units++ < _units)
     {
-        if(_UNITS[itr_units].world_plane == 2) {_UNITS[itr_units].world_plane = 0; }
+        if(_UNITS[itr_units].wp == 2) {_UNITS[itr_units].wp = 0; }
 
         // NOTE: the DASM thinks world_plane is passed here as well, but IsPassableTower() makes no xref to it
-        if(IsPassableTower(_UNITS[itr_units].world_x, _UNITS[itr_units].world_y) == ST_TRUE)
+        if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy) == ST_TRUE)
         {
             _UNITS[itr_units].In_Tower = ST_TRUE;
         }
@@ -849,7 +849,8 @@ void GAME_Overland_Init(void)
     mana_staff_locked = 0;
     research_staff_locked = 0;
 
-    // _players[0].Nominal_Skill = Calc_Nominal_Skill(0);
+    // TODO  _players[0].Nominal_Skill = Player_Base_Casting_Skill(0);
+    
 
     // NIU?  CRP_OVL_MapWindowX = 0;
     // NIU?  CRP_OVL_MapWindowY = 0;
@@ -860,27 +861,28 @@ void GAME_Overland_Init(void)
     _map_x = 0;
     _map_y = 0;
 
-    // j_RP_WIZ_ReturnZero(_human_player_idx)
+    // j_o62p01_Empty_pFxn(_human_player_idx)
 
     _unit = 0;  // 0: None / No Unit
 
     // // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // // // _active_world_x = _FORTRESSES[0].world_x;
-    // // // _active_world_y = _FORTRESSES[0].world_y;
-    // // OVL_Map_CenterX = _FORTRESSES[0].world_x;
-    // // OVL_Map_CenterY = _FORTRESSES[0].world_y;
+    // // // _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
+    // // // _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
+    // // OVL_Map_CenterX = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
+    // // OVL_Map_CenterY = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
     // OVL_Map_CenterX = 24;
     // OVL_Map_CenterY = 16;
-    _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].world_x;
-    _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].world_y;
+    _active_world_x = _FORTRESSES[HUMAN_PLAYER_IDX].wx;
+    _active_world_y = _FORTRESSES[HUMAN_PLAYER_IDX].wy;
 
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
 
     // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // _world_plane = _FORTRESSES[0].world_plane;
-    // _map_plane = _FORTRESSES[0].world_plane;  // TODO(JimBalcomb,20230614): Why is this getting set to 100?
-    _map_plane = 0;
+    // _world_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
+    // _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;  // TODO(JimBalcomb,20230614): Why is this getting set to 100?
+    // _map_plane = 0;
+    _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
 
 
     TILE_VisibilityUpdt();
@@ -888,10 +890,11 @@ void GAME_Overland_Init(void)
 
     Allocate_Reduced_Map();
 
-    // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _world_plane);
+    // Center_Map(&_curr_world_x, &_curr_world_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _world_plane);
     // TODO(JimBalcomb,20230629): validate the SAVE_GAM data for _FORTRESSES
-    // Center_Map(&_map_x, &_map_y, _FORTRESSES[0].world_x, _FORTRESSES[0].world_y, _map_plane);
-    Center_Map(&_map_x, &_map_y, 24, 16, 0);
+    // Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
+    // Center_Map(&_map_x, &_map_y, 24, 16, 0);
+    Center_Map(&_map_x, &_map_y, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _map_plane);
 
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
@@ -906,8 +909,7 @@ void GAME_Overland_Init(void)
 
     // j_o108p02_Empty_pFxn()
 
-    // j_CTY_RecalculateAll
-    // ; calls CTY_Recalculate for all cities  ; (with all its BUGs)
+    // TODO  All_City_Calculations()
 
 
     // TODO  if(Check_Release_Version() != ST_FALSE)

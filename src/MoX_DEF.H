@@ -67,9 +67,9 @@
 #define MY2WY(_my_) { ( (_map_y + _main_map_grid_y) / WORLD_HEIGHT  ) }
 
 
-#define CITYX() ( _CITIES[city_idx].world_x     )
-#define CITYY() ( _CITIES[city_idx].world_y     )
-#define CITYP() ( _CITIES[city_idx].world_plane )
+#define CITYX() ( _CITIES[city_idx].wx     )
+#define CITYY() ( _CITIES[city_idx].wy     )
+#define CITYP() ( _CITIES[city_idx].wp )
 
 
 
@@ -78,9 +78,15 @@
 
 
 
-#define HUMAN_PLAYER_IDX 0
-#define NEUTRAL_PLAYER_IDX 5
-#define NEUTRAL_PLAYER_BANNER_COLOR_IDX 5
+#define HUMAN_PLAYER_IDX                 0
+#define NEUTRAL_PLAYER_IDX               5
+#define NEUTRAL_PLAYER_BANNER_COLOR_IDX  5
+
+
+
+#define MAX_UNIT_COUNT  1000
+
+
 
 // World (Grid) Dimensions, in Map Sqaures
 #define WORLD_WIDTH         60
@@ -158,6 +164,17 @@
 // "silver" used for experience level rings/circles?
 // same as reduced map box?
 // white/bright white for reduced map mark, and GP/MP font color, and outline/aura color for unit enchantment outline?
+
+// ¿ which palette ?
+// Production Screen / Build Table
+#define PAL_GREY_DARK  4  // ¿ font color ?
+#define PAL_GREY_LIGHT 5  // ¿ font color ?
+
+#define PAL_TURQUOISE_LIGHT  244
+#define PAL_TURQUOISE_DARK   248
+#define PAL_TURQUOISE_DIM    251
+#define PAL_TURQUOISE_BRIGHT 255
+
 
 /*
     EGA / VGA Colors

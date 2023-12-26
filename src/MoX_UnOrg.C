@@ -1,8 +1,20 @@
+/*
+    WIZARDS.EXE
+        ...
+        seg001
+        ...
+        seg009
+        ...
+        ovr063
+        ...
+        ovr067
+        ...
+*/
 
 /*
     Meh.
     ...was part of MoM_Init.C
-    not sure what to do with ovr052
+    __not sure what to do with ovr052__
     ...or ovr51
     or how they relate to Init, Loader, Loaded_Game_Update, etc.
 
@@ -145,6 +157,7 @@ int16_t PageFlipEffect;
     Main Screen sets it to 4 before calling Outpost_Screen()
     NameStartingCity_Dialog_Popup sets it to 3 before returning to Main Screen
     Load Screen sets it to 2 when preparing to loop back to Main Screen
+    Production Screen sets it to 3 before returning to City Screen / CityList Screen
 */
 void PageFlip_FX(void)
 {
@@ -158,7 +171,7 @@ void PageFlip_FX(void)
         } break;
         case 1:
         {
-            // RP_VGA_CutRight();
+            // TODO  RP_VGA_CutRight();
         } break;
         case 2:
         {
@@ -167,12 +180,13 @@ void PageFlip_FX(void)
         } break;
         case 3:
         {
-            // Apply_Palette();
-            // VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
+            Apply_Palette();
+            Toggle_Pages();  // |-> Page_Flip()
+            // TODO  VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
         } break;
         case 4:
         {
-            // RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
+            // TODO  RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
         } break;
         default:
         {
@@ -275,27 +289,6 @@ void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, u
 
 
 /*
-    WIZARDS.EXE  ovr052
-*/
-
-// WZD o52p017
-// drake178: ?
-void Load_BUILDDAT(void)
-{
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-
-    build_data_table = (struct s_BUILDDAT *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-}
-
-
-
-/*
     WIZARDS.EXE ovr060
 */
 
@@ -389,7 +382,7 @@ int16_t IsPassableTower(int16_t world_x, int16_t world_y)
     itr_towers = 0;
     while(itr_towers++ < TOWER_COUNT_MAX)
     {
-        if(world_x == _TOWERS[itr_towers].world_x && world_y == _TOWERS[itr_towers].world_y)
+        if(world_x == _TOWERS[itr_towers].wx && world_y == _TOWERS[itr_towers].wy)
         {
             is_passible_tower = ST_TRUE;
         }

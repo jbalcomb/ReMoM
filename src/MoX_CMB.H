@@ -27,7 +27,7 @@ extern "C" {
       with the flags being zeroed instead if no effects apply or the unit is not a hero
     returns the item unit enchantment flags
 */
-uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec);
+uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_STRATEGIC_UNIT * strategic_unit);
 
 // WZD o116p02
 // drake178: BU_Item_To_UEFlags()
@@ -35,7 +35,7 @@ uint32_t UNIT_BU_ApplyItems(int16_t unit_idx, struct s_BU_REC * BU_Rec);
     ¿ "Spell-Specific Artifact Enchantments" ?
 
 */
-void BU_Item_To_UEFlags(int16_t item_idx, struct s_BU_REC * BU_Rec);
+void BU_Item_To_UEFlags(int16_t item_idx, struct s_STRATEGIC_UNIT * strategic_unit);
 
 // WZD o116p03
 
@@ -45,10 +45,10 @@ int16_t UNIT_GetHitsPerFig(int16_t unit_idx);
 // WZD o116p05
 
 // WZD o116p06
-void UNIT_Create_BURecord(int16_t unit_idx, struct s_BU_REC * BattleUnit);
+void UNIT_Create_BURecord(int16_t unit_idx, struct s_STRATEGIC_UNIT * BattleUnit);
 
 // WZD o116p07
-void BU_SetBaseStats(struct s_BU_REC * BattleUnit);
+void BU_SetBaseStats(struct s_STRATEGIC_UNIT * BattleUnit);
 
 // WZD o116p08
 // WZD o116p09

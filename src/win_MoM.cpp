@@ -91,7 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 #ifdef STU_DEBUG
     TST_Validate_Allocate_Data_Space();
 #endif
-    Load_SAVE_GAM(-1);
+    Load_SAVE_GAM(-1);  // Why did I move this here, out of scr_Continue? ~ WZD start-up is 'Continue'?
     // _unit_stack[]
     // _unit_stack_count
     // draw_active_stack_flag

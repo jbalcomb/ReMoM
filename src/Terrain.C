@@ -55,7 +55,7 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
     world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
     terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
-    terrain_type = terrain_type_idx % TERRAIN_COUNT;
+    terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
 
     if(terrain_type != 0)
     {
@@ -343,7 +343,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: Map_Square_Production_Bonus(wx = %d, wy = %d, wp = %d, have_gaias_blessing = %d)\n", __FILE__, __LINE__, wx, wy, wp, have_gaias_blessing);
 // #endif
 
-    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
     // terrain_type = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx * 2)));
     world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
     terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
@@ -586,7 +586,7 @@ int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
 
     if( (wy >= 0) && (wy < WORLD_HEIGHT) )
     {
-        terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % TERRAIN_COUNT);
+        terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
 
         if(terrain_type <= TT_4WRiver5)
         {
@@ -774,21 +774,159 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_HasMithril      
 // WZD s161p17
 // TILE_HasAdamantium   
+
+
 // WZD s161p18
-// TILE_GetNUCostReduce 
+// drake178: TILE_GetNUCostReduce()
+/*
+    
+    TERRAIN SPECIAL MILITARY UNIT COSTS
+    Coal            -10%
+    Iron Ore        -5%
+    * Applies only to normal units except for magicians, priests, shamans and warlocks.
+    The bonus is cumulative for multiple iron ore and coal deposits
+    up to a maximum reduction in cost of 50%. Does not affect costs of buildings.
+*/
+int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves)
+{
+    int16_t terrain_special;
+
+    int16_t cost_reduction;  // _SI_
+
+    cost_reduction = 0;
+
+    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+
+    if(terrain_special == 0x01 /* TS_IronOre */)
+    {
+        if(have_minersguild != ST_TRUE)
+        {
+            cost_reduction = 5;
+        }
+        else
+        {
+            cost_reduction = 10;
+        }
+    }
+    
+    if(terrain_special == 0x02 /* TS_Coal */)
+    {
+        if(have_minersguild != ST_TRUE)
+        {
+            cost_reduction = 10;
+        }
+        else
+        {
+            cost_reduction = 20;
+        }
+    }
+
+    if(are_dwarves == ST_TRUE)
+    {
+        cost_reduction = (cost_reduction * 2);
+    }
+
+    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    {
+        cost_reduction = (cost_reduction / 2);
+    }
+
+    return cost_reduction;
+}
+
+
 // WZD s161p19
-// CTY_GetWeaponQuality 
+// drake178: CTY_GetWeaponQuality()
+// MoO2  Module: INITSHIP  Best_..._Weapon_()
+int16_t City_Best_Weapon(int16_t city_idx)
+{
+    int16_t wy_array[25];
+    int16_t wx_array[25];
+    int16_t weapon_quality;
+    int16_t city_wp;
+    int16_t useable_map_squares;
+    int16_t terrain_special;
+    int16_t itr;  // _DI_
+
+    weapon_quality = wq_Normal;
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Built) ||
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Replaced)
+    )
+    {
+        weapon_quality = wq_Magic;
+
+        city_wp = _CITIES[city_idx].wp;
+
+        useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
+
+        for(itr = 0; itr < useable_map_squares; itr++)
+        {
+            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
+            if(terrain_special == 7)  /* TS_AdamantiumOre */
+            {
+                weapon_quality = wq_Adamantium;
+            }
+
+            if(
+                (terrain_special == 6) &&  /* TS_MithrilOre */
+                (weapon_quality != wq_Adamantium)
+            )
+            {
+                weapon_quality = wq_Mithril;
+            }
+
+        }
+
+    }
+
+    return weapon_quality;
+}
+
+
 // WZD s161p20
 // TILE_GetRoadBldTime  
 // WZD s161p21
 // UU_TILE_GetUnsdMPCost
+
 // WZD s161p22
 // TILE_IsAISailable    
+/*
+WZD s161p22
+TILE_IsAISailable()
+WZD s161p24
+TILE_IsSailable()
+WZD s161p39
+TILE_IsAISailable2()
+*/
+/*
+WZD s161p22
+TILE_IsAISailable()
+; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
+; INCONSISTENT: returns 0 for the single tile no-river
+; lake, which means it should also return 0 for its
+; river outlet versions (0xC5 - 0xC8)
+
+; drake178: TILE_IsSailable()
+; returns 1 for ocean/shore/lake tiles, or 0 otherwise
+
+*/
+
 // WZD s161p23
 // TILE_IsVisibleForest 
 
 // WZD s161p24
 // drake178: TILE_IsSailable()
+/*
+WZD s161p22
+TILE_IsAISailable()
+WZD s161p24
+TILE_IsSailable()
+WZD s161p39
+TILE_IsAISailable2()
+*/
 int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t return_value;
@@ -809,7 +947,7 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     src_ofst = (wp * 4800) + (wy * 120) + (wx * 2);
     world_map_value = GET_2B_OFS(src_sgmt, src_ofst);
 
-    terrain_type = world_map_value % TERRAIN_TYPE_COUNT;
+    terrain_type = world_map_value % NUM_TERRAIN_TYPES;
 
     if(terrain_type > 0x25A)  /* _Tundra00001000 */
     {
@@ -892,10 +1030,63 @@ Done:
 // G_TILE_IsAIEmbarkable
 // WZD s161p27
 // TILE_BuildingReqType 
+
 // WZD s161p28
-// TILE_IsHills         
+// drake178: TILE_IsHills()
+int16_t Terrain_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t is_hills;  // DNE in Dasm
+
+    is_hills = ST_FALSE;  // DNE in Dasm
+
+    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+
+    if(
+        (terrain_type == TT_Hills1) ||
+        (terrain_type > TT_Mntns_end) && (terrain_type < TT_Desert_1st)
+    )
+    {
+        is_hills = ST_TRUE;
+    }
+    else
+    {
+        is_hills = ST_FALSE;
+    }
+
+    return is_hills;
+}
+
+
 // WZD s161p29
-// TILE_IsMountains     
+// drake178: TILE_IsMountains()
+int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t is_mountain;  // DNE in Dasm
+
+    is_mountain = ST_FALSE;  // DNE in Dasm
+
+    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+
+    if(
+        (terrain_type == TT_Mountain1) ||
+        (terrain_type == TT_ChaosNode) ||
+        (terrain_type == TT_Volcano) ||
+        ((terrain_type > TT_Rivers_end) && (terrain_type < TT_Hills_1st))
+    )
+    {
+        is_mountain = ST_TRUE;
+    }
+    else
+    {
+        is_mountain = ST_FALSE;
+    }
+
+    return is_mountain;
+}
+
+
 // WZD s161p30
 // TILE_IsDesert        
 // WZD s161p31
@@ -914,7 +1105,117 @@ Done:
 // CTY_CountNightshades 
 // WZD s161p38
 // TILE_IsLand          
+
 // WZD s161p39
-// TILE_IsAISailable2   
+// drake178: TILE_IsAISailable2()
+/*
+WZD s161p22
+TILE_IsAISailable()
+WZD s161p24
+TILE_IsSailable()
+WZD s161p39
+TILE_IsAISailable2()
+*/
+/*
+; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
+; differs from TILE_IsAISailable in that it checks for
+; invalid tile indices (not Plane though), for which
+; it returns 0 instead
+; INCONSISTENT: returns 0 for the single tile no-river
+; lake, which means it should also return 0 for its
+; river outlet versions (0xC5 - 0xC8)
+
+*/
+int16_t TILE_IsAISailable2(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t is_ocean;  // DNE in Dasm
+
+    is_ocean = ST_FALSE;
+
+    if(wx < 0)
+    {
+        wx += WORLD_WIDTH;
+    }
+    if(wx > WORLD_WIDTH)
+    {
+        wx -= WORLD_WIDTH;
+    }
+
+    if( (wy >= 0) && (wy < WORLD_HEIGHT) )
+    {
+        terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+
+        if(terrain_type <= _Tundra00001000)
+        {
+            if(terrain_type <= _River1111_5)
+            {
+                if(terrain_type <= _Shore111R1110)
+                {
+                    if(terrain_type <= _Desert10101111)
+                    {
+                        if(terrain_type <= _Shore000R0000)
+                        {
+                            if(terrain_type <= _River1001_2)
+                            {
+                                if(terrain_type <= _Shore10101111)
+                                {
+                                    if(terrain_type != TT_BugGrass)
+                                    {
+                                        if(terrain_type != _1Lake)
+                                        {
+                                            is_ocean = ST_TRUE;
+                                        }
+                                        else
+                                        {
+                                            is_ocean = ST_FALSE;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        is_ocean = ST_FALSE;
+                                    }
+                                }
+                                else
+                                {
+                                    is_ocean = ST_FALSE;
+                                }
+                            }
+                            else
+                            {
+                                is_ocean = ST_TRUE;
+                            }
+                        }
+                        else
+                        {
+                            is_ocean = ST_FALSE;
+                        }
+                    }
+                    else
+                    {
+                        is_ocean = ST_TRUE;
+                    }
+                }
+                else
+                {
+                    is_ocean = ST_FALSE;
+                }
+            }
+            else
+            {
+                is_ocean = ST_TRUE;
+            }
+        }
+        else
+        {
+            is_ocean = ST_FALSE;
+        }
+    }
+
+    return is_ocean;
+}
+
+
+
 // WZD s161p40
 // UU_TILE_BotchedResFn 

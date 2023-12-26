@@ -480,7 +480,7 @@ when always draw (-1) is set for OVL_ActiveStackDraw
     dbg_prn("DEBUG: [%s, %d]: draw_active_stack_flag: %d\n", __FILE__, __LINE__, draw_active_stack_flag);
     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
     dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].owner_idx: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].owner_idx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].world_plane: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].world_plane);
+    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].wp: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].wp);
     dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].In_Tower: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].In_Tower);
     dbg_prn("DEBUG: [%s, %d]: world_plane: %d\n", __FILE__, __LINE__, world_plane);
 #endif
@@ -491,10 +491,10 @@ when always draw (-1) is set for OVL_ActiveStackDraw
         if((_UNITS[_unit_stack[0].unit_idx].owner_idx != ST_UNDEFINED))
         {
             unit_idx = _unit_stack[0].unit_idx;
-            if( (_UNITS[_unit_stack[0].unit_idx].world_plane == world_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
+            if( (_UNITS[_unit_stack[0].unit_idx].wp == world_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
             {
-                unit_xw = _UNITS[unit_idx].world_x;
-                unit_yw = _UNITS[unit_idx].world_y;
+                unit_xw = _UNITS[unit_idx].wx;
+                unit_yw = _UNITS[unit_idx].wy;
                 in_view = World_To_Screen(mmap_xw, mmap_yw, &unit_xw, &unit_yw);
 
                 // not never, not always, so must be set for draw-cycling, so increment the cycle
@@ -540,8 +540,8 @@ when always draw (-1) is set for OVL_ActiveStackDraw
                         }
 
                         unit_idx = _unit_stack[0].unit_idx;
-                        // Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
-                        Draw_Reduced_Map(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].world_x, _UNITS[unit_idx].world_y, ST_TRUE);
+                        // Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
+                        Draw_Reduced_Map(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
 
                     }
                 }
@@ -625,13 +625,6 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
 #endif
 
-#ifdef STU_DEBUG
-    if(DBG_TST_Selected_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: Set_Entities_On_Map_Window()  (DBG_TST_Selected_Stack == 1)\n", __FILE__, __LINE__);
-    }
-#endif
-
     city_in_view = ST_FALSE;
     entity_world_y = 0;
     entity_world_x = 0;
@@ -647,47 +640,21 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         entity_owner_idx = _UNITS[itr_units].owner_idx;
-        entity_world_x = _UNITS[itr_units].world_x;
-        entity_world_y = _UNITS[itr_units].world_y;
-        entity_world_p = _UNITS[itr_units].world_plane;
+        entity_world_x = _UNITS[itr_units].wx;
+        entity_world_y = _UNITS[itr_units].wy;
+        entity_world_p = _UNITS[itr_units].wp;
         square_is_scouted = Check_Square_Scouted(entity_world_x, entity_world_y, world_plane);
-#ifdef STU_DEBUG
-    if(DBG_TST_Selected_Stack == 1)
-    {
-        if(entity_owner_idx != _human_player_idx)
-        {
-            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_owner_idx: %d\n", __FILE__, __LINE__, entity_owner_idx);
-        }
-        if(entity_world_x != 19)
-        {
-            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_x: %d\n", __FILE__, __LINE__, entity_world_x);
-        }
-        if(entity_world_y != 10)
-        {
-            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_y: %d\n", __FILE__, __LINE__, entity_world_y);
-        }
-        if(entity_world_p != 0)
-        {
-            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entity_world_p: %d\n", __FILE__, __LINE__, entity_world_p);
-        }
-
-        if(square_is_scouted != ST_TRUE)
-        {
-            dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: square_is_scouted: %d\n", __FILE__, __LINE__, square_is_scouted);
-        }
-    }
-#endif
 
         if(entity_owner_idx != ST_UNDEFINED)
         {
             if(square_is_scouted == ST_TRUE)
             {
-                if( (_UNITS[itr_units].world_plane == world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) )
+                if( (_UNITS[itr_units].wp == world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) )
                 {
-                    // entity_world_y = _UNITS[itr_units].world_y;
+                    // entity_world_y = _UNITS[itr_units].wy;
                     if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
                     {
-                        // entity_world_x = _UNITS[itr_units].world_x;
+                        // entity_world_x = _UNITS[itr_units].wx;
                         if(
                              ((entity_world_x >= world_x) && (entity_world_x < world_x + MAP_WIDTH)) ||
                              ((entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH))
@@ -712,12 +679,6 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                                 if(_UNITS[itr_units].Draw_Priority > _UNITS[prior_entity_idx].Draw_Priority)
                                 {
                                     // Add UNIT to entities_on_movement_map[]
-#ifdef STU_DEBUG
-    if(DBG_TST_Selected_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
-    }
-#endif
                                     entities_on_movement_map[entity_table_idx] = itr_units;
                                 }
                             }
@@ -726,12 +687,6 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                                 if(_UNITS[itr_units].Draw_Priority > 0)
                                 {
                                     // Add UNIT to entities_on_movement_map[]
-#ifdef STU_DEBUG
-    if(DBG_TST_Selected_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
-    }
-#endif
                                     entities_on_movement_map[entity_table_idx] = itr_units;
                                 }
                                 else
@@ -739,12 +694,6 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
                                     if( (_UNITS[itr_units].Draw_Priority == 0) && (draw_active_stack_flag == -1) )  /* ALWAYS draw active stack */
                                     {
                                         // Add UNIT to entities_on_movement_map[]
-#ifdef STU_DEBUG
-    if(DBG_TST_Selected_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: \n", __FILE__, __LINE__);
-    }
-#endif
                                         entities_on_movement_map[entity_table_idx] = itr_units;
                                     }
                                 }
@@ -758,57 +707,54 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        entity_world_x = _CITIES[itr_cities].world_x;
-        entity_world_y = _CITIES[itr_cities].world_y;
-        entity_world_p = _CITIES[itr_cities].world_plane;
+
+        entity_world_x = _CITIES[itr_cities].wx;
+        entity_world_y = _CITIES[itr_cities].wy;
+        entity_world_p = _CITIES[itr_cities].wp;
+
         square_is_explored = TBL_Scouting[((entity_world_p * WORLD_SIZE) + (entity_world_y * WORLD_WIDTH) + entity_world_x)];
-        if( ((entity_world_p == world_plane) || (entity_world_p == 2)) && (square_is_explored!= ST_FALSE) )
+
+        if( ((entity_world_p == world_plane) || (entity_world_p == 2)) && (square_is_explored != ST_FALSE) )
         {
-            entity_world_y = _CITIES[itr_cities].world_y;
+            entity_world_y = _CITIES[itr_cities].wy;
+
             if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
             {
+
                 city_in_view = ST_FALSE;
+
                 entity_map_y = entity_world_y - world_y;
-                entity_world_x = _CITIES[itr_cities].world_x;
+
+                entity_world_x = _CITIES[itr_cities].wx;
+
                 if(
                     ( (entity_world_x >= world_x) && (entity_world_x < world_x + MAP_WIDTH) ) ||
                     ( (entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH) )
                 )
                 {
+
                     if( (entity_world_x + WORLD_WIDTH >= world_x) && (entity_world_x + WORLD_WIDTH < world_x + MAP_WIDTH) )
                     {
                         entity_world_x = entity_world_x + WORLD_WIDTH;
                     }
+
                     entity_map_x = entity_world_x - world_x;
+
                     city_in_view = ST_TRUE;
+
                 }
+
+                if(city_in_view == ST_TRUE)
+                {
+                    entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
+                    entities_on_movement_map[entity_table_idx] = (itr_cities + 1000);
+                }
+
             }
-        }
-        if(city_in_view == ST_TRUE)
-        {
-            entity_table_idx = (entity_map_y * MAP_WIDTH) + entity_map_x;
-            entities_on_movement_map[entity_table_idx] = (itr_cities + 1000);
+
         }
 
     }
-
-#ifdef STU_DEBUG
-    if(DBG_TST_Validate_Entities == 1)
-    {
-        DLOG("(DBG_TST_Validate_Entities == 1)");
-        for(itr_map_y = 0; itr_map_y < MAP_HEIGHT; itr_map_y++)
-        {
-            for(itr_map_x = 0; itr_map_x < MAP_WIDTH; itr_map_x++)
-            {
-                // if(entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x] != DBG_TST_entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x])
-                // {
-                //     dbg_prn("DEBUG: [%s, %d]: DBG_TST_FAILURE: entities_on_movement_map[] != DBG_TST_entities_on_movement_map[]\n", __FILE__, __LINE__);
-                // }
-            }
-        }
-    }
-    DBG_TST_Validate_Entities = 0;
-#endif
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Set_Entities_On_Map_Window(world_x = %d, world_y = %d, world_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, world_plane);
@@ -879,28 +825,29 @@ void Reset_Stack_Draw_Priority(void)
 // WZD o68p01
 // ? MoO2  Module: MAINSCR  Center_Map_() ?
 /*
-    in: xpos,ypos are new map center
+    map_x, map_y are the top-left corner of the movement map, in world coordinates
+    seeting _prev_world_x, y causes the next map draw to jump to the new coordinates
+
+    in: world_grid_x,ys is new world-map center
     in/out: map_x,map_y are cur/new map start
 */
-void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t world_grid_y, int16_t world_plane)
+void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t tmp_map_x;
-    int16_t tmp_map_y;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Center_Map(*map_x, *map_y, world_gird_x, world_grid_y, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_gird_x, world_grid_y, world_plane);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Center_Map(*map_x = %d, *map_y = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_grid_x, world_grid_y, world_plane);
 #endif
 
-    if(world_gird_x >= WORLD_WIDTH)
+    if(world_grid_x >= WORLD_WIDTH)
     {
-        world_gird_x -= WORLD_WIDTH;
+        world_grid_x -= WORLD_WIDTH;
     }
-    if(world_gird_x < 0)
+    if(world_grid_x < 0)
     {
-        world_gird_x += WORLD_WIDTH;
+        world_grid_x += WORLD_WIDTH;
     }
 
-    *map_x = world_gird_x - MAP_WIDTH_HALF;
+    *map_x = world_grid_x - MAP_WIDTH_HALF;
     if(*map_x <= 0)
     {
         *map_x = ((*map_x + WORLD_WIDTH) / WORLD_WIDTH);
@@ -928,9 +875,58 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_gird_x, int16_t 
     Set_Entities_On_Map_Window(*map_x, *map_y, world_plane);
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Center_Map(*map_x, *map_y, world_gird_x, world_grid_y, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_gird_x, world_grid_y, world_plane);
+    dbg_prn("DEBUG: [%s, %d]: END: Center_Map(*map_x = %d, *map_y = %d, world_grid_x = %d, world_grid_y = %d, world_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, world_grid_x, world_grid_y, world_plane);
 #endif
 }
+
+
+// WZD o68p02
+void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+{
+    int16_t city_screen_map_world_grid_y;
+    int16_t city_screen_map_world_grid_x;
+
+    city_screen_map_world_grid_y = world_grid_y;
+    city_screen_map_world_grid_x = (world_grid_x - 2);
+
+    if(city_screen_map_world_grid_x <= 0)
+    {
+        *map_x = ((city_screen_map_world_grid_x + WORLD_WIDTH) % WORLD_WIDTH);
+    }
+    else
+    {
+        *map_x = city_screen_map_world_grid_x;
+    }
+
+    city_screen_map_world_grid_y = (world_grid_y - 2);
+
+    if(city_screen_map_world_grid_y <= 0)
+    {
+        *map_y = 0;
+    }
+    else
+    {
+        *map_y = city_screen_map_world_grid_y;
+    }
+
+    if((*map_y + 5) >= WORLD_HEIGHT)
+    {
+        *map_y = (WORLD_HEIGHT - 5);
+    }
+
+    _prev_world_x = *map_x;
+    _prev_world_y = *map_y;
+
+    // NIU  CRP_OVL_MapWindowX = (_prev_world_x * SQUARE_WIDTH);
+    // NIU  CRP_OVL_MapWindowY = (_prev_world_y * SQUARE_HEIGHT);
+
+    Set_Unit_Draw_Priority();
+    Reset_Stack_Draw_Priority();
+    Set_Entities_On_Map_Window(*map_x, *map_y, world_plane);
+
+}
+
+
 
 // WZD o68p03
 // drake178: OVL_GetMinimapStart()
@@ -1612,7 +1608,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 
     if(current_screen == scr_City_Screen)
     {
-        Set_Window(215, 4, 454, 183);
+        Set_Window(215, 4, 454, 183);  // BUGBUG:  should be x2: (215 + (5 * 20) - 1) & y2: (4 + (5 * 18) - 1)
     }
     else
     {
@@ -1621,10 +1617,10 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr_cities].world_plane == world_plane)
+        if(_CITIES[itr_cities].wp == world_plane)
         {
-            city_x = _CITIES[itr_cities].world_x;
-            city_y = _CITIES[itr_cities].world_y;
+            city_x = _CITIES[itr_cities].wx;
+            city_y = _CITIES[itr_cities].wy;
             if(TBL_Scouting[((world_plane * WORLD_SIZE) + (city_y * WORLD_WIDTH) + city_x)] != ST_FALSE)
             {
                 city_x = city_x - world_grid_x;  // translate to map relative coordinates
@@ -1646,9 +1642,9 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                 screen_start_x = screen_x + (city_x * SQUARE_WIDTH) - 6;  // start 6 pixels early, to overdraw the City Picture
                                 screen_start_y = screen_y + (city_y * SQUARE_HEIGHT) - 6;  // start 6 pixels early, to overdraw the City Picture
 
-                                if(city_owner != 5)  /* Neutral Player */
+                                if(city_owner != NEUTRAL_PLAYER_IDX)  /* Neutral Player */
                                 {
-                                    if(_CITIES[itr_cities].buildings[CITY_WALLS] == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)  /* ¿ "B_Replaced" or just ST_FALSE ? */
                                     {
                                         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
                                     }
@@ -1675,7 +1671,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                 }
                                 else
                                 {
-                                    if(_CITIES[itr_cities].buildings[CITY_WALLS] == 0)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)  /* ¿ "B_Replaced" or just ST_FALSE ? */
                                     {
                                         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
                                     }
@@ -1729,8 +1725,8 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 
     for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
     {
-        tower_x = _TOWERS[itr_towers].world_x;
-        tower_y = _TOWERS[itr_towers].world_y;
+        tower_x = _TOWERS[itr_towers].wx;
+        tower_y = _TOWERS[itr_towers].wy;
 
         unexplored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (tower_y * WORLD_WIDTH) + tower_x];
         if(unexplored_flag != ST_FALSE)
@@ -1802,14 +1798,14 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
-        if(_LAIRS[itr_lairs].world_plane == world_plane)
+        if(_LAIRS[itr_lairs].wp == world_plane)
         {
             if(_LAIRS[itr_lairs].Intact == 1)
             {
                 if(_LAIRS[itr_lairs].Type > EZ_Sorcery_Node)
                 {
-                    lair_x = _LAIRS[itr_lairs].world_x;
-                    lair_y = _LAIRS[itr_lairs].world_y;
+                    lair_x = _LAIRS[itr_lairs].wx;
+                    lair_y = _LAIRS[itr_lairs].wy;
                     unexplored_flag = TBL_Scouting[(world_plane * WORLD_SIZE) + (lair_y * WORLD_WIDTH) + lair_x];
                     if(unexplored_flag != ST_FALSE)
                     {
@@ -1900,9 +1896,9 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
     for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
     {
-        if(world_plane == TBL_Nodes[itr_nodes].world_plane)
+        if(world_plane == _NODES[itr_nodes].wp)
         {
-            node_owner_idx = TBL_Nodes[itr_nodes].Owner;
+            node_owner_idx = _NODES[itr_nodes].owner_idx;
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: node_owner_idx: %d\n", __FILE__, __LINE__, node_owner_idx);
 // #endif
@@ -1916,18 +1912,18 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // #endif
                     assert(node_owner_banner_idx <= 5);
                     node_anim_seg = node_auras_seg[node_owner_banner_idx];
-                    node_power = TBL_Nodes[itr_nodes].Power;
+                    node_power = _NODES[itr_nodes].power;
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: node_power: %d\n", __FILE__, __LINE__, node_power);
 // #endif
                     Tile_Index = 0;
                     while(Tile_Index < node_power)
                     {
-                        node_aura_world_x = TBL_Nodes[itr_nodes].Aura_Xs[Tile_Index];
+                        node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: node_aura_world_x: %d\n", __FILE__, __LINE__, node_aura_world_x);
 // #endif
-                        node_aura_world_y = TBL_Nodes[itr_nodes].Aura_Ys[Tile_Index];
+                        node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: node_aura_world_y: %d\n", __FILE__, __LINE__, node_aura_world_y);
 // #endif
@@ -1967,10 +1963,10 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                         Tile_Index++;
                     }
 
-// TODO                      if( (TBL_Nodes[itr_nodes].Meld_Flags & 0x01) != 0 )/* M_Warped */
+// TODO                      if( (_NODES[itr_nodes].Meld_Flags & 0x01) != 0 )/* M_Warped */
 // TODO                      {
-// TODO                          node_aura_world_x = TBL_Nodes[itr_nodes].Aura_Xs[Tile_Index];
-// TODO                          node_aura_world_y = TBL_Nodes[itr_nodes].Aura_Ys[Tile_Index];
+// TODO                          node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
+// TODO                          node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
 // TODO                          unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
 // TODO                          if(unexplored_area != ST_FALSE)
 // TODO                          {
@@ -2107,7 +2103,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     has_city = ST_FALSE;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == world_plane))
                         {
                             has_city = ST_TRUE;
                         }
@@ -2206,7 +2202,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
                     City_Cover = 0;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].world_x == curr_world_x) && (_CITIES[itr_cities].world_y == itr_world_y) && (_CITIES[itr_cities].world_plane == world_plane))
+                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == world_plane))
                         {
                             City_Cover = 1;
                         }
@@ -2510,7 +2506,7 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
 #endif
 
 
-    terrain_type_idx_base = world_plane * TERRAIN_COUNT;
+    terrain_type_idx_base = world_plane * NUM_TERRAIN_TYPES;
 
     explore_data_ptr = (TBL_Scouting + (world_plane * WORLD_SIZE));
     world_data_ptr = (_world_maps + (world_plane * 4800));
@@ -2559,10 +2555,10 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
     */
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr_cities].world_plane == world_plane)
+        if(_CITIES[itr_cities].wp == world_plane)
         {
-            city_world_x = _CITIES[itr_cities].world_x;
-            city_world_y = _CITIES[itr_cities].world_y;
+            city_world_x = _CITIES[itr_cities].wx;
+            city_world_y = _CITIES[itr_cities].wy;
             if(*(explore_data_ptr + (city_world_y * WORLD_WIDTH) + city_world_x) != ST_FALSE)
             {
                 city_minimap_x = city_world_x - minimap_start_x;

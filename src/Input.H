@@ -519,8 +519,8 @@ enum Simtex_Key_Codes
 //     KP_Ctrl_LeftDown   = 0x86,
 //     KP_Ctrl_RightDown  = 0x87,
 //     KP_Ctrl_s          = 0x90,
-//     KP_F11             = 0x91,
-//     KP_F12             = 0x92,
+    ST_KEY_F11             = 0x91,
+    ST_KEY_F12             = 0x92,
 //     KP_Alt_a           = 0xA0,
 //     KP_Alt_b           = 0xA1,
 //     KP_Alt_c           = 0xA2,
@@ -673,6 +673,20 @@ int16_t Scan_Field(void);
 
 // WZD s36p26
 int16_t Scan_Input(void);
+
+// WZD s36p27
+// drake178: UU_GUI_KeyWaitLoop()
+
+// WZD s36p28
+// drake178: G_GUI_ClearInput()
+// MoO2  Module: fields  Reset_Wait_For_Input()
+void Reset_Wait_For_Input(void);
+
+// WZD s36p29
+// drake178: G_GUI_PressAnyKey()
+// MoO2  Module: fields  Wait_For_Input()
+int16_t Wait_For_Input(void);
+
 
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()

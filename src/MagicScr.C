@@ -436,13 +436,13 @@ void Magic_Screen(void)
         // TODO  _help_entries[(IDK_CnctWzdsCnt_w42CB4 * 10)] = HLP_SHATTERED_GEM;  // HLP_SHATTERED_GEM = 263
         // TODO  _help_entries[(100 + (IDK_CnctWzdsCnt_w42CB4 * 10))] = ST_UNDEFINED;
 
-        if(_FORTRESSES[itr_players].Active == ST_TRUE)
+        if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
             gem_player_nums[gem_count] = -1;
             // TODO  _help_entries[(gem_count * 10)] = HLP_GRAY_GEM;  // HLP_GRAY_GEM = 262
         }
 
-        if(_FORTRESSES[itr_players].Active == ST_TRUE)
+        if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
             if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
             {
@@ -575,7 +575,7 @@ void Magic_Screen_Draw(void)
 // var_2= word ptr -2
 
     int16_t itr_help_entries;
-    int16_t itr_num_players;
+    int16_t itr_players;
     int16_t itr_gems;
     int16_t itr_ovl_enchs;
 
@@ -599,15 +599,15 @@ void Magic_Screen_Draw(void)
         *(_help_entries + 430 + (itr_help_entries * 10)) = ST_UNDEFINED;
     }
 
-    for(itr_players_help = 0, itr_num_players = 1; itr_num_players < _num_players; itr_players_help++, itr_num_players++)
+    for(itr_players_help = 0, itr_players = 1; itr_players < _num_players; itr_players_help++, itr_players++)
     {
         *(_help_entries +   0 + (itr_players_help * 10)) = HLP_SHATTERED_GEM;
         *(_help_entries + 100 + (itr_players_help * 10)) = ST_UNDEFINED;
-        if(_FORTRESSES[itr_num_players].Active == ST_TRUE)
+        if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
             *(_help_entries +   0 + (itr_players_help * 10)) = HLP_GRAY_GEM;
         }
-        if( (_FORTRESSES[itr_num_players].Active == ST_TRUE) && (_players[_human_player_idx].Dipl.Contacted[itr_num_players] == ST_TRUE) )
+        if( (_FORTRESSES[itr_players].active == ST_TRUE) && (_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE) )
         {
             *(_help_entries +   0 + (itr_players_help * 10)) = ST_UNDEFINED;
             *(_help_entries + 100 + (itr_players_help * 10)) = HLP_RELATIONS;

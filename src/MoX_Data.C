@@ -63,6 +63,37 @@ struct s_mouse_list mouse_list_hourglass[1] = {
 // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
 
 
+// WZD dseg:0156
+// drake178: STR_TownSizes
+char * STR_TownSizes[6] =
+{
+    cnst_Outpost,
+    cnst_Hamlet,
+    cnst_Village,
+    cnst_Town,
+    cnst_City,
+    cnst_Capital
+};
+ 
+
+
+
+
+// WZD dseg:1D74
+// drake178: struct XP_TABLE TBL_Experience
+int16_t TBL_Experience[9] = {0, 20, 60, 120, 200, 300, 450, 600, 1000};
+// 00 struc XP_TABLE ; (sizeof=0x12, standard type)
+// 00 Hero_or_Recruit dw ?                    ; base 10
+// 02 Myrmidon_or_Regular dw ?                ; base 10
+// 04 Captain_or_Veteran dw ?                 ; base 10
+// 06 Cmdr_or_Elite dw ?                      ; base 10
+// 08 Champion dw ?                           ; base 10
+// 0A Lord_or_Ultra_Elite dw ?                ; base 10
+// 0C Grand_Lord dw ?                         ; base 10
+// 0E Super_Hero dw ?                         ; base 10
+// 10 Demi_God dw ?                           ; base 10
+// 12 ends XP_TABLE
+
 
 
 
@@ -72,9 +103,37 @@ struct s_mouse_list mouse_list_hourglass[1] = {
 // WZD dseg:1ED8 DE 26 E5 26 EC 26 F4 26 9C 21 FA 26             STR_USW_MagicRaces@ dw offset cnst_Rlm5_Arcane, offset cnst_Rlm0_Nature, offset cnst_Rlm1_Sorcery, offset cnst_Rlm2_Chaos, offset cnst_Rlm3_Life, offset cnst_Rlm4_Death
 // WZD dseg:1ED8                                                                                         ; DATA XREF: USW_DrawView+453t ...
 // WZD dseg:1ED8                                                                                         ; "Life"
-// WZD dseg:1EE4 00 27 0D 27 B6 21 18 27 26 27 33 27 3E 27 4E 27+STR_CityEnchants@ dw offset cnst_WallofFire
 
-
+// WZD dseg:1EE4
+char * STR_CityEnchants[26] = 
+{
+    cnst_WallofFire,
+    cnst_ChaosRift,
+    cnst_DarkRituals, 
+    cnst_EvilPresence, 
+    cnst_CursedLands, 
+    cnst_Pestilence, 
+    cnst_CloudofShadow, 
+    cnst_Famine, 
+    cnst_FlyingFortress1, 
+    cnst_NatureWard, 
+    cnst_SorceryWard, 
+    cnst_ChaosWard, 
+    cnst_LifeWard, 
+    cnst_DeathWard, 
+    cnst_NaturesEye, 
+    cnst_EarthGate, 
+    cnst_StreamofLife, 
+    cnst_GaiasBlessing, 
+    cnst_Inspirations, 
+    cnst_Prosperity, 
+    cnst_AstralGate, 
+    cnst_HeavenlyLight, 
+    cnst_Consecration, 
+    cnst_WallofDarkness, 
+    cnst_AltarofBattle, 
+    cnst_Nightshade
+};
 
 
 
@@ -255,13 +314,90 @@ struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
 // WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_nameso
 
 
+// WZD dseg:2143 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0         ; DATA XREF: dseg:wizard_abilities_nameso
+
+// WZD dseg:214D
+// drake178: cnst_Outpost
+char cnst_Outpost[] = "Outpost";
+// WZD dseg:2155
+// drake178: cnst_Hamlet
+char cnst_Hamlet[] = "Hamlet";
+// WZD dseg:215C
+// drake178: cnst_Village
+char cnst_Village[] = "Village";
+// WZD dseg:2164
+// drake178: cnst_Town
+char cnst_Town[] = "Town";
+// WZD dseg:2169
+// drake178: cnst_City
+char cnst_City[] = "City";
+// WZD dseg:216E
+// drake178: cnst_Capital
+char cnst_Capital[] = "Capital";
+
+// WZD dseg:2176 53 75 6D 6D 6F 6E 69 6E 67 20 43 69 72 63 6C 65+cnst_SummoningCircle db 'Summoning Circle',0
+
+// WZD dseg:2187
+char cnst_EarthGate[] = "Earth Gate";
+// WZD dseg:2192
+char cnst_StreamOfLife[] = "Stream Of Life";
+// WZD dseg:219C
+char cnst_Rlm3_Life[] = "Life";
+// WZD dseg:21A1
+char cnst_AstralGate[] = "Astral Gate";
+// WZD dseg:21AD
+char cnst_Fortress[] = "Fortress";
+// WZD dseg:21B6
+char cnst_DarkRituals[] = "Dark Rituals";
+// WZD dseg:21C3
+char cnst_AltarofBattle[] = "Altar of Battle";
 
 
 
-// WZD dseg:2A12
-char builddat_lbx_file[] = "BUILDDAT.LBX";
-
-
+// WZD dseg:2700
+char cnst_WallofFire[] = "Wall of Fire";
+// WZD dseg:270D
+char cnst_ChaosRift[] = "Chaos Rift";
+// WZD dseg:2718
+char cnst_EvilPresence[] = "Evil Presence";
+// WZD dseg:2726
+char cnst_CursedLands[] = "Cursed Lands";
+// WZD dseg:2733
+char cnst_Pestilence[] = "Pestilence";
+// WZD dseg:273E
+char cnst_CloudofShadow[] = "Cloud of Shadow";
+// WZD dseg:274E
+char cnst_Famine[] = "Famine";
+// WZD dseg:2755
+char cnst_FlyingFortress1[] = "Flying";
+// WZD dseg:275C
+char cnst_NatureWard[] = "Nature Ward";
+// WZD dseg:2768
+char cnst_SorceryWard[] = "Sorcery Ward";
+// WZD dseg:2775
+char cnst_ChaosWard[] = "Chaos Ward";
+// WZD dseg:2780
+char cnst_LifeWard[] = "Life Ward";
+// WZD dseg:278A
+char cnst_DeathWard[] = "Death Ward";
+// WZD dseg:2795
+char cnst_NaturesEye[] = "Nature's Eye";
+// WZD dseg:27A2
+char cnst_StreamofLife[] = "Stream of Life";
+// WZD dseg:27B1
+char cnst_GaiasBlessing[] = "Gaia's Blessing";
+// WZD dseg:27C1
+char cnst_Inspirations[] = "Inspirations";
+// WZD dseg:27CE
+char cnst_Prosperity[] = "Prosperity";
+// WZD dseg:27D9
+char cnst_HeavenlyLight[] = "Heavenly Light";
+// WZD dseg:27E8
+char cnst_Consecration[] = "Consecration";
+// WZD dseg:27F5
+char cnst_WallofDarkness[] = "Wall of Darkness";
+// WZD dseg:2806
+char cnst_Nightshade[] = "Nightshade";
 
 
 
@@ -312,6 +448,8 @@ struct s_Movement_Modes movement_modes_array = { CAVALRY, FORESTER, MOUNTAINEER,
 
 
 
+
+
 // MGC dseg:52C6
 // AKA gsa_WIZARDS_0to13
 SAMB_ptr wizard_portrait_segs[14];  // ¿ here, because used by MGC Newgame_Screen(), but, also used by WZD Magic_Screen() ?
@@ -328,6 +466,34 @@ char hlpentry_lbx_file[] = "hlpentry";
 // WZD dseg:6E9E
 // drake178: TBL_Tax_Unrest_Pcnts
 int16_t tax_unrest_pct_table[7] = {0,10,20,30,45,60,75};
+
+
+
+
+
+// WZD dseg:6ED0                                                 ¿ BEGIN: Cityscape - Initialized Data ?
+
+// WZD dseg:6ED0
+// drake178: CTY_EnchantAnimStage
+int16_t cityscape_bldg_anim_ctr = 0;
+
+// WZD dseg:6ED2
+int16_t cityscape_water_anim_ctr = 0;
+
+// WZD dseg:6ED4
+int16_t cityscape_wall_anim_ctr = 0;
+
+// WZD dseg:6ED6
+int16_t IDK_cityscape_vanish_percent = 100;
+
+// WZD dseg:6ED8
+// ¿ usage/pattern ? sets of 4?
+// IDK_cityscape_RC_4x2
+// 4, 9, 13, 18, 0, 5, 9, 14, 0, -12, 18, 0, 5,-20,24,-13,19,-13,24,-7, 0,-14,29, 0, 4,-17,31,-4, 7,-21,35,-6, 0,-15,19, 0, 6,-20,23,-6,10,-25,30,-11, 0,-14,29, 0, 6,-19,34,-5,11,-25,39,-11, 6,-41,30,-3,11,-47,30,-42,25,-41,30,-9
+
+// WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
+
+
 
 
 
@@ -526,8 +692,6 @@ int16_t help_list_count = 0;
 
 // WZD dseg:912A                                                 ¿ BEGIN: ?
 
-
-
 // WZD dseg:912A
 // index of the Time Stop wizard plus 1 (0 if none)
 int16_t g_TimeStop_PlayerNum;
@@ -535,7 +699,7 @@ int16_t g_TimeStop_PlayerNum;
 // WZD dseg:912C
 struct s_SPELL_DATA * spell_data_table;
 
-// WZD dseg:912C                                                                                         ; 215 records of 36 bytes
+// WZD dseg:9130                                                 ; unsigned int IMG_GAME_SpellAnim
 // WZD dseg:9130 00 00                                           IMG_GAME_SpellAnim@ dw 0                ; DATA XREF: GAME_LearnSpellAnim+374w ...
 // WZD dseg:9130                                                                                         ; appended into the LBX_Sandbox_Segment
 // WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
@@ -545,18 +709,18 @@ struct s_SPELL_DATA * spell_data_table;
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
 
-
-
 // WZD dseg:9136
 struct s_ITEM * TBL_Items;
 
 // WZD dseg:913A
 SAMB_ptr TBL_Premade_Items;
+
 // WZD dseg:913E
-// IMG_USW_Items ITEM_ICONS
+// drake178: IMG_USW_Items ITEM_ICONS
+SAMB_ptr item_icons_seg[116];
 
 // WZD dseg:9226
-struct s_BU_REC * Active_Unit;                       // alloc in Allocate_Data_Space()
+struct s_STRATEGIC_UNIT * global_strategic_unit;                       // alloc in Allocate_Data_Space()
 
 // WZD dseg:922A
 // TBL_BattleUnits
@@ -581,6 +745,148 @@ SAMB_ptr p4_heroes;
 SAMB_ptr p5_heroes;
 
 
+
+
+
+// WZD dseg:92B0
+// drake178: G_TBL_CityscapeBldngs
+struct s_BLDG * G_TBL_CityscapeBldngs;
+
+// WZD dseg:92B4
+int16_t IDK_Cityscape_Bldg_Cnt;
+
+// WZD dseg:92B6
+// drake178: IMG_USW_GrassBase@
+SAMB_ptr unit_grass_diamond_seg;
+
+// WZD dseg:92B8
+// drake178: IMG_CTY_Buildings BLDNG_GFX
+SAMB_ptr bldg_picts_seg[35];
+
+// WZD dseg:92FE
+// drake178: IMG_CTY_CITYSPL4
+SAMB_ptr IDK_CITYSPL4_city_walls_build_seg;
+
+// WZD dseg:9300
+// drake178: IMG_CTY_TradeGoods@
+SAMB_ptr building_trade_goods_seg;
+
+// WZD dseg:9302
+// drake178: IMG_CTY_Housing_Std@, IMG_CTY_Housing_Tre@, IMG_CTY_Housing_Mnd@
+SAMB_ptr bldg_housing_seg[3];
+
+// WZD dseg:9308 00 00                                           IMG_CTY_WizFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4F4w ...
+// WZD dseg:930A 00 00                                           IMG_CTY_Scap_Wall@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+4DDw ...
+// WZD dseg:930C 00 00                                           IMG_CTY_AltarofBtl@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+498w ...
+// WZD dseg:930E 00 00                                           IMG_CTY_EvilPresnc@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+4C6w ...
+// WZD dseg:9310 00 00                                           IMG_CTY_Dark_Ritual@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4AFw ...
+// WZD dseg:9312 00 00                                           IMG_CTY_Astral_Gate@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+481w ...
+// WZD dseg:9314 00 00                                           IMG_CTY_StreamofLif@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+46Aw ...
+// WZD dseg:9316 00 00                                           IMG_CTY_Earth_Gate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+453w ...
+// WZD dseg:9318 00 00                                           IMG_CTY_Sum_Circle@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+43Cw ...
+// WZD dseg:931A 00 00 00 00 00 00                               IMG_CTY_Scap_Rocks@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+41Ew ...
+// WZD dseg:9320 00 00 00 00 00 00                               IMG_CTY_Scap_Trees@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+3F6w ...
+
+// WZD dseg:9326
+// drake178: IMG_CTY_Scap_Houses@[15]
+SAMB_ptr cityscape_houses_seg[15];
+
+// WZD dseg:9344 00 00                                           IMG_CTY_Scap_Roads@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+38Fw ...
+// WZD dseg:9346 00 00                                           IMG_CTY_WallofDark@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+30Fw ...
+// WZD dseg:9348 00 00                                           IMG_CTY_Unk dw 0
+// WZD dseg:934A 00 00                                           IMG_CTY_WallofFire@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2F8w ...
+// WZD dseg:934C 00 00                                           IMG_CTY_Consecrate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2E1w ...
+// WZD dseg:934E 00 00                                           IMG_CTY_Prosperity@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2CAw ...
+// WZD dseg:9350 00 00                                           IMG_CTY_Inspiratn@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+2B3w ...
+// WZD dseg:9352 00 00                                           IMG_CTY_NatsEye@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+29Cw ...
+// WZD dseg:9354 00 00                                           IMG_CTY_SorcWard@ dw 0                  ; DATA XREF: GFX_Swap_AppndCtScap+285w ...
+// WZD dseg:9356 00 00                                           IMG_CTY_LifeWard@ dw 0                  ; DATA XREF: GFX_Swap_AppndCtScap+26Ew ...
+// WZD dseg:9358 00 00                                           IMG_CTY_NatWard@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+257w ...
+// WZD dseg:935A 00 00                                           IMG_CTY_ChaosWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+240w ...
+// WZD dseg:935C 00 00                                           IMG_CTY_DeathWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+229w ...
+// WZD dseg:935E 00 00                                           IMG_CTY_FamineMask@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+12Cw ...
+
+// WZD dseg:9360
+// drake178: IMG_CTY_Arc_CRift@
+SAMB_ptr cityscape_background_arcanus_chaosrift_seg;
+
+// WZD dseg:9362
+// drake178: IMG_CTY_Arc_HLight@
+SAMB_ptr cityscape_background_arcanus_alkar_seg;
+
+// WZD dseg:9364
+// drake178: IMG_CTY_Arc_CDark@
+SAMB_ptr cityscape_background_arcanus_darkcloud_seg;
+
+// WZD dseg:9366
+// drake178: IMG_CTY_Arc_MtnBG@
+SAMB_ptr cityscape_background_arcanus_mountain_seg;
+
+// WZD dseg:9368
+// drake178: IMG_CTY_Arc_HillBG@
+SAMB_ptr cityscape_background_arcanus_hills_seg;
+
+// WZD dseg:936A
+// drake178: IMG_CTY_Arc_Ocean@
+SAMB_ptr cityscape_background_arcanus_ocean_seg;
+
+// WZD dseg:936C
+// drake178: IMG_CTY_Arc_River@
+SAMB_ptr cityscape_background_arcanus_river_seg;
+
+// WZD dseg:936E 00 00                                           IMG_CTY_CursedLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+74w ...
+// WZD dseg:9370 00 00                                           IMG_CTY_LivingLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+5Dw
+// WZD dseg:9372 00 00                                           IMG_CTY_GaiasMask@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+46w ...
+// WZD dseg:9374 00 00                                           IMG_CTY_FlyFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+2Fw ...
+
+// WZD dseg:9376
+// drake178: IMG_CTY_Arc_BGs@
+SAMB_ptr cityscape_background_arcanus_ground_seg;
+
+// WZD dseg:9378
+// drake178: IMG_CTY_Myr_River@
+SAMB_ptr cityscape_background_myrror_river_seg;
+
+// WZD dseg:937A
+// drake178: IMG_CTY_Myr_Ocean@
+SAMB_ptr cityscape_background_myrror_ocean_seg;
+
+// WZD dseg:937C 00 00                                           IMG_CTY_Arc_GrassBG@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+143w ...
+
+// WZD dseg:937E
+// drake178: IMG_CTY_Myr_CRift@
+SAMB_ptr cityscape_background_myrror_chaosrift_seg;
+
+// WZD dseg:9380
+// drake178: IMG_CTY_Myr_CDark@
+SAMB_ptr cityscape_background_myrror_darkcloud_seg;
+
+// WZD dseg:9382
+// drake178: IMG_CTY_Myr_HLight@
+SAMB_ptr cityscape_background_myrror_alkar_seg;
+
+// WZD dseg:9384 00 00                                           IMG_CTY_Myr_GrassBG@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+19Fw ...
+
+// WZD dseg:9386
+// drake178: IMG_CTY_Myr_MtnBG@
+SAMB_ptr cityscape_background_myrror_mountain_seg;
+
+// WZD dseg:9388
+// drake178: IMG_CTY_Myr_HillBG@
+SAMB_ptr cityscape_background_myrror_hills_seg;
+
+// WZD dseg:938A
+// drake178: IMG_CTY_Myr_BGs@
+SAMB_ptr cityscape_background_myrror_ground_seg;
+
+// WZD dseg:938C
+struct s_BLDG_DATA * bldg_data_table;
+
+// WZD dseg:9390 00 00                                           SND_Music_Segment dw 0                  ; DATA XREF: IDK_BuilingCompletedMessage+16Br ...
+// WZD dseg:9390                                                                                         ; 15Eh LBX_Alloc_Space paragraphs
+
+
+
 /*
     scouted / scouting - Unit Ability, Unit Special Ability, Building Effect, Spell Effect (City Enchantment)
     ~ scouted_table
@@ -597,13 +903,6 @@ uint8_t * square_scouted_p0;                // Bit_Field  alloc in Allocate_Data
 // WZD dseg:9396
 // drake178: Visibility_Arcanus
 uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data_Space()
-
-
-
-
-
-// WZD dseg:938C
-struct s_BUILDDAT * build_data_table;
 
 
 
@@ -676,48 +975,95 @@ int16_t skill_staff_locked;
 // WZD dseg:9493 00                                              db    0
 // WZD dseg:9494 00 00                                           IMG_GUI_AlchemyStar@ dw 0               ; DATA XREF: GAME_AlchemyWindow+F4w ...
 // WZD dseg:9496 00 00                                           IMG_GUI_Alchemy_BG@ dw 0                ; DATA XREF: GAME_AlchemyWindow+6Aw ...
-// WZD dseg:9498 00 00                                           IMG_CTY_RED_Btn@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+115w ...
-// WZD dseg:9498                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:9498                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:949A 00 00                                           IMG_CTY_RightBldTab@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+1E9w ...
-// WZD dseg:949A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:949C 00 00                                           IMG_CTY_LeftBldTab@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+1D2w ...
-// WZD dseg:949C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// WZD dseg:9498
+// drake178: IMG_CTY_RED_Btn@
+SAMB_ptr red_button_seg;
+
+// WZD dseg:949A
+// drake178: IMG_CTY_RightBldTab@
+SAMB_ptr IMG_CTY_RightBldTab;
+
+// WZD dseg:949C
+// drake178: IMG_CTY_LeftBldTab@
+SAMB_ptr IMG_CTY_LeftBldTab;
+
 // WZD dseg:949E 00 00                                           IMG_OVL_EnemyCityBG@ dw 0               ; DATA XREF: IDK_EnemyCityScreen_s4A3F0+115w ...
-// WZD dseg:94A0 00 00                                           IMG_CTY_10_Food@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+1EDw ...
-// WZD dseg:94A0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A2 00 00                                           IMG_CTY_10_Prod@ dw 0                   ; DATA XREF: sub_4DA19+2CEr
-// WZD dseg:94A2                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A4 00 00                                           IMG_CTY_10_Gold@ dw 0                   ; DATA XREF: sub_4DA19+484r ...
-// WZD dseg:94A4                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A6 00 00                                           IMG_CTY_10_Power@ dw 0                  ; DATA XREF: sub_4DA19+7A6r ...
-// WZD dseg:94A6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A8 00 00                                           IMG_CTY_10_Books@ dw 0                  ; DATA XREF: sub_4DA19+9B2r
-// WZD dseg:94A8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94AA 00 00                                           IMG_CTY_Neg_10_Gold@ dw 0               ; DATA XREF: IDK_CityScreen_AddResourcesFields+44Er ...
-// WZD dseg:94AA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94AC 00 00                                           IMG_CTY_Neg_10_Food@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+20Bw ...
-// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Rebels@ dw 0Eh dup(0)           ; DATA XREF: City_Screen_Load_Pictures+186w ...
-// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
-// WZD dseg:94AE                                                                                         ; GFX_Swap_Seg, 1 rebel image per header
-// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Farmers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures+15Ew ...
-// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
-// WZD dseg:94CA                                                                                         ; GFX_Swap_Seg, 1 farmer image per header
-// WZD dseg:94E6 00 00                                           IMG_CTY_1_Food@ dw 0                    ; DATA XREF: City_Screen_Load_Pictures+1AEw ...
-// WZD dseg:94E6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94E8 00 00                                           IMG_CTY_1_Prod@ dw 0                    ; DATA XREF: sub_4DA19+2D2r
-// WZD dseg:94E8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EA 00 00                                           IMG_CTY_1_Gold@ dw 0                    ; DATA XREF: sub_4DA19+488r ...
-// WZD dseg:94EA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EC 00 00                                           IMG_CTY_1_Power@ dw 0                   ; DATA XREF: sub_4DA19+7AAr ...
-// WZD dseg:94EC                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EE 00 00                                           IMG_CTY_1_Book@ dw 0                    ; DATA XREF: sub_4DA19+9B6r
-// WZD dseg:94EE                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94F0 00 00                                           IMG_CTY_Neg_1_Food@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+1CCw ...
-// WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Workers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures+136w ...
-// WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
-// WZD dseg:94F2                                                                                         ; GFX_Swap_Seg, 1 worker image per header
+
+// WZD dseg:94A0
+// drake178: IMG_CTY_10_Food@
+// WZD dseg:94A2
+// drake178: IMG_CTY_10_Prod@
+// WZD dseg:94A4
+// drake178: IMG_CTY_10_Gold@
+// WZD dseg:94A6
+// drake178: IMG_CTY_10_Power@
+// WZD dseg:94A8
+// drake178: IMG_CTY_10_Books@
+// WZD dseg:94AA
+// drake178: IMG_CTY_Neg_10_Gold@
+SAMB_ptr city_big_resource_icon_seg[6];
+
+// WZD dseg:94AC
+// drake178: IMG_CTY_Neg_10_Food@
+SAMB_ptr city_grey_big_bread_icon_seg;
+
+// WZD dseg:94AE
+// drake178: IMG_CTY_Rebels@[14]
+SAMB_ptr city_rebel_icon_seg[14];
+
+// WZD dseg:94CA
+// drake178: IMG_CTY_Farmers@[14]
+SAMB_ptr city_farmer_icon_seg[14];
+
+
+// WZD dseg:94E6
+// drake178: IMG_CTY_1_Food@
+// WZD dseg:94E8
+// drake178: IMG_CTY_1_Prod@
+// WZD dseg:94EA
+// drake178: IMG_CTY_1_Gold@
+// WZD dseg:94EC
+// drake178: IMG_CTY_1_Power@
+// WZD dseg:94EE
+// drake178: IMG_CTY_1_Book@
+SAMB_ptr city_lil_resource_icon_seg[5];
+
+// WZD dseg:94F0
+// drake178: IMG_CTY_Neg_1_Food@
+SAMB_ptr city_grey_lil_bread_icon_seg;
+
+
+
+// WZD dseg:94F2
+// drake178: IMG_CTY_Workers@[14];
+SAMB_ptr city_worker_icon_seg[14];
+
 // WZD dseg:950E                                                 BEGIN: CityList_Screen_Load()
+
 // WZD dseg:950E 00 00                                           citylist_ok_button_seg dw 0             ; DATA XREF: CityList_Screen+101r ...
 // WZD dseg:950E                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:9510 00 00                                           citylist_down_button_seg dw 0           ; DATA XREF: CityList_Screen+1FFr ...
@@ -725,60 +1071,84 @@ int16_t skill_staff_locked;
 // WZD dseg:9512 00 00                                           citylist_up_button_seg dw 0             ; DATA XREF: CityList_Screen+16Er ...
 // WZD dseg:9512                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:9514 00 00                                           citylist_background_seg dw 0            ; DATA XREF: CityList_Screen:loc_5767Dr ...
+
 // WZD dseg:9514                                                 END: CityList_Screen_Load()
-// WZD dseg:9516
-// WZD dseg:9516
-// WZD dseg:9516
+
 // WZD dseg:9516                                                 BEGIN:  Main Screen Pictures
+
 // WZD dseg:9516
-// WZD dseg:9516
-// WZD dseg:9516
-// WZD dseg:9516 00 00                                           next_turn_button_seg dw 0               ; DATA XREF: Main_Screen_Load_Pictures+299w ...
-// WZD dseg:9516                                                                                         ; single-loaded image
-// WZD dseg:9518 00 00                                           survey_background dw 0                  ; DATA XREF: Main_Screen_Load_Pictures+34Dw ...
-// WZD dseg:9518                                                                                         ; single-loaded image
-// WZD dseg:951A 00 00                                           road_button_border dw 0                 ; DATA XREF: Main_Screen_Load_Pictures+33Bw ...
-// WZD dseg:951A                                                                                         ; single-loaded image
-// WZD dseg:951C 00 00                                           road_background dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+317w ...
-// WZD dseg:951C                                                                                         ; single-loaded image
-// WZD dseg:951E 00 00                                           road_ok_button dw 0                     ; DATA XREF: Main_Screen_Load_Pictures+329w ...
-// WZD dseg:951E                                                                                         ; single-loaded 2 frame image (normal - clicked)
-// WZD dseg:9520 00 00                                           dw 0
-// WZD dseg:9522 00 00                                           DESELECT_button_blockout dw 0           ; DATA XREF: Main_Screen_Load_Pictures+305w ...
-// WZD dseg:9522                                                                                         ; single-loaded image
-// WZD dseg:9524 00 00                                           cast_cancel_border dw 0                 ; DATA XREF: Main_Screen_Load_Pictures+2F3w ...
-// WZD dseg:9524                                                                                         ; single-loaded image
-// WZD dseg:9526 00 00                                           cast_cancel_button dw 0                 ; DATA XREF: Main_Screen_Load_Pictures+2E1w ...
-// WZD dseg:9526                                                                                         ; single-loaded 2 frame image (normal - clicked)
-// WZD dseg:9528 00 00                                           cast_background dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+2CFw ...
-// WZD dseg:9528                                                                                         ; single-loaded image
-// WZD dseg:952A 00 00                                           dw 0
-// WZD dseg:952C 00 00                                           next_turn_background_seg dw 0           ; DATA XREF: Main_Screen_Load_Pictures:loc_466E8w ...
-// WZD dseg:952C                                                                                         ; single-loaded image
-// WZD dseg:952E 00 00                                           deselect_background dw 0                ; DATA XREF: Main_Screen_Load_Pictures+2ABw ...
-// WZD dseg:952E                                                                                         ; single-loaded image
+SAMB_ptr next_turn_button_seg;
+// MAIN.LBX,58  DESELECT    next turn button..
+
+// WZD dseg:9518
+SAMB_ptr survey_background;
+// MAIN.LBX,57  MAINSRVY    survey backgrnd
+
+// WZD dseg:951A
+SAMB_ptr road_button_border;
+// MAIN.LBX,48  C&RBORDR    road button border
+
+// WZD dseg:951C
+SAMB_ptr road_background;
+// MAIN.LBX,45  MAINROAD    road background
+
+// WZD dseg:951E
+SAMB_ptr road_ok_button;
+// MAIN.LBX,46  CASTCNCL    road ok button
+
+// WZD dseg:9522
+SAMB_ptr DESELECT_button_blockout;
+// MAIN.LBX,44    DESELECT    button blockout
+
+// WZD dseg:9524
+SAMB_ptr cast_button_border;
+// MAIN.LBX,47  C&RBORDR    cast button border
+
+// WZD dseg:9526
+SAMB_ptr cast_cancel_button;
+// MAIN.LBX,41  CASTCNCL    cast cancel button
+
+// WZD dseg:9528
+SAMB_ptr cast_background;
+// MAIN.LBX,40  MAINCAST    cast background
+
+// WZD dseg:952C
+SAMB_ptr next_turn_background_seg;
+// MAIN.LBX,35  DESELECT    next turn backgrnd
+
 // WZD dseg:952E
-// WZD dseg:952E
+SAMB_ptr deselect_background;
+// MAIN.LBX,34  DESELECT    deselect backgrnd
+
 // WZD dseg:952E                                                 END:  Main Screen Pictures
-// WZD dseg:952E
-// WZD dseg:952E
-// WZD dseg:952E
-// WZD dseg:9530 00 00 00 00 00 00                               IMG_CTY_EmptyHuts@ dw 3 dup(0)          ; DATA XREF: City_Screen_Load_Pictures:loc_46A47w ...
-// WZD dseg:9530                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
-// WZD dseg:9536 00 00 00 00 00 00                               IMG_CTY_FilledHuts@ dw 3 dup(0)         ; DATA XREF: City_Screen_Load_Pictures+25Aw ...
-// WZD dseg:9536                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
+
+// WZD dseg:9530
+// drake178: IMG_CTY_EmptyHuts@
+SAMB_ptr outpost_dark_icon_seg[3];
+
+// WZD dseg:9536
+// drake178: IMG_CTY_FilledHuts@
+SAMB_ptr outpost_bright_icon_seg[3];
+
 // WZD dseg:953C 00 00                                           namecity_background_seg dw 0            ; DATA XREF: City_Screen_Load_Pictures+239w ...
 // WZD dseg:953E 00 00                                           IMG_CTY_Outpost_BG@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+222w ...
-// WZD dseg:9540 00 00                                           IMG_USW_SideBtns_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+8Bw ...
+
+// WZD dseg:9540
+// drake178: IMG_USW_SideBtns_BG@
+SAMB_ptr unitview_button_background_seg;
+
 // WZD dseg:9542 00 00                                           dw 0
 // WZD dseg:9544 00 00                                           dw 0
 // WZD dseg:9546 00 00                                           dw 0
-// WZD dseg:9548 00 00                                           IMG_OVL_BuildBtn_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+176w
-// WZD dseg:9548                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:9548
+// drake178: IMG_OVL_BuildBtn_BG@
+SAMB_ptr IMG_OVL_BuildBtn_BG;
+
 // WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
 // WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
 // WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
-// WZD dseg:956E                                                                                         ; single-loaded image
+
 // WZD dseg:9570 00 00                                           armylist_ok_button_seg dw 0             ; DATA XREF: ArmyList_Screen+12Cr ...
 // WZD dseg:9570                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:9572 00 00                                           armylist_items_button_seg dw 0          ; DATA XREF: ArmyList_Screen+109r ...
@@ -848,8 +1218,11 @@ int16_t skill_staff_locked;
 // WZD dseg:95EA 00 00                                           dw 0
 // WZD dseg:95EC 00 00                                           dw 0
 // WZD dseg:95EE 00 00                                           dw 0
-// WZD dseg:95F0 00 00                                           IMG_CTY_HalfRsc@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+2E4w ...
-// WZD dseg:95F0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+
+// WZD dseg:95F0
+// drake178: IMG_CTY_HalfRsc@
+SAMB_ptr city_half_background_seg;
+
 // WZD dseg:95F2 00 00                                           goto_booty_icon dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+371w ...
 // WZD dseg:95F2                                                                                         ; single-loaded image
 // WZD dseg:95F4 00 00 00 00 00 00 00 00 00 00 00 00             hero_portraits_seg dw 6 dup(0)          ; DATA XREF: ArmyList_Screen_Draw+38Dr ...
@@ -915,15 +1288,17 @@ int16_t skill_staff_locked;
 
 
 
-// dseg:9644 00 00                                           _city_idx dw 0                          ; DATA XREF: City_Screen+55r ...
-// dseg:9646 00                                              db    0
-// dseg:9647 00                                              db    0
+// WZD dseg:9644
+int16_t _city_idx;
+
+// WZD dseg:9646 00                                              db    0
+// WZD dseg:9647 00                                              db    0
 
 // WZD dseg:9648
 SAMB_ptr UnitDraw_WorkArea;  // alloc in MoM_Init_Tables(), 60 PR, 960 DB
 
-// dseg:964A 00                                              db    0
-// dseg:964B 00                                              db    0
+// WZD dseg:964A 00                                              db    0
+// WZD dseg:964B 00                                              db    0
 
 // WZD dseg:964C
 // MoO2: ~== _ship_node
@@ -934,121 +1309,13 @@ int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 
 
 
-
-
-
-
-
-
-
-// WZD dseg:92B6 00 00                                           
-// IMG_USW_GrassBase@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+57Ew ...
-SAMB_ptr IMG_USW_GrassBase;
-
-
-
-// WZD dseg:9498 00 00                                           
-// IMG_CTY_RED_Btn@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+115w ...
-// BACKGRND.LBX, 24  REDBUTT red button
-SAMB_ptr red_button_seg;
-// WZD dseg:9498                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:9498                                                                                         ; 2 frame image (normal - clicked)
-
-// WZD dseg:949A 00 00                                           
-// IMG_CTY_RightBldTab@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+1E9w ...
-SAMB_ptr IMG_CTY_RightBldTab;
-// WZD dseg:949A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:949C 00 00                                           
-// IMG_CTY_LeftBldTab@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+1D2w ...
-SAMB_ptr IMG_CTY_LeftBldTab;
-// WZD dseg:949C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:949E 00 00                                           IMG_OVL_EnemyCityBG@ dw 0               ; DATA XREF: IDK_EnemyCityScreen_s4A3F0+115w ...
-
-// WZD dseg:94A0 00 00                                           
-// IMG_CTY_10_Food@ dw 0                   ; DATA XREF: City_Screen_Load_Pictures+1EDw ...
-SAMB_ptr IMG_CTY_10_Food[6];
-// WZD dseg:94A0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:94A2 00 00                                           IMG_CTY_10_Prod@ dw 0                   ; DATA XREF: sub_4DA19+2CEr
-// WZD dseg:94A2                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A4 00 00                                           IMG_CTY_10_Gold@ dw 0                   ; DATA XREF: sub_4DA19+484r ...
-// WZD dseg:94A4                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A6 00 00                                           IMG_CTY_10_Power@ dw 0                  ; DATA XREF: sub_4DA19+7A6r ...
-// WZD dseg:94A6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94A8 00 00                                           IMG_CTY_10_Books@ dw 0                  ; DATA XREF: sub_4DA19+9B2r
-// WZD dseg:94A8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94AA 00 00                                           IMG_CTY_Neg_10_Gold@ dw 0               ; DATA XREF: IDK_CityScreen_AddResourcesFields+44Er ...
-// WZD dseg:94AA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:94AC 00 00                                           
-// IMG_CTY_Neg_10_Food@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+20Bw ...
-SAMB_ptr IMG_CTY_Neg_10_Food;
-// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Rebels@ dw 0Eh dup(0)           ; DATA XREF: City_Screen_Load_Pictures+186w ...
-// WZD dseg:94AE 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
-
-// WZD dseg:94AE                                                                                         ; GFX_Swap_Seg, 1 rebel image per header
-// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Farmers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures:loc_46923w ...
-// WZD dseg:94CA 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
-// WZD dseg:94CA                                                                                         ; GFX_Swap_Seg, 1 farmer image per header
-
-// WZD dseg:94E6 00 00                                           
-// IMG_CTY_1_Food@ dw 0                    ; DATA XREF: City_Screen_Load_Pictures+1AEw ...
-SAMB_ptr IMG_CTY_1_Food[5];
-// WZD dseg:94E6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:94E8 00 00                                           IMG_CTY_1_Prod@ dw 0                    ; DATA XREF: sub_4DA19+2D2r
-// WZD dseg:94E8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EA 00 00                                           IMG_CTY_1_Gold@ dw 0                    ; DATA XREF: sub_4DA19+488r ...
-// WZD dseg:94EA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EC 00 00                                           IMG_CTY_1_Power@ dw 0                   ; DATA XREF: sub_4DA19+7AAr ...
-// WZD dseg:94EC                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:94EE 00 00                                           IMG_CTY_1_Book@ dw 0                    ; DATA XREF: sub_4DA19+9B6r
-// WZD dseg:94EE                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:94F0 00 00                                           
-// IMG_CTY_Neg_1_Food@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+1CCw ...
-SAMB_ptr IMG_CTY_Neg_1_Food;
-
-
-
-// WZD dseg:952E                                                 END:  Main Screen Pictures
-// WZD dseg:952E
-// WZD dseg:952E
-// WZD dseg:952E
-// WZD dseg:9530 00 00 00 00 00 00                               IMG_CTY_EmptyHuts@ dw 3 dup(0)          ; DATA XREF: City_Screen_Load_Pictures:loc_46A47w ...
-// WZD dseg:9530                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
-// WZD dseg:9536 00 00 00 00 00 00                               IMG_CTY_FilledHuts@ dw 3 dup(0)         ; DATA XREF: City_Screen_Load_Pictures+25Aw ...
-// WZD dseg:9536                                                                                         ; array of 3 appended res EMM hdrs in GFX_Swap_Seg
-// WZD dseg:953C 00 00                                           namecity_background_seg dw 0            ; DATA XREF: City_Screen_Load_Pictures+239w ...
-// WZD dseg:953E 00 00                                           IMG_CTY_Outpost_BG@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+222w ...
-
-// WZD dseg:9540 00 00                                           
-// IMG_USW_SideBtns_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+8Bw ...
-SAMB_ptr unitview_button_background_seg;
-
-// WZD dseg:9542 00 00                                           dw 0
-// WZD dseg:9544 00 00                                           dw 0
-// WZD dseg:9546 00 00                                           dw 0
-
-// WZD dseg:9548 00 00                                           
-// IMG_OVL_BuildBtn_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+176w
-SAMB_ptr IMG_OVL_BuildBtn_BG;
-// WZD dseg:9548                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
-
-
-
 // WZD dseg:9750                                                 ¿ END: maps / map grid fields - Uninitialized Data ?
-// WZD dseg:9750
-// WZD dseg:9752
+
 // WZD dseg:9752                                                 ? BEGIN: City Screen ?
-// WZD dseg:9752
+
 // WZD dseg:9752 00 00                                           scanned_field__G_CTY_ClickedLabel dw 0  ; DATA XREF: City_Screen+2A9w ...
+// WZD dseg:9752
+int16_t city_screen_scanned_field;
 
 // WZD dseg:9754 00 00                                           
 // IMG_OVL_UnitListBtm@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+15Fw ...
@@ -1060,14 +1327,18 @@ SAMB_ptr IMG_OVL_UnitListBtm;
 SAMB_ptr IMG_OVL_UnitList_BG;
 // WZD dseg:9756                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
-// WZD dseg:9758 00 00                                           IMG_CTY_NewBuild_BG@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+74w ...
-// WZD dseg:9758                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:975A 00 00                                           IMG_CTY_SplScrlDn@ dw 0                 ; DATA XREF: City_Screen_Load_Pictures+FEw ...
-// WZD dseg:975A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:975A                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:975C 00 00                                           IMG_CTY_SplScrlUp@ dw 0                 ; DATA XREF: City_Screen_Load_Pictures+E7w ...
-// WZD dseg:975C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:975C                                                                                         ; 2 frame image (normal - clicked)
+// WZD dseg:9758
+// drake178: IMG_CTY_NewBuild_BG@
+SAMB_ptr city_new_build_notify_grass_seg;
+
+// WZD dseg:975A
+// drake178: IMG_CTY_SplScrlDn@
+SAMB_ptr city_spell_dn_arrow_button_seg;
+
+// WZD dseg:975C
+// drake178: IMG_CTY_SplScrlUp@
+SAMB_ptr city_spell_up_arrow_button_seg;
+
 // WZD dseg:975E 00 00 00 00 00 00 00 00 00 00 00 00             IMG_USW_ItemSlots ISLT_ICONS <0>        ; DATA XREF: GFX_Swap_AppendItems+15Bw ...
 // WZD dseg:975E                                                                                         ; array of 6 appended reserved EMM headers in
 // WZD dseg:975E                                                                                         ; GFX_Swap_Seg, each with one item slot image
@@ -1075,105 +1346,171 @@ SAMB_ptr IMG_OVL_UnitList_BG;
 // WZD dseg:976A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:976C 00 00                                           IMG_USW_ItemHelp_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendItems+12Dw ...
 // WZD dseg:976C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_ItemPowers IPOW_ICONS <0>       ; DATA XREF: GFX_Swap_AppendItems+40w ...
-// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 22 appended reserved EMM headers in
-// WZD dseg:976E 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; GFX_Swap_Seg, each with one item power image
+
+// WZD dseg:976E
+// drake178: IMG_USW_ItemPowers IPOW_ICONS
+SAMB_ptr IMG_USW_ItemPowers[22];
+
 // WZD dseg:979A 00 00                                           IMG_MOODWIZPortrait@ dw 0               ; DATA XREF: IDK_DiplAnim_s6FDA1+4Cr ...
 // WZD dseg:979A                                                                                         ; 3 frame image (good, bad, neutral)
 
-// WZD dseg:979C 00 00                                           
-// IMG_USW_WaterBase@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+567w ...
-SAMB_ptr IMG_USW_WaterBase;
-// WZD dseg:979C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:979C
+// drake178: IMG_USW_WaterBase@
+SAMB_ptr unit_water_diamond_seg;
 
-// WZD dseg:979E 00 00                                           
-// IMG_USW_Portrt_Brdr@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+200w ...
+// WZD dseg:979E
+// drake178: IMG_USW_Portrt_Brdr@
 SAMB_ptr IMG_USW_Portrt_Brdr;
-// WZD dseg:979E                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
-// WZD dseg:97A0 00 00                                           
-// IMG_USW_1_Gold@ dw 0                    ; DATA XREF: GFX_Swap_AppendUView+1BBw ...
-SAMB_ptr IMG_USW_1_Gold;
-// WZD dseg:97A0                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:97A0                                                                                         ; should have put this in the dseg:94ea pointer
+// WZD dseg:97A0
+// drake178: IMG_USW_1_Gold@
+SAMB_ptr gold1_icon_seg;
 
-// WZD dseg:97A2 00 00                                           
-// IMG_CTY_Neg_1_Gold@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+619w ...
-SAMB_ptr IMG_CTY_Neg_1_Gold;
-// WZD dseg:97A2                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:97A2
+// drake178: IMG_CTY_Neg_1_Gold@
+SAMB_ptr black_gold1_icon_seg;
 
-// WZD dseg:97A4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-// IMG_USW_AbBorders@ dw 8 dup(0)          ; DATA XREF: GFX_Swap_AppendUView+DAw ...
-SAMB_ptr IMG_USW_AbBorders[8];
-// WZD dseg:97A4                                                                                         ; array of 8 appended reserved EMM headers in
-// WZD dseg:97A4                                                                                         ; GFX_Swap_Seg, one for around each list slot
+// WZD dseg:97A4
+// drake178: IMG_USW_AbBorders@
+SAMB_ptr unitview_specials_borders_seg[8];
 
-// WZD dseg:97B4 00 00                                           
-// IMG_USW_ArrowDown@ dw 0                 ; DATA XREF: GFX_Swap_AppendUView+B9w ...
+// WZD dseg:97B4
+// drake178: IMG_USW_ArrowDown@
 SAMB_ptr unitview_down_arrow_seg;
-// WZD dseg:97B4                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:97B4                                                                                         ; 2 images (normal - clicked)
 
-// WZD dseg:97B6 00 00                                           
-// IMG_USW_ArrowUp@ dw 0                   ; DATA XREF: GFX_Swap_AppendUView+A2w ...
+// WZD dseg:97B6
+// drake178: IMG_USW_ArrowUp@
 SAMB_ptr unitview_up_arrow_seg;
-// WZD dseg:97B6                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:97B6                                                                                         ; 2 images (normal - clicked)
 
-// WZD dseg:97B8 00 00                                           
-// IMG_USW_Background@ dw 0                ; DATA XREF: GFX_Swap_AppendUView+74w ...
+// WZD dseg:97B8
+// drake178: IMG_USW_Background@
 SAMB_ptr unitview_large_background_seg;
-// WZD dseg:97B8                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
 // WZD dseg:97BA 00 00                                           
 // IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
 SAMB_ptr unitview_small_background_seg;
 // WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
-// WZD dseg:97BC 00 00                                           
-// IMG_USW_Stats_Gold dw 0                 ; DATA XREF: GFX_Swap_AppendUView+12Aw ...
-SAMB_ptr IMG_USW_Stats_Gold[15];
+// WZD dseg:97BC
+// drake178: IMG_USW_Stats_Gold
+SAMB_ptr unitview_stat_gold_icons_seg[15];
 
-// WZD dseg:97DA 00 00                                           
-// IMG_USW_Stat_Icons dw 0                 ; DATA XREF: GFX_Swap_AppendUView+102w ...
-SAMB_ptr IMG_USW_Stat_Icons[15];
-// WZD dseg:97DA                                                                                         ; array of 15 appended reserved EMM header in
-// WZD dseg:97DA                                                                                         ; GFX_Swap_Seg, each with one regular attribute image
+// WZD dseg:97DA
+// drake178: IMG_USW_Stat_Icons
+SAMB_ptr unitview_stat_icons_seg[15];
 
 // WZD dseg:97F8 00                                              
 // special_seg db    0                     ; DATA XREF: GFX_Swap_AppendUView+1Dw ...
-SAMB_ptr special_seg[111];
-// WZD dseg:97F8                                                                                         ; array of 145 appended reserved EMM headers in
-// WZD dseg:97F8                                                                                         ; GFX_Swap_Seg, each with one image
-// WZD dseg:97F8                                                                                         ; UU_Guises@ is also used to hold the diplomacy mirror
-// WZD dseg:97F8                                                                                         ; image (BACKGRND.LBX entry 18, 5740 bytes in sandbox)
+SAMB_ptr special_seg[145];
 
-// WZD dseg:98D6 00                                              
-// special2_seg db    0                    ; DATA XREF: GFX_Swap_AppendUView+40w
-SAMB_ptr special2_seg[34];
+// WZD dseg:991A
+// drake178: IMG_OVL_EZConfirmBG@
+SAMB_ptr lair_confirm_border_seg;
 
-// WZD dseg:991A 00 00                                           IMG_OVL_EZConfirmBG@ dw 0               ; DATA XREF: City_Screen_Load_Pictures+2A0w ...
-// WZD dseg:991A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:991C 00 00                                           IMG_OVL_EZBtm_BG@ dw 0                  ; DATA XREF: City_Screen_Load_Pictures+2CEw ...
-// WZD dseg:991C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:991E 00 00                                           IMG_OVL_EZBtn_BG@ dw 0                  ; DATA XREF: City_Screen_Load_Pictures+2B7w ...
-// WZD dseg:991E                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:991C
+// drake178: IMG_OVL_EZBtm_BG@
+SAMB_ptr lair_bottom_without_button_seg;
+
+// WZD dseg:991E
+// drake178: IMG_OVL_EZBtn_BG@
+SAMB_ptr lair_bottom_with_button_seg;
+
 // WZD dseg:9920 00 00                                           CRP_DBG_Alt_T_State dw 0                ; DATA XREF: Main_Screen+47Fr ...
 
 // WZD dseg:9920                                                 ? END: City Screen ?
 
 // WZD dseg:9922                                                 BEGIN:  Main Screen Pictures
 
+// WZD dseg:9922
+SAMB_ptr main_background;
 
+// WZD dseg:9924
+SAMB_ptr unit_backgrounds[9];
 
+// WZD dseg:9924                                                 END:  Main Screen Pictures
 
+// WZD dseg:9936 00 00                                           city_background_seg dw 0                ; DATA XREF: City_Screen_Load_Pictures+18w ...
+// WZD dseg:9938 00 00                                           city_block_out_seg dw 0                 ; DATA XREF: City_Screen_Load_Pictures+B9w ...
+// WZD dseg:993A 00 00                                           city_full_resource_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+A2w ...
+// WZD dseg:993C 00 00                                           city_reqd_resource_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+8Bw ...
+// WZD dseg:993E 00 00                                           city_lock_buy_button_seg dw 0           ; DATA XREF: City_Screen_Load_Pictures+D0w ...
+// WZD dseg:9940 00 00                                           city_ok_button_seg dw 0                 ; DATA XREF: City_Screen_Load_Pictures+5Dw ...
+// WZD dseg:9942 00 00                                           city_buy_button_seg dw 0                ; DATA XREF: City_Screen_Load_Pictures+2Fw ...
+// WZD dseg:9944 00 00                                           city_change_button_seg dw 0             ; DATA XREF: City_Screen_Load_Pictures+46w ...
+
+// WZD dseg:9946                                                 BEGIN:  Main Screen Pictures
+
+// WZD dseg:9946
+SAMB_ptr main_red_medal_icon;
+SAMB_ptr main_gold_medal_icon;
+SAMB_ptr main_white_medal_icon;
+SAMB_ptr main_adamantium_weapon_icon;
+SAMB_ptr main_mithril_weapon_icon;
+SAMB_ptr main_magic_weapon_icon;
+
+// Screen Layout: L-R, T-B
+//     Done, Patrol, Wait, Build
+SAMB_ptr main_lock_purify_button;
+SAMB_ptr main_lock_build_button;
+SAMB_ptr main_lock_wait_button;
+SAMB_ptr main_lock_patrol_button;
+SAMB_ptr main_lock_done_button;
+
+SAMB_ptr main_meld_button;
+// WZD dseg:995E
+SAMB_ptr main_purify_button;
+// WZD dseg:9960 00 00                                           IDK_UU_action_C dw 0
+// WZD dseg:9962
+SAMB_ptr main_build_button;
+SAMB_ptr main_done_button;
+SAMB_ptr main_wait_button;
+SAMB_ptr main_patrol_button;
+
+// ? block of Main Screen - Top Buttons Bar ?
+// XREF: Main_Screen_Load_Pictures(); OVL_SetMenuButtons(); OVL_DrawMainMenu()
+// ; single-loaded 2 frame image (normal - clicked)
+// Code Order:   ?
+// Data Order:   S,I,M,C,G,A,P
+// Load Order:   G,S,A,C,M,I,P
+// LBX Order:    G,S,A,C,M,I,P
+// Screen Order: G,S,A,C,M,I,P
+SAMB_ptr main_spells_button;
+SAMB_ptr main_info_button;
+SAMB_ptr main_magic_button;
+SAMB_ptr main_cities_button;
+SAMB_ptr main_game_button;
+SAMB_ptr main_armies_button;
+SAMB_ptr main_plane_button;
+
+// XREF: Main_Screen_Load_Pictures(); Draw_Movement_Mode_Icons()
+// single-loaded image
+// gets indexed like an array of pictures in Draw_Movement_Mode_Icons()
+SAMB_ptr move_sail_icon;
+SAMB_ptr move_swim_icon;
+SAMB_ptr move_mt_icon;
+SAMB_ptr move_forest_icon;
+SAMB_ptr move_fly_icon;
+SAMB_ptr move_path_icon;
+SAMB_ptr move_astral_icon;
+SAMB_ptr move_wind_icon;
+SAMB_ptr move_boot_icon;
+// WZD dseg:998A 00 00                                           IDK_UU_Cavalry dw 0
 
 // dseg:998A END:  Main Screen Pictures
+
+
+
+SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
+
+
+
 
 // WZD dseg:998C
 // GUI_SmallWork_IMG@ dw 0
     // 96h paragraphs used for building GUI notification images
     // (although the pointer variable is also used for building combat figure images, after which it is reassigned)
+// TODO  confirm this is only used for 'bitmaps'
+SAMB_ptr GfxBuf_2400B;
 
 // WZD dseg:998E
 SAMB_ptr _screen_seg;
@@ -1205,6 +1542,94 @@ int16_t _unit_stack_count;
 // WZD dseg:999E
 struct s_STACK _unit_stack[9];
 
+
+
+// WZD dseg:99C2
+// drake178: MSG_CityLost_Count
+int8_t MSG_CityLost_Count;
+
+// WZD dseg:99C3
+// drake178: MSG_CityLost_Names db 118h dup(0)
+char MSG_CityLost_Names[280];
+
+// WZD dseg:9ADB
+// drake178: MSG_CityGained_Count
+int8_t MSG_CityGained_Count;
+
+// WZD dseg:9ADC
+// drake178: MSG_CityGained_Array
+int8_t MSG_CityGained_Array[20];
+
+// WZD dseg:9AF0
+// drake178: MSG_BuildDone_Count
+int8_t MSG_Building_Complete_Count;
+
+// WZD dseg:9AF1 00                                              db    0
+
+// WZD dseg:9AF2
+// drake178: MSG_BuildDone_Array Building_Done_Msg_Item 14h dup(<0>)
+struct s_MSG_BUILDING_COMPLETE MSG_Building_Complete[20];
+
+// WZD dseg:9B42
+// drake178: MSG_BldLost_Count
+int8_t MSG_BldLost_Count;
+
+// WZD dseg:9B43 00                                              db    0
+
+// WZD dseg:9B44
+// drake178: MSG_BldLost_Array Building_Lost_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9B94
+// drake178: MSG_UnitLost_Count
+int8_t MSG_UnitLost_Count;
+
+// WZD dseg:9B95 00                                              db    0
+
+// WZD dseg:9B96
+// drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9BE6
+// drake178: MSG_UnitKilled_Count
+int8_t MSG_UnitKilled_Count;
+
+// WZD dseg:9BE7 00                                              db    0
+
+// WZD dseg:9BE8
+// drake178: MSG_UnitKilled_Array Unit_Killed_Msg_Item 14h dup(<0>)
+
+// WZD dseg:9C38
+// drake178: MSG_CityGrowth_Count
+int8_t MSG_CityGrowth_Count;
+
+// WZD dseg:9C39
+// drake178: MSG_CityGrowth_Array db 14h dup(0)
+
+// WZD dseg:9C4D
+// drake178: MSG_CityDeath_Count
+int8_t MSG_CityDeath_Count;
+
+// WZD dseg:9C4E
+// drake178: MSG_CityDeath_Array db 14h dup(0) 
+
+// WZD dseg:9C62
+// drake178: MSG_UEsLost_Count
+int8_t MSG_UEsLost_Count;
+
+// WZD dseg:9C63
+// drake178: MSG_UEsLost_Array db 14h dup(0)   
+
+// WZD dseg:9C77
+// drake178: MSG_CEsLost_Count
+int8_t MSG_CEsLost_Count;
+
+// WZD dseg:9C78
+// drake178: MSG_CEsLost_Array db 14h dup(0)   
+
+// WZD dseg:9C8C
+// drake178: MSG_GEs_Lost
+int8_t MSG_GEs_Lost;
+
+// WZD dseg:9C8D 00                                              db    0
 
 
 
@@ -1243,31 +1668,22 @@ uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
 SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
 
 // WZD dseg:9CBC  
-// SAMB_ptr _CITIES;
-// struct s_CITY _CITIES[CITY_COUNT_MAX];  // 100 * sizeof(114)
 struct s_CITY * _CITIES;
 
 // WZD dseg:9CC0
 // drake178: TBL_Encounters
-/*
-    alloc in Allocate_Data_Space()
-    load in Load_SAVE_GAM() - read 102 of 24
-
-*/
 // AKA TBL_Lairs
-struct s_LAIR * TBL_Lairs;
 struct s_LAIR * _LAIRS;
 
 // WZD dseg:9CC4  
-// struct s_TOWER _TOWERS[NUM_TOWERS];  // 6 * sizeof(4)
-// struct s_TOWER _TOWERS[];
 struct s_TOWER * _TOWERS;
 
-// WZD dseg:9CC8  
+// WZD dseg:9CC8
 struct s_FORTRESS * _FORTRESSES;
 
-// WZD dseg:9CCC  
-struct s_NODE * TBL_Nodes;
+// WZD dseg:9CCC
+// drake178: TBL_Nodes
+struct s_NODE * _NODES;
 
 // WZD dseg:9CD0
 uint8_t * TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
@@ -1285,8 +1701,9 @@ uint8_t * _world_maps;
 SAMB_ptr TBL_Unrest[14];
 SAMB_ptr TBL_Unrest_Hack;
 
-// WZD dseg:9D18 00 00                                           IMG_CTY_Bldngs_Wall@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+602w ...
-// WZD dseg:9D18                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9D18
+// drake178: IMG_CTY_Bldngs_Wall@
+SAMB_ptr cityscape_big_city_wall_seg;
 
 // WZD dseg:9D1A
 uint16_t tmp_World_Data_Paras;
@@ -1376,23 +1793,104 @@ struct s_GAME_DATA game_data;
 
 
 
+// WZD dseg:BF70
+int16_t city_resources_rows_fields[7];
 
+// WZD dseg:BF7E
+int16_t * city_population_row_fields;
+
+// WZD dseg:BF80
+int16_t city_no_buy;
+
+// WZD dseg:BF82
+int16_t * city_screen_required_buildings_list;
+
+// WZD dseg:BF84
+// drake178: CTY_EScrollDn_Label
+int16_t city_dn_button;
+
+// WZD dseg:BF86
+// drake178: CTY_EScrollUp_Label
+int16_t city_up_button;
+
+// WZD dseg:BF88
+int16_t UU_CityScreen_Field;
+
+// WZD dseg:BF8A
+int16_t city_map_y;
+
+// WZD dseg:BF8C
+int16_t city_map_x;
+
+// WZD dseg:BF8E
+int16_t G_CTY_ClickLabelCount;
+
+// WZD dseg:BF90
+byte_ptr G_CTY_ClickLabelArray;
+
+// WZD dseg:BF92
+// drake178: CTY_EnchDisplayCount
+int16_t city_enchantment_display_count;
+
+// WZD dseg:BF94
+// drake178: N/A
+int16_t UU_CityScreen_Field_Something;
+
+// WZD dseg:BF96
+// drake178: CTY_EnchantScrolling
+int16_t city_enchantment_display_scroll_flag;
+
+// WZD dseg:BF98
+// drake178: CTY_FirstShownEnch
+int16_t city_enchantment_display_first;
 
 // WZD dseg:BF9A
-int16_t CTY_EnchantCount;
+int16_t city_enchantment_list_count;
 
 // WZD dseg:BF9C
-char * CTY_EnchantOwners;
+// drake178: CTY_EnchantOwners
+int16_t * city_enchantment_owner_list;
 
 // WZD dseg:BF9E
-char * CTY_EnchantList;
+// drake178: CTY_EnchantList
+int16_t * city_enchantment_list;
 
+// WZD dseg:BFA0
+int16_t * city_enchantment_fields;
 
+// WZD dseg:BFA2
+int16_t _garrison_window_start_y;
 
+// WZD dseg:BFA4
+int16_t _garrison_window_start_x;
 
+// WZD dseg:BFA6
+int16_t city_screen_esc_hotkey;
 
-// WZD dseg:BFB6 00 00                                           production_screen_return_screen dw 0    ; DATA XREF: City_Screen+657w ...
-// WZD dseg:BFB6                                                                                         ; {1: CityList Screen, 2: City Screen}
+// WZD dseg:BFA8
+int16_t city_screen_ok_button;
+
+// WZD dseg:BFAA
+int16_t city_sceen_change_button;
+
+// WZD dseg:BFAC
+int16_t city_screen_buy_button;
+
+// WZD dseg:BFAE
+char * city_screen_product_name;
+
+// WZD dseg:BFB0
+int16_t IDK_city_production_cost;
+
+// WZD dseg:BFB2
+int16_t IDK_city_n_turns_to_produce;
+
+// WZD dseg:BFB4
+int16_t cityscreen_city_built_bldg_idx;
+
+// WZD dseg:BFB6
+int16_t production_screen_return_screen;
+
 // WZD dseg:BFB8 00 00                                           dw 0
 
 // WZD dseg:BFBA
@@ -1401,12 +1899,29 @@ char * GUI_String_2;
 // WZD dseg:BFBC
 char * GUI_String_1;
 
+// WZD dseg:BFBE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+word_42A5E dw 0Fh dup(0)                ; DATA XREF: sub_4D5EA+47w
+// WZD dseg:BFDC 00 00                                           Retn_Struct@ dw 0  // ; FOOD_BRKDN *Retn_Struct
+// WZD dseg:BFDE 00 00                                           word_42A7E dw 0                         ; DATA XREF: sub_4D5EA+B1w ...
+// WZD dseg:BFE0 00 00                                           word_42A80 dw 0                         ; DATA XREF: sub_4D5EA+ABw ...
+// WZD dseg:BFE2 00 00                                           word_42A82 dw 0                         ; DATA XREF: sub_4D5EA+7Bw ...
+// WZD dseg:BFE4 00 00                                           IMG_Seg dw 0                            ; DATA XREF: sub_4D5EA+64w ...
+// WZD dseg:BFE6 00 00                                           word_42A86 dw 0                         ; DATA XREF: sub_4D5EA+Bw ...
+// WZD dseg:BFE8 00 00                                           IDK_EnemyCityScreen_UnitStack_2 dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
+// WZD dseg:BFEA 00 00                                           IDK_EnemyCityScreen_UnitStack_1 dw 0    ; DATA XREF: Enemy_City_Screen:loc_4A454r ...
+// WZD dseg:BFEC 00 00                                           RecTotal dw 0                           ; DATA XREF: Enemy_City_Screen+68o ...
+// WZD dseg:BFEE 00 00                                           start_y dw 0                            ; DATA XREF: Enemy_City_Screen:loc_4A43Fw ...
+// WZD dseg:BFF0 00 00                                           IDK_EnemyCityScreen_xstart dw 0         ; DATA XREF: Enemy_City_Screen:loc_4A439w ...
 
+
+
+// WZD dseg:BFF2                                                 ¿ BEGIN:  ovr056  Production Screen ?
+
+// WZD dseg:C03C                                                 ¿ END:  ovr056  Production Screen ?
 
 
 
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
-// WZD dseg:C03E
+
 // WZD dseg:C03E 00 00                                           CRP_OverlandVar_2 dw 0                  ; DATA XREF: Main_Screen+60w
 // WZD dseg:C040 00 00                                           CRP_OverlandVar_4 dw 0                  ; DATA XREF: Main_Screen:loc_4FC07r ...
 // WZD dseg:C042 00 00                                           OVL_MapVar3 dw 0                        ; DATA XREF: Main_Screen+6Cw ...
@@ -1427,12 +1942,16 @@ char * GUI_String_1;
 // WZD dseg:C052 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Unit_Window_Fields dw 9 dup(0)          ; DATA XREF: IDK_CityScreen_AddFields+2Cw ...
 // WZD dseg:C064 00 00                                           CRP_OverlandVar_3 dw 0                  ; DATA XREF: Main_Screen+9Ar ...
 // WZD dseg:C066 00 00                                           OVL_Path_Length dw 0                    ; DATA XREF: Main_Screen+CBDr ...
+
 // WZD dseg:C068 00 00                                           OVL_StackHasPath dw 0                   ; DATA XREF: City_Screen:loc_47BE1w ...
 // WZD dseg:C068                                                                                         ; set to 0 after display-sorting the active stack
 // WZD dseg:C068                                                                                         ; set to 1 if road-building, but the unit is not on any
 // WZD dseg:C068                                                                                         ;   of the plotted line tiles (before returning)
 // WZD dseg:C068                                                                                         ; set to 1 if road-building, and tiles left to do
 // WZD dseg:C068                                                                                         ; set to 1 if moving with path left to go
+// WZD dseg:C068
+int16_t OVL_StackHasPath;
+
 // WZD dseg:C06A 00 00                                           _done_button dw 0                       ; DATA XREF: Main_Screen:CheckDoneButtonr ...
 // WZD dseg:C06C 00 00                                           _wait_button dw 0                       ; DATA XREF: Main_Screen:loc_50419r ...
 // WZD dseg:C06E 00 00                                           _patrol_button dw 0                     ; DATA XREF: Main_Screen:loc_50207r ...
@@ -1446,31 +1965,26 @@ char * GUI_String_1;
 // WZD dseg:C07E 00 00                                           _game_button dw 0                       ; DATA XREF: Main_Screen:loc_500E1r ...
 // WZD dseg:C080 00 00                                           dw 0
 
-// WZD dseg:C082 00 00                                           _unit_window_start_y dw 0               ; DATA XREF: GAME_Overland_Init+130w ...
-// WZD dseg:C082                                                                                         ; set to 4Fh
 // WZD dseg:C082
 // AKA OVL_STKUnitCards_Top
 int16_t _unit_window_start_y;
 
-// WZD dseg:C084 00 00                                           _unit_window_start_x dw 0               ; DATA XREF: GAME_Overland_Init+12Aw ...
-// WZD dseg:C084                                                                                         ; set to 0F7h
 // WZD dseg:C084
 // AKA OVL_STKUnitCards_Lft
 int16_t _unit_window_start_x;
 
-// WZD dseg:C086 00 00                                           _reduced_map_seg dw 0                   ; DATA XREF: sub_49F38+15w ...
-// WZD dseg:C086                                                                                         ; 12Fh LBX_Alloc_First paragraphs in the
-// WZD dseg:C086                                                                                         ; LBX_Sandbox_Segment
 // WZD dseg:C086
 SAMB_ptr _reduced_map_seg;
-// ; 12Fh LBX_Alloc_First paragraphs in the LBX_Sandbox_Segment
 
 // WZD dseg:C088 00 00                                           NIU_MainScreen_local_flag dw 0          ; DATA XREF: Main_Screen:loc_4FB72w ...
 // WZD dseg:C088                                                                                         ; drake178: CRP_OverlandVar
 // WZD dseg:C088                                                                                         ; only XREF Main_Screen(), sets TRUE, never tests
 // WZD dseg:C08A 00 00                                           SND_Bkgrnd_Track dw 0                   ; DATA XREF: IDK_SND_BkGrnd_s518AE+1Er ...
 // WZD dseg:C08A                                                                                         ; the current power-based background music track index
-// WZD dseg:C08C 00 00                                           word_42B2C dw 0                         ; DATA XREF: sub_499B1+E0r ...
+
+// WZD dseg:C08C
+int16_t city_built_bldg_idx;
+
 // WZD dseg:C08E 00 00                                           STK_HMoves_Left dw 0                    ; DATA XREF: OVL_GetStackHMoves:@@Donew ...
 // WZD dseg:C090 00 00                                           dw 0
 
@@ -1704,10 +2218,39 @@ SAMB_ptr IMG_USW_HeroPortrt;
 
 
 
+// WZD dseg:C7FC
+// drake178: GUI_NearMsgString
+char GUI_NearMsgString[154];
 
 
 
 
+
+// WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
+
+// WZD dseg:CA78
+// drake178: IDK_animate_new_building_idx
+// WZD dseg:CA7A
+// drake178: dword_4351A
+
+// WZD dseg:CA7E
+// drake178: IMG_CTY_Vtrcl_Mask@
+SAMB_ptr IDK_BUILDS1_vertical_mask_seg;
+
+// WZD dseg:CA80
+// drake178: IMG_CTY_Horz_Mask@
+SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
+
+// WZD dseg:CA82
+// drake178: Frame_Index
+// WZD dseg:CA84
+// drake178: word_43524
+// WZD dseg:CA86
+// drake178: word_43526
+// WZD dseg:CA88
+// drake178: pict_seg
+
+// WZD dseg:CA88                                                 ¿ END: Cityscape - ?
 
 
 

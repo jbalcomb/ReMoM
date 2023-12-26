@@ -3,15 +3,32 @@
         seg017
         seg018
         seg019
+        seg020  MoO2 Module: palette
+        seg021
 */
 #include "MoX.H"
 
 
 
+// WZD dseg:783C                                                 seg017  MoO2 Module: fonts
+
 // WZD dseg:783C
 uint16_t outline_color = 0;
+
 // WZD dseg:783E
-int16_t draw_alias_flag;
+int16_t draw_alias_flag = 0;
+
+// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4w
+// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181w ...
+
+// WZD dseg:7844                                                 seg020  MoO2 Module: palette
+// WZD dseg:7844
+int16_t cycle_direction_flag = -1;
+
+// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+
+
+
 
 
 /*
@@ -753,9 +770,9 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
     }
 
 
-    next_x = print_xpos;
-
 Done:
+
+    next_x = print_xpos;
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
@@ -1771,7 +1788,13 @@ void Clear_Palette_Changes(int start_color, int end_color)
 // WZD s20p10
 
 // WZD s20p11
-// void Reset_Cycle_Palette_Color(void);
+/*
+    0: normal, 1: reverse, -1: disabled
+*/
+void Reset_Cycle_Palette_Color(void)
+{
+    cycle_direction_flag = -1;
+}
 
 // WZD s20p12
  // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)

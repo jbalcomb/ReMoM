@@ -165,7 +165,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     fwrite(TBL_Landmasses, 2, 2400, file_pointer);
 
-    fwrite(TBL_Nodes, 30, 48, file_pointer);
+    fwrite(_NODES, 30, 48, file_pointer);
 
     fwrite(_FORTRESSES, 6, 4, file_pointer);
     // fwrite(_FORTRESSES, FORTRESS_COUNT_MAX, sizeof(struct s_FORTRESS), file_pointer);
@@ -321,7 +321,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 #endif
     assert(file_pointer_position == 24664);
 
-    fread(TBL_Nodes, 30, 48, file_pointer);
+    fread(_NODES, 30, 48, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
 #ifdef STU_DEBUG

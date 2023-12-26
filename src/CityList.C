@@ -282,9 +282,9 @@ void CityList_Draw_Reduced_Map(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: CityList_Draw_Reduced_Map()\n", __FILE__, __LINE__);
 #endif
 
-    city_world_x = _CITIES[list_cities[citylist_item_scanned_field]].world_x;
-    city_world_y = _CITIES[list_cities[citylist_item_scanned_field]].world_y;
-    city_world_p = _CITIES[list_cities[citylist_item_scanned_field]].world_plane;
+    city_world_x = _CITIES[list_cities[citylist_item_scanned_field]].wx;
+    city_world_y = _CITIES[list_cities[citylist_item_scanned_field]].wy;
+    city_world_p = _CITIES[list_cities[citylist_item_scanned_field]].wp;
 
     List_Screen_Draw_Reduced_Map(CITYLIST_REDUCED_MAP_X, CITYLIST_REDUCED_MAP_Y, CITYLIST_REDUCED_MAP_W, CITYLIST_REDUCED_MAP_H, city_world_p, city_world_x, city_world_y);
 
@@ -309,8 +309,8 @@ void CityList_Screen_Load(void)
 
     GUI_String_1 = (char *)Near_Allocate_Next(80);  // why 80 here, but 100 for ArmyList?
 
-    CTY_EnchantList = (char *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
-    CTY_EnchantOwners = (char *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
+    city_enchantment_list = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
+    city_enchantment_owner_list = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
 
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 153);
 
@@ -517,8 +517,8 @@ void CityList_Screen_Draw(void)
         String_To_Upper(GUI_String_1);
         // DEMO  Print(99, 158, GUI_String_1);
 
-        // TODO  CTY_GetEnchants(city_idx, CTY_EnchantList, CTY_EnchantOwners, &CTY_EnchantCount);
-        // TODO  CTY_Print_Enchantments(100, 168, CTY_EnchantList, CTY_EnchantOwners, (CTY_EnchantCount > 8 ? 8 : CTY_EnchantCount)) // maybe just MAX() macro?
+        // TODO  CTY_GetEnchants(city_idx, city_enchantment_list, city_enchantment_owner_list, &CTY_EnchantCount);
+        // TODO  CTY_Print_Enchantments(100, 168, city_enchantment_list, city_enchantment_owner_list, (CTY_EnchantCount > 8 ? 8 : CTY_EnchantCount)) // maybe just MAX() macro?
 
         // DEMO  CityList_Draw_Reduced_Map();
     }

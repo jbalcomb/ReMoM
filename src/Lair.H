@@ -34,15 +34,19 @@ int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane);
 // WZD o83p04
 // EZ_Resolve          ();
 // WZD o83p05
-// OVL_EZ_Confirm_Entry();
+// OVL_EZ_Confirm_Entry()
 // WZD o83p06
 // EZ_TreasureDialog   ();
 // WZD o83p07
 // EZ_GoldManaReward   ();
+
 // WZD o83p08
-// STR_ListSeparator   ();
+// drake178: STR_ListSeparator()
+void STR_ListSeparator(int16_t * size, int16_t count, char * list);
+
 // WZD o83p09
-// STR_GetIndefinite   ();
+char * STR_GetIndefinite(char * word);
+
 // WZD o83p10
 // EZ_GenerateRewards  ();
 // WZD o83p11

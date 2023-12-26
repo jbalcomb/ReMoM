@@ -11,7 +11,7 @@ int16_t platform_mouse_button_status;
 int16_t lock_mouse_button_status_flag = ST_FALSE;
 
 // WZD s35p05
-int16_t MD_GetButtonStatus(void)
+int16_t Mouse_Button(void)
 {
 
     // int16_t mouse_button_status;
@@ -20,6 +20,8 @@ int16_t MD_GetButtonStatus(void)
     // {
     //     mouse_button_status = mouse_right_button + mouse_left_button;
     // }
+
+    Pump_Events();
 
     return platform_mouse_button_status;
 }

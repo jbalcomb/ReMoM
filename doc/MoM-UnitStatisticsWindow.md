@@ -79,11 +79,11 @@ Main_Screen()
                     view_type came from USW_FullDisplay(), hard-coded to 1
                     USW_In_Combat has been set to ST_FALSE
 
-_DI_ViewTypeFlag = ViewTypeFlag
+_DI_ViewTypeFlag = CalledFromFlag
 
     USW_DrawLeft = x_start;
     USW_DrawTop = y_start;
-    USW_ViewType = ViewTypeFlag; // ; 2 if combat
+    USW_ViewType = CalledFromFlag; // ; 2 if combat
     USW_Unit_Index = unit_idx;
     USW_Effect_Count = 0;
 

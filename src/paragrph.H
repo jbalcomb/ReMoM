@@ -37,11 +37,11 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t text_width, char * text_string
 
 // WZD s19p05
 // drake178: VGA_GetTextHeight
-int16_t Get_Paragraph_Max_Height(int16_t text_width, char * text_string);
+int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string);
 
 // WZD s19p06
 // drake178: VGA_GetTextWidth
-// VGA_GetTextWidth
+int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_type);
 
 // WZD s19p07
 // drake178: VGA_ResetFltBlocks()

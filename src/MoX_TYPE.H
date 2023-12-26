@@ -4,6 +4,7 @@
 
 typedef unsigned char * byte_ptr;
 typedef unsigned char * SAMB_ptr;
+typedef long long       SAMB_INT;  // TODO  finish this out - ~ pointer to pict or int for -1/INVALID, but 16-bit DOS 2-byte vs. 64-bit Win 8-byte (short vs. long long)
 
 typedef unsigned char       byte;
 typedef unsigned short int  word;

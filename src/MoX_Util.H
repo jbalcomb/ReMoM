@@ -42,6 +42,13 @@ void String_To_Upper(char * string);
 // drake178: UU_STR_ToLower()
 // MoO2  Module: strings  String_To_Lower()
 
+
+
+// WZD s22p20
+void MEM_SwapWord(int16_t * word1, int16_t * word2);
+
+
+
 // WZD s22p23
 int16_t Test_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 

@@ -74,6 +74,8 @@ int16_t Keyboard_Status(void)
 
     Save_Mouse_State();
 
+    Pump_Events();
+
     if(key_pressed == ST_TRUE)
     {
         keyboard_status = ST_TRUE;

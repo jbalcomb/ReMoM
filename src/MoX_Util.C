@@ -58,6 +58,20 @@ void String_To_Upper(char * string)
 }
 
 
+
+// WZD s22p20
+// TODO  see if there is an example of this is the MS C lib or journal
+void MEM_SwapWord(int16_t * word1, int16_t * word2)
+{
+    int16_t tmp_word;
+
+    tmp_word = *word1;
+    *word1 = *word2;
+    *word2 = tmp_word;
+}
+
+
+
 // WZD s22p23
 int16_t Test_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
 {

@@ -69,7 +69,7 @@
     UU_TBL_1
     UU_TBL_2
     TBL_Landmasses
-    TBL_Nodes
+    _NODES
     _FORTRESSES
     _TOWERS
     TBL_Encounters
@@ -103,7 +103,7 @@
     fread(UU_TBL_1, 2, 96, file_pointer);
     fread(UU_TBL_2, 2, 96, file_pointer);
     fread(TBL_Landmasses, 2, 2400, file_pointer);
-    fread(TBL_Nodes, 30, 48, file_pointer);
+    fread(_NODES, 30, 48, file_pointer);
     fread(_FORTRESSES, 6, 4, file_pointer);
     fread(_TOWERS, 6, 4, file_pointer);
     fread(TBL_Encounters, 102, 24, file_pointer);
@@ -154,7 +154,7 @@ struct s_MOM_GAME_DATA {
     // UU_TBL_1
     // UU_TBL_2
     // TBL_Landmasses
-    // TBL_Nodes
+    // _NODES
     // _FORTRESSES
     // _TOWERS
     // TBL_Encounters
