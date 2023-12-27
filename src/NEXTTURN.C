@@ -1228,7 +1228,7 @@ void CTY_ProdProgress(int16_t city_idx)
 
                     // TODO  UNIT_RemoveExcess(_units - 1);
 
-                    Get_Units_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
+                    Units_At_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
 
                     if(
                         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) ||

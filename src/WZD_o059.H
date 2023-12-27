@@ -29,15 +29,15 @@ extern "C" {
 
 // WZD o59p03
 // drake178: CTY_GetGarrison()
-void Get_Units_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[]);
+void Units_At_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o59p04
 // drake178: TILE_GetUnitStack()
-// TILE_GetUnitStack()
+void Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o59p05
 // drake178: TILE_GetEnemyStack()
-void Get_Units_Other__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[]);
+void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o59p06
 // drake178: TILE_GetUnits_2()

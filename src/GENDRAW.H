@@ -36,16 +36,20 @@ int16_t Confirmation_Box(char * text_string);
 void Confirmation_Box_Draw(void);
 
 // WZD o149p03
-// GUI_WarningType1    
+// drake178: GUI_WarningType1()
+void Warn1(char * msg);
 
 // WZD o149p04
 // drake178: GUI_WarningType0()
-void GUI_WarningType0(char * msg);
+void Warn0(char * msg);
 
 // WZD o149p05
-// GUI_ShowRedMessage  
+// drake178: GUI_ShowRedMessage()
+void Warn(char * msg);
+
 // WZD o149p06
-// GUI_DrawRedMessage  
+// drake178: GUI_DrawRedMessage()
+void Warn_Draw(void);
 
 // WZD o149p07
 // drake178: GUI_ListSelect_Dlg()

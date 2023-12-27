@@ -1,4 +1,44 @@
 
+Left-Click Movement Map Grid Field
+    In IDA, color #42 (~Gold)
+
+Do Nothing
+Set Path
+Move Stack  (if stack active)
+
+
+Left-Click Movement Map
+if a stack is active
+if the stack has movement points
+
+...
+...
+...
+
+Left-Click Move Stack
+    |-> Move_Stack()
+        |-> Move_Units()
+
+
+Stack Has Path  (which may have just been set && regardless of movement points)
+
+
+left-click on the active stack
+cancel actions and unset path
+
+
+
+
+
+## Move_Stack()
+
+## Move_Units()
+
+
+
+
+
+
 !!!!! renamed !!!!!
 Do_Move_Stack_DirKey() |-> Do_Move_Stack() |-> Move_Stack() |-> Move_Units()
 Move_Stack_DirKey()    |-> Move_Stack()    |-> Move_Units() |-> Move_Units_Draw()

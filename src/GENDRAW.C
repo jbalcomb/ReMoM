@@ -44,9 +44,14 @@ uint8_t COL_ListSel_Titles[5] = {0x66, 0xFB, 0xFB, 0xFB, 0xFB};
 */
 
 // WZD dseg:6F87                                                 END:  Selection Box
-// WZD dseg:6F8C E4 E4 E4 E4 E4                                  COL_Warning1 db 0E4h, 0E4h, 0E4h, 0E4h, 0E4h
-// WZD dseg:6F8C                                                                                         ; DATA XREF: GUI_DrawRedMessage+76o
-// WZD dseg:6F91 2D 2D 2D 2D 2D                                  COL_Warning2 db 2Dh, 2Dh, 2Dh, 2Dh, 2Dh ; DATA XREF: GUI_DrawRedMessage:loc_D6C3Do
+
+// WZD dseg:6F8C
+// drake178: COL_Warning1
+uint8_t COL_Warning1[5] = {228, 228, 228, 228, 228};
+
+// WZD dseg:6F91
+// drake178: COL_Warning2
+uint8_t COL_Warning2[5] = {45, 45, 45, 45, 45};
 
 // WZD dseg:6F96
 // drake178: RP_GUI_Confirm_XShift
@@ -257,10 +262,21 @@ int16_t notify_color_slide;
 // drake178: GUI_ColorSlide_State
 int16_t notify_color_slide_cycle;
 
-// WZD dseg:CB02 00 00                                           IMG_GUI_RedMsg2Btm@ dw 0                ; DATA XREF: GUI_ShowRedMessage+68w ...
-// WZD dseg:CB04 00 00                                           IMG_GUI_RedMessage2@ dw 0               ; DATA XREF: GUI_ShowRedMessage+51w ...
-// WZD dseg:CB06 00 00                                           IMG_GUI_RedMsg1Btm@ dw 0                ; DATA XREF: GUI_ShowRedMessage+3Aw ...
-// WZD dseg:CB08 00 00                                           IMG_GUI_RedMessage1@ dw 0               ; DATA XREF: GUI_ShowRedMessage+23w ...
+// WZD dseg:CB02
+// drake178: IMG_GUI_RedMsg2Btm@
+SAMB_ptr IMG_GUI_RedMsg2Btm;
+
+// WZD dseg:CB04
+// drake178: IMG_GUI_RedMessage2@
+SAMB_ptr IMG_GUI_RedMessage2;
+
+// WZD dseg:CB06
+// drake178: IMG_GUI_RedMsg1Btm@
+SAMB_ptr IMG_GUI_RedMsg1Btm;
+
+// WZD dseg:CB08
+// drake178: IMG_GUI_RedMessage1@
+SAMB_ptr IMG_GUI_RedMessage1;
 
 
 /*
@@ -321,11 +337,10 @@ int16_t message_box_y;
 // AKA confirmation_box_x
 int16_t message_box_x;
 
-// WZD dseg:CB54 00 00                                           GUI_RedMsg_Type dw 0                    ; DATA XREF: GUI_WarningType1+3w ...
-// WZD dseg:CB54                                                                                         ; determines whether to use the first or the second
-// WZD dseg:CB54                                                                                         ; of the two different warning message backgrounds
-// WZD dseg:CB54                                                                                         ; (both of which are red, but slightly different and
-// WZD dseg:CB54                                                                                         ; use a different font color)
+// WZD dseg:CB54
+// drake178: GUI_RedMsg_Type
+int16_t GUI_RedMsg_Type;
+
 // WZD dseg:CB56                                                 ovr150
 
 
@@ -478,118 +493,131 @@ void Confirmation_Box_Draw(void)
 
 
 // WZD o149p03
-// GUI_WarningType1    
+// drake178: GUI_WarningType1()
+void Warn1(char * msg)
+{
+    GUI_RedMsg_Type = 1;
+    Warn(msg);
+}
 
 // WZD o149p04
 // drake178: GUI_WarningType0()
-void GUI_WarningType0(char * msg)
+void Warn0(char * msg)
 {
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GUI_WarningType0(msg = %s)\n", __FILE__, __LINE__, msg);
-#endif
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GUI_WarningType0(msg = %s)\n", __FILE__, __LINE__, msg);
-#endif
-
+    GUI_RedMsg_Type = 0;
+    Warn(msg);
 }
 
 // WZD o149p05
-// GUI_ShowRedMessage  
+// drake178: GUI_ShowRedMessage
+void Warn(char * msg)
+{
+    int16_t UU_var3;
+    int16_t textbox_height;
+    int16_t max_para_height;
+
+        Save_ScreenSeg();
+
+        // RESOURCE.LBX,  38  WARNBACK    warning top
+        // RESOURCE.LBX,  39  WARNBACK    warning bottom
+        // RESOURCE.LBX,  49  WARNBCK2    warning top
+        // RESOURCE.LBX,  50  WARNBCK2    warning bottom
+
+        IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file, 38, _screen_seg);
+        IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file, 39, _screen_seg);
+        IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file, 49, _screen_seg);
+        IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file, 50, _screen_seg);
+
+        Save_Auto_Function();
+
+        Save_Alias_Colors();
+
+        Set_Font_Colors_15(0, COL_Dialog_Text);
+
+        Copy_On_To_Off_Page();
+
+        message_box_text = msg;
+
+        Set_Font(4, 4, 4, ST_NULL);
+
+        max_para_height = Get_Paragraph_Max_Height(166, msg);
+
+        textbox_height = max_para_height + 33;
+
+        message_box_x = 68;
+
+        message_box_y = ((200 - textbox_height) / 2);
+
+        Assign_Auto_Function(&Warn_Draw, 1);
+
+        UU_var3 = 0;
+
+        // TODO  SND_PlayClickSound();
+
+        Wait_For_Input();
+
+        Restore_Alias_Colors();
+        Reset_Window();
+        Restore_Auto_Function();
+        Restore_ScreenSeg();
+}
+
 
 // WZD o149p06
-void GUI_DrawRedMessage(void)
+// drake178: GUI_DrawRedMessage()
+void Warn_Draw(void)
 {
+    int16_t max_para_height;  // _SI_
 
-    // Set_Font(4, 4, 4);
+    Set_Font(4, 4, 4, ST_NULL);
 
-    // _SI_ = VGA_GetTextHeight(166, GUI_Dialog_Text@)
+    max_para_height = Get_Paragraph_Max_Height(166, message_box_text);
 
-    // Set_Page_Off();
+    Set_Page_Off();
 
-    // Set_Window(0, 0, 319, (GUI_Dialog_Top + _SI_ + 12);
+    Set_Window(0, 0, SCREEN_XMAX, (message_box_y + max_para_height + 12));
 
-//     if(GUI_RedMsg_Type == 0)
-//     {
-// VGA_WndDrawLBXImage(GUI_Dialog_Left, GUI_Dialog_Top, IMG_GUI_RedMessage1@);
-//     }
-//         
-//     else
-//     {
-// VGA_WndDrawLBXImage(GUI_Dialog_Left, GUI_Dialog_Top, IMG_GUI_RedMessage2@);
-//     }
+    if(GUI_RedMsg_Type == 0)
+    {
+        Clipped_Draw(message_box_x, message_box_y, IMG_GUI_RedMessage1);
+    }
+    else
+    {
+        Clipped_Draw(message_box_x, message_box_y, IMG_GUI_RedMessage2);
+    }
 
-    // Reset_Window();
+    Reset_Window();
 
-//     if(GUI_RedMsg_Type == 0)
-//     {
-// Set_Font_Colors_15(4, COL_Warning1);
-//     }
-//         
-//     else
-//     {
-// Set_Font_Colors_15(4, COL_Warning2);
-//     }
+    if(GUI_RedMsg_Type == 0)
+    {
+        Set_Font_Colors_15(4, COL_Warning1);
+    }
+    else
+    {
+        Set_Font_Colors_15(4, COL_Warning2);
+    }
 
-    // Set_Font(4, 15, 15);
+    Set_Font(4, 15, 15, ST_NULL);
 
-// mov     ax, 2
-// push    ax                              ; Align
-// push    [GUI_Dialog_Text@]              ; Text@
-// mov     ax, 166
-// push    ax                              ; Width
-// mov     ax, [GUI_Dialog_Top]
-// add     ax, 11
-// push    ax                              ; Top
-// mov     ax, [GUI_Dialog_Left]
-// add     ax, 11
-// push    ax                              ; Left
-// call    Print_Paragraph   
+    Print_Paragraph((message_box_x + 11), (message_box_y + 11), 166, message_box_text, 2);
+    Print_Paragraph((message_box_x + 10), (message_box_y + 11), 166, message_box_text, 2);
 
-// mov     ax, 2
-// push    ax                              ; Align
-// push    [GUI_Dialog_Text@]              ; Text@
-// mov     ax, 166
-// push    ax                              ; Width
-// mov     ax, [GUI_Dialog_Top]
-// add     ax, 11
-// push    ax                              ; Top
-// mov     ax, [GUI_Dialog_Left]
-// add     ax, 10
-// push    ax                              ; Left
-// call    Print_Paragraph                 ; drake178: VGA_DrawText
+    Set_Alias_Color(184);
+    Set_Font(4, 4, 4, ST_NULL);
 
-    // Set_Alias_Color(184);
+    Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 2);
 
-    // Set_Font(4, 4, 4);
-
-// mov     ax, 2
-// push    ax                              ; Align
-// push    [GUI_Dialog_Text@]              ; Text@
-// mov     ax, 166
-// push    ax                              ; Width
-// mov     ax, [GUI_Dialog_Top]
-// add     ax, 10
-// push    ax                              ; Top
-// mov     ax, [GUI_Dialog_Left]
-// add     ax, 10
-// push    ax                              ; Left
-// call    Print_Paragraph                 ; drake178: VGA_DrawText
-
-//     if(GUI_RedMsg_Type == 0)
-//     {
-//     FLIC_Draw(GUI_Dialog_Left, (GUI_Dialog_Top + _SI_ + 10), IMG_GUI_RedMsg1Btm@);
-//     }
-//         
-//     else
-//     {
-//     FLIC_Draw(GUI_Dialog_Left, (GUI_Dialog_Top + _SI_ + 10), IMG_GUI_RedMsg2Btm@);
-//     }
+    if(GUI_RedMsg_Type == 0)
+    {
+        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), IMG_GUI_RedMsg1Btm);
+    }
+    else
+    {
+        FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), IMG_GUI_RedMsg2Btm);
+    }
 
 }
+
 
 // WZD o149p07
 /*

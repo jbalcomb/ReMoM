@@ -22,9 +22,10 @@
 #include "MainScr_Maps.H"
 
 #include "AdvsrScr.H"
+#include "GENDRAW.H"
 #include "SCastScr.H"  /* World_To_Screen() */
 #include "UnitStat.H"
-
+#include "WZD_o059.H"
 
 
 /*
@@ -171,7 +172,7 @@ int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int1
 // WZD o62p08
 void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
 // WZD o62p09
-// EarthGateTeleport()
+int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
 // WZD o62p10
 // drake178: USW_FullDisplay()
 void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
@@ -217,7 +218,9 @@ int16_t Stack_Moves_Active(void);
 int16_t Stack_Moves(void);
 
 // WZD o63p14
-// RP_TILE_HasCity2()
+// drake178: RP_TILE_HasCity2()
+// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
+int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o63p14
 // Check_Planar_Seal()
@@ -238,7 +241,10 @@ void Main_Screen_Draw_Next_Turn_Button(void);
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
-
+// WZD o64p10
+void UNIT_SetGlobalPath__STUB(int16_t unit_idx);
+// WZD o64p11
+// OVL_DrawPath()
 
 /*
     WIZARDS.EXE  ovr095
@@ -395,7 +401,7 @@ char hotkey_PlaneButton[] = "P";
 // WZD dseg:2EC3
 // aSomeUnitsDoNotHaveE db 'Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?',0
 // WZD dseg:2F42
-// aTheSelectedUnitsCan db 'The selected units cannot move on this plane.',0
+char cstrWarnNoPlaneMove[] = "The selected units cannot move on this plane.";
 // WZD dseg:2F70
 // aTurn_1 db 'turn',0
 
@@ -492,7 +498,7 @@ int16_t _game_button;
 // WZD dseg:C082 _unit_window_start_y dw 0
 // WZD dseg:C084 _unit_window_start_x dw 0
 // WZD dseg:C086 _reduced_map_seg dw 0
-// WZD dseg:C088 NIU_MainScreen_local_flag dw 0
+// WZD dseg:C088 UU_MainScreen_flag dw 0
 // WZD dseg:C08A SND_Bkgrnd_Track dw 0
 // WZD dseg:C08C word_42B2C dw 0
 
@@ -1030,7 +1036,7 @@ void Main_Screen(void)
 
     Reset_Window();
     Clear_Fields();
-    // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+    // UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
     Allocate_Reduced_Map();
     Reset_Draw_Active_Stack();
     Set_Outline_Color(0);  // ¿ BLACK / NONE / TRANSPARENT ?
@@ -1581,7 +1587,7 @@ void Main_Screen(void)
 
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
-                // NIU_MainScreen_local_flag = 1;
+                // UU_MainScreen_flag = 1;
             }
         }
         /*
@@ -1797,58 +1803,62 @@ void Main_Screen(void)
         /*
             Left-Click Movement Map Grid Field
                 In IDA, color #42 (~Gold)
-            - only if unit/stack active/selected
+            
+            Do Nothing
+            Set Path
+            Move Stack  (if stack active)
         */
-        if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
+        if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0))
         {
             unit_stack_hmoves = Stack_Moves_Active();  // stack movement points to use for move stack
             if(unit_stack_hmoves < 1)
             {
-                DLOG("(unit_stack_hmoves < 1)");
-                // j_IDK_MainScr_SUA_s553C3()
-                // j_UNIT_SetGlobalPath()  // calcs OVL_Path_Length; sets OVL_StackHasPath
+                Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, US_GoingTo, ((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_map_y + _main_map_grid_y) % WORLD_HEIGHT));
+                unit_idx = _unit_stack[0].unit_idx;
+                UNIT_SetGlobalPath__STUB(unit_idx);
                 if(OVL_Path_Length < 1)
                 {
-                    // j_IDK_MainScr_SUA_s553C3()
+                    Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, US_Ready, ((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_map_y + _main_map_grid_y) % WORLD_HEIGHT));
                 }
-                // IDK   Set_Mouse_List_Normal();
+                Set_Mouse_List_Default();
                 Reset_Map_Draw();
-                // DONT  NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
-            }
-            else
-            {
-                DLOG("(unit_stack_hmoves >= 1)");
+                // TODO  UU_MainScreen_flag == 1;
             }
 
             if(OVL_StackHasPath == ST_TRUE)
             {
-                // NIU_MainScreen_local_flag = 1
+                // TODO  UU_MainScreen_flag = 1
+
                 unit_idx = _unit_stack[0].unit_idx;
+
                 if(_UNITS[unit_idx].wp == _map_plane)
                 {
                     unit_stack_world_y = _UNITS[unit_idx].wy;
-                    if(unit_stack_world_y >= _map_y && unit_stack_world_y <= _map_y + MAP_WIDTH)
+
+                    if(unit_stack_world_y >= _map_y && unit_stack_world_y < (_map_y + MAP_HEIGHT))
                     {
                         IDK_unit_stack_in_view = ST_FALSE;
+
                         unit_stack_world_x = _UNITS[unit_idx].wx;
                         if(
-                            ( unit_stack_world_x >= _map_x && unit_stack_world_x <= (_map_x + MAP_HEIGHT) ) ||
-                            ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) <= (_map_x + MAP_HEIGHT) )
+                            ( unit_stack_world_x >= _map_x && unit_stack_world_x < (_map_x + MAP_WIDTH) ) ||
+                            ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) < (_map_x + MAP_WIDTH) )
                         )
                         {
-                            unit_stack_world_x = unit_stack_world_x - _map_x;
+                            unit_stack_world_x -= _map_x;
                             IDK_unit_stack_in_view = ST_TRUE;
                         }
+
                         if(IDK_unit_stack_in_view == ST_TRUE)
                         {
                             if(_main_map_grid_x == unit_stack_world_x)
                             {
-                                unit_stack_world_y = unit_stack_world_y - _map_y;
+                                unit_stack_world_y -= _map_y;
                                 if(_main_map_grid_y == unit_stack_world_y)
                                 {
-                                    // j_IDK_MainScr_SUA_s553C3(_human_player_idx, &_map_x, &_map_y, &_map_plane, 0, 0, 0)
-                                    // CRP_OverlandVar_3 == ST_FALSE;
-                                    // OVL_StackHasPath == ST_FALSE;
+                                    Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, US_Ready, 0, 0);
+                                    // TODO  CRP_OverlandVar_3 == ST_FALSE;
+                                    OVL_StackHasPath = ST_FALSE;
                                 }
                             }
 
@@ -1859,28 +1869,34 @@ void Main_Screen(void)
             }
             else
             {
-                // NIU_MainScreen_local_flag = 1; // ? ST_TRUE ?
+/*
+    BEGIN:  Left-Click Move Stack
+*/
+                // TODO  UU_MainScreen_flag = 1;
                 if(all_units_moved == ST_FALSE)
                 {
-                    DLOG("(all_units_moved == ST_FALSE)");
-                    target_world_x = (_map_x + _main_map_grid_x) % WORLD_WIDTH;  // world_x of click
-                    target_world_y = _map_y + _main_map_grid_y;         // world_y of click
-                    // ovr062
-                    // x,y,p for dst; gets src from _UNITS[_unit_stack[0].unit_idx]
-                    // if(EarthGateTeleport(target_world_x, target_world_y, _map_plane) == ST_FALSE)
-                    // {
-                    //     // if ...
-                    //     /// j_OVL_CanPlanarTravel() == ST_FALSE
-                    //     // _UNITS[_unit_stack[0].unit_idx].wp == _map_plane;
-                    //     // _UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE;
-                    //     // WZD o61p02
-                    //     // Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane)
-                    //     // else
-                    //     // "The selected units cannot move on this plane."
-                    //     // ; displays the passed message in a red warning dialog
-                    //     // j_GUI_WarningType0(cstrWarnNoPlaneMove)
-                    // }
+                    target_world_x = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
+                    target_world_y =  (_map_y + _main_map_grid_y);
+                    if(EarthGateTeleport__WIP(target_world_x, target_world_y, _map_plane) == ST_FALSE)
+                    {
+                        if(
+                            (Stack_Has_PlanarTravel() == ST_TRUE) ||
+                            (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) ||
+                            (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE)
+                        )
+                        {
+                            Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+                        }
+                        else
+                        {
+                            Warn0(cstrWarnNoPlaneMove);  // "The selected units cannot move on this plane."
+                        }
+                    }
+                    Main_Screen_Reset();
                 }
+/*
+    END:  Left-Click Move Stack
+*/
             }
         }
 
@@ -2059,7 +2075,7 @@ void Main_Screen(void)
 
                     DLOG("@@DidRightClickUnit");
                     screen_changed = ST_TRUE;
-                    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
+                    // DONT  UU_MainScreen_flag = ST_TRUE;
                 }
 
             }
@@ -2476,7 +2492,7 @@ void Main_Screen_Reset(void)
     Reset_Map_Draw();
     // TODO  Deactivate_Help_List(0;)
     // TODO  Main_Screen_Help();
-    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
+    // DONT  UU_MainScreen_flag = ST_TRUE;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Reset()\n", __FILE__, __LINE__);
@@ -2741,9 +2757,6 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
 
         Move_Units(player_idx, move_x, move_y, Spec, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
-// ; moves, or starts to move, an overland stack towards a target destination
-// ; returns 1 if the stack has moved, 0 if out of moves or no valid path
-// ; complicated, BUG-ridden, progress in here, RE-EXPLORE
 
 
         unit_idx = _unit;
@@ -2766,10 +2779,10 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
             DLOG("(movement_points_available < 1)");
             for(itr_units = 0; itr_units < unit_array_count; itr_units++)
             {
-                if( (_UNITS[unit_array[itr_units]].Status & 0x00) == 0)  /* US_Ready  "NO ORDERS" */
+                if( (_UNITS[unit_array[itr_units]].Status & US_Ready) == 0)
                 {
                     _UNITS[unit_array[itr_units]].Finished = ST_TRUE;
-                    _UNITS[unit_array[itr_units]].Status = 0x04;  /* US_ReachDest  "DONE" */
+                    _UNITS[unit_array[itr_units]].Status = US_ReachedDest;
                 }
             }
 
@@ -3653,7 +3666,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
         if(GoingTo_Unit_idx != ST_UNDEFINED)
         {
-            // TODO  UNIT_SetGlobalPath(GoingTo_Unit_idx);
+            // TODO  UNIT_SetGlobalPath__STUB(GoingTo_Unit_idx);
         }
 
         unit_idx = _unit;
@@ -4309,7 +4322,110 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 
 
 // WZD o62p09
-// EarthGateTeleport()
+int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t unit_array[9];
+    int16_t moveable_units_count;
+    int16_t unit_count;
+    int16_t Radius;
+    int16_t player_idx;
+    int16_t dst_city_idx;
+    int16_t did_earthgate;
+    int16_t src_city_idx;
+    int16_t unit_idx;  // _SI_
+    int16_t itr;  // _DI_
+
+    if(_unit_stack_count < 1)
+    {
+        goto Failure;
+    }
+
+    dst_city_idx = City_At_Square__2(wx, wy, wp);
+
+    if(dst_city_idx == ST_UNDEFINED)
+    {
+        goto Failure;
+    }
+
+    Units_At_Square(wx, wy, wp, _human_player_idx, &unit_count, &unit_array[0]);
+
+    if(unit_count >= 9)
+    {
+        goto Failure;
+    }
+
+    moveable_units_count = 0;
+
+    did_earthgate = ST_FALSE;
+
+    unit_idx = _unit_stack[0].unit_idx;
+
+    src_city_idx = City_At_Square__2(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+
+    if(
+        (dst_city_idx != ST_UNDEFINED) &&
+        (_CITIES[src_city_idx].wp == _CITIES[dst_city_idx].wp) &&
+        (_CITIES[src_city_idx].owner_idx == _CITIES[dst_city_idx].owner_idx) &&
+        (_CITIES[src_city_idx].enchantments[EARTH_GATE] == ST_TRUE) &&
+        (_CITIES[dst_city_idx].enchantments[EARTH_GATE] == ST_TRUE)
+    )
+    {
+        for(itr = 0; itr < _unit_stack_count; itr++)
+        {
+            unit_idx = _unit_stack[itr].unit_idx;
+            if(
+                (_UNITS[unit_idx].Finished != ST_FALSE) &&
+                (_unit_stack[itr].active == ST_TRUE) &&
+                (_UNITS[unit_idx].HMoves > 0)
+            )
+            {
+                moveable_units_count++;
+            }
+        }
+
+        if((moveable_units_count + unit_count) <= MAX_STACK)
+        {
+            for(itr = 0; itr < _unit_stack_count; itr++)
+            {
+                unit_idx = _unit_stack[itr].unit_idx;
+                if(
+                    (_UNITS[unit_idx].Finished != ST_FALSE) &&
+                    (_unit_stack[itr].active == ST_TRUE) &&
+                    (_UNITS[unit_idx].HMoves > 0)
+                )
+                {
+                    _UNITS[unit_idx].wx = _CITIES[dst_city_idx].wx;
+                    _UNITS[unit_idx].wy = _CITIES[dst_city_idx].wy;
+                    _UNITS[unit_idx].HMoves -= 2;
+                    if(_UNITS[unit_idx].HMoves < 1)
+                    {
+                        _UNITS[unit_idx].Finished = ST_TRUE;
+                    }
+                }
+            }
+
+            player_idx = _CITIES[src_city_idx].owner_idx;
+            // TODO  Radius = IDK_City_Radius_s34255(player_idx, wx, wy, wp);
+            // AI_ContactWizards((player_idx, wx, wy, wp, Radius);
+            // TODO TILE_ExploreRadius(wx, wy, wp, Radius);
+            TILE_ExploreRadius(wx, wy, wp, 2);
+            _active_world_x = _CITIES[dst_city_idx].wx;
+            _active_world_y = _CITIES[dst_city_idx].wy;
+            WIZ_NextIdleStack(player_idx, &_map_x, &_map_y, &wp);
+            did_earthgate = ST_TRUE;
+            Update_Scouted_And_Contacted();
+        }
+    }
+
+
+Failure:
+    did_earthgate = ST_FALSE;
+
+
+Done:
+
+    return did_earthgate;
+}
 
 
 // WZD o62p10
@@ -5230,13 +5346,13 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
         if(unit_idx == ST_UNDEFINED)
         {
             // Active_Stack_Movement_Modes(&movement_mode_flags);
-            Active_Stack_Movement_Modes(&movement_mode_flags[0]);
+            Active_Stack_Movement_Modes__WIP(&movement_mode_flags[0]);
         }
         else
         {
             stack = unit_idx;
             // Stack_Movement_Modes(&movement_mode_flags, &stack, 1);
-            Stack_Movement_Modes(&movement_mode_flags[0], &stack, 1);
+            Stack_Movement_Modes__NOOP(&movement_mode_flags[0], &stack, 1);
         }
 
     }
@@ -5473,10 +5589,10 @@ OON XREF STK_Move() WZD o95p01
 */
     int16_t stack_has_windwalker;
     int16_t windwalker_unit_idx;
-    int16_t movement_points; // In Dasm, SI
-    int16_t tmp_unit_idx;  // In Dasm, DI
-    int16_t itr_unit_stack;
-    int8_t tmp_unit_type;  // In Dasm, DNE
+    int16_t movement_points; // _SI_
+    int16_t tmp_unit_idx;  // _DI_
+    int16_t itr_stack;
+    int8_t tmp_unit_type;  // DNE in Dasm
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Moves_Active()\n", __FILE__, __LINE__);
@@ -5486,10 +5602,10 @@ OON XREF STK_Move() WZD o95p01
 
     stack_has_windwalker = ST_FALSE;
 
-    for(itr_unit_stack = 0; itr_unit_stack < _unit_stack_count; itr_unit_stack++)
+    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
-        tmp_unit_idx = _unit_stack[itr_unit_stack].unit_idx;
-        if(_unit_stack[itr_unit_stack].active == ST_TRUE)
+        tmp_unit_idx = _unit_stack[itr_stack].unit_idx;
+        if(_unit_stack[itr_stack].active == ST_TRUE)
         {
             if(_UNITS[tmp_unit_idx].HMoves < movement_points)
             {
@@ -5497,7 +5613,7 @@ OON XREF STK_Move() WZD o95p01
             }
 
             tmp_unit_type = _UNITS[tmp_unit_idx].type;
-            if(_unit_type_table[tmp_unit_type].Transport == ST_TRUE)
+            if(_unit_type_table[tmp_unit_type].Transport > 0)
             {
                 movement_points = _UNITS[tmp_unit_idx].HMoves;
                 break;
@@ -5604,7 +5720,29 @@ int16_t Stack_Moves(void)
 
 
 // WZD o63p14
-// RP_TILE_HasCity2()
+// drake178: RP_TILE_HasCity2
+// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
+int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t has_city;  // _SI_
+    int16_t itr;  // _CX_
+
+    has_city = ST_UNDEFINED;
+
+    for(itr = 0; ((itr < _cities) && (has_city == ST_UNDEFINED)); itr++)
+    {
+        if(
+            (_CITIES[itr].wx == wx) &&
+            (_CITIES[itr].wy == wy) &&
+            (_CITIES[itr].wp == wp)
+        )
+        {
+            has_city = itr;
+        }
+    }
+
+    return has_city;
+}
 
 
 // WZD o63p14
@@ -6099,6 +6237,76 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 
 }
 
+// WZD o64p10
+void UNIT_SetGlobalPath__STUB(int16_t unit_idx)
+{
+    int16_t boat_rider_array[9];
+    int16_t unit_array[9];
+    int16_t movement_modes[6];
+    int16_t Current_Tile_Index;
+    int16_t Road_Start_Y;
+    int16_t Road_Start_X;
+    int16_t owner_idx;
+    int16_t stack_count;
+    int16_t boat_rider_array_count;
+    int16_t unit_goto_wy;
+    int16_t unit_goto_wx;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t goto_units_count;
+    int16_t l_unit_idx;
+    int16_t unit_stack_idx;  // _SI_
+    int16_t itr_stack;  // _DI_
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_goto_wx = _UNITS[unit_idx].dst_wx;
+    unit_goto_wy = _UNITS[unit_idx].dst_wy;
+    owner_idx = _UNITS[unit_idx].owner_idx;
+
+    stack_count = _unit_stack_count;
+
+    goto_units_count = 0;
+
+    for(itr_stack = 0; itr_stack < stack_count; itr_stack++)
+    {
+        unit_array[itr_stack] = _unit_stack[itr_stack].unit_idx;
+        if(_UNITS[unit_array[itr_stack]].Status == US_GoingTo)
+        {
+            goto_units_count++;
+        }
+    }
+
+    if(goto_units_count < 1)
+    {
+        return;
+    }
+
+    Stack_Movement_Modes__NOOP(&movement_modes[0], &unit_array[0], stack_count);
+
+    boat_rider_array_count = STK_GetLandlubbers(stack_count, &unit_array[0], &boat_rider_array[0]);
+
+    if(_UNITS[unit_idx].Rd_Constr_Left != -1)
+    {
+
+    }
+    else
+    {
+        // TODO  OVL_Path_Length = STK_GetPath__FAILURE(movement_modes[0], movement_modes[1], movement_modes[2], movement_modes[3], movement_modes[4], movement_modes[5], unit_wx, unit_wy, unit_goto_wx, unit_goto_wy, _map_plane, &MovePath_X, &IDK_MovePath_Y[1], &OVL_Path_Costs, 1, 30, boat_rider_array_count, stack_count, owner_idx);
+        OVL_Path_Length = 0;
+    }
+
+    if(OVL_Path_Length > 0)
+    {
+        OVL_StackHasPath = ST_TRUE;
+    }
+
+}
+
+
+// WZD o64p11
+// OVL_DrawPath()
+
 
 
 
@@ -6162,7 +6370,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
             movement_modes[itr_eight] = 0;
         }
 
-        Stack_Movement_Modes(&movement_modes[0], unit_array, unit_array_count);
+        Stack_Movement_Modes__NOOP(&movement_modes[0], unit_array, unit_array_count);
 
         boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
 
@@ -6227,26 +6435,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
                 Combat_Move = ST_FALSE;
                 //TODO  OVL_SWardTriggered = ST_FALSE;
 
-// push    [bp+unit_array_count]           ; UCount
-// push    [bp+unit_array@]                ; UList@
-// lea     ax, [bp+Out_Of_Moves]
-// push    ax                              ; Cmplt@
-// lea     ax, [bp+Path_Length]
-// push    ax                              ; Length@
-// lea     ax, [bp+Combat_Move]
-// push    ax                              ; Cmbt@
-// lea     ax, [bp+Obstacle_Index]
-// push    ax                              ; Obst@
-// push    [bp+movement_points]            ; HMoves
-// mov     ax, offset OVL_Path_Costs
-// push    ax                              ; Costs@
-// push    [bp+map_plane]                  ; Plane
-// mov     ax, offset OVL_Path_Ys
-// push    ax                              ; Ys@
-// mov     ax, offset OVL_Path_Xs
-// push    ax                              ; Xs@
-// push    [bp+player_idx]                 ; Player_Index
-// call    j_STK_EvaluatePath              
+                // TODO STK_EvaluatePath__WIP(player_idx, &MovePath_X, &IDK_MovePath_Y[1], map_p, &OVL_Path_Costs, movement_points, &Obstacle_Index, &Combat_Move, &Path_Length, &Out_Of_Moves, unit_array, unit_array_count);
+
 // ; evaluates the stack's set path, and sets the return
 // ; values accordingly:
 // ;   Cmplt@ - 1 if running out of moves (no obstacles)
@@ -6395,22 +6585,22 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
                             (_UNITS[unit_idx].owner_idx == _human_player_idx)
                         )
                         {
-                            _UNITS[unit_idx].Status = 0x00 /* "NO ORDERS"  US_Ready */;
+                            _UNITS[unit_idx].Status = US_Ready;
                             _UNITS[unit_idx].dst_wx = 0;
                             _UNITS[unit_idx].dst_wy = 0;
                             Out_Of_Moves = ST_FALSE;
                         }
                         
-                        if( (Out_Of_Moves == ST_TRUE) && ((_UNITS[unit_idx].Status & 0x10 /* US_Move */) != 0) )
+                        if( (Out_Of_Moves == ST_TRUE) && ((_UNITS[unit_idx].Status & US_Move) != 0) )
                         {
-                            _UNITS[unit_idx].Status = 0x03;  /* "GOTO"  US_GoingTo */
+                            _UNITS[unit_idx].Status = US_GoingTo;
                             _UNITS[unit_idx].dst_wx = destination_x;
                             _UNITS[unit_idx].dst_wy = destination_y;
                             _UNITS[unit_idx].Finished = ST_TRUE;
                         }
 
                         if(
-                            ( (_UNITS[unit_idx].Status & 0x03 /* US_GoingTo */) == 0) &&
+                            ( (_UNITS[unit_idx].Status & US_GoingTo) == 0) &&
                             ( _UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx ) &&
                             ( _UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy )
                         )
@@ -6419,7 +6609,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 
                             if(_UNITS[unit_idx].Rd_Constr_Left == -1)
                             {
-                                _UNITS[unit_idx].Status = 0x00;  /* "NO ORDERS"  US_Ready */
+                                _UNITS[unit_idx].Status = US_Ready;
                                 _UNITS[unit_idx].dst_wx = 0;
                                 _UNITS[unit_idx].dst_wy = 0;
                                 if(_UNITS[unit_idx].HMoves > 0)
@@ -6432,7 +6622,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 
                         }
 
-                        if( (_UNITS[unit_idx].Status & 0x03 /* US_GoingTo */) != 0)
+                        if( (_UNITS[unit_idx].Status & US_GoingTo) != 0)
                         {
                             _UNITS[unit_idx].Finished = ST_TRUE;
                         }

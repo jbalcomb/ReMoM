@@ -5,6 +5,7 @@
 
 #include "MoM.H"
 #include "WZD_o059.H"
+#include "MainScr.H"
 #include "MainScr_Maps.H"  /* TILE_Explore(); */
 
 
@@ -28,49 +29,83 @@
 
 // WZD o59p03
 // drake178: CTY_GetGarrison()
-/*
-    Get Units - City
-
-*/
-void Get_Units_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[])
+void Units_At_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[])
 {
-    int16_t itr_units;  // _SI_
-    int16_t l_unit_count;  // _DI_
+    int16_t itr;
+    int16_t count;
 
-    l_unit_count = 0;
+    count = 0;
 
-    for(itr_units = 0; ((itr_units < _units) && (l_unit_count < MAX_STACK)); itr_units++)
+    for(itr = 0; ((itr < _units) && (count < MAX_STACK)); itr++)
     {
         if(
-            (_CITIES[city_idx].wp == _UNITS[itr_units].wp) &&
-            (_CITIES[city_idx].wx == _UNITS[itr_units].wx) &&
-            (_CITIES[city_idx].wy == _UNITS[itr_units].wy) &&
-            (_CITIES[city_idx].owner_idx == _UNITS[itr_units].owner_idx)
+            (_CITIES[city_idx].wp == _UNITS[itr].wp) &&
+            (_CITIES[city_idx].wx == _UNITS[itr].wx) &&
+            (_CITIES[city_idx].wy == _UNITS[itr].wy) &&
+            (_CITIES[city_idx].owner_idx == _UNITS[itr].owner_idx)
         )
         {
-            unit_array[l_unit_count] = itr_units;
-            l_unit_count++;
+            unit_array[count] = itr;
+            count++;
         }
     }
 
-    *unit_count = l_unit_count;
+    *unit_count = count;
 }
 
 
 // WZD o59p04
 // drake178: TILE_GetUnitStack()
-// TILE_GetUnitStack()
+void Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
+{
+    int16_t itr;
+    int16_t count;
+
+    count = 0;
+
+    for(itr = 0; itr < _units; itr++)
+    {
+        if(
+            ((_UNITS[itr].wp == wp) || (_UNITS[itr].In_Tower == ST_TRUE)) &&
+            (_UNITS[itr].wx == wx) &&
+            (_UNITS[itr].wy == wy) &&
+            (_UNITS[itr].owner_idx == player_idx)
+        )
+        {
+            unit_array[count] = itr;
+            count++;
+        }
+    }
+
+    *unit_count = count;
+}
 
 
 // WZD o59p05
 // drake178: TILE_GetEnemyStack()
-/*
-Get Units - Unowned
-
-*/
-void Get_Units_Other__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
+void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
 {
+    int16_t itr;
+    int16_t count;
 
+    count = 0;
+
+    for(itr = 0; itr < _units; itr++)
+    {
+        if(
+            ((_UNITS[itr].wp == wp) || (_UNITS[itr].In_Tower == ST_TRUE)) &&
+            (_UNITS[itr].wx == wx) &&
+            (_UNITS[itr].wy == wy) &&
+            (_UNITS[itr].owner_idx != player_idx) &&
+            (_UNITS[itr].owner_idx != -1)
+        )
+        {
+            unit_array[count] = itr;
+            count++;
+        }
+    }
+
+    *unit_count = count;
 }
 
 // WZD o59p06
@@ -484,7 +519,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
     _DI_return_value = -1;  // ¿ ST_SUCCESS ?
 
-    Active_Stack_Movement_Modes(&movement_mode_flags[0]);
+    Active_Stack_Movement_Modes__WIP(&movement_mode_flags[0]);
 
     if(Terrain_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane) == ST_TRUE)
     {

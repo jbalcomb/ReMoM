@@ -480,6 +480,10 @@ void MainScr_Prepare_Reduced_Map(void);
 // PRIVATE  void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 // PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
+// WZD o64p10
+// UNIT_SetGlobalPath()
+// WZD o64p11
+// OVL_DrawPath()
 
 
 
@@ -515,7 +519,9 @@ void MainScr_Prepare_Reduced_Map(void);
 */
 
 // WZD o97p01
-// STK_EvaluatePath()
+// TODO void STK_EvaluatePath__WIP((int16_t player_idx, int16_t *Xs@, int16_t *Ys@, int16_t Plane, int16_t *Costs@, int16_t HMoves, int16_t *Obst@, int16_t *Cmbt@, int16_t *Length@, int16_t *Cmplt@, int16_t *UList@, int16_t UCount);
+
+
 
 // WZD o97p02
 // sub_7E597()

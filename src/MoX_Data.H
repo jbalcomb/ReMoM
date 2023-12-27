@@ -207,7 +207,7 @@ enum Unit_Status
     US_Patrol,
     US_BuildRoad,
     US_GoingTo,
-    US_ReachedDest,
+    US_ReachedDest,  /* "DONE" in 'MoM Demo' */
     US_Wait,
     US_Casting,    /* drake178: US_Unknown_6; "CASTING" in 'MoM Demo' */
     US_Unknown_7,  /* "PURIFY" in 'MoM Demo' */

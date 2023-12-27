@@ -38,7 +38,7 @@ Elsewhere, ...
     wrapper for STK_GetMoveTypes()
 */
 // void Active_Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags)
-void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
+void Active_Stack_Movement_Modes__WIP(int16_t movement_mode_flags[])
 {
     int16_t stack[9];
     int16_t stack_has_no_active_units;
@@ -78,7 +78,7 @@ void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
         }
     }
 
-    Stack_Movement_Modes(movement_mode_flags, &stack[0], unit_count);
+    Stack_Movement_Modes__NOOP(movement_mode_flags, &stack[0], unit_count);
 
     if(stack_has_no_active_units == ST_TRUE)
     {
@@ -98,7 +98,7 @@ void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
 // drake178: STK_GetMoveTypes()
 // void STK_GetMoveTypes(int16_t * movement_mode_flags, int_16_t stack, int16_t unit_count)
 // void Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags, int16_t * stack_array, int16_t stack_size)
-void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size)
+void Stack_Movement_Modes__NOOP(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size)
 {
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Movement_Modes()\n", __FILE__, __LINE__);
@@ -521,7 +521,7 @@ push    [bp+movement_modes]             ; MTypes
 call    j_STK_GetPath    
 
 */
-int16_t STK_GetPath(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t src_x, int16_t src_y, int16_t dst_x, int16_t dst_y, int16_t map_p, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t boat_rider_count, int16_t units_count, int16_t player_idx)
+int16_t STK_GetPath__FAILURE(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t src_x, int16_t src_y, int16_t dst_x, int16_t dst_y, int16_t map_p, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t boat_rider_count, int16_t units_count, int16_t player_idx)
 {
 // Btm_Y= word ptr -0Eh
 // Rgt_X= word ptr -0Ch

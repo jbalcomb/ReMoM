@@ -47,12 +47,12 @@ extern "C" {
 // WZD o71p01
 // drake178: OVL_GetMoveTypes()
 // void Active_Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags);
-void Active_Stack_Movement_Modes(int16_t movement_mode_flags[]);
+void Active_Stack_Movement_Modes__WIP(int16_t movement_mode_flags[]);
 
 // WZD o71p02
 // drake178: STK_GetMoveTypes()
 // void Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags, int16_t * stack_array, int16_t stack_size);
-void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size);
+void Stack_Movement_Modes__NOOP(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size);
 
 // WZD o71p03
 /*
@@ -119,7 +119,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o148p03
 // drake178: STK_GetPath()
-int16_t STK_GetPath(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Plane, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t LLCnt, int16_t UCnt, int16_t player_idx);
+int16_t STK_GetPath__FAILURE(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Plane, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t LLCnt, int16_t UCnt, int16_t player_idx);
 
 // WZD o148p04
 // TILE_ExtendRange()
