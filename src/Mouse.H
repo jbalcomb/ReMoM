@@ -93,7 +93,8 @@ extern int16_t mouse_buffer_button;
 extern int16_t mouse_buffer_flag2;
 
 // WZD dseg:78D4
-extern int16_t MOUSE_INT_Process;
+// drake178: MOUSE_INT_Process
+extern int16_t mouse_interrupt_active;
 
 
 // ...
@@ -138,7 +139,10 @@ void Mouse_Movement_Handler(void);
 void Mouse_Button_Handler(void);
 
 // WZD s35p12
-// MOUSE_INT_Handler
+// drake178: MOUSE_INT_Handler()
+// MoO2  Module: mouse  User_Mouse_Handler()
+// void User_Mouse_Handler(int16_t max, int16_t buttons, int16_t mcx, int16_t mdx);;
+/* PLATFORM */  void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my);
 
 // WZD s35p13
 void Save_Mouse_State(void);
@@ -178,6 +182,14 @@ int16_t Mouse_Buffer(void);
 // WZD s35p26
 int16_t Mouse_Buffer2(void);
 
+// WZD s35p27
+// RP_MOUSE_SetSecClick()
+
+// WZD s35p28
+// UU_MOUSE_GenerateClick()
+
+// WZD s35p29
+void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);
 
 
 // WZD s35p30  Save_Mouse_On_Page   CRL_Save_RSP  GUI_SaveCursorArea

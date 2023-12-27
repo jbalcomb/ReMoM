@@ -1690,7 +1690,7 @@ void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
     uint8_t blue;
     uint8_t percent;
 
-    assert((first_set >= last_set));
+    // assert(first_set >= last_set);
 
     if(last_set < first_set)
     {

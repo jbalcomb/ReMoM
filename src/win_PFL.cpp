@@ -248,48 +248,47 @@ void Pump_Paints(void)
     }
 }
 
-
-// ¿ ~== Mouse_Int_Handler() ?
-void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
-{
-    if (lock_mouse_button_status_flag != ST_TRUE)
-    {
-        mouse_x = platform_mouse_x / 2;
-        mouse_y = platform_mouse_y / 2;
-        // mouse_x = platform_mouse_x / display_scale;
-        // mouse_y = platform_mouse_y / display_scale;
-    }
-    if (MOUSE_INT_Process == ST_FALSE)
-    {
-        MOUSE_INT_Process = ST_TRUE;
-        // TODO  MOUSE_SaveClick();
-        if (mouse_enabled != ST_FALSE)
-        {
-            mouse_enabled = ST_FALSE;
-            if (current_mouse_list_count >= 2)
-            {
-                Check_Mouse_Shape(mouse_x, mouse_y);
-            }
-            Restore_Mouse_On_Page();                // mouse_background_buffer -> video_page_buffer[draw_page_num]
-            Save_Mouse_On_Page(mouse_x, mouse_y);   // video_page_buffer[draw_page_num] -> mouse_background_buffer
-            Draw_Mouse_On_Page(mouse_x, mouse_y);   // mouse_palette -> video_page_buffer[draw_page_num]
-            mouse_enabled = ST_TRUE;
-        }
-        MOUSE_INT_Process = ST_FALSE;
-    }
-}
-
-void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status)
-{
-    if(lock_mouse_button_status_flag != ST_TRUE)
-    {
-        mouse_x = platform_mouse_x / 2;
-        mouse_y = platform_mouse_y / 2;
-        // mouse_x = platform_mouse_x / display_scale;
-        // mouse_y = platform_mouse_y / display_scale;
-        platform_mouse_button_status = mouse_button_status;
-    }
-}
+// DELETE  // ¿ ~== Mouse_Int_Handler() ?
+// DELETE  void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
+// DELETE  {
+// DELETE      if (lock_mouse_button_status_flag != ST_TRUE)
+// DELETE      {
+// DELETE          mouse_x = platform_mouse_x / 2;
+// DELETE          mouse_y = platform_mouse_y / 2;
+// DELETE          // mouse_x = platform_mouse_x / display_scale;
+// DELETE          // mouse_y = platform_mouse_y / display_scale;
+// DELETE      }
+// DELETE      if (mouse_interrupt_active == ST_FALSE)
+// DELETE      {
+// DELETE          mouse_interrupt_active = ST_TRUE;
+// DELETE          // TODO  MOUSE_SaveClick();
+// DELETE          if (mouse_enabled != ST_FALSE)
+// DELETE          {
+// DELETE              mouse_enabled = ST_FALSE;
+// DELETE              if (current_mouse_list_count >= 2)
+// DELETE              {
+// DELETE                  Check_Mouse_Shape(mouse_x, mouse_y);
+// DELETE              }
+// DELETE              Restore_Mouse_On_Page();                // mouse_background_buffer -> video_page_buffer[draw_page_num]
+// DELETE              Save_Mouse_On_Page(mouse_x, mouse_y);   // video_page_buffer[draw_page_num] -> mouse_background_buffer
+// DELETE              Draw_Mouse_On_Page(mouse_x, mouse_y);   // mouse_palette -> video_page_buffer[draw_page_num]
+// DELETE              mouse_enabled = ST_TRUE;
+// DELETE          }
+// DELETE          mouse_interrupt_active = ST_FALSE;
+// DELETE      }
+// DELETE  }
+// DELETE  
+// DELETE  void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status)
+// DELETE  {
+// DELETE      if(lock_mouse_button_status_flag != ST_TRUE)
+// DELETE      {
+// DELETE          mouse_x = platform_mouse_x / 2;
+// DELETE          mouse_y = platform_mouse_y / 2;
+// DELETE          // mouse_x = platform_mouse_x / display_scale;
+// DELETE          // mouse_y = platform_mouse_y / display_scale;
+// DELETE          platform_mouse_button_status = mouse_button_status;
+// DELETE      }
+// DELETE  }
 
 struct win32_window_dimension Get_Window_Dimensions(HWND Window)
 {
@@ -529,8 +528,8 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptMouse;
             GetCursorPos(&ptMouse);
             ScreenToClient(g_Window, &ptMouse);
-            Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
-
+            // DELETE  Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
+            User_Mouse_Handler(0b00000000, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
 
 
@@ -574,18 +573,20 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
         {
             OutputDebugStringA("WM_LBUTTONDOWN\n");
-            POINT pt;
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000001);
+            POINT ptMouse;
+            ptMouse.x = GET_X_LPARAM(lParam);
+            ptMouse.y = GET_Y_LPARAM(lParam);
+            // DELETE  Update_Mouse_Button_Status((int16_t)ptMouse.x, (int16_t)ptMouse.y, 0b00000001);
+            User_Mouse_Handler(0b00000001, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
         case WM_RBUTTONDOWN:
         {
             OutputDebugStringA("WM_RBUTTONDOWN\n");
-            POINT pt;
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            Update_Mouse_Button_Status((int16_t)pt.x, (int16_t)pt.y, 0b00000010);
+            POINT ptMouse;
+            ptMouse.x = GET_X_LPARAM(lParam);
+            ptMouse.y = GET_Y_LPARAM(lParam);
+            // DELETE  Update_Mouse_Button_Status((int16_t)ptMouse.x, (int16_t)ptMouse.y, 0b00000010);
+            User_Mouse_Handler(0b00000010, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
 
 

@@ -79,7 +79,8 @@ int16_t mouse_buffer_button = 0;
 int16_t mouse_buffer_flag2 = 0;
 
 // WZD dseg:78D4
-int16_t MOUSE_INT_Process = ST_FALSE;
+// drake178: MOUSE_INT_Process
+int16_t mouse_interrupt_active = ST_FALSE;
 
 // WZD dseg:78D6
 // drake178: GUI_HaveAreaSave
@@ -240,6 +241,11 @@ int16_t Init_Mouse_Driver(void)
 // WZD s35p11
 // PLATFORM void Mouse_Button_Handler(void)
 
+// WZD s35p12
+// drake178: MOUSE_INT_Handler()
+// MoO2  Module: mouse  User_Mouse_Handler()
+// PLATFORM  void User_Mouse_Handler(int16_t max, int16_t buttons, int16_t mcx, int16_t mdx)
+
 
 // WZD s35p13
 void Save_Mouse_State(void)
@@ -333,6 +339,24 @@ int16_t Mouse_Buffer2(void)
     return temp;
 }
 
+// WZD s35p27
+// RP_MOUSE_SetSecClick()
+
+// WZD s35p28
+// UU_MOUSE_GenerateClick()
+
+// WZD s35p29
+void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
+{
+    if(buttons = (buttons & 0x03) != 0)
+    {
+        mouse_buffer_button = buttons;
+        mouse_buffer_flag = ST_TRUE;
+        mouse_buffer_flag2 = ST_TRUE;
+        mouse_buffer_x = x;
+        mouse_buffer_y = y;
+    }
+}
 
 
 
