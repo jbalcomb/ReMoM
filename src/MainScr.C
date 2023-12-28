@@ -5309,45 +5309,28 @@ void Main_Screen_Draw_Movement_Bar(void)
 void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
 {
     int16_t movement_icons[9];
-    // struct s_Movement_Modes movement_mode_flags;
     int16_t movement_mode_flags[9];
     int16_t stack;
     int16_t x_start;
     int itr;
     int movement_mode_icon_count;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
-
-    /*
-        set array of movement mode flags to false
-    */
     if(_unit_stack_count >= 1 || unit_idx != ST_UNDEFINED)
     {
-#ifdef STU_DEBUG
-        if(_unit_stack_count >= 1)
-            DLOG("(_unit_stack_count >= 1)");
-        if(unit_idx != ST_UNDEFINED)
-            DLOG("(unit_idx != ST_UNDEFINED)");
-#endif
 
         for(itr = 0; itr < 9; itr++)  /* TODO: add define for 9 - (Special) Movemenet Mode Count/Max */
         {
             movement_mode_flags[itr] = ST_FALSE;
         }
 
-
         if(unit_idx == ST_UNDEFINED)
         {
-            // Active_Stack_Movement_Modes(&movement_mode_flags);
-            Active_Stack_Movement_Modes__WIP(&movement_mode_flags[0]);
+            Active_Stack_Movement_Modes(&movement_mode_flags[0]);
         }
         else
         {
             stack = unit_idx;
-            // Stack_Movement_Modes(&movement_mode_flags, &stack, 1);
-            Stack_Movement_Modes__NOOP(&movement_mode_flags[0], &stack, 1);
+            Army_Movement_Modes(&movement_mode_flags[0], &stack, 1);
         }
 
     }
@@ -5367,58 +5350,55 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
         movement_icons[movement_mode_icon_count] = 6;  /* M_PShift_Icon */
         movement_mode_icon_count++;
     }
+
     // if(movement_mode_flags.mm_Flying == ST_TRUE)
     if(movement_mode_flags[OFS_FLYING] == ST_TRUE)
     {
         movement_icons[movement_mode_icon_count] = 4;  /* M_Fly_Icon */
         movement_mode_icon_count++;
     }
+    else if(movement_mode_flags[OFS_SAILING] == ST_TRUE)  // if(movement_mode_flags.mm_Sailing == ST_TRUE)
+    {
+        movement_icons[movement_mode_icon_count] = 0;  /* M_Sail_Icon */
+        movement_mode_icon_count++;
+    }
     else
     {
-        // if(movement_mode_flags.mm_Sailing == ST_TRUE)
-        if(movement_mode_flags[OFS_SAILING] == ST_TRUE)
+        // if( (movement_mode_flags.mm_Forester == ST_TRUE) && (movement_mode_flags.mm_Mountaineer == ST_TRUE) )
+        if( (movement_mode_flags[OFS_FORESTER] == ST_TRUE) && (movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE) )
         {
-            movement_icons[movement_mode_icon_count] = 0;  /* M_Sail_Icon */
+            movement_icons[movement_mode_icon_count] = 5;  /* M_Pathf_Icon */
             movement_mode_icon_count++;
         }
         else
         {
-            // if( (movement_mode_flags.mm_Forester == ST_TRUE) && (movement_mode_flags.mm_Mountaineer == ST_TRUE) )
-            if( (movement_mode_flags[OFS_FORESTER] == ST_TRUE) && (movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE) )
+            // if(movement_mode_flags.mm_Forester == ST_TRUE)
+            if(movement_mode_flags[OFS_FORESTER] == ST_TRUE)
             {
-                movement_icons[movement_mode_icon_count] = 5;  /* M_Pathf_Icon */
+                movement_icons[movement_mode_icon_count] = 3;  /* M_Forest_Icon */
                 movement_mode_icon_count++;
+
             }
             else
             {
-                // if(movement_mode_flags.mm_Forester == ST_TRUE)
-                if(movement_mode_flags[OFS_FORESTER] == ST_TRUE)
+                // if(movement_mode_flags.mm_Mountaineer == ST_TRUE)
+                if(movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE)
                 {
-                    movement_icons[movement_mode_icon_count] = 3;  /* M_Forest_Icon */
+                    movement_icons[movement_mode_icon_count] = 2;  /* M_Mntn_Icon */
                     movement_mode_icon_count++;
 
                 }
-                else
-                {
-                    // if(movement_mode_flags.mm_Mountaineer == ST_TRUE)
-                    if(movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE)
-                    {
-                        movement_icons[movement_mode_icon_count] = 2;  /* M_Mntn_Icon */
-                        movement_mode_icon_count++;
-
-                    }
-                }
             }
+        }
 
-            // if(movement_mode_flags.mm_Swimming == ST_TRUE)
-            if(movement_mode_flags[OFS_SWIMMING] == ST_TRUE)
-            {
-                movement_icons[movement_mode_icon_count] = 1;  /* M_Swim_Icon */
-                movement_mode_icon_count++;
-            }
-
+        // if(movement_mode_flags.mm_Swimming == ST_TRUE)
+        if(movement_mode_flags[OFS_SWIMMING] == ST_TRUE)
+        {
+            movement_icons[movement_mode_icon_count] = 1;  /* M_Swim_Icon */
+            movement_mode_icon_count++;
         }
     }
+
     if(movement_mode_icon_count == 0)
     {
         movement_icons[movement_mode_icon_count] = 8;  /* M_Grnd_Icon */
@@ -5434,10 +5414,6 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
         FLIC_Draw(x_start, y, movement_mode_icons[movement_icons[itr]]);
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
 }
 
 
@@ -6277,7 +6253,7 @@ void UNIT_SetGlobalPath__STUB(int16_t unit_idx)
         return;
     }
 
-    Stack_Movement_Modes__NOOP(&movement_modes[0], &unit_array[0], stack_count);
+    Army_Movement_Modes(&movement_modes[0], &unit_array[0], stack_count);
 
     boat_rider_array_count = STK_GetLandlubbers(stack_count, &unit_array[0], &boat_rider_array[0]);
 
@@ -6315,22 +6291,22 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 {
 
     int16_t boat_rider_array[9];
-    int16_t movement_modes[9];
+    int16_t movement_mode_flags[9];  // BUG should be 6
     int16_t Construction_Total;
     int16_t UU_Endurance_Value;
     int16_t boat_rider_count;
     int16_t UU_flag_FALSE;
-    int16_t UU_unit_p;
+    int16_t UU_unit_wp;
     int16_t Total_Move_Cost;
     int16_t Out_Of_Moves;
     int16_t movement_points;
-    int16_t Obstacle_Index;
-    int16_t Combat_Move;
+    int16_t atackee_idx;
+    int16_t attack_flag;
     int16_t Current_Step;
     int16_t YPos;
     int16_t XPos;
-    int16_t unit_y;
-    int16_t unit_x;
+    int16_t unit_wy;
+    int16_t unit_wx;
     int16_t Path_Length;
     int16_t First_Unit_Index;
 
@@ -6345,9 +6321,9 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 #endif
 
     unit_idx = unit_array[0];
-    unit_x = _UNITS[unit_idx].wx;
-    unit_y = _UNITS[unit_idx].wy;
-    UU_unit_p = _UNITS[unit_idx].wp;
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    UU_unit_wp = _UNITS[unit_idx].wp;
 
     UU_flag_FALSE = ST_FALSE;
 
@@ -6361,11 +6337,11 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
         goto Done_Return_FALSE;
     }
 
-    for(itr_eight = 0; itr_eight < 8; itr_eight++)
+    for(itr_eight = 0; itr_eight < 8; itr_eight++)  // BUG should be 6 - the flags don't include teleporting or merging
     {
-        movement_modes[itr_eight] = 0;
+        movement_mode_flags[itr_eight] = 0;
     }
-    Stack_Movement_Modes__NOOP(&movement_modes[0], unit_array, unit_array_count);
+    Army_Movement_Modes(&movement_mode_flags[0], unit_array, unit_array_count);
     boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
 
     switch(path_type) { case 0: { goto Prep_Move_Path; } break; case 1: { goto Start_Path; } break; case 2: { goto Prep_Road_Path; } break; case 3: { goto Prep_Move_Path; } break; default: { goto Start_Path; } break; }
@@ -6379,7 +6355,29 @@ Prep_Road_Path:
 Prep_Move_Path:
 {
 
-    // TODO  Path_Length = STK_GetPath();
+//     Path_Length = STK_GetPath__FAILURE(
+//         movement_mode_flags[0],
+//         movement_mode_flags[1],
+//         movement_mode_flags[2],
+//         movement_mode_flags[3],
+//         movement_mode_flags[4],
+//         movement_mode_flags[5],
+//         unit_wx,
+//         unit_wy,
+//         destination_x,
+//         destination_y,
+//         map_p,
+//         &movepath_x_array[2],
+//         &movepath_y_array[2],
+//         &movepath_cost_array[0],
+//         1,
+//         movement_points,
+//         boat_rider_count,
+//         unit_array_count,
+//         player_idx
+//     );
+
+    // HACK: 
     Path_Length = 1;
     OVL_Path_Costs[0] = 1;
     // MovePath_X[0] = unit_x;
@@ -6388,6 +6386,7 @@ Prep_Move_Path:
     // MovePath_Y[1] = destination_y;
     MovePath_X[0] = destination_x;
     MovePath_Y[0] = destination_y;
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: Path_Length: %d\n", __FILE__, __LINE__, Path_Length);
 #endif
@@ -6414,19 +6413,19 @@ Start_Path:
     }
 
     Out_Of_Moves = ST_FALSE;
-    Combat_Move = ST_FALSE;
+    attack_flag = ST_FALSE;
     //TODO  OVL_SWardTriggered = ST_FALSE;
 
 
 // TODO     STK_EvaluatePath__WIP(
 // TODO         player_idx,
-// TODO         &MovePath_X,
-// TODO         &IDK_MovePath_Y[1],
+// TODO         &movepath_x_array[2],
+// TODO         &movepath_y_array[2],
 // TODO         map_p,
-// TODO         &OVL_Path_Costs,
+// TODO         &movepath_cost_array[0],
 // TODO         movement_points,
-// TODO         &Obstacle_Index,
-// TODO         &Combat_Move,
+// TODO         &atackee_idx,
+// TODO         &attack_flag,
 // TODO         &Path_Length,
 // TODO         &Out_Of_Moves,
 // TODO         unit_array,
@@ -6444,12 +6443,10 @@ Start_Path:
     dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
 #endif
 
-    // ∴ 
-
     if(Path_Length <= 1)
     {
-        OVL_Action_OriginX = unit_x;
-        OVL_Action_OriginY = unit_y;
+        OVL_Action_OriginX = unit_wx;
+        OVL_Action_OriginY = unit_wy;
     }
     else
     {
@@ -6477,7 +6474,7 @@ Start_Path:
     // TODO      OVL_SpellWardError();
     // TODO  }
 
-    if((Combat_Move == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))
+    if((attack_flag == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))
     {
         goto Combat_Handlers;
     }
@@ -6521,7 +6518,7 @@ End_Of_Moving:
 
             if(
                 (_UNITS[unit_idx].Status != US_GoingTo) &&
-                (Combat_Move == ST_TRUE) &&
+                (attack_flag == ST_TRUE) &&
                 (_UNITS[unit_idx].owner_idx == _human_player_idx)
             )
             {

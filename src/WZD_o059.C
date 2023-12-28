@@ -519,7 +519,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 
     _DI_return_value = -1;  // ¿ ST_SUCCESS ?
 
-    Active_Stack_Movement_Modes__WIP(&movement_mode_flags[0]);
+    Active_Stack_Movement_Modes(&movement_mode_flags[0]);
 
     if(Terrain_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane) == ST_TRUE)
     {

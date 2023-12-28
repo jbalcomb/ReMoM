@@ -1038,6 +1038,8 @@ struct s_NODE
 // };
 
 // sizeof:  20h  32d
+#pragma pack(push)
+#pragma pack(2)
 struct s_UNIT
 {
     /* 00 */  int8_t  wx;
@@ -1064,12 +1066,14 @@ struct s_UNIT
     /* 17 */  int8_t  Mutations;    // ; enum MUT_FLAGS
     /* 18 */  int16_t Enchants_LO;  // ; enum UE_FLAGS_L
     /* 1A */  int16_t Enchants_HI;  // ; enum UE_FLAGS_H
+              // TODO  uint32_t enchantments;
     /* 1C */  int8_t  Rd_Constr_Left;
     /* 1D */  int8_t  Rd_From_X;
     /* 1E */  int8_t  Rd_From_Y;
     /* 1F */  int8_t  Unknown_1Fh;  // ¿ 2-byte alignment padding ?
     /* 20 */
 };
+#pragma pack(pop)
 
 
 // // sizeof:  24h  36d
@@ -3309,6 +3313,14 @@ extern uint8_t Scd_Dst_X;
 extern uint8_t MovePath_X[118];
 // WZD dseg:C756
 extern uint8_t IDK_MovePath[62];
+
+// WZD dseg:C5F0
+extern int8_t movepath_cost_array[118];
+// WZD dseg:C666
+extern int8_t movepath_y_array[120];
+// WZD dseg:C6DE
+extern int8_t movepath_x_array[120];
+
 
 
 

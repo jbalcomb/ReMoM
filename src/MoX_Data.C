@@ -2199,6 +2199,13 @@ uint8_t MovePath_X[118];
 // WZD dseg:C756
 uint8_t IDK_MovePath[62];
 
+// WZD dseg:C5F0
+int8_t movepath_cost_array[118];
+// WZD dseg:C666
+int8_t movepath_y_array[120];
+// WZD dseg:C6DE
+int8_t movepath_x_array[120];
+
 
 
 // WZD dseg:C794 00                                              STK_HasNatureUnits db 0                 ; DATA XREF: CTY_CheckSpellWard:loc_7E798w ...

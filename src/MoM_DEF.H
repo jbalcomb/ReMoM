@@ -369,6 +369,12 @@ PS.  'MoM Demo' looks to have an array of strings for the defines / enum
     enum MOVEFLAGS
     data and code looks like a bitfield
 
+    movement_modes_array = { 0x0001, 0x0020, 0x0040, 0x0004, 0x0002, 0x0008 }; { CAVALRY, FORESTER, MOUNTAINEER, SWIMMING, SAILING, FLYING }
+    this is what is tested against in Army_Movement_Modes()
+        so, this is probably what should be MM_
+        and, the current MM_ should be an enum
+        drake178 has these as enum MOVEFLAGS, which is used for s_UNIT_TYPE.Move_Flags
+
     UnitView & UnitList
         Movement Type |-> Movement Type Icon  UNITVIEW.LBX, {11,12,13}
         can't handle multiples - only tests 1 bit, in-order
@@ -411,14 +417,14 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 // #define OFS_FLYING           0x0A
 // #define OFS_PLANARTRAVEL     0x0C
 // #define OFS_WALKING          0x0E
-#define OFS_CAVALRY          1
-#define OFS_FORESTER         2
-#define OFS_MOUNTAINEER      3
-#define OFS_SWIMMING         4
-#define OFS_SAILING          5
-#define OFS_FLYING           6
-#define OFS_PLANARTRAVEL     7
-#define OFS_WALKING          8
+#define OFS_CAVALRY          0
+#define OFS_FORESTER         1
+#define OFS_MOUNTAINEER      2
+#define OFS_SWIMMING         3
+#define OFS_SAILING          4
+#define OFS_FLYING           5
+#define OFS_PLANARTRAVEL     6
+#define OFS_WALKING          7
 
 // MM: Movement Mode
 #define MM_CAVALRY          0
@@ -495,7 +501,7 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 // 0b0000000100000000  0x0100    256
 // 0b0000001000000000  0x0200    512
 // 0b0000010000000000  0x0400   1024
-// 0b0000100000000000  0x0800   2048
+#define UA_NONCORPOREAL     0x0800      // 0b0000100000000000  0x0800   2048
 #define UA_WINDWALKING      0x1000      // 0b0001000000000000  0x1000   4096
 // 0b0010000000000000  0x2000   8192
 // 0b0100000000000000  0x4000  16384
@@ -511,9 +517,9 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 // 0b0000000000000100  0x0004      4
 // 0b0000000000001000  0x0008      8
 // 0b0000000000010000  0x0010     16
-// 0b0000000000100000  0x0020     32
+#define UE_WRAITHFORM       0x0020      // 0b0000000000100000  0x0020     32
 // 0b0000000001000000  0x0040     64
-// 0b0000000010000000  0x0080    128
+#define UE_PATHFINDING      0x0080      // 0b0000000010000000  0x0080    128
 #define UE_WATERWALKING     0x0100      // 0b0000000100000000  0x0100    256
 // 0b0000001000000000  0x0200    512
 // 0b0000010000000000  0x0400   1024
@@ -561,7 +567,7 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 // 0b00000001  0x01      1
 // 0b00000010  0x02      2
 // 0b00000100  0x04      4
-#define CC_Flight           0x08    // 0b00001000  0x08      8
+#define CC_FLIGHT           0x08    // 0b00001000  0x08      8
 // 0b00010000  0x10     16
 // 0b00100000  0x20     32
 // 0b01000000  0x40     64

@@ -34,15 +34,14 @@ Elsewhere, ...
 // WZD o71p01
 // drake178: OVL_GetMoveTypes()
 /*
-    assumes _unit_stack_count
-    wrapper for STK_GetMoveTypes()
+    wrapper for Army_Movement_Modes()
+    that assumes _unit_stack
 */
-// void Active_Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags)
-void Active_Stack_Movement_Modes__WIP(int16_t movement_mode_flags[])
+void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
 {
-    int16_t stack[9];
+    int16_t troops[9];
     int16_t stack_has_no_active_units;
-    int16_t unit_count;
+    int16_t troop_count;
     int16_t itr;
 
 #ifdef STU_DEBUG
@@ -67,18 +66,18 @@ void Active_Stack_Movement_Modes__WIP(int16_t movement_mode_flags[])
         }
     }
 
-    unit_count = 0;
+    troop_count = 0;
 
     for(itr = 0; itr < _unit_stack_count; itr++)
     {
         if(_unit_stack[itr].active == ST_TRUE)
         {
-            stack[unit_count] = _unit_stack[itr].unit_idx;
-            unit_count++;
+            troops[troop_count] = _unit_stack[itr].unit_idx;
+            troop_count++;
         }
     }
 
-    Stack_Movement_Modes__NOOP(movement_mode_flags, &stack[0], unit_count);
+    Army_Movement_Modes(movement_mode_flags, &troops[0], troop_count);
 
     if(stack_has_no_active_units == ST_TRUE)
     {
@@ -96,21 +95,242 @@ void Active_Stack_Movement_Modes__WIP(int16_t movement_mode_flags[])
 
 // WZD o71p02
 // drake178: STK_GetMoveTypes()
-// void STK_GetMoveTypes(int16_t * movement_mode_flags, int_16_t stack, int16_t unit_count)
-// void Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags, int16_t * stack_array, int16_t stack_size)
-void Stack_Movement_Modes__NOOP(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size)
+void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_t troop_count)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Movement_Modes()\n", __FILE__, __LINE__);
-#endif
+    int16_t l_movement_modes_array[6];
+    int16_t Swimming_Units;
+    int16_t Flying_Units;
+    uint32_t item_enchantments;
+    int16_t Units_With_Same;
+    int16_t unit_type;
+    int16_t unit_idx;
+    int16_t itr_troops;
+    int16_t itr_modes;  // _SI_
 
+    // SCOPY@(sizeof(12), l_movement_modes_array, MoveType_Flags);
+    // memcpy(l_movement_modes_array, MoveFlag_Array, 12);
+    memcpy(l_movement_modes_array, &movement_modes_array, 12);
 
+    Flying_Units = 0;
+    Swimming_Units = 0;
 
+    for(itr_modes = 0; itr_modes < 6; itr_modes++)
+    {
+        movement_mode_flags[itr_modes] = ST_FALSE;
 
+        Units_With_Same = 0;
+        item_enchantments = 0;
+        
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            unit_idx = troops[itr_troops];
+            unit_type = _UNITS[unit_idx].type;
+            item_enchantments = 0;
+            if(_UNITS[unit_idx].Hero_Slot != -1)
+            {
+                item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
+                item_enchantments = global_strategic_unit->Item_UEs;
+            }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Stack_Movement_Modes()\n", __FILE__, __LINE__);
-#endif
+            if((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == MV_FORESTER)
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+            if((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == MV_MOUNTAINEER)
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+            if((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == MV_SAILING)
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if(
+                ((_unit_type_table[unit_type].Move_Flags & movement_mode_flags[itr_modes]) == MV_FLYING) &&
+                (_unit_type_table[unit_type].Transport > 0)
+            )
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if(
+                (l_movement_modes_array[itr_modes] == MV_FORESTER) &&
+                (
+                    ((_UNITS[unit_idx].Enchants_LO & UE_PATHFINDING) != 0) ||
+                    ((item_enchantments & UE_PATHFINDING) != 0)
+                )
+            )
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if(
+                (l_movement_modes_array[itr_modes] == MV_MOUNTAINEER) &&
+                (
+                    ((_UNITS[unit_idx].Enchants_LO & UE_PATHFINDING) != 0) ||
+                    ((item_enchantments & UE_PATHFINDING) != 0)
+                )
+            )
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if(
+                (movement_mode_flags[itr_modes] == MV_FLYING) &&
+                (
+                    ((_UNITS[unit_idx].Enchants_HI & UE_WINDWALKING) != 0) ||
+                    ((_unit_type_table[unit_type].Abilities & UA_WINDWALKING) != 0)
+                )
+            )
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if(
+                (movement_mode_flags[itr_modes] == MV_FLYING) &&
+                ((_UNITS[unit_idx].Enchants_HI & (UE_WINDWALKING | UE_FLIGHT)) != 0) &&
+                (_unit_type_table[unit_type].Transport > 0)
+            )
+            {
+                movement_mode_flags[itr_modes] = ST_TRUE;
+            }
+
+            if((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == l_movement_modes_array[itr_modes])
+            {
+                Units_With_Same++;
+
+                if(l_movement_modes_array[itr_modes] == MV_SWIMMING)
+                {
+                    Swimming_Units++;
+                }
+
+                if(l_movement_modes_array[itr_modes] == MV_FLYING)
+                {
+                    Flying_Units++;  // BUGBUG:  drake178: applying this independently of artificial flight means that units that have both count as 2 flyers, and will each allow a ground unit to be carried along
+                }
+
+                if(
+                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                )
+                {
+                    Units_With_Same--;
+                }
+
+                if(
+                    (l_movement_modes_array[itr_modes] == MV_FLYING) &&  // BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code)
+                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                )
+                {
+                    Swimming_Units--;
+                }
+            }
+
+            if
+            (
+                (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
+                (
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WATERWALKING) != 0) ||
+                    ((item_enchantments & UE_WATERWALKING) != 0)
+                )
+            )
+            {
+                Units_With_Same++;
+                Swimming_Units++;  // BUGBUG:  drake178: natural swimmers with water walking now count as 2
+            }
+
+            if
+            (
+                (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
+                (
+                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                )
+            )
+            {
+                Units_With_Same++;
+                Swimming_Units++;  // BUGBUG:  drake178: natural swimmers with water walking now count as 2
+            }
+
+            if(
+                (l_movement_modes_array[itr_modes] == MV_FLYING) &&
+                (
+                    ((_UNITS[unit_idx].Enchants_HI & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
+                    ((item_enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
+                    ((_UNITS[unit_idx].Mutations & CC_FLIGHT) != 0)
+                )
+            )
+            {
+                Units_With_Same++;
+                Flying_Units++;
+
+                if(
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WATERWALKING) != 0) ||
+                    ((item_enchantments & UE_WATERWALKING) != 0) ||
+                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
+                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((item_enchantments & UE_WRAITHFORM) != 0)
+                )
+                {
+                    Swimming_Units--;
+                }
+                
+            }
+        }
+
+        if(Units_With_Same >= troop_count)
+        {
+            movement_mode_flags[itr_modes] = ST_TRUE;
+        }
+
+    }
+
+    if((Flying_Units + Swimming_Units) >= troop_count)
+    {
+        movement_mode_flags[3] = ST_TRUE;
+        if(Flying_Units < 1 || Swimming_Units < 1)
+        {
+            movement_mode_flags[3] = ST_TRUE;
+            movement_mode_flags[5] = ST_TRUE;
+            if(Flying_Units == 0)
+            {
+                movement_mode_flags[5] = ST_FALSE;
+            }
+            if(Swimming_Units == 0)
+            {
+                movement_mode_flags[3] = ST_FALSE;
+            }
+        }
+    }
+
+    movement_mode_flags[0] = ST_FALSE;
+
+    Units_With_Same = 0;
+
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        unit_type = _UNITS[unit_idx].type;
+        if(
+            ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
+            ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0)  // BUGBUG:  drake178: ignores the item power
+            /* || ((item_enchantments & UE_WRAITHFORM) != 0) */
+        )
+        {
+            Units_With_Same++;
+        }
+    }
+
+    if(Units_With_Same == troop_count)
+    {
+        movement_mode_flags[1] = ST_TRUE;
+        movement_mode_flags[2] = ST_TRUE;
+    }
+
 }
 
 
@@ -146,7 +366,7 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
         has_airtravel = ST_TRUE;
     }
     
-    if( (_UNITS[unit_idx].Mutations & CC_Flight) != 0)
+    if( (_UNITS[unit_idx].Mutations & CC_FLIGHT) != 0)
     {
         has_airtravel = ST_TRUE;
     }
@@ -521,7 +741,7 @@ push    [bp+movement_modes]             ; MTypes
 call    j_STK_GetPath    
 
 */
-int16_t STK_GetPath__FAILURE(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t src_x, int16_t src_y, int16_t dst_x, int16_t dst_y, int16_t map_p, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t boat_rider_count, int16_t units_count, int16_t player_idx)
+int16_t STK_GetPath__FAILURE(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx)
 {
 // Btm_Y= word ptr -0Eh
 // Rgt_X= word ptr -0Ch
@@ -542,15 +762,15 @@ int16_t STK_GetPath__FAILURE(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, 
 
     // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
-    UU_bFlag_1 = ST_TRUE;  // ; unused as argument (overwritten)
-    UU_vFlag_2 = 8;        // ; unused as argument (overwritten)
+    UU_flag = ST_TRUE;  // ; unused as argument (overwritten)
+    UU_moves2 = 8;        // ; unused as argument (overwritten)
 
     // DONT  CRP_UNIT_OverlandPath = ST_UNDEFINED;  // ; an index into OvlMovePaths_EMS@
 
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
-        UU_bFlag_1 = ST_FALSE;
+        UU_flag = ST_FALSE;
 
 
     }
