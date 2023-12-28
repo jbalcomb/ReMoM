@@ -519,7 +519,7 @@ void MainScr_Prepare_Reduced_Map(void);
 */
 
 // WZD o97p01
-// TODO void STK_EvaluatePath__WIP((int16_t player_idx, int16_t *Xs@, int16_t *Ys@, int16_t Plane, int16_t *Costs@, int16_t HMoves, int16_t *Obst@, int16_t *Cmbt@, int16_t *Length@, int16_t *Cmplt@, int16_t *UList@, int16_t UCount);
+void STK_EvaluatePath__WIP(int16_t player_idx, int16_t *Xs, int16_t *Ys, int16_t Plane, int16_t *Costs, int16_t moves2, int16_t *Obst, int16_t *Cmbt, int16_t *Length, int16_t *Cmplt, int16_t unit_array[], int16_t unit_array_count);
 
 
 

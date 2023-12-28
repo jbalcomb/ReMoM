@@ -1,4 +1,148 @@
 
+ ∴ 
+
+
+Move Path
+Movement Path
+Path Finding Algorithm
+
+not sure what is what
+
+¿ something like find a path from src to dst ?
+
+ovr095
+ovr096
+ovr097
+
+
+
+Move_Units()
+    |-> STK_GetPath()
+    |-> STK_EvaluatePath()
+
+STK_GetPath() returns path length
+EZ_Resolve() is called inside of Move_Units()
+
+
+
+
+
+calls Units_Moves() to get available moes2
+bails if its < 1
+
+gets movement modes
+gets boat riders
+
+Spec/Special Move
+RdBd_UNIT_MoveStack_WIP() sets it to 0, just like Move_Units(), 
+but, changes it to 2 if the unit count == road builder count
+Move_Units() checks 0 then 2 then 3
+0 and 3 are the same - to call STK_GetPath()
+2 is ALL road building
+1 and everything else just skip the call to STK_GetPath()
+
+checks path length
+bails if its < 1
+
+
+STK_EvaluatePath()
+
+
+Total_Move_Cost += OVL_Path_Costs[itr]  itr < Path_Length
+
+checks updated path length - now just 'moves length'
+
+sets OVL_Action_OriginX and OVL_Action_OriginY
+    if <= 1 unit_wx,wy
+    if > 1 Fst_Dst_X[Path_Length], IDK_MovePath_Y[Path_Length]
+
+checks updated path length - still just 'moves length'
+if != 0 Move_Units_Draw()
+
+checks OVL_SWardTriggered  OVL_SpellWardError()
+
+checks Combat_Move - set by STK_EvaluatePath()
+    goes in combat handlers for Lair, Enemy Stack/City
+    handles cancel/win/lose
+    updates unit wx,y,p
+else
+    goes to @@EndOfMoving
+
+so, ...
+    it's spell ward or combat - can't be both
+
+NOTE:
+    Total_Move_Cost is in moves2 units
+    it's what gets deducted from the units moves2 (AKA HMoves)
+
+
+
+
+
+## STK_EvaluatePath()
+
+// ; evaluates the stack's set path, and sets the return
+// ; values accordingly:
+// ;   Cmplt@ - 1 if running out of moves (no obstacles)
+// ;   Path_Length@ - amount of moves that can be executed
+// ;   Combat@ - the move enters a hostile tile (the human
+// ;     player's move is stopped short before this)
+// ;   Obst@ - a player or unit index identifying the
+// ;     hostile entity (BUG? should be player index?)
+// ; returns 1 if the stack can use up all of its
+// ; movement, or 0 otherwise (moving gets interrupted)
+// ;
+// ; contains multiple transport-related BUGs
+
+
+
+
+
+
+
+
+
+
+
+
+dseg:C666 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_MovePath_Y db 78h dup(0)            ; DATA XREF: Move_Units+495r ...
+
+dseg:C6E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+MovePath_X db 76h dup(0)                ; DATA XREF: RdBd_UNIT_MoveStack_WIP+26Fo ...
+
+
+
+                    // TODO(JimBalcomb,20231016):  ¿ why the `[bx-2]` ? indexing lo-bye of word, but array is DB? so, sizeof() pointer data-type?
+                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Xs[bx-2];  cbw;  mov     [OVL_Action_OriginX], ax
+                    // ... mov     al, [bx-3922h] ...
+                    
+                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Ys[bx-2];  cbw;  mov     [OVL_Action_OriginY], ax
+                    // ... mov     al, [bx-399Ah] ...
+                    
+                    // mov     bx, [bp+Path_Length];  mov     al, [Scd_Dst_Y+bx];     cbw;  mov     [bp+destination_y], ax
+                    // ... mov     al, [bx-3999h] ...
+                    // mov     al, [(IDK_MovePath_Y+1)+bx]
+
+                    // // // OVL_Action_OriginX = Fst_Dst_X[Path_Length];
+                    // // // OVL_Action_OriginY = Fst_Dst_Y[Path_Length];
+                    // // OVL_Action_OriginX = *(Fst_Dst_X + Path_Length);
+                    // // OVL_Action_OriginY = *(Fst_Dst_Y + Path_Length);
+                    // OVL_Action_OriginX = *(((uint8_t *)(&Fst_Dst_X)) + 1 + Path_Length);
+                    // OVL_Action_OriginY = *(((uint8_t *)(&Fst_Dst_Y)) + 1 + Path_Length);
+                    OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
+                    OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
+
+
+
+
+
+
+
+
+
+
+
+
+
 !!!!! renamed !!!!!
 Do_Move_Stack_DirKey() |-> Do_Move_Stack() |-> Move_Stack() |-> Move_Units()
 Move_Stack_DirKey()    |-> Move_Stack()    |-> Move_Units() |-> Move_Units_Draw()

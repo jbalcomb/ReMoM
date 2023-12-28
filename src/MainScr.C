@@ -253,7 +253,7 @@ void UNIT_SetGlobalPath__STUB(int16_t unit_idx);
 // WZD o95p01
 // drake178: STK_Move()
 // AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
 
 // WZD o95p02
 // AKA OVL_MoveUnitStack()
@@ -2728,7 +2728,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
     int16_t unit_y;
     int16_t unit_x;
     int16_t movement_points_available;
-    int16_t Spec;
+    int16_t move_type;
     int16_t unit_idx;
 
     int16_t itr_units;
@@ -2737,7 +2737,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
 #endif
 
-    Spec = 0;
+    move_type = 0;
 
     if(move_y != WORLD_Y_MIN && move_y != WORLD_Y_MAX)
     {
@@ -2756,7 +2756,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 // DONT          }
 
 
-        Move_Units(player_idx, move_x, move_y, Spec, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
+        Move_Units(player_idx, move_x, move_y, move_type, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
 
 
         unit_idx = _unit;
@@ -2799,11 +2799,6 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         // DONT  fxnptr_o59p();
         Reset_Draw_Active_Stack();
     }
-
-// IDGI    else
-// IDGI    {
-// IDGI        return ST_FALSE;
-// IDGI    }
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
@@ -6316,28 +6311,28 @@ void UNIT_SetGlobalPath__STUB(int16_t unit_idx)
 
 // WZD o95p01
 // AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[])
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[])
 {
 
     int16_t boat_rider_array[9];
     int16_t movement_modes[9];
-// Construction_Total= word ptr -22h
-// UU_Endurance_Value= word ptr -20h
+    int16_t Construction_Total;
+    int16_t UU_Endurance_Value;
     int16_t boat_rider_count;
     int16_t UU_flag_FALSE;
     int16_t UU_unit_p;
     int16_t Total_Move_Cost;
     int16_t Out_Of_Moves;
     int16_t movement_points;
-// Obstacle_Index= word ptr -12h
+    int16_t Obstacle_Index;
     int16_t Combat_Move;
-// Current_Step= word ptr -0Eh
-// YPos= word ptr -0Ch
-// XPos= word ptr -0Ah
+    int16_t Current_Step;
+    int16_t YPos;
+    int16_t XPos;
     int16_t unit_y;
     int16_t unit_x;
     int16_t Path_Length;
-// First_Unit_Index= word ptr -2
+    int16_t First_Unit_Index;
 
     int16_t unit_idx;
     int16_t return_value;
@@ -6346,7 +6341,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t itr_units;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, Spec = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p)\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, Spec, *map_x, *map_y, map_p, unit_array_count, &unit_array[0]);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, path_type = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p)\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, path_type, *map_x, *map_y, map_p, unit_array_count, &unit_array[0]);
 #endif
 
     unit_idx = unit_array[0];
@@ -6361,58 +6356,38 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 
     movement_points = Units_Moves(unit_array, unit_array_count);
 
-    if(movement_points >= 1)
+    if(movement_points < 1)
     {
-        DLOG("(movement_points >= 1)");
-        // movement_modes[{0,...,8}] = 0
-        for(itr_eight = 0; itr_eight < 8; itr_eight++)
-        {
-            movement_modes[itr_eight] = 0;
-        }
+        goto Done_Return_FALSE;
+    }
 
-        Stack_Movement_Modes__NOOP(&movement_modes[0], unit_array, unit_array_count);
+    for(itr_eight = 0; itr_eight < 8; itr_eight++)
+    {
+        movement_modes[itr_eight] = 0;
+    }
+    Stack_Movement_Modes__NOOP(&movement_modes[0], unit_array, unit_array_count);
+    boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
 
-        boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
+    switch(path_type) { case 0: { goto Prep_Move_Path; } break; case 1: { goto Start_Path; } break; case 2: { goto Prep_Road_Path; } break; case 3: { goto Prep_Move_Path; } break; default: { goto Start_Path; } break; }
 
-        if(Spec == 0)
-        {
-            DLOG("(Spec == 0)");
-// push    [bp+player_idx]
-// push    [bp+unit_array_count]           ; UCnt
-// push    [bp+boat_rider_count]           ; LLCnt
-// push    [bp+movement_points]            ; UU2
-// mov     ax, 1
-// push    ax                              ; UU1
-// mov     ax, offset OVL_Path_Costs
-// push    ax                              ; RCs@
-// mov     ax, offset OVL_Path_Ys
-// push    ax                              ; RYs@
-// mov     ax, offset OVL_Path_Xs
-// push    ax                              ; RXs@
-// push    [bp+map_plane]                  ; Plane
-// push    [bp+destination_y]              ; TgtY
-// push    [bp+destination_x]              ; TgtX
-// push    [bp+unit_y]                     ; SrcY
-// push    [bp+unit_x]                     ; SrcX
-// push    [bp+movement_modes+0Ah]
-// push    [bp+movement_modes+8]
-// push    [bp+movement_modes+6]
-// push    [bp+movement_modes+4]
-// push    [bp+movement_modes+2]
-// push    [bp+movement_modes]                     ; MTypes
-// Path_Length = STK_GetPath();
-// fills the return arrays with a path from the source to the destination tile,
-// either by reading it out from the stored paths or by generating a new one from scratch
-// ; returns the path length
-// ; rewritten in the overland djikstra patch
-            Path_Length = 1;
-            OVL_Path_Costs[0] = 1;
-            // MovePath_X[0] = unit_x;
-            // MovePath_Y[0] = unit_y;
-            // MovePath_X[1] = destination_x;
-            // MovePath_Y[1] = destination_y;
-            MovePath_X[0] = destination_x;
-            MovePath_Y[0] = destination_y;
+Prep_Road_Path:
+{
+    // TODO
+    goto Start_Path;
+}
+
+Prep_Move_Path:
+{
+
+    // TODO  Path_Length = STK_GetPath();
+    Path_Length = 1;
+    OVL_Path_Costs[0] = 1;
+    // MovePath_X[0] = unit_x;
+    // MovePath_Y[0] = unit_y;
+    // MovePath_X[1] = destination_x;
+    // MovePath_Y[1] = destination_y;
+    MovePath_X[0] = destination_x;
+    MovePath_Y[0] = destination_y;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: Path_Length: %d\n", __FILE__, __LINE__, Path_Length);
 #endif
@@ -6426,287 +6401,205 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
 #endif
 
+    goto Start_Path;
+
+}
+
+Start_Path:
+{
+
+    if(Path_Length < 1)
+    {
+        goto Done_Return_FALSE;
+    }
+
+    Out_Of_Moves = ST_FALSE;
+    Combat_Move = ST_FALSE;
+    //TODO  OVL_SWardTriggered = ST_FALSE;
 
 
-            if(Path_Length >= 1)
-            {
-                DLOG("(Path_Length >= 1)");
-                Out_Of_Moves = ST_FALSE;
-                Combat_Move = ST_FALSE;
-                //TODO  OVL_SWardTriggered = ST_FALSE;
+// TODO     STK_EvaluatePath__WIP(
+// TODO         player_idx,
+// TODO         &MovePath_X,
+// TODO         &IDK_MovePath_Y[1],
+// TODO         map_p,
+// TODO         &OVL_Path_Costs,
+// TODO         movement_points,
+// TODO         &Obstacle_Index,
+// TODO         &Combat_Move,
+// TODO         &Path_Length,
+// TODO         &Out_Of_Moves,
+// TODO         unit_array,
+// TODO         unit_array_count
+// TODO     );
 
-                // TODO STK_EvaluatePath__WIP(player_idx, &MovePath_X, &IDK_MovePath_Y[1], map_p, &OVL_Path_Costs, movement_points, &Obstacle_Index, &Combat_Move, &Path_Length, &Out_Of_Moves, unit_array, unit_array_count);
 
-// ; evaluates the stack's set path, and sets the return
-// ; values accordingly:
-// ;   Cmplt@ - 1 if running out of moves (no obstacles)
-// ;   Path_Length@ - amount of moves that can be executed
-// ;   Combat@ - the move enters a hostile tile (the human
-// ;     player's move is stopped short before this)
-// ;   Obst@ - a player or unit index identifying the
-// ;     hostile entity (BUG? should be player index?)
-// ; returns 1 if the stack can use up all of its
-// ; movement, or 0 otherwise (moving gets interrupted)
-// ;
-// ; contains multiple transport-related BUGs
-
-                // ¿ accumulate path cost ?
-                Total_Move_Cost = 0;
-                for(itr_Path_Length = 0; itr_Path_Length < Path_Length; itr_Path_Length++)
-                {
-                    Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
-                }
+    // ¿ accumulate path cost ?
+    Total_Move_Cost = 0;
+    for(itr_Path_Length = 0; itr_Path_Length < Path_Length; itr_Path_Length++)
+    {
+        Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
+    }
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
 #endif
 
+    // ∴ 
 
-                if(Path_Length <= 1)
-                {
-                    DLOG("(Path_Length <= 1)");
-                    // NOTE: (Path_Length >= 1) && (Path_Length <= 1) ∴ (Path_Length == 1)
-
-                    // drake178: set to the path tile before the last before moving units overland
-                    OVL_Action_OriginX = unit_x;
-                    OVL_Action_OriginY = unit_y;
-                }
-                else  /* !(Path_Length <= 1) */
-                {
-                    DLOG("(Path_Length > 1)");
-                    // TODO(JimBalcomb,20231016):  ¿ why the `[bx-2]` ? indexing lo-bye of word, but array is DB? so, sizeof() pointer data-type?
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Xs[bx-2];  cbw;  mov     [OVL_Action_OriginX], ax
-                    // ... mov     al, [bx-3922h] ...
-                    
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Ys[bx-2];  cbw;  mov     [OVL_Action_OriginY], ax
-                    // ... mov     al, [bx-399Ah] ...
-                    
-                    // mov     bx, [bp+Path_Length];  mov     al, [Scd_Dst_Y+bx];     cbw;  mov     [bp+destination_y], ax
-                    // ... mov     al, [bx-3999h] ...
-                    // mov     al, [(IDK_MovePath_Y+1)+bx]
-
-                    // // // OVL_Action_OriginX = Fst_Dst_X[Path_Length];
-                    // // // OVL_Action_OriginY = Fst_Dst_Y[Path_Length];
-                    // // OVL_Action_OriginX = *(Fst_Dst_X + Path_Length);
-                    // // OVL_Action_OriginY = *(Fst_Dst_Y + Path_Length);
-                    // OVL_Action_OriginX = *(((uint8_t *)(&Fst_Dst_X)) + 1 + Path_Length);
-                    // OVL_Action_OriginY = *(((uint8_t *)(&Fst_Dst_Y)) + 1 + Path_Length);
-                    OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
-                    OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
-                }
-
-                if(Path_Length <= 0)
-                {
-                    DLOG("(Path_Length <= 1)");
-                    Total_Move_Cost = 0;
-                    Out_Of_Moves = ST_FALSE;
-                }
-                else  /* !(Path_Length <= 0) */
-                {
-                    DLOG("(Path_Length > 0)");
-                    Move_Units_Draw(player_idx, map_p, Path_Length, map_x, map_y, unit_array, unit_array_count);
-                }
-
-                // TODO  if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
-                // TODO  {
-                // TODO      OVL_SpellWardError();
-                // TODO  }
-
-                /*
-                    BEGIN:  ¿ if STK_EvaluatePath() determined that the move(s) is going to result in an encounter / combat ?
-                */
-                if( (Combat_Move == ST_TRUE) || (UU_flag_FALSE == ST_TRUE) )
-                {
-
-                }
-                /*
-                    END:  ¿ if STK_EvaluatePath() determined that the move(s) is going to result in an encounter / combat ?
-                */
-
-
-
-                /*
-                    HERE:
-                    after YayNayMay Move_Units_Draw()
-                    after YayNay Combat_Move
-                    ¿¿¿
-                    still inside movement_points > 0 && movement_path_length > 0
-                    ???
-                */
-
-                OVL_Action_XPos = -1;
-                OVL_Action_YPos = -1;
-
-                Units_In_Tower(unit_array_count, unit_array, map_p);
-                // ; checks if the stack is in a Tower of Wizardry; sets
-                // ; the In_Tower flags and explores both maps at the
-                // ; location if they are, or clears the flag and pulls
-                // ; all of the units to the specified plane if not
-                // ; considers Planar Seal
-                // ;
-                // ; BUG: ignores scouting ranges
-
-                for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-                {
-                    unit_idx = unit_array[itr_units];
+    if(Path_Length <= 1)
+    {
+        OVL_Action_OriginX = unit_x;
+        OVL_Action_OriginY = unit_y;
+    }
+    else
+    {
+        OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
+        OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
+    }
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
+    dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginX: %d\n", __FILE__, __LINE__, OVL_Action_OriginX);
+    dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginY: %d\n", __FILE__, __LINE__, OVL_Action_OriginY);
 #endif
 
-                    if(_UNITS[unit_idx].Rd_Constr_Left == 99)  /* ¿ Cancelled ? */
-                    {
-                        _UNITS[unit_idx].Rd_Constr_Left = -1;  /* ¿ NONE ? */
-                    }
+    if(Path_Length <= 0)
+    {
+        Total_Move_Cost = 0;
+        Out_Of_Moves = ST_FALSE;
+    }
+    else
+    {
+        Move_Units_Draw(player_idx, map_p, Path_Length, map_x, map_y, unit_array, unit_array_count);
+    }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[%d].Finished == ST_FALSE): %d\n", __FILE__, __LINE__, unit_idx, (_UNITS[unit_idx].Finished == ST_FALSE));
-    dbg_prn("DEBUG: [%s, %d]: ((_UNITS[%d].Status & PATROL) == 0): %d\n", __FILE__, __LINE__, unit_idx, ((_UNITS[unit_idx].Status & PATROL) == 0));
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
-#endif
-                    // MoX_Data.H  enum Unit_Status  US_Patrol  2
-                    // if( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) != 0) )
-                    // ¿ Nay Finished && Nay Patrol ?
-                    if( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) == 0) )
-                    {
-                        DLOG("( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) == 0) )");
-                        _UNITS[unit_idx].HMoves = _UNITS[unit_idx].HMoves - Total_Move_Cost;
+    // BUGBUG  can't be get spell warded and also go into combat
+    // TODO  if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
+    // TODO  {
+    // TODO      OVL_SpellWardError();
+    // TODO  }
 
-                        if(_UNITS[unit_idx].HMoves < 1)
-                        {
-                            _UNITS[unit_idx].Finished = ST_TRUE; 
-                            _UNITS[unit_idx].HMoves = 0;
-                        }
+    if((Combat_Move == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))
+    {
+        goto Combat_Handlers;
+    }
 
-                        if(
-                            (_UNITS[unit_idx].Status != US_GoingTo) &&
-                            (Combat_Move == ST_TRUE) &&
-                            (_UNITS[unit_idx].owner_idx == _human_player_idx)
-                        )
-                        {
-                            _UNITS[unit_idx].Status = US_Ready;
-                            _UNITS[unit_idx].dst_wx = 0;
-                            _UNITS[unit_idx].dst_wy = 0;
-                            Out_Of_Moves = ST_FALSE;
-                        }
-                        
-                        if( (Out_Of_Moves == ST_TRUE) && ((_UNITS[unit_idx].Status & US_Move) != 0) )
-                        {
-                            _UNITS[unit_idx].Status = US_GoingTo;
-                            _UNITS[unit_idx].dst_wx = destination_x;
-                            _UNITS[unit_idx].dst_wy = destination_y;
-                            _UNITS[unit_idx].Finished = ST_TRUE;
-                        }
+    goto End_Of_Moving;
 
-                        if(
-                            ( (_UNITS[unit_idx].Status & US_GoingTo) == 0) &&
-                            ( _UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx ) &&
-                            ( _UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy )
-                        )
-                        {
-                            // ¿ logic to land here ?
-
-                            if(_UNITS[unit_idx].Rd_Constr_Left == -1)
-                            {
-                                _UNITS[unit_idx].Status = US_Ready;
-                                _UNITS[unit_idx].dst_wx = 0;
-                                _UNITS[unit_idx].dst_wy = 0;
-                                if(_UNITS[unit_idx].HMoves > 0)
-                                {
-                                    _UNITS[unit_idx].Finished = ST_FALSE;
-                                }
-                            }
-
-                            Out_Of_Moves = ST_FALSE;
-
-                        }
-
-                        if( (_UNITS[unit_idx].Status & US_GoingTo) != 0)
-                        {
-                            _UNITS[unit_idx].Finished = ST_TRUE;
-                        }
-
-                    }
-                    else
-                    {
-                        DLOG("( (_UNITS[unit_idx].Finished != ST_FALSE) || ((_UNITS[unit_idx].Status & PATROL) != 0) )");
-                    }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[unit_idx].Finished == ST_FALSE): %d\n", __FILE__, __LINE__, (_UNITS[unit_idx].Finished == ST_FALSE));
-    dbg_prn("DEBUG: [%s, %d]: ((_UNITS[unit_idx].Status & PATROL) != 0): %d\n", __FILE__, __LINE__, ((_UNITS[unit_idx].Status & PATROL) != 0));
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_idx].HMoves: %d\n", __FILE__, __LINE__, _UNITS[unit_idx].HMoves);
-#endif
+}
 
 
-                }  /* for(itr_units = 0; itr_units < unit_array_count; itr_units++) */
+Combat_Handlers:
+{
+
+}
 
 
-// push    [bp+unit_array@]
-// push    [bp+unit_array_count]           ; unit_array_count
-// nop
-// push    cs
-// call    near ptr G_STK_SetPatrol        ; sets all non-transport, non-dead units in the stack
-//                                         ; to patrol
-//                                         ;
-//                                         ; why?
-// 
-// pop     cx
-// pop     cx
-// 
-// 
-// call    j_Reset_Draw_Active_Stack       ; sets the overland map drawing to renew everything on
-//                                         ; its next refresh, and if there is a stack selected,
-//                                         ; resets its display to the normal blinking behaviour,
-//                                         ; starting with the first four "off" states
-// 
-// 
-// 
-// mov     ax, [bp+player_idx]
-// cmp     ax, [_human_player_idx]         ; index of the human player (special rules apply)
-// jnz     short @@JmpDone_Return_TRUE
-// 
-// call    j_Update_Scouted_And_Contacted  ; recalculates the visibility arrays for both planes
-//                                         ; after clearing them entirely, and marks contacted
-//                                         ; players accordingly if they haven't been already
+End_Of_Moving:
+{
 
+    OVL_Action_XPos = -1;
+    OVL_Action_YPos = -1;
 
+    Units_In_Tower(unit_array_count, unit_array, map_p);
 
-
-
-
-            }
-            else  /* !(Path_Length >= 1) */
-            {
-                DLOG("(Path_Length < 1)");
-                goto Done_Return_FALSE;
-            }
-
-
-
+    for(itr_units = 0; itr_units < unit_array_count; itr_units++)
+    {
+        unit_idx = unit_array[itr_units];
+        if(_UNITS[unit_idx].Rd_Constr_Left == 99)
+        {
+            _UNITS[unit_idx].Rd_Constr_Left = -1;
         }
 
+        if((_UNITS[unit_idx].Finished == ST_FALSE) && (_UNITS[unit_idx].Status != PATROL))
+        {
+            _UNITS[unit_idx].HMoves -= Total_Move_Cost;
 
+            if(_UNITS[unit_idx].HMoves < 1)
+            {
+                _UNITS[unit_idx].Finished = ST_TRUE; 
+                _UNITS[unit_idx].HMoves = 0;
+            }
+
+            if(
+                (_UNITS[unit_idx].Status != US_GoingTo) &&
+                (Combat_Move == ST_TRUE) &&
+                (_UNITS[unit_idx].owner_idx == _human_player_idx)
+            )
+            {
+                _UNITS[unit_idx].Status = US_Ready;
+                _UNITS[unit_idx].dst_wx = 0;
+                _UNITS[unit_idx].dst_wy = 0;
+                Out_Of_Moves = ST_FALSE;
+            }
+            
+            if(
+                (Out_Of_Moves == ST_TRUE) &&
+                (_UNITS[unit_idx].Status != US_Move)
+            )
+            {
+                _UNITS[unit_idx].Status = US_GoingTo;
+                _UNITS[unit_idx].dst_wx = destination_x;
+                _UNITS[unit_idx].dst_wy = destination_y;
+                _UNITS[unit_idx].Finished = ST_TRUE;
+            }
+
+            if(
+                (_UNITS[unit_idx].Status == US_GoingTo) &&
+                (_UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx) &&
+                (_UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy)
+            )
+            {
+                if(_UNITS[unit_idx].Rd_Constr_Left == -1)
+                {
+                    _UNITS[unit_idx].Status = US_Ready;
+                    _UNITS[unit_idx].dst_wx = 0;
+                    _UNITS[unit_idx].dst_wy = 0;
+                    if(_UNITS[unit_idx].HMoves > 0)
+                    {
+                        _UNITS[unit_idx].Finished = ST_FALSE;
+                    }
+                }
+                Out_Of_Moves = ST_FALSE;
+            }
+
+            if(_UNITS[unit_idx].Status == US_GoingTo)
+            {
+                _UNITS[unit_idx].Finished = ST_TRUE;
+            }
+        }
     }
-    else  /* !(movement_points >= 1) */
+
+    // TODO G_STK_SetPatrol(unit_array_count, unit_array);
+    
+    Reset_Draw_Active_Stack();
+
+    if(player_idx == _human_player_idx)
     {
-        DLOG("(movement_points < 1)");
-        goto Done_Return_FALSE;
+        Update_Scouted_And_Contacted();
     }
+
+    goto Done_Return_TRUE;
+
+}
+
+
+    goto Done;
+
 
 Done_Return_FALSE:
     Reset_Draw_Active_Stack();
     return_value = ST_FALSE;
     goto Done;
 
+
 Done_Return_TRUE:
     return_value = ST_TRUE;
     goto Done;
 
+
 Done:
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, Spec = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p) { return_value = %d }\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, Spec, *map_x, *map_y, map_p, unit_array_count, &unit_array[0], return_value);
+    dbg_prn("DEBUG: [%s, %d]: END: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, path_type = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p) { return_value = %d }\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, path_type, *map_x, *map_y, map_p, unit_array_count, &unit_array[0], return_value);
 #endif
 
     return return_value;
@@ -7255,6 +7148,11 @@ Done:
 
 // WZD o97p01
 // STK_EvaluatePath()
+void STK_EvaluatePath__WIP(int16_t player_idx, int16_t* Xs, int16_t* Ys, int16_t Plane, int16_t* Costs, int16_t moves2, int16_t* Obst, int16_t* Cmbt, int16_t* Length, int16_t* Cmplt, int16_t unit_array[], int16_t unit_array_count)
+{
+
+}
+
 
 // WZD o97p02
 // sub_7E597()
