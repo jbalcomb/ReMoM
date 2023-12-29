@@ -78,7 +78,7 @@
     _UNITS
     TBL_Terr_Specials
     TBL_Scouting
-    TBL_MoveMaps_EMS
+    movement_mode_cost_maps
     _events_table, 
     TBL_Terrain_Flags
     grand_vizier
@@ -112,7 +112,7 @@
     fread(_UNITS, 1009, 32, file_pointer);
     fread(TBL_Terr_Specials, 2, 2400, file_pointer);
     fread(TBL_Scouting, 2, 2400, file_pointer);
-    fread(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
+    fread(movement_mode_cost_maps, 2, 14400, file_pointer);
     fread(_events_table, 1, 100, file_pointer);
     fread(TBL_Terrain_Flags, 2, 2400, file_pointer);
     fread(&grand_vizier, 1, 2, file_pointer);
@@ -163,7 +163,7 @@ struct s_MOM_GAME_DATA {
     // _UNITS
     // TBL_Terr_Specials
     // TBL_Scouting
-    // TBL_MoveMaps_EMS
+    // movement_mode_cost_maps
     // _events_table, 
     // TBL_Terrain_Flags
     // grand_vizier

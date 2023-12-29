@@ -148,7 +148,7 @@ SA_GET_USED(SAMB_head): 2345
     */
     // mov     ax, 632                         ; rewritten in the overland Djikstra patch
     // call    EMM_EMMDATAH_AllocFirst         ; clears the EMM Data block, then creates an LBX
-    // mov     [word ptr TBL_TempMoveMap_EMS], ax ; 278h EMMData paragraphs
+    // mov     [word ptr movepath_cost_map], ax ; 278h EMMData paragraphs
     // 
     // mov     ax, 1802
     // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
@@ -166,9 +166,9 @@ SA_GET_USED(SAMB_head): 2345
     // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
     // mov     [word ptr TBL_OvlMovePathsEMS@], ax ; 409h EMMData paragraphs
 
-    TBL_TempMoveMap_EMS = Allocate_Space(632);
-    TBL_MoveMaps_EMS = Allocate_Space(1802);  // 1802 PR, 28832 B
-    DBG_ORIG_TBL_MoveMaps_EMS = TBL_MoveMaps_EMS;
+    movepath_cost_map = (struct s_MOVE_COST_MAP *)Allocate_Space(632);  // 632PR  10112B
+    movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);  // 1802 PR 28832 B
+    // DBG_ORIG_TBL_MoveMaps_EMS = TBL_MoveMaps_EMS;
 
     // ¿ ~== TBL_Scouting or square_scouted_p0/p1 ?
     square_shared_bits = (uint8_t *)Allocate_Space(301);  // 301 * 16 = 4816  ¿ 301 would be the byte count need for one worlds worth of bits, +1 to cover the paragraph boundary, like with square_scouted_p0/p1 ?

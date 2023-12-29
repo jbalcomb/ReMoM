@@ -18,6 +18,17 @@
 extern "C" {
 #endif
 
+// drake178: enum Terrain_Flags
+// 0x01
+// 0x02
+// 0x04
+#define TF_Road         0x08
+#define TF_Enc_Road     0x10
+#define TF_Corruption   0x20
+#define TF_Unk_40       0x40
+#define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
+#define TF_AnyRoad      0x18
+
 
 
 // WZD s161p01

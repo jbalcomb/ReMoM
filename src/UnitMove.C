@@ -700,7 +700,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 // WZD o148p03
 // STK_GetPath()
 /*
-    "Units", not "Stack" - takes unit_array_count, doesn't touch _unit_stack, _unit_stack_count
+    "Army", not "Stack" - takes troop_count, doesn't touch _unit_stack, _unit_stack_count
     ¿ Units_Move_Path() ?
 
     ¿ UU_PathingVar1:  debug counter for movement path cache hits ?
@@ -711,37 +711,8 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     UU_DBG_MovePatchCache_Misses
     DEDUCE: ¿ the usage here, incrementing without initializing, is another clue that variables initialized to zero can/do get put in the Uninitialized Data Data Segment ?
 
-
-
-    called from Move_Stack()
-
-push    [bp+player_idx]
-push    [bp+unit_array_count]           ; UCnt
-push    [bp+Landlubber_Count]           ; LLCnt
-push    [bp+movement_points]            ; UU2
-mov     ax, 1
-push    ax                              ; UU1
-mov     ax, offset OVL_Path_Costs
-push    ax                              ; RCs@
-mov     ax, (offset IDK_MovePath_DestinationY+1)
-push    ax                              ; RYs@
-mov     ax, (offset IDK_MovePath_DestinationX+1)
-push    ax                              ; RXs@
-push    [bp+map_plane]                  ; Plane
-push    [bp+destination_y]              ; TgtY
-push    [bp+destination_x]              ; TgtX
-push    [bp+unit_y]                     ; SrcY
-push    [bp+unit_x]                     ; SrcX
-push    [bp+movement_modes+0Ah]
-push    [bp+movement_modes+8]
-push    [bp+movement_modes+6]
-push    [bp+movement_modes+4]
-push    [bp+movement_modes+2]
-push    [bp+movement_modes]             ; MTypes
-call    j_STK_GetPath    
-
 */
-int16_t STK_GetPath__FAILURE(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx)
+int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx)
 {
 // Btm_Y= word ptr -0Eh
 // Rgt_X= word ptr -0Ch
@@ -753,36 +724,41 @@ int16_t STK_GetPath__FAILURE(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int
 
     int16_t path_length;  // DNE, in Dasm
 
-    assert(0 && "STK_GetPath() not yet implemented");
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetPath()\n", __FILE__, __LINE__);
-#endif
-
-
     // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
-    UU_flag = ST_TRUE;  // ; unused as argument (overwritten)
-    UU_moves2 = 8;        // ; unused as argument (overwritten)
+    UU_flag = ST_TRUE;
+    UU_moves2 = 8;
 
     // DONT  CRP_UNIT_OverlandPath = ST_UNDEFINED;  // ; an index into OvlMovePaths_EMS@
 
-
     if(player_idx == HUMAN_PLAYER_IDX)
     {
-        UU_flag = ST_FALSE;
-
-
+        goto Calc_Move_Path;
     }
-    else  /* (player_idx != HUMAN_PLAYER_IDX) */
+    else
     {
-        // DONT  "NOT human player - movement path cache"
+        goto Move_Path_Cache;
     }
 
+Move_Path_Cache:
+{
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: STK_GetPath()\n", __FILE__, __LINE__);
-#endif
+    goto Done;
+}
+
+Calc_Move_Path:
+{
+    
+    UU_flag = ST_FALSE;
+
+    Init_MovePath_Cost_Map(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+
+    goto Done;
+}
+
+
+Done:
 
     path_length = 0;
     return path_length;
@@ -791,11 +767,152 @@ int16_t STK_GetPath__FAILURE(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int
 
 // WZD o148p04
 // TILE_ExtendRange()
+
 // WZD o148p05
 // sub_D601B()
+
 // WZD o148p06
-// STK_SetOvlMoveMap()
+// drake178: STK_SetOvlMoveMap()
+void Init_MovePath_Cost_Map(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp)
+{
+    int8_t * movemap_ptr;
+    int8_t * terrain_flags_ptr;
+    int16_t map_squares;
+    int16_t var_6;
+    int16_t road_bits;
+    int16_t itr_squares;
+    int16_t itr_wy;
+    int16_t itr_wx;  // _DI_
+
+    // TODO  EMM_Map_DataH()
+
+    if(MvMd_5 == ST_TRUE) { goto Flying; }
+    if(MvMd_4 == ST_TRUE) { goto Sailing; }
+    if((MvMd_1 == ST_TRUE) && (MvMd_2 == ST_TRUE)) { goto Yay_Pathfinding; } else { goto Nay_Pathfinding; }
+
+
+Flying:
+{
+
+        Set_Memory(&movepath_cost_map->moves2[0], 10080, 2);  // drake178: BUG: we only use 2400 (960h) bytes of this!
+        terrain_flags_ptr = (int8_t *)TBL_Terrain_Flags[wp * WORLD_SIZE];
+        movemap_ptr = (int8_t *)&movepath_cost_map->moves2;
+        map_squares = WORLD_SIZE;
+        road_bits = (TF_Road | TF_Enc_Road);
+        for(itr_squares = 0; itr_squares < map_squares; itr_squares++)
+        {
+            if((terrain_flags_ptr[itr_squares] & road_bits) != 0)
+            {
+                movemap_ptr[itr_squares] = 0;
+            }
+        }
+
+    goto Done;
+
+}
+
+
+Sailing:
+{
+
+    memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->sailing.moves2[0], WORLD_SIZE);
+
+    goto Done;
+
+}
+
+
+Yay_Pathfinding:
+{
+
+    if(MvMd_3 == ST_TRUE)
+    {
+        for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+        {
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+                movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+            }
+        }
+    }
+    else
+    {
+        for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+        {
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+                if(movement_mode_cost_maps->walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == 0)
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 0;
+                }
+                else if(movement_mode_cost_maps->walking.moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] == -1)
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = -1;
+                }
+                else
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 1;
+                }
+
+            }
+        }
+    }
+
+    goto Done;
+
+}
+
+
+Nay_Pathfinding:
+{
+
+    if(MvMd_1 == ST_TRUE)
+    {
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->forester.moves2[0], WORLD_SIZE);
+        if(MvMd_3 == ST_TRUE)
+        {
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+        }
+        if(MvMd_2 == ST_TRUE)
+        {
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+        }
+    }
+    else if(MvMd_2 == ST_TRUE)
+    {
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+        if(MvMd_3 == ST_TRUE)
+        {
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+        }
+        if(MvMd_2 == ST_TRUE)
+        {
+            Copy_Memory_Less_Than(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->mountaineer.moves2[0], WORLD_SIZE);
+        }
+
+    }
+    else if(MvMd_3 == ST_TRUE)
+    {
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->swimming.moves2[0], WORLD_SIZE);
+    }
+    else
+    {
+        memcpy(&movepath_cost_map->moves2[0], &movement_mode_cost_maps->walking.moves2[0], WORLD_SIZE);
+    }
+
+    goto Done;
+
+}
+
+
+Done:
+
+    return;
+}
+
+
 // WZD o148p07
 // OVL_ClearUnitPath()
+
 // WZD o148p08
 // OVL_StoreLongPath()

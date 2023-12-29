@@ -1647,12 +1647,15 @@ SAMB_ptr TBL_Catchments_EMS;
 uint8_t * square_shared_bits;               // alloc'd in Allocate_Data_Space()
 
 // WZD dseg:9CA4
-SAMB_ptr TBL_TempMoveMap_EMS;
+// TBL_TempMoveMap_EMS
+struct s_MOVE_COST_MAP * movepath_cost_map;
+
 // WZD dseg:9CA8
 // COL_MinimapTiles
 
 // WZD dseg:9CAC
-SAMB_ptr TBL_MoveMaps_EMS;
+// drake178: TBL_MoveMaps_EMS
+struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 // WZD dseg:9CB0

@@ -117,14 +117,17 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o148p03
 // drake178: STK_GetPath()
-int16_t STK_GetPath__FAILURE(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t one, int16_t moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx);
+int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t one, int16_t moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx);
 
 // WZD o148p04
 // TILE_ExtendRange()
 // WZD o148p05
 // sub_D601B()
+
 // WZD o148p06
-// STK_SetOvlMoveMap()
+// drake178: STK_SetOvlMoveMap()
+void Init_MovePath_Cost_Map(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
+
 // WZD o148p07
 // OVL_ClearUnitPath()
 // WZD o148p08

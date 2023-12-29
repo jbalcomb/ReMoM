@@ -124,9 +124,14 @@ dseg:33B8 01 00 20 00 40 00 04 00 02 00 08 00             MoveFlag_Array dw M_Ca
 
 move path struct shows 35 bytes for the x,y and cost arrays
 
-where the thing that had the iter over 140?
 
-
+OVL_ClearUnitPath()
+    tests CRP_UNIT_OverlandPath > 0 && < 140
+    to set TBL_OvlMovePathsEMS@[] to ST_UNDEFINED
+Loaded_Game_Update()
+    iters over 100
+    to set TBL_OvlMovePathsEMS@[] to ST_UNDEFINED
+    sets CRP_UNIT_OverlandPath to ST_UNDEFINED
 
 
 dseg:C5F0
@@ -298,23 +303,23 @@ sizeof:  76h  118d
 00000076 ends MovePath
 
 
-TBL_TempMoveMap_EMS = SA_MK_FP0(EMM_EMMDATAH_AllocFirst(632))  //  632 PR  10,112B
-TBL_MoveMaps_EMS = SA_MK_FP0(EMM_EMMDATAH_AllocNext(1802))     // 1802 PR  28,832B
+movepath_cost_map = SA_MK_FP0(EMM_EMMDATAH_AllocFirst(632))  //  632 PR  10,112B
+movement_mode_cost_maps = SA_MK_FP0(EMM_EMMDATAH_AllocNext(1802))     // 1802 PR  28,832B
 contains 2 HMP_MAPS structures, one per Plane
 28,832 / 2 = 14,416
 6 * 2400 = 14400 + 16 byte SAMB header
 
 in STK_SetOvlMoveMap()
-memset() on TBL_TempMoveMap_EMS[] is 10080
+memset() on movepath_cost_map[] is 10080
 10,112 - 10,080 = 32
 10,080 / 2 = 5,040
  5,040 / 2 = 2,520
 it's follow by an iter over 2400 
 sets 0 using a byte ptr
-then it copies in 2400 from TBL_MoveMaps_EMS[]
+then it copies in 2400 from movement_mode_cost_maps[]
 
-struct HMP_MAPS TBL_MoveMaps_EMS[]
-TBL_MoveMaps_EMS[2400][6]
+struct HMP_MAPS movement_mode_cost_maps[]
+movement_mode_cost_maps[2400][6]
 for 6 movement types
     Unused, Walking, Forester, Mountaineer, Swimming, Sailing
 
@@ -356,7 +361,7 @@ UNIT_SetGlobalPath()
 
 Allocate_Data_Space()
 
-TBL_TempMoveMap_EMS[]
+movepath_cost_map[]
 632 PR, 10112 B
 2400 + 2400 + 2400 + 256 = 7456
 
@@ -364,7 +369,7 @@ TBL_TempMoveMap_EMS[]
         memset() of 10,080 to 2
             10112 - 10080 = 32 ... 2 16 byte headers?
 
-TBL_MoveMaps_EMS[]
+movement_mode_cost_maps[]
 1802 PR, 28832 B
 
 6 arrays of 2400, for each plane
@@ -396,22 +401,22 @@ cost of each world map square, given the terrain type, for each movement mode
 ¿ something somewhere incorrectly clears / copies 14400 bytes ?
 so, maybe I just assuming one of the two world map movement cost arrays
 STK_SetOvlMoveMap()
-    accesses TBL_MoveMaps_EMS[] with a sizeof() 14400  (0x3840)
+    accesses movement_mode_cost_maps[] with a sizeof() 14400  (0x3840)
     So, ...
         either a 2D array or a struct?
 
-TBL_TempMoveMap_EMS[]
+movepath_cost_map[]
 OVL_Path_Results.Reverse_Path[itr_build_path_length] is set with dst_world_map_idx, as it iterates
 starts from dst x,y
 
 
 
-TBL_TempMoveMap_EMS[]
+movepath_cost_map[]
     Overland_Pathfinder()
     updated by STK_OvlObstacles()  ¿ identifies and marks *impassible* ?
 
 STK_SetOvlMoveMap()
-    copies from TBL_MoveMaps_EMS[] to TBL_TempMoveMap_EMS
+    copies from movement_mode_cost_maps[] to movepath_cost_map
 
 
 
@@ -463,7 +468,7 @@ STK_EvaluatePath()
 WZD  ovr147  [1of1]
 Overland_Pathfinder()
 ¿ sets || returns ?
-    Overland_Pathfinder(src_x, src_y, TBL_TempMoveMap_EMS)
+    Overland_Pathfinder(src_x, src_y, movepath_cost_map)
 00000000 struc OVL_Path_Results ; (sizeof=0x2780)
 00000000 Tile_Costs db 2400 dup(?)
 00000960 Reach_Costs db 2400 dup(?)
@@ -580,8 +585,8 @@ also,
 ...
 ...
 ...
-push    [word ptr TBL_TempMoveMap_EMS+2]
-push    [word ptr TBL_TempMoveMap_EMS]  ; MoveMap@
+push    [word ptr movepath_cost_map+2]
+push    [word ptr movepath_cost_map]  ; MoveMap@
 push    [bp+src_y]                      ; Unit_Y
 push    [bp+src_x]                      ; Unit_X
 call    j_Overland_Pathfinder           ; calculates the shortest path to every tile from the
@@ -634,14 +639,14 @@ STK_GetPath()
     passed offset of OVL_Path_Costs RCs
         memcpy() from TBL_OvlMovePathsEMS@  Move_Path.Costs
         ¿ OR ?
-        RCs[itr_path_length] = TBL_TempMoveMap_EMS[((y * WORLD_WIDTH) + x)]
+        RCs[itr_path_length] = movepath_cost_map[((y * WORLD_WIDTH) + x)]
 
-TBL_TempMoveMap_EMS[] is created by Overland_Pathfinder()
+movepath_cost_map[] is created by Overland_Pathfinder()
 
-TBL_TempMoveMap_EMS[] is updated by STK_OvlObstacles()  ¿ identifies and marks *impassible* ?
+movepath_cost_map[] is updated by STK_OvlObstacles()  ¿ identifies and marks *impassible* ?
 
 STK_SetOvlMoveMap()
-    copies from TBL_MoveMaps_EMS[] to TBL_TempMoveMap_EMS
+    copies from movement_mode_cost_maps[] to movepath_cost_map
 
 
 

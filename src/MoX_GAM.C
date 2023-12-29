@@ -187,7 +187,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     fwrite(TBL_Scouting, 2, 2400, file_pointer);
 
-    fwrite(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
+    fwrite(movement_mode_cost_maps, 2, 14400, file_pointer);
 
     fwrite(events_table, 1, 100, file_pointer);
 
@@ -397,7 +397,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 #endif
     assert(file_pointer_position == 88788);
 
-    fread(TBL_MoveMaps_EMS, 2, 14400, file_pointer);
+    fread(movement_mode_cost_maps, 2, 14400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
 #ifdef STU_DEBUG

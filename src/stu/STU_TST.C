@@ -97,7 +97,7 @@ void TST_Validate_Allocate_Data_Space(void)
         ptr[itr] = 0;
     }
 
-    ptr = (uint8_t *)TBL_MoveMaps_EMS;
+    ptr = (uint8_t *)movement_mode_cost_maps;
     for(itr = 0; itr < MOVEMAPS_RECORD_SIZE; itr++)
     {
         ptr[itr] = 0;

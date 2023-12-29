@@ -258,7 +258,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 // WZD o95p02
 // AKA OVL_MoveUnitStack()
 // AKA Move_Units()
-void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
+void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
 // AI_ContactWizards()
@@ -6307,7 +6307,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t XPos;
     int16_t unit_wy;
     int16_t unit_wx;
-    int16_t Path_Length;
+    int16_t movepath_length;
     int16_t First_Unit_Index;
 
     int16_t unit_idx;
@@ -6355,30 +6355,30 @@ Prep_Road_Path:
 Prep_Move_Path:
 {
 
-//     Path_Length = STK_GetPath__FAILURE(
-//         movement_mode_flags[0],
-//         movement_mode_flags[1],
-//         movement_mode_flags[2],
-//         movement_mode_flags[3],
-//         movement_mode_flags[4],
-//         movement_mode_flags[5],
-//         unit_wx,
-//         unit_wy,
-//         destination_x,
-//         destination_y,
-//         map_p,
-//         &movepath_x_array[2],
-//         &movepath_y_array[2],
-//         &movepath_cost_array[0],
-//         1,
-//         movement_points,
-//         boat_rider_count,
-//         unit_array_count,
-//         player_idx
-//     );
+    movepath_length = STK_GetPath__WIP(
+        movement_mode_flags[0],
+        movement_mode_flags[1],
+        movement_mode_flags[2],
+        movement_mode_flags[3],
+        movement_mode_flags[4],
+        movement_mode_flags[5],
+        unit_wx,
+        unit_wy,
+        destination_x,
+        destination_y,
+        map_p,
+        &movepath_x_array[2],
+        &movepath_y_array[2],
+        &movepath_cost_array[0],
+        1,
+        movement_points,
+        boat_rider_count,
+        unit_array_count,
+        player_idx
+    );
 
     // HACK: 
-    Path_Length = 1;
+    movepath_length = 1;
     OVL_Path_Costs[0] = 1;
     // MovePath_X[0] = unit_x;
     // MovePath_Y[0] = unit_y;
@@ -6388,7 +6388,7 @@ Prep_Move_Path:
     MovePath_Y[0] = destination_y;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Path_Length: %d\n", __FILE__, __LINE__, Path_Length);
+    dbg_prn("DEBUG: [%s, %d]: movepath_length: %d\n", __FILE__, __LINE__, movepath_length);
 #endif
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: OVL_Path_Costs[0]: %d\n", __FILE__, __LINE__, OVL_Path_Costs[0]);
@@ -6407,7 +6407,7 @@ Prep_Move_Path:
 Start_Path:
 {
 
-    if(Path_Length < 1)
+    if(movepath_length < 1)
     {
         goto Done_Return_FALSE;
     }
@@ -6426,7 +6426,7 @@ Start_Path:
 // TODO         movement_points,
 // TODO         &atackee_idx,
 // TODO         &attack_flag,
-// TODO         &Path_Length,
+// TODO         &movepath_length,
 // TODO         &Out_Of_Moves,
 // TODO         unit_array,
 // TODO         unit_array_count
@@ -6435,7 +6435,7 @@ Start_Path:
 
     // ¿ accumulate path cost ?
     Total_Move_Cost = 0;
-    for(itr_Path_Length = 0; itr_Path_Length < Path_Length; itr_Path_Length++)
+    for(itr_Path_Length = 0; itr_Path_Length < movepath_length; itr_Path_Length++)
     {
         Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
     }
@@ -6443,29 +6443,29 @@ Start_Path:
     dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
 #endif
 
-    if(Path_Length <= 1)
+    if(movepath_length <= 1)
     {
         OVL_Action_OriginX = unit_wx;
         OVL_Action_OriginY = unit_wy;
     }
     else
     {
-        OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
-        OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
+        OVL_Action_OriginX = MovePath_X[(movepath_length - 1)];
+        OVL_Action_OriginY = MovePath_Y[(movepath_length - 1)];
     }
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginX: %d\n", __FILE__, __LINE__, OVL_Action_OriginX);
     dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginY: %d\n", __FILE__, __LINE__, OVL_Action_OriginY);
 #endif
 
-    if(Path_Length <= 0)
+    if(movepath_length <= 0)
     {
         Total_Move_Cost = 0;
         Out_Of_Moves = ST_FALSE;
     }
     else
     {
-        Move_Units_Draw(player_idx, map_p, Path_Length, map_x, map_y, unit_array, unit_array_count);
+        Move_Units_Draw(player_idx, map_p, movepath_length, map_x, map_y, unit_array, unit_array_count);
     }
 
     // BUGBUG  can't be get spell warded and also go into combat
@@ -6605,7 +6605,7 @@ Done:
 // WZD o95p02
 // AKA OVL_MoveUnitStack()
 // AKA Move_Units()
-void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
+void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
 {
 
     int16_t display_moves;
@@ -6639,7 +6639,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     int16_t itr_units;
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units_Draw(player_idx = %d, map_p = %d, Path_Length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, Path_Length, *map_x, *map_y, &unit_array[0], unit_array_count);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units_Draw(player_idx = %d, map_p = %d, movepath_length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, movepath_length, *map_x, *map_y, &unit_array[0], unit_array_count);
 #endif
 
 #ifdef STU_DEBUG
@@ -6662,7 +6662,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     }
     if( (player_idx != _human_player_idx) && (magic_set.Enemy_Moves == ST_TRUE) )
     {
-        for(itr_path_length = 0; (itr_path_length < Path_Length) && (display_moves == ST_FALSE); itr_path_length++)
+        for(itr_path_length = 0; (itr_path_length < movepath_length) && (display_moves == ST_FALSE); itr_path_length++)
         {
             // TODO  figure out the paths arrays  if(Check_Square_Scouted(OVL_Path_Xs[itr_path_length], OVL_Path_Ys[itr_path_length]) == ST_TRUE)
             if(Check_Square_Scouted(MovePath_X[itr_path_length], MovePath_Y[itr_path_length], map_p) == ST_TRUE)
@@ -6754,20 +6754,20 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     unit_y = _UNITS[unit_idx].wy;
 
 // IDGI  // TODO: ¿ why the OVL_Path_Xs-1[bx] ? getting the hi-byte of a word? casting? because the sizeof() OVL_Path_Xs[] is DW?
-// IDGI  // mov     bx, [bp+Path_Length]
+// IDGI  // mov     bx, [bp+movepath_length]
 // IDGI  // mov     al, OVL_Path_Xs-1[bx]
 // IDGI  // cbw
 // IDGI  // mov     [bp+destination_x], ax
-// IDGI  // mov     bx, [bp+Path_Length]
+// IDGI  // mov     bx, [bp+movepath_length]
 // IDGI  // mov     al, OVL_Path_Ys-1[bx]
 // IDGI  // cbw
 // IDGI  // mov     [bp+destination_y], ax
-// IDGI      // destination_x = Scd_Dst_X[Path_Length];  // TODO  IDK_MovePath_DestinationX[] vs. OVL_Path_Xs[]
-// IDGI      // destination_y = Scd_Dst_Y[Path_Length];  // TODO  IDK_MovePath_DestinationY[] vs. OVL_Path_Ys[]
-// IDGI      destination_x = *(((uint8_t *)(&Scd_Dst_X)) + 1 + Path_Length);
-// IDGI      destination_y = *(((uint8_t *)(&Scd_Dst_Y)) + 1 + Path_Length);
-    destination_x = MovePath_X[(Path_Length - 1)];
-    destination_y = MovePath_Y[(Path_Length - 1)];
+// IDGI      // destination_x = Scd_Dst_X[movepath_length];  // TODO  IDK_MovePath_DestinationX[] vs. OVL_Path_Xs[]
+// IDGI      // destination_y = Scd_Dst_Y[movepath_length];  // TODO  IDK_MovePath_DestinationY[] vs. OVL_Path_Ys[]
+// IDGI      destination_x = *(((uint8_t *)(&Scd_Dst_X)) + 1 + movepath_length);
+// IDGI      destination_y = *(((uint8_t *)(&Scd_Dst_Y)) + 1 + movepath_length);
+    destination_x = MovePath_X[(movepath_length - 1)];
+    destination_y = MovePath_Y[(movepath_length - 1)];
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: destination_x: %d\n", __FILE__, __LINE__, destination_x);
     dbg_prn("DEBUG: [%s, %d]: destination_y: %d\n", __FILE__, __LINE__, destination_y);
@@ -6824,7 +6824,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
 
 
-    for(itr_path_length = 0; itr_path_length < Path_Length; itr_path_length++)
+    for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++)
     {
         curr_dst_wx = MovePath_X[itr_path_length];
         curr_dst_wy = MovePath_Y[itr_path_length];
@@ -7047,14 +7047,14 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     dbg_prn("DEBUG: [%s, %d]: curr_src_wy: %d\n", __FILE__, __LINE__, curr_src_wy);
 #endif
 
-    }  /* for(itr_path_length = 0; itr_path_length < Path_Length; itr_path_length++) */
+    }  /* for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++) */
 
 
     Reset_Window();
     Reset_Map_Draw();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Units_Draw(player_idx = %d, map_p = %d, Path_Length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, Path_Length, *map_x, *map_y, &unit_array[0], unit_array_count);
+    dbg_prn("DEBUG: [%s, %d]: END: Move_Units_Draw(player_idx = %d, map_p = %d, movepath_length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, movepath_length, *map_x, *map_y, &unit_array[0], unit_array_count);
 #endif
 
 }

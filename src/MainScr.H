@@ -498,7 +498,7 @@ void MainScr_Prepare_Reduced_Map(void);
 // WZD o95p02
 // AKA OVL_MoveUnitStack()
 // AKA Move_Units()
-// ¿PRIVATE? void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
+// ¿PRIVATE? void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
 // AI_ContactWizards()
@@ -507,7 +507,7 @@ void MainScr_Prepare_Reduced_Map(void);
 // G_STK_OvlObstacles()
 
 // WZD o95p05
-// ¿PRIVATE? int16_t Army_Boat_Riders(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+// ¿PRIVATE? int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
 
 // WZD o95p06
 // G_STK_SetPatrol()
