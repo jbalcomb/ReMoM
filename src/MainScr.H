@@ -507,7 +507,7 @@ void MainScr_Prepare_Reduced_Map(void);
 // G_STK_OvlObstacles()
 
 // WZD o95p05
-// ¿PRIVATE? int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+// ¿PRIVATE? int16_t Army_Boat_Riders(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
 
 // WZD o95p06
 // G_STK_SetPatrol()

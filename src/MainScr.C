@@ -267,7 +267,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 // G_STK_OvlObstacles()
 
 // WZD o95p05
-int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+int16_t Army_Boat_Riders(int16_t Stack_Size, int16_t troops[], int16_t boat_riders[]);
 
 // WZD o95p06
 // G_STK_SetPatrol()
@@ -3398,7 +3398,7 @@ void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[])
                 LandLubber_Array[itr_LL_Array] = ST_UNDEFINED;
             }
 
-            LandLubber_Count = STK_GetLandlubbers(_unit_stack_count, &Stack_Array[0], &LandLubber_Array[0]);
+            LandLubber_Count = Army_Boat_Riders(_unit_stack_count, &Stack_Array[0], &LandLubber_Array[0]);
 
             if(LandLubber_Count > 0)
             {
@@ -6255,7 +6255,7 @@ void UNIT_SetGlobalPath__STUB(int16_t unit_idx)
 
     Army_Movement_Modes(&movement_modes[0], &unit_array[0], stack_count);
 
-    boat_rider_array_count = STK_GetLandlubbers(stack_count, &unit_array[0], &boat_rider_array[0]);
+    boat_rider_array_count = Army_Boat_Riders(stack_count, &unit_array[0], &boat_rider_array[0]);
 
     if(_UNITS[unit_idx].Rd_Constr_Left != -1)
     {
@@ -6342,7 +6342,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
         movement_mode_flags[itr_eight] = 0;
     }
     Army_Movement_Modes(&movement_mode_flags[0], unit_array, unit_array_count);
-    boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
+    boat_rider_count = Army_Boat_Riders(unit_array_count, unit_array, &boat_rider_array[0]);
 
     switch(path_type) { case 0: { goto Prep_Move_Path; } break; case 1: { goto Start_Path; } break; case 2: { goto Prep_Road_Path; } break; case 3: { goto Prep_Move_Path; } break; default: { goto Start_Path; } break; }
 
@@ -7066,72 +7066,47 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 // G_STK_OvlObstacles()
 
 // WZD o95p05
-int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[])
+int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boat_riders[])
 {
-    int16_t Landlubber_Count;
+    int16_t boat_rider_count;
+    int16_t itr_troop_count;
 
-    int16_t itr_Stack_Size;
+    boat_rider_count = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetLandlubbers()\n", __FILE__, __LINE__);
-#endif
-
-    Landlubber_Count = 0;
-
-    for(itr_Stack_Size = 0; itr_Stack_Size < Stack_Size; itr_Stack_Size++)
+    for(itr_troop_count = 0; itr_troop_count < troop_count; itr_troop_count++)
     {
-        // drake178: returns 1 if the unit has wind walking, whether natural or through an enchantment; or 0 otherwise
-        // WZD o71p04
-        if(Unit_Has_WindWalking(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+
+        if(Unit_Has_WindWalking(troops[itr_troop_count]) == ST_TRUE)
         {
-            goto Return_Zero;
+            break;
         }
-// DONT          // drake178: does nothing and returns zero, at some point must have been a unit ability or enchantment check
-// DONT          // WZD o71p08
-// DONT          if(UNIT_ReturnZero(*Stack_Array[itr_Stack_Size]) == ST_TRUE)
-// DONT          {
-// DONT              return 0;
-// DONT          }
-        // WZD o71p03
-        if(Unit_Has_AirTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p05
-        if(Unit_Has_WaterTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p010
-        if(Unit_Has_AirTravel_Item(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p09
-        if(Unit_Has_WaterTravel_Item(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        // DONT  o71p08_Empty_pFxn()  ~ Unit_Has_WindWalking__Item()
+
+        if(Unit_Has_AirTravel(troops[itr_troop_count]) == ST_TRUE)
         {
             continue;
         }
 
-        LL_Array[Landlubber_Count] = Stack_Array[itr_Stack_Size];
-        Landlubber_Count++;
+        if(Unit_Has_WaterTravel(troops[itr_troop_count]) == ST_TRUE)
+        {
+            continue;
+        }
+
+        if(Unit_Has_AirTravel_Item(troops[itr_troop_count]) == ST_TRUE)
+        {
+            continue;
+        }
+
+        if(Unit_Has_WaterTravel_Item(troops[itr_troop_count]) == ST_TRUE)
+        {
+            continue;
+        }
+
+        boat_riders[boat_rider_count] = troops[itr_troop_count];
+        boat_rider_count++;
     }
-    goto Return_Count;
 
-Return_Zero:
-    Landlubber_Count = 0;
-    goto Done;
-
-Return_Count:
-    goto Done;
-
-Done:
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: STK_GetLandlubbers()\n", __FILE__, __LINE__);
-#endif
-
-    return Landlubber_Count;
+    return boat_rider_count;
 }
 
 // WZD o95p06
