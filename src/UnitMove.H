@@ -126,7 +126,7 @@ int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t
 
 // WZD o148p06
 // drake178: STK_SetOvlMoveMap()
-void Init_MovePath_Cost_Map(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
+void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
 
 // WZD o148p07
 // OVL_ClearUnitPath()

@@ -24,7 +24,7 @@ Elsewhere, ...
 
 #include "MoM.H"
 #include "UnitMove.H"
-
+#include "MainScr.H"
 
 
 /*
@@ -712,7 +712,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     DEDUCE: ¿ the usage here, incrementing without initializing, is another clue that variables initialized to zero can/do get put in the Uninitialized Data Data Segment ?
 
 */
-int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx)
+int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
 // Btm_Y= word ptr -0Eh
 // Rgt_X= word ptr -0Ch
@@ -751,7 +751,16 @@ Calc_Move_Path:
     
     UU_flag = ST_FALSE;
 
-    Init_MovePath_Cost_Map(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+    // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
+    if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
+    {
+        // TODO  min 2 costs
+    }
+
+    Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+
 
 
     goto Done;
@@ -773,7 +782,7 @@ Done:
 
 // WZD o148p06
 // drake178: STK_SetOvlMoveMap()
-void Init_MovePath_Cost_Map(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp)
+void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp)
 {
     int8_t * movemap_ptr;
     int8_t * terrain_flags_ptr;

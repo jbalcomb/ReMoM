@@ -22,7 +22,7 @@ Move_Units()
     |-> 
     |-> 
     |-> STK_GetPath()
-        |-> STK_SetOvlMoveMap()
+        |-> Init_MovePathMap()
         |-> Overland_Pathfinder()
     |-> STK_EvaluatePath()
 
@@ -309,7 +309,7 @@ contains 2 HMP_MAPS structures, one per Plane
 28,832 / 2 = 14,416
 6 * 2400 = 14400 + 16 byte SAMB header
 
-in STK_SetOvlMoveMap()
+in Init_MovePathMap()
 memset() on movepath_cost_map[] is 10080
 10,112 - 10,080 = 32
 10,080 / 2 = 5,040
@@ -365,7 +365,7 @@ movepath_cost_map[]
 632 PR, 10112 B
 2400 + 2400 + 2400 + 256 = 7456
 
-    STK_SetOvlMoveMap()
+    Init_MovePathMap()
         memset() of 10,080 to 2
             10112 - 10080 = 32 ... 2 16 byte headers?
 
@@ -400,7 +400,7 @@ cost of each world map square, given the terrain type, for each movement mode
 
 ¿ something somewhere incorrectly clears / copies 14400 bytes ?
 so, maybe I just assuming one of the two world map movement cost arrays
-STK_SetOvlMoveMap()
+Init_MovePathMap()
     accesses movement_mode_cost_maps[] with a sizeof() 14400  (0x3840)
     So, ...
         either a 2D array or a struct?
@@ -413,9 +413,9 @@ starts from dst x,y
 
 movepath_cost_map[]
     Overland_Pathfinder()
-    updated by STK_OvlObstacles()  ¿ identifies and marks *impassible* ?
+    updated by Update_MovePathMap()  ¿ identifies and marks *impassible* ?
 
-STK_SetOvlMoveMap()
+Init_MovePathMap()
     copies from movement_mode_cost_maps[] to movepath_cost_map
 
 
@@ -643,9 +643,9 @@ STK_GetPath()
 
 movepath_cost_map[] is created by Overland_Pathfinder()
 
-movepath_cost_map[] is updated by STK_OvlObstacles()  ¿ identifies and marks *impassible* ?
+movepath_cost_map[] is updated by Update_MovePathMap()  ¿ identifies and marks *impassible* ?
 
-STK_SetOvlMoveMap()
+Init_MovePathMap()
     copies from movement_mode_cost_maps[] to movepath_cost_map
 
 
