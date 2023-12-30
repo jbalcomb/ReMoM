@@ -52,6 +52,7 @@
 #include "special.H"
 #include "Spellbook.H"
 #include "Terrain.H"
+#include "TerrType.H"
 #include "Timer.H"
 #include "UnitMove.H"   // WTFMATE
 #include "UNITSTK.H"

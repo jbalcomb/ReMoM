@@ -504,7 +504,8 @@ void MainScr_Prepare_Reduced_Map(void);
 // AI_ContactWizards()
 
 // WZD o95p04
-// G_STK_OvlObstacles()
+// drake178: G_STK_OvlObstacles()
+void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
 // ¿PRIVATE? int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);

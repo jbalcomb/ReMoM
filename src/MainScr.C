@@ -264,7 +264,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 // AI_ContactWizards()
 
 // WZD o95p04
-// G_STK_OvlObstacles()
+// drake178: G_STK_OvlObstacles()
+void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
 int16_t Army_Boat_Riders(int16_t Stack_Size, int16_t troops[], int16_t boat_riders[]);
@@ -7063,7 +7064,215 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 // AI_ContactWizards()
 
 // WZD o95p04
-// G_STK_OvlObstacles()
+// drake178: G_STK_OvlObstacles()
+/*
+    Update Move-Map for Pathing Finding Algorithm
+    allows pathed to, but disallows pathed through
+
+; processes overland obstacles on the passed movement
+; map array, marking tiles as impassable if they can't
+; be pathed through
+;
+; enemy armies are passable if visible relations are
+; below -60 and their stack size is equal or smaller
+;
+; contains some weird transport-related tile enablers,
+*/
+void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy)
+{
+    int16_t dst_troops[9];
+    int16_t checked_troops[9];
+    int16_t checked_troops_boatriders_count;
+    int16_t dst_troop_count;
+    int16_t checked_troop_count;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t dst_troops_carry_capacity;
+    int16_t itr_troops;
+    int16_t itr_units;   // _DI_
+    int16_t itr_lairs;   // _DI_
+    int16_t itr_cities;  // _DI_
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if((_UNITS[itr_units].wp != wp) || (_UNITS[itr_units].owner_idx == ST_UNDEFINED))
+        {
+            continue;
+        }
+
+        unit_wx = _UNITS[itr_units].wx;
+        unit_wy = _UNITS[itr_units].wy;
+
+        if(_UNITS[itr_units].owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            if(player_idx != NEUTRAL_PLAYER_IDX)
+            {
+                if((unit_wx != dst_wx) || (unit_wy != dst_wy))
+                {
+                    ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // ~== Lairs, Cities - only allow dst in path finding
+                }
+            }
+            else
+            {
+                ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // neutral player can't merge stacks
+            }
+
+            continue;
+        }
+
+        if(_UNITS[itr_units].owner_idx != player_idx)
+        {
+            if((unit_wx != dst_wx) || (unit_wy != dst_wy))
+            {
+                if(ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] != -1)
+                {
+                    if(((_players[_UNITS[itr_units].owner_idx].Dipl.Visible_Rel[player_idx] + 100) / 20) <= 2)
+                    {
+                        Units_At_Square(unit_wx, unit_wy, wp, _UNITS[itr_units].owner_idx, &checked_troop_count, &checked_troops[0]);
+                        if(checked_troop_count > troop_count)
+                        {
+                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                        }
+                    }
+                    else
+                    {
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        /*
+            Nay Neutral Player, Yay Owner is Player
+        */
+
+        // Unit is Trooper & Destination is Ocean
+        if(
+            (_UNITS[itr_units].wx == src_wx) &&
+            (_UNITS[itr_units].wy == src_wy) &&
+            (TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+        )
+        {
+            dst_troops_carry_capacity = 0;
+            Units_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+            for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+            {
+                dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
+            }
+            if(dst_troops_carry_capacity > 0)
+            {
+                Units_At_Square(dst_wx, dst_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+                checked_troops_boatriders_count = checked_troop_count;
+                for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[checked_troops[itr_troops]].type > 34) ||  /* Chosen */
+                        (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        checked_troops_boatriders_count--;
+                    }
+                    if(
+                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                        (checked_troops_boatriders_count <= 9)
+                    )
+                    {
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        if((unit_wx == src_wx) && (unit_wy == src_wy))
+        {
+            checked_troop_count = 0;
+        }
+        else
+        {
+            Units_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+        }
+
+        if((checked_troop_count + troop_count) > 9)
+        {
+            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+        }
+        else
+        {
+            if(TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            {
+                dst_troops_carry_capacity = 0;
+                Units_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+                for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+                {
+                    dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
+                }
+                if(dst_troops_carry_capacity > 0)
+                {
+                    checked_troops_boatriders_count = checked_troop_count;
+                    for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
+                    {
+                        if(
+                            (_UNITS[checked_troops[itr_troops]].type > 34) ||  /* Chosen */
+                            (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
+                        )
+                        {
+                            checked_troops_boatriders_count--;
+                        }
+                        if(
+                            ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                            (checked_troops_boatriders_count <= 9)
+                        )
+                        {
+                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+    {
+        if(
+            (_LAIRS[itr_lairs].wp == wp) &&
+            (_LAIRS[itr_lairs].Intact == ST_TRUE) &&
+            ((_LAIRS[itr_lairs].wx != dst_wx) || (_LAIRS[itr_lairs].wy != dst_wy))
+        )
+        {
+            ptr_movepath_cost_map_moves2[((_LAIRS[itr_lairs].wy * WORLD_WIDTH) + _LAIRS[itr_lairs].wx)] = -1;
+        }
+    }
+
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(
+            (_CITIES[itr_cities].wp == wp) &&
+            (_CITIES[itr_cities].owner_idx != player_idx) &&
+            ((_CITIES[itr_cities].wx != dst_wx) || (_CITIES[itr_cities].wy != dst_wy))
+        )
+        {
+            ptr_movepath_cost_map_moves2[((_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] = -1;
+        }
+    }
+    
+}
+
 
 // WZD o95p05
 int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boat_riders[])

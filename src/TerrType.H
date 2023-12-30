@@ -1,3 +1,6 @@
+#ifndef TERRTYPE_H
+#define TERRTYPE_H
+
 
 
 /*
@@ -885,3 +888,6 @@ enum OVL_Tiles_Extended
     _Tundra10101111  = 0x2F9,
     _TerType_Count  = 0x2FA
 };
+
+
+#endif  /* TERRTYPE_H */

@@ -5,7 +5,11 @@ Move_Units()
     Army_Movement_Modes()
     Army_Boat_Riders()
     STK_GetPath()
+        STK_OvlObstacles()
     STK_EvaluatePath()
+
+
+
 
 ## Movement Mode Flags
     6 movement mode boolean values
@@ -105,6 +109,74 @@ if ((nay MvMd_1_Frstr or nay MvMd_2_Mntnr) but yay MvMd_0_Cvlry)
     then, if MvMd_3_Swim overlays movement_mode_cost_maps[4] onto movepath_cost_map
     then, if MvMd_1_Frstr overlays movement_mode_cost_maps[2] onto movepath_cost_map
     then, if MvMd_2_Mntnr overlays movement_mode_cost_maps[3] onto movepath_cost_map
+
+
+
+
+## STK_OvlObstacles()
+
+...
+...
+...
+
+iter UNITS
+iter LAIRS
+iter CITIES
+
+Units:
+    if same plane and not dead
+
+Lairs:
+    set impassible, except dst
+
+Cities:
+    set impassible, except dst
+
+¿ logic of two tests for ocean map square ?
+(1)
+    in owner_idx == player_idx
+    the Unit is a Trooper
+    and the destination map square is the Ocean terrain type
+(2)
+    still in owner_idx == player_idx
+    Unit is or is not on the source map square
+        if nay
+            gets count at Unit's map square
+                checks if the moving Troops could fit on the Unit's map square
+                    if nay
+                        sets impassible
+                    if yay
+                        checks if ocean map square
+                            if yay
+
+        if yay
+            sets count to 0
+                checks if the moving Troops could fit on the Unit's map square
+                    if nay, sets impassible
+
+so,
+    if it doens't fit, set impassible & done
+    if it fits and it isn't not ocean, do nothing & done
+    if it fits and it is ocean, check if there's enough carry capacity and if not set impassible & done
+but,
+    we already branched off and tested if the Unit is a Trooper and the Map Square is Ocean
+
+...
+Unit is or is not a member
+
+if yay
+ 0 +  9 <= 9
+if nay
+dn + sn <= 9
+
+
+
+
+
+
+
+
+
 
 
 ## movement_mode_cost_maps
