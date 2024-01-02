@@ -1,10 +1,19 @@
 
 
 
+C:\STU\developp\1oom\src\game\game_battle_human.c
+
+static void game_battle_item_move_find_route(struct battle_s *bt, uint8_t *route, int itemi, int sx, int sy)
+
+
+
+
+
 Move_Units()
     Army_Movement_Modes()
     Army_Boat_Riders()
     STK_GetPath()
+        Init_MovePath_Cost_Map()
         Update_MovePathMap()
     STK_EvaluatePath()
 
@@ -50,6 +59,74 @@ boatriders[9]
 boatrider_count
 
 movepath_length
+
+
+
+
+
+
+## STK_GetPath()
+
+Move_Units()
+    passes in
+        UU_flag = ST_TRUE
+        UU_moves2 = movement_points, from Units_Moves()
+
+Init_MovePathMap()
+Update_MovePathMap()
+Overland_Pathfinder()
+
+
+UU_flag = ST_TRUE
+UU_moves2 = 8
+CRP_UNIT_OverlandPath = -1
+
+if the player is not the human player
+    it tries to use the Move-Path Cache
+    if it gets a hit it's done
+    otherwise, it falls into the same path for getting a Move-Path
+
+UU_flag = ST_FALSE
+...actually, looks like a ```do{ ... } while (UU_flag == ST_FALSE)```
+...but, why/how?
+
+Init_MovePath_Cost_Map()
+
+checks player_idx and UU_moves2  ```if player_idx == HUMAN_PLAYER_IDX && UU_moves2 == 1```
+    if so, caps the max moves2 at 2
+    I don't see enough evidence that would allow for reasonably deducing why this would happen
+    but, UU_moves2 is hard-coded at 8, so, it never does actually happen
+
+Update_MovePathMap()
+
+if movepath_cost_map[dst] is *impassible*, returns 0 for path length
+
+checks UU_flag
+    if ST_TRUE, calls TILE_ExtendRange()
+
+...
+
+Move_Path_Find()
+
+iter
+sets reverse path
+starting from the destination world map square
+...until Reach_From == Reach_From?
+~ world map square index  ~== ((wy * WORLD_WIDTH) + wx)
+count and array of wms_idx, from dst to src
+the wms_idx for the src mws is the same as the second to last wms idx?
+
+iter back over
+convert wms_idx to wx,wy
+set move path x, y, and cost
+
+
+
+
+
+
+
+
 
 
 
@@ -168,6 +245,8 @@ if yay
  0 +  9 <= 9
 if nay
 dn + sn <= 9
+
+
 
 
 

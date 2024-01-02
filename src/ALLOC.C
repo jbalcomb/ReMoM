@@ -166,7 +166,7 @@ SA_GET_USED(SAMB_head): 2345
     // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
     // mov     [word ptr TBL_OvlMovePathsEMS@], ax ; 409h EMMData paragraphs
 
-    movepath_cost_map = (struct s_MOVE_COST_MAP *)Allocate_Space(632);  // 632PR  10112B
+    movepath_cost_map = (struct s_MOVE_PATH *)Allocate_Space(632);  // 632PR  10112B
     movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);  // 1802 PR 28832 B
     // DBG_ORIG_TBL_MoveMaps_EMS = TBL_MoveMaps_EMS;
 

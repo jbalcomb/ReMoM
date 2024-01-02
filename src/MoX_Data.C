@@ -1648,7 +1648,7 @@ uint8_t * square_shared_bits;               // alloc'd in Allocate_Data_Space()
 
 // WZD dseg:9CA4
 // TBL_TempMoveMap_EMS
-struct s_MOVE_COST_MAP * movepath_cost_map;
+struct s_MOVE_PATH * movepath_cost_map;
 
 // WZD dseg:9CA8
 // COL_MinimapTiles

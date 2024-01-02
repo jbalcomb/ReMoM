@@ -23,6 +23,7 @@ Move_Units()
     |-> 
     |-> STK_GetPath()
         |-> Init_MovePathMap()
+        |-> Update_MovePathMap()
         |-> Overland_Pathfinder()
     |-> STK_EvaluatePath()
 
@@ -125,6 +126,9 @@ dseg:33B8 01 00 20 00 40 00 04 00 02 00 08 00             MoveFlag_Array dw M_Ca
 move path struct shows 35 bytes for the x,y and cost arrays
 
 
+STK_GetPath()
+    iters over 140
+        to get cached MovePath from TBL_OvlMovePathsEMS@
 OVL_ClearUnitPath()
     tests CRP_UNIT_OverlandPath > 0 && < 140
     to set TBL_OvlMovePathsEMS@[] to ST_UNDEFINED

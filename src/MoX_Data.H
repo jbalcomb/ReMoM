@@ -1380,38 +1380,6 @@ struct s_MSG_BUILDING_COMPLETE
 #pragma pack(pop)
 
 
-// drake178: HMP_COSTS
-// sizeof:  960h  2400d
-#pragma pack(push)
-#pragma pack(2)
-struct s_MOVE_COST_MAP
-{
-    /* 0x0000 */ int8_t moves2[2400];
-    /* 0x0960 */
-};
-#pragma pack(pop)
-
-
-// drake178: HMP_MAPS
-// sizeof:  3840h  14,400
-/*
-    movement cost per movement mode, in moves2 units
-    one *map* per movement mode, as world map - 60x40 - map squares
-*/
-#pragma pack(push)
-#pragma pack(2)
-struct s_MOVE_MODE_COST_MAPS
-{
-    /* 0x0000 */ struct s_MOVE_COST_MAP UU_MvMd;
-    /* 0x0960 */ struct s_MOVE_COST_MAP walking;
-    /* 0x12C0 */ struct s_MOVE_COST_MAP forester;
-    /* 0x1C20 */ struct s_MOVE_COST_MAP mountaineer;
-    /* 0x2580 */ struct s_MOVE_COST_MAP swimming;
-    /* 0x2EE0 */ struct s_MOVE_COST_MAP sailing;
-    /* 0x3840 */
-};
-#pragma pack(pop)
-
 
 
 
@@ -2821,7 +2789,7 @@ extern uint8_t * square_shared_bits;               // alloc'd in Allocate_Data_S
 
 // WZD dseg:9CA4
 // drake178: TBL_TempMoveMap_EMS
-extern struct s_MOVE_COST_MAP * movepath_cost_map;
+extern struct s_MOVE_PATH * movepath_cost_map;
 
 // WZD dseg:9CA8
 // COL_MinimapTiles

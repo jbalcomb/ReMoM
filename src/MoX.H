@@ -36,6 +36,7 @@
 #include "LBX_Load.H"
 #include "LOADER.H"
 #include "Mouse.H"
+#include "MovePath.H"
 #include "MoX_CFG.H"
 #include "MoX_CMB.H"
 #include "MoX_DBG.H"

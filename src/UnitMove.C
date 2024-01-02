@@ -25,6 +25,8 @@ Elsewhere, ...
 #include "MoM.H"
 #include "UnitMove.H"
 #include "MainScr.H"
+#include "MovePath.H"
+
 
 
 /*
@@ -700,6 +702,14 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 // WZD o148p03
 // STK_GetPath()
 /*
+    populates movepath_cost_map path, x's, y's, and cost's
+    returns path length
+    
+    Return:
+        int16_t movepath_length
+            ¿ count of map sqaures from source to destion ?
+            returns 0 if Init_MovePathMap() or Update_MovePathMap() determine the destion map square is *impassible*
+    
     "Army", not "Stack" - takes troop_count, doesn't touch _unit_stack, _unit_stack_count
     ¿ Units_Move_Path() ?
 
@@ -714,15 +724,15 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 */
 int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
-// Btm_Y= word ptr -0Eh
-// Rgt_X= word ptr -0Ch
-// Top_Y= word ptr -0Ah
-// Lft_X= word ptr -8
-// Target_Tile_Index= word ptr -6
-// Y_Index= word ptr -4
-// X_Index= word ptr -2
-
-    int16_t path_length;  // DNE, in Dasm
+    int16_t ext_y2;
+    int16_t ext_x2;
+    int16_t ext_y1;
+    int16_t ext_x1;
+    int16_t dst_world_map_idx;
+    int16_t itr_wy;
+    int16_t itr_wx;
+    int16_t itr;  // _SI_
+    int16_t path_length;  // _DI_
 
     // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
@@ -733,6 +743,7 @@ int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
+        UU_flag = ST_FALSE;
         goto Calc_Move_Path;
     }
     else
@@ -740,36 +751,136 @@ int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t
         goto Move_Path_Cache;
     }
 
+
 Move_Path_Cache:
 {
 
+    // HACK:  hard-coded MovePath Cache Miss 
+    goto Calc_Move_Path;
+
     goto Done;
 }
+
 
 Calc_Move_Path:
 {
-    
-    UU_flag = ST_FALSE;
 
-    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
-
-    // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
-    if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
+    do
     {
-        // TODO  min 2 costs
+        Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+        // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
+        // min 2 cost
+        if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
+        {
+            for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+            {
+                for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+                {
+                    if(
+                        (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] != ST_UNDEFINED) &&
+                        (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] > 2)
+                    )
+                    {
+                        movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 2;
+                    }
+                }
+            }
+        }
+
+        Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+
+        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)
+        {
+            goto Done_Return_Zero;
+        }
+
+        if(UU_flag != ST_TRUE)
+        {
+            break;
+        }
+
+
+// TODO          // TODO  TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
+// TODO          // iter 0 < ext_y1, 0 < WORLD_WIDTH
+// TODO          // iter ext_2+1 < WORLD_HEIGHT, 0 < WORLD_WIDTH
+// TODO          // if(ext_x1 >= ext_x2)
+// TODO          // iter ext_y1 < ext_y2,ext_x2 < ext_y1
+// TODO          // else
+// TODO          // itr ext_y1 < ext_y2, 0 < ext_x1
+// TODO  
+// TODO          // Move_Path_Find_C(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+// TODO          Move_Path_Find_ASM(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+// TODO  
+// TODO          path_length = 0;
+// TODO          dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
+// TODO          while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+// TODO          {
+// TODO              movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
+// TODO              dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
+// TODO              path_length++;
+// TODO          }
+// TODO  
+// TODO          for(itr = 0; itr < path_length; itr++)
+// TODO          {
+// TODO              itr_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
+// TODO              itr_wy = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] / WORLD_WIDTH);
+// TODO              mvpth_x[itr] = itr_wx;
+// TODO              mvpth_y[itr] = itr_wy;
+// TODO              mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
+// TODO          }
+// TODO  
+// TODO          if(path_length != 0)
+// TODO          {
+// TODO              break;
+// TODO          }
+        
+        UU_flag = ST_FALSE;
+
+    } while (UU_flag == ST_FALSE);
+
+
+    if(UU_flag == ST_FALSE)
+    {
+
+        // Move_Path_Find_C(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+        Move_Path_Find_ASM(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+
+        path_length = 0;
+        dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
+        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        {
+            movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
+            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
+            path_length++;
+        }
+
+        for(itr = 0; itr < path_length; itr++)
+        {
+            itr_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
+            itr_wy = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] / WORLD_WIDTH);
+            mvpth_x[itr] = itr_wx;
+            mvpth_y[itr] = itr_wy;
+            mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
+        }
+
     }
+    
+    // /* HACK: */ path_length = 0;
 
-    Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
-
+}
 
 
     goto Done;
-}
+
+
+Done_Return_Zero:
+    path_length = 0;
+    goto Done;
 
 
 Done:
 
-    path_length = 0;
     return path_length;
 }
 
