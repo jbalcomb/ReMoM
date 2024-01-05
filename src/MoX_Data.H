@@ -3305,22 +3305,22 @@ extern int16_t OVL_Action_OriginX;
 
 
 
-// WZD dseg:C5F0
-extern uint8_t OVL_Path_Costs[118];
-// WZD dseg:C666
-extern uint8_t Fst_Dst_Y;
-// WZD dseg:C667
-extern uint8_t Scd_Dst_Y;
-// WZD dseg:C668
-extern uint8_t MovePath_Y[118];
-// WZD dseg:C6DE
-extern uint8_t Fst_Dst_X;
-// WZD dseg:C6DF
-extern uint8_t Scd_Dst_X;
-// WZD dseg:C6E0
-extern uint8_t MovePath_X[118];
-// WZD dseg:C756
-extern uint8_t IDK_MovePath[62];
+// DELETE  // WZD dseg:C5F0
+// DELETE  extern uint8_t OVL_Path_Costs[118];
+// DELETE  // WZD dseg:C666
+// DELETE  extern uint8_t Fst_Dst_Y;
+// DELETE  // WZD dseg:C667
+// DELETE  extern uint8_t Scd_Dst_Y;
+// DELETE  // WZD dseg:C668
+// DELETE  extern uint8_t MovePath_Y[118];
+// DELETE  // WZD dseg:C6DE
+// DELETE  extern uint8_t Fst_Dst_X;
+// DELETE  // WZD dseg:C6DF
+// DELETE  extern uint8_t Scd_Dst_X;
+// DELETE  // WZD dseg:C6E0
+// DELETE  extern uint8_t MovePath_X[118];
+// DELETE  // WZD dseg:C756
+// DELETE  extern uint8_t IDK_MovePath[62];
 
 // WZD dseg:C5F0
 extern int8_t movepath_cost_array[118];

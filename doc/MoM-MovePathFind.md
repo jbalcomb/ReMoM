@@ -18,19 +18,199 @@ sets movepath_cost_map[2400 + wx] to 0
 
 
 
+What is it ierating over with CH, CL, and SI?
 
-mov         qword ptr [rsp+18h],r8  
-mov         word ptr [rsp+10h],dx  
-mov         word ptr [rsp+8],cx  
-push        rbp  
-sub         rsp,0A0h  
-lea         rbp,[rsp+20h]  
+CL is just an iter cnt for the loop over the middle map squares
+CH seems to just be a flag that means one of the tested map squares had a value other than *impassible*
+SI doubles as the counter for the outer loop and the inner loop
 
 
 
-lea         rsp,[rbp+80h]  
-pop         rbp  
-ret  
+Two major blocks, where it sets up SI, BX, and DI?
+
+Seconds block resets CH to 0 on every iteration?
+
+incs BX and DI
+
+subs SI, BX, DI
+    next row up?
+
+checks CH and SI
+
+loops back to second major block
+
+else, if value changed, loops back to first major block
+
+
+
+
+DI is for setting the world map square index
+
+SI is for getting the cost from the move path cost map
+
+BX is for getting the 'Reach Costs' ... what dat is? where it come from?
+
+
+
+Test - The First
+
+movepath_cost_map.moves2[(src_wy * WORLD_WIDTH)]
+if not *impassible*
+    gets 'Reach Cost' for wms_idx - 1
+        this'd be -1 in the array
+            ...we're at the start of a world map row?
+            so, the last square on the previous row?
+            if we weren't, it'd just be like x-1 - left map sqaure to the left / west
+            but, first, it's y-1,x=59 ... (60 - (x - 1))?
+
+flip it around?
+    ...at some r,c / x,y
+    check Up-Left / North-West
+    special-case: at c/x = 0, NW is -1
+    every where else, NW is -61
+
+if the first test in @@MajorBlock_1_Outer always the special case of y = 0?
+No? Because, then it goes into another loop, that goes into another loop?
+the next loop goes until CH == 0 or SI >= 2320
+CH will be 0 if each check was *impassible*
+    otherwise, CH gets inc'd at every test
+SI gets incremented at each LODSB, so SI will be GTE 2320 when the count of bytes read, from the row offset, has happened some number of times.
+    if src_wy had been 39, this would have already been the case
+        so, we should be doing <60 reads?
+¿ why only one test before going into the third loop ?
+the third loop sets CL to 29 and goes until it's dec'd to 0
+goes into the loop regardless of whether the previous was *impassible*
+does two LODSB's and tests
+so, 1 + 29 * 2 ... tests 59 ...
+if src_wy was 38, it'd be 2280 + 59 = 2339? so, major block 2 must do another 60?
+
+so, ...
+first iter, y = 0
+3 LODSB's
+second iter, y = 1 + (29 * 2) = 59
+so, ~ iterating over world map height? in 3's?
+and, the first test is special
+maybe, starting each loop at the row start is just to pin down the special case?
+
+
+
+
+
+## Check & Update
+if the current map square is not *impassible*
+
+Test 1:
+
+Test 2:
+if 'curr moves2 cost' + 'adj reach cost' < 'curr reach cost'
+
+Cases?
+    'curr reach cost' == 0
+        MUST NOT update
+    'adj reach cost' == 0
+        MUST update
+
+When?
+    'curr reach cost' == 0
+        when evaluating the source map grid cell
+    'adj reach cost' == 0
+        when evaluating cells adjacent to the source map grid cell
+
+Debug?
+    adjacent_reach_cost
+        if 0, then adjacent is source map grid cell
+    current_reach_cost
+        if 0, then current is source map grid cell
+So, ...
+    if adjacent_reach_cost == 0
+        new_reach_cost = adjacent_reach_cost + move_cost;   0 + {0,1,2,3,4,5,6, ...}
+            if new_reach_cost >= 0
+                current_reach_cost = -1
+                    if new_reach_cost < current_reach_cost
+                        !(0 < -1)
+                        !(0 < 0)
+    if current_reach_cost == 0
+        new_reach_cost = adjacent_reach_cost + move_cost;  -1 + {0,1,2,3,4,5,6, ...}
+            if new_reach_cost >= 0
+                current_reach_cost = 0
+                    if new_reach_cost < current_reach_cost
+                        {0, ...} < 0
+OON Problem?
+    if new_reach_cost < current_reach_cost fails on the -1 initialized value for cells adjacent to the source map grid cell
+Solutions?
+    cast -1 to unsigned so compare is against 255
+        janky?
+    treat initialization value as 255?
+        what happens to test #1?
+            always >= 0
+        something with switching test to subtraction?
+        something with testing ranges of values?
+            carry flag set if adding   128 + 128
+            carry flag set if adding  -128 + 
+Meh. FTW.
+    just test for -1
+    
+
+
+
+
+
+
+┼─────┼─────┼─────┼
+│     │     │     │
+┼─────┼─────┼─────┼
+│ r-1 │   r │     │
+┼─────┼─────┼─────┼
+│     │     │     │
+┼─────┼─────┼─────┼
+
+╟─────┼─ ... ─┼─────╢
+║     │  ...  │ r-1 ║
+╟─────┼─ ... ─┼─────╢
+║   r │  ...  │     ║
+╟─────┼─ ... ─┼─────╢
+║     │  ...  │     ║
+╟─────┼─ ... ─┼─────╢
+
+... ─┼─────╢ ╟─────┼─ ... 
+...  │ r-1 ║ ║     │  ... 
+... ─┼─────╢ ╟─────┼─ ... 
+...  │     ║ ║   r │  ... 
+... ─┼─────╢ ╟─────┼─ ... 
+...  │     ║ ║     │  ... 
+... ─┼─────╢ ╟─────┼─ ... 
+e.g.,
+r = (17 * 60) = 1020  x =  0, y = 17
+r - 1         = 1019  x = 59, y = 16
+
+
+╔═════╤═════╤═════╗
+║ -61 │ -60 │ -59 ║
+╟─────┼─────┼─────╢
+║ - 1 │   0 │ + 1 ║
+╟─────┼─────┼─────╢
+║ +59 │ +60 │ +61 ║
+╚═════╧═════╧═════╝
+
+╔═╤═╤═╤═╤═╤═╤═╤═╤═╤═╤═╤═╗
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╟─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─┼─╢
+╚═╧═╧═╧═╧═╧═╧═╧═╧═╧═╧═╧═╝
+
+
+
+
+
+
+
+
 
 
 

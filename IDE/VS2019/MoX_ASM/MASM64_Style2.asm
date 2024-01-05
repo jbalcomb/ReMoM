@@ -1,6 +1,0 @@
-
-.data
-
-.code
-
-END

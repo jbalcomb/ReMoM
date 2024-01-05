@@ -6356,7 +6356,7 @@ Prep_Road_Path:
 Prep_Move_Path:
 {
 
-    movepath_length = STK_GetPath__WIP(
+    movepath_length = Make_Move_Path(
         movement_mode_flags[0],
         movement_mode_flags[1],
         movement_mode_flags[2],
@@ -6378,28 +6378,28 @@ Prep_Move_Path:
         player_idx
     );
 
-    // HACK: 
-    movepath_length = 1;
-    OVL_Path_Costs[0] = 1;
-    // MovePath_X[0] = unit_x;
-    // MovePath_Y[0] = unit_y;
-    // MovePath_X[1] = destination_x;
-    // MovePath_Y[1] = destination_y;
-    MovePath_X[0] = destination_x;
-    MovePath_Y[0] = destination_y;
+// DELETE    // HACK: 
+// DELETE    movepath_length = 1;
+// DELETE    OVL_Path_Costs[0] = 1;
+// DELETE    // MovePath_X[0] = unit_x;
+// DELETE    // MovePath_Y[0] = unit_y;
+// DELETE    // MovePath_X[1] = destination_x;
+// DELETE    // MovePath_Y[1] = destination_y;
+// DELETE    MovePath_X[0] = destination_x;
+// DELETE    MovePath_Y[0] = destination_y;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: movepath_length: %d\n", __FILE__, __LINE__, movepath_length);
 #endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: OVL_Path_Costs[0]: %d\n", __FILE__, __LINE__, OVL_Path_Costs[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_X[1]: %d\n", __FILE__, __LINE__, MovePath_X[1]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[1]: %d\n", __FILE__, __LINE__, MovePath_Y[1]);
-    dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-    dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-#endif
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: OVL_Path_Costs[0]: %d\n", __FILE__, __LINE__, OVL_Path_Costs[0]);
+// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
+// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
+// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_X[1]: %d\n", __FILE__, __LINE__, MovePath_X[1]);
+// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[1]: %d\n", __FILE__, __LINE__, MovePath_Y[1]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
+// DELETE  #endif
 
     goto Start_Path;
 
@@ -6418,7 +6418,7 @@ Start_Path:
     //TODO  OVL_SWardTriggered = ST_FALSE;
 
 
-// TODO     STK_EvaluatePath__WIP(
+// TODO     Eval_Move_Path(
 // TODO         player_idx,
 // TODO         &movepath_x_array[2],
 // TODO         &movepath_y_array[2],
@@ -6438,7 +6438,8 @@ Start_Path:
     Total_Move_Cost = 0;
     for(itr_Path_Length = 0; itr_Path_Length < movepath_length; itr_Path_Length++)
     {
-        Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
+// DELETE          Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
+        Total_Move_Cost += movepath_cost_array[itr_Path_Length];
     }
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
@@ -6451,8 +6452,10 @@ Start_Path:
     }
     else
     {
-        OVL_Action_OriginX = MovePath_X[(movepath_length - 1)];
-        OVL_Action_OriginY = MovePath_Y[(movepath_length - 1)];
+// DELETE          OVL_Action_OriginX = MovePath_X[(movepath_length - 1)];
+// DELETE          OVL_Action_OriginY = MovePath_Y[(movepath_length - 1)];
+        OVL_Action_OriginX = movepath_x_array[(movepath_length - 1)];
+        OVL_Action_OriginY = movepath_y_array[(movepath_length - 1)];
     }
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginX: %d\n", __FILE__, __LINE__, OVL_Action_OriginX);
@@ -6666,7 +6669,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         for(itr_path_length = 0; (itr_path_length < movepath_length) && (display_moves == ST_FALSE); itr_path_length++)
         {
             // TODO  figure out the paths arrays  if(Check_Square_Scouted(OVL_Path_Xs[itr_path_length], OVL_Path_Ys[itr_path_length]) == ST_TRUE)
-            if(Check_Square_Scouted(MovePath_X[itr_path_length], MovePath_Y[itr_path_length], map_p) == ST_TRUE)
+// DELETE              if(Check_Square_Scouted(MovePath_X[itr_path_length], MovePath_Y[itr_path_length], map_p) == ST_TRUE)
+            if(Check_Square_Scouted(movepath_x_array[itr_path_length], movepath_y_array[itr_path_length], map_p) == ST_TRUE)
             {
                 display_moves = ST_TRUE;
             }
@@ -6767,8 +6771,12 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 // IDGI      // destination_y = Scd_Dst_Y[movepath_length];  // TODO  IDK_MovePath_DestinationY[] vs. OVL_Path_Ys[]
 // IDGI      destination_x = *(((uint8_t *)(&Scd_Dst_X)) + 1 + movepath_length);
 // IDGI      destination_y = *(((uint8_t *)(&Scd_Dst_Y)) + 1 + movepath_length);
-    destination_x = MovePath_X[(movepath_length - 1)];
-    destination_y = MovePath_Y[(movepath_length - 1)];
+
+// DELETE      destination_x = MovePath_X[(movepath_length - 1)];
+// DELETE      destination_y = MovePath_Y[(movepath_length - 1)];
+
+    destination_x = movepath_x_array[(1 + movepath_length)];
+    destination_y = movepath_y_array[(1 + movepath_length)];
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: destination_x: %d\n", __FILE__, __LINE__, destination_x);
     dbg_prn("DEBUG: [%s, %d]: destination_y: %d\n", __FILE__, __LINE__, destination_y);
@@ -6827,8 +6835,10 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++)
     {
-        curr_dst_wx = MovePath_X[itr_path_length];
-        curr_dst_wy = MovePath_Y[itr_path_length];
+// DELETE          curr_dst_wx = MovePath_X[itr_path_length];
+// DELETE          curr_dst_wy = MovePath_Y[itr_path_length];
+        curr_dst_wx = movepath_x_array[(2 + itr_path_length)];
+        curr_dst_wy = movepath_y_array[(2 + itr_path_length)];
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: curr_dst_wx: %d\n", __FILE__, __LINE__, curr_dst_wx);
     dbg_prn("DEBUG: [%s, %d]: curr_dst_wy: %d\n", __FILE__, __LINE__, curr_dst_wy);
@@ -7041,8 +7051,10 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         // ; returns the index of the unit that was spotted if any
         // TOOD  AI_ContactWizards(player_idx, unit_x, unit_y, map_p, scout_range);
 
-        curr_src_wx = MovePath_X[itr_path_length];
-        curr_src_wy = MovePath_Y[itr_path_length];
+// DELETE          curr_src_wx = MovePath_X[itr_path_length];
+// DELETE          curr_src_wy = MovePath_Y[itr_path_length];
+        curr_src_wx = movepath_x_array[itr_path_length];
+        curr_src_wy = movepath_y_array[itr_path_length];
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: curr_src_wx: %d\n", __FILE__, __LINE__, curr_src_wx);
     dbg_prn("DEBUG: [%s, %d]: curr_src_wy: %d\n", __FILE__, __LINE__, curr_src_wy);
@@ -7270,7 +7282,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             ptr_movepath_cost_map_moves2[((_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] = -1;
         }
     }
-    
+ 
 }
 
 

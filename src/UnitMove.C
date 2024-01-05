@@ -703,7 +703,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 /*
     populates movepath_cost_map path, x's, y's, and cost's
     returns path length
-    
+
     Return:
         int16_t movepath_length
             ¿ count of map sqaures from source to destion ?
@@ -721,7 +721,7 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     DEDUCE: ¿ the usage here, incrementing without initializing, is another clue that variables initialized to zero can/do get put in the Uninitialized Data Data Segment ?
 
 */
-int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
+int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
     int16_t ext_y2;
     int16_t ext_x2;
@@ -732,6 +732,8 @@ int16_t STK_GetPath__WIP(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t
     int16_t itr_wx;
     int16_t itr;  // _SI_
     int16_t path_length;  // _DI_
+    int16_t * ptr_reached_from;  // DNE in Dasm
+    int16_t reached_from;  // DNE in Dasm
 
     // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
@@ -808,8 +810,7 @@ Calc_Move_Path:
 // TODO          // else
 // TODO          // itr ext_y1 < ext_y2, 0 < ext_x1
 // TODO  
-// TODO          // Move_Path_Find_C(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
-// TODO          Move_Path_Find_ASM(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+// TODO          // Move_Path_Find(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
 // TODO  
 // TODO          path_length = 0;
 // TODO          dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
@@ -842,11 +843,12 @@ Calc_Move_Path:
     if(UU_flag == ST_FALSE)
     {
 
-        // Move_Path_Find_C(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
-        Move_Path_Find_ASM(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
+        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
 
         path_length = 0;
         dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
+        ptr_reached_from = &movepath_cost_map->Reach_From[dst_world_map_idx];
+        reached_from = *ptr_reached_from;
         while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
         {
             movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
@@ -864,8 +866,6 @@ Calc_Move_Path:
         }
 
     }
-    
-    // /* HACK: */ path_length = 0;
 
     Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
 
@@ -877,7 +877,7 @@ Calc_Move_Path:
 
     Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-
+}
 
     goto Done;
 

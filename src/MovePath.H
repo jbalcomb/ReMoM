@@ -69,8 +69,7 @@ struct s_MOVE_PATH
 */
 
 // drake178: Overland_Pathfinder()
-void Move_Path_Find_ASM(int16_t wx, int16_t wy, int8_t * movepath_cost_map);
-void Move_Path_Find_C(int16_t wx, int16_t wy, int8_t * movepath_cost_map);
+void Move_Path_Find(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_cost_map);
 
 
 
