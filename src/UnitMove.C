@@ -28,7 +28,6 @@ Elsewhere, ...
 #include "MovePath.H"
 
 
-
 /*
     WIZARDS.EXE  ovr071
 */
@@ -868,7 +867,16 @@ Calc_Move_Path:
     
     // /* HACK: */ path_length = 0;
 
-}
+    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+    // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
+    if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
+    {
+        // TODO  min 2 costs
+    }
+
+    Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+
 
 
     goto Done;
