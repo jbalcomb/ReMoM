@@ -748,6 +748,18 @@ SAMB_ptr p5_heroes;
 
 
 
+// WZD dseg:9284
+int16_t OVL_Action_Type;
+// WZD dseg:9286
+int16_t OVL_Action_Structure;
+
+
+
+
+
+
+
+
 // WZD dseg:92B0
 // drake178: G_TBL_CityscapeBldngs
 struct s_BLDG * G_TBL_CityscapeBldngs;
@@ -2138,7 +2150,8 @@ int16_t OVL_Action_XPos;
 
 // WZD dseg:C5DC                                                 ¿ BEGIN: Move_Stack() || UNITMOVE ?
 
-// WZD dseg:C5DC 00 00                                           OVL_SWardTriggered dw 0                 ; DATA XREF: Move_Stack+42Cw ...
+// WZD dseg:C5DC
+int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
 // drake178: set to the path tile before the last before moving units overland
@@ -2161,47 +2174,6 @@ int16_t OVL_Action_OriginX;
 // WZD dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Stack+50Dw
 // WZD dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Stack+507w
 
-// IDGI  // WZD dseg:C5F0
-// IDGI  /*
-// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
-// IDGI  */
-// IDGI  uint8_t OVL_Path_Costs[35];
-// IDGI  // WZD dseg:C5F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        
-// IDGI  // WZD dseg:C613 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_Cost_Array db 55h dup(0)
-// IDGI  // WZD dseg:C667 00                                              
-// IDGI  uint8_t IDK_MovePath_DestinationY[36];  // DATA XREF: OVL_MoveUnitStack+2C9r
-// IDGI  // WZD dseg:C668
-// IDGI  /*
-// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
-// IDGI  */
-// IDGI  // uint8_t OVL_Path_Ys[35];
-// IDGI  // WZD dseg:C68B 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_Y_Array db 55h dup(0)
-// IDGI  // WZD dseg:C6DF 00                                              
-// IDGI  uint8_t IDK_MovePath_DestinationX[36];  // DATA XREF: OVL_MoveUnitStack+2BEr
-// IDGI  // WZD dseg:C6E0
-// IDGI  /*
-// IDGI      Move_Stack() uses `mov al; cbw` so, definitely DB
-// IDGI  */
-// IDGI  // uint8_t OVL_Path_Xs[35];
-// IDGI  WZD dseg:C703 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Botched_X_Array db 55h dup(0)
-
-// DELETE  // WZD dseg:C5F0
-// DELETE  uint8_t OVL_Path_Costs[118];
-// DELETE  // WZD dseg:C666
-// DELETE  uint8_t Fst_Dst_Y;
-// DELETE  // WZD dseg:C667
-// DELETE  uint8_t Scd_Dst_Y;
-// DELETE  // WZD dseg:C668
-// DELETE  uint8_t MovePath_Y[118];
-// DELETE  // WZD dseg:C6DE
-// DELETE  uint8_t Fst_Dst_X;
-// DELETE  // WZD dseg:C6DF
-// DELETE  uint8_t Scd_Dst_X;
-// DELETE  // WZD dseg:C6E0
-// DELETE  uint8_t MovePath_X[118];
-// DELETE  // WZD dseg:C756
-// DELETE  uint8_t IDK_MovePath[62];
-
 // WZD dseg:C5F0
 int8_t movepath_cost_array[118];
 // WZD dseg:C666
@@ -2209,14 +2181,13 @@ int8_t movepath_y_array[120];
 // WZD dseg:C6DE
 int8_t movepath_x_array[120];
 
-
-
 // WZD dseg:C794 00                                              STK_HasNatureUnits db 0                 ; DATA XREF: CTY_CheckSpellWard:loc_7E798w ...
 // WZD dseg:C795 00                                              STK_HasSorceryUnits db 0                ; DATA XREF: CTY_CheckSpellWard+C3w
 // WZD dseg:C796 00                                              STK_HasChaosUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+121w ...
 // WZD dseg:C797 00                                              STK_HasLifeUnits db 0                   ; DATA XREF: CTY_CheckSpellWard+1A2w
 // WZD dseg:C798 00                                              STK_HasDeathUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+200w ...
 // WZD dseg:C799 00                                              UU_Global_Byte db 0
+// WZD dseg:C799 00                                              align 2
 
 // WZD dseg:C799                                                 ¿ END: Move_Stack() || UNITMOVE ?
 

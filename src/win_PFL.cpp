@@ -200,8 +200,8 @@ int Pump_Paints_Cnt = 0;
 
 void Pump_Events(void);
 void Pump_Paints(void);
-void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
-void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status);
+// DELETE  void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
+// DELETE  void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status);
 struct win32_window_dimension Get_Window_Dimensions(HWND Window);
 void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_320x200xXBGR);

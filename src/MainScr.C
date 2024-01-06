@@ -2780,7 +2780,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
             DLOG("(movement_points_available < 1)");
             for(itr_units = 0; itr_units < unit_array_count; itr_units++)
             {
-                if( (_UNITS[unit_array[itr_units]].Status & US_Ready) == 0)
+                if(_UNITS[unit_array[itr_units]].Status == US_Ready)
                 {
                     _UNITS[unit_array[itr_units]].Finished = ST_TRUE;
                     _UNITS[unit_array[itr_units]].Status = US_ReachedDest;
@@ -6288,7 +6288,7 @@ void UNIT_SetGlobalPath__STUB(int16_t unit_idx)
 
 // WZD o95p01
 // AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[])
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[])
 {
 
     int16_t boat_rider_array[9];
@@ -6317,11 +6317,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t itr_Path_Length;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, path_type = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p)\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, path_type, *map_x, *map_y, map_p, unit_array_count, &unit_array[0]);
-#endif
-
-    unit_idx = unit_array[0];
+    unit_idx = troops[0];
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
     UU_unit_wp = _UNITS[unit_idx].wp;
@@ -6331,7 +6327,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     Set_Draw_Active_Stack_Always();
     Reset_Map_Draw();
 
-    movement_points = Units_Moves(unit_array, unit_array_count);
+    movement_points = Units_Moves(troops, troop_count);
 
     if(movement_points < 1)
     {
@@ -6342,8 +6338,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     {
         movement_mode_flags[itr_eight] = 0;
     }
-    Army_Movement_Modes(&movement_mode_flags[0], unit_array, unit_array_count);
-    boat_rider_count = Army_Boat_Riders(unit_array_count, unit_array, &boat_rider_array[0]);
+    Army_Movement_Modes(&movement_mode_flags[0], troops, troop_count);
+    boat_rider_count = Army_Boat_Riders(troop_count, troops, &boat_rider_array[0]);
 
     switch(path_type) { case 0: { goto Prep_Move_Path; } break; case 1: { goto Start_Path; } break; case 2: { goto Prep_Road_Path; } break; case 3: { goto Prep_Move_Path; } break; default: { goto Start_Path; } break; }
 
@@ -6374,32 +6370,9 @@ Prep_Move_Path:
         1,
         movement_points,
         boat_rider_count,
-        unit_array_count,
+        troop_count,
         player_idx
     );
-
-// DELETE    // HACK: 
-// DELETE    movepath_length = 1;
-// DELETE    OVL_Path_Costs[0] = 1;
-// DELETE    // MovePath_X[0] = unit_x;
-// DELETE    // MovePath_Y[0] = unit_y;
-// DELETE    // MovePath_X[1] = destination_x;
-// DELETE    // MovePath_Y[1] = destination_y;
-// DELETE    MovePath_X[0] = destination_x;
-// DELETE    MovePath_Y[0] = destination_y;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: movepath_length: %d\n", __FILE__, __LINE__, movepath_length);
-#endif
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: OVL_Path_Costs[0]: %d\n", __FILE__, __LINE__, OVL_Path_Costs[0]);
-// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_X[1]: %d\n", __FILE__, __LINE__, MovePath_X[1]);
-// DELETE      // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[1]: %d\n", __FILE__, __LINE__, MovePath_Y[1]);
-// DELETE      dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-// DELETE      dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-// DELETE  #endif
 
     goto Start_Path;
 
@@ -6415,35 +6388,31 @@ Start_Path:
 
     Out_Of_Moves = ST_FALSE;
     attack_flag = ST_FALSE;
-    //TODO  OVL_SWardTriggered = ST_FALSE;
+    OVL_SWardTriggered = ST_FALSE;
 
 
-// TODO     Eval_Move_Path(
-// TODO         player_idx,
-// TODO         &movepath_x_array[2],
-// TODO         &movepath_y_array[2],
-// TODO         map_p,
-// TODO         &movepath_cost_array[0],
-// TODO         movement_points,
-// TODO         &atackee_idx,
-// TODO         &attack_flag,
-// TODO         &movepath_length,
-// TODO         &Out_Of_Moves,
-// TODO         unit_array,
-// TODO         unit_array_count
-// TODO     );
+    Eval_Move_Path__WIP(
+        player_idx,
+        &movepath_x_array[2],
+        &movepath_y_array[2],
+        map_p,
+        &movepath_cost_array[0],
+        movement_points,
+        &atackee_idx,
+        &attack_flag,
+        &movepath_length,
+        &Out_Of_Moves,
+        troops,
+        troop_count
+    );
 
 
     // ¿ accumulate path cost ?
     Total_Move_Cost = 0;
     for(itr_Path_Length = 0; itr_Path_Length < movepath_length; itr_Path_Length++)
     {
-// DELETE          Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
         Total_Move_Cost += movepath_cost_array[itr_Path_Length];
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
-#endif
 
     if(movepath_length <= 1)
     {
@@ -6452,15 +6421,9 @@ Start_Path:
     }
     else
     {
-// DELETE          OVL_Action_OriginX = MovePath_X[(movepath_length - 1)];
-// DELETE          OVL_Action_OriginY = MovePath_Y[(movepath_length - 1)];
         OVL_Action_OriginX = movepath_x_array[(movepath_length - 1)];
         OVL_Action_OriginY = movepath_y_array[(movepath_length - 1)];
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginX: %d\n", __FILE__, __LINE__, OVL_Action_OriginX);
-    dbg_prn("DEBUG: [%s, %d]: OVL_Action_OriginY: %d\n", __FILE__, __LINE__, OVL_Action_OriginY);
-#endif
 
     if(movepath_length <= 0)
     {
@@ -6469,14 +6432,14 @@ Start_Path:
     }
     else
     {
-        Move_Units_Draw(player_idx, map_p, movepath_length, map_x, map_y, unit_array, unit_array_count);
+        Move_Units_Draw(player_idx, map_p, movepath_length, map_x, map_y, troops, troop_count);
     }
 
     // BUGBUG  can't be get spell warded and also go into combat
-    // TODO  if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
-    // TODO  {
-    // TODO      OVL_SpellWardError();
-    // TODO  }
+    if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
+    {
+        // TODO  OVL_SpellWardError();
+    }
 
     if((attack_flag == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))
     {
@@ -6500,11 +6463,11 @@ End_Of_Moving:
     OVL_Action_XPos = -1;
     OVL_Action_YPos = -1;
 
-    Units_In_Tower(unit_array_count, unit_array, map_p);
+    Units_In_Tower(troop_count, troops, map_p);
 
-    for(itr_units = 0; itr_units < unit_array_count; itr_units++)
+    for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
-        unit_idx = unit_array[itr_units];
+        unit_idx = troops[itr_units];
         if(_UNITS[unit_idx].Rd_Constr_Left == 99)
         {
             _UNITS[unit_idx].Rd_Constr_Left = -1;
@@ -6569,7 +6532,7 @@ End_Of_Moving:
         }
     }
 
-    // TODO G_STK_SetPatrol(unit_array_count, unit_array);
+    // TODO G_STK_SetPatrol(troop_count, troops);
     
     Reset_Draw_Active_Stack();
 
@@ -6598,10 +6561,6 @@ Done_Return_TRUE:
 
 
 Done:
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, path_type = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p) { return_value = %d }\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, path_type, *map_x, *map_y, map_p, unit_array_count, &unit_array[0], return_value);
-#endif
 
     return return_value;
 }
@@ -7341,9 +7300,272 @@ int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boat_rid
 
 // WZD o97p01
 // STK_EvaluatePath()
-void STK_EvaluatePath__WIP(int16_t player_idx, int16_t* Xs, int16_t* Ys, int16_t Plane, int16_t* Costs, int16_t moves2, int16_t* Obst, int16_t* Cmbt, int16_t* Length, int16_t* Cmplt, int16_t unit_array[], int16_t unit_array_count)
+void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count)
 {
+    int16_t Units[9];
+    int16_t src_boatriders_count;
+    int16_t dst_boatriders_count;
+    int16_t Transport_Capacity;
+    int16_t Cant_Enter;
+    int16_t Path_Length_Copy;
+    int16_t Stop_Short;
+    int16_t Out_of_Moves_Value;
+    int16_t HMoves_Used;
+    int16_t lair_idx;
+    int16_t UU_Encounter;
+    int16_t UU_City;
+    int16_t UU_EnemyUnit;
+    int16_t city_idx;
+    int16_t Unit_Count;
+    int16_t unit_idx;
+    int16_t Move_Interrupted;
+    int16_t Path_Length;
+    int16_t Combat_Path_Value;
+    int16_t Obstacle_Value;
+    int16_t itr_Path_Length;  // _DI_
+    int16_t itr_troops;  // _SI_
 
+    Obstacle_Value = -1;
+    Combat_Path_Value = *attack_flag;
+    Path_Length = *path_length;
+    Out_of_Moves_Value = *Cmplt;
+    Path_Length_Copy = *path_length;
+
+    Obstacle_Value = -1;
+    Combat_Path_Value = *attack_flag;
+    Out_of_Moves_Value = *Cmplt;
+    Path_Length = Path_Length_Copy;
+
+    HMoves_Used = 0;
+    Move_Interrupted = 0;
+    for(itr_Path_Length = 0; ((itr_Path_Length < Path_Length) && (Move_Interrupted == ST_FALSE)); itr_Path_Length++)
+    {
+        HMoves_Used += mvpth_c[itr_Path_Length];
+        
+        if(HMoves_Used >= moves2)
+        {
+            Path_Length = (itr_Path_Length + 1);
+            Out_of_Moves_Value = ST_TRUE;
+            Combat_Path_Value = ST_FALSE;
+            Move_Interrupted = ST_TRUE;
+        }
+
+
+        lair_idx = Square_Has_Lair(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp);
+
+        if(lair_idx != ST_UNDEFINED)
+        {
+            Move_Interrupted = 1;
+            UU_Encounter = 1;
+            Out_of_Moves_Value = 0;
+            Path_Length = itr_Path_Length;
+            Path_Length = itr_Path_Length + 1;
+            Combat_Path_Value = 1;
+            OVL_Action_Type = 5;
+            OVL_Action_Structure = lair_idx;
+            Obstacle_Value = 5;
+            Out_of_Moves_Value = 0;
+
+            continue;
+        }
+
+
+        city_idx = Square_Has_City(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp);
+
+        if(city_idx != ST_UNDEFINED)
+        {
+            Cant_Enter = RP_CTY_CheckSpellWard__STUB(city_idx, &troop_count, &troops[0]);
+            if(Cant_Enter == ST_TRUE)
+            {
+                Move_Interrupted = 1;
+                Path_Length = itr_Path_Length;
+                UU_City = 1;
+                Out_of_Moves_Value = 0;
+            }
+            else
+            {
+                if(_CITIES[city_idx].owner_idx == player_idx)
+                {
+                    Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+                    if((troop_count + Unit_Count) > 9)
+                    {
+                        Move_Interrupted = 1;
+                        Path_Length = itr_Path_Length;
+                        Out_of_Moves_Value = 0;
+                    }
+
+                }
+                else
+                {
+                    Move_Interrupted = 1;
+                    Path_Length = itr_Path_Length;
+                    UU_City = 1;
+                    Out_of_Moves_Value = 0;
+                    Path_Length = (itr_Path_Length + 1);
+                    Combat_Path_Value = 1;
+                    Obstacle_Value = _CITIES[city_idx].owner_idx;
+                    OVL_Action_Structure = city_idx;
+                    OVL_Action_Type = 1;
+                    Out_of_Moves_Value = 0;
+                }
+
+            }
+
+            continue;
+        }
+
+
+        Enemy_Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+        if(Unit_Count > 0)
+        {
+            Move_Interrupted = 1;
+            UU_EnemyUnit = 1;
+            Out_of_Moves_Value = 0;
+            Path_Length = itr_Path_Length;
+            Path_Length = (itr_Path_Length + 1);
+            Out_of_Moves_Value = 0;
+            Combat_Path_Value = 1;
+            Obstacle_Value = Units[0];
+            OVL_Action_Type = 0;
+
+            continue;
+        }
+
+
+        Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+        if((troop_count + Unit_Count) > 9)
+        {
+            Move_Interrupted = 1;
+            Path_Length = itr_Path_Length;
+            Out_of_Moves_Value = 0;
+
+            continue;
+        }
+
+        if(Unit_Count > 0)
+        {
+            Transport_Capacity = 0;
+
+            for(itr_troops = 0; itr_troops < Unit_Count; itr_troops++)
+            {
+                if(_unit_type_table[_UNITS[Units[itr_troops]].type].Transport > 0)
+                {
+                    Transport_Capacity += _unit_type_table[_UNITS[Units[itr_troops]].type].Transport;
+                    Move_Interrupted = 1;
+                    Path_Length = (itr_Path_Length + 1);
+                    Out_of_Moves_Value = 0;
+                }
+            }
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                if(_unit_type_table[_UNITS[troops[itr_troops]].type].Transport > 0)
+                {
+                    Transport_Capacity += _unit_type_table[_UNITS[troops[itr_troops]].type].Transport;
+                    Move_Interrupted = 1;
+                    Path_Length = (itr_Path_Length + 1);
+                    Out_of_Moves_Value = 0;
+                }
+            }
+
+            if(
+                (Move_Interrupted == ST_TRUE) &&
+                (Transport_Capacity > 0)
+            )
+            {
+                dst_boatriders_count = Unit_Count;
+                for(itr_troops = 0; itr_troops < Unit_Count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[Units[itr_troops]].type > 34) ||  /* Chosen */
+                        (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        dst_boatriders_count--;
+                    }
+                }
+                src_boatriders_count = troop_count;
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[Units[itr_troops]].type > 34) ||  /* Chosen */
+                        (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        src_boatriders_count--;
+                    }
+                }
+
+                if((dst_boatriders_count + src_boatriders_count - 1) > Transport_Capacity)
+                {
+                    Path_Length = itr_Path_Length;                    
+                }
+                else
+                {
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+                        if(_unit_type_table[_UNITS[troops[itr_troops]].type].Transport < 0)
+                        {
+                            // DEPR:  ¿ empty macro ?
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+    }
+
+    /*
+        Cancel 'Go-To'
+    */
+    if(
+        (Out_of_Moves_Value == ST_FALSE) &&
+        (Move_Interrupted == ST_TRUE)
+    )
+    {
+        Stop_Short = ST_FALSE;
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            unit_idx = troops[itr_troops];
+            if(
+                (_UNITS[unit_idx].Status == US_GoingTo) &&
+                (player_idx == _human_player_idx)
+            )
+            {
+                if(Combat_Path_Value == ST_TRUE)
+                {
+                    Combat_Path_Value = ST_FALSE;
+                    Stop_Short = ST_TRUE;
+                }
+                _UNITS[unit_idx].Status = US_Ready;
+                _UNITS[unit_idx].dst_wx = 0;
+                _UNITS[unit_idx].dst_wy = 0;
+            }
+        }
+        if(Stop_Short = ST_TRUE)
+        {
+            Path_Length--;
+        }
+    }
+
+
+    *atackee_idx = Obstacle_Value;
+    *attack_flag = Combat_Path_Value;
+    *path_length = Path_Length;
+    *Cmplt = Out_of_Moves_Value;
 }
 
 
@@ -7443,55 +7665,54 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
 /*
     determines if Stack is prohibited from entering the City due to Spell Ward
     returns {ST_FALSE,ST_TRUE}
-*/
-int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
-{
-// Unused_Array= word ptr -1Ch
-// Cant_Enter= word ptr -0Ah
-// Retn_Value= word ptr -8
-// Unused_Local= word ptr -6
-// Stack_Size= word ptr -4
-// Unit_Owner= word ptr -2
-    int16_t city_has_spellward;
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
+Spell Ward:
+    "...magically prohibits creatures (whether friendly or enemy) summoned from the warded realm from entering the town."
+*/
+int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
+{
+    int16_t UU_troops[9];
+    int16_t Cant_Enter;
+    int16_t Retn_Value;
+    int16_t Unused_Local;
+    int16_t UU_l_troop_count;
+    int16_t UU_troops_owner_idx;
+    int16_t city_has_spellward;
+    int16_t * l_troop_count;  // _DI_
+    int16_t * l_troops;  // _SI_
+
+    l_troop_count = troop_count;
+    l_troops = troops;
 
     city_has_spellward = ST_FALSE;
 
+    UU_troops_owner_idx = _UNITS[l_troops[0]].owner_idx;
 
+    UU_l_troop_count = *l_troop_count;
 
-    // TODO  CTY_CheckSpellWard(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+    // IDGI  Cant_Enter = CTY_CheckSpellWard(city_idx, &UU_l_troop_count, l_troops, &UU_troop_count, &UU_troops[0]);
+    Cant_Enter = CTY_CheckSpellWard__STUB(city_idx, &UU_l_troop_count, l_troops);
 
-
-
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
-#endif
-
+    if(Cant_Enter == ST_TRUE)
+    {
+        OVL_SWardTriggered = ST_TRUE;
+        city_has_spellward = ST_TRUE;
+    }
+ 
     return city_has_spellward;
 }
 
 
 // WZD o97p06
 // drake178: CTY_CheckSpellWard()
-int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
 {
     int16_t city_has_spellward;
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
+
 
     city_has_spellward = ST_FALSE;
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
-#endif
+
     return city_has_spellward;
 }
 

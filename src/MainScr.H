@@ -520,7 +520,8 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
 */
 
 // WZD o97p01
-void STK_EvaluatePath__WIP(int16_t player_idx, int16_t *Xs, int16_t *Ys, int16_t Plane, int16_t *Costs, int16_t moves2, int16_t *Obst, int16_t *Cmbt, int16_t *Length, int16_t *Cmplt, int16_t unit_array[], int16_t unit_array_count);
+// drake178: STK_EvaluatePath()
+void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count);
 
 
 
