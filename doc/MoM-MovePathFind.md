@@ -3,6 +3,62 @@
 
 
 
+first block does each row of 60
+starting from the source row
+down through the last row of the world map
+
+second block does each row of 60
+starting from the source row
+up through the first row of the world map
+
+sets a flag if it changes any of the movepath reach costs
+does the whole thing all over again
+
+sets the Reach_Costs[] for the source map grid cell to 0
+this is what *causes* the whole map to descend towards the source
+
+first pass
+tests map grid cell west of the source
+movement cost is 1
+current reach cost is 255
+source adjacent reach cost is 0
+other 7 adjacent reach costs are 255
+updates the reach cost if the new is less than the current
+new reach cost is adjacent reach cost plus movement cost
+...0 + 1 < 255...
+compared to other 7?
+...255 + 1 >= 255
+
+movement cost is for the cell currently being checked
+so, it's the same in each test
+which means the different in the comparisons is just the adjacent reach cost
+
+how different when it comes back around for another pass?
+all the reach costs are set to 255
+so, why would it ever update any of the other cells?
+the only update that matters is the one that points it towards the source cell?
+
+how about from the perspective of the next row down?
+it has already updates the map grid cell west of the source grid cell
+now, the map grid cell south-west
+its second check is the map grid cell to its north, which is the same as west of the source map grid cell
+what does it see?
+adjacent reach cost of 1 - source's reach cost of 0 plus that cell's movement cost of 1
+so, it'll update - to 1 +
+its third check will be the source map grid cell to its north-east
+what does it see now?
+adjacent reach cost of 0
+so, it'll update again - to 0 +
+
+
+
+
+
+
+
+
+
+
 
 
 OVL_Path_Results.Reach_Costs

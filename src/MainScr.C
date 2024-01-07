@@ -6882,7 +6882,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
             Move_Stages = 5;  // MAP_HEIGHT / 2
         }
 
-        if(Move_Stages != 0)
+        if(Move_Stages == 0)
         {
             if(unit_pict_shift_sy > 0)
             {
@@ -7012,8 +7012,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
 // DELETE          curr_src_wx = MovePath_X[itr_path_length];
 // DELETE          curr_src_wy = MovePath_Y[itr_path_length];
-        curr_src_wx = movepath_x_array[itr_path_length];
-        curr_src_wy = movepath_y_array[itr_path_length];
+        curr_src_wx = movepath_x_array[(2 + itr_path_length)];
+        curr_src_wy = movepath_y_array[(2 + itr_path_length)];
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: curr_src_wx: %d\n", __FILE__, __LINE__, curr_src_wx);
     dbg_prn("DEBUG: [%s, %d]: curr_src_wy: %d\n", __FILE__, __LINE__, curr_src_wy);
@@ -7302,7 +7302,7 @@ int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boat_rid
 // STK_EvaluatePath()
 void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count)
 {
-    int16_t Units[9];
+    int16_t Units[9] = { 0xBBBB };
     int16_t src_boatriders_count;
     int16_t dst_boatriders_count;
     int16_t Transport_Capacity;
@@ -7587,7 +7587,7 @@ int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane)
 
     for(itr = 0; itr < _cities && square_has_city == ST_UNDEFINED; itr++)
     {
-        if( (_CITIES[itr].wp == map_plane) && (_CITIES[itr].wx = world_x) && (_CITIES[itr].wy == world_y) )
+        if( (_CITIES[itr].wp == map_plane) && (_CITIES[itr].wx == world_x) && (_CITIES[itr].wy == world_y) )
         {
             square_has_city = itr;
         }
