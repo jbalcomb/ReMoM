@@ -150,15 +150,15 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
 
 // WZD o140p08
 // drake178: WIZ_MatchGoldUpkeep()
-// WIZ_MatchGoldUpkeep()
+int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep);
 
 // WZD o140p09
 // drake178: WIZ_MatchManaUpkeep()
-// WIZ_MatchManaUpkeep()
+int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p10
 // drake178: WIZ_DisbandSummons()
-// WIZ_DisbandSummons()
+int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p11
 // drake178: WIZ_RemoveCEs()

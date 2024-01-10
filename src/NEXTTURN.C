@@ -1525,12 +1525,7 @@ void Players_Apply_Upkeeps__WIP(void)
     int16_t mana_upkeeps[6];
     int16_t gold_upkeeps[6];
     int16_t food_upkeep;
-
     int16_t itr;  // _DI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Apply_Upkeeps()\n", __FILE__, __LINE__);
-#endif
 
     for(itr = 0; itr < 6; itr++)
     {
@@ -1567,11 +1562,7 @@ void Players_Apply_Upkeeps__WIP(void)
             (itr == 0)
         )
         {
-        // TODO  gold_upkeeps[itr] = WIZ_MatchGoldUpkeep(itr, gold_upkeeps[itr]);
-            // ; attempts to disband non-hero, non-transport normal
-            // ; units until the gold upkeep matches or is less than
-            // ; the wizard's current gold
-            // ; inherits a severe BUG from UNIT_GetDependants
+            gold_upkeeps[itr] = WIZ_MatchGoldUpkeep(itr, gold_upkeeps[itr]);
         }
 
         _players[itr].gold_reserve = (_players[itr].gold_reserve - gold_upkeeps[itr]);
@@ -1588,12 +1579,7 @@ void Players_Apply_Upkeeps__WIP(void)
             (itr == 0)
         )
         {
-        // TODO  mana_upkeeps[itr] = WIZ_MatchManaUpkeep(itr, mana_upkeeps[itr]);
-            // ; attempts to remove unit enchantments, global
-            // ; enchantments, city enchantments, or summoned units
-            // ; until the mana upkeep matches or is less than the
-            // ; wizard's current mana
-            // ; inherits multiple BUGs from the subfunctions
+            mana_upkeeps[itr] = WIZ_MatchManaUpkeep__WIP(itr, mana_upkeeps[itr]);
         }
 
         _players[itr].mana_reserve = (_players[itr].mana_reserve - mana_upkeeps[itr]);
@@ -1604,10 +1590,6 @@ void Players_Apply_Upkeeps__WIP(void)
         }
 
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Players_Apply_Upkeeps()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1666,10 +1648,10 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
         )
         {
             MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
-            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 0;
             MSG_UnitLost_Count++;
         }
-        UNIT_MarkRemoved(itr_units, 0);
+        UNIT_MarkRemoved(itr_units, 1);
     }
 
 }
@@ -1677,15 +1659,194 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
 
 // WZD o140p08
 // drake178: WIZ_MatchGoldUpkeep()
-// WIZ_MatchGoldUpkeep()
+int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
+{
+    int16_t troops[9];
+    int16_t itr_troops;
+    int16_t troop_count;
+    int16_t unit_gold_upkeep;
+    int16_t itr_units;  // _SI_
+
+    for(itr_units = (_units - 1); ((itr_units > -1) && (_players[player_idx].gold_reserve < gold_upkeep)); itr_units--)
+    {
+        if(
+            (_UNITS[itr_units].owner_idx == player_idx) &&
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0) &&
+            (_UNITS[itr_units].type > ut_Chosen) &&
+            (_unit_type_table[_UNITS[itr_units].type].Transport == 0)
+        )
+        {
+            
+            unit_gold_upkeep = Unit_Gold_Upkeep(itr_units);
+
+            if(unit_gold_upkeep > 0)
+            {
+                gold_upkeep -= unit_gold_upkeep;
+
+                UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+
+                if(troop_count > 0)
+                {
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+
+                        gold_upkeep -= Unit_Gold_Upkeep(troops[itr_troops]);
+                        
+                        if(
+                            (MSG_UnitLost_Count < 20) &&
+                            (player_idx == HUMAN_PLAYER_IDX)
+                        )
+                        {
+                            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+                            MSG_UnitLost_Count++;
+                        }
+                        UNIT_MarkRemoved(troops[itr_troops], 0);
+                    }
+                }
+
+                if(
+                    (MSG_UnitLost_Count < 20) &&
+                    (player_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+                    MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                    MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 1;
+                    MSG_UnitLost_Count++;
+                }
+                UNIT_MarkRemoved(itr_units, 1);
+            }
+        }
+    }
+
+    return gold_upkeep;
+}
+
 
 // WZD o140p09
 // drake178: WIZ_MatchManaUpkeep()
-// WIZ_MatchManaUpkeep()
+int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
+{
+    int16_t Asset_Type;
+    int16_t Asset_Types_Checked;
+    int16_t mana_expense_type[4];
+    int16_t itr;
+
+    Asset_Types_Checked = 0;
+
+    for(itr = 0; itr < 4; itr++)
+    {
+        mana_expense_type[itr] = 0;
+    }
+
+    while((_players[player_idx].mana_reserve < mana_upkeep) && (Asset_Types_Checked < 4))
+    {
+        Asset_Types_Checked++;
+
+        Asset_Type = (Random(4) - 1);
+
+        while(mana_expense_type[Asset_Type] > 0)
+        {
+            Asset_Type = ((Asset_Type + 1) % 4);
+        }
+
+        switch(Asset_Type)
+        {
+            case 0:
+            {
+                // TODO  mana_upkeep = WIZ_RemoveUEs(player_idx, mana_upkeep);
+                mana_expense_type[0] = 1;
+            } break;
+            case 1:
+            {
+                // TODO  mana_upkeep = WIZ_RemoveCEs(player_idx, mana_upkeep);
+                mana_expense_type[1] = 1;
+            } break;
+            case 2:
+            {
+                // TODO  mana_upkeep = WIZ_RemoveGEs(player_idx, mana_upkeep);
+                mana_expense_type[2] = 1;
+            } break;
+            case 3:
+            {
+                mana_upkeep = WIZ_DisbandSummons(player_idx, mana_upkeep);
+                mana_expense_type[3] = 1;
+            } break;
+        }
+    }
+
+    return mana_upkeep;
+}
+
 
 // WZD o140p10
 // drake178: WIZ_DisbandSummons()
-// WIZ_DisbandSummons()
+int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
+{
+    int16_t troops[9];
+    int16_t Channeler_Divisor;
+    int16_t itr_troops;
+    int16_t troop_count;
+    int16_t itr_units;  // _SI_
+
+    if(_players[player_idx].channeler <= 0)
+    {
+        Channeler_Divisor = 1;
+    }
+    else
+    {
+        Channeler_Divisor = 2;
+    }
+
+    for(itr_units = (_units - 1); ((itr_units > -1) && (_players[player_idx].mana_reserve < mana_upkeep)); itr_units--)
+    {
+        if(
+            (_UNITS[itr_units].owner_idx == player_idx) &&
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) != 0)
+        )
+        {
+            
+            mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
+
+            UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+
+            if(troop_count > 0)
+            {
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+
+                    mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
+                    
+                    if(
+                        (MSG_UnitLost_Count < 20) &&
+                        (player_idx == HUMAN_PLAYER_IDX)
+                    )
+                    {
+                        MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                        MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+                        MSG_UnitLost_Count++;
+                    }
+                    UNIT_MarkRemoved(troops[itr_troops], 0);
+                }
+            }
+
+            if(
+                (MSG_UnitLost_Count < 20) &&
+                (player_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+                MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 2;
+                MSG_UnitLost_Count++;
+            }
+            UNIT_MarkRemoved(itr_units, 1);
+            
+        }
+    }
+
+    return mana_upkeep;
+}
+
 
 // WZD o140p11
 // drake178: WIZ_RemoveCEs()
