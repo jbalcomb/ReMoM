@@ -1,5 +1,6 @@
 /*
     WIZARDS.EXE
+        ovr098
         ovr116
 */
 
@@ -11,6 +12,102 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+/*
+    WIZARDS.EXE  ovr098
+*/
+
+// WZD o98p01
+// drake178: CMB_CE_Refresh()
+// CMB_CE_Refresh()
+
+// WZD o98p02
+// drake178: BU_HasSpellAbility()
+// BU_HasSpellAbility()
+
+// WZD o98p03
+// drake178: sub_7EC81()
+// sub_7EC81()
+
+// WZD o98p04
+// drake178: AI_CMB_PlayTurn()
+// AI_CMB_PlayTurn()
+
+// WZD o98p05
+// drake178: CMB_ProgressTurnFlow()
+// CMB_ProgressTurnFlow()
+
+// WZD o98p06
+// drake178: WIZ_FleeCombat()
+// WIZ_FleeCombat()
+
+// WZD o98p07
+// drake178: TILE_HasCityOfPlayer()
+int16_t Player_City_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
+
+// WZD o98p08
+// drake178: TILE_FleeTo()
+// TILE_FleeTo()
+
+// WZD o98p09
+// drake178: TILE_MoveUnitTo()
+// TILE_MoveUnitTo()
+
+// WZD o98p10
+// drake178: CMB_SetActionCursor()
+// CMB_SetActionCursor()
+
+// WZD o98p11
+// drake178: BU_GetRangedCursor()
+// BU_GetRangedCursor()
+
+// WZD o98p12
+// drake178: CMB_CreateCELabels()
+// CMB_CreateCELabels()
+
+// WZD o98p13
+// drake178: BU_GetCmbtMoveType()
+// BU_GetCmbtMoveType()
+
+// WZD o98p14
+// drake178: UNIT_SummonToBattle()
+// UNIT_SummonToBattle()
+
+// WZD o98p15
+// drake178: BU_UnitLoadToBattle()
+// BU_UnitLoadToBattle()
+
+// WZD o98p16
+// drake178: CMB_Units_Init()
+// CMB_Units_Init()
+
+// WZD o98p17
+// drake178: BU_CheckFlight()
+// BU_CheckFlight()
+
+// WZD o98p18
+// drake178: BU_IsFlying()
+// BU_IsFlying()
+
+// WZD o98p19
+// drake178: BU_MeleeFlightCheck()
+// BU_MeleeFlightCheck()
+
+// WZD o98p20
+// drake178: BU_PrepMoveSound()
+// BU_PrepMoveSound()
+
+// WZD o98p21
+// drake178: G_CMB_Auto_OFF()
+// G_CMB_Auto_OFF()
+
+// WZD o98p22
+// drake178: STK_ComposeFleeLost()
+// STK_ComposeFleeLost()
+
+
 
 
 

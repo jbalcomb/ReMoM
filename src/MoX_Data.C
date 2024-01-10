@@ -403,6 +403,28 @@ char cnst_Nightshade[] = "Nightshade";
 
 
 
+// WZD dseg:2F8C
+char _msg_planar_seal_prevents[] = "Planar Seal prevents your units from changing planes.";
+// WZD dseg:2FC2
+char _msg_units_cant_planar_travel[] = "The selected units cannot Planar Travel at this location.";
+// WZD dseg:2FFC
+char _msg_city_cant_produce_1[] = "The";
+// WZD dseg:2FFF
+char _msg_city_cant_produce_4[] = " ";
+// WZD dseg:3001
+char _msg_city_cant_produce_2[] = " of ";
+// WZD dseg:3006
+char _msg_city_cant_produce_3[] = " can no longer produce ";
+// WZD dseg:301E
+char _msg_city_cant_produce_5[] = ".";
+// WZD dseg:3020
+char _msg_guardian_kills_spirit[] = "The Guardian Spirit occupying this node kills your spirit.";
+// WZD dseg:305B 00                                              align 2
+
+
+
+
+
 // WZD dseg:33B8
 // drake178: MoveFlag_Array
 // 01 00 20 00 40 00 04 00 02 00 08 00             
@@ -1599,6 +1621,7 @@ int8_t MSG_UnitLost_Count;
 
 // WZD dseg:9B96
 // drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
+struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
 
 // WZD dseg:9BE6
 // drake178: MSG_UnitKilled_Count
@@ -1744,7 +1767,7 @@ uint16_t grand_vizier;
 struct s_UNIT * _UNITS;
 
 // WZD dseg:9EC6
-SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
+struct s_INACTV_HERO * TBL_Hero_Names;
 
 // WZD dseg:9ECA
 struct s_WIZARD _players[6];

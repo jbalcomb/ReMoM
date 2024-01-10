@@ -45,7 +45,7 @@ events_table = (int16_t *)&TEST_SAVE_GAM[117588];
 TBL_Terrain_Flags = &TEST_SAVE_GAM[117688];
 grand_vizier = TEST_SAVE_GAM[122488];
 TBL_Premade_Items = &TEST_SAVE_GAM[122490];
-TBL_Hero_Names = &TEST_SAVE_GAM[122740];
+TBL_Hero_Names = (struct s_INACTV_HERO *)&TEST_SAVE_GAM[122740];
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: _num_players: %d\n", __FILE__, __LINE__, _num_players);

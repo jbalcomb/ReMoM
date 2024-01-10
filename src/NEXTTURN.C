@@ -136,7 +136,7 @@ void Next_Turn_Proc(void)
                             strcat(GUI_NearMsgString, temp_string);
                         }
                         strcat(GUI_NearMsgString, ".");
-                        // TODO  GUI_WarningType0(GUI_NearMsgString);
+                        Warn0(GUI_NearMsgString);
                     }
                 }
 
@@ -588,7 +588,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                 _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
                 _UNITS[_units].dst_wx = 0;
                 _UNITS[_units].dst_wy = 0;
-                _UNITS[_units].Status = 0;
+                _UNITS[_units].Status = US_Ready;
                 _UNITS[_units].Level = 0;
                 _UNITS[_units].XP = 0;
                 _UNITS[_units].Damage = 0;
@@ -633,7 +633,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
 
                     _UNITS[_units].Mutations = City_Best_Weapon(R_Param);
 
-                    if((_unit_type_table[unit_type].Abilities & 0x20) != 0)  /* Ab_CrOutpost */
+                    if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
                         _CITIES[R_Param].population -= 1;
                         if(_CITIES[R_Param].population == 0)
@@ -653,7 +653,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                                         if(itr == HUMAN_PLAYER_IDX)
                                         {
                                             LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);
-                                            // TODO  GUI_WarningType0(GUI_NearMsgString);
+                                            Warn0(GUI_NearMsgString);
                                             goto Done_Failure;
                                         }
                                     }
@@ -673,7 +673,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
 
                     if(
                         (_players[owner_idx].Globals[CHAOS_SURGE] > 0) &&
-                        ((_unit_type_table[unit_type].Abilities & 0x01) == 0)  /* attr_FantasticUnit */
+                        ((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) == 0)
                     )
                     {
                         // TODO  UNIT_ChaosChannel(_units);
@@ -1201,7 +1201,7 @@ void MSG_Clear(void)
 void CTY_ProdProgress(int16_t city_idx)
 {
     char city_name[20];
-    int16_t UU_garrison_units[9];
+    int16_t UU_garrison_units[9] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
     int16_t UU_garrison_count;
     int16_t curr_prod_cost;  // _SI_
 
@@ -1226,9 +1226,9 @@ void CTY_ProdProgress(int16_t city_idx)
                         city_idx
                     );
 
-                    // TODO  UNIT_RemoveExcess(_units - 1);
+                    UNIT_RemoveExcess((_units - 1));
 
-                    Units_At_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
+                    Army_At_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
 
                     if(
                         (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) ||
@@ -1252,7 +1252,7 @@ void CTY_ProdProgress(int16_t city_idx)
                         strcpy(city_name, _CITIES[city_idx].name);
                         strcat(GUI_NearMsgString, city_name);
                         strcat(GUI_NearMsgString, cnst_TooManyUnits);
-                        // TODO  GUI_WarningType0(GUI_NearMsgString);
+                        Warn0(GUI_NearMsgString);
 
                         if(
                             (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) &&

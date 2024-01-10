@@ -31,6 +31,7 @@
 #include "Help.H"
 #include "Init.H"
 #include "Input.H"
+#include "Items.H"
 #include "Keyboard.H"
 #include "Lair.H"
 #include "LBX_Load.H"
@@ -50,6 +51,7 @@
 #include "paragrph.H"
 #include "RACETYPE.H"
 #include "SCORE.H"      // Hall Of Fame (HoF)
+#include "SETTLE.H"
 #include "special.H"
 #include "Spellbook.H"
 #include "Terrain.H"
@@ -60,6 +62,7 @@
 #include "UNITTYPE.H"   // WTFMATE
 #include "Video.H"
 #include "Video2.H"
+#include "WZD_o059.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"

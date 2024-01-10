@@ -29,14 +29,13 @@
 
 // WZD o59p03
 // drake178: CTY_GetGarrison()
-void Units_At_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[])
+void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[])
 {
     int16_t itr;
-    int16_t count;
 
-    count = 0;
+    *troop_count = 0;
 
-    for(itr = 0; ((itr < _units) && (count < MAX_STACK)); itr++)
+    for(itr = 0; ((itr < _units) && (*troop_count < MAX_STACK)); itr++)
     {
         if(
             (_CITIES[city_idx].wp == _UNITS[itr].wp) &&
@@ -45,23 +44,21 @@ void Units_At_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[])
             (_CITIES[city_idx].owner_idx == _UNITS[itr].owner_idx)
         )
         {
-            unit_array[count] = itr;
-            count++;
+            troops[*troop_count] = itr;
+            *troop_count += 1;
         }
     }
 
-    *unit_count = count;
 }
 
 
 // WZD o59p04
 // drake178: TILE_GetUnitStack()
-void Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
+void Player_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[])
 {
     int16_t itr;
-    int16_t count;
 
-    count = 0;
+    *troop_count = 0;
 
     for(itr = 0; itr < _units; itr++)
     {
@@ -72,23 +69,21 @@ void Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int
             (_UNITS[itr].owner_idx == player_idx)
         )
         {
-            unit_array[count] = itr;
-            count++;
+            troops[*troop_count] = itr;
+            *troop_count += 1;
         }
     }
 
-    *unit_count = count;
 }
 
 
 // WZD o59p05
 // drake178: TILE_GetEnemyStack()
-void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[])
+void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[])
 {
     int16_t itr;
-    int16_t count;
 
-    count = 0;
+    *troop_count = 0;
 
     for(itr = 0; itr < _units; itr++)
     {
@@ -100,17 +95,38 @@ void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
             (_UNITS[itr].owner_idx != -1)
         )
         {
-            unit_array[count] = itr;
-            count++;
+            troops[*troop_count] = itr;
+            *troop_count += 1;
         }
     }
 
-    *unit_count = count;
 }
+
 
 // WZD o59p06
 // drake178: TILE_GetUnits_2()
-// TILE_GetUnits_2()
+void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
+{
+    int16_t itr;
+
+    *troop_count = 0;
+
+    for(itr = 0; ((itr < _units) && (*troop_count < MAX_STACK)); itr++)
+    {
+        if(
+            ((_UNITS[itr].wp == wp) || (_UNITS[itr].In_Tower == ST_TRUE)) &&
+            (_UNITS[itr].wx == wx) &&
+            (_UNITS[itr].wy == wy) &&
+            (_UNITS[itr].owner_idx != -1)
+        )
+        {
+            troops[*troop_count] = itr;
+            *troop_count += 1;
+        }
+    }
+
+}
+
 
 // WZD o59p07
 // drake178: CRP_TILE_GetUnits_2()
@@ -118,7 +134,7 @@ void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
 
 // WZD o59p08
 // drake178: sub_51F82()
-// sub_51F82()
+// UU_Army_At_Square_3()
 
 // WZD o59p09
 // drake178: STK_SettlingPossible()
@@ -139,25 +155,20 @@ void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
 
 // WZD o59p13
 // drake178: STK_CheckTower()
-void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p)
+void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
 {
     int16_t units_y;
     int16_t units_x;
     int16_t tower_idx;
     int16_t units_in_tower;
     int16_t unit_idx;
-
     int16_t itr_towers;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
-#endif
-
-    if(unit_array_count >= 1)
+    if(troop_count >= 1)
     {
-        units_x = _UNITS[unit_array[0]].wx;
-        units_y = _UNITS[unit_array[0]].wy;
+        units_x = _UNITS[troops[0]].wx;
+        units_y = _UNITS[troops[0]].wy;
         units_in_tower = ST_FALSE;
 
         for(itr_towers = 0; (itr_towers < NUM_TOWERS) && (units_in_tower == ST_FALSE); itr_towers++)
@@ -176,12 +187,12 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
 
         if(units_in_tower == ST_TRUE)
         {
-            for(itr_units = 0; itr_units < unit_array_count; itr_units++)
+            for(itr_units = 0; itr_units < troop_count; itr_units++)
             {
-                unit_idx = unit_array[itr_units];
+                unit_idx = troops[itr_units];
                 _UNITS[unit_idx].In_Tower = ST_TRUE;
             }
-            unit_idx = unit_array[0];
+            unit_idx = troops[0];
             _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
             if(_UNITS[unit_idx].owner_idx == _human_player_idx)
             {
@@ -191,9 +202,9 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
         }
         else
         {
-            for(itr_units = 0; itr_units < unit_array_count; itr_units++)
+            for(itr_units = 0; itr_units < troop_count; itr_units++)
             {
-                unit_idx = unit_array[itr_units];
+                unit_idx = troops[itr_units];
                 if(_UNITS[unit_idx].In_Tower == ST_TRUE)
                 {
                     _UNITS[unit_idx].In_Tower = ST_FALSE;
@@ -202,9 +213,6 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Units_In_Tower(unit_array_count = %d, &unit_array[0] = %p, map_p = %d)\n", __FILE__, __LINE__, unit_array_count, &unit_array[0], map_p);
-#endif
 }
 
 
@@ -350,7 +358,7 @@ void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16
                 if(Check_Planar_Seal() == ST_TRUE)
                 {
                     DLOG("(Check_Planar_Seal() == ST_TRUE)");
-                    // TODO GUI_WarningType0(aPlanarSealPrev);  // "Planar Seal prevents your units from changing planes."
+                    Warn0(_msg_planar_seal_prevents);  // "Planar Seal prevents your units from changing planes."
                     // curr_map_plane = orig_map_plane;
                     *map_plane = orig_map_plane;
                     stack_planar_travel = 99;  // ¿ `99` means 'Yay Planar Trav, Yay Planar Seal' ?
@@ -400,7 +408,7 @@ void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16
             DLOG("(stack_plane_shift == -2)");
             // curr_map_plane = orig_map_plane;
             *map_plane = orig_map_plane;
-            // TODO  GUI_WarningType0(aTheSelectedUni); // "The selected units cannot Planar Travel at this location."
+            Warn0(_msg_units_cant_planar_travel); // "The selected units cannot Planar Travel at this location."
         }
         else
         {
@@ -461,7 +469,7 @@ void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16
                     {
                         // curr_map_plane = orig_map_plane;
                         *map_plane = orig_map_plane;
-                        // TODO  GUI_WarningType0(aPlanarSealPrev);  // "Planar Seal prevents your units from changing planes."
+                        Warn0(_msg_planar_seal_prevents);  // "Planar Seal prevents your units from changing planes."
                     }
                 }
             }

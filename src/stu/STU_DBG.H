@@ -64,7 +64,7 @@ extern uint8_t * DBG_ORIG__world_maps;
 // WZD dseg:9EC2
 extern struct s_UNIT * DBG_ORIG__UNITS;
 // WZD dseg:9EC6
-extern SAMB_ptr DBG_ORIG_TBL_Hero_Names;
+extern struct s_INACTV_HERO * DBG_ORIG_TBL_Hero_Names;
 // WZD dseg:9ECA
 // extern struct s_WIZARD DBG_ORIG__players[];
 

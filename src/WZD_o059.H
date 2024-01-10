@@ -29,19 +29,19 @@ extern "C" {
 
 // WZD o59p03
 // drake178: CTY_GetGarrison()
-void Units_At_City(int16_t city_idx, int16_t * unit_count, int16_t unit_array[]);
+void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p04
 // drake178: TILE_GetUnitStack()
-void Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[]);
+void Player_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p05
 // drake178: TILE_GetEnemyStack()
-void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * unit_count, int16_t unit_array[]);
+void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p06
 // drake178: TILE_GetUnits_2()
-// TILE_GetUnits_2()
+void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p07
 // drake178: CRP_TILE_GetUnits_2()
@@ -49,7 +49,7 @@ void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
 
 // WZD o59p08
 // drake178: sub_51F82()
-// sub_51F82()
+// UU_Army_At_Square_3()
 
 // WZD o59p09
 // drake178: STK_SettlingPossible()
@@ -69,7 +69,7 @@ void Enemy_Units_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_id
 
 // WZD o59p13
 // drake178: STK_CheckTower()
-// ¿PRIVATE?  void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
+void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p);
 
 // WZD o59p14
 // drake178: GAME_InTowerRefresh()

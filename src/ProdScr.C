@@ -165,7 +165,7 @@ void Production_Screen(void)
 
     Calculate_Product_Array(_city_idx, &build_table_field_count, &G_CTY_ProducableCount2, &G_CTY_ProdUnitCount, &product_indexes[0]);
 
-    Units_At_City(_city_idx, &unit_array_count, unit_array);
+    Army_At_City(_city_idx, &unit_array_count, unit_array);
 
     garrison_full = ST_FALSE;
 

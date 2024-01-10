@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
     <ClInclude Include="..\..\..\src\Input.H" />
+    <ClInclude Include="..\..\..\src\Items.H" />
     <ClInclude Include="..\..\..\src\ItemView.H" />
     <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\..\..\src\Help.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
     <ClCompile Include="..\..\..\src\Input.C" />
+    <ClCompile Include="..\..\..\src\Items.C" />
     <ClCompile Include="..\..\..\src\ItemView.C" />
     <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
@@ -286,6 +288,7 @@
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
     <ClCompile Include="..\..\..\src\SCORE.C" />
+    <ClCompile Include="..\..\..\src\SETTLE.C" />
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
     <ClCompile Include="..\..\..\src\stu\STU_BMP.C" />

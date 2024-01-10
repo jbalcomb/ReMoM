@@ -69,7 +69,10 @@
 
 #define CITYX() ( _CITIES[city_idx].wx     )
 #define CITYY() ( _CITIES[city_idx].wy     )
-#define CITYP() ( _CITIES[city_idx].wp )
+#define CITYP() ( _CITIES[city_idx].wp     )
+#define UNITX() ( _UNITS[unit_idx].wx     )
+#define UNITY() ( _UNITS[unit_idx].wy     )
+#define UNITP() ( _UNITS[unit_idx].wp     )
 
 
 

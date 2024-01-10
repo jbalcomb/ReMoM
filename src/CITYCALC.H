@@ -66,7 +66,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p13
 // drake178: UNIT_MarkRemoved()
-// UNIT_MarkRemoved()
+void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type);
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()
@@ -74,7 +74,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p15
 // drake178: TILE_GetUnits()
-// TILE_GetUnits()
+void Army_At_Square_1(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o120p16
 // drake178: UU_WIZ_GetReligion()
@@ -106,15 +106,15 @@ int16_t Unit_Level(int16_t unit_idx);
 
 // WZD o120p24
 // drake178: UNIT_GetBaseLevel()
-// UNIT_GetBaseLevel()
+int16_t Unit_Base_Level(int16_t unit_idx);
 
 // WZD o120p25
 // drake178: UNIT_LoggedPushOff()
-// UNIT_LoggedPushOff()
+void UNIT_LoggedPushOff(int16_t unit_idx);
 
 // WZD o120p26
 // drake178: UNIT_RemoveExcess()
-// UNIT_RemoveExcess()
+void UNIT_RemoveExcess(int16_t unit_idx);
 
 
 

@@ -557,6 +557,18 @@ struct s_HIRED_HERO
     /* 1C */
 };
 
+// drake178: INACTV_HERO
+// sizeof:  10h  16d
+#pragma pack(push)
+#pragma pack(2)
+struct s_INACTV_HERO
+{
+    /* 00 */  char Name[20];
+    /* 0E */  int16_t XP;
+    /* 10 */
+};
+#pragma pack(pop)
+
 // sizeof:  32h  50d
 struct s_ITEM
 {
@@ -1379,6 +1391,18 @@ struct s_MSG_BUILDING_COMPLETE
 };
 #pragma pack(pop)
 
+// drake178: Unit_Lost_Msg_Item
+// sizeof:  04h  4d
+#pragma pack(push)
+#pragma pack(2)
+struct s_MSG_UNIT_LOST
+{
+    /* 00 */ int16_t Unit_Type;
+    /* 02 */ int8_t Cause;
+    /* 03 */ // 2-byte padding?  Unused_3h db ?
+    /* 04 */
+};
+#pragma pack(pop)
 
 
 
@@ -1576,6 +1600,28 @@ extern char cnst_Consecration[];
 extern char cnst_WallofDarkness[];
 // WZD dseg:2806
 extern char cnst_Nightshade[];
+
+
+
+
+
+// WZD dseg:2F8C
+extern char _msg_planar_seal_prevents[];
+// WZD dseg:2FC2
+extern char _msg_units_cant_planar_travel[];
+// WZD dseg:2FFC
+extern char _msg_city_cant_produce_1[];
+// WZD dseg:2FFF
+extern char _msg_city_cant_produce_4[];
+// WZD dseg:3001
+extern char _msg_city_cant_produce_2[];
+// WZD dseg:3006
+extern char _msg_city_cant_produce_3[];
+// WZD dseg:301E
+extern char _msg_city_cant_produce_5[];
+// WZD dseg:3020
+extern char _msg_guardian_kills_spirit[];
+// WZD dseg:305B 00                                              align 2
 
 
 
@@ -2738,6 +2784,7 @@ extern int8_t MSG_UnitLost_Count;
 
 // WZD dseg:9B96
 // drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
+extern struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
 
 // WZD dseg:9BE6
 // drake178: MSG_UnitKilled_Count
@@ -2881,7 +2928,8 @@ extern uint16_t grand_vizier;
 extern struct s_UNIT * _UNITS;
 
 // WZD dseg:9EC6
-extern SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
+extern struct s_INACTV_HERO * TBL_Hero_Names;
+
 // WZD dseg:9ECA
 // extern struct s_WIZARD _players[6];
 extern struct s_WIZARD _players[];

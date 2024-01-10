@@ -743,7 +743,81 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 
 // WZD o120p13
 // drake178: UNIT_MarkRemoved()
-// UNIT_MarkRemoved()
+void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
+{
+    int16_t itr;
+    int16_t unit_owner_idx;
+
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
+
+    if(
+        (Rmv_Type == 1) ||
+        (_UNITS[unit_idx].type == ut_Chosen)
+    )
+    {
+        _UNITS[unit_idx].Finished = ST_TRUE;
+
+        if(_UNITS[unit_idx].Hero_Slot > -1)
+        {
+            for(itr = 0; itr < 3; itr++)
+            {
+                if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                {
+                    ITEM_DeleteValue(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
+                }
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = -1;
+            }
+
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Unit_Index = -1;
+
+            p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+
+            if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+            {
+                TBL_Hero_Names[_UNITS[unit_idx].type].XP = _UNITS[unit_idx].XP;
+                // TODO  String_Copy_Far(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+                strcpy(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+            }
+        }
+    }
+    else
+    {
+        _UNITS[unit_idx].Finished = ST_TRUE;
+
+        if(_UNITS[unit_idx].Hero_Slot > -1)
+        {
+            for(itr = 0; itr < 3; itr++)
+            {
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = -1;
+            }
+
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Unit_Index = -1;
+
+            if(Rmv_Type != 2)
+            {
+                if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    TBL_Hero_Names[_UNITS[unit_idx].type].XP = _UNITS[unit_idx].XP;
+                    // TODO  String_Copy_Far(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+                    strcpy(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+                }
+
+                p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+            }
+            else
+            {
+                p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = -20;
+            }
+        }
+    }
+
+    _UNITS[unit_idx].owner_idx = -1;
+
+    _UNITS[unit_idx].wp = -1;
+}
+
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()
@@ -751,7 +825,33 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 
 // WZD o120p15
 // drake178: TILE_GetUnits()
-// TILE_GetUnits()
+/*
+    in_out of count and array of units
+    same wx, wy, wp
+    no Towers
+    not Disbanded/Dead
+*/
+void Army_At_Square_1(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
+{
+    int16_t itr_units;  // _DX_
+
+    *troop_count = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(
+            (_UNITS[itr_units].wx == wx) &&
+            (_UNITS[itr_units].wy == wy) &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&
+            (_UNITS[itr_units].wp == wp)
+        )
+        {
+            troops[*troop_count] = itr_units;
+            *troop_count += 1;
+        }
+    }
+}
+
 
 // WZD o120p16
 // drake178: UU_WIZ_GetReligion()
@@ -1228,20 +1328,148 @@ int16_t Unit_Level(int16_t unit_idx)
 
 // WZD o120p24
 // drake178: UNIT_GetBaseLevel()
-// UNIT_GetBaseLevel()
+int16_t Unit_Base_Level(int16_t unit_idx)
+{
+    int16_t level;  // _DI_
+    int16_t itr;  // _DX_
+
+    level = _UNITS[unit_idx].Level;
+
+    // *(spell_data_table + 0x1C64)
+    // WZD dseg:912C
+    // byte spell_data_table[215][36]
+    // 1C64h  7268d
+    // 201 * 36 = 7236
+    // 7268 - 7236 = 32d  20h
+    // ¿ s_SPELL_DATA.Param0 ?  ; unit type, base damage, UE flag, or CE index
+    if(_UNITS[unit_idx].type < spell_data_table[201].Param0)
+    {
+        for(itr = 0; itr < 4; itr++)
+        {
+            if(_UNITS[unit_idx].XP >= TBL_Experience[itr])
+            {
+                level = itr;
+            }
+        }
+
+        if(_UNITS[unit_idx].Hero_Slot <= -1)
+        {
+            if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
+            {
+                _UNITS[unit_idx].XP = TBL_Experience[UL_ELITE];
+            }
+        }
+        else
+        {
+            for(itr = 4; itr < 9; itr++)
+            {
+                if(_UNITS[unit_idx].XP >= TBL_Experience[itr])
+                {
+                    level = itr;
+                }
+            }
+            if(_UNITS[unit_idx].XP >= TBL_Experience[HL_DEMIGOD])
+            {
+                _UNITS[unit_idx].XP = TBL_Experience[HL_DEMIGOD];
+            }
+        }
+
+
+    }
+
+    if(level > UNIT_LEVEL_MAX)
+    {
+        level = UNIT_LEVEL_MAX;
+    }
+
+    return level;
+}
+
 
 // WZD o120p25
 // drake178: UNIT_LoggedPushOff()
-// UNIT_LoggedPushOff()
+void UNIT_LoggedPushOff(int16_t unit_idx)
+{
+    int16_t flag;  // _DI_
+
+    if(_UNITS[unit_idx].owner_idx != HUMAN_PLAYER_IDX)
+    {
+        flag = ST_FALSE;
+    }
+    else
+    {
+        flag = ST_TRUE;
+    }
+    
+    UNIT_PushOffTile(unit_idx);
+
+    if(
+        (_UNITS[unit_idx].owner_idx == -1) &&
+        (flag == ST_TRUE) &&
+        (MSG_UnitLost_Count < 20)
+    )
+    {
+        MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[unit_idx].type;
+
+        MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 3;
+    }
+
+}
+
 
 // WZD o120p26
 // drake178: UNIT_RemoveExcess()
-// UNIT_RemoveExcess()
+void UNIT_RemoveExcess(int16_t unit_idx)
+{
+    int16_t troops[10] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
+    int16_t unit_wp;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t troop_count;
+    int16_t lowest_trooper_idx;
+    int16_t trooper_value;
+    int16_t lowest_trooper_value;
+    int16_t itr_troops;
+
+    lowest_trooper_idx = -999;
+    lowest_trooper_value = 999;
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+
+    Army_At_Square_1(UNITX(), UNITY(), UNITP(), &troop_count, &troops[0]);
+
+    if(troop_count > MAX_STACK)
+    {
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            trooper_value = Unit_Gold_Upkeep(troops[itr_troops]) + Unit_Mana_Upkeep(troops[itr_troops]);
+            trooper_value += _UNITS[troops[itr_troops]].Level;
+            if(trooper_value <= lowest_trooper_value)
+            {
+                lowest_trooper_value = trooper_value;
+                lowest_trooper_idx = troops[itr_troops];
+            }
+        }
+
+        if (_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_BANNER_COLOR_IDX)
+        {
+            UNIT_LoggedPushOff(lowest_trooper_idx);
+        }
+        else
+        {
+            UNIT_MarkRemoved(lowest_trooper_idx, 1);
+        }
+
+    }
+
+}
 
 
 
 /*
-    WIZARDS.EXE  ovr120
+    WIZARDS.EXE  ovr142
 */
 
 // WZD o142p01

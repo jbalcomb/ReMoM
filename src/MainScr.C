@@ -1393,7 +1393,7 @@ void Main_Screen(void)
 // DEMO                  // strcpy()
 // DEMO                  // strcat()
 // DEMO                  // strcat()
-// DEMO                  // GUI_WarningType0()
+// DEMO                  // Warn0()
 // DEMO                  // Set_Redraw_Function(Main_Screen_Draw, 1);
 // DEMO              }
 // DEMO              else
@@ -2634,7 +2634,7 @@ void Move_Stack_DirKey(int16_t movement_direction)
                     else
                     {
                         DLOG("( (_UNITS[_unit_stack[0].unit_idx].wp != _map_plane) && (_UNITS[_unit_stack[0].unit_idx].In_Tower != ST_TRUE) )");
-                        // TODO  GUI_WarningType0(cstrWarnNoPlaneMove);
+                        Warn0(cstrWarnNoPlaneMove);
                     }
                 }
             }
@@ -2882,7 +2882,7 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
                 (_UNITS[unit_array[itr_units]].wx == unit_wx) &&
                 (_UNITS[unit_array[itr_units]].wy == unit_wy) &&
                 (_UNITS[unit_array[itr_units]].Rd_Constr_Left == -1) &&
-                ((_UNITS[unit_array[itr_units]].Status & 0x03 /* US_GoingTo */) != 0) || (((_UNITS[unit_array[itr_units]].Status & 0x10 /* US_Move */) != 0)) &&
+                ((_UNITS[unit_array[itr_units]].Status == US_GoingTo) || (_UNITS[unit_array[itr_units]].Status == US_Move)) &&
                 (_UNITS[unit_array[itr_units]].Finished == ST_FALSE)
             )
             {
@@ -2902,7 +2902,7 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
                 (_UNITS[unit_array[itr_units]].Rd_Constr_Left == -1)
             )
             {
-                if( (_UNITS[unit_array[itr_units]].Status & 0x00 /* US_Ready */) != 0 )
+                if(_UNITS[unit_array[itr_units]].Status == US_Ready)
                 {
                     // HERE: unit status is NOT "NO ORDERS"  US_Ready
                     // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
@@ -2950,7 +2950,7 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t de
 // WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
 {
-    // Unused_Local= word ptr -10h
+    // DONT  int16_t UU_var8;
     int16_t next_unit_dst_wy;
     int16_t next_unit_dst_wx;
     int16_t next_unit_wy;
@@ -2959,12 +2959,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     int16_t Finished;
     int16_t next_unit_idx;
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p);
-#endif
-
-    // Unused_Local = 0;
+    // DONT  UU_var8 = 0;
     AllUnitsMoved = ST_FALSE;
     Finished = ST_FALSE;
 
@@ -2974,28 +2969,23 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     while(Finished == ST_FALSE)
     {
-        // CRP_OverlandVar_3 = 0;
+        // TODO  CRP_OverlandVar_3 = ST_FALSE;
 
         AllUnitsMoved = WIZ_NextUnit(player_idx, map_p);  // updates `_unit`
 
         if(AllUnitsMoved == ST_TRUE)
         {
-            DLOG("(AllUnitsMoved == ST_TRUE)");
             all_units_moved = ST_TRUE;
             OVL_StackHasPath = ST_FALSE;
             Finished = ST_TRUE;
         }
         else
         {
-            DLOG("(AllUnitsMoved != ST_TRUE)");
             next_unit_idx = _unit;  // just updated by WIZ_NextUnit()
             next_unit_wx = _UNITS[next_unit_idx].wx;
             next_unit_wy = _UNITS[next_unit_idx].wy;
-            Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
-            // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-            // ¿ this block is useless in that it gets redone / overlayed by the subsequent block below, because the flags are equivalent ?
+            Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
         }
-
 
         // HERE: Found a Unit;  `_unit` has been updated;  and ?
         if(Finished == ST_FALSE)
@@ -3005,35 +2995,31 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
             // HERE:  Nay AllUnitsMoved / Yay GotNextUnit;  To be sure, assume we're good, but undo if this Unit is *busy* with a 'GOTO'
             // if it does have a 'GOTO' and that 'GOTO' is actually for 'Build Road', do some 'Build Road' process (which appears to update the map views)
             // or, not quite? cause the conditions are ORs?
-            if( (_UNITS[_unit].Status & 0x03) != 0)  /* "GOTO"  US_GoingTo */
+            if(_UNITS[_unit].Status == US_GoingTo)
             {
-// TODO                  next_unit_dst_wx = _UNITS[_unit].dst_wx;
-// TODO                  next_unit_dst_wy = _UNITS[_unit].dst_wy;
-// TODO  
-// TODO                  // CRP_OverlandVar_3 = ST_TRUE;
-// TODO  
-// TODO                  // TODO  flip this logic around - it's actually just handling the end of the 'Go To' & 'Build Road'
-// TODO                  if(
-// TODO                      (_UNITS[_unit].wx != next_unit_dst_wx) ||
-// TODO                      (_UNITS[_unit].wy != next_unit_dst_wy) ||
-// TODO                      (_UNITS[_unit].Rd_Constr_Left != ST_UNDEFINED)
-// TODO                  )
-// TODO                  {
-// TODO                      Allocate_Reduced_Map();
-// TODO                      RdBd_UNIT_MoveStack_WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
-// TODO                      Allocate_Reduced_Map();
-// TODO                  }
-// TODO                  else
-// TODO                  {
-// TODO                      _UNITS[_unit].Status = 0x00;  /* US_Ready  "NO ORDERS"*/
-// TODO                  }
-// TODO  
-// TODO                  Finished = ST_FALSE;
-                // HACK: 
-                _UNITS[_unit].Status = 0x00;  /* US_Ready  "NO ORDERS"*/
-                _UNITS[_unit].dst_wx = 0;
-                _UNITS[_unit].dst_wy = 0;
-                _UNITS[_unit].Rd_Constr_Left = ST_UNDEFINED;
+                next_unit_dst_wx = _UNITS[_unit].dst_wx;
+                next_unit_dst_wy = _UNITS[_unit].dst_wy;
+
+                // TODO  CRP_OverlandVar_3 = ST_TRUE;
+
+                // handling the end of the 'Go To' & 'Build Road'
+                if(
+                    (_UNITS[_unit].wx == next_unit_dst_wx) &&
+                    (_UNITS[_unit].wy == next_unit_dst_wy) &&
+                    (_UNITS[_unit].Rd_Constr_Left == ST_UNDEFINED)
+                )
+                {
+                    _UNITS[_unit].Status = US_Ready;
+                }
+                else
+                {
+                    // TODO  Allocate_Reduced_Map();
+                    // TODO  RdBd_UNIT_MoveStack_WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
+                    // TODO  Allocate_Reduced_Map();
+                    _UNITS[_unit].Status = US_Ready;
+                }
+
+                Finished = ST_FALSE;
             }
         }
 
@@ -3043,31 +3029,20 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     if(all_units_moved == ST_FALSE)
     {
-        DLOG("(all_units_moved == ST_FALSE)");
         next_unit_idx = _unit;
         next_unit_wx = _UNITS[next_unit_idx].wx;
         next_unit_wy = _UNITS[next_unit_idx].wy;
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
         // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Select_Unit_Stack() ... _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
     }
     else
     {
-        DLOG("(all_units_moved == ST_TRUE)");
         _unit_stack_count = 0;
         Set_Draw_Active_Stack_Always();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
     }
 
-
-    // OVL_MapVar3 = ST_TRUE;
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p);
-#endif
+    // TODO  OVL_MapVar3 = ST_TRUE;
 
 }
 
@@ -3084,7 +3059,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 */
 int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 {
-    int16_t Unused_Local;
+    int16_t UU_var11;
     int16_t tried_other_plane;
     int16_t itr_wait_units;
     int16_t Closest_Active_Unit;
@@ -3095,13 +3070,7 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
     int16_t delta;
     int16_t Return_Value;
     int16_t Finished;
-
     int16_t current_world_plane;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextUnit(player_idx = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_plane);
-#endif
-
 
     current_world_plane = *map_plane;
 
@@ -3112,7 +3081,8 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
 
     tried_other_plane = ST_FALSE;
 
-    Unused_Local = ST_UNDEFINED;
+    UU_var11 = ST_UNDEFINED;
+
     Return_Value = ST_FALSE;
 
     Finished = ST_FALSE;
@@ -3123,17 +3093,18 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
         if(
             (_UNITS[itr_units].owner_idx == player_idx) &&
             ( (_UNITS[itr_units].wp == current_world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) ) &&
-            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&  /* ¿ not dead / disbanded / banished / unsommoned ? */
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&  /* ¿ not dead / disbanded / banished / unsummoned ? */
             (_UNITS[itr_units].Finished == ST_FALSE)
         )
         {
             // TODO  figure out how to deal with delta being 0 for the previously select stack that set _active_world_x,y
             delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].wx, _UNITS[itr_units].wy, WORLD_WIDTH);
 
-            if( (_UNITS[itr_units].Status & 0x05) != 0)  /* US_Wait */
+            if(_UNITS[itr_units].Status == US_Wait)
             {
                 if(Closest_Waiting_Dist > delta)
                 {
+                    // HACK:  bjorked delta == 0
                     if(delta != 0)
                     {
                         Closest_Waiting_Dist = delta;
@@ -3143,10 +3114,11 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
             }
             else
             {
-                if( ((_UNITS[itr_units].Status & 0x08) == 0) /* US_Purify */ && ((_UNITS[itr_units].Status & 0x64) == 0) /* US_Unkown_100 */ )
+                if((_UNITS[itr_units].Status != US_Purify) && (_UNITS[itr_units].Status != US_Unknown_100))
                 {
                     if(Closest_Active_Dist > delta)
                     {
+                        // HACK:  bjorked delta == 0
                         if(delta != 0)
                         {
                             Closest_Active_Dist = delta;
@@ -3164,19 +3136,15 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
             if(Closest_Active_Unit != ST_UNDEFINED)
             {
                 Finished = ST_TRUE;
+                
                 if(current_world_plane == 2)
                 {
                     current_world_plane = 0;
                 }
+
                 *map_plane = current_world_plane;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: Closest_Active_Unit: %d\n", __FILE__, __LINE__, Closest_Active_Unit);
-#endif
+
                 _unit = Closest_Active_Unit;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
 
                 _active_world_x = _UNITS[_unit].wx;
                 _active_world_y = _UNITS[_unit].wy;
@@ -3187,25 +3155,23 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
                 {
                     current_world_plane = 0;
                 }
+
                 *map_plane = current_world_plane;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: Closest_Waiting_Unit: %d\n", __FILE__, __LINE__, Closest_Waiting_Unit);
-#endif
+
                 _unit = Closest_Waiting_Unit;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
+
                 Finished = ST_TRUE;
+                
                 _active_world_x = _UNITS[_unit].wx;
                 _active_world_y = _UNITS[_unit].wy;
+
                 for(itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
                 {
                     if(_UNITS[itr_wait_units].owner_idx == player_idx)
                     {
-                        if( (_UNITS[itr_wait_units].Status & 0x05) == 0)  /* US_Wait */
+                        if(_UNITS[itr_wait_units].Status == US_Wait)
                         {
-                            _UNITS[itr_wait_units].Status = 0x00;  /* US_Ready */
+                            _UNITS[itr_wait_units].Status = US_Ready;
                         }
                     }
                 }
@@ -3218,7 +3184,7 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
                 Closest_Waiting_Unit = ST_UNDEFINED;
                 Closest_Active_Dist = 1000;
                 Closest_Active_Unit = ST_UNDEFINED;
-                Unused_Local = ST_UNDEFINED;
+                UU_var11 = ST_UNDEFINED;
                 itr_units = 0;
             }
             else
@@ -3228,11 +3194,6 @@ int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
             }
         }
     }
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextUnit(player_idx = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_plane);
-#endif
 
     return Return_Value;
 }
@@ -4343,7 +4304,7 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
         goto Failure;
     }
 
-    Units_At_Square(wx, wy, wp, _human_player_idx, &unit_count, &unit_array[0]);
+    Player_Army_At_Square(wx, wy, wp, _human_player_idx, &unit_count, &unit_array[0]);
 
     if(unit_count >= 9)
     {
@@ -7100,7 +7061,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                 {
                     if(((_players[_UNITS[itr_units].owner_idx].Dipl.Visible_Rel[player_idx] + 100) / 20) <= 2)
                     {
-                        Units_At_Square(unit_wx, unit_wy, wp, _UNITS[itr_units].owner_idx, &checked_troop_count, &checked_troops[0]);
+                        Player_Army_At_Square(unit_wx, unit_wy, wp, _UNITS[itr_units].owner_idx, &checked_troop_count, &checked_troops[0]);
                         if(checked_troop_count > troop_count)
                         {
                             ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
@@ -7128,14 +7089,14 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         )
         {
             dst_troops_carry_capacity = 0;
-            Units_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+            Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
             for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
             {
                 dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
             }
             if(dst_troops_carry_capacity > 0)
             {
-                Units_At_Square(dst_wx, dst_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+                Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
                 checked_troops_boatriders_count = checked_troop_count;
                 for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
                 {
@@ -7169,7 +7130,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         }
         else
         {
-            Units_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+            Player_Army_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
         }
 
         if((checked_troop_count + troop_count) > 9)
@@ -7181,7 +7142,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             if(TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
             {
                 dst_troops_carry_capacity = 0;
-                Units_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+                Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
                 for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
                 {
                     dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
@@ -7386,7 +7347,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
             {
                 if(_CITIES[city_idx].owner_idx == player_idx)
                 {
-                    Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+                    Player_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
 
                     if((troop_count + Unit_Count) > 9)
                     {
@@ -7416,7 +7377,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         }
 
 
-        Enemy_Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+        Enemy_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
 
         if(Unit_Count > 0)
         {
@@ -7434,7 +7395,7 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         }
 
 
-        Units_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+        Player_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
 
         if((troop_count + Unit_Count) > 9)
         {
