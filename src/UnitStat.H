@@ -142,7 +142,9 @@ void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t 
 // sub_759DE
 
 // WZD o89p10
-// UNIT_GetDependants
+// drake178: UNIT_GetDependants()
+void UNIT_GetDependants(int16_t unit_idx, int16_t * troop_count, int16_t troops[]);
+
 
 
 #ifdef __cplusplus

@@ -2033,4 +2033,95 @@ void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t 
 // sub_759DE
 
 // WZD o89p10
-// UNIT_GetDependants
+// drake178: UNIT_GetDependants()
+/*
+    this function looks terribly broken in the Dasm
+    ¿ l_troop_count & l_troops should be troop_count & troops ?
+    ¿ Unit_Count should be troop_count ?
+    ¿ there should be a call out to populate l_troop_count & l_troops ?
+    ¿ Unit_Count should be initialized ?
+
+*/
+void UNIT_GetDependants(int16_t unit_idx, int16_t * troop_count, int16_t troops[])
+{
+    int16_t l_troops[9];
+    int16_t l_troop_count;
+    int16_t Have_Dependants;
+    int16_t Windwalking_Unit;
+    int16_t Stack_Has_WW;
+    int16_t On_Ocean_Tile;
+    int16_t Unit_Count;
+    int16_t itr_Unit_Count;  // _SI_
+
+    l_troop_count = 0;
+
+    *troop_count = 0;
+
+    if(_UNITS[unit_idx].owner_idx != -1)
+    {
+        Have_Dependants = ST_FALSE;
+
+        if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)  /* || (o71p08_Empty_pFxn(unit_idx) == ST_TRUE) */
+        {
+            On_Ocean_Tile = Terrain_Is_Sailable(UNITX(), UNITY(), UNITP());
+
+            if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+            {
+                On_Ocean_Tile = ST_FALSE;
+            }
+
+            if(On_Ocean_Tile == ST_TRUE)
+            {
+                Windwalking_Unit = ST_FALSE;
+
+                if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)  /* || (o71p08_Empty_pFxn(unit_idx) == ST_TRUE) */
+                {
+                    Windwalking_Unit = ST_TRUE;
+                }
+
+                Stack_Has_WW = ST_FALSE;
+
+                for(itr_Unit_Count = 0; itr_Unit_Count < Unit_Count; itr_Unit_Count++)
+                {
+                    if(l_troops[itr_Unit_Count] != unit_idx)
+                    {
+                        if(Unit_Has_WindWalking(l_troops[itr_Unit_Count]) == ST_TRUE)  /* || (o71p08_Empty_pFxn(l_troops[itr_Unit_Count]) == ST_TRUE) */
+                        {
+                            Stack_Has_WW = ST_TRUE;
+                        }
+                    }
+                }
+
+                if(
+                    (Stack_Has_WW != ST_FALSE) &&
+                    (Windwalking_Unit != ST_TRUE)
+                )
+                {
+                    Have_Dependants = ST_TRUE;
+                }
+
+
+            }
+        }
+
+        if(Have_Dependants == ST_TRUE)
+        {
+            for(itr_Unit_Count = 0; itr_Unit_Count < Unit_Count; itr_Unit_Count++)
+            {
+                if(
+                    (Unit_Has_AirTravel(l_troops[itr_Unit_Count]) != ST_TRUE) &&
+                    (Unit_Has_AirTravel_Item(l_troops[itr_Unit_Count]) != ST_TRUE) &&
+                    (Unit_Has_WaterTravel(l_troops[itr_Unit_Count]) != ST_TRUE) &&
+                    (Unit_Has_WaterTravel_Item(l_troops[itr_Unit_Count]) != ST_TRUE)
+                )
+                {
+                    troops[l_troop_count] = l_troops[itr_Unit_Count];
+                    l_troop_count++;
+                }
+            }
+        }
+
+        *troop_count = l_troop_count;
+    }
+
+}

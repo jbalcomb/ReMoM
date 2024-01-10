@@ -58,6 +58,7 @@
 #include "TerrType.H"
 #include "Timer.H"
 #include "UnitMove.H"   // WTFMATE
+#include "UnitStat.H"
 #include "UNITSTK.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "Video.H"

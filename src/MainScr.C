@@ -400,7 +400,7 @@ char hotkey_PlaneButton[] = "P";
 // WZD dseg:2E9C
 // aTurnsRemainingUntil db ' turns remaining until you may return.',0
 // WZD dseg:2EC3
-// aSomeUnitsDoNotHaveE db 'Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?',0
+char _msg_not_enough_food_units_will_die[] = "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?";
 // WZD dseg:2F42
 char cstrWarnNoPlaneMove[] = "The selected units cannot move on this plane.";
 // WZD dseg:2F70
@@ -958,9 +958,9 @@ void Main_Screen(void)
     int16_t hotkey_idx_RightUp;
     int16_t hotkey_idx_LeftUp;
     int16_t hotkey_idx_Up;
-    int16_t gold;
-    int16_t food;
-    int16_t mana;
+    int16_t eot_gold_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
+    int16_t eot_food;  // only used for 'Next Turn'; set by Player_Resource_Income_Total()
+    int16_t eot_mana_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
     int16_t hotkey_idx_Alt_N;
     int16_t hotkey_idx_Shift_3;
     int16_t hotkey_idx_Alt_K;
@@ -1003,27 +1003,6 @@ void Main_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
 #endif
 
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: MainScreen - InitialMapValues\n", __FILE__, __LINE__);
-//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-//         dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
-// #endif
-
-
-//     // HACK:
-//     _unit = 46;  // ¿ Where'd I get this _unit from or the x,y's ? 
-//     // Build_Unit_Stack(0, 0, 18, 17);
-//     Build_Unit_Stack(0, 0, _UNITS[_unit].wx, _UNITS[_unit].wy);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].active: %d\n", __FILE__, __LINE__, _unit_stack[0].active);
-// #endif
 
 
     // WZD main() |-> WZD_Load_Init_MainGame() |-> Main_Screen_Load_Pictures()
@@ -1059,9 +1038,6 @@ void Main_Screen(void)
     Reset_Map_Draw();
     MainScr_Prepare_Reduced_Map();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-    // // TEST
-    // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
-    // Validate_Entities_On_Movement_Map(_map_x, _map_y, _map_plane);
 
     // TODO  j_Set_Mouse_List_Default()        ; sets the Normal_Fullscreen window (GUI_SetWindows)
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
@@ -1077,11 +1053,9 @@ void Main_Screen(void)
 
     Set_Input_Delay(1);
 
-    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
+    Reset_Cycle_Palette_Color();
 
-    // TODO  Deactivate_Help_List();
     Deactivate_Help_List();
-    // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
     Set_Main_Screen_Help_List();
 
     // TODO  DBG_Alt_A__TurnCount = -1
@@ -1647,20 +1621,6 @@ void Main_Screen(void)
         // Next Turn Button ... and time-stuff ? end of turn wait ?
         // IDA: Main_Screen+AB0
         // @@Check_Input_NextTurnButton
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (input_field_idx == _next_turn_button): %d\n", __FILE__, __LINE__, (input_field_idx == _next_turn_button));
-    dbg_prn("DEBUG: [%s, %d]: ( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) ): %d\n", __FILE__, __LINE__, ( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) ));
-    dbg_prn("DEBUG: [%s, %d]: ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE)): %d\n", __FILE__, __LINE__, ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE)));
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _next_turn_button: %d\n", __FILE__, __LINE__, _next_turn_button);
-    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-    dbg_prn("DEBUG: [%s, %d]: g_TimeStop_PlayerNum: %d\n", __FILE__, __LINE__, g_TimeStop_PlayerNum);
-    dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
-    dbg_prn("DEBUG: [%s, %d]: IDK_EoT_flag: %d\n", __FILE__, __LINE__, IDK_EoT_flag);
-    dbg_prn("DEBUG: [%s, %d]: magic_set.EoT_Wait: %d\n", __FILE__, __LINE__, magic_set.EoT_Wait);
-    dbg_prn("DEBUG: [%s, %d]: Any_Units_Not_Busy(): %d\n", __FILE__, __LINE__, Any_Units_Not_Busy());
-#endif
 
         if(
             (input_field_idx == _next_turn_button) ||
@@ -1668,35 +1628,25 @@ void Main_Screen(void)
             ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
         )
         {
-            DLOG("(input_field_idx == _next_turn_button)");
+
             // TODO  SND_LeftClickSound();
 
-            // ; fills the return values with the player's gold, food, and mana incomes, positive or negative
-            Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: gold: %d\n", __FILE__, __LINE__, gold);
-    dbg_prn("DEBUG: [%s, %d]: food: %d\n", __FILE__, __LINE__, food);
-    dbg_prn("DEBUG: [%s, %d]: mana: %d\n", __FILE__, __LINE__, mana);
-#endif
+            Player_Resource_Income_Total(_human_player_idx, &eot_gold_nop, &eot_food, &eot_mana_nop);
 
             screen_changed = ST_TRUE;
 
-            if(food < 0)
+            if(eot_food < 0)
             {
-                DLOG("(food < 0)");
                 if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
                 {
-                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )");
                     if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
                     {
                         allow_units_to_die = ST_TRUE;
-                        DLOG("allow_units_to_die = ST_TRUE");
                     }
                     else
                     {
-                        if(food < 0)
+                        if(eot_food < 0)
                         {
-                            DLOG("(food < 0)");
                             // "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?"
                             //   [YES]  [NO]
                             // ; loads and displays the provided message in a
@@ -1704,55 +1654,38 @@ void Main_Screen(void)
                             // ; option buttons, and halting all other screen
                             // ; animation until a result is selected
                             // ; returns 1 if "Yes" is selected, or 0 otherwise
-                            // TODO  allow_units_to_die = GUI_Confirm_Dialog(aSomeUnitsDoNotHaveE);
-                            allow_units_to_die = ST_FALSE;
-                            DLOG("allow_units_to_die = ST_FALSE");
-                        }
-                        else
-                        {
-                            DLOG("(food >= 0)");
+                            allow_units_to_die = Confirmation_Box(_msg_not_enough_food_units_will_die);
                         }
                     }
 
                     if(allow_units_to_die != ST_TRUE)
                     {
-                        DLOG("(allow_units_to_die != ST_TRUE)");
                         IDK_EoT_flag = ST_TRUE;
                     }
                     else
                     {
-                        DLOG("(allow_units_to_die == ST_TRUE)");
-
                         leave_screen_flag = ST_UNDEFINED;
-
                         current_screen = ST_UNDEFINED;
                         Main_Screen_Draw();
                         Clear_Fields();
                         PageFlip_FX();
-                        // current_screen = scr_Next_Turn_Proc;
                         current_screen = scr_NextTurn;
                         IDK_EoT_flag = ST_FALSE;
                     }
                 }
                 else
                 {
-                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )");
                     IDK_EoT_flag = ST_TRUE;
-                    DLOG("IDK_EoT_flag = ST_TRUE");
                 }
-
             }
-            else
+            else  /* (eot_food >= 0) */
             {
-                DLOG("(food >= 0)");
                 current_screen = ST_UNDEFINED;
                 Main_Screen_Draw();
                 Clear_Fields();
                 PageFlip_FX();
-                // current_screen = scr_Next_Turn_Proc;
                 current_screen = scr_NextTurn;
                 IDK_EoT_flag = ST_FALSE;
-
                 leave_screen_flag = ST_UNDEFINED;
             }
 

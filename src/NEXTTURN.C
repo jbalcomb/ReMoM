@@ -1557,11 +1557,7 @@ void Players_Apply_Upkeeps__WIP(void)
             (itr == 0)
         )
         {
-        // TODO  WIZ_MatchFoodUpkeep(itr, excess_foods[itr], food_upkeep);
-            // ; attempts to disband non-hero, non-transport normal
-            // ; units until the food upkeep matches or is less than
-            // ; the food income
-            // ; inherits a severe BUG from UNIT_GetDependants
+            WIZ_MatchFoodUpkeep(itr, excess_foods[itr], food_upkeep);
         }
 
         gold_upkeeps[itr] = Player_Armies_Gold_Upkeep(itr);
@@ -1618,7 +1614,66 @@ void Players_Apply_Upkeeps__WIP(void)
 
 // WZD o140p07
 // drake178: WIZ_MatchFoodUpkeep()
-// WIZ_MatchFoodUpkeep()
+void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep)
+{
+    int16_t troops[9];
+    int16_t itr_troops;
+    int16_t troop_count;
+    int16_t itr_units;  // _SI_
+
+    for(itr_units = (_units - 1); ((itr_units > -1) && (food_upkeep > food_excess)); itr_units--)
+    {
+        if(
+            (_UNITS[itr_units].owner_idx == player_idx) &&
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0) &&
+            (_UNITS[itr_units].type > ut_Chosen) &&
+            (_unit_type_table[_UNITS[itr_units].type].Transport == 0)
+        )
+        {
+            food_upkeep--;
+
+            UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+
+            if(troop_count > 0)
+            {
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+                    if(
+                        ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0) &&
+                        (_UNITS[itr_units].type > ut_Chosen)
+                    )
+                    {
+                        food_upkeep--;
+
+                        if(
+                            (MSG_UnitLost_Count < 20) &&
+                            (player_idx == HUMAN_PLAYER_IDX)
+                        )
+                        {
+                            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+                            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+                            MSG_UnitLost_Count++;
+                        }
+                        UNIT_MarkRemoved(troops[itr_troops], 0);
+                    }
+                }
+            }
+        }
+
+        if(
+            (MSG_UnitLost_Count < 20) &&
+            (player_idx == HUMAN_PLAYER_IDX)
+        )
+        {
+            MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+            MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+            MSG_UnitLost_Count++;
+        }
+        UNIT_MarkRemoved(itr_units, 0);
+    }
+
+}
+
 
 // WZD o140p08
 // drake178: WIZ_MatchGoldUpkeep()

@@ -146,7 +146,7 @@ void Players_Apply_Upkeeps__WIP(void);
 
 // WZD o140p07
 // drake178: WIZ_MatchFoodUpkeep()
-// WIZ_MatchFoodUpkeep()
+void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep);
 
 // WZD o140p08
 // drake178: WIZ_MatchGoldUpkeep()
