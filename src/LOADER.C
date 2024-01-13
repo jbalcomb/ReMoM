@@ -255,7 +255,8 @@ void Load_WZD_Resources(void)
 // fxn_o52p12();
 // fxn_o52p14():
 // fxn_o52p15();
-// Load_SPELLDAT();  // ; loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
+
+    Load_SPELLDAT();  // loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
 
     Load_BUILDDAT();  // loads all records from BUILDDAT.LBX
 
@@ -1723,16 +1724,29 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
 #endif
 
-    _spellbook_small_seg = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);  // "SMLBOOK", ""
-    _spellbook_small_left_corner_seg = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);  // "BCORNERS", ""
-    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);  // "BCORNERS", ""
+    // SPECIAL2.LBX, 034  SMLBOOK
+    // SPECIAL2.LBX, 035  BCORNERS
+    // SPECIAL2.LBX, 036  BCORNERS
 
-    for(itr = 0; itr < 5; itr++)
+    _spellbook_small_seg              = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);
+    _spellbook_small_left_corner_seg  = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);
+    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);
+
+    // SPECIAL2.LBX, 037  BOOKSYMB
+    // SPECIAL2.LBX, 038  BOOKSYMB
+    // SPECIAL2.LBX, 039  BOOKSYMB
+    // SPECIAL2.LBX, 040  BOOKSYMB
+    // SPECIAL2.LBX, 041  BOOKSYMB
+    // SPECIAL2.LBX, 042  BOOKSYMB
+
+    for(itr = 0; itr <= 5; itr++)
     {
-        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);  // "BOOKSYMB", ""
+        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);
     }
 
-    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);  // "SMALTEXT", ""
+    // SPECIAL2.LBX, 043  SMALTEXT
+
+    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);

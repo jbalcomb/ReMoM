@@ -252,39 +252,61 @@ void Restore_Alias_Colors(void);
 // WZD s17p15
 // drake178: VGA_DrawFarString()
 // PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, char * string);
+// Print_Far()
 
+// WZD s17p16
+// VGA_DrawCenteredFar()
+// WZD s17p17
+// UU_VGA_DrawRtAlgFar()
+// WZD s17p18
+// VGA_WndDrawFarString()
+// WZD s17p19
+// UU_VGA_WndDrawCntrdFar()
+// WZD s17p20
+// UU_VGA_WndDrawRtAlgFar()
 
 // WZD s17p21
-// drake178: ?
 int16_t Print_Integer(int16_t x, int16_t y, int16_t val);
 
 // WZD s17p22
-// drake178: ?
 // int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
 
 // WZD s17p23
-// drake178: VGA_DrawRightAligned()
 int16_t Print_Right(int16_t x, int16_t y, char * string);
+
 // WZD s17p24
-// drake178: VGA_DrawCentered()
 int16_t Print_Centered(int16_t x, int16_t y, char * string);
+
 // WZD s17p25
-// drake178: VGA_DrawRtAlgNumber()
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
+
 // WZD s17p26
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
-
+// WZD s17p27
+// UU_Print_Long_Right()
+// WZD s17p28
+// VGA_WndDrawNumber()
+// WZD s17p29
+// UU_VGA_WndDrawLongN()
+// WZD s17p30
+// UU_VGA_WndDrawRtAligned()
+// WZD s17p31
+// VGA_WndDrawCentered()
+// WZD s17p32
+// UU_VGA_WndDrawRtAlgNum()
+// WZD s17p33
+// UU_VGA_WndDrawRtAlgLong()
 
 // WZD s17p34
 int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side);
 
 // WZD s17p35
-// drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string);
+
 // WZD s17p36
-// drake178: VGA_DrawStyledString()
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag);
+
 // WZD s17p37
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag);
 
@@ -301,17 +323,36 @@ void Set_Normal_Colors_On(void);
 // MoO2: Set_Highlight_Colors_On
 void Set_Highlight_Colors_On(void);
 
-
 // WZD s17p41
 // drake178: VGA_FontColor3Toggle
 // MoO2: Set_Special_Colors_On
 void Set_Special_Colors_On(void);
 
-
 // WZD s17p42
 // drake178: VGA_FontColorSelect()
 // MoO2: Set_Normal_Colors_On(); Set_Highlight_Colors_On(); Set_Special_Colors_On();
 void Set_Color_Set(int16_t color_set_idx);
+
+// WZD s17p43
+// RP_DBG_TblDrawValue()
+// WZD s17p44
+// UU_DBG_TblCellWrapper()
+// WZD s17p45
+// UU_DBG_TblDrawString()
+// WZD s17p46
+// UU_DBG_TblDrawS16()
+// WZD s17p47
+// UU_DBG_TblDrawS32()
+// WZD s17p48
+// UU_DBG_TblDrawU32()
+// WZD s17p49
+// DBG_DrawTableCell()
+// WZD s17p50
+// VGA_WndDrawSString()
+// WZD s17p51
+// VGA_WndDrawString()
+// WZD s17p52
+// VGA_WndDrawChar()
 
 // WZD s17p53
 int16_t Get_Current_Font_Index(void);
@@ -323,6 +364,39 @@ int16_t Get_Current_Font_Color(void);
 // WZD s17p56
 // Get_Font_Color3
 
+// WZD s17p57
+// UU_STR_CopyToNearLBX()
+// WZD s17p58
+// VGA_GetVertSpacing()
+// WZD s17p59
+// STR_TrimWhiteSpace()
+
+// WZD s17p60
+int16_t Print_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
+
+// WZD s17p61
+int16_t Print_Display_To_Bitmap(int16_t x, int16_t y, char * string, int16_t full_flag, SAMB_ptr bitmap);
+
+// WZD s17p62
+int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag, SAMB_ptr bitmap);
+
+// WZD s17p63
+int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
+
+// WZD s17p64
+// LBX_DrawCentered()
+// WZD s17p65
+// LBX_DrawJustified()
+// WZD s17p66
+// LBX_DrawFarString()
+// WZD s17p67
+// UU_LBX_DrawRtAlgFar()
+// WZD s17p68
+// UU_LBX_DrawCenteredFar()
+// WZD s17p69
+// UU_LBX_DrawJustifiedFar()
+
+
 
 /*
     WIZARDS.EXE  seg018
@@ -332,14 +406,19 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
 
 // WZD s18p02
 int16_t Print_Character(int16_t x, int16_t y, int16_t char_num);
+
 // WZD s18p03
 int16_t Print_Character_No_Alias(int16_t x, int16_t y, int16_t char_num);
+
 // WZD s18p04
-// LBX_DrawGlyph ? Print_Character_To_Bitmap() ?
+int16_t Print_Character_To_Bitmap(int16_t x, int16_t y, uint8_t char_num, SAMB_ptr bitmap);
+
 // WZD s18p05
 void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset);
+
 // WZD s18p06
 void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset);
+
 // WZD s18p07
 int16_t Get_String_Width(char * string);
 

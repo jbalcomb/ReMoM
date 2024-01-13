@@ -715,6 +715,8 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
 
     casting_skill = sqrt(_players[player_idx].Casting_Skill);
 
+    casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
+
     if(_players[player_idx].archmage > 0)
     {
         casting_skill += 10;
@@ -730,11 +732,133 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
 
 // WZD o121p03
 // drake178: WIZ_GetCastingCost()
-// WIZ_GetCastingCost()
+int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
+{
+    int16_t cast_cost_reduction;
+    int16_t Evil_Omens_Up;
+    int16_t itr_players;
+    int16_t casting_cost;  // _SI_
+
+    cast_cost_reduction = Casting_Cost_Reduction(player_idx, spell_idx);
+
+    casting_cost = spell_data_table[spell_idx].Casting_Cost;
+
+    if(
+        (spell_data_table[spell_idx].Realm == 0) || /* _Nature */
+        (spell_data_table[spell_idx].Realm == 3)  /* _Life */
+    )
+    {
+        Evil_Omens_Up = 0;
+
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            if(_players[itr_players].Globals[EVIL_OMENS] > 0)
+            {
+                Evil_Omens_Up = ST_TRUE;
+            }
+        }
+    }
+
+    if(Evil_Omens_Up == ST_TRUE)
+    {
+        casting_cost = ((casting_cost * 3) / 2);
+    }
+
+    // DEDUCE(JimBalcomb,20240112):  What's this about? I don't see where this 5x is covered in the manual.
+    if(
+        (
+            (spell_data_table[spell_idx].Eligibility == 0) ||
+            (spell_data_table[spell_idx].Eligibility == 2) ||
+            (spell_data_table[spell_idx].Eligibility == 3)
+        ) &&
+        combat_flag == ST_FALSE
+    )
+    {
+        casting_cost = (casting_cost * 5);
+    }
+
+    casting_cost = (casting_cost - ((casting_cost * cast_cost_reduction) / 100));
+
+    return casting_cost;
+}
+
 
 // WZD o121p04
 // drake178: WIZ_CastingCostBonus()
-// WIZ_CastingCostBonus()
+int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
+{
+    int16_t Spellbooks;
+    int16_t Over7_Books;
+    int16_t casting_cost_reduction;  // _CX_
+
+    casting_cost_reduction = 0;
+
+    if(spell_data_table[spell_idx].Realm == 5)  /* _Arcane */
+    {
+        Spellbooks = 0;
+    }
+    else
+    {
+        Spellbooks = _players[player_idx].spellranks[spell_data_table[spell_idx].Realm];
+    }
+
+    if(Spellbooks > 7)
+    {
+        Over7_Books = (Spellbooks - 7);
+        casting_cost_reduction = (Over7_Books * 10);
+    }
+
+    if(
+        (spell_data_table[spell_idx].Realm == 0) &&  /* _Nature */
+        (_players[player_idx].nature_mastery > 0)
+    )
+    {
+        casting_cost_reduction += 15;
+    }
+
+    if(
+        (spell_data_table[spell_idx].Realm == 1) &&  /* _Sorcery */
+        (_players[player_idx].sorcery_mastery > 0)
+    )
+    {
+        casting_cost_reduction += 15;
+    }
+
+    if(
+        (spell_data_table[spell_idx].Realm == 2) &&  /* _Chaos */
+        (_players[player_idx].chaos_mastery > 0)
+    )
+    {
+        casting_cost_reduction += 15;
+    }
+
+    if(
+        (_players[player_idx].artificer > 0) &&
+        (spell_data_table[spell_idx].Type == 11)  /* Crafting_Spell */
+    )
+    {
+        casting_cost_reduction += 50;
+    }
+
+    if(
+        (_players[player_idx].conjurer > 0) &&
+        (spell_data_table[spell_idx].Type == 0)  /* Summoning_Spell */
+    )
+    {
+        casting_cost_reduction += 25;
+    }
+
+    if(
+        (spell_data_table[spell_idx].Realm == 5) &&  /* _Arcane */
+        (_players[player_idx].runemaster > 0)
+    )
+    {
+        casting_cost_reduction += 25;
+    }
+
+    return casting_cost_reduction;
+}
+
 
 // WZD o121p05
 // drake178: WIZ_GetHeroCount()

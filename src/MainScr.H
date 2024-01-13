@@ -103,7 +103,7 @@ extern SAMB_ptr IMG_OVL_WildGame;                  // ; reserved EMM header poin
 // WZD dseg:CB68                                                                                         ; single-loaded image, called "mine" in the file
 
 // WZD dseg:CB6A
-SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM header pointer for a single image
+extern SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM header pointer for a single image
 
 // WZD dseg:CB6C 00 00                                           UU_IMG_OVL_Mud@ dw 0                    ; DATA XREF: Terrain_Init+1F6w
 // WZD dseg:CB6C                                                                                         ; reserved EMM header pointer (unused in the game?)
@@ -469,19 +469,34 @@ void Main_Screen_Draw_Movement_Bar();
 // WZD o64p02
 // void Allocate_Reduced_Map__2(void);
 void Allocate_Reduced_Map(void);  // called from GAME_Overland_Init()  <-|  WZD_Startup_MainGame()  <-|  _main()
+
 // WZD o64p03
 // AKA OVL_PrepMinimap()
 void MainScr_Prepare_Reduced_Map(void);
+
 // WZD o64p04
 // PRIVATE  void Main_Screen_Draw_Summary_Window(void);
+
 // WZD o64p05
 // PRIVATE  void Main_Screen_Draw_Next_Turn_Button(void);
+
+// WZD o64p06
+// drake178: OVL_DisableIncmBlink()
+void OVL_DisableIncmBlink(void);
+
+// WZD o64p07
+// drake178: OVL_EnableIncmBlink()
+void OVL_EnableIncmBlink(void);
+
 // WZD o64p08
 // PRIVATE  void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
+
 // WZD o64p09
 // PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
+
 // WZD o64p10
 // UNIT_SetGlobalPath()
+
 // WZD o64p11
 // OVL_DrawPath()
 

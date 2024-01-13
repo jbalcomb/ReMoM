@@ -372,6 +372,16 @@ void Restore_Alias_Colors(void)
 // PLATFORM  MSDOS  }
 
 
+// WZD s17p16
+// VGA_DrawCenteredFar()
+// WZD s17p17
+// UU_VGA_DrawRtAlgFar()
+// WZD s17p18
+// VGA_WndDrawFarString()
+// WZD s17p19
+// UU_VGA_WndDrawCntrdFar()
+// WZD s17p20
+// UU_VGA_WndDrawRtAlgFar()
 
 
 // WZD s17p21
@@ -462,7 +472,6 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 }
 
 
-
 // WZD s17p26
 // WZD s17p27
 // WZD s17p28
@@ -472,6 +481,21 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 // WZD s17p32
 // WZD s17p33
 
+
+// WZD s17p27
+// UU_Print_Long_Right()
+// WZD s17p28
+// VGA_WndDrawNumber()
+// WZD s17p29
+// UU_VGA_WndDrawLongN()
+// WZD s17p30
+// UU_VGA_WndDrawRtAligned()
+// WZD s17p31
+// VGA_WndDrawCentered()
+// WZD s17p32
+// UU_VGA_WndDrawRtAlgNum()
+// WZD s17p33
+// UU_VGA_WndDrawRtAlgLong()
 
 
 // WZD s17p34
@@ -510,78 +534,60 @@ int16_t Print(int16_t x, int16_t y, char * string)
 // drake178: VGA_DrawStyledString()
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 {
+    int16_t next_x;  // DNE in Dasm
     int16_t itr;
-    int16_t next_x;
     uint16_t outline_style;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
-// #endif
+    outline_style = FONT_GET_SHADOW_FLAG(font_style_data);
 
-    // // outline_style = farpeekb(font_style_data, FONT_HEADER_SHADOW_FLAG);
-    // outline_style = 0;  // ~None
-    outline_style = GET_1B_OFS(font_style_data, FONT_HDR_POS_SHADOW_FLAG);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: outline_style: %d\n", __FILE__, __LINE__, outline_style);
-// DELETE  #endif
-
-    if(outline_style != 0)  /* ¿ ST_NONE ? */
+    if(outline_style != 0)
     {
-        // DLOG("(outline_style != 0)");
         for(itr = 0; itr < 16; itr++)
         {
-            // farpokeb(font_style_data, itr, outline_color);
             SET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS + itr, outline_color);
         }
+
         draw_alias_flag = ST_TRUE;
         
         if(outline_style != 2) /* Shadow_TopLeft */
         {
-            // DLOG("(outline_style != 2)");
             Print_String(x + 1, y + 1, string, ST_FALSE, full_flag);  // overdraw right + botton
             Print_String(x    , y + 1, string, ST_FALSE, full_flag);  // overdraw bottom
             Print_String(x + 1, y    , string, ST_FALSE, full_flag);  // overdraw right
         }
+
         if( outline_style != 1 && outline_style != 3)  /* Shadow_BtmRight || Shadow_BtmRight_2px */
         {
-            // DLOG("( outline_style != 1 && outline_style != 3)");
             Print_String(x - 1, y    , string, ST_FALSE, full_flag);  // overdraw left
             Print_String(x - 1, y - 1, string, ST_FALSE, full_flag);  // overdraw left + top
             Print_String(x    , y - 1, string, ST_FALSE, full_flag);  // overdraw top
         }
+
         if(outline_style == 3 || outline_style == 5)  /* Shadow_BtmRight_2px || Outline_Plus_BR2px */
         {
-            // DLOG("(outline_style == 3 || outline_style == 5)");
             Print_String(x + 2, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 1, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 2, y + 1, string, ST_FALSE, full_flag);
         }
+
         if(outline_style > 3)  /* Shadow_BtmRight_2px */
         {
-            // DLOG("(outline_style > 3)");
             Print_String(x + 1, y - 1, string, ST_FALSE, full_flag);  // overdraw right + top
             Print_String(x - 1, y + 1, string, ST_FALSE, full_flag);  // overdraw left + bottom
         }
+
         if(outline_style == 5)  /* Outline_Plus_BR2px */
         {
-            // DLOG("(outline_style == 5)");
             Print_String(x + 2, y    , string, ST_FALSE, full_flag);
             Print_String(x    , y + 2, string, ST_FALSE, full_flag);
         }
 
-        // ; selects one of the 3 stored font color sets, and
-        // VGA_FontColorSelect(farpeekb(font_style_data,0x13));
-        // MoO2: copies normal_colors into current_colors - compiler in-lined?
         Set_Color_Set(GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLOR_SET));
     }
 
         draw_alias_flag = ST_FALSE;
 
         next_x = Print_String(x, y, string, ST_TRUE, full_flag);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_Display(x = %d, y = %d, string = %s, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, full_flag);
-// #endif
 
     return next_x;
 }
@@ -599,7 +605,7 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 */
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag)
 {
-    int16_t next_x;
+    int16_t next_x;  // DNE in Dasm
     // char character_;
     int16_t str_idx;
     int16_t space_add;
@@ -609,10 +615,6 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
     char character;
     uint16_t ptr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
-// #endif
-
     ptr = 0;
 
     print_xpos = x;
@@ -620,7 +622,6 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
     if(full_flag != ST_FALSE)
     {
-        // DLOG("(full_flag != ST_FALSE)");
         current_space = 0;
         space_remainder = 0;
         str_idx = 0;
@@ -655,105 +656,70 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
         }
     }
 
-
-
-    // while(character = string[ptr++] != '\0')
     while(string[ptr] != '\0')
     {
         character = string[ptr];
-
-// sw_character_values[9] = {1, 2, 3, 4, 13, 20, 21, 25, 29}
-// seg017:0AD1
-// 01 00 02 00 03 00 04 00 0D 00 14 00 15 00 19 00 1D 00
-// seg017:0AE3
-// switch_character
-// offset character_01
-// offset character_02
-// offset character_03
-// offset character_04
-// offset character_13_20
-// offset character_13_20
-// offset character_21
-// offset character_25_29
-// offset character_25_29
 
         switch(character)
         {
             case 1:  /* character == '\x01' */  /* ASCII   1h  1d  SOH (start of heading)  */  /* sw_character_values[0] == character */
             {
-                // DLOG("case 1:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    // DLOG("case 1: && change_color_ok_flag != ST_FALSE)");
                     Set_Normal_Colors_On();
                 }
             } break;
             case 2:
             {
-                // DLOG("case 2:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    // DLOG("case 2: && change_color_ok_flag != ST_FALSE)");
                     Set_Highlight_Colors_On();
                 }
             } break;
             case 3:
             {
-                // DLOG("case 3:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    // DLOG("case 3: && change_color_ok_flag != ST_FALSE)");
                     Set_Special_Colors_On();
                 }
             } break;
             case 4:
             {
-                // DLOG("case 4:");
                 if(change_color_ok_flag != ST_FALSE)
                 {
-                    // DLOG("case 4: && change_color_ok_flag != ST_FALSE)");
                     Set_Highlight_Colors_On();
                 }
             } break;
             case 13:  /*  ASCII  0Dh  13d  CR (carriage return)        */
-                // DLOG("case 13:");
             case 20:  /*  ASCII  14h  20d  DC4 (device control 4)      */
             {
-                // DLOG("case 20:");
                 print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
                 print_xpos += x;
             } break;
             case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
             {
-                // DLOG("case 21:");
                 goto Done;
             } break;
             case 25:  /*  ASCII  19h  25d  EM (end of medium)          */
-                // DLOG("case 25:");
             case 29:  /*  ASCII  1Dh  29d  GS (group separator)        */
             {
-                // DLOG("case 29:");
                 print_xpos = x + string[ptr+1];
                 ptr++;
             } break;
 
         }
 
-
         if(draw_alias_flag != ST_FALSE)
         {
-            // DLOG("(draw_alias_flag != ST_FALSE)");
             print_xpos = Print_Character_No_Alias(print_xpos, print_ypos, character);
         }
         else
         {
-            // DLOG("(draw_alias_flag == ST_FALSE)");
             print_xpos = Print_Character(print_xpos, print_ypos, character);
         }
 
         if(full_flag != ST_FALSE)
         {
-            // DLOG("(full_flag != ST_FALSE)");
             if(character == 0x20)  /* ASCII SPACE 0x20 ' ' */
             {
                 print_xpos += space_add;
@@ -773,10 +739,6 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 Done:
 
     next_x = print_xpos;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_String(x = %d, y = %d, string = %s, change_color_ok_flag = %d, full_flag = %d)\n", __FILE__, __LINE__, x, y, string, change_color_ok_flag, full_flag);
-// #endif
 
     return next_x;
 }
@@ -857,6 +819,28 @@ void Set_Color_Set(int16_t color_set_idx)
 }
 
 
+// WZD s17p43
+// RP_DBG_TblDrawValue()
+// WZD s17p44
+// UU_DBG_TblCellWrapper()
+// WZD s17p45
+// UU_DBG_TblDrawString()
+// WZD s17p46
+// UU_DBG_TblDrawS16()
+// WZD s17p47
+// UU_DBG_TblDrawS32()
+// WZD s17p48
+// UU_DBG_TblDrawU32()
+// WZD s17p49
+// DBG_DrawTableCell()
+// WZD s17p50
+// VGA_WndDrawSString()
+// WZD s17p51
+// VGA_WndDrawString()
+// WZD s17p52
+// VGA_WndDrawChar()
+
+
 // WZD s17p53
 // MoO2  Get_Current_Font_Style() ...happenstance, has the same odd extra copy to 'return vlaue' ? dereferencing a pointer ? exported by ASM ?
 int16_t Get_Current_Font_Index(void)
@@ -884,6 +868,246 @@ int16_t Get_Current_Font_Color(void)
 // Get_Font_Color2
 // WZD s17p56
 // Get_Font_Color3
+
+// WZD s17p57
+// UU_STR_CopyToNearLBX()
+// WZD s17p58
+// VGA_GetVertSpacing()
+// WZD s17p59
+// STR_TrimWhiteSpace()
+
+
+// WZD s17p60
+int16_t Print_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
+{
+    int16_t next_x;  // DNE in Dasm
+
+    next_x = Print_Display_To_Bitmap(x, y, string, 0, bitmap);
+
+    return next_x;
+}
+
+
+// WZD s17p61
+// 1oom:  lbxfont.c  lbxfont_print_str_normal_do()
+int16_t Print_Display_To_Bitmap(int16_t x, int16_t y, char * string, int16_t full_flag, SAMB_ptr bitmap)
+{
+    int16_t next_x;  // DNE in Dasm
+    int16_t itr;
+    int16_t outline_style;
+
+    outline_style = FONT_GET_SHADOW_FLAG(font_style_data);
+
+    if(outline_style != 0)
+    {
+        for(itr = 0; itr < 16; itr++)
+        {
+            SET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS + itr, outline_color);
+        }
+        draw_alias_flag = ST_TRUE;
+        
+        if(outline_style != 2) /* Shadow_TopLeft */
+        {
+            Print_String_To_Bitmap(x + 1, y + 1, string, ST_FALSE, full_flag, bitmap);  // overdraw right + botton
+            Print_String_To_Bitmap(x    , y + 1, string, ST_FALSE, full_flag, bitmap);  // overdraw bottom
+            Print_String_To_Bitmap(x + 1, y    , string, ST_FALSE, full_flag, bitmap);  // overdraw right
+        }
+
+        if( outline_style != 1 && outline_style != 3)  /* Shadow_BtmRight || Shadow_BtmRight_2px */
+        {
+            Print_String_To_Bitmap(x - 1, y    , string, ST_FALSE, full_flag, bitmap);  // overdraw left
+            Print_String_To_Bitmap(x - 1, y - 1, string, ST_FALSE, full_flag, bitmap);  // overdraw left + top
+            Print_String_To_Bitmap(x    , y - 1, string, ST_FALSE, full_flag, bitmap);  // overdraw top
+        }
+
+        if(outline_style == 3 || outline_style == 5)  /* Shadow_BtmRight_2px || Outline_Plus_BR2px */
+        {
+            Print_String_To_Bitmap(x + 2, y + 2, string, ST_FALSE, full_flag, bitmap);
+            Print_String_To_Bitmap(x + 1, y + 2, string, ST_FALSE, full_flag, bitmap);
+            Print_String_To_Bitmap(x + 2, y + 1, string, ST_FALSE, full_flag, bitmap);
+        }
+
+        if(outline_style > 3)  /* Shadow_BtmRight_2px */
+        {
+            Print_String_To_Bitmap(x + 1, y - 1, string, ST_FALSE, full_flag, bitmap);  // overdraw right + top
+            Print_String_To_Bitmap(x - 1, y + 1, string, ST_FALSE, full_flag, bitmap);  // overdraw left + bottom
+        }
+
+        if(outline_style == 5)  /* Outline_Plus_BR2px */
+        {
+            Print_String_To_Bitmap(x + 2, y    , string, ST_FALSE, full_flag, bitmap);
+            Print_String_To_Bitmap(x    , y + 2, string, ST_FALSE, full_flag, bitmap);
+        }
+
+        Set_Color_Set(GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLOR_SET));
+    }
+
+    next_x = Print_String_To_Bitmap(x, y, string, ST_TRUE, full_flag, bitmap);
+
+    return next_x;
+}
+
+
+// WZD s17p62
+int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag, SAMB_ptr bitmap)
+{
+    int16_t next_x;  // DNE in Dasm
+    // char character_;
+    int16_t str_idx;
+    int16_t space_add;
+    int16_t space_remainder;
+    int16_t current_space;
+    int16_t space_count;
+    char character;
+    uint16_t ptr;
+
+    ptr = 0;
+
+    print_xpos = x;
+    print_ypos = y;
+
+    if(full_flag != ST_FALSE)
+    {
+        current_space = 0;
+        space_remainder = 0;
+        str_idx = 0;
+        space_count = 0;
+
+        while(str_idx++)
+        {
+            if(string[str_idx] != '\x00') { break; }            /*  ASCII  00h  00d  NUL (null)                  */
+            if(string[str_idx] != '\x0D') { break; }            /*  ASCII  0Dh  13d  CR (carriage return)        */
+            if(string[str_idx] != '\x14') { break; }            /*  ASCII  14h  20d  DC4 (device control 4)      */
+            if(string[str_idx] != '\x19') { break; }            /*  ASCII  15h  21d  NAK (negative acknowledge)  */
+            if(string[str_idx] != '\x15') { break; }            /*  ASCII  19h  25d  EM (end of medium)          */
+            if(string[str_idx] != '\x1D') { break; }            /*  ASCII  1Dh  29d  GS (group separator)        */
+            if(string[str_idx] == '\x20') { space_count++; }    /*  ASCII  20h  32d  SPACE                       */
+        }
+
+        if(space_count == 0)
+        {
+            full_flag = ST_FALSE;
+        }
+
+        full_flag -= Get_String_Width(string);
+
+        if(full_flag > 0)
+        {
+            space_remainder = full_flag % space_count;
+            space_add = full_flag / space_count;
+        }
+        else
+        {
+            full_flag = ST_FALSE;
+        }
+    }
+
+    while(string[ptr] != '\0')
+    {
+        character = string[ptr];
+
+        switch(character)
+        {
+            case 1:  /* character == '\x01' */  /* ASCII   1h  1d  SOH (start of heading)  */  /* sw_character_values[0] == character */
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Normal_Colors_On();
+                }
+            } break;
+            case 2:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Highlight_Colors_On();
+                }
+            } break;
+            case 3:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Special_Colors_On();
+                }
+            } break;
+            case 4:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Highlight_Colors_On();
+                }
+            } break;
+            case 13:  /*  ASCII  0Dh  13d  CR (carriage return)        */
+            case 20:  /*  ASCII  14h  20d  DC4 (device control 4)      */
+            {
+                print_ypos += GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_BASE_HEIGHT);
+                print_xpos += x;
+            } break;
+            case 21:  /*  ASCII  15h  21d  NAK (negative acknowledge)  */
+            {
+                goto Done;
+            } break;
+            case 25:  /*  ASCII  19h  25d  EM (end of medium)          */
+            case 29:  /*  ASCII  1Dh  29d  GS (group separator)        */
+            {
+                print_xpos = x + string[ptr+1];
+                ptr++;
+            } break;
+
+        }
+
+        print_xpos = Print_Character_To_Bitmap(print_xpos, print_ypos, character, bitmap);
+
+        if(full_flag != ST_FALSE)
+        {
+            if(character == 0x20)  /* ASCII SPACE 0x20 ' ' */
+            {
+                print_xpos += space_add;
+
+                if(current_space < space_remainder)
+                {
+                    print_xpos++;
+                }
+                current_space++;
+            }
+        }
+
+        ptr++;
+    }
+
+
+Done:
+
+    next_x = print_xpos;
+
+    return next_x;
+}
+
+
+// WZD s17p63
+int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
+{
+    int16_t next_x;
+    int16_t string_len;
+
+    string_len = Get_String_Width(string);
+
+    next_x = Print_To_Bitmap((x - string_len), y, string, bitmap);
+
+    return next_x;
+}
+
+// WZD s17p64
+// LBX_DrawCentered()
+// WZD s17p65
+// LBX_DrawJustified()
+// WZD s17p66
+// LBX_DrawFarString()
+// WZD s17p67
+// UU_LBX_DrawRtAlgFar()
+// WZD s17p68
+// UU_LBX_DrawCenteredFar()
+// WZD s17p69
+// UU_LBX_DrawJustifiedFar()
 
 
 
@@ -921,8 +1145,23 @@ int16_t Get_Current_Font_Color(void)
 
 
 */
+// WZD seg018:0000  Font_ColorIndex_2 dw 0            
+// WZD seg018:0002  Font_ColorIndex_3 dw 0            
+// WZD seg018:0004  current_font_syle dw 0            
+// WZD seg018:0006  _CS_skip_x dw 0                   
+// WZD seg018:0008  _CS_height dw 0                   
+// WZD seg018:000A  _CS_next_x dw 0                   
+// WZD seg018:000C  _CS_bitmap_start dw 0             
+// WZD seg018:000E  _CS_width dw 0                    
+// WZD seg018:0010  VGA_GlyphDraw_VTrim dw 0          
+// WZD seg018:0012  VGA_GlyphDraw_FHgt dw 0           
+// WZD seg018:0014  VGA_GlyphDraw_DHgt dw 0           
+// WZD seg018:0016  VGA_GlyphDraw_Top dw 0            
+// WZD seg018:0018  VGA_GlyphDraw_Buffer db 50h dup(0)
 int16_t _CS_skip_x;
+int16_t _CS_height;
 int16_t _CS_next_x;
+byte_ptr _CS_bitmap_start;
 int16_t _CS_width;
 
 // WZD s18p01
@@ -937,10 +1176,6 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 {
     int16_t itr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
-// #endif
-
     color1 = (color1 < 16) ? color1 : 0;
     color2 = (color2 < 16) ? color2 : 0;
     color3 = (color3 < 16) ? color3 : 0;
@@ -952,27 +1187,21 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 
     for(itr = 0; itr < 16; itr++)
     {
-        // current_colors
-        font_style_data[(0 + itr)] = font_colors[((color1 * 16) + itr)];  // /*  00 */ uint8_t  current_colors[16];
-        // font_style_data[(FONT_HDR_POS_CURRENT_COLORS + itr)] = font_colors[((color1 * 16) + itr)];
+        font_style_data[(FONT_HDR_POS_CURRENT_COLORS + itr)] = font_colors[((color1 * 16) + itr)];  // /*  00 */ uint8_t  current_colors[16];
     }
 
     for(itr = 0; itr < 16; itr++)
     {
-        // normal_colors
-        font_style_data[(20 + itr)] = font_colors[((color1 * 16) + itr)];  // /*  14 */ uint8_t  normal_colors[16];
-        // font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * 16) + itr)];
+        font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * 16) + itr)];  // /*  14 */ uint8_t  normal_colors[16];
     }
 
     for(itr = 0; itr < 16; itr++)
     {
-        // highlight_colors
         font_style_data[(FONT_HDR_POS_HIGHLIGHT_COLORS + itr)] = font_colors[((color2 * 16) + itr)];
     }
 
     for(itr = 0; itr < 16; itr++)
     {
-        // special_colors
         font_style_data[(FONT_HDR_POS_SPECIAL_COLORS + itr)] = font_colors[((color3 * 16) + itr)];
     }
 
@@ -991,10 +1220,6 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
     {
         font_header->current_data_offsets[itr] = font_header->data_offsets[((font_idx * 96) + itr)];
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Set_Font(font_idx = %d, color1 = %d, color2 = %d, color3 = %d)\n", __FILE__, __LINE__, font_idx, color1, color2, color3);
-// #endif
 
 }
 
@@ -1022,31 +1247,9 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
     int16_t width;
     byte_ptr font_data_offset;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-// #endif
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      // if(x == 271 && y == 101 && char_num == 50)
-// DELETE      if(
-// DELETE          (x == 271 && y == 101 && char_num == 50) || 
-// DELETE          (x == 271 && y == 133 && char_num == 53)
-// DELETE      )
-// DELETE      {
-// DELETE          DLOG("DBG_Print_Character");
-// DELETE          DLOG("DBG_Print_Character_ASM");
-// DELETE          DBG_Print_Character = 1;
-// DELETE          DBG_Print_Character_ASM = 1;
-// DELETE      }
-// DELETE  #endif
-
     _CS_skip_x = x;
 
-    if(char_num < 32 || char_num > 126)
-    {
-        goto Done_YaySkip;
-    }
-    else
+    if(char_num >= 32 && char_num <= 126)
     {
         char_num = char_num - 32;
 
@@ -1059,33 +1262,12 @@ int16_t Print_Character(int16_t x, int16_t y, int16_t char_num)
 
         Print_Character_ASM(x, y, width, font_data_offset);
 
-        goto Done_NaySkip;
+        next_x = _CS_next_x;
     }
-
-    goto Done;
-
-Done_YaySkip:
-    next_x = _CS_skip_x;
-    goto Done;
-Done_NaySkip:
-    next_x = _CS_next_x;
-    goto Done;
-Done:
-// DELETE  #ifdef STU_DEBUG
-// DELETE      // if(x == 271 && y == 101 && char_num == 50)
-// DELETE      if(
-// DELETE          (x == 271 && y == 101 && char_num == 50) || 
-// DELETE          (x == 271 && y == 133 && char_num == 53)
-// DELETE      )
-// DELETE      {
-// DELETE          DBG_Print_Character = 0;
-// DELETE          DBG_Print_Character_ASM = 0;
-// DELETE      }
-// DELETE  #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-// #endif
+    else
+    {
+        next_x = _CS_skip_x;
+    }
 
     return next_x;
 }
@@ -1094,30 +1276,13 @@ Done:
 // WZD s18p03
 int16_t Print_Character_No_Alias(int16_t x, int16_t y, int16_t char_num)
 {
-    int16_t next_x;
-    int16_t width;
+    int16_t next_x;  // DNE in Dasm
+    int16_t width;  // _DX_
     byte_ptr font_data_offset;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-// #endif
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(x == 272 && y == 100 && char_num == 50)
-// DELETE      {
-// DELETE          DLOG("DBG_Print_Character_No_Alias");
-// DELETE          DBG_Print_Character_No_Alias = 1;
-// DELETE          DBG_Print_Character_No_Alias_ASM = 1;
-// DELETE      }
-// DELETE  #endif
 
     _CS_skip_x = x;
 
-    if(char_num < 32 || char_num > 126)
-    {
-        goto Done_YaySkip;
-    }
-    else
+    if(char_num >= 32 && char_num <= 126)
     {
         char_num = char_num - 32;
 
@@ -1130,34 +1295,96 @@ int16_t Print_Character_No_Alias(int16_t x, int16_t y, int16_t char_num)
 
         Print_Character_No_Alias_ASM(x, y, width, font_data_offset);
 
-        goto Done_NaySkip;
+        next_x = _CS_next_x;
+    }
+    else
+    {
+        next_x = _CS_skip_x;
     }
 
-    goto Done;
-
-Done_YaySkip:
-    next_x = _CS_skip_x;
-    goto Done;
-Done_NaySkip:
-    next_x = _CS_next_x;
-    goto Done;
-Done:
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(x == 272 && y == 100 && char_num == 50)
-// DELETE      {
-// DELETE          DBG_Print_Character_No_Alias = 0;
-// DELETE          DBG_Print_Character_No_Alias_ASM = 0;
-// DELETE      }
-// DELETE  #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias(x = %d, y = %d, char_num = %d)\n", __FILE__, __LINE__, x, y, char_num);
-// #endif
     return next_x;
 }
 
+
 // WZD s18p04
-// LBX_DrawGlyph ? Print_Character_To_Bitmap() ?
+int16_t Print_Character_To_Bitmap(int16_t x, int16_t y, uint8_t char_num, SAMB_ptr bitmap)
+{
+    int16_t next_x;  // DNE in Dasm
+    int16_t width;  // _DX_
+    byte_ptr font_data_offset;
+    byte_ptr bitmap_pos;  // _DI_
+    uint8_t font_data_byte;
+    uint8_t skip_count;
+    uint8_t repeat_count;
+    uint8_t color_index;
+    uint8_t palette_index;
+    int16_t DBG_width;
+    byte_ptr DBG_bitmap_pos;
+
+    _CS_next_x = x;
+
+    _CS_height = FLIC_GET_HEIGHT(bitmap);
+
+    if(char_num >= 32 && char_num <= 126)
+    {
+
+        bitmap_pos = ((bitmap + SZ_PARAGRAPH_B) + ((x * _CS_height) + y));
+        DBG_bitmap_pos = bitmap_pos;
+
+        _CS_skip_x = x;
+
+        char_num = char_num - 32;
+
+        width = font_header->current_font_widths[char_num];
+        DBG_width = width;
+
+        _CS_next_x = _CS_skip_x;
+        _CS_next_x += width;
+        _CS_next_x += font_header->current_horizontal_spacing;
+
+        font_data_offset = (font_style_data + font_header->current_data_offsets[char_num]);
+
+// BEGIN:  ~== Print_Character_ASM()
+        _CS_bitmap_start = bitmap_pos;
+        while(width)
+        {
+            font_data_byte = *font_data_offset++;
+            if((font_data_byte & 0x80) == 0)
+            {
+                repeat_count = ((font_data_byte & 0xF0) >> 4);
+                while(repeat_count--)
+                {
+                    color_index = (font_data_byte & 0x0F);  // _BX_ in Dasm
+                    palette_index = font_header->current_colors[color_index];
+                    *bitmap_pos++ = palette_index;
+                }
+            }
+            /* Type: skip */
+            else if((font_data_byte & 0x7F) != 0)
+            {
+                skip_count = (font_data_byte & 0x7F);
+                bitmap_pos += skip_count;
+            }
+            /* Type: end/skip column */
+            else
+            {
+                bitmap_pos = _CS_bitmap_start;
+                bitmap_pos += _CS_height;
+                _CS_bitmap_start = bitmap_pos;
+                width--;
+                assert(_CS_bitmap_start == (DBG_bitmap_pos + ((DBG_width - width) * _CS_height)));
+            }
+
+        }
+// END:  ~== Print_Character_ASM()
+
+        next_x = _CS_next_x;
+
+    }
+
+    return next_x;
+}
+
 
 // WZD s18p05
 void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset)
@@ -1170,17 +1397,6 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
     uint8_t color_index;
     uint8_t palette_index;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-// #endif
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(color_index = 0; color_index < 16; color_index++)
-// DELETE      {
-// DELETE          palette_index = GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLORS + color_index);
-// DELETE          dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, palette_index);
-// DELETE      }
-// DELETE  #endif
     screen_start = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
     screen_pos = screen_start;
@@ -1188,12 +1404,6 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
     {
 
         font_data_byte = *font_data_offset++;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_ASM == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: font_data_byte: 0x%02X\n", __FILE__, __LINE__, font_data_byte);
-// DELETE      }
-// DELETE  #endif
 
         /* Type: end/skip column */
         if(font_data_byte == 0x80)
@@ -1212,12 +1422,6 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
         )
         {
             skip_count = (font_data_byte & 0x7F);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_ASM == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: skip_count: %d\n", __FILE__, __LINE__, skip_count);
-// DELETE      }
-// DELETE  #endif
 
             while(skip_count--)
             {
@@ -1233,32 +1437,17 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
             while(repeat_count--)
             {
                 color_index = (font_data_byte & 0x0F);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_ASM == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color_index: 0x%02X\n", __FILE__, __LINE__, color_index);
-// DELETE      }
-// DELETE  #endif
 
                 // *screen_pos = font_header->current_colors[color_index];
                 // FTW palette_index = font_header->current_colors[color_index];
                 palette_index = GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLORS + color_index);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_ASM == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: palette_index: 0x%02X\n", __FILE__, __LINE__, palette_index);
-// DELETE      }
-// DELETE  #endif
+
                 *screen_pos = palette_index;
 
                 screen_pos += SCREEN_WIDTH;
             }
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-// #endif
 
 }
 
@@ -1269,7 +1458,7 @@ void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_p
 */
 void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset)
 {
-byte_ptr screen_start;
+    byte_ptr screen_start;
     byte_ptr screen_pos;
     uint8_t font_data_byte;
     uint8_t skip_count;
@@ -1277,29 +1466,12 @@ byte_ptr screen_start;
     uint8_t color_index;
     uint8_t palette_index;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-// #endif
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE  
-// DELETE      }
-// DELETE  #endif
-
     screen_start = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
     screen_pos = screen_start;
     while(width)
     {
         font_data_byte = *font_data_offset++;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: font_data_byte: 0x%02X\n", __FILE__, __LINE__, font_data_byte);
-// DELETE      }
-// DELETE  #endif
 
         /* Type: end/skip column */
         if(font_data_byte == 0x80)
@@ -1318,12 +1490,7 @@ byte_ptr screen_start;
         )
         {
             skip_count = (font_data_byte & 0x7F);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: skip_count: %d\n", __FILE__, __LINE__, skip_count);
-// DELETE      }
-// DELETE  #endif
+
             while(skip_count--)
             {
                 screen_pos += SCREEN_WIDTH;
@@ -1334,58 +1501,27 @@ byte_ptr screen_start;
         if((font_data_byte & 0x80) == 0)
         {
             repeat_count = ((font_data_byte & 0xF0) >> 4);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: repeat_count: %d\n", __FILE__, __LINE__, repeat_count);
-// DELETE      }
-// DELETE  #endif
+
             if((font_data_byte & 0x0F) == 0)
             {
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          DLOG("(font_data_byte == 0)");
-// DELETE      }
-// DELETE  #endif
+
                 screen_pos += SCREEN_WIDTH;
             }
             else
             {
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          DLOG("(font_data_byte != 0)");
-// DELETE      }
-// DELETE  #endif
+
                 while(repeat_count--)
                 {
-                    color_index = (font_data_byte & 0x0F);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: color_index: 0x%02X\n", __FILE__, __LINE__, color_index);
-// DELETE      }
-// DELETE  #endif
-                    // *screen_pos = font_header->current_colors[color_index];
+                    color_index = (font_data_byte & 0x0F);  // _BX_ in Dasm
+
                     palette_index = font_header->current_colors[color_index];
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Print_Character_No_Alias == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: palette_index: 0x%02X\n", __FILE__, __LINE__, palette_index);
-// DELETE      }
-// DELETE  #endif
+
                     *screen_pos = palette_index;
                     screen_pos += SCREEN_WIDTH;
                 }
             }
-
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Print_Character_No_Alias_ASM(x_start = %d, y_start = %d, width = %d, font_data_offset = %p)\n", __FILE__, __LINE__, x_start, y_start, width, font_data_offset);
-// #endif
 
 }
 
@@ -1399,10 +1535,6 @@ int16_t Get_String_Width(char * string)
     int16_t char_num;
     int16_t horizontal_spacing;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_String_Width(string = %s)\n", __FILE__, __LINE__, string);
-// #endif
-
     pos = 0;
     width = 0;
 
@@ -1410,18 +1542,11 @@ int16_t Get_String_Width(char * string)
     // MoO2: horizontal_spacing = font_header.current_horizontal_spacing;
     // horizontal_spacing = font_style_data[72];
     horizontal_spacing = GET_2B_OFS(font_style_data,FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);
-    
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: horizontal_spacing: %d\n", __FILE__, __LINE__, horizontal_spacing);
-// #endif
 
 
 Next_Char:
     char_num = string[pos++];  // ~== LODSB
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: char_num: %d\n", __FILE__, __LINE__, char_num);
-//     dbg_prn("DEBUG: [%s, %d]: char: %c\n", __FILE__, __LINE__, char_num);
-// #endif
+
     char_num -= 32;  // subtract the offset to the first printable character to get the index into the font data tables
 
     // Non-Printable Character
@@ -1466,11 +1591,6 @@ Next_Char:
     // MoO2: font_header.current_font_widths[char_num]
     // width = width + font_style_data[74 + char_num];
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + %d): %d\n", __FILE__, __LINE__, char_num, GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num));
-//     dbg_prn("DEBUG: [%s, %d]: font_header->current_font_widths[%d]: %d\n", __FILE__, __LINE__, char_num, font_header->current_font_widths[char_num]);
-// #endif
-
     // width += GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_FONT_WIDTHS + char_num);
     width += font_header->current_font_widths[char_num];
     width += horizontal_spacing;  // MoO2:    ax, font_header.current_horizontal_spacing
@@ -1479,11 +1599,7 @@ goto Next_Char;
 
 
 Done:
-    width = width - horizontal_spacing;  // remove the extra one that was added to the last character
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Get_String_Width(string = %s) { width = %d }\n", __FILE__, __LINE__, string, width);
-// #endif
+    width -= horizontal_spacing;  // remove the extra one that was added to the last character
 
     return width;
 }

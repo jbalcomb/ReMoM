@@ -68,11 +68,11 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx);
 
 // WZD o121p03
 // drake178: WIZ_GetCastingCost()
-// WIZ_GetCastingCost()
+int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag);
 
 // WZD o121p04
 // drake178: WIZ_CastingCostBonus()
-// WIZ_CastingCostBonus()
+int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx);
 
 // WZD o121p05
 // drake178: WIZ_GetHeroCount()

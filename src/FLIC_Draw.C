@@ -809,7 +809,7 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
                     DLOG("(remap_flag != ST_FALSE)");
                     // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
                     // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
-                    Clipped_Remap_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+                    Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
                 }
 
             }
@@ -991,6 +991,16 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 }
 
 
+// WZD s30p20
+// VGA_WndDrawRotateImg()
+// WZD s30p21
+// VGA_WndDrawImageRect()
+// WZD s30p22
+// UU_VGA_WndDrawTransform()
+// WZD s30p23
+// VGA_RotateRect()
+
+
 // WZD s30p24
 void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
 {
@@ -1150,7 +1160,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
         x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
         if(x2 > 0)
         {
-            y2 = (y = FLIC_GET_HEIGHT(src_pict_seg) - 1);
+            y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
             if(y2 > 0)
             {
                 if(x < 0)
@@ -1200,10 +1210,10 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
                     cheight = dst_height;
                 }
 
-                dst_ofst = (16 + ((cx1 * dst_height) + cy1));
+                dst_ofst = (sizeof(struct s_FLIC_HDR) + ((cx1 * dst_height) + cy1));
                 dst_skip_y = (dst_height - cheight);
 
-                src_ofst = (16 + (FLIC_GET_HEIGHT(src_pict_seg) * skip_x) + skip_y);
+                src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(src_pict_seg)) + skip_y);
                 src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
 
                 dst = (dst_pict_seg + dst_ofst);
@@ -1216,6 +1226,88 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     }
 
 }
+
+
+// WZD s30p27
+// LBX_IMG_Overlay()
+// WZD s30p28
+// LBX_IMG_StripColors()
+// WZD s30p29
+// UU_LBX_IMG_CropRect()
+
+
+// WZD s30p30
+// MoO2  ¿ Fill_Bitmap_();  Fill_Bitmap_Unbounded_();  Fill();  Fill_Region_(); ?
+void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_ptr bitm)
+{
+    int16_t Draw_Height;
+    int16_t Draw_Width;
+    int16_t Draw_Start;
+    int16_t Skip_Height;
+    int16_t height;
+    int16_t width;
+    int16_t itr_draw_height;  // _CX_
+    int16_t itr_draw_width;  // _BX_
+    byte_ptr rvr_bitm;  // _ES_DI_
+
+    // width  = farpeekw(bitm, 0);
+    // height = farpeekw(bitm, 2);
+
+    width  = FLIC_GET_WIDTH(bitm);
+    height = FLIC_GET_HEIGHT(bitm);
+
+    if((x1 < width) && (y1 < height) && (x2 > 0) && (y2 > 0))
+    {
+        if(x1 < 0) { x1 = 0; }
+        if(y1 < 0) { y1 = 0; }
+        if((width  - 1) < x2) { x2 = (width  - 1); }
+        if((height - 1) < y2) { y2 = (height - 1); }
+        Draw_Height = (y2 - y1 + 1);
+        Skip_Height = (height - Draw_Height);
+        Draw_Start = ((x1 * height) + y1);
+        Draw_Width = (x2 - x1 + 1);
+
+        rvr_bitm = (byte_ptr)(bitm + sizeof(struct s_FLIC_HDR) + Draw_Start);
+
+        itr_draw_width = Draw_Width;
+        while(itr_draw_width != 0)
+        {
+            itr_draw_height = Draw_Height;
+            while(itr_draw_height != 0)
+            {
+                *rvr_bitm++ = ST_TRANSPARENT;
+                itr_draw_height--;
+            }
+            rvr_bitm += Skip_Height;
+            itr_draw_width--;
+        }
+    }
+    else
+    {
+        // TODO  RP_MEM_Clear_Far2(sizeof(struct FLIC_HDR), bitm, (height * width));
+    }
+
+}
+
+
+// WZD s30p31
+// UU_LBX_IMG_FullGScale()
+// WZD s30p32
+// UU_LBX_IMG_ExtGScaleEC()
+// WZD s30p33
+// UU_LBX_IMG_ExtGrayScale()
+// WZD s30p34
+// LBX_IMG_Resize()
+// WZD s30p35
+// VGA_FILEH_LoadFirst()
+// WZD s30p36
+// VGA_FILEH_DrawFrame()
+// WZD s30p37
+// VGA_FILEH_Loader()
+// WZD s30p38
+// VGA_FILEH_GetFrame()
+// WZD s30p39
+// VGA_FILEH_SetFrame()
 
 
 // WZD s30p40
@@ -1805,7 +1897,7 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
 // WZD s31p02
 // drake178: VGA_DrawPartImage_R()
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
-void Clipped_Remap_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
+void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
 
 #ifdef STU_DEBUG
@@ -2008,6 +2100,13 @@ void Add_Picture_To_Bitmap(byte_ptr source_picture, byte_ptr destination_bitmap)
 }
 
 
+// WZD s33p03
+// Add_Picture_To_Bitmap_EMM()
+
+// WZD s33p04
+// EMM_MapNextIMGPages2()
+
+
 // WZD seg033:024D
 int16_t CS_height;
 // WZD seg033:024F
@@ -2153,10 +2252,9 @@ void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t s
     CS_height = height;
     CS_width = width;
 
-    itr_height = CS_height;
-
     while(CS_width)
     {
+        itr_height = CS_height;
         while(itr_height)
         {
             pixel = *src++;
@@ -2177,6 +2275,7 @@ void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t s
 
 
 // WZD s33p08
+// LBX_IMG_HorzFlip()
 
 
 // WZD s33p09
@@ -2215,10 +2314,29 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 
 
 // WZD s33p10
+// UU_LBX_IMG_GetIntensity()
 // WZD s33p11
+// LBX_IMG_PartialCopy()
+
+
 // WZD s33p12
+void Clear_Memory_Far(byte_ptr dst, int16_t n)
+{
+    byte_ptr rvr_dst;
+    rvr_dst = dst;
+    while(n != 0)
+    {
+        *rvr_dst++ = 0;
+        n--;
+    }
+}
+
+
 // WZD s33p13
+// LBX_IMG_Shrink()
 // WZD s33p14
+// LBX_IMG_Stretch()
+
 
 // WZD s33p15
 // drak178: LBX_IMG_RandomDelete()
@@ -2232,14 +2350,13 @@ call    Jumble_Bitmap
 bitmap is a segment address
 
 */
-void Vanish_Bitmap(SAMB_ptr bitmap, int16_t percent)
+void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent)
 {
 
     // TODO  RNG_GFX_Random(1000);
 
 
 }
-
 
 
 // WZD s33p16
@@ -2332,5 +2449,24 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: END: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
 // #endif
+
+}
+
+// WZD s33p17
+// LBX_IMG_RevGrayscale()
+// WZD s33p18
+// UU_DUP_RevGrayscale()
+
+// WZD s33p19
+/*
+drake178:
+    a secondary linear feedback shift register using the
+    same feedback polynomial as RNG_Random, also shifted
+    9 states per call, but actually returning the lowest
+    order 10 bits of the resulting state (1-1023) rather
+    than the shifted out return value
+*/
+int16_t RNG_GFX_Random__NOP(int16_t max)
+{
 
 }

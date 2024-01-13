@@ -237,6 +237,12 @@ void Allocate_Reduced_Map(void);
 void Main_Screen_Draw_Summary_Window(void);
 // WZD o064p05
 void Main_Screen_Draw_Next_Turn_Button(void);
+// WZD o64p06
+// drake178: OVL_DisableIncmBlink()
+void OVL_DisableIncmBlink(void);
+// WZD o64p07
+// drake178: OVL_EnableIncmBlink()
+void OVL_EnableIncmBlink(void);
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
@@ -396,9 +402,9 @@ char hotkey_PlaneButton[] = "P";
 // WZD dseg:2E50
 // cnst_HOTKEY_A db 'A',0
 // WZD dseg:2E52
-// aYouMayNotThrowAnySp db 'You may not throw any spells while you are banished.  There are at least ',0
+char aYouMayNotThrowAnySp[] = "You may not throw any spells while you are banished.  There are at least ";
 // WZD dseg:2E9C
-// aTurnsRemainingUntil db ' turns remaining until you may return.',0
+char aTurnsRemainingUntil[] = " turns remaining until you may return.";
 // WZD dseg:2EC3
 char _msg_not_enough_food_units_will_die[] = "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?";
 // WZD dseg:2F42
@@ -937,7 +943,7 @@ void Main_Screen(void)
 {
     int16_t hotkey_idx_Alt_P;
     int16_t hotkey_idx_U;
-// strP= byte ptr -6Ch
+    char temp_string[10];
     int16_t hotkey_idx_F9;
     int16_t hotkey_idx_F8;
     int16_t hotkey_idx_F7;
@@ -986,13 +992,13 @@ void Main_Screen(void)
     int16_t unit_idx;
     int16_t allow_units_to_die;
     int16_t Stack_Index;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
+    // itr__stack_idx__player_idx__turns_til_return
+    int16_t turns_til_return;  // only used for 'Spells Button'; turn count to complete 'Spell of Return'
     int16_t leave_screen_flag;
-    
     int16_t screen_changed;
     int16_t input_field_idx;
     int16_t mouse_x;
     int16_t mouse_y;
-
     int16_t itr_units;
 
     int16_t hotkey_idx_D ;  // debug_hotkey
@@ -1354,31 +1360,32 @@ void Main_Screen(void)
             current_screen = scr_Armies_Screen;
             leave_screen_flag = ST_TRUE;
         }
+
         /*
             BEGIN: Game Buttons - Spells Button
         */
-// DEMO          if(input_field_idx == _spells_button)
-// DEMO          {
-// DEMO              // SND_LeftClickSound();
-// DEMO              if(_players[_human_player_idx].Spell_Cast == 0xD6) /* Spell of Return */
-// DEMO              {
-// DEMO                  // You may not throw any spells while you are banished.
-// DEMO                  // GUI_NearMsgString
-// DEMO                  // strcpy()
-// DEMO                  // strcat()
-// DEMO                  // strcat()
-// DEMO                  // Warn0()
-// DEMO                  // Set_Redraw_Function(Main_Screen_Draw, 1);
-// DEMO              }
-// DEMO              else
-// DEMO              {
-// DEMO                  Set_Draw_Active_Stack_Always();
-// DEMO                  Set_Unit_Draw_Priority();
-// DEMO                  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-// DEMO                  leave_screen_flag = ST_TRUE;
-// DEMO                  current_screen = scr_Spellbook_Screen;
-// DEMO              }
-// DEMO          }
+        if(input_field_idx == _spells_button)
+        {
+            // SND_LeftClickSound();
+            if(_players[_human_player_idx].Spell_Cast == 214) /* Spell of Return */
+            {
+                turns_til_return = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
+                itoa(turns_til_return, temp_string, 10);
+                strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
+                strcat(GUI_NearMsgString, temp_string);
+                strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
+                Warn0(GUI_NearMsgString);
+                // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
+            }
+            else
+            {
+                Set_Draw_Active_Stack_Always();
+                Set_Unit_Draw_Priority();
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                leave_screen_flag = ST_TRUE;
+                current_screen = scr_Spellbook_Screen;
+            }
+        }
 
         if(input_field_idx == _patrol_button)
         {
@@ -6054,6 +6061,23 @@ void Main_Screen_Draw_Next_Turn_Button(void)
     dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
 #endif
 }
+
+
+// WZD o64p06
+// drake178: OVL_DisableIncmBlink()
+void OVL_DisableIncmBlink(void)
+{
+    cycle_incomes = -1;
+}
+
+
+// WZD o64p07
+// drake178: OVL_EnableIncmBlink()
+void OVL_EnableIncmBlink(void)
+{
+    cycle_incomes = 0;
+}
+
 
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)

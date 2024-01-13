@@ -520,7 +520,7 @@ struct s_SPELL_DATA
     /* 00 */ char Name[19];
     /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
     /* 14 */  int8_t AI_Value;
-    /* 15 */  int8_t Type;                  //  ; enum SPELLTYPES
+    /* 15 */  int8_t Type;                  //  ; enum SPELLTYPES   "Type of spell effect"
     /* 16 */  int8_t Book_Section;
     /* 17 */  int8_t Realm;
     /* 18 */  int8_t Eligibility;
@@ -2931,9 +2931,7 @@ extern struct s_UNIT * _UNITS;
 extern struct s_INACTV_HERO * TBL_Hero_Names;
 
 // WZD dseg:9ECA
-// extern struct s_WIZARD _players[6];
-extern struct s_WIZARD _players[];
-// extern struct s_WIZARD * _players;
+extern struct s_WIZARD _players[6];
 
 // WZD dseg:BB7A
 // // // extern struct s_HLP_ENTRY * _help_entries;

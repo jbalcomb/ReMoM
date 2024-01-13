@@ -23,7 +23,7 @@ extern "C" {
 */
 
 // WZD o134p01
-void IDK_Create_SpellScreen_Background(void);
+// PRIVATE  void Spell_Screen_Load(void);
 
 // WZD o134p02
 void Spellbook_Screen_Draw(void);
@@ -32,19 +32,32 @@ void Spellbook_Screen_Draw(void);
 void Spellbook_Screen(void);
 
 // WZD o134p04
+// WIZ_SetOverlandSpell()
+
 // WZD o134p05
+// sub_B9837()
+
 // WZD o134p06
+// OVL_DisplayMainScrn()
 
 // WZD o134p07
 // drake178: OVL_MosaicFlip()
-void OVL_MosaicFlip(void);
+// PRIVATE  void OVL_MosaicFlip(void);
 
 // WZD o134p08
-// WZD o134p09
-// WZD o134p10
-// WZD o134p11
-// WZD o134p12
+// OVL_CounterMessage()
 
+// WZD o134p09
+// sub_B9D14()
+
+// WZD o134p10
+// GAME_LoadSpellAnim()
+
+// WZD o134p11
+// SPL_LoadSoundEffect()
+
+// WZD o134p12
+// sub_BA1AF()
 
 
 
