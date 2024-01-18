@@ -242,7 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MoX\MoX.vcxproj">
-      <Project>{a0ef261e-909a-446f-b998-cd86f813dc2c}</Project>
+      <Project>{da90c873-d83f-4cdf-963d-7b733fe10997}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
