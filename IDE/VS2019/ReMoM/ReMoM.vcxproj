@@ -74,6 +74,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -99,7 +100,6 @@
     <ClInclude Include="..\..\..\src\Explore.H" />
     <ClInclude Include="..\..\..\src\Fields.H" />
     <ClInclude Include="..\..\..\src\FLIC_Draw.H" />
-    <ClInclude Include="..\..\..\src\FLIC_Draw2.H" />
     <ClInclude Include="..\..\..\src\Fonts.H" />
     <ClInclude Include="..\..\..\src\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\Graphics.H" />
@@ -157,8 +157,6 @@
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\Timer.H" />
-    <ClInclude Include="..\..\..\src\TST_GameData.H" />
-    <ClInclude Include="..\..\..\src\TST_GameState.H" />
     <ClInclude Include="..\..\..\src\UnitMove.H" />
     <ClInclude Include="..\..\..\src\UnitStat.H" />
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
@@ -182,7 +180,6 @@
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Fields.C" />
     <ClCompile Include="..\..\..\src\FLIC_Draw.C" />
-    <ClCompile Include="..\..\..\src\FLIC_Draw2.C" />
     <ClCompile Include="..\..\..\src\Fonts.C" />
     <ClCompile Include="..\..\..\src\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\Graphics.C" />
@@ -219,16 +216,13 @@
     <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\ProdScr.C" />
     <ClCompile Include="..\..\..\src\RACETYPE.C" />
-    <ClCompile Include="..\..\..\src\SAVETEST.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
     <ClCompile Include="..\..\..\src\SCORE.C" />
     <ClCompile Include="..\..\..\src\SETTLE.C" />
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_BMP.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_TST.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />

@@ -24,7 +24,6 @@
 #include "Explore.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
-#include "FLIC_Draw2.H"
 #include "Fonts.H"
 #include "GENDRAW.H"
 #include "Graphics.H"
