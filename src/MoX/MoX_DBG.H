@@ -2,24 +2,19 @@
 #define MOX_DBG_H
 
 #include "MoX_TYPE.H"
+#include "MoX_BASE.H"
 
-extern uint8_t DBG_debug_flag;
+
 
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
 
 /*
     WZD  seg024
-    MGC  seg024
 */
-
-
-
-void Main_Screen_Draw_Debug_Information(void);
 
 
 
@@ -28,6 +23,7 @@ void Release_Version(void);
 
 // WZD s24p06
 int Check_Release_Version(void);
+
 
 
 #ifdef __cplusplus

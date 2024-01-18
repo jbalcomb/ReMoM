@@ -1,6 +1,7 @@
 #ifndef MOX_DEF_H
 #define MOX_DEF_H
 
+#include "MoX\MoX_BASE.H"
 
 #ifndef STU_DEBUG
 #define DLOG
@@ -14,20 +15,6 @@
 #define VIDEO_MODE       3  // vm_Mode_Y
 // #define VIDEO_MODE       5  // vm_Mode_Y_2x
 // #define VIDEO_MODE       6  // vm_Mode_Y_2x_XBGR
-
-
-
-#define ST_FAILURE       0
-#define ST_SUCCESS      -1
-
-#define ST_FALSE         0
-#define ST_TRUE          1
-
-#define ST_NULL          0
-
-#define ST_NONE          0
-#define ST_UNDEFINED    -1  /* ¿ "Empty" ? (// Army List Screen - "Empty Hero Slot") */
-/* Elsewhere, "NOT IN USE" ¿ for Fields ? ¿ Debug for outline of fields on screen */
 
 
 

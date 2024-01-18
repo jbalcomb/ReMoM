@@ -1,3 +1,8 @@
+/*
+    WIZARDS.EXE
+        seg008
+*/
+
 #ifndef ALLOCATE_H
 #define ALLOCATE_H
 
@@ -162,64 +167,64 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head);
     MGC  seg008
 */
 
-// MGC s08p01
+// WZD s08p01
 // drake178: LBX_NearAlloc_Mark()
 void Near_Allocate_Mark(void);
 
-// MGC s08p02
+// WZD s08p02
 // drake178: LBX_NearAlloc_Undo()
 void Near_Allocate_Undo(void);
 
-// MGC s08p03
+// WZD s08p03
 // drake178: LBX_NearAlloc_Reset()
-void Allocate_Near_Reset(void);
+void Near_Allocate_Reset(void);
 
-// MGC s08p04
+// WZD s08p04
 // drake178: LBX_NearAlloc_First()
 byte_ptr Near_Allocate_First(int16_t size);
 
-// MGC s08p05
+// WZD s08p05
 // drake178: LBX_NearAlloc_Next()
 byte_ptr Near_Allocate_Next(int16_t size);
 
-// MGC s08p06
+// WZD s08p06
 // drake178: LBX_NearAlloc_Error()
 void Near_Allocation_Error(int16_t size);
 
-// MGC s08p07
+// WZD s08p07
 SAMB_ptr Allocate_Space(uint16_t size);
 
-// MGC s08p08 / s08p09
+// WZD s08p08 / s08p09
 SAMB_ptr Allocate_Space_No_Header(uint16_t size);
 
-// MGC s08p10
+// WZD s08p10
 // drake178: LBX_Alloc_Mark
 void Mark_Block(SAMB_ptr block);
 
-// MGC s08p11
+// WZD s08p11
 // drake178: LBX_Alloc_Undo()
 void Release_Block(SAMB_ptr block);
 
-// MGC s08p12
+// WZD s08p12
 SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size);
 
-// MGC s08p13
+// WZD s08p13
 // drake178: LBX_Alloc_Flush()
 void Reset_First_Block(SAMB_ptr block);
 
-// MGC s08p14
+// WZD s08p14
 SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size);
 
-// MGC s08p15
+// WZD s08p15
 // drake178: LBX_Alloc_GetFree()
 // ¿ MoO2  Module: allocate  Get_Remaining_Block_Space() ?
 uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head);
 
-// MGC s08p16
-// MGC s08p17
-// MGC s08p18
+// WZD s08p16
+// WZD s08p17
+// WZD s08p18
 
-// MGC s08p19
+// WZD s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks);
 
 

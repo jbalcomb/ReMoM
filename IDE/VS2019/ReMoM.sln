@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.33927.289
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReMoM", "ReMoM\ReMoM.vcxproj", "{4851FD01-1E05-46F8-8088-88FFC7D23CBD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MoX", "MoX\MoX.vcxproj", "{A0EF261E-909A-446F-B998-CD86F813DC2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -19,6 +21,14 @@ Global
 		{4851FD01-1E05-46F8-8088-88FFC7D23CBD}.Release|x64.ActiveCfg = Release|x64
 		{4851FD01-1E05-46F8-8088-88FFC7D23CBD}.Release|x64.Build.0 = Release|x64
 		{4851FD01-1E05-46F8-8088-88FFC7D23CBD}.Release|x86.ActiveCfg = Release|x64
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Debug|x64.ActiveCfg = Debug|x64
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Debug|x64.Build.0 = Debug|x64
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Debug|x86.ActiveCfg = Debug|Win32
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Debug|x86.Build.0 = Debug|Win32
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Release|x64.ActiveCfg = Release|x64
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Release|x64.Build.0 = Release|x64
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Release|x86.ActiveCfg = Release|Win32
+		{A0EF261E-909A-446F-B998-CD86F813DC2C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,3 +1,7 @@
+/*
+    WIZARDS.EXE
+        seg008
+*/
 
 /*
     "SPACE ALLOC" - STARLORD.EXE
@@ -24,8 +28,8 @@
 */
 
 #include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
-#include "MoX_DEF.H"    /* ST_FAILURE, etc. */
 #include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
+#include "MoX_BASE.H"    /* ST_FAILURE, etc. */
 
 #include "MoX_DBG.H"    /* Check_Release_Version() */
 
@@ -34,7 +38,6 @@
 #include <malloc.h>     /* malloc() */
 #include <stdlib.h>     /* itoa() */
 #include <string.h>     /* strcat(), strcpy() */
-
 
 
 
@@ -230,21 +233,21 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
     MAGIC.EXE  seg008
 */
 
-// MGC s08p01
+// WZD s08p01
 // drake178: LBX_NearAlloc_Mark()
 void Near_Allocate_Mark(void)
 {
     near_buffer_mark = near_buffer_used;
 }
 
-// MGC s08p02
+// WZD s08p02
 // drake178: LBX_NearAlloc_Undo()
 void Near_Allocate_Undo(void)
 {
     near_buffer_used = near_buffer_mark;
 }
 
-// MGC s08p03
+// WZD s08p03
 // drake178: LBX_NearAlloc_Reset()
 void Near_Allocate_Reset(void)
 {
@@ -252,7 +255,7 @@ void Near_Allocate_Reset(void)
     near_buffer_mark = NEAR_BUFFER_RESERVED;
 }
 
-// MGC s08p04
+// WZD s08p04
 // drake178: LBX_NearAlloc_First()
 byte_ptr Near_Allocate_First(int16_t size)
 {
@@ -266,7 +269,7 @@ byte_ptr Near_Allocate_First(int16_t size)
     return (byte_ptr)&near_buffer[NEAR_BUFFER_RESERVED];
 }
 
-// MGC s08p05
+// WZD s08p05
 // drake178: LBX_NearAlloc_Next()
 byte_ptr Near_Allocate_Next(int16_t size)
 {
@@ -281,12 +284,13 @@ byte_ptr Near_Allocate_Next(int16_t size)
     return (byte_ptr)&near_buffer[tmp_near_buffer_used];
 }
 
-// MGC s08p06
+// WZD s08p06
 // drake178: LBX_NearAlloc_Error()
 void Near_Allocation_Error(int16_t size)
 {
     strcpy(near_buffer, "Near Allocation too large by ");  // cnst_Alloc_Error01[] = "Near Allocation too large by "
     // itoa(size, Tmp_Conv_Str_1, 10);
+#pragma warning(suppress : 4996)
     itoa(size, &near_buffer[100], 10);
     // strcat(near_buffer, Tmp_Conv_Str_1);
     strcat(near_buffer, &near_buffer[100]);
@@ -296,7 +300,7 @@ void Near_Allocation_Error(int16_t size)
 }
 
 
-// MGC s08p07
+// WZD s08p07
 SAMB_ptr Allocate_Space(uint16_t size)
 {
     int32_t lsize;
@@ -322,7 +326,7 @@ SAMB_ptr Allocate_Space(uint16_t size)
     return SAMB_head;
 }
 
-// MGC s08p08 / s08p09
+// WZD s08p08 / s08p09
 SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 {
     int32_t lsize;
@@ -340,7 +344,7 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 }
 
 
-// MGC s08p10
+// WZD s08p10
 // drake178: LBX_Alloc_Mark
 void Mark_Block(SAMB_ptr block)
 {
@@ -352,7 +356,7 @@ void Mark_Block(SAMB_ptr block)
 }
 
 
-// MGC s08p11
+// WZD s08p11
 // drake178: LBX_Alloc_Undo()
 void Release_Block(SAMB_ptr block)
 {
@@ -365,13 +369,13 @@ void Release_Block(SAMB_ptr block)
 }
 
 
-// MGC s08p12
+// WZD s08p12
 SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
     SAMB_ptr sub_SAMB_head;
     SAMB_ptr sub_SAMB_data;
 
-    if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size+1); }
+    if(Check_Allocation(SAMB_head) == ST_FAILURE) { Allocation_Error(0x03, size+1); }
     if(SA_GET_SIZE(SAMB_head) < size) { Allocation_Error(0x02, size+1); }
 
     // block header + sub block header + sub block size
@@ -390,7 +394,7 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
     return sub_SAMB_data;
 }
 
-// MGC s08p13
+// WZD s08p13
 // drake178: LBX_Alloc_Flush()
 void Reset_First_Block(SAMB_ptr block)
 {
@@ -403,7 +407,7 @@ void Reset_First_Block(SAMB_ptr block)
     SA_SET_USED(block, 1);
 }
 
-// MGC s08p14
+// WZD s08p14
 SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 {
     SAMB_ptr sub_SAMB_head;
@@ -411,7 +415,7 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
     uint16_t old_used;
     uint16_t new_used;
     
-    if(Check_Allocation(SAMB_head) == ST_FALSE) { Allocation_Error(0x03, size); }
+    if(Check_Allocation(SAMB_head) == ST_FAILURE) { Allocation_Error(0x03, size); }
     if(Get_Free_Blocks(SAMB_head) < size+1) { Allocation_Error(0x02, size + 1); }
 
     old_used = SA_GET_USED(SAMB_head);
@@ -434,7 +438,7 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
 }
 
 
-// MGC s08p15
+// WZD s08p15
 // drake178: LBX_Alloc_GetFree()
 // ¿ MoO2  Module: allocate  Get_Remaining_Block_Space() ?
 uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
@@ -442,11 +446,11 @@ uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
     return SA_GET_SIZE(SAMB_head) - SA_GET_USED(SAMB_head);
 }
 
-// MGC s08p16
-// MGC s08p17
-// MGC s08p18
+// WZD s08p16
+// WZD s08p17
+// WZD s08p18
 
-// MGC s08p19
+// WZD s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks)
 {
     char buffer[120] = {0};
@@ -455,7 +459,6 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
     if(Check_Release_Version() == ST_TRUE)
     {
         strcpy(buffer, "Insufficient memory. You need at least ");
-#pragma warning(suppress : 4996)
         itoa(640, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, "K free. Try removing all TSR's.");
@@ -485,7 +488,6 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
                 strcat(buffer, str_allocation_errors[9]);
                 break;
         }
-#pragma warning(suppress : 4996)
         itoa(blocks, buffer2, 10);
         strcat(buffer, buffer2);
         strcat(buffer, str_allocation_errors[6]);

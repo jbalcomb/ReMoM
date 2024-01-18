@@ -11,9 +11,6 @@
 
 
 
-#define SZ_32K_B            32768
-#define SZ_PARAGRAPH_B         16
-
 #define SZ_LBX_HDR_B          512
 #define SZ_LBX_HDR_PR          32  // 32 paragraphs * 16 bytes per paragaph = 512 bytes
 

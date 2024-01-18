@@ -16,6 +16,7 @@
 #include "CityScr.H"  /* City_Screen__WIP(); */
 
 
+
 // WZD dseg:5E96                                                 ¿ BEGIN:  ovr121 - Strings ?
 
 // WZD dseg:5E96
@@ -748,7 +749,7 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
         (spell_data_table[spell_idx].Realm == 3)  /* _Life */
     )
     {
-        Evil_Omens_Up = 0;
+        Evil_Omens_Up = ST_FALSE;
 
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
@@ -757,11 +758,12 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
                 Evil_Omens_Up = ST_TRUE;
             }
         }
-    }
 
-    if(Evil_Omens_Up == ST_TRUE)
-    {
-        casting_cost = ((casting_cost * 3) / 2);
+        if (Evil_Omens_Up == ST_TRUE)
+        {
+            casting_cost = ((casting_cost * 3) / 2);
+        }
+
     }
 
     // DEDUCE(JimBalcomb,20240112):  What's this about? I don't see where this 5x is covered in the manual.

@@ -567,6 +567,10 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
 
 
+void Main_Screen_Draw_Debug_Information(void);
+
+
+
 #ifdef __cplusplus
 }
 #endif

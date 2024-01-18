@@ -17,7 +17,6 @@
 
 /* ~ MoX ~ MoM v1.31*/
 #include "ALLOC.H"
-#include "Allocate.H"
 #include "ArmyList.H"
 #include "CITYCALC.H"
 #include "CityList.H"
@@ -33,13 +32,11 @@
 #include "Items.H"
 #include "Keyboard.H"
 #include "Lair.H"
-#include "LBX_Load.H"
 #include "LOADER.H"
 #include "Mouse.H"
 #include "MovePath.H"
 #include "MoX_CFG.H"
 #include "MoX_CMB.H"
-#include "MoX_DBG.H"
 #include "MoX_DIR.H"
 #include "MoX_GAM.H"
 #include "MoX_RNG.H"
@@ -81,6 +78,48 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+/*
+    Exit
+*/
+// WZD s05p02
+// TODO  extern void (*Exit_With_Message)(char* string);
+
+/*
+    Allocate.C
+*/
+// WZD dseg:D49A
+extern char near_buffer[];
+// WZD s08p04
+byte_ptr Near_Allocate_First(int16_t size);
+// WZD s08p05
+byte_ptr Near_Allocate_Next(int16_t size);
+// WZD s08p07
+SAMB_ptr Allocate_Space(uint16_t size);
+// WZD s08p10
+void Mark_Block(SAMB_ptr block);
+// WZD s08p11
+void Release_Block(SAMB_ptr block);
+// WZD s08p12
+SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size);
+// WZD s08p14
+SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size);
+
+/*
+    LBX_Load.C
+*/
+// WZD s10p01
+SAMB_ptr LBX_Load(char* lbx_name, int16_t entry_num);
+// WZD s10p02
+SAMB_ptr LBX_Reload(char* lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
+// WZD s10p03
+SAMB_ptr LBX_Reload_Next(char* lbx_name, int16_t entry_num, SAMB_ptr SAMB_head);
+// WZD s10p04
+SAMB_ptr LBX_Load_Data(char* lbx_name, int16_t entry_num, int16_t start_rec, int16_t num_recs, int16_t record_size);
+// WZD s10p12
+void LBX_Load_Data_Static(char* lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
 
 
 

@@ -54,16 +54,20 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);
+    memset((World_Data + SZ_PARAGRAPH_B), 0xBB, ((3519 * SZ_PARAGRAPH_B) - (1 * SZ_PARAGRAPH_B)));
 
     // also used for COMBAT.TMP
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
 
     // 714 paragraphs = 16 * 714 = 11,424 bytes
-    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
+    // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
+    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);
+    memset(_CITIES, 0x5A, ((714 - 1) * SZ_PARAGRAPH_B));
 #ifdef STU_DEBUG
     DBG_ORIG__CITIES = _CITIES;
 #endif
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
+    memset(_world_maps, 0x4D, ((602 - 1) * SZ_PARAGRAPH_B));
     DBG_ORIG__world_maps = _world_maps;
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
     DBG_ORIG_UU_TBL_1 =  UU_TBL_1;

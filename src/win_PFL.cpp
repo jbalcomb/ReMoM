@@ -1,4 +1,4 @@
-#include <windows.h>
+#include <Windows.h>
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
 #include <timeapi.h>    /* timeBeginPeriod() */
 #include <stdint.h>
@@ -403,6 +403,7 @@ void Init_Platform(HINSTANCE hInstance, int nCmdShow)
 
     WndInit(hInstance, nCmdShow);
 
+    // TODO  Exit_With_Message = MWA_Exit_With_Message;
 
 
     // Getting the performance frequency.

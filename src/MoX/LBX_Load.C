@@ -1,6 +1,6 @@
 
 #include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
-#include "MoX_DEF.H"    /* ST_FAILURE, etc. */
+#include "MoX_BASE.H"    /* ST_FAILURE, etc. */
 #include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
 
 #include "LBX_Load.H"
@@ -466,15 +466,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     /*
         BEGIN: Read Data
     */
-// #pragma warning(suppress : 4703)
-// Save warning levels, and drop it to level 3 
-#pragma warning (push, 3)
-// turn two warnings off
-#pragma warning (disable : 4701 4703 6001)
-// screwy code goes here
     rvr_SAMB_data = SAMB_data;
-// restore original warning levels.
-#pragma warning (pop)
     read_size = SZ_32K_B;
     while(entry_length >= read_size)
     {
@@ -487,7 +479,7 @@ SAMB_ptr LBX_Load_Library_Data(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB
     {
         read_size = entry_length;
         // if ( lbx_read_sgmt(current_seg, read_size, lbxload_fhnd) == ST_FAILURE ) { Error_Handler(lbx_name, 2, entry_num, NULL); }
-#pragma warning(suppress : 28183)
+// #pragma warning(suppress : 28183)
         fread(rvr_SAMB_data, read_size, 1, lbxload_fptr);
     }
     /*

@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
@@ -67,7 +67,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -88,7 +88,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\AdvsrScr.H" />
     <ClInclude Include="..\..\..\src\ALLOC.H" />
-    <ClInclude Include="..\..\..\src\Allocate.H" />
     <ClInclude Include="..\..\..\src\ArmyList.H" />
     <ClInclude Include="..\..\..\src\CITYCALC.H" />
     <ClInclude Include="..\..\..\src\CityList.H" />
@@ -96,7 +95,6 @@
     <ClInclude Include="..\..\..\src\CityScr.H" />
     <ClInclude Include="..\..\..\src\City_ovr55.H" />
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
-    <ClInclude Include="..\..\..\src\Exit.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
     <ClInclude Include="..\..\..\src\Fields.H" />
     <ClInclude Include="..\..\..\src\FLIC_Draw.H" />
@@ -110,7 +108,6 @@
     <ClInclude Include="..\..\..\src\ItemView.H" />
     <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
-    <ClInclude Include="..\..\..\src\LBX_Load.H" />
     <ClInclude Include="..\..\..\src\LOADER.H" />
     <ClInclude Include="..\..\..\src\LoadScr.H" />
     <ClInclude Include="..\..\..\src\MagicScr.H" />
@@ -126,7 +123,6 @@
     <ClInclude Include="..\..\..\src\MoX_CFG.H" />
     <ClInclude Include="..\..\..\src\MoX_CMB.H" />
     <ClInclude Include="..\..\..\src\MoX_Data.H" />
-    <ClInclude Include="..\..\..\src\MoX_DBG.H" />
     <ClInclude Include="..\..\..\src\MoX_DEF.H" />
     <ClInclude Include="..\..\..\src\MoX_DIR.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
@@ -170,7 +166,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AdvsrScr.C" />
     <ClCompile Include="..\..\..\src\ALLOC.C" />
-    <ClCompile Include="..\..\..\src\Allocate.C" />
     <ClCompile Include="..\..\..\src\ArmyList.C" />
     <ClCompile Include="..\..\..\src\CITYCALC.C" />
     <ClCompile Include="..\..\..\src\CityList.C" />
@@ -190,7 +185,6 @@
     <ClCompile Include="..\..\..\src\ItemView.C" />
     <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
-    <ClCompile Include="..\..\..\src\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\LOADER.C" />
     <ClCompile Include="..\..\..\src\LoadScr.C" />
     <ClCompile Include="..\..\..\src\MagicScr.C" />
@@ -204,7 +198,6 @@
     <ClCompile Include="..\..\..\src\MoX_CFG.C" />
     <ClCompile Include="..\..\..\src\MoX_CMB.C" />
     <ClCompile Include="..\..\..\src\MoX_Data.C" />
-    <ClCompile Include="..\..\..\src\MoX_DBG.C" />
     <ClCompile Include="..\..\..\src\MoX_GAM.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
     <ClCompile Include="..\..\..\src\MoX_RNG.C" />
@@ -236,6 +229,7 @@
     <ClCompile Include="..\..\..\src\win_CLK.C" />
     <ClCompile Include="..\..\..\src\win_DIR.C" />
     <ClCompile Include="..\..\..\src\win_EMS.C" />
+    <ClCompile Include="..\..\..\src\win_Exit.C" />
     <ClCompile Include="..\..\..\src\win_Fonts.C" />
     <ClCompile Include="..\..\..\src\win_Input.C" />
     <ClCompile Include="..\..\..\src\win_KD.C" />
@@ -245,6 +239,11 @@
     <ClCompile Include="..\..\..\src\win_Video.C" />
     <ClCompile Include="..\..\..\src\WZD_o059.C" />
     <ClCompile Include="..\..\..\src\WZD_s001.C" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MoX\MoX.vcxproj">
+      <Project>{a0ef261e-909a-446f-b998-cd86f813dc2c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
