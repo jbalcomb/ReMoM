@@ -189,7 +189,7 @@
     <ClCompile Include="..\..\..\src\MainMenu.C" />
     <ClCompile Include="..\..\..\src\MainScr.C" />
     <ClCompile Include="..\..\..\src\MainScr_Maps.C" />
-    <ClCompile Include="..\..\..\src\MGC_s001.C" />
+    <ClCompile Include="..\..\..\src\MoM.C" />
     <ClCompile Include="..\..\..\src\Mouse.C" />
     <ClCompile Include="..\..\..\src\MovePath.C" />
     <ClCompile Include="..\..\..\src\MoX.C" />
@@ -236,7 +236,6 @@
     <ClCompile Include="..\..\..\src\win_PFL.cpp" />
     <ClCompile Include="..\..\..\src\win_Video.C" />
     <ClCompile Include="..\..\..\src\WZD_o059.C" />
-    <ClCompile Include="..\..\..\src\WZD_s001.C" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MoX\MoX.vcxproj">

@@ -51,6 +51,8 @@ extern byte_ptr p_Palette;  // AKA current_palette
 */
 // WZD dseg:76EC
 extern uint8_t* current_video_page;
+// WZD s28p02
+void Set_Page_Off(void);
 
 
 /*

@@ -179,15 +179,6 @@ extern int16_t previous_screen;
 
 
 
-/*
-    WIZARDS.EXE seg001
-*/
-
-// WZD s01p02
-void Screen_Control(void);
-
-
-
 #ifdef __cplusplus
 }
 #endif

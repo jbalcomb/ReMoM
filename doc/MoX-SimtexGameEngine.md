@@ -8,6 +8,32 @@ MoX !~ PFL
 
 
 
+
+
+
+
+SOOOOO MUCH DEPENDENCY!!!!!
+
+...something wants current_screen
+...which is in MoX.C
+...which contains Screen_Control()
+...which depends on EVERYTHING ... every screen code module...
+DevMap:
+    MoX contracts for a Screen Control function, depending on current_screen, previous_screen
+        first usage in main(), as part of Engine/Game Init
+    MoM owns Screen_Control() definition/implementation
+    MoX owns Screen_Control() declaration
+    MoX owns current_screen, previous_screen
+¿ some ifdef around stand-alone / USE_MOX ?
+¿ make a mess with src/inc for extra-special vars/funcs ?  e.g., MoX_SCR & MoM_SCR ... current_screen
+
+
+
+
+
+
+
+
 ¿ Data Types, Defines, Macros ?
 Base-Level, Fundamental?
 just put them all in MoX.H?

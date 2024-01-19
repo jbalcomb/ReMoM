@@ -1,6 +1,5 @@
 
 #include "MoX.H"
-#include "STU_DBG.H"
 
 /*
     MGC o57p01 (1of1)
@@ -11,11 +10,6 @@
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: MoM_Tables_Init()\n", __FILE__, __LINE__);
-#endif
-
-
 // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);  // Page_Count, Handle_Name, Reserved_Flag
 // TODO  EmmHndl_TILEXXX = EMM_GetHandle(3, EmmHndlNm_TILEXXX, 1);  // Page_Count, Handle_Name, Reserved_Flag
 
@@ -25,10 +19,6 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     //  515 * 16 = 8240 bytes
     // 73600 + 8240 = 81840 bytes
     _screen_seg = Allocate_Space(gfx_buff_nparas + 515);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _screen_seg: %p\n", __FILE__, __LINE__, _screen_seg);
-#endif
 
     GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B
 
@@ -54,7 +44,6 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);
-    memset((World_Data + SZ_PARAGRAPH_B), 0xBB, ((3519 * SZ_PARAGRAPH_B) - (1 * SZ_PARAGRAPH_B)));
 
     // also used for COMBAT.TMP
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
@@ -62,26 +51,22 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // 714 paragraphs = 16 * 714 = 11,424 bytes
     // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
     _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);
-    memset(_CITIES, 0x5A, ((714 - 1) * SZ_PARAGRAPH_B));
-#ifdef STU_DEBUG
-    DBG_ORIG__CITIES = _CITIES;
-#endif
+
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
-    memset(_world_maps, 0x4D, ((602 - 1) * SZ_PARAGRAPH_B));
-    DBG_ORIG__world_maps = _world_maps;
+
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
-    DBG_ORIG_UU_TBL_1 =  UU_TBL_1;
+
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
-    DBG_ORIG_UU_TBL_2 =  UU_TBL_2;
+
 
     TBL_Landmasses = (uint8_t *)Allocate_Next_Block(World_Data, 302);      // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Landmasses = TBL_Landmasses;
+
     TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Terr_Specials = TBL_Terr_Specials;
+
     TBL_Terrain_Flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Terrain_Flags = TBL_Terrain_Flags;
+
     TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Scouting = TBL_Scouting;
+
 
     square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes  ¿ (((2400 / 8) + 1) + 1) / 16) ?
     square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
@@ -187,17 +172,17 @@ SA_GET_USED(SAMB_head): 2345
 
 
     p0_heroes = Allocate_Space(28);  // 28 paragraphs = 448 bytes
-    DBG_ORIG_p0_heroes = p0_heroes;
+
     p1_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p1_heroes = p1_heroes;
+
     p2_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p2_heroes = p2_heroes;
+
     p3_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p3_heroes = p3_heroes;
+
     p4_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p4_heroes = p4_heroes;
+
     p5_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p5_heroes = p5_heroes;
+
 
     p_heroes[0] = (struct s_HERO *)p0_heroes;
     p_heroes[1] = (struct s_HERO *)p1_heroes;
@@ -209,27 +194,25 @@ SA_GET_USED(SAMB_head): 2345
 
 
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
-    DBG_ORIG__UNITS = _UNITS;
 
     global_strategic_unit = (struct s_STRATEGIC_UNIT *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
 
     _NODES = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
-    DBG_ORIG__NODES = _NODES;
+
     _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);  // 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
-    DBG_ORIG__FORTRESSES = _FORTRESSES;
+
     _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
-    DBG_ORIG__TOWERS = _TOWERS;
+
     _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
-    DBG_ORIG__LAIRS = _LAIRS;
+
     // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
     events_table = (int16_t *)Allocate_Space(7);
-    DBG_ORIG__events_table = events_table;
+
     TBL_Hero_Names = (struct s_INACTV_HERO *)Allocate_Space(37);
-    DBG_ORIG_TBL_Hero_Names = TBL_Hero_Names;
+
     TBL_Items = (struct s_ITEM *)Allocate_Space(433);
-    DBG_ORIG_TBL_Items = TBL_Items;
+
     TBL_Premade_Items = Allocate_Space(17);
-    DBG_ORIG_TBL_Premade_Items = TBL_Premade_Items;
     
     // AKA TBL_Spell_Data
     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR  7760 B; actual: 215 * 36 = 7740
@@ -258,8 +241,4 @@ SA_GET_USED(SAMB_head): 2345
 
     // EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: MoM_Tables_Init()\n", __FILE__, __LINE__);
-#endif
 }

@@ -2,6 +2,7 @@
 
 #include "win_PFL.hpp"
 
+#include "MoM.H"  /* Screen_Control() */
 #include "MoX.H"  /* ~ MoX - Common */
 
 #ifdef STU_DEBUG
