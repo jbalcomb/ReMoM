@@ -97,7 +97,6 @@
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
     <ClInclude Include="..\..\..\src\Fields.H" />
-    <ClInclude Include="..\..\..\src\FLIC_Draw.H" />
     <ClInclude Include="..\..\..\src\Fonts.H" />
     <ClInclude Include="..\..\..\src\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\Graphics.H" />
@@ -174,7 +173,6 @@
     <ClCompile Include="..\..\..\src\City_ovr55.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Fields.C" />
-    <ClCompile Include="..\..\..\src\FLIC_Draw.C" />
     <ClCompile Include="..\..\..\src\Fonts.C" />
     <ClCompile Include="..\..\..\src\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\Graphics.C" />

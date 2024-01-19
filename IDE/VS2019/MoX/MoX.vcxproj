@@ -13,12 +13,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\MoX\Allocate.C" />
     <ClCompile Include="..\..\..\src\MoX\Exit.C" />
+    <ClCompile Include="..\..\..\src\MoX\FLIC_Draw.C" />
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_DBG.C" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\MoX\Allocate.H" />
     <ClInclude Include="..\..\..\src\MoX\Exit.H" />
+    <ClInclude Include="..\..\..\src\MoX\FLIC_Draw.H" />
     <ClInclude Include="..\..\..\src\MoX\LBX_Load.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BITS.H" />

@@ -11,6 +11,23 @@
 
 
 
+/*
+    FLIC_Draw / animate
+*/
+#define FLIC_HDR_POS_HEIGHT                     0x02
+#define FLIC_GET_HEIGHT(_ptr_)                   ( GET_2B_OFS( (_ptr_), FLIC_HDR_POS_HEIGHT)                  )
+
+/*
+    MoX_DEF
+*/
+
+#define SCREEN_WIDTH    320
+#define SCREEN_HEIGHT   200
+
+#define ST_TRANSPARENT    0
+
+
+
 #define ST_FAILURE       0
 #define ST_SUCCESS      -1
 

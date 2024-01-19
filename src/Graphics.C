@@ -19,6 +19,25 @@ void line_fast(int x1, int y1, int x2, int y2, byte color);
 
 
 
+// WZD dseg:76DA                                                 BEGIN : ovr014
+// WZD dseg:76DA                                                 BEGIN : graphics
+
+// WZD dseg:76DA
+int16_t screen_window_x1 = SCREEN_XMIN;
+// WZD dseg:76DC
+int16_t screen_window_y1 = SCREEN_YMIN;
+// WZD dseg:76DE
+int16_t screen_window_x2 = SCREEN_XMAX;
+// WZD dseg:76E0
+int16_t screen_window_y2 = SCREEN_YMAX;
+
+// WZD dseg:76E0                                                 END : graphics
+// WZD dseg:76E2                                                 ¿ Init ?
+
+
+
+
+
 // WZD s14p01
 // drake178: 
 // MoO2  

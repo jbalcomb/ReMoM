@@ -170,7 +170,7 @@ extern byte_ptr remap_color_palettes;   // alloc in Load_Font_File()  set in Cre
 // WZD dseg:E7EA
 // char font_name[16];                             // set in Load_Font_File()
 
-// WZD  dseg:E7FA
+// WZD dseg:E7FA
 // 96 paragraphs = 96 * 16 = 1,536 bytes  (1536 / 256 = 6)
 extern SAMB_ptr Intensity_Scale_Tbl;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
 // ¿ MoO2 ~ remap_gray_scale_palette ?

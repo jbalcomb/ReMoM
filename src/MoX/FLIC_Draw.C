@@ -15,26 +15,42 @@ MoO2 Module: shear
 
 */
 
-#include "MoX.H"
-#include "MoX_TYPE.H"     /* byte_ptr, SAMB_ptr */
-#include "MoX_DEF.H"      /* DLOG() */
-#include "MoM_DEF.H"
-
-#include "MoX_Data.H"
-
+#include "MoX_TYPE.H"
+#include "MoX_BASE.H"
 #include "FLIC_Draw.H"
+#include <assert.h>
 
-#include "Fonts.H"    /* p_Palette() */
-#include "Video.H"
+/*
+    Fonts
+*/
+// WZD dseg:E7E4
+extern byte_ptr remap_color_palettes;
+// WZD dseg:E7FA
+extern SAMB_ptr Intensity_Scale_Tbl;
 
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
+/*
+    Graphics
+*/
+// WZD dseg:76DA
+extern int16_t screen_window_x1;
+// WZD dseg:76DC
+extern int16_t screen_window_y1;
+// WZD dseg:76DE
+extern int16_t screen_window_x2;
+// WZD dseg:76E0
+extern int16_t screen_window_y2;
 
+/*
+    Palette
+*/
+// WZD dseg:E7E8
+extern byte_ptr p_Palette;  // AKA current_palette
 
-// DELETE  extern uint8_t g_Palette[];
-// DELETE  extern uint8_t g_Palette_XBGR[];
-
+/*
+    Video
+*/
+// WZD dseg:76EC
+extern uint8_t* current_video_page;
 
 
 /*
@@ -52,37 +68,20 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     byte_ptr flic_palette_data;
     int16_t itr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
-
     p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
 
     if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
     {
-        // DLOG("((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))");
         start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
         count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File): %04X\n", __FILE__, __LINE__, FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
-// #endif
     }
     else
     {
-        // DLOG("((frame_index != 0) && (FLIC_GET_FRAME_PALETTES(p_FLIC_File) != 0))");
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
         start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
         count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index): %04X\n", __FILE__, __LINE__, FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
-// #endif
     }
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: start: %d\n", __FILE__, __LINE__, start);
-//     dbg_prn("DEBUG: [%s, %d]: count: %d\n", __FILE__, __LINE__, count);
-//     dbg_prn("DEBUG: [%s, %d]: flic_palette_data: %p\n", __FILE__, __LINE__, flic_palette_data);
-// #endif
 
     // // for(itr = start; itr < count; itr++)
     // for(itr = start; itr < (start + count); itr++)
@@ -92,9 +91,7 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     // }
     for(itr = 0; itr < count; itr++)
     {
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: *(flic_palette_data + itr): %02X\n", __FILE__, __LINE__, *(flic_palette_data + itr));
-// #endif
+
         // DASM: MOVSW; MOVSB;
         // ¿ ~== ? SET_2B, SET_1B ... rvr++;
         *(p_Palette + (start * 3) + (itr * 3) + 0) = *(flic_palette_data + (itr * 3) + 0);
@@ -104,9 +101,6 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
         *(p_Palette + 768 + start + itr) = ST_TRUE;  // TODO  review, remaster, add manifest-constant for palette change flags offset
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Load_Palette(p_FLIC_Header = %p, frame_index = %d)\n", __FILE__, __LINE__, p_FLIC_Header, frame_index);
-// #endif
 }
 
 
@@ -114,8 +108,8 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 /*
     WZD seg024
 */
+
 // WZD s24p08
-// drake178: VGA_SaveDrawSection
 /*
     calls Set_Page_Off(), so ~ Copy Off To Picture
     MoO2: Screen_Bitmap_Capture() |-> Create_Bitmap_Header(); Capture_Screen_Block_();
@@ -199,10 +193,6 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
-
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
     while (width--)
@@ -259,9 +249,6 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
 }
 
 
@@ -315,9 +302,6 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
     uint8_t remap_block_index;
     uint8_t remap_color;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
 
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 //     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
@@ -413,9 +397,6 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Remap_Draw_Frame(x_start = %d, y_start = %d, width = %d, frame_data = %p)\n", __FILE__, __LINE__, x_start, y_start, width, frame_data);
-// #endif
 }
 
 
@@ -459,9 +440,6 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 }
 
 // WZD s30p06
-/*
-    ¿ FLIC_Prepare() vs. Create_Blank_Picture() ?
-*/
 void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint8_t color)
 {
     int16_t length;
@@ -493,7 +471,6 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 
 
 // WZD s30p09
-// drake178: LBX_IMG_ClearGraphic()
 // MoO2  Module: replace  Replace_Color_All()
 void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 {
@@ -504,37 +481,16 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
     uint8_t * dst_ptr;
     uint8_t pixel;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
-// #endif
-
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
-// #ifdef STU_DEBUG
-//     if(DBG_Draw_Invisibility = 1)  /* Unit Has Invisibility */
-//     {
-//         DLOG("(DBG_Draw_Invisibility = 1)");
-//         dbg_prn("DEBUG: [%s, %d]: width: %d\n", __FILE__, __LINE__, width);
-//         dbg_prn("DEBUG: [%s, %d]: height: %d\n", __FILE__, __LINE__, height);
-//         dbg_prn("DEBUG: [%s, %d]: pict_size: %d\n", __FILE__, __LINE__, pict_size);
-//     }
-// #endif
-
 
     src_ptr = (uint8_t *)(pict_seg + 16);
     dst_ptr = (uint8_t *)(pict_seg + 16);
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: src_ptr: %p\n", __FILE__, __LINE__, src_ptr);
-// DELETE      dbg_prn("DEBUG: [%s, %d]: dst_ptr: %p\n", __FILE__, __LINE__, dst_ptr);
-// DELETE  #endif
 
     while(pict_size--)
     {
         pixel = *src_ptr++;
-// DELETE  #ifdef STU_DEBUG
-// DELETE      dbg_prn("DEBUG: [%s, %d]: pixel: 0x%02X\n", __FILE__, __LINE__, pixel);
-// DELETE  #endif
         dst_ptr++;
         if(pixel != ST_TRANSPARENT)
         {
@@ -545,15 +501,10 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Replace_Color_All(pict_seg = %p, replacement_color = %d)\n", __FILE__, __LINE__, pict_seg, replacement_color);
-// #endif
-
 }
 
 
 // WZD s30p10
-// drake178: LBX_IMG_LoadPalette()
 // ¿ MoO2  Module: animate  Draw_Palette() ?
 /*
     tests 'frames have palettes'
@@ -561,25 +512,14 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 */
 void Load_Palette_From_Animation(SAMB_ptr picture)
 {
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
-// #endif
 
     // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
-        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
         FLIC_Load_Palette(picture, 0);
     }
-    else
-    {
-        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
-    }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Load_Palette_From_Animation(picture = %p)\n", __FILE__, __LINE__, picture);
-// #endif
 }
 
 
@@ -595,33 +535,22 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     byte_ptr p_FLIC_Frame;
     uint8_t remap_flag;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: FLIC_Draw(x_start = %d, y_start = %d, picture = %p)\n", __FILE__, __LINE__, x_start, y_start, picture);
-// #endif
-
     // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
 
     current_frame = FLIC_GET_CURRENT_FRAME(picture);
     next_frame = FLIC_GET_CURRENT_FRAME(picture) + 1;
     if(next_frame < FLIC_GET_FRAME_COUNT(picture))
     {
-        // DLOG("(next_frame < FLIC_GET_FRAME_COUNT(picture))");
         FLIC_SET_CURRENT_FRAME(picture, next_frame);
     }
     else
     {
-        // DLOG("(next_frame >= FLIC_GET_FRAME_COUNT(picture))");
         FLIC_SET_CURRENT_FRAME(picture, FLIC_GET_LOOP_FRAME(picture));
     }
 
     if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
-        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
         FLIC_Load_Palette(picture, current_frame);
-    }
-    else
-    {
-        // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
     }
 
     /*
@@ -636,25 +565,17 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 
     if(remap_flag == ST_FALSE)
     {
-        // DLOG("(remap_flag == ST_FALSE)");
         FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
     }
     else
     {
-        // DLOG("(remap_flag != ST_FALSE)");
         // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
         FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: FLIC_Draw(x_start = %d, y_start = %d, picture = %p)\n", __FILE__, __LINE__, x_start, y_start, picture);
-// #endif
 }
 
 // WZD s30p12
-// drake178: 
-// AKA AKA FLIC_Draw_XY_Wnd()
-// AKA FLIC_Draw_Windowed()
 // MoO2  
 void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 {
@@ -677,34 +598,10 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
     uint16_t frame_offset;
     byte_ptr frame_data;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Draw(x = %d, y = %d, picture = %p)\n", __FILE__, __LINE__, x, y, picture);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: screen_window_x1: %d\n", __FILE__, __LINE__, screen_window_x1);
-    dbg_prn("DEBUG: [%s, %d]: screen_window_y1: %d\n", __FILE__, __LINE__, screen_window_y1);
-    dbg_prn("DEBUG: [%s, %d]: screen_window_x2: %d\n", __FILE__, __LINE__, screen_window_x2);
-    dbg_prn("DEBUG: [%s, %d]: screen_window_y2: %d\n", __FILE__, __LINE__, screen_window_y2);
-#endif
-
     if( (x <= screen_window_x2) && (y <= screen_window_y2) )
     {
-        DLOG("( (x <= screen_window_x2) && (y <= screen_window_y2) )");
         // _fmemcpy(animation_header, 0, 0, picture, 16)
         memcpy(&animation_header, picture, 16);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: animation_header.width: %d\n", __FILE__, __LINE__, animation_header.width);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.height: %d\n", __FILE__, __LINE__, animation_header.height);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.current_frame: %d\n", __FILE__, __LINE__, animation_header.current_frame);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.frame_count: %d\n", __FILE__, __LINE__, animation_header.frame_count);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.loop_frame: %d\n", __FILE__, __LINE__, animation_header.loop_frame);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_handle_number: %02X\n", __FILE__, __LINE__, animation_header.emm_handle_number);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_logical_page_number: %02X\n", __FILE__, __LINE__, animation_header.emm_logical_page_number);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.emm_logical_page_offset: %04X\n", __FILE__, __LINE__, animation_header.emm_logical_page_offset);
-    dbg_prn("DEBUG: [%s, %d]: animation_header.palette_header_offset: %04X\n", __FILE__, __LINE__, animation_header.palette_header_offset);
-#endif
 
         x2 = x + animation_header.width - 1;
 
@@ -740,7 +637,6 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
                 if(x2 >= screen_window_x2)
                 {
-                    DLOG("(x2 >= screen_window_x2)");
                     actual_width = screen_window_x2 - start_x + 1;
                 }
                 else
@@ -750,7 +646,6 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
                 if(y2 >= screen_window_y2)
                 {
-                    DLOG("(y2 >= screen_window_y2)");
                     actual_height = screen_window_y2 - start_y + 1;
                 }
                 else
@@ -763,12 +658,10 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
                 if(animation_header.current_frame < animation_header.frame_count)
                 {
-                    // DLOG("(next_frame < FLIC_GET_FRAME_COUNT(picture))");
                     FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
                 }
                 else
                 {
-                    // DLOG("(next_frame >= FLIC_GET_FRAME_COUNT(picture))");
                     FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
                 }
 
@@ -778,10 +671,6 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
                 {
                     // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
                     FLIC_Load_Palette(picture, current_frame);
-                }
-                else
-                {
-                    // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) == 0))");
                 }
 
 
@@ -800,13 +689,11 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
                 if(remap_flag == ST_FALSE)
                 {
-                    DLOG("(remap_flag == ST_FALSE)");
                     // TODO  VGA_DrawPartialImage(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
                     Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
                 }
                 else
                 {
-                    DLOG("(remap_flag != ST_FALSE)");
                     // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
                     // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
                     Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
@@ -816,15 +703,10 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Draw(x = %d, y = %d, picture = %p)\n", __FILE__, __LINE__, x, y, picture);
-#endif
-
 }
 
 
 // WZD s30p13
-// AKA LBX_IMG_BuildFrame()
 // NOTE: Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg) ~== FLIC_Draw(SAMB_ptr p_FLIC_File)
 void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
 {
@@ -940,9 +822,7 @@ void FLIC_Set_CurrentFrame(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 // WZD s30p15
 void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
-
     FLIC_SET_CURRENT_FRAME(p_FLIC_Header, 0);
-
 }
 
 
@@ -950,9 +830,7 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header)
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 {
     int16_t current_frame;
-
     current_frame = FLIC_GET_CURRENT_FRAME(p_FLIC_Header);
-
     return current_frame;
 }
 
@@ -961,11 +839,8 @@ int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header)
 int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
 {
     int16_t frame_count;
-
     frame_count = FLIC_GET_FRAME_COUNT(p_FLIC_Header);
-
     return frame_count;
-
 }
 
 
@@ -973,9 +848,7 @@ int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header)
 int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_width;
-
     flic_width = FLIC_GET_WIDTH(p_FLIC_Header);
-
     return flic_width;
 }
 
@@ -984,19 +857,20 @@ int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header)
 int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 {
     int16_t flic_height;
-
     flic_height = FLIC_GET_HEIGHT(p_FLIC_Header);
-
     return flic_height;
 }
 
 
 // WZD s30p20
 // VGA_WndDrawRotateImg()
+
 // WZD s30p21
 // VGA_WndDrawImageRect()
+
 // WZD s30p22
 // UU_VGA_WndDrawTransform()
+
 // WZD s30p23
 // VGA_RotateRect()
 
@@ -1007,18 +881,10 @@ void Draw_Picture(int16_t x, int16_t y, byte_ptr pict_seg)
     int16_t height;
     int16_t width;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-// #endif
-
     width = GET_2B_OFS(pict_seg, 0);
     height = GET_2B_OFS(pict_seg, 2);
 
     Draw_Picture_ASM(x, y, SZ_FLIC_HDR, pict_seg, width, height, 0);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture(x = %d, y = %d, pict_seg = %p)\n", __FILE__, __LINE__, x, y, pict_seg);
-// #endif
 
 }
 
@@ -1118,13 +984,12 @@ void Draw_Picture_Windowed(int16_t x1, int16_t y1, byte_ptr pict_seg)
     accomodates transparent pixels
         so, "sprite"?
 
-
 MoO2  Module: bitmap   Copy_Bitmap_To_Bitmap()
 MoO2  Module: draw     Color_Stream_Copy_()
 MoO2  Module: draw     Draw_Bitmap_Sprite_()
 MoO2  Module: clipped  Clipped_Draw_Bitmap_Sprite()
 Draw()
-    |->Clipped_Draw_Bitmap_Sprite()
+    |-> Clipped_Draw_Bitmap_Sprite()
 
 So, ...
     ¿ ~ Clipped Copy Bitmap Sprite ?
@@ -1230,8 +1095,10 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 
 // WZD s30p27
 // LBX_IMG_Overlay()
+
 // WZD s30p28
 // LBX_IMG_StripColors()
+
 // WZD s30p29
 // UU_LBX_IMG_CropRect()
 
@@ -1292,20 +1159,28 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_pt
 
 // WZD s30p31
 // UU_LBX_IMG_FullGScale()
+
 // WZD s30p32
 // UU_LBX_IMG_ExtGScaleEC()
+
 // WZD s30p33
 // UU_LBX_IMG_ExtGrayScale()
+
 // WZD s30p34
 // LBX_IMG_Resize()
+
 // WZD s30p35
 // VGA_FILEH_LoadFirst()
+
 // WZD s30p36
 // VGA_FILEH_DrawFrame()
+
 // WZD s30p37
 // VGA_FILEH_Loader()
+
 // WZD s30p38
 // VGA_FILEH_GetFrame()
+
 // WZD s30p39
 // VGA_FILEH_SetFrame()
 
@@ -1314,15 +1189,12 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_pt
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header)
 {
     int16_t full_store_flag;
-
     full_store_flag = FLIC_GET_FRAME_TYPE(p_FLIC_Header);
-
     return full_store_flag;
 }
 
 
 // WZD s30p41
-// drake178: LBX_IMG_SetLoop1
 void FLIC_Set_LoopFrame_1(SAMB_ptr p_FLIC_Header)
 {
     FLIC_SET_LOOP_FRAME(p_FLIC_Header, 1);
@@ -1330,7 +1202,6 @@ void FLIC_Set_LoopFrame_1(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p42
-// drake178: LBX_IMG_OutlineOvr()
 // MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_()
 // checks transparent, outline color  (NOT > 223)
 void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
@@ -1345,10 +1216,6 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     int16_t itr_height;
     uint16_t src_ofst;
     int16_t itr_pict_size;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-// #endif
     
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
@@ -1367,19 +1234,11 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-// DELETE      }
-// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
-            // DELETE  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                // DELETE  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -1387,10 +1246,8 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            // DELETE  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
             if(outside_state != ST_FALSE)
             {
-                // DELETE  DLOG("transition: inside pixel, outside state");
                 *(src_sgmt + (src_ofst - 2)) = outline_color;
             }
             outside_state = ST_FALSE;
@@ -1418,19 +1275,11 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-// DELETE      }
-// DELETE  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color)  /* outside pixel */
         {
-            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -1438,10 +1287,8 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            // Struggle-Mode  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color)");
             if(outside_state != ST_FALSE)
             {
-                // Struggle-Mode  DLOG("transition: inside pixel, outside state");
                 src_ofst -= height;  /* previous column */
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
                 src_ofst += height;
@@ -1462,15 +1309,10 @@ void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color)
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-// #endif
-
 }
 
 
 // WZD s30p43
-// drake178: LBX_IMG_OutlineOvr_R()
 // MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_No_Glass_()
 // checks transparent, outline color, and > 223
 void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
@@ -1485,10 +1327,6 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     int16_t itr_height;
     uint16_t src_ofst;
     int16_t itr_pict_size;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-// #endif
     
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
@@ -1507,19 +1345,11 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-// #ifdef STU_DEBUG
-//     if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-//     {
-//         dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-//     }
-// #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)  /* outside pixel */
         {
-            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -1558,19 +1388,11 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
     while(itr_pict_size--)
     {
         pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
-// Struggle-Mode  #ifdef STU_DEBUG
-// Struggle-Mode      if(DBG_Outline_Bitmap_Pixels_No_Glass == 1)
-// Struggle-Mode      {
-// Struggle-Mode          dbg_prn("DEBUG: [%s, %d]: pixel: %02X\n", __FILE__, __LINE__, pixel);
-// Struggle-Mode      }
-// Struggle-Mode  #endif
 
         if(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)  /* outside pixel */
         {
-            // Struggle-Mode  DLOG("(pixel == ST_TRANSPARENT || pixel == outline_color || pixel >= 224)");
             if(inside_state != ST_FALSE)  /* inside pixel & inside state */
             {
-                // Struggle-Mode  DLOG("transition: outside pixel, inside state");
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
             }
             inside_state = ST_FALSE;
@@ -1578,10 +1400,8 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
         }
         else  /* inside pixel */
         {
-            // Struggle-Mode  DLOG("(pixel != ST_TRANSPARENT && pixel != outline_color && pixel < 224)");
             if(outside_state != ST_FALSE)
             {
-                // Struggle-Mode  DLOG("transition: inside pixel, outside state");
                 src_ofst -= height;  /* previous column */
                 *(src_sgmt + (src_ofst - 1)) = outline_color;
                 src_ofst += height;
@@ -1602,16 +1422,12 @@ void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color)
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Outline_Bitmap_Pixels_No_Glass(pict_seg = %p, outline_color = %02X)\n", __FILE__, __LINE__, pict_seg, outline_color);
-// #endif
 }
 
 
 // WZD s30p44
-// drake178: LBX_IMG_ColorScrmblr
 // MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
-// replaces a selected color in an LBX image with one of the eight indexes in the passed color array, constantly changing the next one to be written using a 16 color long repeat sequence
+// replaces a selected color in an image with one of the eight indexes in the passed color array, constantly changing the next one to be written using a 16 color long repeat sequence
 void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_list)
 {
     int16_t width;
@@ -1622,10 +1438,6 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
     uint8_t color_list_idx;
     uint8_t color_list_ctr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
-// #endif
-    
     width = FLIC_GET_WIDTH(pict_seg);
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
@@ -1647,23 +1459,17 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
         color_list_ctr = ((color_list_ctr + 1) & 0x7);  // ~== mod 8
     }
 
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Bitmap_Aura_Pixels(pict_seg = %p, aura_color = %02X, color_list = %p)\n", __FILE__, __LINE__, pict_seg, aura_color, color_list);
-// #endif
 }
 
 
 // WZD s30p45
-// drake178: UU_LBX_IMG_DrawRect()
+// UU_LBX_IMG_DrawRect()
 
 
 // WZD s30p46
-// drake178: LBX_IMG_GetGFXSize()
 // EXACT  MoO2  Module: bitmap  Get_Bitmap_Actual_Size()
 /*
     No RLE, therefore "Bitmap", per MoO2
-
 */
 void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height)
 {
@@ -1743,7 +1549,6 @@ int16_t CS031_width;
 // WZD seg031:0012
 
 // WZD s31p01
-// drake178: VGA_DrawPartialImage()
 // MoO2  Clipped_Draw_Animated_Sprite()
 void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
@@ -1760,19 +1565,12 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
     int16_t tmp_skip_y;
     int16_t tmp_height;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
-#endif
-
     assert(skip_x == 0);
     assert(skip_y == 0);
-
-
 
     CS031_skip_y = skip_y;
     CS031_width  = width;   // actual_width;
     CS031_height = height;  // actual_height;
-
 
 
 //     if(skip_x != 0)
@@ -1802,9 +1600,6 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
         bbuff = bbuff_pos++;
 
         packet_op = *frame_data++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
-#endif
 
         if(packet_op == 0xFF)  /* Type: skip */
         {
@@ -1812,9 +1607,6 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
         }
 
         packet_byte_count = *frame_data++;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: packet_op: %d\n", __FILE__, __LINE__, packet_op);
-#endif
 
         if(packet_op == 0x80)  /* Type: decode */
         {
@@ -1886,35 +1678,14 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
         }
     }
 
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
-#endif
-
 }
 
 // WZD s31p02
-// drake178: VGA_DrawPartImage_R()
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
 void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Clipped_Remap_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
-#endif
-    // assert(false & "Not Yet Implemented: Clipped_Remap_Draw_Frame()");
-    // assert(false);
     assert(0);
-
-    assert(skip_x == 0);
-    assert(skip_y == 0);
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Clipped_Remap_Draw_Frame(x1 = %d, y1 = %d, width = %d, height = %d, skip_x = %d, skip_y = %d, frame_data = %p)\n", __FILE__, __LINE__, x1, y1, width, height, skip_x, skip_y, frame_data);
-#endif
 
 }
 
@@ -1924,13 +1695,13 @@ void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_
 */
 
 // WZD s32p01
-// drake178: VGA_DrawPartEmsImg()
+// VGA_DrawPartEmsImg()
 
 // WZD s32p02
-// drake178: EMM_MapNextIMGPages()
+// EMM_MapNextIMGPages()
 
 // WZD s32p03
-// drake178: VGA_DrawPartEmsImg_R()
+// VGA_DrawPartEmsImg_R()
 
 
 
@@ -1947,7 +1718,6 @@ void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_
     ? frame index is 
 */
 // ? MoO2: Create_Multi_Frame_Bitmap_Header() ?
-// AKA LBX_IMG_DecPrepare()
 void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg, int16_t frame_idx)
 {
     int16_t src_width;
@@ -2126,10 +1896,6 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
     int16_t itr_width;
     int16_t itr_height;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
-// #endif
-
     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
     data = pict_seg + ofst;
     screen_pos = screen_start;
@@ -2137,12 +1903,10 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 
     if(FLIC_GET_LOOP_FRAME(pict_seg) != 0)
     {
-        // DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) != 0)");
         Remap_Draw_Picture_ASM(x_start, y_start, ofst, pict_seg, width, height, skip_x);
     }
     else
     {
-        // DLOG("(FLIC_GET_LOOP_FRAME(pict_seg) == 0)");
         while(itr_width)
         {
             screen_pos = screen_start++;
@@ -2164,10 +1928,6 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Picture_ASM(x_start = %d,  y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start,  y_start,  ofst,  pict_seg,  width,  height,  skip_x);
-// #endif
-
 }
 
 
@@ -2184,16 +1944,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
     uint8_t remap_color;
     int16_t itr_width;
     int16_t itr_height;
-    
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-// #endif
 
-    // // // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
-    // // screen_page_offset = ((y * SCREEN_WIDTH) + x);
-    // // screen_page = video_page_buffer[1 - draw_page_num] + screen_page_offset;
-    // // screen_start = video_page_buffer[1 - draw_page_num] + (y_start * SCREEN_WIDTH) + x_start;
-    // screen_start = video_page_buffer[draw_page_num] + (y_start * SCREEN_WIDTH) + x_start;
     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
 
     data = pict_seg + ofst;
@@ -2207,12 +1958,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
         while(itr_height)
         {
             data_byte = *data++;
-// #ifdef STU_DEBUG
-//     if(DBG_Remap_Draw_Picture_ASM == 1)
-//     {
-//         dbg_prn("DEBUG: [%s, %d]: data_byte: %02X\n", __FILE__, __LINE__, data_byte);
-//     }
-// #endif
+
             if(data_byte != ST_TRANSPARENT)  /* skip */
             {
                 // TODO  ¿ should be `if(data_byte >= 232) ?
@@ -2235,14 +1981,9 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
         itr_width--;
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Remap_Draw_Picture_ASM(x_start = %d, y_start = %d, ofst = %d, pict_seg = %p, width = %d, height = %d, skip_x = %d)\n", __FILE__, __LINE__, x_start, y_start, ofst, pict_seg, width, height, skip_x);
-// #endif
-
 }
 
 // WZD s33p07
-// drake178: LBX_IMG_RawOverlay()
 // MoO2  Module: draw  Color_Stream_Copy_()
 void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
@@ -2279,8 +2020,6 @@ void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t s
 
 
 // WZD s33p09
-// AKA FLIC_Remap_Color()
-// drake178: LBX_IMG_ColorReplace
 // MoO2:  Replace_Color()
 void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacement_color)
 {
@@ -2315,6 +2054,7 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 
 // WZD s33p10
 // UU_LBX_IMG_GetIntensity()
+
 // WZD s33p11
 // LBX_IMG_PartialCopy()
 
@@ -2334,12 +2074,12 @@ void Clear_Memory_Far(byte_ptr dst, int16_t n)
 
 // WZD s33p13
 // LBX_IMG_Shrink()
+
 // WZD s33p14
 // LBX_IMG_Stretch()
 
 
 // WZD s33p15
-// drak178: LBX_IMG_RandomDelete()
 // MoO2  Module: bitmap  Vanish_Bitmap()
 // MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
 /*
@@ -2360,7 +2100,6 @@ void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent)
 
 
 // WZD s33p16
-// drake178: LBX_IMG_Grayscale()
 // MoO2: Gray_Scale_Bitmap()
 /*
 e.g.,
@@ -2383,10 +2122,6 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
     int16_t pict_size;
     uint8_t data;
     uint8_t intensity_value;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
-// #endif
 
     // DS:SI  src  p_Palette[0]
     // ES:DI  dst  Intensity_Scale_Tbl@[0]
@@ -2446,14 +2181,11 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Gray_Scale_Bitmap(pict_seg = %p, color_start = %d)\n", __FILE__, __LINE__, pict_seg,  color_start);
-// #endif
-
 }
 
 // WZD s33p17
 // LBX_IMG_RevGrayscale()
+
 // WZD s33p18
 // UU_DUP_RevGrayscale()
 

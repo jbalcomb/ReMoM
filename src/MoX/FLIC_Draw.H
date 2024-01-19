@@ -30,6 +30,7 @@ MoO2 Module: shear
 "SZ"    "size"
 */
 
+// MoO2  animation_header
 struct s_FLIC_HDR
 {
     /* 00 */ int16_t width;
@@ -144,7 +145,7 @@ struct s_FLIC_HDR
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
 
 
 /*
@@ -190,8 +191,10 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg);
 
 // WZD s30p03
 // LBX_IMG_VShiftRect
+
 // WZD s30p04
 // LBX_IMG_VertWarp
+
 // WZD s30p05
 // LBX_IMG_HorzWarp
 
@@ -200,16 +203,15 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 
 // WZD s30p07
 // UU_LBX_IMG_ColorShift
+
 // WZD s30p08
 // UU_LBX_IMG_CReplaceRect
 
 // WZD s30p09
-// drake178: LBX_IMG_ClearGraphic()
 // MoO2  Module: replace  Replace_Color_All()
 void Replace_Color_All(SAMB_ptr picture, uint8_t replacement_color);
 
 // WZD s30p10
-// drake178: LBX_IMG_LoadPalette()
 void Load_Palette_From_Animation(SAMB_ptr picture);
 
 
@@ -221,7 +223,6 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture);
 
 
 // WZD s30p13
-// AKA LBX_IMG_BuildFrame();
 void Draw_Picture_To_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
 
 // WZD s30p14
@@ -244,10 +245,13 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p20
 // VGA_WndDrawRotateImg()
+
 // WZD s30p21
 // VGA_WndDrawImageRect()
+
 // WZD s30p22
 // UU_VGA_WndDrawTransform()
+
 // WZD s30p23
 // VGA_RotateRect()
 
@@ -262,8 +266,10 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 
 // WZD s30p27
 // LBX_IMG_Overlay()
+
 // WZD s30p28
 // LBX_IMG_StripColors()
+
 // WZD s30p29
 // UU_LBX_IMG_CropRect()
 
@@ -272,20 +278,28 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 
 // WZD s30p31
 // UU_LBX_IMG_FullGScale()
+
 // WZD s30p32
 // UU_LBX_IMG_ExtGScaleEC()
+
 // WZD s30p33
 // UU_LBX_IMG_ExtGrayScale()
+
 // WZD s30p34
 // LBX_IMG_Resize()
+
 // WZD s30p35
 // VGA_FILEH_LoadFirst()
+
 // WZD s30p36
 // VGA_FILEH_DrawFrame()
+
 // WZD s30p37
 // VGA_FILEH_Loader()
+
 // WZD s30p38
 // VGA_FILEH_GetFrame()
+
 // WZD s30p39
 // VGA_FILEH_SetFrame()
 
@@ -294,28 +308,24 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 int16_t Get_Full_Store_Flag(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p41
-// drake178: LBX_IMG_SetLoop1
 void FLIC_Set_LoopFrame_1(SAMB_ptr p_FLIC_Header);
 
 // WZD s30p42
-// drake178: LBX_IMG_OutlineOvr()
 // MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_()
 // checks transparent, outline color  (NOT > 223)
 void Outline_Bitmap_Pixels(SAMB_ptr pict_seg, uint8_t outline_color);
 
 // WZD s30p43
-// drake178: LBX_IMG_OutlineOvr_R()
 // MoO2: Module: bitmap  Outline_Bitmap() |-> Outline_Bitmap_Pixels_No_Glass_()
 // checks transparent, outline color, and > 223
 void Outline_Bitmap_Pixels_No_Glass(SAMB_ptr pict_seg, uint8_t outline_color);
 
 // WZD s30p44
-// drake178: LBX_IMG_ColorScrmblr
 // MoO2: Bitmap_Aura() |-> Bitmap_Aura_Pixels_()
 void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t color, uint8_t * color_list);
 
 // WZD s30p45
-// drake178: UU_LBX_IMG_DrawRect()
+// UU_LBX_IMG_DrawRect()
 
 // WZD s30p46
 // drake178: LBX_IMG_GetGFXSize()
@@ -328,11 +338,9 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
 */
 
 // WZD s31p01
-// drake178: VGA_DrawPartialImage()
 void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
 
 // WZD s31p02
-// drake178: VGA_DrawPartImage_R()
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
 void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, byte_ptr frame_data);
 
@@ -342,13 +350,13 @@ void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_
 */
 
 // WZD s32p01
-// drake178: VGA_DrawPartEmsImg()
+// VGA_DrawPartEmsImg()
 
 // WZD s32p02
-// drake178: EMM_MapNextIMGPages()
+// EMM_MapNextIMGPages()
 
 // WZD s32p03
-// drake178: VGA_DrawPartEmsImg_R()
+// VGA_DrawPartEmsImg_R()
 
 
 
@@ -357,7 +365,6 @@ void Clipped_Remap_Draw_Frame__NOP(int16_t x1, int16_t y1, int16_t width, int16_
 */
 
 // WZD s33p01
-// AKA LBX_IMG_DecPrepare()
 void Create_Multi_Frame_Blank_Bitmap(SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg, int16_t frame_idx);
 
 // WZD s33p02
@@ -376,7 +383,6 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
 // WZD s33p07
-// drake178: LBX_IMG_RawOverlay()
 // MoO2  Module: draw  Color_Stream_Copy_()
 void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
@@ -384,13 +390,12 @@ void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t s
 // LBX_IMG_HorzFlip()
 
 // WZD s33p09
-// AKA FLIC_Remap_Color()
-// drake178: LBX_IMG_ColorReplace
 // MoO2:  Replace_Color()
 void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacement_color);
 
 // WZD s33p10
 // UU_LBX_IMG_GetIntensity()
+
 // WZD s33p11
 // LBX_IMG_PartialCopy()
 
@@ -399,22 +404,22 @@ void Clear_Memory_Far(byte_ptr dst, int16_t n);
 
 // WZD s33p13
 // LBX_IMG_Shrink()
+
 // WZD s33p14
 // LBX_IMG_Stretch()
 
 // WZD s33p15
-// drak178: LBX_IMG_RandomDelete()
 // MoO2  Module: bitmap  Vanish_Bitmap()
 // MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
 void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent);
 
 // WZD s33p16
-// drake178: LBX_IMG_Grayscale()
 // MoO2: Gray_Scale_Bitmap()
 void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start);
 
 // WZD s33p17
 // LBX_IMG_RevGrayscale()
+
 // WZD s33p18
 // UU_DUP_RevGrayscale()
 

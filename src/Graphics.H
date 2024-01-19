@@ -19,7 +19,27 @@ Module: shear
 #ifdef __cplusplus
 extern "C" {
 #endif
-    /* C and Asm Function Prototypes */
+
+
+
+// WZD dseg:76DA                                                 BEGIN : ovr014
+// WZD dseg:76DA                                                 BEGIN : graphics
+
+// WZD dseg:76DA
+extern int16_t screen_window_x1;
+// WZD dseg:76DC
+extern int16_t screen_window_y1;
+// WZD dseg:76DE
+extern int16_t screen_window_x2;
+// WZD dseg:76E0
+extern int16_t screen_window_y2;
+
+// WZD dseg:76E0                                                 END : graphics
+// WZD dseg:76E2                                                 ¿ Init ?
+
+
+
+
 
 // WZD s14p01
 // drake178: 

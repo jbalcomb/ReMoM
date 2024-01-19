@@ -22,7 +22,6 @@
 #include "CityList.H"
 #include "Explore.H"
 #include "Fields.H"
-#include "FLIC_Draw.H"
 #include "Fonts.H"
 #include "GENDRAW.H"
 #include "Graphics.H"
@@ -106,6 +105,12 @@ void Release_Block(SAMB_ptr block);
 SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size);
 // WZD s08p14
 SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size);
+
+/*
+    FLIC_Draw.C
+*/
+
+
 
 /*
     LBX_Load.C

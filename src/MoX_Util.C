@@ -107,7 +107,6 @@ void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n)
 // WZD s22p18 MEM_Clear_Far()
 
 // WZD s22p19
-// drake178: MEM_Set_Far()
 // MoO2  Module: struct  Set_Memory_()
 void Set_Memory(int8_t * s, int16_t n, int16_t c)
 {
@@ -117,6 +116,7 @@ void Set_Memory(int8_t * s, int16_t n, int16_t c)
 
 // WZD s22p20
 // TODO  see if there is an example of this is the MS C lib or journal
+// ¿ MoO2  struct  Swap_Short() ?
 void MEM_SwapWord(int16_t * word1, int16_t * word2)
 {
     int16_t tmp_word;

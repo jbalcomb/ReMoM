@@ -531,14 +531,13 @@ int16_t map_sustain = 2;
 
 
 
-// dseg:76DA
-int16_t screen_window_x1 = SCREEN_XMIN;
-// dseg:76DC
-int16_t screen_window_y1 = SCREEN_YMIN;
-// dseg:76DE
-int16_t screen_window_x2 = SCREEN_XMAX;
-// dseg:76E0
-int16_t screen_window_y2 = SCREEN_YMAX;
+
+
+// WZD dseg:76DA                                                 BEGIN: ovr014
+// WZD dseg:76DA                                                 BEGIN: graphics
+
+// WZD dseg:76E0                                                 END: graphics
+// WZD dseg:76E2                                                 ¿ Init ?
 
 
 
