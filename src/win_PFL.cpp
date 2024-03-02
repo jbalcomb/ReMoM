@@ -200,8 +200,6 @@ int Pump_Paints_Cnt = 0;
 
 void Pump_Events(void);
 void Pump_Paints(void);
-// DELETE  void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
-// DELETE  void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status);
 struct win32_window_dimension Get_Window_Dimensions(HWND Window);
 void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight);
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_320x200xXBGR);
@@ -214,12 +212,8 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 void Pump_Events(void)
 {
-        // char FPSBuffer[256];
-        // sprintf_s(FPSBuffer, sizeof(FPSBuffer), "%.02fms/f, %.02ff/s, %.02fMc/f\n", MSPerFrame, FPS, MegaCyclesPerFrame);
-        // OutputDebugStringA(FPSBuffer);
-
-
     Pump_Events_Cnt++;
+
     MSG Message;
     while (PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
     {
@@ -248,48 +242,6 @@ void Pump_Paints(void)
     }
 }
 
-// DELETE  // ¿ ~== Mouse_Int_Handler() ?
-// DELETE  void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y)
-// DELETE  {
-// DELETE      if (lock_mouse_button_status_flag != ST_TRUE)
-// DELETE      {
-// DELETE          mouse_x = platform_mouse_x / 2;
-// DELETE          mouse_y = platform_mouse_y / 2;
-// DELETE          // mouse_x = platform_mouse_x / display_scale;
-// DELETE          // mouse_y = platform_mouse_y / display_scale;
-// DELETE      }
-// DELETE      if (mouse_interrupt_active == ST_FALSE)
-// DELETE      {
-// DELETE          mouse_interrupt_active = ST_TRUE;
-// DELETE          // TODO  MOUSE_SaveClick();
-// DELETE          if (mouse_enabled != ST_FALSE)
-// DELETE          {
-// DELETE              mouse_enabled = ST_FALSE;
-// DELETE              if (current_mouse_list_count >= 2)
-// DELETE              {
-// DELETE                  Check_Mouse_Shape(mouse_x, mouse_y);
-// DELETE              }
-// DELETE              Restore_Mouse_On_Page();                // mouse_background_buffer -> video_page_buffer[draw_page_num]
-// DELETE              Save_Mouse_On_Page(mouse_x, mouse_y);   // video_page_buffer[draw_page_num] -> mouse_background_buffer
-// DELETE              Draw_Mouse_On_Page(mouse_x, mouse_y);   // mouse_palette -> video_page_buffer[draw_page_num]
-// DELETE              mouse_enabled = ST_TRUE;
-// DELETE          }
-// DELETE          mouse_interrupt_active = ST_FALSE;
-// DELETE      }
-// DELETE  }
-// DELETE  
-// DELETE  void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status)
-// DELETE  {
-// DELETE      if(lock_mouse_button_status_flag != ST_TRUE)
-// DELETE      {
-// DELETE          mouse_x = platform_mouse_x / 2;
-// DELETE          mouse_y = platform_mouse_y / 2;
-// DELETE          // mouse_x = platform_mouse_x / display_scale;
-// DELETE          // mouse_y = platform_mouse_y / display_scale;
-// DELETE          platform_mouse_button_status = mouse_button_status;
-// DELETE      }
-// DELETE  }
-
 struct win32_window_dimension Get_Window_Dimensions(HWND Window)
 {
     win32_window_dimension WndDim;
@@ -304,19 +256,6 @@ struct win32_window_dimension Get_Window_Dimensions(HWND Window)
 
 void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, int WindowWidth, int WindowHeight)
 {
-// DELETE      // Apply_Palette()
-// DELETE      int16_t itr;
-// DELETE      for(itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
-// DELETE      {
-// DELETE          if(*(p_Palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
-// DELETE          {
-// DELETE              *(PFL_Palette + (itr * 4) + 3) = 0x00;
-// DELETE              *(PFL_Palette + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
-// DELETE              *(PFL_Palette + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);
-// DELETE              *(PFL_Palette + (itr * 4) + 0) = (*(p_Palette + (itr * 3) + 2) << 2);
-// DELETE          }
-// DELETE      }
-
 
     // Convert_320x200xVGA_To_320x200xXBGR(p_320x200xVGA, p_320x200xXBGR);
     uint8_t * p_320x200xVGA;
@@ -335,24 +274,13 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
     height = screen_pixel_height;
     uint8_t color_map_index;
     uint32_t color;
+
     for(itr_height = 0; itr_height < height; itr_height++)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
         {
             color_map_index = *(p_320x200xVGA + (itr_height * width) + itr_width);
             color = p_XBGR[color_map_index];
-            // assert(color != 0);
-// #ifdef STU_DEBUG
-// //     if(color_map_index == 0x72)
-// //     {
-// //         dbg_prn("DEBUG: [%s, %d]: PFL_Palette[%d]: %08X\n", __FILE__, __LINE__, color_map_index, color);
-// //     }
-//     // if( ((itr_height >= 111) || (itr_height <= 111+16)) && ((itr_width >= 121) || (itr_height <= 121+18)) )
-//     if( ((itr_height >= 111) || (itr_height < 111+16)) && ((itr_width >= 121) || (itr_height < 121+18)) )
-//     {
-//         dbg_prn("DEBUG: [%s, %d]: PFL_Palette[%d]: %08X\n", __FILE__, __LINE__, color_map_index, color);
-//     }
-// #endif
             *(p_320x200xXBGR + (itr_height * width) + itr_width) = color;
         }
     }
@@ -379,7 +307,6 @@ void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_32
     uint8_t color_map_index;
     uint32_t color;
 
-// DELETE      p_XBGR = (uint32_t*)g_Palette_XBGR;  // ~== IBM-PC VGA-DAC
     p_XBGR = (uint32_t*)PFL_Palette;  // ~== IBM-PC VGA-DAC
 
     width = 320;

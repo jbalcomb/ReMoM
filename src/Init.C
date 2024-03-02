@@ -1,7 +1,7 @@
 
 #include "MoX.H"
 
-#define DEFAULT_FONT_FILE   "FONTS.LBX"
+char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 // TODO  #define DEFAULT_INPUT_TYPE  1  // Keyboard & Mouse
 // TODO  #define DEFAULT_VIDEO_MODE  3  // vm_Mode_Y
 
