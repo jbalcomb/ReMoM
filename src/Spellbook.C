@@ -1,6 +1,9 @@
 /*
     WIZARDS.EXE
+        ovr128
         ovr117
+        ovr130
+        ovr132
 */
 
 #include "MoM.H"
@@ -107,6 +110,22 @@ char cnst_Research_Cost[] = "Research Cost:";
 // WZD dseg:5E90 00 00                                           dw 0
 
 // WZD dseg:5E90                                                 END:  ovr118 - Strings
+
+
+
+// WZD dseg:68A0                                                 ¿ BEGIN:  ovr132 - Strings ?
+
+// WZD dseg:68A0
+char message_lbx_file__ovr132[] = "message";
+// WZD dseg:68A8
+char names_lbx_file__ovr132[] = "NAMES";
+// WZD dseg:68AE
+char cnst_PlaneShift_2[] = "Plane Shift";
+// WZD dseg:68BA
+char soundfx_lbx_file__ovr132[] = "soundfx";
+
+// WZD dseg:68BA                                                 ¿ END:  ovr132 - Strings ?
+
 
 
 
@@ -577,8 +596,8 @@ void SBK_BuildSpellbook(int16_t Book_Type, int16_t Page_Size)
     DBG_nominal_skill = Player_Base_Casting_Skill(HUMAN_PLAYER_IDX);
     _players[HUMAN_PLAYER_IDX].Nominal_Skill = DBG_nominal_skill;
     
-    // WIZ_ManaPerTurn = (((_players[HUMAN_PLAYER_IDX].Mana_Pnct * _players[HUMAN_PLAYER_IDX].Power_Base) / 100) - Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX));
-    DBG_mana_ratio = _players[HUMAN_PLAYER_IDX].Mana_Pnct;
+    // WIZ_ManaPerTurn = (((_players[HUMAN_PLAYER_IDX].mana_ratio * _players[HUMAN_PLAYER_IDX].Power_Base) / 100) - Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX));
+    DBG_mana_ratio = _players[HUMAN_PLAYER_IDX].mana_ratio;
     DBG_power_base = _players[HUMAN_PLAYER_IDX].Power_Base;
     DBG_mana_upkeep = Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX);
     WIZ_ManaPerTurn = (((DBG_mana_ratio * DBG_power_base) / 100) - DBG_mana_upkeep);
@@ -638,9 +657,9 @@ void SBK_BuildSpellbook(int16_t Book_Type, int16_t Page_Size)
 
         for(itr1 = 0; itr1 < 4; itr1++)
         {
-            if(_players[HUMAN_PLAYER_IDX].Rsrch_Candidates[itr1] > 0)
+            if(_players[HUMAN_PLAYER_IDX].research_spells[itr1] > 0)
             {
-                SBK_SpellList[(itr1 - itr2)] = _players[HUMAN_PLAYER_IDX].Rsrch_Candidates[itr1];
+                SBK_SpellList[(itr1 - itr2)] = _players[HUMAN_PLAYER_IDX].research_spells[itr1];
             }
             else
             {
@@ -653,13 +672,13 @@ void SBK_BuildSpellbook(int16_t Book_Type, int16_t Page_Size)
         itr2 = 0;
         for(itr1 = 0; itr1 < 4; itr1++)
         {
-            if(_players[HUMAN_PLAYER_IDX].Rsrch_Candidates[(4 + itr1)] <= 0)
+            if(_players[HUMAN_PLAYER_IDX].research_spells[(4 + itr1)] <= 0)
             {
                 itr2++;
             }
             else
             {
-                SBK_SpellList[(itr1 - itr2)] = _players[HUMAN_PLAYER_IDX].Rsrch_Candidates[(4 + itr1)];
+                SBK_SpellList[(itr1 - itr2)] = _players[HUMAN_PLAYER_IDX].research_spells[(4 + itr1)];
             }
         }
     }
@@ -744,7 +763,7 @@ void OVL_ComposeBookText(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr spellbook_bitma
 
                 if(Cost_Limit >= casting_cost)
                 {
-                    if(spell_data_table[abs(spell_idx)].Type != 11)  /* Crafting_Spell */
+                    if(spell_data_table[abs(spell_idx)].type != 11)  /* Crafting_Spell */
                     {
                         Text_Width = Get_String_Width(cnst_Instant_Cast);
                         Clear_Bitmap_Region(9, (7 + (itr1 * 22)), (12 + Text_Width), (12 + (itr1 * 22)), spellbook_bitmap);
@@ -805,8 +824,7 @@ void OVL_ComposeBookText(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr spellbook_bitma
 
             Set_Font_Colors_15(1, &colors[0]);
 
-            // TODO  String_Copy_Far(Spell_Name, spell_data_table[abs(spell_idx)].Name);
-            strcpy(Spell_Name, spell_data_table[abs(spell_idx)].Name);
+            strcpy(Spell_Name, spell_data_table[abs(spell_idx)].name);
 
             Text_Width = Get_String_Width(Spell_Name);
 
@@ -830,7 +848,7 @@ void OVL_ComposeBookText(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr spellbook_bitma
 
             if(
                 (casting_cost != 0) ||
-                (spell_data_table[abs(spell_idx)].Type != 11)  /* Crafting_Spell */
+                (spell_data_table[abs(spell_idx)].type != 11)  /* Crafting_Spell */
             )
             {
                 itoa(casting_cost, temp_string, 10);
@@ -959,7 +977,7 @@ void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx)
     Stage_Text_Widths[2] = 55;
     Stage_Text_Widths[1] = 55;
 
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
 
     // TODO  VGA_FILEH_LoadFirst(cnst_BookAnim_File, 0);
 
@@ -985,6 +1003,8 @@ void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx)
 
     }
 
+
+
     Release_Block(_screen_seg);
 
     if(combat_flag != ST_FALSE)
@@ -993,7 +1013,7 @@ void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx)
     }
     else
     {
-        // TODO  Assign_Auto_Function(Spellbook_Screen_Draw, 2);
+        Assign_Auto_Function(Spellbook_Screen_Draw, 2);
     }
 
 
@@ -1219,3 +1239,668 @@ void SBK_Fill(int16_t Page_Size)
 // WZD o118p12
 // drake178: GAME_CheckResearch()
 // GAME_CheckResearch()
+
+
+
+/*
+    WIZARDS.EXE  ovr128
+*/
+
+// WZD o128p01
+/*
+
+; fills any empty slots in the research candidate list
+; if possible, and ensures that if the wizard has any
+; candidates available, they are researching something
+; by calling AI_Research_Picker or GUI_Research_Dialog
+; if that is not the case
+; returns the player's research candidate count
+
+*/
+int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
+{
+    int16_t * Possible_Candidate_List;
+    int16_t Ignore_SoM;
+    int16_t Candidate_Index_In_Realm;
+    int16_t Candidate_Realm;
+    int16_t Candidate_Count;
+    int16_t List_Index;
+    int16_t Max_Candidates;
+    int16_t itr; // _SI_
+
+
+    Max_Candidates = 8;
+    GUI_Multipurpose_Int = 0;
+    Candidate_Count = 0;
+    Ignore_SoM = 0;
+
+    Possible_Candidate_List = (int16_t *)Near_Allocate_First(200);
+
+    WIZ_GetResearchList__STUB(player_idx, Possible_Candidate_List);
+
+
+    // [byte ptr bx-24062]
+    // [(_players.Spells_Known+0D4h)+bx]
+    // D4h  212d  5 * 40 + 12
+    // _players.Spells_Known+Spell_Of_Mastery-1)
+    // DEDU  ¿ macro for spell status would know to xlat 'Spell Number' to 'spell_idx' ?
+    if(_players[player_idx].Spells_Known[((sbr_Arcane * 40) + 12)] = 2)
+    {
+        Ignore_SoM = ST_TRUE;
+    }
+    else
+    {
+        for(itr = 0; itr < Max_Candidates; itr++)
+        {
+            if(_players[player_idx].research_spells[itr] > 0)
+            {
+                Candidate_Count++;
+                if(_players[player_idx].research_spells[itr] == 213)  /* Spell_Of_Mastery */
+                {
+                    Ignore_SoM = ST_TRUE;
+                }
+            }
+        }
+    }
+
+
+    while((Candidate_Count < Max_Candidates) && (GUI_Multipurpose_Int > 0))
+    {
+        List_Index = (Random(GUI_Multipurpose_Int) - 1);
+
+        Candidate_Count++;
+
+        for(itr = 0; itr < Max_Candidates; itr++)
+        {
+            if(_players[player_idx].research_spells[itr] == 0)
+            {
+                _players[player_idx].research_spells[itr] = Possible_Candidate_List[List_Index];
+                Candidate_Index_In_Realm = ((Possible_Candidate_List[List_Index] - 1) % 40);
+                Candidate_Realm = ((Possible_Candidate_List[List_Index] - 1) / 40);
+                _players[player_idx].Spells_Known[((Candidate_Realm * 40) + Candidate_Index_In_Realm)] = 3;  /* S_Researchable */
+                WIZ_GetResearchList__STUB(player_idx, &Possible_Candidate_List[0]);
+            }
+        }
+    }
+
+
+    Candidate_Count = 0;
+
+    for(itr = 0; itr < Max_Candidates; itr++)
+    {
+        if(_players[player_idx].research_spells[itr] > 0)
+        {
+            Candidate_Count++;
+        }
+    }
+
+
+    if(
+        (Candidate_Count < Max_Candidates)
+        &&
+        (GUI_Multipurpose_Int == 0)
+        &&
+        (Ignore_SoM == ST_FALSE)
+    )
+    {
+        if(_players[player_idx].research_spells[itr] == 0)
+        {
+            _players[player_idx].research_spells[itr] = 213;  /* Spell_Of_Mastery */
+        }
+    }
+
+
+    WIZ_ResearchSort__STUB(player_idx, Candidate_Count);
+
+
+    if(
+        (_players[player_idx].research_spell_idx == 0)
+        &&
+        (Candidate_Count > 0)
+        &&
+        (_turn > 1)
+    )
+    {
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+            // ; displays the "Choose a spell to research" dialog
+            // ; using the big apprentice spellbook, and prevents the
+            // ; player from progressing until a candidate has been
+            // ; picked for research, which it then sets in the wizard
+            // ; record before returning
+            // TODO  SBK_Research_Dialog();
+        }
+        else
+        {
+            // ; selects the spell to research from the wizard's list
+            // ; of candidates using a weighted random roll,
+            // ; prioritizing combat spells in research groups from
+            // ; which the player does not yet have a known spell
+            // ;
+            // ; contains multipe BUGs that prevent research-related
+            // ; profile traits from properly affecting the outcome
+            // TODO  AI_Research_Picker(player_idx);
+        }
+
+    }
+
+
+
+    return Candidate_Count;
+}
+
+
+// WZD o128p02
+/*
+
+; compiles a list of the lowest rarity spells from each realm available to the specified player
+
+*/
+void WIZ_GetResearchList__STUB(int16_t player_idx, int16_t research_list[])
+{
+
+
+
+}
+
+
+// WZD o128p03
+int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
+{
+    int16_t Invalid_Realms[NUM_MAGIC_TYPES];
+    int16_t Max_Rarity;
+    int16_t Spell_Found;
+    int16_t Random_Result;
+    int16_t Valid_Realm_Count;
+    int16_t In_Realm_Index;
+    int16_t Added_Rarity;
+    int16_t itr;  // _SI_
+    int16_t magic_realm;  // _DI_
+
+    Valid_Realm_Count = 0;
+    Spell_Found = 0;
+
+    // ¿ BUG: the arcane realm is evaluated by the presence of the Alchemy or Warlord retorts instead of being marked as always available ?
+    // DNM, because no item powers have mt_Arcane? which wouldn't make sense anyway?
+    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
+    {
+        // ¿ ; conflicting condition - will never jump ?
+        if(
+            (itr == NUM_MAGIC_TYPES)
+            ||
+            (_players[player_idx].spellranks[itr] == 0)
+        )
+        {
+            Valid_Realm_Count++;
+            Invalid_Realms[itr] = ST_FALSE;
+        }
+        else
+        {
+            Invalid_Realms[itr] = ST_TRUE;
+        }
+    }
+
+    while((Valid_Realm_Count > 0) && (Spell_Found == ST_FALSE))
+    {
+        Random_Result = Random(Valid_Realm_Count);  // {0,1,2,3,4,5,6}
+
+        itr = 0;
+        magic_realm = 0;
+        while(Random_Result != itr)
+        {
+            if(Invalid_Realms[magic_realm] == ST_FALSE)
+            {
+                itr++;
+            }
+            magic_realm++;
+        }
+
+        magic_realm--;
+
+        if(magic_realm == 5)  /* _Arcane ... enum Realm_Byte*/
+        {
+            Max_Rarity = 3;
+        }
+        else if(_players[player_idx].spellranks[magic_realm] == 1)
+        {
+            Max_Rarity = 2;
+        }
+        else if(_players[player_idx].spellranks[magic_realm] == 2)
+        {
+            Max_Rarity = 3;
+        }
+        else
+        {
+            Max_Rarity = 4;
+        }
+
+        for(Added_Rarity = 0; ((Added_Rarity < 4) && (Spell_Found == ST_FALSE)); Added_Rarity++)
+        {
+            Random_Result = (Random(10) - 1);
+
+            for(itr = 0; itr < 10; itr++)
+            {
+                if(Spell_Found == ST_FALSE)
+                {
+                    if(magic_realm == 5)  /* _Arcane */
+                    {
+                        In_Realm_Index = (Random(11) - 1);
+                    }
+                    else
+                    {
+                        // TODO(JimBalcomb,20240531): no way this is right - run in through the Struggle-Mode debugger
+                        In_Realm_Index = (((Random_Result + itr) % 10) + ((((rarity + Added_Rarity) - 1) / Max_Rarity) * 10));
+                    }
+
+                    if(_players[player_idx].Spells_Known[((magic_realm * 40) + In_Realm_Index)] == 2)  /* S_Known ... enum Research_Status */
+                    {
+                        Spell_Found = ST_TRUE;
+                        In_Realm_Index = (((magic_realm * 40) + In_Realm_Index) + 1);
+                    }
+
+                }
+            }
+
+        }
+
+        Valid_Realm_Count--;
+    }
+
+    if(Spell_Found == ST_FALSE)
+    {
+        In_Realm_Index = 0;
+    }
+
+    // @@Done:
+    return In_Realm_Index;
+}
+
+// WZD o128p04
+// WIZ_GetSpellValue()
+
+// WZD o128p05
+// WIZ_SpellTradeList()
+
+// WZD o128p06
+// sub_AC19E()
+
+// WZD o128p07
+// WIZ_GE_Diplomacy()
+
+// WZD o128p08
+/*
+
+; sorts the wizard's research candidates in ascending
+; order by estimated research time or, if the research
+; income is 0, by research cost
+;
+; contains a BUG that results in some retorts not
+; being applied properly, especially Conjurer
+
+*/
+void WIZ_ResearchSort__STUB(int16_t player_idx, int16_t count)
+{
+
+}
+
+// WZD o128p09
+/*
+awards the selected wizard a spellbook of the
+specified realm, adding knowable spells as necessary,
+and ensuring that they have research candidates if
+possible
+
+BUG: contains an outdated rarity per book table
+BUG: if called with 11 books and missing very rare
+ spells, the book the book is converted to a
+ different realm instead
+BUG: if called with 12 books and missing spells,
+ memory corruption occurs and the effect is undefined
+
+00000000 struc PerBook_Spells ; (sizeof=0x8, standard type)
+00000000 Common dw ?
+00000002 Uncommon dw ?
+00000004 Rare dw ?
+00000006 Very_Rare dw ?
+00000008 ends PerBook_Spells
+
+*/
+void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm)
+{
+    int16_t realm_spells[10];
+    int16_t Book_Spell_Table[10][4];
+    int16_t random_realm_spell;
+    int16_t Existing_Books;
+    int16_t In_Rarity_Index;
+    int16_t realm_spell_count;  // _SI_
+    int16_t itr;  // _DI_
+
+    Book_Spell_Table[0][0] = 3;
+    Book_Spell_Table[0][1] = 1;
+    Book_Spell_Table[0][2] = 0;
+    Book_Spell_Table[0][3] = 0;
+    Book_Spell_Table[1][0] = 2;
+    Book_Spell_Table[1][1] = 1;
+    Book_Spell_Table[1][2] = 1;
+    Book_Spell_Table[1][3] = 1;  // ¿ ; BUG: should be 0 ?
+    Book_Spell_Table[2][0] = 1;
+    Book_Spell_Table[2][1] = 1;
+    Book_Spell_Table[2][2] = 1;
+    Book_Spell_Table[2][3] = 1;
+    Book_Spell_Table[3][0] = 1;
+    Book_Spell_Table[3][1] = 1;
+    Book_Spell_Table[3][2] = 1;
+    Book_Spell_Table[3][3] = 1;
+    Book_Spell_Table[4][0] = 1;
+    Book_Spell_Table[4][1] = 1;
+    Book_Spell_Table[4][2] = 1;
+    Book_Spell_Table[4][3] = 1;
+    Book_Spell_Table[5][0] = 1;
+    Book_Spell_Table[5][1] = 1;
+    Book_Spell_Table[5][2] = 1;
+    Book_Spell_Table[5][3] = 1;
+    Book_Spell_Table[6][0] = 1;
+    Book_Spell_Table[6][1] = 2;
+    Book_Spell_Table[6][2] = 1;
+    Book_Spell_Table[6][3] = 1;
+    Book_Spell_Table[7][0] = 0;
+    Book_Spell_Table[7][1] = 2;
+    Book_Spell_Table[7][2] = 1;
+    Book_Spell_Table[7][3] = 1;
+    Book_Spell_Table[8][0] = 0;
+    Book_Spell_Table[8][1] = 0;
+    Book_Spell_Table[8][2] = 2;
+    Book_Spell_Table[8][3] = 1;
+    Book_Spell_Table[9][0] = 0;
+    Book_Spell_Table[9][1] = 0;
+    Book_Spell_Table[9][2] = 2;  // ¿ ; BUG: should be 1 ?
+    Book_Spell_Table[9][3] = 1;  // ¿ ; BUG: should be 3 ?
+
+
+    Existing_Books = _players[player_idx].spellranks[magic_realm];
+
+    // ¿ ; BUG: values greater than 10 corrupt memory ?
+    if(Existing_Books != 10)
+    {
+        for(itr = 0; itr < 4; itr++)
+        {
+            realm_spell_count = 0;
+            
+            for(In_Rarity_Index = 0; In_Rarity_Index < 10; In_Rarity_Index++)
+            {
+                // DEDU  sizeof() 40 and 10 for spells magic realm and rarity
+                if(_players[player_idx].Spells_Known[((magic_realm * 40) + (itr * 10) + In_Rarity_Index)] == 0);  /* S_Unknown */
+                {
+                    realm_spells[realm_spell_count] = ((itr * 10) + In_Rarity_Index);
+                    realm_spell_count++;
+                }
+            }
+
+            while(
+                (realm_spell_count > 0)
+                &&
+                (Book_Spell_Table[Existing_Books][itr] > 0)
+            )
+            {
+                random_realm_spell = (Random(realm_spell_count) - 1);
+
+                _players[player_idx].Spells_Known[((magic_realm * 40) + realm_spells[random_realm_spell])] = 1;  /* S_Knowable */
+
+                Clear_Structure(random_realm_spell, (uint8_t *)&realm_spells[0], sizeof(realm_spells[0]), realm_spell_count);
+
+                realm_spell_count--;
+
+                Book_Spell_Table[Existing_Books][itr]--;
+            }
+        }
+    }
+
+    _players[player_idx].spellranks[magic_realm]++;
+
+    // TODO  WIZ_RefreshResearch(player_idx);
+
+}
+
+
+// WZD o128p10
+// sub_ACACC()
+
+// WZD o128p11
+// WIZ_ConquestSpells()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr130
+*/
+
+
+// WZD o130p01
+/*
+
+XREF:
+    j_UNIT_SetEquipSlots()
+        WIZ_HireHero()
+
+e.g.,
+WIZ_HireHero()
+    |-> Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots)
+
+Page 28  (PDF Page 33)
+Note that the weapons and armor a hero can be equipped with depend on
+the hero’s type; some heroes are mages, others are warriors, etc.
+*/
+void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
+{
+
+    if(_unit_type_table[unit_type_idx].hero_type == ht_IDK2)
+    {
+        item_slots[0] = ist_SwordStaff_Slot;
+        item_slots[1] = ist_Armor_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+    else if(_unit_type_table[unit_type_idx].hero_type == ht_Mage)
+    {
+        item_slots[0] = ist_Staff_Slot;
+        item_slots[1] = ist_Misc_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+    else if(_unit_type_table[unit_type_idx].hero_type == ht_IDK1)
+    {
+        item_slots[0] = ist_Bow_Slot;
+        item_slots[1] = ist_Armor_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+    else  /* ht_Warrior */
+    {
+        item_slots[0] = ist_Sword_Slot;
+        item_slots[1] = ist_Armor_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+
+}
+
+
+// WZD o130p02
+// sub_AF331()
+
+// WZD o130p03
+// sub_AF56D()
+
+// WZD o130p04
+// sub_AF7C1()
+
+// WZD o130p05
+// sub_AF9AA()
+
+// WZD o130p06
+// sAFA06_Anim_EarthLore()
+
+// WZD o130p07
+// sub_AFB7F()
+
+// WZD o130p08
+// sub_AFCA8()
+
+// WZD o130p09
+// sub_B01F7()
+
+// WZD o130p10
+// sub_B0692()
+
+// WZD o130p11
+// sub_B0C07()
+
+// WZD o130p12
+// sub_B1108()
+
+// WZD o130p13
+// sB1280_Anim_EnchantRoad()
+
+// WZD o130p14
+// sub_B148C()
+
+// WZD o130p15
+// sub_B1843()
+
+// WZD o130p16
+// CTY_Consecration()
+
+// WZD o130p17
+// sub_B1A01()
+
+// WZD o130p18
+// sub_B1ABE()
+
+
+
+/*
+    WIZARDS.EXE  ovr132
+*/
+
+// WZD o132p01
+// sub_B4250()
+
+// WZD o132p02
+// sub_B4471()
+
+// WZD o132p03
+// CTY_ChaosRift()
+
+// WZD o132p04
+// WIZ_MeteorStorm()
+
+// WZD o132p05
+// CTY_StreamOfLife()
+
+// WZD o132p06
+// ¿ MoO2  Module: OFFICER  Set_Officer_To_Player_()
+// Hire_Officer_() |-> Set_Officer_To_Player_()  ...Hire_Officer_() handles the officer cost
+/*
+
+    assumes (_units - 1)
+
+unit_type_idx is passed over all the wzay from Hire_Hero_Popup()
+so, not quite 'Generate Random Hero'
+
+
+XREF:
+    sub_B4250()
+    sub_B4471()
+    sub_B4E00()
+    j_WIZ_HireHero()
+        Hire_Hero_Popup()
+        AI_OfferHero()
+e.g.,
+    Hire_Hero_Popup()
+        |-> j_WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, 0)
+
+"Hire" as in "Summon"
+*/
+int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
+{
+    int16_t itr;
+
+    Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
+
+    _UNITS[(_units - 1)].Finished = 0;
+
+    _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
+
+    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;
+
+    _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
+
+    Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots);
+
+    for(itr = 0; itr < 3; itr++)
+    {
+        _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = -1;
+    }
+
+    if(saved_flag == ST_TRUE)
+    {
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+            strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
+            _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
+            _UNITS[(_units - 1)].Level = Unit_Level((_units - 1));
+        }
+        else
+        {
+            LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+            _UNITS[(_units - 1)].Level = abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level);
+            _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
+        }
+    }
+    else
+    {
+        LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+        SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, 6);
+    }
+
+    _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+    _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
+
+    // BUG  Did this used to do something different? What tests it?
+    // may be is/was success status as in cast the spell
+    return ST_TRUE;
+}
+
+
+// WZD o132p07
+// sub_B4E00()
+
+// WZD o132p08
+// sub_B50AE()
+
+// WZD o132p09
+// sub_B517B()
+
+// WZD o132p10
+// IDK_SplCst_sB529D()
+
+// WZD o132p11
+// WIZ_GreatWasting()
+
+// WZD o132p12
+// CTY_GaiasBlessing()
+
+// WZD o132p13
+// WIZ_Armageddon()
+
+// WZD o132p14
+// sub_B5D8E()
+
+// WZD o132p15
+// CTY_NightshadeDispel()
+
+// WZD o132p16
+// sub_B609C()
+
+// WZD o132p17
+// sub_B62F7()
+
+// WZD o132p18
+// sub_B6505()

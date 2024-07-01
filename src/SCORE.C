@@ -13,9 +13,49 @@
 
 
 
-struct s_mouse_list mouse_list_hof[1] = {
-    {0, 0, 0, 0, 319, 199}
-};
+
+
+// WZD dseg:59B4                                                 BEGIN:  ovr106 - Strings
+
+// WZD dseg:59B4 D0 59 DB 59 E4 59 EF 59 FA 59 02 5A 09 5A 13 5A+TBL_HoF_RaceStrings@ dw offset cnst_Race00, offset cnst_Race01, offset cnst_Race02, offset cnst_Race03, offset cnst_Race04, offset cnst_Race05, offset cnst_Race06, offset cnst_Race07, offset cnst_Race08, offset cnst_Race09, offset cnst_Race0A, offset cnst_Race0B, offset cnst_Race0C
+// WZD dseg:59B4 1E 5A 27 5A 30 5A 3A 5A 41 5A 46 5A                                                     ; DATA XREF: Hall_Of_Fame_Screen_Draw+1CBr
+// WZD dseg:59B4                                                 dw offset cnst_Race0D                   ; "Barbarians"
+// WZD dseg:59D0 42 61 72 62 61 72 69 61 6E 73 00                cnst_Race00 db 'Barbarians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:59DB 42 65 61 73 74 6D 65 6E 00                      cnst_Race01 db 'Beastmen',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:59E4 44 61 72 6B 20 45 6C 76 65 73 00                cnst_Race02 db 'Dark Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:59EF 44 72 61 63 6F 6E 69 61 6E 73 00                cnst_Race03 db 'Draconians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:59FA 44 77 61 72 76 65 73 00                         cnst_Race04 db 'Dwarves',0              ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A02 47 6E 6F 6C 6C 73 00                            cnst_Race05 db 'Gnolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A09 48 61 6C 66 6C 69 6E 67 73 00                   cnst_Race06 db 'Halflings',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A13 48 69 67 68 20 45 6C 76 65 73 00                cnst_Race07 db 'High Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A1E 48 69 67 68 20 4D 65 6E 00                      cnst_Race08 db 'High Men',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A27 4B 6C 61 63 6B 6F 6E 73 00                      cnst_Race09 db 'Klackons',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A30 4C 69 7A 61 72 64 6D 65 6E 00                   cnst_Race0A db 'Lizardmen',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A3A 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A41 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A46 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// WZD dseg:5A4D 48 41 4C 4F 46 41 4D 00                         hof_lbx_file db 'HALOFAM',0             ; DATA XREF: Hall_Of_Fame_Screen+54o
+// WZD dseg:5A55 1B 00                                           cnst_HOTKEY_Esc14 db 1Bh,0              ; DATA XREF: Hall_Of_Fame_Screen+C8o
+// WZD dseg:5A55                                                                                         ; should use dseg:2c56
+// WZD dseg:5A57 20 00                                           cnst_HoF_Space db ' ',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw:loc_86C0Ao
+// WZD dseg:5A57                                                                                         ; (could use dseg:2ad9)
+// WZD dseg:5A59 48 61 6C 6C 00                                  cnst_HoF_String_B db 'Hall',0           ; DATA XREF: Hall_Of_Fame_Screen_Draw+95o
+// WZD dseg:5A5E 4F 66 00                                        cnst_Of db 'Of',0                       ; DATA XREF: Hall_Of_Fame_Screen_Draw+B3o
+// WZD dseg:5A61 46 61 6D 65 00                                  cnst_Fame_2 db 'Fame',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw+D1o
+// WZD dseg:5A61                                                                                         ; should use dseg:367b
+// WZD dseg:5A66 4D 61 73 74 65 72 00                            cnst_HoF_String_C db 'Master',0         ; DATA XREF: Hall_Of_Fame_Screen_Draw+154o
+// WZD dseg:5A6D 29 00                                           cnst_ClosingBrace_5 db ')',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+17Do
+// WZD dseg:5A6D                                                                                         ; should use dseg:3428
+// WZD dseg:5A6F 20 6F 66 20 74 68 65 20 00                      cnst_HoF_String_D db ' of the ',0       ; DATA XREF: Hall_Of_Fame_Screen_Draw+1B2o
+// WZD dseg:5A78 28 00                                           cnst_OpeningBrace_3 db '(',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+241o
+// WZD dseg:5A78                                                                                         ; should use dseg:3426
+// WZD dseg:5A7A 25 29 00                                        cnst_HoF_String_E db '%)',0             ; DATA XREF: Hall_Of_Fame_Screen_Draw+25Fo
+
+// WZD dseg:5A7D 00                                              align 2
+
+// WZD dseg:5A7D                                                 END:  ovr106 - Strings
+
+
 
 
 
@@ -114,38 +154,51 @@ void Hall_Of_Fame_Screen(void)
     SAMB_ptr _halloffame_background_seg;
     int16_t leave_screen_flag;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Hall_Of_Fame_Screen()\n", __FILE__, __LINE__);
-#endif
+    Deactivate_Auto_Function();
 
-    // TODO  Deactivate_Auto_Function();
-    Set_Mouse_List(1, mouse_list_hof);
+    Set_Mouse_List(1, mouse_list_none);
+
     Clear_Fields();
+
     Fade_Out();
+
     Set_Page_Off();
-    Fill(0, 0, 319, 199, 0);
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
+
     Toggle_Pages();
+
     Set_Page_Off();
+
+    // HALOFAM.LBX, 000  HALOFAM     hof background
     _halloffame_background_seg = LBX_Reload(halofam_lbx_file, 0, _screen_seg);
+
     FLIC_Draw(0, 0, _halloffame_background_seg);
+
     Apply_Palette();
+
     Copy_Off_To_Back();
-    // TODO  VGA_SaveDraw_Frame4();
+
+    VGA_SaveDraw_Frame4();
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
     
     Deactivate_Help_List();
 
-    // TODO  Assign_Auto_Function(Hall_Of_Fame_Screen_Draw(), 1);
+    Assign_Auto_Function(Hall_Of_Fame_Screen_Draw, 1);
 
     leave_screen_flag = ST_FALSE;
+
     while(leave_screen_flag == ST_FALSE)
     {
+
         Mark_Time();
+
         Clear_Fields();
-        // TODO  hotkey_idx_ESC = Add_Hidden_Field(0, 0, 319, 199, hof_hotkey_ESC, -1);
-        hotkey_ESC = Add_Hidden_Field(0, 0, 319, 199, 27, -1);
+
+        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, hof_hotkey_ESC, ST_UNDEFINED);
+
         input_field_idx = Get_Input();
 
         if(input_field_idx == hotkey_ESC)
@@ -156,8 +209,7 @@ void Hall_Of_Fame_Screen(void)
         if(leave_screen_flag == ST_FALSE)
         {
             Hall_Of_Fame_Screen_Draw();
-            // TODO  MGC ovr050  Do_Toggle_Pages()                   ; used in place of pageflip_fx
-            Toggle_Pages();
+            PageFlip_FX();
             Release_Time(2);
         }
 
@@ -165,25 +217,21 @@ void Hall_Of_Fame_Screen(void)
 
     Clear_Fields();
     Reset_Window();
-
     Clear_Fields();
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Deactivate_Help_List();
     Fade_Out();
     Load_Palette(0, -1, 0);
-    // TODO  UU_Reset_Cycle_Palette_Color();
+    Reset_Cycle_Palette_Color();
     Clear_Palette_Changes(0, 255);
     Set_Palette_Changes(0, 223);
-    // TODO  VGA_SetShades_Grey0();  
+    Calculate_Remap_Colors();
     Set_Page_Off();
-    Fill(0, 0, 319, 199, 0);
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
     Toggle_Pages();
     Apply_Palette();
     Set_Mouse_List(1, mouse_list_default);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Hall_Of_Fame_Screen()\n", __FILE__, __LINE__);
-#endif
 }
 
 // MGC o61p02
@@ -196,11 +244,6 @@ void Hall_Of_Fame_Screen_Draw(void)
     int16_t print_y;
     int16_t itr_color_array;
     int16_t itr_scores;
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Hall_Of_Fame_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 
     // strcpy(str_SPACE, cnst_HoF_Space);
     strcpy(str_SPACE, " ");
@@ -222,19 +265,23 @@ void Hall_Of_Fame_Screen_Draw(void)
     color_array[14] = 246;
     color_array[15] = 246;
 
-
     Set_Page_Off();
+
     Reset_Window();
+
     Copy_Back_To_Off();
+
     Set_Font_Colors_15(2, &color_array[0]);  // set font style num 0; set font colors block 15
-    Set_Font_Style1(5, 15, 0, 0);  // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
+
+    Set_Font_Style_Shadow_Down(5, 15, 0, 0);  // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
+
     Set_Outline_Color(250);
 
     strcpy(GUI_String_1, cnst_HoF_String_B);  // "Hall"
-    strcat(GUI_String_1, str_SPACE);
-    strcat(GUI_String_1, cnst_Of);  // "Of"
-    strcat(GUI_String_1, str_SPACE);
-    strcat(GUI_String_1, cnst_Fame);  // "Fame"
+    strcat(GUI_String_1, str_SPACE);          // " "
+    strcat(GUI_String_1, cnst_Of);            // "Of"
+    strcat(GUI_String_1, str_SPACE);          // " "
+    strcat(GUI_String_1, cnst_Fame);          // "Fame"
 
     Print_Centered(160, 7, GUI_String_1);
 
@@ -242,10 +289,13 @@ void Hall_Of_Fame_Screen_Draw(void)
     {
         color_array[itr_color_array] = 179;
     }
+
     color_array[0] = 246;
 
     Set_Font_Colors_15(2, &color_array[0]);
-    Set_Font_Style1(2, 15, 0, 0);
+
+    Set_Font_Style_Shadow_Down(2, 15, 0, 0);
+
     Set_Outline_Color(250);
 
     print_x = 72;
@@ -275,9 +325,7 @@ void Hall_Of_Fame_Screen_Draw(void)
             Print_Integer_Right((print_x + 170), print_y, magic_set.HallofFame_Scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
 
             score = 8000 / (magic_set.HallofFame_Scores[itr_scores] * 100);  // ... 8000 ... 100 ... LXMUL ... LDIV ...
-            
             itoa(score, GUI_String_2, 10);
-
             strcpy(GUI_String_1, cnst_OpeningBrace);  // "("
             strcat(GUI_String_1, GUI_String_2);
             strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"
@@ -286,9 +334,5 @@ void Hall_Of_Fame_Screen_Draw(void)
             print_y += 13;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Hall_Of_Fame_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 
 }

@@ -52,7 +52,7 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
 // WZD o56p09
 // CTY_CheckTerrainReq()
-int16_t CTY_CheckTerrainReq__WIP_TRUE(int16_t city_idx, int16_t Terrain_Req_ID);
+int16_t CTY_CheckTerrainReq__ALWAYS_TRUE(int16_t city_idx, int16_t Terrain_Req_ID);
 
 // WZD o56p10
 // drake178: CTY_GetProduceCost()

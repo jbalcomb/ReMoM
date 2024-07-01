@@ -28,8 +28,8 @@ MoO2
         _unit_stack[stack_idx].active = ST_FALSE || ST_TRUE
 
     May
-        OVL_StackHasPath = ST_FALSE;
-        _UNITS[stack_unit_idx].Status = US_Ready;
+        _active_stack_has_path = ST_FALSE;
+        _UNITS[stack_unit_idx].Status = us_Ready;
         _UNITS[stack_unit_idx].Finished = ST_FALSE;
         _UNITS[stack_unit_idx].Rd_Constr_Left = ST_UNDEFINED;
         _UNITS[stack_unit_idx].Finished = ST_TRUE;
@@ -52,15 +52,15 @@ void Update_Stack_Active(int16_t stack_idx)
     stack_unit_idx = _unit_stack[stack_idx].unit_idx;
 
     if(
-        (_UNITS[stack_unit_idx].Status != US_ReachedDest)  /* "DONE" */ &&
-        (_UNITS[stack_unit_idx].HMoves >= 1)
+        (_UNITS[stack_unit_idx].Status != us_ReachedDest)  /* "DONE" */ &&
+        (_UNITS[stack_unit_idx].moves2 >= 1)
     )
     {
 
         if(
             (reset_active_stack == ST_TRUE) &&
             (_unit_stack_count > 1) &&
-            (_UNITS[stack_unit_idx].Status != US_Casting)
+            (_UNITS[stack_unit_idx].Status != us_Casting)
         )
         {
             active_unit_stack_count = 0;
@@ -88,9 +88,9 @@ void Update_Stack_Active(int16_t stack_idx)
 
         if(_unit_stack[stack_idx].active == ST_FALSE)
         {
-            if(_UNITS[stack_unit_idx].Status > 0 /* US_Ready */)
+            if(_UNITS[stack_unit_idx].Status > 0 /* us_Ready */)
             {
-                if(_UNITS[stack_unit_idx].HMoves > 0)
+                if(_UNITS[stack_unit_idx].moves2 > 0)
                 {
                     DEPR_Local_Flag = ST_TRUE;
 
@@ -98,16 +98,16 @@ void Update_Stack_Active(int16_t stack_idx)
                     {
                         _unit_stack[stack_idx].active = ST_TRUE;
 
-                        if(_UNITS[stack_unit_idx].Status == US_GoingTo)
+                        if(_UNITS[stack_unit_idx].Status == us_GOTO)
                         {
-                            OVL_StackHasPath = ST_FALSE;
+                            _active_stack_has_path = ST_FALSE;
                         }
 
-                        _UNITS[stack_unit_idx].Status = US_Ready;
+                        _UNITS[stack_unit_idx].Status = us_Ready;
                         _UNITS[stack_unit_idx].Finished = ST_FALSE;
                         _UNITS[stack_unit_idx].Rd_Constr_Left = ST_UNDEFINED;
 
-                        if(_UNITS[stack_unit_idx].HMoves >= 1)
+                        if(_UNITS[stack_unit_idx].moves2 >= 1)
                         {
                             all_units_moved = ST_FALSE;
                             Reset_Draw_Active_Stack(); 
@@ -123,7 +123,7 @@ void Update_Stack_Active(int16_t stack_idx)
             }
             else
             {
-                if(_UNITS[stack_unit_idx].HMoves <= 0)
+                if(_UNITS[stack_unit_idx].moves2 <= 0)
                 {
                     _unit_stack[stack_idx].active = ST_FALSE;
                 }

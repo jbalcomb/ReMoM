@@ -117,9 +117,9 @@ uint8_t Read_Key(void)
 
     // treat 1-byte scan code and 1-byte character code as a 2-byte value
     // short int / int16_t
-    // ? array of 65536 values ?
-    // ? loop thorugh array of stuct ?
-    // ? procedurally generate a switch statement code block ?
+    // ¿ array of 65536 values ?
+    // ¿ loop thorugh array of stuct ?
+    // ¿ procedurally generate a switch statement code block ?
     switch(scan_code_char_code)
     {
         case SCCC_ESC: { return_key = ST_KEY_ESCAPE; } break;
@@ -152,6 +152,10 @@ uint8_t Read_Key(void)
         case SCCC_X: { return_key = 'x'; } break;
         case SCCC_Y: { return_key = 'y'; } break;
         case SCCC_Z: { return_key = 'z'; } break;
+
+        case SCCC_MINUS:  { return_key = '-'; } break;
+        case SCCC_EQUALS: { return_key = '='; } break;
+        case SCCC_PLUS:   { return_key = '+'; } break;
 
         // BackSpace   0E08
         // Del         5300

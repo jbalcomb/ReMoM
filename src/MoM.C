@@ -27,12 +27,12 @@ void Screen_Control(void)
 {
     int quit_flag;
 
-    Clear_Fields();
-    Set_Mouse_List(1, mouse_list_default);
-
     quit_flag = ST_FALSE;
     while (quit_flag == ST_FALSE)
     {
+
+        Clear_Fields();
+        Set_Mouse_List(1, mouse_list_default);
 
         switch (current_screen)
         {
@@ -49,13 +49,20 @@ void Screen_Control(void)
 
         case scr_Continue:
         {
+            magic_set.Strategic_Combat = ST_TRUE;  // "Strategic Combat Only"
+
             // BEGIN: WZD main()
-            // Load_SAVE_GAM(-1);  // SAVETEST.GAM
+            Load_SAVE_GAM(-1);  // SAVETEST.GAM
             // TST_Load_SAVE_GAM();
             Loaded_Game_Update();
 
+
             // HACK:  (4) Magicians  @  {18, 11}
-            _UNITS[156].Enchants_HI = _UNITS[156].Enchants_HI = 0x8000;  // UE_Invisibility 0x8000
+            _UNITS[156].enchantments |= UE_INVISIBILITY;
+
+            // HACK:  (1) Pikemen  @ {,}
+            _UNITS[808].enchantments |= UE_BLESS;
+
             // HACK: set Cantebury up to complete the 'Miners Guild' on the next 'Next Turn'
             _CITIES[54].Prod_Accu = 280;
 
@@ -66,12 +73,57 @@ void Screen_Control(void)
                 TBL_Scouting[((1 * WORLD_SIZE) + itr_world_size)] = TBL_Scouting[((0 * WORLD_SIZE) + itr_world_size)];
             }
 
+            // HACK:  move Stack to Lair
+            _UNITS[110].wx = 5;
+            _UNITS[110].wy = 21;
+            _UNITS[110].Status = us_Ready;
+            _UNITS[110].moves2 = 2;
+            _UNITS[418].wx = 5;
+            _UNITS[418].wy = 21;
+            _UNITS[418].Status = us_Ready;
+            _UNITS[418].moves2 = 2;
+            _UNITS[534].wx = 5;
+            _UNITS[534].wy = 21;
+            _UNITS[534].Status = us_Ready;
+            _UNITS[534].moves2 = 2;
+            _UNITS[669].wx = 5;
+            _UNITS[669].wy = 21;
+            _UNITS[669].Status = us_Ready;
+            _UNITS[669].moves2 = 2;
+            // Stack not being display until after a Next-Turn
+            // ¿ not getting an entity_idx in Draw_Map_Units() ?
+            // No-Workie  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+            
+            // // _map_x = ( 5 - (12 / 2));
+            // // _map_y = (21 - (10 / 2));
+            // _map_x = 59;
+            // _map_y = 16;
+            // // ...
+            // int16_t entity_idx = 110;
+            // // ...
+            // _unit = entity_idx;
+            // unit_idx = _unit;
+            // Unit_X = _UNITS[unit_idx].wx;
+            // Unit_Y = _UNITS[unit_idx].wy;
+            // _active_world_x = _UNITS[unit_idx].wx;
+            // _active_world_y = _UNITS[unit_idx].wy;
+            // Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
+            // Reset_Draw_Active_Stack();
+            // draw_active_stack_flag = 0;
+            // Set_Unit_Draw_Priority();
+            // Reset_Stack_Draw_Priority();
+            // Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+            // Set_Mouse_List_Default();
+            // Reset_Map_Draw();
+
+
             // END: WZD main()
             current_screen = scr_Main_Screen;
         } break;
 
         case scr_Load_Screen:
         {
+            // TODO  WZD vs. MGC
             /*
                 WZD
                     GameState_01:                           ; case 0x1
@@ -79,6 +131,8 @@ void Screen_Control(void)
                         Load_Screen();
             */
             Load_Screen();
+            // GAME_SoM_Cast_By = ST_UNDEFINED;
+            GAME_RazeCity = ST_FALSE;
             /*
                 WZD
                     GAME_SoM_Cast_By = ST_UNDEFINED;
@@ -99,14 +153,15 @@ void Screen_Control(void)
 
         case scr_New_Game_Screen:
         {
-            // New_Game_Screen();
+            // TODO  New_Game_Screen();
+            /* DEMO */  current_screen = scr_Main_Screen;
         } break;
 
         case scr_Quit_To_DOS:
         {
             // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
             quit_flag = ST_TRUE;
-            // Exit_With_Message("Thank you for playing Master of Magic!\n\n");
+            // TODO  Exit_With_Message("Thank you for playing Master of Magic!\n\n");
         } break;
 
         case scr_Hall_Of_Fame_Screen:
@@ -125,7 +180,8 @@ void Screen_Control(void)
 
         case scr_Settings_Screen:
         {
-            // Settings_Screen();
+            // TODO  Settings_Screen();
+            /* DEMO */  current_screen = scr_Main_Screen;
         } break;
 
         // scr_City = 100,
@@ -150,7 +206,7 @@ void Screen_Control(void)
             // Load_WZD_Resources()
             Load_Palette(0, -1, 0);  // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
             // Calculate_Remap_Colors();
-            // Set_Button_Down_Offsets(1, 1)
+            Set_Button_Down_Offsets(1, 1);
             // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
             Apply_Palette();
             // Fade_In()
@@ -160,12 +216,12 @@ void Screen_Control(void)
 
             // IDK  Set_Outline_Color(0);
             // IDK  Set_Alias_Color(0);
-            // IDK  Set_Font_Style1(0, 0, 0, 0);
+            // IDK  Set_Font_Style_Shadow_Down(0, 0, 0, 0);
 
             Set_Page_Off();
-            Fill(0, 0, 319, 199, 7);
+            Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 7);
             Set_Page_On();
-            Fill(0, 0, 319, 199, 5);
+            Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 5);
             Set_Page_Off();
 
             Main_Screen();
@@ -178,8 +234,15 @@ void Screen_Control(void)
             Magic_Screen();
         } break;
         // scr_RoadBuilding = 107,
-        // scr_Production = 108,
-        // scr_Items = 109,
+        case scr_Production_Screen:
+        {
+            Production_Screen();
+        } break;
+
+        case scr_Item_Screen:  /* 109 */
+        {
+            Item_Screen();
+        } break;
         // scr_NextTurn = 110,
         case scr_NextTurn:
         {
@@ -196,7 +259,10 @@ void Screen_Control(void)
             Advisor_Screen(ST_UNDEFINED);
         } break;
 
-        // scr_Diplomacy = 115
+        case scr_Diplomacy_Screen:
+        {
+            Diplomacy_Screen__STUB();
+        } break;
 
         case scr_Test_Screen:
         {

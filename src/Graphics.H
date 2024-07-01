@@ -5,6 +5,7 @@
         seg016
 
 MoO2:
+Module: init
 Module: graphcis
 Module: regions
 Module: shear
@@ -35,19 +36,19 @@ extern int16_t screen_window_x2;
 extern int16_t screen_window_y2;
 
 // WZD dseg:76E0                                                 END : graphics
-// WZD dseg:76E2                                                 ¿ Init ?
+// WZD dseg:76E2                                                 ï¿½ Init ?
 
 
 
 
 
 // WZD s14p01
-// drake178: 
-// MoO2  
+// MoO2  Module: init  void Init_Drivers()
+/*  Init.C */  // void Init_Drivers(int input_type, char * font_file);
 
 // WZD s14p02
-// drake178: 
-// MoO2  
+// MoO2  DNE
+/* Init.C */  // void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char * font_file)
 
 // WZD s14p03
 // drake178: 
@@ -69,8 +70,25 @@ void Reset_Window(void);
 void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 
 // WZD s14p07
-// drake178: 
-// MoO2  
+// MoO2  Module: graphics  Dot()
+void Dot(int16_t x, int16_t y, int16_t color);
+
+// Init_Drivers()
+// UU_Legacy_Startup()
+// Load_Font_File()
+// Set_Window()
+// Reset_Window()
+// Clipped_Fill()
+// UU_VGA_WndPutPixel()
+// VGA_WndDrawLine()
+// VGA_WndDrawPtrnLine()
+// VGA_WndDrawLineBase()
+// UU_Interlaced_Fill()
+// UU_VGA_DrawRect()
+// UU_VGA_WndDrawRect()
+// UU_VGA_DrawDblRect()
+// Gradient_Fill()
+// DOS_PrintString()
 
 // WZD s14p08
 // drake178: 

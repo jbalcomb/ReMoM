@@ -38,11 +38,11 @@ void Spellbook_Screen(void);
 // sub_B9837()
 
 // WZD o134p06
-// OVL_DisplayMainScrn()
+// drake178: Full_Draw_Main_Screen()
+void Full_Draw_Main_Screen(void);
 
 // WZD o134p07
-// drake178: OVL_MosaicFlip()
-// PRIVATE  void OVL_MosaicFlip(void);
+void OVL_MosaicFlip__STUB(void);
 
 // WZD o134p08
 // OVL_CounterMessage()

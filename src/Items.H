@@ -21,16 +21,13 @@ extern "C" {
 */
 
 // WZD o109p01
-// drake178: WIZ_AwardItems()
-// WIZ_AwardItems()
+void Player_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t item_list[]);
 
 // WZD o109p02
-// drake178: ITEM_DeleteValue()
-void ITEM_DeleteValue(int16_t item_idx);
+void Remove_Item(int16_t item_idx);
 
 // WZD o109p03
-// drake178: AI_ProcessItems()
-// AI_ProcessItems()
+void AI_Process_Item_Pool__STUB(int16_t player_idx, int16_t item_count, int16_t item_list[]);
 
 // WZD o109p04
 // drake178: AI_EquipHeroFirst()

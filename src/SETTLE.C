@@ -186,7 +186,9 @@ void UNIT_PushOffTile(int16_t unit_idx)
     {
         _UNITS[unit_idx].wx = Target_X;
         _UNITS[unit_idx].wy = Target_Y;
-        
+
+        troops[0] = unit_idx;
+
         Units_In_Tower(1, &troops[0], _UNITS[unit_idx].wp);  // BUGBUG  drake178: Towers of Wizardry are not valid push destinations
     }
     else

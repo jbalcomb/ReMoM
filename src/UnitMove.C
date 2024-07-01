@@ -129,8 +129,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             item_enchantments = 0;
             if(_UNITS[unit_idx].Hero_Slot != -1)
             {
-                item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
-                item_enchantments = global_strategic_unit->Item_UEs;
+                item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+                item_enchantments = global_battle_unit->item_enchantments;
             }
 
             if((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == MV_FORESTER)
@@ -157,7 +157,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_FORESTER) &&
                 (
-                    ((_UNITS[unit_idx].Enchants_LO & UE_PATHFINDING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_PATHFINDING) != 0) ||
                     ((item_enchantments & UE_PATHFINDING) != 0)
                 )
             )
@@ -168,7 +168,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_MOUNTAINEER) &&
                 (
-                    ((_UNITS[unit_idx].Enchants_LO & UE_PATHFINDING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_PATHFINDING) != 0) ||
                     ((item_enchantments & UE_PATHFINDING) != 0)
                 )
             )
@@ -179,7 +179,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (movement_mode_flags[itr_modes] == MV_FLYING) &&
                 (
-                    ((_UNITS[unit_idx].Enchants_HI & UE_WINDWALKING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0) ||
                     ((_unit_type_table[unit_type].Abilities & UA_WINDWALKING) != 0)
                 )
             )
@@ -189,7 +189,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
 
             if(
                 (movement_mode_flags[itr_modes] == MV_FLYING) &&
-                ((_UNITS[unit_idx].Enchants_HI & (UE_WINDWALKING | UE_FLIGHT)) != 0) &&
+                ((_UNITS[unit_idx].enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) &&
                 (_unit_type_table[unit_type].Transport > 0)
             )
             {
@@ -212,7 +212,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
 
                 if(
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
                     ((item_enchantments & UE_WRAITHFORM) != 0)
                 )
                 {
@@ -222,7 +222,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 if(
                     (l_movement_modes_array[itr_modes] == MV_FLYING) &&  // BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code)
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
                     ((item_enchantments & UE_WRAITHFORM) != 0)
                 )
                 {
@@ -234,7 +234,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             (
                 (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
                 (
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WATERWALKING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0) ||
                     ((item_enchantments & UE_WATERWALKING) != 0)
                 )
             )
@@ -248,7 +248,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
                 (
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
                     ((item_enchantments & UE_WRAITHFORM) != 0)
                 )
             )
@@ -260,9 +260,9 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
             if(
                 (l_movement_modes_array[itr_modes] == MV_FLYING) &&
                 (
-                    ((_UNITS[unit_idx].Enchants_HI & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
                     ((item_enchantments & (UE_WINDWALKING | UE_FLIGHT)) != 0) ||
-                    ((_UNITS[unit_idx].Mutations & CC_FLIGHT) != 0)
+                    ((_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
                 )
             )
             {
@@ -270,10 +270,10 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 Flying_Units++;
 
                 if(
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WATERWALKING) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0) ||
                     ((item_enchantments & UE_WATERWALKING) != 0) ||
                     ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0) ||
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
                     ((item_enchantments & UE_WRAITHFORM) != 0)
                 )
                 {
@@ -318,7 +318,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
         unit_type = _UNITS[unit_idx].type;
         if(
             ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-            ((_UNITS[unit_idx].Enchants_LO & UE_WRAITHFORM) != 0)  // BUGBUG:  drake178: ignores the item power
+            ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)  // BUGBUG:  drake178: ignores the item power
             /* || ((item_enchantments & UE_WRAITHFORM) != 0) */
         )
         {
@@ -340,12 +340,6 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
 {
     int16_t unit_type;
     int16_t has_airtravel;
-    int16_t tmp_unit_enchantments_loword;
-    int16_t tmp_unit_enchantments_hiword;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_AirTravel(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
 
     has_airtravel = ST_FALSE;
 
@@ -356,25 +350,20 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
         has_airtravel = ST_TRUE;
     }
 
-    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;
-    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;
-
+    
     if(
-        ((tmp_unit_enchantments_hiword & UE_WINDWALKING) != 0) || 
-        ((tmp_unit_enchantments_hiword & UE_FLIGHT) != 0)
+        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) != 0)
+        ||
+        ((_UNITS[unit_idx].enchantments & UE_FLIGHT) != 0)
     )
     {
         has_airtravel = ST_TRUE;
     }
     
-    if( (_UNITS[unit_idx].Mutations & CC_FLIGHT) != 0)
+    if( (_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
     {
         has_airtravel = ST_TRUE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_AirTravel(unit_idx = %d) { has_airtravel = %d }\n", __FILE__, __LINE__, unit_idx, has_airtravel);
-// #endif
 
     return has_airtravel;
 }
@@ -383,46 +372,32 @@ int16_t Unit_Has_AirTravel(int16_t unit_idx)
 int16_t Unit_Has_WindWalking(int16_t unit_idx)
 {
     int16_t has_windwalking;
-    int16_t tmp_unit_enchantments_loword;
-    int16_t tmp_unit_enchantments_hiword;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_WindWalking(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
 
     has_windwalking = ST_FALSE;
 
-    // TODO(JimBalcomb,20230618): figure out why DASM is using DX:AX ? DWORD/long ? ? macro ?
-    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;  // // ; enum UE_FLAGS_L
-    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;  // // ; enum UE_FLAGS_H
-
     if(
-        ((tmp_unit_enchantments_hiword & UE_WINDWALKING) == ST_TRUE) ||
+        ((_UNITS[unit_idx].enchantments & UE_WINDWALKING) == ST_TRUE)
+        ||
         ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_WINDWALKING) == ST_TRUE)
     )
     {
         has_windwalking = ST_TRUE;
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_WindWalking(unit_idx = %d) { has_windwalking = %d }\n", __FILE__, __LINE__, unit_idx, has_windwalking);
-// #endif
-
     return has_windwalking;
 }
 
 
 // WZD o71p05
+/*
+    Movement Mode Sailing
+    Movement Mode Swimming
+    Unit Enchantment Water Walking
+*/
 int16_t Unit_Has_WaterTravel(int16_t unit_idx)
 {
     int16_t unit_type;
     int16_t has_watertravel;
-    int16_t tmp_unit_enchantments_loword;
-    int16_t tmp_unit_enchantments_hiword;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_WaterTravel(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
 
     has_watertravel = ST_FALSE;
 
@@ -438,26 +413,35 @@ int16_t Unit_Has_WaterTravel(int16_t unit_idx)
         has_watertravel = ST_TRUE;
     }
 
-    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;
-    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;
-
-    if(
-        ((tmp_unit_enchantments_loword & UE_WATERWALKING) != 0)
-    )
+    if((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0)
     {
         has_watertravel = ST_TRUE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_WaterTravel(unit_idx = %d) { has_watertravel = %d }\n", __FILE__, __LINE__, unit_idx, has_watertravel);
-// #endif
 
     return has_watertravel;
 }
 
 
 // WZD o71p06
-// int16_t UNIT_IsSailing(int16_t unit_idx);
+/*
+    Movement Mode Sailing
+*/
+int16_t Unit_Has_Sailing(int16_t unit_idx)
+{
+    int16_t unit_type;
+    int16_t has_sailing;
+
+    has_sailing = ST_FALSE;
+
+    unit_type = _UNITS[unit_idx].type;
+
+    if((_unit_type_table[unit_type].Move_Flags & MV_SAILING) != 0)
+    {
+        has_sailing = ST_TRUE;
+    }
+
+    return has_sailing;
+}
 
 // WZD o71p07
 int16_t Unit_Has_Swimming(int16_t unit_idx)
@@ -465,27 +449,19 @@ int16_t Unit_Has_Swimming(int16_t unit_idx)
     int16_t has_swimming;
     int16_t unit_type;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_Swimming(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
-
     has_swimming = ST_FALSE;
 
     unit_type = _UNITS[unit_idx].type;
 
-    if( (_unit_type_table[unit_type].Move_Flags & 0x04 /* M_Swimming */) != 0)
+    if( (_unit_type_table[unit_type].Move_Flags & MV_SWIMMING) != 0)
     {
         has_swimming = ST_TRUE;
     }
 
-    if( (_UNITS[unit_idx].Enchants_LO & 0x0100 /* UE_Water_Walking */) != 0)
+    if((_UNITS[unit_idx].enchantments & UE_WATERWALKING) != 0)
     {
         has_swimming = ST_TRUE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_Swimming(unit_idx = %d) { has_swimming = %d }\n", __FILE__, __LINE__, unit_idx, has_swimming);
-// #endif
 
     return has_swimming;
 }
@@ -499,37 +475,23 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
     uint32_t UU_item_enchantments;
     int16_t has_watertravel_item;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_WaterTravel_Item(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
-
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
-// #endif
+        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
-    // // tmp_item_enchantments_loword = global_strategic_unit->BU_REC.Item_UEs_L;
-    // // tmp_item_enchantments_hiword = global_strategic_unit->BU_REC.Item_UEs_H;
-    // uint32_t items_enchantments = global_strategic_unit->BU_REC.Item_UEs;
+        if(
+            ( (global_battle_unit->item_enchantments & UE_WINDWALKING) != 0) ||
+            ( (global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
+        )
+        {
+            has_watertravel_item = ST_TRUE;
+        }
 
-    if(
-        ( (global_strategic_unit->Item_UEs & UE_WINDWALKING) != 0) ||
-        ( (global_strategic_unit->Item_UEs & UE_FLIGHT) != 0)
-    )
-    {
-        has_watertravel_item = ST_TRUE;
-    }
     }
     else
     {
         has_watertravel_item = ST_FALSE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_WaterTravel_Item(unit_idx = %d) { has_watertravel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_watertravel_item);
-// #endif
 
     return has_watertravel_item;
 }
@@ -541,41 +503,23 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
     uint32_t UU_item_enchantments;
     int16_t has_airtravel_item;
 
-    // // int16_t tmp_item_enchantments_loword;
-    // // int16_t tmp_item_enchantments_hiword;
-    // uint32_t items_enchantments;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_AirTravel_Item(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
-
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
-// #endif
+        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
-    // // tmp_item_enchantments_loword = global_strategic_unit->BU_REC.Item_UEs_L;
-    // // tmp_item_enchantments_hiword = global_strategic_unit->BU_REC.Item_UEs_H;
-    // uint32_t items_enchantments = global_strategic_unit->BU_REC.Item_UEs;
+        if(
+            ( (global_battle_unit->item_enchantments & UE_WINDWALKING) != 0) ||
+            ( (global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
+        )
+        {
+            has_airtravel_item = ST_TRUE;
+        }
 
-    if(
-        ( (global_strategic_unit->Item_UEs & UE_WINDWALKING) != 0) ||
-        ( (global_strategic_unit->Item_UEs & UE_FLIGHT) != 0)
-    )
-    {
-        has_airtravel_item = ST_TRUE;
-    }
     }
     else
     {
         has_airtravel_item = ST_FALSE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_AirTravel_Item(unit_idx = %d) { has_airtravel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_airtravel_item);
-// #endif
 
     return has_airtravel_item;
 }
@@ -583,63 +527,53 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
 // WZD o71p011
 int16_t Unit_Has_Invisibility(int16_t unit_idx)
 {
-    int16_t has_invisibility;
-    // int32_t Unused_PowerFlags;
-    int16_t tmp_unit_enchantments_loword;
-    int16_t tmp_unit_enchantments_hiword;
+    int32_t UU_battle_unit_item_enchantments;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_Invisibility(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
-
-    has_invisibility = ST_FALSE;
-
-    // NOTE: In the Dasm, this looks if( || || ) {return 1} else {return 0}
-
-    if(_UNITS[unit_idx].Hero_Slot != ST_FALSE)
+    if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
-        // Unused_PowerFlags = j_UNIT_BU_ApplyItems(global_strategic_unit@);
-
-        // les     bx, [global_strategic_unit@]              ; 8 LBX_Alloc_Space paragraphs (128 bytes) ; contains a single battle unit record (110 bytes)
-        // mov     ax, [es:bx+BU_REC.Item_UEs_H]
-        // mov     dx, [es:bx+BU_REC.Item_UEs_L]
-        // and     dx, UE_Invisibility
-        // and     ax, 0
-        // or      dx, ax
+        UU_battle_unit_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+        if((global_battle_unit->item_enchantments & UE_INVISIBILITY) != 0)
+        {
+            return ST_TRUE;
+        }
     }
 
-    // TODO(JimBalcomb,20230618): figure out why DASM is using DX:AX ? DWORD/long ? ? macro ?
-    tmp_unit_enchantments_loword = _UNITS[unit_idx].Enchants_LO;  // // ; enum UE_FLAGS_L
-    tmp_unit_enchantments_hiword = _UNITS[unit_idx].Enchants_HI;  // // ; enum UE_FLAGS_H
-
-    if( (tmp_unit_enchantments_hiword & UE_INVISIBILITY) != 0 )
+    if(
+        ((_UNITS[unit_idx].enchantments & UE_INVISIBILITY) != 0)
+        ||
+        ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_INVISIBILITY) != 0)
+    )
     {
-        // DELETE  DLOG("( (tmp_unit_enchantments_hiword & 0x8000) != 0 )");
-        has_invisibility = ST_TRUE;
+        return ST_TRUE;
     }
     else
     {
-        // DELETE  DLOG("( (tmp_unit_enchantments_hiword & 0x8000) == 0 )");
+        return ST_FALSE;
     }
-    if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_INVISIBILITY) != 0 )
-    {
-        // DELETE  DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) != 0 )");
-        has_invisibility = ST_TRUE;
-    }
-    else
-    {
-        // DELETE  DLOG("( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x40) == 0 )");
-    }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_Invisibility(unit_idx = %d)  { has_invisibility = %d }\n", __FILE__, __LINE__, unit_idx, has_invisibility);
-// #endif
-
-    return has_invisibility;
 }
 
 // WZD o71p012
-// int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
+/*
+¿ BUG ? effectively only counts for non-ghero units, as it does not check items
+
+XREF:
+    j_Unit_Has_Endurance()
+        Road_Build_Screen()
+        Move_Units()
+        AI_UNIT_BuildRoad()
+*/
+int16_t Unit_Has_Endurance(int16_t unit_idx)
+{
+    if((_UNITS[unit_idx].enchantments & UE_ENDURANCE) != 0)
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+}
+
 
 // WZD o71p013
 int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
@@ -647,20 +581,13 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     int16_t has_planartravel_item;
     uint32_t UU_item_enchantments;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Has_PlanarTravel_Item(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
-
     if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
 
-        UU_item_enchantments = UNIT_BU_ApplyItems(unit_idx, global_strategic_unit);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: UU_item_enchantments: 0x%08X\n", __FILE__, __LINE__, unit_idx, UU_item_enchantments);
-// #endif
+        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
 
         if(
-            ( (global_strategic_unit->Item_UEs & UE_PLANARTRAVEL) != 0)
+            ( (global_battle_unit->item_enchantments & UE_PLANARTRAVEL) != 0)
         )
         {
             has_planartravel_item = ST_TRUE;
@@ -675,10 +602,6 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
     {
         has_planartravel_item = ST_FALSE;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Has_PlanarTravel_Item(unit_idx = %d)  { has_planartravel_item = %d }\n", __FILE__, __LINE__, unit_idx, has_planartravel_item);
-// #endif
 
     return has_planartravel_item;
 }
@@ -923,7 +846,7 @@ Flying:
 {
 
         Set_Memory(&movepath_cost_map->moves2[0], 10080, 2);  // drake178: BUG: we only use 2400 (960h) bytes of this!
-        terrain_flags_ptr = (int8_t *)TBL_Terrain_Flags[wp * WORLD_SIZE];
+        terrain_flags_ptr = (int8_t *)&TBL_Terrain_Flags[wp * WORLD_SIZE];
         movemap_ptr = (int8_t *)&movepath_cost_map->moves2;
         map_squares = WORLD_SIZE;
         road_bits = (TF_Road | TF_Enc_Road);

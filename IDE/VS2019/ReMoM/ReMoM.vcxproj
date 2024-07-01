@@ -94,16 +94,21 @@
     <ClInclude Include="..\..\..\src\CITYSCAP.H" />
     <ClInclude Include="..\..\..\src\CityScr.H" />
     <ClInclude Include="..\..\..\src\City_ovr55.H" />
+    <ClInclude Include="..\..\..\src\Combat.H" />
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
+    <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
     <ClInclude Include="..\..\..\src\Fields.H" />
     <ClInclude Include="..\..\..\src\Fonts.H" />
     <ClInclude Include="..\..\..\src\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\Graphics.H" />
     <ClInclude Include="..\..\..\src\Help.H" />
+    <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
     <ClInclude Include="..\..\..\src\Input.H" />
+    <ClInclude Include="..\..\..\src\ItemMake.H" />
     <ClInclude Include="..\..\..\src\Items.H" />
+    <ClInclude Include="..\..\..\src\ItemScrn.H" />
     <ClInclude Include="..\..\..\src\ItemView.H" />
     <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
@@ -124,6 +129,7 @@
     <ClInclude Include="..\..\..\src\MoX_Data.H" />
     <ClInclude Include="..\..\..\src\MoX_DEF.H" />
     <ClInclude Include="..\..\..\src\MoX_DIR.H" />
+    <ClInclude Include="..\..\..\src\MoX_DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
     <ClInclude Include="..\..\..\src\MoX_RNG.H" />
@@ -161,6 +167,7 @@
     <ClInclude Include="..\..\..\src\Video2.H" />
     <ClInclude Include="..\..\..\src\win_PFL.hpp" />
     <ClInclude Include="..\..\..\src\WZD_o059.H" />
+    <ClInclude Include="..\..\..\src\WZD_o143.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AdvsrScr.C" />
@@ -171,15 +178,20 @@
     <ClCompile Include="..\..\..\src\CITYSCAP.C" />
     <ClCompile Include="..\..\..\src\CityScr.C" />
     <ClCompile Include="..\..\..\src\City_ovr55.C" />
+    <ClCompile Include="..\..\..\src\Combat.C" />
+    <ClCompile Include="..\..\..\src\DIPLOMAC.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Fields.C" />
     <ClCompile Include="..\..\..\src\Fonts.C" />
     <ClCompile Include="..\..\..\src\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\Graphics.C" />
     <ClCompile Include="..\..\..\src\Help.C" />
+    <ClCompile Include="..\..\..\src\HIRE.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
     <ClCompile Include="..\..\..\src\Input.C" />
+    <ClCompile Include="..\..\..\src\ItemMake.C" />
     <ClCompile Include="..\..\..\src\Items.C" />
+    <ClCompile Include="..\..\..\src\ItemScrn.C" />
     <ClCompile Include="..\..\..\src\ItemView.C" />
     <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
@@ -196,6 +208,7 @@
     <ClCompile Include="..\..\..\src\MoX_CFG.C" />
     <ClCompile Include="..\..\..\src\MoX_CMB.C" />
     <ClCompile Include="..\..\..\src\MoX_Data.C" />
+    <ClCompile Include="..\..\..\src\MoX_DOS.C" />
     <ClCompile Include="..\..\..\src\MoX_GAM.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
     <ClCompile Include="..\..\..\src\MoX_RNG.C" />
@@ -236,6 +249,7 @@
     <ClCompile Include="..\..\..\src\win_PFL.cpp" />
     <ClCompile Include="..\..\..\src\win_Video.C" />
     <ClCompile Include="..\..\..\src\WZD_o059.C" />
+    <ClCompile Include="..\..\..\src\WZD_o143.C" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MoX\MoX.vcxproj">

@@ -305,9 +305,9 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
             {
                 if(
                     (
-                        (exclusion_area_y1[itr_exclusion_count] > ypos)
+                        (exclusion_area_y1[itr_exclusion_count] <= ypos)
                         &&
-                        (exclusion_area_y2[itr_exclusion_count] < ypos)
+                        (exclusion_area_y2[itr_exclusion_count] >= ypos)
                     )
                     ||
                     (
@@ -317,15 +317,19 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                     )
                 )
                 {
-                    if( (exclusion_area_x1[itr_exclusion_count] > xmin) && (exclusion_area_x2[itr_exclusion_count] < xmax) )
+                    if(
+                        (exclusion_area_x2[itr_exclusion_count] > xmin)
+                        &&
+                        (exclusion_area_x1[itr_exclusion_count] < xmax)
+                    )
                     {
-                        if(exclusion_area_x2[itr_exclusion_count] <= xmin)
+                        if(exclusion_area_x1[itr_exclusion_count] > xmin)
                         {
-                            xmin = (exclusion_area_x1[itr_exclusion_count] + 1);
+                            xmax = (exclusion_area_x1[itr_exclusion_count] - 1);
                         }
                         else
                         {
-                            xmax = (exclusion_area_x2[itr_exclusion_count] - 1);
+                            xmin = (exclusion_area_x2[itr_exclusion_count] + 1);
                         }
                         if(xmin > xmax)
                         {
@@ -524,15 +528,11 @@ Done:
 // WZD s19p05
 // drake178: VGA_GetTextHeight
 // EXACT  MoO2  Module: paragrph  Get_Paragraph_Max_Height()
+// TODO  int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string, int16_t print_type)
 int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
 {
-
     int16_t ymax;
     int16_t font_height;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Paragraph_Max_Height(max_width = %d, string = %s)\n", __FILE__, __LINE__, max_width, string);
-#endif
 
     font_height = GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
 
@@ -547,10 +547,6 @@ int16_t Get_Paragraph_Max_Height(int16_t max_width, char * string)
     {
         ymax = 0;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Paragraph_Max_Height(max_width = %d, string = %s) { ymax = %d }\n", __FILE__, __LINE__, max_width, string, ymax);
-#endif
 
     return ymax;
 }
@@ -569,10 +565,6 @@ int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_
     int16_t xmax;
     int16_t itr;  // _SI_
     int16_t x1;  // _DI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Paragraph_Max_Width(max_width = %d, string = %s, print_type = %d)\n", __FILE__, __LINE__, max_width, string, print_type);
-#endif
 
     Mark_Paragraph(0, 0, max_width, string);
 
@@ -623,10 +615,6 @@ int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_
 
     xmax = ((x2max - x1min) + 1);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Get_Paragraph_Max_Width(max_width = %d, string = %s, print_type = %d) { xmax = %d }\n", __FILE__, __LINE__, max_width, string, print_type, xmax);
-#endif
-
     return xmax;
 }
 
@@ -641,21 +629,30 @@ void Reset_Paragraph_Exclusions(void)
 
 
 // WZD s19p08
-// VGA_AddFloatingBlock()
+// drake178: VGA_AddFloatingBlock()
+// MoO2: Set_Paragraph_Exclusion_Area()
+void Set_Paragraph_Exclusion_Area(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+    if(exclusion_count < 4)
+    {
+        exclusion_area_x1[exclusion_count] = x1;
+        exclusion_area_y1[exclusion_count] = y1;
+        exclusion_area_x2[exclusion_count] = x2;
+        exclusion_area_y2[exclusion_count] = y2;
+        
+        exclusion_count++;
+    }
+}
 
 // WZD s19p09
-// UU_VGA_AddFltIMGSpace()
-
+// drake178: UU_VGA_AddFltIMGSpace()
+// MoO2: Set_Paragraph_Exclusion_Picture()
 
 // WZD s19p10
 // drake178: STR_RemoveLBSPs
 void Remove_Paragraph_Marks(char * string)
 {
     int16_t itr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Remove_Paragraph_Marks(string = %s)\n", __FILE__, __LINE__, string);
-#endif
 
     itr = 0;
     while(string[itr] != '\0')
@@ -666,10 +663,6 @@ void Remove_Paragraph_Marks(char * string)
         }
         itr++;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Remove_Paragraph_Marks(string = %s)\n", __FILE__, __LINE__, string);
-#endif
 
 }
 

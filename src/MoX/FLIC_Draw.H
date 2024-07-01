@@ -22,6 +22,7 @@ MoO2 Module: shear
 #include "MoX_BITS.H"
 
 /*
+"BRUN"  "byte run"
 "FRM"   "frame"
 "HDR"   "header"
 "LC"    "line compressed"  ~== Run-Length Encoded (RLE)
@@ -57,7 +58,7 @@ struct s_FLIC_HDR
 #define FLIC_HDR_POS_EMM_LOGICAL_PAGE_NUMBER    0x0B
 #define FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET    0x0C
 #define FLIC_HDR_POS_PALETTE_HEADER_OFFSET      0x0E    // End of 16-byte FLIC Header / animation_header
-#define FLIC_HDR_POS_FRAME_TYPE                 0x10
+#define FLIC_HDR_POS_FRAME_TYPE                 0x10    // "full store flag" ¿ store_type ? ¿ {full, delta} ?
 #define FLIC_HDR_POS_REMAP_FLAG                 0x11    // Remap Colors Flag
 #define FLIC_HDR_POS_FRAME_OFFSET_TABLE         0x12    // 18 bytes from BoF; 4-byte values for offsets from BoF to the FLIC Frame Data
 
@@ -286,7 +287,8 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 // UU_LBX_IMG_ExtGrayScale()
 
 // WZD s30p34
-// LBX_IMG_Resize()
+// drake178: LBX_IMG_Resize()
+void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s30p35
 // VGA_FILEH_LoadFirst()
@@ -387,7 +389,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p08
-// LBX_IMG_HorzFlip()
+void Flip_Bitmap(SAMB_ptr pict_seg);
 
 // WZD s33p09
 // MoO2:  Replace_Color()
@@ -403,10 +405,12 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 void Clear_Memory_Far(byte_ptr dst, int16_t n);
 
 // WZD s33p13
-// LBX_IMG_Shrink()
+// drake178: LBX_IMG_Shrink()
+void Reduce_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s33p14
-// LBX_IMG_Stretch()
+// drake178: LBX_IMG_Stretch()
+void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s33p15
 // MoO2  Module: bitmap  Vanish_Bitmap()

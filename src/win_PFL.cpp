@@ -26,8 +26,10 @@
 uint8_t PFL_Palette[1024];  // Platform's Shadow Palette: 256 colors * bits/bytes/components per color as required by the platform  e.g., RGB, XBGR, RGBA
 
 
-
-uint16_t VK_to_SCCS[128] = {
+/*
+    translate MWA Virtual Key Code to Scan Code / Character Code
+*/
+uint16_t VK_to_SCCS[256] = {
     /*   0 0x00 */  0x0000,
     /*   1 0x01 */  0x0000,
     /*   2 0x02 */  0x0000,
@@ -55,7 +57,7 @@ uint16_t VK_to_SCCS[128] = {
     /*  24 0x18 */  0x0000,
     /*  25 0x19 */  0x0000,
     /*  26 0x1A */  0x0000,
-    /*  27 0x1B */  0x011B,  /* VK_ESCAPE */
+    /*  27 0x1B */  SCCC_ESC,  /* VK_ESCAPE */
     /*  28 0x1C */  0x0000,
     /*  29 0x1D */  0x0000,
     /*  30 0x1E */  0x0000,
@@ -135,9 +137,9 @@ uint16_t VK_to_SCCS[128] = {
     /* 104 0x68 */  SCCC_KP_8,  /* VK_NUMPAD8 */
     /* 105 0x69 */  SCCC_KP_9,  /* VK_NUMPAD9 */
     /* 106 0x6A */  0x0000,
-    /* 107 0x6B */  0x0000,
+    /* 107 0x6B */  SCCC_PLUS,  /* VK_ADD	0x6B	Add key */
     /* 108 0x6C */  0x0000,
-    /* 109 0x6D */  0x0000,
+    /* 109 0x6D */  SCCC_MINUS,  /* VK_SUBTRACT  0x6D  Subtract key */
     /* 110 0x6E */  0x0000,
     /* 111 0x6F */  0x0000,
     /* 112 0x70 */  0x0000,
@@ -155,7 +157,135 @@ uint16_t VK_to_SCCS[128] = {
     /* 124 0x7C */  0x0000,
     /* 125 0x7D */  0x0000,
     /* 126 0x7E */  0x0000,
-    /* 127 0x7F */  0x0000
+    /* 127 0x7F */  0x0000,
+    /* 128 0x */  0x0000,
+    /* 129 0x */  0x0000,
+    /* 130 0x */  0x0000,
+    /* 131 0x */  0x0000,
+    /* 132 0x */  0x0000,
+    /* 133 0x */  0x0000,
+    /* 134 0x */  0x0000,
+    /* 135 0x */  0x0000,
+    /* 136 0x */  0x0000,
+    /* 137 0x */  0x0000,
+    /* 138 0x */  0x0000,
+    /* 139 0x */  0x0000,
+    /* 140 0x */  0x0000,
+    /* 141 0x */  0x0000,
+    /* 142 0x */  0x0000,
+    /* 143 0x */  0x0000,
+    /* 144 0x */  0x0000,
+    /* 145 0x */  0x0000,
+    /* 146 0x */  0x0000,
+    /* 147 0x */  0x0000,
+    /* 148 0x */  0x0000,
+    /* 149 0x */  0x0000,
+    /* 150 0x */  0x0000,
+    /* 151 0x */  0x0000,
+    /* 152 0x */  0x0000,
+    /* 153 0x */  0x0000,
+    /* 154 0x */  0x0000,
+    /* 155 0x */  0x0000,
+    /* 156 0x */  0x0000,
+    /* 157 0x */  0x0000,
+    /* 158 0x */  0x0000,
+    /* 159 0x */  0x0000,
+    /* 160 0x */  0x0000,
+    /* 161 0x */  0x0000,
+    /* 162 0x */  0x0000,
+    /* 163 0x */  0x0000,
+    /* 164 0x */  0x0000,
+    /* 165 0x */  0x0000,
+    /* 166 0x */  0x0000,
+    /* 167 0x */  0x0000,
+    /* 168 0x */  0x0000,
+    /* 169 0x */  0x0000,
+    /* 170 0x */  0x0000,
+    /* 171 0x */  0x0000,
+    /* 172 0x */  0x0000,
+    /* 173 0x */  0x0000,
+    /* 174 0x */  0x0000,
+    /* 175 0x */  0x0000,
+    /* 176 0x */  0x0000,
+    /* 177 0x */  0x0000,
+    /* 178 0x */  0x0000,
+    /* 179 0x */  0x0000,
+    /* 180 0x */  0x0000,
+    /* 181 0x */  0x0000,
+    /* 182 0x */  0x0000,
+    /* 183 0x */  0x0000,
+    /* 184 0x */  0x0000,
+    /* 185 0x */  0x0000,
+    /* 186 0x */  0x0000,
+    /* 187 0xBB */  SCCC_PLUS,
+    /* 188 0xBC */  0x0000,
+    /* 189 0xBD */  SCCC_MINUS,  /* VK_OEM_MINUS	0xBD	For any country/region, the - key */
+    /* 190 0x */  0x0000,
+    /* 191 0x */  0x0000,
+    /* 192 0x */  0x0000,
+    /* 193 0x */  0x0000,
+    /* 194 0x */  0x0000,
+    /* 195 0x */  0x0000,
+    /* 196 0x */  0x0000,
+    /* 197 0x */  0x0000,
+    /* 198 0x */  0x0000,
+    /* 199 0x */  0x0000,
+    /* 200 0x */  0x0000,
+    /* 201 0x */  0x0000,
+    /* 202 0x */  0x0000,
+    /* 203 0x */  0x0000,
+    /* 204 0x */  0x0000,
+    /* 205 0x */  0x0000,
+    /* 206 0x */  0x0000,
+    /* 207 0x */  0x0000,
+    /* 208 0x */  0x0000,
+    /* 209 0x */  0x0000,
+    /* 210 0x */  0x0000,
+    /* 211 0x */  0x0000,
+    /* 212 0x */  0x0000,
+    /* 213 0x */  0x0000,
+    /* 214 0x */  0x0000,
+    /* 215 0x */  0x0000,
+    /* 216 0x */  0x0000,
+    /* 217 0x */  0x0000,
+    /* 218 0x */  0x0000,
+    /* 219 0x */  0x0000,
+    /* 220 0x */  0x0000,
+    /* 221 0x */  0x0000,
+    /* 222 0x */  0x0000,
+    /* 223 0x */  0x0000,
+    /* 224 0x */  0x0000,
+    /* 225 0x */  0x0000,
+    /* 226 0x */  0x0000,
+    /* 227 0x */  0x0000,
+    /* 228 0x */  0x0000,
+    /* 229 0x */  0x0000,
+    /* 230 0x */  0x0000,
+    /* 231 0x */  0x0000,
+    /* 232 0x */  0x0000,
+    /* 233 0x */  0x0000,
+    /* 234 0x */  0x0000,
+    /* 235 0x */  0x0000,
+    /* 236 0x */  0x0000,
+    /* 237 0x */  0x0000,
+    /* 238 0x */  0x0000,
+    /* 239 0x */  0x0000,
+    /* 240 0x */  0x0000,
+    /* 241 0x */  0x0000,
+    /* 242 0x */  0x0000,
+    /* 243 0x */  0x0000,
+    /* 244 0x */  0x0000,
+    /* 245 0x */  0x0000,
+    /* 246 0x */  0x0000,
+    /* 247 0x */  0x0000,
+    /* 248 0x */  0x0000,
+    /* 249 0x */  0x0000,
+    /* 250 0x */  0x0000,
+    /* 251 0x */  0x0000,
+    /* 252 0x */  0x0000,
+    /* 253 0x */  0x0000,
+    /* 254 0x */  0x0000,
+    /* 255 0x */  0x0000
 };
 
 
@@ -198,6 +328,7 @@ int Pump_Paints_Cnt = 0;
 
 
 
+
 void Pump_Events(void);
 void Pump_Paints(void);
 struct win32_window_dimension Get_Window_Dimensions(HWND Window);
@@ -208,6 +339,27 @@ void Init_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, 
 void WndInit(HINSTANCE hInstance, int nCmdShow);
 LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+
+// WZD s35p21
+/*
+        case WM_MOUSEMOVE:
+        {
+            OutputDebugStringA("WM_MOUSEMOVE\n");
+            POINT ptMouse;
+            GetCursorPos(&ptMouse);
+            ScreenToClient(g_Window, &ptMouse);
+            // DELETE  Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
+            User_Mouse_Handler(0b00000000, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
+        } break;
+*/
+void MWA_Set_Mouse_Position(int16_t x, int16_t y)
+{
+    POINT point;
+    point.x = (x * 2);
+    point.y = (y * 2);
+    ClientToScreen(g_Window, &point);
+    SetCursorPos(point.x, point.y);
+}
 
 
 void Pump_Events(void)
@@ -504,7 +656,6 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptMouse;
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
-            // DELETE  Update_Mouse_Button_Status((int16_t)ptMouse.x, (int16_t)ptMouse.y, 0b00000001);
             User_Mouse_Handler(0b00000001, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
         case WM_RBUTTONDOWN:
@@ -513,7 +664,6 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptMouse;
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
-            // DELETE  Update_Mouse_Button_Status((int16_t)ptMouse.x, (int16_t)ptMouse.y, 0b00000010);
             User_Mouse_Handler(0b00000010, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
 
@@ -550,7 +700,6 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             OutputDebugStringA("WM_CLOSE\n");
             quit_game_flag = ST_TRUE;
             current_screen = scr_Quit_To_DOS;
-            // DELETE  g_State_Run = false;
         } break;
 
         case WM_DESTROY:

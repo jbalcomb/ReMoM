@@ -1,5 +1,6 @@
 /*
     WIZARDS.EXE
+    seg001
     seg022
 
     MoO2  Module: random
@@ -76,6 +77,78 @@ uint32_t random_seed = 0x35683568;
 
 
 
+/*
+    WZD  seg001
+*/
+
+// WZD s01p07
+/*
+drake178:
+chooses a random item from a list of 16-bit weighted chances
+condensing the weights such that the total fits into a single call of the 9-bit PRNG (max 512),
+using repeated divisions by 2 if necessary
+*/
+int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
+{
+    int16_t Condense_Loop_Var;
+    int16_t Picked_List_Item;
+    int16_t Weights_Remainder;
+    int16_t itr;
+    int16_t tmp_pick;  // _DI_
+    int16_t return_value;  // _AX_  DNE in Dasm
+
+    itr = 0;  // ¿ DNE in Dasm ?
+    
+    do
+    {
+        tmp_pick = 0;
+
+        tmp_pick += Weights[itr];
+
+        if(tmp_pick < 512)
+        {
+            itr++;
+        }
+        else
+        {
+            for(Condense_Loop_Var = 0; Condense_Loop_Var < List_Count; Condense_Loop_Var++)
+            {
+                Weights[Condense_Loop_Var] = (Weights[Condense_Loop_Var] / 2);
+            }
+        }
+
+    } while (itr < List_Count);
+
+    if(tmp_pick == 0)
+    {
+        return_value = 0;
+    }
+    else
+    {
+        Weights_Remainder = (Random(tmp_pick) - Weights[0]);
+        Picked_List_Item = 0;
+        while((Weights_Remainder > 0) && (List_Count - 1) > Picked_List_Item)
+        {
+            Picked_List_Item++;
+            Weights_Remainder -= Weights[Picked_List_Item];
+        }
+        return_value = Picked_List_Item;
+    }
+
+    return return_value;
+}
+
+
+// WZD s01p08
+// RNG_WeightedPick32()
+
+// WZD s01p09
+// UU_RNG_HighestPick16()
+
+// WZD s01p10
+// UU_RNG_HighestPick32()
+
+
 
 /*
     WZD  seg022
@@ -106,7 +179,40 @@ void Randomize(void)
 
 
 // WZD s22p08
-int16_t Random(int16_t max)
+/*
+1oom
+uint16_t rnd_0_nm1(uint16_t n, uint32_t *seed)
+{
+    uint32_t r = *seed;
+    r ^= (r << 13);
+    r ^= (r >> 17);
+    r ^= (r << 5);
+    *seed = r;
+    return (r >> 16) % n;
+}
+uint16_t rnd_1_n(uint16_t n, uint32_t *seed)
+{
+    return 1 + rnd_0_nm1(n, seed);
+}
+*/
+int16_t Random(int16_t n)
+{
+    uint16_t result;
+    uint32_t r = random_seed;
+
+    r ^= (r << 13);
+    r ^= (r >> 17);
+    r ^= (r << 5);
+    
+    random_seed = r;
+
+    result = (r >> 16) % n;
+
+    result += 1;
+
+    return result;
+}
+int16_t Random__FAIL(int16_t max)
 {
     int16_t itr;
     int16_t result;

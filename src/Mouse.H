@@ -42,7 +42,7 @@ struct s_mouse_list
 
 // WZD dseg:00EE    mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 extern struct s_mouse_list mouse_list_default[];
-// WZD dseg:00FA    mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+extern struct s_mouse_list mouse_list_none[];
 // WZD dseg:0106    mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
 // WZD dseg:0112    NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 // WZD dseg:011E    NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
@@ -123,14 +123,17 @@ int16_t Get_Pointer_Offset(void);
 // WZD s35p05
 int16_t Mouse_Button(void);
 
+// WZD s35p06
+void Mouse_Wait(void);
+
 // WZD s35p07
 int16_t Init_Mouse_Driver(void);
 
 // WZD s35p08
-// RP_Mouse_SetUsable
+void RP_Mouse_SetUsable(void);
 
 // WZD s35p09
-// MOUSE_Reset
+void Reset_System_Mouse(void);
 
 // WZD s35p10
 void Mouse_Movement_Handler(void);

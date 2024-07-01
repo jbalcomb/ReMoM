@@ -219,12 +219,15 @@ enum e_UNIT_TYPE
 enum e_RANGED_ATTACK_TYPE
 {
     rat_None         =  -1,
+    /* rat_None         =   0, ... BU_IsRangedUnit() checks > 0 */
 
     rat_Rock         =  10,
     rat_Cannon       =  11,
+
     rat_Bow          =  20,
     rat_Sling        =  21,
     rat_Unknown      =  22,
+
     rat_Lightning    =  30,
     rat_Fireball     =  31,
     rat_Sorcery      =  32,
@@ -243,13 +246,20 @@ enum e_RANGED_ATTACK_TYPE
     srat_DeathGaze   = 105
 };
 
+enum e_RANGED_ATTACK_GROUP
+{
+    rag_Boulder = 1,  /* { 10, ...,  19} / 10 */
+    rag_Missile = 2,  /* { 20, ...,  29} / 10 */
+    rag_Magic   = 3,  /* { 30, ...,  39} / 10 */
+    rag_Short   = 10  /* {100, ..., 109} / 10 */
+};
 
 // sizeof:  24h  36d
 #pragma pack(push)
 #pragma pack(2)
 struct s_UNIT_TYPE
 {
-    /* 00 */  char **  Name;                    /* offset (00036AA0) */
+    /* 00 */  char **  name;                    /* offset (00036AA0) */
     /* 02 */  int8_t   Melee;
     /* 03 */  int8_t   Ranged;
     /* 04 */  int8_t   Ranged_Type;             // enum e_RANGED_ATTACK_TYPE
@@ -265,13 +275,13 @@ struct s_UNIT_TYPE
     union
     {
         int8_t   reqd_bldg_1;
-        int8_t   hero_portrait;
+        int8_t   hero_portrait;  /* entry_num PORTAITS.LBX */
     };
     /* 0F */  // int8_t   Bldng2_or_HeroType;      /* enum BLD_TYPE */
     union
     {
         int8_t   reqd_bldg_2;
-        int8_t   hero_type;
+        int8_t   hero_type;  /* used by Hero_Slot_Types() to determine the 3 item slots slot type */
     };
     /* 10 */  SAMB_ptr pict_seg;                /* segment pointers to LBX_Alloc_Space headers for reserved EMM file links */
     /* 12 */  int8_t   Hits;
@@ -284,7 +294,7 @@ struct s_UNIT_TYPE
     /* 1A */  int16_t Attribs_1;               /* enum ATTRIB_1 */
     /* 1C */  int8_t Attribs_2;               /* enum ATTRIB_2 */
     /* 1B */  // 2-byte alignment padding
-    /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */
+    /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
     /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */
     /* 22 */  int16_t  Sound;
 };

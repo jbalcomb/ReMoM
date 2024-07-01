@@ -1,15 +1,226 @@
 
 
 
+ovr072 is the 'view' code module
+e.g., view_type gets passed to Unit_Statistics_Popup() and it sets the module-scoped variable
+
+ovr078 is something like the list builder code
+
+ovr089 is extra/util or just what wouldn't fit in ovr072, maybe even ~"init"
+
+
+ovr072
+USW_CombatDisplay()
+USW_LoadAndShow()
+Unit_Statistics_Popup()
+Unit_Statistics_Popup_Do_Draw(void);
+Thing_View_Draw__WIP()
+UV_Draw_Upkeep_Icons__WIP()
+USW_DrawStatIcons()
+UV_Draw_Stat_Icons()
+UV_Draw_Hits_Icons()
+Moves_Type_Icon()
+USW_DrawListPage()
+UV_Add_Effect_Fields()
+USW_SetFXHelp()
+UV_Add_UpDn_Buttons()
+UV_Clear_Effect_Fields()
+USW_GetShownFXCount()
+Melee_Type_Icon()
+Ranged_Type_Icon()
+USW_HireScreenPrep()
+UV_Setup_ProdScr()
+
+ovr078
+USW_Build_Effect_List
+Prod_Build_Specials_List()
+ITEM_GetPowerNames()
+
+ovr089
+Prod_Load_Battle_Unit()
+USW_MemAlloc()
+Load_Unit_Figure()
+IDK_Get_Unit_Enchantment_Names()
+Draw_Unit_Figure()
+Unit_Figure_Position()
+UV_Remove_Unit_Enchantment()
+UNIT_RemoveEnchant()
+sub_759DE()
+UNIT_GetDependants()
+
+
+¿ boundary around just the 'View' ?
+
+¿ boundary around just the "Unit Statistics Window" ?
+... |-> Unit_Statistics_Popup() |-> ...
+
+
+
+
+
+uv_combat
+    in Unit_Statistics_Popup(), HLP_DrawExpanding()
+    in Unit_Statistics_Popup_Do_Draw(), G_USW_DrawEHLines()
+
+
 
 Thing_View_Draw__WIP()
     USW_DrawListPage()
 
 last called function
 
-So, how have I been drawing specials list stuuf, without this function?
+So, how have I been drawing specials list stuff, without this function?
 
 
+
+'Right-Click Hero Portrait'
+Armies Screen
+Items Screen
+
+Item_Screen()
+    |-> USW_FullDisplay()
+        |-> Set_Mouse_List()
+        |-> Load_Battle_Unit()
+        |-> USW_LoadAndShow()
+            |-> Unit_Statistics_Popup()
+                |-> `UV_specials_list`
+                |-> Unit_Statistics_Popup_Do_Draw()
+                    |-> `UV_specials_list`
+                    |-> `UV_item_icon_pict_seg`
+
+
+j_USW_FullDisplay()
+XREF:
+    ArmyList_Screen()
+    City_Screen__WIP()
+    Item_Screen()       Right-Click Hero Portrait
+    Main_Screen()
+    Outpost_Screen()
+
+USW_FullDisplay()
+XREF: (OON)
+    j_USW_FullDisplay()
+
+j_Load_Battle_Unit()
+
+Load_Battle_Unit()
+
+j_USW_LoadAndShow()
+XREF: (OON)
+    USW_FullDisplay()
+
+USW_LoadAndShow()
+XREF: (OON)
+    j_USW_LoadAndShow()
+
+j_USW_MemAlloc()
+XREF:
+    STK_CaptureCity()
+    Load_Display_Combat_Unit()
+    USW_LoadAndShow()
+    USW_LoadHireScreen()
+    Unit_Statistics_Popup()
+
+USW_MemAlloc()
+XREF: (OON)
+    j_USW_MemAlloc()
+
+
+USW_MemAlloc()
+    GUI_String_1, UV_specials_list, UV_item_icon_pict_seg
+    NOTE: Hero_LevelUp_Popup() also allocates GUI_String_1 and UV_specials_list.
+
+UV_specials_list
+XREF:
+    EVNT_DrawMercHire()
+    EVNT_MercHireDialog()
+    EVNT_MercHireDialog()
+    Hero_LevelUp_Popup()
+    Hero_LevelUp_Popup_Draw()
+    USW_HireHeroRedraw()
+    USW_HireHero__STUB()
+    USW_MemAlloc()
+    Unit_Statistics_Popup()
+    Unit_Statistics_Popup_Do_Draw()
+
+UV_item_icon_pict_seg
+XREF:
+    Unit_Statistics_Popup_Do_Draw()     
+
+Unit_Statistics_Popup_Do_Draw()
+XREF:
+    j_Unit_Statistics_Popup_Do_Draw()
+    Unit_Statistics_Popup()
+
+j_Unit_Statistics_Popup_Do_Draw()
+XREF:
+    Unit_Statistics_Popup()
+
+
+Load_Display_Combat_Unit()
+USW_LoadAndShow()
+...
+    |-> Unit_Statistics_Popup()
+        |-> Unit_Statistics_Popup_Do_Draw()
+            |-> UV_item_icon_pict_seg
+
+
+¿ are there two paths here ?
+Tactical_Combat__STUB()                  |-> Load_Display_Combat_Unit() |-> Unit_Statistics_Popup()
+ArmyList_Screen()  |-> USW_FullDisplay() |-> USW_LoadAndShow()   |-> Unit_Statistics_Popup()
+City_Screen__WIP() |-> USW_FullDisplay() |-> USW_LoadAndShow()   |-> Unit_Statistics_Popup()
+Item_Screen()      |-> USW_FullDisplay() |-> USW_LoadAndShow()   |-> Unit_Statistics_Popup()
+Main_Screen()      |-> USW_FullDisplay() |-> USW_LoadAndShow()   |-> Unit_Statistics_Popup()
+Outpost_Screen()   |-> USW_FullDisplay() |-> USW_LoadAndShow()   |-> Unit_Statistics_Popup()
+
+
+¿ UV vs. USW ?  
+    UV_specials_list  
+    UV_item_icon_pict_seg  
+
+
+
+USW_FullDisplay()
+vs.
+Load_Display_Combat_Unit()
+
+    view_type = 1
+    view_type = 2
+    uv_combat = ST_FALSE
+    uv_combat = ST_TRUE
+    GFX_Swap_Overland() ... GFX_Swap_Cities()
+    GFX_Swap_Overland() ... GFX_Swap_Combat()
+
+
+Tactical_Combat__STUB()
+    |-> j_Load_Display_Combat_Unit()
+
+
+
+MoO2:
+    Detailed_View_Ship_()
+        |-> Load_Display_Combat_Ship_()
+            |-> Draw_Ship_Status_()
+allocates _draw_ship_bitmap and _combat_bitmap, in _global_cache_seg
+_detail_fleet_icon_seg ~ unit icon / hero portrait
+uses Combat_Draw_View_Ship_()
+    ...
+    Push_Block() _screen_seg
+    _ESI_detail_fleet_icon_bitmap = Allocate_Next_Block(32, _screen_seg)
+    Draw_Picture_To_Bitmap(_ESI_detail_fleet_icon_bitmap, _detail_fleet_icon_seg)
+    Draw() _ESI_detail_fleet_icon_bitmap
+    Pop_Block() _screen_seg
+
+¿ Load_Display_Combat_Unit() ~== Load_Display_Combat_Ship_() ?
+
+
+Module: CMBTDRW1
+    Draw_Ship_()                Address: 01:00030062
+    Combat_Draw_View_Ship_()    Address: 01:00030631
+    Detailed_View_Ship_()       Address: 01:00031F25
+    Display_Combat_View_Ship_() Address: 01:00033C05
+Module: COMBINIT
+    Load_Display_Combat_Ship_() Address: 01:0004CB1E
 
 
 
@@ -165,7 +376,7 @@ Unit_Statistics_Popup_Do_Draw()
             called with CalledFromFlag
                 XREF:
                     j_USW_Display        jmp     Unit_Statistics_Popup           ; displays the unit statistics window for the specified
-                    USW_CombatDisplay+8C call    near ptr Unit_Statistics_Popup  ; displays the unit statistics window for the specified
+                    Load_Display_Combat_Unit+8C call    near ptr Unit_Statistics_Popup  ; displays the unit statistics window for the specified
                     USW_LoadAndShow+A1   call    near ptr Unit_Statistics_Popup  ; displays the unit statistics window for the specified
 
 Then, ...
@@ -317,6 +528,10 @@ unitview_button_background_seg = LBX_Reload_Next("UNITVIEW", 2, GFX_Swap_Seg);
 "statistics"
 "bottom half"
 "icons"
+"ITEMVIEW"
+"item view"
+"(unit view)"
+"(uv)"
 
 
 HLPENTRY.LBX
@@ -327,6 +542,18 @@ enemy unit Help
 combat view Help
 hiring view Help
 
+ITEMISC.LBX
+ITEMVIEW    item view backgrnd
+ITEMTILE    sword (unit view)
+ITEMTILE    weapon/staff (uv)
+
+PORTRAIT.LBX
+
+
+
+Page 73  (PDF Page 78)
+
+Units may also be dismissed from this unit statistics window by clicking on the dismiss button.
 
 
 Page 77  (PDF Page 82)
@@ -345,3 +572,4 @@ Attribute modifiers (both positive and negative)
 The only exception is if the attribute modifier is conditional in some way  
   (for example, ranged defense provided by shields (see Artifacts) only applies to defenses against ranged attacks);  
   in this case, the modifier is not reflected in the number of swords or shields in the unit statistics window.  
+

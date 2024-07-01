@@ -18,7 +18,7 @@ extern HWND g_Window;
 void MWA_Exit_With_Message(char * string)
 {
     // TODO  SND_Stop_Music();
-    // TODO  MOUSE_Reset();
+    // TODO  Reset_System_Mouse();
     // TODO  SND_Shutdown();
     // TODO  EMM_ReleaseAll();
     // TODO  s06p06_Empty_pFxn();

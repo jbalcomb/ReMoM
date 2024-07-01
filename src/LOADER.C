@@ -724,19 +724,25 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 95  CITYICO3  grey big bread
     city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, GFX_Swap_Seg);
 
-    // BACKGRND.LBX, 33  OUTPOST  outpost brt house
-    // BACKGRND.LBX, 34  OUTPOST  outpost brt tree
-    // BACKGRND.LBX, 35  OUTPOST  outpost brt hut
 
+    // BACKGRND.LBX, 32  OUTPOST  outpost background
+    outpost_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 32, GFX_Swap_Seg);
+
+    // BACKGRND.LBX, 33  OUTNAME  outpost name backg
+    outpost_name_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 33, GFX_Swap_Seg);
+
+
+    // BACKGRND.LBX, 34  OUTPOST  outpost brt house
+    // BACKGRND.LBX, 35  OUTPOST  outpost brt tree
+    // BACKGRND.LBX, 36  OUTPOST  outpost brt hut
     for(itr = 0; itr < 3; itr++)
     {
         outpost_bright_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (34 + itr), GFX_Swap_Seg);
     }
 
-    // BACKGRND.LBX, 36  OUTPOST  outpost drk house
-    // BACKGRND.LBX, 37  OUTPOST  outpost drk tree
-    // BACKGRND.LBX, 38  OUTPOST  outpost drk hut
-
+    // BACKGRND.LBX, 37  OUTPOST  outpost drk house
+    // BACKGRND.LBX, 38  OUTPOST  outpost drk tree
+    // BACKGRND.LBX, 39  OUTPOST  outpost drk hut
     for(itr = 0; itr < 3; itr++)
     {
         outpost_dark_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (37 + itr), GFX_Swap_Seg);
@@ -745,7 +751,6 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 25  LCONFIRM  lair confirm borde
     // BACKGRND.LBX, 26  LCONFIRM  lair bottom w/butt
     // BACKGRND.LBX, 27  LCONFIRM  lair bottom wo/but
-
     lair_confirm_border_seg = LBX_Reload_Next(backgrnd_lbx_file, 25, GFX_Swap_Seg);
     lair_bottom_with_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 26, GFX_Swap_Seg);
     lair_bottom_without_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 27, GFX_Swap_Seg);
@@ -1350,7 +1355,7 @@ void GFX_Swap_AppendUView(void)
     for(itr = 0; itr < 34; itr++)
     {
         // IMG_USW_Abilities.Confusion@
-        special_seg[(110 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, GFX_Swap_Seg);
+        special_seg[(111 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, GFX_Swap_Seg);
     }
 
 
@@ -1504,6 +1509,8 @@ void GFX_Swap_AppendUView(void)
 
 // WZD o52p28
 // drake178: GFX_Swap_AppendItems()
+// MoO2
+// 1oom: 
 /*
     Loads
         ITEMS.LBX
@@ -1511,208 +1518,92 @@ void GFX_Swap_AppendUView(void)
         not
             ITEMDATA.LBX
             ITEMPOW.LBX
+
+Usage:
+    Item Screen / Item View
+    Unit View / Unit Statistics Window
+
 */
-void GFX_Swap_AppendItems__WIP(void)
+void Reload_Item_Pictures(void)
 {
     int16_t itr;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
-#endif
-
+    // load all of ITEMS.LBX
     for(itr = 0; itr < 116; itr++)
     {
         item_icons_seg[itr] = LBX_Reload_Next(items_lbx_file, itr, GFX_Swap_Seg);
     }
 
+    /*
+        ITEMISC.LBX, {0, ..., 36}
+        FLICs: ITEMPOWR, ITEMSLOT, ITEMVIEW, ITEMTILE, 
+    */
+
+    // ITEMISC.LBX, 000  ITEMPOWR  item pro magic
+    // ITEMISC.LBX, 001  ITEMPOWR  item regenerate
+    // ITEMISC.LBX, 002  ITEMPOWR  item haste
+    // ITEMISC.LBX, 003  ITEMPOWR  item true sight
+    // ITEMISC.LBX, 004  ITEMPOWR  item path finding
+    // ITEMISC.LBX, 005  ITEMPOWR  item water walking
+    // ITEMISC.LBX, 006  ITEMPOWR  item pro evil
+    // ITEMISC.LBX, 007  ITEMPOWR  item lion heart
+    // ITEMISC.LBX, 008  ITEMPOWR  item invis
+    // ITEMISC.LBX, 009  ITEMPOWR  item astral proj
+    // ITEMISC.LBX, 010  ITEMPOWR  item endurance
+    // ITEMISC.LBX, 011  ITEMPOWR  item rightousness
+    // ITEMISC.LBX, 012  ITEMPOWR  item invulnerabil
+    // ITEMISC.LBX, 013  ITEMPOWR  item resist elem
+    // ITEMISC.LBX, 014  ITEMPOWR  item pro elements
+    // ITEMISC.LBX, 015  ITEMPOWR  item cloak of fear
+    // ITEMISC.LBX, 016  ITEMPOWR  item flight
+    // ITEMISC.LBX, 017  ITEMPOWR  item resist magic
+    // ITEMISC.LBX, 018  ITEMPOWR  item merging
     for(itr = 0; itr < 19; itr++)
     {
-        IMG_USW_ItemPowers[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, GFX_Swap_Seg);
+        item_power_icons_seg[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, GFX_Swap_Seg);
     }
 
+    // ITEMISC.LBX, 033  ITEMPOWR  item dispel evil
+    // ITEMISC.LBX, 034  ITEMPOWR  item giant str
+    // ITEMISC.LBX, 035  ITEMPOWR  item guardian wind
+    item_power_icons_seg[19] = LBX_Reload_Next(itemisc_lbx_file, 33, GFX_Swap_Seg);
+    item_power_icons_seg[20] = LBX_Reload_Next(itemisc_lbx_file, 34, GFX_Swap_Seg);
+    item_power_icons_seg[21] = LBX_Reload_Next(itemisc_lbx_file, 35, GFX_Swap_Seg);
 
 
-/*
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 33
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Dispel_Evil@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 34
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Giant_Strength@], ax
+    // ITEMISC.LBX, 019  ITEMSLOT  sword
+    // ITEMISC.LBX, 020  ITEMSLOT  bow
+    // ITEMISC.LBX, 021  ITEMSLOT  weapon/staff
+    // ITEMISC.LBX, 022  ITEMSLOT  wand
+    // ITEMISC.LBX, 023  ITEMSLOT  misc
+    // ITEMISC.LBX, 024  ITEMSLOT  armor
+    item_slot_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 19, GFX_Swap_Seg);
+    item_slot_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 20, GFX_Swap_Seg);
+    item_slot_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 21, GFX_Swap_Seg);
+    item_slot_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 22, GFX_Swap_Seg);
+    item_slot_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 24, GFX_Swap_Seg);
+    item_slot_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 23, GFX_Swap_Seg);
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 35
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Guardian_Wind@], ax
+    // ITEMISC.LBX, 025  ITEMVIEW  item view backgrnd
+    // ITEMISC.LBX, 026  ITEMVIEW  item view bullet
+    item_view_background_seg = LBX_Reload_Next(itemisc_lbx_file, 25, GFX_Swap_Seg);
+    item_view_bullet_seg = LBX_Reload_Next(itemisc_lbx_file, 26, GFX_Swap_Seg);
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 19
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+    // ITEMISC.LBX, 027  ITEMTILE  sword (unit view)
+    // ITEMISC.LBX, 028  ITEMTILE  bow   (unit view)
+    // ITEMISC.LBX, 029  ITEMTILE  weapon/staff (uv)
+    // ITEMISC.LBX, 030  ITEMTILE  wand  (unit view)
+    // ITEMISC.LBX, 031  ITEMTILE  misc  (unit view)
+    // ITEMISC.LBX, 032  ITEMTILE  armor (unit view)
+    itemtile_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 27, GFX_Swap_Seg);
+    itemtile_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 28, GFX_Swap_Seg);
+    itemtile_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 29, GFX_Swap_Seg);
+    itemtile_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 30, GFX_Swap_Seg);
+    itemtile_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 32, GFX_Swap_Seg);
+    itemtile_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 31, GFX_Swap_Seg);
 
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Sword@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 20
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Bow@], ax  ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 21
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Sword_Staff@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 22
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Staff@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 24
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Armor@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 23
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Accessory@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 25
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemHelp_BG@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 26
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemHelpBlt@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 27
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Sword@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 28
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Bow@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 29
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Sword_Staff@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 30
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Staff@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 32
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Armor@], ax
-\
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 31
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Accessory@], ax
-
-*/
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o52p29
@@ -1766,7 +1657,7 @@ void GFX_Swap_Cities(void)
 
     Load_Unit_StatFigs();  // LBX_Reload_Next(); UNITS_.LBX, _unit_type_table, GFX_Swap_Seg
 
-    GFX_Swap_AppendItems__WIP();
+    Reload_Item_Pictures();
 
     GFX_Swap_AppndCtScap__WIP();
 
@@ -1790,7 +1681,7 @@ void GFX_Swap_Overland(void)
 
     GFX_Swap_AppendUView();
 
-    GFX_Swap_AppendItems__WIP();
+    Reload_Item_Pictures();
 
     GFX_Swap_AppndCtScap__WIP();
 

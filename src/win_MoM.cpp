@@ -36,6 +36,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     dbg_prn("DEBUG: [%s, %d]: BEGIN: WinMain()\n", __FILE__, __LINE__);
 #endif
 
+    Test_Run();
+
+
+    
     // EMM_Pages_Reserved = 158;
 
 
@@ -88,10 +92,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     // MoM_Tables_Init(6100);  // MGC  6100 PR * 16 B = 97600 bytes
     // MoM_Tables_Init(4600);  // WZD  4600 PR * 16 B = 73600 bytes
     Allocate_Data_Space(6100);
-    Load_SAVE_GAM(-1);  // Why did I move this here, out of scr_Continue? ~ WZD start-up is 'Continue'?
-    // _unit_stack[]
-    // _unit_stack_count
-    // draw_active_stack_flag
+    // IDK(JimBalcomb,20240620): Load_SAVE_GAM(-1);  // Why did I move this here, out of scr_Continue? ~ WZD start-up is 'Continue'?
+    // game data hacks are in Screen_Control() under scr_Continue, after Loaded_Game_Update()
 
     // WZD: Load_SAVE_GAM(8);
 

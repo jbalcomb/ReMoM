@@ -43,7 +43,6 @@ extern "C" {
     WIZARDS.EXE  ovr071
 */
 
-
 // WZD o71p01
 // drake178: OVL_GetMoveTypes()
 void Active_Stack_Movement_Modes(int16_t movement_mode_flags[]);
@@ -77,13 +76,15 @@ int16_t Unit_Has_WindWalking(int16_t unit_idx);
 int16_t Unit_Has_WaterTravel(int16_t unit_idx);
 
 // WZD o71p06
-// int16_t UNIT_IsSailing(int16_t unit_idx);
+// UNIT_HasSailing                                ovr071
+int16_t Unit_Has_Sailing(int16_t unit_idx);
 
 // WZD o71p07
 int16_t Unit_Has_Swimming(int16_t unit_idx);
 
 // WZD o71p08
 // int16_t UNIT_ReturnZero(int16_t unit_idx);
+// o71p08_Empty_pFxn                              ovr071
 
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx);
@@ -95,10 +96,9 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx);
 int16_t Unit_Has_Invisibility(int16_t unit_idx);
 
 // WZD o71p012
-// int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
+int16_t Unit_Has_Endurance(int16_t unit_idx);
 
 // WZD o71p013
-// drake178: UNIT_HasPlanarItem()
 int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o71p014

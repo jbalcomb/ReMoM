@@ -5,6 +5,7 @@
         ovr055
 
 */
+
 #ifndef CITYOVR55_H
 #define CITYOVR55_H
 
@@ -44,15 +45,26 @@ extern "C" {
 
 // WZD o55p06
 // drake178: CTY_TakeOver()
+void Change_City_Ownership(int16_t city_idx, int16_t player_idx);
 
 // WZD o55p07
-// drake178: CTY_ApplyDamage()
+/*
+    called from End_Of_Combat()
+        |-> CTY_ApplyDamage(OVL_Action_Structure, _DI_IDK_population_lost, Destruction_Chance, &Buildings_Lost[0])
+processes direct population loss,
+rolls for and applies building destruction (marking them into the return array),
+recalculates production validity,
+and destroys the city if it has no population left
+; INCONSISTENT with tile requirements and destroyed buildings
+*/
+void CTY_ApplyDamage(int16_t city_idx, int16_t PopLoss, int16_t DChance, int16_t BList[]);
 
 // WZD o55p08
 // drake178: CTY_Remove()
+void Destroy_City(int16_t city_idx);
 
 // WZD o55p09
-// drake178: CTY_Print_Enchantments()
+void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * city_enchantment_list, int16_t * city_enchantment_owner_list, int16_t city_enchantment_list_count);
 
 // WZD o55p10
 // drake178: CTY_ClearEnchant()
@@ -80,10 +92,10 @@ int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_
 int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o55p16
-// drake178: CTY_ValidateProd()
+void City_Check_Production(int16_t city_idx);
 
 // WZD o55p17
-// drake178: CTY_CancelProd()
+void City_Cancel_Production(int16_t city_idx);
 
 // WZD o55p18
 // drake178: N/A
@@ -155,6 +167,7 @@ void Player_Add_Gold(int16_t player_idx, int16_t gold_amount);
 
 // WZD o55p35
 // drake178: WIZ_AddMana()
+void Player_Add_Mana(int16_t player_idx, int16_t mana);
 
 // WZD o55p36
 // drake178: ¿ ?

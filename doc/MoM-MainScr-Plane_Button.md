@@ -39,8 +39,8 @@ Main Screen
             Main_Screen_Reset();
             Reset_Map_Draw();
             MainScr_Prepare_Reduced_Map();
-            // TODO  Deactivate_Auto_Function
-            // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+            Deactivate_Auto_Function
+            Assign_Auto_Function(Main_Screen_Draw, 1);
             Set_Mouse_List_Default();
         }
         /*

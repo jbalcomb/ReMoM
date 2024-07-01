@@ -1,3 +1,11 @@
+/*
+    Fields
+    ~Input
+
+    WIZARDS.EXE
+
+*/
+
 #ifndef FIELDS_H
 #define FIELDS_H
 
@@ -9,6 +17,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123)) { p_fields[fields_count].hotkey -= 32; } } while (0)
+// #define SET_HOTKEY(_hotkey_) do { p_fields[fields_count].hotkey = (_hotkey_); UPPERCASE(_hotkey_) } while (0)
 
 
 
@@ -35,6 +48,11 @@ sprintf(v13, (char*)ESTRINGS_E_Strings_(42));
 */
 
 
+enum e_Scroll_Field_Orientation
+{
+    fo_Horizontal,
+    fo_Vertical
+};
 
 enum e_Field_Type
 {
@@ -56,54 +74,273 @@ enum e_Field_Type
     // MoO2 ?!? Add_String_Field() ?!?
 };
 
+/*
+    ¿ notes/HOW-TO on struct/union w/w/o IDA ?
+    MoX-Fields.md
+
+*/
+// #pragma pack(push)
+// #pragma pack(2)
 struct s_Field
 {
-    int16_t x1;         // 
-    int16_t y1;         // 
-    int16_t x2;         // 
-    int16_t y2;         // 
-    int16_t type;       // 
-    int16_t help;       // 
-    int16_t Font_Index; // 
-    int16_t ColorSet1;  // 
-    int16_t Rect_FX;    // 
-    int16_t Selectable; // 
-    int16_t ColorSet2;  // 
-                        // ? ft 0 ?      ft 4      ft 6     ft 8    ft 9    ft 10   ft 11     ft 12
-    // int16_t Param0;     // Text@                   Min_Val  Str*    Parent
+    /* 00 */ int16_t x1;         // 
+    /* 02 */ int16_t y1;         // 
+    /* 04 */ int16_t x2;         // 
+    /* 06 */ int16_t y2;         // 
+    /* 08 */ int16_t type;       // 
+    /* 0A */ int16_t help;       // 
+    /* 0C */ int16_t font_style_num;        // "style_num"
+    /* 0E */ int16_t font_normal_color;     // ¿ normal colors ?
+    /* 10 */ int16_t Rect_FX;    // 
+    /* 12 */ int16_t Selectable; // 
+    /* 14 */ int16_t font_highlight_color;  // ¿ highlight colors ?
     union {
         int16_t Param0;
+        char * string;      //  4  ft_input  11  ft_ContinuousStringInput
+        int16_t min_valid;  //  6  ft_Scroll
+        // Parent
+    };
+    union {
+        int16_t Param1;
+        int16_t max_valid;        //  6  ft_Scroll
+        int16_t string_pos;       //  8  ft_MultiHotKey
+        SAMB_ptr marker_picture;  // 11  ft_ContinuousStringInput
+    };
+    union {
+        int16_t Param2;
+        int16_t fill_color;         //  4  ft_input  11  ft_ContinuousStringInput
+        // uint16_t sgmt_variable;  //  6  ft_Scroll
+        int16_t string_len;         //  8  ft_MultiHotKey
+    };
+    union {
+        int64_t Param3;
+        int16_t justification;    //  4  ft_Input
+        int16_t min_value;        //  6  ft_scroll
+    };
+    union {
+            int64_t Param4;       // MaxSlide      CStyle                                               ypos
+            int16_t cursor_type;  //  4  ft_Input
+            int16_t max_value;    //  6  ft_scroll
+    };
+    union {
+        int16_t  Param5;
+        SAMB_ptr pict_seg;        //  1 ft_Button
+        int16_t  max_characters;  //  4 ft_Input  11 ft_ContinuousStringInput
+        int16_t  orientation;     //  6 ft_Scroll enum e_Scroll_Field_Orientation {H,V}
+    };
+    union {
+        int16_t Param6;
+        uint8_t * color_array;    //  4  ft_Input
+        // uint16_t ofst_variable;  // ft_Scroll
+        int16_t * variable;       //  6  ft_Scroll
+        int16_t shadow;           // 11  ft_ContinuousStringInput
+    };
+
+    /* 24 */ int16_t hotkey;     // ASCII Character *Code*
+};
+
+struct s_Field2
+{
+    /* 00 */ int16_t x1;            // 
+    /* 02 */ int16_t y1;            // 
+    /* 04 */ int16_t x2;            // 
+    /* 06 */ int16_t y2;            // 
+    /* 08 */ int16_t type;          // 
+    /* 0A */ int16_t help;          // 
+    /* 0C */ int16_t Font_Index;    // "style_num"
+    /* 0E */ int16_t ColorSet1;     // ¿ normal colors ?
+    /* 10 */ int16_t Rect_FX;       // 
+    /* 12 */ int16_t Selectable;    // 
+    /* 14 */ int16_t ColorSet2;     // ¿ highlight colors ?
+
+    union {
+        int16_t Param0;
+        int16_t min_valid;          // ft_Scroll
         char * string;
     };
-    int16_t Param1;     // Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
-    int16_t Param2;     // State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
-    // int16_t Param3;  // FullFrames    Align     MinSlide                 CBlock            xpos
-    // int16_t Param4;  // MaxSlide      CStyle                                               ypos
-    int64_t Param3;     // FullFrames    Align     MinSlide                 CBlock            xpos
-    int64_t Param4;     // MaxSlide      CStyle                                               ypos
-    int16_t Param5;     // pict_seg      MaxLen    Orient                           MaxLen
     union {
-        SAMB_ptr pict_seg;  // ft_Button
-        int16_t MaxLen;     // ft_EditBox, ft_EditSelect
-        int16_t Orient;     // ft_SlideBar
+        int16_t Param1;
+        int16_t max_valid;          // ft_Scroll
     };
-    int16_t Param6;     // CursorColors            StOff                            Outline
-    int16_t hotkey;     // ASCII Character *Code*
-    int16_t Unused_25h; // ?IDK/IDGI?
-    // union { int16_t Param1, Max_Val, Index, IMG, box_width; };
+    union {
+        int16_t Param2;
+        int16_t * sgmt_variable;    // ft_Scroll
+    };
+    union {
+        int64_t Param3;
+        int16_t min_value;          // ft_Scroll
+    };
+    union {
+        int64_t Param4;
+        int16_t max_value;          // ft_Scroll
+    };
+    union {
+        int16_t Param5;
+        SAMB_ptr pict_seg;          // ft_Button
+        int16_t MaxLen;             // ft_EditBox, ft_EditSelect
+        int16_t orientation;        // ft_Scroll
+    };
+    union {
+        int16_t Param6;
+        int16_t * ofst_variable;    // ft_Scroll
+    };
 
+    /* 24 */ int16_t hotkey;        // ASCII Character *Code*
 };
-// TODO(JimBalcomb,20230614): ASSERT sizeof(struct s_Field)
 
-//         Button        Input     Scroll   MultiHotKey  ClickLink  StringList  ContinuousStringInput Grid
-//         ? ft 0 ?      ft 4      ft 6     ft 8    ft 9    ft 10   ft 11     ft 12
-// Param0  Text@                   Min_Val  Str*    Parent
-// Param1  Trig_State              Max_Val  StrIdx  Index   Index   IMG       box_width
-// Param2  State@        BG_Color  StSeg    StrLen                  BG_Color  box_height
-// Param3  FullFrames    Align     MinSlide                 CBlock            xpos
-// Param4  MaxSlide      CStyle                                               ypos
-// Param5  pict_seg      MaxLen    Orient                           MaxLen
-// Param6  CursorColors            StOff                            Outline
+struct s_Field3
+{
+    /* 00 */ int16_t x1;         // 
+    /* 02 */ int16_t y1;         // 
+    /* 04 */ int16_t x2;         // 
+    /* 06 */ int16_t y2;         // 
+    /* 08 */ int16_t type;       // 
+    /* 0A */ int16_t help;       // 
+    /* 0C */ int16_t Font_Index; // "style_num"
+    /* 0E */ int16_t ColorSet1;  // ¿ normal colors ?
+    /* 10 */ int16_t Rect_FX;    // 
+    /* 12 */ int16_t Selectable; // 
+    /* 14 */ int16_t ColorSet2;  // ¿ highlight colors ?
+
+    union
+    {
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        };
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_Button;
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_RadioButton;
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_LockedButton;
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_MultiButton;
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_Input;
+        struct
+        {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_Picture;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_Scroll;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_HotKey;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_MultiHotKey;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_ClickLink;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_StringList;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_ContinuousStringInput;
+        struct {
+            /* 16 */ int16_t Param0;
+            /* 18 */ int16_t Param1;
+            /* 1A */ int16_t Param2;
+            /* 1C */ int16_t Param3;
+            /* 1E */ int16_t Param4;
+            /* 20 */ int16_t Param5;
+            /* 22 */ int16_t Param6;
+        } ft_Grid;
+    };
+
+    /* 24 */ int16_t hotkey;     // ASCII Character *Code*
+};
 
 
 
@@ -163,7 +400,9 @@ extern int16_t down_x;
 extern int16_t down_y;
 
 // WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
-// WZD dseg:8258 GUI_DialogDirections dw 0               
+
+// WZD dseg:8258
+extern int16_t GUI_DialogDirections;
 
 
 // WZD dseg:825A
@@ -197,20 +436,24 @@ extern int16_t _global_esc;  // ERROR: mistook for mouse_cancel_disabled, for ma
 extern int16_t mouse_cancel_disabled;
 
 // WZD dseg:8274
-extern int16_t GUI_ClickActivate;
+extern int16_t mouse_auto_exit;
+
 // WZD dseg:8276 aNotInUse db 'NOT IN USE',0
 // WZD dseg:8281 db    0
 // WZD dseg:8282 GUI_Edit_Position dw 0                  
-// WZD dseg:8284 GUI_EditAnimStage dw 0                  
-// WZD dseg:8286 GUI_EditCursorOn dw 0                   
+
+// WZD dseg:8284
+extern int16_t GUI_EditAnimStage;
+// WZD dseg:8286
+extern int16_t GUI_EditCursorOn;
 
 // WZD dseg:8288
 extern int16_t input_field_active;
 
 // WZD dseg:828A
-extern int16_t DBG_ControlHighlight;
+extern int16_t field_box_mode;
 // WZD dseg:828C
-extern int16_t DBG_HelpHighlight;
+extern int16_t help_box_mode;
 
 // WZD dseg:828E
 // AKA GUI_Active_EditSlct
@@ -226,7 +469,7 @@ extern int16_t active_input_field_number;
 // WZD dseg:8298
 // HELP  int16_t help_list_count = 0;
 
-// WZD dseg:829A KD_ActiveStringTrig dw 0                
+// WZD dseg:829A multi_hotkey_active_field dw 0                
 // WZD dseg:829C UU_cnst_RB7 db 'rb'                     
 // WZD dseg:829E cnst_ZeroString_12 db 0                 
 // WZD dseg:829F UU_cnst_WB8 db 'wb',0                   
@@ -258,8 +501,10 @@ extern char continuous_string[];
 // WZD dseg:E898
 extern int16_t input_delay;
 
-// dseg:E89A MOUSE_Emu_Y dw 0           
-// dseg:E89C MOUSE_Emu_X dw 0           
+// WZD dseg:E89A
+extern int16_t MOUSE_Emu_Y;
+// WZD dseg:E89C
+extern int16_t MOUSE_Emu_X;
 
 // WZD dseg:E89E
 extern int16_t pointer_offset;
@@ -323,6 +568,10 @@ void Enable_Cancel(void);
 // drake178: UU_GUI_ClearEscOverride
 void Disable_Cancel(void);
 
+// WZD s36p10
+// Disable_Mouse_Wait()
+// WZD s36p11
+// Enable_Mouse_Wait()
 
 /*
     BEGIN: Help
@@ -360,6 +609,23 @@ int16_t Auto_Input(void);
 // INPUT  G_GUI_PressAnyKey()
 
 
+// WZD s36p30
+// WZD s36p31
+// WZD s36p32
+// WZD s36p33
+
+// WZD s36p34
+int16_t Add_Input_Field(int16_t x, int16_t y, int16_t Width, char * Text, int16_t MaxL, int16_t BGCol, SAMB_ptr S_Img, char * help, int16_t Style);
+
+// WZD s36p35
+int16_t Add_Continuous_String_Input_Field(int16_t x, int16_t y, int16_t Width, char * Text, int16_t MaxL, int16_t BGCol, SAMB_ptr S_Img, char * help, int16_t Style);
+
+// WZD s36p36
+// UU_GUI_Ctrl_DecHeight();
+
+// WZD s36p37
+// GUI_CreateDialogLine();
+
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * string);
 
@@ -367,31 +633,73 @@ int16_t Add_Multi_Hot_Key_Field(char * string);
 // drake178: GUI_CreateImageLabel()
 int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
+// WZD s36p40
+// UU_GUI_CreateWndImgLbl()
+
+// WZD s36p41
+void Set_Button_Down_Offsets(int16_t x_offset, int16_t y_offset);
+
 // WZD s36p42
 void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
 // WZD s36p43
 int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
 
+// UU_GUI_CreateToggleBtn                         seg036     00004B58 00000054 R F . . B T .
+// UU_GUI_CreateLockblBtn                         seg036     00004BAC 00000054 R F . . B T .
+// UU_GUI_CreateMStateBtn                         seg036     00004C00 00000069 R F . . B T .
+
 // WZD s36p47
 int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
+
+// UU_GUI_CreateWndLabel                          seg036     00004D64 00000193 R F . . B T .
 
 // WZD s36p49
 int16_t Add_Hot_Key(int16_t select_char);
 
-// WZD s36p49
+// WZD s34p50
+// UU_GUI_CreateHelpLink                          seg036     00004FED 0000013A R F . . B T .
+
+// WZD s34p51
 // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
+
+// WZD s34p52
+// WZD s34p53
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
+
+// WZD s34p54
+int16_t Find_Bar_Position(int16_t field_num);
+
+// WZD s34p55
+void Increment_Scroll_Bar(int16_t field_num);
+
+// WZD s34p56
+void Decrement_Scroll_Bar(int16_t field_num);
 
 // WZD s36p57
 void Clear_Fields(void);
 
+// WZD s36p58
+// UU_GUI_NoSelectColor();
+
+// WZD s36p59
+// UU_GUI_ScrollableTxtDlg();
+
+// WZD s36p60
+// GUI_CreateTextDialog();
+
+// WZD s36p61
+// UU_GUI_NoMouseHighlight();
+
+// WZD s36p62
+int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction);
 
 // WZD s36p63
-// drake178: GUI_SetLastControl()
 void Clear_Fields_Above(int16_t field_num);
 
 // WZD s36p64
+// GUI_GetControlCount();
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 // INPUT  void Init_Mouse_Keyboard(int16_t input_type);
@@ -402,6 +710,14 @@ void Clear_Fields_Above(int16_t field_num);
 // WZD s36p67
 // INPUT  void Set_Input_Delay(int16_t input_delay);
 
+// WZD s36p68
+// UU_Get_Input_Delay();
+
+// WZD s36p69
+// UU_GUI_ClearSelectable();
+
+// WZD s36p70
+// UU_GUI_SetSelectable();
 
 // MoO2: Draw_Visible_Fields()
 // WZD s36p71
@@ -413,15 +729,11 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag);
 // WZD s36p73
 void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y);
 
-
-
-
 // WZD s36p74
 // UU_GUI_SetDlgTitleHelp()
 
 // WZD s36p75
 // UU_GUI_ClearTitleHelp()
-
 
 // WZD s36p76
 // drake178: GUI_SetRedrawFn()
@@ -430,7 +742,6 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y);
 // AKA GUI_Set_Redraw_Function()
 // MoO2  Module: fields  Assign_Auto_Function()
 void Assign_Auto_Function(void (*auto_function)(void), uint16_t delay);
-
 
 // WZD s36p77
 // drake178: GUI_SaveRedrawFn()
@@ -444,7 +755,6 @@ void Save_Auto_Function(void);
 // MoO2  Module: fields  Restore_Auto_Function()
 void Restore_Auto_Function(void);
 
-
 // WZD s36p79
 // drake178: GUI_DisableRedraw()
 // AKA Disable_Redraw_Function()
@@ -457,14 +767,12 @@ void Deactivate_Auto_Function(void);
 // MoO2  Module: fields  Activate_Auto_Function()
 void UU_Activate_Auto_Function(void);
 
-
 // WZD s36p81
 // drake178: GUI_CallRedrawFn
 // AKA Call_Redraw_Function()
 // AKA SCRN_CallRedrawFn()
 // MoO2  Module: fields  Invoke_Auto_Function()
 void Invoke_Auto_Function(void);
-
 
 // WZD s36p82
 // drake178: 
@@ -474,7 +782,6 @@ void Invoke_Auto_Function(void);
 // MoO2  Module: fields  Quick_Call_Auto_Function()
 void Quick_Call_Auto_Function(void);
 
-
 // WZD s36p83
 // drake178: GUI_NormalRedraw()
 // AKA GUI_Redraw_WaitTimer
@@ -482,13 +789,9 @@ void Quick_Call_Auto_Function(void);
 // MoO2  Module: fields  Call_Auto_Function()
 void Call_Auto_Function(void);
 
-
-
 // WZD s36p84
 // drake178: UU_GUI_ExtClear()
 void UU_GUI_ExtClear(void);
-
-
 
 // WZD s36p85
 // INPUT  void Toggle_Pages(void);

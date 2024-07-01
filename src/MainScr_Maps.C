@@ -438,7 +438,7 @@ when always draw (-1) is set for OVL_ActiveStackDraw
         if((_UNITS[_unit_stack[0].unit_idx].owner_idx != ST_UNDEFINED))
         {
             unit_idx = _unit_stack[0].unit_idx;
-            if( (_UNITS[_unit_stack[0].unit_idx].wp == world_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
+            if( (_UNITS[_unit_stack[0].unit_idx].wp == world_plane) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
             {
                 unit_xw = _UNITS[unit_idx].wx;
                 unit_yw = _UNITS[unit_idx].wy;
@@ -539,6 +539,7 @@ void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t 
 
 }
 
+
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane)
 {
@@ -582,7 +583,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         {
             if(square_is_scouted == ST_TRUE)
             {
-                if( (_UNITS[itr_units].wp == world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) )
+                if( (_UNITS[itr_units].wp == world_plane) || (_UNITS[itr_units].in_tower == ST_TRUE) )
                 {
                     // entity_world_y = _UNITS[itr_units].wy;
                     if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
@@ -691,6 +692,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
 }
 
+
 // WZD o67p13
 void Set_Unit_Draw_Priority(void)
 {
@@ -727,6 +729,7 @@ void Set_Unit_Draw_Priority(void)
 
 }
 
+
 // WZD o67p14
 // drake178: STK_NoUnitDraw
 void Reset_Stack_Draw_Priority(void)
@@ -739,6 +742,35 @@ void Reset_Stack_Draw_Priority(void)
         unit_idx = _unit_stack[itr_unit_stack_count].unit_idx;
         _UNITS[unit_idx].Draw_Priority = 0;
     }
+}
+
+
+// WZD o67p15
+int16_t IsPassableTower(int16_t wx, int16_t wy)
+{
+    int16_t itr_towers;
+    int16_t is_passible_tower;
+    int16_t active_planar_seal;
+
+    is_passible_tower = ST_FALSE;
+
+    for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX; itr_towers++)
+    {
+        if((wx == _TOWERS[itr_towers].wx) && (wy == _TOWERS[itr_towers].wy))
+        {
+            is_passible_tower = ST_TRUE;
+        }
+    }
+
+    if(is_passible_tower == ST_TRUE)
+    {
+        if(Check_Planar_Seal() == ST_TRUE)
+        {
+            is_passible_tower = ST_FALSE;
+        }
+    }
+
+    return is_passible_tower;
 }
 
 
@@ -964,7 +996,7 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 /*
     called from Units_In_Tower()
         only for human_player_idx
-    called from TILE_ExploreRadius()
+    called from TILE_ExploreRadius__WIP()
 
 */
 void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
@@ -1126,7 +1158,6 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o68p09
-// AKA IDK_Draw_MiniMap_s5B828()
 /*
 ArmyList_Draw_Reduced_Map()
     |-> List_Screen_Draw_Reduced_Map(86, 164, 49, 33, unit_world_p, unit_world_x, unit_world_y)
@@ -1339,9 +1370,9 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             if(DBG_ShowTileInfo == ST_TRUE)
             {
                 // TODO  j_EMM_Map_CONTXXX();  // ; maps in the EMM_ContXXX_H handle (all 4 pages), and resets its corresponding global pointers
-                // TODO  Set_Font(0,0);
+                // TODO  Set_Font_Style(0,0);
                 // Print_Integer(itr_screen_x, itr_screen_y + 12, TBL_Landmasses[(_map_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + curr_world_x]);
-                // TODO  Set_Font(0, 2);
+                // TODO  Set_Font_Style(0, 2);
                 // Print_Integer(itr_screen_x, itr_screen_y, curr_world_x);
             }
 
@@ -1359,7 +1390,10 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
 // WZD o150p06
 void Cycle_Map_Animations(void)
 {
-    map_anim_cycle = (1 - map_anim_cycle);  // toggle {1-0=1,1-1=0}
+    // map_anim_cycle = (1 - map_anim_cycle);  // toggle {1-0=1,1-1=0}
+    // map_anim_cycle = ((map_anim_cycle + 1) % 2);
+    map_anim_cycle = ((map_anim_cycle + 1) % 4);
+
     if(map_anim_cycle == 0)
     {
         terrain_anim_ctr = (terrain_anim_ctr + 1) % 4;
@@ -1607,6 +1641,9 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 }
 
 // WZD o150p10
+/*
+    Draws Lairs (but, not *Lairs* that Towers or Nodes)
+*/
 void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
     int16_t itr_lairs;
@@ -1620,9 +1657,9 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
     {
         if(_LAIRS[itr_lairs].wp == world_plane)
         {
-            if(_LAIRS[itr_lairs].Intact == 1)
+            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
             {
-                if(_LAIRS[itr_lairs].Type > EZ_Sorcery_Node)
+                if(_LAIRS[itr_lairs].type > EZ_Sorcery_Node)
                 {
                     lair_x = _LAIRS[itr_lairs].wx;
                     lair_y = _LAIRS[itr_lairs].wy;
@@ -1663,7 +1700,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                                         // No-Workie  FLIC_Draw(start_x, start_y, (SAMB_ptr)(IMG_OVL_EZ_Cave + ((_LAIRS[itr_lairs].Type - EZ_Cave) * sizeof(SAMB_ptr))));
                                         // No-Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave + 1);
                                         // Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);
-                                        switch(_LAIRS[itr_lairs].Type)
+                                        switch(_LAIRS[itr_lairs].type)
                                         {
                                             case EZ_Cave: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);  } break;
                                             case EZ_Dungeon: {        FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Dung);  } break;

@@ -76,11 +76,11 @@ void Spell_Screen_Load(void);
 // sub_B9837()
 
 // WZD o134p06
-// OVL_DisplayMainScrn()
+// Full_Draw_Main_Screen()
 
 // WZD o134p07
 // drake178: OVL_MosaicFlip()
-void OVL_MosaicFlip(void);
+void OVL_MosaicFlip__STUB(void);
 
 // WZD o134p08
 // OVL_CounterMessage()
@@ -206,11 +206,11 @@ void Spellbook_Screen(void)
     // TODO  Assign_Auto_Function(Spellbook_Screen_Draw, 2);
 
     Set_Outline_Color(0);
-    Set_Font_Style1(0, 3, 0, 0);
+    Set_Font_Style_Shadow_Down(0, 3, 0, 0);
 
     Clear_Fields();
 
-    Set_Help_List(_help_entries, 15);
+    Set_Help_List((char *)&_help_entries[0], 15);
 
     x_start = 16;
     y_start = 12;
@@ -292,7 +292,7 @@ void Spellbook_Screen(void)
 
                             strcpy(GUI_NearMsgString, _msg_abort_1);
                             // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
-                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
+                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].name);
                             strcat(GUI_NearMsgString, temp_string);
                             strcat(GUI_NearMsgString, _msg_abort_3);
                             Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
@@ -313,7 +313,7 @@ void Spellbook_Screen(void)
                             {
                                 strcpy(GUI_NearMsgString, _msg_abort_1);
                                 // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
-                                strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
+                                strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].name);
                                 strcat(GUI_NearMsgString, temp_string);
                                 strcat(GUI_NearMsgString, _msg_abort_3);
                                 Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
@@ -409,7 +409,7 @@ void Spellbook_Screen(void)
     }
     else
     {
-        OVL_MosaicFlip();
+        OVL_MosaicFlip__STUB();
     }
 
 #ifdef STU_DEBUG
@@ -425,30 +425,45 @@ void Spellbook_Screen(void)
 // sub_B9837()
 
 // WZD o134p06
-// OVL_DisplayMainScrn()
+/*
+does a full draw of the main screen on the offscreen video page
+and flips the current page to the offscreen video page
+    PageFlip_FX() |-> Apply_Palette(); Toggle_Pages();
 
+XREF:
+    j_Full_Draw_Main_Screen()
+        ...(58)
+        (23) G_OVL_Cast()
+        Cast_BlackWind(), Cast_CallOfTheVoid(), Cast_ChangeTerain(), Cast_ChaosChannels(), Cast_Corruption(), Cast_FloatingIsland(), Cast_Incarnation(), Cast_Lycantrophy(), Cast_NaturesCures(), Cast_RaiseVolcano(), Cast_Resurrection(), Cast_Stasis(), Cast_SummonHero(), Cast_WarpNode(), Cast_WordOfRecall()
+        ...
+        Chancellor_Screen()
+        City_Built_Building_Message()
+        Combat__STUB()
+        EVNT_ShowMessage()
+        Hero_LevelUp_Popup()
+        Hire_Hero_Popup()
+        IDK_SummonAnim()
+        Player_Process_Item_Pool()
+        WIZ_Banishment()
+        WIZ_ConquestSpells()
 
-// WZD o134p07
-// drake178: OVL_MosaicFlip()
-void OVL_MosaicFlip(void)
+*/
+void Full_Draw_Main_Screen(void)
 {
-
     Set_Page_Off();
     Reset_Map_Draw();
     Main_Screen_Draw();
-    // TODO  VGA_MosaicFlip();  |-> GUI_PageFlip();
-    // WTF?  mov     ax, seg dseg
-    // WTF?  mov     ds, ax
-    // WTF?  mov     ax, [GUI_DS_Save]
-    // WTF?  mov     ds, ax
-    Check_Mouse_Shape(Pointer_X(), Pointer_Y());
-    Save_Mouse_Off_Page(Pointer_X(), Pointer_Y());
-    Draw_Mouse_Off_Page(Pointer_X(), Pointer_Y());
-    Page_Flip();
-    Restore_Mouse_Off_Page();
-    Copy_Mouse_Off_To_Mouse_Back();
-    Restore_Mouse_State();
+    PageFlip_FX();
+}
 
+
+// WZD o134p07
+void OVL_MosaicFlip__STUB(void)
+{
+    Set_Page_Off();
+    Reset_Map_Draw();
+    Main_Screen_Draw();
+    VGA_MosaicFlip__STUB();
 }
 
 // WZD o134p08

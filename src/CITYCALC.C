@@ -17,7 +17,6 @@
 
 
 // WZD o120p01
-// drake178: CTY_Recalculate()
 /*
     sets
     _CITIES[].food2_units
@@ -30,10 +29,6 @@
 void Do_City_Calculations(int16_t city_idx)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
-
     // drake178: ; maps the EMM Data block into the page frame
     // TODO  EMM_Map_DataH();
 
@@ -44,20 +39,15 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
     _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
 
-    if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
+    if((_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX))
     {
         _CITIES[city_idx].food_units = ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
 
 }
 
 
 // WZD o120p02
-// drake178: WIZ_SetPowerBases()
 /*
     sets
     _players[].magic_power
@@ -75,205 +65,124 @@ void Do_City_Calculations(int16_t city_idx)
 */
 void Players_Update_Magic_Power(void)
 {
-    int16_t UU_players_power_base_array[6];
+    int16_t NIU_players_power_base_array[NUM_PLAYERS];
     int16_t node_owner_idx;
 
     int16_t itr;  // _SI_
     int16_t node_magic_power_points;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
-#endif
-
     for(itr = 0; itr < _num_players; itr++)
     {
         _players[itr].Power_Base = 0;
-
-        UU_players_power_base_array[itr] = 0;
+        NIU_players_power_base_array[itr] = 0;
     }
 
-    if(*(events_table + 48) != 2)  /* s_EVENT_DATA.Mana_Short.Status */
+    if(*(events_table + 48) == 2)  /* s_EVENT_DATA.Mana_Short.Status */
     {
-        for(itr = 0; itr < NUM_NODES; itr++)
+        return;
+    }
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+        if(_NODES[itr].owner_idx > -1)
         {
-            if(_NODES[itr].owner_idx > -1)
+            node_owner_idx = _NODES[itr].owner_idx;
+
+            if((_NODES[itr].Meld_Flags & 0x01) > 0)   /* M_Warped */
             {
-                node_owner_idx = _NODES[itr].owner_idx;
-
-                if( (_NODES[itr].Meld_Flags & 0x01 /* M_Warped */) != 1)
-                {
-
-                    // mov al, [es:bx+s_NODE.power]; cbw; mov dx, [_magic]; inc dx; imul dx; cwd; sub ax, dx; sar ax, 1; mov _DI_node_magic_power_points, ax
-                    // node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
-                    node_magic_power_points = ((_NODES[itr].power * (_magic)) / 2);
-                    
-                    /*
-                        Conjunction - Chaos (Red)
-                    */
-                    if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                    }
-
-                    /*
-                        Conjunction - Sorcery (Blue)
-                    */
-                    if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                    }
-
-                    /*
-                        Conjunction - Nature (Green)
-                    */
-                    if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                    }
-
-                    /*
-                        Sorcery Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 0)  /* NODE_Sorcery */ &&
-                        (_players[node_owner_idx].sorcery_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Chaos Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 2)  /* NODE_Chaos */ &&
-                        (_players[node_owner_idx].chaos_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Nature Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 1)  /* NODE_Nature */ &&
-                        (_players[node_owner_idx].nature_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Node Mastery
-                    */
-                    if(_players[node_owner_idx].node_mastery != ST_FALSE)
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    _players[node_owner_idx].Power_Base += node_magic_power_points;
-
-                }
-                else
-                {
-                    _players[node_owner_idx].Power_Base -= 5;
-                }
+                _players[node_owner_idx].Power_Base -= 5;
+                continue;
             }
-        }  /* END: for(itr = 0; itr < NUMTBL_Nodes; itr++) */
 
-        for(itr = 1; itr < _num_players; itr++)
+            node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
+
+            if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points *= 2;
+            }
+
+            if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points *= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points /= 2;
+            }
+
+            if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points *= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points /= 2;
+            }
+
+            if((_NODES[itr].type == nt_Sorcery) && (_players[node_owner_idx].sorcery_mastery))
+                node_magic_power_points *= 2;
+            if((_NODES[itr].type == nt_Chaos) && (_players[node_owner_idx].chaos_mastery))
+                node_magic_power_points *= 2;
+            if((_NODES[itr].type == nt_Nature) && (_players[node_owner_idx].nature_mastery))
+                node_magic_power_points *= 2;
+            if(_players[node_owner_idx].node_mastery)
+                node_magic_power_points *= 2;
+
+            _players[node_owner_idx].Power_Base += node_magic_power_points;
+
+        }  /* if(_NODES[itr].owner_idx > -1) */
+    }  /* for(itr = 0; itr < NUM_NODES; itr++) */
+
+    for(itr = 1; itr < _num_players; itr++)
+    {
+        _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if((_CITIES[itr].owner_idx > -1) && (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX))
         {
-            _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);
-        }
-
-        for(itr = 0; itr < _cities; itr++)
-        {
-            if(
-                (_CITIES[itr].owner_idx > -1) &&
-                (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
-            )
-            {
-                _players[_CITIES[itr].owner_idx].Power_Base += _CITIES[itr].mana_units;
-            }
-        }
-
-        for(itr = 0; itr < _num_players; itr++)
-        {
-            if(_players[itr].Spell_Cast != 0xD6)  /* Spell_Of_Return */
-            {
-                _players[itr].Power_Base += _players[itr].Volcano_Count;
-
-                if(_players[itr].Power_Base < 0)
-                {
-                    _players[itr].Power_Base = 0;
-                }
-            }
-            else
-            {
-                _players[itr].Power_Base = 0;
-            }
+            _players[_CITIES[itr].owner_idx].Power_Base += _CITIES[itr].mana_units;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
-#endif
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        if(_players[itr].Spell_Cast == 214)  /* Spell_Of_Return */
+        {
+            _players[itr].Power_Base = 0;
+        }
+        else
+        {
+            _players[itr].Power_Base += _players[itr].Volcano_Count;
+
+            SETMIN(_players[itr].Power_Base, 0);
+        }
+    }
 
 }
 
 
 // WZD o120p03
-// drake178: UNIT_GetGoldUpkeep()
 int16_t Unit_Gold_Upkeep(int16_t unit_idx)
 {
     int16_t unit_gold_upkeep;
     int16_t unit_owner_idx;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Gold_Upkeep()\n", __FILE__, __LINE__);
-// #endif
-
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
     unit_gold_upkeep = 0;
 
-    if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x01 /* Ab_Summoned */) == 0)
+    if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)
     {
-        if(_UNITS[unit_idx].type > 0x22 /* _Chosen */)
+        if(_UNITS[unit_idx].type > ut_Chosen)
         {
             unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
         }
@@ -281,8 +190,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         {
             // Yay Hero, Nay Noble, Nay Toren The Chosen
             if(
-                (((((struct s_HERO *)( (p0_heroes + (unit_owner_idx * sizeof(p0_heroes))) + (_UNITS[unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x2000 /* Ab_Noble */) == 0) &&
-                (_UNITS[unit_idx].type != 0x22/* _Chosen */)
+                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
+                &&
+                (_UNITS[unit_idx].type != ut_Chosen)
             )
             {
                 unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
@@ -290,7 +200,7 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         }
     }
 
-    if((_UNITS[unit_idx].Mutations & 0x20) != 0)  /* R_Undead */
+    if((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
     {
         unit_gold_upkeep = 0;
     }
@@ -306,10 +216,6 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
             unit_gold_upkeep = ((unit_gold_upkeep * 3) / 4);  /* -25% */
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Gold_Upkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
-// #endif
 
     return unit_gold_upkeep;
 }
@@ -327,10 +233,6 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
     int16_t fame_points;
     int16_t gold_upkeep_cost;
     int16_t itr_units;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_Gold_Upkeep()\n", __FILE__, __LINE__);
-#endif
     
     gold_upkeep_cost = 0;
 
@@ -351,10 +253,6 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
         gold_upkeep_cost = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_Gold_Upkeep() { gold_upkeep_cost = %d }\n", __FILE__, __LINE__, gold_upkeep_cost);
-#endif
-
     return gold_upkeep_cost;
 }
 
@@ -372,10 +270,6 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
     int16_t food_upkeep_cost;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
-#endif
-
     food_upkeep_cost = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
@@ -384,20 +278,14 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
         {
             if(
                 ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x1 /* Ab_Summoned */) == 0) &&
-                (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
-                ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+                (_UNITS[itr_units].type > ut_Chosen) &&
+                ((_UNITS[itr_units].mutations & 0x20 /* R_Undead */) == 0)
             )
             {
                 food_upkeep_cost++;
             }
         }
     }
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     return food_upkeep_cost;
 }
@@ -407,13 +295,8 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
 // drake178: WIZ_GetNUCounts()
 void Players_Normal_Units(int16_t normal_units[])
 {
-
     int16_t itr_players;  // _SI_
     int16_t itr_units;  // _SI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
-#endif
 
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
@@ -424,18 +307,14 @@ void Players_Normal_Units(int16_t normal_units[])
     {
         if(
             ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x01 /* Ab_Summoned */) == 0) &&
-            (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
+            (_UNITS[itr_units].type > ut_Chosen) &&
             (_UNITS[itr_units].owner_idx < _num_players) &&
-            ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+            ((_UNITS[itr_units].mutations & 0x20 /* R_Undead */) == 0)
         )
         {
             normal_units[_UNITS[itr_units].owner_idx]++;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -513,16 +392,9 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
-            if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+            if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
             {
-                
-                // *( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) )
-                // fp_heroes[player_idx]
-                // _UNITS[].type
-                // _players[player_idx].Heroes[itr_heroes].Unit_Index
-                // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI
-                // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
-                if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x2000) != 0 )  /* Ab_Noble */
+                if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_NOBLE) != 0)
                 {
                     gold_income += 10;
                 }
@@ -603,24 +475,16 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 {
     int16_t mana_upkeep;
     int16_t Enchant_Bit;
-    // int16_t Enchants_LO;
-    // int16_t Enchants_HI;
-    uint32_t Enchants;
+    uint32_t unit_enchantments;
     int16_t itr_unit_enchantments;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-// #endif
 
     mana_upkeep = 0;
 
-    // Enchants_HI = _UNITS[unit_idx].Enchants_HI;
-    // Enchants_LO = _UNITS[unit_idx].Enchants_LO;
-    Enchants = ( (((uint32_t)_UNITS[unit_idx].Enchants_HI) << 16) & ((uint32_t)_UNITS[unit_idx].Enchants_LO) );
+    unit_enchantments = _UNITS[unit_idx].enchantments;
 
-    if((_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x01) != 0) /* Ab_Summoned */
+    if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
     {
-        if((_UNITS[unit_idx].Mutations & 0x20) != 0)  /* R_Undead */
+        if((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
         {
             mana_upkeep += ((_unit_type_table[_UNITS[unit_idx].type].Upkeep * 3) / 2);  /* + 50% */
         }
@@ -630,7 +494,7 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
         }
     }
 
-    // ¿ Torin The Chosen has no mana upkeep ?  ¿ why not just get it from the table ?
+    // TODO  ¿ Torin The Chosen has no mana upkeep ?  ¿ why not just get it from the table ?
     if((_UNITS[unit_idx].type & 0x22) == 0)  /* _Chosen */
     {
         mana_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
@@ -646,13 +510,13 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 
     for(itr_unit_enchantments = 0; itr_unit_enchantments < NUM_UNIT_ENCHANTMENTS; itr_unit_enchantments++)
     {
-        // Enchant_Bit = (Enchants_LO & 0x1);
-        Enchant_Bit = (Enchants & 0x1);
+        Enchant_Bit = (unit_enchantments & 0x1);
 
         if(Enchant_Bit == 1)
         {
             mana_upkeep += unit_enchantment_upkeep_table[itr_unit_enchantments];
 
+            // TODO  sup? different than the logic elsewhere of iterating over the bit placement?
 // mov     ax, [bp+Enchants_HI]
 // mov     dx, [bp+Enchants_LO]
 // sar     ax, 1
@@ -660,15 +524,11 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 // mov     [bp+Enchants_HI], ax
 // mov     [bp+Enchants_LO], dx
             // Enchants_LO >>= Enchants_LO;
-            Enchants = (Enchants >> 1);
+            unit_enchantments = (unit_enchantments >> 1);
 
         }
 
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-// #endif
 
     return mana_upkeep;
 }
@@ -742,7 +602,27 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 // UU_UNIT_OnSameTile()
 
 // WZD o120p13
-// drake178: UNIT_MarkRemoved()
+/*
+    undefines owner and plane, resets level, sets finished
+Removal Type:
+    0:                undefines hero items, undefines hero unit index, saves level, experience, name
+    1: deletes items, undefines hero items, undefines hero unit index, saves level, experience, name
+    2:                undefines hero items, undefines hero unit index, sets level to -20
+¿ what does it mean for the level to be -20 ?
+
+AFTER IT’S OVER :: Treasure
+Artifacts may be picked up from heroes killed in battle
+  (unless the heroes died through some mechanism that completely destroyed or banished them
+  including disintegration, banishment, unsummoning and holy word).
+...banished or unsummoned... ~disintegrated ...otherwise, manual intermingles "killed" and "destroyed"
+Meh. ~ "Perma-Death"
+
+e.g.,
+    'Unit Statistics Window' / 'Unit View'
+        Remove Enchantment - Fligh, Waterwalking, Windwalking
+            |-> Dismiss_Unit(unit_idx)
+                |-> UNIT_MarkRemoved(unit_idx, 1)
+*/
 void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
 {
     int16_t itr;
@@ -752,33 +632,31 @@ void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
 
     _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
 
-    if(
-        (Rmv_Type == 1) ||
-        (_UNITS[unit_idx].type == ut_Chosen)
-    )
+    // ¿ removal type 1 is "Dismiss" ?
+    if((Rmv_Type == 1) || (_UNITS[unit_idx].type == ut_Chosen))
     {
         _UNITS[unit_idx].Finished = ST_TRUE;
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
-            for(itr = 0; itr < 3; itr++)
+            for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
             {
                 if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
                 {
-                    ITEM_DeleteValue(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
+                    Remove_Item(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
                 }
-                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = -1;
+
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
             }
 
-            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Unit_Index = -1;
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
 
-            p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+            _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;  // keeps the level data
 
             if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
             {
-                TBL_Hero_Names[_UNITS[unit_idx].type].XP = _UNITS[unit_idx].XP;
-                // TODO  String_Copy_Far(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
-                strcpy(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+                hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+                strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
             }
         }
     }
@@ -788,34 +666,34 @@ void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
-            for(itr = 0; itr < 3; itr++)
+            for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
             {
-                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = -1;
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
             }
 
-            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Unit_Index = -1;
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
 
-            if(Rmv_Type != 2)
+            if(Rmv_Type != 2)  /* ¿ must be type 0 ? */
             {
                 if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
                 {
-                    TBL_Hero_Names[_UNITS[unit_idx].type].XP = _UNITS[unit_idx].XP;
-                    // TODO  String_Copy_Far(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
-                    strcpy(TBL_Hero_Names[_UNITS[unit_idx].type].Name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Name);
+                    hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+                    strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
                 }
 
-                p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+                _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
             }
             else
             {
-                p_heroes[_UNITS[unit_idx].owner_idx][_UNITS[unit_idx].type].Level = -20;
+                _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = -20;
             }
         }
     }
 
-    _UNITS[unit_idx].owner_idx = -1;
+    _UNITS[unit_idx].owner_idx = ST_UNDEFINED;
 
-    _UNITS[unit_idx].wp = -1;
+    _UNITS[unit_idx].wp = ST_UNDEFINED;  // ¿ here because `wp = 9` is used for dead combat summon units ?
+
 }
 
 
@@ -885,19 +763,15 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
     int16_t itr_cities;
     int16_t itr_heroes;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
-#endif
-
     magic_power = _players[player_idx].Power_Base;
 
-    mana_portion     = (((magic_power * _players[player_idx].Mana_Pnct ) + 50) / 100);
-    skill_portion    = (((magic_power * _players[player_idx].Skill_Pcnt) + 50) / 100);
+    mana_portion     = (((magic_power * _players[player_idx].mana_ratio ) + 50) / 100);
+    skill_portion    = (((magic_power * _players[player_idx].skill_ratio) + 50) / 100);
     research_portion = magic_power - mana_portion - skill_portion;
 
-    if( (_players[player_idx].Research_Pcnt == 0) && (research_portion > 0) )
+    if( (_players[player_idx].research_ratio == 0) && (research_portion > 0) )
     {
-        if(_players[player_idx].Skill_Pcnt == 0)
+        if(_players[player_idx].skill_ratio == 0)
         {
             mana_portion += research_portion;
         }
@@ -927,22 +801,15 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
-        if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+        if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
         {
-            
-            // *( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) )
-            // fp_heroes[player_idx]
-            // _UNITS[].type
-            // _players[player_idx].Heroes[itr_heroes].Unit_Index
-            // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI
-            // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
-            if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x20) != 0 )  /* Ab_Sage */
+            if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE) != 0 )
             {
-                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 3);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 3);
             }
-            if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x40) != 0 )  /* Ab_Sage2 */
+            if ((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE2) != 0)
             {
-                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 9);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 9);
             }
         }
     }
@@ -950,10 +817,6 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
     *mana_points = mana_portion;
     *skill_points = skill_portion;
     *research_points = research_portion;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -992,12 +855,7 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     int16_t mana_income;
     int16_t spell_research_bonus;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
-
-    if( (_players[player_idx].Spell_Cast & 0xD6 /* Spell_Of_Return */) != 0 )
+    if(_players[player_idx].Spell_Cast == 214 /* Spell_Of_Return */)
     {
         *mana_total = 0;
         *research_total = 0;
@@ -1007,33 +865,18 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     {
         Player_Magic_Power_Distribution(&mana_income, &skill_income, &research_income, player_idx);
 
-        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].Researching);
+        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].research_spell_idx);
 
-        if(research_income < 0)
-        {
-            research_income = 0;
-        }
-        if(mana_income < 0)
-        {
-            mana_income = 0;
-        }
-        if(skill_income < 0)
-        {
-            skill_income = 0;
-        }
+        SETMIN(research_income, 0);
+        SETMIN(mana_income, 0);
+        SETMIN(skill_income, 0);
 
         research_income += ((research_income * spell_research_bonus) / 100);
 
         *mana_total = mana_income;
         *research_total = research_income;
         *skill_total = skill_income;
-
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o120p19
@@ -1056,7 +899,7 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus += 25;
     }
 
-    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].Type & 0x00 /* Summoning_Spell */) != 0) )
+    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* Summoning_Spell */) != 0) )
     {
         research_bonus += 25;
     }
@@ -1150,24 +993,20 @@ int16_t Player_Fame(int16_t player_idx)
 
     int16_t hero_unit_type;  // DNE in Dasm
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Fame()\n", __FILE__, __LINE__);
-#endif
-
     fame_points = 0;
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
-        if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+        if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
         {
-            hero_unit_idx = _players[player_idx].Heroes[itr_heroes].Unit_Index;
+            hero_unit_idx = _players[player_idx].Heroes[itr_heroes].unit_idx;
             hero_unit_type = _UNITS[hero_unit_idx].type;
 // TODO              // p_heroes + (player_idx * 35 hero structs) + (type * sizeof s_HERO) + offset in struct to Abilities_LO
-// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x08) != 0 )  /* Ab_Legendary */
+// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x08) != 0 )  /* Ab_Legendary */
 // TODO              {
 // TODO                  fame_points += ((_UNITS[hero_unit_idx].Level + 1) * 3);
 // TODO              }
-// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x10) != 0 )  /* Ab_Legendary2 */
+// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x10) != 0 )  /* Ab_Legendary2 */
 // TODO              {
 // TODO                  fame_points += (((_UNITS[hero_unit_idx].Level + 1) * 9) / 2);
 // TODO              }
@@ -1190,19 +1029,35 @@ int16_t Player_Fame(int16_t player_idx)
         fame_points += 10;
     }
 
-    fame_points += _players[player_idx].Fame;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Fame() { fame_points = %d }\n", __FILE__, __LINE__, fame_points);
-#endif
+    fame_points += _players[player_idx].fame;
 
     return fame_points;
 }
 
 
 // WZD o120p21
-// drake178: WIZ_GetEmptyHeroSlot()
-// WIZ_GetEmptyHeroSlot()
+// MoO2  Module: OFFICER  Hero_Slot_Open_()
+/*
+
+*/
+int16_t Hero_Slot_Open(int16_t player_idx)
+{
+    int16_t hero_slot_idx;  // _SI_
+    int16_t itr;  // _CX_
+
+    hero_slot_idx = ST_UNDEFINED;
+
+    for(itr = 0; itr < NUM_HERO_SLOTS; itr++)
+    {
+        if(_players[player_idx].Heroes[itr].unit_idx != ST_UNDEFINED)
+        {
+            hero_slot_idx = itr;
+            break;
+        }
+    }
+
+    return hero_slot_idx;
+}
 
 
 // WZD o120p22
@@ -1286,15 +1141,15 @@ int16_t Unit_Level(int16_t unit_idx)
         // ¿ cancel 'Heroism' 'Unit Enchantment' if the Unit has naturally attained the 'Elite Experience Level' ?
         if(
             (level >= UL_ELITE) &&
-            ((_UNITS[unit_idx].Enchants_HI & 0x0100) != 0)  /* UE_Heroism */
+            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
         )
         {
-            _UNITS[unit_idx].Enchants_HI = (_UNITS[unit_idx].Enchants_HI | 0x0100);
+            _UNITS[unit_idx].enchantments = (_UNITS[unit_idx].enchantments | UE_HEROISM);
         }
 
         // apply 'Heroism' 'Unit Enchantment'
         if(
-            ((_UNITS[unit_idx].Enchants_HI & 0x0100) != 0) && /* UE_Heroism */
+            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0) &&
             (level < UL_ELITE)
         )
         {
@@ -1309,7 +1164,7 @@ int16_t Unit_Level(int16_t unit_idx)
         if(
             (_players[_UNITS[unit_idx].owner_idx].Globals[CRUSADE] > 0) &&
             (_UNITS[unit_idx].type < FST_FANT) &&
-            ((_UNITS[unit_idx].Mutations & 0x20) == 0)  /* R_Undead */
+            ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
         )
         {
             level += 1;
@@ -1558,7 +1413,7 @@ int16_t City_Food_WildGame(int16_t city_idx)
         if((terrain_special & 0x40) != 0)  /* TS_Wild_Game */
         {
             bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
-            bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
+            bit_field = (city_area_shared_bits + (city_wp * WORLD_SIZE) );
             if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
             {
                 food_units += 2;
@@ -2690,11 +2545,23 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 
 // WZD o142p21
+// CTY_OutpostGrowth()
+
 // WZD o142p22
+// WIZ_RecordHistory()
+
 // WZD o142p23
+// WIZ_Get_Astr_Power()
+
 // WZD o142p24
+// WIZ_Get_Astr_ArmyStr()
+
 // WZD o142p25
+// WIZ_Get_Astr_Resrch()
+
 // WZD o142p26
+// WIZ_Get_Nation_Size()
+
 
 // WZD o142p27
 // drake178: CTY_GetRebelCount()
@@ -2906,39 +2773,114 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
 
 // WZD o142p28
+// TILE_Survey()
 
 
 // WZD o142p29
 // drake178: CTY_CatchmentRefresh()
-void CTY_CatchmentRefresh__NOOP(void)
+/*
+loops over 300, as if to clear 300 bytes worth of bits?
+but, does it per plane
+so, should be 150 bytes worth of bits-per-plane
+but, actually allocated as 150 paragraphs
+so, bjorked, but fell into a functional sub-space of the problem-space
+*/
+void Reset_City_Area_Bitfields(void)
 {
-    // int16_t Tile_Index;
-    // int16_t Tile_Y;
-    // int16_t Tile_X;
-    // int16_t city_wy;
-    // int16_t city_wx;
-    // int16_t city_wp;
-    // int16_t Y_Modifier;
-    int16_t itr_plane;
-
+    int16_t city_area_bit_index;
+    int16_t city_area_square_wy;
+    int16_t city_area_square_wx;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t city_wp;
+    int16_t city_area_y;
+    int16_t itr_wp;
+    int16_t itr_bits_bytes;  // _SI_  DNE in Dasm
     int16_t itr_cities;  // _SI_
-    
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
-#endif
+    int16_t city_area_x;  // _DI_
 
-    for(itr_plane = 0; itr_plane < NUM_PLANES; itr_plane++)
+    // TODO  EMM_Map_DataH();
+
+    // IDA Dasm - Grey-Dark
+    for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
     {
-        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        for(itr_bits_bytes = 0; itr_bits_bytes < WORLD_MAP_BITFIELD_SIZE; itr_bits_bytes++)
         {
-            // TBL_Catchments_EMS + (itr_plane * 2400) + itr_cities = 0;
-            *(square_shared_bits + (itr_plane * WORLD_SIZE) + itr_cities) = 0;
+            *(city_area_bits        + (itr_wp * WORLD_SIZE) + itr_bits_bytes) = 0;
+            *(city_area_shared_bits + (itr_wp * WORLD_SIZE) + itr_bits_bytes) = 0;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
-#endif
+    // IDA Dasm - Purple-Grey
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        // city_wx = _CITIES[itr_cities].wx;
+        city_wx = CITIESX();
+        city_wy = CITIESY();
+        city_wp = CITIESP();
+
+        // TODO  There's a loop-around like this elsewhere? Macro? Notes? ¿ MoM-CityArea ?
+        for(city_area_y = -2; city_area_y < 3; city_area_y++)
+        {
+            city_area_square_wy = (city_wy + city_area_y);
+
+            if(
+                (city_area_square_wy >= 0) &&
+                (city_area_square_wy < WORLD_HEIGHT)
+            )
+            {
+                for(city_area_x = -2; city_area_x < 3; city_area_x++)
+                {
+                    city_area_square_wx = (city_wx+ city_area_x);
+
+                    if(
+                        (city_area_square_wx >= 0) &&
+                        (city_area_square_wx < WORLD_WIDTH)
+                    )
+                    {
+                        if(
+                            (
+                                (city_area_y != -2)
+                                ||
+                                (
+                                    (city_area_x != -2)
+                                    &&
+                                    (city_area_x !=  2)
+                                )
+                            )
+                            &&
+                            (
+                                (city_area_y !=  2)
+                                ||
+                                (
+                                    (city_area_x != -2)
+                                    &&
+                                    (city_area_x !=  2)
+                                )
+                            )
+                        )
+                        {
+
+                            city_area_bit_index = ((city_area_square_wy * WORLD_WIDTH) + city_area_square_wx);
+
+                            if(Test_Bit_Field(city_area_bit_index, &city_area_bits[(city_wp * WORLD_SIZE)]) != ST_FALSE)
+                            {
+                                Set_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)]);
+                            }
+                            // Eh? Should be in an `else { }`
+                            Set_Bit_Field(city_area_bit_index, &city_area_bits[(city_wp * WORLD_SIZE)]);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -2947,24 +2889,16 @@ void CTY_CatchmentRefresh__NOOP(void)
 // drake178: TILE_IsShared
 /*
     ~== Check_Square_Scouted() in Explore.C for square_scouted_p0/p1
-
+"shared [world] map square"
 */
-int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp)
+int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_area_square_wy, int16_t city_wp)
 {
-    int16_t bit_index;
+    int16_t city_area_bit_index;
+    int16_t is_shared;  // DNE in Dasm
 
-    uint8_t * bit_field;
-    int16_t is_shared;
+    city_area_bit_index = ((city_area_square_wy * WORLD_WIDTH) + city_area_square_wx);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d)\n", __FILE__, __LINE__, city_wx, city_wy, city_wp);
-// #endif
-
-    bit_index = ((city_wy * WORLD_WIDTH) + city_wx);
-
-    bit_field = (square_shared_bits + (city_wp * WORLD_SIZE));
-
-    if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
+    if(Test_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)]) == ST_FALSE)
     {
         is_shared = ST_FALSE;
     }
@@ -2972,22 +2906,49 @@ int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy
     {
         is_shared = ST_TRUE;
     }
-    
-    // TODO: code up CTY_CatchmentRefresh__NOOP()
-    is_shared = ST_FALSE;
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d) { is_shared = %d }\n", __FILE__, __LINE__, city_wx, city_wy, city_wp, is_shared);
-// #endif
 
     return is_shared;
 }
 
 
 // WZD o142p31
+/*
+    ~ Remove City :: Remove Road
+    unsets road flags - normal, enchanted
+    resets movement mode cost map
+
+OON XREF: CTY_Remove()
+*/
+void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    // TODO  EMM_Map_DataH()
+
+    // movement_mode_cost_maps + (wp * sizeof(struct s_MOVE_MODE_COST_MAPS)) + (wy * WORLD_WIDTH) + wx
+    movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF7;  // not TF_Road
+
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xEF;  // not TF_Enc_Road
+
+}
+
+
 // WZD o142p32
+// CTY_Food_Breakdown()
+
 // WZD o142p33
+// CTY_Gold_Breakdown()
+
 // WZD o142p34
+// CTY_Prod_Breakdown()
+
 // WZD o142p35
+// CTY_Rsrc_Breakdown()
+
 // WZD o142p36
+// CTY_Pwr_Breakdown()

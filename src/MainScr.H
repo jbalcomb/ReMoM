@@ -16,8 +16,14 @@
 */
 
 
+
+// WZD dseg:2E12
+extern int16_t DBG_Alt_A_State;
+
+
+
 // WZD dseg:3062
-extern uint8_t enchantment_outline_colors[320];
+extern uint8_t enchantment_outline_colors[5][8][8];
 
 // WZD  dseg:31AE
 // char cnst_Moves[]  = "Moves:";
@@ -61,12 +67,12 @@ extern int64_t _main_map_grid_y;
 // WZD dseg:C04C
 // CRP_OVL_UU_Control_4 dw 0
 // WZD dseg:C04E
-// int16_t special_action_flag;  // AKA OVL_ExtraUnitAction
+// int16_t special_action_flag;
 // WZD dseg:C050
 // int16_t _next_turn_button;
 
 // WZD dseg:C052
-extern int16_t Unit_Window_Fields[9];
+extern int16_t g_unit_window_fields[MAX_STACK];
 
 // WZD dseg:C064
 // CRP_OverlandVar_3 dw 0
@@ -340,7 +346,7 @@ void Set_Mouse_List_Default(void);
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p05
-// ¿PRIVATE?  int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
+// ¿PRIVATE?  int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
 // ¿PRIVATE?  
@@ -349,13 +355,13 @@ void STK_GetExtraActions__WIP(void);
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
 // ¿PRIVATE?  
-void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[]);
+void Active_Unit_Stack(int16_t * unit_array_count, int16_t unit_array[]);
 
 // WZD o61p08
 void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o61p09
-// ¿PRIVATE?  void RdBd_UNIT_SelectStack_STUB(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
+// ¿PRIVATE?  void Build_RoadBuilder_Stack(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
 // WZD o61p11
@@ -414,6 +420,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 */
 // WZD o63p01
 // PRIVATE  void Main_Screen_Draw_Status_Window(void);
+
 // WZD o063p02
 // PRIVATE  void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
 
@@ -440,9 +447,15 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // drake178: OVL_DrawStackMoves
 void Main_Screen_Draw_Movement_Bar();
 
-// WZD o63p08
+// WZD o63p09
 // drake178: OVL_DrawMoveTypes()
 // void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
+
+// WZD o63p10
+int16_t Stack_Has_PlanarTravel(void);
+
+// WZD o63p11
+// PRIVATE  int16_t Active_Stack_On_Astral_Gate(void);
 
 // WZD o63p12
 // AKA OVL_GetStackHMoves()
@@ -451,13 +464,14 @@ void Main_Screen_Draw_Movement_Bar();
 
 // WZD o63p13
 // AKA OVL_GetStackHMoves_2()
-// PRIVATE int16_t Stack_Moves(void);
+// PRIVATE  int16_t Stack_Moves(void);
 
 // WZD o63p14
 // RP_TILE_HasCity2()
+// PRIVATE  int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD o63p14
-// Check_Planar_Seal()
+// WZD o63p15
+int16_t Check_Planar_Seal(void);
 
 
 
@@ -523,10 +537,10 @@ void OVL_EnableIncmBlink(void);
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
-// ¿PRIVATE? int16_t Army_Boat_Riders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
+// ¿PRIVATE? int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
 
 // WZD o95p06
-// G_STK_SetPatrol()
+void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[]);
 
 
 

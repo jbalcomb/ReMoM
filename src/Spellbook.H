@@ -1,6 +1,9 @@
 /*
     WIZARDS.EXE
         ovr117
+        ovr128
+        ovr130
+        ovr132
 */
 
 #ifndef SPELLBOOK_H
@@ -89,7 +92,8 @@ extern struct s_SPELL_BOOK_PAGE * SBK_BookPages;
 // drake178:  be able to channel into a spell each turn?
 // drake178:  (lower of mana+manaperturn and skill+heroskill)
 // drake178:  in combat, the highest castable cost
-// PRIVATE  extern int16_t SBK_BookManaLimit;
+// updated by 'Magic Screen'
+extern int16_t SBK_BookManaLimit;
 
 // WZD dseg:C90C
 // drake178: NearAlloc_First!
@@ -143,7 +147,7 @@ extern int16_t SBK_OpenPage;
 
 // WZD dseg:C926
 // drake178:  Spell List Count, New Spell Index, ...
-// PRIVATE  extern int16_t GUI_Multipurpose_Int;
+extern int16_t GUI_Multipurpose_Int;
 
 // WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+SBK_Descriptions@ dd 0                                    ; 0
 // WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_LearnSpellAnim+31Ew ...
@@ -284,6 +288,166 @@ void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx);
 // WZD o118p12
 // drake178: GAME_CheckResearch()
 // GAME_CheckResearch()
+
+
+
+/*
+    WIZARDS.EXE  ovr128
+*/
+
+// WZD o128p01
+int16_t WIZ_RefreshResearch__STUB(int16_t player_idx);
+
+// WZD o128p02
+void WIZ_GetResearchList__STUB(int16_t player_idx, int16_t research_list[]);
+
+// WZD o128p03
+int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
+
+// WZD o128p04
+// WIZ_GetSpellValue()
+
+// WZD o128p05
+// WIZ_SpellTradeList()
+
+// WZD o128p06
+// sub_AC19E()
+
+// WZD o128p07
+// WIZ_GE_Diplomacy()
+
+// WZD o128p08
+void WIZ_ResearchSort__STUB(int16_t player_idx, int16_t count);
+
+// WZD o128p09
+void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm);
+
+// WZD o128p10
+// sub_ACACC()
+
+// WZD o128p11
+// WIZ_ConquestSpells()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr130
+*/
+
+// WZD o130p01
+void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
+
+// WZD o130p02
+// sub_AF331()
+
+// WZD o130p03
+// sub_AF56D()
+
+// WZD o130p04
+// sub_AF7C1()
+
+// WZD o130p05
+// sub_AF9AA()
+
+// WZD o130p06
+// sAFA06_Anim_EarthLore()
+
+// WZD o130p07
+// sub_AFB7F()
+
+// WZD o130p08
+// sub_AFCA8()
+
+// WZD o130p09
+// sub_B01F7()
+
+// WZD o130p10
+// sub_B0692()
+
+// WZD o130p11
+// sub_B0C07()
+
+// WZD o130p12
+// sub_B1108()
+
+// WZD o130p13
+// sB1280_Anim_EnchantRoad()
+
+// WZD o130p14
+// sub_B148C()
+
+// WZD o130p15
+// sub_B1843()
+
+// WZD o130p16
+// CTY_Consecration()
+
+// WZD o130p17
+// sub_B1A01()
+
+// WZD o130p18
+// sub_B1ABE()
+
+
+
+/*
+    WIZARDS.EXE  ovr132
+*/
+
+// WZD o132p01
+// sub_B4250()
+
+// WZD o132p02
+// sub_B4471()
+
+// WZD o132p03
+// CTY_ChaosRift()
+
+// WZD o132p04
+// WIZ_MeteorStorm()
+
+// WZD o132p05
+// CTY_StreamOfLife()
+
+// WZD o132p06
+int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_t Saved);
+
+// WZD o132p07
+// sub_B4E00()
+
+// WZD o132p08
+// sub_B50AE()
+
+// WZD o132p09
+// sub_B517B()
+
+// WZD o132p10
+// IDK_SplCst_sB529D()
+
+// WZD o132p11
+// WIZ_GreatWasting()
+
+// WZD o132p12
+// CTY_GaiasBlessing()
+
+// WZD o132p13
+// WIZ_Armageddon()
+
+// WZD o132p14
+// sub_B5D8E()
+
+// WZD o132p15
+// CTY_NightshadeDispel()
+
+// WZD o132p16
+// sub_B609C()
+
+// WZD o132p17
+// sub_B62F7()
+
+// WZD o132p18
+// sub_B6505()
 
 
 

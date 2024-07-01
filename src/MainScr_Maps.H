@@ -150,7 +150,6 @@ void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *Ma
 void IDK_CheckSet_MapDisplay_XY(void);
 
 // WZD o67p04
-// AKA OVL_ShowActiveStack
 void Set_Draw_Active_Stack_Always(void);
 
 // WZD o67p05
@@ -186,6 +185,10 @@ void Set_Unit_Draw_Priority(void);
 // WZD o67p14
 // drake178: STK_NoUnitDraw
 void Reset_Stack_Draw_Priority(void);
+
+// WZD o67p15
+int16_t IsPassableTower(int16_t world_x, int16_t world_y);
+
 
 
 /*
@@ -233,8 +236,11 @@ void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, in
 // AKA Undef_Prev_Map_Draw_XY()
 void Reset_Map_Draw(void);
 
-// WZD o150p02 OVL_MapStateSave          
-// WZD o150p03 OVL_MapStateRestore       
+// WZD o150p02 
+// OVL_MapStateSave()
+
+// WZD o150p03 
+// OVL_MapStateRestore()
 
 // WZD o150p04
 void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p);

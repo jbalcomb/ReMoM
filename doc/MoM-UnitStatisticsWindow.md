@@ -165,9 +165,15 @@ OON XREF:
 
 j_USW_MemAlloc()
 XREF:
-    USW_CombatDisplay:loc_5E206     call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
+    Load_Display_Combat_Unit:loc_5E206     call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
     USW_LoadAndShow+2B              call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
     Unit_Statistics_Popup:loc_5E73C call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
     Unit_Statistics_Popup+58B       call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
     STK_CaptureCity+8               call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
     USW_LoadHireScreen+25           call    j_USW_MemAlloc                  ; resets the near allocation buffer, creates a 100
+
+
+
+##### Naming Things Is Hard
+
+

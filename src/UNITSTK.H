@@ -36,7 +36,7 @@ void Update_Stack_Active(int16_t stack_idx);
 // void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p05
-// ¿PRIVATE?  int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
+// ¿PRIVATE?  int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
 // ¿PRIVATE?  
@@ -45,13 +45,13 @@ void Update_Stack_Active(int16_t stack_idx);
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
 // ¿PRIVATE?  
-// void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[]);
+// void Active_Unit_Stack(int16_t * unit_array_count, int16_t unit_array[]);
 
 // WZD o61p08
 // void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 
 // WZD o61p09
-// ¿PRIVATE?  void RdBd_UNIT_SelectStack_STUB(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
+// ¿PRIVATE?  void Build_RoadBuilder_Stack(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
 // WZD o61p11

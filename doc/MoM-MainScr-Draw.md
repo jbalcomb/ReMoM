@@ -711,7 +711,7 @@ Draw_Map_Window()
 `Draw_Map_Window()`
 main() |-> Screen_Control() |-> Main_Screen() |-> Main_Screen_Draw() |-> Main_Screen_Draw_Do_Draw() |-> Draw_Maps() |-> Draw_Map_Window()
 
-? same code used to draw the "City Map Window" ?
+¿ same code used to draw the "City Map Window" ?
 
 Draw_Map_Window()
 

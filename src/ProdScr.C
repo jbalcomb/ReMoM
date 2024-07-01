@@ -187,7 +187,7 @@ void Production_Screen(void)
 
     current_index = product_indexes[current_item];  // MoO2  _active_prod
 
-    UV_specials_count = 0;
+    uv_specials_list_count = 0;
 
     if(product_indexes[current_item] < 100)
     {
@@ -196,21 +196,21 @@ void Production_Screen(void)
     else
     {
         active_product_idx = (product_indexes[current_item] - 100);
-        Prod_Init_Strategic_Unit(active_product_idx, global_strategic_unit);
-        Prod_Build_Specials_List(active_product_idx, prod_specials_list, &UV_specials_count);
+        Prod_Load_Battle_Unit(active_product_idx, global_battle_unit);
+        Prod_Build_Specials_List(active_product_idx, prod_specials_list, &uv_specials_list_count);
     }
 
-    UV_ListItem = 0;
-    UV_IsMultiPage = ST_FALSE;
+    uv_specials_list_index = 0;
+    uv_multipage = ST_FALSE;
 
-    if(UV_specials_count > 9)
+    if(uv_specials_list_count > 9)
     {
-        UV_IsMultiPage = ST_TRUE;
+        uv_multipage = ST_TRUE;
     }
 
 
-    // TODO  Deactivate_Auto_Function();
-    // TODO  Assign_Auto_Function(Production_Screen_Draw(), 1);
+    Deactivate_Auto_Function();
+    Assign_Auto_Function(Production_Screen_Draw, 1);
 
 
     Production_Screen_Allocate_First_Block();
@@ -280,16 +280,16 @@ void Production_Screen(void)
                 {
                     // WZD dseg:2DB5 54 68 65 72 65 20 69 73 20 6E 6F 74 20 65 6E 6F+aThereIsNotEnoughPop db 'There is not enough population to support new construction.',0
                     strcpy(GUI_String_1, "There is not enough population to support new construction.");
-                    // TODO  GUI_WarningType1(GUI_String_1);
-                    // TODO  Assign_Auto_Function(Production_Screen_Draw(), 1);
+                    Warn1(GUI_String_1);
+                    Assign_Auto_Function(Production_Screen_Draw, 1);
                     screen_changed = ST_TRUE;
                 }
                 else if((garrison_full == ST_TRUE) && (itr < G_CTY_ProdUnitCount))
                 {
                     // WZD dseg:2D7D 54 68 65 72 65 20 61 72 65 20 61 6C 72 65 61 64+aThereAreAlreadyTooM db 'There are already too many units currently in the city.',0
                     strcpy(GUI_String_1, "There are already too many units currently in the city.");
-                    // TODO  GUI_WarningType1(GUI_String_1);
-                    // TODO  Assign_Auto_Function(Production_Screen_Draw(), 1);
+                    Warn1(GUI_String_1);
+                    Assign_Auto_Function(Production_Screen_Draw, 1);
                     screen_changed = ST_TRUE;
                 }
                 else if(current_item == itr)
@@ -335,7 +335,7 @@ void Production_Screen(void)
         /*
             'Thing View' Up/Dn Buttons
         */
-        // TODO  USW_GetShownFXCount(input_field_idx, &DispCnt); 
+        UV_Handle_Arrow_Buttons(input_field_idx, &DispCnt); 
 
 
         if((leave_screen == ST_FALSE) && (screen_changed == ST_FALSE))
@@ -351,7 +351,7 @@ void Production_Screen(void)
 
 
 
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Deactivate_Help_List();
     Clear_Fields();
     Reset_Window();
@@ -369,12 +369,9 @@ void Production_Screen(void)
     PageFlipEffect = 3;
     Clear_Palette_Changes(0, 255);
     Set_Palette_Changes(0, 223);
-    // TODO  Update_Remap_Gray_Palette();
-    GFX_Swap_Cities();
+    Update_Remap_Gray_Palette();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Production_Screen()\n", __FILE__, __LINE__);
-#endif
+    GFX_Swap_Cities();
 
 }
 
@@ -447,23 +444,23 @@ void Production_Screen_Add_Fields(void)
         product_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, 0, ST_UNDEFINED);
     }
 
-    UV_Clear_Effect_Fields();
+    UV_Clear_Specials_Fields();
 
     if(product_indexes[current_item] >= 100)
     {
-        UV_Add_Effect_Fields((popup_base_x + 85), (popup_base_y + 108), prod_specials_list, UV_specials_count, UV_ListItem);
+        UV_Add_Specials_Fields((popup_base_x + 85), (popup_base_y + 108), prod_specials_list, uv_specials_list_count, uv_specials_list_index);
 
         // TODO  _help_entries[38].help_idx = -1;
         // TODO  _help_entries[39].help_idx = -1;
         // TODO  _help_entries[40].help_idx = -1;
         // TODO  _help_entries[41].help_idx = -1;
-        for(itr = 0; itr < UV_specials_count; itr++)
+        for(itr = 0; itr < uv_specials_list_count; itr++)
         {
             // TODO  _help_entries[(38 + itr)].help_idx = [word ptr (_unit_type_table[prod_specials_list[itr]].Transport+3F0h)]
         }
     }
 
-    Set_Font(4, 4, 0, 0);
+    Set_Font_Style(4, 4, 0, 0);
     Set_Alias_Color(203);
 
     production_screen_cancel_button = Add_Button_Field((popup_base_x + 99), (popup_base_y + 181), "Cancel", red_button_seg, 'C', ST_UNDEFINED);
@@ -507,7 +504,7 @@ void Production_Screen_Draw_(void)
     UU_x2 = xstart + UU_width_90;
     UU_y2 = ystart + UU_height_28;
 
-    Set_Font(2, 1, 0, 0);
+    Set_Font_Style(2, 1, 0, 0);
 
     var_8 = xstart + IDK_ProdScr_w42AC0;
     var_A = ystart + IDK_ProdScr_w42ABE;
@@ -550,14 +547,14 @@ void Production_Screen_Draw_(void)
         // TODO  [_help_entries.help_idx+1A4h], HLP_UPKEEP
 
         unit_type = (product_idx - 100);
-        Prod_Init_Strategic_Unit(unit_type, global_strategic_unit);
-        Prod_Build_Specials_List(unit_type, prod_specials_list, &UV_specials_count);
-        UV_Setup_ProdScr(UV_specials_count);
+        Prod_Load_Battle_Unit(unit_type, global_battle_unit);
+        Prod_Build_Specials_List(unit_type, prod_specials_list, &uv_specials_list_count);
+        UV_Setup_ProdScr(uv_specials_list_count);
     }
 
     // ¿ draws at {74, 0} ?
     // overlap with build table left and right
-    Thing_View_Draw__WIP((popup_base_x + list_field_width), popup_base_y, 0, product_idx, prod_specials_list, UV_specials_count, PS_product_pict_seg);
+    Thing_View_Draw__WIP((popup_base_x + list_field_width), popup_base_y, 0, product_idx, prod_specials_list, uv_specials_list_count, PS_product_pict_seg);
 
     build_table_unit_item_cnt = 0;
     build_table_bldg_item_cnt = 0;
@@ -607,7 +604,7 @@ void Production_Screen_Draw_(void)
         // MoO2  mov     eax, 4
         // MoO2  call    Set_Font_Style_Shadow_Down
         Set_Font_Colors_15(2, &colors[0]);
-        Set_Font_Style1(2, 15, 0, 0);
+        Set_Font_Style_Shadow_Down(2, 15, 0, 0);
         Set_Font_Spacing_Width(1);
 
         if(product_indexes[itr] < 100)
@@ -617,7 +614,7 @@ void Production_Screen_Draw_(void)
         else
         {
             unit_type = (product_indexes[itr] - 100);
-            Print((xstart + 3), (ystart + 1), *_unit_type_table[unit_type].Name);
+            Print((xstart + 3), (ystart + 1), *_unit_type_table[unit_type].name);
         }
     }
 
@@ -662,7 +659,7 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
                 {
                     reqd_terrtype = bldg_data_table[itr].reqd_terrain;
                     if(
-                        (CTY_CheckTerrainReq__WIP_TRUE(_city_idx, reqd_terrtype) == ST_TRUE) &&
+                        (CTY_CheckTerrainReq__ALWAYS_TRUE(_city_idx, reqd_terrtype) == ST_TRUE) &&
                         (_CITIES[_city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_Built)  // BUGBUG: drake178: may add replaced buildings to the list
                     )
                     {
@@ -744,8 +741,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
     for(itr = 35; ((itr < 198) && (product_count < 12)); itr++)
     {
         if(
-            (_unit_type_table[itr].Race == city_race) ||
-            (_unit_type_table[itr].Race == 0x0E)  /* Race_Generic */
+            (_unit_type_table[itr].Race == city_race)
+            ||
+            (_unit_type_table[itr].Race == rt_Standard)
         )
         {
             if(
@@ -797,8 +795,8 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
                         )
                     {
                         if (
-                            (strcmp("Spearmen", *_unit_type_table[itr].Name) != 0) &&
-                            (strcmp("Swordsmen", *_unit_type_table[itr].Name) != 0)
+                            (strcmp("Spearmen", *_unit_type_table[itr].name) != 0) &&
+                            (strcmp("Swordsmen", *_unit_type_table[itr].name) != 0)
                             )
                         {
                             product_array[product_count] = (itr + 100);
@@ -840,7 +838,8 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
                 if(bldg_data_table[itr].reqd_bldg_1 > 100)
                 {
                     reqd_terrtype = bldg_data_table[itr].reqd_terrain;
-                    if(CTY_CheckTerrainReq__WIP_TRUE(city_idx, reqd_terrtype) == ST_TRUE)
+                    // TODO  CTY_CheckTerrainReq__ALWAYS_TRUE()
+                    if(CTY_CheckTerrainReq__ALWAYS_TRUE(city_idx, reqd_terrtype) == ST_TRUE)
                     {
                         if(
                             (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_NotBuilt) &&
@@ -894,7 +893,7 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
 // WZD o56p09
 // CTY_CheckTerrainReq()
-int16_t CTY_CheckTerrainReq__WIP_TRUE(int16_t city_idx, int16_t Terrain_Req_ID)
+int16_t CTY_CheckTerrainReq__ALWAYS_TRUE(int16_t city_idx, int16_t Terrain_Req_ID)
 {
     return ST_TRUE;
 }

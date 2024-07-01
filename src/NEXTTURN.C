@@ -47,24 +47,70 @@ char cnst_TooManyUnits[] = ". You must disband some units if you wish to build o
 */
 
 // WZD o60p01
+// ~ MoO2  Module: SHIPSTAK  Remove_Non_Detected_Ships_()  Delete_Ship_Stack_()  Delete_Ship_Node_()
+void Delete_Dead_Units(void)
+{
+    int16_t unit_type;
+    int16_t itr_heroes;
+    int16_t itr_units; // _SI_
+    int16_t itr_players; // _DI_
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        unit_type = _UNITS[itr_units].type;
+
+        if(
+            (_UNITS[itr_units].owner_idx < HUMAN_PLAYER_IDX)
+            ||
+            (_UNITS[itr_units].owner_idx > NEUTRAL_PLAYER_IDX)
+        )
+        {
+            Delete_Structure(itr_units, (uint8_t *)&_UNITS[0], sizeof(struct s_UNIT), _units);
+
+            for(itr_players = 0; itr_players < _num_players; itr_players++)
+            {
+                for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+                {
+                    if(
+                        (_players[itr_players].Heroes[itr_heroes].unit_idx != ST_UNDEFINED)
+                        &&
+                        (_players[itr_players].Heroes[itr_heroes].unit_idx > itr_units)
+                    )
+                    {
+                        _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
+                    }
+                }
+
+            }
+        }
+
+        _units -= 1;
+
+    }
+
+}
+
+
 // WZD o60p02
+// sub_52A4F()
 // WZD o60p03
+// sub_52B04()
 
 
 // WZD o60p04
 void Next_Turn_Proc(void)
 {
-    char temp_string[20];
+    char temp_string[LEN_TEMP_STRING];
     int16_t orig_map_plane;
     int16_t itr_msg;  // _SI_
     int16_t curr_prod_idx;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()\n", __FILE__, __LINE__);
-#endif
 
-    // TODO  GAME_DeleteDeadUnits();
-    // TODO  GAME_InTowerRefresh();
+    /* DEMOHACK */  // Delete_Dead_Units();
+
+    All_Units_In_Towers();
+
 
     Set_Unit_Draw_Priority();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
@@ -78,8 +124,11 @@ void Next_Turn_Proc(void)
 
     GFX_Swap_Cities();
 
-    // TODO  GAME_DeleteDeadUnits();
-    // TODO  GAME_InTowerRefresh()
+
+    /* DEMOHACK */  // Delete_Dead_Units();
+
+    All_Units_In_Towers();
+
 
     if(magic_set.EoT_Summary == ST_TRUE)
     {
@@ -116,9 +165,8 @@ void Next_Turn_Proc(void)
                     else
                     {
                         strcpy(GUI_NearMsgString, "The ");
-                        strcat(GUI_NearMsgString, STR_TownSizes[_CITIES[_city_idx].size]);
+                        strcat(GUI_NearMsgString, _city_size_names[_CITIES[_city_idx].size]);
                         strcat(GUI_NearMsgString, " of ");
-                        // TODO  String_Copy_Far(near_buffer, _CITIES[_city_idx].name);
                         strcpy(near_buffer, _CITIES[_city_idx].name);
                         strcat(GUI_NearMsgString, near_buffer);
                         strcat(GUI_NearMsgString, " can no longer produce ");
@@ -126,11 +174,10 @@ void Next_Turn_Proc(void)
                         if(curr_prod_idx >= 100)
                         {
                             curr_prod_idx -= 100;
-                            strcat(GUI_NearMsgString, *_unit_type_table[curr_prod_idx].Name);
+                            strcat(GUI_NearMsgString, *_unit_type_table[curr_prod_idx].name);
                         }
                         else
                         {
-                            // String_Copy_Far(temp_string, bldg_data_table[curr_prod_idx].name);
                             strcpy(temp_string, bldg_data_table[curr_prod_idx].name);
                             strcat(GUI_NearMsgString, STR_GetIndefinite(&temp_string[0]));
                             strcat(GUI_NearMsgString, " ");
@@ -161,7 +208,9 @@ void Next_Turn_Proc(void)
     // TODO  MSG_Building_Complete_Count = 0;
 
     Update_Units_MvsSts();
+
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
+
     // DONT  fxnptr_o59p();
 
     if( (_players[_human_player_idx].Cast_Cost_Left <= 0) && (_players[_human_player_idx].Spell_Cast > 0) )
@@ -171,27 +220,26 @@ void Next_Turn_Proc(void)
 
 // @@Done_Done
     all_units_moved = ST_FALSE;
+    
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+
     Reset_Draw_Active_Stack();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Next_Turn_Proc()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o60p05
+// AI_ResetUnitMoves()
 
 
 // WZD o60p06
 // ¿ AI version ?
+/*
+updates Finished, Status, moves2_max, moves2
+*/
 void Update_Units_MvsSts(void)
 {
     int16_t itr_units;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Units_MvsSts()\n", __FILE__, __LINE__);
-#endif
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -200,53 +248,70 @@ void Update_Units_MvsSts(void)
 
         // if *busy* doing "PATROL", "BUILD", or "CASTING", (re-)set to 'unorderable'
         if(
-            ((_UNITS[itr_units].Status & US_Patrol) != 0) ||
-            ((_UNITS[itr_units].Status & US_BuildRoad) != 0) ||
-            ((_UNITS[itr_units].Status & US_Casting) != 0)
+            (_UNITS[itr_units].Status == us_Patrol) ||
+            (_UNITS[itr_units].Status == us_BuildRoad) ||
+            (_UNITS[itr_units].Status == us_Casting)
         )
         {
             _UNITS[itr_units].Finished = ST_TRUE;
         }
 
-        // if(
-        //     ((_UNITS[itr_units].Status & US_Wait) != 0) ||
-        //     ((_UNITS[itr_units].Status & US_ReachedDest) != 0)
-        // )
-        // 'Unit Status'  4  0x04  "DONE"       enum US_ReachedDest
-        // 'Unit Status'  5  0x05  "WAIT"       enum US_Wait
-        // 'Unit Status'  0  0x00  "NO ORDERS"  enum US_Ready
-        if( (_UNITS[itr_units].Status == US_Wait) || (_UNITS[itr_units].Status == US_ReachedDest) )
+        if((_UNITS[itr_units].Status == us_Wait) || (_UNITS[itr_units].Status == us_ReachedDest))
         {
-            _UNITS[itr_units].Status = US_Ready;  // "NO ORDERS"
+            _UNITS[itr_units].Status = us_Ready;
         }
 
+        _UNITS[itr_units].moves2_max = Unit_Moves2(itr_units);
 
-        // ; calculates and returns the unit's movement allowance in half movement point units, accounting for all non-combat factors
-        _UNITS[itr_units].HalfMoves_Max = UNIT_GetHalfMoves_WIP(itr_units);
-
-        _UNITS[itr_units].HMoves = _UNITS[itr_units].HalfMoves_Max;
-
+        _UNITS[itr_units].moves2 = _UNITS[itr_units].moves2_max;
 
     }
 
     TILE_VisibilityUpdt();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Units_MvsSts()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
 // WZD o60p07
-// drake78: TILE_VisibilityUpdt()
-/*
-LoadScr.C:    TILE_VisibilityUpdt();
-MoX_UnOrg.C:// TILE_VisibilityUpdt()
-MoX_UnOrg.C:void TILE_VisibilityUpdt(void)
-MoX_UnOrg.H:void TILE_VisibilityUpdt(void);
-*/
-// void TILE_VisibilityUpdt(void);
+void TILE_VisibilityUpdt(void)
+{
+    int16_t itr_players;
+    int16_t itr_units;
+    int16_t tmp_unit_enchantments_hiword;
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        // TODO(JimBalcomb,2023075): figure out the indexing in the Dasm - doesn't look like array of struct  also, this'll set the neutral player?
+        _players[itr_players + 1].Dipl.Contacted[HUMAN_PLAYER_IDX] = 1;
+
+        // if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
+        if(_players[itr_players + 1].Globals[NATURE_AWARENESS] != ST_FALSE)
+        {
+            for(itr_units = 0; itr_units < _units; itr_units++)
+            {
+                if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+                {
+                    if(_UNITS[itr_units].owner_idx != itr_players)
+                    {
+                        if(_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
+                        {
+                            // BUG: only checks enchantment, not ability or item
+                            if((_UNITS[itr_units].enchantments & UE_INVISIBILITY) != 0)
+                            {
+                                _players[itr_players].Dipl.Contacted[_UNITS[itr_units].owner_idx] = 1;
+                                _players[_UNITS[itr_units].owner_idx].Dipl.Contacted[itr_players] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Update_Scouted_And_Contacted();
+    // TST  Validate_Square_Scouted(18,11,0);
+
+}
 
 
 
@@ -257,10 +322,6 @@ MoX_UnOrg.H:void TILE_VisibilityUpdt(void);
 // WZD o119p01
 void Next_Turn_Calc(void)
 {
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
-#endif
 
     // TOOD  Set_Random_Seed(RNG_AI_Turn_Seed);
 
@@ -356,46 +417,48 @@ void Next_Turn_Calc(void)
 
 
 
-// cmp     [DBG_Alt_A_State], e_ST_FALSE
-// jnz     short loc_9EC87
-// cmp     [magic_set.Random_Events], e_ST_TRUE
-// jnz     short loc_9EC87
+    if(
+        (DBG_Alt_A_State == ST_FALSE)
+        &&
+        (magic_set.Random_Events == ST_TRUE)
+    )
+    {
+        // ; attempts to generate a random event
+        // ; has some BUGs that need review
+        // TODO  EVNT_GenerateRandom()
 
-// call    j_EVNT_GenerateRandom           ; attempts to generate a random event
-//                                         ; has some BUGs that need review
+    }
 
 
-// loc_9EC87:                              ; progresses any ongoing events (status 1 or 2)
-// call    j_EVNT_Progress                 ;
-//                                         ; has several BUGs relating to specific events
-
+    // ; progresses any ongoing events (status 1 or 2)
+    // ; has several BUGs relating to specific events
+    // TODO  EVNT_Progress()
 
 
     Players_Apply_Upkeeps__WIP();
 
 
+    // DONT  EMM_Map_DataH()
 
-// call    EMM_Map_DataH                   ; maps the EMM Data block into the page frame
-
-// call    j_CTY_OutpostGrowth             ; calculates and records the growth and/or shrinkage
-//                                         ; of all outposts, although turning into a full city
-//                                         ; is not in this function
-//                                         ; BUG: this function ignores Wild Games altogether,
-//                                         ; both as a source of food and as a terrain special
-//                                         ; BUG: difficulty-based outpost growth modifiers are
-//                                         ; applied to both AI and human player outposts
+    // ; calculates and records the growth and/or shrinkage
+    // ; of all outposts, although turning into a full city
+    // ; is not in this function
+    // ; BUG: this function ignores Wild Games altogether,
+    // ; both as a source of food and as a terrain special
+    // ; BUG: difficulty-based outpost growth modifiers are
+    // ; applied to both AI and human player outposts
+    // TODO  CTY_OutpostGrowth()
 
 
     CTY_ProgressTurn();
 
 
-// call    j_WIZ_ProcessGlobals            ; processes the diplomatic reactions and persistent
-//                                         ; effects of global enchantments and the Spell of
-//                                         ; Mastery
-//                                         ; WARNING: Herb Mastery is not included here despite
-//                                         ; having a persistent effect
-//                                         ; also contains multiple inherited BUGs
-
+    // ; processes the diplomatic reactions and persistent
+    // ; effects of global enchantments and the Spell of Mastery
+    // ; WARNING: Herb Mastery is not included here despite
+    // ; having a persistent effect
+    // ; also contains multiple inherited BUGs
+    // TODO  WIZ_ProcessGlobals()            
 
 
     /*
@@ -403,7 +466,7 @@ void Next_Turn_Calc(void)
     */
     if(grand_vizier == ST_TRUE)
     {
-
+        // TODO
     }
     /*
         END: Grand Vizier
@@ -451,21 +514,18 @@ void Next_Turn_Calc(void)
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
+    // TODO  End_Of_Turn_Diplomacy_Adjustments_
 
-// call    j_IDK_Dipl_s_7436F
+    // TODO  Modifier_Diplomacy_Adjustments()
 
-// call    j_IDK_Dipl_s74B68
-
-// call    j_Cool_Off_Volcanoes
-
-// jmp     short loc_9EDF3
+    // TODO  Cool_Off_Volcanoes()
 
     }
 
 
 // call    j_IDK_SplCst_SplSkl_sC5AB1
 
-// call    j_GAME_DeleteDeadUnits          ; deletes all removed units from the unit table, updating the indices of all hired heroes accordingly
+    /* DEMOHACK */  // Delete_Dead_Units();
 
 
     Set_Unit_Draw_Priority();
@@ -525,10 +585,36 @@ void Next_Turn_Calc(void)
 
 }
 
+
 // WZD o119p02
+// MoO2  Module:  Do_Colony_Calculations_() &&|| All_Colony_Calculations_()
+
+/*
+    For All Cities
+    Do_City_Calculations() ...sets _CITIES[].food2_units, Production, Gold, Upkeep, Research, Power
+    make sane farmer and rebel count
+*/
+void All_Colony_Calculations(void)
+{
+    int16_t minimum_farmer_count;
+    int16_t itr_cities;  // _SI_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        Do_City_Calculations(itr_cities);
+        minimum_farmer_count = City_Minimum_Farmers(itr_cities);
+        if(_CITIES[itr_cities].farmer_count < minimum_farmer_count)
+        {
+            _CITIES[itr_cities].farmer_count = minimum_farmer_count;
+        }
+        City_Rebel_Count(itr_cities);
+    }
+
+}
+
 
 // WZD o119p03
-
+// sub_9EF06                                      ovr119
 
 
 
@@ -543,7 +629,9 @@ void Next_Turn_Calc(void)
 /*
 
     CTY_ProdProgress()
-        UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+        UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
+    Lair_Make_Guardians()
+        Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
 
 R_Param
     if >= 0 && < 2000
@@ -553,6 +641,11 @@ R_Param
         {-2, -3, -4, -5, -6, -7, -8, -9 }
         { 1,  2,  3,  4,  5,  6,  7,  8 }
         then, updates s_UNIT.level from UNIT_GetLevel()
+    if == 2000
+        e.g., Lair_Make_Guardians()
+        ¿ just some number greater than what could be a city_idx ?
+        overrides unit count limit
+        ¿ only way to create units above 980 ?
 
 */
 int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param)
@@ -580,23 +673,22 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                 _UNITS[_units].wy = wy;
                 _UNITS[_units].wp = wp;
                 _UNITS[_units].owner_idx = owner_idx;
-                _UNITS[_units].HalfMoves_Max = _unit_type_table[unit_type].Move_Halves;
+                _UNITS[_units].moves2_max = _unit_type_table[unit_type].Move_Halves;
                 _UNITS[_units].type = unit_type;
                 _UNITS[_units].Hero_Slot = -1;
-                _UNITS[_units].In_Tower = ST_FALSE;
+                _UNITS[_units].in_tower = ST_FALSE;
                 _UNITS[_units].Finished = ST_TRUE;
-                _UNITS[_units].HMoves = 0;
+                _UNITS[_units].moves2 = 0;
                 _UNITS[_units].Sight_Range = _unit_type_table[unit_type].Sight;
                 _UNITS[_units].dst_wx = 0;
                 _UNITS[_units].dst_wy = 0;
-                _UNITS[_units].Status = US_Ready;
+                _UNITS[_units].Status = us_Ready;
                 _UNITS[_units].Level = 0;
                 _UNITS[_units].XP = 0;
                 _UNITS[_units].Damage = 0;
                 _UNITS[_units].Draw_Priority = 0;
-                _UNITS[_units].Enchants_HI = 0;
-                _UNITS[_units].Enchants_LO = 0;
-                _UNITS[_units].Mutations = 0;
+                _UNITS[_units].enchantments = 0;
+                _UNITS[_units].mutations = 0;
                 _UNITS[_units].Move_Failed = 0;
                 _UNITS[_units].Rd_Constr_Left = -1;
 
@@ -632,7 +724,8 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                         _UNITS[_units].XP = TBL_Experience[UL_ELITE];
                     }
 
-                    _UNITS[_units].Mutations = City_Best_Weapon(R_Param);
+                    // TODO  double check this is a direct assignment to the bitfield
+                    _UNITS[_units].mutations = City_Best_Weapon(R_Param);
 
                     if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
@@ -666,10 +759,10 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
 
                     if(
                         (_players[owner_idx].alchemy > 0) &&
-                        (_UNITS[_units].Mutations == 0)
+                        (_UNITS[_units].mutations == 0)
                     )
                     {
-                        _UNITS[_units].Mutations = wq_Magic;                        
+                        _UNITS[_units].mutations = wq_Magic;                        
                     }
 
                     if(
@@ -710,10 +803,6 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
 
     int16_t casting_skill;  // _CX_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Base_Casting_Skill()\n", __FILE__, __LINE__);
-#endif
-
     casting_skill = sqrt(_players[player_idx].Casting_Skill);
 
     casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
@@ -722,10 +811,6 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
     {
         casting_skill += 10;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Base_Casting_Skill()\n", __FILE__, __LINE__);
-#endif
 
     return casting_skill;
 }
@@ -745,8 +830,8 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
     casting_cost = spell_data_table[spell_idx].Casting_Cost;
 
     if(
-        (spell_data_table[spell_idx].Realm == 0) || /* _Nature */
-        (spell_data_table[spell_idx].Realm == 3)  /* _Life */
+        (spell_data_table[spell_idx].Realm == sbr_Nature) ||
+        (spell_data_table[spell_idx].Realm == sbr_Life)
     )
     {
         Evil_Omens_Up = ST_FALSE;
@@ -836,7 +921,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].artificer > 0) &&
-        (spell_data_table[spell_idx].Type == 11)  /* Crafting_Spell */
+        (spell_data_table[spell_idx].type == 11)  /* Crafting_Spell */
     )
     {
         casting_cost_reduction += 50;
@@ -844,7 +929,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].conjurer > 0) &&
-        (spell_data_table[spell_idx].Type == 0)  /* Summoning_Spell */
+        (spell_data_table[spell_idx].type == 0)  /* Summoning_Spell */
     )
     {
         casting_cost_reduction += 25;
@@ -871,8 +956,113 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 // WIZ_DeadHeroCount()
 
 // WZD o121p07
-// drake178: WIZ_GetRandomHero()
-// WIZ_GetRandomHero()
+// MoO2  Module: EVENTS  Pick_Random_Officer_()
+/*
+    zero_cost   {F,T} Hero Cost is 0
+    hero_type_class {0,1,2}  0 any, 1 Hero (lesser), 2 Champion (greater)
+
+; selects a random hero from those still available to
+; the selected player, if any
+; returns the unit type if successful, or -1 otherwise
+
+*/
+int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_type_class)
+{
+    int16_t max_attempts;
+    int16_t attempts;
+    int16_t player_fame;
+    int16_t Success;
+    int16_t hero_type_idx;  // _SI_
+
+    attempts = 0;
+
+    if(zero_cost > 0)
+    {
+        max_attempts = 100;
+    }
+    else
+    {
+        max_attempts = 10;
+    }
+
+    player_fame = Player_Fame(player_idx);
+
+    if(zero_cost == ST_TRUE)
+    {
+        player_fame = 200;
+    }
+
+    Success = ST_FALSE;
+
+    while((_units - 1) < MAX_UNIT_COUNT)
+    {
+        do
+        {
+            attempts++;
+
+            if(hero_type_class == 0)
+            {
+                hero_type_idx = (Random(34) - 1);
+            }
+            else if(hero_type_class == 1)
+            {
+                hero_type_idx = (Random(24) - 1);  // Hero
+            }
+            else
+            {
+                hero_type_idx = (23 + Random(10));  // Champion
+            }
+
+            if(_HEROES2[player_idx]->heroes[hero_type_idx].Level >= 0)
+            {
+                if(
+                    (
+                        !((hero_type_idx == 27)  /* _Priestess */ || (hero_type_idx == 28)  /* _Paladin */)
+                        ||
+                        (_players[player_idx].spellranks[sbr_Life] > 0)
+                    )
+                    &&
+                    (
+                        !((hero_type_idx == 29)  /* _BlackKnight */ || (hero_type_idx == 32)  /* _Necromancer */)
+                        ||
+                        (_players[player_idx].spellranks[sbr_Death] > 0)
+                    )
+                    &&
+                    (((_unit_type_table[hero_type_idx].Cost - 100) / 10) < player_fame)
+                )
+                {
+                    Success = ST_TRUE;
+                }
+            }
+
+            if(Success == ST_TRUE)
+            {
+                break;
+            }
+
+        } while(attempts < max_attempts);
+
+        if((hero_type_class == 2) && (Success == ST_FALSE))
+        {
+            hero_type_class = 0;
+        }
+        else
+        {
+            break;
+        }
+
+    }
+
+    if(Success == ST_FALSE)
+    {
+        return ST_UNDEFINED;
+    }
+    else
+    {
+        return hero_type_idx;
+    }
+    
+}
 
 
 // WZD o121p08
@@ -884,83 +1074,111 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
         Unit Enchantment - Endurance
         Wind Mastery
 */
-int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
+int16_t Unit_Moves2(int16_t unit_idx)
 {
-    uint16_t Enchant_Flags_LO;
-    uint16_t Enchant_Flags_HI;
-    int16_t * ptr_players_heroes_items;
-// Wind_Mastery_Total= word ptr -6
-    int16_t Item_HalfMoves;
-    int16_t Endurance;
+    uint32_t enchantments;  // Unit & Item
+    int16_t * hero_items;
+    int16_t wind_mastery;
+    int16_t item_moves2;
+    int16_t endurance;
+    int16_t movement_points;  // _DI_
+    int16_t itr_hero_items;  // _SI_
+    int16_t itr_players;  // _SI_
 
-    int16_t movement_points;
+    item_moves2 = 0;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: UNIT_GetHalfMoves(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-// #endif
+    endurance = ST_FALSE;
 
-    /* ¿DNE? */ Endurance = ST_FALSE;
+    enchantments = 0;
 
     /*
         BEGIN: Hero Items
     */
     if(_UNITS[unit_idx].Hero_Slot > -1)
     {
-        ptr_players_heroes_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
+        hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
+
+        for (itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
+        {
+            if (hero_items[itr_hero_items] > -1)
+            {
+                if (ITEM_POWER(hero_items[itr_hero_items], ip_Endurance))
+                {
+                    endurance = ST_TRUE;
+                }
+
+                // TODO  enchantments |= _ITEMS[itr_hero_items].Powers;
+                enchantments |= GET_4B_OFS((uint8_t*)&_ITEMS[hero_items[itr_hero_items]], 0x2E);
+
+                item_moves2 += _ITEMS[hero_items[itr_hero_items]].moves2;
+            }
+        }
     }
-    // ...
-    Item_HalfMoves = 0;
     /*
         END: Hero Items
     */
 
     movement_points = _unit_type_table[_UNITS[unit_idx].type].Move_Halves;
 
-    Enchant_Flags_HI = _UNITS[unit_idx].Enchants_HI;
-    Enchant_Flags_LO = _UNITS[unit_idx].Enchants_LO;
+    enchantments |= _UNITS[unit_idx].enchantments;
 
     if(movement_points < 6)
     {
-        if((Enchant_Flags_HI & 0x02) != 0)  /* UE_Flight */
+        if((enchantments & UE_FLIGHT) != 0)
         {
             movement_points = 6;
         }
     }
 
-    if((_UNITS[unit_idx].Mutations & 0x08) != 0)  /* CC_Flight */
+    if((_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
     {
         movement_points = 4;
     }
 
-    if((Enchant_Flags_LO & 0x2000) != 0)  /* UE_Endurance */
+    if((enchantments & UE_ENDURANCE) != 0)
     {
-        Endurance = ST_TRUE;
+        endurance = ST_TRUE;
     }
 
-    if(Endurance == ST_TRUE)
+    if(endurance == ST_TRUE)
     {
         movement_points += 2;
     }
 
-    movement_points += Item_HalfMoves;
-
-
+    movement_points += item_moves2;
 
     /*
         BEGIN: Wind Mastery
     */
-
-
-
+    if(_unit_type_table[_UNITS[unit_idx].type].Transport > ST_FALSE)
+    {
+        wind_mastery = 0;
+        for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+        {
+            if(_players[itr_players].Globals[WIND_MASTERY] > 0)
+            {
+                if(_UNITS[unit_idx].owner_idx == itr_players)
+                {
+                    wind_mastery++;
+                }
+                else
+                {
+                    wind_mastery--;
+                }
+            }
+        }
+        if(wind_mastery > 0)
+        {
+            movement_points = ((movement_points * 3) / 2);
+        }
+        if(wind_mastery < 0)
+        {
+            movement_points = (movement_points / 2);
+        }
+    }
     /*
         END: Wind Mastery
     */
-
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: UNIT_GetHalfMoves(unit_idx = %d) { movement_points = %d }\n", __FILE__, __LINE__, unit_idx, movement_points);
-// #endif
 
     return movement_points;
 }
@@ -971,8 +1189,43 @@ int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx)
 // UNIT_IsNormalUnit()
 
 // WZD o121p10
-// drake178: ¿ ?
-// IDK_MagicScreen_PWR()
+// ¿ MoO2  ..._ALL_TECH_CHEAT..._MORE_MONEY_CHEAT... ?
+void Cheat_Power(void)
+{
+    int16_t itr3;
+    int16_t itr;  // _SI_
+    int16_t itr2;  // _DI_
+
+    for(itr = 0; itr < 8; itr++)
+    {
+        _players[HUMAN_PLAYER_IDX].research_spells[itr] = 0;
+    }
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        _players[itr].mana_reserve = 10000;
+        _players[itr].gold_reserve = 10000;
+        _players[itr].Casting_Skill = 10000;
+        _players[itr].Nominal_Skill = Player_Base_Casting_Skill(itr);
+        _players[itr].Skill_Left = _players[itr].Nominal_Skill;
+        for(itr2 = 0; itr2 < 5; itr2++)
+        {
+            for(itr3 = 0; itr3 < 40; itr3++)
+            {
+                if(_players[itr].Spells_Known[((itr2 * 40) + itr3)] == 1)
+                {
+                    _players[itr].Spells_Known[((itr2 * 40) + itr3)] = 2;
+                }
+            }
+        }
+    }
+
+    _players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] = ST_TRUE;
+
+    _players[HUMAN_PLAYER_IDX].research_spell_idx = 0;
+
+}
+
 
 // WZD o121p11
 // drake178: AI_GetThreat_UType()
@@ -1258,7 +1511,50 @@ _TrlSpearmen
 
 // WZD o121p14
 // drake178: CTY_RemoveMessages()
-// CTY_RemoveMessages()
+/*
+OON XREF: CTY_Remove()
+
+drake178: ; removes any messages related to the city from the finished building message queue
+drake178: ; BUG: fails to copy the subsequent records properly, resulting in mismatched reports
+
+*/
+void City_Delete_Building_Complete_Messages(int16_t city_idx)
+{
+    int16_t itr1;  // _DX_
+    int16_t itr2;  // _SI_
+
+    itr1 = 0;
+
+    while(MSG_Building_Complete_Count > itr1)
+    {
+        // ¿ shift the city_idx for the messages down 1 in preparation for shifting down all the cities in the city structures array ?
+        if(MSG_Building_Complete[itr1].city_idx > city_idx)
+        {
+            MSG_Building_Complete[itr1].city_idx = (MSG_Building_Complete[itr1].city_idx - 1);
+        }
+        else
+        {
+            if(MSG_Building_Complete[itr1].city_idx == city_idx)
+            {
+                itr2 = itr1;
+
+                // BUG BUGBUG OGBUG moves the city_idx for the message, but not the bldg_type_idx
+                while(MSG_Building_Complete_Count > itr2)
+                {
+                    MSG_Building_Complete[itr2].city_idx = MSG_Building_Complete[(itr2 + 1)].city_idx;
+                    // OGBUG DNE  MSG_Building_Complete[itr2].bldg_type_idx = MSG_Building_Complete[(itr2 + 1)].bldg_type_idx;
+                    itr2++;
+                }
+
+                MSG_Building_Complete_Count--;
+            }
+        }
+
+        // @@Next_Message
+        itr1++;
+    }
+
+}
 
 
 
@@ -1267,23 +1563,14 @@ _TrlSpearmen
 */
 
 // WZD o140p01
-// drake178: CTY_RecalculateAll()
 void All_City_Calculations(void)
 {
     int16_t itr_cities;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: All_City_Calculations()\n", __FILE__, __LINE__);
-#endif
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         Do_City_Calculations(itr_cities);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: All_City_Calculations()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1327,7 +1614,7 @@ void MSG_Clear(void)
 void CTY_ProdProgress(int16_t city_idx)
 {
     char city_name[20];
-    int16_t UU_garrison_units[9] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
+    int16_t UU_garrison_units[9] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };  // HACK
     int16_t UU_garrison_count;
     int16_t curr_prod_cost;  // _SI_
 
@@ -1441,7 +1728,7 @@ void CTY_ProdProgress(int16_t city_idx)
                             (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                         )
                         {
-                            TILE_ExploreRadius(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                            TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
                         }
 
                         _CITIES[city_idx].bldg_cnt += 1;
@@ -1501,10 +1788,6 @@ void Update_Players_Gold_Reserve(void)
     int16_t itr_heroes;  // _DI_
     int16_t itr_cities;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Players_Gold_Reserve()\n", __FILE__, __LINE__);
-#endif
-
     // for(itr_players = 0; itr_players < _num_players; itr_players++)
     // VS complains about leaving elements in the array uninitialized, even though they can never be accessed
     // for (itr_players = 0; itr_players < 6; itr_players++)
@@ -1516,10 +1799,10 @@ void Update_Players_Gold_Reserve(void)
 
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
-            if(_players[itr_players].Heroes[itr_heroes].Unit_Index > -1)
+            if(_players[itr_players].Heroes[itr_heroes].unit_idx > -1)
             {
 
-                if( (p_heroes[itr_players][_UNITS[_players[itr_players].Heroes[itr_heroes].Unit_Index].type].Abilities_HI & 0x2000 /* Ab_Noble */) != 0)
+                if(HERO_NOBLE(itr_players, _UNITS[_players[itr_players].Heroes[itr_heroes].unit_idx].type))
                 {
                     gold_incomes[itr_players] += 10;
                 }
@@ -1563,10 +1846,6 @@ void Update_Players_Gold_Reserve(void)
             _players[itr_players].gold_reserve = 0;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Players_Gold_Reserve()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1740,7 +2019,7 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
         {
             food_upkeep--;
 
-            UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+            UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
 
             if(troop_count > 0)
             {
@@ -1809,7 +2088,7 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
             {
                 gold_upkeep -= unit_gold_upkeep;
 
-                UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+                UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
 
                 if(troop_count > 0)
                 {
@@ -1909,19 +2188,19 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
 // drake178: WIZ_DisbandSummons()
 int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 {
-    int16_t troops[9];
+    int16_t troops[MAX_STACK];
     int16_t Channeler_Divisor;
     int16_t itr_troops;
     int16_t troop_count;
     int16_t itr_units;  // _SI_
 
-    if(_players[player_idx].channeler <= 0)
+    if(_players[player_idx].channeler > 0)
     {
-        Channeler_Divisor = 1;
+        Channeler_Divisor = 2;
     }
     else
     {
-        Channeler_Divisor = 2;
+        Channeler_Divisor = 1;
     }
 
     for(itr_units = (_units - 1); ((itr_units > -1) && (_players[player_idx].mana_reserve < mana_upkeep)); itr_units--)
@@ -1934,7 +2213,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
             
             mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
 
-            UNIT_GetDependants(itr_units, &troop_count, &troops[0]);
+            UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
 
             if(troop_count > 0)
             {
@@ -2023,7 +2302,6 @@ void CTY_ProgressTurn(void)
             {
                 if((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
                 {
-                    // TODO  String_Copy_Far(&MSG_CityLost_Names[(MSG_CityLost_Count], _CITIES[itr].name);
                     strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr].name);
                     MSG_CityLost_Count++;
                 }
@@ -2111,12 +2389,7 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
 {
     int16_t heroes_spell_casting_skill_points;
     int16_t half_hero_spell_casting_skill_points;
-
     int16_t itr_heroes;  // _DI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
-#endif
 
     half_hero_spell_casting_skill_points = 0;
     heroes_spell_casting_skill_points = 0;
@@ -2124,68 +2397,168 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
         if(
-            (_players[player_idx].Heroes[itr_heroes].Unit_Index > -1) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wx == _FORTRESSES[player_idx].wx) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wy == _FORTRESSES[player_idx].wy) &&
-            (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].wp == _FORTRESSES[player_idx].wp)
+            (_players[player_idx].Heroes[itr_heroes].unit_idx > -1) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].wx == _FORTRESSES[player_idx].wx) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].wy == _FORTRESSES[player_idx].wy) &&
+            (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].wp == _FORTRESSES[player_idx].wp)
         )
         {
-            UNIT_Create_BURecord(_players[player_idx].Heroes[itr_heroes].Unit_Index, global_strategic_unit);
+            Load_Battle_Unit(_players[player_idx].Heroes[itr_heroes].unit_idx, global_battle_unit);
 
-            half_hero_spell_casting_skill_points = (global_strategic_unit->mana_max / 2);
+            half_hero_spell_casting_skill_points = (global_battle_unit->mana_max / 2);
 
             heroes_spell_casting_skill_points += half_hero_spell_casting_skill_points;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Hero_Casting_Skill()\n", __FILE__, __LINE__);
-#endif
 
     return heroes_spell_casting_skill_points;
 }
 
 
 // WZD o140p18
-// drake178: N/A
 // IDK_SplCst_SplSkl_sC5AB1()
 
 // WZD o140p19
-// drake178: EVNT_RandomOffers()
 // EVNT_RandomOffers()
 
 // WZD o140p20
-// drake178: WIZ_ResearchProgress()
 // WIZ_ResearchProgress()
 
 // WZD o140p21
-// drake178: WIZ_LearnSpell()
-// WIZ_LearnSpell()
+/*
+    WIP: needs GAME_LearnSpellAnim() and AI_Research_Picker()
+
+handles researched spell, traded/gifted spell, treasure spell, and conquest spell
+
+*/
+void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research)
+{
+    int16_t Candidate_Count;
+    int16_t Was_Research_Target;
+    int16_t InRealm_Index;
+    int16_t Spell_Realm;
+    int16_t itr;  // _DI_
+
+    Was_Research_Target = ST_FALSE;
+
+    if(_players[player_idx].SoM_RC > spell_data_table[spell_idx].research_cost)
+    {
+        _players[player_idx].SoM_RC = spell_data_table[spell_idx].research_cost;
+    }
+    else
+    {
+        _players[player_idx].SoM_RC = 0;
+    }
+
+    Spell_Realm = ((spell_idx - 1) / 40);
+
+    InRealm_Index = ((spell_idx - 1) % 40);
+
+    _players[player_idx].Spells_Known[((Spell_Realm * 40) + InRealm_Index)] = 2;  /* S_Known */
+
+    if(_players[player_idx].research_spell_idx == spell_idx)
+    {
+        Was_Research_Target = ST_TRUE;
+
+        for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+        {
+            if(_players[player_idx].research_spells[itr] == _players[player_idx].research_spell_idx)
+            {
+                Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
+                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; already done above ?
+            }
+        }
+
+        Candidate_Count = WIZ_RefreshResearch__STUB(player_idx);
+
+        _players[player_idx].Research_Left = 0;
+
+        if(Candidate_Count == 0)
+        {
+            _players[player_idx].research_spell_idx = -1; /* No_spell */
+        }
+        else
+        {
+            _players[player_idx].research_spell_idx = -(_players[player_idx].research_spell_idx);
+        }
+    }
+    else
+    {
+        // BUG  ¿ refactor or this just shouldn't being doing the same as above ?
+        for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+        {
+            if(_players[player_idx].research_spells[itr] == _players[player_idx].research_spell_idx)
+            {
+                Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
+                _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; this is already done by the above function ?
+                WIZ_RefreshResearch__STUB(player_idx);
+            }
+        }
+    }
+
+
+    if(
+        (player_idx == HUMAN_PLAYER_IDX)
+        &&
+        (New_Research == ST_TRUE)
+    )
+    {
+
+        // ; displays the spell learning animations and, if new
+        // ; research is enabled, flips the apprentice book to the
+        // ; pages with the research candidates afterwards
+        // TODO  GAME_LearnSpellAnim(spell_idx, Was_Research_Target);
+
+        if(Was_Research_Target == ST_FALSE)
+        {
+            // TODO  SND_Silence();
+            // TODO  SND_PlayBkgrndTrack();
+        }
+    }
+    else if(
+        (Was_Research_Target == ST_TRUE)
+        &&
+        (player_idx == HUMAN_PLAYER_IDX)
+    )
+    {
+        // ; selects the spell to research from the wizard's list
+        // ; of candidates using a weighted random roll,
+        // ; prioritizing combat spells in research groups from
+        // ; which the player does not yet have a known spell
+        // ; contains multipe BUGs that prevent research-related
+        // ; profile traits from properly affecting the outcome
+        // TODO  AI_Research_Picker(player_idx);
+
+        if(_players[player_idx].research_spell_idx == 213)  /* Spell_Of_Mastery */
+        {
+            _players[player_idx].Research_Left = _players[player_idx].SoM_RC;
+        }
+        else
+        {
+            _players[player_idx].Research_Left = spell_data_table[spell_idx].research_cost;
+        }
+    }
+
+}
+
 
 // WZD o140p22
-// drake178: G_UNIT_OvlHealing()
 // G_UNIT_OvlHealing()
 
 // WZD o140p23
-// drake178: N/A
 // IDK_Unit_Heal_sC6572()
 
 // WZD o140p24
-// drake178: WIZ_ProcessGlobals()
 // WIZ_ProcessGlobals()
 
 // WZD o140p25
-// drake178: N/A
 // IDK_Unit_XP_sC6BCF()
 
 // WZD o140p26
-// drake178: ¿ ?
 // Cool_Off_Volcanoes()
 
 // WZD o140p27
-// drake178: AI_CullTheWeak()
 // AI_CullTheWeak()
 
 // WZD o140p28
-// drake178: AI_GetAvgUnitCosts()
 // AI_GetAvgUnitCosts()

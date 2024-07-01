@@ -12,7 +12,7 @@
 
 // WZD dseg:CA78                                                 ¿ BEGIN: Cityscape - ?
 
-// WZD dseg:CA78 00 00                                           
+// WZD dseg:CA78
 int16_t IDK_animate_new_building_idx;
 
 // WZD dseg:CA7A
@@ -25,10 +25,10 @@ SAMB_ptr IDK_Cityscape_BldgStruc;
 int16_t cityscape_background_frame;
 
 // WZD dseg:CA84
-int16_t IDK_Cityscape_IsSummonCity;
+int16_t m_cityscape_summon_city;
 
 // WZD dseg:CA86
-int16_t IDK_Cityscape_IsFortressCity;
+int16_t m_cityscape_fortress_city;
 
 
 // WZD dseg:CA88
@@ -98,7 +98,7 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
     Mark_Block(_screen_seg);
     cityscape_pict_seg = Allocate_Next_Block(_screen_seg, 1250);  // 20,000 bytes
-    G_TBL_CityscapeBldngs = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);  // 2,816 bytes  ¿ 16 + 100 * 14 * 2 ?
+    cityscape_bldgs = (struct s_BLDG *)Allocate_Next_Block(_screen_seg, 176);  // 2,816 bytes  ¿ 16 + 100 * 14 * 2 ?
     IDK_Cityscape_BldgStruc = Allocate_Next_Block(_screen_seg, 44);  // 704 bytes ¿ sizeof(header) + 26 x 26 ?
 
     city_wx = _CITIES[city_idx].wx;
@@ -107,28 +107,20 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
     
     Set_Random_Seed(((city_wx * city_wy) + 10389));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
-    IDK_Cityscape_IsFortressCity = ST_FALSE;
-    IDK_Cityscape_IsSummonCity = ST_FALSE;
+    m_cityscape_fortress_city = ST_FALSE;
+    m_cityscape_summon_city = ST_FALSE;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
-            if(
-                (_FORTRESSES[itr_players].wx == city_wx) &&
-                (_FORTRESSES[itr_players].wy == city_wy) &&
-                (_FORTRESSES[itr_players].wp == city_wp)
-            )
+            if((_FORTRESSES[itr_players].wx == city_wx) && (_FORTRESSES[itr_players].wy == city_wy) && (_FORTRESSES[itr_players].wp == city_wp))
             {
-                IDK_Cityscape_IsFortressCity = ST_TRUE;
+                m_cityscape_fortress_city = ST_TRUE;
             }
-            if(
-                (_CITIES[city_idx].wx == _players[itr_players].summon_wx) &&
-                (_CITIES[city_idx].wy == _players[itr_players].summon_wy) &&
-                (_CITIES[city_idx].wp == _players[itr_players].summon_wp)
-            )
+            if((_CITIES[city_idx].wx == _players[itr_players].summon_wx) && (_CITIES[city_idx].wy == _players[itr_players].summon_wy) && (_CITIES[city_idx].wp == _players[itr_players].summon_wp))
             {
-                IDK_Cityscape_IsSummonCity = ST_TRUE;
+                m_cityscape_summon_city = ST_TRUE;
             }
         }
     }

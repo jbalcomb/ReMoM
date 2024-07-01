@@ -22,19 +22,25 @@ extern "C" {
 */
 
 // WZD o60p01
+void Delete_Dead_Units(void);
+
 // WZD o60p02
+// sub_52A4F()
+
 // WZD o60p03
+// sub_52B04()
 
 // WZD o60p04
 void Next_Turn_Proc(void);
 
 // WZD o60p05
+// AI_ResetUnitMoves()
 
 // WZD o60p06
 void Update_Units_MvsSts(void);
 
 // WZD o60p07
-// void TILE_VisibilityUpdt(void);
+void TILE_VisibilityUpdt(void);
 
 
 
@@ -47,7 +53,7 @@ void Update_Units_MvsSts(void);
 void Next_Turn_Calc(void);
 
 // WZD o119p02
-// CTY_CheckMinFarmers()
+void All_Colony_Calculations(void);
 
 // WZD o119p03
 // sub_9EF06()
@@ -83,19 +89,17 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx);
 // WIZ_DeadHeroCount()
 
 // WZD o121p07
-// drake178: WIZ_GetRandomHero()
-// WIZ_GetRandomHero()
+int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_type_class);
 
 // WZD o121p08
-int16_t UNIT_GetHalfMoves_WIP(int16_t unit_idx);
+int16_t Unit_Moves2(int16_t unit_idx);
 
 // WZD o121p09
 // drake178: UNIT_IsNormalUnit()
 // UNIT_IsNormalUnit()
 
 // WZD o121p10
-// drake178: ¿ ?
-// IDK_MagicScreen_PWR()
+void Cheat_Power(void);
 
 // WZD o121p11
 // drake178: AI_GetThreat_UType()
@@ -111,7 +115,7 @@ void Patch_Units_Upkeep_And_Sound(void);
 
 // WZD o121p14
 // drake178: CTY_RemoveMessages()
-// CTY_RemoveMessages()
+void City_Delete_Building_Complete_Messages(int16_t city_idx);
 
 
 
@@ -120,116 +124,87 @@ void Patch_Units_Upkeep_And_Sound(void);
 */
 
 // WZD o140p01
-// drake178: CTY_RecalculateAll()
 void All_City_Calculations(void);
 
 // WZD o140p02
-// drake178: MSG_Clear()
 void MSG_Clear(void);
 
 // WZD o140p03
-// drake178: CTY_ProdProgress()
 void CTY_ProdProgress(int16_t city_idx);
 
 // WZD o140p04
-// drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void);
 
 // WZD o140p05
-// drake178: WIZ_PowerIncomes()
-// OON XREF Next_Turn_Calc()
 void Players_Apply_Magic_Power(void);
 
 // WZD o140p06
-// drake178: WIZ_ProcessUpkeep()
 void Players_Apply_Upkeeps__WIP(void);
 
 // WZD o140p07
-// drake178: WIZ_MatchFoodUpkeep()
 void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep);
 
 // WZD o140p08
-// drake178: WIZ_MatchGoldUpkeep()
 int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep);
 
 // WZD o140p09
-// drake178: WIZ_MatchManaUpkeep()
 int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p10
-// drake178: WIZ_DisbandSummons()
 int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p11
-// drake178: WIZ_RemoveCEs()
 // WIZ_RemoveCEs()
 
 // WZD o140p12
-// drake178: WIZ_RemoveGEs()
 // WIZ_RemoveGEs()
 
 // WZD o140p13
-// drake178: WIZ_RemoveUEs()
 // WIZ_RemoveUEs()
 
 // WZD o140p14
-// drake178: N/A
 // sub_C538E()
 
 // WZD o140p15
-// drake178: N/A
 // sub_C53FA()
 
 // WZD o140p16
-// drake178: CTY_ProgressTurn()
 void CTY_ProgressTurn(void);
 
 // WZD o140p17
-// drake178: WIZ_SkillFromHeroes()
 int16_t Player_Hero_Casting_Skill(int16_t player_idx);
 
 // WZD o140p18
-// drake178: N/A
 // IDK_SplCst_SplSkl_sC5AB1()
 
 // WZD o140p19
-// drake178: EVNT_RandomOffers()
 // EVNT_RandomOffers()
 
 // WZD o140p20
-// drake178: WIZ_ResearchProgress()
 // WIZ_ResearchProgress()
 
 // WZD o140p21
-// drake178: WIZ_LearnSpell()
-// WIZ_LearnSpell()
+void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research);
 
 // WZD o140p22
-// drake178: G_UNIT_OvlHealing()
 // G_UNIT_OvlHealing()
 
 // WZD o140p23
-// drake178: N/A
 // IDK_Unit_Heal_sC6572()
 
 // WZD o140p24
-// drake178: WIZ_ProcessGlobals()
 // WIZ_ProcessGlobals()
 
 // WZD o140p25
-// drake178: N/A
 // IDK_Unit_XP_sC6BCF()
 
 // WZD o140p26
-// drake178: ¿ ?
 // Cool_Off_Volcanoes()
 
 // WZD o140p27
 // drake178: AI_CullTheWeak()
-// AI_CullTheWeak()
 
 // WZD o140p28
-// drake178: AI_GetAvgUnitCosts()
 // AI_GetAvgUnitCosts()
 
 

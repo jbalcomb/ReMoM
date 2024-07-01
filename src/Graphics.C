@@ -153,13 +153,23 @@ void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 // drake178: VGA_RectangleFX()
 // MoO2  Module: graphics  Gradient_Fill()
 /*
+MoO2  void Gradient_Fill(int x1, int y1, int x2, int y2, int fill_type, int * color_array, int color_count, int ripple_count, int seed)
+
+MoO1  fill_type { 1, 3, 7, 13,     15     }
+MoM   fill_type { 1, 3, 7,     14, 15, 16 }
+MoO2  fill_type { 1, 3,            15, 16 }
+
+3: "darken"
+
+Tint_Fill()
+Gray_Scale_Fill()
+Fill()
+
+*/
+/*
     fill_type 3 and 15 are the same except 3 always uses color block 0 (grayscale?)
 
 */
-// MoO2  void Gradient_Fill(int x1, int y1, int x2, int y2, int fill_type, int * color_array, int color_count, int ripple_count, int seed)
-// MoO2  fill_type {1,3,     15,16}
-// MoM   fill_type {1,3,7,14,15,16}
-// 3: "darken"
 void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_type, int16_t remap_block, int16_t Slope, int16_t Scale, int16_t Seed)
 {
     switch(fill_type)
@@ -167,7 +177,6 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
         case 0:
         {
             DLOG("switch(fill_type)  case 0:");
-
         } break;
         case 1:
         {

@@ -18,6 +18,8 @@ extern "C" {
 
     void MWA_Exit_With_Message(char* string);
 
+    void MWA_Set_Mouse_Position(int16_t x, int16_t y);
+
 #ifdef __cplusplus
 }
 #endif

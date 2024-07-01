@@ -433,8 +433,7 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 
     length = width * height;
     
-    itr_length = 0;
-    while(itr_length++ < length)
+    for(itr_length = 0; itr_length < length; itr_length++)
     {
         *(pict_seg + 16 + itr_length) = ST_TRANSPARENT;  /* Color-Map Index 0 */
     }
@@ -600,109 +599,123 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
     uint16_t frame_offset;
     byte_ptr frame_data;
 
-    if( (x <= screen_window_x2) && (y <= screen_window_y2) )
+    if((x > screen_window_x2) || (y > screen_window_y2))
     {
-        // _fmemcpy(animation_header, 0, 0, picture, 16)
-        memcpy(&animation_header, picture, 16);
-
-        x2 = x + animation_header.width - 1;
-
-        if(x2 >= screen_window_x1)
-        {
-            
-            y2 = y + animation_header.height - 1;
-
-            if(y2 >= screen_window_y1)
-            {
-
-                if(x < screen_window_x1)
-                {
-                    skip_x = screen_window_x1 - x;
-                    start_x = screen_window_x1;
-                }
-                else
-                {
-                    skip_x = 0;
-                    start_x = x;
-                }
-
-                if(y < screen_window_y1)
-                {
-                    skip_y = screen_window_y1 - y;
-                    start_y = screen_window_y1;
-                }
-                else
-                {
-                    skip_y = 0;
-                    start_y = y;
-                }
-
-                if(x2 >= screen_window_x2)
-                {
-                    actual_width = screen_window_x2 - start_x + 1;
-                }
-                else
-                {
-                    actual_width = x2 - start_x + 1;
-                }
-
-                if(y2 >= screen_window_y2)
-                {
-                    actual_height = screen_window_y2 - start_y + 1;
-                }
-                else
-                {
-                    actual_height = y2 - start_y + 1;
-                }
-
-                current_frame = animation_header.current_frame;
-                animation_header.current_frame += 1;
-
-                if(animation_header.current_frame < animation_header.frame_count)
-                {
-                    FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
-                }
-                else
-                {
-                    FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
-                }
+        return;
+    }
+    // // _fmemcpy(animation_header, 0, 0, picture, 16)
+    // memcpy(&animation_header, picture, 16);
+    // x2 = x + animation_header.width - 1;
+    // if (x2 < screen_window_x1)
+    // {
+    //     return;
+    // }
+    // y2 = y + animation_header.height - 1;
+    // if(y2 < screen_window_y1)
+    // {
+    //    return;
+    // }
 
 
-                // if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
-                if(animation_header.palette_header_offset != 0)
-                {
-                    // DLOG("((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))");
-                    FLIC_Load_Palette(picture, current_frame);
-                }
+    // _fmemcpy(animation_header, 0, 0, picture, 16)
+    memcpy(&animation_header, picture, 16);
+
+    x2 = x + animation_header.width - 1;
+
+    if(x2 < screen_window_x1)
+    {
+        return;
+    }
+
+    y2 = y + animation_header.height - 1;
+
+    if(y2 < screen_window_y1)
+    {
+        return;
+    }
+
+    if(x < screen_window_x1)
+    {
+        skip_x = screen_window_x1 - x;
+        start_x = screen_window_x1;
+    }
+    else
+    {
+        skip_x = 0;
+        start_x = x;
+    }
+
+    if(y < screen_window_y1)
+    {
+        skip_y = screen_window_y1 - y;
+        start_y = screen_window_y1;
+    }
+    else
+    {
+        skip_y = 0;
+        start_y = y;
+    }
+
+    if(x2 >= screen_window_x2)
+    {
+        actual_width = screen_window_x2 - start_x + 1;
+    }
+    else
+    {
+        actual_width = x2 - start_x + 1;
+    }
+
+    if(y2 >= screen_window_y2)
+    {
+        actual_height = screen_window_y2 - start_y + 1;
+    }
+    else
+    {
+        actual_height = y2 - start_y + 1;
+    }
+
+    current_frame = animation_header.current_frame;
+    animation_header.current_frame += 1;
+
+    if(animation_header.current_frame < animation_header.frame_count)
+    {
+        FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
+    }
+    else
+    {
+        FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
+    }
+
+
+    // if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
+    if(animation_header.palette_header_offset != 0)
+    {
+        FLIC_Load_Palette(picture, current_frame);
+    }
 
 
 
-                /*
-                    Test EMM_Handle_Number
-                        VGA_DrawPartEmsImg()
-                */
+    /*
+        Test EMM_Handle_Number
+            VGA_DrawPartEmsImg()
+    */
 
 
 
-                frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
-                frame_data = picture + (frame_offset) + 1;
+    frame_offset = FLIC_GET_FRAME_OFFSET(picture, current_frame);
+    frame_data = picture + frame_offset + 1;
 
-                remap_flag = FLIC_GET_REMAP_FLAG(picture);
+    remap_flag = FLIC_GET_REMAP_FLAG(picture);
 
-                if(remap_flag == ST_FALSE)
-                {
-                    // TODO  VGA_DrawPartialImage(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
-                    Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
-                }
-                else
-                {
-                    // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
-                    // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
-                    Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
-                }
-
-            }
-        }
+    if(remap_flag == ST_FALSE)
+    {
+        Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+    }
+    else
+    {
+        // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
+        // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+        Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
     }
 
 }
@@ -908,72 +921,74 @@ void Draw_Picture_Windowed(int16_t x1, int16_t y1, byte_ptr pict_seg)
     int16_t buffer_add;
     int16_t skip_add;
 
-    // Test - completely off on the right
-    if( !(x1 > screen_window_x2) )
+    // Test - completely off on the right or completely off on the bottom
+    if((x1 > screen_window_x2) || (y1 > screen_window_y2))
     {
-        // Test - completely off on the bottom
-        if( !(y1 > screen_window_y2) )
-        {
-            width = GET_2B_OFS(pict_seg, 0);
-            height = GET_2B_OFS(pict_seg, 2);
-            x2 = x1 + width - 1;
-            // Test - completely off on the left
-            if( !(x2 < screen_window_x1) )
-            {
-                y2 = y1 + height - 1;
-                // Test - completely off on the top
-                if( !(y2 < screen_window_y1) )
-                {
-                    // Test - partially off on the left
-                    if(x1 >= screen_window_x1)
-                    {
-                        skip_x = 0;
-                        start_x = x1;
-                    }
-                    else
-                    {
-                        skip_x = screen_window_x1 - x1;
-                        start_x = screen_window_x1;
-                    }
-                    // Test - partially off on the top
-                    if(y1 >= screen_window_y1)
-                    {
-                        skip_y = 0;
-                        start_y = y1;
-                    }
-                    else
-                    {
-                        skip_y = screen_window_y1 - y1;
-                        start_y = screen_window_y1;
-                    }
-                    // Test - partially off on the right
-                    if(x2 < screen_window_x2)
-                    {
-                        actual_width = x2 - start_x + 1;
-                    }
-                    else
-                    {
-                        actual_width = screen_window_x2 - start_x + 1;
-                    }
-                    // Test - partially off on the bottom
-                    if(y2 < screen_window_y2)
-                    {
-                        actual_height = y2 - start_y + 1;
-                    }
-                    else
-                    {
-                        actual_height = screen_window_y2 - start_y + 1;
-                    }
-
-                    buffer_add = SZ_FLIC_HDR + skip_y + (skip_x * height);
-                    skip_add = height - actual_height;
-
-                    Draw_Picture_ASM(start_x, start_y, buffer_add, pict_seg, actual_width, actual_height, skip_add);
-
-                }
-            }
-        }
+        return;
     }
+
+    width = GET_2B_OFS(pict_seg, 0);
+    height = GET_2B_OFS(pict_seg, 2);
+
+    x2 = x1 + width - 1;
+    // Test - completely off on the left
+    if(x2 < screen_window_x1)
+    {
+        return;
+    }
+    
+    y2 = y1 + height - 1;
+    // Test - completely off on the top
+    if(y2 < screen_window_y1)
+    {
+        return;
+    }
+
+    // Test - partially off on the left
+    if(x1 >= screen_window_x1)
+    {
+        skip_x = 0;
+        start_x = x1;
+    }
+    else
+    {
+        skip_x = screen_window_x1 - x1;
+        start_x = screen_window_x1;
+    }
+    // Test - partially off on the top
+    if(y1 >= screen_window_y1)
+    {
+        skip_y = 0;
+        start_y = y1;
+    }
+    else
+    {
+        skip_y = screen_window_y1 - y1;
+        start_y = screen_window_y1;
+    }
+    // Test - partially off on the right
+    if(x2 < screen_window_x2)
+    {
+        actual_width = x2 - start_x + 1;
+    }
+    else
+    {
+        actual_width = screen_window_x2 - start_x + 1;
+    }
+    // Test - partially off on the bottom
+    if(y2 < screen_window_y2)
+    {
+        actual_height = y2 - start_y + 1;
+    }
+    else
+    {
+        actual_height = screen_window_y2 - start_y + 1;
+    }
+
+    buffer_add = SZ_FLIC_HDR + skip_y + (skip_x * height);
+    skip_add = height - actual_height;
+
+    Draw_Picture_ASM(start_x, start_y, buffer_add, pict_seg, actual_width, actual_height, skip_add);
 
 }
 
@@ -995,6 +1010,13 @@ Draw()
 
 So, ...
     ¿ ~ Clipped Copy Bitmap Sprite ?
+
+Draw_Item_With_Name()
+    |-> Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea)
+Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_icon_pict_seg)
+    |-> Draw_Picture_To_Bitmap(item_icons_seg[_ITEMS[item_idx].icon_idx], GfxBuf_2400B);
+    |-> Create_Picture(19, 19, item_icon_pict_seg);
+    |-> Clipped_Copy_Bitmap(2, 2, item_icon_pict_seg, GfxBuf_2400B);
 
 */
 void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg)
@@ -1019,78 +1041,78 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     dst_width = FLIC_GET_WIDTH(dst_pict_seg);
     dst_height = FLIC_GET_HEIGHT(dst_pict_seg);
 
-    if(
-        ((dst_width - 1) > x) &&
-        ((dst_height - 1) > y)
-    )
+    if(((dst_width - 1) < x) || ((dst_height - 1) < y))
     {
-        x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
-        if(x2 > 0)
-        {
-            y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
-            if(y2 > 0)
-            {
-                if(x < 0)
-                {
-                    skip_x = (-x);
-                    cx1 = 0;
-                }
-                else
-                {
-                    skip_x = 0;
-                    cx1 = x;
-                }
-                if(y < 0)
-                {
-                    skip_y = (-y);
-                    cy1 = 0;
-                }
-                else
-                {
-                    skip_y = 0;
-                    cy1 = y;
-                }
-
-                if((dst_width - 1) > x2)
-                {
-                    cwidth = (x2 - cx1 + 1);
-                }
-                else
-                {
-                    cwidth = (dst_width - cx1);
-                }
-                if(cwidth > dst_width)
-                {
-                    cwidth = dst_width;
-                }
-
-                if((dst_height - 1) > y2)
-                {
-                    cheight = (y2 - cy1 + 1);
-                }
-                else
-                {
-                    cheight = (dst_height - cy1);
-                }
-                if(cheight > dst_height)
-                {
-                    cheight = dst_height;
-                }
-
-                dst_ofst = (sizeof(struct s_FLIC_HDR) + ((cx1 * dst_height) + cy1));
-                dst_skip_y = (dst_height - cheight);
-
-                src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(src_pict_seg)) + skip_y);
-                src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
-
-                dst = (dst_pict_seg + dst_ofst);
-                src = (src_pict_seg + src_ofst);
-
-                Color_Stream_Copy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
-
-            }
-        }
+        return;
     }
+    x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
+    if(x2 < 0)
+    {
+        return;
+    }
+    y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
+    if(y2 < 0)
+    {
+        return;
+    }
+
+    if(x < 0)
+    {
+        skip_x = (-x);
+        cx1 = 0;
+    }
+    else
+    {
+        skip_x = 0;
+        cx1 = x;
+    }
+    if(y < 0)
+    {
+        skip_y = (-y);
+        cy1 = 0;
+    }
+    else
+    {
+        skip_y = 0;
+        cy1 = y;
+    }
+
+    if((dst_width - 1) > x2)
+    {
+        cwidth = (x2 - cx1 + 1);
+    }
+    else
+    {
+        cwidth = (dst_width - cx1);
+    }
+    if(cwidth > dst_width)
+    {
+        cwidth = dst_width;
+    }
+
+    if((dst_height - 1) > y2)
+    {
+        cheight = (y2 - cy1 + 1);
+    }
+    else
+    {
+        cheight = (dst_height - cy1);
+    }
+    if(cheight > dst_height)
+    {
+        cheight = dst_height;
+    }
+
+    dst_ofst = (sizeof(struct s_FLIC_HDR) + ((cx1 * dst_height) + cy1));
+    dst_skip_y = (dst_height - cheight);
+
+    src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(src_pict_seg)) + skip_y);
+    src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
+
+    dst = (dst_pict_seg + dst_ofst);
+    src = (src_pict_seg + src_ofst);
+
+    Color_Stream_Copy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
 
 }
 
@@ -1169,7 +1191,112 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, SAMB_pt
 // UU_LBX_IMG_ExtGrayScale()
 
 // WZD s30p34
-// LBX_IMG_Resize()
+// drake178: LBX_IMG_Resize()
+// STARMAP.EXE  s39p22  gfx_aux_scale()
+// 1oom: C:\STU\developp\1oom\src\gfxaux.c  void gfx_aux_scale(struct gfx_aux_s *aux, int xscale, int yscale)
+// MoO2  Module: bitmap  Scale_Bitmap()
+/*
+MoO2  Module: bitmap
+    function (0 bytes) Scale_Bitmap
+    Address: 01:0012E374
+        Num params: 4
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            pointer (4 bytes) target_bitmap
+            pointer (4 bytes) source_bitmap
+            signed integer (2 bytes) scale_x
+            signed integer (2 bytes) scale_y
+            signed integer (4 bytes) initial_x_scale
+            signed integer (4 bytes) initial_y_scale
+            signed integer (4 bytes) pict_x
+            signed integer (4 bytes) pict_y
+            signed integer (4 bytes) new_x
+            signed integer (4 bytes) new_y
+            signed integer (2 bytes) width
+            signed integer (2 bytes) height
+            pointer (4 bytes) frame_offset
+            pointer (4 bytes) frame_offset_table
+            pointer (4 bytes) source_start
+            pointer (4 bytes) target_start
+*/
+/*
+
+*/
+void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
+{
+    int16_t height;
+    int16_t width;
+    int16_t initial_y_scale;
+    int16_t initial_x_scale;
+
+    width = FLIC_GET_WIDTH(bitmap);
+    height = FLIC_GET_HEIGHT(bitmap);
+
+    if(
+        (scale_x <= 0) ||
+        (scale_y <= 0) ||
+        (((width  * scale_x) / 100) < 1) ||
+        (((height * scale_y) / 100) < 1)
+    )
+    {
+        Create_Picture(width, height, bitmap);
+    }
+    else
+    {
+
+        initial_x_scale = scale_x;
+        initial_y_scale = scale_y;
+
+        if(
+            (scale_x < 100) &&
+            (scale_y > 100)
+        )
+        {
+            scale_x = 100;
+        }
+
+        if(
+            (scale_x > 100) &&
+            (scale_y < 100)
+        )
+        {
+            scale_y = 100;
+        }
+
+        if(
+            (scale_x > 100) ||
+            (scale_y > 100)
+        )
+        {
+            Enlarge_Bitmap(bitmap, scale_x, scale_y);
+        }
+
+        if(initial_x_scale > 100)
+        {
+            initial_x_scale = 100;
+        }
+
+        if(initial_y_scale > 100)
+        {
+            initial_y_scale = 100;
+        }
+
+        if(
+            (scale_x < 100) ||
+            (scale_y < 100)
+        )
+        {
+            Reduce_Bitmap(bitmap, scale_x, scale_y);
+        }
+
+    }
+
+}
+
 
 // WZD s30p35
 // VGA_FILEH_LoadFirst()
@@ -1444,7 +1571,7 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
 
-    pict_sgmt = (uint8_t *)(pict_seg + 16);  // + sizeof(header)
+    pict_sgmt = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
     pict_ofst = 0;
 
     color_list_idx = 0;
@@ -1541,17 +1668,19 @@ void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, in
     WIZARDS.EXE  seg031
 */
 
-// WZD seg031:000A 00 00                                           
+// WZD seg031:000A
 int16_t CS031_skip_y;
-// WZD seg031:000C 00 00                                           CS031_UU_skip_x dw 0
-// WZD seg031:000E 00 00                                           
+// WZD seg031:000C
+// CS031_UU_skip_x dw 0
+// WZD seg031:000E
 int16_t CS031_height;
-// WZD seg031:0010 00 00                                           
+// WZD seg031:0010
 int16_t CS031_width;
 // WZD seg031:0012
 
 // WZD s31p01
-// MoO2  Clipped_Draw_Animated_Sprite()
+// MoO2  Module: animate  Clipped_Draw_Animated_Sprite()
+// 1oom  lbxgfx.c  lbxgfx_draw_pixels_offs_fmt0()
 void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, int16_t skip_x, int16_t skip_y, SAMB_ptr frame_data)
 {
     unsigned char * bbuff_pos;
@@ -1560,45 +1689,38 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
 
     unsigned char packet_op;
     unsigned char packet_byte_count;
-    unsigned char sequence_byte_count;
-    unsigned char delta_byte_count;
+
+    unsigned char data_count;  // sequence_byte_count
+    unsigned char skip_count;  // delta_byte_count
     unsigned char itr_op_repeat;
 
-    int16_t tmp_skip_y;
-    int16_t tmp_height;
-
-    assert(skip_x == 0);
-    assert(skip_y == 0);
+    int16_t line_count;  // height
+    int16_t line_skip_count;  // skip_y ... skip_count
 
     CS031_skip_y = skip_y;
     CS031_width  = width;   // actual_width;
     CS031_height = height;  // actual_height;
 
 
-//     if(skip_x != 0)
-//     {
-//         packet_op = *frame_data++;
-//         packet_byte_count = *frame_data++;
-//         if(packet_op == 0xFF)  /* Type: skip */
-//         {
-//             frame_data--;
-//         }
-//         else
-//         {
-//             frame_data += packet_byte_count;
-//         }
-//     }
-
-    // if we have more pixels to draw than the height allows
-    // we need to stop drawing, where we should, but also skip the rest of the frame data bytes for this column
-
-
+    if(skip_x != 0)
+    {
+        packet_op = *frame_data++;
+        packet_byte_count = *frame_data++;
+        if(packet_op == 0xFF)  /* Type: skip */
+        {
+            frame_data--;
+        }
+        else
+        {
+            frame_data += packet_byte_count;
+        }
+    }
 
     bbuff_pos = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
 
     while (width--)
     {
-        tmp_height = CS031_height;
+        // line_count = CS031_height;
         bbuff = bbuff_pos++;
 
         packet_op = *frame_data++;
@@ -1612,75 +1734,421 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
 
         if(packet_op == 0x80)  /* Type: decode */
         {
-
-            do {
-                sequence_byte_count = *frame_data++;
-                delta_byte_count = *frame_data++;
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                tmp_height -= delta_byte_count;
-                packet_byte_count -= sequence_byte_count + 2;
-                // while(sequence_byte_count--)
-                while(tmp_height && sequence_byte_count)
+            uint8_t len_compr;
+            /* 10e97 */
+            line_skip_count = skip_y;
+        loc_10ea2:
+            if(line_skip_count != 0)
+            {
+                skip_count = *(frame_data + 1);
+                line_skip_count -= skip_count;
+                if (line_skip_count > 0)
                 {
-                    data_byte = *frame_data++;  // this unsigned char is the op-repeat or just the unsigned char to copy
-                    if(data_byte >= 224)  /* op: repeat */
-                    {
-                        itr_op_repeat = (data_byte - 224) + 1;
-                        sequence_byte_count--;
+                    data_count = *frame_data++;
+                    frame_data++;
+                    packet_byte_count -= data_count + 2;
+                    /* loc_10eb6: */
+                    do {
                         data_byte = *frame_data++;
-                        while(tmp_height && itr_op_repeat)
+                        if (data_byte <= 223)
                         {
-                            tmp_height--;
+                            if (--line_skip_count >= 0)
+                            {
+                                /* continue; */
+                            }
+                            else
+                            {
+                                /* goto 10ec7 */
+                                data_count += line_skip_count;  // HERE: line_skip_count is negative
+                                line_count = height - 1;
+                                ++data_count;
+                                goto loc_10f38;
+                            }
+                        }
+                        else
+                        {
+                            /* 10ed3 */
+                            frame_data++;
+                            line_skip_count -= (data_byte - 223);
+                            if (line_skip_count >= 0)
+                            {
+                                data_count--;
+                                /* continue; */
+                            }
+                            else {
+                                /* goto loc_10ef6; */
+                                frame_data--;
+                                data_byte = *frame_data++;
+                                data_count--;
+                                len_compr = -(line_skip_count);
+                                line_count = height;
+                                goto loc_10f51;
+                            }
+                        }
+                    } while (--data_count);
+                    if (packet_byte_count >= 1)
+                    {
+                        goto loc_10ea2;
+                    }
+                    else {
+                        goto next_column;
+                    }
+                }
+                else
+                {
+                    /* goto loc_10eea; */
+                    data_count = -(line_skip_count);
+                    line_count = height;
+                    goto loc_10f0f;
+                }
+            }
+            /* loc_10f05: */
+            line_count = height;
+            do {
+                /* loc_10f0a: */
+                skip_count = *(frame_data + 1);
+            loc_10f0f:
+                line_count -= skip_count;
+                bbuff += skip_count * SCREEN_WIDTH;
+                data_count = *frame_data++;
+                frame_data++;
+                packet_byte_count -= data_count + 2;
+                /* loc_10f30: */
+                do {
+                    if (--line_count >= 0)
+                    {
+                        data_byte = *frame_data++;
+                        if (data_byte <= 223)
+                        {
+                        loc_10f38:
                             *bbuff = data_byte;
                             bbuff += SCREEN_WIDTH;
-                            itr_op_repeat--;
+                        }
+                        else
+                        {
+                            len_compr = data_byte - 223;
+                            data_byte = *frame_data++;
+                            data_count--;
+                            line_count++;
+                        loc_10f51:
+                            do {
+                                if (--line_count >= 0)
+                                {
+                                    *bbuff = data_byte;
+                                    bbuff += SCREEN_WIDTH;
+                                }
+                                else
+                                {
+                                    data_count--;
+                                    goto loc_10f7e;
+                                }
+                            } while (--len_compr);
                         }
                     }
-                    else  /* op: copy */
+                    else
                     {
-                        tmp_height--;
-                        *bbuff = data_byte;
-                        bbuff += SCREEN_WIDTH;
+                    loc_10f7e:
+                        frame_data += data_count;
+                        break;
                     }
-                    sequence_byte_count--;
-                }
-                frame_data += sequence_byte_count;
-            } while(packet_byte_count >= 1);
+                } while (--data_count);
+            } while (packet_byte_count >= 1);
         }
+
+/*
+    BEGIN: Copy - Packet Operation
+*/
         if(packet_op == 0x00)  /* Type: copy */
         {
-            // tmp_skip_y = CS031_skip_y;
-            // if(tmp_skip_y == 0)
-            // {
-            //     tmp_skip_y = CS031_height;
-            // }
+            line_skip_count = CS031_skip_y;
 
-            do {
-                sequence_byte_count = *frame_data++;  // size_count - Count of Bytes to Copy
-                delta_byte_count = *frame_data++;  // skip_count
-                bbuff += (delta_byte_count * SCREEN_WIDTH);
-                tmp_height -= delta_byte_count;
-                packet_byte_count -= sequence_byte_count + 2;  // A Packet can have multiples Sequences, so deduct the 2-byte *header* and the size of the Sequence
+        copy_consume_skip_y:
+            if(line_skip_count != 0)
+            {
+                skip_count = *(frame_data + 1);
+                line_skip_count -= skip_count;
 
-                // while(sequence_byte_count--)
-                // {
-                //     *bbuff = *frame_data++;
-                //     bbuff += SCREEN_WIDTH;
-                // }
-                while(tmp_height && sequence_byte_count)
+                if(line_skip_count > 0)
                 {
-                    tmp_height--;
+                    data_count = *frame_data++;
+                    line_skip_count -= data_count;
+
+                    if (line_skip_count < 0)
+                    {
+                        /* copy_sequence_pre3: */
+                        frame_data++;
+                        packet_byte_count -= data_count + 2;
+                        frame_data += line_skip_count;  // negative
+                        frame_data += data_count;
+                        data_count = -(line_skip_count);
+                        line_count = CS031_height;
+                        goto copy_loop_height;
+                    }
+                    else
+                    {
+                        frame_data++;
+                        frame_data += data_count;
+                        packet_byte_count -= data_count + 2;
+                        if (packet_byte_count != 0) { goto copy_consume_skip_y; }
+                        goto next_column;
+                    }
+                }
+                else
+                {
+                    /* copy_sequence_pre2: */
+                    line_skip_count = -(line_skip_count);
+                    line_count = CS031_height;
+                    goto copy_sequence_start_loop;
+                }
+
+            }
+
+            /* copy_sequence_pre1: */
+            line_count = CS031_height;
+            /* copy_sequence_start: */
+            do {
+                line_skip_count = *(frame_data + 1);
+                copy_sequence_start_loop:
+                line_count -= line_skip_count;
+                bbuff += (line_skip_count * SCREEN_WIDTH);
+                data_count = *frame_data++;
+                frame_data++;
+                packet_byte_count -= data_count + 2;
+                copy_loop_height:
+                for (;;)
+                {
+                    line_count--;
+                    if (line_count < 0) { frame_data += data_count; break; }
                     *bbuff = *frame_data++;
                     bbuff += SCREEN_WIDTH;
-                    sequence_byte_count--;
+                    data_count--;
+                    if (data_count == 0) { break; }
                 }
-                frame_data += sequence_byte_count;
+                // if (!((packet_byte_count - 1) < 0)) { goto copy_sequence_start; }
+                // goto next_column;  /* copy_end_loop_height: */
+            } while (packet_byte_count >= 1);
+        }  /* if (packet_op == 0x00)  / * Type: copy * / */
 
-            } while(packet_byte_count >= 1);
+/*
+    END: Copy - Packet Operation
+*/
+
+    next_column:
+        ;
+
+    }  /* while (width--) */
+
+}
+
+// static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int w, int h, int xskip, int yskip, uint8_t* data, uint16_t pitch)
+static void lbxgfx_draw_pixels_offs_fmt0(int x0, int y0, int width, int h, int skip_x, int skip_y, uint8_t* data)
+{
+    uint16_t pitch = 320;
+    uint8_t* p = current_video_page + y0 * pitch + x0;
+    /* FIXME this an unreadable goto mess */
+    // uint8_t* p = hw_video_get_buf() + y0 * pitch + x0;
+    uint8_t* q;
+    uint8_t b, packet_op, packet_byte_count, data_count;
+    int ylen;
+
+    /* skip columns */
+    while (skip_x--) {
+        b = *data++;
+        if (b != 0xff) {
+            b = *data++;
+            data += b;
         }
     }
 
+    while (width--)
+    {
+        q = p++;
+        b = *data++;
+        if (b == 0xff) { /* skip column */
+            continue;
+        }
+
+        packet_op = b;
+        packet_byte_count = *data++;
+        if ((packet_op & 0x80) == 0) /* regular data  unsigned/non-negative*/
+        {
+            ylen = skip_y;  // line_skip_count = skip_y
+        copy_consume_skip_y:
+            if(ylen != 0)
+            {
+                ylen -= data[1];
+                if(ylen > 0)
+                {
+                    data_count = *data++;
+                    ylen -= data_count;
+                    if(ylen >= 0)
+                    {
+                        data += data_count + 1;
+                        packet_byte_count -= data_count + 2;
+                        if (packet_byte_count != 0)
+                        {
+                            goto copy_consume_skip_y;
+                        }
+                        else
+                        {
+                            /*10e18*/
+                            continue; /* goto next_column */
+                        }
+                    }  /* if(ylen >= 0) */
+                    else
+                    {
+                        /*goto loc_10e83;*/
+                        ++data;
+                        packet_byte_count -= data_count + 2;
+                        data += ylen + data_count;
+                        data_count = -ylen;
+                        ylen = h;
+                        goto copy_loop_height;
+                    }
+                }  /* if(ylen > 0) */
+                else
+                {
+                    /*goto loc_10e78;*/
+                    data_count = -ylen;
+                    ylen = h;
+                    goto copy_sequence_start_loop;
+                }
+            }  /* if(ylen != 0) */
+
+            /* copy_sequence_pre1 */
+            ylen = h;
+            do {
+                /* copy_sequence_start */
+                data_count = data[1]; /*really skip pixels...*/
+            copy_sequence_start_loop:
+                ylen -= data_count;
+                q += data_count * pitch;
+                data_count = *data++;
+                ++data;
+                packet_byte_count -= data_count + 2;
+            copy_loop_height:
+                do {
+                    if (--ylen >= 0) {
+                        *q = *data++;
+                        q += pitch;
+                    }
+                    else {
+                        data += data_count;
+                        break;
+                    }
+                } while (--data_count);
+            } while (packet_byte_count >= 1);
+        }
+        else {    /* compressed data */
+            uint8_t len_compr;
+            /*10e97*/
+            ylen = skip_y;
+        loc_10ea2:
+            if (ylen != 0) {
+                ylen -= data[1];
+                if (ylen > 0) {
+                    data_count = *data++;
+                    ++data;
+                    packet_byte_count -= data_count + 2;
+                    /*loc_10eb6:*/
+                    do {
+                        b = *data++;
+                        if (b <= 0xdf) {
+                            if (--ylen >= 0) {
+                                /*continue;*/
+                            }
+                            else {
+                                /*goto 10ec7*/
+                                data_count += ylen;
+                                ylen = h - 1;
+                                ++data_count;
+                                goto loc_10f38;
+                            }
+                        }
+                        else {
+                            /*10ed3*/
+                            ++data;
+                            ylen -= (b - 0xdf);
+                            if (ylen >= 0) {
+                                --data_count;
+                                /*continue;*/
+                            }
+                            else {
+                                /*goto loc_10ef6;*/
+                                --data;
+                                b = *data++;
+                                --data_count;
+                                len_compr = -ylen;
+                                ylen = h;
+                                goto loc_10f51;
+                            }
+                        }
+                    } while (--data_count);
+                    if (packet_byte_count >= 1) {
+                        goto loc_10ea2;
+                    }
+                    else {
+                        goto next_column;
+                    }
+                }
+                else {
+                    /*goto loc_10eea;*/
+                    data_count = -ylen;
+                    ylen = h;
+                    goto loc_10f0f;
+                }
+            }
+            /*loc_10f05:*/
+            ylen = h;
+            do {
+                /*loc_10f0a:*/
+                data_count = data[1]; /*really skip pixels...*/
+            loc_10f0f:
+                ylen -= data_count;
+                q += data_count * pitch;
+                data_count = *data++;
+                ++data;
+                packet_byte_count -= data_count + 2;
+                /*loc_10f30:*/
+                do {
+                    if (--ylen >= 0) {
+                        b = *data++;
+                        if (b <= 0xdf) {
+                        loc_10f38:
+                            *q = b;
+                            q += pitch;
+                        }
+                        else {
+                            len_compr = b - 0xdf;
+                            b = *data++;
+                            --data_count;
+                            ++ylen;
+                        loc_10f51:
+                            do {
+                                if (--ylen >= 0) {
+                                    *q = b;
+                                    q += pitch;
+                                }
+                                else {
+                                    --data_count;
+                                    goto loc_10f7e;
+                                }
+                            } while (--len_compr);
+                        }
+                    }
+                    else {
+                    loc_10f7e:
+                        data += data_count;
+                        break;
+                    }
+                } while (--data_count);
+            } while (packet_byte_count >= 1);
+        }
+    next_column:
+        ;
+    }  /* while (width--) */
 }
+
 
 // WZD s31p02
 // MoO2  Module:   Remap_Clipped_Draw_Animated_Sprite()
@@ -1889,6 +2357,9 @@ int16_t CS_skip_add;
 
 // WZD s33p05
 // MoO2 Draw_Bitmap_Sprite_
+/*
+    ¿ vs. Draw() ?  AKA FLIC_Draw() ...just assumes animation frames?
+*/
 void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x)
 {
     byte_ptr screen_start;
@@ -1987,6 +2458,7 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 
 // WZD s33p07
 // MoO2  Module: draw  Color_Stream_Copy_()
+// 1oom  gfxaux.c  static void gfx_aux_overlay_do_normal(uint8_t *dest, const uint8_t *src, int w, int h, int destskipw, int srcskipw)
 void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
     int16_t itr_height;  // _CX_
@@ -2018,8 +2490,31 @@ void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t s
 
 
 // WZD s33p08
-// LBX_IMG_HorzFlip()
+// 1oom  gfxaux.c  gfx_aux_flipx()
+/*
 
+*/
+void Flip_Bitmap(SAMB_ptr pict_seg)
+{
+    int16_t w;
+    int16_t h;
+    uint8_t * p;
+    int16_t y;
+    int16_t x;
+    uint8_t t;
+    w = FLIC_GET_WIDTH(pict_seg);
+    h = FLIC_GET_HEIGHT(pict_seg);
+    p = (pict_seg + 16);
+    for (y = 0; y < h; ++y) {
+        for (x = 0; x < (w / 2); ++x) {
+            t = p[x];
+            p[x] = p[w - 1 - x];
+            p[w - 1 - x] = t;
+        }
+        p += w;
+    }
+
+}
 
 // WZD s33p09
 // MoO2:  Replace_Color()
@@ -2074,11 +2569,133 @@ void Clear_Memory_Far(byte_ptr dst, int16_t n)
 }
 
 
+// WZD seg033:056B
+int16_t CS_Horz_Remainder;
+// WZD seg033:056D
+int16_t CS_Horz_Ratio;
+// WZD seg033:056F
+int16_t CS_Orig_Height;
+
 // WZD s33p13
-// LBX_IMG_Shrink()
+// drake178: LBX_IMG_Shrink()
+void Reduce_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
+{
+    int16_t Vert_Ratio;  // _DX_
+    int16_t Vert_Remainder;  // _BX_
+    uint8_t * src_sgmt;  // _DS_
+    uint16_t src_ofst;  // _SI_
+    byte_ptr src;
+    uint8_t * dst_sgmt;  // _ES_
+    uint16_t dst_ofst;  // _DI_
+    byte_ptr dst;
+    int16_t itr_height;  // _CX_
+    uint16_t src_ofst_start;  // _SI_
+
+    src_sgmt = (uint8_t *)bitmap;
+    dst_sgmt = (uint8_t *)bitmap;
+    FLIC_SET_WIDTH(bitmap, ((FLIC_GET_WIDTH(bitmap) * scale_x) / 100));
+    CS_Horz_Ratio = (25600 / scale_x);
+    CS_Orig_Height = FLIC_GET_HEIGHT(bitmap);
+    FLIC_SET_HEIGHT(bitmap, ((FLIC_GET_HEIGHT(bitmap) * scale_y) / 100));
+    Vert_Ratio = (25600 / scale_y);
+    src_ofst = sizeof(struct s_FLIC_HDR);
+    dst_ofst = sizeof(struct s_FLIC_HDR);
+    CS_width =  FLIC_GET_WIDTH(bitmap);
+    CS_Horz_Remainder = 0;
+    dst = (dst_sgmt + dst_ofst);
+    src = (src_sgmt + src_ofst);
+
+    while(CS_width)
+    {
+        src_ofst_start = src_ofst;
+        itr_height = FLIC_GET_HEIGHT(bitmap);
+        Vert_Remainder = 0;
+        while(itr_height)
+        {
+            *dst++ = *src++;
+
+            src--;
+            Vert_Remainder += Vert_Ratio;
+            src += (Vert_Remainder >> 8);
+            itr_height--;
+        }
+        src_ofst = src_ofst_start;
+        src_ofst += (CS_Orig_Height * ((CS_Horz_Remainder + CS_Horz_Ratio) / 256));
+        src = (src_sgmt + src_ofst);
+        CS_Horz_Remainder = ((CS_Horz_Remainder + CS_Horz_Ratio) % 256);
+        CS_width--;
+    }
+
+}
 
 // WZD s33p14
-// LBX_IMG_Stretch()
+// drake178: LBX_IMG_Stretch()
+void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
+{
+    int16_t Vert_Ratio;  // _DX_
+    int16_t Vert_Remainder;  // _BX_
+    uint8_t * src_sgmt;  // _DS_
+    uint16_t src_ofst;  // _SI_
+    byte_ptr src;
+    uint8_t * dst_sgmt;  // _ES_
+    uint16_t dst_ofst;  // _DI_
+    byte_ptr dst;
+    int16_t itr_height;  // _CX_
+    uint16_t src_ofst_start;  // _SI_
+
+    src_sgmt = (uint8_t *)bitmap;
+    dst_sgmt = (uint8_t *)bitmap;
+
+    src_ofst = (15 + FLIC_GET_WIDTH(bitmap) * FLIC_GET_HEIGHT(bitmap));
+
+    FLIC_SET_WIDTH(bitmap, ((FLIC_GET_WIDTH(bitmap) * scale_x) / 100));
+
+    CS_Horz_Ratio = (25600 / scale_x);
+
+    CS_Orig_Height = FLIC_GET_HEIGHT(bitmap);
+
+    FLIC_SET_HEIGHT(bitmap, ((FLIC_GET_HEIGHT(bitmap) * scale_y) / 100));
+
+    Vert_Ratio = (25600 / scale_y);
+
+    dst_ofst = (15 + FLIC_GET_WIDTH(bitmap) * FLIC_GET_HEIGHT(bitmap));
+
+    CS_width =  FLIC_GET_WIDTH(bitmap);
+
+    CS_Horz_Remainder = 0;
+
+    dst = (dst_sgmt + dst_ofst);
+    src = (src_sgmt + src_ofst);
+
+    while(CS_width)
+    {
+        src_ofst_start = src_ofst;
+        itr_height = FLIC_GET_WIDTH(bitmap);
+        Vert_Remainder = 0;
+        while(itr_height)
+        {
+            *dst++ = *src++;
+            dst--;
+            dst--;
+            src--;
+            Vert_Remainder += Vert_Ratio;
+            src -= (Vert_Remainder >> 8);
+            itr_height--;
+        }
+        src_ofst = src_ofst_start;
+        if((CS_Horz_Remainder + CS_Horz_Ratio) >= 256)
+        {
+            src_ofst -= CS_Orig_Height;
+        }
+        src = (src_sgmt + src_ofst);
+
+        CS_Horz_Remainder = ((CS_Horz_Remainder + CS_Horz_Ratio) % 256);
+
+        CS_width--;
+    }
+
+}
+
 
 
 // WZD s33p15
@@ -2194,13 +2811,14 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
 // WZD s33p19
 /*
 drake178:
-    a secondary linear feedback shift register using the
-    same feedback polynomial as RNG_Random, also shifted
-    9 states per call, but actually returning the lowest
-    order 10 bits of the resulting state (1-1023) rather
-    than the shifted out return value
+    a secondary linear feedback shift register
+    using the same feedback polynomial as RNG_Random,
+    also shifted 9 states per call,
+    but actually returning the lowest order 10 bits of the resulting state (1-1023)
+    rather than the shifted out return value
 */
 int16_t RNG_GFX_Random__NOP(int16_t max)
 {
-
+    
+    return max;
 }

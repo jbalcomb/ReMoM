@@ -368,7 +368,7 @@ void GFX_Swap_AppndCtScap__WIP(void);
 void GFX_Swap_AppendUView(void);
 
 // WZD o52p28
-void GFX_Swap_AppendItems__WIP(void);
+void Reload_Item_Pictures(void);
 
 // WZD o52p29
 void Spellbook_Load_Small_Pictures__WIP(void);

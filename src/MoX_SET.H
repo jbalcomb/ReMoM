@@ -5,11 +5,6 @@
 
 
 
-#define NUM_SAVES 8
-#define LEN_SAVE_DESCRIPTION 20
-#define NUM_HOF_ENTRIES 10
-#define LEN_HOF_NAME 20
-
 // 1D2h 466d bytes
 struct s_MAGIC_SET
 {

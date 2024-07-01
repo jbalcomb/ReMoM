@@ -278,6 +278,31 @@ void Handle_Left_Click(void)
 // WZD s36p01
 // MGC s34p01
 /*
+MoO2
+    function (0 bytes) Interpret_Mouse_Input
+    Address: 01:0011CEF5
+        Num params: 0
+        Return type: signed integer (2 bytes) 
+        void (1 bytes) 
+        Locals:
+            signed integer (2 bytes) i
+            signed integer (2 bytes) j
+            signed integer (2 bytes) m
+            signed integer (2 bytes) mouse_x
+            signed integer (2 bytes) mouse_y
+            signed integer (2 bytes) button_number
+            signed integer (2 bytes) valid
+            signed integer (2 bytes) xmin
+            signed integer (2 bytes) ymin
+            signed integer (2 bytes) xmax
+            signed integer (2 bytes) ymax
+            signed integer (2 bytes) field_type
+            signed integer (2 bytes) field_num
+            signed integer (2 bytes) character
+            signed integer (2 bytes) return_value
+            char (1 bytes) clear_multi_hotkey_fields
+*/
+/*
 
 ProgramPath (Button-Up) - @@EndOfTheClickRoad
     IDA Color #14 ~ DarkSkyBlue
@@ -296,6 +321,34 @@ Color #34 128,64,0 ~PooEmoji Brown
 */
 int16_t Interpret_Mouse_Input(void)
 {
+/*
+MoO2
+    var_68= dword ptr -68h
+    field_type= dword ptr -64h
+    var_60= dword ptr -60h
+    var_5C= dword ptr -5Ch
+    var_58= dword ptr -58h
+    var_54= dword ptr -54h
+    var_50= dword ptr -50h
+    var_4C= dword ptr -4Ch
+    var_48__field_type= dword ptr -48h
+    itr_fields_count= dword ptr -44h
+    itr_continuous_string= dword ptr -40h
+    IDK_itr_10= dword ptr -3Ch
+    mouse_x= dword ptr -38h
+    mouse_y= dword ptr -34h
+    mouse_button= dword ptr -30h
+    var_28= dword ptr -28h
+    var_24= dword ptr -24h
+    var_20= dword ptr -20h
+    var_1C= dword ptr -1Ch
+    var_18= dword ptr -18h
+    field_num__scanned_field= dword ptr -14h
+    character= dword ptr -10h
+    maybe__field_num__scanned_field= dword ptr -0Ch
+    return_value= dword ptr -8
+    clear_multi_hotkey_fields= byte ptr -4
+*/
     int16_t field_num;
     int16_t character;
     int16_t mx;
@@ -305,12 +358,37 @@ int16_t Interpret_Mouse_Input(void)
     int16_t mouse_field;
     int16_t MD_ButtonStatus;
     uint16_t itr_continuous_string;
+    /*
+        _SI_YNM_itr_fields_count__scanned_field
+            return by @@UnsetDownMouseButton_Return_ITR
+            4 paths
+            ¿ active/current field ?
+            1) KD; character == KP_Enter && input_field_active != ST_FALSE; sets to active_input_field_number
+            2) KD; character == +/-; sets to Scan_Field()
+            3)
+            4) 
+    */
+    int16_t alt_field_num;  // _SI_
+    int16_t scanned_field;  // _SI_
+    int16_t return_value;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-// #endif
-
-
+/*
+MoO1
+    mov     [bp+oi], 0
+    mov     uiobj_focus_oi, 0FFFFh
+    mov     [bp+mbuttons], 0
+    mov     uiobj_clicked_oi, 0
+*/
+/*
+MoO2
+    mov     [ebp+field_num__scanned_field], 0
+    mov     [ebp+maybe__field_num__scanned_field], 0
+    mov     [ebp+clear_multi_hotkey_fields], 0
+    mov     [ebp+field_num__scanned_field], 0
+    mov     down_mouse_button, e_ST_UNDEFINED_DW
+    mov     [ebp+mouse_button], 0
+    mov     auto_input_variable, 0
+*/
     character = 0;
     field_num = 0;
     down_mouse_button = ST_UNDEFINED;
@@ -323,12 +401,319 @@ int16_t Interpret_Mouse_Input(void)
 
 
 
-    if(Keyboard_Status() == ST_TRUE)  // MGC s33p16
+    if(Keyboard_Status() == ST_TRUE)
     {
-        character = Interpret_Keyboard_Input(&field_num);  // MGC s34p22
+        character = Interpret_Keyboard_Input(&field_num);
+
+        if ((character == '+') || (character == '-'))
+        {
+            // __debugbreak();
+        }
+
+        if(character == 0)
+        {
+            goto Return_Type_Z2;
+        }
+
+        if(character == ST_KEY_F11)
+        {
+            // TODO  DBG_Quit();
+        }
+        
+        if(character == ST_KEY_F12)
+        {
+            Save_Mouse_State();
+            Restore_Mouse_On_Page();
+            // TODO  DBG_ScreenDump();
+            Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
+            Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
+            Set_Pointer_Position(Pointer_X(), Pointer_Y());
+            Restore_Mouse_State();
+        }
+
+        if((character == ST_KEY_ESCAPE) && (mouse_cancel_disabled != ST_FALSE))
+        {
+            // @@Return_UNDEF
+            return ST_UNDEFINED;
+        }
+
+        if((character == '`') && (Check_Release_Version() == ST_FALSE))
+        {
+            if(field_box_mode == ST_FALSE)
+            {
+                field_box_mode = ST_TRUE;
+            }
+            else
+            {
+                field_box_mode = ST_FALSE;
+            }
+        }
+
+        if((character == '~') && (Check_Release_Version() == ST_FALSE))
+        {
+            if(help_box_mode == ST_FALSE)
+            {
+                help_box_mode = ST_TRUE;
+            }
+            else
+            {
+                help_box_mode = ST_FALSE;
+            }
+        }
+
+        if(p_fields[field_num].type == ft_MultiHotKey)
+        {
+            goto Return_Type_2;
+        }
+
+
+        // May Be:  if((field_num == 0) || (p_fields[field_num].hotkey != character))  ... if(character == ST_KEY_ENTER)
+
         /*
-            Global Debug Keys
+            BEGIN:  Keyboard Hot-Key
         */
+        if((field_num != 0) && (p_fields[field_num].hotkey == character))
+        {
+
+            if(p_fields[field_num].type == ft_Scroll)
+            {
+                goto Return_Type_Z2;
+            }
+
+            if(field_num != 0)
+            {
+                mx = (p_fields[field_num].x1 + ((p_fields[field_num].x2 - p_fields[field_num].x1) / 2));
+                my = (p_fields[field_num].y1 + ((p_fields[field_num].y2 - p_fields[field_num].y1) / 2));
+                Push_Field_Down(field_num, mx, my);
+
+                Mouse_Button_Handler();
+
+                if(p_fields[field_num].type == ft_RadioButton)
+                {
+                    if(p_fields[field_num].Param2 == 0)
+                    {
+                        p_fields[field_num].Param2 = 1;
+                    }
+                    else
+                    {
+                        p_fields[field_num].Param2 = 0;
+                    }
+                }
+
+                if(p_fields[field_num].type == ft_LockedButton)
+                {
+                    if(p_fields[field_num].Param2 == 0)
+                    {
+                        p_fields[field_num].Param2 = 1;
+                    }
+                }
+
+                if (p_fields[field_num].type == ft_ClickLink)
+                {
+                    goto Return_Type_6;
+                }
+
+                goto Return_Type_3;
+            }
+        }
+        /*
+            END:  Keyboard Hot-Key
+        */
+
+
+// TODO          /*
+// TODO              BEGIN:  character == KP_Enter  (assumes ft_ContinuousStringInput)
+// TODO                  IDA: 'poop brown' #34 - KD; ST_KEY_ENTER;
+// TODO          */
+// TODO          {
+// TODO              if(character == ST_KEY_ENTER)
+// TODO              {
+// TODO                  if(input_field_active)
+// TODO                  {
+// TODO                      alt_field_num = active_input_field_number;
+// TODO                      // MoO2:  Copy_Continuous_String()
+// TODO                      strcpy((char *)p_fields[alt_field_num].string, continuous_string);
+// TODO                      if(mouse_auto_exit == ST_FALSE)
+// TODO                      {
+// TODO                          Quick_Call_Auto_Function();
+// TODO                      }
+// TODO                      goto Return_Type_5;
+// TODO                  }
+// TODO  
+// TODO                  alt_field_num = Scan_Field();
+// TODO  
+// TODO                  if(alt_field_num == 0)
+// TODO                  {
+// TODO                      goto Return_Type_Z1;
+// TODO                  }
+// TODO  
+// TODO                  if(alt_field_num > 0)
+// TODO                  {
+// TODO                      if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
+// TODO                      {
+// TODO                          if(input_field_active == ST_FALSE)
+// TODO                          {
+// TODO                              strcpy(continuous_string, p_fields[alt_field_num].string);
+// TODO                              GUI_EditAnimStage = 0;
+// TODO                              GUI_EditCursorOn = 0;
+// TODO  
+// TODO  
+// TODO                              input_field_active = ST_TRUE;
+// TODO                              active_input_field_number = alt_field_num;
+// TODO                              // jmp     @@IDK_KD_Enter_PostOp
+// TODO                          }
+// TODO                          else  /* input_field_active == ST_TRUE */
+// TODO                          {
+// TODO                              if(active_input_field_number == alt_field_num)
+// TODO                              {
+// TODO                                  itr_continuous_string = 0;
+// TODO                                  while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
+// TODO                                  if(continuous_string[(itr_continuous_string - 1)] == '_')
+// TODO                                  {
+// TODO                                      itr_continuous_string--;
+// TODO                                  }
+// TODO                                  continuous_string[itr_continuous_string] = 0;
+// TODO                                  GUI_EditAnimStage = 0;
+// TODO                                  active_input_field_number = ST_UNDEFINED;
+// TODO                                  strcpy(p_fields[alt_field_num].string, continuous_string);
+// TODO                                  // @@IDK_KD_Enter_PostOp
+// TODO                              }
+// TODO                              else
+// TODO                              {
+// TODO                                  strcpy(continuous_string, p_fields[alt_field_num].string);
+// TODO                                  GUI_EditAnimStage = 0;  // cursor_count
+// TODO                                  GUI_EditCursorOn = 0;   // cursor_on
+// TODO                                  active_input_field_number = alt_field_num;
+// TODO                                  // @@IDK_KD_Enter_PostOp:
+// TODO                              }
+// TODO                          }
+// TODO                      }
+// TODO                      else
+// TODO                      {
+// TODO                          if(input_field_active == 0)
+// TODO                          {
+// TODO                              // @@IDK_KD_Enter_PostOp:
+// TODO                          }
+// TODO                          else
+// TODO                          {
+// TODO                              if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
+// TODO                              {
+// TODO                                  itr_continuous_string = 0;
+// TODO                                  while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
+// TODO                                  if(continuous_string[(itr_continuous_string - 1)] == '_')
+// TODO                                  {
+// TODO                                      itr_continuous_string--;
+// TODO                                  }
+// TODO                                  continuous_string[itr_continuous_string] = 0;
+// TODO                                  strcpy(p_fields[alt_field_num].string, continuous_string);
+// TODO                                  GUI_EditAnimStage = 0;
+// TODO                                  input_field_active = ST_FALSE;
+// TODO                                  active_input_field_number = ST_UNDEFINED;
+// TODO                                  // @@IDK_KD_Enter__New_Block:
+// TODO                              }
+// TODO                          }
+// TODO                      }
+// TODO                  }
+// TODO                  else
+// TODO                  {
+// TODO                      // jmp     @@IDK_KD_Enter__New_Block
+// TODO                  }
+// TODO  
+// TODO                  // @@IDK_KD_Enter__New_Block:
+// TODO                  if(alt_field_num == 0)
+// TODO                  {
+// TODO                      if(
+// TODO                          (p_fields[alt_field_num].type != ft_Scroll)
+// TODO                          &&
+// TODO                          (p_fields[alt_field_num].type != ft_ContinuousStringInput)
+// TODO                      )
+// TODO                      {
+// TODO                          Push_Field_Down(alt_field_num, mouse_x, mouse_y);
+// TODO                      }
+// TODO  
+// TODO                      Mouse_Button_Handler();
+// TODO  
+// TODO                      if(p_fields[alt_field_num].type == ft_RadioButton)
+// TODO                      {
+// TODO                          if(p_fields[alt_field_num].Param2 == 0)
+// TODO                          {
+// TODO                              p_fields[alt_field_num].Param2 = 1;
+// TODO                          }
+// TODO                          else
+// TODO                          {
+// TODO                              p_fields[alt_field_num].Param2 = 0;
+// TODO                          }
+// TODO                      }
+// TODO                      else if(p_fields[alt_field_num].type == ft_LockedButton)
+// TODO                      {
+// TODO                          if(p_fields[alt_field_num].Param2 == 0)
+// TODO                          {
+// TODO                              p_fields[alt_field_num].Param2 = 1;
+// TODO                          }
+// TODO                      }
+// TODO                      else if(p_fields[alt_field_num].type == ft_ClickLink)
+// TODO                      {
+// TODO                          goto Return_Type_7;
+// TODO                      }
+// TODO  
+// TODO                      if(mouse_auto_exit == ST_FALSE)
+// TODO                      {
+// TODO                          Quick_Call_Auto_Function();
+// TODO                      }
+// TODO                      goto Return_Type_5;
+// TODO  
+// TODO                  }
+// TODO                  else
+// TODO                  {
+// TODO  
+// TODO                  }
+// TODO  
+// TODO  
+// TODO  
+// TODO              }
+// TODO          }
+// TODO          /*
+// TODO              END:  character == KP_Enter  (assumes ft_ContinuousStringInput)
+// TODO          */
+
+
+        /*
+            BEGIN:  +/- Scroll Bar Field
+        */
+        {
+            if((character == '+' || character == '-') && (alt_field_num = Scan_Field() != 0) && (p_fields[alt_field_num].type == ft_Scroll))
+            {
+                if(character == '+')
+                {
+                    Increment_Scroll_Bar(alt_field_num);
+                }
+                if(character == '-')
+                {
+                    Decrement_Scroll_Bar(alt_field_num);
+                }
+                goto Return_Type_4;
+            }
+        }
+        /*
+            END:  +/- Scroll Bar Field
+        */
+
+        /*
+            BEGIN:  Input Field
+        */
+        if(input_field_active > 0)
+        {
+            if(character == ST_KEY_BACKSPACE)
+            {
+
+            }
+        }
+        /*
+            END:  Input Field
+        */
+
+        goto Return_Type_Z3;
+
     }
     else
     {
@@ -337,7 +722,7 @@ int16_t Interpret_Mouse_Input(void)
         {
             MD_ButtonStatus = Mouse_Button();
 
-            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; } } }
+            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; } } }
 
             // IDA: @@IDK_Loop_GetButtonStatus
             // Begin Block: Loop Mouse_Button()
@@ -460,12 +845,11 @@ int16_t Interpret_Mouse_Input(void)
                     */
 
 
-                    auto_input_variable = field_num;  // MoO2: auto_input_variable
+                    auto_input_variable = field_num;
 
-                    // MoO2: mouse_auto_exit
-                    if(GUI_ClickActivate == ST_FALSE)
+                    if(mouse_auto_exit == ST_FALSE)
                     {
-                        // HERE: Re-Draw, cause your're gonna go back
+                        // HERE: Re-Draw, cause you're gonna go back
                         if(Mouse_Button() != 0)
                         {
                             // Call_Auto_Function();
@@ -486,26 +870,27 @@ int16_t Interpret_Mouse_Input(void)
 
             if(p_fields[auto_input_variable].type == ft_Scroll)
             {
-                // Invoke_Auto_Function();
+                Invoke_Auto_Function();
             }
 
             auto_input_variable = 0;
 
             if(field_num != 0)
             {
-                // DONT  MD_Get_ClickRec1();
-                // DONT  MD_Get_ClickRec2();
-                // DONT  GUI_Processed_LastX = mouse_x;
-                // DONT  GUI_Processed_LastY = mouse_y;
-                // DONT  GUI_Processed_Btns = MD_ButtonStatus;
+                // TODO  MD_Get_ClickRec1();
+                // TODO  MD_Get_ClickRec2();
+                // TODO  GUI_Processed_LastX = mouse_x;
+                // TODO  GUI_Processed_LastY = mouse_y;
+                // TODO  GUI_Processed_Btns = MD_ButtonStatus;
 
                 // TODO says switch 9 cases, but only actually handles 4 - figure out which, including the odd (type - 1) part
+                // the (type - 1) part is a compiler artifact; it subtracts whatever amount to make the first case be case 0
+                // here, that means there was no case for type 0 ft_Button
                 switch(p_fields[field_num].type)
                 {
-                    /*  0  0x00 */  // drake178: TODO
                     case ft_Button:
                     {
-
+                        // DNE in Dasm
                     } break;
 
                     /*  1  0x01 */  // drake178: ToggleButton
@@ -568,8 +953,8 @@ int16_t Interpret_Mouse_Input(void)
         down_mouse_button = ST_UNDEFINED;
         switch(MD_ButtonStatus)
         {
-            case 0: { field_num = 0; goto Done; } break;
-            case 1: { field_num = field_num; goto Done; } break;
+            case 0: { field_num =          0; goto Done; } break;
+            case 1: { field_num =  field_num; goto Done; } break;
             case 2: { field_num = -field_num; goto Done; } break;
         }        
 
@@ -578,25 +963,92 @@ int16_t Interpret_Mouse_Input(void)
     // ¿ ...else... Mouse_Button_Handler(); field_num = 0;
 
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] character: %d\n", __FILE__, __LINE__, character);
-// #endif
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] field_num: %d\n", __FILE__, __LINE__, field_num);
-// #endif
-
     // TODO  if(character != 0)
     // TODO  {
     // TODO      
     // TODO  }
 
 
+    goto Done;
+/*
+    ¿ Types of Departues ?
+        YNM  Mouse_Button_Handler()
+        YNM  down_mouse_button = ST_UNDEFINED
+        YNM  Quick_Call_Auto_Function()
+        Return Values:
+            ...
+            field_num
+            ...
+    Default:  return field_num
+
+*/
+
+/*
+return 0;
+*/
+Return_Type_Z1:                                                           
+    return 0;
+
+/*
+Mouse_Button_Handler(); return 0;
+*/
+Return_Type_Z2:
+    Mouse_Button_Handler();
+    return 0;
+
+/*
+down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return 0;
+*/
+Return_Type_Z3:
+    down_mouse_button = ST_UNDEFINED;
+    Mouse_Button_Handler();
+    return 0;
+
+/*
+Mouse_Button_Handler(); return field_num;
+*/
+Return_Type_2:
+    Mouse_Button_Handler();
+    return field_num;
+
+/*
+Quick_Call_Auto_Function(); down_mouse_button = ST_UNDEFINED; return field_num;
+*/
+Return_Type_3:
+    Quick_Call_Auto_Function();
+    down_mouse_button = ST_UNDEFINED;
+    return field_num;
+
+/*
+Mouse_Button_Handler(); down_mouse_button == ST_UNDEFINED; return alt_field_num;
+*/
+Return_Type_4:
+    Mouse_Button_Handler();
+    down_mouse_button = ST_UNDEFINED;
+    return alt_field_num;
+
+/*
+down_mouse_button == ST_UNDEFINED; return alt_field_num;
+*/
+Return_Type_5:
+    down_mouse_button = ST_UNDEFINED;
+    return alt_field_num;
+
+/*
+down_mouse_button = ST_UNDEFINED; return p_fields[field_num].Param0;
+*/
+Return_Type_6:
+    down_mouse_button = ST_UNDEFINED;
+    return p_fields[field_num].Param0;
+
+/*
+down_mouse_button = ST_UNDEFINED; return p_fields[alt_field_num].Param0;
+*/
+Return_Type_7:
+    down_mouse_button = ST_UNDEFINED;
+    return p_fields[alt_field_num].Param0;
+
 Done:
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Interpret_Mouse_Input() { field_num = %d }\n", __FILE__, __LINE__, field_num);
-// #endif
-
     return field_num;
 }
 
@@ -617,60 +1069,92 @@ Return type: void (1 bytes)
 pointer (4 bytes) help_pointer
 signed integer (2 bytes) count
 */
-// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer, int16_t count)
-// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer[], int16_t count)
-// // void Set_Help_List(struct s_HLP_ENTRY ** help_pointer, int16_t count)
+// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer, int16_t count)
+// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count)
+// // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count)
 // void Set_Help_List(int16_t * help_pointer, int16_t count)
 void Set_Help_List(char * help_pointer, int16_t count)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Set_Help_List()\n", __FILE__, __LINE__);
-#endif
-
-    help_struct_pointer = (struct s_HLP_ENTRY *)help_pointer;
+    help_struct_pointer = (struct s_HELP_FIELD *)help_pointer;
     help_list_count = count;
     help_list_active = ST_TRUE;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Set_Help_List()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD s36p13
 void Deactivate_Help_List(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Deactivate_Help_List()\n", __FILE__, __LINE__);
-#endif
-
     help_list_active = ST_FALSE;
     help_list_count = 0;
     help_struct_pointer = ST_NULL;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Deactivate_Help_List()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD s36p14
 // CAUTION: returns ZERO on SUCCESS
-int16_t Check_Help_List(void)
+int16_t Check_Help_List__STUB(void)
 {
     int16_t help_entry_found;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Check_Help_List()\n", __FILE__, __LINE__);
-#endif
 
-    help_entry_found = 0;
+    help_entry_found = ST_FALSE;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Check_Help_List()\n", __FILE__, __LINE__);
-#endif
     return help_entry_found;
+}
+
+// UU_GUI_GetControlWidth                         seg036     000011C1 0000004D R F . . B T .
+// UU_GUI_GetControlHeight                        seg036     0000120E 0000004E R F . . B T .
+// UU_GUI_GetLastClickX                           seg036     0000125C 0000000A R F . . B T .
+// UU_GUI_GetLastClickY                           seg036     00001266 0000000A R F . . B T .
+// UU_GUI_GetLastClickBtns                        seg036     00001270 0000000A R F . . B T .
+// Get_Mouse_Field                                seg036     0000127A 0000000A R F . . B T .
+// RP_GUI_KeyInputOnly                            seg036     00001284 00000675 R F . . B T .
+// Interpret_Keyboard_Input                       seg036     000018F9 000004AB R F . . B T .
+// GUI_GetNextControl                             seg036     00001DC5 00000DAC R F . . B T .
+
+// WZD s36p24
+// 1oom  uiobj.c  uiobj_set_focus()
+/*
+; Unused in WIZARDS.EXE
+; 
+; if there is no mouse, moves the cursor to the middle
+; of the specified control
+; 
+; MAGIC.EXE uses this to move the cursor when it
+; displays the main menu screen after something else
+*/
+void UU_GUI_MouseEMUMoveTo(int16_t field_idx)
+{
+    int16_t ymid; 
+    int16_t xmid;  // _DI_
+
+    if(mouse_installed)
+    {
+        xmid = (p_fields[field_idx].x1 + ((p_fields[field_idx].x2 - p_fields[field_idx].x1) / 2));
+        ymid = (p_fields[field_idx].y1 + ((p_fields[field_idx].y2 - p_fields[field_idx].y1) / 2));
+
+        if((ymid < 0) || (ymid >= SCREEN_HEIGHT) || (xmid < 0) || (xmid >= SCREEN_WIDTH))
+        {
+            return;
+        }
+
+        MOUSE_Emu_X = xmid;
+        MOUSE_Emu_Y = ymid;
+        Check_Mouse_Shape(MOUSE_Emu_X, MOUSE_Emu_Y);
+        pointer_offset = Get_Pointer_Offset();
+        MOUSE_Emu_X = (MOUSE_Emu_X - pointer_offset);
+        MOUSE_Emu_Y = (MOUSE_Emu_Y - pointer_offset);
+        Set_Pointer_Position(MOUSE_Emu_X, MOUSE_Emu_Y);
+        Restore_Mouse_On_Page();
+        Save_Mouse_On_Page(MOUSE_Emu_X, MOUSE_Emu_Y);
+        Draw_Mouse_On_Page(MOUSE_Emu_X, MOUSE_Emu_Y);
+    }
+
 }
 
 
 // WZD s36p25
+/*
+    Returns field_idx of Field at Pointer Position
+        0 if no field box contains the pointer
+*/
 int16_t Scan_Field(void)
 {
     int16_t mx;
@@ -685,12 +1169,12 @@ int16_t Scan_Field(void)
     mx = Pointer_X();
     my = Pointer_Y();
 
-    current_field = 0;  // ? ST_NULL ?
+    current_field = 0;
 
     Check_Mouse_Shape(mx, my);
     pointer_offset = Get_Pointer_Offset();
 
-    for(itr= 1; itr < fields_count; itr++)
+    for(itr = 1; itr < fields_count; itr++)
     {
         xmin = p_fields[itr].x1;
         ymin = p_fields[itr].y1;
@@ -719,82 +1203,51 @@ int16_t Scan_Input(void)
     int16_t my;
     int16_t itr;
     int16_t current_field;
-    // MoO2 int16_t xmin;
-    // MoO2 int16_t ymin;
-    // MoO2 int16_t xpos;
-    // MoO2 int16_t ypos;
-//     int16_t new_Param3;
-//     int16_t new_Param4;
 
     mx = Pointer_X();
     my = Pointer_Y();
 
-    current_field = 0;  // ? ST_NULL ?
+    current_field = 0;
 
     Check_Mouse_Shape(mx, my);
     pointer_offset = Get_Pointer_Offset();
 
     current_field = Scan_Field();
 
-    /*
-        Field Type: ? //drake178 ClickLink  DNE in MoO2
-    */
     if(p_fields[current_field].type == ft_ClickLink)
     {
-        *((int16_t *)p_fields[current_field].Param2) = p_fields[current_field].Param1;
-        current_field = p_fields[current_field].Param0;
+        // DONT  *p_fields[current_field].Param2 = p_fields[current_field].Param1;
+        // DONT  return = p_fields[current_field].Param0;
     }
 
-    /*
-        Field Type: String List
-    */
-    /*
-        Field Type: Grid
-    */
-    /*
-        Another climb up Mt. Ifferest...
+    if(
+        (p_fields[current_field].type == ft_StringList)
+        &&
+        (p_fields[current_field].Selectable == ST_FALSE)
+    )
+    {
+        return 0;
+    }
 
-        p_fields[current_field].type == ft_StringList
-        p_fields[itr].Selectable != ST_FALSE
-        ...return 0
-        p_fields[current_field].type == ft_Grid
-        down_mouse_button == ST_UNDEFINED
-        p_fields[down_mouse_button].type == ft_Grid
-        ...return current_field
-
-    */
-    // TODO(JimBalcomb,20230620): make a home for notes like this - code oddities, program-flow for (major) components, gotchas, 
-    /*
-        What's up with the casting of the pointers/values for the field parameters?
-
-        e.g.,
-            the Grid Field for the Movement Map
-                in the call to add Add_Grid_Field() it passes the address for _main_map_grid_x and _main_map_grid_y
-                Add_Grid_Field() then sets the value for Param3 and Param4 as the address of _main_map_grid_x and _main_map_grid_y, respectively
-                later, here in the call to Scan_Input() ...
-                ? it updates the values stored in _main_map_grid_x and _main_map_grid_y ?
-
-    */
-    // if(p_fields[current_field].type == ft_StringList && p_fields[itr].Selectable != ST_FALSE)
-
-    /*
-        Field Type: Grid Field
-
-        ...target code-block, by way of...
-            p_fields[current_field].type == ft_Grid && down_mouse_button == ST_UNDEFINED
-            p_fields[current_field].type == ft_Grid && p_fields[down_mouse_button].type != ft_Grid
-    */
-    // &_main_map_grid_y, &_main_map_grid_x
-    // Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help)
-    //     p_fields[fields_count].Param3 = (int16_t)xpos;
-    //     p_fields[fields_count].Param4 = (int16_t)ypos;
+    if(
+        (p_fields[current_field].type == ft_Grid)
+        &&
+        (
+            (down_mouse_button == ST_UNDEFINED)
+            ||
+            (p_fields[down_mouse_button].type != ft_Grid)
+        )
+    )
+    {
+        *((int64_t *)p_fields[current_field].Param3) = ((Pointer_X() - p_fields[current_field].x1) / p_fields[current_field].Param1);
+        *((int64_t *)p_fields[current_field].Param4) = ((Pointer_Y() - p_fields[current_field].y1) / p_fields[current_field].Param2);
+    }
 
     return current_field;
 }
 
 
 // WZD s36p28
-// drake178: G_GUI_ClearInput()
 // MoO2  Module: fields  Reset_Wait_For_Input()
 void Reset_Wait_For_Input(void)
 {
@@ -821,7 +1274,6 @@ void Reset_Wait_For_Input(void)
 
 
 // WZD s36p29
-// drake178: G_GUI_PressAnyKey()
 // MoO2  Module: fields  Wait_For_Input()
 int16_t Wait_For_Input(void)
 {
@@ -918,11 +1370,78 @@ int16_t Wait_For_Input(void)
 }
 
 
+// WZD s36p30
+// drake178: GUI_ProcessDirKey()
+/*
+    L,R,U,D,W,X,Y,Z
+*/
+int16_t Process_Direction_Key__STUB(int16_t dir_key)
+{
+    int16_t Y_Direction;
+    int16_t X_Direction;
+    int16_t Mouse_Cursor_At;
+    int16_t Mouse_Y;
+    int16_t Mouse_X;
+    int16_t field_num;  // _SI_
+    int16_t itr;  // _DI_
+
+    switch(dir_key)
+    {
+        case 'L': { X_Direction = -1; Y_Direction =  0; } break;
+        case 'R': { X_Direction =  1; Y_Direction =  0; } break;
+        case 'U': { X_Direction =  0; Y_Direction = -1; } break;
+        case 'D': { X_Direction =  0; Y_Direction =  1; } break;
+        case 'W': { X_Direction = -1; Y_Direction = -1; } break;
+        case 'X': { X_Direction =  1; Y_Direction = -1; } break;
+        case 'Y': { X_Direction = -1; Y_Direction =  1; } break;
+        case 'Z': { X_Direction =  1; Y_Direction =  1; } break;
+    }
+
+    if(
+        (GUI_DialogDirections != 0)
+        &&
+        (Y_Direction != 0)
+    )
+    {
+        field_num = 0;
+        field_num = GUI_MoveDlgHighlight__STUB(Y_Direction);
+        return field_num;
+    }
+
+    if(mouse_installed == ST_FALSE)
+    {
+        Mouse_X = MOUSE_Emu_X;
+        Mouse_Y = MOUSE_Emu_Y;
+    }
+    else
+    {
+        Mouse_X = Pointer_X();
+        Mouse_Y = Pointer_Y();
+    }
+
+    Mouse_Cursor_At = 0;
+
+    for(itr = (fields_count - 1); itr > 0; itr--)
+    {
+
+
+
+    }
+
+    field_num = Mouse_Cursor_At;
+
+
+
+
+    return field_num;
+}
+
+
 // WZD s36p65
 void Init_Mouse_Keyboard(int16_t input_type)
 {
 
-    p_fields = (struct s_Field *)Allocate_Space(357);  // 357 paragraphs = 367 * 16 = 5712 bytes  (? 150*38=5700 ? + 12 ?)
+    p_fields = (struct s_Field *)Allocate_Space(357);  // 357 PR, 5712 B  (¿ 150 * 38 = 5700 ¿ + 12 ?)
 
     switch(input_type)
     {
@@ -944,11 +1463,11 @@ void Init_Mouse_Keyboard(int16_t input_type)
 
 
 Nay_Mouse:
-    // TODO  RP_MOUSE_SetUsable();
-    // TODO  mouse_installed = ST_FALSE;
-    // TODO  MOUSE_Emu_X = 158;
-    // TODO  MOUSE_Emu_Y = 100;
-    // TODO  MD_MoveCursor(158, 100);
+    RP_Mouse_SetUsable();
+    mouse_installed = ST_FALSE;
+    MOUSE_Emu_X = 158;
+    MOUSE_Emu_Y = 100;
+    Set_Pointer_Position(158, 100);
     goto Done;
 
 
@@ -984,7 +1503,6 @@ Done:
 
 
 // WZD s36p66
-// MGC s34p66
 /*
     returns field_idx/num
 */
@@ -993,19 +1511,17 @@ Done:
 
 
 // WZD s36p67
-// MGC s34p67
 void Set_Input_Delay(int16_t delay_count)
 {
 
     input_delay = delay_count;
 
-    // MOUSE_GetClick();
-    // RP_MOUSE_GetSecClick();
+    Mouse_Buffer();
+    Mouse_Buffer2();
 
 }
 
 // WZD s36p68
-// MGC s34p68
 int16_t Get_Input_Delay(void)
 {
     return input_delay;
@@ -1013,9 +1529,14 @@ int16_t Get_Input_Delay(void)
 
 
 // WZD s36p85
-// drake178: GUI_SimplePageFlip()
-// AKA SCRN_SimplePageFlip()
 // MoO2  Module: video  Toggle_Pages()  &&  Module: MOX2  _TOGGLE_PAGES_
+/*
+¿ how to explain ?
+
+Elsewhere, `GUI_PageFlipPrep(); ... GUI_PageFlip();`
+same procedure, except no Draw_Fields() call
+
+*/
 void Toggle_Pages(void)
 {
     int16_t mouse_x;
@@ -1026,7 +1547,7 @@ void Toggle_Pages(void)
     mouse_x = Pointer_X();
     mouse_y = Pointer_Y();
 
-    Draw_Fields();
+    Draw_Fields();  // MoO2  Draw_Visible_Fields() ...if(draw_fields_flag != ST_FALSE)
 
     Check_Mouse_Shape(mouse_x, mouse_y);
 

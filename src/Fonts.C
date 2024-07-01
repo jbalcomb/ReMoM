@@ -86,13 +86,13 @@ uint8_t VGA_AA_Color_2;
 uint8_t VGA_AA_Color_3;
 
 // WZD dseg:E814
-int16_t Font_ColorIndex3;
+int16_t m_current_special_color;
 // WZD dseg:E816
-int16_t Font_ColorIndex2;
+int16_t m_current_highlight_color;
 // WZD dseg:E818
-int16_t Font_ColorIndex1;
+int16_t m_current_normal_color;
 // WZD dseg:E81A
-int16_t Font_Index;
+int16_t m_current_font_style;
 
 // WZD dseg:E81C
 int16_t print_ypos;
@@ -198,40 +198,44 @@ void Load_Font_File(char * font_file)
 */
 
 // WZD s17p01
-// MoO2: Set_Font_Style_Shadow_Down()
-// ¿ Color1 == 15 ~== MoO2 Set_Remap_Font_Style_Shadow_Down() ?
-void Set_Font_Style1(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3)
+// AKA Set_Font_Style1()
+// MoO2  Module: fonts  Set_Font_Style_Shadow_Down()
+void Set_Font_Style_Shadow_Down(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
-    Set_Font(Font_Index, Color_1, Color_2, Color_3);
-    font_header->shadow_flag = 1;  // bottom right
+    Set_Font_Style(style_num, Color_1, Color_2, Color_3);
+    font_header->shadow_flag = e_Font_Shadow_Down;
 }
 // WZD s17p02
-void Set_Font_Style2(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3)
+// AKA Set_Font_Style2()
+// MoO2  Module: fonts  Set_Font_Style_Shadow_Up()
+void Set_Font_Style_Shadow_Up(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
-    Set_Font(Font_Index, Color_1, Color_2, Color_3);
-    font_header->shadow_flag = 2;  // top left
+    Set_Font_Style(style_num, Color_1, Color_2, Color_3);
+    font_header->shadow_flag = e_Font_Shadow_Up;
 }
 // WZD s17p03
-void Set_Font_Style3(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3)
+// AKA Set_Font_Style3()
+// MoO2  Module: fonts  Set_Font_Style_Shadow_Heavy()
+void Set_Font_Style_Shadow_Heavy(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
-    Set_Font(Font_Index, Color_1, Color_2, Color_3);
-    font_header->shadow_flag = 3;  // 2x bottom right
+    Set_Font_Style(style_num, Color_1, Color_2, Color_3);
+    font_header->shadow_flag = e_Font_Shadow_Heavy;
 }
 // WZD s17p04
 // AKA Set_Font_Style4()
-// MoO2:  Set_Font_Style_Outline(); Set_Remap_Font_Style_Outline();
-// MoO2 font_header.shadow_flag, 4
+// MoO2  Module: fonts  Set_Font_Style_Outline()
 void Set_Font_Style_Outline(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
-    Set_Font(style_num, Color_1, Color_2, Color_3);
-    font_header->shadow_flag = 4;  // enum e_Font_Shadow { e_Font_Shadow_Outline }
+    Set_Font_Style(style_num, Color_1, Color_2, Color_3);
+    font_header->shadow_flag = e_Font_Shadow_Outline;
 }
 // WZD s17p05
-// MoO2: Set_Font_Style_Outline_Heavy(); Set_Remap_Font_Style_Outline_Heavy();
-void Set_Font_Style5(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3)
+// AKA Set_Font_Style5()
+// MoO2  Module: fonts  Set_Font_Style_Outline_Heavy()
+void Set_Font_Style_Outline_Heavy(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
-    Set_Font(Font_Index, Color_1, Color_2, Color_3);
-    font_header->shadow_flag = 5;  // full + bottom right
+    Set_Font_Style(style_num, Color_1, Color_2, Color_3);
+    font_header->shadow_flag = e_Font_Shadow_Outline_Heavy;
 }
 
 
@@ -289,7 +293,7 @@ void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors)
     }
 
     // sets current_colors and normal_colors to font color block 15
-    Set_Font(font_idx, 15, 0, 0);
+    Set_Font_Style(font_idx, 15, 0, 0);
 
 }
 
@@ -406,15 +410,7 @@ int16_t Print_Right(int16_t x, int16_t y, char * string)
     int16_t next_x;
     int16_t string_len;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] Print_Right(): string: %s\n", __FILE__, __LINE__, string);
-#endif
-
     string_len = Get_String_Width(string) - 1;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] Print_Right(): string_len: %d\n", __FILE__, __LINE__, string_len);
-#endif
 
     next_x = Print((x - string_len), y, string);
 
@@ -444,7 +440,6 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-#pragma warning(suppress : 4996)
     itoa(val, buffer, 10);
 
     next_x = Print_Right(x, y, buffer);
@@ -459,7 +454,6 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
     int16_t next_x;
     char buffer[10];
 
-#pragma warning(suppress : 4996)
     itoa(val, buffer, 10);
 
     next_x = Print_Centered(x, y, buffer);
@@ -479,20 +473,48 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 
 
 // WZD s17p27
-// UU_Print_Long_Right()
+// drake178: UU_Print_Long_Right()
 // WZD s17p28
-// VGA_WndDrawNumber()
+// drake178: VGA_WndDrawNumber()
 // WZD s17p29
-// UU_VGA_WndDrawLongN()
+// drake178: UU_VGA_WndDrawLongN()
 // WZD s17p30
-// UU_VGA_WndDrawRtAligned()
-// WZD s17p31
-// VGA_WndDrawCentered()
-// WZD s17p32
-// UU_VGA_WndDrawRtAlgNum()
-// WZD s17p33
-// UU_VGA_WndDrawRtAlgLong()
+// drake178: UU_VGA_WndDrawRtAligned()
 
+// WZD s17p31
+// drake178: VGA_WndDrawCentered()
+// DNE in MoO2
+// 1oom  src/lbxfont  lbxfont_print_str_center_limit()
+/*
+int lbxfont_print_str_center_limit(int x, int y, const char *str, int lx0, int ly0, int lx1, int ly1, uint16_t pitch, int scale)
+    int w = lbxfont_calc_str_width(str);
+    return lbxfont_print_str_normal_limit(x - w / 2, y, str, lx0, ly0, lx1, ly1, pitch, scale);
+*/
+/*
+
+Print_Centered()
+    |-> Print()
+        |-> Print_Display()
+
+*/
+int16_t Clipped_Print_Centered(int16_t x, int16_t y, char * string)
+{
+    int16_t next_x;
+    int16_t string_len;
+
+    string_len = Get_String_Width(string);
+
+    next_x = Clipped_Print((x - (string_len/2)), y, string);
+
+    return next_x;
+}
+
+
+// WZD s17p32
+// drake178: UU_VGA_WndDrawRtAlgNum()
+
+// WZD s17p33
+// drake178: UU_VGA_WndDrawRtAlgLong()
 
 // WZD s17p34
 int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side)
@@ -516,9 +538,6 @@ int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side)
 int16_t Print(int16_t x, int16_t y, char * string)
 {
     int16_t next_x;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Print() string: %s\n", __FILE__, __LINE__, string);
-#endif
 
     next_x = Print_Display(x, y, string, ST_FALSE);
 
@@ -581,9 +600,9 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
         Set_Color_Set(GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLOR_SET));
     }
 
-        draw_alias_flag = ST_FALSE;
+    draw_alias_flag = ST_FALSE;
 
-        next_x = Print_String(x, y, string, ST_TRUE, full_flag);
+    next_x = Print_String(x, y, string, ST_TRUE, full_flag);
 
     return next_x;
 }
@@ -829,41 +848,351 @@ void Set_Color_Set(int16_t color_set_idx)
 // UU_DBG_TblDrawU32()
 // WZD s17p49
 // DBG_DrawTableCell()
+
 // WZD s17p50
-// VGA_WndDrawSString()
+// drake178: VGA_WndDrawSString()
+// DNE in MoO2
+/*
+~ No Alias
+
+; draws a string line into the draw segment, obeying
+; any window limits set via VGA_SetDrawWindow, painting
+; partial glyphs if necessary, using any font color
+; selector bytes encountered in the text, and drawing
+; outlines preset in the font header
+; returns the next X coordinate to draw to
+;
+; unlike the other styled string functions, this one
+; does not disable antialiasing for the outlines
+
+looks like Print_Display()
+
+Print()
+    |-> Print_Display()
+        |-> Print_String
+            |-> Print_Character()
+            |-> Print_Character_No_Alias()
+
+So, ...
+    not equivalent
+    ¿ Print() vs. Print_Display() ?
+        OON Print() hard codes full_flag to ST_FALSE
+Here, ...
+    Print() / Print_Display()
+    includes hard-coded full_flag = ST_FALSE on every call to Clipped_Print_String()
+    neither equivalent tp Print() or Print_Display()
+    everywhere else calls Print(), so just Clipped_Print()
+
+*/
+int16_t Clipped_Print(int16_t x, int16_t y, char * string)
+{
+    int16_t next_x;  // DNE in Dasm
+    int16_t itr;
+    uint16_t outline_style;
+
+    outline_style = FONT_GET_SHADOW_FLAG(font_style_data);
+
+    if(outline_style != 0)
+    {
+        for(itr = 0; itr < 16; itr++)
+        {
+            SET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS + itr, outline_color);
+        }
+        
+        if(outline_style != 2) /* Shadow_TopLeft */
+        {
+            Clipped_Print_String(x + 1, y + 1, string, ST_FALSE);  // overdraw right + botton
+            Clipped_Print_String(x    , y + 1, string, ST_FALSE);  // overdraw bottom
+            Clipped_Print_String(x + 1, y    , string, ST_FALSE);  // overdraw right
+        }
+
+        if( outline_style != 1 && outline_style != 3)  /* Shadow_BtmRight || Shadow_BtmRight_2px */
+        {
+            Clipped_Print_String(x - 1, y    , string, ST_FALSE);  // overdraw left
+            Clipped_Print_String(x - 1, y - 1, string, ST_FALSE);  // overdraw left + top
+            Clipped_Print_String(x    , y - 1, string, ST_FALSE);  // overdraw top
+        }
+
+        if(outline_style == 3 || outline_style == 5)  /* Shadow_BtmRight_2px || Outline_Plus_BR2px */
+        {
+            Clipped_Print_String(x + 2, y + 2, string, ST_FALSE);
+            Clipped_Print_String(x + 1, y + 2, string, ST_FALSE);
+            Clipped_Print_String(x + 2, y + 1, string, ST_FALSE);
+        }
+
+        if(outline_style > 3)  /* Shadow_BtmRight_2px */
+        {
+            Clipped_Print_String(x + 1, y - 1, string, ST_FALSE);  // overdraw right + top
+            Clipped_Print_String(x - 1, y + 1, string, ST_FALSE);  // overdraw left + bottom
+        }
+
+        if(outline_style == 5)  /* Outline_Plus_BR2px */
+        {
+            Clipped_Print_String(x + 2, y    , string, ST_FALSE);
+            Clipped_Print_String(x    , y + 2, string, ST_FALSE);
+        }
+
+        Set_Color_Set(GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLOR_SET));
+    }
+
+    next_x = Clipped_Print_String(x, y, string, ST_TRUE);
+
+    return next_x;
+}
+
+
 // WZD s17p51
-// VGA_WndDrawString()
+// drake178: VGA_WndDrawString()
+// ¿ MoO2  Module: fonts  Clipped_Print_String() ?
+/*
+
+    function (0 bytes) Clipped_Print_String
+    Address: 01:00122309
+        Num params: 4
+        Return type: signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) x
+            signed integer (2 bytes) y
+            pointer (4 bytes) string
+            signed integer (2 bytes) change_color_ok_flag
+            signed integer (2 bytes) full_flag
+            signed integer (4 bytes) ptr
+            signed integer (4 bytes) button_flag
+            signed integer (4 bytes) tab
+            signed integer (4 bytes) height
+            signed integer (4 bytes) character
+            signed integer (4 bytes) space_count
+            signed integer (4 bytes) current_space
+            signed integer (4 bytes) space_remainder
+            signed integer (4 bytes) space_add
+            signed integer (4 bytes) i
+            array (4 bytes) tab_string
+            Num elements:    4, Type:                unsigned integer (4 bytes) 
+
+*/
+/*
+; draws a string line into the draw segment, obeying
+; any window limits set via VGA_SetDrawWindow, painting
+; partial glyphs if necessary, and using any font color
+; selector bytes encountered in the text
+; returns the next X coordinate to draw to
+
+*/
+int16_t Clipped_Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag)
+{
+    int16_t next_x;  // DNE in Dasm
+    int16_t Switch_Char;
+    char character;
+    int16_t width;
+    int16_t height;
+    uint16_t ptr;
+
+    ptr = 0;
+
+    print_xpos = x;
+    print_ypos = y;
+
+    height = FONT_GET_HEIGHT(font_style_data);
+
+    if((y > screen_window_y2) || ((y + height) < screen_window_y1))
+    {
+        return 0;
+    }
+
+    if (x > screen_window_x2)
+    {
+        return x;
+    }
+
+    width = Get_String_Width(string);
+
+    if ((x + width) < screen_window_x1)
+    {
+        return (x + width);
+    }
+
+    // while ((character = *str++) != 0)
+    while(string[ptr] != '\0')
+    {
+        character = string[ptr];
+
+        switch(character)
+        {
+            case 1:  /* character == '\x01' */  /* ASCII   1h  1d  SOH (start of heading)  */  /* sw_character_values[0] == character */
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Normal_Colors_On();
+                }
+            } break;
+            case 2:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Highlight_Colors_On();
+                }
+            } break;
+            case 3:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Special_Colors_On();
+                }
+            } break;
+            case 4:
+            {
+                if(change_color_ok_flag != ST_FALSE)
+                {
+                    Set_Highlight_Colors_On();
+                }
+            } break;
+            case 13:  /*  ASCII  0Dh  13d  CR (carriage return)        */
+            {
+                return print_xpos;
+            } break;
+            default:
+            {
+                // lbxfont_temp_x = lbxfont_print_char_ret_x_limit(lbxfont_temp_x, lbxfont_temp_y, c, lx0, ly0, lx1, ly1, pitch, scale);
+                print_xpos = Clipped_Print_Character(print_xpos, print_ypos, character);
+            } break;
+        }
+    }
+
+    return print_xpos;
+}
+
 // WZD s17p52
-// VGA_WndDrawChar()
+// drake178: VGA_WndDrawChar()
+
+/*
+; draws a single font character into the draw segment,
+; obeying any window limits set via VGA_SetDrawWindow,
+; painting partial glyphs if necessary
+; returns the next X coordinate to draw to
+
+*/
+int16_t Clipped_Print_Character(int16_t x, int16_t y, char character)
+{
+    int16_t max_y;
+    int16_t skip_y;
+    char char_num;
+    int16_t spacing;
+    int16_t width;
+    int16_t height;
+    int16_t skip_x;
+    int16_t next_x;
+
+    char_num = (character - 32);
+
+    if((char_num < 0) || (char_num > 94))
+    {
+        return x;
+    }
+
+    height = font_header->height;
+
+    spacing = font_header->current_horizontal_spacing;
+
+    width = font_header->current_font_widths[char_num];
 
 
+    if((x < screen_window_x1) || ((x + width) > screen_window_x2) || (y < screen_window_y1) || ((y + height) > screen_window_y2))
+    {
+        next_x = x + width + spacing;
+
+        if(x < screen_window_x1)
+        {
+            skip_x = screen_window_x1 - x;
+            if (skip_x >= width)
+            {
+                return next_x;
+            }
+            x = screen_window_x1;
+            width -= skip_x;
+        }
+        else
+        {
+            skip_x = 0;
+        }
+
+        if((x + width) > screen_window_x2)
+        {
+            width = (screen_window_x2 + 1) - x;
+            if(width < 1)
+            {
+                return next_x;
+            }
+        }
+
+        if(y < screen_window_y1)
+        {
+            skip_y = screen_window_y1 - y;
+            y = screen_window_y1;
+        }
+        else
+        {
+            skip_y = 0;
+        }
+
+        if
+        ((y + height) > screen_window_y2)
+        {
+            max_y = screen_window_y2 + 1 - y;
+        }
+        else
+        {
+            max_y = height;
+        }
+
+        // lbxfont_plotchar_limit(x, y, c, xskip, char_w, yskip, h, pitch, scale);
+        Print_Clipped_Character(x, y, char_num, skip_x, width, skip_y, max_y);
+
+    }
+    else
+    {
+        next_x = Print_Character(x, y, character);
+    }
+
+    return next_x;
+}
+
+
+/*
+MoO2
+Pick_Font_Number_()
+Pick_Font_Color_()
+Get_Font_Style_()
+Get_Current_Color_Set_()
+Get_Current_Font_Color()
+Get_Current_Highlight_Color()
+Get_Current_Special_Color()
+*/
 // WZD s17p53
-// MoO2  Get_Current_Font_Style() ...happenstance, has the same odd extra copy to 'return vlaue' ? dereferencing a pointer ? exported by ASM ?
-int16_t Get_Current_Font_Index(void)
+int16_t Get_Current_Font_Style(void)
 {
-    int16_t current_font_index;
-
-    current_font_index = Font_Index;
-
-    return current_font_index;
+    return m_current_font_style;
 }
-
-
 // WZD s17p54
-// AKA Get_Font_Color1
-int16_t Get_Current_Font_Color(void)
+int16_t Get_Current_Normal_Color(void)
 {
-    int16_t current_font_color;
-
-    current_font_color = Font_ColorIndex1;
-
-    return current_font_color;
+    return m_current_normal_color;
+}
+// WZD s17p55
+int16_t Get_Current_Highlight_Color(void)
+{
+    return m_current_highlight_color;
+}
+// WZD s17p56
+int16_t Get_Current_Special_Color(void)
+{
+    return m_current_special_color;
 }
 
-// WZD s17p55
-// Get_Font_Color2
-// WZD s17p56
-// Get_Font_Color3
 
 // WZD s17p57
 // UU_STR_CopyToNearLBX()
@@ -874,6 +1203,22 @@ int16_t Get_Current_Font_Color(void)
 
 
 // WZD s17p60
+// MoO2  Module: fonts  Print_To_Bitmap()
+/*
+    function (0 bytes) Print_To_Bitmap
+    Address: 01:00122A6E
+        Num params: 4
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            signed integer (2 bytes) x
+            signed integer (2 bytes) y
+            pointer (4 bytes) string
+            pointer (4 bytes) bitmap
+*/
 int16_t Print_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
 {
     int16_t next_x;  // DNE in Dasm
@@ -1093,11 +1438,45 @@ int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitm
 }
 
 // WZD s17p64
-// LBX_DrawCentered()
+// Print_Centered_To_Bitmap()
+
 // WZD s17p65
-// LBX_DrawJustified()
+// Print_Full_To_Bitmap()
+
 // WZD s17p66
-// LBX_DrawFarString()
+// MoO2  Module: fonts  Print_To_Bitmap()
+/*
+    function (0 bytes) Print_To_Bitmap
+    Address: 01:00122A6E
+        Num params: 4
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            signed integer (2 bytes) x
+            signed integer (2 bytes) y
+            pointer (4 bytes) string
+            pointer (4 bytes) bitmap
+*/
+/*
+; a double wrapper for LBX_DrawStyledString that first
+; copies the far string into Temp_String in the data
+; segment, then draws it left-aligned into an existing
+; LBX image allocation
+; returns the next X coordinate to draw to
+*/
+// int16_t LBX_DrawFarString(int16_t x, int16_t y, ofst_t src_ofst, sgmt_t src_sgmt, SAMB_ptr bitmap)
+int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
+{
+    int16_t next_x;  // DNE in Dasm
+    // TODO  String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    strcpy(near_buffer, string);
+    next_x = Print_To_Bitmap(x, y, near_buffer, bitmap);
+    return next_x;
+}
+
 // WZD s17p67
 // UU_LBX_DrawRtAlgFar()
 // WZD s17p68
@@ -1160,15 +1539,22 @@ int16_t _CS_next_x;
 byte_ptr _CS_bitmap_start;
 int16_t _CS_width;
 
+int16_t _CS_skip_y;
+int16_t _CS_max_y;
+int16_t _CS_draw_height;
+byte_ptr _CS_screen_start;
+uint8_t _CS_glyph_buffer[80];
+
 // WZD s18p01
-// MoO2: Set_Font_Style(style_num, colors)
+// AKA Set_Font()
+// MoO2  Module: fonts  Set_Font_Style(style_num, colors)
 /*
     sets font style
     sets color1 as current & normal colors
     sets color2 as highlight colors
     sets color3 as special colors
 */
-void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
+void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 {
     int16_t itr;
 
@@ -1176,10 +1562,10 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
     color2 = (color2 < 16) ? color2 : 0;
     color3 = (color3 < 16) ? color3 : 0;
 
-    Font_Index = font_idx;
-    Font_ColorIndex1 = color1;
-    Font_ColorIndex2 = color2;
-    Font_ColorIndex3 = color3;
+    m_current_font_style = font_idx;
+    m_current_normal_color = color1;
+    m_current_highlight_color = color2;
+    m_current_special_color = color3;
 
     for(itr = 0; itr < 16; itr++)
     {
@@ -1522,13 +1908,12 @@ void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t widt
 }
 
 
-
 // WZD s18p07
 int16_t Get_String_Width(char * string)
 {
     int16_t pos;
     int16_t width;
-    int16_t char_num;
+    int16_t char_num = 0;
     int16_t horizontal_spacing;
 
     pos = 0;
@@ -1600,6 +1985,250 @@ Done:
     return width;
 }
 
+
+
+// WZD s18p08
+// drake178: VGA_DrawPartialChar()
+// ¿ MoO2  Module: fonts  Print_Clipped_Character() ?
+// static void lbxfont_plotchar_limit(int x, int y, char c, int xskip, int char_w, int yskip, int char_h, uint16_t pitch, int scale)
+/*
+
+    function (0 bytes) Print_Clipped_Character
+    Address: 01:0012260F
+        Num params: 3
+        Return type: signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        unsigned integer (1 bytes) 
+        Locals:
+            signed integer (2 bytes) x
+            signed integer (2 bytes) y
+            unsigned integer (1 bytes) character
+            signed integer (2 bytes) skip_x
+            signed integer (2 bytes) height
+            signed integer (2 bytes) width
+            signed integer (2 bytes) spacing
+            signed integer (2 bytes) cpos
+            signed integer (2 bytes) skip_y
+            signed integer (2 bytes) max_y
+            signed integer (2 bytes) next_x
+            array (2 bytes) stringer
+            Num elements:    2, Type:                unsigned integer (4 bytes) 
+
+*/
+
+/*
+; draws a single font character into the draw segment
+; by setting up and calling VGA_DrawPartialGlyph
+; unlike most similar functions, this one DOES NOT
+; return the next X coordinate to draw to
+
+*/
+void Print_Clipped_Character(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
+{
+    // uint16_t si = GET_LE_16(&lbxfontdata[0xaa + char_num * 2]);
+    // uint8_t * p = &lbxfontdata[si];
+    byte_ptr font_data_offset;
+
+    font_data_offset = (font_style_data + font_header->current_data_offsets[char_num]);
+
+    while(skip_x)
+    {
+        if(*font_data_offset++ == 0x80)
+        {
+            skip_x--;
+        }
+    }
+
+// mov     ax, [bp+y]
+// mov     cx, ax
+// shl     ax, 1
+// shl     ax, 1
+// add     ax, cx   ; * 5 as a segment address = * 80 total bytes which, since each byte is 4 pixels, equals the draw row
+// add     ax, [current_video_page]
+// mov     es, ax
+// mov     dx, [bp+width]
+// mov     bx, [bp+x]
+// mov     ax, [bp+skip_y]
+// mov     cx, [bp+max_y]
+// mov     di, [font_style_data]
+// mov     ds, di
+
+
+    _CS_skip_y = skip_y;
+    _CS_max_y = max_y;
+    _CS_draw_height = (max_y - skip_y);
+    _CS_width = width;
+    _CS_screen_start = current_video_page + (y * SCREEN_WIDTH);
+
+    Print_Clipped_Letter(x, font_data_offset);
+
+// ; draws a partial font glyph into the draw segment
+// ; requires the following setup beforehand:
+// ;   ds:si = character glyph data pointer
+// ;   es = segment of the top scan line
+// ;   ax = top lines to trim
+// ;   bx = X pixel position
+// ;   cx = original font height
+// ;   dx = character width
+// ;
+// ; font format - glyph_width columns, for each column
+// ;   sign bit: skip if set, dots if not
+// ;     can skip up to 127 pixels, 0 ($80) is next col
+// ;   otherwise bits 0-3: font color, 4-6: repeat count
+// ;     can repeat up to 7 pixels in up to 16 colors
+
+// mov     [cs:VGA_GlyphDraw_VTrim], ax
+// mov     [cs:VGA_GlyphDraw_FHgt], cx
+// sub     cx, ax
+// mov     [cs:VGA_GlyphDraw_DHgt], cx
+// mov     [cs:_CS_width], dx
+// mov     ax, es
+// mov     [cs:VGA_GlyphDraw_Top], ax
+
+// VGA_GlyphDraw_VTrim = skip_y
+// VGA_GlyphDraw_FHgt = max_y
+// VGA_GlyphDraw_DHgt = (max_y - skip_y)
+// _CS_width = width
+// VGA_GlyphDraw_Top = current_video_page + (y * SCREEN_WIDTH)
+
+}
+
+
+// WZD s18p09
+// drake178: VGA_DrawPartialGlyph()
+// ¿ MoO2  Module: fonts  Print_Clipped_Letter() ?
+/*
+
+    function (0 bytes) Print_Clipped_Letter
+    Address: 01:001227EC
+        Num params: 4
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        unsigned integer (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) x
+            signed integer (2 bytes) y
+            unsigned integer (1 bytes) char_num
+            signed integer (2 bytes) skip_x
+            signed integer (2 bytes) width
+            signed integer (2 bytes) skip_y
+            signed integer (2 bytes) max_y
+            signed integer (4 bytes) screen_pos
+            signed integer (4 bytes) screen_start
+            signed integer (4 bytes) line_num
+            signed integer (4 bytes) i
+            signed integer (4 bytes) screen_pos_start
+            signed integer (4 bytes) screen_pos_end
+            signed integer (2 bytes) data_offset
+            signed integer (2 bytes) height
+            signed integer (2 bytes) pos
+            signed integer (2 bytes) new_x
+            unsigned integer (1 bytes) data
+            unsigned integer (1 bytes) skip_count
+
+*/
+/*
+draws a partial font glyph into the draw segment
+requires the following setup beforehand:
+  ds:si = character glyph data pointer
+  es = segment of the top scan line
+  ax = top lines to trim
+  bx = X pixel position
+  cx = original font height
+  dx = character width
+
+font format - glyph_width columns, for each column
+  sign bit: skip if set, dots if not
+    can skip up to 127 pixels, 0 ($80) is next col
+  otherwise bits 0-3: font color, 4-6: repeat count
+    can repeat up to 7 pixels in up to 16 colors
+*/
+// void Print_Clipped_Letter(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
+void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset)
+{
+    int16_t  itr;
+    uint8_t * ptr_glyhp_buffer;
+    uint8_t font_data_byte;
+    uint16_t repeat_count;
+    uint8_t color_index;
+    uint8_t palette_index;
+    uint8_t skip_count;
+    int16_t draw_height;
+    byte_ptr screen_start;
+    byte_ptr screen_pos;
+    uint8_t glyph_buffer_byte;
+
+    while(_CS_width)
+    {
+
+        // DEDU  Is there a reason why this is done on every iteration?
+        for(itr = 0; itr < _CS_max_y; itr++)
+        {
+            _CS_glyph_buffer[itr] = 0xFF;
+        }
+
+        ptr_glyhp_buffer = &_CS_glyph_buffer[0];
+
+        font_data_byte = *font_data_offset++;
+
+        if(!(font_data_byte & 0x80))
+        {
+            repeat_count = (font_data_byte >> 4);
+            color_index = (font_data_byte & 0x0F);
+            palette_index = font_style_data[color_index];
+            while(repeat_count--)
+            {
+                // ES:DI++ = palette_index;
+                // ES = screen_start = current_video_page + (y_start * SCREEN_WIDTH)
+                // DS = ptr_glyhp_buffer = &_CS_glyph_buffer[0]
+                *ptr_glyhp_buffer++ = palette_index;
+            }
+
+        }
+        else if(font_data_byte & 0x7f)
+        {
+            skip_count = (font_data_byte & 0x7F);
+            ptr_glyhp_buffer += skip_count;
+        }
+        else
+        {
+            break;
+        }
+
+
+        /*
+            BEGIN:  copy glyph buffer to screen
+        */
+        // screen_start = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
+        // screen_pos = screen_start;
+        screen_pos = _CS_screen_start + x_start;
+        ptr_glyhp_buffer = &_CS_glyph_buffer[0];
+        draw_height = _CS_draw_height;
+        while(draw_height--)
+        {
+            glyph_buffer_byte = *ptr_glyhp_buffer++;
+            screen_pos++;
+            if(glyph_buffer_byte != 0xFF)
+            {
+                screen_pos--;
+                *screen_pos++ = glyph_buffer_byte;
+            }
+            screen_pos += SCREEN_WIDTH;  // same column, one pixel down
+        }
+        /*
+            END:  copy glyph buffer to screen
+        */
+
+        _CS_width--;
+    }
+
+}
 
 
 
@@ -1736,7 +2365,7 @@ void Load_Palette(int entry, int start_color, int end_color)
 // DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 0) = (*(palette_data + (color_start * 3) + (itr * 3) + 2) << 2);
 // DELETE      }
 
-    Set_Font(0, 0, 0, 0);
+    Set_Font_Style(0, 0, 0, 0);
 
     if(start_color == ST_UNDEFINED)
     {
@@ -1806,7 +2435,7 @@ void Update_Remap_Color_Range(int16_t first_set, int16_t last_set)
 
     if(last_set < first_set)
     {
-        MEM_SwapWord(&first_set, &last_set);
+        Swap_Short(&first_set, &last_set);
     }
 
     if(first_set == 0)
@@ -2077,6 +2706,147 @@ Done:
 }
 
 
+
+// WZD s21p03
+// drake178: VGA_ShadeScreen()
+
+// WZD s21p04
+// drake178: VGA_SlideColors()
+// ¿ MoO2: Cycle_Palette_Color() ... Update_Cycle()
+// ¿ 1oom ?
+/*
+    called from Lair_Confirm_Draw()
+    VGA_SlideColors(247, 8, notify_color_slide_cycle);
+
+*/
+void VGA_SlideColors__STUB(int16_t First_Color, int16_t Count, int16_t ShiftBy)
+{
+
+/*
+mov     dx, 0
+mov     ax, [bp+ShiftBy]
+mov     bx, [bp+Count]
+div     bx
+mov     [bp+ShiftBy], dx
+
+
+add     dx, [bp+First_Color]
+mov     [cs:Pass1_DstColor_1], dx
+
+
+mov     ax, [bp+Count]
+sub     ax, [bp+ShiftBy]
+mov     [cs:Pass1_Count], ax
+
+
+mov     ax, [bp+First_Color]
+mov     [cs:Pass1_SrcColor1], ax
+
+
+mov     ax, [bp+First_Color]
+mov     [cs:Pass2_DstColor_1], ax
+
+
+mov     ax, [bp+ShiftBy]
+mov     [cs:Pass2_Count], ax
+
+
+mov     ax, [bp+Count]
+sub     ax, [bp+ShiftBy]
+add     ax, [bp+First_Color]
+mov     [cs:Pass2_SrcColor_1], ax
+
+
+mov     ax, [current_palette]
+mov     ds, ax
+mov     si, [cs:Pass1_SrcColor1]
+mov     ax, si
+shl     si, 1
+add     si, ax
+mov     bx, [cs:Pass1_DstColor_1]
+mov     cx, [cs:Pass1_Count]
+*/
+
+
+// Wait for Vsync
+// Wait for Vsync
+
+
+/*
+loc_1D105:
+cli
+mov     al, bl
+out     dx, al
+inc     dx
+lodsb
+out     dx, al
+lodsb
+out     dx, al
+lodsb
+out     dx, al
+sti
+dec     dx
+inc     bx
+loop    loc_1D105
+*/
+
+/*
+mov     si, [cs:Pass2_SrcColor_1]
+mov     ax, si
+shl     si, 1
+add     si, ax
+mov     bx, [cs:Pass2_DstColor_1]
+mov     cx, [cs:Pass2_Count]
+cmp     cx, 0
+jz      short loc_1D14F
+*/
+
+
+
+// Wait for Vsync
+// Wait for Vsync
+
+
+
+/*
+loc_1D13F:
+cli
+mov     al, bl
+out     dx, al
+inc     dx
+lodsb
+out     dx, al
+lodsb
+out     dx, al
+lodsb
+out     dx, al
+sti
+dec     dx
+inc     bx
+loop    loc_1D13F
+*/
+
+
+
+/*
+// clear all palette change flags
+loc_1D14F:
+mov     ax, ds
+mov     es, ax
+assume es:dseg
+mov     di, 768
+mov     cx, 128
+mov     ax, 0
+rep stosw
+*/
+
+}
+
+// WZD s21p05
+// drake178: UU_VGA_ColorWave()
+
+
+
 // WZD s21p06
 // drake178: VGA_ShadeColorMatch
 // MoO2: 
@@ -2339,3 +3109,7 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
     
     return found_color;
 }
+
+
+// WZD s21p07
+// FLIC_Load_Palette()

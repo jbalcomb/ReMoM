@@ -301,7 +301,7 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
             food_units *= 2;
 
-            if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) == ST_TRUE)
+            if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
             {
                 food_units /= 2;
             }                               
@@ -408,7 +408,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
             production_bonus = 3;
         }
 
-        if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+        if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
         {
             production_bonus = (production_bonus / 2);
         }
@@ -686,7 +686,7 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         gold_units = ((gold_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         gold_units = (gold_units / 2);
     }
@@ -750,7 +750,7 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         mana_units = ((mana_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         mana_units = (mana_units / 2);
     }
@@ -826,7 +826,7 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
         cost_reduction = (cost_reduction * 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         cost_reduction = (cost_reduction / 2);
     }
@@ -920,6 +920,8 @@ TILE_IsAISailable()
 // WZD s161p24
 // drake178: TILE_IsSailable()
 /*
+    regularly used as 'Square is Ocean-Terrain'
+    
 WZD s161p22
 TILE_IsAISailable()
 WZD s161p24
@@ -934,10 +936,6 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     uint16_t src_ofst;
     uint16_t world_map_value;
     uint16_t terrain_type;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     // les  bx, [_world_maps]
     // ~== ES = (&_world_maps[0] / 16); BX = (&_world_maps[0] % 16);
@@ -1016,10 +1014,6 @@ Return_True:
     goto Done;
 
 Done:
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     return return_value;
 }

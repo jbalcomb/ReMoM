@@ -63,7 +63,7 @@ int16_t confirmation_box_y_offset = 0;
 
 // WZD dseg:6F9A
 // drake178: GUI_Notify_Compose
-int16_t notify_draw_offscr = 0;
+int16_t notify_draw_offscr = ST_FALSE;
 
 // WZD dseg:6F9C
 // drake178: COL_Notify_Shadows
@@ -95,7 +95,9 @@ int16_t notify2_mascot_x1[5] = { -2,   0, -22,   8,  2};
 int16_t notify2_mascot_y1[5]  = {  2, -20,  -4, -12, -3};
 int16_t notify2_text_x1[5] = { 70,  73,  62,  68, 70};
 
-// WZD dseg:6FE2 01 00                                           ITEM_ViewGrowStage dw 1                 ; DATA XREF: ITEM_GetViewDrawPos:loc_D9474r ...
+// WZD dseg:6FE2 01 00                                           
+int16_t m_item_view_grow_stage = 1;
+
 
 /*
     BEGIN:
@@ -156,6 +158,29 @@ SAMB_ptr notify_magic_picts_seg[6];
 
 
 
+
+// WZD dseg:CA8E                                                 BEGIN:  ovr149  GENDRAW - Uninitialized Data
+
+// WZD dseg:CA8E
+int16_t _draw_expanding_box;
+// WZD dseg:CA90
+int16_t HLP_ExpandOrigBottom;
+// WZD dseg:CA92
+int16_t HLP_ExpandOrigRight;
+// WZD dseg:CA94
+int16_t HLP_ExpandOrigTop;
+// WZD dseg:CA96
+int16_t HLP_ExpandOrigLeft;
+// WZD dseg:CA98
+int16_t HLP_ExpandTgtBottom;
+// WZD dseg:CA9A
+int16_t HLP_ExpandTgtRight;
+// WZD dseg:CA9C
+int16_t HLP_ExpandTgtTop;
+// WZD dseg:CA9E
+int16_t HLP_ExpandTgtLeft;
+
+// WZD dseg:CAA0                                                 BEGIN:  Selection Box
 /*
     BEGIN:  Selection Box
 */
@@ -189,95 +214,72 @@ int16_t GUI_ListSel_Count;
 /*
     END:  Selection Box
 */
+// WZD dseg:CAA0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+selectbox_fields dw 0Ah dup(0)          ; DATA XREF: Selection_Box+217w ...
+// WZD dseg:CAB4 00 00                                           selectbox_title dw 0                    ; DATA XREF: Selection_Box+1CBw ...
+// WZD dseg:CAB6 00 00                                           selectbox_list dw 0                     ; DATA XREF: Selection_Box+1C5w ...
+// WZD dseg:CAB8 00 00                                           selectbox_items dw 0                    ; DATA XREF: Selection_Box+1BFw ...
+// WZD dseg:CABA 00 00                                           selectbox_first_item dw 0               ; DATA XREF: Selection_Box+1CEw ...
+// WZD dseg:CABC 00 00                                           selectbox_highlight_item dw 0           ; DATA XREF: Selection_Box+1D4w ...
+// WZD dseg:CABE 00 00                                           UU_selectbox dw 0
+// WZD dseg:CAC0 00 00                                           selectbox_y2 dw 0                       ; DATA XREF: Selection_Box+441r ...
+// WZD dseg:CAC2 00 00                                           selectbox_x2 dw 0                       ; DATA XREF: Selection_Box+2EFr ...
+// WZD dseg:CAC4 00 00                                           selectbox_y1 dw 0                       ; DATA XREF: Selection_Box+2DAr ...
+// WZD dseg:CAC6 00 00                                           selectbox_x1 dw 0                       ; DATA XREF: Selection_Box+321r ...
+// WZD dseg:CAC8 00 00                                           selectbox_multi dw 0                    ; DATA XREF: Selection_Box+1B9w ...
+// WZD dseg:CACA 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: Selection_Box+264r ...
+// WZD dseg:CACA                                                 END:  Selection Box
 
 // WZD dseg:CACA                                                 END:  Selection Box
+
 // WZD dseg:CACC                                                 BEGIN:  Confirmation Box
+// WZD dseg:CACC
+SAMB_ptr confirmation_button_no_seg;            // ; 2 frame image appended in the LBX_Sandbox_Segment
+// WZD dseg:CACE
+SAMB_ptr confirmation_button_yes_seg;           // ; 2 frame image appended in the LBX_Sandbox_Segment
+// WZD dseg:CAD0
+SAMB_ptr confirmation_background_bottom_seg;    // ; single image appended in the LBX_Sandbox_Segment
+// WZD dseg:CAD2
+SAMB_ptr confirmation_background_top_seg;       // ; LBXE_LoadReplace into the LBX_Sandbox_Segment
+// WZD dseg:CAD2                                                 END:  Confirmation Box
 
-// WZD dseg:CACC 00 00                                           
-SAMB_ptr confirmation_button_no_seg;
-// WZD dseg:CACC                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// WZD dseg:CACE 00 00                                           
-SAMB_ptr confirmation_button_yes_seg;
-// WZD dseg:CACE                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// WZD dseg:CAD0 00 00                                           
-SAMB_ptr confirmation_background_bottom_seg;
-// WZD dseg:CAD0                                                                                         ; single image appended in the LBX_Sandbox_Segment
-// WZD dseg:CAD2 00 00                                           
-SAMB_ptr confirmation_background_top_seg;
-// WZD dseg:CAD2                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
-
-
+// WZD dseg:CAD4                                                 BEGIN: Notify
 // WZD dseg:CAD4
-// drake178: GUI_Notify_IMG2_Left
 int16_t notify_pict2_x;
-
 // WZD dseg:CAD6
-// drake178: GUI_Notify_IMG2_Top
 int16_t notify_pict2_y;
-
 // WZD dseg:CAD8
-// drake178: GUI_Notify_IMG_Top
 int16_t notify_pict1_y;
-
 // WZD dseg:CADA
-// drake178: GUI_Notify_IMG_Left
 int16_t notify_pict1_x;
-
 // WZD dseg:CADC
-// drake178: GUI_Notify_GemBorder
 int16_t notify_box_border;
-
 // WZD dseg:CADE
-// drake178: IMG_GUI_Dialog_Pic2@
 SAMB_ptr notify_pict2;
-
 // WZD dseg:CAE0
-// drake178: IMG_GUI_Dialog_Pic@
 SAMB_ptr notify_pict1;
-
 // WZD dseg:CAE2
-// drake178: GUI_Notify_Color
 int16_t notify_type;
-
-// WZD dseg:CAE4 00                                              db    0
-// WZD dseg:CAE5 00                                              db    0
-
+// WZD dseg:CAE4
+// UU_notify
 // WZD dseg:CAE6
-// drake178: IMG_GUI_BlueNtfyGem@; IMG_GUI_RedNtfyGem@; IMG_GUI_GrnNtfyGem@; IMG_GUI_BrwnNtfyGem@
 SAMB_ptr notify_gem_box_seg[4];
-
 // WZD dseg:CAEE
-// drake178: IMG_GUI_BlueNtfyPic@; IMG_GUI_RedNtfyPic@; IMG_GUI_GrnNtfyPic@; IMG_GUI_BrwnNtfyPic@
 SAMB_ptr notify_pict_box_seg[4];
-
 // WZD dseg:CAF6
-// drake178: IMG_GUI_BlueNotify@; IMG_GUI_RedNotify@; IMG_GUI_GrnNotify@; IMG_GUI_BrwnNotify@;
 SAMB_ptr notify_seg[4];
-
 // WZD dseg:CAFE
-// drake178: GUI_ColorSlideType
 int16_t notify_color_slide;
-
 // WZD dseg:CB00
-// drake178: GUI_ColorSlide_State
-int16_t notify_color_slide_cycle;
+int16_t notify_color_slide_cycle;  // {0, ..., 7}
 
 // WZD dseg:CB02
-// drake178: IMG_GUI_RedMsg2Btm@
 SAMB_ptr IMG_GUI_RedMsg2Btm;
-
 // WZD dseg:CB04
-// drake178: IMG_GUI_RedMessage2@
 SAMB_ptr IMG_GUI_RedMessage2;
-
 // WZD dseg:CB06
-// drake178: IMG_GUI_RedMsg1Btm@
 SAMB_ptr IMG_GUI_RedMsg1Btm;
-
 // WZD dseg:CB08
-// drake178: IMG_GUI_RedMessage1@
 SAMB_ptr IMG_GUI_RedMessage1;
-
 
 /*
     BEGIN:  Selection Box
@@ -295,12 +297,8 @@ SAMB_ptr selectbk_bottom_arrow_seg;
 // WZD dseg:CB14
 SAMB_ptr selectbk_top_arrow_seg;
 // WZD dseg:CB16
-// drake178: IMG_GUI_ListS_IBGRs@
-// ; array of 5 2-frame images appended into the sandbox
 SAMB_ptr selectbk_button_22to26_seg[10];
 // WZD dseg:CB2A
-// drake178: IMG_GUI_ListS_IBGs@
-// ; array of 5 2-frame images appended into the sandbox
 SAMB_ptr selectbk_button_12to16_seg[10];
 // WZD dseg:CB3E
 SAMB_ptr selectbd_scroll_seg;
@@ -321,27 +319,23 @@ SAMB_ptr selectbd_left_seg;
 */
 
 // WZD dseg:CB4C
-// drake178: GUI_FamiliarIMGIndex
 int16_t notify_magic_idx;
 
 // WZD dseg:CB4E
 // AKA confirmation_box_text
 char * message_box_text;
-
 // WZD dseg:CB50
-// drake178:  GUI_Dialog_Top;
 // AKA confirmation_box_y
 int16_t message_box_y;
 // WZD dseg:CB52
-// drake178: GUI_Dialog_Left;
 // AKA confirmation_box_x
 int16_t message_box_x;
 
 // WZD dseg:CB54
-// drake178: GUI_RedMsg_Type
+// ; determines whether to use the first or the second of the two different warning message backgrounds (both of which are red, but slightly different and use a different font color)
 int16_t GUI_RedMsg_Type;
 
-// WZD dseg:CB56                                                 ovr150
+// WZD dseg:CB54                                                 END:  ovr149  GENDRAW - Uninitialized Data ; 
 
 
 
@@ -389,7 +383,7 @@ int16_t Confirmation_Box(char * text_string)
 #endif
 
 
-    Set_Font(4, 4, 15, 0);
+    Set_Font_Style(4, 4, 15, 0);
 
 
     paragraph_height = Get_Paragraph_Max_Height(166, text_string);
@@ -457,11 +451,7 @@ void Confirmation_Box_Draw(void)
 {
     int16_t paragraph_height;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Confirmation_Box_Draw()\n", __FILE__, __LINE__);
-#endif
-
-    Set_Font(4, 4, 15, 0);
+    Set_Font_Style(4, 4, 15, ST_NULL);
 
     paragraph_height = Get_Paragraph_Max_Height(166, message_box_text);
 
@@ -476,19 +466,14 @@ void Confirmation_Box_Draw(void)
     FLIC_Draw(message_box_x, (message_box_y + paragraph_height + 10), confirmation_background_bottom_seg);
 
     Set_Font_Colors_15(4, &COL_ConfirmShadows[0]);
-    Set_Font(4, 15, 15, 0);
+    Set_Font_Style(4, 15, 15, ST_NULL);
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
     Print_Paragraph((message_box_x +  9), (message_box_y + 10), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
 
     Set_Alias_Color(18);
     Set_Font_Colors_15(4, &COL_Dialog_Text[0]);
-    Set_Font(4, 4, 15, 0);
+    Set_Font_Style(4, 4, 15, ST_NULL);
     Print_Paragraph((message_box_x +  9), (message_box_y +  9), 166, message_box_text, 0);  // print_type 0: Print Left Aligned
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Confirmation_Box_Draw()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
@@ -538,7 +523,7 @@ void Warn(char * msg)
 
         message_box_text = msg;
 
-        Set_Font(4, 4, 4, ST_NULL);
+        Set_Font_Style(4, 4, 4, ST_NULL);
 
         max_para_height = Get_Paragraph_Max_Height(166, msg);
 
@@ -569,7 +554,7 @@ void Warn_Draw(void)
 {
     int16_t max_para_height;  // _SI_
 
-    Set_Font(4, 4, 4, ST_NULL);
+    Set_Font_Style(4, 4, 4, ST_NULL);
 
     max_para_height = Get_Paragraph_Max_Height(166, message_box_text);
 
@@ -597,13 +582,13 @@ void Warn_Draw(void)
         Set_Font_Colors_15(4, COL_Warning2);
     }
 
-    Set_Font(4, 15, 15, ST_NULL);
+    Set_Font_Style(4, 15, 15, ST_NULL);
 
     Print_Paragraph((message_box_x + 11), (message_box_y + 11), 166, message_box_text, 2);
     Print_Paragraph((message_box_x + 10), (message_box_y + 11), 166, message_box_text, 2);
 
     Set_Alias_Color(184);
-    Set_Font(4, 4, 4, ST_NULL);
+    Set_Font_Style(4, 4, 4, ST_NULL);
 
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 2);
 
@@ -1112,7 +1097,7 @@ void Selection_Box_Draw(void)
 
     Reset_Window();
 
-    Set_Font_Style1(4, 1, 0, 0);
+    Set_Font_Style_Shadow_Down(4, 1, 0, 0);
 
     for(itr_selectbox_items = 0; (itr_selectbox_items < selectbox_items) && (itr_selectbox_items < GUI_ListSel_Count); itr_selectbox_items++)
     {
@@ -1153,7 +1138,6 @@ void Selection_Box_Draw(void)
 }
 
 // WZD o149p09
-// void Selection_Box_Coords(int16_t item_count, char * list_text[], char * title_string)
 void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_string)
 {
     int16_t title_string_width;
@@ -1175,7 +1159,7 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
     }
 
 
-    Set_Font(4, 0, 0, 0);
+    Set_Font_Style(4, 0, 0, 0);
 
 
     horizontal_space = 0;
@@ -1191,27 +1175,6 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
             horizontal_space = Get_String_Width(list_text[itr_GUI_ListSel_Count]);
         }
     }
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Surveyor	 (F1)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 56
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Cartographer	 (F2)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 78
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Apprentice	 (F3)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 65
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Historian	 (F4)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 57
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Astrologer	 (F5)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 65
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Chancellor	 (F6)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 63
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Tax Collector	 (F7)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 76
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Grand Vizier	 (F8)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 73
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 689]: list_text[itr_GUI_ListSel_Count]: Mirror	 (F9)
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 690]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): 47
-
-// DEBUG: [C:\STU\devel\ReMoM\src\Fonts.C, 852]: BEGIN: Set_Font(font_idx = 1, color1 = 0, color2 = 0, color3 = 0)
-// DEBUG: [C:\STU\devel\ReMoM\src\Fonts.C, 907]: END: Set_Font(font_idx = 1, color1 = 0, color2 = 0, color3 = 0)
 
 
     if(selectbox_multi != ST_FALSE)
@@ -1354,9 +1317,161 @@ void Notify_Load(int16_t type, SAMB_ptr pict1)
 
 // WZD o149p11
 // drake178: GUI_Notify_Dialog
-void Notify1__STUB(int16_t center_x, int16_t Top, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
-{
+/*
+    ¿ Notify1() vs. Notify2() ?
 
+
+; the original version of GUI_Familiar_Notify that uses
+; the original redraw function that only shows the
+; familiar with a specific notification background and
+; would use both the Center and BGShade parameters; it
+; is now only used for treasure, where two out of those
+; don't make a difference because they are not used
+; Attributes: bp-based frame
+
+; int __cdecl __far Notify1(int box_center_x, int box_top_y, int notify_color, char *message_text, int box_border, unsigned int notify_pict_seg, int pict1_x, int pict1_y, unsigned int pict2, int pict2_x, int pict2_y, int do_cslide, int do_dim_back)
+
+e.g.,
+Lair_Treasure_Popup()
+    |-> Notify1(190, window_y, 3, lair_message_box_text, 0, Treasure_IMG, 2, 8, 0, 0, 0, 2, 0); 
+
+¿ Type 3 ?
+
+*/
+void Notify1(int16_t box_center_x, int16_t box_top_y, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
+{
+    int16_t UU_var2;
+    int16_t max_para_width;
+
+    Notify_Load(type, pict1);
+
+    notify_magic_idx = 3;  // Life
+
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[2])  /* Chaos */
+    {
+        notify_magic_idx = 2;  // Chaos
+    }
+
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[4])  /* Death */
+    {
+        notify_magic_idx = 4;  // Death
+    }
+
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[0])  /* Nature */
+    {
+        notify_magic_idx = 0;  // Nature
+    }
+
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[1])  /* Sorcery */
+    {
+        notify_magic_idx = 1;  // Sorcery
+    }
+
+
+    switch(notify_magic_idx)
+    {
+        case 0:  /* Nature */
+        {
+            notify_magic_idx = mr_Nature;
+        } break;
+        case 1:  /* Sorcery */
+        {
+            notify_magic_idx = mr_Sorcery;
+        } break;
+        case 2:  /* Chaos */
+        {
+            notify_magic_idx = mr_Chaos;
+        } break;
+        case 3:  /* Life */
+        {
+            notify_magic_idx = mr_Life;
+        } break;
+        case 4:  /* Death */
+        {
+            notify_magic_idx = mr_Death;
+        } break;
+    }
+
+
+    notify_color_slide = do_cslide;
+    notify_color_slide_cycle = 0;
+
+    Save_Alias_Colors();
+
+    if(notify_draw_offscr == 2)
+    {
+        Copy_On_To_Off_Page();
+    }
+
+    if(do_dim_back == ST_TRUE)
+    {
+        Set_Page_Off();
+        Gradient_Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
+    }
+
+    Copy_Off_To_Back();
+
+    message_box_text = message_text;
+
+    notify_pict1 = pict1;
+
+    notify_pict2 = pict2;
+
+    notify_type = type;
+
+    notify_box_border = box_border;
+
+    notify_pict1_x = pict1_x;
+    notify_pict1_y = pict1_y;
+    notify_pict2_x = pict2_x;
+    notify_pict2_y = pict2_y;
+
+    notify_color_slide_cycle = 0;
+
+    Set_Font_Style(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
+
+    max_para_width = Get_Paragraph_Max_Width(175, message_text, 0);
+
+    // DIFF: Notify1 vs. Notify2
+    message_box_x = (box_center_x - ((96 + max_para_width) / 2));
+    // BEh  190d  ADh  173d  (190 - ((96 + 173) / 2)) = (190 - (269 / 2)) = (190 - 134) = 56a
+    message_box_y = box_top_y;
+    // 3Ch  60d
+    Assign_Auto_Function(Notify1_Draw, 1);
+
+    Load_Palette_From_Animation(notify_seg[notify_type]);
+
+    if(pict1 != ST_NULL)
+    {
+        Load_Palette_From_Animation(pict1);
+    }
+
+    // Notify2() has Apply_Palette() first instead of last here
+    // Notify2() has Set_Palette_Changes(0, 243);
+    Set_Palette_Changes(224, 255);
+    Clear_Palette_Changes(198, 198);
+    Update_Remap_Gray_Palette();
+    Apply_Palette();
+
+    UU_var2 = 0;
+
+    if(notify_draw_offscr == 1)
+    {
+        Set_Page_Off();
+        Notify1_Draw();  // Notify2() also uses Notify1_Draw() here
+    }
+    else
+    {
+        Wait_For_Input();
+    }
+
+    Set_Palette_Changes(0, 223);
+    Clear_Palette_Changes(198, 198);
+    Update_Remap_Gray_Palette();
+    Deactivate_Auto_Function();
+    Restore_Alias_Colors();
+    Reset_Window();
+    Restore_ScreenSeg();
 }
 
 
@@ -1389,13 +1504,13 @@ void Notify1_Draw(void)
 
     Copy_Back_To_Off();
 
-    Set_Font(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
+    Set_Font_Style(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
 
     max_para_width = Get_Paragraph_Max_Width(175, message_box_text, 0);
 
     Set_Page_Off();
 
-    Set_Window(0, 0, (message_box_x + xadd + 12), 199);
+    Set_Window(0, 0, (max_para_width + message_box_x + xadd + 12), SCREEN_YMAX);
 
     Clipped_Draw(message_box_x, message_box_y, notify_seg[notify_type]);
 
@@ -1432,20 +1547,20 @@ void Notify1_Draw(void)
     if(notify_type == 3)
     {
         Set_Font_Colors_15(4, COL_ConfirmShadows);
-        Set_Font(4, 15, 15, ST_NULL);
+        Set_Font_Style(4, 15, 15, ST_NULL);
         Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Set_Font(4, 4, 15, ST_NULL);
+        Set_Font_Style(4, 4, 15, ST_NULL);
         Set_Alias_Color(21);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
     }
     else
     {
         Set_Font_Colors_15(4, notify_shadow_colors[notify_type]);
-        Set_Font(4, 15, 15, ST_NULL);
+        Set_Font_Style(4, 15, 15, ST_NULL);
         Print_Paragraph((message_box_x + xadd + 11), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
-        Set_Font(4, 4, 15, ST_NULL);
+        Set_Font_Style(4, 4, 15, ST_NULL);
         Set_Font_Colors_15(4, notify_text_colors[notify_type]);
         Print_Paragraph((message_box_x + xadd + 10), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
     }
@@ -1559,7 +1674,7 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     notify_color_slide_cycle = 0;
 
-    Set_Font(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
+    Set_Font_Style(4, 0, ST_NULL, ST_NULL);  // ...color2, color3
 
     UU_max_para_width = Get_Paragraph_Max_Width(175, message_text, 0);
 
@@ -1574,7 +1689,7 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     message_box_y = box_top_y;
 
-    Assign_Auto_Function(&Notify2_Draw, 1);
+    Assign_Auto_Function(Notify2_Draw, 1);
 
     Load_Palette_From_Animation(notify_seg[notify_type]);
 
@@ -1629,7 +1744,7 @@ void Notify2_Draw(void)
 
     Copy_Back_To_Off();
 
-    Set_Font(4, 0, ST_NULL, ST_NULL);
+    Set_Font_Style(4, 0, ST_NULL, ST_NULL);
 
     max_para_width = Get_Paragraph_Max_Width(175, message_box_text, 0);
 
@@ -1679,12 +1794,12 @@ void Notify2_Draw(void)
 
     // draw outline/shadow
     Set_Font_Colors_15(4, notify_shadow_colors[notify_type]);
-    Set_Font(4, 15, 15, ST_NULL);
+    Set_Font_Style(4, 15, 15, ST_NULL);
     Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx] + 1), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
     Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx]    ), (message_box_y + 9), (max_para_width + 1), message_box_text, 0);
 
     // draw text
-    Set_Font(4, 4, 15, ST_NULL);
+    Set_Font_Style(4, 4, 15, ST_NULL);
     Set_Font_Colors_15(4, notify_text_colors[notify_type]);
     Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx]    ), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
 
@@ -1699,17 +1814,216 @@ void Notify2_Draw(void)
 
 
 // WZD o149p15
-// HLP_NoResizeExpand  
+/*
+XREF:
+    Mirror_Screen()
+    Unit_List_Window_Pup()
+    IDK_Spell_Cityscape_1()
+
+Mirror_Screen()         expand_flag = ST_TRUE
+Unit_List_Window_Pup()  expand_flag = ST_TRUE
+IDK_Spell_Cityscape_1()  expand_flag = ST_FALSE
+
+
+Mirror_Screen()
+    j_HLP_NoResizeExpand(mirror_start_x, mirror_start_y, (mirror_start_x + 179), (mirror_start_y + 195), OL, OT, OR, OB, ST_TRUE)
+
+Unit_List_Window_Pup()
+    j_HLP_NoResizeExpand(ULW_start_x, ULW_start_y, (ULW_start_x + 238), (ULW_IDK_upper_height + 5), OL, OT, (OL + 19), (OT + 16), ST_TRUE)
+
+IDK_Spell_Cityscape_1()
+    j_HLP_NoResizeExpand(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), ST_FALSE)
+
+*/
+void HLP_NoResizeExpand__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag)
+{
+    HLP_DrawExpanding__TODO(TL, TT, TR, TB, TL, TT, TR, TB, OL, OT, OR, OB, expand_flag);
+}
+
 // WZD o149p16
-// HLP_DrawExpanding   
+/*
+; if expanding help is enabled, "grows" an area of the
+; current draw frame out of the current display frame
+; using both EMM_VGAFILE_H and a sandbox buffer, and
+; sets up the global variables used for redrawing the
+; growth lines afterwards, if necessary
+
+*/
+void HLP_DrawExpanding__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t FL, int16_t FT, int16_t FR, int16_t FB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag)
+{
+    _draw_expanding_box = expand_flag;
+
+    HLP_ExpandTgtLeft = TL;
+    HLP_ExpandTgtTop = TT;
+    HLP_ExpandTgtRight = TR;
+    HLP_ExpandTgtBottom = TB;
+
+    HLP_ExpandOrigLeft = OL;
+    HLP_ExpandOrigTop = OT;
+    HLP_ExpandOrigRight = OR;
+    HLP_ExpandOrigBottom = OB;
+
+    if(magic_set.Expanding_Help != ST_FALSE)
+    {
+
+        if(FL > FR)
+        {
+            Swap_Short(&FL, &FR);
+        }
+
+        if(FT > FB)
+        {
+            Swap_Short(&FT, &FB);
+        }
+
+        if(OL > OR)
+        {
+            Swap_Short(&OL, &OR);
+        }
+
+        if(OT > OB)
+        {
+            Swap_Short(&OT, &OB);
+        }
+
+
+
+
+    }
+
+
+}
+
+
 // WZD o149p17
-// G_USW_DrawEHLines   
+/*
+XREF:
+    Unit_Statistics_Popup_Do_Draw()
+    Mirror_Screen_Draw()
+    Draw_Unit_List_Window_Pup()
+
+
+C32 = 186
+C31 = 187
+C22 = 186
+C21 = 185
+C12 = 181
+C11 = 180
+
+*/
+void G_USW_DrawEHLines__TODO(void)
+{
+    if(_draw_expanding_box)
+    {
+        Set_Page_Off();
+        HLP_DrawExpandLines__TODO(HLP_ExpandOrigLeft, HLP_ExpandOrigTop, HLP_ExpandOrigRight, HLP_ExpandOrigBottom, HLP_ExpandTgtLeft, HLP_ExpandTgtTop, HLP_ExpandTgtRight, HLP_ExpandTgtBottom, 180, 181, 185, 186, 187, 186);
+    }
+}
+
+
 // WZD o149p18
-// HLP_DrawExpandLines 
+/*
+XREF:
+    NX_j_HLP_DrawExpandLines()
+    HLP_DrawExpanding()
+    G_USW_DrawEHLines()
+
+G_USW_DrawEHLines()
+    HLP_DrawExpandLines(HLP_ExpandOrigLeft, HLP_ExpandOrigTop, HLP_ExpandOrigRight, HLP_ExpandOrigBottom, HLP_ExpandTgtLeft, HLP_ExpandTgtTop, HLP_ExpandTgtRight, HLP_ExpandTgtBottom, 180, 181, 185, 186, 187, 186);
+
+HLP_DrawExpanding()
+    HLP_DrawExpandLines(OL, OT, OR, OB, StageSize_Left, StageSize_Top, StageSize_Right, StageSize_Bottom, 180, 181, 185, 186, 187, 186);
+
+
+*/
+void HLP_DrawExpandLines__TODO(int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t C11, int16_t C12, int16_t C21, int16_t C22, int16_t C31, int16_t C32)
+{
+
+}
+
+
 // WZD o149p19
-// ITEM_GetViewDrawPos 
+/*
+; calculates and sets the return pointer values to the
+; Left and Top drawing coordinates of the item view
+; window based on the item's origin location, and
+; resizes the image during the initial "grow out"
+; animation
+
+ITEM_GetViewDrawPos(ITEM_ViewLeft, ITEM_ViewTop, item_view_popup_bitm, 5, &IView_Draw_Left, &IView_Draw_Top);
+*/
+void ITEM_GetViewDrawPos(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg, int16_t stages, int16_t * draw_x, int16_t * draw_y)
+{
+    int16_t scale_percentage;
+    int16_t y2;
+    int16_t x2;
+    int16_t y1;
+    int16_t width;
+    int16_t height;
+    int16_t x1;  // _DI_
+
+    // TODO  width = farpeekw(picture_seg, 0);
+    // TODO  height = farpeekw(picture_seg, 2);
+    width = FLIC_GET_WIDTH(picture_seg);
+    height = FLIC_GET_HEIGHT(picture_seg);
+
+    x1 = (start_x - (width / 2));
+    y1 = (start_y - height);
+    x2 = (x1 + width);
+    y2 = (y1 + height);
+
+    if(x1 < 5)
+    {
+        x1 = 5;
+        x2 = (4 + (width / 2));
+    }
+
+    if(y1 < 5)
+    {
+        y1 = 5;
+        y2 = (4 + (height / 2));
+    }
+
+    if(x2 > 315)
+    {
+        x2 = 315;
+        x1 = ((315 - width) + 1);
+    }
+
+    // BUG: should be 195  (200 - 5)(SCREENYMAX - item view window margin)
+    if(y2 > 315)
+    {
+        y1 = ((315 - height) + 1);
+    }
+
+    if(m_item_view_grow_stage > stages)
+    {
+        m_item_view_grow_stage = stages;
+    }
+
+    if(m_item_view_grow_stage == stages)
+    {
+        *draw_x = x1;
+        *draw_y = y1;
+    }
+    else
+    {
+        *draw_x = (start_x + (((x1 - start_x) * m_item_view_grow_stage) / stages));
+        *draw_y = (start_y + (((y1 - start_y) * m_item_view_grow_stage) / stages));
+        scale_percentage = ((m_item_view_grow_stage * 100) / stages);
+        Scale_Bitmap(picture_seg, scale_percentage, scale_percentage);
+    }
+
+    m_item_view_grow_stage++;
+
+}
+
+
 // WZD o149p20
-// ITEM_ResetViewGrow  
+void ITEM_ResetViewGrow(void)
+{
+    m_item_view_grow_stage = 1;
+}
 
 // WZD o149p21
 // drake178: EMM_Sandbox2VGAFILEH

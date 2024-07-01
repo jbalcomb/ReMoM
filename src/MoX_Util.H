@@ -59,8 +59,12 @@ void String_To_Upper(char * string);
 // WZD s22p12 UU_MEM_CopyIfLess()
 // WZD s22p13 UU_MEM_Clear_Near()
 // WZD s22p14 UU_MEM_Set_Near()
+
 // WZD s22p15 MEM_PullRecord()
-// WZD s22p16 MEM_PullDynRecord()
+void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_size, int16_t record_count);
+
+// WZD s22p16
+void Delete_Structure(int16_t record_index, uint8_t * records, int16_t record_size, int16_t record_count);
 
 // WZD s22p17
 // drake178: MEM_CopyIfLess_Far()
@@ -76,7 +80,7 @@ void Set_Memory(int8_t * s, int16_t n, int16_t c);
 // WZD s22p20
 // MoO2  Module: strings  Swap()
 // MoO2  Module: strings  Swap_Short()
-void MEM_SwapWord(int16_t * word1, int16_t * word2);
+void Swap_Short(int16_t * word1, int16_t * word2);
 
 // WZD s22p21 MEM_SwapBytes()
 // MoO2  Module: strings  Swap_Char()

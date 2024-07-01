@@ -45,6 +45,11 @@ void Mouse_Button_Handler(void)
 // WZD s35p11
 void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my)
 {
+    if(mx < 0 || my < 0 || (mx / 2) >= SCREEN_WIDTH || (my / 2) >= SCREEN_HEIGHT)
+    {
+        return;
+    }
+
     // if (lock_mouse_button_status_flag != ST_TRUE)
     // {
             mouse_x = mx / 2;
@@ -75,4 +80,10 @@ void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my)
         mouse_interrupt_active = ST_FALSE;
     }
 
+}
+
+// WZD s35p21
+void Set_Mouse_Position(int16_t x, int16_t y)
+{
+    MWA_Set_Mouse_Position(x, y);
 }
