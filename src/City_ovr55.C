@@ -595,8 +595,18 @@ void City_Cancel_Production(int16_t city_idx)
 // drake178: N/A
 // sub_4BEF0()
 
+
 // WZD o55p20
 // drake178: CTY_BuyProduction()
+// MoO2  
+// 1oom  
+void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
+{
+    int16_t cost;
+    cost = City_Cost_To_Buy_Product(city_idx);
+    _players[player_idx].gold_reserve -= cost;
+    _CITIES[city_idx].Prod_Accu += City_Production_Cost(_CITIES[city_idx].construction, city_idx);
+}
 
 
 // WZD o55p21

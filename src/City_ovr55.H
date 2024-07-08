@@ -107,6 +107,7 @@ void City_Cancel_Production(int16_t city_idx);
 
 // WZD o55p20
 // drake178: CTY_BuyProduction()
+void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx);
 
 // WZD o55p21
 // drake178: CTY_GetProdBuyCost()
