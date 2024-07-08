@@ -219,6 +219,34 @@ input_field_idx == city_screen_buy_button
 
 
 
+## Left-Click City Enchantment
+...input #8
+
+
+
+## Left-Click Cityscape Building
+...input #9
+
+
+
+## Left-Click Unit Window
+...input #10
+mov     [bp+IDK_Col__unit_stack_idx], 0
+mov     ax, [bp+IDK_Col__unit_stack_idx]
+cmp     ax, [_unit_stack_count]
+jl      short loc_48A58
+loc_48A58:
+mov     bx, [bp+IDK_Col__unit_stack_idx]
+shl     bx, 1
+cmp     [g_unit_window_fields+bx], _DI_input_field_idx
+jnz     short loc_48A8E
+loc_48A8E:
+inc     [bp+IDK_Col__unit_stack_idx]
+
+
+
+## Right-Click Unit Window
+...input #11
 
 
 
