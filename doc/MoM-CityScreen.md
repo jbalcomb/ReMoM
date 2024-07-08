@@ -209,6 +209,18 @@ Elsewhere, ...
 
 
 
+## Buy / Buy Button / Left-Click Buy Button
+...input #7
+@@Input_CityScreenBuyButton
+ovr054:0795
+0003B095
+00048355
+input_field_idx == city_screen_buy_button
+
+
+
+
+
 
 ## Resources Window
 resource icons:  

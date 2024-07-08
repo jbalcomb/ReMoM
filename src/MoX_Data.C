@@ -2072,6 +2072,9 @@ int16_t m_city_n_turns_to_produce;
 int16_t cityscreen_city_built_bldg_idx;
 
 // WZD dseg:BFB6
+/*
+    {1: CityList Screen, 2: City Screen}
+*/
 int16_t production_screen_return_screen;
 
 // WZD dseg:BFB8 00 00                                           dw 0
