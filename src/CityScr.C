@@ -160,10 +160,14 @@ void City_Screen__WIP(void)
     int16_t hotkey_X;
     int16_t city_wy;
     int16_t city_wx;
+    // IDK_Row__prod_idx
     int16_t Row;
-    int16_t Col;
+    int16_t unit_type;
+    // IDK_Col__unit_stack_idx
+    int16_t Col;  // IDK_Col__unit_stack_idx
+    int16_t itr_stack;  // IDK_Col__unit_stack_idx
     int16_t screen_changed;
-    int16_t leave_screen_flag;
+    int16_t leave_screen;
     int16_t input_field_idx;  // _DI_
 
     Set_City_Screen_Help_List();
@@ -260,6 +264,7 @@ void City_Screen__WIP(void)
 
     city_screen_scanned_field = ST_UNDEFINED;
 
+
     City_Screen_Allocate_First_Block();
 
 
@@ -273,10 +278,10 @@ void City_Screen__WIP(void)
     Set_Input_Delay(2);
 
     screen_changed = ST_FALSE;
-    leave_screen_flag = ST_FALSE;
+    leave_screen = ST_FALSE;
     city_screen_scanned_field = ST_UNDEFINED;
 
-    while(leave_screen_flag == ST_FALSE)
+    while(leave_screen == ST_FALSE)
     {
         Mark_Time();
 
@@ -378,7 +383,7 @@ void City_Screen__WIP(void)
                     _unit_stack_count = 0;  // BUGBUG  does this always above - what is controlled by _unit_stack_count?
                     // jmp     short $+2
                 }
-                leave_screen_flag = ST_TRUE;
+                leave_screen = ST_TRUE;
                 current_screen = scr_Main_Screen;
             }
         }
@@ -439,17 +444,19 @@ void City_Screen__WIP(void)
 
 
         /*
-            Left-Click City Enchantment
+            BEGIN:  Left-Click City Enchantment
         */
         /*
             Confirmation_Box()
             "Do you wish to turn off the " ... " spell?"
         */
-
+        /*
+            END:  Left-Click City Enchantment
+        */
 
 
         /*
-            Left-Click Cityscape Building
+            BEGIN:  Left-Click Cityscape Building
         */
         /*
             lotsa logic
@@ -458,28 +465,87 @@ void City_Screen__WIP(void)
                 ...do you wish to sell
             City_Can_Sell_Building()
         */
-
+        /*
+            END:  Left-Click Cityscape Building
+        */
 
 
         /*
-            Left-Click Unit Window
+            BEGIN:  Left-Click Unit Window
+        */
+        {
+            // IDK_Col__unit_stack_idx
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                if(g_unit_window_fields[itr_stack] == input_field_idx)
+                {
+                    // TODO  SND_LeftClickSound();
+                    _prev_world_x = _map_x;
+                    _prev_world_y = _map_y;
+                    leave_screen = ST_TRUE;
+                    current_screen = scr_Main_Screen;
+                    if(all_units_moved == ST_TRUE)
+                    {
+                        all_units_moved = ST_FALSE;
+                    }
+                }
+            }
+        }
+        /*
+            END:  Left-Click Unit Window
+        */
+
+
+        /*
+            BEGIN:  Right-Click Unit Window
+        */
+        {
+            // IDK_Col__unit_stack_idx
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            {
+                if(-(g_unit_window_fields[itr_stack]) == input_field_idx)
+                {
+                    City_Screen_Garrison_Window_Picture_Coords(itr_stack, &uv_x1, &uv_y1, &uv_x2, &uv_y2);
+                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, (uv_x1 + 1), (uv_y1 + 1), (uv_x2 + 1), (uv_y2 + 1));
+                    Assign_Auto_Function(City_Screen_Draw__WIP, 1);
+                    City_Screen_Load();
+                    City_Screen_Required_Buildings_List(_city_idx);
+                    if(_CITIES[_city_idx].construction < 100)
+                    {
+                        strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                    }
+                    else
+                    {
+                        unit_type = (_CITIES[_city_idx].construction - 100);
+                        strcpy(city_screen_product_name, *_unit_type_table[unit_type].name);
+                    }
+                    screen_changed = ST_TRUE;
+                    City_Screen_Allocate_First_Block();
+                    city_wx = _CITIES[_city_idx].wx;
+                    city_wy = _CITIES[_city_idx].wy;
+                    Select_Unit_Stack(_human_player_idx, &city_map_wx, &city_map_wy, _map_plane, city_wx, city_wy);
+                    Do_Build_City_Enchantment_List();
+                    Reset_Map_Draw();
+                    Deactivate_Help_List();
+                    Set_City_Screen_Help_List();
+                }
+            }
+        }
+        /*
+            END:  Right-Click Unit Window
+        */
+
+
+        /*
+            BEGIN:  Left-Click Population Row
+        */
+        /*
+            END:  Left-Click Population Row
         */
 
 
 
-        /*
-            Right-Click Unit Window
-        */
-
-
-
-        /*
-            Left-Click Population Row
-        */
-
-
-
-        if( (leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
+        if( (leave_screen == ST_FALSE) && (screen_changed == ST_FALSE) )
         {
             City_Screen_Draw__WIP();
             // DONT  j_o146p05_Empty_pFxn
@@ -835,8 +901,8 @@ void City_Screen_Add_Fields__WIP(void)
     // ~== Main Screen Add_Unit_Window_Fields()
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
-        City_Screen_Garrison_Window_Picture_Coords(itr, &x1, &y1, &x2, &y2);
-        g_unit_window_fields[itr] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, emptystring__ovr054[0], ST_UNDEFINED);
+        City_Screen_Garrison_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
+        g_unit_window_fields[itr_stack] = Add_Hidden_Field((x1 - 1), (y1 - 1), (x2 - 2), (y2 - 2), emptystring__ovr054[0], ST_UNDEFINED);
     }
 
     City_Add_Fields_City_Enchantments(139, 51);
