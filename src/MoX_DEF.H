@@ -52,10 +52,10 @@ Eh?
 #define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #endif
 #ifndef SETMIN
-#define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); }} while (0)
+#define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
 #endif
 #ifndef SETMAX
-#define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); }} while (0)
+#define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); } } while (0)
 #endif
 #ifndef SETRANGE
 #define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
@@ -64,6 +64,13 @@ Eh?
 #define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while (0)
 #define SUBSAT0(_v_, _n_) SUBSATT(_v_, _n_, 0)
 #define TBLLEN(_t_) (sizeof((_t_)) / sizeof((_t_)[0]))
+
+#define CLIPPED()  (x2 < screen_window_x1 || x1 > screen_window_x2 || y2 < screen_window_y1 || y1 > screen_window_y2)
+
+// TODO  // ¿ Fastest Possible Intel-CPU Absolute Value *Function* ?
+// TODO  #define ABS(x)  ( x = (x >= 0) ? x : -x );
+// TODO  
+// TODO  #define sgn(x)  ( (x < 0) ? -1 : ((x > 0) ? 1 : 0) )    /* macro to return the sign of a number */
 
 
 

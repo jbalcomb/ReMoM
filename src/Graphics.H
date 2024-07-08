@@ -53,7 +53,7 @@ extern int16_t screen_window_y2;
 // WZD s14p03
 // drake178: 
 // MoO2  
-
+// Load_Font_File()
 
 // WZD s14p04
 // drake178: 
@@ -70,51 +70,44 @@ void Reset_Window(void);
 void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
 
 // WZD s14p07
-// MoO2  Module: graphics  Dot()
-void Dot(int16_t x, int16_t y, int16_t color);
-
-// Init_Drivers()
-// UU_Legacy_Startup()
-// Load_Font_File()
-// Set_Window()
-// Reset_Window()
-// Clipped_Fill()
-// UU_VGA_WndPutPixel()
-// VGA_WndDrawLine()
-// VGA_WndDrawPtrnLine()
-// VGA_WndDrawLineBase()
-// UU_Interlaced_Fill()
-// UU_VGA_DrawRect()
-// UU_VGA_WndDrawRect()
-// UU_VGA_DrawDblRect()
-// Gradient_Fill()
-// DOS_PrintString()
+// drake178: UU_VGA_WndPutPixel()
+// MoO2  Module: fields  Clipped_Dot()
+void Clipped_Dot(int16_t x, int16_t y, int16_t color);
 
 // WZD s14p08
 // drake178: 
 // MoO2  
+// VGA_WndDrawLine()
 
 // WZD s14p09
 // drake178: 
 // MoO2  
+// VGA_WndDrawPtrnLine()
 
 // WZD s14p10
 // drake178: 
 // MoO2  
+// VGA_WndDrawLineBase()
 
 // WZD s14p11
 // drake178: UU_VGA_DrawBiColorRect()
 // MoO2  Module: graphics  Interlaced_Fill()
+// UU_Interlaced_Fill()
 
 // WZD s14p12
 // drake178: 
 // MoO2  
+// UU_VGA_DrawRect()
+
 // WZD s14p13
 // drake178: 
 // MoO2  
+// UU_VGA_WndDrawRect()
+
 // WZD s14p14
 // drake178: 
 // MoO2  
+// UU_VGA_DrawDblRect()
 
 // WZD s14p15
 // drake178: VGA_RectangleFX()
@@ -124,6 +117,7 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
 // WZD s14p16
 // drake178: DOS_PrintString()
 // MoO2  
+// 1oom 
 // DOS_PrintString
 
 
@@ -134,17 +128,19 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
 */
 
 // WZD s16p01
-void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s16p02
-// drake178: VGA_PutPixel()
-// MoO2  
-// VGA_PutPixel
+// MoO2  Module: graphics  Dot()
+// 1oom  uidraw.c  ui_draw_pixel()
+void Dot(int16_t x, int16_t y, uint8_t color);
 
 // WZD s16p03
 // drake178: VGA_DrawLine()
 // AKA VGA_Draw_Line()
-void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+// MoO2  Module: line  Line()
+// 1oom  uidraw.c  // ui_draw_line1()
+void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s16p04
 // drake178: VGA_DrawPatternLine90

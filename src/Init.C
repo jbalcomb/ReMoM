@@ -19,8 +19,8 @@ char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 // TODO  #define DEFAULT_VIDEO_MODE  3  // vm_Mode_Y
 
 
-// MoO2  Module: init  void Init_Drivers()
 // WZD s014p01
+// MoO2  Module: init  void Init_Drivers()
 void Init_Drivers(int input_type, char * font_file)
 {
 
