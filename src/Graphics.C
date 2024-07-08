@@ -13,6 +13,11 @@ Module: shear
 #include "MoX.H"
 
 
+#define Darken_Fill(_x1_,_y1_,_x2_,_y2_) { Tint_Fill((_x1_), (_y1_), (_x2_), (_y2_), 0); }
+
+
+
+
 void plot_pixel(int x, int y, byte color);
 void line_slow(int x1, int y1, int x2, int y2, byte color);
 void line_fast(int x1, int y1, int x2, int y2, byte color);
@@ -39,31 +44,32 @@ int16_t screen_window_y2 = SCREEN_YMAX;
 
 
 // WZD s14p01
-// drake178: 
-// MoO2  
+// MoO2  Module: init  void Init_Drivers()
+/*  Init.C */  // void Init_Drivers(int input_type, char * font_file);
+
 
 // WZD s14p02
-// drake178: 
-// MoO2  
+// MoO2  DNE
+/* Init.C */  // void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char * font_file)
+
 
 // WZD s14p03
-// drake178: 
-// MoO2  
+// MoO2  Module: fonts  Load_Font_File()
+/* Fonts.C */  // Load_Font_File()
 
 
 // WZD s14p04
-// drake178: 
 // MoO2  Module: graphics  Set_Window(signed integer (2 bytes) x1, signed integer (2 bytes) y1, signed integer (2 bytes) x2, signed integer (2 bytes) y2)
+// 1oom  uiobj.c  uiobj_set_limits()
 void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-    if ( x1 < SCREEN_XMIN ) { x1 = SCREEN_XMIN; }
-    if ( y1 < SCREEN_YMIN ) { y1 = SCREEN_YMIN; }
-    // if (x2 > screen_pixel_width) { x2 = screen_pixel_width - 1;}
-    // if (y2 > screen_pixel_height) { y2 = screen_pixel_height - 1;}
-    if ( x2 > SCREEN_XMAX ) { x2 = SCREEN_XMAX; }
-    if ( y2 > SCREEN_YMAX ) { y2 = SCREEN_YMAX; }
-    if ( x1 > x2 ) { SWAP(x2,x1); }
-    if ( y1 > y2 ) { SWAP(y2,y1); }
+    SETMIN(x1, SCREEN_XMIN);
+    SETMIN(y1, SCREEN_YMIN);
+    SETMAX(x2, SCREEN_XMAX);
+    SETMAX(y2, SCREEN_YMAX);
+
+    if(x1 > x2) { SWAP(x2,x1); }
+    if(y1 > y2) { SWAP(y2,y1); }
 
     screen_window_x1 = x1;
     screen_window_x2 = x2;
@@ -73,12 +79,10 @@ void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 
 
 // WZD s14p05
-// drake178: 
 // MoO2  Module: graphics  Reset_Window()
+// 1oom  uiobj.c  uiobj_set_limits_all()
 void Reset_Window(void)
 {
-    // screen_window_x2 = screen_pixel_width - 1;
-    // screen_window_y2 = screen_pixel_height - 1;
     screen_window_x1 = SCREEN_XMIN;
     screen_window_x2 = SCREEN_XMAX;
     screen_window_y1 = SCREEN_YMIN;
@@ -87,86 +91,105 @@ void Reset_Window(void)
 
 
 // WZD s14p06
-// drake178: VGA_WndDrawFilldRect()
-// MoO2 Fill() just uses a clip flag
+// MoO2  Module: graphics  Fill() Fill() just uses a clip flag
 void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 {
 
-    if( x2 >= screen_window_x1 && x1 <= screen_window_x2 && y2 >= screen_window_y1 && y1 <= screen_window_y2)
+    if(CLIPPED())
     {
-        if(x1 < screen_window_x1)
-        {
-            x1 = screen_window_x1;
-        }
-        if(y1 < screen_window_y1)
-        {
-            y1 = screen_window_y1;
-        }
-        if(x2 > screen_window_x2)
-        {
-            x2 = screen_window_x2;
-        }
-        if(y2 > screen_window_y2)
-        {
-            y2 = screen_window_y2;
-        }
-
-        Fill(x1, y1, x2, y2, color);
+        return;
     }
-    // else { return 0; }
+
+    SETMIN(x1, screen_window_x1);
+    SETMIN(y1, screen_window_y1);
+    SETMAX(x2, screen_window_x2);
+    SETMAX(y2, screen_window_y2);
+    
+    Fill(x1, y1, x2, y2, color);
     
 }
+
 
 
 // WZD s14p07
 // drake178: 
 // MoO2  
+void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+{
+
+    if(CLIPPED())
+    {
+        return;
+    }
+
+    Dot(x1, y1, color);
+
+}
+
+
+
 
 // WZD s14p08
 // drake178: 
 // MoO2  
+// VGA_WndDrawLine()
 
 // WZD s14p09
 // drake178: 
 // MoO2  
+// VGA_WndDrawPtrnLine()
 
 // WZD s14p10
 // drake178: 
 // MoO2  
+// VGA_WndDrawLineBase()
 
 // WZD s14p11
 // drake178: UU_VGA_DrawBiColorRect()
 // MoO2  Module: graphics  Interlaced_Fill()
+// UU_Interlaced_Fill()
 
 // WZD s14p12
 // drake178: 
 // MoO2  
+// UU_VGA_DrawRect()
+
 // WZD s14p13
 // drake178: 
 // MoO2  
+// UU_VGA_WndDrawRect()
+
 // WZD s14p14
 // drake178: 
 // MoO2  
+// UU_VGA_DrawDblRect()
 
 
 // WZD s14p15
 // drake178: VGA_RectangleFX()
 // MoO2  Module: graphics  Gradient_Fill()
 /*
+only called for Field Type 10 
+FFFFFFFF ft_StringList        = 0Ah
+
 MoO2  void Gradient_Fill(int x1, int y1, int x2, int y2, int fill_type, int * color_array, int color_count, int ripple_count, int seed)
 
 MoO1  fill_type { 1, 3, 7, 13,     15     }
 MoM   fill_type { 1, 3, 7,     14, 15, 16 }
 MoO2  fill_type { 1, 3,            15, 16 }
 
+1: 
 3: "darken"
+7: 
+13: 
+14: 
+15: 
+16: Gray_Scale_Fill()
 
 Tint_Fill()
 Gray_Scale_Fill()
 Fill()
 
-*/
-/*
     fill_type 3 and 15 are the same except 3 always uses color block 0 (grayscale?)
 
 */
@@ -258,11 +281,18 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
 // WZD s14p16
 // drake178: DOS_PrintString()
 // MoO2  
+// 1oom
 // DOS_PrintString
 
 
 
+/*
+    WZD seg016
+*/
+
 // WZD s16p01
+// MoO2  Module: graphics  Fill()
+// 1oom  uidraw.c  ui_draw_filled_rect()
 void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 {
 //     int16_t itr_x;
@@ -307,174 +337,115 @@ void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 
 
 // WZD s16p02
-// drake178: VGA_PutPixel()
-// MoO2  
-// VGA_PutPixel
+// MoO2  Module: graphics  Dot()
+// 1oom  uidraw.c  ui_draw_pixel()
+void Dot(int16_t x, int16_t y, uint8_t color)
+{
+    uint8_t * video_memory;
+
+    video_memory = current_video_page + ((y * SCREEN_WIDTH) + x);
+
+    *video_memory = color;
+}
 
 
 // WZD s16p03
 // drake178: VGA_DrawLine()
-void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+// MoO2  Module: line  Line()
+// 1oom  uidraw.c  // ui_draw_line1()
 /*
-Per drake178:
-    Bresenham's line-drawing algorithm (limited to the increasing X directions)
+~ Bresenham's Line-Drawing Algorithm  (¿ DDA ?)
+always draws left to right  (increasing X direction)
+X-Major || Y-Major
+¿ *units* of 256 ?
+~ single register error accumulation ... optimization to eliminate memory accesses
+Per the byte-saving (Assembly) era, allows error conditions to fall through
+
 */
 void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 {
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Line()\n", __FILE__, __LINE__);
-// #endif
+    int16_t temp;  // _SI_
+    int16_t x_delta;  // _CX_
+    int16_t y_delta;  // _DX_
+    int16_t line_increment;
+    int16_t length;
+    int16_t x_slope;
+    int16_t y_slope;
+    int16_t x_error;
+    int16_t y_error;
+    uint8_t * video_memory;  // ES:DI
 
-    // int16_t swap_x_1_2;
-    // int16_t swap_y_1_2;
-    // 
-    // // @@Swap_X2X1_Y2Y1
-    // if(x2 < x1)
-    // {
-    //     swap_x_1_2 = x1;
-    //     x2 = x1;
-    //     x1 = swap_x_1_2;
-    // 
-    //     swap_y_1_2 = y2;
-    //     y2 = y1;
-    //     y1 = swap_y_1_2;
-    // }
-
-    line_fast(x1, y1, x2, y2, color);
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Line()\n", __FILE__, __LINE__);
-// #endif
-
-}
-
-
-// ¿ Festest Possible Intel-CPU Absolute Value *Function* ?
-#define ABS(x)  ( x = (x >= 0) ? x : -x );
-
-#define sgn(x)  ( (x < 0) ? -1 : ((x > 0) ? 1 : 0) )    /* macro to return the sign of a number */
-
-// byte * VGA = (byte *)0xA0000000L;        /* this points to video memory. */
-
-
-/**************************************************************************
- *  plot_pixel                                                            *
- *    Plot a pixel by directly writing to video memory, with no           *
- *    multiplication.                                                     *
- **************************************************************************/
-
-void plot_pixel(int x, int y, byte color)
-{
-  /*  y*320 = y*256 + y*64 = y*2^8 + y*2^6   */
-  // VGA[ (y << 8) + (y << 6) + x] = color;
-  current_video_page[ (y << 8) + (y << 6) + x] = color;
-
-}
-
-
-/**************************************************************************
- *  line_slow                                                             *
- *    draws a line using multiplication and division.                     *
- **************************************************************************/
-
-void line_slow(int x1, int y1, int x2, int y2, byte color)
-{
-    int dx,dy,sdx,sdy,px,py,dxabs,dyabs,i;
-    float slope;
-
-    dx = x2 - x1;      /* the horizontal distance of the line */
-    dy = y2 - y1;      /* the vertical distance of the line */
-    dxabs = abs(dx);
-    dyabs = abs(dy);
-    sdx = sgn(dx);
-    sdy = sgn(dy);
-
-    if (dxabs >= dyabs)  /* the line is more horizontal than vertical */
+    if(x2 < x1)
     {
-        slope = (float)dy / (float)dx;
-        for(i = 0; i != dx; i += sdx)
+        temp = x2;
+        x2 = x1;
+        x1 = temp;
+        temp = y2;
+        y2 = y1;
+        y1 = temp;
+    }
+
+    x_delta = (x2 - x1);
+    y_delta = (y2 - y1);
+
+    line_increment = SCREEN_WIDTH;
+
+    if(y_delta < 0)
+    {
+        y_delta = -(y_delta);
+        line_increment = -(SCREEN_WIDTH);
+    }
+
+    if(x_delta < y_delta)
+    {
+        /* Y Major */
+        length = y_delta + 1;
+        y_slope = 256;
+        if(y_delta != 0)  /* avoid division by zero error condition */
         {
-            px = i + x1;
-            py = slope * i + y1;
-            plot_pixel(px, py, color);
+            x_slope = (x_delta * 256) / y_delta;
         }
     }
-    else /* the line is more vertical than horizontal */
+    else
     {
-        slope = (float)dx / (float)dy;
-        for(i = 0; i != dy; i += sdy)
+        /* X Major */
+        length = x_delta + 1;
+        if(x_delta != 0)  /* avoid division by zero error condition */
         {
-            px = slope * i + x1;
-            py = i + y1;
-            plot_pixel(px, py, color);
+            x_slope = 256;
+            y_slope = (y_delta * 256) / x_delta;
         }
     }
+
+    video_memory = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
+
+    x_error = 256 / 2;
+    y_error = 256 / 2;
+
+    while(length--)
+    {
+        *video_memory = color;
+
+        x_error += x_slope;
+
+        // if((x_error & 0xFF00) != 0)
+        if(x_error >= 256)
+        {
+            x_error &= 0x00FF;
+            video_memory += 1;
+        }
+
+        y_error += y_slope;
+
+        // if ((y_error & 0xFF00) != 0)
+        if(y_error >= 256)
+        {
+            y_error &= 0x00FF;
+            video_memory += line_increment;
+        }
+    }
+
 }
-
-
-/**************************************************************************
- *  line_fast                                                             *
- *    draws a line using Bresenham's line-drawing algorithm, which uses   *
- *    no multiplication or division.                                      *
- **************************************************************************/
-
-void line_fast(int x1, int y1, int x2, int y2, byte color)
-{
-    int i,dx,dy,sdx,sdy,dxabs,dyabs,x,y,px,py;
-    uint8_t * screen_page;
-    uint16_t screen_page_offset;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: line_fast(x1 = %d, y1 = %d, x2 = %d, y2 = %d, color = %d)\n", __FILE__, __LINE__, x1, y1, x2, y2, color);
-// #endif
-
-    dx = x2 - x1;      /* the horizontal distance of the line */
-    dy = y2 - y1;      /* the vertical distance of the line */
-    dxabs = abs(dx);
-    dyabs = abs(dy);
-    sdx = sgn(dx);
-    sdy = sgn(dy);
-    x = dyabs >> 1;
-    y = dxabs >> 1;
-    px = x1;
-    py = y1;
-
-    screen_page = video_page_buffer[1 - draw_page_num];
-
-    *(screen_page + (py * SCREEN_WIDTH) + px) = color;
-
-    if (dxabs >= dyabs) /* the line is more horizontal than vertical */
-    {
-        for(i = 0; i < dxabs; i++)
-        {
-            y += dyabs;
-            if(y >= dxabs)
-            {
-                y -= dxabs;
-                py += sdy;
-            }
-            px += sdx;
-            // plot_pixel(px, py, color);
-            *(screen_page + (py * SCREEN_WIDTH) + px) = color;
-        }
-    }
-    else /* the line is more vertical than horizontal */
-    {
-        for(i = 0; i < dyabs; i++)
-        {
-            x += dxabs;
-            if(x >= dyabs)
-            {
-                x -= dyabs;
-                px += sdx;
-            }
-            py += sdy;
-            // plot_pixel(px, py, color);
-            *(screen_page + (py * SCREEN_WIDTH) + px) = color;
-        }
-    }
-}
-
 
 // WZD s16p04
 // drake178: VGA_DrawPatternLine90
@@ -495,7 +466,6 @@ void line_fast(int x1, int y1, int x2, int y2, byte color)
 // drake178: 
 // MoO2  
 // RNG_Direct_LFSR
-
 
 // WZD s16p08
 // drake178: VGA_Shade_Rect()

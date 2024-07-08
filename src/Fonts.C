@@ -146,7 +146,6 @@ byte_ptr palette_flags;
 
 // WZD  s14o03
 /*
-
     MoO2  Module  init
 */
 void Load_Font_File(char * font_file)
@@ -170,7 +169,7 @@ void Load_Font_File(char * font_file)
     p_PaletteFlags         = p_Palette + (48 * 16);  // ~== p_PaletteFlags = &p_Palette[768];
     palette_flags = p_PaletteFlags;
 
-    // TODO  UU_DAC_Save_Seg = Allocate_Space(48);
+    // TODO  UU_DAC_Save_Seg = Allocate_Space(48);  // in MoO1, also unused, maybe debug code
 
     // Replacement_Colors = Allocate_Space(384);  // 384 paragraphs = 384 * 16 = 6,144 bytes  (24 * 256  ~'remap color tables')
     remap_color_palettes = (uint8_t *)Allocate_Space(384);
