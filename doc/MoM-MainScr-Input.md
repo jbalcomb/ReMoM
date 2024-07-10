@@ -194,6 +194,109 @@ Game Buttons            {_plane_button}
 
 
 
+### Section 9  Click Movement Map
+
+Section 9.1 Left-Click Movement Map
+Section 9.2 Right-Click Movement Map
+Section 9.2.1   Scroll Movement Map
+...Right-Click Movement Map - Map Square, Stack - Own, Other, City - Own, Other
+
+
+### Section 9.1
+Left-Click Movement Map
+### Section 9.2
+Right-Click Movement Map
+"Right-Click Movement Map Grid Field"
+            Scroll Map
+            Select Entity
+                Unit
+                    Own - Active Stack
+                    Other - Unit List Window
+                City
+                    Own
+                        Size
+                            0 - Outpost Screen
+                            1+ - City Screen
+                    Other - Enemy City Window
+
+if(-input_field_idx == _main_map_grid_field)
+
+entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+
+if(entity_idx == ST_UNDEFINED)
+    _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
+    _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
+    IDK_CheckSet_MapDisplay_XY();
+
+
+#### Section 9.2.1  Scroll Movement Map  (Main Screen - Right-Click Movement Map)
+    if(-input_field_idx == _main_map_grid_field)
+    entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+    if(entity_idx == ST_UNDEFINED)
+    ...
+    Scroll Movement Map
+    Right-Click Movement Map Grid Field
+    entity_idx == ST_UNDEFINED
+    @@MoveMovementMap
+    @@JmpMoveMovementMap
+    ...
+    // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
+    // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
+    _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width  / 2) = map x ?
+    _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
+    IDK_CheckSet_MapDisplay_XY();
+
+
+#### Section 9.2.2      Right-Click Movement Map - Stack
+
+    if(-input_field_idx == _main_map_grid_field)
+    entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+    if(entity_idx != ST_UNDEFINED)
+    entity_idx = abs(entity_idx)
+    ¿ why is entity_idx negative ?
+    if(entity_idx < 1000)
+
+#### Section 9.2.2.1    Right-Click Movement Map - Stack - Own
+
+    if(-input_field_idx == _main_map_grid_field)
+    entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+    if(entity_idx != ST_UNDEFINED)
+    entity_idx = abs(entity_idx)
+    ¿ why is entity_idx negative ?
+    if(entity_idx < 1000)
+    if(_UNITS[entity_idx].owner_idx == _human_player_idx)
+
+
+#### Section 9.2.2.2    Right-Click Movement Map - Stack - Other
+
+    if(-input_field_idx == _main_map_grid_field)
+    entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
+    if(entity_idx != ST_UNDEFINED)
+    entity_idx = abs(entity_idx)
+    ¿ why is entity_idx negative ?
+    if(entity_idx < 1000)
+    if(_UNITS[entity_idx].owner_idx == _human_player_idx) { ...} else { ... }
+
+Page 43  (PDF Page 48)
+"Right-clicking on stacks of enemy units calls up a unit list window which briefly describes all of the units in the stack."
+
+
+
+
+#### Section 9.2.3      Right-Click Movement Map - City
+#### Section 9.2.3.1      Right-Click Movement Map - City - Own
+#### Section 9.2.3.2      Right-Click Movement Map - City - Other
+
+else if(entity_idx < 1100)
+_city_idx = entity_idx - 1000;
+if(_CITIES[_city_idx].owner_idx == _human_player_idx)
+else
+'City Screen'
+'Enemy City Screen'
+
+
+
+
 ### Section 8
 Direction Keys          {hotkey_idx_Up, hotkey_idx_Home, hotkey_idx_PgUp, hotkey_idx_Left, hotkey_idx_Right, hotkey_idx_End, hotkey_idx_Down, hotkey_idx_PgDn}
 field order: {UpLeft, Up, UpRight, Left, Right, DownLeft, Down, DownRight}

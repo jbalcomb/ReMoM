@@ -116,15 +116,15 @@ uint8_t COL_Banners[] = {
     0x30, 0x31, 0x32, 0x33, 0x34
 };
 
-// WZD dseg:00C8 62 D8 7B 2B B3 32                               COL_Cartographer db 98, 216, 123, 43, 179, 50
-// WZD dseg:00CE C9 00 A5 00 CB 00                               UU_COL_Setof3_1 db 201,  0,165,  0,203,  0
-// WZD dseg:00D4 79 00 7A 00 7B 00                               UU_COL_Setof3_2 db 121,  0,122,  0,123,  0
-// WZD dseg:00DA 0D 00 0E 00 0F 00                               UU_COL_Setof3_3 db  13,  0, 14,  0, 15,  0
-// WZD dseg:00E0 49 00 4A 00 4B 00                               UU_COL_Setof3_4 db  73,  0, 74,  0, 75,  0
-// WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
-// WZD dseg:00EC 00                                              db    0
-// WZD dseg:00ED 00                                              db    0
-
+// WZD dseg:00C8
+uint8_t COL_Banners2[36] = {
+    98, 216, 123, 43, 179, 50,
+    201,  0, 165,  0, 203,  0,
+    121,  0, 122,  0, 123,  0,
+     13,  0,  14,  0,  15,  0,
+     73,  0,  74,  0,  75,  0,
+    105,  0, 106,  0, 107,  0
+};
 
 // WZD dseg:00EE 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 // struct s_mouse_list mouse_list_default[1] = {
@@ -1460,15 +1460,11 @@ int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 // WZD dseg:9752
 int16_t city_screen_scanned_field;
 
-// WZD dseg:9754 00 00                                           
-// IMG_OVL_UnitListBtm@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+15Fw ...
-SAMB_ptr IMG_OVL_UnitListBtm;
-// WZD dseg:9754                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9754
+SAMB_ptr _unitlist_bottom_seg;
 
-// WZD dseg:9756 00 00                                           
-// IMG_OVL_UnitList_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+148w ...
-SAMB_ptr IMG_OVL_UnitList_BG;
-// WZD dseg:9756                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9756
+SAMB_ptr _unitlist_background_seg;
 
 // WZD dseg:9758
 // drake178: IMG_CTY_NewBuild_BG@

@@ -1439,8 +1439,8 @@ void GFX_Swap_AppendUView(void)
     }
 
 
-    IMG_OVL_UnitList_BG = LBX_Reload_Next(unitview_lbx_file, 28, GFX_Swap_Seg);
-    IMG_OVL_UnitListBtm = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
+    _unitlist_background_seg = LBX_Reload_Next(unitview_lbx_file, 28, GFX_Swap_Seg);
+    _unitlist_bottom_seg = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
 
     // UNITVIEW.LBX,  30  BLDBUTB2    bld button backgrn
     IMG_OVL_BuildBtn_BG = LBX_Reload_Next(unitview_lbx_file, 30, GFX_Swap_Seg);
@@ -1692,6 +1692,21 @@ void GFX_Swap_Overland(void)
 }
 
 // WZD o52p32
+/*
+Load graphics for 'Unit List Window'
+    ...resets GFX_Swap_Seg
+
+XREF:
+    j_U_GFX_Swap_Units()
+        Unit_List_Window()
+*/
+void Cache_Graphics_Unit_List_Window(void)
+{
+    GFX_Swap_Reset();
+    Load_Unit_StatFigs();
+    GFX_Swap_AppendUView();
+}
+
 // WZD o52p33
 
 // WZD o52p34

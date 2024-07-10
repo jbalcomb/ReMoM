@@ -1881,130 +1881,38 @@ void Main_Screen(void)
         */
        if(-input_field_idx == _main_map_grid_field)
        {
-            DLOG("(-input_field_idx == _main_map_grid_field)");
-            DLOG("@@RightClickMovementMap");
-
-            // TODO  rename this variable to something more sensible - maybe add more if it gets reused - here ~entity_idx, was "input"
             entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
 
             if(entity_idx == ST_UNDEFINED)
             {
-                DLOG("(entity_idx == ST_UNDEFINED)");
-                DLOG("ScrollTheMap");
-                // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
-                // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
-                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
-                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
-
+                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
+                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
                 IDK_CheckSet_MapDisplay_XY();
-
             }
             else
             {
-                DLOG("(entity_idx != ST_UNDEFINED)");
-
                 // RP_SND_LeftClickSound2()
 
-                // entity_idx = abs(entity_idx);
-                entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
+                entity_idx = abs(entity_idx);
+                // entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
 
-                if(entity_idx >= 1000)
+                if(entity_idx < 1000)
                 {
-                    DLOG("(entity_idx >= 1000)");
-
-                    if(entity_idx < 1100)
-                    {
-                        DLOG("(entity_idx < 1100)");
-
-                        _city_idx = entity_idx - 1000;
-
-                        if(_CITIES[_city_idx].owner_idx == _human_player_idx)
-                        {
-                            DLOG("(_CITIES[_city_idx].owner_idx == _human_player_idx)");
-
-                            if(_CITIES[_city_idx].size == 0)
-                            {
-                                DLOG("(_CITIES[_city_idx].size == 0)");
-
-                            }
-                            else
-                            {
-                                DLOG("(_CITIES[_city_idx].size != 0)");
-
-                                PageFlipEffect = 4;
-                                // TODO  RP_GUI_GrowOutLeft = (_main_map_grid_x * 20);
-                                // TODO  RP_GUI_GrowOutTop = ((_main_map_grid_y * 18) + 20);
-                                // TODO  RP_GUI_GrowOutFrames = 8;
-                                current_screen = scr_City_Screen;
-                                leave_screen_flag = ST_TRUE;
-
-                            }
-
-                        }
-                        else
-                        {
-                            DLOG("(_CITIES[_city_idx].owner_idx != _human_player_idx)");
-
-                        }
-
-                    }
-                    else
-                    {
-                        DLOG("(entity_idx >= 1100)");
-
-                    }
-
-                }
-                else
-                {
-                    DLOG("(entity_idx < 1000)");
+                    /* #### Section 9.2.2      Right-Click Movement Map - Stack */
                     if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                     {
-                        DLOG("(_UNITS[entity_idx].owner_idx == _human_player_idx)");
-                        DLOG("@@SelectedUnitStack");
-#ifdef STU_DEBUG
-                        DBG_TST_Selected_Stack = 0;
-                        DBG_TST_Select_Unit_Stack = 0;
-                        DBG_TST_Build_Unit_Stack = 0;
-                        DBG_TST_Draw_Map_Units = 0;
-#endif
+                        /* #### Section 9.2.2.1      Right-Click Movement Map - Stack - Own */
                         _unit = entity_idx;
                         unit_idx = _unit;
                         Unit_X = _UNITS[unit_idx].wx;
                         Unit_Y = _UNITS[unit_idx].wy;
                         _active_world_x = _UNITS[unit_idx].wx;
                         _active_world_y = _UNITS[unit_idx].wy;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-    dbg_prn("DEBUG: [%s, %d]: Unit_X: %d\n", __FILE__, __LINE__, Unit_X);
-    dbg_prn("DEBUG: [%s, %d]: Unit_Y: %d\n", __FILE__, __LINE__, Unit_Y);
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-
-    if(_UNITS[unit_idx].wx == 19 && _UNITS[unit_idx].wy == 10)
-    {
-        DBG_TST_Selected_Stack = 1;
-        DBG_TST_Select_Unit_Stack = 1;
-        DBG_TST_Build_Unit_Stack = 1;
-        DBG_TST_Draw_Map_Units = 1;
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Selected_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Selected_Stack);
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Select_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Select_Unit_Stack);
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Build_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Build_Unit_Stack);
-    }
-#endif
                         Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
-#ifdef STU_DEBUG
-        DBG_TST_Selected_Stack = 0;
-        DBG_TST_Select_Unit_Stack = 0;
-        DBG_TST_Build_Unit_Stack = 0;
-#endif
                         if(all_units_moved != ST_TRUE)
                         {
-                            DLOG("(all_units_moved != ST_TRUE)");
                             all_units_moved = ST_FALSE;
                         }
-
                         Reset_Draw_Active_Stack();
                         draw_active_stack_flag = 0;
                         Set_Unit_Draw_Priority();
@@ -2012,28 +1920,53 @@ void Main_Screen(void)
                         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
                         Set_Mouse_List_Default();
                         Reset_Map_Draw();
-
                     }
                     else
                     {
-                        DLOG("if(_UNITS[entity_idx].owner_idx != _human_player_idx)");
-                        // Enemy Unit - Unit List Screen (Pop-Up)
-                        // target_world_x = _main_map_grid_x * SQUARE_WIDTH;
-                        // target_world_y = (_main_map_grid_y * SQUARE_HEIGHT) + SQUARE_WIDTH;
-                        // Deactivate_Help_List();
-                        // TODO  Unit_List_Window_Pup(entity_idx, 0, target_world_x, target_world_y);
-                        // Assign_Auto_Function(Main_Screen_Draw, 1);
-                        // Allocate_Reduced_Map();
-                        // Set_Mouse_List_Default();
-                        // Reset_Map_Draw();
-                        // MainScr_Prepare_Reduced_Map();
-                        // Deactivate_Help_List();
-                        // Set_Main_Screen_Help_List();
+                        /* #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other */
+                        target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+                        target_world_y = (_main_map_grid_y * SQUARE_HEIGHT);
+                        Deactivate_Help_List();
+                        Unit_List_Window(entity_idx, 0, target_world_x, target_world_y);
+                        Assign_Auto_Function(Main_Screen_Draw, 1);
+                        Allocate_Reduced_Map();
+                        Set_Mouse_List_Default();
+                        Reset_Map_Draw();
+                        MainScr_Prepare_Reduced_Map();
+                        Deactivate_Help_List();
+                        Set_Main_Screen_Help_List();
                     }
 
-                    DLOG("@@DidRightClickUnit");
                     screen_changed = ST_TRUE;
                     UU_MainScreen_flag = ST_TRUE;
+                }
+                else if(entity_idx < 1100)
+                {
+                    _city_idx = entity_idx - 1000;
+                    if(_CITIES[_city_idx].owner_idx == _human_player_idx)
+                    {
+                        if(_CITIES[_city_idx].size == 0)
+                        {
+                            DLOG("(_CITIES[_city_idx].size == 0)");
+
+                        }
+                        else
+                        {
+                            PageFlipEffect = 4;
+                            // TODO  RP_GUI_GrowOutLeft = (_main_map_grid_x * 20);
+                            // TODO  RP_GUI_GrowOutTop = ((_main_map_grid_y * 18) + 20);
+                            // TODO  RP_GUI_GrowOutFrames = 8;
+                            current_screen = scr_City_Screen;
+                            leave_screen_flag = ST_TRUE;
+
+                        }
+                    }
+                    else
+                    {
+                        DLOG("(_CITIES[_city_idx].owner_idx != _human_player_idx)");
+
+                    }
+
                 }
 
             }

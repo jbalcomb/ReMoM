@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\Timer.H" />
+    <ClInclude Include="..\..\..\src\UnitList.H" />
     <ClInclude Include="..\..\..\src\UnitMove.H" />
     <ClInclude Include="..\..\..\src\UnitStat.H" />
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
@@ -230,6 +231,7 @@
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
+    <ClCompile Include="..\..\..\src\UnitList.C" />
     <ClCompile Include="..\..\..\src\UnitMove.C" />
     <ClCompile Include="..\..\..\src\UnitStat.C" />
     <ClCompile Include="..\..\..\src\UNITSTK.C" />

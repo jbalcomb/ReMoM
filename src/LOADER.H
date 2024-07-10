@@ -380,7 +380,7 @@ void GFX_Swap_Cities(void);
 void GFX_Swap_Overland(void);
 
 // WZD o52p32
-// U_GFX_Swap_Units()
+void Cache_Graphics_Unit_List_Window(void);
 
 // WZD o52p33
 // U_GFX_Swap_Empty()

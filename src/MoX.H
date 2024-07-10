@@ -281,6 +281,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "Terrain.H"
 #include "TerrType.H"
 #include "Timer.H"
+#include "UnitList.H"
 #include "UnitMove.H"   // WTFMATE
 #include "UnitStat.H"
 #include "UNITSTK.H"
