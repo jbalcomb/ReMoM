@@ -142,7 +142,12 @@ void Set_Unit_View_Help(int16_t uv_type)
 
 
 // WZD o104p14
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX, 14  "enemy city Help"
+void Set_Enemy_City_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 14, (SAMB_ptr)_help_entries, 0, 11, 10);
+    Set_Help_List((char *)&_help_entries[0], 11);
+}
 
 // WZD o104p15
 // HLPENTRY.LBX  ""

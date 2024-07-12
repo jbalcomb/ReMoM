@@ -284,8 +284,6 @@ Page 43  (PDF Page 48)
 
 
 #### Section 9.2.3      Right-Click Movement Map - City
-#### Section 9.2.3.1      Right-Click Movement Map - City - Own
-#### Section 9.2.3.2      Right-Click Movement Map - City - Other
 
 else if(entity_idx < 1100)
 _city_idx = entity_idx - 1000;
@@ -293,6 +291,25 @@ if(_CITIES[_city_idx].owner_idx == _human_player_idx)
 else
 'City Screen'
 'Enemy City Screen'
+
+#### Section 9.2.3.1      Right-Click Movement Map - City - Own
+
+
+
+#### Section 9.2.3.2      Right-Click Movement Map - City - Other
+
+
+Right-Click Movement Map Grid Field
+
+entity_idx != ST_UNDEFINED
+
+abs(entity_idx) >= 1000
+abs(entity_idx) < 1100
+
+HERE:  entity == city
+       _CITIES[_city_idx].owner_idx != _human_player_idx
+
+Enemy_City_Screen()
 
 
 

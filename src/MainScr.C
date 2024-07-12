@@ -1942,7 +1942,7 @@ void Main_Screen(void)
                 }
                 else if(entity_idx < 1100)
                 {
-                    _city_idx = entity_idx - 1000;
+                    _city_idx = (entity_idx - 1000);
                     if(_CITIES[_city_idx].owner_idx == _human_player_idx)
                     {
                         if(_CITIES[_city_idx].size == 0)
@@ -1963,8 +1963,17 @@ void Main_Screen(void)
                     }
                     else
                     {
-                        DLOG("(_CITIES[_city_idx].owner_idx != _human_player_idx)");
-
+                        Deactivate_Help_List();
+                        Enemy_City_Screen();
+                        Assign_Auto_Function(Main_Screen_Draw, 1);
+                        Allocate_Reduced_Map();
+                        Set_Mouse_List_Default();
+                        Reset_Map_Draw();
+                        MainScr_Prepare_Reduced_Map();
+                        screen_changed = ST_TRUE;
+                        Deactivate_Help_List();
+                        Set_Main_Screen_Help_List();
+                        UU_MainScreen_flag = ST_TRUE;
                     }
 
                 }

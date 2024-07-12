@@ -25,20 +25,16 @@ extern "C" {
 
 
 // WZD o55p01
-// drake178: ¿ ?
-// Enemy_City_Screen()
+void Enemy_City_Screen(void);
 
 // WZD o55p02
-// drake178: ¿ ?
-// Enemy_City_Screen_Draw()
+void Enemy_City_Screen_Draw(void);
 
 // WZD o55p03
-// drake178: ¿ ?
-// Enemy_City_Screen_Load()
+void Enemy_City_Screen_Load(void);
 
 // WZD o55p04
-// drake178: ¿ ?
-// IDK_City_Cityscape_Draw_MouseOver()
+void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, int16_t owner_idx);
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()
@@ -140,7 +136,7 @@ void Do_Build_City_Enchantment_List(void);
 
 // WZD o55p28
 // drake178: ¿ ?
-void City_Screen_Draw_City_Enchantments__WIP(int16_t xstart, int16_t ystart);
+void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart);
 
 // WZD o55p29
 // drake178: CTY_CreateEnchCtrls()
@@ -176,6 +172,7 @@ void Player_Add_Mana(int16_t player_idx, int16_t mana);
 
 // WZD o55p37
 // drake178: STR_GenitiveCase()
+void Possessive(char * string);
 
 // WZD o55p38
 // drake178: N/A

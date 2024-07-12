@@ -1124,8 +1124,8 @@ struct s_BLDG
     /* 04 */  int16_t y1;
     /* 06 */  int16_t x2;
     /* 08 */  int16_t y2;
-    /* 0A */  int16_t field_A;
-    /* 0C */  int16_t field_C;
+    /* 0A */  int16_t IDK_x;
+    /* 0C */  int16_t IDK_y;
     /* 0E */
 };
 
@@ -2527,7 +2527,8 @@ extern SAMB_ptr IMG_CTY_RightBldTab;
 // WZD dseg:949C
 extern SAMB_ptr IMG_CTY_LeftBldTab;
 
-// WZD dseg:949E 00 00                                           IMG_OVL_EnemyCityBG@ dw 0               ; DATA XREF: IDK_EnemyCityScreen_s4A3F0+115w ...
+// WZD dseg:949E
+extern SAMB_ptr _enemy_city_seg;
 
 // WZD dseg:94A0
 extern SAMB_ptr city_big_resource_icon_seg[6];
@@ -3396,7 +3397,7 @@ extern char * GUI_String_1;
 // WZD dseg:BFE2 00 00                                           word_42A82 dw 0                         ; DATA XREF: sub_4D5EA+7Bw ...
 // WZD dseg:BFE4 00 00                                           IMG_Seg dw 0                            ; DATA XREF: sub_4D5EA+64w ...
 // WZD dseg:BFE6 00 00                                           word_42A86 dw 0                         ; DATA XREF: sub_4D5EA+Bw ...
-// WZD dseg:BFE8 00 00                                           IDK_EnemyCityScreen_UnitStack_2 dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
+// WZD dseg:BFE8 00 00                                           m_troop_fields dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
 // WZD dseg:BFEA 00 00                                           IDK_EnemyCityScreen_UnitStack_1 dw 0    ; DATA XREF: Enemy_City_Screen:loc_4A454r ...
 // WZD dseg:BFEC 00 00                                           RecTotal dw 0                           ; DATA XREF: Enemy_City_Screen+68o ...
 // WZD dseg:BFEE 00 00                                           start_y dw 0                            ; DATA XREF: Enemy_City_Screen:loc_4A43Fw ...

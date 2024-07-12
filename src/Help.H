@@ -1300,7 +1300,8 @@ void Set_Production_Screen_Help(void);
 void Set_Unit_View_Help(int16_t uv_type);
 
 // WZD o104p14
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX, 14  "enemy city Help"
+void Set_Enemy_City_Screen_Help_List(void);
 
 // WZD o104p15
 // HLPENTRY.LBX  ""

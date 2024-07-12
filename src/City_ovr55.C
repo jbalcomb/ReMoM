@@ -13,25 +13,593 @@
 
 
 
+// WZD dseg:2C9A                                                 BEGIN:  ovr055 - Initialized Data
+
+// WZD dseg:2C9A
+char reload_lbx_file__ovr055[] = "RELOAD";
+
+// WZD dseg:2CA0
+char str_empty_string__ovr055[] = "";
+
+// WZD dseg:2CA1
+char str_hotkey_ESC__ovr055[] = "\x1B";
+
+// WZD dseg:2CA3
+char str_hotkey_X__ovr055[] = "X";
+
+// WZD dseg:2CA5
+char str_City[] = "city";
+
+// WZD dseg:2CAA
+char str_hotkey_Y__ovr055[] = "Y";
+
+// WZD dseg:2CAC
+char str_Plane[] = "plane";
+
+// WZD dseg:2CB2
+char str_TurnOffSpell_1[] = "Do you wish to turn off the \x02";
+
+// WZD dseg:2CD0
+char str_TurnOffSpell_2[] = "\x01 spell?";
+
+// WZD dseg:2CD9
+char str_Sp_Of_Sp[] = " of ";
+
+// WZD dseg:2CDE
+char str_Units__ovr055[] = "Units";
+
+// WZD dseg:2CE4
+char str_NoReport[] = "No Report";
+
+// WZD dseg:2CEE
+char str_Destroyed[] = "Destroyed";
+
+// WZD dseg:2CF8
+char str_Nightshade[] = "Nightshade";
+
+// WZD dseg:2D03
+char str_Genitive_NoS[] = "\x27";
+
+// WZD dseg:2D05
+char str_Genitive_S[] = "\x27s";
+
+// WZD dseg:2D08
+char help_lbx_file__ovr055[] = "HELP";
+
+// WZD dseg:2D0D
+char str_listdat_lbx_file__ovr055[] = "LISTDAT";
+
+// WZD dseg:2D15
+char str_hotkey_M__ovr055[] = "M";
+
+// WZD dseg:2D17 46 6F 6F 64 00                                  cnst_Food db 'Food',0
+// WZD dseg:2D1C 20 28 52 65 70 6C 61 63 65 64 29 00             aReplaced db ' (Replaced)',0
+// WZD dseg:2D28 50 72 6F 64 75 63 74 69 6F 6E 00                aProduction_0 db 'Production',0
+// WZD dseg:2D33 42 75 69 6C 64 69 6E 67 20 4D 61 69 6E 74 65 6E+aBuildingMaintenance db 'Building Maintenance',0
+// WZD dseg:2D48 4D 6F 72 65 00                                  aMore db 'More',0
+// WZD dseg:2D4D 47 6F 6C 64 00                                  cnst_Gold db 'Gold',0                   ; could use dseg:2ac5
+// WZD dseg:2D52 4D 61 67 69 63 61 6C 20 50 6F 77 65 72 00       aMagicalPower db 'Magical Power',0
+// WZD dseg:2D60 2D 00                                           asc_39800 db '-',0
+// WZD dseg:2D62 53 70 65 6C 6C 20 52 65 73 65 61 72 63 68 00    aSpellResearch db 'Spell Research',0
+
+// WZD dseg:2D71 00                                              align 2
+
+// WZD dseg:2D71                                                 END:  ovr055 - Initialized Data
+
+
+
+// WZD dseg:BFE8                                                 BEGIN:  ovr055 - Uninitialized Data
+
+// WZD dseg:BFE8
+int16_t * m_troop_fields;
+
+// WZD dseg:BFEA
+int16_t * m_troops;
+
+// WZD dseg:BFEC
+int16_t m_troop_count;
+
+// WZD dseg:BFEE
+int16_t y_start;
+
+// WZD dseg:BFF0
+int16_t x_start;
+
+// WZD dseg:BFF0                                                 END:  ovr055 - Uninitialized Data
+
+
+
+
 /*
     WIZARDS.EXE  ovr055
 */
 
 // WZD o55p01
-// drake178: ¿ ?
-// Enemy_City_Screen()
+void Enemy_City_Screen(void)
+{
+    int16_t y1;
+    int16_t x1;
+    int16_t hotkey_X;
+    int16_t full_screen_ESC_field;
+    int16_t screen_changed;
+    int16_t leave_screen;
+    int16_t itr_troops;  // _SI_
+    int16_t itr;  // _SI_
+    int16_t input_field_idx;  // _DI_
+
+    Clear_Fields();
+
+    Set_Page_Off();
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Back();
+
+    PageFlip_FX();
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(Enemy_City_Screen_Draw, 1);
+
+    x_start = 60;
+
+    y_start = 0;
+
+    Deactivate_Help_List();
+
+    Set_Enemy_City_Screen_Help_List();
+
+    Enemy_City_Screen_Load();
+
+    Player_Army_At_Square(_CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _CITIES[_city_idx].wp, _CITIES[_city_idx].owner_idx, &m_troop_count, &m_troops[0]);
+
+    for(itr_troops = 0; itr_troops < m_troop_count; itr_troops++)
+    {
+        if(Unit_Has_Invisibility(m_troops[itr_troops]) == ST_TRUE)
+        {
+            Clear_Structure(itr_troops, (uint8_t *)&m_troops[0], 2, m_troop_count);
+            m_troop_count--;
+        }
+    }
+
+
+    // RELOAD.LBX, 026  ENEMYCIT
+    _enemy_city_seg = LBX_Reload(reload_lbx_file__ovr055, 26, _screen_seg);
+
+    Do_Build_City_Enchantment_List();
+
+    Do_City_Calculations(_city_idx);
+
+    city_screen_scanned_field = ST_UNDEFINED;
+
+    cityscape_bldg_count = 0;
+
+    Clear_Fields();
+
+    Set_Input_Delay(1);
+
+    screen_changed = ST_FALSE;
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+        Mark_Time();
+
+        Clear_Fields();
+
+        City_Add_Fields_City_Enchantments((x_start + 139), (y_start + 51));
+
+        City_Add_Fields_Buildings();
+
+        for(itr_troops = 0; itr_troops < m_troop_count; itr_troops++)
+        {
+
+            x1 = (x_start +  5 + ((itr_troops % 6) * 22));
+            y1 = (y_start + 52 + ((itr_troops / 6) * 20));
+
+            m_troop_fields[itr_troops] = Add_Hidden_Field(x1, y1, (x1 + 19), (y1 + 18), str_empty_string__ovr055[0], ST_UNDEFINED);
+        }
+
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055[0], ST_UNDEFINED);
+
+        hotkey_X = Add_Hot_Key(str_hotkey_X__ovr055[0]);
+
+        input_field_idx = Get_Input();
+
+        city_screen_scanned_field = Scan_Input();
+
+
+        if(input_field_idx == hotkey_X)
+        {
+            // ; draws a name-value pair using DBG_DrawTableCell if debug is enabled, or does nothing otherwise
+            // TODO  RP_DBG_TblDrawValue(0, 0, _city_idx, str_City);  // "city"
+            // TODO  RP_DBG_TblDrawValue(0, 1, _CITIES[_city_idx].wx, str_hotkey_X__ovr055);  // "X"
+            // TODO  RP_DBG_TblDrawValue(0, 2, _CITIES[_city_idx].wy, str_hotkey_Y__ovr055);  // "Y"
+            // TODO  RP_DBG_TblDrawValue(0, 2, _CITIES[_city_idx].wp, str_Plane);  // "plane"
+            for(itr = 0; itr < 20; itr++)
+            {
+                // TODO  DBG_TblDrawS16(itr, 4, _CITIES[_city_idx].bldg_status[itr]);
+                
+            }
+            for(itr = 20; itr < 36; itr++)
+            {
+                // TODO  DBG_TblDrawS16((itr - 20), 5, _CITIES[_city_idx].bldg_status[itr]);
+            }
+        }
+
+
+        if(abs(input_field_idx) == full_screen_ESC_field)
+        {
+            // TODO  SND_LeftClickSound();
+            leave_screen = ST_TRUE;
+        }
+
+
+        for(itr_troops = 0; itr_troops < m_troop_count; itr_troops++)
+        {
+            if(m_troop_fields[itr_troops] == input_field_idx)
+            {
+                // TODO  SND_LeftClickSound();
+                leave_screen = ST_UNDEFINED;
+            }
+        }
+
+
+        for(itr = 0; itr < city_cityscape_field_count; itr++)
+        {
+            if(city_cityscape_fields[itr] == input_field_idx)
+            {
+                // TODO  SND_LeftClickSound();
+                leave_screen = ST_UNDEFINED;
+            }
+        }
+
+
+        for(itr = 0; itr < city_enchantment_display_count; itr++)
+        {
+            if(
+                (city_enchantment_fields[itr] == input_field_idx)
+                &&
+                (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
+            )
+            {
+                // TODO  SND_LeftClickSound();
+                Deactivate_Help_List();
+                strcpy(GUI_String_1, str_TurnOffSpell_1);
+                strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
+                strcat(GUI_String_1, str_TurnOffSpell_2);
+                if(Confirmation_Box(GUI_String_1) == ST_TRUE)
+                {
+                    // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
+                    Build_City_Enchantment_List(_city_idx, city_enchantment_list, city_enchantment_owner_list, &city_enchantment_list_count);
+                    city_enchantment_display_scroll_flag = 0;
+                    if(city_enchantment_list_count > 6)
+                    {
+                        city_enchantment_display_scroll_flag = ST_TRUE;
+                    }
+                    else
+                    {
+                        city_enchantment_display_first = 0;
+                    }
+                }
+                Deactivate_Auto_Function();
+                Assign_Auto_Function(Enemy_City_Screen_Draw, 1);
+                screen_changed = ST_TRUE;
+                Reset_Map_Draw();
+                Deactivate_Help_List();
+                Set_Enemy_City_Screen_Help_List();
+            }
+        }
+
+
+        if(input_field_idx == city_up_button)
+        {
+            // TODO  SND_LeftClickSound();
+            city_enchantment_display_first -= 6;
+            if(city_enchantment_display_first < 0)
+            {
+                city_enchantment_display_first = ((city_enchantment_list_count / 6) * 6);
+            }
+            screen_changed = ST_TRUE;
+        }
+
+
+        if(input_field_idx == city_dn_button)
+        {
+            // TODO  SND_LeftClickSound();
+            city_enchantment_display_first += 6;
+            if(city_enchantment_display_first > city_enchantment_list_count)
+            {
+                city_enchantment_display_first = 0;
+            }
+            screen_changed = ST_TRUE;
+        }
+
+
+        if((leave_screen == ST_FALSE) && (screen_changed == ST_FALSE))
+        {
+            Copy_Back_To_Off();
+            Enemy_City_Screen_Draw();
+            PageFlip_FX();
+            Release_Time(1);
+        }
+        screen_changed = ST_FALSE;
+    }
+
+    PageFlipEffect = 3;
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
+    Reset_Window();
+    Clear_Fields();
+
+}
+
 
 // WZD o55p02
-// drake178: ¿ ?
-// Enemy_City_Screen_Draw()
+void Enemy_City_Screen_Draw(void)
+{
+    int16_t var_C;
+    int16_t var_A;
+    uint8_t colors[6];
+    int16_t unit_type;
+    int16_t itr;  // _SI_
+
+    // TODO  mov     [_help_entries.help_01.entry_idx], (HLP_BARBARIAN_TOWNSFOLK + _CITIES[_city_idx].race)
+    // TODO  mov     [_help_entries.help_02.entry_idx], HLP_ENCHANTMENTS_City
+    // TODO  mov     [_help_entries.help_03.entry_idx], HLP_CITY_SCAPE_2
+
+    for(itr = 0; itr < city_cityscape_field_count; itr++)
+    {
+        if(city_cityscape_fields[itr] == city_screen_scanned_field)
+        {
+            if(cityscape_bldgs[itr].bldg_idx < 100)
+            {
+                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_GUISE + cityscape_bldgs[itr].bldg_idx)
+            }
+            else
+            {
+                // TODO  mov     [_help_entries.help_03.entry_idx], (HLP_LAND_SIZE + cityscape_bldgs[itr].bldg_idx)
+            }
+        }
+    }
+
+    for( itr = 0; itr < 6; itr++)
+    {
+        // mov     [_help_entries[itr].help_05.entry_idx+bx], e_ST_UNDEFINED
+    }
+
+    if(city_enchantment_display_count > 0)
+    {
+        // TODO  mov     [_help_entries.help_02.entry_idx], e_ST_UNDEFINED
+        for(itr = 0; itr < city_enchantment_display_count; itr++)
+        {
+            // TODO  mov     [_help_entries[itr].help_05.entry_idx+bx], City_Enchantment_HelpIdx(city_enchantment_list[(city_enchantment_display_first + itr)]);
+        }
+    }
+
+
+    Reset_Window();
+    Set_Page_Off();
+
+
+
+    FLIC_Draw((x_start - 1), y_start, _enemy_city_seg);
+
+    Set_Font_Style_Shadow_Down(5, 5, 0, 0);
+
+    Set_Font_Spacing_Width(1);
+
+    Set_Outline_Color(0);
+
+    strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
+
+    strcat(GUI_String_1, str_Sp_Of_Sp);
+
+    strcpy(GUI_String_2, _CITIES[_city_idx].name);
+
+    strcat(GUI_String_1, GUI_String_2);
+
+    Print_Centered((x_start + 106), (y_start + 3), GUI_String_1);
+
+    colors[0] = 190;
+    colors[1] = 179;
+
+    Set_Font_Colors_15(0, &colors[0]);
+
+    Set_Outline_Color(19);
+
+    Set_Font_Style_Shadow_Down(1, 15, 0, 0);
+
+    Print((x_start + 6), (y_start + 19), *_race_type_table[_CITIES[_city_idx].race].name);
+
+    Print((x_start + 6), 43, str_Units__ovr055);  // "Units"
+
+    City_Screen_Draw_Population_Row(_city_idx, (x_start + 4), (y_start + 27));
+
+    // TODO  mov     [_help_entries.help_04.entry_idx], HLP_CITY_GARRISONS
+
+    Set_Font_Spacing_Width(1);
+
+    if(Check_Square_Scouted(_CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _CITIES[_city_idx].wp) == ST_TRUE)
+    {
+        for(itr = 0; itr < m_troop_count; itr++)
+        {
+            if(m_troop_fields[itr] == city_screen_scanned_field)
+            {
+                unit_type = _UNITS[m_troops[itr]].type;
+                Print((x_start + 36), 43, *_unit_type_table[unit_type].name);
+            }
+        }
+        
+        var_A = (x_start + 5);
+
+        var_C = (y_start + 52);
+
+        for(itr = 0; itr < m_troop_count; itr++)
+        {
+            Draw_Unit_StatFig((var_A + ((itr % 6) * 22)), (var_C + ((itr / 6) * 20)), m_troops[itr], 1);
+        }
+
+        Cycle_Unit_Enchantment_Animation();
+    }
+    else
+    {
+        // mov     [_help_entries.help_04.entry_idx], HLP_NO_REPORT
+        Print((x_start + 54), (y_start + 64), str_NoReport);  // "No Report"
+    }
+
+    City_Screen_Draw_City_Enchantments((x_start + 139), (y_start + 51));
+
+    Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
+
+    IDK_City_Cityscape_Draw_MouseOver(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
+
+}
+
 
 // WZD o55p03
-// drake178: ¿ ?
-// Enemy_City_Screen_Load()
+void Enemy_City_Screen_Load(void)
+{
+
+    GUI_String_1 = (char *)Near_Allocate_First(80);
+
+    GUI_String_2 = (char *)Near_Allocate_Next(80);
+
+    city_enchantment_list = (int16_t *)Near_Allocate_Next(52);
+
+    city_enchantment_owner_list = (int16_t *)Near_Allocate_Next(52);
+
+    city_enchantment_fields = (int16_t *)Near_Allocate_Next(52);
+
+    city_cityscape_fields = (byte_ptr)Near_Allocate_Next(72);  // 36 2-byte values
+
+    city_population_row_fields = (int16_t *)Near_Allocate_Next(40);
+
+    m_troops = (int16_t *)Near_Allocate_Next(18);
+
+    m_troop_fields = (int16_t *)Near_Allocate_Next(18);
+
+}
+
 
 // WZD o55p04
-// drake178: ¿ ?
-// IDK_City_Cityscape_Draw_MouseOver()
+void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
+{
+    char string[26];
+    int16_t var_2;
+    int16_t itr;  // _SI_
+    int16_t IDK;  // _DI_
+
+    if(owner_idx == ST_UNDEFINED)
+    {
+        return;
+    }
+
+    var_2 = 175;
+
+    if(x_start == 1)
+    {
+        IDK = 38;
+    }
+    else
+    {
+        IDK = (x_start + 38);
+        var_2 = (x_start + 175);
+    }
+
+    for(itr = 0; itr < city_cityscape_field_count; itr++)
+    {
+        if(city_cityscape_fields[itr] != scanned_field)
+        {
+            continue;
+        }
+
+        if(cityscape_bldgs[itr].bldg_idx < 100)
+        {
+            if(_CITIES[_city_idx].bldg_status[cityscape_bldgs[itr].bldg_idx] == bs_Removed)
+            {
+                if(
+                    (cityscape_bldgs[itr].IDK_x > IDK)
+                    &&
+                    (cityscape_bldgs[itr].IDK_x <= var_2)
+                )
+                {
+                    Set_Font_Style_Outline(1, 2, 0, 0);
+                }
+                else
+                {
+                    Set_Font_Style_Outline(0, 2, 0, 0);
+                    Set_Font_Spacing_Width(1);
+                }
+                Set_Alias_Color(166);
+                Set_Outline_Color(0);
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), cityscape_bldgs[itr].IDK_y, str_Destroyed);  // "Destroyed"
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 6), bldg_data_table[cityscape_bldgs[itr].bldg_idx].name);
+            }
+            else
+            {
+                if(
+                    (cityscape_bldgs[itr].IDK_x > IDK)
+                    &&
+                    (cityscape_bldgs[itr].IDK_x <= var_2)
+                )
+                {
+                    Set_Font_Style_Outline(1, 0, 0, 0);
+                }
+                else
+                {
+                    Set_Font_Style_Outline(0, 0, 0, 0);
+                    Set_Font_Spacing_Width(1);
+                }
+                Set_Alias_Color(8);
+                Set_Outline_Color(0);
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 6), bldg_data_table[cityscape_bldgs[itr].bldg_idx].name);
+            }
+        }
+        else
+        {
+            Set_Font_Style_Outline(1, 0, 0, 0);
+            if(
+                (cityscape_bldgs[itr].IDK_x <= IDK)
+                ||
+                (cityscape_bldgs[itr].IDK_x > var_2)
+            )
+            {
+                    Set_Font_Style_Outline(0, 0, 0, 0);
+                    Set_Font_Spacing_Width(1);
+            }
+            Set_Alias_Color(8);
+            Set_Outline_Color(0);
+
+            if(cityscape_bldgs[itr].bldg_idx == 104)  /* ¿ bt_BREQ_Grass ? */
+            {
+                strcpy(string, _players[owner_idx].name);
+                Possessive(&string[0]);
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4), string);
+                // cityscape_bldgs[itr].bldg_idx
+                // shl     bx, 1
+                // push    [word ptr bx+9Ah]
+                // (cityscape_bldgs[itr].IDK_y + 3), 
+                // (cityscape_bldgs[itr].IDK_x + 1), 
+                // Print_Centered();
+            }
+            else
+            {
+                // cityscape_bldgs[itr].bldg_idx
+                // shl     bx, 1
+                // push    [word ptr bx+9Ah]
+                // cityscape_bldgs[itr].IDK_y, 
+                // (cityscape_bldgs[itr].IDK_x + 1), 
+                // Print_Centered();
+            }
+
+        }
+
+    }
+
+}
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()
@@ -247,7 +815,7 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
     banner_colors[2] = 125;
     banner_colors[3] = 201;
     banner_colors[4] = 211;
-    banner_colors[5] = 50;
+    banner_colors[5] =  50;  // brown
 
     var_2 = 0;
 
@@ -708,8 +1276,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 xpos += 6;
             }
 
-            // city_resources_rows_fields[0] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[0] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[0] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
             // city_resource_row_field_idx = xpos;
             group_two_x1 = xpos;
@@ -723,8 +1290,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 Draw_Resource_Icons(&xpos, (ystart + (itr_resource_types * 8)), resources[itr_resource_types], abs_diff_food, city_big_resource_icon_seg[itr_resource_types], city_lil_resource_icon_seg[itr_resource_types]);
             }
 
-            // city_resources_rows_fields[1] = Add_Hidden_Field(city_resource_row_field_idx, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[1] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[1] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
         }
         else if (itr_resource_types == 2)
@@ -748,8 +1314,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 xpos += 5;  // BUGBUG: ¿ should be 6 like food, because (icon space - min icon space) = (8 - 2) = 6 ?
             }
 
-            // city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
             // BUGBUG: recalculates abs_diff_gold as group_amount  probably just shouldn't calculate either in the prep-work and just do this for food as well
             group_amount = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
@@ -766,8 +1331,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 Draw_Resource_Icons(&xpos, (ystart + (itr_resource_types * 8)), resources[itr_resource_types], group_amount, city_big_resource_icon_seg[itr_resource_types], city_lil_resource_icon_seg[itr_resource_types]);
             }
 
-            // city_resources_rows_fields[4] = Add_Hidden_Field(city_resource_row_field_idx, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[4] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[4] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
         }
         else
@@ -888,8 +1452,7 @@ void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t y
                 xpos += 5;  // BUGBUG: ¿ should be 6 like food, because (icon space - min icon space) = (8 - 2) = 6 ?
             }
 
-            // city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
 
             // BUGBUG: recalculates abs_diff_gold as group_amount  probably just shouldn't calculate either in the prep-work and just do this for food as well
             group_amount = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
@@ -1133,7 +1696,6 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
     uint8_t * city_enchantments;
     int16_t city_owner_idx;
     int16_t itr1_city_enchantment_count;
-
     int16_t itr_city_enchantments;  // _SI_
     int16_t itr2_city_enchantment_count;  // _SI_
     int16_t city_enchantment_count;  // _DI_
@@ -1150,15 +1712,13 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
         {
             city_enchantment_list[city_enchantment_count] = itr_city_enchantments;
 
-            // TODO  WZD dseg:2CF8 cnst_Nightshade_2 db 'Nightshade',0     ; OON XREF: CTY_GetEnchants()
-            if(stricmp(_city_enchantment_names[itr_city_enchantments], "Nightshade") != 0)
+            if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) != 0)
             {
                 city_enchantment_owner_list[city_enchantment_count] = (city_enchantment_list[itr_city_enchantments] - 1);
             }
             else
             {
-                // TODO  What does this '10' mean?
-                city_enchantment_owner_list[city_enchantment_count] = 10;                
+                city_enchantment_owner_list[city_enchantment_count] = 10;
             }
 
             city_enchantment_count++;
@@ -1177,6 +1737,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
                 Swap_Short(&city_enchantment_owner_list[itr2_city_enchantment_count], &city_enchantment_owner_list[(itr2_city_enchantment_count + 1)]);
                 Swap_Short(&city_enchantment_list[itr2_city_enchantment_count], &city_enchantment_list[(itr2_city_enchantment_count + 1)]);
             }
+            itr2_city_enchantment_count++;
         }
     }
 
@@ -1204,7 +1765,7 @@ void Do_Build_City_Enchantment_List(void)
 
 // WZD o55p28
 // drake178: ¿ ?
-void City_Screen_Draw_City_Enchantments__WIP(int16_t xstart, int16_t ystart)
+void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart)
 {
     uint8_t banner_id;
     uint8_t banner_colors[6];
@@ -1232,7 +1793,6 @@ void City_Screen_Draw_City_Enchantments__WIP(int16_t xstart, int16_t ystart)
         {
             if(city_enchantment_owner_list[(city_enchantment_display_first + itr)] == 5)
             {
-                // TODO:  What's up with indexing?  mov  [_players.banner_id+17E8h], BNR_Brown
                 _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // BNR_Brown
             }
 
@@ -1268,10 +1828,8 @@ void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
 
     if(city_enchantment_display_scroll_flag == ST_TRUE)
     {
-        // city_up_button = Add_Button_Field((xstart + 62), (ystart - 1), cnst_ZeroString_30, city_spell_up_arrow_button_seg, cnst_ZeroString_30, 0xFFFF);
-        city_up_button = Add_Button_Field((xstart + 62), (ystart -  1), "", city_spell_up_arrow_button_seg, 0, ST_UNDEFINED);
-        // city_dn_button = Add_Button_Field((xstart + 62), (ystart + 34), cnst_ZeroString_30, city_spell_dn_arrow_button_seg, cnst_ZeroString_30, 0xFFFF);
-        city_dn_button = Add_Button_Field((xstart + 62), (ystart + 34), "", city_spell_dn_arrow_button_seg, 0, ST_UNDEFINED);
+        city_up_button = Add_Button_Field((xstart + 62), (ystart -  1), str_empty_string__ovr055, city_spell_up_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED);
+        city_dn_button = Add_Button_Field((xstart + 62), (ystart + 34), str_empty_string__ovr055, city_spell_dn_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED);
     }
 
     city_enchantment_display_count = 0;
@@ -1451,7 +2009,6 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
         itr_figures++;
     }
 
-
 }
 
 
@@ -1542,6 +2099,36 @@ void Player_Add_Mana(int16_t player_idx, int16_t amount)
 
 // WZD o55p37
 // drake178: STR_GenitiveCase()
+/*
+; adds the possessive clitic suffix of the genitive
+; case to a string based on whether it ends with the
+; letter 's' (') or not ('s)
+*/
+/*
+    add ' or 's
+    posessive
+*/
+void Possessive(char * string)
+{
+    int16_t string_length;  // _DI_
+
+    string_length = strlen(string);
+
+    if(
+        (string[(string_length - 1)] == 's')
+        ||
+        (string[(string_length - 1)] == 'S')
+    )
+    {
+        strcat(string, str_Genitive_NoS);
+    }
+    else
+    {
+        strcat(string, str_Genitive_S);
+    }
+
+}
+
 
 // WZD o55p38
 // drake178: N/A

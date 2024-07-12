@@ -752,7 +752,7 @@ void City_Screen_Draw2__WIP(void)
 
     City_Screen_Draw_Resource_Icons(_city_idx, 6, 52);
 
-    City_Screen_Draw_City_Enchantments__WIP(139, 51);
+    City_Screen_Draw_City_Enchantments(139, 51);
 
     City_Screen_Draw_Garrison_Window();
 
