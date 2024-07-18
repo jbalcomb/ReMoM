@@ -34,7 +34,7 @@ void Enemy_City_Screen_Draw(void);
 void Enemy_City_Screen_Load(void);
 
 // WZD o55p04
-void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, int16_t owner_idx);
+void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx);
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()

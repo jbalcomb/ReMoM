@@ -1777,6 +1777,97 @@ struct s_MSG_UNIT_LOST
 
 
 
+// WZD dseg:0000                                                 ; ===========================================================================
+// WZD dseg:0000
+// WZD dseg:0000                                                 ; Segment type: Pure data
+// WZD dseg:0000                                                 segment dseg para public 'DATA' use16
+// WZD dseg:0000                                                 assume cs:dseg
+// WZD dseg:0000 00 00 00 00                                     oopsie_accidentally_renamed db 4 dup(0) ; start of c0.asm _DATA
+// WZD dseg:0004 42 6F 72 6C 61 6E 64 20 43 2B 2B 20 2D 20 43 6F+Copyright_Msg db 'Borland C++ - Copyright 1991 Borland Intl.',0
+// WZD dseg:002F 4E 75 6C 6C 20 70 6F 69 6E 74 65 72 20 61 73 73+NullCheck_Msg db 'Null pointer assignment',0Dh,0Ah
+// WZD dseg:002F 69 67 6E 6D 65 6E 74 0D 0A                                                              ; DATA XREF: __checknull+1Fo
+// WZD dseg:0048 44 69 76 69 64 65 20 65 72 72 6F 72 0D 0A       ZeroDiv_Msg db 'Divide error',0Dh,0Ah   ; DATA XREF: ZeroDivision:loc_101AAo
+// WZD dseg:0056 41 62 6E 6F 72 6D 61 6C 20 70 72 6F 67 72 61 6D+Abort_Msg db 'Abnormal program termination',0Dh,0Ah
+// WZD dseg:0056 20 74 65 72 6D 69 6E 61 74 69 6F 6E 0D 0A                                               ; DATA XREF: _abort+3o
+// WZD dseg:0074 00 00 00 00                                     _Int0Vector dd 0                        ; DATA XREF: SaveVectors:loc_101B6w ...
+// WZD dseg:0078 00 00 00 00                                     _Int4Vector dd 0                        ; DATA XREF: SaveVectors+13w ...
+// WZD dseg:007C 00 00 00 00                                     _Int5Vector dd 0                        ; DATA XREF: SaveVectors+20w ...
+// WZD dseg:0080 00 00 00 00                                     _Int6Vector dd 0                        ; DATA XREF: SaveVectors+2Dw ...
+// WZD dseg:0084 00 00                                           __C0argc dw 0                           ; DATA XREF: start+154r
+// WZD dseg:0086 00 00                                           __C0argv dw 0                           ; DATA XREF: start+150r
+// WZD dseg:0088 00 00                                           __C0environ dw 0                        ; DATA XREF: start+14Cr ...
+// WZD dseg:008A 00 00                                           _envLng dw 0                            ; DATA XREF: start+46w ...
+// WZD dseg:008C 00 00                                           _envseg dw 0                            ; DATA XREF: start+1Dw ...
+// WZD dseg:008E 00 00                                           _envSize dw 0                           ; DATA XREF: start+55w ...
+// WZD dseg:0090 00 00                                           _psp dw 0                               ; DATA XREF: start+19w ...
+// WZD dseg:0092 00 00                                           _version dw 0                           ; DATA XREF: start+16w ...
+// WZD dseg:0094 00 00                                           errno dw 0                              ; DATA XREF: __IOerror:ser_endw ...
+// WZD dseg:0096 00 00 00 00                                     _StartTime dd 0                         ; DATA XREF: start+124w ...
+// WZD dseg:009A 54 EA                                           __heapbase dw 0EA54h                    ; DATA XREF: Cityscape_Draw_Scanned_Building_Name+14Fr ...
+// WZD dseg:009C 54 EA                                           __brklvl dw 0EA54h                      ; DATA XREF: __brk+10w ...
+// WZD dseg:009E 00 00 00 00                                     _heapbase dd 0                          ; DATA XREF: _brk+7r ...
+// WZD dseg:00A2 00 00 00 00                                     _brklvl dd 0                            ; DATA XREF: normalize+22w ...
+// WZD dseg:00A6 00 00 00 00                                     _heaptop dd 0                           ; DATA XREF: normalize+69w ...
+// WZD dseg:00A6                                                                                         ; end of c0.asm _DATA
+// WZD dseg:00AA
+// WZD dseg:00AA
+// WZD dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
+// WZD dseg:00AA
+// WZD dseg:00AA
+// WZD dseg:00AA 69 6A 6B 6C 6D 49 4A 4B 4C 4D 79 7A 7B 7C 7D C9+COL_Banners db 105,106,107,108,109      ; DATA XREF: Draw_Unit_StatFig+BFr ...
+// WZD dseg:00AA A5 CB A6 2D A0 A1 A2 B2 B4 30 31 32 33 34       db 73,74,75,76,77
+// WZD dseg:00AA                                                 db 121,122,123,124,125
+// WZD dseg:00AA                                                 db 201,165,203,166,45
+// WZD dseg:00AA                                                 db 160,161,162,178,180
+// WZD dseg:00AA                                                 db 48,49,50,51,52
+// WZD dseg:00C8 62 D8 7B 2B B3 32 C9 00 A5 00 CB 00 79 00 7A 00+COL_Banners2 db 98,216,123,43,179,50    ; DATA XREF: Unit_List_Window_Draw+2Fr ...
+// WZD dseg:00C8 7B 00 0D 00 0E 00 0F 00 49 00 4A 00 4B 00 69 00+db 201,0,165,0,203,0
+// WZD dseg:00C8 6A 00 6B 00                                     db 121,0,122,0,123,0
+// WZD dseg:00C8                                                 db 13,0,14,0,15,0
+// WZD dseg:00C8                                                 db 73,0,74,0,75,0
+// WZD dseg:00C8                                                 db 105,0,106,0,107,0
+// WZD dseg:00EC 00                                              db    0
+// WZD dseg:00ED 00                                              db    0
+// WZD dseg:00ED
+// WZD dseg:00ED
+// WZD dseg:00EE
+// WZD dseg:00EE
+// WZD dseg:00EE 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:00EE                                                                                         ; DATA XREF: Screen_Control+11o ...
+// WZD dseg:00FA 00 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+// WZD dseg:00FA                                                                                         ; DATA XREF: Item_Screen+202o ...
+// WZD dseg:0106 06 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
+// WZD dseg:0106                                                                                         ; DATA XREF: Next_Turn_Calc+14o ...
+// WZD dseg:0112 01 00 00 00 00 00 00 00 3F 01 C7 00             NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:011E 07 00 04 00 00 00 00 00 3F 01 9E 00             NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
+// WZD dseg:011E
+// WZD dseg:011E
+// WZD dseg:012A 01 02 04 08 10 20                               NIU_byte_36BCA db         1,      10b,     100b,    1000b,   10000b,  100000b
+// WZD dseg:0130
+// WZD dseg:0130
+// WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
+// WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
+// WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
+// WZD dseg:0154
+// WZD dseg:0154
+// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
+// WZD dseg:0154
+// WZD dseg:0154
+// WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
+// WZD dseg:0156                                                                                         ; DATA XREF: City_Screen_Draw2__WIP+1Fr ...
+// WZD dseg:0156                                                                                         ; "Outpost"
+
+// WZD dseg:0162
+extern char * STR_MagicBuildings[7];
+
+// WZD dseg:0170 8C 00 00 00 82 00 05 00 78 00 0A 00 6E 00 0F 00+UU_UnknownValuePairs dw 140, 0, 130, 5, 120, 10, 110, 15, 100, 20, 90, 25, 80, 30, 70, 35, 60, 40, 50, 45, 40, 50
+// WZD dseg:019C
+
+
+
+
+
+
 
 // WZD dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
 
@@ -1901,8 +1992,8 @@ extern char cnst_City[];
 // drake178: cnst_Capital
 extern char cnst_Capital[];
 
-// WZD dseg:2176 53 75 6D 6D 6F 6E 69 6E 67 20 43 69 72 63 6C 65+cnst_SummoningCircle db 'Summoning Circle',0
-
+// WZD dseg:2176
+extern char cnst_SummoningCircle[];
 // WZD dseg:2187
 extern char cnst_EarthGate[];
 // WZD dseg:2192
@@ -2076,10 +2167,7 @@ extern int16_t cityscape_wall_anim_ctr;
 extern int16_t IDK_cityscape_vanish_percent;
 
 // WZD dseg:6ED8
-extern int8_t cityscape_cr_136x1[136];
-extern int8_t cityscape_cr_34x4[34][4];
-extern int16_t cityscape_cr_24x8[4][12];
-extern struct s_BLDG_CR cityscape_cr[4][3];
+extern struct s_BLDG_CR cityscape_cr[5][3];
 
 // WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
 

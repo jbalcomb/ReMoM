@@ -454,7 +454,7 @@ void Enemy_City_Screen_Draw(void)
 
     Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
 
-    IDK_City_Cityscape_Draw_MouseOver(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
+    Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
 
 }
 
@@ -485,7 +485,7 @@ void Enemy_City_Screen_Load(void)
 
 
 // WZD o55p04
-void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
+void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
 {
     char string[26];
     int16_t var_2;
@@ -578,21 +578,11 @@ void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, i
                 strcpy(string, _players[owner_idx].name);
                 Possessive(&string[0]);
                 Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4), string);
-                // cityscape_bldgs[itr].bldg_idx
-                // shl     bx, 1
-                // push    [word ptr bx+9Ah]
-                // (cityscape_bldgs[itr].IDK_y + 3), 
-                // (cityscape_bldgs[itr].IDK_x + 1), 
-                // Print_Centered();
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 3), STR_MagicBuildings[(cityscape_bldgs[itr].bldg_idx - 100)]);
             }
             else
             {
-                // cityscape_bldgs[itr].bldg_idx
-                // shl     bx, 1
-                // push    [word ptr bx+9Ah]
-                // cityscape_bldgs[itr].IDK_y, 
-                // (cityscape_bldgs[itr].IDK_x + 1), 
-                // Print_Centered();
+                Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y + 3), STR_MagicBuildings[(cityscape_bldgs[itr].bldg_idx - 100)]);
             }
 
         }

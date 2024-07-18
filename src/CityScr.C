@@ -608,7 +608,7 @@ void City_Screen_Draw__WIP(void)
 
     Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
 
-    IDK_City_Cityscape_Draw_MouseOver(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
+    Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
     if(
         (_CITIES[_city_idx].construction == bt_TradeGoods)
@@ -872,6 +872,7 @@ void City_Screen_Draw2__WIP(void)
 
 
 // WZD o54p04
+// MoO2  Module: COLONY  Add_Screen_Fields_()
 void City_Screen_Add_Fields__WIP(void)
 {
     int16_t y2;
@@ -935,6 +936,11 @@ void City_Add_Fields_Buildings(void)
 
     for(itr = 0; itr < cityscape_bldg_count; itr++)
     {
+        if(cityscape_bldgs[itr].bldg_idx == 104)
+        {
+            __debugbreak;
+        }
+
         x1 = cityscape_bldgs[itr].x1;
         y1 = cityscape_bldgs[itr].y1;
         x2 = cityscape_bldgs[itr].x2;

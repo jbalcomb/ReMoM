@@ -49,7 +49,7 @@ void City_Screen_Draw__WIP(void)
 void Enemy_City_Screen_Draw(void)
 
 // WZD o55p04
-void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
+void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx)
 
 // WZD o144p02
 void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16_t bldg_idx_1, int16_t bldg_idx_2)
@@ -57,11 +57,11 @@ void Cityscape_Draw__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int16
 
 City_Screen_Draw__WIP()
     Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
-    IDK_City_Cityscape_Draw_MouseOver(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
+    Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
 Enemy_City_Screen_Draw()
     |-> Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
-    |-> IDK_City_Cityscape_Draw_MouseOver(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
+    |-> Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
 
 IDK_Spell_Cityscape_Draw()
     |-> Cityscape_Draw__WIP(GAME_MP_SpellVar_3, (var_2 + 5), (var_4 + 27), word_434F2, word_434F2)
@@ -128,13 +128,59 @@ cityscape_bldg_anim_ctr
 cityscape_water_anim_ctr
 cityscape_wall_anim_ctr
 IDK_cityscape_vanish_percent
-
-IDK_cityscape_RC_4x2
-cityscape_cr_136x1[136]
-cityscape_cr_34x4[34][4]
+cityscape_cr
+city_cityscape_field_count
 
 
+City_Screen__WIP()
+    |-> City_Screen_Add_Fields__WIP()
+        city_cityscape_field_count = 0
+        |-> City_Add_Fields_Buildings()
+            city_cityscape_field_count = 0
+            cityscape_bldgs[itr].x1,y1,x2,y2
+            city_cityscape_fields[city_cityscape_field_count] = Add_Hidden_Field()
+            city_cityscape_field_count++
+    city_screen_scanned_field = Scan_Input();
+City_Screen_Draw__WIP()
+    |-> Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
+    |-> Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
+CITYSCAP.C:        if(cityscape_bldgs[cityscape_bldg_count].x1 < x_min)
+CITYSCAP.C:            x_min = cityscape_bldgs[cityscape_bldg_count].x1;
+CITYSCAP.C:        if(cityscape_bldgs[cityscape_bldg_count].x2 > x_max)
+CITYSCAP.C:            x_max = cityscape_bldgs[cityscape_bldg_count].x2;
+
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].x1 = (x + cityscape_cr[type][itr].x1);
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].y1 = (y + cityscape_cr[type][itr].y1);
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].x2 = (x + cityscape_cr[type][itr].x2);
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].y2 = (y + cityscape_cr[type][itr].y2);
+CITYSCAP.C:        cityscape_bldgs[cityscape_bldg_count].IDK_y = (y + 1);
+CITYSCAP.C:        cityscape_bldgs[itr].IDK_x = (((x_max + x_min) / 2) - 3);
+
+row 8, column 10 is fortress
+cityscape_cr[8][10]
+
+Cityscape_XY()
+
+fortress
+Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 104, 4)
+
+¿ IDK_X_or_R, IDK_Y_or_C are screen x,y ?
+
+Draw_Picture() gets passed IDK_X_or_R and (IDK_Y_or_C - 47)
+
+width  is ~28
+height is ~45
+
+Cityscape_Draw_Scanned_Building_Name()
+Print_Centered((cityscape_bldgs[itr].IDK_x + 1), (cityscape_bldgs[itr].IDK_y - 4), string);
+
+0x0000013030D85490  68 00 a1 68 02 70 d1 20 ee 61 d9 34 a2 00
+0x0000013030D8549E  68 00 d1 74 06 73 d7 00 a1 00 d9 34 a2 00
+0x0000013030D854AC  68 00 ac 61 15 76 d0 65 c1 4d d9 34 a2 00
+0x0000013030D854BA  68 00 a1 68 02 70 d1 20 ee 61 d9 34 a2 00
+0x0000013030D854C8  68 00 d1 74 06 73 d7 00 a1 00 d9 34 a2 00
+0x0000013030D854D6  68 00 ac 61 15 76 d0 65 c1 4d d9 34 a2 00
 
 
 
@@ -440,7 +486,7 @@ or
 
 
 
-### IDK_City_Cityscape_Draw_MouseOver()
+### Cityscape_Draw_Scanned_Building_Name()
 XREF:
     Enemy_City_Screen_Draw()
     j_IDK_City_Cityscape_Draw_MouseOver()

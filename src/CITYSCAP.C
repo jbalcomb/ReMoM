@@ -412,7 +412,7 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
             /*
                 BEGIN:  Summon Circle  (100)
             */
-            if((cr_bldg_idx == 104) || (bldg_idx == 104))
+            if((cr_bldg_idx == 100) || (bldg_idx == 100))
             {
                 FLIC_Set_CurrentFrame(cityscape_summon_circle_seg, cityscape_bldg_anim_ctr);
                 Draw_Picture_To_Bitmap(cityscape_summon_circle_seg, GfxBuf_2400B);
@@ -421,8 +421,8 @@ void Cityscape_Draw_Buildings_And_Features__WIP(int16_t city_idx, int16_t x_star
                     // TODO  Vanish_Bitmap(GfxBuf_2400B, IDK_cityscape_vanish_percent);
                 }
                 FLIC_Set_LoopFrame_1(GfxBuf_2400B);
-                Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 47), GfxBuf_2400B);
-                Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 104, 4);
+                Draw_Picture(IDK_X_or_R, (IDK_Y_or_C - 32), GfxBuf_2400B);
+                Cityscape_XY(IDK_X_or_R, IDK_Y_or_C, 100, 1);
             }
             /*
                 END:  Summon Circle  (100)
@@ -1663,18 +1663,19 @@ void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
     x_max = 0;
     x_min = 1000;
 
+    if(bldg_idx == 104)
+    {
+        __debugbreak;
+    }
+
     for(itr = 0; itr < 3; itr++)
     {
         cityscape_bldgs[cityscape_bldg_count].bldg_idx = bldg_idx;
 
-        // cityscape_bldgs[cityscape_bldg_count].x1 = (x + GET_2B_OFS(cityscape_cr_24x8, ((type * 24) + (itr * 8) + 0)));
-        // cityscape_bldgs[cityscape_bldg_count].y1 = (y + GET_2B_OFS(cityscape_cr_24x8, ((type * 24) + (itr * 8) + 2)));
-        // cityscape_bldgs[cityscape_bldg_count].x2 = (x + GET_2B_OFS(cityscape_cr_24x8, ((type * 24) + (itr * 8) + 4)));
-        // cityscape_bldgs[cityscape_bldg_count].y2 = (y + GET_2B_OFS(cityscape_cr_24x8, ((type * 24) + (itr * 8) + 6)));
-        cityscape_bldgs[cityscape_bldg_count].x1 = cityscape_cr[type][itr].x1;
-        cityscape_bldgs[cityscape_bldg_count].y1 = cityscape_cr[type][itr].y1;
-        cityscape_bldgs[cityscape_bldg_count].x2 = cityscape_cr[type][itr].x2;
-        cityscape_bldgs[cityscape_bldg_count].y2 = cityscape_cr[type][itr].y2;
+        cityscape_bldgs[cityscape_bldg_count].x1 = (x + cityscape_cr[type][itr].x1);
+        cityscape_bldgs[cityscape_bldg_count].y1 = (y + cityscape_cr[type][itr].y1);
+        cityscape_bldgs[cityscape_bldg_count].x2 = (x + cityscape_cr[type][itr].x2);
+        cityscape_bldgs[cityscape_bldg_count].y2 = (y + cityscape_cr[type][itr].y2);
 
         cityscape_bldgs[cityscape_bldg_count].IDK_y = (y + 1);
 
