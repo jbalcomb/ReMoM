@@ -548,9 +548,108 @@ int16_t cityscape_wall_anim_ctr = 0;
 int16_t IDK_cityscape_vanish_percent = 100;
 
 // WZD dseg:6ED8
-// ¿ usage/pattern ? sets of 4?
-// IDK_cityscape_RC_4x2
-// 4, 9, 13, 18, 0, 5, 9, 14, 0, -12, 18, 0, 5,-20,24,-13,19,-13,24,-7, 0,-14,29, 0, 4,-17,31,-4, 7,-21,35,-6, 0,-15,19, 0, 6,-20,23,-6,10,-25,30,-11, 0,-14,29, 0, 6,-19,34,-5,11,-25,39,-11, 6,-41,30,-3,11,-47,30,-42,25,-41,30,-9
+int8_t cityscape_cr_136x1[136] =
+{
+     4,   9, 13,  18,
+     0,   5,  9,  14,
+     0, -12, 18,   0,
+     5, -20, 24,  -13,
+    19, -13, 24,  -7,
+     0, -14, 29,   0,
+     4, -17, 31,  -4,
+     7, -21, 35,  -6,
+     0, -15, 19,   0,
+     6, -20, 23,  -6,
+    10, -25, 30, -11,
+     0, -14, 29,   0,
+     6, -19, 34,  -5,
+    11, -25, 39, -11,
+     6, -41, 30,  -3,
+    11, -47, 30, -42,
+    25, -41, 30,  -9
+};
+
+int8_t cityscape_cr_34x4[34][4] =
+{
+    { 4,   9, 13,  18, },
+    { 0,   5,  9,  14, },
+    { 0, -12, 18,   0, },
+    { 5, -20, 24, -13, },
+    {19, -13, 24,  -7, },
+    { 0, -14, 29,   0, },
+    { 4, -17, 31,  -4, },
+    { 7, -21, 35,  -6, },
+    { 0, -15, 19,   0, },
+    { 6, -20, 23,  -6, },
+    {10, -25, 30, -11, },
+    { 0, -14, 29,   0, },
+    { 6, -19, 34,  -5, },
+    {11, -25, 39, -11, },
+    { 6, -41, 30,  -3, },
+    {11, -47, 30, -42, },
+    {25, -41, 30,  -9  }
+};
+
+// dseg:6ED8 04 00 09 00 0D 00 12 00 00 00 05 00 09 00 0E 00 cityscape_cr_roads_1x16 db   4,  0,  9,  0
+// dseg:6ED8                                                                                         ; DATA XREF: Cityscape_Roads_1+6A9r ...
+// dseg:6ED8                                                 db  13,  0, 18,  0
+// dseg:6ED8                                                 db   0,  0,  5,  0
+// dseg:6ED8                                                 db   9,  0, 14,  0
+
+int16_t cityscape_cr_24x8[4][12] =
+{
+    {
+        0, -12,  18,   0,
+        5, -20,  24, -13,
+       19, -13,  24,  -7,
+    },
+    {
+        0, -14,  29,   0,
+        4, -17,  31,  -4,
+        7, -21,  35,  -6,
+    },
+    {
+        0, -15,  19,   0,
+        6, -20,  23,  -6,
+       10, -25,  30, -11,
+    },
+    {
+        0, -14,  29,   0,
+        6, -19,  34,  -5,
+       11, -25,  39, -11
+    }
+};
+
+struct s_BLDG_CR cityscape_cr[4][3] =
+{
+    {
+        {  0, -12,  18,   0 },
+        {  5, -20,  24, -13 },
+        { 19, -13,  24,  -7 },
+    },
+    {
+        {  0, -14,  29,   0 },
+        {  4, -17,  31,  -4 },
+        {  7, -21,  35,  -6 },
+    },
+    {
+        {  0, -15,  19,   0 },
+        {  6, -20,  23,  -6 },
+        { 10, -25,  30, -11 },
+    },
+    {
+        {  0, -14,  29,   0 },
+        {  6, -19,  34,  -5 },
+        { 11, -25,  39, -11 },
+    }
+};
+
+// 
+//     6, -41,  30,  -3,
+//    11, -47,  30, -42,
+//    25, -41,  30,  -9,
+// };
+
 
 // WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
 
@@ -888,23 +987,36 @@ SAMB_ptr building_trade_goods_seg;
 // drake178: IMG_CTY_Housing_Std@, IMG_CTY_Housing_Tre@, IMG_CTY_Housing_Mnd@
 SAMB_ptr bldg_housing_seg[3];
 
-// WZD dseg:9308 00 00                                           IMG_CTY_WizFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4F4w ...
-// WZD dseg:930A 00 00                                           IMG_CTY_Scap_Wall@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+4DDw ...
+// WZD dseg:9308
+SAMB_ptr cityscape_fortress_seg;
+
+// WZD dseg:930A
+SAMB_ptr cityscape_city_walls_seg;
+
 // WZD dseg:930C 00 00                                           IMG_CTY_AltarofBtl@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+498w ...
 // WZD dseg:930E 00 00                                           IMG_CTY_EvilPresnc@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+4C6w ...
 // WZD dseg:9310 00 00                                           IMG_CTY_Dark_Ritual@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4AFw ...
 // WZD dseg:9312 00 00                                           IMG_CTY_Astral_Gate@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+481w ...
 // WZD dseg:9314 00 00                                           IMG_CTY_StreamofLif@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+46Aw ...
 // WZD dseg:9316 00 00                                           IMG_CTY_Earth_Gate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+453w ...
-// WZD dseg:9318 00 00                                           IMG_CTY_Sum_Circle@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+43Cw ...
-// WZD dseg:931A 00 00 00 00 00 00                               IMG_CTY_Scap_Rocks@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+41Ew ...
-// WZD dseg:9320 00 00 00 00 00 00                               IMG_CTY_Scap_Trees@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+3F6w ...
+
+// WZD dseg:9318
+SAMB_ptr cityscape_summon_circle_seg;
+
+// WZD dseg:931A
+SAMB_ptr cityscape_rocks_seg[3];
+
+// WZD dseg:9320
+SAMB_ptr cityscape_trees_seg[3];
 
 // WZD dseg:9326
 // drake178: IMG_CTY_Scap_Houses@[15]
 SAMB_ptr cityscape_houses_seg[15];
 
-// WZD dseg:9344 00 00                                           IMG_CTY_Scap_Roads@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+38Fw ...
+// WZD dseg:9344
+// drake178: IMG_CTY_Scap_Roads
+SAMB_ptr cityscape_roads_seg;
+
 // WZD dseg:9346 00 00                                           IMG_CTY_WallofDark@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+30Fw ...
 // WZD dseg:9348 00 00                                           IMG_CTY_Unk dw 0
 // WZD dseg:934A 00 00                                           IMG_CTY_WallofFire@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2F8w ...

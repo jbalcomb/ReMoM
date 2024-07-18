@@ -39,7 +39,7 @@
 
 #define LEN_WIZARD_NAME       20
 #define LEN_HOF_NAME          20
-
+#define LEN_BUILDING_NAME     20
 #define LEN_CITY_NAME         14  /* WTF, Mate? */
 #define LEN_HERO_NAME         14  /* WTF, Mate? */  /* longest in NAMES is 12 */
 #define LEN_SAVE_DESCRIPTION  20

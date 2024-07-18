@@ -608,7 +608,7 @@ void City_Screen_Draw__WIP(void)
 
     Cityscape_Draw__WIP(_city_idx, 4, 101, cityscreen_city_built_bldg_idx, cityscreen_city_built_bldg_idx);
 
-    // TODO  IDK_City_Cityscape_Draw_MouseOver(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
+    IDK_City_Cityscape_Draw_MouseOver(city_screen_scanned_field, 1, _CITIES[_city_idx].owner_idx);
 
     if(
         (_CITIES[_city_idx].construction == bt_TradeGoods)

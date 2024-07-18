@@ -97,8 +97,10 @@ int16_t City_Best_Weapon(int16_t city_idx);
 // UU_TILE_GetUnsdMPCost
 // WZD s161p22
 // TILE_IsAISailable    
+
 // WZD s161p23
-// TILE_IsVisibleForest 
+// drake178: TILE_IsVisibleForest 
+int16_t Terrain_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p24
 // drake178: TILE_IsSailable()
@@ -140,7 +142,7 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p39
 // drake178: TILE_IsAISailable2()
-int16_t TILE_IsAISailable2(int16_t wx, int16_t wy, int16_t wp);
+int16_t Terrain_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p40
 // UU_TILE_BotchedResFn 

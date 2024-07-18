@@ -573,7 +573,7 @@ void IDK_City_Cityscape_Draw_MouseOver(int16_t scanned_field, int16_t x_start, i
             Set_Alias_Color(8);
             Set_Outline_Color(0);
 
-            if(cityscape_bldgs[itr].bldg_idx == 104)  /* ¿ bt_BREQ_Grass ? */
+            if(cityscape_bldgs[itr].bldg_idx == 104)  /* ¿ per IDK_Spell_Cityscape_1(), some spell as building  ? */
             {
                 strcpy(string, _players[owner_idx].name);
                 Possessive(&string[0]);

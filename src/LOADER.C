@@ -1016,6 +1016,8 @@ mov     [IMG_CTY_Myr_HLight@], ax
     // CITYSCAP.LBX, 111  KAOBACKS    choas dark cloud
     cityscape_background_myrror_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 111, GFX_Swap_Seg);
 
+    // CITYSCAP.LBX, 112  KAOBACKS    choas chaos rift
+    // cityscape_background_myrror_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 112, GFX_Swap_Seg);
 
 /*
 
@@ -1174,7 +1176,7 @@ mov     [IMG_CTY_WallofFire@], ax
 
 
     // CITYSCAP.LBX,  5  BACKS       roads
-    // IMG_CTY_Scap_Roads = LBX_Reload_Next(cityscap_lbx_file, 5, GFX_Swap_Seg);
+    cityscape_roads_seg = LBX_Reload_Next(cityscap_lbx_file, 5, GFX_Swap_Seg);
 
 
     // {{25,26,27,28,29},{30,31,32,33,34},{35,36,37,38,39}}
@@ -1193,100 +1195,93 @@ mov     [IMG_CTY_WallofFire@], ax
     }
 
 
-    // IMG_CTY_Scap_Trees@
+    // CITYSCAP.LBX, 19  HOUSES      tree1
+    // CITYSCAP.LBX, 20  HOUSES      tree2
+    // CITYSCAP.LBX, 21  HOUSES      tree3
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+        cityscape_trees_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (19 + itr1), GFX_Swap_Seg);
+    }
+
+    // CITYSCAP.LBX, 22  HOUSES      rocks1
+    // CITYSCAP.LBX, 23  HOUSES      rocks2
+    // CITYSCAP.LBX, 24  HOUSES      rocks3
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+        cityscape_rocks_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (22 + itr1), GFX_Swap_Seg);
+    }
 
 
-    // IMG_CTY_Scap_Rocks@
+    // CITYSCAP.LBX,  6  BUILDS4     summon circle
+    cityscape_summon_circle_seg = LBX_Reload_Next(cityscap_lbx_file, 6, GFX_Swap_Seg);
 
 
-    /*
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 6
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+/*
 
-add     sp, 6
-mov     [IMG_CTY_Sum_Circle@], ax
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 83
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Earth_Gate@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 84
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_StreamofLif@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 85
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Astral_Gate@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 12
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_AltarofBtl@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 81
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Dark_Ritual@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 82
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_EvilPresnc@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 76
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_Scap_Wall@], ax
+*/
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 40
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
+    // CITYSCAP.LBX,  76  CSWALLS     city walls
+    cityscape_city_walls_seg = LBX_Reload_Next(cityscap_lbx_file, 76, GFX_Swap_Seg);
 
 
-mov     [IMG_CTY_WizFortress@], ax
-
-    */
+    // CITYSCAP.LBX,  40  ANIBUILD    fortress
+    cityscape_fortress_seg = LBX_Reload_Next(cityscap_lbx_file, 40, GFX_Swap_Seg);
 
 
     // CITYSCAP.LBX,  41  BUILDS1     trade goods

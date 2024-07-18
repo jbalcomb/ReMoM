@@ -564,14 +564,13 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 
 // WZD s161p07
 // drake178: TILE_IsRiver()
+/*
+used to decide on river for cityscape  (not ocean, not *water*)
+*/
 int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _SI_
     int16_t is_river;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     is_river = ST_FALSE;  // DNE in Dasm
 
@@ -632,10 +631,6 @@ int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
             is_river = ST_FALSE;
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     return is_river;
 }
@@ -899,7 +894,7 @@ TILE_IsAISailable()
 WZD s161p24
 TILE_IsSailable()
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 /*
 WZD s161p22
@@ -915,7 +910,53 @@ TILE_IsAISailable()
 */
 
 // WZD s161p23
-// TILE_IsVisibleForest 
+// drake178: TILE_IsVisibleForest()
+/*
+returns 1 if the tile is explored by the human
+player, and is a forest tile, or 0 otherwise
+
+INCONSISTENT: unlike all other tile type check
+functions, this only returns 1 for tiles visible to
+the human player (explored)
+*/
+int16_t Terrain_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_is_explored_forest;
+    uint8_t * world_map_ptr;
+    int16_t terrain_type_idx;
+    int16_t terrain_type;
+    int16_t square_is_explored;
+
+    world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
+    terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
+    terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
+
+    square_is_explored = TBL_Scouting[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    if(
+        (square_is_explored != ST_FALSE)
+        &&
+        (
+            (terrain_type == TT_Forest1)
+            ||
+            (terrain_type == TT_Forest2)
+            ||
+            (terrain_type == TT_Forest3)
+            ||
+            (terrain_type == TT_NatNode)
+        )
+    )
+    {
+        terrain_is_explored_forest = ST_TRUE;
+    }
+    else
+    {
+        terrain_is_explored_forest = ST_FALSE;
+    }
+
+    return terrain_is_explored_forest;
+}
+
 
 // WZD s161p24
 // drake178: TILE_IsSailable()
@@ -927,7 +968,7 @@ TILE_IsAISailable()
 WZD s161p24
 TILE_IsSailable()
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1108,9 +1149,11 @@ TILE_IsAISailable()
 WZD s161p24
 TILE_IsSailable()
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 /*
+used to decide on ocean for cityscape  (not river, not *water*)
+
 ; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
 ; differs from TILE_IsAISailable in that it checks for
 ; invalid tile indices (not Plane though), for which
@@ -1120,7 +1163,7 @@ TILE_IsAISailable2()
 ; river outlet versions (0xC5 - 0xC8)
 
 */
-int16_t TILE_IsAISailable2(int16_t wx, int16_t wy, int16_t wp)
+int16_t Terrain_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _CX_
     int16_t is_ocean;  // DNE in Dasm

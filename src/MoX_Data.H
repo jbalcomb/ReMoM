@@ -297,6 +297,19 @@ enum e_ITEM_SLOT_TYPES
     s_RACE_TYPE.cant_build[7]
 
 NOTE: bldg_type_idx = product_idx if product_idx < 100 else unit_type_idx
+
+For Cityscape,
+    -5
+    rocks            -4
+    trees            -3
+    summon circle   100
+    earth gate      101
+    stream of life  102
+    astral gate     103
+    Fortress        104
+    dark rituals    105
+    altar of battle 106
+
 */
 enum e_BUILDING_TYPE
 {
@@ -314,7 +327,7 @@ enum e_BUILDING_TYPE
     bt_Stable             =   9,
     bt_AnimistsGuild      =  10,
     bt_FantasticStable    =  11,
-    bt_Shipwright         =  12,
+    bt_ShipWrightsGuild   =  12,
     bt_ShipYard           =  13,
     bt_MaritimeGuild      =  14,
     bt_Sawmill            =  15,
@@ -365,6 +378,14 @@ enum e_BUILDING_STATUS
     bs_Replaced  =  0,
     bs_Built     =  1,
     bs_Removed   =  2   // Sold or Destroyed
+};
+
+enum e_BUILDING_SHAPE
+{
+    bp_2x2 = 0,
+    bp_2x3 = 1,
+    bp_3x2 = 2,
+    bp_3x3 = 3
 };
 
 
@@ -1090,11 +1111,11 @@ struct s_WIZARD
 // sizeof:  34h  52d
 struct s_BLDG_DATA
 {
-    /* 00 */  char name[20];
-    /* 14 */  // int16_t reqd_bldg_1;          // bldg_idx  >= 100 is Terrain Type
+    /* 00 */  char name[LEN_BUILDING_NAME];
+    /* 14 */  // int16_t reqd_bldg_1;       // bldg_idx  >= 100 is Terrain Type
     union
     {
-        int16_t reqd_bldg_1;
+        int16_t reqd_bldg_1;                // bldg_idx
         int16_t reqd_terrain;
     };
     /* 16 */  int16_t reqd_bldg_2;          // bldg_idx
@@ -1110,11 +1131,19 @@ struct s_BLDG_DATA
     /* 2A */  int16_t AIVal_Research;
     /* 2C */  int16_t construction_cost;  // in production units
     /* 2E */  int16_t Unknown_2Eh;
-    /* 30 */  int16_t G_Animation;
+    /* 30 */  int16_t G_Animation;  // ¿ 'size & position' for Cityscape ?
     /* 32 */  int16_t Category;
     /* 34 */
 };
 
+
+struct s_BLDG_CR
+{
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
+};
 
 // sizeof:  0Eh  14d
 struct s_BLDG
@@ -1127,6 +1156,39 @@ struct s_BLDG
     /* 0A */  int16_t IDK_x;
     /* 0C */  int16_t IDK_y;
     /* 0E */
+};
+
+// sizeof: 2Eh 46d
+struct s_CITYSCAPE
+{
+    /* 00 */ struct s_BLDG * column_00;
+    /* 02 */ struct s_BLDG * column_01;
+    /* 04 */ struct s_BLDG * column_02;
+    /* 06 */ struct s_BLDG * column_03;
+    /* 08 */ struct s_BLDG * column_04;
+    /* 0A */ struct s_BLDG * column_05;
+    /* 0C */ struct s_BLDG * column_06;
+    /* 0E */ struct s_BLDG * column_07;
+    /* 10 */ struct s_BLDG * column_08;
+    /* 12 */ struct s_BLDG * column_09;
+    /* 14 */ struct s_BLDG * column_10;
+    /* 16 */ struct s_BLDG * column_11;
+    /* 18 */ struct s_BLDG * column_12;
+    /* 1A */ struct s_BLDG * column_13;
+    /* 1C */ struct s_BLDG * column_14;
+    /* 1E */ struct s_BLDG * column_15;
+    /* 20 */ struct s_BLDG * column_16;
+    /* 22 */ struct s_BLDG * column_17;
+    /* 24 */ struct s_BLDG * column_18;
+    /* 26 */ struct s_BLDG * column_19;
+    /* 28 */ struct s_BLDG * column_20;
+    /* 2A */ struct s_BLDG * column_21;
+    /* 2C */ struct s_BLDG * column_22;
+};
+
+struct s_CITYSCAPE_CR
+{
+    struct s_BLDG cr[15][23];
 };
 
 
@@ -1217,7 +1279,7 @@ struct s_CITY
     /* 11 */ int8_t wp;
     /* 12 */ int8_t owner_idx;
     /* 13 */ int8_t size;
-    /* 14 */ int8_t population;  // in Units of 1000 (1K)
+    /* 14 */ int8_t population;  // 1-byte, signed;  in Units of 1000 (1K)
     /* 15 */ int8_t farmer_count;
     /* 16 */ int8_t Building_Sold;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
     /* 17 */ int8_t pad2B_17h;  /* 2-byte aligment padding
@@ -2014,9 +2076,10 @@ extern int16_t cityscape_wall_anim_ctr;
 extern int16_t IDK_cityscape_vanish_percent;
 
 // WZD dseg:6ED8
-// ¿ usage/pattern ? sets of 4?
-// IDK_cityscape_RC_4x2
-// 4, 9, 13, 18, 0, 5, 9, 14, 0, -12, 18, 0, 5,-20,24,-13,19,-13,24,-7, 0,-14,29, 0, 4,-17,31,-4, 7,-21,35,-6, 0,-15,19, 0, 6,-20,23,-6,10,-25,30,-11, 0,-14,29, 0, 6,-19,34,-5,11,-25,39,-11, 6,-41,30,-3,11,-47,30,-42,25,-41,30,-9
+extern int8_t cityscape_cr_136x1[136];
+extern int8_t cityscape_cr_34x4[34][4];
+extern int16_t cityscape_cr_24x8[4][12];
+extern struct s_BLDG_CR cityscape_cr[4][3];
 
 // WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
 
@@ -2320,23 +2383,36 @@ extern SAMB_ptr building_trade_goods_seg;
 // drake178: IMG_CTY_Housing_Std@, IMG_CTY_Housing_Tre@, IMG_CTY_Housing_Mnd@
 extern SAMB_ptr bldg_housing_seg[3];
 
-// WZD dseg:9308 00 00                                           IMG_CTY_WizFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4F4w ...
-// WZD dseg:930A 00 00                                           IMG_CTY_Scap_Wall@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+4DDw ...
+// WZD dseg:9308
+extern SAMB_ptr cityscape_fortress_seg;
+
+// WZD dseg:930A
+extern SAMB_ptr cityscape_city_walls_seg;
+
 // WZD dseg:930C 00 00                                           IMG_CTY_AltarofBtl@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+498w ...
 // WZD dseg:930E 00 00                                           IMG_CTY_EvilPresnc@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+4C6w ...
 // WZD dseg:9310 00 00                                           IMG_CTY_Dark_Ritual@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4AFw ...
 // WZD dseg:9312 00 00                                           IMG_CTY_Astral_Gate@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+481w ...
 // WZD dseg:9314 00 00                                           IMG_CTY_StreamofLif@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+46Aw ...
 // WZD dseg:9316 00 00                                           IMG_CTY_Earth_Gate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+453w ...
-// WZD dseg:9318 00 00                                           IMG_CTY_Sum_Circle@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+43Cw ...
-// WZD dseg:931A 00 00 00 00 00 00                               IMG_CTY_Scap_Rocks@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+41Ew ...
-// WZD dseg:9320 00 00 00 00 00 00                               IMG_CTY_Scap_Trees@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+3F6w ...
+
+// WZD dseg:9318
+extern SAMB_ptr cityscape_summon_circle_seg;
+
+// WZD dseg:931A
+extern SAMB_ptr cityscape_rocks_seg[3];
+
+// WZD dseg:9320
+extern SAMB_ptr cityscape_trees_seg[3];
 
 // WZD dseg:9326
 // drake178: IMG_CTY_Scap_Houses@[15]
 extern SAMB_ptr cityscape_houses_seg[15];
 
-// WZD dseg:9344 00 00                                           IMG_CTY_Scap_Roads@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+38Fw ...
+// WZD dseg:9344
+// drake178: IMG_CTY_Scap_Roads
+extern SAMB_ptr cityscape_roads_seg;
+
 // WZD dseg:9346 00 00                                           IMG_CTY_WallofDark@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+30Fw ...
 // WZD dseg:9348 00 00                                           IMG_CTY_Unk dw 0
 // WZD dseg:934A 00 00                                           IMG_CTY_WallofFire@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2F8w ...
