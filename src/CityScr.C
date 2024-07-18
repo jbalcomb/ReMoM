@@ -46,7 +46,7 @@ char cnst_Dot[] = ".";  // string optimizer
 // WZD dseg:2B33
 char aSellingBackYour[] = "Selling back your \x02";
 // WZD dseg:2B33
-char aWillCeaseProductionOfYour[] = "\x01 will cease production of your \x02";
+char aWillCeaseProductionOfYour1[] = "\x01 will cease production of your \x02";
 // WZD dseg:2B69
 char aWillCeaseProductionOfYour2[] = "\x01.";
 // WZD dseg:2B6C
@@ -163,9 +163,11 @@ void City_Screen__WIP(void)
     // IDK_Row__prod_idx
     int16_t Row;
     int16_t unit_type;
+    int16_t reqd_bldg_idx;  // IDK_Row__prod_idx
     // IDK_Col__unit_stack_idx
     int16_t Col;  // IDK_Col__unit_stack_idx
     int16_t itr_stack;  // IDK_Col__unit_stack_idx
+    int16_t itr_cityscape; // IDK_Col__unit_stack_idx
     int16_t screen_changed;
     int16_t leave_screen;
     int16_t input_field_idx;  // _DI_
@@ -456,7 +458,7 @@ void City_Screen__WIP(void)
 
 
         /*
-            BEGIN:  Left-Click Cityscape Building
+            BEGIN:  Left-Click Cityscape - Sell Building
         */
         /*
             lotsa logic
@@ -465,8 +467,124 @@ void City_Screen__WIP(void)
                 ...do you wish to sell
             City_Can_Sell_Building()
         */
+        for(itr_cityscape = 0; itr_cityscape < city_cityscape_field_count; itr_cityscape++)
+        {
+            if(city_cityscape_fields[itr_cityscape] == input_field_idx)
+            {
+                // TODO  SND_LeftClickSound();
+                cityscape_bldg_idx = cityscape_bldgs[itr_cityscape].bldg_idx;
+
+                if(cityscape_bldg_idx <= NUM_BUILDINGS)
+                {
+
+                    if(_CITIES[_city_idx].did_sell_building == ST_TRUE)
+                    {
+                        Warn0(aYouCanOnlySellBackO);  // "You can only sell back one building each turn."
+                    }
+                    else
+                    {
+                        // BUGBUG  return boolean is backwards
+                        // TODO  rename to ¿ ? ~ NOT required / can sell
+                        if(City_Building_Has_Requirement(cityscape_bldg_idx, _city_idx, &reqd_bldg_idx) == ST_TRUE)
+                        {
+                            Deactivate_Help_List();
+
+                            reqd_bldg_idx = ST_FALSE;
+
+                            if(City_Building_Is_Currently_Required(_city_idx, cityscape_bldg_idx) == ST_TRUE)
+                            {
+                                strcpy(GUI_String_1, aSellingBackYour);  // "Selling back your \x02"
+                                strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                                strcat(GUI_String_1, GUI_String_2);
+                                strcat(GUI_String_1, aWillCeaseProductionOfYour1);  // "\x01 will cease production of your \x02"
+                                if(_CITIES[_city_idx].construction < 100)
+                                {
+                                    strcpy(GUI_String_2, bldg_data_table[_CITIES[_city_idx].construction].name);
+                                    strcat(GUI_String_1, GUI_String_2);
+                                }
+                                else
+                                {
+                                    strcat(GUI_String_1, *_unit_type_table[(_CITIES[_city_idx].construction - 100)].name);
+                                }
+                                strcat(GUI_String_1, aWillCeaseProductionOfYour2);
+                                Warn0(GUI_String_1);
+                                reqd_bldg_idx = ST_TRUE;
+                            }
+
+                            building_value = City_Sell_Building_Value(cityscape_bldg_idx);
+
+                            strcpy(GUI_String_1, str_sell_back_1);  // "Do you wish to sell back the \x02"
+                            strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                            strcat(GUI_String_1, GUI_String_2);
+                            strcat(GUI_String_1, str_sell_back_2);  // "\x01 for "
+                            itoa(building_value, GUI_String_2, 10);
+                            strcat(GUI_String_1, GUI_String_2);
+                            strcat(GUI_String_1, str_sell_back_3);  // " gold?"
+
+                            if(Confirmation_Box(GUI_String_1) == ST_TRUE)
+                            {
+                                City_Sell_Building(cityscape_bldg_idx, _city_idx, building_value);
+
+                                if(reqd_bldg_idx == ST_TRUE)
+                                {
+                                    _CITIES[_city_idx].construction = bt_Housing;
+                                }
+
+                                City_Screen_Required_Buildings_List(_city_idx);
+                                Do_City_Calculations(_city_idx);
+                                m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+                                m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
+                                City_Can_Buy_Product();
+                                if(_CITIES[_city_idx].construction < 100)
+                                {
+                                    strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                                }
+                                else
+                                {
+                                    reqd_bldg_idx = (_CITIES[_city_idx].construction - 100);
+                                    strcpy(city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
+                                }
+
+                                _CITIES[_city_idx].did_sell_building = ST_TRUE;
+
+                            }
+
+                        }
+                        else
+                        {
+                            Deactivate_Help_List();
+
+                            if(reqd_bldg_idx > -1)
+                            {
+                                strcpy(GUI_String_1, str_cannot_sell_back_1);  // "You cannot sell back the "
+                                strcpy(GUI_String_2, bldg_data_table[cityscape_bldg_idx].name);
+                                strcat(GUI_String_1, GUI_String_2);
+                                strcat(GUI_String_1, str_cannot_sell_back_2);  // " because it is required by the "
+                                strcpy(GUI_String_2, bldg_data_table[reqd_bldg_idx].name);
+                                strcat(GUI_String_1, GUI_String_2);
+                                strcat(GUI_String_1, cnst_Dot);  // "."
+                                Copy_On_To_Off_Page();
+                                Clear_Fields();
+                                Warn0(GUI_String_1);
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                Deactivate_Auto_Function();
+                Assign_Auto_Function(City_Screen_Draw__WIP, 1);
+                screen_changed = ST_TRUE;
+                Reset_Map_Draw();
+                Deactivate_Help_List();
+                Set_City_Screen_Help_List();
+            }
+        }
+
         /*
-            END:  Left-Click Cityscape Building
+            END:  Left-Click Cityscape - Sell Building
         */
 
 

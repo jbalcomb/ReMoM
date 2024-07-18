@@ -94,6 +94,9 @@ void Screen_Control(void)
             // ¿ not getting an entity_idx in Draw_Map_Units() ?
             // No-Workie  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
             
+            // HACK:  demo "You can only sell back one building each turn."
+            _CITIES[_city_idx].did_sell_building = ST_TRUE;
+
             // // _map_x = ( 5 - (12 / 2));
             // // _map_y = (21 - (10 / 2));
             // _map_x = 59;

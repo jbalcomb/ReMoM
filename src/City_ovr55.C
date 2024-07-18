@@ -674,7 +674,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
 
     _CITIES[city_idx].Prod_Accu = 0;
 
-    _CITIES[city_idx].Building_Sold = ST_FALSE;
+    _CITIES[city_idx].did_sell_building = ST_FALSE;
 
     Do_City_Calculations(city_idx);
 
@@ -930,6 +930,9 @@ int16_t City_Sell_Building(int16_t city_idx, int16_t bldg_idx, int16_t gold_amou
 // WZD o55p14
 // drake178: ¿ ?
 /*
+    if returns ST_FALSE, "You cannot sell back the [] because it is required by the []."
+    BUGBUG  return boolean is backwards
+    TODO  rename to ¿ ? ~ NOT required / can sell
 
     loops through all buildings
     that are not already built
@@ -970,6 +973,8 @@ int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_
     if(_CITIES[city_idx].bldg_status[bldg_idx] != bs_Removed)
     {
         has_reqd_bldg = ST_TRUE;
+        // TODO  find a sensible place to set this, after fixing this function
+        *reqd_bldg_idx = ST_UNDEFINED;  // DNE in Dasm
 
         for(itr_all = 1; ((itr_all < NUM_BUILDINGS) && (has_reqd_bldg == ST_TRUE)); itr_all++)
         {
@@ -1146,8 +1151,21 @@ void City_Cancel_Production(int16_t city_idx)
 
 
 // WZD o55p18
-// drake178: N/A
-// sub_4BEB3()
+int16_t City_Sell_Building_Value(int16_t bldg_idx)
+{
+    int16_t building_value;
+
+    building_value = (bldg_data_table[bldg_idx].construction_cost / 3);
+
+    if(bldg_idx == bt_CityWalls)
+    {
+        building_value /= 2;
+    }
+
+    SETMIN(building_value, 1);
+
+    return building_value;
+}
 
 // WZD o55p19
 // drake178: N/A

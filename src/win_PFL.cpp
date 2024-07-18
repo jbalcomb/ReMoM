@@ -367,6 +367,7 @@ void Pump_Events(void)
     Pump_Events_Cnt++;
 
     MSG Message;
+
     while (PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
     {
 #ifdef STU_DEBUG

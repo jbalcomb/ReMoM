@@ -224,8 +224,11 @@ input_field_idx == city_screen_buy_button
 
 
 
-## Left-Click Cityscape Building
+## Left-Click Cityscape - Sell Building
 ...input #9
+
+
+
 
 
 

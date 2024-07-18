@@ -94,8 +94,7 @@ void City_Check_Production(int16_t city_idx);
 void City_Cancel_Production(int16_t city_idx);
 
 // WZD o55p18
-// drake178: N/A
-// sub_4BEB3()
+int16_t City_Sell_Building_Value(int16_t bldg_idx);
 
 // WZD o55p19
 // drake178: N/A
