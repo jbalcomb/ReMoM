@@ -409,6 +409,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define EXPERIENCE_LEVEL_GOLD       
 #define EXPERIENCE_LEVEL_RED        
 
+
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 

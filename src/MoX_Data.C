@@ -1979,9 +1979,7 @@ SAMB_ptr UU_TBL_1;
 uint8_t * _world_maps;
 
 // WZD dseg:9CE0
-// drake178: 14 individual pointers, one to each row of the table
-SAMB_ptr TBL_Unrest[14];  // TODO  change to NUM_RACES
-SAMB_ptr TBL_Unrest_Hack;
+int8_t * TBL_Unrest[NUM_RACES];
 
 // WZD dseg:9D18
 // drake178: IMG_CTY_Bldngs_Wall@

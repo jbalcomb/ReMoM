@@ -2480,7 +2480,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     city_population = _CITIES[city_idx].population;
 
-    required_farmer_food = city_population - City_Food_WildGame(city_idx);
+    required_farmer_food = (city_population - City_Food_WildGame(city_idx));
 
     if( (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built) || (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced) )
     {
@@ -2494,12 +2494,12 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     if(required_farmer_food > 0)
     {
-        Farming_Threshold = City_Food_Terrain(city_idx);
+            Farming_Threshold = City_Food_Terrain(city_idx);
 
             if(
             (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */) ||
             (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced /* B_Replaced */) ||
-            (_CITIES[city_idx].race == 0x06 /* R_Halfling */)
+            (_CITIES[city_idx].race == rt_Halfling /* R_Halfling */)
         )
         {
             food_per_farmer = 3;
@@ -2510,7 +2510,6 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
         }
 
         minimum_farmer_count = 0;
-
         farmer_food = 0;
         while((farmer_food < required_farmer_food) && (minimum_farmer_count < city_population))
         {
@@ -2518,7 +2517,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
             farmer_food = minimum_farmer_count * food_per_farmer;
 
-            if( (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) || (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced) )
+            if((_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) || (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced))
             {
                 farmer_food += 2;
             }
@@ -2530,7 +2529,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
             if(farmer_food > Farming_Threshold)
             {
-                farmer_food = (((farmer_food - Farming_Threshold) / 2) + Farming_Threshold);
+                farmer_food = (Farming_Threshold + ((farmer_food - Farming_Threshold) / 2));
             }
         }
 
@@ -2574,23 +2573,23 @@ int16_t City_Rebel_Count(int16_t city_idx)
     int16_t city_wy;
     int16_t city_wx;
     int16_t Pacify;
-    int16_t itr_num_players;
+    // itr_num_players__units
+    int16_t itr_num_players;  // itr_num_players__units
+    int16_t itr_units;  // itr_num_players__units
     int16_t city_owner_idx;
     int16_t rebel_count;
-
-    int16_t itr_units;  // DNE in Dasm
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-// #endif
+    int16_t unrest_races;  // DNE in Dasm
+    int16_t unrest_taxes;  // DNE in Dasm
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
-    unrest_percent = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
-    unrest_percent = TBL_Unrest[_players[city_owner_idx].Cptl_Race][_CITIES[city_idx].race];
+
+    unrest_races = (TBL_Unrest[_players[city_owner_idx].Cptl_Race][_CITIES[city_idx].race] * 10);
+    unrest_taxes = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
+    unrest_percent = unrest_races + unrest_taxes;
 
     if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
     {
@@ -2602,8 +2601,9 @@ int16_t City_Rebel_Count(int16_t city_idx)
     Pacify = 0;
 
     if(
-        (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE) &&
-        (_players[city_owner_idx].spellranks[sbr_Death] == 0)
+        (_CITIES[city_idx].enchantments[EVIL_PRESENCE] == ST_FALSE)
+        ||
+        (_players[city_owner_idx].spellranks[sbr_Death] != 0)
     )
     {
 
@@ -2642,7 +2642,8 @@ int16_t City_Rebel_Count(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].infernal_power != ST_FALSE) ||
+            (_players[city_owner_idx].infernal_power != ST_FALSE)
+            ||
             (_players[city_owner_idx].divine_power != ST_FALSE)
         )
         {
@@ -2728,7 +2729,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
                 (_UNITS[itr_units].wx == city_wx) &&
                 (_UNITS[itr_units].wy == city_wy) &&
                 (_UNITS[itr_units].wp == city_wp) &&
-                (_UNITS[itr_units].type != 0x9A /* U_Magic_Spirit */)
+                (_UNITS[itr_units].type < ut_Magic_Spirit)
             )
             {
                 Pacify_Police++;

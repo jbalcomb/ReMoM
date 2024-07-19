@@ -61,6 +61,7 @@
 #define NUM_PLAYERS                 6
 #define NUM_CITIES                100
 #define NUM_UNITS                1009
+#define NUM_RACES                  14
 #define NUM_HEROES                  6   // "Hero Slots"
 #define NUM_HERO_TYPES             35
 #define NUM_TOWERS                  6

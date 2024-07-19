@@ -3362,9 +3362,7 @@ extern SAMB_ptr UU_TBL_1;
 extern uint8_t * _world_maps;
 
 // WZD dseg:9CE0
-// drake178: 14 individual pointers, one to each row of the table
-extern SAMB_ptr TBL_Unrest[14];
-extern SAMB_ptr TBL_Unrest_Hack;
+extern int8_t * TBL_Unrest[NUM_RACES];
 
 // WZD dseg:9D18
 extern SAMB_ptr cityscape_big_city_wall_seg;

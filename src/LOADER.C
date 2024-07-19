@@ -337,7 +337,9 @@ void Units_Upkeeps(void)
 */
 void Terrain_Init(void)
 {
+    SAMB_ptr tmp_sa_TBL_Unrest;
     int16_t itr;
+    uint64_t tmp_address;
 
     // 
     Map_Square_WorkArea = Allocate_Space(70);  // ; 70 * 16 = 1120 bytes
@@ -345,21 +347,17 @@ void Terrain_Init(void)
     terrain_lbx_001 = LBX_Load(terrain_lbx_file, 1);
     terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
     // ehn_terrain_lbx = EMM_Load_LBX_File("TERRAIN.LBX", 1);
-    // HACK: no EMM, so just load entry and monkey with offset adjustments
+    // HACK:  no EMM, so just load entry and monkey with offset adjustments
     terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);
 
 
-    // // TBL_Unrest[0] = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
-    // TBL_Unrest[0] = LBX_Load_Data("TERRSTAT.LBX", 1, 0, 1, 196);
-    // for(itr = 1; itr < 14; itr++)
-    // {
-    //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
-    // }
-    // can't do like they did, because pointers are 8 bytes now
-    TBL_Unrest_Hack = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
-    for(itr = 0; itr < 14; itr++)
+    tmp_sa_TBL_Unrest = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
+    TBL_Unrest[0] = tmp_sa_TBL_Unrest;
+    for(itr = 1; itr < 14; itr++)
     {
-        TBL_Unrest[itr] = (SAMB_ptr)(TBL_Unrest_Hack + (14 * itr));
+        // ¿¿¿
+        TBL_Unrest[itr] = ((int8_t *)TBL_Unrest[(itr - 1)]) + 14;
+        // ???
     }
 
 

@@ -273,8 +273,8 @@ void Enemy_City_Screen(void)
                 if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                 {
                     // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
-                    Build_City_Enchantment_List(_city_idx, city_enchantment_list, city_enchantment_owner_list, &city_enchantment_list_count);
-                    city_enchantment_display_scroll_flag = 0;
+                    Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
+                    city_enchantment_display_scroll_flag = ST_FALSE;
                     if(city_enchantment_list_count > 6)
                     {
                         city_enchantment_display_scroll_flag = ST_TRUE;
@@ -340,8 +340,8 @@ void Enemy_City_Screen(void)
 // WZD o55p02
 void Enemy_City_Screen_Draw(void)
 {
-    int16_t var_C;
-    int16_t var_A;
+    int16_t unit_window_y;
+    int16_t unit_window_x;
     uint8_t colors[6];
     int16_t unit_type;
     int16_t itr;  // _SI_
@@ -384,36 +384,23 @@ void Enemy_City_Screen_Draw(void)
     Set_Page_Off();
 
 
-
     FLIC_Draw((x_start - 1), y_start, _enemy_city_seg);
 
     Set_Font_Style_Shadow_Down(5, 5, 0, 0);
-
     Set_Font_Spacing_Width(1);
-
     Set_Outline_Color(0);
-
     strcpy(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
-
     strcat(GUI_String_1, str_Sp_Of_Sp);
-
     strcpy(GUI_String_2, _CITIES[_city_idx].name);
-
     strcat(GUI_String_1, GUI_String_2);
-
     Print_Centered((x_start + 106), (y_start + 3), GUI_String_1);
 
     colors[0] = 190;
     colors[1] = 179;
-
     Set_Font_Colors_15(0, &colors[0]);
-
     Set_Outline_Color(19);
-
     Set_Font_Style_Shadow_Down(1, 15, 0, 0);
-
     Print((x_start + 6), (y_start + 19), *_race_type_table[_CITIES[_city_idx].race].name);
-
     Print((x_start + 6), 43, str_Units__ovr055);  // "Units"
 
     City_Screen_Draw_Population_Row(_city_idx, (x_start + 4), (y_start + 27));
@@ -433,13 +420,13 @@ void Enemy_City_Screen_Draw(void)
             }
         }
         
-        var_A = (x_start + 5);
+        unit_window_x = (x_start + 5);
 
-        var_C = (y_start + 52);
+        unit_window_y = (y_start + 52);
 
         for(itr = 0; itr < m_troop_count; itr++)
         {
-            Draw_Unit_StatFig((var_A + ((itr % 6) * 22)), (var_C + ((itr / 6) * 20)), m_troops[itr], 1);
+            Draw_Unit_StatFig((unit_window_x + ((itr % 6) * 22)), (unit_window_y + ((itr / 6) * 20)), m_troops[itr], 1);
         }
 
         Cycle_Unit_Enchantment_Animation();
@@ -454,7 +441,8 @@ void Enemy_City_Screen_Draw(void)
 
     Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
 
-    Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
+    // BUGBUG  Dasm looks like Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
+    Cityscape_Draw_Scanned_Building_Name(city_screen_scanned_field, x_start, _CITIES[_city_idx].owner_idx);
 
 }
 
@@ -1710,7 +1698,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
-    city_enchantments = _CITIES[city_idx].enchantments;
+    city_enchantments = (uint8_t *)&_CITIES[city_idx].enchantments;
 
     city_enchantment_count = 0;
 
@@ -1720,13 +1708,14 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
         {
             city_enchantment_list[city_enchantment_count] = itr_city_enchantments;
 
-            if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) != 0)
+            if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
             {
-                city_enchantment_owner_list[city_enchantment_count] = (city_enchantment_list[itr_city_enchantments] - 1);
+                city_enchantment_owner_list[city_enchantment_count] = 10;
             }
             else
             {
-                city_enchantment_owner_list[city_enchantment_count] = 10;
+                // IDGI  city_enchantment_owner_list[city_enchantment_count] = (city_enchantment_list[itr_city_enchantments] - 1);
+                city_enchantment_owner_list[city_enchantment_count] = city_owner_idx;
             }
 
             city_enchantment_count++;
@@ -1757,7 +1746,7 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
 void Do_Build_City_Enchantment_List(void)
 {
 
-    Build_City_Enchantment_List(_city_idx, city_enchantment_list, city_enchantment_owner_list, &city_enchantment_list_count);
+    Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
 
     city_enchantment_display_first = 0;
 
@@ -1799,7 +1788,7 @@ void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart)
         }
         else
         {
-            if(city_enchantment_owner_list[(city_enchantment_display_first + itr)] == 5)
+            if(city_enchantment_owner_list[(city_enchantment_display_first + itr)] == NEUTRAL_PLAYER_IDX)
             {
                 _players[NEUTRAL_PLAYER_IDX].banner_id = 5;  // BNR_Brown
             }
