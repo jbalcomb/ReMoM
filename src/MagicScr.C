@@ -21,6 +21,23 @@ enum e_Alchemy_Conversion_Direction
 
 
 
+
+
+// WZD dseg:3617                                                 BEGIN:  _treaty_type_names
+// WZD dseg:3617
+extern char aNoTreaty[];
+// WZD dseg:3621
+extern char aWizardPact_1[];
+// WZD dseg:362D
+extern char aAlliance_1[];
+// WZD dseg:3636
+extern char aWar[];
+// WZD dseg:363A
+extern char aFinalWar[];
+// WZD dseg:363A                                                 END:  _treaty_type_names
+
+
+
 // WZD dseg:347E                                                 BEGIN: ovr073 - Strings
 
 // WZD dseg:347E
@@ -126,17 +143,7 @@ char cnst_HOTKEY_SPACE[] = " ";
 
 // WZD dseg:35A4                                                 BEGIN: ovr074 - Strings
 
-// WZD dseg:35A4 C4 35                                           diplo_state@ dw offset aHate            ; DATA XREF: Magic_Screen_Draw+A38r ...
-// WZD dseg:35A6 C9 35                                           dw offset aTroubled                     ; "Troubled"
-// WZD dseg:35A8 D2 35                                           dw offset aTense                        ; "Tense"
-// WZD dseg:35AA D8 35                                           dw offset aRestless                     ; "Restless"
-// WZD dseg:35AC E1 35                                           dw offset aUnease                       ; "Unease"
-// WZD dseg:35AE E8 35                                           dw offset aNeutral                      ; "Neutral"
-// WZD dseg:35B0 F0 35                                           dw offset aRelaxed                      ; "Relaxed"
-// WZD dseg:35B2 F8 35                                           dw offset aCalm                         ; "Calm"
-// WZD dseg:35B4 FD 35                                           dw offset aPeaceful_0                   ; "Peaceful"
-// WZD dseg:35B6 06 36                                           dw offset aFriendly           ; "Friendly"
-// WZD dseg:35B8 0F 36                                           dw offset aHarmony                      ; "Harmony"
+// WZD dseg:35A4
 char diplo_state[11][9] =
 {
     "Hate",
@@ -152,14 +159,20 @@ char diplo_state[11][9] =
     "Harmony"
 };
 
-// WZD dseg:35BA 17 36                                           treaty_type_names dw offset aNoTreaty
-// WZD dseg:35BC 21 36                                           dw offset aWizardPact_1
-// WZD dseg:35BE 2D 36                                           dw offset aAlliance_1
-// WZD dseg:35C0 36 36                                           dw offset aWar
-// WZD dseg:35C2 3A 36                                           dw offset aFinalWar
+// WZD dseg:35BA
+char * _treaty_type_names[5] =
+{
+    aNoTreaty,
+    aWizardPact_1,
+    aAlliance_1,
+    aWar,
+    aFinalWar
+};
 
-// WZD dseg:35C4 48 61 74 65                                     aHate db 'Hate'                         
+// WZD dseg:35C4
+char aHate[] = "Hate";                         
 // WZD dseg:35C8 00                                              mirror_screen_strings_null_terminator db 0
+
 // WZD dseg:35C9 54 72 6F 75 62 6C 65 64 00                      aTroubled db 'Troubled',0
 // WZD dseg:35D2 54 65 6E 73 65 00                               aTense db 'Tense',0
 // WZD dseg:35D8 52 65 73 74 6C 65 73 73 00                      aRestless db 'Restless',0
@@ -171,11 +184,18 @@ char diplo_state[11][9] =
 // WZD dseg:3606 46 72 69 65 6E 64 6C 79 00                      aFriendly db 'Friendly',0
 // WZD dseg:360F 48 61 72 6D 6F 6E 79 00                         aHarmony db 'Harmony',0
 
-// WZD dseg:3617 4E 6F 20 54 72 65 61 74 79 00                   aNoTreaty db 'No Treaty',0
-// WZD dseg:3621 57 69 7A 61 72 64 20 50 61 63 74 00             aWizardPact_1 db 'Wizard Pact',0
-// WZD dseg:362D 41 6C 6C 69 61 6E 63 65 00                      aAlliance_1 db 'Alliance',0
-// WZD dseg:3636 57 61 72 00                                     aWar db 'War',0
-// WZD dseg:363A 46 69 6E 61 6C 20 57 61 72 00                   aFinalWar db 'Final War',0
+// WZD dseg:3617                                                 BEGIN:  _treaty_type_names
+// WZD dseg:3617
+char aNoTreaty[] = "No Treaty";
+// WZD dseg:3621
+char aWizardPact_1[] = "Wizard Pact";
+// WZD dseg:362D
+char aAlliance_1[] = "Alliance";
+// WZD dseg:3636
+char aWar[] = "War";
+// WZD dseg:363A
+char aFinalWar[] = "Final War";
+// WZD dseg:363A                                                 END:  _treaty_type_names
 
 // WZD dseg:3644 1B 00                                           cnst_HOTKEY_Esc8 db 1Bh,0               ; should use dseg:2c56
 // WZD dseg:3646 20 00                                           cnst_HOTKEY_SPACE_2 db ' ',0            ; DATA XREF: Mirror_Screen_Draw+8o
@@ -191,8 +211,8 @@ char diplo_state[11][9] =
 // WZD dseg:3686 2E 00                                           mirror_screen_abilities_list_period db '.',0
 // WZD dseg:3688 48 65 72 6F 65 73 00                            aHeroes db 'Heroes',0                   ; DATA XREF: Mirror_Screen_Draw+759o
 // WZD dseg:368F 54 68 65 00                                     cnst_The_2 db 'The',0                   ; DATA XREF: Mirror_Screen_Draw+801o
-// WZD dseg:3693 4C 49 4C 57 49 5A 00                            mirror_lilwiz_lbx_file db 'LILWIZ',0    ; DATA XREF: IDK_MirrorScreen_s6343B+5Bo
-// WZD dseg:369A 4D 41 47 49 43 00                               mirror_magic_lbx_file db 'MAGIC',0      ; DATA XREF: IDK_MirrorScreen_s6343B+78o ...
+// WZD dseg:3693 4C 49 4C 57 49 5A 00                            mirror_lilwiz_lbx_file db 'LILWIZ',0    ; DATA XREF: Mirror_Screen_Load+5Bo
+// WZD dseg:369A 4D 41 47 49 43 00                               mirror_magic_lbx_file db 'MAGIC',0      ; DATA XREF: Mirror_Screen_Load+78o ...
 
 // WZD dseg:369A                                                 END: ovr074 - Strings
 
@@ -203,7 +223,6 @@ char diplo_state[11][9] =
 
 
 // WZD dseg:958E
-// AKA profile_gem;
 SAMB_ptr lilwiz_gem_segs[5];
 
 /*
@@ -1818,4 +1837,4 @@ void Alchemy_Popup_Add_Fields(void)
 // Mirror_Screen_Draw()
 
 // WZD o74p03
-// IDK_MirrorScreen_s6343B()
+// Mirror_Screen_Load()

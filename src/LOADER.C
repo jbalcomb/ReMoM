@@ -493,10 +493,6 @@ void Main_Screen_Load_Pictures(void)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
-
     main_background = LBX_Load(main_lbx_file,  0);
 
     main_game_button = LBX_Load(main_lbx_file, 1);
@@ -570,9 +566,10 @@ void Main_Screen_Load_Pictures(void)
 //     road_button_border = LBX_Load(main_lbx_file, 48);
 // 
 //     survey_background = LBX_Load(main_lbx_file, 57);
-// 
-//     mirror_screen_background = LBX_Load(backgrnd_lbx_file, 4);
-// 
+
+    // BACKGRND.LBX, 004  MAGEVIEW    wizardview backgrn
+    mirror_screen_background_seg = LBX_Load(backgrnd_lbx_file, 4);
+
 //     goto_booty_icon = LBX_Load(main_lbx_file, 50);
 // 
 // 
@@ -588,10 +585,6 @@ void Main_Screen_Load_Pictures(void)
 //     {
 //         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, 59 + itr);
 //     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
 
 }
 

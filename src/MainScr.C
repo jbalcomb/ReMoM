@@ -704,7 +704,7 @@ int16_t skill_staff_lock_flag;
 // WZD dseg:9548  IMG_OVL_BuildBtn_BG  ; DATA XREF: GFX_Swap_AppendUView() ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:954A  IMG_WIZ_BookBinders dw 12h dup(0)  ; DATA XREF: sub_6343B()
 // WZD dseg:956E
-SAMB_ptr mirror_screen_background;
+SAMB_ptr mirror_screen_background_seg;
 // XREF: Main_Screen_Load_Pictures(); sub_62BBC()
 // ; single-loaded image
 // WZD dseg:9570 IMG_ArmyScrn_Ok  ; DATA XREF: Armies_Screen(); sub_58CD2(); sub_598F1(); 2 frame image (normal - clicked)
@@ -1181,69 +1181,78 @@ void Main_Screen(void)
 */
 
 
-        // Advisor - Surveyor
-        if(input_field_idx == hotkey_idx_F1)
+
+        /*
+            BEGIN:  Advisor - Hot-Key
+        */
         {
-            Advisor_Screen(0);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
+            // Advisor - Surveyor
+            if(input_field_idx == hotkey_idx_F1)
+            {
+                Advisor_Screen(0);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Cartographer
+            if(input_field_idx == hotkey_idx_F2)
+            {
+                Advisor_Screen(1);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Apprentice
+            if(input_field_idx == hotkey_idx_F3)
+            {
+                Advisor_Screen(2);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Historian
+            if(input_field_idx == hotkey_idx_F4)
+            {
+                Advisor_Screen(3);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Astrologer
+            if(input_field_idx == hotkey_idx_F5)
+            {
+                Advisor_Screen(4);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Chancellor
+            if(input_field_idx == hotkey_idx_F6)
+            {
+                Advisor_Screen(5);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Tax Collector
+            if(input_field_idx == hotkey_idx_F7)
+            {
+                Advisor_Screen(6);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Grand Vizier
+            if(input_field_idx == hotkey_idx_F8)
+            {
+                Advisor_Screen(7);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Mirror
+            if(input_field_idx == hotkey_idx_F9)
+            {
+                Advisor_Screen(8);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
         }
-        // Advisor - Cartographer
-        if(input_field_idx == hotkey_idx_F2)
-        {
-            Advisor_Screen(1);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Apprentice
-        if(input_field_idx == hotkey_idx_F3)
-        {
-            Advisor_Screen(2);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Historian
-        if(input_field_idx == hotkey_idx_F4)
-        {
-            Advisor_Screen(3);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Astrologer
-        if(input_field_idx == hotkey_idx_F5)
-        {
-            Advisor_Screen(4);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Chancellor
-        if(input_field_idx == hotkey_idx_F6)
-        {
-            Advisor_Screen(5);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Tax Collector
-        if(input_field_idx == hotkey_idx_F7)
-        {
-            Advisor_Screen(6);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Grand Vizier
-        if(input_field_idx == hotkey_idx_F8)
-        {
-            Advisor_Screen(7);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Mirror
-        if(input_field_idx == hotkey_idx_F9)
-        {
-            Advisor_Screen(8);
-            Assign_Auto_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
+        /*
+            END:  Advisor - Hot-Key
+        */
 
         /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
         /* Alt-P   */

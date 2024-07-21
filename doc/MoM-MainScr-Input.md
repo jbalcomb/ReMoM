@@ -172,6 +172,54 @@ END: Mouse Click
 END: Check Input against Fields
 
 
+### Section 1
+Hot-Keys to Advisors    {F1, F2, F3, F4, F5, F6, F7, F8, F9}
+Hot-Keys to Advisors
+F1  Surveyor
+F2  Cartographer
+F3  Apprentice
+F4  Historian
+F5  Astrologer
+F6  Chancellor
+F7  Tax Collector
+F8  Grand Vizier
+F9  Mirror
+
+// Advisor - Surveyor
+// Advisor - Cartographer
+// Advisor - Apprentice
+// Advisor - Historian
+// Advisor - Astrologer
+// Advisor - Chancellor
+// Advisor - Tax Collector
+// Advisor - Grand Vizier
+
+if(input_field_idx == hotkey_idx_F1)
+{
+    Advisor_Screen(0);
+    Assign_Auto_Function(Main_Screen_Draw, 1);
+    Main_Screen_Reset();
+}
+...
+if(input_field_idx == hotkey_idx_F9)
+{
+    Advisor_Screen(8);
+    Assign_Auto_Function(Main_Screen_Draw, 1);
+    Main_Screen_Reset();
+}
+
+switch(input_advisor_idx) { ... }
+        case 8:  /* Mirror        (F9 )*/
+        {
+            Mirror_Screen(0, 150, 60, 180, 90);
+        } break;        
+    PageFlipEffect = 3;
+    current_screen = scr_Main_Screen;
+
+
+
+
+
 ### Section 4.1
 Game Buttons            {_info_button, _game_button, _cities_button, _magic_button, _armies_button, _spells_button}
 ### Section 4.2

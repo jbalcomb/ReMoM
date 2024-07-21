@@ -71,6 +71,7 @@
 #define MAX_STACK                   9
 #define NUM_SPELLS                240
 #define NUM_RESEARCH_SPELLS         8
+#define NUM_WIZARD_SPECIAL_ABILITIES  18
 
 #define NUM_GEMS                    4  /* Magic Screen Wizard Gems */
 

@@ -1251,88 +1251,64 @@ extern "C" {
 */
 
 // WZD o104p01
-// HLPENTRY.LBX  ""
 void Set_Main_Screen_Help_List(void);
 
 // WZD o104p02
-// HLPENTRY.LBX  ""
 void Set_ArmyList_Screen_Help(void);
 
 // WZD o104p03
-// HLPENTRY.LBX  ""
 void Set_Items_Screen_Help_List(void);
 
 // WZD o104p04
-// HLPENTRY.LBX  ""
 void Set_CityList_Screen_Help(void);
 
 // WZD o104p05
-// HLPENTRY.LBX  ""
 void Set_Magic_Screen_Help_List(void);
 
 // WZD o104p06
-// HLPENTRY.LBX, 6  "city scrn Help"
 void Set_City_Screen_Help_List(void);
 
 // WZD o104p07
-// HLPENTRY.LBX  ""
 
 // WZD o104p08
-// HLPENTRY.LBX  ""
 
 // WZD o104p09
-// HLPENTRY.LBX  ""
 
 // WZD o104p10
-// HLPENTRY.LBX  ""
 
 // WZD o104p11
-// HLPENTRY.LBX  "alchemy scrn Help"
 void Set_Alchemy_Screen_Help_List(void);
 
 // WZD o104p12
-// HLPENTRY.LBX  "build Help"
 void Set_Production_Screen_Help(void);
 
 // WZD o104p13
-// HLPENTRY.LBX, 13  "view Help"
-// HLPENTRY.LBX, 22  "combat view Help"
 void Set_Unit_View_Help(int16_t uv_type);
 
 // WZD o104p14
-// HLPENTRY.LBX, 14  "enemy city Help"
 void Set_Enemy_City_Screen_Help_List(void);
 
 // WZD o104p15
-// HLPENTRY.LBX  ""
+void Set_Mirror_Screen_Help_List(void);
 
 // WZD o104p16
-// HLPENTRY.LBX  ""
 
 // WZD o104p17
-// HLPENTRY.LBX  ""
 
 // WZD o104p18
-// HLPENTRY.LBX  ""
 
 // WZD o104p19
-// HLPENTRY.LBX  ""
 
 // WZD o104p20
-// HLPENTRY.LBX  ""
 
 // WZD o104p21
-// HLPENTRY.LBX  ""
 
 // WZD o104p22
-// HLPENTRY.LBX  "Tax Help"
 
 // WZD o104p23
-// HLPENTRY.LBX  "advisor Help"
 void Set_Advisor_Screen_Help_List(void);
 
 // WZD o104p24
-// HLPENTRY.LBX  "score Help"
 void HLP_Load_HallofFame(void);
 
 

@@ -70,7 +70,7 @@ char cnst_PORTRAIT_File[] = "PORTRAIT";
 
 
 
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+// WZD dseg:956E 00 00                                           mirror_screen_background_seg dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
 
 // WZD dseg:9570
 // ; 2 frame image (normal - clicked)

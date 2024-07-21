@@ -616,6 +616,19 @@ IDK_ResurectHero_sBCC70
     calls with 'mutli page' TRUE and size of 6
 
 */
+/*
+        // ; displays a list selection dialog with the specified
+        // ; title and items, with a separate button corresponding
+        // ; to each one, that can be highlighted by mousing over
+        // ; it or selected by clicking
+        // ; returns the index of the selected item
+        // ; BUG: uses two graphical button controls for
+        // ; multi-page lists that are no longer in memory when
+        // ; returning - doing a GUI page flip before clearing
+        // ; them will cause a crash
+        // ; WARNING: the drawing function expects the list of
+        // ; items to be terminated by a zero string
+*/
 // int16_t Selection_Box(int16_t item_count, char * list_text[], int16_t multi_page, char * title_string)
 int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page, char * title_string)
 {

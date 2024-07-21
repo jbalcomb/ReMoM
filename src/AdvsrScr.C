@@ -144,14 +144,7 @@ void Advisor_Screen(int16_t advisor_idx)
 
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Advisor_Screen()\n", __FILE__, __LINE__);
-#endif
-
     strcpy(fkey_string, cnst_Info_Msg_0); // " (F"
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fkey_string: %s\n", __FILE__, __LINE__, fkey_string);
-#endif
 
     if(advisor_idx == ST_UNDEFINED)
     {
@@ -215,19 +208,6 @@ void Advisor_Screen(int16_t advisor_idx)
 
         // strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
         strcpy(str9_EoT, "");
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str0_Surveyor: %s\n", __FILE__, __LINE__, str0_Surveyor);
-    dbg_prn("DEBUG: [%s, %d]: str1_Cartographer: %s\n", __FILE__, __LINE__, str1_Cartographer);
-    dbg_prn("DEBUG: [%s, %d]: str2_Apprentice: %s\n", __FILE__, __LINE__, str2_Apprentice);
-    dbg_prn("DEBUG: [%s, %d]: str3_Historian: %s\n", __FILE__, __LINE__, str3_Historian);
-    dbg_prn("DEBUG: [%s, %d]: str4_Astrologer: %s\n", __FILE__, __LINE__, str4_Astrologer);
-    dbg_prn("DEBUG: [%s, %d]: str5_Chancellor: %s\n", __FILE__, __LINE__, str5_Chancellor);
-    dbg_prn("DEBUG: [%s, %d]: str6_TaxCollector: %s\n", __FILE__, __LINE__, str6_TaxCollector);
-    dbg_prn("DEBUG: [%s, %d]: str7_GrandVizier: %s\n", __FILE__, __LINE__, str7_GrandVizier);
-    dbg_prn("DEBUG: [%s, %d]: str8_Mirror: %s\n", __FILE__, __LINE__, str8_Mirror);
-    dbg_prn("DEBUG: [%s, %d]: str9_EoT: %s\n", __FILE__, __LINE__, str9_EoT);
-#endif
 
         strcpy(box_list_stings[0], cnst_Info_Msg_1);  // "Surveyor"
         // strcat(str0_Surveyor, text_0x1D);  // ASCII  1Dh  29d  GS  (group separator)
@@ -300,18 +280,6 @@ void Advisor_Screen(int16_t advisor_idx)
             // str_list[itr] = (box_list_stings + 26 * itr);
         }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[8]: %s\n", __FILE__, __LINE__, str_list[8]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[9]: %s\n", __FILE__, __LINE__, str_list[9]);
-#endif
 
         for(itr = 0; itr < 10; itr++)
         {
@@ -322,32 +290,9 @@ void Advisor_Screen(int16_t advisor_idx)
             // str_list[itr] = (box_list_stings + 26 * itr);
         }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[8]: %s\n", __FILE__, __LINE__, str_list[8]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[9]: %s\n", __FILE__, __LINE__, str_list[9]);
-#endif
-
         Set_Advisor_Screen_Help_List();
 
-        // ; displays a list selection dialog with the specified
-        // ; title and items, with a separate button corresponding
-        // ; to each one, that can be highlighted by mousing over
-        // ; it or selected by clicking
-        // ; returns the index of the selected item
-        // ; BUG: uses two graphical button controls for
-        // ; multi-page lists that are no longer in memory when
-        // ; returning - doing a GUI page flip before clearing
-        // ; them will cause a crash
-        // ; WARNING: the drawing function expects the list of
-        // ; items to be terminated by a zero string
+
         // input_advisor_idx = GUI_ListSelect_Dlg(9, &List@[0], 0, cnst_Info_Msg_0_3);  // "Select An Advisor"
         input_advisor_idx = Selection_Box(9, &str_list[0], ST_FALSE, "Select An Advisor");
         // returns -1 for ESC
@@ -363,66 +308,52 @@ void Advisor_Screen(int16_t advisor_idx)
     {
         case 0:  /* Surveyor      (F1) */
         {
-            DLOG("switch(input_advisor_idx))  case 0:");
             // TODO  j_IDK_Surveyor_s7A3C0()
 
         } break;
         case 1:  /* Cartographer  (F2) */
         {
-            DLOG("switch(input_advisor_idx))  case 1:");
             // TODO  IDK_Cartographer_Screen()
 
         } break;
         case 2:  /* Apprentice    (F3) */
         {
-            DLOG("switch(input_advisor_idx))  case 2:");
             // TODO  IDK_AdvsrScr_Apprentice()
 
         } break;
         case 3:  /* Historian     (F4) */
         {
-            DLOG("switch(input_advisor_idx))  case 3:");
             // TODO  IDK_AdvsrScr_Historian()
 
         } break;
         case 4:  /* Astrologer    (F5) */
         {
-            DLOG("switch(input_advisor_idx))  case 4:");
             // TODO  IDK_AdvsrScr_Astrologer()
 
         } break;
         case 5:  /* Chancellor    (F6) */
         {
-            DLOG("switch(input_advisor_idx))  case 5:");
             // TODO  j_IDK_Chancellor_EoTSummary_EventsAnimScroll(1);
 
         } break;
         case 6:  /* Tax Collector (F7) */
         {
-            DLOG("switch(input_advisor_idx))  case 6:");
             TaxCollector_Window();
 
         } break;
         case 7:  /* Grand Vizier  (F8) */
         {
-            DLOG("switch(input_advisor_idx))  case 7:");
             GrandVizier_Window();
 
         } break;
         case 8:  /* Mirror        (F9 )*/
         {
-            DLOG("switch(input_advisor_idx))  case 8:");
-            // TODO  Mirror_Screen(0, 150, 60, 180, 90);
-
+            Mirror_Screen(HUMAN_PLAYER_IDX, 150, 60, 180, 90);
         } break;        
     }
 
     PageFlipEffect = 3;
     current_screen = scr_Main_Screen;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Advisor_Screen()\n", __FILE__, __LINE__);
-#endif
 
 }
 

@@ -147,6 +147,35 @@ enum e_Magic
 
 
 /*
+    Rival Wizard Relationship Status
+
+*/
+enum e_RELATIONSHIP_STATS
+{
+// Hate
+// Troubled
+// Tense
+// Restless
+// Unease
+// Neutral
+// Relaxed
+// Calm
+// Peaceful
+// Friendly
+// Harmony
+
+};
+
+enum e_TREATY_TYPE
+{
+    NO_TREATY = 0,    /* "neutral state" */
+    WIZARD_PACT = 1,  /*  */
+    ALLIANCE = 2,     /*  */
+    WAR = 3,          /*  */
+    FINAL_WAR = 4     /*  */
+};
+
+/*
     Computer Personality
 */
 enum e_AI_Personality
@@ -1008,7 +1037,7 @@ struct s_WIZ_DIPL
 // sizeof:  4C8h  1224d
 struct s_WIZARD
 {
-    /* 0000 */ uint8_t wizard_id; /* player_idx  MoO2: player_num, player_id */
+    /* 0000 */ uint8_t wizard_id; /* 1-byte, signed;  player_idx  MoO2: player_num, player_id */
     /* 0001 */ char name[LEN_WIZARD_NAME];
     /* 0015 */ uint8_t Cptl_Race;
     /* 0016 */ uint8_t banner_id;  /* 1-byte, signed */
@@ -1066,7 +1095,7 @@ struct s_WIZARD
     /* 073 */ int8_t conjurer;
     /* 074 */ int8_t charismatic;
     /* 075 */ int8_t artificer;
-    // /* 064 */ int8_t retorts[18];
+    // /* 064 */ int8_t retorts[18];  /* Special Abilities */
 
     /* 0076 */ struct s_OWNED_HERO Heroes[NUM_HEROES];  /* indexed by s_UNIT.hero_slot_idx */
     /* 011E */ uint16_t Unknown_11Eh;
@@ -1947,11 +1976,22 @@ extern int16_t overland_enchantment_upkeep_table[24];
 
 
 
+// WZD dseg:1FBC 11 28                                           
+extern char * _personality_type_names[];
 
 
-// WZD dseg:1FDC 74 28                                           dw offset aExpansionist                 ; "Expansionist"
+// ; added to chance of forming treaties
+// ; added to chance of avoiding superiority wars
+// WZD dseg:1FC8 00 00 0A 00 14 00 1E 00 28 00 32 00             TBL_AI_PRS_???_Mod dw 0, 10, 20, 30, 40, 50
+
+
+// WZD dseg:1FD4
+extern char * _objective_type_names[];
+
+
 // WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
-// WZD dseg:1FDE                                                                                         ; DATA XREF: AI_OVL_SplCat_Picker+9CEr ...
+
+
 
 // WZD dseg:1FEA 
 // drake178: TBL_AI_DIFF_Mods 
@@ -1969,9 +2009,48 @@ extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_L
 // ; declared in overlay.lib\OVRBUFF
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
 
-// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:_wizard_abilities_nameso
 
-// WZD dseg:2143 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0         ; DATA XREF: dseg:_wizard_abilities_nameso
+
+// WZD dseg:2082
+extern char cnst_Alchemy[];
+// WZD dseg:2089
+extern char empty_string__MAIN[];
+// WZD dseg:208A
+extern char cnst_Warlord[];
+// WZD dseg:2092
+extern char cnst_ChaosMastery[];
+// WZD dseg:20A0
+extern char cnst_NatureMastery[];
+// WZD dseg:20AF
+extern char cnst_SorceryMastery[];
+// WZD dseg:20BF
+extern char cnst_InfernalPower[];
+// WZD dseg:20CE
+extern char cnst_DivinePower[];
+// WZD dseg:20DB
+extern char cnst_SageMaster[];
+// WZD dseg:20E7
+extern char cnst_Channeler[];
+// WZD dseg:20F1
+extern char cnst_Myrran[];
+// WZD dseg:20F8
+extern char cnst_Archmage[];
+// WZD dseg:2101
+extern char cnst_ManaFocusing[];
+// WZD dseg:210F
+extern char cnst_NodeMastery[];
+// WZD dseg:211C
+extern char cnst_Famous[];
+// WZD dseg:2123
+extern char cnst_Runemaster[];
+// WZD dseg:212E
+extern char cnst_Conjurer[];
+// WZD dseg:2137
+extern char cnst_Charismatic[];
+// WZD dseg:2143
+extern char cnst_Artificer[];
+
+
 
 // WZD dseg:214D
 // drake178: cnst_Outpost
@@ -2057,6 +2136,34 @@ extern char cnst_WallofDarkness[];
 extern char cnst_Nightshade[];
 
 
+
+// WZD dseg:2811                                                 BEGIN:  _personality_type_names
+// WZD dseg:2811
+extern char aManiacal[];
+// WZD dseg:281A
+extern char aRuthless[];
+// WZD dseg:2823
+extern char aAggressive[];
+// WZD dseg:282E
+extern char aChaotic[];
+// WZD dseg:2836
+extern char aLawful[];
+// WZD dseg:283D
+extern char aPeaceful[];
+// WZD dseg:283D                                                 END:  _personality_type_names
+
+// WZD dseg:2846                                                 BEGIN:  _objective_type_names
+// WZD dseg:2846
+extern char aPragmatist[];
+// WZD dseg:2851
+extern char aMilitarist[];
+// WZD dseg:285C
+extern char aTheurgist[];
+// WZD dseg:2866
+extern char aPerfectionist[];
+// WZD dseg:2874
+extern char aExpansionist[];
+// WZD dseg:2874                                                 END:  _objective_type_names
 
 
 
@@ -2803,9 +2910,11 @@ extern SAMB_ptr unitview_button_background_seg;
 extern SAMB_ptr IMG_OVL_BuildBtn_BG;
 // WZD dseg:9548                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+// WZD dseg:954A
+extern SAMB_ptr mirrow_screen_books_segs[18];
+
+// WZD dseg:956E
+extern SAMB_ptr mirror_screen_background_seg;
 
 
 

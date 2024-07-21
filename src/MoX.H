@@ -289,6 +289,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "UnitView.H"
 #include "Video.H"
 #include "Video2.H"
+#include "WIZVIEW.H"
 #include "WZD_o059.H"
 #include "WZD_o143.H"
 

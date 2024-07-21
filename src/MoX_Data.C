@@ -77,19 +77,14 @@
 // WZD dseg:011E
 // WZD dseg:011E
 // WZD dseg:012A 01 02 04 08 10 20                               NIU_byte_36BCA db         1,      10b,     100b,    1000b,   10000b,  100000b
+
 // WZD dseg:0130
-// WZD dseg:0130
-// WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
-// WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
-// WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
-// WZD dseg:0154
-// WZD dseg:0154
-// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
-// WZD dseg:0154
-// WZD dseg:0154
+// char * _wizard_abilities_names[] =
+
+// WZD dseg:0154 01 00                                           
+int16_t EVNT_Enabled = ST_TRUE;
+
 // WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
-// WZD dseg:0156                                                                                         ; DATA XREF: City_Screen_Draw2__WIP+1Fr ...
-// WZD dseg:0156                                                                                         ; "Outpost"
 
 // WZD dseg:0162
 char * STR_MagicBuildings[7] =
@@ -406,27 +401,35 @@ Global Enchantment upkeeps in byte order, from Eternal Night to Awareness
 */
 int16_t overland_enchantment_upkeep_table[24] = {15, 10, 40, 5, 5, 50, 200, 7, 10, 10, 40, 15, 20, 10, 40, 10, 10, 10, 3, 10, 5, 10, 3, 3};
 
+// WZD dseg:1FBC 11 28                                           
+char * _personality_type_names[] =
+{
+    aManiacal,
+    aRuthless, 
+    aAggressive,
+    aChaotic,
+    aLawful,
+    aPeaceful
+};
 
 
+// ; added to chance of forming treaties
+// ; added to chance of avoiding superiority wars
+// WZD dseg:1FC8 00 00 0A 00 14 00 1E 00 28 00 32 00             TBL_AI_PRS_???_Mod dw 0, 10, 20, 30, 40, 50
 
 
-// MoX_Data.H
-// struct s_DIFFICULTY_MODIFIERS
-// {
-//     /* 00 */  int16_t population_growth;
-//     /* 02 */  int16_t outpost_growth;
-//     /* 04 */  int16_t production;
-//     /* 06 */  int16_t gold;
-//     /* 08 */  int16_t power;
-//     /* 0A */  int16_t research;
-//     /* 0C */  int16_t food;
-//     /* 0E */  int16_t maintenance;
-//     /* 10 */
-// };
+// WZD dseg:1FD4
+char * _objective_type_names[] =
+{
+    aPragmatist,
+    aMilitarist,
+    aTheurgist,
+    aPerfectionist,
+    aExpansionist
+};
 
-// WZD dseg:1FDC 74 28                                           dw offset aExpansionist                 ; "Expansionist"
+
 // WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
-// WZD dseg:1FDE                                                                                         ; DATA XREF: AI_OVL_SplCat_Picker+9CEr ...
 
 // WZD dseg:1FEA 
 // drake178: TBL_AI_DIFF_Mods 
@@ -444,6 +447,21 @@ int16_t overland_enchantment_upkeep_table[24] = {15, 10, 40, 5, 5, 50, 200, 7, 1
 // DIFF_REC <200, 200, 200, 200, 200, 110, 200, 60>; 3
 // DIFF_REC <400, 400, 400, 400, 400, 150, 400, 30>; 4
 
+
+
+// MoX_Data.H
+// struct s_DIFFICULTY_MODIFIERS
+// {
+//     /* 00 */  int16_t population_growth;
+//     /* 02 */  int16_t outpost_growth;
+//     /* 04 */  int16_t production;
+//     /* 06 */  int16_t gold;
+//     /* 08 */  int16_t power;
+//     /* 0A */  int16_t research;
+//     /* 0C */  int16_t food;
+//     /* 0E */  int16_t maintenance;
+//     /* 10 */
+// };
 
 /* Intro, Easy, Normal, Hard, Impossible */
 /* population_growth, outpost_growth, production, gold, mana, research, food, maintenance */
@@ -469,10 +487,10 @@ struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
 // ; declared in overlay.lib\OVRBUFF
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
 
-// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:_wizard_abilities_nameso
+// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'
 
 
-// WZD dseg:2143 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0         ; DATA XREF: dseg:_wizard_abilities_nameso
+// WZD dseg:2143 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer'
 
 
 
@@ -524,6 +542,34 @@ char cnst_WallofDarkness[] = "Wall of Darkness";
 char cnst_Nightshade[] = "Nightshade";
 
 
+
+// WZD dseg:2811                                                 BEGIN:  _personality_type_names
+// WZD dseg:2811
+char aManiacal[] = "Maniacal";
+// WZD dseg:281A
+char aRuthless[] = "Ruthless";
+// WZD dseg:2823
+char aAggressive[] = "Aggressive";
+// WZD dseg:282E
+char aChaotic[] = "Chaotic";
+// WZD dseg:2836
+char aLawful[] = "Lawful";
+// WZD dseg:283D
+char aPeaceful[] = "Peaceful";
+// WZD dseg:283D                                                 END:  _personality_type_names
+
+// WZD dseg:2846                                                 BEGIN:  _objective_type_names
+// WZD dseg:2846
+char aPragmatist[] = "Pragmatist";
+// WZD dseg:2851
+char aMilitarist[] = "Militarist";
+// WZD dseg:285C
+char aTheurgist[] = "Theurgist";
+// WZD dseg:2866
+char aPerfectionist[] = "Perfectionist";
+// WZD dseg:2874
+char aExpansionist[] = "Expansionist";
+// WZD dseg:2874                                                 END:  _objective_type_names
 
 
 
@@ -1401,9 +1447,11 @@ SAMB_ptr unitview_button_background_seg;
 // drake178: IMG_OVL_BuildBtn_BG@
 SAMB_ptr IMG_OVL_BuildBtn_BG;
 
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+// WZD dseg:954A
+SAMB_ptr mirrow_screen_books_segs[18];
+
+// WZD dseg:956E
+SAMB_ptr mirror_screen_background_seg;
 
 // WZD dseg:9570 00 00                                           armylist_ok_button_seg dw 0             ; DATA XREF: ArmyList_Screen+12Cr ...
 // WZD dseg:9570                                                                                         ; 2 frame image (normal - clicked)
