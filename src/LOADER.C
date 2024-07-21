@@ -493,49 +493,45 @@ void Main_Screen_Load_Pictures(void)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
+    main_background    = LBX_Load(main_lbx_file,  0);
 
-    main_background = LBX_Load(main_lbx_file,  0);
-
-    main_game_button = LBX_Load(main_lbx_file, 1);
+    main_game_button   = LBX_Load(main_lbx_file, 1);
     main_spells_button = LBX_Load(main_lbx_file, 2);
     main_armies_button = LBX_Load(main_lbx_file, 3);
     main_cities_button = LBX_Load(main_lbx_file, 4);
-    main_magic_button = LBX_Load(main_lbx_file, 5);
-    main_info_button = LBX_Load(main_lbx_file, 6);
-    main_plane_button = LBX_Load(main_lbx_file, 7);
+    main_magic_button  = LBX_Load(main_lbx_file, 5);
+    main_info_button   = LBX_Load(main_lbx_file, 6);
+    main_plane_button  = LBX_Load(main_lbx_file, 7);
 
-    main_done_button = LBX_Load(main_lbx_file, 8);
+    main_done_button   = LBX_Load(main_lbx_file, 8);
     main_patrol_button = LBX_Load(main_lbx_file, 9);
-    main_wait_button = LBX_Load(main_lbx_file, 10);
-    main_build_button = LBX_Load(main_lbx_file, 11);
+    main_wait_button   = LBX_Load(main_lbx_file, 10);
+    main_build_button  = LBX_Load(main_lbx_file, 11);
     main_purify_button = LBX_Load(main_lbx_file, 42);
-    main_meld_button = LBX_Load(main_lbx_file, 49);
+    main_meld_button   = LBX_Load(main_lbx_file, 49);
 
-    main_lock_done_button = LBX_Load(main_lbx_file, 12);
+    main_lock_done_button   = LBX_Load(main_lbx_file, 12);
     main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
-    main_lock_wait_button = LBX_Load(main_lbx_file, 14);
-    main_lock_build_button = LBX_Load(main_lbx_file, 15);
+    main_lock_wait_button   = LBX_Load(main_lbx_file, 14);
+    main_lock_build_button  = LBX_Load(main_lbx_file, 15);
     main_lock_purify_button = LBX_Load(main_lbx_file, 43);
 
-    main_white_medal_icon = LBX_Load(main_lbx_file, 51);
-    main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
-    main_red_medal_icon = LBX_Load(main_lbx_file, 53);
-    main_magic_weapon_icon = LBX_Load(main_lbx_file, 54);
-    main_mithril_weapon_icon = LBX_Load(main_lbx_file, 55);
+    main_white_medal_icon       = LBX_Load(main_lbx_file, 51);
+    main_gold_medal_icon        = LBX_Load(main_lbx_file, 52);
+    main_red_medal_icon         = LBX_Load(main_lbx_file, 53);
+    main_magic_weapon_icon      = LBX_Load(main_lbx_file, 54);
+    main_mithril_weapon_icon    = LBX_Load(main_lbx_file, 55);
     main_adamantium_weapon_icon = LBX_Load(main_lbx_file, 56);
 
-    move_sail_icon = LBX_Load(main_lbx_file, 18);
-    move_swim_icon = LBX_Load(main_lbx_file, 19);
-    move_mt_icon = LBX_Load(main_lbx_file, 20);
+    move_sail_icon   = LBX_Load(main_lbx_file, 18);
+    move_swim_icon   = LBX_Load(main_lbx_file, 19);
+    move_mt_icon     = LBX_Load(main_lbx_file, 20);
     move_forest_icon = LBX_Load(main_lbx_file, 21);
-    move_fly_icon = LBX_Load(main_lbx_file, 22);
-    move_path_icon = LBX_Load(main_lbx_file, 23);
+    move_fly_icon    = LBX_Load(main_lbx_file, 22);
+    move_path_icon   = LBX_Load(main_lbx_file, 23);
     move_astral_icon = LBX_Load(main_lbx_file, 36);
-    move_wind_icon = LBX_Load(main_lbx_file, 37);
-    move_boot_icon = LBX_Load(main_lbx_file, 38);
+    move_wind_icon   = LBX_Load(main_lbx_file, 37);
+    move_boot_icon   = LBX_Load(main_lbx_file, 38);
 
     movement_mode_icons[0] = LBX_Load(main_lbx_file, 18);
     movement_mode_icons[1] = LBX_Load(main_lbx_file, 19);
@@ -554,44 +550,50 @@ void Main_Screen_Load_Pictures(void)
         unit_backgrounds[itr] = LBX_Load(main_lbx_file, 24 + itr);
     }
 
+    // MAIN.LBX, 058    DESELECT    next turn button..
+    // MAIN.LBX, 034    DESELECT    deselect backgrnd
+    // MAIN.LBX, 035    DESELECT    next turn backgrnd
     next_turn_button_seg = LBX_Load(main_lbx_file, 58);
-
     deselect_background = LBX_Load(main_lbx_file, 34);
     next_turn_background_seg = LBX_Load(main_lbx_file, 35);
 
-//     cast_background = LBX_Load(main_lbx_file, 40);
-//     cast_cancel_button = LBX_Load(main_lbx_file, 41);
-//     cast_button_border = LBX_Load(main_lbx_file, 47);
-// 
-//     DESELECT_button_blockout = LBX_Load(main_lbx_file, 44);
-// 
-//     road_background = LBX_Load(main_lbx_file, 45);
-//     road_ok_button = LBX_Load(main_lbx_file, 46);
-//     road_button_border = LBX_Load(main_lbx_file, 48);
-// 
-//     survey_background = LBX_Load(main_lbx_file, 57);
-// 
-//     mirror_screen_background = LBX_Load(backgrnd_lbx_file, 4);
-// 
-//     goto_booty_icon = LBX_Load(main_lbx_file, 50);
-// 
-// 
-//     // LILEVENT blue
-//     // LILEVENT red
-//     // LILEVENT grn
-//     // LILEVENT bad
-//     // LILEVENT good
-//     // LILEVENT short
-// 
-// 
-//     for(itr = 0; itr < 6; itr++)
-//     {
-//         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, 59 + itr);
-//     }
+    // MAIN.LBX, 040    MAINCAST    cast background
+    // MAIN.LBX, 041    CASTCNCL    cast cancel button
+    // MAIN.LBX, 047    C&RBORDR    cast button border
+    cast_background = LBX_Load(main_lbx_file, 40);
+    cast_cancel_button = LBX_Load(main_lbx_file, 41);
+    cast_button_border = LBX_Load(main_lbx_file, 47);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
+    // MAIN.LBX, 044    DESELECT    button blockout
+    deselect_button_blockout = LBX_Load(main_lbx_file, 44);
+
+    // MAIN.LBX, 045    MAINROAD    road background
+    // MAIN.LBX, 046    CASTCNCL    road ok button
+    // MAIN.LBX, 048    C&RBORDR    road button border
+    road_background = LBX_Load(main_lbx_file, 45);
+    road_ok_button = LBX_Load(main_lbx_file, 46);
+    road_button_border = LBX_Load(main_lbx_file, 48);
+
+    // MAIN.LBX, 057    MAINSRVY    survey backgrnd
+    survey_background = LBX_Load(main_lbx_file, 57);
+
+    // BACKGRND.LBX, 04  MAGEVIEW    wizardview backgrn
+    mirror_screen_background_seg = LBX_Load(backgrnd_lbx_file, 4);
+
+    // BACKGRND.LBX, 050    GOTO        goto booty
+    goto_booty_icon = LBX_Load(main_lbx_file, 50);
+
+
+    // MAIN.LBX, 059    LILEVENT    blue
+    // MAIN.LBX, 060    LILEVENT    red
+    // MAIN.LBX, 061    LILEVENT    grn
+    // MAIN.LBX, 062    LILEVENT    bad
+    // MAIN.LBX, 063    LILEVENT    good
+    // MAIN.LBX, 064    LILEVENT    short
+    for(itr = 0; itr < 6; itr++)
+    {
+        main_lilevent_icons[itr] = LBX_Load(main_lbx_file, (59 + itr));
+    }
 
 }
 

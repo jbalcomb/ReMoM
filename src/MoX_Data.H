@@ -2608,6 +2608,52 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 
 
 
+// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_TerrTiles@ dw 30h dup(0)        ; DATA XREF: CMB_LoadTerrainGFX+D0w ...
+// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 48 images appended into the EMM TILEX handle
+// WZD  dseg:93FA 00                                              db    0
+// WZD  dseg:93FB 00                                              db    0
+// WZD  dseg:93FC 00                                              db    0
+// WZD  dseg:93FD 00                                              db    0
+// WZD  dseg:93FE 00                                              db    0
+// WZD  dseg:93FF 00                                              db    0
+// WZD  dseg:9400 00                                              db    0
+// WZD  dseg:9401 00                                              db    0
+// WZD  dseg:9402 00                                              db    0
+// WZD  dseg:9403 00                                              db    0
+// WZD  dseg:9404 00                                              db    0
+// WZD  dseg:9405 00                                              db    0
+// WZD  dseg:9406 00                                              db    0
+// WZD  dseg:9407 00                                              db    0
+// WZD  dseg:9408 00 00 00 00 00 00 00 00 00 00 00 00             notify_magic_picts_seg dw 6 dup(0)      ; DATA XREF: Notify_Load+17Bw ...
+// WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
+// WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
+// WZD  dseg:9414 00 00                                           gsa_SOUNDFX_2_SFX_Left_Click dw 0       ; DATA XREF: SND_LeftClickSound:loc_14809r ...
+// WZD  dseg:9414                                                                                         ; single-loaded audio file
+// WZD  dseg:9416 00                                              db    0
+// WZD  dseg:9417 00                                              db    0
+// WZD  dseg:9418 00                                              db    0
+// WZD  dseg:9419 00                                              db    0
+// WZD  dseg:941A 00 00                                           gsa_SOUNDFX_0_SFX_Standard_Click dw 0   ; DATA XREF: SND_PlayClickSound:loc_1481Fr ...
+// WZD  dseg:941A                                                                                         ; single-loaded audio file
+// WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
+// WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
+// WZD  dseg:9421 00 00 00 00 00                                  TF_Unk_40_YCoords db 5 dup(0)                             ; 0
+// WZD  dseg:9421                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+57w
+// WZD  dseg:9426 00 00 00 00 00 00                               TF_Unk_40_XCoords db 6 dup(0)                             ; 0
+// WZD  dseg:9426                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+4Cw
+// WZD  dseg:942C 00 00                                           TF_Unk_40_Counter dw 0                  ; DATA XREF: LD_MAP_TFUnk40_Eval+6w ...
+
+// WZD  dseg:942E
+extern SAMB_ptr main_lilevent_icons[6];
+// WZD  dseg:942E                                                                                         ; array of 6 single-loaded images
+// WZD  dseg:942E                                                                                         ; (blue - red - green - bad - good - short)
+// WZD  dseg:942E                                                                                         ; not actually used as far as  i can tell...
+
+// WZD  dseg:943A 00 00 00 00 00 00 00 00                         IMG_CTY_Rubble@ dw 4 dup(0)             ; DATA XREF: GFX_Swap_AppndCtScap+5B6w ...
+// WZD  dseg:943A                                                                                         ; array of 4 appended reserved EMM headers in
+// WZD  dseg:943A                                                                                         ; GFX_Swap_Seg, 2x2 - 2x3 - 3x2 - 3x3 rubble images
+
+
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
 // ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
@@ -2754,7 +2800,7 @@ extern SAMB_ptr road_ok_button;
 // MAIN.LBX,46  CASTCNCL    road ok button
 
 // WZD dseg:9522
-extern SAMB_ptr DESELECT_button_blockout;
+extern SAMB_ptr deselect_button_blockout;
 // MAIN.LBX,44    DESELECT    button blockout
 
 // WZD dseg:9524
@@ -2805,7 +2851,9 @@ extern SAMB_ptr IMG_OVL_BuildBtn_BG;
 
 // WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
 // WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+
+// WZD dseg:956E
+extern SAMB_ptr mirror_screen_background_seg;
 
 
 
@@ -2894,7 +2942,9 @@ extern SAMB_ptr hero_background_seg;
 // drake178: IMG_CTY_HalfRsc@
 extern SAMB_ptr city_half_background_seg;
 
-// WZD dseg:95F2 00 00                                           goto_booty_icon dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+371w ...
+// WZD dseg:95F2
+extern SAMB_ptr goto_booty_icon;
+
 // WZD dseg:95F2                                                                                         ; single-loaded image
 // WZD dseg:95F4 00 00 00 00 00 00 00 00 00 00 00 00             hero_portraits_seg dw 6 dup(0)          ; DATA XREF: ArmyList_Screen_Draw+38Dr ...
 // WZD dseg:9600 00 00 00 00                                     TBL_TERRSTAT_EMS@ dd 0                  ; 
