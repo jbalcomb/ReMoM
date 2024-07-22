@@ -12,8 +12,7 @@
         ...
 */
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
+#include "MoX.H"
 
 // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
 // WZD dseg:784A
@@ -375,5 +374,117 @@ void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field)
 // WZD s22p28 UU_MEM_ClearBit_Near()
 // WZD s22p29 UU_DBG_SetSelectSetting()
 // WZD s22p30 UU_DBG_SelectDialog()
-// WZD s22p31 RP_VGA_GrowOutFlip()
-// WZD s22p32 RP_LBX_IMG_CpyDrawFrame()
+
+// WZD s22p31
+// drake178:  RP_VGA_GrowOutFlip()
+/*
+performs a transition effect with the contents of the
+current draw frame "growing out" from the specified
+location in the display frame; the passed image
+segment must be big enough to hold a full 320x200
+image (64000 bytes), and the call must be made after
+drawing the new frame but before clearing the old one
+
+can be safely repurposed if its call is removed, it
+was originally intended to be used when changing to
+the City Screen, but has been redacted (the call is
+never made after setting up the variables), likely
+because the parent function is hardcoded to use the
+sandbox, which can be problematic because all screen
+redraw elements are normally also loaded there
+*/
+void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture)
+{
+    int16_t Resize_Percent;
+    int16_t y2;
+    int16_t x2;
+    int16_t y1;
+    int16_t x1;
+    byte_ptr picture_data;  // _SI_
+    int16_t itr;  // _DI_
+
+    Clear_Fields();
+
+    picture_data = picture + 16;  // +1 segment / FLIC_HDR / 16 bytes
+
+    Create_Picture(SCREEN_WIDTH, SCREEN_HEIGHT, picture_data);
+
+    Set_Page_Off();
+
+    PageFlip_GrowOut_CopyScreen((picture_data + 16));
+
+    Copy_On_To_Off_Page();
+
+    // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data from the passed destination (ds if 0 is passed as seg) to EMS returns the source segment
+    // TODO  EMM_MapnWrite(0, picture_data, 0, 0, 32000, EmmHndlNbr_VGAFILEH);
+    // TODO  EMM_MapnWrite(0, (picture_data + 32000), 32000, 0, 32000, EmmHndlNbr_VGAFILEH);
+
+    for(itr = 0; itr < counter; itr++)
+    {
+        Mark_Time();
+
+        // TODO  // ; maps in the pages required to reach the data offset in the specified handle, and copies the data to the required destination (ds if 0 is passed as seg) returns the page frame segment
+        // TODO  EMM_MapnRead(0, picture_data, 0, 0, 32000, EmmHndlNbr_VGAFILEH);
+        // TODO  EMM_MapnRead(0, (picture_data + 32000), 32000, 0, 32000, EmmHndlNbr_VGAFILEH);
+
+        x1 = (x_start - (((itr + 1) * x_start) / counter));
+        y1 = (y_start - (((itr + 1) * y_start) / counter));
+        Resize_Percent = (((itr + 1) * 100) / counter);
+        x2 = (x1 + ((Resize_Percent * 32) / 10));
+        y2 = (y1 + (Resize_Percent * 2));
+
+        if(x2 > SCREEN_WIDTH)
+        {
+            x1 = (SCREEN_WIDTH - ((Resize_Percent * 32) / 10));
+        }
+
+        if(y2 > SCREEN_HEIGHT)
+        {
+            y1 = (SCREEN_HEIGHT - (Resize_Percent * 2));
+        }
+
+        Scale_Bitmap(picture_data, Resize_Percent, Resize_Percent);
+
+        Replace_Color(picture_data, 0, 1);
+
+        Set_Page_Off();
+
+        Draw_Picture(x1, y1, picture_data);
+
+        Toggle_Pages();
+
+        Release_Time(1);
+
+    }
+
+}
+
+// WZD s22p32 
+// drake178:  RP_LBX_IMG_CpyDrawFrame()
+/*
+; reads the full draw frame to an LBX image
+*/
+void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data)
+{
+    int16_t height;  // _BX_
+    int16_t width;  // _CX_
+    byte_ptr screen_data;
+    uint8_t pixel;
+
+    screen_data = current_video_page;
+
+    width = SCREEN_WIDTH;
+    while(width > 0)
+    {
+        height = SCREEN_HEIGHT;
+        while(height > 0)
+        {
+            pixel = *screen_data++;
+            *picture_data++ = pixel;
+            screen_data += SCREEN_WIDTH;
+            height--;
+        }
+        width--;
+    }
+
+}

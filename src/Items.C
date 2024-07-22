@@ -43,12 +43,12 @@ void Player_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t it
             Full_Draw_Main_Screen();
             LBX_Load_Data_Static(cnst_MESSAGE_File, 0, (SAMB_ptr)GUI_NearMsgString, 67, 1, 150);
             Warn0(GUI_NearMsgString);
-            OVL_MosaicFlip__STUB();
+            /* TODO */  OVL_MosaicFlip__STUB();
 
             Process_Item_Pool(item_count, item_list);
 
             current_screen = scr_Main_Screen;
-            OVL_MosaicFlip__STUB();
+            /* TODO */  OVL_MosaicFlip__STUB();
         }
         else
         {

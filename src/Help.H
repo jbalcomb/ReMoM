@@ -1311,6 +1311,7 @@ void Set_Enemy_City_Screen_Help_List(void);
 
 // WZD o104p17
 // HLPENTRY.LBX  ""
+void Set_Outpost_Screen_Help_List(void);
 
 // WZD o104p18
 // HLPENTRY.LBX  ""

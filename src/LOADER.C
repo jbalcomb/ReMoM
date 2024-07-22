@@ -875,59 +875,16 @@ void GFX_Swap_AppndCtScap__WIP(void)
     // CITYSCAP.LBX,   0  BACKS      ground background
     cityscape_background_arcanus_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 0, GFX_Swap_Seg);
 
-/*
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 87
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+    // CITYSCAP.LBX,  87  CITYSPL1    flying fortress
+    // CITYSCAP.LBX,  90  CITYSPL3    gaia
+    cityscape_flyingfortress_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 87, GFX_Swap_Seg);
+    cityscape_gaiasblessing_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 90, GFX_Swap_Seg);
 
-add     sp, 6
-
-
-mov     [IMG_CTY_FlyFortress@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 90
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-
-
-mov     [IMG_CTY_GaiasMask@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 89
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-
-
-mov     [IMG_CTY_LivingLands@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 86
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_CursedLands@], ax
-
-*/
-
+    // CITYSCAP.LBX,  89  CITYSPL2    living lands
+    // CITYSCAP.LBX,  86  CITYSPL1    cursed land mask
+    cityscape_livinglands_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 89, GFX_Swap_Seg);
+    cityscape_cursedland_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 86, GFX_Swap_Seg);
 
 
     // CITYSCAP.LBX,   3  CSWATER     river
@@ -952,18 +909,12 @@ mov     [IMG_CTY_CursedLands@], ax
     cityscape_background_arcanus_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 92, GFX_Swap_Seg);
 
 
+    // CITYSCAP.LBX,  88  CITYSPL2    famine
+    cityscape_famine_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 88, GFX_Swap_Seg);
+
+
 
 /*
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 88
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_FamineMask@], ax
 
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 7

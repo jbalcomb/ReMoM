@@ -236,6 +236,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "ArmyList.H"
 #include "CITYCALC.H"
 #include "CityList.H"
+#include "CITYSCAP.H"
 #include "City_ovr55.H"
 #include "Combat.H"
 #include "DIPLOMAC.H"
@@ -270,6 +271,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "MoX_Util.H"   // WTFMATE
 #include "NEXTTURN.H"
+#include "Outpost.H"
 #include "paragrph.H"
 #include "ProdScr.H"
 #include "RACETYPE.H"

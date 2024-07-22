@@ -134,8 +134,7 @@ void UNIT_RemoveExcess(int16_t unit_idx);
 // LD_CTY_ResRefresh()
 
 // WZD o142p05
-// CTY_GetPop10s()
-
+int16_t City_House_Count(int16_t city_idx);
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()

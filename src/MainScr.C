@@ -751,9 +751,9 @@ int64_t _main_map_grid_y;
 // WZD dseg:998C 00 00                   GUI_SmallWork_IMG@ dw 0                 ; 96h LBX_Alloc_Space paragraphs
 // WZD dseg:998E 00 00                   gsa_Sandbox dw 0                        ; 203h + 11F8h LBX_Alloc_Space paragraphs
 // WZD dseg:9990 00 00                   _current_screen dw 0
-// WZD dseg:9992 00 00                   RP_GUI_GrowOutFrames dw 0
-// WZD dseg:9994 00 00                   RP_GUI_GrowOutTop dw 0
-// WZD dseg:9996 00 00                   RP_GUI_GrowOutLeft dw 0
+// WZD dseg:9992 00 00                   GrowOutFrames dw 0
+// WZD dseg:9994 00 00                   GrowOutTop dw 0
+// WZD dseg:9996 00 00                   GrowOutLeft dw 0
 // WZD dseg:9998 00 00 00 00             TBL_Events dd 0                         ; 7 LBX_Alloc_Space paragraphs (112 bytes)
 
 // WZD dseg:999C
@@ -1947,15 +1947,38 @@ void Main_Screen(void)
                     {
                         if(_CITIES[_city_idx].size == 0)
                         {
-                            DLOG("(_CITIES[_city_idx].size == 0)");
+                            /* #### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost */
+                            PageFlipEffect = 4;
+                            GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
+                            GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            GrowOutFrames = 8;
+                            Deactivate_Help_List();
+                            target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+                            target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
+                            // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
+                            Outpost_Screen(ST_FALSE);
+                            Assign_Auto_Function(Main_Screen_Draw, 1);
+                            Allocate_Reduced_Map();
+                            Set_Mouse_List_Default();
+                            Reset_Map_Draw();
+                            MainScr_Prepare_Reduced_Map();
+                            screen_changed = ST_TRUE;
+                            Deactivate_Help_List();
+                            Set_Main_Screen_Help_List();
+                            UU_MainScreen_flag = ST_TRUE;
+
+
+
+
 
                         }
                         else
                         {
                             PageFlipEffect = 4;
-                            // TODO  RP_GUI_GrowOutLeft = (_main_map_grid_x * 20);
-                            // TODO  RP_GUI_GrowOutTop = ((_main_map_grid_y * 18) + 20);
-                            // TODO  RP_GUI_GrowOutFrames = 8;
+                            // TODO  GrowOutLeft = (_main_map_grid_x * 20);
+                            // TODO  GrowOutTop = ((_main_map_grid_y * 18) + 20);
+                            // TODO  GrowOutFrames = 8;
                             current_screen = scr_City_Screen;
                             leave_screen_flag = ST_TRUE;
 
@@ -4481,6 +4504,11 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 // AKA OVL_DrawUnitImage()
 // pict_seg is 
 // MoO2  Draw_Ship_Icon()
+/*
+
+Outpost_Screen_Draw()
+    Draw_Unit_StatFig(figure_x1, figure_y1, CTY_Garrison_Units[itr], 1);
+*/
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     uint8_t unit_type_idx;

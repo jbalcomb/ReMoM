@@ -102,8 +102,14 @@ void Clear_Bit_Field(int16_t bit_idx, uint8_t * bit_field);
 // WZD s22p28 UU_MEM_ClearBit_Near()
 // WZD s22p29 UU_DBG_SetSelectSetting()
 // WZD s22p30 UU_DBG_SelectDialog()
-// WZD s22p31 RP_VGA_GrowOutFlip()
-// WZD s22p32 RP_LBX_IMG_CpyDrawFrame()
+
+// WZD s22p31
+// drake178:  RP_VGA_GrowOutFlip()
+void PageFlip_GrowOut__WIP(int16_t x_start, int16_t y_start, int16_t counter, SAMB_ptr picture);
+
+// WZD s22p32 
+// drake178:  RP_LBX_IMG_CpyDrawFrame()
+void PageFlip_GrowOut_CopyScreen(byte_ptr picture_data);
 
 
 

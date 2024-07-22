@@ -1173,7 +1173,10 @@ void Process_Item_Pool(int16_t item_count, int16_t item_list[])
 
 
 // WZD o75p11
-// ~== Unit_Window_Picture_Coords()
+/*
+~== Unit_Window_Picture_Coords()
+~== Outpost_Garrison_Picture_Coords()
+*/
 void Item_Window_Picture_Coords(int16_t hero_slot_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2)
 {
     assert(_item_window_start_x == 17);

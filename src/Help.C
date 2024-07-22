@@ -157,6 +157,11 @@ void Set_Enemy_City_Screen_Help_List(void)
 
 // WZD o104p17
 // HLPENTRY.LBX  ""
+void Set_Outpost_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 17, (SAMB_ptr)_help_entries, 0, 4, 10);
+    Set_Help_List((char *)&_help_entries[0], 4);
+}
 
 // WZD o104p18
 // HLPENTRY.LBX  ""

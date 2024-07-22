@@ -1328,10 +1328,22 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 */
 
 // WZD o142p01
+// TILE_CreateRoad()
+
 // WZD o142p02
+// TILE_EnchantRoad()
+
 // WZD o142p03
+// LD_TILE_ResUpdate()
+
 // WZD o142p04
+// LD_CTY_ResRefresh()
+
 // WZD o142p05
+int16_t City_House_Count(int16_t city_idx)
+{
+    return _CITIES[city_idx].Pop_10s;
+}
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()
