@@ -202,7 +202,7 @@ MoO2: "dynamic refresh"
             && p_fields[field_num].type != ft_Input
             && p_fields[field_num].type != ft_ContinuousStringInput
             && !(down_mouse_button != ST_UNDEFINED && p_fields[field_num].type == ft_Grid && p_fields[down_mouse_button].type == ft_Grid )
-// `Endn Block: Do Push_Field_Down()`
+// `End Block: Do Push_Field_Down()`
         else
             field_num == down_mouse_button
             || p_fields[field_num].type == ft_Input
@@ -212,7 +212,7 @@ MoO2: "dynamic refresh"
         HERE:  field_num != 0, but did or didn't match down_mouse_button
 
 
-¿ there no code for (field_num type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE) ?
+¿ there is no code for (field_num type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE) ?
 so, the block bounds/entry condition is ... if( !( () && () ) )
 meaning, we do not need to handle exiting or entering or exiting & entering an edit-state
 
