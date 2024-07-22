@@ -342,6 +342,10 @@ else
 
 #### Section 9.2.3.1      Right-Click Movement Map - City - Own
 
+#### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost
+Outpost_Screen(0, target_world_x, target_world_y);
+
+#### Section 9.2.3.1.2      Right-Click Movement Map - City - Own - Non-Outpost
 
 
 #### Section 9.2.3.2      Right-Click Movement Map - City - Other
@@ -358,6 +362,8 @@ HERE:  entity == city
        _CITIES[_city_idx].owner_idx != _human_player_idx
 
 Enemy_City_Screen()
+
+
 
 
 

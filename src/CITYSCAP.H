@@ -64,10 +64,10 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
 void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type);
 
 // WZD o144p15
-// CTY_DrawOutpost()
+void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start);
 
 // WZD o144p16
-// CTY_DrawOutpostScape()
+void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start);
 
 
 

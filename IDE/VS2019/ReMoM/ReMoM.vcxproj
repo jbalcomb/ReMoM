@@ -139,6 +139,7 @@
     <ClInclude Include="..\..\..\src\MoX_Util.H" />
     <ClInclude Include="..\..\..\src\NewGame.H" />
     <ClInclude Include="..\..\..\src\NEXTTURN.H" />
+    <ClInclude Include="..\..\..\src\Outpost.H" />
     <ClInclude Include="..\..\..\src\paragrph.H" />
     <ClInclude Include="..\..\..\src\PNG_Draw.H" />
     <ClInclude Include="..\..\..\src\PNG_Load.H" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\..\..\src\MoX_Util.C" />
     <ClCompile Include="..\..\..\src\NewGame.C" />
     <ClCompile Include="..\..\..\src\NEXTTURN.C" />
+    <ClCompile Include="..\..\..\src\Outpost.C" />
     <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\ProdScr.C" />
     <ClCompile Include="..\..\..\src\RACETYPE.C" />

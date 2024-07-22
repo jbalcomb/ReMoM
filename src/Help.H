@@ -1294,6 +1294,7 @@ void Set_Mirror_Screen_Help_List(void);
 // WZD o104p16
 
 // WZD o104p17
+void Set_Outpost_Screen_Help_List(void);
 
 // WZD o104p18
 

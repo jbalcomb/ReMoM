@@ -37,10 +37,10 @@ char str_hotkey_Y__ovr055[] = "Y";
 char str_Plane[] = "plane";
 
 // WZD dseg:2CB2
-char str_TurnOffSpell_1[] = "Do you wish to turn off the \x02";
+char str_TurnOffSpell_1__ovr055[] = "Do you wish to turn off the \x02";
 
 // WZD dseg:2CD0
-char str_TurnOffSpell_2[] = "\x01 spell?";
+char str_TurnOffSpell_2__ovr055[] = "\x01 spell?";
 
 // WZD dseg:2CD9
 char str_Sp_Of_Sp[] = " of ";
@@ -257,41 +257,49 @@ void Enemy_City_Screen(void)
         }
 
 
-        for(itr = 0; itr < city_enchantment_display_count; itr++)
+        /*
+            BEGIN:  City Enchantment List  (=== ¿ City_Screen() ?, Enemy_City_Screen(), Outpost_Screen)
+        */
         {
-            if(
-                (city_enchantment_fields[itr] == input_field_idx)
-                &&
-                (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
-            )
+            for(itr = 0; itr < city_enchantment_display_count; itr++)
             {
-                // TODO  SND_LeftClickSound();
-                Deactivate_Help_List();
-                strcpy(GUI_String_1, str_TurnOffSpell_1);
-                strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
-                strcat(GUI_String_1, str_TurnOffSpell_2);
-                if(Confirmation_Box(GUI_String_1) == ST_TRUE)
+                if(
+                    (city_enchantment_fields[itr] == input_field_idx)
+                    &&
+                    (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
+                )
                 {
-                    // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
-                    Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
-                    city_enchantment_display_scroll_flag = ST_FALSE;
-                    if(city_enchantment_list_count > 6)
+                    // TODO  SND_LeftClickSound();
+                    Deactivate_Help_List();
+                    strcpy(GUI_String_1, str_TurnOffSpell_1__ovr055);
+                    strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
+                    strcat(GUI_String_1, str_TurnOffSpell_2__ovr055);
+                    if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
-                        city_enchantment_display_scroll_flag = ST_TRUE;
+                        // TODO  CTY_ClearEnchant(_city_idx, city_enchantment_list[(city_enchantment_display_first + itr)]);
+                        Build_City_Enchantment_List(_city_idx, &city_enchantment_list[0], &city_enchantment_owner_list[0], &city_enchantment_list_count);
+                        city_enchantment_display_scroll_flag = ST_FALSE;
+                        if(city_enchantment_list_count > 6)
+                        {
+                            city_enchantment_display_scroll_flag = ST_TRUE;
+                        }
+                        else
+                        {
+                            city_enchantment_display_first = 0;
+                        }
                     }
-                    else
-                    {
-                        city_enchantment_display_first = 0;
-                    }
+                    Deactivate_Auto_Function();
+                    Assign_Auto_Function(Enemy_City_Screen_Draw, 1);
+                    screen_changed = ST_TRUE;
+                    Reset_Map_Draw();
+                    Deactivate_Help_List();
+                    Set_Enemy_City_Screen_Help_List();
                 }
-                Deactivate_Auto_Function();
-                Assign_Auto_Function(Enemy_City_Screen_Draw, 1);
-                screen_changed = ST_TRUE;
-                Reset_Map_Draw();
-                Deactivate_Help_List();
-                Set_Enemy_City_Screen_Help_List();
             }
         }
+        /*
+            END:  City Enchantment List  (=== ¿ City_Screen() ?, Enemy_City_Screen(), Outpost_Screen)
+        */
 
 
         if(input_field_idx == city_up_button)

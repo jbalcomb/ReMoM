@@ -1702,7 +1702,169 @@ void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
 
 
 // WZD o144p15
-// CTY_DrawOutpost()
+/*
+; a wrapper for Outpost_Cityscape_Draw that sets an unused random seed and draws a border around the final image
+; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
+*/
+void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start)
+{
+    uint32_t LFSR;
+    int16_t city_wp;
+    int16_t city_wy;
+    int16_t city_wx;
+
+    // TODO  LFSR = Get_Random_Seed();
+
+    city_wx = _CITIES[city_idx].wx;
+    city_wy = _CITIES[city_idx].wy;
+    city_wp = _CITIES[city_idx].wp;
+
+// TODO  mov     ax, [bp+city_wx]                ; would fit into 16 bits, but unnecessary anyway
+// TODO  cwd
+// TODO  push    ax
+// TODO  mov     ax, [bp+city_wy]
+// TODO  push    dx
+// TODO  cwd
+// TODO  pop     cx
+// TODO  pop     bx
+// TODO  call    LXMUL@
+// TODO  add     ax, 10100010010101b
+// TODO  adc     dx, 0
+// TODO  push    dx                              ; LFSR_HI
+// TODO  push    ax                              ; LFSR_LO
+// TODO  call    Set_Random_Seed
+// TODO  pop     cx
+// TODO  pop     cx                              ; no randomness involved here
+
+
+    Outpost_Cityscape_Draw(city_idx, x_start, y_start);
+
+
+    cityscape_bldg_anim_ctr = ((cityscape_bldg_anim_ctr + 1) / 10);
+
+
+    // TODO  Set_Random_Seed(LFSR);  // BUGBUG  ; no randomness involved here
+
+
+    Line(x_start, y_start, (x_start + 71), y_start, 0);
+    Line(x_start, (y_start + 65), (x_start + 71), (y_start + 65), 0);
+    Line(x_start, y_start, x_start, (y_start + 65), 0);
+    Line((x_start + 71), y_start, (x_start + 71), (y_start + 65), 0);
+
+}
+
 
 // WZD o144p16
-// CTY_DrawOutpostScape()
+/*
+; draws the reduced cityscape of the outpost screen into the current draw segment
+; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
+*/
+void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
+{
+    int16_t race_house_type;
+    int16_t itr_anim;
+    int16_t city_wp;
+    int16_t city_wy;
+    int16_t city_wx;
+
+    city_wx = _CITIES[city_idx].wx;
+    city_wy = _CITIES[city_idx].wy;
+    city_wp = _CITIES[city_idx].wp;
+
+    Set_Window(x_start, y_start, (x_start + 65), (y_start + 71));
+
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
+    {
+        // ; BUG: this is not an actual image
+        FLIC_Set_CurrentFrame(cityscape_gaiasblessing_mask_seg, 0);
+        Clipped_Draw((x_start - 65), y_start, cityscape_gaiasblessing_mask_seg);
+    }
+    else if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] != 0)
+    {
+        // ; BUG: this is not an actual image
+        FLIC_Set_CurrentFrame(cityscape_flyingfortress_mask_seg, 0);
+        Clipped_Draw((x_start - 65), y_start, cityscape_flyingfortress_mask_seg);
+    }
+    else
+    {
+        FLIC_Set_CurrentFrame(cityscape_background_arcanus_ground_seg, 0);
+        Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_ground_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[FAMINE] != 0)
+    {
+        FLIC_Set_CurrentFrame(cityscape_famine_mask_seg, 0);
+        Clipped_Draw((x_start - 65), y_start, cityscape_famine_mask_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[CURSED_LANDS] != 0)
+    {
+        FLIC_Set_CurrentFrame(cityscape_cursedland_mask_seg, 0);
+        Clipped_Draw((x_start - 65), y_start, cityscape_cursedland_mask_seg);
+    }
+
+    if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] == 0)
+    {
+        if(
+            (Terrain_Is_Mountain((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Mountain( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Mountain((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Mountain( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
+        )
+        {
+            FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);
+            Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_mountain_seg);
+        }
+        else if(
+            (Terrain_Is_Hills((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Hills( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Hills((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Terrain_Is_Hills( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
+        )
+        {
+            FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);  // BUGBUG  c&p error?
+            Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_hills_seg);
+        }
+
+    }
+
+    if(_CITIES[city_idx].enchantments[CLOUD_OF_SHADOW] != 0)
+    {
+        FLIC_Set_CurrentFrame(cityscape_background_arcanus_darkcloud_seg, 0);
+        for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
+        {
+
+            Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_darkcloud_seg);
+        }
+    }
+
+    if(_CITIES[city_idx].enchantments[HEAVENLY_LIGHT] != 0)
+    {
+        FLIC_Set_CurrentFrame(cityscape_background_arcanus_alkar_seg, 0);
+        for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
+        {
+
+            Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_alkar_seg);
+        }
+    }
+
+    if(_CITIES[city_idx].enchantments[CHAOS_RIFT] != 0)
+    {
+        FLIC_Set_CurrentFrame(cityscape_background_arcanus_chaosrift_seg, 0);
+        for(itr_anim = 0; itr_anim < cityscape_bldg_anim_ctr; itr_anim++)
+        {
+
+            Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_chaosrift_seg);
+        }
+    }
+
+
+    race_house_type = _race_type_table[_CITIES[city_idx].race].house_type;
+
+    FLIC_Set_CurrentFrame(cityscape_houses_seg[(race_house_type * 10)], 0);
+
+    Clipped_Draw((x_start + 30), (y_start + 30), cityscape_houses_seg[(race_house_type * 10)]);
+
+    Reset_Window();
+
+}

@@ -2620,7 +2620,9 @@ extern SAMB_ptr cityscape_roads_seg;
 // WZD dseg:9358 00 00                                           IMG_CTY_NatWard@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+257w ...
 // WZD dseg:935A 00 00                                           IMG_CTY_ChaosWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+240w ...
 // WZD dseg:935C 00 00                                           IMG_CTY_DeathWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+229w ...
-// WZD dseg:935E 00 00                                           IMG_CTY_FamineMask@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+12Cw ...
+
+// WZD dseg:935E
+extern SAMB_ptr cityscape_famine_mask_seg;
 
 // WZD dseg:9360
 // drake178: IMG_CTY_Arc_CRift@
@@ -2650,10 +2652,14 @@ extern SAMB_ptr cityscape_background_arcanus_ocean_seg;
 // drake178: IMG_CTY_Arc_River@
 extern SAMB_ptr cityscape_background_arcanus_river_seg;
 
-// WZD dseg:936E 00 00                                           IMG_CTY_CursedLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+74w ...
-// WZD dseg:9370 00 00                                           IMG_CTY_LivingLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+5Dw
-// WZD dseg:9372 00 00                                           IMG_CTY_GaiasMask@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+46w ...
-// WZD dseg:9374 00 00                                           IMG_CTY_FlyFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+2Fw ...
+// WZD dseg:936E
+extern SAMB_ptr cityscape_cursedland_mask_seg;
+// WZD dseg:9370
+extern SAMB_ptr cityscape_livinglands_mask_seg;
+// WZD dseg:9372
+extern SAMB_ptr cityscape_gaiasblessing_mask_seg;
+// WZD dseg:9374
+extern SAMB_ptr cityscape_flyingfortress_mask_seg;
 
 // WZD dseg:9376
 // drake178: IMG_CTY_Arc_BGs@
@@ -3354,9 +3360,13 @@ extern SAMB_ptr _screen_seg;
 
 // WZD dseg:9990
 // _current_screen
-// WZD dseg:9992 RP_GUI_GrowOutFrames dw 0               ; DATA XREF: VGA_PageFlip_FX+41r ...
-// WZD dseg:9994 RP_GUI_GrowOutTop dw 0                  ; DATA XREF: VGA_PageFlip_FX+45r ...
-// WZD dseg:9996 RP_GUI_GrowOutLeft dw 0                 ; DATA XREF: VGA_PageFlip_FX+49r ...
+
+// WZD dseg:9992
+extern int16_t GrowOutFrames;
+// WZD dseg:9994
+extern int16_t GrowOutTop;
+// WZD dseg:9996
+extern int16_t GrowOutLeft;
 
 // WZD dseg:9998
 // AKA TBL_Events

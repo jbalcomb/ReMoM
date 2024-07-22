@@ -174,7 +174,7 @@ void PageFlip_FX(void)
         } break;
         case 4:
         {
-            // TODO  RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
+            PageFlip_GrowOut__WIP(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
         } break;
         default:
         {
