@@ -464,7 +464,12 @@ int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string
 ; the rest of the controls, albeit that results in
 ; reduced functionality (e.g. no positioning)
 */
-int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, char * help, int16_t shadow)
+/*
+
+save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED);
+
+*/
+int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow)
 {
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
@@ -479,7 +484,7 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
     p_fields[fields_count].string = string;
     p_fields[fields_count].marker_picture = marker_picture;
     p_fields[fields_count].fill_color = fill_color;
-    p_fields[fields_count].Param6 = shadow;
+    p_fields[fields_count].shadow = shadow;
     p_fields[fields_count].type = ft_ContinuousStringInput;
     fields_count += 1;
     return (fields_count - 1);

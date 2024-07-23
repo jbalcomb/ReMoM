@@ -27,8 +27,9 @@
 #define SCREEN_HEIGHT   200
 
 
-#define NUM_SAVES              8
 #define NUM_SAVE_SLOTS         8
+#define NUM_SAVES              8
+#define NUM_SAVE_GAME_FILES    9
 #define NUM_HOF_ENTRIES       10
 
 #define LEN_STRING            30

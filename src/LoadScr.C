@@ -207,22 +207,18 @@ void Load_Screen(void)
     char found_file[20];
     char buffer2[16];
     char match_string[16];
-    int16_t save_slot_fields[8];
-    int16_t loaded_game_flag;
+    int16_t save_slot_fields[NUM_SAVE_SLOTS];
+    int16_t loaded_game_flag;  // DNE in MGC
     int16_t first_draw_done_flag;
-// Left= word ptr -0Ah
     int16_t x_start;
-    int16_t y_start;
     int16_t input_field_idx;
     int16_t hotkey_ESC;
-// var_4= word ptr -4
-    int16_t leave_screen_flag;
-    int16_t itr;
-    int16_t itr_save_slot_input_field_array;
-
-    int16_t itr_save_slot_fields;
     int16_t itr_save_game_count;
-
+    int16_t leave_screen_flag;
+    int16_t itr_save_slot_fields;  // _SI_
+    int16_t y_start;  // _DI_
+    int16_t itr;  // _SI_
+    int16_t itr_save_slot_input_field_array;  // _SI_
 
     loaded_game_flag = ST_FALSE;
 
@@ -232,18 +228,14 @@ void Load_Screen(void)
     if(loadsave_settings_flag != 3)  /* 3 indicates returning from the settings screen */
     {
         Fade_Out();
-        Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_On();
-        Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_Off();
         Load_Palette(1, -1, 0);  // LOADSAVE - load save palette
     }
     else
     {
-        // if(loadsave_settings_flag != 3)
-        // {
-        //     loadsave_settings_flag = ST_UNDEFINED;
-        // }
         loadsave_settings_flag = ST_UNDEFINED;
     }
 
@@ -261,25 +253,23 @@ void Load_Screen(void)
     // LOAD.LBX, 011  SETTING2    Settings Backgrnd
     // LOAD.LBX, 012  LOADSAVE    Settings button
 
-    loadsave_background = LBX_Reload(     load_lbx_file,  0, _screen_seg);
-    quit_active         = LBX_Reload_Next(load_lbx_file,  2, _screen_seg);
-    load_active         = LBX_Reload_Next(load_lbx_file,  1, _screen_seg);
-    save_active         = LBX_Reload_Next(load_lbx_file,  3, _screen_seg);
-    ok_active           = LBX_Reload_Next(load_lbx_file,  4, _screen_seg);
-
+    loadsave_background     = LBX_Reload(     load_lbx_file,  0, _screen_seg);
+    quit_active             = LBX_Reload_Next(load_lbx_file,  2, _screen_seg);
+    load_active             = LBX_Reload_Next(load_lbx_file,  1, _screen_seg);
+    save_active             = LBX_Reload_Next(load_lbx_file,  3, _screen_seg);
+    ok_active               = LBX_Reload_Next(load_lbx_file,  4, _screen_seg);
     // DNE  Quit inactive
-    load_inactive       = LBX_Reload_Next(load_lbx_file,  6, _screen_seg);
-    save_inactive       = LBX_Reload_Next(load_lbx_file,  7, _screen_seg);
+    load_inactive           = LBX_Reload_Next(load_lbx_file,  6, _screen_seg);  // WZD uses entry 5 for load_inactive
+    save_inactive           = LBX_Reload_Next(load_lbx_file,  7, _screen_seg);
     // DNE  Ok   inactive
-
-    loadsave_text_fill_seg           = LBX_Reload_Next(load_lbx_file,  9, _screen_seg);
-    selection_marker    = LBX_Reload_Next(load_lbx_file, 10, _screen_seg);
-    settings_button     = LBX_Reload_Next(load_lbx_file, 12, _screen_seg);
+    loadsave_text_fill_seg  = LBX_Reload_Next(load_lbx_file,  9, _screen_seg);
+    selection_marker        = LBX_Reload_Next(load_lbx_file, 10, _screen_seg);
+    settings_button         = LBX_Reload_Next(load_lbx_file, 12, _screen_seg);
 
 
     save_game_count = 0;
     
-    for(itr = 1; itr < 9; itr++)
+    for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
         itoa(itr, buffer2, 10);
@@ -297,56 +287,32 @@ void Load_Screen(void)
     }
 
 
-        leave_screen_flag = ST_FALSE;    // BUG: set below
-        selected_load_game_slot_idx = ST_UNDEFINED;    // BUG: set below  // controls drawing of load_active : load_inactive
-        selected_save_game_slot_idx = ST_UNDEFINED;  // controls drawing of save_active : save_inactive
-        first_draw_done_flag = ST_FALSE;
+    leave_screen_flag = ST_FALSE;    // BUG: set below
+    selected_load_game_slot_idx = ST_UNDEFINED;    // BUG: set below  // controls drawing of load_active : load_inactive
+    selected_save_game_slot_idx = ST_UNDEFINED;  // controls drawing of save_active : save_inactive
+    first_draw_done_flag = ST_FALSE;
 
-        x_start = 43;   // ; start X for Quit, Load, Save buttons
-        y_start = 171;  // ; start Y for Quit, Load, Save buttons
+    x_start = 43;   // ; start X for Quit, Load, Save buttons
+    y_start = 171;  // ; start Y for Quit, Load, Save buttons
 
-        Set_Mouse_List(1, mouse_list_loadsave);
+    Set_Mouse_List(1, mouse_list_loadsave);
 
-        Clear_Fields();
+    Clear_Fields();
 
-        hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
+    hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
 
-        loadsave_quit_button      = Add_Hidden_Field((x_start +   0), y_start, (x_start +  39), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-        loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-        loadsave_save_button      = Add_Hidden_Field((x_start + 122), y_start, (x_start + 159), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-        loadsave_ok_button        = Add_Hidden_Field((x_start + 231), y_start, (x_start + 270), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-        loadsave_settings_button  = Add_Hidden_Field((x_start + 172), y_start, (x_start + 229), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_quit_button      = Add_Hidden_Field((x_start +   0), y_start, (x_start +  39), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_save_button      = Add_Hidden_Field((x_start + 122), y_start, (x_start + 159), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_ok_button        = Add_Hidden_Field((x_start + 231), y_start, (x_start + 270), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_settings_button  = Add_Hidden_Field((x_start + 172), y_start, (x_start + 229), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
 
-        Set_Font_Style(3, 1, 3, ST_NULL);
+    Set_Font_Style(3, 1, 3, ST_NULL);
 
-        // TODO  WZD vs. MGC
-//         // ~== MGC
-//         // if previous_screen == scr_Menu_Screen
-//         for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
-//         {
-//             // save_slot_fields[itr_save_slot_fields] = -1000
-//         }
-//         for(itr_save_slot_fields = 0; save_game_count < 8; itr_save_slot_fields++)
-//         {
-//             // save_slot_fields[save_game_slots__[itr_save_slot_fields]] = Add_Hidden_Field(x1_QuitLoadSave, ((save_game_slots__[itr_save_slot_fields] * 15) + 47), (x1_QuitLoadSave + 220), ((save_game_slots__[itr_save_slot_fields] * 15) + 56), cnst_ZeroString_7, -1)
-//         }
-//         
-//         // ~== WZD
-//         for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
-//         {
-//             // drake178: GUI_CreateEditSelect()
-//             // TODO  save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(start_x, (start_y + (itr_save_slot_fields * 15) + 47), 260, magic_set.Save_Names[itr_save_slot_fields * 20], 19, 0, selection_marker, ST_UNDEFINED);
-//         }
-        for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
-        {
-            // TODO  save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (y_start + (itr_save_slot_fields * 15) + 47), 260, magic_set.Save_Names[itr_save_slot_fields], 19, 0, selection_marker, ST_UNDEFINED);
-            save_slot_fields[itr_save_slot_fields] = INVALID_FIELD;
-        }
-
-    // MGC
-    // _settings_button = Add_Hidden_Field(172, y1_QuitLoadSave, 229, (y1_QuitLoadSave + 13), cnst_ZeroString_7, -1);
-
-
+    for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
+    {
+        save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED, ST_NULL);
+    }
 
     selected_load_game_slot_idx = ST_UNDEFINED;  // BUG: set above
 
@@ -370,7 +336,7 @@ void Load_Screen(void)
                 check that slot index against the indices of existing save games
                     if matched, set flag to draw load button
         */
-        for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
+        for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
         {
             if(save_slot_fields[itr_save_slot_fields] == input_field_idx)
             {
@@ -394,7 +360,7 @@ void Load_Screen(void)
             // DONT  loadsave_settings_flag = ST_UNDEFINED;
             // DONT  s01p15_Empty_pFxn();
             // DONT  Save_SAVE_GAM(8);
-            // DONT  GAME_EXE_Swap(cnst_MAGIC_EXE_File3, cnst_MAGICEXE_arg0_3, empty_string__ovr160, empty_string__ovr160);
+            // DONT  GAME_EXE_Swap("MAGIC.EXE", "JENNY", empty_string__ovr160, empty_string__ovr160);
 
             loadsave_settings_flag = ST_UNDEFINED;
             Save_SAVE_GAM(8);
@@ -431,22 +397,20 @@ void Load_Screen(void)
         /*
             Settings Screen
         */
-// TODO         if(input_field_idx == loadsave_settings_button)
-// TODO         {
-// TODO             loadsave_settings_flag = 2;
-// TODO             Settings_Screen();
-// TODO             leave_screen_flag = ST_TRUE;
-// TODO         }
+        if(input_field_idx == loadsave_settings_button)
+        {
+            // TODO  loadsave_settings_flag = 2;
+            // TODO  Settings_Screen();
+            // TODO  leave_screen_flag = ST_TRUE;
+        }
 
 
         if(leave_screen_flag == ST_FALSE)
         {
-            DLOG("(leave_screen_flag == ST_FALSE)");
             Load_Screen_Draw();
             Toggle_Pages();
             if( (load_screen_fade_in_flag != ST_FALSE) && (first_draw_done_flag == ST_FALSE) )
             {
-                DLOG("( (load_screen_fade_in_flag != ST_FALSE) && (first_draw_done_flag == ST_FALSE) )");
                 Copy_On_To_Off_Page();
                 if(loadsave_settings_flag != 3)
                 {
@@ -477,9 +441,9 @@ void Load_Screen(void)
     {
         PageFlipEffect = 2;
         Fade_Out();
-        Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_On();
-        Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_Off();
         // HERE: set the palette back to the /normal/ palette
         Load_Palette(0, -1, ST_NULL);  // EMPERATO - main game palette
@@ -554,7 +518,7 @@ void Load_Screen_Draw(void)
 
     for(itr_save_gam = 0; itr_save_gam < save_game_count; itr_save_gam++)
     {
-        FLIC_Draw(x_start, (47 + (15 * save_game_slots[itr_save_gam])), loadsave_text_fill_seg);
+        FLIC_Draw(x_start, (47 + (save_game_slots[itr_save_gam] * 15)), loadsave_text_fill_seg);
     }
 
 
@@ -632,12 +596,12 @@ void Load_Screen_Draw(void)
 }
 
 // WZD o160p03
+// HLPENTRY.LBX,  26  "Load Screen Help"
+// HLPENTRY.LBX,  27  "Save Screen Help"
 void Load_Screen_Help(void)
 {
-    // TODO  add manifest-constant for help entry record size
-    // TODO  add manifest-constant for help list count
     LBX_Load_Data_Static(cnst_HLPENTRY_File8, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
-    Set_Help_List((char *)&_help_entries[0], 27);  // TODO  ¿ bug - someone put entry_num instead of help_count ?
+    Set_Help_List((char *)&_help_entries[0], 27);  // ¿ BUGBUG - someone put entry_num instead of help_count ?
 }
 
 // WZD o160p04

@@ -618,7 +618,7 @@ int16_t Auto_Input(void);
 int16_t Add_Input_Field(int16_t x, int16_t y, int16_t Width, char * Text, int16_t MaxL, int16_t BGCol, SAMB_ptr S_Img, char * help, int16_t Style);
 
 // WZD s36p35
-int16_t Add_Continuous_String_Input_Field(int16_t x, int16_t y, int16_t Width, char * Text, int16_t MaxL, int16_t BGCol, SAMB_ptr S_Img, char * help, int16_t Style);
+int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);
 
 // WZD s36p36
 // UU_GUI_Ctrl_DecHeight();
