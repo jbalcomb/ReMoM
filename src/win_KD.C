@@ -157,12 +157,12 @@ uint8_t Read_Key(void)
         case SCCC_EQUALS: { return_key = '='; } break;
         case SCCC_PLUS:   { return_key = '+'; } break;
 
-        // BackSpace   0E08
+        case SCCC_BACKSPACE: { return_key = ST_KEY_BACKSPACE; } break;
         // Del         5300
-        case SCCC_KP_2:     { return_key = ST_KEY_DOWN; } break;
-        case SCCC_DOWN:     { return_key = ST_KEY_DOWN; } break;
-        case SCCC_KP_1:     { return_key = ST_KEY_LEFTDOWN; } break;
-        case SCCC_DOWNLEFT: { return_key = ST_KEY_LEFTDOWN; } break;
+        case SCCC_KP_2:     { return_key = ST_KEY_DOWN;       } break;
+        case SCCC_DOWN:     { return_key = ST_KEY_DOWN;       } break;
+        case SCCC_KP_1:     { return_key = ST_KEY_LEFTDOWN;   } break;
+        case SCCC_DOWNLEFT: { return_key = ST_KEY_LEFTDOWN;   } break;
         // Enter       1C0D
         // Esc         011B
         case SCCC_KP_7:     { return_key = ST_KEY_LEFTUP; } break;

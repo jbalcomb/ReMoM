@@ -4,6 +4,36 @@ Mouse
 
 
 
+
+
+IDA Colors
+Keyboard
+Keyboard Debug Keys     light grey #46
+Mouse           
+Mouse Button Loop       bright green #11
+Mouse Buffer    dark purple #40
+...
+    as of 20240725, in Input.C Interpret_Mouse_Input()
+        ProgramPath (Button-Up) - @@EndOfTheClickRoad
+            IDA Color #14 ~ DarkSkyBlue
+            5 incoming branches
+        ProgramPath - Nay KD, Yay MD, Nay Help, Nay Cancel, Yay Button, Yay Field
+            Color #45  64,128,128  ~ Light Forest Green
+        ProgramPath - Nay KD, Yay MD, Nay Help, Nay Cancel, Yay Button, Yay Field, YNM ft_ContinuousStringInput
+            Color #15  128,128,192  ~ Light Grey-Purple
+        ProgramPath - Mouse_Buffer()
+            Color #34 128,64,0 ~PooEmoji Brown
+            20240725: started changing to dark purple #40  SEEALSO: MoX-Input.md
+hunter green #35  Keyboard Hot-Keys
+hunter green #36  ENTER as *click*
+
+
+
+
+
+
+
+
 ¿ UI *Behaviors* ?
 Left Button
 Right Button

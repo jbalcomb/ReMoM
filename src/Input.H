@@ -350,7 +350,7 @@ F12     8600        8800      8A00    8C00
 */
     SCCC_F10 = 0x4400,      // "F10" key
 
-    // BackSpace   0E08
+    SCCC_BACKSPACE = 0x0E08,    // BackSpace
     // Del         5300
     SCCC_KP_2       = 0x5000,   // Numeric Keypad 2 (Down)
     SCCC_DOWN       = 0x50E0,   // Down Arrow  ||  NumLock + Numeric Keypad 2 (Down)

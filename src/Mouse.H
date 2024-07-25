@@ -186,10 +186,10 @@ int16_t Mouse_Buffer(void);
 int16_t Mouse_Buffer2(void);
 
 // WZD s35p27
-// RP_MOUSE_SetSecClick()
+void Set_Buffer_2(int16_t x, int16_t y);
 
 // WZD s35p28
-// UU_MOUSE_GenerateClick()
+void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);
 
 // WZD s35p29
 void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);

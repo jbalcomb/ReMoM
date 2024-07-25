@@ -278,6 +278,7 @@ int16_t active_input_field_number = ST_UNDEFINED;
 // WZD dseg:829F UU_cnst_WB8 db 'wb',0                   
 // WZD dseg:82A2 UU_GUI_Up_Hotkey db 5, 0                
 // WZD dseg:82A4 UU_GUI_Down_Hotkey db 6, 0              
+
 // WZD dseg:82A6
 char GUI_EditCursor[] = "_";
 
@@ -1122,10 +1123,10 @@ void Draw_Fields()
                             Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
                         }
                         
-                        Text_Change = 0;
+                        Text_Change = ST_FALSE;
                         if((GUI_EditAnimStage / 2) != GUI_EditCursorOn)
                         {
-                            Text_Change = 1;
+                            Text_Change = ST_TRUE;
                         }
                         GUI_EditCursorOn = (GUI_EditAnimStage / 2);
                         GUI_EditAnimStage++;
@@ -1138,15 +1139,31 @@ void Draw_Fields()
                         {
                             if(GUI_EditCursorOn != 0)
                             {
-                                while(continuous_string[itr_continuous_string] != '\0' && itr_continuous_string < p_fields[itr_fields_count].Param5) { itr_continuous_string++; }
-                                if((p_fields[itr_fields_count].Param5 - 1) > itr_continuous_string)
+                                itr_continuous_string = 0;
+                                while(
+                                    (continuous_string[itr_continuous_string] != '\0')
+                                    &&
+                                    (itr_continuous_string < p_fields[itr_fields_count].max_characters)
+                                )
+                                {
+                                    itr_continuous_string++;
+                                }
+                                if((p_fields[itr_fields_count].max_characters - 1) > itr_continuous_string)
                                 {
                                     strcat(continuous_string, GUI_EditCursor);  // "_"
                                 }
                             }
                             else
                             {
-                                while(continuous_string[itr_continuous_string] != '_' && itr_continuous_string < p_fields[itr_fields_count].Param5) { itr_continuous_string++; }
+                                itr_continuous_string = 0;
+                                while(
+                                    (continuous_string[itr_continuous_string] != '_')
+                                    &&
+                                    (itr_continuous_string < p_fields[itr_fields_count].max_characters)
+                                )
+                                {
+                                    itr_continuous_string++;
+                                }
                                 continuous_string[itr_continuous_string] = '\0';
                             }
                         }
@@ -1268,6 +1285,11 @@ signed integer (2 bytes) temp_value
 // ¿ Is the code here for `case ft_Grid` the same as in Scan_Input() ?
 
 // WZD s36p72
+/*
+
+up_down_flag    {0: Up, 1: Down}  ~== Down: {F,T}
+
+*/
 void Draw_Field(int16_t field_num, int16_t up_down_flag)
 {
     int16_t Half_Font_Height;

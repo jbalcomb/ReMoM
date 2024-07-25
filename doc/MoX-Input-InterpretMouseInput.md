@@ -1,6 +1,15 @@
 
 
 
+[ ] Yay KD
+    [x] Keyboard Hot-Key
+    [ ] ST_ENTER
+        [ ] ST_ENTER && Nay input_field_active
+        [ ] ST_ENTER && Yay input_field_active
+
+
+
+
 
 Return Types
 
@@ -36,6 +45,19 @@ Handle Keyboard Input:
     or just field_num
     ...
     hard-coded hot-keys
+
+
+
+
+## _SI_alt_field_num
+
+Assignments:
+    _SI_alt_field_num = active_input_field_number
+    _SI_alt_field_num = Scan_Field()
+    _SI_alt_field_num = 1
+    _SI_alt_field_num = Scan_Field()
+    _SI_alt_field_num = 1
+    _SI_alt_field_num += 1
 
 
 

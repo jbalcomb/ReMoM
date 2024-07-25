@@ -369,27 +369,41 @@ int16_t Mouse_Buffer_Button(void)
 // WZD s35p25
 int16_t Mouse_Buffer(void)
 {
-    int16_t temp;
-    temp = mouse_buffer_flag;
+    int16_t value;
+    value = mouse_buffer_flag;
     mouse_buffer_flag = ST_FALSE;
-    return temp;
+    return value;
 }
 
 
 // WZD s35p26
 int16_t Mouse_Buffer2(void)
 {
-    int16_t temp;
-    temp = mouse_buffer_flag2;
+    int16_t value;
+    value = mouse_buffer_flag2;
     mouse_buffer_flag2 = ST_FALSE;
-    return temp;
+    return value;
 }
 
 // WZD s35p27
-// RP_MOUSE_SetSecClick()
+void Set_Buffer_2(int16_t x, int16_t y)
+{
+    mouse_buffer_flag2 = ST_TRUE;
+    mouse_buffer_x = x;
+    mouse_buffer_y = y;
+}
+
 
 // WZD s35p28
-// UU_MOUSE_GenerateClick()
+void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
+{
+    mouse_buffer_flag2 = ST_TRUE;
+    mouse_buffer_flag = ST_TRUE;
+    mouse_buffer_x = x;
+    mouse_buffer_y = y;
+    mouse_buffer_button = buttons;
+}
+
 
 // WZD s35p29
 void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)

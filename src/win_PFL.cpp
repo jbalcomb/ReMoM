@@ -38,7 +38,7 @@ uint16_t VK_to_SCCS[256] = {
     /*   5 0x05 */  0x0000,
     /*   6 0x06 */  0x0000,
     /*   7 0x07 */  0x0000,
-    /*   8 0x08 */  0x0000,
+    /*   8 0x08 */  SCCC_BACKSPACE, /* VK_BACK */
     /*   9 0x09 */  0x0000,
     /*  10 0x0A */  0x0000,
     /*  11 0x0B */  0x0000,
@@ -57,20 +57,20 @@ uint16_t VK_to_SCCS[256] = {
     /*  24 0x18 */  0x0000,
     /*  25 0x19 */  0x0000,
     /*  26 0x1A */  0x0000,
-    /*  27 0x1B */  SCCC_ESC,  /* VK_ESCAPE */
+    /*  27 0x1B */  SCCC_ESC,       /* VK_ESCAPE */
     /*  28 0x1C */  0x0000,
     /*  29 0x1D */  0x0000,
     /*  30 0x1E */  0x0000,
     /*  31 0x1F */  0x0000,
-    /*  32 0x20 */  0x3920,  /* VK_SPACE */
+    /*  32 0x20 */  0x3920,         /* VK_SPACE */
     /*  33 0x21 */  0x0000,
     /*  34 0x22 */  0x0000,
     /*  35 0x23 */  0x0000,
     /*  36 0x24 */  0x0000,
-    /*  37 0x25 */  SCCC_LEFT,  /* VK_LEFT */
-    /*  38 0x26 */  SCCC_UP, /* VK_UP */
-    /*  39 0x27 */  SCCC_RIGHT, /* VK_RIGHT */
-    /*  40 0x28 */  SCCC_DOWN, /* VK_DOWN */
+    /*  37 0x25 */  SCCC_LEFT,      /* VK_LEFT  */
+    /*  38 0x26 */  SCCC_UP,        /* VK_UP    */
+    /*  39 0x27 */  SCCC_RIGHT,     /* VK_RIGHT */
+    /*  40 0x28 */  SCCC_DOWN,      /* VK_DOWN  */
     /*  41 0x29 */  0x0000,
     /*  42 0x2A */  0x0000,
     /*  43 0x2B */  0x0000,

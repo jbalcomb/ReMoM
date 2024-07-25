@@ -83,8 +83,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     Init_Platform(hInstance, nCmdShow);
 
 
-    // Release_Version();
-    // Set_Global_ESC();
+    Release_Version();
+    Enable_Cancel();
 
 
     // MoO2  Module: ALLOC  Allocate_Data_Space()

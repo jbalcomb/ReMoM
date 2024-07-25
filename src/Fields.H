@@ -48,6 +48,13 @@ sprintf(v13, (char*)ESTRINGS_E_Strings_(42));
 */
 
 
+
+enum e_Field_Draw_State
+{
+    DRAW_FIELD_UP    = 0,
+    DRAW_FIELD_DOWN  = 1
+};
+
 enum e_Scroll_Field_Orientation
 {
     fo_Horizontal,
@@ -87,8 +94,8 @@ struct s_Field
     /* 02 */ int16_t y1;         // 
     /* 04 */ int16_t x2;         // 
     /* 06 */ int16_t y2;         // 
-    /* 08 */ int16_t type;       // 
-    /* 0A */ int16_t help;       // 
+    /* 08 */ int16_t type;       // enum e_Field_Type
+    /* 0A */ int16_t help;       // ¿ Help Array/Table Index ?
     /* 0C */ int16_t font_style_num;        // "style_num"
     /* 0E */ int16_t font_normal_color;     // ¿ normal colors ?
     /* 10 */ int16_t Rect_FX;    // 
@@ -96,44 +103,45 @@ struct s_Field
     /* 14 */ int16_t font_highlight_color;  // ¿ highlight colors ?
     union {
         int16_t Param0;
-        char * string;      //  4  ft_input  11  ft_ContinuousStringInput
-        int16_t min_valid;  //  6  ft_Scroll
-        // Parent
+        char * string;              //  4  ft_input         11  ft_ContinuousStringInput
+        int16_t min_valid;          //  6  ft_Scroll
+        int16_t parent;             //  9  ft_ClickLink
     };
     union {
         int16_t Param1;
-        int16_t max_valid;        //  6  ft_Scroll
-        int16_t string_pos;       //  8  ft_MultiHotKey
-        SAMB_ptr marker_picture;  // 11  ft_ContinuousStringInput
+        int16_t max_valid;          //  6  ft_Scroll
+        int16_t string_pos;         //  8  ft_MultiHotKey
+        SAMB_ptr marker_picture;    // 11  ft_ContinuousStringInput
     };
     union {
         int16_t Param2;
-        int16_t fill_color;         //  4  ft_input  11  ft_ContinuousStringInput
-        // uint16_t sgmt_variable;  //  6  ft_Scroll
+        int16_t state;              //  1  ft_RadioButton    2  ft_LockedButton
+        int16_t fill_color;         //  4  ft_input         11  ft_ContinuousStringInput
+        // uint16_t var_segment;  //  6  ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
         int16_t string_len;         //  8  ft_MultiHotKey
     };
     union {
         int64_t Param3;
-        int16_t justification;    //  4  ft_Input
-        int16_t min_value;        //  6  ft_scroll
+        int16_t justification;      //  4  ft_Input
+        int16_t min_value;          //  6  ft_scroll
     };
     union {
-            int64_t Param4;       // MaxSlide      CStyle                                               ypos
-            int16_t cursor_type;  //  4  ft_Input
-            int16_t max_value;    //  6  ft_scroll
+            int64_t Param4;         // MaxSlide      CStyle                                               ypos
+            int16_t cursor_type;    //  4  ft_Input
+            int16_t max_value;      //  6  ft_scroll
     };
     union {
         int16_t  Param5;
-        SAMB_ptr pict_seg;        //  1 ft_Button
-        int16_t  max_characters;  //  4 ft_Input  11 ft_ContinuousStringInput
-        int16_t  orientation;     //  6 ft_Scroll enum e_Scroll_Field_Orientation {H,V}
+        SAMB_ptr pict_seg;          //  1 ft_Button
+        int16_t  max_characters;    //  4 ft_Input  11 ft_ContinuousStringInput
+        int16_t  orientation;       //  6 ft_Scroll enum e_Scroll_Field_Orientation {H,V}
     };
     union {
         int16_t Param6;
-        uint8_t * color_array;    //  4  ft_Input
-        // uint16_t ofst_variable;  // ft_Scroll
-        int16_t * variable;       //  6  ft_Scroll
-        int16_t shadow;           // 11  ft_ContinuousStringInput
+        uint8_t * color_array;      //  4  ft_Input
+        // uint16_t var_offset;  // ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
+        int16_t * variable;         //  6  ft_Scroll
+        int16_t shadow;             // 11  ft_ContinuousStringInput
     };
 
     /* 24 */ int16_t hotkey;     // ASCII Character *Code*

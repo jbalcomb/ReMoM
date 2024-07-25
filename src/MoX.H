@@ -27,9 +27,9 @@ extern "C" {
     MoX_DBG.C/.H
 */
 // WZD s24p01
-// DBG_Quit();
+void F11_Key__WIP(void);
 // WZD s24p02
-// DBG_ScreenDump();
+void Screen_Flic_Capture__STUB(void);
 // WZD s24p03
 // VGA_GetDACBlock();
 // WZD s24p04

@@ -317,6 +317,7 @@ Color #15  128,128,192  ~ Light Grey-Purple
 
 ProgramPath - Mouse_Buffer()
 Color #34 128,64,0 ~PooEmoji Brown
+20240725: started changing to dark purple #40  SEEALSO: MoX-Input.md
 
 */
 int16_t Interpret_Mouse_Input(void)
@@ -358,6 +359,7 @@ MoO2
     int16_t mouse_field;
     int16_t MD_ButtonStatus;
     uint16_t itr_continuous_string;
+    int16_t Accepted_Char;
     /*
         _SI_YNM_itr_fields_count__scanned_field
             return by @@UnsetDownMouseButton_Return_ITR
@@ -405,26 +407,22 @@ MoO2
     {
         character = Interpret_Keyboard_Input(&field_num);
 
-        if ((character == '+') || (character == '-'))
-        {
-            // __debugbreak();
-        }
-
         if(character == 0)
         {
-            goto Return_Type_Z2;
+            goto Return_Type_Z01;
         }
+
 
         if(character == ST_KEY_F11)
         {
-            // TODO  DBG_Quit();
+            F11_Key__WIP();
         }
         
         if(character == ST_KEY_F12)
         {
             Save_Mouse_State();
             Restore_Mouse_On_Page();
-            // TODO  DBG_ScreenDump();
+            Screen_Flic_Capture__STUB();
             Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
             Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
             Set_Pointer_Position(Pointer_X(), Pointer_Y());
@@ -433,8 +431,7 @@ MoO2
 
         if((character == ST_KEY_ESCAPE) && (mouse_cancel_disabled != ST_FALSE))
         {
-            // @@Return_UNDEF
-            return ST_UNDEFINED;
+            goto Return_Type_ESC;
         }
 
         if((character == '`') && (Check_Release_Version() == ST_FALSE))
@@ -461,59 +458,72 @@ MoO2
             }
         }
 
+
+        // ¿ BUGBUG: assumes field_num != 0 ?
         if(p_fields[field_num].type == ft_MultiHotKey)
         {
-            goto Return_Type_2;
+            goto Return_Type_F01;
         }
 
-
-        // May Be:  if((field_num == 0) || (p_fields[field_num].hotkey != character))  ... if(character == ST_KEY_ENTER)
 
         /*
             BEGIN:  Keyboard Hot-Key
         */
-        if((field_num != 0) && (p_fields[field_num].hotkey == character))
         {
-
-            if(p_fields[field_num].type == ft_Scroll)
+            if((field_num != 0) && (p_fields[field_num].hotkey == character))
             {
-                goto Return_Type_Z2;
-            }
 
-            if(field_num != 0)
-            {
-                mx = (p_fields[field_num].x1 + ((p_fields[field_num].x2 - p_fields[field_num].x1) / 2));
-                my = (p_fields[field_num].y1 + ((p_fields[field_num].y2 - p_fields[field_num].y1) / 2));
-                Push_Field_Down(field_num, mx, my);
-
-                Mouse_Button_Handler();
-
-                if(p_fields[field_num].type == ft_RadioButton)
+                if(p_fields[field_num].type == ft_Scroll)
                 {
-                    if(p_fields[field_num].Param2 == 0)
-                    {
-                        p_fields[field_num].Param2 = 1;
-                    }
-                    else
-                    {
-                        p_fields[field_num].Param2 = 0;
-                    }
+                    goto Return_Type_Z01;
                 }
 
-                if(p_fields[field_num].type == ft_LockedButton)
+                if(field_num != 0)
                 {
-                    if(p_fields[field_num].Param2 == 0)
+                    mx = (p_fields[field_num].x1 + ((p_fields[field_num].x2 - p_fields[field_num].x1) / 2));
+                    my = (p_fields[field_num].y1 + ((p_fields[field_num].y2 - p_fields[field_num].y1) / 2));
+                    Push_Field_Down(field_num, mx, my);
+                    Mouse_Button_Handler();
+
+                    switch(p_fields[field_num].type)
                     {
-                        p_fields[field_num].Param2 = 1;
+                        case ft_RadioButton:
+                        {
+                            // toggle unset/set state
+                            if(p_fields[field_num].state == 0)
+                            {
+                                p_fields[field_num].state = 1;
+                            }
+                            else
+                            {
+                                p_fields[field_num].state = 0;
+                            }
+                        } break;
+                        case ft_LockedButton:
+                        {
+                            // if not locked, then lock  (¿ no unlock ?)
+                            if(p_fields[field_num].state == 0)
+                            {
+                                p_fields[field_num].state = 1;
+                            }
+                            else
+                            {
+                                Quick_Call_Auto_Function();
+                                goto Return_Type_Z10;
+                            }
+                        } break;
+                        case ft_ClickLink:
+                        {
+                            // @@Jmp_ClearDown_ReturnFieldNum:
+                            // jmp     @@ClearDown_ReturnFieldNum
+                            goto Return_Type_P10;
+                        } break;
                     }
-                }
 
-                if (p_fields[field_num].type == ft_ClickLink)
-                {
-                    goto Return_Type_6;
-                }
+                    Quick_Call_Auto_Function();
+                    goto Return_Type_F10;
 
-                goto Return_Type_3;
+                }
             }
         }
         /*
@@ -521,160 +531,172 @@ MoO2
         */
 
 
-// TODO          /*
-// TODO              BEGIN:  character == KP_Enter  (assumes ft_ContinuousStringInput)
-// TODO                  IDA: 'poop brown' #34 - KD; ST_KEY_ENTER;
-// TODO          */
-// TODO          {
-// TODO              if(character == ST_KEY_ENTER)
-// TODO              {
-// TODO                  if(input_field_active)
-// TODO                  {
-// TODO                      alt_field_num = active_input_field_number;
-// TODO                      // MoO2:  Copy_Continuous_String()
-// TODO                      strcpy((char *)p_fields[alt_field_num].string, continuous_string);
-// TODO                      if(mouse_auto_exit == ST_FALSE)
-// TODO                      {
-// TODO                          Quick_Call_Auto_Function();
-// TODO                      }
-// TODO                      goto Return_Type_5;
-// TODO                  }
-// TODO  
-// TODO                  alt_field_num = Scan_Field();
-// TODO  
-// TODO                  if(alt_field_num == 0)
-// TODO                  {
-// TODO                      goto Return_Type_Z1;
-// TODO                  }
-// TODO  
-// TODO                  if(alt_field_num > 0)
-// TODO                  {
-// TODO                      if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
-// TODO                      {
-// TODO                          if(input_field_active == ST_FALSE)
-// TODO                          {
-// TODO                              strcpy(continuous_string, p_fields[alt_field_num].string);
-// TODO                              GUI_EditAnimStage = 0;
-// TODO                              GUI_EditCursorOn = 0;
-// TODO  
-// TODO  
-// TODO                              input_field_active = ST_TRUE;
-// TODO                              active_input_field_number = alt_field_num;
-// TODO                              // jmp     @@IDK_KD_Enter_PostOp
-// TODO                          }
-// TODO                          else  /* input_field_active == ST_TRUE */
-// TODO                          {
-// TODO                              if(active_input_field_number == alt_field_num)
-// TODO                              {
-// TODO                                  itr_continuous_string = 0;
-// TODO                                  while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
-// TODO                                  if(continuous_string[(itr_continuous_string - 1)] == '_')
-// TODO                                  {
-// TODO                                      itr_continuous_string--;
-// TODO                                  }
-// TODO                                  continuous_string[itr_continuous_string] = 0;
-// TODO                                  GUI_EditAnimStage = 0;
-// TODO                                  active_input_field_number = ST_UNDEFINED;
-// TODO                                  strcpy(p_fields[alt_field_num].string, continuous_string);
-// TODO                                  // @@IDK_KD_Enter_PostOp
-// TODO                              }
-// TODO                              else
-// TODO                              {
-// TODO                                  strcpy(continuous_string, p_fields[alt_field_num].string);
-// TODO                                  GUI_EditAnimStage = 0;  // cursor_count
-// TODO                                  GUI_EditCursorOn = 0;   // cursor_on
-// TODO                                  active_input_field_number = alt_field_num;
-// TODO                                  // @@IDK_KD_Enter_PostOp:
-// TODO                              }
-// TODO                          }
-// TODO                      }
-// TODO                      else
-// TODO                      {
-// TODO                          if(input_field_active == 0)
-// TODO                          {
-// TODO                              // @@IDK_KD_Enter_PostOp:
-// TODO                          }
-// TODO                          else
-// TODO                          {
-// TODO                              if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
-// TODO                              {
-// TODO                                  itr_continuous_string = 0;
-// TODO                                  while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
-// TODO                                  if(continuous_string[(itr_continuous_string - 1)] == '_')
-// TODO                                  {
-// TODO                                      itr_continuous_string--;
-// TODO                                  }
-// TODO                                  continuous_string[itr_continuous_string] = 0;
-// TODO                                  strcpy(p_fields[alt_field_num].string, continuous_string);
-// TODO                                  GUI_EditAnimStage = 0;
-// TODO                                  input_field_active = ST_FALSE;
-// TODO                                  active_input_field_number = ST_UNDEFINED;
-// TODO                                  // @@IDK_KD_Enter__New_Block:
-// TODO                              }
-// TODO                          }
-// TODO                      }
-// TODO                  }
-// TODO                  else
-// TODO                  {
-// TODO                      // jmp     @@IDK_KD_Enter__New_Block
-// TODO                  }
-// TODO  
-// TODO                  // @@IDK_KD_Enter__New_Block:
-// TODO                  if(alt_field_num == 0)
-// TODO                  {
-// TODO                      if(
-// TODO                          (p_fields[alt_field_num].type != ft_Scroll)
-// TODO                          &&
-// TODO                          (p_fields[alt_field_num].type != ft_ContinuousStringInput)
-// TODO                      )
-// TODO                      {
-// TODO                          Push_Field_Down(alt_field_num, mouse_x, mouse_y);
-// TODO                      }
-// TODO  
-// TODO                      Mouse_Button_Handler();
-// TODO  
-// TODO                      if(p_fields[alt_field_num].type == ft_RadioButton)
-// TODO                      {
-// TODO                          if(p_fields[alt_field_num].Param2 == 0)
-// TODO                          {
-// TODO                              p_fields[alt_field_num].Param2 = 1;
-// TODO                          }
-// TODO                          else
-// TODO                          {
-// TODO                              p_fields[alt_field_num].Param2 = 0;
-// TODO                          }
-// TODO                      }
-// TODO                      else if(p_fields[alt_field_num].type == ft_LockedButton)
-// TODO                      {
-// TODO                          if(p_fields[alt_field_num].Param2 == 0)
-// TODO                          {
-// TODO                              p_fields[alt_field_num].Param2 = 1;
-// TODO                          }
-// TODO                      }
-// TODO                      else if(p_fields[alt_field_num].type == ft_ClickLink)
-// TODO                      {
-// TODO                          goto Return_Type_7;
-// TODO                      }
-// TODO  
-// TODO                      if(mouse_auto_exit == ST_FALSE)
-// TODO                      {
-// TODO                          Quick_Call_Auto_Function();
-// TODO                      }
-// TODO                      goto Return_Type_5;
-// TODO  
-// TODO                  }
-// TODO                  else
-// TODO                  {
-// TODO  
-// TODO                  }
-// TODO  
-// TODO  
-// TODO  
-// TODO              }
-// TODO          }
-// TODO          /*
-// TODO              END:  character == KP_Enter  (assumes ft_ContinuousStringInput)
-// TODO          */
+        /*
+            BEGIN:  character == ST_KEY_ENTER
+                IDA: 'poop brown' #34 - KD; ST_KEY_ENTER;
+        */
+        {
+            if(character == ST_KEY_ENTER)
+            {
+                if(input_field_active != ST_FALSE)
+                {
+                    alt_field_num = active_input_field_number;
+                    // MoO2:  Copy_Continuous_String()
+                    strcpy((char *)p_fields[alt_field_num].string, continuous_string);
+                    if(mouse_auto_exit == ST_FALSE)
+                    {
+                        Quick_Call_Auto_Function();
+                    }
+                    goto Return_Type_5;
+                }
+
+                // IDA:  @@KD_Enter_NayTextInput:
+                alt_field_num = Scan_Field();
+
+                if(alt_field_num == 0)
+                {
+                    goto Return_Type_Z00;
+                }
+
+                if(alt_field_num > 0)
+                {
+                    if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
+                    {
+                        if(input_field_active == ST_FALSE)
+                        {
+                            strcpy(continuous_string, p_fields[alt_field_num].string);
+                            GUI_EditAnimStage = 0;
+                            GUI_EditCursorOn = ST_FALSE;
+                            input_field_active = ST_TRUE;
+                            active_input_field_number = alt_field_num;
+                            // jmp     @@IDK_KD_Enter_PostOp
+                        }
+                        else  /* input_field_active == ST_TRUE */
+                        {
+                            // ¿ UNREACHABLE ?
+                            __debugbreak();
+                            if(active_input_field_number == alt_field_num)
+                            {
+                                itr_continuous_string = 0;
+                                while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
+                                if(continuous_string[(itr_continuous_string - 1)] == '_')
+                                {
+                                    itr_continuous_string--;
+                                }
+                                continuous_string[itr_continuous_string] = 0;
+                                GUI_EditAnimStage = 0;
+                                active_input_field_number = ST_UNDEFINED;
+                                strcpy(p_fields[alt_field_num].string, continuous_string);
+                                // @@IDK_KD_Enter_PostOp
+                            }
+                            else
+                            {
+                                strcpy(continuous_string, p_fields[alt_field_num].string);
+                                GUI_EditAnimStage = 0;  // cursor_count
+                                GUI_EditCursorOn = 0;   // cursor_on
+                                active_input_field_number = alt_field_num;
+                                // @@IDK_KD_Enter_PostOp:
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(input_field_active != 0)
+                        {
+                            __debugbreak();
+                            // UNREACHABLE  if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
+                            // UNREACHABLE  {
+                            // UNREACHABLE      itr_continuous_string = 0;
+                            // UNREACHABLE      while((continuous_string[itr_continuous_string] != '\0') && (p_fields[alt_field_num].max_characters > itr_continuous_string)) { itr_continuous_string++; }
+                            // UNREACHABLE      if(continuous_string[(itr_continuous_string - 1)] == '_')
+                            // UNREACHABLE      {
+                            // UNREACHABLE          itr_continuous_string--;
+                            // UNREACHABLE      }
+                            // UNREACHABLE      continuous_string[itr_continuous_string] = 0;
+                            // UNREACHABLE      strcpy(p_fields[alt_field_num].string, continuous_string);
+                            // UNREACHABLE      GUI_EditAnimStage = 0;
+                            // UNREACHABLE      input_field_active = ST_FALSE;
+                            // UNREACHABLE      active_input_field_number = ST_UNDEFINED;
+                            // UNREACHABLE  }
+                        }
+                    }
+                }
+
+                // @@IDK_KD_Enter__New_Block:
+                // IDA foggy hunter green #36
+                if(alt_field_num == 0)
+                {
+                    if(GUI_DialogDirections != 0)
+                    {
+                        for(alt_field_num = 1; alt_field_num < fields_count; alt_field_num++)
+                        {
+                            // if State@ == Trig_State
+                            if(
+                                (p_fields[alt_field_num].type == ft_StringList)
+                                &&
+                                (p_fields[alt_field_num].Param2 == p_fields[alt_field_num].Param1)
+                                &&
+                                (p_fields[alt_field_num].Selectable != ST_FALSE)
+                            )
+                            {
+                                // got Selectable StringList
+                                // @@Jmp_ClearDown_Return_AltFieldNum:
+                                // jmp     short @@ClearDown_Return_AltFieldNum
+                                goto Return_Type_5;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if((p_fields[alt_field_num].type != ft_Scroll) && (p_fields[alt_field_num].type != ft_ContinuousStringInput))
+                    {
+                        Push_Field_Down(alt_field_num, mouse_x, mouse_y);
+                    }
+
+                    Mouse_Button_Handler();
+
+                    switch(p_fields[alt_field_num].type)
+                    {
+                        case ft_RadioButton:
+                        {
+                            if(p_fields[alt_field_num].state == 0)
+                            {
+                                p_fields[alt_field_num].state = 1;
+                            }
+                            else
+                            {
+                                p_fields[alt_field_num].state = 0;
+                            }
+                        } break;
+                        case ft_LockedButton:
+                        {
+                            if(p_fields[alt_field_num].state == 0)
+                            {
+                                p_fields[alt_field_num].state = 1;
+                            }
+                        } break;
+                        case ft_ClickLink:
+                        {
+                            goto Return_Type_7;
+                        } break;
+                    }
+
+                    if(mouse_auto_exit == ST_FALSE)
+                    {
+                        Quick_Call_Auto_Function();
+                    }
+
+                    // return the field_num for the scanned_field, because ENTER as *click*
+                    goto Return_Type_5;
+
+                }
+
+            }
+        }
+        /*
+            END:  character == KP_Enter  (assumes ft_ContinuousStringInput)
+        */
 
 
         /*
@@ -705,6 +727,59 @@ MoO2
         {
             if(character == ST_KEY_BACKSPACE)
             {
+                alt_field_num = 0;
+                while( (continuous_string[alt_field_num] != '\0') && (continuous_string[alt_field_num] != '_') && ((p_fields[active_input_field_number].max_characters - 1) > alt_field_num))
+                {
+                    alt_field_num++;
+                }
+
+                if(alt_field_num > 0)
+                {
+                    continuous_string[(alt_field_num - 1)] = '\0';
+                    GUI_EditAnimStage = 0;
+                }
+            }
+            else
+            {
+                Accepted_Char = ST_FALSE;
+                if(
+                    (character > 64 && character < 93)
+                    ||
+                    (character > 45 && character < 59)
+                    ||
+                    (character == ' ')
+                    ||
+                    (character == '-')
+                )
+                {
+                    Accepted_Char = ST_TRUE;
+                }
+                else if(character > 96 && character < 123)
+                {
+                    Accepted_Char = ST_TRUE;
+                }
+
+                if(Accepted_Char == ST_TRUE)
+                {
+                    alt_field_num = 0;
+                    while( (continuous_string[alt_field_num] != '_') && (continuous_string[alt_field_num] != '\0') && ((p_fields[active_input_field_number].max_characters - 1) > alt_field_num))
+                    {
+                        alt_field_num++;
+                    }
+
+                    if(((p_fields[active_input_field_number].max_characters - 1) > alt_field_num))
+                    {
+                        continuous_string[alt_field_num] = character;
+                        continuous_string[(alt_field_num + 1)] = '\0';
+                    }
+                    else
+                    {
+                        continuous_string[alt_field_num] = '\0';
+                    }
+
+                    GUI_EditCursorOn = ST_FALSE;
+                    GUI_EditAnimStage = 0;
+                }
 
             }
         }
@@ -712,7 +787,8 @@ MoO2
             END:  Input Field
         */
 
-        goto Return_Type_Z3;
+        // ¿ default end of 'Yay KD' or just end of if(input_field_active > 0) ?
+        goto Return_Type_Z11;
 
     }
     else
@@ -724,10 +800,10 @@ MoO2
 
             // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; } } }
 
-            // IDA: @@IDK_Loop_GetButtonStatus
+            // IDA:  @@Loop_MouseButton  bright green #11
             // Begin Block: Loop Mouse_Button()
             // TODO  make this be the loop that it looks like - need some Input Field that makes use of the feature  e.g., Magic Screen Power Distribution Staves
-            if(Mouse_Button() != 0)
+            while(Mouse_Button() != 0)
             {
 
                 mouse_x = Pointer_X();
@@ -738,8 +814,6 @@ MoO2
                 character = 0;
                 field_num = Scan_Field();
 
-
-
                 /*
                     BEGIN BLOCK: field_num = Scan_Field() != 0
                 */
@@ -747,25 +821,24 @@ MoO2
                 {
                     
                     // Begin Block: field_num = Scan_Field() != 0 && != down_mouse_button
-
                     // Begin Block: Push_Field_Down()
-                    if(
-                        (field_num != down_mouse_button) &&
-                        (p_fields[field_num].type != ft_Input) &&
-                        (p_fields[field_num].type != ft_ContinuousStringInput) &&
-                        !( (down_mouse_button != ST_UNDEFINED) && (p_fields[field_num].type == ft_Grid) && (p_fields[down_mouse_button].type == ft_Grid) )
-                    )
                     {
-                        if(p_fields[down_mouse_button].type == ft_Scroll)
+                        if(
+                            (field_num != down_mouse_button) &&
+                            (p_fields[field_num].type != ft_Input) &&
+                            (p_fields[field_num].type != ft_ContinuousStringInput) &&
+                            !( (down_mouse_button != ST_UNDEFINED) && (p_fields[field_num].type == ft_Grid) && (p_fields[down_mouse_button].type == ft_Grid) )
+                        )
                         {
-                            // Invoke_Auto_Function();  // TODO  get to getting the Magic Screen Power Distribution Staves in the mix
+                            if(p_fields[down_mouse_button].type == ft_Scroll)
+                            {
+                                Invoke_Auto_Function();
+                            }
+
+                            Push_Field_Down(field_num, mouse_x, mouse_y);
                         }
-
-                        Push_Field_Down(field_num, mouse_x, mouse_y);
-
                     }
                     // End Block: Push_Field_Down()
-
                     // End Block: field_num = Scan_Field() != 0 && != down_mouse_button
 
                     // HERE:    Nay KD, Yay MD, No Help, No Cancel, Yay Field, field_num !=/== down_mouse_button
@@ -783,84 +856,104 @@ MoO2
                         BEGIN BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
                     */
 
-                    // if( 
-                    //     !(
-                    //         (p_fields[field_num].type != ft_ContinuousStringInput)
-                    //         && (input_field_active == ST_FALSE)
-                    //     )
-                    //     &&
-                    //     !(
-                    //         (p_fields[field_num].type == ft_ContinuousStringInput)
-                    //         && (input_field_active != ST_FALSE)
-                    //         && (field_num == active_input_field_number)
-                    //     )
-                    // )
-
-                    if(p_fields[field_num].type != ft_ContinuousStringInput)
+                    // if((p_fields[field_num].type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE)) { // DO NOTHING }
+                    if(
+                        (p_fields[field_num].type != ft_ContinuousStringInput)
+                        &&
+                        (input_field_active != ST_FALSE)
+                    )
                     {
-                        if(input_field_active == ST_FALSE)
+                        // `Exit Edit-State`
+                        itr_continuous_string = 0;
+                        while( (continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters < itr_continuous_string) )
                         {
-                            // `DO NOTHING`
+                            itr_continuous_string++;
                         }
-                        else  /* if(input_field_active != ST_FALSE) */
+                        if(continuous_string[(itr_continuous_string - 1)] == '_')
                         {
-                            // `Exit Edit-State`
-                            
-                            // TODO  itr_continuous_string = 0;
-                            // TODO  while( (continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].Param5 < itr_continuous_string) )
-                            // TODO  {
-                            // TODO      itr_continuous_string++;
-                            // TODO  }
-                            // TODO  if(continuous_string[(itr_continuous_string - 1)] == '_')
-                            // TODO  {
-                            // TODO      itr_continuous_string--;
-                            // TODO  }
-                            // TODO  continuous_string[itr_continuous_string] = '\0';
-                            // TODO  strcpy((char *)p_fields[active_input_field_number].Param0, continuous_string);
-                            // TODO  input_field_active = ST_FALSE;
-                            // TODO  active_input_field_number = ST_UNDEFINED;
+                            itr_continuous_string--;
                         }
+                        continuous_string[itr_continuous_string] = '\0';
+                        strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                        input_field_active = ST_FALSE;
+                        active_input_field_number = ST_UNDEFINED;
                     }
-                    else  /* if(p_fields[field_num].type == ft_ContinuousStringInput) */
+                    else if(
+                        (p_fields[field_num].type == ft_ContinuousStringInput)
+                        &&
+                        (input_field_active == ST_FALSE)
+                    )
                     {
-                        if(input_field_active == ST_FALSE)
-                        {
-                            // `Enter Edit-State`
-                        }
-                        else  /* if(input_field_active != ST_FALSE) */
-                        {
-                            if(field_num == active_input_field_number)
-                            {
-                                // `DO NOTHING`
-                            }
-                            else /* if(field_num != active_input_field_number) */
-                            {
-                                // `Exit Edit-State`
-                                // `Enter Edit-State`
-                            }
-                        }
+                        strcpy(continuous_string, p_fields[field_num].string);
+                        GUI_EditAnimStage = 0;
+                        GUI_EditCursorOn = 0;
+                        input_field_active = ST_TRUE;
+                        active_input_field_number= field_num;
+                    }
+                    else if(
+                        (p_fields[field_num].type == ft_ContinuousStringInput)
+                        &&
+                        (input_field_active != ST_FALSE)
+                        &&
+                        (field_num != active_input_field_number)
+                    )
+                    {
+                        // `Exit Edit-State`
+                        // `Enter Edit-State`
+                        strcpy(continuous_string, p_fields[field_num].string);
+                        GUI_EditAnimStage = 0;
+                        GUI_EditCursorOn = 0;
+                        input_field_active = ST_TRUE;
+                        active_input_field_number = field_num;
                     }
                     /*
                         END BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
                     */
 
-
                     auto_input_variable = field_num;
 
-                    if(mouse_auto_exit == ST_FALSE)
+                    if(mouse_auto_exit != ST_FALSE)
                     {
-                        // HERE: Re-Draw, cause you're gonna go back
-                        if(Mouse_Button() != 0)
-                        {
-                            // Call_Auto_Function();
-                        }
+                        break;
+                    }
+
+                    if(Mouse_Button() != 0)
+                    {
+                        Call_Auto_Function();
                     }
 
                 }
                 /*
                     END BLOCK: field_num = Scan_Field() != 0
                 */
-
+                else
+                {
+                    if(down_mouse_button != ST_UNDEFINED)
+                    {
+                        if(p_fields[down_mouse_button].type == ft_Scroll)
+                        {
+                            Invoke_Auto_Function();
+                        }
+                        if(
+                            (p_fields[down_mouse_button].type != ft_MultiButton)
+                            &&
+                            (p_fields[down_mouse_button].type != ft_StringList)
+                            &&
+                            (p_fields[down_mouse_button].type != ft_ContinuousStringInput)
+                        )
+                        {
+                            Save_Mouse_State();
+                            Restore_Mouse_On_Page();
+                            Draw_Field(down_mouse_button, DRAW_FIELD_UP);
+                            Save_Mouse_On_Page(mouse_x, mouse_y);
+                            Draw_Mouse_On_Page(mouse_x, mouse_y);
+                            Set_Pointer_Position(mouse_x, mouse_y);
+                            Restore_Mouse_State();
+                        }
+                        down_mouse_button = ST_UNDEFINED;
+                    }
+                    Set_Buffer_2(mouse_x, mouse_y);
+                }
             }
             /*
                 END BLOCK: Loop Mouse_Button()
@@ -874,6 +967,7 @@ MoO2
             }
 
             auto_input_variable = 0;
+
 
             if(field_num != 0)
             {
@@ -983,40 +1077,67 @@ MoO2
 
 */
 
+
+/*
+return ST_UNDEFINED;
+*/
+Return_Type_ESC:
+    return ST_UNDEFINED;
+
 /*
 return 0;
 */
-Return_Type_Z1:                                                           
+Return_Type_Z00:
+    return 0;
+
+/*
+down_mouse_button = ST_UNDEFINED; return 0;
+*/
+Return_Type_Z10:
+    down_mouse_button = ST_UNDEFINED;
     return 0;
 
 /*
 Mouse_Button_Handler(); return 0;
 */
-Return_Type_Z2:
+Return_Type_Z01:
     Mouse_Button_Handler();
     return 0;
 
 /*
 down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return 0;
 */
-Return_Type_Z3:
+Return_Type_Z11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
     return 0;
 
 /*
+return field_num;
+*/
+Return_Type_F00:
+    return field_num;
+
+/*
+down_mouse_button = ST_UNDEFINED; return field_num;
+*/
+Return_Type_F10:
+    down_mouse_button = ST_UNDEFINED;
+    return field_num;
+
+/*
 Mouse_Button_Handler(); return field_num;
 */
-Return_Type_2:
+Return_Type_F01:
     Mouse_Button_Handler();
     return field_num;
 
 /*
-Quick_Call_Auto_Function(); down_mouse_button = ST_UNDEFINED; return field_num;
+down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 */
-Return_Type_3:
-    Quick_Call_Auto_Function();
+Return_Type_F11:
     down_mouse_button = ST_UNDEFINED;
+    Mouse_Button_Handler();
     return field_num;
 
 /*
@@ -1037,16 +1158,16 @@ Return_Type_5:
 /*
 down_mouse_button = ST_UNDEFINED; return p_fields[field_num].Param0;
 */
-Return_Type_6:
+Return_Type_P10:
     down_mouse_button = ST_UNDEFINED;
-    return p_fields[field_num].Param0;
+    return p_fields[field_num].parent;
 
 /*
 down_mouse_button = ST_UNDEFINED; return p_fields[alt_field_num].Param0;
 */
 Return_Type_7:
     down_mouse_button = ST_UNDEFINED;
-    return p_fields[alt_field_num].Param0;
+    return p_fields[alt_field_num].parent;
 
 Done:
     return field_num;
