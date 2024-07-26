@@ -122,7 +122,6 @@ uint8_t Read_Key(void)
     // ¿ procedurally generate a switch statement code block ?
     switch(scan_code_char_code)
     {
-        case SCCC_ESC: { return_key = ST_KEY_ESCAPE; } break;
 
         case SCCC_F10: { return_key = ST_KEY_F10; } break;
 
@@ -153,6 +152,44 @@ uint8_t Read_Key(void)
         case SCCC_Y: { return_key = 'y'; } break;
         case SCCC_Z: { return_key = 'z'; } break;
 
+        case SCCC_Shift_A: { return_key = 'A'; } break;
+        case SCCC_Shift_B: { return_key = 'B'; } break;
+        case SCCC_Shift_C: { return_key = 'C'; } break;
+        case SCCC_Shift_D: { return_key = 'D'; } break;
+        case SCCC_Shift_E: { return_key = 'E'; } break;
+        case SCCC_Shift_F: { return_key = 'F'; } break;
+        case SCCC_Shift_G: { return_key = 'G'; } break;
+        case SCCC_Shift_H: { return_key = 'H'; } break;
+        case SCCC_Shift_I: { return_key = 'I'; } break;
+        case SCCC_Shift_J: { return_key = 'J'; } break;
+        case SCCC_Shift_K: { return_key = 'K'; } break;
+        case SCCC_Shift_L: { return_key = 'L'; } break;
+        case SCCC_Shift_M: { return_key = 'M'; } break;
+        case SCCC_Shift_N: { return_key = 'N'; } break;
+        case SCCC_Shift_O: { return_key = 'O'; } break;
+        case SCCC_Shift_P: { return_key = 'P'; } break;
+        case SCCC_Shift_Q: { return_key = 'Q'; } break;
+        case SCCC_Shift_R: { return_key = 'R'; } break;
+        case SCCC_Shift_S: { return_key = 'S'; } break;
+        case SCCC_Shift_T: { return_key = 'T'; } break;
+        case SCCC_Shift_U: { return_key = 'U'; } break;
+        case SCCC_Shift_V: { return_key = 'V'; } break;
+        case SCCC_Shift_W: { return_key = 'W'; } break;
+        case SCCC_Shift_X: { return_key = 'X'; } break;
+        case SCCC_Shift_Y: { return_key = 'Y'; } break;
+        case SCCC_Shift_Z: { return_key = 'Z'; } break;
+
+        case SCCC_1: { return_key = '1'; } break;
+        case SCCC_2: { return_key = '2'; } break;
+        case SCCC_3: { return_key = '3'; } break;
+        case SCCC_4: { return_key = '4'; } break;
+        case SCCC_5: { return_key = '5'; } break;
+        case SCCC_6: { return_key = '6'; } break;
+        case SCCC_7: { return_key = '7'; } break;
+        case SCCC_8: { return_key = '8'; } break;
+        case SCCC_9: { return_key = '9'; } break;
+        case SCCC_0: { return_key = '0'; } break;
+
         case SCCC_MINUS:  { return_key = '-'; } break;
         case SCCC_EQUALS: { return_key = '='; } break;
         case SCCC_PLUS:   { return_key = '+'; } break;
@@ -163,8 +200,10 @@ uint8_t Read_Key(void)
         case SCCC_DOWN:     { return_key = ST_KEY_DOWN;       } break;
         case SCCC_KP_1:     { return_key = ST_KEY_LEFTDOWN;   } break;
         case SCCC_DOWNLEFT: { return_key = ST_KEY_LEFTDOWN;   } break;
-        // Enter       1C0D
-        // Esc         011B
+
+        case SCCC_ENTER:    { return_key = ST_KEY_ENTER;      } break;
+        case SCCC_ESCAPE:   { return_key = ST_KEY_ESCAPE;     } break;
+
         case SCCC_KP_7:     { return_key = ST_KEY_LEFTUP; } break;
         case SCCC_UPLEFT:   { return_key = ST_KEY_LEFTUP; } break;
         // Ins         5200

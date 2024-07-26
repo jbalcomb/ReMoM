@@ -43,7 +43,7 @@ uint16_t VK_to_SCCS[256] = {
     /*  10 0x0A */  0x0000,
     /*  11 0x0B */  0x0000,
     /*  12 0x0C */  0x0000,
-    /*  13 0x0D */  0x0000,
+    /*  13 0x0D */  SCCC_ENTER,     /* VK_RETURN */
     /*  14 0x0E */  0x0000,
     /*  15 0x0F */  0x0000,
     /*  16 0x10 */  0x0000,
@@ -57,12 +57,12 @@ uint16_t VK_to_SCCS[256] = {
     /*  24 0x18 */  0x0000,
     /*  25 0x19 */  0x0000,
     /*  26 0x1A */  0x0000,
-    /*  27 0x1B */  SCCC_ESC,       /* VK_ESCAPE */
+    /*  27 0x1B */  SCCC_ESCAPE,    /* VK_ESCAPE */
     /*  28 0x1C */  0x0000,
     /*  29 0x1D */  0x0000,
     /*  30 0x1E */  0x0000,
     /*  31 0x1F */  0x0000,
-    /*  32 0x20 */  0x3920,         /* VK_SPACE */
+    /*  32 0x20 */  SCCC_SPACE,     /* VK_SPACE */
     /*  33 0x21 */  0x0000,
     /*  34 0x22 */  0x0000,
     /*  35 0x23 */  0x0000,
@@ -78,16 +78,16 @@ uint16_t VK_to_SCCS[256] = {
     /*  45 0x2D */  0x0000,
     /*  46 0x2E */  0x0000,
     /*  47 0x2F */  0x0000,
-    /*  48 0x30 */  0x0B30,  /* VK_0 */
-    /*  49 0x31 */  0x0231,  /* VK_1 */
-    /*  50 0x32 */  0x0332,  /* VK_2 */
-    /*  51 0x33 */  0x0433,  /* VK_3 */
-    /*  52 0x34 */  0x0534,  /* VK_4 */
-    /*  53 0x35 */  0x0635,  /* VK_5 */
-    /*  54 0x36 */  0x0736,  /* VK_6 */
-    /*  55 0x37 */  0x0837,  /* VK_7 */
-    /*  56 0x38 */  0x0938,  /* VK_8 */
-    /*  57 0x39 */  0x0A39,  /* VK_9 */
+    /*  48 0x30 */  SCCC_0,  /* VK_0 */
+    /*  49 0x31 */  SCCC_1,  /* VK_1 */
+    /*  50 0x32 */  SCCC_2,  /* VK_2 */
+    /*  51 0x33 */  SCCC_3,  /* VK_3 */
+    /*  52 0x34 */  SCCC_4,  /* VK_4 */
+    /*  53 0x35 */  SCCC_5,  /* VK_5 */
+    /*  54 0x36 */  SCCC_6,  /* VK_6 */
+    /*  55 0x37 */  SCCC_7,  /* VK_7 */
+    /*  56 0x38 */  SCCC_8,  /* VK_8 */
+    /*  57 0x39 */  SCCC_9,  /* VK_9 */
     /*  58 0x3A */  0x0000,  /* unassigned */
     /*  59 0x3B */  0x0000,  /* unassigned */
     /*  60 0x3C */  0x0000,  /* unassigned */
@@ -95,7 +95,7 @@ uint16_t VK_to_SCCS[256] = {
     /*  62 0x3E */  0x0000,  /* unassigned */
     /*  63 0x3F */  0x0000,  /* unassigned */
     /*  64 0x40 */  0x0000,  /* unassigned */
-    /*  65 0x41 */  0x1E61,  /* VK_A */
+    /*  65 0x41 */  SCCC_A,  /* VK_A */
     /*  66 0x42 */  0x3062,  /* VK_B */
     /*  67 0x43 */  0x2E63,  /* VK_C */
     /*  68 0x44 */  0x2064,  /* VK_D */
@@ -635,10 +635,10 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 // Right ALT key is down.
             }
 
-            if(VKCode == VK_ESCAPE && _global_esc == ST_TRUE)
-            {
-                PostQuitMessage(0);
-            }
+            // DELETEME  if(VKCode == VK_ESCAPE && _global_esc == ST_TRUE)
+            // DELETEME  {
+            // DELETEME      PostQuitMessage(0);
+            // DELETEME  }
             if (key_ctrl && key_alt && VKCode == 'Q')
             {
                 PostQuitMessage(0);
@@ -646,6 +646,11 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             key_pressed = ST_TRUE;
             scan_code_char_code = VK_to_SCCS[VKCode];
+
+            if (VKCode == VK_RETURN)
+            {
+                // __debugbreak();
+            }
 
 
         } break;

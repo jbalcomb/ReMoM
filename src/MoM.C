@@ -28,10 +28,12 @@ void Screen_Control(void)
     int quit_flag;
 
     quit_flag = ST_FALSE;
+
     while (quit_flag == ST_FALSE)
     {
 
         Clear_Fields();
+
         Set_Mouse_List(1, mouse_list_default);
 
         switch (current_screen)
@@ -49,6 +51,7 @@ void Screen_Control(void)
 
         case scr_Continue:
         {
+            // HACK:
             magic_set.Strategic_Combat = ST_TRUE;  // "Strategic Combat Only"
 
             // BEGIN: WZD main()
@@ -157,7 +160,6 @@ void Screen_Control(void)
         case scr_New_Game_Screen:
         {
             // TODO  New_Game_Screen();
-            /* DEMO */  current_screen = scr_Main_Screen;
         } break;
 
         case scr_Quit_To_DOS:

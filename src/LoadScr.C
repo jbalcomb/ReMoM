@@ -48,8 +48,7 @@ int16_t loadsave_settings_flag = ST_UNDEFINED;
 // WZD dseg:712C
 char load_lbx_file[] = "LOAD.LBX";
 // WZD dseg:7134
-// char empty_string__ovr160[] = "";
-int16_t empty_string__ovr160 = 0;
+char empty_string__ovr160[] = "";
 // WZD dseg:7135
 char cnst_SAVE3[] = "SAVE";
 // WZD dseg:713A
@@ -204,7 +203,7 @@ void GAME_NextHumanStack(void)
 // WZD o160p01
 void Load_Screen(void)
 {
-    char found_file[20];
+    char found_file[LEN_FILE_NAME];
     char buffer2[16];
     char match_string[16];
     int16_t save_slot_fields[NUM_SAVE_SLOTS];
@@ -301,11 +300,11 @@ void Load_Screen(void)
 
     hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
 
-    loadsave_quit_button      = Add_Hidden_Field((x_start +   0), y_start, (x_start +  39), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-    loadsave_save_button      = Add_Hidden_Field((x_start + 122), y_start, (x_start + 159), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-    loadsave_ok_button        = Add_Hidden_Field((x_start + 231), y_start, (x_start + 270), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
-    loadsave_settings_button  = Add_Hidden_Field((x_start + 172), y_start, (x_start + 229), (y_start + 13), empty_string__ovr160, ST_UNDEFINED);
+    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
 
     Set_Font_Style(3, 1, 3, ST_NULL);
 
@@ -356,7 +355,6 @@ void Load_Screen(void)
         if(input_field_idx == loadsave_quit_button)
         {
             // ~== current_screen = scr_Main_Menu_Screen
-
             // DONT  loadsave_settings_flag = ST_UNDEFINED;
             // DONT  s01p15_Empty_pFxn();
             // DONT  Save_SAVE_GAM(8);
@@ -412,7 +410,7 @@ void Load_Screen(void)
             if( (load_screen_fade_in_flag != ST_FALSE) && (first_draw_done_flag == ST_FALSE) )
             {
                 Copy_On_To_Off_Page();
-                if(loadsave_settings_flag != 3)
+                if(loadsave_settings_flag != 3)  /* ; 3 indicates returning from the settings screen */
                 {
                     Fade_In();
                 }
@@ -429,12 +427,17 @@ void Load_Screen(void)
     Deactivate_Auto_Function();
     Deactivate_Help_List();
 
-    if(loadsave_settings_flag == ST_UNDEFINED)  /* ; 3 indicates returning from the settings screen */
+    // How did I get here?  ...Menu or Main?
+    // But, what if I selected 'Quit'?
+    if(current_screen != scr_Main_Menu_Screen)
     {
-        // TODO  WZD vs. MGC
-        // current_screen = scr_Main_Screen;
-        // HACK: merge MGC Load_Screen() and WZD Load_Screen()
-        current_screen = previous_screen;
+        if(loadsave_settings_flag == ST_UNDEFINED)
+        {
+            // TODO  WZD vs. MGC
+            // current_screen = scr_Main_Screen;
+            // HACK: merge MGC Load_Screen() and WZD Load_Screen()
+            current_screen = previous_screen;
+        }
     }
 
     if(current_screen == scr_Main_Screen)

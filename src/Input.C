@@ -357,7 +357,7 @@ MoO2
     int16_t pointer_offset;
     int16_t down_mouse_button;
     int16_t mouse_field;
-    int16_t MD_ButtonStatus;
+    int16_t mouse_button;
     uint16_t itr_continuous_string;
     int16_t Accepted_Char;
     /*
@@ -394,7 +394,7 @@ MoO2
     character = 0;
     field_num = 0;
     down_mouse_button = ST_UNDEFINED;
-    MD_ButtonStatus = 0;
+    mouse_button = 0;
     mouse_field = 0;
 
     mx = Pointer_X();
@@ -796,9 +796,9 @@ MoO2
         Mouse_Movement_Handler();
         if(Mouse_Button() != ST_FALSE)
         {
-            MD_ButtonStatus = Mouse_Button();
+            mouse_button = Mouse_Button();
 
-            // if(MD_ButtonStatus = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; } } }
+            // if(mouse_button = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; } } }
 
             // IDA:  @@Loop_MouseButton  bright green #11
             // Begin Block: Loop Mouse_Button()
@@ -865,7 +865,7 @@ MoO2
                     {
                         // `Exit Edit-State`
                         itr_continuous_string = 0;
-                        while( (continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters < itr_continuous_string) )
+                        while((continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters > itr_continuous_string))
                         {
                             itr_continuous_string++;
                         }
@@ -886,9 +886,9 @@ MoO2
                     {
                         strcpy(continuous_string, p_fields[field_num].string);
                         GUI_EditAnimStage = 0;
-                        GUI_EditCursorOn = 0;
+                        GUI_EditCursorOn = ST_FALSE;
                         input_field_active = ST_TRUE;
-                        active_input_field_number= field_num;
+                        active_input_field_number = field_num;
                     }
                     else if(
                         (p_fields[field_num].type == ft_ContinuousStringInput)
@@ -898,11 +898,11 @@ MoO2
                         (field_num != active_input_field_number)
                     )
                     {
-                        // `Exit Edit-State`
+                        // `Exit Edit-State`  ~== `Cancel Edit-State`
                         // `Enter Edit-State`
                         strcpy(continuous_string, p_fields[field_num].string);
                         GUI_EditAnimStage = 0;
-                        GUI_EditCursorOn = 0;
+                        GUI_EditCursorOn = ST_FALSE;
                         input_field_active = ST_TRUE;
                         active_input_field_number = field_num;
                     }
@@ -1038,14 +1038,13 @@ MoO2
 
             }
 
-
-        }
+        }  /* END:  if(Mouse_Button() != ST_FALSE) */
 
         // IDA: @@EndOfTheClickRoad
 
         Mouse_Button_Handler();
         down_mouse_button = ST_UNDEFINED;
-        switch(MD_ButtonStatus)
+        switch(mouse_button)
         {
             case 0: { field_num =          0; goto Done; } break;
             case 1: { field_num =  field_num; goto Done; } break;

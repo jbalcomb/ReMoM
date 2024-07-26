@@ -191,8 +191,6 @@ char * field_names[];
 */
 enum ScanCodeCharCode
 {
-    SCCC_ESC = 0x011B,      // "Esc" key
-
     SCCC_A = 0x1E61,        // "A" key
     SCCC_B = 0x3062,        // "B" key
     SCCC_C = 0x2E63,        // "C" key
@@ -300,20 +298,29 @@ enum ScanCodeCharCode
     SCCC_Alt_X = 0x2D00,    // "Alt" key + "X" key
     SCCC_Alt_Y = 0x1500,    // "Alt" key + "Y" key
     SCCC_Alt_Z = 0x2C00,    // "Alt" key + "Z" key
-
 /*
-Key     Normal    Shifted   w/Ctrl    w/Alt
-1      0231        0221        7800
-2      0332        0340      0300    7900
-3      0433        0423        7A00
-4      0534        0524        7B00
-5      0635        0625        7C00
-6      0736        075E      071E    7D00
-7      0837        0826        7E00
-8      0938        092A        7F00
-9      0A39        0A28        8000
-0      0B30        0B29        8100
+Key     Normal      Shifted     w/Ctrl      w/Alt
+1       0231        0221        7800
+2       0332        0340        0300        7900
+3       0433        0423        7A00
+4       0534        0524        7B00
+5       0635        0625        7C00
+6       0736        075E        071E        7D00
+7       0837        0826        7E00
+8       0938        092A        7F00
+9       0A39        0A28        8000
+0       0B30        0B29        8100
 */
+    SCCC_1 = 0x0231,      // '1' "one" key
+    SCCC_2 = 0x0332,      // '2' "two" key
+    SCCC_3 = 0x0433,      // '3' "three" key
+    SCCC_4 = 0x0534,      // '4' "four" key
+    SCCC_5 = 0x0635,      // '5' "five" key
+    SCCC_6 = 0x0736,      // '6' "six" key
+    SCCC_7 = 0x0837,      // '7' "seven" key
+    SCCC_8 = 0x0938,      // '8' "eight" key
+    SCCC_9 = 0x0A39,      // '9' "nine" key
+    SCCC_0 = 0x0B30,      // '0' "zero" key
 /*
 Key     Normal    Shifted   w/Ctrl    w/Alt
 -      0C2D        0C5F      0C1F    8200
@@ -356,8 +363,8 @@ F12     8600        8800      8A00    8C00
     SCCC_DOWN       = 0x50E0,   // Down Arrow  ||  NumLock + Numeric Keypad 2 (Down)
     SCCC_KP_1       = 0x4F00,   // Numeric Keypad 1 (End)
     SCCC_DOWNLEFT   = 0x4FE0,   // NumLock + Numeric Keypad 1 (DownLeft)
-    // Enter       1C0D
-    // Esc         011B
+    SCCC_ENTER      = 0x1C0D,   // Enter
+    SCCC_ESCAPE     = 0x011B,   // Escape
     SCCC_KP_7       = 0x4700,   // Numeric Keypad 7 (Home)
     SCCC_UPLEFT     = 0x47E0,   // NumLock + Numeric Keypad 7 (UpLeft)
     // Ins         5200
@@ -375,7 +382,7 @@ F12     8600        8800      8A00    8C00
     // PrtSc           
     SCCC_KP_6       = 0x4D00,   // Numeric Keypad 6 (Right)
     SCCC_RIGHT      = 0x4DE0,   // Right Arrow  ||  NumLock + Numeric Keypad 6 (Right)
-    // SpaceBar    3920
+    SCCC_SPACE      = 0x3920,   // Space-Bar
     // Tab         0F09
     SCCC_KP_8       = 0x4800,   // Numeric Keypad 8 (Up)
     SCCC_UP         = 0x48E0,   // Up Arrow  ||  NumLock + Numeric Keypad 8 (Up)
