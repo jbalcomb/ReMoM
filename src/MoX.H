@@ -232,6 +232,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 
 
 /* ~ MoX ~ MoM v1.31*/
+#include "AdvsrScr.H"
 #include "ALLOC.H"
 #include "ArmyList.H"
 #include "CITYCALC.H"
@@ -256,6 +257,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "Keyboard.H"
 #include "Lair.H"
 #include "LOADER.H"
+#include "LoadScr.H"
 #include "MagicScr.H"
 #include "MainScr.H"
 // TODO  #include "MainScr_Maps.H"
@@ -267,7 +269,6 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "MoX_DOS.H"
 #include "MoX_GAM.H"
 #include "MoX_RNG.H"
-#include "MoX_SET.H"
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "MoX_Util.H"   // WTFMATE
 #include "NEXTTURN.H"
@@ -277,6 +278,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "RACETYPE.H"
 #include "SBookScr.H"
 #include "SCORE.H"      // Hall Of Fame (HoF)
+#include "Settings.H"
 #include "SETTLE.H"
 #include "special.H"
 #include "Spellbook.H"

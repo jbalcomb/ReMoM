@@ -41,7 +41,7 @@ char cnst_ZeroString_7[] = "";
 // MGC dseg:304A 4A 45 4E 4E 59 00                               cnst_EXESwap_Arg db 'JENNY',0           ; DATA XREF: GAME_WizardsLaunch+30o ...
 
 // MGC dseg:3050
-char load_lbx_file[] = "LOAD.LBX";
+char load_lbx_file__ovr160[] = "LOAD.LBX";
 
 // MGC dseg:3059
 char cnst_HOTKEY_Esc3[] = "\x1B";
@@ -147,14 +147,14 @@ void Load_Screen_MGC__WIP(void)
     int16_t itr;  // _SI_
 
 
-    _background_seg        = LBX_Reload(     load_lbx_file,  0, _screen_seg);
-    _quit_active_seg       = LBX_Reload_Next(load_lbx_file,  2, _screen_seg);
-    _load_active_seg       = LBX_Reload_Next(load_lbx_file,  1, _screen_seg);
-    _load_inactive_seg     = LBX_Reload_Next(load_lbx_file,  5, _screen_seg);  // WZD uses entry 6 for load_inactive
-    _ok_inactive_seg       = LBX_Reload_Next(load_lbx_file,  8, _screen_seg);
-    _text_fill_seg         = LBX_Reload_Next(load_lbx_file,  9, _screen_seg);
-    _settings_button_seg   = LBX_Reload_Next(load_lbx_file, 12, _screen_seg);
-    _selection_marker_seg  = LBX_Reload_Next(load_lbx_file, 10, _screen_seg);
+    _background_seg        = LBX_Reload(     load_lbx_file__ovr160,  0, _screen_seg);
+    _quit_active_seg       = LBX_Reload_Next(load_lbx_file__ovr160,  2, _screen_seg);
+    _load_active_seg       = LBX_Reload_Next(load_lbx_file__ovr160,  1, _screen_seg);
+    _load_inactive_seg     = LBX_Reload_Next(load_lbx_file__ovr160,  5, _screen_seg);  // WZD uses entry 6 for load_inactive
+    _ok_inactive_seg       = LBX_Reload_Next(load_lbx_file__ovr160,  8, _screen_seg);
+    _text_fill_seg         = LBX_Reload_Next(load_lbx_file__ovr160,  9, _screen_seg);
+    _settings_button_seg   = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
+    _selection_marker_seg  = LBX_Reload_Next(load_lbx_file__ovr160, 10, _screen_seg);
 
 
     screen_changed == ST_FALSE;

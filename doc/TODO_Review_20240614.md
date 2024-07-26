@@ -4,6 +4,8 @@
 TODO Review 20240614
 
 no Audio
+no Credits
+no Intro
 no Tactical Combat
 no AI Game Play
 no AI Combat

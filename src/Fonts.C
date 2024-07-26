@@ -199,6 +199,12 @@ void Load_Font_File(char * font_file)
 // WZD s17p01
 // AKA Set_Font_Style1()
 // MoO2  Module: fonts  Set_Font_Style_Shadow_Down()
+/*
+
+Settings_Screen_Draw()
+    Set_Font_Style_Shadow_Down(2, 2, 45, ST_NULL);
+    ~== Set_Font_Style_Shadow_Down(2, 2, 45, 0);
+*/
 void Set_Font_Style_Shadow_Down(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3)
 {
     Set_Font_Style(style_num, Color_1, Color_2, Color_3);
@@ -277,13 +283,15 @@ void Set_Font_Spacing(int16_t spacing)
 /*
     sets 16 colors, starting at font colors index 240
     ¿ font colors block 15 is font remap colors ?
+
+98:  162,162,186
 */
 void Set_Font_Colors_15(int16_t font_idx, uint8_t * colors)
 {
     int16_t itr;
     int16_t color_start;
 
-    color_start = 240;  // ? 15 * 16 ?
+    color_start = 240;  // ¿ 15 * 16 ?
 
     for(itr = 0; itr < 16; itr++)
     {
@@ -1552,6 +1560,15 @@ uint8_t _CS_glyph_buffer[80];
     sets color1 as current & normal colors
     sets color2 as highlight colors
     sets color3 as special colors
+16 color blocks  {0,...,15}
+
+Settings_Screen_Draw()
+    Set_Font_Style_Shadow_Down(2, 2, 45, ST_NULL);
+    ~== Set_Font_Style_Shadow_Down(2, 2, 45, 0);
+    ...
+    Set_Font_Colors_15(3, &colors[0]);
+    Set_Font_Style_Shadow_Down(3, 15, 45, ST_NULL);
+
 */
 void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3)
 {
@@ -1573,7 +1590,7 @@ void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t co
 
     for(itr = 0; itr < 16; itr++)
     {
-        font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * 16) + itr)];  // /*  14 */ uint8_t  normal_colors[16];
+        font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * 16) + itr)];   // /*  14 */ uint8_t  normal_colors[16];
     }
 
     for(itr = 0; itr < 16; itr++)

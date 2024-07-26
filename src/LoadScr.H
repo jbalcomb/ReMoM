@@ -7,7 +7,7 @@
 WZD
     Load_Screen
     Load_Screen_Draw
-    Load_Screen_Help
+    Set_Load_Screen_Help_List
     Loaded_Game_Update
 MGC
     Load_Screen
@@ -61,7 +61,7 @@ void Load_Screen(void);
 void Load_Screen_Draw(void);
 
 // WZD o160p03
-void Load_Screen_Help(void);
+void Set_Load_Screen_Help_List(void);
 
 // WZD o160p04
 void Loaded_Game_Update(void);

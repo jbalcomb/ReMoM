@@ -1,7 +1,28 @@
-#ifndef MOX_SET_H
-#define MOX_SET_H
+/*
+    WIZARDS.EXE
+        ovr125
+    MAGIC.EXE
 
-#include "MoX_TYPE.H"    /* word */
+WZD
+MGC
+
+MoO2
+    Module: FILEDEF
+    Module: INITGAME
+    Module: HAROLD
+    Module: LOADSAVE
+    Module: RUSS
+
+*/
+
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
+#include "MoM.H"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 
@@ -48,16 +69,30 @@ struct s_MAGIC_SET
 
 
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 extern uint8_t _magic_set[];
-
 extern struct s_MAGIC_SET magic_set;
 
+
+
+#define SETTINGS_FILE_NAME "MAGIC.SET"
+#define SETTINGS_FILE_SIZE 466
+
+
+
+void Read_MAGIC_SET(void);
+void Write_MAGIC_SET(void);
+
+
+
+/*
+    WIZARDS.EXE  ovr125
+*/
+
+// WZD o125p01
+void Settings_Screen(void);
+
+// WZD o125p02
+void Settings_Screen_Draw(void);
 
 // WZD o125p03
 void Load_MAGIC_SET(void);
@@ -65,13 +100,13 @@ void Load_MAGIC_SET(void);
 // WZD o125p04
 void Set_Default_Game_Settings(void);
 
+// WZD o125p05
+void Set_Settings_Screen_Help_List(void);
 
-void Read_MAGIC_SET(void);
-void Write_MAGIC_SET(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* MOX_SET_H */
+#endif  /* SETTINGS_H */

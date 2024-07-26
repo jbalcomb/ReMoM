@@ -133,7 +133,6 @@
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
     <ClInclude Include="..\..\..\src\MoX_RNG.H" />
-    <ClInclude Include="..\..\..\src\MoX_SET.H" />
     <ClInclude Include="..\..\..\src\MoX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX_UnOrg.H" />
     <ClInclude Include="..\..\..\src\MoX_Util.H" />
@@ -151,6 +150,7 @@
     <ClInclude Include="..\..\..\src\SBookScr.H" />
     <ClInclude Include="..\..\..\src\SCastScr.H" />
     <ClInclude Include="..\..\..\src\SCORE.H" />
+    <ClInclude Include="..\..\..\src\Settings.H" />
     <ClInclude Include="..\..\..\src\SETTLE.H" />
     <ClInclude Include="..\..\..\src\special.H" />
     <ClInclude Include="..\..\..\src\Spellbook.H" />
@@ -215,7 +215,6 @@
     <ClCompile Include="..\..\..\src\MoX_GAM.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
     <ClCompile Include="..\..\..\src\MoX_RNG.C" />
-    <ClCompile Include="..\..\..\src\MoX_SET.C" />
     <ClCompile Include="..\..\..\src\MoX_UnOrg.C" />
     <ClCompile Include="..\..\..\src\MoX_Util.C" />
     <ClCompile Include="..\..\..\src\NewGame.C" />
@@ -227,6 +226,7 @@
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
     <ClCompile Include="..\..\..\src\SCORE.C" />
+    <ClCompile Include="..\..\..\src\Settings.C" />
     <ClCompile Include="..\..\..\src\SETTLE.C" />
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />

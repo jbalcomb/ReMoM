@@ -126,6 +126,7 @@ enum e_Difficulty
 };
 enum e_Opponents
 {
+    goo_None,
     goo_One,
     goo_Two,
     goo_Three,

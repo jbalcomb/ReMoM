@@ -8,7 +8,7 @@
 WZD
     Load_Screen
     Load_Screen_Draw
-    Load_Screen_Help
+    Set_Load_Screen_Help_List
     Loaded_Game_Update
 MGC
     Load_Screen
@@ -18,37 +18,29 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "MoX.H"
-#include "LoadScr.H"
-#include "MainScr.H"
-#include "MainScr_Maps.H"
+#include "MoM.H"
 
-
-
-
-
-// WZD dseg:60D1 1B 00                                           cnst_HOTKEY_Esc1B db 1Bh,0              ; DATA XREF: OVL_RazeCityDialog+155o
-
-// WZD dseg:60D3 00                                              align 2
-// WZD dseg:60D4 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_loadsave s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
-struct s_mouse_list mouse_list_loadsave[1] = {
-    {1, 0, 0, 0, 319, 199}
-};
-
+/*
+    Settings.C
+*/
+// WZD dseg:60D4
+extern struct s_mouse_list mouse_list_loadsave[1];
 // WZD dseg:60E0
-// ; 3 indicates returning from the settings screen
-int16_t loadsave_settings_flag = ST_UNDEFINED;
-
-
+extern int16_t loadsave_settings_flag;
+// WZD dseg:C9B0
+extern int16_t loadsave_ok_button;
+// WZD dseg:C9B8
+extern int16_t load_screen_fade_in_flag;
 
 
 
 // WZD dseg:712C                                                 BEGIN:  ovr160 - Strings  (LOADSAVE)
 
 // WZD dseg:712C
-char load_lbx_file[] = "LOAD.LBX";
+char load_lbx_file__ovr160[] = "LOAD.LBX";
+
 // WZD dseg:7134
-char empty_string__ovr160[] = "";
+char str_empty_string__ovr160[] = "";
 // WZD dseg:7135
 char cnst_SAVE3[] = "SAVE";
 // WZD dseg:713A
@@ -58,11 +50,12 @@ char cnst_HOTKEY_Esc22 = '\x1B';
 
 // WZD dseg:7141 4D 41 47 49 43 2E 45 58 45 00                   cnst_MAGIC_EXE_File3 db 'MAGIC.EXE',0   ; DATA XREF: Load_Screen+3D1o
 // WZD dseg:714B 4A 45 4E 4E 59 00                               cnst_MAGICEXE_arg0_3 db 'JENNY',0       ; DATA XREF: Load_Screen+3CDo
+
 // WZD dseg:7151
 char load_screen_copyright[] = "Copyright  Simtex Software, 1995   V1.31";
 
 // WZD dseg:717A
-char cnst_HLPENTRY_File8[] = "hlpentry.lbx";
+char hlpentry_lbx_file__ovr160[] = "hlpentry.lbx";
 
 // WZD dseg:7187 00                                              align 2
 
@@ -90,14 +83,14 @@ int16_t loadsave_settings_button;
 // WZD dseg:C992                                                 ; unsigned int IMG_GUI_ChkBoxYes
 // WZD dseg:C992 00 00 00 00 00 00                               IMG_GUI_ChkBoxYes@ dw 3 dup(     0)     ; DATA XREF: Settings_Screen+66w ...
 // WZD dseg:C992                                                                                         ; array of 3 images appended into the sandbox
-// WZD dseg:C998 00 00                                           GUI_Settings_Offset dw 0                ; DATA XREF: Settings_Screen:loc_A90CCw ...
+// WZD dseg:C998 00 00                                           magic_set_ptr dw 0                ; DATA XREF: Settings_Screen:loc_A90CCw ...
 
 // WZD dseg:C99A
 SAMB_ptr save_inactive;
 
 // WZD dseg:C99C
 // AKA IDK_SaveSlots_Array
-int16_t save_game_slots[8];
+int16_t save_game_slots[NUM_SAVE_SLOTS];
 
 // WZD dseg:C9AC
 int16_t loadsave_save_button;
@@ -106,7 +99,7 @@ int16_t loadsave_save_button;
 int16_t loadsave_quit_button;
 
 // WZD dseg:C9B0
-int16_t loadsave_ok_button;
+// Settings.C  int16_t loadsave_ok_button;
 
 // WZD dseg:C9B2
 int16_t selected_load_game_slot_idx;
@@ -118,7 +111,7 @@ int16_t selected_save_game_slot_idx;
 int16_t loadsave_load_button;
 
 // WZD dseg:C9B8
-int16_t load_screen_fade_in_flag;  // ; set to 0 on entering the settings screen
+// Settings.C  int16_t load_screen_fade_in_flag;  // ; set to ST_FALSE on entering the settings screen
 
 // WZD dseg:C9BA
 SAMB_ptr load_inactive;
@@ -252,18 +245,18 @@ void Load_Screen(void)
     // LOAD.LBX, 011  SETTING2    Settings Backgrnd
     // LOAD.LBX, 012  LOADSAVE    Settings button
 
-    loadsave_background     = LBX_Reload(     load_lbx_file,  0, _screen_seg);
-    quit_active             = LBX_Reload_Next(load_lbx_file,  2, _screen_seg);
-    load_active             = LBX_Reload_Next(load_lbx_file,  1, _screen_seg);
-    save_active             = LBX_Reload_Next(load_lbx_file,  3, _screen_seg);
-    ok_active               = LBX_Reload_Next(load_lbx_file,  4, _screen_seg);
+    loadsave_background     = LBX_Reload(     load_lbx_file__ovr160,  0, _screen_seg);
+    quit_active             = LBX_Reload_Next(load_lbx_file__ovr160,  2, _screen_seg);
+    load_active             = LBX_Reload_Next(load_lbx_file__ovr160,  1, _screen_seg);
+    save_active             = LBX_Reload_Next(load_lbx_file__ovr160,  3, _screen_seg);
+    ok_active               = LBX_Reload_Next(load_lbx_file__ovr160,  4, _screen_seg);
     // DNE  Quit inactive
-    load_inactive           = LBX_Reload_Next(load_lbx_file,  6, _screen_seg);  // WZD uses entry 5 for load_inactive
-    save_inactive           = LBX_Reload_Next(load_lbx_file,  7, _screen_seg);
+    load_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  6, _screen_seg);  // WZD uses entry 5 for load_inactive
+    save_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  7, _screen_seg);
     // DNE  Ok   inactive
-    loadsave_text_fill_seg  = LBX_Reload_Next(load_lbx_file,  9, _screen_seg);
-    selection_marker        = LBX_Reload_Next(load_lbx_file, 10, _screen_seg);
-    settings_button         = LBX_Reload_Next(load_lbx_file, 12, _screen_seg);
+    loadsave_text_fill_seg  = LBX_Reload_Next(load_lbx_file__ovr160,  9, _screen_seg);
+    selection_marker        = LBX_Reload_Next(load_lbx_file__ovr160, 10, _screen_seg);
+    settings_button         = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
 
 
     save_game_count = 0;
@@ -300,11 +293,11 @@ void Load_Screen(void)
 
     hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
 
-    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
 
     Set_Font_Style(3, 1, 3, ST_NULL);
 
@@ -319,7 +312,7 @@ void Load_Screen(void)
 
     Assign_Auto_Function(Load_Screen_Draw, 1);
 
-    Load_Screen_Help();
+    Set_Load_Screen_Help_List();
 
     while(leave_screen_flag == ST_FALSE)
     {
@@ -358,7 +351,7 @@ void Load_Screen(void)
             // DONT  loadsave_settings_flag = ST_UNDEFINED;
             // DONT  s01p15_Empty_pFxn();
             // DONT  Save_SAVE_GAM(8);
-            // DONT  GAME_EXE_Swap("MAGIC.EXE", "JENNY", empty_string__ovr160, empty_string__ovr160);
+            // DONT  GAME_EXE_Swap("MAGIC.EXE", "JENNY", str_empty_string__ovr160, str_empty_string__ovr160);
 
             loadsave_settings_flag = ST_UNDEFINED;
             Save_SAVE_GAM(8);
@@ -397,9 +390,9 @@ void Load_Screen(void)
         */
         if(input_field_idx == loadsave_settings_button)
         {
-            // TODO  loadsave_settings_flag = 2;
-            // TODO  Settings_Screen();
-            // TODO  leave_screen_flag = ST_TRUE;
+            loadsave_settings_flag = 2;
+            Settings_Screen();
+            leave_screen_flag = ST_TRUE;
         }
 
 
@@ -601,9 +594,9 @@ void Load_Screen_Draw(void)
 // WZD o160p03
 // HLPENTRY.LBX,  26  "Load Screen Help"
 // HLPENTRY.LBX,  27  "Save Screen Help"
-void Load_Screen_Help(void)
+void Set_Load_Screen_Help_List(void)
 {
-    LBX_Load_Data_Static(cnst_HLPENTRY_File8, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr160, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
     Set_Help_List((char *)&_help_entries[0], 27);  // ¿ BUGBUG - someone put entry_num instead of help_count ?
 }
 
