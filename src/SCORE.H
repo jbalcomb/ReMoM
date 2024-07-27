@@ -28,9 +28,9 @@ extern "C" {
 // MGC  dseg:3C98 4F 66 00                                        cnst_Of db 'Of',0
 // MGC  dseg:3C9B 46 61 6D 65 00                                  cnst_Fame db 'Fame',0
 // MGC  dseg:3CA0 4D 61 73 74 65 72 00                            cnst_HoF_String_C db 'Master',0
-// MGC  dseg:3CA7 29 00                                           cnst_ClosingBrace db ')',0
+// MGC  dseg:3CA7 29 00                                           str_PAREN_CLOSE db ')',0
 // MGC  dseg:3CA9 20 6F 66 20 74 68 65 20 00                      cnst_HoF_String_D db ' of the ',0
-// MGC  dseg:3CB2 28 00                                           cnst_OpeningBrace db '(',0
+// MGC  dseg:3CB2 28 00                                           str_PAREN_OPEN db '(',0
 // MGC  dseg:3CB4 25 29 00                                        cnst_HoF_String_E db '%)',0
 // MGC  dseg:3CB7 00                                              align 2
 /*

@@ -1,6 +1,9 @@
 /*
     Hall of Fame Screen
 
+    WIZARDS.EXE
+        ovr106
+    
     MAGIC.EXE
         ovr061
     
@@ -78,7 +81,7 @@
 // MGC dseg:3C74 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
 // MGC dseg:3C7B 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
 // MGC dseg:3C80 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-char TBL_HoF_RaceStrings[14][20] =
+char TBL_HoF_RaceStrings[NUM_RACES][LEN_RACE_NAME] =
 {
     "Barbarians",
     "Beastmen",
@@ -102,14 +105,14 @@ char TBL_HoF_RaceStrings[14][20] =
                                             BEGIN: ovr061  (Hall Of Fame)
 */
 
-// MGC  dseg:3C87 48 41 4C 4F 46 41 4D 00                         halofam_lbx_file db 'HALOFAM',0
-char halofam_lbx_file[] = "HALOFAM";
+// MGC  dseg:3C87
+char halofam_lbx_file__ovr106[] = "HALOFAM";
 
 // MGC  dseg:3C8F
-char hof_hotkey_ESC = '\x1B';
+char str_hotkey_ESC__ovr106 = '\x1B';
 
 // MGC  dseg:3C91
-char cnst_HoF_Space[] = " ";
+char str_SPACE__ovr106[] = " ";
 
 // MGC  dseg:3C93
 char cnst_HoF_String_B[] = "Hall";
@@ -124,13 +127,13 @@ char cnst_Fame[] = "Fame";
 char cnst_HoF_String_C[] = "Master";
 
 // MGC  dseg:3CA7
-char cnst_ClosingBrace[] = ")";
+char str_PAREN_CLOSE[] = ")";
 
 // MGC  dseg:3CA9
 char cnst_HoF_String_D[] = " of the ";
 
 // MGC  dseg:3CB2
-char cnst_OpeningBrace[] = "(";
+char str_PAREN_OPEN[] = "(";
 
 // MGC  dseg:3CB4
 char cnst_HoF_String_E[] = "%)";
@@ -140,7 +143,6 @@ char cnst_HoF_String_E[] = "%)";
 /*
                                             END: ovr061  (Hall Of Fame)
 */
-// MGC  dseg:3CB8 00 00                                           g_TIMER_Count_Lo dw 0
 
 
 
@@ -149,9 +151,9 @@ char cnst_HoF_String_E[] = "%)";
 // MGC o61p01
 void Hall_Of_Fame_Screen(void)
 {
-    int16_t hotkey_ESC;
+    int16_t full_screen_ESC_field;
     int16_t input_field_idx;
-    SAMB_ptr _halloffame_background_seg;
+    SAMB_ptr hof_background_seg;
     int16_t leave_screen_flag;
 
     Deactivate_Auto_Function();
@@ -171,15 +173,15 @@ void Hall_Of_Fame_Screen(void)
     Set_Page_Off();
 
     // HALOFAM.LBX, 000  HALOFAM     hof background
-    _halloffame_background_seg = LBX_Reload(halofam_lbx_file, 0, _screen_seg);
+    hof_background_seg = LBX_Reload(halofam_lbx_file__ovr106, 0, _screen_seg);
 
-    FLIC_Draw(0, 0, _halloffame_background_seg);
+    FLIC_Draw(0, 0, hof_background_seg);
 
     Apply_Palette();
 
     Copy_Off_To_Back();
 
-    VGA_SaveDraw_Frame4();
+    Copy_Off_To_Page4();
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
@@ -197,11 +199,11 @@ void Hall_Of_Fame_Screen(void)
 
         Clear_Fields();
 
-        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, hof_hotkey_ESC, ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr106, ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == full_screen_ESC_field)
         {
             leave_screen_flag = ST_UNDEFINED;
         }
@@ -220,7 +222,9 @@ void Hall_Of_Fame_Screen(void)
     Clear_Fields();
     Deactivate_Auto_Function();
     Deactivate_Help_List();
+
     Fade_Out();
+
     Load_Palette(0, -1, 0);
     Reset_Cycle_Palette_Color();
     Clear_Palette_Changes(0, 255);
@@ -238,15 +242,14 @@ void Hall_Of_Fame_Screen(void)
 void Hall_Of_Fame_Screen_Draw(void)
 {
     uint8_t color_array[16];
-    int16_t score;
+    int16_t score_percent;
     char str_SPACE[2];
     int16_t print_x;
     int16_t print_y;
     int16_t itr_color_array;
     int16_t itr_scores;
 
-    // strcpy(str_SPACE, cnst_HoF_Space);
-    strcpy(str_SPACE, " ");
+    strcpy(str_SPACE, str_SPACE__ovr106);
 
     color_array[ 0] = 246;
     color_array[ 1] =  49;
@@ -266,14 +269,11 @@ void Hall_Of_Fame_Screen_Draw(void)
     color_array[15] = 246;
 
     Set_Page_Off();
-
     Reset_Window();
-
     Copy_Back_To_Off();
 
-    Set_Font_Colors_15(2, &color_array[0]);  // set font style num 0; set font colors block 15
-
-    Set_Font_Style_Shadow_Down(5, 15, 0, 0);  // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
+    Set_Font_Colors_15(2, &color_array[0]);     // set font style num 0; set font colors block 15
+    Set_Font_Style_Shadow_Down(5, 15, 0, 0);    // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
 
     Set_Outline_Color(250);
 
@@ -293,19 +293,16 @@ void Hall_Of_Fame_Screen_Draw(void)
     color_array[0] = 246;
 
     Set_Font_Colors_15(2, &color_array[0]);
-
     Set_Font_Style_Shadow_Down(2, 15, 0, 0);
-
     Set_Outline_Color(250);
 
     print_x = 72;
     print_y = 42;
 
-    for(itr_scores = 0; itr_scores < 10; itr_scores++)
+    for(itr_scores = 0; itr_scores < NUM_SCORES; itr_scores++)
     {
-        if(magic_set.HallofFame_Scores[itr_scores] != ST_FALSE)
+        if(magic_set.hof_scores[itr_scores] != ST_FALSE)
         {
-
             if(itr_scores == 0)
             {
                 Print_Right(print_x, print_y, cnst_HoF_String_C);  // "Master"
@@ -314,19 +311,21 @@ void Hall_Of_Fame_Screen_Draw(void)
             {
                 itoa((itr_scores+1), GUI_String_2, 10);
                 strcpy(GUI_String_1, GUI_String_2);
-                strcat(GUI_String_1, cnst_ClosingBrace);  // ")"
+                strcat(GUI_String_1, str_PAREN_CLOSE);  // ")"
                 Print_Right(print_x, print_y, GUI_String_1);
             }
 
-            strcpy(GUI_String_1, magic_set.HallofFame_Names[itr_scores]);  // sizeof(magic_set.HallofFame_Names[0]) == 20
+            strcpy(GUI_String_1, magic_set.hof_names[itr_scores]);
             strcat(GUI_String_1, cnst_HoF_String_D);  // " of the "
             strcat(GUI_String_1, TBL_HoF_RaceStrings[magic_set.HallofFame_Races[itr_scores]]);
             Print((print_x + 9), print_y, GUI_String_1);  // ¿ 9 is ~ x offset for title column ?
-            Print_Integer_Right((print_x + 170), print_y, magic_set.HallofFame_Scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
+            Print_Integer_Right((print_x + 170), print_y, magic_set.hof_scores[itr_scores]);  // ¿ 9 is ~ x offset for score column ?
 
-            score = 8000 / (magic_set.HallofFame_Scores[itr_scores] * 100);  // ... 8000 ... 100 ... LXMUL ... LDIV ...
-            itoa(score, GUI_String_2, 10);
-            strcpy(GUI_String_1, cnst_OpeningBrace);  // "("
+            // score_percent = (8000 / (magic_set.hof_scores[itr_scores] * 100));  // ... 8000 ... 100 ... LXMUL ... LDIV ...
+            score_percent = ((magic_set.hof_scores[itr_scores] * 100) / 8000);
+
+            itoa(score_percent, GUI_String_2, 10);
+            strcpy(GUI_String_1, str_PAREN_OPEN);  // "("
             strcat(GUI_String_1, GUI_String_2);
             strcat(GUI_String_1, cnst_HoF_String_E);  // "%)"
             Print_Right((print_x + 198), print_y, GUI_String_1);  // ¿ 198 is ~ x offset for  column ?

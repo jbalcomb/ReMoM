@@ -62,8 +62,8 @@ struct s_MAGIC_SET
 
     /*  E0 */ uint16_t Movement_Anims;
 
-    /*  E2 */ char HallofFame_Names[NUM_HOF_ENTRIES][LEN_HOF_NAME];
-    /* 1AA */ uint16_t HallofFame_Scores[NUM_HOF_ENTRIES];
+    /*  E2 */ char hof_names[NUM_HOF_ENTRIES][LEN_HOF_NAME];
+    /* 1AA */ uint16_t hof_scores[NUM_HOF_ENTRIES];
     /* 1BE */ uint16_t HallofFame_Races[NUM_HOF_ENTRIES];
 };
 

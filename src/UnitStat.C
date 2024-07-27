@@ -58,8 +58,8 @@ char cnst_Disband_Msg2[] = "\x01?";
 char cnst_Dismiss_Msg[] = "Do you wish to dismiss \x02";
 
 // WZD dseg:3421 43 6F 73 74 00                                  cnst_Cost db 'Cost',0                   ; DATA XREF: Unit_Statistics_Popup_Draw+190o
-// WZD dseg:3426 28 00                                           cnst_OpeningBrace db '(',0              ; DATA XREF: Unit_Statistics_Popup_Draw+1C6o
-// WZD dseg:3428 29 00                                           cnst_ClosingBrace db ')',0              ; DATA XREF: Unit_Statistics_Popup_Draw+202o
+// WZD dseg:3426 28 00                                           str_PAREN_OPEN db '(',0              ; DATA XREF: Unit_Statistics_Popup_Draw+1C6o
+// WZD dseg:3428 29 00                                           str_PAREN_CLOSE db ')',0              ; DATA XREF: Unit_Statistics_Popup_Draw+202o
 // WZD dseg:342A 54 68 65 00                                     cnst_The db 'The',0                     ; DATA XREF: Unit_Statistics_Popup_Draw+32Co
 // WZD dseg:342E 4D 6F 76 65 73 00                               cnst_Moves_2 db 'Moves',0               ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F1CCo
 // WZD dseg:342E                                                                                         ; could use dseg:6204

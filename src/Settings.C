@@ -573,13 +573,13 @@ void Load_MAGIC_SET(void)
     if(magic_set.Raze_City != ST_FALSE) { magic_set.Raze_City = ST_TRUE; }
 
     
-    if(magic_set.HallofFame_Scores == 0)
+    if(magic_set.hof_scores == 0)
     {
         for(itr = 0; itr < NUM_HOF_ENTRIES; itr++)
         {
-            magic_set.HallofFame_Scores[itr] = 0;
+            magic_set.hof_scores[itr] = 0;
             magic_set.HallofFame_Races[itr] = 0;
-            strcpy(magic_set.HallofFame_Names[itr], "");
+            strcpy(magic_set.hof_names[itr], "");
         }
     }
 
@@ -630,9 +630,9 @@ void Set_Default_Game_Settings(void)
 
     for(itr = 0; itr < NUM_HOF_ENTRIES; itr++)
     {
-        magic_set.HallofFame_Scores[itr] = 0;
+        magic_set.hof_scores[itr] = 0;
         magic_set.HallofFame_Races[itr] = 0;
-        strcpy(magic_set.HallofFame_Names[itr], "");
+        strcpy(magic_set.hof_names[itr], "");
     }
 
 }

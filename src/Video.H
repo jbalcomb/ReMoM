@@ -118,8 +118,8 @@ void GUI_PageFlip(void);
 // Copy_On_To_Off_NM()
 // Copy_Off_To_Back()
 // Copy_Back_To_Off()
-// VGA_SaveDraw_Frame4()
-// VGA_LoadDraw_Frame4()
+// Copy_Off_To_Page4()
+// Copy_Page4_To_Off()
 // UU_VGA_CopyToDraw()
 
 // WZD s28p01
@@ -151,14 +151,14 @@ void Copy_Off_To_Back(void);
 void Copy_Back_To_Off(void);
 
 // WZD s28p10
-// drake178: VGA_SaveDraw_Frame4()
+// drake178: Copy_Off_To_Page4()
 // copy VGA RAM 0xA000 to VGA RAM 0xAC00 - frame-buffer 0 to frame-buffer 3
-void VGA_SaveDraw_Frame4(void);
+void Copy_Off_To_Page4(void);
 
 // WZD s28p11
 // drake178: VGA_LoadDraw_Frame4()
 // copy VGA RAM 0xAC00 to VGA RAM 0xA000 - frame-buffer 3 to frame-buffer 0
-void VGA_LoadDraw_Frame4(void);
+void Copy_Page4_To_Off(void);
 
 
 

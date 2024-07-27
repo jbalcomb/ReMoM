@@ -50,7 +50,7 @@ void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
     Assign_Auto_Function(Item_View_Popup_Draw, 1);
 
     // ; saves the contents of the current draw frame into the 4th VGA frame, starting at $AC00, overwriting whatever was there before
-    VGA_SaveDraw_Frame4();
+    Copy_Off_To_Page4();
 
     item_view_popup_bitm = Allocate_Next_Block(_screen_seg, 1200);
     m_item_icon_workarea = Allocate_Next_Block(_screen_seg, 50);
@@ -108,7 +108,7 @@ void Item_View_Popup_Draw(void)
 
     Set_Page_Off();
 
-    VGA_LoadDraw_Frame4();
+    Copy_Page4_To_Off();
 
     Item_View_Prepare(item_view_item_idx, item_view_popup_bitm, m_item_icon_workarea);
 
