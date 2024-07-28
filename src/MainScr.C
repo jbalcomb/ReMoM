@@ -134,7 +134,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
-void STK_GetExtraActions__WIP(void);
+void Set_Unit_Action_Special(void);
 
 // WZD o61p07
 void Active_Unit_Stack(int16_t * troop_count, int16_t troops[]);
@@ -927,7 +927,6 @@ SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header poi
 
 
 
-
 /*
     WIZARDS.EXE  ovr057
 
@@ -1076,7 +1075,7 @@ void Main_Screen(void)
     // TODO  j_Set_Mouse_List_Default()        ; sets the Normal_Fullscreen window (GUI_SetWindows)
     Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
 
-    STK_GetExtraActions__WIP();
+    Set_Unit_Action_Special();
 
     // DONT  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
     // DONT  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
@@ -2153,9 +2152,9 @@ void Add_Unit_Action_Fields(void)
 {
     if(_unit_stack_count > 0)
     {
-        _done_button = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
+        _done_button   = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
         _patrol_button = Add_Button_Field(280, 176, "", main_patrol_button, 0, ST_UNDEFINED);
-        _wait_button = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
+        _wait_button   = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
     }
 
     if(special_action_flag != ST_UNDEFINED)
@@ -2193,9 +2192,6 @@ void Add_Unit_Action_Fields(void)
 // AKA j_OVL_DrawUnitActnBtns()
 void Main_Screen_Draw_Unit_Action_Buttons(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
-#endif
 
     if(_unit_stack_count > 0)
     {
@@ -2211,7 +2207,13 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
         FLIC_Draw(246, 186, main_wait_button);
         // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
 
-        if(special_action_flag != ST_UNDEFINED)
+        if(special_action_flag == ST_UNDEFINED)
+        {
+            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+            FLIC_Draw(280, 186, main_lock_build_button);
+            // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
+        }
+        else
         {
             if(special_action_flag == 2)
             {
@@ -2231,13 +2233,6 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
                 FLIC_Draw(280, 186, main_build_button);
                 // TODO  _help_entries.Entry_Index+64h = HLP_BUILD;
             }
-
-        }
-        else
-        {
-            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
-            FLIC_Draw(280, 186, main_lock_build_button);
-            // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
         }
     }
     else
@@ -2254,14 +2249,11 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
         FLIC_Draw(280, 186, main_lock_build_button);
         // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
 
-        FLIC_Set_CurrentFrame(main_wait_button, 0);
+        FLIC_Set_CurrentFrame(main_wait_button, 0);  // BUGBUG  should be main_lock_wait_button
         FLIC_Draw(246, 186, main_wait_button);
         // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o57p05
@@ -2975,7 +2967,10 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 }
 
 // WZD o61p06
-void STK_GetExtraActions__WIP(void)
+/*
+    sets special_action_flag to {build,settle,purify,merge}
+*/
+void Set_Unit_Action_Special(void)
 {
     int16_t troops[MAX_STACK];
     int16_t troop_count;
@@ -3002,7 +2997,7 @@ void STK_GetExtraActions__WIP(void)
     // ; returns 1 if the stack is on a corrupted tile and has
     // ; at least one unit that can purify; or 0 otherwise
     // ; sets GUI_ExtraUnitAction to 2 if returning 1
-    // TODO  STK_PurifyPossible(&troop_count, &troops[0]);
+    Unit_Action_Special_Purify(&troop_count, &troops[0]);
 
 
     // ; returns 1 if the stack is on a node tile and has at
@@ -3370,15 +3365,65 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
 
 
 // WZD o61p10
+// STK_BuildingPossible()
+
 // WZD o61p11
+/*
+    sets special_action_flag
+    returns {F,T} could 'Purify' 'Unit Action - Special
+*/
+int16_t Unit_Action_Special_Purify(int16_t * troop_count, int16_t troops[])
+{
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t have_purifier;
+    int16_t unit_type;
+    int16_t unit_idx;
+    int16_t itr_troops;  // _DI_
+
+    have_purifier = ST_FALSE;
+
+    for(itr_troops = 0; ((itr_troops < *troop_count) && (have_purifier == ST_FALSE)); itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        unit_type = _UNITS[unit_idx].type;
+        if((_unit_type_table[unit_type].Abilities & UA_PURIFY) != 0)
+        {
+            have_purifier = ST_TRUE;
+        }
+    }
+
+    if(have_purifier != ST_TRUE)
+    {
+        return ST_FALSE;
+    }
+
+    unit_wx = _UNITS[troops[0]].wx;
+    unit_wy = _UNITS[troops[0]].wy;
+
+    if((TBL_Terrain_Flags[((_map_plane * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & TF_Corruption) == TF_Corruption)
+    {
+        special_action_flag = 2;
+        return ST_TRUE;
+    }
+
+}
+
 // WZD o61p12
+// STK_MeldingPossible()
+
 // WZD o61p13
+// STK_MeldWithNode()
+
 // WZD o61p14
+// STK_DoMeldWithNode()
+
 // WZD o61p15
+// GAME_ProcessPurify()
 
 // WZD o61p16
 /*
-    counts units that are not busy
+    counts units that are not busy {Patrol,Goto,Purify}
     returns ST_TRUE if any of the player's units are not *busy*
     logic feels inverted for the way it is tested
 */
@@ -3388,26 +3433,20 @@ int16_t Any_Units_Not_Busy()
     int16_t itr_units;
     int16_t return_value;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
-#endif
-
     unit_count = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
         if(_UNITS[itr_units].owner_idx == _human_player_idx)
         {
-            // NOT Patrol, GoTo, or Purify
             if(
-                ( (_UNITS[itr_units].Status & 0x01 /* Patrol */) == 0 ) &&
-                ( (_UNITS[itr_units].Status & 0x03 /* GoTo   */) == 0 ) &&
-                ( (_UNITS[itr_units].Status & 0x08 /* Purify */) == 0 )
+                (_UNITS[itr_units].Status != us_Patrol)
+                &&
+                (_UNITS[itr_units].Status != us_GOTO)
+                &&
+                (_UNITS[itr_units].Status != us_Purify)
             )
             {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].Status);
-#endif
                 unit_count++;
             }
         }
@@ -3415,18 +3454,13 @@ int16_t Any_Units_Not_Busy()
 
     if(unit_count > 0)
     {
-        return_value = ST_TRUE;
+        return ST_TRUE;
     }
     else
     {
-        return_value = ST_FALSE;
+        return ST_FALSE;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
-#endif
-
-    return return_value;
 }
 
 
@@ -3508,7 +3542,7 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     OVL_BringIntoView(map_x, map_y, unit_wx, unit_wy, map_plane);
         
-    STK_GetExtraActions__WIP();
+    Set_Unit_Action_Special();
         
     Active_Unit_Stack(&troop_count, &troops[0]);
 
@@ -3885,7 +3919,7 @@ int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int1
 */
 void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y)
 {
-    int16_t unit_type_idx;
+    int16_t unit_type;
     int16_t case_1_count;
     int16_t itr_stack;
     int16_t unit_idx;
@@ -4021,12 +4055,12 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                 if(_unit_stack[itr_stack].active == ST_TRUE)
                 {
                     unit_idx = _unit_stack[itr_stack].unit_idx;
-                    unit_type_idx = _UNITS[unit_idx].type;
-                    if( (_unit_type_table[unit_type_idx].Abilities & UA_PURIFY) != 0)
+                    unit_type = _UNITS[unit_idx].type;
+                    if((_unit_type_table[unit_type].Abilities & UA_PURIFY) != 0)
                     {
                         _unit_stack[itr_stack].active = ST_FALSE;
                         _UNITS[unit_idx].Finished = ST_TRUE;
-                        _UNITS[unit_idx].Status = 8;  /* "PURIFY"  us_Purify */
+                        _UNITS[unit_idx].Status = us_Purify;
                         _UNITS[unit_idx].moves2 = 0;
                         _UNITS[unit_idx].dst_wx = 0;
                         _UNITS[unit_idx].dst_wy = 0;
@@ -5618,7 +5652,7 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
         if(current_screen == ST_UNDEFINED)
         {
-            FLIC_Draw(246, 178, next_turn_button_seg);  // ? offset by 6,5 to support the 3-D illusion of being depressed
+            FLIC_Draw(246, 178, next_turn_button_seg);
         }
         else
         {
@@ -5658,13 +5692,13 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
 
     if(special_action_flag == ST_UNDEFINED)
     {
-        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
-        FLIC_Draw(280, 186, main_lock_purify_button);
+        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+        FLIC_Draw(280, 186, main_lock_build_button);
     }
     else
     {
-        FLIC_Set_CurrentFrame(main_lock_build_button, 0);
-        FLIC_Draw(280, 186, main_lock_build_button);
+        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
+        FLIC_Draw(280, 186, main_lock_purify_button);
     }
 
 }

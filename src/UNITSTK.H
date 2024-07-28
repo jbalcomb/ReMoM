@@ -41,6 +41,7 @@ void Update_Stack_Active(int16_t stack_idx);
 // WZD o61p06
 // ¿PRIVATE?  
 // void STK_GetExtraActions(void);
+// Set_Unit_Action_Special()
 
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
@@ -54,11 +55,22 @@ void Update_Stack_Active(int16_t stack_idx);
 // ¿PRIVATE?  void Build_RoadBuilder_Stack(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
+// STK_BuildingPossible()
+
 // WZD o61p11
+// Unit_Action_Special_Purify()
+
 // WZD o61p12
+// STK_MeldingPossible()
+
 // WZD o61p13
+// STK_MeldWithNode()
+
 // WZD o61p14
+// STK_DoMeldWithNode()
+
 // WZD o61p15
+void Next_Turn_Process_Purify(void);
 
 // WZD o61p16
 // ¿PRIVATE?  int16_t Any_Units_Not_Busy();

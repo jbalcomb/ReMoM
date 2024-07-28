@@ -350,7 +350,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
 // WZD o61p06
 // ¿PRIVATE?  
-void STK_GetExtraActions__WIP(void);
+void Set_Unit_Action_Special(void);
 
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
@@ -364,11 +364,22 @@ void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 // ¿PRIVATE?  void Build_RoadBuilder_Stack(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
+// STK_BuildingPossible()
+
 // WZD o61p11
+int16_t Unit_Action_Special_Purify(int16_t * troop_count, int16_t troops[]);
+
 // WZD o61p12
+// STK_MeldingPossible()
+
 // WZD o61p13
+// STK_MeldWithNode()
+
 // WZD o61p14
+// STK_DoMeldWithNode()
+
 // WZD o61p15
+// GAME_ProcessPurify()
 
 // WZD o61p16
 // ¿PRIVATE?  int16_t Any_Units_Not_Busy();

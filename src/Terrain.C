@@ -21,7 +21,12 @@
 
 
 // WZD s161p01
-// TILE_ClearCorruption 
+void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
+{
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xDF;  // not TF_Corruption
+}
+
+
 // WZD s161p02
 // TILE_IsNode          
 

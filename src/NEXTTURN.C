@@ -343,11 +343,9 @@ void Next_Turn_Calc(void)
 //                                         ; plans first for all players before processing for all
 //                                         ; players
 
-// call    j_GAME_ProcessPurify            ; progress the purification counters of all purifying
-//                                         ; units, cleansing any tiles where the treshold has
-//                                         ; been reached
-//                                         ; WARNING: the Target_X field may not be the best
-//                                         ; place to hold this information?
+
+    Next_Turn_Process_Purify();
+
 
     MSG_Clear();
 

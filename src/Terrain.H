@@ -32,7 +32,8 @@ extern "C" {
 
 
 // WZD s161p01
-// TILE_ClearCorruption 
+void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p02
 // TILE_IsNode          
 
@@ -62,8 +63,10 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p08
 // TILE_GetSilverGold   
+
 // WZD s161p09
 // TILE_GetGoldOreGold  
+
 // WZD s161p10
 // TILE_GetGemGold      
 
@@ -73,14 +76,19 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p12
 // TILE_GetMithrilPower 
+
 // WZD s161p13
 // TILE_GetAdamntmPower 
+
 // WZD s161p14
 // TILE_GetQuorkPower   
+
 // WZD s161p15
 // TILE_GetCrysxPower   
+
 // WZD s161p16
 // TILE_HasMithril      
+
 // WZD s161p17
 // TILE_HasAdamantium   
 
@@ -93,8 +101,10 @@ int16_t City_Best_Weapon(int16_t city_idx);
 
 // WZD s161p20
 // TILE_GetRoadBldTime  
+
 // WZD s161p21
 // UU_TILE_GetUnsdMPCost
+
 // WZD s161p22
 // TILE_IsAISailable    
 
@@ -108,8 +118,10 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p25
 // TILE_IsDeepOcean     
+
 // WZD s161p26
 // G_TILE_IsAIEmbarkable
+
 // WZD s161p27
 // TILE_BuildingReqType 
 

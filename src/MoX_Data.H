@@ -1407,8 +1407,8 @@ struct s_UNIT
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* ¿ orderable ? {F,T}; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;       /* Go-To Destination World X */
-    /* 0A */  int8_t  dst_wy;       /* Go-To Destination World Y */
+    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  
+    /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
     /* 0B */  int8_t  Status;  // Build_Unit_Stack() resets us_WAIT to us_Ready
     /* 0C */  int8_t  Level;
     /* 0D */  /* int8_t  Unused_0Dh; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
