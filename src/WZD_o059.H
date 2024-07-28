@@ -54,7 +54,7 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
 // sub_520DD()
 
 // WZD o59p12
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o59p13
 void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p);

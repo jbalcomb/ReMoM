@@ -66,8 +66,10 @@ extern int64_t _main_map_grid_y;
 // CRP_OVL_UU_Control_3 dw 0
 // WZD dseg:C04C
 // CRP_OVL_UU_Control_4 dw 0
+
 // WZD dseg:C04E
-// int16_t special_action_flag;
+extern int16_t special_action_flag;
+
 // WZD dseg:C050
 // int16_t _next_turn_button;
 
@@ -322,67 +324,6 @@ void Main_Screen_Draw(void);
 
 // WZD o58p02
 void Set_Mouse_List_Default(void);
-
-
-
-/*
-    WIZARDS.EXE  ovr061
-*/
-
-
-// WZD o61p01
-// AKA IDK_ActiveUnitStack_MovesOrPath_s53150()
-// UNITSTK  void Update_Stack_Active(int16_t stack_idx);
-
-// WZD o61p02
-// AKA Do_Move_Stack()
-// ¿PRIVATE?  int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
-
-// WZD o61p03
-// UNIT_MoveStack()
-// ¿PRIVATE?  int16_t RdBd_UNIT_MoveStack_STUB(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p)
-
-// WZD o61p04
-void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
-
-// WZD o61p05
-// ¿PRIVATE?  int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane);
-
-// WZD o61p06
-// ¿PRIVATE?  
-void Set_Unit_Action_Special(void);
-
-// WZD o61p07
-// drake178: STK_GetMovableUnits()
-// ¿PRIVATE?  
-void Active_Unit_Stack(int16_t * unit_array_count, int16_t unit_array[]);
-
-// WZD o61p08
-void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
-
-// WZD o61p09
-// ¿PRIVATE?  void Build_RoadBuilder_Stack(int16_t & unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
-
-// WZD o61p10
-// STK_BuildingPossible()
-
-// WZD o61p11
-int16_t Unit_Action_Special_Purify(int16_t * troop_count, int16_t troops[]);
-
-// WZD o61p12
-// STK_MeldingPossible()
-
-// WZD o61p13
-// STK_MeldWithNode()
-
-// WZD o61p14
-// STK_DoMeldWithNode()
-
-// WZD o61p15
-// GAME_ProcessPurify()
-
-// WZD o61p16
-// ¿PRIVATE?  int16_t Any_Units_Not_Busy();
 
 
 

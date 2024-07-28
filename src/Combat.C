@@ -4033,6 +4033,9 @@ void Combat_Results_Scroll(void)
 
     }
 
+    Deactivate_Auto_Function();
+    Release_Block(_screen_seg);
+
 }
 
 

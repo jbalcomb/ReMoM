@@ -186,8 +186,31 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
 // WZD o59p11
 // sub_520DD()
 
+
 // WZD o59p12
-// TILE_HasNode()
+int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t node_idx;  // _SI_
+    int16_t itr;  // _CX_
+
+    node_idx = ST_UNDEFINED;
+
+    for(itr = 0; ((itr < NUM_NODES) && (node_idx == ST_UNDEFINED)); itr++)
+    {
+        if(
+            (_NODES[itr].wp == wp)
+            &&
+            (_NODES[itr].wx == wx)
+            &&
+            (_NODES[itr].wy == wy)
+        )
+        {
+            node_idx = itr;
+        }
+    }
+
+    return node_idx;
+}
 
 
 // WZD o59p13
