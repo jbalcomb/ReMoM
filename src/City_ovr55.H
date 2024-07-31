@@ -38,6 +38,7 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()
+int16_t Init_Outpost(void);
 
 // WZD o55p06
 // drake178: CTY_TakeOver()

@@ -122,16 +122,16 @@ void UNIT_RemoveExcess(int16_t unit_idx);
 */
 
 // WZD o142p01
-// TILE_CreateRoad()
+void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p02
-// TILE_EnchantRoad()
+void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p03
-// LD_TILE_ResUpdate()
+void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p04
-// LD_CTY_ResRefresh()
+void NOOP_Current_Player_All_City_Areas(void);
 
 // WZD o142p05
 int16_t City_House_Count(int16_t city_idx);

@@ -361,10 +361,11 @@ void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 // ¿PRIVATE?  void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
 
 // WZD o62p09
-// EarthGateTeleport()
+int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o62p10
-// USW_FullDisplay()
+void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+
 
 
 /*

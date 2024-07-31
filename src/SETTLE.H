@@ -34,11 +34,11 @@ extern "C" {
 
 // WZD o100p04
 // drake178: Do_Build_Outpost()
-// Do_Build_Outpost()
+int16_t Do_Build_Outpost(void);
 
 // WZD o100p05
 // drake178: STK_SettleTile()
-// STK_SettleTile()
+int16_t STK_SettleTile(int16_t troop_count, int16_t troops[]);
 
 // WZD o100p06
 // drake178: AI_UNIT_Move()

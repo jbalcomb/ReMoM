@@ -22,11 +22,11 @@ void Update_Stack_Active(int16_t stack_idx);
 
 // WZD o61p02
 // AKA Do_Move_Stack()
-// ¿PRIVATE?  int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
+int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p03
-// UNIT_MoveStack()
-// ¿PRIVATE?  int16_t RdBd_UNIT_MoveStack_STUB(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p)
+// AKA UNIT_MoveStack()
+int16_t RdBd_UNIT_MoveStack_STUB(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
 
 // WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
@@ -36,12 +36,10 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane);
 
 // WZD o61p06
 // AKA STK_GetExtraActions();
-// ¿PRIVATE?  
 void Set_Unit_Action_Special(void);
 
 // WZD o61p07
 // drake178: STK_GetMovableUnits()
-// ¿PRIVATE?  
 void Active_Unit_Stack(int16_t * unit_array_count, int16_t unit_array[]);
 
 // WZD o61p08

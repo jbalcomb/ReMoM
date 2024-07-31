@@ -374,6 +374,7 @@ void Load_Screen(void)
             Load_SAVE_GAM(selected_load_game_slot_idx);
             loaded_game_flag = ST_TRUE;
             leave_screen_flag = ST_TRUE;
+            /* HACK */ current_screen = scr_Main_Screen;
         }
 
 
@@ -430,6 +431,10 @@ void Load_Screen(void)
             // current_screen = scr_Main_Screen;
             // HACK: merge MGC Load_Screen() and WZD Load_Screen()
             current_screen = previous_screen;
+        }
+        if (loaded_game_flag == ST_TRUE)
+        {
+            current_screen = scr_Main_Screen;
         }
     }
 

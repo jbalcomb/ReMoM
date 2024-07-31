@@ -1492,6 +1492,8 @@ int16_t Wait_For_Input(void)
 
 // WZD s36p30
 // drake178: GUI_ProcessDirKey()
+// MoO2 ?
+// 1oom ?
 /*
     L,R,U,D,W,X,Y,Z
 */
@@ -1555,6 +1557,841 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
 
     return field_num;
 }
+
+
+// WZD s36p31
+// drake178: GUI_EditBoxControl()
+/*
+; creates and processes the event loop for an active
+; edit box control, using any defined redraw function
+; to refresh the screen, and setting the input text to
+; the pointer defined in the control when finished
+; WARNING: this function does not return until the edit box loses focus!
+*/
+/*
+    only called from Draw_Feild()
+    only processed if it is not selected
+    doesn't/can't happen via Input_Box_Popup()
+    any Add_Input_Field() outside of Input_Box_Popup()?
+        only ITEM_CreateControls()
+*/
+int16_t GUI_EditBoxControl(int16_t field_num)
+{
+    char input_string[63];
+    char key;
+    int16_t Timeout_Counter;
+    int16_t Control_Change;
+    int16_t Font_Height;
+    int16_t width;
+    int16_t String_Modified;
+    int16_t max_characters;
+    int16_t Allowed_Char;
+    int16_t string_pos;  // _SI_
+    int16_t itr;  // _DI_
+
+    // Where does this called from / through?
+    __debugbreak();
+
+    Timeout_Counter = 4;
+
+    Clear_Fields();
+
+    if(mouse_installed != ST_FALSE)
+    {
+        while(Mouse_Button() != 0) { Invoke_Auto_Function(); }
+    }
+
+    GUI_Edit_Position = 0;
+    GUI_EditAnimStage = 0;
+
+    max_characters = p_fields[field_num].max_characters;
+
+    width = (p_fields[field_num].x2 - p_fields[field_num].x1);
+
+    String_Modified = ST_FALSE;
+
+    Save_Mouse_State();
+
+    string_pos = 0;
+
+    key = 0;
+
+    Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, p_fields[field_num].font_highlight_color, ST_NULL);
+
+    strcpy(input_string, p_fields[field_num].string);
+
+    while(input_string[string_pos] != '\0') { string_pos++; }
+
+    while((Get_String_Width(input_string) > width) && (string_pos > 0))
+    {
+        // ¿ BUG  ; zeroes the string instead of backspacing it ?
+        string_pos -= string_pos;
+        input_string[string_pos] = 0;
+    }
+
+    GUI_Edit_Position = string_pos;
+
+    SETMAX(GUI_Edit_Position, max_characters);
+
+    strcpy(input_string, p_fields[field_num].string);
+
+    Font_Height = Get_Font_Height();
+
+    Draw_Input_Box_Popup(field_num, input_string);
+
+
+    /*
+        BEGIN:  
+    */
+
+    Control_Change = ST_FALSE;
+
+    // 1oom:  while ((key != MOO_KEY_RETURN) && (!flag_mouse_button))
+    while((Control_Change == ST_FALSE) && (key != ST_KEY_ENTER))
+    {
+        if(Control_Change != ST_FALSE)
+        {
+            break;
+        }
+        
+        while((Keyboard_Status == 0) && (Control_Change == ST_FALSE))
+        {
+            if(GUI_EditTimeOutType == ST_UNDEFINED)
+            {
+                Timeout_Counter--;
+            }
+            
+            if(Timeout_Counter == 0)
+            {
+                break;
+            }
+
+            if(
+                (mouse_installed != ST_FALSE)
+                &&
+                (
+                    (Mouse_Button() != 0)
+                    ||
+                    (Mouse_Buffer() != 0)
+                )
+            )
+            {
+                Control_Change = ST_TRUE;
+                break;
+            }
+
+            GUI_EditAnimStage++;
+
+            if(((Font_Height * 2) - 1) < GUI_EditAnimStage)
+            {
+                GUI_EditAnimStage = 0;
+            }
+
+            Draw_Input_Box_Popup(field_num, input_string);
+
+        }
+
+        if(
+            (Timeout_Counter == 0)
+            ||
+            (Control_Change != ST_FALSE)
+        )
+        {
+            break;
+        }
+
+        key = Read_Key();
+
+/*
+ST_KEY_LEFT             = 0x01
+ST_KEY_RIGHT            = 0x02
+ST_KEY_BACKSPACE        = 0x0B
+ST_KEY_ENTER            = 0x0C
+*/
+        switch(key)
+        {
+            case ST_KEY_LEFT:
+            {
+                String_Modified = ST_TRUE;
+                if(GUI_Edit_Position > 0)
+                {
+                    GUI_Edit_Position--;
+                    GUI_EditAnimStage = 0;
+                }
+            } break;
+            case ST_KEY_RIGHT:
+            {
+                if(
+                    (GUI_Edit_Position < max_characters)
+                    &&
+                    (GUI_Edit_Position < string_pos)
+                )
+                {
+                    GUI_Edit_Position++;
+                    GUI_EditAnimStage = 0;
+                    if(GUI_Edit_Position == string_pos)
+                    {
+                        input_string[string_pos] = ' ';
+                        input_string[(string_pos + 1)] = '\0';
+                        if(Get_String_Width(input_string) > width)
+                        {
+                            GUI_Edit_Position--;
+                        }
+                        input_string[string_pos] = '\0';
+                    }
+                }
+            } break;
+            case ST_KEY_DELETE:
+            {
+                if((
+                    string_pos > 0)
+                    &&
+                    (GUI_Edit_Position > string_pos)
+                )
+                {
+                    for(itr = GUI_Edit_Position; itr < string_pos; itr++)
+                    {
+                        input_string[(itr)] = input_string[(itr + 1)];
+                    }
+                    input_string[string_pos] = '\0';
+                }
+            } break;
+            case ST_KEY_BACKSPACE:
+            {
+                if(String_Modified == ST_FALSE)
+                {
+                    input_string[0] = '\0';
+                    string_pos = 0;
+                    GUI_Edit_Position = 0;
+                    GUI_EditAnimStage = 0;
+                    String_Modified = ST_TRUE;
+                }
+                else
+                {
+                    if(string_pos > 0)
+                    {
+                        if(GUI_Edit_Position >= string_pos)
+                        {
+                            string_pos--;
+                            input_string[string_pos] = '\0';
+                            GUI_Edit_Position--;
+                            GUI_EditAnimStage = 0;
+                        }
+                        else
+                        {
+                            if(GUI_Edit_Position > 0)
+                            {
+                                for(itr = GUI_Edit_Position; itr < string_pos; itr++)
+                                {
+                                    input_string[(itr - 1)] = input_string[itr];
+                                }
+                                string_pos--;
+                                GUI_Edit_Position--;
+                                GUI_EditAnimStage = 0;
+                                input_string[string_pos] = 0;
+                            }
+                        }
+                    }
+                }
+            } break;
+            default:  /* key_02_03_04_05_06_07_08 */
+            {
+                Allowed_Char = ST_FALSE;
+                if(key == ST_KEY_ESCAPE)
+                {
+                    Control_Change = 2;
+                    Allowed_Char = ST_FALSE;
+                }
+                else
+                {
+                    if(
+                        ((key > 64) && (key < 93))
+                        ||
+                        ((key > 45) && (key < 59))
+                        ||
+                        (key == ' ')
+                        ||
+                        (key == '-')
+                        ||
+                        ((key > 96) && (key < 123))
+                    )
+                    {
+                        Allowed_Char = ST_TRUE;
+                    }
+                    if(Allowed_Char == ST_TRUE)
+                    {
+                        String_Modified = ST_TRUE;
+                        input_string[string_pos] = key;
+                        input_string[(string_pos + 1)] = '\0';
+                        if(
+                            (string_pos < max_characters)
+                            &&
+                            (Get_String_Width(input_string) <= width)
+                        )
+                        {
+                            input_string[string_pos] = '\0';
+                            if(GUI_Edit_Position < string_pos)
+                            {
+                                for(itr = string_pos; itr < GUI_Edit_Position; itr++)
+                                {
+                                    input_string[itr] = input_string[(itr - 1)];
+                                }
+                                string_pos++;
+                                input_string[GUI_Edit_Position] = key;
+                                GUI_Edit_Position++;
+                            }
+                            else
+                            {
+                                input_string[string_pos] = key;
+                                string_pos++;
+                                input_string[string_pos] = ' ';
+                                input_string[(string_pos + 1)] = '\0';
+                                if(
+                                    (string_pos < max_characters)
+                                    &&
+                                    (Get_String_Width(input_string) <= width)
+                                )
+                                {
+                                    GUI_Edit_Position++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            input_string[string_pos] = '\0';
+                        }
+
+                        input_string[string_pos] = '\0';
+                        GUI_EditAnimStage = 0;
+
+                    }
+                }
+
+            } break;
+        }
+
+        Draw_Input_Box_Popup(field_num, input_string);
+    }  /* while((key != ST_KEY_ENTER) && (Control_Change == ST_FALSE)) */
+    /*
+        END:  
+    */
+
+    strcpy(p_fields[field_num].string, input_string);
+
+    if(Control_Change != ST_FALSE)
+    {
+        if(mouse_installed != ST_FALSE)
+        {
+            // jmp     short $+2
+
+            while(Mouse_Button() != 0) { }
+        }
+    }
+
+    Restore_Mouse_On_Page();
+    Restore_Mouse_State();
+
+    down_mouse_button = ST_UNDEFINED;
+
+    GUI_Edit_Position = 0;
+    GUI_EditAnimStage = 0;
+
+}
+
+
+// WZD s36p32
+// drake178: GUI_TextEditDialog()
+// MoO2  Module: Module: NAMESTAR  Input_Box_Popup_()
+// 1oom  uiobj.c  uiobj_textinput_do()
+/*
+
+NameStartingCity_Dialog_Popup()
+    start_x = 60;
+    start_y = 30;
+    Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED)
+
+*/
+int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
+{
+    char input_string[63];
+    char key;
+    int16_t input_field_idx;
+    int16_t Control_Change;
+    int16_t Timeout_Counter;
+    int16_t Font_Height;
+    int16_t String_Modified;
+    int16_t Allowed_Char;
+    int16_t string_pos;  // _SI_
+    int16_t itr;  // _DI_
+
+    Timeout_Counter = 4;
+
+    Clear_Fields();
+
+    if(mouse_installed != ST_FALSE)
+    {
+        // jmp     short $+2
+        while(Mouse_Button() != 0) { }
+        Mouse_Buffer();
+        Mouse_Buffer2();
+    }
+
+    Set_Input_Delay(1);
+
+    input_field_idx = Add_Input_Field(x_start, y_start, width, string, max_characters, fill_color, justification, cursor_type, &colors[0], cnst_ZeroString_12, help);
+
+    down_mouse_button = input_field_idx;  // ¿ DEDU:  manually set here so it won't trigger in Draw_Field() ?
+
+    GUI_Edit_Position = 0;
+    GUI_EditAnimStage = 0;
+    GUI_EditCursorOn = ST_FALSE;
+
+    String_Modified = ST_FALSE;
+
+    string_pos = 0;
+
+    key = 0;
+
+    Font_Height = Get_Font_Height();  // 10
+
+    strcpy(input_string, string);
+
+    while(input_string[string_pos] != '\0') { string_pos++; }
+
+    while((Get_String_Width(input_string) > width) && (string_pos > 0))
+    {
+        // ¿ BUG  ; zeroes the string instead of backspacing it ?
+        string_pos -= string_pos;
+        input_string[string_pos] = 0;
+    }
+
+    GUI_Edit_Position = string_pos;
+
+    SETMAX(GUI_Edit_Position, max_characters);
+
+    Draw_Input_Box_Popup(input_field_idx, input_string);
+
+
+    /*
+        BEGIN:  
+    */
+
+    Control_Change = ST_FALSE;
+
+    // 1oom:  while ((key != MOO_KEY_RETURN) && (!flag_mouse_button))
+    while((key != ST_KEY_ENTER) && (Control_Change == ST_FALSE))
+    {
+        while((Keyboard_Status() == 0) && (Control_Change == ST_FALSE))
+        {
+            if(GUI_EditTimeOutType == ST_UNDEFINED)
+            {
+                Timeout_Counter++;
+            }
+            
+            if(Timeout_Counter == 0)
+            {
+                break;
+            }
+
+            if(
+                (mouse_installed != ST_FALSE)
+                &&
+                (
+                    (Mouse_Button() != 0)
+                    ||
+                    (Mouse_Buffer() != 0)
+                )
+            )
+            {
+                Control_Change = ST_TRUE;
+                break;
+            }
+
+            GUI_EditAnimStage++;
+
+            if(((Font_Height * 2) - 1) < GUI_EditAnimStage)
+            {
+                GUI_EditAnimStage = 0;
+            }
+
+            Draw_Input_Box_Popup(input_field_idx, input_string);
+
+        }
+
+        if(
+            (Timeout_Counter == 0)
+            ||
+            (Control_Change != ST_FALSE)
+        )
+        {
+            break;
+        }
+
+        key = Read_Key();
+
+/*
+ST_KEY_LEFT             = 0x01
+ST_KEY_RIGHT            = 0x02
+ST_KEY_BACKSPACE        = 0x0B
+ST_KEY_ENTER            = 0x0C
+*/
+        switch(key)
+        {
+            case ST_KEY_LEFT:
+            {
+                String_Modified = ST_TRUE;
+                if(GUI_Edit_Position > 0)
+                {
+                    GUI_Edit_Position--;
+                    GUI_EditAnimStage = 0;
+                }
+            } break;
+            case ST_KEY_RIGHT:
+            {
+                if(
+                    (GUI_Edit_Position < max_characters)
+                    &&
+                    (GUI_Edit_Position < string_pos)
+                )
+                {
+                    GUI_Edit_Position++;
+                    GUI_EditAnimStage = 0;
+                    if(GUI_Edit_Position == string_pos)
+                    {
+                        input_string[string_pos] = ' ';
+                        input_string[(string_pos + 1)] = '\0';
+                        if(Get_String_Width(input_string) > width)
+                        {
+                            GUI_Edit_Position--;
+                        }
+                        input_string[string_pos] = '\0';
+                    }
+                }
+            } break;
+            case ST_KEY_DELETE:
+            {
+                if((
+                    string_pos > 0)
+                    &&
+                    (GUI_Edit_Position > string_pos)
+                )
+                {
+                    for(itr = GUI_Edit_Position; itr < string_pos; itr++)
+                    {
+                        input_string[(itr)] = input_string[(itr + 1)];
+                    }
+                    input_string[string_pos] = '\0';
+                }
+            } break;
+            case ST_KEY_BACKSPACE:
+            {
+                if(String_Modified == ST_FALSE)
+                {
+                    input_string[0] = '\0';
+                    string_pos = 0;
+                    GUI_Edit_Position = 0;
+                    GUI_EditAnimStage = 0;
+                    String_Modified = ST_TRUE;
+                }
+                else if(string_pos > 0)
+                {
+                    if(GUI_Edit_Position >= string_pos)
+                    {
+                        string_pos--;
+                        input_string[string_pos] = '\0';
+                        GUI_Edit_Position--;
+                        GUI_EditAnimStage = 0;
+                    }
+                    else if(GUI_Edit_Position > 0)
+                    {
+                        for(itr = GUI_Edit_Position; itr < string_pos; itr++)
+                        {
+                            input_string[(itr - 1)] = input_string[itr];
+                        }
+                        string_pos--;
+                        GUI_Edit_Position--;
+                        GUI_EditAnimStage = 0;
+                        input_string[string_pos] = 0;
+                    }
+                }
+            } break;
+            default:  /* key_02_03_04_05_06_07_08 */
+            {
+                Allowed_Char = ST_FALSE;
+                if(key == ST_KEY_ESCAPE)
+                {
+                    Control_Change = 2;
+                    Allowed_Char = ST_FALSE;
+                }
+                else
+                {
+                    if(
+                        ((key > 64) && (key < 93))
+                        ||
+                        ((key > 45) && (key < 59))
+                        ||
+                        (key == ' ')
+                        ||
+                        (key == '-')
+                        ||
+                        ((key > 96) && (key < 123))
+                    )
+                    {
+                        Allowed_Char = ST_TRUE;
+                    }
+                    if(Allowed_Char == ST_TRUE)
+                    {
+                        String_Modified = ST_TRUE;
+                        input_string[string_pos] = key;
+                        input_string[(string_pos + 1)] = '\0';
+                        if(
+                            (string_pos < max_characters)
+                            &&
+                            (Get_String_Width(input_string) <= width)
+                        )
+                        {
+                            input_string[string_pos] = '\0';
+                            if(GUI_Edit_Position < string_pos)
+                            {
+                                for(itr = string_pos; itr < GUI_Edit_Position; itr++)
+                                {
+                                    input_string[itr] = input_string[(itr - 1)];
+                                }
+                                string_pos++;
+                                input_string[GUI_Edit_Position] = key;
+                                GUI_Edit_Position++;
+                            }
+                            else
+                            {
+                                input_string[string_pos] = key;
+                                string_pos++;
+                                input_string[string_pos] = ' ';
+                                input_string[(string_pos + 1)] = '\0';
+                                if(
+                                    (string_pos < max_characters)
+                                    &&
+                                    (Get_String_Width(input_string) <= width)
+                                )
+                                {
+                                    GUI_Edit_Position++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            input_string[string_pos] = '\0';
+                        }
+
+                        input_string[string_pos] = '\0';
+                        GUI_EditAnimStage = 0;
+
+                    }
+                }
+
+            } break;
+        }
+
+        Draw_Input_Box_Popup(input_field_idx, input_string);
+    }  /* while((key != ST_KEY_ENTER) && (Control_Change == ST_FALSE)) */
+    /*
+        END:  
+    */
+
+    strcpy(string, input_string);
+
+    if(Control_Change != ST_FALSE)
+    {
+        if(mouse_installed != ST_FALSE)
+        {
+            // jmp     short $+2
+
+            while(Mouse_Button() != 0) { }
+        }
+    }
+
+    down_mouse_button = ST_UNDEFINED;
+
+    Clear_Fields();
+
+    Mouse_Buffer();
+    Mouse_Buffer2();
+
+    GUI_Edit_Position = 0;
+    GUI_EditAnimStage = 0;
+
+    if(Control_Change == 2)
+    {
+        return ST_SUCCESS;
+    }
+    else
+    {
+        return ST_FAILURE;
+    }
+
+}
+
+
+// WZD s36p33
+// drake178: GUI_EditBoxRedraw()
+// MoO2  Module: NAMESTAR  Draw_Input_Box_Popup_()
+// 1oom  uiobj.c  uiobj_handle_t4_sub2()
+/*
+; calls any active redraw function, draws the selected
+; edit box with the passed text but original control
+; parameters over it, then performs a simple page flip
+; redrawing all other controls in the process
+*/
+/*
+*/
+void Draw_Input_Box_Popup(int16_t field_num, char * string)
+{
+    uint8_t ibeam_color_array[16];
+    char input_string[62];
+    int16_t Box_Width;
+    int16_t Cursor_Bottom;
+    int16_t Cursor_Height;
+    int16_t cursor_x1;
+    int16_t Cursor_Width;
+    int16_t Lines_Drawn;
+    char Edit_Char[2];
+    int16_t anim_stage;  // _DI_
+
+    Mark_Time();
+
+    Set_Page_Off();
+
+    // ; nonstandard memcpy, copies an amount of bytes from one near memory location to another
+    // ; fully replacable with other, already included code
+    // TODO  Copy_Memory_Near(ibeam_color_array, p_fields[field_num].color_array, Get_Font_Height());  // ; ~ ibeam / edit cursor height
+    memcpy(ibeam_color_array, p_fields[field_num].color_array, Get_Font_Height());  // ; ~ ibeam / edit cursor height
+
+    strcpy(input_string, string);
+
+    Invoke_Auto_Function();
+
+    Box_Width = (p_fields[field_num].x2 - p_fields[field_num].x1);
+
+    Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, p_fields[field_num].font_highlight_color, ST_NULL);
+
+    Cursor_Height = (Get_Font_Height() - 1);
+
+    if(p_fields[field_num].fill_color != 0)
+    {
+        Fill(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].x2, p_fields[field_num].y2, p_fields[field_num].fill_color);
+    }
+
+    Edit_Char[1] = '\0';
+    
+    if(p_fields[field_num].cursor_type == crsr_None)
+    {
+        Edit_Char[0] = input_string[GUI_Edit_Position];
+
+        input_string[GUI_Edit_Position] = '\0';
+
+        cursor_x1 = (p_fields[field_num].x1 + Get_String_Width(input_string));
+
+        input_string[GUI_Edit_Position] = Edit_Char[0];
+
+        if(Edit_Char[0] == '\0')
+        {
+            Edit_Char[0] = ' ';
+        }
+        
+        Cursor_Width = Get_String_Width(Edit_Char);
+
+        if(
+            (GUI_EditAnimStage > 0)
+            &&
+            (GUI_EditAnimStage <= Cursor_Height)
+        )
+        {
+            // draw cursor lines up to down in ascending order
+            anim_stage = GUI_EditAnimStage;
+
+            Cursor_Bottom = (p_fields[field_num].y1 + Cursor_Height);
+
+            Lines_Drawn = 0;
+
+            while(anim_stage > 0)
+            {
+                Line(cursor_x1, (Cursor_Bottom - anim_stage + 1), (cursor_x1 + Cursor_Width + 1), (Cursor_Bottom - anim_stage + 1), ibeam_color_array[(1 + Lines_Drawn)]);
+                Lines_Drawn++;
+                anim_stage--;
+            }
+        }
+        else if(GUI_EditAnimStage != 0)
+        {
+            // draw cursor lines down to up in descending order
+            anim_stage = (Cursor_Height - (GUI_EditAnimStage - Cursor_Height));
+
+            Lines_Drawn = 0;
+
+            while (anim_stage > 0)
+            {
+                Line(cursor_x1, ((p_fields[field_num].y1 + anim_stage) - 1), ((cursor_x1 + Cursor_Width) + 1), ((p_fields[field_num].y1 + anim_stage) - 1), ibeam_color_array[(Cursor_Height - Lines_Drawn)]);
+                Lines_Drawn++;
+                anim_stage--;
+            }
+        }
+    }
+    else if(p_fields[field_num].cursor_type == crsr_Finger)
+    {
+        Edit_Char[0] = input_string[GUI_Edit_Position];
+        input_string[GUI_Edit_Position] = '\0';
+        cursor_x1 = (p_fields[field_num].x1 + Get_String_Width(input_string));
+        input_string[GUI_Edit_Position] = Edit_Char[0];
+        if(Edit_Char[0] == '\0')
+        {
+            Edit_Char[0] = ' ';
+        }
+        Cursor_Width = Get_String_Width(Edit_Char);
+        anim_stage = (GUI_EditAnimStage % 3);
+
+        if(
+            (anim_stage == 0)
+            &&
+            (GUI_EditCursorOn == ST_FALSE)
+        )
+        {
+            GUI_EditCursorOn = ST_TRUE;
+        }
+        else if(
+            (anim_stage == 0)
+            &&
+            (GUI_EditCursorOn == ST_TRUE)
+        )
+        {
+            GUI_EditCursorOn = ST_FALSE;
+        }
+
+        Cursor_Bottom = (p_fields[field_num].y1 + Cursor_Height);
+
+        if(GUI_EditCursorOn != ST_FALSE)
+        {
+            Line(cursor_x1, (Cursor_Bottom + 1), (cursor_x1 + Cursor_Width + 1), (Cursor_Bottom + 1), ibeam_color_array[0]);
+        }
+    }
+
+    // 4, 4, 3, 0
+    Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, p_fields[field_num].font_highlight_color, ST_NULL);
+
+    Set_Highlight_Colors_On();
+    
+    Print(p_fields[field_num].x1, p_fields[field_num].y1, input_string);
+
+    /* HACK */ Set_Normal_Colors_On();
+
+    Apply_Palette();
+
+    Toggle_Pages();
+
+    Release_Time(auto_function_delay);
+
+}
+
+
+// WZD s36p34
+// GUI_CreateEditBox()
 
 
 // WZD s36p65

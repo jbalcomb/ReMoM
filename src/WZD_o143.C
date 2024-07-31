@@ -7,6 +7,21 @@
 
 
 
+// WZD dseg:6EAC BEGIN:  ovr143 - Initialized Data
+
+// WZD dseg:6EAC TBL_Conv_Grassland dw _Grasslands1, _Grasslands2, _Grasslands3
+// WZD dseg:6EB2 TBL_Conv_Forest dw _Forest1, _Forest2, _Forest3 ; adjusted in the TERRSTAT patch (A3 -> B4)
+// WZD dseg:6EB8 UU_TBL_Conv_Desert dw _AllDesert2, _AllDesert3, _AllDesert3 ; adjusted in the TERRSTAT patch (AE -> A3)
+// WZD dseg:6EB8                                         ; the last 4 bytes can be repurposed
+// WZD dseg:6EBE terrtype_lbx_file__ovr143 db 'TERRTYPE',0
+
+// WZD dseg:6EC7
+char cityname_lbx_file__ovr143[] = "CITYNAME";
+
+// WZD dseg:6EC7 END:  ovr143 - Initialized Data
+
+
+
 /*
     WIZARDS.EXE  ovr143
 */
@@ -45,7 +60,59 @@
 // TILE_GenerateOre()
 
 // WZD o143p12
-// CTY_SetDefaultName()
+/*
+    for each name record
+    loops through every city
+    if it finds a match, it goes to the next name record
+
+*/
+void Random_City_Name_By_Race(int16_t race_idx, char * name)
+{
+    char Local_Name_String[20];
+    int16_t city_name_idx;
+    int16_t attempts;
+    char * city_names_buffer;  // _DI_
+    int16_t itr_cities;  // _SI_
+    /* hack */ char hack_new_name[20];
+    /* hack */ char * city_names_buffer_ptr;
+
+    city_names_buffer = (char *)Near_Allocate_First(280);
+
+    LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, 280);
+
+    for(attempts = 0; attempts < 200; attempts++)
+    {
+        city_name_idx = (Random(20) - 1);
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+
+            strcpy(Local_Name_String, _CITIES[itr_cities].name);
+
+            strcpy(hack_new_name, _CITIES[itr_cities].name);
+
+            // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
+            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+            if (stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            {
+                continue;
+            }
+
+            if(attempts < 200)
+            {
+                break;
+            }
+
+            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(14) - 1), 1, 280);
+
+        }
+    }
+    
+    // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
+    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+    strcpy(name, city_names_buffer_ptr);
+}
+
 
 // WZD o143p13
 // EVNT_TargetDepletion()

@@ -119,7 +119,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa(save_gam_idx, temp_string, 10);
+        itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");
@@ -256,12 +256,17 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     fclose(file_pointer);
 
-    if( (save_gam_idx > 0) && (save_gam_idx < 9) )
+    // HACK:
+    if(save_gam_idx != ST_UNDEFINED)
     {
-        magic_set.Have_Save[save_gam_idx] = ST_TRUE;
-        file_pointer = fopen("MAGIC.SET", "wb");
-        fwrite(&magic_set, 466, 1, file_pointer);
-        fclose(file_pointer);
+        // ¿ don't save settings for continue/auto-save ?
+        if (save_gam_idx < 8)
+        {
+            magic_set.Have_Save[save_gam_idx] = ST_TRUE;
+            file_pointer = fopen("MAGIC.SET", "wb");
+            fwrite(&magic_set, 466, 1, file_pointer);
+            fclose(file_pointer);
+        }
     }
 
 }
@@ -283,7 +288,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
-        itoa(save_gam_idx, temp_string, 10);
+        itoa((save_gam_idx + 1), temp_string, 10);
         strcpy(file_name, "SAVE");
         strcat(file_name, temp_string);
         strcat(file_name,".GAM");

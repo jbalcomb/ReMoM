@@ -51,7 +51,120 @@ int16_t CTY_Garrison_Units[MAX_STACK];
 */
 
 // WZD o077p01
-// TILE_Settle()
+// drake178: TILE_Settle()
+// Colonize_Planet_() |-> Init_Colony_()
+/*
+; creates a new outpost on the tile if possible,
+; removing the settler from play in the process, and
+; handling any necessary human player interactions
+; returns 1 if successful, or 0 otherwise
+*/
+int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_wp, int16_t outpost_race, int16_t outpost_owner, int16_t settler_unit_idx)
+{
+    SAMB_ptr Sound_Data_Seg;
+    int16_t Result;
+    int16_t city_idx;  // _SI_
+    int16_t itr_players;  // _DI_
+
+    Result = Map_Square_Survey(outpost_wx, outpost_wy, outpost_wp);
+
+    if(Result != 0)
+    {
+        Result = ST_FALSE;
+    }
+    else
+    {
+
+        if(Init_Outpost() != ST_TRUE)   
+        {
+            if(outpost_owner == _human_player_idx)
+            {
+                Warn0(str_NoMoreOutposts);  // "No more outposts may be built."
+            }
+            Result = ST_FALSE;
+        }
+        else
+        {
+            UNIT_MarkRemoved(settler_unit_idx, 1);
+
+            city_idx = (_cities - 1);
+            _city_idx = city_idx;
+            _CITIES[city_idx].Pop_10s = 3;
+
+            _CITIES[city_idx].wx = outpost_wx;
+            _CITIES[city_idx].wy = outpost_wy;
+            _CITIES[city_idx].wp = outpost_wp;
+            _CITIES[city_idx].owner_idx = outpost_owner;
+            _CITIES[city_idx].race = outpost_race;
+
+
+            if(outpost_owner == _human_player_idx)
+            {
+                // TODO  SND_Silence();
+
+                if(magic_set.Event_Music == ST_TRUE)
+                {
+                    // TODO  Sound_Data_Seg = LBX_Reload(music_lbx_file__ovr077, MUSIC_New_Outpost, SND_Music_Segment);
+                    // TODO  SND_PlayFile(Sound_Data_Seg);
+                }
+
+                // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);
+                // ; displays and processes the new outpost naming dialog,
+                // ; suggesting a default name, and falling back to it if
+                // ; nothing is entered
+                Change_City_Name_Popup(_city_idx, outpost_owner);
+
+                // TODO  SND_PlayBkgrndTrack();
+
+                TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 2);
+
+            }
+            else
+            {
+                Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
+            }
+
+            for(itr_players = 0; itr_players < _num_players; itr_players++)
+            {
+                if(_players[itr_players].Globals[AWARENESS] > 0)
+                {
+                    if(itr_players == _human_player_idx)
+                    {
+                        TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 1);
+                    }
+                    else
+                    {
+                        Set_Bit_Field(itr_players, &_CITIES[city_idx].PlayerBits);
+                    }
+                }
+            }
+        }
+
+        // BUBUG  ; all of these have been set already
+        _CITIES[city_idx].wx = outpost_wx;
+        _CITIES[city_idx].wy = outpost_wy;
+        _CITIES[city_idx].wp = outpost_wp;
+        _CITIES[city_idx].owner_idx = outpost_owner;
+        _CITIES[city_idx].race = outpost_race;
+
+        NOOP_Current_Player_All_City_Areas();
+
+        Do_City_Calculations(city_idx);
+
+        TILE_CreateRoad(outpost_wx, outpost_wy, outpost_wp);
+
+        Reset_City_Area_Bitfields();
+
+        Reset_City_Road_Connection_Bitfields();
+
+        Result = ST_TRUE;
+
+    }
+
+    return Result;
+
+}
+
 
 // WZD o077p02
 /*
@@ -342,7 +455,7 @@ void Outpost_Screen_Draw(void)
 
     if(m_troop_count > 0)
     {
-        // mov     [_help_entries.help_01.entry_idx], HLP_CITY_GARRISONS
+        // TODO  mov     [_help_entries.help_01.entry_idx], HLP_CITY_GARRISONS
     }
     else
     {
@@ -444,13 +557,201 @@ void Outpost_Garrison_Picture_Coords(int16_t slot, int16_t * x1, int16_t * y1, i
 }
 
 // WZD o077p06
-// NameOutpost_Dialog_Popup()
+// MoO2  Module: MAINSCR  Change_Home_Star_Name_()
+// MoO2  Module: NAMESTAR  Change_Home_Star_Name_Popup_()
+/*
+; displays and processes the new outpost naming dialog,
+; suggesting a default name, and falling back to it if
+; nothing is entered
+*/
+void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
+{
+    uint8_t colors[14];
+    char default_city_name[16];
+    char city_name[16];
+    int16_t y_start;
+    int16_t x_start;
+    int16_t UU_Edit_Return;
+
+    PageFlipEffect = 0;
+
+    colors[0] = 97;
+    colors[1] = 97;
+    colors[2] = 98;
+    colors[3] = 98;
+    colors[4] = 99;
+    colors[5] = 99;
+    colors[6] = 100;
+    colors[7] = 100;
+    colors[8] = 101;
+    colors[9] = 101;
+    colors[10] = 102;
+    colors[11] = 102;
+    colors[12] = 103;
+    colors[13] = 103;
+
+    x_start = 85;
+    y_start = 100;
+
+    Clear_Fields();
+
+    Set_Page_Off();
+
+    Copy_On_To_Off_Page();
+
+    PageFlip_FX();
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
+
+    strcpy(city_name, _CITIES[city_idx].name);
+
+    strcpy(default_city_name, city_name);
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(Change_City_Name_Popup_Draw, 1);
+
+    Clear_Fields();
+
+    Set_Font_Style(4, 4, 3, 3);
+
+    Set_Font_Spacing_Width(1);
+
+    Set_Alias_Color(103);
+
+    UU_Edit_Return = Input_Box_Popup((x_start + 16), (y_start + 21), 75, city_name, 12, 0, 0, 0, &colors[0], ST_UNDEFINED);
+
+    // ; trims white space from the beginning and end of the passed string
+    // ; BUGGED: will only remove one trailing space if there are multiple
+    Trim(city_name);
+
+    if(strlen(city_name) < 1)
+    {
+        strcpy(city_name, default_city_name);
+    }
+
+    strcpy(_CITIES[city_idx].name, city_name);
+
+    Deactivate_Auto_Function();
+
+    Clear_Fields();
+
+}
+
 
 // WZD o077p07
-// Draw_NameNewOutpost_Background()
+void Change_City_Name_Popup_Draw(void)
+{
+    int16_t start_x;  // _SI_
+    int16_t start_y;  // _DI_
+
+    start_x = 85;
+    start_y = 100;
+
+    FLIC_Draw(start_x, start_y, outpost_name_background_seg);
+
+    Set_Font_Style(4, 4, 0, 0);
+
+    Print((start_x + 10), (start_y + 6), str_NewOutpost);  // "New Outpost"
+
+}
+
 
 // WZD o077p08
-// TILE_CanBeSettled()
+/*
+; returns 0 if the tile can be settled, or an error value if not:
+;   1 - tile is in the ocean
+;   2 - tile has an intact encounter zone
+;   3 - tile has a tower of wizardry
+;   4 - tile has a node
+;   5 - there's already a city within 3 tiles
+*/
+int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t Tile_Distance;
+    int16_t itr;  // _SI_
+
+    if(Terrain_Is_Sailable(wx, wy, wp) == ST_TRUE)
+    {
+        return 1;
+    }
+
+    for(itr = 0; itr < NUM_TOWERS; itr++)
+    {
+        if(
+            (_TOWERS[itr].wx == wx)
+            &&
+            (_TOWERS[itr].wy == wy)
+        )
+        {
+            return 3;
+        }
+    }
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+        if(
+            (_NODES[itr].wp == wp)
+            &&
+            (_NODES[itr].wy == wy)
+            &&
+            (_NODES[itr].wx == wx)
+        )
+        {
+            return 4;
+        }
+    }
+
+    for(itr = 0; itr < NUM_LAIRS; itr++)
+    {
+        if(
+            (_LAIRS[itr].wp == wp)
+            &&
+            (_LAIRS[itr].Intact == ST_TRUE)
+            &&
+            (_LAIRS[itr].wy == wy)
+            &&
+            (_LAIRS[itr].wx == wx)
+        )
+        {
+            return 2;
+        }
+    }
+
+    for(itr = 0; itr < NUM_LAIRS; itr++)
+    {
+        if(
+            (_LAIRS[itr].wp == wp)
+            &&
+            (_LAIRS[itr].Intact == ST_TRUE)
+            &&
+            (_LAIRS[itr].wy == wy)
+            &&
+            (_LAIRS[itr].wx == wx)
+        )
+        {
+            return 2;
+        }
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(
+            (_CITIES[itr].wp == wp)
+        )
+        {
+            Tile_Distance = Delta_XY_With_Wrap(wx, wy, _CITIES[itr].wx, _CITIES[itr].wy, WORLD_WIDTH);
+            if(Tile_Distance <= 3)
+            {
+                return 5;
+            }
+        }
+    }
+
+    return 0;
+}
 
 // WZD o077p09
 // sub_67918()

@@ -1418,15 +1418,15 @@ void Main_Screen(void)
                 {
                     DLOG("switch(special_action_flag)  case 1:");
                     // o100p04
-                    // TODO  if(Do_Build_Outpost() == ST_TRUE)
-                    // TODO  {
-                    // TODO      // DONT  o62p01_Empty_pFxn(_human_player_idx)
-                    // TODO      Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
-                    // TODO      WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-                    // TODO      Main_Screen_Reset()
-                    // TODO      screen_changed = ST_TRUE;
-                    // TODO  }
-                    // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+                    if(Do_Build_Outpost() == ST_TRUE)
+                    {
+                        // DONT  o62p01_Empty_pFxn(_human_player_idx)
+                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
+                        WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+                        Main_Screen_Reset();
+                        screen_changed = ST_TRUE;
+                    }
+                    Assign_Auto_Function(Main_Screen_Draw, 1);
                 } break;
                 case 2:  /* Purify */
                 {
@@ -1564,39 +1564,38 @@ void Main_Screen(void)
         /*
             BEGIN: Right-Click Unit Window Grid Field
         */
-        // Right-Click Unit Window Grid Field
-        // Right-Click Unit Window
-        // for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
-        for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
-            if(g_unit_window_fields[itr_stack] == -(input_field_idx))
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
-                DLOG("(g_unit_window_fields[Stack_Index] = -input_field_idx)");
-                Set_Draw_Active_Stack_Always();
-                Set_Unit_Draw_Priority();
-                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                Main_Screen_Draw();
-                PageFlip_FX();
+                if(g_unit_window_fields[itr_stack] == -(input_field_idx))
+                {
+                    DLOG("(g_unit_window_fields[Stack_Index] = -input_field_idx)");
+                    Set_Draw_Active_Stack_Always();
+                    Set_Unit_Draw_Priority();
+                    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                    Main_Screen_Draw();
+                    PageFlip_FX();
 
-                Unit_Window_Picture_Coords(itr_stack, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
+                    Unit_Window_Picture_Coords(itr_stack, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
 
-                // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
-                //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
+                    // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
+                    //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
 
-                USW_FullDisplay(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
+                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
 
-                Assign_Auto_Function(Main_Screen_Draw, 1);
-                Allocate_Reduced_Map();
-                Set_Mouse_List_Default();
-                Reset_Draw_Active_Stack();
-                Set_Unit_Draw_Priority();
-                Reset_Stack_Draw_Priority();
-                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                Reset_Map_Draw();
-                MainScr_Prepare_Reduced_Map();
-                screen_changed = ST_TRUE;
-                Deactivate_Help_List();
-                Set_Main_Screen_Help_List();
+                    Assign_Auto_Function(Main_Screen_Draw, 1);
+                    Allocate_Reduced_Map();
+                    Set_Mouse_List_Default();
+                    Reset_Draw_Active_Stack();
+                    Set_Unit_Draw_Priority();
+                    Reset_Stack_Draw_Priority();
+                    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                    Reset_Map_Draw();
+                    MainScr_Prepare_Reduced_Map();
+                    screen_changed = ST_TRUE;
+                    Deactivate_Help_List();
+                    Set_Main_Screen_Help_List();
+                }
             }
         }
         /*
@@ -2020,9 +2019,13 @@ void Main_Screen(void)
         if((leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
         {
             Main_Screen_Draw();
-            if(_turn == 0)
+            if(
+                (_turn == 0)
+                &&
+                (_given_chance_to_rename_home_city == ST_FALSE)
+            )
             {
-                // TODO  j_NameStartingCity_Dialog_Popup(0);
+                NameStartingCity_Dialog_Popup(0);
                 Assign_Auto_Function(Main_Screen_Draw, 1);
                 _given_chance_to_rename_home_city = ST_TRUE;
             }

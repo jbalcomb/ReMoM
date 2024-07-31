@@ -589,6 +589,85 @@ void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()
+/*
+; if there aren't 99 cities yet, clear the next record
+; and increase the total counter by one, effectively
+; creating a new city (with 0-0-0 coordinates)
+; returns 1 if successful, 0 otherwise
+*/
+int16_t Init_Outpost(void)
+{
+    int16_t itr;  // _CX_
+
+    if(_cities == 99)
+    {
+        return ST_FALSE;
+    }
+
+    _CITIES[_cities].race = 0;
+    _CITIES[_cities].wx = 0;
+    _CITIES[_cities].wy = 0;
+    _CITIES[_cities].wp = 0;
+    _CITIES[_cities].owner_idx = ST_UNDEFINED;
+    _CITIES[_cities].size = 0;
+    _CITIES[_cities].population = 0;
+    _CITIES[_cities].did_sell_building = ST_FALSE;
+    _CITIES[_cities].Pop_10s = 0;
+    _CITIES[_cities].PlayerBits = 0;
+    _CITIES[_cities].construction = bt_Housing;
+    _CITIES[_cities].bldg_cnt = 0;
+
+
+    for(itr = 0; itr < NUM_BUILDINGS; itr++)
+    {
+        _CITIES[_cities].bldg_status[itr] = bs_NotBuilt;
+    }
+
+    _CITIES[_cities].bldg_status[0] = bs_Replaced;
+
+
+    _CITIES[_cities].enchantments[WALL_OF_FIRE] = ST_FALSE;
+    _CITIES[_cities].enchantments[CHAOS_RIFT] = ST_FALSE;
+    _CITIES[_cities].enchantments[DARK_RITUALS] = ST_FALSE;
+    _CITIES[_cities].enchantments[EVIL_PRESENCE] = ST_FALSE;
+    _CITIES[_cities].enchantments[CURSED_LANDS] = ST_FALSE;
+    _CITIES[_cities].enchantments[PESTILENCE] = ST_FALSE;
+    _CITIES[_cities].enchantments[CLOUD_OF_SHADOW] = ST_FALSE;
+    _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
+    _CITIES[_cities].enchantments[FAMINE] = ST_FALSE;
+    _CITIES[_cities].enchantments[FLYING_FORTRESS] = ST_FALSE;
+    _CITIES[_cities].enchantments[NATURE_WARD] = ST_FALSE;
+    _CITIES[_cities].enchantments[SORCERY_WARD] = ST_FALSE;
+    _CITIES[_cities].enchantments[CHAOS_WARD] = ST_FALSE;
+    _CITIES[_cities].enchantments[LIFE_WARD] = ST_FALSE;
+    _CITIES[_cities].enchantments[DEATH_WARD] = ST_FALSE;
+    _CITIES[_cities].enchantments[NATURES_EYE] = ST_FALSE;
+    _CITIES[_cities].enchantments[EARTH_GATE] = ST_FALSE;
+    _CITIES[_cities].enchantments[STREAM_OF_LIFE] = ST_FALSE;
+    _CITIES[_cities].enchantments[GAIAS_BLESSING] = ST_FALSE;
+    _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+    _CITIES[_cities].enchantments[PROSPERITY] = ST_FALSE;
+    _CITIES[_cities].enchantments[ASTRAL_GATE] = ST_FALSE;
+    _CITIES[_cities].enchantments[HEAVENLY_LIGHT] = ST_FALSE;
+    _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
+    _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;
+    _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+    _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
+    _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;
+    _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;  // BUGBUG dupe
+
+    _CITIES[_cities].production_units = 0;
+    _CITIES[_cities].Prod_Accu = 0;
+    _CITIES[_cities].gold_units = 0;
+    _CITIES[_cities].mana_units = 0;
+    _CITIES[_cities].food_units = 0;
+
+    _cities++;
+
+    return ST_TRUE;
+
+}
+
 
 // WZD o55p06
 // drake178: CTY_TakeOver()

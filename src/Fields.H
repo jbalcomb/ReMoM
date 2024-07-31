@@ -418,7 +418,8 @@ extern int16_t GUI_DialogDirections;
 // AKA g_SCRN_Redraw_Timer
 // AKA redraw_timer
 // MoO2  Module: fields  auto_function_delay
-// PIVATE  extern uint16_t auto_function_delay;
+// TODO  make this PIVATE, add a shared header for the fields/input modules
+extern uint16_t auto_function_delay;
 
 
 // WZD dseg:825C
@@ -484,6 +485,17 @@ extern int16_t active_input_field_number;
 // WZD dseg:82A2 UU_GUI_Up_Hotkey db 5, 0                
 // WZD dseg:82A4 UU_GUI_Down_Hotkey db 6, 0              
 // WZD dseg:82A6 GUI_EditCursor db '_',0                 
+
+// WZD dseg:8282
+extern int16_t GUI_Edit_Position;
+// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
+// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
+
+// WZD dseg:8290
+extern int16_t GUI_EditTimeOutType;
+
+// WZD dseg:829E
+extern char cnst_ZeroString_12[];
 
 /*
     WZD dseg:82A6                           END: Fields - Initialized Data
@@ -623,7 +635,7 @@ int16_t Auto_Input(void);
 // WZD s36p33
 
 // WZD s36p34
-int16_t Add_Input_Field(int16_t x, int16_t y, int16_t Width, char * Text, int16_t MaxL, int16_t BGCol, SAMB_ptr S_Img, char * help, int16_t Style);
+int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t color_array[], char * select_char, int16_t help);
 
 // WZD s36p35
 int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);

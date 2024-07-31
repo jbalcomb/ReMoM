@@ -1230,10 +1230,95 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
 
 
 // WZD o54p09
-// NameStartingCity_Dialog_Popup
+// MoO2  Module: NAMESTAR  Change_Home_Star_Name_Popup_
+void NameStartingCity_Dialog_Popup(int16_t city_idx)
+{
+    uint8_t color_array[14];
+    char default_cityname[16];
+    char Text[16];
+    int16_t start_y;
+    int16_t start_x;
+    int16_t UU_RetVal_TextEditDialog;
+
+    PageFlipEffect = 0;
+
+    color_array[0]  =  97;
+    color_array[1]  =  97;
+    color_array[2]  =  98;
+    color_array[3]  =  98;
+    color_array[4]  =  99;
+    color_array[5]  =  99;
+    color_array[6]  = 100;
+    color_array[7]  = 100;
+    color_array[8]  = 101;
+    color_array[9]  = 101;
+    color_array[10] = 102;
+    color_array[11] = 102;
+    color_array[12] = 103;
+    color_array[13] = 103;
+
+
+    start_x = 60;
+    start_y = 30;
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(Draw_NameStartingCity_Background, 1);
+
+    Copy_Off_To_Back();
+
+    Random_City_Name_By_Race(_CITIES[city_idx].race, _CITIES[city_idx].name);
+
+    strcpy(Text, _CITIES[city_idx].name);
+
+    strcpy(default_cityname, Text);
+
+    Clear_Fields();
+
+    Set_Font_Style(4, 4, 3, 3);
+
+    Set_Font_Spacing_Width(1);
+
+    Set_Alias_Color(103);
+
+    UU_RetVal_TextEditDialog = Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED);
+
+    Trim(Text);
+
+    if(strlen(Text) < 1)
+    {
+        strcpy(Text, default_cityname);
+    }
+
+    strcpy(_CITIES[city_idx].name, Text);
+
+    PageFlipEffect = 3;
+
+}
+
 
 // WZD o54p10
-// Draw_NameStartingCity_Background
+void Draw_NameStartingCity_Background(void)
+{
+    int16_t start_x;  // _SI_
+    int16_t start_y;  // _DI_
+
+    start_x = 60;
+    start_y = 30;
+
+    Set_Page_Off();
+
+    Copy_Back_To_Off();
+
+    FLIC_Draw(start_x, start_y, outpost_name_background_seg);
+
+    Set_Font_Style(4, 4, 0, 0);
+
+    Print((start_x + 10), (start_y + 6), cstr_NameStartingCity);  // "Name Starting City"
+
+}
 
 
 // WZD o54p11

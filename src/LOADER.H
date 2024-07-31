@@ -60,7 +60,7 @@ extern "C" {
 // 0000001C Large_Shield@ dw ?
 // 0000001E Wall_Crusher@ dw ?
 // 00000020 Healer@ dw ?
-// 00000022 Create_Outpost@ dw ?
+// 00000022 Init_Outpost@ dw ?
 // 00000024 Invisibility@ dw ?
 // 00000026 Create_Undead@ dw ?
 // 00000028 Pathfinding@ dw ?

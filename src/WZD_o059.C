@@ -179,6 +179,43 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
 
 // WZD o59p09
 // STK_SettlingPossible()
+int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[])
+{
+    int16_t unit_type;
+    int16_t have_settlers;
+    int16_t itr_troops;  // _DI_
+    int16_t unit_idx;  // _SI_
+
+    have_settlers = ST_FALSE;
+
+    for(itr_troops = 0; ((itr_troops < troop_count) && (have_settlers == ST_FALSE)); itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        unit_type = _UNITS[unit_idx].type;
+        if(
+            ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
+            &&
+            ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
+        )
+        {
+            have_settlers = ST_TRUE;
+        }
+    }
+
+    unit_idx = troops[0];
+
+    if(have_settlers == ST_TRUE)
+    {
+        if(Map_Square_Survey(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp) == 0)
+        {
+            special_action_flag = 1;
+            return ST_TRUE;
+        }
+    }
+
+    return ST_FALSE;
+}
+
 
 // WZD o59p10
 // fxnptr_o59p10()

@@ -639,25 +639,17 @@ void Set_Unit_Action_Special(void)
     // ; has at least one unit with the construction ability;
     // ; or 0 otherwise
     // ; sets GUI_ExtraUnitAction to 0 if returning 1
+    // sets special_action_flag to 0
     // TODO  STK_BuildingPossible(&troop_count, &troops[0]);
 
+    // sets special_action_flag to 1
+    Unit_Action_Special_Settle(troop_count, &troops[0]);
 
-    // ; returns 1 if the stack is on a tile that can be
-    // ; settled and has at least one settler; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 1 if returning 1
-    // TODO  STK_SettlingPossible(&troop_count, &troops[0]);
+    // sets special_action_flag to 2
+    Unit_Action_Special_Purify(troop_count, &troops[0]);
 
-
-    // ; returns 1 if the stack is on a corrupted tile and has
-    // ; at least one unit that can purify; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 2 if returning 1
-    Unit_Action_Special_Purify(&troop_count, &troops[0]);
-
-
-    // ; returns 1 if the stack is on a node tile and has at
-    // ; least one magic- or guardian spirit; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 9 if returning 1
-    Unit_Action_Special_Meld(&troop_count, &troops[0]);
+    // sets special_action_flag to 9
+    Unit_Action_Special_Meld(troop_count, &troops[0]);
 
 }
 

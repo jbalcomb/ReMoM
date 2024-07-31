@@ -13,6 +13,31 @@
 
 
 
+
+#define SZ_FONT_HDR                             1946
+
+#define COLOR_SET_COUNT                           16
+#define COLOR_SET_HIGHLIGHT                        1
+#define COLOR_SET_SPECIAL                          2
+
+#define FONT_HDR_POS_CURRENT_COLORS             0x00
+#define FONT_HDR_POS_HEIGHT                     0x10
+#define FONT_HDR_POS_SHADOW_FLAG                0x12
+#define FONT_HDR_POS_CURRENT_COLOR_SET          0x13
+
+#define FONT_HDR_POS_COLOR_SETS_OFST            0x14
+#define FONT_HDR_POS_NORMAL_COLORS              0x14
+#define FONT_HDR_POS_HIGHLIGHT_COLORS           0x24
+#define FONT_HDR_POS_SPECIAL_COLORS             0x34
+
+#define FONT_HDR_POS_CURRENT_BASE_HEIGHT        0x44
+#define FONT_HDR_POS_CURRENT_VERTICAL_SPACING   0x46
+#define FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING 0x48
+
+#define FONT_HDR_POS_CURRENT_FONT_WIDTHS        0x4A
+
+
+
 #define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (p_Palette), (768 + (_palette_index_)) ) )
 
 
@@ -54,13 +79,13 @@ enum e_Font_Shadow
 
 struct s_FONT_HEADER
 {
-    /*  00 */ uint8_t  current_colors[16];
+    /*  00 */ uint8_t  current_colors[COLOR_SET_COUNT];
     /*  10 */ uint16_t height;
     /*  12 */ uint8_t  shadow_flag;  /* ¿ Set_Font_Style() does STOSW here ? */
-    /*  13 */ uint8_t  current_color_set;
-    /*  14 */ uint8_t  normal_colors[16];
-    /*  24 */ uint8_t  highlight_colors[16];
-    /*  34 */ uint8_t  special_colors[16];
+    /*  13 */ uint8_t  current_color_set;  /* {0: normal, 1: highlight, 2: special} */
+    /*  14 */ uint8_t  normal_colors[COLOR_SET_COUNT];
+    /*  24 */ uint8_t  highlight_colors[COLOR_SET_COUNT];
+    /*  34 */ uint8_t  special_colors[COLOR_SET_COUNT];
     /*  44 */ uint16_t current_base_height;
     /*  46 */ uint16_t current_vertical_spacing;
     /*  48 */ uint16_t current_horizontal_spacing;
@@ -74,26 +99,6 @@ struct s_FONT_HEADER
     /* 49A */ uint16_t data_offsets[768];   /* 8 * 96 * sizeof 2 */
     /* 79A */
 };
-
-#define SZ_FONT_HDR                             1946
-
-#define COLOR_SET_COUNT                           16
-
-#define FONT_HDR_POS_CURRENT_COLORS             0x00
-#define FONT_HDR_POS_HEIGHT                     0x10
-#define FONT_HDR_POS_SHADOW_FLAG                0x12
-#define FONT_HDR_POS_CURRENT_COLOR_SET          0x13
-
-#define FONT_HDR_POS_COLOR_SETS_OFST            0x14
-#define FONT_HDR_POS_NORMAL_COLORS              0x14
-#define FONT_HDR_POS_HIGHLIGHT_COLORS           0x24
-#define FONT_HDR_POS_SPECIAL_COLORS             0x34
-
-#define FONT_HDR_POS_CURRENT_BASE_HEIGHT        0x44
-#define FONT_HDR_POS_CURRENT_VERTICAL_SPACING   0x46
-#define FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING 0x48
-
-#define FONT_HDR_POS_CURRENT_FONT_WIDTHS        0x4A
 
 
 
@@ -382,8 +387,9 @@ int16_t Get_Current_Special_Color(void);
 // UU_STR_CopyToNearLBX()
 // WZD s17p58
 // VGA_GetVertSpacing()
+
 // WZD s17p59
-// STR_TrimWhiteSpace()
+void Trim(char * string);
 
 // WZD s17p60
 int16_t Print_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);

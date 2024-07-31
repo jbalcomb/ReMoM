@@ -72,10 +72,10 @@ void City_Screen_Draw_Buttons(void);
 void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t bldg_idx);
 
 // WZD o54p09
-// NameStartingCity_Dialog_Popup
+void NameStartingCity_Dialog_Popup(int16_t city_idx);
 
 // WZD o54p10
-// Draw_NameStartingCity_Background
+void Draw_NameStartingCity_Background(void);
 
 // WZD o54p11
 void City_Screen_Required_Buildings_List(int16_t city_idx);

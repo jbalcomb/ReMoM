@@ -52,7 +52,7 @@ extern "C" {
 // TILE_GenerateOre()
 
 // WZD o143p12
-// CTY_SetDefaultName()
+void Random_City_Name_By_Race(int16_t race, char * name);
 
 // WZD o143p13
 // EVNT_TargetDepletion()

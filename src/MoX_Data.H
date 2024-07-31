@@ -1314,7 +1314,7 @@ struct s_CITY
     /* 16 */ int8_t did_sell_building;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
     /* 17 */ int8_t pad2B_17h;  /* 2-byte aligment padding
     /* 18 */ int16_t Pop_10s;
-    /* 1A */ int8_t PlayerBits;
+    /* 1A */ uint8_t PlayerBits;  /* bit per player_idx - city (map square) is visible / explored / targetable */
     /* 1B */ int8_t pad2B_1Bh;  /* 2-byte aligment padding
     /* 1C */ int16_t construction;  /* ~== `product_idx`  < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t bldg_cnt;

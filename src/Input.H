@@ -358,7 +358,7 @@ F12     8600        8800      8A00    8C00
     SCCC_F10 = 0x4400,      // "F10" key
 
     SCCC_BACKSPACE = 0x0E08,    // BackSpace
-    // Del         5300
+    SCCC_DELETE = 0x5300,       // Delete
     SCCC_KP_2       = 0x5000,   // Numeric Keypad 2 (Down)
     SCCC_DOWN       = 0x50E0,   // Down Arrow  ||  NumLock + Numeric Keypad 2 (Down)
     SCCC_KP_1       = 0x4F00,   // Numeric Keypad 1 (End)
@@ -500,7 +500,7 @@ enum e_SimTex_Key_Codes
     ST_KEY_LEFTUP           = 0x07,
     ST_KEY_LEFTDOWN         = 0x08,
 //     KP_Insert          = 0x09,
-//     KP_Delete          = 0x0A,
+    ST_KEY_DELETE           = 0x0A,
     ST_KEY_BACKSPACE        = 0x0B,
     ST_KEY_ENTER            = 0x0C,
     ST_KEY_TAB              = 0x0D,
@@ -667,8 +667,8 @@ extern "C" {
 // G_GUI_PressAnyKey                              seg036     00002F1E 0000018B R F . . B T .
 // GUI_ProcessDirKey                              seg036     000030A9 000002C8 R F . . B T .
 // GUI_EditBoxControl                             seg036     0000339F 0000042B R F . . B T .
-// GUI_TextEditDialog                             seg036     000037E1 000003C9 R F . . B T .
-// GUI_EditBoxRedraw                              seg036     00003BC1 000003E7 R F . . B T .
+// Input_Box_Popup                             seg036     000037E1 000003C9 R F . . B T .
+// Draw_Input_Box_Popup                              seg036     00003BC1 000003E7 R F . . B T .
 // GUI_CreateEditBox                              seg036     00003FA8 000001CF R F . . B T .
 // 
 // GUI_CreateImageLabel                           seg036     00004667 00000147 R F . . B T .
@@ -739,6 +739,19 @@ int16_t Wait_For_Input(void);
 // WZD s36p30
 // drake178: GUI_ProcessDirKey()
 int16_t Process_Direction_Key__STUB(int16_t dir_key);
+
+// WZD s36p31
+int16_t GUI_EditBoxControl(int16_t field_num);
+
+// WZD s36p32
+int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help);
+
+// WZD s36p33
+void Draw_Input_Box_Popup(int16_t Editbox_Index, char * Local_String);
+
+// WZD s36p34
+// GUI_CreateEditBox()
+
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type);

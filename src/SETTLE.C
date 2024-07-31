@@ -15,7 +15,7 @@ IDK_Settle_s82061()
 o100p05
 STK_SettleTile()
 o77p01
-TILE_Settle()
+Create_Outpost()
 
 
 Module: COLONIZE
@@ -39,7 +39,7 @@ Program-Flow: Special Unit Action - Settle
     IDK_Settle_s82061()
         |-> STK_GetMovableUnits()
         |-> STK_SettleTile()
-            |-> TILE_Settle(unit_x, unit_y, unit_p, unit_race, unit_owner_idx, unit_idx)
+            |-> Create_Outpost(unit_x, unit_y, unit_p, unit_race, unit_owner_idx, unit_idx)
                 |-> TILE_CanBeSettled()
                 |-> CTY_CreateEmpty()
 
@@ -78,12 +78,71 @@ Game-Data:
 // AI_UNIT_Settle()
 
 // WZD o100p04
-// drake178: Do_Build_Outpost()
-// Do_Build_Outpost()
+int16_t Do_Build_Outpost(void)
+{
+    int16_t troops[MAX_STACK];
+    int16_t troop_count;
+
+    Active_Unit_Stack(&troop_count, &troops[0]);
+
+    return STK_SettleTile(troop_count, &troops[0]);
+
+}
 
 // WZD o100p05
 // drake178: STK_SettleTile()
-// STK_SettleTile()
+int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
+{
+    int16_t unit_owner;
+    int16_t unit_race;
+    int16_t unit_wp;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t stack_has_settler;
+    int16_t unit_type;
+    int16_t itr_troops;  // _DI_
+    int16_t unit_idx;  // _SI_
+
+    stack_has_settler = ST_FALSE;
+
+    for(itr_troops = 0; ((itr_troops < troop_count) && (stack_has_settler == ST_FALSE)); itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        unit_type = _UNITS[unit_idx].type;
+        if(
+            ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
+            &&
+            ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
+        )
+        {
+            stack_has_settler = ST_TRUE;
+        }
+    }
+
+    if(stack_has_settler != ST_TRUE)
+    {
+        return ST_FALSE;
+    }
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+
+    unit_owner = _UNITS[unit_idx].owner_idx;
+
+    unit_race = _unit_type_table[unit_type].Race;
+
+    if(Create_Outpost(unit_wx, unit_wy, unit_wp, unit_race, unit_owner, unit_idx) == ST_TRUE)
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+
+}
+
 
 // WZD o100p06
 // drake178: AI_UNIT_Move()

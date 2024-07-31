@@ -456,7 +456,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         // ; loses focus, at which point the resulting string is
         // ; saved to the passed pointer and the function returns
         // ; -1 if the Esc key was pressed, or 0 otherwise
-        // TODO  GUI_TextEditDialog((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, 13, 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127, -1);
+        // TODO  Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, 13, 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127, -1);
         strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
     }
 

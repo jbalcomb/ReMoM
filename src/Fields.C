@@ -100,7 +100,7 @@ dseg:8254 FF FF                                           down_y dw -1          
 dseg:8254                                                 ? END: Mouse - Initialized Data ?       ; offset added to 'down' button field text
 dseg:8256 FF FF                                           GUI_EmptyTitleHelp dw 0FFFFh            ; DATA XREF: UU_GUI_ScrollableTxtDlg+1BEr ...
 dseg:8258 00 00                                           GUI_DialogDirections dw 0               ; DATA XREF: Interpret_Mouse_Input:loc_26BD8r ...
-dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: GUI_EditBoxRedraw+3D7r ...
+dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: Draw_Input_Box_Popup+3D7r ...
 dseg:825C                                                 ; #314 mouse_list_none_init
 dseg:825C 00 00 00 00 00 00 3F 01 C7 00 00 00             mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
 dseg:825C                                                                                         ; DATA XREF: Init_Mouse_Keyboard:loc_2D1C5o
@@ -130,7 +130,7 @@ dseg:8298                                                 ¿ END: Help - Initial
 dseg:829A                                                 ? BEGIN: Mouse Buffer ?
 dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
 dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: GUI_TextEditDialog+3Bo ...
+dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: Input_Box_Popup+3Bo ...
 dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
 dseg:829F                                                 ? END: Mouse Buffer ?
 dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
@@ -139,6 +139,17 @@ dseg:82A6 5F 00                                           GUI_EditCursor db '_',
 dseg:82A6
 dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
 */
+
+// WZD dseg:8282
+int16_t GUI_Edit_Position = 0;
+// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
+// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
+
+// WZD dseg:8290
+int16_t GUI_EditTimeOutType = 0;
+
+// WZD dseg:829E
+char cnst_ZeroString_12[] = "";
 
 
 
@@ -1069,7 +1080,24 @@ void Draw_Fields()
                 } break;
                 case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
                 {
-                    // N/A; Manually Excluded
+                    if(down_mouse_button != itr_fields_count)
+                    {
+                        Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+
+                        if (p_fields[itr_fields_count].fill_color != 0)
+                        {
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                        }
+
+                        if(p_fields[itr_fields_count].justification != 0)
+                        {
+                            // Print_Right(p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+                        }
+                        else
+                        {
+                            // Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+                        }
+                    }
                 } break;
                 case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
                 {
@@ -1351,7 +1379,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
-
+            // TODO  GUI_EditBoxControl(field_num);
         } break;
         case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {

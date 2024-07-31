@@ -564,41 +564,41 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
 
     if(outline_style != 0)
     {
-        for(itr = 0; itr < 16; itr++)
+        for(itr = 0; itr < COLOR_SET_COUNT; itr++)
         {
             SET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS + itr, outline_color);
         }
 
         draw_alias_flag = ST_TRUE;
         
-        if(outline_style != 2) /* Shadow_TopLeft */
+        if(outline_style != e_Font_Shadow_Up)
         {
             Print_String(x + 1, y + 1, string, ST_FALSE, full_flag);  // overdraw right + botton
             Print_String(x    , y + 1, string, ST_FALSE, full_flag);  // overdraw bottom
             Print_String(x + 1, y    , string, ST_FALSE, full_flag);  // overdraw right
         }
 
-        if( outline_style != 1 && outline_style != 3)  /* Shadow_BtmRight || Shadow_BtmRight_2px */
+        if( outline_style != e_Font_Shadow_Down && outline_style != e_Font_Shadow_Heavy)
         {
             Print_String(x - 1, y    , string, ST_FALSE, full_flag);  // overdraw left
             Print_String(x - 1, y - 1, string, ST_FALSE, full_flag);  // overdraw left + top
             Print_String(x    , y - 1, string, ST_FALSE, full_flag);  // overdraw top
         }
 
-        if(outline_style == 3 || outline_style == 5)  /* Shadow_BtmRight_2px || Outline_Plus_BR2px */
+        if(outline_style == e_Font_Shadow_Heavy || outline_style == e_Font_Shadow_Heavy)
         {
             Print_String(x + 2, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 1, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 2, y + 1, string, ST_FALSE, full_flag);
         }
 
-        if(outline_style > 3)  /* Shadow_BtmRight_2px */
+        if(outline_style > e_Font_Shadow_Heavy)
         {
             Print_String(x + 1, y - 1, string, ST_FALSE, full_flag);  // overdraw right + top
             Print_String(x - 1, y + 1, string, ST_FALSE, full_flag);  // overdraw left + bottom
         }
 
-        if(outline_style == 5)  /* Outline_Plus_BR2px */
+        if(outline_style == e_Font_Shadow_Outline_Heavy)
         {
             Print_String(x + 2, y    , string, ST_FALSE, full_flag);
             Print_String(x    , y + 2, string, ST_FALSE, full_flag);
@@ -684,28 +684,28 @@ int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_o
 
         switch(character)
         {
-            case 1:  /* character == '\x01' */  /* ASCII   1h  1d  SOH (start of heading)  */  /* sw_character_values[0] == character */
+            case 1:  /* character == '\x01' */
             {
                 if(change_color_ok_flag != ST_FALSE)
                 {
                     Set_Normal_Colors_On();
                 }
             } break;
-            case 2:
+            case 2:  /* character == '\x02' */
             {
                 if(change_color_ok_flag != ST_FALSE)
                 {
                     Set_Highlight_Colors_On();
                 }
             } break;
-            case 3:
+            case 3:  /* character == '\x03' */
             {
                 if(change_color_ok_flag != ST_FALSE)
                 {
                     Set_Special_Colors_On();
                 }
             } break;
-            case 4:
+            case 4:  /* character == '\x04' */
             {
                 if(change_color_ok_flag != ST_FALSE)
                 {
@@ -783,6 +783,12 @@ void Set_Normal_Colors_On(void)
 // drake178: VGA_FontColor2Toggle
 // MoO2: Set_Highlight_Colors_On
 // MoO2: copies highlight_colors into current_colors - 8 words
+/*
+    IDGI:  Dasm definitely looks like a *toggle*, but 'Name Starting City' doesn't work with it like that.
+    MoO2 does not look like a *toggle*.
+    Something must unset it somewhere else?
+        ...in Print(), change_colors_ok_flag?
+*/
 void Set_Highlight_Colors_On(void)
 {
     uint8_t current_color_set;
@@ -795,6 +801,7 @@ void Set_Highlight_Colors_On(void)
     {
         Set_Color_Set(0);
     }
+    // Set_Color_Set(1);
 }
 
 // WZD s17p41
@@ -805,14 +812,15 @@ void Set_Special_Colors_On(void)
 {
     uint8_t current_color_set;
     current_color_set = GET_1B_OFS(font_style_data,FONT_HDR_POS_CURRENT_COLOR_SET);
-    if(current_color_set != 2)
-    {
-        Set_Color_Set(2);
-    }
-    else
-    {
-        Set_Color_Set(0);
-    }
+    // if(current_color_set != 2)
+    // {
+    //     Set_Color_Set(2);
+    // }
+    // else
+    // {
+    //     Set_Color_Set(0);
+    // }
+    Set_Color_Set(2);
 }
 
 
@@ -1205,8 +1213,57 @@ int16_t Get_Current_Special_Color(void)
 // UU_STR_CopyToNearLBX()
 // WZD s17p58
 // VGA_GetVertSpacing()
+
 // WZD s17p59
-// STR_TrimWhiteSpace()
+/*
+MoO2
+Module: strings
+    function (0 bytes) Trim
+    Address: 01:0013303E
+        Num params: 1
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            pointer (4 bytes) name
+            signed integer (4 bytes) i
+            signed integer (4 bytes) start_pos
+            signed integer (4 bytes) end_pos
+*/
+/*
+; trims white space from the beginning and end of the passed string
+; BUGGED: will only remove one trailing space if there are multiple
+*/
+void Trim(char * string)
+{
+    int16_t Trailing_Space;
+    int16_t itr1;
+    int16_t itr2;  // _DI_
+
+    itr1 = 0;
+    while(string[itr1] == ' ') { itr1++; }
+
+    itr2 = 0;
+    Trailing_Space = ST_UNDEFINED;
+
+    while(string[itr2] != '\0')
+    {
+        if(string[itr2] == ' ')
+        {
+            Trailing_Space = itr2;  //  ; BUG: will only register the final trailing space if there are multiple
+        }
+        else
+        {
+            Trailing_Space = ST_UNDEFINED;
+        }
+        itr2++;
+    }
+
+    if(Trailing_Space != ST_UNDEFINED)
+    {
+        string[Trailing_Space] = '\0';
+    }
+
+}
 
 
 // WZD s17p60
@@ -1574,33 +1631,33 @@ void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t co
 {
     int16_t itr;
 
-    color1 = (color1 < 16) ? color1 : 0;
-    color2 = (color2 < 16) ? color2 : 0;
-    color3 = (color3 < 16) ? color3 : 0;
+    color1 = (color1 < COLOR_SET_COUNT) ? color1 : 0;
+    color2 = (color2 < COLOR_SET_COUNT) ? color2 : 0;
+    color3 = (color3 < COLOR_SET_COUNT) ? color3 : 0;
 
     m_current_font_style = font_idx;
     m_current_normal_color = color1;
     m_current_highlight_color = color2;
     m_current_special_color = color3;
 
-    for(itr = 0; itr < 16; itr++)
+    for(itr = 0; itr < COLOR_SET_COUNT; itr++)
     {
-        font_style_data[(FONT_HDR_POS_CURRENT_COLORS + itr)] = font_colors[((color1 * 16) + itr)];  // /*  00 */ uint8_t  current_colors[16];
+        font_style_data[(FONT_HDR_POS_CURRENT_COLORS + itr)] = font_colors[((color1 * COLOR_SET_COUNT) + itr)];  // /*  00 */ uint8_t  current_colors[16];
     }
 
-    for(itr = 0; itr < 16; itr++)
+    for(itr = 0; itr < COLOR_SET_COUNT; itr++)
     {
-        font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * 16) + itr)];   // /*  14 */ uint8_t  normal_colors[16];
+        font_style_data[(FONT_HDR_POS_NORMAL_COLORS + itr)] = font_colors[((color1 * COLOR_SET_COUNT) + itr)];   // /*  14 */ uint8_t  normal_colors[16];
     }
 
-    for(itr = 0; itr < 16; itr++)
+    for(itr = 0; itr < COLOR_SET_COUNT; itr++)
     {
-        font_style_data[(FONT_HDR_POS_HIGHLIGHT_COLORS + itr)] = font_colors[((color2 * 16) + itr)];
+        font_style_data[(FONT_HDR_POS_HIGHLIGHT_COLORS + itr)] = font_colors[((color2 * COLOR_SET_COUNT) + itr)];
     }
 
-    for(itr = 0; itr < 16; itr++)
+    for(itr = 0; itr < COLOR_SET_COUNT; itr++)
     {
-        font_style_data[(FONT_HDR_POS_SPECIAL_COLORS + itr)] = font_colors[((color3 * 16) + itr)];
+        font_style_data[(FONT_HDR_POS_SPECIAL_COLORS + itr)] = font_colors[((color3 * COLOR_SET_COUNT) + itr)];
     }
 
     font_header->height = font_header->base_height[font_idx];

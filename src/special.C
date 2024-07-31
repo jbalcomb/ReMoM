@@ -29,9 +29,13 @@
 // TILE_GetDistance()
 
 // WZD s23p03
+// MoO2
+// 1oom
 /*
     calculate the distance between {x1,y1} and {x2,y2}
-
+; returns a non-euclidean distance between two tiles,
+; using the larger of the X and Y distances, but
+; accounting for the map wrapping around (with Width)
 */
 int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t wrap_x)
 {

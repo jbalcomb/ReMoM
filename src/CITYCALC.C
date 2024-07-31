@@ -1328,16 +1328,139 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 */
 
 // WZD o142p01
-// TILE_CreateRoad()
+// drake178: TILE_CreateRoad()
+/*
+; creates a road on the tile, setting the corresponding
+; movement allowances, and removing the enchanted road
+; flag if set, but then also enchanting the road if the
+; tile is on Myrror
+*/
+void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    // TODO  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+
+    movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Road;
+
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= TF_Enc_Road;
+
+    if(wp == 1)  /* Myrror */
+    {
+        TILE_EnchantRoad(wx, wy, wp);
+    }
+
+}
 
 // WZD o142p02
-// TILE_EnchantRoad()
+// drake178: TILE_EnchantRoad()
+/*
+; changes a regular road on a tile to an enchanted one,
+; or does nothing if there is no road on the tile
+*/
+void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+
+    if((TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    {
+
+        TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Enc_Road;
+
+        movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+        
+    }
+
+}
+
 
 // WZD o142p03
-// LD_TILE_ResUpdate()
+// drake178: LD_TILE_ResUpdate()
+/*
+; Legacy Development function, can be removed
+;
+; would update some aspect of some resource on a tile
+; by tile basis with no return value
+*/
+void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp)
+{
+    return;
+}
 
 // WZD o142p04
 // LD_CTY_ResRefresh()
+/*
+; Legacy Development function, can be removed
+;
+; would update some aspect of some resource on every
+; tile of every catchment area (including corners)
+*/
+void NOOP_Current_Player_All_City_Areas(void)
+{
+    int16_t Max_Distance;
+    int16_t city_area_square_wy;
+    int16_t city_area_x;
+    int16_t city_wp;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t itr_cities;  // _SI_
+    int16_t city_area_square_wx;  // _DI_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            city_wx = _CITIES[itr_cities].wx;
+            city_wy = _CITIES[itr_cities].wy;
+            city_wp = _CITIES[itr_cities].wp;
+            if(_CITIES[itr_cities].population >= 8)
+            {
+                // jmp     short $+2
+            }
+            Max_Distance = 2;
+            
+            for((city_area_square_wy = (city_wy - Max_Distance)); ((city_wy + Max_Distance + 1) > city_area_square_wy); city_area_square_wy++)
+            {
+                if(
+                    (city_area_square_wy >= 0)
+                    &&
+                    (city_area_square_wy < WORLD_HEIGHT)
+                )
+                {
+                    for((city_area_x = (city_wx - Max_Distance));  ((city_wx + Max_Distance + 1) > city_area_x); city_area_x++)
+                    {
+                        city_area_square_wx = city_area_x;
+                        if(city_area_square_wx < 0)
+                        {
+                            city_area_square_wx += WORLD_WIDTH;
+                        }
+                        if(city_area_square_wx >= WORLD_WIDTH)
+                        {
+                            city_area_square_wx = WORLD_WIDTH;
+                        }
+                        empty_fxn_o142p03(city_area_square_wx, city_area_square_wy, city_wp);
+                    }
+                }
+            }
+        }
+    }
+}
 
 // WZD o142p05
 int16_t City_House_Count(int16_t city_idx)
