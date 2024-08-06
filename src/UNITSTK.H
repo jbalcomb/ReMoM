@@ -25,8 +25,7 @@ void Update_Stack_Active(int16_t stack_idx);
 int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
 
 // WZD o61p03
-// AKA UNIT_MoveStack()
-int16_t RdBd_UNIT_MoveStack_STUB(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
+int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
 
 // WZD o61p04
 void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
@@ -49,7 +48,7 @@ void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
 void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t dst_wx, int16_t dst_wy, int16_t player_idx, int16_t unit_idx);
 
 // WZD o61p10
-// STK_BuildingPossible()
+int16_t Unit_Action_Special_Build(int16_t troop_count, int16_t troops[]);
 
 // WZD o61p11
 int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[]);

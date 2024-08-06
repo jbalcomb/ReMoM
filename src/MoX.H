@@ -276,6 +276,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "paragrph.H"
 #include "ProdScr.H"
 #include "RACETYPE.H"
+#include "Roads.H"
 #include "SBookScr.H"
 #include "SCORE.H"      // Hall Of Fame (HoF)
 #include "Settings.H"
@@ -404,38 +405,37 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 */
 enum e_SCREENS
 {
-    scr_Main_Menu_Screen = 0,
+    scr_Main_Menu_Screen    = 0,
 
-    scr_Continue = 10,
-    scr_Load_Screen = 11,
-    scr_New_Game_Screen = 12,
-    scr_Quit_To_DOS = 13,
+    scr_Continue            = 10,
+    scr_Load_Screen         = 11,
+    scr_New_Game_Screen     = 12,
+    scr_Quit_To_DOS         = 13,
     scr_Hall_Of_Fame_Screen = 14,
-    scr_Settings_Screen = 15,
+    scr_Settings_Screen     = 15,
 
     /* WZD */
-    scr_City_Screen = 100,
+    scr_City_Screen         = 100,
     /* scr_Load_Screen = 101, */
-    scr_Armies_Screen = 102,
-    scr_Cities_Screen = 103,
-    scr_Quit = 104,
-    scr_Main_Screen = 105,
-    scr_Magic_Screen = 106,
-    scr_RoadBuilding = 107,  /* ?!? */
-    scr_Production_Screen = 108,  /* Production Pop-Up - ¿ from the City List Screen and City Screen ? */
-    scr_Item_Screen = 109,
-    scr_NextTurn = 110,  /* ¿ drake187: NextTurnProc ? ¿ MoO2: Do_Next_Turn_() ? */
+    scr_Armies_Screen       = 102,
+    scr_Cities_Screen       = 103,
+    scr_Quit                = 104,
+    scr_Main_Screen         = 105,
+    scr_Magic_Screen        = 106,
+    scr_Road_Build          = 107,
+    scr_Production_Screen   = 108,  /* Production Pop-Up - ¿ from the City List Screen and City Screen ? */
+    scr_Item_Screen         = 109,
+    scr_NextTurn            = 110,  /* ¿ drake187: NextTurnProc ? ¿ MoO2: Do_Next_Turn_() ? */
     /* ¿default? */
-    scr_Spellbook_Screen = 112,
+    scr_Spellbook_Screen    = 112,
     /* ¿default? */
-    scr_Advisor_Screen = 114,   /* WZD 0x0E */
-    // scr_Diplomac = 115,  /* ?!? */
-    scr_Diplomacy_Screen = 115,
+    scr_Advisor_Screen      = 114,   /* WZD 0x0E */
+    scr_Diplomacy_Screen    = 115,
     // ¿!? Surveyor, Cartographer, etc.
 
-    scr_Test_Screen = 200,
+    scr_Test_Screen         = 200,
 
-    scr_PoC_Screen = 240
+    scr_PoC_Screen          = 240
 };
 
 

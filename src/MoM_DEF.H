@@ -231,6 +231,10 @@ WIZARDS.LBX
 
 #define MAP_SCREEN_X                  0  // in Pixels
 #define MAP_SCREEN_Y                 20  // in Pixels
+#define MAP_SCREEN_X1                 0  // in Pixels
+#define MAP_SCREEN_Y1                20  // in Pixels
+#define MAP_SCREEN_X2               239  // in Pixels
+#define MAP_SCREEN_Y2               199  // in Pixels
 
 #define REDUCED_MAP_SCREEN_X        251  // in Pixels
 #define REDUCED_MAP_SCREEN_Y         21  // in Pixels

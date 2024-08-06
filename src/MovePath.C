@@ -182,6 +182,16 @@ void Do_Costs_Lst(void)
     movepath_reach_from++;
 }
 
+/*
+; calculates the shortest path to every tile from the starting one;
+; not the best solution for MoM, as it's based on movement costs rather than turns to reach a tile
+; rewritten in the overland djikstra patch
+*/
+/*
+
+OVL_GetRoadPath()
+    Move_Path_Find(src_wx, src_wy, &movepath_cost_map[0]);
+*/
 void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_movepath_cost_map)
 {
     wx = arg_wx;

@@ -71,11 +71,10 @@ void Random_City_Name_By_Race(int16_t race, char * name);
 void Reset_City_Road_Connection_Bitfields(void);
 
 // WZD o143p18
-// TILE_ResetRoadConns()
+void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p19
-// OVL_GetRoadPath()
-
+int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t * path_string_x, int8_t * path_string_y);
 
 
 #ifdef __cplusplus

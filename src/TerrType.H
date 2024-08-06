@@ -65,7 +65,7 @@ enum TER_TYPES
     TT_BugGrass    = 0x1,
     TT_Shore1_1st  = 0x2,
     TT_Lake        = 0x12,
-    TT_Shore1_end  = 0x0A1,
+    TT_Shore1_end  = 0x0A1,  /* 161 */
     TT_Grass1      = 0x0A2,
     TT_Forest1     = 0x0A3,
     TT_Mountain1   = 0x0A4,

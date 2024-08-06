@@ -35,7 +35,12 @@ extern int16_t _minimap_grid_field;
 // WZD dseg:9740
 extern int16_t _main_map_grid_field;
 
-
+// WZD dseg:9742
+// int16_t _minimap_grid_x;
+extern int64_t _minimap_grid_x;
+// WZD dseg:9744
+// int16_t _minimap_grid_y;
+extern int64_t _minimap_grid_y;
 
 // WZD dseg:974E 
 // int16_t _main_map_grid_x;
@@ -304,7 +309,7 @@ o57p10  ? Move_Stack_DirKey() ?
 // WZD o57p05
 // PRIVATE  void Add_Game_Button_Fields(void);
 // WZD o57p06
-// PRIVATE  void Main_Screen_Draw_Game_Buttons(void);
+void Main_Screen_Draw_Game_Buttons(void);
 // WZD o57p07
 // PRIVATE  void Add_Unit_Window_Fields(void);
 // WZD o57p08
@@ -372,7 +377,7 @@ void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16
     WIZARDS.EXE  ovr063
 */
 // WZD o63p01
-// PRIVATE  void Main_Screen_Draw_Status_Window(void);
+void Main_Screen_Draw_Status_Window(void);
 
 // WZD o063p02
 // PRIVATE  void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
@@ -475,7 +480,7 @@ void OVL_EnableIncmBlink(void);
 
 // WZD o95p01
 // AKA Move_Stack()
-// ¿PRIVATE? int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[]);
 
 // WZD o95p02
 // AKA OVL_MoveUnitStack()

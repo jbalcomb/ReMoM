@@ -2059,8 +2059,37 @@ struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 */
 uint8_t * TBL_Scouting;                     // load in Load_SAVE_GAM()
 
-// WZD dseg:9CB4  
+// WZD dseg:9CB4
+/*
+8 bit bitfield
+0 0 0 0 0 0 0 0
+| | | | | | | |
+| | | | | | | \- 0: unknown
+| | | | | | \- 1: unknown
+| | | | | \- 2: unknown
+| | | | \- 3: regular road
+| | | \- 4: enchanted road
+| | \- 5: corruption
+| \- 6: unknown
+\- 7: unknown
+
+// 0x01
+// 0x02
+// 0x04
+#define TF_Road         0x08
+#define TF_Enc_Road     0x10
+#define TF_Corruption   0x20
+#define TF_Unk_40       0x40
+#define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
+#define TF_AnyRoad      0x18
+
+TILE_MakeGrassland() ...Forest,Desert,Mountain,Hill
+    and     al, 11111000b
+    AKA and     al, not 111b
+
+*/
 uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
+
 // WZD dseg:9CB8  
 SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
 
@@ -2076,7 +2105,7 @@ struct s_FORTRESS * _FORTRESSES;
 struct s_NODE * _NODES;
 
 // WZD dseg:9CD0
-uint8_t * TBL_Landmasses;  // 302 PR, 4832 B, in World_Data
+uint8_t * TBL_Landmasses;  // 1-byte, unsigned;  302 PR, 4832 B, in World_Data
 
 // WZD dseg:9CD4
 SAMB_ptr UU_TBL_2;

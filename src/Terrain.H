@@ -100,7 +100,7 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
 int16_t City_Best_Weapon(int16_t city_idx);
 
 // WZD s161p20
-// TILE_GetRoadBldTime  
+int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p21
 // UU_TILE_GetUnsdMPCost

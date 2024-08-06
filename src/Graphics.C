@@ -127,22 +127,326 @@ void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 }
 
 
-
-
 // WZD s14p08
-// drake178: 
-// MoO2  
-// VGA_WndDrawLine()
+// drake178: VGA_WndDrawLine()
+// MoO2  DNE
+// 1oom  uidraw.c  ui_draw_line_limit()
+void Clipped_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+{
+    Clipped_Line_Base(x1, y1, x2, y2, ST_FALSE, color, ST_NULL, ST_NULL, ST_NULL);
+}
+
 
 // WZD s14p09
-// drake178: 
+// drake178: VGA_WndDrawPtrnLine()
 // MoO2  
-// VGA_WndDrawPtrnLine()
+// 1oom  uidraw.c  ui_draw_line_limit_ctbl()
+// ; int __cdecl __far Clipped_Multi_Colored_Line(int x1, int y1, int x2, int y2, char *colortbl@, int colornum, int colorpos)
+void Clipped_Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int colornum, int colorpos)
+{
+    Clipped_Line_Base(x1, y1, x2, y2, 1, 0, &colortbl[0], colornum, colorpos);
+}
+
 
 // WZD s14p10
-// drake178: 
-// MoO2  
-// VGA_WndDrawLineBase()
+// drake178: VGA_WndDrawLineBase()
+// MoO2  Module: line  Clip_Line()
+// MoO2  Module: strings  Swap_Short()
+// MoO2  ~ Multi_Colored_Line_()
+// 1oom  ui_draw_line_limit_do()
+/*
+; calculates the arguments for, and calls, either
+; Line() or Multi_Colored_Line() in a way that
+; obeys any limits set through Set_Window()
+*/
+/*
+    Eh?
+        clipped_flag = {F,T}
+        swap (y1,y1)
+        swap (x1,x2)
+
+*/
+void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t Patterned, uint8_t color, uint8_t colortbl[], int16_t colornum, int16_t colorpos)
+{
+    uint32_t y_delta;
+    uint32_t x_delta;
+    int16_t P_Off_Cutoff;
+    int16_t swap_y;
+    int16_t swap_x;
+    int16_t clipped_flag;
+
+
+    clipped_flag = ST_FALSE;
+
+    P_Off_Cutoff = 0;
+
+    if(x1 == x2)  /* ¿ line is vertical ? */
+    {
+        if(
+            (x1 < screen_window_x1)
+            ||
+            (x2 > screen_window_x2)
+        )
+        {
+            clipped_flag = ST_TRUE;
+        }
+        else
+        {
+            if(y2 < y1)
+            {
+                swap_y = y2;
+                y2 = y1;
+                y1 = swap_y;
+                colorpos = (colornum - 1) - colorpos;  /* IDGI */
+            }
+            if(
+                (y2 < screen_window_y1)
+                ||
+                (y1 > screen_window_y2)
+            )
+            {
+                clipped_flag = ST_TRUE;
+            }
+            else
+            {
+                SETMIN(y1, screen_window_y1);
+                SETMAX(y2, screen_window_y2);
+            }
+        }
+    }
+    else  /* ¿ line is NOT vertical ? ... ¿ but, may be horizontal ? */
+    {
+        if(x2 < x1)
+        {
+            swap_x = x2;
+            x2 = x1;
+            x1 = swap_x;
+
+            swap_y = y2;
+            y2 = y1;
+            y1 = swap_y;
+
+            colorpos = ((colornum - 1) - colorpos);
+        }
+        y_delta = y2 - y1;
+        x_delta = x2 - x1;
+        if(x1 < screen_window_x1)
+        {
+            P_Off_Cutoff = (screen_window_x1 - x1); // count of pixels clipped from the start of the line
+            y2 += (y_delta * (screen_window_x1 - x1)) / x_delta;
+            x1 = screen_window_x1;
+        }
+        if(x1 > x2)
+        {
+            clipped_flag = ST_TRUE;
+        }
+        else
+        {
+            if(x2 > screen_window_x2)
+            {
+
+                y2 = y1 + (y_delta * (screen_window_x2 - x1)) / x_delta;
+                x2 = screen_window_x2;
+            }
+            if(x2 < x1)
+            {
+                clipped_flag = ST_TRUE;
+            }
+        }
+    }
+
+    if(y1 == y2)  /* vertical line */
+    {
+        if(
+            (y1 < screen_window_y1)
+            ||
+            (y2 > screen_window_y2)
+        )
+        {
+            clipped_flag = ST_TRUE;
+        }
+        if(x2 < x1)
+        {
+            swap_x = x2;
+            x2 = x1;
+            x1 = swap_x;
+        }
+        if(
+            (x2 < screen_window_x1)
+            ||
+            (x1 > screen_window_x2)
+        )
+        {
+            clipped_flag = ST_TRUE;
+        }
+        if(x1 < screen_window_x1)
+        {
+            P_Off_Cutoff = (screen_window_x1 - x1);
+            x1 = screen_window_x1;
+        }
+        if(x2 > screen_window_x2)
+        {
+            x2 = screen_window_x2;
+        }
+    }
+    else  /* NOT vertical line */
+    {
+        if(y2 < y1)
+        {
+            swap_y = y2;
+            y2 = y1;
+            y1 = swap_y;
+            swap_x = x2;
+            x2 = x1;
+            x1 = swap_x;
+        }
+        x_delta = x2 - x1;
+        y_delta = y2 - y1;
+        if(y1 < screen_window_y1)
+        {
+            x1 += (x_delta * (screen_window_y1 - y1)) / y_delta;
+            y1 = screen_window_y1;
+        }
+        if(y1 > y2)
+        {
+            clipped_flag = ST_TRUE;
+        }
+        if(y2 > screen_window_y2)
+        {
+            x2 = x1 + (x_delta * (screen_window_y2 - y1)) / y_delta;
+            y2 = screen_window_y2;
+        }
+        if(y2 < y1)
+        {
+            clipped_flag = ST_TRUE;
+        }
+    }
+
+    if(clipped_flag == ST_FALSE)
+    {
+        if(Patterned == ST_FALSE)
+        {
+            Line(x1, y1, x2, y2, color);
+        }
+        else
+        {
+            // Multi_Colored_Line(x1, y1, x2, y2, colortbl, colornum, ((colorpos + P_Off_Cutoff) % colornum));
+            ui_draw_line_ctbl(x1, y1, x2, y2, colortbl, colornum, ((colorpos + P_Off_Cutoff) % colornum));
+        }
+    }
+
+}
+
+// static void ui_draw_line_limit_do(int x0, int y0, int x1, int y1, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos, int scale)
+static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos)
+{
+    if (x1 == x2)
+    {
+        if((x1 < screen_window_x1) || (x1 > screen_window_x2))
+        {
+            return;
+        }
+
+        if(y2 < y1)
+        {
+            int t = y1; y1 = y2; y2 = t;
+            colorpos = colornum - 1 - colorpos;
+        }
+        if((y2 < screen_window_y1) || (y1 > screen_window_y2))
+        {
+            return;
+        }
+        SETMAX(y1, screen_window_y1);
+        SETMIN(y2, screen_window_y2);
+    }
+    else
+    {
+        int x_delta, y_delta;
+        if(x2 < x1)
+        {
+            int t;
+            t = x1; x1 = x2; x2 = t;
+            t = y1; y1 = y2; y2 = t;
+            colorpos = colornum - 1 - colorpos;
+        }
+        y_delta = y2 - y1;
+        x_delta = x2 - x1;
+        if(x1 < screen_window_x1)
+        {
+            y1 += (y_delta * (screen_window_x1 - x1)) / x_delta;
+            x1 = screen_window_x1;
+        }
+        if(x1 > x2)
+        {
+            return;
+        }
+        if(x2 > screen_window_x2)
+        {
+            y2 = y1 + (y_delta * (screen_window_x2 - x1)) / x_delta;
+            x2 = screen_window_x2;
+        }
+        if(x2 < x1)
+        {
+            return;
+        }
+    }
+
+    if(y1 == y2)
+    {
+        if((y1 < screen_window_y1) || (y1 > screen_window_y2))
+        {
+            return;
+        }
+        if(x2 < x1)
+        {
+            int t = x1; x1 = x2; x2 = t;
+        }
+        if((x2 < screen_window_x1) || (x1 > screen_window_x2))
+        {
+            return;
+        }
+        SETMAX(x1, screen_window_x1);
+        SETMIN(x2, screen_window_x2);
+    }
+    else
+    {
+        int x_delta, y_delta;
+        if(y2 < y1)
+        {
+            int t;
+            t = x1; x1 = x2; x2 = t;
+            t = y1; y1 = y2; y2 = t;
+        }
+        x_delta = x2 - x1;
+        y_delta = y2 - y1;
+        if(y1 < screen_window_y1)
+        {
+            x1 += (x_delta * (screen_window_y1 - y1)) / y_delta;
+            y1 = screen_window_y1;
+        }
+        if(y1 > y2)
+        {
+            return;
+        }
+        if(y2 > screen_window_y2)
+        {
+            x2 = x1 + (x_delta * (screen_window_y2 - y1)) / y_delta;
+            y2 = screen_window_y2;
+        }
+        if(y2 < y1)
+        {
+            return;
+        }
+    }
+
+    if (colortbl) {
+        // ui_draw_line_ctbl(x1, y1, x2, y2, colortbl, colornum, colorpos, scale);
+        ui_draw_line_ctbl(x1, y1, x2, y2, colortbl, colornum, colorpos);
+    } else {
+        // Line(x1, y1, x2, y2, color, scale);
+        Line(x1, y1, x2, y2, color);
+    }
+}
 
 // WZD s14p11
 // drake178: UU_VGA_DrawBiColorRect()
@@ -448,9 +752,199 @@ void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 }
 
 // WZD s16p04
-// drake178: VGA_DrawPatternLine90
-// MoO2  
-// VGA_DrawPatternLine
+// drake178: VGA_DrawPatternLine()
+// MoO2  Multi_Colored_Line()
+void Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int16_t colornum, int16_t colorpos)
+{
+    uint8_t * Repeat_Mark;
+    int16_t line_increment;
+    int16_t x_slope;
+    int16_t length;
+    int16_t y_slope;
+
+    int16_t x_delta;  // _CX_
+    int16_t y_delta;  // _DX_
+    int16_t x_error;
+    int16_t y_error;
+    int16_t temp;  // _SI_
+    uint8_t * color_ptr;  // _SI_
+    uint8_t * video_memory;  // ES:DI
+    uint8_t color;  // _AL_
+
+    if(x2 < x1)
+    {
+        temp = x2;
+        x2 = x1;
+        x1 = temp;
+        temp = y2;
+        y2 = y1;
+        y1 = temp;
+    }
+
+    x_delta = (x2 - x1);
+    y_delta = (y2 - y1);
+
+    line_increment = SCREEN_WIDTH;
+
+    if(y_delta < 0)
+    {
+        y_delta = -(y_delta);
+        line_increment = -(SCREEN_WIDTH);
+    }
+
+    if(x_delta < y_delta)
+    {
+        /* Y Major */
+        length = y_delta + 1;
+        y_slope = 256;
+        if(y_delta != 0)  /* avoid division by zero error condition */
+        {
+            x_slope = (x_delta * 256) / y_delta;
+        }
+    }
+    else
+    {
+        /* X Major */
+        length = x_delta + 1;
+        if(x_delta != 0)  /* avoid division by zero error condition */
+        {
+            x_slope = 256;
+            y_slope = (y_delta * 256) / x_delta;
+        }
+    }
+
+    color_ptr = &colortbl[colorpos];
+    Repeat_Mark = &colortbl[colornum];
+
+    video_memory = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
+
+    x_error = 256 / 2;
+    y_error = 256 / 2;
+
+    while(length--)
+    {
+        // ~ color = colortbl[colorpos]
+        color = *color_ptr++;
+
+        if(color != ST_TRANSPARENT)
+        {
+            *video_memory = color;
+        }
+
+        if(color_ptr == Repeat_Mark)
+        {
+            color_ptr = &colortbl[0];
+        }
+
+        x_error += x_slope;
+
+        // if((x_error & 0xFF00) != 0)
+        if(x_error >= 256)
+        {
+            x_error &= 0x00FF;
+            video_memory += 1;
+        }
+
+        y_error += y_slope;
+
+        // if ((y_error & 0xFF00) != 0)
+        if(y_error >= 256)
+        {
+            y_error &= 0x00FF;
+            video_memory += line_increment;
+        }
+    }
+
+}
+
+// void ui_draw_line_ctbl(int x0, int y0, int x1, int y1, const uint8_t *colortbl, int colornum, int pos, int scale)
+void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, int colornum, int pos)
+{
+    int xslope = 0, yslope = 0, yinc, length;    /* BUG? xslope and yslope not cleared by MOO1 */
+    int temp;
+
+    if(x2 < x1)
+    {
+        temp = x2;
+        x2 = x1;
+        x1 = temp;
+        temp = y2;
+        y2 = y1;
+        y1 = temp;
+    }
+
+    {
+        int dx, dy;
+        dx = x2 - x1;
+        dy = y2 - y1;
+        // yinc = UI_SCREEN_W * scale;
+        yinc = SCREEN_WIDTH;
+        if(dy < 0)
+        {
+            dy = -dy;
+            // yinc = -UI_SCREEN_W * scale;
+            yinc = -SCREEN_WIDTH;
+        }
+        if(dx < dy)
+        {
+            length = dy + 1;
+            yslope = 256;
+            if (dy != 0) {
+                xslope = (dx << 8) / dy;
+            }
+        }
+        else
+        {
+            length = dx + 1;
+            if(dx != 0)
+            {
+                xslope = 256;
+                yslope = (dy << 8) / dx;
+            }
+        }
+    }
+
+    {
+        // uint8_t *p = hw_video_get_buf() + (y1 * UI_SCREEN_W + x1) * scale;
+        uint8_t *p = current_video_page + ((y1 * SCREEN_WIDTH) + x1);
+        int xerr, yerr;
+
+        xerr = 256 / 2;
+        yerr = 256 / 2;
+
+        while(length--) {
+            uint8_t color;
+            color = colortbl[pos++];
+            if(pos >= colornum)
+            {
+                pos = 0;
+            }
+            if(color != 0)
+            {
+                // if (scale == 1) {
+                //     *p = color;
+                // } else {
+                //     gfxscale_draw_pixel(p, color, UI_SCREEN_W, scale);
+                // }
+                *p = color;
+            }
+            xerr += xslope;
+            if((xerr & 0xFF00) != 0)
+            {
+                xerr &= 0x00FF;
+                // p += scale;
+                p += 1;
+            }
+            yerr += yslope;
+            if((yerr & 0xFF00) != 0)
+            {
+                yerr &= 0x00FF;
+                p += yinc;
+            }
+        }
+    }
+}
+
 
 // WZD s16p05
 // drake178: UU_VGA_CreateColorWave()

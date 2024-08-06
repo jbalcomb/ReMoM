@@ -887,7 +887,199 @@ int16_t City_Best_Weapon(int16_t city_idx)
 
 
 // WZD s161p20
-// TILE_GetRoadBldTime  
+// drake178: TILE_GetRoadBldTime()
+/*
+; returns the amount of time, in turns, that it would
+; take to construct a road on the tile, -1 if one may
+; not be built, or 0 if there already is one
+*/
+/*
+TABLE F
+ROAD BUILDING
+TERRAIN TYPE OR SPECIAL
+TURNS TO BUILD
+*/
+/*
+no idea how to make this look sensible
+maybe not actually a switch
+
+*/
+int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t world_maps_offset;  // DNE in Dasm
+
+    if((TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    {
+        return 0;
+    }
+
+    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
+    terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
+
+    if(terrain_type >= TT_Tundra_1st)
+    {
+        return 6;
+    }
+
+    if(terrain_type == TT_BugGrass)
+    {
+        return 2;
+    }
+
+    // TT_Ocean1, TT_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
+    if(terrain_type < TT_Grass1)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_4WRiver5)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Shore2_end)
+    {
+        return 5;
+    }
+
+    if(terrain_type > TT_Desert_end)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Hills_end)
+    {
+        return 4;
+    }
+
+    if(terrain_type > TT_Mntns_end)
+    {
+        return 6;
+    }
+
+    if(terrain_type > TT_Rivers_end)
+    {
+        return 8;
+    }
+
+    if(terrain_type > TT_Shore2F_end)
+    {
+        return 5;
+    }
+
+    if(terrain_type > TT_RiverM_end)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Forest3)
+    {
+        return 5;
+    }
+
+    switch(terrain_type)
+    {
+        case TT_Grass1:     /* 0x0A2 */
+        {
+            return 3;
+        } break;
+        case TT_Forest1:    /* 0x0A3 */
+        {
+            return 6;
+        } break;
+        case TT_Mountain1:  /* 0x0A4 */
+        {
+            return 8;
+        } break;
+        case TT_Desert1:    /* 0x0A5 */
+        {
+            return 4;
+        } break;
+        case TT_Swamp1:     /* 0x0A6 */
+        {
+            return 8;
+        } break;
+        case TT_Tundra1:    /* 0x0A7 */
+        {
+            return 6;
+        } break;
+        case TT_SorcNode:   /* 0x0A8 */
+        {
+            return 4;
+        } break;
+        case TT_NatNode:    /* 0x0A9 */
+        {
+            return 5;
+        } break;
+        case TT_ChaosNode:  /* 0x0AA */
+        {
+            return 5;
+        } break;
+        case TT_Hills1:     /* 0x0AB */
+        {
+            return 6;
+        } break;
+        case TT_Grass2:     /* 0x0AC */
+        {
+            return 3;
+        } break;
+        case TT_Grass3:     /* 0x0AD */
+        {
+            return 3;
+        } break;
+        case TT_Desert2:    /* 0x0AE */
+        {
+            return 4;
+        } break;
+        case TT_Desert3:    /* 0x0AF */
+        {
+            return 4;
+        } break;
+        case TT_Desert4:    /* 0x0B0 */
+        {
+            return 4;
+        } break;
+        case TT_Swamp2:     /* 0x0B1 */
+        {
+            return 8;
+        } break;
+        case TT_Swamp3:     /* 0x0B2 */
+        {
+            return 8;
+        } break;
+        case TT_Volcano:    /* 0x0B3 */
+        {
+            return 8;
+        } break;
+        case TT_Grass4:     /* 0x0B4 */
+        {
+            return 3;
+        } break;
+        case TT_Tundra2:    /* 0x0B5 */
+        {
+            return 6;
+        } break;
+        case TT_Tundra3:    /* 0x0B6 */
+        {
+            return 6;
+        } break;
+        case TT_Forest2:    /* 0x0B7 */
+        {
+            return 6;
+        } break;
+        case TT_Forest3:    /* 0x0B8 */
+        {
+            return 6;
+        } break;
+
+    }
+
+    return ST_UNDEFINED;
+}
+
+
 // WZD s161p21
 // UU_TILE_GetUnsdMPCost
 

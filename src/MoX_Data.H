@@ -1331,7 +1331,7 @@ struct s_CITY
     /* 62 */ int8_t mana_units;
     /* 63 */ int8_t research_units;
     /* 64 */ int8_t food_units;
-    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
+    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
     /* 66 */ 
 };
 
@@ -1417,9 +1417,9 @@ struct s_UNIT
     /* 11 */  int8_t  Damage;
     /* 12 */  int8_t  Draw_Priority;
     /* 13 */  /* int8_t  Unknown_13h; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
-    /* 14 */  int16_t in_tower;     /* FALSE/TRUE;  Unit is in a Tower of Wizardry */
+    /* 14 */  int16_t in_tower;     /* {F,T};  Unit is on/in a Tower of Wizardry */
     /* 16 */  int8_t  Sight_Range;
-    /* 17 */  int8_t  mutations;    // ; enum MUT_FLAGS
+    /* 17 */  int8_t  mutations;    // UM_...  ; enum MUT_FLAGS
     /* / * 18 * /  int16_t Enchants_LO;  // ; enum UE_FLAGS_L */
     /* / * 1A * /  int16_t Enchants_HI;  // ; enum UE_FLAGS_H */
     // DELETEME  union {
@@ -1428,7 +1428,7 @@ struct s_UNIT
     // DELETEME      int16_t  Enchants_HI;
     // DELETEME  };
     uint32_t enchantments;
-    /* 1C */  int8_t  Rd_Constr_Left;  // 1-byte, signed;  ~ movement points;  Move_Units() sets movepath_cost_array[0]
+    /* 1C */  int8_t  Rd_Constr_Left;  // 1-byte, signed;  turns to build  ~ movement points;  Move_Units() sets movepath_cost_array[0]
     /* 1D */  int8_t  Rd_From_X;  // wx?
     /* 1E */  int8_t  Rd_From_Y;  // wy?
     /* 1F */  /* int8_t  Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */

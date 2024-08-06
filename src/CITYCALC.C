@@ -1337,29 +1337,35 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 */
 void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
 {
+    uint8_t terrain_flags;
 
     // TODO  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 
     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-
     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-
     movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-
     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
-
     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
     TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Road;
 
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= TF_Enc_Road;
+    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(TF_Enc_Road);
+
+    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
     if(wp == 1)  /* Myrror */
     {
         TILE_EnchantRoad(wx, wy, wp);
     }
 
+    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
 }
+
 
 // WZD o142p02
 // drake178: TILE_EnchantRoad()

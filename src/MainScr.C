@@ -1411,8 +1411,8 @@ void Main_Screen(void)
                 case 0:  /* Road Building */
                 {
                     DLOG("switch(special_action_flag)  case 0:");
-                    // TODO  leave_screen_flag = ST_UNDEFINED;
-                    // TODO  current_screen = scr_Road_Building;
+                    leave_screen_flag = ST_UNDEFINED;
+                    current_screen = scr_Road_Build;
                 } break;
                 case 1:  /* Settle */
                 {
@@ -1981,7 +1981,6 @@ void Main_Screen(void)
         if(abs(input_field_idx) == _minimap_grid_field)
         {
             // TODO  SND_LeftClickSound();
-
             Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = _minimap_grid_x + target_world_x;
             _prev_world_y = _minimap_grid_y + target_world_y;
@@ -4795,11 +4794,10 @@ path_type
 */
 int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[])
 {
-
     int16_t boat_rider_array[MAX_STACK];
     int16_t movement_mode_flags[9];  // BUG should be 6
-    int16_t Construction_Total;
-    int16_t UU_Endurance_Value;
+    int16_t construction_points;
+    int16_t uu_road_builder_unit_idx;
     int16_t boatrider_count;
     int16_t UU_flag_FALSE;
     int16_t UU_unit_wp;
@@ -4813,7 +4811,7 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t XPos;
     int16_t unit_wy;
     int16_t unit_wx;
-    int16_t movepath_length;  int16_t path_length;  // TODO
+    int16_t path_length;
     int16_t First_Unit_Index;
 
     int16_t unit_idx;
@@ -4852,7 +4850,14 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     Army_Movement_Modes(&movement_mode_flags[0], troops, troop_count);
     boatrider_count = Army_Boatriders(troop_count, troops, &boat_rider_array[0]);
 
-    switch(path_type) { case 0: { goto Prep_Move_Path; } break; case 1: { goto Start_Path; } break; case 2: { goto Prep_Road_Path; } break; case 3: { goto Prep_Move_Path; } break; default: { goto Start_Path; } break; }
+    switch(path_type)
+    {
+        case 0:  { goto Prep_Move_Path; } break;
+        case 1:  { goto Start_Path;     } break;
+        case 2:  { goto Prep_Road_Path; } break;
+        case 3:  { goto Prep_Move_Path; } break;
+        default: { goto Start_Path;     } break;
+    }
 
 Prep_Road_Path:
 {
@@ -4865,24 +4870,14 @@ Prep_Road_Path:
     // ; BUG: should either use the same procedure for human roadbuilding, or otherwise utilise a function that can check for path validity
     if(player_idx == _human_player_idx)
     {
-        // ; plots a "line" between two tile coordinates using
-        // ; Bresenham's line-drawing algorithm, putting the X and
-        // ; Y coordinates of the resulting array of tiles into
-        // ; two separate return (byte) arrays
-        // ; returns the length of the array (tile distance)
-        // TODO  path_length = TILE_PlotMapLine(XPos, YPos, destination_x, destination_y, &movepath_x_array[2], &movepath_y_array[2], WORLD_WIDTH);
+        path_length = Path_Wrap(XPos, YPos, destination_x, destination_y, &movepath_x_array[2], &movepath_y_array[2], WORLD_WIDTH);
     }
     else
     {
-        // ; calculates a road building path between the selected
-        // ; tiles, treating roads as 1 MP, everything else as 2
-        // ; returns the path length along with the coordinates,
-        // ; or 0 if a valid path can not be found
-        // TODO  path_length = OVL_GetRoadPath(XPos, YPos, destination_x, destination_y, map_p, &movepath_x_array[2], &movepath_y_array[2]);
+        path_length = OVL_GetRoadPath(XPos, YPos, destination_x, destination_y, map_p, &movepath_x_array[2], &movepath_y_array[2]);
     }
 
     Current_Step = -1;
-
 
     for(itr_path = 0; itr_path < path_length; itr_path++)
     {
@@ -4903,20 +4898,21 @@ Prep_Road_Path:
         }
     }
 
-    Construction_Total = 0;
+    // ¿ ~ same as code-block from Road_Build_Screen() ?
+    construction_points = 0;
     // @@Loop_Troops__AccumulateConstruction
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
         unit_idx = troops[itr_troops];
         if(_unit_type_table[_UNITS[unit_idx].type].Construction > 0)
         {
-            Construction_Total += _unit_type_table[_UNITS[unit_idx].type].Construction;
+            construction_points += _unit_type_table[_UNITS[unit_idx].type].Construction;
 
-            UU_Endurance_Value = unit_idx;
+            uu_road_builder_unit_idx = unit_idx;
             if(Unit_Has_Endurance(unit_idx) == ST_TRUE)
             {
-                UU_Endurance_Value = unit_idx;
-                Construction_Total += 1;
+                uu_road_builder_unit_idx = unit_idx;
+                construction_points += 1;
             }
         }
     }
@@ -4924,13 +4920,10 @@ Prep_Road_Path:
 
     for(itr_path = 0; itr_path < path_length; itr_path++)
     {
-        // ; returns the amount of time, in turns, that it would
-        // ; take to construct a road on the tile, -1 if one may
-        // ; not be built, or 0 if there already is one
-        // TODO  movepath_cost_array[itr_path] = TILE_GetRoadBldTime(movepath_x_array[(2 + itr_path)], movepath_y_array[(2 + itr_path)], map_p);
-        if(Construction_Total > 0)
+        movepath_cost_array[itr_path] = Turns_To_Build_Road(movepath_x_array[(2 + itr_path)], movepath_y_array[(2 + itr_path)], map_p);
+        if(construction_points > 0)
         {
-            movepath_cost_array[itr_path] = (movepath_cost_array[itr_path] / Construction_Total);
+            movepath_cost_array[itr_path] /= construction_points;
         }
         SETMIN(movepath_cost_array[itr_path], 1);
     }
@@ -4946,7 +4939,6 @@ Prep_Road_Path:
             Current_Step = 0;
             _UNITS[troops[itr_troops]].Finished = ST_TRUE;
             _UNITS[troops[itr_troops]].Rd_Constr_Left -= 1;
-
         }
         else
         {
@@ -4955,15 +4947,8 @@ Prep_Road_Path:
                 Current_Step = 0;
                 _UNITS[troops[itr_troops]].Rd_Constr_Left = ST_UNDEFINED;
                 _UNITS[troops[itr_troops]].Status = us_Ready;
-                // ; creates a road on the tile, setting the corresponding
-                // ; movement allowances, and removing the enchanted road
-                // ; flag if set, but then also enchanting the road if the
-                // ; tile is on Myrror
-                // TODO  TILE_CreateRoad(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
-                // ; resets the road connection bitfields of every city
-                // ; that is on the same landmass as the specified tile
-                // ; using the overland pathfinding algorithm
-                // TODO  TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+                TILE_CreateRoad(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+                TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
             }
             else
             {
@@ -4973,6 +4958,8 @@ Prep_Road_Path:
         }
 
         // Where is this?
+        // ovr095:03FC loc_7BC7C:
+        // 000714CC  0007BC7C
         if(Current_Step == 1)
         {
             path_length = 1;
@@ -4992,7 +4979,7 @@ Prep_Road_Path:
 Prep_Move_Path:
 {
 
-    movepath_length = Make_Move_Path(
+    path_length = Make_Move_Path(
         movement_mode_flags[0],
         movement_mode_flags[1],
         movement_mode_flags[2],
@@ -5021,7 +5008,7 @@ Prep_Move_Path:
 Start_Path:
 {
 
-    if(movepath_length < 1)
+    if(path_length < 1)
     {
         goto Done_Return_FALSE;
     }
@@ -5040,7 +5027,7 @@ Start_Path:
         movement_points,
         &defender_idx,
         &attack_flag,
-        &movepath_length,
+        &path_length,
         &Out_Of_Moves,
         troops,
         troop_count
@@ -5049,30 +5036,30 @@ Start_Path:
 
     // ¿ accumulate path cost ?
     Total_Move_Cost = 0;
-    for(itr_Path_Length = 0; itr_Path_Length < movepath_length; itr_Path_Length++)
+    for(itr_Path_Length = 0; itr_Path_Length < path_length; itr_Path_Length++)
     {
         Total_Move_Cost += movepath_cost_array[itr_Path_Length];
     }
 
-    if(movepath_length <= 1)
+    if(path_length <= 1)
     {
         OVL_Action_OriginX = unit_wx;
         OVL_Action_OriginY = unit_wy;
     }
     else
     {
-        OVL_Action_OriginX = movepath_x_array[(movepath_length - 1)];
-        OVL_Action_OriginY = movepath_y_array[(movepath_length - 1)];
+        OVL_Action_OriginX = movepath_x_array[(path_length - 1)];
+        OVL_Action_OriginY = movepath_y_array[(path_length - 1)];
     }
 
-    if(movepath_length <= 0)
+    if(path_length <= 0)
     {
         Total_Move_Cost = 0;
         Out_Of_Moves = ST_FALSE;
     }
     else
     {
-        Move_Units_Draw(player_idx, map_p, movepath_length, map_x, map_y, troops, troop_count);
+        Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
     }
 
     // BUGBUG  can't be get spell warded and also go into combat
@@ -5256,8 +5243,13 @@ Done:
 }
 
 // WZD o95p02
-// AKA OVL_MoveUnitStack()
-// AKA Move_Units()
+/*
+
+OON XREF
+Move_Units()
+    Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
+
+*/
 void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
 {
 
@@ -5428,10 +5420,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
     if(Building_Road == ST_TRUE)
     {
-        // TODO  TILE_CreateRoad(unit_x, unit_y, map_p);
-        // TODO  TILE_ResetRoadConns(unit_x, unit_y, map_p);
+        TILE_CreateRoad(unit_x, unit_y, map_p);
+        TILE_ResetRoadConns(unit_x, unit_y, map_p);
     }
-
 
 
     for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++)
@@ -5631,7 +5622,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         curr_src_wx = movepath_x_array[(2 + itr_path_length)];
         curr_src_wy = movepath_y_array[(2 + itr_path_length)];
 
-    }  /* for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++) */
+    }  /* for(itr_path_length = 0; itr_path_length < path_length; itr_path_length++) */
 
 
     Reset_Window();
@@ -6220,7 +6211,8 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         Cancel 'Go-To'
     */
     if(
-        (Out_of_Moves_Value == ST_FALSE) &&
+        (Out_of_Moves_Value == ST_FALSE)
+        &&
         (Move_Interrupted == ST_TRUE)
     )
     {
@@ -6229,7 +6221,8 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
         {
             unit_idx = troops[itr_troops];
             if(
-                (_UNITS[unit_idx].Status == us_GOTO) &&
+                (_UNITS[unit_idx].Status == us_GOTO)
+                &&
                 (player_idx == _human_player_idx)
             )
             {
@@ -6312,7 +6305,8 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
         }
 
         if(
-            (_unit_type_table[_UNITS[unit_idx].type].Transport > 0) ||
+            (_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+            ||
             (Unit_Has_WindWalking(unit_idx) == ST_TRUE)
         )
         {
@@ -6344,7 +6338,7 @@ Spell Ward:
 */
 int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
 {
-    int16_t UU_troops[9];
+    int16_t UU_troops[MAX_STACK];
     int16_t Cant_Enter;
     int16_t Retn_Value;
     int16_t Unused_Local;
@@ -6443,9 +6437,19 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 }
 
 
-
+/*
+_map_x,y
+_main_map_grid_x,y
+mouse_x,y
+screen_x,y
+field_x,y
+grid_x,y
+world_x,y
+*/
 void Main_Screen_Draw_Debug_Information(void)
 {
+    int16_t mouse_x;
+    int16_t mouse_y;
     int16_t screen_x;
     int16_t screen_y;
     int16_t field_x;
@@ -6454,33 +6458,33 @@ void Main_Screen_Draw_Debug_Information(void)
     int16_t grid_y;
     int16_t world_x;
     int16_t world_y;
+    int pos;
 
     Set_Outline_Color(0);
     // Set_Font_Style_Shadow_Down(0, 0, 0, 0);
     Set_Font_Style_Shadow_Down(1, 0, 0, 0);
     Set_Alias_Color(8);
 
-    // Print(10, 189, cstr_WarGames);
-    // Print(268, 68, cstr_GP);
-    // Print(306, 68, cstr_MP);
-    // // Print(40, 100, cstr_1st5);
-    // // Print(40, 180, cstr_ABC);
+    pos = 0;
 
     //   M   a   p       X   ,   Y
     // ~ 6 + 5 + 5 + 4 + 6 + 3 + 6 = 35 + ? 10
-    Print(2, 22, "Map X,Y");
-    Print_Integer(45, 22, _map_x);
-    Print_Integer(57, 22, _map_y);
+    Print(2, (22+(8*pos)), "Map X,Y");
+    Print_Integer(45, (22+(8*pos)), _map_x);
+    Print_Integer(57, (22+(8*pos)), _map_y);
+    pos++;
 
     //   G   r   i   d       X   ,   Y
     // ~ 5 + 5 + 2 + 5 + 4 + 6 + 3 + 6 = 36 + ? 9
-    Print(2, 22+8, "Grid X,Y");
-    Print_Integer(45, 22+8, (int16_t)_main_map_grid_x);
-    Print_Integer(57, 22+8, (int16_t)_main_map_grid_y);
+    Print(2, (22+(8*pos)), "Grid X,Y");
+    Print_Integer(45, (22+(8*pos)), (int16_t)_main_map_grid_x);
+    Print_Integer(57, (22+(8*pos)), (int16_t)_main_map_grid_y);
+    pos++;
 
-
-    screen_x = Pointer_X();
-    screen_y = Pointer_Y();
+    mouse_x = Pointer_X();
+    mouse_y = Pointer_Y();
+    screen_x = mouse_x;
+    screen_y = mouse_y;
     // ~ translate screen coordinates to field coordinates
     field_x = screen_x -  0;  // always  0
     field_y = screen_y - 20;  // always 20
@@ -6491,25 +6495,42 @@ void Main_Screen_Draw_Debug_Information(void)
     world_x = field_x / WORLD_WIDTH;
     world_y = field_y / WORLD_HEIGHT;
 
+    //   M   D       X   ,   Y
+    // ~ 6 + 6 + 4 + 6 + 3 + 6 = 31 + ? 
+    Print(2, (22+(2*8)), "MD X,Y");
+    Print_Integer(40, (22+(8*pos)), mouse_x);
+    Print_Integer(56, (22+(8*pos)), mouse_y);
+    pos++;
+
     //   M   D       M   X   ,   M   Y
     // ~ 6 + 6 + 4 + 6 + 6 + 3 + 6 + 6 = 43 + ? 
-    Print(2, 22+16, "MD MX,MY");
-    Print_Integer(52, 22+16, grid_x);
-    Print_Integer(64, 22+16, grid_y);
+    Print(2, (22+(3*8)), "MD MX,MY");
+    Print_Integer(52, (22+(8*pos)), grid_x);
+    Print_Integer(64, (22+(8*pos)), grid_y);
+    pos++;
 
     //   M   D       W   X   ,   W   Y
     // ~ 6 + 6 + 4 + 6 + 6 + 3 + 6 + 6 = 43 + ? 
-    Print(2, 22+24, "MD WX,WY");
-    Print_Integer(52, 22+24, world_x);
-    Print_Integer(64, 22+24, world_y);
-
+    Print(2, (22+(4*8)), "MD WX,WY");
+    Print_Integer(52, (22+(8*pos)), world_x);
+    Print_Integer(64, (22+(8*pos)), world_y);
+    pos++;
 
     if(_unit_stack_count > 0)
     {
         //   U   N   I   T       I   D   X
         // ~ ? + ? + ? + ? + 4 + ? + 6 + 6 = 
-        Print(2, 22+32, "UNIT IDX");
-        Print_Integer(46, 22+32, _unit_stack[0].unit_idx);
+        Print(2, (22+(8*pos)), "UNIT IDX");
+        Print_Integer(46, (22+(8*pos)), _unit_stack[0].unit_idx);
+        pos++;
+        // UNIT WX
+        Print(2, (22+(8*pos)), "UNIT WX");
+        Print_Integer(46, (22+(8*pos)), _UNITS[_unit_stack[0].unit_idx].wx);
+        pos++;
+        // UNIT WY
+        Print(2, (22+(8*pos)), "UNIT WY");
+        Print_Integer(46, (22+(8*pos)), _UNITS[_unit_stack[0].unit_idx].wy);
+        pos++;
     }
 
     Set_Font_Style_Shadow_Down(0, 0, 0, 0);

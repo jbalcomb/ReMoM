@@ -244,7 +244,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 }
 
 // WZD o61p03
-int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
+int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
 {
     int16_t troops[MAX_STACK];
     int16_t roadbuilder_count;
@@ -323,7 +323,8 @@ int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t ds
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
         if(
-            (_UNITS[troops[itr_units]].owner_idx != ST_UNDEFINED) &&
+            (_UNITS[troops[itr_units]].owner_idx != ST_UNDEFINED)
+            &&
             (_UNITS[troops[itr_units]].Rd_Constr_Left == -1)
         )
         {
@@ -396,6 +397,11 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
         no_units_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
 
+        if(_unit == 502)
+        {
+            // __debugbreak();
+        }
+
         if(no_units_available == ST_TRUE)
         {
             all_units_moved = ST_TRUE;
@@ -428,8 +434,10 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
                 // handling the end of the 'Go To' & 'Build Road'
                 if(
-                    (_UNITS[_unit].wx == next_unit_dst_wx) &&
-                    (_UNITS[_unit].wy == next_unit_dst_wy) &&
+                    (_UNITS[_unit].wx == next_unit_dst_wx)
+                    &&
+                    (_UNITS[_unit].wy == next_unit_dst_wy)
+                    &&
                     (_UNITS[_unit].Rd_Constr_Left == ST_UNDEFINED)
                 )
                 {
@@ -437,10 +445,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
                 }
                 else
                 {
-                    // Allocate_Reduced_Map();
-                    // TODO  RdBd_UNIT_MoveStack_WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
-                    // Allocate_Reduced_Map();
-                    _UNITS[_unit].Status = us_Ready;
+                    Allocate_Reduced_Map();
+                    RdBd_UNIT_MoveStack__WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
+                    Allocate_Reduced_Map();
                 }
 
                 done = ST_FALSE;
@@ -634,13 +641,8 @@ void Set_Unit_Action_Special(void)
 
     Active_Unit_Stack(&troop_count, &troops[0]);
 
-
-    // ; returns 1 if the stack is on a non-sailable tile and
-    // ; has at least one unit with the construction ability;
-    // ; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 0 if returning 1
     // sets special_action_flag to 0
-    // TODO  STK_BuildingPossible(&troop_count, &troops[0]);
+    Unit_Action_Special_Build(troop_count, &troops[0]);
 
     // sets special_action_flag to 1
     Unit_Action_Special_Settle(troop_count, &troops[0]);
@@ -1011,7 +1013,49 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
 
 
 // WZD o61p10
-// STK_BuildingPossible()
+// drake178:  STK_BuildingPossible()
+/*
+; returns 1 if the stack is on a non-sailable tile and
+; has at least one unit with the construction ability;
+; or 0 otherwise
+; sets GUI_ExtraUnitAction to 0 if returning 1
+*/
+int16_t Unit_Action_Special_Build(int16_t troop_count, int16_t troops[])
+{
+    int16_t have_road_builders;
+    int16_t unit_type;
+    int16_t unit_idx;
+    int16_t itr_troops;  // _DI_
+
+    if(Terrain_Is_Sailable(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp) == ST_TRUE)
+    {
+        return ST_FALSE;
+    }
+
+    have_road_builders = ST_FALSE;
+
+    for(itr_troops = 0; ((itr_troops < troop_count) && (have_road_builders == ST_FALSE)); itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        unit_type = _UNITS[unit_idx].type;
+        if(_unit_type_table[unit_type].Construction > 0)
+        {
+            have_road_builders = ST_TRUE;
+        }
+
+    }
+
+    if(have_road_builders != ST_TRUE)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        special_action_flag = 0;
+        return ST_TRUE;
+    }
+
+}
 
 
 // WZD o61p11

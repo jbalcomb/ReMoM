@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\..\src\PoC_Screen.H" />
     <ClInclude Include="..\..\..\src\ProdScr.H" />
     <ClInclude Include="..\..\..\src\RACETYPE.H" />
+    <ClInclude Include="..\..\..\src\Roads.H" />
     <ClInclude Include="..\..\..\src\SBookScr.H" />
     <ClInclude Include="..\..\..\src\SCastScr.H" />
     <ClInclude Include="..\..\..\src\SCORE.H" />
@@ -223,6 +224,7 @@
     <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\ProdScr.C" />
     <ClCompile Include="..\..\..\src\RACETYPE.C" />
+    <ClCompile Include="..\..\..\src\Roads.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
     <ClCompile Include="..\..\..\src\SCORE.C" />

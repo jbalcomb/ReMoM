@@ -156,7 +156,12 @@ void Set_Outpost_Screen_Help_List(void)
 // HLPENTRY.LBX  ""
 
 // WZD o104p19
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "road Help"
+void Set_Road_Build_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 19, (SAMB_ptr)_help_entries, 0, 13, 10);
+    Set_Help_List((char *)&_help_entries[0], 13);
+}
 
 // WZD o104p20
 // HLPENTRY.LBX  ""

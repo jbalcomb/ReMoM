@@ -82,12 +82,12 @@ void Clipped_Dot(int16_t x, int16_t y, int16_t color);
 // WZD s14p09
 // drake178: 
 // MoO2  
-// VGA_WndDrawPtrnLine()
+// Clipped_Multi_Colored_Line()
+void Clipped_Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int colornum, int colorpos);
 
 // WZD s14p10
-// drake178: 
-// MoO2  
-// VGA_WndDrawLineBase()
+void Clipped_Line_Base(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t Patterned, uint8_t color, uint8_t colortbl[], int16_t colornum, int16_t colorpos);
+static void ui_draw_line_limit_do(int x1, int y1, int x2, int y2, uint8_t color, const uint8_t *colortbl, int colornum, int colorpos);
 
 // WZD s14p11
 // drake178: UU_VGA_DrawBiColorRect()
@@ -143,9 +143,8 @@ void Dot(int16_t x, int16_t y, uint8_t color);
 void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s16p04
-// drake178: VGA_DrawPatternLine90
-// MoO2  
-// VGA_DrawPatternLine
+void Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int16_t colornum, int16_t colorpos);
+void ui_draw_line_ctbl(int x1, int y1, int x2, int y2, const uint8_t *colortbl, int colornum, int pos);
 
 // WZD s16p05
 // drake178: UU_VGA_CreateColorWave()

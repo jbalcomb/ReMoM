@@ -258,7 +258,227 @@ void Reset_City_Road_Connection_Bitfields(void)
 
 
 // WZD o143p18
-// TILE_ResetRoadConns()
+// drake178: TILE_ResetRoadConns()
+/*
+; resets the road connection bitfields of every city
+; that is on the same landmass as the specified tile
+; using the overland pathfinding algorithm
+*/
+void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t City_List[100];
+    int16_t square_landmass;
+    int16_t Has_Road_Out;
+    int16_t City_Tile_Index;
+    int16_t itr_bits;
+    int16_t City_Count;
+    int16_t UU_var10;
+    int16_t Y_Loop_Var;
+    int16_t X_Loop_Var;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t city_wp;
+    int16_t city_landmass;
+    int16_t Dest_City_Index;
+    int16_t itr_cities;  // _DI_
+
+    // DONT  EMM_Map_DataH()                   ; maps the EMM Data block into the page frame
+
+
+    UU_var10 = WORLD_SIZE;
+
+    square_landmass = TBL_Landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        city_wp = _CITIES[itr_cities].wp;
+        city_wx = _CITIES[itr_cities].wx;
+        city_wy = _CITIES[itr_cities].wy;
+
+        city_landmass = TBL_Landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
+                
+        if(city_landmass == square_landmass)
+        {
+            for(itr_bits = 0; itr_bits < 13; itr_bits++)
+            {
+                _CITIES[itr_cities].road_connections[itr_bits] = 0;
+            }
+        }
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        city_wp = _CITIES[itr_cities].wp;
+        city_wx = _CITIES[itr_cities].wx;
+        city_wy = _CITIES[itr_cities].wy;
+
+        city_landmass = TBL_Landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
+
+        if(city_landmass == square_landmass)
+        {
+            Has_Road_Out = ST_FALSE;
+            for(Y_Loop_Var = -1; Y_Loop_Var < 2; Y_Loop_Var++)
+            {
+                for(X_Loop_Var = -1; X_Loop_Var < 2; X_Loop_Var++)
+                {
+                    if(
+                        (X_Loop_Var != 0)
+                        ||
+                        (Y_Loop_Var != 0)
+                    )
+                    {
+                        if((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & TF_Road) != 0)
+                        {
+                            Has_Road_Out = ST_TRUE;
+                        }
+                    }
+                }
+            }
+
+            if(Has_Road_Out == ST_TRUE)
+            {
+                City_Count = 0;
+                for(Dest_City_Index = (itr_cities + 1); Dest_City_Index < _cities; Dest_City_Index++)
+                {
+                    if(
+                        (_CITIES[itr_cities].wp == _CITIES[Dest_City_Index].wp)
+                        &&
+                        (TBL_Landmasses[((city_wp * WORLD_SIZE) + (_CITIES[Dest_City_Index].wy * WORLD_WIDTH) + _CITIES[Dest_City_Index].wx)] == city_landmass)
+                    )
+                    {
+                        City_List[City_Count] = Dest_City_Index;
+                        City_Count++;
+                    }
+                }
+
+                if (City_Count > 0)
+                {
+                    for (Y_Loop_Var = 0; Y_Loop_Var < WORLD_HEIGHT; Y_Loop_Var++)
+                    {
+                        for (X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
+                        {
+                            if ((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & TF_Road) != 0)
+                            {
+                                if (TBL_Landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
+                                {
+                                    movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = 1;
+                                }
+                            }
+                            else
+                            {
+                                movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = -1;
+                            }
+                        }
+                    }
+                }
+
+                Move_Path_Find(city_wx, city_wy, movepath_cost_map);
+
+                for (itr_bits = 0; itr_bits < City_Count; itr_bits++)
+                {
+                    City_Tile_Index = ((_CITIES[City_List[itr_bits]].wy * WORLD_WIDTH) + _CITIES[City_List[itr_bits]].wx);
+                    if (movepath_cost_map->Reach_From[City_Tile_Index] == City_Tile_Index)
+                    {
+                        Set_Bit_Field(City_List[itr_bits], (uint8_t*)&_CITIES[itr_cities].road_connections[0]);
+                        Set_Bit_Field(itr_cities, (uint8_t*)&_CITIES[City_List[itr_bits]].road_connections[0]);
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o143p19
-// OVL_GetRoadPath()
+// drake178: OVL_GetRoadPath()
+/*
+; calculates a road building path between the selected
+; tiles, treating roads as 1 MP, everything else as 2
+; returns the path length along with the coordinates,
+; or 0 if a valid path can not be found
+*/
+/*
+'Main Screen'
+Move_Units()
+Prep_Road_Path:
+OVL_GetRoadPath(XPos, YPos, destination_x, destination_y, map_p, &movepath_x_array[2], &movepath_y_array[2]);
+*/
+int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t * path_string_x, int8_t * path_string_y)
+{
+    int16_t Tile_Offset;
+    int16_t itr_world_height;
+    int16_t itr_world_width;
+    int16_t landmass_num;
+    int16_t itr1;  // _DI_
+    int16_t itr2;  // _SI_
+    // _DI_itr1__path_length
+
+    // DONT  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+
+    landmass_num = TBL_Landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)];
+
+    if(landmass_num = 0)  /* ; ? 0: None / No Land ? */
+    {
+        return 0;
+    }                
+
+    if(TBL_Landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] != landmass_num)
+    {
+        return 0;
+    }
+    
+    for(itr_world_height = 0; itr_world_height < WORLD_HEIGHT; itr_world_height++)
+    {
+        for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++)
+        {
+            if(TBL_Landmasses[((wp * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)] == landmass_num)
+            {
+                if((TBL_Terrain_Flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & TF_Road) != 0)
+                {
+                    movepath_cost_map->moves2[((itr_world_height * WORLD_WIDTH) + itr_world_width)] = 1;
+                }
+                else
+                {
+                    movepath_cost_map->moves2[((itr_world_height * WORLD_WIDTH) + itr_world_width)] = 2;
+                }
+            }
+            else
+            {
+                movepath_cost_map->moves2[((itr_world_height * WORLD_WIDTH) + itr_world_width)] = -1;  // ¿ impassible ?
+            }
+        }
+    }
+
+    if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)
+    {
+        return 0;
+    }
+
+    Move_Path_Find(src_wx, src_wy, &movepath_cost_map[0]);
+
+    itr1 = 0;
+
+    Tile_Offset = ((dst_wy * WORLD_WIDTH) + dst_wx);
+
+    while(movepath_cost_map->Reach_From[Tile_Offset] == Tile_Offset)
+    {
+        movepath_cost_map->Reverse_Path[itr1] = Tile_Offset;
+        Tile_Offset = movepath_cost_map->Reach_From[Tile_Offset];
+        itr1++;
+    }
+
+    for(itr2 = 0; itr2 < itr1; itr2++)
+    {
+        itr_world_width = (movepath_cost_map->Reverse_Path[(itr1 - 1 - itr2)] % WORLD_WIDTH);
+        itr_world_height = (movepath_cost_map->Reverse_Path[(itr1 - 1 - itr2)] / WORLD_WIDTH);
+        path_string_x[itr2] = itr_world_width;
+        path_string_y[itr2] = itr_world_height;
+    }
+
+    return itr1;
+}

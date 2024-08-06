@@ -238,7 +238,10 @@ void Screen_Control(void)
         {
             Magic_Screen();
         } break;
-        // scr_RoadBuilding = 107,
+        case scr_Road_Build:
+        {
+            Road_Build_Screen();
+        } break;
         case scr_Production_Screen:
         {
             Production_Screen();

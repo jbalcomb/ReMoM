@@ -31,7 +31,11 @@
 // x = x + y - ( y = x );
 // #define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)  ...  invoke: SWAP(a, b, int);
 #define SWAP(x, y) (x ^= y ^= x ^= y)
-
+// temp = x2; x2 = x1; x1 = temp;
+// temp = y2; y2 = y1; y1 = temp;
+#define SWAP_X() (temp = x2; x2 = x1; x1 = temp;)
+#define SWAP_Y() (temp = y2; y2 = y1; y1 = temp;)
+#define SWAP_SHORT(_v1_,_v2_,_t_) ((_t_) = (_v2_); (_v2_) = (_v1_); (_v1_) = (_t_);)
 
 #define UPPERCASE(_character_) do { if(((_character_) > 96) && ((_character_) < 123) ) { (_character_) -= 32; } } while (0)
 
@@ -410,6 +414,17 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define EXPERIENCE_LEVEL_RED        
 
 
+
+/*
+    MoM / MoX Palette / Color-Map (CMAP) / Color-Table (CTBL)
+    7?
+*/
+#define PALETTE_EMPERATO      0  /* Main Screen;  ¿ "EMPERATO - main game palette" ? */
+#define PALETTE_LOADSAVE      1  /* Load/Save Screen;  ¿ "LOADSAVE - load save palette" ? */
+#define PALETTE_ARCANUS       2  /* Main Menu Screen;  ¿ "ARCANUS - Magic Castle View" ? */
+
+
+
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 
@@ -421,6 +436,10 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 // "silver" used for experience level rings/circles?
 // same as reduced map box?
 // white/bright white for reduced map mark, and GP/MP font color, and outline/aura color for unit enchantment outline?
+
+// main palette  EMPERATO
+#define ROAD_BUILD_BLUE     108  /* {108, 109, 110, 111} */
+#define ROAD_BUILD_RED      200  /* {200, 201, 202, 203} */
 
 // ¿ which palette ?
 // Production Screen / Build Table
@@ -462,8 +481,8 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 // TODO  GUI_String_1 = (char *)Near_Allocate_First(100);
 // TODO  GUI_String_2 = (char *)Near_Allocate_Next(100);
 
-// TODO  hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, hof_hotkey_ESC, ST_UNDEFINED);
-// char hof_hotkey_ESC = '\x1B';
+// TODO  full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, hotkey_ESC, ST_UNDEFINED);
+// char hotkey_ESC[] = "\x1B";
 
 
 
