@@ -19,15 +19,30 @@ extern "C" {
 
 */
 
+// IDK_Spell_Casting_Screen                       ovr070
+// sub_5CDB2                                      ovr070
+// IDK_Spell_Casting_Screen_Draw                  ovr070
+// World_To_Screen                                ovr070
+// sub_5CFC9                                      ovr070
+// sub_5CFFA                                      ovr070
+// sub_5D0B3                                      ovr070
+// sub_5D0E8                                      ovr070
+// sub_5D0FF                                      ovr070
+// sub_5D116                                      ovr070
+// sub_5D12D                                      ovr070
+// sub_5D144                                      ovr070
+// sub_5D15B                                      ovr070
+// sub_5D20A                                      ovr070
+// sub_5D5D5                                      ovr070
+
 // WZD o70p01
 
 // WZD o70p02
 
 // WZD o70p03
-int16_t World_To_Screen(int16_t map_xw, int16_t map_yw, int16_t * unit_xw, int16_t * unit_yw);
-
 
 // WZD o70p04
+int16_t World_To_Screen(int16_t map_wx, int16_t map_wy, int16_t * unit_wx, int16_t * unit_wy);
 
 // WZD o70p05
 

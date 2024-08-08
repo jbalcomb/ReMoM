@@ -156,7 +156,7 @@ Down o Move_Units+D9                mov     ax, offset move_path_array
 Down r Move_Units:loc_7BB09         cmp     [move_path_array+_SI_itr], 0 
 Down r Move_Units:loc_7BCEE         mov     al, [move_path_array+_SI_itr]
 Down o RdBd_UNIT_MoveStack_WIP+267  mov     ax, offset move_path_array   
-Down o UNIT_SetGlobalPath__STUB+112 mov     ax, offset move_path_array   
+Down o Set_Active_Stack_Movement_Path+112 mov     ax, offset move_path_array   
 
 ovr095:00D9 B8 F0 C5                                        mov     ax, offset move_path_array
 ovr095:00DD B8 68 C6                                        mov     ax, (offset move_path_array+78h)
@@ -167,7 +167,7 @@ dseg:C5F0
 unk_43090
 
 Down o RdBd_UNIT_MoveStack_WIP+267  mov     ax, offset unk_43090            
-Down o UNIT_SetGlobalPath__STUB+112 mov     ax, offset unk_43090            
+Down o Set_Active_Stack_Movement_Path+112 mov     ax, offset unk_43090            
 Down o Move_Units+D9                mov     ax, offset unk_43090            
 Down w Move_Units+272               mov     [byte ptr unk_43090+_SI_itr], al
 Down r Move_Units+27C               mov     al, [byte ptr unk_43090+_SI_itr]
@@ -182,12 +182,12 @@ Down o AI_AssignStackTarget+146     mov     ax, offset unk_43090
 dseg:C666 00                                              OON_movepath_Y_1 db    0                       ; DATA XREF: Move_Units+495r
 dseg:C667 00                                              OON_movepath_Y_2 db    0                       ; DATA XREF: Move_Units_Draw+2C9r
 dseg:C668 00                                              unk_43108 db    0                       ; DATA XREF: RdBd_UNIT_MoveStack_WIP+26Bo ...
-dseg:C669 00                                              unk_43109 db    0                       ; DATA XREF: UNIT_SetGlobalPath__STUB+1EAr ...
+dseg:C669 00                                              unk_43109 db    0                       ; DATA XREF: Set_Active_Stack_Movement_Path+1EAr ...
 
 dseg:C6DE 00                                              OON_movepath_X_1 db    0                       ; DATA XREF: Move_Units+48Ar
 dseg:C6DF 00                                              OON_movepath_X_2 db    0                       ; DATA XREF: Move_Units_Draw+2BEr
 dseg:C6E0 00                                              movepath_X_3 db    0                       ; DATA XREF: RdBd_UNIT_MoveStack_WIP+26Fo ...
-dseg:C6E1 00                                              movepath_X_4 db    0                       ; DATA XREF: UNIT_SetGlobalPath__STUB+1DDr ...
+dseg:C6E1 00                                              movepath_X_4 db    0                       ; DATA XREF: Set_Active_Stack_Movement_Path+1DDr ...
 
 mov     bx, [bp+Path_Length]
 mov     al, [byte ptr OON_movepath_X_1+bx]
@@ -216,11 +216,11 @@ ovr095:0BEC 98                                              cbw
 ovr095:0BED 89 46 F6                                        mov     [bp+destination_y], ax
 
 
-Down r UNIT_SetGlobalPath__STUB+1DD mov     al, [byte ptr unk_43181+bx]
+Down r Set_Active_Stack_Movement_Path+1DD mov     al, [byte ptr unk_43181+bx]
 Down r Move_Units+1C7               mov     al, [byte ptr unk_43181+bx]
 
 in Move_Units(), in road path
-same as in UNIT_SetGlobalPath()
+same as in Set_Active_Stack_Movement_Path()
 mov     bx, [bp+Current_Step]
 add     bx, _SI_itr
 mov     al, [byte ptr movepath_X_4+bx]
@@ -356,7 +356,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
 
 
-UNIT_SetGlobalPath()
+Set_Active_Stack_Movement_Path()
     sets OVL_Path_Length from STK_GetPath()
 
 
@@ -609,7 +609,7 @@ DSEG shows space for 119 bytes, from here to the next known XREF
 elsewhere, something had an itr < 140
 XREF:
 UNIT_MoveStack+267       mov     ax, offset OVL_Path_Costs                         
-UNIT_SetGlobalPath+112   mov     ax, offset OVL_Path_Costs                         
+Set_Active_Stack_Movement_Path+112   mov     ax, offset OVL_Path_Costs                         
 Move_Stack+D9            mov     ax, offset OVL_Path_Costs                         
 Move_Stack+272           mov     [byte ptr OVL_Path_Costs+_SI_itr__units__path], al
 Move_Stack+27C           mov     al, [byte ptr OVL_Path_Costs+_SI_itr__units__path]
@@ -625,7 +625,7 @@ Move_Stack()
     passes the offset of OVL_Path_Costs to STK_GetPath()
     passes the offset of OVL_Path_Costs to STK_EvaluatePath()
 
-UNIT_SetGlobalPath
+Set_Active_Stack_Movement_Path
     passes the offset of OVL_Path_Costs to STK_GetPath()
 
 UNIT_MoveStack
@@ -660,7 +660,7 @@ Init_MovePathMap()
 STK_GetPath()
     XREF: ***OON*** j_STK_GetPath()
 j_STK_GetPath()
-    XREF:  UNIT_SetGlobalPath();  Move_Stack();  AI_AssignStackTarget();
+    XREF:  Set_Active_Stack_Movement_Path();  Move_Stack();  AI_AssignStackTarget();
 STK_EvaluatePath()
     XREF: ***OON*** j_STK_EvaluatePath()
 j_STK_EvaluatePath
@@ -684,7 +684,7 @@ j_STK_EvaluatePath()
 
 ### j_STK_GetPath()
 XREF:
-UNIT_SetGlobalPath()
+Set_Active_Stack_Movement_Path()
 Move_Stack()
 AI_AssignStackTarget()
 

@@ -542,7 +542,7 @@ void Main_Screen_Load_Pictures(void)
     movement_mode_icons[6] = LBX_Load(main_lbx_file, 36);
     movement_mode_icons[7] = LBX_Load(main_lbx_file, 37);
     movement_mode_icons[8] = LBX_Load(main_lbx_file, 38);
-    // movement_mode_icons[9] ¿ drake178: "Cavalry"
+    // movement_mode_icons[9] ¿ drake178: "Cavalry" ?
 
 
     for(itr = 0; itr < 9; itr++)
@@ -553,14 +553,14 @@ void Main_Screen_Load_Pictures(void)
     // MAIN.LBX, 058    DESELECT    next turn button..
     // MAIN.LBX, 034    DESELECT    deselect backgrnd
     // MAIN.LBX, 035    DESELECT    next turn backgrnd
-    next_turn_button_seg = LBX_Load(main_lbx_file, 58);
-    deselect_background = LBX_Load(main_lbx_file, 34);
+    next_turn_button_seg     = LBX_Load(main_lbx_file, 58);
+    deselect_background      = LBX_Load(main_lbx_file, 34);
     next_turn_background_seg = LBX_Load(main_lbx_file, 35);
 
     // MAIN.LBX, 040    MAINCAST    cast background
     // MAIN.LBX, 041    CASTCNCL    cast cancel button
     // MAIN.LBX, 047    C&RBORDR    cast button border
-    cast_background = LBX_Load(main_lbx_file, 40);
+    cast_background    = LBX_Load(main_lbx_file, 40);
     cast_cancel_button = LBX_Load(main_lbx_file, 41);
     cast_button_border = LBX_Load(main_lbx_file, 47);
 
@@ -570,8 +570,8 @@ void Main_Screen_Load_Pictures(void)
     // MAIN.LBX, 045    MAINROAD    road background
     // MAIN.LBX, 046    CASTCNCL    road ok button
     // MAIN.LBX, 048    C&RBORDR    road button border
-    road_background = LBX_Load(main_lbx_file, 45);
-    road_ok_button = LBX_Load(main_lbx_file, 46);
+    road_background    = LBX_Load(main_lbx_file, 45);
+    road_ok_button     = LBX_Load(main_lbx_file, 46);
     road_button_border = LBX_Load(main_lbx_file, 48);
 
     // MAIN.LBX, 057    MAINSRVY    survey backgrnd
@@ -580,7 +580,7 @@ void Main_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 04  MAGEVIEW    wizardview backgrn
     mirror_screen_background_seg = LBX_Load(backgrnd_lbx_file, 4);
 
-    // BACKGRND.LBX, 050    GOTO        goto booty
+    // MAIN.LBX, 050    GOTO        goto booty
     goto_booty_icon = LBX_Load(main_lbx_file, 50);
 
 

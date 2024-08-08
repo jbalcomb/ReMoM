@@ -85,7 +85,7 @@ extern int16_t g_unit_window_fields[MAX_STACK];
 // CRP_OverlandVar_3 dw 0
 
 // WZD dseg:C066
-// int16_t OVL_Path_Length;
+// int16_t _active_stack_path_length;
 
 
 
@@ -467,10 +467,10 @@ void OVL_EnableIncmBlink(void);
 // PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 // WZD o64p10
-// UNIT_SetGlobalPath()
+void Set_Active_Stack_Movement_Path(int16_t unit_idx);
 
 // WZD o64p11
-// OVL_DrawPath()
+void Draw_Active_Stack_Movement_Path(int16_t path_length, int8_t movepath_x_array[], int8_t movepath_y_array[]);
 
 
 

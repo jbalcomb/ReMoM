@@ -341,11 +341,11 @@ push    ax                              ; XPos
     
 SelectUnit_Stack()
     // ; sets the global path arrays and variables based on
-    UNIT_SetGlobalPath(unit_idx)
+    Set_Active_Stack_Movement_Path(unit_idx)
 Main_Screen()
     /* left click move map && unit_stack_count != 0 && stack moves < 1 */
     Stack_Action(..., GOTO, ...)
-    UNIT_SetGlobalPath(_unit_stack[0].unit_idx)
+    Set_Active_Stack_Movement_Path(_unit_stack[0].unit_idx)
 
 mov     ax, offset OVL_Path_Costs
 push    ax                              ; RCs@
@@ -368,7 +368,7 @@ call    j_STK_GetPath
 
 
 
-UNIT_SetGlobalPath()
+Set_Active_Stack_Movement_Path()
     builds unit_array from _unit_stack
         ¿ why does it take unit_idx as a parameter then ?
     loops over unit_array
