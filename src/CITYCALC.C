@@ -2526,8 +2526,6 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 
     if(product_idx >= 100)
     {
-        // mov     dx, offset _unit_type_table - (64h * 24h)
-        // add     dx, s_UNIT_TYPE.Cost
         product_cost = _unit_type_table[(product_idx - 100)].Cost;
 
         city_wp = _CITIES[city_idx].wp;
@@ -2543,7 +2541,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
         */
         unit_cost_reduction_applies = ST_TRUE;
 
-        if((_unit_type_table[(product_idx - 100)].Abilities & 0x4000) != 0)  /* Ab_Purify */
+        if((_unit_type_table[(product_idx - 100)].Abilities & UA_PURIFY) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }
@@ -2553,12 +2551,12 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
             unit_cost_reduction_applies = ST_FALSE;
         }
 
-        if((_unit_type_table[(product_idx - 100)].Attribs_2 & 0x02) != 0)  /* Spl_Fireball */
+        if((_unit_type_table[(product_idx - 100)].Attribs_2 & USA_FIREBALL) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }
 
-        if((_unit_type_table[(product_idx - 100)].Attribs_2 & 0x04) != 0)  /* Spl_DoomBolt */
+        if((_unit_type_table[(product_idx - 100)].Attribs_2 & USA_DOOMBOLT) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }

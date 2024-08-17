@@ -1207,11 +1207,11 @@ void City_Cancel_Production(int16_t city_idx)
 {
     if(_CITIES[city_idx].owner_idx == _human_player_idx)
     {
-        if(MSG_Building_Complete_Count < 20)
+        if(g_bldg_msg_ctr < 20)
         {
-            MSG_Building_Complete[MSG_Building_Complete_Count].city_idx = city_idx;
-            MSG_Building_Complete[MSG_Building_Complete_Count].bldg_type_idx = -(_CITIES[city_idx].construction);  // DEDU  negative means?  ("...can no longer produce...")
-            MSG_Building_Complete_Count++;
+            MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
+            MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = -(_CITIES[city_idx].construction);  // DEDU  negative means?  ("...can no longer produce...")
+            g_bldg_msg_ctr++;
         }
         else
         {
@@ -1220,7 +1220,7 @@ void City_Cancel_Production(int16_t city_idx)
     }
     else
     {
-        _CITIES[city_idx].construction = bt_GRANDVIZIER;
+        _CITIES[city_idx].construction = bt_AUTOBUILD;
     }
 }
 

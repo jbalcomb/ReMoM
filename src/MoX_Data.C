@@ -475,10 +475,36 @@ struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL] =
 };
 
 
-// WZD dseg:203A 00 00 00 05 00 00 00 00 05 00 00 00 0A 00 00 00+TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities <<0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 0, 10, 0, 0>, <0, 0, 10, 0, 0>, <0, 10, 0, 0, 2>, <0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 5, 0, 0, 5>, <0, 5, 0, 0, 3>, <0, 0, 0, 0, 10>>
-// WZD dseg:203A 00 0A 00 00 00 0A 00 00 02 00 00 00 05 00 00 00+                                        ; DATA XREF: AI_CTY_SetProduction+49Fr ...
-// WZD dseg:206C 0A 00 0F 00 1E 00 0A 00 0A 00 0F 00 0F 00 0A 00+TBL_AI_BLD_BaseWgts dw 10, 15, 30, 10, 10, 15, 15, 10, 10, 10
-// WZD dseg:206C 0A 00 0A 00                                                                             ; DATA XREF: AI_CTY_SetProduction+4C2r ...
+// WZD dseg:203A
+// TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities
+/*
+    10 categories
+     5 objectives   Pragmatist, Militarist, Theurgist, Perfectionist, Expansionist
+*/
+int16_t TBL_AI_BLD_OBJWgts[10][5] = 
+{
+    { 0,  0,  0,  5,  0},
+    { 0,  0,  0,  5,  0},
+    { 0,  0, 10,  0,  0},
+    { 0,  0, 10,  0,  0},
+    { 0, 10,  0,  0,  2},
+    { 0,  0,  0,  5,  0},
+    { 0,  0,  0,  5,  0},
+    { 0,  5,  0,  0,  5},
+    { 0,  5,  0,  0,  3},
+    { 0,  0,  0,  0, 10}
+};
+
+// WZD dseg:206C
+/*
+    ¿ indexed by bldg_data_table[product_array[itr]].Category ?
+    ¿ indexed by bldg_data_table[bldg_idx].Category ?
+    
+*/
+int16_t TBL_AI_BLD_BaseWgts[10] =
+{
+    10, 15, 30, 10, 10, 15, 15, 10, 10, 10
+};
 
 
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
@@ -1946,7 +1972,7 @@ int8_t MSG_CityGained_Array[20];
 
 // WZD dseg:9AF0
 // drake178: MSG_BuildDone_Count
-int8_t MSG_Building_Complete_Count;
+int8_t g_bldg_msg_ctr;
 
 // WZD dseg:9AF1 00                                              db    0
 
@@ -2101,6 +2127,12 @@ SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
 struct s_CITY * _CITIES;
 struct s_LAIR * _LAIRS;
 struct s_TOWER * _TOWERS;
+/*
+array of struct s_FORTRESS
+3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
+allocated in Allocate_Data_Space()
+populated in Load_SAVE_GAM()
+*/
 struct s_FORTRESS * _FORTRESSES;
 struct s_NODE * _NODES;
 

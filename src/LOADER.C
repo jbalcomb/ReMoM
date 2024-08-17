@@ -792,32 +792,14 @@ void City_Screen_Load_Pictures(void)
 // WZD o52p16
 void Load_SPELLDAT(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_SPELLDAT()\n", __FILE__, __LINE__);
-#endif
-
     spell_data_table = (struct s_SPELL_DATA *)LBX_Load_Data(spelldat_lbx_file, 0, 0, 215, 36);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_SPELLDAT()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
 // WZD o52p17
-// drake178: ?
 void Load_BUILDDAT(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -831,9 +813,7 @@ void Load_BUILDDAT(void)
 // WZD o52p20
 void GFX_Swap_Reset(void)
 {
-
     Allocate_First_Block(GFX_Swap_Seg, 1);
-
 }
 
 

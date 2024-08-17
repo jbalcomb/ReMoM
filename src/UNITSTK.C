@@ -525,11 +525,20 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
     itr_units = 0;
     while(done == ST_FALSE)
     {
+        assert(itr_units < MAX_UNIT_COUNT);
+        assert(_units != 0);
 
         if(
-            (_UNITS[itr_units].owner_idx == player_idx) &&
-            ( (_UNITS[itr_units].wp == current_world_plane) || (_UNITS[itr_units].in_tower == ST_TRUE) ) &&
-            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&  /* ¿ not dead / disbanded / banished / unsummoned ? */
+            (_UNITS[itr_units].owner_idx == player_idx)
+            &&
+            (
+                (_UNITS[itr_units].wp == current_world_plane)
+                ||
+                (_UNITS[itr_units].in_tower == ST_TRUE)
+            )
+            &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED)  /* ¿ not dead / disbanded / banished / unsummoned ? */
+            &&
             (_UNITS[itr_units].Finished == ST_FALSE)
         )
         {

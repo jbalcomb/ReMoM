@@ -64,3 +64,98 @@ AD FE
 4D 65 63 68 61 6E 69 63 69 61 6E 73 20 47 75 69 6C 64 00 00     22 00 14 00 FF FF 00 00 00 00 00 00 FB FF 00 00 00 00 00 00 00 00 00 00 58 02 00 00 00 00 04 00 
 4D 69 6E 65 72 73 20 47 75 69 6C 64 00 00 00 00 00 00 00 00     C8 00 20 00 FF FF 00 00 00 00 00 00 FD FF 00 00 00 00 00 00 00 00 00 00 2C 01 00 00 00 00 05 00 
 43 69 74 79 20 57 61 6C 6C 73 00 00 00 00 00 00 00 00 00 00     20 00 00 00 FF FF 00 00 00 00 00 00 FE FF 00 00 00 00 00 00 00 00 00 00 96 00 00 00 FF FF 04 00
+
+
+None                FF FF  FF FF  FF FF  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  FF FF,  0, 
+Trade Goods         00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  FF FF,  0, 
+Housing             00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  FF FF,  0, 
+Barracks            00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  00 00  1E 00  00 00  02 00,  4, 
+Armory              08 00  03 00  03 00  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  50 00  00 00  00 00,  4, 
+Fighters Guild      04 00  00 00  FF FF  01 00  00 00  00 00  FD FF  00 00  00 00  00 00  00 00  00 00  C8 00  00 00  01 00,  4, 
+Armorers Guild      05 00  00 00  05 00  00 00  00 00  00 00  FC FF  00 00  00 00  00 00  00 00  00 00  5E 01  00 00  01 00,  4, 
+War College         14 00  06 00  06 00  00 00  01 00  00 00  FB FF  00 00  00 00  00 00  00 00  00 00  F4 01  00 00  01 00,  4, 
+Smithy              00 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  28 00  00 00  00 00,  4, 
+Stables             08 00  00 00  FF FF  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  50 00  00 00  03 00,  4, 
+Animists Guild      17 00  09 00  FF FF  00 00  00 00  00 00  FB FF  00 00  00 00  00 00  00 00  00 00  2C 01  00 00  00 00,  6, 
+Fantastic Stable    06 00  0A 00  09 00  00 00  00 00  00 00  FA FF  00 00  00 00  00 00  00 00  00 00  58 02  00 00  03 00,  4, 
+Ship Wrights Guild  6E 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  64 00  00 00  02 00,  7, 
+Ship Yard           0F 00  0C 00  0C 00  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  C8 00  00 00  02 00,  7, 
+Maritime Guild      04 00  0D 00  0D 00  00 00  00 00  00 00  FC FF  00 00  00 00  00 00  00 00  00 00  90 01  00 00  02 00,  1, 
+Sawmill             65 00  00 00  FF FF  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  64 00  00 00  00 00,  5, 
+Library             20 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  00 00  02 00  3C 00  00 00  01 00,  3, 
+Sages Guild         10 00  00 00  FF FF  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  03 00  78 00  00 00  00 00,  3, 
+Oracle              18 00  14 00  FF FF  00 00  00 00  00 00  FC FF  00 00  00 00  00 00  00 00  06 00  F4 01  00 00  00 00,  3, 
+Alchemists Guild    11 00  00 00  FF FF  00 00  00 00  01 00  FD FF  00 00  00 00  03 00  00 00  00 00  FA 00  00 00  00 00,  3, 
+University          11 00  00 00  10 00  00 00  00 00  00 00  FD FF  00 00  00 00  00 00  00 00  07 00  2C 01  00 00  01 00,  3, 
+Wizards Guild       13 00  14 00  13 00  00 00  00 00  00 00  FB FF  00 00  00 00  08 00  00 00  08 00  E8 03  00 00  00 00,  3, 
+Shrine              20 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  02 00  00 00  64 00  00 00  03 00,  2, 
+Temple              16 00  00 00  16 00  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  05 00  00 00  C8 00  00 00  03 00,  2, 
+Parthenon           17 00  00 00  17 00  00 00  00 00  00 00  FD FF  00 00  00 00  00 00  09 00  00 00  90 01  00 00  03 00,  2, 
+Cathedral           18 00  00 00  18 00  00 00  00 00  00 00  FC FF  00 00  00 00  00 00  0F 00  00 00  20 03  00 00  03 00,  2, 
+Marketplace         08 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  64 00  00 00  00 00,  1, 
+Bank                1A 00  14 00  1A 00  00 00  00 00  00 00  FD FF  00 00  00 00  00 00  00 00  00 00  FA 00  00 00  00 00,  1, 
+Merchants Guild     0D 00  1B 00  1B 00  00 00  00 00  00 00  FB FF  00 00  00 00  00 00  00 00  00 00  58 02  00 00  00 00,  1, 
+Granary             20 00  00 00  FF FF  00 00  00 00  00 00  FF FF  02 00  00 00  00 00  00 00  00 00  28 00  00 00  00 00,  6, 
+Farmers Market      1D 00  1A 00  1D 00  00 00  00 00  00 00  FE FF  05 00  00 00  00 00  00 00  00 00  64 00  00 00  00 00,  6, 
+Foresters Guild     0F 00  00 00  FF FF  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  C8 00  00 00  00 00,  5, 
+Builders Hall       00 00  00 00  FF FF  00 00  00 00  00 00  FF FF  00 00  00 00  00 00  00 00  00 00  3C 00  00 00  02 00,  5, 
+Mechanicians Guild  22 00  14 00  FF FF  00 00  00 00  00 00  FB FF  00 00  00 00  00 00  00 00  00 00  58 02  00 00  00 00,  4, 
+Miners Guild        C8 00  20 00  FF FF  00 00  00 00  00 00  FD FF  00 00  00 00  00 00  00 00  00 00  2C 01  00 00  00 00,  5, 
+City Walls          20 00  00 00  FF FF  00 00  00 00  00 00  FE FF  00 00  00 00  00 00  00 00  00 00  96 00  00 00  FF FF,  4, 
+
+
+
+None                0
+Trade Goods         0
+Housing             0
+
+Marketplace         1
+Bank                1
+Merchants Guild     1
+Maritime Guild      1
+
+Shrine              2
+Temple              2
+Parthenon           2
+Cathedral           2
+
+Library             3
+Sages Guild         3
+Oracle              3
+Alchemists Guild    3
+University          3
+Wizards Guild       3
+
+Barracks            4
+Armory              4
+Fighters Guild      4
+Armorers Guild      4
+War College         4
+Smithy              4
+Stables             4
+Fantastic Stable    4
+Mechanicians Guild  4
+City Walls          4
+
+Sawmill             5
+Foresters Guild     5
+Builders Hall       5
+Miners Guild        5
+
+Granary             6
+Farmers Market      6
+Animists Guild      6
+
+Ship Wrights Guild  7
+Ship Yard           7
+
+
+
+0:  None, Trade, Housing
+1:  Marketplace, Bank, Merchants Guild, Maritime Guild
+2:  Shrine, Temple, Parthenon, Cathedral
+3:  Library, Sages Guild, Oracle, Alchemists Guild, University, Wizards Guild
+4:  Barracks, Armory, Fighters Guild, Armorers Guild, War College, Smithy, Stables, Fantastic Stable, Mechanicians Guild, City Walls
+5:  Sawmill, Foresters Guild, Builders Hall, Miners Guild
+6:  Granary, Farmers Market, Animists Guild
+7:  Ship Wrights Guild, Ship Yard

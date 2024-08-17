@@ -20,7 +20,7 @@ extern "C" {
 */
 
 // WZD s01p07
-int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count);
+int16_t Get_Weighted_Choice(int16_t * Weights, int16_t List_Count);
 
 // WZD s01p08
 // RNG_WeightedPick32()

@@ -707,7 +707,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
 
                         if(combat_attacker_player_idx != _human_player_idx)
                         {
-                            _CITIES[OVL_Action_Structure].construction = bt_GRANDVIZIER;  // -4 gran vizier
+                            _CITIES[OVL_Action_Structure].construction = bt_AUTOBUILD;  // -4 gran vizier
                         }
 
                     }
@@ -1878,7 +1878,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
                 // ; chances; condensing the weights such that the total
                 // ; fits into a single call of the 9-bit RNG (max 512),
                 // ; using repeated divisions by 2 if necessary
-                BU_Index = RNG_WeightedPick16(&Weights[0], _combat_total_unit_count);
+                BU_Index = Get_Weighted_Choice(&Weights[0], _combat_total_unit_count);
             }
             else
             {
@@ -3368,11 +3368,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             if(player_idx != _combat_defender_player)
             {
-                for(itr_bldg_msg = 0; MSG_Building_Complete_Count> itr_bldg_msg; itr_bldg_msg++)
+                for(itr_bldg_msg = 0; g_bldg_msg_ctr> itr_bldg_msg; itr_bldg_msg++)
                 {
                     if(MSG_Building_Complete[itr_bldg_msg].city_idx == OVL_Action_Structure)
                     {
-                        for(bldg_msg_idx = itr_bldg_msg; MSG_Building_Complete_Count > itr_bldg_msg; itr_bldg_msg++)
+                        for(bldg_msg_idx = itr_bldg_msg; g_bldg_msg_ctr > itr_bldg_msg; itr_bldg_msg++)
                         {
                             MSG_Building_Complete[bldg_msg_idx].city_idx = MSG_Building_Complete[(bldg_msg_idx + 1)].city_idx;
                         }

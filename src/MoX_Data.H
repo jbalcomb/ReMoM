@@ -343,7 +343,7 @@ For Cityscape,
 */
 enum e_BUILDING_TYPE
 {
-    bt_GRANDVIZIER        =  -4,  /* AKA 0xFFFC */
+    bt_AUTOBUILD        =  -4,  /* AKA 0xFFFC */
     bt_INVALID            =  -1,
     bt_NONE               =   0,
     bt_TradeGoods         =   1,
@@ -1998,10 +1998,12 @@ extern char * _objective_type_names[];
 // drake178: TBL_AI_DIFF_Mods 
 extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL];
 
-// WZD dseg:203A 00 00 00 05 00 00 00 00 05 00 00 00 0A 00 00 00+TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities <<0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 0, 10, 0, 0>, <0, 0, 10, 0, 0>, <0, 10, 0, 0, 2>, <0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 5, 0, 0, 5>, <0, 5, 0, 0, 3>, <0, 0, 0, 0, 10>>
-// WZD dseg:203A 00 0A 00 00 00 0A 00 00 02 00 00 00 05 00 00 00+                                        ; DATA XREF: AI_CTY_SetProduction+49Fr ...
-// WZD dseg:206C 0A 00 0F 00 1E 00 0A 00 0A 00 0F 00 0F 00 0A 00+TBL_AI_BLD_BaseWgts dw 10, 15, 30, 10, 10, 15, 15, 10, 10, 10
-// WZD dseg:206C 0A 00 0A 00                                                                             ; DATA XREF: AI_CTY_SetProduction+4C2r ...
+// WZD dseg:203A
+extern int16_t TBL_AI_BLD_OBJWgts[10][5];
+
+// WZD dseg:206C
+extern int16_t TBL_AI_BLD_BaseWgts[10];
+
 
 
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
@@ -3399,7 +3401,7 @@ extern int8_t MSG_CityGained_Array[20];
 
 // WZD dseg:9AF0
 // drake178: MSG_BuildDone_Count
-extern int8_t MSG_Building_Complete_Count;
+extern int8_t g_bldg_msg_ctr;
 
 // WZD dseg:9AF1 00                                              db    0
 

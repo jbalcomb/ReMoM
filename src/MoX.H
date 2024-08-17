@@ -233,6 +233,9 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 
 /* ~ MoX ~ MoM v1.31*/
 #include "AdvsrScr.H"
+#include "AIBUILD.H"
+#include "AIDATA.H"
+#include "AIDUDES.H"
 #include "ALLOC.H"
 #include "ArmyList.H"
 #include "CITYCALC.H"
@@ -283,6 +286,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "SETTLE.H"
 #include "special.H"
 #include "Spellbook.H"
+#include "Summary.H"
 #include "Terrain.H"
 #include "TerrType.H"
 #include "Timer.H"

@@ -83,12 +83,13 @@ uint32_t random_seed = 0x35683568;
 
 // WZD s01p07
 /*
-drake178:
+drake178: RNG_WeightedPick16()
 chooses a random item from a list of 16-bit weighted chances
 condensing the weights such that the total fits into a single call of the 9-bit PRNG (max 512),
 using repeated divisions by 2 if necessary
 */
-int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
+// MoO2  Module: KEN  Get_Weighted_Choice_()
+int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
 {
     int16_t Condense_Loop_Var;
     int16_t Picked_List_Item;
@@ -103,7 +104,7 @@ int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
     {
         tmp_pick = 0;
 
-        tmp_pick += Weights[itr];
+        tmp_pick += weight_array[itr];
 
         if(tmp_pick < 512)
         {
@@ -111,13 +112,13 @@ int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
         }
         else
         {
-            for(Condense_Loop_Var = 0; Condense_Loop_Var < List_Count; Condense_Loop_Var++)
+            for(Condense_Loop_Var = 0; Condense_Loop_Var < weight_count; Condense_Loop_Var++)
             {
-                Weights[Condense_Loop_Var] = (Weights[Condense_Loop_Var] / 2);
+                weight_array[Condense_Loop_Var] = (weight_array[Condense_Loop_Var] / 2);
             }
         }
 
-    } while (itr < List_Count);
+    } while (itr < weight_count);
 
     if(tmp_pick == 0)
     {
@@ -125,12 +126,12 @@ int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
     }
     else
     {
-        Weights_Remainder = (Random(tmp_pick) - Weights[0]);
+        Weights_Remainder = (Random(tmp_pick) - weight_array[0]);
         Picked_List_Item = 0;
-        while((Weights_Remainder > 0) && (List_Count - 1) > Picked_List_Item)
+        while((Weights_Remainder > 0) && (weight_count - 1) > Picked_List_Item)
         {
             Picked_List_Item++;
-            Weights_Remainder -= Weights[Picked_List_Item];
+            Weights_Remainder -= weight_array[Picked_List_Item];
         }
         return_value = Picked_List_Item;
     }
@@ -140,13 +141,17 @@ int16_t RNG_WeightedPick16(int16_t * Weights, int16_t List_Count)
 
 
 // WZD s01p08
-// RNG_WeightedPick32()
+// drake178: RNG_WeightedPick32()
+// MoO2  Module: KEN  Get_Weighted_Choice_Long_()
+
 
 // WZD s01p09
-// UU_RNG_HighestPick16()
+// drake178: UU_RNG_HighestPick16()
+// MoO2  Module: KEN  Get_Weighted_Best_Choice_()
 
 // WZD s01p10
-// UU_RNG_HighestPick32()
+// drake178: UU_RNG_HighestPick32()
+// MoO2  Module: KEN  Get_Weighted_Choice_Best_Long_()
 
 
 

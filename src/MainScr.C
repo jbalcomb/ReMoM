@@ -4284,6 +4284,9 @@ int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o63p15
+/*
+    returns {F,T} - any player has 'Planar Seal'
+*/
 int16_t Check_Planar_Seal(void)
 {
     int16_t itr_players;

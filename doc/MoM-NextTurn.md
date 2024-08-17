@@ -1,4 +1,157 @@
 
+Next Turn - MoX/MoM
+
+'Next Turn Proc'
+'Next Turn Calc'
+
+
+
+Remove *killed* Units
+Remove/Replaced Buildings
+Heal Units
+Count Volcanoes
+Grand Vizier
+
+¿ processes required due to changes in `_units` ?
+
+¿ processes required due to changes in terrain ?
+
+
+
+
+
+## Next_Turn_Proc()
+    Delete_Dead_Units();
+    All_Units_In_Towers();
+    Set_Unit_Draw_Priority();
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+    Reset_Map_Draw();
+    Next_Turn_Calc();
+    GFX_Swap_Cities();
+    Delete_Dead_Units();
+    All_Units_In_Towers();
+    Chancellor_Screen();  /* "End of Turn Summary" */
+    if g_bldg_msg_ctr > 0
+    current_screen = scr_Main_Screen;
+    g_bldg_msg_ctr = 0;
+    Update_Units_MvsSts();
+    // DONT  o62p01_Empty_pFxn(_human_player_idx);
+    // DONT  fxnptr_o59p();
+    G_OVL_Cast__STUB(_human_player_idx);
+    all_units_moved = ST_FALSE;
+    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+    Reset_Draw_Active_Stack();
+
+
+Delete_Dead_Units();  All_Units_In_Towers();
+Set_Unit_Draw_Priority();  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);  Reset_Map_Draw();
+*** Next_Turn_Calc(); ***
+*** GFX_Swap_Cities(); ***
+Delete_Dead_Units();  All_Units_In_Towers();
+*** Chancellor_Screen();  /* "End of Turn Summary" */ ***
+if g_bldg_msg_ctr > 0  g_bldg_msg_ctr = 0;
+current_screen = scr_Main_Screen;
+*** Update_Units_MvsSts(); ***
+*** G_OVL_Cast__STUB(_human_player_idx); ***
+all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);  Reset_Draw_Active_Stack();
+
+
+
+
+## City Production
+
+`Human Player (HP)`
+    Next_Turn_Calc()
+        |-> Apply_Colony_Changes()
+            |-> City_Apply_Production()
+                |-> Player_Colony_Autobuild_HP()
+
+`Computer Player (HP)`
+    Next_Turn_Calc()
+        |-> AI_Overland_Turn()
+            |-> All_Player_Colony_Autobuild()
+                |-> Player_Colony_Autobuild_CP()
+
+`Neutral Player (NP)`
+    Next_Turn_Calc()
+        |-> AI_Overland_Turn()
+            |-> All_Player_Colony_Autobuild()
+                |-> Player_Colony_Autobuild_NP()
+
+### Apply_Colony_Changes()
+AKA CTY_ProgressTurn()
+    handles graduating or destroying 'Outpost'
+    applies population growth
+    handles grow or shrink message
+    City_Apply_Production()
+    applies CONSECRATION, STREAM_OF_LIFE, CHAOS_RIFT, GAIAS_BLESSING, NIGHTSHADE
+    TILE_CountVolcanoes()
+
+### City_Apply_Production()
+AKA CTY_ProdProgress()
+    (only) handles the completion of a Unit or Building
+    if Prod_Accu >= product_cost
+        _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+            but, also, maybe _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+    if bt_Oracle, TILE_ExploreRadius__WIP()
+
+
+
+### g_bldg_msg_ctr
+
+Next_Turn_Proc() iters over g_bldg_msg_ctr()
+    if(MSG_Building_Complete[itr].city_idx != ST_UNDEFINED_DB)
+        
+
+XREF:
+    City_Apply_Production+2C8                             cmp     [g_bldg_msg_ctr], 20
+    City_Apply_Production+2CF                             mov     al, [g_bldg_msg_ctr]
+    City_Apply_Production+2E0                             mov     al, [g_bldg_msg_ctr]
+    City_Apply_Production+300                             inc     [g_bldg_msg_ctr]    
+    City_Cancel_Production+1C                        cmp     [g_bldg_msg_ctr], 20
+    City_Cancel_Production+23                        mov     al, [g_bldg_msg_ctr]
+    City_Cancel_Production+34                        mov     al, [g_bldg_msg_ctr]
+    City_Cancel_Production+56                        mov     al, [g_bldg_msg_ctr]
+    City_Cancel_Production+5B                        mov     [g_bldg_msg_ctr], al
+    City_Delete_Building_Complete_Messages+63        mov     al, [g_bldg_msg_ctr]
+    City_Delete_Building_Complete_Messages+68        mov     [g_bldg_msg_ctr], al
+    City_Delete_Building_Complete_Messages:loc_A229A mov     al, [g_bldg_msg_ctr]
+    City_Delete_Building_Complete_Messages:loc_A22AB mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat__WIP+C76                           mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat__WIP+C7B                           mov     [g_bldg_msg_ctr], al
+    End_Of_Combat__WIP:loc_A5C0E                     mov     al, [g_bldg_msg_ctr]
+    End_Of_Combat__WIP:loc_A5C1F                     mov     al, [g_bldg_msg_ctr]
+    Next_Turn_Proc+292                               mov     [g_bldg_msg_ctr], 0 
+    Next_Turn_Proc:loc_52B5B                         cmp     [g_bldg_msg_ctr], 0 
+    Next_Turn_Proc:loc_52D8A                         mov     al, [g_bldg_msg_ctr]
+
+
+
+
+
+
+### `GAME_InTowerRefresh()`
+; clears and resets the in-tower flag for all units
+; based on their current circumstances
+
+
+
+
+
+## Gold, Mana, Food
+
+### Income - Gold, Mana, Food
+
+### Upkeep - Gold, Mana, Food
+
+
+
+
+
+
+
+
+
 
 
 move these to the IDA documentation...

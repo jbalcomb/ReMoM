@@ -48,6 +48,11 @@ char cnst_TooManyUnits[] = ". You must disband some units if you wish to build o
 
 // WZD o60p01
 // ~ MoO2  Module: SHIPSTAK  Remove_Non_Detected_Ships_()  Delete_Ship_Stack_()  Delete_Ship_Node_()
+/*
+    Eh?
+        for each _units
+    ...reduces _units...
+*/
 void Delete_Dead_Units(void)
 {
     int16_t unit_type;
@@ -81,21 +86,41 @@ void Delete_Dead_Units(void)
                         _players[itr_players].Heroes[itr_heroes].unit_idx -= 1;
                     }
                 }
-
             }
+
+            _units -= 1;
         }
-
-        _units -= 1;
-
     }
 
 }
 
 
 // WZD o60p02
-// sub_52A4F()
+/*
+    returns the maximum scout range of all _units[] at wx, wy, wp
+
+XREF:
+    j_IDK_City_Radius_s34255()
+        Do_Plane_Shift()
+        EarthGateTeleport__WIP()
+        Cast_PlaneShift()
+*/
+int16_t IDK_City_Radius_s34255__STUB(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp)
+{
+
+}
+
+
 // WZD o60p03
-// sub_52B04()
+void empty_function__o060p03(void)
+{
+/*
+push    bp
+mov     bp, sp
+pop     bp
+retf
+*/
+}
 
 
 // WZD o60p04
@@ -106,33 +131,28 @@ void Next_Turn_Proc(void)
     int16_t itr_msg;  // _SI_
     int16_t curr_prod_idx;  // _DI_
 
-
-    /* DEMOHACK */  // Delete_Dead_Units();
+    Delete_Dead_Units();
 
     All_Units_In_Towers();
-
 
     Set_Unit_Draw_Priority();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     Reset_Map_Draw();
 
 
-
     Next_Turn_Calc();
-
 
 
     GFX_Swap_Cities();
 
-
-    /* DEMOHACK */  // Delete_Dead_Units();
+    Delete_Dead_Units();
 
     All_Units_In_Towers();
 
 
     if(magic_set.EoT_Summary == ST_TRUE)
     {
-        // TODO  IDK_Chancellor_EoTSummary_EventsAnimScroll();
+        // TODO  Chancellor_Screen__STUB();
     }
 
 
@@ -140,10 +160,10 @@ void Next_Turn_Proc(void)
     /*
         BEGIN: Messages
     */
-    if(MSG_Building_Complete_Count > 0)
+    if(g_bldg_msg_ctr > 0)
     {
         // DONT  j_o62p01_Empty_pFxn(_human_player_idx);  // drake178: does nothing and returns zero; at some point must have been some wizard data refresh function
-        for(itr_msg = 0; itr_msg < MSG_Building_Complete_Count; itr_msg++)
+        for(itr_msg = 0; itr_msg < g_bldg_msg_ctr; itr_msg++)
         {
             if(MSG_Building_Complete[itr_msg].city_idx != -1)
             {
@@ -158,7 +178,7 @@ void Next_Turn_Proc(void)
                 }
                 else  /* (MSG_Building_Complete[itr_msg].bldg_type_idx < bt_NONE) */
                 {
-                    if(_CITIES[_city_idx].construction == bt_GRANDVIZIER)
+                    if(_CITIES[_city_idx].construction == bt_AUTOBUILD)
                     {
                         _CITIES[_city_idx].construction = bt_Housing;
                     }
@@ -205,7 +225,7 @@ void Next_Turn_Proc(void)
 // @@Done_WrapItUp
     current_screen = scr_Main_Screen;
 
-    // TODO  MSG_Building_Complete_Count = 0;
+    g_bldg_msg_ctr = 0;
 
     Update_Units_MvsSts();
 
@@ -213,9 +233,12 @@ void Next_Turn_Proc(void)
 
     // DONT  fxnptr_o59p();
 
-    if( (_players[_human_player_idx].Cast_Cost_Left <= 0) && (_players[_human_player_idx].Spell_Cast > 0) )
+    if(
+        (_players[_human_player_idx].Cast_Cost_Left <= 0)
+        &&
+        (_players[_human_player_idx].Spell_Cast > 0))
     {
-        // TODO  G_OVL_Cast(_human_player_idx);
+        // TODO  G_OVL_Cast__STUB(_human_player_idx);
     }
 
 // @@Done_Done
@@ -448,7 +471,7 @@ void Next_Turn_Calc(void)
     // TODO  CTY_OutpostGrowth()
 
 
-    CTY_ProgressTurn();
+    Apply_Colony_Changes();
 
 
     // ; processes the diplomatic reactions and persistent
@@ -626,7 +649,7 @@ void All_Colony_Calculations(void)
 // MoO2  Module: COLBLDG  Colbldg_Create_Ship_() |-> Create_Ship_()
 /*
 
-    CTY_ProdProgress()
+    City_Apply_Production()
         UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
     Lair_Make_Guardians()
         Create_Unit__WIP(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
@@ -728,30 +751,34 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                     if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
                         _CITIES[R_Param].population -= 1;
+
                         if(_CITIES[R_Param].population == 0)
                         {
                             _CITIES[R_Param].Pop_10s = 3;
+
                             if(_CITIES[R_Param].owner_idx >= _num_players)
                             {
                                 for(itr = 0; itr < _num_players; itr++)
                                 {
                                     if(
-                                        (_CITIES[R_Param].wx == _FORTRESSES[itr].wx) &&
-                                        (_CITIES[R_Param].wy == _FORTRESSES[itr].wy) &&
+                                        (_CITIES[R_Param].wx == _FORTRESSES[itr].wx)
+                                        &&
+                                        (_CITIES[R_Param].wy == _FORTRESSES[itr].wy)
+                                        &&
                                         (_CITIES[R_Param].wp == _FORTRESSES[itr].wp)
                                     )
                                     {
                                         _CITIES[R_Param].population += 1;
                                         if(itr == HUMAN_PLAYER_IDX)
                                         {
-                                            LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);
+                                            LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 11, 1, 150);  // "The last few people are required to maintain your fortress. They may not become settlers.  Settler unit not built."
                                             Warn0(GUI_NearMsgString);
                                             goto Done_Failure;
                                         }
                                     }
                                 }
                             }
-                            // TODO  CTY_Remove(R_Param);
+                            // TODO  Destroy_City(R_Param);
                         }
                     }
 
@@ -1523,7 +1550,7 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx)
 
     itr1 = 0;
 
-    while(MSG_Building_Complete_Count > itr1)
+    while(g_bldg_msg_ctr > itr1)
     {
         // ¿ shift the city_idx for the messages down 1 in preparation for shifting down all the cities in the city structures array ?
         if(MSG_Building_Complete[itr1].city_idx > city_idx)
@@ -1537,14 +1564,14 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx)
                 itr2 = itr1;
 
                 // BUG BUGBUG OGBUG moves the city_idx for the message, but not the bldg_type_idx
-                while(MSG_Building_Complete_Count > itr2)
+                while(g_bldg_msg_ctr > itr2)
                 {
                     MSG_Building_Complete[itr2].city_idx = MSG_Building_Complete[(itr2 + 1)].city_idx;
                     // OGBUG DNE  MSG_Building_Complete[itr2].bldg_type_idx = MSG_Building_Complete[(itr2 + 1)].bldg_type_idx;
                     itr2++;
                 }
 
-                MSG_Building_Complete_Count--;
+                g_bldg_msg_ctr--;
             }
         }
 
@@ -1582,7 +1609,7 @@ void All_City_Calculations(void)
     City: Grow, Shrink
     Building: Lost
 
-    does not reset MSG_Building_Complete_Count
+    does not reset g_bldg_msg_ctr
 */
 void MSG_Clear(void)
 {
@@ -1601,6 +1628,7 @@ void MSG_Clear(void)
 
 // WZD o140p03
 // drake178: CTY_ProdProgress()
+// MoO2  Module: COLCALC  Apply_Production_()
 /*
     accumulate production points
         apply production points
@@ -1609,165 +1637,165 @@ void MSG_Clear(void)
     do 'Grand Vizier' // do 'Computer Player' product decision/selection
 
 */
-void CTY_ProdProgress(int16_t city_idx)
+void City_Apply_Production(int16_t city_idx)
 {
-    char city_name[20];
-    int16_t UU_garrison_units[9] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };  // HACK
-    int16_t UU_garrison_count;
-    int16_t curr_prod_cost;  // _SI_
+    char city_name[LEN_NAME];
+    int16_t uu_troops[MAX_STACK] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };  // HACK
+    int16_t uu_troop_count;
+    int16_t product_cost;  // _SI_
 
-    curr_prod_cost = City_Current_Product_Cost(city_idx);
+    product_cost = City_Current_Product_Cost(city_idx);
 
-    if(_CITIES[city_idx].population > 0)
+    if(_CITIES[city_idx].population <= 0)
     {
-        if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
+        return;
+    }
+
+    if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
+    {
+        _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+
+        if(_CITIES[city_idx].Prod_Accu >= product_cost)
         {
-            _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-
-            if(_CITIES[city_idx].Prod_Accu >= curr_prod_cost)
+            if((_units + 1) < MAX_UNIT_COUNT)
             {
-                if((_units + 1) < MAX_UNIT_COUNT)
+                Create_Unit__WIP((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+
+                UNIT_RemoveExcess((_units - 1));
+
+                Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
+
+                if(
+                    (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                    ||
+                    (grand_vizier == ST_TRUE)
+                )
                 {
-                    Create_Unit__WIP(
-                        (_CITIES[city_idx].construction - 100), 
-                        _CITIES[city_idx].owner_idx,
-                        _CITIES[city_idx].wx,
-                        _CITIES[city_idx].wy,
-                        _CITIES[city_idx].wp,
-                        city_idx
-                    );
-
-                    UNIT_RemoveExcess((_units - 1));
-
-                    Army_At_City(city_idx, &UU_garrison_count, &UU_garrison_units[0]);
-
-                    if(
-                        (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) ||
-                        (grand_vizier == ST_TRUE)
-                    )
-                    {
-                        _CITIES[city_idx].construction = bt_GRANDVIZIER;
-                    }
-
-                }
-                else
-                {
-                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                    {
-                        _CITIES[city_idx].construction = bt_GRANDVIZIER;
-                    }
-                    else
-                    {
-                        LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);
-                        // TODO  String_Copy_Far(city_name, _CITIES[city_idx].name)
-                        strcpy(city_name, _CITIES[city_idx].name);
-                        strcat(GUI_NearMsgString, city_name);
-                        strcat(GUI_NearMsgString, cnst_TooManyUnits);
-                        Warn0(GUI_NearMsgString);
-
-                        if(
-                            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) &&
-                            (grand_vizier == ST_TRUE)
-                        )
-                        {
-                            _CITIES[city_idx].construction = bt_GRANDVIZIER;
-                        }
-                        else
-                        {
-                            _CITIES[city_idx].construction = bt_TradeGoods;
-                        }
-                    }
+                    _CITIES[city_idx].construction = bt_AUTOBUILD;
                 }
 
-                _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
-            }
-
-        }
-        else  /* *Product* is 'Building' */
-        {
-            if(_CITIES[city_idx].construction < bt_Barracks)
-            {
-                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                {
-                    _CITIES[city_idx].construction = bt_GRANDVIZIER;
-                }
             }
             else
             {
-                if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                 {
-                    _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
+                    _CITIES[city_idx].construction = bt_AUTOBUILD;
                 }
                 else
                 {
-                    _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-                }
+                    LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
+                    strcpy(city_name, _CITIES[city_idx].name);
+                    strcat(GUI_NearMsgString, city_name);
+                    strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
+                    Warn0(GUI_NearMsgString);
 
-                if(_CITIES[city_idx].Prod_Accu >= curr_prod_cost)
-                {
-
-                    assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
-                    // IDGI:  ¿ impossible state - unreachable code ?
-                    // #CRASHME
-                    if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)
+                    if(
+                        (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                        &&
+                        (grand_vizier == ST_TRUE)
+                    )
                     {
-                        _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+                        _CITIES[city_idx].construction = bt_AUTOBUILD;
                     }
                     else
                     {
-                        _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
-                        if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != -1)
+                        _CITIES[city_idx].construction = bt_TradeGoods;
+                    }
+                }
+            }
+
+            _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
+        }
+
+    }
+    else  /* *Product* is 'Building' */
+    {
+        if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
+        {
+            if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+            {
+                _CITIES[city_idx].construction = bt_AUTOBUILD;
+            }
+        }
+        else
+        {
+            if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+            {
+                _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
+            }
+            else
+            {
+                _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+            }
+
+            if(_CITIES[city_idx].Prod_Accu >= product_cost)
+            {
+
+                assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
+                // IDGI:  ¿ impossible state - unreachable code ?
+                // #CRASHME
+                // BUGBUG
+                if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
+                {
+                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+                }
+                else
+                {
+                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+                    if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
+                    {
+                        _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+                    }
+
+                    if(
+                        (_CITIES[city_idx].construction == bt_Oracle)
+                        &&
+                        (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                    )
+                    {
+                        TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                    }
+
+                    _CITIES[city_idx].bldg_cnt += 1;
+
+                    _CITIES[city_idx].Prod_Accu = 0;
+
+                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+                    {
+                        _CITIES[city_idx].construction = bt_AUTOBUILD;
+                    }
+                    else
+                    {
+                        if(g_bldg_msg_ctr < 20)
                         {
-                            _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+                            MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
+                            MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
+                            g_bldg_msg_ctr++;
                         }
 
-                        if(
-                            (_CITIES[city_idx].construction == bt_Oracle) &&
-                            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
-                        )
+                        if(grand_vizier == ST_TRUE)
                         {
-                            TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
-                        }
-
-                        _CITIES[city_idx].bldg_cnt += 1;
-
-                        _CITIES[city_idx].Prod_Accu = 0;
-
-                        if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                        {
-                            _CITIES[city_idx].construction = bt_GRANDVIZIER;
+                            _CITIES[city_idx].construction = bt_AUTOBUILD;
                         }
                         else
                         {
-                            if(MSG_Building_Complete_Count < 20)
-                            {
-                                MSG_Building_Complete[MSG_Building_Complete_Count].city_idx = city_idx;
-                                MSG_Building_Complete[MSG_Building_Complete_Count].bldg_type_idx = _CITIES[city_idx].construction;
-                                MSG_Building_Complete_Count++;
-                            }
-
-                            if(grand_vizier == ST_TRUE)
-                            {
-                                _CITIES[city_idx].construction = bt_GRANDVIZIER;
-                            }
-                            else
-                            {
-                                _CITIES[city_idx].construction = bt_Housing;
-                            }
+                            _CITIES[city_idx].construction = bt_Housing;
                         }
                     }
                 }
             }
         }
+    }
 
-        if(
-            (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) &&
-            (grand_vizier == ST_TRUE) &&
-            (_CITIES[city_idx].construction != -4)
-        )
-        {
-            // TODO  CTY_GrandVizier(city_idx);
-        }
+    if(
+        (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+        &&
+        (grand_vizier == ST_TRUE)
+        &&
+        (_CITIES[city_idx].construction == bt_AUTOBUILD)
+    )
+    {
+        Player_Colony_Autobuild_HP(city_idx);
     }
 
 }
@@ -2274,6 +2302,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 
 // WZD o140p16
 // drake178: CTY_ProgressTurn()
+// MoO2  Module: COLCALC  Apply_Colony_Changes_()
 /*
     Outpost loss
     Outpost graduation  (NOT growth)
@@ -2283,9 +2312,8 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
     City size decrease
     Pestilence City size decrease
 
-
 */
-void CTY_ProgressTurn(void)
+void Apply_Colony_Changes(void)
 {
     int16_t Surplus_Farmers;
     int16_t New_Min_Farmers;
@@ -2294,7 +2322,7 @@ void CTY_ProgressTurn(void)
 
     for(itr = 0; itr < _cities; itr++)
     {
-        if(_CITIES[itr].population == 0)
+        if(_CITIES[itr].population == 0)  /* assume "City" is 'Outpost' */
         {
             if(_CITIES[itr].Pop_10s <= 0)
             {
@@ -2303,7 +2331,7 @@ void CTY_ProgressTurn(void)
                     strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr].name);
                     MSG_CityLost_Count++;
                 }
-                // TODO  CTY_Remove(itr);
+                Destroy_City(itr);
             }
 
             if(_CITIES[itr].Pop_10s >= 10)
@@ -2349,7 +2377,7 @@ void CTY_ProgressTurn(void)
                 }
             }
             
-            CTY_ProdProgress(itr);
+            City_Apply_Production(itr);
 
         }
 
@@ -2358,18 +2386,22 @@ void CTY_ProgressTurn(void)
         {
             // TODO  CTY_Consecration(itr);
         }
+
         if(_CITIES[itr].enchantments[STREAM_OF_LIFE] > 0)
         {
             // TODO  CTY_StreamOfLife(itr);
         }
+
         if(_CITIES[itr].enchantments[CHAOS_RIFT] > 0)
         {
             // TODO  CTY_ChaosRift(itr);
         }
+
         if(_CITIES[itr].enchantments[GAIAS_BLESSING] > 0)
         {
             // TODO  CTY_GaiasBlessing(itr);
         }
+        
         if(_CITIES[itr].enchantments[NIGHTSHADE] > 0)
         {
             // TODO  CTY_NightshadeDispel(itr);

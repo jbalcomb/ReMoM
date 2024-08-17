@@ -25,10 +25,10 @@ extern "C" {
 void Delete_Dead_Units(void);
 
 // WZD o60p02
-// sub_52A4F()
+int16_t IDK_City_Radius_s34255__STUB(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o60p03
-// sub_52B04()
+void empty_function__o060p03(void);
 
 // WZD o60p04
 void Next_Turn_Proc(void);
@@ -130,7 +130,7 @@ void All_City_Calculations(void);
 void MSG_Clear(void);
 
 // WZD o140p03
-void CTY_ProdProgress(int16_t city_idx);
+void City_Apply_Production(int16_t city_idx);
 
 // WZD o140p04
 void Update_Players_Gold_Reserve(void);
@@ -169,7 +169,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep);
 // sub_C53FA()
 
 // WZD o140p16
-void CTY_ProgressTurn(void);
+void Apply_Colony_Changes(void);
 
 // WZD o140p17
 int16_t Player_Hero_Casting_Skill(int16_t player_idx);

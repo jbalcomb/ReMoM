@@ -100,7 +100,7 @@ OON XREF:
         VGA_Fade_Out          
         Fade_In               
         Loaded_Game_Update_WZD
-        RNG_WeightedPick16    
+        Get_Weighted_Choice    
         RNG_WeightedPick32    
         UU_RNG_HighestPick16  
         UU_RNG_HighestPick32  
