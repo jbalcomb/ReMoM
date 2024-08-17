@@ -78,7 +78,7 @@ all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map
             |-> All_Player_Colony_Autobuild()
                 |-> Player_Colony_Autobuild_NP()
 
-### Apply_Colony_Changes()
+### Apply_City_Changes()
 AKA CTY_ProgressTurn()
     handles graduating or destroying 'Outpost'
     applies population growth

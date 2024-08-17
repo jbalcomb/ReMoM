@@ -461,17 +461,11 @@ void Next_Turn_Calc(void)
 
     // DONT  EMM_Map_DataH()
 
-    // ; calculates and records the growth and/or shrinkage
-    // ; of all outposts, although turning into a full city
-    // ; is not in this function
-    // ; BUG: this function ignores Wild Games altogether,
-    // ; both as a source of food and as a terrain special
-    // ; BUG: difficulty-based outpost growth modifiers are
-    // ; applied to both AI and human player outposts
-    // TODO  CTY_OutpostGrowth()
+
+    All_Outpost_Population_Growth();
 
 
-    Apply_Colony_Changes();
+    Apply_City_Changes();
 
 
     // ; processes the diplomatic reactions and persistent
@@ -2302,7 +2296,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 
 // WZD o140p16
 // drake178: CTY_ProgressTurn()
-// MoO2  Module: COLCALC  Apply_Colony_Changes_()
+// MoO2  Module: COLCALC  Apply_Colony_Changes_()  Apply_Colony_Pop_Growth_()
 /*
     Outpost loss
     Outpost graduation  (NOT growth)
@@ -2313,100 +2307,171 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
     Pestilence City size decrease
 
 */
-void Apply_Colony_Changes(void)
+void Apply_City_Changes(void)
 {
     int16_t Surplus_Farmers;
     int16_t New_Min_Farmers;
     int16_t Population_Growth;
-    int16_t itr;
+    int16_t itr_cities;
 
-    for(itr = 0; itr < _cities; itr++)
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr].population == 0)  /* assume "City" is 'Outpost' */
+        // if 'City' is 'Outpost'
+        if(_CITIES[itr_cities].population == 0)  /* assume "City" is 'Outpost' */
         {
-            if(_CITIES[itr].Pop_10s <= 0)
+            // 'Outpost' failed
+            if(_CITIES[itr_cities].Pop_10s <= 0)
             {
-                if((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
+                if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
                 {
-                    strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr].name);
+                    strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
                     MSG_CityLost_Count++;
                 }
-                Destroy_City(itr);
+                Destroy_City(itr_cities);
             }
 
-            if(_CITIES[itr].Pop_10s >= 10)
+            // 'Outpost' graduated to 'City'
+            if(_CITIES[itr_cities].Pop_10s >= 10)
             {
-                _CITIES[itr].population = 1;
-                _CITIES[itr].size = 1;  /* CTY_Hamlet */
-                _CITIES[itr].farmer_count = City_Minimum_Farmers(itr);
-                Do_City_Calculations(itr);
-                if((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityGained_Count < 20))
+                _CITIES[itr_cities].population = 1;
+                _CITIES[itr_cities].size = 1;  /* CTY_Hamlet */
+                _CITIES[itr_cities].farmer_count = City_Minimum_Farmers(itr_cities);
+                Do_City_Calculations(itr_cities);
+                if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityGained_Count < 20))
                 {
-                    MSG_CityGained_Array[MSG_CityGained_Count] = itr;
+                    MSG_CityGained_Array[MSG_CityGained_Count] = itr_cities;
                     MSG_CityGained_Count++;
                 }
             }
         }
         else
         {
-            Population_Growth = City_Growth_Rate(itr);
-            _CITIES[itr].Pop_10s += Population_Growth;
+            // apply population growth
+            Population_Growth = City_Growth_Rate(itr_cities);
 
-            if((_CITIES[itr].Pop_10s >= 100) && (_CITIES[itr].population < 25))
+            _CITIES[itr_cities].Pop_10s += Population_Growth;
+
+            // increase population
+            if((_CITIES[itr_cities].Pop_10s >= 100) && (_CITIES[itr_cities].population < 25))
             {
-                // TODO  grow city, add message
+                Surplus_Farmers = City_Minimum_Farmers(itr_cities);
+
+                Surplus_Farmers -= _CITIES[itr_cities].farmer_count;
+
+                _CITIES[itr_cities].population += 1;
+
+                _CITIES[itr_cities].Pop_10s = 0;  /* ; BUG: discards excess population */
+
+                New_Min_Farmers = City_Minimum_Farmers(itr_cities);
+
+                _CITIES[itr_cities].farmer_count = (New_Min_Farmers + Surplus_Farmers);
+
+                if(_CITIES[itr_cities].farmer_count > _CITIES[itr_cities].population)
+                {
+                    _CITIES[itr_cities].farmer_count = _CITIES[itr_cities].population;
+                }
+
+                _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);  // {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6}
+                // _CITIES[itr_cities].size = BUCKET(_CITIES[itr_cities].population, 4);
+
+                SETMAX(_CITIES[itr_cities].size, MAX_CITY_SIZE);  // CTY_Capital
+
+                if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
+                {
+                    // BUGBUG:  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))`
+                    SETMAX(_CITIES[itr_cities].population, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
+                }
+
+                if(
+                    (_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (MSG_CityGrowth_Count < 20)
+                )
+                {
+                    MSG_CityGrowth_Array[MSG_CityGrowth_Count] = itr_cities;
+                    MSG_CityGrowth_Count++;
+                }
+
             }
 
-            if(_CITIES[itr].Pop_10s < 0)
+            // decrease population
+            if(_CITIES[itr_cities].Pop_10s < 0)
             {
-                if(_CITIES[itr].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
+                if(_CITIES[itr_cities].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
                 {
-                    _CITIES[itr].Pop_10s = 5;
+                    _CITIES[itr_cities].Pop_10s = 5;
                 }
                 else
                 {
-                    // TODO  shrink city, add message
+                    _CITIES[itr_cities].population -= 1;
+
+                    _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);
+
+                    if((
+                        _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+                        &&
+                        (MSG_CityDeath_Count < 20)
+                    )
+                    {
+                        MSG_CityDeath_Array[MSG_CityDeath_Count] = itr_cities;
+                        MSG_CityDeath_Count++;
+                    }
+
+                    _CITIES[itr_cities].Pop_10s += 100;
                 }
             }
 
-            if(_CITIES[itr].enchantments[PESTILENCE] > 0)
+            // decrease population
+            if(_CITIES[itr_cities].enchantments[PESTILENCE] > 0)
             {
-                if(_CITIES[itr].population > Random(10))
+                if(_CITIES[itr_cities].population > Random(10))
                 {
-                    // TODO  shrink city, add message
+                    _CITIES[itr_cities].population -= 1;
+
+                    if((
+                        _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+                        &&
+                        (MSG_CityDeath_Count < 20)
+                    )
+                    {
+                        MSG_CityDeath_Array[MSG_CityDeath_Count] = itr_cities;
+                        MSG_CityDeath_Count++;
+                    }
+
                 }
             }
             
-            City_Apply_Production(itr);
+            City_Apply_Production(itr_cities);
 
         }
 
 
-        if(_CITIES[itr].enchantments[CONSECRATION] > 0)
+        if(_CITIES[itr_cities].enchantments[CONSECRATION] > 0)
         {
-            // TODO  CTY_Consecration(itr);
+            // TODO  CTY_Consecration(itr_cities);
         }
 
-        if(_CITIES[itr].enchantments[STREAM_OF_LIFE] > 0)
+        if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
         {
-            // TODO  CTY_StreamOfLife(itr);
+            // TODO  CTY_StreamOfLife(itr_cities);
         }
 
-        if(_CITIES[itr].enchantments[CHAOS_RIFT] > 0)
+        if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] > 0)
         {
-            // TODO  CTY_ChaosRift(itr);
+            // TODO  CTY_ChaosRift(itr_cities);
         }
 
-        if(_CITIES[itr].enchantments[GAIAS_BLESSING] > 0)
+        if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] > 0)
         {
-            // TODO  CTY_GaiasBlessing(itr);
+            // TODO  CTY_GaiasBlessing(itr_cities);
         }
         
-        if(_CITIES[itr].enchantments[NIGHTSHADE] > 0)
+        if(_CITIES[itr_cities].enchantments[NIGHTSHADE] > 0)
         {
-            // TODO  CTY_NightshadeDispel(itr);
+            // TODO  CTY_NightshadeDispel(itr_cities);
         }
     }
+
 
     // TODO  TILE_CountVolcanoes()
 

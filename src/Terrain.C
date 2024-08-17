@@ -840,8 +840,8 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
 // MoO2  Module: INITSHIP  Best_..._Weapon_()
 int16_t City_Best_Weapon(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t weapon_quality;
     int16_t city_wp;
     int16_t useable_map_squares;

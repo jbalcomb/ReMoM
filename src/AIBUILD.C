@@ -534,7 +534,7 @@ XREF:
     j_CTY_GrandVizier__STUB()
         Next_Turn_Calc()
         City_Apply_Production()
-            Apply_Colony_Changes()
+            Apply_City_Changes()
             NX_j_CTY_ProdProgress()
 
 Next_Turn_Calc()

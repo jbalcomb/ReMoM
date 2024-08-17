@@ -1478,8 +1478,8 @@ int16_t City_House_Count(int16_t city_idx)
 // drake178: CTY_GetTileFood()
 int16_t City_Food_Terrain(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t city_wp;
     int16_t useable_map_squares;
     
@@ -1519,8 +1519,8 @@ int16_t City_Food_Terrain(int16_t city_idx)
 // drake178: CTY_GetWildGameFood()
 int16_t City_Food_WildGame(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t bit_index;
     int16_t city_wp;
     int16_t useable_map_squares;
@@ -1757,6 +1757,19 @@ int16_t City_Food_Production(int16_t city_idx)
 
 // WZD o142p10
 // drake178: CTY_GetMaxPop()
+/*
+; returns the city's maximum population (without cap),
+; based on tile food, gaia's blessing, famine,
+; granary, and farmer's market
+*/
+/*
+
+XREF:
+    City_Growth_Rate()
+    TILE_Survey()
+    NX_j_City_Maximum_Size()
+
+*/
 int16_t City_Maximum_Size(int16_t city_idx)
 {
     int16_t maximum_size;  // _SI_
@@ -1769,7 +1782,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */) ||
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+        ||
         (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
     )
     {
@@ -1777,7 +1791,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */) ||
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+        ||
         (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
     )
     {
@@ -1796,8 +1811,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
 // drake178: CTY_GetProd()
 int16_t City_Production_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t production2_per_worker;
     int16_t have_gaias_blessing;
     int16_t city_wp;
@@ -1920,8 +1935,8 @@ int16_t City_Production_Production(int16_t city_idx)
 // drake178: CTY_GetGold()
 int16_t City_Gold_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t gold_modifier;
     int16_t are_dwarf;
     int16_t have_miners_guild;
@@ -2123,8 +2138,8 @@ int16_t City_Research_Production(int16_t city_idx)
 // drake178: CTY_GetPower()
 int16_t City_Mana_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t spell_ranks;
     int16_t have_miners_guild;
     int16_t are_dwarf;
@@ -2335,6 +2350,18 @@ int16_t City_Mana_Production(int16_t city_idx)
 
 // WZD o142p15
 // drake178: CTY_GetPopGrowth()
+/*
+; calculates and returns the city's population growth
+; contains multiple bugs that can prevent negative
+; total growth from being applied in certain cases
+*/
+/*
+
+XREF:
+    j_City_Growth_Rate()
+        City_Screen_Draw2__WIP()
+        Apply_City_Changes()
+*/
 int16_t City_Growth_Rate(int16_t city_idx)
 {
     int16_t maximum_size;
@@ -2371,7 +2398,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
                     population_growth_rate = ((((maximum_size - _CITIES[city_idx].population) + 1) / 2) + _race_type_table[_CITIES[city_idx].race].Growth_Mod);
 
                     if(
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */) ||
+                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+                        ||
                         (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
                     )
                     {
@@ -2379,14 +2407,15 @@ int16_t City_Growth_Rate(int16_t city_idx)
                     }
 
                     if(
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */) ||
+                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+                        ||
                         (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
                     )
                     {
                         population_growth_rate += 3;
                     }
 
-                    if(_CITIES[city_idx].population >= 25)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
+                    if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
                     {
                         population_growth_rate = 0;
                     }
@@ -2413,7 +2442,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             population_growth_modifier -= 25;
                         }
 
-                        if(_CITIES[city_idx].construction == 2)  /* _Housing */
+                        if(_CITIES[city_idx].construction == bt_Housing)
                         {
 
                             if(_CITIES[city_idx].population == 1)
@@ -2426,7 +2455,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */) ||
+                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */)
+                                ||
                                 (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced /* B_Replaced */)
                             )
                             {
@@ -2434,14 +2464,15 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built /* B_Built */) ||
+                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built /* B_Built */)
+                                ||
                                 (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced /* B_Replaced */)
                             )
                             {
                                 population_growth_modifier += 15;
                             }
 
-                            if(_CITIES[city_idx].population >= 25)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
+                            if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
                             {
                                 population_growth_rate = 0;
                             }
@@ -2450,10 +2481,9 @@ int16_t City_Growth_Rate(int16_t city_idx)
 
                                 population_growth_rate = (((population_growth_rate * population_growth_modifier) + 100) / 100);
 
-
-                                if(_CITIES[city_idx].owner_idx == 5)
+                                if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
                                 {
-                                    population_growth_rate = (population_growth_rate / 2);
+                                    population_growth_rate /= 2;
 
                                     if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))
                                     {
@@ -2462,16 +2492,13 @@ int16_t City_Growth_Rate(int16_t city_idx)
                                 }
                                 else
                                 {
-                                    if(_CITIES[city_idx].owner_idx != 0)
+                                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                                     {
                                         population_growth_rate = ((population_growth_rate * difficulty_modifiers_table[_difficulty].population_growth) / 100);
                                     }
                                 }
 
-                                if(population_growth_rate <= 0)
-                                {
-                                    population_growth_rate = 0;
-                                }
+                                SETMIN(population_growth_rate, 0);
 
                             }
 
@@ -2496,8 +2523,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
 // MoO2  Module:  COLCALC  Colony_Current_Product_Cost_()  Colony_Product_Cost_()
 int16_t City_Current_Product_Cost(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t have_miners_guild;
     int16_t unit_cost_percent;
     int16_t itr;
@@ -2683,7 +2710,116 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 
 // WZD o142p21
-// CTY_OutpostGrowth()
+// drake178: CTY_OutpostGrowth()
+// MoO2  Module: COLCALC  Apply_Colony_Pop_Growth_()
+/*
+; calculates and records the growth and/or shrinkage of all outposts, although turning into a full city is not in this function
+; BUG: this function ignores Wild Games altogether, both as a source of food and as a terrain special
+; BUG: difficulty-based outpost growth modifiers are applied to both AI and human player outposts
+*/
+/*
+    adds and/or subtracts to/from _CITIES[].Pop_10s
+    if percentage change of grow += {3}
+    if percentage change of shrink += {2}
+*/
+void All_Outpost_Population_Growth(void)
+{
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
+    int16_t itr;
+    int16_t city_wp;
+    int16_t terrain_special;
+    int16_t useable_map_squares;
+    int16_t shrink;
+    int16_t itr_cities;  // _SI_
+    int16_t grow;  // _DI_
+
+    // DONT  EMM_Map_DataH();
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].population == 0)
+        {
+            continue;
+        }
+
+        grow = City_Food_Terrain(itr_cities);
+
+        grow += _race_type_table[_CITIES[itr_cities].race].outpost_growth_rate;
+
+        if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] != 0)
+        {
+            grow += 20;
+        }
+
+        if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] != 0)
+        {
+            grow += 10;
+        }
+
+        city_wp = CITIESP();
+
+        useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp, &wx_array[0], &wy_array[0]);
+
+        for(itr = 0; itr < useable_map_squares; itr++)
+        {
+            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
+            if(terrain_special != 0)
+            {
+                if(
+                    (terrain_special == 1)  /* TS_IronOre */
+                    ||
+                    (terrain_special == 3)  /* TS_SilverOre */
+                )
+                {
+                    grow += 5;
+                }
+                else
+                {
+                    grow += 10;
+                }
+            }
+
+        }
+
+        shrink =  5;  // 5%  1:20
+
+        if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+        {
+            shrink += 5;  // 5%  1:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[PESTILENCE] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[FAMINE] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+        
+        grow = ((difficulty_modifiers_table[_difficulty].outpost_growth * grow) / 100);
+
+        if(Random(100) <= grow)
+        {
+            _CITIES[itr_cities].Pop_10s += Random(3);
+        }
+
+        if(Random(100) <= shrink)
+        {
+            _CITIES[itr_cities].Pop_10s += Random(2);
+        }
+    }
+
+}
+
 
 // WZD o142p22
 // WIZ_RecordHistory()

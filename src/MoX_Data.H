@@ -343,7 +343,7 @@ For Cityscape,
 */
 enum e_BUILDING_TYPE
 {
-    bt_AUTOBUILD        =  -4,  /* AKA 0xFFFC */
+    bt_AUTOBUILD          =  -4,  /* AKA 0xFFFC */
     bt_INVALID            =  -1,
     bt_NONE               =   0,
     bt_TradeGoods         =   1,
@@ -2005,7 +2005,6 @@ extern int16_t TBL_AI_BLD_OBJWgts[10][5];
 extern int16_t TBL_AI_BLD_BaseWgts[10];
 
 
-
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
 // WZD dseg:2080 00 10                                           __ovrbuffer dw 4096
 // ; DATA XREF: __OvrPrepare+19r ...
@@ -3425,7 +3424,6 @@ extern int8_t MSG_UnitLost_Count;
 // WZD dseg:9B95 00                                              db    0
 
 // WZD dseg:9B96
-// drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
 extern struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
 
 // WZD dseg:9BE6
@@ -3442,14 +3440,14 @@ extern int8_t MSG_UnitKilled_Count;
 extern int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
-// drake178: MSG_CityGrowth_Array db 14h dup(0)
+extern int16_t MSG_CityGrowth_Array[20];
 
 // WZD dseg:9C4D
 // drake178: MSG_CityDeath_Count
 extern int8_t MSG_CityDeath_Count;
 
 // WZD dseg:9C4E
-// drake178: MSG_CityDeath_Array db 14h dup(0) 
+extern int16_t MSG_CityDeath_Array[20];
 
 // WZD dseg:9C62
 // drake178: MSG_UEsLost_Count

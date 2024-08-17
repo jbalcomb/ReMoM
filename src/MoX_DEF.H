@@ -64,6 +64,11 @@ Eh?
 #ifndef SETRANGE
 #define SETRANGE(a, b, c) do { if (((c) <= (b)) || ((b) > (a))) { (a) = (b); } else if ((c) < (a)) { (a) = (c); } } while (0)
 #endif
+// e.g., _CITIES[itr].size = ((_CITIES[itr].population + 3) / 4);
+#ifndef BUCKET
+#define BUCKET(_value_, _size_) do { (((_value_) + ((_size_) - 1)) / (_size_) )} while (0)
+#endif
+// `1oom`
 #define ADDSATT(_v_, _n_, _top_) do { int _t_; _t_ = (_v_) + (_n_); SETMIN(_t_, (_top_)); (_v_) = _t_; } while (0)
 #define SUBSATT(_v_, _n_, _bot_) do { int _t_; _t_ = (_v_) - (_n_); SETMAX(_t_, (_bot_)); (_v_) = _t_; } while (0)
 #define SUBSAT0(_v_, _n_) SUBSATT(_v_, _n_, 0)
@@ -344,8 +349,11 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 
 
 
-#define MAX_UNIT_COUNT  1000
+#define MAX_UNIT_COUNT    1000
 
+#define MAX_CITY_POPULATION 25
+#define MAX_CITY_POPULATION_NEUTRAL_PLAYER 8  // NOTE: *should* be ((_difficulty + 1) * 2))  (({0,1,2,3} + 1) * 2) = {2,4,6,8}
+#define MAX_CITY_SIZE        5
 
 
 // World (Grid) Dimensions, in Map Sqaures

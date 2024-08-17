@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\..\src\Spellbook.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
+    <ClInclude Include="..\..\..\src\Summary.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\Timer.H" />
@@ -240,6 +241,7 @@
     <ClCompile Include="..\..\..\src\Spellbook.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
+    <ClCompile Include="..\..\..\src\Summary.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
     <ClCompile Include="..\..\..\src\UnitList.C" />

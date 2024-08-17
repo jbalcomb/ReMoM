@@ -715,7 +715,8 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
     {
         // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
         // TODO  VGA_DrawPartImage_R(start_x, start_y, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
-        Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+        // TODO  Clipped_Remap_Draw_Frame__NOP(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
+        Clipped_Draw_Frame(start_x, start_y, actual_width, actual_height, skip_x, skip_y, frame_data);
     }
 
 }

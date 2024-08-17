@@ -2016,17 +2016,22 @@ int8_t MSG_UnitKilled_Count;
 
 // WZD dseg:9C38
 // drake178: MSG_CityGrowth_Count
+/*
+    1-byte, signed
+*/
 int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
-// drake178: MSG_CityGrowth_Array db 14h dup(0)
+// drake178: MSG_CityGrowth_Array
+int16_t MSG_CityGrowth_Array[20];
 
 // WZD dseg:9C4D
 // drake178: MSG_CityDeath_Count
 int8_t MSG_CityDeath_Count;
 
 // WZD dseg:9C4E
-// drake178: MSG_CityDeath_Array db 14h dup(0) 
+// drake178: MSG_CityDeath_Array
+int16_t MSG_CityDeath_Array[20];
 
 // WZD dseg:9C62
 // drake178: MSG_UEsLost_Count

@@ -219,6 +219,11 @@ WIZARDS.LBX
 #define WORLD_SIZE_DB       2400  // 1-byte values
 #define WORLD_SIZE_DW       4800  // 2-byte values
 
+#define CITY_AREA_WIDTH        5
+#define CITY_AREA_HEIGHT       5
+#define CITY_AREA_SIZE          CITY_AREA_WIDTH * CITY_AREA_HEIGHT
+
+
 #define SZ_WORLD_BITFIELD    WORLD_WIDTH * WORLD_HEIGHT / SZ_PARAGRAPH_B  // e.g., 60 * 40 = 2400 / 16 = 150
 #define WORLD_MAP_BITFIELD_SIZE  SZ_WORLD_BITFIELD * NUM_PLANES  // Eh? Calc should just be in-code?
 

@@ -169,7 +169,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep);
 // sub_C53FA()
 
 // WZD o140p16
-void Apply_Colony_Changes(void);
+void Apply_City_Changes(void);
 
 // WZD o140p17
 int16_t Player_Hero_Casting_Skill(int16_t player_idx);

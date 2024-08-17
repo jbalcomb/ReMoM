@@ -197,7 +197,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx);
 int16_t City_Minimum_Farmers(int16_t city_idx);
 
 // WZD o142p21
-// CTY_OutpostGrowth()
+void All_Outpost_Population_Growth(void);
 
 // WZD o142p22
 // WIZ_RecordHistory()
