@@ -43,7 +43,7 @@ SAMB_ptr DBG_ORIG_TBL_MoveMaps_EMS;
 // WZD dseg:9CB0
 uint8_t * DBG_ORIG_TBL_Scouting;
 // WZD dseg:9CB4  
-uint8_t * DBG_ORIG_TBL_Terrain_Flags;
+uint8_t * DBG_ORIG__map_square_flags;
 // WZD dseg:9CB8  
 SAMB_ptr  DBG_ORIG_TBL_Terr_Specials;
 // WZD dseg:9CBC  

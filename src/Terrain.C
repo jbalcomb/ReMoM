@@ -23,7 +23,7 @@
 // WZD s161p01
 void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xDF;  // not TF_Corruption
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xDF;  // not TF_Corruption
 }
 
 
@@ -700,8 +700,10 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p08
 // TILE_GetSilverGold   
+
 // WZD s161p09
 // TILE_GetGoldOreGold  
+
 // WZD s161p10
 // TILE_GetGemGold      
 
@@ -764,14 +766,19 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p12
 // TILE_GetMithrilPower 
+
 // WZD s161p13
 // TILE_GetAdamntmPower 
+
 // WZD s161p14
 // TILE_GetQuorkPower   
+
 // WZD s161p15
 // TILE_GetCrysxPower   
+
 // WZD s161p16
 // TILE_HasMithril      
+
 // WZD s161p17
 // TILE_HasAdamantium   
 
@@ -909,7 +916,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
     int16_t terrain_type;  // _CX_
     int16_t world_maps_offset;  // DNE in Dasm
 
-    if((TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
     {
         return 0;
     }
@@ -1258,8 +1265,10 @@ Done:
 
 // WZD s161p25
 // TILE_IsDeepOcean     
+
 // WZD s161p26
 // G_TILE_IsAIEmbarkable
+
 // WZD s161p27
 // TILE_BuildingReqType 
 
@@ -1321,20 +1330,27 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 
 // WZD s161p30
 // TILE_IsDesert        
+
 // WZD s161p31
 // TILE_IsTundra        
+
 // WZD s161p32
 // TILE_IsSwamp         
+
 // WZD s161p33
 // TILE_IsGrasslands    
+
 // WZD s161p34
 // TILE_IsVolcano       
+
 // WZD s161p35
 // TILE_IsCorrupted     
 // WZD s161p36
 // UU_TILE_IsRes_40h    
+
 // WZD s161p37
 // CTY_CountNightshades 
+
 // WZD s161p38
 // TILE_IsLand          
 
@@ -1343,8 +1359,10 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 /*
 WZD s161p22
 TILE_IsAISailable()
+
 WZD s161p24
 TILE_IsSailable()
+
 WZD s161p39
 Terrain_Is_Ocean()
 */

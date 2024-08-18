@@ -19,10 +19,10 @@ extern "C" {
 */
 
 // WZD o143p01
-// TILE_MakeVolcano()
+void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
 
 // WZD o143p02
-// TILE_CountVolcanoes()
+void Volcano_Counts(void);
 
 // WZD o143p03
 // TILE_MakeGrassland()
@@ -49,7 +49,7 @@ extern "C" {
 // TILE_GetRoughType()
 
 // WZD o143p11
-// TILE_GenerateOre()
+void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p12
 void Random_City_Name_By_Race(int16_t race, char * name);

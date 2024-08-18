@@ -1049,7 +1049,7 @@ struct s_WIZARD
     /* 0022 */ uint16_t SoM_RC;  /* DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
     /* 0024 */ uint16_t fame;
     /* 0026 */ uint16_t Power_Base;
-    /* 0028 */ uint16_t Volcano_Count;
+    /* 0028 */ uint16_t volcanoes;  // count of volcanoes created by the Wizard  (NOTE: stored as a 3-bit member in the _map_square_flags bitfield)
     /* 002A */ uint8_t research_ratio;
     /* 002B */ uint8_t mana_ratio;
     /* 002C */ uint8_t skill_ratio;
@@ -1057,14 +1057,14 @@ struct s_WIZARD
     /* 002E */ int16_t summon_wx;
     /* 0030 */ int16_t summon_wy;
     /* 0032 */ int16_t summon_wp;
-    /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* spells available for researching */
+    /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* array of spell_idx, for spells available for researching */
     /* 0044 */ uint8_t Unknown_044h[4];  /* ¿  ? */
     /* 0048 */ uint16_t Avg_Unit_Value;         /* neutral: rampage accumulator */
     /* 004A */ uint16_t Unknown_04Ah;
     /* 004C */ uint16_t Cmbt_Skill_Left;
     /* 004E */ uint16_t Cast_Cost_Left;
     /* 0050 */ uint16_t Cast_Cost_Initial;      /* neutral: raiders accumulator */
-    /* 0052 */ uint16_t Spell_Cast;
+    /* 0052 */ uint16_t Spell_Cast;  // spell_idx;  Spell Id of spell currently being cast by the Wizard
     /* 0054 */ uint16_t Skill_Left;
     /* 0056 */ uint16_t Nominal_Skill;
     /* 0058 */ uint16_t tax_rate;
@@ -1107,8 +1107,8 @@ struct s_WIZARD
     /* 025A */ uint16_t Research_Left;
     /* 025C */ uint16_t mana_reserve;  /*  */
     /* 025E */ int32_t Casting_Skill;
-    /* 0262 */ uint16_t research_spell_idx;
-    /* 0264 */ uint8_t Spells_Known[240];  // TODO should be [6][40] or some odd, equivalent struct
+    /* 0262 */ uint16_t research_spell_idx;  // spell_idx of spell currently being researched
+    /* 0264 */ uint8_t Spells_Known[NUM_SPELLS];  // TODO should be [6][40] or some odd, equivalent struct
     /* 0354 */ uint16_t Defeated_Wizards;
     /* 0356 */ uint16_t gold_reserve;  /*  */
     /* 0358 */ uint16_t Unknown_358h;
@@ -1116,7 +1116,7 @@ struct s_WIZARD
     /* 0360 */ uint16_t Pop_div_10k;
     /* 0362 */ uint8_t Historian[288];
     /* 0482 */ // struct s_GLOBALE Globals;
-               uint8_t Globals[24];
+               uint8_t Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t Magic_Strategy;
     /* 049C */ uint16_t Unknown_49Ch;
     /* 049E */ uint16_t Hostility[NUM_PLAYERS];
@@ -3503,7 +3503,7 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 // WZD dseg:9CB0  
 extern uint8_t * TBL_Scouting;              // alloc in Allocate_Data_Space()
 // WZD dseg:9CB4
-extern uint8_t * TBL_Terrain_Flags;         // alloc in Allocate_Data_Space()
+extern uint8_t * _map_square_flags;         // alloc in Allocate_Data_Space()
 // WZD dseg:9CB8
 extern SAMB_ptr TBL_Terr_Specials;          // alloc in Allocate_Data_Space()
 

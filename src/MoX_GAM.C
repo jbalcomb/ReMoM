@@ -234,7 +234,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 117688);
 
-    fwrite(TBL_Terrain_Flags, NUM_PLANES, 2400, file_pointer);
+    fwrite(_map_square_flags, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 122488);
@@ -259,7 +259,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     // HACK:
     if(save_gam_idx != ST_UNDEFINED)
     {
-        // ¿ don't save settings for continue/auto-save ?
+        // ï¿½ don't save settings for continue/auto-save ?
         if (save_gam_idx < 8)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
@@ -411,7 +411,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 117688);
 
-    fread(TBL_Terrain_Flags, NUM_PLANES, 2400, file_pointer);
+    fread(_map_square_flags, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 122488);

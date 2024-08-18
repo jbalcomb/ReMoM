@@ -303,7 +303,7 @@ enum OVL_Tiles_Extended
     _AllDesert4     = 0xB0,
     _Swamp2         = 0xB1,
     _Swamp3         = 0xB2,
-    _Volcano        = 0xB3,
+    tt_Volcano      = 0xB3,
     _Grasslands4    = 0xB4,
     _AllTundra2     = 0xB5,
     _AllTundra3     = 0xB6,

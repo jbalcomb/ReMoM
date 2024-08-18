@@ -2472,8 +2472,7 @@ void Apply_City_Changes(void)
         }
     }
 
-
-    // TODO  TILE_CountVolcanoes()
+    Volcano_Counts();
 
 }
 

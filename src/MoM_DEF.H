@@ -69,7 +69,7 @@
 #define NUM_NODES                  30
 #define NUM_LAIRS                 102
 #define MAX_STACK                   9
-#define NUM_SPELLS                240
+#define NUM_SPELLS                240  // 6 reals, 40 spells each
 #define NUM_RESEARCH_SPELLS         8
 #define NUM_WIZARD_SPECIAL_ABILITIES  18
 #define NUM_SCORES                 10

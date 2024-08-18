@@ -27,10 +27,108 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 */
 
 // WZD o143p01
-// TILE_MakeVolcano()
+// drake178: TILE_MakeVolcano()
+// MoO2  DNE, but "...generate..." // "...set..."
+/*
+; turns the tile into a volcano, adjusting the flow of
+; adjacent tiles accordingly
+;
+; BUG: does not update movement costs (fixed in the TERRSTAT patch)
+; BUG: fails to create minerals
+*/
+void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
+{
+    uint16_t terrain_type;
+    int16_t terrain_special;
+
+
+    __debugbreak();
+
+
+    terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
+
+    SET_TERRAIN_TYPE(wx, wy, wp, tt_Volcano);
+
+    terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
+
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] = (_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] | (player_idx + 1) );
+
+
+    // ; adjusts the extended tile type (graphic) of the tile
+    // ; and all adjacent tiles to produce a seamless flow of
+    // ; desert, tundra, hill, and mountain tiles
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+
+    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+
+    *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = (*(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) & 0x2F);
+
+    terrain_special = *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx);
+
+    *(TBL_Terr_Specials + (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx) = 0;
+
+
+    // ; attempts to generate a new mineral type terrain special on the tile with a 20% chance
+    // ; BUG: clears the result after setting it
+    // TODO  TILE_GenerateOre(wx, wy, wp);
+
+
+}
 
 // WZD o143p02
-// TILE_CountVolcanoes()
+// drake178: TILE_CountVolcanoes()
+/*
+
+XREF:
+    j_TILE_CountVolcanoes()
+        Cast_ChangeTerain()
+        Cast_ChangeTerain()
+        Cast_RaiseVolcano()
+        WIZ_Armageddon()
+        Apply_City_Changes()
+        Cool_Off_Volcanoes()
+
+*/
+void Volcano_Counts(void)
+{
+    int16_t volcano_count_array[10];
+    int16_t player_idx;
+    int16_t itr_wy;
+    int16_t itr_players;  // _CX_
+    int16_t itr_wx;  // _DI_
+    int16_t itr_wp;  // _SI_
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        volcano_count_array[itr_players] = 0;
+    }
+
+    for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
+    {
+        for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+        {
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+
+                // player_idx = (_map_square_flags[((itr_wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] & 0x7);
+                player_idx = (GET_MAP_SQUARE_FLAG(itr_wx, itr_wy, itr_wp) & 0b00000111);
+
+                if(player_idx > HUMAN_PLAYER_IDX)
+                {
+                    volcano_count_array[(player_idx - 1)] += 1;
+                }
+
+            }
+        }
+    }
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        _players[itr_players].volcanoes = volcano_count_array[itr_players];
+    }
+
+}
 
 // WZD o143p03
 // TILE_MakeGrassland()
@@ -57,7 +155,19 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 // TILE_GetRoughType()
 
 // WZD o143p11
-// TILE_GenerateOre()
+// drake178:  TILE_GenerateOre()
+/*
+
+XREF:
+    Set_Terrain_Type_Volcano()
+    NX_j_TILE_GenerateOre()
+
+*/
+void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp)
+{
+
+}
+
 
 // WZD o143p12
 /*
@@ -183,7 +293,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                     (Y_Loop_Var != 0)
                 )
                 {
-                    if((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & 0x08) != 0)  // TF_Road
+                    if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & 0x08) != 0)  // TF_Road
                     {
                         has_road_connection = ST_TRUE;
                     }
@@ -217,7 +327,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                 {
                     for(X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                     {
-                        if((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] & 0x08) == 0)  // TF_Road
+                        if((_map_square_flags[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] & 0x08) == 0)  // TF_Road
                         {
                             movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = -1;
                         }
@@ -328,7 +438,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                         (Y_Loop_Var != 0)
                     )
                     {
-                        if((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & TF_Road) != 0)
+                        if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & TF_Road) != 0)
                         {
                             Has_Road_Out = ST_TRUE;
                         }
@@ -358,7 +468,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                     {
                         for (X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                         {
-                            if ((TBL_Terrain_Flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & TF_Road) != 0)
+                            if ((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & TF_Road) != 0)
                             {
                                 if (TBL_Landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
                                 {
@@ -438,7 +548,7 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
         {
             if(TBL_Landmasses[((wp * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)] == landmass_num)
             {
-                if((TBL_Terrain_Flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & TF_Road) != 0)
+                if((_map_square_flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & TF_Road) != 0)
                 {
                     movepath_cost_map->moves2[((itr_world_height * WORLD_WIDTH) + itr_world_width)] = 1;
                 }

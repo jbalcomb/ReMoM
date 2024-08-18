@@ -846,7 +846,7 @@ Flying:
 {
 
         Set_Memory(&movepath_cost_map->moves2[0], 10080, 2);  // drake178: BUG: we only use 2400 (960h) bytes of this!
-        terrain_flags_ptr = (int8_t *)&TBL_Terrain_Flags[wp * WORLD_SIZE];
+        terrain_flags_ptr = (int8_t *)&_map_square_flags[wp * WORLD_SIZE];
         movemap_ptr = (int8_t *)&movepath_cost_map->moves2;
         map_squares = WORLD_SIZE;
         road_bits = (TF_Road | TF_Enc_Road);

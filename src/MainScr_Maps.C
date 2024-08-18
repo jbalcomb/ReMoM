@@ -1895,7 +1895,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
             {
                 terrain_special = TBL_Terr_Specials[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
-                terrain_flag = TBL_Terrain_Flags[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+                terrain_flag = _map_square_flags[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
                 if((terrain_flag & 0x20) != 0)  /* Corruption */
                 {
@@ -2058,7 +2058,7 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
             unexplored_area = TBL_Scouting[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
             if(unexplored_area != ST_FALSE)
             {
-                terrain_flags_table_sgmt = (uint8_t *)TBL_Terrain_Flags;
+                terrain_flags_table_sgmt = (uint8_t *)_map_square_flags;
                 terrain_flags_table_ofst = (world_plane * WORLD_SIZE) + ((itr_world_y - 1) * WORLD_WIDTH) + (curr_world_x - 1);
                 // -------------
                 // |  0|  1|  2|

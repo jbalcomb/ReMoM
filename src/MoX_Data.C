@@ -2095,9 +2095,9 @@ uint8_t * TBL_Scouting;                     // load in Load_SAVE_GAM()
 8 bit bitfield
 0 0 0 0 0 0 0 0
 | | | | | | | |
-| | | | | | | \- 0: unknown
-| | | | | | \- 1: unknown
-| | | | | \- 2: unknown
+| | | | | \-\-\- {2,1,0}: Volcano's Player Number (player_idx + 1) {1,2,3,4,5,6,7}
+| | | | | 
+| | | | | 
 | | | | \- 3: regular road
 | | | \- 4: enchanted road
 | | \- 5: corruption
@@ -2118,8 +2118,13 @@ TILE_MakeGrassland() ...Forest,Desert,Mountain,Hill
     and     al, 11111000b
     AKA and     al, not 111b
 
+Volcano_Counts()
+
 */
-uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
+/*
+1-byte, unsigned
+*/
+uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
 // WZD dseg:9CB8  
 SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()

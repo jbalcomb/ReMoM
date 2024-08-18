@@ -58,7 +58,7 @@ void Do_City_Calculations(int16_t city_idx)
 
     sum of s_CITY.mana_units
 
-    _players[].Volcano_Count
+    _players[].volcanoes
 
     _players.Spell_Cast Spell_Of_Return
 
@@ -161,7 +161,7 @@ void Players_Update_Magic_Power(void)
         }
         else
         {
-            _players[itr].Power_Base += _players[itr].Volcano_Count;
+            _players[itr].Power_Base += _players[itr].volcanoes;
 
             SETMIN(_players[itr].Power_Base, 0);
         }
@@ -1347,22 +1347,22 @@ void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
 
-    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Road;
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Road;
 
-    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(TF_Enc_Road);
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(TF_Enc_Road);
 
-    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
     if(wp == 1)  /* Myrror */
     {
         TILE_EnchantRoad(wx, wy, wp);
     }
 
-    terrain_flags = TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
 }
 
@@ -1378,10 +1378,10 @@ void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp)
 
     // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
 
-    if((TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
     {
 
-        TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Enc_Road;
+        _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Enc_Road;
 
         movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
 
@@ -1624,7 +1624,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
                 square_x_max =  1;
             }
 
-            terrain_flags_table_row = (uint8_t *)&TBL_Terrain_Flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
+            terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
 
             itr_world_x = square_x_min;
 
@@ -3207,9 +3207,9 @@ void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
     movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
     movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
 
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF7;  // not TF_Road
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF7;  // not TF_Road
 
-    TBL_Terrain_Flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xEF;  // not TF_Enc_Road
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xEF;  // not TF_Enc_Road
 
 }
 

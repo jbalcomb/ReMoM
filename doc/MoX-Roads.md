@@ -151,7 +151,7 @@ MoO2
 
 
 
-## TBL_Terrain_Flags
+## _map_square_flags
 
 // WZD dseg:9CB4
 /*
@@ -167,7 +167,7 @@ MoO2
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18
 */
-uint8_t * TBL_Terrain_Flags;                // load in Load_SAVE_GAM()
+uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
 
 

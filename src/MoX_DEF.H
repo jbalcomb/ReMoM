@@ -335,6 +335,36 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 
 
 
+/*
+    Accessor Macros
+        _world_map
+            Terrain Type
+        TBL_Terr_Specials
+
+        _map_square_flags  AKA TBL_Terrain_Flags
+            Volcano Player, Road - Regular, Road - Enchanted, Corruption
+
+*/
+// #define GET_TERRAIN_TYPE(_value_, _size_) do { GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2))) } while (0)
+/*
+    gets the uint16_t 'Terrain Type' from _world_maps
+*/
+#define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_) ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
+
+// #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while (0)
+/*
+    sets the uint16_t 'Terrain Type' in _world_maps
+*/
+#define SET_TERRAIN_TYPE(_wx_, _wy_, _wp_, _terrain_type_)  ( SET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)), (_terrain_type_)) )
+
+
+#define GET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_)  ( *(TBL_Terr_Specials + ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_)) )
+
+
+#define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
+
+#define SET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
+
 
 
 // something or other for color difference/distance

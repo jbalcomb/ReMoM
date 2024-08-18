@@ -42,7 +42,7 @@ TBL_Terr_Specials
 TBL_Scouting
 movement_mode_cost_maps
 events_table
-TBL_Terrain_Flags
+_map_square_flags
 
 grand_vizier
 
@@ -92,7 +92,7 @@ assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
     // TBL_Scouting
     // movement_mode_cost_maps
     // events_table
-    // TBL_Terrain_Flags
+    // _map_square_flags
     assert(sizeof(grand_vizier) == 2);
     // TBL_Premade_Items
     // hero_names_table
