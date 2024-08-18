@@ -2119,7 +2119,39 @@ void City_Screen_Garrison_Window_Picture_Coords(int16_t stack_idx, int16_t * x1,
 
 // WZD o55p33
 // drake178: N/A
-// IDK_CtyBld_s4D357()
+void All_City_Removed_Buildings(void)
+{
+    int16_t itr_buildings;  // _SI_
+    int16_t itr_cities;  // _CX_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if(_CITIES[itr_cities].owner_idx == _human_player_idx)
+        {
+            _CITIES[itr_cities].did_sell_building = ST_FALSE;
+        }
+
+        for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)
+        {
+
+            if(_CITIES[itr_cities].bldg_status[itr_buildings] == bs_Removed)
+            {
+
+                if(bldg_data_table[itr_buildings].replace_bldg != ST_UNDEFINED)
+                {
+                    _CITIES[itr_cities].bldg_status[bldg_data_table[itr_buildings].replace_bldg] = bs_Built;  // set the previously replaced building's status back to 'Built'
+                }
+
+                _CITIES[itr_cities].bldg_status[itr_buildings] = bs_NotBuilt;
+                
+            }
+
+        }
+
+    }
+
+}
 
 // WZD o55p34
 // drake178: WIZ_AddGold()

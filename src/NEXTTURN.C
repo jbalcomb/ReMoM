@@ -544,9 +544,11 @@ void Next_Turn_Calc(void)
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
 
-// call    j_IDK_CtyBld_s4D357
+    All_City_Removed_Buildings();
+
 
 // call    j_IDK_Unit_XP_sC6BCF
+
 
 // call    j_IDK_Unit_Heal_sC6572
 

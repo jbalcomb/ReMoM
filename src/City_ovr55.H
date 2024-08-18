@@ -156,7 +156,7 @@ void City_Screen_Garrison_Window_Picture_Coords(int16_t stack_idx, int16_t * x1,
 
 // WZD o55p33
 // drake178: N/A
-// IDK_CtyBld_s4D357()
+void All_City_Removed_Buildings(void);
 
 // WZD o55p34
 // drake178: WIZ_AddGold()
