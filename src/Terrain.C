@@ -1349,7 +1349,96 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 // UU_TILE_IsRes_40h    
 
 // WZD s161p37
-// CTY_CountNightshades 
+// drake178: CTY_CountNightshades()
+/*
+// ; counts and sets the amount of Nightshades affecting
+// ; every city (returns the last count)
+// ; BUG: only updates the count if a relevant building is
+// ; present, meaning that it can't be cleared either if
+// ; one isn't
+*/
+/*
+
+XREF:
+    j_CTY_CountNightshades()
+        Next_Turn_Calc()
+
+*/
+void All_City_Nightshade_Count(void)
+{
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
+    int16_t city_wp__2;  // ; Plane would have sufficed just fine, no need to have 2 of this
+    int16_t useable_map_squares;
+    int16_t city_wp;
+    int16_t city_population;
+    int16_t Unused_StackVar;
+    int16_t nightshade_count;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t itr_cities;  // _SI_
+    int16_t itr;  // _DI_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        city_wx = _CITIES[itr_cities].wx;
+        city_wy = _CITIES[itr_cities].wy;
+        city_wp = _CITIES[itr_cities].wp;
+
+        city_population = _CITIES[itr_cities].population;
+
+        Unused_StackVar = 2;
+
+        nightshade_count = 0;
+
+        if(city_population = 0)
+        {
+            continue;
+        }
+
+        if(
+            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ TEMPLE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ PARTHENON        ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ CATHEDRAL        ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ SAGES_GUILD      ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ ORACLE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ ALCHEMISTS_GUILD ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ WIZARDS_GUILD    ] != bs_NotBuilt)
+        )
+        {
+
+            city_wp__2 = _CITIES[itr_cities].wp;
+
+            useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp__2, &wx_array[0], &wy_array[0]);
+
+            for(itr = 0; itr < useable_map_squares; itr++)
+            {
+
+                if((GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp__2) & TS_NIGHTSHADE) != 0)
+                {
+                    nightshade_count++;
+                }
+
+            }
+
+            _CITIES[itr_cities].enchantments[NIGHTSHADE] = nightshade_count;
+
+        }
+
+    }
+
+}
+
 
 // WZD s161p38
 // TILE_IsLand          

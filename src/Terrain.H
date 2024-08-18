@@ -18,6 +18,45 @@
 extern "C" {
 #endif
 
+
+/*
+IDK
+mixed-use bitfield
+4-bit value
+4 bits
+*/
+enum enum_Terrain_Specials
+{
+    ts_Iron           =   1,
+    ts_Coal           =   2,
+    ts_Silver         =   3,
+    ts_Gold           =   4,
+    ts_Gems           =   5,
+    ts_Mithril        =   6,
+    ts_Adamantium     =   7,
+    ts_QuorkCrystals  =   8,
+    ts_CrysxCrystals  =   9,
+    ts_HuntersLodge   =  16,
+    ts_Unknown_20     =  32,
+    ts_Wild_Game      =  64,
+    ts_Nightshade     = 128
+};
+
+#define TS_IRON             1  // 0001
+#define TS_COAL             2  // 0020
+#define TS_SILVER           3  // 0011
+#define TS_GOLD             4  // 0100
+#define TS_GEM              5  // 0101
+#define TS_MITHRIL          6  // 0110
+#define TS_ADAMANTIUM       7  // 0111
+#define TS_QUORK            8  // 1000
+#define TS_CRYSX            9  // 1001
+#define TS_HUNTERSLODGE  0x10  // 0001
+#define TS_UNKNOWN_20H   0x20  // 0010
+#define TS_WILDGAME      0x40  // 0100
+#define TS_NIGHTSHADE    0x80  // 1000
+
+
 // drake178: enum Terrain_Flags
 // 0x01
 // 0x02
@@ -147,8 +186,10 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
 // TILE_IsCorrupted     
 // WZD s161p36
 // UU_TILE_IsRes_40h    
+
 // WZD s161p37
-// CTY_CountNightshades 
+void All_City_Nightshade_Count(void);
+
 // WZD s161p38
 // TILE_IsLand          
 

@@ -497,11 +497,8 @@ void Next_Turn_Calc(void)
         Set_Mouse_List(1, mouse_list_hourglass);
 
 
-    // call    j_CTY_CountNightshades          ; counts and sets the amount of Nightshades affecting
-    //                                         ; every city (returns the last count)
-    //                                         ; BUG: only updates the count if a relevant building is
-    //                                         ; present, meaning that it can't be cleared either if
-    //                                         ; one isn't
+        All_City_Nightshade_Count();
+
 
     // call    j_DIPL_Gravitation              ; process wizard pact and alliance relation
     //                                         ; gravitation, military and city overextension, and
