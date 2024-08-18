@@ -199,7 +199,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 // IDK_Unit_XP_sC6BCF()
 
 // WZD o140p26
-// Cool_Off_Volcanoes()
+void Cool_Off_Volcanoes(void);
 
 // WZD o140p27
 // drake178: AI_CullTheWeak()

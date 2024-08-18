@@ -34,7 +34,7 @@ void Volcano_Counts(void);
 // RP_TILE_MakeDesert()
 
 // WZD o143p06
-// TILE_MakeMountain()
+void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p07
 // TILE_MakeHill()

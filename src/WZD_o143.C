@@ -140,7 +140,27 @@ void Volcano_Counts(void)
 // RP_TILE_MakeDesert()
 
 // WZD o143p06
-// TILE_MakeMountain()
+// drake178: TILE_MakeMountain()
+/*
+; turns the tile into a mountain, adjusting the flow of adjacent tiles accordingly
+; BUG: does not update movement costs (fixed in the TERRSTAT patch)
+*/
+void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
+{
+    uint16_t terrain_type;
+    int16_t terrain_special;
+
+    SET_TERRAIN_TYPE(wx, wy, wp, tt_1Mountain1);
+
+    // ; adjusts the extended tile type (graphic) of the tile
+    // ; and all adjacent tiles to produce a seamless flow of
+    // ; desert, tundra, hill, and mountain tiles
+    // TODO  TILE_AdjustMapFlow(wx, wy, wp);
+
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000));  // clear the volcano player idx
+
+}
+
 
 // WZD o143p07
 // TILE_MakeHill()

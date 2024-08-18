@@ -418,122 +418,122 @@ void Next_Turn_Calc(void)
     else
     {
 
-    // drake178: decreases the peace counters for all wizards towards all others
-    // call    j_WIZ_DecreasePeaceCs
+        // drake178: decreases the peace counters for all wizards towards all others
+        // call    j_WIZ_DecreasePeaceCs
 
-    Update_Players_Gold_Reserve();
+        Update_Players_Gold_Reserve();
 
-    Players_Update_Magic_Power();
+        Players_Update_Magic_Power();
 
-    Players_Apply_Magic_Power();
+        Players_Apply_Magic_Power();
 
-// call    j_WIZ_ResearchProgress          ; checks whether any of the wizards has finished their
-//                                         ; current research, and if so, allows picking a new one
-//                                         ; if possible, showing the new spell animation for the
-//                                         ; human player followed by the research dialog
-//                                         ; WARNING: can temporarily store a negative spell index
-//                                         ; as the player's researched spell
+    // call    j_WIZ_ResearchProgress          ; checks whether any of the wizards has finished their
+    //                                         ; current research, and if so, allows picking a new one
+    //                                         ; if possible, showing the new spell animation for the
+    //                                         ; human player followed by the research dialog
+    //                                         ; WARNING: can temporarily store a negative spell index
+    //                                         ; as the player's researched spell
 
-    // TODO  OVL_DisableIncmBlink();
-
-
-
-    if(
-        (DBG_Alt_A_State == ST_FALSE)
-        &&
-        (magic_set.Random_Events == ST_TRUE)
-    )
-    {
-        // ; attempts to generate a random event
-        // ; has some BUGs that need review
-        // TODO  EVNT_GenerateRandom()
-
-    }
-
-
-    // ; progresses any ongoing events (status 1 or 2)
-    // ; has several BUGs relating to specific events
-    // TODO  EVNT_Progress()
-
-
-    Players_Apply_Upkeeps__WIP();
-
-
-    // DONT  EMM_Map_DataH()
-
-
-    All_Outpost_Population_Growth();
-
-
-    Apply_City_Changes();
-
-
-    // ; processes the diplomatic reactions and persistent
-    // ; effects of global enchantments and the Spell of Mastery
-    // ; WARNING: Herb Mastery is not included here despite
-    // ; having a persistent effect
-    // ; also contains multiple inherited BUGs
-    // TODO  WIZ_ProcessGlobals()            
-
-
-    /*
-        BEGIN: Grand Vizier
-    */
-    if(grand_vizier == ST_TRUE)
-    {
-        // TODO
-    }
-    /*
-        END: Grand Vizier
-    */
+        // TODO  OVL_DisableIncmBlink();
 
 
 
-// loc_9ED2A:                              ; processes the wandering merchant, mercenary, and hero
-// call    j_EVNT_RandomOffers             ; for hire offers for all players
-//                                         ; has multiple BUGs, both own and inherited
+        if(
+            (DBG_Alt_A_State == ST_FALSE)
+            &&
+            (magic_set.Random_Events == ST_TRUE)
+        )
+        {
+            // ; attempts to generate a random event
+            // ; has some BUGs that need review
+            // TODO  EVNT_GenerateRandom()
+
+        }
 
 
-    Set_Mouse_List(1, mouse_list_hourglass);
+        // ; progresses any ongoing events (status 1 or 2)
+        // ; has several BUGs relating to specific events
+        // TODO  EVNT_Progress()
 
 
-// call    j_CTY_CountNightshades          ; counts and sets the amount of Nightshades affecting
-//                                         ; every city (returns the last count)
-//                                         ; BUG: only updates the count if a relevant building is
-//                                         ; present, meaning that it can't be cleared either if
-//                                         ; one isn't
-
-// call    j_DIPL_Gravitation              ; process wizard pact and alliance relation
-//                                         ; gravitation, military and city overextension, and
-//                                         ; gravitation towards default relation
-//                                         ; RE-EXPLORE!
-
-// call    j_DIPL_ContactProgress          ; progress the human player's contact with other
-//                                         ; wizards - if progress is 0, but contacted is 1,
-//                                         ; set progress to 1 and relations to no treaty
+        Players_Apply_Upkeeps__WIP();
 
 
-    Set_Mouse_List(1, mouse_list_hourglass);
+        // DONT  EMM_Map_DataH()
 
 
-// call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
+        All_Outpost_Population_Growth();
 
 
-    Set_Mouse_List(1, mouse_list_hourglass);
+        Apply_City_Changes();
 
 
-// call    j_IDK_Dipl_s7373B
+        // ; processes the diplomatic reactions and persistent
+        // ; effects of global enchantments and the Spell of Mastery
+        // ; WARNING: Herb Mastery is not included here despite
+        // ; having a persistent effect
+        // ; also contains multiple inherited BUGs
+        // TODO  WIZ_ProcessGlobals()            
 
-// call    j_IDK_Dipl_s73FBF
+
+        /*
+            BEGIN: Grand Vizier
+        */
+        if(grand_vizier == ST_TRUE)
+        {
+            // TODO
+        }
+        /*
+            END: Grand Vizier
+        */
 
 
-    Set_Mouse_List(1, mouse_list_hourglass);
 
-    // TODO  End_Of_Turn_Diplomacy_Adjustments_
+    // loc_9ED2A:                              ; processes the wandering merchant, mercenary, and hero
+    // call    j_EVNT_RandomOffers             ; for hire offers for all players
+    //                                         ; has multiple BUGs, both own and inherited
 
-    // TODO  Modifier_Diplomacy_Adjustments()
 
-    // TODO  Cool_Off_Volcanoes()
+        Set_Mouse_List(1, mouse_list_hourglass);
+
+
+    // call    j_CTY_CountNightshades          ; counts and sets the amount of Nightshades affecting
+    //                                         ; every city (returns the last count)
+    //                                         ; BUG: only updates the count if a relevant building is
+    //                                         ; present, meaning that it can't be cleared either if
+    //                                         ; one isn't
+
+    // call    j_DIPL_Gravitation              ; process wizard pact and alliance relation
+    //                                         ; gravitation, military and city overextension, and
+    //                                         ; gravitation towards default relation
+    //                                         ; RE-EXPLORE!
+
+    // call    j_DIPL_ContactProgress          ; progress the human player's contact with other
+    //                                         ; wizards - if progress is 0, but contacted is 1,
+    //                                         ; set progress to 1 and relations to no treaty
+
+
+        Set_Mouse_List(1, mouse_list_hourglass);
+
+
+    // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
+
+
+        Set_Mouse_List(1, mouse_list_hourglass);
+
+
+    // call    j_IDK_Dipl_s7373B
+
+    // call    j_IDK_Dipl_s73FBF
+
+
+        Set_Mouse_List(1, mouse_list_hourglass);
+
+        // TODO  End_Of_Turn_Diplomacy_Adjustments_
+
+        // TODO  Modifier_Diplomacy_Adjustments()
+
+        Cool_Off_Volcanoes();
 
     }
 
@@ -1799,9 +1799,9 @@ void City_Apply_Production(int16_t city_idx)
 // drake178: WIZ_GoldIncomes()
 void Update_Players_Gold_Reserve(void)
 {
-    int16_t normal_units[6];
-    int16_t food_incomes[6];
-    int16_t gold_incomes[6];
+    int16_t normal_units[NUM_PLAYERS];
+    int16_t food_incomes[NUM_PLAYERS];
+    int16_t gold_incomes[NUM_PLAYERS];
     int16_t Excess_Food;
 
     int16_t itr_players;  // _SI_
@@ -1946,13 +1946,13 @@ void Players_Apply_Magic_Power(void)
 */
 void Players_Apply_Upkeeps__WIP(void)
 {
-    int16_t excess_foods[6];
-    int16_t mana_upkeeps[6];
-    int16_t gold_upkeeps[6];
+    int16_t excess_foods[NUM_PLAYERS];
+    int16_t mana_upkeeps[NUM_PLAYERS];
+    int16_t gold_upkeeps[NUM_PLAYERS];
     int16_t food_upkeep;
     int16_t itr;  // _DI_
 
-    for(itr = 0; itr < 6; itr++)
+    for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
         excess_foods[itr] = 0;
     }
@@ -1960,7 +1960,8 @@ void Players_Apply_Upkeeps__WIP(void)
     for(itr = 0; itr < _cities; itr++)
     {
         if(
-            (_CITIES[itr].owner_idx != -1) &&
+            (_CITIES[itr].owner_idx != ST_UNDEFINED)
+            &&
             (_CITIES[itr].food_units > _CITIES[itr].population)
         )
         {
@@ -1973,7 +1974,8 @@ void Players_Apply_Upkeeps__WIP(void)
         food_upkeep = Player_Armies_Food_Upkeep(itr);
 
         if(
-            (excess_foods[itr] < food_upkeep) &&
+            (excess_foods[itr] < food_upkeep)
+            &&
             (itr == 0)
         )
         {
@@ -1983,7 +1985,8 @@ void Players_Apply_Upkeeps__WIP(void)
         gold_upkeeps[itr] = Player_Armies_Gold_Upkeep(itr);
 
         if(
-            (gold_upkeeps[itr] > _players[itr].gold_reserve) &&
+            (gold_upkeeps[itr] > _players[itr].gold_reserve)
+            &&
             (itr == 0)
         )
         {
@@ -2000,7 +2003,8 @@ void Players_Apply_Upkeeps__WIP(void)
         mana_upkeeps[itr] = Player_Armies_And_Enchantments_Mana_Upkeep(itr);
 
         if(
-            (mana_upkeeps[itr] > _players[itr].mana_reserve) &&
+            (mana_upkeeps[itr] > _players[itr].mana_reserve)
+            &&
             (itr == 0)
         )
         {
@@ -2023,7 +2027,7 @@ void Players_Apply_Upkeeps__WIP(void)
 // drake178: WIZ_MatchFoodUpkeep()
 void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep)
 {
-    int16_t troops[9];
+    int16_t troops[MAX_STACK];
     int16_t itr_troops;
     int16_t troop_count;
     int16_t itr_units;  // _SI_
@@ -2086,7 +2090,7 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
 // drake178: WIZ_MatchGoldUpkeep()
 int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
 {
-    int16_t troops[9];
+    int16_t troops[MAX_STACK];
     int16_t itr_troops;
     int16_t troop_count;
     int16_t unit_gold_upkeep;
@@ -2649,7 +2653,35 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 // IDK_Unit_XP_sC6BCF()
 
 // WZD o140p26
-// Cool_Off_Volcanoes()
+void Cool_Off_Volcanoes(void)
+{
+    int16_t terrain_type;
+    int16_t itr_wp;
+    int16_t itr_wy;  // _DI_
+    int16_t itr_wx;  // _SI_
+
+    for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
+    {
+        for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+        {
+            for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+            {
+                terrain_type = (GET_TERRAIN_TYPE(itr_wx, itr_wy, itr_wp) % _TerType_Count);
+
+                if(terrain_type == tt_Volcano)
+                {
+                    if(Random(100) < 3)
+                    {
+                        Set_Terrain_Type_Mountain(itr_wx, itr_wy, itr_wp);
+                    }
+                }
+            }
+        }
+    }
+
+    Volcano_Counts();
+}
+
 
 // WZD o140p27
 // AI_CullTheWeak()
