@@ -988,7 +988,7 @@ struct s_COMBAT_ENCHANTMENTS * combat_enchantments;             // alloc in IDK_
 
 
 // WZD dseg:9232
-struct s_HEROES * _HEROES2[6];
+struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
 
 // WZD dseg:924A 00 00                                           CMB_AI_Fled dw 0                        ; DATA XREF: Tactical_Combat__WIP:loc_75ED7w ...

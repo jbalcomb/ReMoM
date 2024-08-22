@@ -547,7 +547,7 @@ void Next_Turn_Calc(void)
     All_City_Removed_Buildings();
 
 
-// call    j_IDK_Unit_XP_sC6BCF
+    Do_All_Units_XP_Check_();
 
 
 // call    j_IDK_Unit_Heal_sC6572
@@ -712,7 +712,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                     {
                         R_Param = (abs(R_Param) - 1);
                         _UNITS[_units].XP = TBL_Experience[R_Param];
-                        _UNITS[_units].Level = Unit_Level(_units);
+                        _UNITS[_units].Level = Calc_Unit_Level(_units);
                     }
                 }
                 else  /* ((R_Param >= 0) && R_Param < 2000) */
@@ -791,7 +791,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                         // TODO  UNIT_ChaosChannel(_units);
                     }
 
-                    _UNITS[_units].Level = Unit_Level(_units);
+                    _UNITS[_units].Level = Calc_Unit_Level(_units);
                 }
 
                 goto Done_Success;
@@ -2649,7 +2649,178 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 // WIZ_ProcessGlobals()
 
 // WZD o140p25
-// IDK_Unit_XP_sC6BCF()
+// MoO2  Module: INITSHIP  Repair_Ships_At_Colonies_()
+// Next_Turn_Calc_() |-> Do_All_Ships_XP_Check_() |-> Best_Instructor_Bonus_(); Do_XP_For_Ship_() |-> Do_Academy_At_Location_Check_(); Calc_Ship_Level_()
+/*
+    heals units
+    clears stasis
+    ...
+    _UNITS[itr_units].XP += 1;
+    New_Level = Calc_Unit_Level(itr_units);
+    Hero_LevelUp_Popup(itr_units);
+    _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);    
+    ...
+    _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
+    _UNITS[troop_list[itr_troops]].Level = Calc_Unit_Level(troop_list[itr_troops]);
+
+*/
+void Do_All_Units_XP_Check_(void)
+{
+    struct s_BATTLE_UNIT battle_unit;
+    int16_t Processed_Hero_List[NUM_HEROES];
+    int16_t troop_list[MAX_STACK];
+    int16_t New_Level;
+    int16_t hero_unit_idx;
+    int16_t troop_count;
+    int16_t Highest_Armsmaster_XP;
+    int16_t XP_Gain;
+    int16_t itr_heroes;
+    int16_t itr_units;  // _SI_
+    int16_t itr_players;  // _SI_
+    int16_t itr_troops;  // _DI_
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        // Herb Mastery:  Nature. Global Enchantment;  Casting Cost: 1000 mana;  Upkeep: 10 mana/turn. Very Rare.
+        // Completely heals all of a wizard’s damaged units every game turn.
+        if(
+            (_players[_UNITS[itr_units].owner_idx].Globals[HERB_MASTERY] > 0)
+            &&
+            (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+            &&
+            ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
+        )
+        {
+            _UNITS[itr_units].Damage = 0;
+        }
+
+        if((_UNITS[itr_units].mutations & C_STASISLINGER) != 0)
+        {
+            Load_Battle_Unit(itr_units, &battle_unit);
+
+            if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
+            {
+                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b01111111);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+            }
+        }
+
+        if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
+        {
+            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
+            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b10111111);  // ¿ xor     al, C_STASISINIT  01000000b ?
+        }
+
+        if(
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
+            &&
+            ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
+            &&
+            (
+                (g_TimeStop_PlayerNum == 0)
+                ||
+                (_UNITS[itr_units].owner_idx == g_TimeStop_PlayerNum)
+            )
+        )
+        {
+
+            _UNITS[itr_units].XP += 1;
+
+            New_Level = Calc_Unit_Level(itr_units);
+
+            if(_UNITS[itr_units].Hero_Slot > -1)
+            {
+                if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    if(_UNITS[itr_units].Level < New_Level)
+                    {
+                        Hero_LevelUp_Popup(itr_units);
+                    }
+                }
+            }
+
+            _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
+
+        }
+
+
+    }
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+        {
+            Processed_Hero_List[itr_heroes] = ST_FALSE;
+        }
+
+        if(
+            (g_TimeStop_PlayerNum == 0)
+            ||
+            (g_TimeStop_PlayerNum == itr_players)
+        )
+        {
+            for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
+            {
+                if(
+                    (_players[itr_players].Heroes[itr_heroes].unit_idx > -1)
+                    &&
+                    (Processed_Hero_List[itr_heroes] == ST_FALSE)
+                )
+                {
+
+                    hero_unit_idx = _players[itr_players].Heroes[itr_heroes].unit_idx;
+
+                    Highest_Armsmaster_XP = 0;
+
+                    Army_At_Square_1(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, troop_count, &troop_list[0]);
+
+                    Processed_Hero_List[itr_heroes] = ST_TRUE;
+
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+                        XP_Gain = 0;
+
+                        Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
+
+                        if(_UNITS[troop_list[itr_troops]].Hero_Slot > -1)
+                        {
+
+                            if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER) != 0)
+                            {
+                                XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 2);
+                            }
+                            else if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER2) != 0)
+                            {
+                                XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 3);
+                            }
+
+                            if(XP_Gain > Highest_Armsmaster_XP)
+                            {
+                                Highest_Armsmaster_XP = XP_Gain;
+                            }
+
+                        }
+                    }
+
+                    if(Highest_Armsmaster_XP > 0)
+                    {
+                        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                        {
+                            if(_UNITS[troop_list[itr_troops]].Hero_Slot == -1)
+                            {
+                                _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
+
+                                _UNITS[troop_list[itr_troops]].Level = Calc_Unit_Level(troop_list[itr_troops]);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+}
+
 
 // WZD o140p26
 void Cool_Off_Volcanoes(void)

@@ -8,7 +8,7 @@
 */
 /*
 
-USW_HeroAbilities is XREF'd by ovr102 IDK_Hero_Populate_USW_List_Structure
+USW_HeroAbilities is XREF'd by ovr102 Hero_Build_Specials_List
 
 */
 /*
@@ -35,47 +35,6 @@ USW_Attributes_1
 #include "UnitView.H"
 #include <intrin.h>
 
-
-
-// ¿ "UNICON" ?
-#define SPECIAL_ICON_TELEPORTING      0
-#define SPECIAL_ICON_FORESTER         1
-#define SPECIAL_ICON_MOUNTAINEER      2
-#define SPECIAL_ICON_PATHFINDING     20
-#define SPECIAL_ICON_CONSTRUCTION    36
-#define SPECIAL_ICON_SCOUTING        37
-#define SPECIAL_ICON_CASTER          55
-
-#define SPECIAL_ICON_WARPED_DEFENSE  62
-#define SPECIAL_ICON_WARPED_FLIGHT  63
-#define SPECIAL_ICON_WARPED_BREATH  64
-
-#define SPECIAL_ICON_STASIS         115
-#define SPECIAL_ICON_UNDEAD         120
-#define SPECIAL_ICON_QUIVER         136
-#define SPECIAL_ICON_SUMMON_DEMONS  139
-
-#define SPECIAL_ICON_LEVEL_MEDALS  102
-
-#define SPECIAL_ICON_THROWN             130
-#define SPECIAL_ICON_FIRE_BREATH        138
-#define SPECIAL_ICON_LIGHTNING_BREATH   137
-#define SPECIAL_ICON_STONING_GAZE        26
-#define SPECIAL_ICON_DOOM_GAZE          134
-#define SPECIAL_ICON_DEATH_GAZE         135
-
-
-
-// drake178: USW_HeroAbl
-// sizeof:  08h  8d
-struct USW_HeroAbl
-{
-    /* 00 */  uint32_t flags;
-    /* 04 */  uint8_t icon_idx;
-    /* 05 */  // 2-byte alignment padding
-    /* 06 */  int16_t help_idx;
-    /* 08 */
-};
 
 
 // drake178: USW_Ability
@@ -580,29 +539,30 @@ char cnst_Space_SAVE[] = " Spell Save";
 // drake178: struct USW_HeroAbl USW_HeroAbilities
 struct USW_HeroAbl USW_HeroAbilities[23] =
 {
-    { 0x00000001,  0x002B,  HLP_LEADERSHIP   },
-    { 0x00000002,  0x002B,  HLP_LEADERSHIP   },
-    { 0x00000008,  0x002D,  HLP_LEGENDARY    },
-    { 0x00000010,  0x002D,  HLP_LEGENDARY    },
-    { 0x00000040,  0x002F,  HLP_BLADEMASTER  },
-    { 0x00000080,  0x002F,  HLP_BLADEMASTER  },
-    { 0x00000200,  0x002E,  HLP_ARMSMASTER   },
-    { 0x00000400,  0x002E,  HLP_ARMSMASTER   },
-    { 0x00001000,  0x0032,  HLP_CONSTITUTION },
-    { 0x00002000,  0x0032,  HLP_CONSTITUTION },
-    { 0x00008000,  0x0034,  HLP_MIGHT        },
-    { 0x00010000,  0x0034,  HLP_MIGHT        },
-    { 0x00040000,  0x0036,  HLP_ARCANE_POWER },
-    { 0x00080000,  0x0036,  HLP_ARCANE_POWER },
-    { 0x00200000,  0x003D,  HLP_SAGE         },
-    { 0x00400000,  0x003D,  HLP_SAGE         },
-    { 0x01000000,  0x0039,  HLP_PRAYERMASTER },
-    { 0x02000000,  0x0039,  HLP_PRAYERMASTER },
-    { 0x80000000,  0x008F,  HLP_AGILE        },  /* out of order */
-    { 0x04000000,  0x008F,  HLP_AGILE        },  /* out of order */
-    { 0x08000000,  0x003A,  HLP_LUCKY_HERO   },
-    { 0x10000000,  0x003B,  HLP_CHARMED      },
-    { 0x20000000,  0x003C,  HLP_NOBLE        }
+/*    flags        pict  help               */
+    { 0x00000001,   43,  HLP_LEADERSHIP   },
+    { 0x00000002,   43,  HLP_LEADERSHIP   },
+    { 0x00000008,   45,  HLP_LEGENDARY    },
+    { 0x00000010,   45,  HLP_LEGENDARY    },
+    { 0x00000040,   47,  HLP_BLADEMASTER  },
+    { 0x00000080,   47,  HLP_BLADEMASTER  },
+    { 0x00000200,   46,  HLP_ARMSMASTER   },
+    { 0x00000400,   46,  HLP_ARMSMASTER   },
+    { 0x00001000,   50,  HLP_CONSTITUTION },
+    { 0x00002000,   50,  HLP_CONSTITUTION },
+    { 0x00008000,   52,  HLP_MIGHT        },
+    { 0x00010000,   52,  HLP_MIGHT        },
+    { 0x00040000,   54,  HLP_ARCANE_POWER },
+    { 0x00080000,   54,  HLP_ARCANE_POWER },
+    { 0x00200000,   61,  HLP_SAGE         },
+    { 0x00400000,   61,  HLP_SAGE         },
+    { 0x01000000,   57,  HLP_PRAYERMASTER },
+    { 0x02000000,   57,  HLP_PRAYERMASTER },
+    { 0x80000000,  143,  HLP_AGILE        },  /* out of order */
+    { 0x04000000,  143,  HLP_AGILE        },  /* out of order */
+    { 0x08000000,   58,  HLP_LUCKY_HERO   },
+    { 0x10000000,   59,  HLP_CHARMED      },
+    { 0x20000000,   60,  HLP_NOBLE        }
 };
 
 char * unit_ability_names[15] =
@@ -629,8 +589,8 @@ char * unit_ability_names[15] =
 // drake178: struct USW_Ability USW_Abilities
 struct USW_Ability USW_Abilities[15] =
 {
-/*   name                      flags    pict     help  */
-    {&unit_ability_names[ 0],  0x0002,   14,  0x018C},
+/*   name                      flags    pict  help    */
+    {&unit_ability_names[ 0],  0x0002,   14,  396},
     {&unit_ability_names[ 1],  0x0004,    4,  0x018D},
     {&unit_ability_names[ 2],  0x0008,   15,  0x018E},
     {&unit_ability_names[ 3],  0x0010,   16,  0x018F},
@@ -1136,7 +1096,7 @@ USW_ItemPower <offset cnst_Merging, 0, 2000h, 12h, HLP_MERGING_I>
 
 
 // WZD dseg:3F46
-char * USW_UnitLevels[] = 
+char * USW_UnitLevels[6] = 
 {
     cnst_UnitLevel_1,
     cnst_UnitLevel_2,
@@ -1147,7 +1107,7 @@ char * USW_UnitLevels[] =
 };
 
 // WZD dseg:3F52
-char * USW_HeroLevels[] =
+char * USW_HeroLevels[9] =
 {
     cnst_HeroLevel_1,
     cnst_HeroLevel_2,
@@ -1296,7 +1256,7 @@ Any special abilities and unit enchantments appear as icons in the bottom half o
 void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, int16_t * specials_count)
 {
     char scout_rank[5][5];
-    char temp_string[20];
+    char temp_string[LEN_TEMP_STRING];
     uint32_t hero_ability_flag;
     int16_t ranged_attack_group;
     int16_t Unit_Mutations;
@@ -1308,7 +1268,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     int16_t hero_owner_idx;
     int16_t itr;
     int16_t ability_value;
-    int16_t special_abilities_count;  // _DI_
+    int16_t specials_index;  // _DI_
     int16_t item_slot_type;  // DNE in Dasm
 
     strcpy(scout_rank[0], empty_string_ovr078);  // ""
@@ -1321,7 +1281,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
     *specials_count = 0;
 
-    special_abilities_count = 0;
+    specials_index = 0;
 
 
     /*
@@ -1337,34 +1297,34 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     {
         if(_UNITS[unit_idx].Hero_Slot == -1)
         {
-            strcpy(specials_list->names[special_abilities_count], USW_UnitLevels[_UNITS[unit_idx].Level]);
+            strcpy(specials_list->names[specials_index], USW_UnitLevels[_UNITS[unit_idx].Level]);
         }
         else
         {
-            strcpy(specials_list->names[special_abilities_count], USW_HeroLevels[_UNITS[unit_idx].Level]);
+            strcpy(specials_list->names[specials_index], USW_HeroLevels[_UNITS[unit_idx].Level]);
         }
-        strcat(specials_list->names[special_abilities_count], cnst_SpaceOpenBrace2);
+        strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
         itoa(_UNITS[unit_idx].XP, temp_string, 10);
-        strcat(specials_list->names[special_abilities_count], temp_string);
-        strcat(specials_list->names[special_abilities_count], cnst_ExperiencePts);
-        specials_list->flags[special_abilities_count] = -1;
-        specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[(SPECIAL_ICON_LEVEL_MEDALS + _UNITS[unit_idx].Level)];
+        strcat(specials_list->names[specials_index], temp_string);
+        strcat(specials_list->names[specials_index], cnst_ExperiencePts);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[(SPECIAL_ICON_LEVEL_MEDALS + _UNITS[unit_idx].Level)];
         if(_UNITS[unit_idx].Hero_Slot == -1)
         {
-            specials_list->helps[special_abilities_count] = (HLP_UNIT_LEVEL_0 + _UNITS[unit_idx].Level);
+            specials_list->helps[specials_index] = (HLP_UNIT_LEVEL_0 + _UNITS[unit_idx].Level);
         }
         else
         {
-            specials_list->helps[special_abilities_count] = (HLP_HERO_LEVEL_0 + _UNITS[unit_idx].Level);
+            specials_list->helps[specials_index] = (HLP_HERO_LEVEL_0 + _UNITS[unit_idx].Level);
         }
-        special_abilities_count++;
+        specials_index++;
     }
 
 
     /*
         BEGIN:  Hero Unit Specific
     */
-    if(_UNITS[unit_idx].Hero_Slot != -1)
+    if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
     {
         hero_owner_idx = _UNITS[unit_idx].owner_idx;
         hero_slot_idx = _UNITS[unit_idx].Hero_Slot;
@@ -1375,23 +1335,23 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
             if(item_idx > -1)
             {
-                // String_Copy_Far(specials_list->names[special_abilities_count], 0, _ITEMS[item_idx].name);
-                strcpy(specials_list->names[special_abilities_count], _ITEMS[item_idx].name);
-                specials_list->flags[special_abilities_count] = -99;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)item_icons_seg[_ITEMS[item_idx].icon_idx];
-                specials_list->helps[special_abilities_count] = item_idx;
+                // String_Copy_Far(specials_list->names[specials_index], 0, _ITEMS[item_idx].name);
+                strcpy(specials_list->names[specials_index], _ITEMS[item_idx].name);
+                specials_list->flags[specials_index] = -99;
+                specials_list->picts[specials_index] = (SAMB_INT)item_icons_seg[_ITEMS[item_idx].icon_idx];
+                specials_list->helps[specials_index] = item_idx;
             }
             else
             {
-                strcpy(specials_list->names[special_abilities_count], empty_string_ovr078);
-                specials_list->flags[special_abilities_count] = -99;
-                // specials_list->picts[special_abilities_count] = (SAMB_INT)itemtile_icons_seg[_players[hero_owner_idx].Heroes[hero_slot_idx].Item_Slots[itr]];
+                strcpy(specials_list->names[specials_index], empty_string_ovr078);
+                specials_list->flags[specials_index] = -99;
+                // specials_list->picts[specials_index] = (SAMB_INT)itemtile_icons_seg[_players[hero_owner_idx].Heroes[hero_slot_idx].Item_Slots[itr]];
                 item_slot_type = _players[hero_owner_idx].Heroes[hero_slot_idx].Item_Slots[itr];
-                specials_list->picts[special_abilities_count] = (SAMB_INT)itemtile_icons_seg[(item_slot_type - 1)];
-                specials_list->helps[special_abilities_count] = -(HLP_MERGING_I + _players[hero_owner_idx].Heroes[hero_slot_idx].Item_Slots[itr]);
+                specials_list->picts[specials_index] = (SAMB_INT)itemtile_icons_seg[(item_slot_type - 1)];
+                specials_list->helps[specials_index] = -(HLP_MERGING_I + _players[hero_owner_idx].Heroes[hero_slot_idx].Item_Slots[itr]);
             }
 
-            special_abilities_count++;
+            specials_index++;
         }
 
         /*
@@ -1401,12 +1361,12 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         {
             if((global_battle_unit->item_enchantments & USW_Item_UEs[itr].bit_idx) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], USW_Item_UEs[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)item_power_icons_seg[USW_Item_UEs[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_Item_UEs[itr].help_idx;
+                strcpy(specials_list->names[specials_index], USW_Item_UEs[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)item_power_icons_seg[USW_Item_UEs[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_Item_UEs[itr].help_idx;
 
-                special_abilities_count++;
+                specials_index++;
             }
         }
         /*
@@ -1428,135 +1388,135 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 {
                     case HSA_AGILITY:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Agility);
+                        strcpy(specials_list->names[specials_index], cnst_Agility);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_LEADERSHIP:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Leadership);
+                        strcpy(specials_list->names[specials_index], cnst_Leadership);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 3);
                     } break;
                     case HSA_LEADERSHIP2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Leadership);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Leadership);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 2);
                     } break;
                     case HSA_LEGENDARY:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Legendary);
+                        strcpy(specials_list->names[specials_index], cnst_Legendary);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 3);
                     } break;
                     case HSA_LEGENDARY2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Legendary);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Legendary);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
                     } break;
                     case HSA_BLADEMASTER:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Blademaster);
+                        strcpy(specials_list->names[specials_index], cnst_Blademaster);
                         ability_value = ((_UNITS[unit_idx].Level + 1) / 2);
                     } break;
                     case HSA_BLADEMASTER2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Blademaster);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Blademaster);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 3) / 4);
                     } break;
                     case HSA_ARMSMASTER:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Armsmaster);
+                        strcpy(specials_list->names[specials_index], cnst_Armsmaster);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 2);
                     } break;
                     case HSA_ARMSMASTER2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Armsmaster);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Armsmaster);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_CONSTITUTION:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Constitution);
+                        strcpy(specials_list->names[specials_index], cnst_Constitution);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_CONSTITUTION2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Constitution);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Constitution);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_MIGHT:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Might);
+                        strcpy(specials_list->names[specials_index], cnst_Might);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_MIGHT2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Might);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Might);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_ARCANE_POWER:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_ArcanePower);
+                        strcpy(specials_list->names[specials_index], cnst_ArcanePower);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_ARCANE_POWER2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_ArcanePower);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_ArcanePower);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_SAGE:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Sage_2);
-                        strcat(specials_list->names[special_abilities_count], cnst_Space_3);
+                        strcpy(specials_list->names[specials_index], cnst_Sage_2);
+                        strcat(specials_list->names[specials_index], cnst_Space_3);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                         itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[special_abilities_count], temp_string);
-                        strcat(specials_list->names[special_abilities_count], cnst_ResearchPoints);
+                        strcat(specials_list->names[specials_index], temp_string);
+                        strcat(specials_list->names[specials_index], cnst_ResearchPoints);
                     } break;
                     case HSA_SAGE2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Sage_2);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
-                        strcat(specials_list->names[special_abilities_count], cnst_Space_3);
+                        strcpy(specials_list->names[specials_index], cnst_Sage_2);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
+                        strcat(specials_list->names[specials_index], cnst_Space_3);
                         ability_value = (((_UNITS[unit_idx].Level + 1) * 9) / 2);
                         itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[special_abilities_count], temp_string);
-                        strcat(specials_list->names[special_abilities_count], cnst_ResearchPoints);
+                        strcat(specials_list->names[specials_index], temp_string);
+                        strcat(specials_list->names[specials_index], cnst_ResearchPoints);
                     } break;
                     case HSA_PRAYERMASTER:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Prayermaster);
+                        strcpy(specials_list->names[specials_index], cnst_Prayermaster);
                         ability_value = (_UNITS[unit_idx].Level + 1);
                     } break;
                     case HSA_PRAYERMASTER2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Prayermaster);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Prayermaster);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_AGILITY2:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Agility);
-                        strcat(specials_list->names[special_abilities_count], cnst_SuperAbStar);
+                        strcpy(specials_list->names[specials_index], cnst_Agility);
+                        strcat(specials_list->names[specials_index], cnst_SuperAbStar);
                         ability_value = ((_UNITS[unit_idx].Level + 1) * 3);
                     } break;
                     case HSA_LUCKY:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Lucky);
+                        strcpy(specials_list->names[specials_index], cnst_Lucky);
                         ability_value = -1;
                     } break;
                     case HSA_CHARMED:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Charmed);
+                        strcpy(specials_list->names[specials_index], cnst_Charmed);
                         ability_value = -1;
                     } break;
                     case HSA_NOBLE:
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Noble);
+                        strcpy(specials_list->names[specials_index], cnst_Noble);
                         ability_value = -1;
                     } break;
                 }
@@ -1568,17 +1528,17 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 )
                 {
                     itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[special_abilities_count], cnst_SpacePlus);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
+                    strcat(specials_list->names[specials_index], cnst_SpacePlus);
+                    strcat(specials_list->names[specials_index], temp_string);
                 }
 
-                specials_list->flags[special_abilities_count] = -1;
+                specials_list->flags[specials_index] = ST_UNDEFINED;
 
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_HeroAbilities[itr].icon_idx];
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_HeroAbilities[itr].icon_idx];
 
-                specials_list->helps[special_abilities_count] = USW_HeroAbilities[itr].help_idx;
+                specials_list->helps[specials_index] = USW_HeroAbilities[itr].help_idx;
 
-                special_abilities_count++;
+                specials_index++;
             }
         }
         /*
@@ -1591,38 +1551,39 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         {
             if(_HEROES2[hero_owner_idx]->heroes[unit_type].Casting_Skill > 0)
             {
-                strcpy(specials_list->names[special_abilities_count], cnst_Caster);
+                strcpy(specials_list->names[specials_index], cnst_Caster);
                 if(_HEROES2[hero_owner_idx]->heroes[unit_type].Level >= 0)
                 {
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_3);
+                    strcat(specials_list->names[specials_index], cnst_Space_3);
                     if(global_battle_unit->mana_max > global_battle_unit->mana)
                     {
                         ability_value = global_battle_unit->mana;
                         itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[special_abilities_count], temp_string);
-                        strcat(specials_list->names[special_abilities_count], cnst_SpaceOpenBrace2);
+                        strcat(specials_list->names[specials_index], temp_string);
+                        strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
                         ability_value = global_battle_unit->mana_max;
                         itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[special_abilities_count], temp_string);
-                        strcat(specials_list->names[special_abilities_count], cnst_ClosingBrace_3);
+                        strcat(specials_list->names[specials_index], temp_string);
+                        strcat(specials_list->names[specials_index], cnst_ClosingBrace_3);
                     }
                     else
                     {
                         ability_value = global_battle_unit->mana_max;
                         itoa(ability_value, temp_string, 10);
-                        strcat(specials_list->names[special_abilities_count], temp_string);
+                        strcat(specials_list->names[specials_index], temp_string);
                     }
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_mp);
+                    strcat(specials_list->names[specials_index], cnst_Space_mp);
                 }
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_CASTER];
-                specials_list->helps[special_abilities_count] = HLP_CASTER;
-                special_abilities_count++;
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CASTER];
+                specials_list->helps[specials_index] = HLP_CASTER;
+                specials_index++;
             }
         }
         /*
             END:  Spell Caster
         */
+
     }
     /*
         END:  Hero Unit Specific
@@ -1657,35 +1618,35 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 {
                     if(ranged_attack_group == rag_Boulder)
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Rock);
+                        strcpy(specials_list->names[specials_index], cnst_Rock);
                     }
                     if(ranged_attack_group == rag_Missile)
                     {
                         if(global_battle_unit->ranged_type != rat_Bow)
                         {
-                            strcpy(specials_list->names[special_abilities_count], cnst_Bullet);
+                            strcpy(specials_list->names[specials_index], cnst_Bullet);
                         }
                         else
                         {
-                            strcpy(specials_list->names[special_abilities_count], cnst_Arrow);
+                            strcpy(specials_list->names[specials_index], cnst_Arrow);
                         }
                     }
                     if(ranged_attack_group == rag_Magic)
                     {
-                        strcpy(specials_list->names[special_abilities_count], cnst_Spell_2);
+                        strcpy(specials_list->names[specials_index], cnst_Spell_2);
                     }
                     ability_value = global_battle_unit->ammo;
                     itoa(ability_value, temp_string, 10);
                     if(ability_value > 1)
                     {
-                        strcat(specials_list->names[special_abilities_count], cnst_Ammo_Plural);
+                        strcat(specials_list->names[specials_index], cnst_Ammo_Plural);
                     }
-                    strcat(specials_list->names[special_abilities_count], cnst_TimesSign);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
-                    specials_list->flags[special_abilities_count] = -1;
-                    specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_QUIVER];
-                    specials_list->helps[special_abilities_count] = HLP_QUIVER;
-                    special_abilities_count++;
+                    strcat(specials_list->names[specials_index], cnst_TimesSign);
+                    strcat(specials_list->names[specials_index], temp_string);
+                    specials_list->flags[specials_index] = -1;
+                    specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_QUIVER];
+                    specials_list->helps[specials_index] = HLP_QUIVER;
+                    specials_index++;
                 }
             }
         }
@@ -1705,20 +1666,20 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             itoa(ability_value, temp_string, 10);
             if(ability_value > 0)
             {
-                strcpy(specials_list->names[special_abilities_count], cnst_Plus_1);
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[125];
-                specials_list->helps[special_abilities_count] = HLP_TOHIT_PLUS;
+                strcpy(specials_list->names[specials_index], cnst_Plus_1);
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[125];
+                specials_list->helps[specials_index] = HLP_TOHIT_PLUS;
             }
             else
             {
-                strcpy(specials_list->names[special_abilities_count], empty_string_ovr078);
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[126];
-                specials_list->helps[special_abilities_count] = HLP_TOHIT_MINUS;
+                strcpy(specials_list->names[specials_index], empty_string_ovr078);
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[126];
+                specials_list->helps[specials_index] = HLP_TOHIT_MINUS;
             }
-            strcat(specials_list->names[special_abilities_count], temp_string);
-            strcat(specials_list->names[special_abilities_count], cnst_ToHit);
-            specials_list->flags[special_abilities_count] = -1;
-            special_abilities_count++;
+            strcat(specials_list->names[specials_index], temp_string);
+            strcat(specials_list->names[specials_index], cnst_ToHit);
+            specials_list->flags[specials_index] = -1;
+            specials_index++;
         }
     }
     /*
@@ -1733,11 +1694,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG: ignores the ability value ?
         if(global_battle_unit->Construction > 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Construction);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_CONSTRUCTION];
-            specials_list->helps[special_abilities_count] = HLP_CONSTRUCTION;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Construction);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CONSTRUCTION];
+            specials_list->helps[specials_index] = HLP_CONSTRUCTION;
+            specials_index++;
         }
     }
     /*
@@ -1753,14 +1714,14 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG: misrepresents the souting range by ranking it based on the value rather than the actual increase ?
         if(global_battle_unit->scout_range > 1)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Scouting);
+            strcpy(specials_list->names[specials_index], cnst_Scouting);
             ability_value = global_battle_unit->scout_range;
             strcpy(temp_string, scout_rank[ability_value]);
-            strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_SCOUTING];
-            specials_list->helps[special_abilities_count] = HLP_SCOUTING;
-            special_abilities_count++;
+            strcat(specials_list->names[specials_index], cnst_Space_3);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_SCOUTING];
+            specials_list->helps[specials_index] = HLP_SCOUTING;
+            specials_index++;
         }
     }
     /*
@@ -1775,11 +1736,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ; BUG: this should be checked in the unit type to avoid double display for the item power
         if((global_battle_unit->Move_Flags & MV_MERGING) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Merging);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)item_power_icons_seg[18];
-            specials_list->helps[special_abilities_count] = HLP_MERGING;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Merging);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)item_power_icons_seg[18];
+            specials_list->helps[specials_index] = HLP_MERGING;
+            specials_index++;
         }
     }
     /*
@@ -1794,11 +1755,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ; BUG: this should be checked in the unit type to avoid double display for the item power
         if((global_battle_unit->Move_Flags & MV_TELEPORT) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Teleporting);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_TELEPORTING];
-            specials_list->helps[special_abilities_count] = HLP_TELEPORTING;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Teleporting);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_TELEPORTING];
+            specials_list->helps[specials_index] = HLP_TELEPORTING;
+            specials_index++;
         }
     }
     /*
@@ -1816,27 +1777,27 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             ((global_battle_unit->Move_Flags & MV_MOUNTAINEER) != 0)
         )
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Pathfinding);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_PATHFINDING];
-            specials_list->helps[special_abilities_count] = HLP_PATHFINDING_Ab;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Pathfinding);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_PATHFINDING];
+            specials_list->helps[specials_index] = HLP_PATHFINDING_Ab;
+            specials_index++;
         }
         else if((global_battle_unit->Move_Flags & MV_FORESTER) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Mountaineer);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_MOUNTAINEER];
-            specials_list->helps[special_abilities_count] = HLP_MOUNTAINEER_Ab;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Mountaineer);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_MOUNTAINEER];
+            specials_list->helps[specials_index] = HLP_MOUNTAINEER_Ab;
+            specials_index++;
         }
         else if((global_battle_unit->Move_Flags & MV_MOUNTAINEER) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Forester);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_FORESTER];
-            specials_list->helps[special_abilities_count] = HLP_FORESTER_Ab;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Forester);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_FORESTER];
+            specials_list->helps[specials_index] = HLP_FORESTER_Ab;
+            specials_index++;
         }
     }
     /*
@@ -1851,15 +1812,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ s_BATTLE_UNIT.Abilities is just copied from s_UNIT_TYPE.Abilities ?
         // LargeShield, PlaneShift, WallCrusher, Healer, CreateOutpost, Invisibility, CreateUndead, LongRange, LandCorruption, MeldWithNode, NonCorporeal, WindWalking, Regeneration, Purify, Negate1stStrike
         // ¿ BUG: these should be taken from the unit type to avoid double display of abilities granted by spells ?
-        for(itr = 0; ((itr < 15) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 15) && (specials_index < 39)); itr++)
         {
             if((USW_Abilities[itr].bit_idx & global_battle_unit->Abilities) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_Abilities[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_Abilities[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_Abilities[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *USW_Abilities[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Abilities[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_Abilities[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -1877,7 +1838,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // "Creature Summoning"
         if((_unit_type_table[unit_type].Attribs_1 & (USA_SUMMON_DEMON_1 || USA_SUMMON_DEMON_2)) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_SummonDemons);
+            strcpy(specials_list->names[specials_index], cnst_SummonDemons);
             ability_value = 0;
             if((_unit_type_table[unit_type].Attribs_1 & USA_SUMMON_DEMON_2) != 0)
             {
@@ -1888,12 +1849,12 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 ability_value++;
             }
             itoa(ability_value, temp_string, 10);
-            strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-            strcat(specials_list->names[special_abilities_count], temp_string);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_SUMMON_DEMONS];
-            specials_list->helps[special_abilities_count] = HLP_SUMMON_DEMONS;
-            special_abilities_count++;
+            strcat(specials_list->names[specials_index], cnst_Space_3);
+            strcat(specials_list->names[specials_index], temp_string);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_SUMMON_DEMONS];
+            specials_list->helps[specials_index] = HLP_SUMMON_DEMONS;
+            specials_index++;
         }
     }
     /*
@@ -1908,32 +1869,32 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG? does not have the record limit check from above ?
         if((_unit_type_table[unit_type].Attribs_1 & (USA_CASTER_20 || USA_CASTER_40)) != 0)  /* (Sum_Demon_1 || Sum_Demon_2) */
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Caster);
-            strcat(specials_list->names[special_abilities_count], cnst_Space_3);
+            strcpy(specials_list->names[specials_index], cnst_Caster);
+            strcat(specials_list->names[specials_index], cnst_Space_3);
 
             if(global_battle_unit->mana_max > global_battle_unit->mana)
             {
                 ability_value = global_battle_unit->mana;
                 itoa(ability_value, temp_string, 10);
-                strcat(specials_list->names[special_abilities_count], temp_string);
-                strcat(specials_list->names[special_abilities_count], cnst_SpaceOpenBrace2);
+                strcat(specials_list->names[specials_index], temp_string);
+                strcat(specials_list->names[specials_index], cnst_SpaceOpenBrace2);
                 ability_value = global_battle_unit->mana_max;
                 itoa(ability_value, temp_string, 10);
-                strcat(specials_list->names[special_abilities_count], temp_string);
-                strcat(specials_list->names[special_abilities_count], cnst_ClosingBrace_3);
+                strcat(specials_list->names[specials_index], temp_string);
+                strcat(specials_list->names[specials_index], cnst_ClosingBrace_3);
             }
             else
             {
                 ability_value = global_battle_unit->mana_max;
                 itoa(ability_value, temp_string, 10);
-                strcat(specials_list->names[special_abilities_count], temp_string);
+                strcat(specials_list->names[specials_index], temp_string);
             }
-            strcat(specials_list->names[special_abilities_count], cnst_Space_mp);
+            strcat(specials_list->names[specials_index], cnst_Space_mp);
 
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_CASTER];
-            specials_list->helps[special_abilities_count] = HLP_CASTER;
-            special_abilities_count++;
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CASTER];
+            specials_list->helps[specials_index] = HLP_CASTER;
+            specials_index++;
         }
     }
     /*
@@ -1946,15 +1907,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     */
     {
         // Lucky, PoisonImmunity, FireImmunity, StoningImmunity, WeaponImmunity, MissileImmunity, IllusionsImm, ColdImmunity, MagicImmunity, DeathImmunity
-        for(itr = 0; ((itr < 10) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 10) && (specials_index < 39)); itr++)
         {
             if((USW_Attributes_1[itr].bit_idx & _unit_type_table[unit_type].Attribs_1) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_Attributes_1[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_Attributes_1[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_Attributes_1[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *USW_Attributes_1[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Attributes_1[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_Attributes_1[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -1968,15 +1929,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     */
     {
         // HealingSpell, FireBallSpell, DoomboltSpell, Immolation, CauseFearSpell, WebSpell, ResistanceToAll, HolyBonus
-        for(itr = 0; ((itr < 8) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 8) && (specials_index < 39)); itr++)
         {
             if((USW_Attributes_2[itr].bit_idx & _unit_type_table[unit_type].Attribs_2) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_Attributes_2[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_Attributes_2[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_Attributes_2[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *USW_Attributes_2[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Attributes_2[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_Attributes_2[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -1992,29 +1953,29 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG: Life Steal does not show its -Save modifier (neither do Destruction and Death Touch if fixed) ?
         // ¿ BUG: only considers universal attack flags - those that apply only to melee or ranged are ignored ?
         // ArmorPiercing, Poison, LifeSteal, AutomaticDmg, Destruction, Illusion, StoningTouch, DeathTouch, PowerDrain, DispelEvil
-        for(itr = 0; ((itr < 11) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 11) && (specials_index < 39)); itr++)
         {
             if((USW_ATK_Flags[itr].bit_idx & global_battle_unit->Attack_Flags) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_ATK_Flags[itr].name);
+                strcpy(specials_list->names[specials_index], *USW_ATK_Flags[itr].name);
                 if(USW_ATK_Flags[itr].bit_idx == Att_Poison)
                 {
                     ability_value = global_battle_unit->Poison_Strength;
                     itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
+                    strcat(specials_list->names[specials_index], cnst_Space_3);
+                    strcat(specials_list->names[specials_index], temp_string);
                 }
                 if(USW_ATK_Flags[itr].bit_idx == Att_StnTouch)
                 {
                     ability_value = global_battle_unit->Spec_Att_Attrib;
                     itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
+                    strcat(specials_list->names[specials_index], cnst_Space_3);
+                    strcat(specials_list->names[specials_index], temp_string);
                 }
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_ATK_Flags[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_ATK_Flags[itr].help_idx;
-                special_abilities_count++;
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_ATK_Flags[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_ATK_Flags[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -2030,11 +1991,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG: these should be taken from the unit type to avoid double display of chaos channels fire breath ?
         // ¿ BUG: Multi-Gaze shows the inverse modifier for its special damage gaze attacks ?
         // Thrown, FireBreath, Lightning, StoningGaze, DoomGaze, DeathGaze
-        for(itr = 0; ((itr < 6) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 6) && (specials_index < 39)); itr++)
         {
             if(global_battle_unit->ranged_type == USW_SR_Attacks[itr].Ranged_Type)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_SR_Attacks[itr].name);
+                strcpy(specials_list->names[specials_index], *USW_SR_Attacks[itr].name);
                 ability_value = global_battle_unit->ranged;
                 if(
                     (USW_SR_Attacks[itr].Ranged_Type == srat_StoneGaze)
@@ -2045,35 +2006,35 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                     ability_value = global_battle_unit->Spec_Att_Attrib;
                 }
                 itoa(ability_value, temp_string, 10);
-                strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-                strcat(specials_list->names[special_abilities_count], temp_string);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_SR_Attacks[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_ATK_Flags[itr].help_idx;
-                special_abilities_count++;
+                strcat(specials_list->names[specials_index], cnst_Space_3);
+                strcat(specials_list->names[specials_index], temp_string);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_ATK_Flags[itr].help_idx;
+                specials_index++;
 
                 // just added srat_MultiGaze (104), now add both srat_StoneGaze (103) and srat_DeathGaze (105)
                 if(USW_SR_Attacks[itr].Ranged_Type == srat_MultiGaze)
                 {
-                    strcpy(specials_list->names[special_abilities_count], *USW_SR_Attacks[(itr + 1)].name);
+                    strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr + 1)].name);
                     ability_value = global_battle_unit->Spec_Att_Attrib;
                     itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
-                    specials_list->flags[special_abilities_count] = -1;
-                    specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr + 1)].icon_idx];
-                    specials_list->helps[special_abilities_count] = USW_ATK_Flags[(itr + 1)].help_idx;
-                    special_abilities_count++;
+                    strcat(specials_list->names[specials_index], cnst_Space_3);
+                    strcat(specials_list->names[specials_index], temp_string);
+                    specials_list->flags[specials_index] = -1;
+                    specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr + 1)].icon_idx];
+                    specials_list->helps[specials_index] = USW_ATK_Flags[(itr + 1)].help_idx;
+                    specials_index++;
 
-                    strcpy(specials_list->names[special_abilities_count], *USW_SR_Attacks[(itr - 1)].name);
+                    strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr - 1)].name);
                     ability_value = global_battle_unit->Spec_Att_Attrib;
                     itoa(ability_value, temp_string, 10);
-                    strcat(specials_list->names[special_abilities_count], cnst_Space_3);
-                    strcat(specials_list->names[special_abilities_count], temp_string);
-                    specials_list->flags[special_abilities_count] = -1;
-                    specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr - 1)].icon_idx];
-                    specials_list->helps[special_abilities_count] = USW_ATK_Flags[(itr - 1)].help_idx;
-                    special_abilities_count++;
+                    strcat(specials_list->names[specials_index], cnst_Space_3);
+                    strcat(specials_list->names[specials_index], temp_string);
+                    specials_list->flags[specials_index] = -1;
+                    specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr - 1)].icon_idx];
+                    specials_list->helps[specials_index] = USW_ATK_Flags[(itr - 1)].help_idx;
+                    specials_index++;
                 }
             }
         }
@@ -2087,15 +2048,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         BEGIN:  Battle Unit Combat Effects
     */
     {
-        for(itr = 0; ((itr < 15) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 15) && (specials_index < 39)); itr++)
         {
             if((global_battle_unit->Combat_Effects & USW_Combat_FX[itr].CEff_Flags) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *USW_Combat_FX[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[USW_Combat_FX[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = USW_Combat_FX[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *USW_Combat_FX[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Combat_FX[itr].icon_idx];
+                specials_list->helps[specials_index] = USW_Combat_FX[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -2109,15 +2070,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     */
     {
         Unit_Mutations = _UNITS[unit_idx].mutations;
-        for(itr = 0; ((itr < 3) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 3) && (specials_index < 39)); itr++)
         {
             if((_unit_mutation_data[itr].flag & Unit_Mutations) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *_unit_mutation_data[itr].name);
-                specials_list->flags[special_abilities_count] = -1;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[_unit_mutation_data[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = _unit_mutation_data[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *_unit_mutation_data[itr].name);
+                specials_list->flags[specials_index] = -1;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[_unit_mutation_data[itr].icon_idx];
+                specials_list->helps[specials_index] = _unit_mutation_data[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -2132,11 +2093,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         Unit_Mutations = _UNITS[unit_idx].mutations;
         if((Unit_Mutations & UM_UNDEAD) != 0)
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Undead);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_UNDEAD];
-            specials_list->helps[special_abilities_count] = HLP_UNDEAD;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Undead);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_UNDEAD];
+            specials_list->helps[specials_index] = HLP_UNDEAD;
+            specials_index++;
         }
     }
     /*
@@ -2155,11 +2116,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             ((Unit_Mutations & C_STASISLINGER) != 0)
         )
         {
-            strcpy(specials_list->names[special_abilities_count], cnst_Stasis);
-            specials_list->flags[special_abilities_count] = -1;
-            specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[SPECIAL_ICON_STASIS];
-            specials_list->helps[special_abilities_count] = HLP_STASIS;
-            special_abilities_count++;
+            strcpy(specials_list->names[specials_index], cnst_Stasis);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_STASIS];
+            specials_list->helps[specials_index] = HLP_STASIS;
+            specials_index++;
         }
     }
     /*
@@ -2173,15 +2134,15 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     {
         unit_enchantments = _UNITS[unit_idx].enchantments;
 
-        for(itr = 0; ((itr < 32) && (special_abilities_count < 39)); itr++)
+        for(itr = 0; ((itr < 32) && (specials_index < 39)); itr++)
         {
             if((unit_enchantments & _unit_enchantment_data[itr].flag) != 0)
             {
-                strcpy(specials_list->names[special_abilities_count], *_unit_enchantment_data[itr].name);
-                specials_list->flags[special_abilities_count] = _unit_enchantment_data[itr].flag;
-                specials_list->picts[special_abilities_count] = (SAMB_INT)special_seg[_unit_enchantment_data[itr].icon_idx];
-                specials_list->helps[special_abilities_count] = _unit_enchantment_data[itr].help_idx;
-                special_abilities_count++;
+                strcpy(specials_list->names[specials_index], *_unit_enchantment_data[itr].name);
+                specials_list->flags[specials_index] = _unit_enchantment_data[itr].flag;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[_unit_enchantment_data[itr].icon_idx];
+                specials_list->helps[specials_index] = _unit_enchantment_data[itr].help_idx;
+                specials_index++;
             }
         }
     }
@@ -2189,7 +2150,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         END:  Unit Enchantments
     */
 
-    *specials_count = special_abilities_count;
+    *specials_count = specials_index;
 
 }
 
@@ -2206,6 +2167,9 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     USW_Attributes_2
     USW_ATK_Flags
     USW_SR_Attacks
+
+    ¿ ~== Hero_Build_Specials_List() ?
+
 */
 void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_list, int16_t * specials_count)
 {
@@ -2213,7 +2177,7 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     int16_t value;
     char temp_buffer[10];
     int16_t itr;
-    int16_t list_index;  // SI
+    int16_t specials_index;  // SI
 
     strcpy(scout_rank[0], "");   // if > 1, so never used
     strcpy(scout_rank[1], "I");  // if > 1, so never used
@@ -2221,66 +2185,66 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     strcpy(scout_rank[3], "III");
     strcpy(scout_rank[4], "IV");
 
-    list_index = 0;
+    specials_index = 0;
 
     if(_unit_type_table[unit_type].Construction > 0)
     {
-        strcpy(specials_list->names[list_index], cnst_Construction);
-        specials_list->flags[list_index] = -1;
-        specials_list->picts[list_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CONSTRUCTION];
-        specials_list->helps[list_index] = HLP_CONSTRUCTION;
-        list_index++;
+        strcpy(specials_list->names[specials_index], cnst_Construction);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_CONSTRUCTION];
+        specials_list->helps[specials_index] = HLP_CONSTRUCTION;
+        specials_index++;
     }
 
     if(_unit_type_table[unit_type].Sight > 1)
     {
-        strcpy(specials_list->names[list_index], cnst_Scouting);
+        strcpy(specials_list->names[specials_index], cnst_Scouting);
         value = _unit_type_table[unit_type].Sight;
         strcpy(temp_buffer, scout_rank[value]);  // BUGBUG: should use index, not value  Sight == 1 is not 'Special', so 2 should be "I"
-        strcat(specials_list->names[list_index], cnst_Space_3);
-        strcat(specials_list->names[list_index], temp_buffer);
-        specials_list->flags[list_index] = -1;
-        specials_list->picts[list_index] = (SAMB_INT)special_seg[SPECIAL_ICON_SCOUTING];
-        specials_list->helps[list_index] = HLP_SCOUTING;
-        list_index++;
+        strcat(specials_list->names[specials_index], cnst_Space_3);
+        strcat(specials_list->names[specials_index], temp_buffer);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_SCOUTING];
+        specials_list->helps[specials_index] = HLP_SCOUTING;
+        specials_index++;
     }
 
     if((_unit_type_table[unit_type].Move_Flags & TELEPORTING) != 0)
     {
-        strcpy(specials_list->names[list_index], cnst_Teleporting);
-        specials_list->flags[list_index] = -1;
-        specials_list->picts[list_index] = (SAMB_INT)special_seg[SPECIAL_ICON_TELEPORTING];
-        specials_list->helps[list_index] = HLP_TELEPORTING;
-        list_index++;
+        strcpy(specials_list->names[specials_index], cnst_Teleporting);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_TELEPORTING];
+        specials_list->helps[specials_index] = HLP_TELEPORTING;
+        specials_index++;
     }
 
     if((_unit_type_table[unit_type].Move_Flags & FORESTER) != 0)
     {
-        strcpy(specials_list->names[list_index], cnst_Forester);
-        specials_list->flags[list_index] = -1;
-        specials_list->picts[list_index] = (SAMB_INT)special_seg[SPECIAL_ICON_FORESTER];
-        specials_list->helps[list_index] = HLP_FORESTER_Ab;
-        list_index++;
+        strcpy(specials_list->names[specials_index], cnst_Forester);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_FORESTER];
+        specials_list->helps[specials_index] = HLP_FORESTER_Ab;
+        specials_index++;
     }
 
     if((_unit_type_table[unit_type].Move_Flags & MOUNTAINEER) != 0)
     {
-        strcpy(specials_list->names[list_index], cnst_Mountaineer);
-        specials_list->flags[list_index] = -1;
-        specials_list->picts[list_index] = (SAMB_INT)special_seg[SPECIAL_ICON_MOUNTAINEER];
-        specials_list->helps[list_index] = HLP_MOUNTAINEER_Ab;
-        list_index++;
+        strcpy(specials_list->names[specials_index], cnst_Mountaineer);
+        specials_list->flags[specials_index] = -1;
+        specials_list->picts[specials_index] = (SAMB_INT)special_seg[SPECIAL_ICON_MOUNTAINEER];
+        specials_list->helps[specials_index] = HLP_MOUNTAINEER_Ab;
+        specials_index++;
     }
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < NUM_UNIT_ATTRIBUTES; itr++)
     {
         if((_unit_type_table[unit_type].Abilities & USW_Abilities[itr].bit_idx) != 0)
         {
-            strcpy(specials_list->names[list_index], *USW_Abilities[itr].name);
-            specials_list->flags[list_index] = -1;
-            specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_Abilities[itr].icon_idx];
-            specials_list->helps[list_index] = USW_Abilities[itr].help_idx;
-            list_index++;
+            strcpy(specials_list->names[specials_index], *USW_Abilities[itr].name);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Abilities[itr].icon_idx];
+            specials_list->helps[specials_index] = USW_Abilities[itr].help_idx;
+            specials_index++;
         }
     }
 
@@ -2288,11 +2252,11 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     {
         if((_unit_type_table[unit_type].Attribs_1 & USW_Attributes_1[itr].bit_idx) != 0)
         {
-            strcpy(specials_list->names[list_index], *USW_Attributes_1[itr].name);
-            specials_list->flags[list_index] = -1;
-            specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_Attributes_1[itr].icon_idx];
-            specials_list->helps[list_index] = USW_Attributes_1[itr].help_idx;
-            list_index++;
+            strcpy(specials_list->names[specials_index], *USW_Attributes_1[itr].name);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Attributes_1[itr].icon_idx];
+            specials_list->helps[specials_index] = USW_Attributes_1[itr].help_idx;
+            specials_index++;
         }
     }
 
@@ -2300,11 +2264,11 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     {
         if((_unit_type_table[unit_type].Attribs_2 & USW_Attributes_2[itr].bit_idx) != 0)
         {
-            strcpy(specials_list->names[list_index], *USW_Attributes_2[itr].name);
-            specials_list->flags[list_index] = -1;
-            specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_Attributes_2[itr].icon_idx];
-            specials_list->helps[list_index] = USW_Attributes_2[itr].help_idx;
-            list_index++;
+            strcpy(specials_list->names[specials_index], *USW_Attributes_2[itr].name);
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_Attributes_2[itr].icon_idx];
+            specials_list->helps[specials_index] = USW_Attributes_2[itr].help_idx;
+            specials_index++;
         }
     }
 
@@ -2312,36 +2276,36 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     {
         if((_unit_type_table[unit_type].Attack_Flags & USW_ATK_Flags[itr].bit_idx) != 0)
         {
-            strcpy(specials_list->names[list_index], *USW_ATK_Flags[itr].name);
+            strcpy(specials_list->names[specials_index], *USW_ATK_Flags[itr].name);
 
             if((USW_ATK_Flags[itr].bit_idx & Att_Poison) != 0)  /* Att_Poison */
             {
                 value = global_battle_unit->Poison_Strength;
                 itoa(value, temp_buffer, 10);
-                strcat(specials_list->names[list_index], " ");
-                strcat(specials_list->names[list_index], temp_buffer);
+                strcat(specials_list->names[specials_index], " ");
+                strcat(specials_list->names[specials_index], temp_buffer);
             }
 
             if((USW_ATK_Flags[itr].bit_idx & Att_StnTouch) != 0)  /* Att_StnTouch */
             {
                 value = global_battle_unit->Spec_Att_Attrib;
                 itoa(value, temp_buffer, 10);
-                strcat(specials_list->names[list_index], " ");
-                strcat(specials_list->names[list_index], temp_buffer);
+                strcat(specials_list->names[specials_index], " ");
+                strcat(specials_list->names[specials_index], temp_buffer);
             }
 
-            specials_list->flags[list_index] = -1;
-            specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_ATK_Flags[itr].icon_idx];
-            specials_list->helps[list_index] = USW_ATK_Flags[itr].help_idx;
-            list_index++;
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_ATK_Flags[itr].icon_idx];
+            specials_list->helps[specials_index] = USW_ATK_Flags[itr].help_idx;
+            specials_index++;
         }
     }
 
-    for(itr = 0; ((itr < 6) && (list_index < 39)); itr++)
+    for(itr = 0; ((itr < 6) && (specials_index < 39)); itr++)
     {
         if(global_battle_unit->ranged_type == USW_SR_Attacks[itr].Ranged_Type)
         {
-            strcpy(specials_list->names[list_index], *USW_SR_Attacks[itr].name);
+            strcpy(specials_list->names[specials_index], *USW_SR_Attacks[itr].name);
 
             value = global_battle_unit->ranged;
 
@@ -2355,40 +2319,40 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
             }
 
             itoa(value, temp_buffer, 10);
-            strcat(specials_list->names[list_index], " ");
-            strcat(specials_list->names[list_index], temp_buffer);
+            strcat(specials_list->names[specials_index], " ");
+            strcat(specials_list->names[specials_index], temp_buffer);
 
-            specials_list->flags[list_index] = -1;
-            specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_SR_Attacks[itr].icon_idx];
-            specials_list->helps[list_index] = USW_SR_Attacks[itr].help_idx;
-            list_index++;
+            specials_list->flags[specials_index] = -1;
+            specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[itr].icon_idx];
+            specials_list->helps[specials_index] = USW_SR_Attacks[itr].help_idx;
+            specials_index++;
 
             if(USW_SR_Attacks[itr].Ranged_Type == srat_MultiGaze)
             {
-                strcpy(specials_list->names[list_index], *USW_SR_Attacks[(itr + 1)].name);
+                strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr + 1)].name);
                 value = global_battle_unit->Spec_Att_Attrib;
                 itoa(value, temp_buffer, 10);
-                strcat(specials_list->names[list_index], " ");
-                strcat(specials_list->names[list_index], temp_buffer);
-                specials_list->flags[list_index] = -1;
-                specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr + 1)].icon_idx];
-                specials_list->helps[list_index] = USW_SR_Attacks[(itr + 1)].help_idx;
-                list_index++;
+                strcat(specials_list->names[specials_index], " ");
+                strcat(specials_list->names[specials_index], temp_buffer);
+                specials_list->flags[specials_index] = ST_UNDEFINED;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr + 1)].icon_idx];
+                specials_list->helps[specials_index] = USW_SR_Attacks[(itr + 1)].help_idx;
+                specials_index++;
 
-                strcpy(specials_list->names[list_index], *USW_SR_Attacks[(itr - 1)].name);
+                strcpy(specials_list->names[specials_index], *USW_SR_Attacks[(itr - 1)].name);
                 value = global_battle_unit->Spec_Att_Attrib;
                 itoa(value, temp_buffer, 10);
-                strcat(specials_list->names[list_index], " ");
-                strcat(specials_list->names[list_index], temp_buffer);
-                specials_list->flags[list_index] = -1;
-                specials_list->picts[list_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr - 1)].icon_idx];
-                specials_list->helps[list_index] = USW_SR_Attacks[(itr - 1)].help_idx;
-                list_index++;
+                strcat(specials_list->names[specials_index], " ");
+                strcat(specials_list->names[specials_index], temp_buffer);
+                specials_list->flags[specials_index] = ST_UNDEFINED;
+                specials_list->picts[specials_index] = (SAMB_INT)special_seg[USW_SR_Attacks[(itr - 1)].icon_idx];
+                specials_list->helps[specials_index] = USW_SR_Attacks[(itr - 1)].help_idx;
+                specials_index++;
             }
         }
     }
 
-    *specials_count = list_index;
+    *specials_count = specials_index;
 
 }
 

@@ -196,7 +196,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 // WIZ_ProcessGlobals()
 
 // WZD o140p25
-// IDK_Unit_XP_sC6BCF()
+void Do_All_Units_XP_Check_(void);
 
 // WZD o140p26
 void Cool_Off_Volcanoes(void);

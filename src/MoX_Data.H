@@ -1474,84 +1474,92 @@ struct s_UNIT
 #pragma pack(2)
 struct s_BATTLE_UNIT
 {
-    /* 0x00 */  int8_t melee;
-    /* 0x01 */  int8_t ranged;
-    /* 0x02 */  int8_t ranged_type;
-    /* 0x03 */  int8_t ammo;
-    /* 0x04 */  int8_t tohit;
-    /* 0x05 */  int8_t defense;
-    /* 0x06 */  int8_t resist;
-    /* 0x07 */  int8_t movement_points;
-    /* 0x08 */  int16_t cost;
-    /* 0x0A */  int8_t upkeep;
-    /* 0x0B */  int8_t race;                                // ; enum Race_Code
-    /* 0x0C */  int8_t Unused_0Ch;      // reqd_bldg_1 & hero_portrait
-    /* 0x0D */  int8_t Cur_Figures;     // reqd_bldg_2 & hero_type
-    /* 0x0E */  uint64_t Fig_IMG_Index;  // SAMB_ptr pict_seg
-    /* 0x10 */  int8_t hits;
-    /* 0x11 */  int8_t scout_range;
-    /* 0x12 */  int8_t carry_capacity;
-    /* 0x13 */  int8_t Max_Figures;
-    /* 0x14 */  int8_t Construction;
-    /* 0x15 */  int8_t Spec_Att_Attrib;
-    /* 0x16 */  uint16_t Move_Flags;                          // ; enum MOVEFLAGS
-    /* 0x17 */  // int8_t Unused_17h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x18 */  int16_t Attribs_1;                          // ; enum ATTRIB_1
-    /* 0x1A */  int8_t Attribs_2;
-    /* 0x1B */  int8_t Unused_1Bh;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x00 */  int8_t   melee;
+    /* 0x01 */  int8_t   ranged;
+    /* 0x02 */  int8_t   ranged_type;
+    /* 0x03 */  int8_t   ammo;
+    /* 0x04 */  int8_t   tohit;
+    /* 0x05 */  int8_t   defense;
+    /* 0x06 */  int8_t   resist;
+    /* 0x07 */  int8_t   movement_points;
+    /* 0x08 */  int16_t  cost;
+    /* 0x0A */  int8_t   upkeep;
+    /* 0x0B */  int8_t   race;                              // ; enum Race_Code
+    /* 0x0C */  /* int8_t Unused_0Ch; */                          // reqd_bldg_1 & hero_portrait
+    union {
+                int8_t   reqd_bldg_1;
+                int8_t   hero_portrait_idx;
+    };
+    /* 0x0D */  /* int8_t Cur_Figures; */                         // reqd_bldg_2 & hero_type
+    union {
+                int8_t   Cur_Figures;
+                int8_t   reqd_bldg_2;
+                int8_t   hero_type;
+    };
+    /* 0x0E */  uint64_t Fig_IMG_Index;                     // SAMB_ptr pict_seg
+    /* 0x10 */  int8_t   hits;
+    /* 0x11 */  int8_t   scout_range;
+    /* 0x12 */  int8_t   carry_capacity;
+    /* 0x13 */  int8_t   Max_Figures;
+    /* 0x14 */  int8_t   Construction;
+    /* 0x15 */  int8_t   Spec_Att_Attrib;
+    /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
+    /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x18 */  int16_t  Attribs_1;                         // ; enum ATTRIB_1
+    /* 0x1A */  int8_t   Attribs_2;
+    /* 0x1B */  int8_t   Unused_1Bh;                        // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
     /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t Attack_Flags;                      // ; enum ATK_FLAGS
-    /* 0x20 */  int16_t Sound;
-
-    /* 0x22 */  int16_t Combat_Effects;                     // ; enum Combat_Effect
-    /* 0x24 */  int8_t Melee_To_Hit;
-    /* 0x25 */  int8_t Ranged_To_Hit;
-    /* 0x26 */  int8_t To_Block;
-    /* 0x27 */  int8_t Weapon_Plus1;
-    /* 0x28 */  uint16_t Melee_ATK_Flags;                    // ; enum ATK_FLAGS
-    /* 0x2A */  uint16_t Ranged_ATK_Flags;                   // ; enum ATK_FLAGS
-    /* 0x2C */  uint32_t item_enchantments;                         // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
-    /* 0x30 */  int16_t unit_idx;
-    /* 0x32 */  int8_t Extra_Hits;
-    /* 0x33 */  int8_t Web_HP;
-    /* 0x34 */  int8_t Status;
-    /* 0x35 */  int8_t controller_idx;  // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
-    /* 0x36 */  uint8_t damage[3];  // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
-    /* 0x39 */  int8_t TopFig_Dmg;
-    /* 0x3A */  uint32_t enchantments;  // Unit Enchantments
-    /* 0x3E */  int8_t Suppression;
-    /* 0x3F */  int8_t mana_max;
-    /* 0x40 */  int8_t mana;
-    /* 0x41 */  int8_t Item_Charges;
-    /* 0x42 */  int8_t Poison_Strength;
-    /* 0x43 */  int8_t Target_BU;
-    /* 0x44 */  int16_t X_Pos;
-    /* 0x46 */  int16_t Y_Pos;
-    /* 0x48 */  int16_t Target_X;
-    /* 0x4A */  int16_t Target_Y;
-    /* 0x4C */  int16_t MoveStage;
-    /* 0x4E */  int16_t Atk_FigLoss;
-    /* 0x50 */  int16_t UE_Color;
-    /* 0x52 */  int16_t Moving;
-    /* 0x54 */  int16_t Action;
-    /* 0x56 */  int8_t Confusion_State;
-    /* 0x57 */  int8_t pad2B_57h;
-    /* 0x58 */  int16_t Blood_Amount;
+    /* 0x20 */  int16_t  Sound;
+    /* 0x22 */  int16_t  Combat_Effects;                    // ; enum Combat_Effect
+    /* 0x24 */  int8_t   Melee_To_Hit;
+    /* 0x25 */  int8_t   Ranged_To_Hit;
+    /* 0x26 */  int8_t   To_Block;
+    /* 0x27 */  int8_t   Weapon_Plus1;
+    /* 0x28 */  uint16_t Melee_ATK_Flags;                   // ; enum ATK_FLAGS
+    /* 0x2A */  uint16_t Ranged_ATK_Flags;                  // ; enum ATK_FLAGS
+    /* 0x2C */  uint32_t item_enchantments;                 // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
+    /* 0x30 */  int16_t  unit_idx;
+    /* 0x32 */  int8_t   Extra_Hits;
+    /* 0x33 */  int8_t   Web_HP;
+    /* 0x34 */  int8_t   Status;
+    /* 0x35 */  int8_t   controller_idx;                    // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
+    /* 0x36 */  uint8_t  damage[3];                         // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
+    /* 0x39 */  int8_t   TopFig_Dmg;
+    /* 0x3A */  uint32_t enchantments;                      // Unit Enchantments
+    /* 0x3E */  int8_t   Suppression;
+    /* 0x3F */  int8_t   mana_max;
+    /* 0x40 */  int8_t   mana;
+    /* 0x41 */  int8_t   Item_Charges;
+    /* 0x42 */  int8_t   Poison_Strength;
+    /* 0x43 */  int8_t   Target_BU;
+    /* 0x44 */  int16_t  X_Pos;
+    /* 0x46 */  int16_t  Y_Pos;
+    /* 0x48 */  int16_t  Target_X;
+    /* 0x4A */  int16_t  Target_Y;
+    /* 0x4C */  int16_t  MoveStage;
+    /* 0x4E */  int16_t  Atk_FigLoss;
+    /* 0x50 */  int16_t  UE_Color;
+    /* 0x52 */  int16_t  Moving;
+    /* 0x54 */  int16_t  Action;
+    /* 0x56 */  int8_t   Confusion_State;
+    /* 0x57 */  int8_t   pad2B_57h;
+    /* 0x58 */  int16_t  Blood_Amount;
     /* 0x5A */  int16_t  Unknown_5A;
-    /* 0x5C */  int16_t Always_Animate;
-    /* 0x5E */  int16_t Melee_Anim;
-    /* 0x60 */  int16_t Image_Effect;
-    /* 0x62 */  int16_t Move_Bob;
-    /* 0x64 */  int8_t Gold_Melee;
-    /* 0x65 */  int8_t Gold_Ranged;
-    /* 0x66 */  int8_t Gold_Defense;
-    /* 0x67 */  int8_t Gold_Resist;
-    /* 0x68 */  int8_t Gold_Hits;
-    /* 0x69 */  int8_t Grey_Melee;
-    /* 0x6A */  int8_t Grey_Ranged;
-    /* 0x6B */  int8_t Grey_Defense;
-    /* 0x6C */  int8_t Grey_Resist;
-    /* 0x6D */  int8_t Grey_Hits;
+    /* 0x5C */  int16_t  Always_Animate;
+    /* 0x5E */  int16_t  Melee_Anim;
+    /* 0x60 */  int16_t  Image_Effect;
+    /* 0x62 */  int16_t  Move_Bob;
+    /* 0x64 */  int8_t   Gold_Melee;
+    /* 0x65 */  int8_t   Gold_Ranged;
+    /* 0x66 */  int8_t   Gold_Defense;
+    /* 0x67 */  int8_t   Gold_Resist;
+    /* 0x68 */  int8_t   Gold_Hits;
+    /* 0x69 */  int8_t   Grey_Melee;
+    /* 0x6A */  int8_t   Grey_Ranged;
+    /* 0x6B */  int8_t   Grey_Defense;
+    /* 0x6C */  int8_t   Grey_Resist;
+    /* 0x6D */  int8_t   Grey_Hits;
     /* 0x6E */
 };
 #pragma pack(pop)
@@ -1763,10 +1771,10 @@ struct s_HELP_DATA
 
 struct s_UV_List
 {
- /* 00 */ char names[40][30];
- /* 1E */ int32_t flags[40];
- /* 22 */ SAMB_INT picts[40];  // -1 or pointer to ¿ ALWAYS pointer to picture from SPECIALS.LBX/SPECIALS2.LBX ?
- /* 24 */ int16_t helps[40];  // enum HELP_TXT
+ /* 00 */ char names[NUM_UNIT_VIEW_LIST_ITEMS][LEN_DESCRIPTION];
+ /* 1E */ int32_t flags[NUM_UNIT_VIEW_LIST_ITEMS];      // ¿ ?
+ /* 22 */ SAMB_INT picts[NUM_UNIT_VIEW_LIST_ITEMS];     // -1 or pointer to ¿ ALWAYS pointer to picture from SPECIALS.LBX/SPECIALS2.LBX ?
+ /* 24 */ int16_t helps[NUM_UNIT_VIEW_LIST_ITEMS];      // enum HELP_TXT
  /* 26 */
 };
 

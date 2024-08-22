@@ -1097,7 +1097,11 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
 
 // WZD o120p23
 // drake178: UNIT_GetLevel()
-int16_t Unit_Level(int16_t unit_idx)
+// MoO2  Module: ERICNET  Calc_Ship_Level_()
+/*
+
+*/
+int16_t Calc_Unit_Level(int16_t unit_idx)
 {
     int16_t itr;
     int16_t level;

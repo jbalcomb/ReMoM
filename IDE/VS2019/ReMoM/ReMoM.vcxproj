@@ -117,6 +117,7 @@
     <ClInclude Include="..\..\..\src\Lair.H" />
     <ClInclude Include="..\..\..\src\LOADER.H" />
     <ClInclude Include="..\..\..\src\LoadScr.H" />
+    <ClInclude Include="..\..\..\src\LVLMAKE.H" />
     <ClInclude Include="..\..\..\src\MagicScr.H" />
     <ClInclude Include="..\..\..\src\MainMenu.H" />
     <ClInclude Include="..\..\..\src\MainScr.H" />
@@ -208,6 +209,7 @@
     <ClCompile Include="..\..\..\src\Lair.C" />
     <ClCompile Include="..\..\..\src\LOADER.C" />
     <ClCompile Include="..\..\..\src\LoadScr.C" />
+    <ClCompile Include="..\..\..\src\LVLMAKE.C" />
     <ClCompile Include="..\..\..\src\MagicScr.C" />
     <ClCompile Include="..\..\..\src\MainMenu.C" />
     <ClCompile Include="..\..\..\src\MainScr.C" />

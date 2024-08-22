@@ -670,7 +670,7 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
                 else
                 {
                     Building_Index = BLD_AllowedByRace__WIP_TRUE(bldg_idx, itr);
-                    if(Building_Index != -1)
+                    if(Building_Index != ST_UNDEFINED)
                     {
                         allows_list[*allows_list_count] = Building_Index;
                         *allows_list_count += 1;
@@ -747,8 +747,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
         )
         {
             if(
-                (_unit_type_table[itr].reqd_bldg_1 != -1) &&
-                (_unit_type_table[itr].reqd_bldg_2 != -1)
+                (_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)
+                &&
+                (_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)
             )
             {
                 if(
@@ -952,6 +953,7 @@ int16_t City_N_Turns_To_Produce(int16_t production_cost, int16_t city_idx)
     {
         turns_to_produce = (production_cost / _CITIES[city_idx].production_units);
         
+        // TODO  ROUNDUP()
         if((production_cost % _CITIES[city_idx].production_units) != 0)
         {
             turns_to_produce += 1;

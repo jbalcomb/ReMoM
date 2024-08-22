@@ -46,7 +46,9 @@
 #define PLAYER_COUNT_MAX            6
 #define NUM_DIFFICULTY_LEVEL        5   /* Intro, Easy, Normal, Hard, Impossible */
 #define NUM_UNIT_ENCHANTMENTS      32
+#define NUM_UNIT_ATTRIBUTES        15
 #define NUM_UNIT_MUTATIONS          3
+#define NUM_UNIT_VIEW_LIST_ITEMS   40
 #define NUM_CITY_ENCHANTMENTS      26   // ¿ wha'hapen? CTY_EnchantsUpkeep() has 26, but s_CITY has 25 ? Includes Nightshade!
 #define NUM_OVERLAND_ENCHANTMENTS  24
 #define NUM_BUILDINGS              36

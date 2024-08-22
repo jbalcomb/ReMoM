@@ -31,8 +31,13 @@ extern struct s_UV_List * uv_specials_list_array;
 // int32_t uv_specials_fields_ability_flags[8];
 // int16_t uv_item_desc_fields[3];
 // int16_t uv_item_icon_fields[3];
-// int16_t uv_special_desc_fields[8];
-// int16_t uv_special_icon_fields[8];
+
+// dseg:C1C0
+extern int16_t uv_special_desc_fields[8];
+
+// dseg:C1D0
+extern int16_t uv_special_icon_fields[8];
+
 extern SAMB_ptr UV_item_icon_pict_seg;
 // int16_t uv_unit_idx;
 // int16_t uv_view_type;  // enum e_VIEW_TYPE

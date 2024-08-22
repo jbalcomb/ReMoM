@@ -10,6 +10,37 @@
 #ifndef UNITVIEW_H
 #define UNITVIEW_H
 
+
+
+// ¿ "UNICON" ?
+#define SPECIAL_ICON_TELEPORTING      0
+#define SPECIAL_ICON_FORESTER         1
+#define SPECIAL_ICON_MOUNTAINEER      2
+#define SPECIAL_ICON_PATHFINDING     20
+#define SPECIAL_ICON_CONSTRUCTION    36
+#define SPECIAL_ICON_SCOUTING        37
+#define SPECIAL_ICON_CASTER          55
+
+#define SPECIAL_ICON_WARPED_DEFENSE  62
+#define SPECIAL_ICON_WARPED_FLIGHT  63
+#define SPECIAL_ICON_WARPED_BREATH  64
+
+#define SPECIAL_ICON_STASIS         115
+#define SPECIAL_ICON_UNDEAD         120
+#define SPECIAL_ICON_QUIVER         136
+#define SPECIAL_ICON_SUMMON_DEMONS  139
+
+#define SPECIAL_ICON_LEVEL_MEDALS  102
+
+#define SPECIAL_ICON_THROWN             130
+#define SPECIAL_ICON_FIRE_BREATH        138
+#define SPECIAL_ICON_LIGHTNING_BREATH   137
+#define SPECIAL_ICON_STONING_GAZE        26
+#define SPECIAL_ICON_DOOM_GAZE          134
+#define SPECIAL_ICON_DEATH_GAZE         135
+
+
+
 enum e_VIEW_TYPE
 {
     uvt_Prod,
@@ -18,10 +49,31 @@ enum e_VIEW_TYPE
 };
 
 
+// drake178: USW_HeroAbl
+// sizeof:  08h  8d
+struct USW_HeroAbl
+{
+    /* 00 */  uint32_t flags;
+    /* 04 */  uint8_t icon_idx;
+    /* 05 */  // 2-byte alignment padding
+    /* 06 */  int16_t help_idx;
+    /* 08 */
+};
+
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+// WZD dseg:3A50
+extern struct USW_HeroAbl USW_HeroAbilities[23];
+
+// WZD dseg:3F52
+extern char * USW_HeroLevels[9];
+
 
 
 

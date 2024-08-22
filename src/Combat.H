@@ -534,7 +534,7 @@ int16_t Check_For_Winner(void);
 // CMB_DefenseRoll()
 
 // WZD o122p03
-// BU_ResistRoll()
+int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, int16_t magic_realm);
 
 // WZD o122p04
 // BU_GetEffectiveRES()

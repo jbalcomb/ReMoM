@@ -1,6 +1,41 @@
 
 
 
+
+
+UnitView.C  USW_Build_Effect_List()
+UnitView.C  Prod_Build_Specials_List()
+LVLMAKE.C   IDK_Hero_Populate_USW_List_Structure()
+¿ All equivalent ?
+...
+void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, int16_t * specials_count)
+void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_list, int16_t * specials_count)
+void IDK_Hero_Populate_USW_List_Structure(int16_t unit_idx, struct s_UV_List * specials_list, int16_t * specials_count)
+...
+struct s_UV_List * specials_list
+int16_t * specials_count
+uint32_t hero_abilities_flags;
+uint32_t hero_ability_flag;
+int16_t ability_value;
+...
+uv_specials_list_array = (struct s_UV_List *)Near_Allocate_Next(1520);
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ovr072 is the 'view' code module
 e.g., view_type gets passed to Unit_Statistics_Popup() and it sets the module-scoped variable
 

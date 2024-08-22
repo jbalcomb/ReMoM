@@ -387,6 +387,9 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define MAX_CITY_POPULATION_NEUTRAL_PLAYER 8  // NOTE: *should* be ((_difficulty + 1) * 2))  (({0,1,2,3} + 1) * 2) = {2,4,6,8}
 #define MAX_CITY_SIZE        5
 
+#define MAX_LEVEL_HERO       7
+
+
 
 // World (Grid) Dimensions, in Map Sqaures
 #define WORLD_WIDTH         60

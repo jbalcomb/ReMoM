@@ -2650,7 +2650,20 @@ int16_t Check_For_Winner(void)
 // CMB_DefenseRoll()
 
 // WZD o122p03
-// BU_ResistRoll()
+// drake178: BU_ResistRoll()
+/*
+; calculates the unit's effective Resistance score,
+; then makes a resistance check with the passed
+; modifier, returning 0 if the unit succeeded, or the
+; difference from the target number if it didn't
+*/
+int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, int16_t magic_realm)
+{
+
+    return 0;
+
+}
+
 
 // WZD o122p04
 // BU_GetEffectiveRES()

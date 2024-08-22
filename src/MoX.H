@@ -261,6 +261,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "Lair.H"
 #include "LOADER.H"
 #include "LoadScr.H"
+#include "LVLMAKE.H"
 #include "MagicScr.H"
 #include "MainScr.H"
 // TODO  #include "MainScr_Maps.H"

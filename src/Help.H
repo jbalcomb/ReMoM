@@ -1269,6 +1269,7 @@ void Set_Magic_Screen_Help_List(void);
 void Set_City_Screen_Help_List(void);
 
 // WZD o104p07
+void Set_Mirror_Screen_Help_List(void);
 
 // WZD o104p08
 
@@ -1289,7 +1290,8 @@ void Set_Unit_View_Help(int16_t uv_type);
 void Set_Enemy_City_Screen_Help_List(void);
 
 // WZD o104p15
-void Set_Mirror_Screen_Help_List(void);
+void Set_Level_Screen_Help_List(void);
+
 
 // WZD o104p16
 

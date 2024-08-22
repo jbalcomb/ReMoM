@@ -1845,7 +1845,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
         {
             strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
-            _UNITS[(_units - 1)].Level = Unit_Level((_units - 1));
+            _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
         }
         else
         {
