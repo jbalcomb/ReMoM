@@ -6,6 +6,7 @@
         ovr119
         ovr121
         ovr140
+        ovr141
 */
 
 #ifndef NEXTTURN_H
@@ -187,10 +188,10 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx);
 void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research);
 
 // WZD o140p22
-void Repair_Unit(int16_t unit_idx, int16_t fraction, int16_t flag);
+void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag);
 
 // WZD o140p23
-void Repair_All_Units(void);
+void Heal_All_Units(void);
 
 // WZD o140p24
 // WIZ_ProcessGlobals()
@@ -206,6 +207,16 @@ void Cool_Off_Volcanoes(void);
 
 // WZD o140p28
 // AI_GetAvgUnitCosts()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr140
+*/
+
+// WZD o141p01
+void Do_Autosave(void);
 
 
 

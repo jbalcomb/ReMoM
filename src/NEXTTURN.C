@@ -6,6 +6,7 @@
         ovr119
         ovr121
         ovr140
+        ovr141
 */
 
 #include "MoM.H"
@@ -60,7 +61,8 @@ SAMB_ptr UNIT_HealArray;
 
 // WZD dseg:CA74                                                 BEGIN:  ovr141 - Uninitialized Data
 
-// WZD dseg:CA74 00 00                                           IDK_autosave dw 0                       ; DATA XREF: GAME_AutoSave+5Dw
+// WZD dseg:CA74
+int16_t IDK_autosave;
 
 // WZD dseg:CA74                                                 END:  ovr141 - Uninitialized Data
 
@@ -574,7 +576,7 @@ void Next_Turn_Calc(void)
     Do_All_Units_XP_Check_();
 
 
-    Repair_All_Units();
+    Heal_All_Units();
 
 
 // MoO2
@@ -602,7 +604,9 @@ void Next_Turn_Calc(void)
     // TODO  OVL_EnableIncmBlink();
     
 
-// call    j_GAME_AutoSave                 ; if the current turn is divisible by 4, saves the game
+    Do_Autosave();
+
+// ; if the current turn is divisible by 4, saves the game
 //                                         ; into slot index 8 (SAVE9.GAM), the "continue" save
 //                                         ; that can not be loaded from the save/load screen, but
 //                                         ; is started automatically by wizards.exe
@@ -2806,7 +2810,7 @@ void Heal_All_Units(void)
                 ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
             )
             {
-                Repair_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+                Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
             }
 
             if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
@@ -2865,7 +2869,7 @@ void Heal_All_Units(void)
                         (UNIT_HealArray[troops[itr_troops]] != 66)  // TODO  DEDU  IDGI
                     )
                     {
-                        Repair_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+                        Heal_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
                     }
 
                 }
@@ -3094,3 +3098,44 @@ void Cool_Off_Volcanoes(void)
 
 // WZD o140p28
 // AI_GetAvgUnitCosts()
+
+
+
+/*
+    WIZARDS.EXE  ovr140
+*/
+
+// WZD o141p01
+// drake178:  GAME_AutoSave()
+// MoO2  Module: NEXTTURN  Do_Autosave_()
+/*
+; if the current turn is divisible by 4, saves the game
+; into slot index 8 (SAVE9.GAM), the "continue" save
+; that can not be loaded from the save/load screen, but
+; is started automatically by wizards.exe
+*/
+void Do_Autosave(void)
+{
+    struct s_mouse_list mouse_list[1];
+
+    if((_turn % 4) != 0)
+    {
+        return;
+    }
+
+    mouse_list[0].image_num = crsr_Hourglass;
+    mouse_list[0].center_offset = 0;
+    mouse_list[0].x1 = SCREEN_XMIN;
+    mouse_list[0].y1 = SCREEN_YMIN;
+    mouse_list[0].x2 = SCREEN_XMAX;
+    mouse_list[0].y2 = SCREEN_YMAX;
+
+    Set_Mouse_List(1, mouse_list);
+
+    Save_SAVE_GAM(8);
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    IDK_autosave = ST_FALSE;
+
+}
