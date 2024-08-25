@@ -187,10 +187,10 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx);
 void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research);
 
 // WZD o140p22
-// G_UNIT_OvlHealing()
+void Repair_Unit(int16_t unit_idx, int16_t fraction, int16_t flag);
 
 // WZD o140p23
-// IDK_Unit_Heal_sC6572()
+void Repair_All_Units(void);
 
 // WZD o140p24
 // WIZ_ProcessGlobals()

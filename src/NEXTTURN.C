@@ -42,6 +42,30 @@ char cnst_TooManyUnits[] = ". You must disband some units if you wish to build o
 
 
 
+// WZD dseg:CA66                                                 BEGIN: ovr140 - Uninitialized Data
+
+// WZD dseg:CA66
+// drake178: UNIT_HealArray
+SAMB_ptr UNIT_HealArray;
+
+// WZD dseg:CA6A 00 00                                           dw 0
+// WZD dseg:CA6C 00 00                                           dw 0
+// WZD dseg:CA6E 00 00                                           dw 0
+// WZD dseg:CA70 00 00                                           dw 0
+// WZD dseg:CA72 00 00                                           dw 0
+
+// WZD dseg:CA72                                                 END: ovr140 - Uninitialized Data
+
+
+
+// WZD dseg:CA74                                                 BEGIN:  ovr141 - Uninitialized Data
+
+// WZD dseg:CA74 00 00                                           IDK_autosave dw 0                       ; DATA XREF: GAME_AutoSave+5Dw
+
+// WZD dseg:CA74                                                 END:  ovr141 - Uninitialized Data
+
+
+
 /*
     WIZARDS.EXE  ovr060
 */
@@ -550,7 +574,7 @@ void Next_Turn_Calc(void)
     Do_All_Units_XP_Check_();
 
 
-// call    j_IDK_Unit_Heal_sC6572
+    Repair_All_Units();
 
 
 // MoO2
@@ -2640,10 +2664,222 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
 
 // WZD o140p22
-// G_UNIT_OvlHealing()
+// drake178: G_UNIT_OvlHealing()
+/*
+Page 74  (PDF Page 79)
+Unit Size and Healing
+Healing rates are 5% of total hit points (of the undamaged figure) per turn when units are outside of cities, 10% when garrisoned in cities, and 15% when garrisoned in cities that have an animist’s guild. 
+Finally, when units occupy map squares with Natural Healers (see Special Unit Abilities), they heal an additional 20% of their total hit points per game turn!
+*/
+/*
+
+OON XREF  Repair_All_Units()
+called in two different places
+    one with flag = ST_FALSE
+    one with flag = ST_TRUE
+
+*/
+void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag)
+{
+
+    int16_t hits_total;  // _DI_
+
+    hits_total = _unit_type_table[_UNITS[unit_idx].type].Figures * Unit_Hit_Points(unit_idx);
+
+    if(flag == ST_FALSE)
+    {
+
+        if(_UNITS[unit_idx].Damage < hits_total)
+        {
+
+            // ; BUG: damage over 127 can't be healed
+            if(_UNITS[unit_idx].Damage > 0)
+            {
+
+                while(hits_total > fraction)
+                {
+                    _UNITS[unit_idx].Damage -= 1;
+                    hits_total -= fraction;
+                }
+
+                if(Random(fraction) <= hits_total)
+                {
+                    _UNITS[unit_idx].Damage -= 1;
+                }
+
+                SETMIN(_UNITS[unit_idx].Damage, 0);
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  // 20%
+
+        // ; BUG: will always remove damage over 127
+        SETMIN(_UNITS[unit_idx].Damage, 0);
+
+        UNIT_HealArray[unit_idx] = 66;  // TODO  DEDU  IDGI
+
+    }
+
+}
+
 
 // WZD o140p23
-// IDK_Unit_Heal_sC6572()
+/*
+Page 74  (PDF Page 79)
+Unit Size and Healing
+Healing rates are 5% of total hit points (of the undamaged figure) per turn when units are outside of cities, 10% when garrisoned in cities, and 15% when garrisoned in cities that have an animist’s guild. 
+Finally, when units occupy map squares with Natural Healers (see Special Unit Abilities), they heal an additional 20% of their total hit points per game turn!
+*/
+/*
+
+*/
+void Heal_All_Units(void)
+{
+    int16_t troops[MAX_STACK];
+    int16_t var_16[MAX_STACK];
+    int16_t Human_Player_Units;
+    int16_t troop_count;
+    int16_t itr_troops;  // _SI_
+    int16_t itr;  // _DI_
+    int16_t itr_units;  // _DI_
+    int16_t itr_cities;  // _DI_
+
+    // DONT  UNIT_HealArray = SA_MK_FP0(Allocate_First_Block(_screen_seg, (4 + (_units_ / 16))););
+    UNIT_HealArray = Allocate_First_Block(_screen_seg, (4 + (_units / 16)));  // calculate allocation in 16-byte paragraphs/memory segments
+    
+    // ; set every unit to 1/20th per turn natural healing
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        UNIT_HealArray[itr_units] = 20;
+    }
+
+    // ; set the healing rate for units inside cities
+    // ; BUG: was supposed to mark removed any units that are
+    // ; on a tile that has a city with a non-matching owner,
+    // ; but the design is botched, as the function that
+    // ; returns the list of units does not actually include
+    // ; these
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        Army_At_City(itr_cities, &troop_count, &troops[0]);
+
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+
+            // BUGBUG  ; conflicting condition: will always jump  ; (the function filling the array won't return enemies)
+            if(_UNITS[troops[itr_troops]].owner_idx != _CITIES[itr_cities].owner_idx)
+            {
+                UNIT_MarkRemoved(troops[itr_troops], 2);
+            }
+        }
+
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            UNIT_HealArray[troops[itr_troops]] = 10;
+        }
+
+        if(_CITIES[itr_cities].bldg_status[ANIMISTS_GUILD] > bs_Replaced)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
+        {
+            UNIT_HealArray[troops[itr_troops]] = 6;
+        }
+    }
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(
+            (g_TimeStop_PlayerNum == 0)
+            ||
+            (_UNITS[itr_units].owner_idx == g_TimeStop_PlayerNum)
+        )
+        {
+
+            if(
+                (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+                &&
+                ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
+            )
+            {
+                Repair_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+            }
+
+            if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
+            {
+
+                Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
+
+                if(troop_count > MAX_STACK)
+                {
+                    Human_Player_Units = ST_FALSE;
+
+                    // ; remove any neutral units, check if any of the rest belong to the human player
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+
+                        if(_UNITS[itr_troops].owner_idx == NEUTRAL_PLAYER_IDX)
+                        {
+                            UNIT_MarkRemoved(troops[itr_troops], 2);
+                        }
+
+                        if(_UNITS[itr_troops].owner_idx == HUMAN_PLAYER_IDX)
+                        {
+                            Human_Player_Units = ST_TRUE;
+                        }
+
+                    }
+
+                    if(Human_Player_Units == ST_TRUE)
+                    {
+                        // ; remove any units that don't belong to the human player
+                        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                        {
+
+                            if(_UNITS[itr_troops].owner_idx != HUMAN_PLAYER_IDX)
+                            {
+                                UNIT_MarkRemoved(troops[itr_troops], 2);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
+                    }
+
+                }
+
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+
+                    if(
+                        (_unit_type_table[_UNITS[itr_units].type].Race != rt_Death)
+                        &&
+                        ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
+                        &&
+                        (UNIT_HealArray[troops[itr_troops]] != 66)  // TODO  DEDU  IDGI
+                    )
+                    {
+                        Repair_Unit(itr_units, UNIT_HealArray[itr_units], ST_FALSE);
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+}
+
 
 // WZD o140p24
 // WIZ_ProcessGlobals()
@@ -2771,7 +3007,7 @@ void Do_All_Units_XP_Check_(void)
 
                     Highest_Armsmaster_XP = 0;
 
-                    Army_At_Square_1(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, troop_count, &troop_list[0]);
+                    Army_At_Square_1(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, &troop_count, &troop_list[0]);
 
                     Processed_Hero_List[itr_heroes] = ST_TRUE;
 
