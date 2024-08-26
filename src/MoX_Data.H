@@ -945,9 +945,9 @@ struct s_DIFFICULTY_MODIFIERS
 // sizeof:  06h  6d
 struct s_Astr_Data
 {
-    /* 00 */ int16_t Magic_Power;
-    /* 02 */ int16_t Spell_Research;
-    /* 04 */ int16_t Army_Strength;
+    /* 00 */ int16_t Magic_Power;       /* populated in Record_History(), by WIZ_Get_Astr_Power() */
+    /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr() */
+    /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch() */
 };
 
 // sizeof:  18h  24d
@@ -1100,37 +1100,37 @@ struct s_WIZARD
 
     /* 0076 */ struct s_OWNED_HERO Heroes[NUM_HEROES];  /* indexed by s_UNIT.hero_slot_idx */
     /* 011E */ uint16_t Unknown_11Eh;
-    /* 0120 */ int16_t Vault_Items[NUM_VAULT_ITEM_SLOTS];      /* ¿ index into _ITEMS ? YES */ /* referenced as Hero Slot Index #6 */ /* same data type as Heroes.Items[] */
+    /* 0120 */ int16_t  Vault_Items[NUM_VAULT_ITEM_SLOTS];  /* ¿ index into _ITEMS ? YES */ /* referenced as Hero Slot Index #6 */ /* same data type as Heroes.Items[] */
 
     /* 0128 */ struct s_WIZ_DIPL Dipl;
 
     /* 025A */ uint16_t Research_Left;
-    /* 025C */ uint16_t mana_reserve;  /*  */
-    /* 025E */ int32_t Casting_Skill;
-    /* 0262 */ uint16_t research_spell_idx;  // spell_idx of spell currently being researched
-    /* 0264 */ uint8_t Spells_Known[NUM_SPELLS];  // TODO should be [6][40] or some odd, equivalent struct
+    /* 025C */ uint16_t mana_reserve;       /*  */
+    /* 025E */ int32_t  Casting_Skill;
+    /* 0262 */ uint16_t research_spell_idx; /* spell_idx of spell currently being researched */
+    /* 0264 */ uint8_t  Spells_Known[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */
     /* 0354 */ uint16_t Defeated_Wizards;
-    /* 0356 */ uint16_t gold_reserve;  /*  */
+    /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;
-    /* 035A */ struct s_Astr_Data Astr;
-    /* 0360 */ uint16_t Pop_div_10k;
-    /* 0362 */ uint8_t Historian[288];
+    /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */
+    /* 0360 */ uint16_t Pop_div_10k;        /* ¿ mini-pops ?  onlu used for history? */
+    /* 0362 */ uint8_t  Historian[288];     /* ¿ Wizard's Power ? */
     /* 0482 */ // struct s_GLOBALE Globals;
-               uint8_t Globals[NUM_OVERLAND_ENCHANTMENTS];
+               uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t Magic_Strategy;
     /* 049C */ uint16_t Unknown_49Ch;
     /* 049E */ uint16_t Hostility[NUM_PLAYERS];
     /* 04AA */ uint16_t War_Reeval;
     /* 04AC */ uint16_t MgcStrat_Reeval;
     /* 04AE */ uint16_t Pow_Redist_Wait;
-    /* 04B0 */ uint8_t Peace_Counters[NUM_PLAYERS];
-    /* 04B6 */ uint8_t field_4B6;
-    /* 04B7 */ uint8_t field_4B7;
+    /* 04B0 */ uint8_t  Peace_Counters[NUM_PLAYERS];
+    /* 04B6 */ uint8_t  field_4B6;
+    /* 04B7 */ uint8_t  field_4B7;
     /* 04B8 */ uint16_t field_4B8;
     /* 04BA */ uint16_t OVL_TargetWiz;
-    /* 04BC */ uint8_t field_4BC;
-    /* 04BD */ uint8_t field_4BD;
-    /* 04BE */ uint8_t Unknown_4BEh[6];
+    /* 04BC */ uint8_t  field_4BC;
+    /* 04BD */ uint8_t  field_4BD;
+    /* 04BE */ uint8_t  Unknown_4BEh[6];
     /* 04C4 */ uint16_t Prim_Realm;
     /* 04C6 */ uint16_t Sec_Realm;
 };

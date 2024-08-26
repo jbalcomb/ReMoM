@@ -583,12 +583,13 @@ void Next_Turn_Calc(void)
 // Module: BILL
 //     code (0 bytes) Record_History_
 //     Address: 01:0010208A
-// call    j_WIZ_RecordHistory             ; calculates and records the astrologer/historian data
-//                                         ; Power = power base - 10
-//                                         ; Army Strength = (gold upkeep + mana upkeep) / 5
-//                                         ; Research = sum of known in-realm indexes / 10
-//                                         ; Historian = (above 3) + ((cities pop_K sum) / 10)
-//                                         ; Astrologer's max scale is 200, Historian's is 160
+    Record_History();
+// ; calculates and records the astrologer/historian data
+// ; Power = power base - 10
+// ; Army Strength = (gold upkeep + mana upkeep) / 5
+// ; Research = sum of known in-realm indexes / 10
+// ; Historian = (above 3) + ((cities pop_K sum) / 10)
+// ; Astrologer's max scale is 200, Historian's is 160
 
 
 

@@ -5,6 +5,44 @@
 
 ¿ ((#3 * #2) % #1) ?
 
+LXMUL@()
+LDIV@()
+
+
+
+
+
+WIZ_RecordHistory()
+loc_C9936:
+mov     ax, [bp+max_curr_magic]
+cwd
+push    dx
+push    ax
+mov     ax, _SI_itr
+mov     dx, size s_WIZARD
+imul    dx
+mov     bx, ax
+mov     ax, [_players.Astr.Magic_Power+bx]
+cwd
+push    ax
+push    dx
+xor     dx, dx
+mov     ax, 200
+pop     cx
+pop     bx
+call    LXMUL@
+push    dx
+push    ax
+call    LDIV@
+push    ax
+mov     ax, _SI_itr
+mov     dx, size s_WIZARD
+imul    dx
+mov     bx, ax
+pop     ax
+mov     [_players.Astr.Magic_Power+bx], ax
+
+_players[itr_players].Astr.Magic_Power = (max_curr_magic * _players[itr_players].Astr.Magic_Power) / 200);
 
 
 

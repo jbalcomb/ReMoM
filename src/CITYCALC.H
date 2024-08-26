@@ -200,19 +200,19 @@ int16_t City_Minimum_Farmers(int16_t city_idx);
 void All_Outpost_Population_Growth(void);
 
 // WZD o142p22
-// WIZ_RecordHistory()
+void Record_History(void);
 
 // WZD o142p23
-// WIZ_Get_Astr_Power()
+int16_t WIZ_Get_Astr_Power__STUB(int16_t player_idx);
 
 // WZD o142p24
-// WIZ_Get_Astr_ArmyStr()
+int16_t WIZ_Get_Astr_ArmyStr__STUB(int16_t player_idx);
 
 // WZD o142p25
-// WIZ_Get_Astr_Resrch()
+int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx);
 
 // WZD o142p26
-// WIZ_Get_Nation_Size()
+int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx);
 
 // WZD o142p27
 // drake178: CTY_GetRebelCount()
