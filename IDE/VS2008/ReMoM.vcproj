@@ -183,11 +183,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ALLOC.C"
+				RelativePath="..\..\src\AIBUILD.C"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Allocate.C"
+				RelativePath="..\..\src\AIDATA.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\AIDUDES.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ALLOC.C"
 				>
 			</File>
 			<File
@@ -219,19 +227,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Combat.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\DIPLOMAC.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Explore.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\Fields.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\FLIC_Draw.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\FLIC_Draw2.C"
 				>
 			</File>
 			<File
@@ -251,11 +259,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\HIRE.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Init.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\Input.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemMake.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Items.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemScrn.C"
 				>
 			</File>
 			<File
@@ -271,15 +295,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\LBX_Load.C"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\LOADER.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\LoadScr.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\LVLMAKE.C"
 				>
 			</File>
 			<File
@@ -303,7 +327,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoM.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Mouse.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MovePath.C"
 				>
 			</File>
 			<File
@@ -323,7 +355,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX_DBG.C"
+				RelativePath="..\..\src\MoX_DOS.C"
 				>
 			</File>
 			<File
@@ -336,10 +368,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\MoX_RNG.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_SET.C"
 				>
 			</File>
 			<File
@@ -359,19 +387,11 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Outpost.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\paragrph.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\PNG_Draw.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\PNG_Load.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\PoC_PFL.C"
 				>
 			</File>
 			<File
@@ -383,7 +403,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SAVETEST.C"
+				RelativePath="..\..\src\Roads.C"
 				>
 			</File>
 			<File
@@ -403,6 +423,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Settings.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\SETTLE.C"
 				>
 			</File>
@@ -415,6 +439,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Summary.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Terrain.C"
 				>
 			</File>
@@ -423,15 +451,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\TST_GameData.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\TST_GameState.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\TST_SAVE_GAM.C"
+				RelativePath="..\..\src\UnitList.C"
 				>
 			</File>
 			<File
@@ -503,7 +523,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\WIZVIEW.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\WZD_o059.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\WZD_o143.C"
 				>
 			</File>
 			<File
@@ -518,6 +546,18 @@
 			>
 			<File
 				RelativePath="..\..\src\AdvsrScr.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\AIBUILD.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\AIDATA.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\AIDUDES.H"
 				>
 			</File>
 			<File
@@ -553,7 +593,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Combat.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\DebugSrc.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\DIPLOMAC.H"
 				>
 			</File>
 			<File
@@ -593,11 +641,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\HIRE.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Init.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\Input.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemMake.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Items.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ItemScrn.H"
 				>
 			</File>
 			<File
@@ -622,6 +686,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\LoadScr.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\LVLMAKE.H"
 				>
 			</File>
 			<File
@@ -661,6 +729,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MovePath.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX.H"
 				>
 			</File>
@@ -690,6 +762,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\MoX_DIR.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX_DOS.H"
 				>
 			</File>
 			<File
@@ -729,6 +805,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Outpost.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\paragrph.H"
 				>
 			</File>
@@ -761,6 +841,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Roads.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\SBookScr.H"
 				>
 			</File>
@@ -773,6 +857,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Settings.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\SETTLE.H"
 				>
 			</File>
@@ -782,6 +870,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Spellbook.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Summary.H"
 				>
 			</File>
 			<File
@@ -802,6 +894,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\TST_GameState.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\UnitList.H"
 				>
 			</File>
 			<File
@@ -837,7 +933,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\WIZVIEW.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\WZD_o059.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\WZD_o143.H"
 				>
 			</File>
 		</Filter>
@@ -855,14 +959,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\stu\STU_BMP.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\stu\STU_BMP.H"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\stu\STU_DBG.C"
 				>
 			</File>
@@ -872,10 +968,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\stu\STU_DEF.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\stu\STU_TST.C"
 				>
 			</File>
 			<File
@@ -904,6 +996,62 @@
 			</File>
 			<File
 				RelativePath="..\..\3PL\lodepng\lodepng.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="MoX"
+			>
+			<File
+				RelativePath="..\..\src\MoX\Allocate.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Allocate.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Exit.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Exit.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\FLIC_Draw.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\FLIC_Draw.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\LBX_Load.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\LBX_Load.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_BASE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_BITS.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_DBG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_DBG.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_TYPE.H"
 				>
 			</File>
 		</Filter>

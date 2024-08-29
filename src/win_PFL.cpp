@@ -1,6 +1,5 @@
 #include <Windows.h>
 #include "windowsx.h"   /* GET_X_LPARAM(), GET_Y_LPARAM() */
-#include <timeapi.h>    /* timeBeginPeriod() */
 #include <stdint.h>
 
 #include "win_PFL.hpp"
@@ -610,7 +609,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             GetCursorPos(&ptMouse);
             ScreenToClient(g_Window, &ptMouse);
             // DELETE  Update_Mouse_Position((int16_t)ptMouse.x, (int16_t)ptMouse.y);
-            User_Mouse_Handler(0b00000000, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
+            User_Mouse_Handler(0 /*0b00000000*/, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
 
 
@@ -662,7 +661,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptMouse;
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
-            User_Mouse_Handler(0b00000001, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
+            User_Mouse_Handler(1 /*0b00000001*/, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
         case WM_RBUTTONDOWN:
         {
@@ -670,7 +669,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptMouse;
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
-            User_Mouse_Handler(0b00000010, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
+            User_Mouse_Handler(2 /*0b00000010*/, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
         } break;
 
 

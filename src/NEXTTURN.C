@@ -2941,14 +2941,14 @@ void Do_All_Units_XP_Check_(void)
 
             if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
             {
-                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b01111111);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?
             }
         }
 
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
             _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
-            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b10111111);  // ¿ xor     al, C_STASISINIT  01000000b ?
+            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0xBF /*0b10111111*/);  // ¿ xor     al, C_STASISINIT  01000000b ?
         }
 
         if(
@@ -3018,12 +3018,12 @@ void Do_All_Units_XP_Check_(void)
 
                     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                     {
+						int idxHeroSlot = _UNITS[troop_list[itr_troops]].Hero_Slot;	// ; BUG: this can also be -1!
                         XP_Gain = 0;
 
-                        Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
-
-                        if(_UNITS[troop_list[itr_troops]].Hero_Slot > -1)
+                        if(idxHeroSlot > -1)
                         {
+							Processed_Hero_List[idxHeroSlot] = ST_TRUE;
 
                             if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER) != 0)
                             {
