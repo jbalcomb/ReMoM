@@ -574,7 +574,7 @@ MoO2
                         else  /* input_field_active == ST_TRUE */
                         {
                             // ¿ UNREACHABLE ?
-                            __debugbreak();
+                            MOX_DBG_BREAK;
                             if(active_input_field_number == alt_field_num)
                             {
                                 itr_continuous_string = 0;
@@ -603,7 +603,7 @@ MoO2
                     {
                         if(input_field_active != 0)
                         {
-                            __debugbreak();
+                            MOX_DBG_BREAK;
                             // UNREACHABLE  if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
                             // UNREACHABLE  {
                             // UNREACHABLE      itr_continuous_string = 0;
@@ -1590,7 +1590,7 @@ int16_t GUI_EditBoxControl(int16_t field_num)
     int16_t itr;  // _DI_
 
     // Where does this called from / through?
-    __debugbreak();
+    MOX_DBG_BREAK;
 
     Timeout_Counter = 4;
 

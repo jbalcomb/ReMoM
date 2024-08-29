@@ -42,7 +42,7 @@ void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player
     int16_t terrain_special;
 
 
-    __debugbreak();
+    MOX_DBG_BREAK;
 
 
     terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);

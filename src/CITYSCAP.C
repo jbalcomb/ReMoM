@@ -1665,7 +1665,7 @@ void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
 
     if(bldg_idx == 104)
     {
-        __debugbreak;
+        MOX_DBG_BREAK;
     }
 
     for(itr = 0; itr < 3; itr++)

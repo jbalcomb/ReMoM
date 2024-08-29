@@ -1056,7 +1056,7 @@ void City_Add_Fields_Buildings(void)
     {
         if(cityscape_bldgs[itr].bldg_idx == 104)
         {
-            __debugbreak;
+            MOX_DBG_BREAK;
         }
 
         x1 = cityscape_bldgs[itr].x1;

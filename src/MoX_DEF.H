@@ -7,7 +7,13 @@
 #define DLOG
 #endif
 
-
+#ifndef	MOX_DBG_BREAK
+	#ifdef	_DEBUG
+		#define	MOX_DBG_BREAK	__debugbreak
+	#else
+		#define	MOX_DBG_BREAK
+	#endif
+#endif
 
 #define VIDEO_MODE_MODE_Y
 // #define VIDEO_MODE_MODE_Y_2x

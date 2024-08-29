@@ -307,7 +307,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     if(Hire_Success == ST_FALSE)
     {
         GFX_Swap_Cities();
-        return;
+        return 0;
     }
 
     GAME_AssetCost = (_unit_type_table[unit_type_idx].Cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].Cost) / 4));

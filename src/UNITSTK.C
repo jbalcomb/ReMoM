@@ -399,7 +399,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
         if(_unit == 502)
         {
-            // __debugbreak();
+            // MOX_DBG_BREAK;
         }
 
         if(no_units_available == ST_TRUE)
@@ -1107,6 +1107,7 @@ int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[])
         return ST_TRUE;
     }
 
+	return ST_FALSE;
 }
 
 
@@ -1188,6 +1189,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
         }
     }
 
+	return ST_FALSE;
 }
 
 // WZD o61p13
