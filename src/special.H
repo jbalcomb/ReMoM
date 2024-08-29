@@ -40,7 +40,7 @@ int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16
 // UU_Tile_PlotLine()
 
 // WZD s23p05
-// TILE_PlotMapLine()
+int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_string_x, int8_t * path_string_y, int16_t length);
 
 
 

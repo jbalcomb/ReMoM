@@ -43,7 +43,7 @@ SAMB_ptr DBG_ORIG_TBL_MoveMaps_EMS;
 // WZD dseg:9CB0
 uint8_t * DBG_ORIG_TBL_Scouting;
 // WZD dseg:9CB4  
-uint8_t * DBG_ORIG_TBL_Terrain_Flags;
+uint8_t * DBG_ORIG__map_square_flags;
 // WZD dseg:9CB8  
 SAMB_ptr  DBG_ORIG_TBL_Terr_Specials;
 // WZD dseg:9CBC  
@@ -67,7 +67,7 @@ uint8_t * DBG_ORIG__world_maps;
 // WZD dseg:9EC2
 struct s_UNIT * DBG_ORIG__UNITS;
 // WZD dseg:9EC6
-SAMB_ptr DBG_ORIG_TBL_Hero_Names;
+struct s_INACTV_HERO * DBG_ORIG_TBL_Hero_Names;
 // WZD dseg:9ECA
 // struct s_WIZARD DBG_ORIG__players[6];
 

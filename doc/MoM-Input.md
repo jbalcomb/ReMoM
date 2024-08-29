@@ -66,7 +66,7 @@ so, maybe,
         if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; }
         else
         {
-            if(_global_esc == ST_FALSE) { while(MD_GetButtonStatus() = ST_RIGHTBUTTON){ GUI_1TickRedraw()} return ST_UNDEFINED; }
+            if(_global_esc == ST_FALSE) { while(MD_GetButtonStatus() = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; }
         }
     }
 
@@ -315,10 +315,113 @@ I don't think this plays.
 Why have the test for MD_GetClickRec1()?
 
 What about _global_esc?
-    ... ... ... if(_global_esc == ST_FALSE) while(MD_GetButtonStatus() == 2) { GUI_1TickRedraw(); }
+    ... ... ... if(_global_esc == ST_FALSE) while(MD_GetButtonStatus() == 2) { Quick_Call_Auto_Function(); }
         MD_GetClickRec1(); MD_Get_ClickRec2(); return ST_UNDEFINED;
 The code int the MD_GetClickRec1() branch has it following Check_Help_List() as well.
 Looks to be an &&|| that gets lands in a loop waiting for the right-click to end.
+
+
+
+
+
+### Interpret_Keyboard_Input()
+
+int16_t Interpret_Keyboard_Input(int16_t * field_num)
+
+returns character, inouts field_idx
+
+whole buncha something with multi-hotkey/alt-strings
+
+What's up with KD_prev_field_idx?
+WZD dseg:824C  KD_prev_field_idx dw 0
+1oom guy has it as "uiobj_kbd_alt_oi"
+
+KD_prev_field_idx
+
+multi_hotkey_active_field
+...holds a field_idx
+
+MoO2
+    if multi_hotkey_active_field
+    alpha_key = Get_Alt_Alpha_Key(character)
+    multihotkey_field_idx = Check_Multi_Hot_Key_Fields(alpha_key)
+
+¿ 1oom put the multihotkey Alt-Key check in uiobj_handle_kbd_find_alt() ?
+    mookey_t k = KBD_GET_KEY(key);
+    uint32_t kmod = KBD_GET_KEYMOD(key);
+    char c = uiobj_get_keychar(key);
+    ...
+    if ((p->type == 8) && KBD_MOD_ONLY_ALT(key) && (k == p->key))
+Yeah, because he used SDL keys, instead of hacking those back into ST keys.
+
+1st block
+    checks active multihotkey field and current hotkey character match
+2nd block
+
+
+#1
+(
+    p_fields[_SI_field_idx].hotkey != character
+    ||
+    (
+        p_fields[_SI_field_idx].hotkey == character
+        &&
+        p_fields[_SI_field_idx].type == ft_MultiHotKey
+    )
+)
+vs.
+#2
+(
+    (p_fields[_SI_field_idx].hotkey != character)
+    ||
+    (p_fields[_SI_field_idx].type == ft_MultiHotKey)
+)
+vs.
+#3
+!(
+    p_fields[_SI_field_idx].hotkey == character
+    &&
+    p_fields[_SI_field_idx].type != ft_MultiHotKey
+)
+
+#2
+    if hotkey != character
+        TRUE: jumps, doesn't even test the next condition
+        FALSE: means (hotkey == character), tests next condition
+    concern?
+        (hotkey == character) && (type != ft_MultiHotKey)
+        not possible, no concern
+
+#2 and #3 are logically equivalent?
+so, ... decision criteria?
+communicating intent?
+What are we looking for?
+Why would we want to match type == ft_MultiHotKey if hotkey != character?
+The immediate, subsequent re-check for (type == ft_MultiHotKey)
+  makes it feel like this test must not be conclusive on that condition?
+  So, it must not be #2?
+    Starts from (hotkey == character)...
+    Then only if also (type == ft_MultiHotKey)
+    Hence, Bail: (hotkey == character && type != ft_MultiHotkey)
+But, ...
+    it converts character to alt key, so it wanted hotkey != character
+
+Case 1: hotkey != character
+
+
+Case 2: hotkey == character && type == ft_MultiHotKey
+
+20240513
+I think I just finally got it.
+It should loop up the hotkey match...
+but, if the field is a ft_MultiHotKey, it checks the Alt-Key and breaks
+so, after the while loop, you have the field_idx of the field that matched the hotkey, whether it was a ft_MultiHotKey or not.
+The flags for first checking the current multi hotkey are to prioritize matching its next hotkey character over any other field that might have that same character as its hotkey.
+(feels terribly fragile)
+
+
+
+
 
 
 
@@ -545,7 +648,7 @@ Interpret_Mouse_Input()
           p_fields[field_num].type != ft_ContinuousStringInput
                GUI_MouseFocusCtrl = field_num
                Push_Field_Down(field_num, mouse_x, mouse_y)
-               GUI_1TickRedraw()
+               Quick_Call_Auto_Function()
 
 
 

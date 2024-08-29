@@ -13,6 +13,31 @@
 
 
 
+
+#define SZ_FONT_HDR                             1946
+
+#define COLOR_SET_COUNT                           16
+#define COLOR_SET_HIGHLIGHT                        1
+#define COLOR_SET_SPECIAL                          2
+
+#define FONT_HDR_POS_CURRENT_COLORS             0x00
+#define FONT_HDR_POS_HEIGHT                     0x10
+#define FONT_HDR_POS_SHADOW_FLAG                0x12
+#define FONT_HDR_POS_CURRENT_COLOR_SET          0x13
+
+#define FONT_HDR_POS_COLOR_SETS_OFST            0x14
+#define FONT_HDR_POS_NORMAL_COLORS              0x14
+#define FONT_HDR_POS_HIGHLIGHT_COLORS           0x24
+#define FONT_HDR_POS_SPECIAL_COLORS             0x34
+
+#define FONT_HDR_POS_CURRENT_BASE_HEIGHT        0x44
+#define FONT_HDR_POS_CURRENT_VERTICAL_SPACING   0x46
+#define FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING 0x48
+
+#define FONT_HDR_POS_CURRENT_FONT_WIDTHS        0x4A
+
+
+
 #define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (p_Palette), (768 + (_palette_index_)) ) )
 
 
@@ -43,24 +68,24 @@ enum e_Font_Style
 enum e_Font_Shadow
 {
     e_Font_Shadow_None = 0,
-    e_Font_Shadow_Down = 1,
-    e_Font_Shadow_Up = 2,
-    e_Font_Shadow_Heavy = 3,
-    e_Font_Shadow_Outline = 4,
-    e_Font_Shadow_Outline_Heavy = 5    
+    e_Font_Shadow_Down = 1,          // bottom right
+    e_Font_Shadow_Up = 2,            // top left
+    e_Font_Shadow_Heavy = 3,         // 2x bottom right
+    e_Font_Shadow_Outline = 4,       // full
+    e_Font_Shadow_Outline_Heavy = 5  // full + bottom right
 };
 
 // 96 characters; ASCII: {32, ..., 126}
 
 struct s_FONT_HEADER
 {
-    /*  00 */ uint8_t  current_colors[16];
+    /*  00 */ uint8_t  current_colors[COLOR_SET_COUNT];
     /*  10 */ uint16_t height;
     /*  12 */ uint8_t  shadow_flag;  /* ¿ Set_Font_Style() does STOSW here ? */
-    /*  13 */ uint8_t  current_color_set;
-    /*  14 */ uint8_t  normal_colors[16];
-    /*  24 */ uint8_t  highlight_colors[16];
-    /*  34 */ uint8_t  special_colors[16];
+    /*  13 */ uint8_t  current_color_set;  /* {0: normal, 1: highlight, 2: special} */
+    /*  14 */ uint8_t  normal_colors[COLOR_SET_COUNT];
+    /*  24 */ uint8_t  highlight_colors[COLOR_SET_COUNT];
+    /*  34 */ uint8_t  special_colors[COLOR_SET_COUNT];
     /*  44 */ uint16_t current_base_height;
     /*  46 */ uint16_t current_vertical_spacing;
     /*  48 */ uint16_t current_horizontal_spacing;
@@ -74,26 +99,6 @@ struct s_FONT_HEADER
     /* 49A */ uint16_t data_offsets[768];   /* 8 * 96 * sizeof 2 */
     /* 79A */
 };
-
-#define SZ_FONT_HDR                             1946
-
-#define COLOR_SET_COUNT                           16
-
-#define FONT_HDR_POS_CURRENT_COLORS             0x00
-#define FONT_HDR_POS_HEIGHT                     0x10
-#define FONT_HDR_POS_SHADOW_FLAG                0x12
-#define FONT_HDR_POS_CURRENT_COLOR_SET          0x13
-
-#define FONT_HDR_POS_COLOR_SETS_OFST            0x14
-#define FONT_HDR_POS_NORMAL_COLORS              0x14
-#define FONT_HDR_POS_HIGHLIGHT_COLORS           0x24
-#define FONT_HDR_POS_SPECIAL_COLORS             0x34
-
-#define FONT_HDR_POS_CURRENT_BASE_HEIGHT        0x44
-#define FONT_HDR_POS_CURRENT_VERTICAL_SPACING   0x46
-#define FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING 0x48
-
-#define FONT_HDR_POS_CURRENT_FONT_WIDTHS        0x4A
 
 
 
@@ -170,7 +175,7 @@ extern byte_ptr remap_color_palettes;   // alloc in Load_Font_File()  set in Cre
 // WZD dseg:E7EA
 // char font_name[16];                             // set in Load_Font_File()
 
-// WZD  dseg:E7FA
+// WZD dseg:E7FA
 // 96 paragraphs = 96 * 16 = 1,536 bytes  (1536 / 256 = 6)
 extern SAMB_ptr Intensity_Scale_Tbl;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
 // ¿ MoO2 ~ remap_gray_scale_palette ?
@@ -201,7 +206,7 @@ void Set_Palette_Changes(int start_color, int end_color);
     WIZARDS.EXE  seg018
 */
 // WZD s18p01
-void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
+void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
 
 
 /*
@@ -209,17 +214,15 @@ void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
 */
 
 // WZD s17p01
-void Set_Font_Style1(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
+void Set_Font_Style_Shadow_Down(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p02
-void Set_Font_Style2(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
+void Set_Font_Style_Shadow_Up(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p03
-void Set_Font_Style3(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
+void Set_Font_Style_Shadow_Heavy(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p04
-// AKA Set_Font_Style4()
-// MoO2: Set_Font_Style_Outline()
 void Set_Font_Style_Outline(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p05
-void Set_Font_Style5(int16_t Font_Index, int16_t Color_1, int16_t Color_2, int16_t Color_3);
+void Set_Font_Style_Outline_Heavy(int16_t style_num, int16_t Color_1, int16_t Color_2, int16_t Color_3);
 // WZD s17p06
 void Set_Outline_Color(int16_t color_num);
 // WZD s17p07
@@ -252,39 +255,68 @@ void Restore_Alias_Colors(void);
 // WZD s17p15
 // drake178: VGA_DrawFarString()
 // PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, char * string);
+// Print_Far()
 
+// WZD s17p16
+// VGA_DrawCenteredFar()
+// WZD s17p17
+// UU_VGA_DrawRtAlgFar()
+// WZD s17p18
+// VGA_WndDrawFarString()
+// WZD s17p19
+// UU_VGA_WndDrawCntrdFar()
+// WZD s17p20
+// UU_VGA_WndDrawRtAlgFar()
 
 // WZD s17p21
-// drake178: ?
 int16_t Print_Integer(int16_t x, int16_t y, int16_t val);
 
 // WZD s17p22
-// drake178: ?
 // int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
 
 // WZD s17p23
-// drake178: VGA_DrawRightAligned()
 int16_t Print_Right(int16_t x, int16_t y, char * string);
+
 // WZD s17p24
-// drake178: VGA_DrawCentered()
 int16_t Print_Centered(int16_t x, int16_t y, char * string);
+
 // WZD s17p25
-// drake178: VGA_DrawRtAlgNumber()
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
+
 // WZD s17p26
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
+// WZD s17p27
+// drake178: UU_Print_Long_Right()
+// WZD s17p28
+// drake178: VGA_WndDrawNumber()
+// WZD s17p29
+// drake178: UU_VGA_WndDrawLongN()
+// WZD s17p30
+// drake178: UU_VGA_WndDrawRtAligned()
 
+// WZD s17p31
+// drake178: VGA_WndDrawCentered()
+int16_t Clipped_Print_Centered(int16_t x, int16_t y, char * string);
+
+// WZD s17p32
+// drake178: UU_VGA_WndDrawRtAlgNum()
+// WZD s17p33
+// drake178: UU_VGA_WndDrawRtAlgLong()
+
+// Clipped_Print_String()
+// Print_Clipped_Character()
+// Print_Clipped_Letter()
 
 // WZD s17p34
 int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side);
 
 // WZD s17p35
-// drake178: VGA_DrawTextLine()
 int16_t Print(int16_t x, int16_t y, char * string);
+
 // WZD s17p36
-// drake178: VGA_DrawStyledString()
 int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag);
+
 // WZD s17p37
 int16_t Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag);
 
@@ -301,47 +333,138 @@ void Set_Normal_Colors_On(void);
 // MoO2: Set_Highlight_Colors_On
 void Set_Highlight_Colors_On(void);
 
-
 // WZD s17p41
 // drake178: VGA_FontColor3Toggle
 // MoO2: Set_Special_Colors_On
 void Set_Special_Colors_On(void);
-
 
 // WZD s17p42
 // drake178: VGA_FontColorSelect()
 // MoO2: Set_Normal_Colors_On(); Set_Highlight_Colors_On(); Set_Special_Colors_On();
 void Set_Color_Set(int16_t color_set_idx);
 
+// WZD s17p43
+// RP_DBG_TblDrawValue()
+// WZD s17p44
+// UU_DBG_TblCellWrapper()
+// WZD s17p45
+// UU_DBG_TblDrawString()
+// WZD s17p46
+// UU_DBG_TblDrawS16()
+// WZD s17p47
+// UU_DBG_TblDrawS32()
+// WZD s17p48
+// UU_DBG_TblDrawU32()
+// WZD s17p49
+// DBG_DrawTableCell()
+
+// WZD s17p50
+// drake178: VGA_WndDrawSString()
+// DNE in MoO2
+int16_t Clipped_Print(int16_t x, int16_t y, char * string);
+
+// WZD s17p51
+int16_t Clipped_Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag);
+
+// WZD s17p52
+// drake178: VGA_WndDrawChar()
+/*
+
+*/
+int16_t Clipped_Print_Character(int16_t x, int16_t y, char character);
+
 // WZD s17p53
-int16_t Get_Current_Font_Index(void);
+// MoO2  Get_Font_Style_()
+int16_t Get_Current_Font_Style(void);
 // WZD s17p54
-// Get_Font_Color1
-int16_t Get_Current_Font_Color(void);
+int16_t Get_Current_Normal_Color(void);
 // WZD s17p55
-// Get_Font_Color2
+int16_t Get_Current_Highlight_Color(void);
 // WZD s17p56
-// Get_Font_Color3
+int16_t Get_Current_Special_Color(void);
+
+// WZD s17p57
+// UU_STR_CopyToNearLBX()
+// WZD s17p58
+// VGA_GetVertSpacing()
+
+// WZD s17p59
+void Trim(char * string);
+
+// WZD s17p60
+int16_t Print_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
+
+// WZD s17p61
+int16_t Print_Display_To_Bitmap(int16_t x, int16_t y, char * string, int16_t full_flag, SAMB_ptr bitmap);
+
+// WZD s17p62
+int16_t Print_String_To_Bitmap(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag, int16_t full_flag, SAMB_ptr bitmap);
+
+// WZD s17p63
+int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
+
+// MoO2
+// Print_Centered_To_Bitmap()
+// Print_Full_To_Bitmap()
+// Print_To_Bitmap()
+// Print_Display_To_Bitmap()
+// Print_String_To_Bitmap()
+// Print_Character_To_Bitmap()
+// Print_Clipped_Letter_To_Bitmap()
+// Set_PSTR_Style()
+
+// WZD s17p64
+// Print_Centered_To_Bitmap()
+
+// WZD s17p65
+// Print_Full_To_Bitmap()
+
+// WZD s17p66
+int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
+
+// WZD s17p67
+// UU_LBX_DrawRtAlgFar()
+// WZD s17p68
+// UU_LBX_DrawCenteredFar()
+// WZD s17p69
+// UU_LBX_DrawJustifiedFar()
+
 
 
 /*
     WIZARDS.EXE  seg018
 */
 // WZD s18p01
-void Set_Font(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
+void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t color3);
 
 // WZD s18p02
 int16_t Print_Character(int16_t x, int16_t y, int16_t char_num);
+
 // WZD s18p03
 int16_t Print_Character_No_Alias(int16_t x, int16_t y, int16_t char_num);
+
 // WZD s18p04
-// LBX_DrawGlyph ? Print_Character_To_Bitmap() ?
+int16_t Print_Character_To_Bitmap(int16_t x, int16_t y, uint8_t char_num, SAMB_ptr bitmap);
+
 // WZD s18p05
 void Print_Character_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset);
+
 // WZD s18p06
 void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t width, byte_ptr font_data_offset);
+
 // WZD s18p07
 int16_t Get_String_Width(char * string);
+
+// WZD s18p08
+// drake178: VGA_DrawPartialChar()
+// ¿ MoO2  Module: fonts  Print_Clipped_Character() ?
+void Print_Clipped_Character(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y);
+
+// WZD s18p09
+// drake178: VGA_DrawPartialGlyph()
+// ¿ MoO2  Module: fonts  Print_Clipped_Letter() ?
+void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset);
+
 
 
 /*
@@ -379,14 +502,7 @@ void Load_Palette(int entry, int start_color, int end_color);
 // WZD s20p02
 // drake178: VGA_ResetShade0()
 // MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
-
-// WZD s20p02
-// drake178: VGA_ResetShade0()
-// MoO2: ~ Calculate_Remap_Gray_Palettes_()
-// fills out the first record of the Replacement_Colors@ table using 50% black (the original), but will only affect colors marked as changed in the DAC
-// void Update_Remap_Gray_Palette(void);
+void Update_Remap_Gray_Palette(void);
 
 // WZD s20p03
 // drake178: VGA_SetShades_Grey0()
@@ -441,6 +557,18 @@ void Apply_Palette(void);
 void Cycle_Palette(int16_t percent);
 
 
+// WZD s21p03
+// drake178: VGA_ShadeScreen()
+
+// WZD s21p04
+// drake178: VGA_SlideColors()
+// ¿ MoO2: Cycle_Palette_Color() ... Update_Cycle()
+// ¿ 1oom ?
+void VGA_SlideColors__STUB(int16_t First_Color, int16_t Count, int16_t ShiftBy);
+
+// WZD s21p05
+// drake178: UU_VGA_ColorWave()
+
 
 // WZD s21p06
 // drake178: VGA_ShadeColorMatch
@@ -464,6 +592,8 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue);
 // uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b);
 // uint8_t Find_Closest_Color(uint8_t r, uint8_t g, uint8_t b);
 
+// WZD s21p07
+// FLIC_Load_Palette()
 
 
 #ifdef __cplusplus

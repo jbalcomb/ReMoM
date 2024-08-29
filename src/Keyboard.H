@@ -225,7 +225,7 @@ uint8_t Read_Key(void);
 
 // WZD s36p22
 // MGC s34p22
-int16_t Interpret_Keyboard_Input(int16_t * field_num);
+uint8_t Interpret_Keyboard_Input(int16_t * field_num);
 
 
 #ifdef __cplusplus

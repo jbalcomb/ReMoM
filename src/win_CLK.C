@@ -48,7 +48,9 @@ uint32_t Get_System_Clock_Counter(void)
     DWORD win_tick_count;
 #pragma warning(suppress : 28159)
     win_tick_count = GetTickCount();  // TODO  "Consider using GetTickCount64() ..."
-    dos_tick_count = win_tick_count / (uint32_t)54.92540;  // TODO(JimBalcomb,20231115): maybe identify castings that are purposeful and/or reasonable... macro? IMA_UINT32
+    // dos_tick_count = win_tick_count / (uint32_t)54.92540;  // TODO(JimBalcomb,20231115): maybe identify castings that are purposeful and/or reasonable... macro? IMA_UINT32
+    // dos_tick_count = win_tick_count / (uint32_t)(54.92540 * 2.0);
+    dos_tick_count = win_tick_count / (uint32_t)(54.92540 * 1.5);
     return dos_tick_count;
 }
 

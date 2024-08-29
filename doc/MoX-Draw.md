@@ -1,6 +1,16 @@
 
 
 
+MoO2
+
+Draw()
+    |-> Set_Animation_Palette()
+
+Draw_Animated_Sprite_()
+Draw_Bitmap_Sprite_()
+
+
+
 FLIC_Draw()
     |-> FLIC_Draw_Frame()
     |-> FLIC_Remap_Draw_Frame()

@@ -279,7 +279,7 @@ Down o sub_52B09+237                         mov     ax, offset _map_y
 Down o sub_52B09+2E1                         mov     ax, offset _map_y                         
 Down o EarthGateTeleport+2F1                 mov     ax, offset _map_y                         
 Down r MainScr_Prepare_Reduced_Map+19        mov     ax, [_map_y]                              
-Down r OVL_DrawPath+29                       push    [_map_y]                        ; Map_TopY
+Down r Draw_Active_Stack_Movement_Path+29    push    [_map_y]                        ; Map_TopY
 Down o Cities_Screen+373                     mov     ax, offset _map_y                         
 Down o Cities_Screen+3DD                     mov     ax, offset _map_y                         
 Down w Draw_Maps+120                         mov     [_map_y], _DI_cur_map_ypos                

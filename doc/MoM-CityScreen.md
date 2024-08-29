@@ -1,14 +1,110 @@
+/*
+    City Screen
+
+    WIZARDS.EXE
+        ovr054
+
+*/
+/*
+    ¿ ~== City (Screen) Util / Misc ?
+
+    WIZARDS.EXE
+        ovr055
+
+*/
+/*
+    Cityscape  (City Screen)
+
+    WIZARDS.EXE
+        ovr144
+*/
 
 
-figure count is still missing
-figure banner color is incorrect
+
+MoM.C
+Screen_Control()
+    Clear_Fields();
+    Set_Mouse_List(1, mouse_list_default);
+    switch (current_screen)
+    {
+        case scr_City_Screen: /* WZD 0x00 */
+        {
+            City_Screen__WIP();
+        } break;
+    }
+
+CityScr.C
+City_Screen__WIP()
+
+
+
+
+
+IDA Groups
+...
+...
+...
+    [SCREEN LOOP]
+    Enter Screen-Loop
+        [INPUT]
+            Left-Click Resource Row
+            Hot-Key X - DEBUG
+            Left-Click Up Button
+            Left-Click Down Button
+            Left-Click Change Button
+            Left-Click OK Button  ||  Hot-Key ESCAPE
+            Left-Click Buy Button
+            Left-Click City Enchantment
+            Left-Click Cityscape - Sell Building
+            Left-Click Unit Window
+            Right-Click Unit Window
+            Left-Click Population Row
+    Screen-Loop Wrap-Up
+Leave Screen
+
+
+
+
+## zz_active_stack_flag
+    ¿ deprecated and/or debug ?
+    ¿ `jmp   short $+2` suggests else or empty macro or null function pointer
+    zz_active_stack_flag = ST_FALSE;
+    if(_unit_stack_count != 0)
+    {
+        zz_active_stack_flag = ST_TRUE;
+    }
+    ...
+    if((input_field_idx == city_screen_ok_button) || (input_field_idx == city_screen_esc_hotkey))
+    {
+        _unit_stack_count = 0;
+        ...
+        if(zz_active_stack_flag == ST_TRUE)
+        {
+            _unit_stack_count = 0;  // BUGBUG  does this always above - what is controlled by _unit_stack_count?
+            // jmp     short $+2  // jump 2 bytes; from ovr054:0788, to ovr054:078A; loc_4834A:
+        }
+        ...
+    }
+
+
+m_city_no_buy
+    controls whether to add a field for and draw the "Buy" button
+    City_Can_Buy_Product() sets m_city_no_buy
+        m_city_n_turns_to_produce
+        m_city_production_cost
+        City_Cost_To_Buy_Product()
+        _city_idx
+
+
+
+
+
 
 
 where is the load for ... ?
     // BACKGRND.LBX, 31  OUTPOST  outpost background
     // BACKGRND.LBX, 32  OUTNAME  outpost name backg
     
-
 
 
 
@@ -111,6 +207,49 @@ Elsewhere, ...
             4x4?  
                 = 16?  
 
+
+
+## Buy / Buy Button / Left-Click Buy Button
+...input #7
+@@Input_CityScreenBuyButton
+ovr054:0795
+0003B095
+00048355
+input_field_idx == city_screen_buy_button
+
+
+
+## Left-Click City Enchantment
+...input #8
+
+
+
+## Left-Click Cityscape - Sell Building
+...input #9
+
+
+
+
+
+
+## Left-Click Unit Window
+...input #10
+mov     [bp+IDK_Col__unit_stack_idx], 0
+mov     ax, [bp+IDK_Col__unit_stack_idx]
+cmp     ax, [_unit_stack_count]
+jl      short loc_48A58
+loc_48A58:
+mov     bx, [bp+IDK_Col__unit_stack_idx]
+shl     bx, 1
+cmp     [g_unit_window_fields+bx], _DI_input_field_idx
+jnz     short loc_48A8E
+loc_48A8E:
+inc     [bp+IDK_Col__unit_stack_idx]
+
+
+
+## Right-Click Unit Window
+...input #11
 
 
 

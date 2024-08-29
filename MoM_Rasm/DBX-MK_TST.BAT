@@ -1,1 +1,0 @@
-start /b "" "J:\STU\WD\DOSBox\DOSBox.exe" -noautoexec -noconsole -conf "J:\STU\WD\DOSBox\dosbox-0.74-3.conf" -c "MOUNT C J:\STU\DBWD" -c "MOUNT D J:\STU\devel\STU-MoM_Rasm\MoM_Rasm" -c "D:" -c "MK_TST.BAT"

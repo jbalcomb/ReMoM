@@ -5,20 +5,20 @@ if not exist build (mkdir build)
 
 pushd build
 
-cl /DUNDEFINE_UNICODE /DSTU_DEBUG /D__WIN32__ /RTCs /RTCu /W1 /Zc:strictStrings -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\SAVETEST.C ..\src\win_MoM.cpp ..\src\win_PFL.cpp ..\src\MoX_PFL.C ..\src\win_CLK.C ..\src\win_DIR.C ..\src\win_EMS.C ..\src\win_Fonts.C ..\src\win_Input.C ..\src\win_KD.C ..\src\win_MD.C ..\src\win_Video.C ..\src\MGC_s001.C ..\src\WZD_s001.C ..\src\AdvsrScr.C ..\src\ALLOC.C ..\src\Allocate.C ..\src\ArmyList.C ..\src\CITYCALC.C ..\src\CityList.C ..\src\CITYSCAP.C ..\src\CityScr.C ..\src\City_ovr55.C ..\src\FLIC_Draw.C ..\src\FLIC_Draw2.C ..\src\Explore.C ..\src\Fields.C ..\src\Fonts.C ..\src\GENDRAW.C ..\src\Graphics.C ..\src\Help.C ..\src\Init.C ..\src\Input.C ..\src\ItemView.C ..\src\Keyboard.C ..\src\Lair.C ..\src\LBX_Load.C ..\src\LOADER.C ..\src\LoadScr.C ..\src\MagicScr.C ..\src\MainMenu.C ..\src\MainScr.C ..\src\MainScr_Maps.C ..\src\Mouse.C ..\src\MoX.C ..\src\MoX_CFG.C ..\src\MoX_CMB.C ..\src\MoX_Data.C ..\src\MoX_DBG.C ..\src\MoX_GAM.C ..\src\MoX_RNG.C ..\src\MoX_SET.C ..\src\MoX_UnOrg.C ..\src\MoX_Util.C ..\src\NEXTTURN.C ..\src\paragrph.C ..\src\ProdScr.C ..\src\RACETYPE.C ..\src\SBookScr.C ..\src\SCastScr.C ..\src\SCORE.C ..\src\special.C ..\src\Spellbook.C ..\src\Terrain.C ..\src\TEXTBOX.C ..\src\UnitMove.C ..\src\UnitStat.C ..\src\UNITSTK.C ..\src\UnitType.C ..\src\UnitView.C  ..\src\Video.C ..\src\Video2.C ..\src\WZD_o059.C ..\src\STU\STU_BMP.C ..\src\STU\STU_DBG.C  ..\src\STU\STU_TST.C ..\src\STU\STU_UTIL.C ..\src\TST_GameData.C ..\src\TST_GameState.C user32.lib gdi32.lib winmm.lib
-REM cl /DUNDEFINE_UNICODE /DSTU_DEBUG /D__WIN32__ -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\Win32_Main.cpp ..\src\Win32_Init.cpp ..\src\Win32_Evnt.cpp ..\src\MoM_PFL.C ..\src\win_CLK.C ..\src\win_DIR.C ..\src\win_KD.C ..\src\win_MD.C ..\src\MoM_Init.C ..\src\MoM_main.C ..\src\LBX_Load.C ..\src\Allocate.C ..\src\FLIC_Draw.C ..\src\FLIC_Draw2.C ..\src\Explore.C ..\src\Fields.C ..\src\Fonts.C ..\src\Graphics.C ..\src\Init.C ..\src\Input.C ..\src\Keyboard.C ..\src\Mouse.C ..\src\MoX_CFG.C ..\src\MoX_Data.C ..\src\MoX_DBG.C ..\src\MoX_GAM.C ..\src\MoX_RNG.C ..\src\MoX_SET.C ..\src\MoX_Util.C ..\src\Video.C ..\src\Video2.C ..\src\LoadScr.C ..\src\MainMenu.C ..\src\MainScr.C ..\src\MainScr_Maps.C ..\src\SCastScr.C ..\src\UnitMove.C ..\src\UnitType.C ..\src\STU\STU_DBG.C ..\src\STU\STU_UTIL.C ..\src\STU\STU_BMP.C ..\src\TST_GameData.C ..\src\TST_GameState.C user32.lib gdi32.lib winmm.lib
-REM cl /DSTU_DEBUG_FXN /D__WIN32__ -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\Win32_Main.cpp ..\src\Win32_Init.cpp ..\src\Win32_Evnt.cpp ..\src\Win32_MoM.cpp ..\src\win_DIR.C ..\src\win_KD.C ..\src\win_MD.C ..\src\MoM.C ..\src\MoM_main.C ..\src\LBX_Load.C ..\src\Allocate.C ..\src\FLIC_Draw.C ..\src\Fields.C ..\src\Fonts.C ..\src\Graphics.C ..\src\Help.C ..\src\Input.C ..\src\Keyboard.C ..\src\Mouse.C ..\src\MoX_DBG.C ..\src\MoX_CFG.C ..\src\MoX_Data.C ..\src\UnitMove.C ..\src\UnitType.C ..\src\MoX_GAM.C ..\src\MoX_SET.C ..\src\Video.C ..\src\MainMenu.C ..\src\MainScr.C ..\src\MainScr_Maps.C ..\src\SCastScr.C ..\src\STU\STU_DBG.C ..\src\STU\STU_UTIL.C ..\src\STU\STU_BMP.C user32.lib gdi32.lib winmm.lib
-REM cl /D__WIN32__ -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\Win32_Main.cpp ..\src\Win32_Init.cpp ..\src\Win32_Evnt.cpp ..\src\Win32_MoM.cpp ..\src\win_DIR.C ..\src\win_KD.C ..\src\win_MD.C ..\src\MoM.C ..\src\MoM_main.C ..\src\LBX_Load.C ..\src\Allocate.C ..\src\FLIC_Draw.C ..\src\Fields.C ..\src\Fonts.C ..\src\Graphics.C ..\src\Help.C ..\src\Input.C ..\src\Keyboard.C ..\src\Mouse.C ..\src\MoX_DBG.C ..\src\MoX_CFG.C ..\src\MoX_Data.C ..\src\UnitMove.C ..\src\UnitType.C ..\src\MoX_GAM.C ..\src\MoX_SET.C ..\src\Video.C ..\src\MainMenu.C ..\src\MainScr.C ..\src\MainScr_Maps.C ..\src\SCastScr.C ..\src\STU\STU_DBG.C ..\src\STU\STU_UTIL.C ..\src\STU\STU_BMP.C user32.lib gdi32.lib winmm.lib
+@SET SRC_MOX=..\src\MoX\Allocate.C ..\src\MoX\Exit.C ..\src\MoX\FLIC_Draw.C ..\src\MoX\LBX_Load.C ..\src\MoX.C ..\src\MoX\MoX_DBG.C
+
+cl /c %SRC_MOX%
+
+lib Allocate.obj Exit.obj FLIC_Draw.obj LBX_Load.obj MoX.obj MoX_DBG.obj /OUT:MoX.lib
+
+
+@SET SRC_PFL=..\src\win_MoM.cpp ..\src\win_PFL.cpp ..\src\MoX_PFL.C ..\src\win_CLK.C ..\src\win_DIR.C ..\src\win_EMS.C ..\src\win_Fonts.C ..\src\win_Input.C ..\src\win_KD.C ..\src\win_MD.C ..\src\win_Video.C
+
+REM cl /c %SRC_PFL%
+
+REM lib win_MoM.obj win_PFL.obj MoX_PFL.obj win_CLK.obj win_DIR.obj win_EMS.obj win_Fonts.obj win_Input.obj win_KD.obj win_MD.obj win_Video.obj /OUT:PFL.lib
+
+
+cl /DUNDEFINE_UNICODE /DSTU_DEBUG /D__WIN32__ /RTCs /RTCu /W1 /Zc:strictStrings -FC /Fe: MoM.exe -I ..\src\STU -I ..\src -Zi ..\src\win_MoM.cpp ..\src\win_PFL.cpp ..\src\MoX_PFL.C ..\src\win_CLK.C ..\src\win_DIR.C ..\src\win_EMS.C ..\src\win_Fonts.C ..\src\win_Input.C ..\src\win_KD.C ..\src\win_MD.C ..\src\win_Video.C ..\src\AdvsrScr.C ..\src\AIBUILD.C ..\src\AIDATA.C ..\src\AIDUDES.C ..\src\ALLOC.C ..\src\ArmyList.C ..\src\CITYCALC.C ..\src\CityList.C ..\src\CITYSCAP.C ..\src\CityScr.C ..\src\City_ovr55.C ..\src\Combat.C ..\src\DIPLOMAC.C ..\src\Explore.C ..\src\Fields.C ..\src\Fonts.C ..\src\GENDRAW.C ..\src\Graphics.C ..\src\Help.C ..\src\HIRE.C ..\src\Init.C ..\src\Input.C ..\src\ItemMake.C ..\src\Items.C ..\src\ItemScrn.C ..\src\ItemView.C ..\src\Keyboard.C ..\src\Lair.C ..\src\LOADER.C ..\src\LoadScr.C ..\src\LVLMAKE.C ..\src\MagicScr.C ..\src\MainMenu.C ..\src\MainScr.C ..\src\MainScr_Maps.C ..\src\MoM.C ..\src\Mouse.C ..\src\MovePath.C ..\src\MoX_CFG.C ..\src\MoX_CMB.C ..\src\MoX_Data.C ..\src\MoX_DOS.C ..\src\MoX_GAM.C ..\src\MoX_RNG.C ..\src\MoX_UnOrg.C ..\src\MoX_Util.C ..\src\NewGame.C ..\src\NEXTTURN.C ..\src\Outpost.C ..\src\paragrph.C ..\src\ProdScr.C ..\src\RACETYPE.C ..\src\Roads.C ..\src\SBookScr.C ..\src\SCastScr.C ..\src\SCORE.C ..\src\Settings.C ..\src\SETTLE.C ..\src\special.C ..\src\Spellbook.C ..\src\Summary.C ..\src\Terrain.C ..\src\TEXTBOX.C ..\src\UnitList.C ..\src\UnitMove.C ..\src\UnitStat.C ..\src\UNITSTK.C ..\src\UnitType.C ..\src\UnitView.C  ..\src\Video.C ..\src\Video2.C ..\src\WIZVIEW.C ..\src\WZD_o059.C ..\src\WZD_o143.C ..\src\STU\STU_DBG.C  ..\src\STU\STU_UTIL.C user32.lib gdi32.lib winmm.lib MoX.lib
 
 popd
-
-REM /Zc:strictStrings (Disable string literal type conversion)
-REM https://learn.microsoft.com/en-us/cpp/cpp/string-and-character-literals-cpp?view=msvc-170
-REM |-> https://learn.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=msvc-170
-
-REM /RTCs  Enables stack (frame) verification.
-REM /RTCc  Reports when a value is assigned to a smaller data type that results in a data loss.
-REM #pragma runtime_checks("", off)
-REM #pragma runtime_checks("", restore)
-REM https://learn.microsoft.com/en-us/cpp/build/reference/rtc-run-time-error-checks?view=msvc-170#remarks
-REM |-> https://learn.microsoft.com/en-us/cpp/preprocessor/runtime-checks?view=msvc-170

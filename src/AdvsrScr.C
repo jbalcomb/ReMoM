@@ -7,13 +7,12 @@
 */
 
 #include "MoM.H"
-#include "AdvsrScr.H"
 
 
 
-// WZD dseg:37C0                                                 ¿ BEGIN: Advisor Screen - Initialized Data
+// WZD dseg:37C0                                                 BEGIN: ovr076 - Initialized Data  (Advisor Screen)
 
-// WZD dseg:37C0 20 28 46 00                                     
+// WZD dseg:37C0
 char cnst_Info_Msg_0[] = " (F";
 
 // WZD dseg:37C4 53 75 72 76 65 79 6F 72 00                      
@@ -108,11 +107,105 @@ char aTaxPerPopulation[] = " Tax Per Population ";
     END: Tax Collector
 */
 
+// WZD dseg:3897
+char str_TaxPerPopulation[] = " Tax Rate Per Population ";
+// WZD dseg:38AA
+char str_SPACE__ovr076[] = " ";  // in th emidst of str_TaxPerPopulation, per the 'String Optimizer'
+
+// WZD dseg:38AC
+char reload_lbx_file__ovr076[] = "RELOAD";
+
+// WZD dseg:38AC
+char str_hotkey_ESC__ovr076[] = "\x1B";
+
+// WZD dseg:38B5 4A 61 6E 75 61 72 79 00                         aJanuary db 'January',0
+// WZD dseg:38BD 46 65 62 72 75 61 72 79 00                      aFebruary db 'February',0
+// WZD dseg:38C6 4D 61 72 63 68 00                               aMarch db 'March',0
+// WZD dseg:38CC 41 70 72 69 6C 00                               aApril db 'April',0
+// WZD dseg:38D2 4D 61 79 00                                     aMay db 'May',0
+// WZD dseg:38D6 4A 75 6E 65 00                                  aJune db 'June',0
+// WZD dseg:38DB 4A 75 6C 79 00                                  aJuly db 'July',0
+// WZD dseg:38E0 41 75 67 75 73 74 00                            aAugust db 'August',0
+// WZD dseg:38E7 53 65 70 74 65 6D 62 65 72 00                   aSeptember db 'September',0
+// WZD dseg:38F1 4F 63 74 6F 62 65 72 00                         aOctober db 'October',0
+// WZD dseg:38F9 4E 6F 76 65 6D 62 65 72 00                      aNovember db 'November',0
+// WZD dseg:3902 44 65 63 65 6D 62 65 72 00                      aDecember db 'December',0
+
+// WZD dseg:390B
+char str_HistoryOfWizardsPower[] = "History Of Wizards Power";
+
+// WZD dseg:391E
+char str_Power[] = "Power";  // in the midst of str_HistoryOfWizardsPower, per the 'String Optimizer'
+
+// WZD dseg:3924
+char str_CurrentStatusOfWiza[] = "Current Status Of Wizards";
+
+// WZD dseg:393E
+char str_Army[] = "Army";
+
+// WZD dseg:3943
+char str_Strength[] = "Strength";
+
+// WZD dseg:394C
+char str_Magic[] = "Magic";
+
+// WZD dseg:3952
+char str_Spell[] = "Spell";
+
+// WZD dseg:3958
+char str_Research[] = "Research";
+
+// WZD dseg:3961
+char str_hotkey_N__ovr076[] = "N";
+
+// WZD dseg:3963
+char str_hotkey_C__ovr076[] = "C";
+
+// WZD dseg:3965
+char str_Neutral_0[] = "Neutral";
+
+// WZD dseg:396D
+char str_Arcanus[] = "Arcanus";
+
+// WZD dseg:3975
+char str_Myrror[] = "Myrror";
+
+// WZD dseg:397C
+char str_Plane_0[] = " Plane";
+
+// WZD dseg:3983
+char str_DoYouWishToAllowTheGrandVizierToSelectWhatBuildingsYourCitiesCreate[] = "Do you wish to allow the Grand Vizier to select what buildings your cities create?";
+
+// WZD dseg:3983                                                 END: ovr076 - Initialized Data  (Advisor Screen)
+
+
 
 
 // WZD dseg:3983
 // Confirmation Box - Message Text
 char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select what buildings your cities create?";
+
+
+
+// WZD dseg:C296                                                 BEGIN:  ovr076 - Uninitialized Data  (Advisors Screen)
+
+// WZD dseg:C296 00 00                                           OVL_Cartograph_Plane dw 0               ; DATA XREF: IDK_Cartographer_Screen+31w ...
+// WZD dseg:C298 00 00                                           word_42D38 dw 0                         ; DATA XREF: Cartographer_Screen_Draw+6Ew ...
+// WZD dseg:C29A 00 00                                           OVL_Cartograph_Top dw 0                 ; DATA XREF: IDK_Cartographer_Screen+3Aw ...
+// WZD dseg:C29C 00 00                                           OVL_Cartograph_Left dw 0                ; DATA XREF: IDK_Cartographer_Screen+34w ...
+
+// WZD dseg:C29E
+int16_t y;
+
+// WZD dseg:C2A0
+int16_t x;
+
+// WZD dseg:C2A2
+SAMB_ptr status_screen_seg;
+
+// WZD dseg:C2A4 00 00                                           picture dw 0                            ; DATA XREF: IDK_AdvsrScr_Historian+34w ...
+
+// WZD dseg:C2A4                                                 END:  ovr076 - Uninitialized Data  (Advisors Screen)
 
 
 
@@ -144,14 +237,7 @@ void Advisor_Screen(int16_t advisor_idx)
 
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Advisor_Screen()\n", __FILE__, __LINE__);
-#endif
-
     strcpy(fkey_string, cnst_Info_Msg_0); // " (F"
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: fkey_string: %s\n", __FILE__, __LINE__, fkey_string);
-#endif
 
     if(advisor_idx == ST_UNDEFINED)
     {
@@ -215,19 +301,6 @@ void Advisor_Screen(int16_t advisor_idx)
 
         // strcpy(str9_EoT, 0);  // (offset cnst_Info_Msg_0+3)
         strcpy(str9_EoT, "");
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str0_Surveyor: %s\n", __FILE__, __LINE__, str0_Surveyor);
-    dbg_prn("DEBUG: [%s, %d]: str1_Cartographer: %s\n", __FILE__, __LINE__, str1_Cartographer);
-    dbg_prn("DEBUG: [%s, %d]: str2_Apprentice: %s\n", __FILE__, __LINE__, str2_Apprentice);
-    dbg_prn("DEBUG: [%s, %d]: str3_Historian: %s\n", __FILE__, __LINE__, str3_Historian);
-    dbg_prn("DEBUG: [%s, %d]: str4_Astrologer: %s\n", __FILE__, __LINE__, str4_Astrologer);
-    dbg_prn("DEBUG: [%s, %d]: str5_Chancellor: %s\n", __FILE__, __LINE__, str5_Chancellor);
-    dbg_prn("DEBUG: [%s, %d]: str6_TaxCollector: %s\n", __FILE__, __LINE__, str6_TaxCollector);
-    dbg_prn("DEBUG: [%s, %d]: str7_GrandVizier: %s\n", __FILE__, __LINE__, str7_GrandVizier);
-    dbg_prn("DEBUG: [%s, %d]: str8_Mirror: %s\n", __FILE__, __LINE__, str8_Mirror);
-    dbg_prn("DEBUG: [%s, %d]: str9_EoT: %s\n", __FILE__, __LINE__, str9_EoT);
-#endif
 
         strcpy(box_list_stings[0], cnst_Info_Msg_1);  // "Surveyor"
         // strcat(str0_Surveyor, text_0x1D);  // ASCII  1Dh  29d  GS  (group separator)
@@ -300,18 +373,6 @@ void Advisor_Screen(int16_t advisor_idx)
             // str_list[itr] = (box_list_stings + 26 * itr);
         }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[8]: %s\n", __FILE__, __LINE__, str_list[8]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[9]: %s\n", __FILE__, __LINE__, str_list[9]);
-#endif
 
         for(itr = 0; itr < 10; itr++)
         {
@@ -322,32 +383,9 @@ void Advisor_Screen(int16_t advisor_idx)
             // str_list[itr] = (box_list_stings + 26 * itr);
         }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[8]: %s\n", __FILE__, __LINE__, str_list[8]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[9]: %s\n", __FILE__, __LINE__, str_list[9]);
-#endif
-
         Set_Advisor_Screen_Help_List();
 
-        // ; displays a list selection dialog with the specified
-        // ; title and items, with a separate button corresponding
-        // ; to each one, that can be highlighted by mousing over
-        // ; it or selected by clicking
-        // ; returns the index of the selected item
-        // ; BUG: uses two graphical button controls for
-        // ; multi-page lists that are no longer in memory when
-        // ; returning - doing a GUI page flip before clearing
-        // ; them will cause a crash
-        // ; WARNING: the drawing function expects the list of
-        // ; items to be terminated by a zero string
+
         // input_advisor_idx = GUI_ListSelect_Dlg(9, &List@[0], 0, cnst_Info_Msg_0_3);  // "Select An Advisor"
         input_advisor_idx = Selection_Box(9, &str_list[0], ST_FALSE, "Select An Advisor");
         // returns -1 for ESC
@@ -363,66 +401,52 @@ void Advisor_Screen(int16_t advisor_idx)
     {
         case 0:  /* Surveyor      (F1) */
         {
-            DLOG("switch(input_advisor_idx))  case 0:");
             // TODO  j_IDK_Surveyor_s7A3C0()
 
         } break;
         case 1:  /* Cartographer  (F2) */
         {
-            DLOG("switch(input_advisor_idx))  case 1:");
             // TODO  IDK_Cartographer_Screen()
 
         } break;
         case 2:  /* Apprentice    (F3) */
         {
-            DLOG("switch(input_advisor_idx))  case 2:");
             // TODO  IDK_AdvsrScr_Apprentice()
 
         } break;
         case 3:  /* Historian     (F4) */
         {
-            DLOG("switch(input_advisor_idx))  case 3:");
-            // TODO  IDK_AdvsrScr_Historian()
+            IDK_AdvsrScr_Historian();
 
         } break;
         case 4:  /* Astrologer    (F5) */
         {
-            DLOG("switch(input_advisor_idx))  case 4:");
-            // TODO  IDK_AdvsrScr_Astrologer()
+            Status_Screen();
 
         } break;
         case 5:  /* Chancellor    (F6) */
         {
-            DLOG("switch(input_advisor_idx))  case 5:");
             // TODO  j_IDK_Chancellor_EoTSummary_EventsAnimScroll(1);
 
         } break;
         case 6:  /* Tax Collector (F7) */
         {
-            DLOG("switch(input_advisor_idx))  case 6:");
             TaxCollector_Window();
 
         } break;
         case 7:  /* Grand Vizier  (F8) */
         {
-            DLOG("switch(input_advisor_idx))  case 7:");
             GrandVizier_Window();
 
         } break;
         case 8:  /* Mirror        (F9 )*/
         {
-            DLOG("switch(input_advisor_idx))  case 8:");
-            // TODO  Mirror_Screen(0, 150, 60, 180, 90);
-
+            Mirror_Screen(HUMAN_PLAYER_IDX, 150, 60, 180, 90);
         } break;        
     }
 
     PageFlipEffect = 3;
     current_screen = scr_Main_Screen;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Advisor_Screen()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -590,13 +614,224 @@ void TaxCollector_Window(void)
 }
 
 // WZD o76p03
+void IDK_AdvsrScr_Historian(void)
+{
+
+
+
+}
+
+
 // WZD o76p04
+// sub_655C4()
+
 // WZD o76p05
+// sub_65B47()
+
 // WZD o76p06
+// drake178: 
+/*
+
+*/
+void Status_Screen(void)
+{
+    int16_t input_field_idx;
+    int16_t full_screen_ESC_field;
+    int16_t leave_screen;  // _SI_
+
+    GUI_String_1 = (char *)Near_Allocate_First(100);
+    GUI_String_2 = (char *)Near_Allocate_Next(100);
+
+    // RELOAD.LBX, 000  STATBACK
+    // RELOAD.LBX, 001  STATUS
+    status_screen_seg = LBX_Reload(reload_lbx_file__ovr076, 1, _screen_seg);
+
+    Clear_Fields();
+    Set_Page_Off();
+    Copy_On_To_Off_Page();
+    Copy_Off_To_Back();
+    PageFlip_FX();
+    Set_Page_Off();
+
+    Load_Palette_From_Animation(status_screen_seg);
+
+    Set_Palette_Changes(0, 255);
+
+    Update_Remap_Gray_Palette();
+
+    Copy_Back_To_Off();
+
+    // Huh?  Assign_Auto_Function();
+
+    Deactivate_Help_List();
+
+    Set_Status_Screen_Help_List();
+
+    x = 20;
+    y = 11;
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+        Mark_Time();
+
+        Clear_Fields();
+
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076, ST_UNDEFINED);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == full_screen_ESC_field)
+        {
+            // TODO  SND_LeftClickSound();
+            leave_screen = ST_TRUE;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Status_Screen_Draw();
+            PageFlip_FX();
+            Release_Time(1);
+        }
+    }
+
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
+    Reset_Window();
+    Clear_Fields();
+
+}
+
+
 // WZD o76p07
+// drake178: sub_65D33()
+/*
+
+*/
+void Status_Screen_Draw(void)
+{
+    char dest[4];
+    uint8_t var_18[6] = {0, 0, 0, 0, 0, 0};
+    int16_t var_12;
+    int16_t scores[3];
+    int16_t itr_players;
+    int16_t var_8;
+    uint8_t colors[6] = {0, 0, 0, 0, 0, 0};
+    int16_t itr_scores;  // _SI_
+    int16_t IDK_y;  // _DI_
+
+    strcpy(dest, str_SPACE__ovr076);
+
+    var_18[0] = 172;
+    var_18[1] = 216;
+    var_18[2] = 124;
+    var_18[3] = 201;
+    var_18[4] = 211;
+
+    Set_Page_Off();
+
+    FLIC_Draw(x, y, status_screen_seg);
+
+    for(itr_players = 1; itr_players < NUM_PLAYERS; itr_players++)
+    {
+        colors[itr_players] = (177 + itr_players);
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+    Set_Alias_Color(246);
+
+    Set_Outline_Color(254);
+
+    Print_Centered((x + 138), (y + 10), str_CurrentStatusOfWiza);
+
+    Set_Font_Style_Shadow_Down(2, 3, 0, 0);
+
+    Set_Alias_Color(246);
+
+    Set_Outline_Color(254);
+
+    strcpy(GUI_String_1, str_Army);
+
+    strcat(GUI_String_1, dest);
+
+    strcat(GUI_String_1, str_Strength);
+
+    Print_Centered((x + 138), (y + 23), GUI_String_1);
+
+    strcpy(GUI_String_1, str_Magic);
+
+    strcat(GUI_String_1, dest);
+
+    strcat(GUI_String_1, str_Power);
+
+    Print_Centered((x + 138), (y + 72), GUI_String_1);
+
+    strcpy(GUI_String_1, str_Spell);
+
+    strcat(GUI_String_1, dest);
+
+    strcat(GUI_String_1, str_Research);
+
+    Print_Centered((x + 138), (y + 121), GUI_String_1);
+
+    Set_Font_Style_Shadow_Down(0, 15, 0, 0);
+
+    Set_Alias_Color(246);
+
+    Set_Outline_Color(254);
+
+    var_12 = 0;
+    
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    {
+
+        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        {
+            var_8 = 35;
+
+            scores[0] = _players[itr_players].Astr.Army_Strength;
+
+            scores[1] = _players[itr_players].Astr.Magic_Power;
+
+            scores[2] = _players[itr_players].Astr.Spell_Research;
+
+            for(itr_scores = 0; itr_scores < 3; itr_scores++)
+            {
+                SETMAX(scores[itr_scores], 200);
+
+                IDK_y = (var_12 * 7)+ (y + var_8);
+
+                Print((x + 14), IDK_y, _players[itr_players].name);
+
+                Gradient_Fill((x + 64), (IDK_y + 2), (x + 65 + scores[itr_scores]), (IDK_y + 3), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
+
+                Fill((x + 64), (IDK_y + 1), (x + 64 + scores[itr_scores]), (IDK_y + 2), var_18[_players[itr_players].banner_id]);
+
+                var_8 += 49;
+
+            }
+
+            var_12++;
+
+        }
+
+    }
+
+}
+
+
 // WZD o76p08
+// IDK_Cartographer_Screen()
+
 // WZD o76p09
+// OVL_CartographRedraw()
+
 // WZD o76p10
+// Cartographer_Screen_Draw()
 
 // WZD o76p11
 void GrandVizier_Window(void)

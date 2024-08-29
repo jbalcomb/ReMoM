@@ -255,7 +255,8 @@ void Load_WZD_Resources(void)
 // fxn_o52p12();
 // fxn_o52p14():
 // fxn_o52p15();
-// Load_SPELLDAT();  // ; loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
+
+    Load_SPELLDAT();  // loads all records from SPELLDAT.LBX, overwriting the pointer to a previous allocation (8k wasted)
 
     Load_BUILDDAT();  // loads all records from BUILDDAT.LBX
 
@@ -336,7 +337,9 @@ void Units_Upkeeps(void)
 */
 void Terrain_Init(void)
 {
+    SAMB_ptr tmp_sa_TBL_Unrest;
     int16_t itr;
+    uint64_t tmp_address;
 
     // 
     Map_Square_WorkArea = Allocate_Space(70);  // ; 70 * 16 = 1120 bytes
@@ -344,21 +347,17 @@ void Terrain_Init(void)
     terrain_lbx_001 = LBX_Load(terrain_lbx_file, 1);
     terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
     // ehn_terrain_lbx = EMM_Load_LBX_File("TERRAIN.LBX", 1);
-    // HACK: no EMM, so just load entry and monkey with offset adjustments
+    // HACK:  no EMM, so just load entry and monkey with offset adjustments
     terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);
 
 
-    // // TBL_Unrest[0] = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
-    // TBL_Unrest[0] = LBX_Load_Data("TERRSTAT.LBX", 1, 0, 1, 196);
-    // for(itr = 1; itr < 14; itr++)
-    // {
-    //     TBL_Unrest[itr] = TBL_Unrest[itr - 1] + (14 * 16);
-    // }
-    // can't do like they did, because pointers are 8 bytes now
-    TBL_Unrest_Hack = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
-    for(itr = 0; itr < 14; itr++)
+    tmp_sa_TBL_Unrest = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
+    TBL_Unrest[0] = tmp_sa_TBL_Unrest;
+    for(itr = 1; itr < 14; itr++)
     {
-        TBL_Unrest[itr] = (SAMB_ptr)(TBL_Unrest_Hack + (14 * itr));
+        // ¿¿¿
+        TBL_Unrest[itr] = ((int8_t *)TBL_Unrest[(itr - 1)]) + 14;
+        // ???
     }
 
 
@@ -477,6 +476,7 @@ void Terrain_Init(void)
 //     // ; (blue tile frame called "city work area")
 
         UU_hunters_lodge_seg = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
+        
         IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);    // ; reserved EMM header pointer for a single image
         IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);      // ; reserved EMM header pointer for a single image
         
@@ -494,49 +494,45 @@ void Main_Screen_Load_Pictures(void)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
+    main_background    = LBX_Load(main_lbx_file,  0);
 
-    main_background = LBX_Load(main_lbx_file,  0);
-
-    main_game_button = LBX_Load(main_lbx_file, 1);
+    main_game_button   = LBX_Load(main_lbx_file, 1);
     main_spells_button = LBX_Load(main_lbx_file, 2);
     main_armies_button = LBX_Load(main_lbx_file, 3);
     main_cities_button = LBX_Load(main_lbx_file, 4);
-    main_magic_button = LBX_Load(main_lbx_file, 5);
-    main_info_button = LBX_Load(main_lbx_file, 6);
-    main_plane_button = LBX_Load(main_lbx_file, 7);
+    main_magic_button  = LBX_Load(main_lbx_file, 5);
+    main_info_button   = LBX_Load(main_lbx_file, 6);
+    main_plane_button  = LBX_Load(main_lbx_file, 7);
 
-    main_done_button = LBX_Load(main_lbx_file, 8);
+    main_done_button   = LBX_Load(main_lbx_file, 8);
     main_patrol_button = LBX_Load(main_lbx_file, 9);
-    main_wait_button = LBX_Load(main_lbx_file, 10);
-    main_build_button = LBX_Load(main_lbx_file, 11);
+    main_wait_button   = LBX_Load(main_lbx_file, 10);
+    main_build_button  = LBX_Load(main_lbx_file, 11);
     main_purify_button = LBX_Load(main_lbx_file, 42);
-    main_meld_button = LBX_Load(main_lbx_file, 49);
+    main_meld_button   = LBX_Load(main_lbx_file, 49);
 
-    main_lock_done_button = LBX_Load(main_lbx_file, 12);
+    main_lock_done_button   = LBX_Load(main_lbx_file, 12);
     main_lock_patrol_button = LBX_Load(main_lbx_file, 13);
-    main_lock_wait_button = LBX_Load(main_lbx_file, 14);
-    main_lock_build_button = LBX_Load(main_lbx_file, 15);
+    main_lock_wait_button   = LBX_Load(main_lbx_file, 14);
+    main_lock_build_button  = LBX_Load(main_lbx_file, 15);
     main_lock_purify_button = LBX_Load(main_lbx_file, 43);
 
-    main_white_medal_icon = LBX_Load(main_lbx_file, 51);
-    main_gold_medal_icon = LBX_Load(main_lbx_file, 52);
-    main_red_medal_icon = LBX_Load(main_lbx_file, 53);
-    main_magic_weapon_icon = LBX_Load(main_lbx_file, 54);
-    main_mithril_weapon_icon = LBX_Load(main_lbx_file, 55);
+    main_white_medal_icon       = LBX_Load(main_lbx_file, 51);
+    main_gold_medal_icon        = LBX_Load(main_lbx_file, 52);
+    main_red_medal_icon         = LBX_Load(main_lbx_file, 53);
+    main_magic_weapon_icon      = LBX_Load(main_lbx_file, 54);
+    main_mithril_weapon_icon    = LBX_Load(main_lbx_file, 55);
     main_adamantium_weapon_icon = LBX_Load(main_lbx_file, 56);
 
-    move_sail_icon = LBX_Load(main_lbx_file, 18);
-    move_swim_icon = LBX_Load(main_lbx_file, 19);
-    move_mt_icon = LBX_Load(main_lbx_file, 20);
+    move_sail_icon   = LBX_Load(main_lbx_file, 18);
+    move_swim_icon   = LBX_Load(main_lbx_file, 19);
+    move_mt_icon     = LBX_Load(main_lbx_file, 20);
     move_forest_icon = LBX_Load(main_lbx_file, 21);
-    move_fly_icon = LBX_Load(main_lbx_file, 22);
-    move_path_icon = LBX_Load(main_lbx_file, 23);
+    move_fly_icon    = LBX_Load(main_lbx_file, 22);
+    move_path_icon   = LBX_Load(main_lbx_file, 23);
     move_astral_icon = LBX_Load(main_lbx_file, 36);
-    move_wind_icon = LBX_Load(main_lbx_file, 37);
-    move_boot_icon = LBX_Load(main_lbx_file, 38);
+    move_wind_icon   = LBX_Load(main_lbx_file, 37);
+    move_boot_icon   = LBX_Load(main_lbx_file, 38);
 
     movement_mode_icons[0] = LBX_Load(main_lbx_file, 18);
     movement_mode_icons[1] = LBX_Load(main_lbx_file, 19);
@@ -547,7 +543,7 @@ void Main_Screen_Load_Pictures(void)
     movement_mode_icons[6] = LBX_Load(main_lbx_file, 36);
     movement_mode_icons[7] = LBX_Load(main_lbx_file, 37);
     movement_mode_icons[8] = LBX_Load(main_lbx_file, 38);
-    // movement_mode_icons[9] ¿ drake178: "Cavalry"
+    // movement_mode_icons[9] ¿ drake178: "Cavalry" ?
 
 
     for(itr = 0; itr < 9; itr++)
@@ -555,44 +551,50 @@ void Main_Screen_Load_Pictures(void)
         unit_backgrounds[itr] = LBX_Load(main_lbx_file, 24 + itr);
     }
 
-    next_turn_button_seg = LBX_Load(main_lbx_file, 58);
-
-    deselect_background = LBX_Load(main_lbx_file, 34);
+    // MAIN.LBX, 058    DESELECT    next turn button..
+    // MAIN.LBX, 034    DESELECT    deselect backgrnd
+    // MAIN.LBX, 035    DESELECT    next turn backgrnd
+    next_turn_button_seg     = LBX_Load(main_lbx_file, 58);
+    deselect_background      = LBX_Load(main_lbx_file, 34);
     next_turn_background_seg = LBX_Load(main_lbx_file, 35);
 
-//     cast_background = LBX_Load(main_lbx_file, 40);
-//     cast_cancel_button = LBX_Load(main_lbx_file, 41);
-//     cast_button_border = LBX_Load(main_lbx_file, 47);
-// 
-//     DESELECT_button_blockout = LBX_Load(main_lbx_file, 44);
-// 
-//     road_background = LBX_Load(main_lbx_file, 45);
-//     road_ok_button = LBX_Load(main_lbx_file, 46);
-//     road_button_border = LBX_Load(main_lbx_file, 48);
-// 
-//     survey_background = LBX_Load(main_lbx_file, 57);
-// 
-//     mirror_screen_background = LBX_Load(backgrnd_lbx_file, 4);
-// 
-//     goto_booty_icon = LBX_Load(main_lbx_file, 50);
-// 
-// 
-//     // LILEVENT blue
-//     // LILEVENT red
-//     // LILEVENT grn
-//     // LILEVENT bad
-//     // LILEVENT good
-//     // LILEVENT short
-// 
-// 
-//     for(itr = 0; itr < 6; itr++)
-//     {
-//         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, 59 + itr);
-//     }
+    // MAIN.LBX, 040    MAINCAST    cast background
+    // MAIN.LBX, 041    CASTCNCL    cast cancel button
+    // MAIN.LBX, 047    C&RBORDR    cast button border
+    cast_background    = LBX_Load(main_lbx_file, 40);
+    cast_cancel_button = LBX_Load(main_lbx_file, 41);
+    cast_button_border = LBX_Load(main_lbx_file, 47);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()\n", __FILE__, __LINE__);
-#endif
+    // MAIN.LBX, 044    DESELECT    button blockout
+    deselect_button_blockout = LBX_Load(main_lbx_file, 44);
+
+    // MAIN.LBX, 045    MAINROAD    road background
+    // MAIN.LBX, 046    CASTCNCL    road ok button
+    // MAIN.LBX, 048    C&RBORDR    road button border
+    road_background    = LBX_Load(main_lbx_file, 45);
+    road_ok_button     = LBX_Load(main_lbx_file, 46);
+    road_button_border = LBX_Load(main_lbx_file, 48);
+
+    // MAIN.LBX, 057    MAINSRVY    survey backgrnd
+    survey_background = LBX_Load(main_lbx_file, 57);
+
+    // BACKGRND.LBX, 04  MAGEVIEW    wizardview backgrn
+    mirror_screen_background_seg = LBX_Load(backgrnd_lbx_file, 4);
+
+    // MAIN.LBX, 050    GOTO        goto booty
+    goto_booty_icon = LBX_Load(main_lbx_file, 50);
+
+
+    // MAIN.LBX, 059    LILEVENT    blue
+    // MAIN.LBX, 060    LILEVENT    red
+    // MAIN.LBX, 061    LILEVENT    grn
+    // MAIN.LBX, 062    LILEVENT    bad
+    // MAIN.LBX, 063    LILEVENT    good
+    // MAIN.LBX, 064    LILEVENT    short
+    for(itr = 0; itr < 6; itr++)
+    {
+        main_lilevent_icons[itr] = LBX_Load(main_lbx_file, (59 + itr));
+    }
 
 }
 
@@ -723,19 +725,25 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 95  CITYICO3  grey big bread
     city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, GFX_Swap_Seg);
 
-    // BACKGRND.LBX, 33  OUTPOST  outpost brt house
-    // BACKGRND.LBX, 34  OUTPOST  outpost brt tree
-    // BACKGRND.LBX, 35  OUTPOST  outpost brt hut
 
+    // BACKGRND.LBX, 32  OUTPOST  outpost background
+    outpost_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 32, GFX_Swap_Seg);
+
+    // BACKGRND.LBX, 33  OUTNAME  outpost name backg
+    outpost_name_background_seg = LBX_Reload_Next(backgrnd_lbx_file, 33, GFX_Swap_Seg);
+
+
+    // BACKGRND.LBX, 34  OUTPOST  outpost brt house
+    // BACKGRND.LBX, 35  OUTPOST  outpost brt tree
+    // BACKGRND.LBX, 36  OUTPOST  outpost brt hut
     for(itr = 0; itr < 3; itr++)
     {
         outpost_bright_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (34 + itr), GFX_Swap_Seg);
     }
 
-    // BACKGRND.LBX, 36  OUTPOST  outpost drk house
-    // BACKGRND.LBX, 37  OUTPOST  outpost drk tree
-    // BACKGRND.LBX, 38  OUTPOST  outpost drk hut
-
+    // BACKGRND.LBX, 37  OUTPOST  outpost drk house
+    // BACKGRND.LBX, 38  OUTPOST  outpost drk tree
+    // BACKGRND.LBX, 39  OUTPOST  outpost drk hut
     for(itr = 0; itr < 3; itr++)
     {
         outpost_dark_icon_seg[itr] = LBX_Reload_Next(backgrnd_lbx_file, (37 + itr), GFX_Swap_Seg);
@@ -744,7 +752,6 @@ void City_Screen_Load_Pictures(void)
     // BACKGRND.LBX, 25  LCONFIRM  lair confirm borde
     // BACKGRND.LBX, 26  LCONFIRM  lair bottom w/butt
     // BACKGRND.LBX, 27  LCONFIRM  lair bottom wo/but
-
     lair_confirm_border_seg = LBX_Reload_Next(backgrnd_lbx_file, 25, GFX_Swap_Seg);
     lair_bottom_with_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 26, GFX_Swap_Seg);
     lair_bottom_without_button_seg = LBX_Reload_Next(backgrnd_lbx_file, 27, GFX_Swap_Seg);
@@ -786,32 +793,14 @@ void City_Screen_Load_Pictures(void)
 // WZD o52p16
 void Load_SPELLDAT(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_SPELLDAT()\n", __FILE__, __LINE__);
-#endif
-
     spell_data_table = (struct s_SPELL_DATA *)LBX_Load_Data(spelldat_lbx_file, 0, 0, 215, 36);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_SPELLDAT()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
 // WZD o52p17
-// drake178: ?
 void Load_BUILDDAT(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
-
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file, 0, 0, 36, 52);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_BUILDDAT()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -825,9 +814,7 @@ void Load_BUILDDAT(void)
 // WZD o52p20
 void GFX_Swap_Reset(void)
 {
-
     Allocate_First_Block(GFX_Swap_Seg, 1);
-
 }
 
 
@@ -869,59 +856,16 @@ void GFX_Swap_AppndCtScap__WIP(void)
     // CITYSCAP.LBX,   0  BACKS      ground background
     cityscape_background_arcanus_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 0, GFX_Swap_Seg);
 
-/*
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 87
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+    // CITYSCAP.LBX,  87  CITYSPL1    flying fortress
+    // CITYSCAP.LBX,  90  CITYSPL3    gaia
+    cityscape_flyingfortress_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 87, GFX_Swap_Seg);
+    cityscape_gaiasblessing_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 90, GFX_Swap_Seg);
 
-add     sp, 6
-
-
-mov     [IMG_CTY_FlyFortress@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 90
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-
-
-mov     [IMG_CTY_GaiasMask@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 89
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-
-
-mov     [IMG_CTY_LivingLands@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 86
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_CursedLands@], ax
-
-*/
-
+    // CITYSCAP.LBX,  89  CITYSPL2    living lands
+    // CITYSCAP.LBX,  86  CITYSPL1    cursed land mask
+    cityscape_livinglands_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 89, GFX_Swap_Seg);
+    cityscape_cursedland_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 86, GFX_Swap_Seg);
 
 
     // CITYSCAP.LBX,   3  CSWATER     river
@@ -946,18 +890,12 @@ mov     [IMG_CTY_CursedLands@], ax
     cityscape_background_arcanus_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 92, GFX_Swap_Seg);
 
 
+    // CITYSCAP.LBX,  88  CITYSPL2    famine
+    cityscape_famine_mask_seg = LBX_Reload_Next(cityscap_lbx_file, 88, GFX_Swap_Seg);
+
+
 
 /*
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 88
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_FamineMask@], ax
 
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 7
@@ -1010,6 +948,8 @@ mov     [IMG_CTY_Myr_HLight@], ax
     // CITYSCAP.LBX, 111  KAOBACKS    choas dark cloud
     cityscape_background_myrror_darkcloud_seg = LBX_Reload_Next(cityscap_lbx_file, 111, GFX_Swap_Seg);
 
+    // CITYSCAP.LBX, 112  KAOBACKS    choas chaos rift
+    // cityscape_background_myrror_chaosrift_seg = LBX_Reload_Next(cityscap_lbx_file, 112, GFX_Swap_Seg);
 
 /*
 
@@ -1168,7 +1108,7 @@ mov     [IMG_CTY_WallofFire@], ax
 
 
     // CITYSCAP.LBX,  5  BACKS       roads
-    // IMG_CTY_Scap_Roads = LBX_Reload_Next(cityscap_lbx_file, 5, GFX_Swap_Seg);
+    cityscape_roads_seg = LBX_Reload_Next(cityscap_lbx_file, 5, GFX_Swap_Seg);
 
 
     // {{25,26,27,28,29},{30,31,32,33,34},{35,36,37,38,39}}
@@ -1187,100 +1127,93 @@ mov     [IMG_CTY_WallofFire@], ax
     }
 
 
-    // IMG_CTY_Scap_Trees@
+    // CITYSCAP.LBX, 19  HOUSES      tree1
+    // CITYSCAP.LBX, 20  HOUSES      tree2
+    // CITYSCAP.LBX, 21  HOUSES      tree3
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+        cityscape_trees_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (19 + itr1), GFX_Swap_Seg);
+    }
+
+    // CITYSCAP.LBX, 22  HOUSES      rocks1
+    // CITYSCAP.LBX, 23  HOUSES      rocks2
+    // CITYSCAP.LBX, 24  HOUSES      rocks3
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+        cityscape_rocks_seg[itr1] = LBX_Reload_Next(cityscap_lbx_file, (22 + itr1), GFX_Swap_Seg);
+    }
 
 
-    // IMG_CTY_Scap_Rocks@
+    // CITYSCAP.LBX,  6  BUILDS4     summon circle
+    cityscape_summon_circle_seg = LBX_Reload_Next(cityscap_lbx_file, 6, GFX_Swap_Seg);
 
 
-    /*
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 6
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+/*
 
-add     sp, 6
-mov     [IMG_CTY_Sum_Circle@], ax
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 83
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Earth_Gate@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 84
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_StreamofLif@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 85
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Astral_Gate@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 12
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_AltarofBtl@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 81
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_Dark_Ritual@], ax
+
 push    [GFX_Swap_Seg]                  ; base_seg
 mov     ax, 82
 push    ax                              ; entry_num
 mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
 push    ax                              ; file_name
 call    LBX_Reload_Next
-
 add     sp, 6
 mov     [IMG_CTY_EvilPresnc@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 76
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_CTY_Scap_Wall@], ax
+*/
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 40
-push    ax                              ; entry_num
-mov     ax, offset cityscap_lbx_file    ; "CITYSCAP"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
+    // CITYSCAP.LBX,  76  CSWALLS     city walls
+    cityscape_city_walls_seg = LBX_Reload_Next(cityscap_lbx_file, 76, GFX_Swap_Seg);
 
 
-mov     [IMG_CTY_WizFortress@], ax
-
-    */
+    // CITYSCAP.LBX,  40  ANIBUILD    fortress
+    cityscape_fortress_seg = LBX_Reload_Next(cityscap_lbx_file, 40, GFX_Swap_Seg);
 
 
     // CITYSCAP.LBX,  41  BUILDS1     trade goods
@@ -1349,7 +1282,7 @@ void GFX_Swap_AppendUView(void)
     for(itr = 0; itr < 34; itr++)
     {
         // IMG_USW_Abilities.Confusion@
-        special_seg[(110 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, GFX_Swap_Seg);
+        special_seg[(111 + itr)] = LBX_Reload_Next(special2_lbx_file, itr, GFX_Swap_Seg);
     }
 
 
@@ -1433,8 +1366,8 @@ void GFX_Swap_AppendUView(void)
     }
 
 
-    IMG_OVL_UnitList_BG = LBX_Reload_Next(unitview_lbx_file, 28, GFX_Swap_Seg);
-    IMG_OVL_UnitListBtm = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
+    _unitlist_background_seg = LBX_Reload_Next(unitview_lbx_file, 28, GFX_Swap_Seg);
+    _unitlist_bottom_seg = LBX_Reload_Next(unitview_lbx_file, 29, GFX_Swap_Seg);
 
     // UNITVIEW.LBX,  30  BLDBUTB2    bld button backgrn
     IMG_OVL_BuildBtn_BG = LBX_Reload_Next(unitview_lbx_file, 30, GFX_Swap_Seg);
@@ -1503,6 +1436,8 @@ void GFX_Swap_AppendUView(void)
 
 // WZD o52p28
 // drake178: GFX_Swap_AppendItems()
+// MoO2
+// 1oom: 
 /*
     Loads
         ITEMS.LBX
@@ -1510,208 +1445,92 @@ void GFX_Swap_AppendUView(void)
         not
             ITEMDATA.LBX
             ITEMPOW.LBX
+
+Usage:
+    Item Screen / Item View
+    Unit View / Unit Statistics Window
+
 */
-void GFX_Swap_AppendItems__WIP(void)
+void Reload_Item_Pictures(void)
 {
     int16_t itr;  // _SI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
-#endif
-
+    // load all of ITEMS.LBX
     for(itr = 0; itr < 116; itr++)
     {
         item_icons_seg[itr] = LBX_Reload_Next(items_lbx_file, itr, GFX_Swap_Seg);
     }
 
+    /*
+        ITEMISC.LBX, {0, ..., 36}
+        FLICs: ITEMPOWR, ITEMSLOT, ITEMVIEW, ITEMTILE, 
+    */
+
+    // ITEMISC.LBX, 000  ITEMPOWR  item pro magic
+    // ITEMISC.LBX, 001  ITEMPOWR  item regenerate
+    // ITEMISC.LBX, 002  ITEMPOWR  item haste
+    // ITEMISC.LBX, 003  ITEMPOWR  item true sight
+    // ITEMISC.LBX, 004  ITEMPOWR  item path finding
+    // ITEMISC.LBX, 005  ITEMPOWR  item water walking
+    // ITEMISC.LBX, 006  ITEMPOWR  item pro evil
+    // ITEMISC.LBX, 007  ITEMPOWR  item lion heart
+    // ITEMISC.LBX, 008  ITEMPOWR  item invis
+    // ITEMISC.LBX, 009  ITEMPOWR  item astral proj
+    // ITEMISC.LBX, 010  ITEMPOWR  item endurance
+    // ITEMISC.LBX, 011  ITEMPOWR  item rightousness
+    // ITEMISC.LBX, 012  ITEMPOWR  item invulnerabil
+    // ITEMISC.LBX, 013  ITEMPOWR  item resist elem
+    // ITEMISC.LBX, 014  ITEMPOWR  item pro elements
+    // ITEMISC.LBX, 015  ITEMPOWR  item cloak of fear
+    // ITEMISC.LBX, 016  ITEMPOWR  item flight
+    // ITEMISC.LBX, 017  ITEMPOWR  item resist magic
+    // ITEMISC.LBX, 018  ITEMPOWR  item merging
     for(itr = 0; itr < 19; itr++)
     {
-        IMG_USW_ItemPowers[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, GFX_Swap_Seg);
+        item_power_icons_seg[itr] = LBX_Reload_Next(itemisc_lbx_file, itr, GFX_Swap_Seg);
     }
 
+    // ITEMISC.LBX, 033  ITEMPOWR  item dispel evil
+    // ITEMISC.LBX, 034  ITEMPOWR  item giant str
+    // ITEMISC.LBX, 035  ITEMPOWR  item guardian wind
+    item_power_icons_seg[19] = LBX_Reload_Next(itemisc_lbx_file, 33, GFX_Swap_Seg);
+    item_power_icons_seg[20] = LBX_Reload_Next(itemisc_lbx_file, 34, GFX_Swap_Seg);
+    item_power_icons_seg[21] = LBX_Reload_Next(itemisc_lbx_file, 35, GFX_Swap_Seg);
 
 
-/*
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 33
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Dispel_Evil@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 34
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Giant_Strength@], ax
+    // ITEMISC.LBX, 019  ITEMSLOT  sword
+    // ITEMISC.LBX, 020  ITEMSLOT  bow
+    // ITEMISC.LBX, 021  ITEMSLOT  weapon/staff
+    // ITEMISC.LBX, 022  ITEMSLOT  wand
+    // ITEMISC.LBX, 023  ITEMSLOT  misc
+    // ITEMISC.LBX, 024  ITEMSLOT  armor
+    item_slot_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 19, GFX_Swap_Seg);
+    item_slot_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 20, GFX_Swap_Seg);
+    item_slot_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 21, GFX_Swap_Seg);
+    item_slot_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 22, GFX_Swap_Seg);
+    item_slot_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 24, GFX_Swap_Seg);
+    item_slot_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 23, GFX_Swap_Seg);
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 35
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemPowers.Guardian_Wind@], ax
+    // ITEMISC.LBX, 025  ITEMVIEW  item view backgrnd
+    // ITEMISC.LBX, 026  ITEMVIEW  item view bullet
+    item_view_background_seg = LBX_Reload_Next(itemisc_lbx_file, 25, GFX_Swap_Seg);
+    item_view_bullet_seg = LBX_Reload_Next(itemisc_lbx_file, 26, GFX_Swap_Seg);
 
 
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 19
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
+    // ITEMISC.LBX, 027  ITEMTILE  sword (unit view)
+    // ITEMISC.LBX, 028  ITEMTILE  bow   (unit view)
+    // ITEMISC.LBX, 029  ITEMTILE  weapon/staff (uv)
+    // ITEMISC.LBX, 030  ITEMTILE  wand  (unit view)
+    // ITEMISC.LBX, 031  ITEMTILE  misc  (unit view)
+    // ITEMISC.LBX, 032  ITEMTILE  armor (unit view)
+    itemtile_icons_seg[0] = LBX_Reload_Next(itemisc_lbx_file, 27, GFX_Swap_Seg);
+    itemtile_icons_seg[1] = LBX_Reload_Next(itemisc_lbx_file, 28, GFX_Swap_Seg);
+    itemtile_icons_seg[2] = LBX_Reload_Next(itemisc_lbx_file, 29, GFX_Swap_Seg);
+    itemtile_icons_seg[3] = LBX_Reload_Next(itemisc_lbx_file, 30, GFX_Swap_Seg);
+    itemtile_icons_seg[4] = LBX_Reload_Next(itemisc_lbx_file, 32, GFX_Swap_Seg);
+    itemtile_icons_seg[5] = LBX_Reload_Next(itemisc_lbx_file, 31, GFX_Swap_Seg);
 
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Sword@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 20
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Bow@], ax  ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 21
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Sword_Staff@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 22
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Staff@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 24
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Armor@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 23
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_ARMY_ItemSlots@.Accessory@], ax ; array of 6 appended reserved EMM headers in
-                                        ; GFX_Swap_Seg, each with one item slot image
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 25
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemHelp_BG@], ax
-
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 26
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemHelpBlt@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 27
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Sword@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 28
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Bow@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 29
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Sword_Staff@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 30
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Staff@], ax
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 32
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Armor@], ax
-\
-
-push    [GFX_Swap_Seg]                  ; base_seg
-mov     ax, 31
-push    ax                              ; entry_num
-mov     ax, offset itemisc_lbx_file     ; "ITEMISC"
-push    ax                              ; file_name
-call    LBX_Reload_Next
-
-add     sp, 6
-mov     [IMG_USW_ItemSlots.Accessory@], ax
-
-*/
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GFX_Swap_AppendItems()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o52p29
@@ -1723,16 +1542,29 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
 #endif
 
-    _spellbook_small_seg = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);  // "SMLBOOK", ""
-    _spellbook_small_left_corner_seg = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);  // "BCORNERS", ""
-    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);  // "BCORNERS", ""
+    // SPECIAL2.LBX, 034  SMLBOOK
+    // SPECIAL2.LBX, 035  BCORNERS
+    // SPECIAL2.LBX, 036  BCORNERS
 
-    for(itr = 0; itr < 5; itr++)
+    _spellbook_small_seg              = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);
+    _spellbook_small_left_corner_seg  = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);
+    _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);
+
+    // SPECIAL2.LBX, 037  BOOKSYMB
+    // SPECIAL2.LBX, 038  BOOKSYMB
+    // SPECIAL2.LBX, 039  BOOKSYMB
+    // SPECIAL2.LBX, 040  BOOKSYMB
+    // SPECIAL2.LBX, 041  BOOKSYMB
+    // SPECIAL2.LBX, 042  BOOKSYMB
+
+    for(itr = 0; itr <= 5; itr++)
     {
-        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);  // "BOOKSYMB", ""
+        _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);
     }
 
-    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);  // "SMALTEXT", ""
+    // SPECIAL2.LBX, 043  SMALTEXT
+
+    _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
@@ -1752,7 +1584,7 @@ void GFX_Swap_Cities(void)
 
     Load_Unit_StatFigs();  // LBX_Reload_Next(); UNITS_.LBX, _unit_type_table, GFX_Swap_Seg
 
-    GFX_Swap_AppendItems__WIP();
+    Reload_Item_Pictures();
 
     GFX_Swap_AppndCtScap__WIP();
 
@@ -1776,7 +1608,7 @@ void GFX_Swap_Overland(void)
 
     GFX_Swap_AppendUView();
 
-    GFX_Swap_AppendItems__WIP();
+    Reload_Item_Pictures();
 
     GFX_Swap_AppndCtScap__WIP();
 
@@ -1787,6 +1619,21 @@ void GFX_Swap_Overland(void)
 }
 
 // WZD o52p32
+/*
+Load graphics for 'Unit List Window'
+    ...resets GFX_Swap_Seg
+
+XREF:
+    j_U_GFX_Swap_Units()
+        Unit_List_Window()
+*/
+void Cache_Graphics_Unit_List_Window(void)
+{
+    GFX_Swap_Reset();
+    Load_Unit_StatFigs();
+    GFX_Swap_AppendUView();
+}
+
 // WZD o52p33
 
 // WZD o52p34

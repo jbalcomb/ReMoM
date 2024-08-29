@@ -5,6 +5,7 @@
         ovr055
 
 */
+
 #ifndef CITYOVR55_H
 #define CITYOVR55_H
 
@@ -24,35 +25,43 @@ extern "C" {
 
 
 // WZD o55p01
-// drake178: ¿ ?
-// Enemy_City_Screen()
+void Enemy_City_Screen(void);
 
 // WZD o55p02
-// drake178: ¿ ?
-// Enemy_City_Screen_Draw()
+void Enemy_City_Screen_Draw(void);
 
 // WZD o55p03
-// drake178: ¿ ?
-// Enemy_City_Screen_Load()
+void Enemy_City_Screen_Load(void);
 
 // WZD o55p04
-// drake178: ¿ ?
-// IDK_City_Cityscape_Draw_MouseOver()
+void Cityscape_Draw_Scanned_Building_Name(int16_t scanned_field, int16_t x_start, int16_t owner_idx);
 
 // WZD o55p05
 // drake178: CTY_CreateEmpty()
+int16_t Init_Outpost(void);
 
 // WZD o55p06
 // drake178: CTY_TakeOver()
+void Change_City_Ownership(int16_t city_idx, int16_t player_idx);
 
 // WZD o55p07
-// drake178: CTY_ApplyDamage()
+/*
+    called from End_Of_Combat()
+        |-> CTY_ApplyDamage(OVL_Action_Structure, _DI_IDK_population_lost, Destruction_Chance, &Buildings_Lost[0])
+processes direct population loss,
+rolls for and applies building destruction (marking them into the return array),
+recalculates production validity,
+and destroys the city if it has no population left
+; INCONSISTENT with tile requirements and destroyed buildings
+*/
+void CTY_ApplyDamage(int16_t city_idx, int16_t PopLoss, int16_t DChance, int16_t BList[]);
 
 // WZD o55p08
 // drake178: CTY_Remove()
+void Destroy_City(int16_t city_idx);
 
 // WZD o55p09
-// drake178: CTY_Print_Enchantments()
+void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * city_enchantment_list, int16_t * city_enchantment_owner_list, int16_t city_enchantment_list_count);
 
 // WZD o55p10
 // drake178: CTY_ClearEnchant()
@@ -80,14 +89,13 @@ int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_
 int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o55p16
-// drake178: CTY_ValidateProd()
+void City_Check_Production(int16_t city_idx);
 
 // WZD o55p17
-// drake178: CTY_CancelProd()
+void City_Cancel_Production(int16_t city_idx);
 
 // WZD o55p18
-// drake178: N/A
-// sub_4BEB3()
+int16_t City_Sell_Building_Value(int16_t bldg_idx);
 
 // WZD o55p19
 // drake178: N/A
@@ -95,6 +103,7 @@ int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o55p20
 // drake178: CTY_BuyProduction()
+void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx);
 
 // WZD o55p21
 // drake178: CTY_GetProdBuyCost()
@@ -127,7 +136,7 @@ void Do_Build_City_Enchantment_List(void);
 
 // WZD o55p28
 // drake178: ¿ ?
-void City_Screen_Draw_City_Enchantments__WIP(int16_t xstart, int16_t ystart);
+void City_Screen_Draw_City_Enchantments(int16_t xstart, int16_t ystart);
 
 // WZD o55p29
 // drake178: CTY_CreateEnchCtrls()
@@ -147,7 +156,7 @@ void City_Screen_Garrison_Window_Picture_Coords(int16_t stack_idx, int16_t * x1,
 
 // WZD o55p33
 // drake178: N/A
-// IDK_CtyBld_s4D357()
+void All_City_Removed_Buildings(void);
 
 // WZD o55p34
 // drake178: WIZ_AddGold()
@@ -155,6 +164,7 @@ void Player_Add_Gold(int16_t player_idx, int16_t gold_amount);
 
 // WZD o55p35
 // drake178: WIZ_AddMana()
+void Player_Add_Mana(int16_t player_idx, int16_t mana);
 
 // WZD o55p36
 // drake178: ¿ ?
@@ -162,6 +172,7 @@ void Player_Add_Gold(int16_t player_idx, int16_t gold_amount);
 
 // WZD o55p37
 // drake178: STR_GenitiveCase()
+void Possessive(char * string);
 
 // WZD o55p38
 // drake178: N/A

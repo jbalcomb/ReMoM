@@ -10,26 +10,30 @@
 #include "Video.H"
 
 
-/*
-int16_t example_mouse_list_count = 2;
-struct s_mouse_list example_mouse_list[2] = {
-    {0, 0, 0, 0, 319, 199},
-    {3, 1, 32, 20, 158, 100}
-};
 
-int16_t mouse_list_none_count = 1;
+// int16_t example_mouse_list_count = 2;
+// struct s_mouse_list example_mouse_list[2] = {
+//     {0, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX},
+//     {3, 1, 32, 20, 158, 100}
+// };
+
+// int16_t mouse_list_none_count = 1;
 struct s_mouse_list mouse_list_none[1] = {
-    {0, 0, 0, 0, 319, 199}
+    {crsr_None, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
 };
 
-int16_t mouse_list_default_count = 1;
-struct s_mouse_list mouse_list_default[1] = {
-    {1, 0, 0, 0, 319, 199}
-};
-*/
+// int16_t mouse_list_default_count = 1;
+// struct s_mouse_list mouse_list_default[1] = {
+//     {crsr_Finger, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
+// };
+
 // TODO  _mouse_list_arrow
+// struct s_mouse_list mouse_list_arrow[1] = {
+//     {crsr_Ranged, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
+// };
+
 struct s_mouse_list mouse_list_default[1] = {
-    {1, 0, 0, 0, 319, 199}
+    {crsr_Finger, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
 };
 
 
@@ -45,19 +49,18 @@ int16_t current_pointer_image_number = 0;
 int16_t previous_pointer_image_number = 0;
 
 // WZD dseg:78BC
-// drake178: MOUSE_CursorDraw
 int16_t mouse_enabled = ST_FALSE;
 
 // WZD dseg:78BE
-// drake178: MOUSE_DriverPresent
 // MoO2: mouse_driver_installed
-int16_t mouse_driver_installed;
+int16_t mouse_driver_installed = ST_FALSE;
 
-// WZD dseg:78C0 00 00                   MOUSE_Usable dw 0
+// WZD dseg:78C0
+int16_t MOUSE_Usable = ST_FALSE;
 
-// WZD dseg:78C2 9E 00                   MOUSE_CurrentX dw 9Eh
+// WZD dseg:78C2
 int16_t mouse_x = 158;
-// WZD dseg:78C4 64 00                   MOUSE_CurrentY dw 64h
+// WZD dseg:78C4
 int16_t mouse_y = 100;
 
 // WZD dseg:78C6
@@ -79,17 +82,14 @@ int16_t mouse_buffer_button = 0;
 int16_t mouse_buffer_flag2 = 0;
 
 // WZD dseg:78D4
-int16_t MOUSE_INT_Process = ST_FALSE;
+int16_t mouse_interrupt_active = ST_FALSE;
 
 // WZD dseg:78D6
-// drake178: GUI_HaveAreaSave
 int16_t mouse_save_flag = ST_FALSE;
 
 // WZD dseg:78D8
-// drake178: MOUSE_InitX
 int16_t init_mouse_x = 158;
 // WZD dseg:78DA
-// drake178: MOUSE_InitY
 int16_t init_mouse_y = 100;
 
 // WZD dseg:78DC
@@ -204,33 +204,81 @@ int16_t Get_Pointer_Offset(void)
 // WZD s35p05
 // Platform-Layer int16_t Mouse_Button(void)
 
+// WZD s35p06
+void Mouse_Wait(void)
+{
+// mov     ax, 3
+// mov     bx, 0
+// mov     cx, 0
+// mov     dx, 0
+// cli
+// int     33h                             ; - MS MOUSE - RETURN POSITION AND BUTTON STATUS
+//                                         ; Return: BX = button status, CX = column, DX = row
+// sti
+// and     bx, 3
+// return _AX_
+}
+
+
 // WZD s35p07
-// AKA MD_Init()
 int16_t Init_Mouse_Driver(void)
 {
     // INT 33, 0
     // if _AX != 0x000
     // INT 33, 3
     mouse_driver_installed = ST_TRUE;
-    // mouse_interrupt_active = ST_FALSE;  // AKA g_MD_INT_InProcess
+    mouse_interrupt_active = ST_FALSE;
+
+    mouse_x = init_mouse_x;
+    mouse_y = init_mouse_y;
 
     // INT 33, 7  638
     // INT 33, 8  199
 
-    // ~== MoO2 Set_Pointer_Position
-    mouse_x = init_mouse_x;
-    mouse_y = init_mouse_y;
+    Mouse_Wait();
 
-    // Mouse_Wait()  AKA MD_WaitRelease()
-
-    // INT 33, C  MD_INT_Handler
+    // INT 33, 12  User_Mouse_Handler
 
     mouse_enabled = ST_FALSE;
 
-    // g_MD_ClickRec1 = 0;  /* ? ST_FALSE ? */
-    // g_MD_ClickRec2 = 0;  /* ? ST_FALSE ? */
+    mouse_buffer_flag = ST_FALSE;
+    mouse_buffer_flag2 = ST_FALSE;
 
     return ST_SUCCESS;
+}
+
+
+// WZD s35p08
+void RP_Mouse_SetUsable(void)
+{
+    MOUSE_Usable = ST_TRUE;
+}
+
+
+// WZD s35p09
+void Reset_System_Mouse(void)
+{
+    if(mouse_driver_installed)
+    {
+        Mouse_Wait();
+        mouse_enabled = ST_FALSE;  // DNE in MoO2
+        mouse_buffer_flag = ST_FALSE;
+        mouse_buffer_flag2 = ST_FALSE;
+        // MoO2  old_mouse_x = Pointer_X();
+        // MoO2  old_mouse_y = Pointer_Y();
+        init_mouse_x = Pointer_X();
+        init_mouse_y = Pointer_Y();
+
+// cli  AKA _disable_()
+// mov     ax, 21h
+// int     33h                             ; - MS MOUSE - SOFTWARE RESET
+//                                         ; Return: AX = FFFFh if mouse driver installed
+//                                         ; AX = 0021h if mouse driver not installed
+//                                         ; BX = 2 if mouse driver is installed
+// sti  AKA _enable_()
+
+    }
+    mouse_driver_installed = ST_FALSE;
 }
 
 
@@ -239,6 +287,11 @@ int16_t Init_Mouse_Driver(void)
 
 // WZD s35p11
 // PLATFORM void Mouse_Button_Handler(void)
+
+// WZD s35p12
+// drake178: MOUSE_INT_Handler()
+// MoO2  Module: mouse  User_Mouse_Handler()
+// PLATFORM  void User_Mouse_Handler(int16_t max, int16_t buttons, int16_t mcx, int16_t mdx)
 
 
 // WZD s35p13
@@ -270,27 +323,26 @@ int16_t Pointer_Y(void)
 // MD_MoveCursor
 void Set_Pointer_Position(int16_t x, int16_t y)
 {
-//     MOUSE_CurrentX = x;
-//     MOUSE_CurrentY = y;
-// 
-//     if(MOUSE_DriverPresent != ST_FALSE)
-//     {
-//         Set_Mouse_Position(x, y);
-//     }
+    mouse_x = x;
+    mouse_y = y;
+
+    if(mouse_driver_installed)
+    {
+        Set_Mouse_Position(x, y);
+    }
 }
 
 // WZD s35p21
-// AKA MD_MoveCursorINT() AKA MOUSE_MoveCursorINT()
-void Set_Mouse_Position(int16_t x, int16_t y)
-{
-// asm mov cx, [bp+x]
-// asm shl cx, 1
-// asm mov dx, [bp+y]
-// asm mov ax, 4
-// asm cli
-// asm int 33h
-// asm sti
-}
+// PLATFORM  void Set_Mouse_Position(int16_t x, int16_t y)
+// {
+// // asm mov cx, [bp+x]
+// // asm shl cx, 1
+// // asm mov dx, [bp+y]
+// // asm mov ax, 4
+// // asm cli
+// // asm int 33h
+// // asm sti
+// }
 
 
 // WZD s35p22
@@ -317,22 +369,54 @@ int16_t Mouse_Buffer_Button(void)
 // WZD s35p25
 int16_t Mouse_Buffer(void)
 {
-    int16_t temp;
-    temp = mouse_buffer_flag;
-    mouse_buffer_flag = 0;
-    return temp;
+    int16_t value;
+    value = mouse_buffer_flag;
+    mouse_buffer_flag = ST_FALSE;
+    return value;
 }
 
 
 // WZD s35p26
 int16_t Mouse_Buffer2(void)
 {
-    int16_t temp;
-    temp = mouse_buffer_flag2;
-    mouse_buffer_flag2 = 0;
-    return temp;
+    int16_t value;
+    value = mouse_buffer_flag2;
+    mouse_buffer_flag2 = ST_FALSE;
+    return value;
 }
 
+// WZD s35p27
+void Set_Buffer_2(int16_t x, int16_t y)
+{
+    mouse_buffer_flag2 = ST_TRUE;
+    mouse_buffer_x = x;
+    mouse_buffer_y = y;
+}
+
+
+// WZD s35p28
+void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
+{
+    mouse_buffer_flag2 = ST_TRUE;
+    mouse_buffer_flag = ST_TRUE;
+    mouse_buffer_x = x;
+    mouse_buffer_y = y;
+    mouse_buffer_button = buttons;
+}
+
+
+// WZD s35p29
+void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
+{
+    if(buttons = (buttons & 0x03) != 0)
+    {
+        mouse_buffer_button = buttons;
+        mouse_buffer_flag = ST_TRUE;
+        mouse_buffer_flag2 = ST_TRUE;
+        mouse_buffer_x = x;
+        mouse_buffer_y = y;
+    }
+}
 
 
 
@@ -359,7 +443,10 @@ void Save_Mouse_On_Page(int16_t x, int16_t y)
     // if(previous_pointer_image_number == 0 && mouse_save_flag != ST_FALSE)
     // mouse_save_flag == ST_TRUE
     // if(current_pointer_image_number == 0 && previous_pointer_image_number == 0 && GUI_HaveAreaSave == ST_FALSE) { return; }
+    if (current_pointer_image_number != 0)
+    {
 
+    }
     // clip the cursor image to the right and the bottom of the screen
     if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH ; } else { width  = SCREEN_WIDTH  - x; }
     if(y + CURSOR_HEIGHT < SCREEN_HEIGHT) { height = CURSOR_HEIGHT; } else { height = SCREEN_HEIGHT - y; }

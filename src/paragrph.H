@@ -48,10 +48,13 @@ int16_t Get_Paragraph_Max_Width(int16_t max_width, char * string, int16_t print_
 void Reset_Paragraph_Exclusions(void);
 
 // WZD s19p08
-// VGA_AddFloatingBlock()
+// drake178: VGA_AddFloatingBlock()
+// MoO2: Set_Paragraph_Exclusion_Area()
+void Set_Paragraph_Exclusion_Area(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 // WZD s19p09
-// UU_VGA_AddFltIMGSpace()
+// drake178: UU_VGA_AddFltIMGSpace()
+// MoO2: Set_Paragraph_Exclusion_Picture()
 
 // WZD s19p10
 // drake178: STR_RemoveLBSPs

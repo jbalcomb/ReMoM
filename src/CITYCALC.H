@@ -66,7 +66,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p13
 // drake178: UNIT_MarkRemoved()
-// UNIT_MarkRemoved()
+void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type);
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()
@@ -74,7 +74,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p15
 // drake178: TILE_GetUnits()
-// TILE_GetUnits()
+void Army_At_Square_1(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o120p16
 // drake178: UU_WIZ_GetReligion()
@@ -93,8 +93,7 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx);
 int16_t Player_Fame(int16_t player_idx);
 
 // WZD o120p21
-// drake178: WIZ_GetEmptyHeroSlot()
-// WIZ_GetEmptyHeroSlot()
+int16_t Hero_Slot_Open(int16_t player_idx);
 
 // WZD o120p22
 // drake178: CTY_GetGoldUpkeep()
@@ -102,19 +101,19 @@ int16_t City_Gold_Mainanence(int16_t city_idx);
 
 // WZD o120p23
 // drake178: UNIT_GetLevel()
-int16_t Unit_Level(int16_t unit_idx);
+int16_t Calc_Unit_Level(int16_t unit_idx);
 
 // WZD o120p24
 // drake178: UNIT_GetBaseLevel()
-// UNIT_GetBaseLevel()
+int16_t Unit_Base_Level(int16_t unit_idx);
 
 // WZD o120p25
 // drake178: UNIT_LoggedPushOff()
-// UNIT_LoggedPushOff()
+void UNIT_LoggedPushOff(int16_t unit_idx);
 
 // WZD o120p26
 // drake178: UNIT_RemoveExcess()
-// UNIT_RemoveExcess()
+void UNIT_RemoveExcess(int16_t unit_idx);
 
 
 
@@ -123,10 +122,19 @@ int16_t Unit_Level(int16_t unit_idx);
 */
 
 // WZD o142p01
+void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o142p02
+void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o142p03
+void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o142p04
+void NOOP_Current_Player_All_City_Areas(void);
+
 // WZD o142p05
+int16_t City_House_Count(int16_t city_idx);
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()
@@ -175,40 +183,69 @@ int16_t City_Current_Product_Cost(int16_t city_idx);
 
 
 // WZD o142p17
+// UU_AI_Fort_Defense()
+
 // WZD o142p18
+// EVNT_GenerateMercs()
+
 // WZD o142p19
+// LD_MAP_TFUnk40_Eval()
+
 
 // WZD o142p20
 // drake178: CTY_GetMinFarmers()
 int16_t City_Minimum_Farmers(int16_t city_idx);
 
 // WZD o142p21
+void All_Outpost_Population_Growth(void);
+
 // WZD o142p22
+void Record_History(void);
+
 // WZD o142p23
+int16_t WIZ_Get_Astr_Power__STUB(int16_t player_idx);
+
 // WZD o142p24
+int16_t WIZ_Get_Astr_ArmyStr__STUB(int16_t player_idx);
+
 // WZD o142p25
+int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx);
+
 // WZD o142p26
+int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx);
 
 // WZD o142p27
 // drake178: CTY_GetRebelCount()
 int16_t City_Rebel_Count(int16_t city_idx);
 
 // WZD o142p28
+// TILE_Survey()
 
 // WZD o142p29
 // drake178: CTY_CatchmentRefresh()
-void CTY_CatchmentRefresh__NOOP(void);
+void Reset_City_Area_Bitfields(void);
 
 // WZD o142p30
 // drake178: TILE_IsShared
-int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp);
+int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_area_square_wy, int16_t city_wp);
 
 // WZD o142p31
+void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o142p32
+// CTY_Food_Breakdown()
+
 // WZD o142p33
+// CTY_Gold_Breakdown()
+
 // WZD o142p34
+// CTY_Prod_Breakdown()
+
 // WZD o142p35
+// CTY_Rsrc_Breakdown()
+
 // WZD o142p36
+// CTY_Pwr_Breakdown()
 
 
 

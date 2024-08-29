@@ -1,0 +1,152 @@
+
+Entries:    83
+Type:        0
+
+
+
+000             
+001  CMBTBUTT   spell button
+002  CMBTBUTT   wait button
+003  CMBTBUTT   done button
+004  CMBTBUTT   auto button
+005  COMENCHI   light
+006  COMENCHI   darkness
+007  COMENCHI   warp reality
+008  COMENCHI   black curse
+009  COMENCHI   wrack
+010  COMENCHI   metal fires
+011  COMENCHI   prayer
+012  COMENCHI   high prayer
+013  COMENCHI   terror
+014  COMENCHI   lightning
+015  COMENCHI   counter magic
+016  CSPELL     right arrow
+017  CSPELL     left arrow
+018  HITBAR     unit hit bar
+019  COMBLIST   combat unit list
+020  CMBTBUTT   use button
+021  CMBTBUTT   flee butotn
+022  CMBTBUTT   cancel button
+023  LOCKBUTT   spell lock
+024  LOCKBUTT   wait lock
+025  LOCKBUTT   use lock
+026  LOCKBUTT   auto lock
+027  LOCKBUTT   flee lock
+028  LOCKBUTT   done lock
+029  SMALICON   sword
+030  SMALICON   fireball
+031  SMALICON   bless
+032  SMALICON   magic
+033  SMALICON   adam
+034  SMALICON   bow
+035  SMALICON   rock
+036  SMALICON   breath
+037  SMALICON   axe
+038  SMALICON   walk
+039  SMALICON   fly
+040  SMALICON   swim
+041  MASINVIS   mass invis
+042  INFOICON   crusade
+043  INFOICON   holy arms
+044  INFOICON   holy light
+045  INFOICON   charm of life
+046  INFOICON   chaos surge
+047  INFOICON   red node
+048  INFOICON   red node w/aura
+049  INFOICON   eternal night
+050  INFOICON   cloud of darkness
+051  INFOICON   zombie mastery
+052  INFOICON   green node
+053  INFOICON   green node w/aura
+054  INFOICON   blue node
+055  INFOICON   blue node w/aura
+056  INFOBAC1   info bot
+057  INFOBAC2   info mid
+058  INFOBAC3   info top
+059  INFOBOX    info box
+060  COMENCHI   entangle icon
+061  SCANICON   sword
+062  SCANICON   fireball
+063  SCANICON   bless
+064  SCANICON   magic
+065  SCANICON   adam
+066  SCANICON   bow
+067  SCANICON   rock
+068  SCANICON   breath
+069  SCANICON   axe
+070  SCANICON   defense
+071  SCANICON   health
+072  SCANICON   walk
+073  SCANICON   fly
+074  SCANICON   swim
+075  SCANICON   resistance
+076  SCANICON   silver
+077  SCANICON   gold
+078  SCANICON   red
+079  COMENCHI   mana leek
+080  COMENCHI   blur
+081  BASE       no raze button
+082  BASE       raze button
+
+
+
+53 00 
+AD FE 
+00 00 
+00 00 
+
+60 0C 00 00 
+60 0C 00 00 
+68 0F 00 00 
+7F 12 00 00 
+8F 15 00 00 
+9D 18 00 00 
+13 1A 00 00 
+52 1B 00 00 
+05 1D 00 00 
+A4 1E 00 00 
+4E 20 00 00 
+01 22 00 00 
+A0 23 00 00 
+43 25 00 00 
+F6 26 00 00 
+A9 28 00 00 
+44 2A 00 00 
+C6 2A 00 00 
+3A 2B 00 00 
+33 2C 00 00 
+49 67 00 00 
+66 6A 00 00 
+6D 6D 00 00 
+6D 71 00 00 
+27 73 00 00 
+E3 74 00 00 
+9F 76 00 00 
+59 78 00 00 
+E5 79 00 00 
+7A 7B 00 00 
+10 7C 00 00 
+CC 7C 00 00 
+68 7D 00 00 
+0D 7E 00 00 
+AE 7E 00 00 
+4C 7F 00 00 
+E7 7F 00 00 
+A2 80 00 00 
+3C 81 00 00 
+EF 81 00 00 
+89 82 00 00 
+3F 83 00 00 
+EE 84 00 00 
+17 86 00 00 
+72 87 00 00 
+CA 88 00 00 
+20 8A 00 00 
+51 8B 00 00 
+AC 8C 00 00 
+07 8E 00 00 
+3B 8F 00 00 
+92 90 00 00 ED 91 00 00 48 93 00 00 A3 94 00 00 FE 95 00 00 59 97 00 00 8C A2 00 00 A1 05 01 00 8A 45 01 00 5D 47 01 00 10 49 01 00 5E 49 01 00 C6 49 01 00 19 4A 01 00 7B 4A 01 00 D6 4A 01 00 28 4B 01 00 76 4B 01 00 C0 4B 01 00 0D 4C 01 00 67 4C 01 00 C2 4C 01 00 1E 4D 01 00 6C 4D 01 00 D0 4D 01 00 13 4E 01 00 4D 4E 01 00 87 4E 01 00 C1 4E 01 00 60 50 01 00 07 52 01 00 A2 5C 01 00 
+4D 67 01 00 
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00

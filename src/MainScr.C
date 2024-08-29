@@ -22,8 +22,15 @@
 #include "MainScr_Maps.H"
 
 #include "AdvsrScr.H"
+#include "GENDRAW.H"
 #include "SCastScr.H"  /* World_To_Screen() */
 #include "UnitStat.H"
+#include "WZD_o059.H"
+
+
+// extern uint8_t DBG_debug_flag;
+uint8_t DBG_debug_flag = 0;
+void Main_Screen_Draw_Debug_Information(void);
 
 
 
@@ -97,58 +104,13 @@ void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_
 
 // WZD o59p19
 // AKA IDK_MaybeSwitchStackPlane_s52514()
-void Do_Plane_Button(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
+void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
 
 // WZD o59p20
 // AKA IDK_PlanarTravel_TestWaterCity_s52774()
 int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
 
 
-
-/*
-    WIZARDS.EXE  ovr061
-*/
-// WZD o61p01
-// AKA IDK_ActiveUnitStack_MovesOrPath_s53150()
-// UNITSTK  void Update_Stack_Active(int16_t stack_idx);
-
-// WZD o61p02
-// AKA Do_Move_Stack()
-int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
-
-// WZD o61p03
-// UNIT_MoveStack()
-int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p);
-
-// WZD o61p04
-void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p);
-
-// WZD o61p05
-int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane);
-
-// WZD o61p06
-// drake178: STK_GetExtraActions()
-void STK_GetExtraActions__WIP(void);
-
-// WZD o61p07
-// drake178: STK_GetMovableUnits()
-void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[]);
-
-// WZD o61p08
-void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[]);
-
-// WZD o61p09
-void RdBd_UNIT_SelectStack_STUB(int16_t * unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx);
-
-// WZD o61p10
-// WZD o61p11
-// WZD o61p12
-// WZD o61p13
-// WZD o61p14
-// WZD o61p15
-
-// WZD o61p16
-int16_t Any_Units_Not_Busy();
 
 /*
     WIZARDS.EXE  ovr062
@@ -167,13 +129,12 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
 // WZD o62p06
 int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
 // WZD o62p07
-// DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
+// DONT  int16_t o62p07_Empty_pFxn(int16_t troop_count, int16_t * troops);
 // WZD o62p08
 void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
 // WZD o62p09
-// EarthGateTeleport()
+int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
 // WZD o62p10
-// drake178: USW_FullDisplay()
 void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 /*
@@ -196,16 +157,16 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx);
 
 // WZD o63p07
-// drake178: OVL_DrawStackMoves
 void Main_Screen_Draw_Movement_Bar();
 
 // WZD o63p08
-// drake178: OVL_DrawMoveTypes()
 void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
 
-// WZD o63p09
-// drake178: OVL_CanPlanarTravel()
+// WZD o63p10
 int16_t Stack_Has_PlanarTravel(void);
+
+// WZD o63p11
+int16_t Active_Stack_On_Astral_Gate();
 
 // WZD o63p12
 // AKA OVL_GetStackHMoves()
@@ -217,10 +178,14 @@ int16_t Stack_Moves_Active(void);
 int16_t Stack_Moves(void);
 
 // WZD o63p14
-// RP_TILE_HasCity2()
+// AKA RP_TILE_HasCity2()
+// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
+int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
 
-// WZD o63p14
-// Check_Planar_Seal()
+// WZD o63p15
+int16_t Check_Planar_Seal(void);
+
+
 
 /*
     WIZARDS.EXE  ovr064
@@ -234,11 +199,20 @@ void Allocate_Reduced_Map(void);
 void Main_Screen_Draw_Summary_Window(void);
 // WZD o064p05
 void Main_Screen_Draw_Next_Turn_Button(void);
+// WZD o64p06
+// drake178: OVL_DisableIncmBlink()
+void OVL_DisableIncmBlink(void);
+// WZD o64p07
+// drake178: OVL_EnableIncmBlink()
+void OVL_EnableIncmBlink(void);
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 // WZD o64p09
 void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
-
+// WZD o64p10
+void Set_Active_Stack_Movement_Path(int16_t unit_idx);
+// WZD o64p11
+void Draw_Active_Stack_Movement_Path(int16_t path_length, int8_t movepath_x_array[], int8_t movepath_y_array[]);
 
 /*
     WIZARDS.EXE  ovr095
@@ -247,24 +221,25 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 // WZD o95p01
 // drake178: STK_Move()
 // AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
 
 // WZD o95p02
 // AKA OVL_MoveUnitStack()
 // AKA Move_Units()
-void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
+void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
 // AI_ContactWizards()
 
 // WZD o95p04
-// G_STK_OvlObstacles()
+// drake178: G_STK_OvlObstacles()
+void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
-int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[]);
+int16_t Army_Boatriders(int16_t Stack_Size, int16_t troops[], int16_t boatriders[]);
 
 // WZD o95p06
-// G_STK_SetPatrol()
+// Fix_Patrol_On_Boats()
 
 
 /*
@@ -300,26 +275,27 @@ int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t
 // OVL_SpellWardError()
 
 // WZD o97p08
-void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);
+void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_t right_align_flag);
 
 
 
 // dseg:2E10                                                 BEGIN: Main Screen
 
 // WZD dseg:2E10
-// CRP_DBG_Alt_K_State dw 0
+// int16_t CRP_DBG_Alt_K_State = ST_FALSE;
 // WZD dseg:2E12
-// DBG_Alt_A_State dw 0
+int16_t DBG_Alt_A_State = ST_FALSE;
 // WZD dseg:2E14
-int16_t UU_first_turn_done_flag = ST_FALSE;
+// MoO2  _given_chance_to_rename_home_star
+int16_t _given_chance_to_rename_home_city = ST_FALSE;
 // WZD dseg:2E16
 // hotkey_MainScrn_X db 'X'
 
-// WZD dseg:2E16                                                 the 4 above maybe are DBG ?             ; should use dseg:2a8a
+// WZD dseg:2E16                                                 the 4 above maybe are DBG ?
 // WZD dseg:2E16                                                 below here, maybe compiler added as encountered?
 
 // WZD dseg:2E17
-// cnst_ZeroString_31 db 0
+char empty_string__ovr057[] = "";
 // WZD dseg:2E18
 // cnst_HOTKEY_S1 db '!',0
 // WZD dseg:2E1A
@@ -387,15 +363,15 @@ char hotkey_PlaneButton[] = "P";
 // WZD dseg:2E4E
 // cnst_HOTKEY_K db 'K',0
 // WZD dseg:2E50
-// cnst_HOTKEY_A db 'A',0
+char hotkey_ArmiesButton[] = "A";
 // WZD dseg:2E52
-// aYouMayNotThrowAnySp db 'You may not throw any spells while you are banished.  There are at least ',0
+char aYouMayNotThrowAnySp[] = "You may not throw any spells while you are banished.  There are at least ";
 // WZD dseg:2E9C
-// aTurnsRemainingUntil db ' turns remaining until you may return.',0
+char aTurnsRemainingUntil[] = " turns remaining until you may return.";
 // WZD dseg:2EC3
-// aSomeUnitsDoNotHaveE db 'Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?',0
+char _msg_not_enough_food_units_will_die[] = "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?";
 // WZD dseg:2F42
-// aTheSelectedUnitsCan db 'The selected units cannot move on this plane.',0
+char cstrWarnNoPlaneMove[] = "The selected units cannot move on this plane.";
 // WZD dseg:2F70
 // aTurn_1 db 'turn',0
 
@@ -453,16 +429,37 @@ char cnst_Moves[] = "Moves:";
 // CRP_OVL_UU_Control_3 dw 0
 // WZD dseg:C04C
 // CRP_OVL_UU_Control_4 dw 0
+
 // WZD dseg:C04E
-int16_t special_action_flag;  // AKA OVL_ExtraUnitAction
+/*
+; set to indicate any extra action possible for the
+; selected stack
+;   -1: no extra action possible
+;    0: road building possible
+;    1: settling possible
+;    2: purifying possible
+;    9: melding possible
+*/
+int16_t special_action_flag;
+
 // WZD dseg:C050
 int16_t _next_turn_button;
 // WZD dseg:C052
-int16_t Unit_Window_Fields[9];
+int16_t g_unit_window_fields[MAX_STACK];
 // WZD dseg:C064
 // CRP_OverlandVar_3 dw 0
+
 // WZD dseg:C066
-int16_t OVL_Path_Length;
+int16_t _active_stack_path_length;
+// WZD dseg:C068 
+/*
+; set to 0 after display-sorting the active stack
+; set to 1 if road-building, but the unit is not on any of the plotted line tiles (before returning)
+; set to 1 if road-building, and tiles left to do
+; set to 1 if moving with path left to go
+*/
+int16_t _active_stack_has_path;
+
 
 
 // WZD dseg:C06A
@@ -492,7 +489,8 @@ int16_t _game_button;
 // WZD dseg:C082 _unit_window_start_y dw 0
 // WZD dseg:C084 _unit_window_start_x dw 0
 // WZD dseg:C086 _reduced_map_seg dw 0
-// WZD dseg:C088 NIU_MainScreen_local_flag dw 0
+// WZD dseg:C088 
+int16_t UU_MainScreen_flag;
 // WZD dseg:C08A SND_Bkgrnd_Track dw 0
 // WZD dseg:C08C word_42B2C dw 0
 
@@ -527,68 +525,77 @@ char cstr_WarGames[] = "WOULD YOU LIKE TO PLAY A GAME?";
 
 
 
-// array used for color outline for enchanted units
-// 5 magic realms {Chaos, Death, Life, Nature, Sorcery}
-// ? 8 animation stages ?
-// ? 3 colors for each stages ?
-// 5 * 8 * 3 = 120
 // WZD dseg:3062
-// drake178: COL_UE_Chaos
-// WZD dseg:30A2
-// drake178: COL_UE_Death
-// WZD dseg:30E2
-// drake178: COL_UE_Life
-// WZD dseg:3122
-// drake178: COL_UE_Nature
-// WZD dseg:3162
-// drake178: COL_UE_Sorcery
+
 /*
     ¿ 2-D Array ?
     not just for enchentments
     more like 'magic realm outline'
     enchantment_outline_colors[magic_realm][animation_count]
 
+array used for color outline for enchanted units and powered items
+
+5 magic realms {Chaos, Death, Life, Nature, Sorcery}
+
+8 animation stages
+
+// ? 3 colors for each stages ?
+// 5 * 8 * 3 = 120
+
 */
-uint8_t enchantment_outline_colors[320] = 
+uint8_t enchantment_outline_colors[5][8][8] =
 {
-    0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D,
-    0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2A, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B,
-    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x2A, 0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29,
-    0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B,
-    0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24,
-    0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22,
-    0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20,
-    0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22,
-    0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
-    0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D,
-    0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
-    0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D,
-    0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44,
-    0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42,
-    0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40,
-    0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42,
-    0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64,
-    0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62,
-    0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60,
-    0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62
+    {
+        { 45, 44, 43, 42, 41, 42, 43, 44 },
+        { 44, 43, 42, 41, 42, 43, 44, 45 },
+        { 43, 42, 41, 42, 43, 44, 45, 44 },
+        { 42, 41, 42, 43, 44, 45, 44, 43 },
+        { 41, 42, 43, 44, 45, 44, 43, 42 },
+        { 42, 43, 44, 45, 44, 43, 42, 41 },
+        { 43, 44, 45, 44, 43, 42, 41, 42 },
+        { 44, 45, 44, 43, 42, 41, 42, 43 }
+    },
+    {
+        { 36, 35, 34, 33, 32, 33, 34, 35 },
+        { 35, 34, 33, 32, 33, 34, 35, 36 },
+        { 34, 33, 32, 33, 34, 35, 36, 35 },
+        { 33, 32, 33, 34, 35, 36, 35, 34 },
+        { 32, 33, 34, 35, 36, 35, 34, 33 },
+        { 33, 34, 35, 36, 35, 34, 33, 32 },
+        { 34, 35, 36, 35, 34, 33, 32, 33 },
+        { 35, 36, 35, 34, 33, 32, 33, 34 }
+    },
+    {
+        { 11, 12, 13, 14, 15, 14, 13, 12 },
+        { 12, 13, 14, 15, 14, 13, 12, 11 },
+        { 13, 14, 15, 14, 13, 12, 11, 12 },
+        { 14, 15, 14, 13, 12, 11, 12, 13 },
+        { 15, 14, 13, 12, 11, 12, 13, 14 },
+        { 14, 13, 12, 11, 12, 13, 14, 15 },
+        { 13, 12, 11, 12, 13, 14, 15, 14 },
+        { 12, 11, 12, 13, 14, 15, 14, 13 }
+    },
+    {
+        { 68, 67, 66, 65, 64, 65, 66, 67},
+        { 67, 66, 65, 64, 65, 66, 67, 68},
+        { 66, 65, 64, 65, 66, 67, 68, 67},
+        { 65, 64, 65, 66, 67, 68, 67, 66},
+        { 64, 65, 66, 67, 68, 67, 66, 65},
+        { 65, 66, 67, 68, 67, 66, 65, 64},
+        { 66, 67, 68, 67, 66, 65, 64, 65},
+        { 67, 68, 67, 66, 65, 64, 65, 66}
+    },
+    {
+        { 100, 99, 98, 97, 96, 97, 98, 99 },
+        { 99, 98, 97, 96, 97, 98, 99, 100 },
+        { 98, 97, 96, 97, 98, 99, 100, 99 },
+        { 97, 96, 97, 98, 99, 100, 99, 98 },
+        { 96, 97, 98, 99, 100, 99, 98, 97 },
+        { 97, 98, 99, 100, 99, 98, 97, 96 },
+        { 98, 99, 100, 99, 98, 97, 96, 97 },
+        { 99, 100, 99, 98, 97, 96, 97, 98 }
+    }
 };
-// uint8_t magic_outline_colors[5][8][3] = 
-// {
-//     { {0x2D, 0x2C, 0x2B}, {0x2A, 0x29, 0x2A}, {0x2B, 0x2C, 0x2C}, {0x2B, 0x2A, 0x29}, {0x2A, 0x2B, 0x2C}, {0x2D, 0x2B, 0x2A}, {0x29, 0x2A, 0x2B}, {0x2C, 0x2D, 0x2C}, },
-//     { {0x2A, 0x29, 0x2A}, {0x2B, 0x2C, 0x2D}, {0x2C, 0x2B, 0x29}, {0x2A, 0x2B, 0x2C}, {0x2D, 0x2C, 0x2B}, {0x2A, 0x2A, 0x2B}, {0x2C, 0x2D, 0x2C}, {0x2B, 0x2A, 0x29}, },
-// 0x2B, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2C, 0x2D, 0x2C, 0x2B, 0x2A, 0x29, 0x2A, 0x2B, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23,
-// 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x22, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x21, 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22,
-// 0x20, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x21, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x22, 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21,
-// 0x23, 0x24, 0x23, 0x22, 0x21, 0x20, 0x21, 0x22, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
-// 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0E, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E,
-// 0x0E, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0D, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0C, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D,
-// 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x42, 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43,
-// 0x41, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x40, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x41, 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40,
-// 0x42, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x43, 0x44, 0x43, 0x42, 0x41, 0x40, 0x41, 0x42, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63,
-// 0x63, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x62, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x61, 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62,
-// 0x60, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x61, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x62, 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61,
-// 0x63, 0x64, 0x63, 0x62, 0x61, 0x60, 0x61, 0x62
-// };
 
 
 
@@ -664,7 +671,7 @@ int16_t skill_staff_lock_flag;
 // WZD dseg:9548  IMG_OVL_BuildBtn_BG  ; DATA XREF: GFX_Swap_AppendUView() ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:954A  IMG_WIZ_BookBinders dw 12h dup(0)  ; DATA XREF: sub_6343B()
 // WZD dseg:956E
-SAMB_ptr mirror_screen_background;
+SAMB_ptr mirror_screen_background_seg;
 // XREF: Main_Screen_Load_Pictures(); sub_62BBC()
 // ; single-loaded image
 // WZD dseg:9570 IMG_ArmyScrn_Ok  ; DATA XREF: Armies_Screen(); sub_58CD2(); sub_598F1(); 2 frame image (normal - clicked)
@@ -711,9 +718,9 @@ int64_t _main_map_grid_y;
 // WZD dseg:998C 00 00                   GUI_SmallWork_IMG@ dw 0                 ; 96h LBX_Alloc_Space paragraphs
 // WZD dseg:998E 00 00                   gsa_Sandbox dw 0                        ; 203h + 11F8h LBX_Alloc_Space paragraphs
 // WZD dseg:9990 00 00                   _current_screen dw 0
-// WZD dseg:9992 00 00                   RP_GUI_GrowOutFrames dw 0
-// WZD dseg:9994 00 00                   RP_GUI_GrowOutTop dw 0
-// WZD dseg:9996 00 00                   RP_GUI_GrowOutLeft dw 0
+// WZD dseg:9992 00 00                   GrowOutFrames dw 0
+// WZD dseg:9994 00 00                   GrowOutTop dw 0
+// WZD dseg:9996 00 00                   GrowOutLeft dw 0
 // WZD dseg:9998 00 00 00 00             TBL_Events dd 0                         ; 7 LBX_Alloc_Space paragraphs (112 bytes)
 
 // WZD dseg:999C
@@ -887,7 +894,6 @@ SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header poi
 
 
 
-
 /*
     WIZARDS.EXE  ovr057
 
@@ -930,7 +936,7 @@ void Main_Screen(void)
 {
     int16_t hotkey_idx_Alt_P;
     int16_t hotkey_idx_U;
-// strP= byte ptr -6Ch
+    char temp_string[10];
     int16_t hotkey_idx_F9;
     int16_t hotkey_idx_F8;
     int16_t hotkey_idx_F7;
@@ -951,9 +957,9 @@ void Main_Screen(void)
     int16_t hotkey_idx_RightUp;
     int16_t hotkey_idx_LeftUp;
     int16_t hotkey_idx_Up;
-    int16_t gold;
-    int16_t food;
-    int16_t mana;
+    int16_t eot_gold_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
+    int16_t eot_food;  // only used for 'Next Turn'; set by Player_Resource_Income_Total()
+    int16_t eot_mana_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
     int16_t hotkey_idx_Alt_N;
     int16_t hotkey_idx_Shift_3;
     int16_t hotkey_idx_Alt_K;
@@ -970,8 +976,8 @@ void Main_Screen(void)
     int16_t hotkey_idx_Shift_1;
     int16_t Unused_Button_Index;
     int16_t hotkey_idx_X;
-    int16_t Unit_Y;
-    int16_t Unit_X;
+    int16_t selected_unit_wy;
+    int16_t selected_unit_wx;
     int16_t usw_y2;
     int16_t usw_x2;
     int16_t target_world_y;  // doubles as usw_y1
@@ -979,13 +985,14 @@ void Main_Screen(void)
     int16_t unit_idx;
     int16_t allow_units_to_die;
     int16_t Stack_Index;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
+    int16_t itr_stack;
+    // itr__stack_idx__player_idx__turns_til_return
+    int16_t turns_til_return;  // only used for 'Spells Button'; turn count to complete 'Spell of Return'
     int16_t leave_screen_flag;
-    
     int16_t screen_changed;
     int16_t input_field_idx;
     int16_t mouse_x;
     int16_t mouse_y;
-
     int16_t itr_units;
 
     int16_t hotkey_idx_D ;  // debug_hotkey
@@ -996,27 +1003,6 @@ void Main_Screen(void)
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen()\n", __FILE__, __LINE__);
 #endif
 
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: MainScreen - InitialMapValues\n", __FILE__, __LINE__);
-//         dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-//         dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-//         dbg_prn("DEBUG: [%s, %d]: _prev_world_y: %d\n", __FILE__, __LINE__, _prev_world_y);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_x: %d\n", __FILE__, __LINE__, _main_map_grid_x);
-//         dbg_prn("DEBUG: [%s, %d]: _main_map_grid_y: %d\n", __FILE__, __LINE__, _main_map_grid_y);
-// #endif
-
-
-//     // HACK:
-//     _unit = 46;  // ¿ Where'd I get this _unit from or the x,y's ? 
-//     // Build_Unit_Stack(0, 0, 18, 17);
-//     Build_Unit_Stack(0, 0, _UNITS[_unit].wx, _UNITS[_unit].wy);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack_count: %d\n", __FILE__, __LINE__, _unit_stack_count);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].unit_idx: %d\n", __FILE__, __LINE__, _unit_stack[0].unit_idx);
-//     dbg_prn("DEBUG: [%s, %d]: _unit_stack[0].active: %d\n", __FILE__, __LINE__, _unit_stack[0].active);
-// #endif
 
 
     // WZD main() |-> WZD_Load_Init_MainGame() |-> Main_Screen_Load_Pictures()
@@ -1030,20 +1016,20 @@ void Main_Screen(void)
 
     Reset_Window();
     Clear_Fields();
-    // NIU_MainScreen_local_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+    // UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
     Allocate_Reduced_Map();
     Reset_Draw_Active_Stack();
     Set_Outline_Color(0);  // ¿ BLACK / NONE / TRANSPARENT ?
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
 
-    // Deactivate_Auto_Function();
-    // Assign_Auto_Function(Main_Screen_Draw, 1);
+    Deactivate_Auto_Function();
+    Assign_Auto_Function(Main_Screen_Draw, 1);
 
-    // IDK   _unit_window_start_x = 247;  // AKA OVL_STKUnitCards_Lft
-    // IDK   _unit_window_start_y = 79;  // AKA OVL_STKUnitCards_Top
+    _unit_window_start_x = 247;
+    _unit_window_start_y = 79;
 
-    // DONT  IDK_CityList_list_first_item = 0;  // ? ST_FALSE ?
+    m_citylist_first_item = 0;
 
     // DONT  CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
     // DONT  CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
@@ -1052,14 +1038,10 @@ void Main_Screen(void)
     Reset_Map_Draw();
     MainScr_Prepare_Reduced_Map();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-    // // TEST
-    // // Export_Entities_On_Movement_Map(l_map_x, l_map_y, map_plane);
-    // Validate_Entities_On_Movement_Map(_map_x, _map_y, _map_plane);
 
-    // TODO  j_Set_Mouse_List_Default()        ; sets the Normal_Fullscreen window (GUI_SetWindows)
-    Set_Mouse_List(1, mouse_list_default);  // ~== Set_Mouse_List_MainScr() |-> Set_Mouse_List(1, mouse_list_main/default/normal/arrow);
+    Set_Mouse_List_Default();
 
-    STK_GetExtraActions__WIP();
+    Set_Unit_Action_Special();
 
     // DONT  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
     // DONT  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
@@ -1070,11 +1052,9 @@ void Main_Screen(void)
 
     Set_Input_Delay(1);
 
-    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
+    Reset_Cycle_Palette_Color();
 
-    // TODO  Deactivate_Help_List();
     Deactivate_Help_List();
-    // TODO  Main_Screen_Help();  // ? |-> WZD s104 HLP_Load_OVL_View() |-> WZD s10 LBXR_DirectLoader() ?
     Set_Main_Screen_Help_List();
 
     // TODO  DBG_Alt_A__TurnCount = -1
@@ -1098,6 +1078,7 @@ void Main_Screen(void)
             BEGIN: Add Fields
         */
         Clear_Fields();
+
         Main_Screen_Add_Fields();
 
         hotkey_idx_X = Add_Hot_Key('X');
@@ -1140,7 +1121,7 @@ void Main_Screen(void)
         hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
         hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
 
-        hotkey_idx_D = Add_Hot_Key('D');  // debug_hotkey
+        hotkey_idx_D = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
         hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
 
         /*
@@ -1166,69 +1147,78 @@ void Main_Screen(void)
 */
 
 
-        // Advisor - Surveyor
-        if(input_field_idx == hotkey_idx_F1)
+
+        /*
+            BEGIN:  Advisor - Hot-Key
+        */
         {
-            Advisor_Screen(0);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
+            // Advisor - Surveyor
+            if(input_field_idx == hotkey_idx_F1)
+            {
+                Advisor_Screen(0);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Cartographer
+            if(input_field_idx == hotkey_idx_F2)
+            {
+                Advisor_Screen(1);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Apprentice
+            if(input_field_idx == hotkey_idx_F3)
+            {
+                Advisor_Screen(2);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Historian
+            if(input_field_idx == hotkey_idx_F4)
+            {
+                Advisor_Screen(3);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Astrologer
+            if(input_field_idx == hotkey_idx_F5)
+            {
+                Advisor_Screen(4);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Chancellor
+            if(input_field_idx == hotkey_idx_F6)
+            {
+                Advisor_Screen(5);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Tax Collector
+            if(input_field_idx == hotkey_idx_F7)
+            {
+                Advisor_Screen(6);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Grand Vizier
+            if(input_field_idx == hotkey_idx_F8)
+            {
+                Advisor_Screen(7);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
+            // Advisor - Mirror
+            if(input_field_idx == hotkey_idx_F9)
+            {
+                Advisor_Screen(8);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                Main_Screen_Reset();
+            }
         }
-        // Advisor - Cartographer
-        if(input_field_idx == hotkey_idx_F2)
-        {
-            Advisor_Screen(1);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Apprentice
-        if(input_field_idx == hotkey_idx_F3)
-        {
-            Advisor_Screen(2);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Historian
-        if(input_field_idx == hotkey_idx_F4)
-        {
-            Advisor_Screen(3);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Astrologer
-        if(input_field_idx == hotkey_idx_F5)
-        {
-            Advisor_Screen(4);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Chancellor
-        if(input_field_idx == hotkey_idx_F6)
-        {
-            Advisor_Screen(5);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Tax Collector
-        if(input_field_idx == hotkey_idx_F7)
-        {
-            Advisor_Screen(6);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Grand Vizier
-        if(input_field_idx == hotkey_idx_F8)
-        {
-            Advisor_Screen(7);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
-        // Advisor - Mirror
-        if(input_field_idx == hotkey_idx_F9)
-        {
-            Advisor_Screen(8);
-            // TODO  Set_Redraw_Function(Main_Screen_Draw, 1);
-            Main_Screen_Reset();
-        }
+        /*
+            END:  Advisor - Hot-Key
+        */
 
         /* Alt-A   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_Alt_A_State=1-DBG_Alt_A_State;}} */
         /* Alt-P   */
@@ -1275,11 +1265,11 @@ void Main_Screen(void)
             */
             // _unit = entity_idx;
             // unit_idx = _unit;
-            // Unit_X = _UNITS[unit_idx].wx;
-            // Unit_Y = _UNITS[unit_idx].wy;
+            // selected_unit_wx = _UNITS[unit_idx].wx;
+            // selected_unit_wy = _UNITS[unit_idx].wy;
             // OVL_Map_CenterX = _UNITS[unit_idx].wx;
             // OVL_Map_CenterY = _UNITS[unit_idx].wy;
-            // Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
+            // Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
         }
 
         // Quick-Save
@@ -1312,9 +1302,9 @@ void Main_Screen(void)
         if((input_field_idx == hotkey_idx_Q) || (input_field_idx == hotkey_idx_U) )
         {
             _unit_stack_count = 0;
-            Set_Draw_Active_Stack_Always();     // OVL_ShowActiveStack();
-            Set_Unit_Draw_Priority();           // UNIT_DrawPriorities();
-            Reset_Stack_Draw_Priority();        // STK_NoUnitDraw();
+            Set_Draw_Active_Stack_Always();
+            Set_Unit_Draw_Priority();
+            Reset_Stack_Draw_Priority();
             Set_Entities_On_Map_Window(_map_x, _map_y,_map_plane);
             Reset_Map_Draw();
             screen_changed = ST_TRUE;
@@ -1373,35 +1363,35 @@ void Main_Screen(void)
             current_screen = scr_Armies_Screen;
             leave_screen_flag = ST_TRUE;
         }
+
         /*
             BEGIN: Game Buttons - Spells Button
         */
-// DEMO          if(input_field_idx == _spells_button)
-// DEMO          {
-// DEMO              // SND_LeftClickSound();
-// DEMO              if(_players[_human_player_idx].Spell_Cast == 0xD6) /* Spell of Return */
-// DEMO              {
-// DEMO                  // You may not throw any spells while you are banished.
-// DEMO                  // GUI_NearMsgString
-// DEMO                  // strcpy()
-// DEMO                  // strcat()
-// DEMO                  // strcat()
-// DEMO                  // GUI_WarningType0()
-// DEMO                  // Set_Redraw_Function(Main_Screen_Draw, 1);
-// DEMO              }
-// DEMO              else
-// DEMO              {
-// DEMO                  Set_Draw_Active_Stack_Always();
-// DEMO                  Set_Unit_Draw_Priority();
-// DEMO                  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-// DEMO                  leave_screen_flag = ST_TRUE;
-// DEMO                  current_screen = scr_Spellbook_Screen;
-// DEMO              }
-// DEMO          }
+        if(input_field_idx == _spells_button)
+        {
+            // SND_LeftClickSound();
+            if(_players[_human_player_idx].Spell_Cast == 214) /* Spell of Return */
+            {
+                turns_til_return = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
+                itoa(turns_til_return, temp_string, 10);
+                strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
+                strcat(GUI_NearMsgString, temp_string);
+                strcat(GUI_NearMsgString, aTurnsRemainingUntil);  // " turns remaining until you may return."
+                Warn0(GUI_NearMsgString);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+            }
+            else
+            {
+                Set_Draw_Active_Stack_Always();
+                Set_Unit_Draw_Priority();
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                leave_screen_flag = ST_TRUE;
+                current_screen = scr_Spellbook_Screen;
+            }
+        }
 
         if(input_field_idx == _patrol_button)
         {
-            DLOG("(input_field_idx == _patrol_button)");
             // TODO  SND_LeftClickSound();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 1, 0, 0);  /* Action 1: 'Patrol' */
@@ -1431,22 +1421,22 @@ void Main_Screen(void)
                 case 0:  /* Road Building */
                 {
                     DLOG("switch(special_action_flag)  case 0:");
-                    // TODO  leave_screen_flag = ST_UNDEFINED;
-                    // TODO  current_screen = scr_Road_Building;
+                    leave_screen_flag = ST_UNDEFINED;
+                    current_screen = scr_Road_Build;
                 } break;
                 case 1:  /* Settle */
                 {
                     DLOG("switch(special_action_flag)  case 1:");
                     // o100p04
-                    // TODO  if(Do_Build_Outpost() == ST_TRUE)
-                    // TODO  {
-                    // TODO      // DONT  o62p01_Empty_pFxn(_human_player_idx)
-                    // TODO      Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y);
-                    // TODO      WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-                    // TODO      Main_Screen_Reset()
-                    // TODO      screen_changed = ST_TRUE;
-                    // TODO  }
-                    // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+                    if(Do_Build_Outpost() == ST_TRUE)
+                    {
+                        // DONT  o62p01_Empty_pFxn(_human_player_idx)
+                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
+                        WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+                        Main_Screen_Reset();
+                        screen_changed = ST_TRUE;
+                    }
+                    Assign_Auto_Function(Main_Screen_Draw, 1);
                 } break;
                 case 2:  /* Purify */
                 {
@@ -1497,11 +1487,11 @@ void Main_Screen(void)
                 case 9:  /* Meld */
                 {
                     DLOG("switch(special_action_flag)  case 9:");
-                    // TODO  STK_MeldWithNode()
+                    STK_MeldWithNode();
                     // DONT  o62p01_Empty_pFxn(_human_player_idx)
-                    // TODO  Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_x, selected_unit_y);
-                    // TODO  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
-                    // TODO  Main_Screen_Reset()
+                    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
+                    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+                    Main_Screen_Reset();
                 } break;
             }
         }
@@ -1523,7 +1513,6 @@ void Main_Screen(void)
 
         if(input_field_idx == _wait_button)
         {
-            DLOG("(input_field_idx == _wait_button)");
             // TODO  SND_LeftClickSound();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 5, 0, 0);  /* Action 5: 'Wait' */
@@ -1542,14 +1531,13 @@ void Main_Screen(void)
         */
         if(input_field_idx == _plane_button)
         {
-            DLOG("(input_field_idx == _plane_button)");
             // TODO  SND_LeftClickSound();
-            Do_Plane_Button(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+            Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Main_Screen_Reset();
             Reset_Map_Draw();
             MainScr_Prepare_Reduced_Map();
-            // TODO  Deactivate_Auto_Function
-            // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+            Deactivate_Auto_Function();
+            Assign_Auto_Function(Main_Screen_Draw, 1);
             Set_Mouse_List_Default();
         }
         /*
@@ -1561,7 +1549,7 @@ void Main_Screen(void)
         /*
             BEGIN: Left-Click Unit Window Grid Field
         */
-        // TODO:  rename Unit_Window_Fields to something like _main_map_grid_field
+        // TODO:  rename g_unit_window_fields to something like _main_map_grid_field
         // Custom Color: 255, 192, 128 ~light orange  DESC:"input field select relation - secondary/ignoreable/background noise"
         // Node Group Name: Left-Click on Unit/Stack
         // Left-Click Unit Window Grid Field
@@ -1570,18 +1558,13 @@ void Main_Screen(void)
         // Main_Screen+097B
         for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
-            if(Unit_Window_Fields[Stack_Index] == input_field_idx)
+            if(g_unit_window_fields[Stack_Index] == input_field_idx)
             {
-                DLOG("(Unit_Window_Fields[Stack_Index] = input_field_idx)");
-
                 // TODO  RP_SND_LeftClickSound2();  // drake178: byte-identical to SND_LeftClickSound()
-
                 // HERE:  itr_stack ~== unit window field idx
                 Update_Stack_Active(Stack_Index);
-
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-
-                // NIU_MainScreen_local_flag = 1;
+                UU_MainScreen_flag = ST_TRUE;
             }
         }
         /*
@@ -1591,40 +1574,38 @@ void Main_Screen(void)
         /*
             BEGIN: Right-Click Unit Window Grid Field
         */
-        // Right-Click Unit Window Grid Field
-        // Right-Click Unit Window
-        for(Stack_Index = 0; Stack_Index < _unit_stack_count; Stack_Index++)
         {
-            if(Unit_Window_Fields[Stack_Index] == -input_field_idx)
+            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
-                DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
-                Set_Draw_Active_Stack_Always();
-                Set_Unit_Draw_Priority();
-                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                Main_Screen_Draw();
-                PageFlip_FX();
+                if(g_unit_window_fields[itr_stack] == -(input_field_idx))
+                {
+                    DLOG("(g_unit_window_fields[Stack_Index] = -input_field_idx)");
+                    Set_Draw_Active_Stack_Always();
+                    Set_Unit_Draw_Priority();
+                    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                    Main_Screen_Draw();
+                    PageFlip_FX();
 
-                // Unit_Window_Picture_Coords(Stack_Index, &OLft, &OTop, Right@, Bottom@);
-                Unit_Window_Picture_Coords(Stack_Index, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
+                    Unit_Window_Picture_Coords(itr_stack, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
 
-                // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
-                //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
+                    // NOTE(JimBalcomb,20230802): this here looks like what I just saw for clicking the Hero Picture on the Items Screen
+                    //                            so, YayNayMay Unit_Window_Picture_Coords() is just getting the coords for the grow-out pop-up effect
 
-                USW_FullDisplay(_unit_stack[Stack_Index].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
+                    USW_FullDisplay(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
 
-                // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
-
-                Allocate_Reduced_Map();
-                Set_Mouse_List_Default();
-                Reset_Draw_Active_Stack();
-                Set_Unit_Draw_Priority();
-                Reset_Stack_Draw_Priority();
-                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-                Reset_Map_Draw();
-                MainScr_Prepare_Reduced_Map();
-                screen_changed = ST_TRUE;
-                Deactivate_Help_List();
-                Set_Main_Screen_Help_List();
+                    Assign_Auto_Function(Main_Screen_Draw, 1);
+                    Allocate_Reduced_Map();
+                    Set_Mouse_List_Default();
+                    Reset_Draw_Active_Stack();
+                    Set_Unit_Draw_Priority();
+                    Reset_Stack_Draw_Priority();
+                    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+                    Reset_Map_Draw();
+                    MainScr_Prepare_Reduced_Map();
+                    screen_changed = ST_TRUE;
+                    Deactivate_Help_List();
+                    Set_Main_Screen_Help_List();
+                }
             }
         }
         /*
@@ -1640,20 +1621,6 @@ void Main_Screen(void)
         // Next Turn Button ... and time-stuff ? end of turn wait ?
         // IDA: Main_Screen+AB0
         // @@Check_Input_NextTurnButton
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (input_field_idx == _next_turn_button): %d\n", __FILE__, __LINE__, (input_field_idx == _next_turn_button));
-    dbg_prn("DEBUG: [%s, %d]: ( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) ): %d\n", __FILE__, __LINE__, ( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) ));
-    dbg_prn("DEBUG: [%s, %d]: ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE)): %d\n", __FILE__, __LINE__, ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE)));
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _next_turn_button: %d\n", __FILE__, __LINE__, _next_turn_button);
-    dbg_prn("DEBUG: [%s, %d]: input_field_idx: %d\n", __FILE__, __LINE__, input_field_idx);
-    dbg_prn("DEBUG: [%s, %d]: g_TimeStop_PlayerNum: %d\n", __FILE__, __LINE__, g_TimeStop_PlayerNum);
-    dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
-    dbg_prn("DEBUG: [%s, %d]: IDK_EoT_flag: %d\n", __FILE__, __LINE__, IDK_EoT_flag);
-    dbg_prn("DEBUG: [%s, %d]: magic_set.EoT_Wait: %d\n", __FILE__, __LINE__, magic_set.EoT_Wait);
-    dbg_prn("DEBUG: [%s, %d]: Any_Units_Not_Busy(): %d\n", __FILE__, __LINE__, Any_Units_Not_Busy());
-#endif
 
         if(
             (input_field_idx == _next_turn_button) ||
@@ -1661,35 +1628,25 @@ void Main_Screen(void)
             ((all_units_moved == ST_TRUE) && (IDK_EoT_flag == ST_FALSE) && (magic_set.EoT_Wait == ST_FALSE) && (Any_Units_Not_Busy() == ST_TRUE))
         )
         {
-            DLOG("(input_field_idx == _next_turn_button)");
+
             // TODO  SND_LeftClickSound();
 
-            // ; fills the return values with the player's gold, food, and mana incomes, positive or negative
-            Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: gold: %d\n", __FILE__, __LINE__, gold);
-    dbg_prn("DEBUG: [%s, %d]: food: %d\n", __FILE__, __LINE__, food);
-    dbg_prn("DEBUG: [%s, %d]: mana: %d\n", __FILE__, __LINE__, mana);
-#endif
+            Player_Resource_Income_Total(_human_player_idx, &eot_gold_nop, &eot_food, &eot_mana_nop);
 
             screen_changed = ST_TRUE;
 
-            if(food < 0)
+            if(eot_food < 0)
             {
-                DLOG("(food < 0)");
                 if( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )
                 {
-                    DLOG("( (input_field_idx == _next_turn_button) || (IDK_EoT_flag == ST_TRUE) )");
                     if( (g_TimeStop_PlayerNum > 0) && ((_human_player_idx + 1) != g_TimeStop_PlayerNum) )
                     {
                         allow_units_to_die = ST_TRUE;
-                        DLOG("allow_units_to_die = ST_TRUE");
                     }
                     else
                     {
-                        if(food < 0)
+                        if(eot_food < 0)
                         {
-                            DLOG("(food < 0)");
                             // "Some units do not have enough food and will die unless you allocate more farmers in a city.  Do you wish to allow them to die?"
                             //   [YES]  [NO]
                             // ; loads and displays the provided message in a
@@ -1697,59 +1654,42 @@ void Main_Screen(void)
                             // ; option buttons, and halting all other screen
                             // ; animation until a result is selected
                             // ; returns 1 if "Yes" is selected, or 0 otherwise
-                            // TODO  allow_units_to_die = GUI_Confirm_Dialog(aSomeUnitsDoNotHaveE);
-                            allow_units_to_die = ST_FALSE;
-                            DLOG("allow_units_to_die = ST_FALSE");
-                        }
-                        else
-                        {
-                            DLOG("(food >= 0)");
+                            allow_units_to_die = Confirmation_Box(_msg_not_enough_food_units_will_die);
                         }
                     }
 
                     if(allow_units_to_die != ST_TRUE)
                     {
-                        DLOG("(allow_units_to_die != ST_TRUE)");
                         IDK_EoT_flag = ST_TRUE;
                     }
                     else
                     {
-                        DLOG("(allow_units_to_die == ST_TRUE)");
-
                         leave_screen_flag = ST_UNDEFINED;
-
                         current_screen = ST_UNDEFINED;
                         Main_Screen_Draw();
                         Clear_Fields();
                         PageFlip_FX();
-                        // current_screen = scr_Next_Turn_Proc;
                         current_screen = scr_NextTurn;
                         IDK_EoT_flag = ST_FALSE;
                     }
                 }
                 else
                 {
-                    DLOG("( (input_field_idx != _next_turn_button) && (IDK_EoT_flag != ST_TRUE) )");
                     IDK_EoT_flag = ST_TRUE;
-                    DLOG("IDK_EoT_flag = ST_TRUE");
                 }
-
             }
-            else
+            else  /* (eot_food >= 0) */
             {
-                DLOG("(food >= 0)");
                 current_screen = ST_UNDEFINED;
                 Main_Screen_Draw();
                 Clear_Fields();
                 PageFlip_FX();
-                // current_screen = scr_Next_Turn_Proc;
                 current_screen = scr_NextTurn;
                 IDK_EoT_flag = ST_FALSE;
-
                 leave_screen_flag = ST_UNDEFINED;
             }
 
-            // TODO  Assign_Auto_Function(Main_Screen_Draw(), 1);
+            Assign_Auto_Function(Main_Screen_Draw, 1);
         }
 
         /*
@@ -1797,58 +1737,62 @@ void Main_Screen(void)
         /*
             Left-Click Movement Map Grid Field
                 In IDA, color #42 (~Gold)
-            - only if unit/stack active/selected
+            
+            Do Nothing
+            Set Path
+            Move Stack  (if stack active)
         */
-        if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0) )
+        if((input_field_idx == _main_map_grid_field) && (_unit_stack_count != 0))
         {
             unit_stack_hmoves = Stack_Moves_Active();  // stack movement points to use for move stack
             if(unit_stack_hmoves < 1)
             {
-                DLOG("(unit_stack_hmoves < 1)");
-                // j_IDK_MainScr_SUA_s553C3()
-                // j_UNIT_SetGlobalPath()  // calcs OVL_Path_Length; sets OVL_StackHasPath
-                if(OVL_Path_Length < 1)
+                Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, us_GOTO, ((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_map_y + _main_map_grid_y) % WORLD_HEIGHT));
+                unit_idx = _unit_stack[0].unit_idx;
+                Set_Active_Stack_Movement_Path(unit_idx);
+                if(_active_stack_path_length < 1)
                 {
-                    // j_IDK_MainScr_SUA_s553C3()
+                    Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, us_Ready, ((_map_x + _main_map_grid_x) % WORLD_WIDTH), ((_map_y + _main_map_grid_y) % WORLD_HEIGHT));
                 }
-                // IDK   Set_Mouse_List_Normal();
+                Set_Mouse_List_Default();
                 Reset_Map_Draw();
-                // DONT  NIU_MainScreen_local_flag == 1; // ? ST_TRUE ?
-            }
-            else
-            {
-                DLOG("(unit_stack_hmoves >= 1)");
+                // TODO  UU_MainScreen_flag == 1;
             }
 
-            if(OVL_StackHasPath == ST_TRUE)
+            if(_active_stack_has_path == ST_TRUE)
             {
-                // NIU_MainScreen_local_flag = 1
+                // TODO  UU_MainScreen_flag = 1
+
                 unit_idx = _unit_stack[0].unit_idx;
+
                 if(_UNITS[unit_idx].wp == _map_plane)
                 {
                     unit_stack_world_y = _UNITS[unit_idx].wy;
-                    if(unit_stack_world_y >= _map_y && unit_stack_world_y <= _map_y + MAP_WIDTH)
+
+                    if(unit_stack_world_y >= _map_y && unit_stack_world_y < (_map_y + MAP_HEIGHT))
                     {
                         IDK_unit_stack_in_view = ST_FALSE;
+
                         unit_stack_world_x = _UNITS[unit_idx].wx;
                         if(
-                            ( unit_stack_world_x >= _map_x && unit_stack_world_x <= (_map_x + MAP_HEIGHT) ) ||
-                            ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) <= (_map_x + MAP_HEIGHT) )
+                            ( unit_stack_world_x >= _map_x && unit_stack_world_x < (_map_x + MAP_WIDTH) ) ||
+                            ( (unit_stack_world_x + WORLD_WIDTH) >= _map_x && (unit_stack_world_x + WORLD_WIDTH) < (_map_x + MAP_WIDTH) )
                         )
                         {
-                            unit_stack_world_x = unit_stack_world_x - _map_x;
+                            unit_stack_world_x -= _map_x;
                             IDK_unit_stack_in_view = ST_TRUE;
                         }
+
                         if(IDK_unit_stack_in_view == ST_TRUE)
                         {
                             if(_main_map_grid_x == unit_stack_world_x)
                             {
-                                unit_stack_world_y = unit_stack_world_y - _map_y;
+                                unit_stack_world_y -= _map_y;
                                 if(_main_map_grid_y == unit_stack_world_y)
                                 {
-                                    // j_IDK_MainScr_SUA_s553C3(_human_player_idx, &_map_x, &_map_y, &_map_plane, 0, 0, 0)
-                                    // CRP_OverlandVar_3 == ST_FALSE;
-                                    // OVL_StackHasPath == ST_FALSE;
+                                    Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, us_Ready, 0, 0);
+                                    // TODO  CRP_OverlandVar_3 == ST_FALSE;
+                                    _active_stack_has_path = ST_FALSE;
                                 }
                             }
 
@@ -1859,28 +1803,34 @@ void Main_Screen(void)
             }
             else
             {
-                // NIU_MainScreen_local_flag = 1; // ? ST_TRUE ?
+/*
+    BEGIN:  Left-Click Move Stack
+*/
+                // TODO  UU_MainScreen_flag = 1;
                 if(all_units_moved == ST_FALSE)
                 {
-                    DLOG("(all_units_moved == ST_FALSE)");
-                    target_world_x = (_map_x + _main_map_grid_x) % WORLD_WIDTH;  // world_x of click
-                    target_world_y = _map_y + _main_map_grid_y;         // world_y of click
-                    // ovr062
-                    // x,y,p for dst; gets src from _UNITS[_unit_stack[0].unit_idx]
-                    // if(EarthGateTeleport(target_world_x, target_world_y, _map_plane) == ST_FALSE)
-                    // {
-                    //     // if ...
-                    //     /// j_OVL_CanPlanarTravel() == ST_FALSE
-                    //     // _UNITS[_unit_stack[0].unit_idx].wp == _map_plane;
-                    //     // _UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE;
-                    //     // WZD o61p02
-                    //     // Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane)
-                    //     // else
-                    //     // "The selected units cannot move on this plane."
-                    //     // ; displays the passed message in a red warning dialog
-                    //     // j_GUI_WarningType0(cstrWarnNoPlaneMove)
-                    // }
+                    target_world_x = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
+                    target_world_y =  (_map_y + _main_map_grid_y);
+                    if(EarthGateTeleport__WIP(target_world_x, target_world_y, _map_plane) == ST_FALSE)
+                    {
+                        if(
+                            (Stack_Has_PlanarTravel() == ST_TRUE) ||
+                            (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) ||
+                            (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE)
+                        )
+                        {
+                            Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+                        }
+                        else
+                        {
+                            Warn0(cstrWarnNoPlaneMove);  // "The selected units cannot move on this plane."
+                        }
+                    }
+                    Main_Screen_Reset();
                 }
+/*
+    END:  Left-Click Move Stack
+*/
             }
         }
 
@@ -1905,132 +1855,38 @@ void Main_Screen(void)
         */
        if(-input_field_idx == _main_map_grid_field)
        {
-            DLOG("(-input_field_idx == _main_map_grid_field)");
-            DLOG("@@RightClickMovementMap");
-
-            // TODO  rename this variable to something more sensible - maybe add more if it gets reused - here ~entity_idx, was "input"
             entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
 
             if(entity_idx == ST_UNDEFINED)
             {
-                DLOG("(entity_idx == ST_UNDEFINED)");
-                DLOG("ScrollTheMap");
-                // _main_map_grid_x,y is now what got updated in Param3,4 way over in Interpret_Mouse_Input() |-> Push_Field_Down()
-                // ¿ here, _prev_world_x, y is final destination for scrolling the map ?
-                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));  // ¿ grid x - (map width / 2) = map x ?
-                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));  // ¿ grid y - (map height / 2) = map y ?
-
+                _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
+                _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
                 IDK_CheckSet_MapDisplay_XY();
-
             }
             else
             {
-                DLOG("(entity_idx != ST_UNDEFINED)");
-
                 // RP_SND_LeftClickSound2()
 
-                // entity_idx = abs(entity_idx);
-                entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
+                entity_idx = abs(entity_idx);
+                // entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
 
-                if(entity_idx >= 1000)
+                if(entity_idx < 1000)
                 {
-                    DLOG("(entity_idx >= 1000)");
-
-                    if(entity_idx < 1100)
-                    {
-                        DLOG("(entity_idx < 1100)");
-
-                        _city_idx = entity_idx - 1000;
-
-                        if(_CITIES[_city_idx].owner_idx == _human_player_idx)
-                        {
-                            DLOG("(_CITIES[_city_idx].owner_idx == _human_player_idx)");
-
-                            if(_CITIES[_city_idx].size == 0)
-                            {
-                                DLOG("(_CITIES[_city_idx].size == 0)");
-
-                            }
-                            else
-                            {
-                                DLOG("(_CITIES[_city_idx].size != 0)");
-
-                                PageFlipEffect = 4;
-                                // TODO  RP_GUI_GrowOutLeft = (_main_map_grid_x * 20);
-                                // TODO  RP_GUI_GrowOutTop = ((_main_map_grid_y * 18) + 20);
-                                // TODO  RP_GUI_GrowOutFrames = 8;
-                                current_screen = scr_City_Screen;
-                                leave_screen_flag = ST_TRUE;
-
-                            }
-
-                        }
-                        else
-                        {
-                            DLOG("(_CITIES[_city_idx].owner_idx != _human_player_idx)");
-
-                        }
-
-                    }
-                    else
-                    {
-                        DLOG("(entity_idx >= 1100)");
-
-                    }
-
-                }
-                else
-                {
-                    DLOG("(entity_idx < 1000)");
+                    /* #### Section 9.2.2      Right-Click Movement Map - Stack */
                     if(_UNITS[entity_idx].owner_idx == _human_player_idx)
                     {
-                        DLOG("(_UNITS[entity_idx].owner_idx == _human_player_idx)");
-                        DLOG("@@SelectedUnitStack");
-#ifdef STU_DEBUG
-                        DBG_TST_Selected_Stack = 0;
-                        DBG_TST_Select_Unit_Stack = 0;
-                        DBG_TST_Build_Unit_Stack = 0;
-                        DBG_TST_Draw_Map_Units = 0;
-#endif
+                        /* #### Section 9.2.2.1      Right-Click Movement Map - Stack - Own */
                         _unit = entity_idx;
                         unit_idx = _unit;
-                        Unit_X = _UNITS[unit_idx].wx;
-                        Unit_Y = _UNITS[unit_idx].wy;
-                        // OVL_Map_CenterX = _UNITS[unit_idx].wx;
-                        // OVL_Map_CenterY = _UNITS[unit_idx].wy;
+                        selected_unit_wx = _UNITS[unit_idx].wx;
+                        selected_unit_wy = _UNITS[unit_idx].wy;
                         _active_world_x = _UNITS[unit_idx].wx;
                         _active_world_y = _UNITS[unit_idx].wy;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-    dbg_prn("DEBUG: [%s, %d]: Unit_X: %d\n", __FILE__, __LINE__, Unit_X);
-    dbg_prn("DEBUG: [%s, %d]: Unit_Y: %d\n", __FILE__, __LINE__, Unit_Y);
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-
-    if(_UNITS[unit_idx].wx == 19 && _UNITS[unit_idx].wy == 10)
-    {
-        DBG_TST_Selected_Stack = 1;
-        DBG_TST_Select_Unit_Stack = 1;
-        DBG_TST_Build_Unit_Stack = 1;
-        DBG_TST_Draw_Map_Units = 1;
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Selected_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Selected_Stack);
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Select_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Select_Unit_Stack);
-        dbg_prn("DEBUG: [%s, %d]: DBG_TST_Build_Unit_Stack: %d\n", __FILE__, __LINE__, DBG_TST_Build_Unit_Stack);
-    }
-#endif
-                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, Unit_X, Unit_Y);
-#ifdef STU_DEBUG
-        DBG_TST_Selected_Stack = 0;
-        DBG_TST_Select_Unit_Stack = 0;
-        DBG_TST_Build_Unit_Stack = 0;
-#endif
+                        Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
                         if(all_units_moved != ST_TRUE)
                         {
-                            DLOG("(all_units_moved != ST_TRUE)");
                             all_units_moved = ST_FALSE;
                         }
-
                         Reset_Draw_Active_Stack();
                         draw_active_stack_flag = 0;
                         Set_Unit_Draw_Priority();
@@ -2038,28 +1894,85 @@ void Main_Screen(void)
                         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
                         Set_Mouse_List_Default();
                         Reset_Map_Draw();
-
                     }
                     else
                     {
-                        DLOG("if(_UNITS[entity_idx].owner_idx != _human_player_idx)");
-                        // Enemy Unit - Unit List Screen (Pop-Up)
-                        // target_world_x = _main_map_grid_x * SQUARE_WIDTH;
-                        // target_world_y = (_main_map_grid_y * SQUARE_HEIGHT) + SQUARE_WIDTH;
-                        // TODO  Deactivate_Help_List();
-                        // TODO  Unit_List_Window_Pup(input__entity_idx, 0, target_world_x, target_world_y);
-                        // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
-                        // Allocate_Reduced_Map();
-                        // Set_Mouse_List_Default();
-                        // Reset_Map_Draw();
-                        // MainScr_Prepare_Reduced_Map();
-                        // TODO  Deactivate_Help_List();
-                        // TODO  Main_Screen_Help();
+                        /* #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other */
+                        target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+                        target_world_y = (_main_map_grid_y * SQUARE_HEIGHT);
+                        Deactivate_Help_List();
+                        Unit_List_Window(entity_idx, 0, target_world_x, target_world_y);
+                        Assign_Auto_Function(Main_Screen_Draw, 1);
+                        Allocate_Reduced_Map();
+                        Set_Mouse_List_Default();
+                        Reset_Map_Draw();
+                        MainScr_Prepare_Reduced_Map();
+                        Deactivate_Help_List();
+                        Set_Main_Screen_Help_List();
                     }
 
-                    DLOG("@@DidRightClickUnit");
                     screen_changed = ST_TRUE;
-                    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
+                    UU_MainScreen_flag = ST_TRUE;
+                }
+                else if(entity_idx < 1100)
+                {
+                    _city_idx = (entity_idx - 1000);
+                    if(_CITIES[_city_idx].owner_idx == _human_player_idx)
+                    {
+                        if(_CITIES[_city_idx].size == 0)
+                        {
+                            /* #### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost */
+                            PageFlipEffect = 4;
+                            GrowOutLeft = (_main_map_grid_x * SQUARE_WIDTH);
+                            GrowOutTop = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            GrowOutFrames = 8;
+                            Deactivate_Help_List();
+                            target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+                            target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+                            // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
+                            // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
+                            Outpost_Screen(ST_FALSE);
+                            Assign_Auto_Function(Main_Screen_Draw, 1);
+                            Allocate_Reduced_Map();
+                            Set_Mouse_List_Default();
+                            Reset_Map_Draw();
+                            MainScr_Prepare_Reduced_Map();
+                            screen_changed = ST_TRUE;
+                            Deactivate_Help_List();
+                            Set_Main_Screen_Help_List();
+                            UU_MainScreen_flag = ST_TRUE;
+
+
+
+
+
+                        }
+                        else
+                        {
+                            PageFlipEffect = 4;
+                            // TODO  GrowOutLeft = (_main_map_grid_x * 20);
+                            // TODO  GrowOutTop = ((_main_map_grid_y * 18) + 20);
+                            // TODO  GrowOutFrames = 8;
+                            current_screen = scr_City_Screen;
+                            leave_screen_flag = ST_TRUE;
+
+                        }
+                    }
+                    else
+                    {
+                        Deactivate_Help_List();
+                        Enemy_City_Screen();
+                        Assign_Auto_Function(Main_Screen_Draw, 1);
+                        Allocate_Reduced_Map();
+                        Set_Mouse_List_Default();
+                        Reset_Map_Draw();
+                        MainScr_Prepare_Reduced_Map();
+                        screen_changed = ST_TRUE;
+                        Deactivate_Help_List();
+                        Set_Main_Screen_Help_List();
+                        UU_MainScreen_flag = ST_TRUE;
+                    }
+
                 }
 
             }
@@ -2078,39 +1991,12 @@ void Main_Screen(void)
         if(abs(input_field_idx) == _minimap_grid_field)
         {
             // TODO  SND_LeftClickSound();
-
             Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _minimap_grid_x: %d\n", __FILE__, __LINE__, _minimap_grid_x);
-            dbg_prn("DEBUG: [%s, %d]: _minimap_grid_y: %d\n", __FILE__, __LINE__, _minimap_grid_y);
-            dbg_prn("DEBUG: [%s, %d]: target_world_x: %d\n", __FILE__, __LINE__, target_world_x);
-            dbg_prn("DEBUG: [%s, %d]: target_world_y: %d\n", __FILE__, __LINE__, target_world_y);
-#endif
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-#endif
             _prev_world_x = _minimap_grid_x + target_world_x;
             _prev_world_y = _minimap_grid_y + target_world_y;
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-            dbg_prn("DEBUG: [%s, %d]: _prev_world_x: %d\n", __FILE__, __LINE__, _prev_world_x);
-#endif
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-#endif
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-#endif
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
-#ifdef STU_DEBUG
-            dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-            dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-#endif
             // Hot-Key 'C'
                 // unit_idx = _unit_stack[0].unit_idx;
                 // _map_plane = _UNITS[unit_idx].wp;
@@ -2142,15 +2028,19 @@ void Main_Screen(void)
         if((leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
         {
             Main_Screen_Draw();
-            if(_turn == 0)
+            if(
+                (_turn == 0)
+                &&
+                (_given_chance_to_rename_home_city == ST_FALSE)
+            )
             {
-                // TODO  j_NameStartingCity_Dialog_Popup(0);
-                // TODO  Set_Redraw_Function(j_Main_Screen_Draw, 1);
-                UU_first_turn_done_flag = ST_TRUE;
+                NameStartingCity_Dialog_Popup(0);
+                Assign_Auto_Function(Main_Screen_Draw, 1);
+                _given_chance_to_rename_home_city = ST_TRUE;
             }
             else
             {
-                UU_first_turn_done_flag = ST_TRUE;
+                _given_chance_to_rename_home_city = ST_TRUE;
             }
             // o146p04_Empty_pFxn();
             // o108p03_Empty_pFxn();
@@ -2162,13 +2052,10 @@ void Main_Screen(void)
 
     }  /* while(leave_screen_flag == ST_FALSE) */
 
-    // TODO  Disable_Redraw_Function()
-    // TODO  Deactivate_Help_List();
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
     Reset_Window();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -2177,32 +2064,28 @@ void Main_Screen_Add_Fields(void)
 {
     int16_t itr_unit_stack;
 
-    // CRP_OVL_UU_Control_4 = -1000;
-    // CRP_OVL_UU_Control_3 = -1000;
-    // CRP_OVL_UU_Control_2 = -1000;
-    // CRP_OVL_UU_Control_1 = -1000;
-    _main_map_grid_field = -1000;
-    _minimap_grid_field = -1000;
-    _next_turn_button = -1000;
-    _special_button = -1000;
-    _patrol_button = -1000;
-    _wait_button = -1000;
-    _done_button = -1000;
-    _game_button = -1000;
-    _spells_button = -1000;
-    _armies_button = -1000;
-    _cities_button = -1000;
-    _magic_button = -1000;
-    _info_button = -1000;
-    _plane_button = -1000;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
+    // CRP_OVL_UU_Control_4 = INVALID_FIELD;
+    // CRP_OVL_UU_Control_3 = INVALID_FIELD;
+    // CRP_OVL_UU_Control_2 = INVALID_FIELD;
+    // CRP_OVL_UU_Control_1 = INVALID_FIELD;
+    _main_map_grid_field = INVALID_FIELD;
+    _minimap_grid_field = INVALID_FIELD;
+    _next_turn_button = INVALID_FIELD;
+    _special_button = INVALID_FIELD;
+    _patrol_button = INVALID_FIELD;
+    _wait_button = INVALID_FIELD;
+    _done_button = INVALID_FIELD;
+    _game_button = INVALID_FIELD;
+    _spells_button = INVALID_FIELD;
+    _armies_button = INVALID_FIELD;
+    _cities_button = INVALID_FIELD;
+    _magic_button = INVALID_FIELD;
+    _info_button = INVALID_FIELD;
+    _plane_button = INVALID_FIELD;
 
     for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
     {
-        Unit_Window_Fields[itr_unit_stack] = -1000;
+        g_unit_window_fields[itr_unit_stack] = INVALID_FIELD;
     }
 
     if(_unit_stack_count > 0)
@@ -2212,15 +2095,8 @@ void Main_Screen_Add_Fields(void)
     
     if(all_units_moved == ST_TRUE)
     {
-        DLOG("(all_units_moved == ST_TRUE)");
         _next_turn_button = Add_Hidden_Field(248, 175, 313, 199, 'N', ST_UNDEFINED);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _next_turn_button: %d\n", __FILE__, __LINE__, _next_turn_button);
-#endif
-    }
-    else
-    {
-        DLOG("(all_units_moved != ST_TRUE)");
+
     }
 
     if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
@@ -2238,24 +2114,6 @@ void Main_Screen_Add_Fields(void)
     Add_Game_Button_Fields();
     Add_Unit_Action_Fields();
 
-
-//     // field_idx_click_C = Add_Hidden_Field(108, (138 + (12 * 0)), 211, (149 + (12 * 0)), 0, -1);
-//     // field_idx_click_L = Add_Hidden_Field(108, 150, 211, 161, 0, -1);
-//     // field_idx_click_N = Add_Hidden_Field(108, 162, 211, 173, 0, -1);
-//     // field_idx_click_H = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
-//     // field_idx_click_Q = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
-// 
-//     // int16_t Add_Hot_Key(int16_t select_char)
-//     field_idx_hotkey_G = Add_Hot_Key('G');
-//     field_idx_hotkey_Q = Add_Hot_Key('Q');
-// 
-//     // int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
-//     _game_button = Add_Hidden_Field(6, 6, 46, 26, ST_NULL, ST_UNDEFINED);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Add_Fields()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o57p03
@@ -2263,20 +2121,20 @@ void Add_Unit_Action_Fields(void)
 {
     if(_unit_stack_count > 0)
     {
-        _done_button = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
-        _patrol_button = Add_Button_Field(280, 176, "", main_patrol_button, '0', ST_UNDEFINED);
-        _wait_button = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
+        _done_button   = Add_Button_Field(246, 176, "", main_done_button, 'D', ST_UNDEFINED);
+        _patrol_button = Add_Button_Field(280, 176, "", main_patrol_button, 0, ST_UNDEFINED);
+        _wait_button   = Add_Button_Field(246, 186, "", main_wait_button, 'W', ST_UNDEFINED);
     }
 
     if(special_action_flag != ST_UNDEFINED)
     {
         if(special_action_flag == 2)
         {
-            _special_button = Add_Button_Field(280, 186, "", main_purify_button, '0', ST_UNDEFINED);
+            _special_button = Add_Button_Field(280, 186, "", main_purify_button, 0, ST_UNDEFINED);
         }
         else if(special_action_flag == 9)
         {
-            _special_button = Add_Button_Field(280, 186, "", main_meld_button, '0', ST_UNDEFINED);
+            _special_button = Add_Button_Field(280, 186, "", main_meld_button, 0, ST_UNDEFINED);
         }
         else
         {
@@ -2286,10 +2144,10 @@ void Add_Unit_Action_Fields(void)
 
     if(_unit_stack_count < 1)
     {
-        _done_button = -1000;
-        _patrol_button = -1000;
-        _wait_button = -1000;
-        _special_button = -1000;
+        _done_button = INVALID_FIELD;
+        _patrol_button = INVALID_FIELD;
+        _wait_button = INVALID_FIELD;
+        _special_button = INVALID_FIELD;
 
         if(all_units_moved == ST_FALSE)
         {
@@ -2303,89 +2161,81 @@ void Add_Unit_Action_Fields(void)
 // AKA j_OVL_DrawUnitActnBtns()
 void Main_Screen_Draw_Unit_Action_Buttons(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
-#endif
 
     if(_unit_stack_count > 0)
     {
         FLIC_Set_CurrentFrame(main_done_button, 0);
         FLIC_Draw(246, 176, main_done_button);
-        // _help_entries.Entry_Index+46h = HLP_DONE;
+        // TODO  _help_entries.Entry_Index+46h = HLP_DONE;
 
         FLIC_Set_CurrentFrame(main_patrol_button, 0);
         FLIC_Draw(280, 176, main_patrol_button);
-        // _help_entries.Entry_Index+50h = HLP_PATROL;
+        // TODO  _help_entries.Entry_Index+50h = HLP_PATROL;
 
         FLIC_Set_CurrentFrame(main_wait_button, 0);
         FLIC_Draw(246, 186, main_wait_button);
-        /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
+        // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
 
-        if(special_action_flag != ST_UNDEFINED)
+        if(special_action_flag == ST_UNDEFINED)
+        {
+            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
+            FLIC_Draw(280, 186, main_lock_build_button);
+            // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
+        }
+        else
         {
             if(special_action_flag == 2)
             {
                 FLIC_Set_CurrentFrame(main_purify_button, 0);
                 FLIC_Draw(280, 186, main_purify_button);
-                // _help_entries.Entry_Index+64h = HLP_PURIFY;
+                // TODO  _help_entries.Entry_Index+64h = HLP_PURIFY;
             }
             else if(special_action_flag == 9)
             {
                 FLIC_Set_CurrentFrame(main_meld_button, 0);
                 FLIC_Draw(280, 186, main_meld_button);
-                // _help_entries.Entry_Index+64h = HLP_MELD;
+                // TODO  _help_entries.Entry_Index+64h = HLP_MELD;
             }
             else
             {
                 FLIC_Set_CurrentFrame(main_build_button, 0);
                 FLIC_Draw(280, 186, main_build_button);
-                // _help_entries.Entry_Index+64h = HLP_BUILD;
+                // TODO  _help_entries.Entry_Index+64h = HLP_BUILD;
             }
-
-        }
-        else
-        {
-            FLIC_Set_CurrentFrame(main_lock_build_button, 0);
-            FLIC_Draw(280, 186, main_lock_build_button);
-            // _help_entries.Entry_Index+64h = ST_UNDEFINED;
         }
     }
     else
     {
         FLIC_Set_CurrentFrame(main_lock_done_button, 0);
         FLIC_Draw(246, 176, main_lock_done_button);
-        // _help_entries.Entry_Index+46h = ST_UNDEFINED;
+        // TODO  _help_entries.Entry_Index+46h = ST_UNDEFINED;
 
         FLIC_Set_CurrentFrame(main_lock_patrol_button, 0);
         FLIC_Draw(280, 176, main_lock_patrol_button);
-        // _help_entries.Entry_Index+50h = ST_UNDEFINED;
+        // TODO  _help_entries.Entry_Index+50h = ST_UNDEFINED;
 
         FLIC_Set_CurrentFrame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
-        // _help_entries.Entry_Index+64h = ST_UNDEFINED;
+        // TODO  _help_entries.Entry_Index+64h = ST_UNDEFINED;
 
-        FLIC_Set_CurrentFrame(main_wait_button, 0);
+        FLIC_Set_CurrentFrame(main_wait_button, 0);  // BUGBUG  should be main_lock_wait_button
         FLIC_Draw(246, 186, main_wait_button);
-        /// _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
+        // TODO  _help_entries.Entry_Index+5Ah = ST_UNDEFINED;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Buttons()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o57p05
 // OVL_SetMenuButtons
 void Add_Game_Button_Fields(void)
 {
-    // cnst_ZeroString_31 ... hotkey_GameButton, etc.
-    _game_button    = Add_Button_Field(  7, 4, "", main_game_button,   'G', ST_UNDEFINED);
-    _spells_button  = Add_Button_Field( 47, 4, "", main_spells_button, 'S', ST_UNDEFINED);
-    _armies_button  = Add_Button_Field( 89, 4, "", main_armies_button, 'A', ST_UNDEFINED);
-    _cities_button  = Add_Button_Field(140, 4, "", main_cities_button, '0', ST_UNDEFINED);
-    _magic_button   = Add_Button_Field(184, 4, "", main_magic_button,  'M', ST_UNDEFINED);
-    _info_button    = Add_Button_Field(226, 4, "", main_info_button,   'I', ST_UNDEFINED);
-    _plane_button   = Add_Button_Field(270, 4, "", main_plane_button,  'P', ST_UNDEFINED);
+    _game_button    = Add_Button_Field(  7, 4, empty_string__ovr057, main_game_button,   hotkey_GameButton[0], ST_UNDEFINED);
+    _spells_button  = Add_Button_Field( 47, 4, empty_string__ovr057, main_spells_button, hotkey_SpellsButton[0], ST_UNDEFINED);
+    _armies_button  = Add_Button_Field( 89, 4, empty_string__ovr057, main_armies_button, hotkey_ArmiesButton[0], ST_UNDEFINED);
+    _cities_button  = Add_Button_Field(140, 4, empty_string__ovr057, main_cities_button, empty_string__ovr057[0], ST_UNDEFINED);
+    _magic_button   = Add_Button_Field(184, 4, empty_string__ovr057, main_magic_button,  hotkey_MagicButton[0], ST_UNDEFINED);
+    _info_button    = Add_Button_Field(226, 4, empty_string__ovr057, main_info_button,   hotkey_InfoButton[0], ST_UNDEFINED);
+    _plane_button   = Add_Button_Field(270, 4, empty_string__ovr057, main_plane_button,  hotkey_PlaneButton[0], ST_UNDEFINED);
 }
 
 
@@ -2395,16 +2245,22 @@ void Main_Screen_Draw_Game_Buttons(void)
 {
     FLIC_Set_CurrentFrame(main_game_button, 0);
     FLIC_Draw((7 + (40 * 0)), 4, main_game_button);
+
     FLIC_Set_CurrentFrame(main_spells_button, 0);
     FLIC_Draw(47, 4, main_spells_button);
+
     FLIC_Set_CurrentFrame(main_armies_button, 0);
     FLIC_Draw(89, 4, main_armies_button);
+
     FLIC_Set_CurrentFrame(main_cities_button, 0);
     FLIC_Draw(140, 4, main_cities_button);
+
     FLIC_Set_CurrentFrame(main_magic_button, 0);
     FLIC_Draw(184, 4, main_magic_button);
+
     FLIC_Set_CurrentFrame(main_info_button, 0);
     FLIC_Draw(226, 4, main_info_button);
+
     FLIC_Set_CurrentFrame(main_plane_button, 0);
     FLIC_Draw(270, 4, main_plane_button);
 }
@@ -2418,53 +2274,28 @@ void Add_Unit_Window_Fields(void)
     int16_t y1;
     int16_t x2;
     int16_t y2;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Add_Unit_Window_Fields()\n", __FILE__, __LINE__);
-#endif
-
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
         Unit_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
-        Unit_Window_Fields[itr_stack] = Add_Hidden_Field(x1-1, y1-1, x2-2, y2-2, 0, ST_UNDEFINED);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Unit_Window_Fields[%d]: %d\n", __FILE__, __LINE__, itr_stack, Unit_Window_Fields[itr_stack]);
-#endif
+        g_unit_window_fields[itr_stack] = Add_Hidden_Field((x1 - 1), (y1 - 1), (x2 - 2), (y2 - 2), 0, ST_UNDEFINED);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Add_Unit_Window_Fields()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o57p08
 void Main_Screen_Draw(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
-
     Reset_Window();
     Set_Page_Off();
-
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o57p09
 void Main_Screen_Reset(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Reset()\n", __FILE__, __LINE__);
-#endif
-
     Allocate_Reduced_Map();
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Clear_Fields();
     Reset_Draw_Active_Stack();
     Set_Unit_Draw_Priority();
@@ -2472,173 +2303,107 @@ void Main_Screen_Reset(void)
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     Set_Mouse_List_Default();
     MainScr_Prepare_Reduced_Map();
-    // TODO  Assign_Auto_Function(Main_Screen_Draw, 1);
+    Assign_Auto_Function(Main_Screen_Draw, 1);
     Reset_Map_Draw();
-    // TODO  Deactivate_Help_List(0;)
-    // TODO  Main_Screen_Help();
-    // DONT  NIU_MainScreen_local_flag = ST_TRUE;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Reset()\n", __FILE__, __LINE__);
-#endif
+    Deactivate_Help_List();
+    Set_Main_Screen_Help_List();
+    UU_MainScreen_flag = ST_TRUE;
 }
 
 // WZD o57p10
-// AKA Do_Move_Stack_DirKey()
 void Move_Stack_DirKey(int16_t movement_direction)
 {
     int16_t movement_points;
     int16_t move_x;
     int16_t move_y;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Stack_DirKey(movement_direction = %d)\n", __FILE__, __LINE__, movement_direction);
-#endif
-
-    if(_unit_stack_count != 0)
+    if(_unit_stack_count == 0)
     {
-        DLOG("(_unit_stack_count != 0)");
-        // movement_points = Stack_Moves_Active();
-        // if(movement_points != 0)
-        if(movement_points = Stack_Moves_Active() != 0)
+        return;
+    }
+
+    if(movement_points = Stack_Moves_Active() == 0)
+    {
+        return;
+    }
+
+    if(all_units_moved == ST_FALSE)
+    {
+        switch(movement_direction)
         {
-            DLOG("(Stack_Moves_Active() != 0))");
-            if(all_units_moved == ST_FALSE)
+            case 1:  /* LeftDown  -x,+y */
             {
-                DLOG("(all_units_moved == ST_FALSE)");
-
-                switch(movement_direction)
-                {
-                    case 1:  /* LeftDown  -x,+y */
-                    {
-                        DLOG("switch(movement_direction)  case 1:  LeftDown");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
-                    } break;
-                    case 2:  /* Down  +y */
-                    {
-                        DLOG("switch(movement_direction)  case 2:  Down");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
-                    } break;
-                    case 3:  /* RightDown  +x,+y */
-                    {
-                        DLOG("switch(movement_direction)  case 3:  RightDown");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
-                    } break;
-                    case 4:  /* Left  -x */
-                    {
-                        DLOG("switch(movement_direction)  case 4:  Left");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx - 1);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
-                    } break;
-                    case 5:  /* DNE */
-                    {
-                        DLOG("switch(movement_direction)  case 5:  DNE");
-                    } break;
-                    case 6:  /* Right  +x */
-                    {
-                        DLOG("switch(movement_direction)  case 6:  Right");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx + 1);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
-                    } break;
-                    case 7:  /* LeftUp  -x,-y */
-                    {
-                        DLOG("switch(movement_direction)  case 7:  LeftUp");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
-                    } break;
-                    case 8:  /* Up  -y */
-                    {
-                        DLOG("switch(movement_direction)  case 8:  Up");
-                        move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
-                    } break;
-                    case 9:  /* RightUp  +x,-y */
-                    {
-                        DLOG("switch(movement_direction)  case 9:  RightUp");
-                        move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
-                        move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
-                    } break;
-
-                }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].wx: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].wx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[_unit_stack[0].unit_idx].wy: %d\n", __FILE__, __LINE__, _UNITS[_unit_stack[0].unit_idx].wy);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: move_x: %d\n", __FILE__, __LINE__, move_x);
-    dbg_prn("DEBUG: [%s, %d]: move_y: %d\n", __FILE__, __LINE__, move_y);
-#endif
-
-                if(move_y < WORLD_Y_MIN)
-                {
-                    move_y = WORLD_Y_MIN;
-                }
-                if(move_y >= WORLD_HEIGHT)
-                {
-                    move_y = WORLD_Y_MAX;
-                }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Stack_Has_PlanarTravel(): %d\n", __FILE__, __LINE__, Stack_Has_PlanarTravel());
-
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane));
-
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE));
-
-#endif
-
-                if(Stack_Has_PlanarTravel() == ST_TRUE)
-                {
-                    DLOG("(Stack_Has_PlanarTravel() == ST_TRUE)");
-                    Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
-                }
-                else
-                {
-                    DLOG("(Stack_Has_PlanarTravel() != ST_TRUE)");
-                    if( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )
-                    {
-                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].In_Tower == ST_TRUE) )");
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: &_map_x: %p\n", __FILE__, __LINE__, &_map_x);
-    dbg_prn("DEBUG: [%s, %d]: &_map_y: %p\n", __FILE__, __LINE__, &_map_y);
-    dbg_prn("DEBUG: [%s, %d]: &_map_plane: %p\n", __FILE__, __LINE__, &_map_plane);
-
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d\n", __FILE__, __LINE__, _map_x);
-    dbg_prn("DEBUG: [%s, %d]: _map_y: %d\n", __FILE__, __LINE__, _map_y);
-    dbg_prn("DEBUG: [%s, %d]: _map_plane: %d\n", __FILE__, __LINE__, _map_plane);
-#endif
-
-                        Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
-                    }
-                    else
-                    {
-                        DLOG("( (_UNITS[_unit_stack[0].unit_idx].wp != _map_plane) && (_UNITS[_unit_stack[0].unit_idx].In_Tower != ST_TRUE) )");
-                        // TODO  GUI_WarningType0(cstrWarnNoPlaneMove);
-                    }
-                }
-            }
-            else
+                move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
+            } break;
+            case 2:  /* Down  +y */
             {
-                DLOG("(all_units_moved == ST_TRUE)");
-            }
+                move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
+            } break;
+            case 3:  /* RightDown  +x,+y */
+            {
+                move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy + 1);
+            } break;
+            case 4:  /* Left  -x */
+            {
+                move_x = (_UNITS[_unit_stack[0].unit_idx].wx - 1);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
+            } break;
+            case 5:  /* DNE */
+            {
+            } break;
+            case 6:  /* Right  +x */
+            {
+                move_x = (_UNITS[_unit_stack[0].unit_idx].wx + 1);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy);
+            } break;
+            case 7:  /* LeftUp  -x,-y */
+            {
+                move_x = ((_UNITS[_unit_stack[0].unit_idx].wx - 1) % WORLD_WIDTH);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
+            } break;
+            case 8:  /* Up  -y */
+            {
+                move_x = (_UNITS[_unit_stack[0].unit_idx].wx);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
+            } break;
+            case 9:  /* RightUp  +x,-y */
+            {
+                move_x = ((_UNITS[_unit_stack[0].unit_idx].wx + 1) % WORLD_WIDTH);
+                move_y = (_UNITS[_unit_stack[0].unit_idx].wy - 1);
+            } break;
+
+        }
+
+        if(move_y < WORLD_Y_MIN)
+        {
+            move_y = WORLD_Y_MIN;
+        }
+        if(move_y >= WORLD_HEIGHT)
+        {
+            move_y = WORLD_Y_MAX;
+        }
+
+        if(Stack_Has_PlanarTravel() == ST_TRUE)
+        {
+            Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
         }
         else
         {
-            DLOG("(Stack_Moves_Active() == 0))");
+            if( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
+            {
+
+                Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+            }
+            else
+            {
+                Warn0(cstrWarnNoPlaneMove);
+            }
         }
     }
-    else
-    {
-        DLOG("(_unit_stack_count == 0)");
-    }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Stack_DirKey(movement_direction = %d)\n", __FILE__, __LINE__, movement_direction);
-#endif
 }
 
 
@@ -2662,26 +2427,27 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
     x2 = 0;
     y2 = 0;
 
-    if(_unit != ST_UNDEFINED && _unit_stack_count != 0)
+    if(_unit == ST_UNDEFINED || _unit_stack_count == 0)
     {
+        return;
+    }
 
-        for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-        {
-            unit_idx = _unit_stack[itr_stack].unit_idx;
+    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+    {
+        unit_idx = _unit_stack[itr_stack].unit_idx;
 
-            Unit_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
-            FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_stack]);
-            Draw_Unit_Picture(x1, y1, unit_idx, _unit_stack[itr_stack].active);
-            Unit_Window_Draw_Unit_Attributes(x1, y1, unit_idx);
-        }
+        Unit_Window_Picture_Coords(itr_stack, &x1, &y1, &x2, &y2);
+        FLIC_Draw(x1-1, y1-1, unit_backgrounds[itr_stack]);
+        Draw_Unit_Picture(x1, y1, unit_idx, _unit_stack[itr_stack].active);
+        Unit_Window_Draw_Unit_Attributes(x1, y1, unit_idx);
+    }
 
-        Cycle_Unit_Enchantment_Animation();
-        unit_weapon_type_animation_count++;
-        if(unit_weapon_type_animation_count > 3)
-        {
-            unit_weapon_type_animation_count = 0;
-        }
+    Cycle_Unit_Enchantment_Animation();
 
+    unit_weapon_type_animation_count++;
+    if(unit_weapon_type_animation_count > 3)
+    {
+        unit_weapon_type_animation_count = 0;
     }
 
 }
@@ -2691,891 +2457,6 @@ void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y)
 void Set_Mouse_List_Default(void)
 {
     Set_Mouse_List(1, mouse_list_default);
-}
-
-
-
-/*
-    WIZARDS.EXE  ovr061
-*/
-
-// WZD o61p01
-// IDK_ActiveUnitStack_MovesOrPath_s53150()
-
-// WZD o61p02
-// AKA Do_Move_Stack()
-int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
-{
-    int16_t unit_array[9];
-    int16_t unit_array_count;
-    int16_t unit_p;
-    int16_t unit_y;
-    int16_t unit_x;
-    int16_t movement_points_available;
-    int16_t Spec;
-    int16_t unit_idx;
-
-    int16_t itr_units;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
-#endif
-
-    Spec = 0;
-
-    if(move_y != WORLD_Y_MIN && move_y != WORLD_Y_MAX)
-    {
-        Build_Moveable_Stack(&unit_array_count, &unit_array[0]);
-
-        _unit = unit_array[0];
-
-// DONT          if(OVL_MapVar3 == 1)
-// DONT          {
-// DONT              OVL_MapVar3 = 0;
-// DONT              CRP_OVL_Obstacle_Var1 = 0;
-// DONT          }
-// DONT          if(CRP_OVL_Obstacle_Var1 == 0)
-// DONT          {
-// DONT              o58p03_Empty_pFxn();
-// DONT          }
-
-
-        Move_Units(player_idx, move_x, move_y, Spec, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
-// ; moves, or starts to move, an overland stack towards a target destination
-// ; returns 1 if the stack has moved, 0 if out of moves or no valid path
-// ; complicated, BUG-ridden, progress in here, RE-EXPLORE
-
-
-        unit_idx = _unit;
-        unit_x = _UNITS[unit_idx].wx;
-        unit_y = _UNITS[unit_idx].wy;
-        unit_p = _UNITS[unit_idx].wp;
-
-
-        // DONT  o62p01_Empty_pFxn(player_idx);
-        movement_points_available = Stack_Moves();
-
-
-        // DONT  o62p01_Empty_pFxn(player_idx);
-        Select_Unit_Stack(player_idx, map_x, map_y, *map_p, unit_x, unit_y);
-        movement_points_available = Stack_Moves();
-
-
-        if(movement_points_available < 1)
-        {
-            DLOG("(movement_points_available < 1)");
-            for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-            {
-                if( (_UNITS[unit_array[itr_units]].Status & 0x00) == 0)  /* US_Ready  "NO ORDERS" */
-                {
-                    _UNITS[unit_array[itr_units]].Finished = ST_TRUE;
-                    _UNITS[unit_array[itr_units]].Status = 0x04;  /* US_ReachDest  "DONE" */
-                }
-            }
-
-            WIZ_NextIdleStack(player_idx, map_x, map_y, map_p);
-        }
-        else
-        {
-            DLOG("(movement_points_available >= 1)");
-        }
-
-        Set_Unit_Draw_Priority();
-        Reset_Stack_Draw_Priority();
-        Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-        // DONT  fxnptr_o59p();
-        Reset_Draw_Active_Stack();
-    }
-
-// IDGI    else
-// IDGI    {
-// IDGI        return ST_FALSE;
-// IDGI    }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
-#endif
-
-    return ST_TRUE;
-}
-
-// WZD o61p03
-// UNIT_MoveStack()
-int16_t RdBd_UNIT_MoveStack_WIP(int16_t player_idx, int16_t unit_idx, int16_t destination_world_x, int16_t destination_world_y, int16_t * map_x, int16_t * map_y, int16_t map_p)
-{
-    int16_t unit_array[9];
-    int16_t road_builder_count;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t did_move_stack;
-    int16_t unit_array_count;
-    int16_t Special_Move;
-    int16_t unit_array_unit_idx;
-
-    int16_t return_value;
-    int16_t itr_units;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: RdBd_UNIT_MoveStack_STUB(player_idx = %d, _unit = %d, destination_world_x = %d, destination_world_y = %d, *map_x = %d, *map_y = %d, map_p = %d)\n", __FILE__, __LINE__, player_idx, _unit, destination_world_x, destination_world_y, *map_x, *map_y, map_p);
-#endif
-
-
-    RdBd_UNIT_SelectStack_STUB(&unit_array_count, &unit_array[0], destination_world_x, destination_world_y, player_idx, unit_idx);
-    // ; select the stack of units from a tile that match the
-    // ; destination and road building left of the specified
-    // ; unit, and fill out the return values accordingly;
-    // ; accounting for transport units if the tile has any,
-    // ; and only returning these if the tile has a city on it
-    // ; BUG: considers Non_Corporeal units to be landlubbers
-    // ; that require transport to cross oceans
-
-    if(unit_array_count < 1)
-    {
-        return_value = ST_FALSE;
-    }
-    else
-    {
-
-        road_builder_count = 0;
-        Special_Move = 0;
-
-
-        // yellow
-        for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-        {
-            unit_array_unit_idx = unit_array[itr_units];
-
-            if(_UNITS[unit_array_unit_idx].Rd_Constr_Left != -1)
-            {
-                road_builder_count++;
-            }
-
-        }
-
-        if(road_builder_count == unit_array_count)
-        {
-            Special_Move = 2;  /* ¿ IIF 'Build Road' ? */
-        }
-    
-
-        unit_wx = _UNITS[unit_idx].wx;
-        unit_wy = _UNITS[unit_idx].wy;
-
-
-        // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
-        did_move_stack = Move_Units(player_idx, destination_world_x, destination_world_y, Special_Move, map_x, map_y, map_p, unit_array_count, &unit_array[0]);
-
-
-        // purple
-        for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-        {
-            if(
-                (_UNITS[unit_array[itr_units]].wx == unit_wx) &&
-                (_UNITS[unit_array[itr_units]].wy == unit_wy) &&
-                (_UNITS[unit_array[itr_units]].Rd_Constr_Left == -1) &&
-                ((_UNITS[unit_array[itr_units]].Status & 0x03 /* US_GoingTo */) != 0) || (((_UNITS[unit_array[itr_units]].Status & 0x10 /* US_Move */) != 0)) &&
-                (_UNITS[unit_array[itr_units]].Finished == ST_FALSE)
-            )
-            {
-                _UNITS[unit_array[itr_units]].Move_Failed = ST_TRUE;
-                _UNITS[unit_array[itr_units]].Status = 0x00; /* US_Ready */
-                _UNITS[unit_array[itr_units]].dst_wx = 0;
-                _UNITS[unit_array[itr_units]].dst_wy = 0;
-            }
-        }
-
-
-        // dark gold
-        for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-        {
-            if(
-                (_UNITS[unit_array[itr_units]].owner_idx != ST_UNDEFINED) &&
-                (_UNITS[unit_array[itr_units]].Rd_Constr_Left == -1)
-            )
-            {
-                if( (_UNITS[unit_array[itr_units]].Status & 0x00 /* US_Ready */) != 0 )
-                {
-                    // HERE: unit status is NOT "NO ORDERS"  US_Ready
-                    // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
-                    // TODO  OVL_ClearUnitPath();               ; clears the long path referenced by UNIT_OverlandPath, provided that it is in the range of the corresponding table
-                }
-                else
-                {
-                    // TODO  EMM_Map_DataH();
-                    // TODO  OVL_StoreLongPath(player_idx, _UNITS[unit_array[itr_units]].wx, _UNITS[unit_array[itr_units]].wy, _UNITS[unit_array[itr_units]].dst_wx, _UNITS[unit_array[itr_units]].dst_wy, map_p, &MovePath_X, &MovePath_Y, &OVL_Path_Costs);
-                        // ; attempts to store a multi-turn path into EMS,
-                        // ; provided that both the source and destination
-                        // ; locations are on it, and there is space left in the
-                        // ; corresponding table
-                        // ; BUG: ignores the plane when looking for a match
-                        // ; WARNING: the state of the map can change by the time
-                        // ;  the path is retrieved later (concept flaw)
-                }
-            }
-
-        }
-
-
-
-        if(player_idx == _human_player_idx)
-        {
-            // DONT  o62p01_Empty_pFxn(player_idx);
-            Set_Unit_Draw_Priority();
-            Reset_Stack_Draw_Priority();
-            Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
-            Reset_Draw_Active_Stack();
-        }
-
-        return_value = did_move_stack;
-    }
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: RdBd_UNIT_MoveStack_STUB(player_idx = %d, _unit = %d, destination_world_x = %d, destination_world_y = %d, *map_x = %d, *map_y = %d, map_p = %d)\n", __FILE__, __LINE__, player_idx, _unit, destination_world_x, destination_world_y, *map_x, *map_y, map_p);
-#endif
-
-    return return_value;
-}
-
-
-// WZD o61p04
-void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
-{
-    // Unused_Local= word ptr -10h
-    int16_t next_unit_dst_wy;
-    int16_t next_unit_dst_wx;
-    int16_t next_unit_wy;
-    int16_t next_unit_wx;
-    int16_t AllUnitsMoved;
-    int16_t Finished;
-    int16_t next_unit_idx;
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p);
-#endif
-
-    // Unused_Local = 0;
-    AllUnitsMoved = ST_FALSE;
-    Finished = ST_FALSE;
-
-    Reset_Map_Draw();
-
-    // TODO  o62p01_Empty_pFxn(player_idx);
-
-    while(Finished == ST_FALSE)
-    {
-        // CRP_OverlandVar_3 = 0;
-
-        AllUnitsMoved = WIZ_NextUnit(player_idx, map_p);  // updates `_unit`
-
-        if(AllUnitsMoved == ST_TRUE)
-        {
-            DLOG("(AllUnitsMoved == ST_TRUE)");
-            all_units_moved = ST_TRUE;
-            OVL_StackHasPath = ST_FALSE;
-            Finished = ST_TRUE;
-        }
-        else
-        {
-            DLOG("(AllUnitsMoved != ST_TRUE)");
-            next_unit_idx = _unit;  // just updated by WIZ_NextUnit()
-            next_unit_wx = _UNITS[next_unit_idx].wx;
-            next_unit_wy = _UNITS[next_unit_idx].wy;
-            Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
-            // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-            // ¿ this block is useless in that it gets redone / overlayed by the subsequent block below, because the flags are equivalent ?
-        }
-
-
-        // HERE: Found a Unit;  `_unit` has been updated;  and ?
-        if(Finished == ST_FALSE)
-        {
-            Finished = ST_TRUE;
-
-            // HERE:  Nay AllUnitsMoved / Yay GotNextUnit;  To be sure, assume we're good, but undo if this Unit is *busy* with a 'GOTO'
-            // if it does have a 'GOTO' and that 'GOTO' is actually for 'Build Road', do some 'Build Road' process (which appears to update the map views)
-            // or, not quite? cause the conditions are ORs?
-            if( (_UNITS[_unit].Status & 0x03) != 0)  /* "GOTO"  US_GoingTo */
-            {
-// TODO                  next_unit_dst_wx = _UNITS[_unit].dst_wx;
-// TODO                  next_unit_dst_wy = _UNITS[_unit].dst_wy;
-// TODO  
-// TODO                  // CRP_OverlandVar_3 = ST_TRUE;
-// TODO  
-// TODO                  // TODO  flip this logic around - it's actually just handling the end of the 'Go To' & 'Build Road'
-// TODO                  if(
-// TODO                      (_UNITS[_unit].wx != next_unit_dst_wx) ||
-// TODO                      (_UNITS[_unit].wy != next_unit_dst_wy) ||
-// TODO                      (_UNITS[_unit].Rd_Constr_Left != ST_UNDEFINED)
-// TODO                  )
-// TODO                  {
-// TODO                      Allocate_Reduced_Map();
-// TODO                      RdBd_UNIT_MoveStack_WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
-// TODO                      Allocate_Reduced_Map();
-// TODO                  }
-// TODO                  else
-// TODO                  {
-// TODO                      _UNITS[_unit].Status = 0x00;  /* US_Ready  "NO ORDERS"*/
-// TODO                  }
-// TODO  
-// TODO                  Finished = ST_FALSE;
-                // HACK: 
-                _UNITS[_unit].Status = 0x00;  /* US_Ready  "NO ORDERS"*/
-                _UNITS[_unit].dst_wx = 0;
-                _UNITS[_unit].dst_wy = 0;
-                _UNITS[_unit].Rd_Constr_Left = ST_UNDEFINED;
-            }
-        }
-
-    }
-
-
-
-    if(all_units_moved == ST_FALSE)
-    {
-        DLOG("(all_units_moved == ST_FALSE)");
-        next_unit_idx = _unit;
-        next_unit_wx = _UNITS[next_unit_idx].wx;
-        next_unit_wy = _UNITS[next_unit_idx].wy;
-        Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);
-        // Select_Unit_Stack() calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Select_Unit_Stack() ... _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
-    }
-    else
-    {
-        DLOG("(all_units_moved == ST_TRUE)");
-        _unit_stack_count = 0;
-        Set_Draw_Active_Stack_Always();
-        Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-    }
-
-
-    // OVL_MapVar3 = ST_TRUE;
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextIdleStack(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p);
-#endif
-
-}
-
-
-
-// WZD o61p05
-/*
-    next nearest available unit
-        from _active_world_x, _active_world_y
-    sets _unit, _active_world_x, _active_world_y
-
-    ~== *available* / *selectable*
-        Finished != ST_TRUE
-*/
-int16_t WIZ_NextUnit(int16_t player_idx, int16_t * map_plane)
-{
-    int16_t Unused_Local;
-    int16_t tried_other_plane;
-    int16_t itr_wait_units;
-    int16_t Closest_Active_Unit;
-    int16_t Closest_Active_Dist;
-    int16_t Closest_Waiting_Unit;
-    int16_t Closest_Waiting_Dist;
-    int16_t itr_units;
-    int16_t delta;
-    int16_t Return_Value;
-    int16_t Finished;
-
-    int16_t current_world_plane;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: WIZ_NextUnit(player_idx = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_plane);
-#endif
-
-
-    current_world_plane = *map_plane;
-
-    Closest_Waiting_Dist = 1000;
-    Closest_Waiting_Unit = ST_UNDEFINED;
-    Closest_Active_Dist = 1000;
-    Closest_Active_Unit = ST_UNDEFINED;
-
-    tried_other_plane = ST_FALSE;
-
-    Unused_Local = ST_UNDEFINED;
-    Return_Value = ST_FALSE;
-
-    Finished = ST_FALSE;
-    itr_units = 0;
-    while(Finished == ST_FALSE)
-    {
-
-        if(
-            (_UNITS[itr_units].owner_idx == player_idx) &&
-            ( (_UNITS[itr_units].wp == current_world_plane) || (_UNITS[itr_units].In_Tower == ST_TRUE) ) &&
-            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&  /* ¿ not dead / disbanded / banished / unsommoned ? */
-            (_UNITS[itr_units].Finished == ST_FALSE)
-        )
-        {
-            // TODO  figure out how to deal with delta being 0 for the previously select stack that set _active_world_x,y
-            delta = Delta_XY_With_Wrap(_active_world_x, _active_world_y, _UNITS[itr_units].wx, _UNITS[itr_units].wy, WORLD_WIDTH);
-
-            if( (_UNITS[itr_units].Status & 0x05) != 0)  /* US_Wait */
-            {
-                if(Closest_Waiting_Dist > delta)
-                {
-                    if(delta != 0)
-                    {
-                        Closest_Waiting_Dist = delta;
-                        Closest_Waiting_Unit = itr_units;
-                    }
-                }
-            }
-            else
-            {
-                if( ((_UNITS[itr_units].Status & 0x08) == 0) /* US_Purify */ && ((_UNITS[itr_units].Status & 0x64) == 0) /* US_Unkown_100 */ )
-                {
-                    if(Closest_Active_Dist > delta)
-                    {
-                        if(delta != 0)
-                        {
-                            Closest_Active_Dist = delta;
-                            Closest_Active_Unit = itr_units;
-                        }
-                    }
-                }
-            }
-        }
-
-        itr_units++;
-        // HERE: we've iterated through all of the units
-        if(itr_units == _units)
-        {
-            if(Closest_Active_Unit != ST_UNDEFINED)
-            {
-                Finished = ST_TRUE;
-                if(current_world_plane == 2)
-                {
-                    current_world_plane = 0;
-                }
-                *map_plane = current_world_plane;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: Closest_Active_Unit: %d\n", __FILE__, __LINE__, Closest_Active_Unit);
-#endif
-                _unit = Closest_Active_Unit;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
-
-                _active_world_x = _UNITS[_unit].wx;
-                _active_world_y = _UNITS[_unit].wy;
-            }
-            else if(Closest_Waiting_Unit != ST_UNDEFINED)
-            {
-                if(current_world_plane == 2)
-                {
-                    current_world_plane = 0;
-                }
-                *map_plane = current_world_plane;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-    dbg_prn("DEBUG: [%s, %d]: Closest_Waiting_Unit: %d\n", __FILE__, __LINE__, Closest_Waiting_Unit);
-#endif
-                _unit = Closest_Waiting_Unit;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit: %d\n", __FILE__, __LINE__, _unit);
-#endif
-                Finished = ST_TRUE;
-                _active_world_x = _UNITS[_unit].wx;
-                _active_world_y = _UNITS[_unit].wy;
-                for(itr_wait_units = 0; itr_wait_units < _units; itr_wait_units++)
-                {
-                    if(_UNITS[itr_wait_units].owner_idx == player_idx)
-                    {
-                        if( (_UNITS[itr_wait_units].Status & 0x05) == 0)  /* US_Wait */
-                        {
-                            _UNITS[itr_wait_units].Status = 0x00;  /* US_Ready */
-                        }
-                    }
-                }
-            }
-            else if(tried_other_plane != ST_TRUE)
-            {
-                tried_other_plane = ST_TRUE;
-                current_world_plane = ((current_world_plane + 1) % 2);
-                Closest_Waiting_Dist = 1000;
-                Closest_Waiting_Unit = ST_UNDEFINED;
-                Closest_Active_Dist = 1000;
-                Closest_Active_Unit = ST_UNDEFINED;
-                Unused_Local = ST_UNDEFINED;
-                itr_units = 0;
-            }
-            else
-            {
-                Finished = ST_TRUE;
-                Return_Value = ST_TRUE;
-            }
-        }
-    }
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: WIZ_NextUnit(player_idx = %d, *map_plane = %d)\n", __FILE__, __LINE__, player_idx, *map_plane);
-#endif
-
-    return Return_Value;
-}
-
-// WZD o61p06
-void STK_GetExtraActions__WIP(void)
-{
-    int16_t unit_array[9];
-    int16_t unit_array_count;
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetExtraActions__WIP()\n", __FILE__, __LINE__);
-#endif
-
-    // ; set to indicate any extra action possible for the
-    // ; selected stack
-    // ;   -1: no extra action possible
-    // ;    0: road building possible
-    // ;    1: settling possible
-    // ;    2: purifying possible
-    // ;    9: melding possible
-    special_action_flag = ST_UNDEFINED;
-
-
-    Active_UnitGroup(&unit_array_count, &unit_array[0]);
-
-
-    // ; returns 1 if the stack is on a non-sailable tile and
-    // ; has at least one unit with the construction ability;
-    // ; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 0 if returning 1
-    // TODO  STK_BuildingPossible(&unit_array_count, &unit_array[0]);
-
-
-    // ; returns 1 if the stack is on a tile that can be
-    // ; settled and has at least one settler; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 1 if returning 1
-    // TODO  STK_SettlingPossible(&unit_array_count, &unit_array[0]);
-
-
-    // ; returns 1 if the stack is on a corrupted tile and has
-    // ; at least one unit that can purify; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 2 if returning 1
-    // TODO  STK_PurifyPossible(&unit_array_count, &unit_array[0]);
-
-
-    // ; returns 1 if the stack is on a node tile and has at
-    // ; least one magic- or guardian spirit; or 0 otherwise
-    // ; sets GUI_ExtraUnitAction to 9 if returning 1
-    // TODO  STK_MeldingPossible(&unit_array_count, &unit_array[0]);
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: STK_GetExtraActions__WIP()\n", __FILE__, __LINE__);
-#endif
-
-}
-
-// WZD o61p07
-// drake178: STK_GetMovableUnits()
-/*
-    count of Units in Stack with 'active'
-    inout of count
-    inout of array of unit indices
-*/
-void Active_UnitGroup(int16_t * unit_array_count, int16_t unit_array[])
-{
-    int16_t itr_stack;
-    int16_t unit_count;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Active_UnitGroup()\n", __FILE__, __LINE__);
-#endif
-
-    unit_count = 0;
-
-    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-    {
-        if(_unit_stack[itr_stack].active == ST_TRUE)
-        {
-            unit_array[unit_count] = _unit_stack[itr_stack].unit_idx;
-            unit_count++;
-        }
-    }
-
-    *unit_array_count = unit_count;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Active_UnitGroup()\n", __FILE__, __LINE__);
-#endif
-
-}
-
-// WZD o61p08
-/*
-
-*/
-void Build_Moveable_Stack(int16_t * unit_count, int16_t unit_array[])
-{
-    int16_t Stack_Array[9];
-    int16_t LandLubber_Array[9];
-    int16_t transport_load;
-    int16_t LandLubber_Array_Index;
-    int16_t transport_capacity;
-    int16_t LandLubber_Count;
-    int16_t stack_has_transport;
-    int16_t IDK_unit_array_cnt;
-    int16_t IDK_Stack_Array_cnt;
-
-    int16_t itr_stack;
-    int16_t itr_LL_Array;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Build_Moveable_Stack()\n", __FILE__, __LINE__);
-#endif
-
-    stack_has_transport = ST_FALSE;
-    transport_capacity = 0;
-
-    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-    {
-        if(_unit_stack[itr_stack].active == ST_TRUE)
-        {
-            if(_UNITS[_unit_stack[itr_stack].unit_idx].Status != 0x03) /* US_GoingTo */
-            {
-                if(_unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport > 0)
-                {
-                    stack_has_transport = ST_TRUE;
-                    transport_capacity = _unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport;
-                }
-            }
-        }
-    }
-
-    if(stack_has_transport == ST_TRUE)
-    {
-        IDK_Stack_Array_cnt = 0;
-        IDK_unit_array_cnt = 0;
-
-        for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-        {
-            if(_unit_stack[itr_stack].active == ST_TRUE)
-            {
-                if(_UNITS[_unit_stack[itr_stack].unit_idx].Status != 0x03) /* US_GoingTo */
-                {
-                    if(_unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport > 0)
-                    {
-                        unit_array[IDK_unit_array_cnt] = _unit_stack[itr_stack].unit_idx;
-                        IDK_unit_array_cnt++;
-                    }
-                }
-            }
-            Stack_Array[IDK_Stack_Array_cnt] = _unit_stack[itr_stack].unit_idx;
-            IDK_Stack_Array_cnt++;
-        }
-
-        IDK_Stack_Array_cnt = IDK_unit_array_cnt;
-        
-        if(Square_Has_City(_UNITS[_unit_stack[0].unit_idx].wx, _UNITS[_unit_stack[0].unit_idx].wy, _UNITS[_unit_stack[0].unit_idx].wp) == ST_UNDEFINED)
-        {
-            for(itr_LL_Array = 0; itr_LL_Array < 9; itr_LL_Array++)
-            {
-                LandLubber_Array[itr_LL_Array] = ST_UNDEFINED;
-            }
-
-            LandLubber_Count = STK_GetLandlubbers(_unit_stack_count, &Stack_Array[0], &LandLubber_Array[0]);
-
-            if(LandLubber_Count > 0)
-            {
-                IDK_Stack_Array_cnt = IDK_unit_array_cnt;
-                LandLubber_Array_Index = 0;
-                transport_load = 0;
-
-                for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-                {
-                    if(LandLubber_Array[LandLubber_Array_Index] == _unit_stack[itr_stack].unit_idx)
-                    {
-                        if(
-                            (transport_load < transport_capacity) ||
-                            (_UNITS[_unit_stack[itr_stack].unit_idx].type <= 34)  /* Hero Unit */
-                        )
-                        {
-                            unit_array[IDK_Stack_Array_cnt] = _unit_stack[itr_stack].unit_idx;
-                            IDK_Stack_Array_cnt++;
-                            LandLubber_Array_Index++;
-                            if( _UNITS[_unit_stack[itr_stack].unit_idx].type > 34)  /* Hero Unit */
-                            {
-                                transport_load++;
-                            }
-                        }
-                    }
-                }
-
-                for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-                {
-                    if(
-                        (Unit_Has_AirTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_WaterTravel_Item(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_Swimming(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_FALSE) &&
-                        (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_FALSE)
-                    )
-                    {
-                        if( (_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x03 /* US_GoingTo */) == 0)
-                        {
-                            unit_array[IDK_Stack_Array_cnt] = _unit_stack[itr_stack].unit_idx;
-                            IDK_Stack_Array_cnt++;
-                        }
-                    }
-                }
-
-                goto Done;
-
-            }
-            else  /* !(LandLubber_Count > 0) */
-            {
-                // HERE: Yay TransPort, Nay City, Nay LandLubbers
-                if(IDK_Stack_Array_cnt < _unit_stack_count)
-                {
-                    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-                    {
-                        if( ((_UNITS[itr_stack].Status & 0x03 /* US_GoingTo */) != 0) &&
-                            (_unit_type_table[_UNITS[itr_stack].type].Transport < 1)
-                        )
-                        {
-                            unit_array[IDK_Stack_Array_cnt] = _unit_stack[itr_stack].unit_idx;
-                            IDK_Stack_Array_cnt++;
-                        }
-                    }
-                }
-                else
-                {
-                    // HERE: ¿ we're on the ocean and all stack units are transports ?
-                    goto Done;
-                }
-
-
-            }
-
-        }
-        else  /* Square_Has_City() != ST_UNDEFINED */
-        {
-            goto Done;
-        }
-
-    }
-    else  /* (stack_has_transport != ST_TRUE) */
-    {
-        IDK_Stack_Array_cnt = 0;
-
-        for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
-        {
-            if( 
-                (_unit_stack[itr_stack].active == ST_TRUE) &&
-                ( ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x03) == 0) /* US_GoingTo */)
-            )
-            {
-                unit_array[IDK_Stack_Array_cnt] = _unit_stack[itr_stack].unit_idx;
-                IDK_Stack_Array_cnt++;
-            }
-        }
-
-    }
-
-Done:
-    *unit_count = IDK_Stack_Array_cnt;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Build_Moveable_Stack()\n", __FILE__, __LINE__);
-#endif
-
-}
-
-
-
-// WZD o61p09
-void RdBd_UNIT_SelectStack_STUB(int16_t * unit_array_count, int16_t unit_array[], int16_t wx, int16_t wy, int16_t player_idx, int16_t unit_idx)
-{
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: RdBd_UNIT_SelectStack_STUB()\n", __FILE__, __LINE__);
-#endif
-
-
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: RdBd_UNIT_SelectStack_STUB()\n", __FILE__, __LINE__);
-#endif
-
-}
-
-
-// WZD o61p10
-// WZD o61p11
-// WZD o61p12
-// WZD o61p13
-// WZD o61p14
-// WZD o61p15
-
-// WZD o61p16
-/*
-    counts units that are not busy
-    returns ST_TRUE if any of the player's units are not *busy*
-    logic feels inverted for the way it is tested
-*/
-int16_t Any_Units_Not_Busy()
-{
-    int16_t unit_count;
-    int16_t itr_units;
-    int16_t return_value;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
-#endif
-
-    unit_count = 0;
-
-    for(itr_units = 0; itr_units < _units; itr_units++)
-    {
-        if(_UNITS[itr_units].owner_idx == _human_player_idx)
-        {
-            // NOT Patrol, GoTo, or Purify
-            if(
-                ( (_UNITS[itr_units].Status & 0x01 /* Patrol */) == 0 ) &&
-                ( (_UNITS[itr_units].Status & 0x03 /* GoTo   */) == 0 ) &&
-                ( (_UNITS[itr_units].Status & 0x08 /* Purify */) == 0 )
-            )
-            {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, itr_units, _UNITS[itr_units].Status);
-#endif
-                unit_count++;
-            }
-        }
-    }
-
-    if(unit_count > 0)
-    {
-        return_value = ST_TRUE;
-    }
-    else
-    {
-        return_value = ST_FALSE;
-    }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Any_Units_Not_Busy()\n", __FILE__, __LINE__);
-#endif
-
-    return return_value;
 }
 
 
@@ -3593,7 +2474,7 @@ int16_t Any_Units_Not_Busy()
 builds a stack from the units on the tile, selects
 the one with the highest draw priority that can move
 as the current unit, brings the stack into view, sets
-In_Tower flags, calculates GUI_ExtraUnitAction and,
+in_tower flags, calculates GUI_ExtraUnitAction and,
 if all the units belong to the human player and have
 a destination already set, loads their path into the
 global arrays, setting GUI_StackHasPath to 1
@@ -3601,90 +2482,81 @@ global arrays, setting GUI_StackHasPath to 1
 // MoO2  Module: SHIPSTK  Find_Ship_Stacks_()
 // _NUM_SHIPS, _ship_stack_count, _PLAYER_NUM, _ship, _ship_stack_start, _ship_node
 // Remove_Non_Detected_Ships_(), Sort_Ships_In_Stack_()
-// AKA OVL_StackSelect()
-void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y)
+/*
+Build_Unit_Stack() sets _unit_stack_count
+then, short-circuits if(_unit_stack_count == 0)
+calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`
+*/
+void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_wx, int16_t unit_wy)
 {
-    int16_t GoingTo_Unit_idx;
+    int16_t goto_unit_idx;
     int16_t itr_stack;
     int16_t unit_idx;
-    int16_t unit_array[9];
-    int16_t unit_array_count;
-    
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Select_Unit_Stack(player_idx = %d, *map_x = %d, *map_y = %d, map_plane = %d, unit_x = %d, unit_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, map_plane, unit_x, unit_y);
-#endif
+    int16_t troops[MAX_STACK];
+    int16_t troop_count;
 
     reset_active_stack = ST_TRUE;
 
-#ifdef STU_DEBUG
-    if(DBG_TST_Select_Unit_Stack == 1)
+    Build_Unit_Stack(player_idx, map_plane, unit_wx, unit_wy);  // sets _unit_stack_count
+
+    if(_unit_stack_count == 0)
     {
-        dbg_prn("DEBUG: [%s, %d]: (DBG_TST_Select_Unit_Stack == 1)\n", __FILE__, __LINE__);
+        return;
     }
-#endif
 
-    Build_Unit_Stack(player_idx, map_plane, unit_x, unit_y);
+    Sort_Unit_Stack();
 
-    if(_unit_stack_count != 0)
+    _active_stack_has_path = ST_FALSE;
+
+    goto_unit_idx = ST_UNDEFINED;
+
+    if(player_idx == _human_player_idx)
     {
-        Sort_Unit_Stack();
-
-        OVL_StackHasPath = ST_FALSE;
-
-        GoingTo_Unit_idx = ST_UNDEFINED;
-
-        if(player_idx == _human_player_idx)
+        for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
         {
-
-            for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
+            unit_idx = _unit_stack[itr_stack].unit_idx;
+            if(_UNITS[unit_idx].Status == us_GOTO)
             {
-                unit_idx = _unit_stack[itr_stack].unit_idx;
-                if(_UNITS[unit_idx].Status == 3) /* US_GoingTo */
-                {
-                    GoingTo_Unit_idx = unit_idx;
-                }
-                else
-                {
-                    GoingTo_Unit_idx = ST_UNDEFINED;
-                    break;
-                }
+                goto_unit_idx = unit_idx;
+            }
+            else
+            {
+                goto_unit_idx = ST_UNDEFINED;
+                break;
             }
         }
-
-        if(GoingTo_Unit_idx != ST_UNDEFINED)
-        {
-            // TODO  UNIT_SetGlobalPath(GoingTo_Unit_idx);
-        }
-
-        unit_idx = _unit;
-        unit_x = _UNITS[unit_idx].wx;
-        unit_y = _UNITS[unit_idx].wy;
-        OVL_BringIntoView(map_x, map_y, unit_x, unit_y, map_plane);
-        
-        STK_GetExtraActions__WIP();
-        
-        Active_UnitGroup(&unit_array_count, &unit_array[0]);
-
-        // DONT  o62p07_Empty_pFxn(unit_array_count, &unit_array[0]);
-
-        Units_In_Tower(unit_array_count, &unit_array[0], map_plane);
-
-        if(_unit_stack_count < 1)
-        {
-            OVL_StackHasPath = ST_FALSE;
-        }
-
     }
-    // ¿ else { return 0; } ?
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Select_Unit_Stack(player_idx = %d, *map_x = %d, *map_y = %d, map_plane = %d, unit_x = %d, unit_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, map_plane, unit_x, unit_y);
-#endif
+    if(goto_unit_idx != ST_UNDEFINED)
+    {
+        Set_Active_Stack_Movement_Path(goto_unit_idx);
+    }
+
+    unit_idx = _unit;
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+
+    OVL_BringIntoView(map_x, map_y, unit_wx, unit_wy, map_plane);
+        
+    Set_Unit_Action_Special();
+        
+    Active_Unit_Stack(&troop_count, &troops[0]);
+
+    // DONT  o62p07_Empty_pFxn(unit_array_count, &unit_array[0]);
+
+    Units_In_Tower(troop_count, &troops[0], map_plane);
+
+    if(_unit_stack_count < 1)
+    {
+        _active_stack_has_path = ST_FALSE;
+    }
+
 }
 
 // WZD o62p03
-// drake178: STK_DisplaySort
-// OON XREF: Select_Unit_Stack()
+/*
+OON XREF: Select_Unit_Stack()
+*/
 void Sort_Unit_Stack(void)
 {
     int16_t itr_stack_outer;
@@ -3752,145 +2624,74 @@ void Sort_Unit_Stack(void)
 }
 
 // WZD o62p04
-void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y)
+/*
+sets _unit_stack_count
+populates _unit_stack[]
+OON XREF:  Select_Unit_Stack()
+
+if us_Wait then us_Ready
+if us_Purify then active = ST_FALSE
+*/
+void Build_Unit_Stack(int16_t player_idx, int16_t wp, int16_t wx, int16_t wy)
 {
-    int16_t itr_unit_stack;
-    int16_t itr_units;
-    int16_t current_unit_idx;
-
-    int16_t unit_stack_idx;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Build_Unit_Stack()\n", __FILE__, __LINE__);
-#endif
-
-#ifdef STU_DEBUG
-    // if(DBG_TST_Selected_Stack == 1)
-    if(DBG_TST_Build_Unit_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: (DBG_TST_Build_Unit_Stack == 1)\n", __FILE__, __LINE__);
-    }
-#endif
+    int16_t unit_stack_idx;  // _DI_
+    int16_t itr_units;  // _SI_
+    int16_t unit_idx;  // _DX_
+    int16_t itr;  // _SI_
 
     unit_stack_idx = 0;
 
-    for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
+    for(itr = 0; itr < MAX_STACK; itr++)
     {
-        _unit_stack[itr_unit_stack].active = ST_FALSE;
+        _unit_stack[itr].active = ST_FALSE;
     }
 
-#ifdef STU_DEBUG
-    // if(DBG_TST_Selected_Stack == 1)
-    if(DBG_TST_Build_Unit_Stack == 1)
+    for (itr_units = 0; itr_units < _units; itr_units++)
     {
-        dbg_prn("DEBUG: [%s, %d]: _units: %d\n", __FILE__, __LINE__, _units);
-    }
-#endif
+        unit_idx = itr_units;
 
-    for(itr_units = 0; itr_units < _units; itr_units++)
-    {
-        current_unit_idx = itr_units;
-
-#ifdef STU_DEBUG
-    // if(DBG_TST_Selected_Stack == 1)
-    if(DBG_TST_Build_Unit_Stack == 1)
-    {
-        //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
-        //    _UNITS[current_unit_idx].owner_idx,
-        //    _UNITS[current_unit_idx].wx,
-        //    _UNITS[current_unit_idx].wy,
-        //    _UNITS[current_unit_idx].wp,
-        //    _UNITS[current_unit_idx].In_Tower
-        // );
-
-        //dbg_prn("DEBUG: [%s, %d]: %d, %d, %d, %d, %d\n", __FILE__, __LINE__,
-        //    (_UNITS[current_unit_idx].owner_idx != player_idx),
-        //    (_UNITS[current_unit_idx].wx != world_x),
-        //    (_UNITS[current_unit_idx].wy != world_y),
-        //    (_UNITS[current_unit_idx].owner_idx == ST_UNDEFINED),
-        //    ( (_UNITS[current_unit_idx].wp != world_plane) && (_UNITS[current_unit_idx].In_Tower != ST_TRUE) )
-        //);
-    }
-#endif
-
-        if((_UNITS[current_unit_idx].owner_idx == player_idx) && 
-            (_UNITS[current_unit_idx].wx == world_x) &&
-            (_UNITS[current_unit_idx].wy == world_y) &&
-            (_UNITS[current_unit_idx].owner_idx != ST_UNDEFINED) && 
-            ( (_UNITS[current_unit_idx].wp == world_plane) || (_UNITS[current_unit_idx].In_Tower == ST_TRUE) )
+        // ¿ if NOT then continue ?
+        if(
+            (_UNITS[unit_idx].owner_idx == player_idx)
+            &&
+            (_UNITS[unit_idx].wx == wx)
+            &&
+            (_UNITS[unit_idx].wy == wy)
+            &&
+            (_UNITS[unit_idx].owner_idx != ST_UNDEFINED)
+            &&
+            (
+                (_UNITS[unit_idx].wp == wp)
+                ||
+                (_UNITS[unit_idx].in_tower == ST_TRUE)
+            )
         )
         {
-            /*
-                Add Unit to Stack
-            */
-            DLOG("@@AddUnitToStack");
-            _unit_stack[unit_stack_idx].unit_idx = current_unit_idx;
+            _unit_stack[unit_stack_idx].unit_idx = unit_idx;
 
-            // ? inactive: no moves, finished, or purify ?
-            // ? what about patrol ?
-#ifdef STU_DEBUG
-    // if(DBG_TST_Selected_Stack == 1)
-    if(DBG_TST_Build_Unit_Stack == 1)
-    {
-        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
-        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
-        dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
-    }
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[unit_stack_idx].active:    %d\n", __FILE__, __LINE__, _unit_stack[unit_stack_idx].active);
-#endif
-
-            if(_UNITS[current_unit_idx].HMoves > 0)
+            if((_UNITS[unit_idx].moves2 > 0) && (_UNITS[unit_idx].Finished == ST_FALSE))
             {
-                if(_UNITS[current_unit_idx].Finished == ST_FALSE)
-                {
-                    _unit_stack[unit_stack_idx].active = ST_TRUE;
+                _unit_stack[unit_stack_idx].active = ST_TRUE;
 
-                    if(_UNITS[current_unit_idx].Status == 5)  // enum Unit Status - Wait
-                    {
-                        _UNITS[current_unit_idx].Status = 0;  // enum Unit Status - Ready
-                    }
+                if(_UNITS[unit_idx].Status == us_Wait)
+                {
+                    _UNITS[unit_idx].Status = us_Ready;
                 }
             }
 
-            if(_UNITS[current_unit_idx].Status == 8)  // enum Unit Status - Purify
+            if(_UNITS[unit_idx].Status == us_Purify)
             {
                 _unit_stack[unit_stack_idx].active = ST_FALSE;
             }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves:  %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].HMoves);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Finished);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status:    %d\n", __FILE__, __LINE__, current_unit_idx, _UNITS[current_unit_idx].Status);
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[unit_stack_idx].active:    %d\n", __FILE__, __LINE__, _unit_stack[unit_stack_idx].active);
-#endif
-
             unit_stack_idx++;
+            assert(unit_stack_idx <= MAX_STACK);
         }
 
     }
 
     _unit_stack_count = unit_stack_idx;
 
-#ifdef STU_DEBUG
-    // if(DBG_TST_Selected_Stack == 1)
-    if(DBG_TST_Build_Unit_Stack == 1)
-    {
-        for(itr_unit_stack = 0; itr_unit_stack < 9; itr_unit_stack++)
-        {
-            dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].unit_idx:  %d\n", __FILE__, __LINE__, itr_unit_stack, _unit_stack[itr_unit_stack].unit_idx);
-            dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active:    %d\n", __FILE__, __LINE__, itr_unit_stack, _unit_stack[itr_unit_stack].active);
-        }
-    }
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Build_Unit_Stack()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o62p05
@@ -4113,14 +2914,10 @@ int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int1
 */
 void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y)
 {
-    int16_t unit_type_idx;
+    int16_t unit_type;
     int16_t case_1_count;
     int16_t itr_stack;
     int16_t unit_idx;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Action(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d, action = %d, destination_x = %d, destination_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p, action, destination_x, destination_y);
-#endif
 
     case_1_count = 0;
 
@@ -4137,20 +2934,19 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
     {
         case 0:  /* Ready */
         {
-            DLOG("switch(action)  case 0:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
-                _UNITS[unit_idx].Status = 0x00;  /* US_Ready */
+                _UNITS[unit_idx].Status = 0;  /* us_Ready */
                 _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-                if(_UNITS[unit_idx].HMoves > 0)
+                if(_UNITS[unit_idx].moves2 > 0)
                 {
                     _unit_stack[itr_stack].active = ST_TRUE;
                     _UNITS[unit_idx].Finished = ST_FALSE;
                 }
                 else
                 {
-                    _UNITS[unit_idx].Status = 0x04;  /* US_ReachedDest */
+                    _UNITS[unit_idx].Status = 4;  /* "DONE"  us_ReachedDest */
                     _UNITS[unit_idx].Finished = ST_TRUE;
                 }
                 _UNITS[unit_idx].dst_wx = 0;
@@ -4159,25 +2955,15 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
         } break;
         case 1:
         {
-            DLOG("switch(action)  case 1:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active: %d\n", __FILE__, __LINE__, itr_stack, _unit_stack[itr_stack].active);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
-#endif
                 if(
                     (_unit_stack[itr_stack].active == ST_TRUE) &&
-                    (_UNITS[unit_idx].HMoves > 0) &&
+                    (_UNITS[unit_idx].moves2 > 0) &&
                     (_UNITS[unit_idx].Finished == ST_FALSE)
                 )
                 {
-                    DLOG("( (_unit_stack[itr_stack].active == ST_TRUE) && (_UNITS[unit_idx].HMoves > 0) && (_UNITS[unit_idx].Finished == ST_FALSE) )");
                     _UNITS[unit_idx].Status = action;
                     _UNITS[unit_idx].Finished = ST_TRUE;
                     _unit_stack[itr_stack].active = ST_FALSE;
@@ -4185,34 +2971,24 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
                     _UNITS[unit_idx].dst_wy = 0;
                     case_1_count++;
                 }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_stack[%d].active: %d\n", __FILE__, __LINE__, itr_stack, _unit_stack[itr_stack].active);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
-#endif
+
             }
         } break;
         case 2:
         {
-            DLOG("switch(action)  case 2:");
-
         } break;
         case 3:  /* Go-To */
         {
-            DLOG("switch(action)  case 3:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
                 if(
-                    ((_UNITS[unit_idx].Status & 0x04) != 0) ||  /* US_ReachedDest */
-                    ((_UNITS[unit_idx].Status & 0x03) != 0) ||  /* US_GoingTo */
-                    ((_UNITS[unit_idx].Status & 0x00) != 0)     /* US_Ready */
+                    ((_UNITS[unit_idx].Status & 4) != 0) ||  /* "DONE"  us_ReachedDest */
+                    ((_UNITS[unit_idx].Status & 3) != 0) ||  /* "GOTO"  us_GOTO */
+                    ((_UNITS[unit_idx].Status & 0) != 0)     /* us_Ready */
                 )
                 {
-                    _UNITS[unit_idx].Status = 0x03;  /* "GOTO"  US_GoingTo */
+                    _UNITS[unit_idx].Status = 3;  /* "GOTO"  us_GOTO */
                     _UNITS[unit_idx].dst_wx = destination_x;
                     _UNITS[unit_idx].dst_wy = destination_y;
                 }
@@ -4220,21 +2996,20 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
         } break;
         case 4:  /* "DONE"  ¿ completed on-going action (move path, pave path, purify) ? */
         {
-            DLOG("switch(action)  case 4:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 if(
                     (_unit_stack[itr_stack].active == ST_TRUE) &&
-                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x03) == 0) &&  /* "GOTO"  US_GoingTo */
-                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 0x08) == 0)     /* "PURIFY"  US_Purify  */
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 3) == 0) &&  /* "GOTO"  us_GOTO */
+                    ((_UNITS[_unit_stack[itr_stack].unit_idx].Status & 8) == 0)     /* "PURIFY"  us_Purify  */
                 )
                 {
                     unit_idx = _unit_stack[itr_stack].unit_idx;
                     _unit_stack[itr_stack].active = ST_FALSE;
                     _UNITS[unit_idx].Finished = ST_TRUE;
-                    _UNITS[unit_idx].Status = 0x04;  /* "DONE"  US_ReachedDest */
+                    _UNITS[unit_idx].Status = 4;  /* "DONE"  us_ReachedDest */
                     _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
-                    _UNITS[unit_idx].HMoves = 0;
+                    _UNITS[unit_idx].moves2 = 0;
                     _UNITS[unit_idx].dst_wx = 0;
                     _UNITS[unit_idx].dst_wy = 0;
                 }
@@ -4242,17 +3017,18 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
         } break;
         case 5:  /* Wait */
         {
-            DLOG("switch(action)  case 5:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
                 if(
-                    (_unit_stack[itr_stack].active != ST_FALSE) &&
-                    (_UNITS[unit_idx].HMoves > 0) &&
+                    (_unit_stack[itr_stack].active == ST_TRUE)
+                    &&
+                    (_UNITS[unit_idx].moves2 > 0)
+                    &&
                     (_UNITS[unit_idx].Finished == ST_FALSE)
                 )
                 {
-                    _UNITS[unit_idx].Status = 0x05;  /* "WAIT"  US_Wait */
+                    _UNITS[unit_idx].Status = 5;  /* "WAIT"  us_Wait */
                     _unit_stack[itr_stack].active = ST_FALSE;
                     _UNITS[unit_idx].dst_wx = 0;
                     _UNITS[unit_idx].dst_wy = 0;
@@ -4261,29 +3037,26 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
         } break;
         case 6:
         {
-            DLOG("switch(action)  case 6:");
 
         } break;
         case 7:
         {
-            DLOG("switch(action)  case 7:");
 
         } break;
         case 8:  /* Purify */
         {
-            DLOG("switch(action)  case 8:");
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 if(_unit_stack[itr_stack].active == ST_TRUE)
                 {
                     unit_idx = _unit_stack[itr_stack].unit_idx;
-                    unit_type_idx = _UNITS[unit_idx].type;
-                    if( (_unit_type_table[unit_type_idx].Abilities & 0x4000) != 0)  /* Unit Type Ability: Purify / Purification */
+                    unit_type = _UNITS[unit_idx].type;
+                    if((_unit_type_table[unit_type].Abilities & UA_PURIFY) != 0)
                     {
                         _unit_stack[itr_stack].active = ST_FALSE;
                         _UNITS[unit_idx].Finished = ST_TRUE;
-                        _UNITS[unit_idx].Status = 0x08;  /* "PURIFY"  US_Purify */
-                        _UNITS[unit_idx].HMoves = 0;
+                        _UNITS[unit_idx].Status = us_Purify;
+                        _UNITS[unit_idx].moves2 = 0;
                         _UNITS[unit_idx].dst_wx = 0;
                         _UNITS[unit_idx].dst_wy = 0;
                         _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
@@ -4300,42 +3073,136 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
     Reset_Stack_Draw_Priority();
     Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Stack_Action(player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d, action = %d, destination_x = %d, destination_y = %d)\n", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_p, action, destination_x, destination_y);
-#endif
-
 }
 
 
 // WZD o62p09
-// EarthGateTeleport()
+int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t unit_array[9];
+    int16_t moveable_units_count;
+    int16_t unit_count;
+    int16_t Radius;
+    int16_t player_idx;
+    int16_t dst_city_idx;
+    int16_t did_earthgate;
+    int16_t src_city_idx;
+    int16_t unit_idx;  // _SI_
+    int16_t itr;  // _DI_
+
+    if(_unit_stack_count < 1)
+    {
+        goto Failure;
+    }
+
+    dst_city_idx = City_At_Square__2(wx, wy, wp);
+
+    if(dst_city_idx == ST_UNDEFINED)
+    {
+        goto Failure;
+    }
+
+    Player_Army_At_Square(wx, wy, wp, _human_player_idx, &unit_count, &unit_array[0]);
+
+    if(unit_count >= 9)
+    {
+        goto Failure;
+    }
+
+    moveable_units_count = 0;
+
+    did_earthgate = ST_FALSE;
+
+    unit_idx = _unit_stack[0].unit_idx;
+
+    src_city_idx = City_At_Square__2(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+
+    if(
+        (dst_city_idx != ST_UNDEFINED) &&
+        (_CITIES[src_city_idx].wp == _CITIES[dst_city_idx].wp) &&
+        (_CITIES[src_city_idx].owner_idx == _CITIES[dst_city_idx].owner_idx) &&
+        (_CITIES[src_city_idx].enchantments[EARTH_GATE] == ST_TRUE) &&
+        (_CITIES[dst_city_idx].enchantments[EARTH_GATE] == ST_TRUE)
+    )
+    {
+        for(itr = 0; itr < _unit_stack_count; itr++)
+        {
+            unit_idx = _unit_stack[itr].unit_idx;
+            if(
+                (_UNITS[unit_idx].Finished != ST_FALSE) &&
+                (_unit_stack[itr].active == ST_TRUE) &&
+                (_UNITS[unit_idx].moves2 > 0)
+            )
+            {
+                moveable_units_count++;
+            }
+        }
+
+        if((moveable_units_count + unit_count) <= MAX_STACK)
+        {
+            for(itr = 0; itr < _unit_stack_count; itr++)
+            {
+                unit_idx = _unit_stack[itr].unit_idx;
+                if(
+                    (_UNITS[unit_idx].Finished != ST_FALSE) &&
+                    (_unit_stack[itr].active == ST_TRUE) &&
+                    (_UNITS[unit_idx].moves2 > 0)
+                )
+                {
+                    _UNITS[unit_idx].wx = _CITIES[dst_city_idx].wx;
+                    _UNITS[unit_idx].wy = _CITIES[dst_city_idx].wy;
+                    _UNITS[unit_idx].moves2 -= 2;
+                    if(_UNITS[unit_idx].moves2 < 1)
+                    {
+                        _UNITS[unit_idx].Finished = ST_TRUE;
+                    }
+                }
+            }
+
+            player_idx = _CITIES[src_city_idx].owner_idx;
+            // TODO  Radius = IDK_City_Radius_s34255(player_idx, wx, wy, wp);
+            // AI_ContactWizards((player_idx, wx, wy, wp, Radius);
+            // TODO TILE_ExploreRadius__WIP(wx, wy, wp, Radius);
+            TILE_ExploreRadius__WIP(wx, wy, wp, 2);
+            _active_world_x = _CITIES[dst_city_idx].wx;
+            _active_world_y = _CITIES[dst_city_idx].wy;
+            WIZ_NextIdleStack(player_idx, &_map_x, &_map_y, &wp);
+            did_earthgate = ST_TRUE;
+            Update_Scouted_And_Contacted();
+        }
+    }
+
+
+Failure:
+    did_earthgate = ST_FALSE;
+
+
+Done:
+
+    return did_earthgate;
+}
 
 
 // WZD o62p10
+/*
+
+XREF:
+    ArmyList_Screen()
+    City_Screen__WIP()
+    Item_Screen()
+    Main_Screen()
+    Outpost_Screen()
+
+USW_FullDisplay()
+    |-> Load_Battle_Unit()
+    |-> USW_LoadAndShow()
+    
+*/
 void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: USW_FullDisplay()\n", __FILE__, __LINE__);
-#endif
-
-    // ; creates a battle unit record for the specified unit,
-    // ; calculating and setting its overland statistics, and
-    // ; saving the struct to the passed destination pointer
-    UNIT_Create_BURecord(unit_idx, global_strategic_unit);
-
-
-    // ; a wrapper for USW_Display that swaps in the overland
-    // ; graphics, loads the figure or portrait image of the
-    // ; unit, and allocates the USW structure memory,
-    // ; swapping back the city graphics afterwards
-    // ; inherits all the BUGs
+    Set_Mouse_List(1, mouse_list_default);
+    Load_Battle_Unit(unit_idx, global_battle_unit);
     USW_LoadAndShow(31, 6, x1, y1, x2, y2, 1, unit_idx);
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: USW_FullDisplay()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -4348,25 +3215,16 @@ void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16
 // MoO2: ~Print_Main_Screen_Data_()
 void Main_Screen_Draw_Status_Window(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] BEGIN: Main_Screen_Draw_Status_Window()\n", __FILE__, __LINE__);
-#endif
 
     Set_Outline_Color(0);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d] player_idx: %d\n", __FILE__, __LINE__, player_idx);
-//     dbg_prn("DEBUG: [%s, %d] _players[player_idx].gold_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].gold_reserve);
-//     dbg_prn("DEBUG: [%s, %d] _players[player_idx].mana_reserve: %d\n", __FILE__, __LINE__, _players[player_idx].mana_reserve);
-// #endif
-
     if(_players[player_idx].gold_reserve > 9999 || _players[player_idx].mana_reserve > 9999)
     {
-        Set_Font_Style1(0, 0, 0, 0);
+        Set_Font_Style_Shadow_Down(0, 0, 0, 0);  // ¿ narrow ?
     }
     else
     {
-        Set_Font_Style1(1, 0, 0, 0);
+        Set_Font_Style_Shadow_Down(1, 0, 0, 0);  // ¿ default / regular / normal ?
     }
 
     Set_Alias_Color(ST_GRAY);
@@ -4374,38 +3232,18 @@ void Main_Screen_Draw_Status_Window(void)
     Print_Integer_Right(265, 68, _players[_human_player_idx].gold_reserve);
     Print_Integer_Right(303, 68, _players[_human_player_idx].mana_reserve);
 
-    Set_Font_Style1(0, 0, 0, 0);
+    Set_Font_Style_Shadow_Down(0, 0, 0, 0);
 
-    // // Print(40, 100, cstr_1st5);
-    // // Print(40, 180, cstr_ABC);
-    // Print(10, 189, cstr_WarGames);
-    // // Print(268, 68, "GP");
-    // // Print(306, 68, "MP");
     Print(268, 68, cstr_GP);
     Print(306, 68, cstr_MP);
 
     Set_Outline_Color(0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d] END: Main_Screen_Draw_Status_Window()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o063p02
-// ; int __cdecl __far OVL_DrawMainScreen(int *MapX@, int *MapY@, int Plane, int XPos, int YPos, int Player_Index)
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx)
 {
-// MapX@= word ptr  6
-// MapY@= word ptr  8
-// Plane= word ptr  0Ah
-// XPos= word ptr  0Ch
-// YPos= word ptr  0Eh
-// Player_Index= word ptr  10h
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Do_Draw(*map_x = %d, *map_y = %d, map_plane = %d, x_pos = %d , y_pos = %d, player_idx = %d)\n", __FILE__, __LINE__, *map_x, *map_y, map_plane, x_pos, y_pos, player_idx);
-#endif
 
     Reset_Map_Draw();
 
@@ -4415,22 +3253,12 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     FLIC_Draw(0, 0, main_background);
 
-    // Draw_Minimap_Window(251, 21, 58, 30);
-    // Draw_Reduced_Map(251, 21, 58, 30);
-    // Draw_Reduced_Map(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
     Draw_World_Window(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
 
-    // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
-    // _help_entries.Entry_Index+96h = ST_UNDEFINED;
-    // _help_entries.Entry_Index+0A0h = ST_UNDEFINED;
-    // _help_entries.Entry_Index+0F0h = ST_UNDEFINED;
-
-
-    // DEBUG
-    // void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y)
-    // Build_Unit_Stack(0, 0, 0, 0);
-    // Build_Unit_Stack(0, 0, 0, 0);
-    // Build_Unit_Stack(0, _UNITS[46].wp, _UNITS[46].wx, _UNITS[46].wy);
+    // TODO  _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
+    // TODO  _help_entries.Entry_Index+96h = ST_UNDEFINED;
+    // TODO  _help_entries.Entry_Index+0A0h = ST_UNDEFINED;
+    // TODO  _help_entries.Entry_Index+0F0h = ST_UNDEFINED;
 
     if(_unit_stack_count > 0)
     {
@@ -4447,14 +3275,13 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     Main_Screen_Draw_Status_Window();
 
-    // TODO  if(OVL_StackHasPath == ST_TRUE)
-    // TODO  {
-    // TODO      j_OVL_DrawPath(OVL_Path_Length, OVL_Path_Xs, OVL_Path_Ys);
-    // TODO  }
+    if(_active_stack_has_path == ST_TRUE)
+    {
+        Draw_Active_Stack_Movement_Path(_active_stack_path_length, &movepath_x_array[2], &movepath_y_array[2]);
+    }
 
     Main_Screen_Draw_Game_Buttons();
-
-    // TODO  OVL_DrawStackMoves();
+   
     Main_Screen_Draw_Movement_Bar();
 
     if(DBG_debug_flag)
@@ -4462,218 +3289,194 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
         Main_Screen_Draw_Debug_Information();
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Do_Draw()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o063p03
+/*
+
+¿¿¿
+MoO2
+_draw_ship_bitmap
+_ship_bitmap
+_combat_bitmap
+???
+
+SEE ALSO:  CMB_Draw_Unit_Enchantment_Outline()
+*/
 void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
 {
-    int16_t Unit_Enchantments_LO;
-    int16_t Unit_Enchantments_HI;
     int8_t enchantment_magic_realm;
     uint32_t unit_enchantments;
     uint8_t * color_list;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Enchantment_Outline(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-#endif
-
-    Unit_Enchantments_HI = _UNITS[unit_idx].Enchants_HI;
-    Unit_Enchantments_LO = _UNITS[unit_idx].Enchants_LO;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Unit_Enchantments_HI: %04X\n", __FILE__, __LINE__, Unit_Enchantments_HI);
-    dbg_prn("DEBUG: [%s, %d]: Unit_Enchantments_LO: %04X\n", __FILE__, __LINE__, Unit_Enchantments_LO);
-#endif
-    // unit_enchantments = (Unit_Enchantments_HI || Unit_Enchantments_LO << 16);
-    unit_enchantments = (Unit_Enchantments_LO || Unit_Enchantments_HI << 16);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_enchantments: %08X\n", __FILE__, __LINE__, unit_enchantments);
-#endif
+    unit_enchantments = _UNITS[unit_idx].enchantments;
 
     enchantment_magic_realm = ST_UNDEFINED;
 
     if(Unit_Has_Invisibility(unit_idx) == ST_TRUE)
     {
-        DLOG("(UNIT_HasInvisibility(unit_idx) == ST_TRUE)");
-        Unit_Enchantments_HI = 0x0000;
-        Unit_Enchantments_LO = 0x0000;
+        unit_enchantments = 0;
     }
 
-/*
-enum Magic Realm
-mr_Chaos = 0,
-mr_Death = 1,
-mr_Life = 2,
-mr_Nature = 3,
-mr_Sorcery = 4,
-*/
-
-    if( (Unit_Enchantments_HI || Unit_Enchantments_LO) != 0 )
+    if(unit_enchantments != 0)
     {
-        DLOG("( (Unit_Enchantments_HI || Unit_Enchantments_LO) != 0 )");
 
-        if((Unit_Enchantments_LO & 0x40) != 0)  /* UE_Regeneration */
+        if((unit_enchantments & UE_REGENERATION) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_HI & 0x4) != 0)  /* UE_Resist_Magic */
+        else if((unit_enchantments & UE_RESISTMAGIC) != 0)
         {
-            DLOG("((Unit_Enchantments_HI & 0x4) != 0)  /* UE_Resist_Magic */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_HI & 0x4000) != 0)  /* UE_Righteousness */
+        else if((unit_enchantments & UE_RIGHTEOUSNESS) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_HI & 0x1000) != 0)  /* UE_Planar_Travel */
+        else if((unit_enchantments & UE_PLANARTRAVEL) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x10) != 0)  /* UE_Black_Channels */
+        else if((unit_enchantments & UE_BLACKCHANNELS) != 0)
         {
-            enchantment_magic_realm = 1;  /* Death */
+            enchantment_magic_realm = mr_Death;
         }
-        else if((Unit_Enchantments_HI & 0x400) != 0)  /* UE_Lionheart*/
+        else if((unit_enchantments & UE_LIONHEART) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x1000) != 0) /* UE_Iron_Skin*/
+        else if((unit_enchantments & UE_IRONSKIN) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_HI & 0x8) != 0)  /* UE_Magic_Immunity */
+        else if((unit_enchantments & UE_MAGICIMMUNITY) != 0)
         {
-            DLOG("((Unit_Enchantments_HI & 0x8) != 0)  /* UE_Magic_Immunity */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_HI & 0x1) != 0)  /* UE_Wind_Walking */
+        else if((unit_enchantments & UE_WINDWALKING) != 0)
         {
-            DLOG("((Unit_Enchantments_HI & 0x1) != 0)  /* UE_Wind_Walking */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_LO & 0x400) != 0)  /* UE_Elemental_Armor */
+        else if((unit_enchantments & UE_ELEMENTALARMOR) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_HI & 0x40) != 0)  /* UE_True_Sight */
+        else if((unit_enchantments & UE_TRUESIGHT) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_HI & 0x8000) != 0)  /* UE_Invulnerability */
+        else if((unit_enchantments & UE_INVULNERABILITY) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x80) != 0)  /* UE_Path_Finding */
+        else if((unit_enchantments & UE_PATHFINDING) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_HI & 0x2) != 0)  /* UE_Flight */
+        else if((unit_enchantments & UE_FLIGHT) != 0)
         {
-            DLOG("((Unit_Enchantments_HI & 0x2) != 0)  /* UE_Flight */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_HI & 0x20) != 0)  /* UE_Eldritch_Weapon */
+        else if((unit_enchantments & UE_ELDRITCHWEAPON) != 0)
         {
-            enchantment_magic_realm = 0;  /* Chaos */
+            enchantment_magic_realm = mr_Chaos;
         }
-        else if((Unit_Enchantments_LO & 0x20) != 0) /* UE_Wraith_Form */
+        else if((unit_enchantments & UE_WRAITHFORM) != 0)
         {
-            enchantment_magic_realm = 1;  /* Death */
+            enchantment_magic_realm = mr_Death;
         }
-        else if((Unit_Enchantments_HI & 0x800) != 0)  /* UE_Giant_Strength */
+        else if((unit_enchantments & UE_GIANTSTRENGTH) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_LO & 0x1) != 0)  /* UE_Immolation */
+        else if((unit_enchantments & UE_IMMOLATION) != 0)
         {
-            enchantment_magic_realm = 0;  /* Chaos */
+            enchantment_magic_realm = mr_Chaos;
         }
-        else if((Unit_Enchantments_LO & 0x2) != 0)  /* UE_Guardian_Wind */
+        else if((unit_enchantments & UE_GUARDIANWIND) != 0)
         {
-            DLOG("((Unit_Enchantments_LO & 0x2) != 0)  /* UE_Guardian_Wind */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_LO & 0x4000) != 0)  /* UE_Spell_Lock */
+        else if((unit_enchantments & UE_SPELLLOCK) != 0)
         {
-            DLOG("((Unit_Enchantments_LO & 0x4000) != 0)  /* UE_Spell_Lock */");
-            enchantment_magic_realm = 4;  /* Sorcery */
+            enchantment_magic_realm = mr_Sorcery;
         }
-        else if((Unit_Enchantments_HI & 0x100) != 0)  /* UE_Heroism */
+        else if((unit_enchantments & UE_HEROISM) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x4) != 0)  /* UE_Berserk */
+        else if((unit_enchantments & UE_BERSERK) != 0)
         {
-            enchantment_magic_realm = 1;  /* Death */
+            enchantment_magic_realm = mr_Death;
         }
-        else if((Unit_Enchantments_HI & 0x2000) != 0)  /* UE_Holy_Armor */
+        else if((unit_enchantments & UE_HOLYARMOR) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x100) != 0)  /* UE_Water_Walking */
+        else if((unit_enchantments & UE_WATERWALKING) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_LO & 0x2000) != 0)  /* UE_Endurance */
+        else if((unit_enchantments & UE_ENDURANCE) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x8) != 0)  /* UE_Cloak_of_Fear */
+        else if((unit_enchantments & UE_CLOAKOFFEAR) != 0)
         {
-            enchantment_magic_realm = 1;  /* Death */
+            enchantment_magic_realm = mr_Death;
         }
-        else if((Unit_Enchantments_LO & 0x800) != 0)  /* UE_Stone_Skin */
+        else if((unit_enchantments & UE_STONESKIN) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
-        else if((Unit_Enchantments_HI & 0x10) != 0)  /* UE_Flame_Blade */
+        else if((unit_enchantments & UE_FLAMEBLADE) != 0)
         {
-            enchantment_magic_realm = 0;  /* Chaos */
+            enchantment_magic_realm = mr_Chaos;
         }
-        else if((Unit_Enchantments_HI & 0x200) != 0)  /* UE_Bless */
+        else if((unit_enchantments & UE_BLESS) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_HI & 0x80) != 0)  /* UE_Holy_Weapon */
+        else if((unit_enchantments & UE_HOLYWEAPON) != 0)
         {
-            enchantment_magic_realm = 2;  /* Life */
+            enchantment_magic_realm = mr_Life;
         }
-        else if((Unit_Enchantments_LO & 0x200) != 0)  /* UE_Resist_Elements */
+        else if((unit_enchantments & UE_RESISTELEMENTS) != 0)
         {
-            enchantment_magic_realm = 3;  /* Nature */
+            enchantment_magic_realm = mr_Nature;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: enchantment_magic_realm: %d\n", __FILE__, __LINE__, enchantment_magic_realm);
-#endif
 
     if(enchantment_magic_realm != ST_UNDEFINED)
     {
-        DLOG("(enchantment_magic_realm != ST_UNDEFINED)");
         Outline_Bitmap_Pixels_No_Glass(UnitDraw_WorkArea, 255);
-        // Bitmap_Aura_Pixels(UnitDraw_WorkArea, 255, (enchantment_outline_colors + ((enchantment_magic_realm * 64) + (unit_enchantment_animation_count * 8))));
-        color_list = (uint8_t *)(enchantment_outline_colors + ((enchantment_magic_realm * 64) + (unit_enchantment_animation_count * 8)));
-        Bitmap_Aura_Pixels(UnitDraw_WorkArea, 255, color_list);
+        Bitmap_Aura_Pixels(UnitDraw_WorkArea, 255, &enchantment_outline_colors[enchantment_magic_realm][unit_enchantment_animation_count][0]);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Enchantment_Outline(unit_idx = %d)\n", __FILE__, __LINE__, unit_idx);
-#endif
 }
 
 
 
 
 // WZD o063p04
-// drake178: j_GAME_Animate_UEs()
+/*
+
+XREF:
+    j_Cycle_Unit_Enchantment_Animation()
+        City_Screen_Draw_Garrison_Window()
+        Enemy_City_Screen_Draw()
+        Main_Screen_Draw_Unit_Window()
+        Main_Screen_Draw_Next_Turn_Button()
+        ArmyList_Screen_Draw()
+        Draw_Unit_List_Window_Pup()
+        Unit_Figure_Draw()
+        CMB_CreateEntities()
+
+*/
 void Cycle_Unit_Enchantment_Animation(void)
 {
-    unit_enchantment_animation_flag++;
+    unit_enchantment_animation_flag += 1;
 
     if(unit_enchantment_animation_flag > 1)
     {
@@ -4682,12 +3485,12 @@ void Cycle_Unit_Enchantment_Animation(void)
 
     if(unit_enchantment_animation_flag < 1)
     {
-        unit_enchantment_animation_count++;
-    }
+        unit_enchantment_animation_count += 1;
 
-    if(unit_enchantment_animation_count > 7)
-    {
-        unit_enchantment_animation_count = 0;
+        if(unit_enchantment_animation_count > 7)
+        {
+            unit_enchantment_animation_count = 0;
+        }
     }
 }
 
@@ -4696,36 +3499,6 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     int16_t unit_owner_idx;
     int16_t unit_colored_backgrounds_idx;
-#ifdef STU_DEBUG
-    int16_t screen_x;
-    int16_t screen_y;
-    uint16_t screen_page;
-    uint16_t screen_ofst;
-    int16_t itr_width;
-    int16_t itr_height;
-    uint8_t * vbb_ptr;
-#endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
-
-// #ifdef STU_DEBUG
-//     // if(unit_idx == 79)  /* Unit Enchantment Outline */
-//     // {
-//     //     DBG_Outline_Bitmap_Pixels_No_Glass = 1;
-//     // }
-//     // dbg_prn("DEBUG: [%s, %d]: DBG_Outline_Bitmap_Pixels_No_Glass = 1\n", __FILE__, __LINE__);
-//     // if(unit_idx == 156)  /* Unit Has Invisibility */
-//     if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
-//     {
-//         DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
-//         DBG_Draw_Invisibility = 1;
-//         DBG_Remap_Draw_Picture_ASM = 1;
-//     }
-// #endif
-
-
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -4756,69 +3529,11 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         }
 
         FLIC_Draw(x, y, _unit_colored_backgrounds_seg[unit_colored_backgrounds_idx]);
-// #ifdef STU_DEBUG
-//     if(DBG_Draw_Invisibility == 1)  /* Unit Has Invisibility */
-//     {
-//         DLOG("Unit Colored Background");
-//         // screen_page = (video_page_buffer[1 - draw_page_num]);
-//         // screen_ofst = (80 * SCREEN_WIDTH) + 248;
-//         screen_x = 121;
-//         screen_y = 111;
-//         vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((screen_y * SCREEN_WIDTH) + screen_x));
-//         for(itr_height = 0; itr_height < STATFIG_HEIGHT; itr_height++)
-//         {
-//             for(itr_width = 0; itr_width < STATFIG_WIDTH; itr_width++)
-//             {
-//                 dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
-//             }
-//         }
-//     }
-// #endif
 
     }
 
     Draw_Unit_StatFig(x, y, unit_idx, flag);
 
-// #ifdef STU_DEBUG
-//     if(DBG_Draw_Invisibility == 1)  /* Unit Has Invisibility */
-//     {
-//         DLOG("(DBG_Draw_Invisibility == 1)");
-//         // screen_page = (video_page_buffer[1 - draw_page_num]);
-//         // screen_ofst = (80 * SCREEN_WIDTH) + 248;
-//         // vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((80 * SCREEN_WIDTH) + 248));
-//         screen_x = 121;
-//         screen_y = 111;
-//         vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((screen_y * SCREEN_WIDTH) + screen_x));
-//         
-//         for(itr_height = 0; itr_height < 16; itr_height++)
-//         {
-//             for(itr_width = 0; itr_width < 18; itr_width++)
-//             {
-//                 dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
-//             }
-//         }
-//     }
-// #endif
-
-#ifdef STU_DEBUG
-    // if(unit_idx == 79)  /* Unit Enchantment Outline */
-    // {
-    //     DBG_Outline_Bitmap_Pixels_No_Glass = 1;
-    // }
-    // dbg_prn("DEBUG: [%s, %d]: DBG_Outline_Bitmap_Pixels_No_Glass = 1\n", __FILE__, __LINE__);
-    // if(unit_idx == 156)  /* Unit Has Invisibility */
-    if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
-    {
-        DBG_Draw_Invisibility = 0;
-        DBG_Remap_Draw_Picture_ASM = 0;
-    }
-    DBG_Draw_Invisibility = 0;
-    DBG_Remap_Draw_Picture_ASM = 0;
-#endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_Picture(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
 }
 
 
@@ -4826,6 +3541,11 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 // AKA OVL_DrawUnitImage()
 // pict_seg is 
 // MoO2  Draw_Ship_Icon()
+/*
+
+Outpost_Screen_Draw()
+    Draw_Unit_StatFig(figure_x1, figure_y1, CTY_Garrison_Units[itr], 1);
+*/
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
     uint8_t unit_type_idx;
@@ -4838,19 +3558,6 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
     uint8_t * vbb_ptr;
     int16_t itr_width;
     int16_t itr_height;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
-// DELETE      {
-// DELETE          DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
-// DELETE          // DBG_Draw_Unit_StatFig = 1;
-// DELETE          DBG_Remap_Draw_Picture_ASM = 1;
-// DELETE      }
-// DELETE  #endif
 
     unit_type_idx = _UNITS[unit_idx].type;
 
@@ -4894,19 +3601,17 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 
         if(Unit_Has_Invisibility(unit_idx) == ST_TRUE)
         {
-            // DLOG("(UNIT_HasInvisibility(unit_idx) == ST_TRUE)");
             Replace_Color_All(UnitDraw_WorkArea, 233); // sets every non-transparent pixel; 233 means use remap colors - (233-232=1) remap color block 1
             Outline_Bitmap_Pixels(UnitDraw_WorkArea, ST_BLACK);
         }
 
         if((flag != 3) && 
-            (_UNITS[unit_idx].Status == 1) /* US_Patrol */ && 
+            (_UNITS[unit_idx].Status == us_Patrol) && 
             (Unit_Has_Invisibility(unit_idx) == ST_FALSE)  && 
             (unit_owner_idx == _human_player_idx)
         )
         {
-            // DLOG("Unit is Inactive/Finished");
-            Gray_Scale_Bitmap(UnitDraw_WorkArea, 1);  // ¿ 1 means ... ?
+            Gray_Scale_Bitmap(UnitDraw_WorkArea, 1);  // TODO  ¿ 1 means ... ?
         }
     
         Draw_Unit_Enchantment_Outline(unit_idx);
@@ -4914,23 +3619,6 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 
     FLIC_Set_LoopFrame_1(UnitDraw_WorkArea);  // sets for/enables remap colors
     Draw_Picture(x+1, y+1, UnitDraw_WorkArea);
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
-// DELETE      {
-// DELETE          DLOG("(x == 120 && y == 110 && unit_idx == 156 && flag == 2)");
-// DELETE          // vbb_ptr = (video_page_buffer[1 - draw_page_num] + (((y+1) * SCREEN_WIDTH) + (x+1)));
-// DELETE          vbb_ptr = (video_page_buffer[draw_page_num] + (((y+1) * SCREEN_WIDTH) + (x+1)));
-// DELETE          
-// DELETE          for(itr_height = 0; itr_height < 16; itr_height++)
-// DELETE          {
-// DELETE              for(itr_width = 0; itr_width < 18; itr_width++)
-// DELETE              {
-// DELETE                  dbg_prn("%02X\n", *(vbb_ptr + ((itr_height * SCREEN_WIDTH) + itr_width)));
-// DELETE              }
-// DELETE          }
-// DELETE      }
-// DELETE  #endif
 
     /*
         BEGIN: Unit Status - Icon/Text
@@ -4944,32 +3632,33 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         color_array[1] = 15;  // ¿ palette index 15 0x0F  [0F] 3F 3F 3F ?
         Set_Font_Colors_15(0, &color_array[0]); // set font style num 0; set font colors block 15
         Set_Outline_Color(4);
-        Set_Font_Style1(0, 15, 0, 0); // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
+        Set_Font_Style_Shadow_Down(0, 15, 0, 0); // set font style num 0; set normal,highlight,special colors - blocks 15,0,0; set shadow bottom right
 
-        switch( (_UNITS[unit_idx].Status - 2) )
+        // switch( (_UNITS[unit_idx].Status - 2) )
+        switch(_UNITS[unit_idx].Status)
         {
-            case 0:  /* ¿ US_BuildRoad == 2 ? */
+        case us_BuildRoad:  /* ¿ us_BuildRoad == 2 ? */
             {
-                Print(x+2, y+2, "B");  // drak178: UNIT_Building_Mark
+                Print(x+2, y+2, "B");
             } break;
-            case 1:  /* ¿ US_GoingTo == 3 ? */
+            case us_GOTO:  /* ¿ us_GOTO == 3 ? */
             {
                 if(_UNITS[unit_idx].Rd_Constr_Left == ST_UNDEFINED)
                 {
-                    Print(x+2, y+2, "G");  // drak178: UNIT_Going_Mark
+                    Print(x+2, y+2, "G");
                 }
                 else
                 {
-                    Print(x+2, y+2, "B");  // drak178: UNIT_Building_Mark
+                    Print(x+2, y+2, "B");
                 }
             } break;
-            case 4:
+            case us_Casting:
             {
-                Print(x+4, y+5, "C");  // drak178: UNIT_Unk_C_Mark
+                Print(x+4, y+5, "C");  // 'MoM Demo' "Casting"
             } break;
-            case 6:  /* ¿ US_Purify == 8 ? */
+            case us_Purify:
             {
-                Print(x+2, y+2, "P");  // drak178: UNIT_Purifying_Mark
+                Print(x+2, y+2, "P");
             } break;
         }
     }
@@ -4977,17 +3666,6 @@ void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
         END: Unit Status - Icon/Text
     */
 
-
-// DELETE #ifdef STU_DEBUG
-// DELETE     if(x == 120 && y == 110 && unit_idx == 156 && flag == 2)
-// DELETE     {
-// DELETE         DBG_Remap_Draw_Picture_ASM = 0;
-// DELETE     }
-// DELETE #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Unit_StatFig(x = %d, y = %d, unit_idx = %d, flag = %d)\n", __FILE__, __LINE__, x, y, unit_idx, flag);
-// #endif
 }
 
 
@@ -5026,7 +3704,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     // MoO2  Module: AIPOWER  Current_Ship_Hits_  Address: 01:0005F2C3
     // MoO2  Module: AIPOWER  Max_Ship_Hits_      Address: 01:0005F2F6
     // MoO2  Module: CMBTAI   Get_Total_Hits_     Address: 01:0002BB06
-    max_hits = UNIT_GetHitsPerFig(unit_idx) * _unit_type_table[Unit_Type].Figures;
+    max_hits = Unit_Hit_Points(unit_idx) * _unit_type_table[Unit_Type].Figures;
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: max_hits: %d\n", __FILE__, __LINE__, max_hits);
 #endif
@@ -5105,7 +3783,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     /*
         BEGIN: Weapon - "magic", "mithril", "adamantium"
     */
-        Weapon_Quality = (_UNITS[unit_idx].Mutations & 0x03);  /* bit set - 1st and/or 2nd  OR  2^2 values {0,1,2,3} */
+        Weapon_Quality = (_UNITS[unit_idx].mutations & 0x03);  /* mask-off bits besides weapon quality;  bit set - 1st and/or 2nd  OR  2^2 values {0,1,2,3} */
         if(Weapon_Quality > 0)
         {
             Wpn_Left = x + 13;
@@ -5147,10 +3825,6 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
 void Main_Screen_Draw_Movement_Bar(void)
 {
     uint16_t movement_points;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Movement_Bar()\n", __FILE__, __LINE__);
-#endif
-
 
     // _help_entries+0AAh = ST_UNDEFINED
 
@@ -5161,19 +3835,19 @@ void Main_Screen_Draw_Movement_Bar(void)
         if(movement_points != 0)
         {
             // _help_entries+0AAh = HLP_MOVES
-            Set_Font_Style1(1,1,0,0);
+            Set_Font_Style_Shadow_Down(1,1,0,0);
             Set_Outline_Color(0);
             Set_Alias_Color(0);
             Print(246, 167, cnst_Moves);
             Print_Moves_String(275, 167, movement_points, ST_FALSE);
 
-            Set_Font(1,1,0,0);
+            Set_Font_Style(1,1,0,0);
             Set_Outline_Color(0);
             Set_Alias_Color(0);
             Print(246, 168, cnst_Moves);
             Print_Moves_String(275, 168, movement_points, ST_FALSE);
 
-            Set_Font(1,0,0,0);
+            Set_Font_Style(1,0,0,0);
             Set_Alias_Color(0);
             Print(246, 167, cnst_Moves);
             Print_Moves_String(275, 167, movement_points, ST_FALSE);
@@ -5182,10 +3856,6 @@ void Main_Screen_Draw_Movement_Bar(void)
         }
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Movement_Bar()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -5198,45 +3868,28 @@ void Main_Screen_Draw_Movement_Bar(void)
 void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
 {
     int16_t movement_icons[9];
-    // struct s_Movement_Modes movement_mode_flags;
     int16_t movement_mode_flags[9];
     int16_t stack;
     int16_t x_start;
     int itr;
     int movement_mode_icon_count;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
-
-    /*
-        set array of movement mode flags to false
-    */
     if(_unit_stack_count >= 1 || unit_idx != ST_UNDEFINED)
     {
-#ifdef STU_DEBUG
-        if(_unit_stack_count >= 1)
-            DLOG("(_unit_stack_count >= 1)");
-        if(unit_idx != ST_UNDEFINED)
-            DLOG("(unit_idx != ST_UNDEFINED)");
-#endif
 
         for(itr = 0; itr < 9; itr++)  /* TODO: add define for 9 - (Special) Movemenet Mode Count/Max */
         {
             movement_mode_flags[itr] = ST_FALSE;
         }
 
-
         if(unit_idx == ST_UNDEFINED)
         {
-            // Active_Stack_Movement_Modes(&movement_mode_flags);
             Active_Stack_Movement_Modes(&movement_mode_flags[0]);
         }
         else
         {
             stack = unit_idx;
-            // Stack_Movement_Modes(&movement_mode_flags, &stack, 1);
-            Stack_Movement_Modes(&movement_mode_flags[0], &stack, 1);
+            Army_Movement_Modes(&movement_mode_flags[0], &stack, 1);
         }
 
     }
@@ -5256,58 +3909,55 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
         movement_icons[movement_mode_icon_count] = 6;  /* M_PShift_Icon */
         movement_mode_icon_count++;
     }
+
     // if(movement_mode_flags.mm_Flying == ST_TRUE)
     if(movement_mode_flags[OFS_FLYING] == ST_TRUE)
     {
         movement_icons[movement_mode_icon_count] = 4;  /* M_Fly_Icon */
         movement_mode_icon_count++;
     }
+    else if(movement_mode_flags[OFS_SAILING] == ST_TRUE)  // if(movement_mode_flags.mm_Sailing == ST_TRUE)
+    {
+        movement_icons[movement_mode_icon_count] = 0;  /* M_Sail_Icon */
+        movement_mode_icon_count++;
+    }
     else
     {
-        // if(movement_mode_flags.mm_Sailing == ST_TRUE)
-        if(movement_mode_flags[OFS_SAILING] == ST_TRUE)
+        // if( (movement_mode_flags.mm_Forester == ST_TRUE) && (movement_mode_flags.mm_Mountaineer == ST_TRUE) )
+        if( (movement_mode_flags[OFS_FORESTER] == ST_TRUE) && (movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE) )
         {
-            movement_icons[movement_mode_icon_count] = 0;  /* M_Sail_Icon */
+            movement_icons[movement_mode_icon_count] = 5;  /* M_Pathf_Icon */
             movement_mode_icon_count++;
         }
         else
         {
-            // if( (movement_mode_flags.mm_Forester == ST_TRUE) && (movement_mode_flags.mm_Mountaineer == ST_TRUE) )
-            if( (movement_mode_flags[OFS_FORESTER] == ST_TRUE) && (movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE) )
+            // if(movement_mode_flags.mm_Forester == ST_TRUE)
+            if(movement_mode_flags[OFS_FORESTER] == ST_TRUE)
             {
-                movement_icons[movement_mode_icon_count] = 5;  /* M_Pathf_Icon */
+                movement_icons[movement_mode_icon_count] = 3;  /* M_Forest_Icon */
                 movement_mode_icon_count++;
+
             }
             else
             {
-                // if(movement_mode_flags.mm_Forester == ST_TRUE)
-                if(movement_mode_flags[OFS_FORESTER] == ST_TRUE)
+                // if(movement_mode_flags.mm_Mountaineer == ST_TRUE)
+                if(movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE)
                 {
-                    movement_icons[movement_mode_icon_count] = 3;  /* M_Forest_Icon */
+                    movement_icons[movement_mode_icon_count] = 2;  /* M_Mntn_Icon */
                     movement_mode_icon_count++;
 
                 }
-                else
-                {
-                    // if(movement_mode_flags.mm_Mountaineer == ST_TRUE)
-                    if(movement_mode_flags[OFS_MOUNTAINEER] == ST_TRUE)
-                    {
-                        movement_icons[movement_mode_icon_count] = 2;  /* M_Mntn_Icon */
-                        movement_mode_icon_count++;
-
-                    }
-                }
             }
+        }
 
-            // if(movement_mode_flags.mm_Swimming == ST_TRUE)
-            if(movement_mode_flags[OFS_SWIMMING] == ST_TRUE)
-            {
-                movement_icons[movement_mode_icon_count] = 1;  /* M_Swim_Icon */
-                movement_mode_icon_count++;
-            }
-
+        // if(movement_mode_flags.mm_Swimming == ST_TRUE)
+        if(movement_mode_flags[OFS_SWIMMING] == ST_TRUE)
+        {
+            movement_icons[movement_mode_icon_count] = 1;  /* M_Swim_Icon */
+            movement_mode_icon_count++;
         }
     }
+
     if(movement_mode_icon_count == 0)
     {
         movement_icons[movement_mode_icon_count] = 8;  /* M_Grnd_Icon */
@@ -5323,15 +3973,10 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
         FLIC_Draw(x_start, y, movement_mode_icons[movement_icons[itr]]);
     }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Draw_Movement_Mode_Icons(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
 }
 
 
 // WZD o63p09
-// drake178: OVL_CanPlanarTravel()
 /*
     checks if Active Stack is on City with Astral Gate
     or if all Units have Planar Travel, by Enchantment, Ability, or Item
@@ -5345,11 +3990,6 @@ int16_t Stack_Has_PlanarTravel(void)
     int16_t stack_on_astral_gate;
     int16_t unit_idx;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Has_PlanarTravel()\n", __FILE__, __LINE__);
-#endif
-
-
     stack_has_no_active_units = ST_TRUE;
 
     for(itr = 0; (itr < _unit_stack_count) && (stack_has_no_active_units == ST_TRUE); itr++)
@@ -5362,23 +4002,15 @@ int16_t Stack_Has_PlanarTravel(void)
 
     if(stack_has_no_active_units == ST_TRUE)
     {
-        DLOG("(stack_has_no_active_units == ST_TRUE)");
         for(itr = 0; itr < _unit_stack_count; itr++)
         {
             _unit_stack[itr].active = ST_TRUE;
         }
     }
-    else
-    {
-        DLOG("(stack_has_no_active_units == ST_FALSE)");
-    }
 
     has_planartravel = ST_FALSE;
 
-    // drake178: returns 1 if the active stack is on a tile that has a city equipped with an Astral Gate (cast by the human player) on either plane; or 0 otherwise
-    // OVL_CheckAstralGate()
-    // TODO  stack_on_astral_gate = Active_Stack_On_Astral_Gate()
-    stack_on_astral_gate = ST_FALSE;
+    stack_on_astral_gate = Active_Stack_On_Astral_Gate();
 
     // Unused_Local = 0
 
@@ -5387,15 +4019,12 @@ int16_t Stack_Has_PlanarTravel(void)
         unit_idx = _unit_stack[itr].unit_idx;
         if(_unit_stack[itr].active == ST_TRUE)
         {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ): %d\n", __FILE__, __LINE__, ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ));
-    dbg_prn("DEBUG: [%s, %d]: ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ): %d\n", __FILE__, __LINE__, ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ));
-    dbg_prn("DEBUG: [%s, %d]: Unit_Has_PlanarTravel_Item(unit_idx): %d\n", __FILE__, __LINE__, Unit_Has_PlanarTravel_Item(unit_idx));
-#endif
             if(
-                ( (_UNITS[unit_idx].Enchants_HI & UE_PLANARTRAVEL) != 0 ) ||
-                ( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0 ) ||
-                ( Unit_Has_PlanarTravel_Item(unit_idx) == ST_TRUE )
+                ((_UNITS[unit_idx].enchantments & UE_PLANARTRAVEL) != 0)
+                ||
+                ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_PLANARTRAVEL) != 0)
+                ||
+                (Unit_Has_PlanarTravel_Item(unit_idx) == ST_TRUE)
             )
             {
                 has_planartravel = ST_TRUE;
@@ -5407,7 +4036,6 @@ int16_t Stack_Has_PlanarTravel(void)
         }
     }
 
-
     if(stack_has_no_active_units == ST_TRUE)
     {
         for(itr = 0; itr < _unit_stack_count; itr++)
@@ -5416,12 +4044,42 @@ int16_t Stack_Has_PlanarTravel(void)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Stack_Has_PlanarTravel() { has_planartravel = %d }\n", __FILE__, __LINE__, has_planartravel);
-#endif
     return has_planartravel;
 }
 
+
+// WZD o63p11
+/*
+OON XREF: Stack_Has_PlanarTravel()
+*/
+int16_t Active_Stack_On_Astral_Gate(void)
+{
+    int16_t astral_gate;
+    int16_t city_idx;  // _DI_
+    int16_t unit_idx;  // _SI_
+
+    astral_gate = ST_FALSE;
+
+    unit_idx = _unit_stack[0].unit_idx;
+
+    city_idx = City_At_Square__2(UNITX(), UNITY(), 0);
+
+    if(city_idx == ST_UNDEFINED)
+    {
+        city_idx = City_At_Square__2(UNITX(), UNITY(), 1);
+    }
+
+    if(
+        (city_idx != ST_UNDEFINED)
+        &&
+        (_CITIES[city_idx].enchantments[ASTRAL_GATE] == ST_TRUE)
+    )
+    {
+        astral_gate = ST_TRUE;
+    }
+
+    return astral_gate;
+}
 
 
 // WZD o63p12
@@ -5451,9 +4109,9 @@ j_Stack_Moves_Active()
     loops through current stack
         checks for active
         checks if the unit type is/has/does transport/carries units
-            breaks and assigns units current HMoves
+            breaks and assigns units current moves2
         checks for wind walking - ability or enchantment
-            does not break, but assigns units current HMoves
+            does not break, but assigns units current moves2
     Scenarios/Use-Cases:
         stack does not have a 'carries units' and does not have a 'has wind walking'
         stack does have a 'carries units' but does not have a 'has wind walking'
@@ -5462,7 +4120,7 @@ j_Stack_Moves_Active()
         if stack does have a 'carries units', that is that and its are the movement points
         ...
         ? nay 'carries units', nay 'has wind walking' ?
-            returns lowest HMoves of 'active' units
+            returns lowest moves2 of 'active' units
 
 NOTE: you can have multiple transport units in a stack
 
@@ -5473,10 +4131,10 @@ OON XREF STK_Move() WZD o95p01
 */
     int16_t stack_has_windwalker;
     int16_t windwalker_unit_idx;
-    int16_t movement_points; // In Dasm, SI
-    int16_t tmp_unit_idx;  // In Dasm, DI
-    int16_t itr_unit_stack;
-    int8_t tmp_unit_type;  // In Dasm, DNE
+    int16_t movement_points; // _SI_
+    int16_t tmp_unit_idx;  // _DI_
+    int16_t itr_stack;
+    int8_t tmp_unit_type;  // DNE in Dasm
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Moves_Active()\n", __FILE__, __LINE__);
@@ -5486,20 +4144,20 @@ OON XREF STK_Move() WZD o95p01
 
     stack_has_windwalker = ST_FALSE;
 
-    for(itr_unit_stack = 0; itr_unit_stack < _unit_stack_count; itr_unit_stack++)
+    for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
-        tmp_unit_idx = _unit_stack[itr_unit_stack].unit_idx;
-        if(_unit_stack[itr_unit_stack].active == ST_TRUE)
+        tmp_unit_idx = _unit_stack[itr_stack].unit_idx;
+        if(_unit_stack[itr_stack].active == ST_TRUE)
         {
-            if(_UNITS[tmp_unit_idx].HMoves < movement_points)
+            if(_UNITS[tmp_unit_idx].moves2 < movement_points)
             {
-                movement_points = _UNITS[tmp_unit_idx].HMoves;
+                movement_points = _UNITS[tmp_unit_idx].moves2;
             }
 
             tmp_unit_type = _UNITS[tmp_unit_idx].type;
-            if(_unit_type_table[tmp_unit_type].Transport == ST_TRUE)
+            if(_unit_type_table[tmp_unit_type].Transport > 0)
             {
-                movement_points = _UNITS[tmp_unit_idx].HMoves;
+                movement_points = _UNITS[tmp_unit_idx].moves2;
                 break;
             }
 
@@ -5507,7 +4165,7 @@ OON XREF STK_Move() WZD o95p01
             {
                 stack_has_windwalker = ST_TRUE;
                 windwalker_unit_idx = tmp_unit_idx;
-                movement_points = _UNITS[tmp_unit_idx].HMoves;
+                movement_points = _UNITS[tmp_unit_idx].moves2;
             }
         }
     }
@@ -5554,34 +4212,34 @@ int16_t Stack_Moves(void)
     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
     {
         unit_idx = _unit_stack[itr_stack].unit_idx;
-        if(_UNITS[unit_idx].HMoves < movement_points)
+        if(_UNITS[unit_idx].moves2 < movement_points)
         {
-            movement_points = _UNITS[unit_idx].HMoves;
+            movement_points = _UNITS[unit_idx].moves2;
         }
         if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
         {
-            movement_points = _UNITS[unit_idx].HMoves;
+            movement_points = _UNITS[unit_idx].moves2;
             break;
         }
         if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)
         {
             stack_has_windwalker = ST_TRUE;
-            movement_points = _UNITS[unit_idx].HMoves;
+            movement_points = _UNITS[unit_idx].moves2;
             windwalker_unit_idx = unit_idx;
         }
     }
 
     if(stack_has_windwalker == ST_TRUE)
     {
-        if(_UNITS[windwalker_unit_idx].HMoves > 0)
+        if(_UNITS[windwalker_unit_idx].moves2 > 0)
         {
             for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
             {
                 unit_idx = _unit_stack[itr_stack].unit_idx;
 
-                if( (_UNITS[windwalker_unit_idx].HMoves < 0) && (Unit_Has_WindWalking(unit_idx) != ST_TRUE) )
+                if( (_UNITS[windwalker_unit_idx].moves2 < 0) && (Unit_Has_WindWalking(unit_idx) != ST_TRUE) )
                 {
-                    _UNITS[unit_idx].HMoves = 1;
+                    _UNITS[unit_idx].moves2 = 1;
                     _UNITS[unit_idx].Finished = ST_FALSE;
                 }
             }
@@ -5595,20 +4253,55 @@ int16_t Stack_Moves(void)
 
     stack_moves = movement_points;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Stack_Moves() { stack_moves = %d }\n", __FILE__, __LINE__, stack_moves);
-#endif
-
     return stack_moves;
 }
 
 
 // WZD o63p14
-// RP_TILE_HasCity2()
+// drake178: RP_TILE_HasCity2
+// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
+int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t has_city;  // _SI_
+    int16_t itr;  // _CX_
+
+    has_city = ST_UNDEFINED;
+
+    for(itr = 0; ((itr < _cities) && (has_city == ST_UNDEFINED)); itr++)
+    {
+        if(
+            (_CITIES[itr].wx == wx) &&
+            (_CITIES[itr].wy == wy) &&
+            (_CITIES[itr].wp == wp)
+        )
+        {
+            has_city = itr;
+        }
+    }
+
+    return has_city;
+}
 
 
-// WZD o63p14
-// Check_Planar_Seal()
+// WZD o63p15
+/*
+    returns {F,T} - any player has 'Planar Seal'
+*/
+int16_t Check_Planar_Seal(void)
+{
+    int16_t itr_players;
+    int16_t planar_seal;
+
+    for(itr_players = 0, planar_seal = ST_FALSE; ((itr_players < _num_players) && (planar_seal == ST_FALSE)); itr_players++)
+    {
+        if(_players[itr_players].Globals[PLANAR_SEAL] == ST_TRUE)
+        {
+            planar_seal = ST_TRUE;
+        }
+    }
+
+    return planar_seal;
+}
 
 
 
@@ -5620,7 +4313,6 @@ int16_t Stack_Moves(void)
 // void Allocate_Reduced_Map__1(void)
 // WZD o64p02
 // PRIVATE  void Allocate_Reduced_Map__2(void);
-// drake178: j_RP_LBX_Minimap_Alloc2
 void Allocate_Reduced_Map(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 * 16 = 4848 bytes
@@ -5632,32 +4324,18 @@ void Allocate_Reduced_Map(void)
 // AKA OVL_PrepMinimap()
 void MainScr_Prepare_Reduced_Map(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
-#endif
     int16_t minimap_x = 0;
     int16_t minimap_y = 0;
     int16_t minimap_width;
     int16_t minimap_height;
-
-    // minimap_width = 58;
-    // minimap_height = 30;
     minimap_width = REDUCED_MAP_W;
     minimap_height = REDUCED_MAP_H;
 
     Reduced_Map_Set_Dims(minimap_width, minimap_height);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _map_x: %d  _map_y: %d\n", __FILE__, __LINE__, _map_x, _map_y);
-#endif
-
     Reduced_Map_Coords(&minimap_x, &minimap_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), minimap_width, minimap_height);
-    
-    Draw_Reduced_Map(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: MainScr_Prepare_Reduced_Map()\n", __FILE__, __LINE__);
-#endif
+    Draw_Reduced_Map(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
 }
 
 // WZD o064p04
@@ -5669,10 +4347,6 @@ void Main_Screen_Draw_Summary_Window(void)
     uint8_t colors[16] = {0};
     int16_t active_event_id;
     uint8_t color_index;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Summary_Window()\n", __FILE__, __LINE__);
-#endif
 
     gold = 0;  // DNE in Dasm
     food = 0;  // DNE in Dasm
@@ -5705,14 +4379,6 @@ void Main_Screen_Draw_Summary_Window(void)
     Player_Resource_Income_Total(_human_player_idx, &gold, &food, &mana);
 
 
-// // // mov     [bp+Color_0], 198
-// // // mov     [bp+Color_1], 198
-// // // mov     [bp+Color_2], 198
-// // // lea     ax, [bp+Color_0]
-// //     Color_0 = 198;
-// //     Color_1 = 198;
-// //     Color_2 = 198;
-// // VGA_SetFontnColor(0, Color_0, Color_1, Color_2);
     colors[0] = 198;
     colors[1] = 198;
     colors[2] = 198;
@@ -5725,29 +4391,11 @@ void Main_Screen_Draw_Summary_Window(void)
 
     if(gold >= 0)
     {
-        DLOG("(gold >= 0)");
         Set_Font_Style_Outline(0, 4, 0, 0);
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(color_index = 0; color_index < 16; color_index++)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
-// DELETE      }
-// DELETE  #endif
-
         Set_Alias_Color(184);  // 184d  B8h  ~"dark gold"
-
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(color_index = 0; color_index < 16; color_index++)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: current_colors[%d]: 0x%02X\n", __FILE__, __LINE__, color_index, GET_1B_OFS(font_style_data, (FONT_HDR_POS_CURRENT_COLORS + color_index)));
-// DELETE      }
-// DELETE  #endif
-
     }
     else
     {
-        DLOG("(gold < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
             Set_Font_Style_Outline(0, 2, 0, 0);
@@ -5757,46 +4405,19 @@ void Main_Screen_Draw_Summary_Window(void)
             Set_Font_Style_Outline(0, 15, 0, 0);
         }
     }
-// #ifdef STU_DEBUG
-//     DBG_Main_Screen_Draw_Summary_Window = 1;
-//     DBG_Print_Integer_Right = 1;
-//     DBG_Print_Right = 1;
-//     DBG_Get_String_Width = 1;
-//     DBG_Print = 1;
-//     DBG_Print_Display = 1;
-//     DBG_Print_String = 1;
-//     DBG_Print_Character = 1;
-//     DBG_Print_Character_ASM = 1;
-//     DBG_Print_Character_No_Alias = 1;
-//     DBG_Print_Character_No_Alias_ASM = 1;
-// #endif
+
     Print_Integer_Right(273, 101, gold);
-#ifdef STU_DEBUG
-    DBG_Main_Screen_Draw_Summary_Window = 0;
-    DBG_Print_Integer_Right = 0;
-    DBG_Print_Right = 0;
-    DBG_Get_String_Width = 0;
-    DBG_Print = 0;
-    DBG_Print_Display = 0;
-    DBG_Print_String = 0;
-    DBG_Print_Character = 0;
-    DBG_Print_Character_ASM = 0;
-    DBG_Print_Character_No_Alias = 0;
-    DBG_Print_Character_No_Alias_ASM = 0;
-#endif
 
     Print(278, 101, cstr_Gold);
 
 
     if(food >= 0)
     {
-        DLOG("(food >= 0)");
         Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
     }
     else
     {
-        DLOG("(food < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
             Set_Font_Style_Outline(0, 2, 0, 0);
@@ -5812,13 +4433,11 @@ void Main_Screen_Draw_Summary_Window(void)
 
     if(mana >= 0)
     {
-        DLOG("(mana >= 0)");
         Set_Font_Style_Outline(0, 4, 0, 0);
         Set_Alias_Color(184);
     }
     else
     {
-        DLOG("(mana < 0)");
         if(cycle_incomes == ST_UNDEFINED)
         {
             Set_Font_Style_Outline(0, 2, 0, 0);
@@ -6011,20 +4630,12 @@ void Main_Screen_Draw_Summary_Window(void)
 
 // ? Error if alone or unsued/unreferenced ? Done:
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Summary_Window()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 
 // WZD o064p05
 void Main_Screen_Draw_Next_Turn_Button(void)
 {
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
-#endif
 
     // _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
 
@@ -6038,7 +4649,7 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
         if(current_screen == ST_UNDEFINED)
         {
-            FLIC_Draw(246, 178, next_turn_button_seg);  // ? offset by 6,5 to support the 3-D illusion of being depressed
+            FLIC_Draw(246, 178, next_turn_button_seg);
         }
         else
         {
@@ -6046,17 +4657,26 @@ void Main_Screen_Draw_Next_Turn_Button(void)
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Next_Turn_Button()\n", __FILE__, __LINE__);
-#endif
 }
+
+
+// WZD o64p06
+void OVL_DisableIncmBlink(void)
+{
+    cycle_incomes = -1;
+}
+
+
+// WZD o64p07
+void OVL_EnableIncmBlink(void)
+{
+    cycle_incomes = 0;
+}
+
 
 // WZD o64p08
 void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Screen_Draw_Unit_Action_Locked_Buttons()\n", __FILE__, __LINE__);
-#endif
 
     FLIC_Set_CurrentFrame(main_lock_done_button, 0);
     FLIC_Draw(246, 176, main_lock_done_button);
@@ -6069,18 +4689,15 @@ void Main_Screen_Draw_Unit_Action_Locked_Buttons(void)
 
     if(special_action_flag == ST_UNDEFINED)
     {
-        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
-        FLIC_Draw(280, 186, main_lock_purify_button);
-    }
-    else
-    {
         FLIC_Set_CurrentFrame(main_lock_build_button, 0);
         FLIC_Draw(280, 186, main_lock_build_button);
     }
+    else
+    {
+        FLIC_Set_CurrentFrame(main_lock_purify_button, 0);
+        FLIC_Draw(280, 186, main_lock_purify_button);
+    }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Screen_Draw_Unit_Action_Locked_Buttons()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -6090,8 +4707,8 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 
     // TODO(JimBalcomb,20230616): add module-scoped (manifest) contstants for the magic-numbers used here-in
     // 3 for figures width, 3 for figures height
-    // ? 23 for figures background width, 29 for figures background height ?
-    // ? 22 for figrues width, 28 for figures height ?
+    // ¿ 23 for figures background width, 29 for figures background height ?
+    // ¿ 22 for figrues width, 28 for figures height ?
     *x1 = _unit_window_start_x + ((stack_idx % 3) * 23);
     *y1 = _unit_window_start_y + ((stack_idx / 3) * 29);
     *x2 = *x1 + 22;
@@ -6099,6 +4716,142 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 
 }
 
+// WZD o64p10
+// drake178: UNIT_SetGlobalPath()
+void Set_Active_Stack_Movement_Path(int16_t unit_idx)
+{
+    int16_t boatriders[MAX_STACK];
+    int16_t troops[MAX_STACK];
+    int16_t movement_mode_flags[6];
+    int16_t movepath_idx;
+    int16_t road_src_wy;
+    int16_t road_src_wx;
+    int16_t owner_idx;
+    int16_t troop_count;
+    int16_t boatrider_count;
+    int16_t unit_goto_wy;
+    int16_t unit_goto_wx;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t goto_units_count;
+    int16_t l_unit_idx;
+    int16_t unit_stack_idx;  // _SI_
+    int16_t itr_troops;  // _DI_
+    int16_t itr;  // _DI_
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_goto_wx = _UNITS[unit_idx].dst_wx;
+    unit_goto_wy = _UNITS[unit_idx].dst_wy;
+    owner_idx = _UNITS[unit_idx].owner_idx;
+
+    troop_count = _unit_stack_count;
+
+    goto_units_count = 0;
+
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        troops[itr_troops] = _unit_stack[itr_troops].unit_idx;
+        if(_UNITS[troops[itr_troops]].Status == us_GOTO)
+        {
+            goto_units_count++;
+        }
+    }
+
+    if(goto_units_count < 1)
+    {
+        return;
+    }
+
+    Army_Movement_Modes(&movement_mode_flags[0], &troops[0], troop_count);
+
+    boatrider_count = Army_Boatriders(troop_count, &troops[0], &boatriders[0]);
+
+    if(_UNITS[unit_idx].Rd_Constr_Left != ST_UNDEFINED)
+    {
+        road_src_wx = _UNITS[unit_idx].Rd_From_X;
+        road_src_wy = _UNITS[unit_idx].Rd_From_Y;
+
+        _active_stack_path_length = Path_Wrap(road_src_wx, road_src_wy, unit_goto_wx, unit_goto_wy, &movepath_x_array[2], &movepath_y_array[2], WORLD_WIDTH);
+
+        movepath_idx = ST_UNDEFINED;
+
+        for(itr = 0; itr < _active_stack_path_length; itr++)
+        {
+            if(
+                (movepath_x_array[(2 + itr)] == unit_wx)
+                &&
+                (movepath_y_array[(2 + itr)] == unit_wy)
+            )
+            {
+                movepath_idx = itr;
+            }
+        }
+
+        if(movepath_idx != ST_UNDEFINED)
+        {
+            _active_stack_path_length -= (movepath_idx - 1);
+        }
+
+        for(itr = 0; itr < _active_stack_path_length; itr++)
+        {
+            movepath_x_array[(2 + itr)] = movepath_x_array[(3 + itr)];
+            movepath_y_array[(2 + itr)] = movepath_y_array[(3 + itr)];
+        }
+
+    }
+    else
+    {
+        _active_stack_path_length = Make_Move_Path(
+            movement_mode_flags[0],
+            movement_mode_flags[1],
+            movement_mode_flags[2],
+            movement_mode_flags[3],
+            movement_mode_flags[4],
+            movement_mode_flags[5],
+            unit_wx,
+            unit_wy,
+            unit_goto_wx,
+            unit_goto_wy,
+            _map_plane,
+            &movepath_x_array[2],
+            &movepath_y_array[2],
+            &movepath_cost_array[0],
+            1,
+            30,
+            boatrider_count,
+            troop_count,
+            player_idx
+        );
+    }
+
+    if(_active_stack_path_length > 0)
+    {
+        _active_stack_has_path = ST_TRUE;
+    }
+
+}
+
+
+// WZD o64p11
+// drake178: OVL_DrawPath()
+void Draw_Active_Stack_Movement_Path(int16_t path_length, int8_t movepath_x_array[], int8_t movepath_y_array[])
+{
+    int16_t movepath_y;
+    int16_t movepath_x;
+    int16_t itr_path_length;  // _SI_
+
+    for(itr_path_length = 0; itr_path_length < path_length; itr_path_length++)
+    {
+        movepath_x = movepath_x_array[itr_path_length];
+        movepath_y = movepath_y_array[itr_path_length];
+
+        if(World_To_Screen(_map_x, _map_y, &movepath_x, &movepath_y) == ST_TRUE)
+        {
+            FLIC_Draw((8 + movepath_x), (6 + movepath_y), goto_booty_icon);
+        }
+    }
+}
 
 
 
@@ -6108,28 +4861,36 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 
 // WZD o95p01
 // AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t Spec, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[])
-{
+/*
+RdBd_UNIT_MoveStack_WIP()
+    path_type = Special_Move = 2, if entire stack is roadbuilders
 
-    int16_t boat_rider_array[9];
-    int16_t movement_modes[9];
-// Construction_Total= word ptr -22h
-// UU_Endurance_Value= word ptr -20h
-    int16_t boat_rider_count;
+path_type
+    switch() {}
+        2: 
+
+*/
+int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[])
+{
+    int16_t boat_rider_array[MAX_STACK];
+    int16_t movement_mode_flags[9];  // BUG should be 6
+    int16_t construction_points;
+    int16_t uu_road_builder_unit_idx;
+    int16_t boatrider_count;
     int16_t UU_flag_FALSE;
-    int16_t UU_unit_p;
+    int16_t UU_unit_wp;
     int16_t Total_Move_Cost;
     int16_t Out_Of_Moves;
     int16_t movement_points;
-// Obstacle_Index= word ptr -12h
-    int16_t Combat_Move;
-// Current_Step= word ptr -0Eh
-// YPos= word ptr -0Ch
-// XPos= word ptr -0Ah
-    int16_t unit_y;
-    int16_t unit_x;
-    int16_t Path_Length;
-// First_Unit_Index= word ptr -2
+    int16_t defender_idx;
+    int16_t attack_flag;
+    int16_t Current_Step;
+    int16_t YPos;
+    int16_t XPos;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t path_length;
+    int16_t First_Unit_Index;
 
     int16_t unit_idx;
     int16_t return_value;
@@ -6137,395 +4898,437 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t itr_Path_Length;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, Spec = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p)\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, Spec, *map_x, *map_y, map_p, unit_array_count, &unit_array[0]);
-#endif
+    int16_t lair_combat_result;
+    int16_t combat_result;
+    int16_t itr_troops;  // _SI_
+    int16_t itr_path;  // _SI_
 
-    unit_idx = unit_array[0];
-    unit_x = _UNITS[unit_idx].wx;
-    unit_y = _UNITS[unit_idx].wy;
-    UU_unit_p = _UNITS[unit_idx].wp;
+
+    unit_idx = troops[0];
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    UU_unit_wp = _UNITS[unit_idx].wp;
 
     UU_flag_FALSE = ST_FALSE;
 
     Set_Draw_Active_Stack_Always();
     Reset_Map_Draw();
 
-    movement_points = Units_Moves(unit_array, unit_array_count);
+    movement_points = Units_Moves(troops, troop_count);
 
-    if(movement_points >= 1)
+    if(movement_points < 1)
     {
-        DLOG("(movement_points >= 1)");
-        // movement_modes[{0,...,8}] = 0
-        for(itr_eight = 0; itr_eight < 8; itr_eight++)
-        {
-            movement_modes[itr_eight] = 0;
-        }
-
-        Stack_Movement_Modes(&movement_modes[0], unit_array, unit_array_count);
-
-        boat_rider_count = STK_GetLandlubbers(unit_array_count, unit_array, &boat_rider_array[0]);
-
-        if(Spec == 0)
-        {
-            DLOG("(Spec == 0)");
-// push    [bp+player_idx]
-// push    [bp+unit_array_count]           ; UCnt
-// push    [bp+boat_rider_count]           ; LLCnt
-// push    [bp+movement_points]            ; UU2
-// mov     ax, 1
-// push    ax                              ; UU1
-// mov     ax, offset OVL_Path_Costs
-// push    ax                              ; RCs@
-// mov     ax, offset OVL_Path_Ys
-// push    ax                              ; RYs@
-// mov     ax, offset OVL_Path_Xs
-// push    ax                              ; RXs@
-// push    [bp+map_plane]                  ; Plane
-// push    [bp+destination_y]              ; TgtY
-// push    [bp+destination_x]              ; TgtX
-// push    [bp+unit_y]                     ; SrcY
-// push    [bp+unit_x]                     ; SrcX
-// push    [bp+movement_modes+0Ah]
-// push    [bp+movement_modes+8]
-// push    [bp+movement_modes+6]
-// push    [bp+movement_modes+4]
-// push    [bp+movement_modes+2]
-// push    [bp+movement_modes]                     ; MTypes
-// Path_Length = STK_GetPath();
-// fills the return arrays with a path from the source to the destination tile,
-// either by reading it out from the stored paths or by generating a new one from scratch
-// ; returns the path length
-// ; rewritten in the overland djikstra patch
-            Path_Length = 1;
-            OVL_Path_Costs[0] = 1;
-            // MovePath_X[0] = unit_x;
-            // MovePath_Y[0] = unit_y;
-            // MovePath_X[1] = destination_x;
-            // MovePath_Y[1] = destination_y;
-            MovePath_X[0] = destination_x;
-            MovePath_Y[0] = destination_y;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Path_Length: %d\n", __FILE__, __LINE__, Path_Length);
-#endif
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: OVL_Path_Costs[0]: %d\n", __FILE__, __LINE__, OVL_Path_Costs[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_X[1]: %d\n", __FILE__, __LINE__, MovePath_X[1]);
-    // dbg_prn("DEBUG: [%s, %d]: MovePath_Y[1]: %d\n", __FILE__, __LINE__, MovePath_Y[1]);
-    dbg_prn("DEBUG: [%s, %d]: MovePath_X[0]: %d\n", __FILE__, __LINE__, MovePath_X[0]);
-    dbg_prn("DEBUG: [%s, %d]: MovePath_Y[0]: %d\n", __FILE__, __LINE__, MovePath_Y[0]);
-#endif
-
-
-
-            if(Path_Length >= 1)
-            {
-                DLOG("(Path_Length >= 1)");
-                Out_Of_Moves = ST_FALSE;
-                Combat_Move = ST_FALSE;
-                //TODO  OVL_SWardTriggered = ST_FALSE;
-
-// push    [bp+unit_array_count]           ; UCount
-// push    [bp+unit_array@]                ; UList@
-// lea     ax, [bp+Out_Of_Moves]
-// push    ax                              ; Cmplt@
-// lea     ax, [bp+Path_Length]
-// push    ax                              ; Length@
-// lea     ax, [bp+Combat_Move]
-// push    ax                              ; Cmbt@
-// lea     ax, [bp+Obstacle_Index]
-// push    ax                              ; Obst@
-// push    [bp+movement_points]            ; HMoves
-// mov     ax, offset OVL_Path_Costs
-// push    ax                              ; Costs@
-// push    [bp+map_plane]                  ; Plane
-// mov     ax, offset OVL_Path_Ys
-// push    ax                              ; Ys@
-// mov     ax, offset OVL_Path_Xs
-// push    ax                              ; Xs@
-// push    [bp+player_idx]                 ; Player_Index
-// call    j_STK_EvaluatePath              
-// ; evaluates the stack's set path, and sets the return
-// ; values accordingly:
-// ;   Cmplt@ - 1 if running out of moves (no obstacles)
-// ;   Path_Length@ - amount of moves that can be executed
-// ;   Combat@ - the move enters a hostile tile (the human
-// ;     player's move is stopped short before this)
-// ;   Obst@ - a player or unit index identifying the
-// ;     hostile entity (BUG? should be player index?)
-// ; returns 1 if the stack can use up all of its
-// ; movement, or 0 otherwise (moving gets interrupted)
-// ;
-// ; contains multiple transport-related BUGs
-
-                // ¿ accumulate path cost ?
-                Total_Move_Cost = 0;
-                for(itr_Path_Length = 0; itr_Path_Length < Path_Length; itr_Path_Length++)
-                {
-                    Total_Move_Cost += OVL_Path_Costs[itr_Path_Length];
-                }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Total_Move_Cost: %d\n", __FILE__, __LINE__, Total_Move_Cost);
-#endif
-
-
-                if(Path_Length <= 1)
-                {
-                    DLOG("(Path_Length <= 1)");
-                    // NOTE: (Path_Length >= 1) && (Path_Length <= 1) ∴ (Path_Length == 1)
-
-                    // drake178: set to the path tile before the last before moving units overland
-                    OVL_Action_OriginX = unit_x;
-                    OVL_Action_OriginY = unit_y;
-                }
-                else  /* !(Path_Length <= 1) */
-                {
-                    DLOG("(Path_Length > 1)");
-                    // TODO(JimBalcomb,20231016):  ¿ why the `[bx-2]` ? indexing lo-bye of word, but array is DB? so, sizeof() pointer data-type?
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Xs[bx-2];  cbw;  mov     [OVL_Action_OriginX], ax
-                    // ... mov     al, [bx-3922h] ...
-                    
-                    // mov     bx, [bp+Path_Length];  mov     al, OVL_Path_Ys[bx-2];  cbw;  mov     [OVL_Action_OriginY], ax
-                    // ... mov     al, [bx-399Ah] ...
-                    
-                    // mov     bx, [bp+Path_Length];  mov     al, [Scd_Dst_Y+bx];     cbw;  mov     [bp+destination_y], ax
-                    // ... mov     al, [bx-3999h] ...
-                    // mov     al, [(IDK_MovePath_Y+1)+bx]
-
-                    // // // OVL_Action_OriginX = Fst_Dst_X[Path_Length];
-                    // // // OVL_Action_OriginY = Fst_Dst_Y[Path_Length];
-                    // // OVL_Action_OriginX = *(Fst_Dst_X + Path_Length);
-                    // // OVL_Action_OriginY = *(Fst_Dst_Y + Path_Length);
-                    // OVL_Action_OriginX = *(((uint8_t *)(&Fst_Dst_X)) + 1 + Path_Length);
-                    // OVL_Action_OriginY = *(((uint8_t *)(&Fst_Dst_Y)) + 1 + Path_Length);
-                    OVL_Action_OriginX = MovePath_X[(Path_Length - 1)];
-                    OVL_Action_OriginY = MovePath_Y[(Path_Length - 1)];
-                }
-
-                if(Path_Length <= 0)
-                {
-                    DLOG("(Path_Length <= 1)");
-                    Total_Move_Cost = 0;
-                    Out_Of_Moves = ST_FALSE;
-                }
-                else  /* !(Path_Length <= 0) */
-                {
-                    DLOG("(Path_Length > 0)");
-                    Move_Units_Draw(player_idx, map_p, Path_Length, map_x, map_y, unit_array, unit_array_count);
-                }
-
-                // TODO  if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
-                // TODO  {
-                // TODO      OVL_SpellWardError();
-                // TODO  }
-
-                /*
-                    BEGIN:  ¿ if STK_EvaluatePath() determined that the move(s) is going to result in an encounter / combat ?
-                */
-                if( (Combat_Move == ST_TRUE) || (UU_flag_FALSE == ST_TRUE) )
-                {
-
-                }
-                /*
-                    END:  ¿ if STK_EvaluatePath() determined that the move(s) is going to result in an encounter / combat ?
-                */
-
-
-
-                /*
-                    HERE:
-                    after YayNayMay Move_Units_Draw()
-                    after YayNay Combat_Move
-                    ¿¿¿
-                    still inside movement_points > 0 && movement_path_length > 0
-                    ???
-                */
-
-                OVL_Action_XPos = -1;
-                OVL_Action_YPos = -1;
-
-                Units_In_Tower(unit_array_count, unit_array, map_p);
-                // ; checks if the stack is in a Tower of Wizardry; sets
-                // ; the In_Tower flags and explores both maps at the
-                // ; location if they are, or clears the flag and pulls
-                // ; all of the units to the specified plane if not
-                // ; considers Planar Seal
-                // ;
-                // ; BUG: ignores scouting ranges
-
-                for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-                {
-                    unit_idx = unit_array[itr_units];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _unit_idx: %d\n", __FILE__, __LINE__, unit_idx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Finished: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Finished);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].Status: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
-#endif
-
-                    if(_UNITS[unit_idx].Rd_Constr_Left == 99)  /* ¿ Cancelled ? */
-                    {
-                        _UNITS[unit_idx].Rd_Constr_Left = -1;  /* ¿ NONE ? */
-                    }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[%d].Finished == ST_FALSE): %d\n", __FILE__, __LINE__, unit_idx, (_UNITS[unit_idx].Finished == ST_FALSE));
-    dbg_prn("DEBUG: [%s, %d]: ((_UNITS[%d].Status & PATROL) == 0): %d\n", __FILE__, __LINE__, unit_idx, ((_UNITS[unit_idx].Status & PATROL) == 0));
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[%d].HMoves: %d\n", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].HMoves);
-#endif
-                    // MoX_Data.H  enum Unit_Status  US_Patrol  2
-                    // if( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) != 0) )
-                    // ¿ Nay Finished && Nay Patrol ?
-                    if( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) == 0) )
-                    {
-                        DLOG("( (_UNITS[unit_idx].Finished == ST_FALSE) && ((_UNITS[unit_idx].Status & PATROL) == 0) )");
-                        _UNITS[unit_idx].HMoves = _UNITS[unit_idx].HMoves - Total_Move_Cost;
-
-                        if(_UNITS[unit_idx].HMoves < 1)
-                        {
-                            _UNITS[unit_idx].Finished = ST_TRUE; 
-                            _UNITS[unit_idx].HMoves = 0;
-                        }
-
-                        if(
-                            (_UNITS[unit_idx].Status != US_GoingTo) &&
-                            (Combat_Move == ST_TRUE) &&
-                            (_UNITS[unit_idx].owner_idx == _human_player_idx)
-                        )
-                        {
-                            _UNITS[unit_idx].Status = 0x00 /* "NO ORDERS"  US_Ready */;
-                            _UNITS[unit_idx].dst_wx = 0;
-                            _UNITS[unit_idx].dst_wy = 0;
-                            Out_Of_Moves = ST_FALSE;
-                        }
-                        
-                        if( (Out_Of_Moves == ST_TRUE) && ((_UNITS[unit_idx].Status & 0x10 /* US_Move */) != 0) )
-                        {
-                            _UNITS[unit_idx].Status = 0x03;  /* "GOTO"  US_GoingTo */
-                            _UNITS[unit_idx].dst_wx = destination_x;
-                            _UNITS[unit_idx].dst_wy = destination_y;
-                            _UNITS[unit_idx].Finished = ST_TRUE;
-                        }
-
-                        if(
-                            ( (_UNITS[unit_idx].Status & 0x03 /* US_GoingTo */) == 0) &&
-                            ( _UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx ) &&
-                            ( _UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy )
-                        )
-                        {
-                            // ¿ logic to land here ?
-
-                            if(_UNITS[unit_idx].Rd_Constr_Left == -1)
-                            {
-                                _UNITS[unit_idx].Status = 0x00;  /* "NO ORDERS"  US_Ready */
-                                _UNITS[unit_idx].dst_wx = 0;
-                                _UNITS[unit_idx].dst_wy = 0;
-                                if(_UNITS[unit_idx].HMoves > 0)
-                                {
-                                    _UNITS[unit_idx].Finished = ST_FALSE;
-                                }
-                            }
-
-                            Out_Of_Moves = ST_FALSE;
-
-                        }
-
-                        if( (_UNITS[unit_idx].Status & 0x03 /* US_GoingTo */) != 0)
-                        {
-                            _UNITS[unit_idx].Finished = ST_TRUE;
-                        }
-
-                    }
-                    else
-                    {
-                        DLOG("( (_UNITS[unit_idx].Finished != ST_FALSE) || ((_UNITS[unit_idx].Status & PATROL) != 0) )");
-                    }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: (_UNITS[unit_idx].Finished == ST_FALSE): %d\n", __FILE__, __LINE__, (_UNITS[unit_idx].Finished == ST_FALSE));
-    dbg_prn("DEBUG: [%s, %d]: ((_UNITS[unit_idx].Status & PATROL) != 0): %d\n", __FILE__, __LINE__, ((_UNITS[unit_idx].Status & PATROL) != 0));
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_idx].HMoves: %d\n", __FILE__, __LINE__, _UNITS[unit_idx].HMoves);
-#endif
-
-
-                }  /* for(itr_units = 0; itr_units < unit_array_count; itr_units++) */
-
-
-// push    [bp+unit_array@]
-// push    [bp+unit_array_count]           ; unit_array_count
-// nop
-// push    cs
-// call    near ptr G_STK_SetPatrol        ; sets all non-transport, non-dead units in the stack
-//                                         ; to patrol
-//                                         ;
-//                                         ; why?
-// 
-// pop     cx
-// pop     cx
-// 
-// 
-// call    j_Reset_Draw_Active_Stack       ; sets the overland map drawing to renew everything on
-//                                         ; its next refresh, and if there is a stack selected,
-//                                         ; resets its display to the normal blinking behaviour,
-//                                         ; starting with the first four "off" states
-// 
-// 
-// 
-// mov     ax, [bp+player_idx]
-// cmp     ax, [_human_player_idx]         ; index of the human player (special rules apply)
-// jnz     short @@JmpDone_Return_TRUE
-// 
-// call    j_Update_Scouted_And_Contacted  ; recalculates the visibility arrays for both planes
-//                                         ; after clearing them entirely, and marks contacted
-//                                         ; players accordingly if they haven't been already
-
-
-
-
-
-
-            }
-            else  /* !(Path_Length >= 1) */
-            {
-                DLOG("(Path_Length < 1)");
-                goto Done_Return_FALSE;
-            }
-
-
-
-        }
-
-
-    }
-    else  /* !(movement_points >= 1) */
-    {
-        DLOG("(movement_points < 1)");
         goto Done_Return_FALSE;
     }
+
+    for(itr_eight = 0; itr_eight < 8; itr_eight++)  // BUG should be 6 - the flags don't include teleporting or merging
+    {
+        movement_mode_flags[itr_eight] = 0;
+    }
+    Army_Movement_Modes(&movement_mode_flags[0], troops, troop_count);
+    boatrider_count = Army_Boatriders(troop_count, troops, &boat_rider_array[0]);
+
+    switch(path_type)
+    {
+        case 0:  { goto Prep_Move_Path; } break;
+        case 1:  { goto Start_Path;     } break;
+        case 2:  { goto Prep_Road_Path; } break;
+        case 3:  { goto Prep_Move_Path; } break;
+        default: { goto Start_Path;     } break;
+    }
+
+Prep_Road_Path:
+{
+
+    // @@IDK_AllUnitsRoadBuilding:
+    XPos = _UNITS[unit_idx].Rd_From_X;
+    YPos = _UNITS[unit_idx].Rd_From_Y;
+
+
+    // ; BUG: should either use the same procedure for human roadbuilding, or otherwise utilise a function that can check for path validity
+    if(player_idx == _human_player_idx)
+    {
+        path_length = Path_Wrap(XPos, YPos, destination_x, destination_y, &movepath_x_array[2], &movepath_y_array[2], WORLD_WIDTH);
+    }
+    else
+    {
+        path_length = OVL_GetRoadPath(XPos, YPos, destination_x, destination_y, map_p, &movepath_x_array[2], &movepath_y_array[2]);
+    }
+
+    Current_Step = -1;
+
+    for(itr_path = 0; itr_path < path_length; itr_path++)
+    {
+        if((movepath_x_array[(2 + itr_path)] == unit_wx) && (movepath_y_array[(2 + itr_path)] == unit_wy))
+        {
+                Current_Step = itr_path;
+                break;
+        }
+    }
+
+    if(Current_Step != -1)
+    {
+        path_length -= Current_Step;
+        for(itr_path = 0; itr_path < path_length; itr_path++)
+        {
+            movepath_x_array[(2 + itr_path)] = movepath_x_array[(3 + (Current_Step + itr_path))];
+            movepath_y_array[(2 + itr_path)] = movepath_y_array[(3 + (Current_Step + itr_path))];
+        }
+    }
+
+    // ¿ ~ same as code-block from Road_Build_Screen() ?
+    construction_points = 0;
+    // @@Loop_Troops__AccumulateConstruction
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+        unit_idx = troops[itr_troops];
+        if(_unit_type_table[_UNITS[unit_idx].type].Construction > 0)
+        {
+            construction_points += _unit_type_table[_UNITS[unit_idx].type].Construction;
+
+            uu_road_builder_unit_idx = unit_idx;
+            if(Unit_Has_Endurance(unit_idx) == ST_TRUE)
+            {
+                uu_road_builder_unit_idx = unit_idx;
+                construction_points += 1;
+            }
+        }
+    }
+    // @@Next_Troop__AccumulateConstruction
+
+    for(itr_path = 0; itr_path < path_length; itr_path++)
+    {
+        movepath_cost_array[itr_path] = Turns_To_Build_Road(movepath_x_array[(2 + itr_path)], movepath_y_array[(2 + itr_path)], map_p);
+        if(construction_points > 0)
+        {
+            movepath_cost_array[itr_path] /= construction_points;
+        }
+        SETMIN(movepath_cost_array[itr_path], 1);
+    }
+
+
+    Current_Step = 1;
+
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+    {
+
+        if(_UNITS[troops[itr_troops]].Rd_Constr_Left > 0)
+        {
+            Current_Step = 0;
+            _UNITS[troops[itr_troops]].Finished = ST_TRUE;
+            _UNITS[troops[itr_troops]].Rd_Constr_Left -= 1;
+        }
+        else
+        {
+            if(path_length == 0)
+            {
+                Current_Step = 0;
+                _UNITS[troops[itr_troops]].Rd_Constr_Left = ST_UNDEFINED;
+                _UNITS[troops[itr_troops]].Status = us_Ready;
+                TILE_CreateRoad(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+                TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+            }
+            else
+            {
+                _UNITS[troops[itr_troops]].Rd_Constr_Left = movepath_cost_array[0];
+                Current_Step = 1;
+            }
+        }
+
+        // Where is this?
+        // ovr095:03FC loc_7BC7C:
+        // 000714CC  0007BC7C
+        if(Current_Step == 1)
+        {
+            path_length = 1;
+        }
+        else
+        {
+            path_length = 0;
+        }
+
+    }
+
+    // @@END_ROAD_BUILD:
+
+    goto Start_Path;
+}
+
+Prep_Move_Path:
+{
+
+    path_length = Make_Move_Path(
+        movement_mode_flags[0],
+        movement_mode_flags[1],
+        movement_mode_flags[2],
+        movement_mode_flags[3],
+        movement_mode_flags[4],
+        movement_mode_flags[5],
+        unit_wx,
+        unit_wy,
+        destination_x,
+        destination_y,
+        map_p,
+        &movepath_x_array[2],
+        &movepath_y_array[2],
+        &movepath_cost_array[0],
+        1,
+        movement_points,
+        boatrider_count,
+        troop_count,
+        player_idx
+    );
+
+    goto Start_Path;
+
+}
+
+Start_Path:
+{
+
+    if(path_length < 1)
+    {
+        goto Done_Return_FALSE;
+    }
+
+    Out_Of_Moves = ST_FALSE;
+    attack_flag = ST_FALSE;
+    OVL_SWardTriggered = ST_FALSE;
+
+
+    Eval_Move_Path__WIP(
+        player_idx,
+        &movepath_x_array[2],
+        &movepath_y_array[2],
+        map_p,
+        &movepath_cost_array[0],
+        movement_points,
+        &defender_idx,
+        &attack_flag,
+        &path_length,
+        &Out_Of_Moves,
+        troops,
+        troop_count
+    );
+
+
+    // ¿ accumulate path cost ?
+    Total_Move_Cost = 0;
+    for(itr_Path_Length = 0; itr_Path_Length < path_length; itr_Path_Length++)
+    {
+        Total_Move_Cost += movepath_cost_array[itr_Path_Length];
+    }
+
+    if(path_length <= 1)
+    {
+        OVL_Action_OriginX = unit_wx;
+        OVL_Action_OriginY = unit_wy;
+    }
+    else
+    {
+        OVL_Action_OriginX = movepath_x_array[(path_length - 1)];
+        OVL_Action_OriginY = movepath_y_array[(path_length - 1)];
+    }
+
+    if(path_length <= 0)
+    {
+        Total_Move_Cost = 0;
+        Out_Of_Moves = ST_FALSE;
+    }
+    else
+    {
+        Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
+    }
+
+    // BUGBUG  can't be get spell warded and also go into combat
+    if( (OVL_SWardTriggered == ST_TRUE) && (player_idx == _human_player_idx) )
+    {
+        // TODO  OVL_SpellWardError();
+    }
+
+    if((attack_flag == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))
+    {
+        goto Combat_Handlers;
+    }
+
+    goto End_Of_Moving;
+
+}
+
+
+Combat_Handlers:
+{
+    // Combat_Move == ST_TRUE
+    // loc_7BD7B:
+    // TODO  First_Unit_Index = unit_idx;                // unit_idx of passed in troops[0]
+    // TODO  CRP_OVL_Obstacle_Var1 = ST_FALSE;           // cmp'd in Move_Stack(), if FALSE, calls empty function pointer; set to FALSE if OVL_MapVar3 is TRUE, right before call to Move_Units()
+    // TODO  CRP_OVL_Obstacle_Var2 = First_Unit_Index;   // OON XREF;  CRP_OVL_Obstacle_Var2 = First_Unit_Index = _DI_unit_idx = troops[0]
+    // TODO  CRP_OVL_Obstacle_Var3 = attackee_idx;       // OON XREF;  CRP_OVL_Obstacle_Var3 = attackee_idx = Obstacle_Value = dst_troops[0] || s_CITY.owner_idx || NEUTRAL_PLAYER;  set in Eval_Move_Path__WIP(); 
+
+    // set in Eval_Move_Path__WIP() (AKA STK_EvaluatePath)
+    // {0: Enemy Stack, 1: Enemy City, 5: Lair}
+    if(OVL_Action_Type == 5)
+    {
+        lair_combat_result = Lair_Combat__WIP(OVL_Action_Structure, player_idx);
+
+        if(lair_combat_result == 0)  // ~ Winner == False / Combat - Lose
+        {
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                if(
+                    (_UNITS[troops[itr_troops]].wx == OVL_Action_XPos) &&
+                    (_UNITS[troops[itr_troops]].wy == OVL_Action_YPos)
+                )
+                {
+                    _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
+                    _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
+                }
+            }
+        }
+        else if(lair_combat_result == 1)  // ~ Winner == True / Combat - Win
+        {
+            Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, troops);
+
+        }
+        else if(lair_combat_result == 99)  // ~ Combat - Cancel
+        {
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
+                _UNITS[troops[itr_troops]].wy = OVL_Action_OriginY;
+            }
+        }
+    }
+    else
+    {
+        combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
+
+        if(combat_result == 1)
+        {
+            Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, troops);
+        }
+    }
+
+}
+
+
+End_Of_Moving:
+{
+
+    OVL_Action_XPos = ST_UNDEFINED;
+    OVL_Action_YPos = ST_UNDEFINED;
+
+    Units_In_Tower(troop_count, troops, map_p);
+
+    for(itr_units = 0; itr_units < troop_count; itr_units++)
+    {
+        unit_idx = troops[itr_units];
+        if(_UNITS[unit_idx].Rd_Constr_Left == 99)
+        {
+            _UNITS[unit_idx].Rd_Constr_Left = ST_UNDEFINED;
+        }
+
+        if((_UNITS[unit_idx].Finished == ST_FALSE) && (_UNITS[unit_idx].Status != PATROL))
+        {
+            _UNITS[unit_idx].moves2 -= Total_Move_Cost;
+
+            if(_UNITS[unit_idx].moves2 < 1)
+            {
+                _UNITS[unit_idx].Finished = ST_TRUE; 
+                _UNITS[unit_idx].moves2 = 0;
+            }
+
+            if(
+                (_UNITS[unit_idx].Status != us_GOTO) &&
+                (attack_flag == ST_TRUE) &&
+                (_UNITS[unit_idx].owner_idx == _human_player_idx)
+            )
+            {
+                _UNITS[unit_idx].Status = us_Ready;
+                _UNITS[unit_idx].dst_wx = 0;
+                _UNITS[unit_idx].dst_wy = 0;
+                Out_Of_Moves = ST_FALSE;
+            }
+            
+            if(
+                (Out_Of_Moves == ST_TRUE) &&
+                (_UNITS[unit_idx].Status != us_Move)
+            )
+            {
+                _UNITS[unit_idx].Status = us_GOTO;
+                _UNITS[unit_idx].dst_wx = destination_x;
+                _UNITS[unit_idx].dst_wy = destination_y;
+                _UNITS[unit_idx].Finished = ST_TRUE;
+            }
+
+            if(
+                (_UNITS[unit_idx].Status == us_GOTO) &&
+                (_UNITS[unit_idx].wx == _UNITS[unit_idx].dst_wx) &&
+                (_UNITS[unit_idx].wy == _UNITS[unit_idx].dst_wy)
+            )
+            {
+                if(_UNITS[unit_idx].Rd_Constr_Left == -1)
+                {
+                    _UNITS[unit_idx].Status = us_Ready;
+                    _UNITS[unit_idx].dst_wx = 0;
+                    _UNITS[unit_idx].dst_wy = 0;
+                    if(_UNITS[unit_idx].moves2 > 0)
+                    {
+                        _UNITS[unit_idx].Finished = ST_FALSE;
+                    }
+                }
+                Out_Of_Moves = ST_FALSE;
+            }
+
+            if(_UNITS[unit_idx].Status == us_GOTO)
+            {
+                _UNITS[unit_idx].Finished = ST_TRUE;
+            }
+        }
+    }
+
+    // DEMO  Fix_Patrol_On_Boats(troop_count, troops);
+    
+    Reset_Draw_Active_Stack();
+
+    if(player_idx == _human_player_idx)
+    {
+        Update_Scouted_And_Contacted();
+    }
+
+    goto Done_Return_TRUE;
+
+}
+
+
+    goto Done;
+
 
 Done_Return_FALSE:
     Reset_Draw_Active_Stack();
     return_value = ST_FALSE;
     goto Done;
 
+
 Done_Return_TRUE:
     return_value = ST_TRUE;
     goto Done;
 
-Done:
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Units(player_idx = %d, destination_x = %d, destination_y = %d, Spec = %d, *map_x = %d, *map_y = %d, map_p = %d, unit_array_count = %d, &unit_array[0] = %p) { return_value = %d }\n", __FILE__, __LINE__, player_idx, destination_x, destination_y, Spec, *map_x, *map_y, map_p, unit_array_count, &unit_array[0], return_value);
-#endif
+Done:
 
     return return_value;
 }
 
 // WZD o95p02
-// AKA OVL_MoveUnitStack()
-// AKA Move_Units()
-void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
+/*
+
+OON XREF
+Move_Units()
+    Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
+
+*/
+void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count)
 {
 
     int16_t display_moves;
@@ -6558,18 +5361,6 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     int16_t itr_move_stages;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Units_Draw(player_idx = %d, map_p = %d, Path_Length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, Path_Length, *map_x, *map_y, &unit_array[0], unit_array_count);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_array_count: %d\n", __FILE__, __LINE__, unit_array_count);
-    for(itr_units = 0; itr_units < unit_array_count; itr_units++)
-    {
-        dbg_prn("DEBUG: [%s, %d]: unit_array[%d]: %d\n", __FILE__, __LINE__, itr_units, unit_array[itr_units]);
-    }
-#endif
-
     unit_idx = unit_array[0];
 
     /*
@@ -6582,10 +5373,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     }
     if( (player_idx != _human_player_idx) && (magic_set.Enemy_Moves == ST_TRUE) )
     {
-        for(itr_path_length = 0; (itr_path_length < Path_Length) && (display_moves == ST_FALSE); itr_path_length++)
+        for(itr_path_length = 0; (itr_path_length < movepath_length) && (display_moves == ST_FALSE); itr_path_length++)
         {
-            // TODO  figure out the paths arrays  if(Check_Square_Scouted(OVL_Path_Xs[itr_path_length], OVL_Path_Ys[itr_path_length]) == ST_TRUE)
-            if(Check_Square_Scouted(MovePath_X[itr_path_length], MovePath_Y[itr_path_length], map_p) == ST_TRUE)
+            if(Check_Square_Scouted(movepath_x_array[itr_path_length], movepath_y_array[itr_path_length], map_p) == ST_TRUE)
             {
                 display_moves = ST_TRUE;
             }
@@ -6613,7 +5403,6 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
     if(display_moves == ST_TRUE)
     {
-        DLOG("(display_moves == ST_TRUE)");
         OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
         _map_x = *map_x;
         _map_y = *map_y;
@@ -6673,38 +5462,13 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
     unit_x = _UNITS[unit_idx].wx;
     unit_y = _UNITS[unit_idx].wy;
 
-// IDGI  // TODO: ¿ why the OVL_Path_Xs-1[bx] ? getting the hi-byte of a word? casting? because the sizeof() OVL_Path_Xs[] is DW?
-// IDGI  // mov     bx, [bp+Path_Length]
-// IDGI  // mov     al, OVL_Path_Xs-1[bx]
-// IDGI  // cbw
-// IDGI  // mov     [bp+destination_x], ax
-// IDGI  // mov     bx, [bp+Path_Length]
-// IDGI  // mov     al, OVL_Path_Ys-1[bx]
-// IDGI  // cbw
-// IDGI  // mov     [bp+destination_y], ax
-// IDGI      // destination_x = Scd_Dst_X[Path_Length];  // TODO  IDK_MovePath_DestinationX[] vs. OVL_Path_Xs[]
-// IDGI      // destination_y = Scd_Dst_Y[Path_Length];  // TODO  IDK_MovePath_DestinationY[] vs. OVL_Path_Ys[]
-// IDGI      destination_x = *(((uint8_t *)(&Scd_Dst_X)) + 1 + Path_Length);
-// IDGI      destination_y = *(((uint8_t *)(&Scd_Dst_Y)) + 1 + Path_Length);
-    destination_x = MovePath_X[(Path_Length - 1)];
-    destination_y = MovePath_Y[(Path_Length - 1)];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: destination_x: %d\n", __FILE__, __LINE__, destination_x);
-    dbg_prn("DEBUG: [%s, %d]: destination_y: %d\n", __FILE__, __LINE__, destination_y);
-#endif
+    destination_x = movepath_x_array[(1 + movepath_length)];
+    destination_y = movepath_y_array[(1 + movepath_length)];
 
     for(itr_units = 0; itr_units < unit_array_count; itr_units++)
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wx: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wy: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wy);
-#endif
         _UNITS[unit_array[itr_units]].wx = destination_x;
         _UNITS[unit_array[itr_units]].wy = destination_y;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wx: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wx);
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_array[itr_units]].wy: %d\n", __FILE__, __LINE__, _UNITS[unit_array[itr_units]].wy);
-#endif
     }
 
 
@@ -6730,33 +5494,19 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
     curr_src_wx = unit_x;
     curr_src_wy = unit_y;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: curr_src_wx: %d\n", __FILE__, __LINE__, curr_src_wx);
-    dbg_prn("DEBUG: [%s, %d]: curr_src_wy: %d\n", __FILE__, __LINE__, curr_src_wy);
-#endif
 
 
     if(Building_Road == ST_TRUE)
     {
-        // TODO  TILE_CreateRoad(unit_x, unit_y, map_p);
-        // TODO  TILE_ResetRoadConns(unit_x, unit_y, map_p);
+        TILE_CreateRoad(unit_x, unit_y, map_p);
+        TILE_ResetRoadConns(unit_x, unit_y, map_p);
     }
 
 
-
-    for(itr_path_length = 0; itr_path_length < Path_Length; itr_path_length++)
+    for(itr_path_length = 0; itr_path_length < movepath_length; itr_path_length++)
     {
-        curr_dst_wx = MovePath_X[itr_path_length];
-        curr_dst_wy = MovePath_Y[itr_path_length];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: curr_dst_wx: %d\n", __FILE__, __LINE__, curr_dst_wx);
-    dbg_prn("DEBUG: [%s, %d]: curr_dst_wy: %d\n", __FILE__, __LINE__, curr_dst_wy);
-#endif
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_x: %d\n", __FILE__, __LINE__, unit_x);
-    dbg_prn("DEBUG: [%s, %d]: unit_y: %d\n", __FILE__, __LINE__, unit_y);
-#endif
+        curr_dst_wx = movepath_x_array[(2 + itr_path_length)];
+        curr_dst_wy = movepath_y_array[(2 + itr_path_length)];
 
         unit_pict_shift_sx = 0;
         if(curr_dst_wx > unit_x)  /* ¿ moving to the right ? */
@@ -6816,11 +5566,6 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
             unit_y -= 1;
         }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: unit_x: %d\n", __FILE__, __LINE__, unit_x);
-    dbg_prn("DEBUG: [%s, %d]: unit_y: %d\n", __FILE__, __LINE__, unit_y);
-#endif
-
 
         Move_Stages = 0;
         if(unit_pict_shift_sx == 0)
@@ -6832,7 +5577,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
             Move_Stages = 5;  // MAP_HEIGHT / 2
         }
 
-        if(Move_Stages != 0)
+        if(Move_Stages == 0)
         {
             if(unit_pict_shift_sy > 0)
             {
@@ -6876,7 +5621,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
                 {
                     // ; the same call with the same parameters is repeated below, except it more appropriately also updates the minimap after the call
                     // ; explores map tiles in the specified radius, usually referred to as the scouting range
-                    TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
+                    TILE_ExploreRadius__WIP(unit_x, unit_y, map_p, scout_range);
                 }
 
             }
@@ -6909,7 +5654,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
                 if( (itr_move_stages == 1) && (player_idx == _human_player_idx) )
                 {
                     Reset_Map_Draw();
-                    TILE_ExploreRadius(unit_x, unit_y, map_p, scout_range);
+                    TILE_ExploreRadius__WIP(unit_x, unit_y, map_p, scout_range);
                     MainScr_Prepare_Reduced_Map();
                 }
 
@@ -6941,12 +5686,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
                 Draw_Unit_Picture(unit_pict_sx, unit_pict_sy, unit_idx, 2);
 
                 Set_Window(0, 20, 239, 199);
-                // Redraw_Map_Unexplored_Area(0, 20, MAP_WIDTH, MAP_HEIGHT, *map_x, *map_y, map_p);
-                // ; redraws the unscouted area coverage into the current
-                // ; draw segment based on the specified map parameters
-                // ; this is always a full draw, unlike OVL_DrawScouting,
-                // ; and will refresh the black rectangles covering
-                // ; unscouted tiles in addition to drawing the edges
+                // TODO  Redraw_Map_Unexplored_Area(0, 20, MAP_WIDTH, MAP_HEIGHT, *map_x, *map_y, map_p);
 
                 PageFlip_FX();
 
@@ -6954,28 +5694,17 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 
         }
 
-        // ; if the units on the tile scouted another wizard's
-        // ; unit or city, establishes contact between the two
-        // ; wizards, provided that they are both AI
-        // ; returns the index of the unit that was spotted if any
         // TOOD  AI_ContactWizards(player_idx, unit_x, unit_y, map_p, scout_range);
 
-        curr_src_wx = MovePath_X[itr_path_length];
-        curr_src_wy = MovePath_Y[itr_path_length];
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: curr_src_wx: %d\n", __FILE__, __LINE__, curr_src_wx);
-    dbg_prn("DEBUG: [%s, %d]: curr_src_wy: %d\n", __FILE__, __LINE__, curr_src_wy);
-#endif
 
-    }  /* for(itr_path_length = 0; itr_path_length < Path_Length; itr_path_length++) */
+        curr_src_wx = movepath_x_array[(2 + itr_path_length)];
+        curr_src_wy = movepath_y_array[(2 + itr_path_length)];
+
+    }  /* for(itr_path_length = 0; itr_path_length < path_length; itr_path_length++) */
 
 
     Reset_Window();
     Reset_Map_Draw();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Units_Draw(player_idx = %d, map_p = %d, Path_Length = %d, *map_x = %d, *map_y = %d, &unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, player_idx, map_p, Path_Length, *map_x, *map_y, &unit_array[0], unit_array_count);
-#endif
 
 }
 
@@ -6983,79 +5712,340 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t Path_Length, int
 // AI_ContactWizards()
 
 // WZD o95p04
-// G_STK_OvlObstacles()
+// drake178: G_STK_OvlObstacles()
+/*
+    Update Move-Map for Pathing Finding Algorithm
+    allows pathed to, but disallows pathed through
+
+; processes overland obstacles on the passed movement
+; map array, marking tiles as impassable if they can't
+; be pathed through
+;
+; enemy armies are passable if visible relations are
+; below -60 and their stack size is equal or smaller
+;
+; contains some weird transport-related tile enablers,
+*/
+void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy)
+{
+    int16_t dst_troops[9];
+    int16_t checked_troops[9];
+    int16_t checked_troops_boatriders_count;
+    int16_t dst_troop_count;
+    int16_t checked_troop_count;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t dst_troops_carry_capacity;
+    int16_t itr_troops;
+    int16_t itr_units;   // _DI_
+    int16_t itr_lairs;   // _DI_
+    int16_t itr_cities;  // _DI_
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if((_UNITS[itr_units].wp != wp) || (_UNITS[itr_units].owner_idx == ST_UNDEFINED))
+        {
+            continue;
+        }
+
+        unit_wx = _UNITS[itr_units].wx;
+        unit_wy = _UNITS[itr_units].wy;
+
+        if(_UNITS[itr_units].owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            if(player_idx != NEUTRAL_PLAYER_IDX)
+            {
+                if((unit_wx != dst_wx) || (unit_wy != dst_wy))
+                {
+                    ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // ~== Lairs, Cities - only allow dst in path finding
+                }
+            }
+            else
+            {
+                ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;  // neutral player can't merge stacks
+            }
+
+            continue;
+        }
+
+        if(_UNITS[itr_units].owner_idx != player_idx)
+        {
+            if((unit_wx != dst_wx) || (unit_wy != dst_wy))
+            {
+                if(ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] != -1)
+                {
+                    if(((_players[_UNITS[itr_units].owner_idx].Dipl.Visible_Rel[player_idx] + 100) / 20) <= 2)
+                    {
+                        Player_Army_At_Square(unit_wx, unit_wy, wp, _UNITS[itr_units].owner_idx, &checked_troop_count, &checked_troops[0]);
+                        if(checked_troop_count > troop_count)
+                        {
+                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                        }
+                    }
+                    else
+                    {
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        /*
+            Nay Neutral Player, Yay Owner is Player
+        */
+
+        // Unit is Trooper & Destination is Ocean
+        if(
+            (_UNITS[itr_units].wx == src_wx) &&
+            (_UNITS[itr_units].wy == src_wy) &&
+            (TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+        )
+        {
+            dst_troops_carry_capacity = 0;
+            Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+            for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+            {
+                dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
+            }
+            if(dst_troops_carry_capacity > 0)
+            {
+                Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+                checked_troops_boatriders_count = checked_troop_count;
+                for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[checked_troops[itr_troops]].type > ut_Chosen) ||
+                        (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        checked_troops_boatriders_count--;
+                    }
+                    if(
+                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                        (checked_troops_boatriders_count <= 9)
+                    )
+                    {
+                        ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        if((unit_wx == src_wx) && (unit_wy == src_wy))
+        {
+            checked_troop_count = 0;
+        }
+        else
+        {
+            Player_Army_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
+        }
+
+        if((checked_troop_count + troop_count) > 9)
+        {
+            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
+        }
+        else
+        {
+            if(TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            {
+                dst_troops_carry_capacity = 0;
+                Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
+                for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+                {
+                    dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
+                }
+                if(dst_troops_carry_capacity > 0)
+                {
+                    checked_troops_boatriders_count = checked_troop_count;
+                    for(itr_troops = 0; itr_troops < checked_troop_count; itr_troops++)
+                    {
+                        if(
+                            (_UNITS[checked_troops[itr_troops]].type > ut_Chosen) ||
+                            (Unit_Has_AirTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_WaterTravel_Item(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_Swimming(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_WindWalking(checked_troops[itr_troops]) == ST_TRUE) ||
+                            (Unit_Has_AirTravel(checked_troops[itr_troops]) == ST_TRUE)
+                        )
+                        {
+                            checked_troops_boatriders_count--;
+                        }
+                        if(
+                            ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
+                            (checked_troops_boatriders_count <= 9)
+                        )
+                        {
+                            ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+    {
+        if(
+            (_LAIRS[itr_lairs].wp == wp) &&
+            (_LAIRS[itr_lairs].Intact == ST_TRUE) &&
+            ((_LAIRS[itr_lairs].wx != dst_wx) || (_LAIRS[itr_lairs].wy != dst_wy))
+        )
+        {
+            ptr_movepath_cost_map_moves2[((_LAIRS[itr_lairs].wy * WORLD_WIDTH) + _LAIRS[itr_lairs].wx)] = -1;
+        }
+    }
+
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(
+            (_CITIES[itr_cities].wp == wp) &&
+            (_CITIES[itr_cities].owner_idx != player_idx) &&
+            ((_CITIES[itr_cities].wx != dst_wx) || (_CITIES[itr_cities].wy != dst_wy))
+        )
+        {
+            ptr_movepath_cost_map_moves2[((_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] = -1;
+        }
+    }
+ 
+}
+
 
 // WZD o95p05
-int16_t STK_GetLandlubbers(int16_t Stack_Size, int16_t Stack_Array[], int16_t LL_Array[])
+/*
+array and count of units that require a seat on a boat
+
+XREF:
+    Move_Units()
+    j_Army_Boatriders()
+        Build_Moveable_Stack()
+        Build_RoadBuilder_Stack()
+        Set_Active_Stack_Movement_Path()
+
+*/
+int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[])
 {
-    int16_t Landlubber_Count;
-
-    int16_t itr_Stack_Size;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: STK_GetLandlubbers()\n", __FILE__, __LINE__);
-#endif
-
-    Landlubber_Count = 0;
-
-    for(itr_Stack_Size = 0; itr_Stack_Size < Stack_Size; itr_Stack_Size++)
+    int16_t boatrider_count;
+    int16_t itr_troops;
+    boatrider_count = 0;
+    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
-        // drake178: returns 1 if the unit has wind walking, whether natural or through an enchantment; or 0 otherwise
-        // WZD o71p04
-        if(Unit_Has_WindWalking(Stack_Array[itr_Stack_Size]) == ST_TRUE)
+        if(
+            (Unit_Has_WindWalking(troops[itr_troops]) == ST_TRUE)
+            ||
+            (ST_FALSE)  /* DONT  o71p08_Empty_pFxn()  ~ Unit_Has_WindWalking_Item() */
+        )
         {
-            goto Return_Zero;
-        }
-// DONT          // drake178: does nothing and returns zero, at some point must have been a unit ability or enchantment check
-// DONT          // WZD o71p08
-// DONT          if(UNIT_ReturnZero(*Stack_Array[itr_Stack_Size]) == ST_TRUE)
-// DONT          {
-// DONT              return 0;
-// DONT          }
-        // WZD o71p03
-        if(Unit_Has_AirTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p05
-        if(Unit_Has_WaterTravel(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p010
-        if(Unit_Has_AirTravel_Item(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
-        }
-        // WZD o71p09
-        if(Unit_Has_WaterTravel_Item(Stack_Array[itr_Stack_Size]) == ST_TRUE)
-        {
-            continue;
+            return 0;
         }
 
-        LL_Array[Landlubber_Count] = Stack_Array[itr_Stack_Size];
-        Landlubber_Count++;
+        if(
+            (Unit_Has_AirTravel(troops[itr_troops]) != ST_TRUE)
+            &&
+            (Unit_Has_WaterTravel(troops[itr_troops]) != ST_TRUE)
+            &&
+            (Unit_Has_AirTravel_Item(troops[itr_troops]) != ST_TRUE)
+            &&
+            (Unit_Has_WaterTravel_Item(troops[itr_troops]) != ST_TRUE)
+        )
+        {
+            boatriders[boatrider_count] = troops[itr_troops];
+            boatrider_count++;
+        }
     }
-    goto Return_Count;
 
-Return_Zero:
-    Landlubber_Count = 0;
-    goto Done;
-
-Return_Count:
-    goto Done;
-
-Done:
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: STK_GetLandlubbers()\n", __FILE__, __LINE__);
-#endif
-
-    return Landlubber_Count;
+    return boatrider_count;
 }
 
 // WZD o95p06
-// G_STK_SetPatrol()
+/*
+OON XREF:  Move_Units()
+(re-)sets units on boats to patrol status
+if the stack has a boat that still has movement points
+¿ because the boat will get selected again before the 'Next Turn' process does its own thing ?
+*/
+void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
+{
+    int16_t Stack_Units[MAX_STACK];
+    int16_t unit_owner_idx;
+    int16_t unit_wp;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t Stack_Count;
+    int16_t Carry_Stack;
+    int16_t itr_troops;  // _SI_
+    int16_t * troops_ptr;  // _DI_
+
+    troops_ptr = &troops[0];
+
+    unit_wx = _UNITS[troops_ptr[0]].wx;
+    unit_wy = _UNITS[troops_ptr[0]].wy;
+    unit_wp = _UNITS[troops_ptr[0]].wp;
+
+    // get owner from first non-dead troop
+    unit_owner_idx = ST_UNDEFINED;
+    itr_troops = 0;
+    while((unit_owner_idx == ST_UNDEFINED) && (itr_troops++ < troop_count))
+    {
+        unit_owner_idx = _UNITS[troops_ptr[itr_troops]].owner_idx;
+    }
+
+    if(unit_owner_idx == ST_UNDEFINED)
+    {
+        return;
+    }
+
+
+    Player_Army_At_Square(unit_wx, unit_wy, unit_wp, unit_owner_idx, &Stack_Count, &Stack_Units[0]);
+
+    Carry_Stack = ST_FALSE;
+
+    for(itr_troops = 0; itr_troops < Stack_Count; itr_troops++)
+    {
+        if(
+            (_unit_type_table[_UNITS[Stack_Units[itr_troops]].type].Transport > 0)
+            &&
+            (_UNITS[Stack_Units[itr_troops]].moves2 > 0)
+        )
+        {
+            Carry_Stack = ST_TRUE;
+        }
+    }
+
+    if(Carry_Stack == ST_TRUE)
+    {
+        for(itr_troops = 0; itr_troops < Stack_Count; itr_troops++)
+        {
+            if(_unit_type_table[_UNITS[Stack_Units[itr_troops]].type].Transport < 1)
+            {
+                _UNITS[Stack_Units[itr_troops]].Status = us_Patrol;
+                _UNITS[Stack_Units[itr_troops]].Finished = ST_TRUE;
+            }
+        }
+    }
+    else
+    {
+        for(itr_troops = 0; itr_troops < Stack_Count; itr_troops++)
+        {
+            if(_UNITS[Stack_Units[itr_troops]].Status != us_Patrol)
+            {
+                // jnz     short $+2
+            }
+        }
+    }
+
+}
 
 
 
@@ -7065,34 +6055,302 @@ Done:
 
 // WZD o97p01
 // STK_EvaluatePath()
+void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count)
+{
+    int16_t Units[MAX_STACK] = { 0xBBBB };
+    int16_t src_boatriders_count;
+    int16_t dst_boatriders_count;
+    int16_t Transport_Capacity;
+    int16_t Cant_Enter;
+    int16_t Path_Length_Copy;
+    int16_t Stop_Short;
+    int16_t Out_of_Moves_Value;
+    int16_t HMoves_Used;
+    int16_t lair_idx;
+    int16_t UU_Encounter;   // boolean flag for movement blocked by Lair
+    int16_t UU_City;        // boolean flag for movement blocked by City - spellwarded or enemy
+    int16_t UU_EnemyUnit;   // boolean flag for movement blocked by Enemy Army
+    // ¿ no flag for movement blocked by own army, in city or not
+    int16_t city_idx;
+    int16_t Unit_Count;
+    int16_t unit_idx;
+    int16_t Move_Interrupted;
+    int16_t Path_Length;
+    int16_t Combat_Path_Value;
+    int16_t Obstacle_Value;
+    int16_t itr_Path_Length;  // _DI_
+    int16_t itr_troops;  // _SI_
+
+    Obstacle_Value = -1;
+    Combat_Path_Value = *attack_flag;
+    Path_Length = *path_length;
+    Out_of_Moves_Value = *Cmplt;
+    Path_Length_Copy = *path_length;
+
+    Obstacle_Value = -1;
+    Combat_Path_Value = *attack_flag;
+    Out_of_Moves_Value = *Cmplt;
+    Path_Length = Path_Length_Copy;
+
+    HMoves_Used = 0;
+    Move_Interrupted = ST_FALSE;
+    for(itr_Path_Length = 0; ((itr_Path_Length < Path_Length) && (Move_Interrupted == ST_FALSE)); itr_Path_Length++)
+    {
+        HMoves_Used += mvpth_c[itr_Path_Length];
+        
+        if(HMoves_Used >= moves2)
+        {
+            Path_Length = (itr_Path_Length + 1);
+            Out_of_Moves_Value = ST_TRUE;
+            Combat_Path_Value = ST_FALSE;
+            Move_Interrupted = ST_TRUE;
+        }
+
+
+        lair_idx = Square_Has_Lair(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp);
+
+        if(lair_idx != ST_UNDEFINED)
+        {
+            Move_Interrupted = ST_TRUE;
+            UU_Encounter = 1;
+            Out_of_Moves_Value = 0;
+            Path_Length = itr_Path_Length;
+            Path_Length = itr_Path_Length + 1;
+            Combat_Path_Value = 1;
+            OVL_Action_Type = 5;
+            OVL_Action_Structure = lair_idx;
+            Obstacle_Value = 5;
+            Out_of_Moves_Value = 0;
+
+            continue;
+        }
+
+
+        city_idx = Square_Has_City(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp);
+
+        if(city_idx != ST_UNDEFINED)
+        {
+            // TODO  RP_CTY_CheckSpellWard__STUB()
+            Cant_Enter = RP_CTY_CheckSpellWard__STUB(city_idx, &troop_count, &troops[0]);
+            if(Cant_Enter == ST_TRUE)
+            {
+                Move_Interrupted = 1;
+                Path_Length = itr_Path_Length;
+                UU_City = 1;
+                Out_of_Moves_Value = 0;
+            }
+            else
+            {
+                if(_CITIES[city_idx].owner_idx == player_idx)
+                {
+                    Player_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+                    if((troop_count + Unit_Count) > 9)
+                    {
+                        Move_Interrupted = 1;
+                        Path_Length = itr_Path_Length;
+                        Out_of_Moves_Value = 0;
+                    }
+
+                }
+                else
+                {
+                    Move_Interrupted = 1;
+                    Path_Length = itr_Path_Length;
+                    UU_City = 1;
+                    Out_of_Moves_Value = 0;
+                    Path_Length = (itr_Path_Length + 1);
+                    Combat_Path_Value = 1;
+                    Obstacle_Value = _CITIES[city_idx].owner_idx;
+                    OVL_Action_Structure = city_idx;
+                    OVL_Action_Type = 1;
+                    Out_of_Moves_Value = 0;
+                }
+
+            }
+
+            continue;
+        }
+
+
+        Enemy_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+        if(Unit_Count > 0)
+        {
+            Move_Interrupted = 1;
+            UU_EnemyUnit = 1;
+            Out_of_Moves_Value = 0;
+            Path_Length = itr_Path_Length;
+            Path_Length = (itr_Path_Length + 1);
+            Out_of_Moves_Value = 0;
+            Combat_Path_Value = 1;
+            Obstacle_Value = Units[0];
+            OVL_Action_Type = 0;
+
+            continue;
+        }
+
+
+        Player_Army_At_Square(mvpth_x[itr_Path_Length], mvpth_y[itr_Path_Length], wp, player_idx, &Unit_Count, &Units[0]);
+
+        if((troop_count + Unit_Count) > 9)
+        {
+            Move_Interrupted = 1;
+            Path_Length = itr_Path_Length;
+            Out_of_Moves_Value = 0;
+
+            continue;
+        }
+
+        if(Unit_Count > 0)
+        {
+            Transport_Capacity = 0;
+
+            for(itr_troops = 0; itr_troops < Unit_Count; itr_troops++)
+            {
+                if(_unit_type_table[_UNITS[Units[itr_troops]].type].Transport > 0)
+                {
+                    Transport_Capacity += _unit_type_table[_UNITS[Units[itr_troops]].type].Transport;
+                    Move_Interrupted = 1;
+                    Path_Length = (itr_Path_Length + 1);
+                    Out_of_Moves_Value = 0;
+                }
+            }
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                if(_unit_type_table[_UNITS[troops[itr_troops]].type].Transport > 0)
+                {
+                    Transport_Capacity += _unit_type_table[_UNITS[troops[itr_troops]].type].Transport;
+                    Move_Interrupted = 1;
+                    Path_Length = (itr_Path_Length + 1);
+                    Out_of_Moves_Value = 0;
+                }
+            }
+
+            if(
+                (Move_Interrupted == ST_TRUE) &&
+                (Transport_Capacity > 0)
+            )
+            {
+                dst_boatriders_count = Unit_Count;
+                for(itr_troops = 0; itr_troops < Unit_Count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[Units[itr_troops]].type > ut_Chosen) ||
+                        (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        dst_boatriders_count--;
+                    }
+                }
+                src_boatriders_count = troop_count;
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+                    if(
+                        (_UNITS[Units[itr_troops]].type > ut_Chosen) ||
+                        (Unit_Has_AirTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WaterTravel_Item(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_Swimming(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_WindWalking(Units[itr_troops]) == ST_TRUE) ||
+                        (Unit_Has_AirTravel(Units[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        src_boatriders_count--;
+                    }
+                }
+
+                if((dst_boatriders_count + src_boatriders_count - 1) > Transport_Capacity)
+                {
+                    Path_Length = itr_Path_Length;                    
+                }
+                else
+                {
+                    for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                    {
+                        if(_unit_type_table[_UNITS[troops[itr_troops]].type].Transport < 0)
+                        {
+                            // DEPR:  ¿ empty macro ?
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+    }
+
+    /*
+        Cancel 'Go-To'
+    */
+    if(
+        (Out_of_Moves_Value == ST_FALSE)
+        &&
+        (Move_Interrupted == ST_TRUE)
+    )
+    {
+        Stop_Short = ST_FALSE;
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            unit_idx = troops[itr_troops];
+            if(
+                (_UNITS[unit_idx].Status == us_GOTO)
+                &&
+                (player_idx == _human_player_idx)
+            )
+            {
+                if(Combat_Path_Value == ST_TRUE)
+                {
+                    Combat_Path_Value = ST_FALSE;
+                    Stop_Short = ST_TRUE;
+                }
+                _UNITS[unit_idx].Status = us_Ready;
+                _UNITS[unit_idx].dst_wx = 0;
+                _UNITS[unit_idx].dst_wy = 0;
+            }
+        }
+        if(Stop_Short == ST_TRUE)
+        {
+            Path_Length--;
+        }
+    }
+
+
+    *atackee_idx = Obstacle_Value;
+    *attack_flag = Combat_Path_Value;
+    *path_length = Path_Length;
+    *Cmplt = Out_of_Moves_Value;
+}
+
 
 // WZD o97p02
 // sub_7E597()
 
 // WZD o97p03
-// drake178: TILE_HasCity()
-int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane)
+// TODO  ¿ vs. City_At_Square__2() ?
+/*
+    returns city_idx or -1
+*/
+int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t square_has_city;
-    int16_t itr;
+    int16_t itr_cities;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Square_Has_City(world_x = %d, world_y = %d, map_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, map_plane);
-#endif
-
+    itr_cities = 0;
     square_has_city = ST_UNDEFINED;
-
-    for(itr = 0; itr < _cities && square_has_city == ST_UNDEFINED; itr++)
+    while(itr_cities++ < _cities && square_has_city == ST_UNDEFINED)
     {
-        if( (_CITIES[itr].wp == map_plane) && (_CITIES[itr].wx = world_x) && (_CITIES[itr].wy == world_y) )
+        if((_CITIES[itr_cities].wp == wp) && (_CITIES[itr_cities].wx == wx) && (_CITIES[itr_cities].wy == wy))
         {
-            square_has_city = itr;
+            square_has_city = itr_cities;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Square_Has_City(world_x = %d, world_y = %d, map_plane = %d)\n", __FILE__, __LINE__, world_x, world_y, map_plane);
-#endif
     return square_has_city;
 }
 
@@ -7109,15 +6367,9 @@ int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane)
 */
 int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
 {
-
     int16_t itr_unit_array_count;
-
-    int16_t movement_points; // In Dasm, SI
-    int16_t unit_idx;  // In Dasm, DI
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Units_Moves(&unit_array[0] = %p, unit_array_count = %d)\n", __FILE__, __LINE__, &unit_array[0], unit_array_count);
-#endif
+    int16_t movement_points; // _SI_
+    int16_t unit_idx;  // _DI_
 
     movement_points = 1000;
 
@@ -7125,17 +6377,18 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
     {
         unit_idx = _unit_stack[itr_unit_array_count].unit_idx;
         
-        if(_UNITS[unit_idx].HMoves < movement_points)
+        if(_UNITS[unit_idx].moves2 < movement_points)
         {
-            movement_points = _UNITS[unit_idx].HMoves;
+            movement_points = _UNITS[unit_idx].moves2;
         }
 
         if(
-            (_unit_type_table[_UNITS[unit_idx].type].Transport > 0) ||
+            (_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+            ||
             (Unit_Has_WindWalking(unit_idx) == ST_TRUE)
         )
         {
-            movement_points = _UNITS[unit_idx].HMoves;
+            movement_points = _UNITS[unit_idx].moves2;
             break;
         }
 
@@ -7148,12 +6401,7 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
 
     stack_moves = movement_points;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Units_Moves(&unit_array[0] = %p, unit_array_count = %d) { stack_moves = %d }\n", __FILE__, __LINE__, &unit_array[0], unit_array_count, stack_moves);
-#endif
-
     return stack_moves;
-
 }
 
 
@@ -7162,55 +6410,54 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
 /*
     determines if Stack is prohibited from entering the City due to Spell Ward
     returns {ST_FALSE,ST_TRUE}
-*/
-int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
-{
-// Unused_Array= word ptr -1Ch
-// Cant_Enter= word ptr -0Ah
-// Retn_Value= word ptr -8
-// Unused_Local= word ptr -6
-// Stack_Size= word ptr -4
-// Unit_Owner= word ptr -2
-    int16_t city_has_spellward;
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: RP_CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
+Spell Ward:
+    "...magically prohibits creatures (whether friendly or enemy) summoned from the warded realm from entering the town."
+*/
+int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
+{
+    int16_t UU_troops[MAX_STACK];
+    int16_t Cant_Enter;
+    int16_t Retn_Value;
+    int16_t Unused_Local;
+    int16_t UU_l_troop_count;
+    int16_t UU_troops_owner_idx;
+    int16_t city_has_spellward;
+    int16_t * l_troop_count;  // _DI_
+    int16_t * l_troops;  // _SI_
+
+    l_troop_count = troop_count;
+    l_troops = troops;
 
     city_has_spellward = ST_FALSE;
 
+    UU_troops_owner_idx = _UNITS[l_troops[0]].owner_idx;
 
+    UU_l_troop_count = *l_troop_count;
 
-    // TODO  CTY_CheckSpellWard(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+    // IDGI  Cant_Enter = CTY_CheckSpellWard(city_idx, &UU_l_troop_count, l_troops, &UU_troop_count, &UU_troops[0]);
+    Cant_Enter = CTY_CheckSpellWard__STUB(city_idx, &UU_l_troop_count, l_troops);
 
-
-
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: END: RP_CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
-#endif
-
+    if(Cant_Enter == ST_TRUE)
+    {
+        OVL_SWardTriggered = ST_TRUE;
+        city_has_spellward = ST_TRUE;
+    }
+ 
     return city_has_spellward;
 }
 
 
 // WZD o97p06
 // drake178: CTY_CheckSpellWard()
-int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array)
+int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
 {
     int16_t city_has_spellward;
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CheckSpellWard__STUB(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
+
 
     city_has_spellward = ST_FALSE;
 
-#ifdef STU_DEBUG
-    // dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard(city_idx = %d, stack_size = %d, stack_array = %d)\n", __FILE__, __LINE__, city_idx, stack_size, stack_array);
-    dbg_prn("DEBUG: [%s, %d]: END: CTY_CheckSpellWard__STUB(city_idx = %d) { city_has_spellward = %d }\n", __FILE__, __LINE__, city_idx, city_has_spellward);
-#endif
+
     return city_has_spellward;
 }
 
@@ -7220,68 +6467,152 @@ int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t
 
 
 // WZD o97p08
-// drake178: VGA_DrawHalfValue()
-// OON XREF: j_VGA_DrawHalfValue()
-// Main_Screen_Draw_Movement_Bar
-// Main_Screen_Draw_Movement_Bar
-// Main_Screen_Draw_Movement_Bar
-// CMB_DrawAUWStats+10F         
-// CMB_DrawUnitDisplay+278      
-void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag)
+/*
+
+XREF:
+    Main_Screen_Draw_Movement_Bar()
+    CMB_DrawAUWStats()
+    CMB_DrawUnitDisplay()
+
+*/
+void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_t right_align_flag)
 {
     char buffer[8];
     char string[8];
-    int16_t whole_value;
+    int16_t moves;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Print_Moves_String(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
-#endif
-
-    if(half_value < 0)
+    if(moves2 < 0)
     {
-        DLOG("(half_value < 0)");
-        whole_value = 0;
+        moves = 0;
     }
     else
     {
-        DLOG("(half_value >= 0)");
-        whole_value = half_value / 2;
+        moves = moves2 / 2;
     }
     
     strcpy(string, "");  // WZD dseg:569A cnst_Nullstring[] = {'\0'}
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
-#endif
 
-    if(whole_value > 0)
+    if(moves > 0)
     {
-        DLOG("(whole_value > 0)");
-        itoa(whole_value, buffer, 10);
+        itoa(moves, buffer, 10);
         strcat(string, buffer);
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
-#endif
 
-    if(half_value % 2 != 0)
+    if((moves2 % 2) != 0)
     {
-        DLOG("(half_value % 2 != 0)");
         strcat(string, ".5");  // WZD dseg:56C9 cnst_Half_2[] = ".5"
     }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: string: %s\n", __FILE__, __LINE__, string);
-#endif
 
     if(right_align_flag == ST_FALSE)
     {
         Print(x_start, y_start, string);
     }
-    else  /* ¿ WTF:  else if(right_align_flag == ST_TRUE) ? */
+    else  /* DEDU  ¿ WTF:  else if(right_align_flag == ST_TRUE) ? */
     {
         Print_Right(x_start, y_start, string);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Print_Moves_String(x_start = %d, y_start = %d, half_value = %d, right_align_flag = %d)\n", __FILE__, __LINE__, x_start, y_start, half_value, right_align_flag);
-#endif
+}
+
+
+/*
+_map_x,y
+_main_map_grid_x,y
+mouse_x,y
+screen_x,y
+field_x,y
+grid_x,y
+world_x,y
+*/
+void Main_Screen_Draw_Debug_Information(void)
+{
+    int16_t mouse_x;
+    int16_t mouse_y;
+    int16_t screen_x;
+    int16_t screen_y;
+    int16_t field_x;
+    int16_t field_y;
+    int16_t grid_x;
+    int16_t grid_y;
+    int16_t world_x;
+    int16_t world_y;
+    int pos;
+
+    Set_Outline_Color(0);
+    // Set_Font_Style_Shadow_Down(0, 0, 0, 0);
+    Set_Font_Style_Shadow_Down(1, 0, 0, 0);
+    Set_Alias_Color(8);
+
+    pos = 0;
+
+    //   M   a   p       X   ,   Y
+    // ~ 6 + 5 + 5 + 4 + 6 + 3 + 6 = 35 + ? 10
+    Print(2, (22+(8*pos)), "Map X,Y");
+    Print_Integer(45, (22+(8*pos)), _map_x);
+    Print_Integer(57, (22+(8*pos)), _map_y);
+    pos++;
+
+    //   G   r   i   d       X   ,   Y
+    // ~ 5 + 5 + 2 + 5 + 4 + 6 + 3 + 6 = 36 + ? 9
+    Print(2, (22+(8*pos)), "Grid X,Y");
+    Print_Integer(45, (22+(8*pos)), (int16_t)_main_map_grid_x);
+    Print_Integer(57, (22+(8*pos)), (int16_t)_main_map_grid_y);
+    pos++;
+
+    mouse_x = Pointer_X();
+    mouse_y = Pointer_Y();
+    screen_x = mouse_x;
+    screen_y = mouse_y;
+    // ~ translate screen coordinates to field coordinates
+    field_x = screen_x -  0;  // always  0
+    field_y = screen_y - 20;  // always 20
+    // ~ translate field coordinates to grid coordinates  (from pixels to squares)
+    grid_x = field_x / MOVEMENT_MAP_WIDTH;
+    grid_y = field_y / MOVEMENT_MAP_HEIGHT;
+    // ~ translate field coordinates to world coordinates  (from pixels to squares)
+    world_x = field_x / WORLD_WIDTH;
+    world_y = field_y / WORLD_HEIGHT;
+
+    //   M   D       X   ,   Y
+    // ~ 6 + 6 + 4 + 6 + 3 + 6 = 31 + ? 
+    Print(2, (22+(2*8)), "MD X,Y");
+    Print_Integer(40, (22+(8*pos)), mouse_x);
+    Print_Integer(56, (22+(8*pos)), mouse_y);
+    pos++;
+
+    //   M   D       M   X   ,   M   Y
+    // ~ 6 + 6 + 4 + 6 + 6 + 3 + 6 + 6 = 43 + ? 
+    Print(2, (22+(3*8)), "MD MX,MY");
+    Print_Integer(52, (22+(8*pos)), grid_x);
+    Print_Integer(64, (22+(8*pos)), grid_y);
+    pos++;
+
+    //   M   D       W   X   ,   W   Y
+    // ~ 6 + 6 + 4 + 6 + 6 + 3 + 6 + 6 = 43 + ? 
+    Print(2, (22+(4*8)), "MD WX,WY");
+    Print_Integer(52, (22+(8*pos)), world_x);
+    Print_Integer(64, (22+(8*pos)), world_y);
+    pos++;
+
+    if(_unit_stack_count > 0)
+    {
+        //   U   N   I   T       I   D   X
+        // ~ ? + ? + ? + ? + 4 + ? + 6 + 6 = 
+        Print(2, (22+(8*pos)), "UNIT IDX");
+        Print_Integer(46, (22+(8*pos)), _unit_stack[0].unit_idx);
+        pos++;
+        // UNIT WX
+        Print(2, (22+(8*pos)), "UNIT WX");
+        Print_Integer(46, (22+(8*pos)), _UNITS[_unit_stack[0].unit_idx].wx);
+        pos++;
+        // UNIT WY
+        Print(2, (22+(8*pos)), "UNIT WY");
+        Print_Integer(46, (22+(8*pos)), _UNITS[_unit_stack[0].unit_idx].wy);
+        pos++;
+    }
+
+    Set_Font_Style_Shadow_Down(0, 0, 0, 0);
+    Set_Outline_Color(0);
+    // TODO  ¿ Set_Alias_Color(8); ?
+
 }

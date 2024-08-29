@@ -13,39 +13,26 @@
 // #include "MainScr.H"  /* Select_Unit_Stack() */
 #include "MainScr_Maps.H"  /* List_Screen_Draw_Reduced_Map() */
 
-/*
-City List Screen Background
-City List Screen OK Button
 
-RELOAD.LBX
-    Entries: 27
-    Type:    0  ("Pictures")
 
-    Name        Description
-21  CITYLIST
-22  CITYLBUT
-*/
 
-// WZD dseg:31E4 4D 61 6E 61 20 53 68 6F 72 74 00                cstr_Mana_Short db 'Mana Short',0       ; DATA XREF: Main_Screen_Draw_Summary_Window+438o
-// WZD dseg:31E4                                                 ? END: Main_Screen_Draw_Summary_Window ?
-// WZD dseg:31EF 00                                              db    0
 
-// WZD dseg:31F0                                                 ¿ BEGIN: CityList Screen - Initialized Data ?
+// WZD dseg:31F0                                                 BEGIN: ovr065 - Strings  (CityList Screen)
 
 // WZD dseg:31F0
-char citylist_hotkey_NUL = '\0';
+char emptystring__ovr065 = '\0';
 // WZD dseg:31F1
-char cnst_HOTKEY_O_3 = 'O';
+char str_citylist_O = 'O';
 // WZD dseg:31F3
-char cnst_HOTKEY_Esc4 = '\x1B';
+char str_citylist_ESC = '\x1B';
 // WZD dseg:31F5
-char cnst_HOTKEY_U_2 = 'U';
+char str_citylist_U = 'U';
 // WZD dseg:31F7
-char cnst_HOTKEY_D_2 = 'D';
+char str_citylist_D = 'D';
 // WZD dseg:31F9
-char cnst_RELOAD_File2[] = "RELOAD";
+char reload_lbx_file__ovr065[] = "RELOAD";
 // WZD dseg:3200
-char cnst_ARMYLIST_File[] = "ARMYLIST";
+char armylist_lbx_file__ovr065[] = "ARMYLIST";
 // WZD dseg:3209
 char aTheCitiesOf[] = "The Cities Of ";
 // WZD dseg:3218
@@ -67,12 +54,10 @@ char cnst_GP_2[] = "GP";
 // WZD dseg:3241
 char cnst_MP_2[] = "MP";
 
-// WZD dseg:3241                                                 ¿ END: CityList Screen - Initialized Data ?
+// WZD dseg:3241                                                 END: ovr065 - Strings  (CityList Screen)
 
-// WZD dseg:3244
-// WZD dseg:3244                                                 ¿ BEGIN: ArmyList Screen - Initialized Data ?
-// WZD dseg:3244
-// WZD dseg:3244 00                                              unk_39CE4 db    0                       ; DATA XREF: ArmyList_Screen+10Do ...
+
+
 
 
 // WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Workers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures+136w ...
@@ -110,8 +95,8 @@ TODO(JimBalcomb,20230922): finish ArmyList_Screen()
 // WZD o65p01
 void CityList_Screen(void)
 {
-// Units@= word ptr -2Ah
-// Count@= word ptr -18h
+    int16_t troops[9];
+    int16_t troop_count;
     int16_t hotkey_ESC;
     int16_t screen_changed;
     int16_t button_citylist_ok;
@@ -123,13 +108,8 @@ void CityList_Screen(void)
     int16_t citylist_up_button_left;
     int16_t scanned_field;
     int16_t leave_screen_flag;
-
-    int16_t input_field_idx;
-    int16_t hotkey_idx_ESC;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CityList_Screen()\n", __FILE__, __LINE__);
-#endif
+    int16_t input_field_idx;  // _DI_
+    int16_t itr;  // _SI_
 
     CityList_Screen_Load();
 
@@ -139,19 +119,19 @@ void CityList_Screen(void)
     Set_Palette_Changes(0, 255);
     Update_Remap_Color_Range(0, 1);
 
-    // TODO word_42B54 = 16;
-    // TODO word_42B52 = 16;
+    UU_citylist_some_x = 16;
+    UU_citylist_some_y = 16;
 
     Build_City_List();
 
-    list_first_item = IDK_CityList_list_first_item;
+    list_first_item = m_citylist_first_item;
 
     Update_Cities_List();
 
-    // TODO  CTY_GetGarrison(&Count, &Units[0]);
+    Army_At_City(list_first_item, &troop_count, &troops[0]);
 
-    // TODO  Deactivate_Auto_Function();
-    // TODO  Assign_Auto_Function(CityList_Screen_Draw(), 1);
+    Deactivate_Auto_Function();
+    Assign_Auto_Function(CityList_Screen_Draw, 1);
     Set_Input_Delay(1);
 
     CityList_Draw_Reduced_Map();
@@ -162,7 +142,7 @@ void CityList_Screen(void)
 
     citylist_item_scanned_field = 0;
 
-    // TODO  CityList_Load_Help();
+    Set_CityList_Screen_Help();
 
     Set_Input_Delay(2);
 
@@ -177,14 +157,9 @@ void CityList_Screen(void)
 
         CityList_Add_List_Fields();
 
-
-        // DEMO
-        hotkey_idx_ESC = Add_Hidden_Field(0, 0, 319, 199, 27, -1);
-
-
-        Set_Font(0, 0, 6, 15);
-        button_citylist_ok = Add_Button_Field(239, 182, "", citylist_ok_button_seg, cnst_HOTKEY_O_3, ST_UNDEFINED);
-        hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc4);
+        Set_Font_Style(0, 0, 6, 15);
+        button_citylist_ok = Add_Button_Field(239, 182, "", citylist_ok_button_seg, str_citylist_O, ST_UNDEFINED);
+        hotkey_ESC = Add_Hot_Key(str_citylist_ESC);
 
         // YayNay City List Scroll Up
         if(list_first_item != 0)
@@ -192,9 +167,9 @@ void CityList_Screen(void)
             // TODO  _help_entries = 244
             // TODO  _help_entries+14h = 244
 
-            hotkey_U = Add_Hot_Key(cnst_HOTKEY_U_2);
-            citylist_up_button_left  = Add_Button_Field( 11, 26, "", citylist_up_button_seg, citylist_hotkey_NUL, ST_UNDEFINED);
-            citylist_up_button_right = Add_Button_Field(299, 26, "", citylist_up_button_seg, citylist_hotkey_NUL, ST_UNDEFINED);
+            hotkey_U = Add_Hot_Key(str_citylist_U);
+            citylist_up_button_left  = Add_Button_Field( 11, 26, "", citylist_up_button_seg, emptystring__ovr065, ST_UNDEFINED);
+            citylist_up_button_right = Add_Button_Field(299, 26, "", citylist_up_button_seg, emptystring__ovr065, ST_UNDEFINED);
         }
         else
         {
@@ -207,11 +182,11 @@ void CityList_Screen(void)
         }
 
         // YayNay City List Scroll Down
-        if( (((list_first_item + 9) - citylist_city_count) != 0) && ((list_item_count - citylist_city_count) != 0) )
+        if((((list_first_item + 9) - m_city_list_count) != 0) && ((list_item_count - m_city_list_count) != 0))
         {
-            hotkey_D = Add_Hot_Key(cnst_HOTKEY_D_2);
-            citylist_down_button_left  = Add_Button_Field( 11, 139, "", citylist_down_button_seg, citylist_hotkey_NUL, ST_UNDEFINED);
-            citylist_down_button_right = Add_Button_Field(299, 139, "", citylist_down_button_seg, citylist_hotkey_NUL, ST_UNDEFINED);
+            hotkey_D = Add_Hot_Key(str_citylist_D);
+            citylist_down_button_left  = Add_Button_Field( 11, 139, "", citylist_down_button_seg, emptystring__ovr065, ST_UNDEFINED);
+            citylist_down_button_right = Add_Button_Field(299, 139, "", citylist_down_button_seg, emptystring__ovr065, ST_UNDEFINED);
         }
         else
         {
@@ -228,27 +203,112 @@ void CityList_Screen(void)
 
         scanned_field = Scan_Input();
 
-        if(input_field_idx == hotkey_idx_ESC)
-        {
-            leave_screen_flag = ST_TRUE;
-        }
-
-
         /*
             Leave Screen
         */
-        if(input_field_idx == ST_UNDEFINED || input_field_idx == button_citylist_ok || input_field_idx == hotkey_ESC)
+        if((input_field_idx == ST_UNDEFINED) || (input_field_idx == button_citylist_ok) || (input_field_idx == hotkey_ESC))
         {
             // SND_LeftClickSound();
             leave_screen_flag = ST_TRUE;
             current_screen = scr_Main_Screen;
         }
 
-        // ...
-        // ...
-        // ...
+        if((input_field_idx == citylist_up_button_left) || (input_field_idx == citylist_up_button_right) || (input_field_idx == hotkey_U))
+        {
+            // TODO  SND_LeftClickSound();
+            if(list_first_item != 0)
+            {
+                if((list_first_item - NUM_CITY_LIST_SCROLL) < 0)
+                {
+                    list_first_item = 0;
+                }
+                else
+                {
+                    list_first_item -= NUM_CITY_LIST_SCROLL;
+                }
+            }
+            Update_Cities_List();
+            screen_changed = ST_TRUE;
+        }
 
-        if(leave_screen_flag == ST_FALSE && screen_changed == ST_FALSE)
+        if((input_field_idx == citylist_down_button_left) || (input_field_idx == citylist_down_button_right) || (input_field_idx == hotkey_D))
+        {
+            // TODO  SND_LeftClickSound();
+            if((list_first_item + NUM_CITY_LIST) < m_city_list_count)
+            {
+                if((list_first_item + NUM_CITY_LIST + NUM_CITY_LIST_SCROLL) < m_city_list_count)
+                {
+                    list_first_item += NUM_CITY_LIST_SCROLL;
+                }
+                else
+                {
+                    list_first_item += 1;
+                }
+            }
+            Update_Cities_List();
+            screen_changed = ST_TRUE;
+        }
+
+        for(itr = 0; itr < m_cities_list_field_count; itr++)
+        {
+            if(m_cities_list_fields[itr] == input_field_idx)
+            {
+                // SND_LeftClickSound();
+                _city_idx = list_cities[itr];
+                if(_CITIES[_city_idx].size == 0)
+                {
+                    _map_plane = _CITIES[_city_idx].wp;
+                    Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _CITIES[_city_idx].wp);
+                    current_screen = scr_Main_Screen;
+                }
+                else
+                {
+                    _map_plane = _CITIES[_city_idx].wp;
+                    Center_Map(&_map_x, &_map_y, _CITIES[_city_idx].wx, _CITIES[_city_idx].wy, _CITIES[_city_idx].wp);
+                    current_screen = scr_City_Screen;
+                }
+                leave_screen_flag = ST_TRUE;
+            }
+        }
+
+        for(itr = 0; itr < m_cities_list_field_count; itr++)
+        {
+            if(-(m_cities_list_fields[itr]) == input_field_idx)
+            {
+                // SND_LeftClickSound();
+                m_citylist_first_item = list_first_item;
+                _city_idx = list_cities[itr];
+                if(_CITIES[_city_idx].size == 0)
+                {
+                    // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the tile
+                    // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
+                    // TODO  Outpost_Screen(0, -1, -1);
+                    Assign_Auto_Function(CityList_Screen_Draw, 1);
+                    CityList_Screen_Load();
+                    Build_City_List();
+                    Army_At_City(list_first_item, &troop_count, &troops[0]);
+                    CityList_Draw_Reduced_Map();
+                    screen_changed = ST_TRUE;
+                }
+                else
+                {
+                    current_screen = scr_Production_Screen;
+                    production_screen_return_screen = 1;  // {1: CityList Screen, 2: City Screen}
+                    leave_screen_flag = ST_TRUE;
+                }
+                
+            }
+        }
+
+        for(itr = 0; itr < m_cities_list_field_count; itr++)
+        {
+            if(m_cities_list_fields[itr] == scanned_field)
+            {
+                citylist_item_scanned_field = itr;
+            }
+        }
+
+        if((leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE))
         {
             CityList_Screen_Draw();
             PageFlip_FX();
@@ -257,17 +317,14 @@ void CityList_Screen(void)
         screen_changed = ST_FALSE;
     }
 
-    // TODO  Deactivate_Help_List();
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Help_List();
+    Deactivate_Auto_Function();
     Reset_Window();
     Clear_Fields();
     Clear_Palette_Changes(0, 255);
     Set_Palette_Changes(0, 223);
-    // TODO  Update_Remap_Gray_Palette();
+    Update_Remap_Gray_Palette();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CityList_Screen()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -299,29 +356,30 @@ void CityList_Draw_Reduced_Map(void)
 // WZD o65p03
 void CityList_Screen_Load(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CityList_Screen_Load()\n", __FILE__, __LINE__);
-#endif
 
-    city_list = Near_Allocate_First(200);  // 100 2-byte ints  ~== sizeof(int) * CITY_COUNT_MAX
+    m_city_list_array = Near_Allocate_First(200);  // 100 2-byte ints  ~== sizeof(int) * CITY_COUNT_MAX
 
     list_cities = Near_Allocate_Next(18);  // ¿ 9 2-byte ints, for City List of 9 ?
 
-    GUI_String_1 = (char *)Near_Allocate_Next(80);  // why 80 here, but 100 for ArmyList?
+    GUI_String_1 = (char *)Near_Allocate_Next(80);
 
-    city_enchantment_list = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
-    city_enchantment_owner_list = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
+    city_enchantment_list        = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
+    city_enchantment_owner_list  = (int16_t *)Near_Allocate_Next(52);  // ¿ 26 2-byte ints ?
 
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 153);
 
-    citylist_background_seg = LBX_Reload_Next("RELOAD", 21, _screen_seg);
-    citylist_ok_button_seg = LBX_Reload_Next("RELOAD", 22, _screen_seg);
-    citylist_up_button_seg = LBX_Reload_Next("ARMYLIST", 1, _screen_seg);
+    // RELOAD.LBX, 021  CITYLIST
+    // RELOAD.LBX, 022  CITYLBUT
+
+    citylist_background_seg  = LBX_Reload_Next("RELOAD",  21, _screen_seg);
+    citylist_ok_button_seg   = LBX_Reload_Next("RELOAD",  22, _screen_seg);
+
+    // ARMYLIST.LBX, 001  ARMYLBUT   armylist up but
+    // ARMYLIST.LBX, 002  ARMYLBUT   armylist down but
+
+    citylist_up_button_seg   = LBX_Reload_Next("ARMYLIST", 1, _screen_seg);
     citylist_down_button_seg = LBX_Reload_Next("ARMYLIST", 2, _screen_seg);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CityList_Screen_Load()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -336,13 +394,9 @@ void CityList_Screen_Draw(void)
     int16_t unit_type;
     int16_t city_idx;
 
-    int16_t itr_colors;
+    int16_t itr_colors;  // _SI_
     int16_t itr_list_item_count;
-    int16_t y_offset;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CityList_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
+    int16_t y_offset;  // _DI_
 
     CityList_Set_List_Item_Count();
 
@@ -353,15 +407,18 @@ void CityList_Screen_Draw(void)
     
     /*
         Up Arrows
+            do not draw
+            do draw - enabled
+            do draw - disabled
     */
-    if(list_first_item == 0 && citylist_city_count > 9)
+    if(list_first_item == 0 && m_city_list_count > NUM_CITY_LIST)
     {
         FLIC_Set_CurrentFrame(citylist_up_button_seg, 1);
         FLIC_Draw(11, 26, citylist_up_button_seg);
         FLIC_Set_CurrentFrame(citylist_up_button_seg, 1);
         FLIC_Draw(299, 26, citylist_up_button_seg);
     }
-    else
+    else if(m_city_list_count > NUM_CITY_LIST)
     {
         FLIC_Set_CurrentFrame(citylist_up_button_seg, 0);
         FLIC_Draw(11, 26, citylist_up_button_seg);
@@ -372,14 +429,22 @@ void CityList_Screen_Draw(void)
     /*
         Down Arrows
     */
-    if( citylist_city_count > 6 && ( (((list_first_item + 9) - citylist_city_count) == 0)  || ((list_item_count - citylist_city_count) == 0) ) )
+    if(
+        (m_city_list_count > NUM_CITY_LIST)
+        &&
+        (
+            ((list_first_item + NUM_CITY_LIST) == m_city_list_count)
+            ||
+            (list_item_count == m_city_list_count)
+        )
+    )
     {
         FLIC_Set_CurrentFrame(citylist_down_button_seg, 1);
         FLIC_Draw(11, 139, citylist_down_button_seg);
         FLIC_Set_CurrentFrame(citylist_down_button_seg, 1);
         FLIC_Draw(299, 139, citylist_down_button_seg);
     }
-    else
+    else if(m_city_list_count > NUM_CITY_LIST)
     {
         FLIC_Set_CurrentFrame(citylist_down_button_seg, 0);
         FLIC_Draw(11, 139, citylist_down_button_seg);
@@ -391,7 +456,7 @@ void CityList_Screen_Draw(void)
     // BEGIN: Print Title
 
     strcpy(GUI_String_1, aTheCitiesOf);
-    strcat(GUI_String_1, _players[_human_player_idx].Name);
+    strcat(GUI_String_1, _players[_human_player_idx].name);
     for(itr_colors = 0; itr_colors < 5; itr_colors++)
     {
         colors1[itr_colors] = 237;
@@ -425,19 +490,19 @@ void CityList_Screen_Draw(void)
 
 
     Set_Outline_Color(231);
-    colors2[0] = 236;
-    colors2[1] = 129;
-    colors2[2] = 129;
-    Set_Font_Colors_15(1, &colors2[0]);  // ¿ sets font style 1 and font remap colors block ?
-    Set_Font_Style1(1, 15, 0, 0);  // shadow - bottom-right, 1 pixel; use special/custom colors font color block
+    colors1[0] = 236;
+    colors1[1] = 129;
+    colors1[2] = 129;
+    Set_Font_Colors_15(1, &colors1[0]);  // ¿ sets font style 1 and font remap colors block ?
+    Set_Font_Style_Shadow_Down(1, 15, 0, 0);  // shadow - bottom-right, 1 pixel; use special/custom colors font color block
 
-    Print(32, 17, aName);
-    Print(88, 17, aRace);
-    Print(136, 17, aPop);
-    Print(154, 17, cnst_Gold_3);
-    Print(176, 17, aPrd);
-    Print(197, 17, aProducing);
-    Print(272, 17, aTime);
+    Print( 32, 17, aName);        /* "Name"      */
+    Print( 88, 17, aRace);        /* "Race"      */
+    Print(136, 17, aPop);         /* "Pop"       */
+    Print(154, 17, cnst_Gold_3);  /* "Gold"      */
+    Print(176, 17, aPrd);         /* "Prd"       */
+    Print(197, 17, aProducing);   /* "Producing" */
+    Print(272, 17, aTime);        /* "Time"      */
 
     itoa(_players[_human_player_idx].gold_reserve, GUI_String_1, 10);
     strcat(GUI_String_1, cnst_GP_2);
@@ -451,13 +516,13 @@ void CityList_Screen_Draw(void)
     Set_Font_Spacing_Width(1);
 
     /*
-        City Info
-        Scanned City Highlight
+        BEGIN: City Summary
     */
     for(itr_list_item_count = 0; itr_list_item_count < list_item_count; itr_list_item_count++)
     {
         city_idx = list_cities[itr_list_item_count];
 
+        // BUGBUG
         if(itr_list_item_count == citylist_item_scanned_field)
         {
             // jmp     short $+2
@@ -467,44 +532,48 @@ void CityList_Screen_Draw(void)
 
         if(itr_list_item_count == citylist_item_scanned_field)
         {
+            UU_CityListDraw_ScannedHighlight = 0;  // BUGBUG
+
             y_offset = 25 + (14 * itr_list_item_count);
-            // DEMO  Gradient_Fill( 30, (y_offset + 1),  81, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill( 86, (y_offset + 1), 130, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill(135, (y_offset + 1), 150, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill(155, (y_offset + 1), 170, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill(175, (y_offset + 1), 190, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill(195, (y_offset + 1), 270, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
-            // DEMO  Gradient_Fill(275, (y_offset + 1), 289, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);
+            Gradient_Fill( 30, (y_offset + 1),  81, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Name
+            Gradient_Fill( 86, (y_offset + 1), 130, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Race
+            Gradient_Fill(135, (y_offset + 1), 150, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Pop
+            Gradient_Fill(155, (y_offset + 1), 170, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Gold
+            Gradient_Fill(175, (y_offset + 1), 190, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Prd
+            Gradient_Fill(195, (y_offset + 1), 270, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Producing
+            Gradient_Fill(275, (y_offset + 1), 289, (y_offset + 9), 15, 1, ST_NULL, ST_NULL, ST_NULL);  // Time
         }
 
-        // DOS  Print_Far(31, (27 + 14 * itr_list_item_count, (FP_OFF(_CITIES) + (sizeof(s_CITY) * city_idx)), FP_SEG(_CITIES));
-        // DEMO  Print(31, (27 + 14 * itr_list_item_count), _CITIES[city_idx].name);
-        // TODO  Print(87, (27 + 14 * itr_list_item_count), _unit_race_table[_CITIES[city_idx].race]);
-        // DEMO  Print_Integer_Right(148, (27 + 14 * itr_list_item_count), _CITIES[city_idx].Pop_K);
-        // DEMO  Print_Integer_Right(168, (27 + 14 * itr_list_item_count), (_CITIES[city_idx].Gold - _CITIES[city_idx].Upkeep));
-        // DEMO  Print_Integer_Right(188, (27 + 14 * itr_list_item_count), _CITIES[city_idx].Production);
+        // TODO  Print_Far()
+        Print(31, (27 + (14 * itr_list_item_count)), _CITIES[city_idx].name);
+        Print(87, (27 + (14 * itr_list_item_count)), *_race_type_table[_CITIES[city_idx].race].name);
+        Print_Integer_Right(148, (27 + (14 * itr_list_item_count)), _CITIES[city_idx].population);
+        Print_Integer_Right(168, (27 + (14 * itr_list_item_count)), (_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance));
+        Print_Integer_Right(188, (27 + (14 * itr_list_item_count)), _CITIES[city_idx].production_units);
 
         city_construction = _CITIES[city_idx].construction;
         if(city_construction < 100)  /* building */
         {
-            // DOS  String_Copy_Far(GUI_String_1, 0, (FP_OFF(build_data_table) + (sizeof(build_data_table) * city_construction)), FP_SEG(build_data_table));
-            // DEMO  strcpy(GUI_String_1, build_data_table[city_construction].name);
+            // TODO  String_Copy_Far()
+            strcpy(GUI_String_1, bldg_data_table[city_construction].name);
         }
         else  /* unit */
         {
-            unit_type = city_construction - 100;
-            // TODO  strcpy(GUI_String_1, *_unit_type_table[unit_type].Name);
+            unit_type = (city_construction - 100);
+            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
         }
-        // DEMO  Print(196, (27 + 14 * itr_list_item_count), GUI_String_1);
+        Print(196, (27 + 14 * itr_list_item_count), GUI_String_1);
 
-        // TODO  production_cost = CTY_GetProduceCost(city_construction, city_idx);
-        // TODO  production_time = sub_340E2(production_cost, city_idx);
-        // DEMO  Print_Integer_Right(287, (27 + 14 * itr_list_item_count), production_time);
-
+        production_cost = City_Production_Cost(city_construction, city_idx);
+        production_time = City_N_Turns_To_Produce(production_cost, city_idx);
+        Print_Integer_Right(287, (27 + (14 * itr_list_item_count)), production_time);
     }
+    /*
+        END: City Summary
+    */
 
 
-    if(citylist_city_count > 0)
+    if(m_city_list_count > 0)
     {
         city_idx = list_cities[citylist_item_scanned_field];
         Set_Outline_Color(231);
@@ -512,42 +581,48 @@ void CityList_Screen_Draw(void)
         colors1[1] = 129;
         colors1[2] = 129;
         Set_Font_Colors_15(1, &colors1[0]);
-        Set_Font_Style1(1, 15, 0, 0);
+        Set_Font_Style_Shadow_Down(1, 15, 0, 0);
+        // TODO  String_Copy_Far()
         strcpy(GUI_String_1, _CITIES[city_idx].name);
         String_To_Upper(GUI_String_1);
-        // DEMO  Print(99, 158, GUI_String_1);
+        Print(99, 158, GUI_String_1);
 
-        // TODO  CTY_GetEnchants(city_idx, city_enchantment_list, city_enchantment_owner_list, &CTY_EnchantCount);
-        // TODO  CTY_Print_Enchantments(100, 168, city_enchantment_list, city_enchantment_owner_list, (CTY_EnchantCount > 8 ? 8 : CTY_EnchantCount)) // maybe just MAX() macro?
+        Build_City_Enchantment_List(city_idx, city_enchantment_list, city_enchantment_owner_list, &city_enchantment_list_count);
 
-        // DEMO  CityList_Draw_Reduced_Map();
+        SETMAX(city_enchantment_list_count, 8);
+
+        Print_City_Enchantment_List(100, 168, city_enchantment_list, city_enchantment_owner_list, city_enchantment_list_count);
+
+        CityList_Draw_Reduced_Map();
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CityList_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o65p05
 // ~ MoO2 Build_Global_Colony_List_()
+// MoO2  N_Colonies_()
+/*
+    populates m_city_list_array[]
+
+*/
 void Build_City_List(void)
 {
     int16_t itr_cities;
 
-    citylist_city_count = 0;  /* MoO2  DNE, always does 250 - max colonies */
+    m_city_list_count = 0;  /* MoO2  DNE, always does 250 - max colonies */
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)  /* MoO2  _NUM_COLONIES ~== _cities */
     {
         if(_CITIES[itr_cities].owner_idx == _human_player_idx)  /* MoO2  _PLAYER_NUM ~== _human_player_idx */
         {
-            city_list[citylist_city_count] = itr_cities;  /* MoO2  _g_colony_list_ptr */
+            m_city_list_array[m_city_list_count] = itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
 
-            citylist_city_count++;
+            m_city_list_count++;
 
-            if(_CITIES[itr_cities].construction == 0x00)  /* ¿ None/Nothing/Unset ? */
+            if(_CITIES[itr_cities].construction == bt_NONE)
             {
-                _CITIES[itr_cities].construction = 0x02;  /* ¿ Housing ? */
+                _CITIES[itr_cities].construction = bt_Housing;
             }
         }
     }
@@ -557,73 +632,60 @@ void Build_City_List(void)
 // WZD o65p06
 // ~ MoO2  Update_Col_List_() ... sets _list_col from _g_colony_list_ptr, based on _first + itr
 /*
+    populates list_cities[]
     sets the list of Cities to display, from list_first_item to list_item_count
 */
 void Update_Cities_List(void)
 {
     int16_t itr_list_items;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Cities_List()\n", __FILE__, __LINE__);
-#endif
-
     CityList_Set_List_Item_Count();
 
     for(itr_list_items = 0; itr_list_items < list_item_count; itr_list_items++)
     {
-        list_cities[itr_list_items] = city_list[(list_first_item + itr_list_items)];
+        list_cities[itr_list_items] = m_city_list_array[(list_first_item + itr_list_items)];
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Cities_List()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o65p07
+// MoO2  Module: COLSUM  Add_Fields_()
 void CityList_Add_List_Fields(void)
 {
     int16_t x1;
     int16_t y1;
     int16_t x2;
     int16_t y2;
-    int16_t itr_list_item_count;
+    int16_t itr;
 
-    citylist_item_count = 0;
+    m_cities_list_field_count = 0;
 
     CityList_Set_List_Item_Count();
 
-    for(itr_list_item_count = 0; itr_list_item_count < list_item_count; itr_list_item_count++)
+    for(itr = 0; itr < list_item_count; itr++)
     {
         x1 = 30;
-        y1 = (26 + (14 * itr_list_item_count));
-        x2 = x1 + 259;
-        y2 = y1 + 8;
-        citylist_item_fields[citylist_item_count] = Add_Hidden_Field(x1, y1, x2, y2, citylist_hotkey_NUL, ST_UNDEFINED);
-        citylist_item_count++;
+        y1 = (26 + (14 * itr));  /* cities list row height */
+        x2 = x1 + 259;  /* cities list line  width */
+        y2 = y1 + 8;  /* cities list line height */
+        m_cities_list_fields[m_cities_list_field_count] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr065, ST_UNDEFINED);
+
+        m_cities_list_field_count++;
     }
 
 }
 
 
 // WZD o65p08
-// ~== IDK_ArmyList_Set_List_Item_Count
+// ~== ArmyList_Set_List_Item_Count()
 // ~ MoO2  Update_Col_List_()
 /*
     sets list item count to min of 9 or city count
 */
 void CityList_Set_List_Item_Count(void)
 {
-    list_item_count = 9 + list_first_item;
-
-    if(list_item_count > 9)
-    {
-        list_item_count = 9;
-    }
-
-    if(list_item_count > citylist_city_count)
-    {
-        list_item_count = citylist_city_count;
-    }
-
+    list_item_count = NUM_CITY_LIST + list_first_item;
+    SETMAX(list_item_count, NUM_CITY_LIST);
+    SETMAX(list_item_count, m_city_list_count);
 }

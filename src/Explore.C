@@ -231,12 +231,12 @@ void Update_Scouted_And_Contacted(void)
 //     {
 //     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].owner_idx == _human_player_idx): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].owner_idx == _human_player_idx));
 //     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].wp == curr_world_p): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].wp == curr_world_p));
-//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].In_Tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].In_Tower == ST_TRUE));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE) ));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) ));
+//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].in_tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].in_tower == ST_TRUE));
+//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE) ));
+//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) ));
 //     }
 // #endif
-                if( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].In_Tower == ST_TRUE)) )
+                if( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) )
                 {
                     scout_level = _UNITS[itr_units].Sight_Range;
                     // TODO  UNIT_IsFlying
@@ -244,7 +244,7 @@ void Update_Scouted_And_Contacted(void)
                     // TODO  UNIT_ReturnZero
                     // TODO  UNIT_HasItemFlight
                     // if scout_level < 2 scout_level = 2
-                    if(_UNITS[itr_units].Status == 1)  /* US_Patrol */
+                    if(_UNITS[itr_units].Status == 1)  /* us_Patrol */
                     {
                         scout_level++;
                     }

@@ -1,5 +1,0 @@
-@ECHO OFF
-
-DEL *.LST
-DEL *.MAP
-DEL *.OBJ

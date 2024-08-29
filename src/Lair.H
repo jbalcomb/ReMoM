@@ -24,39 +24,67 @@ extern "C" {
 
 
 // WZD o83p01
-// drake178: TILE_HasEncounter()
 int16_t Square_Has_Lair(int16_t world_x, int16_t world_y, int16_t map_plane);
 
 // WZD o83p02
-// EZ_Clear            ();
+void Lair_Clear(int16_t lair_idx);
+
 // WZD o83p03
-// sub_6D490           ();
+int16_t UU_Player_Maybe_Lair_Combat(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);
+
 // WZD o83p04
-// EZ_Resolve          ();
+int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx);
+
 // WZD o83p05
-// OVL_EZ_Confirm_Entry()
+int16_t Do_Lair_Confirm(int16_t lair_idx);
+
 // WZD o83p06
-// EZ_TreasureDialog   ();
+/*
+
+; composes and displays the treasure notification dialog from the passed parameters
+; BUG: gold or mana rewards of exactly 1 won't be included
+
+
+lea     ax, [bp+Reward_Specials]
+push    ax                              ; Spec@
+push    [bp+Reward_Special_Count]       ; SpCnt
+push    [bp+Total_Rewards]              ; Count
+push    [bp+Hero_Slot]                  ; HSlot
+push    [bp+Reward_Spell]               ; Spell
+lea     ax, [bp+item_list]
+push    ax                              ; Items@
+push    [bp+Dlg_Window_Top]             ; WndTop
+push    _SI_lair_idx                    ; Zone_Index
+nop
+push    cs
+Lair_Treasure_Popup()
+
+*/
+void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[], int16_t spell, int16_t hero_slot, int16_t Total_Rewards, int16_t Reward_Special_Count, int16_t Reward_Specials[]);
+
 // WZD o83p07
-// EZ_GoldManaReward   ();
+void Lair_Loot_Gold_And_Mana(int16_t lair_idx, int16_t player_idx);
 
 // WZD o83p08
-// drake178: STR_ListSeparator()
-void STR_ListSeparator(int16_t * size, int16_t count, char * list);
+void Add_Comma_Or_And(int16_t * size, int16_t count, char * list);
 
 // WZD o83p09
 char * STR_GetIndefinite(char * word);
 
 // WZD o83p10
-// EZ_GenerateRewards  ();
+void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[], int16_t * spell, int16_t * hero, int16_t * hero_slot, int16_t * total_rewards, int16_t * reward_special_count, int16_t reward_specials[]);
+
 // WZD o83p11
-// OVL_EZ_Confirm_Dlg  ();
+int16_t Lair_Confirm(int16_t UU_lair_confirm_start_x, int16_t UU_lair_confirm_start_y, char * lair_message_box_text, SAMB_ptr lair_confirm_pict, int16_t UU_lair_confirm_pict_x, int16_t UU_lair_confirm_pict_y, int16_t lair_has_guardians, int16_t lair_is_node);
+
 // WZD o83p12
-// OVL_DrawEZConfirm   ();
+void Lair_Confirm_Draw(void);
+
 // WZD o83p13
-// EZ_SpecialTreasure  ();
+void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, int16_t * reward_special_count, int16_t reward_specials[]);
+
 // WZD o83p14
-// EZ_GetBookRealm     ();
+int16_t Lair_Magic_Realm(int16_t lair_idx);
 
 
 

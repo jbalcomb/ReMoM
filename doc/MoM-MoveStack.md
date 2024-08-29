@@ -1,4 +1,56 @@
 
+Left-Click Movement Map Grid Field
+    In IDA, color #42 (~Gold)
+
+Do Nothing
+Set Path
+Move Stack  (if stack active)
+
+
+Left-Click Movement Map
+if a stack is active
+if the stack has movement points
+
+...
+...
+...
+
+Left-Click Move Stack
+    |-> Move_Stack()
+        |-> Move_Units()
+
+
+Stack Has Path  (which may have just been set && regardless of movement points)
+
+
+left-click on the active stack
+cancel actions and unset path
+
+
+
+
+
+Move_Units()
+    STK_GetPath__WIP()
+        Init_MovePath_Cost_Map()
+        Move_Path_Find()
+    STK_EvaluatePath()
+
+
+
+
+
+
+
+## Move_Stack()
+
+## Move_Units()
+
+
+
+
+
+
 !!!!! renamed !!!!!
 Do_Move_Stack_DirKey() |-> Do_Move_Stack() |-> Move_Stack() |-> Move_Units()
 Move_Stack_DirKey()    |-> Move_Stack()    |-> Move_Units() |-> Move_Units_Draw()
@@ -289,11 +341,11 @@ push    ax                              ; XPos
     
 SelectUnit_Stack()
     // ; sets the global path arrays and variables based on
-    UNIT_SetGlobalPath(unit_idx)
+    Set_Active_Stack_Movement_Path(unit_idx)
 Main_Screen()
     /* left click move map && unit_stack_count != 0 && stack moves < 1 */
     Stack_Action(..., GOTO, ...)
-    UNIT_SetGlobalPath(_unit_stack[0].unit_idx)
+    Set_Active_Stack_Movement_Path(_unit_stack[0].unit_idx)
 
 mov     ax, offset OVL_Path_Costs
 push    ax                              ; RCs@
@@ -316,7 +368,7 @@ call    j_STK_GetPath
 
 
 
-UNIT_SetGlobalPath()
+Set_Active_Stack_Movement_Path()
     builds unit_array from _unit_stack
         ¿ why does it take unit_idx as a parameter then ?
     loops over unit_array

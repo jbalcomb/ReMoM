@@ -1,6 +1,5 @@
 
 #include "MoX.H"
-#include "STU_DBG.H"
 
 /*
     MGC o57p01 (1of1)
@@ -11,11 +10,6 @@
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: MoM_Tables_Init()\n", __FILE__, __LINE__);
-#endif
-
-
 // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);  // Page_Count, Handle_Name, Reserved_Flag
 // TODO  EmmHndl_TILEXXX = EMM_GetHandle(3, EmmHndlNm_TILEXXX, 1);  // Page_Count, Handle_Name, Reserved_Flag
 
@@ -25,10 +19,6 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     //  515 * 16 = 8240 bytes
     // 73600 + 8240 = 81840 bytes
     _screen_seg = Allocate_Space(gfx_buff_nparas + 515);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _screen_seg: %p\n", __FILE__, __LINE__, _screen_seg);
-#endif
 
     GfxBuf_2400B = Allocate_Space(150);  // 150 PR  2400 B
 
@@ -59,25 +49,24 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
 
     // 714 paragraphs = 16 * 714 = 11,424 bytes
-    _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
-#ifdef STU_DEBUG
-    DBG_ORIG__CITIES = _CITIES;
-#endif
+    // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
+    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);
+
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
-    DBG_ORIG__world_maps = _world_maps;
+
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
-    DBG_ORIG_UU_TBL_1 =  UU_TBL_1;
+
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
-    DBG_ORIG_UU_TBL_2 =  UU_TBL_2;
+
 
     TBL_Landmasses = (uint8_t *)Allocate_Next_Block(World_Data, 302);      // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Landmasses = TBL_Landmasses;
+
     TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Terr_Specials = TBL_Terr_Specials;
-    TBL_Terrain_Flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Terrain_Flags = TBL_Terrain_Flags;
+
+    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
+
     TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
-    DBG_ORIG_TBL_Scouting = TBL_Scouting;
+
 
     square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes  ¿ (((2400 / 8) + 1) + 1) / 16) ?
     square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
@@ -143,89 +132,88 @@ SA_GET_USED(SAMB_head): 2345
 */
 
 
-    /*
-    
-    */
-    // mov     ax, 632                         ; rewritten in the overland Djikstra patch
-    // call    EMM_EMMDATAH_AllocFirst         ; clears the EMM Data block, then creates an LBX
-    // mov     [word ptr TBL_TempMoveMap_EMS], ax ; 278h EMMData paragraphs
-    // 
-    // mov     ax, 1802
-    // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
-    // mov     [word ptr TBL_MoveMaps_EMS], ax ; 70Ah EMMData paragraphs
-    // 
-    // mov     ax, 301
-    // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
-    // mov     [word ptr TBL_SharedTiles_EMS@], ax ; bitflag table of the map tiles that are in the
-    // 
-    // mov     ax, 301
-    // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
-    // mov     [word ptr TBL_Catchments_EMS@], ax ; bitflag table of the map tiles that are in the
-    // 
-    // mov     ax, 1033
-    // call    EMM_EMMDATAH_AllocNext          ; creates an LBX allocation into the EMM Data block
-    // mov     [word ptr TBL_OvlMovePathsEMS@], ax ; 409h EMMData paragraphs
+/*
 
-    TBL_TempMoveMap_EMS = Allocate_Space(632);
-    TBL_MoveMaps_EMS = Allocate_Space(1802);  // 1802 PR, 28832 B
-    DBG_ORIG_TBL_MoveMaps_EMS = TBL_MoveMaps_EMS;
+only usage of EMM_EMMDATAH_AllocFirst() / EMM_EMMDATAH_AllocNext()
 
-    // ¿ ~== TBL_Scouting or square_scouted_p0/p1 ?
-    square_shared_bits = (uint8_t *)Allocate_Space(301);  // 301 * 16 = 4816  ¿ 301 would be the byte count need for one worlds worth of bits, +1 to cover the paragraph boundary, like with square_scouted_p0/p1 ?
+632 + 1802 + 301 + 301 + 1033 = 4069 * 16 = 65,104  (65536 - 65104 = 432 / 16 = 27)
 
-    TBL_Catchments_EMS = Allocate_Space(301);
+movepath_cost_map        = SA_MK_FP0( EMM_EMMDATAH_AllocFirst( 632 ) );  //  632 PR  10112 B
+movement_mode_cost_maps  = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1802 ) );  // 1802 PR  28832 B
+city_area_shared_bits    = SA_MK_FP0( EMM_EMMDATAH_AllocNext(  301 ) );  //  301 PR   4816 B
+city_area_bits           = SA_MK_FP0( EMM_EMMDATAH_AllocNext(  301 ) );  //  301 PR   4816 B
+TBL_OvlMovePathsEMS      = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1033 ) );  // 1033 PR  16528 B
+
+city_area_bits & city_area_shared_bits
+¿ ~== TBL_Scouting or square_scouted_p0/p1 ?
+301 * 16 = 4816  ¿ 301 would be the byte count needed for one worlds worth of bits, +1 to cover the paragraph boundary, like with square_scouted_p0/p1 ?
+60 * 40 = 2400 / 16 = 150 * 2 = 300
+
+in Reset_City_Area_Bitfields()
+it loops over 300 for city_area_bits and city_area_shared_bits
+so, 300 PRs, + 1 for the SAMB header
+
+*/
+
+    movepath_cost_map = (struct s_MOVE_PATH *)Allocate_Space(632);
+    movement_mode_cost_maps = (struct s_MOVE_MODE_COST_MAPS *)Allocate_Space(1802);
+
+    city_area_shared_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
+    city_area_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
+
     TBL_OvlMovePaths_EMS = Allocate_Space(1033);
 
+
     /*
     
     */
+// DELETE      p0_heroes = Allocate_Space(28);  // 28 paragraphs = 448 bytes
+// DELETE      p1_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
+// DELETE      p2_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
+// DELETE      p3_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
+// DELETE      p4_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
+// DELETE      p5_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
+// DELETE  
+// DELETE      p_heroes[0] = (struct s_HERO *)p0_heroes;
+// DELETE      p_heroes[1] = (struct s_HERO *)p1_heroes;
+// DELETE      p_heroes[2] = (struct s_HERO *)p2_heroes;
+// DELETE      p_heroes[3] = (struct s_HERO *)p3_heroes;
+// DELETE      p_heroes[4] = (struct s_HERO *)p4_heroes;
+// DELETE      p_heroes[5] = (struct s_HERO *)p5_heroes;
+// DELETE  
+// DELETE      _HEROES = (struct s_HERO **)p0_heroes;
+// DELETE      _HEROES2 = p0_heroes;
 
-
-
-    p0_heroes = Allocate_Space(28);  // 28 paragraphs = 448 bytes
-    DBG_ORIG_p0_heroes = p0_heroes;
-    p1_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p1_heroes = p1_heroes;
-    p2_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p2_heroes = p2_heroes;
-    p3_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p3_heroes = p3_heroes;
-    p4_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p4_heroes = p4_heroes;
-    p5_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    DBG_ORIG_p5_heroes = p5_heroes;
-
-    p_heroes[0] = (struct s_HERO *)p0_heroes;
-    p_heroes[1] = (struct s_HERO *)p1_heroes;
-    p_heroes[2] = (struct s_HERO *)p2_heroes;
-    p_heroes[3] = (struct s_HERO *)p3_heroes;
-    p_heroes[4] = (struct s_HERO *)p4_heroes;
-    p_heroes[5] = (struct s_HERO *)p5_heroes;
-
+    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 paragraphs = 448 bytes
+    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
+    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
+    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
+    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
+    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
 
 
     _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
-    DBG_ORIG__UNITS = _UNITS;
 
-    global_strategic_unit = (struct s_STRATEGIC_UNIT *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
+    // MoO2  global_combat_data
+    global_battle_unit = (struct s_BATTLE_UNIT *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
 
     _NODES = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
-    DBG_ORIG__NODES = _NODES;
-    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);  // 3 PR = 48 B;  actual: 6 * sizeof(struct s_FORTRESS) = 24
-    DBG_ORIG__FORTRESSES = _FORTRESSES;
+
+    _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
+
     _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
-    DBG_ORIG__TOWERS = _TOWERS;
+
     _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
-    DBG_ORIG__LAIRS = _LAIRS;
+
     // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
     events_table = (int16_t *)Allocate_Space(7);
-    DBG_ORIG__events_table = events_table;
-    TBL_Hero_Names = Allocate_Space(37);
-    DBG_ORIG_TBL_Hero_Names = TBL_Hero_Names;
-    TBL_Items = (struct s_ITEM *)Allocate_Space(433);
-    DBG_ORIG_TBL_Items = TBL_Items;
+
+    // ¿ MoO2  _officer_names ? ¿ Officer vs. Owned Officer ?
+    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);
+
+    _ITEMS = (struct s_ITEM *)Allocate_Space(433);  // 433 PR  6928 B;  SAVE.GAM: 138 * 50 = 6900  ... 1 + ((138 * 50) + (SZ_PARAGRAPH - 1))
+
     TBL_Premade_Items = Allocate_Space(17);
-    DBG_ORIG_TBL_Premade_Items = TBL_Premade_Items;
     
     // AKA TBL_Spell_Data
     spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR  7760 B; actual: 215 * 36 = 7740
@@ -254,8 +242,4 @@ SA_GET_USED(SAMB_head): 2345
 
     // EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: MoM_Tables_Init()\n", __FILE__, __LINE__);
-#endif
 }

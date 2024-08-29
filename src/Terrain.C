@@ -21,7 +21,12 @@
 
 
 // WZD s161p01
-// TILE_ClearCorruption 
+void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
+{
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xDF;  // not TF_Corruption
+}
+
+
 // WZD s161p02
 // TILE_IsNode          
 
@@ -301,7 +306,7 @@ int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
             food_units *= 2;
 
-            if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) == ST_TRUE)
+            if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
             {
                 food_units /= 2;
             }                               
@@ -408,7 +413,7 @@ int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t 
             production_bonus = 3;
         }
 
-        if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+        if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
         {
             production_bonus = (production_bonus / 2);
         }
@@ -564,14 +569,13 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 
 // WZD s161p07
 // drake178: TILE_IsRiver()
+/*
+used to decide on river for cityscape  (not ocean, not *water*)
+*/
 int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _SI_
     int16_t is_river;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     is_river = ST_FALSE;  // DNE in Dasm
 
@@ -633,10 +637,6 @@ int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp)
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_River(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
-
     return is_river;
 }
 
@@ -686,7 +686,7 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         gold_units = ((gold_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         gold_units = (gold_units / 2);
     }
@@ -700,8 +700,10 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p08
 // TILE_GetSilverGold   
+
 // WZD s161p09
 // TILE_GetGoldOreGold  
+
 // WZD s161p10
 // TILE_GetGemGold      
 
@@ -750,7 +752,7 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
         mana_units = ((mana_units * 3) / 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         mana_units = (mana_units / 2);
     }
@@ -764,14 +766,19 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 
 // WZD s161p12
 // TILE_GetMithrilPower 
+
 // WZD s161p13
 // TILE_GetAdamntmPower 
+
 // WZD s161p14
 // TILE_GetQuorkPower   
+
 // WZD s161p15
 // TILE_GetCrysxPower   
+
 // WZD s161p16
 // TILE_HasMithril      
+
 // WZD s161p17
 // TILE_HasAdamantium   
 
@@ -826,7 +833,7 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
         cost_reduction = (cost_reduction * 2);
     }
 
-    if(City_Map_Square_Is_Shared__ALWAYS_FALSE(wx, wy, wp) != ST_FALSE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
     {
         cost_reduction = (cost_reduction / 2);
     }
@@ -840,8 +847,8 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
 // MoO2  Module: INITSHIP  Best_..._Weapon_()
 int16_t City_Best_Weapon(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t weapon_quality;
     int16_t city_wp;
     int16_t useable_map_squares;
@@ -887,7 +894,199 @@ int16_t City_Best_Weapon(int16_t city_idx)
 
 
 // WZD s161p20
-// TILE_GetRoadBldTime  
+// drake178: TILE_GetRoadBldTime()
+/*
+; returns the amount of time, in turns, that it would
+; take to construct a road on the tile, -1 if one may
+; not be built, or 0 if there already is one
+*/
+/*
+TABLE F
+ROAD BUILDING
+TERRAIN TYPE OR SPECIAL
+TURNS TO BUILD
+*/
+/*
+no idea how to make this look sensible
+maybe not actually a switch
+
+*/
+int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t world_maps_offset;  // DNE in Dasm
+
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    {
+        return 0;
+    }
+
+    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
+    terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
+
+    if(terrain_type >= TT_Tundra_1st)
+    {
+        return 6;
+    }
+
+    if(terrain_type == TT_BugGrass)
+    {
+        return 2;
+    }
+
+    // TT_Ocean1, TT_BugGrass, TT_Shore1_1st, TT_Lake, TT_Shore1_end
+    if(terrain_type < TT_Grass1)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_4WRiver5)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Shore2_end)
+    {
+        return 5;
+    }
+
+    if(terrain_type > TT_Desert_end)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Hills_end)
+    {
+        return 4;
+    }
+
+    if(terrain_type > TT_Mntns_end)
+    {
+        return 6;
+    }
+
+    if(terrain_type > TT_Rivers_end)
+    {
+        return 8;
+    }
+
+    if(terrain_type > TT_Shore2F_end)
+    {
+        return 5;
+    }
+
+    if(terrain_type > TT_RiverM_end)
+    {
+        return ST_UNDEFINED;
+    }
+
+    if(terrain_type > TT_Forest3)
+    {
+        return 5;
+    }
+
+    switch(terrain_type)
+    {
+        case TT_Grass1:     /* 0x0A2 */
+        {
+            return 3;
+        } break;
+        case TT_Forest1:    /* 0x0A3 */
+        {
+            return 6;
+        } break;
+        case TT_Mountain1:  /* 0x0A4 */
+        {
+            return 8;
+        } break;
+        case TT_Desert1:    /* 0x0A5 */
+        {
+            return 4;
+        } break;
+        case TT_Swamp1:     /* 0x0A6 */
+        {
+            return 8;
+        } break;
+        case TT_Tundra1:    /* 0x0A7 */
+        {
+            return 6;
+        } break;
+        case TT_SorcNode:   /* 0x0A8 */
+        {
+            return 4;
+        } break;
+        case TT_NatNode:    /* 0x0A9 */
+        {
+            return 5;
+        } break;
+        case TT_ChaosNode:  /* 0x0AA */
+        {
+            return 5;
+        } break;
+        case TT_Hills1:     /* 0x0AB */
+        {
+            return 6;
+        } break;
+        case TT_Grass2:     /* 0x0AC */
+        {
+            return 3;
+        } break;
+        case TT_Grass3:     /* 0x0AD */
+        {
+            return 3;
+        } break;
+        case TT_Desert2:    /* 0x0AE */
+        {
+            return 4;
+        } break;
+        case TT_Desert3:    /* 0x0AF */
+        {
+            return 4;
+        } break;
+        case TT_Desert4:    /* 0x0B0 */
+        {
+            return 4;
+        } break;
+        case TT_Swamp2:     /* 0x0B1 */
+        {
+            return 8;
+        } break;
+        case TT_Swamp3:     /* 0x0B2 */
+        {
+            return 8;
+        } break;
+        case TT_Volcano:    /* 0x0B3 */
+        {
+            return 8;
+        } break;
+        case TT_Grass4:     /* 0x0B4 */
+        {
+            return 3;
+        } break;
+        case TT_Tundra2:    /* 0x0B5 */
+        {
+            return 6;
+        } break;
+        case TT_Tundra3:    /* 0x0B6 */
+        {
+            return 6;
+        } break;
+        case TT_Forest2:    /* 0x0B7 */
+        {
+            return 6;
+        } break;
+        case TT_Forest3:    /* 0x0B8 */
+        {
+            return 6;
+        } break;
+
+    }
+
+    return ST_UNDEFINED;
+}
+
+
 // WZD s161p21
 // UU_TILE_GetUnsdMPCost
 
@@ -899,7 +1098,7 @@ TILE_IsAISailable()
 WZD s161p24
 TILE_IsSailable()
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 /*
 WZD s161p22
@@ -915,17 +1114,65 @@ TILE_IsAISailable()
 */
 
 // WZD s161p23
-// TILE_IsVisibleForest 
+// drake178: TILE_IsVisibleForest()
+/*
+returns 1 if the tile is explored by the human
+player, and is a forest tile, or 0 otherwise
+
+INCONSISTENT: unlike all other tile type check
+functions, this only returns 1 for tiles visible to
+the human player (explored)
+*/
+int16_t Terrain_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_is_explored_forest;
+    uint8_t * world_map_ptr;
+    int16_t terrain_type_idx;
+    int16_t terrain_type;
+    int16_t square_is_explored;
+
+    world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
+    terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
+    terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
+
+    square_is_explored = TBL_Scouting[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    if(
+        (square_is_explored != ST_FALSE)
+        &&
+        (
+            (terrain_type == TT_Forest1)
+            ||
+            (terrain_type == TT_Forest2)
+            ||
+            (terrain_type == TT_Forest3)
+            ||
+            (terrain_type == TT_NatNode)
+        )
+    )
+    {
+        terrain_is_explored_forest = ST_TRUE;
+    }
+    else
+    {
+        terrain_is_explored_forest = ST_FALSE;
+    }
+
+    return terrain_is_explored_forest;
+}
+
 
 // WZD s161p24
 // drake178: TILE_IsSailable()
 /*
+    regularly used as 'Square is Ocean-Terrain'
+    
 WZD s161p22
 TILE_IsAISailable()
 WZD s161p24
 TILE_IsSailable()
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -934,10 +1181,6 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     uint16_t src_ofst;
     uint16_t world_map_value;
     uint16_t terrain_type;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
 
     // les  bx, [_world_maps]
     // ~== ES = (&_world_maps[0] / 16); BX = (&_world_maps[0] % 16);
@@ -1017,17 +1260,15 @@ Return_True:
 
 Done:
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Terrain_Is_Sailable(wx = %d, wy = %d, wp = %d)\n", __FILE__, __LINE__, wx, wy, wp);
-// #endif
-
     return return_value;
 }
 
 // WZD s161p25
 // TILE_IsDeepOcean     
+
 // WZD s161p26
 // G_TILE_IsAIEmbarkable
+
 // WZD s161p27
 // TILE_BuildingReqType 
 
@@ -1089,20 +1330,116 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 
 // WZD s161p30
 // TILE_IsDesert        
+
 // WZD s161p31
 // TILE_IsTundra        
+
 // WZD s161p32
 // TILE_IsSwamp         
+
 // WZD s161p33
 // TILE_IsGrasslands    
+
 // WZD s161p34
 // TILE_IsVolcano       
+
 // WZD s161p35
 // TILE_IsCorrupted     
 // WZD s161p36
 // UU_TILE_IsRes_40h    
+
 // WZD s161p37
-// CTY_CountNightshades 
+// drake178: CTY_CountNightshades()
+/*
+// ; counts and sets the amount of Nightshades affecting
+// ; every city (returns the last count)
+// ; BUG: only updates the count if a relevant building is
+// ; present, meaning that it can't be cleared either if
+// ; one isn't
+*/
+/*
+
+XREF:
+    j_CTY_CountNightshades()
+        Next_Turn_Calc()
+
+*/
+void All_City_Nightshade_Count(void)
+{
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
+    int16_t city_wp__2;  // ; Plane would have sufficed just fine, no need to have 2 of this
+    int16_t useable_map_squares;
+    int16_t city_wp;
+    int16_t city_population;
+    int16_t Unused_StackVar;
+    int16_t nightshade_count;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t itr_cities;  // _SI_
+    int16_t itr;  // _DI_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        city_wx = _CITIES[itr_cities].wx;
+        city_wy = _CITIES[itr_cities].wy;
+        city_wp = _CITIES[itr_cities].wp;
+
+        city_population = _CITIES[itr_cities].population;
+
+        Unused_StackVar = 2;
+
+        nightshade_count = 0;
+
+        if(city_population = 0)
+        {
+            continue;
+        }
+
+        if(
+            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ TEMPLE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ PARTHENON        ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ CATHEDRAL        ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ SAGES_GUILD      ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ ORACLE           ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ ALCHEMISTS_GUILD ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ WIZARDS_GUILD    ] != bs_NotBuilt)
+        )
+        {
+
+            city_wp__2 = _CITIES[itr_cities].wp;
+
+            useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp__2, &wx_array[0], &wy_array[0]);
+
+            for(itr = 0; itr < useable_map_squares; itr++)
+            {
+
+                if((GET_TERRAIN_SPECIAL(wx_array[itr], wy_array[itr], city_wp__2) & TS_NIGHTSHADE) != 0)
+                {
+                    nightshade_count++;
+                }
+
+            }
+
+            _CITIES[itr_cities].enchantments[NIGHTSHADE] = nightshade_count;
+
+        }
+
+    }
+
+}
+
+
 // WZD s161p38
 // TILE_IsLand          
 
@@ -1111,12 +1448,16 @@ int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 /*
 WZD s161p22
 TILE_IsAISailable()
+
 WZD s161p24
 TILE_IsSailable()
+
 WZD s161p39
-TILE_IsAISailable2()
+Terrain_Is_Ocean()
 */
 /*
+used to decide on ocean for cityscape  (not river, not *water*)
+
 ; returns 1 if the tile is a shore, ocean, or lake, or 0 otherwise
 ; differs from TILE_IsAISailable in that it checks for
 ; invalid tile indices (not Plane though), for which
@@ -1126,7 +1467,7 @@ TILE_IsAISailable2()
 ; river outlet versions (0xC5 - 0xC8)
 
 */
-int16_t TILE_IsAISailable2(int16_t wx, int16_t wy, int16_t wp)
+int16_t Terrain_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _CX_
     int16_t is_ocean;  // DNE in Dasm

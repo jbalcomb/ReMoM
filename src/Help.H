@@ -249,9 +249,9 @@ HLP_STONING_TOUCH                   = 0x1B4,
 HLP_CAUSE_DEATH                     = 0x1B5,
 HLP_POWER_DRAIN                     = 0x1B6,
 HLP_DISPEL_EVIL                     = 0x1B7,
-HLP_CHAOS_CHANNEL_Def                   = 0x1B8,
-HLP_CHAOS_CHANNEL_Fly                   = 0x1B9,
-HLP_CHAOS_CHANNEL_Brth                      = 0x1BA,
+HLP_WARPED_DEFENSE                   = 0x1B8,
+HLP_WARPED_FLIGHT                   = 0x1B9,
+HLP_WARPED_BREATH                      = 0x1BA,
 HLP_THROWN                      = 0x1BB,
 HLP_FIRE_BREATH                     = 0x1BC,
 HLP_LIGHTNING_BREATH                    = 0x1BD,
@@ -636,7 +636,7 @@ enum HELP_TXT
     HLP_PURIFY                  = 227,
     HLP_MELD                = 228,
     HLP_NEXT_TURN               = 229,
-    HEP_REDUCED_MAP                 = 230,
+    HLP_REDUCED_MAP                 = 230,
     HLP_TOTAL_GOLD                  = 231,
     HLP_TOTAL_MANA                  = 232,
     HLP_GOLD_INCOME                 = 233,
@@ -659,6 +659,7 @@ enum HELP_TXT
     HLP_CITY_NAME               = 250,
     HLP_CITY_ENCHANTMENTS               = 251,
     HLP_OK_City                 = 252,
+
     HLP_WALKING                 = 253,
     HLP_FORESTER                = 254,
     HLP_MOUNTAINEER                 = 255,
@@ -668,6 +669,7 @@ enum HELP_TXT
     HLP_SAILING                 = 259,
     HLP_WIND_WALKING                = 260,
     HLP_PLANAR_TRAVEL               = 261,
+
     HLP_GRAY_GEM                = 262,
     HLP_SHATTERED_GEM               = 263,
     HLP_POWER_DISTRIBUTION                  = 264,
@@ -685,6 +687,7 @@ enum HELP_TXT
     HLP_CASTING                 = 276,
     HLP_RESEARCHING                 = 277,
     HLP_SUMMON_TO               = 278,
+
     HLP_BARBARIAN_TOWNSFOLK                 = 279,
     HLP_BEASTMEN_TOWNSFOLK                  = 280,
     HLP_DARK_ELF_TOWNSFOLK                  = 281,
@@ -714,6 +717,7 @@ enum HELP_TXT
     HLP_BUY                 = 305,
     HLP_CHANGE                  = 306,
     HLP_OK_City_2               = 307,
+    
     HLP_Barbarian_Farmers               = 308,
     HLP_Barbarian_Workers               = 309,
     HLP_Barbarian_Rebels                = 310,
@@ -756,6 +760,7 @@ enum HELP_TXT
     HLP_Troll_Farmers               = 347,
     HLP_Troll_Workers               = 348,
     HLP_Troll_Rebels                = 349,
+
     HLP_PORTRAIT                = 350,
     HLP_NAME                = 351,
     HLP_STATISTICS                  = 352,
@@ -817,6 +822,7 @@ enum HELP_TXT
     HLP_REGENERATION                = 408,
     HLP_PURIFY_Ab               = 409,
     HLP_NEGATE_FIRST_STRIKE                 = 410,
+
     HLP_LUCKY               = 411,
     HLP_POISON_IMMUNITY                 = 412,
     HLP_FIRE_IMMUNITY               = 413,
@@ -827,6 +833,7 @@ enum HELP_TXT
     HLP_COLD_IMMUNITY               = 418,
     HLP_MAGIC_IMMUNITY                  = 419,
     HLP_DEATH_IMMUNITY                  = 420,
+
     HLP_HEALING_SPELL               = 421,
     HLP_FIRE_BALL_SPELL                 = 422,
     HLP_DOOMBOLT_SPELL                  = 423,
@@ -835,6 +842,7 @@ enum HELP_TXT
     HLP_WEB_SPELL               = 426,
     HLP_RESISTANCE_TO_ALL               = 427,
     HLP_HOLY_BONUS                  = 428,
+
     HLP_ARMOR_PIERCING                  = 429,
     HLP_FIRST_STRIKE                = 430,
     HLP_POISON                  = 431,
@@ -846,62 +854,67 @@ enum HELP_TXT
     HLP_CAUSE_DEATH                 = 437,
     HLP_POWER_DRAIN                 = 438,
     HLP_DISPEL_EVIL                 = 439,
-    HLP_CHAOS_CHANNEL_Def               = 440,
-    HLP_CHAOS_CHANNEL_Fly               = 441,
-    HLP_CHAOS_CHANNEL_Brth                  = 442,
+
+    HLP_WARPED_DEFENSE       = 440,
+    HLP_WARPED_FLIGHT       = 441,
+    HLP_WARPED_BREATH      = 442,
+
     HLP_THROWN                  = 443,
-    HLP_FIRE_BREATH                 = 444,
-    HLP_LIGHTNING_BREATH                = 445,
-    HLP_STONING_GAZE                = 446,
+    HLP_FIRE_BREATH             = 444,
+    HLP_LIGHTNING_BREATH        = 445,
+    HLP_STONING_GAZE            = 446,
     HLP_DOOM_GAZE               = 447,
-    HLP_DEATH_GAZE                  = 448,
-    HLP_IMMOLATION_UE               = 449,
-    HLP_GUARDIAN_WIND               = 450,
+    HLP_DEATH_GAZE              = 448,
+
+    HLP_IMMOLATION_UE           = 449,
+    HLP_GUARDIAN_WIND           = 450,
     HLP_BERSERK                 = 451,
-    HLP_CLOAK_OF_FEAR               = 452,
-    HLP_BLACK_CHANNELS                  = 453,
-    HLP_WRAITH_FORM                 = 454,
-    HLP_REGENERATE                  = 455,
-    HLP_PATHFINDING_UE                  = 456,
-    HLP_WATER_WALKING               = 457,
-    HLP_ELEMENTAL_ARMOR                 = 458,
-    HLP_RESIST_ELEMENTS                 = 459,
-    HLP_STONE_SKIN                  = 460,
+    HLP_CLOAK_OF_FEAR           = 452,
+    HLP_BLACK_CHANNELS          = 453,
+    HLP_WRAITH_FORM             = 454,
+    HLP_REGENERATE              = 455,
+    HLP_PATHFINDING_UE          = 456,
+    HLP_WATER_WALKING           = 457,
+    HLP_ELEMENTAL_ARMOR         = 458,
+    HLP_RESIST_ELEMENTS         = 459,
+    HLP_STONE_SKIN              = 460,
     HLP_IRON_SKIN               = 461,
     HLP_ENDURANCE               = 462,
-    HLP_SPELL_LOCK                  = 463,
-    HLP_INVISIBILITY_UE                 = 464,
-    HLP_WIND_WALKING_UE                 = 465,
+    HLP_SPELL_LOCK              = 463,
+    HLP_INVISIBILITY_UE         = 464,
+    HLP_WIND_WALKING_UE         = 465,
     HLP_FLIGHT                  = 466,
-    HLP_RESIST_MAGIC                = 467,
-    HLP_MAGIC_IMMUNITY_UE               = 468,
-    HLP_FLAME_BLADE                 = 469,
-    HLP_ELDRITCH_WEAPON                 = 470,
-    HLP_TRUE_SIGHT                  = 471,
-    HLP_HOLY_WEAPON                 = 472,
+    HLP_RESIST_MAGIC            = 467,
+    HLP_MAGIC_IMMUNITY_UE       = 468,
+    HLP_FLAME_BLADE             = 469,
+    HLP_ELDRITCH_WEAPON         = 470,
+    HLP_TRUE_SIGHT              = 471,
+    HLP_HOLY_WEAPON             = 472,
     HLP_HEROISM                 = 473,
-    HLP_BLESS               = 474,
-    HLP_LION_HEART                  = 475,
-    HLP_GIANT_STRENGTH                  = 476,
-    HLP_PLANAR_TRAVEL_UE                = 477,
-    HLP_HOLY_ARMOR                  = 478,
-    HLP_RIGHTEOUSNESS               = 479,
-    HLP_INVULNERABILITY                 = 480,
+    HLP_BLESS                   = 474,
+    HLP_LION_HEART              = 475,
+    HLP_GIANT_STRENGTH          = 476,
+    HLP_PLANAR_TRAVEL_UE        = 477,
+    HLP_HOLY_ARMOR              = 478,
+    HLP_RIGHTEOUSNESS           = 479,
+    HLP_INVULNERABILITY         = 480,
+
     HLP_VERTIGO                 = 481,
     HLP_CONFUSION               = 482,
     HLP_WHIRLWIND               = 483,
-    HLP_MIND_STORM                  = 484,
+    HLP_MIND_STORM              = 484,
     HLP_SHATTER                 = 485,
     HLP_WEAKNESS                = 486,
-    HLP_BLACK_SLEEP                 = 487,
-    HLP_WARP_CREATURE_Atk               = 488,
-    HLP_WARP_CREATURE_Def               = 489,
-    HLP_WARP_CREATURE_Res               = 490,
+    HLP_BLACK_SLEEP             = 487,
+    HLP_WARP_CREATURE_Atk       = 488,
+    HLP_WARP_CREATURE_Def       = 489,
+    HLP_WARP_CREATURE_Res       = 490,
     HLP_MANA_LEAK               = 491,
-    HLP_HASTE               = 492,
-    HLP_WEB                 = 493,
-    HLP_CREATURE_BINDING                = 494,
-    HLP_POSSESSION                  = 495,
+    HLP_HASTE                   = 492,
+    HLP_WEB                     = 493,
+    HLP_CREATURE_BINDING        = 494,
+    HLP_POSSESSION              = 495,
+
     HLP_UPKEEP                  = 496,
     HLP_PAGE_UP                 = 497,
     HLP_PAGE_DOWN               = 498,
@@ -921,44 +934,50 @@ enum HELP_TXT
     HLP_CANCEL_Road                 = 512,
     HLP_SURVEY                  = 513,
     HLP_CANCEL_Survey               = 514,
-    HLP_LEADERSHIP                  = 515,
-    HLP_LEGENDARY               = 516,
-    HLP_BLADEMASTER                 = 517,
-    HLP_ARMSMASTER                  = 518,
-    HLP_CONSTITUTION                = 519,
+
+    HLP_LEADERSHIP          = 515,
+    HLP_LEGENDARY           = 516,
+    HLP_BLADEMASTER         = 517,
+    HLP_ARMSMASTER          = 518,
+    HLP_CONSTITUTION        = 519,
     HLP_MIGHT               = 520,
-    HLP_ARCANE_POWER                = 521,
+    HLP_ARCANE_POWER        = 521,
     HLP_SAGE                = 522,
-    HLP_PRAYERMASTER                = 523,
-    HLP_LUCKY_Hero                  = 524,
-    HLP_CHARMED                 = 525,
+    HLP_PRAYERMASTER        = 523,
+    HLP_LUCKY_HERO          = 524,
+    HLP_CHARMED             = 525,
     HLP_NOBLE               = 526,
-    HLP_RECRUIT                 = 527,
-    HLP_REGULAR                 = 528,
-    HLP_VETERAN                 = 529,
+
+    HLP_UNIT_LEVEL_0        = 527,  /* HLP_RECRUIT */
+    HLP_REGULAR             = 528,
+    HLP_VETERAN             = 529,
     HLP_ELITE               = 530,
-    HLP_ULTRA_ELITE                 = 531,
-    HLP_CHAMPION                = 532,
-    HLP_HERO                = 533,
-    HLP_MYRMIDON                = 534,
-    HLP_CAPTAIN                 = 535,
-    HLP_COMMANDER               = 536,
-    HLP_CHAMPION_Hero               = 537,
+    HLP_ULTRA_ELITE         = 531,
+    HLP_CHAMPION            = 532,
+    HLP_HERO_LEVEL_0        = 533,  /* HLP_HERO */
+    HLP_MYRMIDON            = 534,
+    HLP_CAPTAIN             = 535,
+    HLP_COMMANDER           = 536,
+    HLP_CHAMPION_HERO       = 537,
     HLP_LORD                = 538,
-    HLP_GRAND_LORD                  = 539,
-    HLP_SUPER_HERO                  = 540,
-    HLP_DEMI_GOD                = 541,
-    HLP_QUIVER                  = 542,
-    HLP_PLUS_TO_HIT                 = 543,
-    HLP_MIN_TO_HIT                  = 544,
-    HLP_CONSTRUCTION                = 545,
-    HLP_SCOUTING                = 546,
-    HLP_MERGING                 = 547,
-    HLP_TELEPORTING                 = 548,
-    HLP_PATHFINDING_Ab                  = 549,
-    HLP_MOUNTAINEER_Ab                  = 550,
-    HLP_FORESTER_Ab                 = 551,
-    HLP_SUMMON_DEMONS               = 552,
+    HLP_GRAND_LORD          = 539,
+    HLP_SUPER_HERO          = 540,
+    HLP_DEMI_GOD            = 541,
+
+    HLP_QUIVER              = 542,
+
+    HLP_TOHIT_PLUS          = 543,
+    HLP_TOHIT_MINUS         = 544,
+
+    HLP_CONSTRUCTION        = 545,
+    HLP_SCOUTING            = 546,
+    HLP_MERGING             = 547,
+    HLP_TELEPORTING         = 548,
+    HLP_PATHFINDING_Ab      = 549,
+    HLP_MOUNTAINEER_Ab      = 550,
+    HLP_FORESTER_Ab         = 551,
+    HLP_SUMMON_DEMONS       = 552,
+
     HLP_UNDEAD                  = 553,
     HLP_STASIS                  = 554,
     HLP_CASTER                  = 555,
@@ -983,6 +1002,7 @@ enum HELP_TXT
     HLP_GUARDIAN_WIND_I                 = 574,
     HLP_GIANT_STRENGTH_I                = 575,
     HLP_MERGING_I               = 576,
+
     HLP_SWORD_SLOT_1                = 577,
     HLP_BOW_SLOT_1                  = 578,
     HLP_STAVE_SWORD_SLOT_1                  = 579,
@@ -995,6 +1015,7 @@ enum HELP_TXT
     HLP_STAVE_SLOT_2                = 586,
     HLP_ARMOR_SLOT_2                = 587,
     HLP_MISCELLANEOUS_SLOT_2                = 588,
+    
     HLP_SPELL_BUTTON                = 589,
     HLP_WAIT_BUTTON                 = 590,
     HLP_INFO_BUTTON                 = 591,
@@ -1230,85 +1251,72 @@ extern "C" {
 */
 
 // WZD o104p01
-// HLPENTRY.LBX  ""
 void Set_Main_Screen_Help_List(void);
 
 // WZD o104p02
-// HLPENTRY.LBX  ""
 void Set_ArmyList_Screen_Help(void);
 
 // WZD o104p03
-// HLPENTRY.LBX  ""
 void Set_Items_Screen_Help_List(void);
 
 // WZD o104p04
-// HLPENTRY.LBX  ""
 void Set_CityList_Screen_Help(void);
 
 // WZD o104p05
-// HLPENTRY.LBX  ""
 void Set_Magic_Screen_Help_List(void);
 
 // WZD o104p06
-// HLPENTRY.LBX, 6  "city scrn Help"
 void Set_City_Screen_Help_List(void);
 
 // WZD o104p07
-// HLPENTRY.LBX  ""
+void Set_Mirror_Screen_Help_List(void);
 
 // WZD o104p08
-// HLPENTRY.LBX  ""
+void Set_Cartographer_Screen_Help_List(void);
 
 // WZD o104p09
-// HLPENTRY.LBX  ""
+void Set_Powergraph_Screen_Help_List(void);
 
 // WZD o104p10
-// HLPENTRY.LBX  ""
+// sub_8562B
+void Set_Status_Screen_Help_List(void);
 
 // WZD o104p11
-// HLPENTRY.LBX  "alchemy scrn Help"
 void Set_Alchemy_Screen_Help_List(void);
 
 // WZD o104p12
-// HLPENTRY.LBX  "build Help"
 void Set_Production_Screen_Help(void);
 
 // WZD o104p13
-// HLPENTRY.LBX  ""
+void Set_Unit_View_Help(int16_t uv_type);
 
 // WZD o104p14
-// HLPENTRY.LBX  ""
+void Set_Enemy_City_Screen_Help_List(void);
 
 // WZD o104p15
-// HLPENTRY.LBX  ""
+void Set_Level_Screen_Help_List(void);
+
 
 // WZD o104p16
-// HLPENTRY.LBX  ""
 
 // WZD o104p17
-// HLPENTRY.LBX  ""
+void Set_Outpost_Screen_Help_List(void);
 
 // WZD o104p18
-// HLPENTRY.LBX  ""
 
 // WZD o104p19
-// HLPENTRY.LBX  ""
+void Set_Road_Build_Screen_Help_List(void);
 
 // WZD o104p20
-// HLPENTRY.LBX  ""
 
 // WZD o104p21
-// HLPENTRY.LBX  ""
 
 // WZD o104p22
-// HLPENTRY.LBX  "Tax Help"
 
 // WZD o104p23
-// HLPENTRY.LBX  "advisor Help"
 void Set_Advisor_Screen_Help_List(void);
 
 // WZD o104p24
-// HLPENTRY.LBX  "score Help"
 void HLP_Load_HallofFame(void);
 
 

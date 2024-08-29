@@ -41,3 +41,49 @@ void Mouse_Button_Handler(void)
     platform_mouse_button_status = 0;
     lock_mouse_button_status_flag = ST_FALSE;
 }
+
+// WZD s35p11
+void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my)
+{
+    if(mx < 0 || my < 0 || (mx / 2) >= SCREEN_WIDTH || (my / 2) >= SCREEN_HEIGHT)
+    {
+        return;
+    }
+
+    // if (lock_mouse_button_status_flag != ST_TRUE)
+    // {
+            mouse_x = mx / 2;
+            mouse_y = my / 2;
+            // mouse_x = platform_mouse_x / display_scale;
+            // mouse_y = platform_mouse_y / display_scale;
+            platform_mouse_button_status = buttons;
+    // }
+
+    if (mouse_interrupt_active == ST_FALSE)
+    {
+        mouse_interrupt_active = ST_TRUE;
+
+        Check_Mouse_Buffer((mx / 2), (my / 2), buttons);
+
+        if (mouse_enabled == ST_TRUE)
+        {
+            mouse_enabled = ST_FALSE;
+            if (current_mouse_list_count >= 2)
+            {
+                Check_Mouse_Shape(mouse_x, mouse_y);
+            }
+            Restore_Mouse_On_Page();                // mouse_background_buffer -> video_page_buffer[draw_page_num]
+            Save_Mouse_On_Page(mouse_x, mouse_y);   // video_page_buffer[draw_page_num] -> mouse_background_buffer
+            Draw_Mouse_On_Page(mouse_x, mouse_y);   // mouse_palette -> video_page_buffer[draw_page_num]
+            mouse_enabled = ST_TRUE;
+        }
+        mouse_interrupt_active = ST_FALSE;
+    }
+
+}
+
+// WZD s35p21
+void Set_Mouse_Position(int16_t x, int16_t y)
+{
+    MWA_Set_Mouse_Position(x, y);
+}

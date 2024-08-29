@@ -5,6 +5,9 @@
 
 
 
+
+
+
 /*
     WIZARDS.EXE
     Data Segment (DSEG)
@@ -97,7 +100,7 @@ dseg:8254 FF FF                                           down_y dw -1          
 dseg:8254                                                 ? END: Mouse - Initialized Data ?       ; offset added to 'down' button field text
 dseg:8256 FF FF                                           GUI_EmptyTitleHelp dw 0FFFFh            ; DATA XREF: UU_GUI_ScrollableTxtDlg+1BEr ...
 dseg:8258 00 00                                           GUI_DialogDirections dw 0               ; DATA XREF: Interpret_Mouse_Input:loc_26BD8r ...
-dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: GUI_EditBoxRedraw+3D7r ...
+dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: Draw_Input_Box_Popup+3D7r ...
 dseg:825C                                                 ; #314 mouse_list_none_init
 dseg:825C 00 00 00 00 00 00 3F 01 C7 00 00 00             mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
 dseg:825C                                                                                         ; DATA XREF: Init_Mouse_Keyboard:loc_2D1C5o
@@ -114,8 +117,8 @@ dseg:8282 00 00                                           GUI_Edit_Position dw 0
 dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
 dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
 dseg:8288 00 00                                           input_field_active dw 0                 ; DATA XREF: Interpret_Mouse_Input:loc_26941r ...
-dseg:828A 00 00                                           DBG_ControlHighlight dw 0               ; DATA XREF: Interpret_Mouse_Input+DCr ...
-dseg:828C 00 00                                           DBG_HelpHighlight dw 0                  ; DATA XREF: Interpret_Mouse_Input+100r ...
+dseg:828A 00 00                                           field_box_mode dw 0               ; DATA XREF: Interpret_Mouse_Input+DCr ...
+dseg:828C 00 00                                           help_box_mode dw 0                  ; DATA XREF: Interpret_Mouse_Input+100r ...
 dseg:828E FF FF                                           active_input_field_number dw 0FFFFh     ; DATA XREF: Interpret_Mouse_Input+2DCr ...
 dseg:8290 00 00                                           GUI_EditTimeOutType dw 0                ; DATA XREF: UU_GUI_SetTimeOutP+14w ...
 dseg:8292 00 00                                           UU_GUI_UUClickBufVar dw 0               ; DATA XREF: UU_GUI_SetClickBuffer+27w
@@ -125,9 +128,9 @@ dseg:8296 00 00                                           help_list_active dw 0 
 dseg:8298 00 00                                           help_list_count dw 0                    ; DATA XREF: Set_Help_List+12w ...
 dseg:8298                                                 ¿ END: Help - Initialized Data ?
 dseg:829A                                                 ? BEGIN: Mouse Buffer ?
-dseg:829A 00 00                                           KD_ActiveStringTrig dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
+dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
 dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: GUI_TextEditDialog+3Bo ...
+dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: Input_Box_Popup+3Bo ...
 dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
 dseg:829F                                                 ? END: Mouse Buffer ?
 dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
@@ -136,6 +139,17 @@ dseg:82A6 5F 00                                           GUI_EditCursor db '_',
 dseg:82A6
 dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
 */
+
+// WZD dseg:8282
+int16_t GUI_Edit_Position = 0;
+// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
+// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
+
+// WZD dseg:8290
+int16_t GUI_EditTimeOutType = 0;
+
+// WZD dseg:829E
+char cnst_ZeroString_12[] = "";
 
 
 
@@ -195,13 +209,11 @@ int16_t down_x = 1 ;
 int16_t down_y = -1;
 
 // WZD dseg:8256 GUI_EmptyTitleHelp dw 0FFFFh            
-// WZD dseg:8258 GUI_DialogDirections dw 0               
 
+// WZD dseg:8258
+int16_t GUI_DialogDirections = 0;
 
 // WZD dseg:825A
-// drake178: GUI_Redraw_Timer
-// AKA g_SCRN_Redraw_Timer
-// AKA redraw_timer
 // MoO2  Module: fields  auto_function_delay
 uint16_t auto_function_delay = 2;
 
@@ -211,6 +223,7 @@ uint16_t auto_function_delay = 2;
 // ¿ int16_t mouse_list_init_count = 1; ?
 // WZD dseg:825C
 // DEDUCE: only XREF in Init_Mouse_Keyboard() ?
+// MoO2  default_mouse
 struct s_mouse_list mouse_list_init[1] = {
     {0, 0, 0, 0, 319, 199}
 };
@@ -231,24 +244,33 @@ int16_t _global_esc = ST_FALSE;  // ERROR: mistook for mouse_cancel_disabled, fo
 int16_t mouse_cancel_disabled = ST_FALSE;
 
 // WZD dseg:8274
-int16_t GUI_ClickActivate;
+int16_t mouse_auto_exit;
 
 // WZD dseg:8276 aNotInUse db 'NOT IN USE',0
 // WZD dseg:8281 db    0
 // WZD dseg:8282 GUI_Edit_Position dw 0                  
-// WZD dseg:8284 GUI_EditAnimStage dw 0                  
-// WZD dseg:8286 GUI_EditCursorOn dw 0                   
+
+// WZD dseg:8284
+int16_t GUI_EditAnimStage;
+// WZD dseg:8286
+int16_t GUI_EditCursorOn;
 
 // WZD dseg:8288
 int16_t input_field_active = ST_FALSE;
 
 // WZD dseg:828A
-int16_t DBG_ControlHighlight = ST_FALSE;
+// DBG_ControlHighlight
+// MoO2  Module: fields  field_box_mode
+int16_t field_box_mode = ST_FALSE;
 // WZD dseg:828C
-int16_t DBG_HelpHighlight = ST_FALSE;
+// DBG_HelpHighlight
+// MoO2  Module: fields  help_box_mode
+int16_t help_box_mode = ST_FALSE;
 
 // WZD dseg:828E
-// AKA GUI_Active_EditSlct
+/*
+    field_idx of ft_ContinuousStringInput
+*/
 int16_t active_input_field_number = ST_UNDEFINED;
 
 // WZD dseg:8290 GUI_EditTimeOutType dw 0                
@@ -261,13 +283,15 @@ int16_t active_input_field_number = ST_UNDEFINED;
 // WZD dseg:8298
 // HELP  int16_t help_list_count = 0;
 
-// WZD dseg:829A KD_ActiveStringTrig dw 0                
+// WZD dseg:829A multi_hotkey_active_field dw 0                
 // WZD dseg:829C UU_cnst_RB7 db 'rb'                     
 // WZD dseg:829E cnst_ZeroString_12 db 0                 
 // WZD dseg:829F UU_cnst_WB8 db 'wb',0                   
 // WZD dseg:82A2 UU_GUI_Up_Hotkey db 5, 0                
 // WZD dseg:82A4 UU_GUI_Down_Hotkey db 6, 0              
-// WZD dseg:82A6 GUI_EditCursor db '_',0                 
+
+// WZD dseg:82A6
+char GUI_EditCursor[] = "_";
 
 /*
     WZD dseg:82A6                           END: Fields - Initialized Data
@@ -275,7 +299,7 @@ int16_t active_input_field_number = ST_UNDEFINED;
 
 
 /*
-    WZD dseg:E872                           BEGIN: Fields - Uninitialized Data
+    WZD dseg:E872                           BEGIN: seg036 (Fields) - Uninitialized Data
 */
 
 // WZD dseg:E872
@@ -293,8 +317,10 @@ char continuous_string[30];
 // WZD dseg:E898
 int16_t input_delay;
 
-// dseg:E89A MOUSE_Emu_Y dw 0           
-// dseg:E89C MOUSE_Emu_X dw 0           
+// WZD dseg:E89A
+int16_t MOUSE_Emu_Y;
+// WZD dseg:E89C
+int16_t MOUSE_Emu_X;
 
 // WZD dseg:E89E
 int16_t pointer_offset;
@@ -304,8 +330,6 @@ int16_t temp_field_count;
 
 // WZD dseg:E8A2
 int16_t fields_count;
-
-
 
 // WZD dseg:E8A4 
 // drake178: GUI_Prev_Redraw_Fn
@@ -324,13 +348,11 @@ void (*function2)(void);
 // MoO2  Module: fields  function
 void (*function)(void);
 
-
-
 // WZD dseg:E8AC
 struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 /*
-    WZD dseg:E8AC                           END: Fields - Uninitialized Data
+    WZD dseg:E8AC                           END: seg036 (Fields) - Uninitialized Data
 */
 
 
@@ -353,6 +375,17 @@ void Disable_Cancel(void)
     mouse_cancel_disabled = ST_TRUE;
 }
 
+// WZD s36p10
+void Disable_Mouse_Wait(void)
+{
+    mouse_auto_exit = ST_TRUE;
+}
+// WZD s36p11
+void Enable_Mouse_Wait(void)
+{
+    mouse_auto_exit = ST_FALSE;
+}
+
 
 // WZD s36p20
 // drake178: GUI_GetMouseFocus()
@@ -363,35 +396,137 @@ int16_t Auto_Input(void)
     return auto_input_variable;
 }
 
+
+
+// WZD s36p30
+// WZD s36p31
+// WZD s36p32
+// WZD s36p33
+
+// WZD s36p34
+// MoO2  Module: fields  Add_Input_Field()
+/*
+    function (0 bytes) Add_Input_Field
+    Address: 01:00115E3B
+        Num params: 4
+        Return type: signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) xmin
+            signed integer (2 bytes) ymin
+            signed integer (2 bytes) width
+            pointer (4 bytes) string
+            signed integer (2 bytes) max_characters
+            signed integer (2 bytes) fill_color
+            signed integer (2 bytes) justification
+            signed integer (2 bytes) cursor_type
+            pointer (4 bytes) color_array
+            pointer (4 bytes) select_char
+            signed integer (2 bytes) button_sound
+*/
+/*
+
+*/
+int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t color_array[], char * select_char, int16_t help)
+{
+    p_fields[fields_count].x1 = xmin;
+    p_fields[fields_count].y1 = ymin;
+    p_fields[fields_count].font_style_num = Get_Current_Font_Style();
+    p_fields[fields_count].font_normal_color = Get_Current_Normal_Color();
+    p_fields[fields_count].font_highlight_color = Get_Current_Highlight_Color();
+    p_fields[fields_count].x2 = (xmin + width);
+    p_fields[fields_count].y2 = (ymin + Get_Font_Height());
+    p_fields[fields_count].max_characters = max_characters;
+    p_fields[fields_count].hotkey = select_char[0];
+    UPPERCASE(p_fields[fields_count].hotkey);
+    p_fields[fields_count].help = help;
+    p_fields[fields_count].string = string;
+    p_fields[fields_count].fill_color = fill_color;
+    p_fields[fields_count].justification = justification;
+    p_fields[fields_count].cursor_type = cursor_type;
+    p_fields[fields_count].color_array = color_array;
+    p_fields[fields_count].type = ft_Input;
+    fields_count += 1;
+    return (fields_count - 1);
+}
+
+
+// WZD s36p35
+/*
+; drake178: GUI_CreateEditSelect()
+; creates a custom edit box with the passed attributes,
+; returns the index of the created control:
+;   Text@  - pointer to the edit string
+;   MaxL   - maximum acceptable string length
+;   BGCol  - background color for the control box
+;   S_Img@ - segment pointer to the selection indicator
+;   Style  - text outline style
+; different than the basic edit box in that it does not
+; have its own focus event handler, but is handled with
+; the rest of the controls, albeit that results in
+; reduced functionality (e.g. no positioning)
+*/
+/*
+
+save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED);
+
+*/
+int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow)
+{
+    p_fields[fields_count].x1 = xmin;
+    p_fields[fields_count].y1 = ymin;
+    p_fields[fields_count].font_style_num = Get_Current_Font_Style();
+    p_fields[fields_count].font_normal_color = Get_Current_Normal_Color();
+    p_fields[fields_count].font_highlight_color = Get_Current_Highlight_Color();
+    p_fields[fields_count].x2 = (xmin + width);
+    p_fields[fields_count].y2 = (ymin + Get_Font_Height());
+    p_fields[fields_count].max_characters = max_characters;
+    p_fields[fields_count].hotkey = ST_NULL;
+    p_fields[fields_count].help = help;
+    p_fields[fields_count].string = string;
+    p_fields[fields_count].marker_picture = marker_picture;
+    p_fields[fields_count].fill_color = fill_color;
+    p_fields[fields_count].shadow = shadow;
+    p_fields[fields_count].type = ft_ContinuousStringInput;
+    fields_count += 1;
+    return (fields_count - 1);
+}
+
+// WZD s36p36
+// UU_GUI_Ctrl_DecHeight();
+
+// WZD s36p37
+// GUI_CreateDialogLine();
+
 // WZD s36p38
 int16_t Add_Multi_Hot_Key_Field(char * string)
 {
-    char hotkey_string[30];
+    char hotkey_string[LEN_STRING];
     int16_t itr_string_length = 0;
-
     strcpy(hotkey_string, string);
-
-    while(hotkey_string[itr_string_length] != '\0' && itr_string_length < 30) itr_string_length++;
-
-    p_fields[fields_count].x1 = 500;
-    p_fields[fields_count].y1 = 500;
-    p_fields[fields_count].x2 = 500;
-    p_fields[fields_count].y2 = 500;
+    while(hotkey_string[itr_string_length] != '\0' && itr_string_length < LEN_STRING) itr_string_length++;
+    p_fields[fields_count].x1 = OFF_SCREEN;
+    p_fields[fields_count].y1 = OFF_SCREEN;
+    p_fields[fields_count].x2 = OFF_SCREEN;
+    p_fields[fields_count].y2 = OFF_SCREEN;
     p_fields[fields_count].type = ft_MultiHotKey;
     p_fields[fields_count].help = ST_UNDEFINED;
-    // p_fields[fields_count].Param0 = string[0];  // TODO(JimBalcomb,20230612): fix Param0 - ? need char * ?
     p_fields[fields_count].string = string;
-    p_fields[fields_count].Param1 = 0;
-    p_fields[fields_count].Param2 = itr_string_length;
+    p_fields[fields_count].string_pos = 0;
+    p_fields[fields_count].string_len = itr_string_length;
     p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
-
-    if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
-    {
-        p_fields[fields_count].hotkey -= 32;
-    }
-
+    UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-
     return (fields_count - 1);
 }
 
@@ -402,27 +537,27 @@ int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, int16_t
 {
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
-
     p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg);
     p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg);
-
     p_fields[fields_count].help = help;
-
-    // p_fields[fields_count].Param5 = pict_seg;
     p_fields[fields_count].pict_seg = pict_seg;
-
     p_fields[fields_count].type = ft_Picture;
-
-    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
-    {
-        p_fields[fields_count].hotkey -= 32;
-    }
-
+    UPPERCASE(p_fields[fields_count].type);
     fields_count += 1;
-
     return (fields_count - 1);
 }
 
+
+// WZD s36p40
+// UU_GUI_CreateWndImgLbl()
+
+// WZD s36p41
+// MoO2  Module: fields  Set_Button_Down_Offsets()
+void Set_Button_Down_Offsets(int16_t x, int16_t y)
+{
+    down_x = x;
+    down_y = y;
+}
 
 // WZD s36p42
 void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
@@ -437,8 +572,8 @@ void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_se
     p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg) - 1;
     p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg) - 1;
 
-    p_fields[fields_count].Font_Index = Get_Current_Font_Index();
-    p_fields[fields_count].ColorSet1 = Get_Current_Font_Color();
+    p_fields[fields_count].font_style_num = Get_Current_Font_Style();
+    p_fields[fields_count].font_normal_color = Get_Current_Normal_Color();
 
     p_fields[fields_count].help = help;
 
@@ -466,20 +601,16 @@ void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_se
 // WZD s36p43
 int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
 {
-
     Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
-
     p_fields[fields_count].type = ft_Button;
-
     fields_count += 1;
-
     return (fields_count - 1);
 }
+
 
 // WZD s36p47
 int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
 {
-
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
     p_fields[fields_count].x2 = xmax;
@@ -487,36 +618,23 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
     p_fields[fields_count].type = ft_HotKey;
     p_fields[fields_count].help = help;
     p_fields[fields_count].hotkey = hotkey;
-
-    if ((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
-    {
-        p_fields[fields_count].hotkey -= 32;
-    }
-
+    UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-
     return (fields_count - 1);
 }
 
 // WZD s34p49
 int16_t Add_Hot_Key(int16_t select_char)
 {
-
-    p_fields[fields_count].x1 = 500;
-    p_fields[fields_count].y1 = 500;
-    p_fields[fields_count].x2 = 500;
-    p_fields[fields_count].y2 = 500;
+    p_fields[fields_count].x1 = OFF_SCREEN;
+    p_fields[fields_count].y1 = OFF_SCREEN;
+    p_fields[fields_count].x2 = OFF_SCREEN;
+    p_fields[fields_count].y2 = OFF_SCREEN;
     p_fields[fields_count].type = ft_HotKey;
     p_fields[fields_count].help = ST_UNDEFINED;
     p_fields[fields_count].hotkey = select_char;
-
-    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
-    {
-        p_fields[fields_count].hotkey -= 32;
-    }
-
+    UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-
     return (fields_count - 1);
 }
 
@@ -525,22 +643,15 @@ int16_t Add_Hot_Key(int16_t select_char)
 // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help)
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help)
 {
-
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
-
     p_fields[fields_count].x2 = (box_width * horizontal_count) + xmin - 1;
     p_fields[fields_count].y2 = (box_height * vertical_count) + ymin - 1;
-
     p_fields[fields_count].help = help;
-
     p_fields[fields_count].type = ft_Grid;
-
     p_fields[fields_count].Param1 = box_width;
     p_fields[fields_count].Param2 = box_height;
-
     p_fields[fields_count].hotkey = ST_NULL;
-
     // p_fields[fields_count].Param3 = *xpos;
     // p_fields[fields_count].Param4 = *ypos;
     // NOTE: We are storing the addresses of the pointers, to later be recast and dereferenced.
@@ -548,33 +659,320 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
     // p_fields[fields_count].Param4 = (uint16_t)ypos;
     p_fields[fields_count].Param3 = (int64_t)xpos;
     p_fields[fields_count].Param4 = (int64_t)ypos;
-
-    if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123))
-    {
-        p_fields[fields_count].hotkey -= 32;
-    }
-
+    UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-
     return (fields_count - 1);
 }
 
-// WZD s36p57
-void Clear_Fields(void)
-{
 
+// WZD s34p52
+// WZD s34p53
+// 1oom  uiobj.c  uiobj_add_slider_int() / uiobj_add_slider_func()
+// 1oom: int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
+/*
+MoO2  Module: fields  Add_Scroll_Field()
+
+    Add_Scroll_Field()
+        Address: 01:00115478
+            Return type: signed integer (2 bytes) 
+        signed integer (2 bytes) xmin
+        signed integer (2 bytes) ymin
+        signed integer (2 bytes) min_value
+        signed integer (2 bytes) max_value
+        signed integer (2 bytes) min_valid
+        signed integer (2 bytes) max_valid
+        signed integer (2 bytes) width
+        signed integer (2 bytes) height
+        pointer (4 bytes) variable
+        pointer (4 bytes) hotkey
+        signed integer (2 bytes) button_sound
+*/
+/*
+drake178: GUI_CreateNearSlider(); GUI_CreateSlideBar();
+STARMAP.EXE: uiobj_add_slider_noseg(); uiobj_add_slider();
+Add_Scroll_Field(); Add_Scroll_Field_Far()
+
+; a wrapper for GUI_CreateSlideBar to create a slide bar control with a near state pointer returns the index of the created control
+...
+; creates a slider bar with the passed attributes, returns the index of the created control:
+; the orientation (horizontal/vertical) is defined by the larger of Width/Height, slider bars need to be drawn using a graphic redraw function, the GUI only controls their input state
+
+;   Min_S  - minimum slider position
+;   Max_S  - maximum slider position
+;   Min_V  - minimum represented value
+;   Max_V  - maximum represented value
+;   Pos@   - near pointer to the position state
+*/
+// int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help)
+// int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * ofst_variable, int16_t * sgmt_variable, char * hotkey, int16_t help)
+/*
+    uses all 6 parameters
+
+Alchemy_Popup_Add_Fields()
+    |-> Add_Scroll_Field((m_alchemy_popup_start_x + 50), (m_alchemy_popup_start_y + 25), 0, 55, 3, 53, 55, 7, m_alchemy_arrowbar_pos, cnst_HOTKEY_A_2, ST_UNDEFINED);
+
+*/
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help)
+{
+    p_fields[fields_count].x1 = xmin;
+    p_fields[fields_count].y1 = ymin;
+    p_fields[fields_count].x2 = (p_fields[fields_count].x1 + width);
+    p_fields[fields_count].y2 = (p_fields[fields_count].y1 + height);
+    p_fields[fields_count].min_valid = min_valid;
+    p_fields[fields_count].max_valid = max_valid;
+    p_fields[fields_count].min_value = min_value;
+    p_fields[fields_count].max_value = max_value;
+    p_fields[fields_count].help = help;
+    p_fields[fields_count].orientation = (width > height) ? 0 : 1;  // Orientation: {Horizontal, Vertical}
+    p_fields[fields_count].type = ft_Scroll;
+    p_fields[fields_count].variable = variable;
+    p_fields[fields_count].hotkey = hotkey;
+    UPPERCASE(p_fields[fields_count].hotkey);
+    // TODO  SET_HOTKEY(hotkey);
+    fields_count += 1;
+    return (fields_count - 1);
+}
+
+
+// WZD s34p54
+// GUI_SliderUpdate()
+// 1oom  uiobj_handle_t6_slider_input()
+/*
+    function (0 bytes) Find_Bar_Position
+    Address: 01:001156E2
+        Num params: 1
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) field_num
+            signed integer (2 bytes) pos
+            signed integer (2 bytes) width
+            signed integer (2 bytes) bar_value
+            signed integer (4 bytes) value
+*/
+int16_t Find_Bar_Position(int16_t field_num)
+{
+    int16_t pos;
+    int16_t width;
+    int16_t bar_value;
+    int32_t value;
+
+    if(p_fields[field_num].orientation == fo_Horizontal)  /* horizontal L->R */
+    {
+        width = (p_fields[field_num].x2 - p_fields[field_num].x1);
+        pos = Pointer_X() + pointer_offset;
+        value = (((pos - p_fields[field_num].x1) * (p_fields[field_num].max_value - p_fields[field_num].min_value)) / width);
+        if(p_fields[field_num].x2 <= pos)
+        {
+            bar_value = p_fields[field_num].max_value;
+        }
+        else if(p_fields[field_num].x1 >= pos)
+        {
+            bar_value = p_fields[field_num].min_value;
+        }
+        else
+        {
+            bar_value = p_fields[field_num].min_value + value;
+        }
+    }
+    else  /* vertical B->T */
+    {
+        width = (p_fields[field_num].y2 - p_fields[field_num].y1);
+        pos = Pointer_Y() + pointer_offset;
+        value = (((p_fields[field_num].y2 - pos) * (p_fields[field_num].max_value - p_fields[field_num].min_value)) / width);
+        if(p_fields[field_num].y2 <= pos)
+        {
+            bar_value = p_fields[field_num].min_value;
+        }
+        else if(p_fields[field_num].y1 >= pos)
+        {
+            bar_value = p_fields[field_num].max_value;
+        }
+        else
+        {
+            bar_value = value;
+        }
+    }
+
+    SETMIN(bar_value, p_fields[field_num].Param0);
+    SETMAX(bar_value, p_fields[field_num].Param1);
+
+    *p_fields[field_num].variable = bar_value;
+
+}
+
+// WZD s34p55
+// GUI_SlideUp();
+// uiobj_slider_plus()
+/*
+    function (0 bytes) Increment_Scroll_Bar
+    Address: 01:00115994
+        Num params: 1
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) field_num
+            signed integer (2 bytes) percent
+            signed integer (2 bytes) width
+            signed integer (2 bytes) bar_value
+            signed integer (4 bytes) value
+*/
+void Increment_Scroll_Bar(int16_t field_num)
+{
+    int32_t bar_value;
+    // uint16_t ofst_variable;
+    // uint16_t sgmt_variable;
+    int16_t value;
+    int16_t width;
+    int16_t percent;
+    
+    // sgmt_variable = p_fields[field_num].Param2
+    // ofst_variable = p_fields[field_num].Param6
+    value = *p_fields[field_num].variable;
+
+    width = (p_fields[field_num].max_value - p_fields[field_num].min_value);
+
+    percent = ((((value - p_fields[field_num].min_value) * 100) / width) + 5);
+
+    if(percent > 100)
+    {
+        value = p_fields[field_num].Param1;
+    }
+    else
+    {
+        bar_value = ((percent * width) / 100);
+        value = (p_fields[field_num].min_value + bar_value);
+    }
+
+    if(p_fields[field_num].Param1 < value)
+    {
+        value = p_fields[field_num].Param1;
+    }
+
+    *p_fields[field_num].variable = value;
+
+}
+
+// WZD s34p56
+// GUI_SlideDown();
+// 1oom  uiobj_slider_minus()
+/*
+    function (0 bytes) Decrement_Scroll_Bar
+    Address: 01:00115AC0
+        Num params: 1
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) field_num
+            signed integer (2 bytes) percent
+            signed integer (2 bytes) width
+            signed integer (2 bytes) bar_value
+            signed integer (4 bytes) value
+*/
+void Decrement_Scroll_Bar(int16_t field_num)
+{
+    int32_t bar_value;
+    // uint16_t ofst_variable;
+    // uint16_t sgmt_variable;
+    int16_t value;
+    int16_t width;
+    int16_t percent;
+    
+    // sgmt_variable = p_fields[field_num].Param2
+    // ofst_variable = p_fields[field_num].Param6
+    value = *p_fields[field_num].variable;
+
+    width = (p_fields[field_num].Param4 - p_fields[field_num].Param3);
+
+    percent = ((((value - p_fields[field_num].Param3) * 100) / width) - 5);
+
+    if(percent < 0)
+    {
+        value = p_fields[field_num].Param0;
+    }
+    else
+    {
+        bar_value = ((percent * width) / 100);
+        value = (p_fields[field_num].Param3 + bar_value);
+    }
+
+    if(p_fields[field_num].Param0 > value)
+    {
+        value = p_fields[field_num].Param0;
+    }
+
+    *p_fields[field_num].variable = value;
+
+}
+
+
+// WZD s36p57
+/*
+MoO1
     fields_count = 1;
     down_mouse_button = ST_UNDEFINED;
-    // focused_field = ST_UNDEFINED;
-    // mouse_field = ST_FALSE;
+    uiobj_clicked_oi = 0;
+
+MoO2
+    fields_count = 1;
+    input_delay = 0;
+    down_mouse_button = ST_UNDEFINED;
+    auto_input_variable = 0;
     input_field_active = ST_FALSE;
     active_input_field_number = ST_UNDEFINED;
+    multi_hotkey_active_field = ST_FALSE;
+    Mouse_Buffer();
+    Mouse_Buffer2();
+*/
+/*
 
+*/
+void Clear_Fields(void)
+{
+    fields_count = 1;
+    down_mouse_button = ST_UNDEFINED;
+    auto_input_variable = 0;
+    input_field_active = ST_FALSE;
+    active_input_field_number = ST_UNDEFINED;
+}
+
+// WZD s36p58
+// UU_GUI_NoSelectColor();
+
+// WZD s36p59
+// UU_GUI_ScrollableTxtDlg();
+
+// WZD s36p60
+// GUI_CreateTextDialog();
+
+// WZD s36p61
+// UU_GUI_NoMouseHighlight();
+
+// WZD s36p62
+/*
+; moves the currently selected dialog option up or down
+; if possible, along with the mouse pointer, and sets
+; the control state variable accordingly
+*/
+int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction)
+{
+    int16_t itr_fields_count;
+    int16_t field_idx;  // _SI_
+    int16_t scanned_field;  // _DI_
+
+    scanned_field = Scan_Input();
+
+    field_idx = scanned_field;
+
+
+
+
+
+    return field_idx;
 }
 
 
 // WZD s36p63
-// drake178: GUI_SetLastControl()
 // MoO2  Module: fields  Clear_Fields_Above()
 void Clear_Fields_Above(int16_t field_num)
 {
@@ -584,11 +982,23 @@ void Clear_Fields_Above(int16_t field_num)
 
 
 // WZD s36p64
+int16_t Get_Field_Counter(void)
+{
+    return fields_count;
+}
 
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 // INPUT  void Init_Mouse_Keyboard(int16_t input_type);
 
+// WZD s36p68
+// UU_Get_Input_Delay();
+
+// WZD s36p69
+// UU_GUI_ClearSelectable();
+
+// WZD s36p70
+// UU_GUI_SetSelectable();
 
 
 /*
@@ -619,8 +1029,16 @@ void Draw_Fields()
     int16_t old_windows_x2;
     int16_t old_windows_y1;
     int16_t old_windows_y2;
-    int16_t itr_fields_count;
-    int16_t itr_help_list_count;
+    int16_t Text_Change;
+    int16_t State_Pointer1;
+    int16_t State_Pointer2;
+    int16_t bar_position;
+    int16_t Half_V_Spacing;
+    int16_t Half_Font_Height;
+    int16_t itr_fields_count;  // _SI_
+    int16_t itr_help_list_count;  // _SI_
+    int16_t itr_continuous_string;  // _DI_
+    int16_t IDK_InputField_ShadowType;  // _AX_ ... DNE in MoM Dasm, but in MoO2 Dasm
 
     old_windows_x1 = screen_window_x1;
     old_windows_x2 = screen_window_x2;
@@ -631,10 +1049,9 @@ void Draw_Fields()
 
     Set_Page_Off();
 
-
     for(itr_fields_count = 1; itr_fields_count < fields_count; itr_fields_count++)
     {
-        if( (down_mouse_button == itr_fields_count) && (p_fields[itr_fields_count].type != ft_Input) && (p_fields[itr_fields_count].type != ft_Grid) )
+        if((down_mouse_button == itr_fields_count) && (p_fields[itr_fields_count].type != ft_Input) && (p_fields[itr_fields_count].type != ft_Grid))
         {
             Draw_Field(itr_fields_count, 1);
         }
@@ -646,8 +1063,6 @@ void Draw_Fields()
             {
                 case ft_Button:                 /*  0  0x00 */  // drake178: TODO
                 {
-                    // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Button");
-
                     Draw_Field(itr_fields_count, 0);
 
                 } break;
@@ -665,7 +1080,24 @@ void Draw_Fields()
                 } break;
                 case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
                 {
+                    if(down_mouse_button != itr_fields_count)
+                    {
+                        Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
 
+                        if (p_fields[itr_fields_count].fill_color != 0)
+                        {
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                        }
+
+                        if(p_fields[itr_fields_count].justification != 0)
+                        {
+                            // Print_Right(p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+                        }
+                        else
+                        {
+                            // Print(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+                        }
+                    }
                 } break;
                 case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
                 {
@@ -673,7 +1105,10 @@ void Draw_Fields()
                 } break;
                 case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
                 {
-
+                    // ~== MoO2  Module: fields  Find_Bar_Position()
+                    bar_position = *p_fields[itr_fields_count].variable;
+                    SETRANGE(bar_position, p_fields[itr_fields_count].min_valid, p_fields[itr_fields_count].max_valid);
+                    *p_fields[itr_fields_count].variable = bar_position;
                 } break;
                 case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
                 {
@@ -693,19 +1128,120 @@ void Draw_Fields()
                 } break;
                 case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
                 {
+                    if(active_input_field_number == itr_fields_count)
+                    {
+                        IDK_InputField_ShadowType = p_fields[itr_fields_count].shadow;
+                        if(IDK_InputField_ShadowType == -1)
+                        {
+                            Set_Font_Style_Shadow_Down(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
+                        else if(IDK_InputField_ShadowType == 1)
+                        {
+                            Set_Font_Style_Shadow_Up(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
+                        else
+                        {
+                            Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
 
+                        Set_Highlight_Colors_On();
+
+                        if(p_fields[itr_fields_count].fill_color != 0)
+                        {
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                        }
+                        
+                        Text_Change = ST_FALSE;
+                        if((GUI_EditAnimStage / 2) != GUI_EditCursorOn)
+                        {
+                            Text_Change = ST_TRUE;
+                        }
+                        GUI_EditCursorOn = (GUI_EditAnimStage / 2);
+                        GUI_EditAnimStage++;
+                        if(GUI_EditAnimStage > 3)
+                        {
+                            GUI_EditAnimStage = 0;
+                        }
+
+                        if(Text_Change != ST_FALSE)
+                        {
+                            if(GUI_EditCursorOn != 0)
+                            {
+                                itr_continuous_string = 0;
+                                while(
+                                    (continuous_string[itr_continuous_string] != '\0')
+                                    &&
+                                    (itr_continuous_string < p_fields[itr_fields_count].max_characters)
+                                )
+                                {
+                                    itr_continuous_string++;
+                                }
+                                if((p_fields[itr_fields_count].max_characters - 1) > itr_continuous_string)
+                                {
+                                    strcat(continuous_string, GUI_EditCursor);  // "_"
+                                }
+                            }
+                            else
+                            {
+                                itr_continuous_string = 0;
+                                while(
+                                    (continuous_string[itr_continuous_string] != '_')
+                                    &&
+                                    (itr_continuous_string < p_fields[itr_fields_count].max_characters)
+                                )
+                                {
+                                    itr_continuous_string++;
+                                }
+                                continuous_string[itr_continuous_string] = '\0';
+                            }
+                        }
+
+                        if(p_fields[itr_fields_count].marker_picture != ST_NULL)
+                        {
+                            FLIC_Draw(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].marker_picture);
+                        }
+
+                        Print((p_fields[itr_fields_count].x1 + 10), p_fields[itr_fields_count].y1, continuous_string);
+
+                        Set_Normal_Colors_On();
+
+                    }
+                    else
+                    {
+                        IDK_InputField_ShadowType = p_fields[itr_fields_count].shadow;
+                        if(IDK_InputField_ShadowType == -1)
+                        {
+                            Set_Font_Style_Shadow_Down(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
+                        else if(IDK_InputField_ShadowType == 1)
+                        {
+                            Set_Font_Style_Shadow_Up(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
+                        else
+                        {
+                            Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_normal_color, p_fields[itr_fields_count].font_highlight_color, ST_NULL);
+                        }
+
+                        if(p_fields[itr_fields_count].fill_color != 0)
+                        {
+                            Fill(p_fields[itr_fields_count].x1, p_fields[itr_fields_count].y1, p_fields[itr_fields_count].x2, p_fields[itr_fields_count].y2, p_fields[itr_fields_count].fill_color);
+                        }
+
+                        Print((p_fields[itr_fields_count].x1 + 10), p_fields[itr_fields_count].y1, p_fields[itr_fields_count].string);
+
+                        
+                    }
                 } break;
                 case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
                 {
-                    // DLOG("switch(p_fields[itr_fields_count].type)  case ft_Grid");
-                    
+                    // N/A; Manually Excluded
                 } break;
 
             }
 
         }
 
-        if( (DBG_ControlHighlight != ST_FALSE) && (p_fields[itr_fields_count].type != ft_MultiHotKey) )
+        if( (field_box_mode != ST_FALSE) && (p_fields[itr_fields_count].type != ft_MultiHotKey) )
         {
             /*
                 Draw Rectangle
@@ -727,7 +1263,7 @@ void Draw_Fields()
     }
 
 
-// TODO      if( (DBG_HelpHighlight != ST_FALSE) && (help_list_count != 0) )
+// TODO      if( (help_box_mode != ST_FALSE) && (help_list_count != 0) )
 // TODO      {
 // TODO          for(itr_help_list_count = 1; itr_help_list_count < help_list_count; itr_help_list_count++)
 // TODO          {
@@ -777,58 +1313,31 @@ signed integer (2 bytes) temp_value
 // ¿ Is the code here for `case ft_Grid` the same as in Scan_Input() ?
 
 // WZD s36p72
+/*
+
+up_down_flag    {0: Up, 1: Down}  ~== Down: {F,T}
+
+*/
 void Draw_Field(int16_t field_num, int16_t up_down_flag)
 {
-// Half_V_Spacing= word ptr -4
     int16_t Half_Font_Height;
-
-    int16_t screen_x;  // ~ Pointer_X()
-    int16_t screen_y;  // ~ Pointer_Y()
-    // ~ translate screen coordinates to field coordinates
-    int16_t field_x;  // field_x = screen_x - p_fields[].x1
-    int16_t field_y;  // field_y = screen_y - p_fields[].y1
-    // ~ translate field coordinates to grid coordinates  (from pixels to squares)
-    int16_t grid_x;  // grid_x = field_x % box_width
-    int16_t grid_y;  // grid_y = field_y % box_height
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Draw_Field()\n", __FILE__, __LINE__);
-// #endif
+    int16_t screen_x;
+    int16_t screen_y;
+    int16_t field_x;
+    int16_t field_y;
+    int16_t grid_x;
+    int16_t grid_y;
 
     switch(p_fields[field_num].type)
     {
         case ft_Button:                 /*  0  0x00 */  // drake178: TODO
         {
-            // DLOG("switch(p_fields[field_num].type) case ft_Button");
-
-// Old-Code: .\MoM_Rasm\_s34p71c.c
-// #ifdef STU_DEBUG
-//                 dbg_prn("DEBUG: [%s, %d] case Ctrl_ClickButton\n", __FILE__, __LINE__);
-// #endif
-//                 FLIC_Reset_CurrentFrame(p_fields[field_num].Param5);
-//                 // FLIC_Draw_XY(p_fields[field_num].Left, p_fields[field_num].Top, p_fields[field_num].Param5);
-//                 FLIC_Draw(p_fields[field_num].Left, p_fields[field_num].Top, (SAMB_ptr)MK_FP(p_fields[field_num].Param5,0));
-//                 VGA_SetFont(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
-//                 Half_Font_Height = ( (VGA_GetFontHeight() - 1) / 2);
-//                 VGA_DrawCentered(
-//                     ((p_fields[field_num].Right - p_fields[field_num].Left) + p_fields[field_num].Left),
-//                     (((p_fields[field_num].Bottom - p_fields[field_num].Top) / 2) + p_fields[field_num].Top - Half_Font_Height),
-//                     p_fields[field_num].Param0
-//                 );
             if(up_down_flag == 0)  /* up */
             {
-                // DLOG("(up_down_flag == 0)");
-
                 FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
-
-                Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
-                Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
-                // Print_Centered(
-                //     ((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1),
-                //     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
-                //     (char *)p_fields[field_num].string
-                // );
+                Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, ST_NULL, ST_NULL);
+                Half_Font_Height = ((Get_Font_Height() - 1) / 2);
                 Print_Centered(
                     (((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1),
                     (((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height),
@@ -837,35 +1346,24 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             }
             else
             {
-                // DLOG("(up_down_flag != 0)");
-
                 if(p_fields[field_num].Param3 == 0)  /* FullFrames */
                 {
-                    // DLOG("(p_fields[field_num].Param3 == 0)");
                     FLIC_Reset_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg);
                     FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
                 }
                 else
                 {
-                    // DLOG("(p_fields[field_num].Param3 != 0)");
                     FLIC_Set_CurrentFrame((SAMB_ptr)p_fields[field_num].pict_seg, 1);
                 }
                 FLIC_Draw(p_fields[field_num].x1, p_fields[field_num].y1, (SAMB_ptr)p_fields[field_num].pict_seg);
-
-                Set_Font(p_fields[field_num].Font_Index, p_fields[field_num].ColorSet1, 0, 0);
-                Half_Font_Height = ( (Get_Font_Height() - 1) / 2);
-                // Print_Centered(
-                //     (((p_fields[field_num].x2 - p_fields[field_num].x1) + p_fields[field_num].x1) + down_x),
-                //     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
-                //     (char *)p_fields[field_num].string
-                // );
+                Set_Font_Style(p_fields[field_num].font_style_num, p_fields[field_num].font_normal_color, ST_NULL, ST_NULL);
+                Half_Font_Height = ((Get_Font_Height() - 1) / 2);
                 Print_Centered(
                     ((((p_fields[field_num].x2 - p_fields[field_num].x1) / 2) + p_fields[field_num].x1) + down_x),
                     ((((p_fields[field_num].y2 - p_fields[field_num].y1) / 2) + p_fields[field_num].y1 - Half_Font_Height) + down_y),
                     (char *)p_fields[field_num].string
                 );
             }
-
         } break;
         case ft_RadioButton:            /*  1  0x01 */  // drake178: ToggleButton
         {
@@ -881,23 +1379,26 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
-
+            // TODO  GUI_EditBoxControl(field_num);
         } break;
         case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {
-
+            // default
         } break;
         case ft_Scroll:                 /*  6  0x06 */  // drake178: SlideBar
         {
-
+            if(up_down_flag == 1)
+            {
+                Find_Bar_Position(field_num);
+            }
         } break;
         case ft_HotKey:                 /*  7  0x07 */  // drake178: Label
         {
-
+            // default
         } break;
         case ft_MultiHotKey:            /*  8  0x08 */  // drake178: Ctrl_AltString
         {
-
+            // default
         } break;
         case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
         {
@@ -909,42 +1410,12 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_ContinuousStringInput:  /* 11  0x0B */  // drake178: EditSelect
         {
-
+            // default
         } break;
         case ft_Grid:                   /* 12  0x0C */  // drake178: TODO
         {
-            // DLOG("switch(p_fields[field_num].type) case ft_Grid");
             if(up_down_flag == 1)  /* ¿ field up/down state: down ? */
             {
-                // DLOG("(up_down_flag == 1)");
-
-                /*
-                    What it is, what is what, what is up?
-
-                        Get the x,y coordinates relative to the field
-                        ~ translate screen coordinates to field coordinates
-                            field_x = Pointer_X() - p_fields[].x1
-                            field_y = Pointer_Y() - p_fields[].y1
-
-                        ~ translate field coordinates to grid coordinates
-                            grid_x = field_x % box_width
-                            grid_y = field_y % box_height
-                        
-
-                    e.g.,
-                        Movement Map Grid Field
-                                                                 (xmin, ymin, box_width, box_height, horizontal_count, vertical_count, *xpos, *ypos, help)
-                            _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_y, &_main_map_grid_x, ST_UNDEFINED);
-                                p_fields[].x1 =  0
-                                p_fields[].y1 = 20
-                                p_fields[].x2 = 239 = (240 - 1) = (240 +  0 - 1) = ((20 * 12) +  0 - 1) = (box_width  * horizontal_count) + xmin - 1;
-                                p_fields[].y2 = 199 = (200 - 1) = (180 + 20 - 1) = ((18 * 10) + 20 - 1) = (box_height * vertical_count  ) + ymin - 1;
-                                p_fields[].Param1 = 20  box_width
-                                p_fields[].Param2 = 18  box_height
-                                p_fields[].Param3 = memory address of _main_map_grid_x
-                                p_fields[].Param4 = memory address of _main_map_grid_y
-                */
-
                 screen_x = Pointer_X();
                 screen_y = Pointer_Y();
                 // ~ translate screen coordinates to field coordinates
@@ -953,101 +1424,34 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
                 // ~ translate field coordinates to grid coordinates  (from pixels to squares)
                 grid_x = field_x / p_fields[field_num].Param1;  // always 12  box_width
                 grid_y = field_y / p_fields[field_num].Param2;  // always 10  box_height
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: field_num: %d\n", __FILE__, __LINE__, field_num);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].type: %d\n", __FILE__, __LINE__, p_fields[field_num].type);
-// 
-//     dbg_prn("DEBUG: [%s, %d]: screen_x: %d\n", __FILE__, __LINE__, screen_x);
-//     dbg_prn("DEBUG: [%s, %d]: screen_y: %d\n", __FILE__, __LINE__, screen_y);
-//     
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].x1: %d\n", __FILE__, __LINE__, p_fields[field_num].x1);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].y1: %d\n", __FILE__, __LINE__, p_fields[field_num].y1);
-//     
-//     dbg_prn("DEBUG: [%s, %d]: field_x: %d\n", __FILE__, __LINE__, field_x);
-//     dbg_prn("DEBUG: [%s, %d]: field_y: %d\n", __FILE__, __LINE__, field_y);
-// 
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param1: %d\n", __FILE__, __LINE__, p_fields[field_num].Param1);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param2: %d\n", __FILE__, __LINE__, p_fields[field_num].Param2);
-// 
-//     dbg_prn("DEBUG: [%s, %d]: grid_x: %d\n", __FILE__, __LINE__, grid_x);
-//     dbg_prn("DEBUG: [%s, %d]: grid_y: %d\n", __FILE__, __LINE__, grid_y);
-// 
-//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: %d\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: %d\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-//     // dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%02X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param3: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param3);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[field_num].Param4: 0x%08X\n", __FILE__, __LINE__, p_fields[field_num].Param4);
-// 
-//     // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param3);
-//     // dbg_prn("DEBUG: [%s, %d]: (int16_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int16_t *)p_fields[field_num].Param4);
-//     dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param3: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param3);
-//     dbg_prn("DEBUG: [%s, %d]: (int64_t *)p_fields[field_num].Param4: %p\n", __FILE__, __LINE__, (int64_t *)p_fields[field_num].Param4);
-// 
-//     // ~ get the value in Param3, as an unsigned 2-byte value, treat it as a pointer to a signed 2-byte value
-//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
-//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
-//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
-//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
-//     // ¿ should show addresses of _main_map_grid_x and _main_map_grid_y, correct?
-// 
-// #endif
-
-            // ¿ same code as in Add_Grid_Field() ?
-            // NO!! Here, assigning value, there assigning memory address
-
-            // ~ access Param3/4 as an unsigned 2-byte value, treat that value as a pointer to a signed 2-byte value, dereference that pointer to assign a signed 2-byte value
-            // *( (int16_t *) ( (uint16_t) p_fields[field_num].Param3 ) ) = grid_x;
-            // *( (int16_t *) ( (uint16_t) p_fields[field_num].Param4 ) ) = grid_y;
-            *((int64_t *)p_fields[field_num].Param3) = grid_x;
-            *((int64_t *)p_fields[field_num].Param4) = grid_y;
-
-// #ifdef STU_DEBUG
-//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param3) ) );
-//     // dbg_prn("DEBUG: [%s, %d]: *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ): %d\n", __FILE__, __LINE__, *( (int16_t *) ((uint16_t)p_fields[field_num].Param4) ) );
-//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param3): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param3));
-//     dbg_prn("DEBUG: [%s, %d]: *((int64_t *)p_fields[field_num].Param4): %d\n", __FILE__, __LINE__, *((int64_t *)p_fields[field_num].Param4));
-// #endif
-
+                // ¿ same code as in Add_Grid_Field() ?
+                // NO!! Here, assigning value, there assigning memory address
+                // ~ access Param3/4 as an unsigned 2-byte value, treat that value as a pointer to a signed 2-byte value, dereference that pointer to assign a signed 2-byte value
+                // *( (int16_t *) ( (uint16_t) p_fields[field_num].Param3 ) ) = grid_x;
+                // *( (int16_t *) ( (uint16_t) p_fields[field_num].Param4 ) ) = grid_y;
+                *((int64_t *)p_fields[field_num].Param3) = grid_x;
+                *((int64_t *)p_fields[field_num].Param4) = grid_y;
             }
         } break;
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Draw_Field()\n", __FILE__, __LINE__);
-// #endif
 }
 
 // WZD s36p73
 void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
 {
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Push_Field_Down()\n", __FILE__, __LINE__);
-// #endif
 
-
-    if( (mouse_x >= 0) && (mouse_x < SCREEN_WIDTH) && (mouse_y >= 0) && (mouse_y < SCREEN_HEIGHT) )
+    if( (mouse_x < 0) || (mouse_x >= SCREEN_WIDTH) || (mouse_y < 0) || (mouse_y >= SCREEN_HEIGHT) )
     {
-        // DONT  if(mouse_installed != ST_FALSE)
-        // DONT  {
-        // DONT      Restore_Mouse_On_Page();
-        // DONT      VGA_SetDirectDraw();
-        // DONT      down_mouse_button = field_num;
-        // DONT      Draw_Field(field_num, 1);
-        // DONT      down_mouse_button = -1;
-        // DONT      VGA_Set_DSP_Addr();
-        // DONT      Save_Mouse_On_Page(mouse_x, mouse_y);
-        // DONT      Draw_Mouse_On_Page(mouse_x, mouse_y);
-        // DONT      Set_Pointer_Position(mouse_x, mouse_y);
-        // DONT  } else {
+        return;
+    }
 
+    if(mouse_installed)
+    {
         Save_Mouse_State();
-
         if(field_num != down_mouse_button)
         {
-
             if(down_mouse_button != ST_UNDEFINED)
             {
                 /*
@@ -1055,83 +1459,60 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
                 */
                 if(down_mouse_button != field_num)
                 {
-
                     Restore_Mouse_On_Page();
-
-                    /*
-                        Yay/Nay Redraw Previous
-                        Yay:
-                            Fall-Through:
-                                previous control is not Ctrl_MStateButton
-                                previous control is Ctrl_MStateButton but current control is not Ctrl_MStateButton
-                                previous control is Ctrl_DialogLine and current control is Ctrl_DialogLine
-                                current control is Selectable
-
-                        Nay:
-                            previous control is Ctrl_MStateButton but current control is not Ctrl_MStateButton
-                            previous control is Ctrl_DialogLine but current control is not Ctrl_MStateButton
-                            current control is not Selectable
-
-                    */
-
-                    if( !((p_fields[down_mouse_button].type == ft_MultiButton) && (p_fields[field_num].type != ft_MultiButton)) )
+                    if((p_fields[down_mouse_button].type != ft_MultiButton) || (p_fields[field_num].type == ft_MultiButton))
                     {
-                        if(p_fields[down_mouse_button].type != ft_StringList)
+                        if(
+                            (p_fields[down_mouse_button].type != ft_StringList)
+                            ||
+                            ( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].Selectable != ST_FALSE) )
+                        )
                         {
                             Draw_Field(down_mouse_button, 0);
                         }
-                        else
-                        {
-                            if( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].Selectable != ST_FALSE) )
-                            {
-                                Draw_Field(down_mouse_button, 0);
-                            }
-                        }
                     }
-
                     // @@DrawControl:
                     down_mouse_button = field_num;
                     Draw_Field(field_num, 1);
-
                     if(p_fields[field_num].type == ft_Input)
                     {
                         mouse_x = Pointer_X();
                         mouse_y = Pointer_Y();
                     }
-
                     Save_Mouse_On_Page(mouse_x, mouse_y);
                     Draw_Mouse_On_Page(mouse_x, mouse_y);
                     Set_Pointer_Position(mouse_x, mouse_y);
-
                 }
-
             }
-            else
+            else  /* if(down_mouse_button != ST_UNDEFINED) */
             {
                 Restore_Mouse_On_Page();
                 down_mouse_button = field_num;
                 Draw_Field(field_num, 1);
-
-                if(p_fields[field_num].type != ft_Input)
+                if(p_fields[field_num].type == ft_Input)
                 {
                     mouse_x = Pointer_X();
                     mouse_y = Pointer_Y();
                 }
-                
                 Save_Mouse_On_Page(mouse_x, mouse_y);
                 Draw_Mouse_On_Page(mouse_x, mouse_y);
                 Set_Pointer_Position(mouse_x, mouse_y);
-
             }
-
         }
-
         Restore_Mouse_State();
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
-// #endif
+    else  /* if(mouse_installed) */
+    {
+        Restore_Mouse_On_Page();
+        Set_Page_On();
+        down_mouse_button = field_num;
+        Draw_Field(field_num, 1);
+        down_mouse_button = ST_UNDEFINED;
+        Set_Page_Off();
+        Save_Mouse_On_Page(mouse_x, mouse_y);
+        Draw_Mouse_On_Page(mouse_x, mouse_y);
+        Set_Pointer_Position(mouse_x, mouse_y);
+    }
 }
 
 
@@ -1223,10 +1604,6 @@ void Invoke_Auto_Function(void)
 
 
 // WZD s36p82
-// drake178: 
-// AKA SCRN_Redraw_WaitOne
-// AKA GUI_Redraw_WaitOne()
-// AKA GUI_1TickRedraw()
 // MoO2  Module: fields  Quick_Call_Auto_Function()
 void Quick_Call_Auto_Function(void)
 {

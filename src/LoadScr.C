@@ -8,7 +8,7 @@
 WZD
     Load_Screen
     Load_Screen_Draw
-    Load_Screen_Help
+    Set_Load_Screen_Help_List
     Loaded_Game_Update
 MGC
     Load_Screen
@@ -18,73 +18,48 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "MoX.H"
-#include "LoadScr.H"
-#include "MainScr.H"
-#include "MainScr_Maps.H"
-
-
-
-
-
-// WZD dseg:60D1 1B 00                                           cnst_HOTKEY_Esc1B db 1Bh,0              ; DATA XREF: OVL_RazeCityDialog+155o
-// WZD dseg:60D1                                                                                         ; should use dseg:2c56
-// WZD dseg:60D3 00                                              align 2
-// WZD dseg:60D4 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_loadsave s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
-struct s_mouse_list mouse_list_loadsave[1] = {
-    {1, 0, 0, 0, 319, 199}
-};
-
-// WZD dseg:60D4                                                                                         ; DATA XREF: Settings_Screen+112o ...
-// WZD dseg:60D4                                                                                         ; should use Normal_Fullscreen
-// WZD dseg:60E0 FF FF                                           loadsave_settings_flag dw -1            ; DATA XREF: Settings_Screen+39Fr ...
-// WZD dseg:60E0                                                                                         ; 3 indicates returning from the settings screen
-
-
-// WZD dseg:60E0
-int16_t loadsave_settings_flag = ST_UNDEFINED;
-
-
-
-
+#include "MoM.H"
 
 /*
-                                            ¿ BEGIN: ovr160 - Initialized Data  LOADSAVE ?
+    Settings.C
 */
+// WZD dseg:60D4
+extern struct s_mouse_list mouse_list_loadsave[1];
+// WZD dseg:60E0
+extern int16_t loadsave_settings_flag;
+// WZD dseg:C9B0
+extern int16_t loadsave_ok_button;
+// WZD dseg:C9B8
+extern int16_t load_screen_fade_in_flag;
+
+
+
+// WZD dseg:712C                                                 BEGIN:  ovr160 - Strings  (LOADSAVE)
+
 // WZD dseg:712C
-char load_lbx_file[] = "LOAD.LBX";
+char load_lbx_file__ovr160[] = "LOAD.LBX";
 
 // WZD dseg:7134
-// char cnst_ZeroString_22[] = "";
-int16_t cnst_ZeroString_22 = 0;
-
+char str_empty_string__ovr160[] = "";
 // WZD dseg:7135
 char cnst_SAVE3[] = "SAVE";
-
 // WZD dseg:713A
 char cnst_SAVE_ext3[] = ".GAM";
-
 // WZD dseg:713F
 char cnst_HOTKEY_Esc22 = '\x1B';
 
 // WZD dseg:7141 4D 41 47 49 43 2E 45 58 45 00                   cnst_MAGIC_EXE_File3 db 'MAGIC.EXE',0   ; DATA XREF: Load_Screen+3D1o
-// WZD dseg:7141                                                                                         ; should use dseg:51f4
 // WZD dseg:714B 4A 45 4E 4E 59 00                               cnst_MAGICEXE_arg0_3 db 'JENNY',0       ; DATA XREF: Load_Screen+3CDo
-// WZD dseg:714B                                                                                         ; should use dseg:51fe
 
 // WZD dseg:7151
 char load_screen_copyright[] = "Copyright  Simtex Software, 1995   V1.31";
 
 // WZD dseg:717A
-char cnst_HLPENTRY_File8[] = "hlpentry.lbx";
+char hlpentry_lbx_file__ovr160[] = "hlpentry.lbx";
 
-// WZD dseg:7187 00                                              db    0
+// WZD dseg:7187 00                                              align 2
 
-/*
-                                            ¿ END: ovr160 - Initialized Data  LOADSAVE ?
-*/
-
-
+// WZD dseg:7187                                                 END:  ovr160 - Strings  (LOADSAVE)
 
 
 
@@ -108,14 +83,14 @@ int16_t loadsave_settings_button;
 // WZD dseg:C992                                                 ; unsigned int IMG_GUI_ChkBoxYes
 // WZD dseg:C992 00 00 00 00 00 00                               IMG_GUI_ChkBoxYes@ dw 3 dup(     0)     ; DATA XREF: Settings_Screen+66w ...
 // WZD dseg:C992                                                                                         ; array of 3 images appended into the sandbox
-// WZD dseg:C998 00 00                                           GUI_Settings_Offset dw 0                ; DATA XREF: Settings_Screen:loc_A90CCw ...
+// WZD dseg:C998 00 00                                           magic_set_ptr dw 0                ; DATA XREF: Settings_Screen:loc_A90CCw ...
 
 // WZD dseg:C99A
 SAMB_ptr save_inactive;
 
 // WZD dseg:C99C
 // AKA IDK_SaveSlots_Array
-int16_t save_game_slots[8];
+int16_t save_game_slots[NUM_SAVE_SLOTS];
 
 // WZD dseg:C9AC
 int16_t loadsave_save_button;
@@ -124,7 +99,7 @@ int16_t loadsave_save_button;
 int16_t loadsave_quit_button;
 
 // WZD dseg:C9B0
-int16_t loadsave_ok_button;
+// Settings.C  int16_t loadsave_ok_button;
 
 // WZD dseg:C9B2
 int16_t selected_load_game_slot_idx;
@@ -136,7 +111,7 @@ int16_t selected_save_game_slot_idx;
 int16_t loadsave_load_button;
 
 // WZD dseg:C9B8
-int16_t load_screen_fade_in_flag;  // ; set to 0 on entering the settings screen
+// Settings.C  int16_t load_screen_fade_in_flag;  // ; set to ST_FALSE on entering the settings screen
 
 // WZD dseg:C9BA
 SAMB_ptr load_inactive;
@@ -151,7 +126,7 @@ int16_t save_game_count;
 SAMB_ptr settings_button;
 
 // WZD dseg:C9C2
-SAMB_ptr text_fill;
+SAMB_ptr loadsave_text_fill_seg;
 
 // WZD dseg:C9C4
 SAMB_ptr ok_active;
@@ -195,41 +170,20 @@ SAMB_ptr save_active;
 void GAME_NextHumanStack(void)
 {
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: GAME_NextHumanStack()\n", __FILE__, __LINE__);
-#endif
-
-
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
-
 
     OVL_Action_XPos = ST_UNDEFINED;
     OVL_Action_YPos = ST_UNDEFINED;
 
-
-    // ; recalculates the visibility arrays for both planes
-    // ; after clearing them entirely, and marks contacted
-    // ; players accordingly if they haven't been already
     Update_Scouted_And_Contacted();
-
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
-
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
-
-    // ; recalculates the visibility arrays for both planes
-    // ; after clearing them entirely, and marks contacted
-    // ; players accordingly if they haven't been already
     Update_Scouted_And_Contacted();
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: GAME_NextHumanStack()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -242,30 +196,21 @@ void GAME_NextHumanStack(void)
 // WZD o160p01
 void Load_Screen(void)
 {
-    char found_file[20];
+    char found_file[LEN_FILE_NAME];
     char buffer2[16];
     char match_string[16];
-    int16_t save_slot_fields[8];
-    int16_t loaded_game_flag;
+    int16_t save_slot_fields[NUM_SAVE_SLOTS];
+    int16_t loaded_game_flag;  // DNE in MGC
     int16_t first_draw_done_flag;
-// Left= word ptr -0Ah
     int16_t x_start;
-    int16_t y_start;
     int16_t input_field_idx;
     int16_t hotkey_ESC;
-// var_4= word ptr -4
-    int16_t leave_screen_flag;
-    int16_t itr;
-    int16_t itr_save_slot_input_field_array;
-
-    int16_t itr_save_slot_fields;
     int16_t itr_save_game_count;
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen()\n", __FILE__, __LINE__);
-#endif
+    int16_t leave_screen_flag;
+    int16_t itr_save_slot_fields;  // _SI_
+    int16_t y_start;  // _DI_
+    int16_t itr;  // _SI_
+    int16_t itr_save_slot_input_field_array;  // _SI_
 
     loaded_game_flag = ST_FALSE;
 
@@ -274,45 +219,51 @@ void Load_Screen(void)
     // TODO: maybe, someday, come to terms with the way this logic looks in the Dasm. Pretty sure it's testing for a specific/known valid value and resetting on anything else
     if(loadsave_settings_flag != 3)  /* 3 indicates returning from the settings screen */
     {
-        DLOG("(loadsave_settings_flag != 3)");
         Fade_Out();
-        Fill(0, 0, 319, 199, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_On();
-        Fill(0, 0, 319, 199, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_Off();
         Load_Palette(1, -1, 0);  // LOADSAVE - load save palette
     }
     else
     {
-        // if(loadsave_settings_flag != 3)
-        // {
-        //     loadsave_settings_flag = ST_UNDEFINED;
-        // }
         loadsave_settings_flag = ST_UNDEFINED;
     }
 
-    loadsave_background = LBX_Reload(load_lbx_file,  0, _screen_seg);
-    quit_active         = LBX_Reload_Next(load_lbx_file,  2, _screen_seg);
-    load_active         = LBX_Reload_Next(load_lbx_file,  1, _screen_seg);
-    save_active         = LBX_Reload_Next(load_lbx_file,  3, _screen_seg);
-    ok_active           = LBX_Reload_Next(load_lbx_file,  4, _screen_seg);
+    // LOAD.LBX, 000  LOADSAVE    Load & Save back
+    // LOAD.LBX, 001  LOADSAVE    Load active
+    // LOAD.LBX, 002  LOADSAVE    Quit active
+    // LOAD.LBX, 003  LOADSAVE    Save active
+    // LOAD.LBX, 004  LOADSAVE    Ok   active
+    // LOAD.LBX, 005  LOAD_BUT    Load inactive
+    // LOAD.LBX, 006  LOAD_BUT    Quit inactive
+    // LOAD.LBX, 007  LOAD_BUT    Save inactive
+    // LOAD.LBX, 008  LOAD_BUT    Ok   inactive
+    // LOAD.LBX, 009  LOADSAVE    Text Fill
+    // LOAD.LBX, 010  LOADBACK    selection marker
+    // LOAD.LBX, 011  SETTING2    Settings Backgrnd
+    // LOAD.LBX, 012  LOADSAVE    Settings button
 
+    loadsave_background     = LBX_Reload(     load_lbx_file__ovr160,  0, _screen_seg);
+    quit_active             = LBX_Reload_Next(load_lbx_file__ovr160,  2, _screen_seg);
+    load_active             = LBX_Reload_Next(load_lbx_file__ovr160,  1, _screen_seg);
+    save_active             = LBX_Reload_Next(load_lbx_file__ovr160,  3, _screen_seg);
+    ok_active               = LBX_Reload_Next(load_lbx_file__ovr160,  4, _screen_seg);
     // DNE  Quit inactive
-    load_inactive       = LBX_Reload_Next(load_lbx_file,  6, _screen_seg);
-    save_inactive       = LBX_Reload_Next(load_lbx_file,  7, _screen_seg);
+    load_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  6, _screen_seg);  // WZD uses entry 5 for load_inactive
+    save_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  7, _screen_seg);
     // DNE  Ok   inactive
-
-    text_fill           = LBX_Reload_Next(load_lbx_file,  9, _screen_seg);
-    selection_marker    = LBX_Reload_Next(load_lbx_file, 10, _screen_seg);
-    settings_button     = LBX_Reload_Next(load_lbx_file, 12, _screen_seg);
+    loadsave_text_fill_seg  = LBX_Reload_Next(load_lbx_file__ovr160,  9, _screen_seg);
+    selection_marker        = LBX_Reload_Next(load_lbx_file__ovr160, 10, _screen_seg);
+    settings_button         = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
 
 
     save_game_count = 0;
     
-    for(itr = 1; itr < 9; itr++)
+    for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
         strcpy(match_string, cnst_SAVE3);
-// ¿ #pragma warning(suppress : 4996) ?
         itoa(itr, buffer2, 10);
         strcat(match_string, buffer2);
         strcat(match_string, cnst_SAVE_ext3);
@@ -325,64 +276,43 @@ void Load_Screen(void)
             save_game_slots[save_game_count] = itr;
             save_game_count++;
         }
-
     }
 
 
-        leave_screen_flag = ST_FALSE;
-        selected_load_game_slot_idx = ST_UNDEFINED;  // controls drawing of load_active : load_inactive
-        selected_save_game_slot_idx = ST_UNDEFINED;  // controls drawing of save_active : save_inactive
-        first_draw_done_flag = ST_FALSE;
+    leave_screen_flag = ST_FALSE;    // BUG: set below
+    selected_load_game_slot_idx = ST_UNDEFINED;    // BUG: set below  // controls drawing of load_active : load_inactive
+    selected_save_game_slot_idx = ST_UNDEFINED;  // controls drawing of save_active : save_inactive
+    first_draw_done_flag = ST_FALSE;
 
-        x_start = 43;
-        y_start = 171;
+    x_start = 43;   // ; start X for Quit, Load, Save buttons
+    y_start = 171;  // ; start Y for Quit, Load, Save buttons
 
-        Set_Mouse_List(1, mouse_list_loadsave);
+    Set_Mouse_List(1, mouse_list_loadsave);
 
-        Clear_Fields();
+    Clear_Fields();
 
-        hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
+    hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
 
-        loadsave_quit_button      = Add_Hidden_Field((x_start +   0), y_start, (x_start +  39), (y_start + 13), cnst_ZeroString_22, ST_UNDEFINED);
-        loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), cnst_ZeroString_22, ST_UNDEFINED);
-        loadsave_save_button      = Add_Hidden_Field((x_start + 122), y_start, (x_start + 159), (y_start + 13), cnst_ZeroString_22, ST_UNDEFINED);
-        loadsave_ok_button        = Add_Hidden_Field((x_start + 231), y_start, (x_start + 270), (y_start + 13), cnst_ZeroString_22, ST_UNDEFINED);
-        loadsave_settings_button  = Add_Hidden_Field((x_start + 172), y_start, (x_start + 229), (y_start + 13), cnst_ZeroString_22, ST_UNDEFINED);
+    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
 
-        Set_Font(3, 1, 3, ST_NULL);
+    Set_Font_Style(3, 1, 3, ST_NULL);
 
-//         // ~== MGC
-//         // if previous_screen == scr_Menu_Screen
-//         for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
-//         {
-//             // save_slot_fields[itr_save_slot_fields] = -1000
-//         }
-//         for(itr_save_slot_fields = 0; save_game_count < 8; itr_save_slot_fields++)
-//         {
-//             // save_slot_fields[save_game_slots__[itr_save_slot_fields]] = Add_Hidden_Field(x1_QuitLoadSave, ((save_game_slots__[itr_save_slot_fields] * 15) + 47), (x1_QuitLoadSave + 220), ((save_game_slots__[itr_save_slot_fields] * 15) + 56), cnst_ZeroString_7, -1)
-//         }
-//         
-//         // ~== WZD
-//         for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
-//         {
-//             // drake178: GUI_CreateEditSelect()
-//             // TODO  save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(start_x, (start_y + (itr_save_slot_fields * 15) + 47), 260, magic_set.Save_Names[itr_save_slot_fields * 20], 19, 0, selection_marker, ST_UNDEFINED);
-//         }
-        for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
-        {
-            // TODO  save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (y_start + (itr_save_slot_fields * 15) + 47), 260, magic_set.Save_Names[itr_save_slot_fields], 19, 0, selection_marker, ST_UNDEFINED);
-            save_slot_fields[itr_save_slot_fields] = INVALID_FIELD;
-        }
+    for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
+    {
+        save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED, ST_NULL);
+    }
 
-    // MGC
-    // _settings_button = Add_Hidden_Field(172, y1_QuitLoadSave, 229, (y1_QuitLoadSave + 13), cnst_ZeroString_7, -1);
+    selected_load_game_slot_idx = ST_UNDEFINED;  // BUG: set above
 
+    leave_screen_flag = ST_FALSE;  // BUG: set above
 
+    Assign_Auto_Function(Load_Screen_Draw, 1);
 
-    selected_load_game_slot_idx = ST_UNDEFINED;
-    leave_screen_flag = ST_FALSE;
-    // TODO  Assign_Auto_Function(Load_Screen_Draw, 1);
-    Load_Screen_Help();
+    Set_Load_Screen_Help_List();
 
     while(leave_screen_flag == ST_FALSE)
     {
@@ -398,7 +328,7 @@ void Load_Screen(void)
                 check that slot index against the indices of existing save games
                     if matched, set flag to draw load button
         */
-        for(itr_save_slot_fields = 0; itr_save_slot_fields < 8; itr_save_slot_fields++)
+        for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
         {
             if(save_slot_fields[itr_save_slot_fields] == input_field_idx)
             {
@@ -418,11 +348,10 @@ void Load_Screen(void)
         if(input_field_idx == loadsave_quit_button)
         {
             // ~== current_screen = scr_Main_Menu_Screen
-
             // DONT  loadsave_settings_flag = ST_UNDEFINED;
             // DONT  s01p15_Empty_pFxn();
             // DONT  Save_SAVE_GAM(8);
-            // DONT  GAME_EXE_Swap(cnst_MAGIC_EXE_File3, cnst_MAGICEXE_arg0_3, cnst_ZeroString_22, cnst_ZeroString_22);
+            // DONT  GAME_EXE_Swap("MAGIC.EXE", "JENNY", str_empty_string__ovr160, str_empty_string__ovr160);
 
             loadsave_settings_flag = ST_UNDEFINED;
             Save_SAVE_GAM(8);
@@ -445,6 +374,7 @@ void Load_Screen(void)
             Load_SAVE_GAM(selected_load_game_slot_idx);
             loaded_game_flag = ST_TRUE;
             leave_screen_flag = ST_TRUE;
+            /* HACK */ current_screen = scr_Main_Screen;
         }
 
 
@@ -459,24 +389,22 @@ void Load_Screen(void)
         /*
             Settings Screen
         */
-// TODO         if(input_field_idx == loadsave_settings_button)
-// TODO         {
-// TODO             loadsave_settings_flag = 2;
-// TODO             Settings_Screen();
-// TODO             leave_screen_flag = ST_TRUE;
-// TODO         }
+        if(input_field_idx == loadsave_settings_button)
+        {
+            loadsave_settings_flag = 2;
+            Settings_Screen();
+            leave_screen_flag = ST_TRUE;
+        }
 
 
         if(leave_screen_flag == ST_FALSE)
         {
-            DLOG("(leave_screen_flag == ST_FALSE)");
             Load_Screen_Draw();
             Toggle_Pages();
             if( (load_screen_fade_in_flag != ST_FALSE) && (first_draw_done_flag == ST_FALSE) )
             {
-                DLOG("( (load_screen_fade_in_flag != ST_FALSE) && (first_draw_done_flag == ST_FALSE) )");
                 Copy_On_To_Off_Page();
-                if(loadsave_settings_flag != 3)
+                if(loadsave_settings_flag != 3)  /* ; 3 indicates returning from the settings screen */
                 {
                     Fade_In();
                 }
@@ -490,23 +418,33 @@ void Load_Screen(void)
 // @@LeaveScreen
 
     Clear_Fields();
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Deactivate_Help_List();
 
-    if(loadsave_settings_flag == ST_UNDEFINED)  /* ; 3 indicates returning from the settings screen */
+    // How did I get here?  ...Menu or Main?
+    // But, what if I selected 'Quit'?
+    if(current_screen != scr_Main_Menu_Screen)
     {
-        // current_screen = scr_Main_Screen;
-        // HACK: merge MGC Load_Screen() and WZD Load_Screen()
-        current_screen = previous_screen;
+        if(loadsave_settings_flag == ST_UNDEFINED)
+        {
+            // TODO  WZD vs. MGC
+            // current_screen = scr_Main_Screen;
+            // HACK: merge MGC Load_Screen() and WZD Load_Screen()
+            current_screen = previous_screen;
+        }
+        if (loaded_game_flag == ST_TRUE)
+        {
+            current_screen = scr_Main_Screen;
+        }
     }
 
     if(current_screen == scr_Main_Screen)
     {
         PageFlipEffect = 2;
         Fade_Out();
-        Fill(0, 0, 319, 199, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_On();
-        Fill(0, 0, 319, 199, 0);
+        Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_Off();
         // HERE: set the palette back to the /normal/ palette
         Load_Palette(0, -1, ST_NULL);  // EMPERATO - main game palette
@@ -520,9 +458,6 @@ void Load_Screen(void)
         Loaded_Game_Update();
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Screen()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o160p02
@@ -543,10 +478,6 @@ void Load_Screen_Draw(void)
     int16_t moused_field;
     int16_t itr_save_gam;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
-
     /*
         MGC
             mov     ax, [word ptr COL_SaveLoad1+2]
@@ -566,55 +497,29 @@ void Load_Screen_Draw(void)
     color_array[0] = 34;
     color_array[1] = 43;
 
-    /*
-        MGC
-            current_menu_screen = Auto_Input();
-    */
-    /*
-        WZD
-            moused_field = Auto_Input();
-    */
+    /* MGC  current_menu_screen = Auto_Input(); */
     moused_field = Auto_Input();
-
 
     x_start = 43;
 
     color_array[2] = 171;
 
-
     Set_Page_Off();
-    Fill(0, 0, 319, 199, 0);
 
+    Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 0);
 
-    /*
-        MGC
-            FLIC_Draw(0, 0, _background_seg);
-    */
-    /*
-        WZD
-            FLIC_Draw(0, 0, loadsave_background);
-    */
+    /* MGC  FLIC_Draw(0, 0, _background_seg); */
     FLIC_Draw(0, 0, loadsave_background);
 
-
-    /*
-        MGC
-            Fill( 42, 170, 123, 184, 0);
-            Fill(171, 170, 271, 184, 0);
-    */
-
-    /*
-        WZD
-            Fill( 42, 170, 160, 184, 0);
-            Fill(171, 170, 271, 184, 0);
-    */
+    /* MGC  Fill( 42, 170, 123, 184, 0); */
     Fill( 42, 170, 160, 184, 0);
+
     Fill(171, 170, 271, 184, 0);
 
 
     for(itr_save_gam = 0; itr_save_gam < save_game_count; itr_save_gam++)
     {
-        FLIC_Draw(x_start, (47 + (15 * save_game_slots[itr_save_gam])), text_fill);
+        FLIC_Draw(x_start, (47 + (save_game_slots[itr_save_gam] * 15)), loadsave_text_fill_seg);
     }
 
 
@@ -686,31 +591,18 @@ void Load_Screen_Draw(void)
         FLIC_Draw(231, 171, ok_active);
     }
 
-
     Set_Font_Colors_15(0, &color_array[0]);
-    Print_Centered(160, 193, load_screen_copyright);
-    
+    Print_Centered(160, 193, load_screen_copyright);  // "Copyright  Simtex Software, 1995   V1.31"
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o160p03
-void Load_Screen_Help(void)
+// HLPENTRY.LBX,  26  "Load Screen Help"
+// HLPENTRY.LBX,  27  "Save Screen Help"
+void Set_Load_Screen_Help_List(void)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_Screen_Help()\n", __FILE__, __LINE__);
-#endif
-
-    // TODO  add manifest-constant for help entry record size
-    // TODO  add manifest-constant for help list count
-    LBX_Load_Data_Static(cnst_HLPENTRY_File8, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
-    Set_Help_List(_help_entries, 27);  // TODO  ¿ bug - someone put entry_num instead of help_count ?
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Load_Screen_Help()\n", __FILE__, __LINE__);
-#endif
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr160, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
+    Set_Help_List((char *)&_help_entries[0], 27);  // ¿ BUGBUG - someone put entry_num instead of help_count ?
 }
 
 // WZD o160p04
@@ -719,77 +611,88 @@ void Loaded_Game_Update(void)
     int16_t itr;
     int16_t itr_players;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Loaded_Game_Update()\n", __FILE__, __LINE__);
-#endif
 
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
-    // mov     [GAME_RazeCity], 0
+    GAME_RazeCity = ST_FALSE;
 
-    _human_player_idx = 0;
+    _human_player_idx = HUMAN_PLAYER_IDX;
 
     PageFlipEffect = 0;
     
-    CTY_CatchmentRefresh__NOOP();
+    Reset_City_Area_Bitfields();
 
     GAME_Overland_Init();
 
     Patch_Units_Upkeep_And_Sound();
 
-    // j_LD_CTY_ResRefresh();
+    // DONT  j_LD_CTY_ResRefresh();
+//     ; drake178: LD_CTY_ResRefresh()
+//     ; Legacy Development function, can be removed
+//     ; would update some aspect of some resource on every
+//     ; tile of every catchment area (including corners)
+// call    j_NOOP_Current_Player_All_City_Areas
 
-    // j_LD_MAP_TFUnk40_Eval();           ; not sure what this resource is or would have been, this function enumerates the first five tiles that have it, and records their coordinates
+    // DONT  j_LD_MAP_TFUnk40_Eval();  // drake178: ; not sure what this resource is or would have been, this function enumerates the first five tiles that have it, and records their coordinates
+// call    j_LD_MAP_TFUnk40_Eval           ; not sure what this resource is or would have been,
+//                                         ; this function enumerates the first five tiles that
+//                                         ; have it, and records their coordinates
 
-    // j_CTY_CheckMinFarmers();
+// call    j_CTY_CheckMinFarmers           ; ensures that every city has at least the minimum
+//                                         ; amount of farmers it needs, or can have if there are
+//                                         ; also rebels in it
+
+    All_Colony_Calculations();
 
     _unit_stack_count = 0;
 
-    // j_SND_PlayBkgrndTrack();
+    // TODO  j_SND_PlayBkgrndTrack();
 
     GFX_Swap_Cities();
 
-    // j_CTY_ResetRoadConns();
+    Reset_City_Road_Connection_Bitfields();
 
-    // j_GAME_DeleteDeadUnits();
+    // TODO  j_GAME_DeleteDeadUnits();
 
-    // j_AI_ResetUnitMoves();
+    // TODO  j_AI_ResetUnitMoves();
 
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
-    // for(itr = 1; itr < NUM_PLAYERS; itr++)
-    // {
-    //     TBL_Wizards[itr].Avg_Unit_Value = 0;
-    // }
+    // TODO  for(itr = 1; itr < NUM_PLAYERS; itr++)
+    // TODO  {
+    // TODO      TBL_Wizards[itr].Avg_Unit_Value = 0;
+    // TODO  }
 
-
+    // DEDU  ¿¿¿ WIZ_NextIdleStack() was called above in GAME_Overland_Init() ???
     GAME_NextHumanStack();
 
-    // if(_difficulty = 0 /* "Intro" */) { magic_set.Random_Events = ST_FALSE; }
 
-    // for(itr = 0; itr < 100; itr++)
-    // {
-    //     TBL_OvlMovePathsEMS[itr] = ST_UNDEFINED;
-    // }
-    // CRP_UNIT_OverlandPath = ST_UNDEFINED;
-    // j_CONTX_CreateChains();
-    // j_CONTX_CreateLChains();
-    // for(itr = 0; itr < _num_players; itr++)
-    // {
-    //     AI_CONTX_Reevals[itr] = ST_FALSE;
-    // }
+    if(_difficulty = god_Intro)
+    {
+        magic_set.Random_Events = ST_FALSE;
+    }
+
+
+    // TODO  for(itr = 0; itr < 100; itr++)
+    // TODO  {
+    // TODO      TBL_OvlMovePathsEMS[itr] = ST_UNDEFINED;
+    // TODO  }
+    // TODO  CRP_UNIT_OverlandPath = ST_UNDEFINED;
+    // TODO  j_CONTX_CreateChains();
+    // TODO  j_CONTX_CreateLChains();
+    // TODO  for(itr = 0; itr < _num_players; itr++)
+    // TODO  {
+    // TODO      AI_CONTX_Reevals[itr] = ST_FALSE;
+    // TODO  }
+
 
     g_TimeStop_PlayerNum = ST_NONE;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        // if(_players[itr].Globals.Time_Stop > 0)
         if(_players[itr_players].Globals[TIME_STOP] > 0)
         {
-            g_TimeStop_PlayerNum = itr_players + 1;
+            g_TimeStop_PlayerNum = (itr_players + 1);
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Loaded_Game_Update()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -835,11 +738,11 @@ void GAME_Overland_Init(void)
         // NOTE: the DASM thinks world_plane is passed here as well, but IsPassableTower() makes no xref to it
         if(IsPassableTower(_UNITS[itr_units].wx, _UNITS[itr_units].wy) == ST_TRUE)
         {
-            _UNITS[itr_units].In_Tower = ST_TRUE;
+            _UNITS[itr_units].in_tower = ST_TRUE;
         }
         else
         {
-            _UNITS[itr_units].In_Tower = ST_FALSE;
+            _UNITS[itr_units].in_tower = ST_FALSE;
         }
 
     }
@@ -907,7 +810,7 @@ void GAME_Overland_Init(void)
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
 
-    // j_o108p02_Empty_pFxn()
+    // DONT  j_o108p02_Empty_pFxn()
 
     // TODO  All_City_Calculations()
 

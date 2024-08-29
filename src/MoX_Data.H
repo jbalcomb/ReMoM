@@ -54,6 +54,8 @@
 #define FORTRESS_RECORD_SIZE       4
 // sizeof(struct s_HERO)
 #define HERO_RECORD_SIZE          12
+// sizeof(struct s_ITEM)
+#define ITEM_RECORD_SIZE          50
 // sizeof(struct s_LAIR)
 #define LAIR_RECORD_SIZE          24
 // sizeof(struct s_NODE)
@@ -124,6 +126,7 @@ enum e_Difficulty
 };
 enum e_Opponents
 {
+    goo_None,
     goo_One,
     goo_Two,
     goo_Three,
@@ -142,6 +145,61 @@ enum e_Magic
     gom_Powerful
 };
 
+
+
+/*
+    Rival Wizard Relationship Status
+
+*/
+enum e_RELATIONSHIP_STATS
+{
+// Hate
+// Troubled
+// Tense
+// Restless
+// Unease
+// Neutral
+// Relaxed
+// Calm
+// Peaceful
+// Friendly
+// Harmony
+
+};
+
+enum e_TREATY_TYPE
+{
+    NO_TREATY = 0,    /* "neutral state" */
+    WIZARD_PACT = 1,  /*  */
+    ALLIANCE = 2,     /*  */
+    WAR = 3,          /*  */
+    FINAL_WAR = 4     /*  */
+};
+
+/*
+    Computer Personality
+*/
+enum e_AI_Personality
+{
+    PRS_Maniacal    = 0,
+    PRS_Ruthless    = 1,
+    PRS_Aggressive  = 2,
+    PRS_Chaotic     = 3,
+    PRS_Lawful      = 4,
+    PRS_Peaceful    = 5
+};
+
+/*
+    Computer Objective
+*/
+enum AI_Objective
+{
+    OBJ_Pragmatist     = 0,
+    OBJ_Militarist     = 1,
+    OBJ_Theurgist      = 2,
+    OBJ_Perfectionist  = 3,
+    OBJ_Expansionist   = 4
+};
 
 
 
@@ -184,6 +242,9 @@ enum Meld_Flags
     M_Guardian
 };
 
+// drake178: EZ_Types
+// TODO  rename to Lairs
+
 enum EZ_Types
 {
     EZ_Tower,
@@ -201,28 +262,55 @@ enum EZ_Types
 
 
 
-enum Unit_Status
+enum e_UNIT_STATUS
 {
-    US_Ready,      /* "NO ORDERS" in 'MoM Demo' */
-    US_Patrol,
-    US_BuildRoad,
-    US_GoingTo,
-    US_ReachedDest,
-    US_Wait,
-    US_Casting,    /* drake178: US_Unknown_6; "CASTING" in 'MoM Demo' */
-    US_Unknown_7,  /* "PURIFY" in 'MoM Demo' */
-    US_Purify,
-    US_Meld,
-    US_Settle,
-    US_SeekTransport,
-    US_Unknown_12,
-    US_Unknown_13,
-    US_Unknown_14,
-    US_Unknown_15,
-    US_Move,
+    us_Ready          =   0,  /* 'MoM Demo': "NO ORDERS" */
+    us_Patrol         =   1,
+    us_BuildRoad      =   2,
+    us_GOTO           =   3,
+    us_ReachedDest    =   4,  /* 'MoM Demo': "DONE"      */
+    us_Wait           =   5,
+    us_Casting        =   6,  /* 'MoM Demo': "CASTING"   */
+    us_Unknown_7      =   7,  /* 'MoM Demo': "PURIFY"    */
+    us_Purify         =   8,
+    us_Meld           =   9,
+    us_Settle         =  10,
+    us_SeekTransport  =  11,
+    us_Unknown_12     =  12,
+    us_Unknown_13     =  13,
+    us_Unknown_14     =  14,
+    us_Unknown_15     =  15,
+    us_Move           =  16,
+    us_Unknown_100    = 100,   //  64h  100d  01100100b
+    us_PurifyDone     = 111    //  6Fh  111d  01101111b
+};
 
-    US_Unknown_100  = 100,   // 64h  100d  01100100b
-    US_PurifyDone   = 111    // 6Fh  111d  01101111b
+
+
+/*
+    Hero Type  (NOT Unit Type)
+
+*/
+enum e_HERO_TYPES
+{
+    ht_Warrior = 0,
+    ht_IDK1 = 1,
+    ht_IDK2 = 2,
+    ht_Mage = 3
+};
+
+/*
+    Item Slot Types
+        <==> Hero Type  (NOT Unit Type)
+*/
+enum e_ITEM_SLOT_TYPES
+{
+    ist_Sword_Slot       = 1,  /* Sword Icon                        Axe, Mace or Sword              */
+    ist_Bow_Slot         = 2,  /* Bow Icon                          Axe, Bow, Mace or Sword         */
+    ist_SwordStaff_Slot  = 3,  /* Staff crossed with Sword Icon     All Weapons                     */
+    ist_Staff_Slot       = 4,  /* Staff Icon                        Staff or Wand                   */
+    ist_Armor_Slot       = 5,  /* Armor Icon                        Any type of Mail/Armor, Shields */
+    ist_Misc_Slot        = 6   /* Ring Icon                         All Miscellaneous Items         */
 };
 
 
@@ -239,10 +327,23 @@ enum Unit_Status
     s_RACE_TYPE.cant_build[7]
 
 NOTE: bldg_type_idx = product_idx if product_idx < 100 else unit_type_idx
+
+For Cityscape,
+    -5
+    rocks            -4
+    trees            -3
+    summon circle   100
+    earth gate      101
+    stream of life  102
+    astral gate     103
+    Fortress        104
+    dark rituals    105
+    altar of battle 106
+
 */
 enum e_BUILDING_TYPE
 {
-    bt_GRANDVIZIER        =  -4,
+    bt_AUTOBUILD          =  -4,  /* AKA 0xFFFC */
     bt_INVALID            =  -1,
     bt_NONE               =   0,
     bt_TradeGoods         =   1,
@@ -256,7 +357,7 @@ enum e_BUILDING_TYPE
     bt_Stable             =   9,
     bt_AnimistsGuild      =  10,
     bt_FantasticStable    =  11,
-    bt_Shipwright         =  12,
+    bt_ShipWrightsGuild   =  12,
     bt_ShipYard           =  13,
     bt_MaritimeGuild      =  14,
     bt_Sawmill            =  15,
@@ -309,6 +410,14 @@ enum e_BUILDING_STATUS
     bs_Removed   =  2   // Sold or Destroyed
 };
 
+enum e_BUILDING_SHAPE
+{
+    bp_2x2 = 0,
+    bp_2x3 = 1,
+    bp_3x2 = 2,
+    bp_3x3 = 3
+};
+
 
 /*
     Magic Realm
@@ -327,6 +436,12 @@ enum e_MAGIC_REALM
 /*
     s_WIZARD.spellranks
     'Message Box' - type/color
+
+    ¿ players[].Spells_Known[] ?
+    [6][40]
+    212 is 'Spell of Mastery
+    5 * 40 + 12
+
 */
 enum e_SPELLBOOK_RANK
 {
@@ -334,8 +449,90 @@ enum e_SPELLBOOK_RANK
     sbr_Sorcery  = 1,
     sbr_Chaos    = 2,
     sbr_Life     = 3,
-    sbr_Death    = 4
+    sbr_Death    = 4,
+    sbr_Arcane   = 5
 };
+
+
+/*
+¿ global/general application ?
+NOTE(JimBalcomb,20240531): Fst Encountered Usage - EZ_SpecialTreasure()
+
+Meh? "rtt" as in "ReTorT"
+*/
+enum RETORTS
+{
+    rtt_Alchemy  = 0,
+    rtt_Warlord  = 1,
+    rtt_Chaos_Mastery  = 2,
+    rtt_Nature_Mastery  = 3,
+    rtt_Sorcery_Mastery  = 4,
+    rtt_Infernal_Power  = 5,
+    rtt_Divine_Power  = 6,
+    rtt_Sage_Master  = 7,
+    rtt_Channeller  = 8,
+    rtt_Myrran  = 9,
+    rtt_Archmage  = 10,
+    rtt_Mana_Focusing  = 11,
+    rtt_Node_Mastery  = 12,
+    rtt_Famous  = 13,
+    rtt_Runemaster  = 14,
+    rtt_Conjurer  = 15,
+    rtt_Charismatic  = 16,
+    rtt_Artificer  = 17
+};
+
+
+enum enum_SPELL_DATA_TYPE
+{
+    Summoning_Spell         =  0,
+    Unit_Enchantment        =  1,
+    City_Enchantment        =  2,
+    City_Curse              =  3,
+    Fixed_Dmg_Spell         =  4,
+    Special_Spell           =  5,
+    Target_Wiz_Spell        =  6,
+    sdt_Global_Enchantment  =  9,
+    Battlefield_Spell       = 10,
+    Crafting_Spell          = 11,
+    Destruction_Spell       = 12,
+    Resistable_Spell        = 13,
+    No_Resist_Spell         = 14,
+    Mundane_Enchantment     = 15,
+    Mundane_Curse           = 16,
+    Infusable_Spell         = 17,
+    Dispel_Spell            = 18,
+    Disenchant_Spell        = 19,
+    Disjunction_Spell       = 20,
+    Counter_Spell           = 21,
+    Var_Dmg_Spell           = 22,
+    Banish_Spell            = 23
+};
+
+
+/*
+    Node Type - Magic Realm
+    s_NODE.type)
+*/
+enum e_NODE_TYPE
+{
+    nt_Sorcery = 0,
+    nt_Nature  = 1,
+    nt_Chaos   = 2
+};
+
+/*
+    CMB_node_type
+    (NOT s_NODE.type)
+*/
+enum e_COMBAT_NODE_TYPE
+{
+    cnt_UNDEFINED = -1,
+    cnt_Sorcery   =  0,  /* <-> rt_Sorcery */
+    cnt_Chaos     =  1,  /* <-> rt_Chaos */
+    cnt_Nature    =  2   /* <-> rt_Nature */
+};
+
 
 
 /*
@@ -515,70 +712,180 @@ struct s_RETORTS
 };
 
 // sizeof:  24h  36d
+#pragma pack(push)
+#pragma pack(2)
 struct s_SPELL_DATA
 {
-    /* 00 */ char Name[19];
+    /* 00 */ char name[19];
     /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
     /* 14 */  int8_t AI_Value;
-    /* 15 */  int8_t Type;                  //  ; enum SPELLTYPES
+    /* 15 */  int8_t type;                  //  ; enum SPELLTYPES   "Type of spell effect"
     /* 16 */  int8_t Book_Section;
     /* 17 */  int8_t Realm;
     /* 18 */  int8_t Eligibility;
-    /* 19 */  int8_t Unknown_19h;
+    /* 19 */  /* int8_t Unknown_19h; */  /* ¿ 2-byte alignment padding ? */
     /* 1A */  int16_t Casting_Cost;
-    /* 1C */  int16_t Resrch_Cost;
+    /* 1C */  int16_t research_cost;
     /* 1E */  int8_t Sound;
-    /* 1F */  int8_t Unknown_1Fh;
+    /* 1F */  /* int8_t Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
     /* 20 */  int8_t Param0;                //  ; unit type, base damage, UE flag, or CE index
     /* 21 */  int8_t Param1;
     /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
     /* 24 */
 };
+#pragma pack(pop)
 
+
+// DELETE  // sizeof:  0Ch  12d
+// DELETE  #pragma pack(push)
+// DELETE  #pragma pack(2)
+// DELETE  struct s_HERO
+// DELETE  {
+// DELETE      /* 00 */  int16_t  Level;  // ¿ experience (level) ?
+// DELETE      /* / * 02 * /  uint16_t Abilities_LO;  // ; enum Hero_Ability_LO */
+// DELETE      /* / * 04 * /  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI */
+// DELETE      union {
+// DELETE          uint32_t abilities;
+// DELETE          uint16_t Abilities_LO;  // ; enum Hero_Ability_LO
+// DELETE          uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
+// DELETE      };
+// DELETE      /* 06 */  int8_t   Casting_Skill;
+// DELETE      /* 07 */  uint8_t  Spells[4];
+// DELETE      /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
+// DELETE      /* 0C */
+// DELETE  };
+// DELETE  #pragma pack(pop)
+// DELETE  struct s_HERO2
+// DELETE  {
+// DELETE      /* 00 */  int16_t  Level;  // ¿ experience (level) ?
+// DELETE      /* 02 */  uint32_t abilities;
+// DELETE      /* 06 */  int8_t   Casting_Skill;
+// DELETE      /* 07 */  uint8_t  Spells[4];
+// DELETE      /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
+// DELETE      /* 0C */
+// DELETE  };
+// DELETE  struct s_HEROES
+// DELETE  {
+// DELETE      struct s_HERO2 heroes[NUM_HERO_TYPES];
+// DELETE  };
 // sizeof:  0Ch  12d
+#pragma pack(push)
+#pragma pack(2)
 struct s_HERO
 {
-    /* 00 */  int16_t  Level;  // ¿ experience (level) ?
-    /* 02 */  uint16_t Abilities_LO;  // ; enum Hero_Ability_LO
-    /* 04 */  uint16_t Abilities_HI;  // ; enum Hero_Ability_HI
-    /* 06 */  int8_t   Casting_Skill;
-    /* 07 */  uint8_t  Spells[4];
-    /* 0B */  uint8_t  Unused_0Bh;      /* ¿ padding byte to align-2 or Spells was [5] ? */
+    /* 00 */  int16_t  Level;          // ¿ experience (level) ?  Pick_Random_Hero() uses `>= 0` to mean 'player has hero'
+    /* 02 */  uint32_t abilities;      // HSA_
+    /* 06 */  int8_t   Casting_Skill;  //
+    /* 07 */  uint8_t  Spells[4];      //
+    /* 0B */  /* uint8_t  Unused_0Bh; */     /* ¿ padding byte to align-2 or Spells was [5] ? */
     /* 0C */
+};
+#pragma pack(pop)
+
+struct s_HEROES
+{
+    struct s_HERO heroes[NUM_HERO_TYPES];
 };
 
 // sizeof:  1Ch  28d
-struct s_HIRED_HERO
+#pragma pack(push)
+#pragma pack(2)
+struct s_OWNED_HERO
 {
-    /* 00 */ int16_t Unit_Index;  /* unit_dx, back into _UNITS[] */
-    /* 02 */ char Name[14];
-    /* 10 */ int16_t Items[3];      /* ¿ index into TBL_Items ? */
-    /* 16 */ int16_t Item_Slots[3];
+    /* 00 */ int16_t unit_idx;       /*  Unit Index;      index into _UNITS[]                                        */
+    /* 02 */ char name[14];
+    /* 10 */ int16_t Items[3];       /*  Item Index;      index into _ITEMS[]                                        */
+    /* 16 */ int16_t Item_Slots[3];  /*  Item Slot Type;  index into item_slot_icons_seg[] and itemtile_icons_seg[]  */
     /* 1C */
 };
+#pragma pack(pop)
+
+// drake178: INACTV_HERO
+// sizeof:  10h  16d
+#pragma pack(push)
+#pragma pack(2)
+struct s_INACTV_HERO
+{
+    /* 00 */  char name[LEN_STRING];
+    /* 0E */  int16_t experience_points;
+    /* 10 */
+};
+#pragma pack(pop)
+
+// sizeof:  1Eh  30d
+#pragma pack(push)
+#pragma pack(2)
+struct s_ITEM_POWER
+{
+/* 00 */ char name[18];
+/* 12 */ int16_t item_types;  // bitfield; bit position ~== item type;  enum I_TypeBits
+/* 14 */ int16_t cost;
+/* 16 */ int8_t type;
+/* 17 */ int8_t Realm;
+/* 18 */ int16_t Books_or_Bonus;
+/* 1A */ uint32_t powers;  // ; enum IPOW_LO ; enum IPOW_HI
+/* 1E */
+};
+#pragma pack(pop)
+
+// sizeof:  38h  56d
+#pragma pack(push)
+#pragma pack(2)
+struct s_ITEM_DATA
+{
+/* 00 */ char name[30];  // array is 30, but last 4 are always 0, longest name is 26 characters
+/* 1E */ char icon_idx;
+/* 1F */ char field_1F;
+/* 20 */ char field_20;
+/* 21 */ char field_21;
+/* 22 */ int16_t cost;
+/* 24 */ char field_24;
+/* 25 */ char field_25;
+/* 26 */ char field_26;
+/* 27 */ int8_t moves;
+/* 28 */ char field_28;
+/* 29 */ char field_29;
+/* 2A */ char field_2A;
+/* 2B */ char field_2B;
+/* 2C */ char field_2C;
+/* 2D */ char field_2D;
+/* 2E */ char field_2E;
+/* 2F */ char field_2F;
+/* 30 */ char field_30;
+/* 31 */ char field_31;
+/* 32 */ uint8_t spellranks[5];
+/* 37 */ uint8_t flag;  /* ¿ {F,T} ? */
+};
+#pragma pack(pop)
+
 
 // sizeof:  32h  50d
+/*
+    "attribute enhancements"
+*/
+#pragma pack(push)
+#pragma pack(2)
 struct s_ITEM
 {
-    /* 00 */  char Name[30];
-    /* 1E */  int16_t Icon_Index;
-    /* 20 */  int8_t Slot_Type;
-    /* 21 */  int8_t Item_Type;
-    /* 22 */  int16_t Mana_Value;
-    /* 24 */  int8_t Bonus_Attack;
-    /* 25 */  int8_t Bonus_To_Hit;
-    /* 26 */  int8_t Bonus_Defense;
-    /* 27 */  int8_t Bonus_HalfMoves;
-    /* 28 */  int8_t Bonus_Resist;
-    /* 29 */  int8_t Bonus_Mana;
-    /* 2A */  int8_t Spell_Save;
-    /* 2B */  int8_t Charged_Spell;
-    /* 2C */  int16_t Charges;
-    // TODO  /* 2E */  Powers_LOWord dw ?                      // ; enum IPOW_LO
-    // TODO  /* 30 */  Powers_HOWord dw ?                      // ; enum IPOW_HO
-    /* 2E */  uint32_t Powers;
+    /* 00 */  char     name[30];
+    /* 1E */  int8_t   icon_idx;       // ¿ entry_num for ITEMS.LBX ?
+    /* 1F */  int8_t   IDK_icon_idx;   // ¿ item 4 "I of the Elements" came up with icon_idx of 1541, so I changed this to 1 byte, not sure if HI/LO of 0605
+    /* 20 */  int8_t   Slot_Type;      // ¿ ITEMMISC.LBX  ITEMSLOT  sword, bow, weapon/staff, wand, misc, armor ?
+    /* 21 */  int8_t   type;           // ¿ {sword, mace, axe, bow, staff, wand, misc, shield, chain, plate} ?
+    /* 22 */  int16_t  cost;     // ¿ "Cost" ... "the base creation cost of the artifact in mana" ?  Activate_Item() uses `<= 0` here to mean "empty"/"available"
+    /* 24 */  int8_t   attack;   // "Attack"
+    /* 25 */  int8_t   tohit;   // "To Hit"
+    /* 26 */  int8_t   defense;  // "Defense"
+    /* 27 */  int8_t   moves2;         // "Movement"
+    /* 28 */  int8_t   resistance;   // "Resistance"
+    /* 29 */  int8_t   spell_skill;     // "Spell Skill"
+    /* 2A */  int8_t   spell_save;     // "Spell Save"
+    /* 2B */  int8_t   embed_spell_idx;  // Index into spell_data_tabl;  Embedded Spell  ("Choose a spell to embed in this item")
+    /* 2C */  int16_t  embed_spell_cnt;        // "Spell Charges"
+    /* 2E */  uint32_t Powers;         // ~ "Item Specials"
     /* 32 */
 };
+#pragma pack(pop)
 
 // 00000001 ; enum IPOW_LO (bitfield)
 // 00000001 IP_Vampiric  = 1
@@ -617,34 +924,6 @@ struct s_ITEM
 // 00008000 IP_Invulnerability  = 8000h
 
 
-// sizeof:  132h  306d
-struct s_WIZ_DIPL
-{
-    /* 0000 */ int8_t Contacted[6];
-    /* 0006 */ int16_t Treaty_Interest[6];
-    /* 0012 */ int16_t Peace_Interest[6];
-    /* 001E */ int16_t Trade_Interest[6];
-    /* 002A */ int8_t Visible_Rel[6];
-    /* 0030 */ int8_t Dipl_Status[6];
-    /* 0036 */ int16_t DA_Strength[6];
-    /* 0042 */ int8_t Dipl_Action[6];
-    /* 0048 */ int16_t DA_Spell[6];
-    /* 0054 */ int8_t DA_City[6];
-    /* 005A */ int8_t Default_Rel[6];
-    /* 0060 */ int8_t Contact_Progress[6];
-    /* 0066 */ int8_t Broken_Treaty[6];
-    /* 006C */ int16_t Unknown_194h[6];
-    /* 0078 */ int8_t Hidden_Rel[6];
-    /* 007E */ int8_t Unknown_1A6h[24];
-    /* 0096 */ int8_t Tribute_Spell[6];
-    /* 009C */ int8_t Unknown_1C4h[90];
-    /* 00F6 */ int16_t Tribute_Gold[6];
-    /* 0102 */ int8_t Unknown_22Ah[30];
-    /* 0120 */ int8_t Unknown_248h[6];
-    /* 0126 */ int8_t Unknown_24Eh[6];
-    /* 012C */ int8_t G_Warning_Progress[6];
-    /* 0132 */
-};
 
 /*
     computer player wizards - difficulty level modifiers
@@ -666,9 +945,9 @@ struct s_DIFFICULTY_MODIFIERS
 // sizeof:  06h  6d
 struct s_Astr_Data
 {
-    /* 00 */ int16_t Magic_Power;
-    /* 02 */ int16_t Spell_Research;
-    /* 04 */ int16_t Army_Strength;
+    /* 00 */ int16_t Magic_Power;       /* populated in Record_History(), by WIZ_Get_Astr_Power() */
+    /* 02 */ int16_t Spell_Research;    /* populated in Record_History(), by WIZ_Get_Astr_ArmyStr() */
+    /* 04 */ int16_t Army_Strength;     /* populated in Record_History(), by WIZ_Get_Astr_Resrch() */
 };
 
 // sizeof:  18h  24d
@@ -718,47 +997,74 @@ struct s_GAME_DATA
 };
 
 
+
+
+// sizeof:  132h  306d
 /*
-    No idea if it actually matters, but
-    the pragma pack is here because this thing
-        uint32_t Casting_Skill
-    is causing a 2 byte bump for alignment to 4-byte
-    and it was messing with my head
-    when I was trying to debug the struct for the file read
+    SEE: MoM-Diplomacy.md
+
 */
+struct s_WIZ_DIPL
+{
+    /* 0000 */ int8_t Contacted[NUM_PLAYERS];  /* ¿ BOOLVEC_DECLARE(contact, PLAYER_NUM); ? */
+    /* 0006 */ int16_t Treaty_Interest[NUM_PLAYERS];
+    /* 0012 */ int16_t Peace_Interest[NUM_PLAYERS];
+    /* 001E */ int16_t Trade_Interest[NUM_PLAYERS];
+    /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed;  1oom: relation1 */
+    /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty */
+    /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
+    /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];
+    /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
+    /* 0054 */ int8_t DA_City[NUM_PLAYERS];
+    /* 005A */ int8_t Default_Rel[NUM_PLAYERS];  /* 1oom: relation2 */
+    /* 0060 */ int8_t Contact_Progress[NUM_PLAYERS];  /* ¿ 1oom have_met[] {0,1,2} ? */
+    /* 0066 */ int8_t Broken_Treaty[NUM_PLAYERS];  /* 1oom: broken_treaty */
+    /* 006C */ int16_t Unknown_194h[NUM_PLAYERS];
+    /* 0078 */ int8_t Hidden_Rel[NUM_PLAYERS];  /* 1oom:  trust */
+    /* 007E */ int8_t Unknown_1A6h[24];
+    /* 0096 */ int8_t Tribute_Spell[NUM_PLAYERS];
+    /* 009C */ int8_t Unknown_1C4h[90];
+    /* 00F6 */ int16_t Tribute_Gold[NUM_PLAYERS];
+    /* 0102 */ int8_t Unknown_22Ah[30];
+    /* 0120 */ int8_t Unknown_248h[NUM_PLAYERS];
+    /* 0126 */ int8_t Unknown_24Eh[NUM_PLAYERS];
+    /* 012C */ int8_t G_Warning_Progress[NUM_PLAYERS];
+    /* 0132 */
+};
+
 
 #pragma pack(push)
 #pragma pack(2)
-// sizeof:  4C8  1224d
+// sizeof:  4C8h  1224d
 struct s_WIZARD
 {
-    /* 0000 */ uint8_t wizard_id; /* drake178: Protrait */
-    /* 0001 */ char Name[20];
+    /* 0000 */ uint8_t wizard_id; /* 1-byte, signed;  player_idx  MoO2: player_num, player_id */
+    /* 0001 */ char name[LEN_WIZARD_NAME];
     /* 0015 */ uint8_t Cptl_Race;
-    /* 0016 */ uint8_t banner_id;  /* drake178: Banner */
-    /* 0017 */ uint8_t Unused_017h;
+    /* 0016 */ uint8_t banner_id;  /* 1-byte, signed */
+    /* 0017 */ uint8_t pad2B_17h;  /* ¿ 2-byte alignment padding ? */
     /* 0018 */ uint16_t Personality;            /* enum AI_Personality */
     /* 001A */ uint16_t Objective;              /* enum AI_Objective */
-    /* 001C */ uint8_t Unknown_01Ch[6];
-    /* 0022 */ uint16_t SoM_RC;
-    /* 0024 */ uint16_t Fame;
+    /* 001C */ uint8_t Unknown_01Ch[6];  /* ¿  ? */
+    /* 0022 */ uint16_t SoM_RC;  /* DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
+    /* 0024 */ uint16_t fame;
     /* 0026 */ uint16_t Power_Base;
-    /* 0028 */ uint16_t Volcano_Count;
-    /* 002A */ uint8_t Research_Pcnt;
-    /* 002B */ uint8_t Mana_Pnct;
-    /* 002C */ uint8_t Skill_Pcnt;
+    /* 0028 */ uint16_t volcanoes;  // count of volcanoes created by the Wizard  (NOTE: stored as a 3-bit member in the _map_square_flags bitfield)
+    /* 002A */ uint8_t research_ratio;
+    /* 002B */ uint8_t mana_ratio;
+    /* 002C */ uint8_t skill_ratio;
     /* 002D */ uint8_t Volcano_Power;
     /* 002E */ int16_t summon_wx;
     /* 0030 */ int16_t summon_wy;
     /* 0032 */ int16_t summon_wp;
-    /* 0034 */ uint16_t Rsrch_Candidates[8];
-    /* 0044 */ uint8_t Unknown_044h[4];
+    /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* array of spell_idx, for spells available for researching */
+    /* 0044 */ uint8_t Unknown_044h[4];  /* ¿  ? */
     /* 0048 */ uint16_t Avg_Unit_Value;         /* neutral: rampage accumulator */
     /* 004A */ uint16_t Unknown_04Ah;
     /* 004C */ uint16_t Cmbt_Skill_Left;
     /* 004E */ uint16_t Cast_Cost_Left;
     /* 0050 */ uint16_t Cast_Cost_Initial;      /* neutral: raiders accumulator */
-    /* 0052 */ uint16_t Spell_Cast;
+    /* 0052 */ uint16_t Spell_Cast;  // spell_idx;  Spell Id of spell currently being cast by the Wizard
     /* 0054 */ uint16_t Skill_Left;
     /* 0056 */ uint16_t Nominal_Skill;
     /* 0058 */ uint16_t tax_rate;
@@ -790,38 +1096,41 @@ struct s_WIZARD
     /* 073 */ int8_t conjurer;
     /* 074 */ int8_t charismatic;
     /* 075 */ int8_t artificer;
+    // /* 064 */ int8_t retorts[18];  /* Special Abilities */
 
-    /* 0076 */ struct s_HIRED_HERO Heroes[6];  /* indexed by Hero_Slot, from s_UNIT */
+    /* 0076 */ struct s_OWNED_HERO Heroes[NUM_HEROES];  /* indexed by s_UNIT.hero_slot_idx */
     /* 011E */ uint16_t Unknown_11Eh;
-    /* 0120 */ uint16_t Vault_Items[4];
+    /* 0120 */ int16_t  Vault_Items[NUM_VAULT_ITEM_SLOTS];  /* ¿ index into _ITEMS ? YES */ /* referenced as Hero Slot Index #6 */ /* same data type as Heroes.Items[] */
+
     /* 0128 */ struct s_WIZ_DIPL Dipl;
+
     /* 025A */ uint16_t Research_Left;
-    /* 025C */ uint16_t mana_reserve;  /*  */
-    /* 025E */ int32_t Casting_Skill;
-    /* 0262 */ uint16_t Researching;
-    /* 0264 */ uint8_t Spells_Known[240];
+    /* 025C */ uint16_t mana_reserve;       /*  */
+    /* 025E */ int32_t  Casting_Skill;
+    /* 0262 */ uint16_t research_spell_idx; /* spell_idx of spell currently being researched */
+    /* 0264 */ uint8_t  Spells_Known[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */
     /* 0354 */ uint16_t Defeated_Wizards;
-    /* 0356 */ uint16_t gold_reserve;  /*  */
+    /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;
-    /* 035A */ struct s_Astr_Data Astr;
-    /* 0360 */ uint16_t Pop_div_10k;
-    /* 0362 */ uint8_t Historian[288];
+    /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */
+    /* 0360 */ uint16_t Pop_div_10k;        /* ¿ mini-pops ?  onlu used for history? */
+    /* 0362 */ uint8_t  Historian[288];     /* ¿ Wizard's Power ? */
     /* 0482 */ // struct s_GLOBALE Globals;
-               uint8_t Globals[24];
+               uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t Magic_Strategy;
     /* 049C */ uint16_t Unknown_49Ch;
-    /* 049E */ uint16_t Hostility[6];
+    /* 049E */ uint16_t Hostility[NUM_PLAYERS];
     /* 04AA */ uint16_t War_Reeval;
     /* 04AC */ uint16_t MgcStrat_Reeval;
     /* 04AE */ uint16_t Pow_Redist_Wait;
-    /* 04B0 */ uint8_t Peace_Counters[6];
-    /* 04B6 */ uint8_t field_4B6;
-    /* 04B7 */ uint8_t field_4B7;
+    /* 04B0 */ uint8_t  Peace_Counters[NUM_PLAYERS];
+    /* 04B6 */ uint8_t  field_4B6;
+    /* 04B7 */ uint8_t  field_4B7;
     /* 04B8 */ uint16_t field_4B8;
     /* 04BA */ uint16_t OVL_TargetWiz;
-    /* 04BC */ uint8_t field_4BC;
-    /* 04BD */ uint8_t field_4BD;
-    /* 04BE */ uint8_t Unknown_4BEh[6];
+    /* 04BC */ uint8_t  field_4BC;
+    /* 04BD */ uint8_t  field_4BD;
+    /* 04BE */ uint8_t  Unknown_4BEh[6];
     /* 04C4 */ uint16_t Prim_Realm;
     /* 04C6 */ uint16_t Sec_Realm;
 };
@@ -832,11 +1141,11 @@ struct s_WIZARD
 // sizeof:  34h  52d
 struct s_BLDG_DATA
 {
-    /* 00 */  char name[20];
-    /* 14 */  // int16_t reqd_bldg_1;          // bldg_idx  >= 100 is Terrain Type
+    /* 00 */  char name[LEN_BUILDING_NAME];
+    /* 14 */  // int16_t reqd_bldg_1;       // bldg_idx  >= 100 is Terrain Type
     union
     {
-        int16_t reqd_bldg_1;
+        int16_t reqd_bldg_1;                // bldg_idx
         int16_t reqd_terrain;
     };
     /* 16 */  int16_t reqd_bldg_2;          // bldg_idx
@@ -852,11 +1161,19 @@ struct s_BLDG_DATA
     /* 2A */  int16_t AIVal_Research;
     /* 2C */  int16_t construction_cost;  // in production units
     /* 2E */  int16_t Unknown_2Eh;
-    /* 30 */  int16_t G_Animation;
+    /* 30 */  int16_t G_Animation;  // ¿ 'size & position' for Cityscape ?
     /* 32 */  int16_t Category;
     /* 34 */
 };
 
+
+struct s_BLDG_CR
+{
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
+};
 
 // sizeof:  0Eh  14d
 struct s_BLDG
@@ -866,9 +1183,42 @@ struct s_BLDG
     /* 04 */  int16_t y1;
     /* 06 */  int16_t x2;
     /* 08 */  int16_t y2;
-    /* 0A */  int16_t field_A;
-    /* 0C */  int16_t field_C;
+    /* 0A */  int16_t IDK_x;
+    /* 0C */  int16_t IDK_y;
     /* 0E */
+};
+
+// sizeof: 2Eh 46d
+struct s_CITYSCAPE
+{
+    /* 00 */ struct s_BLDG * column_00;
+    /* 02 */ struct s_BLDG * column_01;
+    /* 04 */ struct s_BLDG * column_02;
+    /* 06 */ struct s_BLDG * column_03;
+    /* 08 */ struct s_BLDG * column_04;
+    /* 0A */ struct s_BLDG * column_05;
+    /* 0C */ struct s_BLDG * column_06;
+    /* 0E */ struct s_BLDG * column_07;
+    /* 10 */ struct s_BLDG * column_08;
+    /* 12 */ struct s_BLDG * column_09;
+    /* 14 */ struct s_BLDG * column_10;
+    /* 16 */ struct s_BLDG * column_11;
+    /* 18 */ struct s_BLDG * column_12;
+    /* 1A */ struct s_BLDG * column_13;
+    /* 1C */ struct s_BLDG * column_14;
+    /* 1E */ struct s_BLDG * column_15;
+    /* 20 */ struct s_BLDG * column_16;
+    /* 22 */ struct s_BLDG * column_17;
+    /* 24 */ struct s_BLDG * column_18;
+    /* 26 */ struct s_BLDG * column_19;
+    /* 28 */ struct s_BLDG * column_20;
+    /* 2A */ struct s_BLDG * column_21;
+    /* 2C */ struct s_BLDG * column_22;
+};
+
+struct s_CITYSCAPE_CR
+{
+    struct s_BLDG cr[15][23];
 };
 
 
@@ -952,20 +1302,20 @@ struct s_CITY_ENCHANTMENTS
 // sizeof:  72h  114d
 struct s_CITY
 {
-    /* 00 */ char name[14];  // pointer  2-byte in 16-bit DOS  8-byte in 64-bit Windows
+    /* 00 */ char name[LEN_CITY_NAME];  // pointer  2-byte in 16-bit DOS  8-byte in 64-bit Windows
     /* 0E */ int8_t race;
     /* 0F */ int8_t wx;
     /* 10 */ int8_t wy;
     /* 11 */ int8_t wp;
     /* 12 */ int8_t owner_idx;
     /* 13 */ int8_t size;
-    /* 14 */ int8_t population;  // in Units of 1000 (1K)
+    /* 14 */ int8_t population;  // 1-byte, signed;  in Units of 1000 (1K)
     /* 15 */ int8_t farmer_count;
-    /* 16 */ int8_t Building_Sold;  // {F/T} sold a building a this turn
-    /* 17 */ int8_t Unused_17h;  // probably align-2 padding
+    /* 16 */ int8_t did_sell_building;  // {F/T} sold a building a this turn  // TODO  rename did_sell/just_sold_building
+    /* 17 */ int8_t pad2B_17h;  /* 2-byte aligment padding
     /* 18 */ int16_t Pop_10s;
-    /* 1A */ int8_t PlayerBits;
-    /* 1B */ int8_t Unused_1Bh;  // probably align-2 padding
+    /* 1A */ uint8_t PlayerBits;  /* bit per player_idx - city (map square) is visible / explored / targetable */
+    /* 1B */ int8_t pad2B_1Bh;  /* 2-byte aligment padding
     /* 1C */ int16_t construction;  /* ~== `product_idx`  < 100 building, >= 100 unit .. 0 is meaning? ... 99 max bldg, 256 - 1 - 99 = 156 max unit types? */
     /* 1E */ int8_t bldg_cnt;
     /* 1F */ // struct s_CITY_BUILDINGS buildings;
@@ -981,47 +1331,53 @@ struct s_CITY
     /* 62 */ int8_t mana_units;
     /* 63 */ int8_t research_units;
     /* 64 */ int8_t food_units;
-    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); cit_idx is city_idx;
+    /* 65 */ int8_t road_connections[13];  // Bit-Field; use Test_Bit_Field(); bit_idx is city_idx;
     /* 66 */ 
 };
 
 // sizeof:  18h  24d
+#pragma pack(push)
+#pragma pack(2)
 struct s_LAIR
 {
     /* 00 */  int8_t   wx;
     /* 01 */  int8_t   wy;
     /* 02 */  int8_t   wp;
-    /* 03 */  int8_t   Intact;
-    /* 04 */  int8_t   Type;
-    /* 05 */  int8_t   Defender1_Index;
-    /* 06 */  int8_t   Def1_Had_n_Left;
-    /* 07 */  int8_t   Defender2_Index;
-    /* 08 */  int8_t   Def2_Had_n_Left;
-    /* 09 */  int8_t   Unused_09h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0A */  int16_t  Loot_Gold;
-    /* 0C */  int16_t  Loot_Mana;
+    /* 03 */  int8_t   Intact;  // {F,T} ... set to false by Lair_Clear() ... Draw_Map_Lairs() only *draws* if true
+    /* 04 */  int8_t   type;    // {0,...,} ... Draw_Map_Lairs() only *draws* if > 3 {0,...3} are tower and nodes
+    /* 05 */  uint8_t  guard1_unit_type;
+    /* 06 */  uint8_t  guard1_count;       // ¿ code only checks low-nibble for count != 0 ?
+    /* 07 */  uint8_t  guard2_unit_type;
+    /* 08 */  uint8_t  guard2_count;       // ¿ code only checks low-nibble for count != 0 ?
+    /* 09 */  int8_t   pad2B_09h;  /* 2-byte alignment padding */
+    /* 0A */  int16_t  Loot_Gold;   // 2-byte, signed
+    /* 0C */  int16_t  Loot_Mana;   // 2-byte, signed
     /* 0E */  int8_t   Spell_n_Special;
-    /* 0F */  int8_t   Misc_Flags;
+    /* 0F */  uint8_t  Misc_Flags; // 7: 6: 5: 4: 3: 2: ¿ attacked ? 1: ¿ visited ? 0: Prisoner {F,T}
     /* 10 */  int8_t   Item_Count;
-    /* 11 */  int8_t   Unused_11h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 11 */  int8_t   pad2B_11h;  /* 2-byte alignment padding */
     /* 12 */  int16_t  Item_Values[3];
     /* 18 */
 };
+#pragma pack(pop)
 
 // sizeof:  30h  48d
+#pragma pack(push)
+#pragma pack(2)
 struct s_NODE
 {
     /* 00 */  int8_t  wx;
     /* 01 */  int8_t  wy;
     /* 02 */  int8_t  wp;
     /* 03 */  int8_t  owner_idx;
-    /* 04 */  int8_t  power;        // used to index Aura_Xs,Ys and added to node_anim_ctr for FLIC_Set_CurrentFrame()
+    /* 04 */  int8_t  power;        // 1-byte, signed;  used to index Aura_Xs,Ys and added to node_anim_ctr for FLIC_Set_CurrentFrame()
     /* 05 */  int8_t  Aura_Xs[20];
     /* 19 */  int8_t  Aura_Ys[20];
-    /* 2D */  int8_t  type;
+    /* 2D */  int8_t  type;         // enum e_NODE_TYPE {0: nt_Sorcery, 1: nt_Nature, 2: nt_Chaos}
     /* 2E */  int8_t  Meld_Flags;
-    /* 2F */  int8_t  Unused_2Fh;  // ¿ 2-byte alignment padding ?
+    /* 2F */  int8_t  pad2B_2Fh;  // ¿ 2-byte alignment padding ?
 };
+#pragma pack(pop)
 
 
 // in RACETYPE.H
@@ -1038,38 +1394,47 @@ struct s_NODE
 // };
 
 // sizeof:  20h  32d
+#pragma pack(push)
+#pragma pack(2)
 struct s_UNIT
 {
     /* 00 */  int8_t  wx;
     /* 01 */  int8_t  wy;
-    /* 02 */  int8_t  wp;
+    /* 02 */  int8_t  wp;  // somewhere, doubles as a status?
     /* 03 */  int8_t  owner_idx;    /* set to ST_UNDEFINED when a unit dies */
-    /* 04 */  int8_t  HalfMoves_Max;
+    /* 04 */  int8_t  moves2_max;
     /* 05 */  uint8_t type;         /* Unit Type Index |-> Unit Type Table */
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
-    /* 07 */  int8_t  Finished;     /* FALSE/TRUE; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
-    /* 08 */  int8_t  HMoves;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;       /* Go-To Destination World X */
-    /* 0A */  int8_t  dst_wy;       /* Go-To Destination World Y */
-    /* 0B */  int8_t  Status;
+    /* 07 */  int8_t  Finished;     /* ¿ orderable ? {F,T}; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
+    /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */
+    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  
+    /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
+    /* 0B */  int8_t  Status;  // Build_Unit_Stack() resets us_WAIT to us_Ready
     /* 0C */  int8_t  Level;
-    /* 0D */  int8_t  Unused_0Dh;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0E */  int16_t XP;
+    /* 0D */  /* int8_t  Unused_0Dh; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
+    /* 0E */  int16_t XP;  // should be `"ep"
     /* 10 */  int8_t  Move_Failed;
     /* 11 */  int8_t  Damage;
     /* 12 */  int8_t  Draw_Priority;
-    /* 13 */  int8_t  Unknown_13h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 14 */  int16_t In_Tower;     /* FALSE/TRUE;  Unit is in a Tower of Wizardry */
+    /* 13 */  /* int8_t  Unknown_13h; */  /* ¿ 2-byte alignment padding ? */ /* CLUE: here is odd and next one is 2-byte value */
+    /* 14 */  int16_t in_tower;     /* {F,T};  Unit is on/in a Tower of Wizardry */
     /* 16 */  int8_t  Sight_Range;
-    /* 17 */  int8_t  Mutations;    // ; enum MUT_FLAGS
-    /* 18 */  int16_t Enchants_LO;  // ; enum UE_FLAGS_L
-    /* 1A */  int16_t Enchants_HI;  // ; enum UE_FLAGS_H
-    /* 1C */  int8_t  Rd_Constr_Left;
-    /* 1D */  int8_t  Rd_From_X;
-    /* 1E */  int8_t  Rd_From_Y;
-    /* 1F */  int8_t  Unknown_1Fh;  // ¿ 2-byte alignment padding ?
+    /* 17 */  int8_t  mutations;    // UM_...  ; enum MUT_FLAGS
+    /* / * 18 * /  int16_t Enchants_LO;  // ; enum UE_FLAGS_L */
+    /* / * 1A * /  int16_t Enchants_HI;  // ; enum UE_FLAGS_H */
+    // DELETEME  union {
+    // DELETEME      uint32_t enchantments;
+    // DELETEME      int16_t  Enchants_LO;
+    // DELETEME      int16_t  Enchants_HI;
+    // DELETEME  };
+    uint32_t enchantments;
+    /* 1C */  int8_t  Rd_Constr_Left;  // 1-byte, signed;  turns to build  ~ movement points;  Move_Units() sets movepath_cost_array[0]
+    /* 1D */  int8_t  Rd_From_X;  // wx?
+    /* 1E */  int8_t  Rd_From_Y;  // wy?
+    /* 1F */  /* int8_t  Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
     /* 20 */
 };
+#pragma pack(pop)
 
 
 // // sizeof:  24h  36d
@@ -1103,96 +1468,98 @@ struct s_UNIT
 //     /* 22 */  int16_t  Sound;
 
 
-//  ; (sizeof=0x6E)
+// sizeof: 6Eh  110d
 // drake178: struct s_BU_REC
 #pragma pack(push)
 #pragma pack(2)
-struct s_STRATEGIC_UNIT
+struct s_BATTLE_UNIT
 {
-    /* 0x00 */  int8_t melee;
-    /* 0x01 */  int8_t ranged;
-    /* 0x02 */  int8_t ranged_type;
-    /* 0x03 */  int8_t ammo;
-    /* 0x04 */  int8_t tohit;
-    /* 0x05 */  int8_t defense;
-    /* 0x06 */  int8_t resist;
-    /* 0x07 */  int8_t movement_points;
-    /* 0x08 */  int16_t cost;
-    /* 0x0A */  int8_t upkeep;
-    /* 0x0B */  int8_t race;                                // ; enum Race_Code
-    /* 0x0C */  int8_t Unused_0Ch;      // reqd_bldg_1 & hero_portrait
-    /* 0x0D */  int8_t Cur_Figures;     // reqd_bldg_2 & hero_type
-    /* 0x0E */  uint64_t Fig_IMG_Index;  // SAMB_ptr pict_seg
-    /* 0x10 */  int8_t hits;
-    /* 0x11 */  int8_t scout_range;
-    /* 0x12 */  int8_t carry_capacity;
-    /* 0x13 */  int8_t Max_Figures;
-    /* 0x14 */  int8_t Construction;
-    /* 0x15 */  int8_t Spec_Att_Attrib;
-    /* 0x16 */  uint16_t Move_Flags;                          // ; enum MOVEFLAGS
-    /* 0x17 */  // int8_t Unused_17h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x18 */  int16_t Attribs_1;                          // ; enum ATTRIB_1
-    /* 0x1A */  int8_t Attribs_2;
-    /* 0x1B */  int8_t Unused_1Bh;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS
+    /* 0x00 */  int8_t   melee;
+    /* 0x01 */  int8_t   ranged;
+    /* 0x02 */  int8_t   ranged_type;
+    /* 0x03 */  int8_t   ammo;
+    /* 0x04 */  int8_t   tohit;
+    /* 0x05 */  int8_t   defense;
+    /* 0x06 */  int8_t   resist;
+    /* 0x07 */  int8_t   movement_points;
+    /* 0x08 */  int16_t  cost;
+    /* 0x0A */  int8_t   upkeep;
+    /* 0x0B */  int8_t   race;                              // ; enum Race_Code
+    /* 0x0C */  /* int8_t Unused_0Ch; */                          // reqd_bldg_1 & hero_portrait
+    union {
+                int8_t   reqd_bldg_1;
+                int8_t   hero_portrait_idx;
+    };
+    /* 0x0D */  /* int8_t Cur_Figures; */                         // reqd_bldg_2 & hero_type
+    union {
+                int8_t   Cur_Figures;
+                int8_t   reqd_bldg_2;
+                int8_t   hero_type;
+    };
+    /* 0x0E */  uint64_t Fig_IMG_Index;                     // SAMB_ptr pict_seg
+    /* 0x10 */  int8_t   hits;
+    /* 0x11 */  int8_t   scout_range;
+    /* 0x12 */  int8_t   carry_capacity;
+    /* 0x13 */  int8_t   Max_Figures;
+    /* 0x14 */  int8_t   Construction;
+    /* 0x15 */  int8_t   Spec_Att_Attrib;
+    /* 0x16 */  uint16_t Move_Flags;                        // ; enum MOVEFLAGS
+    /* 0x17 */  // int8_t Unused_17h;                       // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x18 */  int16_t  Attribs_1;                         // ; enum ATTRIB_1
+    /* 0x1A */  int8_t   Attribs_2;
+    /* 0x1B */  int8_t   Unused_1Bh;                        // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
+    /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t Attack_Flags;                      // ; enum ATK_FLAGS
-    /* 0x20 */  int16_t Sound;
-
-    /* 0x22 */  int16_t Combat_Effects;                     // ; enum Combat_Effect
-    /* 0x24 */  int8_t Melee_To_Hit;
-    /* 0x25 */  int8_t Ranged_To_Hit;
-    /* 0x26 */  int8_t To_Block;
-    /* 0x27 */  int8_t Weapon_Plus1;
-    /* 0x28 */  int16_t Melee_ATK_Flags;                    // ; enum ATK_FLAGS
-    /* 0x2A */  int16_t Ranged_ATK_Flags;                   // ; enum ATK_FLAGS
-    // TODO  /* 0x2C */  int16_t Item_UEs_L;                         // ; enum UE_FLAGS_L
-    // TODO  /* 0x2E */  int16_t Item_UEs_H;                         // ; enum UE_FLAGS_H
-    /* 0x2C */  uint32_t Item_UEs;                         // ; enum UE_FLAGS
-    /* 0x30 */  int16_t unit_idx;
-    /* 0x32 */  int8_t Extra_Hits;
-    /* 0x33 */  int8_t Web_HP;
-    /* 0x34 */  int8_t Status;
-    /* 0x35 */  int8_t owner_idx;
-    /* 0x36 */  int8_t Regular_Dmg;
-    /* 0x37 */  int8_t Undeath_Dmg;
-    /* 0x38 */  int8_t Irreversible_Dmg;
-    /* 0x39 */  int8_t TopFig_Dmg;
-    // TODO  /* 0x3A */  int16_t Unit_Enchants_L;                    // ; enum UE_FLAGS_L
-    // TODO  /* 0x3C */  int16_t Unit_Enchants_H;                    // ; enum UE_FLAGS_H
-    /* 0x3A */  uint32_t Unit_Enchants;                    // ; enum UE_FLAGS
-    /* 0x3E */  int8_t Suppression;
-    /* 0x3F */  int8_t mana_max;
-    /* 0x40 */  int8_t mana;
-    /* 0x41 */  int8_t Item_Charges;
-    /* 0x42 */  int8_t Poison_Strength;
-    /* 0x43 */  int8_t Target_BU;
-    /* 0x44 */  int16_t X_Pos;
-    /* 0x46 */  int16_t Y_Pos;
-    /* 0x48 */  int16_t Target_X;
-    /* 0x4A */  int16_t Target_Y;
-    /* 0x4C */  int16_t MoveStage;
-    /* 0x4E */  int16_t Atk_FigLoss;
-    /* 0x50 */  int16_t UE_Color;
-    /* 0x52 */  int16_t Moving;
-    /* 0x54 */  int16_t Action;
-    /* 0x56 */  int8_t Confusion_State;
-    /* 0x57 */  int8_t Unknown_57h;  // ¿ 2-byte alignment padding ? CLUE: here is odd and next one is 2-byte value
-    /* 0x58 */  int16_t Blood_Amount;
-    /* 0x5A */  int16_t Unknown_5Ah;
-    /* 0x5C */  int16_t Always_Animate;
-    /* 0x5E */  int16_t Melee_Anim;
-    /* 0x60 */  int16_t Image_Effect;
-    /* 0x62 */  int16_t Move_Bob;
-    /* 0x64 */  int8_t Gold_Melee;
-    /* 0x65 */  int8_t Gold_Ranged;
-    /* 0x66 */  int8_t Gold_Defense;
-    /* 0x67 */  int8_t Gold_Resist;
-    /* 0x68 */  int8_t Gold_Hits;
-    /* 0x69 */  int8_t Grey_Melee;
-    /* 0x6A */  int8_t Grey_Ranged;
-    /* 0x6B */  int8_t Grey_Defense;
-    /* 0x6C */  int8_t Grey_Resist;
-    /* 0x6D */  int8_t Unused_Grey_Hits;  // ¿ 2-byte alignment padding ?
+    /* 0x20 */  int16_t  Sound;
+    /* 0x22 */  int16_t  Combat_Effects;                    // ; enum Combat_Effect
+    /* 0x24 */  int8_t   Melee_To_Hit;
+    /* 0x25 */  int8_t   Ranged_To_Hit;
+    /* 0x26 */  int8_t   To_Block;
+    /* 0x27 */  int8_t   Weapon_Plus1;
+    /* 0x28 */  uint16_t Melee_ATK_Flags;                   // ; enum ATK_FLAGS
+    /* 0x2A */  uint16_t Ranged_ATK_Flags;                  // ; enum ATK_FLAGS
+    /* 0x2C */  uint32_t item_enchantments;                 // Item Powers, as Unit Enchantments  enum e_UNIT_ENCHANTMENTS ... macro UE_...
+    /* 0x30 */  int16_t  unit_idx;
+    /* 0x32 */  int8_t   Extra_Hits;
+    /* 0x33 */  int8_t   Web_HP;
+    /* 0x34 */  int8_t   Status;
+    /* 0x35 */  int8_t   controller_idx;                    // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
+    /* 0x36 */  uint8_t  damage[3];                         // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
+    /* 0x39 */  int8_t   TopFig_Dmg;
+    /* 0x3A */  uint32_t enchantments;                      // Unit Enchantments
+    /* 0x3E */  int8_t   Suppression;
+    /* 0x3F */  int8_t   mana_max;
+    /* 0x40 */  int8_t   mana;
+    /* 0x41 */  int8_t   Item_Charges;
+    /* 0x42 */  int8_t   Poison_Strength;
+    /* 0x43 */  int8_t   Target_BU;
+    /* 0x44 */  int16_t  X_Pos;
+    /* 0x46 */  int16_t  Y_Pos;
+    /* 0x48 */  int16_t  Target_X;
+    /* 0x4A */  int16_t  Target_Y;
+    /* 0x4C */  int16_t  MoveStage;
+    /* 0x4E */  int16_t  Atk_FigLoss;
+    /* 0x50 */  int16_t  UE_Color;
+    /* 0x52 */  int16_t  Moving;
+    /* 0x54 */  int16_t  Action;
+    /* 0x56 */  int8_t   Confusion_State;
+    /* 0x57 */  int8_t   pad2B_57h;
+    /* 0x58 */  int16_t  Blood_Amount;
+    /* 0x5A */  int16_t  Unknown_5A;
+    /* 0x5C */  int16_t  Always_Animate;
+    /* 0x5E */  int16_t  Melee_Anim;
+    /* 0x60 */  int16_t  Image_Effect;
+    /* 0x62 */  int16_t  Move_Bob;
+    /* 0x64 */  int8_t   Gold_Melee;
+    /* 0x65 */  int8_t   Gold_Ranged;
+    /* 0x66 */  int8_t   Gold_Defense;
+    /* 0x67 */  int8_t   Gold_Resist;
+    /* 0x68 */  int8_t   Gold_Hits;
+    /* 0x69 */  int8_t   Grey_Melee;
+    /* 0x6A */  int8_t   Grey_Ranged;
+    /* 0x6B */  int8_t   Grey_Defense;
+    /* 0x6C */  int8_t   Grey_Resist;
+    /* 0x6D */  int8_t   Grey_Hits;
     /* 0x6E */
 };
 #pragma pack(pop)
@@ -1238,7 +1605,7 @@ struct s_TOWER
     /* 00 */ int8_t wx;
     /* 01 */ int8_t wy;
     /* 02 */ int8_t owner_idx;
-    /* 03 */ // 2-byte alignment padding
+    /* 03 */ int8_t pad2B_03h;  // 2-byte alignment padding
     /* 04 */
 };
 
@@ -1258,7 +1625,7 @@ struct s_FORTRESS
 struct s_STACK
 {
     /* 00 */ int16_t unit_idx;
-    /* 02 */ int16_t active;  // AKA Can_Move
+    /* 02 */ int16_t active;  // AKA Can_Move  if us_Purify then ~busy
     /* 04 */
 };
 
@@ -1325,7 +1692,7 @@ struct s_EVENT_DATA
 // records from HLPENTRY.LBX
 // max 50 * 10 loaded into _help_entries
 // sizeof 0Ah 10d
-struct s_HLP_ENTRY
+struct s_HELP_FIELD
 {
     int16_t help_idx;  // enum HELP_TXT
     int16_t x1;
@@ -1334,8 +1701,63 @@ struct s_HLP_ENTRY
     int16_t y2;
 };
 
+// sizeof:  500d  (50 * sizeof(struct s_HELP_FIELD))
+struct s_HELP_LIST
+{
+    struct s_HELP_FIELD help_00;
+    struct s_HELP_FIELD help_01;
+    struct s_HELP_FIELD help_02;
+    struct s_HELP_FIELD help_03;
+    struct s_HELP_FIELD help_04;
+    struct s_HELP_FIELD help_05;
+    struct s_HELP_FIELD help_06;
+    struct s_HELP_FIELD help_07;
+    struct s_HELP_FIELD help_08;
+    struct s_HELP_FIELD help_09;
+    struct s_HELP_FIELD help_10;
+    struct s_HELP_FIELD help_11;
+    struct s_HELP_FIELD help_12;
+    struct s_HELP_FIELD help_13;
+    struct s_HELP_FIELD help_14;
+    struct s_HELP_FIELD help_15;
+    struct s_HELP_FIELD help_16;
+    struct s_HELP_FIELD help_17;
+    struct s_HELP_FIELD help_18;
+    struct s_HELP_FIELD help_19;
+    struct s_HELP_FIELD help_20;
+    struct s_HELP_FIELD help_21;
+    struct s_HELP_FIELD help_22;
+    struct s_HELP_FIELD help_23;
+    struct s_HELP_FIELD help_24;
+    struct s_HELP_FIELD help_25;
+    struct s_HELP_FIELD help_26;
+    struct s_HELP_FIELD help_27;
+    struct s_HELP_FIELD help_28;
+    struct s_HELP_FIELD help_29;
+    struct s_HELP_FIELD help_30;
+    struct s_HELP_FIELD help_31;
+    struct s_HELP_FIELD help_32;
+    struct s_HELP_FIELD help_33;
+    struct s_HELP_FIELD help_34;
+    struct s_HELP_FIELD help_35;
+    struct s_HELP_FIELD help_36;
+    struct s_HELP_FIELD help_37;
+    struct s_HELP_FIELD help_38;
+    struct s_HELP_FIELD help_39;
+    struct s_HELP_FIELD help_40;
+    struct s_HELP_FIELD help_41;
+    struct s_HELP_FIELD help_42;
+    struct s_HELP_FIELD help_43;
+    struct s_HELP_FIELD help_44;
+    struct s_HELP_FIELD help_45;
+    struct s_HELP_FIELD help_46;
+    struct s_HELP_FIELD help_47;
+    struct s_HELP_FIELD help_48;
+    struct s_HELP_FIELD help_49;
+};
+
 // sizeof 0418h 1048d
-struct s_HLP_DATA
+struct s_HELP_DATA
 {
     char title[30];
     char lbx_name[14];
@@ -1349,10 +1771,10 @@ struct s_HLP_DATA
 
 struct s_UV_List
 {
- /* 00 */ char names[40][30];
- /* 1E */ int32_t flags[40];
- /* 22 */ SAMB_INT picts[40];  // ¿ ALWAYS pointer to picture from SPECIALS.LBX/SPECIALS2.LBX ?
- /* 24 */ int16_t helps[40];  // enum HELP_TXT
+ /* 00 */ char names[NUM_UNIT_VIEW_LIST_ITEMS][LEN_DESCRIPTION];
+ /* 1E */ int32_t flags[NUM_UNIT_VIEW_LIST_ITEMS];      // ¿ ?
+ /* 22 */ SAMB_INT picts[NUM_UNIT_VIEW_LIST_ITEMS];     // -1 or pointer to ¿ ALWAYS pointer to picture from SPECIALS.LBX/SPECIALS2.LBX ?
+ /* 24 */ int16_t helps[NUM_UNIT_VIEW_LIST_ITEMS];      // enum HELP_TXT
  /* 26 */
 };
 
@@ -1375,6 +1797,112 @@ struct s_MSG_BUILDING_COMPLETE
 };
 #pragma pack(pop)
 
+// drake178: Unit_Lost_Msg_Item
+// sizeof:  04h  4d
+#pragma pack(push)
+#pragma pack(2)
+struct s_MSG_UNIT_LOST
+{
+    /* 00 */ int16_t Unit_Type;
+    /* 02 */ int8_t Cause;
+    /* 03 */ // 2-byte padding?  Unused_3h db ?
+    /* 04 */
+};
+#pragma pack(pop)
+
+
+
+
+
+
+// WZD dseg:0000                                                 ; ===========================================================================
+// WZD dseg:0000
+// WZD dseg:0000                                                 ; Segment type: Pure data
+// WZD dseg:0000                                                 segment dseg para public 'DATA' use16
+// WZD dseg:0000                                                 assume cs:dseg
+// WZD dseg:0000 00 00 00 00                                     oopsie_accidentally_renamed db 4 dup(0) ; start of c0.asm _DATA
+// WZD dseg:0004 42 6F 72 6C 61 6E 64 20 43 2B 2B 20 2D 20 43 6F+Copyright_Msg db 'Borland C++ - Copyright 1991 Borland Intl.',0
+// WZD dseg:002F 4E 75 6C 6C 20 70 6F 69 6E 74 65 72 20 61 73 73+NullCheck_Msg db 'Null pointer assignment',0Dh,0Ah
+// WZD dseg:002F 69 67 6E 6D 65 6E 74 0D 0A                                                              ; DATA XREF: __checknull+1Fo
+// WZD dseg:0048 44 69 76 69 64 65 20 65 72 72 6F 72 0D 0A       ZeroDiv_Msg db 'Divide error',0Dh,0Ah   ; DATA XREF: ZeroDivision:loc_101AAo
+// WZD dseg:0056 41 62 6E 6F 72 6D 61 6C 20 70 72 6F 67 72 61 6D+Abort_Msg db 'Abnormal program termination',0Dh,0Ah
+// WZD dseg:0056 20 74 65 72 6D 69 6E 61 74 69 6F 6E 0D 0A                                               ; DATA XREF: _abort+3o
+// WZD dseg:0074 00 00 00 00                                     _Int0Vector dd 0                        ; DATA XREF: SaveVectors:loc_101B6w ...
+// WZD dseg:0078 00 00 00 00                                     _Int4Vector dd 0                        ; DATA XREF: SaveVectors+13w ...
+// WZD dseg:007C 00 00 00 00                                     _Int5Vector dd 0                        ; DATA XREF: SaveVectors+20w ...
+// WZD dseg:0080 00 00 00 00                                     _Int6Vector dd 0                        ; DATA XREF: SaveVectors+2Dw ...
+// WZD dseg:0084 00 00                                           __C0argc dw 0                           ; DATA XREF: start+154r
+// WZD dseg:0086 00 00                                           __C0argv dw 0                           ; DATA XREF: start+150r
+// WZD dseg:0088 00 00                                           __C0environ dw 0                        ; DATA XREF: start+14Cr ...
+// WZD dseg:008A 00 00                                           _envLng dw 0                            ; DATA XREF: start+46w ...
+// WZD dseg:008C 00 00                                           _envseg dw 0                            ; DATA XREF: start+1Dw ...
+// WZD dseg:008E 00 00                                           _envSize dw 0                           ; DATA XREF: start+55w ...
+// WZD dseg:0090 00 00                                           _psp dw 0                               ; DATA XREF: start+19w ...
+// WZD dseg:0092 00 00                                           _version dw 0                           ; DATA XREF: start+16w ...
+// WZD dseg:0094 00 00                                           errno dw 0                              ; DATA XREF: __IOerror:ser_endw ...
+// WZD dseg:0096 00 00 00 00                                     _StartTime dd 0                         ; DATA XREF: start+124w ...
+// WZD dseg:009A 54 EA                                           __heapbase dw 0EA54h                    ; DATA XREF: Cityscape_Draw_Scanned_Building_Name+14Fr ...
+// WZD dseg:009C 54 EA                                           __brklvl dw 0EA54h                      ; DATA XREF: __brk+10w ...
+// WZD dseg:009E 00 00 00 00                                     _heapbase dd 0                          ; DATA XREF: _brk+7r ...
+// WZD dseg:00A2 00 00 00 00                                     _brklvl dd 0                            ; DATA XREF: normalize+22w ...
+// WZD dseg:00A6 00 00 00 00                                     _heaptop dd 0                           ; DATA XREF: normalize+69w ...
+// WZD dseg:00A6                                                                                         ; end of c0.asm _DATA
+// WZD dseg:00AA
+// WZD dseg:00AA
+// WZD dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
+// WZD dseg:00AA
+// WZD dseg:00AA
+// WZD dseg:00AA 69 6A 6B 6C 6D 49 4A 4B 4C 4D 79 7A 7B 7C 7D C9+COL_Banners db 105,106,107,108,109      ; DATA XREF: Draw_Unit_StatFig+BFr ...
+// WZD dseg:00AA A5 CB A6 2D A0 A1 A2 B2 B4 30 31 32 33 34       db 73,74,75,76,77
+// WZD dseg:00AA                                                 db 121,122,123,124,125
+// WZD dseg:00AA                                                 db 201,165,203,166,45
+// WZD dseg:00AA                                                 db 160,161,162,178,180
+// WZD dseg:00AA                                                 db 48,49,50,51,52
+// WZD dseg:00C8 62 D8 7B 2B B3 32 C9 00 A5 00 CB 00 79 00 7A 00+COL_Banners2 db 98,216,123,43,179,50    ; DATA XREF: Unit_List_Window_Draw+2Fr ...
+// WZD dseg:00C8 7B 00 0D 00 0E 00 0F 00 49 00 4A 00 4B 00 69 00+db 201,0,165,0,203,0
+// WZD dseg:00C8 6A 00 6B 00                                     db 121,0,122,0,123,0
+// WZD dseg:00C8                                                 db 13,0,14,0,15,0
+// WZD dseg:00C8                                                 db 73,0,74,0,75,0
+// WZD dseg:00C8                                                 db 105,0,106,0,107,0
+// WZD dseg:00EC 00                                              db    0
+// WZD dseg:00ED 00                                              db    0
+// WZD dseg:00ED
+// WZD dseg:00ED
+// WZD dseg:00EE
+// WZD dseg:00EE
+// WZD dseg:00EE 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:00EE                                                                                         ; DATA XREF: Screen_Control+11o ...
+// WZD dseg:00FA 00 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+// WZD dseg:00FA                                                                                         ; DATA XREF: Item_Screen+202o ...
+// WZD dseg:0106 06 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
+// WZD dseg:0106                                                                                         ; DATA XREF: Next_Turn_Calc+14o ...
+// WZD dseg:0112 01 00 00 00 00 00 00 00 3F 01 C7 00             NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
+// WZD dseg:011E 07 00 04 00 00 00 00 00 3F 01 9E 00             NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
+// WZD dseg:011E
+// WZD dseg:011E
+// WZD dseg:012A 01 02 04 08 10 20                               NIU_byte_36BCA db         1,      10b,     100b,    1000b,   10000b,  100000b
+// WZD dseg:0130
+// WZD dseg:0130
+// WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
+// WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
+// WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
+// WZD dseg:0154
+// WZD dseg:0154
+// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
+// WZD dseg:0154
+// WZD dseg:0154
+// WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
+// WZD dseg:0156                                                                                         ; DATA XREF: City_Screen_Draw2__WIP+1Fr ...
+// WZD dseg:0156                                                                                         ; "Outpost"
+
+// WZD dseg:0162
+extern char * STR_MagicBuildings[7];
+
+// WZD dseg:0170 8C 00 00 00 82 00 05 00 78 00 0A 00 6E 00 0F 00+UU_UnknownValuePairs dw 140, 0, 130, 5, 120, 10, 110, 15, 100, 20, 90, 25, 80, 30, 70, 35, 60, 40, 50, 45, 40, 50
+// WZD dseg:019C
+
+
+
 
 
 
@@ -1390,15 +1918,8 @@ struct s_MSG_BUILDING_COMPLETE
 // WZD dseg:00C3 30 31 32 33 34                                  COL_Banners_P5 db 48, 49, 50, 51, 52
 extern uint8_t COL_Banners[];
 
-// WZD dseg:00C8 62 D8 7B 2B B3 32                               COL_Cartographer db 98, 216, 123, 43, 179, 50
-// WZD dseg:00CE C9 00 A5 00 CB 00                               UU_COL_Setof3_1 db 201,  0,165,  0,203,  0
-// WZD dseg:00D4 79 00 7A 00 7B 00                               UU_COL_Setof3_2 db 121,  0,122,  0,123,  0
-// WZD dseg:00DA 0D 00 0E 00 0F 00                               UU_COL_Setof3_3 db  13,  0, 14,  0, 15,  0
-// WZD dseg:00E0 49 00 4A 00 4B 00                               UU_COL_Setof3_4 db  73,  0, 74,  0, 75,  0
-// WZD dseg:00E6 69 00 6A 00 6B 00                               UU_COL_Setof3_5 db 105,  0,106,  0,107,  0
-// WZD dseg:00EC 00                                              db    0
-// WZD dseg:00ED 00                                              db    0
-
+// WZD dseg:00C8
+extern uint8_t COL_Banners2[36];
 
 // WZD dseg:00EE 01 00 00 00 00 00 00 00 3F 01 C7 00             mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 // extern struct s_mouse_list mouse_list_default[1];
@@ -1410,14 +1931,14 @@ extern struct s_mouse_list mouse_list_hourglass[1];
 // WZD dseg:011E 07 00 04 00 00 00 00 00 3F 01 9E 00             NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
 
 // WZD dseg:012A 01 02 04 08 10 20                               byte_36BCA db   1,  2,  4,  8, 16, 32
-// WZD dseg:0130 82 20 8A 20 92 20 A0 20 AF 20 BF 20 CE 20 DB 20+wizard_abilities_names dw offset cnst_Alchemy, offset cnst_Warlord, offset cnst_ChaosMastery, offset cnst_NatureMastery, offset cnst_SorceryMastery, offset cnst_InfernalPower, offset cnst_DivinePower, offset cnst_SageMaster, offset cnst_Channeler, offset cnst_Myrran, offset cnst_Archmage
-// WZD dseg:0130 E7 20 F1 20 F8 20 01 21 0F 21 1C 21 23 21 2E 21+                                        ; DATA XREF: Mirror_Screen_Draw+61Er ...
-// WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
+
+// WZD dseg:0130
+extern char * _wizard_abilities_names[18];
+
 // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
 
 // WZD dseg:0156
-// drake178: STR_TownSizes
-extern char * STR_TownSizes[6];
+extern char * _city_size_names[6];
 
 
 
@@ -1440,10 +1961,13 @@ extern int16_t TBL_Experience[9];
 
 
 
+extern char * rtn16[5];
+
+
 
 
 // WZD dseg:1EE4
-extern char * STR_CityEnchants[26];
+extern char * _city_enchantment_names[26];
 
 
 
@@ -1461,20 +1985,32 @@ extern int16_t overland_enchantment_upkeep_table[24];
 
 
 
+// WZD dseg:1FBC 11 28                                           
+extern char * _personality_type_names[];
 
 
-// WZD dseg:1FDC 74 28                                           dw offset aExpansionist                 ; "Expansionist"
+// ; added to chance of forming treaties
+// ; added to chance of avoiding superiority wars
+// WZD dseg:1FC8 00 00 0A 00 14 00 1E 00 28 00 32 00             TBL_AI_PRS_???_Mod dw 0, 10, 20, 30, 40, 50
+
+
+// WZD dseg:1FD4
+extern char * _objective_type_names[];
+
+
 // WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
-// WZD dseg:1FDE                                                                                         ; DATA XREF: AI_OVL_SplCat_Picker+9CEr ...
+
+
 
 // WZD dseg:1FEA 
 // drake178: TBL_AI_DIFF_Mods 
 extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_LEVEL];
 
-// WZD dseg:203A 00 00 00 05 00 00 00 00 05 00 00 00 0A 00 00 00+TBL_AI_BLD_OBJWgts AI_BLD_Obj_Priorities <<0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 0, 10, 0, 0>, <0, 0, 10, 0, 0>, <0, 10, 0, 0, 2>, <0, 0, 0, 5, 0>, <0, 0, 0, 5, 0>, <0, 5, 0, 0, 5>, <0, 5, 0, 0, 3>, <0, 0, 0, 0, 10>>
-// WZD dseg:203A 00 0A 00 00 00 0A 00 00 02 00 00 00 05 00 00 00+                                        ; DATA XREF: AI_CTY_SetProduction+49Fr ...
-// WZD dseg:206C 0A 00 0F 00 1E 00 0A 00 0A 00 0F 00 0F 00 0A 00+TBL_AI_BLD_BaseWgts dw 10, 15, 30, 10, 10, 15, 15, 10, 10, 10
-// WZD dseg:206C 0A 00 0A 00                                                                             ; DATA XREF: AI_CTY_SetProduction+4C2r ...
+// WZD dseg:203A
+extern int16_t TBL_AI_BLD_OBJWgts[10][5];
+
+// WZD dseg:206C
+extern int16_t TBL_AI_BLD_BaseWgts[10];
 
 
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
@@ -1483,9 +2019,48 @@ extern struct s_DIFFICULTY_MODIFIERS difficulty_modifiers_table[NUM_DIFFICULTY_L
 // ; declared in overlay.lib\OVRBUFF
 // WZD dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
 
-// WZD dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_nameso
 
-// WZD dseg:2143 41 72 74 69 66 69 63 65 72 00                   cnst_Artificer db 'Artificer',0         ; DATA XREF: dseg:wizard_abilities_nameso
+
+// WZD dseg:2082
+extern char cnst_Alchemy[];
+// WZD dseg:2089
+extern char empty_string__MAIN[];
+// WZD dseg:208A
+extern char cnst_Warlord[];
+// WZD dseg:2092
+extern char cnst_ChaosMastery[];
+// WZD dseg:20A0
+extern char cnst_NatureMastery[];
+// WZD dseg:20AF
+extern char cnst_SorceryMastery[];
+// WZD dseg:20BF
+extern char cnst_InfernalPower[];
+// WZD dseg:20CE
+extern char cnst_DivinePower[];
+// WZD dseg:20DB
+extern char cnst_SageMaster[];
+// WZD dseg:20E7
+extern char cnst_Channeler[];
+// WZD dseg:20F1
+extern char cnst_Myrran[];
+// WZD dseg:20F8
+extern char cnst_Archmage[];
+// WZD dseg:2101
+extern char cnst_ManaFocusing[];
+// WZD dseg:210F
+extern char cnst_NodeMastery[];
+// WZD dseg:211C
+extern char cnst_Famous[];
+// WZD dseg:2123
+extern char cnst_Runemaster[];
+// WZD dseg:212E
+extern char cnst_Conjurer[];
+// WZD dseg:2137
+extern char cnst_Charismatic[];
+// WZD dseg:2143
+extern char cnst_Artificer[];
+
+
 
 // WZD dseg:214D
 // drake178: cnst_Outpost
@@ -1506,8 +2081,8 @@ extern char cnst_City[];
 // drake178: cnst_Capital
 extern char cnst_Capital[];
 
-// WZD dseg:2176 53 75 6D 6D 6F 6E 69 6E 67 20 43 69 72 63 6C 65+cnst_SummoningCircle db 'Summoning Circle',0
-
+// WZD dseg:2176
+extern char cnst_SummoningCircle[];
 // WZD dseg:2187
 extern char cnst_EarthGate[];
 // WZD dseg:2192
@@ -1569,6 +2144,56 @@ extern char cnst_Consecration[];
 extern char cnst_WallofDarkness[];
 // WZD dseg:2806
 extern char cnst_Nightshade[];
+
+
+
+// WZD dseg:2811                                                 BEGIN:  _personality_type_names
+// WZD dseg:2811
+extern char aManiacal[];
+// WZD dseg:281A
+extern char aRuthless[];
+// WZD dseg:2823
+extern char aAggressive[];
+// WZD dseg:282E
+extern char aChaotic[];
+// WZD dseg:2836
+extern char aLawful[];
+// WZD dseg:283D
+extern char aPeaceful[];
+// WZD dseg:283D                                                 END:  _personality_type_names
+
+// WZD dseg:2846                                                 BEGIN:  _objective_type_names
+// WZD dseg:2846
+extern char aPragmatist[];
+// WZD dseg:2851
+extern char aMilitarist[];
+// WZD dseg:285C
+extern char aTheurgist[];
+// WZD dseg:2866
+extern char aPerfectionist[];
+// WZD dseg:2874
+extern char aExpansionist[];
+// WZD dseg:2874                                                 END:  _objective_type_names
+
+
+
+// WZD dseg:2F8C
+extern char _msg_planar_seal_prevents[];
+// WZD dseg:2FC2
+extern char _msg_units_cant_planar_travel[];
+// WZD dseg:2FFC
+extern char _msg_city_cant_produce_1[];
+// WZD dseg:2FFF
+extern char _msg_city_cant_produce_4[];
+// WZD dseg:3001
+extern char _msg_city_cant_produce_2[];
+// WZD dseg:3006
+extern char _msg_city_cant_produce_3[];
+// WZD dseg:301E
+extern char _msg_city_cant_produce_5[];
+// WZD dseg:3020
+extern char _msg_guardian_kills_spirit[];
+// WZD dseg:305B 00                                              align 2
 
 
 
@@ -1659,9 +2284,7 @@ extern int16_t cityscape_wall_anim_ctr;
 extern int16_t IDK_cityscape_vanish_percent;
 
 // WZD dseg:6ED8
-// ¿ usage/pattern ? sets of 4?
-// IDK_cityscape_RC_4x2
-// 4, 9, 13, 18, 0, 5, 9, 14, 0, -12, 18, 0, 5,-20,24,-13,19,-13,24,-7, 0,-14,29, 0, 4,-17,31,-4, 7,-21,35,-6, 0,-15,19, 0, 6,-20,23,-6,10,-25,30,-11, 0,-14,29, 0, 6,-19,34,-5,11,-25,39,-11, 6,-41,30,-3,11,-47,30,-42,25,-41,30,-9
+extern struct s_BLDG_CR cityscape_cr[5][3];
 
 // WZD dseg:6F5E                                                 ¿ END: Cityscape - Initialized Data ?
 
@@ -1678,14 +2301,13 @@ extern int16_t OVL_NewMapSustain;
 
 
 
-// dseg:76DA
-extern int16_t screen_window_x1;
-// dseg:76DC
-extern int16_t screen_window_y1;
-// dseg:76DE
-extern int16_t screen_window_x2;
-// dseg:76E0
-extern int16_t screen_window_y2;
+
+
+// WZD dseg:76DA                                                 BEGIN: ovr014
+// WZD dseg:76DA                                                 BEGIN: graphics
+
+// WZD dseg:76E0                                                 END: graphics
+// WZD dseg:76E2                                                 ¿ Init ?
 
 
 
@@ -1871,11 +2493,11 @@ extern struct s_SPELL_DATA * spell_data_table;
 
 
 
-// in MGC, screen_change for Main_Menu_Screen() is the next one up fro TBL_Items
+// in MGC, screen_change for Main_Menu_Screen() is the next one up fro _ITEMS
 // but there is nothing of the sort in WZD
 
 // WZD dseg:9136
-extern struct s_ITEM * TBL_Items;
+extern struct s_ITEM * _ITEMS;
 
 // WZD dseg:913A
 extern SAMB_ptr TBL_Premade_Items;
@@ -1884,41 +2506,67 @@ extern SAMB_ptr TBL_Premade_Items;
 // drake178: IMG_USW_Items ITEM_ICONS
 extern SAMB_ptr item_icons_seg[116];
 
+
+
+
+
+
+
 // WZD dseg:9226
-extern struct s_STRATEGIC_UNIT * global_strategic_unit;                // alloc in Allocate_Data_Space()
+// MoO2  Module: Mox  _global_combat_data_
+extern struct s_BATTLE_UNIT * global_battle_unit;                // alloc in Allocate_Data_Space()
 
 // WZD dseg:922A
-// TBL_BattleUnits
+// MoO  Module: Mox  _combat_data_
+// WZD dseg:922A 00 00 00 00                                     _combat_data_ dd 0                      ; DATA XREF: USW_Build_Effect_List+AB7r ...
+extern struct s_BATTLE_UNIT * battle_units;
+
 // WZD dseg:922E
-// TBL_CombatEnchants
+// ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
+extern struct s_COMBAT_ENCHANTMENTS * combat_enchantments;      // alloc in
 
 
-// extern struct s_HERO p_heroes[][];
-// extern struct s_HERO ** p_heroes;
-// extern struct s_HERO p_heroes[6][35];
-extern struct s_HERO * p_heroes[6];
+
 // WZD dseg:9232
-extern SAMB_ptr p0_heroes;                  // alloc in Allocate_Data_Space()
-// WZD dseg:9236
-extern SAMB_ptr p1_heroes;                  // alloc in Allocate_Data_Space()
-// WZD dseg:923A
-extern SAMB_ptr p2_heroes;                  // alloc in Allocate_Data_Space()
-// WZD dseg:923E
-extern SAMB_ptr p3_heroes;                  // alloc in Allocate_Data_Space()
-// WZD dseg:9242
-extern SAMB_ptr p4_heroes;                  // alloc in Allocate_Data_Space()
-// WZD dseg:9246
-extern SAMB_ptr p5_heroes;                  // alloc in Allocate_Data_Space()
+extern struct s_HEROES * _HEROES2[6];                  // alloc in Allocate_Data_Space()
+
+
+
+// WZD dseg:924A 00 00                                           CMB_AI_Fled dw 0                        ; DATA XREF: Tactical_Combat__WIP:loc_75ED7w ...
+// WZD dseg:924A                                                                                         ; now 0 (non-strategic battle init)
+// WZD dseg:924A                                                                                         ; set to 1 if the AI decides to flee
+// WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_ScanIcons@ CSCAN_ICONS <0>      ; DATA XREF: CMB_LoadResources+39Bw ...
+// WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 pointers to sandbox appended images
+// WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
+// WZD dseg:9272 00 00                                           CMB_WallRise_Going dw 0                 ; DATA XREF: CMB_WallRise_Anim+35w ...
+// WZD dseg:9272                                                                                         ; set to 0 at the beginning of combat map creation
+// WZD dseg:9272                                                                                         ; 1 branches wall entity creation (unknown IMG array)
+
+// WZD dseg:9274
+// ; 15Ch LBX_Alloc_First paragraphs, sandbox segment
+extern struct s_BATTLEFIELD * battlefield;
+
+// WZD dseg:9278 00 00                                           CMB_ActiveUnitFrameY dw 0               ; DATA XREF: CMB_SetActionCursor+48w ...
+// WZD dseg:927A 00 00                                           CMB_ActiveUnitFrameX dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
+// WZD dseg:927C 00 00                                           CMB_ActiveUnitFrame dw 0                ; DATA XREF: Tactical_Combat__WIP+246w ...
+// WZD dseg:927E 00 00                                           CMB_TargetFrame_Y dw 0                  ; DATA XREF: Tactical_Combat__WIP+92Dw ...
+// WZD dseg:9280 00 00                                           CMB_TargetFrame_X dw 0                  ; DATA XREF: Tactical_Combat__WIP+915w ...
+// WZD dseg:9282 00 00                                           CMB_TargetFrame dw 0                    ; DATA XREF: Tactical_Combat__WIP+24Cw ...
+
+// WZD dseg:9284
+extern int16_t OVL_Action_Type;
+// WZD dseg:9286
+extern int16_t OVL_Action_Structure;
 
 
 
 
 // WZD dseg:92B0
-// drake178: G_TBL_CityscapeBldngs
-extern struct s_BLDG * G_TBL_CityscapeBldngs;
+// drake178: cityscape_bldgs
+extern struct s_BLDG * cityscape_bldgs;
 
 // WZD dseg:92B4
-extern int16_t IDK_Cityscape_Bldg_Cnt;
+extern int16_t cityscape_bldg_count;
 
 // WZD dseg:92B6
 // drake178: IMG_USW_GrassBase@
@@ -1940,23 +2588,36 @@ extern SAMB_ptr building_trade_goods_seg;
 // drake178: IMG_CTY_Housing_Std@, IMG_CTY_Housing_Tre@, IMG_CTY_Housing_Mnd@
 extern SAMB_ptr bldg_housing_seg[3];
 
-// WZD dseg:9308 00 00                                           IMG_CTY_WizFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4F4w ...
-// WZD dseg:930A 00 00                                           IMG_CTY_Scap_Wall@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+4DDw ...
+// WZD dseg:9308
+extern SAMB_ptr cityscape_fortress_seg;
+
+// WZD dseg:930A
+extern SAMB_ptr cityscape_city_walls_seg;
+
 // WZD dseg:930C 00 00                                           IMG_CTY_AltarofBtl@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+498w ...
 // WZD dseg:930E 00 00                                           IMG_CTY_EvilPresnc@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+4C6w ...
 // WZD dseg:9310 00 00                                           IMG_CTY_Dark_Ritual@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+4AFw ...
 // WZD dseg:9312 00 00                                           IMG_CTY_Astral_Gate@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+481w ...
 // WZD dseg:9314 00 00                                           IMG_CTY_StreamofLif@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+46Aw ...
 // WZD dseg:9316 00 00                                           IMG_CTY_Earth_Gate@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+453w ...
-// WZD dseg:9318 00 00                                           IMG_CTY_Sum_Circle@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+43Cw ...
-// WZD dseg:931A 00 00 00 00 00 00                               IMG_CTY_Scap_Rocks@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+41Ew ...
-// WZD dseg:9320 00 00 00 00 00 00                               IMG_CTY_Scap_Trees@ dw 3 dup(0)         ; DATA XREF: GFX_Swap_AppndCtScap+3F6w ...
+
+// WZD dseg:9318
+extern SAMB_ptr cityscape_summon_circle_seg;
+
+// WZD dseg:931A
+extern SAMB_ptr cityscape_rocks_seg[3];
+
+// WZD dseg:9320
+extern SAMB_ptr cityscape_trees_seg[3];
 
 // WZD dseg:9326
 // drake178: IMG_CTY_Scap_Houses@[15]
 extern SAMB_ptr cityscape_houses_seg[15];
 
-// WZD dseg:9344 00 00                                           IMG_CTY_Scap_Roads@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+38Fw ...
+// WZD dseg:9344
+// drake178: IMG_CTY_Scap_Roads
+extern SAMB_ptr cityscape_roads_seg;
+
 // WZD dseg:9346 00 00                                           IMG_CTY_WallofDark@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+30Fw ...
 // WZD dseg:9348 00 00                                           IMG_CTY_Unk dw 0
 // WZD dseg:934A 00 00                                           IMG_CTY_WallofFire@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+2F8w ...
@@ -1969,7 +2630,9 @@ extern SAMB_ptr cityscape_houses_seg[15];
 // WZD dseg:9358 00 00                                           IMG_CTY_NatWard@ dw 0                   ; DATA XREF: GFX_Swap_AppndCtScap+257w ...
 // WZD dseg:935A 00 00                                           IMG_CTY_ChaosWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+240w ...
 // WZD dseg:935C 00 00                                           IMG_CTY_DeathWard@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+229w ...
-// WZD dseg:935E 00 00                                           IMG_CTY_FamineMask@ dw 0                ; DATA XREF: GFX_Swap_AppndCtScap+12Cw ...
+
+// WZD dseg:935E
+extern SAMB_ptr cityscape_famine_mask_seg;
 
 // WZD dseg:9360
 // drake178: IMG_CTY_Arc_CRift@
@@ -1999,10 +2662,14 @@ extern SAMB_ptr cityscape_background_arcanus_ocean_seg;
 // drake178: IMG_CTY_Arc_River@
 extern SAMB_ptr cityscape_background_arcanus_river_seg;
 
-// WZD dseg:936E 00 00                                           IMG_CTY_CursedLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+74w ...
-// WZD dseg:9370 00 00                                           IMG_CTY_LivingLands@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+5Dw
-// WZD dseg:9372 00 00                                           IMG_CTY_GaiasMask@ dw 0                 ; DATA XREF: GFX_Swap_AppndCtScap+46w ...
-// WZD dseg:9374 00 00                                           IMG_CTY_FlyFortress@ dw 0               ; DATA XREF: GFX_Swap_AppndCtScap+2Fw ...
+// WZD dseg:936E
+extern SAMB_ptr cityscape_cursedland_mask_seg;
+// WZD dseg:9370
+extern SAMB_ptr cityscape_livinglands_mask_seg;
+// WZD dseg:9372
+extern SAMB_ptr cityscape_gaiasblessing_mask_seg;
+// WZD dseg:9374
+extern SAMB_ptr cityscape_flyingfortress_mask_seg;
 
 // WZD dseg:9376
 // drake178: IMG_CTY_Arc_BGs@
@@ -2064,6 +2731,52 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 
 
 
+// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_TerrTiles@ dw 30h dup(0)        ; DATA XREF: CMB_LoadTerrainGFX+D0w ...
+// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 48 images appended into the EMM TILEX handle
+// WZD  dseg:93FA 00                                              db    0
+// WZD  dseg:93FB 00                                              db    0
+// WZD  dseg:93FC 00                                              db    0
+// WZD  dseg:93FD 00                                              db    0
+// WZD  dseg:93FE 00                                              db    0
+// WZD  dseg:93FF 00                                              db    0
+// WZD  dseg:9400 00                                              db    0
+// WZD  dseg:9401 00                                              db    0
+// WZD  dseg:9402 00                                              db    0
+// WZD  dseg:9403 00                                              db    0
+// WZD  dseg:9404 00                                              db    0
+// WZD  dseg:9405 00                                              db    0
+// WZD  dseg:9406 00                                              db    0
+// WZD  dseg:9407 00                                              db    0
+// WZD  dseg:9408 00 00 00 00 00 00 00 00 00 00 00 00             notify_magic_picts_seg dw 6 dup(0)      ; DATA XREF: Notify_Load+17Bw ...
+// WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
+// WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
+// WZD  dseg:9414 00 00                                           gsa_SOUNDFX_2_SFX_Left_Click dw 0       ; DATA XREF: SND_LeftClickSound:loc_14809r ...
+// WZD  dseg:9414                                                                                         ; single-loaded audio file
+// WZD  dseg:9416 00                                              db    0
+// WZD  dseg:9417 00                                              db    0
+// WZD  dseg:9418 00                                              db    0
+// WZD  dseg:9419 00                                              db    0
+// WZD  dseg:941A 00 00                                           gsa_SOUNDFX_0_SFX_Standard_Click dw 0   ; DATA XREF: SND_PlayClickSound:loc_1481Fr ...
+// WZD  dseg:941A                                                                                         ; single-loaded audio file
+// WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
+// WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
+// WZD  dseg:9421 00 00 00 00 00                                  TF_Unk_40_YCoords db 5 dup(0)                             ; 0
+// WZD  dseg:9421                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+57w
+// WZD  dseg:9426 00 00 00 00 00 00                               TF_Unk_40_XCoords db 6 dup(0)                             ; 0
+// WZD  dseg:9426                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+4Cw
+// WZD  dseg:942C 00 00                                           TF_Unk_40_Counter dw 0                  ; DATA XREF: LD_MAP_TFUnk40_Eval+6w ...
+
+// WZD  dseg:942E
+extern SAMB_ptr main_lilevent_icons[6];
+// WZD  dseg:942E                                                                                         ; array of 6 single-loaded images
+// WZD  dseg:942E                                                                                         ; (blue - red - green - bad - good - short)
+// WZD  dseg:942E                                                                                         ; not actually used as far as  i can tell...
+
+// WZD  dseg:943A 00 00 00 00 00 00 00 00                         IMG_CTY_Rubble@ dw 4 dup(0)             ; DATA XREF: GFX_Swap_AppndCtScap+5B6w ...
+// WZD  dseg:943A                                                                                         ; array of 4 appended reserved EMM headers in
+// WZD  dseg:943A                                                                                         ; GFX_Swap_Seg, 2x2 - 2x3 - 3x2 - 3x3 rubble images
+
+
 
 /* -2: NEVER, -1: ALWAYS, {0,1,2,3}: frame - draw off, {4,5,6,7}: frame - draw on */
 // ? Set_Draw_Active_Stack_...() means this variable is private to ovr067 ?
@@ -2096,7 +2809,10 @@ extern int16_t reset_active_stack;
 // WZD dseg:946C 00 00                                           word_3FF0C dw 0                         ; DATA XREF: sub_BECD9+23w ...
 // WZD dseg:946E 00 00                                           _spellbook_small_seg dw 0               ; DATA XREF: Spellbook_Load_Small_Pictures+18w ...
 // WZD dseg:946E                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:9470 00 00                                           IMG_GUI_ScrollBtm@ dw 0                 ; DATA XREF: CMB_DrawSummary+3Br ...
+
+// WZD dseg:9470
+extern SAMB_ptr _combat_results_scroll_bottom_seg;
+
 // WZD dseg:9472 00 00                                           dw 0
 // WZD dseg:9474 00 00                                           dw 0
 // WZD dseg:9476 00 00                                           dw 0
@@ -2113,80 +2829,59 @@ extern int16_t research_staff_locked;
 // WZD dseg:9482
 extern int16_t skill_staff_locked;
 
-// WZD dseg:9484 00 00                                           IMG_GUI_AlchRevText@ dw 0               ; DATA XREF: GAME_AlchemyWindow+10Bw ...
-// WZD dseg:9486 00 00                                           IMG_GUI_AlchemyBar@ dw 0                ; DATA XREF: GAME_AlchemyWindow+DDw ...
-// WZD dseg:9488 00 00                                           IMG_GUI_AlchemyRArr@ dw 0               ; DATA XREF: GAME_AlchemyWindow+C6w ...
-// WZD dseg:9488                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:948A 00 00                                           IMG_GUI_AlchemyLArr@ dw 0               ; DATA XREF: GAME_AlchemyWindow+AFw ...
-// WZD dseg:948A                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:948C 00 00                                           IMG_GUI_AlchemyCncl@ dw 0               ; DATA XREF: GAME_AlchemyWindow+81w ...
-// WZD dseg:948C                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:948E 00 00                                           IMG_GUI_AlchemyOk@ dw 0                 ; DATA XREF: GAME_AlchemyWindow+98w ...
-// WZD dseg:948E                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:9490 00 00                                           UU_IMG_NewG_OKBtn@ dw 0                 ; MAGIC.EXE variable, unused in WIZARDS.EXE
-// WZD dseg:9492 00                                              db    0
-// WZD dseg:9493 00                                              db    0
-// WZD dseg:9494 00 00                                           IMG_GUI_AlchemyStar@ dw 0               ; DATA XREF: GAME_AlchemyWindow+F4w ...
-// WZD dseg:9496 00 00                                           IMG_GUI_Alchemy_BG@ dw 0                ; DATA XREF: GAME_AlchemyWindow+6Aw ...
+// WZD dseg:9484
+extern SAMB_ptr m_alchemy_pow2gold_seg;
+// WZD dseg:9486
+extern SAMB_ptr m_alchemy_bar_pict_seg;
+// WZD dseg:9488
+extern SAMB_ptr m_alchemy_right_arrow_button_seg;
+// WZD dseg:948A
+extern SAMB_ptr m_alchemy_left_arrow_button_seg;
+// WZD dseg:948C
+extern SAMB_ptr m_alchemy_cancel_button_seg;
+// WZD dseg:948E
+extern SAMB_ptr m_alchemy_ok_button_seg;
+// WZD dseg:9490
+extern SAMB_ptr UU_IMG_NewG_OKBtn;
+// WZD dseg:9492
+extern SAMB_ptr IDK_Alchemy_Pict;
+// WZD dseg:9494
+extern SAMB_ptr m_alchemy_star_seg;
+// WZD dseg:9496
+extern SAMB_ptr m_alchemy_background_seg;
+
 
 // WZD dseg:9498
-// drake178: IMG_CTY_RED_Btn@
 extern SAMB_ptr red_button_seg;
 
 // WZD dseg:949A
-// drake178: IMG_CTY_RightBldTab@
 extern SAMB_ptr IMG_CTY_RightBldTab;
 
-// WZD dseg:949C 00 00                                           
-// drake178: IMG_CTY_LeftBldTab@
+// WZD dseg:949C
 extern SAMB_ptr IMG_CTY_LeftBldTab;
 
-// WZD dseg:949E 00 00                                           IMG_OVL_EnemyCityBG@ dw 0               ; DATA XREF: IDK_EnemyCityScreen_s4A3F0+115w ...
+// WZD dseg:949E
+extern SAMB_ptr _enemy_city_seg;
 
 // WZD dseg:94A0
-// drake178: IMG_CTY_10_Food@
-// WZD dseg:94A2
-// drake178: IMG_CTY_10_Prod@
-// WZD dseg:94A4
-// drake178: IMG_CTY_10_Gold@
-// WZD dseg:94A6
-// drake178: IMG_CTY_10_Power@
-// WZD dseg:94A8
-// drake178: IMG_CTY_10_Books@
-// WZD dseg:94AA
-// drake178: IMG_CTY_Neg_10_Gold@
 extern SAMB_ptr city_big_resource_icon_seg[6];
 
 // WZD dseg:94AC
-// drake178: IMG_CTY_Neg_10_Food@
 extern SAMB_ptr city_grey_big_bread_icon_seg;
 
 // WZD dseg:94AE
-// drake178: IMG_CTY_Rebels@[14]
 extern SAMB_ptr city_rebel_icon_seg[14];
 
 // WZD dseg:94CA
-// drake178: IMG_CTY_Farmers@[14]
 extern SAMB_ptr city_farmer_icon_seg[14];
 
 // WZD dseg:94E6
-// drake178: IMG_CTY_1_Food@
-// WZD dseg:94E8
-// drake178: IMG_CTY_1_Prod@
-// WZD dseg:94EA
-// drake178: IMG_CTY_1_Gold@
-// WZD dseg:94EC
-// drake178: IMG_CTY_1_Power@
-// WZD dseg:94EE
-// drake178: IMG_CTY_1_Book@
 extern SAMB_ptr city_lil_resource_icon_seg[5];
 
 // WZD dseg:94F0
-// drake178: IMG_CTY_Neg_1_Food@
 extern SAMB_ptr city_grey_lil_bread_icon_seg;
 
 // WZD dseg:94F2
-// drake178: IMG_CTY_Workers@[14];
 extern SAMB_ptr city_worker_icon_seg[14];
 
 
@@ -2228,7 +2923,7 @@ extern SAMB_ptr road_ok_button;
 // MAIN.LBX,46  CASTCNCL    road ok button
 
 // WZD dseg:9522
-extern SAMB_ptr DESELECT_button_blockout;
+extern SAMB_ptr deselect_button_blockout;
 // MAIN.LBX,44    DESELECT    button blockout
 
 // WZD dseg:9524
@@ -2254,32 +2949,34 @@ extern SAMB_ptr deselect_background;
 // WZD dseg:952E                                                 END:  Main Screen Pictures
 
 // WZD dseg:9530
-// drake178: IMG_CTY_EmptyHuts@
 extern SAMB_ptr outpost_dark_icon_seg[3];
 
 // WZD dseg:9536
-// drake178: IMG_CTY_FilledHuts@
 extern SAMB_ptr outpost_bright_icon_seg[3];
 
-// WZD dseg:953C 00 00                                           namecity_background_seg dw 0            ; DATA XREF: City_Screen_Load_Pictures+239w ...
-// WZD dseg:953E 00 00                                           IMG_CTY_Outpost_BG@ dw 0                ; DATA XREF: City_Screen_Load_Pictures+222w ...
+// WZD dseg:953C
+extern SAMB_ptr outpost_name_background_seg;
 
-// WZD dseg:9540 00 00                                           
-// IMG_USW_SideBtns_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+8Bw ...
+// WZD dseg:953E
+extern SAMB_ptr outpost_background_seg;
+
+// WZD dseg:9540
 extern SAMB_ptr unitview_button_background_seg;
 
 // WZD dseg:9542 00 00                                           dw 0
 // WZD dseg:9544 00 00                                           dw 0
 // WZD dseg:9546 00 00                                           dw 0
 
-// WZD dseg:9548 00 00                                           
+// WZD dseg:9548
 // IMG_OVL_BuildBtn_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+176w
 extern SAMB_ptr IMG_OVL_BuildBtn_BG;
 // WZD dseg:9548                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mirrow_screen_18_books_icons dw 12h dup(0)
-// WZD dseg:954A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: IDK_MirrorScreen_s6343B+88w ...
-// WZD dseg:956E 00 00                                           mirror_screen_background dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+// WZD dseg:954A
+extern SAMB_ptr mirrow_screen_books_segs[18];
+
+// WZD dseg:956E
+extern SAMB_ptr mirror_screen_background_seg;
 
 
 
@@ -2294,15 +2991,26 @@ extern SAMB_ptr IMG_OVL_BuildBtn_BG;
 // WZD dseg:9576                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:9576                                                                                         ; should use dseg:9512
 // WZD dseg:9578 00 00                                           armylist_background_seg dw 0            ; DATA XREF: ArmyList_Screen_Load+BBw ...
-// WZD dseg:957A 00 00 00 00 00 00 00 00 00 00 00 00             IMG_ARMY_ItemSlots@ ISLT_ICONS <0>      ; DATA XREF: GFX_Swap_AppendItems+A3w ...
-// WZD dseg:957A                                                                                         ; array of 6 appended reserved EMM headers in
-// WZD dseg:957A                                                                                         ; GFX_Swap_Seg, each with one item slot image
-// WZD dseg:9586 00 00                                           IMG_ItemScrn_Ok@ dw 0                   ; DATA XREF: ITEM_ScreenRedraw+3D6r ...
-// WZD dseg:9586                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:9588 00 00                                           IMG_ItemScrn_Alch@ dw 0                 ; DATA XREF: ITEM_ScreenRedraw+3AEr ...
-// WZD dseg:9588                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:958A 00 00                                           IMG_ItemScrn_HeroBr@ dw 0               ; DATA XREF: ITEM_ScreenRedraw+9Cr ...
-// WZD dseg:958C 00 00                                           IMG_ItemScrn_BG@ dw 0                   ; DATA XREF: Items_Screen+2Fr ...
+
+
+
+// WZD dseg:957A
+extern SAMB_ptr item_slot_icons_seg[6];
+
+// WZD dseg:9586
+extern SAMB_ptr hero_ok_button_seg;
+
+// WZD dseg:9588
+extern SAMB_ptr hero_alchemy_button_seg;
+
+// WZD dseg:958A
+extern SAMB_ptr hero_outline_seg;
+
+// WZD dseg:958C
+extern SAMB_ptr hero_background_seg;
+
+
+
 // WZD dseg:958E 00 00 00 00 00 00 00 00 00 00 00 00             lilwiz_gem_segs dw 6 dup(0)             ; DATA XREF: Magic_Screen_Load_Pictures+BFw ...
 // WZD dseg:959A 00                                              db    0
 // WZD dseg:959B 00                                              db    0
@@ -2357,13 +3065,15 @@ extern SAMB_ptr IMG_OVL_BuildBtn_BG;
 // drake178: IMG_CTY_HalfRsc@
 extern SAMB_ptr city_half_background_seg;
 
-// WZD dseg:95F2 00 00                                           goto_booty_icon dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+371w ...
+// WZD dseg:95F2
+extern SAMB_ptr goto_booty_icon;
+
 // WZD dseg:95F2                                                                                         ; single-loaded image
 // WZD dseg:95F4 00 00 00 00 00 00 00 00 00 00 00 00             hero_portraits_seg dw 6 dup(0)          ; DATA XREF: ArmyList_Screen_Draw+38Dr ...
-// WZD dseg:9600 00 00 00 00                                     TBL_TERRSTAT_EMS@ dd 0                  ; allocated in the overland djikstra patch
-// WZD dseg:9604 00 00 00 00                                     TBL_PF_Conversions@ dd 0                ; allocated in the overland djikstra patch
-// WZD dseg:9608 00 00 00 00                                     TBL_PF_Tentative@ dd 0                  ; allocated in the overland djikstra patch
-// WZD dseg:960C 00 00 00 00                                     TBL_PF_Results@ dd 0                    ; allocated in the overland djikstra patch
+// WZD dseg:9600 00 00 00 00                                     TBL_TERRSTAT_EMS@ dd 0                  ; 
+// WZD dseg:9604 00 00 00 00                                     TBL_PF_Conversions@ dd 0                ; 
+// WZD dseg:9608 00 00 00 00                                     TBL_PF_Tentative@ dd 0                  ; 
+// WZD dseg:960C 00 00 00 00                                     TBL_PF_Results@ dd 0                    ; 
 // WZD dseg:9610 00                                              db    0
 // WZD dseg:9611 00                                              db    0
 // WZD dseg:9612 00                                              db    0
@@ -2443,19 +3153,14 @@ extern int16_t entities_on_movement_map[];
 
 // WZD dseg:9752                                                 ? BEGIN: City Screen ?
 
-// WZD dseg:9752 00 00                                           scanned_field__G_CTY_ClickedLabel dw 0  ; DATA XREF: City_Screen+2A9w ...
 // WZD dseg:9752
 extern int16_t city_screen_scanned_field;
 
-// WZD dseg:9754 00 00                                           
-// IMG_OVL_UnitListBtm@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+15Fw ...
-extern SAMB_ptr IMG_OVL_UnitListBtm;
-// WZD dseg:9754                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9754
+extern SAMB_ptr _unitlist_bottom_seg;
 
-// WZD dseg:9756 00 00                                           
-// IMG_OVL_UnitList_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+148w ...
-extern SAMB_ptr IMG_OVL_UnitList_BG;
-// WZD dseg:9756                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:9756
+extern SAMB_ptr _unitlist_background_seg;
 
 // WZD dseg:9758
 // drake178: IMG_CTY_NewBuild_BG@
@@ -2469,17 +3174,20 @@ extern SAMB_ptr city_spell_dn_arrow_button_seg;
 // drake178: IMG_CTY_SplScrlUp@
 extern SAMB_ptr city_spell_up_arrow_button_seg;
 
-// WZD dseg:975E 00 00 00 00 00 00 00 00 00 00 00 00             IMG_USW_ItemSlots ISLT_ICONS <0>        ; DATA XREF: GFX_Swap_AppendItems+15Bw ...
-// WZD dseg:975E                                                                                         ; array of 6 appended reserved EMM headers in
-// WZD dseg:975E                                                                                         ; GFX_Swap_Seg, each with one item slot image
-// WZD dseg:976A 00 00                                           IMG_USW_ItemHelpBlt@ dw 0               ; DATA XREF: GFX_Swap_AppendItems+144w ...
-// WZD dseg:976A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
-// WZD dseg:976C 00 00                                           IMG_USW_ItemHelp_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendItems+12Dw ...
-// WZD dseg:976C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:975E
+extern SAMB_ptr itemtile_icons_seg[6];
+
+// WZD dseg:976
+// XREF: GFX_Swap_AppendItems(); Item_View_Prepare(); Hero_LevelUp_Popup_Draw();
+extern SAMB_ptr item_view_bullet_seg;
+
+// WZD dseg:976C
+// XREF: GFX_Swap_AppendItems(); Item_View_Prepare();
+extern SAMB_ptr item_view_background_seg;
 
 // WZD dseg:976E
 // drake178: IMG_USW_ItemPowers IPOW_ICONS
-extern SAMB_ptr IMG_USW_ItemPowers[22];
+extern SAMB_ptr item_power_icons_seg[22];
 
 // WZD dseg:979A 00 00                                           IMG_MOODWIZPortrait@ dw 0               ; DATA XREF: IDK_DiplAnim_s6FDA1+4Cr ...
 // WZD dseg:979A                                                                                         ; 3 frame image (good, bad, neutral)
@@ -2517,7 +3225,7 @@ extern SAMB_ptr unitview_up_arrow_seg;
 // drake178: IMG_USW_Background@
 extern SAMB_ptr unitview_large_background_seg;
 
-// WZD dseg:97BA 00 00                                           
+// WZD dseg:97BA
 // IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
 extern SAMB_ptr unitview_small_background_seg;
 // WZD dseg:97BA                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
@@ -2530,7 +3238,7 @@ extern SAMB_ptr unitview_stat_gold_icons_seg[15];
 // drake178: IMG_USW_Stat_Icons
 extern SAMB_ptr unitview_stat_icons_seg[15];
 
-// WZD dseg:97F8 00                                              
+// WZD dseg:97F8
 extern SAMB_ptr special_seg[145];
 
 // WZD dseg:991A
@@ -2597,7 +3305,7 @@ extern SAMB_ptr main_done_button;
 extern SAMB_ptr main_wait_button;
 extern SAMB_ptr main_patrol_button;
 
-// ? block of Main Screen - Top Buttons Bar ?
+// ¿ block of Main Screen - Top Buttons Bar ?
 // XREF: Main_Screen_Load_Pictures(); OVL_SetMenuButtons(); OVL_DrawMainMenu()
 // ; single-loaded 2 frame image (normal - clicked)
 // Code Order:   ?
@@ -2662,9 +3370,13 @@ extern SAMB_ptr _screen_seg;
 
 // WZD dseg:9990
 // _current_screen
-// WZD dseg:9992 RP_GUI_GrowOutFrames dw 0               ; DATA XREF: VGA_PageFlip_FX+41r ...
-// WZD dseg:9994 RP_GUI_GrowOutTop dw 0                  ; DATA XREF: VGA_PageFlip_FX+45r ...
-// WZD dseg:9996 RP_GUI_GrowOutLeft dw 0                 ; DATA XREF: VGA_PageFlip_FX+49r ...
+
+// WZD dseg:9992
+extern int16_t GrowOutFrames;
+// WZD dseg:9994
+extern int16_t GrowOutTop;
+// WZD dseg:9996
+extern int16_t GrowOutLeft;
 
 // WZD dseg:9998
 // AKA TBL_Events
@@ -2674,7 +3386,7 @@ extern int16_t * events_table;
 // WZD dseg:999C
 extern int16_t _unit_stack_count;
 // WZD dseg:999E
-extern struct s_STACK _unit_stack[];
+extern struct s_STACK _unit_stack[MAX_STACK];
 
 
 
@@ -2696,7 +3408,7 @@ extern int8_t MSG_CityGained_Array[20];
 
 // WZD dseg:9AF0
 // drake178: MSG_BuildDone_Count
-extern int8_t MSG_Building_Complete_Count;
+extern int8_t g_bldg_msg_ctr;
 
 // WZD dseg:9AF1 00                                              db    0
 
@@ -2720,7 +3432,7 @@ extern int8_t MSG_UnitLost_Count;
 // WZD dseg:9B95 00                                              db    0
 
 // WZD dseg:9B96
-// drake178: MSG_UnitLost_Array Unit_Lost_Msg_Item 14h dup(<0>)
+extern struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
 
 // WZD dseg:9BE6
 // drake178: MSG_UnitKilled_Count
@@ -2736,14 +3448,14 @@ extern int8_t MSG_UnitKilled_Count;
 extern int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
-// drake178: MSG_CityGrowth_Array db 14h dup(0)
+extern int16_t MSG_CityGrowth_Array[20];
 
 // WZD dseg:9C4D
 // drake178: MSG_CityDeath_Count
 extern int8_t MSG_CityDeath_Count;
 
 // WZD dseg:9C4E
-// drake178: MSG_CityDeath_Array db 14h dup(0) 
+extern int16_t MSG_CityDeath_Array[20];
 
 // WZD dseg:9C62
 // drake178: MSG_UEsLost_Count
@@ -2769,52 +3481,49 @@ extern int8_t MSG_GEs_Lost;
 
 // WZD dseg:9C90
 extern SAMB_ptr TBL_OvlMovePaths_EMS;
+
 // WZD dseg:9C94
 // CONTX_Arc_NmeStrMap
 // WZD dseg:9C98
 // CONTX_Myr_NmeStrMap
+
 // WZD dseg:9C9C
-extern SAMB_ptr TBL_Catchments_EMS;
+// drake178: TBL_Catchments_EMS
+extern uint8_t * city_area_bits;                        // alloc'd in Allocate_Data_Space()
 
 // WZD dseg:9CA0
 // drake178: TBL_SharedTiles_EMS
-extern uint8_t * square_shared_bits;               // alloc'd in Allocate_Data_Space()
+extern uint8_t * city_area_shared_bits;                 // alloc'd in Allocate_Data_Space()
 
 // WZD dseg:9CA4
-extern SAMB_ptr TBL_TempMoveMap_EMS;
+// drake178: TBL_TempMoveMap_EMS
+extern struct s_MOVE_PATH * movepath_cost_map;
+
 // WZD dseg:9CA8
 // COL_MinimapTiles
+
 // WZD dseg:9CAC
-extern SAMB_ptr TBL_MoveMaps_EMS;
+// drake178: TBL_MoveMaps_EMS
+extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
+
 
 
 // WZD dseg:9CB0  
 extern uint8_t * TBL_Scouting;              // alloc in Allocate_Data_Space()
 // WZD dseg:9CB4
-extern uint8_t * TBL_Terrain_Flags;         // alloc in Allocate_Data_Space()
+extern uint8_t * _map_square_flags;         // alloc in Allocate_Data_Space()
 // WZD dseg:9CB8
 extern SAMB_ptr TBL_Terr_Specials;          // alloc in Allocate_Data_Space()
 
 // WZD dseg:9CBC
-// extern SAMB_ptr _CITIES;
-// extern struct s_CITY _CITIES[];
-extern struct s_CITY * _CITIES;
-
 // WZD dseg:9CC0
-// drake178: TBL_Encounters
-// AKA TBL_Lairs
-extern struct s_LAIR * _LAIRS;
-
 // WZD dseg:9CC4
-// drake178: TBL_Towers;
-extern struct s_TOWER * _TOWERS;
-
 // WZD dseg:9CC8
-// drake178: TBL_Fortresses;
-extern struct s_FORTRESS * _FORTRESSES;
-
 // WZD dseg:9CCC
-// drake178: TBL_Nodes
+extern struct s_CITY * _CITIES;
+extern struct s_LAIR * _LAIRS;
+extern struct s_TOWER * _TOWERS;
+extern struct s_FORTRESS * _FORTRESSES;
 extern struct s_NODE * _NODES;
 
 // WZD dseg:9CD0
@@ -2829,12 +3538,9 @@ extern SAMB_ptr UU_TBL_1;
 extern uint8_t * _world_maps;
 
 // WZD dseg:9CE0
-// drake178: 14 individual pointers, one to each row of the table
-extern SAMB_ptr TBL_Unrest[14];
-extern SAMB_ptr TBL_Unrest_Hack;
+extern int8_t * TBL_Unrest[NUM_RACES];
 
 // WZD dseg:9D18
-// drake178: IMG_CTY_Bldngs_Wall@
 extern SAMB_ptr cityscape_big_city_wall_seg;
 
 // WZD dseg:9D1A
@@ -2854,22 +3560,20 @@ extern uint16_t grand_vizier;
 
 
 // WZD dseg:9EC2
-// extern SAMB_ptr TBL_Units;
-// extern struct s_UNIT _UNITS[];
 extern struct s_UNIT * _UNITS;
 
 // WZD dseg:9EC6
-extern SAMB_ptr TBL_Hero_Names;  // 25h 37d PR 37*16=592
+extern struct s_INACTV_HERO * hero_names_table;
+
 // WZD dseg:9ECA
-// extern struct s_WIZARD _players[6];
-extern struct s_WIZARD _players[];
-// extern struct s_WIZARD * _players;
+extern struct s_WIZARD _players[6];
 
 // WZD dseg:BB7A
-// // // extern struct s_HLP_ENTRY * _help_entries;
-// // extern uint8_t _help_entries[];
-// extern int16_t _help_entries[];
-extern char _help_entries[];
+// // // extern struct s_HELP_FIELD _help_entries[50];
+// // extern uint8_t _help_entries[500];
+// extern char _help_entries[500];
+// extern struct s_HELP_LIST _help_entries;
+extern struct s_HELP_FIELD _help_entries[50];
 
 
 // WZD dseg:974A
@@ -2926,33 +3630,31 @@ extern int16_t city_resources_rows_fields[7];
 extern int16_t * city_population_row_fields;
 
 // WZD dseg:BF80
-extern int16_t city_no_buy;
+extern int16_t m_city_no_buy;
 
 // WZD dseg:BF82
 extern int16_t * city_screen_required_buildings_list;
 
 // WZD dseg:BF84
-// drake178: CTY_EScrollDn_Label
 extern int16_t city_dn_button;
 
 // WZD dseg:BF86
-// drake178: CTY_EScrollUp_Label
 extern int16_t city_up_button;
 
 // WZD dseg:BF88
 extern int16_t UU_CityScreen_Field;
 
 // WZD dseg:BF8A
-extern int16_t city_map_y;
+extern int16_t city_map_wy;
 
 // WZD dseg:BF8C
-extern int16_t city_map_x;
+extern int16_t city_map_wx;
 
 // WZD dseg:BF8E
-extern int16_t G_CTY_ClickLabelCount;
+extern int16_t city_cityscape_field_count;
 
 // WZD dseg:BF90
-extern byte_ptr G_CTY_ClickLabelArray;
+extern byte_ptr city_cityscape_fields;
 
 // WZD dseg:BF92
 // drake178: CTY_EnchDisplayCount
@@ -3006,10 +3708,10 @@ extern int16_t city_screen_buy_button;
 extern char * city_screen_product_name;
 
 // WZD dseg:BFB0
-extern int16_t IDK_city_production_cost;
+extern int16_t m_city_production_cost;
 
 // WZD dseg:BFB2
-extern int16_t IDK_city_n_turns_to_produce;
+extern int16_t m_city_n_turns_to_produce;
 
 // WZD dseg:BFB4
 extern int16_t cityscreen_city_built_bldg_idx;
@@ -3033,7 +3735,7 @@ extern char * GUI_String_1;
 // WZD dseg:BFE2 00 00                                           word_42A82 dw 0                         ; DATA XREF: sub_4D5EA+7Bw ...
 // WZD dseg:BFE4 00 00                                           IMG_Seg dw 0                            ; DATA XREF: sub_4D5EA+64w ...
 // WZD dseg:BFE6 00 00                                           word_42A86 dw 0                         ; DATA XREF: sub_4D5EA+Bw ...
-// WZD dseg:BFE8 00 00                                           IDK_EnemyCityScreen_UnitStack_2 dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
+// WZD dseg:BFE8 00 00                                           m_troop_fields dw 0    ; DATA XREF: Enemy_City_Screen+1D3r ...
 // WZD dseg:BFEA 00 00                                           IDK_EnemyCityScreen_UnitStack_1 dw 0    ; DATA XREF: Enemy_City_Screen:loc_4A454r ...
 // WZD dseg:BFEC 00 00                                           RecTotal dw 0                           ; DATA XREF: Enemy_City_Screen+68o ...
 // WZD dseg:BFEE 00 00                                           start_y dw 0                            ; DATA XREF: Enemy_City_Screen:loc_4A43Fw ...
@@ -3066,19 +3768,13 @@ extern char * GUI_String_1;
 // WZD dseg:C04E                                                                                         ;    2: purifying possible
 // WZD dseg:C04E                                                                                         ;    9: melding possible
 // WZD dseg:C050 00 00                                           _next_turn_button dw 0                  ; DATA XREF: Main_Screen:@@Check_Input_NextTurnButtonr ...
-// WZD dseg:C052 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+Unit_Window_Fields dw 9 dup(0)          ; DATA XREF: IDK_CityScreen_AddFields+2Cw ...
+// WZD dseg:C052 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+g_unit_window_fields dw 9 dup(0)          ; DATA XREF: IDK_CityScreen_AddFields+2Cw ...
 // WZD dseg:C064 00 00                                           CRP_OverlandVar_3 dw 0                  ; DATA XREF: Main_Screen+9Ar ...
-// WZD dseg:C066 00 00                                           OVL_Path_Length dw 0                    ; DATA XREF: Main_Screen+CBDr ...
+// WZD dseg:C066 00 00                                           _active_stack_path_length dw 0                    ; DATA XREF: Main_Screen+CBDr ...
 
-// WZD dseg:C068 00 00                                           OVL_StackHasPath dw 0                   ; DATA XREF: City_Screen:loc_47BE1w ...
 // WZD dseg:C068
-extern int16_t OVL_StackHasPath;
+extern int16_t _active_stack_has_path;
 
-// WZD dseg:C068                                                                                         ; set to 0 after display-sorting the active stack
-// WZD dseg:C068                                                                                         ; set to 1 if road-building, but the unit is not on any
-// WZD dseg:C068                                                                                         ;   of the plotted line tiles (before returning)
-// WZD dseg:C068                                                                                         ; set to 1 if road-building, and tiles left to do
-// WZD dseg:C068                                                                                         ; set to 1 if moving with path left to go
 // WZD dseg:C06A 00 00                                           _done_button dw 0                       ; DATA XREF: Main_Screen:CheckDoneButtonr ...
 // WZD dseg:C06C 00 00                                           _wait_button dw 0                       ; DATA XREF: Main_Screen:loc_50419r ...
 // WZD dseg:C06E 00 00                                           _patrol_button dw 0                     ; DATA XREF: Main_Screen:loc_50207r ...
@@ -3139,22 +3835,24 @@ extern int16_t citylist_item_scanned_field;
 
 // WZD dseg:C09A
 // AKA G_Some_OVL_Var_1
-extern int16_t IDK_CityList_list_first_item;
+extern int16_t m_citylist_first_item;
 
 // WZD dseg:C09C
-extern int16_t citylist_city_count;
+extern int16_t m_city_list_count;
 
 // WZD dseg:C09E
-extern int16_t citylist_item_count;
+extern int16_t m_cities_list_field_count;
 
 // WZD dseg:C0A0
-extern int16_t citylist_item_fields[];
+extern int16_t m_cities_list_fields[9];
 
-// WZD dseg:C0B2 00 00                                           word_42B52 dw 0                         ; DATA XREF: CityList_Screen+4Cw
-// WZD dseg:C0B4 00 00                                           word_42B54 dw 0                         ; DATA XREF: CityList_Screen+46w
+// WZD dseg:C0B2
+extern int16_t UU_citylist_some_y;
+// WZD dseg:C0B4
+extern int16_t UU_citylist_some_x;
 
 // WZD dseg:C0B6
-extern SAMB_ptr city_list;
+extern SAMB_ptr m_city_list_array;
 
 // WZD dseg:C0B8
 extern SAMB_ptr list_cities;
@@ -3163,7 +3861,9 @@ extern SAMB_ptr list_cities;
 extern int16_t armylist_item_scanned_field;
 
 // WZD dseg:C0BC 00 00                                           dw 0
-// WZD dseg:C0BE 00 00                                           word_42B5E dw 0                         ; DATA XREF: CityList_Screen_Draw:loc_58114w
+
+// WZD dseg:C0BE
+extern int16_t UU_CityListDraw_ScannedHighlight;
 
 // WZD dseg:C0C0
 extern int16_t IDK_armylist_row_count;
@@ -3172,7 +3872,7 @@ extern int16_t IDK_armylist_row_count;
 extern byte_ptr IDK_armylist_row_fields;
 
 // WZD dseg:C0C4
-extern int16_t armylist_army_count;
+extern int16_t m_army_list_count;
 
 // WZD dseg:C0C6
 extern int16_t list_item_count;
@@ -3185,7 +3885,7 @@ extern int16_t armylist_unit_count;
 
 // WZD dseg:C0CC
 // MoO2  Module: COLREFIT  _n_ships_in_list  Address: 02:00197A28
-extern int16_t armylist_item_count;
+extern int16_t m_armies_list_field_count;
 
 // WZD dseg:C0CE 00 00                                           word_42B6E dw 0                         ; DATA XREF: ArmyList_Screen+2Bw
 // WZD dseg:C0D0 00 00                                           word_42B70 dw 0                         ; DATA XREF: ArmyList_Screen+25w
@@ -3197,16 +3897,16 @@ extern int16_t armylist_hero_portrait_start_y;
 extern int16_t armylist_hero_portrait_start_x;
 
 // WZD dseg:C0D6
-extern byte_ptr armylist_hero_portrait_unit_indices;
+extern int16_t * armylist_hero_portrait_unit_indices;
 
 // WZD dseg:C0D8
 extern int16_t armylist_hero_portrait_count;
 
 // WZD dseg:C0DA
-extern byte_ptr armylist_hero_portrait_fields;
+extern int16_t * armylist_hero_portrait_fields;
 
 // WZD dseg:C0DC
-extern byte_ptr armylist_unit_fields;
+extern int16_t * m_armies_list_fields;
 
 // WZD dseg:C0DE
 extern int16_t armylist_start_y;
@@ -3224,22 +3924,22 @@ extern int16_t armylist_upkeep_mana;
 extern int16_t armylist_upkeep_gold;
 
 // WZD dseg:C0E8
-extern char * armylist_20x20[20];
+extern char * armylist_unit_enchantment_names[20];
 
 // WZD dseg:C110
-extern SAMB_ptr list_armies;                       // 108 bytes;  2-byte values, 6 x 9  armies x units;
+extern int16_t * list_armies;                       // 108 bytes;  2-byte values, 6 x 9  armies x units;
 
 // WZD dseg:C112
-extern byte_ptr armylist_world_p_1000;
+extern byte_ptr m_armies_wp;
 
 // WZD dseg:C114
 extern SAMB_ptr armylist_list_item_count;          // 54 bytes;  6 x 9; 
 
 // WZD dseg:C116
-extern byte_ptr armylist_world_y_1000;
+extern byte_ptr m_armies_wy;
 
 // WZD dseg:C118
-extern byte_ptr armylist_world_x_1000;
+extern byte_ptr m_armies_wx;
 
 // WZD dseg:C11A 00 00                                           dw 0
 
@@ -3256,18 +3956,28 @@ extern byte_ptr armylist_world_x_1000;
 
 
 
-// WZD dseg:C47C
-extern int16_t OVL_Action_Plane;
-// WZD dseg:C47E
-extern int16_t OVL_Action_YPos;
-// WZD dseg:C480
-extern int16_t OVL_Action_XPos;
+// WZD dseg:C2FE                                                 ¿ END" ovr083 - Uninitialized Data ?
+
+// WZD dseg:C300
+extern int16_t m_item_wp;
+// WZD dseg:C302
+extern int16_t m_item_wy;
+// WZD dseg:C304
+extern int16_t m_item_wx;
+// WZD dseg:C306
+extern int16_t item_pool_in_process;
+
+// WZD dseg:C308 00 00                                           word_42DA8 dw 0                         ; DATA XREF: sub_6EFA5:loc_6F07Aw ...
+// WZD dseg:C30A 00 00                                           G_Some_DIPL_Alloc_5 dw 0                ; DATA XREF: sub_6EFA5+111r ...
+
+
 
 
 
 // WZD dseg:C5DC                                                 ¿ BEGIN: Move_Stack() || UNITMOVE ?
 
-// WZD dseg:C5DC 00 00                                           OVL_SWardTriggered dw 0                 ; DATA XREF: Move_Stack+42Cw ...
+// WZD dseg:C5DC
+extern int16_t OVL_SWardTriggered;
 
 // WZD dseg:C5DE
 // drake178: set to the path tile before the last before moving units overland
@@ -3291,26 +4001,12 @@ extern int16_t OVL_Action_OriginX;
 // WZD dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Stack+50Dw
 // WZD dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Stack+507w
 
-
-
 // WZD dseg:C5F0
-extern uint8_t OVL_Path_Costs[118];
+extern int8_t movepath_cost_array[118];
 // WZD dseg:C666
-extern uint8_t Fst_Dst_Y;
-// WZD dseg:C667
-extern uint8_t Scd_Dst_Y;
-// WZD dseg:C668
-extern uint8_t MovePath_Y[118];
+extern int8_t movepath_y_array[120];
 // WZD dseg:C6DE
-extern uint8_t Fst_Dst_X;
-// WZD dseg:C6DF
-extern uint8_t Scd_Dst_X;
-// WZD dseg:C6E0
-extern uint8_t MovePath_X[118];
-// WZD dseg:C756
-extern uint8_t IDK_MovePath[62];
-
-
+extern int8_t movepath_x_array[120];
 
 // WZD dseg:C794 00                                              STK_HasNatureUnits db 0                 ; DATA XREF: CTY_CheckSpellWard:loc_7E798w ...
 // WZD dseg:C795 00                                              STK_HasSorceryUnits db 0                ; DATA XREF: CTY_CheckSpellWard+C3w
@@ -3318,20 +4014,58 @@ extern uint8_t IDK_MovePath[62];
 // WZD dseg:C797 00                                              STK_HasLifeUnits db 0                   ; DATA XREF: CTY_CheckSpellWard+1A2w
 // WZD dseg:C798 00                                              STK_HasDeathUnits db 0                  ; DATA XREF: CTY_CheckSpellWard+200w ...
 // WZD dseg:C799 00                                              UU_Global_Byte db 0
-
+// align 2
 // WZD dseg:C799                                                 ¿ END: Move_Stack() || UNITMOVE ?
 
 // WZD dseg:C79A 00 00                                           CMB_HumanTurn dw 0                      ; DATA XREF: CMB_TacticalCombat+26Dw ...
 
 
 // WZD dseg:C79E
-extern SAMB_ptr IMG_USW_HeroPortrt;
+extern SAMB_ptr m_hero_portrait_seg;
 
 
 
 // WZD dseg:C7FC
 // drake178: GUI_NearMsgString
 extern char GUI_NearMsgString[154];
+
+
+
+
+
+
+// WZD dseg:C9CA                                                 ¿ END: Settings / Load Screen - Uninitialized Data ?
+// WZD dseg:C9CA                                                     ¿ END: ovr160 - Uninitialized Data  LOADSAVE ?
+// WZD dseg:C9CC                                                 ¿ BEGIN:  ?
+
+// WZD dseg:C9CC 00 00                                           IMG_GUI_ScrollDnArr@ dw 0               ; DATA XREF: Chancellor_Screen_Draw+31r ...
+// WZD dseg:C9CE 00 00                                           IMG_GUI_ScrollUpArr@ dw 0               ; DATA XREF: Chancellor_Screen_Draw:loc_A9A3Fr ...
+
+// WZD dseg:C9D0
+extern SAMB_ptr _scroll_paper_seg;
+
+// WZD dseg:C9D2 00 00                                           word_43472 dw 0                         ; DATA XREF: Chancellor_Screen+1Aw ...
+// WZD dseg:C9D4
+extern int16_t CMB_Scroll_MinHeight;
+// WZD dseg:C9D6
+extern int16_t _scroll_text_height;
+// WZD dseg:C9D8
+extern int16_t G_CMB_NextScrollLineTop;
+// WZD dseg:C9DA 00 00                                           word_4347A dw 0                         ; DATA XREF: Chancellor_Screen_Draw:loc_A9A53r ...
+// WZD dseg:C9DC
+extern int16_t _scroll_text_top;
+// WZD dseg:C9DE 00 00                                           hirehero_unit_type_name dw 0               ; DATA XREF: USW_LoadHireScreen+85w ...
+// WZD dseg:C9E0 00 00                                           GUI_InHeroNaming dw 0                   ; DATA XREF: Merchant_Popup_Draw+1Br ...
+// WZD dseg:C9E2 00 00                                           GAME_HeroHireType dw 0                  ; DATA XREF: USW_HireHeroRedraw+69r ...
+// WZD dseg:C9E2                                                                                         ; 0: random, 1: summon, 2: prisoner, 3: champion
+// WZD dseg:C9E4 00 00                                           hire_namebox_seg@ dw 0                   ; DATA XREF: USW_LoadHireScreen+78w
+// WZD dseg:C9E6 00 00                                           IMG_MerchantBtns@ dw 0                  ; DATA XREF: EVNT_LoadMerchantWnd:loc_AAB67w ...
+// WZD dseg:C9E8 00 00                                           hire_banner_seg@ dw 0                    ; DATA XREF: EVNT_LoadMerchantWnd:loc_AAB50w ...
+// WZD dseg:C9EA 00 00                                           EVNT_MercUnitCount dw 0                 ; DATA XREF: EVNT_DrawMercHire+67r ...
+// WZD dseg:C9EC 00 00                                           CRP_EVNT_MercUnitType dw 0              ; DATA XREF: EVNT_MercHireDialog+3Dw ...
+// WZD dseg:C9EE 00 00                                           GAME_AssetCost dw 0                     ; DATA XREF: Merchant_Popup_Draw+91r ...
+
+// WZD dseg:C9EE                                                 ¿ END:  ?
 
 
 
@@ -3430,12 +4164,12 @@ extern byte_ptr _VGAFILEH_seg;
 
 // WZD dseg:E872
 // AKA _help_list
-// extern struct s_HLP_ENTRY * help_struct_pointer;
+// extern struct s_HELP_FIELD * help_struct_pointer;
 /*
-    ¿ pointer to an array of pointers of data type 'struct s_HLP_ENTRY' ?
+    ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
 */
-// extern struct s_HLP_ENTRY ** help_struct_pointer;
-extern struct s_HLP_ENTRY * help_struct_pointer;
+// extern struct s_HELP_FIELD ** help_struct_pointer;
+extern struct s_HELP_FIELD * help_struct_pointer;
 
 
 // WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?

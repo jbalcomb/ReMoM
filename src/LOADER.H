@@ -60,7 +60,7 @@ extern "C" {
 // 0000001C Large_Shield@ dw ?
 // 0000001E Wall_Crusher@ dw ?
 // 00000020 Healer@ dw ?
-// 00000022 Create_Outpost@ dw ?
+// 00000022 Init_Outpost@ dw ?
 // 00000024 Invisibility@ dw ?
 // 00000026 Create_Undead@ dw ?
 // 00000028 Pathfinding@ dw ?
@@ -368,7 +368,7 @@ void GFX_Swap_AppndCtScap__WIP(void);
 void GFX_Swap_AppendUView(void);
 
 // WZD o52p28
-void GFX_Swap_AppendItems__WIP(void);
+void Reload_Item_Pictures(void);
 
 // WZD o52p29
 void Spellbook_Load_Small_Pictures__WIP(void);
@@ -380,7 +380,7 @@ void GFX_Swap_Cities(void);
 void GFX_Swap_Overland(void);
 
 // WZD o52p32
-// U_GFX_Swap_Units()
+void Cache_Graphics_Unit_List_Window(void);
 
 // WZD o52p33
 // U_GFX_Swap_Empty()

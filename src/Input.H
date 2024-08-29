@@ -191,8 +191,6 @@ char * field_names[];
 */
 enum ScanCodeCharCode
 {
-    SCCC_ESC = 0x011B,      // "Esc" key
-
     SCCC_A = 0x1E61,        // "A" key
     SCCC_B = 0x3062,        // "B" key
     SCCC_C = 0x2E63,        // "C" key
@@ -300,20 +298,29 @@ enum ScanCodeCharCode
     SCCC_Alt_X = 0x2D00,    // "Alt" key + "X" key
     SCCC_Alt_Y = 0x1500,    // "Alt" key + "Y" key
     SCCC_Alt_Z = 0x2C00,    // "Alt" key + "Z" key
-
 /*
-Key     Normal    Shifted   w/Ctrl    w/Alt
-1      0231        0221        7800
-2      0332        0340      0300    7900
-3      0433        0423        7A00
-4      0534        0524        7B00
-5      0635        0625        7C00
-6      0736        075E      071E    7D00
-7      0837        0826        7E00
-8      0938        092A        7F00
-9      0A39        0A28        8000
-0      0B30        0B29        8100
+Key     Normal      Shifted     w/Ctrl      w/Alt
+1       0231        0221        7800
+2       0332        0340        0300        7900
+3       0433        0423        7A00
+4       0534        0524        7B00
+5       0635        0625        7C00
+6       0736        075E        071E        7D00
+7       0837        0826        7E00
+8       0938        092A        7F00
+9       0A39        0A28        8000
+0       0B30        0B29        8100
 */
+    SCCC_1 = 0x0231,      // '1' "one" key
+    SCCC_2 = 0x0332,      // '2' "two" key
+    SCCC_3 = 0x0433,      // '3' "three" key
+    SCCC_4 = 0x0534,      // '4' "four" key
+    SCCC_5 = 0x0635,      // '5' "five" key
+    SCCC_6 = 0x0736,      // '6' "six" key
+    SCCC_7 = 0x0837,      // '7' "seven" key
+    SCCC_8 = 0x0938,      // '8' "eight" key
+    SCCC_9 = 0x0A39,      // '9' "nine" key
+    SCCC_0 = 0x0B30,      // '0' "zero" key
 /*
 Key     Normal    Shifted   w/Ctrl    w/Alt
 -      0C2D        0C5F      0C1F    8200
@@ -328,7 +335,11 @@ Key     Normal    Shifted   w/Ctrl    w/Alt
 .      342E        343E
 /      352F        353F
 */
-    SCCC_F10 = 0x4400,      // "F10" key
+SCCC_MINUS = 0x0C2D,      // '-' "minus" key
+SCCC_EQUALS = 0x0D3D,      // '=' "equals" key
+
+SCCC_PLUS = 0x0D2B,      // '+' "plus" key
+
 /*
 Key     Normal      Shifted   w/Ctrl  w/Alt
 F1      3B00        5400      5E00    6800
@@ -344,15 +355,16 @@ F10     4400        5D00      6700    7100
 F11     8500        8700      8900    8B00
 F12     8600        8800      8A00    8C00
 */
+    SCCC_F10 = 0x4400,      // "F10" key
 
-    // BackSpace   0E08
-    // Del         5300
+    SCCC_BACKSPACE = 0x0E08,    // BackSpace
+    SCCC_DELETE = 0x5300,       // Delete
     SCCC_KP_2       = 0x5000,   // Numeric Keypad 2 (Down)
     SCCC_DOWN       = 0x50E0,   // Down Arrow  ||  NumLock + Numeric Keypad 2 (Down)
     SCCC_KP_1       = 0x4F00,   // Numeric Keypad 1 (End)
     SCCC_DOWNLEFT   = 0x4FE0,   // NumLock + Numeric Keypad 1 (DownLeft)
-    // Enter       1C0D
-    // Esc         011B
+    SCCC_ENTER      = 0x1C0D,   // Enter
+    SCCC_ESCAPE     = 0x011B,   // Escape
     SCCC_KP_7       = 0x4700,   // Numeric Keypad 7 (Home)
     SCCC_UPLEFT     = 0x47E0,   // NumLock + Numeric Keypad 7 (UpLeft)
     // Ins         5200
@@ -370,7 +382,7 @@ F12     8600        8800      8A00    8C00
     // PrtSc           
     SCCC_KP_6       = 0x4D00,   // Numeric Keypad 6 (Right)
     SCCC_RIGHT      = 0x4DE0,   // Right Arrow  ||  NumLock + Numeric Keypad 6 (Right)
-    // SpaceBar    3920
+    SCCC_SPACE      = 0x3920,   // Space-Bar
     // Tab         0F09
     SCCC_KP_8       = 0x4800,   // Numeric Keypad 8 (Up)
     SCCC_UP         = 0x48E0,   // Up Arrow  ||  NumLock + Numeric Keypad 8 (Up)
@@ -456,7 +468,7 @@ KP_RightDown  = 6
 KP_LeftUp  = 7
 KP_LeftDown  = 8
 
-The regular Home, End, PgUp, PgDn keys do not doing anything.
+The regular Home, End, PgUp, PgDn keys do not do anything.
 Not sure what 'Enter' is doing with Unit Movement, or why it is even matching an input field.
 
 
@@ -476,7 +488,7 @@ Anywhoodle, ...
 
 */
 
-enum Simtex_Key_Codes
+enum e_SimTex_Key_Codes
 {
 //     KP_NumMult         = 0x00,
     ST_KEY_LEFT             = 0x01,
@@ -488,10 +500,10 @@ enum Simtex_Key_Codes
     ST_KEY_LEFTUP           = 0x07,
     ST_KEY_LEFTDOWN         = 0x08,
 //     KP_Insert          = 0x09,
-//     KP_Delete          = 0x0A,
-//     KP_Backspace       = 0x0B,
-//     KP_Enter           = 0x0C,
-//     KP_Tab             = 0x0D,
+    ST_KEY_DELETE           = 0x0A,
+    ST_KEY_BACKSPACE        = 0x0B,
+    ST_KEY_ENTER            = 0x0C,
+    ST_KEY_TAB              = 0x0D,
     ST_KEY_F1               = 0x0E,
     ST_KEY_F2               = 0x0F,
     ST_KEY_F3               = 0x10,
@@ -519,9 +531,10 @@ enum Simtex_Key_Codes
 //     KP_Ctrl_LeftDown   = 0x86,
 //     KP_Ctrl_RightDown  = 0x87,
 //     KP_Ctrl_s          = 0x90,
-    ST_KEY_F11             = 0x91,
-    ST_KEY_F12             = 0x92,
-//     KP_Alt_a           = 0xA0,
+    ST_KEY_F11              = 0x91,
+    ST_KEY_F12              = 0x92,
+/* MoO2  Get_Alt_Alpha_Key()  character => alpha_key */
+    ST_KEY_ALT_A            = 0xA0,  /* 160d  160 - 95 = 65 41h 'A' */
 //     KP_Alt_b           = 0xA1,
 //     KP_Alt_c           = 0xA2,
 //     KP_Alt_d           = 0xA3,
@@ -641,6 +654,29 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
+
+// Interpret_Mouse_Input                          seg036     0000000C 00000F5F R F . . B T .
+// UU_GUI_SetTimeOutP                             seg036     00000F90 0000001C R F . . B T .
+// UU_GUI_SetTimeOutN                             seg036     00000FAC 0000001C R F . . B T .
+// UU_GUI_EditStart                               seg036     00000FC8 00000010 R F . . B T .
+// UU_GUI_SetClickBuffer                          seg036     00000FD8 00000031 R F . . B T .
+// UU_GUI_LoadClickFile                           seg036     00001009 00000054 R F . . B T .
+// UU_GUI_SaveClickFile                           seg036     0000105D 00000047 R F . . B T .
+// 
+// G_GUI_ClearInput                               seg036     00002EE2 0000003C R F . . B T .
+// G_GUI_PressAnyKey                              seg036     00002F1E 0000018B R F . . B T .
+// GUI_ProcessDirKey                              seg036     000030A9 000002C8 R F . . B T .
+// GUI_EditBoxControl                             seg036     0000339F 0000042B R F . . B T .
+// Input_Box_Popup                             seg036     000037E1 000003C9 R F . . B T .
+// Draw_Input_Box_Popup                              seg036     00003BC1 000003E7 R F . . B T .
+// GUI_CreateEditBox                              seg036     00003FA8 000001CF R F . . B T .
+// 
+// GUI_CreateImageLabel                           seg036     00004667 00000147 R F . . B T .
+// UU_GUI_CreateWndImgLbl                         seg036     000047AE 000001D0 R F . . B T .
+// Set_Button_Down_Offsets                        seg036     0000497E 00000011 R F . . B T .
+
+
+
 /*
     WIZARDS.EXE seg036
     MAGIC.EXE seg034
@@ -655,9 +691,9 @@ void Set_Global_ESC(void);
 
 
 // WZD s36p12
-// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer, int16_t count);
-// // // void Set_Help_List(struct s_HLP_ENTRY * help_pointer[], int16_t count);
-// // void Set_Help_List(struct s_HLP_ENTRY ** help_pointer, int16_t count);
+// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer, int16_t count);
+// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count);
+// // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count);
 // void Set_Help_List(int16_t * help_pointer, int16_t count);
 void Set_Help_List(char * help_pointer, int16_t count);
 
@@ -665,7 +701,20 @@ void Set_Help_List(char * help_pointer, int16_t count);
 void Deactivate_Help_List(void);
 
 // WZD s36p14
-int16_t Check_Help_List(void);
+int16_t Check_Help_List__STUB(void);
+
+// UU_GUI_GetControlWidth                         seg036     000011C1 0000004D R F . . B T .
+// UU_GUI_GetControlHeight                        seg036     0000120E 0000004E R F . . B T .
+// UU_GUI_GetLastClickX                           seg036     0000125C 0000000A R F . . B T .
+// UU_GUI_GetLastClickY                           seg036     00001266 0000000A R F . . B T .
+// UU_GUI_GetLastClickBtns                        seg036     00001270 0000000A R F . . B T .
+// Get_Mouse_Field                                seg036     0000127A 0000000A R F . . B T .
+// RP_GUI_KeyInputOnly                            seg036     00001284 00000675 R F . . B T .
+// Interpret_Keyboard_Input                       seg036     000018F9 000004AB R F . . B T .
+// GUI_GetNextControl                             seg036     00001DC5 00000DAC R F . . B T .
+
+// WZD s36p24
+void UU_GUI_MouseEMUMoveTo(int16_t field_idx);
 
 
 // WZD s36p25
@@ -687,6 +736,21 @@ void Reset_Wait_For_Input(void);
 // MoO2  Module: fields  Wait_For_Input()
 int16_t Wait_For_Input(void);
 
+// WZD s36p30
+// drake178: GUI_ProcessDirKey()
+int16_t Process_Direction_Key__STUB(int16_t dir_key);
+
+// WZD s36p31
+int16_t GUI_EditBoxControl(int16_t field_num);
+
+// WZD s36p32
+int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help);
+
+// WZD s36p33
+void Draw_Input_Box_Popup(int16_t Editbox_Index, char * Local_String);
+
+// WZD s36p34
+// GUI_CreateEditBox()
 
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()

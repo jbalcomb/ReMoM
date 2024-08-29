@@ -62,7 +62,7 @@ TBL_Terr_Specials
 TBL_Scouting
 TBL_MoveMaps_EMS
 _events_table
-TBL_Terrain_Flags
+_map_square_flags
 grand_vizier
 TBL_Premade_Items
 TBL_Hero_Names

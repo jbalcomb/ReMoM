@@ -2,7 +2,7 @@
     Armies Screen
 
     WIZARDS.EXE
-        ovr
+        ovr066
     
     MoO2:
         Module: ¿ Fleet Screen ?
@@ -16,6 +16,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+// shared with 'Item Screen'
+extern SAMB_ptr hero_portraits_seg[6];
 
 
 
@@ -33,7 +38,7 @@ void ArmyList_Screen_Draw(void);
 void ArmyList_Add_List_Fields(void);
 
 // WZD o66p04
-// IDK_ArmyList_s59569
+void ArmyList_UnitFigure_Coordinates(int16_t armylist_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 // WZD o66p05
 void ArmyList_Draw_Reduced_Map(void);

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -26,19 +18,6 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>NotSet</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>NotSet</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -57,12 +36,6 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -70,53 +43,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
@@ -127,17 +62,19 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\STU\devel\ReMoM\IDE\VS2019\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,36 +82,42 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\STU\devel\ReMoM\IDE\VS2019\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\AdvsrScr.H" />
+    <ClInclude Include="..\..\..\src\AIBUILD.H" />
+    <ClInclude Include="..\..\..\src\AIDATA.H" />
+    <ClInclude Include="..\..\..\src\AIDUDES.H" />
     <ClInclude Include="..\..\..\src\ALLOC.H" />
-    <ClInclude Include="..\..\..\src\Allocate.H" />
     <ClInclude Include="..\..\..\src\ArmyList.H" />
     <ClInclude Include="..\..\..\src\CITYCALC.H" />
     <ClInclude Include="..\..\..\src\CityList.H" />
     <ClInclude Include="..\..\..\src\CITYSCAP.H" />
     <ClInclude Include="..\..\..\src\CityScr.H" />
     <ClInclude Include="..\..\..\src\City_ovr55.H" />
+    <ClInclude Include="..\..\..\src\Combat.H" />
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
-    <ClInclude Include="..\..\..\src\Exit.H" />
+    <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
     <ClInclude Include="..\..\..\src\Fields.H" />
-    <ClInclude Include="..\..\..\src\FLIC_Draw.H" />
-    <ClInclude Include="..\..\..\src\FLIC_Draw2.H" />
     <ClInclude Include="..\..\..\src\Fonts.H" />
     <ClInclude Include="..\..\..\src\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\Graphics.H" />
     <ClInclude Include="..\..\..\src\Help.H" />
+    <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
     <ClInclude Include="..\..\..\src\Input.H" />
+    <ClInclude Include="..\..\..\src\ItemMake.H" />
+    <ClInclude Include="..\..\..\src\Items.H" />
+    <ClInclude Include="..\..\..\src\ItemScrn.H" />
     <ClInclude Include="..\..\..\src\ItemView.H" />
     <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
-    <ClInclude Include="..\..\..\src\LBX_Load.H" />
     <ClInclude Include="..\..\..\src\LOADER.H" />
     <ClInclude Include="..\..\..\src\LoadScr.H" />
+    <ClInclude Include="..\..\..\src\LVLMAKE.H" />
     <ClInclude Include="..\..\..\src\MagicScr.H" />
     <ClInclude Include="..\..\..\src\MainMenu.H" />
     <ClInclude Include="..\..\..\src\MainScr.H" />
@@ -182,23 +125,24 @@
     <ClInclude Include="..\..\..\src\MoM.H" />
     <ClInclude Include="..\..\..\src\MoM_DEF.H" />
     <ClInclude Include="..\..\..\src\Mouse.H" />
+    <ClInclude Include="..\..\..\src\MovePath.H" />
     <ClInclude Include="..\..\..\src\MoX.H" />
     <ClInclude Include="..\..\..\src\MoX_BITS.H" />
     <ClInclude Include="..\..\..\src\MoX_CFG.H" />
     <ClInclude Include="..\..\..\src\MoX_CMB.H" />
     <ClInclude Include="..\..\..\src\MoX_Data.H" />
-    <ClInclude Include="..\..\..\src\MoX_DBG.H" />
     <ClInclude Include="..\..\..\src\MoX_DEF.H" />
     <ClInclude Include="..\..\..\src\MoX_DIR.H" />
+    <ClInclude Include="..\..\..\src\MoX_DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
     <ClInclude Include="..\..\..\src\MoX_RNG.H" />
-    <ClInclude Include="..\..\..\src\MoX_SET.H" />
     <ClInclude Include="..\..\..\src\MoX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX_UnOrg.H" />
     <ClInclude Include="..\..\..\src\MoX_Util.H" />
     <ClInclude Include="..\..\..\src\NewGame.H" />
     <ClInclude Include="..\..\..\src\NEXTTURN.H" />
+    <ClInclude Include="..\..\..\src\Outpost.H" />
     <ClInclude Include="..\..\..\src\paragrph.H" />
     <ClInclude Include="..\..\..\src\PNG_Draw.H" />
     <ClInclude Include="..\..\..\src\PNG_Load.H" />
@@ -207,19 +151,21 @@
     <ClInclude Include="..\..\..\src\PoC_Screen.H" />
     <ClInclude Include="..\..\..\src\ProdScr.H" />
     <ClInclude Include="..\..\..\src\RACETYPE.H" />
+    <ClInclude Include="..\..\..\src\Roads.H" />
     <ClInclude Include="..\..\..\src\SBookScr.H" />
     <ClInclude Include="..\..\..\src\SCastScr.H" />
     <ClInclude Include="..\..\..\src\SCORE.H" />
+    <ClInclude Include="..\..\..\src\Settings.H" />
     <ClInclude Include="..\..\..\src\SETTLE.H" />
     <ClInclude Include="..\..\..\src\special.H" />
     <ClInclude Include="..\..\..\src\Spellbook.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
+    <ClInclude Include="..\..\..\src\Summary.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\Timer.H" />
-    <ClInclude Include="..\..\..\src\TST_GameData.H" />
-    <ClInclude Include="..\..\..\src\TST_GameState.H" />
+    <ClInclude Include="..\..\..\src\UnitList.H" />
     <ClInclude Include="..\..\..\src\UnitMove.H" />
     <ClInclude Include="..\..\..\src\UnitStat.H" />
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
@@ -228,68 +174,79 @@
     <ClInclude Include="..\..\..\src\Video.H" />
     <ClInclude Include="..\..\..\src\Video2.H" />
     <ClInclude Include="..\..\..\src\win_PFL.hpp" />
+    <ClInclude Include="..\..\..\src\WIZVIEW.H" />
     <ClInclude Include="..\..\..\src\WZD_o059.H" />
+    <ClInclude Include="..\..\..\src\WZD_o143.H" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\AdvsrScr.C" />
+    <ClCompile Include="..\..\..\src\AIBUILD.C" />
+    <ClCompile Include="..\..\..\src\AIDATA.C" />
+    <ClCompile Include="..\..\..\src\AIDUDES.C" />
     <ClCompile Include="..\..\..\src\ALLOC.C" />
-    <ClCompile Include="..\..\..\src\Allocate.C" />
     <ClCompile Include="..\..\..\src\ArmyList.C" />
     <ClCompile Include="..\..\..\src\CITYCALC.C" />
     <ClCompile Include="..\..\..\src\CityList.C" />
     <ClCompile Include="..\..\..\src\CITYSCAP.C" />
     <ClCompile Include="..\..\..\src\CityScr.C" />
     <ClCompile Include="..\..\..\src\City_ovr55.C" />
+    <ClCompile Include="..\..\..\src\Combat.C" />
+    <ClCompile Include="..\..\..\src\DIPLOMAC.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Fields.C" />
-    <ClCompile Include="..\..\..\src\FLIC_Draw.C" />
-    <ClCompile Include="..\..\..\src\FLIC_Draw2.C" />
     <ClCompile Include="..\..\..\src\Fonts.C" />
     <ClCompile Include="..\..\..\src\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\Graphics.C" />
     <ClCompile Include="..\..\..\src\Help.C" />
+    <ClCompile Include="..\..\..\src\HIRE.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
     <ClCompile Include="..\..\..\src\Input.C" />
+    <ClCompile Include="..\..\..\src\ItemMake.C" />
+    <ClCompile Include="..\..\..\src\Items.C" />
+    <ClCompile Include="..\..\..\src\ItemScrn.C" />
     <ClCompile Include="..\..\..\src\ItemView.C" />
     <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
-    <ClCompile Include="..\..\..\src\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\LOADER.C" />
     <ClCompile Include="..\..\..\src\LoadScr.C" />
+    <ClCompile Include="..\..\..\src\LVLMAKE.C" />
     <ClCompile Include="..\..\..\src\MagicScr.C" />
     <ClCompile Include="..\..\..\src\MainMenu.C" />
     <ClCompile Include="..\..\..\src\MainScr.C" />
     <ClCompile Include="..\..\..\src\MainScr_Maps.C" />
-    <ClCompile Include="..\..\..\src\MGC_s001.C" />
+    <ClCompile Include="..\..\..\src\MoM.C" />
     <ClCompile Include="..\..\..\src\Mouse.C" />
+    <ClCompile Include="..\..\..\src\MovePath.C" />
     <ClCompile Include="..\..\..\src\MoX.C" />
     <ClCompile Include="..\..\..\src\MoX_CFG.C" />
     <ClCompile Include="..\..\..\src\MoX_CMB.C" />
     <ClCompile Include="..\..\..\src\MoX_Data.C" />
-    <ClCompile Include="..\..\..\src\MoX_DBG.C" />
+    <ClCompile Include="..\..\..\src\MoX_DOS.C" />
     <ClCompile Include="..\..\..\src\MoX_GAM.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
     <ClCompile Include="..\..\..\src\MoX_RNG.C" />
-    <ClCompile Include="..\..\..\src\MoX_SET.C" />
     <ClCompile Include="..\..\..\src\MoX_UnOrg.C" />
     <ClCompile Include="..\..\..\src\MoX_Util.C" />
     <ClCompile Include="..\..\..\src\NewGame.C" />
     <ClCompile Include="..\..\..\src\NEXTTURN.C" />
+    <ClCompile Include="..\..\..\src\Outpost.C" />
     <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\ProdScr.C" />
     <ClCompile Include="..\..\..\src\RACETYPE.C" />
-    <ClCompile Include="..\..\..\src\SAVETEST.C" />
+    <ClCompile Include="..\..\..\src\Roads.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
     <ClCompile Include="..\..\..\src\SCORE.C" />
+    <ClCompile Include="..\..\..\src\Settings.C" />
+    <ClCompile Include="..\..\..\src\SETTLE.C" />
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_BMP.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_TST.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
+    <ClCompile Include="..\..\..\src\Summary.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
+    <ClCompile Include="..\..\..\src\UnitList.C" />
     <ClCompile Include="..\..\..\src\UnitMove.C" />
     <ClCompile Include="..\..\..\src\UnitStat.C" />
     <ClCompile Include="..\..\..\src\UNITSTK.C" />
@@ -300,6 +257,7 @@
     <ClCompile Include="..\..\..\src\win_CLK.C" />
     <ClCompile Include="..\..\..\src\win_DIR.C" />
     <ClCompile Include="..\..\..\src\win_EMS.C" />
+    <ClCompile Include="..\..\..\src\win_Exit.C" />
     <ClCompile Include="..\..\..\src\win_Fonts.C" />
     <ClCompile Include="..\..\..\src\win_Input.C" />
     <ClCompile Include="..\..\..\src\win_KD.C" />
@@ -307,8 +265,14 @@
     <ClCompile Include="..\..\..\src\win_MoM.cpp" />
     <ClCompile Include="..\..\..\src\win_PFL.cpp" />
     <ClCompile Include="..\..\..\src\win_Video.C" />
+    <ClCompile Include="..\..\..\src\WIZVIEW.C" />
     <ClCompile Include="..\..\..\src\WZD_o059.C" />
-    <ClCompile Include="..\..\..\src\WZD_s001.C" />
+    <ClCompile Include="..\..\..\src\WZD_o143.C" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MoX\MoX.vcxproj">
+      <Project>{da90c873-d83f-4cdf-963d-7b733fe10997}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

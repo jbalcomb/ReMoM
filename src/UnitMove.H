@@ -1,6 +1,6 @@
 /*
     WIZARDS.EXE
-    ovr071
+        ovr071
 */
 
 #ifndef UNITMOVE_H
@@ -43,16 +43,13 @@ extern "C" {
     WIZARDS.EXE  ovr071
 */
 
-
 // WZD o71p01
 // drake178: OVL_GetMoveTypes()
-// void Active_Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags);
 void Active_Stack_Movement_Modes(int16_t movement_mode_flags[]);
 
 // WZD o71p02
 // drake178: STK_GetMoveTypes()
-// void Stack_Movement_Modes(struct s_Movement_Modes * movement_mode_flags, int16_t * stack_array, int16_t stack_size);
-void Stack_Movement_Modes(int16_t movement_mode_flags[], int16_t * stack_array, int16_t stack_size);
+void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_t troop_count);
 
 // WZD o71p03
 /*
@@ -79,13 +76,15 @@ int16_t Unit_Has_WindWalking(int16_t unit_idx);
 int16_t Unit_Has_WaterTravel(int16_t unit_idx);
 
 // WZD o71p06
-// int16_t UNIT_IsSailing(int16_t unit_idx);
+// UNIT_HasSailing                                ovr071
+int16_t Unit_Has_Sailing(int16_t unit_idx);
 
 // WZD o71p07
 int16_t Unit_Has_Swimming(int16_t unit_idx);
 
 // WZD o71p08
 // int16_t UNIT_ReturnZero(int16_t unit_idx);
+// o71p08_Empty_pFxn                              ovr071
 
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx);
@@ -97,10 +96,9 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx);
 int16_t Unit_Has_Invisibility(int16_t unit_idx);
 
 // WZD o71p012
-// int16_t UNIT_HasEnduranceUE(int16_t unit_idx);
+int16_t Unit_Has_Endurance(int16_t unit_idx);
 
 // WZD o71p013
-// drake178: UNIT_HasPlanarItem()
 int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o71p014
@@ -114,21 +112,27 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o148p01
 // UU_OVL_Return_2()
+
 // WZD o148p02
 // UU_OVL_GetLinePath()
 
 // WZD o148p03
 // drake178: STK_GetPath()
-int16_t STK_GetPath(int16_t MvMd_00, int16_t MvMd_02, int16_t MvMd_04, int16_t MvMd_06, int16_t MvMd_08, int16_t MvMd_0A, int16_t SrcX, int16_t SrcY, int16_t TgtX, int16_t TgtY, int16_t Plane, uint8_t * RXs, uint8_t * RYs, uint8_t RCs, int16_t UU_bFlag_1, int16_t UU_vFlag_2, int16_t LLCnt, int16_t UCnt, int16_t player_idx);
+int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t one, int16_t moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx);
 
 // WZD o148p04
 // TILE_ExtendRange()
+
 // WZD o148p05
 // sub_D601B()
+
 // WZD o148p06
-// STK_SetOvlMoveMap()
+// drake178: STK_SetOvlMoveMap()
+void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
+
 // WZD o148p07
 // OVL_ClearUnitPath()
+
 // WZD o148p08
 // OVL_StoreLongPath()
 

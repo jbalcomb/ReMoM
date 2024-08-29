@@ -28,12 +28,6 @@
 // WZD o60p07
 // TILE_VisibilityUpdt()
 
-// WZD o63p15
-// Check_Planar_Seal()
-
-// WZD o67p15
-// IsPassableTower()
-
 
 
 /*
@@ -106,7 +100,7 @@ OON XREF:
         VGA_Fade_Out          
         Fade_In               
         Loaded_Game_Update_WZD
-        RNG_WeightedPick16    
+        Get_Weighted_Choice    
         RNG_WeightedPick32    
         UU_RNG_HighestPick16  
         UU_RNG_HighestPick32  
@@ -116,12 +110,6 @@ OON XREF:
         SND_PlayClickSound    
         RP_SND_LeftClickSound2
         s01p15_Empty_pFxn     
-    
-    ovr051
-    ovr052
-    ovr060
-    ovr063
-    ovr067
 
 */
 
@@ -181,12 +169,12 @@ void PageFlip_FX(void)
         case 3:
         {
             Apply_Palette();
-            Toggle_Pages();  // |-> Page_Flip()
             // TODO  VGA_MosaicFlip();  // |-> Toggle_Pages() |-> Page_Flip()
+            Toggle_Pages();  // |-> Page_Flip()
         } break;
         case 4:
         {
-            // TODO  RP_VGA_GrowOutFlip(RP_GUI_GrowOutLeft, RP_GUI_GrowOutTop, RP_GUI_GrowOutFrames, _screen_seg + 400)             
+            PageFlip_GrowOut__WIP(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
         } break;
         default:
         {
@@ -205,10 +193,6 @@ void Fade_Out(void)
 {
     int16_t fade_percent;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Fade_Out()\n", __FILE__, __LINE__);
-#endif
-
     for(fade_percent = 25; fade_percent < 101; fade_percent += 25)
     {
         Mark_Time();
@@ -217,9 +201,6 @@ void Fade_Out(void)
         Release_Time(1);
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Fade_Out()\n", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -227,10 +208,6 @@ void Fade_Out(void)
 void Fade_In(void)
 {
     int16_t fade_percent;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Fade_In()\n", __FILE__, __LINE__);
-#endif
     
     for(fade_percent = 75; fade_percent >= 0; fade_percent -= 25)
     {
@@ -239,10 +216,6 @@ void Fade_In(void)
         Cycle_Palette(fade_percent);
         Release_Time(1);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Fade_In()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -253,11 +226,10 @@ void Fade_In(void)
 */
 
 // WZD s09p07
-void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
+void String_Copy_Far__STUB(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
 {
-
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: String_Copy_Far()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: String_Copy_Far__STUB()\n", __FILE__, __LINE__);
 #endif
 
 //     if(dst_sgmt == 0)
@@ -282,119 +254,6 @@ void String_Copy_Far(unsigned short int dst_ofst, unsigned short int dst_sgmt, u
 //     } while(*(src_sgmt + src_ofst) != '\0')
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: String_Copy_Far()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: String_Copy_Far__STUB()\n", __FILE__, __LINE__);
 #endif
-}
-
-
-
-/*
-    WIZARDS.EXE ovr060
-*/
-
-// WZD o60p07
-void TILE_VisibilityUpdt(void)
-{
-    int16_t itr_players;
-    int16_t itr_units;
-    int16_t tmp_unit_enchantments_hiword;
-
-    for(itr_players = 0; itr_players < _num_players; itr_players++)
-    {
-        // TODO(JimBalcomb,2023075): figure out the indexing in the Dasm - doesn't look like array of struct  also, this'll set the neutral player?
-        _players[itr_players + 1].Dipl.Contacted[0] = 1;
-
-        // if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
-        if(_players[itr_players + 1].Globals[NATURE_AWARENESS] != ST_FALSE)
-        {
-            for(itr_units = 0; itr_units < _units; itr_units++)
-            {
-                if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
-                {
-                    if(_UNITS[itr_units].owner_idx != itr_players)
-                    {
-                        if(_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
-                        {
-                            // BUG: only checks enchantment, not ability or item
-                            tmp_unit_enchantments_hiword = _UNITS[itr_units].Enchants_HI;  // // ; enum UE_FLAGS_H
-                            // UE_Invisibility 0x8000
-                            if( (tmp_unit_enchantments_hiword & 0x8000) != 0 )
-                            {
-                                _players[itr_players].Dipl.Contacted[_UNITS[itr_units].owner_idx] = 1;
-                                _players[_UNITS[itr_units].owner_idx].Dipl.Contacted[itr_players] = 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    Update_Scouted_And_Contacted();
-    // TST  Validate_Square_Scouted(18,11,0);
-
-}
-
-/*
-    WIZARDS.EXE ovr063
-*/
-
-// WZD o63p15
-int16_t Check_Planar_Seal(void)
-{
-    int16_t itr_players;
-    int16_t active_planar_seal;
-
-    active_planar_seal = ST_FALSE;
-
-    itr_players = 0;
-    while(itr_players++ < _num_players)
-    {
-
-        if(active_planar_seal == ST_FALSE)
-        {
-            // if(_players[itr_players].Globals.Planar_Seal == ST_TRUE)
-            if(_players[itr_players].Globals[PLANAR_SEAL] == ST_TRUE)
-            {
-                active_planar_seal = ST_TRUE;
-            }
-        }
-
-    }
-
-    return active_planar_seal;
-}
-
-
-/*
-    WIZARDS.EXE ovr067
-*/
-
-// WZD o67p15
-int16_t IsPassableTower(int16_t world_x, int16_t world_y)
-{
-    int16_t itr_towers;
-    int16_t is_passible_tower;
-    int16_t active_planar_seal;
-
-    is_passible_tower = ST_FALSE;
-
-    itr_towers = 0;
-    while(itr_towers++ < TOWER_COUNT_MAX)
-    {
-        if(world_x == _TOWERS[itr_towers].wx && world_y == _TOWERS[itr_towers].wy)
-        {
-            is_passible_tower = ST_TRUE;
-        }
-    }
-
-    if(is_passible_tower == ST_TRUE)
-    {
-        if(Check_Planar_Seal() == ST_TRUE)
-        {
-            is_passible_tower = ST_FALSE;
-        }
-    }
-
-    return is_passible_tower;
 }

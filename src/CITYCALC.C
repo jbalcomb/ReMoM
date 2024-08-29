@@ -17,7 +17,6 @@
 
 
 // WZD o120p01
-// drake178: CTY_Recalculate()
 /*
     sets
     _CITIES[].food2_units
@@ -30,10 +29,6 @@
 void Do_City_Calculations(int16_t city_idx)
 {
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
-
     // drake178: ; maps the EMM Data block into the page frame
     // TODO  EMM_Map_DataH();
 
@@ -44,20 +39,15 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
     _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
 
-    if( (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX) )
+    if((_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX))
     {
         _CITIES[city_idx].food_units = ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100);
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Do_City_Calculations(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-#endif
 
 }
 
 
 // WZD o120p02
-// drake178: WIZ_SetPowerBases()
 /*
     sets
     _players[].magic_power
@@ -68,212 +58,131 @@ void Do_City_Calculations(int16_t city_idx)
 
     sum of s_CITY.mana_units
 
-    _players[].Volcano_Count
+    _players[].volcanoes
 
     _players.Spell_Cast Spell_Of_Return
 
 */
 void Players_Update_Magic_Power(void)
 {
-    int16_t UU_players_power_base_array[6];
+    int16_t NIU_players_power_base_array[NUM_PLAYERS];
     int16_t node_owner_idx;
 
     int16_t itr;  // _SI_
     int16_t node_magic_power_points;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
-#endif
-
     for(itr = 0; itr < _num_players; itr++)
     {
         _players[itr].Power_Base = 0;
-
-        UU_players_power_base_array[itr] = 0;
+        NIU_players_power_base_array[itr] = 0;
     }
 
-    if(*(events_table + 48) != 2)  /* s_EVENT_DATA.Mana_Short.Status */
+    if(*(events_table + 48) == 2)  /* s_EVENT_DATA.Mana_Short.Status */
     {
-        for(itr = 0; itr < NUM_NODES; itr++)
+        return;
+    }
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+        if(_NODES[itr].owner_idx > -1)
         {
-            if(_NODES[itr].owner_idx > -1)
+            node_owner_idx = _NODES[itr].owner_idx;
+
+            if((_NODES[itr].Meld_Flags & 0x01) > 0)   /* M_Warped */
             {
-                node_owner_idx = _NODES[itr].owner_idx;
-
-                if( (_NODES[itr].Meld_Flags & 0x01 /* M_Warped */) != 1)
-                {
-
-                    // mov al, [es:bx+s_NODE.power]; cbw; mov dx, [_magic]; inc dx; imul dx; cwd; sub ax, dx; sar ax, 1; mov _DI_node_magic_power_points, ax
-                    // node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
-                    node_magic_power_points = ((_NODES[itr].power * (_magic)) / 2);
-                    
-                    /*
-                        Conjunction - Chaos (Red)
-                    */
-                    if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                    }
-
-                    /*
-                        Conjunction - Sorcery (Blue)
-                    */
-                    if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                    }
-
-                    /*
-                        Conjunction - Nature (Green)
-                    */
-                    if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
-                    {
-                        if(_NODES[itr].type == 0)  /* NODE_Sorcery */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                        if(_NODES[itr].type == 1)  /* NODE_Nature */
-                        {
-                            node_magic_power_points = (node_magic_power_points * 2);
-                        }
-                        if(_NODES[itr].type == 2)  /* NODE_Chaos */
-                        {
-                            node_magic_power_points = (node_magic_power_points / 2);
-                        }
-                    }
-
-                    /*
-                        Sorcery Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 0)  /* NODE_Sorcery */ &&
-                        (_players[node_owner_idx].sorcery_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Chaos Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 2)  /* NODE_Chaos */ &&
-                        (_players[node_owner_idx].chaos_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Nature Mastery
-                    */
-                    if(
-                        (_NODES[itr].type == 1)  /* NODE_Nature */ &&
-                        (_players[node_owner_idx].nature_mastery != ST_FALSE)
-                    )
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    /*
-                        Node Mastery
-                    */
-                    if(_players[node_owner_idx].node_mastery != ST_FALSE)
-                    {
-                        node_magic_power_points = (node_magic_power_points * 2);
-                    }
-
-                    _players[node_owner_idx].Power_Base += node_magic_power_points;
-
-                }
-                else
-                {
-                    _players[node_owner_idx].Power_Base -= 5;
-                }
+                _players[node_owner_idx].Power_Base -= 5;
+                continue;
             }
-        }  /* END: for(itr = 0; itr < NUMTBL_Nodes; itr++) */
 
-        for(itr = 1; itr < _num_players; itr++)
+            node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
+
+            if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points *= 2;
+            }
+
+            if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points *= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points /= 2;
+            }
+
+            if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
+            {
+                if(_NODES[itr].type == nt_Sorcery)
+                    node_magic_power_points /= 2;
+                if(_NODES[itr].type == nt_Nature)
+                    node_magic_power_points *= 2;
+                if(_NODES[itr].type == nt_Chaos)
+                    node_magic_power_points /= 2;
+            }
+
+            if((_NODES[itr].type == nt_Sorcery) && (_players[node_owner_idx].sorcery_mastery))
+                node_magic_power_points *= 2;
+            if((_NODES[itr].type == nt_Chaos) && (_players[node_owner_idx].chaos_mastery))
+                node_magic_power_points *= 2;
+            if((_NODES[itr].type == nt_Nature) && (_players[node_owner_idx].nature_mastery))
+                node_magic_power_points *= 2;
+            if(_players[node_owner_idx].node_mastery)
+                node_magic_power_points *= 2;
+
+            _players[node_owner_idx].Power_Base += node_magic_power_points;
+
+        }  /* if(_NODES[itr].owner_idx > -1) */
+    }  /* for(itr = 0; itr < NUM_NODES; itr++) */
+
+    for(itr = 1; itr < _num_players; itr++)
+    {
+        _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);  // e.g., * 150 / 100 ~== * 1.5 ~== +50%
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if((_CITIES[itr].owner_idx > -1) && (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX))
         {
-            _players[itr].Power_Base = ((_players[itr].Power_Base * difficulty_modifiers_table[_difficulty].mana) / 100);
-        }
-
-        for(itr = 0; itr < _cities; itr++)
-        {
-            if(
-                (_CITIES[itr].owner_idx > -1) &&
-                (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
-            )
-            {
-                _players[_CITIES[itr].owner_idx].Power_Base += _CITIES[itr].mana_units;
-            }
-        }
-
-        for(itr = 0; itr < _num_players; itr++)
-        {
-            if(_players[itr].Spell_Cast != 0xD6)  /* Spell_Of_Return */
-            {
-                _players[itr].Power_Base += _players[itr].Volcano_Count;
-
-                if(_players[itr].Power_Base < 0)
-                {
-                    _players[itr].Power_Base = 0;
-                }
-            }
-            else
-            {
-                _players[itr].Power_Base = 0;
-            }
+            _players[_CITIES[itr].owner_idx].Power_Base += _CITIES[itr].mana_units;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Players_Update_Magic_Power()\n", __FILE__, __LINE__);
-#endif
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        if(_players[itr].Spell_Cast == 214)  /* Spell_Of_Return */
+        {
+            _players[itr].Power_Base = 0;
+        }
+        else
+        {
+            _players[itr].Power_Base += _players[itr].volcanoes;
+
+            SETMIN(_players[itr].Power_Base, 0);
+        }
+    }
 
 }
 
 
 // WZD o120p03
-// drake178: UNIT_GetGoldUpkeep()
 int16_t Unit_Gold_Upkeep(int16_t unit_idx)
 {
     int16_t unit_gold_upkeep;
     int16_t unit_owner_idx;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Gold_Upkeep()\n", __FILE__, __LINE__);
-// #endif
-
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
 
     unit_gold_upkeep = 0;
 
-    if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x01 /* Ab_Summoned */) == 0)
+    if( (_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)
     {
-        if(_UNITS[unit_idx].type > 0x22 /* _Chosen */)
+        if(_UNITS[unit_idx].type > ut_Chosen)
         {
             unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
         }
@@ -281,8 +190,9 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         {
             // Yay Hero, Nay Noble, Nay Toren The Chosen
             if(
-                (((((struct s_HERO *)( (p0_heroes + (unit_owner_idx * sizeof(p0_heroes))) + (_UNITS[unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x2000 /* Ab_Noble */) == 0) &&
-                (_UNITS[unit_idx].type != 0x22/* _Chosen */)
+                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
+                &&
+                (_UNITS[unit_idx].type != ut_Chosen)
             )
             {
                 unit_gold_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
@@ -290,7 +200,7 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         }
     }
 
-    if((_UNITS[unit_idx].Mutations & 0x20) != 0)  /* R_Undead */
+    if((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
     {
         unit_gold_upkeep = 0;
     }
@@ -306,10 +216,6 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
             unit_gold_upkeep = ((unit_gold_upkeep * 3) / 4);  /* -25% */
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Gold_Upkeep() { unit_gold_upkeep = %d }\n", __FILE__, __LINE__, unit_gold_upkeep);
-// #endif
 
     return unit_gold_upkeep;
 }
@@ -327,10 +233,6 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
     int16_t fame_points;
     int16_t gold_upkeep_cost;
     int16_t itr_units;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_Gold_Upkeep()\n", __FILE__, __LINE__);
-#endif
     
     gold_upkeep_cost = 0;
 
@@ -351,10 +253,6 @@ int16_t Player_Armies_Gold_Upkeep(int16_t player_idx)
         gold_upkeep_cost = 0;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_Gold_Upkeep() { gold_upkeep_cost = %d }\n", __FILE__, __LINE__, gold_upkeep_cost);
-#endif
-
     return gold_upkeep_cost;
 }
 
@@ -372,10 +270,6 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
     int16_t food_upkeep_cost;
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
-#endif
-
     food_upkeep_cost = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
@@ -384,20 +278,14 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
         {
             if(
                 ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x1 /* Ab_Summoned */) == 0) &&
-                (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
-                ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+                (_UNITS[itr_units].type > ut_Chosen) &&
+                ((_UNITS[itr_units].mutations & 0x20 /* R_Undead */) == 0)
             )
             {
                 food_upkeep_cost++;
             }
         }
     }
-
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_Food_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     return food_upkeep_cost;
 }
@@ -407,13 +295,8 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
 // drake178: WIZ_GetNUCounts()
 void Players_Normal_Units(int16_t normal_units[])
 {
-
     int16_t itr_players;  // _SI_
     int16_t itr_units;  // _SI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
-#endif
 
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
@@ -424,18 +307,14 @@ void Players_Normal_Units(int16_t normal_units[])
     {
         if(
             ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x01 /* Ab_Summoned */) == 0) &&
-            (_UNITS[itr_units].type > 0x22 /* _Chosen */) &&
+            (_UNITS[itr_units].type > ut_Chosen) &&
             (_UNITS[itr_units].owner_idx < _num_players) &&
-            ((_UNITS[itr_units].Mutations & 0x20 /* R_Undead */) == 0)
+            ((_UNITS[itr_units].mutations & 0x20 /* R_Undead */) == 0)
         )
         {
             normal_units[_UNITS[itr_units].owner_idx]++;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Normal_Units()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -513,16 +392,9 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
-            if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+            if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
             {
-                
-                // *( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) )
-                // fp_heroes[player_idx]
-                // _UNITS[].type
-                // _players[player_idx].Heroes[itr_heroes].Unit_Index
-                // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI
-                // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
-                if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x2000) != 0 )  /* Ab_Noble */
+                if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_NOBLE) != 0)
                 {
                     gold_income += 10;
                 }
@@ -603,24 +475,16 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 {
     int16_t mana_upkeep;
     int16_t Enchant_Bit;
-    // int16_t Enchants_LO;
-    // int16_t Enchants_HI;
-    uint32_t Enchants;
+    uint32_t unit_enchantments;
     int16_t itr_unit_enchantments;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-// #endif
 
     mana_upkeep = 0;
 
-    // Enchants_HI = _UNITS[unit_idx].Enchants_HI;
-    // Enchants_LO = _UNITS[unit_idx].Enchants_LO;
-    Enchants = ( (((uint32_t)_UNITS[unit_idx].Enchants_HI) << 16) & ((uint32_t)_UNITS[unit_idx].Enchants_LO) );
+    unit_enchantments = _UNITS[unit_idx].enchantments;
 
-    if((_unit_type_table[_UNITS[unit_idx].type].Abilities & 0x01) != 0) /* Ab_Summoned */
+    if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
     {
-        if((_UNITS[unit_idx].Mutations & 0x20) != 0)  /* R_Undead */
+        if((_UNITS[unit_idx].mutations & UM_UNDEAD) != 0)
         {
             mana_upkeep += ((_unit_type_table[_UNITS[unit_idx].type].Upkeep * 3) / 2);  /* + 50% */
         }
@@ -630,7 +494,7 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
         }
     }
 
-    // ¿ Torin The Chosen has no mana upkeep ?  ¿ why not just get it from the table ?
+    // TODO  ¿ Torin The Chosen has no mana upkeep ?  ¿ why not just get it from the table ?
     if((_UNITS[unit_idx].type & 0x22) == 0)  /* _Chosen */
     {
         mana_upkeep += _unit_type_table[_UNITS[unit_idx].type].Upkeep;
@@ -646,13 +510,13 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 
     for(itr_unit_enchantments = 0; itr_unit_enchantments < NUM_UNIT_ENCHANTMENTS; itr_unit_enchantments++)
     {
-        // Enchant_Bit = (Enchants_LO & 0x1);
-        Enchant_Bit = (Enchants & 0x1);
+        Enchant_Bit = (unit_enchantments & 0x1);
 
         if(Enchant_Bit == 1)
         {
             mana_upkeep += unit_enchantment_upkeep_table[itr_unit_enchantments];
 
+            // TODO  sup? different than the logic elsewhere of iterating over the bit placement?
 // mov     ax, [bp+Enchants_HI]
 // mov     dx, [bp+Enchants_LO]
 // sar     ax, 1
@@ -660,15 +524,11 @@ int16_t Unit_Mana_Upkeep(int16_t unit_idx)
 // mov     [bp+Enchants_HI], ax
 // mov     [bp+Enchants_LO], dx
             // Enchants_LO >>= Enchants_LO;
-            Enchants = (Enchants >> 1);
+            unit_enchantments = (unit_enchantments >> 1);
 
         }
 
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Unit_Mana_Upkeep()\n", __FILE__, __LINE__);
-// #endif
 
     return mana_upkeep;
 }
@@ -742,8 +602,100 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 // UU_UNIT_OnSameTile()
 
 // WZD o120p13
-// drake178: UNIT_MarkRemoved()
-// UNIT_MarkRemoved()
+/*
+    undefines owner and plane, resets level, sets finished
+Removal Type:
+    0:                undefines hero items, undefines hero unit index, saves level, experience, name
+    1: deletes items, undefines hero items, undefines hero unit index, saves level, experience, name
+    2:                undefines hero items, undefines hero unit index, sets level to -20
+¿ what does it mean for the level to be -20 ?
+
+AFTER IT’S OVER :: Treasure
+Artifacts may be picked up from heroes killed in battle
+  (unless the heroes died through some mechanism that completely destroyed or banished them
+  including disintegration, banishment, unsummoning and holy word).
+...banished or unsummoned... ~disintegrated ...otherwise, manual intermingles "killed" and "destroyed"
+Meh. ~ "Perma-Death"
+
+e.g.,
+    'Unit Statistics Window' / 'Unit View'
+        Remove Enchantment - Fligh, Waterwalking, Windwalking
+            |-> Dismiss_Unit(unit_idx)
+                |-> UNIT_MarkRemoved(unit_idx, 1)
+*/
+void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
+{
+    int16_t itr;
+    int16_t unit_owner_idx;
+
+    unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+    _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
+
+    // ¿ removal type 1 is "Dismiss" ?
+    if((Rmv_Type == 1) || (_UNITS[unit_idx].type == ut_Chosen))
+    {
+        _UNITS[unit_idx].Finished = ST_TRUE;
+
+        if(_UNITS[unit_idx].Hero_Slot > -1)
+        {
+            for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
+            {
+                if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                {
+                    Remove_Item(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
+                }
+
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
+            }
+
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
+
+            _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;  // keeps the level data
+
+            if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+            {
+                hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+                strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+            }
+        }
+    }
+    else
+    {
+        _UNITS[unit_idx].Finished = ST_TRUE;
+
+        if(_UNITS[unit_idx].Hero_Slot > -1)
+        {
+            for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
+            {
+                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
+            }
+
+            _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
+
+            if(Rmv_Type != 2)  /* ¿ must be type 0 ? */
+            {
+                if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+                    strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+                }
+
+                _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+            }
+            else
+            {
+                _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = -20;
+            }
+        }
+    }
+
+    _UNITS[unit_idx].owner_idx = ST_UNDEFINED;
+
+    _UNITS[unit_idx].wp = ST_UNDEFINED;  // ¿ here because `wp = 9` is used for dead combat summon units ?
+
+}
+
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()
@@ -751,7 +703,33 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 
 // WZD o120p15
 // drake178: TILE_GetUnits()
-// TILE_GetUnits()
+/*
+    in_out of count and array of units
+    same wx, wy, wp
+    no Towers
+    not Disbanded/Dead
+*/
+void Army_At_Square_1(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
+{
+    int16_t itr_units;  // _DX_
+
+    *troop_count = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(
+            (_UNITS[itr_units].wx == wx) &&
+            (_UNITS[itr_units].wy == wy) &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&
+            (_UNITS[itr_units].wp == wp)
+        )
+        {
+            troops[*troop_count] = itr_units;
+            *troop_count += 1;
+        }
+    }
+}
+
 
 // WZD o120p16
 // drake178: UU_WIZ_GetReligion()
@@ -785,19 +763,15 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
     int16_t itr_cities;
     int16_t itr_heroes;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
-#endif
-
     magic_power = _players[player_idx].Power_Base;
 
-    mana_portion     = (((magic_power * _players[player_idx].Mana_Pnct ) + 50) / 100);
-    skill_portion    = (((magic_power * _players[player_idx].Skill_Pcnt) + 50) / 100);
+    mana_portion     = (((magic_power * _players[player_idx].mana_ratio ) + 50) / 100);
+    skill_portion    = (((magic_power * _players[player_idx].skill_ratio) + 50) / 100);
     research_portion = magic_power - mana_portion - skill_portion;
 
-    if( (_players[player_idx].Research_Pcnt == 0) && (research_portion > 0) )
+    if( (_players[player_idx].research_ratio == 0) && (research_portion > 0) )
     {
-        if(_players[player_idx].Skill_Pcnt == 0)
+        if(_players[player_idx].skill_ratio == 0)
         {
             mana_portion += research_portion;
         }
@@ -827,22 +801,15 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
-        if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+        if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
         {
-            
-            // *( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) )
-            // fp_heroes[player_idx]
-            // _UNITS[].type
-            // _players[player_idx].Heroes[itr_heroes].Unit_Index
-            // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI
-            // ((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO
-            if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x20) != 0 )  /* Ab_Sage */
+            if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE) != 0 )
             {
-                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 3);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 3);
             }
-            if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_HI) & 0x40) != 0 )  /* Ab_Sage2 */
+            if ((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_SAGE2) != 0)
             {
-                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].Level * 9);
+                research_portion += (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].Level * 9);
             }
         }
     }
@@ -850,10 +817,6 @@ void Player_Magic_Power_Distribution(int16_t * mana_points, int16_t * skill_poin
     *mana_points = mana_portion;
     *skill_points = skill_portion;
     *research_points = research_portion;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Distribution()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -892,12 +855,7 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     int16_t mana_income;
     int16_t spell_research_bonus;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
-
-    if( (_players[player_idx].Spell_Cast & 0xD6 /* Spell_Of_Return */) != 0 )
+    if(_players[player_idx].Spell_Cast == 214 /* Spell_Of_Return */)
     {
         *mana_total = 0;
         *research_total = 0;
@@ -907,33 +865,18 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     {
         Player_Magic_Power_Distribution(&mana_income, &skill_income, &research_income, player_idx);
 
-        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].Researching);
+        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].research_spell_idx);
 
-        if(research_income < 0)
-        {
-            research_income = 0;
-        }
-        if(mana_income < 0)
-        {
-            mana_income = 0;
-        }
-        if(skill_income < 0)
-        {
-            skill_income = 0;
-        }
+        SETMIN(research_income, 0);
+        SETMIN(mana_income, 0);
+        SETMIN(skill_income, 0);
 
         research_income += ((research_income * spell_research_bonus) / 100);
 
         *mana_total = mana_income;
         *research_total = research_income;
         *skill_total = skill_income;
-
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Magic_Power_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o120p19
@@ -956,7 +899,7 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus += 25;
     }
 
-    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].Type & 0x00 /* Summoning_Spell */) != 0) )
+    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* Summoning_Spell */) != 0) )
     {
         research_bonus += 25;
     }
@@ -1050,24 +993,20 @@ int16_t Player_Fame(int16_t player_idx)
 
     int16_t hero_unit_type;  // DNE in Dasm
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Fame()\n", __FILE__, __LINE__);
-#endif
-
     fame_points = 0;
 
     for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
     {
-        if(_players[player_idx].Heroes[itr_heroes].Unit_Index > -1)
+        if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
         {
-            hero_unit_idx = _players[player_idx].Heroes[itr_heroes].Unit_Index;
+            hero_unit_idx = _players[player_idx].Heroes[itr_heroes].unit_idx;
             hero_unit_type = _UNITS[hero_unit_idx].type;
 // TODO              // p_heroes + (player_idx * 35 hero structs) + (type * sizeof s_HERO) + offset in struct to Abilities_LO
-// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x08) != 0 )  /* Ab_Legendary */
+// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x08) != 0 )  /* Ab_Legendary */
 // TODO              {
 // TODO                  fame_points += ((_UNITS[hero_unit_idx].Level + 1) * 3);
 // TODO              }
-// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].Unit_Index].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x10) != 0 )  /* Ab_Legendary2 */
+// TODO              if( ((((struct s_HERO *)( (p0_heroes + (player_idx * sizeof(p0_heroes))) + (_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type * sizeof(struct s_HERO)) ))->Abilities_LO) & 0x10) != 0 )  /* Ab_Legendary2 */
 // TODO              {
 // TODO                  fame_points += (((_UNITS[hero_unit_idx].Level + 1) * 9) / 2);
 // TODO              }
@@ -1090,19 +1029,35 @@ int16_t Player_Fame(int16_t player_idx)
         fame_points += 10;
     }
 
-    fame_points += _players[player_idx].Fame;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Fame() { fame_points = %d }\n", __FILE__, __LINE__, fame_points);
-#endif
+    fame_points += _players[player_idx].fame;
 
     return fame_points;
 }
 
 
 // WZD o120p21
-// drake178: WIZ_GetEmptyHeroSlot()
-// WIZ_GetEmptyHeroSlot()
+// MoO2  Module: OFFICER  Hero_Slot_Open_()
+/*
+
+*/
+int16_t Hero_Slot_Open(int16_t player_idx)
+{
+    int16_t hero_slot_idx;  // _SI_
+    int16_t itr;  // _CX_
+
+    hero_slot_idx = ST_UNDEFINED;
+
+    for(itr = 0; itr < NUM_HERO_SLOTS; itr++)
+    {
+        if(_players[player_idx].Heroes[itr].unit_idx != ST_UNDEFINED)
+        {
+            hero_slot_idx = itr;
+            break;
+        }
+    }
+
+    return hero_slot_idx;
+}
 
 
 // WZD o120p22
@@ -1142,7 +1097,11 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
 
 // WZD o120p23
 // drake178: UNIT_GetLevel()
-int16_t Unit_Level(int16_t unit_idx)
+// MoO2  Module: ERICNET  Calc_Ship_Level_()
+/*
+
+*/
+int16_t Calc_Unit_Level(int16_t unit_idx)
 {
     int16_t itr;
     int16_t level;
@@ -1186,15 +1145,15 @@ int16_t Unit_Level(int16_t unit_idx)
         // ¿ cancel 'Heroism' 'Unit Enchantment' if the Unit has naturally attained the 'Elite Experience Level' ?
         if(
             (level >= UL_ELITE) &&
-            ((_UNITS[unit_idx].Enchants_HI & 0x0100) != 0)  /* UE_Heroism */
+            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
         )
         {
-            _UNITS[unit_idx].Enchants_HI = (_UNITS[unit_idx].Enchants_HI | 0x0100);
+            _UNITS[unit_idx].enchantments = (_UNITS[unit_idx].enchantments | UE_HEROISM);
         }
 
         // apply 'Heroism' 'Unit Enchantment'
         if(
-            ((_UNITS[unit_idx].Enchants_HI & 0x0100) != 0) && /* UE_Heroism */
+            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0) &&
             (level < UL_ELITE)
         )
         {
@@ -1209,7 +1168,7 @@ int16_t Unit_Level(int16_t unit_idx)
         if(
             (_players[_UNITS[unit_idx].owner_idx].Globals[CRUSADE] > 0) &&
             (_UNITS[unit_idx].type < FST_FANT) &&
-            ((_UNITS[unit_idx].Mutations & 0x20) == 0)  /* R_Undead */
+            ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
         )
         {
             level += 1;
@@ -1228,34 +1187,303 @@ int16_t Unit_Level(int16_t unit_idx)
 
 // WZD o120p24
 // drake178: UNIT_GetBaseLevel()
-// UNIT_GetBaseLevel()
+int16_t Unit_Base_Level(int16_t unit_idx)
+{
+    int16_t level;  // _DI_
+    int16_t itr;  // _DX_
+
+    level = _UNITS[unit_idx].Level;
+
+    // *(spell_data_table + 0x1C64)
+    // WZD dseg:912C
+    // byte spell_data_table[215][36]
+    // 1C64h  7268d
+    // 201 * 36 = 7236
+    // 7268 - 7236 = 32d  20h
+    // ¿ s_SPELL_DATA.Param0 ?  ; unit type, base damage, UE flag, or CE index
+    if(_UNITS[unit_idx].type < spell_data_table[201].Param0)
+    {
+        for(itr = 0; itr < 4; itr++)
+        {
+            if(_UNITS[unit_idx].XP >= TBL_Experience[itr])
+            {
+                level = itr;
+            }
+        }
+
+        if(_UNITS[unit_idx].Hero_Slot <= -1)
+        {
+            if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
+            {
+                _UNITS[unit_idx].XP = TBL_Experience[UL_ELITE];
+            }
+        }
+        else
+        {
+            for(itr = 4; itr < 9; itr++)
+            {
+                if(_UNITS[unit_idx].XP >= TBL_Experience[itr])
+                {
+                    level = itr;
+                }
+            }
+            if(_UNITS[unit_idx].XP >= TBL_Experience[HL_DEMIGOD])
+            {
+                _UNITS[unit_idx].XP = TBL_Experience[HL_DEMIGOD];
+            }
+        }
+
+
+    }
+
+    if(level > UNIT_LEVEL_MAX)
+    {
+        level = UNIT_LEVEL_MAX;
+    }
+
+    return level;
+}
+
 
 // WZD o120p25
 // drake178: UNIT_LoggedPushOff()
-// UNIT_LoggedPushOff()
+void UNIT_LoggedPushOff(int16_t unit_idx)
+{
+    int16_t flag;  // _DI_
+
+    if(_UNITS[unit_idx].owner_idx != HUMAN_PLAYER_IDX)
+    {
+        flag = ST_FALSE;
+    }
+    else
+    {
+        flag = ST_TRUE;
+    }
+    
+    UNIT_PushOffTile(unit_idx);
+
+    if(
+        (_UNITS[unit_idx].owner_idx == -1) &&
+        (flag == ST_TRUE) &&
+        (MSG_UnitLost_Count < 20)
+    )
+    {
+        MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[unit_idx].type;
+
+        MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 3;
+    }
+
+}
+
 
 // WZD o120p26
 // drake178: UNIT_RemoveExcess()
-// UNIT_RemoveExcess()
+void UNIT_RemoveExcess(int16_t unit_idx)
+{
+    int16_t troops[10] = { 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB };
+    int16_t unit_wp;
+    int16_t unit_wy;
+    int16_t unit_wx;
+    int16_t troop_count;
+    int16_t lowest_trooper_idx;
+    int16_t trooper_value;
+    int16_t lowest_trooper_value;
+    int16_t itr_troops;
+
+    lowest_trooper_idx = -999;
+    lowest_trooper_value = 999;
+
+    unit_wx = _UNITS[unit_idx].wx;
+    unit_wy = _UNITS[unit_idx].wy;
+    unit_wp = _UNITS[unit_idx].wp;
+
+    Army_At_Square_1(UNITX(), UNITY(), UNITP(), &troop_count, &troops[0]);
+
+    if(troop_count > MAX_STACK)
+    {
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            trooper_value = Unit_Gold_Upkeep(troops[itr_troops]) + Unit_Mana_Upkeep(troops[itr_troops]);
+            trooper_value += _UNITS[troops[itr_troops]].Level;
+            if(trooper_value <= lowest_trooper_value)
+            {
+                lowest_trooper_value = trooper_value;
+                lowest_trooper_idx = troops[itr_troops];
+            }
+        }
+
+        if (_UNITS[lowest_trooper_idx].owner_idx != NEUTRAL_PLAYER_BANNER_COLOR_IDX)
+        {
+            UNIT_LoggedPushOff(lowest_trooper_idx);
+        }
+        else
+        {
+            UNIT_MarkRemoved(lowest_trooper_idx, 1);
+        }
+
+    }
+
+}
 
 
 
 /*
-    WIZARDS.EXE  ovr120
+    WIZARDS.EXE  ovr142
 */
 
 // WZD o142p01
+// drake178: TILE_CreateRoad()
+/*
+; creates a road on the tile, setting the corresponding
+; movement allowances, and removing the enchanted road
+; flag if set, but then also enchanting the road if the
+; tile is on Myrror
+*/
+void TILE_CreateRoad(int16_t wx, int16_t wy, int16_t wp)
+{
+    uint8_t terrain_flags;
+
+    // TODO  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+
+    movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+    movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 1;
+
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Road;
+
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= ~(TF_Enc_Road);
+
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+    if(wp == 1)  /* Myrror */
+    {
+        TILE_EnchantRoad(wx, wy, wp);
+    }
+
+    terrain_flags = _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+
+}
+
+
 // WZD o142p02
+// drake178: TILE_EnchantRoad()
+/*
+; changes a regular road on a tile to an enchanted one,
+; or does nothing if there is no road on the tile
+*/
+void TILE_EnchantRoad(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    {
+
+        _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= TF_Enc_Road;
+
+        movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+
+        movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 0;
+        
+    }
+
+}
+
+
 // WZD o142p03
+// drake178: LD_TILE_ResUpdate()
+/*
+; Legacy Development function, can be removed
+;
+; would update some aspect of some resource on a tile
+; by tile basis with no return value
+*/
+void empty_fxn_o142p03(int16_t wx, int16_t wy, int16_t wp)
+{
+    return;
+}
+
 // WZD o142p04
+// LD_CTY_ResRefresh()
+/*
+; Legacy Development function, can be removed
+;
+; would update some aspect of some resource on every
+; tile of every catchment area (including corners)
+*/
+void NOOP_Current_Player_All_City_Areas(void)
+{
+    int16_t Max_Distance;
+    int16_t city_area_square_wy;
+    int16_t city_area_x;
+    int16_t city_wp;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t itr_cities;  // _SI_
+    int16_t city_area_square_wx;  // _DI_
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+        {
+            city_wx = _CITIES[itr_cities].wx;
+            city_wy = _CITIES[itr_cities].wy;
+            city_wp = _CITIES[itr_cities].wp;
+            if(_CITIES[itr_cities].population >= 8)
+            {
+                // jmp     short $+2
+            }
+            Max_Distance = 2;
+            
+            for((city_area_square_wy = (city_wy - Max_Distance)); ((city_wy + Max_Distance + 1) > city_area_square_wy); city_area_square_wy++)
+            {
+                if(
+                    (city_area_square_wy >= 0)
+                    &&
+                    (city_area_square_wy < WORLD_HEIGHT)
+                )
+                {
+                    for((city_area_x = (city_wx - Max_Distance));  ((city_wx + Max_Distance + 1) > city_area_x); city_area_x++)
+                    {
+                        city_area_square_wx = city_area_x;
+                        if(city_area_square_wx < 0)
+                        {
+                            city_area_square_wx += WORLD_WIDTH;
+                        }
+                        if(city_area_square_wx >= WORLD_WIDTH)
+                        {
+                            city_area_square_wx = WORLD_WIDTH;
+                        }
+                        empty_fxn_o142p03(city_area_square_wx, city_area_square_wy, city_wp);
+                    }
+                }
+            }
+        }
+    }
+}
+
 // WZD o142p05
+int16_t City_House_Count(int16_t city_idx)
+{
+    return _CITIES[city_idx].Pop_10s;
+}
 
 // WZD o142p06
 // drake178: CTY_GetTileFood()
 int16_t City_Food_Terrain(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t city_wp;
     int16_t useable_map_squares;
     
@@ -1295,8 +1523,8 @@ int16_t City_Food_Terrain(int16_t city_idx)
 // drake178: CTY_GetWildGameFood()
 int16_t City_Food_WildGame(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t bit_index;
     int16_t city_wp;
     int16_t useable_map_squares;
@@ -1330,7 +1558,7 @@ int16_t City_Food_WildGame(int16_t city_idx)
         if((terrain_special & 0x40) != 0)  /* TS_Wild_Game */
         {
             bit_index = ((wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
-            bit_field = (square_shared_bits + (city_wp * WORLD_SIZE) );
+            bit_field = (city_area_shared_bits + (city_wp * WORLD_SIZE) );
             if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
             {
                 food_units += 2;
@@ -1400,7 +1628,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
                 square_x_max =  1;
             }
 
-            terrain_flags_table_row = (uint8_t *)&TBL_Terrain_Flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
+            terrain_flags_table_row = (uint8_t *)&_map_square_flags[(city_wp * WORLD_SIZE) + (square_y * WORLD_WIDTH)];
 
             itr_world_x = square_x_min;
 
@@ -1533,6 +1761,19 @@ int16_t City_Food_Production(int16_t city_idx)
 
 // WZD o142p10
 // drake178: CTY_GetMaxPop()
+/*
+; returns the city's maximum population (without cap),
+; based on tile food, gaia's blessing, famine,
+; granary, and farmer's market
+*/
+/*
+
+XREF:
+    City_Growth_Rate()
+    TILE_Survey()
+    NX_j_City_Maximum_Size()
+
+*/
 int16_t City_Maximum_Size(int16_t city_idx)
 {
     int16_t maximum_size;  // _SI_
@@ -1545,7 +1786,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */) ||
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+        ||
         (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
     )
     {
@@ -1553,7 +1795,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */) ||
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+        ||
         (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
     )
     {
@@ -1572,8 +1815,8 @@ int16_t City_Maximum_Size(int16_t city_idx)
 // drake178: CTY_GetProd()
 int16_t City_Production_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t production2_per_worker;
     int16_t have_gaias_blessing;
     int16_t city_wp;
@@ -1696,8 +1939,8 @@ int16_t City_Production_Production(int16_t city_idx)
 // drake178: CTY_GetGold()
 int16_t City_Gold_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t gold_modifier;
     int16_t are_dwarf;
     int16_t have_miners_guild;
@@ -1899,8 +2142,8 @@ int16_t City_Research_Production(int16_t city_idx)
 // drake178: CTY_GetPower()
 int16_t City_Mana_Production(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t spell_ranks;
     int16_t have_miners_guild;
     int16_t are_dwarf;
@@ -2111,6 +2354,18 @@ int16_t City_Mana_Production(int16_t city_idx)
 
 // WZD o142p15
 // drake178: CTY_GetPopGrowth()
+/*
+; calculates and returns the city's population growth
+; contains multiple bugs that can prevent negative
+; total growth from being applied in certain cases
+*/
+/*
+
+XREF:
+    j_City_Growth_Rate()
+        City_Screen_Draw2__WIP()
+        Apply_City_Changes()
+*/
 int16_t City_Growth_Rate(int16_t city_idx)
 {
     int16_t maximum_size;
@@ -2147,7 +2402,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
                     population_growth_rate = ((((maximum_size - _CITIES[city_idx].population) + 1) / 2) + _race_type_table[_CITIES[city_idx].race].Growth_Mod);
 
                     if(
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */) ||
+                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+                        ||
                         (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
                     )
                     {
@@ -2155,14 +2411,15 @@ int16_t City_Growth_Rate(int16_t city_idx)
                     }
 
                     if(
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */) ||
+                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+                        ||
                         (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
                     )
                     {
                         population_growth_rate += 3;
                     }
 
-                    if(_CITIES[city_idx].population >= 25)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
+                    if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
                     {
                         population_growth_rate = 0;
                     }
@@ -2189,7 +2446,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             population_growth_modifier -= 25;
                         }
 
-                        if(_CITIES[city_idx].construction == 2)  /* _Housing */
+                        if(_CITIES[city_idx].construction == bt_Housing)
                         {
 
                             if(_CITIES[city_idx].population == 1)
@@ -2202,7 +2459,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */) ||
+                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */)
+                                ||
                                 (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced /* B_Replaced */)
                             )
                             {
@@ -2210,14 +2468,15 @@ int16_t City_Growth_Rate(int16_t city_idx)
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built /* B_Built */) ||
+                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built /* B_Built */)
+                                ||
                                 (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced /* B_Replaced */)
                             )
                             {
                                 population_growth_modifier += 15;
                             }
 
-                            if(_CITIES[city_idx].population >= 25)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
+                            if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
                             {
                                 population_growth_rate = 0;
                             }
@@ -2226,10 +2485,9 @@ int16_t City_Growth_Rate(int16_t city_idx)
 
                                 population_growth_rate = (((population_growth_rate * population_growth_modifier) + 100) / 100);
 
-
-                                if(_CITIES[city_idx].owner_idx == 5)
+                                if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
                                 {
-                                    population_growth_rate = (population_growth_rate / 2);
+                                    population_growth_rate /= 2;
 
                                     if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))
                                     {
@@ -2238,16 +2496,13 @@ int16_t City_Growth_Rate(int16_t city_idx)
                                 }
                                 else
                                 {
-                                    if(_CITIES[city_idx].owner_idx != 0)
+                                    if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                                     {
                                         population_growth_rate = ((population_growth_rate * difficulty_modifiers_table[_difficulty].population_growth) / 100);
                                     }
                                 }
 
-                                if(population_growth_rate <= 0)
-                                {
-                                    population_growth_rate = 0;
-                                }
+                                SETMIN(population_growth_rate, 0);
 
                             }
 
@@ -2272,8 +2527,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
 // MoO2  Module:  COLCALC  Colony_Current_Product_Cost_()  Colony_Product_Cost_()
 int16_t City_Current_Product_Cost(int16_t city_idx)
 {
-    int16_t wy_array[25];
-    int16_t wx_array[25];
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
     int16_t have_miners_guild;
     int16_t unit_cost_percent;
     int16_t itr;
@@ -2302,8 +2557,6 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 
     if(product_idx >= 100)
     {
-        // mov     dx, offset _unit_type_table - (64h * 24h)
-        // add     dx, s_UNIT_TYPE.Cost
         product_cost = _unit_type_table[(product_idx - 100)].Cost;
 
         city_wp = _CITIES[city_idx].wp;
@@ -2319,7 +2572,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
         */
         unit_cost_reduction_applies = ST_TRUE;
 
-        if((_unit_type_table[(product_idx - 100)].Abilities & 0x4000) != 0)  /* Ab_Purify */
+        if((_unit_type_table[(product_idx - 100)].Abilities & UA_PURIFY) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }
@@ -2329,12 +2582,12 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
             unit_cost_reduction_applies = ST_FALSE;
         }
 
-        if((_unit_type_table[(product_idx - 100)].Attribs_2 & 0x02) != 0)  /* Spl_Fireball */
+        if((_unit_type_table[(product_idx - 100)].Attribs_2 & USA_FIREBALL) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }
 
-        if((_unit_type_table[(product_idx - 100)].Attribs_2 & 0x04) != 0)  /* Spl_DoomBolt */
+        if((_unit_type_table[(product_idx - 100)].Attribs_2 & USA_DOOMBOLT) != 0)
         {
             unit_cost_reduction_applies = ST_FALSE;
         }
@@ -2397,7 +2650,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     city_population = _CITIES[city_idx].population;
 
-    required_farmer_food = city_population - City_Food_WildGame(city_idx);
+    required_farmer_food = (city_population - City_Food_WildGame(city_idx));
 
     if( (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built) || (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced) )
     {
@@ -2411,12 +2664,12 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     if(required_farmer_food > 0)
     {
-        Farming_Threshold = City_Food_Terrain(city_idx);
+            Farming_Threshold = City_Food_Terrain(city_idx);
 
             if(
             (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */) ||
             (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced /* B_Replaced */) ||
-            (_CITIES[city_idx].race == 0x06 /* R_Halfling */)
+            (_CITIES[city_idx].race == rt_Halfling /* R_Halfling */)
         )
         {
             food_per_farmer = 3;
@@ -2427,7 +2680,6 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
         }
 
         minimum_farmer_count = 0;
-
         farmer_food = 0;
         while((farmer_food < required_farmer_food) && (minimum_farmer_count < city_population))
         {
@@ -2435,7 +2687,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
             farmer_food = minimum_farmer_count * food_per_farmer;
 
-            if( (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) || (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced) )
+            if((_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) || (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced))
             {
                 farmer_food += 2;
             }
@@ -2447,7 +2699,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
             if(farmer_food > Farming_Threshold)
             {
-                farmer_food = (((farmer_food - Farming_Threshold) / 2) + Farming_Threshold);
+                farmer_food = (Farming_Threshold + ((farmer_food - Farming_Threshold) / 2));
             }
         }
 
@@ -2462,11 +2714,308 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 
 // WZD o142p21
+// drake178: CTY_OutpostGrowth()
+// MoO2  Module: COLCALC  Apply_Colony_Pop_Growth_()
+/*
+; calculates and records the growth and/or shrinkage of all outposts, although turning into a full city is not in this function
+; BUG: this function ignores Wild Games altogether, both as a source of food and as a terrain special
+; BUG: difficulty-based outpost growth modifiers are applied to both AI and human player outposts
+*/
+/*
+    adds and/or subtracts to/from _CITIES[].Pop_10s
+    if percentage change of grow += {3}
+    if percentage change of shrink += {2}
+*/
+void All_Outpost_Population_Growth(void)
+{
+    int16_t wy_array[CITY_AREA_SIZE];
+    int16_t wx_array[CITY_AREA_SIZE];
+    int16_t itr;
+    int16_t city_wp;
+    int16_t terrain_special;
+    int16_t useable_map_squares;
+    int16_t shrink;
+    int16_t itr_cities;  // _SI_
+    int16_t grow;  // _DI_
+
+    // DONT  EMM_Map_DataH();
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].population == 0)
+        {
+            continue;
+        }
+
+        grow = City_Food_Terrain(itr_cities);
+
+        grow += _race_type_table[_CITIES[itr_cities].race].outpost_growth_rate;
+
+        if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] != 0)
+        {
+            grow += 20;
+        }
+
+        if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] != 0)
+        {
+            grow += 10;
+        }
+
+        city_wp = CITIESP();
+
+        useable_map_squares = Get_Useable_City_Area(CITIESX(), CITIESY(), city_wp, &wx_array[0], &wy_array[0]);
+
+        for(itr = 0; itr < useable_map_squares; itr++)
+        {
+            terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
+
+            if(terrain_special != 0)
+            {
+                if(
+                    (terrain_special == 1)  /* TS_IronOre */
+                    ||
+                    (terrain_special == 3)  /* TS_SilverOre */
+                )
+                {
+                    grow += 5;
+                }
+                else
+                {
+                    grow += 10;
+                }
+            }
+
+        }
+
+        shrink =  5;  // 5%  1:20
+
+        if(_CITIES[itr_cities].enchantments[EVIL_PRESENCE] != 0)
+        {
+            shrink += 5;  // 5%  1:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[PESTILENCE] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[FAMINE] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+
+        if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] != 0)
+        {
+            shrink += 10;  // 10%  2:20
+        }
+        
+        grow = ((difficulty_modifiers_table[_difficulty].outpost_growth * grow) / 100);
+
+        if(Random(100) <= grow)
+        {
+            _CITIES[itr_cities].Pop_10s += Random(3);
+        }
+
+        if(Random(100) <= shrink)
+        {
+            _CITIES[itr_cities].Pop_10s += Random(2);
+        }
+    }
+
+}
+
+
 // WZD o142p22
+// drake178: WIZ_RecordHistory()
+// MoO2  Module: BILL  Record_History_()
+/*
+; calculates and records the astrologer/historian data
+; Power = power base - 10
+; Army Strength = (gold upkeep + mana upkeep) / 5
+; Research = sum of known in-realm indexes / 10
+; Historian = (above 3) + ((cities pop_K sum) / 10)
+; Astrologer's max scale is 200, Historian's is 160
+*/
+/*
+    calculates and records the 'power of a wizard', for the "History of Wizards’ Power graph"
+
+"The power of a wizard is the combined value of many things including army strength, total magic power drawn from all sources per turn, and spells that wizard has learned."
+
+*/
+void Record_History(void)
+{
+    int16_t power_of_a_wizard[NUM_PLAYERS];
+    int16_t itr_history;
+    int16_t max_curr_population;
+    int16_t max_curr_research;
+    int16_t max_curr_military;
+    int16_t max_curr_magic;
+    int16_t itr;  // _SI_
+    int16_t itr_players;  // _SI_
+    int16_t IDK_max_curr_wiz_pwr;  // _DI_
+
+    // ; fill out the astrologer fields and the local total progress array (sum of all fields)
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        _players[itr_players].Astr.Magic_Power     = WIZ_Get_Astr_Power__STUB(itr_players);
+        _players[itr_players].Astr.Army_Strength   = WIZ_Get_Astr_ArmyStr__STUB(itr_players);
+        _players[itr_players].Astr.Spell_Research  = WIZ_Get_Astr_Resrch__STUB(itr_players);
+        _players[itr_players].Pop_div_10k          = WIZ_Get_Nation_Size__STUB(itr_players);
+
+        power_of_a_wizard[itr_players] = (_players[itr_players].Astr.Magic_Power + _players[itr_players].Astr.Army_Strength + _players[itr_players].Astr.Spell_Research + _players[itr_players].Pop_div_10k);
+    }
+
+    max_curr_magic = 0;
+    max_curr_military = 0;
+    max_curr_research = 0;
+    max_curr_population = 0;
+
+    IDK_max_curr_wiz_pwr = 0;
+
+    // ; find and store the highest values in each category, with di holding the highest total
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(_players[itr_players].Astr.Magic_Power > max_curr_magic)
+        {
+            max_curr_magic = _players[itr_players].Astr.Magic_Power;
+        }
+        
+        if(_players[itr_players].Astr.Army_Strength > max_curr_military)
+        {
+            max_curr_military = _players[itr_players].Astr.Army_Strength;
+        }
+        
+        if(_players[itr_players].Astr.Spell_Research > max_curr_research)
+        {
+            max_curr_research = _players[itr_players].Astr.Spell_Research;
+        }
+        
+        if(_players[itr_players].Pop_div_10k > max_curr_population)
+        {
+            max_curr_population = _players[itr_players].Pop_div_10k;
+        }
+
+        if(power_of_a_wizard[itr_players] > IDK_max_curr_wiz_pwr)
+        {
+            IDK_max_curr_wiz_pwr = power_of_a_wizard[itr_players];
+        }
+        
+    }
+
+    // adjust power so that the highest is at most 200
+    if(max_curr_magic > 200)
+    {
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            _players[itr_players].Astr.Magic_Power = ((max_curr_magic * _players[itr_players].Astr.Magic_Power) / 200);
+        }
+    }
+
+    // adjust army strength so that the highest is at most 200
+    if(max_curr_military > 200)
+    {
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            _players[itr_players].Astr.Army_Strength = ((max_curr_military * _players[itr_players].Astr.Army_Strength) / 200);
+        }
+    }
+
+    // adjust research so that the highest is at most 200
+    if(max_curr_research > 200)
+    {
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            _players[itr_players].Astr.Spell_Research = ((max_curr_research * _players[itr_players].Astr.Spell_Research) / 200);
+        }
+    }
+
+    // divide the total progress values by 7
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        power_of_a_wizard[itr_players] = (power_of_a_wizard[itr_players] / 7);
+    }
+
+    IDK_max_curr_wiz_pwr = (IDK_max_curr_wiz_pwr / 7);
+
+    // adjust the total progress values such that the highest is at most 160
+    if(IDK_max_curr_wiz_pwr > 160)
+    {
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            power_of_a_wizard[itr_players] = ((IDK_max_curr_wiz_pwr * power_of_a_wizard[itr_players]) / 160);
+        }
+    }
+    
+
+    if(_turn < 288)
+    {
+        // record the total progress values into the historian
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            _players[itr_players].Historian[_turn] = power_of_a_wizard[itr_players];
+        }
+    }
+    else
+    {
+        // scroll the historian, then record the total progress values into it
+        for(itr_players = 0; itr_players < _num_players; itr_players++)
+        {
+            for(itr_history = 0; itr_history < 287; itr_history++)
+            {
+                _players[itr_players].Historian[(itr_history + 1)] = _players[itr_players].Historian[itr_history];
+            }
+
+            _players[itr_players].Historian[287] = power_of_a_wizard[itr_players];
+        }
+    }
+
+}
+
+
 // WZD o142p23
+// drake178: WIZ_Get_Astr_Power()
+int16_t WIZ_Get_Astr_Power__STUB(int16_t player_idx)
+{
+    return Random(100);
+}
+
 // WZD o142p24
+// drake178: WIZ_Get_Astr_ArmyStr()
+int16_t WIZ_Get_Astr_ArmyStr__STUB(int16_t player_idx)
+{
+    return Random(100);
+}
+
 // WZD o142p25
+// drake178: WIZ_Get_Astr_Resrch()
+int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx)
+{
+    return Random(100);
+}
+
 // WZD o142p26
+// drake178: WIZ_Get_Nation_Size()
+int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx)
+{
+    int16_t itr_cities;  // _CX_
+    int16_t empire_population;  // _SI_
+
+    empire_population = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if(_CITIES[itr_cities].owner_idx == player_idx)
+        {
+            empire_population += _CITIES[itr_cities].population;
+        }
+
+    }
+
+    return (empire_population / 10);  // ~ "mini population units"
+}
+
 
 // WZD o142p27
 // drake178: CTY_GetRebelCount()
@@ -2479,23 +3028,23 @@ int16_t City_Rebel_Count(int16_t city_idx)
     int16_t city_wy;
     int16_t city_wx;
     int16_t Pacify;
-    int16_t itr_num_players;
+    // itr_num_players__units
+    int16_t itr_num_players;  // itr_num_players__units
+    int16_t itr_units;  // itr_num_players__units
     int16_t city_owner_idx;
     int16_t rebel_count;
-
-    int16_t itr_units;  // DNE in Dasm
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-// #endif
+    int16_t unrest_races;  // DNE in Dasm
+    int16_t unrest_taxes;  // DNE in Dasm
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
     city_wx = _CITIES[city_idx].wx;
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
-    unrest_percent = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
-    unrest_percent = TBL_Unrest[_players[city_owner_idx].Cptl_Race][_CITIES[city_idx].race];
+
+    unrest_races = (TBL_Unrest[_players[city_owner_idx].Cptl_Race][_CITIES[city_idx].race] * 10);
+    unrest_taxes = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
+    unrest_percent = unrest_races + unrest_taxes;
 
     if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
     {
@@ -2507,8 +3056,9 @@ int16_t City_Rebel_Count(int16_t city_idx)
     Pacify = 0;
 
     if(
-        (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE) &&
-        (_players[city_owner_idx].spellranks[sbr_Death] == 0)
+        (_CITIES[city_idx].enchantments[EVIL_PRESENCE] == ST_FALSE)
+        ||
+        (_players[city_owner_idx].spellranks[sbr_Death] != 0)
     )
     {
 
@@ -2547,7 +3097,8 @@ int16_t City_Rebel_Count(int16_t city_idx)
         }
 
         if(
-            (_players[city_owner_idx].infernal_power != ST_FALSE) ||
+            (_players[city_owner_idx].infernal_power != ST_FALSE)
+            ||
             (_players[city_owner_idx].divine_power != ST_FALSE)
         )
         {
@@ -2633,7 +3184,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
                 (_UNITS[itr_units].wx == city_wx) &&
                 (_UNITS[itr_units].wy == city_wy) &&
                 (_UNITS[itr_units].wp == city_wp) &&
-                (_UNITS[itr_units].type != 0x9A /* U_Magic_Spirit */)
+                (_UNITS[itr_units].type < ut_Magic_Spirit)
             )
             {
                 Pacify_Police++;
@@ -2678,39 +3229,114 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
 
 // WZD o142p28
+// TILE_Survey()
 
 
 // WZD o142p29
 // drake178: CTY_CatchmentRefresh()
-void CTY_CatchmentRefresh__NOOP(void)
+/*
+loops over 300, as if to clear 300 bytes worth of bits?
+but, does it per plane
+so, should be 150 bytes worth of bits-per-plane
+but, actually allocated as 150 paragraphs
+so, bjorked, but fell into a functional sub-space of the problem-space
+*/
+void Reset_City_Area_Bitfields(void)
 {
-    // int16_t Tile_Index;
-    // int16_t Tile_Y;
-    // int16_t Tile_X;
-    // int16_t city_wy;
-    // int16_t city_wx;
-    // int16_t city_wp;
-    // int16_t Y_Modifier;
-    int16_t itr_plane;
-
+    int16_t city_area_bit_index;
+    int16_t city_area_square_wy;
+    int16_t city_area_square_wx;
+    int16_t city_wy;
+    int16_t city_wx;
+    int16_t city_wp;
+    int16_t city_area_y;
+    int16_t itr_wp;
+    int16_t itr_bits_bytes;  // _SI_  DNE in Dasm
     int16_t itr_cities;  // _SI_
-    
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
-#endif
+    int16_t city_area_x;  // _DI_
 
-    for(itr_plane = 0; itr_plane < NUM_PLANES; itr_plane++)
+    // TODO  EMM_Map_DataH();
+
+    // IDA Dasm - Grey-Dark
+    for(itr_wp = 0; itr_wp < NUM_PLANES; itr_wp++)
     {
-        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        for(itr_bits_bytes = 0; itr_bits_bytes < WORLD_MAP_BITFIELD_SIZE; itr_bits_bytes++)
         {
-            // TBL_Catchments_EMS + (itr_plane * 2400) + itr_cities = 0;
-            *(square_shared_bits + (itr_plane * WORLD_SIZE) + itr_cities) = 0;
+            *(city_area_bits        + (itr_wp * WORLD_SIZE) + itr_bits_bytes) = 0;
+            *(city_area_shared_bits + (itr_wp * WORLD_SIZE) + itr_bits_bytes) = 0;
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CTY_CatchmentRefresh__NOOP()\n", __FILE__, __LINE__);
-#endif
+    // IDA Dasm - Purple-Grey
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        // city_wx = _CITIES[itr_cities].wx;
+        city_wx = CITIESX();
+        city_wy = CITIESY();
+        city_wp = CITIESP();
+
+        // TODO  There's a loop-around like this elsewhere? Macro? Notes? ¿ MoM-CityArea ?
+        for(city_area_y = -2; city_area_y < 3; city_area_y++)
+        {
+            city_area_square_wy = (city_wy + city_area_y);
+
+            if(
+                (city_area_square_wy >= 0) &&
+                (city_area_square_wy < WORLD_HEIGHT)
+            )
+            {
+                for(city_area_x = -2; city_area_x < 3; city_area_x++)
+                {
+                    city_area_square_wx = (city_wx+ city_area_x);
+
+                    if(
+                        (city_area_square_wx >= 0) &&
+                        (city_area_square_wx < WORLD_WIDTH)
+                    )
+                    {
+                        if(
+                            (
+                                (city_area_y != -2)
+                                ||
+                                (
+                                    (city_area_x != -2)
+                                    &&
+                                    (city_area_x !=  2)
+                                )
+                            )
+                            &&
+                            (
+                                (city_area_y !=  2)
+                                ||
+                                (
+                                    (city_area_x != -2)
+                                    &&
+                                    (city_area_x !=  2)
+                                )
+                            )
+                        )
+                        {
+
+                            city_area_bit_index = ((city_area_square_wy * WORLD_WIDTH) + city_area_square_wx);
+
+                            if(Test_Bit_Field(city_area_bit_index, &city_area_bits[(city_wp * WORLD_SIZE)]) != ST_FALSE)
+                            {
+                                Set_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)]);
+                            }
+                            // Eh? Should be in an `else { }`
+                            Set_Bit_Field(city_area_bit_index, &city_area_bits[(city_wp * WORLD_SIZE)]);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -2719,24 +3345,16 @@ void CTY_CatchmentRefresh__NOOP(void)
 // drake178: TILE_IsShared
 /*
     ~== Check_Square_Scouted() in Explore.C for square_scouted_p0/p1
-
+"shared [world] map square"
 */
-int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy, int16_t city_wp)
+int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_area_square_wy, int16_t city_wp)
 {
-    int16_t bit_index;
+    int16_t city_area_bit_index;
+    int16_t is_shared;  // DNE in Dasm
 
-    uint8_t * bit_field;
-    int16_t is_shared;
+    city_area_bit_index = ((city_area_square_wy * WORLD_WIDTH) + city_area_square_wx);
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d)\n", __FILE__, __LINE__, city_wx, city_wy, city_wp);
-// #endif
-
-    bit_index = ((city_wy * WORLD_WIDTH) + city_wx);
-
-    bit_field = (square_shared_bits + (city_wp * WORLD_SIZE));
-
-    if(Test_Bit_Field(bit_index, bit_field) == ST_FALSE)
+    if(Test_Bit_Field(city_area_bit_index, &city_area_shared_bits[(city_wp * WORLD_SIZE)]) == ST_FALSE)
     {
         is_shared = ST_FALSE;
     }
@@ -2744,22 +3362,49 @@ int16_t City_Map_Square_Is_Shared__ALWAYS_FALSE(int16_t city_wx, int16_t city_wy
     {
         is_shared = ST_TRUE;
     }
-    
-    // TODO: code up CTY_CatchmentRefresh__NOOP()
-    is_shared = ST_FALSE;
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Map_Square_Is_Shared(city_wx = %d, city_wy = %d, city_wp = %d) { is_shared = %d }\n", __FILE__, __LINE__, city_wx, city_wy, city_wp, is_shared);
-// #endif
 
     return is_shared;
 }
 
 
 // WZD o142p31
+/*
+    ~ Remove City :: Remove Road
+    unsets road flags - normal, enchanted
+    resets movement mode cost map
+
+OON XREF: CTY_Remove()
+*/
+void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
+{
+
+    // TODO  EMM_Map_DataH()
+
+    // movement_mode_cost_maps + (wp * sizeof(struct s_MOVE_MODE_COST_MAPS)) + (wy * WORLD_WIDTH) + wx
+    movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].mountaineer.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+    movement_mode_cost_maps[wp].swimming.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
+
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF7;  // not TF_Road
+
+    _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xEF;  // not TF_Enc_Road
+
+}
+
+
 // WZD o142p32
+// CTY_Food_Breakdown()
+
 // WZD o142p33
+// CTY_Gold_Breakdown()
+
 // WZD o142p34
+// CTY_Prod_Breakdown()
+
 // WZD o142p35
+// CTY_Rsrc_Breakdown()
+
 // WZD o142p36
+// CTY_Pwr_Breakdown()

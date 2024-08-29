@@ -9,6 +9,86 @@ Decode
 Draw()
 Clipped_Draw()
 Draw_Picture()
+¿ Clipped_Print() ?
+
+
+
+MoO2
+
+Add_Picture_To_Bitmap()
+
+Module: animate
+    Draw_Animated_Sprite_On_Page()
+    Remap_Draw_Animated_Sprite()
+    Remap_Clipped_Draw_Animated_Sprite()
+
+Module: clipped
+
+
+
+    function (0 bytes) Remap_Clipped_Draw_Animated_Sprite
+    Address: 01:0012BC0B
+        Num params: 3
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            signed integer (2 bytes) x1
+            signed integer (2 bytes) y1
+            pointer (4 bytes) frame_data
+            signed integer (4 bytes) screen_pos
+            signed integer (4 bytes) y
+            signed integer (4 bytes) screen_start
+            signed integer (4 bytes) buffer_pos
+            signed integer (4 bytes) buffer_pos_word
+            signed integer (4 bytes) packet_end
+            signed integer (2 bytes) height
+            signed integer (2 bytes) data_count
+            signed integer (2 bytes) skip_count
+            signed integer (2 bytes) store_type
+            signed integer (2 bytes) width
+            signed integer (2 bytes) x2
+            signed integer (2 bytes) y2
+            signed integer (2 bytes) skip_x
+            signed integer (2 bytes) start_x
+            signed integer (2 bytes) skip_y
+            signed integer (2 bytes) start_y
+            signed integer (2 bytes) actual_width
+            signed integer (2 bytes) actual_height
+            signed integer (2 bytes) skip_add
+            signed integer (2 bytes) clipped_count
+            pointer (4 bytes) frame_data_word
+            signed integer (4 bytes) buffer_add
+            signed integer (4 bytes) screen_line_add
+            signed integer (4 bytes) screen_line_start
+            signed integer (4 bytes) screen_line_end
+
+
+
+
+
+
+Where did I put the source code for Animator/FLIC Lib?
+
+C:\STU\develedu\
+
+C:\STU\develedu\FLILIB3\FLISRC3\UNBRUN.ASM
+low level routine to uncompress 1st frame of a FLI
+unbrun  uncompress byte run
+cbuf    pointer to
+screen  pointer to
+linect  line count
+linelp  line loop
+ulcloop 
+ucopy   
+endulcloop  
+ulcout      ¿ outro ?
+ulcrun
+
+¿ "line count" ~== "height" ?
+
+
 
 
 Clipped_Draw_Frame()

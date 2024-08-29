@@ -42,7 +42,7 @@ struct s_mouse_list
 
 // WZD dseg:00EE    mouse_list_default s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 extern struct s_mouse_list mouse_list_default[];
-// WZD dseg:00FA    mouse_list_none s_MOUSE_LIST <0, 0, 0, 0, 319, 199>
+extern struct s_mouse_list mouse_list_none[];
 // WZD dseg:0106    mouse_list_hourglass s_MOUSE_LIST <crsr_Hourglass, 0, 0, 0, 319, 199>
 // WZD dseg:0112    NIU_mouse_list_normal s_MOUSE_LIST <crsr_Finger, 0, 0, 0, 319, 199>
 // WZD dseg:011E    NIU_mouse_list_boot s_MOUSE_LIST <crsr_WingedBoot, 4, 0, 0, 319, 158> ; ? 158 is main map width ?
@@ -93,7 +93,8 @@ extern int16_t mouse_buffer_button;
 extern int16_t mouse_buffer_flag2;
 
 // WZD dseg:78D4
-extern int16_t MOUSE_INT_Process;
+// drake178: MOUSE_INT_Process
+extern int16_t mouse_interrupt_active;
 
 
 // ...
@@ -122,14 +123,17 @@ int16_t Get_Pointer_Offset(void);
 // WZD s35p05
 int16_t Mouse_Button(void);
 
+// WZD s35p06
+void Mouse_Wait(void);
+
 // WZD s35p07
 int16_t Init_Mouse_Driver(void);
 
 // WZD s35p08
-// RP_Mouse_SetUsable
+void RP_Mouse_SetUsable(void);
 
 // WZD s35p09
-// MOUSE_Reset
+void Reset_System_Mouse(void);
 
 // WZD s35p10
 void Mouse_Movement_Handler(void);
@@ -138,7 +142,10 @@ void Mouse_Movement_Handler(void);
 void Mouse_Button_Handler(void);
 
 // WZD s35p12
-// MOUSE_INT_Handler
+// drake178: MOUSE_INT_Handler()
+// MoO2  Module: mouse  User_Mouse_Handler()
+// void User_Mouse_Handler(int16_t max, int16_t buttons, int16_t mcx, int16_t mdx);;
+/* PLATFORM */  void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my);
 
 // WZD s35p13
 void Save_Mouse_State(void);
@@ -178,6 +185,14 @@ int16_t Mouse_Buffer(void);
 // WZD s35p26
 int16_t Mouse_Buffer2(void);
 
+// WZD s35p27
+void Set_Buffer_2(int16_t x, int16_t y);
+
+// WZD s35p28
+void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);
+
+// WZD s35p29
+void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);
 
 
 // WZD s35p30  Save_Mouse_On_Page   CRL_Save_RSP  GUI_SaveCursorArea

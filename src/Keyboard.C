@@ -1,10 +1,13 @@
 
+// #include "MoX.H"
+
 #include <string.h>
 
 #include "MoX_TYPE.H"
 #include "MoX_DEF.H"
 
 #include "Keyboard.H"
+#include "Mouse.H"
 
 #include "Fields.H"
 #include "Input.H"
@@ -19,7 +22,7 @@
 int16_t KD_prev_field_idx = 0;
 // WZD dseg:829A                                                 ? BEGIN: Mouse Buffer ?
 // WZD dseg:829A  MGC dseg:4D6C
-int16_t KD_ActiveStringTrig = 0;
+int16_t multi_hotkey_active_field = 0;
 
 
 // Platform:  // WZD s35p14
@@ -43,89 +46,130 @@ enum Key_Press
 
 
 // WZD s34p22
-// MGC s34p22
-int16_t Interpret_Keyboard_Input(int16_t * field_num)
+// 1oom  uiobj.c  uiobj_handle_kbd()
+// MoO2  Module: fields  Interpret_Keyboard_Input()
+/*
+function (0 bytes) Interpret_Keyboard_Input
+Address: 01:0011CACE
+    Num params: 1
+    Return type: signed integer (2 bytes) 
+    pointer (4 bytes) 
+    Locals:
+        pointer (4 bytes) field_num
+        signed integer (2 bytes) count
+        signed integer (2 bytes) key
+        signed integer (2 bytes) mouse_x
+        signed integer (2 bytes) mouse_y
+        signed integer (2 bytes) current_field
+        signed integer (2 bytes) next_field
+        signed integer (2 bytes) i
+        signed integer (2 bytes) character
+        signed integer (2 bytes) clear_hotkeys
+        signed integer (2 bytes) original_character
+        signed integer (2 bytes) fkey_hit
+        array (40 bytes) temp_string
+        Num elements:   40, Type:                unsigned integer (4 bytes) 
+*/
+uint8_t Interpret_Keyboard_Input(int16_t * field_num)
 {
-    char Local_String[30];
-    uint16_t Input_Key_Extended;
-    uint8_t Original_Key;
-    uint8_t return_key;
-    int16_t Reset_String_Triggers;
-    int16_t Loop_Var;
-    int16_t Control_Index;
+    char temp_string[30];
+    uint16_t dirkey_character;
+    uint8_t original_character;
+    uint8_t character;
+    int16_t clear_hotkeys;
+    int16_t itr_fields_count;
+    int16_t dirkey_field_idx;
     int16_t _SI_field_idx;
     int16_t itr;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Keyboard_Input(*field_num = %d)\n", __FILE__, __LINE__, *field_num);
-// #endif
+    character = Read_Key();
 
-    return_key = Read_Key();
-    // assert(return_key != 0);
-
-    if(KD_prev_field_idx >= fields_count) { KD_prev_field_idx = 0; } // maybe not FALSE/NULL, because it gets incremement below
-    _SI_field_idx = KD_prev_field_idx;
-    Original_Key = return_key;
-    if ((return_key > 96) && (return_key < 123) ) { return_key -= 32; }
-
-
-
-    if(KD_ActiveStringTrig != ST_NULL)
+    if(KD_prev_field_idx >= fields_count)
     {
-        _SI_field_idx = KD_ActiveStringTrig;
-        return_key -= 95;  // treat Alt-A as A
-        if(return_key == p_fields[_SI_field_idx].hotkey)
+        KD_prev_field_idx = 0;
+    }
+
+    _SI_field_idx = (KD_prev_field_idx + 1);
+
+    original_character = character;
+
+    UPPERCASE(character);
+
+
+    /*
+        Active, check MultiHotKey Field
+    */
+    {
+        if(multi_hotkey_active_field == 0)
         {
-            return_key += 95;
+            _SI_field_idx = fields_count;
         }
         else
         {
-            return_key += 95;
-            _SI_field_idx = fields_count;  // this reset field_idx so it gets reprocessed in the next section
+            _SI_field_idx = multi_hotkey_active_field;
+            character -= 95;  // e.g., convert Alt-A to A
+            if(character == p_fields[_SI_field_idx].hotkey)
+            {
+                character += 95;
+            }
+            else
+            {
+                character += 95;
+                _SI_field_idx = fields_count;
+            }
         }
     }
-    else
+
+    /*
+        From Next, check MultiHotKey Fields
+    */
     {
-        _SI_field_idx = fields_count;
-    }
-
-
-
-    /* From previous, Multi Character HotKey Fields */
-    if(_SI_field_idx == fields_count)
-    {
-        KD_ActiveStringTrig = ST_NULL;  // clear it, because we just failed to match it
-
-        _SI_field_idx = KD_prev_field_idx + 1;
-        // while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
-        while ( (_SI_field_idx != fields_count) )
+        if(_SI_field_idx == fields_count)
         {
-            // treat Alt-A as A  //MoO2 "Alt_Alpha"
-            if( (p_fields[_SI_field_idx].type == ft_MultiHotKey) && (p_fields[_SI_field_idx].hotkey == (return_key + 95)) )
+            multi_hotkey_active_field = 0;
+            _SI_field_idx = KD_prev_field_idx + 1;
+            while(((p_fields[_SI_field_idx].hotkey != character) || (p_fields[_SI_field_idx].type == ft_MultiHotKey)) && (_SI_field_idx != fields_count))
             {
-                DLOG("got MultiHotKey");
-                break;
-            }
-            {
+                if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
+                {
+                    character -= 95;  // e.g., convert Alt-A to A
+                    if(character == p_fields[_SI_field_idx].hotkey)
+                    {
+                        character += 95;
+                        break;
+                    }
+                    else
+                    {
+                        character += 95;
+                    }
+                }
                 _SI_field_idx++;
             }
         }
     }
 
-    /* From first, Multi Character HotKey Fields */
-    if(_SI_field_idx == fields_count)
+    /*
+        From First, check MultiHotKey Fields
+    */
     {
-        _SI_field_idx = 1;
-        // while( (return_key != p_fields[_SI_field_idx].hotkey) && (p_fields[_SI_field_idx].type == ft_MultiHotKey) || (_SI_field_idx != fields_count) )
-        while ((_SI_field_idx != fields_count))
+        if(_SI_field_idx == fields_count)
         {
-            // treat Alt-A as A  //MoO2 "Alt_Alpha"
-            if( (p_fields[_SI_field_idx].type == ft_MultiHotKey) && (p_fields[_SI_field_idx].hotkey == (return_key + 95)) )
+            _SI_field_idx = 1;
+            while(((p_fields[_SI_field_idx].hotkey != character) || (p_fields[_SI_field_idx].type == ft_MultiHotKey)) && (_SI_field_idx != fields_count))
             {
-                DLOG("got MultiHotKey");
-                break;
-            }
-            {
+                if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
+                {
+                    character -= 95;  // e.g., convert Alt-A to A
+                    if(character == p_fields[_SI_field_idx].hotkey)
+                    {
+                        character += 95;
+                        break;
+                    }
+                    else
+                    {
+                        character += 95;
+                    }
+                }
                 _SI_field_idx++;
             }
         }
@@ -133,158 +177,91 @@ int16_t Interpret_Keyboard_Input(int16_t * field_num)
 
 
     KD_prev_field_idx = _SI_field_idx;
-    Reset_String_Triggers = ST_TRUE;
+
+    clear_hotkeys = ST_TRUE;
 
 
+    // HERE:  
     if(_SI_field_idx < fields_count)
     {
-//         DLOG("if(_SI_field_idx < fields_count)");
         *field_num = _SI_field_idx;
+        if((p_fields[_SI_field_idx].x1 < SCREEN_WIDTH) && (p_fields[_SI_field_idx].y1 < SCREEN_HEIGHT)
+        )
+        {
+            // ~ UU_GUI_MouseEMUMoveTo()
+            Save_Mouse_State();
+            MOUSE_Emu_X = (p_fields[_SI_field_idx].x1 + ((p_fields[_SI_field_idx].x2 - p_fields[_SI_field_idx].x1) / 2));
+            MOUSE_Emu_Y = (p_fields[_SI_field_idx].y1 + ((p_fields[_SI_field_idx].y2 - p_fields[_SI_field_idx].y1) / 2));
+            if((MOUSE_Emu_X < SCREEN_WIDTH) && (MOUSE_Emu_Y < SCREEN_HEIGHT))
+            {
+                Check_Mouse_Shape(MOUSE_Emu_X, MOUSE_Emu_Y);
+                pointer_offset = Get_Pointer_Offset();
+                MOUSE_Emu_X = (MOUSE_Emu_X - pointer_offset);
+                MOUSE_Emu_Y = (MOUSE_Emu_Y - pointer_offset);
+                Set_Pointer_Position(MOUSE_Emu_X, MOUSE_Emu_Y);
+                Restore_Mouse_On_Page();
+                Save_Mouse_On_Page(MOUSE_Emu_X, MOUSE_Emu_Y);
+                Draw_Mouse_On_Page(MOUSE_Emu_X, MOUSE_Emu_Y);
+            }
+            Restore_Mouse_State();
+        }
 
-//         /*
-//             Field is On-Screen
-//         */
-//         if( (p_fields[_SI_field_idx].x1 < 320) && (p_fields[_SI_field_idx].y1 < 200) )
-//         {
-//             Save_Mouse_State();
-//             MOUSE_Emu_X = p_fields[_SI_field_idx].x1 + (ABS((p_fields[_SI_field_idx].x2 - p_fields[_SI_field_idx].x1)) / 2);
-//             MOUSE_Emu_Y = p_fields[_SI_field_idx].y1 + (ABS((p_fields[_SI_field_idx].y2 - p_fields[_SI_field_idx].y1)) / 2);
-//             if( (MOUSE_Emu_X < 320) && (MOUSE_Emu_Y < 200) )
-//             {
-//                 Check_Mouse_Shape(MOUSE_Emu_X, MOUSE_Emu_Y);
-//                 _cursor_offset = Get_Pointer_Offset();
-//                 MOUSE_Emu_X = MOUSE_Emu_X - _cursor_offset;
-//                 MOUSE_Emu_Y = MOUSE_Emu_Y - _cursor_offset;
-//                 MD_MoveCursor(MOUSE_Emu_X, MOUSE_Emu_Y);
-//                 CRL_Restore_RSP();
-//                 CRL_Save_RSP(MOUSE_Emu_X, MOUSE_Emu_Y);
-//                 CRH_Draw_RSP(MOUSE_Emu_X, MOUSE_Emu_Y);
-//             }
-//             Restore_Mouse_State();
-//         }
-
-//         /*
-//             Update the members for the Multi Character HotKey Field
-//         */
-//         if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
-//         {
-//             strcpy(Local_String, p_fields[_SI_field_idx].Param0);
-//             p_fields[_SI_field_idx].Param1++;
-//             if(p_fields[_SI_field_idx].Param1 < p_fields[_SI_field_idx].Param2)
-//             {
-//                 p_fields[_SI_field_idx].hotkey = Local_String[p_fields[_SI_field_idx].Param1];
-//                 KD_ActiveStringTrig = _SI_field_idx;
-//                 *field_num = 0;
-//                 return_key = 0;
-//             }
-//             else
-//             {
-//                 p_fields[_SI_field_idx].Param1 = 0;
-//                 p_fields[_SI_field_idx].hotkey = Local_String[0];
-//                 KD_ActiveStringTrig == 0;
-//             }
-//         }
-
+        if(p_fields[_SI_field_idx].type == ft_MultiHotKey)
+        {
+            strcpy(temp_string, p_fields[_SI_field_idx].string);
+            p_fields[_SI_field_idx].string_pos++;
+            if(p_fields[_SI_field_idx].string_pos < p_fields[_SI_field_idx].string_len)
+            {
+                p_fields[_SI_field_idx].hotkey = temp_string[p_fields[_SI_field_idx].string_pos];
+                multi_hotkey_active_field = _SI_field_idx;
+                *field_num = 0;
+                character = 0;
+            }
+            else
+            {
+                p_fields[_SI_field_idx].string_pos = 0;
+                p_fields[_SI_field_idx].hotkey = temp_string[0];
+                multi_hotkey_active_field == 0;
+            }
+        }
     }
     else  /* if(_SI_field_idx < fields_count) */
     {
-//         DLOG("if(_SI_field_idx >= fields_count)");
-
-//         Control_Index = *field_num;
-//         Input_Key_Extended = return_key;
-//         switch(Input_Key_Extended)
-//         {
-//             case KP_Left:  { Control_Index = GUI_ProcessDirKey('L'); } break;
-//             case KP_Right: { Control_Index = GUI_ProcessDirKey('R'); } break;
-//             case KP_Up:    { Control_Index = GUI_ProcessDirKey('U'); } break;
-//             case KP_Down:  { Control_Index = GUI_ProcessDirKey('D'); } break;
-//             case KP_PgUp:  { Control_Index = GUI_ProcessDirKey('W'); } break;
-//             case KP_Home:  { Control_Index = GUI_ProcessDirKey('X'); } break;
-//             case KP_End:   { Control_Index = GUI_ProcessDirKey('Y'); } break;
-//             case KP_PgDn:  { Control_Index = GUI_ProcessDirKey('Z'); } break;
-//         }
-//         *field_num = Control_Index;
+        dirkey_field_idx = *field_num;
+        dirkey_character = character;
+        switch(dirkey_character)
+        {
+            // TODO  case KP_Left:  { dirkey_field_idx = Process_Direction_Key__STUB('L'); } break;
+            // TODO  case KP_Right: { dirkey_field_idx = Process_Direction_Key__STUB('R'); } break;
+            // TODO  case KP_Up:    { dirkey_field_idx = Process_Direction_Key__STUB('U'); } break;
+            // TODO  case KP_Down:  { dirkey_field_idx = Process_Direction_Key__STUB('D'); } break;
+            // TODO  case KP_PgUp:  { dirkey_field_idx = Process_Direction_Key__STUB('W'); } break;
+            // TODO  case KP_Home:  { dirkey_field_idx = Process_Direction_Key__STUB('X'); } break;
+            // TODO  case KP_End:   { dirkey_field_idx = Process_Direction_Key__STUB('Y'); } break;
+            // TODO  case KP_PgDn:  { dirkey_field_idx = Process_Direction_Key__STUB('Z'); } break;
+        }
+        *field_num = dirkey_field_idx;
     }
 
 
-//     if(Reset_String_Triggers != ST_FALSE)
-//     {
-//         Loop_Var = 0;
-//         while(Loop_Var < fields_count)
-//         {
-//             if(p_fields[Loop_Var].type == ft_MultiHotKey)
-//             {
-//                 strcpy(Local_String, p_fields[Loop_Var].Param0);
-//                 p_fields[Loop_Var].Param1 = 0;
-//                 p_fields[Loop_Var].hotkey = Local_String[0];
-//             }
-//             Loop_Var++;
-//         }
-//     }
-
-
-
-
-//     for(itr = 0; itr < fields_count; itr++)
-//     {
-//         if(return_key == p_fields[itr].hotkey)
-//         {
-//             *field_num = itr;
-//         }
-//     }
-
-    // HACK: force the match of character and hotkey
-    if(_SI_field_idx == fields_count)
+    if(clear_hotkeys != ST_FALSE)
     {
-//         DLOG("HACK: force the match of character and hotkey");
-        _SI_field_idx = 1;
-        while(_SI_field_idx != fields_count)
+        for(itr_fields_count = 0; itr_fields_count < fields_count; itr_fields_count++)
         {
-            if(return_key == p_fields[_SI_field_idx].hotkey)
+            if(p_fields[itr_fields_count].type == ft_MultiHotKey)
             {
-                *field_num = _SI_field_idx;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[_SI_field_idx].hotkey: %d\n", __FILE__, __LINE__, p_fields[_SI_field_idx].hotkey);
-//     dbg_prn("DEBUG: [%s, %d]: _SI_field_idx: %d\n", __FILE__, __LINE__, _SI_field_idx);
-//     dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
-// #endif
+                strcpy(temp_string, p_fields[itr_fields_count].string);
+                p_fields[itr_fields_count].string_pos = 0;
+                p_fields[itr_fields_count].hotkey = temp_string[0];
             }
-            _SI_field_idx++;
         }
     }
-    else
+
+
+    if(p_fields[*field_num].hotkey != character)
     {
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: ~END: Interpret_Keyboard_Input\n", __FILE__, __LINE__);
-//     dbg_prn("DEBUG: [%s, %d]: (_SI_field_idx != fields_count)\n", __FILE__, __LINE__);
-// #endif
+        character = original_character;
     }
 
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-//     dbg_prn("DEBUG: [%s, %d]: p_fields[*field_num].hotkey: %d\n", __FILE__, __LINE__, p_fields[*field_num].hotkey);
-// #endif
-    if(return_key != p_fields[*field_num].hotkey)
-    {
-//         DLOG("if(return_key != p_fields[*field_num].hotkey)");
-        return_key = Original_Key;
-    }
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: Original_Key: %d\n", __FILE__, __LINE__, Original_Key);
-//     dbg_prn("DEBUG: [%s, %d]: return_key: %d\n", __FILE__, __LINE__, return_key);
-// #endif
-
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: *field_num: %d\n", __FILE__, __LINE__, *field_num);
-// #endif
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Interpret_Keyboard_Input(*field_num = %d) { return_key = %d }\n", __FILE__, __LINE__, *field_num, return_key);
-// #endif
-
-    return return_key;
+    return character;
 }

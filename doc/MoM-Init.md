@@ -301,7 +301,7 @@ exact same in MGC & WZD
  [x] TBL_Scouting        World_Data
  [x] TBL_MoveMaps_EMS
  [x] _events_table
- [x] TBL_Terrain_Flags   World_Data
+ [x] _map_square_flags   World_Data
  [-] grand_vizier
  [x] TBL_Premade_Items
  [x] TBL_Hero_Names
@@ -325,7 +325,7 @@ World_Data
     UU_TBL_2
     TBL_Landmasses
     TBL_Terr_Specials
-    TBL_Terrain_Flags
+    _map_square_flags
     TBL_Scouting
     square_scouted_p0
     square_scouted_p1
