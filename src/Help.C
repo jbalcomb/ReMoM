@@ -86,13 +86,31 @@ void Set_Mirror_Screen_Help_List(void)
 }
 
 // WZD o104p08
-// HLPENTRY.LBX  ""
+// drake178: HLP_Load_Cartographr
+// HLPENTRY.LBX  "cartographer scrn Help"
+void Set_Cartographer_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 8, (SAMB_ptr)_help_entries, 0, 5, 10);
+    Set_Help_List((char *)&_help_entries[0], 5);
+}
 
 // WZD o104p09
-// HLPENTRY.LBX  ""
+// drake178: sub_855F8()
+// HLPENTRY.LBX  "powergraph scrn Help"
+void Set_Powergraph_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 9, (SAMB_ptr)_help_entries, 0, 1, 10);
+    Set_Help_List((char *)&_help_entries[0], 1);
+}
 
 // WZD o104p10
-// HLPENTRY.LBX  ""
+// drake178: sub_8562B()
+// HLPENTRY.LBX  "status scrn Help"
+void Set_Status_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 10, (SAMB_ptr)_help_entries, 0, 1, 10);
+    Set_Help_List((char *)&_help_entries[0], 1);
+}
 
 
 // WZD o104p11

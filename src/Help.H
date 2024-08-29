@@ -1272,10 +1272,14 @@ void Set_City_Screen_Help_List(void);
 void Set_Mirror_Screen_Help_List(void);
 
 // WZD o104p08
+void Set_Cartographer_Screen_Help_List(void);
 
 // WZD o104p09
+void Set_Powergraph_Screen_Help_List(void);
 
 // WZD o104p10
+// sub_8562B
+void Set_Status_Screen_Help_List(void);
 
 // WZD o104p11
 void Set_Alchemy_Screen_Help_List(void);

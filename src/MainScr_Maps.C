@@ -1903,7 +1903,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
                 }
 
-                if((terrain_special & 0x40) != 0)  /* Wild Game */
+                if((terrain_special & TS_WILDGAME) != 0)
                 {
                     has_city = ST_FALSE;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
@@ -1917,9 +1917,12 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     if(has_city == ST_FALSE)
                     {
                         site_pict_seg = IMG_OVL_WildGame;
+                        // FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
+                        
+                        site_pict_seg = UU_hunters_lodge_seg;
                         FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
 
-                        if((terrain_special & 0x10) != 0)  /* Hunter's Lodge */
+                        if((terrain_special & TS_HUNTERSLODGE) != 0)
                         {
                             site_pict_seg = UU_hunters_lodge_seg;
                             FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);

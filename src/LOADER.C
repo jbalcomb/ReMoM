@@ -476,6 +476,7 @@ void Terrain_Init(void)
 //     // ; (blue tile frame called "city work area")
 
         UU_hunters_lodge_seg = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
+        
         IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);    // ; reserved EMM header pointer for a single image
         IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);      // ; reserved EMM header pointer for a single image
         
