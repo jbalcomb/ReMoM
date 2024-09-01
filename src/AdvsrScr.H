@@ -28,13 +28,13 @@ void Advisor_Screen(int16_t advisor_idx);
 void TaxCollector_Window(void);
 
 // WZD o76p03
-void IDK_AdvsrScr_Historian(void);
+void Powergraph_Screen(void);
 
 // WZD o76p04
-// sub_655C4()
+void Powergraph_Screen_Draw(void);
 
 // WZD o76p05
-// sub_65B47()
+void IDK_Powergraph_Draw_Turn_Data(void);
 
 // WZD o76p06
 void Status_Screen(void);
