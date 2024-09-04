@@ -245,10 +245,69 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
 
 
 // WZD o143p13
-// EVNT_TargetDepletion()
+// drake178: EVNT_TargetDepletion()
+/*
+; attempts to pick a target for the depletion event
+; from among the target player's cities that have an
+; appropriate resource type in their catchment, setting
+; the values at the return pointers accordingly
+; returns the city index if successful, or -1 otherwise
+;
+; BUG: never actually executes, instead always
+; returning -1 due to a botched comparison
+*/
+int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special)
+{
+    int16_t Tile_Tries;
+    int16_t city_idx;
+    int16_t result_city_idx;
+    int16_t City_Tries;
+
+    result_city_idx = ST_UNDEFINED;
+
+    // ; BUG: will jump the first time and never execute
+    for(City_Tries = 0; ((City_Tries < 100) && (result_city_idx == ST_FALSE)); City_Tries++)
+    {
+        
+    }
+
+
+
+    return result_city_idx;
+
+}
 
 // WZD o143p14
-// EVNT_FindNewMineral()
+// drake178: EVNT_FindNewMineral()
+/*
+; attempts to pick a target for the new mineral event
+; from among the target player's cities, setting the
+; values at the return pointers accordingly
+; returns the city index if successful, or -1 otherwise
+;
+; BUG: never actually executes, instead always
+; returning -1 due to a botched comparison
+*/
+int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special)
+{
+    int16_t Tile_Tries;
+    int16_t city_idx;
+    int16_t result_city_idx;
+    int16_t City_Tries;
+
+    result_city_idx = ST_UNDEFINED;
+
+    // ; BUG: will jump the first time and never execute
+    for(City_Tries = 0; ((City_Tries < 100) && (result_city_idx == ST_FALSE)); City_Tries++)
+    {
+        
+    }
+
+
+
+    return result_city_idx;
+
+}
 
 // WZD o143p15
 // TILE_ReplaceMinerals()

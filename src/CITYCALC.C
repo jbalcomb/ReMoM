@@ -77,7 +77,7 @@ void Players_Update_Magic_Power(void)
         NIU_players_power_base_array[itr] = 0;
     }
 
-    if(*(events_table + 48) == 2)  /* s_EVENT_DATA.Mana_Short.Status */
+    if(events_table->Mana_Short_Status == 2)
     {
         return;
     }
@@ -96,7 +96,7 @@ void Players_Update_Magic_Power(void)
 
             node_magic_power_points = ((_NODES[itr].power * (_magic + 1)) / 2);
 
-            if(*(events_table + 42) == 2)  /* s_EVENT_DATA.Conjunction_Chaos.Status */
+            if(events_table->Conjunction_Chaos_Status == 2)
             {
                 if(_NODES[itr].type == nt_Sorcery)
                     node_magic_power_points /= 2;
@@ -106,7 +106,7 @@ void Players_Update_Magic_Power(void)
                     node_magic_power_points *= 2;
             }
 
-            if(*(events_table + 46) == 2)  /* s_EVENT_DATA.Conjunction_Sorcery.Status */
+            if(events_table->Conjunction_Sorcery_Status == 2)
             {
                 if(_NODES[itr].type == nt_Sorcery)
                     node_magic_power_points *= 2;
@@ -116,7 +116,7 @@ void Players_Update_Magic_Power(void)
                     node_magic_power_points /= 2;
             }
 
-            if(*(events_table + 44) == 2)  /* s_EVENT_DATA.Conjunction_Nature.Status */
+            if(events_table->Conjunction_Nature_Status == 2)
             {
                 if(_NODES[itr].type == nt_Sorcery)
                     node_magic_power_points /= 2;
@@ -2163,7 +2163,7 @@ int16_t City_Mana_Production(int16_t city_idx)
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
     if(
-        (*(events_table + 48) != 2) &&  /* Mana_Short.Status */
+        (events_table->Mana_Short_Status != 2) &&
         (_CITIES[city_idx].population != 0) &&
         (city_owner_idx != NEUTRAL_PLAYER_IDX)
     )
@@ -2303,7 +2303,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_players[city_owner_idx].spellranks[sbr_Death] != 0) &&
-            (*(events_table + 38) == 2)  /* Good_Moon.Status */
+            (events_table->Good_Moon_Status == 2)
         )
         {
             mana_units = (mana_units - (building_magic_power / 2));
@@ -2311,7 +2311,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_players[city_owner_idx].spellranks[sbr_Life] != 0) &&
-            (*(events_table + 40) == 2)  /* Bad_Moon.Status */
+            (events_table->Bad_Moon_Status == 2)
         )
         {
             mana_units = (mana_units - (building_magic_power / 2));
@@ -2324,7 +2324,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_players[city_owner_idx].spellranks[sbr_Life] != 0) &&
-            (*(events_table + 38) == 2)  /* Good_Moon.Status */
+            (events_table->Good_Moon_Status == 2)
         )
         {
             mana_units += building_magic_power;
@@ -2332,7 +2332,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         if(
             (_players[city_owner_idx].spellranks[sbr_Death] != 0) &&
-            (*(events_table + 40) == 2)  /* Bad_Moon.Status */
+            (events_table->Bad_Moon_Status == 2)
         )
         {
             mana_units += building_magic_power;
@@ -2434,7 +2434,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
                         /*
                             Population Boom
                         */
-                        if( (events_table[22] != 0) && (events_table[23] == city_idx) )
+                        if( (events_table->Population_Boom_Status != 0) && (events_table->Population_Boom_Data == city_idx) )
                         {
                             population_growth_rate = (population_growth_rate * 2);
                         }

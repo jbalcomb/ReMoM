@@ -206,7 +206,7 @@ so, 300 PRs, + 1 for the SAMB header
     _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
 
     // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
-    events_table = (int16_t *)Allocate_Space(7);
+    events_table = (struct s_EVENT_DATA *)Allocate_Space(7);
 
     // ¿ MoO2  _officer_names ? ¿ Officer vs. Owned Officer ?
     hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);

@@ -676,6 +676,35 @@ enum e_WEAPON_QUALITY
 
 
 
+/*
+19 events
+{0, ..., 18}
+
+*/
+enum e_EVENT_TYPE
+{
+    et_None                 =  0,
+    et_Meteor               =  1,
+    et_Gift                 =  2,
+    et_Disjunction          =  3,
+    et_Marriage             =  4,
+    et_Earthquake           =  5,
+    et_Pirates              =  6,
+    et_Plague               =  7,
+    et_Rebellion            =  8,
+    et_Donation             =  9,
+    et_Depletion            = 10,
+    et_New_Mine             = 11,
+    et_Population_Boom             = 12,
+    et_Good_Moon            = 13,
+    et_Bad_Moon             = 14,
+    et_Conjunction_Chaos    = 15,
+    et_Conjunction_Nature   = 16,
+    et_Conjunction_Sorcery  = 17,
+    et_Mana_Short            = 18
+};
+
+
 
 
 // sizeof:  0Ah  10d
@@ -1659,32 +1688,122 @@ struct CON_EVENT
     /* 0x04 */
 };
 
-// drake178: ¿ ?
-// sizeof:  64h  100d
+// // drake178: ¿ ?
+// // sizeof:  64h  100d
+// struct s_EVENT_DATA
+// {
+//     /* 0x00 */  int16_t Last_Event_Turn;
+//     /* 0x02 */  struct STD_EVENT Meteor;
+//     /* 0x08 */  struct STD_EVENT Gift;
+//     /* 0x0E */  int16_t Disjunction;
+//     /* 0x10 */  struct STD_EVENT Dpl_Marriage;
+//     /* 0x16 */  int16_t Unused_16h;
+//     /* 0x18 */  struct STD_EVENT Earthquake;
+//     /* 0x1E */  struct STD_EVENT Pirates;
+//     /* 0x24 */  struct STD_EVENT Plague;
+//     /* 0x2A */  int16_t Plague_Duration;
+//     /* 0x2C */  struct STD_EVENT Rebellion;
+//     /* 0x32 */  struct STD_EVENT Donation;
+//     /* 0x38 */  struct STD_EVENT Depletion;
+//     /* 0x3E */  struct REV_EVENT New_Mine;
+//     /* 0x44 */  struct REV_EVENT Pop_Boom;
+//     /* 0x4A */  int16_t Pop_Boom_Duration;
+//     /* 0x4C */  struct CON_EVENT Good_Moon;
+//     /* 0x50 */  struct CON_EVENT Bad_Moon;
+//     /* 0x54 */  struct CON_EVENT Conjunction_Chaos;
+//     /* 0x58 */  struct CON_EVENT Conjunction_Nature;
+//     /* 0x5C */  struct CON_EVENT Conjunction_Sorcery;
+//     /* 0x60 */  struct CON_EVENT Mana_Short;
+//     /* 0x64 */
+// };
+
 struct s_EVENT_DATA
 {
-    /* 0x00 */  int16_t Last_Event_Turn;
-    /* 0x02 */  struct STD_EVENT Meteor;
-    /* 0x08 */  struct STD_EVENT Gift;
-    /* 0x0E */  int16_t Disjunction;
-    /* 0x10 */  struct STD_EVENT Dpl_Marriage;
-    /* 0x16 */  int16_t Unused_16h;
-    /* 0x18 */  struct STD_EVENT Earthquake;
-    /* 0x1E */  struct STD_EVENT Pirates;
-    /* 0x24 */  struct STD_EVENT Plague;
+    /* 0x00 */  int16_t last_event_turn;
+    // /* 0x02 */  struct STD_EVENT Meteor;
+    /* 0x00 */ int16_t Meteor_Status;
+    /* 0x02 */ int16_t Meteor_Player;
+    /* 0x04 */ int16_t Meteor_Data;
+
+    // /* 0x08 */  struct STD_EVENT Gift;
+    /* 0x00 */ int16_t Gift_Status;
+    /* 0x02 */ int16_t Gift_Player;
+    /* 0x04 */ int16_t Gift_Data;
+
+    /* 0x0E */  int16_t Disjunction_Status;
+
+    // /* 0x10 */  struct STD_EVENT Dpl_Marriage;
+    /* 0x00 */ int16_t Marriage_Status;
+    /* 0x02 */ int16_t Marriage_Player;
+    /* 0x04 */ int16_t marriage_neutral_city_idx;
+    /* 0x16 */ int16_t marriage_player_city_idx;
+
+    // /* 0x18 */  struct STD_EVENT Earthquake;
+    /* 0x00 */ int16_t Earthquake_Status;
+    /* 0x02 */ int16_t Earthquake_Player;
+    /* 0x04 */ int16_t Earthquake_Data;
+
+    // /* 0x1E */  struct STD_EVENT Pirates;
+    /* 0x00 */ int16_t Pirates_Status;
+    /* 0x02 */ int16_t Pirates_Player;
+    /* 0x04 */ int16_t Pirates_Data;
+
+    // /* 0x24 */  struct STD_EVENT Plague;
+    /* 0x00 */ int16_t Plague_Status;
+    /* 0x02 */ int16_t Plague_Player;
+    /* 0x04 */ int16_t Plague_Data;
     /* 0x2A */  int16_t Plague_Duration;
-    /* 0x2C */  struct STD_EVENT Rebellion;
-    /* 0x32 */  struct STD_EVENT Donation;
-    /* 0x38 */  struct STD_EVENT Depletion;
-    /* 0x3E */  struct REV_EVENT New_Mine;
-    /* 0x44 */  struct REV_EVENT Pop_Boom;
-    /* 0x4A */  int16_t Pop_Boom_Duration;
-    /* 0x4C */  struct CON_EVENT Good_Moon;
-    /* 0x50 */  struct CON_EVENT Bad_Moon;
-    /* 0x54 */  struct CON_EVENT Conjunction_Chaos;
-    /* 0x58 */  struct CON_EVENT Conjunction_Nature;
-    /* 0x5C */  struct CON_EVENT Conjunction_Sorcery;
-    /* 0x60 */  struct CON_EVENT Mana_Short;
+
+    // /* 0x2C */  struct STD_EVENT Rebellion;
+    /* 0x00 */ int16_t Rebellion_Status;
+    /* 0x02 */ int16_t Rebellion_Player;
+    /* 0x04 */ int16_t Rebellion_Data;
+
+    // /* 0x32 */  struct STD_EVENT Donation;
+    /* 0x00 */ int16_t Donation_Status;
+    /* 0x02 */ int16_t Donation_Player;
+    /* 0x04 */ int16_t Donation_Data;
+
+    // /* 0x38 */  struct STD_EVENT Depletion;
+    /* 0x00 */ int16_t Depletion_Status;
+    /* 0x02 */ int16_t Depletion_Player;
+    /* 0x04 */ int16_t Depletion_Data;
+
+    // /* 0x3E */  struct REV_EVENT New_Mine;
+    /* 0x00 */ int16_t New_Mine_Status;
+    /* 0x02 */ int16_t New_Mine_Data;
+    /* 0x04 */ int16_t New_Mine_Player;
+
+    // /* 0x44 */  struct REV_EVENT Pop_Boom;
+    /* 0x00 */ int16_t Population_Boom_Status;
+    /* 0x02 */ int16_t Population_Boom_Data;
+    /* 0x04 */ int16_t Population_Boom_Player;
+    /* 0x4A */ int16_t Population_Boom_Duration;
+
+    // /* 0x4C */  struct CON_EVENT Good_Moon;
+    /* 0x00 */ int16_t Good_Moon_Status;
+    /* 0x02 */ int16_t Good_Moon_Duration;
+
+    // /* 0x50 */  struct CON_EVENT Bad_Moon;
+    /* 0x00 */ int16_t Bad_Moon_Status;
+    /* 0x02 */ int16_t Bad_Moon_Duration;
+
+    // /* 0x54 */  struct CON_EVENT Conjunction_Chaos;
+    /* 0x00 */ int16_t Conjunction_Chaos_Status;
+    /* 0x02 */ int16_t Conjunction_Chaos_Duration;
+
+    // /* 0x58 */  struct CON_EVENT Conjunction_Nature;
+    /* 0x00 */ int16_t Conjunction_Nature_Status;
+    /* 0x02 */ int16_t Conjunction_Nature_Duration;
+
+    // /* 0x5C */  struct CON_EVENT Conjunction_Sorcery;
+    /* 0x00 */ int16_t Conjunction_Sorcery_Status;
+    /* 0x02 */ int16_t Conjunction_Sorcery_Duration;
+
+    // /* 0x60 */  struct CON_EVENT Mana_Short;
+    /* 0x00 */ int16_t Mana_Short_Status;
+    /* 0x02 */ int16_t Mana_Short_Duration;
+
     /* 0x64 */
 };
 
@@ -1888,7 +2007,7 @@ struct s_MSG_UNIT_LOST
 // WZD dseg:0130 37 21 43 21                                     dw offset cnst_ManaFocusing, offset cnst_NodeMastery, offset cnst_Famous, offset cnst_Runemaster, offset cnst_Conjurer, offset cnst_Charismatic, offset cnst_Artificer ; "Alchemy"
 // WZD dseg:0154
 // WZD dseg:0154
-// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
+// DELETEME  // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: Determine_Event+8r
 // WZD dseg:0154
 // WZD dseg:0154
 // WZD dseg:0156 4D 21 55 21 5C 21 64 21 69 21 6E 21             _city_size_names dw offset cnst_Outpost, offset cnst_Hamlet, offset cnst_Village, offset cnst_Town, offset cnst_City, offset cnst_Capital
@@ -1935,7 +2054,7 @@ extern struct s_mouse_list mouse_list_hourglass[1];
 // WZD dseg:0130
 extern char * _wizard_abilities_names[18];
 
-// WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
+// DELETEME  // WZD dseg:0154 01 00                                           EVNT_Enabled dw 1                       ; DATA XREF: EVNT_GenerateRandom:loc_6AD68r
 
 // WZD dseg:0156
 extern char * _city_size_names[6];
@@ -3381,7 +3500,8 @@ extern int16_t GrowOutLeft;
 // WZD dseg:9998
 // AKA TBL_Events
 // extern struct s_EVENT_DATA * events_table;  // alloc in Allocate_Data_Space()  7 PR 112 B  type? 1-byte,2-byte signed,unsigned 112 events or 56 events?
-extern int16_t * events_table;
+// extern int16_t * events_table;
+extern struct s_EVENT_DATA * events_table;
 
 // WZD dseg:999C
 extern int16_t _unit_stack_count;

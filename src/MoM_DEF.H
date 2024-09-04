@@ -75,6 +75,7 @@
 #define NUM_RESEARCH_SPELLS         8
 #define NUM_WIZARD_SPECIAL_ABILITIES  18
 #define NUM_SCORES                 10
+#define NUM_EVENT_TYPES            19
 
 #define NUM_GEMS                    4  /* Magic Screen Wizard Gems */
 
