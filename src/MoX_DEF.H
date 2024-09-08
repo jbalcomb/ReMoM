@@ -383,9 +383,14 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define HUMAN_PLAYER_IDX                 0
 #define NEUTRAL_PLAYER_IDX               5
 #define MOO_MONSTER_PLAYER_IDX           6
+
 #define NEUTRAL_PLAYER_BANNER_COLOR_IDX  5
 
-
+#define BANNER_COLOR_BLUE              172
+#define BANNER_COLOR_GREEN             216
+#define BANNER_COLOR_PURPLE            124
+#define BANNER_COLOR_RED               201
+#define BANNER_COLOR_YELLOW            211
 
 #define MAX_UNIT_COUNT    1000
 

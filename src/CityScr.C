@@ -796,7 +796,7 @@ void City_Screen_Draw2__WIP(void)
     /*
         Plague
     */
-    if((events_table[12] == 2) && (events_table[14] == _city_idx))
+    if((events_table->Plague_Status == 2) && (events_table->Plague_Data == _city_idx))
     {
         // TODO  [_help_entries.help_idx+8Ch], HLP_PLAGUE
 
@@ -806,7 +806,7 @@ void City_Screen_Draw2__WIP(void)
     /*
         Population Boom
     */
-    if((events_table[22] == 2) && (events_table[23] == _city_idx))
+    if((events_table->Population_Boom_Status == 2) && (events_table->Population_Boom_Data == _city_idx))
     {
         // TODO  [_help_entries.help_idx+8Ch], HLP_POPULATION_BOOM
 

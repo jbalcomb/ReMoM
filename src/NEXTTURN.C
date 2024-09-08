@@ -464,16 +464,12 @@ void Next_Turn_Calc(void)
 
 
 
-        if(
-            (DBG_Alt_A_State == ST_FALSE)
-            &&
-            (magic_set.Random_Events == ST_TRUE)
-        )
+        if(DBG_Alt_A_State == ST_FALSE)
         {
-            // ; attempts to generate a random event
-            // ; has some BUGs that need review
-            // TODO  EVNT_GenerateRandom()
-
+            if(magic_set.Random_Events == ST_TRUE)
+            {
+                Determine_Event();
+            }
         }
 
 
@@ -579,18 +575,7 @@ void Next_Turn_Calc(void)
     Heal_All_Units();
 
 
-// MoO2
-// Module: BILL
-//     code (0 bytes) Record_History_
-//     Address: 01:0010208A
     Record_History();
-// ; calculates and records the astrologer/historian data
-// ; Power = power base - 10
-// ; Army Strength = (gold upkeep + mana upkeep) / 5
-// ; Research = sum of known in-realm indexes / 10
-// ; Historian = (above 3) + ((cities pop_K sum) / 10)
-// ; Astrologer's max scale is 200, Historian's is 160
-
 
 
 // call    j_IDK_SND_BkGrnd_s518AE

@@ -118,18 +118,30 @@ char reload_lbx_file__ovr076[] = "RELOAD";
 // WZD dseg:38AC
 char str_hotkey_ESC__ovr076[] = "\x1B";
 
-// WZD dseg:38B5 4A 61 6E 75 61 72 79 00                         aJanuary db 'January',0
-// WZD dseg:38BD 46 65 62 72 75 61 72 79 00                      aFebruary db 'February',0
-// WZD dseg:38C6 4D 61 72 63 68 00                               aMarch db 'March',0
-// WZD dseg:38CC 41 70 72 69 6C 00                               aApril db 'April',0
-// WZD dseg:38D2 4D 61 79 00                                     aMay db 'May',0
-// WZD dseg:38D6 4A 75 6E 65 00                                  aJune db 'June',0
-// WZD dseg:38DB 4A 75 6C 79 00                                  aJuly db 'July',0
-// WZD dseg:38E0 41 75 67 75 73 74 00                            aAugust db 'August',0
-// WZD dseg:38E7 53 65 70 74 65 6D 62 65 72 00                   aSeptember db 'September',0
-// WZD dseg:38F1 4F 63 74 6F 62 65 72 00                         aOctober db 'October',0
-// WZD dseg:38F9 4E 6F 76 65 6D 62 65 72 00                      aNovember db 'November',0
-// WZD dseg:3902 44 65 63 65 6D 62 65 72 00                      aDecember db 'December',0
+// WZD dseg:38B5
+char str_January__ovr076[] = "January";
+// WZD dseg:38BD
+char str_February__ovr076[] = "February";
+// WZD dseg:38C6
+char str_March__ovr076[] = "March";
+// WZD dseg:38CC
+char str_April__ovr076[] = "April";
+// WZD dseg:38D2
+char str_May__ovr076[] = "May";
+// WZD dseg:38D6
+char str_June__ovr076[] = "June";
+// WZD dseg:38DB
+char str_July__ovr076[] = "July";
+// WZD dseg:38E0
+char str_August__ovr076[] = "August";
+// WZD dseg:38E7
+char str_September__ovr076[] = "September";
+// WZD dseg:38F1
+char str_October__ovr076[] = "October";
+// WZD dseg:38F9
+char str_November__ovr076[] = "November";
+// WZD dseg:3902
+char str_December__ovr076[] = "December";
 
 // WZD dseg:390B
 char str_HistoryOfWizardsPower[] = "History Of Wizards Power";
@@ -195,15 +207,16 @@ char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select w
 // WZD dseg:C29C 00 00                                           OVL_Cartograph_Left dw 0                ; DATA XREF: IDK_Cartographer_Screen+34w ...
 
 // WZD dseg:C29E
-int16_t y;
+int16_t status_screen_y;
 
 // WZD dseg:C2A0
-int16_t x;
+int16_t status_screen_x;
 
 // WZD dseg:C2A2
 SAMB_ptr status_screen_seg;
 
-// WZD dseg:C2A4 00 00                                           picture dw 0                            ; DATA XREF: IDK_AdvsrScr_Historian+34w ...
+// WZD dseg:C2A4
+SAMB_ptr powergraph_screen_seg;
 
 // WZD dseg:C2A4                                                 END:  ovr076 - Uninitialized Data  (Advisors Screen)
 
@@ -416,7 +429,7 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 3:  /* Historian     (F4) */
         {
-            IDK_AdvsrScr_Historian();
+            Powergraph_Screen();
 
         } break;
         case 4:  /* Astrologer    (F5) */
@@ -614,19 +627,326 @@ void TaxCollector_Window(void)
 }
 
 // WZD o76p03
-void IDK_AdvsrScr_Historian(void)
+/*
+    "Historian"
+    "History of Wizards Power"
+
+*/
+void Powergraph_Screen(void)
 {
 
+    int16_t input_field_idx;
+    int16_t full_screen_ESC_field;
+    int16_t leave_screen;  // _SI_
 
+    GUI_String_1 = (char *)Near_Allocate_First(100);
+    GUI_String_2 = (char *)Near_Allocate_Next(100);
+
+    // RELOAD.LBX, 000  STATBACK
+    powergraph_screen_seg = LBX_Reload(reload_lbx_file__ovr076, 0, _screen_seg);
+
+    Clear_Fields();
+    Set_Page_Off();
+    Copy_On_To_Off_Page();
+    Copy_Off_To_Back();
+    PageFlip_FX();
+    Set_Page_Off();
+
+    Load_Palette_From_Animation(powergraph_screen_seg);
+
+    Set_Palette_Changes(0, 255);
+
+    Update_Remap_Gray_Palette();
+
+    // DNE Copy_Back_To_Off();
+
+    Assign_Auto_Function(Powergraph_Screen_Draw, 1);
+
+    Deactivate_Help_List();
+
+    Set_Powergraph_Screen_Help_List();
+
+    status_screen_x = 20;
+    status_screen_y = 11;
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+        Mark_Time();
+
+        Clear_Fields();
+
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == full_screen_ESC_field)
+        {
+            // TODO  SND_LeftClickSound();
+            leave_screen = ST_TRUE;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Powergraph_Screen_Draw();
+            PageFlip_FX();
+            Release_Time(1);
+        }
+    }
+
+    Deactivate_Help_List();
+    Deactivate_Auto_Function();
+    Reset_Window();
+    Clear_Fields();
 
 }
 
 
 // WZD o76p04
-// sub_655C4()
+// drake178: sub_655C4()
+void Powergraph_Screen_Draw(void)
+{
+    char months[12][12];
+    char dest[4];
+    int16_t month;  // ¿ used as 'first month' ... 'first turn' (¿ because turns are months ?) ?
+    int16_t y1;
+    int16_t x2;
+    int16_t turns_count;
+    int16_t itr_players;  // itr_players__turns
+    int16_t itr_turns;  // itr_players__turns
+    int16_t WTF__turns_years;
+    int16_t WTF__turns_months;
+    uint8_t banner_colors[6];
+    uint8_t colors[6];
+    int16_t year;  // _SI_  ¿ used as 'first year' ?
+    int16_t months_count;  // _DI_
+
+    strcpy(dest, &str_TaxPerPopulation[19]);
+
+    strcpy(months[0],  str_January__ovr076);
+    strcpy(months[1],  str_February__ovr076);
+    strcpy(months[2],  str_March__ovr076);
+    strcpy(months[3],  str_April__ovr076);
+    strcpy(months[4],  str_May__ovr076);
+    strcpy(months[5],  str_June__ovr076);
+    strcpy(months[6],  str_July__ovr076);
+    strcpy(months[7],  str_August__ovr076);
+    strcpy(months[8],  str_September__ovr076);
+    strcpy(months[9],  str_October__ovr076);
+    strcpy(months[10], str_November__ovr076);
+    strcpy(months[11], str_December__ovr076);
+
+    banner_colors[0] = BANNER_COLOR_BLUE;
+    banner_colors[1] = BANNER_COLOR_GREEN;
+    banner_colors[2] = BANNER_COLOR_PURPLE;
+    banner_colors[3] = BANNER_COLOR_RED;
+    banner_colors[4] = BANNER_COLOR_YELLOW;
+
+    Set_Page_Off();
+
+    FLIC_Draw(0, 0, powergraph_screen_seg);
+
+    strcpy(dest, str_SPACE__ovr076);
+
+    for(itr_players = 1; itr_players < NUM_PLAYERS; itr_players++)
+    {
+        colors[itr_players] = (177 + itr_players);
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+    Set_Alias_Color(246);
+
+    Set_Outline_Color(254);
+
+    Print_Centered(160, 10, str_HistoryOfWizardsPower);  // "History Of Wizards Power"
+
+    WTF__turns_years = (_turn / 12);
+
+    WTF__turns_months = (_turn % 12);
+
+    // strcpy(GUI_String_1, (char *)&months[(WTF__turns_months * 12)][0]);
+    // strcpy(GUI_String_1, &months[0]);
+    strcpy(GUI_String_1, (char *)&months[8]);
+
+    itoa((1400 + WTF__turns_years), GUI_String_2, 10);
+
+    strcat(GUI_String_1, dest);
+
+    strcat(GUI_String_1, GUI_String_2);
+
+    Set_Font_Style_Shadow_Down(2, 15, 0, 0);
+
+    Set_Outline_Color(254);
+
+    Print_Right(309, 11, GUI_String_1);
+
+    Line(16, 183, 303, 183, 180);
+
+    Gradient_Fill(16, 184, 303, 184, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ...remap_block, Slope, Scale, Seed
+
+    year = 0;
+
+    month = 0;
+
+    if(WTF__turns_years > 23)  // 23 tick marks, on the time-line
+    {
+        year = (WTF__turns_years - 23);  // 23 tick marks, on the time-line
+        month = (11 - WTF__turns_months);
+    }
+
+    if(((year + 1) / 5) == 0)
+    {
+        year++;
+        month = (WTF__turns_months + 23);  // 23 tick marks, on the time-line
+    }
+
+    Set_Font_Style_Shadow_Down(1, 0, 0, 0);
+
+    Set_Outline_Color(254);
+
+    Print_Integer(10, 186, (1400 + year));  // the actual/first year on the time-line
+
+    months_count = 1;
+
+    if(_turn < 288)
+    {
+        turns_count = _turn;
+    }
+    else
+    {
+        turns_count = 287;
+    }
+
+    for(itr_turns = 0; itr_turns < turns_count; itr_turns++)
+    {
+
+        if((months_count % 12) == 0)
+        {
+
+            x2 = (16 + ((months_count / 12) * 12));
+
+            y1 = 182;
+
+            Line(x2, y1, x2, (2 + y1), 180);
+
+            if(((year + (months_count / 12)) % 5) == 0)
+            {
+                // TODO DEDU IDGI  the Dasm shows `10 +` but that simply does not work ... somehow it must get to adding another 12?
+                // Print_Integer((10 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
+                Print_Integer((22 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
+            }
+
+        }
+
+        months_count++;
+    }
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
+    {
+        if(_FORTRESSES[itr_players].active == ST_TRUE)
+        {
+            if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)  // ¿ current player ?
+            {
+                IDK_Powergraph_Draw_Turn_Data(itr_players, turns_count, month);
+            }
+        }
+    }
+
+    IDK_Powergraph_Draw_Turn_Data(_human_player_idx, turns_count, month);
+
+    colors[0] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+    colors[1] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+    colors[2] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+    colors[3] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+    colors[4] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+    colors[5] = banner_colors[(_players[HUMAN_PLAYER_IDX].banner_id)];
+
+    Set_Font_Colors_15(3, &colors[0]);
+
+    Set_Font_Style_Shadow_Down(3, 15, 0, 0);
+
+    Set_Outline_Color(254);
+
+    Print(10, 23, _players[HUMAN_PLAYER_IDX].name);
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
+    {
+        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        {
+            colors[0] = banner_colors[(_players[itr_players].banner_id)];
+            colors[1] = banner_colors[(_players[itr_players].banner_id)];
+            colors[2] = banner_colors[(_players[itr_players].banner_id)];
+            colors[3] = banner_colors[(_players[itr_players].banner_id)];
+            colors[4] = banner_colors[(_players[itr_players].banner_id)];
+            colors[5] = banner_colors[(_players[itr_players].banner_id)];
+
+            Set_Font_Colors_15(3, &colors[0]);
+
+            Set_Font_Style_Shadow_Down(3, 15, 0, 0);
+
+            Set_Outline_Color(254);
+
+            Print(10, (23 + (itr_players * 9)), _players[itr_players].name);
+        }
+    }
+
+}
+
 
 // WZD o76p05
-// sub_65B47()
+// drake178: sub_65B47()
+void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t month)
+{
+    uint8_t banner_colors[5];
+    int16_t var_B;
+    int16_t x2_itr;
+    int16_t turns_count;
+    int16_t y2;
+    int16_t x2;
+    int16_t x1;
+    int16_t y1;  // _DI_
+    int16_t itr_turn_data;  // _SI_
+    struct s_WIZARD * ptr_player;
+    uint8_t * ptr_Historian;
+
+    banner_colors[0] = BANNER_COLOR_BLUE;
+    banner_colors[1] = BANNER_COLOR_GREEN;
+    banner_colors[2] = BANNER_COLOR_PURPLE;
+    banner_colors[3] = BANNER_COLOR_RED;
+    banner_colors[4] = BANNER_COLOR_YELLOW;
+
+    turns_count = turns;
+
+    x2_itr = 0;
+
+    for(itr_turn_data = month; itr_turn_data < turns_count; itr_turn_data++)
+    {
+        x2 = (16 + x2_itr);
+        y2 = (181 - _players[player_idx].Historian[itr_turn_data]);  // 181 is 2 pixels up from the time-line
+        ptr_player = &_players[player_idx];
+        ptr_Historian = &_players[player_idx].Historian[0];
+
+        SETMIN(y2, 22);
+        if(itr_turn_data > month)
+        {
+            Line(x1, y1, x2, y2, banner_colors[_players[player_idx].banner_id]);
+            x1 = x2;
+            y1 = y2;
+        }
+        else
+        {
+            x1 = 16;
+            y1 = (181 - _players[player_idx].Historian[0]);
+            SETMIN(y1, 22);
+        }
+        x2_itr++;
+    }
+
+}
 
 // WZD o76p06
 // drake178: 
@@ -661,14 +981,14 @@ void Status_Screen(void)
 
     Copy_Back_To_Off();
 
-    // Huh?  Assign_Auto_Function();
+    Assign_Auto_Function(Status_Screen_Draw, 1);  // DEDU  looks weird
 
     Deactivate_Help_List();
 
     Set_Status_Screen_Help_List();
 
-    x = 20;
-    y = 11;
+    status_screen_x = 20;
+    status_screen_y = 11;
 
     leave_screen = ST_FALSE;
 
@@ -678,7 +998,7 @@ void Status_Screen(void)
 
         Clear_Fields();
 
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076, ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_XMAX, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr076[0], ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -712,7 +1032,7 @@ void Status_Screen(void)
 void Status_Screen_Draw(void)
 {
     char dest[4];
-    uint8_t var_18[6] = {0, 0, 0, 0, 0, 0};
+    uint8_t IDK_colors[6] = {0, 0, 0, 0, 0, 0};
     int16_t var_12;
     int16_t scores[3];
     int16_t itr_players;
@@ -723,15 +1043,15 @@ void Status_Screen_Draw(void)
 
     strcpy(dest, str_SPACE__ovr076);
 
-    var_18[0] = 172;
-    var_18[1] = 216;
-    var_18[2] = 124;
-    var_18[3] = 201;
-    var_18[4] = 211;
+    IDK_colors[0] = 172;
+    IDK_colors[1] = 216;
+    IDK_colors[2] = 124;
+    IDK_colors[3] = 201;
+    IDK_colors[4] = 211;
 
     Set_Page_Off();
 
-    FLIC_Draw(x, y, status_screen_seg);
+    FLIC_Draw(status_screen_x, status_screen_y, status_screen_seg);
 
     for(itr_players = 1; itr_players < NUM_PLAYERS; itr_players++)
     {
@@ -746,7 +1066,7 @@ void Status_Screen_Draw(void)
 
     Set_Outline_Color(254);
 
-    Print_Centered((x + 138), (y + 10), str_CurrentStatusOfWiza);
+    Print_Centered((status_screen_x + 138), (status_screen_y + 10), str_CurrentStatusOfWiza);
 
     Set_Font_Style_Shadow_Down(2, 3, 0, 0);
 
@@ -760,7 +1080,7 @@ void Status_Screen_Draw(void)
 
     strcat(GUI_String_1, str_Strength);
 
-    Print_Centered((x + 138), (y + 23), GUI_String_1);
+    Print_Centered((status_screen_x + 138), (status_screen_y + 23), GUI_String_1);
 
     strcpy(GUI_String_1, str_Magic);
 
@@ -768,7 +1088,7 @@ void Status_Screen_Draw(void)
 
     strcat(GUI_String_1, str_Power);
 
-    Print_Centered((x + 138), (y + 72), GUI_String_1);
+    Print_Centered((status_screen_x + 138), (status_screen_y + 72), GUI_String_1);
 
     strcpy(GUI_String_1, str_Spell);
 
@@ -776,7 +1096,7 @@ void Status_Screen_Draw(void)
 
     strcat(GUI_String_1, str_Research);
 
-    Print_Centered((x + 138), (y + 121), GUI_String_1);
+    Print_Centered((status_screen_x + 138), (status_screen_y + 121), GUI_String_1);
 
     Set_Font_Style_Shadow_Down(0, 15, 0, 0);
 
@@ -803,20 +1123,18 @@ void Status_Screen_Draw(void)
             {
                 SETMAX(scores[itr_scores], 200);
 
-                IDK_y = (var_12 * 7)+ (y + var_8);
+                IDK_y = (var_12 * 7)+ (status_screen_y + var_8);
 
-                Print((x + 14), IDK_y, _players[itr_players].name);
+                Print((status_screen_x + 14), IDK_y, _players[itr_players].name);
 
-                Gradient_Fill((x + 64), (IDK_y + 2), (x + 65 + scores[itr_scores]), (IDK_y + 3), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
+                Gradient_Fill((status_screen_x + 64), (IDK_y + 2), (status_screen_x + 65 + scores[itr_scores]), (IDK_y + 3), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
 
-                Fill((x + 64), (IDK_y + 1), (x + 64 + scores[itr_scores]), (IDK_y + 2), var_18[_players[itr_players].banner_id]);
+                Fill((status_screen_x + 64), (IDK_y + 1), (status_screen_x + 64 + scores[itr_scores]), (IDK_y + 2), IDK_colors[_players[itr_players].banner_id]);
 
                 var_8 += 49;
-
             }
 
             var_12++;
-
         }
 
     }

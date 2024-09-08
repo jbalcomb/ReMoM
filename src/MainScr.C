@@ -4492,16 +4492,7 @@ void Main_Screen_Draw_Summary_Window(void)
     /*
         BEGIN: Conjunction - Sorcery, Chaos, Nature
     */
-    // TBL_Events
-    // s_EVENT_DATA.Conjunction_Sorcery.Status], 2
-    // 0x0403af5c  access violation: 0x403AF5C
-    // _events_table[]  0x0403af5c
-    // // // // if(events_table[92] == 2)
-    // // // if(*((int16_t *)(events_table + 92)) == 2)
-    // // int16_t * ptr_events_table;
-    // // ptr_events_table = (int16_t *)(&events_table + 92);
-    // if(*((int16_t *)(&events_table + 92)) == 2)
-    if(*(events_table + 46) == 2)
+    if(events_table->Conjunction_Sorcery_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 172;
@@ -4511,11 +4502,8 @@ void Main_Screen_Draw_Summary_Window(void)
         Print_Centered(280, 157, cstr_Conjunction);
         active_event_id = 0;
     }
-    // TBL_Events
-    // s_EVENT_DATA.Conjunction_Chaos.Status], 2
-    // if(events_table[84] == 2)
-    // if(*((int16_t *)(&events_table + 84)) == 2)
-    if(*(events_table + 42) == 2)
+
+    if(events_table->Conjunction_Chaos_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 201;
@@ -4525,11 +4513,8 @@ void Main_Screen_Draw_Summary_Window(void)
         Print_Centered(280, 158, cstr_Conjunction);
         active_event_id = 1;
     }
-    // TBL_Events
-    // s_EVENT_DATA.Conjunction_Nature.Status], 2
-    // if(_events_table[88] == 2)
-    // if(*((int16_t *)(&events_table + 88)) == 2)
-    if(*(events_table + 44) == 2)
+
+    if(events_table->Conjunction_Nature_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 217;
@@ -4543,11 +4528,7 @@ void Main_Screen_Draw_Summary_Window(void)
         END: Conjunction - Sorcery, Chaos, Nature
     */
 
-    // TBL_Events
-    // s_EVENT_DATA.Bad_Moon.Status], 2
-    // if(events_table[80] == 2)
-    // if(*((int16_t *)(&events_table + 80)) == 2)
-    if(*(events_table + 40) == 2)
+    if(events_table->Bad_Moon_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 9;
@@ -4558,11 +4539,7 @@ void Main_Screen_Draw_Summary_Window(void)
         active_event_id = 3;
     }
 
-    // TBL_Events
-    // s_EVENT_DATA.Good_Moon.Status], 2
-    // if(events_table[76] == 2)
-    // if(*((int16_t *)(&events_table + 76)) == 2)
-    if(*(events_table + 38) == 2)
+    if(events_table->Good_Moon_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 15;
@@ -4573,11 +4550,7 @@ void Main_Screen_Draw_Summary_Window(void)
         active_event_id = 4;
     }
 
-    // TBL_Events
-    // s_EVENT_DATA.Mana_Short.Status], 2
-    // if(events_table[96] == 2)
-    // if(*((int16_t *)(&events_table + 96)) == 2)
-    if(*(events_table + 48) == 2)
+    if(events_table->Mana_Short_Status == 2)
     {
         colors[0] = 0;
         colors[1] = 123;

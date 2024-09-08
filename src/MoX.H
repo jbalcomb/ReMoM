@@ -244,6 +244,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "City_ovr55.H"
 #include "Combat.H"
 #include "DIPLOMAC.H"
+#include "EVENTS.H"
 #include "Explore.H"
 #include "Fields.H"
 #include "Fonts.H"

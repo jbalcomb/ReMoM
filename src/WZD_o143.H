@@ -55,10 +55,10 @@ void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp);
 void Random_City_Name_By_Race(int16_t race, char * name);
 
 // WZD o143p13
-// EVNT_TargetDepletion()
+int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
 
 // WZD o143p14
-// EVNT_FindNewMineral()
+int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
 
 // WZD o143p15
 // TILE_ReplaceMinerals()
