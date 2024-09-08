@@ -2797,7 +2797,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantment, char 
     int16_t troop_count;
     int16_t unit_will_die;
     int16_t enchantment_idx;
-    int16_t unit_idx;  // _DI_
+    int16_t unit_idx = 0;  // _DI_
     int16_t itr;  // _SI_
 
     enchantment_idx = ST_UNDEFINED;

@@ -235,6 +235,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\EVENTS.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\EVENTS.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Explore.C"
 				>
 			</File>

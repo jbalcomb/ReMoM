@@ -249,12 +249,10 @@ void Determine_Event(void)
 
     for(Tries = 0; ((Tries < 5) && (event_type == ST_UNDEFINED)); Tries++)
     {
-
         event_type = Random(18);
 
 
         player_idx = Get_Event_Victim(m_event_good_array[event_type]);
-
 
         if(player_idx == ST_UNDEFINED)
         {
@@ -651,7 +649,8 @@ int16_t Any_Overland_Enchantments(void)
 */
 int16_t Get_Event_Victim(int16_t event_type)
 {
-
+	// TODO
+	return ST_UNDEFINED;
 }
 
 
@@ -669,5 +668,6 @@ int16_t Get_Event_Victim(int16_t event_type)
 */
 int16_t Pick_Random_City(int16_t player_idx)
 {
-
+	// TODO
+	return ST_UNDEFINED;
 }
