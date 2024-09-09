@@ -473,9 +473,7 @@ void Next_Turn_Calc(void)
         }
 
 
-        // ; progresses any ongoing events (status 1 or 2)
-        // ; has several BUGs relating to specific events
-        // TODO  EVNT_Progress()
+        Event_Twiddle();
 
 
         Players_Apply_Upkeeps__WIP();
@@ -510,10 +508,7 @@ void Next_Turn_Calc(void)
         */
 
 
-
-    // loc_9ED2A:                              ; processes the wandering merchant, mercenary, and hero
-    // call    j_EVNT_RandomOffers             ; for hire offers for all players
-    //                                         ; has multiple BUGs, both own and inherited
+        Determine_Offer();
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
@@ -981,11 +976,49 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
 // WZD o121p05
 // drake178: WIZ_GetHeroCount()
-// WIZ_GetHeroCount()
+int16_t Player_Hero_Count(int16_t player_idx)
+{
+    int16_t itr_hero_slots;  // _CX_
+    int16_t hero_count;  // _SI_
+
+    for(itr_hero_slots = 0; itr_hero_slots < NUM_HERO_SLOTS; itr_hero_slots++)
+    {
+        if(_players[player_idx].Heroes[itr_hero_slots].unit_idx != ST_UNDEFINED)
+        {
+            hero_count++;
+        }
+    }
+
+    return hero_count;
+}
+
 
 // WZD o121p06
 // drake178: WIZ_DeadHeroCount()
-// WIZ_DeadHeroCount()
+/*
+; returns the amount of dead, but not disintegrated
+; heroes formerly in the player's service
+*/
+int16_t WIZ_DeadHeroCount(int16_t player_idx)
+{
+    int16_t itr_hero_types;  // _SI_
+    int16_t hero_count;  // _DI_
+
+    for(itr_hero_types = 0; itr_hero_types < 34; itr_hero_types++)
+    {
+        if(
+            (_HEROES2[player_idx]->heroes[itr_hero_types].Level < 0)
+            &&
+            (_HEROES2[player_idx]->heroes[itr_hero_types].Level != -20)  // DEDU  What's with the -20? Just saw that in AI_Accept_Hero()?
+        )
+        {
+            hero_count++;
+        }
+    }
+
+    return hero_count;
+}
+
 
 // WZD o121p07
 // MoO2  Module: EVENTS  Pick_Random_Officer_()
@@ -2530,7 +2563,267 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
 // IDK_SplCst_SplSkl_sC5AB1()
 
 // WZD o140p19
-// EVNT_RandomOffers()
+// drake178: EVNT_RandomOffers()
+/*
+; processes the wandering merchant, mercenary, and hero for hire offers for all players
+; has multiple BUGs, both own and inherited
+*/
+/*
+
+*/
+void Determine_Offer(void)
+{
+    int16_t Bookshelf[NUM_MAGIC_TYPES];
+    int16_t item_price;
+    int16_t Hire_Response;
+    int16_t Merc_Level;
+    int16_t Merc_Cost;
+    int16_t Merc_Amount;
+    int16_t wp;
+    int16_t wy;
+    int16_t wx;
+    int16_t Hero_Slot;
+    int16_t unit_type;  // used for Generate_Mercenaries() and Pick_Random_Hero()
+    int16_t player_fame;
+    int16_t itr;
+    int16_t itr_players;  // _SI_
+    int16_t IDK;  // _DI_
+
+    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
+    {
+        Bookshelf[itr] = 12;
+    }
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(_players[itr_players].Spell_Cast == 214)  /* Spell_Of_Return */
+        {
+            continue;
+        }
+
+        if(_FORTRESSES[itr_players].active == ST_FALSE)
+        {
+            continue;
+        }
+
+        if(itr_players == HUMAN_PLAYER_IDX)
+        {
+
+            player_fame = Player_Fame(itr_players);
+
+            IDK = (2 + (player_fame / 25));
+
+            if(_players[itr_players].famous > 0)
+            {
+                IDK = (IDK * 2);
+            }
+
+            SETMAX(IDK, 10);
+
+            // HACK: 
+            if(DBG_trigger_offer_item == ST_TRUE)
+            {
+                IDK = 100;
+                _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
+                DBG_trigger_offer_item = ST_FALSE;
+            }
+
+            if(Random(100) <= IDK)
+            {
+
+                GUI_InHeroNaming = Make_Item(0, &Bookshelf[0], 0);
+
+                item_price = (_ITEMS[GUI_InHeroNaming].cost * 3);
+
+                // drake178: ; BUG: wrong order of operations
+                if(_players[HUMAN_PLAYER_IDX].gold_reserve < item_price)
+                {
+                    Remove_Item(GUI_InHeroNaming);
+                }
+                else
+                {
+
+                    if(_players[HUMAN_PLAYER_IDX].charismatic > 0)
+                    {
+                        item_price = (item_price / 2);  // "half price"
+                    }
+
+                    Set_Mouse_List(1, mouse_list_default);
+
+                    Merchant_Popup();
+
+                    Set_Mouse_List(1, mouse_list_hourglass);
+
+                }
+            }
+        }
+
+
+        if(_units >= 947)
+        {
+            continue;
+        }
+
+        IDK = (1 + (player_fame / 20));
+
+        if(_players[itr_players].famous > 0)
+        {
+            IDK *= 2;
+        }
+
+        SETMAX(IDK, 10);
+
+        if(itr_players > 0)
+        {
+            IDK += 10;
+        }
+
+        // HACK: 
+        if(DBG_trigger_offer_merc == ST_TRUE)
+        {
+            IDK = 100;
+            _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
+            DBG_trigger_offer_merc = ST_FALSE;
+        }
+
+        if(Random(100) <= IDK)
+        {
+
+            unit_type = 0;
+
+            Generate_Mercenaries(itr_players, wx, wy, wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
+
+            wx = _FORTRESSES[itr_players].wx;
+            wy = _FORTRESSES[itr_players].wy;
+            wp = _FORTRESSES[itr_players].wp;
+
+            if(
+                (Merc_Amount > 0)
+                &&
+                ((_units + Merc_Amount) < 1000)
+            )
+            {
+
+                // ; conflicting condition - will always jump
+                if(_players[itr_players].gold_reserve >= Merc_Cost)
+                {
+
+                    Hire_Response = ST_TRUE;
+
+                    if(itr_players == HUMAN_PLAYER_IDX)
+                    {
+
+                        Set_Mouse_List(1, mouse_list_default);
+
+                        Hire_Response = Hire_Merc_Popup(unit_type, Merc_Amount, Merc_Level, Merc_Cost);
+
+                        Set_Mouse_List(1, mouse_list_hourglass);
+
+                    }
+
+                    if(Hire_Response == ST_TRUE)
+                    {
+
+                        _players[itr_players].gold_reserve -= Merc_Cost;
+
+                        for(itr = 0; itr < Merc_Amount; itr++)
+                        {
+
+                            Create_Unit__WIP(unit_type, itr_players, wx, wy, wp, -1);
+
+                            _UNITS[(_units - 1)].Level = Merc_Level;
+
+                            _UNITS[(_units - 1)].XP = TBL_Experience[Merc_Level];
+
+                            _UNITS[(_units - 1)].Finished = 0;
+
+                            _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
+
+                            UNIT_RemoveExcess((_units - 1));
+
+                        }
+
+                        if(itr_players == HUMAN_PLAYER_IDX)
+                        {
+
+                            _active_world_x = wx;
+                            _active_world_y = wy;
+                            _map_plane = wp;
+
+                            // DONT  o62p01_Empty_pFxn(itr_players);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        IDK = (3 + (player_fame / 25));
+
+        if(_players[itr_players].famous > 0)
+        {
+            IDK *= 2;
+        }
+
+        SETMAX(IDK, 10);
+
+        if(itr_players > HUMAN_PLAYER_IDX)
+        {
+            IDK += 10;
+        }
+
+        IDK = (IDK / (((Player_Hero_Count(itr_players) + 1) / 2) + 1));
+
+        // HACK: 
+        if(DBG_trigger_offer_hero == ST_TRUE)
+        {
+            IDK = 100;
+            _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
+            DBG_trigger_offer_hero = ST_FALSE;
+        }
+
+        if(
+            (Random(100) <= IDK)
+            &&
+            ((_units + 1) < 1000)
+        )
+        {
+
+            Hero_Slot = Hero_Slot_Open(itr_players);
+
+            unit_type = Pick_Random_Hero(itr_players, 0, 0);
+
+            if(
+                (Hero_Slot > -1)
+                &&
+                (unit_type > -1)
+            )
+            {
+
+                if(itr_players == HUMAN_PLAYER_IDX)
+                {
+                    Set_Mouse_List(1, mouse_list_default);
+                    Hire_Hero_Popup(Hero_Slot, unit_type, 0);
+                    Set_Mouse_List(1, mouse_list_hourglass);
+                }
+                else
+                {
+                    AI_Accept_Hero(itr_players, Hero_Slot, unit_type);
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o140p20
 // WIZ_ResearchProgress()
@@ -2782,6 +3075,12 @@ void Heal_All_Units(void)
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+
+        // HACK: 
+        if (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        {
+            continue;
+        }
 
         if(
             (g_TimeStop_PlayerNum == 0)

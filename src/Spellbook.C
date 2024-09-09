@@ -1811,10 +1811,13 @@ XREF:
     sub_B4E00()
     j_WIZ_HireHero()
         Hire_Hero_Popup()
-        AI_OfferHero()
+        AI_Accept_Hero()
 e.g.,
     Hire_Hero_Popup()
         |-> j_WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, 0)
+
+    void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type_idx)
+        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
 
 "Hire" as in "Summon"
 */
@@ -1865,6 +1868,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     // BUG  Did this used to do something different? What tests it?
     // may be is/was success status as in cast the spell
+    // NOTE(JimBalcomb,202409090905): AI_Accept_Hero() tests this
     return ST_TRUE;
 }
 

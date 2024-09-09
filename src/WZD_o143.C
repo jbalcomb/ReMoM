@@ -310,10 +310,35 @@ int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy
 }
 
 // WZD o143p15
-// TILE_ReplaceMinerals()
+// drake178: TILE_ReplaceMinerals()
+/*
+; removes all minerals from the tile, replacing them
+; with the passed one, but leaving Wild Games and
+; Nightshades intact
+*/
+/*
+
+*/
+void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t terain_special)
+{
+
+}
+
 
 // WZD o143p16
-// TILE_RemoveMinerals()
+// drake178: TILE_RemoveMinerals()
+/*
+; removes any minerals from the selected tile (but not
+; Wild Game or Nightshade)
+; returns the new terrain special flags for the tile
+*/
+/*
+    clears the low-byte of TBL_Terr_Specials[]
+*/
+void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp)
+{
+    TBL_Terr_Specials[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] &= 0xF0;
+}
 
 
 // WZD o143p17

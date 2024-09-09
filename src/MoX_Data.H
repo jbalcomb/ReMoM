@@ -695,15 +695,153 @@ enum e_EVENT_TYPE
     et_Donation             =  9,
     et_Depletion            = 10,
     et_New_Mine             = 11,
-    et_Population_Boom             = 12,
+    et_Population_Boom      = 12,
     et_Good_Moon            = 13,
     et_Bad_Moon             = 14,
     et_Conjunction_Chaos    = 15,
     et_Conjunction_Nature   = 16,
     et_Conjunction_Sorcery  = 17,
-    et_Mana_Short            = 18
+    et_Mana_Short           = 18
 };
 
+enum e_EVENT_STATUS
+{
+    es_Nothing = 0,
+    es_Starting = 1,
+    es_Ongoing = 2,
+    es_Ending = 3
+};
+
+enum e_EVENT_MESSAGE_TYPE
+{
+    emt_Started = 0,
+    emt_Ended = 1,
+    emt_IDK_two = 2,
+    emt_Happened = 3,
+    emt_Elsewhere = 4
+};
+
+
+
+enum MUSIC_Tracks
+{
+MUSIC_Good_Arcane  = 0,
+MUSIC_Good_Chaos  = 1,
+MUSIC_Good_Death  = 2,
+MUSIC_Good_Life  = 3,
+MUSIC_Good_Nature  = 4,
+MUSIC_Good_Sorcery  = 5,
+MUSIC_Bad_Arcane  = 6,
+MUSIC_Bad_Chaos  = 7,
+MUSIC_Bad_Death  = 8,
+MUSIC_Bad_Life  = 9,
+MUSIC_Bad_Nature  = 10,
+MUSIC_Bad_Sorcery  = 11,
+MUSIC_SoM_Started  = 12,
+MUSIC_Weak_Summon  = 13,
+MUSIC_Avg_Summon  = 14,
+MUSIC_Powerful_Summon  = 15,
+MUSIC_Mighty_Summon  = 16,
+MUSIC_Spell_Failure  = 17,
+MUSIC_Upkeep_Warning  = 18,
+MUSIC_Eternal_Night  = 19,
+MUSIC_Evil_Omens  = 20,
+MUSIC_Zombie_Mastery  = 21,
+MUSIC_Aura_of_Majesty  = 22,
+MUSIC_Wind_Mastery  = 23,
+MUSIC_Suppress_Magic  = 24,
+MUSIC_Time_Stop  = 25,
+MUSIC_Nature_Awareness  = 26,
+MUSIC_Force_of_Nature  = 27,
+MUSIC_Herb_Mastery  = 28,
+MUSIC_Chaos_Surge  = 29,
+MUSIC_Doom_Mastery  = 30,
+MUSIC_Great_Wasting  = 31,
+MUSIC_Meteor_Storm  = 32,
+MUSIC_Armageddon  = 33,
+MUSIC_Tranquility  = 34,
+MUSIC_Life_Force  = 35,
+MUSIC_Crusade  = 36,
+MUSIC_Just_Cause  = 37,
+MUSIC_Holy_Arms  = 38,
+MUSIC_Wrath_of_God  = 39,
+MUSIC_New_Spell  = 40,
+MUSIC_Merlin_Good  = 41,
+MUSIC_Merlin_Bad  = 42,
+MUSIC_Raven_Good  = 43,
+MUSIC_Raven_Bad  = 44,
+MUSIC_Sharee_Good  = 45,
+MUSIC_Sharee_Bad  = 46,
+MUSIC_LoPan_Good  = 47,
+MUSIC_LoPan_Bad  = 48,
+MUSIC_Jafar_Good  = 49,
+MUSIC_Jafar_Bad  = 50,
+MUSIC_Oberic_Good  = 51,
+MUSIC_Oberic_Bad  = 52,
+MUSIC_Rjak_Good  = 53,
+MUSIC_Rjak_Bad  = 54,
+MUSIC_Sssra_Good  = 55,
+MUSIC_Sssra_Bad  = 56,
+MUSIC_Tauron_Good  = 57,
+MUSIC_Tauron_Bad  = 58,
+MUSIC_Freya_Good  = 59,
+MUSIC_Freya_Bad  = 60,
+MUSIC_Horus_Good  = 61,
+MUSIC_Horus_Bad  = 62,
+MUSIC_Ariel_Good  = 63,
+MUSIC_Ariel_Bad  = 64,
+MUSIC_Tlaloc_Good  = 65,
+MUSIC_Tlaloc_Bad  = 66,
+MUSIC_Kali_Good  = 67,
+MUSIC_Kali_Bad  = 68,
+MUSIC_WIN_By_Magic  = 69,
+MUSIC_Hiring_Screen  = 70,
+MUSIC_Merlin_Cmbt1  = 71,
+MUSIC_Merlin_Cmbt2  = 72,
+MUSIC_Raven_Cmbt1  = 73,
+MUSIC_Raven_Cmbt2  = 74,
+MUSIC_Sharee_Cmbt1  = 75,
+MUSIC_Sharee_Cmbt2  = 76,
+MUSIC_LoPan_Cmbt1  = 77,
+MUSIC_LoPan_Cmbt2  = 78,
+MUSIC_Jafar_Cmbt1  = 79,
+MUSIC_Jafar_Cmbt2  = 80,
+MUSIC_Oberic_Cmbt1  = 81,
+MUSIC_Oberic_Cmbt2  = 82,
+MUSIC_Rjak_Cmbt1  = 83,
+MUSIC_Rjak_Cmbt2  = 84,
+MUSIC_Sssra_Cmbt1  = 85,
+MUSIC_Sssra_Cmbt2  = 86,
+MUSIC_Tauron_Cmbt1  = 87,
+MUSIC_Tauron_Cmbt2  = 88,
+MUSIC_Freya_Cmbt1  = 89,
+MUSIC_Freya_Cmbt2  = 90,
+MUSIC_Horus_Cmbt1  = 91,
+MUSIC_Horus_Cmbt2  = 92,
+MUSIC_Ariel_Cmbt1  = 93,
+MUSIC_Ariel_Cmbt2  = 94,
+MUSIC_Tlaloc_Cmbt1  = 95,
+MUSIC_Tlaloc_Cmbt2  = 96,
+MUSIC_Kali_Cmbt1  = 97,
+MUSIC_Kali_Cmbt2  = 98,
+MUSIC_Bkrgnd_Good  = 99,
+MUSIC_Bkgrnd_Neutral  = 100,
+MUSIC_Bkgrnd_Negative  = 101,
+MUSIC_Combat_1  = 102,
+MUSIC_Combat_2  = 103,
+MUSIC_Main_Menu  = 104,
+MUSIC_Site_Discovery  = 105,
+MUSIC_Events  = 106,
+MUSIC_New_Outpost  = 107,
+MUSIC_Bldng_Finished  = 108,
+MUSIC_WIN_Military  = 109,
+MUSIC_LOSE_Military  = 110,
+MUSIC_LOSE_By_Magic  = 111,
+MUSIC_Intro  = 112,
+MUSIC_Fanf_not_used  = 113,
+MUSIC_Bad_Event  = 114,
+MUSIC_Fanfare  = 115
+};
 
 
 
@@ -1733,8 +1871,8 @@ struct s_EVENT_DATA
     /* 0x0E */  int16_t Disjunction_Status;
 
     // /* 0x10 */  struct STD_EVENT Dpl_Marriage;
-    /* 0x00 */ int16_t Marriage_Status;
-    /* 0x02 */ int16_t Marriage_Player;
+    /* 0x00 */ int16_t marriage_status;
+    /* 0x02 */ int16_t marriage_player_idx;
     /* 0x04 */ int16_t marriage_neutral_city_idx;
     /* 0x16 */ int16_t marriage_player_city_idx;
 
@@ -1770,9 +1908,9 @@ struct s_EVENT_DATA
     /* 0x04 */ int16_t Depletion_Data;
 
     // /* 0x3E */  struct REV_EVENT New_Mine;
-    /* 0x00 */ int16_t New_Mine_Status;
-    /* 0x02 */ int16_t New_Mine_Data;
-    /* 0x04 */ int16_t New_Mine_Player;
+    /* 0x00 */ int16_t minerals_status;
+    /* 0x02 */ int16_t minerals_data;
+    /* 0x04 */ int16_t minerals_player;
 
     // /* 0x44 */  struct REV_EVENT Pop_Boom;
     /* 0x00 */ int16_t Population_Boom_Status;
@@ -2833,10 +2971,8 @@ extern SAMB_ptr cityscape_background_myrror_ground_seg;
 // WZD dseg:938C
 extern struct s_BLDG_DATA * bldg_data_table;
 
-// WZD dseg:9390 00 00                                           SND_Music_Segment dw 0                  ; DATA XREF: IDK_BuilingCompletedMessage+16Br ...
-// WZD dseg:9390                                                                                         ; 15Eh LBX_Alloc_Space paragraphs
-
-
+// WZD dseg:9390
+extern SAMB_ptr SND_Music_Segment;
 
 
 
@@ -4188,6 +4324,60 @@ extern int16_t _scroll_text_top;
 // WZD dseg:C9EE                                                 ¿ END:  ?
 
 
+
+// WZD dseg:CA10                                                 BEGIN: ovr136 - Uninitialized Data
+
+// WZD dseg:CA10 00 00                                           CMB_SliderLimit dw 0                    ; DATA XREF: CMB_SliderRedraw+7Br ...
+// WZD dseg:CA10                                                                                         ; is this really necessary?
+// WZD dseg:CA12 00 00                                           GAME_MP_SpellVar_1 dw 0                 ; DATA XREF: SBK_SliderRedraw+9Fw ...
+// WZD dseg:CA12                                                                                         ; holds the spell strength during sliders
+// WZD dseg:CA12                                                                                         ; holds the anim stage during global cast anims
+// WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
+// WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
+// WZD dseg:CA16 00 00                                           SBK_Spell_Index dw 0                    ; DATA XREF: GAME_LearnSpellAnim+Cw ...
+// WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
+// WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
+// WZD dseg:CA24 00 00                                           word_434C4 dw 0                         ; DATA XREF: IDK_SomScr_Load+8Cw ...
+// WZD dseg:CA26 00 00                                           IMG_SBK_SliderBG@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+38w ...
+// WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
+// WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
+// WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
+// WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
+// WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
+// WZD dseg:CA2C 00 00                                           IDK_DiploScrn_scanned_field dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
+// WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
+// WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
+// WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
+// WZD dseg:CA34 00 00                                           IMG_SBK_Anims@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
+// WZD dseg:CA34                                                                                         ; 145h paragraphs in the sandbox during spell decode
+// WZD dseg:CA34                                                                                         ; 442h paragraphs in the sandbox during combat casting
+// WZD dseg:CA36
+extern SAMB_ptr IMG_SBK_PageText;
+// WZD dseg:CA36                                                                                         ; 708h paragraphs in the sandbox, or 28h for sliders
+// WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
+// WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
+// WZD dseg:CA3C 00 00                                           IDK_SPELLSCR_seg__1 dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
+// WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
+// WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
+// WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)
+// WZD dseg:CA42 00 00                                           IMG_SBK_SliderDot@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+171w ...
+// WZD dseg:CA42                                                                                         ; also the item crafting left arrow (2 state image)
+// WZD dseg:CA44 00 00                                           IMG_MoodWizPortrait@ dw 0               ; DATA XREF: OVL_LoadGlobalAnim+28w ...
+// WZD dseg:CA46 00                                              db    0
+// WZD dseg:CA47 00                                              db    0
+// WZD dseg:CA48 00                                              db    0
+// WZD dseg:CA49 00                                              db    0
+// WZD dseg:CA4A 00                                              db    0
+// WZD dseg:CA4B 00                                              db    0
+// WZD dseg:CA4C 00 00                                           GUI_Interaction_Done dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
+// WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
+// WZD dseg:CA50 00 00                                           GAME_MP_SpellVar_3 dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
+// WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
+// WZD dseg:CA50                                                                                         ; player_idx during global cast anims
+// WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
+// WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
+
+// WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
 
 
 

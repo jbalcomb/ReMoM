@@ -82,8 +82,7 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
 int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx);
 
 // WZD o121p05
-// drake178: WIZ_GetHeroCount()
-// WIZ_GetHeroCount()
+int16_t Player_Hero_Count(int16_t player_idx);
 
 // WZD o121p06
 // drake178: WIZ_DeadHeroCount()
@@ -179,7 +178,7 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx);
 // IDK_SplCst_SplSkl_sC5AB1()
 
 // WZD o140p19
-// EVNT_RandomOffers()
+void Determine_Offer(void);
 
 // WZD o140p20
 // WIZ_ResearchProgress()
@@ -210,9 +209,8 @@ void Cool_Off_Volcanoes(void);
 
 
 
-
 /*
-    WIZARDS.EXE  ovr140
+    WIZARDS.EXE  ovr141
 */
 
 // WZD o141p01

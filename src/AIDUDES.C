@@ -14,7 +14,36 @@
 */
 
 // WZD o145p01
-// RP_WIZ_AllowMercs()
+// drake178: RP_WIZ_AllowMercs()
+/*
+; returns 1 if it is at least turn 50, and the player
+; can afford to spend the specified amount of gold
+;
+; This function should not exist - both of these
+; factors are already checked in the main mercenary
+; generator function, turn also has lower limit
+*/
+/*
+    decides if the CP/NP should accept the offer of mercenaries
+*/
+int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost)
+{
+
+    if(
+        (_turn < 50)
+        ||
+        ((_players[player_idx].gold_reserve / 2) < cost)
+    )
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        return ST_TRUE;
+    }
+
+}
+
 
 // WZD o145p02
 // AI_Overland_Turn()

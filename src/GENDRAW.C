@@ -1419,7 +1419,8 @@ void Notify1(int16_t box_center_x, int16_t box_top_y, int16_t type, char * messa
     if(do_dim_back == ST_TRUE)
     {
         Set_Page_Off();
-        Gradient_Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
+        // DELETEME  Gradient_Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ..., remap_block, Slope, Scale, Seed
+        DARKEN_SCREEN();
     }
 
     Copy_Off_To_Back();
@@ -1596,6 +1597,20 @@ void Notify1_Draw(void)
 // drake178: GUI_Familiar_Notify()
 /*
 
+¿ mascot picture ?
+
+Show_Event_Message()
+    Notify2(160, 70, 2, m_event_message, 1, m_event_display_seg, 0, 8, 0, 0, 0, 1, 1);
+        type == 2
+        box_border == 1
+        pict1 == m_event_display_seg
+        pict1_x == 0
+        pict1_y == 8
+        pict2    == ST_NULL
+        pict2_x  == 0
+        pict2_y  == 0
+        do_cslide   == ST_TRUE
+        do_dim_back == ST_TRUE
 */
 void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * message_text, int16_t box_border, SAMB_ptr pict1, int16_t pict1_x, int16_t pict1_y, SAMB_ptr pict2, int16_t pict2_x, int16_t pict2_y, int16_t do_cslide, int16_t do_dim_back)
 {

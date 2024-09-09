@@ -21,7 +21,7 @@ extern "C" {
 */
 
 // WZD o145p01
-// RP_WIZ_AllowMercs()
+int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost);
 
 // WZD o145p02
 // AI_Overland_Turn()

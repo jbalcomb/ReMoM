@@ -16,18 +16,23 @@ extern "C" {
 
 
 
+// WZD dseg:C9E0
+extern int16_t GUI_InHeroNaming;
+
+
+
 /*
     WIZARDS.EXE  ovr127
 */
 
 // WZD s127p01
-// EVNT_LoadMerchantWnd()
+void Merchant_Popup_Load(void);
 
 // WZD s127p02
-// EVNT_DrawMerchantWnd()
+void Merchant_Popup_Draw(void);
 
 // WZD s127p03
-// EVNT_MerchantDialog()
+void Merchant_Popup(void);
 
 // WZD s127p04
 void Hire_Hero_Load(int16_t unit_type);
@@ -39,13 +44,13 @@ void Hire_Hero_Popup_Draw(void);
 int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hire_type);
 
 // WZD s127p07
-// EVNT_DrawMercHire()
+void Hire_Merc_Popup_Draw(void);
 
 // WZD s127p08
-// EVNT_MercHireDialog()
+int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost);
 
 // WZD s127p09
-// AI_OfferHero()
+void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type_idx);
 
 
 

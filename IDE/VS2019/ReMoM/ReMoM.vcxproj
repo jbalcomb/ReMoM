@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\..\src\win_PFL.hpp" />
     <ClInclude Include="..\..\..\src\WIZVIEW.H" />
     <ClInclude Include="..\..\..\src\WZD_o059.H" />
+    <ClInclude Include="..\..\..\src\WZD_o129.H" />
     <ClInclude Include="..\..\..\src\WZD_o143.H" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +270,7 @@
     <ClCompile Include="..\..\..\src\win_Video.C" />
     <ClCompile Include="..\..\..\src\WIZVIEW.C" />
     <ClCompile Include="..\..\..\src\WZD_o059.C" />
+    <ClCompile Include="..\..\..\src\WZD_o129.C" />
     <ClCompile Include="..\..\..\src\WZD_o143.C" />
   </ItemGroup>
   <ItemGroup>
