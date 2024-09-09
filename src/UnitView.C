@@ -1957,7 +1957,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         {
             if((USW_ATK_Flags[itr].bit_idx & global_battle_unit->Attack_Flags) != 0)
             {
-                strcpy(specials_list->names[specials_index], *USW_ATK_Flags[itr].name);
+				const char* pcszName = *USW_ATK_Flags[itr].name;
+				if(pcszName)
+	                strcpy(specials_list->names[specials_index], pcszName);
+				else
+					specials_list->names[specials_index][0] = '\0';
                 if(USW_ATK_Flags[itr].bit_idx == Att_Poison)
                 {
                     ability_value = global_battle_unit->Poison_Strength;

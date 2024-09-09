@@ -539,6 +539,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\WZD_o129.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\WZD_o143.C"
 				>
 			</File>
@@ -946,6 +950,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\WZD_o059.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\WZD_o129.H"
 				>
 			</File>
 			<File

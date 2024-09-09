@@ -979,7 +979,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 int16_t Player_Hero_Count(int16_t player_idx)
 {
     int16_t itr_hero_slots;  // _CX_
-    int16_t hero_count;  // _SI_
+    int16_t hero_count = 0;  // _SI_
 
     for(itr_hero_slots = 0; itr_hero_slots < NUM_HERO_SLOTS; itr_hero_slots++)
     {
@@ -2689,14 +2689,13 @@ void Determine_Offer(void)
 
         if(Random(100) <= IDK)
         {
-
             unit_type = 0;
-
-            Generate_Mercenaries(itr_players, wx, wy, wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
 
             wx = _FORTRESSES[itr_players].wx;
             wy = _FORTRESSES[itr_players].wy;
             wp = _FORTRESSES[itr_players].wp;
+
+            Generate_Mercenaries(itr_players, wx, wy, wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
 
             if(
                 (Merc_Amount > 0)
