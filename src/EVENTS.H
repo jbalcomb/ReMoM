@@ -25,7 +25,7 @@ extern "C" {
 void Determine_Event(void);
 
 // WZD s080p02
-// EVNT_Progress()
+void Event_Twiddle(void);
 
 // WZD s080p03
 int16_t Any_Overland_Enchantments(void);
@@ -37,10 +37,10 @@ int16_t Any_Overland_Enchantments(void);
 */
 
 // WZD s081p01
-// EVNT_ShowMessage()
+void Show_Event_Message(void);
 
 // WZD s081p02
-// EVNT_ComposeMessage()
+void Get_Event_Message(void);
 
 // WZD s081p03
 int16_t Get_Event_Victim(int16_t event_type);

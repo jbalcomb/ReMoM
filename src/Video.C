@@ -139,8 +139,8 @@ void GUI_PageFlip(void)
 // mov     ax, [GUI_DS_Save]
 // mov     ds, ax
     
-    mx = Pointer_Y();
-    my = Pointer_X();
+    mx = Pointer_X();
+    my = Pointer_Y();
 
     Check_Mouse_Shape(mx, my);
     Save_Mouse_Off_Page(mx, my);

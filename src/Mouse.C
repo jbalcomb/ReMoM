@@ -9,6 +9,8 @@
 #include "Input.H"
 #include "Video.H"
 
+#include <assert.h>
+
 
 
 // int16_t example_mouse_list_count = 2;
@@ -310,12 +312,14 @@ void Restore_Mouse_State(void)
 // WZD s35p18
 int16_t Pointer_X(void)
 {
+    assert(mouse_y < SCREEN_XMAX);
     return mouse_x;
 }
 
 // WZD s35p19
 int16_t Pointer_Y(void)
 {
+    assert(mouse_y < SCREEN_YMAX);
     return mouse_y;
 }
 

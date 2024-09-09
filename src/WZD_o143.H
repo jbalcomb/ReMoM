@@ -61,10 +61,10 @@ int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * w
 int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
 
 // WZD o143p15
-// TILE_ReplaceMinerals()
+void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t terain_special);
 
 // WZD o143p16
-// TILE_RemoveMinerals()
+void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p17
 // drake178: CTY_ResetRoadConns()

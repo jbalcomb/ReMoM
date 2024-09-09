@@ -16,6 +16,10 @@ extern "C" {
     ¿ Game-State Debug Variables ?
 */
 
+
+extern int16_t DBG_trigger_event;
+
+
 // WZD dseg:9136
 extern struct s_ITEM * DBG_ORIG_TBL_Items;
 // WZD dseg:913A

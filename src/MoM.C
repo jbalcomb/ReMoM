@@ -101,6 +101,14 @@ void Screen_Control(void)
             // HACK:  demo "You can only sell back one building each turn."
             _CITIES[_city_idx].did_sell_building = ST_TRUE;
 
+            // HACK:  trigger 'Event'
+            // // DBG_trigger_event = STU_TRUE;
+            // DBG_trigger_event = ST_TRUE;
+            // HACK:  trigger 'Offer'
+            DBG_trigger_offer_item = ST_TRUE;
+            DBG_trigger_offer_merc = ST_TRUE;
+            DBG_trigger_offer_hero = ST_TRUE;
+
             // // _map_x = ( 5 - (12 / 2));
             // // _map_y = (21 - (10 / 2));
             // _map_x = 59;
@@ -241,7 +249,7 @@ void Screen_Control(void)
         } break;
         case scr_Road_Build:
         {
-            Road_Build_Screen();
+        Road_Build_Screen();
         } break;
         case scr_Production_Screen:
         {

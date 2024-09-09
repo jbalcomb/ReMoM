@@ -2531,6 +2531,8 @@ void Unit_View_Allocate(void)
 USW_LoadAndShow() calls this with the 'Type Flag' unset
 USW_LoadHireScreen calls this with the 'Type Flag' set
 City_Screen_Allocate_First_Block() calls this with the 'Type Flag' set
+
+    // AKA Unit_Figure_Load()
 */
 void Load_Unit_Figure(int16_t type_or_unit, int16_t use_type)
 {
@@ -2609,6 +2611,7 @@ void Get_Unit_Enchantment_Names(int16_t unit_idx, char ** unit_enchantment_names
     if CalledFromFlag == 0, assumes _human_player_idx
     if CalledFromFlag != 0, gets figure count from *combat data*, instead of _unit_type_table
 
+    // AKA Unit_Figure_Draw
 */
 void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, int16_t CalledFromFlag)
 {
@@ -2787,9 +2790,9 @@ void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t 
 Page 77  (PDF Page 82)
 "Clicking on the enchantments removes them (if they were cast by your wizard)."
 */
-int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantment, char * message_buffer)
+int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char * message_buffer)
 {
-    int16_t troops[9];
+    int16_t troops[MAX_STACK];
     int16_t multiple_deaths;
     int16_t unit_has_windwalking;
     int16_t stack_has_windwalking;
@@ -2797,7 +2800,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantment, char 
     int16_t troop_count;
     int16_t unit_will_die;
     int16_t enchantment_idx;
-    int16_t unit_idx = 0;  // _DI_
+    /* ¿ bogus ? */ // int16_t unit_idx;  // _DI_
     int16_t itr;  // _SI_
 
     enchantment_idx = ST_UNDEFINED;
@@ -2830,6 +2833,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantment, char 
         ((enchantment & UE_WINDWALKING) != 0)
     )
     {
+
         water_hazard = Terrain_Is_Sailable(UNITX(), UNITY(), UNITP());
 
         // ¿ BUG: does not check transport capacity ?

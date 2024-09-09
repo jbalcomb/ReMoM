@@ -302,6 +302,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "Video2.H"
 #include "WIZVIEW.H"
 #include "WZD_o059.H"
+#include "WZD_o129.H"
 #include "WZD_o143.H"
 
 #ifdef STU_DEBUG
@@ -321,6 +322,13 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+extern int16_t DBG_trigger_event;
+extern int16_t DBG_trigger_offer_item;
+extern int16_t DBG_trigger_offer_merc;
+extern int16_t DBG_trigger_offer_hero;
 
 
 

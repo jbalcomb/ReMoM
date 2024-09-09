@@ -164,6 +164,10 @@ struct s_ITEM_POWER * _ITEM_POWERS;
 /*
 shared with 'Hire / Merchant' ovr127
 DEDU  ¿ should use UV's variable ?
+
+Merchant_Popup_Load()
+    ITEM_Draw_Seg = Allocate_Next_Block(_screen_seg, 1200);
+
 */
 SAMB_ptr ITEM_Draw_Seg;
 
@@ -801,7 +805,7 @@ int16_t Value           {0,1000,1200,30000}  ...if value == 0 then {200,2000}
 XREF:
     j_ITEM_Generate()
         EVNT_GenerateRandom()
-        EVNT_RandomOffers()
+        Determine_Offer()
         Lair_Generate_Treasure()
         WIZ_SetOverlandSpell()
 
@@ -809,7 +813,7 @@ XREF:
 e.g.,
         EVNT_GenerateRandom()
             j_ITEM_Generate(2, &_players[].spellranks, 0)
-        EVNT_RandomOffers()
+        Determine_Offer()
             j_ITEM_Generate(0, &Bookshelf, 0)
         Lair_Generate_Treasure()
             j_ITEM_Generate(_LAIRS[].Item_Values, &_players[].spellranks, 0)

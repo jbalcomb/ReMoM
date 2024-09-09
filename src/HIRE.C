@@ -26,10 +26,10 @@ extern SAMB_ptr ITEM_Draw_Seg;
 
 
 
-// WZD dseg:6504                                                 BEGIN:  ovr127 - Strings
+// WZD dseg:6504                                                 BEGIN:  ovr127 - Initialized Data
 
 // WZD dseg:6504
-char cnst_HIRE_File[] = "HIRE";
+char hire_lbx_file__ovr127[] = "HIRE";
 // WZD dseg:6508
 char empty_string__ovr127[] = "";
 // WZD dseg:6509
@@ -43,7 +43,7 @@ char cnst_Merchant_Msg_4[] = "Buy";
 // WZD dseg:6561
 char cnst_Merchant_Msg_5[] = "Reject";
 // WZD dseg:6568
-char cnst_NAMES_File[] = "NAMES";
+char names_lbx_file__ovr127[] = "NAMES";
 // WZD dseg:656E
 char cnst_Hire_Msg_1[] = "Hero for Hire: ";
 // WZD dseg:657E
@@ -61,11 +61,11 @@ char cnst_Hire_Msg_7[] = "Hire";
 // WZD dseg:65DA
 char cnst_Hire_Msg_8[] = "Accept";
 // WZD dseg:65E1
-char cnst_HOTKEY_H[] = "H";
+char str_hotkey_H__ovr127[] = "H";
 // WZD dseg:65E3
-char cnst_HOTKEY_A_5[] = "A";
+char str_hotkey_A__ovr127[] = "A";
 // WZD dseg:65E5
-char cnst_HLPENTRY_File5[] = "hlpentry";
+char hlpentry_lbx_file__ovr127[] = "hlpentry";
 // WZD dseg:65EE
 char cnst_Hire_Msg_9[] = "Mercenary for Hire: ";
 // WZD dseg:6603
@@ -83,6 +83,12 @@ char cnst_Hire_Msg_A[] = " Mercenaries for Hire: ";
 char * hirehero_unit_type_name;
 
 // WZD dseg:C9E0
+// drake178: multi-use variable!
+/*
+Usage               Location
+    Item Index          Determine_Offer()
+
+*/
 int16_t GUI_InHeroNaming;
 
 // WZD dseg:C9E2
@@ -115,13 +121,165 @@ int16_t GAME_AssetCost;
 */
 
 // WZD s127p01
-// EVNT_LoadMerchantWnd()
+// drake178: EVNT_LoadMerchantWnd()
+/*
+; redraws the overland map, saves it to the third VGA
+; frame, and loads the images for showing the merchant
+; window
+;
+; WARNING: reuses variables defined elsewhere
+*/
+/*
+
+*/
+void Merchant_Popup_Load(void)
+{
+
+    Allocate_Reduced_Map();
+    Set_Page_Off();
+    Main_Screen_Draw();
+    Copy_Off_To_Back();
+    Set_Page_On();
+
+    // HIRE.LBX, 002  MERCHBAK
+    hire_banner_seg = LBX_Reload_Next(hire_lbx_file__ovr127, 2, _screen_seg);
+
+    // HIRE.LBX, 001  REDBUTT
+    IMG_MerchantBtns = LBX_Reload_Next(hire_lbx_file__ovr127, 1, _screen_seg);
+
+    ITEM_Draw_Seg = Allocate_Next_Block(_screen_seg, 1200);
+
+    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);
+
+}
+
 
 // WZD s127p02
-// EVNT_DrawMerchantWnd()
+// drake178: EVNT_DrawMerchantWnd()
+void Merchant_Popup_Draw(void)
+{
+    char item_name[LEN_ITEM_NAME];
+    int16_t screen_x;  // _SI_
+    int16_t screen_y;  // _DI_
+
+    screen_x = 5;
+    screen_y = 15;
+
+    Cycle_Item_Enchantment_Animation();
+
+    Item_View_Prepare(GUI_InHeroNaming, ITEM_Draw_Seg, IMG_SBK_PageText);
+
+    Copy_Back_To_Off();
+
+    FLIC_Draw(screen_x, screen_y, hire_banner_seg);
+
+    strcpy(GUI_NearMsgString, cnst_Merchant_Msg_1);
+
+    strcpy(item_name, _ITEMS[GUI_InHeroNaming].name);
+
+    strcat(GUI_NearMsgString, item_name);
+
+    strcat(GUI_NearMsgString, cnst_Merchant_Msg_2);
+
+    itoa(GAME_AssetCost, item_name, 10);
+
+    strcat(GUI_NearMsgString, item_name);
+
+    strcat(GUI_NearMsgString, cnst_Merchant_Msg_3);
+
+    Set_Alias_Color(163);
+
+    Set_Font_Style_Shadow_Down(4, 4, 0, 0);
+
+    Set_Outline_Color(253);
+
+    Print_Paragraph((screen_x + 57), (screen_y + 9), 182, GUI_NearMsgString, 0);
+
+    Draw_Picture((screen_x + 14), (screen_y + 65), ITEM_Draw_Seg);
+
+}
+
 
 // WZD s127p03
-// EVNT_MerchantDialog()
+// drake178: EVNT_MerchantDialog()
+void Merchant_Popup(void)
+{
+    int16_t merchant_popup_y_start;
+    int16_t merchant_popup_x_start;
+    int16_t merchant_buy_button;
+    int16_t merchant_reject_button;
+    int16_t input_field_idx;  // _DI_
+    int16_t leave_screen;  // _SI_
+
+    // TODO  OVL_DisableIncmBlink();
+
+    Set_Button_Down_Offsets(1, 1);
+
+    Merchant_Popup_Load();
+
+    merchant_popup_x_start = 5;
+    merchant_popup_y_start = 15;
+
+    Clear_Fields();
+
+    GAME_AssetCost = _ITEMS[GUI_InHeroNaming].cost;
+
+    if(_players[HUMAN_PLAYER_IDX].charismatic > 0)
+    {
+        GAME_AssetCost /= 2;
+    }
+
+    Set_Font_Style(4, 4, 0, 0);
+
+    merchant_buy_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 121), cnst_Merchant_Msg_4, IMG_MerchantBtns, empty_string__ovr127[0], ST_UNDEFINED);
+
+    merchant_reject_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 140), cnst_Merchant_Msg_5, IMG_MerchantBtns, ST_UNDEFINED, ST_UNDEFINED);
+
+    Assign_Auto_Function(Merchant_Popup_Draw, 2);
+
+    leave_screen = ST_FALSE;
+
+    Set_Input_Delay(2);
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == merchant_reject_button)
+        {
+            Remove_Item(GUI_InHeroNaming);
+            leave_screen = ST_TRUE;
+        }
+
+        if(input_field_idx == merchant_buy_button)
+        {
+
+            _players[HUMAN_PLAYER_IDX].gold_reserve -= GAME_AssetCost;
+
+            OVL_MosaicFlip__STUB();
+
+            Process_Item_Pool(1, &GUI_InHeroNaming);
+
+            current_screen = scr_Main_Screen;
+
+            leave_screen = ST_TRUE;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Set_Page_Off();
+            Merchant_Popup_Draw();
+            PageFlip_FX();
+        }
+    }
+
+    Release_Block(_screen_seg);
+    Clear_Fields();
+    Deactivate_Auto_Function();
+
+}
+
 
 // WZD s127p04
 void Hire_Hero_Load(int16_t unit_type)
@@ -138,25 +296,25 @@ void Hire_Hero_Load(int16_t unit_type)
     _reduced_map_seg = Allocate_Next_Block(_screen_seg, 303);
 
     // HIRE.LBX, 4  000  BANNER
-    hire_banner_seg = LBX_Reload_Next(cnst_HIRE_File, 0, _screen_seg);
+    hire_banner_seg = LBX_Reload_Next(hire_lbx_file__ovr127, 0, _screen_seg);
 
     // BUG  ¿ ; should use the already allocated USW_ItemDraw_Seg ?
     ITEM_Draw_Seg = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
 
     // BUG  ¿ ; asset never used ?
     // HIRE.LBX, 4  004  NAMEBOX
-    hire_namebox_seg = LBX_Reload_Next(cnst_HIRE_File, 4, _screen_seg);
+    hire_namebox_seg = LBX_Reload_Next(hire_lbx_file__ovr127, 4, _screen_seg);
 
     hirehero_unit_type_name = (char *)Near_Allocate_Next(13);
 
     // BUG  ~macro for unit figure or hero portrait, but only loading hero name records, and this whole function/popup is only for heros
     if(unit_type > ut_Chosen)
     {
-        LBX_Load_Data_Static(cnst_NAMES_File, 0, (SAMB_ptr)hirehero_unit_type_name, unit_type, 1, 13);
+        Load_Unit_Figure(unit_type, 1);
     }
     else
     {
-        Load_Unit_Figure(unit_type, 1);
+        LBX_Load_Data_Static(names_lbx_file__ovr127, 0, (SAMB_ptr)hirehero_unit_type_name, unit_type, 1, 13);
     }
 
 }
@@ -331,7 +489,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     if(_players[HUMAN_PLAYER_IDX].charismatic > 0)
     {
-        GAME_AssetCost /= 2;
+        GAME_AssetCost /= 2;  // 50%
     }
 
     Load_Battle_Unit((_units - 1), global_battle_unit);
@@ -346,14 +504,16 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
-        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, 'H' /* cnst_HOTKEY_H */, -1);
+        // ¿ "[H]ire" ?
+        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED);
     }
     else
     {
-        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, 'A' /* cnst_HOTKEY_A_5 */, -1);
+        // ¿ "[A]ccept" ?
+        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED);
     }
 
-    Reject_Button_Index = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, -1, -1);
+    Reject_Button_Index = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
 
     UV_Add_Specials_Fields((window_x + 8), (window_y + 108), uv_specials_list_array, uv_specials_list_count, uv_specials_list_index);
 
@@ -369,8 +529,8 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     // TODO  VGA_MosaicFlip();
 
-
-    LBX_Load_Data_Static(cnst_HLPENTRY_File5, 23, (SAMB_ptr)_help_entries, 0, 23, 10);
+    // ~== Set_Hire_Hero_Popup_Help_List()
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr127, 23, (SAMB_ptr)_help_entries, 0, 23, 10);
     Set_Help_List((char *)_help_entries, 23);
 
 
@@ -392,7 +552,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         /*
             BEGIN:  Reject
         */
-        if(input_field_idx = Reject_Button_Index)
+        if(input_field_idx == Reject_Button_Index)
         {
             leave_screen = ST_TRUE;
             // TODO  RP_SND_LeftClickSound2();
@@ -425,11 +585,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
                 _UNITS[(_units - 1)].wx = _players[HUMAN_PLAYER_IDX].summon_wx;
                 _UNITS[(_units - 1)].wy = _players[HUMAN_PLAYER_IDX].summon_wy;
                 _UNITS[(_units - 1)].wp = _players[HUMAN_PLAYER_IDX].summon_wp;
-                // ; BUG: can push a unit out of the capital when finding a prisoner
-                UNIT_RemoveExcess((_units - 1));
-                Hero_Hired = ST_TRUE;
-                leave_screen = ST_TRUE;
             }
+            // ; BUG: can push a unit out of the capital when finding a prisoner
+            UNIT_RemoveExcess((_units - 1));
+            Hero_Hired = ST_TRUE;
+            leave_screen = ST_TRUE;
         }
         /*
             END:  Hire / Accept
@@ -461,11 +621,15 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     }
 
     Clear_Fields();
+
     Deactivate_Auto_Function();
+
     GFX_Swap_Cities();
 
     Full_Draw_Main_Screen();
+
     OVL_EnableIncmBlink();
+
     Deactivate_Help_List();
 
     return Hero_Hired;
@@ -473,10 +637,228 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
 
 // WZD s127p07
-// EVNT_DrawMercHire()
+// drake178: EVNT_DrawMercHire()
+void Hire_Merc_Popup_Draw(void)
+{
+
+    char temp_string[10];
+    int16_t window_x;  // _SI_
+    int16_t window_y;  // _DI_
+
+    window_x = 25;
+    window_y = 17;
+
+    Copy_Back_To_Off();
+
+    Thing_View_Draw__WIP(window_x, window_y, 1, (_units - 1), uv_specials_list_array, uv_specials_list_count, ITEM_Draw_Seg);
+
+    FLIC_Draw((window_x - 25), 0, hire_banner_seg);
+
+    Set_Alias_Color(163);
+
+    Set_Font_Style(4, 4, 4, 4);
+
+    if(EVNT_MercUnitCount == 1)
+    {
+        strcpy(GUI_NearMsgString, cnst_Hire_Msg_9);
+    }
+    else
+    {
+        itoa(EVNT_MercUnitCount, temp_string, 10);
+        strcpy(GUI_NearMsgString, temp_string);
+        strcat(GUI_NearMsgString, cnst_Hire_Msg_A);
+    }
+
+    itoa(GAME_AssetCost, temp_string, 10);
+
+    strcat(GUI_NearMsgString, temp_string);
+
+    strcat(GUI_NearMsgString, cnst_Hire_Msg_2);
+
+    Print_Centered((window_x + 103), (window_y - 11), GUI_NearMsgString);
+
+}
+
 
 // WZD s127p08
-// EVNT_MercHireDialog()
+// drake178: EVNT_MercHireDialog()
+/*
+; displays and processes the mercenary hire dialog
+; returns 1 if the mercenaries are hired, or 0 if not
+;
+; BUG: undoes a sandbox allocation it never marks
+*/
+/*
+
+*/
+int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost)
+{
+    int16_t return_value;
+    int16_t window_y;
+    int16_t window_x;
+    int16_t Hire_Button_Index;
+    int16_t Reject_Button_Index;
+    int16_t input_field_idx;
+    int16_t leave_screen;  // _SI_
+
+    window_x = 25;
+    window_y = 17;
+
+    // TODO  OVL_DisableIncmBlink();
+
+    Allocate_Reduced_Map();
+
+    Set_Page_Off();
+
+    Reset_Map_Draw();
+
+    Main_Screen_Draw();
+
+    Copy_Off_To_Back();
+
+    Set_Page_On();
+
+    GFX_Swap_Overland();
+
+    CRP_EVNT_MercUnitType = type;
+
+    EVNT_MercUnitCount = count;
+
+    GAME_AssetCost = cost;
+
+    Set_Button_Down_Offsets(1, 1);
+
+    Create_Unit__WIP(CRP_EVNT_MercUnitType, HUMAN_PLAYER_IDX, _FORTRESSES[HUMAN_PLAYER_IDX].wx, _FORTRESSES[HUMAN_PLAYER_IDX].wy, _FORTRESSES[HUMAN_PLAYER_IDX].wp, ST_UNDEFINED);
+
+    _UNITS[(_units - 1)].Level = level;
+
+    _UNITS[(_units - 1)].XP = TBL_Experience[level];
+
+    Hire_Hero_Load(type);
+
+    Load_Battle_Unit((_units - 1), global_battle_unit);
+
+    USW_Build_Effect_List((_units - 1), uv_specials_list_array, &uv_specials_list_count);
+
+    UV_Setup_HireScr((_units - 1), uv_specials_list_count);
+
+    Assign_Auto_Function(Hire_Merc_Popup_Draw, 2);
+
+    Clear_Fields();
+
+    Set_Font_Style(4, 4, 0, 0);
+
+    Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, empty_string__ovr127[0], ST_UNDEFINED);
+
+    Reject_Button_Index = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
+
+    Set_Font_Style(0, 0, 2, 0);
+
+    PageFlipEffect = 3;
+
+    Set_Page_Off();
+
+    Hire_Merc_Popup_Draw();
+
+    Draw_Fields();
+
+    PageFlip_FX();
+
+    PageFlipEffect = 0;
+
+    leave_screen = ST_FALSE;
+
+    Set_Input_Delay(2);
+
+    // ~== Set_Hire_Merc_Popup_Help_List()
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr127, 23, (SAMB_ptr)_help_entries, 0, 23, 10);
+    Set_Help_List((char *)&_help_entries[0], 23);
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        UV_Set_Specials_Help_Fields(uv_specials_list_array, uv_specials_list_count, 0);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == Reject_Button_Index)
+        {
+            leave_screen = ST_TRUE;
+            // TODO  RP_SND_LeftClickSound2();
+            _units -= 1;
+            return_value = ST_FALSE;
+        }
+
+        if(input_field_idx == Hire_Button_Index)
+        {
+            // TODO  SND_LeftClickSound();
+            leave_screen = ST_TRUE;
+            _units -= 1;
+            return_value = ST_TRUE;
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+            Set_Page_Off();
+            Hire_Merc_Popup_Draw();
+            PageFlip_FX();
+        }
+
+    }
+
+    Clear_Fields();
+    GFX_Swap_Cities();
+    Full_Draw_Main_Screen();
+    Deactivate_Auto_Function();
+    Release_Block(_screen_seg);
+    // TODO  Near_Allocate_Undo(_screen_seg);
+    // TODO  OVL_EnableIncmBlink();
+    Deactivate_Help_List();
+
+    return return_value;
+}
+
 
 // WZD s127p09
-// AI_OfferHero()
+// drake178: AI_OfferHero()
+/*
+; checks whether the player can afford the hero (cost
+; less than 90% gold reserves), and if so, hires the
+; hero to the specified slot
+*/
+/*
+
+*/
+void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type_idx)
+{
+    int16_t Hero_Hired;
+    int16_t allowance;
+    int16_t unit_cost;  // _DI_
+
+    unit_cost = _unit_type_table[unit_type_idx].Cost;
+
+    if(_players[player_idx].charismatic > 0)
+    {
+        unit_cost /= 2;  // 50%  half price
+    }
+
+    allowance = ((_players[player_idx].gold_reserve * 100) / 90);
+
+    if(allowance >= unit_cost)
+    {
+        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
+
+        if(Hero_Hired == ST_FALSE)
+        {
+            return;
+        }
+
+        UNIT_RemoveExcess((_units - 1));
+
+        _players[player_idx].gold_reserve -= unit_cost;
+
+        _HEROES2[player_idx]->heroes[unit_type_idx].Level = -20;  // DEDU  What's with the `-20`? Didn't I see that somewhere else - Kill_Units(), Remove_Dead_Units()?
+
+    }
+
+}

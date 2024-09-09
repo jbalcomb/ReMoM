@@ -439,7 +439,7 @@ XREF:
         Chancellor_Screen()
         City_Built_Building_Message()
         Combat__STUB()
-        EVNT_ShowMessage()
+        Show_Event_Message()
         Hero_LevelUp_Popup()
         Hire_Hero_Popup()
         IDK_SummonAnim()

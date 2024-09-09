@@ -637,6 +637,7 @@ void Loaded_Game_Update(void)
 //                                         ; this function enumerates the first five tiles that
 //                                         ; have it, and records their coordinates
 
+    // ¿ in MGC, not WZD ?
 // call    j_CTY_CheckMinFarmers           ; ensures that every city has at least the minimum
 //                                         ; amount of farmers it needs, or can have if there are
 //                                         ; also rebels in it
@@ -651,7 +652,7 @@ void Loaded_Game_Update(void)
 
     Reset_City_Road_Connection_Bitfields();
 
-    // TODO  j_GAME_DeleteDeadUnits();
+    Delete_Dead_Units();
 
     // TODO  j_AI_ResetUnitMoves();
 

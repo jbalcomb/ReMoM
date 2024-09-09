@@ -1049,7 +1049,7 @@ int16_t Hero_Slot_Open(int16_t player_idx)
 
     for(itr = 0; itr < NUM_HERO_SLOTS; itr++)
     {
-        if(_players[player_idx].Heroes[itr].unit_idx != ST_UNDEFINED)
+        if(_players[player_idx].Heroes[itr].unit_idx == ST_UNDEFINED)
         {
             hero_slot_idx = itr;
             break;
@@ -2630,8 +2630,245 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 
 
 // WZD o142p17
+// UU_AI_Fort_Defense()
+
+
 // WZD o142p18
+// drake178: EVNT_GenerateMercs()
+/*
+; attempts to generate mercenaries that can offer
+; themselves up for hire, filling out all but the
+; location from the return fields
+; returns the level of units offered (won't be used)
+; BUG: checks for charismatic only after discarding for not enough gold
+*/
+/*
+
+    `*amount = 0;` indicates failure
+
+*/
+void Generate_Mercenaries(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level)
+{
+    int16_t G_Tries;
+    int16_t Myrror_Available;
+    int16_t Arcanus_Available;
+    int16_t Unit_Count;
+    int16_t Total_Cost;
+    int16_t Roll_Total;
+    int16_t Merc_Level;
+    int16_t player_fame;
+    int16_t itr_units;  // _SI_
+    int16_t itr_cities;  // _SI_
+    int16_t itr_towers;  // _SI_
+    int16_t unit_type;  // _DI_
+    int16_t return_value;  // _AX_
+
+    Total_Cost = 0;  // HACK:  DNE in Dasm
+
+    Myrror_Available = ST_FALSE;
+    Arcanus_Available = ST_FALSE;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(_UNITS[itr_units].owner_idx != player_idx)
+        {
+            continue;
+        }
+
+        if(_UNITS[itr_units].wp == 0)
+        {
+            Arcanus_Available = ST_TRUE;
+        }
+        else
+        {
+            Myrror_Available = ST_TRUE;
+        }
+
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if(_CITIES[itr_cities].owner_idx != player_idx)
+        {
+            continue;
+        }
+
+        if(_CITIES[itr_cities].wp == 0)
+        {
+            Arcanus_Available = ST_TRUE;
+        }
+        else
+        {
+            Myrror_Available = ST_TRUE;
+        }
+
+    }
+
+
+    for(itr_towers = 0; itr_towers < _cities; itr_towers++)
+    {
+
+        if(_TOWERS[itr_towers].owner_idx != player_idx)
+        {
+            Arcanus_Available = ST_TRUE;
+            Myrror_Available = ST_TRUE;
+        }
+
+    }
+
+    player_fame = Player_Fame(player_idx);
+
+    Roll_Total = (Random(100) + player_fame);
+
+    if(Roll_Total > 90)
+    {
+        Merc_Level = 3;
+    }
+    else if(Roll_Total > 90)
+    {
+        Merc_Level = 2;
+    }
+    else
+    {
+        Merc_Level = 1;
+    }
+
+    G_Tries = 0;
+    while(1)
+    {
+        G_Tries++;
+
+        if(
+            (G_Tries >= 20)
+            ||
+            (_turn < 30)
+        )
+        {
+            *amount = 0;
+            return;
+        }
+
+        unit_type = (Random(198) - 1);
+
+        if((_unit_type_table[unit_type].Abilities & UA_FANTASTIC) != 0)
+        {
+            continue;
+        }
+
+        if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
+        {
+            continue;
+        }
+
+        if((_unit_type_table[unit_type].Move_Flags & MV_SAILING) != 0)
+        {
+            continue;
+        }
+
+        if(unit_type < ut_Trireme)
+        {
+            continue;
+        }
+
+        if(unit_type == ut_NmdMagicians)
+        {
+            continue;
+        }
+
+        if(
+            (_unit_type_table[unit_type].Race == rt_Draconian)
+            &&
+            (_unit_type_table[unit_type].Construction > 0)
+        )
+        {
+            continue;
+        }
+
+        if(
+            (_unit_type_table[unit_type].Race == rt_Beastman)
+            ||
+            (_unit_type_table[unit_type].Race == rt_Dark_Elf)
+            ||
+            (_unit_type_table[unit_type].Race == rt_Draconian)
+            ||
+            (_unit_type_table[unit_type].Race == rt_Dwarf)
+            ||
+            (_unit_type_table[unit_type].Race == rt_Troll)
+        )
+        {
+            if(Myrror_Available == ST_FALSE)
+            {
+                continue;
+            }
+        }
+        else
+        {
+            if(Arcanus_Available == ST_FALSE)
+            {
+                continue;
+            }
+        }
+
+        /* ¿ BUGBUG  Total_Cost is uninitialized ? */
+        if((_turn / 2) < Total_Cost)
+        {
+            continue;
+        }
+
+        Total_Cost = ((_unit_type_table[unit_type].Cost * (3 + Merc_Level)) / 2);
+
+        Roll_Total = (Random(100) + player_fame);
+
+        if(Roll_Total > 90)
+        {
+            Unit_Count = 3;
+        }
+        else if(Roll_Total > 60)
+        {
+            Unit_Count = 2;
+        }
+        else
+        {
+            Unit_Count = 1;
+        }
+
+        Total_Cost *= Unit_Count;
+
+        // drake178: ; BUG: wrong order of operations
+        if(_players[player_idx].gold_reserve < Total_Cost)
+        {
+            Unit_Count = 0;
+        }
+
+        if(_players[player_idx].charismatic != 0)
+        {
+            Total_Cost /= 2;  // 50% half price
+        }
+
+        if(player_idx != HUMAN_PLAYER_IDX)
+        {
+            if(AI_Accept_Mercenaries(player_idx, Total_Cost) == ST_FALSE)
+            {
+                Unit_Count = 0;
+            }
+        }
+
+        *amount = Unit_Count;
+        *type = unit_type;
+        *cost = Total_Cost;
+        *level = Merc_Level;
+        return;
+
+    }
+
+}
+
+
 // WZD o142p19
+// LD_MAP_TFUnk40_Eval()
+
 
 // WZD o142p20
 // drake178: CTY_GetMinFarmers()
@@ -2642,9 +2879,7 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
     int16_t city_population;
     int16_t required_farmer_food;
     int16_t minimum_farmer_count;
-
     int16_t farmer_food;  // _DI_
-
 
     // TODO  EMM_Map_DataH()
 

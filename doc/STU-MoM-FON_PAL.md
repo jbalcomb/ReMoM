@@ -11,7 +11,7 @@ FONTS.LBX
 
 
 256 color palette, as rectangles of solid color
-Color-Map Index; Red, Green, Blue values, 6-bpp, as Hexidecima - 1 chracter per nibble
+Color-Map Index; Red, Green, Blue values, 6-bpp, as Hexadecimal - 1 chracter per nibble
 MoM Font Style Number 1 - width = 3, height = 5
 
 

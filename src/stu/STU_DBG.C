@@ -19,6 +19,14 @@ https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-supp
     ¿ Game-State Debug Variables ?
 */
 
+
+// int16_t DBG_trigger_event = STU_FALSE;
+// int16_t DBG_trigger_event = ST_FALSE;
+// int16_t DBG_trigger_event = false;
+// int16_t DBG_trigger_event = 0;
+int16_t STU_DBG_trigger_event = 0;
+
+
 // WZD dseg:9136
 struct s_ITEM * DBG_ORIG_TBL_Items;
 // WZD dseg:913A
