@@ -2707,7 +2707,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp
     }
 
 
-    for(itr_towers = 0; itr_towers < _cities; itr_towers++)
+    for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX; itr_towers++)
     {
 
         if(_TOWERS[itr_towers].owner_idx != player_idx)
