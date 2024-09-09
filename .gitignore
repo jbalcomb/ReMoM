@@ -28,6 +28,7 @@ MoM-Rasm/
 *.LBX
 *.MOM
 *.SET
+!SAVETEST.GAM
 
 
 # STU
