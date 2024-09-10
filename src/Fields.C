@@ -1439,10 +1439,10 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 }
 
 // WZD s36p73
-void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
+void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
 {
 
-    if( (mouse_x < 0) || (mouse_x >= SCREEN_WIDTH) || (mouse_y < 0) || (mouse_y >= SCREEN_HEIGHT) )
+    if( (l_mx < 0) || (l_mx >= SCREEN_WIDTH) || (l_my < 0) || (l_my >= SCREEN_HEIGHT) )
     {
         return;
     }
@@ -1476,12 +1476,12 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
                     Draw_Field(field_num, 1);
                     if(p_fields[field_num].type == ft_Input)
                     {
-                        mouse_x = Pointer_X();
-                        mouse_y = Pointer_Y();
+                        l_mx = Pointer_X();
+                        l_my = Pointer_Y();
                     }
-                    Save_Mouse_On_Page(mouse_x, mouse_y);
-                    Draw_Mouse_On_Page(mouse_x, mouse_y);
-                    Set_Pointer_Position(mouse_x, mouse_y);
+                    Save_Mouse_On_Page(l_mx, l_my);
+                    Draw_Mouse_On_Page(l_mx, l_my);
+                    Set_Pointer_Position(l_mx, l_my);
                 }
             }
             else  /* if(down_mouse_button != ST_UNDEFINED) */
@@ -1491,12 +1491,12 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
                 Draw_Field(field_num, 1);
                 if(p_fields[field_num].type == ft_Input)
                 {
-                    mouse_x = Pointer_X();
-                    mouse_y = Pointer_Y();
+                    l_mx = Pointer_X();
+                    l_my = Pointer_Y();
                 }
-                Save_Mouse_On_Page(mouse_x, mouse_y);
-                Draw_Mouse_On_Page(mouse_x, mouse_y);
-                Set_Pointer_Position(mouse_x, mouse_y);
+                Save_Mouse_On_Page(l_mx, l_my);
+                Draw_Mouse_On_Page(l_mx, l_my);
+                Set_Pointer_Position(l_mx, l_my);
             }
         }
         Restore_Mouse_State();
@@ -1509,9 +1509,9 @@ void Push_Field_Down(int16_t field_num, int16_t mouse_x, int16_t mouse_y)
         Draw_Field(field_num, 1);
         down_mouse_button = ST_UNDEFINED;
         Set_Page_Off();
-        Save_Mouse_On_Page(mouse_x, mouse_y);
-        Draw_Mouse_On_Page(mouse_x, mouse_y);
-        Set_Pointer_Position(mouse_x, mouse_y);
+        Save_Mouse_On_Page(l_mx, l_my);
+        Draw_Mouse_On_Page(l_mx, l_my);
+        Set_Pointer_Position(l_mx, l_my);
     }
 }
 

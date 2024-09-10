@@ -1864,7 +1864,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
     }
 
     _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
-    _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
+    _UNITS[(_units - 1)].XP = TBL_Experience[unit_type_idx];
 
     // BUG  Did this used to do something different? What tests it?
     // may be is/was success status as in cast the spell

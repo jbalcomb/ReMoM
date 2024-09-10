@@ -205,7 +205,7 @@ void Item_Screen(void)
                 item_pool_active = ST_FALSE;
             }
             Item_Screen_Draw_Do();
-            Item_Pool_View();
+            Item_Pool_View();  // hero_background_seg gets overwritten in here?
             m_cursor_item_idx = item_pool_item_idx;
             m_item_slot_idx = VAULT_HERO_SLOT_IDX;
             if(item_pool_in_process == ST_TRUE)
@@ -598,6 +598,7 @@ void Item_Screen_Draw(void)
     {
         Set_Font_Style_Shadow_Down(1, 0, 0, 0);  // regular
     }
+
     Set_Outline_Color(0);
     Set_Alias_Color(225);
     Print_Integer_Right((_item_window_start_x + 166), (_item_window_start_y + 164), _players[HUMAN_PLAYER_IDX].gold_reserve);
@@ -657,7 +658,7 @@ void Item_Screen_Load(void)
     // ARMYLIST.LBX, 008  HEROBUT4   hero ok butt
     hero_ok_button_seg = LBX_Reload_Next(cnst_ARMYLIST_File3, 8, _screen_seg);
 
-    for(itr = 0; itr < 6; itr++)
+    for(itr = 0; itr < NUM_HERO_PORTRAIT; itr++)
     {
 
         hero_unit_idx = _players[_human_player_idx].Heroes[itr].unit_idx;

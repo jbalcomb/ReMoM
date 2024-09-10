@@ -21,6 +21,8 @@ extern "C" {
 
 extern int16_t draw_page_num;
 extern uint8_t * current_video_page;
+// extern uint8_t * video_page_buffer[];
+extern uint8_t * video_memory;
 extern uint8_t * video_page_buffer[];
 extern uint8_t * draw_page;
 

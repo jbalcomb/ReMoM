@@ -2692,7 +2692,7 @@ void Determine_Offer(void)
 
             unit_type = 0;
 
-            Generate_Mercenaries(itr_players, wx, wy, wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
+            Generate_Mercenaries(itr_players, &wx, &wy, &wp, &Merc_Amount, &unit_type, &Merc_Cost, &Merc_Level);
 
             wx = _FORTRESSES[itr_players].wx;
             wy = _FORTRESSES[itr_players].wy;

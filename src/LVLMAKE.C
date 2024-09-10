@@ -179,7 +179,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     Load_Battle_Unit(unit_idx, global_battle_unit);
 
-    LVLMAKE_pc_level_bottom = LBX_Reload_Next(reload_lbx_file__ovr102, 23, _screen_seg);
+    LVLMAKE_pc_level_screen = LBX_Reload_Next(reload_lbx_file__ovr102, 23, _screen_seg);
 
     LVLMAKE_pc_level_bottom = LBX_Reload_Next(reload_lbx_file__ovr102, 24, _screen_seg);
 

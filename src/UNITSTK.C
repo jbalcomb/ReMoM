@@ -642,11 +642,10 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 */
 void Set_Unit_Action_Special(void)
 {
-    int16_t troops[MAX_STACK];
+    int16_t troops[MAX_STACK] = {0,0,0,0,0,0,0,0,0};  // HACK? ...as compiled?
     int16_t troop_count;
 
     special_action_flag = ST_UNDEFINED;
-
 
     Active_Unit_Stack(&troop_count, &troops[0]);
 

@@ -16,6 +16,8 @@
 int16_t draw_page_num = 0;
 
 uint8_t * current_video_page;
+// uint8_t * video_page_buffer[4];  // On, Off, Back, ¿ Back2 ?
+uint8_t * video_memory;
 uint8_t * video_page_buffer[4];  // On, Off, Back, ¿ Back2 ?
 uint8_t * draw_page;
 
