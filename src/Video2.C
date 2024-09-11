@@ -168,20 +168,56 @@ void Init_Video_Drivers(int mode_num)
 
 void Create_Screen_Buffers(int size)
 {
-    // MoO2      __off_page_buffer = Allocate_Space(size + 46);
-    // MoO2      __back_page_buffer = Allocate_Space(size + 46);
-    // MoO2      Set_Memory(__off_page_buffer, screen_pixel_size, 0);
-    // MoO2      Set_Memory(__back_page_buffer, screen_pixel_size, 0);
-    // video_page_buffer[0] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    // video_page_buffer[1] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    video_page_buffer[0] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );  // 320 * 200 * 1Bpp = 64000 / 16 = 4000 PR
-    video_page_buffer[1] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );
-    video_page_buffer[2] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
-    video_page_buffer[3] = (uint8_t*)Allocate_Space(((screen_pixel_size + 1) / 16));
-    memset(video_page_buffer[0], 0, screen_pixel_size);
-    memset(video_page_buffer[1], 0, screen_pixel_size);
-    memset(video_page_buffer[2], 0, screen_pixel_size);
-    memset(video_page_buffer[3], 0, screen_pixel_size);
+    int64_t video_memory_size;
+    int64_t video_memory_offset;
+
+    // // // // MoO2      __off_page_buffer = Allocate_Space(size + 46);
+    // // // // MoO2      __back_page_buffer = Allocate_Space(size + 46);
+    // // // // MoO2      Set_Memory(__off_page_buffer, screen_pixel_size, 0);
+    // // // // MoO2      Set_Memory(__back_page_buffer, screen_pixel_size, 0);
+    // // // // video_page_buffer[0] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    // // // // video_page_buffer[1] = (uint8_t*)VirtualAlloc(NULL, (320 * 200 * 1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    // // // video_page_buffer[0] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );  // 320 * 200 * 1Bpp = 64000 / 16 = 4000 PR
+    // // // video_page_buffer[1] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );
+    // // // video_page_buffer[2] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );
+    // // // video_page_buffer[3] = (uint8_t*)Allocate_Space( ((screen_pixel_size + 1) / 16) );
+    // // video_page_buffer[0] = (uint8_t*)Allocate_Space( ((256 * 1024) / 16) );  // 256 * 1024  65536 * 4  262144 / 16 = 16384
+    // video_page_buffer[0] = video_memory[(0 + (0 * 64 * 1024))];
+    // video_page_buffer[1] = video_memory[(0 + (1 * 64 * 1024))];
+    // video_page_buffer[2] = video_memory[(0 + (2 * 64 * 1024))];
+    // video_page_buffer[3] = video_memory[(0 + (3 * 64 * 1024))];
+
+    video_memory_size = (256 * 1024);
+
+    video_memory = (uint8_t *)Allocate_Space(((256 * 1024) / 16));  // 256 * 1024  65536 * 4  262144 / 16 = 16384
+
+    video_memory_offset = (0 + (0 * 64 * 1024));
+
+    video_page_buffer[0] = &video_memory[video_memory_offset];
+
+    video_memory_offset = (0 + (1 * 64 * 1024));
+
+    video_page_buffer[1] = &video_memory[video_memory_offset];
+
+    video_memory_offset = (0 + (2 * 64 * 1024));
+
+    video_page_buffer[2] = &video_memory[video_memory_offset];
+
+    video_memory_offset = (0 + (3 * 64 * 1024));
+
+    video_page_buffer[3] = &video_memory[video_memory_offset];
+
+
+    // // memset(video_page_buffer[0], 0, screen_pixel_size);
+    // // memset(video_page_buffer[1], 0, screen_pixel_size);
+    // // memset(video_page_buffer[2], 0, screen_pixel_size);
+    // // memset(video_page_buffer[3], 0, screen_pixel_size);
+    // memset(video_page_buffer[0], 0, (64 * 1024));
+    // memset(video_page_buffer[1], 0, (64 * 1024));
+    // memset(video_page_buffer[2], 0, (64 * 1024));
+    // memset(video_page_buffer[3], 0, (64 * 1024));
+    memset(video_memory, 0, (256 * 1024));
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[0]: %p\n", __FILE__, __LINE__, video_page_buffer[0]);
     dbg_prn("DEBUG: [%s, %d]: video_page_buffer[1]: %p\n", __FILE__, __LINE__, video_page_buffer[1]);
@@ -195,8 +231,8 @@ void Create_Screen_Buffers(int size)
 
     video_page_buffer_2x[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );  // 640 * 400 * 1Bpp = 256000  / 16 = 16000 PR
     video_page_buffer_2x[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
-    video_page_buffer_2x[2] = (uint8_t*)Allocate_Space(((640 * 400 * 1) / 16));
-    video_page_buffer_2x[3] = (uint8_t*)Allocate_Space(((640 * 400 * 1) / 16));
+    video_page_buffer_2x[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
+    video_page_buffer_2x[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 1) / 16) );
     memset(video_page_buffer_2x[0], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[1], 0, screen_pixel_size * 2);
     memset(video_page_buffer_2x[2], 0, screen_pixel_size * 2);
@@ -214,8 +250,8 @@ void Create_Screen_Buffers(int size)
 
     video_page_buffer_2x_XBGR[0] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );  // 640 * 400 * 4Bpp = 1000000  / 16 = 64000 PR
     video_page_buffer_2x_XBGR[1] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
-    video_page_buffer_2x_XBGR[2] = (uint8_t*)Allocate_Space(((640 * 400 * 4) / 16));
-    video_page_buffer_2x_XBGR[3] = (uint8_t*)Allocate_Space(((640 * 400 * 4) / 16));
+    video_page_buffer_2x_XBGR[2] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
+    video_page_buffer_2x_XBGR[3] = (uint8_t*)Allocate_Space( ((640 * 400 * 4) / 16) );
     memset(video_page_buffer_2x_XBGR[0], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[1], 0, (640 * 400 * 4));
     memset(video_page_buffer_2x_XBGR[2], 0, (640 * 400 * 4));

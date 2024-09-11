@@ -352,8 +352,8 @@ MoO2
 */
     int16_t field_num;
     int16_t character;
-    int16_t mx;
-    int16_t my;
+    int16_t l_mx;
+    int16_t l_my;
     int16_t pointer_offset;
     int16_t down_mouse_button;
     int16_t mouse_field;
@@ -397,8 +397,8 @@ MoO2
     mouse_button = 0;
     mouse_field = 0;
 
-    mx = Pointer_X();
-    my = Pointer_Y();
+    l_mx = Pointer_X();
+    l_my = Pointer_Y();
     pointer_offset = Get_Pointer_Offset();
 
 
@@ -480,9 +480,9 @@ MoO2
 
                 if(field_num != 0)
                 {
-                    mx = (p_fields[field_num].x1 + ((p_fields[field_num].x2 - p_fields[field_num].x1) / 2));
-                    my = (p_fields[field_num].y1 + ((p_fields[field_num].y2 - p_fields[field_num].y1) / 2));
-                    Push_Field_Down(field_num, mx, my);
+                    l_mx = (p_fields[field_num].x1 + ((p_fields[field_num].x2 - p_fields[field_num].x1) / 2));
+                    l_my = (p_fields[field_num].y1 + ((p_fields[field_num].y2 - p_fields[field_num].y1) / 2));
+                    Push_Field_Down(field_num, l_mx, l_my);
                     Mouse_Button_Handler();
 
                     switch(p_fields[field_num].type)
@@ -651,7 +651,7 @@ MoO2
                 {
                     if((p_fields[alt_field_num].type != ft_Scroll) && (p_fields[alt_field_num].type != ft_ContinuousStringInput))
                     {
-                        Push_Field_Down(alt_field_num, mouse_x, mouse_y);
+                        Push_Field_Down(alt_field_num, l_mx, l_my);
                     }
 
                     Mouse_Button_Handler();
@@ -806,8 +806,8 @@ MoO2
             while(Mouse_Button() != 0)
             {
 
-                mouse_x = Pointer_X();
-                mouse_y = Pointer_Y();
+                l_mx = Pointer_X();
+                l_my = Pointer_Y();
                 pointer_offset = Get_Pointer_Offset();
                 field_num = 0;
                 // Unused_Local == ST_UNDEFINED
@@ -835,7 +835,7 @@ MoO2
                                 Invoke_Auto_Function();
                             }
 
-                            Push_Field_Down(field_num, mouse_x, mouse_y);
+                            Push_Field_Down(field_num, l_mx, l_my);
                         }
                     }
                     // End Block: Push_Field_Down()
@@ -945,14 +945,14 @@ MoO2
                             Save_Mouse_State();
                             Restore_Mouse_On_Page();
                             Draw_Field(down_mouse_button, DRAW_FIELD_UP);
-                            Save_Mouse_On_Page(mouse_x, mouse_y);
-                            Draw_Mouse_On_Page(mouse_x, mouse_y);
-                            Set_Pointer_Position(mouse_x, mouse_y);
+                            Save_Mouse_On_Page(l_mx, l_my);
+                            Draw_Mouse_On_Page(l_mx, l_my);
+                            Set_Pointer_Position(l_mx, l_my);
                             Restore_Mouse_State();
                         }
                         down_mouse_button = ST_UNDEFINED;
                     }
-                    Set_Buffer_2(mouse_x, mouse_y);
+                    Set_Buffer_2(l_mx, l_my);
                 }
             }
             /*

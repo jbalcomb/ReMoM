@@ -1959,12 +1959,10 @@ void Print_Character_No_Alias_ASM(int16_t x_start, int16_t y_start, int16_t widt
 
             if((font_data_byte & 0x0F) == 0)
             {
-
                 screen_pos += SCREEN_WIDTH;
             }
             else
             {
-
                 while(repeat_count--)
                 {
                     color_index = (font_data_byte & 0x0F);  // _BX_ in Dasm

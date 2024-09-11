@@ -61,9 +61,9 @@ int16_t mouse_driver_installed = ST_FALSE;
 int16_t MOUSE_Usable = ST_FALSE;
 
 // WZD dseg:78C2
-int16_t mouse_x = 158;
+int16_t g_mouse_x = 158;
 // WZD dseg:78C4
-int16_t mouse_y = 100;
+int16_t g_mouse_y = 100;
 
 // WZD dseg:78C6
 int16_t current_mouse_list_count = 1;
@@ -165,7 +165,7 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
 
 // WZD s35p02
 // void GUI_FindWindow(int X_Pos, int Y_Pos);
-void Check_Mouse_Shape(int16_t x, int16_t y)
+void Check_Mouse_Shape(int16_t l_mx, int16_t l_my)
 {
     int16_t count;
     int16_t list_index;
@@ -177,10 +177,15 @@ void Check_Mouse_Shape(int16_t x, int16_t y)
 
     while(--count)
     {
-        if( (x > current_mouse_list[count].x1) &&
-            (x < current_mouse_list[count].x2) &&
-            (y > current_mouse_list[count].y1) &&
-            (y < current_mouse_list[count].y2) )
+        if(
+            (l_mx >= current_mouse_list[count].x1)
+            &&
+            (l_my >= current_mouse_list[count].y1)
+            &&
+            (current_mouse_list[count].x2 >= l_mx)
+            &&
+            (current_mouse_list[count].y2 >= l_my)
+        )
         {
             list_index = count;
         }
@@ -231,8 +236,8 @@ int16_t Init_Mouse_Driver(void)
     mouse_driver_installed = ST_TRUE;
     mouse_interrupt_active = ST_FALSE;
 
-    mouse_x = init_mouse_x;
-    mouse_y = init_mouse_y;
+    g_mouse_x = init_mouse_x;
+    g_mouse_y = init_mouse_y;
 
     // INT 33, 7  638
     // INT 33, 8  199
@@ -312,27 +317,27 @@ void Restore_Mouse_State(void)
 // WZD s35p18
 int16_t Pointer_X(void)
 {
-    assert(mouse_y < SCREEN_XMAX);
-    return mouse_x;
+    assert(g_mouse_x <= SCREEN_XMAX);
+    return g_mouse_x;
 }
 
 // WZD s35p19
 int16_t Pointer_Y(void)
 {
-    assert(mouse_y < SCREEN_YMAX);
-    return mouse_y;
+    assert(g_mouse_y <= SCREEN_YMAX);
+    return g_mouse_y;
 }
 
 // WZD s35p20
 // MD_MoveCursor
-void Set_Pointer_Position(int16_t x, int16_t y)
+void Set_Pointer_Position(int16_t l_mx, int16_t l_my)
 {
-    mouse_x = x;
-    mouse_y = y;
+    g_mouse_x = l_mx;
+    g_mouse_y = l_my;
 
     if(mouse_driver_installed)
     {
-        Set_Mouse_Position(x, y);
+        Set_Mouse_Position(l_mx, l_my);
     }
 }
 

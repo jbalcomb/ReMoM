@@ -312,7 +312,7 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 //     screen_pos = screen_start;
 //     itr_width = width;
 
-    while (width--)
+    while(width--)
     {
         bbuff = bbuff_pos++;
         packet_op = *frame_data++;  // Frame Byte #1: Op/Count
