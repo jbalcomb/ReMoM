@@ -133,7 +133,7 @@ XREF:
 */
 int16_t IDK_City_Radius_s34255__STUB(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp)
 {
-
+	return 0;
 }
 
 
@@ -979,7 +979,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 int16_t Player_Hero_Count(int16_t player_idx)
 {
     int16_t itr_hero_slots;  // _CX_
-    int16_t hero_count;  // _SI_
+    int16_t hero_count = 0;  // _SI_
 
     for(itr_hero_slots = 0; itr_hero_slots < NUM_HERO_SLOTS; itr_hero_slots++)
     {
@@ -1002,7 +1002,7 @@ int16_t Player_Hero_Count(int16_t player_idx)
 int16_t WIZ_DeadHeroCount(int16_t player_idx)
 {
     int16_t itr_hero_types;  // _SI_
-    int16_t hero_count;  // _DI_
+    int16_t hero_count = 0;  // _DI_
 
     for(itr_hero_types = 0; itr_hero_types < 34; itr_hero_types++)
     {
@@ -3225,14 +3225,14 @@ void Do_All_Units_XP_Check_(void)
 
             if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
             {
-                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b01111111);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?
             }
         }
 
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
             _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
-            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b10111111);  // ¿ xor     al, C_STASISINIT  01000000b ?
+            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0xBF /*0b10111111*/);  // ¿ xor     al, C_STASISINIT  01000000b ?
         }
 
         if(
