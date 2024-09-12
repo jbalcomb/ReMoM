@@ -221,7 +221,7 @@ uint8_t Interpret_Keyboard_Input(int16_t * field_num)
             {
                 p_fields[_SI_field_idx].string_pos = 0;
                 p_fields[_SI_field_idx].hotkey = temp_string[0];
-                multi_hotkey_active_field == 0;
+                multi_hotkey_active_field = 0;
             }
         }
     }

@@ -48,7 +48,7 @@ char aRvl[] = "RVL";
 
 // WZD dseg:3483
 // borrowed null-terminator from aRvl
-char empty_string__ovr073[]  = "";
+char str_empty_string__ovr073[]  = "";
 
 // WZD dseg:3484
 char aPwr[] = "PWR";
@@ -556,19 +556,19 @@ void Magic_Screen(void)
         
         if(input_field_idx == magic_mana_staff_locked)
         {
-            // TODO  SND_LeftClickSound()
+            Play_Left_Click__STUB();
             // mov  ax, [mana_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [mana_staff_locked], ax;
             mana_staff_locked = (1 - mana_staff_locked);
         }
         if(input_field_idx == magic_skill_staff_locked)
         {
-            // TODO  SND_LeftClickSound()
+            Play_Left_Click__STUB();
             // mov  ax, [skill_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [skill_staff_locked], ax;
             skill_staff_locked = (1 - skill_staff_locked);
         }
         if(input_field_idx == magic_research_staff_locked)
         {
-            // TODO  SND_LeftClickSound()
+            Play_Left_Click__STUB();
             // mov  ax, [research_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [research_staff_locked], ax;
             research_staff_locked = (1 - research_staff_locked);
         }
@@ -578,7 +578,7 @@ void Magic_Screen(void)
         */
        if((input_field_idx == button_magic_ok) || (input_field_idx == hotkey_ESC))
        {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen_flag = ST_UNDEFINED;
        }
 
@@ -586,7 +586,7 @@ void Magic_Screen(void)
         {
             if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _human_player_idx))
             {
-                // TODO  SND_LeftClickSound()
+                Play_Left_Click__STUB();
                 strcpy(GUI_String_1, aDoYouWishToCancelYour);  // "Do you wish to cancel your \x02"
                 strcpy(GUI_String_2, spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].name);
                 strcat(GUI_String_1, GUI_String_2);
@@ -627,7 +627,7 @@ void Magic_Screen(void)
         */
         if(input_field_idx == button_magic_alchemy)
         {
-            // TODO  SND_LeftClickSound()
+            Play_Left_Click__STUB();
             Alchemy_Popup(80, 60);
 
             Assign_Auto_Function(Magic_Screen_Draw, 1);
@@ -667,13 +667,12 @@ void Magic_Screen(void)
         {
             if((-(magic_gem_fields[itr]) == input_field_idx) && (gem_player_nums[itr] > 0))
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 gem_x1 = (29 + (77 * itr));
                 gem_y1 = 10;
                 gem_x2 = (gem_x1 + 30);
                 gem_y2 = (gem_y1 + 30);
-                // TODO  Mirror_Screen(gem_player_nums[itr], gem_x1, gem_y1, gem_x2, gem_y2);
-
+                Mirror_Screen(gem_player_nums[itr], gem_x1, gem_y1, gem_x2, gem_y2);
                 Magic_Screen_Load_Pictures();
                 Build_Overland_Enchantment_List();
                 Assign_Auto_Function(Magic_Screen_Draw, 1);
@@ -704,7 +703,7 @@ void Magic_Screen(void)
                 }
                 else
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     G_DIPL_TargetWizard = gem_player_nums[itr];
                     current_screen = scr_Diplomacy_Screen;
                     leave_screen_flag = 2;
@@ -718,7 +717,7 @@ void Magic_Screen(void)
 
         if(magic_ovl_ench_list_down == abs(input_field_idx))
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             magic_ovl_ench_list_first_item += 18;
             if(magic_ovl_ench_list_first_item >= ovl_ench_cnt)
             {
@@ -830,11 +829,11 @@ void Magic_Screen_Draw(void)
     int16_t itr_ovl_enchs;  // _SI_
 
     // TODO  ¿ player banner colors ?  add manifest constants
-    colors1[0] = 172;
-    colors1[1] = 216;
-    colors1[2] = 123;
-    colors1[3] = 201;
-    colors1[4] = 211;
+    colors1[0] = BANNER_COLOR_BLUE;
+    colors1[1] = BANNER_COLOR_GREEN;
+    colors1[2] = BANNER_COLOR_PURPLE_123;
+    colors1[3] = BANNER_COLOR_RED;
+    colors1[4] = BANNER_COLOR_YELLOW;
 
     for(itr_help_entries = 0; itr_help_entries < 4; itr_help_entries++)
     {
@@ -1279,7 +1278,6 @@ void Magic_Screen_Draw(void)
                 Set_Font_Style_Outline(0, 15, 0, 0);
                 Set_Alias_Color(182);
                 Set_Outline_Color(1);
-                // TODO  Print_Centered_Far();
                 Print_Centered((45 + (77 * itr_gems)), 4, spell_data_table[_players[gem_player_nums[itr_gems]].Spell_Cast].name);
             }
 
@@ -1323,7 +1321,6 @@ void Magic_Screen_Draw(void)
             Set_Font_Style_Shadow_Down(2, 15, 0, 0);
             Set_Outline_Color(19);
             Set_Alias_Color(185);
-            // TODO Print_Far()
             Print(171, (80 + (10 * itr_ovl_enchs)), spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].name);
             // TODO  _help_entries[(16 + itr_ovl_enchs)].entry_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
         }
@@ -1348,7 +1345,6 @@ void Magic_Screen_Draw(void)
                 Set_Font_Style_Shadow_Down(0, 15, 0, 0);
                 Set_Outline_Color(19);
                 Set_Alias_Color(185);
-                // TODO Print_Far()
                 Print((171 + (69 * (itr_ovl_enchs % 2))), (81 + (9 * (itr_ovl_enchs / 2))), spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].name);
                 // TODO  _help_entries[(25 + itr_ovl_enchs)].entry_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
             }
@@ -1382,8 +1378,8 @@ void Magic_Screen_Add_Fields(void)
     Add_Scroll_Field( 79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, 'R', ST_UNDEFINED);  // (offset aPwr+2)
     Add_Scroll_Field(126, 102, 0, 50, 0, 50, 5, 50, &skill_stave_pct_pos,    'S', ST_UNDEFINED);  // cnst_HOTKEY_S_2
 
-    button_magic_ok       = Add_Button_Field(291, 181, "", magic_ok_button_seg,      'O', ST_UNDEFINED);  // empty_string__ovr073,  cnst_HOTKEY_O_7
-    button_magic_alchemy  = Add_Button_Field(232, 181, "", magic_alchemy_button_seg, 'A', ST_UNDEFINED);  // empty_string__ovr073,  cnst_HOTKEY_A_2
+    button_magic_ok       = Add_Button_Field(291, 181, str_empty_string__ovr073, magic_ok_button_seg,      'O', ST_UNDEFINED);  // cnst_HOTKEY_O_7
+    button_magic_alchemy  = Add_Button_Field(232, 181, str_empty_string__ovr073, magic_alchemy_button_seg, 'A', ST_UNDEFINED);  // cnst_HOTKEY_A_2
 
     magic_mana_staff_locked      = Add_Hidden_Field( 28, 82,  41, 101, 0, ST_UNDEFINED);
     magic_research_staff_locked  = Add_Hidden_Field( 75, 82,  88, 101, 0, ST_UNDEFINED);
@@ -1393,7 +1389,7 @@ void Magic_Screen_Add_Fields(void)
     {
         x1 = (29 + (77 * itr_gem_count));
         y1 = 10;
-        magic_gem_fields[itr_gem_count] = Add_Hidden_Field(x1, y1, (x1 + 30), (y1 + 32), 0, ST_UNDEFINED);  // empty_string__ovr073
+        magic_gem_fields[itr_gem_count] = Add_Hidden_Field(x1, y1, (x1 + 30), (y1 + 32), str_empty_string__ovr073[0], ST_UNDEFINED);
     }
 
     ovl_ench_list_cnt = 0;
@@ -1404,7 +1400,7 @@ void Magic_Screen_Add_Fields(void)
         ovl_ench_list_cnt = ovl_ench_cnt;
         for(itr_ovl_ench_cnt = 0; itr_ovl_ench_cnt < ovl_ench_cnt; itr_ovl_ench_cnt++)
         {
-            magic_ovl_ench_flds[itr_ovl_ench_cnt] = Add_Hidden_Field(x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), 0, ST_UNDEFINED);  // empty_string__ovr073
+            magic_ovl_ench_flds[itr_ovl_ench_cnt] = Add_Hidden_Field(x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), str_empty_string__ovr073[0], ST_UNDEFINED);
         }
     }
     else
@@ -1413,14 +1409,14 @@ void Magic_Screen_Add_Fields(void)
         SETMAX(ovl_ench_list_cnt, 18);
         for(itr_ovl_ench_list_cnt = 0; itr_ovl_ench_list_cnt < ovl_ench_list_cnt; itr_ovl_ench_list_cnt++)
         {
-            magic_ovl_ench_flds[itr_ovl_ench_list_cnt] = Add_Hidden_Field((x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), 0, ST_UNDEFINED);  // empty_string__ovr073
+            magic_ovl_ench_flds[itr_ovl_ench_list_cnt] = Add_Hidden_Field((x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), str_empty_string__ovr073[0], ST_UNDEFINED);
         }
     }
 
     magic_ovl_ench_list_down = INVALID_FIELD;
     if(magic_ovl_ench_list_scroll_flag == ST_TRUE)
     {
-        magic_ovl_ench_list_down = Add_Hidden_Field(286, 163, 307, 169, 0, ST_UNDEFINED);  // empty_string__ovr073
+        magic_ovl_ench_list_down = Add_Hidden_Field(286, 163, 307, 169, str_empty_string__ovr073[0], ST_UNDEFINED);
     }
 
 }
@@ -1484,7 +1480,7 @@ void Magic_Screen_Load_Pictures(void)
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(30);
     ovl_ench_list_spells = Near_Allocate_Next(192);  // 192 bytes ... ¿ 96 of ?
-    ovl_ench_list_players = Near_Allocate_Next(96);  // 96 bytes ... ¿ 96 of player_idx ?
+    ovl_ench_list_players = (int8_t *)Near_Allocate_Next(96);  // 96 bytes ... ¿ 96 of player_idx ?
     magic_ovl_ench_flds = Near_Allocate_Next(40);  // 40 bytes ... ¿ 40 or 20 of ... ?
     magic_gem_fields = Near_Allocate_Next(12);  // 12 bytes ... ¿ 12 or 6 of ... ?
 
@@ -1638,13 +1634,13 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
             (input_field_idx == hotkey_ESC)
         )
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
         }
 
         if(input_field_idx == m_alchemy_ok_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
 
             if(m_alchemy_conversion_direction == 1)
@@ -1661,7 +1657,7 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
 
         if(input_field_idx == m_alchemy_arrow_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             /*
                 IDGI: two's compliment trickery?
                     mov     ax, [m_alchemy_conversion_direction]
@@ -1802,24 +1798,24 @@ void Alchemy_Popup_Add_Fields(void)
 
     Add_Scroll_Field((m_alchemy_popup_start_x + 50), (m_alchemy_popup_start_y + 25), 0, 55, 3, 53, 55, 7, &m_alchemy_arrowbar_pos, cnst_HOTKEY_A_2[0], ST_UNDEFINED);
 
-    m_alchemy_cancel_button_field = Add_Button_Field((m_alchemy_popup_start_x + 13), (m_alchemy_popup_start_y + 39), empty_string__ovr073, m_alchemy_cancel_button_seg, cnst_HOTKEY_C_5, ST_UNDEFINED);
+    m_alchemy_cancel_button_field = Add_Button_Field((m_alchemy_popup_start_x + 13), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_cancel_button_seg, cnst_HOTKEY_C_5, ST_UNDEFINED);
 
-    m_alchemy_ok_button_field = Add_Button_Field((m_alchemy_popup_start_x + 96), (m_alchemy_popup_start_y + 39), empty_string__ovr073, m_alchemy_ok_button_seg, cnst_HOTKEY_O_7, ST_UNDEFINED);
+    m_alchemy_ok_button_field = Add_Button_Field((m_alchemy_popup_start_x + 96), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_ok_button_seg, cnst_HOTKEY_O_7, ST_UNDEFINED);
 
     if(m_alchemy_conversion_direction == e_GoldToPower)
     {
-        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), empty_string__ovr073, m_alchemy_left_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
+        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_left_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
     }
     else
     {
-        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), empty_string__ovr073, m_alchemy_right_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
+        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_right_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
     }
 
     // ¿ BUG: never checked for input match ?
-    m_alchemy_popup_window_field = Add_Hidden_Field(m_alchemy_popup_start_x, m_alchemy_popup_start_y, (m_alchemy_popup_start_x + 157), (m_alchemy_popup_start_y + 65), empty_string__ovr073[0], ST_UNDEFINED);
+    m_alchemy_popup_window_field = Add_Hidden_Field(m_alchemy_popup_start_x, m_alchemy_popup_start_y, (m_alchemy_popup_start_x + 157), (m_alchemy_popup_start_y + 65), str_empty_string__ovr073[0], ST_UNDEFINED);
 
     // ¿ ~== _global_exit_field ?
-    m_alchemy_popup_exit_field = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr073[0], ST_UNDEFINED);
+    m_alchemy_popup_exit_field = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr073[0], ST_UNDEFINED);
 
 }
 

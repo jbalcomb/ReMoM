@@ -45,7 +45,7 @@
 #define LEN_HERO_NAME         14  /* WTF, Mate? */  /* longest in NAMES is 12 */
 #define LEN_SAVE_DESCRIPTION  20
 #define LEN_RACE_NAME         20
-#define LEN_ITEM_NAME          30
+#define LEN_ITEM_NAME         30
 
 
 #define ST_TRANSPARENT    0

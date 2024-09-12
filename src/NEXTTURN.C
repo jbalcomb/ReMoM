@@ -131,14 +131,49 @@ XREF:
         EarthGateTeleport__WIP()
         Cast_PlaneShift()
 */
-int16_t IDK_City_Radius_s34255__STUB(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp)
+int16_t Player_Units_Max_Range(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp)
 {
+    int16_t range;
+    int16_t itr_units;  // _DI_
 
+    range = 1;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(_UNITS[itr_units].owner_idx == player_idx)
+        {
+            if(
+                (_UNITS[itr_units].wp == wp)
+                ||
+                (_UNITS[itr_units].in_tower == ST_TRUE)
+            )
+            {
+                if(
+                    (_UNITS[itr_units].wx == wx)
+                    &&
+                    (_UNITS[itr_units].wy == wy)
+                )
+                {
+                    if(_UNITS[itr_units].Sight_Range > range)
+                    {
+                        range = _UNITS[itr_units].Sight_Range;
+                    }
+                }
+            }
+        }
+    }
+
+    return range;
 }
 
 
 // WZD o60p03
-void empty_function__o060p03(void)
+/*
+GARBAGE
+XREF:
+    NX_j_o060p03_empty_function()
+*/
+void o060p03_empty_function(void)
 {
 /*
 push    bp
@@ -460,7 +495,9 @@ void Next_Turn_Calc(void)
     //                                         ; WARNING: can temporarily store a negative spell index
     //                                         ; as the player's researched spell
 
-        // TODO  OVL_DisableIncmBlink();
+
+
+        OVL_DisableIncmBlink();
 
 
 
@@ -573,7 +610,7 @@ void Next_Turn_Calc(void)
     Record_History();
 
 
-// call    j_IDK_SND_BkGrnd_s518AE
+    Increment_Background_Music();
 
 
     _turn++;
@@ -582,15 +619,10 @@ void Next_Turn_Calc(void)
     // TODO  cap gold, mana 30000
 
 
-    // TODO  OVL_EnableIncmBlink();
+    OVL_EnableIncmBlink();
     
 
     Do_Autosave();
-
-// ; if the current turn is divisible by 4, saves the game
-//                                         ; into slot index 8 (SAVE9.GAM), the "continue" save
-//                                         ; that can not be loaded from the save/load screen, but
-//                                         ; is started automatically by wizards.exe
 
 
     All_City_Calculations();
@@ -981,6 +1013,8 @@ int16_t Player_Hero_Count(int16_t player_idx)
     int16_t itr_hero_slots;  // _CX_
     int16_t hero_count;  // _SI_
 
+    hero_count = 0;
+
     for(itr_hero_slots = 0; itr_hero_slots < NUM_HERO_SLOTS; itr_hero_slots++)
     {
         if(_players[player_idx].Heroes[itr_hero_slots].unit_idx != ST_UNDEFINED)
@@ -996,18 +1030,19 @@ int16_t Player_Hero_Count(int16_t player_idx)
 // WZD o121p06
 // drake178: WIZ_DeadHeroCount()
 /*
-; returns the amount of dead, but not disintegrated
-; heroes formerly in the player's service
+; returns the amount of dead, but not disintegrated heroes formerly in the player's service
 */
-int16_t WIZ_DeadHeroCount(int16_t player_idx)
+int16_t Player_Dead_Hero_Count(int16_t player_idx)
 {
     int16_t itr_hero_types;  // _SI_
     int16_t hero_count;  // _DI_
 
-    for(itr_hero_types = 0; itr_hero_types < 34; itr_hero_types++)
+    hero_count = 0;
+
+    for(itr_hero_types = MIN_HERO_TYPE; itr_hero_types < MAX_HERO_TYPE; itr_hero_types++)
     {
         if(
-            (_HEROES2[player_idx]->heroes[itr_hero_types].Level < 0)
+            (_HEROES2[player_idx]->heroes[itr_hero_types].Level < 0)  /* ¿ DEDU negative means what now/again ? */
             &&
             (_HEROES2[player_idx]->heroes[itr_hero_types].Level != -20)  // DEDU  What's with the -20? Just saw that in AI_Accept_Hero()?
         )
@@ -1054,7 +1089,7 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 
     if(zero_cost == ST_TRUE)
     {
-        player_fame = 200;
+        player_fame = 200;  // ¿ set high enough that all heroes are available ?  ¿ highest cost is 600  ((_unit_type_table[34].Cost - 100) / 10) = ((600 - 100) / 10) = (500 / 10) = 50 < player_fame ?
     }
 
     Success = ST_FALSE;
@@ -1078,7 +1113,7 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
                 hero_type_idx = (23 + Random(10));  // Champion
             }
 
-            if(_HEROES2[player_idx]->heroes[hero_type_idx].Level >= 0)
+            if(_HEROES2[player_idx]->heroes[hero_type_idx].Level >= 0)  /* ¿ not disintegrated ... but, what about -20 ? */
             {
                 if(
                     (
@@ -2621,8 +2656,8 @@ void Determine_Offer(void)
 
             SETMAX(IDK, 10);
 
-            // HACK: 
-            if(DBG_trigger_offer_item == ST_TRUE)
+            
+            /* HACK: */ if(DBG_trigger_offer_item == ST_TRUE)
             {
                 IDK = 100;
                 _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
@@ -2679,8 +2714,7 @@ void Determine_Offer(void)
             IDK += 10;
         }
 
-        // HACK: 
-        if(DBG_trigger_offer_merc == ST_TRUE)
+        /* HACK: */ if(DBG_trigger_offer_merc == ST_TRUE)
         {
             IDK = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
@@ -2779,8 +2813,7 @@ void Determine_Offer(void)
 
         IDK = (IDK / (((Player_Hero_Count(itr_players) + 1) / 2) + 1));
 
-        // HACK: 
-        if(DBG_trigger_offer_hero == ST_TRUE)
+        /* HACK*/ if(DBG_trigger_offer_hero == ST_TRUE)
         {
             IDK = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
@@ -2915,8 +2948,8 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         if(Was_Research_Target == ST_FALSE)
         {
-            // TODO  SND_Silence();
-            // TODO  SND_PlayBkgrndTrack();
+            Stop_All_Sounds__STUB();
+            Play_Background_Music();
         }
     }
     else if(
@@ -3069,15 +3102,18 @@ void Heal_All_Units(void)
 
         if(_CITIES[itr_cities].bldg_status[ANIMISTS_GUILD] > bs_Replaced)  /* {-1:NotBuilt,0:Replaced,1:Built,2:Removed} */
         {
-            UNIT_HealArray[troops[itr_troops]] = 6;
+            for (itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+                UNIT_HealArray[troops[itr_troops]] = 6;
+            }
         }
+
     }
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        // HACK: 
-        if (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        /* HACK: */ if (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
         {
             continue;
         }
@@ -3164,8 +3200,6 @@ void Heal_All_Units(void)
         }
 
     }
-
-
 
 }
 

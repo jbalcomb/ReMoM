@@ -321,7 +321,7 @@ void City_Screen_Load_Pictures(void);
 // fxn_o52p12()
 
 // WZD o52p13
-// Load_Button_Sounds()
+void Load_Button_Sounds(void);
 
 // WZD o52p14
 // fxn_o52p14()

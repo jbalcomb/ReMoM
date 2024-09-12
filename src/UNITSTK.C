@@ -1106,6 +1106,11 @@ int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[])
         return ST_TRUE;
     }
 
+
+
+    // C:\STU\devel\ReMoM\src\UNITSTK.C(1109) : warning C4715: 'Unit_Action_Special_Purify': not all control paths return a value
+    return ST_FALSE;
+
 }
 
 
@@ -1186,6 +1191,11 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
             }
         }
     }
+
+
+
+    // C:\STU\devel\ReMoM\src\UNITSTK.C(1190) : warning C4715: 'Unit_Action_Special_Meld': not all control paths return a value
+    return ST_FALSE;
 
 }
 

@@ -741,7 +741,7 @@ int16_t Wait_For_Input(void);
 int16_t Process_Direction_Key__STUB(int16_t dir_key);
 
 // WZD s36p31
-int16_t GUI_EditBoxControl(int16_t field_num);
+void GUI_EditBoxControl(int16_t field_num);
 
 // WZD s36p32
 int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help);

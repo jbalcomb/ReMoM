@@ -22,7 +22,26 @@ char * GAME_FONT_FILE = &MOM_FONT_FILE[0];  // Create a Pointer to the Character
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-    char found_file[30];
+    char found_file[LEN_STRING];
+// File_Name = byte ptr - 3Eh
+    int16_t DIGI_ID;
+    int16_t MIDI_ID;
+    int16_t MIDI_DRV;
+    int16_t DIGI_DMA;
+    int16_t DIGI_IRQ;
+    int16_t DIGI_IO;
+    int16_t DIGI_DRV;
+    int16_t MIDI_IRQ;
+    int16_t MIDI_IO;
+// itr_savegams = word ptr - 6
+// file_handle = word ptr - 4
+    SAMB_ptr main_menu_music_seg;  // MGC
+// EMS_Pages_Left = word ptr - 2
+    int16_t midi_driver;  // _SI_
+    int16_t IDK;  // _DI_
+    int16_t MIDI_DMA;  // _DI_
+
+
     int input_type;
 #ifdef STU_DEBUG
     int itr_remap_pal_num;
@@ -50,41 +69,239 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     // MoO2  Load_Game_Settings()
     Load_CONFIG_MOM();
-    Load_MAGIC_SET();
 
+    /* WZD */ Load_MAGIC_SET();
+
+    MIDI_IO = config_mom.MIDI_IO;
+    MIDI_IRQ = config_mom.MIDI_IRQ;
+    IDK = ST_UNDEFINED;
+    midi_driver = config_mom.MIDI_ID;
+
+/*
+FFFFFFFF ; enum e_Sound_Hardware
+FFFFFFFF No_Sound_HW  = 0
+FFFFFFFF PC_Speaker  = 1
+FFFFFFFF AdLib  = 16
+FFFFFFFF SB_Orig  = 18
+FFFFFFFF SB_Pro  = 24
+FFFFFFFF Pro_Audio_S  = 25
+FFFFFFFF SB_Pro_OPL3  = 32
+FFFFFFFF Pro_Audio_S_16  = 33
+FFFFFFFF AdLib_Gold  = 34
+FFFFFFFF Roland_MT32  = 48
+FFFFFFFF Roland_LAPC  = 49
+FFFFFFFF General_MIDI  = 56
+*/
+    switch(midi_driver)
+    {
+        case 0:
+        {
+            midi_driver = 0;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 1:
+        {
+            midi_driver = SND_Speaker;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 16:
+        {
+            midi_driver = SND_AdLib;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 18:
+        {
+            midi_driver = SND_SB;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 24:
+        {
+            midi_driver = SND_SBPro;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 25:
+        {
+            midi_driver = SND_PAS;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 32:
+        {
+            midi_driver = SND_SBPro2;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 33:
+        {
+            midi_driver = SND_PAS16;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 34:
+        {
+            midi_driver = SND_ALG;
+            MIDI_IO = ST_UNDEFINED;
+            MIDI_IRQ = ST_UNDEFINED;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 48:
+        {
+            midi_driver = SND_GMIDI;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 49:
+        {
+            midi_driver = SND_Roland;
+            IDK = ST_UNDEFINED;
+        } break;
+        case 56:
+        {
+            midi_driver = SND_GMIDI;
+            IDK = ST_UNDEFINED;
+        } break;
+    }
+
+    if(midi_driver == SND_Roland)
+    {
+        DOS_PrintString__STUB(str_Initializing_Roland_Drivers);  // "Initializing Roland Drivers...$"
+        Mark_Time();
+        Release_Time(20);
+    }
+
+    DIGI_IO = config_mom.DIGI_IO;
+    DIGI_IRQ = config_mom.DIGI_IRQ;
+    DIGI_DMA = config_mom.DIGI_DMA;
+    DIGI_ID = config_mom.DIGI_ID;
+
+    switch(DIGI_ID)
+    {
+        case 0:
+        {
+            DIGI_DRV = SND_NONE;
+            DIGI_IO = ST_UNDEFINED;
+            DIGI_IRQ = ST_UNDEFINED;
+            DIGI_DMA = ST_UNDEFINED;
+        } break;
+        case 1:
+        {
+            DIGI_DRV = SND_Speaker;
+            DIGI_IO = ST_UNDEFINED;
+            DIGI_IRQ = ST_UNDEFINED;
+            DIGI_DMA = ST_UNDEFINED;
+        } break;
+        case 16:
+        {
+            DIGI_DRV = SND_NONE;
+            DIGI_IO = ST_UNDEFINED;
+            DIGI_IRQ = ST_UNDEFINED;
+            DIGI_DMA = ST_UNDEFINED;
+        } break;
+        case 18:
+        {
+            DIGI_DRV = SND_SB;
+        } break;
+        case 24:
+        {
+            DIGI_DRV = SND_SBPro;
+        } break;
+        case 25:
+        {
+            DIGI_DRV = SND_PAS;
+            DIGI_IO = ST_UNDEFINED;
+        } break;
+        case 32:  /* 0x20 */
+        {
+            DIGI_DRV = SND_SBPro2;
+            MIDI_IRQ = DIGI_IRQ;
+            IDK = DIGI_DMA;
+        } break;
+        case 33:  /* 0x21 */
+        {
+            DIGI_DRV = SND_PAS16;
+            DIGI_IO = ST_UNDEFINED;
+        } break;
+        case 34:  /* 0x22 */
+        {
+            DIGI_DRV = SND_ALG;
+        } break;
+        case 48:
+        case 49:
+        {
+            DIGI_DRV = SND_Roland;
+            DIGI_IO = ST_UNDEFINED;
+            DIGI_IRQ = ST_UNDEFINED;
+            DIGI_DMA = ST_UNDEFINED;
+        } break;
+        case 56:
+        {
+            DIGI_DRV = SND_GMIDI;
+            DIGI_IO = ST_UNDEFINED;
+            DIGI_IRQ = ST_UNDEFINED;
+            DIGI_DMA = ST_UNDEFINED;
+        } break;
+    }
+
+    if(midi_driver == SND_AdLib)
+    {
+        DIGI_DRV = SND_AdLib;
+    }
 
     /*
         MIDI Driver
         SFX Driver
     */
-    // if (magic_set.Snd_Channels > 2 || magic_set.Snd_Channels < 0)
-    // {
-    //     magic_set.Snd_Channels = 0;
-    // }
-    // magic_set.Input_Type = 1;
+    if(
+        (magic_set.sound_channels > 2)
+        ||
+        (magic_set.sound_channels < 0)
+    )
+    {
+        magic_set.sound_channels = 0;
+    }
+
 
 
     // TODO  MoO2  Check_For_Saved_Games()
+    // for(itr_savegams = 1; itr_savegams < 9; itr_savegams++)
+
 
 
     // EMS_SetMinKB(2700);;
     // RAM_SetMinKB(583);
 
 
-    // magic_set.Input_Type = 1;
-    // magic_set.Snd_Channels = 2;
-    // Init_Drivers(magic_set.Input_Type, magic_set.Snd_Channels, &font_file, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, SFX_DRV, SFX_IO, SFX_IRQ, SFX_DMA);
-
+    magic_set.input_type = 1;
+    magic_set.sound_channels = 2;
+    // Init_Drivers(magic_set.input_type, magic_set.sound_channels, &font_file, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, SFX_DRV, SFX_IO, SFX_IRQ, SFX_DMA);
     /*
         Initialize MoX - SimTex Game Engine (STGE)
         Initialize PFL - The Platform-Layer
     */
-    Init_Drivers(VIDEO_MODE, MOM_FONT_FILE);
+    // Init_Drivers(VIDEO_MODE, MOM_FONT_FILE);
+    Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, midi_driver, MIDI_IO, MIDI_IRQ, IDK, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
+
+
+
     Init_Platform(hInstance, nCmdShow);
 
 
+
     Release_Version();
+
+
+
     Enable_Cancel();
+
 
 
     // MoO2  Module: ALLOC  Allocate_Data_Space()
@@ -122,11 +339,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     // MoO2: Draw_Logos()
     // TODO  c0argv == 'J','E','N','N','Y'
     // TODO  j_GAME_PlayIntro()
+
+
+
     // MoO2: Init_Credits() <-| Load_Credits() <-| Main_Menu_Screen()
     // TODO  j_Init_Credits()
-    // TODO  SND_Stop_Music()
-    // TODO  MainMenu_Music_Seg = LBX_Load(music_lbx, MUSIC_Main_Menu)
-    // TODO  SND_PlayFile(MainMenu_Music_Seg)
+    Stop_Music__STUB();
+    main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
+    if(magic_set.background_music == ST_TRUE)
+    {
+        Play_Sound__STUB(main_menu_music_seg);
+    }
 
 
 

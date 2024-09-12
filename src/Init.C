@@ -20,8 +20,15 @@ char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 
 
 // WZD s014p01
+// drake178: ¿ ?
 // MoO2  Module: init  void Init_Drivers()
-void Init_Drivers(int input_type, char * font_file)
+/*
+; performs various startup functions, such as
+; initializing EMS, VGA, Audio, and Mouse, also
+; loads the fonts and sets the time as random seed
+*/
+// void Init_Drivers(int input_type, char * font_file)
+void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi_driver, int MIDI_IO, int MIDI_IRQ, int MIDI_DMA, int digi_driver, int Digi_IO, int Digi_IRQ, int Digi_DMA)
 {
 
     DBG_Open_ERROR_LOG();
@@ -35,13 +42,14 @@ void Init_Drivers(int input_type, char * font_file)
     {
         // MoO2  Load_System_Font()
         Load_Font_File(DEFAULT_FONT_FILE);
-        // TODO  Audio_init(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);
-        Init_Mouse_Keyboard(1);
+        // /* TODO */  Audio_Init__STUB(0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);  // IDGI two parameters too many
+        /* TODO */  Audio_Init__STUB(0, 0, -1, -1, -1, -1, -1, -1, -1);
+        Init_Mouse_Keyboard(1);  // ¿ 1 is what now ?
     }
     else
     {
         Load_Font_File(font_file);
-        // TODO  Audio_Init(M_Drv, Snd_Chnls, M_IO, M_IRQ, M_DMA, D_Drv, D_IO, D_IRQ, D_DMA);
+        /* TODO */  Audio_Init__STUB(midi_driver, sound_channels, MIDI_IO, MIDI_IRQ, MIDI_DMA, digi_driver, Digi_IO, Digi_IRQ, Digi_DMA);
         Init_Mouse_Keyboard(input_type);
     }
 

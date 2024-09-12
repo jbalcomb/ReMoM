@@ -329,7 +329,15 @@ void Set_Alias_Color(int16_t color)
 }
 
 // WZD s17p13
-// drake178: ?
+// drake178: ¿ ?
+/*
+; saves the anti-aliasing colors of each font color
+; set to static variables starting at dseg:e800 (16
+; color blocks + current colors + 3 default sets)
+*/
+/*
+
+*/
 void Save_Alias_Colors(void)
 {
     int16_t itr_color_count;

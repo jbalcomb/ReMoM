@@ -209,7 +209,7 @@ so, 300 PRs, + 1 for the SAMB header
     events_table = (struct s_EVENT_DATA *)Allocate_Space(7);
 
     // ¿ MoO2  _officer_names ? ¿ Officer vs. Owned Officer ?
-    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);
+    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR  592 B  ... ~ (36) 16-byte structs
 
     _ITEMS = (struct s_ITEM *)Allocate_Space(433);  // 433 PR  6928 B;  SAVE.GAM: 138 * 50 = 6900  ... 1 + ((138 * 50) + (SZ_PARAGRAPH - 1))
 

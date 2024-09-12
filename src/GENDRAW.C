@@ -91,9 +91,9 @@ uint8_t notify_text_colors[4][5] =
 // drake178: GUI_Familiar_IMGTop
 // WZD dseg:6FD8
 // drake178: GUI_Familiar_IMGText
-int16_t notify2_mascot_x1[5] = { -2,   0, -22,   8,  2};
+int16_t notify2_mascot_x1[5]  = { -2,   0, -22,   8,  2};
 int16_t notify2_mascot_y1[5]  = {  2, -20,  -4, -12, -3};
-int16_t notify2_text_x1[5] = { 70,  73,  62,  68, 70};
+int16_t notify2_text_x1[5]    = { 70,  73,  62,  68, 70};
 
 // WZD dseg:6FE2 01 00                                           
 int16_t m_item_view_grow_stage = 1;
@@ -105,9 +105,9 @@ int16_t m_item_view_grow_stage = 1;
         Selection Box
 */
 // WZD dseg:6FE4
-char resource_lbx_file[] = "RESOURCE";
+char resource_lbx_file__ovr149[] = "RESOURCE";
 // WZD dseg:6FEC 00                                              
-char cnst_ZeroString_5[] = "";
+char str_empty_string__ovr149[] = "";
 /*
     END:
         Confirmation Box
@@ -119,10 +119,10 @@ char cnst_ZeroString_5[] = "";
         Confirmation Box
 */
 // WZD dseg:6FED
-char cnst_HOTKEY_Y_3[] = "Y";
+char str_hotkey_Y__ovr149[] = "Y";
 
 // WZD dseg:6FEF
-char cnst_HOTKEY_N_5[] = "N";
+char str_hotkey_N__ovr149[] = "N";
 
 /*
     BEGIN:
@@ -135,7 +135,7 @@ char cnst_HOTKEY_N_5[] = "N";
         Selection Box
 */
 // WZD dseg:6FF1
-char cnst_HOTKEY_Esc21[] = "\x1B";
+char str_hotkey_ESC__ovr149[] = "\x1B";
 /*
     END:
         Confirmation Box
@@ -332,8 +332,11 @@ int16_t message_box_y;
 int16_t message_box_x;
 
 // WZD dseg:CB54
-// ; determines whether to use the first or the second of the two different warning message backgrounds (both of which are red, but slightly different and use a different font color)
-int16_t GUI_RedMsg_Type;
+// drake178: GUI_RedMsg_Type
+/*
+; determines whether to use the first or the second of the two different warning message backgrounds (both of which are red, but slightly different and use a different font color)
+*/
+int16_t m_warn_type;
 
 // WZD dseg:CB54                                                 END:  ovr149  GENDRAW - Uninitialized Data ; 
 
@@ -345,7 +348,6 @@ int16_t GUI_RedMsg_Type;
 // drake178: GUI_Confirm_Dialog()
 int16_t Confirmation_Box(char * text_string)
 {
-
     int16_t choice;
     int16_t Text_Label_Index;
     int16_t hotkey_ESC;
@@ -353,38 +355,30 @@ int16_t Confirmation_Box(char * text_string)
     int16_t confirmation_button_yes;
     int16_t input_field_idx;
     int16_t Box_Height;
-
     int16_t paragraph_height;
     int16_t leave_screen;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Confirmation_Box(text_string = %s)\n", __FILE__, __LINE__, text_string);
-#endif
 
     Save_Alias_Colors();
 
     Set_Font_Colors_15(0, &COL_Dialog_Text[0]);
 
     Save_ScreenSeg();
-
  
     // RESOURCE.LBX, 0  "CONFMBAK", ""
-    confirmation_background_top_seg = LBX_Reload(resource_lbx_file, 0, _screen_seg);
+    confirmation_background_top_seg = LBX_Reload(resource_lbx_file__ovr149, 0, _screen_seg);
+
     // RESOURCE.LBX, 1  "CONFMBAK", ""
-    confirmation_background_bottom_seg = LBX_Reload_Next(resource_lbx_file, 1, _screen_seg);
+    confirmation_background_bottom_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 1, _screen_seg);
+
     // RESOURCE.LBX, 3  CONFMBUT    yes
-    confirmation_button_yes_seg = LBX_Reload_Next(resource_lbx_file, 3, _screen_seg);
+    confirmation_button_yes_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 3, _screen_seg);
+
     // RESOURCE.LBX, 4  CONFMBUT    no
-    confirmation_button_no_seg = LBX_Reload_Next(resource_lbx_file, 4, _screen_seg);
+    confirmation_button_no_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 4, _screen_seg);
 
     message_box_text = text_string;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: message_box_text: %s)\n", __FILE__, __LINE__, message_box_text);
-#endif
-
 
     Set_Font_Style(4, 4, 15, 0);
-
 
     paragraph_height = Get_Paragraph_Max_Height(166, text_string);
 
@@ -394,22 +388,18 @@ int16_t Confirmation_Box(char * text_string)
 
     Clear_Fields();
 
-    // confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_yes_seg, cnst_HOTKEY_Y_3, -1);
-    confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_yes_seg, 'Y', -1);
+    confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_yes_seg, str_hotkey_Y__ovr149[0], ST_UNDEFINED);
 
-    // confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_no_seg, cnst_HOTKEY_N_5, -1);
-    confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), cnst_ZeroString_5, confirmation_button_no_seg, 'N', -1);
+    confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_no_seg, str_hotkey_N__ovr149[0], ST_UNDEFINED);
 
-    // Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), cnst_ZeroString_5, -1);
-    Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), 0, -1);
+    Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), str_empty_string__ovr149[0], ST_UNDEFINED);
 
-    // hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc21, -1);
-    hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
+    hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED);
 
-    // TODO  Assign_Auto_Function(Confirmation_Box_Draw, 1);
-
+    Assign_Auto_Function(Confirmation_Box_Draw, 1);
 
     leave_screen = ST_FALSE;
+
     while(leave_screen == ST_FALSE)
     {
 
@@ -432,15 +422,11 @@ int16_t Confirmation_Box(char * text_string)
         PageFlip_FX();
     }
 
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
     Clear_Fields();
     Restore_Alias_Colors();
     Reset_Window();
     Restore_ScreenSeg();
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Confirmation_Box(text_string = %s)\n", __FILE__, __LINE__, text_string);
-#endif
 
     return choice;
 }
@@ -481,7 +467,7 @@ void Confirmation_Box_Draw(void)
 // drake178: GUI_WarningType1()
 void Warn1(char * msg)
 {
-    GUI_RedMsg_Type = 1;
+    m_warn_type = 1;
     Warn(msg);
 }
 
@@ -489,7 +475,7 @@ void Warn1(char * msg)
 // drake178: GUI_WarningType0()
 void Warn0(char * msg)
 {
-    GUI_RedMsg_Type = 0;
+    m_warn_type = 0;
     Warn(msg);
 }
 
@@ -508,10 +494,10 @@ void Warn(char * msg)
         // RESOURCE.LBX,  49  WARNBCK2    warning top
         // RESOURCE.LBX,  50  WARNBCK2    warning bottom
 
-        IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file, 38, _screen_seg);
-        IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file, 39, _screen_seg);
-        IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file, 49, _screen_seg);
-        IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file, 50, _screen_seg);
+        IMG_GUI_RedMessage1  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
+        IMG_GUI_RedMsg1Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
+        IMG_GUI_RedMessage2  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
+        IMG_GUI_RedMsg2Btm   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
 
         Save_Auto_Function();
 
@@ -533,11 +519,11 @@ void Warn(char * msg)
 
         message_box_y = ((200 - textbox_height) / 2);
 
-        Assign_Auto_Function(&Warn_Draw, 1);
+        Assign_Auto_Function(Warn_Draw, 1);
 
         UU_var3 = 0;
 
-        // TODO  SND_PlayClickSound();
+        Play_Standard_Click__STUB();
 
         Wait_For_Input();
 
@@ -562,7 +548,7 @@ void Warn_Draw(void)
 
     Set_Window(0, 0, SCREEN_XMAX, (message_box_y + max_para_height + 12));
 
-    if(GUI_RedMsg_Type == 0)
+    if(m_warn_type == 0)
     {
         Clipped_Draw(message_box_x, message_box_y, IMG_GUI_RedMessage1);
     }
@@ -573,7 +559,7 @@ void Warn_Draw(void)
 
     Reset_Window();
 
-    if(GUI_RedMsg_Type == 0)
+    if(m_warn_type == 0)
     {
         Set_Font_Colors_15(4, COL_Warning1);
     }
@@ -592,7 +578,7 @@ void Warn_Draw(void)
 
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 2);
 
-    if(GUI_RedMsg_Type == 0)
+    if(m_warn_type == 0)
     {
         FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), IMG_GUI_RedMsg1Btm);
     }
@@ -605,6 +591,20 @@ void Warn_Draw(void)
 
 
 // WZD o149p07
+// drake178: ¿ ?
+/*
+; displays a list selection dialog with the specified
+; title and items, with a separate button corresponding
+; to each one, that can be highlighted by mousing over
+; it or selected by clicking
+; returns the index of the selected item
+; BUG: uses two graphical button controls for
+; multi-page lists that are no longer in memory when
+; returning - doing a GUI page flip before clearing
+; them will cause a crash
+; WARNING: the drawing function expects the list of
+; items to be terminated by a zero string
+*/
 /*
     returns the index of the selection
 
@@ -616,20 +616,6 @@ IDK_ResurectHero_sBCC70
     calls with 'mutli page' TRUE and size of 6
 
 */
-/*
-        // ; displays a list selection dialog with the specified
-        // ; title and items, with a separate button corresponding
-        // ; to each one, that can be highlighted by mousing over
-        // ; it or selected by clicking
-        // ; returns the index of the selected item
-        // ; BUG: uses two graphical button controls for
-        // ; multi-page lists that are no longer in memory when
-        // ; returning - doing a GUI page flip before clearing
-        // ; them will cause a crash
-        // ; WARNING: the drawing function expects the list of
-        // ; items to be terminated by a zero string
-*/
-// int16_t Selection_Box(int16_t item_count, char * list_text[], int16_t multi_page, char * title_string)
 int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page, char * title_string)
 {
     int16_t selectbox_window;
@@ -638,7 +624,6 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
     int16_t Down_Arrow_Ctrl_Index;
     int16_t Up_Arrow_Ctrl_Index;
     int16_t leave_screen;
-
     int16_t itr;
     int16_t input_field_idx;
     int16_t x1;
@@ -646,59 +631,45 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
     int16_t x2;
     int16_t y2;
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Selection_Box()\n", __FILE__, __LINE__);
-#endif
-
-    // ; saves the anti-aliasing colors of each font color
-    // ; set to static variables starting at dseg:e800 (16
-    // ; color blocks + current colors + 3 default sets)
     Save_Alias_Colors();
 
     Copy_On_To_Off_Page();
+
     Copy_Off_To_Back();
 
-    // ; saves the first 64k of the LBX_Sandbox_Segment into
-    // ; pages 1-5 of the VGAFILEH EMS handle
-    // EMM_Sandbox2VGAFILEH()
     Save_ScreenSeg();
 
+    selectbd_left_seg = LBX_Reload(resource_lbx_file__ovr149, 5, _screen_seg);
 
-    selectbd_left_seg = LBX_Reload(resource_lbx_file, 5, _screen_seg);
+    selectbd_bottom_left_seg         = LBX_Reload_Next(resource_lbx_file__ovr149,  6, _screen_seg);
+    selectbd_top_seg                 = LBX_Reload_Next(resource_lbx_file__ovr149,  7, _screen_seg);
+    selectbd_bottom_seg              = LBX_Reload_Next(resource_lbx_file__ovr149,  9, _screen_seg);
+    selectbd_right_seg               = LBX_Reload_Next(resource_lbx_file__ovr149,  8, _screen_seg);
+    selectbd_bottom_right_seg        = LBX_Reload_Next(resource_lbx_file__ovr149, 10, _screen_seg);
+    selectbd_scroll_seg              = LBX_Reload_Next(resource_lbx_file__ovr149, 11, _screen_seg);
 
-    selectbd_bottom_left_seg         = LBX_Reload_Next(resource_lbx_file,  6, _screen_seg);
-    selectbd_top_seg                 = LBX_Reload_Next(resource_lbx_file,  7, _screen_seg);
-    selectbd_bottom_seg              = LBX_Reload_Next(resource_lbx_file,  9, _screen_seg);
-    selectbd_right_seg               = LBX_Reload_Next(resource_lbx_file,  8, _screen_seg);
-    selectbd_bottom_right_seg        = LBX_Reload_Next(resource_lbx_file, 10, _screen_seg);
-    selectbd_scroll_seg              = LBX_Reload_Next(resource_lbx_file, 11, _screen_seg);
+    selectbk_top_arrow_seg           = LBX_Reload_Next(resource_lbx_file__ovr149, 32, _screen_seg);
+    selectbk_bottom_arrow_seg        = LBX_Reload_Next(resource_lbx_file__ovr149, 33, _screen_seg);
+    selectbk_scroll_top_seg          = LBX_Reload_Next(resource_lbx_file__ovr149, 34, _screen_seg);
+    selectbk_scroll_bottom_seg       = LBX_Reload_Next(resource_lbx_file__ovr149, 35, _screen_seg);
+    selectbk_scroll_locked_up_seg    = LBX_Reload_Next(resource_lbx_file__ovr149, 36, _screen_seg);
+    selectbk_scroll_locked_down_seg  = LBX_Reload_Next(resource_lbx_file__ovr149, 37, _screen_seg);
 
-    selectbk_top_arrow_seg           = LBX_Reload_Next(resource_lbx_file, 32, _screen_seg);
-    selectbk_bottom_arrow_seg        = LBX_Reload_Next(resource_lbx_file, 33, _screen_seg);
-    selectbk_scroll_top_seg          = LBX_Reload_Next(resource_lbx_file, 34, _screen_seg);
-    selectbk_scroll_bottom_seg       = LBX_Reload_Next(resource_lbx_file, 35, _screen_seg);
-    selectbk_scroll_locked_up_seg    = LBX_Reload_Next(resource_lbx_file, 36, _screen_seg);
-    selectbk_scroll_locked_down_seg  = LBX_Reload_Next(resource_lbx_file, 37, _screen_seg);
-
-    /*
-        12  SELECTBK    button 1
-        13  SELECTBK    button 2
-        14  SELECTBK    button 3
-        15  SELECTBK    button 4
-        16  SELECTBK    button 5
-
-        22  SELECTBK    button 1
-        23  SELECTBK    button 2
-        24  SELECTBK    button 3
-        25  SELECTBK    button 4
-        26  SELECTBK    button 5
-    */
+    // RESOURCE.LBX, 012  SELECTBK    button 1
+    // RESOURCE.LBX, 013  SELECTBK    button 2
+    // RESOURCE.LBX, 014  SELECTBK    button 3
+    // RESOURCE.LBX, 015  SELECTBK    button 4
+    // RESOURCE.LBX, 016  SELECTBK    button 5
+    // RESOURCE.LBX, 022  SELECTBK    button 1
+    // RESOURCE.LBX, 023  SELECTBK    button 2
+    // RESOURCE.LBX, 024  SELECTBK    button 3
+    // RESOURCE.LBX, 025  SELECTBK    button 4
+    // RESOURCE.LBX, 026  SELECTBK    button 5
     for(itr = 0; itr < 5; itr++)
     {
-        selectbk_button_12to16_seg[itr] = LBX_Reload_Next(resource_lbx_file, (itr + 12), _screen_seg);
+        selectbk_button_12to16_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (itr + 12), _screen_seg);
 
-        selectbk_button_22to26_seg[itr] = LBX_Reload_Next(resource_lbx_file, (itr + 22), _screen_seg);
+        selectbk_button_22to26_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (itr + 22), _screen_seg);
     }
 
     for(itr = 5; itr < 10; itr++)
@@ -707,8 +678,6 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
         selectbk_button_22to26_seg[itr] = selectbk_button_22to26_seg[itr - 5];
     }
 
-
-
     selectbox_multi = multi_page;
     selectbox_items = item_count;
     selectbox_list = list_text;
@@ -716,21 +685,11 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
     selectbox_first_item = 0;
     selectbox_highlight_item = 0;
 
-
     Selection_Box_Coords(item_count, selectbox_list, title_string);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: selectbox_x1: %d\n", __FILE__, __LINE__, selectbox_x1);
-//     dbg_prn("DEBUG: [%s, %d]: selectbox_y1: %d\n", __FILE__, __LINE__, selectbox_y1);
-//     dbg_prn("DEBUG: [%s, %d]: selectbox_x2: %d\n", __FILE__, __LINE__, selectbox_x2);
-//     dbg_prn("DEBUG: [%s, %d]: selectbox_y2: %d\n", __FILE__, __LINE__, selectbox_y2);
-// #endif
 
-
-    // TODO  Assign_Auto_Function(Selection_Box_Draw, 1);
-
+    Assign_Auto_Function(Selection_Box_Draw, 1);
 
     leave_screen = ST_FALSE;
-
 
     Up_Arrow_Ctrl_Index = INVALID_FIELD;
     Down_Arrow_Ctrl_Index = INVALID_FIELD;
@@ -741,8 +700,6 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
     }
 
     hotkey_ESC = INVALID_FIELD;
-
-
 
     while(leave_screen == ST_FALSE)
     {
@@ -786,44 +743,27 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
             selectbox_fields[itr] = INVALID_FIELD;
         }
 
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: selectbox_items: %d\n", __FILE__, __LINE__, selectbox_items);
-    dbg_prn("DEBUG: [%s, %d]: GUI_ListSel_Count: %d\n", __FILE__, __LINE__, GUI_ListSel_Count);
-#endif
-
         for(itr = 0; (itr < selectbox_items) && (itr < GUI_ListSel_Count); itr++)
         {
             if(selectbox_multi == ST_TRUE)
             {
-                // DLOG("(selectbox_multi == ST_TRUE)");
                 y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (itr + 1));
                 x2 = selectbox_x2 - FLIC_Get_Width(selectbd_right_seg);
                 y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg);
 
-                // selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2,  cnst_ZeroString_5, -1);
-                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, 0, -1);
+                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
             }
             else
             {
-                // DLOG("(selectbox_multi != ST_TRUE)");
                 y2 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * (itr + 1));
                 x2 = selectbox_x2 - FLIC_Get_Width(selectbd_right_seg);
                 y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg);
 
-                // selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2,  cnst_ZeroString_5, -1);
-                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, 0, -1);
+                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
             }
         }
-
-#ifdef STU_DEBUG
-        for(itr = 0; (itr < selectbox_items) && (itr < GUI_ListSel_Count); itr++)
-        {
-            dbg_prn("DEBUG: [%s, %d]: selectbox_fields[%d]: %d\n", __FILE__, __LINE__, itr, selectbox_fields[itr]);
-        }
-#endif
 
         if(selectbox_multi == ST_TRUE)
         {
@@ -832,10 +772,10 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
             {
 // mov     ax, -1
 // push    ax                              ; help
-// mov     ax, offset cnst_ZeroString_5
+// mov     ax, offset str_empty_string__ovr149
 // push    ax                              ; hotkey
 // push    [selectbk_top_arrow_seg]        ; pict_seg
-// mov     ax, offset cnst_ZeroString_5
+// mov     ax, offset str_empty_string__ovr149
 // push    ax                              ; string
 // push    [selectbd_top_seg]              ; pict_seg
 // call    FLIC_Get_Height                 ; returns the draw height of an LBX image
@@ -857,10 +797,10 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
             {
 // mov     ax, -1
 // push    ax                              ; help
-// mov     ax, offset cnst_ZeroString_5
+// mov     ax, offset str_empty_string__ovr149
 // push    ax                              ; hotkey
 // push    [selectbk_bottom_arrow_seg]     ; pict_seg
-// mov     ax, offset cnst_ZeroString_5
+// mov     ax, offset str_empty_string__ovr149
 // push    ax                              ; string
 // push    [selectbd_bottom_seg]           ; pict_seg
 // call    FLIC_Get_Height                 ; returns the draw height of an LBX image
@@ -889,12 +829,9 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 
         }
 
+        selectbox_window = Add_Hidden_Field(selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, str_empty_string__ovr149[0], ST_UNDEFINED);
 
-        // selectbox_window = Add_Hidden_Field(selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, cnst_ZeroString_5, -1);
-        selectbox_window = Add_Hidden_Field(selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, 0, -1);
-
-        // hotkey_ESC = Add_Hidden_Field(0, 0, 319, 199, cnst_HOTKEY_Esc21, -1);
-        hotkey_ESC = Add_Hidden_Field(0, 0, 319, 199, '\x1B', -1);
+        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED);
 
         PageFlip_FX();
 
@@ -902,24 +839,11 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 
 
 
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
 
     Restore_Alias_Colors();
 
-    // ; loads pages 1-5 of the VGAFILEH EMS handle into the
-    // ; first 64k of the LBX_Sandbox_Segment
-    // ; BUG: restoring the original sandbox removes the
-    // ; images of the up and down arrows from memory - these
-    // ; are needed for the standard GUI redraw functions,
-    // ; and will cause a crash if the page is flipped before
-    // ; the GUI is cleared
-    // EMM_VGAFILEH2Sandbox();
     Restore_ScreenSeg();
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Selection_Box()\n", __FILE__, __LINE__);
-#endif
 
     return list_select_idx;
 }
@@ -939,20 +863,11 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 void Selection_Box_Draw(void)
 {
     int16_t scanned_field;
-
     int16_t itr_selectbox_items;
-
     int16_t x_start;  // DNE in Dasm
     int16_t y_start;  // DNE in Dasm
-    
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Selection_Box_Draw()\n", __FILE__, __LINE__);
-#endif
 
     scanned_field = Scan_Input();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: scanned_field: %d\n", __FILE__, __LINE__, scanned_field);
-#endif
 
     if( (scanned_field > GUI_ListSel_Count) || (scanned_field > selectbox_items) )
     {
@@ -981,7 +896,6 @@ void Selection_Box_Draw(void)
     Set_Window(selectbox_x1, selectbox_y1, (selectbox_x2 - 5), selectbox_y2);
     if(selectbox_multi == ST_FALSE)
     {
-        DLOG("(selectbox_multi == ST_FALSE)");
         itr_selectbox_items = 0;
         while((selectbox_items - 1) >= itr_selectbox_items)
         {
@@ -1028,7 +942,6 @@ void Selection_Box_Draw(void)
     }
     else
     {
-        DLOG("(selectbox_multi != ST_FALSE)");
         itr_selectbox_items = 0;
         while((selectbox_items - 1) >= itr_selectbox_items)
         {
@@ -1142,12 +1055,6 @@ void Selection_Box_Draw(void)
         END: Draw Button Text
     */
 
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Selection_Box_Draw()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o149p09
@@ -1156,13 +1063,8 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
     int16_t title_string_width;
     int16_t selectbox_height;
     int16_t selectbox_width;
-
     int16_t horizontal_space;
     int16_t itr_GUI_ListSel_Count;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Selection_Box_Coords(item_count = %d, list_text[0] = %s, title_string = %s)\n", __FILE__, __LINE__, item_count, list_text[0], title_string);
-#endif
 
     GUI_ListSel_Count = 0;
 
@@ -1179,10 +1081,6 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
 
     for(itr_GUI_ListSel_Count = 0; itr_GUI_ListSel_Count < GUI_ListSel_Count; itr_GUI_ListSel_Count++)
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: list_text[itr_GUI_ListSel_Count]: %s\n", __FILE__, __LINE__, list_text[itr_GUI_ListSel_Count]);
-    dbg_prn("DEBUG: [%s, %d]: Get_String_Width(list_text[itr_GUI_ListSel_Count]): %d\n", __FILE__, __LINE__, Get_String_Width(list_text[itr_GUI_ListSel_Count]));
-#endif
         if(Get_String_Width(list_text[itr_GUI_ListSel_Count]) > horizontal_space)
         {
             horizontal_space = Get_String_Width(list_text[itr_GUI_ListSel_Count]);
@@ -1196,9 +1094,6 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
     }
 
     title_string_width = Get_String_Width(title_string);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: title_string_width: %d\n", __FILE__, __LINE__, title_string_width);
-#endif
 
     if(title_string_width > horizontal_space)
     {
@@ -1209,45 +1104,11 @@ void Selection_Box_Coords(int16_t item_count, char ** list_text, char * title_st
 
     selectbox_width = FLIC_Get_Width(selectbd_left_seg) + horizontal_space + FLIC_Get_Width(selectbd_right_seg);
     selectbox_height = FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_button_12to16_seg[0]) * item_count) + FLIC_Get_Height(selectbd_bottom_seg);
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: selectbox_width: %d\n", __FILE__, __LINE__, selectbox_width);
-    dbg_prn("DEBUG: [%s, %d]: selectbox_height: %d\n", __FILE__, __LINE__, selectbox_height);
-#endif
-
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 709]: title_string_width: 75
-
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 722]: selectbox_width: 120
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 723]: selectbox_height: 158
-
 
     selectbox_x1 = ((SCREEN_WIDTH - selectbox_width) / 2);
     selectbox_y1 = ((SCREEN_HEIGHT - selectbox_height) / 2);
     selectbox_x2 = selectbox_x1 + selectbox_width - 1;
     selectbox_y2 = selectbox_y1 + selectbox_height - 1;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: selectbox_x1: %d\n", __FILE__, __LINE__, selectbox_x1);
-    dbg_prn("DEBUG: [%s, %d]: selectbox_y1: %d\n", __FILE__, __LINE__, selectbox_y1);
-    dbg_prn("DEBUG: [%s, %d]: selectbox_x2: %d\n", __FILE__, __LINE__, selectbox_x2);
-    dbg_prn("DEBUG: [%s, %d]: selectbox_y2: %d\n", __FILE__, __LINE__, selectbox_y2);
-#endif
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 320]: selectbox_x1: 101
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 321]: selectbox_y1: 21
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 322]: selectbox_x2: 217
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 323]: selectbox_y2: 178
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 732]: selectbox_x1: 100
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 733]: selectbox_y1: 21
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 734]: selectbox_x2: 219
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 735]: selectbox_y2: 178
-// ~ {86, 22, 233, 179}
-// w: 147, h: 157
-// DEBUG: [C:\STU\devel\ReMoM\src\GENDRAW.C, 709]: title_string_width: 75
-// title x1 106 x2 213 w 107
-// 17 characters  avg 6.29412 pixels per
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Selection_Box_Coords()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1268,44 +1129,44 @@ void Notify_Load(int16_t type, SAMB_ptr pict1)
 // IDGI        farpokew(_screen_seg, SAMB.used, 1);
 // IDGI    }
 
-// RESOURCE.LBX,  40  G_NOTIFY    green notify
-// RESOURCE.LBX,  41  G_NOTIFY    
-// RESOURCE.LBX,  42  G_NOTIFY    
-// RESOURCE.LBX,  43  F_NOTIFY    red notify
-// RESOURCE.LBX,  44  F_NOTIFY    pict box
-// RESOURCE.LBX,  45  F_NOTIFY    gem box
-// RESOURCE.LBX,  46  B_NOTIFY    green notify
-// RESOURCE.LBX,  47  B_NOTIFY    pict box
-// RESOURCE.LBX,  48  B_NOTIFY    gem box
-// RESOURCE.LBX,  56  BRNOTIFY    
-// RESOURCE.LBX,  57  BRNOTIFY    
-// RESOURCE.LBX,  58  BRNOTIFY    
+    // RESOURCE.LBX,  040  G_NOTIFY    green notify
+    // RESOURCE.LBX,  041  G_NOTIFY    
+    // RESOURCE.LBX,  042  G_NOTIFY    
+    // RESOURCE.LBX,  043  F_NOTIFY    red notify
+    // RESOURCE.LBX,  044  F_NOTIFY    pict box
+    // RESOURCE.LBX,  045  F_NOTIFY    gem box
+    // RESOURCE.LBX,  046  B_NOTIFY    green notify
+    // RESOURCE.LBX,  047  B_NOTIFY    pict box
+    // RESOURCE.LBX,  048  B_NOTIFY    gem box
+    // RESOURCE.LBX,  056  BRNOTIFY    
+    // RESOURCE.LBX,  057  BRNOTIFY    
+    // RESOURCE.LBX,  058  BRNOTIFY    
 
     switch(type)
     {
         case 0:
         {
-            notify_seg[0]          = LBX_Reload_Next(resource_lbx_file, 46, _screen_seg);
-            notify_pict_box_seg[0] = LBX_Reload_Next(resource_lbx_file, 47, _screen_seg);
-            notify_gem_box_seg[0]  = LBX_Reload_Next(resource_lbx_file, 48, _screen_seg);
+            notify_seg[0]          = LBX_Reload_Next(resource_lbx_file__ovr149, 46, _screen_seg);
+            notify_pict_box_seg[0] = LBX_Reload_Next(resource_lbx_file__ovr149, 47, _screen_seg);
+            notify_gem_box_seg[0]  = LBX_Reload_Next(resource_lbx_file__ovr149, 48, _screen_seg);
         } break;
         case 1:
         {
-            notify_seg[1]          = LBX_Reload_Next(resource_lbx_file, 43, _screen_seg);
-            notify_pict_box_seg[1] = LBX_Reload_Next(resource_lbx_file, 44, _screen_seg);
-            notify_gem_box_seg[1]  = LBX_Reload_Next(resource_lbx_file, 45, _screen_seg);
+            notify_seg[1]          = LBX_Reload_Next(resource_lbx_file__ovr149, 43, _screen_seg);
+            notify_pict_box_seg[1] = LBX_Reload_Next(resource_lbx_file__ovr149, 44, _screen_seg);
+            notify_gem_box_seg[1]  = LBX_Reload_Next(resource_lbx_file__ovr149, 45, _screen_seg);
         } break;
         case 2:
         {
-            notify_seg[2]          = LBX_Reload_Next(resource_lbx_file, 40, _screen_seg);
-            notify_pict_box_seg[2] = LBX_Reload_Next(resource_lbx_file, 41, _screen_seg);
-            notify_gem_box_seg[2]  = LBX_Reload_Next(resource_lbx_file, 42, _screen_seg);
+            notify_seg[2]          = LBX_Reload_Next(resource_lbx_file__ovr149, 40, _screen_seg);
+            notify_pict_box_seg[2] = LBX_Reload_Next(resource_lbx_file__ovr149, 41, _screen_seg);
+            notify_gem_box_seg[2]  = LBX_Reload_Next(resource_lbx_file__ovr149, 42, _screen_seg);
         } break;
         case 3:
         {
-            notify_seg[3]          = LBX_Reload_Next(resource_lbx_file, 56, _screen_seg);
-            notify_pict_box_seg[3] = LBX_Reload_Next(resource_lbx_file, 57, _screen_seg);
-            notify_gem_box_seg[3]  = LBX_Reload_Next(resource_lbx_file, 58, _screen_seg);
+            notify_seg[3]          = LBX_Reload_Next(resource_lbx_file__ovr149, 56, _screen_seg);
+            notify_pict_box_seg[3] = LBX_Reload_Next(resource_lbx_file__ovr149, 57, _screen_seg);
+            notify_gem_box_seg[3]  = LBX_Reload_Next(resource_lbx_file__ovr149, 58, _screen_seg);
         } break;
     }
 
@@ -1317,7 +1178,7 @@ void Notify_Load(int16_t type, SAMB_ptr pict1)
 
     for(itr = 0; itr < 5; itr++)
     {
-        notify_magic_picts_seg[itr] = LBX_Reload_Next(resource_lbx_file, (51 + itr), _screen_seg);
+        notify_magic_picts_seg[itr] = LBX_Reload_Next(resource_lbx_file__ovr149, (51 + itr), _screen_seg);
     }
 
 }
@@ -2055,6 +1916,13 @@ void ITEM_ResetViewGrow(void)
 
 // WZD o149p21
 // drake178: EMM_Sandbox2VGAFILEH
+/*
+; saves the first 64k of the LBX_Sandbox_Segment into
+; pages 1-5 of the VGAFILEH EMS handle
+*/
+/*
+
+*/
 void Save_ScreenSeg(void)
 {
 // ovr159
@@ -2094,6 +1962,18 @@ void Save_ScreenSeg(void)
 
 // WZD o149p22
 // drake178: EMM_VGAFILEH2Sandbox
+/*
+; loads pages 1-5 of the VGAFILEH EMS handle into the
+; first 64k of the LBX_Sandbox_Segment
+; BUG: restoring the original sandbox removes the
+; images of the up and down arrows from memory - these
+; are needed for the standard GUI redraw functions,
+; and will cause a crash if the page is flipped before
+; the GUI is cleared
+*/
+/*
+
+*/
 void Restore_ScreenSeg(void)
 {
 // ovr159

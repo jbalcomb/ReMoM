@@ -1242,14 +1242,18 @@ uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data
 // WZD  dseg:9408 00 00 00 00 00 00 00 00 00 00 00 00             notify_magic_picts_seg dw 6 dup(0)      ; DATA XREF: Notify_Load+17Bw ...
 // WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
 // WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
-// WZD  dseg:9414 00 00                                           gsa_SOUNDFX_2_SFX_Left_Click dw 0       ; DATA XREF: SND_LeftClickSound:loc_14809r ...
-// WZD  dseg:9414                                                                                         ; single-loaded audio file
+
+// WZD  dseg:9414
+SAMB_ptr snd_left_button_click;
+
 // WZD  dseg:9416 00                                              db    0
 // WZD  dseg:9417 00                                              db    0
 // WZD  dseg:9418 00                                              db    0
 // WZD  dseg:9419 00                                              db    0
-// WZD  dseg:941A 00 00                                           gsa_SOUNDFX_0_SFX_Standard_Click dw 0   ; DATA XREF: SND_PlayClickSound:loc_1481Fr ...
-// WZD  dseg:941A                                                                                         ; single-loaded audio file
+
+// WZD  dseg:941A
+SAMB_ptr snd_standard_button_click;
+
 // WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
 // WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
 // WZD  dseg:9421 00 00 00 00 00                                  TF_Unk_40_YCoords db 5 dup(0)                             ; 0

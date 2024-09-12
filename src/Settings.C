@@ -595,9 +595,9 @@ void Set_Default_Game_Settings(void)
 {
     int16_t itr;
 
-    magic_set.SoundFX = ST_TRUE;
-    magic_set.BG_Music = ST_TRUE;
-    magic_set.Event_Music = ST_TRUE;
+    magic_set.sound_effects = ST_TRUE;
+    magic_set.background_music = ST_TRUE;
+    magic_set.event_music = ST_TRUE;
     magic_set.Enemy_Moves = ST_TRUE;
     magic_set.Enemy_Spells = ST_TRUE;
     magic_set.Random_Events = ST_TRUE;
@@ -620,8 +620,8 @@ void Set_Default_Game_Settings(void)
     magic_set.MagicPower = gom_Normal;
     magic_set.LandSize = gol_Medium;
 
-    magic_set.Input_Type = 1;  // ¿ Keyboard & Mouse ?
-    magic_set.Snd_Channels = 2;
+    magic_set.input_type = 1;  // ¿ Keyboard & Mouse ?
+    magic_set.sound_channels = 2;
 
     for(itr = 0; itr < NUM_SAVES; itr++)
     {

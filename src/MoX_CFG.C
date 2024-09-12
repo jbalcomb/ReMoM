@@ -8,7 +8,7 @@
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
 
 
-uint8_t _config_mom[20];
+uint8_t _config_mom[sizeof(struct s_CONFIG_MOM)];
 
 struct s_CONFIG_MOM config_mom;
 

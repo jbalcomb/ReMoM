@@ -200,7 +200,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == main_cancel_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Main_Screen;
             leave_screen = ST_UNDEFINED;
         }
@@ -208,7 +208,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == roadbuild_ok_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             if(m_turns_to_build_road > 0)
             {
                 Clear_Fields();
@@ -228,7 +228,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == _main_map_grid_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             target_wx = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
             target_wy = (_map_y + _main_map_grid_y);
             Reset_Map_Draw();
@@ -241,7 +241,7 @@ void Road_Build_Screen(void)
             /*
                 Main_Screen()
                 BEGIN: Reduced Map Grid Field
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
                 _prev_world_x = _minimap_grid_x + target_world_x;
                 _prev_world_y = _minimap_grid_y + target_world_y;
@@ -249,7 +249,7 @@ void Road_Build_Screen(void)
                 _map_y = _prev_world_y;
                 Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             */
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Reduced_Map_Coords(&target_wx, &target_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = (_minimap_grid_x + target_wx);
             _prev_world_y = (_minimap_grid_y + target_wy);
@@ -600,7 +600,7 @@ void Road_Build_Path(int16_t x2, int16_t y2)
                 SETMIN(turns_to_build_road, 1);
             }
 
-            if((m_turns_to_build_road + turns_to_build_road) > 120)  /* ¿ MAX_MOVE_PATH_LENGTH = (2 * WORLD_WIDTH) ? */
+            if((m_turns_to_build_road + turns_to_build_road) > 120)  /* ï¿½ MAX_MOVE_PATH_LENGTH = (2 * WORLD_WIDTH) ? */
             {
                 m_road_path_length = itr;
                 break;

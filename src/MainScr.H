@@ -330,6 +330,27 @@ void Main_Screen_Draw(void);
 // WZD o58p02
 void Set_Mouse_List_Default(void);
 
+// WZD o58p03
+void o58p03_empty_function(void);
+
+// WZD o58p04
+void Falsify_CRP_OVL_Obstacle_Var1(void);
+
+// WZD o58p05
+void Increment_Background_Music(void);
+
+// WZD o58p06
+int16_t Get_Background_Music(void);
+
+// WZD o58p07
+void Play_Background_Music(void);
+
+// WZD o58p08
+// sub_51A1A()
+
+// WZD o58p09
+// sub_51AA0()
+
 
 
 /*

@@ -235,7 +235,7 @@ void Item_Screen(void)
             ( (input_field_idx == hotkey_idx_ESC)                      && (m_cursor_item_idx == ST_UNDEFINED) )
         )
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
         }
 
@@ -245,7 +245,7 @@ void Item_Screen(void)
         */
         if(input_field_idx == m_item_screen_alchemy_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Alchemy_Popup((_item_window_start_x + 63), (_item_window_start_y + 58));
             Assign_Auto_Function(Item_Screen_Draw_Do, 1);
             Item_Screen_Load();
@@ -273,7 +273,7 @@ void Item_Screen(void)
                 */
                 if(-(m_item_screen_hero_fields[itr_hero_slots]) == input_field_idx)
                 {
-                    // TODO  RP_SND_LeftClickSound2();
+                    Play_Left_Click__DUPE();
                     Deactivate_Help_List();
                     Item_Window_Picture_Coords(itr_hero_slots, &portrait_x1, &portrait_y1, &portrait_x2, &portrait_y2);
                     unit_idx = _players[_human_player_idx].Heroes[itr_hero_slots].unit_idx;
@@ -306,7 +306,7 @@ void Item_Screen(void)
                         if(_players[_human_player_idx].Heroes[itr_hero_slots].Items[itr_item_slots] > -1)
                         {
                             Deactivate_Help_List();
-                            // TODO  RP_SND_LeftClickSound2();
+                            Play_Left_Click__DUPE();
                             item_slot_x = (_item_window_start_x + 54 + (((itr_hero_slots % 2) * 136) + (itr_item_slots * 29)));
                             item_slot_y = (_item_window_start_y + ((itr_hero_slots / 2) * 28));
                             if(m_cursor_item_idx != ST_UNDEFINED)
@@ -340,7 +340,7 @@ void Item_Screen(void)
                 {
                     if(_players[_human_player_idx].Vault_Items[itr_vault_item_slots] > -1)
                     {
-                        // TODO  RP_SND_LeftClickSound2();
+                        Play_Left_Click__DUPE();
                         Deactivate_Help_List();
                         if(m_cursor_item_idx != ST_UNDEFINED)
                         {
@@ -371,7 +371,7 @@ void Item_Screen(void)
                 {
                     if(m_item_screen_hero_item_fields[itr_hero_slots][itr_item_slots] == input_field_idx)
                     {
-                        // TODO  SND_LeftClickSound();
+                        Play_Left_Click__STUB();
                         Deactivate_Help_List();
                         Move_Item(itr_hero_slots, itr_item_slots);
                         Assign_Auto_Function(Item_Screen_Draw_Do, 1);
@@ -391,7 +391,7 @@ void Item_Screen(void)
             {
                 if(m_item_screen_vault_item_fields[itr_vault_item_slots] == input_field_idx)
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     Deactivate_Help_List();
                     Move_Item(VAULT_HERO_SLOT_IDX, itr_vault_item_slots);
                     Assign_Auto_Function(Item_Screen_Draw_Do, 1);
@@ -411,7 +411,7 @@ void Item_Screen(void)
                 if(m_cursor_item_idx > -1)
                 {
                     Deactivate_Auto_Function();
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     Deactivate_Help_List();
                     Destroy_Item();
                     Deactivate_Help_List();

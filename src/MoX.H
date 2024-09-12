@@ -80,10 +80,10 @@ void FLIC_Reset_CurrentFrame(SAMB_ptr p_FLIC_Header);
 int16_t FLIC_Get_CurrentFrame(SAMB_ptr p_FLIC_Header);
 // WZD s30p17
 int16_t FLIC_Get_FrameCount(SAMB_ptr p_FLIC_Header);
-// // WZD s30p18
-// int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header);
-// // WZD s30p19
-// int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
+// WZD s30p18
+int16_t FLIC_Get_Width(SAMB_ptr p_FLIC_Header);
+// WZD s30p19
+int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 // // WZD s30p20
 // // VGA_WndDrawRotateImg()
 // // WZD s30p21
@@ -288,6 +288,8 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "SETTLE.H"
 #include "special.H"
 #include "Spellbook.H"
+#include "SOUND.H"
+#include "SPLMASTR.H"
 #include "Summary.H"
 #include "Terrain.H"
 #include "TerrType.H"

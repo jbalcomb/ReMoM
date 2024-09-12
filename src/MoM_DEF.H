@@ -66,6 +66,8 @@
 #define NUM_RACES                  14
 #define NUM_HEROES                  6   // "Hero Slots"
 #define NUM_HERO_TYPES             35
+#define MIN_HERO_TYPE               0
+#define MAX_HERO_TYPE              34
 #define NUM_TOWERS                  6
 #define NUM_FORTRESSES              6
 #define NUM_NODES                  30
@@ -81,6 +83,7 @@
 
 #define NUM_HERO_SLOTS              6
 #define NUM_HERO_ITEMS              3
+#define NUM_HERO_ITEM_SLOTS         3
 #define NUM_VAULT_ITEMS             4
 #define NUM_VAULT_ITEM_SLOTS        4
 

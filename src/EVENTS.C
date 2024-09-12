@@ -1381,9 +1381,9 @@ int16_t Any_Overland_Enchantments(void)
 // drake178: EVNT_ShowMessage()
 void Show_Event_Message(void)
 {
-    SAMB_ptr Sound_Data_Seg;
+    SAMB_ptr sound_seg;
     SAMB_ptr m_event_display_seg;
-    int16_t IDK;  // _SI_
+    int16_t event_music_num;  // _SI_
 
     if(
         (m_event_player_idx != 99)
@@ -1396,7 +1396,7 @@ void Show_Event_Message(void)
         return;
     }
 
-    // TODO  SND_Silence();
+    // TODO  Stop_All_Sounds__STUB();
     Allocate_Reduced_Map();
     Set_Draw_Active_Stack_Always();
     Set_Unit_Draw_Priority();
@@ -1414,16 +1414,16 @@ void Show_Event_Message(void)
 
     Set_Input_Delay(1);
 
-    if(magic_set.Event_Music == ST_TRUE)
+    if(magic_set.event_music == ST_TRUE)
     {
 
         if(m_event_good_array[m_current_event] == ST_TRUE)
         {
-            IDK = MUSIC_Events;
+            event_music_num = MUSIC_Events;
         }
         else
         {
-            IDK = MUSIC_Bad_Event;
+            event_music_num = MUSIC_Bad_Event;
         }
 
         if(
@@ -1432,7 +1432,7 @@ void Show_Event_Message(void)
             (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] == 0)
         )
         {
-            IDK = MUSIC_Bad_Event;
+            event_music_num = MUSIC_Bad_Event;
         }
 
         if(
@@ -1441,11 +1441,11 @@ void Show_Event_Message(void)
             (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] == 0)
         )
         {
-            IDK = MUSIC_Bad_Event;
+            event_music_num = MUSIC_Bad_Event;
         }
 
-        Sound_Data_Seg = LBX_Reload(music_lbx_file__ovr081, IDK, SND_Music_Segment);
-        // TODO  SND_PlayFile(Sound_Data_Seg);
+        sound_seg = LBX_Reload(music_lbx_file__ovr081, event_music_num, SND_Music_Segment);
+        Play_Sound__STUB(sound_seg);
 
     }
 
@@ -1459,7 +1459,7 @@ void Show_Event_Message(void)
 
     Update_Remap_Gray_Palette();
 
-    // TODO  SND_PlayBkgrndTrack();
+    Play_Background_Music();
 
     Allocate_Reduced_Map();
 
@@ -1666,6 +1666,87 @@ void Get_Event_Message(void)
 */
 int16_t Get_Event_Victim(int16_t event_type)
 {
+    int16_t wizard_power[NUM_PLAYERS];
+    int16_t In_RNG_Range;
+    int16_t victim_idx;
+    int16_t Weights_Remainder;
+    int16_t itr;  // _SI_
+    int16_t IDK;  // _DI_
+
+    for(itr = 0; itr < NUM_PLAYERS; itr++)
+    {
+        wizard_power[itr] = 0;
+    }
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+        wizard_power[itr] = (_players[itr].Astr.Magic_Power + _players[itr].Astr.Spell_Research + _players[itr].Astr.Army_Strength);
+    }
+
+    if(event_type == ST_TRUE)
+    {
+        for(itr = 0; itr < _num_players; itr++)
+        {
+            wizard_power[itr] = (600 - wizard_power[itr]);
+            if(wizard_power[itr] < 1)
+            {
+                wizard_power[itr] = 0;
+            }
+        }
+    }
+
+    In_RNG_Range = ST_FALSE;
+
+    while(In_RNG_Range == ST_FALSE)
+    {
+        IDK = 0;
+
+        for(itr = 0; itr < _num_players; itr++)
+        {
+            IDK += wizard_power[itr];
+        }
+
+        if(IDK > 500)
+        {
+            for(itr = 0; itr < _num_players; itr++)
+            {
+                wizard_power[itr] = (wizard_power[itr] / 2);
+            }
+        }
+        else
+        {
+            In_RNG_Range = ST_TRUE;
+        }
+
+    }
+
+    if(IDK < 1)
+    {
+        return ST_UNDEFINED;
+    }
+
+    Weights_Remainder = (Random(IDK) - 1);
+
+    victim_idx = HUMAN_PLAYER_IDX;
+
+    while(Weights_Remainder >= 0)
+    {
+
+        if((_num_players - 1) <= victim_idx)
+        {
+            break;
+        }
+
+        Weights_Remainder -= wizard_power[victim_idx];
+
+        if(Weights_Remainder >= 0)
+        {
+            victim_idx++;
+        }
+
+    }
+
+    return victim_idx;
 
 }
 
@@ -1684,5 +1765,42 @@ int16_t Get_Event_Victim(int16_t event_type)
 */
 int16_t Pick_Random_City(int16_t player_idx)
 {
+    int16_t city_idx;
+    int16_t itr_cities;
+    int16_t IDK;  // _DI_
+
+    if(_cities < 1)
+    {
+        return ST_UNDEFINED;
+    }
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        city_idx = (Random(_cities) - 1);
+
+        IDK = ST_UNDEFINED;
+
+        for(itr_cities = 0; ((itr_cities < _cities) && (IDK == ST_UNDEFINED)); itr_cities++)
+        {
+
+            if(_CITIES[city_idx].owner_idx == player_idx)
+            {
+                IDK = city_idx;
+            }
+
+            if(IDK != ST_UNDEFINED)
+            {
+                if(TBL_Unrest[_players[player_idx].capital_race][_CITIES[city_idx].race] > 1)
+                {
+                    IDK = ST_UNDEFINED;
+                }
+            }
+
+            city_idx = ((city_idx + 1) % _cities);
+
+        }
+
+    }
 
 }

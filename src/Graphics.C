@@ -586,7 +586,25 @@ void Gradient_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t fill_
 // drake178: DOS_PrintString()
 // MoO2  
 // 1oom
-// DOS_PrintString
+void DOS_PrintString__STUB(char * string)
+{
+// string= word ptr  6
+// 
+// _SI_string = si
+// push    bp
+// mov     bp, sp
+// push    _SI_string
+// 
+// mov     _SI_string, [bp+string]
+// 
+// mov     dx, [bp+string]
+// mov     ah, 9
+// int     21h                             ; DOS - PRINT STRING
+//                                         ; DS:DX -> string terminated by "$"
+// pop     _SI_string
+// pop     bp
+// retf
+}
 
 
 

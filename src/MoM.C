@@ -25,11 +25,13 @@ void TST_Load_SAVE_GAM(void);
 // MoO2 Module: MOX2
 void Screen_Control(void)
 {
+    int16_t prev__Settings_BG_Music;
+
     int quit_flag;
 
     quit_flag = ST_FALSE;
 
-    while (quit_flag == ST_FALSE)
+    while(quit_flag == ST_FALSE)
     {
 
         Clear_Fields();
@@ -141,28 +143,27 @@ void Screen_Control(void)
             /*
                 WZD
                     GameState_01:                           ; case 0x1
-                        prev__Settings_BG_Music = magic_set.BG_Music;
-                        Load_Screen();
             */
+            prev__Settings_BG_Music = magic_set.background_music;
+
             Load_Screen();
-            // GAME_SoM_Cast_By = ST_UNDEFINED;
+
+            GAME_SoM_Cast_By = ST_UNDEFINED;
+
             GAME_RazeCity = ST_FALSE;
-            /*
-                WZD
-                    GAME_SoM_Cast_By = ST_UNDEFINED;
-                    GAME_RazeCity = ST_FALSE;
-                    if(prev__Settings_BG_Music != magic_set.BG_Music)
-                    {
-                        if(magic_set.BG_Music == ST_TRUE)
-                        {
-                            SND_PlayBkgrndTrack();
-                        }
-                        else
-                        {
-                            SND_Stop_Music();
-                        }
-                    }
-            */
+
+            if(prev__Settings_BG_Music != magic_set.background_music)
+            {
+                if(magic_set.background_music == ST_TRUE)
+                {
+                    Play_Background_Music();
+                }
+                else
+                {
+                    Stop_Music__STUB();
+                }
+            }
+
         } break;
 
         case scr_New_Game_Screen:

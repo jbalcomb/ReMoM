@@ -1575,7 +1575,7 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
     any Add_Input_Field() outside of Input_Box_Popup()?
         only ITEM_CreateControls()
 */
-int16_t GUI_EditBoxControl(int16_t field_num)
+void GUI_EditBoxControl(int16_t field_num)
 {
     char input_string[63];
     char key;
@@ -1904,6 +1904,13 @@ ST_KEY_ENTER            = 0x0C
 // MoO2  Module: Module: NAMESTAR  Input_Box_Popup_()
 // 1oom  uiobj.c  uiobj_textinput_do()
 /*
+; clears the GUI, creates an edit box with the passed
+; parameters, and transfers control to it until it
+; loses focus, at which point the resulting string is
+; saved to the passed pointer and the function returns
+; -1 if the Esc key was pressed, or 0 otherwise
+*/
+/*
 
 NameStartingCity_Dialog_Popup()
     start_x = 60;
@@ -1938,6 +1945,7 @@ int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * 
 
     Set_Input_Delay(1);
 
+    // TODO  Where does cnst_ZeroString_12 actually live?
     input_field_idx = Add_Input_Field(x_start, y_start, width, string, max_characters, fill_color, justification, cursor_type, &colors[0], cnst_ZeroString_12, help);
 
     down_mouse_button = input_field_idx;  // ¿ DEDU:  manually set here so it won't trigger in Draw_Field() ?

@@ -260,7 +260,7 @@ void Production_Screen(void)
             (input_field_idx == hotkey_idx_ESC)
         )
         {
-            // TODO  SND_LeftClickSound()
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;
         }
@@ -273,7 +273,7 @@ void Production_Screen(void)
         {
             if(product_fields[itr] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 Deactivate_Help_List();
 
                 if(itr >= G_CTY_ProducableCount2)
@@ -324,7 +324,7 @@ void Production_Screen(void)
         */
         if(input_field_idx == production_screen_ok_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             _CITIES[_city_idx].construction = product_indexes[current_item];
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;

@@ -1,6 +1,8 @@
 
 #include <Windows.h>
 
+#include "MoX.H"
+
 extern HWND g_Window;
 
 
@@ -17,11 +19,16 @@ extern HWND g_Window;
 */
 void MWA_Exit_With_Message(char * string)
 {
-    // TODO  SND_Stop_Music();
-    // TODO  Reset_System_Mouse();
-    // TODO  SND_Shutdown();
+    Stop_Music__STUB();
+
+    Reset_System_Mouse();
+
+    Audio_Uninit__STUB();
+
     // TODO  EMM_ReleaseAll();
-    // TODO  s06p06_Empty_pFxn();
+
+    // TODO  DBG_Close_ERROR_LOG();
+
     // TODO  VGA_SetTextMode();
     
     // TODO  Quit_With_Message(string);

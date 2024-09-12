@@ -799,6 +799,7 @@ int16_t Find_Bar_Position(int16_t field_num)
 
     *p_fields[field_num].variable = bar_value;
 
+    return bar_value;
 }
 
 // WZD s34p55

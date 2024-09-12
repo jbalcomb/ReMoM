@@ -232,7 +232,7 @@ void Enemy_City_Screen(void)
 
         if(abs(input_field_idx) == full_screen_ESC_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
         }
 
@@ -241,7 +241,7 @@ void Enemy_City_Screen(void)
         {
             if(m_troop_fields[itr_troops] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 leave_screen = ST_UNDEFINED;
             }
         }
@@ -251,7 +251,7 @@ void Enemy_City_Screen(void)
         {
             if(city_cityscape_fields[itr] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 leave_screen = ST_UNDEFINED;
             }
         }
@@ -269,7 +269,7 @@ void Enemy_City_Screen(void)
                     (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
                 )
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     Deactivate_Help_List();
                     strcpy(GUI_String_1, str_TurnOffSpell_1__ovr055);
                     strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
@@ -304,7 +304,7 @@ void Enemy_City_Screen(void)
 
         if(input_field_idx == city_up_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             city_enchantment_display_first -= 6;
             if(city_enchantment_display_first < 0)
             {
@@ -316,7 +316,7 @@ void Enemy_City_Screen(void)
 
         if(input_field_idx == city_dn_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             city_enchantment_display_first += 6;
             if(city_enchantment_display_first > city_enchantment_list_count)
             {

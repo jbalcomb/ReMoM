@@ -61,7 +61,7 @@ int16_t CTY_Garrison_Units[MAX_STACK];
 */
 int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_wp, int16_t outpost_race, int16_t outpost_owner, int16_t settler_unit_idx)
 {
-    SAMB_ptr Sound_Data_Seg;
+    SAMB_ptr sound_seg;
     int16_t Result;
     int16_t city_idx;  // _SI_
     int16_t itr_players;  // _DI_
@@ -100,12 +100,12 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 
             if(outpost_owner == _human_player_idx)
             {
-                // TODO  SND_Silence();
+                Stop_All_Sounds__STUB();
 
-                if(magic_set.Event_Music == ST_TRUE)
+                if(magic_set.event_music == ST_TRUE)
                 {
-                    // TODO  Sound_Data_Seg = LBX_Reload(music_lbx_file__ovr077, MUSIC_New_Outpost, SND_Music_Segment);
-                    // TODO  SND_PlayFile(Sound_Data_Seg);
+                    sound_seg = LBX_Reload(music_lbx_file__ovr077, MUSIC_New_Outpost, SND_Music_Segment);
+                    Play_Sound__STUB(sound_seg);
                 }
 
                 // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);
@@ -114,7 +114,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 // ; nothing is entered
                 Change_City_Name_Popup(_city_idx, outpost_owner);
 
-                // TODO  SND_PlayBkgrndTrack();
+                Play_Background_Music();
 
                 TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 2);
 
@@ -140,7 +140,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
             }
         }
 
-        // BUBUG  ; all of these have been set already
+        // BUG  ; all of these have been set already
         _CITIES[city_idx].wx = outpost_wx;
         _CITIES[city_idx].wy = outpost_wy;
         _CITIES[city_idx].wp = outpost_wp;
@@ -258,8 +258,8 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == full_screen_ESC_field)
         {
-            // TODO  SND_LeftClickSound();
-            leave_screen == ST_UNDEFINED;
+            Play_Left_Click__STUB();
+            leave_screen = ST_UNDEFINED;
         }
 
 
@@ -275,7 +275,7 @@ void Outpost_Screen(int16_t flag)
                     (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
                 )
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     Deactivate_Help_List();
                     strcpy(GUI_String_1, str_TurnOffSpell_1__ovr077);
                     strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
@@ -311,7 +311,7 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == city_up_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             city_enchantment_display_first -= 6;
             if(city_enchantment_display_first < 0)
             {
@@ -323,7 +323,7 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == city_dn_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             city_enchantment_display_first += 6;
             if(city_enchantment_display_first > city_enchantment_list_count)
             {
@@ -341,7 +341,7 @@ void Outpost_Screen(int16_t flag)
             {
                 if(g_unit_window_fields[itr] == input_field_idx)
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     if(_CITIES[_city_idx].owner_idx == _human_player_idx)
                     {
                         _active_world_x = _CITIES[_city_idx].wx;

@@ -97,10 +97,20 @@ int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16
 /*
 Unused in MoM
 
+essentially, MoO1 ~== to Path_Wrap()
 
 */
 int Path(int x1, int y1, int x2, int y2, int *tblx, int *tbly)
 {
+    int16_t distance;
+
+
+
+    distance = 0;
+
+
+
+    return distance;
 
 }
 

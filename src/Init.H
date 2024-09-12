@@ -10,11 +10,9 @@ extern "C" {
 
 
 // WZD s014p01
-// MoO2  Module: init  void Init_Drivers()
-void Init_Drivers(int input_type, char * font_file);
+void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi_driver, int MIDI_IO, int MIDI_IRQ, int MIDI_DMA, int digi_driver, int Digi_IO, int Digi_IRQ, int Digi_DMA);
 
 // WZD s014p02
-// MoO2  DNE
 void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char * font_file);
 
 
