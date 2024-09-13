@@ -899,6 +899,9 @@ void Powergraph_Screen_Draw(void)
 
 // WZD o76p05
 // drake178: sub_65B47()
+/*
+
+*/
 void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t month)
 {
     uint8_t banner_colors[5];

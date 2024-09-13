@@ -280,15 +280,15 @@ char * Get_Item_Type_Name(int16_t item_idx)
 ; returns a volatile pointer to a default name generated from the item's selected powers
 
 */
-static char * Get_Item_Name(int16_t item_idx)
+static const char * Get_Item_Name(int16_t item_idx)
 {
 
-    char Spell_Name[20];
+    char spell_name[LEN_SPELL_NAME];
     char * Attrib_Suffixes[7];
-    char Temp_String[30];
-    char Conversion_String[10];
+    static char item_name[LEN_ITEM_NAME];
+    char temp_buffer[LEN_TEMP_BUFFER];
     int16_t Have_Prefix;
-    int16_t Unprocessed_Powers[4];
+    int16_t Unprocessed_Powers[NUM_ITEM_POWERS];
     int16_t Highest_Index_Power;
     int16_t item_type;
     int16_t item_type_bit_idx;  // _DI_
@@ -330,11 +330,11 @@ static char * Get_Item_Name(int16_t item_idx)
             (item_type < it_Misc)
         )
         {
-            strcpy(Temp_String, cnst_Plus_4);
-            itoa((Unprocessed_Powers[itr] + 1), Conversion_String, 10);
-            strcat(Temp_String, Conversion_String);
-            strcat(Temp_String, cnst_Space_4);
-            strcat(Temp_String, Get_Item_Type_Name(item_idx));  // Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cloak, Gauntlet, Helm, Orb
+            strcpy(item_name, cnst_Plus_4);
+            itoa((Unprocessed_Powers[itr] + 1), temp_buffer, 10);
+            strcat(item_name, temp_buffer);
+            strcat(item_name, cnst_Space_4);
+            strcat(item_name, Get_Item_Type_Name(item_idx));  // Sword, Mace, Axe, Bow, Staff, Wand, Misc, Shield, Chain, Plate, Amulet, Ring, Cloak, Gauntlet, Helm, Orb
 
             Unprocessed_Powers[itr] = -2;
 
@@ -349,7 +349,7 @@ static char * Get_Item_Name(int16_t item_idx)
         {
             // jmp     short $+2
         }
-        strcpy(Temp_String, Get_Item_Type_Name(item_idx));
+        strcpy(item_name, Get_Item_Type_Name(item_idx));
     }
 
 
@@ -365,25 +365,25 @@ static char * Get_Item_Name(int16_t item_idx)
 
     if(Highest_Index_Power > -1)
     {
-        strcat(Temp_String, cnst_Sp_Of_Sp_4);
+        strcat(item_name, cnst_Sp_Of_Sp_4);
 
         if(Highest_Index_Power < 33)
         {
-            strcat(Temp_String, Attrib_Suffixes[_ITEM_POWERS[Highest_Index_Power].type]);
+            strcat(item_name, Attrib_Suffixes[_ITEM_POWERS[Highest_Index_Power].type]);
         }
         else if(Highest_Index_Power < 65)
         {
-            strcat(Temp_String, _ITEM_POWERS[Highest_Index_Power].name);
+            strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
         }
         else
         {
-            strcpy(Spell_Name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
-            strcat(Temp_String, Spell_Name);
-            if(strlen(Temp_String) < 26)
+            strcpy(spell_name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
+            strcat(item_name, spell_name);
+            if(strlen(item_name) < 26)
             {
-                strcat(Temp_String, cnst_TimesSign_2);
-                itoa(_ITEMS[item_idx].embed_spell_cnt, Conversion_String, 10);
-                strcat(Temp_String, Conversion_String);
+                strcat(item_name, cnst_TimesSign_2);
+                itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
+                strcat(item_name, temp_buffer);
             }
         }
 
@@ -391,16 +391,16 @@ static char * Get_Item_Name(int16_t item_idx)
 
     if(Have_Prefix == ST_TRUE)
     {
-        if(strlen(Temp_String) > 26)
+        if(strlen(item_name) > 26)
         {
             for(itr = 0; itr < 3; itr++)
             {
-                Clear_Structure(0, (uint8_t *)&Temp_String, 1, 30);
+                Clear_Structure(0, (uint8_t *)&item_name, 1, 30);
             }
         }
     }
 
-    return &Temp_String[0];
+    return item_name;
 }
 
 

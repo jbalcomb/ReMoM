@@ -36,11 +36,13 @@
 #define LEN_NAME              20  /* ¿ Wizard Name, Unit Type Name, Building Name, HoF Name, Save-Game Name, ... ? (NOT Item Name, City Name)*/
 #define LEN_DESCRIPTION       30  /* ¿ Item Name ? */
 #define LEN_TEMP_STRING       20
+#define LEN_TEMP_BUFFER       10
 #define LEN_FILE_NAME         20
 
 #define LEN_WIZARD_NAME       20
 #define LEN_HOF_NAME          20
 #define LEN_BUILDING_NAME     20
+#define LEN_SPELL_NAME        20
 #define LEN_CITY_NAME         14  /* WTF, Mate? */
 #define LEN_HERO_NAME         14  /* WTF, Mate? */  /* longest in NAMES is 12 */
 #define LEN_SAVE_DESCRIPTION  20

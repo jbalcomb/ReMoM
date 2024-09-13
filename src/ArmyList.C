@@ -1075,10 +1075,10 @@ void ArmyList_Screen_Load(void)
         armylist_unit_enchantment_names[itr] = (char *)Near_Allocate_Next(20);
     }
 
-    m_armies_list_fields = Near_Allocate_Next(108);
+    m_armies_list_fields = (int16_t *)Near_Allocate_Next(108);
 
-    armylist_hero_portrait_fields = Near_Allocate_Next(12);        // 6 2-byte values
-    armylist_hero_portrait_unit_indices = Near_Allocate_Next(12);  // 6 2-byte values
+    armylist_hero_portrait_fields = (int16_t *)Near_Allocate_Next(12);        // 6 2-byte values
+    armylist_hero_portrait_unit_indices = (int16_t *)Near_Allocate_Next(12);  // 6 2-byte values
     IDK_armylist_row_fields = Near_Allocate_Next(12);  // ¿ 12 is 6 2-byte values, 1 per ArmyList List Item Field ?
 
     Set_Page_Off();

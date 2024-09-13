@@ -1423,13 +1423,13 @@ int16_t Wait_For_Input(void)
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
-                    // TODO  DBG_Quit();
+                    F11_Key__WIP();
                 }
                 else if(charcode == ST_KEY_F12)
                 {
                     Save_Mouse_State();
                     Restore_Mouse_On_Page();
-                    // TODO  DBG_ScreenDump();
+                    Screen_Flic_Capture__STUB();
                     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Set_Pointer_Position(Pointer_X(), Pointer_Y());
@@ -1449,13 +1449,13 @@ int16_t Wait_For_Input(void)
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
-                    // TODO  DBG_Quit();
+                    F11_Key__WIP();
                 }
                 else if(charcode == ST_KEY_F12)
                 {
                     Save_Mouse_State();
                     Restore_Mouse_On_Page();
-                    // TODO  DBG_ScreenDump();
+                    Screen_Flic_Capture__STUB();
                     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Draw_Mouse_On_Page(Pointer_X(), Pointer_Y());
                     Set_Pointer_Position(Pointer_X(), Pointer_Y());

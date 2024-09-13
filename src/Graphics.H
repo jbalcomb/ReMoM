@@ -58,13 +58,13 @@ void Set_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 void Reset_Window(void);
 
 // WZD s14p06
-void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color);
+void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s14p07
-void Clipped_Dot(int16_t x, int16_t y, int16_t color);
+void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s14p08
-// VGA_WndDrawLine()
+void Clipped_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color);
 
 // WZD s14p09
 void Clipped_Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int colornum, int colorpos);

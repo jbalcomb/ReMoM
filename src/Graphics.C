@@ -92,7 +92,7 @@ void Reset_Window(void)
 
 // WZD s14p06
 // MoO2  Module: graphics  Fill() Fill() just uses a clip flag
-void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
 
     if(CLIPPED())
@@ -114,7 +114,7 @@ void Clipped_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 // WZD s14p07
 // drake178: 
 // MoO2  
-void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
 
     if(CLIPPED())
@@ -131,7 +131,7 @@ void Clipped_Dot(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
 // drake178: VGA_WndDrawLine()
 // MoO2  DNE
 // 1oom  uidraw.c  ui_draw_line_limit()
-void Clipped_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+void Clipped_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
     Clipped_Line_Base(x1, y1, x2, y2, ST_FALSE, color, ST_NULL, ST_NULL, ST_NULL);
 }
@@ -615,7 +615,7 @@ void DOS_PrintString__STUB(char * string)
 // WZD s16p01
 // MoO2  Module: graphics  Fill()
 // 1oom  uidraw.c  ui_draw_filled_rect()
-void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+void Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
 //     int16_t itr_x;
 //     int16_t itr_y;
@@ -684,7 +684,7 @@ X-Major || Y-Major
 Per the byte-saving (Assembly) era, allows error conditions to fall through
 
 */
-void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t color)
+void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
     int16_t temp;  // _SI_
     int16_t x_delta;  // _CX_

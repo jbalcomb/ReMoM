@@ -1802,5 +1802,6 @@ int16_t Pick_Random_City(int16_t player_idx)
         }
 
     }
-
+    
+    return city_idx;
 }
