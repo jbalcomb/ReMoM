@@ -439,11 +439,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\SOUND.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\special.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\Spellbook.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SPLMASTR.C"
 				>
 			</File>
 			<File
@@ -877,11 +885,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\SOUND.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\special.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\Spellbook.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\SPLMASTR.H"
 				>
 			</File>
 			<File

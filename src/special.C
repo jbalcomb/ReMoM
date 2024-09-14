@@ -395,7 +395,7 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
     return distance;
 }
 
-static inline int util_math_route_step_len(int adx, int ady)
+__forceinline static int util_math_route_step_len(int adx, int ady)
 {
     int v = adx + ady;
     return v ? (v + 1) : 3;
@@ -403,9 +403,8 @@ static inline int util_math_route_step_len(int adx, int ady)
 
 int util_math_get_route_len(int x0, int y0, const int *tblx, const int *tbly, int len)
 {
-    int l;
-    l = util_math_route_step_len(abs(x0 - tblx[0]), abs(y0 - tbly[0]));
-    for (int i = 1; i < len; ++i) {
+    int l = util_math_route_step_len(abs(x0 - tblx[0]), abs(y0 - tbly[0])), i;
+    for (i = 1; i < len; ++i) {
         l += util_math_route_step_len(abs(tblx[i - 1] - tblx[i]), abs(tbly[i - 1] - tbly[i]));
     }
     return l;

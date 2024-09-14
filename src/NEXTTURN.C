@@ -3259,14 +3259,14 @@ void Do_All_Units_XP_Check_(void)
 
             if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
             {
-                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b01111111);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+                _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?
             }
         }
 
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
             _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
-            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0b10111111);  // ¿ xor     al, C_STASISINIT  01000000b ?
+            _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0xBF /*0b10111111*/);  // ¿ xor     al, C_STASISINIT  01000000b ?
         }
 
         if(
