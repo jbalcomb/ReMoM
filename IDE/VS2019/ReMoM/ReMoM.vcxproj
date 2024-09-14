@@ -158,8 +158,10 @@
     <ClInclude Include="..\..\..\src\SCORE.H" />
     <ClInclude Include="..\..\..\src\Settings.H" />
     <ClInclude Include="..\..\..\src\SETTLE.H" />
+    <ClInclude Include="..\..\..\src\SOUND.H" />
     <ClInclude Include="..\..\..\src\special.H" />
     <ClInclude Include="..\..\..\src\Spellbook.H" />
+    <ClInclude Include="..\..\..\src\SPLMASTR.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
     <ClInclude Include="..\..\..\src\Summary.H" />
@@ -242,8 +244,10 @@
     <ClCompile Include="..\..\..\src\SCORE.C" />
     <ClCompile Include="..\..\..\src\Settings.C" />
     <ClCompile Include="..\..\..\src\SETTLE.C" />
+    <ClCompile Include="..\..\..\src\SOUND.C" />
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
+    <ClCompile Include="..\..\..\src\SPLMASTR.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
     <ClCompile Include="..\..\..\src\Summary.C" />

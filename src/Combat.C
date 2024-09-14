@@ -636,9 +636,9 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             (magic_set.Strategic_Combat == ST_FALSE)
         )
         {
-            // TODO  SND_Silence();
+            Stop_All_Sounds__STUB();
             Battle_Outcome = Tactical_Combat__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, &Item_Count, &Item_List[0]);
-            // TODO  SND_PlayBkgrndTrack();
+            Play_Background_Music();
         }
         else
         {

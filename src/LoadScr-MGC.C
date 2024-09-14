@@ -262,7 +262,7 @@ void Load_Screen_MGC__WIP(void)
             // Save_SAVE_GAM(8)
             // execl(MAGIC.EXE)
             leave_screen_flag = ST_TRUE;
-            // TODO  SND_Empty_Fn();  // ; used in place of WIZARDS.EXE's SND_PlayClickSound
+            // TODO  SND_Empty_Fn();  // ; used in place of WIZARDS.EXE's Play_Standard_Click__STUB
         }
 
 
@@ -281,7 +281,7 @@ void Load_Screen_MGC__WIP(void)
         if(input_field_idx == _settings_button)
         {
             Deactivate_Help_List();
-            // TODO  Settings_Screen();
+            Settings_Screen();
             g_GUI_MainScreenJump = 1;
             leave_screen_flag = ST_TRUE;
         }

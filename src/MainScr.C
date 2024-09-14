@@ -387,6 +387,32 @@ char hotkey_MagicButton[] = "M";
 // WZD dseg:2F81 
 char hotkey_InfoButton[] = "I";
 
+
+
+
+
+
+// WZD dseg:2F84                                                 BEGIN:  ovr058 - Initialized Data
+
+// WZD dseg:2F84
+int16_t m_background_music_ctr = 0;
+
+// WZD dseg:2F86
+char music_lbx_file__ovr058[] = "MUSIC";
+
+// WZD dseg:2F86                                                 END:  ovr058 - Initialized Data
+
+
+
+
+
+
+
+
+
+
+
+
 // WZD dseg:305B  align 2
 
 // WZD dseg:305C                                                 ? BEGIN: Draw Unit Window ?
@@ -411,7 +437,7 @@ char cnst_Moves[] = "Moves:";
 
 
 
-// WZD dseg:C03E                                                 BEGIN: Main_Screen
+// WZD dseg:C03E                                                 ¿ BEGIN:  ovr057 - Uninitialized Data  (Main_Screen) ?
 
 // WZD dseg:C03E
 // CRP_OverlandVar_2 dw 0
@@ -419,8 +445,10 @@ char cnst_Moves[] = "Moves:";
 // CRP_OverlandVar_4 dw 0
 // WZD dseg:C042
 // OVL_MapVar3 dw 0
+
 // WZD dseg:C044
-// CRP_OVL_Obstacle_Var1 dw 0
+int16_t CRP_OVL_Obstacle_Var1;
+
 // WZD dseg:C046
 // CRP_OVL_UU_Control_1 dw 0
 // WZD dseg:C048
@@ -491,7 +519,14 @@ int16_t _game_button;
 // WZD dseg:C086 _reduced_map_seg dw 0
 // WZD dseg:C088 
 int16_t UU_MainScreen_flag;
-// WZD dseg:C08A SND_Bkgrnd_Track dw 0
+
+// WZD dseg:C08A
+// drake178: SND_Bkgrnd_Track
+/*
+; the current power-based background music track index
+*/
+int16_t m_background_music_num;
+
 // WZD dseg:C08C word_42B2C dw 0
 
 
@@ -1322,7 +1357,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _info_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Advisor_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1332,7 +1367,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _game_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Load_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1341,7 +1376,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _cities_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Cities_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1350,7 +1385,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _magic_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Magic_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1359,7 +1394,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _armies_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             current_screen = scr_Armies_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1369,7 +1404,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _spells_button)
         {
-            // SND_LeftClickSound();
+            Play_Left_Click__STUB();
             if(_players[_human_player_idx].Spell_Cast == 214) /* Spell of Return */
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
@@ -1392,7 +1427,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _patrol_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 1, 0, 0);  /* Action 1: 'Patrol' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1407,8 +1442,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _special_button)
         {
-            // TODO  SND_LeftClickSound();
-
+            Play_Left_Click__STUB();
             /*
                 -1: no extra action possible
                  0: road building possible
@@ -1441,7 +1475,7 @@ void Main_Screen(void)
                 case 2:  /* Purify */
                 {
                     DLOG("switch(special_action_flag)  case 2:");
-                    // ABOVE  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     // DNE    Reset_Draw_Active_Stack();
                     Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 8, 0, 0);  /* Action 8: 'Purify' */
                     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1498,7 +1532,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _done_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 4, 0, 0);  /* Action 4: 'Done' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1513,7 +1547,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _wait_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 5, 0, 0);  /* Action 5: 'Wait' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1531,7 +1565,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _plane_button)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Main_Screen_Reset();
             Reset_Map_Draw();
@@ -1560,7 +1594,7 @@ void Main_Screen(void)
         {
             if(g_unit_window_fields[Stack_Index] == input_field_idx)
             {
-                // TODO  RP_SND_LeftClickSound2();  // drake178: byte-identical to SND_LeftClickSound()
+                Play_Left_Click__DUPE();
                 // HERE:  itr_stack ~== unit window field idx
                 Update_Stack_Active(Stack_Index);
                 Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
@@ -1629,7 +1663,7 @@ void Main_Screen(void)
         )
         {
 
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
 
             Player_Resource_Income_Total(_human_player_idx, &eot_gold_nop, &eot_food, &eot_mana_nop);
 
@@ -1865,7 +1899,7 @@ void Main_Screen(void)
             }
             else
             {
-                // RP_SND_LeftClickSound2()
+                Play_Left_Click__DUPE();
 
                 entity_idx = abs(entity_idx);
                 // entity_idx = entity_idx > 0 ? entity_idx : entity_idx*-1;
@@ -1990,7 +2024,7 @@ void Main_Screen(void)
 
         if(abs(input_field_idx) == _minimap_grid_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = _minimap_grid_x + target_world_x;
             _prev_world_y = _minimap_grid_y + target_world_y;
@@ -2458,6 +2492,174 @@ void Set_Mouse_List_Default(void)
 {
     Set_Mouse_List(1, mouse_list_default);
 }
+
+
+// WZD o58p03
+/*
+OON XREF: 
+Move_Stack() |-> j_o58p03_Empty_pFxn() |-> o58p03_empty_function()
+called when CRP_OVL_Obstacle_Var1 == ST_FALSE
+*/
+void o58p03_empty_function(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
+
+// WZD o58p04
+// drake178: sub_518A3()
+/*
+NOT IN USE
+
+¿ would control whether o58p03_empty_function() gets called from Move_Stack() ?
+
+XREF:
+    Falsify_CRP_OVL_Obstacle_Var1()
+        NX_j_Falsify_CRP_OVL_Obstacle_Var1()
+*/
+void Falsify_CRP_OVL_Obstacle_Var1(void)
+{
+    CRP_OVL_Obstacle_Var1 = ST_FALSE;
+}
+
+// WZD o58p05
+// drake178: ¿ ?
+void Increment_Background_Music(void)
+{
+    int16_t background_music_num;
+
+    if(m_background_music_ctr > 3)
+    {
+        m_background_music_ctr = 0;
+
+        background_music_num = Get_Background_Music();
+
+        if(background_music_num != m_background_music_num)
+        {
+            Play_Background_Music();
+        }
+
+    }
+    else
+    {
+        m_background_music_ctr++;
+    }
+
+}
+
+
+// WZD o58p06
+// drake178: SND_GetBkgrndTone()
+/*
+; returns the entry index of one of the three main
+; background music tracks, based on the player's
+; performance versus the best and worst computer
+; players (negative is below 110% of the worst power,
+; good is above 90% of the best AI, using historian)
+*/
+int16_t Get_Background_Music(void)
+{
+    int16_t Highest_Power;
+    int16_t background_music_num;
+    int16_t itr_players;  // _SI_
+    int16_t IDK;  // _CX_
+    int16_t wizards_power;  // _DI_
+
+    background_music_num = MUSIC_Bkgrnd_Neutral;
+
+    if(_turn < 288)
+    {
+        IDK = (_turn - 1);
+    }
+    else
+    {
+        IDK = 287;
+    }
+
+    SETMIN(IDK, 0);
+
+    Highest_Power = 0;
+
+    wizards_power = 255;
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++);
+    {
+
+        if(_players[itr_players].Historian[IDK] > Highest_Power)
+        {
+            Highest_Power = _players[itr_players].Historian[IDK];
+        }
+
+        if(_players[itr_players].Historian[IDK] < wizards_power)
+        {
+            wizards_power = _players[itr_players].Historian[IDK];
+        }
+
+    }
+
+    if(wizards_power == 255)
+    {
+        wizards_power = 0;
+    }
+
+    if((_players[_human_player_idx].Historian[IDK] + (Highest_Power / 10)) >= Highest_Power)
+    {
+        background_music_num = MUSIC_Bkrgnd_Good;
+    }
+
+    if(wizards_power > 0)
+    {
+        if((_players[_human_player_idx].Historian[IDK] - (wizards_power / 10)) <= wizards_power)
+        {
+            background_music_num = MUSIC_Bkgrnd_Negative;
+        }
+    }
+
+    return background_music_num;
+}
+
+
+// WZD o58p07
+// drake178: SND_PlayBkgrndTrack()
+/*
+; stops all sound playback and, if background music is
+; enabled, selects and starts playing the currently
+; appropriate background track based on player power
+*/
+void Play_Background_Music(void)
+{
+    SAMB_ptr sound_seg;
+    int16_t background_music_num;  // _SI_
+
+    if(magic_set.background_music == ST_TRUE)
+    {
+        Stop_All_Sounds__STUB();
+
+        background_music_num = Get_Background_Music();
+
+        m_background_music_num = background_music_num;
+
+        sound_seg = LBX_Reload(music_lbx_file__ovr058, background_music_num, SND_Music_Segment);
+
+        Play_Sound__STUB(sound_seg);
+
+    }
+    else
+    {
+        Stop_All_Sounds__STUB();
+    }
+
+
+}
+
+
+// WZD o58p08
+// sub_51A1A()
+
+// WZD o58p09
+// sub_51AA0()
 
 
 

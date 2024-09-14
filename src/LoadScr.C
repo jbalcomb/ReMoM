@@ -646,7 +646,7 @@ void Loaded_Game_Update(void)
 
     _unit_stack_count = 0;
 
-    // TODO  j_SND_PlayBkgrndTrack();
+    Play_Background_Music();
 
     GFX_Swap_Cities();
 

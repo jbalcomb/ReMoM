@@ -335,7 +335,7 @@ void City_Screen__WIP(void)
         {
             if(input_field_idx == city_sceen_change_button)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
                 Production_Screen();
 
@@ -375,7 +375,7 @@ void City_Screen__WIP(void)
             if((input_field_idx == city_screen_ok_button) || (input_field_idx == city_screen_esc_hotkey))
             {
                 _unit_stack_count = 0;
-                // TODO  SND_LeftClickSound()
+                Play_Left_Click__STUB();
                 _prev_world_x = _map_x;
                 _prev_world_y = _map_y;
                 Deactivate_Auto_Function();
@@ -400,7 +400,7 @@ void City_Screen__WIP(void)
         {
             if(input_field_idx == city_screen_buy_button)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 building_value = _players[_human_player_idx].gold_reserve;
                 if(
                     (m_city_n_turns_to_produce > 1)
@@ -471,7 +471,7 @@ void City_Screen__WIP(void)
         {
             if(city_cityscape_fields[itr_cityscape] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 cityscape_bldg_idx = cityscape_bldgs[itr_cityscape].bldg_idx;
 
                 if(cityscape_bldg_idx <= NUM_BUILDINGS)
@@ -597,7 +597,7 @@ void City_Screen__WIP(void)
             {
                 if(g_unit_window_fields[itr_stack] == input_field_idx)
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     _prev_world_x = _map_x;
                     _prev_world_y = _map_y;
                     leave_screen = ST_TRUE;
@@ -1054,10 +1054,6 @@ void City_Add_Fields_Buildings(void)
 
     for(itr = 0; itr < cityscape_bldg_count; itr++)
     {
-        if(cityscape_bldgs[itr].bldg_idx == 104)
-        {
-            MOX_DBG_BREAK;
-        }
 
         x1 = cityscape_bldgs[itr].x1;
         y1 = cityscape_bldgs[itr].y1;
@@ -1138,7 +1134,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
 {
     SAMB_ptr bldg_bitm_seg;
     int16_t tmp_strlen;
-    int16_t Sound_Data_Seg;
+    SAMB_ptr sound_seg;
     int16_t width;
     int16_t height;
     int16_t ystart;
@@ -1147,12 +1143,13 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     int16_t bitm_x;  // _SI_
     int16_t bitm_y;  // _DI_
 
-    // TODO  SND_Silence();
+    Stop_All_Sounds__STUB();
+
     Allocate_Reduced_Map();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
 
-    // TODO  Full_Draw_Main_Screen();
+    Full_Draw_Main_Screen();
 
 
     Copy_On_To_Off_Page();
@@ -1176,10 +1173,10 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     strcat(GUI_String_1, GUI_String_2);
     strcat(GUI_String_1, ".");
 
-    if(magic_set.Event_Music == ST_TRUE)
+    if(magic_set.event_music == ST_TRUE)
     {
-        // TODO  Sound_Data_Seg = LBX_Reload(music_lbx_file, MUSIC_Bldng_Finished, SND_Music_Segment);
-        // TODO  SND_PlayFile(Sound_Data_Seg);
+        sound_seg = LBX_Reload(music_lbx_file__ovr054, MUSIC_Bldng_Finished, SND_Music_Segment);
+        Play_Sound__STUB(sound_seg);
     }
 
     bitm_x = 0;
@@ -1221,7 +1218,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
         );
     }
 
-    // TODO  SND_PlayBkgrndTrack();
+    Play_Background_Music();
 
     IDK_Clear_Cityscape_Vanish_Percent();
 

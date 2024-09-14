@@ -185,7 +185,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx);
 // UU_AI_Fort_Defense()
 
 // WZD o142p18
-void Generate_Mercenaries(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level);
+void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level);
 
 // WZD o142p19
 // LD_MAP_TFUnk40_Eval()

@@ -26,7 +26,7 @@ extern "C" {
 void Delete_Dead_Units(void);
 
 // WZD o60p02
-int16_t IDK_City_Radius_s34255__STUB(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);
+int16_t Player_Units_Max_Range(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o60p03
 void empty_function__o060p03(void);
@@ -66,27 +66,22 @@ void All_Colony_Calculations(void);
 */
 
 // WZD o121p01
-// drake178: UNIT_Create()
 int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16_t wy, int16_t wp, int16_t R_Param);
 
 // WZD o121p02
-// AKAK Calc_Nominal_Skill()
 int16_t Player_Base_Casting_Skill(int16_t player_idx);
 
 // WZD o121p03
-// drake178: WIZ_GetCastingCost()
 int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag);
 
 // WZD o121p04
-// drake178: WIZ_CastingCostBonus()
 int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx);
 
 // WZD o121p05
 int16_t Player_Hero_Count(int16_t player_idx);
 
 // WZD o121p06
-// drake178: WIZ_DeadHeroCount()
-// WIZ_DeadHeroCount()
+// Player_Dead_Hero_Count()
 
 // WZD o121p07
 int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_type_class);
@@ -95,26 +90,21 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 int16_t Unit_Moves2(int16_t unit_idx);
 
 // WZD o121p09
-// drake178: UNIT_IsNormalUnit()
 // UNIT_IsNormalUnit()
 
 // WZD o121p10
 void Cheat_Power(void);
 
 // WZD o121p11
-// drake178: AI_GetThreat_UType()
 // AI_GetThreat_UType()
 
 // WZD o121p12
-// drake178: AI_GetThreat_UNIT()
 // AI_GetThreat_UNIT()
 
 // WZD o121p13
-// drake178: RP_GAME_UnitTypesUpdate()
 void Patch_Units_Upkeep_And_Sound(void);
 
 // WZD o121p14
-// drake178: CTY_RemoveMessages()
 void City_Delete_Building_Complete_Messages(int16_t city_idx);
 
 
@@ -202,7 +192,7 @@ void Do_All_Units_XP_Check_(void);
 void Cool_Off_Volcanoes(void);
 
 // WZD o140p27
-// drake178: AI_CullTheWeak()
+// AI_CullTheWeak()
 
 // WZD o140p28
 // AI_GetAvgUnitCosts()

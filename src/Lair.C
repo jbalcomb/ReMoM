@@ -90,7 +90,8 @@ char * TBL_EZ_Indefinites[] =
 };
 
 
-// WZD dseg:4B6B 4D 55 53 49 43 00                               cnst_MUSIC_File5 db 'MUSIC',0           ; DATA XREF: Lair_Combat__WIP+33o
+// WZD dseg:4B6B
+char music_lbx_file__ovr083[] = "MUSIC";
 
 // WZD dseg:4B71
 char cnst_EZ_Msg_1[] = "You have found ";
@@ -245,7 +246,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 {
     int16_t Reward_Specials[2];
     int16_t Reward_Special_Count;
-    int16_t Event_Music_Seg;
+    SAMB_ptr sound_seg;
     int16_t Previous_Game_State;
     int16_t Total_Rewards;
     int16_t Reward_Hero;
@@ -264,17 +265,17 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
     if (player_idx == _human_player_idx)
     {
-        if (magic_set.Event_Music == ST_TRUE)
+        if (magic_set.event_music == ST_TRUE)
         {
-            // TODO  Event_Music_Seg = LBX_Reload(cnst_MUSIC_File5, MUSIC_Site_Discovery, SND_Music_Segment);
-            // TODO  SND_PlayFile(Event_Music_Seg);
+            sound_seg = LBX_Reload(music_lbx_file__ovr083, MUSIC_Site_Discovery, SND_Music_Segment);
+            Play_Sound__STUB(sound_seg);
         }
 
         Encounter_Outcome = Do_Lair_Confirm(lair_idx);
 
         Set_Bit_Field(1, &_LAIRS[lair_idx].Misc_Flags);
 
-        // TODO  SND_PlayBkgrndTrack();
+        Play_Background_Music();
     }
 
     if(Encounter_Outcome == ST_FALSE)

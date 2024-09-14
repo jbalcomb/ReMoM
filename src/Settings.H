@@ -30,9 +30,9 @@ extern "C" {
 struct s_MAGIC_SET
 {
     /* Settings Screen */
-    /*  00 */ uint16_t SoundFX;
-    /*  02 */ uint16_t BG_Music;
-    /*  04 */ uint16_t Event_Music;
+    /*  00 */ uint16_t sound_effects;
+    /*  02 */ uint16_t background_music;
+    /*  04 */ uint16_t event_music;
     /*  06 */ uint16_t City_Spell_Events;
     /*  08 */ uint16_t Ovl_Spell_Events;
     /*  0A */ uint16_t Summoning_Events;
@@ -49,8 +49,8 @@ struct s_MAGIC_SET
     /*  20 */ uint16_t Show_Node_Owners;
     /*  22 */ uint16_t Expanding_Help;
 
-    /*  24 */ uint16_t Snd_Channels;
-    /*  26 */ uint16_t Input_Type;
+    /*  24 */ uint16_t sound_channels;
+    /*  26 */ uint16_t input_type;
 
     /*  28 */ uint16_t Difficulty;
     /*  2A */ uint16_t Opponents;

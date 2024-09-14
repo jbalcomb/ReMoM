@@ -391,6 +391,8 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define BANNER_COLOR_PURPLE            124
 #define BANNER_COLOR_RED               201
 #define BANNER_COLOR_YELLOW            211
+#define BANNER_COLOR_PURPLE_123            123
+#define BANNER_COLOR_PURPLE_124            124
 
 #define MAX_UNIT_COUNT    1000
 

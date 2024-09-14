@@ -1129,22 +1129,25 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
                 }
             }
 
-            if(_UNITS[unit_idx].XP >= TBL_Experience[8])
-            {
-                _UNITS[unit_idx].XP = TBL_Experience[8];
-            }
+            // DELETEME  if(_UNITS[unit_idx].XP >= TBL_Experience[UNIT_LEVEL_MAX])
+            // DELETEME  {
+            // DELETEME      _UNITS[unit_idx].XP = TBL_Experience[UNIT_LEVEL_MAX];
+            // DELETEME  }
+            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
         }
         else
         {
-            if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
-            {
-                _UNITS[unit_idx].XP = TBL_Experience[UL_ELITE];
-            }
+            // DELETEME  if(_UNITS[unit_idx].XP >= TBL_Experience[UL_ELITE])
+            // DELETEME  {
+            // DELETEME      _UNITS[unit_idx].XP = TBL_Experience[UL_ELITE];
+            // DELETEME  }
+            SETMAX(_UNITS[unit_idx].XP, TBL_Experience[UNIT_LEVEL_MAX]);
         }
 
         // ¿ cancel 'Heroism' 'Unit Enchantment' if the Unit has naturally attained the 'Elite Experience Level' ?
         if(
-            (level >= UL_ELITE) &&
+            (level >= UL_ELITE)
+            &&
             ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
         )
         {
@@ -1153,7 +1156,8 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
 
         // apply 'Heroism' 'Unit Enchantment'
         if(
-            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0) &&
+            ((_UNITS[unit_idx].enchantments & UE_HEROISM) != 0)
+            &&
             (level < UL_ELITE)
         )
         {
@@ -1166,7 +1170,8 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
         }
 
         if(
-            (_players[_UNITS[unit_idx].owner_idx].Globals[CRUSADE] > 0) &&
+            (_players[_UNITS[unit_idx].owner_idx].Globals[CRUSADE] > 0)
+            &&
             (_UNITS[unit_idx].type < FST_FANT) &&
             ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
         )
@@ -1176,10 +1181,11 @@ int16_t Calc_Unit_Level(int16_t unit_idx)
 
     }
 
-    if(level > UNIT_LEVEL_MAX)
-    {
-        level = UNIT_LEVEL_MAX;
-    }
+    // DELETEME  if(level > UNIT_LEVEL_MAX)
+    // DELETEME  {
+    // DELETEME      level = UNIT_LEVEL_MAX;
+    // DELETEME  }
+    SETMAX(level, UNIT_LEVEL_MAX);
 
     return level;
 }
@@ -1290,8 +1296,8 @@ void UNIT_RemoveExcess(int16_t unit_idx)
     int16_t lowest_trooper_value;
     int16_t itr_troops;
 
-    lowest_trooper_idx = -999;
-    lowest_trooper_value = 999;
+    lowest_trooper_idx   = -999;
+    lowest_trooper_value =  999;
 
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
@@ -1301,6 +1307,7 @@ void UNIT_RemoveExcess(int16_t unit_idx)
 
     if(troop_count > MAX_STACK)
     {
+
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
             trooper_value = Unit_Gold_Upkeep(troops[itr_troops]) + Unit_Mana_Upkeep(troops[itr_troops]);
@@ -1322,7 +1329,7 @@ void UNIT_RemoveExcess(int16_t unit_idx)
         }
 
     }
-
+    
 }
 
 
@@ -3277,7 +3284,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
     city_wp = _CITIES[city_idx].wp;
 
 
-    unrest_races = (TBL_Unrest[_players[city_owner_idx].Cptl_Race][_CITIES[city_idx].race] * 10);
+    unrest_races = (TBL_Unrest[_players[city_owner_idx].capital_race][_CITIES[city_idx].race] * 10);
     unrest_taxes = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
     unrest_percent = unrest_races + unrest_taxes;
 

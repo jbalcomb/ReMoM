@@ -71,7 +71,7 @@ void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
 
         if(input_field_idx == hotkey_ESC)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_UNDEFINED;
         }
 

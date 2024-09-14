@@ -5,16 +5,16 @@
 
 struct s_CONFIG_MOM
 {
-    /*00*/ uint16_t MDI_IO;     // Sound Card Address / Music Card Address
-    /*02*/ uint16_t MDI_ID;     // ID - Sound Card / Music Card
-    /*04*/ uint16_t MDI_IRQ;    // Music IRQ
-    /*06*/ uint16_t DIG_IO;     // Digital Card Address
-    /*08*/ uint16_t DIG_ID;     // ID - Digital Card
-    /*0A*/ uint16_t DIG_IRQ;    // Digital IRQ
-    /*0C*/ uint16_t DIG_DRQ;    // Digital DRQ
-    /*0E*/ uint16_t NIU_0E;     // 
-    /*10*/ uint16_t NIU_10;     //
-    /*12*/ uint16_t NIU_12;     // 
+    /*00*/ uint16_t MIDI_IO;     // Sound Card Address / Music Card Address
+    /*02*/ uint16_t MIDI_ID;     // ID - Sound Card / Music Card
+    /*04*/ uint16_t MIDI_IRQ;    // Music IRQ
+    /*06*/ uint16_t DIGI_IO;     // Digital Card Address
+    /*08*/ uint16_t DIGI_ID;     // ID - Digital Card
+    /*0A*/ uint16_t DIGI_IRQ;    // Digital IRQ
+    /*0C*/ uint16_t DIGI_DMA;    // Digital DRQ
+    /*0E*/ uint16_t NIU_0E;     //  ¿ MoO1 ?
+    /*10*/ uint16_t NIU_10;     //  ¿ MoO1 ?
+    /*12*/ uint16_t NIU_12;     //  ¿ MoO1 ?
 };
 
 
@@ -23,7 +23,7 @@ struct s_CONFIG_MOM
 extern "C" {
 #endif
 
-extern uint8_t _config_mom[20];
+extern uint8_t _config_mom[sizeof(struct s_CONFIG_MOM)];
 
 extern struct s_CONFIG_MOM config_mom;
 

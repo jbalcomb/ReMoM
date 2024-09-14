@@ -61,7 +61,7 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 */
 // TODO  void Exit_With_Message(char * string)
 // TODO  {
-// TODO      // TODO  SND_Stop_Music();
+// TODO      // TODO  Stop_Music__STUB();
 // TODO      // TODO  Reset_System_Mouse();
 // TODO      // TODO  SND_Shutdown();
 // TODO      // TODO  EMM_ReleaseAll();

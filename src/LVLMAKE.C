@@ -138,7 +138,7 @@ int16_t lvlmake_unit_idx;
 // WZD o102p01
 void Hero_LevelUp_Popup(int16_t unit_idx)
 {
-    SAMB_ptr Sound_Data_Seg;
+    SAMB_ptr sound_seg;
     int16_t uu_screen_coordinate;
     int16_t ymin;
     int16_t hotkey_ESC;
@@ -152,7 +152,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
         return;
     }
 
-    // TODO  SND_Silence();
+    // TODO  Stop_All_Sounds__STUB();
     
     Allocate_Reduced_Map();
 
@@ -185,10 +185,10 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
     m_hero_portrait_seg = LBX_Reload_Next(portrait_lbx_file__ovr102, global_battle_unit->hero_portrait_idx, _screen_seg);
 
-    if(magic_set.Event_Music == ST_TRUE)
+    if(magic_set.event_music == ST_TRUE)
     {
-        // TODO  Sound_Data_Seg = LBX_Reload(cnst_MUSIC_File9, MUSIC_Fanfare, SND_Music_Segment);
-        // TODO  SND_PlayFile(Sound_Data_Seg);
+        sound_seg = LBX_Reload(music_lbx_file__ovr102, MUSIC_Fanfare, SND_Music_Segment);
+        Play_Sound__STUB(sound_seg);
     }
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
@@ -286,8 +286,8 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     Clear_Fields();
     Deactivate_Auto_Function();
     Allocate_Reduced_Map();
-    // TODO  j_OVL_MosaicFlip__STUB();
-    // TODO  j_SND_PlayBkgrndTrack();
+    OVL_MosaicFlip__STUB();
+    Play_Background_Music();
 
 }
 

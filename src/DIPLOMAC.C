@@ -219,7 +219,7 @@ void Diplomacy_Screen__STUB(void)
 
 
     // @@leave_screen
-    // TODO  SND_Silence();
+    Stop_All_Sounds__STUB();
     Deactivate_Auto_Function();
     Clear_Fields();
     current_screen = scr_Magic_Screen;
@@ -228,7 +228,7 @@ void Diplomacy_Screen__STUB(void)
     // TODO  GAME_ReloadWorldData();
     // TODO  GAME_CheckResearch(1);
     GFX_Swap_Cities();
-    // TODO  SND_PlayBkgrndTrack();
+    Play_Background_Music();
 
     // @@done
 

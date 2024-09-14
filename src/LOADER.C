@@ -122,7 +122,7 @@ char main_lbx_file[] = "MAIN";
 char backgrnd_lbx_file[] = "BACKGRND";
 
 // WZD dseg:29FD
-char soundfx_lbx_file[] = "SOUNDFX";
+char soundfx_lbx_file__ovr052[] = "SOUNDFX";
 
 // WZD dseg:2A05
 char spelldat_lbx_file[] = "SPELLDAT.LBX";
@@ -781,7 +781,20 @@ void City_Screen_Load_Pictures(void)
 // fxn_o52p12()
 
 // WZD o52p13
-// Load_Button_Sounds()
+// drake178: ¿ ?
+/*
+; loads the standard and left click sounds
+*/
+void Load_Button_Sounds(void)
+{
+
+    // SOUNDFX.LBX, 000    SLX19 VO    Standard Button click
+    snd_standard_button_click = LBX_Load(soundfx_lbx_file__ovr052, 0);
+
+    // SOUNDFX.LBX, 002    OKBUTTN     left button click
+    snd_left_button_click = LBX_Load(soundfx_lbx_file__ovr052, 2);
+
+}
 
 // WZD o52p14
 // fxn_o52p14()

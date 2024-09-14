@@ -37,7 +37,7 @@ char cnst_WB7[] = "wb";
 // WZD s24p01
 void F11_Key__WIP(void)
 {
-    if (release_version == ST_TRUE)
+    if(release_version == ST_TRUE)
     {
         return;
     }
@@ -45,6 +45,7 @@ void F11_Key__WIP(void)
 }
 
 // WZD s24p02
+// drake178: DBG_ScreenDump()
 /*
 MoO2
 Module: capture
@@ -121,7 +122,7 @@ void Screen_Flic_Capture__STUB(void)
     strcpy(ScreenDump_File, cnst_Scrdmp00_Full);  // "SCRDMP00"
 
 
-    while (DIR(ScreenDump_File, scanline_buffer) != 0)
+    while(DIR(ScreenDump_File, scanline_buffer) != 0)
     {
         Scrdmp_File_Number++;
         if (Scrdmp_File_Number < 10)

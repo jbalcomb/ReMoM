@@ -1663,11 +1663,6 @@ void Cityscape_XY(int16_t x, int16_t y, int16_t bldg_idx, int16_t type)
     x_max = 0;
     x_min = 1000;
 
-    if(bldg_idx == 104)
-    {
-        MOX_DBG_BREAK;
-    }
-
     for(itr = 0; itr < 3; itr++)
     {
         cityscape_bldgs[cityscape_bldg_count].bldg_idx = bldg_idx;

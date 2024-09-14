@@ -203,7 +203,7 @@ void Spellbook_Screen(void)
         SBK_OpenPage = SBK_SomePageSaveVar;
     }
 
-    // TODO  Assign_Auto_Function(Spellbook_Screen_Draw, 2);
+    Assign_Auto_Function(Spellbook_Screen_Draw, 2);
 
     Set_Outline_Color(0);
     Set_Font_Style_Shadow_Down(0, 3, 0, 0);
@@ -241,7 +241,7 @@ void Spellbook_Screen(void)
         */
         if(input_field_idx == hotkey_ESC)
         {
-            // TODO  RP_SND_LeftClickSound2();
+            Play_Left_Click__DUPE();
             leave_screen = ST_TRUE;
         }
 
@@ -252,7 +252,7 @@ void Spellbook_Screen(void)
         {
             if((SBK_BookPageCount - 2) > SBK_OpenPage)
             {
-                // TODO  RP_SND_LeftClickSound2();
+                Play_Left_Click__DUPE();
                 SBK_PageTurn_Small(1, 0, 0);
                 SBK_OpenPage += 2;
             }
@@ -265,7 +265,7 @@ void Spellbook_Screen(void)
         {
             if(SBK_OpenPage > 1)
             {
-                // TODO  RP_SND_LeftClickSound2();
+                Play_Left_Click__DUPE();
                 SBK_PageTurn_Small(0, 0, 0);
                 SBK_OpenPage -= 2;
             }
@@ -282,7 +282,7 @@ void Spellbook_Screen(void)
                 {
                     if(SBK_BookPages[SBK_OpenPage].Spell_Count > itr_spellbook_page_fields)
                     {
-                        // TODO  SND_LeftClickSound();
+                        Play_Left_Click__STUB();
                         Ctrl_Index = itr_spellbook_page_fields;
                         spell_idx = SBK_BookPages[SBK_OpenPage].Spells[itr_spellbook_page_fields];
                         

@@ -211,7 +211,7 @@ void Merchant_Popup(void)
     int16_t input_field_idx;  // _DI_
     int16_t leave_screen;  // _SI_
 
-    // TODO  OVL_DisableIncmBlink();
+    OVL_DisableIncmBlink();
 
     Set_Button_Down_Offsets(1, 1);
 
@@ -375,6 +375,8 @@ void Hire_Hero_Popup_Draw(void)
     if(GUI_InHeroNaming == ST_TRUE)
     {
         Set_Font_Style(4, 4, 4, 4);
+        // BACKGRND.LBX, 33  OUTNAME  outpost name backg
+        outpost_name_background_seg = LBX_Reload_Next("BACKGRND", 33, GFX_Swap_Seg);
         FLIC_Draw((window_x + 29), (window_y + 55), outpost_name_background_seg);
         Print_Centered((window_x + 104), (window_y + 61), cnst_Hire_Msg_6);
         FLIC_Reset_CurrentFrame(red_button_seg);
@@ -412,8 +414,8 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     int16_t Hero_Hired;
     int16_t Hire_Success;
     int16_t window_y;
-    int16_t Hire_Button_Index;
-    int16_t Reject_Button_Index;
+    int16_t hire_button_field;
+    int16_t reject_button_field;
     int16_t itr;
     int16_t leave_screen;
     int16_t input_field_idx;
@@ -459,13 +461,13 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     strcpy(_players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, hirehero_unit_type_name);
 
-    Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, 0);
+    Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
 
     // ; conflicting condition - will always jump
     if(Hire_Success == ST_FALSE)
     {
         GFX_Swap_Cities();
-        return 0;
+        return ST_FALSE;
     }
 
     GAME_AssetCost = (_unit_type_table[unit_type_idx].Cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].Cost) / 4));
@@ -482,8 +484,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             _UNITS[(_units - 1)].Level += 1;
             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
         }
+
         UNIT_MarkRemoved((_units - 1), 1);
+
         GFX_Swap_Cities();
+
         return ST_FALSE;
     }
 
@@ -505,15 +510,15 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
         // ¿ "[H]ire" ?
-        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED);
+        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED);
     }
     else
     {
         // ¿ "[A]ccept" ?
-        Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED);
+        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED);
     }
 
-    Reject_Button_Index = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
+    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
 
     UV_Add_Specials_Fields((window_x + 8), (window_y + 108), uv_specials_list_array, uv_specials_list_count, uv_specials_list_index);
 
@@ -527,7 +532,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Apply_Palette();
 
-    // TODO  VGA_MosaicFlip();
+    VGA_MosaicFlip__STUB();
 
     // ~== Set_Hire_Hero_Popup_Help_List()
     LBX_Load_Data_Static(hlpentry_lbx_file__ovr127, 23, (SAMB_ptr)_help_entries, 0, 23, 10);
@@ -550,12 +555,12 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         UV_Handle_Arrow_Buttons(input_field_idx, &itr);
 
         /*
-            BEGIN:  Reject
+            BEGIN:  Left-Click Reject Button
         */
-        if(input_field_idx == Reject_Button_Index)
+        if(input_field_idx == reject_button_field)
         {
             leave_screen = ST_TRUE;
-            // TODO  RP_SND_LeftClickSound2();
+            Play_Left_Click__DUPE();
             if(_UNITS[(_units - 1)].Level < 4)
             {
                 _UNITS[(_units - 1)].Level += 1;
@@ -564,15 +569,15 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             UNIT_MarkRemoved((_units - 1), 1);
         }
         /*
-            END:  Reject
+            END:  Left-Click Reject Button
         */
 
         /*
-            BEGIN:  Hire / Accept
+            BEGIN:  Left-Click Hire / Accept Button
         */
-        if(input_field_idx == Hire_Button_Index)
+        if(input_field_idx == hire_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             GUI_InHeroNaming = ST_TRUE;
             _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type_idx].Level = -20;
             if(GAME_HeroHireType == 0)
@@ -592,10 +597,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             leave_screen = ST_TRUE;
         }
         /*
-            END:  Hire / Accept
+            END:  Left-Click Hire / Accept Button
         */
 
-        Clear_Fields_Above(Reject_Button_Index);
+        Clear_Fields_Above(reject_button_field);
+
         UV_Add_Specials_Fields((window_x + 8), (window_y + 108), uv_specials_list_array, uv_specials_list_count, uv_specials_list_index);
 
         if(leave_screen == ST_FALSE)
@@ -611,12 +617,9 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     {
         Set_Font_Style(4, 4, 4, 4);
 
-        // ; clears the GUI, creates an edit box with the passed
-        // ; parameters, and transfers control to it until it
-        // ; loses focus, at which point the resulting string is
-        // ; saved to the passed pointer and the function returns
-        // ; -1 if the Esc key was pressed, or 0 otherwise
-        // TODO  Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, 13, 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127, -1);
+        // // int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
+        // Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0], ST_UNDEFINED);
+        Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0]);
         strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
     }
 
@@ -696,15 +699,15 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
     int16_t return_value;
     int16_t window_y;
     int16_t window_x;
-    int16_t Hire_Button_Index;
-    int16_t Reject_Button_Index;
+    int16_t hire_button_field;
+    int16_t reject_button_field;
     int16_t input_field_idx;
     int16_t leave_screen;  // _SI_
 
     window_x = 25;
     window_y = 17;
 
-    // TODO  OVL_DisableIncmBlink();
+    OVL_DisableIncmBlink();
 
     Allocate_Reduced_Map();
 
@@ -748,9 +751,9 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Set_Font_Style(4, 4, 0, 0);
 
-    Hire_Button_Index = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, empty_string__ovr127[0], ST_UNDEFINED);
+    hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, empty_string__ovr127[0], ST_UNDEFINED);
 
-    Reject_Button_Index = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
+    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
 
     Set_Font_Style(0, 0, 2, 0);
 
@@ -781,17 +784,17 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == Reject_Button_Index)
+        if(input_field_idx == reject_button_field)
         {
             leave_screen = ST_TRUE;
-            // TODO  RP_SND_LeftClickSound2();
+            Play_Left_Click__DUPE();
             _units -= 1;
             return_value = ST_FALSE;
         }
 
-        if(input_field_idx == Hire_Button_Index)
+        if(input_field_idx == hire_button_field)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen = ST_TRUE;
             _units -= 1;
             return_value = ST_TRUE;
@@ -812,7 +815,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
     Deactivate_Auto_Function();
     Release_Block(_screen_seg);
     // TODO  Near_Allocate_Undo(_screen_seg);
-    // TODO  OVL_EnableIncmBlink();
+    OVL_EnableIncmBlink();
     Deactivate_Help_List();
 
     return return_value;

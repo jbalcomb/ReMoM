@@ -34,7 +34,7 @@ void Powergraph_Screen(void);
 void Powergraph_Screen_Draw(void);
 
 // WZD o76p05
-void IDK_Powergraph_Draw_Turn_Data(void);
+void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t month);
 
 // WZD o76p06
 void Status_Screen(void);

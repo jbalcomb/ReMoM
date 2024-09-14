@@ -1837,9 +1837,9 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots);
 
-    for(itr = 0; itr < 3; itr++)
+    for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
     {
-        _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = -1;
+        _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
     }
 
     if(saved_flag == ST_TRUE)
@@ -1860,11 +1860,11 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
     else
     {
         LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
-        SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, 6);
+        SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, HL_GRANDLORD);
     }
 
     _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
-    _UNITS[(_units - 1)].XP = TBL_Experience[unit_type_idx];
+    _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
 
     // BUG  Did this used to do something different? What tests it?
     // may be is/was success status as in cast the spell

@@ -723,128 +723,6 @@ enum e_EVENT_MESSAGE_TYPE
 
 
 
-enum MUSIC_Tracks
-{
-MUSIC_Good_Arcane  = 0,
-MUSIC_Good_Chaos  = 1,
-MUSIC_Good_Death  = 2,
-MUSIC_Good_Life  = 3,
-MUSIC_Good_Nature  = 4,
-MUSIC_Good_Sorcery  = 5,
-MUSIC_Bad_Arcane  = 6,
-MUSIC_Bad_Chaos  = 7,
-MUSIC_Bad_Death  = 8,
-MUSIC_Bad_Life  = 9,
-MUSIC_Bad_Nature  = 10,
-MUSIC_Bad_Sorcery  = 11,
-MUSIC_SoM_Started  = 12,
-MUSIC_Weak_Summon  = 13,
-MUSIC_Avg_Summon  = 14,
-MUSIC_Powerful_Summon  = 15,
-MUSIC_Mighty_Summon  = 16,
-MUSIC_Spell_Failure  = 17,
-MUSIC_Upkeep_Warning  = 18,
-MUSIC_Eternal_Night  = 19,
-MUSIC_Evil_Omens  = 20,
-MUSIC_Zombie_Mastery  = 21,
-MUSIC_Aura_of_Majesty  = 22,
-MUSIC_Wind_Mastery  = 23,
-MUSIC_Suppress_Magic  = 24,
-MUSIC_Time_Stop  = 25,
-MUSIC_Nature_Awareness  = 26,
-MUSIC_Force_of_Nature  = 27,
-MUSIC_Herb_Mastery  = 28,
-MUSIC_Chaos_Surge  = 29,
-MUSIC_Doom_Mastery  = 30,
-MUSIC_Great_Wasting  = 31,
-MUSIC_Meteor_Storm  = 32,
-MUSIC_Armageddon  = 33,
-MUSIC_Tranquility  = 34,
-MUSIC_Life_Force  = 35,
-MUSIC_Crusade  = 36,
-MUSIC_Just_Cause  = 37,
-MUSIC_Holy_Arms  = 38,
-MUSIC_Wrath_of_God  = 39,
-MUSIC_New_Spell  = 40,
-MUSIC_Merlin_Good  = 41,
-MUSIC_Merlin_Bad  = 42,
-MUSIC_Raven_Good  = 43,
-MUSIC_Raven_Bad  = 44,
-MUSIC_Sharee_Good  = 45,
-MUSIC_Sharee_Bad  = 46,
-MUSIC_LoPan_Good  = 47,
-MUSIC_LoPan_Bad  = 48,
-MUSIC_Jafar_Good  = 49,
-MUSIC_Jafar_Bad  = 50,
-MUSIC_Oberic_Good  = 51,
-MUSIC_Oberic_Bad  = 52,
-MUSIC_Rjak_Good  = 53,
-MUSIC_Rjak_Bad  = 54,
-MUSIC_Sssra_Good  = 55,
-MUSIC_Sssra_Bad  = 56,
-MUSIC_Tauron_Good  = 57,
-MUSIC_Tauron_Bad  = 58,
-MUSIC_Freya_Good  = 59,
-MUSIC_Freya_Bad  = 60,
-MUSIC_Horus_Good  = 61,
-MUSIC_Horus_Bad  = 62,
-MUSIC_Ariel_Good  = 63,
-MUSIC_Ariel_Bad  = 64,
-MUSIC_Tlaloc_Good  = 65,
-MUSIC_Tlaloc_Bad  = 66,
-MUSIC_Kali_Good  = 67,
-MUSIC_Kali_Bad  = 68,
-MUSIC_WIN_By_Magic  = 69,
-MUSIC_Hiring_Screen  = 70,
-MUSIC_Merlin_Cmbt1  = 71,
-MUSIC_Merlin_Cmbt2  = 72,
-MUSIC_Raven_Cmbt1  = 73,
-MUSIC_Raven_Cmbt2  = 74,
-MUSIC_Sharee_Cmbt1  = 75,
-MUSIC_Sharee_Cmbt2  = 76,
-MUSIC_LoPan_Cmbt1  = 77,
-MUSIC_LoPan_Cmbt2  = 78,
-MUSIC_Jafar_Cmbt1  = 79,
-MUSIC_Jafar_Cmbt2  = 80,
-MUSIC_Oberic_Cmbt1  = 81,
-MUSIC_Oberic_Cmbt2  = 82,
-MUSIC_Rjak_Cmbt1  = 83,
-MUSIC_Rjak_Cmbt2  = 84,
-MUSIC_Sssra_Cmbt1  = 85,
-MUSIC_Sssra_Cmbt2  = 86,
-MUSIC_Tauron_Cmbt1  = 87,
-MUSIC_Tauron_Cmbt2  = 88,
-MUSIC_Freya_Cmbt1  = 89,
-MUSIC_Freya_Cmbt2  = 90,
-MUSIC_Horus_Cmbt1  = 91,
-MUSIC_Horus_Cmbt2  = 92,
-MUSIC_Ariel_Cmbt1  = 93,
-MUSIC_Ariel_Cmbt2  = 94,
-MUSIC_Tlaloc_Cmbt1  = 95,
-MUSIC_Tlaloc_Cmbt2  = 96,
-MUSIC_Kali_Cmbt1  = 97,
-MUSIC_Kali_Cmbt2  = 98,
-MUSIC_Bkrgnd_Good  = 99,
-MUSIC_Bkgrnd_Neutral  = 100,
-MUSIC_Bkgrnd_Negative  = 101,
-MUSIC_Combat_1  = 102,
-MUSIC_Combat_2  = 103,
-MUSIC_Main_Menu  = 104,
-MUSIC_Site_Discovery  = 105,
-MUSIC_Events  = 106,
-MUSIC_New_Outpost  = 107,
-MUSIC_Bldng_Finished  = 108,
-MUSIC_WIN_Military  = 109,
-MUSIC_LOSE_Military  = 110,
-MUSIC_LOSE_By_Magic  = 111,
-MUSIC_Intro  = 112,
-MUSIC_Fanf_not_used  = 113,
-MUSIC_Bad_Event  = 114,
-MUSIC_Fanfare  = 115
-};
-
-
-
 // sizeof:  0Ah  10d
 struct s_BOOKSHELF
 {
@@ -968,12 +846,19 @@ struct s_OWNED_HERO
 #pragma pack(pop)
 
 // drake178: INACTV_HERO
+/*
+hero_names_table
+allocated in Allocate_Data_Space()
+37 PR  592 B
+~ (36) 16-byte structs
+
+*/
 // sizeof:  10h  16d
 #pragma pack(push)
 #pragma pack(2)
 struct s_INACTV_HERO
 {
-    /* 00 */  char name[LEN_STRING];
+    /* 00 */  char name[LEN_HERO_NAME];
     /* 0E */  int16_t experience_points;
     /* 10 */
 };
@@ -1207,7 +1092,7 @@ struct s_WIZARD
 {
     /* 0000 */ uint8_t wizard_id; /* 1-byte, signed;  player_idx  MoO2: player_num, player_id */
     /* 0001 */ char name[LEN_WIZARD_NAME];
-    /* 0015 */ uint8_t Cptl_Race;
+    /* 0015 */ uint8_t capital_race;
     /* 0016 */ uint8_t banner_id;  /* 1-byte, signed */
     /* 0017 */ uint8_t pad2B_17h;  /* ¿ 2-byte alignment padding ? */
     /* 0018 */ uint16_t Personality;            /* enum AI_Personality */
@@ -3005,14 +2890,18 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 // WZD  dseg:9408 00 00 00 00 00 00 00 00 00 00 00 00             notify_magic_picts_seg dw 6 dup(0)      ; DATA XREF: Notify_Load+17Bw ...
 // WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
 // WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
-// WZD  dseg:9414 00 00                                           gsa_SOUNDFX_2_SFX_Left_Click dw 0       ; DATA XREF: SND_LeftClickSound:loc_14809r ...
-// WZD  dseg:9414                                                                                         ; single-loaded audio file
+
+// WZD  dseg:9414
+extern SAMB_ptr snd_left_button_click;
+
 // WZD  dseg:9416 00                                              db    0
 // WZD  dseg:9417 00                                              db    0
 // WZD  dseg:9418 00                                              db    0
 // WZD  dseg:9419 00                                              db    0
-// WZD  dseg:941A 00 00                                           gsa_SOUNDFX_0_SFX_Standard_Click dw 0   ; DATA XREF: SND_PlayClickSound:loc_1481Fr ...
-// WZD  dseg:941A                                                                                         ; single-loaded audio file
+
+// WZD  dseg:941A
+extern SAMB_ptr snd_standard_button_click;
+
 // WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
 // WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
 // WZD  dseg:9421 00 00 00 00 00                                  TF_Unk_40_YCoords db 5 dup(0)                             ; 0

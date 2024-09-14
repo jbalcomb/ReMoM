@@ -150,7 +150,7 @@ switch(current_screen)
         {
             case 0:
             {
-                // SND_Stop_Music();
+                // Stop_Music__STUB();
                 // j_GAME_WizardsLaunch(8);
             } break;
             case 1:

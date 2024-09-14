@@ -263,7 +263,7 @@ void ArmyList_Screen(void)
         */
         if(input_field_idx == button_armylist_ok || input_field_idx == hotkey_ESC)
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             leave_screen_flag = ST_TRUE;
             current_screen = scr_Main_Screen;
             // TODO  j_o62p01_Empty_pFxn(_human_player_idx);
@@ -284,7 +284,7 @@ void ArmyList_Screen(void)
         */
         if(input_field_idx == button_armylist_items)
         {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 leave_screen_flag = ST_TRUE;
                 item_pool_item_idx = ST_UNDEFINED;
                 current_screen = scr_Item_Screen;
@@ -296,7 +296,7 @@ void ArmyList_Screen(void)
         */
         if( (input_field_idx == button_armylist_up_right) || (input_field_idx == button_armylist_up_left) || (input_field_idx == hotkey_U) )
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             if(list_first_item != 0)
             {
                 list_first_item--;
@@ -310,7 +310,7 @@ void ArmyList_Screen(void)
         */
         if( (input_field_idx == button_armylist_down_right) || (input_field_idx == button_armylist_down_left) || (input_field_idx == hotkey_D) )
         {
-            // TODO  SND_LeftClickSound();
+            Play_Left_Click__STUB();
             if(list_first_item + 6 < m_army_list_count)
             {
                 list_first_item++;
@@ -326,7 +326,7 @@ void ArmyList_Screen(void)
         {
             if(m_armies_list_fields[itr] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 _unit = list_armies[itr];
                 _map_plane  = _UNITS[_unit].wp;
                 Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
@@ -396,7 +396,7 @@ void ArmyList_Screen(void)
         {
             if(armylist_hero_portrait_fields[itr] == input_field_idx)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 _unit = _players[_human_player_idx].Heroes[itr].unit_idx;
                 _map_plane  = _UNITS[_unit].wp;
                 Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, _UNITS[_unit].wx, _UNITS[_unit].wy);
@@ -1075,10 +1075,10 @@ void ArmyList_Screen_Load(void)
         armylist_unit_enchantment_names[itr] = (char *)Near_Allocate_Next(20);
     }
 
-    m_armies_list_fields = Near_Allocate_Next(108);
+    m_armies_list_fields = (int16_t *)Near_Allocate_Next(108);
 
-    armylist_hero_portrait_fields = Near_Allocate_Next(12);        // 6 2-byte values
-    armylist_hero_portrait_unit_indices = Near_Allocate_Next(12);  // 6 2-byte values
+    armylist_hero_portrait_fields = (int16_t *)Near_Allocate_Next(12);        // 6 2-byte values
+    armylist_hero_portrait_unit_indices = (int16_t *)Near_Allocate_Next(12);  // 6 2-byte values
     IDK_armylist_row_fields = Near_Allocate_Next(12);  // ¿ 12 is 6 2-byte values, 1 per ArmyList List Item Field ?
 
     Set_Page_Off();

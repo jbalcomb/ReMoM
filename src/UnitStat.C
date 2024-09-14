@@ -415,7 +415,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                     (-(uv_item_desc_fields[itr]) == input_field_idx)
                 )
                 {
-                    // TODO  SND_LeftClickSound();
+                    Play_Left_Click__STUB();
                     
                     item_idx = _players[_UNITS[uv_unit_idx].owner_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].Items[itr];
                     if(item_idx != -1)
@@ -487,7 +487,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                             (uv_specials_fields_ability_flags[itr] != -99)
                         )
                         {
-                            // TODO  SND_LeftClickSound();
+                            Play_Left_Click__STUB();
                             Deactivate_Help_List();
 
                             dismissed_unit = UV_Remove_Unit_Enchantment(uv_unit_idx, uv_specials_fields_ability_flags[itr], GUI_String_1);
@@ -550,7 +550,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
         {
             if(input_field_idx == unitview_dismiss_button)
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 if(_UNITS[uv_unit_idx].Hero_Slot != -1)
                 {
                     strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
@@ -590,7 +590,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                 (input_field_idx == hotkey_idx_ESC)
             )
             {
-                // TODO  SND_LeftClickSound();
+                Play_Left_Click__STUB();
                 leave_screen = ST_UNDEFINED;
             }
         }
@@ -1838,7 +1838,7 @@ void UV_Handle_Arrow_Buttons(int16_t input_field_idx, int16_t * display_count)
 
     if(input_field_idx == unitview_dn_button)
     {
-        // TODO  SND_LeftClickSound();
+        Play_Left_Click__STUB();
 
         if(
             (uv_specials_list_index == 0)
@@ -1861,7 +1861,7 @@ void UV_Handle_Arrow_Buttons(int16_t input_field_idx, int16_t * display_count)
 
     if(input_field_idx == unitview_up_button)
     {
-        // TODO  SND_LeftClickSound();
+        Play_Left_Click__STUB();
 
         if(
             (uv_specials_list_index == 0)
