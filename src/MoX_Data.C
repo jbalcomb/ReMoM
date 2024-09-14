@@ -2093,11 +2093,17 @@ struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 // WZD dseg:9CB0
+// drake178: TBL_Scouting
+// MoO2  Module: PLNTSUM  data (0 bytes) _planet_explored  Address: 02:001945B2
+// 1oom: ¿ ?
 /*
     302 Paragraphs, 4832 Bytes
     4800 bytes used - 1-byte values, 2400 world squares, 2 planes
+    {F,T}
+
 */
-uint8_t * TBL_Scouting;                     // load in Load_SAVE_GAM()
+uint8_t * _square_explored;                     // load in Load_SAVE_GAM()
+
 
 // WZD dseg:9CB4
 /*

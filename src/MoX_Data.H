@@ -3653,10 +3653,12 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 
 
-// WZD dseg:9CB0  
-extern uint8_t * TBL_Scouting;              // alloc in Allocate_Data_Space()
+// WZD dseg:9CB0
+extern uint8_t * _square_explored;              // alloc in Allocate_Data_Space()
+
 // WZD dseg:9CB4
 extern uint8_t * _map_square_flags;         // alloc in Allocate_Data_Space()
+
 // WZD dseg:9CB8
 extern SAMB_ptr TBL_Terr_Specials;          // alloc in Allocate_Data_Space()
 

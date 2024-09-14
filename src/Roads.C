@@ -543,7 +543,8 @@ void Road_Build_Path(int16_t x2, int16_t y2)
     int16_t turns_to_build_road;  // _SI_
     int16_t itr;  // _DI_
 
-    if(TBL_Scouting[((_map_plane * WORLD_SIZE) + (y2 * WORLD_WIDTH) + x2)] == ST_FALSE)
+    // DELETEME  if(_square_explored[((_map_plane * WORLD_SIZE) + (y2 * WORLD_WIDTH) + x2)] == ST_FALSE)
+    if(GET_SQUARE_EXPLORED(x2, y2, _map_plane) == ST_FALSE)
     {
         return;
     }

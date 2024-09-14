@@ -384,9 +384,10 @@ void Cheat_Reveal(void)
     {
         for(itr_x = 0; itr_x <WORLD_WIDTH; itr_x++)
         {
-            // TODO  rename TBL_Scouting to square_explored
-            TBL_Scouting[((0 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0x0F;
-            TBL_Scouting[((1 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0x0F;
+            // DELETEME  _square_explored[((0 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
+            // DELETEME  _square_explored[((1 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
+            SET_SQUARE_EXPLORED(itr_x, itr_y, 0, 0xF);
+            SET_SQUARE_EXPLORED(itr_x, itr_y, 1, 0xF);
         }
     }
 
@@ -674,8 +675,8 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
 */
 int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
 {
-    int16_t movement_mode_flags[6];
-    int16_t stack_array[9];
+    int16_t movement_mode_flags[6] = { 0xBB,0xBB,0xBB,0xBB,0xBB,0xBB };
+    int16_t stack_array[MAX_STACK] = { 0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB,0xBB };
     int16_t city_has_spellward;
     // int16_t laird_idx__city_idx;
     int16_t lair_idx;

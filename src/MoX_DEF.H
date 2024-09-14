@@ -361,6 +361,21 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define GET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_)  ( *(TBL_Terr_Specials + ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_)) )
 
 
+//            _square_explored[((0 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
+//            _square_explored[((1 * WORLD_SIZE) + (itr_y * WORLD_WIDTH) + itr_x)] = 0xF;  /* 0b11111111 */
+// MoO2  Clear_Planet_Explored_Flags_()
+// MoO2  Set_Planet_Explored_Flags_()
+#define GET_SQUARE_EXPLORED(_wx_, _wy_, _wp_)           ( _square_explored[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]              )
+#define SET_SQUARE_EXPLORED(_wx_, _wy_, _wp_, _value_)  ( _square_explored[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_)  )
+
+#define UNEXPLORED  0x0  /* no bits are set */  /* test as 'any bits are set' */
+
+#define SQUARE_UNEXPLORED(_wx_, _wy_, _wp_)             (  GET_SQUARE_EXPLORED((_wx_), (_wy_), (_wp_)) == UNEXPLORED  )
+/* Intuitive?  explored means NOT unexplored */
+#define SQUARE_EXPLORED(  _wx_, _wy_, _wp_)             (  !SQUARE_UNEXPLORED( (_wx_), (_wy_), (_wp_))                )
+/* ¿ ...none, any, all... ? */
+
+
 #define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 
 #define SET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
@@ -374,21 +389,70 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 
 
 
-#define HUMAN_PLAYER_IDX                 0
-#define NEUTRAL_PLAYER_IDX               5
-#define MOO_MONSTER_PLAYER_IDX           6
+#define HUMAN_PLAYER_IDX                   0
+#define NEUTRAL_PLAYER_IDX                 5
+#define MOO_MONSTER_PLAYER_IDX             6
 
-#define NEUTRAL_PLAYER_BANNER_COLOR_IDX  5
+#define NUM_BANNER_COLORS                  6
+#define NEUTRAL_PLAYER_BANNER_COLOR_IDX    5
+#define NEUTRAL_PLAYER_BANNER_COLOR       50
 
-#define BANNER_COLOR_BLUE              172
-#define BANNER_COLOR_GREEN             216
-#define BANNER_COLOR_PURPLE            124
-#define BANNER_COLOR_RED               201
-#define BANNER_COLOR_YELLOW            211
-#define BANNER_COLOR_PURPLE_123            123
-#define BANNER_COLOR_PURPLE_124            124
+/*
+WZD dseg:7011
 
-#define MAX_UNIT_COUNT    1000
+uint8_t COL_City_Banner[] = { ... };
+
+COL_City_Banner0    db  96,  97,  98,  99, 100  ¿ ~ blue ?
+COL_City_Banner1    db  72,  73,  74,  75,  76  ¿ ~ green ?
+COL_City_Banner2    db 205, 206, 207, 208, 209  ~ purple
+COL_City_Banner3    db 201, 165, 203, 166,  45  ~ red
+COL_City_Banner4    db 209, 210, 211, 212, 213  ~ yellow
+UU_COL_City_Banner5 db  29,  29,  28,  28,  27  ¿ ?
+UU_COL_City_Banner6 db  29,  29,  28,  28,  27  ¿ ?
+
+
+// ¿ MoO2: ~ remap_picture_colors ?
+// WZD dseg:00AA 69 6A 6B 6C 6D                                  COL_Banners_P0 db 105, 106, 107, 108, 109
+// WZD dseg:00AF 49 4A 4B 4C 4D                                  COL_Banners_P1 db 73, 74, 75, 76, 77
+// WZD dseg:00B4 79 7A 7B 7C 7D                                  COL_Banners_P2 db 121, 122, 123, 124, 125
+// WZD dseg:00B9 C9 A5 CB A6 2D                                  COL_Banners_P3 db 201, 165, 203, 166, 45
+// WZD dseg:00BE A0 A1 A2 B2 B4                                  COL_Banners_P4 db 160, 161, 162, 178, 180
+// WZD dseg:00C3 30 31 32 33 34                                  COL_Banners_P5 db 48, 49, 50, 51, 52
+uint8_t COL_Banners[] = {
+    0x69, 0x6A, 0x6B, 0x6C, 0x6D,
+    0x49, 0x4A, 0x4B, 0x4C, 0x4D,
+    0x79, 0x7A, 0x7B, 0x7C, 0x7D,
+    0xC9, 0xA5, 0xCB, 0xA6, 0x2D,
+    0xA0, 0xA1, 0xA2, 0xB2, 0xB4,
+    0x30, 0x31, 0x32, 0x33, 0x34
+};
+
+// WZD dseg:00C8
+uint8_t COL_Banners2[36] = {
+    98, 216, 123, 43, 179, 50,
+    201,  0, 165,  0, 203,  0,
+    121,  0, 122,  0, 123,  0,
+     13,  0,  14,  0,  15,  0,
+     73,  0,  74,  0,  75,  0,
+    105,  0, 106,  0, 107,  0
+};
+
+*/
+#define BANNER_COLOR_BLUE                172
+#define BANNER_COLOR_GREEN               216
+#define BANNER_COLOR_PURPLE              124
+#define BANNER_COLOR_RED                 201
+#define BANNER_COLOR_YELLOW              211
+#define BANNER_COLOR_BROWN                50
+#define BANNER_COLOR_BLUE_171            171
+#define BANNER_COLOR_BLUE_172            172
+#define BANNER_COLOR_PURPLE_123          123
+#define BANNER_COLOR_PURPLE_124          124
+#define BANNER_COLOR_PURPLE_205          205
+#define BANNER_COLOR_YELLOW_210          210
+#define BANNER_COLOR_YELLOW_211          211
+
+#define MAX_UNIT_COUNT                  1000
 
 #define MAX_CITY_POPULATION 25
 #define MAX_CITY_POPULATION_NEUTRAL_PLAYER 8  // NOTE: *should* be ((_difficulty + 1) * 2))  (({0,1,2,3} + 1) * 2) = {2,4,6,8}

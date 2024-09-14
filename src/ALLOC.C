@@ -65,7 +65,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
 
-    TBL_Scouting = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
+    _square_explored = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
 
 
     square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes  ¿ (((2400 / 8) + 1) + 1) / 16) ?
@@ -145,7 +145,7 @@ city_area_bits           = SA_MK_FP0( EMM_EMMDATAH_AllocNext(  301 ) );  //  301
 TBL_OvlMovePathsEMS      = SA_MK_FP0( EMM_EMMDATAH_AllocNext( 1033 ) );  // 1033 PR  16528 B
 
 city_area_bits & city_area_shared_bits
-¿ ~== TBL_Scouting or square_scouted_p0/p1 ?
+¿ ~== _square_explored or square_scouted_p0/p1 ?
 301 * 16 = 4816  ¿ 301 would be the byte count needed for one worlds worth of bits, +1 to cover the paragraph boundary, like with square_scouted_p0/p1 ?
 60 * 40 = 2400 / 16 = 150 * 2 = 300
 

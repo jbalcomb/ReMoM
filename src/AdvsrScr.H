@@ -43,13 +43,13 @@ void Status_Screen(void);
 void Status_Screen_Draw(void);
 
 // WZD o76p08
-// IDK_Cartographer_Screen()
+void Cartographer_Screen__WIP(void);
 
 // WZD o76p09
-// OVL_CartographRedraw()
+void Cartographer_Screen_Draw__WIP(void);
 
 // WZD o76p10
-// Cartographer_Screen_Draw()
+void Cartographer_Screen_IDK_map_features__WIP(int16_t flag);
 
 // WZD o76p11
 void GrandVizier_Window(void);

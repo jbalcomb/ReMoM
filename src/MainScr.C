@@ -982,7 +982,7 @@ void Main_Screen(void)
     int16_t hotkey_idx_F2;
     int16_t hotkey_idx_F1;
     int16_t IDK_EoT_flag;
-// DBG_Alt_A__TurnCount= word ptr -4Eh
+    int16_t DBG_Alt_A__TurnCount;
     int16_t hotkey_idx_Alt_A;
     int16_t hotkey_idx_RightDown;
     int16_t hotkey_idx_Down;
@@ -1051,10 +1051,12 @@ void Main_Screen(void)
 
     Reset_Window();
     Clear_Fields();
-    // UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+
+    // TODO  UU_MainScreen_flag = 1;  // only XREF Main_Screen(), sets TRUE, never tests
+
     Allocate_Reduced_Map();
     Reset_Draw_Active_Stack();
-    Set_Outline_Color(0);  // ¿ BLACK / NONE / TRANSPARENT ?
+    Set_Outline_Color(ST_TRANSPARENT);
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
 
@@ -1066,9 +1068,9 @@ void Main_Screen(void)
 
     m_citylist_first_item = 0;
 
-    // DONT  CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
-    // DONT  CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
-    // DONT  OVL_MapVar3 = 1;  // ? ST_TRUE ?
+    // TODO  CRP_OverlandVar_2 = 0;  // ? ST_FALSE ?
+    // TODO  CRP_OVL_Obstacle_Var1 = 0;  // ? ST_FALSE ?
+    // TODO  OVL_MapVar3 = 1;  // ? ST_TRUE ?
 
     Reset_Map_Draw();
     MainScr_Prepare_Reduced_Map();
@@ -1078,8 +1080,8 @@ void Main_Screen(void)
 
     Set_Unit_Action_Special();
 
-    // DONT  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
-    // DONT  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
+    // TODO  if (CRP_OverlandVar_3 != 1) { CRP_OverlandVar_3 = 0; }  // ? ST_TRUE ST_FALSE ?
+    // TODO  if (CRP_OverlandVar_4 != 1) { CRP_OverlandVar_4 = 0; }  // ? ST_TRUE ST_FALSE ?
 
     screen_changed = ST_FALSE;
 
@@ -1092,12 +1094,14 @@ void Main_Screen(void)
     Deactivate_Help_List();
     Set_Main_Screen_Help_List();
 
-    // TODO  DBG_Alt_A__TurnCount = -1
+    DBG_Alt_A__TurnCount = ST_UNDEFINED;
+    
+    assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     Main_Screen_Draw();
+
     PageFlip_FX();
-
-
 
     /*
         BEGIN: Screen-Loop
@@ -1853,6 +1857,9 @@ void Main_Screen(void)
                             (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE)
                         )
                         {
+                            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+                            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
                             Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
                         }
                         else
@@ -2321,6 +2328,10 @@ void Main_Screen_Draw(void)
 {
     Reset_Window();
     Set_Page_Off();
+
+    assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
 }
 
@@ -2411,23 +2422,31 @@ void Move_Stack_DirKey(int16_t movement_direction)
 
         }
 
-        if(move_y < WORLD_Y_MIN)
-        {
-            move_y = WORLD_Y_MIN;
-        }
-        if(move_y >= WORLD_HEIGHT)
-        {
-            move_y = WORLD_Y_MAX;
-        }
+        // DELETEME  if(move_y < WORLD_Y_MIN)
+        // DELETEME  {
+        // DELETEME      move_y = WORLD_Y_MIN;
+        // DELETEME  }
+        SETMIN(move_y, WORLD_Y_MIN);
+
+        // DELETEME  if(move_y >= WORLD_HEIGHT)
+        // DELETEME  {
+        // DELETEME      move_y = WORLD_Y_MAX;
+        // DELETEME  }
+        SETMIN(move_y, WORLD_HEIGHT);
 
         if(Stack_Has_PlanarTravel() == ST_TRUE)
         {
+            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
             Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
         }
         else
         {
             if( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
             {
+                assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+                assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
                 Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
             }
@@ -3446,10 +3465,15 @@ void Main_Screen_Draw_Status_Window(void)
 // WZD o063p02
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx)
 {
+    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     Reset_Map_Draw();
 
     Reduced_Map_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
+
+    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
@@ -3465,7 +3489,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
     if(_unit_stack_count > 0)
     {
         Main_Screen_Draw_Unit_Window(_unit_window_start_x, _unit_window_start_y);
-        // TODO(JimBalcomb,20230616): make note of the drawing of locked buttons in here  ? program-flow oddities ? screen component drawing graph ?
+        // TODO(JimBalcomb,20230616): make note of the drawing of locked buttons in here  ¿ program-flow oddities ?  ¿ screen component drawing flowchart ?
         Main_Screen_Draw_Unit_Action_Buttons();
     }
     else
@@ -5078,6 +5102,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t itr_troops;  // _SI_
     int16_t itr_path;  // _SI_
 
+    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     unit_idx = troops[0];
     unit_wx = _UNITS[unit_idx].wx;
@@ -5312,6 +5338,9 @@ Start_Path:
     }
     else
     {
+        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
         Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
     }
 
@@ -5536,6 +5565,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     int16_t itr_move_stages;
     int16_t itr_units;
 
+    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
     unit_idx = unit_array[0];
 
     /*
@@ -5585,7 +5617,12 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
         Reset_Map_Draw();
         MainScr_Prepare_Reduced_Map();
+
+        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+
         Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
+
         PageFlip_FX();
         Copy_On_To_Off_Page();
         Reset_Map_Draw();

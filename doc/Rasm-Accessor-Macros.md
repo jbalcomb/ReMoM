@@ -248,8 +248,8 @@ So, ...
     ~ 'Get Word Of World Map' (wx, wy, wp)
     ~ 'Get Byte Of World Map' (wx, wy, wp)
     ¿ the DB or DW access seen in the Dasm is due to the width of the data-type of the pointer ?
-        (uint8_t  *)(_world_maps + ( (wp * 4800) + (wy * 120) + (wx * 2) ) );
-        (uint16_t *)(_world_maps + ( (wp * 2400) + (wy *  60) + (wx    ) ) );
+        (uint8_t  *)(_world_maps + ( (wp * WORLD_SIZE_DW) + (wy * 120) + (wx * 2) ) );
+        (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE_DB) + (wy *  60) + (wx    ) ) );
 
 
 ### _world_maps
@@ -294,8 +294,8 @@ Draw_Reduced_Map()
     uint8_t * world_data_ptr;
     uint8_t * minimap_pict_data_ptr;
     terrain_type_idx_base = world_plane * TERRAIN_COUNT;
-    explore_data_ptr = (TBL_Scouting + (world_plane * WORLD_SIZE));
-    world_data_ptr = (_world_maps + (world_plane * 4800));
+    explore_data_ptr = (_square_explored + (world_plane * WORLD_SIZE));
+    world_data_ptr = (_world_maps + (world_plane * WORLD_SIZE));
     minimap_pict_data_ptr = minimap_pict_seg + 16;  // +1 segment (paragraph), for the animation/picture/bitmap header
     terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
     terrain_type_idx += terrain_type_idx_base;
@@ -310,7 +310,7 @@ Terrain_Is_Sailable()
     // ~== ES = (&_world_maps[0] / 16); BX = (&_world_maps[0] % 16);
     src_sgmt = _world_maps;
     src_ofst = 0;
-    src_ofst = (map_plane * 4800) + (world_y * 120) + (world_x * 2);
+    src_ofst = (map_plane * WORLD_SIZE) + (world_y * 120) + (world_x * 2);
     world_map_value = GET_2B_OFS(src_sgmt, src_ofst);
     terrain_type = world_map_value % TERRAIN_TYPE_COUNT;
 

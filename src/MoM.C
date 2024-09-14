@@ -75,7 +75,7 @@ void Screen_Control(void)
             int16_t itr_world_size;
             for (itr_world_size = 0; itr_world_size < WORLD_SIZE; itr_world_size++)
             {
-                TBL_Scouting[((1 * WORLD_SIZE) + itr_world_size)] = TBL_Scouting[((0 * WORLD_SIZE) + itr_world_size)];
+                _square_explored[((1 * WORLD_SIZE) + itr_world_size)] = _square_explored[((0 * WORLD_SIZE) + itr_world_size)];
             }
 
             // HACK:  move Stack to Lair

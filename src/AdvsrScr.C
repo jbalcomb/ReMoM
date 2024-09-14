@@ -201,10 +201,14 @@ char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select w
 
 // WZD dseg:C296                                                 BEGIN:  ovr076 - Uninitialized Data  (Advisors Screen)
 
-// WZD dseg:C296 00 00                                           OVL_Cartograph_Plane dw 0               ; DATA XREF: IDK_Cartographer_Screen+31w ...
-// WZD dseg:C298 00 00                                           word_42D38 dw 0                         ; DATA XREF: Cartographer_Screen_Draw+6Ew ...
-// WZD dseg:C29A 00 00                                           OVL_Cartograph_Top dw 0                 ; DATA XREF: IDK_Cartographer_Screen+3Aw ...
-// WZD dseg:C29C 00 00                                           OVL_Cartograph_Left dw 0                ; DATA XREF: IDK_Cartographer_Screen+34w ...
+// WZD dseg:C296
+int16_t OVL_Cartograph_Plane;
+// WZD dseg:C298
+int16_t word_42D38;
+// WZD dseg:C29A
+int16_t m_cartograph_y;
+// WZD dseg:C29C
+int16_t m_cartograph_x;
 
 // WZD dseg:C29E
 int16_t status_screen_y;
@@ -419,8 +423,10 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 1:  /* Cartographer  (F2) */
         {
-            // TODO  IDK_Cartographer_Screen()
+            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
+            Cartographer_Screen__WIP();
         } break;
         case 2:  /* Apprentice    (F3) */
         {
@@ -1146,13 +1152,218 @@ void Status_Screen_Draw(void)
 
 
 // WZD o76p08
-// IDK_Cartographer_Screen()
+void Cartographer_Screen__WIP(void)
+{
+    int16_t hotkey_escape = 0;
+    int16_t cartograph_dot_grid = 0;
+    int64_t grid_row = 0;     // int16_t in Dasm
+    int64_t grid_column = 0;  // int16_t in Dasm
+    int16_t hotkey_next = 0;
+    int16_t hotkey_close = 0;
+    int16_t leave_screen = 0;  // _SI_
+    int16_t input_field_idx = 0;  // _DI_
+
+    GUI_String_1 = (char *)Near_Allocate_First(100);
+
+    Assign_Auto_Function(Cartographer_Screen_Draw__WIP, 1);
+
+    Deactivate_Help_List();
+
+    OVL_Cartograph_Plane = _map_plane;
+
+    m_cartograph_x = 16;
+    m_cartograph_y = 27;
+
+    Set_Cartographer_Screen_Help_List();
+
+    Cartographer_Screen_IDK_map_features__WIP(0);
+
+    Cartographer_Screen_IDK_map_features__WIP(1);
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+        Mark_Time();
+
+        Clear_Fields();
+
+        hotkey_next = Add_Hidden_Field(285, 180, 314, 199, str_hotkey_N__ovr076[0], ST_UNDEFINED);
+
+        hotkey_close = Add_Hidden_Field(265, 143, 299, 169, str_hotkey_C__ovr076[0], ST_UNDEFINED);
+
+        hotkey_escape = Add_Hot_Key(str_hotkey_ESC__ovr076[0]);
+
+        /* MainScr.C#L2147  Main_Screen_Add_Fields() */  // _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
+        cartograph_dot_grid = Add_Grid_Field(m_cartograph_x, m_cartograph_y, 4, 4, WORLD_WIDTH, WORLD_HEIGHT, &grid_column, &grid_row, ST_UNDEFINED);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == hotkey_next)
+        {
+            Play_Left_Click__STUB();
+            OVL_Cartograph_Plane = (1 - OVL_Cartograph_Plane);
+        }
+
+        if(
+            (input_field_idx == hotkey_close)
+            ||
+            (input_field_idx == hotkey_escape)
+        )
+        {
+            Play_Left_Click__STUB();
+            leave_screen = ST_TRUE;
+        }
+
+        leave_screen = ST_TRUE;
+
+        _map_plane = OVL_Cartograph_Plane;
+
+        _map_x = grid_column;
+
+        _map_y = grid_row;
+
+        _unit_stack_count = 0;
+
+        /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+        assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+        assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+        Center_Map(&_map_x, &_map_y, grid_column, grid_row, _map_plane);
+
+        Set_Draw_Active_Stack_Always();
+        Set_Unit_Draw_Priority();
+        Reset_Stack_Draw_Priority();
+
+        Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+        Reset_Map_Draw();
+
+        if(leave_screen == ST_FALSE)
+        {
+            Cartographer_Screen_Draw__WIP();
+            PageFlip_FX();
+            Release_Time(1);
+        }
+
+    }
+
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
+    Reset_Window();
+    Clear_Fields();
+    PageFlipEffect = 2;
+
+}
+
 
 // WZD o76p09
-// OVL_CartographRedraw()
+/*
+; loads the contents of either VGA frame 3 (Arcanus) or
+; 4 (Myrror) into the current draw frame, and if the
+; mouse cursor is over a visible city, draws its name
+; over its square
+*/
+void Cartographer_Screen_Draw__WIP(void)
+{
+    int16_t banner_colors[NUM_BANNER_COLORS] = {0,0,0,0,0,0};
+    int16_t city_dot_y = 0;
+    int16_t city_dot_x = 0;
+    uint8_t colors [4] = {0,0,0,0};
+    int16_t l_my = 0;
+    int16_t l_mx = 0;
+    int16_t itr_cities = 0;  // _DI_
+
+    banner_colors[0] = BANNER_COLOR_BLUE;
+    banner_colors[1] = COL_Banners2[1];
+    banner_colors[2] = COL_Banners2[2];
+    banner_colors[3] = BANNER_COLOR_RED;
+    banner_colors[4] = COL_Banners2[4];
+    banner_colors[5] = COL_Banners2[5];
+
+    Set_Page_Off();
+
+    switch(OVL_Cartograph_Plane)
+    {
+        case 0:
+        {
+            Copy_Back_To_Off();
+        } break;
+        case 1:
+        {
+            Copy_Page4_To_Off();
+        } break;
+    }
+
+    l_mx = Pointer_X();
+    l_my = Pointer_Y();
+
+    if(
+        (l_mx < m_cartograph_x)
+        ||
+        (l_my < m_cartograph_y)
+        ||
+        ((m_cartograph_x + 240) < l_mx)
+        ||
+        ((m_cartograph_y + 160) < l_my)
+    )
+    {
+        return;
+    }
+
+    l_mx = ((l_mx - m_cartograph_x) / 4);
+
+    l_my = ((l_my - m_cartograph_y) / 4);
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+        if
+        (
+            (_CITIES[itr_cities].wp = OVL_Cartograph_Plane)
+            &&
+            (_CITIES[itr_cities].wx == l_mx)
+            &&
+            (_CITIES[itr_cities].wx == l_mx)
+        )
+        {
+
+            // DELETEME  if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) != UNEXPLORED)
+            if(SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp))
+            {
+
+                city_dot_x = (m_cartograph_x + (l_mx * 4));
+
+                city_dot_y = (m_cartograph_y + (l_my * 4));
+
+                colors[0] = ST_BLACK;
+
+                colors[1] = banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id];
+
+                Set_Font_Colors_15(0, &colors[0]);
+
+                Set_Outline_Color(1);
+
+                Set_Font_Style_Outline(0, 15, 0, 0);
+
+                Print_Centered((city_dot_x + 2), (city_dot_y - 6), _CITIES[itr_cities].name);
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o76p10
-// Cartographer_Screen_Draw()
+void Cartographer_Screen_IDK_map_features__WIP(int16_t flag)
+{
+
+
+
+}
+
 
 // WZD o76p11
 void GrandVizier_Window(void)

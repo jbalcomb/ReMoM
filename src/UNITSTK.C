@@ -158,7 +158,7 @@ void Update_Stack_Active(int16_t stack_idx)
 // AKA Do_Move_Stack()
 int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p)
 {
-    int16_t unit_array[9];
+    int16_t unit_array[MAX_STACK];
     int16_t unit_array_count;
     int16_t unit_p;
     int16_t unit_y;
@@ -169,9 +169,8 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
     int16_t itr_units;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
-#endif
+    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     move_type = 0;
 
@@ -181,16 +180,18 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
         _unit = unit_array[0];
 
-// DONT          if(OVL_MapVar3 == 1)
-// DONT          {
-// DONT              OVL_MapVar3 = 0;
-// DONT              CRP_OVL_Obstacle_Var1 = 0;
-// DONT          }
-// DONT          if(CRP_OVL_Obstacle_Var1 == 0)
-// DONT          {
-// DONT              o58p03_Empty_pFxn();
-// DONT          }
+// TODO          if(OVL_MapVar3 == 1)
+// TODO          {
+// TODO              OVL_MapVar3 = 0;
+// TODO              CRP_OVL_Obstacle_Var1 = 0;
+// TODO          }
+// TODO          if(CRP_OVL_Obstacle_Var1 == 0)
+// TODO          {
+// TODO              o58p03_Empty_pFxn();
+// TODO          }
 
+        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
         Move_Units(player_idx, move_x, move_y, move_type, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
 
@@ -201,11 +202,11 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         unit_p = _UNITS[unit_idx].wp;
 
 
-        // DONT  o62p01_Empty_pFxn(player_idx);
+        // TODO  o62p01_Empty_pFxn(player_idx);
         movement_points_available = Stack_Moves();
 
 
-        // DONT  o62p01_Empty_pFxn(player_idx);
+        // TODO  o62p01_Empty_pFxn(player_idx);
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, unit_x, unit_y);
         movement_points_available = Stack_Moves();
 
@@ -232,13 +233,9 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         Set_Unit_Draw_Priority();
         Reset_Stack_Draw_Priority();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
-        // DONT  fxnptr_o59p();
+        // TODO  fxnptr_o59p();
         Reset_Draw_Active_Stack();
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Move_Stack(move_x = %d, move_y = %d, player_idx = %d, *map_x = %d, *map_y = %d, *map_p = %d)\n", __FILE__, __LINE__, move_x, move_y, player_idx, *map_x, *map_y, *map_p);
-#endif
 
     return ST_TRUE;
 }

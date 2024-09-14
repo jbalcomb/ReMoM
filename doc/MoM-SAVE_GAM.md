@@ -59,7 +59,7 @@ TBL_Items
 _CITIES
 _UNITS
 TBL_Terr_Specials
-TBL_Scouting
+_square_explored
 TBL_MoveMaps_EMS
 _events_table
 _map_square_flags
@@ -461,7 +461,7 @@ gfp_TBL_Items            138 *    50 =  6900    35500
 gfp_TBL_Cities           100 *   114 = 11400    46900
 p_Units_Table           1009 *    32 = 32288    79188
 gfp_TBL_Terr_Specials      2 *  2400 =  4800    83988
-gfp_TBL_Scouting           2 *  2400 =  4800    88788
+gfp__square_explored       2 *  2400 =  4800    88788
 gfp_TBL_MoveMaps_EMM       2 * 14400 = 28800    117588
 p_Events                   1 *   100 =   100    117688
 p_Terrain_Flags            2 *  2400 =  4800    122488

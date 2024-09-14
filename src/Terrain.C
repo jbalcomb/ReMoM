@@ -1135,7 +1135,8 @@ int16_t Terrain_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp)
     terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
     terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
 
-    square_is_explored = TBL_Scouting[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    // DELETEME  square_is_explored = _square_explored[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    square_is_explored = GET_SQUARE_EXPLORED(wx, wy, wp);
 
     if(
         (square_is_explored != ST_FALSE)

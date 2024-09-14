@@ -393,16 +393,17 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
 // drake178: UNIT_ContactHuman
 
 // WZD o92p08
-int16_t Check_Square_Explored(int16_t world_x, int16_t world_y, int16_t world_p)
+int16_t Check_Square_Explored(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t square_explored_flag;
     int16_t square_is_explored;
 
     square_is_explored = ST_FALSE;
 
-    square_explored_flag = TBL_Scouting[( (world_p * WORLD_SIZE) + (world_y * WORLD_WIDTH) + world_x )];
+    // DELETEME  square_explored_flag = _square_explored[( (world_p * WORLD_SIZE) + (world_y * WORLD_WIDTH) + world_x )];
+    square_explored_flag = GET_SQUARE_EXPLORED(wx, wy, wp);
 
-    if(square_explored_flag != ST_FALSE)
+    if(square_explored_flag != UNEXPLORED)  /* if any bits are set */
     {
         square_is_explored = ST_TRUE;
     }

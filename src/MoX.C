@@ -44,7 +44,7 @@ _CITIES
 _UNITS
 
 TBL_Terr_Specials
-TBL_Scouting
+_square_explored
 movement_mode_cost_maps
 events_table
 _map_square_flags
@@ -94,7 +94,7 @@ assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  114  _CITIES
 assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
 
     // TBL_Terr_Specials
-    // TBL_Scouting
+    // _square_explored
     // movement_mode_cost_maps
     // events_table
     // _map_square_flags

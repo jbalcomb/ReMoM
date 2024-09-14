@@ -657,8 +657,8 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
     // NOTE: We are storing the addresses of the pointers, to later be recast and dereferenced.
     // p_fields[fields_count].Param3 = (uint16_t)xpos;
     // p_fields[fields_count].Param4 = (uint16_t)ypos;
-    p_fields[fields_count].Param3 = (int64_t)xpos;
-    p_fields[fields_count].Param4 = (int64_t)ypos;
+    p_fields[fields_count].Param3 = (int64_t)xpos;  // NOTE: assigning address, not value
+    p_fields[fields_count].Param4 = (int64_t)ypos;  // NOTE: assigning address, not value
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
     return (fields_count - 1);

@@ -298,7 +298,7 @@ exact same in MGC & WZD
  [x] _CITIES             World_Data
  [x] _UNITS
  [x] TBL_Terr_Specials   World_Data
- [x] TBL_Scouting        World_Data
+ [x] _square_explored    World_Data
  [x] TBL_MoveMaps_EMS
  [x] _events_table
  [x] _map_square_flags   World_Data
@@ -326,7 +326,7 @@ World_Data
     TBL_Landmasses
     TBL_Terr_Specials
     _map_square_flags
-    TBL_Scouting
+    _square_explored
     square_scouted_p0
     square_scouted_p1
     World_Data_Extra
