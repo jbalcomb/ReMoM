@@ -159,24 +159,23 @@ void Load_Font_File(char * font_file)
 
     font_header = (struct s_FONT_HEADER *)font_style_data;
 
-    palette_block          = Allocate_Space(348);    // 348 paragraphs = 386 * 16 bytes = 5568 bytes
+    palette_block          = Allocate_Space(348);    // 348 PR, 5568 B
 
     // MoO2  current_palette
-    p_Palette              = Allocate_Space(64);     //  64 paragraphs =  64 * 16 bytes = 1024 bytes
+    p_Palette              = Allocate_Space(64);     //  64 PR, 1024 B
     // 1oom: lbxpal_palette = p_Palette;
     current_palette = p_Palette;
 
-    p_PaletteFlags         = p_Palette + (48 * 16);  // ~== p_PaletteFlags = &p_Palette[768];
+    p_PaletteFlags         = p_Palette + (48 * SZ_PARAGRAPH_B);  // ~== p_PaletteFlags = &p_Palette[768];
     palette_flags = p_PaletteFlags;
 
     // TODO  UU_DAC_Save_Seg = Allocate_Space(48);  // in MoO1, also unused, maybe debug code
 
-    // Replacement_Colors = Allocate_Space(384);  // 384 paragraphs = 384 * 16 = 6,144 bytes  (24 * 256  ~'remap color tables')
-    remap_color_palettes = (uint8_t *)Allocate_Space(384);
+    remap_color_palettes = (uint8_t *)Allocate_Space(384);  // 384 PR, 6144 B  (24 * 256  ~'remap color tables')
 
     // TODO  gsa_VGAFILEH_Header = Allocate_Space(2);
 
-    Intensity_Scale_Tbl = Allocate_Space(96);  // 96 paragraphs = 96 * 16 = 1,536 bytes  
+    Intensity_Scale_Tbl = Allocate_Space(96);  // 96 PR, 1536 B
 
     // TODO  VGA_TextDraw_Init();
 

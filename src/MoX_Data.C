@@ -2172,6 +2172,14 @@ SAMB_ptr UU_TBL_1;
 // WZD dseg:9CDC
 // AKA TBL_Maps;
 // SAMB_ptr _world_maps;
+/*
+Allocate_Data_Space()
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 PR, 9632 B
+
+STU_DBG.C
+    uint8_t * DBG_ORIG__world_maps;
+
+*/
 uint8_t * _world_maps;
 
 // WZD dseg:9CE0

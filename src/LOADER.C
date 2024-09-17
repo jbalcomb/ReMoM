@@ -327,13 +327,17 @@ void Units_Upkeeps(void)
 // WZD o52p03
 /*
     All (Movement) Map
-        TERRAIN.LBX, Entry 1,2
-        TERRSTAT.LBX, Entry 1, Records 1x196
-        MAPBACK.LBX
+        TERRAIN.LBX   Entry 1,2
+        TERRSTAT.LBX  Entry 1, Records 1x196
+        MAPBACK.LBX   ¿ *.* ?
 
     Allocate_Space()
         Map_Square_WorkArea
         Warp_Node_WorkArea
+
+... Allocate / Load / Init ...
+... Terrain / Map Data ...
+... Movement / World ...
 */
 void Terrain_Init(void)
 {
@@ -342,21 +346,22 @@ void Terrain_Init(void)
     uint64_t tmp_address;
 
     // 
-    Map_Square_WorkArea = Allocate_Space(70);  // ; 70 * 16 = 1120 bytes
+    Map_Square_WorkArea = Allocate_Space(70);  // 70 PR, 1120 B
 
-    terrain_lbx_001 = LBX_Load(terrain_lbx_file, 1);
-    terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
+    m_terrain_lbx_001 = (uint16_t *)LBX_Load(terrain_lbx_file, 1);
+    m_terrain_lbx_002 = LBX_Load(terrain_lbx_file, 2);
     // ehn_terrain_lbx = EMM_Load_LBX_File("TERRAIN.LBX", 1);
     // HACK:  no EMM, so just load entry and monkey with offset adjustments
-    terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);
+    // TODO  make this an allocate and reload and set another pointer to the offset, so it looks like it did and dont need the math elsewhere - e.g., Draw_Map_Terrain()
+    m_terrain_lbx_000 = LBX_Load(terrain_lbx_file, 0);  // 676416 B
 
 
     tmp_sa_TBL_Unrest = LBX_Load_Data(terrstat_lbx_file, 1, 0, 1, 196);
-    TBL_Unrest[0] = tmp_sa_TBL_Unrest;
-    for(itr = 1; itr < 14; itr++)
+    TBL_Unrest[0] = (int8_t *)tmp_sa_TBL_Unrest;
+    for(itr = 1; itr < NUM_RACES; itr++)
     {
         // ¿¿¿
-        TBL_Unrest[itr] = ((int8_t *)TBL_Unrest[(itr - 1)]) + 14;
+        TBL_Unrest[itr] = ((int8_t *)TBL_Unrest[(itr - 1)]) + NUM_RACES;
         // ???
     }
 
@@ -365,7 +370,7 @@ void Terrain_Init(void)
     for(itr = 1; itr < 15; itr++)
     {
         itr--;
-        unexplored_mask_seg[itr] = LBX_Load(rsc0C_MAPBACK_LBX, itr);  // ; array of 14 reserved EMM header pointers
+        unexplored_mask_seg[itr] = LBX_Load(rsc0C_MAPBACK_LBX, itr);
         itr++;
     }
 
@@ -380,59 +385,40 @@ void Terrain_Init(void)
     IMG_OVL_NoWall_City = LBX_Load(mapback_lbx_file, 21);   // ; reserved EMM header pointer for a 5 frame image
 
     tower_unowned_seg = LBX_Load(mapback_lbx_file, 69);     // ; reserved EMM header pointer for a single image
-    tower_owned_seg = LBX_Load(mapback_lbx_file, 70);       // ; reserved EMM header pointer for a single image
+    tower_owned_seg   = LBX_Load(mapback_lbx_file, 70);     // ; reserved EMM header pointer for a single image
 
-// 71  SITES    mound
-    IMG_OVL_EZ_Cave = LBX_Load(mapback_lbx_file, 71);       // ; reserved EMM header pointer for a single image
-// 74  SITES    ruins
-    IMG_OVL_EZ_Dung = LBX_Load(mapback_lbx_file, 74);       // ; reserved EMM header pointer for a single image
-// 72  SITES    temple
-    IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);      // ; reserved EMM header pointer for a single image
-// 73  SITES    keep
-    IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);      // ; reserved EMM header pointer for a single image
-// 71  SITES    mound
-    IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);      // ; reserved EMM header pointer for a single image
-// 74  SITES    ruins
-    IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);      // ; reserved EMM header pointer for a single image
-// 75  SITES    fallen temple
-    IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);      // ; reserved EMM header pointer for a single image
-//     EZ_Cave,
-//     EZ_Dungeon,
-//     EZ_Ancient_Temple,
-//     EZ_Keep,
-//     EZ_Monster_Lair,
-//     EZ_Ruins,
-//     EZ_Fallen_Temple
-// SAMB_ptr IMG_OVL_EZ_Cave;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBC6
-// SAMB_ptr IMG_OVL_EZ_Dung;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBC8
-// SAMB_ptr IMG_OVL_EZ_ATmpl;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBCA
-// SAMB_ptr IMG_OVL_EZ_AKeep;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBCC
-// SAMB_ptr IMG_OVL_EZ_MLair;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBCE
-// SAMB_ptr IMG_OVL_EZ_Ruins;                   // ; reserved EMM header pointer for a single image
-// // WZD dseg:CBD0
-// SAMB_ptr IMG_OVL_EZ_FTmpl;                   // ; reserved EMM header pointer for a single image
 
-        /*
-            MAPBACK 78 to 86:
-            78  SITES   coal
-            79  SITES   iron
-            80  SITES   silver
-            81  SITES   gold
-            82  SITES   gems
-            83  SITES   mithril
-            84  SITES   adamantium
-            85  SITES   quork
-            86  SITES   crysx
-        */
-        for(itr = 1; itr < 10; itr++)
-        {
-            mineral_site_segs[itr] = LBX_Load(mapback_lbx_file, 77 + itr);
-        }
+    // MAPBACK.LBX, 071     SITES    mound
+    // MAPBACK.LBX, 074     SITES    ruins
+    // MAPBACK.LBX, 072     SITES    temple
+    // MAPBACK.LBX, 073     SITES    keep
+    // MAPBACK.LBX, 071     SITES    mound
+    // MAPBACK.LBX, 074     SITES    ruins
+    // MAPBACK.LBX, 075     SITES    fallen temple
+
+    IMG_OVL_EZ_Cave  = LBX_Load(mapback_lbx_file, 71);  // ~ EZ_Cave
+    IMG_OVL_EZ_Dung  = LBX_Load(mapback_lbx_file, 74);  // ~ EZ_Dungeon
+    IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);  // ~ EZ_Ancient_Temple
+    IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);  // ~ EZ_Keep
+    IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);  // ~ EZ_Monster_Lair
+    IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);  // ~ EZ_Ruins
+    IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);  // ~ EZ_Fallen_Temple
+
+
+    // MAPBACK.LBX, 078     SITES   coal
+    // MAPBACK.LBX, 079     SITES   iron
+    // MAPBACK.LBX, 080     SITES   silver
+    // MAPBACK.LBX, 081     SITES   gold
+    // MAPBACK.LBX, 082     SITES   gems
+    // MAPBACK.LBX, 083     SITES   mithril
+    // MAPBACK.LBX, 084     SITES   adamantium
+    // MAPBACK.LBX, 085     SITES   quork
+    // MAPBACK.LBX, 086     SITES   crysx
+
+    for(itr = 1; itr < 10; itr++)
+    {
+        mineral_site_segs[itr] = LBX_Load(mapback_lbx_file, 77 + itr);
+    }
 
 
 //     UU_IMG_OVL_Mud = LBX_Load(mapback_lbx_file, 76);
@@ -477,10 +463,10 @@ void Terrain_Init(void)
 
         UU_hunters_lodge_seg = LBX_Load(mapback_lbx_file, 90);     // ; single-loaded image, called "hunter's lodge"
         
-        IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);    // ; reserved EMM header pointer for a single image
-        IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);      // ; reserved EMM header pointer for a single image
+        IMG_OVL_Nightshade = LBX_Load(mapback_lbx_file, 91);
+        IMG_OVL_WildGame = LBX_Load(mapback_lbx_file, 92);
         
-        node_warped_seg = LBX_Load(mapback_lbx_file, 93);    // ; reserved EMM header pointer for a single image
+        node_warped_seg = LBX_Load(mapback_lbx_file, 93);
 
 }
 

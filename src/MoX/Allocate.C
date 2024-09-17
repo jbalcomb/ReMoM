@@ -378,10 +378,28 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
     if(Check_Allocation(SAMB_head) == ST_FAILURE) { Allocation_Error(0x03, size+1); }
     if(SA_GET_SIZE(SAMB_head) < size) { Allocation_Error(0x02, size+1); }
 
+    SET_2B_OFS(SAMB_head,  0, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  2, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  4, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  6, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head,  8, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 10, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 12, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(SAMB_head, 14, 0xBBBB);  // DNE in Dasm
+
     // block header + sub block header + sub block size
     SA_SET_USED(SAMB_head,1+(1+size));
 
     sub_SAMB_head = SAMB_head + 16;  // ~== &SAMB_head[16]
+
+    SET_2B_OFS(sub_SAMB_head,  0, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  2, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  4, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  6, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  8, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 10, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 12, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 14, 0xBBBB);  // DNE in Dasm
 
     SA_SET_MEMSIG1(sub_SAMB_head);
     SA_SET_MEMSIG2(sub_SAMB_head);

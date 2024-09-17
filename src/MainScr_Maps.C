@@ -161,7 +161,7 @@ int16_t _prev_world_x;
 
 
 // WZD dseg:9CA8
-SAMB_ptr terrain_lbx_002;  // 2 * 762 color map indecies, by terrain type, for minimap
+SAMB_ptr m_terrain_lbx_002;  // 2 * 762 color map indecies, by terrain type, for minimap
 
 
 
@@ -193,12 +193,31 @@ int16_t reduced_map_mark_cycle;
 
 
 // WZD dseg:CC22
-SAMB_ptr terrain_lbx_001;                   // load in Terrain_Init() ovr052
+/*
+¿ "Terrain Type Record [Data]" ?
+TERRAIN.LBX, 001
+3048 bytes, 1524 values, 762 terain types
+2-byte, unsigned
+1 bit value for {F,T} terrain is animated
+7 bit value for index of EMM Logical Page
+8 bit value for index of picture record in EMM Page Frame
+
+00 02
+...
+80 14
+...
+...
+...
+A4 3F
+...
+27 62
+*/
+uint16_t * m_terrain_lbx_001;                   // load in Terrain_Init() ovr052
 // WZD dseg:CC26
-byte_ptr terrain_001_1;                     // load in Terrain_Init() ovr052
+byte_ptr m_terrain_001_1;                     // load in Terrain_Init() ovr052
 // WZD dseg:CC28
 // g_EmmHndl_TERRAIN dw 0  ; EMM_Load_LBX handle
-SAMB_ptr terrain_lbx_000;                   // load in Terrain_Init() ovr052
+SAMB_ptr m_terrain_lbx_000;                   // load in Terrain_Init() ovr052
 
 
 
@@ -776,8 +795,8 @@ void Set_Unit_Draw_Priority(void)
 // drake178: STK_NoUnitDraw
 void Reset_Stack_Draw_Priority(void)
 {
-    int16_t itr_unit_stack_count;
-    int16_t unit_idx;
+    int16_t itr_unit_stack_count = 0;
+    int16_t unit_idx = 0;
 
     for(itr_unit_stack_count = 0; itr_unit_stack_count < _unit_stack_count; itr_unit_stack_count++)
     {
@@ -790,9 +809,9 @@ void Reset_Stack_Draw_Priority(void)
 // WZD o67p15
 int16_t IsPassableTower(int16_t wx, int16_t wy)
 {
-    int16_t itr_towers;
-    int16_t is_passible_tower;
-    int16_t active_planar_seal;
+    int16_t itr_towers = 0;
+    int16_t is_passible_tower = 0;
+    int16_t active_planar_seal = 0;
 
     is_passible_tower = ST_FALSE;
 
@@ -831,8 +850,8 @@ int16_t IsPassableTower(int16_t wx, int16_t wy)
 */
 void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t tmp_world_grid_y;
-    int16_t tmp_world_grid_x;
+    int16_t tmp_world_grid_y = 0;
+    int16_t tmp_world_grid_x = 0;
 
     assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
     assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
@@ -851,7 +870,7 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
 
     tmp_world_grid_x = (world_grid_x - MAP_WIDTH_HALF);
 
-    if (tmp_world_grid_x > 0)
+    if(tmp_world_grid_x > 0)
     {
         *map_x = tmp_world_grid_x;
     }
@@ -862,7 +881,7 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
 
     tmp_world_grid_y = (world_grid_y - MAP_HEIGHT_HALF);
 
-    if (tmp_world_grid_y > 0)
+    if(tmp_world_grid_y > 0)
     {
         *map_y = tmp_world_grid_y;
     }
@@ -895,8 +914,8 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
 // WZD o68p02
 void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t city_screen_map_world_grid_y;
-    int16_t city_screen_map_world_grid_x;
+    int16_t city_screen_map_world_grid_y = 0;
+    int16_t city_screen_map_world_grid_x = 0;
 
     city_screen_map_world_grid_y = world_grid_y;
     city_screen_map_world_grid_x = (world_grid_x - 2);
@@ -1019,7 +1038,7 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
             }
 
             terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
-            terrain_001_0 = GET_1B_OFS(terrain_lbx_001, (terrain_001_index * 2) + 0);
+            terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
 
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
@@ -1353,10 +1372,10 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
     int16_t curr_world_x;
     uint8_t unexplored_area_flag;
     int16_t world_maps_offset;
-    uint32_t terrain_lbx_000_offset;
-    uint16_t terrain_001_index;
-    uint8_t terrain_001_0;
-    uint8_t terrain_001_1;
+    uint32_t terrain_lbx_000_offset;  // DNE in Dasm
+    uint16_t terrain_001_index;  // DNE inm Dasm
+    uint8_t l_terrain_001_0;
+    uint8_t l_terrain_001_1;  // DNE in Dasm
     byte_ptr terrain_pict_seg;
 
     if(world_plane == 0)
@@ -1402,43 +1421,45 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
                 terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
                 terrain_001_index += terrain_tile_base;
                 terrain_001_index *= 2;  // because, sizeof(int16_t)
-                terrain_001_0 = 0;
-                terrain_001_0 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 0);
-                terrain_001_1 = GET_1B_OFS(terrain_lbx_001, terrain_001_index + 1);
+                l_terrain_001_0 = 0;
+                l_terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, terrain_001_index + 0);
+                l_terrain_001_1 = GET_1B_OFS(m_terrain_lbx_001, terrain_001_index + 1);
 
-                assert( (terrain_001_0 == 0 && terrain_001_1 >= 2) || (terrain_001_0 != 0) );
+                assert( (l_terrain_001_0 == 0 && l_terrain_001_1 >= 2) || (l_terrain_001_0 != 0) );
+
+                assert((l_terrain_001_0 & 0x7F) <= 41);  // highest  676032 / 16384 = 41.26171875  ...got 55
 
                 map_draw_full = ST_TRUE;
-                if( ((terrain_001_0 & 0x80) == 0) || (map_draw_full == ST_TRUE) )
+                if( ((l_terrain_001_0 & 0x80) == 0) || (map_draw_full == ST_TRUE) )
                 {
-                    if((terrain_001_0 & 0x80) != 0)
+                    if((l_terrain_001_0 & 0x80) != 0)
                     {
-                        terrain_001_0 = terrain_001_0 & 0x7F;  // ~== -128
-                        terrain_001_1 += terrain_anim_ctr;
+                        l_terrain_001_0 = (l_terrain_001_0 & 0x7F);  // ~== -128  ... NOTE(JimBalcomb,20240915)  clear the sign-bit
+                        l_terrain_001_1 += terrain_anim_ctr;
                     }
 
-                    // MS-DOS  // Dasm  terrain_pict_seg = ( (((((terrain_001_1 * 2) + terrain_001_1) * 2) * 2) *2) ) + EMM_PageFrame;
-                    // MS-DOS  terrain_pict_seg = EMM_PageFrame + (terrain_001_1 * 24);  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
+                    // MS-DOS  // Dasm  terrain_pict_seg = EMM_PageFrame[( (((((m_terrain_lbx_001 * 2) + m_terrain_lbx_001) * 2) * 2) *2) )];
+                    // MS-DOS  terrain_pict_seg = EMM_PageFrame[(m_terrain_lbx_001 * 24)];  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
                     // MS-DOS  if(terrain_000_elpn != terrain_001_0)
                     // MS-DOS  {
                     // MS-DOS      EMM_Map4Pages(terrain_001_0, g_EmmHndl_TERRAIN); // First Logical Page, EMM Handle Name
                     // MS-DOS  }
 
-                    // map index in terrain_001_1 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
+                    // map index in m_terrain_lbx_001 to TERRAIN.LBX Entry 0, instead of TERRAIN.LBX entire file in EMM
                     // loading entry 0, instead of whole file
                     // ( EMM Page * 16K ) + (terrain pict index * 384) - (difference in header size)
-                    if(terrain_001_0 == 0)
+                    if(l_terrain_001_0 == 0)
                     {
-                        terrain_lbx_000_offset = 0xC0 + ((terrain_001_1 - 2) * 384);
-                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + ((terrain_001_1 - 2) * 384) + 0xC0;
+                        terrain_lbx_000_offset = 0xC0 + ((l_terrain_001_1 - 2) * 384);
+                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + ((m_terrain_lbx_001 - 2) * 384) + 0xC0;
                     }
                     else
                     {
-                        terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
-                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (terrain_001_1 * 384) - 0xC0 - 384;
+                        terrain_lbx_000_offset = (l_terrain_001_0 * 16384) + (l_terrain_001_1 * 384) - 0xC0 - 384;
+                        // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (m_terrain_lbx_001 * 384) - 0xC0 - 384;
                     }
 
-                    terrain_pict_seg = terrain_lbx_000 + terrain_lbx_000_offset;
+                    terrain_pict_seg = m_terrain_lbx_000 + terrain_lbx_000_offset;
                     Draw_Picture(itr_screen_x, itr_screen_y, terrain_pict_seg);
                 }
 
@@ -1511,7 +1532,7 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
             }
 
             terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
-            terrain_001_0 = GET_1B_OFS(terrain_lbx_001, (terrain_001_index * 2) + 0);
+            terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
 
@@ -2450,7 +2471,7 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
                 assert(square_explored_flag != ST_FALSE);
                 terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
                 terrain_type_idx += terrain_type_idx_base;
-                minimap_terrain_color = terrain_lbx_002[terrain_type_idx];
+                minimap_terrain_color = m_terrain_lbx_002[terrain_type_idx];
                 *(minimap_pict_data_ptr + ((itr_minimap_width * minimap_height) + itr_minimap_height)) = minimap_terrain_color;
             }
         }
@@ -2518,5 +2539,449 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
 
 
 // WZD o150p17
+// Cartograph_Screen_Draw_Map_Terrain__NOWORKIE
+/*
+
+
+Cartograph_Screen_Draw_Map__WIP()
+    |-> Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(flag, cartograph_seg);
+
+~ Draw_Map_Terrain()
+
+*/
+void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg)
+{
+    byte_ptr ptr_cartograph_pict_palette;
+    byte_ptr ptr_current_palette;
+    SAMB_ptr cartograph_pict;
+    int16_t itr_colors;
+    int16_t square_explored_flag;
+    int16_t Color_Intensity;
+    byte_ptr terrain_pict_seg;
+    int16_t itr_world_height;
+    int16_t Map_Start_Offset;
+    int16_t itr_palette;
+    int16_t terrain_000_elpn;
+    int16_t terrain_type;
+    uint8_t l_terrain_001_0;
+    uint8_t l_terrain_001_1;  // DNE in Dasm
+    uint16_t l_terrain_001;  // DNE in Dasm
+    int16_t itr_world_width;  // _SI_
+
+    byte_ptr src_sgmt;  // _DS_
+    int16_t src_ofst;  // _SI_
+    byte_ptr dst_sgmt;  // _ES_
+    int16_t dst_ofst;  // _DI_
+
+    uint32_t terrain_lbx_000_offset;  // DNE in Dasm
+    uint16_t terrain_001_index;  // DNE inm Dasm
+    uint8_t baito;  // DNE in Dasm
+    uint8_t animated_terrain_flag;  // DNE in Dasm
+    uint8_t emm_logical_page_index;  // DNE in Dasm
+    uint8_t emm_terain_picture_index;  // DNE in Dasm
+
+
+    cartograph_pict = (SAMB_ptr)&cartograph_seg[16];  // ¿ sizeof(struct s_FLIC_HEADER) or SZ_PARAGRAPH or color block ?
+
+    Create_Picture(240, 160, cartograph_pict);  // (WORLD_WIDTH * 4) x (WORLD_HEIGHT * 4)
+
+    // ptr_current_palette = SA_MK_FP0(current_palette);
+    ptr_current_palette = current_palette;
+
+    // ptr_cartograph_pict_palette = SA_MK_FP0(cartograph_seg);
+    // ptr_cartograph_pict_palette = (SAMB_ptr)cartograph_seg;
+    ptr_cartograph_pict_palette = (SAMB_ptr)&cartograph_seg[32];
+
+    // drake178: fill the first 256 bytes (the color data) with intensity values ((R+G+B/2)/5+E0h) of the current palette colors, reserving 102 and 103 as zeroes
+    // for(itr = 0; itr < 768; itr++)
+    // {
+    //     *(p_Palette + itr) = 0;
+    // }
+    /*
+    itr_colors = 0;
+    itr_palette = 0;
+    while(itr_palette < 768)
+    {
+
+        if(itr_colors == 102)
+        {
+            ptr_cartograph_pict_palette[itr_colors] = ST_TRANSPARENT;
+        }
+        else if(itr_colors == 103)
+        {
+            ptr_cartograph_pict_palette[itr_colors] = ST_TRANSPARENT;
+        }
+        else
+        {
+
+            Color_Intensity = ((ptr_current_palette[itr_palette] + ptr_current_palette[(itr_palette + 1)]) + (ptr_current_palette[(itr_palette + 2)] / 2));
+
+            ptr_cartograph_pict_palette[itr_colors] = (224 + (Color_Intensity / 5));  // ¿ RLE op repeat ? ¿ manual Replace_Color() ?
+            
+        }
+
+        itr_colors += 1;
+        
+        itr_palette += 3;
+    }
+    */
+
+    terrain_000_elpn = ST_UNDEFINED;
+
+    Map_Start_Offset = 272;  // ¿ color-map index ?
+
+    for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++)
+    {
+
+        for(itr_world_height = 0; itr_world_height < WORLD_HEIGHT; itr_world_height++)
+        {
+
+            if(GET_SQUARE_EXPLORED(itr_world_width, itr_world_height, cartograph_plane) != UNEXPLORED)
+            {
+
+                terrain_type = _world_maps[((cartograph_plane * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)];
+
+                l_terrain_001 = m_terrain_lbx_001[terrain_type];
+                animated_terrain_flag    = (uint8_t)((l_terrain_001 & 0x8000) >> 15);
+                emm_logical_page_index   = (uint8_t)((l_terrain_001 & 0x7F00) >>  8); 
+                emm_terain_picture_index = (uint8_t)( l_terrain_001 & 0x00FF       ); 
+
+                /* HACK */  terrain_001_index = (terrain_type * 2);
+
+                l_terrain_001_0 = 0;
+                l_terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, terrain_001_index + 0);
+                l_terrain_001_1 = GET_1B_OFS(m_terrain_lbx_001, terrain_001_index + 1);
+
+                assert( (l_terrain_001_0 == 0 && l_terrain_001_1 >= 2) || (l_terrain_001_0 != 0) );
+                assert((l_terrain_001_0 & 0x7F) <= 39);
+                assert(l_terrain_001_1 <= 127);
+
+                if((l_terrain_001_0 & 0x80) != 0) /* drake178: animated tile */
+                {
+                    m_terrain_lbx_001 += terrain_anim_ctr;
+                    l_terrain_001_0 = (l_terrain_001_0 & 0x7F);  // clear the sign bit
+                }
+
+                // drake178: ; * 180h, from FILE start, not entry start!  ; contains the segment address of the EMS page frame
+                // TODO  terrain_pict_seg = (EMM_PageFrame + (m_terrain_lbx_001 * 2 * 2 * 2));
+
+                // if(terrain_000_elpn != m_terrain_lbx_001)
+                // {
+                //     // ; maps in four consecutive logical pages from the
+                //     // ; passed handle, starting with the one specified
+                //     // ; uses a different EMM function than seg012:0255
+                //     // ; preserves all register values
+                //     // TODO  EMM_Map4Pages(m_terrain_lbx_001, ehn_terrain_lbx);
+                // }
+
+                if(l_terrain_001_0 == 0)
+                {
+                    assert(l_terrain_001_1 >= 2);
+                    terrain_lbx_000_offset = 0xC0 + ((l_terrain_001_1 - 2) * 384);
+                    // terrain_lbx_000_offset = (terrain_001_0 * 16384) + ((m_terrain_lbx_001 - 2) * 384) + 0xC0;
+                }
+                else
+                {
+                    assert(l_terrain_001_1 >= 0);
+                    terrain_lbx_000_offset = (l_terrain_001_0 * 16384) + (l_terrain_001_1 * 384) - 0xC0 - 384;
+                    // terrain_lbx_000_offset = (terrain_001_0 * 16384) + (m_terrain_lbx_001 * 384) - 0xC0 - 384;
+                }
+
+                assert(terrain_lbx_000_offset <= (676416 - 384));
+
+                terrain_pict_seg = (m_terrain_lbx_000 + terrain_lbx_000_offset);
+
+                /*
+                    ¿ remapping the terrain color-map indices to the cartograph_pic palette ?
+
+                */
+                /* DS */  src_sgmt = (byte_ptr)(terrain_pict_seg + (1 * SZ_SEGMENT));  // pointer to the picture data (color-map indices)
+                /* SI */  src_ofst = itr_world_width;
+                // /* ES */  dst_sgmt = (byte_ptr)cartograph_seg;
+                /* ES */  dst_sgmt = (byte_ptr)&cartograph_seg[32];
+                /* DI */  dst_ofst = Map_Start_Offset;  // starts at 272 ... 
+
+                /* ~ mov bl, ds:0;  mov al, [es:bx];  stosb */
+                /* ES:DI = AL */
+                // baito = src_sgmt[0];
+                // dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[0]];
+                // baito = dst_sgmt[dst_ofst];
+                // dst_ofst++;
+
+                /*
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[0]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[5]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[10]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[15]];
+                dst_ofst++;
+
+                dst_ofst =+ 156;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[90]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[95]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[100]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[105]];
+                dst_ofst++;
+
+                dst_ofst =+ 156;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[180]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[185]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[190]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[195]];
+                dst_ofst++;
+
+                dst_ofst =+ 156;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[270]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[275]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[280]];
+                dst_ofst++;
+
+                dst_sgmt[dst_ofst] = dst_sgmt[src_sgmt[285]];
+                dst_ofst++;
+                */
+
+            }  /* END:  if(GET_SQUARE_EXPLORED(itr_world_width, itr_world_height, cartograph_plane) != UNEXPLORED) */
+
+            // // Map_Start_Offset += 2;  // 4 / sizeof()
+            // Map_Start_Offset += 4;
+            Map_Start_Offset += 1;
+
+        }  /* END:  for(itr_world_height = 0; itr_world_height < WORLD_HEIGHT; itr_world_height++) */
+
+        // // Map_Start_Offset += 240;  // 480 / sizeof()
+        // Map_Start_Offset += 480;
+        Map_Start_Offset += 240;
+
+    }  /* END:  for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++) */
+
+    Map_Start_Offset = 0;
+    for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++)
+    {
+
+        for(itr_world_height = 0; itr_world_height < WORLD_HEIGHT; itr_world_height++)
+        {
+
+            square_explored_flag = GET_SQUARE_EXPLORED(itr_world_width, itr_world_height, cartograph_plane);
+
+            if(square_explored_flag != UNEXPLORED)
+            {
+
+                if(square_explored_flag != EXPLORED)
+                {
+
+                    switch(square_explored_flag)
+                    {
+
+                        case 0x0:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 337)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x1:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 338)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x2:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 497)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 498)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x3:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 178)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x4:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x5:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 179)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 339)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x6:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x7:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 177)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x8:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 176)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 336)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 496)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0x9:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst + 499)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0xA:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0xB:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  17)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  18)] = ST_TRANSPARENT;
+                            dst_sgmt[(dst_ofst +  19)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0xC:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  16)] = ST_TRANSPARENT;
+
+                        } break;
+
+                        case 0xD:
+                        {
+                            dst_ofst = Map_Start_Offset;
+                            dst_sgmt = (byte_ptr)&cartograph_pict[32];
+                            
+                            dst_sgmt[(dst_ofst +  496)] = ST_TRANSPARENT;
+
+                        } break;
+
+                    }
+
+                }
+
+            }
+
+            // // Map_Start_Offset += 2;  // 4 / sizeof()
+            // Map_Start_Offset += 4;
+            Map_Start_Offset += 1;
+
+        }
+
+        // // Map_Start_Offset += 240;  // 480 / sizeof()
+        // Map_Start_Offset += 480;
+        Map_Start_Offset += 240;
+
+    }  /* END:  for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++) */
+
+}
 
 // WZD o150p18

@@ -851,13 +851,12 @@ void G_WLD_StaticAssetRfrsh(void)
 //    }
 
     all_units_moved = ST_FALSE;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: all_units_moved: %d\n", __FILE__, __LINE__, all_units_moved);
-#endif
 
     reset_active_stack = ST_TRUE;
+
     Reset_Draw_Active_Stack();
-    _map_plane = 0;  // Arcanus
+
+    _map_plane = ARCANUS_PLANE;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {

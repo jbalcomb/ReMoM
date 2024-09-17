@@ -11,7 +11,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
     
 // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);  // Page_Count, Handle_Name, Reserved_Flag
-// TODO  EmmHndl_TILEXXX = EMM_GetHandle(3, EmmHndlNm_TILEXXX, 1);  // Page_Count, Handle_Name, Reserved_Flag
+// TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);  // Page_Count, Handle_Name, Reserved_Flag
 
     // MGC: 6100
     // WZD: 4600
@@ -48,28 +48,24 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // also used for COMBAT.TMP
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
 
-    // 714 paragraphs = 16 * 714 = 11,424 bytes
-    // _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);   // 714 Paragraphs, 11424 Bytes
-    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);
+    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
 
-    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);         // 602 Paragraphs, 9632 Bytes
+    _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);  // 602 PR, 9632 B
 
-    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
+    UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
+    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
 
-    UU_TBL_2 = Allocate_Next_Block(World_Data, 14);             // 14 Paragraphs, 224 Bytes
+    TBL_Landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
+    TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
-    TBL_Landmasses = (uint8_t *)Allocate_Next_Block(World_Data, 302);      // 302 Paragraphs, 4832 Bytes
+    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
-    TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-
-    _map_square_flags = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 Paragraphs, 4832 Bytes
-
-    _square_explored = (uint8_t *)Allocate_Next_Block(World_Data, 302);        // 302 Paragraphs, 4832 Bytes
+    _square_explored  = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
 
-    square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes  ¿ (((2400 / 8) + 1) + 1) / 16) ?
-    square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 Paragraphs, 304 Bytes
+    square_scouted_p0 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 PR, 304 B  ¿ (((2400 / 8) + 1) + 1) / 16) ?
+    square_scouted_p1 = (uint8_t *)Allocate_Next_Block(World_Data, 19);    // 19 PR, 304 B
 
     World_Data_Extra = Allocate_Next_Block(World_Data, Get_Free_Blocks(World_Data) - 1);
 
@@ -184,46 +180,46 @@ so, 300 PRs, + 1 for the SAMB header
 // DELETE      _HEROES = (struct s_HERO **)p0_heroes;
 // DELETE      _HEROES2 = p0_heroes;
 
-    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 paragraphs = 448 bytes
-    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
-    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 paragraphs = 432 bytes
+    _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
+    _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[2] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[3] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[4] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
+    _HEROES2[5] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
 
 
-    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 paragraphs = 32448 bytes
+    _UNITS = (struct s_UNIT *)Allocate_Space(2028);  // 2028 PR, 32448 B
 
     // MoO2  global_combat_data
-    global_battle_unit = (struct s_BATTLE_UNIT *)Allocate_Space(8);  // 8 paragraphs = 128 bytes
+    global_battle_unit = (struct s_BATTLE_UNIT *)Allocate_Space(8);  // 8 PR, 128 B
 
     _NODES = (struct s_NODE *)Allocate_Space(92);  // 92 PR = 1472 B;  actual: 30 * sizeof(struct s_NODE) = 30 * 48 = 1440 B
 
     _FORTRESSES = (struct s_FORTRESS *)Allocate_Space(3);
 
-    _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 paragraphs = 48 bytes
+    _TOWERS = (struct s_TOWER *)Allocate_Space(3);  // 3 PR, 48 B
 
-    _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 paragraphs = 5616 bytes
+    _LAIRS = (struct s_LAIR *)Allocate_Space(351);  // 351 PR, 5616 B
 
-    // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 paragraphs = 112 bytes
+    // events_table = (struct s_EVENT_DATA *)Allocate_Space(7);  // 7 PR, 112 B
     events_table = (struct s_EVENT_DATA *)Allocate_Space(7);
 
     // ¿ MoO2  _officer_names ? ¿ Officer vs. Owned Officer ?
-    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR  592 B  ... ~ (36) 16-byte structs
+    hero_names_table = (struct s_INACTV_HERO *)Allocate_Space(37);  // 37 PR, 592 B  ... ~ (36) 16-byte structs
 
-    _ITEMS = (struct s_ITEM *)Allocate_Space(433);  // 433 PR  6928 B;  SAVE.GAM: 138 * 50 = 6900  ... 1 + ((138 * 50) + (SZ_PARAGRAPH - 1))
+    _ITEMS = (struct s_ITEM *)Allocate_Space(433);  // 433 PR, 6928 B;  SAVE.GAM: 138 * 50 = 6900  ... 1 + ((138 * 50) + (SZ_PARAGRAPH - 1))
 
-    TBL_Premade_Items = Allocate_Space(17);
+    TBL_Premade_Items = Allocate_Space(17);  // 17 PR, 272 B
     
     // AKA TBL_Spell_Data
-    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR  7760 B; actual: 215 * 36 = 7740
+    spell_data_table = (struct s_SPELL_DATA *)Allocate_Space(485);  // 485 PR, 7760 B; actual: 215 * 36 = 7740
 
-    UnitDraw_WorkArea = Allocate_Space(60);  // 60 paragraphs = 960 bytes
+    UnitDraw_WorkArea = Allocate_Space(60);  // 60 PR, 960 B  
     
-    // SND_Music_Segment = Allocate_Space(350);
+    SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
 
-// ?
+// ¿¿¿
 // mov     [AI_Arc_MainWarConts@], (offset TBL_Wizards.Spells_Known+17E8h)
 // mov     [AI_Myr_MainWarConts@], (offset TBL_Wizards.Spells_Known+17F4h)
 // mov     [AI_CONTX_Reevals@], (offset TBL_Wizards.Spells_Known+1800h)
@@ -238,7 +234,7 @@ so, 300 PRs, + 1 for the SAMB header
 // mov     [AI_Arc_NewColTgtYs@], (offset TBL_Wizards.Spells_Known+18B0h)
 // mov     [AI_Myr_NewColTgtYs@], (offset TBL_Wizards.Spells_Known+18BCh)
 // mov     [AI_SCircle_Reevals@], (offset TBL_Wizards.Spells_Known+18C8h)
-// ?
+// ???
 
     // EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
 

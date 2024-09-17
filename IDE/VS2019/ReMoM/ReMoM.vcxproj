@@ -162,6 +162,7 @@
     <ClInclude Include="..\..\..\src\special.H" />
     <ClInclude Include="..\..\..\src\Spellbook.H" />
     <ClInclude Include="..\..\..\src\SPLMASTR.H" />
+    <ClInclude Include="..\..\..\src\stu\STU_CHK.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
     <ClInclude Include="..\..\..\src\Summary.H" />
@@ -248,6 +249,7 @@
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
     <ClCompile Include="..\..\..\src\SPLMASTR.C" />
+    <ClCompile Include="..\..\..\src\stu\STU_CHK.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
     <ClCompile Include="..\..\..\src\Summary.C" />

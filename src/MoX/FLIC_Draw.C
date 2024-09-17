@@ -410,13 +410,15 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 
 // WZD s30p02
 /*
-    ¿ FLIC_Prepare() vs. Create_Blank_Picture() ?
+    ¿ Create_Picture() vs. Create_Blank_Picture() ?
     same header values, just default transparent vs. specified color
 */
 void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
 {
-    int16_t length;
-    int16_t itr_length;
+    uint16_t length = 0;
+    uint16_t counter = 0;
+    byte_ptr dst_sgmt;
+    uint16_t dst_ofst;
 
     // TODO(JimBalcomb,20230701): fix up the Macros
     // FLIC_SET_WIDTH(pict_seg, width);
@@ -425,17 +427,32 @@ void Create_Picture(int16_t width, int16_t height, byte_ptr pict_seg)
     // FLIC_SET_FRAME_COUNT(pict_seg, 0);
     // FLIC_SET_LOOP_FRAME(pict_seg,0);
 
-    SET_2B_OFS(pict_seg,0,width);
-    SET_2B_OFS(pict_seg,2,height);
-    SET_2B_OFS(pict_seg,4,0xDE0A);  /* e_FLIC_Decoded */
-    SET_2B_OFS(pict_seg,6,0);
-    SET_2B_OFS(pict_seg,8,0);
+    SET_2B_OFS(pict_seg, 0, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 2, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 4, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 6, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 8, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 10, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 12, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(pict_seg, 14, 0xBBBB);  // DNE in Dasm
+
+    SET_2B_OFS(pict_seg, 0, width);
+    SET_2B_OFS(pict_seg, 2, height);
+    SET_2B_OFS(pict_seg, 4, 0xDE0A);  /* e_FLIC_Decoded */
+    SET_2B_OFS(pict_seg, 6, 0);
+    SET_2B_OFS(pict_seg, 8, 0);
 
     length = width * height;
-    
-    for(itr_length = 0; itr_length < length; itr_length++)
+
+    // rep stosb
+    dst_sgmt = pict_seg;
+    dst_ofst = 16;
+    counter = length;
+    while(counter > 0)
     {
-        *(pict_seg + 16 + itr_length) = ST_TRANSPARENT;  /* Color-Map Index 0 */
+        *(dst_sgmt + dst_ofst) = ST_TRANSPARENT;  /* Color-Map Index 0 */
+        dst_ofst++;
+        counter--;
     }
 
 }

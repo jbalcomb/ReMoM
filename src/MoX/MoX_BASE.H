@@ -71,6 +71,7 @@
 #define SZ_16K_B            16384
 #define SZ_32K_B            32768
 #define SZ_PARAGRAPH_B         16
+#define SZ_SEGMENT             16  /* 16-bit memory segment size */
 
 
 

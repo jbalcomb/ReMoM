@@ -69,17 +69,17 @@ extern int16_t _prev_world_x;
 
 
 // WZD dseg:9CA8
-extern SAMB_ptr terrain_lbx_002;
-// array of color indecies by tile type for minimap / "reduced map"
+extern SAMB_ptr m_terrain_lbx_002;
+// array of color indices by tile type for minimap / "reduced map"
 
 
 // WZD dseg:CC22
-extern SAMB_ptr terrain_lbx_001;            // load in Terrain_Init() ovr052
+extern uint16_t * m_terrain_lbx_001;            // load in Terrain_Init() ovr052
 // WZD dseg:CC26
-extern byte_ptr terrain_001_1;              // load in Terrain_Init() ovr052
+extern byte_ptr m_terrain_001_1;              // load in Terrain_Init() ovr052
 // WZD dseg:CC28
 // g_EmmHndl_TERRAIN dw 0  ; EMM_Load_LBX handle
-extern SAMB_ptr terrain_lbx_000;            // load in Terrain_Init() ovr052
+extern SAMB_ptr m_terrain_lbx_000;            // load in Terrain_Init() ovr052
 
 
 
@@ -285,7 +285,9 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 
-// WZD o150p17 IDK_Prepare_TileMap_sDAB1A
+// WZD o150p17
+void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg);
+
 // WZD o150p18 sub_DAFF4                 
 
 

@@ -2432,7 +2432,7 @@ void Move_Stack_DirKey(int16_t movement_direction)
         // DELETEME  {
         // DELETEME      move_y = WORLD_Y_MAX;
         // DELETEME  }
-        SETMIN(move_y, WORLD_HEIGHT);
+        SETMAX(move_y, WORLD_HEIGHT);
 
         if(Stack_Has_PlanarTravel() == ST_TRUE)
         {

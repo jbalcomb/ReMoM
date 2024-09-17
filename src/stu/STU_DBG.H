@@ -5,6 +5,12 @@
 
 #include "STU_TYPE.H"
 
+#include "STU.H"
+#include "STU_TYPE.H"
+#include "STU_DEF.H"
+#include "STU_UTIL.H"   /* get_datetime() */
+#include "STU_CHK.H"
+
 
 
 #ifdef __cplusplus

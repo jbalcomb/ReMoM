@@ -60,6 +60,9 @@ void Screen_Control(void)
             Load_SAVE_GAM(-1);  // SAVETEST.GAM
             // TST_Load_SAVE_GAM();
             Loaded_Game_Update();
+            
+            Capture_Game_Data();
+            Check_Game_Data();
 
 
             // HACK:  (4) Magicians  @  {18, 11}

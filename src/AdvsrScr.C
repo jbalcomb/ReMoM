@@ -108,9 +108,9 @@ char aTaxPerPopulation[] = " Tax Per Population ";
 */
 
 // WZD dseg:3897
-char str_TaxPerPopulation[] = " Tax Rate Per Population ";
+char str_TaxRatePerPopulation__ovr076[] = " Tax Rate Per Population ";
 // WZD dseg:38AA
-char str_SPACE__ovr076[] = " ";  // in th emidst of str_TaxPerPopulation, per the 'String Optimizer'
+char str_SPACE__ovr076[] = " ";  // in the midst of str_TaxRatePerPopulation__ovr076, per the 'String Optimizer'
 
 // WZD dseg:38AC
 char reload_lbx_file__ovr076[] = "RELOAD";
@@ -144,25 +144,25 @@ char str_November__ovr076[] = "November";
 char str_December__ovr076[] = "December";
 
 // WZD dseg:390B
-char str_HistoryOfWizardsPower[] = "History Of Wizards Power";
+char str_HistoryOfWizardsPower__ovr076[] = "History Of Wizards Power";
 
 // WZD dseg:391E
-char str_Power[] = "Power";  // in the midst of str_HistoryOfWizardsPower, per the 'String Optimizer'
+char str_Power[] = "Power";  // in the midst of str_HistoryOfWizardsPower__ovr076, per the 'String Optimizer'
 
 // WZD dseg:3924
 char str_CurrentStatusOfWiza[] = "Current Status Of Wizards";
 
 // WZD dseg:393E
-char str_Army[] = "Army";
+char str_Army__ovr076[] = "Army";
 
 // WZD dseg:3943
-char str_Strength[] = "Strength";
+char str_Strength__ovr076[] = "Strength";
 
 // WZD dseg:394C
-char str_Magic[] = "Magic";
+char str_Magic__ovr076[] = "Magic";
 
 // WZD dseg:3952
-char str_Spell[] = "Spell";
+char str_Spell__ovr076[] = "Spell";
 
 // WZD dseg:3958
 char str_Research[] = "Research";
@@ -174,16 +174,16 @@ char str_hotkey_N__ovr076[] = "N";
 char str_hotkey_C__ovr076[] = "C";
 
 // WZD dseg:3965
-char str_Neutral_0[] = "Neutral";
+char str_Neutral__ovr076[] = "Neutral";
 
 // WZD dseg:396D
-char str_Arcanus[] = "Arcanus";
+char str_Arcanus__ovr076[] = "Arcanus";
 
 // WZD dseg:3975
-char str_Myrror[] = "Myrror";
+char str_Myrror__ovr076[] = "Myrror";
 
 // WZD dseg:397C
-char str_Plane_0[] = " Plane";
+char str_Plane__ovr076[] = " Plane";
 
 // WZD dseg:3983
 char str_DoYouWishToAllowTheGrandVizierToSelectWhatBuildingsYourCitiesCreate[] = "Do you wish to allow the Grand Vizier to select what buildings your cities create?";
@@ -202,9 +202,11 @@ char aDoYouWishToAllowThe[] = "Do you wish to allow the Grand Vizier to select w
 // WZD dseg:C296                                                 BEGIN:  ovr076 - Uninitialized Data  (Advisors Screen)
 
 // WZD dseg:C296
-int16_t OVL_Cartograph_Plane;
+int16_t m_cartograph_plane;
+
 // WZD dseg:C298
-int16_t word_42D38;
+SAMB_ptr cartograph_seg;
+
 // WZD dseg:C29A
 int16_t m_cartograph_y;
 // WZD dseg:C29C
@@ -573,11 +575,11 @@ void TaxCollector_Window(void)
 
 
 
-    if(tax_rate > 6)
-    {
-        tax_rate = 6;
-    }
-
+    // DELETEME  if(tax_rate > 6)
+    // DELETEME  {
+    // DELETEME      tax_rate = 6;
+    // DELETEME  }
+    SETMAX(tax_rate, 6);
 
     for(itr_list = 0; itr_list < 7; itr_list++)
     {
@@ -728,7 +730,7 @@ void Powergraph_Screen_Draw(void)
     int16_t year;  // _SI_  ¿ used as 'first year' ?
     int16_t months_count;  // _DI_
 
-    strcpy(dest, &str_TaxPerPopulation[19]);
+    strcpy(dest, &str_TaxRatePerPopulation__ovr076[19]);
 
     strcpy(months[0],  str_January__ovr076);
     strcpy(months[1],  str_February__ovr076);
@@ -768,7 +770,7 @@ void Powergraph_Screen_Draw(void)
 
     Set_Outline_Color(254);
 
-    Print_Centered(160, 10, str_HistoryOfWizardsPower);  // "History Of Wizards Power"
+    Print_Centered(160, 10, str_HistoryOfWizardsPower__ovr076);  // "History Of Wizards Power"
 
     WTF__turns_years = (_turn / 12);
 
@@ -910,17 +912,17 @@ void Powergraph_Screen_Draw(void)
 */
 void IDK_Powergraph_Draw_Turn_Data(int16_t player_idx, int16_t turns, int16_t month)
 {
-    uint8_t banner_colors[5];
-    int16_t var_B;
-    int16_t x2_itr;
-    int16_t turns_count;
-    int16_t y2;
-    int16_t x2;
-    int16_t x1;
-    int16_t y1;  // _DI_
-    int16_t itr_turn_data;  // _SI_
-    struct s_WIZARD * ptr_player;
-    uint8_t * ptr_Historian;
+    uint8_t banner_colors[5] = { 0,0,0,0,0 };
+    int16_t var_B = 0;
+    int16_t x2_itr = 0;
+    int16_t turns_count = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 00 ;
+    int16_t x1 = 0 ;
+    int16_t y1 = 0;  // _DI_
+    int16_t itr_turn_data = 0;  // _SI_
+    struct s_WIZARD * ptr_player = 0;
+    uint8_t * ptr_Historian = 0;
 
     banner_colors[0] = BANNER_COLOR_BLUE;
     banner_colors[1] = BANNER_COLOR_GREEN;
@@ -1083,15 +1085,15 @@ void Status_Screen_Draw(void)
 
     Set_Outline_Color(254);
 
-    strcpy(GUI_String_1, str_Army);
+    strcpy(GUI_String_1, str_Army__ovr076);
 
     strcat(GUI_String_1, dest);
 
-    strcat(GUI_String_1, str_Strength);
+    strcat(GUI_String_1, str_Strength__ovr076);
 
     Print_Centered((status_screen_x + 138), (status_screen_y + 23), GUI_String_1);
 
-    strcpy(GUI_String_1, str_Magic);
+    strcpy(GUI_String_1, str_Magic__ovr076);
 
     strcat(GUI_String_1, dest);
 
@@ -1099,7 +1101,7 @@ void Status_Screen_Draw(void)
 
     Print_Centered((status_screen_x + 138), (status_screen_y + 72), GUI_String_1);
 
-    strcpy(GUI_String_1, str_Spell);
+    strcpy(GUI_String_1, str_Spell__ovr076);
 
     strcat(GUI_String_1, dest);
 
@@ -1169,16 +1171,16 @@ void Cartographer_Screen__WIP(void)
 
     Deactivate_Help_List();
 
-    OVL_Cartograph_Plane = _map_plane;
+    m_cartograph_plane = _map_plane;
 
     m_cartograph_x = 16;
     m_cartograph_y = 27;
 
     Set_Cartographer_Screen_Help_List();
 
-    Cartographer_Screen_IDK_map_features__WIP(0);
+    Cartograph_Screen_Draw_Map__WIP(0);
 
-    Cartographer_Screen_IDK_map_features__WIP(1);
+    Cartograph_Screen_Draw_Map__WIP(1);
 
     leave_screen = ST_FALSE;
 
@@ -1202,7 +1204,7 @@ void Cartographer_Screen__WIP(void)
         if(input_field_idx == hotkey_next)
         {
             Play_Left_Click__STUB();
-            OVL_Cartograph_Plane = (1 - OVL_Cartograph_Plane);
+            m_cartograph_plane = (1 - m_cartograph_plane);
         }
 
         if(
@@ -1215,29 +1217,34 @@ void Cartographer_Screen__WIP(void)
             leave_screen = ST_TRUE;
         }
 
-        leave_screen = ST_TRUE;
+        if(input_field_idx == cartograph_dot_grid)
+        {
 
-        _map_plane = OVL_Cartograph_Plane;
+            leave_screen = ST_TRUE;
 
-        _map_x = grid_column;
+            _map_plane = m_cartograph_plane;
 
-        _map_y = grid_row;
+            _map_x = grid_column;
 
-        _unit_stack_count = 0;
+            _map_y = grid_row;
 
-        /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
-        assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-        assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
-        Center_Map(&_map_x, &_map_y, grid_column, grid_row, _map_plane);
+            _unit_stack_count = 0;
 
-        Set_Draw_Active_Stack_Always();
-        Set_Unit_Draw_Priority();
-        Reset_Stack_Draw_Priority();
+            /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+            Center_Map(&_map_x, &_map_y, grid_column, grid_row, _map_plane);
 
-        Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+            Set_Draw_Active_Stack_Always();
+            Set_Unit_Draw_Priority();
+            Reset_Stack_Draw_Priority();
 
-        Reset_Map_Draw();
+            Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
+            Reset_Map_Draw();
+
+        }
+        
         if(leave_screen == ST_FALSE)
         {
             Cartographer_Screen_Draw__WIP();
@@ -1282,7 +1289,7 @@ void Cartographer_Screen_Draw__WIP(void)
 
     Set_Page_Off();
 
-    switch(OVL_Cartograph_Plane)
+    switch(m_cartograph_plane)
     {
         case 0:
         {
@@ -1302,9 +1309,9 @@ void Cartographer_Screen_Draw__WIP(void)
         ||
         (l_my < m_cartograph_y)
         ||
-        ((m_cartograph_x + 240) < l_mx)
+        ((m_cartograph_x + CARTOGRAPHER_MAP_WIDTH) < l_mx)
         ||
-        ((m_cartograph_y + 160) < l_my)
+        ((m_cartograph_y + CARTOGRAPHER_MAP_HEIGHT) < l_my)
     )
     {
         return;
@@ -1319,7 +1326,7 @@ void Cartographer_Screen_Draw__WIP(void)
 
         if
         (
-            (_CITIES[itr_cities].wp = OVL_Cartograph_Plane)
+            (_CITIES[itr_cities].wp == m_cartograph_plane)
             &&
             (_CITIES[itr_cities].wx == l_mx)
             &&
@@ -1357,10 +1364,220 @@ void Cartographer_Screen_Draw__WIP(void)
 
 
 // WZD o76p10
-void Cartographer_Screen_IDK_map_features__WIP(int16_t flag)
+void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
 {
+    int16_t banner_colors[NUM_PLAYERS];
+    SAMB_ptr mapflags_segs[NUM_PLAYERS];
+    uint8_t colors[14];
+    int16_t var_8;
+    int16_t y;
+    int16_t x;
+    SAMB_ptr worldmap_seg;
+    int16_t itr_legend;  // _DI_
+    int16_t itr_players;  // _DI_
+    int16_t itr_colors;  // _DI_
+    int16_t itr_nodes;  // _DI_
+    int16_t itr_lairs;  // _DI_
+    int16_t itr_towers;  // _DI_
+    int16_t itr_units;  // _DI_
+    int16_t itr_cities;  // _DI_
 
+    banner_colors[0] = BANNER_COLOR_BLUE;
+    banner_colors[1] = COL_Banners2[1];
+    banner_colors[2] = COL_Banners2[2];
+    banner_colors[3] = BANNER_COLOR_RED;
+    banner_colors[4] = COL_Banners2[4];
+    banner_colors[5] = COL_Banners2[5];
 
+    Set_Page_Off();
+
+    // RELOAD.LBX, 002  WORLDMAP
+    worldmap_seg = LBX_Reload(reload_lbx_file__ovr076, 2, _screen_seg);
+
+    FLIC_Draw(0, 0, worldmap_seg);
+
+    cartograph_seg = Allocate_First_Block(_screen_seg, 2500);  // 2500 PR, 40000 B  (16 + 16 + (240 * 160)) ?
+
+    // RELOAD.LBX, 003  MAPFLAGS
+    // RELOAD.LBX, 004  MAPFLAGS
+    // RELOAD.LBX, 005  MAPFLAGS
+    // RELOAD.LBX, 006  MAPFLAGS
+    // RELOAD.LBX, 007  MAPFLAGS
+    // RELOAD.LBX, 008  MAPFLAGS
+    for(itr_legend = 0; itr_legend < NUM_PLAYERS; itr_legend++)
+    {
+        mapflags_segs[itr_legend] = LBX_Reload_Next(reload_lbx_file__ovr076, (3 + itr_legend), _screen_seg);
+    }
+
+    // TODO  Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(flag, cartograph_seg);
+    /* HACK */  Create_Picture(CARTOGRAPHER_MAP_WIDTH, CARTOGRAPHER_MAP_HEIGHT, (cartograph_seg + 16));  // (WORLD_WIDTH * 4) x (WORLD_HEIGHT * 4)
+    Draw_Picture(m_cartograph_x, m_cartograph_y, (cartograph_seg + 16));
+
+    Set_Font_Style(1, 1, 0, 0);
+
+    Set_Alias_Color(238);
+
+    Set_Outline_Color(254);
+
+    Set_Font_Spacing_Width(1);
+
+    var_8 = 0;
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        if(_players[_human_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
+        {
+            FLIC_Draw(260, (80 + (var_8 * 9)), mapflags_segs[_players[itr_players].banner_id]);
+            Print(269, (82 + (var_8 * 9)), _players[itr_players].name);
+            var_8++;
+        }
+    }
+
+    FLIC_Draw(260, (80 + (var_8 * 9)), mapflags_segs[5]);
+
+    Print(269, (82 + (var_8 * 9)), str_Neutral__ovr076);  // "Neutral"
+
+    for(itr_colors = 1; itr_colors < 13; itr_colors++)
+    {
+        colors[itr_colors] = 1;
+    }
+
+    Set_Font_Colors_15(0, &colors[0]);
+
+    Set_Alias_Color(25);
+
+    Set_Font_Style_Outline(5, 15, 0, 0);
+
+    Set_Alias_Color(25);
+
+    Set_Outline_Color(239);
+
+    if(flag == 0)
+    {
+        strcpy(GUI_String_1, str_Arcanus__ovr076);  // "Arcanus"
+    }
+    else
+    {
+        strcpy(GUI_String_1, str_Myrror__ovr076);  // "Myrror"
+    }
+
+    strcat(GUI_String_1, str_Plane__ovr076);  // " Plane"
+
+    Print_Centered(160, 12, GUI_String_1);
+
+    for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
+    {
+        if(_NODES[itr_nodes].wp == flag)
+        {
+            if(GET_SQUARE_EXPLORED(_NODES[itr_nodes].wx, _NODES[itr_nodes].wy, _NODES[itr_nodes].wp) != UNEXPLORED)
+            {
+                x = (m_cartograph_x + (_NODES[itr_nodes].wx * 4) + 2);
+                y = (m_cartograph_y + (_NODES[itr_nodes].wy * 4) + 1);
+                Dot(x, y, ST_LIGHT_GRAY);
+            }
+        }
+    }
+
+    for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+    {
+        if(_LAIRS[itr_lairs].wp == flag)
+        {
+            if(_LAIRS[itr_lairs].Intact == ST_TRUE)
+            {
+                if(GET_SQUARE_EXPLORED(_LAIRS[itr_lairs].wx, _LAIRS[itr_lairs].wy, _LAIRS[itr_lairs].wp) != UNEXPLORED)
+                {
+                    x = (m_cartograph_x + (_LAIRS[itr_lairs].wx * 4) + 2);
+                    y = (m_cartograph_y + (_LAIRS[itr_lairs].wy * 4) + 1);
+                    Dot(x, y, ST_LIGHT_GRAY);
+                }
+            }
+        }
+    }
+
+    for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
+    {
+        if(GET_SQUARE_EXPLORED(_TOWERS[itr_towers].wx, _TOWERS[itr_towers].wy, flag) != UNEXPLORED)
+        {
+            x = (m_cartograph_x + (_TOWERS[itr_towers].wx * 4) + 2);
+            y = (m_cartograph_y + (_TOWERS[itr_towers].wy * 4) + 1);
+            Dot(x, y, ST_LIGHT_GRAY);
+        }
+    }
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+        if(
+            (_UNITS[itr_units].wp == flag)
+            ||
+            (_UNITS[itr_units].in_tower == ST_TRUE)
+        )
+        {
+            if(Check_Square_Scouted(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp) == ST_TRUE)
+            {
+                x = (m_cartograph_x + (_UNITS[itr_units].wx * 4) + 2);
+                y = (m_cartograph_x + (_UNITS[itr_units].wy * 4) + 1);
+                if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+                {
+                    if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
+                    {
+                        Dot(x, y, banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
+                    }
+                    else if(_UNITS[itr_units].owner_idx == NEUTRAL_PLAYER_IDX)
+                    {
+                        // nada, nunca, zero, ... jumps to end of loops
+                    }
+                    else
+                    {
+                        if(Unit_Has_Invisibility(itr_units) != ST_TRUE)
+                        {
+                            Dot(x, y, banner_colors[_players[_UNITS[itr_units].owner_idx].banner_id]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var_8 = 0;  // ¿ ST_FALSE ?
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(
+            (_CITIES[itr_cities].wp == flag)
+            ||
+            (_CITIES[itr_cities].wp == 2)  /* IDGI, but *means* city is *accessible* from both planes/either plane */
+        )
+        {
+            if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, flag) != UNEXPLORED)
+            {
+                x = (m_cartograph_x + (_CITIES[itr_cities].wx * 4));
+                y = (m_cartograph_x + (_CITIES[itr_cities].wy * 4));
+                Fill((x + 1), (y + 1), (x + 3), (y + 3), ST_BLACK);
+                if(_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
+                {
+                    Fill(x, y, (x + 2), (y + 2), banner_colors[_players[_CITIES[itr_cities].owner_idx].banner_id]);
+                }
+                else
+                {
+                    /*  ovr076:1CFF  B8 10 00    mov     ax, 10h */
+                    Fill(x, y, (x + 2), (y + 2), ST_BROWN);
+                    var_8 = 1;  // ¿ ST_TRUE ?
+                    var_8 = LO_BYTE(var_8);
+                }
+            }
+        }
+    }
+
+    switch(flag)
+    {
+        case ARCANUS_PLANE:
+        {
+            Copy_Off_To_Back();
+        } break;
+        case MYRROR_PLANE:
+        {
+            Copy_Off_To_Page4();
+        } break;
+    }
 
 }
 

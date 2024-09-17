@@ -310,6 +310,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #ifdef STU_DEBUG
 #include "STU_DBG.H"
 #endif
+#include "STU\STU_DBG.H"
 
 #include "MoX_PFL.H"
 
@@ -394,20 +395,26 @@ SAMB_ptr LBX_Load_Data(char* lbx_name, int16_t entry_num, int16_t start_rec, int
 // WZD s10p12
 void LBX_Load_Data_Static(char* lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, uint16_t start_rec, uint16_t num_recs, uint16_t record_size);
 
-
-
 /*
+    WIZARDS.EXE  ovr067, ovr068, ovr150
     MainScr_Maps.C
 */
-
-
 // WZD o67p04
 void Set_Draw_Active_Stack_Always(void);
 // WZD o67p06
 void Reset_Draw_Active_Stack(void);
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
-
+// WZD o67p13
+void Set_Unit_Draw_Priority(void);
+// WZD o67p14
+void Reset_Stack_Draw_Priority(void);
+// WZD o68p01
+void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
+// WZD o150p01
+void Reset_Map_Draw(void);
+// WZD o150p17
+void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg);
 
 
 

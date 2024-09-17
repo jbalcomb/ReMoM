@@ -369,6 +369,7 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define SET_SQUARE_EXPLORED(_wx_, _wy_, _wp_, _value_)  ( _square_explored[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_)  )
 
 #define UNEXPLORED  0x0  /* no bits are set */  /* test as 'any bits are set' */
+#define EXPLORED    0xF  /* ¿ all bits are set ? */  /* test as 'all bits are set' */
 
 #define SQUARE_UNEXPLORED(_wx_, _wy_, _wp_)             (  GET_SQUARE_EXPLORED((_wx_), (_wy_), (_wp_)) == UNEXPLORED  )
 /* Intuitive?  explored means NOT unexplored */
@@ -478,6 +479,12 @@ uint8_t COL_Banners2[36] = {
 #define SQUARE_HEIGHT       18  // in Pixels
 
 
+
+#define CARTOGRAPHER_MAP_WIDTH  (WORLD_WIDTH  * 4)
+#define CARTOGRAPHER_MAP_HEIGHT (WORLD_HEIGHT * 4)
+
+
+
 #ifdef VIDEO_MODE_MODE_Y
 #define SCREEN_WIDTH    320
 #define SCREEN_HEIGHT   200
@@ -542,6 +549,8 @@ uint8_t COL_Banners2[36] = {
 #define ST_TRANSPARENT       0  /*  */
 #define ST_BLACK             1  /*  */
 
+#define ST_LIGHT_GRAY        7  /* used for {nodes, lairs, towers} on the Cartographer Screen */
+
 #define ST_GRAY              8
 
 #define ST_LIGHT_MAGENTA    13
@@ -550,6 +559,8 @@ uint8_t COL_Banners2[36] = {
 // "silver" used for experience level rings/circles?
 // same as reduced map box?
 // white/bright white for reduced map mark, and GP/MP font color, and outline/aura color for unit enchantment outline?
+
+#define ST_BROWN            16  /* used for the Neutral Player's cities on the 'Cartographer Screen' */
 
 // main palette  EMPERATO
 #define ROAD_BUILD_BLUE     108  /* {108, 109, 110, 111} */
@@ -592,6 +603,8 @@ uint8_t COL_Banners2[36] = {
 #define CLROFF() { Set_Page_Off(); Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0); }
 #define CLRON()  { Set_Page_On();  Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0); }
 
+// MoO2  Darken_Fill()
+// MoO2  Darken_Main_Screen_Background_()
 #define DARKEN_SCREEN()  { Gradient_Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL); }
 
 // TODO  GUI_String_1 = (char *)Near_Allocate_First(100);
