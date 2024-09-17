@@ -501,7 +501,7 @@ int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
 {
     uint32_t UU_item_enchantments;
-    int16_t has_airtravel_item;
+    int16_t has_airtravel_item = ST_FALSE;
 
     if(_UNITS[unit_idx].Hero_Slot != -1)
     {
@@ -514,11 +514,6 @@ int16_t Unit_Has_AirTravel_Item(int16_t unit_idx)
         {
             has_airtravel_item = ST_TRUE;
         }
-
-    }
-    else
-    {
-        has_airtravel_item = ST_FALSE;
     }
 
     return has_airtravel_item;

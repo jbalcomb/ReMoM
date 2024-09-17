@@ -519,7 +519,7 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
     int16_t itr_bit_index;
     int16_t itr_roadconn;
 
-    int16_t trade_bonus;  // _SI_
+    int16_t trade_bonus = 0;  // _SI_
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Road_Trade_Bonus(city_idx = %d)\n", __FILE__, __LINE__, city_idx);

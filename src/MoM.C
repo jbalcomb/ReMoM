@@ -53,6 +53,8 @@ void Screen_Control(void)
 
         case scr_Continue:
         {
+            int16_t itr_world_size;
+
             // HACK:
             magic_set.Strategic_Combat = ST_TRUE;  // "Strategic Combat Only"
 
@@ -75,7 +77,6 @@ void Screen_Control(void)
             _CITIES[54].Prod_Accu = 280;
 
             // HACK:  visibility to support highlighting the Plane shift feature, for the public alpha demo release video
-            int16_t itr_world_size;
             for (itr_world_size = 0; itr_world_size < WORLD_SIZE; itr_world_size++)
             {
                 _square_explored[((1 * WORLD_SIZE) + itr_world_size)] = _square_explored[((0 * WORLD_SIZE) + itr_world_size)];

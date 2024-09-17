@@ -1620,7 +1620,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
     IDK_health_attacker__2 = IDK_health_attacker;
     IDK_health_defender__2 = IDK_health_defender;
-    /* DEMOHACK */ if (OVL_Action_Type == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0b01111111111111111111111111111111; }
+    /* DEMOHACK */ if (OVL_Action_Type == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
 
     /*
         BEGIN:  ¿ halve values for Neutral Player ?

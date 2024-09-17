@@ -217,7 +217,6 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 */
 void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 {
-    
     uint8_t * string_widths;
     int16_t x_override;
     int16_t Line_Width;

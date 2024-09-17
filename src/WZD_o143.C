@@ -42,7 +42,7 @@ void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player
     int16_t terrain_special;
 
 
-    __debugbreak();
+    MOX_DBG_BREAK;
 
 
     terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
@@ -112,7 +112,7 @@ void Volcano_Counts(void)
             {
 
                 // player_idx = (_map_square_flags[((itr_wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] & 0x7);
-                player_idx = (GET_MAP_SQUARE_FLAG(itr_wx, itr_wy, itr_wp) & 0b00000111);
+                player_idx = (GET_MAP_SQUARE_FLAG(itr_wx, itr_wy, itr_wp) & 7 /*0b00000111*/);
 
                 if(player_idx > HUMAN_PLAYER_IDX)
                 {
@@ -157,7 +157,7 @@ void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
     // ; desert, tundra, hill, and mountain tiles
     // TODO  TILE_AdjustMapFlow(wx, wy, wp);
 
-    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000));  // clear the volcano player idx
+    SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0xF8 /*0b11111000*/));  // clear the volcano player idx
 
 }
 
