@@ -2579,28 +2579,72 @@ void Reset_Cycle_Palette_Color(void)
 }
 
 // WZD s20p12
- // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+// drake178: ¿ ?
 /*
-$ grep Cycle_Palette_Color *
-LoadScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
-MainScr.C:    // TODO  Reset_Cycle_Palette_Color()  AKA VGA_BlinkReset()
-MainScr.C:    Reset_Cycle_Palette_Color();
-MainScr.C:        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);
-MoX.C:                // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
-PoC_Main.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
-SBookScr.C:    // TODO  Reset_Cycle_Palette_Color();
-SCORE.C:    // TODO  UU_Reset_Cycle_Palette_Color();
-grep: msdos: Is a directory
-grep: mswin: Is a directory
-grep: stu: Is a directory
-win_MoM.cpp:    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+MoO2
+Module: palette
+    function (0 bytes) Cycle_Palette_Color
+    Address: 01:00131B5D
+        Num params: 4
+        Return type: void (1 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) color_num
+            signed integer (2 bytes) red_min
+            signed integer (2 bytes) green_min
+            signed integer (2 bytes) blue_min
+            signed integer (2 bytes) red_max
+            signed integer (2 bytes) green_max
+            signed integer (2 bytes) blue_max
+            signed integer (2 bytes) step_value
+            signed integer (4 bytes) delta_red
+            signed integer (4 bytes) delta_green
+            signed integer (4 bytes) delta_blue
+            signed integer (4 bytes) primary_color
+            signed integer (4 bytes) store_red
+            signed integer (4 bytes) store_blue
+            signed integer (4 bytes) store_green
 */
+/*
+
+*/
+void Cycle_Palette_Color__STUB(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value)
+{
+
+
+
+
+
+}
+
 
 // WZD s20p13
+// drake178: ¿ ?
+/*
+MoO2
+Module: palette
+    function (0 bytes) Update_Cycle
+    Address: 01:00131E6B
+        Num params: 2
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        pointer (4 bytes) 
+        Locals:
+            pointer (4 bytes) color_min
+            pointer (4 bytes) color_max
+*/
 // Update_Cycle(int *color_min, int *color_max)
 
 // WZD s20p14
-// UU_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
+// drake178: UU_VGA_CreateHues()
+// NX_VGA_CreateHues(int First_DAC_Reg, int Steps, int B_Red, int B_Grn, int B_Blu, int T_Red, int T_Grn, int T_Blu)
 
 
 
@@ -2713,12 +2757,7 @@ void Cycle_Palette(int16_t percent)
     uint8_t color_grn;
     uint8_t color_blu;
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
-// #endif
-
     vpercent = 100 - percent;
-
     
     if(vpercent > 0)                    /* percent < 100 */
     {
@@ -2777,10 +2816,6 @@ void Cycle_Palette(int16_t percent)
 Done:
     return;  // DNE in Dasm - VSBS
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Cycle_Palette(percent = %d)\n", __FILE__, __LINE__, percent);
-// #endif
-
 }
 
 
@@ -2790,8 +2825,6 @@ Done:
 
 // WZD s21p04
 // drake178: VGA_SlideColors()
-// ¿ MoO2: Cycle_Palette_Color() ... Update_Cycle()
-// ¿ 1oom ?
 /*
     called from Lair_Confirm_Draw()
     VGA_SlideColors(247, 8, notify_color_slide_cycle);
@@ -2919,6 +2952,7 @@ rep stosw
 */
 
 }
+
 
 // WZD s21p05
 // drake178: UU_VGA_ColorWave()

@@ -323,15 +323,15 @@ FFFFFFFF General_MIDI  = 56
 
     Load_Palette(0, -1, 0);
     Calculate_Remap_Colors();
-    // Set_Button_Down_Offsets(1, 1);
-    // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
+    Set_Button_Down_Offsets(1, 1);
+    Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);  // (color_num, red_min, green_min, blue_min, red_max, green_max, blue_max, step_value)
     Apply_Palette();
     // Fade_In()
     // _current_screen = scr_Main_Screen
     current_screen = scr_Main_Menu_Screen;
     // _players.Banner+17E8h = BNR_Brown
     // Clear_Fields()
-    // Loaded_Game_Update_WZD()
+    // DONT  ...WZD assumes SAVE8.GAM was loaded...  Loaded_Game_Update_WZD()
     // GAME_SoM_Cast_By = ST_UNDEFINED
 
 

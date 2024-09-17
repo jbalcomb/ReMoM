@@ -51,7 +51,7 @@ extern SAMB_ptr _spellbook_small_text;
 
 // WZD dseg:9454
 // _spellbook_small_symbols SPBK_ICONS <0>
-extern SAMB_ptr _spellbook_small_symbols[5];
+extern SAMB_ptr _spellbook_small_symbols[NUM_MAGIC_REALMS];
 
 // WZD dseg:9460 00 00                                           IMG_SPL_BigBook@ dw 0                   ; DATA XREF: GAME_LearnSpellAnim+16Dw ...
 // WZD dseg:9460                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
@@ -80,8 +80,8 @@ extern SAMB_ptr _spellbook_small_seg;
 // WZD dseg:C8FA
 extern struct s_SPELL_BOOK_PAGE * SBK_BookPages;
 
-// WZD dseg:C8FC 00 00                                           SBK_NewSpellAnim_Stg dw 0               ; DATA XREF: CMB_SetTargetCursor+24Dr ...
-// WZD dseg:C8FC                                                                                         ; (0-7), also combat casting cursor anim stage (0-4)
+// WZD dseg:C8FC
+extern int16_t SBK_NewSpellAnim_Stg;
 
 // WZD dseg:C8FE
 // drake178: IMG_SBK_BookRealms@ SPBK_ICONS
@@ -149,23 +149,9 @@ extern int16_t SBK_OpenPage;
 // drake178:  Spell List Count, New Spell Index, ...
 extern int16_t GUI_Multipurpose_Int;
 
-// WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+SBK_Descriptions@ dd 0                                    ; 0
-// WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: GAME_LearnSpellAnim+31Ew ...
-// WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+dd 0                                    ; 1 ; 9 or 12 LBX_Alloc_Next paragraphs in the
-// WZD dseg:C928 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 dd 0                                    ; 2 ; LBX_Sandbox_Segment (after a flush)
-// WZD dseg:C928                                                 dd 0                                    ; 3
-// WZD dseg:C928                                                 dd 0                                    ; 4
-// WZD dseg:C928                                                 dd 0                                    ; 5
-// WZD dseg:C928                                                 dd 0                                    ; 6
-// WZD dseg:C928                                                 dd 0                                    ; 7
-// WZD dseg:C928                                                 dd 0                                    ; 8
-// WZD dseg:C928                                                 dd 0                                    ; 9
-// WZD dseg:C928                                                 dd 0                                    ; 10
-// WZD dseg:C928                                                 dd 0                                    ; 11
-// WZD dseg:C928                                                 dd 0                                    ; 12
-// WZD dseg:C928                                                 dd 0                                    ; 13
-// WZD dseg:C928                                                 dd 0                                    ; 14
-// WZD dseg:C928                                                 dd 0                                    ; 15
+// WZD dseg:C928
+extern char * SBK_Descriptions[];
+
 // WZD dseg:C968 00 00                                           IMG_GAME_Lab_Wizard@ dw 0               ; DATA XREF: GAME_NewSpellAnim+1Cr ...
 // WZD dseg:C96A 00 00                                           IMG_GAME_LabFmiliar@ dw 0               ; DATA XREF: GAME_NewSpellAnim+3Ar ...
 // WZD dseg:C96C 00 00                                           IMG_GAME_MagicColmn@ dw 0               ; DATA XREF: GAME_NewSpellAnim+4Er ...
@@ -182,57 +168,43 @@ extern int16_t GUI_Multipurpose_Int;
 */
 
 // WZD o117p01
-// drake178: SBK_AddHumanPlayer()
-// PRIVATE  void SBK_AddHumanPlayer(int16_t Book_Type, SAMB_ptr SpList_Ptr);
+void SBK_AddHumanPlayer(int16_t Book_Type, SAMB_ptr SpList_Ptr);
 
 // WZD o117p02
-// drake178: SBK_AddRealm()
 // SBK_AddRealm()
 
 // WZD o117p03
-// drake178: SBK_CountSpellGroups()
-// PRIVATE  void SBK_CountSpellGroups(void);
+void SBK_CountSpellGroups(void);
 
 // WZD o117p04
-// drake178: SBK_BuildSpellbook()
-void SBK_BuildSpellbook(int16_t Book_Type, int16_t Page_Size);
+void SBK_BuildSpellbook__WIP(int16_t Book_Type, int16_t Page_Size);
 
 // WZD o117p05
-// drake178: sub_9A9E8()
 // sub_9A9E8()
 
 // WZD o117p06
-// drake178: CMB_BuildSpellbook()
 // CMB_BuildSpellbook()
 
 // WZD o117p07
-// drake178: OVL_ComposeBookText()
-// PRIVATE  void OVL_ComposeBookText(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr Work_IMG);
+void OVL_ComposeBookText(struct s_SPELL_BOOK_PAGE Page, SAMB_ptr spellbook_bitmap);
 
 // WZD o117p08
-// drake178: CMB_ComposeBookText()
 // CMB_ComposeBookText()
 
 // WZD o117p09
-// drake178: OVL_DrawSpellbook()
 void OVL_DrawSpellbook(int16_t x, int16_t y);
 
 // WZD o117p10
-// drake178: CMB_DrawSpellbook()
 // CMB_DrawSpellbook()
 
 // WZD o117p11
-// drake178: SBK_PageFlip_Small()
-// BOOK.LBX  "PTURNSML"
 void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx);
 
 // WZD o117p12
-// drake178: SBK_AddPages()
-// PRIVATE  void SBK_AddPages(int16_t Spell_Count, int16_t Grp_Index, char * Title, int16_t Page_Size);
+void SBK_AddPages(int16_t Spell_Count, int16_t Grp_Index, char * Title, int16_t Page_Size);
 
 // WZD o117p13
-// drake178: SBK_Fill()
-// PRIVATE  void SBK_Fill(int16_t Page_Size);
+void SBK_Fill(int16_t Page_Size);
 
 
 
@@ -242,51 +214,39 @@ void SBK_PageTurn_Small(int turn_type, int combat_flag, int player_idx);
 */
 
 // WZD o118p01
-// drake178: SBK_PageFlip_Big()
-// SBK_PageFlip_Big()
+void SBK_PageFlip_Big__WIP(int16_t direction);
 
 // WZD o118p02
-// drake178: SBK_ApprenticeBook()
-// SBK_ApprenticeBook()
+void SBK_ApprenticeBook__WIP(void);
 
 // WZD o118p03
-// drake178: GAME_NewSpellAnim()
 // GAME_NewSpellAnim()
 
 // WZD o118p04
-// drake178: VGA_DrawBlackScreen()
 // VGA_DrawBlackScreen()
 
 // WZD o118p05
-// drake178: GAME_LoadNewSpell()
 // GAME_LoadNewSpell()
 
 // WZD o118p06
-// drake178: GAME_LearnSpellAnim()
 // GAME_LearnSpellAnim()
 
 // WZD o118p07
-// drake178: SBK_DrawSpellDecode()
 // SBK_DrawSpellDecode()
 
 // WZD o118p08
-// drake178: SBK_LoadSpellDescs()
-// SBK_LoadSpellDescs()
+void SBK_LoadSpellDescs__WIP(int16_t page);
 
 // WZD o118p09
-// drake178: sub_9DDBC()
-// sub_9DDBC()
+void Apprentice_Screen__WIP(void);
 
 // WZD o118p10
-// drake178: SBK_ComposeApprPage()
-// SBK_ComposeApprPage()
+void SBK_ComposeApprPage__WIP(int16_t page, SAMB_ptr seg, int16_t flag);
 
 // WZD o118p11
-// drake178: SBK_Research_Dialog()
 // SBK_Research_Dialog()
 
 // WZD o118p12
-// drake178: GAME_CheckResearch()
 // GAME_CheckResearch()
 
 

@@ -224,7 +224,7 @@ void Screen_Control(void)
             Load_Palette(0, -1, 0);  // NOTE(JimBalcomb,20230111): this is the only Load_Palette() leading to the Main_Screen()
             // Calculate_Remap_Colors();
             Set_Button_Down_Offsets(1, 1);
-            // Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1)
+            Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);
             Apply_Palette();
             // Fade_In()
             // Clear_Fields()

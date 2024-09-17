@@ -532,7 +532,7 @@ void Clear_Palette_Changes(int start_color, int end_color);
 void Reset_Cycle_Palette_Color(void);
 
 // WZD s20p12
- // Cycle_Palette_Color(int color_num, int red_min, int green_min, int blue_min, int red_max, int green_max, int blue_max, int step_value)
+void Cycle_Palette_Color__STUB(int16_t color_num, int16_t red_min, int16_t green_min, int16_t blue_min, int16_t red_max, int16_t green_max, int16_t blue_max, int16_t step_value);
 
 // WZD s20p13
 // Update_Cycle(int *color_min, int *color_max)

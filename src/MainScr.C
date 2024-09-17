@@ -4823,7 +4823,7 @@ void Main_Screen_Draw_Summary_Window(void)
     // cycles reds for negative values
     if(cycle_incomes != ST_UNDEFINED)
     {
-        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 3);
+        Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 3);
     }
 
 

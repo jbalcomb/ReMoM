@@ -447,10 +447,10 @@ void Load_Screen(void)
         Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);
         Set_Page_Off();
         // HERE: set the palette back to the /normal/ palette
-        Load_Palette(0, -1, ST_NULL);  // EMPERATO - main game palette
+        Load_Palette(0, ST_UNDEFINED, ST_NULL);  // EMPERATO - main game palette
         Set_Palette_Changes(0, 255);
         Calculate_Remap_Colors();
-        // TODO  Cycle_Palette_Color(198, 40, 0, 0, 63, 0, 0, 1);
+        Cycle_Palette_Color__STUB(198, 40, 0, 0, 63, 0, 0, 1);
     }
 
     if(loaded_game_flag == ST_TRUE)

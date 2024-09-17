@@ -451,14 +451,14 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
 
 void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_320x200xXBGR)
 {
-    unsigned int* p_XBGR;
-    int itr;
-    int width;
-    int height;
-    int itr_width;
-    int itr_height;
-    uint8_t color_map_index;
-    uint32_t color;
+    unsigned int * p_XBGR = 0;
+    int itr = 0;
+    int width = 0;
+    int height = 0;
+    int itr_width = 0;
+    int itr_height = 0;
+    uint8_t color_map_index = 0;
+    uint32_t color = 0;
 
     p_XBGR = (uint32_t*)PFL_Palette;  // ~== IBM-PC VGA-DAC
 
@@ -530,7 +530,20 @@ void Init_Window_Back_Buffer(struct win32_offscreen_buffer * Buffer, int Width, 
     {
         // ErrorExit(TEXT("VirtualAlloc"));
     }
-    memset(Buffer->Memory, 1, BitmapMemorySize);
+    
+
+    // memset(Buffer->Memory, 1, BitmapMemorySize);
+    // Severity	Code	Description	Project	File	Line	Suppression State
+    // Warning	C6387	'Buffer->Memory' could be '0':  this does not adhere to the specification for the function 'memset'.ReMoM	C : \STU\devel\ReMoM\src\win_PFL.cpp	533
+    if(Buffer->Memory == 0)
+    {
+        abort();
+    }
+    else
+    {
+        memset(Buffer->Memory, 1, BitmapMemorySize);
+    }
+
 }
 
 void WndInit(HINSTANCE hInstance, int nCmdShow)
@@ -569,8 +582,31 @@ void WndInit(HINSTANCE hInstance, int nCmdShow)
     {
         // return FALSE;
     }
-    ShowWindow(g_Window, nCmdShow);
-    UpdateWindow(g_Window);
+
+    // ShowWindow(g_Window, nCmdShow);
+    // Severity	Code	Description	Project	File	Line	Suppression State
+    // Warning	C6387	'g_Window' could be '0':  this does not adhere to the specification for the function 'ShowWindow'.ReMoM	C : \STU\devel\ReMoM\src\win_PFL.cpp	572
+    if (g_Window == 0)
+    {
+        abort();
+    }
+    else
+    {
+        ShowWindow(g_Window, nCmdShow);
+    }
+    
+    // UpdateWindow(g_Window);
+    // Severity	Code	Description	Project	File	Line	Suppression State
+    // Warning	C6387	'g_Window' could be '0':  this does not adhere to the specification for the function 'UpdateWindow'.See line 572 for an earlier location where this can occur	ReMoM	C : \STU\devel\ReMoM\src\win_PFL.cpp	573
+    if (g_Window == 0)
+    {
+        abort();
+    }
+    else
+    {
+        UpdateWindow(g_Window);
+    }
+
     g_DeviceContext = GetDC(g_Window);  // requires WNDCLASS style CS_OWNDC
 }
 
@@ -667,6 +703,10 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RBUTTONDOWN:
         {
             OutputDebugStringA("WM_RBUTTONDOWN\n");
+            // @Simbey
+            // This is that Microsoft C++ Guidelines thing to which I was referring. ~ 20240915
+            // Severity	Code	Description	Project	File	Line	Suppression State
+            // Message	lnt - uninitialized - local	Local variable is not initialized.ReMoM	C : \STU\devel\ReMoM\src\win_PFL.cpp	670
             POINT ptMouse;
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);

@@ -169,7 +169,7 @@ void Spellbook_Screen(void)
 
     Spell_Screen_Load();
 
-    SBK_BuildSpellbook(0, 6);  // Book_Type, Page_Size
+    SBK_BuildSpellbook__WIP(0, 6);  // Book_Type, Page_Size
 
     SBK_Dogears = 1;
 

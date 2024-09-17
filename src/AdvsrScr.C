@@ -237,24 +237,34 @@ SAMB_ptr powergraph_screen_seg;
 // WZD o76p01
 void Advisor_Screen(int16_t advisor_idx)
 {
-    char str0_Surveyor[26];
-    char str1_Cartographer[26];
-    char str2_Apprentice[26];
-    char str3_Historian[26];
-    char str4_Astrologer[26];
-    char str5_Chancellor[26];
-    char str6_TaxCollector[26];
-    char str7_GrandVizier[26];
-    char str8_Mirror[26];
-    char str9_EoT[26];
-    char box_list_stings[10][26];
+    char str0_Surveyor[26]      = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str1_Cartographer[26]  = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str2_Apprentice[26]    = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str3_Historian[26]     = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str4_Astrologer[26]    = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str5_Chancellor[26]    = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str6_TaxCollector[26]  = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str7_GrandVizier[26]   = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str8_Mirror[26]        = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str9_EoT[26]           = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char box_list_stings[10][26] = {
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    };
     // char box_list_stings[260];
     // int16_t str_list[10];
-    char * str_list[10];
-    char fkey_string[4];
-    int16_t input_advisor_idx;
+    char* str_list[10] = { 0,0,0,0,0,0,0,0,0,0 };
+    char fkey_string[4] = { 0, 0, 0, 0 };
+    int16_t input_advisor_idx = 0;
 
-    int16_t itr;
+    int16_t itr = 0;
 
     strcpy(fkey_string, cnst_Info_Msg_0); // " (F"
 
@@ -432,7 +442,7 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 2:  /* Apprentice    (F3) */
         {
-            // TODO  IDK_AdvsrScr_Apprentice()
+            Apprentice_Screen__WIP();
 
         } break;
         case 3:  /* Historian     (F4) */
@@ -495,24 +505,30 @@ void TaxCollector_Window(void)
 // box_list_stings__05= byte ptr -120h
 // box_list_stings__06= byte ptr -102h
 // box_list_stings__07= byte ptr -0E4h
-    char box_list_stings[10][26];
+    char box_list_stings[10][26] = {
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                                  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    };
 // NX_line9= byte ptr -0C6h
 // NX_line10= byte ptr -0A8h
 // NX_line11= byte ptr -8Ah
 // NX_line12= byte ptr -6Ch
 // NX_line13= byte ptr -4Eh
-    char * str_list[8];
+    char * str_list[8]   = { 0, 0, 0, 0, 0, 0, 0, 0 };
 // UU_IDK_var_20= byte ptr -20h
-    char str_unrest[10];
-    char str_gold[10];
-    int16_t selection;
+    char str_unrest[10]  = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char str_gold[10]    = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t selection = 0;
 
-    int16_t tax_rate;
-    int16_t itr_list;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: TaxCollector_Window()\n", __FILE__, __LINE__);
-#endif
+    int16_t tax_rate = 0;
+    int16_t itr_list = 0;
 
     strcpy(str_gold, cnst_Info_Msg_7_3); // " gold,"
 
@@ -597,40 +613,19 @@ void TaxCollector_Window(void)
     // str_list[7] = (char *)(box_list_stings + (30 * 7));  // sizeof(box_list_stings[0])
     str_list[7] = box_list_stings[7];
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: str_list[0]: %s\n", __FILE__, __LINE__, str_list[0]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[1]: %s\n", __FILE__, __LINE__, str_list[1]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[2]: %s\n", __FILE__, __LINE__, str_list[2]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[3]: %s\n", __FILE__, __LINE__, str_list[3]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[4]: %s\n", __FILE__, __LINE__, str_list[4]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[5]: %s\n", __FILE__, __LINE__, str_list[5]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[6]: %s\n", __FILE__, __LINE__, str_list[6]);
-    dbg_prn("DEBUG: [%s, %d]: str_list[7]: %s\n", __FILE__, __LINE__, str_list[7]);
-#endif
-
-
     // TODO  Set_TaxCollector_Window_Help_List();
-
 
     // selection = Selection_Box(7, &str_list[0], ST_FALSE, aTaxPerPopulation);
     selection = Selection_Box(7, &str_list[0], ST_FALSE, " Tax Per Population ");
 
-
     Deactivate_Help_List();
-
 
     if(selection != ST_UNDEFINED)
     {
         _players[_human_player_idx].tax_rate = selection;
     }
 
-
     // TODO  CTY_RecalculateAll();
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: TaxCollector_Window()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -715,22 +710,35 @@ void Powergraph_Screen(void)
 // drake178: sub_655C4()
 void Powergraph_Screen_Draw(void)
 {
-    char months[12][12];
-    char dest[4];
-    int16_t month;  // ¿ used as 'first month' ... 'first turn' (¿ because turns are months ?) ?
-    int16_t y1;
-    int16_t x2;
-    int16_t turns_count;
-    int16_t itr_players;  // itr_players__turns
-    int16_t itr_turns;  // itr_players__turns
-    int16_t WTF__turns_years;
-    int16_t WTF__turns_months;
-    uint8_t banner_colors[6];
-    uint8_t colors[6];
-    int16_t year;  // _SI_  ¿ used as 'first year' ?
-    int16_t months_count;  // _DI_
+    char months[12][12] = {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    };
+    char dest[4] = { 0, 0, 0, 0 };
+    int16_t month = 0;  // ¿ used as 'first month' ... 'first turn' (¿ because turns are months ?) ?
+    int16_t y1 = 0;
+    int16_t x2 = 0;
+    int16_t turns_count = 0;
+    int16_t itr_players = 0;  // itr_players__turns
+    int16_t itr_turns = 0;  // itr_players__turns
+    int16_t WTF__turns_years = 0;
+    int16_t WTF__turns_months = 0;
+    uint8_t banner_colors[6] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t year = 0;  // _SI_  ¿ used as 'first year' ?
+    int16_t months_count = 0;  // _DI_
 
-    strcpy(dest, &str_TaxRatePerPopulation__ovr076[19]);
+    strcpy(dest, &str_TaxRatePerPopulation__ovr076[19]);  // ¿ "tion" ? ¿ but, also, unsed/overwritten ?
 
     strcpy(months[0],  str_January__ovr076);
     strcpy(months[1],  str_February__ovr076);
@@ -1042,23 +1050,23 @@ void Status_Screen(void)
 */
 void Status_Screen_Draw(void)
 {
-    char dest[4];
-    uint8_t IDK_colors[6] = {0, 0, 0, 0, 0, 0};
-    int16_t var_12;
-    int16_t scores[3];
-    int16_t itr_players;
-    int16_t var_8;
+    char dest[4] = { 0, 0, 0, 0 };
+    uint8_t banner_colors[6] = {0, 0, 0, 0, 0, 0};
+    int16_t var_12 = 0;
+    int16_t scores[3] = { 0, 0, 0 };
+    int16_t itr_players = 0;
+    int16_t var_8 = 0;
     uint8_t colors[6] = {0, 0, 0, 0, 0, 0};
-    int16_t itr_scores;  // _SI_
-    int16_t IDK_y;  // _DI_
+    int16_t itr_scores = 0;  // _SI_
+    int16_t IDK_y = 0;  // _DI_
 
     strcpy(dest, str_SPACE__ovr076);
 
-    IDK_colors[0] = 172;
-    IDK_colors[1] = 216;
-    IDK_colors[2] = 124;
-    IDK_colors[3] = 201;
-    IDK_colors[4] = 211;
+    banner_colors[0] = 172;
+    banner_colors[1] = 216;
+    banner_colors[2] = 124;
+    banner_colors[3] = 201;
+    banner_colors[4] = 211;
 
     Set_Page_Off();
 
@@ -1140,7 +1148,7 @@ void Status_Screen_Draw(void)
 
                 Gradient_Fill((status_screen_x + 64), (IDK_y + 2), (status_screen_x + 65 + scores[itr_scores]), (IDK_y + 3), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
 
-                Fill((status_screen_x + 64), (IDK_y + 1), (status_screen_x + 64 + scores[itr_scores]), (IDK_y + 2), IDK_colors[_players[itr_players].banner_id]);
+                Fill((status_screen_x + 64), (IDK_y + 1), (status_screen_x + 64 + scores[itr_scores]), (IDK_y + 2), banner_colors[_players[itr_players].banner_id]);
 
                 var_8 += 49;
             }
@@ -1330,7 +1338,7 @@ void Cartographer_Screen_Draw__WIP(void)
             &&
             (_CITIES[itr_cities].wx == l_mx)
             &&
-            (_CITIES[itr_cities].wx == l_mx)
+            (_CITIES[itr_cities].wy == l_my)
         )
         {
 
