@@ -991,6 +991,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\stu\STU_CHK.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\stu\STU_CHK.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\stu\STU_DBG.C"
 				>
 			</File>
