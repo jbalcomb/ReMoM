@@ -697,7 +697,7 @@ void Magic_Screen(void)
         {
             if((magic_gem_fields[itr] == input_field_idx) && (gem_player_nums[itr] > 0))
             {
-                if(_players[_human_player_idx].Spell_Cast == 214)  /* Spell_Of_Return */
+                if(_players[_human_player_idx].casting_spell_idx == 214)  /* Spell_Of_Return */
                 {
                     Warn1(aYouMayNotContactOth);  // "You may not contact other wizards while you are banished."
                 }
@@ -1123,7 +1123,7 @@ void Magic_Screen_Draw(void)
     strcat(GUI_String_1, cnst_Space_MP);
     Print_Right(54, 160, GUI_String_1);
 
-    if(_players[HUMAN_PLAYER_IDX].research_spell_idx == 0)
+    if(_players[HUMAN_PLAYER_IDX].researching_spell_idx == 0)
     {
         Print(67, 100, cnst_NoSpell);
     }
@@ -1184,14 +1184,14 @@ void Magic_Screen_Draw(void)
     */
     Print(100, 177, aCasting_0);
     // TODO  Print_Far()
-    Print(156, 177, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].name);
+    Print(156, 177, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
 
     /*
         "Researching:"
     */
     Print(100, 185, aResearching);
     // TODO  Print_Far()
-    Print(156, 185, spell_data_table[_players[HUMAN_PLAYER_IDX].research_spell_idx].name);
+    Print(156, 185, spell_data_table[_players[HUMAN_PLAYER_IDX].researching_spell_idx].name);
 
     /*
         "Summon To:"
@@ -1278,7 +1278,7 @@ void Magic_Screen_Draw(void)
                 Set_Font_Style_Outline(0, 15, 0, 0);
                 Set_Alias_Color(182);
                 Set_Outline_Color(1);
-                Print_Centered((45 + (77 * itr_gems)), 4, spell_data_table[_players[gem_player_nums[itr_gems]].Spell_Cast].name);
+                Print_Centered((45 + (77 * itr_gems)), 4, spell_data_table[_players[gem_player_nums[itr_gems]].casting_spell_idx].name);
             }
 
             x_start += 77;

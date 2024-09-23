@@ -61,9 +61,16 @@ void Set_Paragraph_Exclusion_Area(int16_t x1, int16_t y1, int16_t x2, int16_t y2
 void Remove_Paragraph_Marks(char * string);
 
 // WZD s19p11
+// Get_Font_Height()
+
 // WZD s19p12
+// UU_VGA_WidestGlyph()
+
 // WZD s19p13
+void Print_Paragraph_To_Bitmap(int16_t x, int16_t y, int16_t max_width, char * string, int16_t print_type, SAMB_ptr bitmap);
+
 // WZD s19p14
+// VGA_TextDraw_Init()
 
 
 

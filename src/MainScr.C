@@ -1409,7 +1409,7 @@ void Main_Screen(void)
         if(input_field_idx == _spells_button)
         {
             Play_Left_Click__STUB();
-            if(_players[_human_player_idx].Spell_Cast == 214) /* Spell of Return */
+            if(_players[_human_player_idx].casting_spell_idx == 214) /* Spell of Return */
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
                 itoa(turns_til_return, temp_string, 10);

@@ -44,7 +44,7 @@ struct s_MAGIC_SET
     /*  16 */ uint16_t Auto_Unit_Info;
     /*  18 */ uint16_t Enemy_Moves;
     /*  1A */ uint16_t Enemy_Spells;
-    /*  1C */ uint16_t Spell_Book_Order;
+    /*  1C */ uint16_t spell_book_ordering;  /* HELP: "SPELL BOOK ORDERING" "Controls whether spells on your spell book are ordered in categories versus one long list." */
     /*  1E */ uint16_t Spell_Anims;
     /*  20 */ uint16_t Show_Node_Owners;
     /*  22 */ uint16_t Expanding_Help;

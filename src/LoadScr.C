@@ -860,18 +860,18 @@ void G_WLD_StaticAssetRfrsh(void)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        // TODO  CTY_Recalculate(itr_cities);
+        Do_City_Calculations(itr_cities);
     }
 
-//    _WIZ_SetPowerBases();
+    Players_Update_Magic_Power();
 
-//    SBK_SomePageSaveVar = 0;
-//    CMB_SpellBookPage = 0;
-//    SBK_Candidate_Page = 0;
+    SBK_SomePageSaveVar = 0;
+    CMB_SpellBookPage = 0;
+    SBK_Candidate_Page = 0;
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        // TODO  WIZ_RefreshResearch(itr_players);
+        WIZ_RefreshResearch__STUB(itr_players);
     }
 
 }

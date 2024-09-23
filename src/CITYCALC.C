@@ -60,7 +60,7 @@ void Do_City_Calculations(int16_t city_idx)
 
     _players[].volcanoes
 
-    _players.Spell_Cast Spell_Of_Return
+    _players.casting_spell_idx Spell_Of_Return
 
 */
 void Players_Update_Magic_Power(void)
@@ -155,7 +155,7 @@ void Players_Update_Magic_Power(void)
 
     for(itr = 0; itr < _num_players; itr++)
     {
-        if(_players[itr].Spell_Cast == 214)  /* Spell_Of_Return */
+        if(_players[itr].casting_spell_idx == 214)  /* Spell_Of_Return */
         {
             _players[itr].Power_Base = 0;
         }
@@ -855,7 +855,7 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     int16_t mana_income;
     int16_t spell_research_bonus;
 
-    if(_players[player_idx].Spell_Cast == 214 /* Spell_Of_Return */)
+    if(_players[player_idx].casting_spell_idx == 214 /* Spell_Of_Return */)
     {
         *mana_total = 0;
         *research_total = 0;
@@ -865,7 +865,7 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
     {
         Player_Magic_Power_Distribution(&mana_income, &skill_income, &research_income, player_idx);
 
-        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].research_spell_idx);
+        spell_research_bonus = Player_Spell_Research_Bonus(player_idx, _players[player_idx].researching_spell_idx);
 
         SETMIN(research_income, 0);
         SETMIN(mana_income, 0);
@@ -883,96 +883,81 @@ void Player_Magic_Power_Income_Total(int16_t * mana_total, int16_t * research_to
 int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
 {
     int16_t magic_realm;
+    int16_t research_bonus_percentage;
 
-    int16_t research_bonus;
+    research_bonus_percentage = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Spell_Research_Bonus()\n", __FILE__, __LINE__);
-#endif
-
-    research_bonus = 0;
-
-    magic_realm = spell_data_table[spell_idx].Realm;
+    magic_realm = spell_data_table[spell_idx].magic_realm;
 
     if(_players[player_idx].sage_master > 0)
     {
-        research_bonus += 25;
+        research_bonus_percentage += 25;
     }
 
     if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* Summoning_Spell */) != 0) )
     {
-        research_bonus += 25;
+        research_bonus_percentage += 25;
     }
 
     switch(magic_realm)
     {
         case 0:  /* Nature */
         {
-            DLOG("switch(magic_realm)  case 0:");
             if(_players[player_idx].nature_mastery > 0)
             {
-                research_bonus += 15;
+                research_bonus_percentage += 15;
             }
             if(_players[player_idx].spellranks[sbr_Nature] > 7)
             {
-                research_bonus += ((_players[player_idx].spellranks[sbr_Nature] - 7) * 10);
+                research_bonus_percentage += ((_players[player_idx].spellranks[sbr_Nature] - 7) * 10);
             }
         } break;
         case 1:  /* Sorcery */
         {
-            DLOG("switch(magic_realm)  case 1:");
             if(_players[player_idx].sorcery_mastery > 0)
             {
-                research_bonus += 15;
+                research_bonus_percentage += 15;
             }
             if(_players[player_idx].spellranks[sbr_Sorcery] > 7)
             {
-                research_bonus += ((_players[player_idx].spellranks[sbr_Sorcery] - 7) * 10);
+                research_bonus_percentage += ((_players[player_idx].spellranks[sbr_Sorcery] - 7) * 10);
             }
         } break;
         case 2:  /* Chaos */
         {
-            DLOG("switch(magic_realm)  case 2:");
             if(_players[player_idx].chaos_mastery > 0)
             {
-                research_bonus += 15;
+                research_bonus_percentage += 15;
             }
             if(_players[player_idx].spellranks[sbr_Chaos] > 7)
             {
-                research_bonus += ((_players[player_idx].spellranks[sbr_Chaos] - 7) * 10);
+                research_bonus_percentage += ((_players[player_idx].spellranks[sbr_Chaos] - 7) * 10);
             }
         } break;
         case 3:  /* Life */
         {
-            DLOG("switch(magic_realm)  case 3:");
             if(_players[player_idx].spellranks[sbr_Life] > 7)
             {
-                research_bonus += ((_players[player_idx].spellranks[sbr_Life] - 7) * 10);
+                research_bonus_percentage += ((_players[player_idx].spellranks[sbr_Life] - 7) * 10);
             }
         } break;
         case 4:  /* Death */
         {
-            DLOG("switch(magic_realm)  case 4:");
             if(_players[player_idx].spellranks[sbr_Death] > 7)
             {
-                research_bonus += ((_players[player_idx].spellranks[sbr_Death] - 7) * 10);
+                research_bonus_percentage += ((_players[player_idx].spellranks[sbr_Death] - 7) * 10);
             }
         } break;
         case 5:  /* Arcane */
         {
-            DLOG("switch(magic_realm)  case 5:");
             if(_players[player_idx].runemaster > 0)
             {
-                research_bonus += 25;
+                research_bonus_percentage += 25;
             }
         } break;
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Spell_Research_Bonus()\n", __FILE__, __LINE__);
-#endif
-
-    return research_bonus;
+    return research_bonus_percentage;
 }
 
 // WZD o120p20

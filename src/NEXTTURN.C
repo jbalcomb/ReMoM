@@ -297,7 +297,7 @@ void Next_Turn_Proc(void)
     if(
         (_players[_human_player_idx].Cast_Cost_Left <= 0)
         &&
-        (_players[_human_player_idx].Spell_Cast > 0))
+        (_players[_human_player_idx].casting_spell_idx > 0))
     {
         // TODO  G_OVL_Cast__STUB(_human_player_idx);
     }
@@ -889,8 +889,8 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
     casting_cost = spell_data_table[spell_idx].Casting_Cost;
 
     if(
-        (spell_data_table[spell_idx].Realm == sbr_Nature) ||
-        (spell_data_table[spell_idx].Realm == sbr_Life)
+        (spell_data_table[spell_idx].magic_realm == sbr_Nature) ||
+        (spell_data_table[spell_idx].magic_realm == sbr_Life)
     )
     {
         Evil_Omens_Up = ST_FALSE;
@@ -939,13 +939,13 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     casting_cost_reduction = 0;
 
-    if(spell_data_table[spell_idx].Realm == 5)  /* _Arcane */
+    if(spell_data_table[spell_idx].magic_realm == 5)  /* _Arcane */
     {
         Spellbooks = 0;
     }
     else
     {
-        Spellbooks = _players[player_idx].spellranks[spell_data_table[spell_idx].Realm];
+        Spellbooks = _players[player_idx].spellranks[spell_data_table[spell_idx].magic_realm];
     }
 
     if(Spellbooks > 7)
@@ -955,7 +955,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
     }
 
     if(
-        (spell_data_table[spell_idx].Realm == 0) &&  /* _Nature */
+        (spell_data_table[spell_idx].magic_realm == 0) &&  /* _Nature */
         (_players[player_idx].nature_mastery > 0)
     )
     {
@@ -963,7 +963,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
     }
 
     if(
-        (spell_data_table[spell_idx].Realm == 1) &&  /* _Sorcery */
+        (spell_data_table[spell_idx].magic_realm == 1) &&  /* _Sorcery */
         (_players[player_idx].sorcery_mastery > 0)
     )
     {
@@ -971,7 +971,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
     }
 
     if(
-        (spell_data_table[spell_idx].Realm == 2) &&  /* _Chaos */
+        (spell_data_table[spell_idx].magic_realm == 2) &&  /* _Chaos */
         (_players[player_idx].chaos_mastery > 0)
     )
     {
@@ -995,7 +995,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
     }
 
     if(
-        (spell_data_table[spell_idx].Realm == 5) &&  /* _Arcane */
+        (spell_data_table[spell_idx].magic_realm == 5) &&  /* _Arcane */
         (_players[player_idx].runemaster > 0)
     )
     {
@@ -1296,7 +1296,7 @@ void Cheat_Power(void)
     int16_t itr;  // _SI_
     int16_t itr2;  // _DI_
 
-    for(itr = 0; itr < 8; itr++)
+    for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
     {
         _players[HUMAN_PLAYER_IDX].research_spells[itr] = 0;
     }
@@ -1310,11 +1310,11 @@ void Cheat_Power(void)
         _players[itr].Skill_Left = _players[itr].Nominal_Skill;
         for(itr2 = 0; itr2 < 5; itr2++)
         {
-            for(itr3 = 0; itr3 < 40; itr3++)
+            for(itr3 = 0; itr3 < NUM_SPELLS_PER_MAGIC_REALM; itr3++)
             {
-                if(_players[itr].Spells_Known[((itr2 * 40) + itr3)] == 1)
+                if(_players[itr].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] == 1)  /* ¿ knowable ? */
                 {
-                    _players[itr].Spells_Known[((itr2 * 40) + itr3)] = 2;
+                    _players[itr].spells_list[((itr2 * NUM_SPELLS_PER_MAGIC_REALM) + itr3)] = 2;  /* ¿ known ? */
                 }
             }
         }
@@ -1322,7 +1322,7 @@ void Cheat_Power(void)
 
     _players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] = ST_TRUE;
 
-    _players[HUMAN_PLAYER_IDX].research_spell_idx = 0;
+    _players[HUMAN_PLAYER_IDX].researching_spell_idx = 0;
 
 }
 
@@ -1975,7 +1975,7 @@ void Players_Apply_Magic_Power(void)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        if(_players[itr_players].Spell_Cast != 0xD6 /* Spell_Of_Return */)
+        if(_players[itr_players].casting_spell_idx != 0xD6 /* Spell_Of_Return */)
         {
             Player_Magic_Power_Income_Total(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
         }
@@ -2632,7 +2632,7 @@ void Determine_Offer(void)
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        if(_players[itr_players].Spell_Cast == 214)  /* Spell_Of_Return */
+        if(_players[itr_players].casting_spell_idx == 214)  /* Spell_Of_Return */
         {
             continue;
         }
@@ -2891,15 +2891,15 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
     InRealm_Index = ((spell_idx - 1) % 40);
 
-    _players[player_idx].Spells_Known[((Spell_Realm * 40) + InRealm_Index)] = 2;  /* S_Known */
+    _players[player_idx].spells_list[((Spell_Realm * 40) + InRealm_Index)] = 2;  /* S_Known */
 
-    if(_players[player_idx].research_spell_idx == spell_idx)
+    if(_players[player_idx].researching_spell_idx == spell_idx)
     {
         Was_Research_Target = ST_TRUE;
 
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
-            if(_players[player_idx].research_spells[itr] == _players[player_idx].research_spell_idx)
+            if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
             {
                 Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
                 _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; already done above ?
@@ -2912,11 +2912,11 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         if(Candidate_Count == 0)
         {
-            _players[player_idx].research_spell_idx = -1; /* No_spell */
+            _players[player_idx].researching_spell_idx = -1; /* No_spell */
         }
         else
         {
-            _players[player_idx].research_spell_idx = -(_players[player_idx].research_spell_idx);
+            _players[player_idx].researching_spell_idx = -(_players[player_idx].researching_spell_idx);
         }
     }
     else
@@ -2924,7 +2924,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
         // BUG  ¿ refactor or this just shouldn't being doing the same as above ?
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
-            if(_players[player_idx].research_spells[itr] == _players[player_idx].research_spell_idx)
+            if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
             {
                 Clear_Structure(itr, (uint8_t *)&_players[player_idx].research_spells[0], sizeof(_players[player_idx].research_spells[0]), NUM_RESEARCH_SPELLS);
                 _players[player_idx].research_spells[(NUM_RESEARCH_SPELLS - 1)] = 0; // BUG  ¿ drake178: ; this is already done by the above function ?
@@ -2966,7 +2966,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
         // ; profile traits from properly affecting the outcome
         // TODO  AI_Research_Picker(player_idx);
 
-        if(_players[player_idx].research_spell_idx == 213)  /* Spell_Of_Mastery */
+        if(_players[player_idx].researching_spell_idx == 213)  /* Spell_Of_Mastery */
         {
             _players[player_idx].Research_Left = _players[player_idx].SoM_RC;
         }

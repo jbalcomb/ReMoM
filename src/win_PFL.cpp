@@ -397,9 +397,10 @@ void Pump_Paints(void)
 struct win32_window_dimension Get_Window_Dimensions(HWND Window)
 {
     win32_window_dimension WndDim;
-    
     RECT ClientAreaRect;
+
     GetClientRect(Window, &ClientAreaRect);
+
     WndDim.Width = ClientAreaRect.right - ClientAreaRect.left;
     WndDim.Height = ClientAreaRect.bottom - ClientAreaRect.top;
     

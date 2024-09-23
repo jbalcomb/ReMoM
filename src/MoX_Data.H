@@ -437,13 +437,13 @@ enum e_MAGIC_REALM
     s_WIZARD.spellranks
     'Message Box' - type/color
 
-    ¿ players[].Spells_Known[] ?
+    ¿ players[].spells_list[] ?
     [6][40]
     212 is 'Spell of Mastery
     5 * 40 + 12
 
 */
-enum e_SPELLBOOK_RANK
+enum e_SPELL_BOOK_REALM
 {
     sbr_Nature   = 0,
     sbr_Sorcery  = 1,
@@ -451,6 +451,23 @@ enum e_SPELLBOOK_RANK
     sbr_Life     = 3,
     sbr_Death    = 4,
     sbr_Arcane   = 5
+};
+
+enum e_SPELL_BOOK_CATEGORY
+{
+    sbc_Special      = 0,
+    sbc_Summoning    = 1,
+    sbc_Enchantment  = 2,
+    sbc_City         = 3,
+    sbc_Unit         = 4,
+    sbc_Combat       = 5,
+};
+
+enum e_SPELL_LIST_TYPE
+{
+    slt_Overland  = 0,
+    slt_Combat    = 1,
+    slt_Library   = 2
 };
 
 
@@ -761,13 +778,13 @@ struct s_RETORTS
 #pragma pack(2)
 struct s_SPELL_DATA
 {
-    /* 00 */ char name[19];
+    /* 00 */ char name[LEN_SPELLDAT_NAME];  // ¿ (LEN_SPELL_NAME - 1) ?
     /* 13 */  int8_t AI_Group;              //  ; enum AI_Spell_Groups
     /* 14 */  int8_t AI_Value;
     /* 15 */  int8_t type;                  //  ; enum SPELLTYPES   "Type of spell effect"
-    /* 16 */  int8_t Book_Section;
-    /* 17 */  int8_t Realm;
-    /* 18 */  int8_t Eligibility;
+    /* 16 */  int8_t spell_book_category;  // 1-byte, signed;  "spell category" "categories: summoning spells, special spells, city spells, enchantments, unit spells, combat spells and research spells"
+    /* 17 */  int8_t magic_realm;  // magic realm  ¿ sbr_ ?
+    /* 18 */  int8_t Eligibility;   /* ¿ overland, combat, ... ? */
     /* 19 */  /* int8_t Unknown_19h; */  /* ¿ 2-byte alignment padding ? */
     /* 1A */  int16_t Casting_Cost;
     /* 1C */  int16_t research_cost;
@@ -779,7 +796,6 @@ struct s_SPELL_DATA
     /* 24 */
 };
 #pragma pack(pop)
-
 
 // DELETE  // sizeof:  0Ch  12d
 // DELETE  #pragma pack(push)
@@ -873,7 +889,7 @@ struct s_ITEM_POWER
 /* 12 */ int16_t item_types;  // bitfield; bit position ~== item type;  enum I_TypeBits
 /* 14 */ int16_t cost;
 /* 16 */ int8_t type;
-/* 17 */ int8_t Realm;
+/* 17 */ int8_t magic_realm;
 /* 18 */ int16_t Books_or_Bonus;
 /* 1A */ uint32_t powers;  // ; enum IPOW_LO ; enum IPOW_HI
 /* 1E */
@@ -1109,14 +1125,14 @@ struct s_WIZARD
     /* 002E */ int16_t summon_wx;
     /* 0030 */ int16_t summon_wy;
     /* 0032 */ int16_t summon_wp;
-    /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* array of spell_idx, for spells available for researching */
+    /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* array of spells_list[] spell_idx, for spells available for researching */
     /* 0044 */ uint8_t Unknown_044h[4];  /* ¿  ? */
     /* 0048 */ uint16_t Avg_Unit_Value;         /* neutral: rampage accumulator */
-    /* 004A */ uint16_t Unknown_04Ah;
+    /* 004A */ uint16_t Unknown_04Ah;  /* ¿  ? */
     /* 004C */ uint16_t Cmbt_Skill_Left;
     /* 004E */ uint16_t Cast_Cost_Left;
     /* 0050 */ uint16_t Cast_Cost_Initial;      /* neutral: raiders accumulator */
-    /* 0052 */ uint16_t Spell_Cast;  // spell_idx;  Spell Id of spell currently being cast by the Wizard
+    /* 0052 */ uint16_t casting_spell_idx;  /* spells_list[] spell_idx of the spell currently being cast */
     /* 0054 */ uint16_t Skill_Left;
     /* 0056 */ uint16_t Nominal_Skill;
     /* 0058 */ uint16_t tax_rate;
@@ -1159,9 +1175,9 @@ struct s_WIZARD
     /* 025A */ uint16_t Research_Left;
     /* 025C */ uint16_t mana_reserve;       /*  */
     /* 025E */ int32_t  Casting_Skill;
-    /* 0262 */ uint16_t research_spell_idx; /* spell_idx of spell currently being researched */
-    /* 0264 */ uint8_t  Spells_Known[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */
-    /* 0354 */ uint16_t Defeated_Wizards;
+    /* 0262 */ uint16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
+    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */
+    /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;
     /* 035A */ struct s_Astr_Data Astr;     /* populated in Record_History() */
@@ -2941,11 +2957,11 @@ extern int16_t reset_active_stack;
 // WZD dseg:9450 00 00                                           dw 0
 // WZD dseg:9452 00 00                                           _spellbook_small_text dw 0              ; DATA XREF: Spellbook_Load_Small_Pictures+85w ...
 // WZD dseg:9454 00 00 00 00 00 00 00 00 00 00 00 00             _spellbook_small_symbols SPBK_ICONS <0> ; DATA XREF: Spellbook_Load_Small_Pictures+67w ...
-// WZD dseg:9460 00 00                                           IMG_SPL_BigBook@ dw 0                   ; DATA XREF: GAME_LearnSpellAnim+16Dw ...
+// WZD dseg:9460 00 00                                           _spellbook_big_seg@ dw 0                   ; DATA XREF: GAME_LearnSpellAnim+16Dw ...
 // WZD dseg:9460                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
 // WZD dseg:9462 00 00                                           dw 0
-// WZD dseg:9464 00 00                                           IMG_SPL_BigRDogear@ dw 0                ; DATA XREF: SBK_PageFlip_Big+79w ...
-// WZD dseg:9466 00 00                                           IMG_SPL_BigLDogear@ dw 0                ; DATA XREF: SBK_PageFlip_Big+62w ...
+// WZD dseg:9464 00 00                                           _spellbook_big_right_corner_seg@ dw 0                ; DATA XREF: SBK_PageFlip_Big+79w ...
+// WZD dseg:9466 00 00                                           _spellbook_big_left_corner_seg@ dw 0                ; DATA XREF: SBK_PageFlip_Big+62w ...
 // WZD dseg:9468 00 00                                           _spellbook_small_right_corner_seg dw 0  ; DATA XREF: Spellbook_Load_Small_Pictures+46w ...
 // WZD dseg:9468                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:946A 00 00                                           _spellbook_small_left_corner_seg dw 0   ; DATA XREF: Spellbook_Load_Small_Pictures+2Fw ...

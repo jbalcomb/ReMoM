@@ -130,56 +130,56 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 
     for(itr = 0; itr < paragraph_max_lines; itr++)
     {
+
         switch(print_type)
         {
 
             case 0:  // ¿ Align-Left ?
             {
-                DLOG("switch(print_type)  case 0:");
                 Print(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
             } break;
 
             case 1:  // ¿ Align-Right ?
             {
-                DLOG("switch(print_type)  case 1:");
                 // Print_Right(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width);
                 Print_Centered(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
             } break;
 
             case 2:  // ¿ Center ?
             {
-                DLOG("switch(print_type)  case 2:");
-                Print_Centered(
-                    ((paragraph_line_x_start[itr] + paragraph_line_x_end[itr]) / 2),
-                    paragraph_line_y_start[itr],
-                    &string[paragraph_line_offset[itr]]
+                Print_Centered(((paragraph_line_x_start[itr] + paragraph_line_x_end[itr]) / 2), paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]
                 );
             } break;
             
             case 3:  // ¿ Justify ?
             {
-                DLOG("switch(print_type)  case 3:");
-                if((paragraph_max_lines - 1) == itr)
+
+                if((paragraph_max_lines - 1) == itr)  /* last line */
                 {
+
                     Print(
                         paragraph_line_x_start[itr],
                         paragraph_line_y_start[itr],
                         &string[paragraph_line_offset[itr]]
                     );
+
                 }
                 else
                 {
+
                     Print_Full(
                         paragraph_line_x_start[itr],
                         paragraph_line_y_start[itr],
                         &string[paragraph_line_offset[itr]],
                         (paragraph_line_x_end[itr] - paragraph_line_x_start[itr])
                     );
+
                 }
 
             } break;
 
         }
+
     }
 
     Remove_Paragraph_Marks(string);
@@ -667,6 +667,77 @@ void Remove_Paragraph_Marks(char * string)
 
 
 // WZD s19p11
+// Get_Font_Height()
+
 // WZD s19p12
+// UU_VGA_WidestGlyph()
+
 // WZD s19p13
+// drake178: LBX_DrawText()
+/*
+; draws a paragraph of text into an LBX image
+; allocation, then clears any rectangles reserved for
+; text to float around
+; Align can be one of the following:
+;   0 - left aligned (default)
+;   1 - right aligned (BUGGED)
+;   2 - centered (BUGGED)
+;   3 - justified (last line is left-aligned)
+;
+; WARNING: no text will be drawn if the last line
+; would go below the bottom of the screen
+*/
+void Print_Paragraph_To_Bitmap(int16_t x, int16_t y, int16_t max_width, char * string, int16_t print_type, SAMB_ptr bitmap)
+{
+    int16_t itr;  // _SI_
+
+    Mark_Paragraph(x, y, max_width, string);
+
+    for(itr = 0; itr < paragraph_max_lines; itr++)
+    {
+
+        switch(print_type)
+        {
+
+            case 0:  // ¿ Align-Left ?
+            {
+                Print_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+            } break;
+
+            case 1:  // ¿ Align-Right ?
+            {
+                // DEDU  Print_Right_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width, bitmap);
+                Print_Right_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+            } break;
+
+            case 2:  // ¿ Center ?
+            {
+                // DEDU  Print_Centered_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width, bitmap);
+                Print_Centered_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+            } break;
+            
+            case 3:  // ¿ Justify ?
+            {
+                if((paragraph_max_lines - 1) == itr)  /* last line */
+                {
+                    Print_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                }
+                else
+                {
+                    Print_Full_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], (paragraph_line_x_end[itr] - paragraph_line_x_start[itr]), bitmap);
+                }
+
+            } break;
+
+        }
+
+    }
+
+    Remove_Paragraph_Marks(string);
+
+    exclusion_count = 0;
+
+}
+
 // WZD s19p14
+// VGA_TextDraw_Init()

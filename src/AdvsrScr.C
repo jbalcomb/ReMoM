@@ -1374,21 +1374,21 @@ void Cartographer_Screen_Draw__WIP(void)
 // WZD o76p10
 void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
 {
-    int16_t banner_colors[NUM_PLAYERS];
-    SAMB_ptr mapflags_segs[NUM_PLAYERS];
-    uint8_t colors[14];
-    int16_t var_8;
-    int16_t y;
-    int16_t x;
-    SAMB_ptr worldmap_seg;
-    int16_t itr_legend;  // _DI_
-    int16_t itr_players;  // _DI_
-    int16_t itr_colors;  // _DI_
-    int16_t itr_nodes;  // _DI_
-    int16_t itr_lairs;  // _DI_
-    int16_t itr_towers;  // _DI_
-    int16_t itr_units;  // _DI_
-    int16_t itr_cities;  // _DI_
+    int16_t banner_colors[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    SAMB_ptr mapflags_segs[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    uint8_t colors[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t var_8 = 0;
+    int16_t y = 0;
+    int16_t x = 0;
+    SAMB_ptr worldmap_seg = 0;
+    int16_t itr_legend = 0;  // _DI_
+    int16_t itr_players = 0;  // _DI_
+    int16_t itr_colors = 0;  // _DI_
+    int16_t itr_nodes = 0;  // _DI_
+    int16_t itr_lairs = 0;  // _DI_
+    int16_t itr_towers = 0;  // _DI_
+    int16_t itr_units = 0;  // _DI_
+    int16_t itr_cities = 0;  // _DI_
 
     banner_colors[0] = BANNER_COLOR_BLUE;
     banner_colors[1] = COL_Banners2[1];

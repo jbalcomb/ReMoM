@@ -414,10 +414,10 @@ int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitm
 // Set_PSTR_Style()
 
 // WZD s17p64
-// Print_Centered_To_Bitmap()
+int16_t Print_Centered_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);
 
 // WZD s17p65
-// Print_Full_To_Bitmap()
+int16_t Print_Full_To_Bitmap(int16_t x, int16_t y, char * string, int16_t right_side, SAMB_ptr bitmap);
 
 // WZD s17p66
 int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap);

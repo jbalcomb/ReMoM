@@ -291,19 +291,23 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s30p35
-// VGA_FILEH_LoadFirst()
+void Open_File_Animation__STUB(char * file_name, int16_t entry_num);
 
 // WZD s30p36
 // VGA_FILEH_DrawFrame()
+// Draw_File_Animation()
 
 // WZD s30p37
 // VGA_FILEH_Loader()
+// Load_File_Animation_Frame()
 
 // WZD s30p38
 // VGA_FILEH_GetFrame()
+// Get_File_Animation_Frame()
 
 // WZD s30p39
 // VGA_FILEH_SetFrame()
+// Set_File_Animation_Frame()
 
 // WZD s30p40
 // MoO2  Get_Full_Store_Flag()

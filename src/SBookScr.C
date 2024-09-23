@@ -126,7 +126,7 @@ void Spellbook_Screen_Draw(void)
 
     Copy_Back_To_Off();
 
-    OVL_DrawSpellbook(16, 10);
+    SmlBook_Draw__WIP(16, 10);
 
 }
 
@@ -134,28 +134,24 @@ void Spellbook_Screen_Draw(void)
 // WZD o134p03
 void Spellbook_Screen(void)
 {
-    char temp_string[20];
-    int16_t spellbook_page_left[6];
-    int16_t spellbook_page_right[6];
-    int16_t hotkey_B;
-    int16_t hotkey_F;
-    int16_t Ctrl_Index;
-    int16_t spell_idx;
-    int16_t Abort_Spell__YN;
-    int16_t hotkey_ESC;
-    int16_t y_start;
-    int16_t var_A;
-    int16_t player_is_casting;
-    int16_t itr_page_spell_count;
-    int16_t input_field_idx;
-    int16_t leave_screen;
-    int16_t itr_spellbook_page_count;  // _SI_
-    int16_t itr_spellbook_page_fields;  // _SI_
-    int16_t x_start;  // _DI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Screen()\n", __FILE__, __LINE__);
-#endif
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t spellbook_page_left[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t spellbook_page_right[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t hotkey_B = 0;
+    int16_t hotkey_F = 0;
+    int16_t Ctrl_Index = 0;
+    int16_t spell_idx = 0;
+    int16_t Abort_Spell__YN = 0;
+    int16_t hotkey_ESC = 0;
+    int16_t y_start = 0;
+    int16_t var_A = 0;
+    int16_t player_is_casting = 0;
+    int16_t itr_page_spell_count = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t itr_spellbook_page_count = 0;  // _SI_
+    int16_t itr_spellbook_page_fields = 0;  // _SI_
+    int16_t x_start = 0;  // _DI_
 
     var_A = 0;
 
@@ -169,20 +165,24 @@ void Spellbook_Screen(void)
 
     Spell_Screen_Load();
 
-    SBK_BuildSpellbook__WIP(0, 6);  // Book_Type, Page_Size
+    SBK_BuildSpellbook__WIP(slt_Overland, 6);  // Book_Type, Page_Size
 
     SBK_Dogears = 1;
 
     player_is_casting = ST_FALSE;
 
-    for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < SBK_BookPageCount) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
+    for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < m_spellbook_page_count) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
     {
-        for(itr_page_spell_count = 0; SBK_BookPages[itr_spellbook_page_count].Spell_Count <= itr_page_spell_count; itr_page_spell_count++)
+
+        for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count <= itr_page_spell_count; itr_page_spell_count++)
         {
+
             if(player_is_casting == ST_FALSE)
             {
-                if(SBK_BookPages[itr_spellbook_page_count].Spells[itr_page_spell_count] == _players[HUMAN_PLAYER_IDX].Spell_Cast)
+
+                if(m_spellbook_pages[itr_spellbook_page_count].spell[itr_page_spell_count] == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                 {
+
                     if((itr_spellbook_page_count % 2) != 1)
                     {
                         SBK_OpenPage = itr_spellbook_page_count;
@@ -193,9 +193,13 @@ void Spellbook_Screen(void)
                     }
 
                     player_is_casting = ST_TRUE;
+
                 }
+
             }
+
         }
+
     }
 
     if(player_is_casting == ST_FALSE)
@@ -206,6 +210,7 @@ void Spellbook_Screen(void)
     Assign_Auto_Function(Spellbook_Screen_Draw, 2);
 
     Set_Outline_Color(0);
+
     Set_Font_Style_Shadow_Down(0, 3, 0, 0);
 
     Clear_Fields();
@@ -219,6 +224,7 @@ void Spellbook_Screen(void)
     {
         spellbook_page_left[itr_spellbook_page_fields] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
     }
+
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
         spellbook_page_right[itr_spellbook_page_fields] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
@@ -250,10 +256,10 @@ void Spellbook_Screen(void)
         */
         if(input_field_idx == hotkey_F)
         {
-            if((SBK_BookPageCount - 2) > SBK_OpenPage)
+            if((m_spellbook_page_count - 2) > SBK_OpenPage)
             {
                 Play_Left_Click__DUPE();
-                SBK_PageTurn_Small(1, 0, 0);
+                SmlBook_PageTurn__WIP(1, 0, 0);
                 SBK_OpenPage += 2;
             }
         }
@@ -266,7 +272,7 @@ void Spellbook_Screen(void)
             if(SBK_OpenPage > 1)
             {
                 Play_Left_Click__DUPE();
-                SBK_PageTurn_Small(0, 0, 0);
+                SmlBook_PageTurn__WIP(0, 0, 0);
                 SBK_OpenPage -= 2;
             }
         }
@@ -276,23 +282,27 @@ void Spellbook_Screen(void)
         */
         for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 12; itr_spellbook_page_fields++)
         {
+
             if(spellbook_page_left[itr_spellbook_page_fields] == input_field_idx)
             {
+
                 if(itr_spellbook_page_fields < 6)
                 {
-                    if(SBK_BookPages[SBK_OpenPage].Spell_Count > itr_spellbook_page_fields)
+
+                    if(m_spellbook_pages[SBK_OpenPage].count > itr_spellbook_page_fields)
                     {
+
                         Play_Left_Click__STUB();
                         Ctrl_Index = itr_spellbook_page_fields;
-                        spell_idx = SBK_BookPages[SBK_OpenPage].Spells[itr_spellbook_page_fields];
+                        spell_idx = m_spellbook_pages[SBK_OpenPage].spell[itr_spellbook_page_fields];
                         
-                        if(spell_idx == _players[HUMAN_PLAYER_IDX].Spell_Cast)
+                        if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                         {
                             spell_idx = ST_UNDEFINED;
 
                             strcpy(GUI_NearMsgString, _msg_abort_1);
-                            // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
-                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].name);
+                            // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].Name);
+                            strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                             strcat(GUI_NearMsgString, temp_string);
                             strcat(GUI_NearMsgString, _msg_abort_3);
                             Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
@@ -301,7 +311,7 @@ void Spellbook_Screen(void)
                             {
                                 _players[HUMAN_PLAYER_IDX].Cast_Cost_Left = 0;
                                 _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial = 0;
-                                _players[HUMAN_PLAYER_IDX].Spell_Cast = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
                                 spell_idx = ST_UNDEFINED;
                                 leave_screen = ST_TRUE;
                             }
@@ -309,11 +319,11 @@ void Spellbook_Screen(void)
 
                         if(spell_idx > -1)
                         {
-                            if(_players[HUMAN_PLAYER_IDX].Spell_Cast > 0)
+                            if(_players[HUMAN_PLAYER_IDX].casting_spell_idx > 0)
                             {
                                 strcpy(GUI_NearMsgString, _msg_abort_1);
-                                // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].Name);
-                                strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].Spell_Cast].name);
+                                // TODO  String_Copy_Far(MK_FP(temp_string, 0), spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].Name);
+                                strcpy(temp_string, spell_data_table[_players[HUMAN_PLAYER_IDX].casting_spell_idx].name);
                                 strcat(GUI_NearMsgString, temp_string);
                                 strcat(GUI_NearMsgString, _msg_abort_3);
                                 Abort_Spell__YN = Confirmation_Box(GUI_NearMsgString);
@@ -326,7 +336,7 @@ void Spellbook_Screen(void)
                                 {
                                     _players[HUMAN_PLAYER_IDX].Cast_Cost_Left -= _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial;
                                     _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial = 0;
-                                    _players[HUMAN_PLAYER_IDX].Spell_Cast = 0;
+                                    _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
                                 }
                             }
                             else
@@ -340,7 +350,7 @@ void Spellbook_Screen(void)
                             {
                                 leave_screen = ST_TRUE;
                                 var_A = ST_TRUE;
-                                _players[HUMAN_PLAYER_IDX].Spell_Cast = spell_idx;
+                                _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
                             }
 
                         }

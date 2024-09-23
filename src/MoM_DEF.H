@@ -73,9 +73,13 @@
 #define NUM_NODES                  30
 #define NUM_LAIRS                 102
 #define MAX_STACK                   9
-#define NUM_SPELLS                240  // 6 reals, 40 spells each
-#define NUM_RESEARCH_SPELLS         8
-#define NUM_WIZARD_SPECIAL_ABILITIES  18
+#define NUM_SPELLS                      240  // 6 reals, 40 spells each
+#define NUM_SPELLS_PER_MAGIC_REALM       40
+#define NUM_RESEARCH_SPELLS               8
+#define NUM_SPELLS_PER_PAGE_BIG           4
+#define NUM_SPELLS_PER_PAGE_SML           6
+#define NUM_SPELLBOOK_DESCRIPTIONS       16
+#define NUM_WIZARD_SPECIAL_ABILITIES     18
 #define NUM_SCORES                 10
 #define NUM_EVENT_TYPES            19
 

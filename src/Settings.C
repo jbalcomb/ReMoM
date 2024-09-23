@@ -358,9 +358,9 @@ void Settings_Screen(void)
             // ¿ "Enemy Spells" ? ... ¿ "Spell Animations" ?
             if(input_field_idx == Option_Control_Indices[14])
             {
-                // TODO  CMB_SpellBookPage = 0;
+                CMB_SpellBookPage = 0;
                 SBK_SomePageSaveVar = 0;
-                // TODO  SBK_Candidate_Page = 0;
+                SBK_Candidate_Page = 0;
             }
         }
 
@@ -604,7 +604,7 @@ void Set_Default_Game_Settings(void)
     magic_set.EoT_Wait = ST_TRUE;
     magic_set.EoT_Summary = ST_TRUE;
     magic_set.Raze_City = ST_TRUE;
-    magic_set.Spell_Book_Order = ST_TRUE;
+    magic_set.spell_book_ordering = ST_TRUE;
     magic_set.Strategic_Combat = ST_FALSE;
     magic_set.Spell_Anims = ST_TRUE;
     magic_set.City_Spell_Events = ST_TRUE;

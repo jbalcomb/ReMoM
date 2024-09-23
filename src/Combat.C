@@ -460,16 +460,16 @@ Combat()
 */
 int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[])
 {
-    int16_t Item_List[18];
-    int16_t City_Destroyed;
-    int16_t Item_Count;
-    int16_t Garrison_Size;
-    int16_t combat_attacker_player_idx;
-    int16_t Battle_Outcome;
-    int16_t defender_idx;  // _DI_
-    int16_t itr;  // _SI_
-    int16_t combat_defender_player_idx;
-    int16_t return_value;  // DNE in Dasm
+    int16_t Item_List[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t City_Destroyed = 0;
+    int16_t Item_Count = 0;
+    int16_t Garrison_Size = 0;
+    int16_t combat_attacker_player_idx = 0;
+    int16_t Battle_Outcome = 0;
+    int16_t defender_idx = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+    int16_t combat_defender_player_idx = 0;
+    int16_t return_value = 0;  // DNE in Dasm
 
 
     City_Destroyed = ST_FALSE;
@@ -833,9 +833,9 @@ Done:
 // MoO2: DNE
 void Lair_Make_Guardians(int16_t lair_idx)
 {
-    int16_t guard_count;
-    int16_t unit_count;
-    int16_t itr;  // _DI_
+    int16_t guard_count = 0;
+    int16_t unit_count = 0;
+    int16_t itr = 0;  // _DI_
 
     // TODO figure out lair guardian count high and low nibbles, so you can make a macro for them
     // TODO make macro for lair guardian count high and low nibbles
@@ -882,9 +882,9 @@ void Lair_Make_Guardians(int16_t lair_idx)
 */
 int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx)
 {
-    int16_t troops[9];
-    int16_t troop_count;
-    int16_t winner;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troop_count = 0;
+    int16_t winner = 0;
 
     Player_Army_At_Square(_LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, player_idx, &troop_count, &troops[0]);
 
@@ -1124,54 +1124,54 @@ void Strategic_Combat_Allocate(void)
 */
 int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 {
-    int16_t Weights[36];
-    int16_t var_66;
-    int16_t var_64;
-    int16_t var_62;
-    int16_t var_60;
-    int16_t var_5E;
-    int16_t var_5C;
-    int16_t defender_third_nominal_skill;
-    int16_t attacker_third_nominal_skill;
-    int16_t var_56;
-    int16_t var_54;
-    int16_t var_52;
-    int16_t var_50;
-    int16_t var_4E;
-    int16_t var_4C;
-    int16_t defender_mana_multiplied;
-    int16_t attacker_mana_multiplied;
-    int16_t HP;
-    int16_t special_ranged_attack_strength;  // DNE in Dasm  (re-uses HP)
-    int16_t var_44;
-    int16_t var_42;
-    int16_t var_40;
-    int16_t IDK_damage_defender;
-    int16_t IDK_damage_attacker;
-    int32_t var_3A;
-    int32_t var_36;
-    int32_t IDK_health_defender__2;
-    int32_t IDK_ranged_threat_defender;
-    int32_t IDK_melee_threat_defender;
-    int32_t IDK_health_attacker__2;
-    int32_t IDK_ranged_threat_attacker;
-    int32_t IDK_melee_threat_attacker;
-    int32_t IDK_health_defender;
-    int32_t IDK_health_attacker;
-    int16_t combat_structure;
-    int16_t Dmg_Array[3];
-    int16_t BU_Index;  // ¿ MsgType__BU_Index ?
-    int16_t MsgType;  // ¿ MsgType__BU_Index ?
-    int16_t unit_idx;
-    int16_t _combat_defender_count;
-    int16_t winner_player_idx;
-    int16_t itr;  // _SI_
-    int16_t _combat_attacker_count;  // DNE in Dasm
-    int16_t itr_units;  // _SI_
-    int16_t itr_battle_units;  // _SI_
-    int16_t itr_combat_turns;  // _SI_
-    int16_t spell_ranks;  // _DI_
-    int16_t did_win;  // DNE in Dasm
+    int16_t Weights[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t var_66 = 0;
+    int16_t var_64 = 0;
+    int16_t var_62 = 0;
+    int16_t var_60 = 0;
+    int16_t var_5E = 0;
+    int16_t var_5C = 0;
+    int16_t defender_third_nominal_skill = 0;
+    int16_t attacker_third_nominal_skill = 0;
+    int16_t var_56 = 0;
+    int16_t var_54 = 0;
+    int16_t var_52 = 0;
+    int16_t var_50 = 0;
+    int16_t var_4E = 0;
+    int16_t var_4C = 0;
+    int16_t defender_mana_multiplied = 0;
+    int16_t attacker_mana_multiplied = 0;
+    int16_t HP = 0;
+    int16_t special_ranged_attack_strength = 0;  // DNE in Dasm  (re-uses HP)
+    int16_t var_44 = 0;
+    int16_t var_42 = 0;
+    int16_t var_40 = 0;
+    int16_t IDK_damage_defender = 0;
+    int16_t IDK_damage_attacker = 0;
+    int32_t var_3A = 0;
+    int32_t var_36 = 0;
+    int32_t IDK_health_defender__2 = 0;
+    int32_t IDK_ranged_threat_defender = 0;
+    int32_t IDK_melee_threat_defender = 0;
+    int32_t IDK_health_attacker__2 = 0;
+    int32_t IDK_ranged_threat_attacker = 0;
+    int32_t IDK_melee_threat_attacker = 0;
+    int32_t IDK_health_defender = 0;
+    int32_t IDK_health_attacker = 0;
+    int16_t combat_structure = 0;
+    int16_t Dmg_Array[3] = { 0, 0, 0 };
+    int16_t BU_Index = 0;  // ¿ MsgType__BU_Index ?
+    int16_t MsgType = 0;  // ¿ MsgType__BU_Index ?
+    int16_t unit_idx = 0;
+    int16_t _combat_defender_count = 0;
+    int16_t winner_player_idx = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t _combat_attacker_count = 0;  // DNE in Dasm
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_battle_units = 0;  // _SI_
+    int16_t itr_combat_turns = 0;  // _SI_
+    int16_t spell_ranks = 0;  // _DI_
+    int16_t did_win = 0;  // DNE in Dasm
 
 
     var_5C = 0;
@@ -2911,29 +2911,29 @@ Diplomatic_Value:
 */
 void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_list[], int16_t MsgType)
 {
-    int16_t Buildings_Lost[36];
-    int16_t Rare_Foe_Defeated;
-    int16_t Diplomatic_Value;
-    int16_t Summoned_Unit;
-    int16_t Population_Loss_Percent;
-    int16_t Destruction_Chance;
-    int16_t No_Secondaries;
-    int16_t BU_CombatHits;
-    char Conv_String[10];
-    int16_t Undead_Created;
-    int16_t Zombies_Raised;
-    int16_t Experience_Gained;
-    int16_t Surviving_Unit_Count;
-    int16_t battle_unit_owner_idx;
-    uint32_t enchantments;
-    int16_t itr_battle_units;  // _SI_
-    int16_t RazeCity;  // _SI_
-    int16_t itr_buildings;  // _SI_
-    int16_t itr_population;  // _SI_
-    int16_t itr_bldg_msg;  // _SI_
-    int16_t IDK_population_lost;  // _DI_
-    int16_t bldg_msg_idx;  // _DI_
-    int16_t itr_hero_items;  // _DI_
+    int16_t Buildings_Lost[36] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Rare_Foe_Defeated = 0;
+    int16_t Diplomatic_Value = 0;
+    int16_t Summoned_Unit = 0;
+    int16_t Population_Loss_Percent = 0;
+    int16_t Destruction_Chance = 0;
+    int16_t No_Secondaries = 0;
+    int16_t BU_CombatHits = 0;
+    char temp_buffer[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Undead_Created = 0;
+    int16_t Zombies_Raised = 0;
+    int16_t Experience_Gained = 0;
+    int16_t Surviving_Unit_Count = 0;
+    int16_t battle_unit_owner_idx = 0;
+    uint32_t enchantments = 0;
+    int16_t itr_battle_units = 0;  // _SI_
+    int16_t RazeCity = 0;  // _SI_
+    int16_t itr_buildings = 0;  // _SI_
+    int16_t itr_population = 0;  // _SI_
+    int16_t itr_bldg_msg = 0;  // _SI_
+    int16_t IDK_population_lost = 0;  // _DI_
+    int16_t bldg_msg_idx = 0;  // _DI_
+    int16_t itr_hero_items = 0;  // _DI_
 
     Rare_Foe_Defeated = 0;
 
@@ -3786,9 +3786,9 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     {
         if(Zombies_Raised > 0)
         {
-            itoa(Zombies_Raised, Conv_String, 10);
+            itoa(Zombies_Raised, temp_buffer, 10);
 
-            strcpy(GUI_NearMsgString, Conv_String);
+            strcpy(GUI_NearMsgString, temp_buffer);
 
             if(Zombies_Raised > 1)
             {
@@ -3806,9 +3806,9 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
         if(Undead_Created > 0)
         {
-            itoa(Undead_Created, Conv_String, 10);
+            itoa(Undead_Created, temp_buffer, 10);
 
-            strcpy(GUI_NearMsgString, Conv_String);
+            strcpy(GUI_NearMsgString, temp_buffer);
 
             if(Undead_Created > 1)
             {
@@ -4055,14 +4055,14 @@ void Combat_Results_Scroll(void)
 // WZD o123p05
 int16_t Combat_Results_Scroll_Text(void)
 {
-    char message[150];
-    char temp_string[20];
-    uint8_t colors2[5];
-    uint8_t colors1[5];
-    int16_t next_x;
-    int16_t text_height;  // _SI_
-    int16_t itr_colors;  // _DI_
-    int16_t itr_buildings;  // _DI_
+    char message[150] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char temp_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t colors2[5] = { 0, 0, 0, 0, 0 };
+    uint8_t colors1[5] = { 0, 0, 0, 0, 0 };
+    int16_t next_x = 0;
+    int16_t text_height = 0;  // _SI_
+    int16_t itr_colors = 0;  // _DI_
+    int16_t itr_buildings = 0;  // _DI_
 
 
     CMB_Scroll_MinHeight = 0;
@@ -4665,9 +4665,9 @@ int16_t BU_IsCombatSummon(int16_t battle_unit_idx)
 */
 void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 {
-    int16_t City_Owner;
-    int16_t Stack_Owner;  // _DI_
-    int16_t itr;  // _SI_
+    int16_t City_Owner = 0;
+    int16_t Stack_Owner = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
     Unit_View_Allocate();  // ¿ if/where used ?
 

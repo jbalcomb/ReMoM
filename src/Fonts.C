@@ -1007,12 +1007,12 @@ int16_t Clipped_Print(int16_t x, int16_t y, char * string)
 */
 int16_t Clipped_Print_String(int16_t x, int16_t y, char * string, int16_t change_color_ok_flag)
 {
-    int16_t next_x;  // DNE in Dasm
-    int16_t Switch_Char;
-    char character;
-    int16_t width;
-    int16_t height;
-    uint16_t ptr;
+    int16_t next_x = 0;  // DNE in Dasm
+    int16_t Switch_Char = 0;
+    char character = 0;
+    int16_t width = 0;
+    int16_t height = 0;
+    uint16_t ptr = 0;
 
     ptr = 0;
 
@@ -1498,8 +1498,8 @@ Done:
 // WZD s17p63
 int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
 {
-    int16_t next_x;
-    int16_t string_len;
+    int16_t next_x = 0;
+    int16_t string_len = 0;
 
     string_len = Get_String_Width(string);
 
@@ -1509,10 +1509,29 @@ int16_t Print_Right_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitm
 }
 
 // WZD s17p64
-// Print_Centered_To_Bitmap()
+int16_t Print_Centered_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
+{
+    int16_t next_x = 0;
+    int16_t string_len = 0;
+
+    string_len = Get_String_Width(string);
+
+    next_x = Print_To_Bitmap((x - (string_len / 2)), y, string, bitmap);
+
+    return next_x;
+}
+
 
 // WZD s17p65
-// Print_Full_To_Bitmap()
+int16_t Print_Full_To_Bitmap(int16_t x, int16_t y, char * string, int16_t right_side, SAMB_ptr bitmap)
+{
+
+    SETMIN(right_side, 0);
+
+    Print_Display_To_Bitmap(x, y, string, right_side, bitmap);
+
+}
+
 
 // WZD s17p66
 // MoO2  Module: fonts  Print_To_Bitmap()
@@ -2230,17 +2249,17 @@ font format - glyph_width columns, for each column
 // void Print_Clipped_Letter(int16_t x, int16_t y, char char_num, int16_t skip_x, int16_t width, int16_t skip_y, int16_t max_y)
 void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset)
 {
-    int16_t  itr;
-    uint8_t * ptr_glyhp_buffer;
-    uint8_t font_data_byte;
-    uint16_t repeat_count;
-    uint8_t color_index;
-    uint8_t palette_index;
-    uint8_t skip_count;
-    int16_t draw_height;
-    byte_ptr screen_start;
-    byte_ptr screen_pos;
-    uint8_t glyph_buffer_byte;
+    int16_t  itr = 0;
+    uint8_t * ptr_glyhp_buffer = 0;
+    uint8_t font_data_byte = 0;
+    uint16_t repeat_count = 0;
+    uint8_t color_index = 0;
+    uint8_t palette_index = 0;
+    uint8_t skip_count = 0;
+    int16_t draw_height = 0;
+    byte_ptr screen_start = 0;
+    byte_ptr screen_pos = 0;
+    uint8_t glyph_buffer_byte = 0;
 
     while(_CS_width)
     {
@@ -3149,23 +3168,23 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
 */
 uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
 {
-    uint8_t * current_palette;
-    uint8_t * remap_palette;
-    uint16_t ofst;
+    uint8_t * current_palette = 0;
+    uint8_t * remap_palette = 0;
+    uint16_t ofst = 0;
     // uint8_t colormap_idx;
-    int16_t colormap_idx;
-    uint8_t palette_red;
-    uint8_t palette_green;
-    uint8_t palette_blue;
-    int16_t dif_red;
-    int16_t dif_green;
-    int16_t dif_blue;
+    int16_t colormap_idx = 0;
+    uint8_t palette_red = 0;
+    uint8_t palette_green = 0;
+    uint8_t palette_blue = 0;
+    int16_t dif_red = 0;
+    int16_t dif_green = 0;
+    int16_t dif_blue = 0;
     // Meh.  uint16_t counter;
-    int16_t current_dif;
-    int16_t closest_dif;
-    uint8_t closest;
+    int16_t current_dif = 0;
+    int16_t closest_dif = 0;
+    uint8_t closest = 0;
 
-    uint8_t found_color;
+    uint8_t found_color = 0;
 
     found_color = 0;
 
