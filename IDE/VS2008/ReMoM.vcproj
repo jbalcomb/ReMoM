@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\3PL;..\..\src;..\..\src\stu"
+				AdditionalIncludeDirectories="..\..\3PL;..\..\src;..\..\src\stu;..\..\src\MoX"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -331,10 +331,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MGC_s001.C"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\MoM.C"
 				>
 			</File>
@@ -344,46 +340,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\MovePath.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CFG.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CMB.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Data.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DOS.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_GAM.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_PFL.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_RNG.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_UnOrg.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Util.C"
 				>
 			</File>
 			<File
@@ -424,10 +380,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SCORE.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\sdl_MoM.cpp"
 				>
 			</File>
 			<File
@@ -552,10 +504,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\WZD_o143.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\WZD_s001.C"
 				>
 			</File>
 		</Filter>
@@ -750,70 +698,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\MovePath.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_BITS.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CFG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CMB.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Data.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DBG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DEF.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DIR.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DOS.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_GAM.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_PFL.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_RNG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_SET.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_TYPE.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_UnOrg.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Util.H"
 				>
 			</File>
 			<File
@@ -1028,18 +912,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="lodepng"
-			>
-			<File
-				RelativePath="..\..\3PL\lodepng\lodepng.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\3PL\lodepng\lodepng.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="MoX"
 			>
 			<File
@@ -1075,6 +947,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoX\MoX.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX\MoX_BASE.H"
 				>
 			</File>
@@ -1083,7 +963,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoX\MoX_BITS.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_CFG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_CFG.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_CMB.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_CMB.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Data.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Data.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX\MoX_DBG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX\MoX_DBG.H"
 				>
 			</File>
 			<File
@@ -1091,7 +1003,71 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoX\MoX_DEF.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_DIR.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_DOS.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_DOS.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_GAM.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_GAM.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_PFL.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_PFL.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_RNG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_RNG.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_SET.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX\MoX_TYPE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_TYPE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_UnOrg.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_UnOrg.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Util.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Util.H"
 				>
 			</File>
 		</Filter>

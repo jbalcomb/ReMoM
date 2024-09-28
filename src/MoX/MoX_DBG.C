@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "MoX_DBG.H"
 
 
@@ -33,6 +33,12 @@ char cnst_WB7[] = "wb";
     MAGIC.EXE    seg024
     WIZARDS.EXE  seg024
 */
+
+// Defined externally:
+void Set_Page_On(void);
+void Save_Mouse_State(void);
+int16_t DIR(char * match_string, char * found_file);
+
 
 // WZD s24p01
 void F11_Key__WIP(void)
