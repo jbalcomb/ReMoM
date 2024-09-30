@@ -123,7 +123,7 @@
     <ClInclude Include="..\..\..\src\MoM_DEF.H" />
     <ClInclude Include="..\..\..\src\MovePath.H" />
     <ClInclude Include="..\..\..\src\MoX.H" />
-    <ClInclude Include="..\..\..\src\MoX_DOS.H" />
+    <ClInclude Include="..\..\..\src\MoX\DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
     <ClInclude Include="..\..\..\src\MoX_RNG.H" />
@@ -203,7 +203,7 @@
     <ClCompile Include="..\..\..\src\MoM_Data.C" />
     <ClCompile Include="..\..\..\src\MoM_DBG.C" />
     <ClCompile Include="..\..\..\src\MovePath.C" />
-    <ClCompile Include="..\..\..\src\MoX_DOS.C" />
+    <ClCompile Include="..\..\..\src\MoX\DOS.C" />
     <ClCompile Include="..\..\..\src\MoX_GAM.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
     <ClCompile Include="..\..\..\src\MoX_RNG.C" />
