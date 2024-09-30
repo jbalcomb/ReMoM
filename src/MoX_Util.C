@@ -52,14 +52,18 @@ void String_To_Upper(char * string)
     itr = 0;
     while(string[itr] != '\0')
     {
-        if(string[itr] >= 'a')
+
+        if(
+            (string[itr] >= 'a')
+            ||
+            (string[itr] <= 'z')
+        )
         {
-            if(string[itr] <= 'z')
-            {
-                string[itr] = string[itr] + ('A' - 'a');
-            }
+            string[itr] = string[itr] + ('A' - 'a');
         }
+
         itr++;
+
     }
 
 }
@@ -67,6 +71,28 @@ void String_To_Upper(char * string)
 // WZD s22p10
 // drake178: UU_STR_ToLower()
 // MoO2  Module: strings  String_To_Lower()
+void String_To_Lower(char * string)
+{
+    int16_t itr;
+
+    itr = 0;
+    while(string[itr] != '\0')
+    {
+
+        if(
+            (string[itr] >= 'A')
+            ||
+            (string[itr] <= 'Z')
+        )
+        {
+            string[itr] = string[itr] + ('a' - 'A');
+        }
+
+        itr++;
+        
+    }
+
+}
 
 
 // WZD s22p11
@@ -228,11 +254,66 @@ void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n)
 
 // WZD s22p19
 // MoO2  Module: struct  Set_Memory_()
+/*
+    s
+    n   number of bytes
+    c   *character*
+*/
 void Set_Memory(int8_t * s, int16_t n, int16_t c)
 {
-    if(n != 0) { while(n--) { *s++ = c; } }
-}
+    if(n == 0) { return; }
 
+    while(n--) { *s++ = c; }
+}
+// void Set_Memory_(int8_t * s, int16_t n, uint8_t c)
+// {
+//     // IDK uint16_t c2 = 0;
+//     uint32_t c4 = 0;
+// 
+//     if(n == 0) { return; }
+// 
+//     // c2 = (uint32_t)c & 0xFF;
+//     // c2 = (c2 <<  8) | c2;
+//     // c4 = (c4 << 16) | c2;
+//     c4 = (c << 24) | (c << 16) | (c <<  8) | c;
+// 
+// 
+//     if(n != 0) { while(n--) { *s++ = c; } }
+// }
+/*
+; clever?
+; takes a byte
+; duplicates the byte into all four bytes
+; copies 4 bytes at a time, as it's able
+Set_Memory_         proc near                                                                       ; CODE XREF: Overlapped_Ship_Icon_Button_+9Dp ...
+                    pusha
+                    cmp edx, 0                                                                      ; count/size
+                    jz  short @@Done
+                    mov edi, eax                                                                    ; dst
+                    and ebx, 0FFh                                                                   ; EBX == value
+                    mov bh, bl
+                    mov cx, bx
+                    shl ebx, 16
+                    mov bx, cx
+                    and eax, 1                                                                      ; ¿ test for odd number ?
+                    jz  short loc_12769A
+                    mov eax, ebx
+                    stosb
+                    dec edx
+loc_12769A:                                                                                         ; CODE XREF: Set_Memory_+1Cj
+                    mov ecx, edx
+                    shr ecx, 2
+                    mov eax, ebx
+                    rep stosd
+                    mov ecx, edx
+                    and ecx, 3
+                    jz  short @@Done
+                    rep stosb
+@@Done:                                                                                             ; CODE XREF: Set_Memory_+4j ...
+                    popa
+                    retn
+Set_Memory_         endp
+*/
 
 // WZD s22p20
 // TODO  see if there is an example of this is the MS C lib or journal

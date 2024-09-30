@@ -431,44 +431,36 @@ void Advisor_Screen(int16_t advisor_idx)
         case 0:  /* Surveyor      (F1) */
         {
             // TODO  j_IDK_Surveyor_s7A3C0()
-
         } break;
         case 1:  /* Cartographer  (F2) */
         {
             assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
             assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
-
             Cartographer_Screen__WIP();
         } break;
         case 2:  /* Apprentice    (F3) */
         {
             Apprentice_Screen__WIP();
-
         } break;
         case 3:  /* Historian     (F4) */
         {
             Powergraph_Screen();
-
         } break;
         case 4:  /* Astrologer    (F5) */
         {
             Status_Screen();
-
         } break;
         case 5:  /* Chancellor    (F6) */
         {
-            // TODO  j_IDK_Chancellor_EoTSummary_EventsAnimScroll(1);
-
+            Chancellor_Screen__WIP(1);
         } break;
         case 6:  /* Tax Collector (F7) */
         {
             TaxCollector_Window();
-
         } break;
         case 7:  /* Grand Vizier  (F8) */
         {
             GrandVizier_Window();
-
         } break;
         case 8:  /* Mirror        (F9 )*/
         {
@@ -477,6 +469,7 @@ void Advisor_Screen(int16_t advisor_idx)
     }
 
     PageFlipEffect = 3;
+
     current_screen = scr_Main_Screen;
 
 }

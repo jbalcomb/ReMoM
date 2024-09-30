@@ -2591,7 +2591,7 @@ int16_t Check_For_Winner(void)
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        if(battle_units[itr_battle_units].Status = 0)  /* Unit_Active */
+        if(battle_units[itr_battle_units].Status == 0)  /* Unit_Active */
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
@@ -4246,7 +4246,7 @@ int16_t Combat_Results_Scroll_Text(void)
             text_height += 11;
             Set_Font_Colors_15(1, &colors2[0]);
             Set_Font_Spacing_Width(2);
-            G_CMB_NextScrollLineTop = text_height;
+            _scroll_start_x = text_height;
             for(itr_buildings = 0; itr_buildings < CMB_Buildings_Lost; itr_buildings++)
             {
                 if(CMB_LostBuildings[itr_buildings] > 0)

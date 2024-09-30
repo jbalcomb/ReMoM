@@ -1474,13 +1474,12 @@ int16_t City_House_Count(int16_t city_idx)
 // drake178: CTY_GetTileFood()
 int16_t City_Food_Terrain(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t city_wp;
-    int16_t useable_map_squares;
-    
-    int16_t food2_units;  // _DI_
-    int16_t itr;  // _SI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t food2_units = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Terrain()\n", __FILE__, __LINE__);
@@ -1515,18 +1514,16 @@ int16_t City_Food_Terrain(int16_t city_idx)
 // drake178: CTY_GetWildGameFood()
 int16_t City_Food_WildGame(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t bit_index;
-    int16_t city_wp;
-    int16_t useable_map_squares;
-    
-    int16_t food_units;  // _DI_
-    int16_t itr;  // _SI_
-    uint8_t * bit_field;  // _DX_
-
-    uint16_t terrain_specials_offset;
-    uint8_t terrain_special;
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t bit_index = 0;
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t food_units = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+    uint8_t * bit_field = 0;  // _DX_
+    uint16_t terrain_specials_offset = 0;
+    uint8_t terrain_special = 0;
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_WildGame(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
@@ -1807,18 +1804,17 @@ int16_t City_Maximum_Size(int16_t city_idx)
 // drake178: CTY_GetProd()
 int16_t City_Production_Production(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t production2_per_worker;
-    int16_t have_gaias_blessing;
-    int16_t city_wp;
-    int16_t City_Owner;
-    int16_t production_units;
-    int16_t worker_count;
-    int16_t itr;
-    int16_t useable_map_squares;
-
-    int16_t production_modifier;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t production2_per_worker = 0;
+    int16_t have_gaias_blessing = 0;
+    int16_t city_wp = 0;
+    int16_t City_Owner = 0;
+    int16_t production_units = 0;
+    int16_t worker_count = 0;
+    int16_t itr = 0;
+    int16_t useable_map_squares = 0;
+    int16_t production_modifier = 0;  // _DI_
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Production_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
@@ -1931,17 +1927,16 @@ int16_t City_Production_Production(int16_t city_idx)
 // drake178: CTY_GetGold()
 int16_t City_Gold_Production(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t gold_modifier;
-    int16_t are_dwarf;
-    int16_t have_miners_guild;
-    int16_t city_wp;
-    int16_t city_owner_idx;
-    int16_t itr;
-    int16_t useable_map_squares;
-
-    int16_t gold_units;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t gold_modifier = 0;
+    int16_t are_dwarf = 0;
+    int16_t have_miners_guild = 0;
+    int16_t city_wp = 0;
+    int16_t city_owner_idx = 0;
+    int16_t itr = 0;
+    int16_t useable_map_squares = 0;
+    int16_t gold_units = 0;  // _DI_
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
@@ -2134,19 +2129,18 @@ int16_t City_Research_Production(int16_t city_idx)
 // drake178: CTY_GetPower()
 int16_t City_Mana_Production(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t spell_ranks;
-    int16_t have_miners_guild;
-    int16_t are_dwarf;
-    int16_t city_wp;
-    int16_t useable_map_squares;
-    int16_t building_magic_power;
-    int16_t building_magic_power_modifier;
-    int16_t city_owner_idx;
-    int16_t itr;
-
-    int16_t mana_units;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t spell_ranks = 0;
+    int16_t have_miners_guild = 0;
+    int16_t are_dwarf = 0;
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t building_magic_power = 0;
+    int16_t building_magic_power_modifier = 0;
+    int16_t city_owner_idx = 0;
+    int16_t itr = 0;
+    int16_t mana_units = 0;  // _DI_
 
 // #ifdef STU_DEBUG
 //     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
@@ -2519,18 +2513,17 @@ int16_t City_Growth_Rate(int16_t city_idx)
 // MoO2  Module:  COLCALC  Colony_Current_Product_Cost_()  Colony_Product_Cost_()
 int16_t City_Current_Product_Cost(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t have_miners_guild;
-    int16_t unit_cost_percent;
-    int16_t itr;
-    int16_t are_dwarf;
-    int16_t unit_cost_reduction_applies;
-    int16_t city_wp;
-    int16_t useable_map_squares;
-    int16_t product_cost;
-
-    int16_t product_idx;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t have_miners_guild = 0;
+    int16_t unit_cost_percent = 0;
+    int16_t itr = 0;
+    int16_t are_dwarf = 0;
+    int16_t unit_cost_reduction_applies = 0;
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t product_cost = 0;
+    int16_t product_idx = 0;  // _DI_
 
 
     // TODO  EMM_Map_DataH()
@@ -2955,15 +2948,15 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 */
 void All_Outpost_Population_Growth(void)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t itr;
-    int16_t city_wp;
-    int16_t terrain_special;
-    int16_t useable_map_squares;
-    int16_t shrink;
-    int16_t itr_cities;  // _SI_
-    int16_t grow;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;
+    int16_t city_wp = 0;
+    int16_t terrain_special = 0;
+    int16_t useable_map_squares = 0;
+    int16_t shrink = 0;
+    int16_t itr_cities = 0;  // _SI_
+    int16_t grow = 0;  // _DI_
 
     // DONT  EMM_Map_DataH();
 
@@ -3071,15 +3064,15 @@ void All_Outpost_Population_Growth(void)
 */
 void Record_History(void)
 {
-    int16_t power_of_a_wizard[NUM_PLAYERS];
-    int16_t itr_history;
-    int16_t max_curr_population;
-    int16_t max_curr_research;
-    int16_t max_curr_military;
-    int16_t max_curr_magic;
-    int16_t itr;  // _SI_
-    int16_t itr_players;  // _SI_
-    int16_t IDK_max_curr_wiz_pwr;  // _DI_
+    int16_t power_of_a_wizard[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t itr_history = 0;
+    int16_t max_curr_population = 0;
+    int16_t max_curr_research = 0;
+    int16_t max_curr_military = 0;
+    int16_t max_curr_magic = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr_players = 0;  // _SI_
+    int16_t IDK_max_curr_wiz_pwr = 0;  // _DI_
 
     // ; fill out the astrologer fields and the local total progress array (sum of all fields)
     for(itr_players = 0; itr_players < _num_players; itr_players++)

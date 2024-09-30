@@ -96,8 +96,10 @@ extern int16_t near_buffer_used;
 // WZD dseg:738E 00 00                                           farload_lbx_header_flag dw 0            ; DATA XREF: LBX_Load_Entry:loc_15981r ...
 // WZD dseg:7390 FF FF                                           farload_fptr dw 0FFFFh                  ; DATA XREF: LBX_Load_Entry:loc_159DAr ...
 // WZD dseg:7392 00 00                                           UU_gLbxLoadFormat dw 0                  ; DATA XREF: LBX_Load_Entry+47r ...
-// WZD dseg:7394                                                 ; char secondary_drive_path[]
-// WZD dseg:7394 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+secondary_drive_path db 32h dup(0)      ; DATA XREF: LBX_Load_Entry+EDr ...
+
+// WZD dseg:7394
+extern char secondary_drive_path[];
+
 // WZD dseg:73C6 2E 4C 42 58 00                                  farload_file_extension db '.LBX',0      ; DATA XREF: LBX_Load_Entry+CAo ...
 // WZD dseg:73CB 2E 4C 42 58 20 5B 65 6E 74 72 79 20 00          cnst_LBXErr_Common1 db '.LBX [entry ',0 ; DATA XREF: Error_Handler+2Bo
 // WZD dseg:73D8 5D 20 00                                        cnst_LBXErr_Common2 db '] ',0           ; DATA XREF: Error_Handler+4Ao
@@ -226,6 +228,16 @@ uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head);
 
 // WZD s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks);
+
+
+
+/*
+    MoO2
+    Module: allocate
+*/
+SAMB_ptr Allocate_Dos_Space(int32_t size);
+SAMB_ptr Allocate_Dos_Data_Space(int32_t size);
+
 
 
 #ifdef __cplusplus

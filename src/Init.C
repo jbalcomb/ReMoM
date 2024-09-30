@@ -34,6 +34,7 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
     DBG_Open_ERROR_LOG();
     
     EMS_Startup();
+    // TODO  Create_IO_Buffer();  /* MoO2 */
 
     // VGA_SetModeY()  // MoO2  Init_Video_Drivers() ... |-> Set_Video_Mode()
     Init_Video_Drivers(VIDEO_MODE);

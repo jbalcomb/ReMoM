@@ -107,12 +107,20 @@ void Screen_Control(void)
             _CITIES[_city_idx].did_sell_building = ST_TRUE;
 
             // HACK:  trigger 'Event'
-            // // DBG_trigger_event = STU_TRUE;
-            // DBG_trigger_event = ST_TRUE;
+            DBG_trigger_event = ST_TRUE;
+            // DBG_trigger_event_plague = ST_TRUE;
+            // DBG_trigger_event_population_boom = ST_TRUE;
+            // DBG_trigger_event_good_moon = ST_TRUE;
+            // DBG_trigger_event_bad_moon = ST_TRUE;
+            // DBG_trigger_event_conjunction_chaos = ST_TRUE;
+            DBG_trigger_event_conjunction_nature = ST_TRUE;
+            // DBG_trigger_event_conjunction_sorcery = ST_TRUE;
+            // DBG_trigger_event_mana_short = ST_TRUE;
+
             // HACK:  trigger 'Offer'
-            DBG_trigger_offer_item = ST_TRUE;
-            DBG_trigger_offer_merc = ST_TRUE;
-            DBG_trigger_offer_hero = ST_TRUE;
+            // DBG_trigger_offer_item = ST_TRUE;
+            // DBG_trigger_offer_merc = ST_TRUE;
+            // DBG_trigger_offer_hero = ST_TRUE;
 
             // // _map_x = ( 5 - (12 / 2));
             // // _map_y = (21 - (10 / 2));

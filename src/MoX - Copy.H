@@ -256,9 +256,11 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "City_ovr55.H"
 #include "Combat.H"
 #include "DIPLOMAC.H"
+#include "EMM.H"
 #include "EVENTS.H"
 #include "Explore.H"
 #include "Fields.H"
+#include "file_ani.H"
 #include "Fonts.H"
 #include "GENDRAW.H"
 #include "Graphics.H"
@@ -266,6 +268,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y);
 #include "HIRE.H"
 #include "Init.H"
 #include "Input.H"
+#include "IO_Buffer.H"
 #include "ItemMake.H"
 #include "Items.H"
 #include "ItemScrn.H"
@@ -341,14 +344,6 @@ extern "C" {
 
 
 extern int16_t DBG_trigger_event;
-extern int16_t DBG_trigger_event_plague;
-extern int16_t DBG_trigger_event_population_boom;
-extern int16_t DBG_trigger_event_good_moon;
-extern int16_t DBG_trigger_event_bad_moon;
-extern int16_t DBG_trigger_event_conjunction_chaos;
-extern int16_t DBG_trigger_event_conjunction_nature;
-extern int16_t DBG_trigger_event_conjunction_sorcery;
-extern int16_t DBG_trigger_event_mana_short;
 extern int16_t DBG_trigger_offer_item;
 extern int16_t DBG_trigger_offer_merc;
 extern int16_t DBG_trigger_offer_hero;

@@ -41,7 +41,7 @@ magic_set.HallofFame_Names is an array of 10 elements of 20 characters c-strings
     magic_set.Enemy_Spells = 1
     magic_set.Random_Events = 1
     magic_set.EoT_Wait = 1
-    magic_set.EoT_Summary = 1
+    magic_set.end_of_turn_summary = 1
     magic_set.Raze_City = 1
     magic_set.Spell_Book_Order = 1
     magic_set.Strategic_Combat = 0

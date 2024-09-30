@@ -111,10 +111,6 @@
 
 
 
-
-
-
-
 // Game Option - Difficulty
 enum e_Difficulty
 {
@@ -1756,9 +1752,19 @@ struct CON_EVENT
 //     /* 0x64 */
 // };
 
+struct s_EVENT_2
+{
+    /* 0x00 */ int16_t status;
+    /* 0x02 */ int16_t data;
+    /* 0x04 */ int16_t player;
+    /* 0x4A */ int16_t duration;
+
+};
+
 struct s_EVENT_DATA
 {
     /* 0x00 */  int16_t last_event_turn;
+
     // /* 0x02 */  struct STD_EVENT Meteor;
     /* 0x00 */ int16_t Meteor_Status;
     /* 0x02 */ int16_t Meteor_Player;
@@ -1843,6 +1849,30 @@ struct s_EVENT_DATA
     /* 0x00 */ int16_t Mana_Short_Status;
     /* 0x02 */ int16_t Mana_Short_Duration;
 
+    /* 0x64 */
+};
+
+struct s_EVENT_DATA_2
+{
+    /* 0x00 */  int16_t last_event_turn__MGFY;
+    struct s_EVENT_2 meteor;
+    struct s_EVENT_2 gift;
+    struct s_EVENT_2 disjunction;
+    struct s_EVENT_2 marriage;
+    struct s_EVENT_2 earthquake;
+    struct s_EVENT_2 pirates;
+    struct s_EVENT_2 plagues;
+    struct s_EVENT_2 rebellion;
+    struct s_EVENT_2 donation;
+    struct s_EVENT_2 depletion;
+    struct s_EVENT_2 minerals;
+    struct s_EVENT_2 population_boom;
+    struct s_EVENT_2 good_moon;
+    struct s_EVENT_2 bad_moon;
+    struct s_EVENT_2 conjuction_chaos;
+    struct s_EVENT_2 conjuction_nature;
+    struct s_EVENT_2 conjuction_sorcery;
+    struct s_EVENT_2 mana_short;
     /* 0x64 */
 };
 
@@ -1949,7 +1979,20 @@ struct s_UV_List
 struct s_MSG_BUILDING_COMPLETE
 {
     /* 00 */ int8_t city_idx;
-    /* 01 */ // 2-byte alignment padding
+    /* 01 */ char align2B_01h; // 2-byte alignment padding
+    /* 02 */ int16_t bldg_type_idx;
+    /* 04 */
+};
+#pragma pack(pop)
+
+// drake178: Building_Done_Msg_Item
+// sizeof:  04h  4d
+#pragma pack(push)
+#pragma pack(2)
+struct s_MSG_BUILDING_LOST
+{
+    /* 00 */ int8_t city_idx;
+    /* 01 */ char align2B_01h; // 2-byte alignment padding
     /* 02 */ int16_t bldg_type_idx;
     /* 04 */
 };
@@ -1963,7 +2006,20 @@ struct s_MSG_UNIT_LOST
 {
     /* 00 */ int16_t Unit_Type;
     /* 02 */ int8_t Cause;
-    /* 03 */ // 2-byte padding?  Unused_3h db ?
+    /* 03 */ char align2B_03h; // 2-byte alignment padding
+    /* 04 */
+};
+#pragma pack(pop)
+
+// drake178: Unit_Killed_Msg_Item
+// sizeof:  04h  4d
+#pragma pack(push)
+#pragma pack(2)
+struct s_MSG_UNIT_KILLED
+{
+    /* 00 */ int16_t Unit_Type;
+    /* 02 */ int8_t City;
+    /* 03 */ int8_t Spell;
     /* 04 */
 };
 #pragma pack(pop)
@@ -3574,20 +3630,17 @@ extern int8_t g_bldg_msg_ctr;
 // WZD dseg:9AF1 00                                              db    0
 
 // WZD dseg:9AF2
-// drake178: MSG_BuildDone_Array Building_Done_Msg_Item 14h dup(<0>)
 extern struct s_MSG_BUILDING_COMPLETE MSG_Building_Complete[20];
 
 // WZD dseg:9B42
-// drake178: MSG_BldLost_Count
 extern int8_t MSG_BldLost_Count;
 
 // WZD dseg:9B43 00                                              db    0
 
 // WZD dseg:9B44
-// drake178: MSG_BldLost_Array Building_Lost_Msg_Item 14h dup(<0>)
+extern struct s_MSG_BUILDING_LOST MSG_BldLost_Array[20];
 
 // WZD dseg:9B94
-// drake178: MSG_UnitLost_Count
 extern int8_t MSG_UnitLost_Count;
 
 // WZD dseg:9B95 00                                              db    0
@@ -3596,44 +3649,38 @@ extern int8_t MSG_UnitLost_Count;
 extern struct s_MSG_UNIT_LOST MSG_UnitLost_Array[20];
 
 // WZD dseg:9BE6
-// drake178: MSG_UnitKilled_Count
 extern int8_t MSG_UnitKilled_Count;
 
 // WZD dseg:9BE7 00                                              db    0
 
 // WZD dseg:9BE8
-// drake178: MSG_UnitKilled_Array Unit_Killed_Msg_Item 14h dup(<0>)
+extern struct s_MSG_UNIT_KILLED MSG_UnitKilled_Array[20];
 
 // WZD dseg:9C38
-// drake178: MSG_CityGrowth_Count
 extern int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
-extern int16_t MSG_CityGrowth_Array[20];
+extern uint8_t MSG_CityGrowth_Array[20];
 
 // WZD dseg:9C4D
-// drake178: MSG_CityDeath_Count
 extern int8_t MSG_CityDeath_Count;
 
 // WZD dseg:9C4E
-extern int16_t MSG_CityDeath_Array[20];
+extern uint8_t MSG_CityDeath_Array[20];
 
 // WZD dseg:9C62
-// drake178: MSG_UEsLost_Count
 extern int8_t MSG_UEsLost_Count;
 
 // WZD dseg:9C63
-// drake178: MSG_UEsLost_Array db 14h dup(0)   
+extern uint8_t MSG_UEsLost_Array[20];
 
 // WZD dseg:9C77
-// drake178: MSG_CEsLost_Count
 extern int8_t MSG_CEsLost_Count;
 
 // WZD dseg:9C78
-// drake178: MSG_CEsLost_Array db 14h dup(0)   
+extern uint8_t MSG_CEsLost_Array[20];
 
 // WZD dseg:9C8C
-// drake178: MSG_GEs_Lost
 extern int8_t MSG_GEs_Lost;
 
 // WZD dseg:9C8D 00                                              db    0
@@ -3868,7 +3915,7 @@ extern int16_t city_sceen_change_button;
 extern int16_t city_screen_buy_button;
 
 // WZD dseg:BFAE
-extern char * city_screen_product_name;
+extern char * m_city_screen_product_name;
 
 // WZD dseg:BFB0
 extern int16_t m_city_production_cost;
@@ -4213,8 +4260,8 @@ extern int16_t CMB_Scroll_MinHeight;
 // WZD dseg:C9D6
 extern int16_t _scroll_text_height;
 // WZD dseg:C9D8
-extern int16_t G_CMB_NextScrollLineTop;
-// WZD dseg:C9DA 00 00                                           word_4347A dw 0                         ; DATA XREF: Chancellor_Screen_Draw:loc_A9A53r ...
+extern int16_t _scroll_start_x;
+// WZD dseg:C9DA 00 00                                           m_report_scroll_text_height dw 0                         ; DATA XREF: Chancellor_Screen_Draw:loc_A9A53r ...
 // WZD dseg:C9DC
 extern int16_t _scroll_text_top;
 // WZD dseg:C9DE 00 00                                           hirehero_unit_type_name dw 0               ; DATA XREF: USW_LoadHireScreen+85w ...
@@ -4358,6 +4405,8 @@ extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles
 // WZD dseg:E5F2 00 00                                           dw 0
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
 extern byte_ptr _VGAFILEH_seg;
+extern SAMB_ptr report_scroll_out_seg;
+
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
 // WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...
@@ -4367,12 +4416,14 @@ extern byte_ptr _VGAFILEH_seg;
 // WZD dseg:E5FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+EMM_Table EMM_Record 28h dup(<0>)       ; DATA XREF: EMM_Startup+8Bt ...
 // WZD dseg:E7DC 00 00                                           EMM_MinKB dw 0                          ; DATA XREF: EMS_SetMinKB+6w ...
 // WZD dseg:E7DC                                                                                         ; set to 2700 in _main
-// WZD dseg:E7DE
+
+
+
 // WZD dseg:E7DE                                                 BEGIN:  Fonts
-// WZD dseg:E7DE
+
 // WZD dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0                ; DATA XREF: Load_Font_File+78w ...
-
-
+// extern struct s_animation_header file_animation_header;
+// TODO  relocate  extern struct s_FLIC_HDR file_animation_header;
 
 
 

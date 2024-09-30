@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\..\src\PoC_Screen.H" />
     <ClInclude Include="..\..\..\src\ProdScr.H" />
     <ClInclude Include="..\..\..\src\RACETYPE.H" />
+    <ClInclude Include="..\..\..\src\REPORT.H" />
     <ClInclude Include="..\..\..\src\Roads.H" />
     <ClInclude Include="..\..\..\src\SBookScr.H" />
     <ClInclude Include="..\..\..\src\SCastScr.H" />
@@ -165,7 +166,6 @@
     <ClInclude Include="..\..\..\src\stu\STU_CHK.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
-    <ClInclude Include="..\..\..\src\Summary.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\Timer.H" />
@@ -239,6 +239,7 @@
     <ClCompile Include="..\..\..\src\paragrph.C" />
     <ClCompile Include="..\..\..\src\ProdScr.C" />
     <ClCompile Include="..\..\..\src\RACETYPE.C" />
+    <ClCompile Include="..\..\..\src\REPORT.C" />
     <ClCompile Include="..\..\..\src\Roads.C" />
     <ClCompile Include="..\..\..\src\SBookScr.C" />
     <ClCompile Include="..\..\..\src\SCastScr.C" />
@@ -252,7 +253,6 @@
     <ClCompile Include="..\..\..\src\stu\STU_CHK.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
-    <ClCompile Include="..\..\..\src\Summary.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
     <ClCompile Include="..\..\..\src\UnitList.C" />

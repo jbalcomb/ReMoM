@@ -117,7 +117,7 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx);
 void All_City_Calculations(void);
 
 // WZD o140p02
-void MSG_Clear(void);
+void Initialize_Reports(void);
 
 // WZD o140p03
 void City_Apply_Production(int16_t city_idx);

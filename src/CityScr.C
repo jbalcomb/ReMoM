@@ -114,7 +114,7 @@ char cstr_NameStartingCity[] = "Name Starting City";
 
 
 // WZD dseg:92B4
-int16_t CTY_Entity_Count;
+int16_t cityscape_bldg_count;
 
 
 
@@ -251,16 +251,16 @@ void City_Screen__WIP(void)
 
     if(_CITIES[_city_idx].construction < 100)
     {
-        strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+        String_Copy_Far(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+        // strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
     }
     else
     {
         Row = (_CITIES[_city_idx].construction - 100);
-        strcpy(city_screen_product_name, *_unit_type_table[Row].name);
+        strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
     }
 
-
-    CTY_Entity_Count = 0;
+    cityscape_bldg_count = 0;
 
     City_Can_Buy_Product();
 
@@ -350,12 +350,12 @@ void City_Screen__WIP(void)
                 if(_CITIES[_city_idx].construction < 100)
                 {
                     // TODO  String_Copy_Far(IDK_production_title, bldg_data_table[_CITIES[_city_idx].construction]);
-                    strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                    strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                 }
                 else
                 {
                     Row = (_CITIES[_city_idx].construction - 100);
-                    strcpy(city_screen_product_name, *_unit_type_table[Row].name);
+                    strcpy(m_city_screen_product_name, *_unit_type_table[Row].name);
                 }
                 City_Screen_Allocate_First_Block();
 
@@ -415,9 +415,9 @@ void City_Screen__WIP(void)
                     strcat(GUI_String_1, GUI_String_2);
                     strcat(GUI_String_1, aGold_3);  // " Gold"
                     strcat(GUI_String_1, aByPurchasing);  // "\x01 by purchasing"
-                    strcat(GUI_String_1, STR_GetIndefinite(city_screen_product_name));
+                    strcat(GUI_String_1, STR_GetIndefinite(m_city_screen_product_name));
                     strcat(GUI_String_1, cnst_Space);  // " "
-                    strcat(GUI_String_1, city_screen_product_name);
+                    strcat(GUI_String_1, m_city_screen_product_name);
                     strcat(GUI_String_1, cnst_QuestionMark);  // "?"
                     if(Confirmation_Box(GUI_String_1) == ST_TRUE)
                     {
@@ -537,12 +537,12 @@ void City_Screen__WIP(void)
                                 City_Can_Buy_Product();
                                 if(_CITIES[_city_idx].construction < 100)
                                 {
-                                    strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                                    strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                                 }
                                 else
                                 {
                                     reqd_bldg_idx = (_CITIES[_city_idx].construction - 100);
-                                    strcpy(city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
+                                    strcpy(m_city_screen_product_name, *_unit_type_table[reqd_bldg_idx].name);
                                 }
 
                                 _CITIES[_city_idx].did_sell_building = ST_TRUE;
@@ -630,12 +630,12 @@ void City_Screen__WIP(void)
                     City_Screen_Required_Buildings_List(_city_idx);
                     if(_CITIES[_city_idx].construction < 100)
                     {
-                        strcpy(city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
+                        strcpy(m_city_screen_product_name, bldg_data_table[_CITIES[_city_idx].construction].name);
                     }
                     else
                     {
                         unit_type = (_CITIES[_city_idx].construction - 100);
-                        strcpy(city_screen_product_name, *_unit_type_table[unit_type].name);
+                        strcpy(m_city_screen_product_name, *_unit_type_table[unit_type].name);
                     }
                     screen_changed = ST_TRUE;
                     City_Screen_Allocate_First_Block();
@@ -953,7 +953,7 @@ void City_Screen_Draw2__WIP(void)
     Set_Alias_Color(26);
     Set_Font_Spacing_Width(1);
 
-    para_width = Get_Paragraph_Max_Width(44, city_screen_product_name, 0);
+    para_width = Get_Paragraph_Max_Width(44, m_city_screen_product_name, 0);
 
     if((para_width > 42) || (para_width <= 0))
     {
@@ -962,7 +962,7 @@ void City_Screen_Draw2__WIP(void)
         Set_Font_Spacing_Width(1);
     }
 
-    if(Get_Paragraph_Max_Height(44, city_screen_product_name) > 6)
+    if(Get_Paragraph_Max_Height(44, m_city_screen_product_name) > 6)
     {
         Set_Font_Style_Shadow_Up(0, 0, 0, 0);
         Set_Font_LF(0);
@@ -972,16 +972,16 @@ void City_Screen_Draw2__WIP(void)
     Set_Alias_Color(26);
     Set_Outline_Color(4);
 
-    para_height = Get_Paragraph_Max_Height(44, city_screen_product_name);
+    para_height = Get_Paragraph_Max_Height(44, m_city_screen_product_name);
 
     if(para_height > 0)
     {
         print_y = (179 - (para_height - 6));
-        Print_Paragraph(216, print_y, 44, city_screen_product_name, 2);
+        Print_Paragraph(216, print_y, 44, m_city_screen_product_name, 2);
     }
     else
     {
-        Print(216, 179, city_screen_product_name);
+        Print(216, 179, m_city_screen_product_name);
     }
 
     Set_Outline_Color(0);
@@ -1393,7 +1393,7 @@ void City_Screen_Load(void)
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
 
-    city_screen_product_name = (char *)Near_Allocate_Next(40);
+    m_city_screen_product_name = (char *)Near_Allocate_Next(40);
 
     city_screen_required_buildings_list = (int16_t *)Near_Allocate_Next(72);  // 36 int16_t  Buildings
 

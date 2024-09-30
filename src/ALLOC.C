@@ -4,6 +4,7 @@
 /*
     MGC o57p01 (1of1)
     WZD o152p01 (1of1)
+    MoO2  Module: allocate
 */
 // AKA MoM_Tables_Init()
 // Allocate_Data_Space()

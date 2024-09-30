@@ -95,7 +95,9 @@ void s01p16_empty_function(void);
 */
 
 // WZD s09p07
-void String_Copy_Far__STUB(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt);
+// void String_Copy_Far(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt);
+void String_Copy_Far(char * dst, char * src);
+void String_Copy_Far__ASM(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt);
 
 
 

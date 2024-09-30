@@ -36,7 +36,7 @@ struct s_MAGIC_SET
     /*  06 */ uint16_t City_Spell_Events;
     /*  08 */ uint16_t Ovl_Spell_Events;
     /*  0A */ uint16_t Summoning_Events;
-    /*  0C */ uint16_t EoT_Summary;
+    /*  0C */ uint16_t end_of_turn_summary;
     /*  0E */ uint16_t Raze_City;
     /*  10 */ uint16_t Random_Events;
     /*  12 */ uint16_t EoT_Wait;

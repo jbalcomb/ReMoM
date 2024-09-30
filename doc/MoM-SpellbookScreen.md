@@ -5,7 +5,7 @@
 Spellbook_Screen()
 
     // TODO  sub_B8AD0();
-    SBK_BuildSpellbook(0, 6);  // Book_Type, Page_Size
+    Spellbook_Build__WIP(0, 6);  // Book_Type, Page_Size
 
             ; creates a list of spells for the specified book type,
                                         ; then organizes them into the global near dynamic

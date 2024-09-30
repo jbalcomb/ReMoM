@@ -28,10 +28,10 @@ void Chancellor_Screen_Draw(void);
 void Chancellor_Screen_Load(void);
 
 // WZD o126p03
-void Chancellor_Screen__STUB(void);
+void Chancellor_Screen__WIP(int16_t flag);
 
 // WZD o126p04
-void Chancellor_Screen_Scroll_Draw(void);
+void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag);
 
 
 

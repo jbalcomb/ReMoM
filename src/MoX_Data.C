@@ -1952,6 +1952,10 @@ int16_t GrowOutLeft;
 // int16_t * events_table;
 struct s_EVENT_DATA * events_table;
 
+int16_t last_event_turn_2;
+struct s_EVENT_DATA_2 * events_table_2;
+
+
 // WZD dseg:999C
 /*
 set by Build_Unit_Stack()
@@ -2003,6 +2007,7 @@ int8_t MSG_BldLost_Count;
 
 // WZD dseg:9B44
 // drake178: MSG_BldLost_Array Building_Lost_Msg_Item 14h dup(<0>)
+struct s_MSG_BUILDING_LOST MSG_BldLost_Array[20];
 
 // WZD dseg:9B94
 // drake178: MSG_UnitLost_Count
@@ -2022,6 +2027,7 @@ int8_t MSG_UnitKilled_Count;
 
 // WZD dseg:9BE8
 // drake178: MSG_UnitKilled_Array Unit_Killed_Msg_Item 14h dup(<0>)
+struct s_MSG_UNIT_KILLED MSG_UnitKilled_Array[20];
 
 // WZD dseg:9C38
 // drake178: MSG_CityGrowth_Count
@@ -2032,7 +2038,7 @@ int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
 // drake178: MSG_CityGrowth_Array
-int16_t MSG_CityGrowth_Array[20];
+int8_t MSG_CityGrowth_Array[20];  // 1-byte, unsigned
 
 // WZD dseg:9C4D
 // drake178: MSG_CityDeath_Count
@@ -2040,7 +2046,7 @@ int8_t MSG_CityDeath_Count;
 
 // WZD dseg:9C4E
 // drake178: MSG_CityDeath_Array
-int16_t MSG_CityDeath_Array[20];
+uint8_t MSG_CityDeath_Array[20];  // 1-byte, unsigned
 
 // WZD dseg:9C62
 // drake178: MSG_UEsLost_Count
@@ -2048,6 +2054,7 @@ int8_t MSG_UEsLost_Count;
 
 // WZD dseg:9C63
 // drake178: MSG_UEsLost_Array db 14h dup(0)   
+uint8_t MSG_UEsLost_Array[20];  // 1-byte, unsigned
 
 // WZD dseg:9C77
 // drake178: MSG_CEsLost_Count
@@ -2055,6 +2062,7 @@ int8_t MSG_CEsLost_Count;
 
 // WZD dseg:9C78
 // drake178: MSG_CEsLost_Array db 14h dup(0)   
+uint8_t MSG_CEsLost_Array[20];  // 1-byte, unsigned
 
 // WZD dseg:9C8C
 // drake178: MSG_GEs_Lost
@@ -2385,7 +2393,7 @@ int16_t city_sceen_change_button;
 int16_t city_screen_buy_button;
 
 // WZD dseg:BFAE
-char * city_screen_product_name;
+char * m_city_screen_product_name;
 
 // WZD dseg:BFB0
 int16_t m_city_production_cost;
@@ -2737,8 +2745,8 @@ int16_t CMB_Scroll_MinHeight;
 // WZD dseg:C9D6
 int16_t _scroll_text_height;
 // WZD dseg:C9D8
-int16_t G_CMB_NextScrollLineTop;
-// WZD dseg:C9DA 00 00                                           word_4347A dw 0                         ; DATA XREF: Chancellor_Screen_Draw:loc_A9A53r ...
+int16_t _scroll_start_x;
+// WZD dseg:C9DA 00 00                                           m_report_scroll_text_height dw 0                         ; DATA XREF: Chancellor_Screen_Draw:loc_A9A53r ...
 // WZD dseg:C9DC
 int16_t _scroll_text_top;
 // WZD dseg:C9DE 00 00                                           hirehero_unit_type_name dw 0               ; DATA XREF: USW_LoadHireScreen+85w ...
@@ -2883,8 +2891,12 @@ SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
 // WZD dseg:E5F0 00 00                                           EmmHndlNbr_EMMDATAH dw 0                ; DATA XREF: EMM_Startup+18Bw ...
 // WZD dseg:E5F0                                                                                         ; 4 reserved pages
 // WZD dseg:E5F2 00 00                                           dw 0
+
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
+// AKA  EmmHndlNbr_VGAFILEH
 byte_ptr _VGAFILEH_seg;
+SAMB_ptr report_scroll_out_seg;
+/* MoO2 */
 
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
@@ -2895,11 +2907,24 @@ byte_ptr _VGAFILEH_seg;
 // WZD dseg:E5FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+EMM_Table EMM_Record 28h dup(<0>)       ; DATA XREF: EMM_Startup+8Bt ...
 // WZD dseg:E7DC 00 00                                           EMM_MinKB dw 0                          ; DATA XREF: EMS_SetMinKB+6w ...
 // WZD dseg:E7DC                                                                                         ; set to 2700 in _main
-// WZD dseg:E7DE
-// WZD dseg:E7DE                                                 BEGIN:  Fonts
-// WZD dseg:E7DE
-// WZD dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0                ; DATA XREF: Load_Font_File+78w ...
 
+
+
+// WZD dseg:E7DE                                                 BEGIN:  Fonts
+
+// WZD dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0                ; DATA XREF: Load_Font_File+78w ...
+// WZD dseg:E7DE
+// struct s_animation_header file_animation_header = 0;
+// TODO  relocate  struct s_FLIC_HDR file_animation_header;
+
+/*
+MoO2
+dseg02:001A86F8                                                 BEGIN: Create_IO_Buffer()
+dseg02:001A86F8 ?? ?? ?? ??                                     io_buffer_seg       dd ?                                                                            ; DATA XREF: Create_IO_Buffer+25w ...
+dseg02:001A86FC ?? ?? ?? ??                                     io_buffer           dd ?                                                                            ; DATA XREF: Do_Main_Menu_File_Animation_:loc_80E05r ...
+dseg02:001A8700 ?? ??                                           io_buffer_selector  dw ?                                                                            ; DATA XREF: Create_IO_Buffer+3Dw
+dseg02:001A8700                                                 END: Create_IO_Buffer()
+*/
 
 
 

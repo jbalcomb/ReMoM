@@ -44,13 +44,10 @@ extern "C" {
 // WZD s22p08 Random()
 
 // WZD s22p09
-// drake178: STR_ToUpper()
-// MoO2  Module: strings  String_To_Upper()
 void String_To_Upper(char * string);
 
 // WZD s22p10
-// drake178: UU_STR_ToLower()
-// MoO2  Module: strings  String_To_Lower()
+void String_To_Lower(char * string);
 
 // WZD s22p11
 // drake178: RP_MEM_Copy()
@@ -67,14 +64,11 @@ void Clear_Structure(int16_t record_index, uint8_t * records, int16_t record_siz
 void Delete_Structure(int16_t record_index, uint8_t * records, int16_t record_size, int16_t record_count);
 
 // WZD s22p17
-// drake178: MEM_CopyIfLess_Far()
 void Copy_Memory_Less_Than(int8_t * src, int8_t * dst, int16_t n);
 
 // WZD s22p18 MEM_Clear_Far()
 
 // WZD s22p19
-// drake178: MEM_Set_Far()
-// MoO2  Module: struct  Set_Memory_()
 void Set_Memory(int8_t * s, int16_t n, int16_t c);
 
 // WZD s22p20

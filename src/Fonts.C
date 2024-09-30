@@ -173,7 +173,7 @@ void Load_Font_File(char * font_file)
 
     remap_color_palettes = (uint8_t *)Allocate_Space(384);  // 384 PR, 6144 B  (24 * 256  ~'remap color tables')
 
-    // TODO  gsa_VGAFILEH_Header = Allocate_Space(2);
+    // TODO  file_animation_header = (struct s_FLIC_HDR *)Allocate_Space(2);
 
     Intensity_Scale_Tbl = Allocate_Space(96);  // 96 PR, 1536 B
 
@@ -384,18 +384,94 @@ void Restore_Alias_Colors(void)
 // PLATFORM  MSDOS  
 // PLATFORM  MSDOS      return next_x;
 // PLATFORM  MSDOS  }
+// int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Print_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Print(x, y, near_buffer);
+
+    return next_x;
+}
 
 
 // WZD s17p16
-// VGA_DrawCenteredFar()
+// drake178: VGA_DrawCenteredFar()
+// int16_t Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Print_Centered_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Print(x, y, near_buffer);
+
+    return next_x;
+}
+
 // WZD s17p17
-// UU_VGA_DrawRtAlgFar()
+// drake178: UU_VGA_DrawRtAlgFar()
+// int16_t Print_Right_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Print_Right_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Print(x, y, near_buffer);
+
+    return next_x;
+}
+
 // WZD s17p18
-// VGA_WndDrawFarString()
+// drake178: VGA_WndDrawFarString()
+// int16_t Clipped_Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Clipped_Print_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Clipped_Print(x, y, near_buffer);
+
+    return next_x;
+}
+
 // WZD s17p19
-// UU_VGA_WndDrawCntrdFar()
+// drake178: UU_VGA_WndDrawCntrdFar()
+// int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Clipped_Print_Centered(x, y, near_buffer);
+
+    return next_x;
+}
+
 // WZD s17p20
-// UU_VGA_WndDrawRtAlgFar()
+// drake178: UU_VGA_WndDrawRtAlgFar()
+// int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
+int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, char * src)
+{
+    int16_t next_x;
+
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
+
+    next_x = Clipped_Print_Right(x, y, near_buffer);
+
+    return next_x;
+}
 
 
 // WZD s17p21
@@ -415,6 +491,18 @@ int16_t Print_Integer(int16_t x, int16_t y, int16_t val)
 
 // WZD s17p22
 // int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
+int16_t Print_Long(int16_t x, int16_t y, int32_t val)
+{
+    int16_t next_x;
+    char buffer[10];
+
+#pragma warning(suppress : 4996)
+    ltoa(val, buffer, 10);
+
+    next_x = Print(x, y, buffer);
+
+    return next_x;
+}
 
 
 // WZD s17p23
@@ -452,7 +540,7 @@ int16_t Print_Centered(int16_t x, int16_t y, char * string)
 int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
 {
     int16_t next_x;
-    char buffer[10];
+    char buffer[LEN_TEMP_BUFFER];
 
     itoa(val, buffer, 10);
 
@@ -466,7 +554,7 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val)
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 {
     int16_t next_x;
-    char buffer[10];
+    char buffer[LEN_TEMP_BUFFER];
 
     itoa(val, buffer, 10);
 
@@ -476,24 +564,61 @@ int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val)
 }
 
 
-// WZD s17p26
-// WZD s17p27
-// WZD s17p28
-// WZD s17p29
-// WZD s17p30
-// WZD s17p31
-// WZD s17p32
-// WZD s17p33
-
-
 // WZD s17p27
 // drake178: UU_Print_Long_Right()
+int16_t Print_Long_Right(int16_t x, int16_t y, int32_t val)
+{
+    int16_t next_x;
+    char buffer[LEN_TEMP_BUFFER];
+
+    itoa(val, buffer, 10);
+
+    next_x = Print_Right(x, y, buffer);
+
+    return next_x;
+}
+
 // WZD s17p28
 // drake178: VGA_WndDrawNumber()
+int16_t Clipped_Print_Integer(int16_t x, int16_t y, int16_t val)
+{
+    int16_t next_x;
+    char buffer[LEN_TEMP_BUFFER];
+
+    itoa(val, buffer, 10);
+
+    next_x = Clipped_Print(x, y, buffer);
+
+    return next_x;
+}
+
 // WZD s17p29
 // drake178: UU_VGA_WndDrawLongN()
+int16_t Clipped_Print_Long(int16_t x, int16_t y, int32_t val)
+{
+    int16_t next_x;
+    char buffer[LEN_TEMP_BUFFER];
+
+    ltoa(val, buffer, 10);
+
+    next_x = Clipped_Print(x, y, buffer);
+
+    return next_x;
+}
+
 // WZD s17p30
 // drake178: UU_VGA_WndDrawRtAligned()
+int16_t Clipped_Print_Right(int16_t x, int16_t y, char * string)
+{
+    int16_t next_x;
+    int16_t string_len;
+
+    string_len = Get_String_Width(string) - 1;
+
+    next_x = Clipped_Print((x - string_len), y, string);
+
+    return next_x;
+}
 
 // WZD s17p31
 // drake178: VGA_WndDrawCentered()
@@ -518,7 +643,7 @@ int16_t Clipped_Print_Centered(int16_t x, int16_t y, char * string)
 
     string_len = Get_String_Width(string);
 
-    next_x = Clipped_Print((x - (string_len/2)), y, string);
+    next_x = Clipped_Print((x - (string_len / 2)), y, string);
 
     return next_x;
 }
@@ -526,9 +651,33 @@ int16_t Clipped_Print_Centered(int16_t x, int16_t y, char * string)
 
 // WZD s17p32
 // drake178: UU_VGA_WndDrawRtAlgNum()
+int16_t Clipped_Print_Integer_Right(int16_t x, int16_t y, int16_t val)
+{
+    int16_t next_x;
+    char buffer[10];
+
+    itoa(val, buffer, 10);
+
+    next_x = Clipped_Print_Right(x, y, buffer);
+
+    return next_x;
+}
+
 
 // WZD s17p33
 // drake178: UU_VGA_WndDrawRtAlgLong()
+int16_t Clipped_Print_Long_Right(int16_t x, int16_t y, int32_t val)
+{
+    int16_t next_x;
+    char buffer[LEN_TEMP_BUFFER];
+
+    ltoa(val, buffer, 10);
+
+    next_x = Clipped_Print_Right(x, y, buffer);
+
+    return next_x;
+}
+
 
 // WZD s17p34
 int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side)
@@ -775,6 +924,11 @@ Done:
 
 // WZD s17p38
 // drake178: UU_VGA_DisableAAPixels
+// MoO2  No_Print_Alias()
+void No_Print_Alias(void)
+{
+    draw_alias_flag = ST_TRUE;
+}
 
 
 // WZD s17p39
@@ -856,6 +1010,7 @@ void Set_Color_Set(int16_t color_set_idx)
 }
 
 
+// TODO  matches these up with MoO2's Disp_PSTR(), PSTRM(), PSTRS(), PSTR(), PSTRL(), PSTRU(), ...
 // WZD s17p43
 // RP_DBG_TblDrawValue()
 // WZD s17p44
@@ -1083,6 +1238,8 @@ int16_t Clipped_Print_String(int16_t x, int16_t y, char * string, int16_t change
                 print_xpos = Clipped_Print_Character(print_xpos, print_ypos, character);
             } break;
         }
+
+        ptr++;
     }
 
     return print_xpos;
@@ -1217,9 +1374,29 @@ int16_t Get_Current_Special_Color(void)
 
 
 // WZD s17p57
-// UU_STR_CopyToNearLBX()
+// drake178: UU_STR_CopyToNearLBX()
+// void String_Copy_Far_To_Near(int offset, char *src_ofst, unsigned int src_sgmt)
+void String_Copy_Far_To_Near(int offset, char * src)
+{
+
+    // String_Copy_Far(near_buffer[offset], 0, src_ofst, src_sgmt);
+    String_Copy_Far((char *)near_buffer[offset], src);
+
+}
+
+
 // WZD s17p58
-// VGA_GetVertSpacing()
+// drake178: VGA_GetVertSpacing()
+int16_t Get_Font_Vertical_Spacing(void)
+{
+    int16_t return_value;
+
+    // return_value = (farpeekw(font_style_data, FONT_HDR_POS_HEIGHT) - farpeekb(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT))
+    return_value = (FONT_GET_HEIGHT(font_style_data) - FONT_GET_CURRENT_BASE_HEIGHT(font_style_data));
+
+    return return_value;
+
+}
 
 // WZD s17p59
 /*

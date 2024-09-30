@@ -346,12 +346,42 @@ void s01p16_empty_function(void)
     WIZARDS.EXE  seg009
 */
 
+// WZD s09p01
+// lbx_open()
+// WZD s09p02
+// lbx_close()
+// WZD s09p03
+// lbx_seek()
+// WZD s09p04
+// drake178: UU_DISK_GetFileSize()
+// WZD s09p05
+// lbx_read_sgmt()
+// WZD s09p06
+// lbx_read_ofst()
+
 // WZD s09p07
-void String_Copy_Far__STUB(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
+/*
+    Meh.
+*/ 
+// void String_Copy_Far(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt)
+void String_Copy_Far(char * dst, char * src)
 {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: String_Copy_Far__STUB()\n", __FILE__, __LINE__);
-#endif
+    char character;
+
+    while(1)
+    {
+        character = *src++;
+        *dst++ = character;
+        if(character == '\0')
+        {
+            break;
+        }
+    }
+
+}
+
+void String_Copy_Far__ASM(unsigned short int dst_ofst, unsigned short int dst_sgmt, unsigned short int src_ofst, unsigned short int src_sgmt)
+{
 
 //     if(dst_sgmt == 0)
 //     {
@@ -374,7 +404,4 @@ void String_Copy_Far__STUB(unsigned short int dst_ofst, unsigned short int dst_s
 // 
 //     } while(*(src_sgmt + src_ofst) != '\0')
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: String_Copy_Far__STUB()\n", __FILE__, __LINE__);
-#endif
 }

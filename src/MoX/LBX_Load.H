@@ -11,6 +11,27 @@
 
 
 
+enum enum_LBX_ERROR
+{
+    le_not_found          =  1,
+    le_corrupted          =  2,
+    le_low_RAM            =  3,
+    le_alloc_fail         =  4,
+    le_reload_fail        =  5,
+    le_bad_header         =  7,
+    le_entries_exceeded   =  8,
+    le_recsize_mismatch   =  9,
+    le_records_exceeded   = 10,
+    le_load_reg_first     = 11,
+    le_low_EMS            = 12,
+    le_cantload_reserved  = 13,
+    le_low_ResEM          = 14,
+    le_EM_swap_fail       = 15,
+    le_anim_over_64k      = 16
+};
+
+
+
 #define SZ_LBX_HDR_B          512
 #define SZ_LBX_HDR_PR          32  // 32 paragraphs * 16 bytes per paragaph = 512 bytes
 
@@ -94,6 +115,9 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 // WZD s10p13
 // ¿ MoO2: Get_Farload_Data_Record_Count() ?
 // LBX_GetEntryData()
+
+// WZD s10p14
+void UU_LBX_SetPath(char * path);
 
 // WZD s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages);

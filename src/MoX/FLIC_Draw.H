@@ -173,11 +173,11 @@ void Capture_Screen_Block(SAMB_ptr pict_seg, int16_t x1, int16_t y1, int16_t x2,
 */
 
 // WZD s29p01
-void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
+void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height);
 
 // WZD s29p02
 // MoO2  Module: animate  Remap_Draw() |-> Remap_Draw_Animated_Sprite(); ... Module: remap  unsigned int picture_remap_color_list[256]  Address: 02:001B479C
-void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data);
+void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height);
 
 
 /*
@@ -291,15 +291,14 @@ void Clear_Bitmap_Region(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_pt
 void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y);
 
 // WZD s30p35
-void Open_File_Animation__STUB(char * file_name, int16_t entry_num);
+// void Open_File_Animation(char * file_name, int16_t entry_num);
 
 // WZD s30p36
 // VGA_FILEH_DrawFrame()
 // Draw_File_Animation()
 
 // WZD s30p37
-// VGA_FILEH_Loader()
-// Load_File_Animation_Frame()
+// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page);
 
 // WZD s30p38
 // VGA_FILEH_GetFrame()

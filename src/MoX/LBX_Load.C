@@ -673,8 +673,33 @@ void LBX_Load_Data_Static(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head
 
 }
 
+// WZD s10p14
+// drake178: UU_LBX_SetPath()
+// MoO2  Module: farload  Set_Alternate_Path()
+/*
+; Unused in MoM
+;
+; sets a (path) string that LBX disk loader functions
+; will append the file name after, to try again if
+; they can't open the file with name only
+; returns a pointer to the static string variable
+*/
+/*
+MoO2
+XREF: 
+    Module: MOX2  Set_Mox_Alt_Path_()
+        main__0()
 
-// MGC s10p15
+*/
+/*
+    sets secondary_drive_path to the alternate path
+*/
+void Set_Alternate_Path(char * alternate)
+{
+    strcpy(secondary_drive_path, alternate);
+}
+
+// WZD s10p15
 void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16_t pages)
 {
     char buffer[120];
@@ -693,13 +718,13 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 
     switch (error_num)
     {
-        case 1:
+        case le_not_found:
             strcat(buffer, str_error_handler[2]);
             break;
-        case 2:
+        case le_corrupted:
             strcat(buffer, str_error_handler[3]);
             break;
-        case 3:
+        case le_low_RAM:
             strcpy(buffer, str_error_handler[4]);
             
 #pragma warning(suppress : 4996)
@@ -707,10 +732,10 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             strcat(buffer, buffer2);
             strcat(buffer, str_error_handler[5]);
             break;
-        case 4:
+        case le_alloc_fail:
             strcat(buffer, str_error_handler[6]);
             break;
-        case 5:
+        case le_reload_fail:
             strcat(buffer, str_error_handler[7]);
 #pragma warning(suppress : 4996)
             itoa(pages, buffer2, 10);
@@ -770,7 +795,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
 
 }
 
-// MGC s10p16
+// WZD s10p16
 void File_Name_Base(char * file_name)
 {
     int16_t itr;

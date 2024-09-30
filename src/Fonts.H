@@ -86,7 +86,7 @@ struct s_FONT_HEADER
     /*  14 */ uint8_t  normal_colors[COLOR_SET_COUNT];
     /*  24 */ uint8_t  highlight_colors[COLOR_SET_COUNT];
     /*  34 */ uint8_t  special_colors[COLOR_SET_COUNT];
-    /*  44 */ uint16_t current_base_height;
+    /*  44 */ uint16_t current_base_height;  // ¿ Get_Font_Vertical_Spacing() uses farpeekb() ?
     /*  46 */ uint16_t current_vertical_spacing;
     /*  48 */ uint16_t current_horizontal_spacing;
     /*  4A */ uint8_t  current_font_widths[96];
@@ -106,9 +106,9 @@ struct s_FONT_HEADER
 #define FONT_GET_SHADOW_FLAG(_ptr_)             ( GET_1B_OFS( (_ptr_), FONT_HDR_POS_SHADOW_FLAG       )             )
 #define FONT_GET_CURRENT_COLOR_SET(_ptr_)       ( GET_1B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_COLOR_SET )             )
 
-#define FONT_GET_CURRENT_BASE_HEIGHT            ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_BASE_HEIGHT        )    )
-#define FONT_GET_CURRENT_VERTICAL_SPACING       ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_VERTICAL_SPACING   )    )
-#define FONT_GET_CURRENT_HORIZONTAL_SPACING     ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING )    )
+#define FONT_GET_CURRENT_BASE_HEIGHT(_ptr_)            ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_BASE_HEIGHT        )    )
+#define FONT_GET_CURRENT_VERTICAL_SPACING(_ptr_)       ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_VERTICAL_SPACING   )    )
+#define FONT_GET_CURRENT_HORIZONTAL_SPACING(_ptr_)     ( GET_2B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING )    )
 
 // #define FONT_GET_CURRENT_FONT_WIDTH()           ( GET_1B_OFS( (_ptr_), FONT_HDR_POS_CURRENT_FONT_WIDTHS)       )
 
@@ -253,26 +253,35 @@ void Save_Alias_Colors(void);
 void Restore_Alias_Colors(void);
 
 // WZD s17p15
-// drake178: VGA_DrawFarString()
 // PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, char * string);
-// Print_Far()
+// int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Print_Far(int16_t x, int16_t y, char * src);
 
 // WZD s17p16
-// VGA_DrawCenteredFar()
+// int16_t Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Print_Centered_Far(int16_t x, int16_t y, char * src);
+
 // WZD s17p17
-// UU_VGA_DrawRtAlgFar()
+// int16_t Print_Right_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Print_Right_Far(int16_t x, int16_t y, char * src);
+
 // WZD s17p18
-// VGA_WndDrawFarString()
+// int16_t Clipped_Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Clipped_Print_Far(int16_t x, int16_t y, char * src);
+
 // WZD s17p19
-// UU_VGA_WndDrawCntrdFar()
+// int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, char * src);
+
 // WZD s17p20
-// UU_VGA_WndDrawRtAlgFar()
+// int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt);
+int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, char * src);
 
 // WZD s17p21
 int16_t Print_Integer(int16_t x, int16_t y, int16_t val);
 
 // WZD s17p22
-// int16_t UU_Print_Long(int16_t x, int16_t y, int32_t val);
+int16_t Print_Long(int16_t x, int16_t y, int32_t val);
 
 // WZD s17p23
 int16_t Print_Right(int16_t x, int16_t y, char * string);
@@ -287,26 +296,26 @@ int16_t Print_Integer_Right(int16_t x, int16_t y, int16_t val);
 int16_t Print_Integer_Centered(int16_t x, int16_t y, int16_t val);
 
 // WZD s17p27
-// drake178: UU_Print_Long_Right()
+int16_t Print_Long_Right(int16_t x, int16_t y, int32_t val);
+
 // WZD s17p28
-// drake178: VGA_WndDrawNumber()
+int16_t Clipped_Print_Integer(int16_t x, int16_t y, int16_t val);
+
 // WZD s17p29
-// drake178: UU_VGA_WndDrawLongN()
+int16_t Clipped_Print_Long(int16_t x, int16_t y, int32_t val);
+
 // WZD s17p30
-// drake178: UU_VGA_WndDrawRtAligned()
+int16_t Clipped_Print_Right(int16_t x, int16_t y, char * string);
 
 // WZD s17p31
 // drake178: VGA_WndDrawCentered()
 int16_t Clipped_Print_Centered(int16_t x, int16_t y, char * string);
 
 // WZD s17p32
-// drake178: UU_VGA_WndDrawRtAlgNum()
-// WZD s17p33
-// drake178: UU_VGA_WndDrawRtAlgLong()
+int16_t Clipped_Print_Integer_Right(int16_t x, int16_t y, int16_t val);
 
-// Clipped_Print_String()
-// Print_Clipped_Character()
-// Print_Clipped_Letter()
+// WZD s17p33
+int16_t Clipped_Print_Long_Right(int16_t x, int16_t y, int32_t val);
 
 // WZD s17p34
 int16_t Print_Full(int16_t x, int16_t y, char * string, int16_t right_side);
@@ -384,9 +393,11 @@ int16_t Get_Current_Highlight_Color(void);
 int16_t Get_Current_Special_Color(void);
 
 // WZD s17p57
-// UU_STR_CopyToNearLBX()
+// void String_Copy_Far_To_Near(int offset, char *src_ofst, unsigned int src_sgmt);
+void String_Copy_Far_To_Near(int offset, char * src);
+
 // WZD s17p58
-// VGA_GetVertSpacing()
+int16_t Get_Font_Vertical_Spacing(void);
 
 // WZD s17p59
 void Trim(char * string);

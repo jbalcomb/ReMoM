@@ -722,7 +722,7 @@ void SBK_BuildSpellbook__WIP(int16_t spell_list_type, int16_t page_spell_count)
 int16_t UU_IDK_turn_to_cast__STUB(int16_t player_idx)
 {
 
-
+    return 999;
 
 }
 
@@ -1324,7 +1324,7 @@ void BigBook__PageTurn__WIP(int16_t direction)
 
     Deactivate_Auto_Function();
 
-    Open_File_Animation__STUB(cnst_BookAnim_File2, 1);
+    // TODO  Open_File_Animation__STUB(cnst_BookAnim_File2, 1);
 
     Mark_Block(_screen_seg);
 

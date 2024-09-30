@@ -9,6 +9,55 @@ int16_t previous_screen;
 
 
 int16_t DBG_trigger_event = ST_FALSE;
+/*
+    et_None                 =  0,
+    et_Meteor               =  1,
+    et_Gift                 =  2,
+    et_Disjunction          =  3,
+    et_Marriage             =  4,
+    et_Earthquake           =  5,
+    et_Pirates              =  6,
+    et_Plague               =  7,
+    et_Rebellion            =  8,
+    et_Donation             =  9,
+    et_Depletion            = 10,
+    et_New_Mine             = 11,
+    et_Population_Boom      = 12,
+    et_Good_Moon            = 13,
+    et_Bad_Moon             = 14,
+    et_Conjunction_Chaos    = 15,
+    et_Conjunction_Nature   = 16,
+    et_Conjunction_Sorcery  = 17,
+    et_Mana_Short           = 18
+*/
+/*
+    Plague
+    Population Boom
+    Good Moon
+    Bad Moon
+    Conjuction - Chaos
+    Conjuction - Nature
+    Conjuction - Sorcery
+    Mana Short
+*/
+int16_t DBG_trigger_event_plague = ST_FALSE;
+int16_t DBG_trigger_event_population_boom = ST_FALSE;
+int16_t DBG_trigger_event_good_moon = ST_TRUE;
+int16_t DBG_trigger_event_bad_moon = ST_FALSE;
+int16_t DBG_trigger_event_conjunction_chaos = ST_FALSE;
+int16_t DBG_trigger_event_conjunction_nature = ST_FALSE;
+int16_t DBG_trigger_event_conjunction_sorcery = ST_FALSE;
+int16_t DBG_trigger_event_mana_short = ST_FALSE;
+/*
+    MSG_UnitLost_Count
+    MSG_UnitKilled_Count
+    MSG_CityGrowth_Count
+    MSG_CityDeath_Count
+    MSG_BldLost_Count
+    MSG_UEsLost_Count
+    MSG_CEsLost_Count
+    MSG_GEs_Lost
+*/
 int16_t DBG_trigger_offer_item = ST_FALSE;
 int16_t DBG_trigger_offer_merc = ST_FALSE;
 int16_t DBG_trigger_offer_hero = ST_FALSE;

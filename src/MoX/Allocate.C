@@ -70,8 +70,10 @@ int16_t near_buffer_used = 256;
 // WZD dseg:738E 00 00                                           farload_lbx_header_flag dw 0            ; DATA XREF: LBX_Load_Entry:loc_15981r ...
 // WZD dseg:7390 FF FF                                           farload_fptr dw 0FFFFh                  ; DATA XREF: LBX_Load_Entry:loc_159DAr ...
 // WZD dseg:7392 00 00                                           UU_gLbxLoadFormat dw 0                  ; DATA XREF: LBX_Load_Entry+47r ...
-// WZD dseg:7394                                                 ; char secondary_drive_path[]
-// WZD dseg:7394 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+secondary_drive_path db 32h dup(0)      ; DATA XREF: LBX_Load_Entry+EDr ...
+
+// WZD dseg:7394
+char secondary_drive_path[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 // WZD dseg:73C6 2E 4C 42 58 00                                  farload_file_extension db '.LBX',0      ; DATA XREF: LBX_Load_Entry+CAo ...
 // WZD dseg:73CB 2E 4C 42 58 20 5B 65 6E 74 72 79 20 00          cnst_LBXErr_Common1 db '.LBX [entry ',0 ; DATA XREF: Error_Handler+2Bo
 // WZD dseg:73D8 5D 20 00                                        cnst_LBXErr_Common2 db '] ',0           ; DATA XREF: Error_Handler+4Ao
@@ -471,8 +473,8 @@ uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head)
 // WZD s08p19
 void Allocation_Error(uint16_t error_num, uint16_t blocks)
 {
-    char buffer[120] = {0};
-    char buffer2[20] = {0};
+    char buffer[120] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer2[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     if(Check_Release_Version() == ST_TRUE)
     {
@@ -512,4 +514,217 @@ void Allocation_Error(uint16_t error_num, uint16_t blocks)
     }
 
     // TODO  Exit_With_Message(buffer);
+}
+
+
+
+/*
+    MoO2
+    Module: allocate
+*/
+
+/*
+MoO2
+Module: allocate
+    function (0 bytes) Allocate_Dos_Space
+    Address: 01:00110C62
+        Num params: 1
+        Return type: pointer (4 bytes) 
+        signed integer (4 bytes) 
+        Locals:
+            signed integer (4 bytes) size
+            pointer (4 bytes) name
+            pointer (4 bytes) header
+            signed integer (4 bytes) lsize
+*/
+/*
+    size, in paragraphs
+*/
+SAMB_ptr Allocate_Dos_Space(int32_t size)
+{
+    void * pointer;
+    SAMB_ptr header;
+    int32_t lsize;
+    SAMB_ptr SAMB_head;
+
+    lsize = size;
+
+    if((lsize & 0x3) != 0)
+    {
+        lsize = (lsize >> 2);
+        lsize = (lsize << 2);
+        lsize = (lsize + 4);
+    }
+
+    pointer = Allocate_Dos_Data_Space((lsize + 12));
+
+    if(pointer == ST_NULL)
+    {
+        // Allocation_Error(size);  // MoO2 has all as "Insufficient Memory!\n\n"
+    }
+
+    header = (SAMB_ptr)pointer;
+
+    // header[0] = 0;  // s_SAMB.used
+    // header[4] = size;  // s_SAMB.size
+    // header[8] = 0;  // s_SAMB.field_8
+
+    SAMB_head = (header + 12);
+
+    SA_SET_MEMSIG1(SAMB_head);  // DNE in MoO2 Dasm
+    SA_SET_MEMSIG2(SAMB_head);  // DNE in MoO2 Dasm
+    SA_SET_SIZE(SAMB_head, size);
+    SA_SET_USED(SAMB_head, 1);  // MoO2 Dasm shows 0
+    // ¿ DONT ?  SA_SET_MARK(SAMB_head, 1);  // MoO2 Dasm shows 0
+
+    return SAMB_head;
+}
+
+/*
+MoO2
+Module: allocate
+    function (0 bytes) Allocate_Dos_Data_Space
+    Address: 01:00110E36
+        Num params: 1
+        Return type: pointer (4 bytes) 
+        signed integer (4 bytes) 
+        Locals:
+            signed integer (4 bytes) size
+            pointer (4 bytes) name
+            signed integer (4 bytes) i
+            struct (28 bytes) inregs
+                    struct (28 bytes) x
+                            unsigned integer (4 bytes) eax
+                            unsigned integer (4 bytes) ebx
+                            unsigned integer (4 bytes) ecx
+                            unsigned integer (4 bytes) edx
+                            unsigned integer (4 bytes) esi
+                            unsigned integer (4 bytes) edi
+                            unsigned integer (4 bytes) cflag
+                    struct (28 bytes) w
+                            unsigned integer (2 bytes) ax
+                            unsigned integer (2 bytes) _1
+                            unsigned integer (2 bytes) bx
+                            unsigned integer (2 bytes) _2
+                            unsigned integer (2 bytes) cx
+                            unsigned integer (2 bytes) _3
+                            unsigned integer (2 bytes) dx
+                            unsigned integer (2 bytes) _4
+                            unsigned integer (2 bytes) si
+                            unsigned integer (2 bytes) _5
+                            unsigned integer (2 bytes) di
+                            unsigned integer (2 bytes) _6
+                            unsigned integer (4 bytes) cflag
+                    struct (16 bytes) h
+                            char (1 bytes) al
+                            char (1 bytes) ah
+                            unsigned integer (2 bytes) _1
+                            char (1 bytes) bl
+                            char (1 bytes) bh
+                            unsigned integer (2 bytes) _2
+                            char (1 bytes) cl
+                            char (1 bytes) ch
+                            unsigned integer (2 bytes) _3
+                            char (1 bytes) dl
+                            char (1 bytes) dh
+                            unsigned integer (2 bytes) _4
+            struct (28 bytes) outregs
+                    struct (28 bytes) x
+                            unsigned integer (4 bytes) eax
+                            unsigned integer (4 bytes) ebx
+                            unsigned integer (4 bytes) ecx
+                            unsigned integer (4 bytes) edx
+                            unsigned integer (4 bytes) esi
+                            unsigned integer (4 bytes) edi
+                            unsigned integer (4 bytes) cflag
+                    struct (28 bytes) w
+                            unsigned integer (2 bytes) ax
+                            unsigned integer (2 bytes) _1
+                            unsigned integer (2 bytes) bx
+                            unsigned integer (2 bytes) _2
+                            unsigned integer (2 bytes) cx
+                            unsigned integer (2 bytes) _3
+                            unsigned integer (2 bytes) dx
+                            unsigned integer (2 bytes) _4
+                            unsigned integer (2 bytes) si
+                            unsigned integer (2 bytes) _5
+                            unsigned integer (2 bytes) di
+                            unsigned integer (2 bytes) _6
+                            unsigned integer (4 bytes) cflag
+                    struct (16 bytes) h
+                            char (1 bytes) al
+                            char (1 bytes) ah
+                            unsigned integer (2 bytes) _1
+                            char (1 bytes) bl
+                            char (1 bytes) bh
+                            unsigned integer (2 bytes) _2
+                            char (1 bytes) cl
+                            char (1 bytes) ch
+                            unsigned integer (2 bytes) _3
+                            char (1 bytes) dl
+                            char (1 bytes) dh
+                            unsigned integer (2 bytes) _4
+*/
+SAMB_ptr Allocate_Dos_Data_Space(int32_t size)
+{
+    int32_t var_48 = 0;
+    int32_t var_44 = 0;
+    int32_t var_2C = 0;
+    int32_t var_14 = 0;
+    void * name = 0;
+    SAMB_ptr return_value = 0;
+
+    // 16-byte aligned
+    if((size & 0xF) != 0)
+    {
+        size = ((size / 16) + 1);
+    }
+    else
+    {
+        size = (size / 16);
+    }
+
+    if(size > 65535)
+    {
+        /*
+            https://open-watcom.github.io/open-watcom-v2-wikidocs/cpguide.html
+            DOS/4GW provides a DPMI interface through interrupt 0x31.
+            int386x( DPMI_INT, &regs, &regs, &sregs );
+            union REGS regs;
+            struct SREGS sregs;
+            regs.x.eax = 0x00000500;
+            memset( &sregs, 0, sizeof(sregs) );
+            sregs.es = FP_SEG( &MemInfo );
+            regs.x.edi = FP_OFF( &MemInfo );
+
+            https://open-watcom.github.io/open-watcom-v2-wikidocs/cpguide.html#DOSD4GW__Interrupt_31H_DPMI_Functions
+            DOS/4GW:  DOS Memory Management Services
+            Function 0100H
+            This function allocates memory from the DOS free memory pool.  This function returns both the real-mode segment and one or more descriptors that can be used by protected-mode applications.  Pass the following information:
+            BX = the number of paragraphs (16-byte blocks) requested
+
+            https://github.com/videogamepreservation/descent2/blob/master/SOURCE/BIOS/DPMI.C
+
+        */
+        // var_48 = 0x0100;
+        // var_44 = size;
+        // int386_(0x31, &var_48, &var_2C);
+        // if(var_14 == 0)
+        // {
+        //     var_08__name = (var_2C * 16);
+        // }
+        // else
+        // {
+        //     var_08__name = 0;
+        // }
+        // return_value = var_08__name;
+        name = malloc(size);
+    }
+    else
+    {
+        return_value = NULL;
+    }
+
+    return return_value;
+
 }

@@ -847,18 +847,19 @@ int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t 
 // MoO2  Module: INITSHIP  Best_..._Weapon_()
 int16_t City_Best_Weapon(int16_t city_idx)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t weapon_quality;
-    int16_t city_wp;
-    int16_t useable_map_squares;
-    int16_t terrain_special;
-    int16_t itr;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t weapon_quality = 0;
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t terrain_special = 0;
+    int16_t itr = 0;  // _DI_
 
     weapon_quality = wq_Normal;
 
     if(
-        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Built) ||
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Built)
+        ||
         (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Replaced)
     )
     {
@@ -872,13 +873,14 @@ int16_t City_Best_Weapon(int16_t city_idx)
         {
             terrain_special = *(TBL_Terr_Specials + (city_wp * WORLD_SIZE) + (wy_array[itr] * WORLD_WIDTH) + wx_array[itr]);
 
-            if(terrain_special == 7)  /* TS_AdamantiumOre */
+            if(terrain_special == ts_Adamantium)
             {
                 weapon_quality = wq_Adamantium;
             }
 
             if(
-                (terrain_special == 6) &&  /* TS_MithrilOre */
+                (terrain_special == ts_Mithril)
+                &&
                 (weapon_quality != wq_Adamantium)
             )
             {
@@ -1367,18 +1369,18 @@ XREF:
 */
 void All_City_Nightshade_Count(void)
 {
-    int16_t wy_array[CITY_AREA_SIZE];
-    int16_t wx_array[CITY_AREA_SIZE];
-    int16_t city_wp__2;  // ; Plane would have sufficed just fine, no need to have 2 of this
-    int16_t useable_map_squares;
-    int16_t city_wp;
-    int16_t city_population;
-    int16_t Unused_StackVar;
-    int16_t nightshade_count;
-    int16_t city_wy;
-    int16_t city_wx;
-    int16_t itr_cities;  // _SI_
-    int16_t itr;  // _DI_
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_wp__2 = 0;  // ; Plane would have sufficed just fine, no need to have 2 of this
+    int16_t useable_map_squares = 0;
+    int16_t city_wp = 0;
+    int16_t city_population = 0;
+    int16_t Unused_StackVar = 0;
+    int16_t nightshade_count = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t itr_cities = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -1400,7 +1402,9 @@ void All_City_Nightshade_Count(void)
         if(
             (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
             ||
-            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
+            /* Severity	Code	Description	Project	File	Line	Suppression State                                                                   */
+            /* Warning	C6287	Redundant code : the left and right sub - expressions are identical.ReMoM	C : \STU\devel\ReMoM\src\Terrain.C	1402    */
+            (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)  /* NOTE: actually, definitely duplicated */
             ||
             (_CITIES[itr_cities].bldg_status[ TEMPLE           ] != bs_NotBuilt)
             ||

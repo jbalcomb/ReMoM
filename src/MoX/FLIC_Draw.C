@@ -18,7 +18,10 @@ MoO2 Module: shear
 #include "MoX_TYPE.H"
 #include "MoX_BASE.H"
 #include "FLIC_Draw.H"
+#include "LBX_Load.H"
 #include <assert.h>
+
+
 
 /*
     Fonts
@@ -55,6 +58,19 @@ extern uint8_t* current_video_page;
 void Set_Page_Off(void);
 
 
+
+// WZD dseg:E860                                                 BEGIN: seg030
+
+// WZD dseg:E860
+char file_animation_file_name[16];
+
+// WZD dseg:E870
+int16_t file_animation_entry_num;
+
+// WZD dseg:E870                                                 END: seg030
+
+
+
 /*
     WZD  seg021
 */
@@ -69,9 +85,13 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     int16_t count;
     byte_ptr flic_palette_data;
     int16_t itr;
+    uint16_t DBG_flic_palette_header_frame_palettes;
+    uint16_t DBG_frame_palette_data_offset;
+    uint16_t DBG_flic_palette_data_offset;
 
     p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
 
+    DBG_flic_palette_header_frame_palettes = FLIC_GET_FRAME_PALETTES(p_FLIC_File);
     if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
     {
         start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
@@ -80,9 +100,14 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     }
     else
     {
+        DBG_frame_palette_data_offset = FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File, frame_index);
+        DBG_flic_palette_data_offset = FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
         start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
         count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
+        flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
+        start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
+        count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
     }
 
     // // for(itr = start; itr < count; itr++)
@@ -183,7 +208,8 @@ void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x
 */
 
 // WZD s29p01
-void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data)
+// 1oom  lbxgfx_draw_pixels_fmt0()
+void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height)
 {
     unsigned char * bbuff_pos;
     unsigned char * bbuff;
@@ -194,13 +220,23 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
     unsigned char sequence_byte_count;
     unsigned char delta_byte_count;
     unsigned char itr_op_repeat;
+    byte_ptr DBG_frame_data;
+    byte_ptr DBG_frame_data_end;
+    uint16_t DBG_frame_data_pos;
+
+    DBG_frame_data = frame_data;
+    DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
 
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 
-    while (width--)
+    while(width--)
     {
         bbuff = bbuff_pos++;
+
         packet_op = *frame_data++;
+        DBG_frame_data_pos = (frame_data - DBG_frame_data);
+        // assert(frame_data <= DBG_frame_data_end);
+
         if(packet_op == 0xFF)  /* Type: skip */
         {
             continue;
@@ -256,6 +292,7 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
 
 // WZD s29p02
 // MoO2  Module: animate  Remap_Draw() |-> Remap_Draw_Animated_Sprite(); ... Module: remap  unsigned int picture_remap_color_list[256]  Address: 02:001B479C
+// 1oom  lbxgfx_draw_pixels_fmt1()
 /*
     MoO2
     Module: animate
@@ -288,7 +325,7 @@ void FLIC_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr f
 /*
     draw a FLIC frame, using the remap colors
 */
-void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data)
+void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte_ptr frame_data, int16_t DBG_height)
 {
     unsigned char * bbuff_pos;  // TODO rename all these to screen_start
     unsigned char * bbuff;  // TODO rename all these to screen_pos
@@ -304,6 +341,12 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
     uint8_t remap_block_index;
     uint8_t remap_color;
 
+    byte_ptr DBG_frame_data;
+    byte_ptr DBG_frame_data_end;
+    uint16_t DBG_frame_data_pos;
+
+    DBG_frame_data = frame_data;
+    DBG_frame_data_end = (DBG_frame_data + (width * DBG_height));
 
     bbuff_pos = current_video_page + ((y_start * SCREEN_WIDTH) + x_start);
 //     screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
@@ -315,7 +358,11 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
     while(width--)
     {
         bbuff = bbuff_pos++;
+
         packet_op = *frame_data++;  // Frame Byte #1: Op/Count
+        DBG_frame_data_pos = (frame_data - DBG_frame_data);
+        // assert(frame_data <= DBG_frame_data_end);
+
         if(packet_op == 0xFF)  /* Type: skip */
         {
             continue;
@@ -552,6 +599,9 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     unsigned short flic_frame_offset_ofst;
     byte_ptr p_FLIC_Frame;
     uint8_t remap_flag;
+    uint16_t DBG_palette_header_offset;
+    int16_t DBG_width;
+    int16_t DBG_height;
 
     // ¿ MEM_Copy_Far(&pict_hdr, 0, 0, picture, 16) ?
 
@@ -566,6 +616,7 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
         FLIC_SET_CURRENT_FRAME(picture, FLIC_GET_LOOP_FRAME(picture));
     }
 
+    DBG_palette_header_offset = FLIC_GET_PALETTE_HEADER_OFFSET(picture);
     if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
     {
         FLIC_Load_Palette(picture, current_frame);
@@ -581,14 +632,19 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 
     remap_flag = FLIC_GET_REMAP_FLAG(picture);
 
+    DBG_width = FLIC_GET_WIDTH(picture);
+    DBG_height = FLIC_GET_HEIGHT(picture);
+    assert(DBG_width <= SCREEN_WIDTH);
+    assert(DBG_height <= SCREEN_HEIGHT);
+
     if(remap_flag == ST_FALSE)
     {
-        FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+        FLIC_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame, DBG_height);
     }
     else
     {
         // MoO2  Module: animate  Remap_Draw_Animated_Sprite(x_start, y_start, frame_data)
-        FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame);
+        FLIC_Remap_Draw_Frame(x_start, y_start, FLIC_GET_WIDTH(picture), p_FLIC_Frame, DBG_height);
     }
 
 }
@@ -597,7 +653,7 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
 // MoO2  
 void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 {
-    struct s_FLIC_HDR animation_header;
+    struct s_FLIC_HDR l_animation_header;
 // var_16= word ptr -16h
 // frame_offset_sgmt= word ptr -14h
 // frame_offset_ofst= word ptr -12h
@@ -635,16 +691,16 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
 
 
     // _fmemcpy(animation_header, 0, 0, picture, 16)
-    memcpy(&animation_header, picture, 16);
+    memcpy(&l_animation_header, picture, 16);
 
-    x2 = x + animation_header.width - 1;
+    x2 = x + l_animation_header.width - 1;
 
     if(x2 < screen_window_x1)
     {
         return;
     }
 
-    y2 = y + animation_header.height - 1;
+    y2 = y + l_animation_header.height - 1;
 
     if(y2 < screen_window_y1)
     {
@@ -691,21 +747,21 @@ void Clipped_Draw(int16_t x, int16_t y, SAMB_ptr picture)
         actual_height = y2 - start_y + 1;
     }
 
-    current_frame = animation_header.current_frame;
-    animation_header.current_frame += 1;
+    current_frame = l_animation_header.current_frame;
+    l_animation_header.current_frame += 1;
 
-    if(animation_header.current_frame < animation_header.frame_count)
+    if(l_animation_header.current_frame < l_animation_header.frame_count)
     {
-        FLIC_SET_CURRENT_FRAME(picture, animation_header.current_frame);
+        FLIC_SET_CURRENT_FRAME(picture, l_animation_header.current_frame);
     }
     else
     {
-        FLIC_SET_CURRENT_FRAME(picture, animation_header.loop_frame);
+        FLIC_SET_CURRENT_FRAME(picture, l_animation_header.loop_frame);
     }
 
 
     // if((FLIC_GET_PALETTE_HEADER_OFFSET(picture) != 0))
-    if(animation_header.palette_header_offset != 0)
+    if(l_animation_header.palette_header_offset != 0)
     {
         FLIC_Load_Palette(picture, current_frame);
     }
@@ -1320,33 +1376,167 @@ void Scale_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
 // VGA_FILEH_LoadFirst()
 // MoO2  Module: file_ani  Open_File_Animation()
 /*
+MoO2
+Module: file_ani
+    function (0 bytes) Open_File_Animation
+    Address: 01:0012C607
+        Num params: 2
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            pointer (4 bytes) file_name
+            signed integer (2 bytes) entry_num
+            signed integer (4 bytes) i
+            signed integer (2 bytes) x2
+            signed integer (2 bytes) y2
+            signed integer (2 bytes) clip
+            signed integer (4 bytes) frame_list
+            pointer (4 bytes) frame_offset
+            pointer (4 bytes) frame_offset_table
+            signed integer (4 bytes) file_index
+            signed integer (4 bytes) space_remaining
+            signed integer (4 bytes) current_extended_flag
+            unsigned integer (4 bytes) num_blocks
+            unsigned integer (4 bytes) current_seg
+            unsigned integer (4 bytes) read_size
+            signed integer (4 bytes) foffset
+            signed integer (4 bytes) entry_start
+            signed integer (4 bytes) entry_end
+            signed integer (4 bytes) entry_length
+            array (60 bytes) full_file_path
+            Num elements:   60, Type:                unsigned integer (4 bytes) 
+*/
+/*
 ; loads up to 16300 bytes from the beginning of an LBX
 ; file entry into the first (index 0) logical page of
 ; the VGAFILEH EMM handle, and copies the image header
 ; into the VGA_FILE_H_Hdr allocation, filling out the
 ; handle and data offset fields
 */
-void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
-{
-
-
-
-}
+// void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
+// {
+// 
+//     strcpy(file_animation_file_name, file_name);
+// 
+//     file_animation_entry_num = entry_num;
+// 
+// 
+// // xor     ax, ax
+// // push    ax                              ; logical_page
+// // xor     ax, ax
+// // mov     dx, 16300
+// // push    ax
+// // push    dx                              ; size
+// // xor     ax, ax
+// // xor     dx, dx
+// // push    ax
+// // push    dx                              ; offset
+// // nop
+// // push    cs
+// // Load_File_Animation_Frame__STUB();
+// // // Open_File_Animation__STUB() pushes are 32-bit value
+//     Load_File_Animation_Frame__STUB(0, 16300, 0, 0);
+// 
+// 
+// // push    [EmmHndlNbr_VGAFILEH]           ; EMM_Handle
+// // mov     ax, 16
+// // push    ax                              ; Amt_Bytes
+// // xor     ax, ax
+// // xor     dx, dx
+// // push    ax
+// // push    dx                              ; Data_Offset
+// // push    [file_animation_header]         ; Target_Seg
+// // xor     ax, ax
+// // push    ax                              ; Target_Off
+// // EMM_MapnRead();
+// // // Open_File_Animation__STUB() pushes are 32-bit value
+// 
+// 
+//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_HANDLE_NUMBER, EmmHndlNbr_VGAFILEH);
+//     // farpokew(file_animation_header, FLIC_HDR_POS_EMM_LOGICAL_PAGE_OFFSET, 0);
+// 
+// 
+// }
 
 // WZD s30p36
-// VGA_FILEH_DrawFrame()
+// drake178: VGA_FILEH_DrawFrame()
+/*
+; loads an image frame from the current VGA_Source_File
+; into the VGAFILEH EMM handle starting at page index
+; 1, and then draws it into the current draw frame
+*/
 // Draw_File_Animation()
 
 // WZD s30p37
-// VGA_FILEH_Loader()
+// drake178: VGA_FILEH_Loader()
 // Load_File_Animation_Frame()
+/*
+; loads data from a specific entry of an LBX file to
+; the specified logical page in the VGAFILEH EMM handle
+; the file name is set through VGA_Source_File, while
+; the entry index is specified in VGA_Source_Entry
+; passing a large enough byte count will load from the
+; offset to the end of the entry, never beyond
+; has a minor bug about error reporting
+*/
+/*
+
+XREF:
+    Open_File_Animation__WIP()
+    Draw_File_Animation__WIP()
+
+*/
+// void Load_File_Animation_Frame__STUB(int32_t offset, int32_t size, int16_t logical_page)
+// {
+//     char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+//     int32_t entry_start = 0;
+//     int32_t entry_length = 0;
+//     int32_t Total_Bytes_Left = 0;
+//     int16_t read_size = 0;
+//     int16_t Page_Frame_Segment = 0;
+//     int16_t Page_Count = 0;
+//     int16_t current_page = 0;  // _SI_
+//     int16_t lbx_fptr = 0;  // _DI_
+//     // ; BUG: should not allocate a local string
+// 
+//     // if(_VGAFILEH_seg == ST_NULL)
+//     {
+//         // Error_Handler(file_animation_file_name, le_low_EMS, 0);
+//         Error_Handler(file_animation_file_name, le_low_EMS, 0, ST_NULL);
+//     }
+// 
+//     // ; finds and opens the LBX file if it wasn't already,
+//     // ; loads its header data, and fills out the 32bit
+//     // ; returns values pointed to by the arguments
+//     // ; returns the file handle (unclosed), quits on errors
+//     lbx_fptr = LBX_GetEntryData__WIP(file_animation_file_name, file_animation_entry_num, &entry_start, &entry_length, 0);
+// 
+//     entry_start += offset;
+// 
+//     entry_length -= offset;
+// 
+//     if(entry_length <= 0)
+//     {
+//         // ; BUG: should use the global variable
+//         // Error_Handler(file_name, le_corrupted, file_animation_entry_num);
+//         Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
+//     }
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// }
 
 // WZD s30p38
-// VGA_FILEH_GetFrame()
+// drake178: VGA_FILEH_GetFrame()
 // Get_File_Animation_Frame()
 
 // WZD s30p39
-// VGA_FILEH_SetFrame()
+// drake178: VGA_FILEH_SetFrame()
 // Set_File_Animation_Frame()
 
 

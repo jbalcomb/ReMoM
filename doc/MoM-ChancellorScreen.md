@@ -8,10 +8,20 @@ ovr126
 
 
 
-sub_A9A30                                      ovr126
-sub_A9A77                                      ovr126
-IDK_Chancellor_EoTSummary_EventsAnimScroll     ovr126
-sub_AA1A9                                      ovr126
+Chancellor_Screen_Draw__WIP()
+
+Chancellor_Screen_Load()
+
+Chancellor_Screen__WIP()
+
+Chancellor_Screen_Scroll_Draw__WIP()
+
+
+## Chancellor_Screen_Load()
+
+XREF:
+    Chancellor_Screen__STUB()
+    NX_j_Chancellor_Screen_Load()
 
 
 

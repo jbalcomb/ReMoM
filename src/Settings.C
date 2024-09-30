@@ -202,16 +202,16 @@ void Write_MAGIC_SET(void)
 // WZD o125p01
 void Settings_Screen(void)
 {
-    char found_file[30];
-    int16_t Local_Settings_Tops[13];
-    int16_t Option_Control_Indices[19];
-    FILE * file_pointer;
-    int16_t first_draw_done;
-    int16_t hotkey_ESC;
-    int16_t input_field_idx;
-    int16_t leave_screen;
-    int16_t itr;  // _SI_
-    int16_t IDK;  // _DI_
+    char found_file[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Local_Settings_Tops[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Option_Control_Indices[19] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    FILE * file_pointer = 0;
+    int16_t first_draw_done = 0;
+    int16_t hotkey_ESC = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
 
 // TODO  lea     ax, [bp+Local_Settings_Tops]
 // TODO  push    ss
@@ -602,7 +602,7 @@ void Set_Default_Game_Settings(void)
     magic_set.Enemy_Spells = ST_TRUE;
     magic_set.Random_Events = ST_TRUE;
     magic_set.EoT_Wait = ST_TRUE;
-    magic_set.EoT_Summary = ST_TRUE;
+    magic_set.end_of_turn_summary = ST_TRUE;
     magic_set.Raze_City = ST_TRUE;
     magic_set.spell_book_ordering = ST_TRUE;
     magic_set.Strategic_Combat = ST_FALSE;

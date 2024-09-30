@@ -187,10 +187,10 @@ retf
 // WZD o60p04
 void Next_Turn_Proc(void)
 {
-    char temp_string[LEN_TEMP_STRING];
-    int16_t orig_map_plane;
-    int16_t itr_msg;  // _SI_
-    int16_t curr_prod_idx;  // _DI_
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t orig_map_plane = 0;
+    int16_t itr_msg = 0;  // _SI_
+    int16_t curr_prod_idx = 0;  // _DI_
 
     Delete_Dead_Units();
 
@@ -211,9 +211,9 @@ void Next_Turn_Proc(void)
     All_Units_In_Towers();
 
 
-    if(magic_set.EoT_Summary == ST_TRUE)
+    if(magic_set.end_of_turn_summary == ST_TRUE)
     {
-        // TODO  Chancellor_Screen__STUB();
+        Chancellor_Screen__WIP(0);
     }
 
 
@@ -431,7 +431,7 @@ void Next_Turn_Calc(void)
     Next_Turn_Process_Purify();
 
 
-    MSG_Clear();
+    Initialize_Reports();
 
 
     if(g_TimeStop_PlayerNum != 0)
@@ -1677,6 +1677,8 @@ void All_City_Calculations(void)
 
 // WZD o140p02
 // drake178: MSG_Clear()
+// MoO2  Module: REPORT  Initialize_Reports_()
+// ... memset_(_something_interesting_happened, 8, 0);
 /*
     Unit: Lost, Killed
     UE, CE, OE: Lost
@@ -1686,7 +1688,7 @@ void All_City_Calculations(void)
 
     does not reset g_bldg_msg_ctr
 */
-void MSG_Clear(void)
+void Initialize_Reports(void)
 {
     MSG_UnitLost_Count = 0;
     MSG_UnitKilled_Count = 0;
