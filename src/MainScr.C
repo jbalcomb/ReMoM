@@ -959,69 +959,69 @@ o57p10  ? Move_Stack_DirKey() ?
 // WZD 057p01
 void Main_Screen(void)
 {
-    int16_t hotkey_idx_Alt_P;
-    int16_t hotkey_idx_U;
+    int16_t hotkey_idx_Alt_P = 0;
+    int16_t hotkey_idx_U = 0;
     char temp_string[10];
-    int16_t hotkey_idx_F9;
-    int16_t hotkey_idx_F8;
-    int16_t hotkey_idx_F7;
-    int16_t hotkey_idx_F6;
-    int16_t hotkey_idx_F5;
-    int16_t hotkey_idx_F4;
-    int16_t hotkey_idx_F3;
-    int16_t hotkey_idx_F2;
-    int16_t hotkey_idx_F1;
-    int16_t IDK_EoT_flag;
-    int16_t DBG_Alt_A__TurnCount;
-    int16_t hotkey_idx_Alt_A;
-    int16_t hotkey_idx_RightDown;
-    int16_t hotkey_idx_Down;
-    int16_t hotkey_idx_LeftDown;
-    int16_t hotkey_idx_Right;
-    int16_t hotkey_idx_Left;
-    int16_t hotkey_idx_RightUp;
-    int16_t hotkey_idx_LeftUp;
-    int16_t hotkey_idx_Up;
-    int16_t eot_gold_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
-    int16_t eot_food;  // only used for 'Next Turn'; set by Player_Resource_Income_Total()
-    int16_t eot_mana_nop;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
-    int16_t hotkey_idx_Alt_N;
-    int16_t hotkey_idx_Shift_3;
-    int16_t hotkey_idx_Alt_K;
-    int16_t hotkey_idx_F10;
-    int16_t hotkey_idx_Alt_T;
-    int16_t unit_stack_hmoves;
-    int16_t unit_stack_world_y;
-    int16_t unit_stack_world_x;
-    int16_t IDK_unit_stack_in_view;
-    int16_t entity_idx;  // AKA "input"
-    int16_t hotkey_idx_Q;
-    int16_t hotkey_idx_C;
-    int16_t hotkey_idx_Shift_2;
-    int16_t hotkey_idx_Shift_1;
-    int16_t Unused_Button_Index;
-    int16_t hotkey_idx_X;
-    int16_t selected_unit_wy;
-    int16_t selected_unit_wx;
-    int16_t usw_y2;
-    int16_t usw_x2;
-    int16_t target_world_y;  // doubles as usw_y1
-    int16_t target_world_x;  // doubles as usw_x1
-    int16_t unit_idx;
-    int16_t allow_units_to_die;
-    int16_t Stack_Index;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
-    int16_t itr_stack;
+    int16_t hotkey_idx_F9 = 0;
+    int16_t hotkey_idx_F8 = 0;
+    int16_t hotkey_idx_F7 = 0;
+    int16_t hotkey_idx_F6 = 0;
+    int16_t hotkey_idx_F5 = 0;
+    int16_t hotkey_idx_F4 = 0;
+    int16_t hotkey_idx_F3 = 0;
+    int16_t hotkey_idx_F2 = 0;
+    int16_t hotkey_idx_F1 = 0;
+    int16_t IDK_EoT_flag = 0;
+    int16_t DBG_Alt_A__TurnCount = 0;
+    int16_t hotkey_idx_Alt_A = 0;
+    int16_t hotkey_idx_RightDown = 0;
+    int16_t hotkey_idx_Down = 0;
+    int16_t hotkey_idx_LeftDown = 0;
+    int16_t hotkey_idx_Right = 0;
+    int16_t hotkey_idx_Left = 0;
+    int16_t hotkey_idx_RightUp = 0;
+    int16_t hotkey_idx_LeftUp = 0;
+    int16_t hotkey_idx_Up = 0;
+    int16_t eot_gold_nop = 0;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
+    int16_t eot_food = 0;  // only used for 'Next Turn'; set by Player_Resource_Income_Total()
+    int16_t eot_mana_nop = 0;  // only used for 'Next Turn'; place-holder, not used; set by Player_Resource_Income_Total()
+    int16_t hotkey_idx_Alt_N = 0;
+    int16_t hotkey_idx_Shift_3 = 0;
+    int16_t hotkey_idx_Alt_K = 0;
+    int16_t hotkey_idx_F10 = 0;
+    int16_t hotkey_idx_Alt_T = 0;
+    int16_t unit_stack_hmoves = 0;
+    int16_t unit_stack_world_y = 0;
+    int16_t unit_stack_world_x = 0;
+    int16_t IDK_unit_stack_in_view = 0;
+    int16_t entity_idx = 0;  // AKA "input"
+    int16_t hotkey_idx_Q = 0;
+    int16_t hotkey_idx_C = 0;
+    int16_t hotkey_idx_Shift_2 = 0;
+    int16_t hotkey_idx_Shift_1 = 0;
+    int16_t Unused_Button_Index = 0;
+    int16_t hotkey_idx_X = 0;
+    int16_t selected_unit_wy = 0;
+    int16_t selected_unit_wx = 0;
+    int16_t usw_y2 = 0;
+    int16_t usw_x2 = 0;
+    int16_t target_world_y = 0;  // doubles as usw_y1
+    int16_t target_world_x = 0;  // doubles as usw_x1
+    int16_t unit_idx = 0;
+    int16_t allow_units_to_die = 0;
+    int16_t Stack_Index = 0;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
+    int16_t itr_stack = 0;
     // itr__stack_idx__player_idx__turns_til_return
-    int16_t turns_til_return;  // only used for 'Spells Button'; turn count to complete 'Spell of Return'
-    int16_t leave_screen_flag;
-    int16_t screen_changed;
-    int16_t input_field_idx;
-    int16_t mouse_x;
-    int16_t mouse_y;
-    int16_t itr_units;
+    int16_t turns_til_return = 0;  // only used for 'Spells Button'; turn count to complete 'Spell of Return'
+    int16_t leave_screen_flag = 0;
+    int16_t screen_changed = 0;
+    int16_t input_field_idx = 0;
+    int16_t mouse_x = 0;
+    int16_t mouse_y = 0;
+    int16_t itr_units = 0;
 
-    int16_t hotkey_idx_D ;  // debug_hotkey
-    int16_t hotkey_idx_T ;  // test_hotkey
+    int16_t hotkey_idx_D = 0;  // debug_hotkey
+    int16_t hotkey_idx_T = 0;  // test_hotkey
 
 
 #ifdef STU_DEBUG

@@ -472,28 +472,58 @@ int16_t Unit_Has_Swimming(int16_t unit_idx)
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
 {
-    uint32_t UU_item_enchantments;
-    int16_t has_watertravel_item;
+// Meh.    uint32_t UU_item_enchantments = 0;
+// Meh.    int16_t has_watertravel_item = 0;  // DNE in Dasm
 
-    if(_UNITS[unit_idx].Hero_Slot != -1)
-    {
-        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+// Meh?    has_watertravel_item = ST_FALSE;
 
-        if(
-            ( (global_battle_unit->item_enchantments & UE_WINDWALKING) != 0) ||
-            ( (global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
+// Meh.    if (_UNITS[unit_idx].Hero_Slot != -1)
+// Meh.    {
+// Meh.        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+// Meh.
+// Meh.        if (
+// Meh.            ((global_battle_unit->item_enchantments & UE_WINDWALKING) != 0)
+// Meh.            ||
+// Meh.            ((global_battle_unit->item_enchantments & UE_FLIGHT) != 0)
+// Meh.            )
+// Meh.        {
+// Meh.            has_watertravel_item = ST_TRUE;
+// Meh.        }
+// Meh.
+// Meh.    }
+// Meh.    else
+// Meh.    {
+// Meh.        has_watertravel_item = ST_FALSE;
+// Meh.    }
+// Meh.
+// Meh.    return has_watertravel_item;
+
+// Meh?    if(
+// Meh?        (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
+// Meh?        ||
+// Meh?        ((UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
+// Meh?    )
+// Meh?    {
+// Meh?        return ST_FALSE;
+// Meh?    }
+// Meh?    else
+// Meh?    {
+// Meh?        return ST_TRUE;
+// Meh?    }
+
+    if (
+        (_UNITS[unit_idx].Hero_Slot == ST_UNDEFINED)
+        ||
+        ((BU_Apply_Item_Powers(unit_idx, global_battle_unit) & UE_WATERWALKING) == 0)
         )
-        {
-            has_watertravel_item = ST_TRUE;
-        }
-
+    {
+        return ST_FALSE;
     }
     else
     {
-        has_watertravel_item = ST_FALSE;
+        return ST_TRUE;
     }
 
-    return has_watertravel_item;
 }
 
 

@@ -40,6 +40,12 @@ MoM_MoX.C/.H
 ~== MoM <===> MoM_MoX <===> MoX_MoM <===> MoX
 
 
+What about the PFL stuff?
+...MoX_DIR.H...win_DIR.C...
+¿ game-engine has it's own platform-layer ?
+
+
+
 MoO2
 FILEDEF & INITGAME
 ..."Saved_Game"..."Settings"...

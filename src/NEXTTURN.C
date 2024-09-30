@@ -3227,18 +3227,18 @@ void Heal_All_Units(void)
 */
 void Do_All_Units_XP_Check_(void)
 {
-    struct s_BATTLE_UNIT battle_unit;
-    int16_t Processed_Hero_List[NUM_HEROES];
-    int16_t troop_list[MAX_STACK];
-    int16_t New_Level;
-    int16_t hero_unit_idx;
-    int16_t troop_count;
-    int16_t Highest_Armsmaster_XP;
-    int16_t XP_Gain;
-    int16_t itr_heroes;
-    int16_t itr_units;  // _SI_
-    int16_t itr_players;  // _SI_
-    int16_t itr_troops;  // _DI_
+    /* TODO  init to zeroes (But, HOW!?!?!) */  struct s_BATTLE_UNIT battle_unit;
+    int16_t Processed_Hero_List[NUM_HEROES] = { 0, 0, 0, 0, 0, 0 };
+    int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t New_Level = 0;
+    int16_t hero_unit_idx = 0;
+    int16_t troop_count = 0;
+    int16_t Highest_Armsmaster_XP = 0;
+    int16_t XP_Gain = 0;
+    int16_t itr_heroes = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_players = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -3340,7 +3340,15 @@ void Do_All_Units_XP_Check_(void)
                     {
                         XP_Gain = 0;
 
-                        Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
+                        /*
+                            ¿ BUGBUG ?
+                            Run-Time Check Failure #2 - Stack around the variable 'Processed_Hero_List' was corrupted.
+                        */
+                        // Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
+                        if(_UNITS[troop_list[itr_troops]].Hero_Slot > ST_UNDEFINED)
+                        {
+                            Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;
+                        }
 
                         if(_UNITS[troop_list[itr_troops]].Hero_Slot > -1)
                         {

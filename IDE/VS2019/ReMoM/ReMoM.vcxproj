@@ -56,7 +56,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +123,6 @@
     <ClInclude Include="..\..\..\src\MoM_DEF.H" />
     <ClInclude Include="..\..\..\src\MovePath.H" />
     <ClInclude Include="..\..\..\src\MoX.H" />
-    <ClInclude Include="..\..\..\src\MoX_DIR.H" />
     <ClInclude Include="..\..\..\src\MoX_DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />

@@ -14,6 +14,7 @@
 #include "Allocate.H"
 #include "CFG.H"
 #include "DBG.H"
+#include "DIR.H"
 #include "Exit.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
