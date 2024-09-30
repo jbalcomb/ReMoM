@@ -17,7 +17,7 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

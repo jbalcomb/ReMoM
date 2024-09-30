@@ -3,14 +3,7 @@
     ~== MoO2 Module: video
     SimTex progression to supporting multiple video modes and pixel formats
 */
-#include "MoX.H"
-#include "Video2.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
-
-#include <string.h>  /* memset() */
+#include "MoM.H"
 
 
 

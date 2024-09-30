@@ -11,7 +11,7 @@
 #ifndef CITYLIST_H
 #define CITYLIST_H
 
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

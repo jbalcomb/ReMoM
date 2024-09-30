@@ -392,7 +392,7 @@ void TILE_VisibilityUpdt(void)
         }
     }
 
-    Update_Scouted_And_Contacted();
+    Update_Scouted_And_Contacted__WIP();
     // TST  Validate_Square_Scouted(18,11,0);
 
 }

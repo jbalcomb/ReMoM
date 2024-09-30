@@ -340,21 +340,6 @@ extern "C" {
 
 
 
-extern int16_t DBG_trigger_event;
-extern int16_t DBG_trigger_event_plague;
-extern int16_t DBG_trigger_event_population_boom;
-extern int16_t DBG_trigger_event_good_moon;
-extern int16_t DBG_trigger_event_bad_moon;
-extern int16_t DBG_trigger_event_conjunction_chaos;
-extern int16_t DBG_trigger_event_conjunction_nature;
-extern int16_t DBG_trigger_event_conjunction_sorcery;
-extern int16_t DBG_trigger_event_mana_short;
-extern int16_t DBG_trigger_offer_item;
-extern int16_t DBG_trigger_offer_merc;
-extern int16_t DBG_trigger_offer_hero;
-
-
-
 /*
     Exit
 */
@@ -445,6 +430,9 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     WIZARDS.EXE  ovr067, ovr068, ovr150
     MainScr_Maps.C
 */
+extern SAMB_ptr m_terrain_lbx_002;
+extern uint16_t * m_terrain_lbx_001;
+extern SAMB_ptr m_terrain_lbx_000;
 // WZD o67p04
 void Set_Draw_Active_Stack_Always(void);
 // WZD o67p06
@@ -506,15 +494,6 @@ enum e_SCREENS
 
     scr_PoC_Screen          = 240
 };
-
-
-
-extern int16_t current_screen;
-extern int16_t previous_screen;
-
-
-
-void Test_Run(void);
 
 
 

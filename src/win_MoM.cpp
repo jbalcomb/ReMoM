@@ -2,12 +2,7 @@
 
 #include "win_PFL.hpp"
 
-#include "MoM.H"  /* Screen_Control() */
-#include "MoX.H"  /* ~ MoX - Common */
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
+#include "MoM.H"
 
 
 
@@ -22,30 +17,30 @@ char * GAME_FONT_FILE = &MOM_FONT_FILE[0];  // Create a Pointer to the Character
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-    char found_file[LEN_STRING];
+    char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // File_Name = byte ptr - 3Eh
-    int16_t DIGI_ID;
-    int16_t MIDI_ID;
-    int16_t MIDI_DRV;
-    int16_t DIGI_DMA;
-    int16_t DIGI_IRQ;
-    int16_t DIGI_IO;
-    int16_t DIGI_DRV;
-    int16_t MIDI_IRQ;
-    int16_t MIDI_IO;
+    int16_t DIGI_ID = 0;
+    int16_t MIDI_ID = 0;
+    int16_t MIDI_DRV = 0;
+    int16_t DIGI_DMA = 0;
+    int16_t DIGI_IRQ = 0;
+    int16_t DIGI_IO = 0;
+    int16_t DIGI_DRV = 0;
+    int16_t MIDI_IRQ = 0;
+    int16_t MIDI_IO = 0;
 // itr_savegams = word ptr - 6
 // file_handle = word ptr - 4
-    SAMB_ptr main_menu_music_seg;  // MGC
+    SAMB_ptr main_menu_music_seg = 0;  // MGC
 // EMS_Pages_Left = word ptr - 2
-    int16_t midi_driver;  // _SI_
-    int16_t IDK;  // _DI_
-    int16_t MIDI_DMA;  // _DI_
+    int16_t midi_driver = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+    int16_t MIDI_DMA = 0;  // _DI_
 
 
-    int input_type;
+    int input_type = 0;
 #ifdef STU_DEBUG
-    int itr_remap_pal_num;
-    int itr_remap_pal_num_index;
+    int itr_remap_pal_num = 0;
+    int itr_remap_pal_num_index = 0;
 #endif
 #ifdef STU_DEBUG
     Debug_Log_Startup();

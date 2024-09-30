@@ -1,22 +1,5 @@
 
-#include "MoX.H"
-
-#include "AdvsrScr.H"
-#include "ArmyList.H"
-#include "CityList.H"
-#include "CityScr.H"
-#include "LoadScr.H"
-#include "MainMenu.H"
-#include "MainScr.H"
-#include "MagicScr.H"
-#include "SBookScr.H"
-
-void TST_Load_SAVE_GAM(void);
-
-
-
-// MoX.C  int16_t current_screen;
-// MoX.C  int16_t previous_screen;
+#include "MoM.H"
 
 
 

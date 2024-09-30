@@ -1,20 +1,6 @@
 
-// #include "MoX.H"
+#include "MoM.H"
 
-#include <string.h>
-
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-
-#include "Keyboard.H"
-#include "Mouse.H"
-
-#include "Fields.H"
-#include "Input.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
 
 
 // WZD dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?

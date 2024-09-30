@@ -70,12 +70,7 @@ void GFX_Swap_Overland(void);
 
 
 
-#include "MoX.H"
-
-#include "CityScr.H"
-#include "MainMenu.H"
-#include "MainScr.H"
-#include "MainScr_Maps.H"  // terrain_lbx_001, terrain_lbx_002
+#include "MoM.H"
 
 
 
@@ -341,9 +336,9 @@ void Units_Upkeeps(void)
 */
 void Terrain_Init(void)
 {
-    SAMB_ptr tmp_sa_TBL_Unrest;
-    int16_t itr;
-    uint64_t tmp_address;
+    SAMB_ptr tmp_sa_TBL_Unrest = 0;
+    int16_t itr = 0;
+    uint64_t tmp_address = 0;
 
     // 
     Map_Square_WorkArea = Allocate_Space(70);  // 70 PR, 1120 B

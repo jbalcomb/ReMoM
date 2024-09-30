@@ -8,11 +8,7 @@
         Module: ¿ Fleet Screen ?
 */
 
-#include "MoX.H"
-#include "ArmyList.H"
-#include "MainScr.H"  /* Select_Unit_Stack() */
-#include "MainScr_Maps.H"  /* List_Screen_Draw_Reduced_Map() */
-
+#include "MoM.H"
 
 /*
 Army List Screen Background

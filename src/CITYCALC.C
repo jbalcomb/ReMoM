@@ -7,9 +7,6 @@
 */
 
 #include "MoM.H"
-#include "CITYCALC.H"
-
-
 
 /*
     WIZARDS.EXE  ovr120

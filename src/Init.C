@@ -12,7 +12,7 @@ MoO2  Module: fonts     Load_Font_File()
 ¿ MoO2  Module: initfile ?
 
 */
-#include "MoX.H"
+#include "MoM.H"
 
 char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 // TODO  #define DEFAULT_INPUT_TYPE  1  // Keyboard & Mouse

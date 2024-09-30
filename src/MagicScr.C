@@ -10,8 +10,9 @@
         Module: ¿  ?
 */
 
-#include "MoX.H"
-#include "MagicScr.H"
+#include "MoM.H"
+
+
 
 enum e_Alchemy_Conversion_Direction
 {
@@ -597,7 +598,7 @@ void Magic_Screen(void)
                     players_globals[spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0] = 0;
                     if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == NATURE_AWARENESS)
                     {
-                        Update_Scouted_And_Contacted();
+                        Update_Scouted_And_Contacted__WIP();
                     }
                     if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == TIME_STOP)
                     {

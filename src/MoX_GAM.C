@@ -5,13 +5,7 @@
     MoO2: Module: LOADSAVE
 */
 
-#include "MoX.H"
-
-#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* itoa() */
-#include <string.h>     /* memset(), strcat(), strcpy() */
-
-#include <assert.h>
+#include "MoM.H"
 
 
 

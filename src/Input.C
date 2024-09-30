@@ -2,7 +2,7 @@
     WIZARDS.EXE
         seg036
 */
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef STU_DEBUG
 #include "STU_DBG.H"

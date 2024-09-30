@@ -3,7 +3,7 @@
     ovr092
 */
 
-#include "MoX.H"
+#include "MoM.H"
 
 
 
@@ -14,7 +14,7 @@ void Clear_Square_Scouted_Flags(int16_t world_p)
     int16_t bit_field_size;
     int16_t itr_bit_field;
 
-    bit_field_size = WORLD_SIZE / 8;
+    bit_field_size = WORLD_SIZE / 8;  // bits per byte / bytes per data type size
 
     if(world_p == 0)
     {
@@ -140,9 +140,7 @@ void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     uint16_t new_bit_field_byte;
 
     world_square_idx = (world_y * WORLD_WIDTH) + world_x;
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: world_square_idx = ((%d * %d) + %d) =  %d\n", __FILE__, __LINE__, world_y, WORLD_WIDTH, world_x, ((world_y * WORLD_WIDTH) + world_x));
-// #endif
+
     bit_idx = world_square_idx;
     bit_field = square_scouted_p0;
     byte_idx = (bit_idx >> 3);
@@ -151,17 +149,6 @@ void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     // bit_field[byte_idx] = (bit_field_byte | bit_field_test_bits[byte_bit_idx]);
     bit_field_test_bit = bit_field_test_bits[byte_bit_idx];
     new_bit_field_byte = (bit_field_byte | bit_field_test_bits[byte_bit_idx]);
-// #ifdef STU_DEBUG
-//         dbg_prn("DEBUG: [%s, %d]: world_square_idx: %d\n", __FILE__, __LINE__, world_square_idx);
-//         dbg_prn("DEBUG: [%s, %d]: bit_idx: %d\n", __FILE__, __LINE__, bit_idx);
-//         dbg_prn("DEBUG: [%s, %d]: square_scouted_p0: %p\n", __FILE__, __LINE__, square_scouted_p0);
-//         dbg_prn("DEBUG: [%s, %d]: bit_field: %p\n", __FILE__, __LINE__, bit_field);
-//         dbg_prn("DEBUG: [%s, %d]: byte_idx: %d\n", __FILE__, __LINE__, byte_idx);
-//         dbg_prn("DEBUG: [%s, %d]: bit_field_byte: 0x%02X\n", __FILE__, __LINE__, bit_field_byte);
-//         dbg_prn("DEBUG: [%s, %d]: byte_bit_idx: %d\n", __FILE__, __LINE__, byte_bit_idx);
-//         dbg_prn("DEBUG: [%s, %d]: bit_field_test_bit: 0x%04X\n", __FILE__, __LINE__, bit_field_test_bit);
-//         dbg_prn("DEBUG: [%s, %d]: new_bit_field_byte: 0x%02X\n", __FILE__, __LINE__, new_bit_field_byte);
-// #endif
 
 
     if(world_p == 0)
@@ -172,6 +159,7 @@ void Set_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
     {
         Set_Bit_Field(world_square_idx, square_scouted_p1);
     }
+
 }
 
 // WZD o92p04
@@ -194,17 +182,13 @@ void UU_Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
 
 // WZD o92p05
 // drake178: TILE_VisibilityReset
-void Update_Scouted_And_Contacted(void)
+void Update_Scouted_And_Contacted__WIP(void)
 {
     int16_t itr_planes;
     int16_t itr_units;
     int16_t itr_cities;
     int16_t curr_world_p;
     int16_t scout_level;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Update_Scouted_And_Contacted()\n", __FILE__, __LINE__);
-#endif
 
     for(itr_planes = 0; itr_planes < NUM_PLANES; itr_planes++)
     {
@@ -220,16 +204,7 @@ void Update_Scouted_And_Contacted(void)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
-// #ifdef STU_DEBUG
-//     if( (_UNITS[itr_units].wx == 20) && (_UNITS[itr_units].wy == 16) )
-//     {
-//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].owner_idx == _human_player_idx): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].owner_idx == _human_player_idx));
-//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].wp == curr_world_p): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].wp == curr_world_p));
-//     dbg_prn("DEBUG: [%s, %d]: (_UNITS[itr_units].in_tower == ST_TRUE): %d\n", __FILE__, __LINE__, (_UNITS[itr_units].in_tower == ST_TRUE));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE) ));
-//     dbg_prn("DEBUG: [%s, %d]: ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) ): %d\n", __FILE__, __LINE__, ( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) ));
-//     }
-// #endif
+
                 if( (_UNITS[itr_units].owner_idx == _human_player_idx) && ((_UNITS[itr_units].wp == curr_world_p) || (_UNITS[itr_units].in_tower == ST_TRUE)) )
                 {
                     scout_level = _UNITS[itr_units].Sight_Range;
@@ -238,7 +213,7 @@ void Update_Scouted_And_Contacted(void)
                     // TODO  UNIT_ReturnZero
                     // TODO  UNIT_HasItemFlight
                     // if scout_level < 2 scout_level = 2
-                    if(_UNITS[itr_units].Status == 1)  /* us_Patrol */
+                    if(_UNITS[itr_units].Status == us_Patrol)
                     {
                         scout_level++;
                     }
@@ -255,7 +230,7 @@ void Update_Scouted_And_Contacted(void)
                 {
                     scout_level = 2;
 
-                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] != bs_NotBuilt)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] != bs_NotBuilt)
                     {
                         scout_level = 3;
                     }
@@ -265,7 +240,7 @@ void Update_Scouted_And_Contacted(void)
                         scout_level = 5;
                     }
                     // BUG: Overrides Nature's Eye
-                    if(_CITIES[itr_cities].bldg_status[ORACLE] != bs_NotBuilt)  /* B_Not_Built */
+                    if(_CITIES[itr_cities].bldg_status[ORACLE] != bs_NotBuilt)
                     {
                         scout_level = 4;
                     }
@@ -300,9 +275,6 @@ void Update_Scouted_And_Contacted(void)
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Update_Scouted_And_Contacted()\n", __FILE__, __LINE__);
-#endif
 }
 
 // WZD o92p06
@@ -320,28 +292,22 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
     int16_t curr_world_x;
     int16_t square_is_explored;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Set_Square_Scouted_Flags(world_x = %d, world_y = %d, world_p = %d, scout_range = %d)\n", __FILE__, __LINE__, world_x, world_y, world_p, scout_range);
-#endif
-
     if(scout_range == 0)
     {
         return_value = 0;
     }
     else
     {
+
         start_world_y = world_y - scout_range;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: start_world_y: %d\n", __FILE__, __LINE__, start_world_y);
-// #endif
+
         if(start_world_y < 0)
         {
             start_world_y = 0;
         }
+
         start_world_x = world_x - scout_range;
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: start_world_x: %d\n", __FILE__, __LINE__, start_world_x);
-// #endif
+
         if(start_world_x < 0)
         {
             start_world_x = start_world_x + WORLD_WIDTH;
@@ -361,24 +327,16 @@ int16_t Set_Square_Scouted_Flags(int16_t world_x, int16_t world_y, int16_t world
                     curr_world_x = itr_world_x - WORLD_WIDTH;
                 }
                 square_is_explored = Check_Square_Explored(curr_world_x, itr_world_y, world_p);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: square_is_explored: %d\n", __FILE__, __LINE__, square_is_explored);
-// #endif
+
                 if(square_is_explored != ST_FALSE)
                 {
                     Set_Square_Scouted(curr_world_x, itr_world_y, world_p);
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: Check_Square_Scouted(): %d\n", __FILE__, __LINE__, Check_Square_Scouted(curr_world_x, itr_world_y, world_p));
-// #endif
+
                 }
             }
         }
         return_value = itr_world_y;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Set_Square_Scouted_Flags(world_x = %d, world_y = %d, world_p = %d, scout_range = %d)\n", __FILE__, __LINE__, world_x, world_y, world_p, scout_range);
-#endif
 
     return return_value;
 }
@@ -394,7 +352,6 @@ int16_t Check_Square_Explored(int16_t wx, int16_t wy, int16_t wp)
 
     square_is_explored = ST_FALSE;
 
-    // DELETEME  square_explored_flag = _square_explored[( (world_p * WORLD_SIZE) + (world_y * WORLD_WIDTH) + world_x )];
     square_explored_flag = GET_SQUARE_EXPLORED(wx, wy, wp);
 
     if(square_explored_flag != UNEXPLORED)  /* if any bits are set */

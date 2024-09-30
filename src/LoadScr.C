@@ -176,14 +176,14 @@ void GAME_NextHumanStack(void)
     OVL_Action_XPos = ST_UNDEFINED;
     OVL_Action_YPos = ST_UNDEFINED;
 
-    Update_Scouted_And_Contacted();
+    Update_Scouted_And_Contacted__WIP();
 
     // ; does nothing and returns zero; at some point must have been some wizard data refresh function
     // DONT  o62p01_Empty_pFxn(_human_player_idx);
 
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
-    Update_Scouted_And_Contacted();
+    Update_Scouted_And_Contacted__WIP();
 
 }
 

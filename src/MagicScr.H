@@ -13,7 +13,7 @@
 #ifndef MAGICSCR_H
 #define MAGICSCR_H
 
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

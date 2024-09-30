@@ -35,7 +35,7 @@ void UU_Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p);
 
 // WZD o92p05
 // drake178: TILE_VisibilityReset
-void Update_Scouted_And_Contacted(void);
+void Update_Scouted_And_Contacted__WIP(void);
 
 // WZD o92p06
 // drake178: TILE_ApplySightRange

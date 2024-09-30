@@ -8,12 +8,7 @@
         Module: ¿ Planets/Colonies Screen ?
 */
 
-#include "MoX.H"
-#include "CityList.H"
-// #include "MainScr.H"  /* Select_Unit_Stack() */
-#include "MainScr_Maps.H"  /* List_Screen_Draw_Reduced_Map() */
-
-
+#include "MoM.H"
 
 
 

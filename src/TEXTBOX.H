@@ -96,7 +96,7 @@ Module: TEXTBOX
 #ifndef TEXTBOX_H
 #define TEXTBOX_H
 
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

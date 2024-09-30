@@ -7,7 +7,7 @@
 
 */
 
-#include "MoX.H"
+#include "MoM.H"
 
 /*
 o100p04
@@ -395,8 +395,3 @@ Done:
 // WZD o100p13
 // drake178: TILE_CanShiftPlanes()
 // TILE_CanShiftPlanes()
-
-
-
-#include "MoX.H"
-#include "SETTLE.H"

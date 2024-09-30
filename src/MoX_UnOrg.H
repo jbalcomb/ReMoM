@@ -10,7 +10,7 @@
 #ifndef MOX_UNORG_H
 #define MOX_UNORG_H
 
-#include "MoX.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,8 +18,12 @@ extern "C" {
 
 
 
-extern int16_t PageFlipEffect;
+extern int16_t current_screen;
+extern int16_t previous_screen;
 
+
+
+extern int16_t PageFlipEffect;
 
 
 

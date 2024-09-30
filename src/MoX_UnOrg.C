@@ -115,7 +115,12 @@ OON XREF:
 
 
 
-#include "MoX.H"
+#include "MoM.H"
+
+
+
+int16_t current_screen;
+int16_t previous_screen;
 
 
 

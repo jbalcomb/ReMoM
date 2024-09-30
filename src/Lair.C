@@ -12,7 +12,7 @@ BACKGRND.LBX
 NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 */
 
-#include "MoX.H"
+#include "MoM.H"
 
 
 
