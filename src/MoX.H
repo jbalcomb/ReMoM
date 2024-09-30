@@ -41,46 +41,6 @@ extern "C" {
 // WZD s05p02
 // TODO  extern void (*Exit_With_Message)(char* string);
 
-/*
-    Allocate.C
-*/
-// WZD dseg:D49A
-extern char near_buffer[];
-// // WZD s08p01
-// void Near_Allocate_Mark(void);
-// // WZD s08p02
-// void Near_Allocate_Undo(void);
-// WZD s08p03
-void Near_Allocate_Reset(void);  // used by Hire_Hero_Load()
-// WZD s08p04
-byte_ptr Near_Allocate_First(int16_t size);
-// WZD s08p05
-byte_ptr Near_Allocate_Next(int16_t size);
-// WZD s08p06
-void Near_Allocation_Error(int16_t size);
-// WZD s08p07
-SAMB_ptr Allocate_Space(uint16_t size);
-// // WZD s08p08 / s08p09
-// SAMB_ptr Allocate_Space_No_Header(uint16_t size);
-// WZD s08p10
-void Mark_Block(SAMB_ptr block);
-// WZD s08p11
-void Release_Block(SAMB_ptr block);
-// WZD s08p12
-SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size);
-// WZD s08p13
-void Reset_First_Block(SAMB_ptr block);  // used by Hier_Hero_Load()
-// WZD s08p14
-SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size);
-// WZD s08p15
-uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head);
-/*
-    MoO2
-    Module: allocate
-*/
-SAMB_ptr Allocate_Dos_Space(int32_t size);
-SAMB_ptr Allocate_Dos_Data_Space(int32_t size);
-
 
 
 /*

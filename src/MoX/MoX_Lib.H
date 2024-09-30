@@ -4,6 +4,7 @@
 #include "MoX_DEF.H"
 #include "MoX_TYPE.H"
 
-#include "MoX_DBG.H"
+#include "Allocate.H"
 #include "FLIC_Draw.H"
 #include "Mouse.H"
+#include "MoX_DBG.H"
