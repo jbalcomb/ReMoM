@@ -29,6 +29,7 @@
 #include "LBX_Load.H"
 #include "LOADSAVE.H"
 #include "Mouse.H"
+#include "paragrph.H"
 #include "random.H"
 #include "Timer.H"
 #include "Util.H"

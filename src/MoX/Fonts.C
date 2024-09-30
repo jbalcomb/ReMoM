@@ -1703,11 +1703,13 @@ int16_t Print_Centered_To_Bitmap(int16_t x, int16_t y, char * string, SAMB_ptr b
 // WZD s17p65
 int16_t Print_Full_To_Bitmap(int16_t x, int16_t y, char * string, int16_t right_side, SAMB_ptr bitmap)
 {
+    int16_t next_x;  // DNE in Dasm
 
     SETMIN(right_side, 0);
 
-    Print_Display_To_Bitmap(x, y, string, right_side, bitmap);
+    next_x = Print_Display_To_Bitmap(x, y, string, right_side, bitmap);
 
+    return next_x;
 }
 
 
