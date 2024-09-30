@@ -9,7 +9,7 @@
 #ifndef GENDRAW_H
 #define GENDRAW_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {

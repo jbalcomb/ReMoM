@@ -16,6 +16,7 @@
     <ClCompile Include="..\..\..\src\MoX\Fields.C" />
     <ClCompile Include="..\..\..\src\MoX\FLIC_Draw.C" />
     <ClCompile Include="..\..\..\src\MoX\Fonts.C" />
+    <ClCompile Include="..\..\..\src\MoX\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_DBG.C" />
@@ -26,6 +27,7 @@
     <ClInclude Include="..\..\..\src\MoX\Fields.H" />
     <ClInclude Include="..\..\..\src\MoX\FLIC_Draw.H" />
     <ClInclude Include="..\..\..\src\MoX\Fonts.H" />
+    <ClInclude Include="..\..\..\src\MoX\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\MoX\LBX_Load.H" />
     <ClInclude Include="..\..\..\src\MoX\Mouse.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />

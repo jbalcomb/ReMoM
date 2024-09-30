@@ -9,6 +9,7 @@
 #include "Fields.H"
 #include "FLIC_Draw.H"
 #include "Fonts.H"
+#include "GENDRAW.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
 #include "MoX_DBG.H"

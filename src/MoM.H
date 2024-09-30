@@ -26,7 +26,6 @@
 #include "DIPLOMAC.H"
 #include "EVENTS.H"
 #include "Explore.H"
-#include "GENDRAW.H"
 #include "Graphics.H"
 #include "Help.H"
 #include "HIRE.H"
