@@ -109,7 +109,6 @@
     <ClInclude Include="..\..\..\src\Items.H" />
     <ClInclude Include="..\..\..\src\ItemScrn.H" />
     <ClInclude Include="..\..\..\src\ItemView.H" />
-    <ClInclude Include="..\..\..\src\Keyboard.H" />
     <ClInclude Include="..\..\..\src\Lair.H" />
     <ClInclude Include="..\..\..\src\LOADER.H" />
     <ClInclude Include="..\..\..\src\LoadScr.H" />
@@ -198,7 +197,6 @@
     <ClCompile Include="..\..\..\src\Items.C" />
     <ClCompile Include="..\..\..\src\ItemScrn.C" />
     <ClCompile Include="..\..\..\src\ItemView.C" />
-    <ClCompile Include="..\..\..\src\Keyboard.C" />
     <ClCompile Include="..\..\..\src\Lair.C" />
     <ClCompile Include="..\..\..\src\LOADER.C" />
     <ClCompile Include="..\..\..\src\LoadScr.C" />

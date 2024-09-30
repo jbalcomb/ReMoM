@@ -1,11 +1,11 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 /*
     MoM uses INT 16,10, which returns AH = scan code, AL = ASCII character or 0
-    But, it just them as a 16-bit value in AX. (which is what most everyone actually means by "scancode")
+    But, it just treats them as a 16-bit value in AX. (which is what most everyone actually means by "scancode")
 
 
 

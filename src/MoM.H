@@ -33,7 +33,6 @@
 #include "Items.H"
 #include "ItemScrn.H"
 #include "ItemView.H"
-#include "Keyboard.H"
 #include "Lair.H"
 #include "LOADER.H"
 #include "LoadScr.H"
