@@ -11,8 +11,7 @@ cl /c %SRC_STU%
 
 lib STU_CHK.obj STU_DBG.obj STU_UTIL.obj /OUT:STU.lib
 
-REM ..\src\MoX\EMM.C ..\src\MoX\file_ani.C ..\src\MoX\IO_Buffer.C
-@SET SRC_MOX=..\src\MOX_T4.C ..\src\MoX\Allocate.C ..\src\MoX\CFG.C ..\src\MoX\DBG.C ..\src\MoX\DOS.C ..\src\MoX\Exit.C ..\src\MoX\Fields.C ..\src\MoX\Fonts.C ..\src\MoX\GENDRAW.C ..\src\MoX\Graphics.C  ..\src\MoX\FLIC_Draw.C ..\src\MoX\Input.C ..\src\MoX\Keyboard.C ..\src\MoX\LBX_Load.C ..\src\MoX\LOADSAVE.C ..\src\MoX\Mouse.C ..\src\MoX\MoX_Temp.C ..\src\MoX\paragrph.C ..\src\random.C ..\src\MoX\Util.C ..\src\MoX\Video.C ..\src\MoX\Video2.C
+@SET SRC_MOX=..\src\MOX_T4.C ..\src\MoX\Allocate.C ..\src\MoX\CFG.C ..\src\MoX\DBG.C ..\src\MoX\DOS.C ..\src\MoX\EMM.C ..\src\MoX\Exit.C ..\src\MoX\Fields.C ..\src\MoX\file_ani.C ..\src\MoX\Fonts.C ..\src\MoX\GENDRAW.C ..\src\MoX\Graphics.C  ..\src\MoX\FLIC_Draw.C ..\src\MoX\Input.C ..\src\MoX\IO_Buffer.C ..\src\MoX\Keyboard.C ..\src\MoX\LBX_Load.C ..\src\MoX\LOADSAVE.C ..\src\MoX\Mouse.C ..\src\MoX\MoX_Temp.C ..\src\MoX\paragrph.C ..\src\MoX\random.C ..\src\MoX\Util.C ..\src\MoX\Video.C ..\src\MoX\Video2.C
 
 cl /c %SRC_MOX%
 

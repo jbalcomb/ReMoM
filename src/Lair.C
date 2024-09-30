@@ -244,17 +244,17 @@ returns 1 if cleared, 0 if not, 99 if cancelled
 */
 int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 {
-    int16_t Reward_Specials[2];
-    int16_t Reward_Special_Count;
-    SAMB_ptr sound_seg;
-    int16_t Previous_Game_State;
-    int16_t Total_Rewards;
-    int16_t Reward_Hero;
-    int16_t Hero_Slot;
-    int16_t Reward_Spell;
-    int16_t Reward_Items[3];
-    int16_t treasure_window_y;
-    int16_t Encounter_Outcome;
+    int16_t Reward_Specials[2] = { 0, 0 };
+    int16_t Reward_Special_Count = 0;
+    SAMB_ptr sound_seg = 0;
+    int16_t Previous_Game_State = 0;
+    int16_t Total_Rewards = 0;
+    int16_t Reward_Hero = 0;
+    int16_t Hero_Slot = 0;
+    int16_t Reward_Spell = 0;
+    int16_t Reward_Items[3] = { 0, 0, 0 };
+    int16_t treasure_window_y = 0;
+    int16_t Encounter_Outcome = 0;
 
     Clear_Fields();
 
@@ -543,14 +543,14 @@ int16_t Do_Lair_Confirm(int16_t lair_idx)
 void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[], int16_t spell, int16_t hero_slot, int16_t Total_Rewards, int16_t Reward_Special_Count, int16_t Reward_Specials[])
 {
 
-    char Spell_Name[30];
-    int16_t List_Count;
-    int16_t lair_item_count;
-    SAMB_ptr lair_treasure_notify_pict_seg;
-    int16_t amount[3];
-    char * Item_Type_Names[3];
-    char * temp_string;
-    int16_t itr;  // _SI_
+    char Spell_Name[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t List_Count = 0;
+    int16_t lair_item_count = 0;
+    SAMB_ptr lair_treasure_notify_pict_seg = 0;
+    int16_t amount[3] = { 0, 0, 0 };
+    char * Item_Type_Names[3] = { 0, 0, 0 };
+    char * temp_string = 0;
+    int16_t itr = 0;  // _SI_
 
     lair_message_box_text = (char *)Near_Allocate_First(500);  // ¿ same size asMoO2  Rescued_Loknar_Popup_() ?
 
@@ -631,6 +631,10 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
                 itoa(amount[itr], temp_string, 10);
                 strcat(lair_message_box_text, temp_string);
                 strcat(lair_message_box_text, cnst_EZ_Msg_2);
+                /*
+                            Severity	Code	Description	Project	File	Line	Suppression State
+                    TODO    Warning	C6385	Reading invalid data from 'rtn16':  the readable size is '40' bytes, but 'Reward_Specials[itr]' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Lair.C	634	
+                */
                 strcat(lair_message_box_text, rtn16[Reward_Specials[itr]]);
                 strcat(lair_message_box_text, cnst_Reward_Msg_7);  // " spell book"
                 if(amount[itr] > 1)
@@ -642,6 +646,10 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
             {
                 strcat(lair_message_box_text, cnst_Reward_Msg_8);  // "a retort of "
                 // push    _wizard_abilities_names[bx-(2*64h)]
+                /*
+                            Severity	Code	Description	Project	File	Line	Suppression State
+                    TODO    Warning	C6385	Reading invalid data from '_wizard_abilities_names':  the readable size is '144' bytes, but 'Reward_Specials[itr]' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Lair.C	645
+                */
                 strcat(lair_message_box_text, _wizard_abilities_names[Reward_Specials[itr]]);
             }
         }
@@ -1229,7 +1237,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                 {
                     WIZ_AddSpellbook__WIP(player_idx, EZ_Book_Realm);
                     reward_specials[*reward_special_count] = EZ_Book_Realm;
-                    *reward_special_count++;
+                    *reward_special_count += 1;
                 }
             }
             else
@@ -1296,7 +1304,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                             {
                                 wizard_retorts[retort_idx] = 1;
                                 reward_specials[*reward_special_count] = (100 + retort_idx);
-                                *reward_special_count++;
+                                *reward_special_count += 1;
                                 // ¿ drake178: ; BUG: not a single pick reward ?
                                 if(retort_idx == rtt_Famous)
                                 {

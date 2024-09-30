@@ -196,21 +196,21 @@ void GAME_NextHumanStack(void)
 // WZD o160p01
 void Load_Screen(void)
 {
-    char found_file[LEN_FILE_NAME];
-    char buffer2[16];
-    char match_string[16];
-    int16_t save_slot_fields[NUM_SAVE_SLOTS];
-    int16_t loaded_game_flag;  // DNE in MGC
-    int16_t first_draw_done_flag;
-    int16_t x_start;
-    int16_t input_field_idx;
-    int16_t hotkey_ESC;
-    int16_t itr_save_game_count;
-    int16_t leave_screen_flag;
-    int16_t itr_save_slot_fields;  // _SI_
-    int16_t y_start;  // _DI_
-    int16_t itr;  // _SI_
-    int16_t itr_save_slot_input_field_array;  // _SI_
+    char found_file[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char buffer2[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char match_string[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t save_slot_fields[NUM_SAVE_SLOTS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t loaded_game_flag = 0;  // DNE in MGC
+    int16_t first_draw_done_flag = 0;
+    int16_t x_start = 0;
+    int16_t input_field_idx = 0;
+    int16_t hotkey_ESC = 0;
+    int16_t itr_save_game_count = 0;
+    int16_t leave_screen_flag = 0;
+    int16_t itr_save_slot_fields = 0;  // _SI_
+    int16_t y_start = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+    int16_t itr_save_slot_input_field_array = 0;  // _SI_
 
     loaded_game_flag = ST_FALSE;
 
