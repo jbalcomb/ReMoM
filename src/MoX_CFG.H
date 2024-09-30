@@ -1,7 +1,7 @@
 #ifndef MOX_CFG_H
 #define MOX_CFG_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 struct s_CONFIG_MOM
 {

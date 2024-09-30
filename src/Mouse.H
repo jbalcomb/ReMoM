@@ -1,7 +1,7 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

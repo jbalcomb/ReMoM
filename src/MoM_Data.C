@@ -1,13 +1,5 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoM_DEF.H"
-
-#include "MoM_Data.H"
-
-#include "Mouse.H"  /* struct s_mouse_list */
-
-
+#include "MoM.H"
 
 
 

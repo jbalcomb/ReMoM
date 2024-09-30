@@ -109,15 +109,15 @@ extern "C" {
 */
 
 // WZD o159p01
-void Draw_Help_Entry(int16_t help_entry_idx);
+void Draw_Help_Entry__STUB(int16_t help_entry_idx);
 
 // WZD o159p02
 // drake178: GUI_Help_RedrawFn()
-void Draw_Help_Entry_Draw(void);
+void Draw_Help_Entry_Draw__STUB(void);
 
 // WZD o159p03
 // drake178: EMM_Map_VGAFILEH1_5()
-uint16_t EMM_Map_VGAFILEH1_5(void);
+uint16_t EMM_Map_VGAFILEH1_5__STUB(void);
 
 
 #ifdef __cplusplus

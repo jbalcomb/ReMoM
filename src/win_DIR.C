@@ -6,12 +6,8 @@
 #include <tchar.h>
 #include <stdio.h>
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
+#include "MoM.H"
 
-#include "MoX_DIR.H"
-
-#include "Mouse.H"
 
 
 // MGC s03p05

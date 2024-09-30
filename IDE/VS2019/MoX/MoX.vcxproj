@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BITS.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_DBG.H" />
+    <ClInclude Include="..\..\..\src\MoX\MoX_Lib.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_TYPE.H" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -13,7 +13,7 @@ Module: shear
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 
 

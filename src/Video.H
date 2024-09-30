@@ -11,7 +11,7 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 #ifdef __cplusplus
 extern "C" {

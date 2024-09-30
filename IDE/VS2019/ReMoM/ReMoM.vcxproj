@@ -130,16 +130,13 @@
     <ClInclude Include="..\..\..\src\Mouse.H" />
     <ClInclude Include="..\..\..\src\MovePath.H" />
     <ClInclude Include="..\..\..\src\MoX.H" />
-    <ClInclude Include="..\..\..\src\MoX_BITS.H" />
     <ClInclude Include="..\..\..\src\MoX_CFG.H" />
     <ClInclude Include="..\..\..\src\MoX_CMB.H" />
-    <ClInclude Include="..\..\..\src\MoX_DEF.H" />
     <ClInclude Include="..\..\..\src\MoX_DIR.H" />
     <ClInclude Include="..\..\..\src\MoX_DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_GAM.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
     <ClInclude Include="..\..\..\src\MoX_RNG.H" />
-    <ClInclude Include="..\..\..\src\MoX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX_UnOrg.H" />
     <ClInclude Include="..\..\..\src\MoX_Util.H" />
     <ClInclude Include="..\..\..\src\NewGame.H" />

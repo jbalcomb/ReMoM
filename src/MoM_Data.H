@@ -1,8 +1,7 @@
 #ifndef MOX_DATA_H
 #define MOX_DATA_H
 
-#include "MoX_TYPE.H"
-#include "MoM_DEF.H"
+#include "MoM.H"
 
 /*
     ¿ MoX vs. MoM ?

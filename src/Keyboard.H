@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 /*
     MoM uses INT 16,10, which returns AH = scan code, AL = ASCII character or 0

@@ -1,15 +1,5 @@
 
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoM_DEF.H"
-
-#include "Mouse.H"
-
-#include "Fonts.H"
-#include "Input.H"
-#include "Video.H"
-
-#include <assert.h>
+#include "MoM.H"
 
 
 

@@ -1,7 +1,7 @@
 #ifndef MOX_DIR_H
 #define MOX_DIR_H
 
-#include "MoX_TYPE.H"
+#include "MoM.H"
 
 /*
     MoX_DIR.H
