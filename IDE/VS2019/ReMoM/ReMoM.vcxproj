@@ -102,7 +102,6 @@
     <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\EVENTS.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
-    <ClInclude Include="..\..\..\src\Graphics.H" />
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
@@ -193,7 +192,6 @@
     <ClCompile Include="..\..\..\src\DIPLOMAC.C" />
     <ClCompile Include="..\..\..\src\EVENTS.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
-    <ClCompile Include="..\..\..\src\Graphics.C" />
     <ClCompile Include="..\..\..\src\Help.C" />
     <ClCompile Include="..\..\..\src\HIRE.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
