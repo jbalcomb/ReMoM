@@ -45,3 +45,9 @@ rename MoX.C/.H - ...MoX_MoM...MoX_Lib...
 
 ¿ weirdly add MoX_STRU, MoX_ENUM, etc. ? just used MoX_DEF? move to MoX_Lib?
 ...something I saw somewhere just had a massive <lib name>.H with *everything* in there...
+
+
+eliminate the declarations in MoX.H for the MoX functions
+add all MoX headers to MoX_Lib.H
+move all MoM includes to MoM.H from MoX.H
+...requires moving the modules to the MoX project
