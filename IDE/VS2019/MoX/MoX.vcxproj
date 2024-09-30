@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_DBG.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_Temp.C" />
+    <ClCompile Include="..\..\..\src\MoX\Util.C" />
     <ClCompile Include="..\..\..\src\MoX\Video.C" />
     <ClCompile Include="..\..\..\src\MoX\Video2.C" />
   </ItemGroup>
@@ -45,6 +46,7 @@
     <ClInclude Include="..\..\..\src\MoX\MoX_Lib.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_Temp.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_TYPE.H" />
+    <ClInclude Include="..\..\..\src\MoX\Util.H" />
     <ClInclude Include="..\..\..\src\MoX\Video.H" />
     <ClInclude Include="..\..\..\src\MoX\Video2.H" />
   </ItemGroup>

@@ -23,6 +23,7 @@
 #include "LBX_Load.H"
 #include "Mouse.H"
 #include "MoX_DBG.H"
+#include "Util.H"
 #include "Video.H"
 #include "Video2.H"
 

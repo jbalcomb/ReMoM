@@ -49,7 +49,6 @@
 #include "MoX_GAM.H"
 #include "MoX_RNG.H"
 #include "MoX_UnOrg.H"  // WTFMATE
-#include "MoX_Util.H"   // WTFMATE
 #include "NEXTTURN.H"
 #include "Outpost.H"
 #include "paragrph.H"
