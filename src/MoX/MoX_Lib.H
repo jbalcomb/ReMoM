@@ -27,6 +27,7 @@
 #include "LBX_Load.H"
 #include "LOADSAVE.H"
 #include "Mouse.H"
+#include "random.H"
 #include "Util.H"
 #include "Video.H"
 #include "Video2.H"

@@ -125,7 +125,6 @@
     <ClInclude Include="..\..\..\src\MoX.H" />
     <ClInclude Include="..\..\..\src\MoX\DOS.H" />
     <ClInclude Include="..\..\..\src\MoX_PFL.H" />
-    <ClInclude Include="..\..\..\src\MoX_RNG.H" />
     <ClInclude Include="..\..\..\src\MoX_UnOrg.H" />
     <ClInclude Include="..\..\..\src\NewGame.H" />
     <ClInclude Include="..\..\..\src\NEXTTURN.H" />
@@ -204,7 +203,6 @@
     <ClCompile Include="..\..\..\src\MovePath.C" />
     <ClCompile Include="..\..\..\src\MoX\DOS.C" />
     <ClCompile Include="..\..\..\src\MoX_PFL.C" />
-    <ClCompile Include="..\..\..\src\MoX_RNG.C" />
     <ClCompile Include="..\..\..\src\MoX_UnOrg.C" />
     <ClCompile Include="..\..\..\src\NewGame.C" />
     <ClCompile Include="..\..\..\src\NEXTTURN.C" />

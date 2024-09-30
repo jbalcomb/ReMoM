@@ -2,11 +2,15 @@
     WIZARDS.EXE
     seg001
     seg022
+
+MoO2
+    Module: random
+
 */
 #ifndef MOX_RNG_H
 #define MOX_RNG_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {

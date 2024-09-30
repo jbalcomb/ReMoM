@@ -3,7 +3,8 @@
     seg001
     seg022
 
-    MoO2  Module: random
+MoO2
+    Module: random
         unsigned integer (4 bytes) random_seed
         Random()
         Set_Random_Seed()
@@ -12,7 +13,8 @@
 
 */
 
-#include "MoM.H"
+#include "MoX_Lib.H"
+
 // win_CLK.C  /* Get_System_Clock_Counter() */
 
 
