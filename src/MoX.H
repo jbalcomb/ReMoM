@@ -21,81 +21,6 @@
 extern "C" {
 #endif
 
-/*
-    Mouse.C/.H
-*/
-// // WZD s35p01
-// void Set_Mouse_List(int16_t count, struct s_mouse_list * list);
-// WZD s35p02
-void Check_Mouse_Shape(int16_t x, int16_t y);
-// // WZD s35p03
-// int16_t Get_Pointer_Image_Number(void);
-// WZD s35p04
-int16_t Get_Pointer_Offset(void);
-// // WZD s35p05
-// int16_t Mouse_Button(void);
-// // WZD s35p07
-// int16_t Init_Mouse_Driver(void);
-// // WZD s35p08
-// // RP_Mouse_SetUsable
-// // WZD s35p09
-// // Reset_System_Mouse
-// // WZD s35p10
-// void Mouse_Movement_Handler(void);
-// // WZD s35p11
-// void Mouse_Button_Handler(void);
-// // WZD s35p12
-// /* PLATFORM */  void User_Mouse_Handler(int16_t buttons, int16_t mx, int16_t my);
-// WZD s35p13
-void Save_Mouse_State(void);
-// WZD s35p14
-void Restore_Mouse_State(void);
-// // WZD s35p18
-// int16_t Pointer_X(void);
-// // WZD s35p19
-// int16_t Pointer_Y(void);
-// WZD s35p20
-void Set_Pointer_Position(int16_t x, int16_t y);
-// // WZD s35p21
-// void Set_Mouse_Position(int16_t x, int16_t y);
-// // WZD s35p22
-// int16_t Mouse_Buffer_X(void);
-// // WZD s35p23
-// int16_t Mouse_Buffer_Y(void);
-// // WZD s35p24
-// int16_t Mouse_Buffer_Button(void);
-// // WZD s35p25
-// int16_t Mouse_Buffer(void);
-// // WZD s35p26
-// int16_t Mouse_Buffer2(void);
-// // WZD s35p27
-// // RP_MOUSE_SetSecClick()
-// // WZD s35p28
-// // UU_MOUSE_GenerateClick()
-// // WZD s35p29
-// void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons);
-// WZD s35p30
-// // WZD s35p31
-// // WZD s35p32
-void Save_Mouse_On_Page(int16_t x, int16_t y);
-// void Save_Mouse_Off_Page(int16_t x, int16_t y);
-// void Save_Mouse_On_Page_(int16_t x, int16_t y);
-// // WZD s35p33
-// void Copy_Mouse_Off_To_Mouse_Back(void);
-// WZD s35p34
-// // WZD s35p35
-// // WZD s35p36
-void Restore_Mouse_On_Page(void);
-// void Restore_Mouse_Off_Page(void);
-// WZD s35p37
-// // WZD s35p38
-// // WZD s35p39
-// // WZD s35p40
-void Draw_Mouse_On_Page(int16_t x, int16_t y);
-// void Draw_Mouse_Off_Page(int16_t x, int16_t y);
-// void Draw_Mouse_On_Page_(int16_t x, int16_t y);
-// void Draw_Mouse_Off_Page_(int16_t x, int16_t y);
-
 #ifdef __cplusplus
 }
 #endif
@@ -155,10 +80,6 @@ uint16_t Get_Free_Blocks(SAMB_ptr SAMB_head);
 */
 SAMB_ptr Allocate_Dos_Space(int32_t size);
 SAMB_ptr Allocate_Dos_Data_Space(int32_t size);
-
-/*
-    FLIC_Draw.C
-*/
 
 
 

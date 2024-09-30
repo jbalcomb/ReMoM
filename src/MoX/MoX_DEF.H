@@ -1,7 +1,7 @@
 #ifndef MOX_DEF_H
 #define MOX_DEF_H
 
-#include "MoX\MoX_BASE.H"
+#include "MoX_BASE.H"
 
 #ifndef STU_DEBUG
 #define DLOG

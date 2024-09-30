@@ -413,28 +413,28 @@ void Move_Path_Find__MEH(int16_t wx, int16_t wy, struct s_MOVE_PATH * movepath_c
 {
     int8_t  reach_costs_changed = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
     int16_t CS_Row_Start = 0;           // WZD ovr147:0002  Code-Segment Variable
-    int16_t itr;
-    int8_t * movepath_cost;
-    uint8_t * movepath_reach_cost;
-    int16_t * movepath_reach_from;
-    int16_t ofst_movepath_cost;
-    int8_t move_cost;
-    int8_t itr_row;  // _CL_
-    int8_t incr_flag;  // _CH_
-    int8_t tmp_move_cost;
-    uint8_t adjacent_reach_cost;
-    uint8_t new_reach_cost;
-    uint8_t current_reach_cost;
-    int8_t reach_cost;
-    int16_t adj_pos;
-    int8_t dbg_wms0_reach_cost;
-    int8_t dbg_wms1_reach_cost;
-    int8_t dbg_wms2_reach_cost;
-    int8_t dbg_wms3_reach_cost;
-    int16_t dbg_wms0_reach_from;
-    int16_t dbg_wms1_reach_from;
-    int16_t dbg_wms2_reach_from;
-    int16_t dbg_wms3_reach_from;
+    int16_t itr = 0;
+    int8_t * movepath_cost = 0;
+    uint8_t * movepath_reach_cost = 0;
+    int16_t * movepath_reach_from = 0;
+    int16_t ofst_movepath_cost = 0;
+    int8_t move_cost = 0;
+    int8_t itr_row = 0;  // _CL_
+    int8_t incr_flag = 0;  // _CH_
+    int8_t tmp_move_cost = 0;
+    uint8_t adjacent_reach_cost = 0;
+    uint8_t new_reach_cost = 0;
+    uint8_t current_reach_cost = 0;
+    int8_t reach_cost = 0;
+    int16_t adj_pos = 0;
+    int8_t dbg_wms0_reach_cost = 0;
+    int8_t dbg_wms1_reach_cost = 0;
+    int8_t dbg_wms2_reach_cost = 0;
+    int8_t dbg_wms3_reach_cost = 0;
+    int16_t dbg_wms0_reach_from = 0;
+    int16_t dbg_wms1_reach_from = 0;
+    int16_t dbg_wms2_reach_from = 0;
+    int16_t dbg_wms3_reach_from = 0;
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Move_Path_Find(wx = %d, wy = %d, movepath_cost_map = %p)\n", __FILE__, __LINE__, wx, wy, movepath_cost_map);

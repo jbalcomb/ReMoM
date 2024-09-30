@@ -45,7 +45,6 @@
 #include "MagicScr.H"
 // TODO  #include "MainScr_Maps.H"
 #include "MainScr.H"
-#include "Mouse.H"
 #include "MovePath.H"
 #include "MoX_CFG.H"
 #include "MoX_CMB.H"

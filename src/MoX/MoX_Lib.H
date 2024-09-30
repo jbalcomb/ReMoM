@@ -6,3 +6,4 @@
 
 #include "MoX_DBG.H"
 #include "FLIC_Draw.H"
+#include "Mouse.H"
