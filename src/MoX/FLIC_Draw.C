@@ -15,33 +15,7 @@ MoO2 Module: shear
 
 */
 
-#include "MoX_TYPE.H"
-#include "MoX_BASE.H"
-#include "FLIC_Draw.H"
-#include "LBX_Load.H"
-#include <assert.h>
-
-
-
-/*
-    Fonts
-*/
-// WZD dseg:E7E4
-extern byte_ptr remap_color_palettes;
-// WZD dseg:E7FA
-extern SAMB_ptr Intensity_Scale_Tbl;
-
-/*
-    Graphics
-*/
-// WZD dseg:76DA
-extern int16_t screen_window_x1;
-// WZD dseg:76DC
-extern int16_t screen_window_y1;
-// WZD dseg:76DE
-extern int16_t screen_window_x2;
-// WZD dseg:76E0
-extern int16_t screen_window_y2;
+#include "MoX_Lib.H"
 
 /*
     Palette

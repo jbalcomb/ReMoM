@@ -23,7 +23,7 @@ int16_t draw_alias_flag = 0;
 
 // WZD dseg:7844                                                 seg020  MoO2 Module: palette
 // WZD dseg:7844
-int16_t cycle_direction_flag = -1;
+int16_t cycle_direction_flag = ST_UNDEFINED;
 
 // WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
 
@@ -741,7 +741,7 @@ int16_t Print_Display(int16_t x, int16_t y, char * string, int16_t full_flag)
             Print_String(x    , y - 1, string, ST_FALSE, full_flag);  // overdraw top
         }
 
-        if(outline_style == e_Font_Shadow_Heavy || outline_style == e_Font_Shadow_Heavy)
+        if(outline_style == e_Font_Shadow_Heavy || outline_style == e_Font_Shadow_Outline_Heavy)
         {
             Print_String(x + 2, y + 2, string, ST_FALSE, full_flag);
             Print_String(x + 1, y + 2, string, ST_FALSE, full_flag);

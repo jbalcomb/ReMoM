@@ -9,7 +9,7 @@
 #ifndef FIELDS_H
 #define FIELDS_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {

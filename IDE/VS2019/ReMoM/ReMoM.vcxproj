@@ -102,7 +102,6 @@
     <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\EVENTS.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
-    <ClInclude Include="..\..\..\src\Fields.H" />
     <ClInclude Include="..\..\..\src\Fonts.H" />
     <ClInclude Include="..\..\..\src\GENDRAW.H" />
     <ClInclude Include="..\..\..\src\Graphics.H" />
@@ -196,7 +195,6 @@
     <ClCompile Include="..\..\..\src\DIPLOMAC.C" />
     <ClCompile Include="..\..\..\src\EVENTS.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
-    <ClCompile Include="..\..\..\src\Fields.C" />
     <ClCompile Include="..\..\..\src\Fonts.C" />
     <ClCompile Include="..\..\..\src\GENDRAW.C" />
     <ClCompile Include="..\..\..\src\Graphics.C" />
