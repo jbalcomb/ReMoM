@@ -686,16 +686,16 @@ Per the byte-saving (Assembly) era, allows error conditions to fall through
 */
 void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 {
-    int16_t temp;  // _SI_
-    int16_t x_delta;  // _CX_
-    int16_t y_delta;  // _DX_
-    int16_t line_increment;
-    int16_t length;
-    int16_t x_slope;
-    int16_t y_slope;
-    int16_t x_error;
-    int16_t y_error;
-    uint8_t * video_memory;  // ES:DI
+    int16_t temp = 0;  // _SI_
+    int16_t x_delta = 0;  // _CX_
+    int16_t y_delta = 0;  // _DX_
+    int16_t line_increment = 0;
+    int16_t length = 0;
+    int16_t x_slope = 0;
+    int16_t y_slope = 0;
+    int16_t x_error = 0;
+    int16_t y_error = 0;
+    uint8_t * video_memory = 0;  // ES:DI
 
     if(x2 < x1)
     {
@@ -774,20 +774,20 @@ void Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color)
 // MoO2  Multi_Colored_Line()
 void Multi_Colored_Line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t colortbl[], int16_t colornum, int16_t colorpos)
 {
-    uint8_t * Repeat_Mark;
-    int16_t line_increment;
-    int16_t x_slope;
-    int16_t length;
-    int16_t y_slope;
+    uint8_t * Repeat_Mark = 0;
+    int16_t line_increment = 0;
+    int16_t x_slope = 0;
+    int16_t length = 0;
+    int16_t y_slope = 0;
 
-    int16_t x_delta;  // _CX_
-    int16_t y_delta;  // _DX_
-    int16_t x_error;
-    int16_t y_error;
-    int16_t temp;  // _SI_
-    uint8_t * color_ptr;  // _SI_
-    uint8_t * video_memory;  // ES:DI
-    uint8_t color;  // _AL_
+    int16_t x_delta = 0;  // _CX_
+    int16_t y_delta = 0;  // _DX_
+    int16_t x_error = 0;
+    int16_t y_error = 0;
+    int16_t temp = 0;  // _SI_
+    uint8_t * color_ptr = 0;  // _SI_
+    uint8_t * video_memory = 0;  // ES:DI
+    uint8_t color = 0;  // _AL_
 
     if(x2 < x1)
     {
