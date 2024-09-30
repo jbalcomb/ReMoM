@@ -2,18 +2,8 @@
     WIZARDS.EXE
     ovr092
 */
-#include "MoX_TYPE.H"
-#include "MoX_DEF.H"
-#include "MoM_DEF.H"
 
-#include "MoX_Data.H"
-#include "Mox_Util.H"
-
-#include "Explore.H"
-
-#ifdef STU_DEBUG
-#include "STU_DBG.H"
-#endif
+#include "MoX.H"
 
 
 
@@ -222,6 +212,10 @@ void Update_Scouted_And_Contacted(void)
         Clear_Square_Scouted_Flags(itr_planes);
 
         // if(_players[_human_player_idx].Globals.Nature_Awareness == ST_FALSE)
+        /*
+            Severity	Code	Description	Project	File	Line	Suppression State
+            Warning	C6385	Reading invalid data from '_players':  the readable size is '7344' bytes, but '_human_player_idx' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Explore.C	215
+        */
         if(_players[_human_player_idx].Globals[NATURE_AWARENESS] == ST_FALSE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)

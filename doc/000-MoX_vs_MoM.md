@@ -6,6 +6,7 @@ MoX vs. MoM
 
 ¿ For Sure ?
 MoX
+    MoX.C/.H <-> MoX_Lib.C/.H
     Allocate
     (FLIC_)Draw
     EMM
@@ -19,6 +20,7 @@ MoX
     IO_Buffer
     (LBX)Load
     Mouse
+    MoX_DBG
     paragrph
     SOUND
     TEXTBOX
@@ -38,3 +40,6 @@ ALLOC
 Progression?
 rename MoX_Data.C/.H
 rename MoX.C/.H - ...MoX_MoM...MoX_Lib...
+
+¿ weirdly add MoX_STRU, MoX_ENUM, etc. ? just used MoX_DEF? move to MoX_Lib?
+...something I saw somewhere just had a massive <lib name>.H with *everything* in there...

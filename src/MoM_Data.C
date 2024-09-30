@@ -3,7 +3,7 @@
 #include "MoX_DEF.H"
 #include "MoM_DEF.H"
 
-#include "MoX_Data.H"
+#include "MoM_Data.H"
 
 #include "Mouse.H"  /* struct s_mouse_list */
 
