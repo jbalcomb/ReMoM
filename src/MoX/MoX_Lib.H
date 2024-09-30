@@ -25,6 +25,7 @@
 #include "Input.H"
 #include "Keyboard.H"
 #include "LBX_Load.H"
+#include "LOADSAVE.H"
 #include "Mouse.H"
 #include "Util.H"
 #include "Video.H"

@@ -42,7 +42,6 @@
 // TODO  #include "MainScr_Maps.H"
 #include "MainScr.H"
 #include "MovePath.H"
-#include "MoX_GAM.H"
 #include "MoX_RNG.H"
 #include "MoX_UnOrg.H"  // WTFMATE
 #include "NEXTTURN.H"

@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\..\src\MoX\Input.C" />
     <ClCompile Include="..\..\..\src\MoX\Keyboard.C" />
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
+    <ClCompile Include="..\..\..\src\MoX\LOADSAVE.C" />
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_Temp.C" />
     <ClCompile Include="..\..\..\src\MoX\Util.C" />
@@ -43,6 +44,7 @@
     <ClInclude Include="..\..\..\src\MoX\Input.H" />
     <ClInclude Include="..\..\..\src\MoX\Keyboard.H" />
     <ClInclude Include="..\..\..\src\MoX\LBX_Load.H" />
+    <ClInclude Include="..\..\..\src\MoX\LOADSAVE.H" />
     <ClInclude Include="..\..\..\src\MoX\Mouse.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BITS.H" />

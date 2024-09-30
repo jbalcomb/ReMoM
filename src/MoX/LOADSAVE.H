@@ -1,7 +1,7 @@
 #ifndef MOX_GAM_H
 #define MOX_GAM_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 
 
