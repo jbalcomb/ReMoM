@@ -60,7 +60,6 @@
 #include "SPLMASTR.H"
 #include "Terrain.H"
 #include "TerrType.H"
-#include "Timer.H"
 #include "UnitList.H"
 #include "UnitMove.H"   // WTFMATE
 #include "UnitStat.H"

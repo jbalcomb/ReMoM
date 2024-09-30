@@ -53,6 +53,7 @@
     <ClInclude Include="..\..\..\src\MoX\MoX_Temp.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX\random.H" />
+    <ClInclude Include="..\..\..\src\MoX\Timer.H" />
     <ClInclude Include="..\..\..\src\MoX\Util.H" />
     <ClInclude Include="..\..\..\src\MoX\Video.H" />
     <ClInclude Include="..\..\..\src\MoX\Video2.H" />

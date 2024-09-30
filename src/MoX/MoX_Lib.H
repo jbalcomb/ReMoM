@@ -28,6 +28,7 @@
 #include "LOADSAVE.H"
 #include "Mouse.H"
 #include "random.H"
+#include "Timer.H"
 #include "Util.H"
 #include "Video.H"
 #include "Video2.H"

@@ -153,7 +153,6 @@
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
-    <ClInclude Include="..\..\..\src\Timer.H" />
     <ClInclude Include="..\..\..\src\UnitList.H" />
     <ClInclude Include="..\..\..\src\UnitMove.H" />
     <ClInclude Include="..\..\..\src\UnitStat.H" />

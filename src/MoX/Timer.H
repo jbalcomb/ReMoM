@@ -1,4 +1,7 @@
 /*
+    WIZARDS.EXE
+        seg002
+
 MoO2  Module: timer
     Release_Time_
         Address: 01:0012C2C6
@@ -11,6 +14,8 @@ MoO2  Module: timer
 */
 #ifndef TIMER_H
 #define TIMER_H
+
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {
