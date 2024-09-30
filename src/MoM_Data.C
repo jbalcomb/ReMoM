@@ -2030,7 +2030,7 @@ int8_t MSG_CityGrowth_Count;
 
 // WZD dseg:9C39
 // drake178: MSG_CityGrowth_Array
-int8_t MSG_CityGrowth_Array[20];  // 1-byte, unsigned
+uint8_t MSG_CityGrowth_Array[20];  // 1-byte, unsigned
 
 // WZD dseg:9C4D
 // drake178: MSG_CityDeath_Count

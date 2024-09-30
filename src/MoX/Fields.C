@@ -745,7 +745,7 @@ int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t 
             signed integer (2 bytes) bar_value
             signed integer (4 bytes) value
 */
-void Find_Bar_Position(int16_t field_num)
+int16_t Find_Bar_Position(int16_t field_num)
 {
     int16_t pos;
     int16_t width;

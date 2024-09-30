@@ -686,7 +686,7 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
 int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
 
 // WZD s34p54
-void Find_Bar_Position(int16_t field_num);
+int16_t Find_Bar_Position(int16_t field_num);
 
 // WZD s34p55
 void Increment_Scroll_Bar(int16_t field_num);
