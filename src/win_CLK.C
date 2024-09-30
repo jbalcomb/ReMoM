@@ -1,5 +1,5 @@
 
-#include "Mox.H"
+#include "MoM.H"
 
 #include "Windows.h"
 
@@ -44,8 +44,8 @@ uint32_t tick_count;
 // ~== INT 1A,0 - Read System Clock Timer
 uint32_t Get_System_Clock_Counter(void)
 {
-    uint32_t dos_tick_count;
-    DWORD win_tick_count;
+    uint32_t dos_tick_count = 0;
+    DWORD win_tick_count = 0;
 #pragma warning(suppress : 28159)
     win_tick_count = GetTickCount();  // TODO  "Consider using GetTickCount64() ..."
     // dos_tick_count = win_tick_count / (uint32_t)54.92540;  // TODO(JimBalcomb,20231115): maybe identify castings that are purposeful and/or reasonable... macro? IMA_UINT32
@@ -56,7 +56,7 @@ uint32_t Get_System_Clock_Counter(void)
 
 void Release_Time(int ticks)
 {
-    uint32_t current_tick_count;
+    uint32_t current_tick_count = 0;
     do
     {
         current_tick_count = Get_System_Clock_Counter();
