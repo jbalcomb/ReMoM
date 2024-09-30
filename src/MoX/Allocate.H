@@ -24,8 +24,9 @@ blocks?
 */
 
 
-#include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
-#include "MoX_BITS.H"   /* MoX_GET_2B_OFS() etc. */
+
+#include "MoX_Lib.H"
+
 
 
 enum e_SA_Allocation_Type

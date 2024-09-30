@@ -1,13 +1,7 @@
 #ifndef MOX_LBX_H
 #define MOX_LBX_H
 
-#include "MoX_TYPE.H"
-
-#include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
-
-
-// #include <STDIO.H>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdio.h>
+#include "MoX_Lib.H"
 
 
 

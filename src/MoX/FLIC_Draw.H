@@ -18,8 +18,7 @@ MoO2 Module: shear
 #ifndef FLIC_DRAW_H
 #define FLIC_DRAW_H
 
-#include "MoX_TYPE.H"
-#include "MoX_BITS.H"
+#include "MoX_Lib.H"
 
 /*
 "BRUN"  "byte run"
