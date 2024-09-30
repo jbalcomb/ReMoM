@@ -8,11 +8,13 @@
 #include "Exit.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
+#include "Fonts.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
 #include "MoX_DBG.H"
 
 #include "..\Graphics.H"
+#include "..\Video.H"
 
 #include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
 #include "MoX_BASE.H"    /* ST_FAILURE, etc. */

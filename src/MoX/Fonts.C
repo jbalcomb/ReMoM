@@ -6,7 +6,8 @@
         seg020  MoO2 Module: palette
         seg021
 */
-#include "MoM.H"
+
+#include "MoX_Lib.H"
 
 
 
