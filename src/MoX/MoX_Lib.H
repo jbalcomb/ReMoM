@@ -11,6 +11,7 @@
 #include "Fonts.H"
 #include "GENDRAW.H"
 #include "Graphics.H"
+#include "Input.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
 #include "MoX_DBG.H"

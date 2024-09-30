@@ -105,7 +105,6 @@
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
-    <ClInclude Include="..\..\..\src\Input.H" />
     <ClInclude Include="..\..\..\src\ItemMake.H" />
     <ClInclude Include="..\..\..\src\Items.H" />
     <ClInclude Include="..\..\..\src\ItemScrn.H" />
@@ -195,7 +194,6 @@
     <ClCompile Include="..\..\..\src\Help.C" />
     <ClCompile Include="..\..\..\src\HIRE.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
-    <ClCompile Include="..\..\..\src\Input.C" />
     <ClCompile Include="..\..\..\src\ItemMake.C" />
     <ClCompile Include="..\..\..\src\Items.C" />
     <ClCompile Include="..\..\..\src\ItemScrn.C" />

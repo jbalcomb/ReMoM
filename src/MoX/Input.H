@@ -5,7 +5,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef STU_DEBUG
 extern int16_t DBG_In_MouseButtonLeft;

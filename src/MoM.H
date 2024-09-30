@@ -29,7 +29,6 @@
 #include "Help.H"
 #include "HIRE.H"
 #include "Init.H"
-#include "Input.H"
 #include "ItemMake.H"
 #include "Items.H"
 #include "ItemScrn.H"
