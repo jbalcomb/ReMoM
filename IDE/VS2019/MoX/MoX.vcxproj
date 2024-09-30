@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\MoX\LOADSAVE.C" />
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
+    <ClCompile Include="..\..\..\src\MoX\MOX_T4.C" />
     <ClCompile Include="..\..\..\src\MoX\MoX_Temp.C" />
     <ClCompile Include="..\..\..\src\MoX\random.C" />
     <ClCompile Include="..\..\..\src\MoX\Util.C" />
@@ -50,6 +51,7 @@
     <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_BITS.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_Lib.H" />
+    <ClInclude Include="..\..\..\src\MoX\MOX_T4.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_Temp.H" />
     <ClInclude Include="..\..\..\src\MoX\MoX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX\random.H" />

@@ -10,7 +10,7 @@
 #ifndef MOX_UNORG_H
 #define MOX_UNORG_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {
