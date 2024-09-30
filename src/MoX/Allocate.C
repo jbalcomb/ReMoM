@@ -27,17 +27,7 @@
 
 */
 
-#include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
-#include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
-#include "MoX_BASE.H"    /* ST_FAILURE, etc. */
-
-#include "MoX_DBG.H"    /* Check_Release_Version() */
-
-#include "Allocate.H"
-
-#include <malloc.h>     /* malloc() */
-#include <stdlib.h>     /* itoa() */
-#include <string.h>     /* strcat(), strcpy() */
+#include "MoX_Lib.H"
 
 
 

@@ -12,6 +12,8 @@
 #include "MoX_Temp.H"
 
 #include "Allocate.H"
+#include "CFG.H"
+#include "DBG.H"
 #include "Exit.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
@@ -22,7 +24,6 @@
 #include "Keyboard.H"
 #include "LBX_Load.H"
 #include "Mouse.H"
-#include "MoX_DBG.H"
 #include "Util.H"
 #include "Video.H"
 #include "Video2.H"
@@ -38,3 +39,13 @@
 #include <string.h>     /* strcat(), strcpy() */
 
 #endif  /* MOX_LIB_H */
+
+// Allocate.C 
+// #include "MoX_TYPE.H"   /* SAMB_ptr, etc. */
+// #include "MoX_BITS.H"   /* GET_2B_OFS() etc. */
+// #include "MoX_BASE.H"    /* ST_FAILURE, etc. */
+// #include "MoX_DBG.H"    /* Check_Release_Version() */
+// #include "Allocate.H"
+// #include <malloc.h>     /* malloc() */
+// #include <stdlib.h>     /* itoa() */
+// #include <string.h>     /* strcat(), strcpy() */

@@ -40,6 +40,11 @@ MoM_MoX.C/.H
 ~== MoM <===> MoM_MoX <===> MoX_MoM <===> MoX
 
 
+MoO2
+FILEDEF & INITGAME
+..."Saved_Game"..."Settings"...
+
+
 
 
 

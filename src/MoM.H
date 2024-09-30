@@ -42,7 +42,6 @@
 // TODO  #include "MainScr_Maps.H"
 #include "MainScr.H"
 #include "MovePath.H"
-#include "MoX_CFG.H"
 #include "MoX_CMB.H"
 #include "MoX_DIR.H"
 #include "MoX_DOS.H"

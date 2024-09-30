@@ -1,12 +1,21 @@
+/*
+    WIZARDS.EXE
+        seg024
 
-#include "MoX_DBG.H"
+MoO2
+    Module: capture
+    Module: fields
+
+*/
+
+#include "MoX_Lib.H"
 
 
 
 // WZD dseg:7876                                                 BEGIN : seg024 - Initialized Data
 
 // WZD dseg:7876
-int16_t release_version = ST_FALSE;
+int16_t release_flag = ST_FALSE;
 
 // WZD dseg:7878
 char cnst_Scrdmp00_Full[] = "SCRDMP00";
@@ -37,7 +46,7 @@ char cnst_WB7[] = "wb";
 // WZD s24p01
 void F11_Key__WIP(void)
 {
-    if(release_version == ST_TRUE)
+    if(release_flag == ST_TRUE)
     {
         return;
     }
@@ -109,7 +118,7 @@ void Screen_Flic_Capture__STUB(void)
     uint32_t Dword_Field_Value;
     int16_t file_handle;  // _SI_
 
-    if(release_version == ST_TRUE)
+    if(release_flag == ST_TRUE)
     {
         return;
     }
@@ -155,14 +164,14 @@ void Screen_Flic_Capture__STUB(void)
 // MoO2  Module: capture  Release_Version()  Address: 01:00110B34
 void Release_Version(void)
 {
-    release_version = ST_TRUE;
+    release_flag = ST_TRUE;
 }
 
 // WZD s24p06
 // MoO2  Module: capture  Check_Release_Version()  Address: 01:00110B5C
 int Check_Release_Version(void)
 {
-    return release_version;
+    return release_flag;
 }
 
 // WZD s24p07

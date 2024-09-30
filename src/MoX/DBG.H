@@ -1,10 +1,16 @@
+/*
+    WIZARDS.EXE
+        seg024
+
+MoO2
+    Module: capture
+    Module: fields
+
+*/
 #ifndef MOX_DBG_H
 #define MOX_DBG_H
 
-#include "MoX_TYPE.H"
-#include "MoX_BASE.H"
-
-
+#include "MoX_Lib.H"
 
 
 
