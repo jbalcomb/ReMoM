@@ -5,6 +5,7 @@
 #include "MoX_TYPE.H"
 
 #include "Allocate.H"
+#include "Exit.H"
 #include "FLIC_Draw.H"
 #include "LBX_Load.H"
 #include "Mouse.H"

@@ -13,33 +13,9 @@
 
 
 
-/*
-    ¿ MoX Migration Plan ?
-*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifdef __cplusplus
-}
-#endif
-
-
-
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-/*
-    Exit
-*/
-// WZD s05p02
-// TODO  extern void (*Exit_With_Message)(char* string);
 
 
 
