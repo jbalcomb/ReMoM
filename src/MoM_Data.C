@@ -2215,10 +2215,6 @@ struct s_UNIT * _UNITS;
 // WZD dseg:9EC6
 struct s_INACTV_HERO * hero_names_table;
 
-// WZD dseg:9ECA
-struct s_WIZARD _players[6];
-// struct s_WIZARD * _players;
-
 
 // WZD dseg:BB7A
 // // // struct s_HELP_FIELD _help_entries[50];

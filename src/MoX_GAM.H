@@ -46,11 +46,11 @@ dead hero
 0x01	Prayermaster
 */
 
-struct s_SAVE_GAM
-{
-    /* 00 */ struct s_HERO p0_heroes[35];
-
-};
+// struct s_SAVE_GAM
+// {
+//     /* 00 */ struct s_HERO p0_heroes[35];
+// 
+// };
 
 
 
@@ -58,7 +58,7 @@ struct s_SAVE_GAM
 extern "C" {
 #endif
 
-extern struct s_SAVE_GAM save_gam;
+// DELETEME  extern struct s_SAVE_GAM save_gam;
 
 
 void TST_Validate_GameData(void);

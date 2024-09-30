@@ -166,8 +166,6 @@
     <ClInclude Include="..\..\..\src\UNITSTK.H" />
     <ClInclude Include="..\..\..\src\UNITTYPE.H" />
     <ClInclude Include="..\..\..\src\UnitView.H" />
-    <ClInclude Include="..\..\..\src\Video.H" />
-    <ClInclude Include="..\..\..\src\Video2.H" />
     <ClInclude Include="..\..\..\src\win_PFL.hpp" />
     <ClInclude Include="..\..\..\src\WIZVIEW.H" />
     <ClInclude Include="..\..\..\src\WZD_o059.H" />
@@ -245,8 +243,6 @@
     <ClCompile Include="..\..\..\src\UNITSTK.C" />
     <ClCompile Include="..\..\..\src\UNITTYPE.C" />
     <ClCompile Include="..\..\..\src\UnitView.C" />
-    <ClCompile Include="..\..\..\src\Video.C" />
-    <ClCompile Include="..\..\..\src\Video2.C" />
     <ClCompile Include="..\..\..\src\win_CLK.C" />
     <ClCompile Include="..\..\..\src\win_DIR.C" />
     <ClCompile Include="..\..\..\src\win_EMS.C" />

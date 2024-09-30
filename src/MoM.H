@@ -74,8 +74,6 @@
 #include "UNITSTK.H"
 #include "UNITTYPE.H"   // WTFMATE
 #include "UnitView.H"
-#include "Video.H"
-#include "Video2.H"
 #include "WIZVIEW.H"
 #include "WZD_o059.H"
 #include "WZD_o129.H"

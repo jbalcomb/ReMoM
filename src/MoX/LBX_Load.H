@@ -1,6 +1,7 @@
 #ifndef MOX_LBX_H
 #define MOX_LBX_H
 
+#include <stdio.h>
 #include "MoX_Lib.H"
 
 

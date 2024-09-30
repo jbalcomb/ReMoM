@@ -1483,47 +1483,47 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     do_dim_back = ST_FALSE;
 
-    notify_magic_idx = 3;  // Life
+    notify_magic_idx = sbr_Life;
 
-    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[2])  /* Chaos */
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos])
     {
-        notify_magic_idx = 2;  // Chaos
+        notify_magic_idx = sbr_Chaos;
     }
 
-    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[4])  /* Death */
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death])
     {
-        notify_magic_idx = 4;  // Death
+        notify_magic_idx = sbr_Death;
     }
 
-    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[0])  /* Nature */
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature])
     {
-        notify_magic_idx = 0;  // Nature
+        notify_magic_idx = sbr_Nature;
     }
 
-    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[1])  /* Sorcery */
+    if(_players[HUMAN_PLAYER_IDX].spellranks[notify_magic_idx] < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery])
     {
-        notify_magic_idx = 1;  // Sorcery
+        notify_magic_idx = sbr_Sorcery;
     }
 
     switch(notify_magic_idx)
     {
-        case 0:  /* Nature */
+        case sbr_Nature:
         {
             notify_magic_idx = mr_Nature;
         } break;
-        case 1:  /* Sorcery */
+        case sbr_Sorcery:
         {
             notify_magic_idx = mr_Sorcery;
         } break;
-        case 2:  /* Chaos */
+        case sbr_Chaos:
         {
             notify_magic_idx = mr_Chaos;
         } break;
-        case 3:  /* Life */
+        case sbr_Life:
         {
             notify_magic_idx = mr_Life;
         } break;
-        case 4:  /* Death */
+        case sbr_Death:
         {
             notify_magic_idx = mr_Death;
         } break;

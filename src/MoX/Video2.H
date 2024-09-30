@@ -6,7 +6,7 @@
 #ifndef VIDEO2_H
 #define VIDEO2_H
 
-#include "MoM.H"
+#include "MoX_Lib.H"
 
 #ifdef __cplusplus
 extern "C" {

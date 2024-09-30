@@ -3774,8 +3774,6 @@ extern struct s_UNIT * _UNITS;
 // WZD dseg:9EC6
 extern struct s_INACTV_HERO * hero_names_table;
 
-// WZD dseg:9ECA
-extern struct s_WIZARD _players[6];
 
 // WZD dseg:BB7A
 // // // extern struct s_HELP_FIELD _help_entries[50];
