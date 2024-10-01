@@ -247,22 +247,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Fields.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Fonts.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\GENDRAW.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Graphics.C"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\Help.C"
 				>
 			</File>
@@ -272,10 +256,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Init.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Input.C"
 				>
 			</File>
 			<File
@@ -292,10 +272,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ItemView.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Keyboard.C"
 				>
 			</File>
 			<File
@@ -331,59 +307,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MGC_s001.C"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\MoM.C"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Mouse.C"
+				RelativePath="..\..\src\MoM_Data.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoM_DBG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoM_PFL.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\MovePath.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CFG.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CMB.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Data.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DOS.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_GAM.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_PFL.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_RNG.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_UnOrg.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Util.C"
 				>
 			</File>
 			<File
@@ -399,15 +339,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\paragrph.C"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ProdScr.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\RACETYPE.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\REPORT.C"
 				>
 			</File>
 			<File
@@ -424,10 +364,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SCORE.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\sdl_MoM.cpp"
 				>
 			</File>
 			<File
@@ -452,10 +388,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SPLMASTR.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Summary.C"
 				>
 			</File>
 			<File
@@ -488,14 +420,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\UnitView.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Video.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Video2.C"
 				>
 			</File>
 			<File
@@ -552,10 +476,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\WZD_o143.C"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\WZD_s001.C"
 				>
 			</File>
 		</Filter>
@@ -633,27 +553,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Fields.H"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\FLIC_Draw.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\FLIC_Draw2.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Fonts.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\GENDRAW.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Graphics.H"
 				>
 			</File>
 			<File
@@ -686,10 +590,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ItemView.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Keyboard.H"
 				>
 			</File>
 			<File
@@ -741,79 +641,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoM_Data.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoM_DBG.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoM_DEF.H"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Mouse.H"
+				RelativePath="..\..\src\MoM_PFL.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\MovePath.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_BITS.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CFG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_CMB.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Data.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DBG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DEF.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DIR.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_DOS.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_GAM.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_PFL.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_RNG.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_SET.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_TYPE.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_UnOrg.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MoX_Util.H"
 				>
 			</File>
 			<File
@@ -826,10 +670,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Outpost.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\paragrph.H"
 				>
 			</File>
 			<File
@@ -858,6 +698,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\RACETYPE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\REPORT.H"
 				>
 			</File>
 			<File
@@ -898,10 +742,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SPLMASTR.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Summary.H"
 				>
 			</File>
 			<File
@@ -946,14 +786,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\UnitView.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Video.H"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\Video2.H"
 				>
 			</File>
 			<File
@@ -1028,18 +860,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="lodepng"
-			>
-			<File
-				RelativePath="..\..\3PL\lodepng\lodepng.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\3PL\lodepng\lodepng.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="MoX"
 			>
 			<File
@@ -1051,11 +871,63 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoX\CFG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\CFG.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\DBG.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\DBG.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\DIR.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\DOS.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\DOS.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\EMM.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\EMM.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX\Exit.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\MoX\Exit.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Fields.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Fields.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\file_ani.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\file_ani.H"
 				>
 			</File>
 			<File
@@ -1067,11 +939,75 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\MoX\Fonts.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Fonts.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\GENDRAW.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\GENDRAW.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Graphics.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Graphics.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Input.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Input.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\IO_Buffer.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\IO_Buffer.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Keyboard.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Keyboard.H"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\MoX\LBX_Load.C"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\MoX\LBX_Load.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\LOADSAVE.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\LOADSAVE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Mouse.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Mouse.H"
 				>
 			</File>
 			<File
@@ -1083,15 +1019,75 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_DBG.C"
+				RelativePath="..\..\src\MoX\MoX_DEF.H"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoX\MoX_DBG.H"
+				RelativePath="..\..\src\MoX\MoX_Lib.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MOX_T4.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MOX_T4.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Temp.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\MoX_Temp.H"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\MoX\MoX_TYPE.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\paragrph.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\paragrph.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\random.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\random.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Timer.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Util.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Util.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Video.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Video.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Video2.C"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\MoX\Video2.H"
 				>
 			</File>
 		</Filter>
