@@ -1308,6 +1308,7 @@ void Set_Outpost_Screen_Help_List(void);
 void Set_Road_Build_Screen_Help_List(void);
 
 // WZD o104p20
+void Set_Surveyor_Screen_Help_List(void);
 
 // WZD o104p21
 

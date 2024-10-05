@@ -1492,7 +1492,7 @@ int16_t City_Food_Terrain(int16_t city_idx)
 
     for(itr = 0; itr < useable_map_squares; itr++)
     {
-        food2_units += Map_Square_Food2(wx_array[itr], wy_array[itr], city_wp);
+        food2_units += Square_Food2(wx_array[itr], wy_array[itr], city_wp);
     }
 
     if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != ST_FALSE)
@@ -1630,7 +1630,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
                     square_x -= WORLD_WIDTH;
                 }
 
-                if( (*(terrain_flags_table_row + square_x) & 0x20) == 0 ) /* TF_Corruption */
+                if( (*(terrain_flags_table_row + square_x) & 0x20) == 0 ) /* MSF_CORRUPTION */
                 {
                     wx_array[map_square_count] = square_x;
                     wy_array[map_square_count] = square_y;
@@ -1756,7 +1756,7 @@ int16_t City_Food_Production(int16_t city_idx)
 
 XREF:
     City_Growth_Rate()
-    TILE_Survey()
+    Compute_Base_Map_Square_Values()
     NX_j_City_Maximum_Size()
 
 */
@@ -1862,7 +1862,7 @@ int16_t City_Production_Production(int16_t city_idx)
 
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            production_modifier += Map_Square_Production_Bonus(wx_array[itr], wy_array[itr], city_wp, have_gaias_blessing);
+            production_modifier += Square_Production_Bonus(wx_array[itr], wy_array[itr], city_wp, have_gaias_blessing);
         }
 
         if(
@@ -1951,7 +1951,7 @@ int16_t City_Gold_Production(int16_t city_idx)
 
         useable_map_squares = Get_Useable_City_Area(CITYX(), CITYY(), city_wp, &wx_array[0], &wy_array[0]);
 
-        gold_modifier = Map_Square_Gold_Bonus(CITYX(), CITYY(), CITYP()) + City_Road_Trade_Bonus(city_idx);
+        gold_modifier = Square_Gold_Bonus(CITYX(), CITYY(), CITYP()) + City_Road_Trade_Bonus(city_idx);
 
         if(_CITIES[city_idx].race == 0x0B /* R_Nomad */)
         {
@@ -2027,7 +2027,7 @@ int16_t City_Gold_Production(int16_t city_idx)
         for(itr = 0; itr < useable_map_squares; itr++)
         {
 
-            gold_units += Map_Square_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+            gold_units += Square_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
 
         }
 
@@ -2281,7 +2281,7 @@ int16_t City_Mana_Production(int16_t city_idx)
 
         for(itr = 0; itr < useable_map_squares; itr++)
         {
-            mana_units += Map_Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+            mana_units += Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
         }
 
         if(
@@ -2587,7 +2587,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
         {
             for(itr = 0; itr < useable_map_squares; itr++)
             {
-                unit_cost_percent -= Terrain_Unit_Cost_Reduction(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+                unit_cost_percent -= Square_Unit_Cost_Reduction(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
             }
         }
 
@@ -3446,7 +3446,357 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
 
 // WZD o142p28
-// TILE_Survey()
+// drake178: TILE_Survey()
+/*
+; surveys the selected tile, filling out the variables
+; at the return pointer locations
+; contains one bug that miscalculates wild game food
+; when looking to settle (marked)
+*/
+/*
+    "surveyor’s information ... statistics for a potential city built on the selected map square"
+
+    *MaxPop     
+    *production_bonus       Square_Production_Bonus()
+    *gold_bonus                 City_Road_Trade_Bonus() ... if rt_Nomand += 50
+    *unit_cost_reduction    Square_Unit_Cost_Reduction()
+    *Gold       
+    *Power      
+    *have_nightshade     
+    *have_mithril     
+    *have_adamantium     
+    *have_shore     
+    *is_unexplored flag {F,T}
+
+Surveyor_Window_Display()
+    Compute_Base_Map_Square_Values(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
+...
+"""
+City Resources
+Maximum Pop 10
+Prod Bonus +22%
+gold_units Bonus +10%
+"""
+
+AI_ProcessSettlers()
+    Compute_Base_Map_Square_Values(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
+
+
+*/
+void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
+{
+    int16_t city_idx;
+    int16_t itr;
+    int16_t map_square_has_city;
+    int16_t Tile_Food;
+    int16_t food2_remainder;
+    int16_t Bit_Index;
+    int16_t itr_wx;
+    int16_t itr_wy;  // _DI_
+    int16_t curr_wx;  // _SI_
+
+    // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
+
+    map_square_has_city = ST_FALSE;
+
+    // look for a city at the provided coordinates, and save its index if there is one
+    for(itr = 0; itr < _cities; itr++)
+    {
+        if(
+            (_CITIES[itr].wx == wx)
+            &&
+            (_CITIES[itr].wy == wy)
+            &&
+            (_CITIES[itr].wp == wp)
+        )
+        {
+            map_square_has_city = ST_TRUE;
+            city_idx = itr;
+        }
+    }
+
+    *MaxPop = 0;
+    *production_bonus = 0;
+    *gold_bonus = 0;
+    *unit_cost_reduction = 0;
+    *gold_units = 0;
+    *magic_units = 0;
+    *have_nightshade = 0;
+    *have_mithril = 0;
+    *have_adamantium = 0;
+    *have_shore = 0;
+    *is_unexplored = 0;
+
+    food2_remainder = 0;
+
+    *gold_bonus = Square_Gold_Bonus(wx, wy, wp);
+
+    for(itr_wy = (wy - 2); ((itr_wy < (wy + 3)) && (itr_wy > 0) && (itr_wy < WORLD_HEIGHT)); itr+wy ++)
+    {
+
+        for(itr_wx = (wx - 2); itr_wx < (wx + 3); itr_wx++)
+        {
+
+            if(
+                (
+                    (wy - 2) == itr_wy
+                    &&
+                    (
+                        (wx - 2) == itr_wx
+                        ||
+                        (wx + 2) == itr_wx
+                    )
+                )
+                ||
+                (
+                    (wy + 2) == itr_wy
+                    &&
+                    (
+                        (wx - 2) == itr_wx
+                        ||
+                        (wx + 2) == itr_wx
+                    )
+
+                )
+            )
+            {
+                continue;
+            }
+
+            curr_wx = itr_wx;
+
+            if(curr_wx < 0)
+            {
+                curr_wx = WORLD_WIDTH;
+            }
+
+            if(curr_wx > WORLD_WIDTH)
+            {
+                curr_wx -= WORLD_WIDTH;
+            }
+
+            if(SQUARE_UNEXPLORED(curr_wx, itr_wy, wp))
+            {
+                *is_unexplored = ST_TRUE;
+                continue;
+            }
+
+            Bit_Index = ((itr_wy * WORLD_WIDTH) + curr_wx);
+
+            if(
+                (map_square_has_city != ST_FALSE)
+                ||
+                (Test_Bit_Field(Bit_Index, &city_area_bits[(wp * WORLD_SIZE)]) == 0)
+            )
+            {
+
+                *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+
+                if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
+                {
+                    *MaxPop += 2;  // ; BUG: should be 8 (counting quarter foods here)
+                }
+
+                *production_bonus = Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE);
+
+                *unit_cost_reduction = Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+
+                SETMAX(*unit_cost_reduction, 50);  // The bonus is cumulative ... up to a maximum reduction in cost of 50%.
+
+                *gold_units = Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+
+                *magic_units = Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE);
+
+            }
+            else
+            {
+
+                Tile_Food = Square_Food2(curr_wx, itr_wy, wp);
+
+                if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
+                {
+                    Tile_Food += 2;  // ; BUG: should be 8 (counting quarter foods here)
+                }
+
+                *MaxPop += ((Tile_Food + food2_remainder) / 2);
+
+                food2_remainder = ((Tile_Food + food2_remainder) % 2);
+
+                *production_bonus = (Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE) / 2);
+
+                *unit_cost_reduction = (Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+
+                SETMAX(*unit_cost_reduction, 50);  // The bonus is cumulative ... up to a maximum reduction in cost of 50%.
+
+                *gold_units = (Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+
+                *magic_units = (Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+
+            }
+
+            if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Nightshade) != 0)
+            {
+                *have_nightshade = ST_TRUE;
+            }
+
+            if(Square_Has_Mithril(curr_wx, itr_wy, wp) == ST_TRUE)
+            {
+                *have_mithril = ST_TRUE;
+            }
+
+            if(Square_Has_Adamantium(curr_wx, itr_wy, wp) == ST_TRUE)
+            {
+                *have_adamantium = ST_TRUE;
+                *have_mithril = ST_FALSE;
+            }
+
+        }
+
+    }
+
+    // HERE: *MaxPop is ...
+    // *MaxPop = Square_Food2(curr_wx, itr_wy, wp);
+    // *MaxPop += ((Tile_Food + food2_remainder) / 2);
+    *MaxPop = (*MaxPop / 4);  // ¿ 2 food2 per population unit ?
+    // HERE: *MaxPop is population
+
+    if(map_square_has_city == ST_TRUE)
+    {
+
+        *MaxPop = City_Maximum_Size(city_idx);
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+        )
+        {
+            *production_bonus += 25;
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_Sawmill] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_Sawmill] == bs_Replaced)
+        )
+        {
+            *production_bonus += 25;
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+        )
+        {
+            *production_bonus += 50;
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_MechaniciansGuild] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_MechaniciansGuild] == bs_Replaced)
+        )
+        {
+            *production_bonus += 50;
+        }
+
+        if(_CITIES[city_idx].enchantments[INSPIRATIONS] > 0)
+        {
+            *production_bonus += 100;
+        }
+
+        if(_CITIES[city_idx].race == rt_Nomad)
+        {
+            *gold_bonus += 50;
+        }
+
+        *gold_bonus += City_Road_Trade_Bonus(city_idx);
+
+        if((_CITIES[city_idx].population / 3) < *gold_bonus)
+        {
+            *gold_bonus = (_CITIES[city_idx].population / 3);
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_MerchantsGuild] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_MerchantsGuild] == bs_Replaced)
+        )
+        {
+            *gold_bonus += 100;
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_Bank] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_Bank] == bs_Replaced)
+        )
+        {
+            *gold_bonus += 50;
+        }
+
+        if(
+            (_CITIES[city_idx].bldg_status[bt_Marketplace] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[bt_Marketplace] == bs_Replaced)
+        )
+        {
+            *gold_bonus += 50;
+        }
+
+
+        if(_CITIES[city_idx].enchantments[PROSPERITY] > 0)
+        {
+            *gold_bonus += 100;
+        }
+
+    }
+
+    SETMAX(*MaxPop, 25);
+
+    for(itr_wy = (wy - 1); ((wy + 2) <= itr_wy); itr_wy++)
+    {
+
+        if(
+            (itr_wy > 0)
+            &&
+            (itr_wy < WORLD_HEIGHT)
+        )
+        {
+
+            for(itr_wx = (wx - 1); (wx + 2) > itr_wx; itr_wx++)
+            {
+
+                curr_wx = itr_wx;
+
+                if(curr_wx < 0)
+                {
+                    curr_wx += WORLD_WIDTH;
+                }
+
+                if(curr_wx > WORLD_WIDTH)
+                {
+                    curr_wx -= WORLD_WIDTH;
+                }
+
+                if(SQUARE_EXPLORED(curr_wx, itr_wy, wp) != ST_FALSE)
+                {
+
+                    if(Square_Is_Sailable(curr_wx, itr_wy, wp) != ST_FALSE)
+                    {
+                        *have_shore = ST_TRUE;
+                    }
+
+                }
+
+            }
+            
+        }
+
+    }
+
+}
 
 
 // WZD o142p29

@@ -56,6 +56,7 @@
 #include "Spellbook.H"
 #include "SOUND.H"
 #include "SPLMASTR.H"
+#include "Surveyor.H"
 #include "Terrain.H"
 #include "TerrType.H"
 #include "UnitList.H"

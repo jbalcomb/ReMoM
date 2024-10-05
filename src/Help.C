@@ -187,7 +187,12 @@ void Set_Road_Build_Screen_Help_List(void)
 }
 
 // WZD o104p20
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "survey Help"
+void Set_Surveyor_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 20, (SAMB_ptr)_help_entries, 0, 12, 10);
+    Set_Help_List((char*)&_help_entries[0], 12);
+}
 
 // WZD o104p21
 // HLPENTRY.LBX  ""

@@ -150,7 +150,7 @@ void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp)
     uint16_t terrain_type;
     int16_t terrain_special;
 
-    SET_TERRAIN_TYPE(wx, wy, wp, tt_1Mountain1);
+    SET_TERRAIN_TYPE(wx, wy, wp, tte_1Mountain1);
 
     // ; adjusts the extended tile type (graphic) of the tile
     // ; and all adjacent tiles to produce a seamless flow of
@@ -345,21 +345,21 @@ void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp)
 // drake178: CTY_ResetRoadConns()
 void Reset_City_Road_Connection_Bitfields(void)
 {
-    int16_t candidate_list[NUM_CITIES];
-    int16_t UU_var1A;
-    int16_t has_road_connection;
-    int16_t City_Tile_Index;
-    int16_t candidate_index;
-    int16_t candidate_count;
-    int16_t UU_var10;
-    int16_t Y_Loop_Var;
-    int16_t X_Loop_Var;
-    int16_t city_wy;
-    int16_t city_wx;
-    int16_t city_wp;
-    int16_t city_landmass_idx;
-    int16_t dst_city_idx;
-    int16_t itr_cities;  // _DI_
+    int16_t candidate_list[NUM_CITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t UU_var1A = 0;
+    int16_t has_road_connection = 0;
+    int16_t City_Tile_Index = 0;
+    int16_t candidate_index = 0;
+    int16_t candidate_count = 0;
+    int16_t UU_var10 = 0;
+    int16_t Y_Loop_Var = 0;
+    int16_t X_Loop_Var = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t city_wp = 0;
+    int16_t city_landmass_idx = 0;
+    int16_t dst_city_idx = 0;
+    int16_t itr_cities = 0;  // _DI_
 
     // TODO  EMM_Map_DataH();
 

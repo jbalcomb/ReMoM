@@ -1,5 +1,5 @@
-#ifndef MOX_DATA_H
-#define MOX_DATA_H
+#ifndef MOM_DATA_H
+#define MOM_DATA_H
 
 #include "MoM.H"
 
@@ -3477,7 +3477,7 @@ extern SAMB_ptr lair_bottom_with_button_seg;
 // WZD dseg:9922                                                 BEGIN:  Main Screen Pictures
 
 // WZD dseg:9922
-extern SAMB_ptr main_background;
+extern SAMB_ptr main_background_seg;
 
 // WZD dseg:9924
 extern SAMB_ptr unit_backgrounds[9];
@@ -4462,4 +4462,4 @@ extern "C" {
 #endif
 
 
-#endif  /* MOX_DATA_H */
+#endif  /* MOM_DATA_H */

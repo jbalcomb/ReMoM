@@ -475,7 +475,7 @@ void Main_Screen_Load_Pictures(void)
 {
     int16_t itr;
 
-    main_background    = LBX_Load(main_lbx_file,  0);
+    main_background_seg = LBX_Load(main_lbx_file,  0);
 
     main_game_button   = LBX_Load(main_lbx_file, 1);
     main_spells_button = LBX_Load(main_lbx_file, 2);

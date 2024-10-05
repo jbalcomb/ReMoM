@@ -16,7 +16,7 @@ then, <= the upper boundary of each range of terrain types
 
 not sure about this specific animated ocean terrain
 everything after this is Tundra
-<= _AnimOcean  = 259h
+<= tt_AnimOcean  = 259h
 ~ < 'Tundra Range'
 
 >= _Grasslands1  0xA2
@@ -66,27 +66,27 @@ enum TER_TYPES
     TT_Shore1_1st  = 0x2,
     TT_Lake        = 0x12,
     TT_Shore1_end  = 0x0A1,  /* 161 */
-    TT_Grass1      = 0x0A2,
+    tt_Grasslands1      = 0x0A2,
     TT_Forest1     = 0x0A3,
-    TT_Mountain1   = 0x0A4,
-    TT_Desert1     = 0x0A5,
-    TT_Swamp1      = 0x0A6,
-    TT_Tundra1     = 0x0A7,
-    TT_SorcNode    = 0x0A8,
+    tt_Mountain1   = 0x0A4,
+    tt_Desert1     = 0x0A5,
+    tt_Swamp1      = 0x0A6,
+    tt_Tundra1     = 0x0A7,
+    tt_SorceryNode    = 0x0A8,
     TT_NatNode     = 0x0A9,
-    TT_ChaosNode   = 0x0AA,
-    TT_Hills1      = 0x0AB,
-    TT_Grass2      = 0x0AC,
-    TT_Grass3      = 0x0AD,
-    TT_Desert2     = 0x0AE,
-    TT_Desert3     = 0x0AF,
-    TT_Desert4     = 0x0B0,
-    TT_Swamp2      = 0x0B1,
-    TT_Swamp3      = 0x0B2,
-    TT_Volcano     = 0x0B3,
-    TT_Grass4      = 0x0B4,
-    TT_Tundra2     = 0x0B5,
-    TT_Tundra3     = 0x0B6,
+    tt_ChaosNode   = 0x0AA,
+    tt_Hills1      = 0x0AB,
+    tt_Grasslands2      = 0x0AC,
+    tt_Grasslands3      = 0x0AD,
+    tt_Desert2     = 0x0AE,
+    tt_Desert3     = 0x0AF,
+    tt_Desert4     = 0x0B0,
+    tt_Swamp2      = 0x0B1,
+    tt_Swamp3      = 0x0B2,
+    tt_Volcano     = 0x0B3,
+    tt_Grasslands4  = 0x0B4,
+    tt_Tundra2     = 0x0B5,
+    tt_Tundra3     = 0x0B6,
     TT_Forest2     = 0x0B7,
     TT_Forest3     = 0x0B8,
     TT_RiverM_1st  = 0x0B9,
@@ -98,14 +98,14 @@ enum TER_TYPES
     TT_Shore2F_1st = 0xC9,
     TT_Shore2F_end = 0xE8,
     TT_Rivers_1st  = 0x0E9,
-    TT_Rivers_end  = 0x102,
+    tt_Rivers_end  = 0x102,
     TT_Mntns_1st   = 0x103,
-    TT_Mntns_end   = 0x112,
-    TT_Hills_1st   = 0x113,
-    TT_Hills_end   = 0x123,
-    TT_Desert_1st  = 0x124,
+    tt_Mntns_end   = 0x112,
+    tt_Hills_1st   = 0x113,
+    tt_Hills_end   = 0x123,
+    tt_Desert_1st  = 0x124,
     TT_Desert_end  = 0x1C3,
-    TT_Shore2_1st  = 0x1C4,
+    tt_Shore2_1st  = 0x1C4,
     TT_Shore2_end  = 0x1D3,
     TT_4WRiver1    = 0x1D4,
     TT_4WRiver2    = 0x1D5,
@@ -115,7 +115,7 @@ enum TER_TYPES
     TT_Shore3_1st  = 0x1D9,
     TT_Shore3_end  = 0x258,
     TT_Ocean2      = 0x259,
-    TT_Tundra_1st  = 0x25A,
+    tt_Tundra_1st  = 0x25A,
     TT_Tundra_Last = 0x2F9,
     TerType_Count  = 0x2F
 };
@@ -288,7 +288,7 @@ enum OVL_Tiles_Extended
     _Shore10101111  = 0xA1,
     _Grasslands1    = 0xA2,
     _Forest1        = 0xA3,
-    tt_1Mountain1   = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
+    tte_1Mountain1   = 0xA4,  /* type used by Set_Terrain_Type_Mountain() */
     _AllDesert1     = 0xA5,
     _Swamp1         = 0xA6,
     _AllTundra1     = 0xA7,
@@ -303,7 +303,7 @@ enum OVL_Tiles_Extended
     _AllDesert4     = 0xB0,
     _Swamp2         = 0xB1,
     _Swamp3         = 0xB2,
-    tt_Volcano      = 0xB3,  /* type used by Set_Terrain_Type_Volcano() */
+    tte_Volcano      = 0xB3,  /* type used by Set_Terrain_Type_Volcano() */
     _Grasslands4    = 0xB4,
     _AllTundra2     = 0xB5,
     _AllTundra3     = 0xB6,
@@ -725,7 +725,7 @@ enum OVL_Tiles_Extended
     _Shore000R1001  = 0x256,
     _Shore001R0001  = 0x257,
     _Shore001R1001  = 0x258,
-    _AnimOcean      = 0x259,
+    tte_AnimOcean      = 0x259,  /* type used by Square_Is_Ocean() */
     _Tundra00001000 = 0x25A,
     _Tundra00001100 = 0x25B,
     _Tundra00001110 = 0x25C,
