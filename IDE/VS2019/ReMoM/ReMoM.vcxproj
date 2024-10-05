@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\..\src\stu\STU_CHK.H" />
     <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
     <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
+    <ClInclude Include="..\..\..\src\Surveyor.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\UnitList.H" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\..\..\src\stu\STU_CHK.C" />
     <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
     <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
+    <ClCompile Include="..\..\..\src\Surveyor.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
     <ClCompile Include="..\..\..\src\UnitList.C" />

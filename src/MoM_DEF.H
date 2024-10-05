@@ -276,6 +276,11 @@ WIZARDS.LBX
 // #define MAP_SQUARE_SCREEN_Y_MAX        180  // in Pixels
 #define MAP_SQUARE_SCREEN_Y_MAX        (MAP_SCREEN_Y + ((MAP_HEIGHT - 1) * SQUARE_HEIGHT))   // in Pixels
 
+// "Movement Map" :: {{0,20},{240,200}}
+#define MOVEMENT_MAP_SCREEN_XMIN     0
+#define MOVEMENT_MAP_SCREEN_YMIN    20
+#define MOVEMENT_MAP_SCREEN_XMAX   240
+#define MOVEMENT_MAP_SCREEN_YMAX   200
 
 
 #define MOVEMENT_MAP_SCREEN_X         0

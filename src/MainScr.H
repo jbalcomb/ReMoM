@@ -89,6 +89,11 @@ extern int16_t g_unit_window_fields[MAX_STACK];
 
 
 
+// WZD dseg:C072
+extern int16_t _plane_button;
+
+
+
 /*
                                         ¿ BEGIN: ovr052 Terrain_Init() ?
 */

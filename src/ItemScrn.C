@@ -1257,7 +1257,7 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
 
     Local_0_2 = 0;
 
-    On_Water = Terrain_Is_Sailable(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp);
+    On_Water = Square_Is_Sailable(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp);
 
 
     /*

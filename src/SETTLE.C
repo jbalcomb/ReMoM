@@ -271,13 +271,13 @@ void UNIT_PushOffTile(int16_t unit_idx)
 */
 int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx, int16_t unit_idx)
 {
-    int16_t troops[9];
-    int16_t trooper_idx;
-    int16_t have_windwalker;
-    int16_t unit_spaces;
-    int16_t troop_count;
-    int16_t itr;  // _SI_
-    int16_t is_legal_move;  // _DI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t trooper_idx = 0;
+    int16_t have_windwalker = 0;
+    int16_t unit_spaces = 0;
+    int16_t troop_count = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t is_legal_move = 0;  // _DI_
 
     Army_At_Square_2(wx, wy, wp, &troop_count, &troops[0]);
 
@@ -297,7 +297,8 @@ int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_
     for(itr = 0; ((itr < NUM_TOWERS) && (have_windwalker == ST_FALSE)); itr++)
     {
         if(
-            (_TOWERS[itr].wx == wx) &&
+            (_TOWERS[itr].wx == wx)
+            &&
             (_TOWERS[itr].wy == wy)
         )
         {
@@ -309,7 +310,7 @@ int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_
 
     unit_spaces = 0;
 
-    if(Terrain_Is_Sailable(wx, wy, wp) == ST_TRUE)
+    if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE)
     {
         have_windwalker = ST_FALSE;
         if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)

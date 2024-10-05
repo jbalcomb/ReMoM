@@ -3467,7 +3467,7 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
-    FLIC_Draw(0, 0, main_background);
+    FLIC_Draw(0, 0, main_background_seg);
 
     Draw_World_Window(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
 

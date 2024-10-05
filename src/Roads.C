@@ -117,7 +117,7 @@ void Road_Build_Screen(void)
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
 
-    if(Terrain_Is_Sailable(unit_wx, unit_wy, _UNITS[unit_idx].wp) == ST_TRUE)
+    if(Square_Is_Sailable(unit_wx, unit_wy, _UNITS[unit_idx].wp) == ST_TRUE)
     {
         return;
     }
@@ -335,7 +335,7 @@ void Road_Build_Screen_Draw(void)
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
 
-    FLIC_Draw(0, 0, main_background);
+    FLIC_Draw(0, 0, main_background_seg);
 
     Draw_World_Window(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
 
@@ -694,7 +694,7 @@ void Set_Army_Road_Building(int16_t troop_count, int16_t troops[], int16_t dst_w
 
     path_distance = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &movepath_x_array[1], &movepath_y_array[1], WORLD_WIDTH);
 
-    if(Terrain_Is_Sailable(src_wx, src_wy, _map_plane) == ST_TRUE)
+    if(Square_Is_Sailable(src_wx, src_wy, _map_plane) == ST_TRUE)
     {
         return;
     }

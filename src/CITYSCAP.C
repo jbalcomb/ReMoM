@@ -1164,7 +1164,7 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
     */
     {
         if(
-            (Terrain_Is_Explored_Forest(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
+            (Square_Is_Explored_Forest(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
             ||
             (_race_type_table[_CITIES[city_idx].race].house_type == 1)
         )
@@ -1177,9 +1177,9 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
         }
 
         if(
-            (Terrain_Is_Mountain(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
+            (Square_Is_Mountain(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
             ||
-            (Terrain_Is_Hills(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
+            (Square_Is_Hills(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
         )
         {
             rock_count = (Random(10) + 20);
@@ -1496,15 +1496,15 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
         TL, L, BL, T, C, B, TR, R, BR
     */
     if(
-        (Terrain_Is_River((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_River((city_wx - 1), city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_River((city_wx - 1), (city_wy + 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_River(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_River(city_wx, city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_River(city_wx, (city_wy + 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_River((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_River((city_wx + 1), city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_River((city_wx + 1), (city_wy + 1), city_wp) == ST_TRUE)
+        (Square_Is_River((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_River((city_wx - 1), city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_River((city_wx - 1), (city_wy + 1), city_wp) == ST_TRUE) ||
+        (Square_Is_River(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_River(city_wx, city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_River(city_wx, (city_wy + 1), city_wp) == ST_TRUE) ||
+        (Square_Is_River((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_River((city_wx + 1), city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_River((city_wx + 1), (city_wy + 1), city_wp) == ST_TRUE)
     )
     {
         if(city_wp == ARCANUS_PLANE)
@@ -1525,15 +1525,15 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
         }
     }
     else if(
-        (Terrain_Is_Ocean((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean((city_wx - 1), city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean((city_wx - 1), (city_wy + 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean(city_wx, city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean(city_wx, (city_wy + 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean((city_wx + 1), city_wy, city_wp) == ST_TRUE) ||
-        (Terrain_Is_Ocean((city_wx + 1), (city_wy + 1), city_wp) == ST_TRUE)
+        (Square_Is_OceanLike((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike((city_wx - 1), city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike((city_wx - 1), (city_wy + 1), city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike(city_wx, city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike(city_wx, (city_wy + 1), city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike((city_wx + 1), city_wy, city_wp) == ST_TRUE) ||
+        (Square_Is_OceanLike((city_wx + 1), (city_wy + 1), city_wp) == ST_TRUE)
     )
     {
         if(city_wp == ARCANUS_PLANE)
@@ -1605,10 +1605,10 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
                 TL, T, TR, C
             */
             if(
-                (Terrain_Is_Mountain((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Mountain(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Mountain((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Mountain(city_wx, city_wy, city_wp) == ST_TRUE)
+                (Square_Is_Mountain((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Mountain(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Mountain((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Mountain(city_wx, city_wy, city_wp) == ST_TRUE)
             )
             {
                 if(city_wp == ARCANUS_PLANE)
@@ -1623,10 +1623,10 @@ void Cityscape_Draw_Background(int16_t city_idx, int16_t xstart, int16_t ystart,
                 }
             }
             else if(
-                (Terrain_Is_Hills((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Hills(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Hills((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-                (Terrain_Is_Hills(city_wx, city_wy, city_wp) == ST_TRUE)
+                (Square_Is_Hills((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Hills(city_wx, (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Hills((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+                (Square_Is_Hills(city_wx, city_wy, city_wp) == ST_TRUE)
             )
             {
                 if(city_wp == ARCANUS_PLANE)
@@ -1801,20 +1801,20 @@ void Outpost_Cityscape_Draw(int16_t city_idx, int16_t x_start, int16_t y_start)
     if(_CITIES[city_idx].enchantments[FLYING_FORTRESS] == 0)
     {
         if(
-            (Terrain_Is_Mountain((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Mountain( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Mountain((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Mountain( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
+            (Square_Is_Mountain((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Mountain( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Mountain((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Mountain( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
         )
         {
             FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);
             Clipped_Draw((x_start - 65), y_start, cityscape_background_arcanus_mountain_seg);
         }
         else if(
-            (Terrain_Is_Hills((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Hills( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Hills((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
-            (Terrain_Is_Hills( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
+            (Square_Is_Hills((city_wx - 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Hills( city_wx     , (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Hills((city_wx + 1), (city_wy - 1), city_wp) == ST_TRUE) ||
+            (Square_Is_Hills( city_wx     ,  city_wy     , city_wp) == ST_TRUE)
         )
         {
             FLIC_Set_CurrentFrame(cityscape_background_arcanus_mountain_seg, 0);  // BUGBUG  c&p error?

@@ -980,7 +980,7 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
             
             if(
                 (global_battle_unit->carry_capacity > 0) ||
-                ((CalledFromFlag == uvt_Stat) && (Terrain_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp) == ST_TRUE))
+                ((CalledFromFlag == uvt_Stat) && (Square_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp) == ST_TRUE))
             )
             {
                 FLIC_Draw((UV_x_start_offset + UV_x_start + 6), (UV_y_start + 18), unit_water_diamond_seg);

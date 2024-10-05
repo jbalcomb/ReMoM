@@ -2838,7 +2838,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
     )
     {
 
-        water_hazard = Terrain_Is_Sailable(UNITX(), UNITY(), UNITP());
+        water_hazard = Square_Is_Sailable(UNITX(), UNITY(), UNITP());
 
         // ¿ BUG: does not check transport capacity ?
         if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
@@ -3030,7 +3030,7 @@ void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t tr
 
         if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)  /* || (o71p08_Empty_pFxn(unit_idx) == ST_TRUE) */
         {
-            On_Ocean_Tile = Terrain_Is_Sailable(UNITX(), UNITY(), UNITP());
+            On_Ocean_Tile = Square_Is_Sailable(UNITX(), UNITY(), UNITP());
 
             if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
             {

@@ -430,7 +430,7 @@ void Advisor_Screen(int16_t advisor_idx)
     {
         case 0:  /* Surveyor      (F1) */
         {
-            // TODO  j_IDK_Surveyor_s7A3C0()
+            Surveyor_Screen();
         } break;
         case 1:  /* Cartographer  (F2) */
         {

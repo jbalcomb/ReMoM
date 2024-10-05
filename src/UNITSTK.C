@@ -1032,7 +1032,7 @@ int16_t Unit_Action_Special_Build(int16_t troop_count, int16_t troops[])
     int16_t unit_idx;
     int16_t itr_troops;  // _DI_
 
-    if(Terrain_Is_Sailable(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp) == ST_TRUE)
+    if(Square_Is_Sailable(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp) == ST_TRUE)
     {
         return ST_FALSE;
     }
@@ -1097,7 +1097,7 @@ int16_t Unit_Action_Special_Purify(int16_t troop_count, int16_t troops[])
     unit_wx = _UNITS[troops[0]].wx;
     unit_wy = _UNITS[troops[0]].wy;
 
-    if((_map_square_flags[((_map_plane * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & TF_Corruption) == TF_Corruption)
+    if((_map_square_flags[((_map_plane * WORLD_SIZE) + (unit_wy * WORLD_WIDTH) + unit_wx)] & MSF_CORRUPTION) == MSF_CORRUPTION)
     {
         special_action_flag = 2;
         return ST_TRUE;

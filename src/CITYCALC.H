@@ -137,48 +137,36 @@ void NOOP_Current_Player_All_City_Areas(void);
 int16_t City_House_Count(int16_t city_idx);
 
 // WZD o142p06
-// drake178: CTY_GetTileFood()
 int16_t City_Food_Terrain(int16_t city_idx);
 
 // WZD o142p07
-// drake178: CTY_GetWildGameFood()
 int16_t City_Food_WildGame(int16_t city_idx);
 
 // WZD o142p08
-// drake178: CTY_GetCatchment()
 int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp, int16_t *wx_array, int16_t *wy_array);
 
 // WZD o142p09
-// drake178: CTY_GetFood()
 int16_t City_Food_Production(int16_t city_idx);
 
 // WZD o142p10
-// drake178: CTY_GetMaxPop()
 int16_t City_Maximum_Size(int16_t city_idx);
 
 // WZD o142p11
-// drake178: CTY_GetProd()
 int16_t City_Production_Production(int16_t city_idx);
 
 // WZD o142p12
-// drake178: CTY_GetGold()
 int16_t City_Gold_Production(int16_t city_idx);
 
 // WZD o142p13
-// drake178: CTY_GetResearch()
 int16_t City_Research_Production(int16_t city_idx);
 
 // WZD o142p14
-// drake178: CTY_GetPower()
 int16_t City_Mana_Production(int16_t city_idx);
 
 // WZD o142p15
-// drake178: CTY_GetPopGrowth()
 int16_t City_Growth_Rate(int16_t city_idx);
 
 // WZD o142p16
-// drake178: CTY_GetProdCost()
-// MoO2  Module:  COLCALC  Colony_Current_Product_Cost_()  Colony_Product_Cost_()
 int16_t City_Current_Product_Cost(int16_t city_idx);
 
 // WZD o142p17
@@ -191,7 +179,6 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
 // LD_MAP_TFUnk40_Eval()
 
 // WZD o142p20
-// drake178: CTY_GetMinFarmers()
 int16_t City_Minimum_Farmers(int16_t city_idx);
 
 // WZD o142p21
@@ -213,18 +200,15 @@ int16_t WIZ_Get_Astr_Resrch__STUB(int16_t player_idx);
 int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx);
 
 // WZD o142p27
-// drake178: CTY_GetRebelCount()
 int16_t City_Rebel_Count(int16_t city_idx);
 
 // WZD o142p28
-// TILE_Survey()
+void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *Prod, int16_t *TrdGld, int16_t *CostRed, int16_t *Gold, int16_t *Power, int16_t *NitShd, int16_t *Mithrl, int16_t *Admntm, int16_t *Shored, int16_t *Unexplored);
 
 // WZD o142p29
-// drake178: CTY_CatchmentRefresh()
 void Reset_City_Area_Bitfields(void);
 
 // WZD o142p30
-// drake178: TILE_IsShared
 int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_area_square_wy, int16_t city_wp);
 
 // WZD o142p31

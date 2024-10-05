@@ -32,8 +32,8 @@ enum enum_Terrain_Specials
     ts_Silver         =   3,
     ts_Gold           =   4,
     ts_Gems           =   5,
-    ts_Mithril        =   6,
-    ts_Adamantium     =   7,
+    ts_Mithril        =   6,  // "TERRAIN SPECIAL ... Mithril Ore"
+    ts_Adamantium     =   7,  // "TERRAIN SPECIAL ... Adamantium"
     ts_QuorkCrystals  =   8,
     ts_CrysxCrystals  =   9,
     ts_HuntersLodge   =  16,
@@ -63,8 +63,8 @@ enum enum_Terrain_Specials
 // 0x04
 #define TF_Road         0x08
 #define TF_Enc_Road     0x10
-#define TF_Corruption   0x20
-#define TF_Unk_40       0x40
+#define MSF_CORRUPTION  0x20
+#define MSF_UNKNOWN_40H 0x40
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18
 
@@ -77,28 +77,22 @@ void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp);
 // TILE_IsNode          
 
 // WZD s161p03
-// drake178: TILE_GetFood()
-int16_t Map_Square_Food2(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p04
-// drake178: TILE_GetProd()
-int16_t Map_Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
+int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have_gaias_blessing);
 
 // WZD s161p05
-// drake178: TILE_GetWaterGold()
-int16_t Map_Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p06
-// drake178: CTY_GetRoadGold()
 int16_t City_Road_Trade_Bonus(int16_t city_idx);
 
 // WZD s161p07
-// drake178: TILE_IsRiver()
-int16_t Terrain_Is_River(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p08
-// drake178: TILE_GetSpecialGold()
-int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
+int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
 
 // WZD s161p08
 // TILE_GetSilverGold   
@@ -110,14 +104,13 @@ int16_t Map_Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_GetGemGold      
 
 // WZD s161p11
-// drake178: TILE_GetSpecialPower()
-int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
+int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf);
 
 // WZD s161p12
-// TILE_GetMithrilPower 
+int16_t Square_Mithril_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
 // WZD s161p13
-// TILE_GetAdamntmPower 
+int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
 // WZD s161p14
 // TILE_GetQuorkPower   
@@ -126,14 +119,13 @@ int16_t Map_Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_
 // TILE_GetCrysxPower   
 
 // WZD s161p16
-// TILE_HasMithril      
+int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p17
-// TILE_HasAdamantium   
+int16_t Square_Has_Adamantium(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p18
-// drake178: TILE_GetNUCostReduce()
-int16_t Terrain_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
+int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t have_minersguild, int16_t are_dwarves);
 
 // WZD s161p19
 int16_t City_Best_Weapon(int16_t city_idx);
@@ -148,15 +140,13 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp);
 // TILE_IsAISailable    
 
 // WZD s161p23
-// drake178: TILE_IsVisibleForest 
-int16_t Terrain_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p24
-// drake178: TILE_IsSailable()
-int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p25
-// TILE_IsDeepOcean     
+int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p26
 // G_TILE_IsAIEmbarkable
@@ -165,27 +155,31 @@ int16_t Terrain_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 // TILE_BuildingReqType 
 
 // WZD s161p28
-// drake178: TILE_IsHills()
-int16_t Terrain_Is_Hills(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p29
-// drake178: TILE_IsMountains()
-int16_t Terrain_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p30
-// TILE_IsDesert        
+int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p31
-// TILE_IsTundra        
+int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p32
-// TILE_IsSwamp         
+int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p33
-// TILE_IsGrasslands    
+int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p34
-// TILE_IsVolcano       
+int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp);
+
 // WZD s161p35
-// TILE_IsCorrupted     
+// drake178: TILE_IsCorrupted()
+
 // WZD s161p36
-// UU_TILE_IsRes_40h    
+// drake178: UU_TILE_IsRes_40h()
 
 // WZD s161p37
 void All_City_Nightshade_Count(void);
@@ -194,8 +188,7 @@ void All_City_Nightshade_Count(void);
 // TILE_IsLand          
 
 // WZD s161p39
-// drake178: TILE_IsAISailable2()
-int16_t Terrain_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p40
 // UU_TILE_BotchedResFn 

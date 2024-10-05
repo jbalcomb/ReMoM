@@ -355,7 +355,9 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
     gets the uint16_t 'Terrain Type' from _world_maps
 */
-#define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_) ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
+#define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_)  ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
+// terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+#define TERRAIN_TYPE(_wx_, _wy_, _wp_)      ( (*( (uint16_t *)(_world_maps + ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) )) ) % NUM_TERRAIN_TYPES) )
 
 // #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while (0)
 /*
@@ -364,6 +366,11 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define SET_TERRAIN_TYPE(_wx_, _wy_, _wp_, _terrain_type_)  ( SET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)), (_terrain_type_)) )
 
 
+/*
+    Terrain Special
+
+...( & 0x0F) ~== 'any mineral'
+*/
 #define GET_TERRAIN_SPECIAL(_wx_, _wy_, _wp_)  ( *(TBL_Terr_Specials + ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_)) )
 
 
@@ -383,11 +390,34 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /* ¿ ...none, any, all... ? */
 
 
+/*
+    Map Square Flags
+
+#define TF_Road         0x08
+#define TF_Enc_Road     0x10
+#define MSF_CORRUPTION   0x20
+#define TF_Unk_40       0x40
+#define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
+#define TF_AnyRoad      0x18
+*/
 #define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 
 #define SET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
 
 #define CLEAR_MAP_SQUARE_FLAGS_VOLCANO_PLAYER_IDX()  ( SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000)) )
+
+#define MAP_SQUARE_HAS_NO_ROAD(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_NoRoad80 )
+#define MAP_SQUARE_HAS_ROAD(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_AnyRoad )
+#define MAP_SQUARE_HAS_ROAD_REGULAR(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Road )
+#define MAP_SQUARE_HAS_ROAD_ENCHANTED(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Enc_Road )
+#define MAP_SQUARE_HAS_CORRUPTION(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_CORRUPTION )
+#define MAP_SQUARE_HAS_UNKOWN(_wx_, _wy_, _wp_)  ( GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & TF_Unk_40 )
+
+#define MAP_SQUARE_CORRUPT(_wx_, _wy_, _wp_)  ( (GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_CORRUPTION) == 1 )
+#define MAP_SQUARE_UNCORRUPT(_wx_, _wy_, _wp_)  ( (GET_MAP_SQUARE_FLAG((_wx_), (_wy_), (_wp_)) & MSF_CORRUPTION) == 0 )
+
+// ovr094:06CF 26 F6 07 20                                     test    [byte ptr es:bx], TF_Corruption
+// 26 F6 07 40                                     test    [byte ptr es:bx], TF_Unk_40
 
 
 

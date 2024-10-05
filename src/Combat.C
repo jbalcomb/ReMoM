@@ -1157,7 +1157,7 @@ void Retreat_From_Combat(int16_t player_idx)
         /*
             BEGIN:  Ocean Combat
         */
-        if(Terrain_Is_Sailable(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane) == ST_TRUE)
+        if(Square_Is_Sailable(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane) == ST_TRUE)
         {
 
     // calculate the transport capacity of the player's surviving units
@@ -1586,7 +1586,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
         Move_Possible = ST_FALSE;
 
         // Ocean Combat
-        if(Terrain_Is_Sailable(wx, wy, wp) == ST_TRUE)
+        if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE)
         {
             Wind_Walker = ST_FALSE;
 
@@ -1699,7 +1699,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             }  /* if(Move_Possible == ST_FALSE) */
 
         }
-        else  /* if(Terrain_Is_Sailable(wx, wy, wp) == ST_TRUE) */
+        else  /* if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE) */
         {
 // abort if any of the fleeing units has sailing movement
 // BUG: flying and Non-Corporeal ships can move on land
@@ -6915,7 +6915,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 
     combat_structure = cs_NONE;
 
-    if(Terrain_Is_Sailable(wx, wy, wp) != ST_FALSE)
+    if(Square_Is_Sailable(wx, wy, wp) != ST_FALSE)
     {
         combat_structure = cs_OceanTerrainType;
     }
@@ -6940,7 +6940,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 
     terrain_type = (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] % NUM_TERRAIN_TYPES);
 
-    if(terrain_type == TT_SorcNode)
+    if(terrain_type == tt_SorceryNode)
     {
         combat_structure = cs_SorceryNode;
     }
@@ -6950,7 +6950,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
         combat_structure = cs_NatureNode;
     }
     
-    if(terrain_type == TT_ChaosNode)
+    if(terrain_type == tt_ChaosNode)
     {
         combat_structure = cs_ChaosNode;
     }
@@ -6973,7 +6973,7 @@ int16_t CMB_MarkLandLubbers(int16_t player_idx)
 
     unit_count = 0;
 
-    if(Terrain_Is_Sailable(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane) == ST_TRUE)
+    if(Square_Is_Sailable(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane) == ST_TRUE)
     {
 
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)

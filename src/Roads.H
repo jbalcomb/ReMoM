@@ -17,6 +17,11 @@ extern "C" {
 
 
 
+// WZD dseg:C130
+extern int16_t main_cancel_button_field;
+
+
+
 /*
     WIZARDS.EXE ovr069
 */

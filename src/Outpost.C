@@ -673,7 +673,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
     int16_t Tile_Distance;
     int16_t itr;  // _SI_
 
-    if(Terrain_Is_Sailable(wx, wy, wp) == ST_TRUE)
+    if(Square_Is_Sailable(wx, wy, wp) == ST_TRUE)
     {
         return 1;
     }

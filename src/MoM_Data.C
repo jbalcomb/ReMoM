@@ -1814,7 +1814,7 @@ SAMB_ptr lair_bottom_with_button_seg;
 // WZD dseg:9922                                                 BEGIN:  Main Screen Pictures
 
 // WZD dseg:9922
-SAMB_ptr main_background;
+SAMB_ptr main_background_seg;
 
 // WZD dseg:9924
 SAMB_ptr unit_backgrounds[9];
@@ -2074,6 +2074,11 @@ SAMB_ptr TBL_OvlMovePaths_EMS;
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS
+/*
+    Hey, Jimbo.
+    How about a note on what these bits actually mean?
+    
+*/
 uint8_t * city_area_bits;                       // alloc'd in Allocate_Data_Space()
 
 // WZD dseg:9CA0
@@ -2124,7 +2129,7 @@ uint8_t * _square_explored;                     // load in Load_SAVE_GAM()
 // 0x04
 #define TF_Road         0x08
 #define TF_Enc_Road     0x10
-#define TF_Corruption   0x20
+#define MSF_CORRUPTION   0x20
 #define TF_Unk_40       0x40
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18
@@ -2142,6 +2147,27 @@ Volcano_Counts()
 uint8_t * _map_square_flags;                // load in Load_SAVE_GAM()
 
 // WZD dseg:9CB8  
+/*
+"Terrain Specials"
+"special terrain features (minerals, crystals, wild game, etc.)"
+
+; enum enum_Terrain_Specials
+TS_IronOre  = 1
+TS_Coal  = 2
+TS_SilverOre  = 3
+TS_GoldOre  = 4
+TS_Gems  = 5
+TS_MithrilOre  = 6
+TS_AdamantiumOre  = 7
+TS_QuorkCrystals  = 8
+TS_CrysxCrystals  = 9
+...10,11,12,13,14,15...
+TS_HuntersLodge  = 10h
+TS_Unknown_20  = 20h
+TS_Wild_Game  = 40h
+ts_Nightshade  = 80h
+
+*/
 SAMB_ptr TBL_Terr_Specials;                 // load in Load_SAVE_GAM()
 
 // WZD dseg:9CBC  
