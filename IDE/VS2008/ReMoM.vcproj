@@ -391,6 +391,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Surveyor.C"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Terrain.C"
 				>
 			</File>
@@ -742,6 +746,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\SPLMASTR.H"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Surveyor.H"
 				>
 			</File>
 			<File
