@@ -173,7 +173,7 @@ void Road_Build_Screen(void)
 
     Reset_Map_Draw();
 
-    MainScr_Prepare_Reduced_Map();
+    MainScr_Create_Reduced_Map_Picture();
 
     Deactivate_Help_List();
 
@@ -255,7 +255,7 @@ void Road_Build_Screen(void)
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
-            MainScr_Prepare_Reduced_Map();
+            MainScr_Create_Reduced_Map_Picture();
             Set_Mouse_List_Default();
             Reset_Map_Draw();
         }

@@ -6945,7 +6945,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
         combat_structure = cs_SorceryNode;
     }
     
-    if(terrain_type == TT_NatNode)
+    if(terrain_type == tt_NatureNode)
     {
         combat_structure = cs_NatureNode;
     }

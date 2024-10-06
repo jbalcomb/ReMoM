@@ -470,7 +470,7 @@ void Allocate_Reduced_Map(void);  // called from GAME_Overland_Init()  <-|  WZD_
 
 // WZD o64p03
 // AKA OVL_PrepMinimap()
-void MainScr_Prepare_Reduced_Map(void);
+void MainScr_Create_Reduced_Map_Picture(void);
 
 // WZD o64p04
 // PRIVATE  void Main_Screen_Draw_Summary_Window(void);

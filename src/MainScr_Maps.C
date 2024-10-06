@@ -13,7 +13,7 @@ void IDK_Draw_MiniMap_s5B828()
 // WZD o150p16
 // "Reduced Map"/"World Window"
 // AKA Draw_Minimap()
-void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 
 */
 #include "MoM.H"
@@ -380,7 +380,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     Reduced_Map_Coords(&minimap_x, &minimap_y, ((l_map_x + (MAP_WIDTH/2)) % WORLD_WIDTH), (l_map_y + (MAP_HEIGHT/2)), minimap_width, minimap_height);
 
     // Draw_Minimap(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
-    Draw_Reduced_Map(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);  // mark_x = 0, mark_y = 0, mark_flag = 0
+    Create_Reduced_Map_Picture(minimap_x, minimap_y, map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);  // mark_x = 0, mark_y = 0, mark_flag = 0
 
 
     Draw_Map_Window(screen_x, screen_y, map_width, map_height, l_map_x, l_map_y, map_plane);
@@ -549,7 +549,7 @@ when always draw (-1) is set for OVL_ActiveStackDraw
 
                         unit_idx = _unit_stack[0].unit_idx;
                         // Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
-                        Draw_Reduced_Map(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
+                        Create_Reduced_Map_Picture(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
 
                     }
                 }
@@ -854,8 +854,8 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
     int16_t tmp_world_grid_y = 0;
     int16_t tmp_world_grid_x = 0;
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    // NOWORKIE  assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+    // NOWORKIE  assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
     if(world_grid_x >= WORLD_WIDTH)
     {
@@ -964,42 +964,36 @@ void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int
 // drake178: OVL_GetMinimapStart()
 // AKA Minimap_Coords()
 /*
-push    [minimap_height]
-push    [minimap_width]
-mov     ax, _DI_cur_map_ypos
-add     ax, 5                           ; 10 / 2
-push    ax                              ; Center_Y
-mov     ax, _SI_cur_map_xpos
-add     ax, 6                           ; 12 / 2
-mov     bx, 60
-cwd
-idiv    bx
-push    dx                              ; Center_X
-mov     ax, offset minimap_y
-push    ax                              ; TopY@
-mov     ax, offset minimap_x
-push    ax                              ; LeftX@
-j_OVL_GetMinimapStart
 ; sets the return values to the top left map tile
 ; coordinates that should be displayed at the top left
 ; corner of the minimap
 */
+/*
+    in-outs the x,y for the top-left corner of the reduced map window
+
+    mid_x   ((_map_x + (MAP_WIDTH  / 2)) % WORLD_WIDTH)
+    mid_y   ( _map_y + (MAP_HEIGHT / 2))
+        where, _map_x,y are the top left corner of the movement map in world coordinates
+
+    translates the movement map center x,y to the reduced map window x,y, in world coordinates
+*/
 void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height)
 {
-    int16_t tmp_minimap_x;
-    int16_t tmp_minimap_y;
+    int16_t tmp_minimap_y = 0;
+    int16_t tmp_minimap_x = 0;  // _CX_
 
-    tmp_minimap_x = mid_x - (minimap_width / 2);
+    tmp_minimap_x = (mid_x - (minimap_width / 2));
+
     if(tmp_minimap_x > 0)
     {
         *minimap_x = tmp_minimap_x;
     }
     else
     {
-        *minimap_x = (tmp_minimap_x + WORLD_WIDTH) % WORLD_WIDTH;
+        *minimap_x = ((tmp_minimap_x + WORLD_WIDTH) % WORLD_WIDTH);
     }
 
-    tmp_minimap_y = mid_y - (minimap_height / 2);
+    tmp_minimap_y = (mid_y - (minimap_height / 2));
 
     *minimap_y = tmp_minimap_y;
 
@@ -1290,7 +1284,7 @@ void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, in
     }
 
     Reduced_Map_Coords(&reduced_map_x, &reduced_map_y, wx, wy, w, h);
-    Draw_Reduced_Map(reduced_map_x, reduced_map_y, wp, _reduced_map_seg, w, h, wx, wy, mark_flag);
+    Create_Reduced_Map_Picture(reduced_map_x, reduced_map_y, wp, _reduced_map_seg, w, h, wx, wy, mark_flag);
 
     Reset_Window();
     Draw_Picture(x, y, _reduced_map_seg);
@@ -2342,11 +2336,15 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // WZD o150p16
 // "Reduced Map"/"World Window"
 // AKA Draw_Minimap()
+// AKA Draw_Reduced_Map
 // TODO  rename to ~create/build
 /*
-    TODO(JimBalcomb,20240914):  MainScr_Maps.C  Draw_Reduced_Map()  needs a full review
+    TODO(JimBalcomb,20240914):  MainScr_Maps.C  Create_Reduced_Map_Picture()  needs a full review
+
+Elsewhere, Draw_World_Window() is called to call Draw_Picture() on _reduced_map_seg
+
 */
-void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 {
 // minimap_pict_data_ptr = dword ptr - 1Ch
 // world_data_ptr = dword ptr - 18h
@@ -2418,7 +2416,6 @@ void Draw_Reduced_Map(int16_t minimap_start_x, int16_t minimap_start_y, int16_t 
     //  50 ~ brown
     // WZD dseg:700A AB D8 CD C9 D2 32                               COL_MinimapBanners db 171, 216, 205, 201, 210, 50
     // WZD dseg:7010 32                                              COL_MinimapNeutral db 50
-
 
 
     

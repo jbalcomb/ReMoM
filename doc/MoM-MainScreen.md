@@ -25,6 +25,39 @@ dseg:C098                                                     ¿ BEGIN: List / A
 
 
 
+## target_world_x, target_world_y
+AKA reduced_map_window_wx, reduced_map_window_wy
+
+    BEGIN: Right-Click Unit Window Grid Field
+        Unit_Window_Picture_Coords(itr_stack, &target_world_x, &target_world_y, &usw_x2, &usw_y2);
+        USW_FullDisplay(_unit_stack[itr_stack].unit_idx, target_world_x, target_world_y, (target_world_x + 18), (target_world_y + 18));
+
+    BEGIN:  Left-Click Move Stack
+        target_world_x = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
+        target_world_y =  (_map_y + _main_map_grid_y);
+        if(EarthGateTeleport__WIP(target_world_x, target_world_y, _map_plane) == ST_FALSE)
+        ...
+        Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
+
+    Right-Click Movement Map Grid Field
+    /* #### Section 9.2.2.2      Right-Click Movement Map - Stack - Other */
+        target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+        target_world_y = (_main_map_grid_y * SQUARE_HEIGHT);
+        Unit_List_Window(entity_idx, 0, target_world_x, target_world_y);
+
+    Right-Click Movement Map Grid Field
+    /* #### Section 9.2.3.1.1      Right-Click Movement Map - City - Own - Outpost */
+        target_world_x = (_main_map_grid_x * SQUARE_WIDTH);
+        target_world_y = (MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
+
+    BEGIN: Reduced Map Grid Field
+        Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+        _prev_world_x = reduced_map_window_wx + _minimap_grid_x;
+        _prev_world_y = reduced_map_window_wy + _minimap_grid_y;
+        _map_x = _prev_world_x;
+        _map_y = _prev_world_y;
+        Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
+
 
 
 
