@@ -41,13 +41,13 @@ char str_PercentSign[] = "%";
 char str_GoldBonus[] = "Gold Bonus";
 
 // WZD dseg:5390
-char str_OnWater_[] = "on water";
+char str_OnWater_[] = "on water.";
 
 // WZD dseg:539A
-char str_OnLairs_[] = "on lairs";
+char str_OnLairs_[] = "on lairs.";
 
 // WZD dseg:53A4
-char str_OnTowers_[] = "on towers";
+char str_OnTowers_[] = "on towers.";
 
 // WZD dseg:53AF
 char str_OnMagicNodes_[] = "on magic nodes.";
@@ -102,10 +102,13 @@ char aShore[] = "Shore";
 char a10Gold[] = "+10% gold";
 // WZD dseg:54BA
 char aVolcano[] = "Volcano";
+
 // WZD dseg:54C2
 char aCorruption[] = "Corruption";
+
 // WZD dseg:54CD
 char aOf_0[] = " of";
+
 // WZD dseg:54D1
 char aGoldOre[] = "Gold Ore";
 // WZD dseg:54DA
@@ -216,8 +219,8 @@ void Surveyor_Screen(void)
 {
     int16_t hotkey_ESC_field = 0;
     int16_t l_map_plane = 0;
-    int16_t TopY = 0;
-    int16_t LeftX = 0;
+    int16_t reduced_map_window_wy = 0;   // ~== target_world_y
+    int16_t reduced_map_window_wx = 0;  // ~== target_world_x
     int16_t scanned_field = 0;
     int16_t leave_screen = 0;  // _DI_
     int16_t input_field_idx = 0;  // _SI_
@@ -234,15 +237,11 @@ void Surveyor_Screen(void)
 
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 153);
 
-    GUI_String_1 = (char *)Near_Allocate_First(100);
-
-    GUI_String_2 = (char *)Near_Allocate_Next(100);
-
-    survey_near_alloc_1_100 = (char *)Near_Allocate_Next(100);
-
-    survey_near_alloc_2_50 = (char *)Near_Allocate_Next(50);
-
-    survey_near_alloc_3_50 = (char *)Near_Allocate_Next(50);
+    GUI_String_1             = (char *)Near_Allocate_First(100);
+    GUI_String_2             = (char *)Near_Allocate_Next( 100);
+    survey_near_alloc_1_100  = (char *)Near_Allocate_Next( 100);
+    survey_near_alloc_2_50   = (char *)Near_Allocate_Next(  50);
+    survey_near_alloc_3_50   = (char *)Near_Allocate_Next(  50);
 
     Set_Unit_Draw_Priority();
 
@@ -250,7 +249,7 @@ void Surveyor_Screen(void)
 
     Reset_Map_Draw();
 
-    MainScr_Prepare_Reduced_Map();
+    MainScr_Create_Reduced_Map_Picture();
 
     Set_Input_Delay(1);
 
@@ -291,7 +290,7 @@ void Surveyor_Screen(void)
             Play_Left_Click__STUB();
             Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Reset_Map_Draw();
-            MainScr_Prepare_Reduced_Map();
+            MainScr_Create_Reduced_Map_Picture();
             Deactivate_Auto_Function();
             Assign_Auto_Function(Surveyor_Screen_Draw, 1);
         }
@@ -299,21 +298,21 @@ void Surveyor_Screen(void)
         if(input_field_idx == _minimap_grid_field)
         {
             Play_Left_Click__STUB();
-            Reduced_Map_Coords(&LeftX, &TopY, ((_map_x + 6) / WORLD_WIDTH), (_map_y + 5), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-            _prev_world_x = (_minimap_grid_x + LeftX);
-            _prev_world_y = (_minimap_grid_y + TopY);
+            Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+            _prev_world_x = (reduced_map_window_wx + _minimap_grid_x);  // ...is the 'wx' of the clicked square
+            _prev_world_y = (reduced_map_window_wy + _minimap_grid_y);  // ...is the 'wy' of the clicked square
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
-            MainScr_Prepare_Reduced_Map();
+            MainScr_Create_Reduced_Map_Picture();
             Set_Mouse_List_Default();
             Reset_Map_Draw();
         }
 
         if(-(_main_map_grid_field) == input_field_idx)
         {
-            _prev_world_x = (_main_map_grid_x - 6);
-            _prev_world_y = (_main_map_grid_y - 5);
+            _prev_world_x += (_main_map_grid_x - (MAP_WIDTH  / 2));
+            _prev_world_y += (_main_map_grid_y - (MAP_HEIGHT / 2));
             IDK_CheckSet_MapDisplay_XY();
         }
 
@@ -351,7 +350,7 @@ void Surveyor_Screen_Add_Fields(void)
         (_map_y == _prev_world_y)
     )
     {
-        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
+        _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
     }
 
     if(
@@ -360,7 +359,7 @@ void Surveyor_Screen_Add_Fields(void)
         (_map_y == _prev_world_y)
     )
     {
-        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+        _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
     main_cancel_button_field = Add_Button_Field(263, 181, str_empty_string__094, cast_cancel_button, str_hotkey_C__ovr094[0], ST_UNDEFINED);
@@ -376,11 +375,11 @@ void Surveyor_Screen_Draw(void)
 
     Set_Page_Off();
 
-    Draw_Maps(0, 20, 12, 10, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
+    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
 
     FLIC_Draw(0, 0, main_background_seg);
 
-    Draw_World_Window(251, 21, 58, 30);
+    Draw_World_Window(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
 
     Main_Screen_Draw_Game_Buttons();
 
@@ -404,16 +403,16 @@ void Surveyor_Screen_Draw(void)
 */
 void Surveyor_Window_Display(void)
 {
-    int16_t Unexplored = 0;
-    int16_t Shored = 0;
-    int16_t Admntm = 0;
-    int16_t Mithrl = 0;
-    int16_t NitShd = 0;
-    int16_t Power = 0;
-    int16_t Gold = 0;
-    int16_t CostRed = 0;
-    int16_t TrdGld = 0;
-    int16_t Prod = 0;
+    int16_t is_unexplored = 0;
+    int16_t have_shore = 0;
+    int16_t have_adamantium = 0;
+    int16_t have_mithril = 0;
+    int16_t have_nightshade = 0;
+    int16_t magic_units = 0;
+    int16_t gold_units = 0;
+    int16_t unit_cost_reduction = 0;
+    int16_t gold_bonus = 0;
+    int16_t production_bonus = 0;
     int16_t val = 0;
     int16_t var_4 = 0;
     int16_t l_my = 0;
@@ -444,9 +443,9 @@ void Surveyor_Window_Display(void)
 
     val = 0;
 
-    Prod = 0;
+    production_bonus = 0;
 
-    TrdGld = 0;
+    gold_bonus = 0;
 
     if(SQUARE_EXPLORED(l_mx, l_my, _map_plane))
     {
@@ -469,7 +468,7 @@ void Surveyor_Window_Display(void)
 
             if(IDK > 0)
             {
-                var_4 = 0;
+                var_4 = 0;  // HERE: var_4 being 0 means it shows all the summary information
             }
 
         }
@@ -479,7 +478,8 @@ void Surveyor_Window_Display(void)
             case 0:
             {
 
-                Compute_Base_Map_Square_Values(l_mx, l_my, _map_plane, &val, &Prod, &TrdGld, &CostRed, &Gold, &Power, &NitShd, &Mithrl, &Admntm, &Shored, &Unexplored);
+// void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t *MaxPop, int16_t *production_bonus, int16_t *gold_bonus, int16_t *unit_cost_reduction, int16_t *gold_units, int16_t *magic_units, int16_t *have_nightshade, int16_t *have_mithril, int16_t *have_adamantium, int16_t *have_shore, int16_t *is_unexplored)
+                Compute_Base_Map_Square_Values(l_mx, l_my, _map_plane, &val, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &is_unexplored);
 
                 Surveyor_IDK_Set_Font_Stuff__1();
 
@@ -491,14 +491,14 @@ void Surveyor_Window_Display(void)
                 Print_Integer_Right(306, 151, val);
 
                 Print(245, 158, str_ProdBonus);
-                itoa(Prod, GUI_String_1, 10);
+                itoa(production_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);
                 Print_Right(312, 158, GUI_String_2);
 
                 Print(245, 165, str_GoldBonus);
-                itoa(TrdGld, GUI_String_1, 10);
+                itoa(gold_bonus, GUI_String_1, 10);
                 strcpy(GUI_String_2, str_PlusSign);
                 strcat(GUI_String_2, GUI_String_1);
                 strcat(GUI_String_2, str_PercentSign);
@@ -528,15 +528,18 @@ void Surveyor_Window_Display(void)
             
         }
 
-        strcpy(GUI_String_2, str_CitiesCannotBe);
+        if(var_4 > 0)
+        {
+            strcpy(GUI_String_2, str_CitiesCannotBe);
 
-        strcat(GUI_String_2, GUI_String_1);
+            strcat(GUI_String_2, GUI_String_1);
 
-        Print_Paragraph(246, 143, 67, GUI_String_2, 0);
+            Print_Paragraph(246, 143, 67, GUI_String_2, 0);
+        }
 
     }
 
-    if(SQUARE_EXPLORED(l_mx, l_my, _map_plane))
+    if(SQUARE_EXPLORED(l_mx, l_my, _map_plane) == ST_TRUE)
     {
 
         IDK = Surveyor_Cities(l_mx, l_my, _map_plane);
@@ -548,10 +551,15 @@ void Surveyor_Window_Display(void)
         else
         {
 
-            // test [byte ptr es:bx], TF_Corruption;  jz;
-            if(MAP_SQUARE_UNCORRUPT(l_mx, l_my, _map_plane))
+            // // test [byte ptr es:bx], TF_Corruption;  jz;
+            // if(MAP_SQUARE_UNCORRUPT(l_mx, l_my, _map_plane))
+            // {
+            //     IDK += (1000 + MAP_SQUARE_HAS_CORRUPTION(l_mx, l_my, _map_plane));
+            // }
+
+            if((GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION) != 0)
             {
-                IDK += (1000 + MAP_SQUARE_HAS_CORRUPTION(l_mx, l_my, _map_plane));
+                IDK += (1000 + (GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION));
             }
 
         }
@@ -582,7 +590,7 @@ void Surveyor_Window_Display(void)
             IDK = Surveyor_Nodes(l_mx, l_my, _map_plane);
         }
 
-        if(Square_Is_Explored_Forest(l_mx, l_my, _map_plane) == ST_TRUE)
+        if(Square_Is_Forest(l_mx, l_my, _map_plane) == ST_TRUE)
         {
             Surveyor_IDK_Print_Terrain_And_Effect(2, IDK);
         }
@@ -651,6 +659,21 @@ void Surveyor_Window_Display(void)
 
 // WZD o094p05
 /*
+IDK_type
+    type  0     Ocean
+    type  1     Grasslands
+    type  2     Forest
+    type  3     Mountain
+    type  4     Desert
+    type  5     Swamp
+    type  6     Tundra
+    type  7     Shore
+    type  8     RiverMouth
+    type  9     DNE
+    type 10     Hills
+    type 11     Plains
+    type 12     River
+    type 13     Volcano
 
 IDK_IDK:
     0:  ¿ DNE ?
@@ -666,6 +689,7 @@ IDK_IDK:
     :
     0x40:   Wild Game
     0x80:   Nightshade
+    100, 104, 105, 106, 107, 108, 109, 110: Lairs (_LAIRS[].type)
 
 */
 void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
@@ -794,9 +818,10 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
         var_2 = IDK_IDK;
 
         // vt_Survey_Display
-        //   1,   2,   3,   4,   5,   6,   7,   8,   9
+        //   1,   2,   3,   4,   5,   6,   7,   8,   9,
         //  64, 
-        // 100, 104, 105, 106, 107, 108, 109, 110, 128
+        // 100, 104, 105, 106, 107, 108, 109, 110,
+        // 128
         switch(var_2)
         {
             case 0:
@@ -857,23 +882,26 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
                 Print_Centered(280, 114, str_Nightshade__ovr094);
                 strcpy(GUI_String_1, aProtectsCityFr);
             } break;
-            case 0x64:
+            /* Lairs */
+            case 100:
+            case 104:
+            case 105:
+            case 106:
+            case 107:
+            case 108:
+            case 109:
+            case 110:
             {
-
                 Print_Centered(280, 114, survey_near_alloc_1_100);
-
                 Surveyor_IDK_Set_Font_Stuff__2();
-
                 Print_Centered(280, 121, survey_near_alloc_2_50);
-
                 Print_Centered(280, 128, survey_near_alloc_3_50);
-
                 Surveyor_IDK_Set_Font_Stuff__1();
-
             } break;
 
         }
 
+        /* Nodes */
         if(IDK_IDK >= 200)
         {
 

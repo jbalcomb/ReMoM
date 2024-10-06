@@ -1007,6 +1007,8 @@ void Main_Screen(void)
     int16_t usw_x2 = 0;
     int16_t target_world_y = 0;  // doubles as usw_y1
     int16_t target_world_x = 0;  // doubles as usw_x1
+    int16_t reduced_map_window_wy = 0;  // DNE in Dasm, uses target_world_y
+    int16_t reduced_map_window_wx = 0;  // DNE in Dasm, uses target_world_x
     int16_t unit_idx = 0;
     int16_t allow_units_to_die = 0;
     int16_t Stack_Index = 0;  /* unit_idx || player_idx;  itr for _unit_stack;  also used for itr _num_players in Alt-P Debug Randomized Personality */
@@ -1063,7 +1065,7 @@ void Main_Screen(void)
     // TODO  OVL_MapVar3 = 1;  // ? ST_TRUE ?
 
     Reset_Map_Draw();
-    MainScr_Prepare_Reduced_Map();
+    MainScr_Create_Reduced_Map_Picture();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
     Set_Mouse_List_Default();
@@ -1273,7 +1275,7 @@ void Main_Screen(void)
             // city in last column / on right edge Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
             // TST?  Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
             // Center_Map(&_map_x, &_map_y, 18+6, 11+5, 0);  // TST: Validate_Entities_On_Movement_Map()
-            // // ¿ Req'd ? MainScr_Prepare_Reduced_Map();
+            // // ¿ Req'd ? MainScr_Create_Reduced_Map_Picture();
             // // ¿ Req'd ? Set_Mouse_List(1, mouse_list_default);
             // // ¿ Req'd ? Reset_Map_Draw();
             // _prev_world_x = 18 + (_main_map_grid_x - (MAP_WIDTH  / 2));
@@ -1321,7 +1323,7 @@ void Main_Screen(void)
                 unit_idx = _unit_stack[0].unit_idx;
                 _map_plane = _UNITS[unit_idx].wp;
                 Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
-                MainScr_Prepare_Reduced_Map();
+                MainScr_Create_Reduced_Map_Picture();
                 Set_Mouse_List(1, mouse_list_default);
                 Reset_Map_Draw();
             }
@@ -1563,7 +1565,7 @@ void Main_Screen(void)
             Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Main_Screen_Reset();
             Reset_Map_Draw();
-            MainScr_Prepare_Reduced_Map();
+            MainScr_Create_Reduced_Map_Picture();
             Deactivate_Auto_Function();
             Assign_Auto_Function(Main_Screen_Draw, 1);
             Set_Mouse_List_Default();
@@ -1629,7 +1631,7 @@ void Main_Screen(void)
                     Reset_Stack_Draw_Priority();
                     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
                     Reset_Map_Draw();
-                    MainScr_Prepare_Reduced_Map();
+                    MainScr_Create_Reduced_Map_Picture();
                     screen_changed = ST_TRUE;
                     Deactivate_Help_List();
                     Set_Main_Screen_Help_List();
@@ -1937,7 +1939,7 @@ void Main_Screen(void)
                         Allocate_Reduced_Map();
                         Set_Mouse_List_Default();
                         Reset_Map_Draw();
-                        MainScr_Prepare_Reduced_Map();
+                        MainScr_Create_Reduced_Map_Picture();
                         Deactivate_Help_List();
                         Set_Main_Screen_Help_List();
                     }
@@ -1967,7 +1969,7 @@ void Main_Screen(void)
                             Allocate_Reduced_Map();
                             Set_Mouse_List_Default();
                             Reset_Map_Draw();
-                            MainScr_Prepare_Reduced_Map();
+                            MainScr_Create_Reduced_Map_Picture();
                             screen_changed = ST_TRUE;
                             Deactivate_Help_List();
                             Set_Main_Screen_Help_List();
@@ -1997,7 +1999,7 @@ void Main_Screen(void)
                         Allocate_Reduced_Map();
                         Set_Mouse_List_Default();
                         Reset_Map_Draw();
-                        MainScr_Prepare_Reduced_Map();
+                        MainScr_Create_Reduced_Map_Picture();
                         screen_changed = ST_TRUE;
                         Deactivate_Help_List();
                         Set_Main_Screen_Help_List();
@@ -2014,7 +2016,7 @@ void Main_Screen(void)
 
         /*
             BEGIN: Reduced Map Grid Field
-                In IDA, custom color #1 (~MoM's Lighest Purpleish (154,117,190))
+                In IDA, custom color #1 (~MoM's Lightest Purpleish (154,117,190))
         */
         // Left-Click Reduced Map Grid Field
         // Right-Click Reduced Map Grid Field
@@ -2022,9 +2024,10 @@ void Main_Screen(void)
         if(abs(input_field_idx) == _minimap_grid_field)
         {
             Play_Left_Click__STUB();
-            Reduced_Map_Coords(&target_world_x, &target_world_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
-            _prev_world_x = _minimap_grid_x + target_world_x;
-            _prev_world_y = _minimap_grid_y + target_world_y;
+            // HERE: target_world_x,y are not *used*, just in-out'd to the x,y for the reduced map window, in world coordinates
+            Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+            _prev_world_x = reduced_map_window_wx + _minimap_grid_x;  // ...is the 'wx' of the clicked square
+            _prev_world_y = reduced_map_window_wy + _minimap_grid_y;  // ...is the 'wy' of the clicked square
             _map_x = _prev_world_x;
             _map_y = _prev_world_y;
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
@@ -2032,7 +2035,7 @@ void Main_Screen(void)
                 // unit_idx = _unit_stack[0].unit_idx;
                 // _map_plane = _UNITS[unit_idx].wp;
                 // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
-                // MainScr_Prepare_Reduced_Map();
+                // MainScr_Create_Reduced_Map_Picture();
                 // Set_Mouse_List(1, mouse_list_default);
                 // Reset_Map_Draw();
 
@@ -2132,8 +2135,6 @@ void Main_Screen_Add_Fields(void)
 
     if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
     {
-        // TODO  add defines for the map dims/coords
-        // TODO  confirm what these values/calculations should end up being
         _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
     }
 
@@ -2337,7 +2338,7 @@ void Main_Screen_Reset(void)
     Reset_Stack_Draw_Priority();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
     Set_Mouse_List_Default();
-    MainScr_Prepare_Reduced_Map();
+    MainScr_Create_Reduced_Map_Picture();
     Assign_Auto_Function(Main_Screen_Draw, 1);
     Reset_Map_Draw();
     Deactivate_Help_List();
@@ -4536,22 +4537,27 @@ void Allocate_Reduced_Map(void)
 
 
 // WZD o64p03
-// ? subset of Draw_Maps() ?
+// ¿ subset of Draw_Maps() ?
 // AKA OVL_PrepMinimap()
-void MainScr_Prepare_Reduced_Map(void)
+// AKA MainScr_Prepare_Reduced_Map()
+/*
+
+*/
+void MainScr_Create_Reduced_Map_Picture(void)
 {
-    int16_t minimap_x = 0;
-    int16_t minimap_y = 0;
-    int16_t minimap_width;
-    int16_t minimap_height;
-    minimap_width = REDUCED_MAP_W;
-    minimap_height = REDUCED_MAP_H;
+    int16_t reduced_map_window_wx = 0;
+    int16_t reduced_map_window_wy = 0;
+    int16_t reduced_map_width = 0;  // _SI_
+    int16_t reduced_map_height = 0;  // _DI_
 
-    Reduced_Map_Set_Dims(minimap_width, minimap_height);
+    reduced_map_width = REDUCED_MAP_W;
+    reduced_map_height = REDUCED_MAP_H;
 
-    Reduced_Map_Coords(&minimap_x, &minimap_y, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), minimap_width, minimap_height);
+    Reduced_Map_Set_Dims(reduced_map_width, reduced_map_height);
 
-    Draw_Reduced_Map(minimap_x, minimap_y, _map_plane, _reduced_map_seg, minimap_width, minimap_height, 0, 0, 0);
+    Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), reduced_map_width, reduced_map_height);
+
+    Create_Reduced_Map_Picture(reduced_map_window_wx, reduced_map_window_wy, _map_plane, _reduced_map_seg, reduced_map_width, reduced_map_height, 0, 0, 0);
 }
 
 // WZD o064p04
@@ -5606,7 +5612,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         Set_Unit_Draw_Priority();
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
         Reset_Map_Draw();
-        MainScr_Prepare_Reduced_Map();
+        MainScr_Create_Reduced_Map_Picture();
 
         assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
         assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
@@ -5857,7 +5863,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 {
                     Reset_Map_Draw();
                     TILE_ExploreRadius__WIP(unit_x, unit_y, map_p, scout_range);
-                    MainScr_Prepare_Reduced_Map();
+                    MainScr_Create_Reduced_Map_Picture();
                 }
 
                 Set_Window(0, 20, 239, 199);

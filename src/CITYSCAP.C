@@ -1164,7 +1164,7 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
     */
     {
         if(
-            (Square_Is_Explored_Forest(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
+            (Square_Is_Forest(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) == ST_TRUE)
             ||
             (_race_type_table[_CITIES[city_idx].race].house_type == 1)
         )

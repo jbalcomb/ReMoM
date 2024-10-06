@@ -140,7 +140,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp);
 // TILE_IsAISailable    
 
 // WZD s161p23
-int16_t Square_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp);
+int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p24
 int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);

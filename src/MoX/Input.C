@@ -2406,7 +2406,8 @@ void Draw_Input_Box_Popup(int16_t field_num, char * string)
 void Init_Mouse_Keyboard(int16_t input_type)
 {
 
-    p_fields = (struct s_Field *)Allocate_Space(357);  // 357 PR, 5712 B  (¿ 150 * 38 = 5700 ¿ + 12 ?)
+    // p_fields = (struct s_Field *)Allocate_Space(357);  // 357 PR, 5712 B  (¿ 150 * 38 = 5700 ¿ + 12 ?)
+    p_fields = (struct s_Field *)Allocate_Space((((150 * sizeof(struct s_Field)) / 16) + 1));  // 357 PR, 5712 B  (¿ 150 * 38 = 5700 ¿ + 12 ?)
 
     switch(input_type)
     {

@@ -344,6 +344,10 @@ void (*function2)(void);
 void (*function)(void);
 
 // WZD dseg:E8AC
+/*
+Init_Mouse_Keyboard()
+    p_fields = (struct s_Field *)Allocate_Space(357);  // 357 PR, 5712 B  (¿ 150 * 38 = 5700 ¿ + 12 ?)
+*/
 struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 
 /*

@@ -38,27 +38,13 @@ void Map_Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 */
 int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 {
-// uint8_t * world_data_ptr;
-// 
-// terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
-// 
-// world_maps_offset = ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2));
-// terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
-// 
-// world_data_ptr = (_world_maps + (world_plane * 4800));
-// terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
-
-    uint8_t * world_map_ptr;
-    int16_t terrain_type_idx;
     int16_t terrain_type;
     int16_t food_units;
     // IDGI  int16_t terrain_type_switch_value;
 
-    world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
-    terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
-    terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(terrain_type != 0)
+    if(terrain_type != TT_Ocean1)
     {
         // HERE:  >= 1 && <= ??
         if(terrain_type < TT_Ocean2)
@@ -88,7 +74,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                         if(terrain_type <= tt_Rivers_end)
                                         {
                                             // HERE:  > 'Shore1 Range' && < 'Mountain Range' < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
-                                            if(terrain_type <= TT_Forest3)
+                                            if(terrain_type <= tt_Forest3)
                                             {
                                                 // HERE:  > 'Shore1 Range' && 'RiverM, Lake, Shore2, Rivers Range' < 'Mountain Range' < 'Hills Range' < 'Desert Range' < 'Shore2 Range'  < '4WRiver Range' < 'Shore3 Range < 'Tundra Range'
                                                 // HERE:  ¿ 'RiverM, Lake, Shore2, Rivers Range' ?
@@ -99,13 +85,13 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 // ovr161:01AC
 // sw_terrtype_based_grass
 // sw_terrtype_based_grass[ 0] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands1     = 0A2h
-// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest1    = 0A3h
+// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest1    = 0A3h
 // sw_terrtype_based_grass[ 2] = 62 01 = sw_terrtype_based_grass_02             tt_Mountain1  = 0A4h
 // sw_terrtype_based_grass[ 3] = 64 01 = sw_terrtype_based_grass_03_12_13_14    tt_Desert1    = 0A5h
 // sw_terrtype_based_grass[ 4] = 66 01 = sw_terrtype_based_grass_04_15_16       tt_Swamp1     = 0A6h
 // sw_terrtype_based_grass[ 5] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra1    = 0A7h
 // sw_terrtype_based_grass[ 6] = 6A 01 = sw_terrtype_based_grass_06             tt_SorceryNode   = 0A8h
-// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             TT_NatNode    = 0A9h
+// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             tt_NatureNode    = 0A9h
 // sw_terrtype_based_grass[ 8] = 74 01 = sw_terrtype_based_grass_08             tt_ChaosNode  = 0AAh
 // sw_terrtype_based_grass[ 9] = 7A 01 = sw_terrtype_based_grass_09             tt_Hills1     = 0ABh
 // sw_terrtype_based_grass[10] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands2     = 0ACh
@@ -119,17 +105,17 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 // sw_terrtype_based_grass[18] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands4     = 0B4h
 // sw_terrtype_based_grass[19] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra2    = 0B5h
 // sw_terrtype_based_grass[20] = 68 01 = sw_terrtype_based_grass_05_19_20       tt_Tundra3    = 0B6h
-// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest2    = 0B7h
-// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest3    = 0B8h
+// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest2    = 0B7h
+// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest3    = 0B8h
 
 // sw_terrtype_based_grass[ 0] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands1     = 0A2h
 // sw_terrtype_based_grass[10] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands2     = 0ACh
 // sw_terrtype_based_grass[11] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands3     = 0ADh
 // sw_terrtype_based_grass[18] = 5B 01 = sw_terrtype_based_grass_00_10_11_18    tt_Grasslands4     = 0B4h
 
-// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest1    = 0A3h
-// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest2    = 0B7h
-// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       TT_Forest3    = 0B8h
+// sw_terrtype_based_grass[ 1] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest1    = 0A3h
+// sw_terrtype_based_grass[21] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest2    = 0B7h
+// sw_terrtype_based_grass[22] = 60 01 = sw_terrtype_based_grass_01_21_22       tt_Forest3    = 0B8h
 
 // sw_terrtype_based_grass[ 2] = 62 01 = sw_terrtype_based_grass_02             tt_Mountain1  = 0A4h
 
@@ -148,7 +134,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 
 // sw_terrtype_based_grass[ 6] = 6A 01 = sw_terrtype_based_grass_06             tt_SorceryNode   = 0A8h
 
-// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             TT_NatNode    = 0A9h
+// sw_terrtype_based_grass[ 7] = 6F 01 = sw_terrtype_based_grass_07             tt_NatureNode    = 0A9h
 
 // sw_terrtype_based_grass[ 8] = 74 01 = sw_terrtype_based_grass_08             tt_ChaosNode  = 0AAh
 
@@ -159,13 +145,13 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 // ovr161:015B                                                 sw_terrtype_based_grass_00_10_11_18:    ; DATA XREF: ovr161:sw_terrtype_based_grasso
 
 // tt_Grasslands1     = 0A2h
-// TT_Forest1    = 0A3h
+// tt_Forest1    = 0A3h
 // tt_Mountain1  = 0A4h
 // tt_Desert1    = 0A5h
 // tt_Swamp1     = 0A6h
 // tt_Tundra1    = 0A7h
 // tt_SorceryNode   = 0A8h
-// TT_NatNode    = 0A9h
+// tt_NatureNode    = 0A9h
 // tt_ChaosNode  = 0AAh
 // tt_Hills1     = 0ABh
 // tt_Grasslands2     = 0ACh
@@ -179,8 +165,8 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
 // tt_Grasslands4     = 0B4h
 // tt_Tundra2    = 0B5h
 // tt_Tundra3    = 0B6h
-// TT_Forest2    = 0B7h
-// TT_Forest3    = 0B8h
+// tt_Forest2    = 0B7h
+// tt_Forest3    = 0B8h
                                                 // {162, ..., 184}
                                                 // IDGI  switch(terrain_type_switch_value)
                                                 switch(terrain_type)
@@ -193,9 +179,9 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                                     {
                                                         food_units = 3;
                                                     } break;
-                                                    case TT_Forest1:
-                                                    case TT_Forest2:
-                                                    case TT_Forest3:
+                                                    case tt_Forest1:
+                                                    case tt_Forest2:
+                                                    case tt_Forest3:
                                                     {
                                                         food_units = 1;
                                                     } break;
@@ -226,7 +212,7 @@ int16_t Square_Food2(int16_t wx, int16_t wy, int16_t wp)
                                                     {
                                                         food_units = 4;
                                                     } break;
-                                                    case TT_NatNode:
+                                                    case tt_NatureNode:
                                                     {
                                                         food_units = 5;
                                                     } break;
@@ -334,10 +320,7 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
     uint16_t terrain_type;  // _SI_
     int16_t production_bonus;  // _DI_
 
-    int16_t world_maps_offset;
-
-    world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
-    terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(terrain_type <= TT_Desert_end)
     {
@@ -354,10 +337,10 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
                 {
                     if
                     (
-                        (terrain_type == TT_Forest1) ||
-                        (terrain_type == TT_Forest2) ||
-                        (terrain_type == TT_Forest3) ||
-                        (terrain_type == TT_NatNode)
+                        (terrain_type == tt_Forest1) ||
+                        (terrain_type == tt_Forest2) ||
+                        (terrain_type == tt_Forest3) ||
+                        (terrain_type == tt_NatureNode)
                     )
                     {
                         if(have_gaias_blessing != ST_TRUE)
@@ -555,7 +538,7 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
 
     if( (wy >= 0) && (wy < WORLD_HEIGHT) )
     {
-        terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+        terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
         if(terrain_type <= TT_4WRiver5)
         {
@@ -567,7 +550,7 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
                     {
                         if(terrain_type <= TT_RiverM_end)
                         {
-                            if(terrain_type <= TT_Forest3)
+                            if(terrain_type <= tt_Forest3)
                             {
                                 is_river = ST_FALSE;
                             }
@@ -968,16 +951,13 @@ maybe not actually a switch
 int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _CX_
-    int16_t world_maps_offset;  // DNE in Dasm
 
     if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
     {
         return 0;
     }
 
-    // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
-    world_maps_offset = ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
-    terrain_type = GET_2B_OFS(_world_maps,world_maps_offset);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(terrain_type >= tt_Tundra_1st)
     {
@@ -1035,7 +1015,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         return ST_UNDEFINED;
     }
 
-    if(terrain_type > TT_Forest3)
+    if(terrain_type > tt_Forest3)
     {
         return 5;
     }
@@ -1046,7 +1026,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         {
             return 3;
         } break;
-        case TT_Forest1:    /* 0x0A3 */
+        case tt_Forest1:    /* 0x0A3 */
         {
             return 6;
         } break;
@@ -1070,7 +1050,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         {
             return 4;
         } break;
-        case TT_NatNode:    /* 0x0A9 */
+        case tt_NatureNode:    /* 0x0A9 */
         {
             return 5;
         } break;
@@ -1126,11 +1106,11 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
         {
             return 6;
         } break;
-        case TT_Forest2:    /* 0x0B7 */
+        case tt_Forest2:    /* 0x0B7 */
         {
             return 6;
         } break;
-        case TT_Forest3:    /* 0x0B8 */
+        case tt_Forest3:    /* 0x0B8 */
         {
             return 6;
         } break;
@@ -1169,6 +1149,7 @@ TILE_IsAISailable()
 
 // WZD s161p23
 // drake178: TILE_IsVisibleForest()
+// AKA Square_Is_Explored_Forest()
 /*
 returns 1 if the tile is explored by the human
 player, and is a forest tile, or 0 otherwise
@@ -1177,42 +1158,35 @@ INCONSISTENT: unlike all other tile type check
 functions, this only returns 1 for tiles visible to
 the human player (explored)
 */
-int16_t Square_Is_Explored_Forest(int16_t wx, int16_t wy, int16_t wp)
+int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_is_explored_forest;
-    uint8_t * world_map_ptr;
-    int16_t terrain_type_idx;
-    int16_t terrain_type;
-    int16_t square_is_explored;
+    int16_t is_forest = 0;
+    int16_t terrain_type = 0;
 
-    world_map_ptr = (_world_maps + (wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2));
-    terrain_type_idx = GET_2B_OFS(world_map_ptr, 0);
-    terrain_type = terrain_type_idx % NUM_TERRAIN_TYPES;
-
-    square_is_explored = GET_SQUARE_EXPLORED(wx, wy, wp);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
-        (square_is_explored != ST_FALSE)
+        (SQUARE_EXPLORED(wx, wy, wp) == ST_TRUE)
         &&
         (
-            (terrain_type == TT_Forest1)
+            (terrain_type == tt_Forest1)
             ||
-            (terrain_type == TT_Forest2)
+            (terrain_type == tt_Forest2)
             ||
-            (terrain_type == TT_Forest3)
+            (terrain_type == tt_Forest3)
             ||
-            (terrain_type == TT_NatNode)
+            (terrain_type == tt_NatureNode)
         )
     )
     {
-        terrain_is_explored_forest = ST_TRUE;
+        is_forest = ST_TRUE;
     }
     else
     {
-        terrain_is_explored_forest = ST_FALSE;
+        is_forest = ST_FALSE;
     }
 
-    return terrain_is_explored_forest;
+    return is_forest;
 }
 
 
@@ -1232,21 +1206,10 @@ Square_Is_OceanLike()
 */
 int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t return_value;
-    uint8_t * src_sgmt;
-    uint16_t src_ofst;
-    uint16_t world_map_value;
-    uint16_t terrain_type;
+    int16_t return_value = 0;
+    uint16_t terrain_type = 0;
 
-    // // les  bx, [_world_maps]
-    // // ~== ES = (&_world_maps[0] / 16); BX = (&_world_maps[0] % 16);
-    // src_sgmt = _world_maps;
-    // src_ofst = 0;
-    // src_ofst = (wp * 4800) + (wy * 120) + (wx * 2);
-    // world_map_value = GET_2B_OFS(src_sgmt, src_ofst);
-    // terrain_type = world_map_value % NUM_TERRAIN_TYPES;
-
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     // if(terrain_type > 0x25A)  /* _Tundra00001000 */
     if(terrain_type > tt_Tundra_1st)  /* _Tundra00001000 */
@@ -1361,15 +1324,15 @@ int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 
     is_hills = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_Hills1)
         ||
         (
-            (terrain_type > tt_Mntns_end)
+            (terrain_type > tt_Mntns_end)   // >= tt_Hills_1st   = 0x113
             &&
-            (terrain_type < tt_Desert_1st)
+            (terrain_type < tt_Desert_1st)  // <= tt_Hills_end   = 0x123
         )
     )
     {
@@ -1393,7 +1356,7 @@ int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 
     is_mountain = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_Mountain1)
@@ -1429,13 +1392,13 @@ int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 
     is_desert = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (
-            (terrain_type > tt_Hills_end)
+            (terrain_type > tt_Hills_end)   // >= tt_Desert_1st  = 0x124
             &&
-            (terrain_type > tt_Shore2_1st)
+            (terrain_type < tt_Shore2_1st)  // <= TT_Desert_end  = 0x1C3
         )
         ||
         (terrain_type == tt_Desert1)
@@ -1467,7 +1430,7 @@ int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 
     is_tundra = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_Tundra1)
@@ -1499,7 +1462,7 @@ int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 
     is_swamp = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_Swamp1)
@@ -1529,7 +1492,7 @@ int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 
     is_grasslands = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_Grasslands1)
@@ -1563,7 +1526,7 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 
     is_volcano = ST_FALSE;  // DNE in Dasm
 
-    terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
     if(
         (terrain_type == tt_ChaosNode)
@@ -1770,7 +1733,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 
     if( (wy >= 0) && (wy < WORLD_HEIGHT) )
     {
-        terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
+        terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
         if(terrain_type <= _Tundra00001000)
         {
