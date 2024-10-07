@@ -11,6 +11,29 @@ MoO2  Module: animate
 SEEALSO: EMM ... IO Buffer ...
 
 
+1oom just does a LBX_Load() and FLIC_Draw()
+MoO2 uses io_buffer, instead of _VGAFILEH_seg and file_animation_header
+
+
+The business with file_animation_header and _VGAFILEH_seg *feels* like a special use-case of the EMM Header Only *caching*.
+The approach of just doing a LBX_Load() and FLIC_Draw() seems to work just fine.
+But, *need* something more consistent with the existing code-base and Dasm.
+Can we just allocated a large enough buffer for _VGAFILEH_seg and then point file_animation_header at the SAMB_data?
+Or, just allocated the buffer for file_animation_header directly and just use LBX_Reload()?
+
+Get_File_Animation_Frame() uses file_animation_header
+Set_File_Animation_Frame() uses file_animation_header
+Load_File_Animation_Frame() reads the data into _VGAFILEH_seg
+
+
+
+
+
+
+
+
+
+
 Module: init
     unsigned integer (4 bytes) io_buffer_seg
     Address: 02:001A86F8

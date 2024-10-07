@@ -23,7 +23,8 @@ extern "C" {
 
 // WZD dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0                ; DATA XREF: Load_Font_File+78w ...
 // extern struct s_animation_header file_animation_header;
-extern struct s_FLIC_HDR * file_animation_header;
+// extern struct s_FLIC_HDR * file_animation_header;
+extern SAMB_ptr file_animation_header;
 
 
 

@@ -16,7 +16,8 @@ MoO2
 // WZD dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0                ; DATA XREF: Load_Font_File+78w ...
 // WZD dseg:E7DE
 // struct s_animation_header file_animation_header = 0;
-struct s_FLIC_HDR * file_animation_header;
+// struct s_FLIC_HDR * file_animation_header;
+SAMB_ptr file_animation_header;
 
 
 

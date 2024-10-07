@@ -44,7 +44,7 @@ char * Get_Item_Type_Name(int16_t item_idx);
 // ITEM_CreateControls()
 
 // WZD o115p08
-// sub_95E65()
+int16_t IDK_CreateArtifact__STUB(int16_t IDK1, int16_t IDK2);
 
 // WZD o115p09
 // PRIVATE  void Create_Item_Record(int16_t item_idx);

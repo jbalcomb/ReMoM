@@ -942,7 +942,9 @@ struct s_SPELL_DATA * spell_data_table;
 // WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
 // WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
 // WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
-// WZD dseg:9134 00 00                                           SND_Spell_Music@ dw 0                   ; DATA XREF: GAME_LearnSpellAnim+39w ...
+
+// WZD dseg:9134
+SAMB_ptr SND_Spell_Music;
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
 
@@ -2797,7 +2799,8 @@ int16_t _scroll_text_top;
 // WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 // WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:CA2C 00 00                                           IDK_DiploScrn_scanned_field dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
+// WZD dseg:CA2C
+int16_t IDK_DiploScrn_scanned_field;
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
@@ -2906,10 +2909,20 @@ SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
 // WZD dseg:E5F0                                                                                         ; 4 reserved pages
 // WZD dseg:E5F2 00 00                                           dw 0
 
+/*
+    TODO  fix the issues around VGAFILEH
+    ...
+    for now, just manually add variables for each resource used by 'File Animation'
+    ...
+    e.g.,
+    NAY  Open_File_Animation(spellscr_lbx_file__ovr138, 67);
+    YAY  vortex_3_seg = LBX_Load(spellscr_lbx_file__ovr138, 67);
+    NAY  Draw_File_Animation();
+    YAY  FLIC_Draw(0, 0, vortex_3_seg);
+*/
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
 // AKA  EmmHndlNbr_VGAFILEH
 byte_ptr _VGAFILEH_seg;
-SAMB_ptr report_scroll_out_seg;
 /* MoO2 */
 
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages

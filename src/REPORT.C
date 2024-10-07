@@ -209,45 +209,48 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     Copy_On_To_Off_Page();
 
-    for(itr_msgs = 0; itr_msgs < MSG_CityLost_Count; itr_msgs++)
+    // Outpost Deserted
+    for(itr_msgs = 0; MSG_CityLost_Count > itr_msgs; itr_msgs++)
     {
 
-        strcpy(GUI_NearMsgString, aTheOutpostOf);
+        strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
 
         // ; BUG: incorrect array element size, should be 14
         // strcat(GUI_NearMsgString, (MSG_CityLost_Names + (itr_msgs * 20)));
         strcat(GUI_NearMsgString, &MSG_CityLost_Names[(itr_msgs * 20)]);
         // strcat(GUI_NearMsgString, MSG_CityLost_Names[itr_msgs]);
 
-        strcat(GUI_NearMsgString, aHasBeenDeserte);
+        strcat(GUI_NearMsgString, aHasBeenDeserte);  // " has been deserted."
 
         Warn0(GUI_NearMsgString);
 
     }
 
-    for(itr_msgs = 0; itr_msgs < MSG_CityGained_Count; itr_msgs++)
+    // Outpost Grown
+    for(itr_msgs = 0; MSG_CityGained_Count > itr_msgs; itr_msgs++)
     {
 
-        strcpy(GUI_NearMsgString, aTheOutpostOf);
+        strcpy(GUI_NearMsgString, aTheOutpostOf);  // "The outpost of "
 
         // String_Copy_Far(temp_string, _CITIES[MSG_CityGained_Array[itr_msgs]].name);
         strcpy(temp_string, _CITIES[MSG_CityGained_Array[itr_msgs]].name);
 
         strcat(GUI_NearMsgString, temp_string);
 
-        strcat(GUI_NearMsgString, aHasGrownIntoAH);
+        strcat(GUI_NearMsgString, aHasGrownIntoAH);  // " has grown into a hamlet."
 
         Warn0(GUI_NearMsgString);
 
     }
 
 
-    for(itr_msgs = 0; itr_msgs < MSG_CityGrowth_Count; itr_msgs++)
+    for(itr_msgs = 0; MSG_CityGrowth_Count > itr_msgs; itr_msgs++)
     {
 
-        for(record_index = 0; record_index > MSG_CityDeath_Count; record_index++)
+        for(record_index = 0; MSG_CityDeath_Count > record_index; record_index++)
         {
 
+            // same city_idx
             if(MSG_CityGrowth_Array[itr_msgs] == MSG_CityDeath_Array[record_index])
             {
 
@@ -403,15 +406,7 @@ void Chancellor_Screen__WIP(int16_t flag)
     Clear_Fields();
 
     // SCROLL.LBX, 002      "SCROLOUT"  ""
-    // TODO  Open_File_Animation__STUB(scroll_lbx_file__ovr126__2, 2);
-    // ; loads up to 16300 bytes from the beginning of an LBX
-    // ; file entry into the first (index 0) logical page of
-    // ; the VGAFILEH EMM handle, and copies the image header
-    // ; into the VGA_FILE_H_Hdr allocation, filling out the
-    // ; handle and data offset fields
-    // report_scroll_out_seg = LBX_Reload(scroll_lbx_file__ovr126__2, 2, _VGAFILEH_seg);
-    report_scroll_out_seg = LBX_Load(scroll_lbx_file__ovr126__2, 2);
-
+    Open_File_Animation__HACK(scroll_lbx_file__ovr126__2, 2);
 
     // IDGI  for(itr_msgs = 0; ((_scroll_text_height + 7) / 8) >= itr_msgs; itr_msgs++)
     for (itr_msgs = 0; itr_msgs < ((_scroll_text_height + 7) / 8); itr_msgs++)
@@ -431,8 +426,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
         Reset_Window();
 
-        // TODO  Draw_File_Animation__WIP();
-        FLIC_Draw(0, 0, report_scroll_out_seg);
+        Draw_File_Animation__HACK();
 
         if(itr_msgs == 0)
         {
@@ -923,7 +917,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
         Set_Font_Spacing_Width(2);
 
-        for(itr = 0; MSG_UEsLost_Count < itr; itr++)
+        for(itr = 0; MSG_UEsLost_Count > itr; itr++)
         {
 
             var_2 = Clipped_Print((var_2 + 1), (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[MSG_UEsLost_Array[itr]].name);
@@ -959,7 +953,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
         x_add += 2;
     }
 
-    // ¿ BUGBUG:  no loop? no array?
+    // ¿ BUGBUG:  no loop / no array ?
     if(MSG_GEs_Lost > 0)
     {
         Set_Font_Colors_15(4, &colors1[0]);

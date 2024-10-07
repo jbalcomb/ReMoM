@@ -48,7 +48,7 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
 int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[]);
 
 // WZD o59p10
-// fxnptr_o59p10()
+void o59p10_empty_function(void);
 
 // WZD o59p11
 // sub_520DD()

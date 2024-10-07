@@ -1857,6 +1857,22 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     node_owner_banner_idx = _players[node_owner_idx].banner_id;
 
                     assert(node_owner_banner_idx <= 5);
+                    // //       Severity	Code	Description	Project	File	Line	Suppression State
+                    // // TODO  Warning	C6385	Reading invalid data from 'node_auras_seg':  the readable size is '40' bytes, but 'node_owner_banner_idx' bytes may be read.ReMoM	C : \STU\devel\ReMoM\src\MainScr_Maps.C	1860
+                    // // Reading invalid data from the readable size is bytes but bytes may be read
+                    // // try assert(image_encoders_count * sizeof(ImageCodecInfo) <= image_encoder_array_size);
+                    // // or  assert(image_encoders_count <= image_encoder_array_size / sizeof(ImageCodecInfo));
+                    // // try to use __analysis_assume() instead of assert()
+                    // // node_anim_seg = node_auras_seg[node_owner_banner_idx];
+                    // NOWORKIE  if (node_owner_banner_idx < sizeof(node_auras_seg))
+                    // {
+                    //     node_anim_seg = node_auras_seg[node_owner_banner_idx];
+                    // }
+                    // else
+                    // {
+                    //     __debug_break();
+                    // }
+                    #pragma warning(suppress : 6385)
                     node_anim_seg = node_auras_seg[node_owner_banner_idx];
                     node_power = _NODES[itr_nodes].power;
 
@@ -2133,18 +2149,18 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
 // WZD o150p14
 void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
 {
-    int16_t itr_screen_x;
-    int16_t itr_screen_y;
-    int16_t itr_world_x;
-    int16_t itr_world_y;
-    int16_t curr_world_x;
-    uint8_t unexplored_area;
-    uint8_t * terrain_flags_table_sgmt;
-    int16_t terrain_flags_table_ofst;
-    uint8_t has_road;
-    uint8_t has_eroad;
-    int16_t itr_cities;
-    int16_t has_city;
+    int16_t itr_screen_x = 0;
+    int16_t itr_screen_y = 0;
+    int16_t itr_world_x = 0;
+    int16_t itr_world_y = 0;
+    int16_t curr_world_x = 0;
+    uint8_t unexplored_area = 0;
+    uint8_t * terrain_flags_table_sgmt = 0;
+    int16_t terrain_flags_table_ofst = 0;
+    uint8_t has_road = 0;
+    uint8_t has_eroad = 0;
+    int16_t itr_cities = 0;
+    int16_t has_city = 0;
 
     itr_screen_y = screen_y;
     itr_world_y = world_grid_y;
@@ -2371,30 +2387,30 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 // _SI_city_world_x = si
 // _DI_city_world_y = di
 
-    int16_t terrain_type_idx_base;
-    int16_t terrain_type_idx;
-    uint8_t * explore_data_ptr;
-    uint8_t * world_data_ptr;
-    uint8_t * minimap_pict_data_ptr;
-    int16_t itr_minimap_height;
-    int16_t itr_minimap_width;
+    int16_t terrain_type_idx_base = 0;
+    int16_t terrain_type_idx = 0;
+    uint8_t * explore_data_ptr = 0;
+    uint8_t * world_data_ptr = 0;
+    uint8_t * minimap_pict_data_ptr = 0;
+    int16_t itr_minimap_height = 0;
+    int16_t itr_minimap_width = 0;
 
-    int16_t minimap_square_y;
-    int16_t minimap_square_x;
-    int8_t explored_flag;
-    uint8_t minimap_terrain_color;
-    int16_t itr_cities;
-    int16_t city_world_x;
-    int16_t city_world_y;
-    int16_t city_minimap_x;
-    int16_t city_minimap_y;
-    int16_t city_owner_idx;
-    int16_t mark_minimap_x;
-    int16_t mark_minimap_y;
+    int16_t minimap_square_y = 0;
+    int16_t minimap_square_x = 0;
+    int8_t explored_flag = 0;
+    uint8_t minimap_terrain_color = 0;
+    int16_t itr_cities = 0;
+    int16_t city_world_x = 0;
+    int16_t city_world_y = 0;
+    int16_t city_minimap_x = 0;
+    int16_t city_minimap_y = 0;
+    int16_t city_owner_idx = 0;
+    int16_t mark_minimap_x = 0;
+    int16_t mark_minimap_y = 0;
 
-    uint8_t square_explored_flag;  // DNE in Dasm
-    int16_t minimap_square_y_gte_zero;  // DNE in Dasm
-    int16_t minimap_square_y_lt_world_height;  // DNE in Dasm
+    uint8_t square_explored_flag = 0;  // DNE in Dasm
+    int16_t minimap_square_y_gte_zero = 0;  // DNE in Dasm
+    int16_t minimap_square_y_lt_world_height = 0;  // DNE in Dasm
 
     terrain_type_idx_base = world_plane * NUM_TERRAIN_TYPES;
 
@@ -2549,34 +2565,34 @@ Cartograph_Screen_Draw_Map__WIP()
 */
 void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg)
 {
-    byte_ptr ptr_cartograph_pict_palette;
-    byte_ptr ptr_current_palette;
-    SAMB_ptr cartograph_pict;
-    int16_t itr_colors;
-    int16_t square_explored_flag;
-    int16_t Color_Intensity;
-    byte_ptr terrain_pict_seg;
-    int16_t itr_world_height;
-    int16_t Map_Start_Offset;
-    int16_t itr_palette;
-    int16_t terrain_000_elpn;
-    int16_t terrain_type;
-    uint8_t l_terrain_001_0;
-    uint8_t l_terrain_001_1;  // DNE in Dasm
-    uint16_t l_terrain_001;  // DNE in Dasm
-    int16_t itr_world_width;  // _SI_
+    byte_ptr ptr_cartograph_pict_palette = 0;
+    byte_ptr ptr_current_palette = 0;
+    SAMB_ptr cartograph_pict = 0;
+    int16_t itr_colors = 0;
+    int16_t square_explored_flag = 0;
+    int16_t Color_Intensity = 0;
+    byte_ptr terrain_pict_seg = 0;
+    int16_t itr_world_height = 0;
+    int16_t Map_Start_Offset = 0;
+    int16_t itr_palette = 0;
+    int16_t terrain_000_elpn = 0;
+    int16_t terrain_type = 0;
+    uint8_t l_terrain_001_0 = 0;
+    uint8_t l_terrain_001_1 = 0;  // DNE in Dasm
+    uint16_t l_terrain_001 = 0;  // DNE in Dasm
+    int16_t itr_world_width = 0;  // _SI_
 
-    byte_ptr src_sgmt;  // _DS_
-    int16_t src_ofst;  // _SI_
-    byte_ptr dst_sgmt;  // _ES_
-    int16_t dst_ofst;  // _DI_
+    byte_ptr src_sgmt = 0;  // _DS_
+    int16_t src_ofst = 0;  // _SI_
+    byte_ptr dst_sgmt = 0;  // _ES_
+    int16_t dst_ofst = 0;  // _DI_
 
-    uint32_t terrain_lbx_000_offset;  // DNE in Dasm
-    uint16_t terrain_001_index;  // DNE inm Dasm
-    uint8_t baito;  // DNE in Dasm
-    uint8_t animated_terrain_flag;  // DNE in Dasm
-    uint8_t emm_logical_page_index;  // DNE in Dasm
-    uint8_t emm_terain_picture_index;  // DNE in Dasm
+    uint32_t terrain_lbx_000_offset = 0;  // DNE in Dasm
+    uint16_t terrain_001_index = 0;  // DNE inm Dasm
+    uint8_t baito = 0;  // DNE in Dasm
+    uint8_t animated_terrain_flag = 0;  // DNE in Dasm
+    uint8_t emm_logical_page_index = 0;  // DNE in Dasm
+    uint8_t emm_terain_picture_index = 0;  // DNE in Dasm
 
 
     cartograph_pict = (SAMB_ptr)&cartograph_seg[16];  // ¿ sizeof(struct s_FLIC_HEADER) or SZ_PARAGRAPH or color block ?

@@ -218,7 +218,19 @@ int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[])
 
 
 // WZD o59p10
-// fxnptr_o59p10()
+void o59p10_empty_function(void)
+{
+// proc o59p10_empty_function far
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+// endp o59p10_empty_function
+
+    return;
+    
+}
+
 
 // WZD o59p11
 // sub_520DD()

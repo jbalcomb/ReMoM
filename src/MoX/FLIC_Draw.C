@@ -1388,6 +1388,17 @@ Module: file_ani
 ; into the VGA_FILE_H_Hdr allocation, filling out the
 ; handle and data offset fields
 */
+void Open_File_Animation__HACK(char * file_name, int16_t entry_num)
+{
+
+    strcpy(file_animation_file_name, file_name);
+
+    file_animation_entry_num = entry_num;
+
+    // file_animation_header = (struct s_FLIC_HDR *)LBX_Reload(file_animation_file_name, file_animation_entry_num, _VGAFILEH_seg);
+    file_animation_header = LBX_Load(file_animation_file_name, file_animation_entry_num);
+
+}
 // void Open_File_Animation__STUB(char * file_name, int16_t entry_num)
 // {
 // 
@@ -1433,6 +1444,7 @@ Module: file_ani
 // 
 // }
 
+
 // WZD s30p36
 // drake178: VGA_FILEH_DrawFrame()
 /*
@@ -1441,6 +1453,13 @@ Module: file_ani
 ; 1, and then draws it into the current draw frame
 */
 // Draw_File_Animation()
+void Draw_File_Animation__HACK(void)
+{
+
+    FLIC_Draw(0, 0, file_animation_header);
+
+}
+
 
 // WZD s30p37
 // drake178: VGA_FILEH_Loader()
@@ -1505,13 +1524,62 @@ XREF:
 // 
 // }
 
+
 // WZD s30p38
 // drake178: VGA_FILEH_GetFrame()
-// Get_File_Animation_Frame()
+/*
+; returns the index of the next frame that will be
+; displayed by a VGA_FILEH_DrawFrame call
+; Attributes: bp-based frame
+*/
+/*
+proc Get_File_Animation_Frame far
+push    bp
+mov     bp, sp
+mov     ax, s_FLIC_HDR.current_frame
+push    ax                              ; Offset
+push    [file_animation_header]         ; Segment
+call    farpeekw
+pop     cx
+pop     cx
+jmp     short $+2
+pop     bp
+retf
+endp Get_File_Animation_Frame
+*/
+int16_t Get_File_Animation_Frame(void)
+{
+    int16_t file_animation_frame = 0;  // DNE in Dasm
+
+    file_animation_frame = GET_2B_OFS(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME);
+
+    return file_animation_frame;
+}
+
 
 // WZD s30p39
 // drake178: VGA_FILEH_SetFrame()
-// Set_File_Animation_Frame()
+/*
+proc Set_File_Animation_Frame far
+frame_num= word ptr  6
+push    bp
+mov     bp, sp
+push    [bp+frame_num]                  ; value
+mov     ax, s_FLIC_HDR.current_frame
+push    ax                              ; ofst
+push    [file_animation_header]         ; sgmt
+call    farpokew
+add     sp, 6
+pop     bp
+retf
+endp Set_File_Animation_Frame
+*/
+void Set_File_Animation_Frame(int16_t frame_num)
+{
+
+    SET_2B_OFS(file_animation_header, FLIC_HDR_POS_CURRENT_FRAME, frame_num);
+
+}
 
 
 // WZD s30p40

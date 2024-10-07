@@ -44,6 +44,7 @@
 #include "MovePath.H"
 #include "NEXTTURN.H"
 #include "Outpost.H"
+#include "OverSpel.H"
 #include "ProdScr.H"
 #include "RACETYPE.H"
 #include "REPORT.H"

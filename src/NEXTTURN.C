@@ -223,10 +223,12 @@ void Next_Turn_Proc(void)
     */
     if(g_bldg_msg_ctr > 0)
     {
-        // DONT  j_o62p01_Empty_pFxn(_human_player_idx);  // drake178: does nothing and returns zero; at some point must have been some wizard data refresh function
+
+        o62p01_empty_function(_human_player_idx);
+
         for(itr_msg = 0; itr_msg < g_bldg_msg_ctr; itr_msg++)
         {
-            if(MSG_Building_Complete[itr_msg].city_idx != -1)
+            if(MSG_Building_Complete[itr_msg].city_idx != ST_UNDEFINED)
             {
                 _city_idx = MSG_Building_Complete[itr_msg].city_idx;
                 orig_map_plane = _map_plane;
@@ -290,16 +292,16 @@ void Next_Turn_Proc(void)
 
     Update_Units_MvsSts();
 
-    // DONT  o62p01_Empty_pFxn(_human_player_idx);
+    o62p01_empty_function(_human_player_idx);
 
-    // DONT  fxnptr_o59p();
+    o59p10_empty_function();
 
     if(
-        (_players[_human_player_idx].Cast_Cost_Left <= 0)
+        (_players[_human_player_idx].casting_cost_remaining <= 0)
         &&
         (_players[_human_player_idx].casting_spell_idx > 0))
     {
-        // TODO  G_OVL_Cast__STUB(_human_player_idx);
+        Cast_Spell_Overland__WIP(_human_player_idx);
     }
 
 // @@Done_Done
@@ -980,7 +982,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].artificer > 0) &&
-        (spell_data_table[spell_idx].type == 11)  /* Crafting_Spell */
+        (spell_data_table[spell_idx].type == 11)  /* sdt_Crafting_Spell */
     )
     {
         casting_cost_reduction += 50;

@@ -6,7 +6,6 @@
     WIZARDS.EXE
     ovr057
     ovr058
-    ovr059
     ovr061
     ovr062
     ovr063
@@ -326,6 +325,8 @@ void Main_Screen_Draw(void);
 // AKA Do_Move_Stack_DirKey()
 // PRIVATE  void Move_Stack_DirKey(int16_t movement_direction);
 
+
+
 /*
     WIZARDS.EXE  ovr058
 */
@@ -363,7 +364,7 @@ void Play_Background_Music(void);
 */
 
 // WZD o62p01
-// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
+int16_t o62p01_empty_function(int16_t player_idx);
 
 // WZD o62p02
 // AKA OVL_StackSelect()

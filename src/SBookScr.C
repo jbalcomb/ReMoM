@@ -139,12 +139,12 @@ void Spellbook_Screen(void)
     int16_t spellbook_page_right[6] = { 0, 0, 0, 0, 0, 0 };
     int16_t hotkey_B = 0;
     int16_t hotkey_F = 0;
-    int16_t Ctrl_Index = 0;
+    int16_t spellbook_page_spell_index = 0;
     int16_t spell_idx = 0;
     int16_t Abort_Spell__YN = 0;
     int16_t hotkey_ESC = 0;
     int16_t y_start = 0;
-    int16_t var_A = 0;
+    int16_t did_select_spell = 0;
     int16_t player_is_casting = 0;
     int16_t itr_page_spell_count = 0;
     int16_t input_field_idx = 0;
@@ -153,7 +153,7 @@ void Spellbook_Screen(void)
     int16_t itr_spellbook_page_fields = 0;  // _SI_
     int16_t x_start = 0;  // _DI_
 
-    var_A = 0;
+    did_select_spell = 0;
 
     OVL_DisableIncmBlink();
 
@@ -293,7 +293,9 @@ void Spellbook_Screen(void)
                     {
 
                         Play_Left_Click__STUB();
-                        Ctrl_Index = itr_spellbook_page_fields;
+
+                        spellbook_page_spell_index = itr_spellbook_page_fields;
+
                         spell_idx = m_spellbook_pages[SBK_OpenPage].spell[itr_spellbook_page_fields];
                         
                         if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
@@ -309,8 +311,8 @@ void Spellbook_Screen(void)
 
                             if(Abort_Spell__YN == ST_TRUE)
                             {
-                                _players[HUMAN_PLAYER_IDX].Cast_Cost_Left = 0;
-                                _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
+                                _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
                                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
                                 spell_idx = ST_UNDEFINED;
                                 leave_screen = ST_TRUE;
@@ -334,8 +336,8 @@ void Spellbook_Screen(void)
                                 }
                                 else
                                 {
-                                    _players[HUMAN_PLAYER_IDX].Cast_Cost_Left -= _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial;
-                                    _players[HUMAN_PLAYER_IDX].Cast_Cost_Initial = 0;
+                                    _players[HUMAN_PLAYER_IDX].casting_cost_remaining -= _players[HUMAN_PLAYER_IDX].casting_cost_original;
+                                    _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
                                     _players[HUMAN_PLAYER_IDX].casting_spell_idx = 0;
                                 }
                             }
@@ -349,7 +351,7 @@ void Spellbook_Screen(void)
                             if(Abort_Spell__YN == ST_TRUE)
                             {
                                 leave_screen = ST_TRUE;
-                                var_A = ST_TRUE;
+                                did_select_spell = ST_TRUE;
                                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
                             }
 
@@ -371,7 +373,7 @@ void Spellbook_Screen(void)
             END:  Left-Click Spellbook Page Spell Fields
         */
 
-        // TODO  Assign_Auto_Function(Spellbook_Screen_Draw, 2);
+        Assign_Auto_Function(Spellbook_Screen_Draw, 2);
 
         if(leave_screen == ST_FALSE)
         {
@@ -401,7 +403,7 @@ void Spellbook_Screen(void)
     }  /* END:  while(leave_screen == ST_FALSE) */
 
 
-    // TODO  Deactivate_Auto_Function();
+    Deactivate_Auto_Function();
 
     current_screen = scr_Main_Screen;
 
@@ -413,23 +415,226 @@ void Spellbook_Screen(void)
 
     Deactivate_Help_List();
 
-    if(var_A == ST_TRUE)
+    if(did_select_spell == ST_TRUE)
     {
-        // TODO  WIZ_SetOverlandSpell(0, Spell_Index, Ctrl_Index);
+        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
     }
     else
     {
         OVL_MosaicFlip__STUB();
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Screen()\n", __FILE__, __LINE__);
-#endif
 }
 
 
 // WZD o134p04
-// WIZ_SetOverlandSpell()
+// drake178: WIZ_SetOverlandSpell()
+/*
+; sets the selected spell as the current overland cast
+; for the specified wizard, processes any pre-cast
+; functions (slider, crafting, SoM animation) and, if
+; the spell can be cast instantly, executes that too
+; returns 1 if the spell was instant, or 0 otherwise
+; UNEXPLORED SUBFUNCTIONS INSIDE, RE-EXPLORE!
+*/
+/*
+
+¿ handles the 'slider' for variable power spells ?
+
+¿ doesn't *know* it's for the human/current player ?
+
+*/
+int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
+{
+    int16_t var_8;
+    int16_t item_idx;
+    int16_t did_cast_spell__iff_human_player;
+    int16_t Mana_This_Turn;
+
+    did_cast_spell__iff_human_player = ST_FALSE;
+
+    _players[player_idx].casting_spell_idx = spell_idx;
+
+    if(_players[player_idx].Skill_Left > _players[player_idx].mana_reserve)
+    {
+        Mana_This_Turn = _players[player_idx].mana_reserve;
+    }
+    else
+    {
+        Mana_This_Turn = _players[player_idx].Skill_Left;
+    }
+
+    if(
+        (spell_data_table[spell_idx].type < sdt_Infusable_Spell)
+        ||
+        (player_idx != HUMAN_PLAYER_IDX)
+    )
+    {
+
+        if(spell_data_table[spell_idx].type == sdt_Crafting_Spell)
+        {
+
+            if(spell_idx == spl_Enchant_Item)
+            {
+
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+                    // TODO  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 0);
+                    // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
+                    // Allocate_Reduced_Map();
+                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
+                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
+                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
+                    Remove_Item(item_idx);
+                }
+                else
+                {
+
+                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
+
+                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
+
+                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+
+                    // TODO  _fmemcpy(_ITEMS[(136 - player_idx)], _ITEMS[item_idx]);
+                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
+
+                    Remove_Item(item_idx);
+
+                }
+
+            }
+            else if(spell_idx == spl_Create_Artifact)
+            {
+
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+                    // TODO  _players[player_idx].casting_cost_remaining = IDK_CreateArtifact__STUB(0, 1);
+                    // _players[player_idx].casting_cost_original = _ITEMS[136].cost;
+                    // Allocate_Reduced_Map();
+                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
+                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
+                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
+                    Remove_Item(item_idx);
+                }
+                else
+                {
+
+                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
+
+                    _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
+
+                    _players[player_idx].casting_cost_remaining = ((_players[player_idx].casting_cost_remaining * var_8) / 100);
+
+                    // TODO  _fmemcpy(_ITEMS[(136 - player_idx)], _ITEMS[item_idx]);
+                    memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
+
+                    Remove_Item(item_idx);
+
+                }
+
+            }
+            // ¿ no else {} ?
+
+            _players[player_idx].casting_cost_remaining == 0;
+
+        }
+        else
+        {
+
+            if(spell_idx == spl_Spell_Of_Mastery)
+            {
+
+                SoM_Started(player_idx);
+
+                Global_Enchantment_Change_Relations(player_idx, spl_Spell_Of_Mastery, 1);
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
+
+        // ; displays the spell infusion dialog, allowing the
+        // ; player to specify the additional power they wish to
+        // ; channel into an infusable spell, setting both the
+        // ; initial and final cost into the wizard record
+        // ;
+        // ; BUG: ignores Evil Omens almost entirely
+        // TODO  SBK_SpellSlider(spell_idx, spellbook_page_spell_index);
+
+    }
+
+    if(_players[player_idx].casting_spell_idx == spl_NONE)
+    {
+        _players[player_idx].casting_cost_original = 0;
+    }
+    else
+    {
+
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+
+            if(_players[player_idx].casting_cost_remaining < Mana_This_Turn)
+            {
+
+                Mana_This_Turn = _players[player_idx].casting_cost_remaining;
+
+            }
+
+            if(Mana_This_Turn < 0)
+            {
+                Mana_This_Turn = 0;
+            }
+
+            if(_players[player_idx].casting_cost_remaining <= Mana_This_Turn)
+            {
+
+                _players[player_idx].Skill_Left -= Mana_This_Turn;
+
+                _players[player_idx].mana_reserve -= Mana_This_Turn;
+
+                // BUG  already tested, only true in this path
+                if(player_idx == HUMAN_PLAYER_IDX)
+                {
+                    OVL_MosaicFlip__STUB();
+                }
+
+                did_cast_spell__iff_human_player = ST_TRUE;
+
+                Cast_Spell_Overland__WIP(player_idx);
+
+            }
+
+        }
+
+    }
+
+    if(spell_idx > spl_NONE)
+    {
+        // === { Summoning_Spell, Unit_Enchantment, City_Enchantment, City_Curse, Fixed_Dmg_Spell, Special_Spell, Target_Wiz_Spell, sdt_Global_Enchantment, Battlefield_Spell }
+        // DEDU  But, why?
+        if(spell_data_table[spell_idx].type < sdt_Crafting_Spell)
+        {
+
+            if(player_idx == HUMAN_PLAYER_IDX)
+            {
+                OVL_MosaicFlip__STUB();
+            }
+            
+        }
+
+    }
+
+    return did_cast_spell__iff_human_player;
+
+}
 
 // WZD o134p05
 // sub_B9837()

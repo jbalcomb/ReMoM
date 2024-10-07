@@ -51,10 +51,10 @@ extern int16_t GAME_SoM_Cast_By;
 // IDK_SomScr_Lose()
 
 // WZD o138p04
-// sub_C0D33()
+void SoM_Started_Draw(void);
 
 // WZD o138p05
-// sC0DB3_Anim_SoMstarted()
+void SoM_Started(int16_t player_idx);
 
 // WZD o138p06
 // IDK_SomScr_Load()

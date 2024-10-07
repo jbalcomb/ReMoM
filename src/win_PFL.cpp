@@ -349,7 +349,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 */
 void MWA_Set_Mouse_Position(int16_t x, int16_t y)
 {
-    POINT point;
+    POINT point = { 0, 0 };
     point.x = (x * 2);
     point.y = (y * 2);
     ClientToScreen(g_Window, &point);
@@ -392,8 +392,8 @@ void Pump_Paints(void)
 
 struct win32_window_dimension Get_Window_Dimensions(HWND Window)
 {
-    win32_window_dimension WndDim;
-    RECT ClientAreaRect;
+    win32_window_dimension WndDim = { 0, 0 };
+    RECT ClientAreaRect = { 0, 0, 0, 0 };
 
     GetClientRect(Window, &ClientAreaRect);
 
@@ -691,7 +691,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
         {
             OutputDebugStringA("WM_LBUTTONDOWN\n");
-            POINT ptMouse;
+            POINT ptMouse = { 0, 0 };
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
             User_Mouse_Handler(1 /*0b00000001*/, (int16_t)ptMouse.x, (int16_t)ptMouse.y);
@@ -703,7 +703,7 @@ LRESULT CALLBACK WndEvnt(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // This is that Microsoft C++ Guidelines thing to which I was referring. ~ 20240915
             // Severity	Code	Description	Project	File	Line	Suppression State
             // Message	lnt - uninitialized - local	Local variable is not initialized.ReMoM	C : \STU\devel\ReMoM\src\win_PFL.cpp	670
-            POINT ptMouse;
+            POINT ptMouse = { 0, 0 };
             ptMouse.x = GET_X_LPARAM(lParam);
             ptMouse.y = GET_Y_LPARAM(lParam);
             User_Mouse_Handler(2 /*0b00000010*/, (int16_t)ptMouse.x, (int16_t)ptMouse.y);

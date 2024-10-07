@@ -293,6 +293,7 @@ void Diplomacy_Screen__STUB(void)
 // DIPL_LeaveMeAlone()
 
 // WZD o85p12
+// drake178: G_DIPL_Action()
 // MoO2  Module: DIPLOMAC  Change_Relations_()  Module: NETMOX  Russ_Change_Relations_()
 /*
     Applies a change in diplomatic relations
@@ -301,6 +302,14 @@ void Diplomacy_Screen__STUB(void)
 
 called from End_Of_Combat()
     |-> G_DIPL_Action(-Diplomatic_Value, _combat_attacker_player, _combat_defender_player, 8, ST_NULL, ST_NULL);
+
+Spellbook_Screen()
+    if(did_select_spell == ST_TRUE)
+        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+            Global_Enchantment_Change_Relations(player_idx, spl_Spell_Of_Mastery, 1)
+                if(spell_idx == spl_Spell_Of_Mastery)
+                    Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
+
 */
 void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx, int16_t type, int16_t city_idx, int16_t spell_idx)
 {
@@ -606,7 +615,9 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
             }
 
         }
+
     }
+
 }
 
 // WZD o85p13

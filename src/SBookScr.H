@@ -32,7 +32,7 @@ void Spellbook_Screen_Draw(void);
 void Spellbook_Screen(void);
 
 // WZD o134p04
-// WIZ_SetOverlandSpell()
+int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index);
 
 // WZD o134p05
 // sub_B9837()

@@ -768,7 +768,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             }
             else
             {
-                casting_cost = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left;
+                casting_cost = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
             }
 
             if(SBK_BookManaLimit != 0)
@@ -800,7 +800,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
                 if(Cost_Limit >= casting_cost)
                 {
-                    if(spell_data_table[abs(spell_idx)].type != 11)  /* Crafting_Spell */
+                    if(spell_data_table[abs(spell_idx)].type != 11)  /* sdt_Crafting_Spell */
                     {
                         Text_Width = Get_String_Width(cnst_Instant_Cast);
                         Clear_Bitmap_Region(9, (7 + (itr1 * 22)), (12 + Text_Width), (12 + (itr1 * 22)), spellbook_bitmap);
@@ -875,7 +875,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
             }
             else
             {
-                casting_cost = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left;
+                casting_cost = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
             }
 
             if(casting_cost < 0)
@@ -885,7 +885,7 @@ void SmlBook_Compose__WIP(struct s_SPELL_BOOK_PAGE spell_book_page, SAMB_ptr spe
 
             if(
                 (casting_cost != 0) ||
-                (spell_data_table[abs(spell_idx)].type != 11)  /* Crafting_Spell */
+                (spell_data_table[abs(spell_idx)].type != 11)  /* sdt_Crafting_Spell */
             )
             {
                 itoa(casting_cost, temp_string, 10);
@@ -2406,8 +2406,203 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
 // WZD o128p06
 // sub_AC19E()
 
+
 // WZD o128p07
-// WIZ_GE_Diplomacy()
+// drake178: WIZ_GE_Diplomacy()
+/*
+; initiates a diplomatic reaction towards the specified
+; player for the selected global spell from every other
+; wizard
+;
+; WARNING: the per-turn divisors make the action values
+; very small or even zero
+*/
+/*
+spl_Spell_Of_Mastery    - 50  10
+spl_Eternal_Night       - 12  12
+spl_Evil_Omens          - 20  12
+spl_Zombie_Mastery      - 14  12
+spl_Aura_of_Majesty     + 10   0
+spl_Wind_Mastery        -  4  12
+spl_Suppress_Magic      - 25  12
+spl_Time_Stop              0  12
+spl_Nature_Awareness       0  12
+spl_Natures_Wrath       - 20  12
+spl_Herb_Mastery           0  12
+spl_Chaos_Surge         - 10  12
+spl_Doom_Mastery        -  8  12
+spl_Great_Wasting       - 20  12
+spl_Meteor_Storm        - 15  12
+spl_Armageddon          - 25  12
+spl_Tranquility         - 20  12
+spl_Life_Force          - 20  12
+spl_Crusade             - 10  12
+spl_Just_Cause             0  12
+spl_Holy_Arms           -  5  12
+
+*/
+/*
+    updates diplomatic relations for all other wizards, with the caster of the overland enchantment, based on which spell is being cast
+
+XREF:
+    WIZ_SetOverlandSpell__WIP()
+    Cast_Spell_Overland__WIP()
+    WIZ_ProcessGlobals()
+
+
+*/
+void Global_Enchantment_Change_Relations(int16_t player_idx, int16_t spell_idx, int16_t divisor)
+{
+    int16_t itr_players = 0;  // _DI_
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(itr_players != player_idx)
+        {
+
+            if(spell_idx == spl_Spell_Of_Mastery)
+            {
+                Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Eternal_Night)
+            {
+                Change_Relations((-12 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(
+                (spell_idx == spl_Evil_Omens)
+                &&
+                (
+                    (_players[itr_players].spellranks[sbr_Life] > 0)
+                    ||
+                    (_players[itr_players].spellranks[sbr_Nature] > 0)
+                )
+            )
+            {
+                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Zombie_Mastery)
+            {
+                Change_Relations((-14 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Aura_of_Majesty)
+            {
+                Change_Relations((10 / divisor), player_idx, itr_players, 0, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Wind_Mastery)
+            {
+                Change_Relations((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Suppress_Magic)
+            {
+                Change_Relations((-4 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Time_Stop)
+            {
+                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Nature_Awareness)
+            {
+                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(
+                (spell_idx == spl_Natures_Wrath)
+                &&
+                (
+                    (_players[itr_players].spellranks[sbr_Chaos] > 0)
+                    ||
+                    (_players[itr_players].spellranks[sbr_Death] > 0)
+                )
+            )
+            {
+                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Herb_Mastery)
+            {
+                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(
+                (spell_idx == spl_Chaos_Surge)
+                &&
+                (_players[itr_players].spellranks[sbr_Chaos] == 0)
+            )
+            {
+                Change_Relations((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Doom_Mastery)
+            {
+                Change_Relations((-8 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Great_Wasting)
+            {
+                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Meteor_Storm)
+            {
+                Change_Relations((-15 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(spell_idx == spl_Armageddon)
+            {
+                Change_Relations((-25 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(
+                (spell_idx == spl_Tranquility)
+                &&
+                (_players[itr_players].spellranks[sbr_Chaos] > 0)
+            )
+            {
+                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+            if(
+                (spell_idx == spl_Life_Force)
+                &&
+                (_players[itr_players].spellranks[sbr_Death] > 0)
+            )
+            {
+                Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+
+            if(spell_idx == spl_Crusade)
+            {
+                Change_Relations((-10 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+
+            if(spell_idx == spl_Just_Cause)
+            {
+                Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+
+            if(spell_idx == spl_Holy_Arms)
+            {
+                Change_Relations((-5 / divisor), player_idx, itr_players, 12, 0, spell_idx);
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o128p08
 /*

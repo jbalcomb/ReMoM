@@ -508,13 +508,13 @@ enum enum_SPELL_DATA_TYPE
     Target_Wiz_Spell        =  6,
     sdt_Global_Enchantment  =  9,
     Battlefield_Spell       = 10,
-    Crafting_Spell          = 11,
+    sdt_Crafting_Spell      = 11,
     Destruction_Spell       = 12,
     Resistable_Spell        = 13,
     No_Resist_Spell         = 14,
     Mundane_Enchantment     = 15,
     Mundane_Curse           = 16,
-    Infusable_Spell         = 17,
+    sdt_Infusable_Spell     = 17,
     Dispel_Spell            = 18,
     Disenchant_Spell        = 19,
     Disjunction_Spell       = 20,
@@ -1127,8 +1127,8 @@ struct s_WIZARD
     /* 0048 */ uint16_t Avg_Unit_Value;         /* neutral: rampage accumulator */
     /* 004A */ uint16_t Unknown_04Ah;  /* ¿  ? */
     /* 004C */ uint16_t Cmbt_Skill_Left;
-    /* 004E */ uint16_t Cast_Cost_Left;
-    /* 0050 */ uint16_t Cast_Cost_Initial;      /* neutral: raiders accumulator */
+    /* 004E */ uint16_t casting_cost_remaining;
+    /* 0050 */ uint16_t casting_cost_original;      /* neutral: raiders accumulator */
     /* 0052 */ uint16_t casting_spell_idx;  /* spells_list[] spell_idx of the spell currently being cast */
     /* 0054 */ uint16_t Skill_Left;
     /* 0056 */ uint16_t Nominal_Skill;
@@ -1169,7 +1169,7 @@ struct s_WIZARD
 
     /* 0128 */ struct s_WIZ_DIPL Dipl;
 
-    /* 025A */ uint16_t Research_Left;
+    /* 025A */ uint16_t Research_Left;  // ¿ ~ research_cost_remaining ?
     /* 025C */ uint16_t mana_reserve;       /*  */
     /* 025E */ int32_t  Casting_Skill;
     /* 0262 */ uint16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
@@ -2702,7 +2702,9 @@ extern struct s_SPELL_DATA * spell_data_table;
 // WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
 // WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
 // WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
-// WZD dseg:9134 00 00                                           SND_Spell_Music@ dw 0                   ; DATA XREF: GAME_LearnSpellAnim+39w ...
+
+// WZD dseg:9134
+extern SAMB_ptr SND_Spell_Music;
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
 
@@ -4297,7 +4299,8 @@ extern int16_t _scroll_text_top;
 // WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 // WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:CA2C 00 00                                           IDK_DiploScrn_scanned_field dw 0        ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+44r ...
+// WZD dseg:CA2C
+extern int16_t IDK_DiploScrn_scanned_field;
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
@@ -4402,9 +4405,9 @@ extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles
 // WZD dseg:E5F0 00 00                                           EmmHndlNbr_EMMDATAH dw 0                ; DATA XREF: EMM_Startup+18Bw ...
 // WZD dseg:E5F0                                                                                         ; 4 reserved pages
 // WZD dseg:E5F2 00 00                                           dw 0
+
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
 extern byte_ptr _VGAFILEH_seg;
-extern SAMB_ptr report_scroll_out_seg;
 
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...

@@ -468,6 +468,21 @@ static int16_t Get_Item_Cost(int16_t item_idx)
 
 // WZD o115p08
 // sub_95E65()
+/*
+
+if(spell_data_table[spell_idx].type == sdt_Crafting_Spell)
+    if(spell_idx == spl_Enchant_Item)
+        _players[player_idx].casting_cost_remaining = IDK_CreateArtifact(0, 0);
+    else if(spell_idx == spl_Create_Artifact)
+        _players[player_idx].casting_cost_remaining = IDK_CreateArtifact(0, 1);
+
+*/
+int16_t IDK_CreateArtifact__STUB(int16_t IDK1, int16_t IDK2)
+{
+
+    return 0;
+    
+}
 
 // WZD o115p09
 static void Create_Item_Record(int16_t item_idx)

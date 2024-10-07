@@ -2,7 +2,6 @@
     WIZARDS.EXE
     ovr057
     ovr058
-    ovr059
     ovr061
     ovr062
     ovr063
@@ -66,47 +65,10 @@ void Set_Mouse_List_Default(void);
 
 
 /*
-    WIZARDS.EXE  ovr059
-*/
-
-// WZD o59p01
-// WZD o59p02
-// WZD o59p03
-// WZD o59p04
-// WZD o59p05
-// WZD o59p06
-// WZD o59p07
-// WZD o59p08
-// WZD o59p09
-// WZD o59p10
-// WZD o59p11
-// WZD o59p12
-
-// WZD o59p13
-// drake178: STK_CheckTower()
-void Units_In_Tower(int16_t unit_array_count, int16_t unit_array[], int16_t map_p);
-
-// WZD o59p14
-// WZD o59p15
-// WZD o59p16
-// WZD o59p17
-// WZD o59p18
-
-// WZD o59p19
-// AKA IDK_MaybeSwitchStackPlane_s52514()
-void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);
-
-// WZD o59p20
-// AKA IDK_PlanarTravel_TestWaterCity_s52774()
-int16_t Check_Stack_Plane_Shift(int16_t unit_idx, int16_t map_plane);
-
-
-
-/*
     WIZARDS.EXE  ovr062
 */
 // WZD o62p01
-// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
+int16_t o62p01_empty_function(int16_t player_idx);
 // WZD o62p02
 // AKA OVL_StackSelect()
 void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y);
@@ -1403,7 +1365,7 @@ void Main_Screen(void)
             Play_Left_Click__STUB();
             if(_players[_human_player_idx].casting_spell_idx == 214) /* Spell of Return */
             {
-                turns_til_return = _players[HUMAN_PLAYER_IDX].Cast_Cost_Left / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
+                turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
                 itoa(turns_til_return, temp_string, 10);
                 strcpy(GUI_NearMsgString, aYouMayNotThrowAnySp);  // "You may not throw any spells while you are banished.  There are at least "
                 strcat(GUI_NearMsgString, temp_string);
@@ -1460,7 +1422,7 @@ void Main_Screen(void)
                     // o100p04
                     if(Do_Build_Outpost() == ST_TRUE)
                     {
-                        // DONT  o62p01_Empty_pFxn(_human_player_idx)
+                        o62p01_empty_function(_human_player_idx);
                         Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
                         WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
                         Main_Screen_Reset();
@@ -1518,7 +1480,7 @@ void Main_Screen(void)
                 {
                     DLOG("switch(special_action_flag)  case 9:");
                     STK_MeldWithNode();
-                    // DONT  o62p01_Empty_pFxn(_human_player_idx)
+                    o62p01_empty_function(_human_player_idx);
                     Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
                     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
                     Main_Screen_Reset();
@@ -2678,7 +2640,25 @@ void Play_Background_Music(void)
 */
 
 // WZD o62p01
-// DONT  int16_t o62p01_Empty_pFxn(int16_t player_idx)
+/*
+drake178: does nothing and returns zero; at some point must have been some wizard data refresh function
+*/
+int16_t o62p01_empty_function(int16_t player_idx)
+{
+// proc o62p01_empty_function far
+// player_idx= word ptr  6
+// push    bp
+// mov     bp, sp
+// xor     ax, ax
+// jmp     short $+2
+// pop     bp
+// retf
+// endp o62p01_empty_function
+
+    return 0;
+
+}
+
 
 // WZD o62p02
 /*
