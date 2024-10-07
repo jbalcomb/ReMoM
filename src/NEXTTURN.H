@@ -165,7 +165,7 @@ void Apply_City_Changes(void);
 int16_t Player_Hero_Casting_Skill(int16_t player_idx);
 
 // WZD o140p18
-// IDK_SplCst_SplSkl_sC5AB1()
+void All_Players_Apply_Spell_Casting(void);
 
 // WZD o140p19
 void Determine_Offer(void);

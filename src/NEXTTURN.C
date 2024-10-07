@@ -18,6 +18,15 @@
 
 
 
+// WZD dseg:5E92                                                 BEGIN:  ovr119 - Initialized Data
+
+// WZD dseg:5E92
+uint32_t RNG_AI_Turn_Seed = 0x2A57;  // 10839d  10101001010111b
+
+// WZD dseg:5E92                                                 END:  ovr119 - Initialized Data
+
+
+
 // WZD dseg:5E96                                                 ¿ BEGIN:  ovr121 - Strings ?
 
 // WZD dseg:5E96
@@ -409,7 +418,7 @@ void TILE_VisibilityUpdt(void)
 void Next_Turn_Calc(void)
 {
 
-    // TOOD  Set_Random_Seed(RNG_AI_Turn_Seed);
+    Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
 
@@ -591,9 +600,10 @@ void Next_Turn_Calc(void)
     }
 
 
-// call    j_IDK_SplCst_SplSkl_sC5AB1
+    All_Players_Apply_Spell_Casting();
 
-    /* DEMOHACK */  // Delete_Dead_Units();
+
+    Delete_Dead_Units();
 
 
     Set_Unit_Draw_Priority();
@@ -630,7 +640,7 @@ void Next_Turn_Calc(void)
     All_City_Calculations();
 
 
-    // TODO  Get_Random_Seed(RNG_AI_Turn_Seed);
+    RNG_AI_Turn_Seed = Get_Random_Seed();
 
 
     Set_Mouse_List(1, mouse_list_default);
@@ -2599,7 +2609,144 @@ int16_t Player_Hero_Casting_Skill(int16_t player_idx)
 
 
 // WZD o140p18
-// IDK_SplCst_SplSkl_sC5AB1()
+/*
+    IDK, but pretty sure this is what progresses spell casting
+
+    sets
+        _players[itr_players].Skill_Left
+        _players[itr_players].Nominal_Skill
+        _players[itr_players].casting_cost_remaining
+        _players[itr_players].mana_reserve
+
+Next_Turn_Proc()
+    Next_Turn_Calc()
+        All_Players_Apply_Spell_Casting()
+
+*/
+void All_Players_Apply_Spell_Casting(void)
+{
+    int16_t itr_players = 0;  // _SI_
+    int16_t magic_units = 0;  // _DI_
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(
+            (g_TimeStop_PlayerNum == 0)
+            ||
+            (itr_players + 1) == g_TimeStop_PlayerNum
+        )
+        {
+
+            _players[itr_players].Skill_Left += Player_Hero_Casting_Skill(itr_players);
+
+            _players[itr_players].Nominal_Skill = Player_Base_Casting_Skill(itr_players);
+
+            if(_players[itr_players].casting_spell_idx > 0)
+            {
+
+                if(_players[itr_players].Skill_Left > _players[itr_players].mana_reserve)
+                {
+                    magic_units = _players[itr_players].mana_reserve;
+                }
+                else
+                {
+                    magic_units = _players[itr_players].Skill_Left;
+                }
+
+                if(_players[itr_players].casting_cost_remaining < magic_units)
+                {
+                    magic_units = _players[itr_players].casting_cost_remaining;
+                }
+
+                // Sup, logic?
+                if(
+                    (itr_players == HUMAN_PLAYER_IDX)
+                    ||
+                    (_players[itr_players].casting_spell_idx != spl_Spell_Of_Return)
+                )
+                {
+
+                    _players[itr_players].casting_cost_remaining -= magic_units;
+
+                    _players[itr_players].mana_reserve -= magic_units;
+
+                }
+                else
+                {
+                    /*
+                        (itr_players != HUMAN_PLAYER_IDX)
+                        &&
+                        (_players[itr_players].casting_spell_idx == spl_Spell_Of_Return)
+                    */
+
+                    _players[itr_players].casting_cost_remaining -= _players[itr_players].Nominal_Skill;
+
+                    SETMIN(_players[itr_players].casting_cost_remaining, 0);
+
+                    _players[itr_players].mana_reserve -= _players[itr_players].Nominal_Skill;
+
+                    SETMIN(_players[itr_players].mana_reserve, 0);
+
+                }
+
+                magic_units = 0;
+
+                _players[itr_players].Skill_Left = 0;
+
+                if(_players[itr_players].casting_cost_remaining > 0)
+                {
+
+                    if(_players[itr_players].Nominal_Skill > _players[itr_players].mana_reserve)
+                    {
+
+                        magic_units = _players[itr_players].mana_reserve;
+
+                    }
+                    else
+                    {
+
+                        magic_units = _players[itr_players].Nominal_Skill;
+
+                    }
+
+                    if(_players[itr_players].casting_cost_remaining < magic_units)
+                    {
+
+                        magic_units = _players[itr_players].casting_cost_remaining;
+
+                    }
+
+                    if((_players[itr_players].casting_cost_remaining - magic_units) == 0)
+                    {
+
+                        _players[itr_players].casting_cost_remaining -= magic_units;
+
+                        _players[itr_players].mana_reserve -= magic_units;
+
+                        _players[itr_players].Skill_Left = -(magic_units);
+
+                    }
+
+                }
+
+            }
+
+            if(_players[itr_players].Skill_Left < 0)
+            {
+                _players[itr_players].Skill_Left += _players[itr_players].Nominal_Skill;
+            }
+            else
+            {
+                _players[itr_players].Skill_Left = _players[itr_players].Nominal_Skill;
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o140p19
 // drake178: EVNT_RandomOffers()

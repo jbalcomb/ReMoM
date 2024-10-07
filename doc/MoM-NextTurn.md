@@ -18,6 +18,10 @@ Grand Vizier
 
 
 
+20241007
+Where is the update to casting_cost_remaining?
+
+
 
 
 ## Next_Turn_Proc()
@@ -32,12 +36,13 @@ Grand Vizier
     All_Units_In_Towers();
     Chancellor_Screen();  /* "End of Turn Summary" */
     if g_bldg_msg_ctr > 0
+        o62p01_empty_function(_human_player_idx);
     current_screen = scr_Main_Screen;
     g_bldg_msg_ctr = 0;
     Update_Units_MvsSts();
-    // DONT  o62p01_Empty_pFxn(_human_player_idx);
-    // DONT  fxnptr_o59p();
-    G_OVL_Cast__STUB(_human_player_idx);
+    o62p01_empty_function(_human_player_idx);
+    o59p10_empty_function();
+    Cast_Spell_Overland__WIP(_human_player_idx);
     all_units_moved = ST_FALSE;
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
     Reset_Draw_Active_Stack();
@@ -52,8 +57,37 @@ Delete_Dead_Units();  All_Units_In_Towers();
 if g_bldg_msg_ctr > 0  g_bldg_msg_ctr = 0;
 current_screen = scr_Main_Screen;
 *** Update_Units_MvsSts(); ***
-*** G_OVL_Cast__STUB(_human_player_idx); ***
+*** Cast_Spell_Overland__WIP(_human_player_idx); ***
 all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);  Reset_Draw_Active_Stack();
+
+
+## Next_Turn_Calc()
+
+Set_Random_Seed(RNG_AI_Turn_Seed);
+Set_Mouse_List(1, mouse_list_hourglass);
+
+
+
+
+All_Players_Apply_Spell_Casting();
+Delete_Dead_Units();
+Set_Unit_Draw_Priority();
+Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+All_City_Removed_Buildings();
+Do_All_Units_XP_Check();
+Heal_All_Units();
+Record_History();
+Increment_Background_Music();
+_turn++;
+...cap gold, mana 30000...
+OVL_EnableIncmBlink();
+Do_Autosave();
+All_City_Calculations();
+RNG_AI_Turn_Seed = Get_Random_Seed();
+Set_Mouse_List(1, mouse_list_default);
+
+
+
 
 
 
