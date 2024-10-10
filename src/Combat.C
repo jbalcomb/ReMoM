@@ -6021,11 +6021,11 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 ((_UNITS[battle_units[itr_battle_units].unit_idx].mutations & UM_UNDEAD) != 0)
             )
             {
-                UNIT_MarkRemoved(battle_units[itr_battle_units].unit_idx, 2);  // wiped from existence
+                Kill_Unit(battle_units[itr_battle_units].unit_idx, 2);  // wiped from existence
             }
             else
             {
-                UNIT_MarkRemoved(battle_units[itr_battle_units].unit_idx, 0);  // just mostly dead
+                Kill_Unit(battle_units[itr_battle_units].unit_idx, 0);  // just mostly dead
             }
 
         }
@@ -7257,7 +7257,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 
         for(itr = 0; itr < troop_count; itr++)
         {
-            UNIT_MarkRemoved(troops[itr], 0);
+            Kill_Unit(troops[itr], 0);
         }
 
     }

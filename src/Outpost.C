@@ -85,7 +85,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
         }
         else
         {
-            UNIT_MarkRemoved(settler_unit_idx, 1);
+            Kill_Unit(settler_unit_idx, 1);
 
             city_idx = (_cities - 1);
             _city_idx = city_idx;

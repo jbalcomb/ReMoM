@@ -1309,7 +1309,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
         }
     }
 
-    UNIT_MarkRemoved(Spirit_Unit_Index, 1);
+    Kill_Unit(Spirit_Unit_Index, 1);
 
 }
 

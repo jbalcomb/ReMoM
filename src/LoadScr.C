@@ -659,7 +659,7 @@ void Loaded_Game_Update(void)
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
     // TODO  for(itr = 1; itr < NUM_PLAYERS; itr++)
     // TODO  {
-    // TODO      TBL_Wizards[itr].Avg_Unit_Value = 0;
+    // TODO      TBL_Wizards[itr].average_unit_cost = 0;
     // TODO  }
 
     // DEDU  ¿¿¿ WIZ_NextIdleStack() was called above in GAME_Overland_Init() ???

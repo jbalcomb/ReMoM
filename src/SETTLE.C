@@ -252,7 +252,7 @@ void UNIT_PushOffTile(int16_t unit_idx)
     }
     else
     {
-        UNIT_MarkRemoved(unit_idx, 1);
+        Kill_Unit(unit_idx, 1);
     }
 
 }

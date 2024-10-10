@@ -618,9 +618,9 @@ e.g.,
     'Unit Statistics Window' / 'Unit View'
         Remove Enchantment - Fligh, Waterwalking, Windwalking
             |-> Dismiss_Unit(unit_idx)
-                |-> UNIT_MarkRemoved(unit_idx, 1)
+                |-> Kill_Unit(unit_idx, 1)
 */
-void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type)
+void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type)
 {
     int16_t itr;
     int16_t unit_owner_idx;
@@ -1307,7 +1307,7 @@ void UNIT_RemoveExcess(int16_t unit_idx)
         }
         else
         {
-            UNIT_MarkRemoved(lowest_trooper_idx, 1);
+            Kill_Unit(lowest_trooper_idx, 1);
         }
 
     }

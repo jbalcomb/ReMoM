@@ -46,7 +46,25 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost)
 
 
 // WZD o145p02
-// AI_Overland_Turn()
+// drake178: AI_Overland_Turn()
+/*
+; process all aspects of the AI turns except diplomacy,
+; including the neutral player
+;
+; contains a hoard of BUGs
+; plans first for all players before processing for all
+; players
+*/
+/*
+
+*/
+// void AI_Overland_Turn__WIP(void)
+// {
+// 
+// 
+// 
+// }
+
 
 // WZD o145p03
 // AI_Continent_Eval()

@@ -201,9 +201,10 @@ void Next_Turn_Proc(void)
     int16_t itr_msg = 0;  // _SI_
     int16_t curr_prod_idx = 0;  // _DI_
 
-    Delete_Dead_Units();
 
+    Delete_Dead_Units();
     All_Units_In_Towers();
+
 
     Set_Unit_Draw_Priority();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
@@ -215,9 +216,10 @@ void Next_Turn_Proc(void)
 
     GFX_Swap_Cities();
 
-    Delete_Dead_Units();
 
+    Delete_Dead_Units();
     All_Units_In_Towers();
+
 
 
     if(magic_set.end_of_turn_summary == ST_TRUE)
@@ -292,32 +294,30 @@ void Next_Turn_Proc(void)
         END: Messages
     */
 
-
-
-// @@Done_WrapItUp
     current_screen = scr_Main_Screen;
 
     g_bldg_msg_ctr = 0;
 
+
+
     Update_Units_MvsSts();
-
     o62p01_empty_function(_human_player_idx);
-
     o59p10_empty_function();
+
+
 
     if(
         (_players[_human_player_idx].casting_cost_remaining <= 0)
         &&
-        (_players[_human_player_idx].casting_spell_idx > 0))
+        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
         Cast_Spell_Overland__WIP(_human_player_idx);
     }
 
-// @@Done_Done
-    all_units_moved = ST_FALSE;
-    
-    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
 
+
+    all_units_moved = ST_FALSE;
+    WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
     Reset_Draw_Active_Stack();
 
 }
@@ -426,17 +426,11 @@ void Next_Turn_Calc(void)
     All_City_Calculations();
 
 
-// call    j_AI_CullTheWeak                ; after turn 99, disbands any non-garrison AI unit that
-//                                         ; costs less than its wizard's average, and every 25
-//                                         ; turns, recalculates the average and disbands up to
-//                                         ; one such unit from each garrison too
 
-// call    j_AI_Overland_Turn              ; process all aspects of the AI turns except diplomacy,
-//                                         ; including the neutral player
-//                                         ;
-//                                         ; contains a hoard of BUGs
-//                                         ; plans first for all players before processing for all
-//                                         ; players
+    AI_Kill_Lame_Units();
+
+    // TOOD  AI_Overland_Turn__WIP();
+
 
 
     Next_Turn_Process_Purify();
@@ -2146,7 +2140,7 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
                             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
                             MSG_UnitLost_Count++;
                         }
-                        UNIT_MarkRemoved(troops[itr_troops], 0);
+                        Kill_Unit(troops[itr_troops], 0);
                     }
                 }
             }
@@ -2161,7 +2155,7 @@ void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_u
             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 0;
             MSG_UnitLost_Count++;
         }
-        UNIT_MarkRemoved(itr_units, 1);
+        Kill_Unit(itr_units, 1);
     }
 
 }
@@ -2211,7 +2205,7 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
                             MSG_UnitLost_Count++;
                         }
-                        UNIT_MarkRemoved(troops[itr_troops], 0);
+                        Kill_Unit(troops[itr_troops], 0);
                     }
                 }
 
@@ -2224,7 +2218,7 @@ int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep)
                     MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 1;
                     MSG_UnitLost_Count++;
                 }
-                UNIT_MarkRemoved(itr_units, 1);
+                Kill_Unit(itr_units, 1);
             }
         }
     }
@@ -2336,7 +2330,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                         MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
                         MSG_UnitLost_Count++;
                     }
-                    UNIT_MarkRemoved(troops[itr_troops], 0);
+                    Kill_Unit(troops[itr_troops], 0);
                 }
             }
 
@@ -2349,7 +2343,7 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                 MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 2;
                 MSG_UnitLost_Count++;
             }
-            UNIT_MarkRemoved(itr_units, 1);
+            Kill_Unit(itr_units, 1);
             
         }
     }
@@ -3319,7 +3313,7 @@ void Heal_All_Units(void)
             // BUGBUG  ; conflicting condition: will always jump  ; (the function filling the array won't return enemies)
             if(_UNITS[troops[itr_troops]].owner_idx != _CITIES[itr_cities].owner_idx)
             {
-                UNIT_MarkRemoved(troops[itr_troops], 2);
+                Kill_Unit(troops[itr_troops], 2);
             }
         }
 
@@ -3377,7 +3371,7 @@ void Heal_All_Units(void)
 
                         if(_UNITS[itr_troops].owner_idx == NEUTRAL_PLAYER_IDX)
                         {
-                            UNIT_MarkRemoved(troops[itr_troops], 2);
+                            Kill_Unit(troops[itr_troops], 2);
                         }
 
                         if(_UNITS[itr_troops].owner_idx == HUMAN_PLAYER_IDX)
@@ -3395,7 +3389,7 @@ void Heal_All_Units(void)
 
                             if(_UNITS[itr_troops].owner_idx != HUMAN_PLAYER_IDX)
                             {
-                                UNIT_MarkRemoved(troops[itr_troops], 2);
+                                Kill_Unit(troops[itr_troops], 2);
                             }
 
                         }
@@ -3649,10 +3643,248 @@ void Cool_Off_Volcanoes(void)
 
 
 // WZD o140p27
-// AI_CullTheWeak()
+// drake178: AI_CullTheWeak()
+/*
+; after turn 99, disbands any non-garrison AI unit that
+; costs less than its wizard's average, and every 25
+; turns, recalculates the average and disbands up to
+; one such unit from each garrison too
+*/
+/*
+
+¿ units_in_city is {F,T} of whether each _units[] is in a city that is not owned by the neutral or human player ?
+...to what end?
+
+*/
+void AI_Kill_Lame_Units(void)
+{
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t did_remove_unit = 0;
+    int16_t troop_count = 0;
+    int16_t * units_in_city = 0;
+    int16_t unit_owner = 0;
+    int16_t unit_type = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_cities = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
+
+    if(_turn < 100)
+    {
+        return;
+    }
+
+    units_in_city = (int16_t *)Near_Allocate_First(_units);
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        units_in_city[itr_units] = ST_FALSE;
+
+    }
+
+    if((_turn % 25) != 0)
+    {
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+
+            if(
+                (_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
+                ||
+                (_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+                continue;
+            }
+
+            Army_At_City(itr_cities, &troop_count, &troops[0]);
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+
+                units_in_city[troops[itr_troops]] = ST_TRUE;
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        AI_Calculate_Average_Unit_Cost();
+
+        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        {
+
+            if(
+                (_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
+                ||
+                (_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+                continue;
+            }
+
+            Army_At_City(itr_cities, &troop_count, &troops[0]);
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+
+                units_in_city[troops[itr_troops]] = ST_TRUE;
+
+            }
+
+            did_remove_unit = ST_FALSE;
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+
+                if(did_remove_unit == ST_FALSE)
+                {
+
+                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].Cost < (_players[_CITIES[itr_cities].owner_idx].average_unit_cost / 2))
+                    {
+
+                        Kill_Unit(troops[itr_troops], 0);
+
+                        did_remove_unit = ST_TRUE;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    GUI_Multipurpose_Int = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        unit_owner = _UNITS[itr_units].owner_idx;
+
+        unit_type = _UNITS[itr_units].type;
+
+        if(
+            (unit_owner > HUMAN_PLAYER_IDX)
+            &&
+            (unit_owner > NEUTRAL_PLAYER_IDX)
+        )
+        {
+
+            if(
+                ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) == 0)
+                &&
+                ((_unit_type_table[unit_type].Abilities & UA_MELD) == 0)
+                &&
+                (_unit_type_table[unit_type].Construction == 0)
+                &&
+                (_unit_type_table[unit_type].Transport == 0)
+                &&
+                (unit_type > ut_Trireme)
+                &&
+                (_unit_type_table[unit_type].Cost < (_players[unit_owner].average_unit_cost / 2))
+                &&
+                (units_in_city[itr_units] == ST_FALSE)
+            )
+            {
+
+                Kill_Unit(itr_units, 0);
+
+                GUI_Multipurpose_Int++;
+
+            }
+
+        }
+
+    }
+
+
+}
+
 
 // WZD o140p28
-// AI_GetAvgUnitCosts()
+// drake178: AI_GetAvgUnitCosts()
+/*
+; calculates and sets into the wizard record the
+; average combat unit value (total cost / count) of
+; each AI wizard
+*/
+/*
+
+*/
+void AI_Calculate_Average_Unit_Cost(void)
+{
+    int16_t Combat_Unit_Count[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int32_t Combat_Unit_Value[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t unit_owner = 0;
+    int16_t itr_num_players = 0;  // _SI_
+    int16_t itr_units = 0;  // _SI_
+    int16_t unit_type = 0;  // _DI_
+
+    for(itr_num_players = 0; itr_num_players < NUM_PLAYERS; itr_num_players)
+    {
+
+        Combat_Unit_Value[itr_num_players] = 0;
+
+        Combat_Unit_Count[itr_num_players] = 0;
+
+    }
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        unit_owner = _UNITS[itr_units].owner_idx;
+
+        unit_type = _UNITS[itr_units].type;
+
+        if(
+            (unit_owner > HUMAN_PLAYER_IDX)
+            &&
+            (unit_owner < NEUTRAL_PLAYER_IDX)
+        )
+        {
+
+
+            if(
+                ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) == 0)
+                &&
+                ((_unit_type_table[unit_type].Abilities & UA_MELD) == 0)
+                &&
+                (_unit_type_table[unit_type].Construction == 0)
+                &&
+                (_unit_type_table[unit_type].Transport == 0)
+            )
+            {
+
+                Combat_Unit_Value[unit_owner] += _unit_type_table[unit_type].Cost;
+
+                Combat_Unit_Count[unit_owner]++;
+
+            }
+
+        }
+
+    }
+
+    for(itr_num_players = 1; itr_num_players < NUM_PLAYERS; itr_num_players++)
+    {
+
+        if(Combat_Unit_Count[itr_num_players] != 0)
+        {
+
+            _players[itr_num_players].average_unit_cost = (Combat_Unit_Value[itr_num_players] / Combat_Unit_Count[itr_num_players]);
+
+        }
+
+    }
+
+}
 
 
 

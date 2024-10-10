@@ -321,6 +321,9 @@ int16_t SBK_OpenPage;
 Learn_Spell_Animation()
     used as spellbook page spell index of spell being learned, as passed in
 
+AI_Kill_Lame_Units()
+    ¿ count of *less-than_average* units removed ?
+
 */
 int16_t GUI_Multipurpose_Int;  /* NOTE(JimBalcomb,20240922): presently, now, only used in Combat.C */
 int16_t m_spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int

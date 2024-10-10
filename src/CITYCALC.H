@@ -66,7 +66,7 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx);
 
 // WZD o120p13
 // drake178: UNIT_MarkRemoved()
-void UNIT_MarkRemoved(int16_t unit_idx, int16_t Rmv_Type);
+void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type);
 
 // WZD o120p14
 // drake178: UU_BYTE_SortDescnd()

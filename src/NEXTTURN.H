@@ -192,10 +192,10 @@ void Do_All_Units_XP_Check_(void);
 void Cool_Off_Volcanoes(void);
 
 // WZD o140p27
-// AI_CullTheWeak()
+void AI_Kill_Lame_Units(void);
 
 // WZD o140p28
-// AI_GetAvgUnitCosts()
+void AI_Calculate_Average_Unit_Cost(void);
 
 
 

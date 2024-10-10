@@ -1124,7 +1124,7 @@ struct s_WIZARD
     /* 0032 */ int16_t summon_wp;
     /* 0034 */ uint16_t research_spells[NUM_RESEARCH_SPELLS];     /* array of spells_list[] spell_idx, for spells available for researching */
     /* 0044 */ uint8_t Unknown_044h[4];  /* ¿  ? */
-    /* 0048 */ uint16_t Avg_Unit_Value;         /* neutral: rampage accumulator */
+    /* 0048 */ uint16_t average_unit_cost;         /* neutral: rampage accumulator */
     /* 004A */ uint16_t Unknown_04Ah;  /* ¿  ? */
     /* 004C */ uint16_t Cmbt_Skill_Left;
     /* 004E */ uint16_t casting_cost_remaining;

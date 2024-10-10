@@ -485,7 +485,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
         }
 
-        UNIT_MarkRemoved((_units - 1), 1);
+        Kill_Unit((_units - 1), 1);
 
         GFX_Swap_Cities();
 
@@ -566,7 +566,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
                 _UNITS[(_units - 1)].Level += 1;
                 _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
             }
-            UNIT_MarkRemoved((_units - 1), 1);
+            Kill_Unit((_units - 1), 1);
         }
         /*
             END:  Left-Click Reject Button

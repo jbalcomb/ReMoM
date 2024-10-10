@@ -376,11 +376,11 @@ void All_Units_In_Towers(void)
 // WZD o59p15
 // MoO2  Module: OFFICER  Dismiss_Officer_()
 /*
-    calls UNIT_MarkRemoved() with 1 - 'dismiss'
+    calls Kill_Unit() with 1 - 'dismiss'
 */
 void Dismiss_Unit(int16_t unit_idx)
 {
-    UNIT_MarkRemoved(unit_idx, 1);
+    Kill_Unit(unit_idx, 1);
 }
 
 
