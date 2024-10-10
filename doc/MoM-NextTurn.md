@@ -65,9 +65,18 @@ all_units_moved = ST_FALSE;  WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map
 
 Set_Random_Seed(RNG_AI_Turn_Seed);
 Set_Mouse_List(1, mouse_list_hourglass);
-
-
-
+All_City_Calculations();
+AI_CullTheWeak();
+AI_Overland_Turn();
+Next_Turn_Process_Purify();
+Initialize_Reports();
+if(g_TimeStop_PlayerNum != 0) { ... }
+WIZ_DecreasePeaceCs();
+Update_Players_Gold_Reserve();
+Players_Update_Magic_Power();
+Players_Apply_Magic_Power();
+Players_Check_Spell_Research();
+OVL_DisableIncmBlink();
 
 All_Players_Apply_Spell_Casting();
 Delete_Dead_Units();

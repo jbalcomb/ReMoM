@@ -936,9 +936,19 @@ int16_t g_TimeStop_PlayerNum;
 // WZD dseg:912C
 struct s_SPELL_DATA * spell_data_table;
 
-// WZD dseg:9130                                                 ; unsigned int IMG_GAME_SpellAnim
-// WZD dseg:9130 00 00                                           IMG_GAME_SpellAnim@ dw 0                ; DATA XREF: GAME_LearnSpellAnim+374w ...
-// WZD dseg:9130                                                                                         ; appended into the LBX_Sandbox_Segment
+// WZD dseg:9130
+// drake178: IMG_GAME_SpellAnim
+/*
+    IDK, but used *generically*, in a lot of different places
+
+e.g.,
+Learn_Spell_Animation()
+    // SPECFX.LBX, 049  "NEWSPELL"  ""
+    spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr118, 49, _screen_seg);
+
+*/
+SAMB_ptr spell_animation_seg;
+
 // WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
 // WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
 // WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
@@ -2789,7 +2799,10 @@ int16_t _scroll_text_top;
 // WZD dseg:CA12                                                                                         ; holds the anim stage during global cast anims
 // WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
 // WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
-// WZD dseg:CA16 00 00                                           SBK_Spell_Index dw 0                    ; DATA XREF: GAME_LearnSpellAnim+Cw ...
+
+// WZD dseg:CA16
+int16_t SBK_Spell_Index;
+
 // WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
 // WZD dseg:CA24 00 00                                           word_434C4 dw 0                         ; DATA XREF: IDK_SomScr_Load+8Cw ...
@@ -2804,9 +2817,9 @@ int16_t IDK_DiploScrn_scanned_field;
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
-// WZD dseg:CA34 00 00                                           IMG_SBK_Anims@ dw 0                     ; DATA XREF: CMB_ShowSpellbook+30w ...
-// WZD dseg:CA34                                                                                         ; 145h paragraphs in the sandbox during spell decode
-// WZD dseg:CA34                                                                                         ; 442h paragraphs in the sandbox during combat casting
+
+// WZD dseg:CA34
+SAMB_ptr IMG_SBK_Anims;
 
 // WZD dseg:CA36
 // drake178: IMG_SBK_PageText

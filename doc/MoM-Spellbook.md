@@ -71,13 +71,13 @@ XREF:
     j_SBK_BuildSpellbook__WIP()
         GAME_LearnSpellAnim()
         Apprentice_Screen__WIP()
-        SBK_Research_Dialog__STUB()
+        Spell_Research_Select__STUB()
         Spellbook_Screen()
 
 Apprentice_Screen__WIP()
     |-> Spellbook_Build__WIP(2, 4)
 
-SBK_Research_Dialog__STUB()
+Spell_Research_Select__STUB()
     |-> Spellbook_Build__WIP(2, 4)
 
 Spellbook_Screen()
@@ -260,7 +260,7 @@ XREF:
 
 Build_Spell_List(Book_Type, m_spellbook_spell_list);
 
-SBK_Research_Dialog__STUB()
+Spell_Research_Select__STUB()
     |-> Spellbook_Build__WIP(2, 4)
         |-> Build_Spell_List(Book_Type, m_spellbook_spell_list)
 

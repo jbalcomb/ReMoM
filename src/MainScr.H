@@ -349,7 +349,7 @@ void Increment_Background_Music(void);
 int16_t Get_Background_Music(void);
 
 // WZD o58p07
-void Play_Background_Music(void);
+void Play_Background_Music__STUB(void);
 
 // WZD o58p08
 // sub_51A1A()

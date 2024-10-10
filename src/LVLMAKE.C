@@ -287,7 +287,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     Deactivate_Auto_Function();
     Allocate_Reduced_Map();
     OVL_MosaicFlip__STUB();
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
 }
 

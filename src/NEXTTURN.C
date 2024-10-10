@@ -495,29 +495,24 @@ void Next_Turn_Calc(void)
 
         Update_Players_Gold_Reserve();
 
+
         Players_Update_Magic_Power();
 
         Players_Apply_Magic_Power();
 
-    // call    j_WIZ_ResearchProgress          ; checks whether any of the wizards has finished their
-    //                                         ; current research, and if so, allows picking a new one
-    //                                         ; if possible, showing the new spell animation for the
-    //                                         ; human player followed by the research dialog
-    //                                         ; WARNING: can temporarily store a negative spell index
-    //                                         ; as the player's researched spell
-
+        Players_Check_Spell_Research();
 
 
         OVL_DisableIncmBlink();
 
 
-
-        if(DBG_Alt_A_State == ST_FALSE)
+        if(
+            (DBG_Alt_A_State == ST_FALSE)
+            &&
+            (magic_set.random_events == ST_TRUE)
+        )
         {
-            if(magic_set.Random_Events == ST_TRUE)
-            {
-                Determine_Event();
-            }
+            Determine_Event();
         }
 
 
@@ -874,7 +869,7 @@ int16_t Player_Base_Casting_Skill(int16_t player_idx)
 
     int16_t casting_skill;  // _CX_
 
-    casting_skill = sqrt(_players[player_idx].Casting_Skill);
+    casting_skill = sqrt(_players[player_idx].spell_casting_skill);
 
     casting_skill += 1;  // STUBUG(JimBalcomb,20240113): getting 71 instead of 72; truncated? round up? imperfect square? isqrt()? CORDIC Algorithm - Successive Approximation?
 
@@ -1317,7 +1312,7 @@ void Cheat_Power(void)
     {
         _players[itr].mana_reserve = 10000;
         _players[itr].gold_reserve = 10000;
-        _players[itr].Casting_Skill = 10000;
+        _players[itr].spell_casting_skill = 10000;
         _players[itr].Nominal_Skill = Player_Base_Casting_Skill(itr);
         _players[itr].Skill_Left = _players[itr].Nominal_Skill;
         for(itr2 = 0; itr2 < 5; itr2++)
@@ -1970,37 +1965,32 @@ void Update_Players_Gold_Reserve(void)
 // OON XREF: Next_Turn_Calc()
 /*
     sets
-    _players[itr_players].Research_Left
+    _players[itr_players].research_cost_remaining
     _players[itr_players].mana_reserve
-    _players[itr_players].Casting_Skill
+    _players[itr_players].spell_casting_skill
 
 */
 void Players_Apply_Magic_Power(void)
 {
-    int16_t Research_Income;
-    int16_t Mana_Income;
-    int16_t Skill_Income;
-
-    int16_t itr_players;  // _SI_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
-#endif
+    int16_t Research_Income = 0;
+    int16_t Mana_Income = 0;
+    int16_t Skill_Income = 0;
+    int16_t itr_players = 0;  // _SI_
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        if(_players[itr_players].casting_spell_idx != 0xD6 /* Spell_Of_Return */)
+        if(_players[itr_players].casting_spell_idx != spl_Spell_Of_Return)
         {
             Player_Magic_Power_Income_Total(&Mana_Income, &Research_Income, &Skill_Income, itr_players);
         }
 
-        if(_players[itr_players].Research_Left <= Research_Income)
+        if(_players[itr_players].research_cost_remaining <= Research_Income)
         {
-            _players[itr_players].Research_Left = 0;
+            _players[itr_players].research_cost_remaining = 0;
         }
         else
         {
-            _players[itr_players].Research_Left -= Research_Income;
+            _players[itr_players].research_cost_remaining -= Research_Income;
         }
 
         if((32000 - _players[itr_players].mana_reserve) >= Mana_Income)
@@ -2014,19 +2004,15 @@ void Players_Apply_Magic_Power(void)
 
         // 'Archmage' Special Ability 50% bonus to all mana spent on increasing skill
         // ¿ vs. Calc_Nominal_Skill() ?
-        if(_players[itr_players].archmage <= 0)
+        if(_players[itr_players].archmage > 0)
         {
-            _players[itr_players].Casting_Skill += Skill_Income;
+            _players[itr_players].spell_casting_skill += ((Skill_Income * 3) / 2);
         }
         else
         {
-            _players[itr_players].Casting_Skill += ((Skill_Income * 3) / 2);
+            _players[itr_players].spell_casting_skill += Skill_Income;
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Players_Apply_Magic_Power()\n", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -3010,7 +2996,104 @@ void Determine_Offer(void)
 
 
 // WZD o140p20
-// WIZ_ResearchProgress()
+// drake178: WIZ_ResearchProgress
+/*
+; checks whether any of the wizards has finished their
+; current research, and if so, allows picking a new one
+; if possible, showing the new spell animation for the
+; human player followed by the research dialog
+;
+; WARNING: can temporarily store a negative spell index
+; as the player's researched spell
+*/
+/*
+
+
+Q: Where does research_cost_remaining get updated?
+A: Players_Apply_Magic_Power()
+*/
+void Players_Check_Spell_Research(void)
+{
+    int16_t itr_players = 0;  // _SI_
+    int16_t IDK = 0;  // _DI_
+
+    IDK = ST_FALSE;
+
+    if(DBG_trigger_complete_research_spell == ST_TRUE)
+    {
+        _players[HUMAN_PLAYER_IDX].research_cost_remaining = 0;
+        DBG_trigger_complete_research_spell = ST_FALSE;
+    }
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(
+            (_players[itr_players].research_cost_remaining == 0)
+            &&
+            (_players[itr_players].researching_spell_idx > spl_NONE)
+        )
+        {
+
+            WIZ_LearnSpell__WIP(itr_players, _players[itr_players].researching_spell_idx, 1);
+
+            IDK = ST_TRUE;
+
+        }
+
+        if(
+            (_players[itr_players].researching_spell_idx < spl_NONE)
+            ||
+            (
+                (_players[itr_players].researching_spell_idx == spl_NONE)
+                &&
+                (_turn < 2)
+            )
+        )
+        {
+
+            if(itr_players == HUMAN_PLAYER_IDX)
+            {
+
+                Set_Mouse_List(1, mouse_list_default);
+
+                Spell_Research_Select();
+
+                Set_Mouse_List(1, mouse_list_hourglass);
+
+                if(IDK == ST_TRUE)
+                {
+                    Stop_All_Sounds__STUB();
+                    Play_Background_Music__STUB();
+                }
+
+            }
+            else
+            {
+
+                AI_Research_Picker__STUB(itr_players);
+
+            }
+
+            if(_players[itr_players].researching_spell_idx == spl_Spell_Of_Mastery)
+            {
+
+                _players[itr_players].research_cost_remaining = _players[itr_players].SoM_RC;
+
+            }
+            else
+            {
+
+                _players[itr_players].research_cost_remaining = spell_data_table[_players[itr_players].researching_spell_idx].research_cost;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o140p21
 /*
@@ -3038,11 +3121,11 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
         _players[player_idx].SoM_RC = 0;
     }
 
-    Spell_Realm = ((spell_idx - 1) / 40);
+    Spell_Realm = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);
 
-    InRealm_Index = ((spell_idx - 1) % 40);
+    InRealm_Index = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
 
-    _players[player_idx].spells_list[((Spell_Realm * 40) + InRealm_Index)] = 2;  /* S_Known */
+    _players[player_idx].spells_list[((Spell_Realm * NUM_SPELLS_PER_MAGIC_REALM) + InRealm_Index)] = 2;  /* S_Known */
 
     if(_players[player_idx].researching_spell_idx == spell_idx)
     {
@@ -3059,7 +3142,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         Candidate_Count = WIZ_RefreshResearch__STUB(player_idx);
 
-        _players[player_idx].Research_Left = 0;
+        _players[player_idx].research_cost_remaining = 0;
 
         if(Candidate_Count == 0)
         {
@@ -3092,39 +3175,33 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
     )
     {
 
-        // ; displays the spell learning animations and, if new
-        // ; research is enabled, flips the apprentice book to the
-        // ; pages with the research candidates afterwards
-        // TODO  GAME_LearnSpellAnim(spell_idx, Was_Research_Target);
+        Learn_Spell_Animation(spell_idx, Was_Research_Target);
 
         if(Was_Research_Target == ST_FALSE)
         {
             Stop_All_Sounds__STUB();
-            Play_Background_Music();
+            Play_Background_Music__STUB();
         }
+
     }
     else if(
         (Was_Research_Target == ST_TRUE)
         &&
-        (player_idx == HUMAN_PLAYER_IDX)
+        (player_idx != HUMAN_PLAYER_IDX)
     )
     {
-        // ; selects the spell to research from the wizard's list
-        // ; of candidates using a weighted random roll,
-        // ; prioritizing combat spells in research groups from
-        // ; which the player does not yet have a known spell
-        // ; contains multipe BUGs that prevent research-related
-        // ; profile traits from properly affecting the outcome
-        // TODO  AI_Research_Picker(player_idx);
 
-        if(_players[player_idx].researching_spell_idx == 213)  /* Spell_Of_Mastery */
+        AI_Research_Picker__STUB(player_idx);
+
+        if(_players[player_idx].researching_spell_idx == spl_Spell_Of_Mastery)
         {
-            _players[player_idx].Research_Left = _players[player_idx].SoM_RC;
+            _players[player_idx].research_cost_remaining = _players[player_idx].SoM_RC;
         }
         else
         {
-            _players[player_idx].Research_Left = spell_data_table[spell_idx].research_cost;
+            _players[player_idx].research_cost_remaining = spell_data_table[spell_idx].research_cost;
         }
+
     }
 
 }

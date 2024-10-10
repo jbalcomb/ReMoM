@@ -6,18 +6,18 @@ Type:     0
 
 
 
-000  SCROLARR    up arrow
-001  SCROLARR    down arrow
-002  SCROLOUT
-003  SCROLLUP
-004  SCROLLDN
-005  SCRLPAPR
-006  BIGBOOK
-007  BCORNERS    big left corner
-008  BCORNERS    big right corner
-009  CMBSCRL1
-010  CMBWIN
-011  CMBLOSE
+// SCROLL.LBX, 000  "SCROLARR"  "up arrow"
+// SCROLL.LBX, 001  "SCROLARR"  "down arrow"
+// SCROLL.LBX, 002  "SCROLOUT"  ""
+// SCROLL.LBX, 003  "SCROLLUP"  ""
+// SCROLL.LBX, 004  "SCROLLDN"  ""
+// SCROLL.LBX, 005  "SCRLPAPR"  ""
+// SCROLL.LBX, 006  "BIGBOOK"   ""
+// SCROLL.LBX, 007  "BCORNERS"  "big left corner"
+// SCROLL.LBX, 008  "BCORNERS"  "big right corner"
+// SCROLL.LBX, 009  "CMBSCRL1"  ""
+// SCROLL.LBX, 010  "CMBWIN"    ""
+// SCROLL.LBX, 011  "CMBLOSE"   ""
 
 
 

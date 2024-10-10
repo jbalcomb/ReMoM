@@ -646,7 +646,7 @@ void Loaded_Game_Update(void)
 
     _unit_stack_count = 0;
 
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
     GFX_Swap_Cities();
 
@@ -668,7 +668,7 @@ void Loaded_Game_Update(void)
 
     if(_difficulty = god_Intro)
     {
-        magic_set.Random_Events = ST_FALSE;
+        magic_set.random_events = ST_FALSE;
     }
 
 

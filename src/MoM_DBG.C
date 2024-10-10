@@ -57,6 +57,7 @@ int16_t DBG_trigger_offer_item = ST_FALSE;
 int16_t DBG_trigger_offer_merc = ST_FALSE;
 int16_t DBG_trigger_offer_hero = ST_FALSE;
 
+int16_t DBG_trigger_complete_research_spell = ST_FALSE;
 
 
 /*

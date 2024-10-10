@@ -669,7 +669,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
         {
             Stop_All_Sounds__STUB();
             Battle_Outcome = Tactical_Combat__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, &Item_Count, &Item_List[0]);
-            Play_Background_Music();
+            Play_Background_Music__STUB();
         }
         else
         {

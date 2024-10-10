@@ -76,11 +76,13 @@ char cnst_SpellRealm6[] = "Sorcery";
 
 // WZD dseg:5DC0                                                 BEGIN:  ovr118 - Initialized Data
 
-// WZD dseg:5DC0 35 00 2D 00 25 00 10 00 06 00 06 00             TBL_SpellDecode_Rs dw 35h, 2Dh, 25h, 10h, 6, 6
-// WZD dseg:5DCC 40 00 47 00 4F 00 65 00 6F 00 6F 00             TBL_SpellDecode_Ls dw 40h, 47h, 4Fh, 65h, 6Fh, 6Fh
+// WZD dseg:5DC0
+// WZD dseg:5DCC
+struct s_SPELL_DECODE TBL_SpellDecode_Rs = {  53,  45,  37,  16,   6,   6 };
+struct s_SPELL_DECODE TBL_SpellDecode_Ls = {  64,  71,  79, 101, 111, 111 };
 
 // WZD dseg:5DD8
-char cnst_BookAnim_File2[] = "book";
+char book_lbx_file__ovr118[] = "book";
 
 // WZD dseg:5DDC
 char str_empty_string__ovr118[] = "";
@@ -309,11 +311,15 @@ int16_t SBK_OpenPage;
 
 // WZD dseg:C926
 // drake178:  Spell List Count, New Spell Index, ...
+// ¿ MoO2  Module: MOX  _temp_sint... ?
 /*
 
     count of spell_idx in m_spellbook_spell_list[]
         Spellbook_Group_Counts()
     set in Build_Spell_List()
+
+Learn_Spell_Animation()
+    used as spellbook page spell index of spell being learned, as passed in
 
 */
 int16_t GUI_Multipurpose_Int;  /* NOTE(JimBalcomb,20240922): presently, now, only used in Combat.C */
@@ -322,13 +328,19 @@ int16_t m_spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
 // WZD dseg:C928
 /*
 ¿ 2 pages, 8 per page ?
+¿ sometimes used as 4 x 4 ?
 */
 char * SBK_Descriptions[NUM_SPELLBOOK_DESCRIPTIONS];
 
-// WZD dseg:C968 00 00                                           IMG_GAME_Lab_Wizard@ dw 0               ; DATA XREF: GAME_NewSpellAnim+1Cr ...
-// WZD dseg:C96A 00 00                                           IMG_GAME_LabFmiliar@ dw 0               ; DATA XREF: GAME_NewSpellAnim+3Ar ...
-// WZD dseg:C96C 00 00                                           IMG_GAME_MagicColmn@ dw 0               ; DATA XREF: GAME_NewSpellAnim+4Er ...
-// WZD dseg:C96E 00 00                                           IMG_GAME_Lab_Podium@ dw 0               ; DATA XREF: GAME_NewSpellAnim+8r ...
+// WZD dseg:C968
+SAMB_ptr wizlab_wizard_seg;
+// WZD dseg:C96A
+SAMB_ptr wizlab_familiar_seg;
+// WZD dseg:C96C
+SAMB_ptr wizlab_blue_column_seg;
+// WZD dseg:C96E
+SAMB_ptr wizlab_background_seg;  // DNE in Dasm
+SAMB_ptr wizlab_podium_seg;
 // WZD dseg:C970 00                                              db    0
 // WZD dseg:C971 00                                              db    0
 
@@ -1324,7 +1336,7 @@ void BigBook__PageTurn__WIP(int16_t direction)
 
     Deactivate_Auto_Function();
 
-    // TODO  Open_File_Animation__STUB(cnst_BookAnim_File2, 1);
+    Open_File_Animation__HACK(book_lbx_file__ovr118, 1);
 
     Mark_Block(_screen_seg);
 
@@ -1425,23 +1437,617 @@ void BigBook_Draw(void)
 
 // WZD o118p03
 // drake178: GAME_NewSpellAnim()
-// GAME_NewSpellAnim()
+/*
+; draws a frame of the new spell animation into the
+; current draw frame
+*/
+/*
+
+*/
+void Learn_Spell_Animation_Draw(void)
+{
+
+    Copy_Back_To_Off();
+
+    FLIC_Draw(149, 133, wizlab_podium_seg);
+
+    FLIC_Reset_CurrentFrame(wizlab_wizard_seg);
+
+    FLIC_Draw(69, 75, wizlab_wizard_seg);
+
+    FLIC_Draw(190, 160, wizlab_familiar_seg);
+
+    Clipped_Draw(132, -3, wizlab_blue_column_seg);
+
+}
+
 
 // WZD o118p04
 // drake178: VGA_DrawBlackScreen()
-// VGA_DrawBlackScreen()
+// ¿ MoO2  Cls() || Cls_On ?
+void Fill_Black_Draw(void)
+{
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+
+}
+
 
 // WZD o118p05
 // drake178: GAME_LoadNewSpell()
-// GAME_LoadNewSpell()
+/*
+; loads the wizard lab image into the third VGA frame,
+; then loads the components necessary for the spell
+; learning animation into the LBX_Sandbox_Segment
+*/
+/*
+
+*/
+void Learn_Spell_Animation_Load(void)
+{
+    int16_t magic_realm = 0;
+
+    magic_realm = _players[HUMAN_PLAYER_IDX].Prim_Realm;
+
+    // WIZLAB.LBX, 000    "MERLIN"      ""
+    // WIZLAB.LBX, 001    "RAVEN"       ""
+    // WIZLAB.LBX, 002    "SHAREE"      ""
+    // WIZLAB.LBX, 003    "LOPAN"       ""
+    // WIZLAB.LBX, 004    "JAFAR"       ""
+    // WIZLAB.LBX, 005    "OBERIC"      ""
+    // WIZLAB.LBX, 006    "RJAK"        ""
+    // WIZLAB.LBX, 007    "SSSRA"       ""
+    // WIZLAB.LBX, 008    "TAURON"      ""
+    // WIZLAB.LBX, 009    "FREYA"       ""
+    // WIZLAB.LBX, 010    "HORUS"       ""
+    // WIZLAB.LBX, 011    "ARIEL"       ""
+    // WIZLAB.LBX, 012    "TLALOC"      ""
+    // WIZLAB.LBX, 013    "KALI"        ""
+    wizlab_wizard_seg = LBX_Reload(wizlab_lbx_file__ovr118, _players[HUMAN_PLAYER_IDX].wizard_id, _screen_seg);
+
+    Load_Palette_From_Animation(wizlab_wizard_seg);
+
+    // WIZLAB.LBX, 019    "WIZLAB"      ""
+    wizlab_background_seg = LBX_Reload(wizlab_lbx_file__ovr118, 19, _screen_seg);
+
+    Set_Page_Off();
+
+    FLIC_Draw(0, 0, wizlab_background_seg);
+
+    Copy_Off_To_Back();
+
+    Set_Page_On();
+
+    // WIZLAB.LBX, 020    "PODIUM"      ""
+    wizlab_podium_seg = LBX_Reload(wizlab_lbx_file__ovr118, 20, _screen_seg);
+
+    // WIZLAB.LBX, 014    "FAMILIAR"    "green"
+    // WIZLAB.LBX, 015    "FAMILIAR"    "blue"
+    // WIZLAB.LBX, 016    "FAMILIAR"    "red"
+    // WIZLAB.LBX, 017    "FAMILIAR"    "white"
+    // WIZLAB.LBX, 018    "FAMILIAR"    "black"
+    wizlab_familiar_seg = LBX_Reload_Next(wizlab_lbx_file__ovr118, (14 + magic_realm), _screen_seg);
+
+    // WIZLAB.LBX, 021    "BLUECOL"     ""
+    wizlab_blue_column_seg = LBX_Reload_Next(wizlab_lbx_file__ovr118, 21, _screen_seg);
+
+    // WIZLAB.LBX, 000    "MERLIN"      ""
+    // WIZLAB.LBX, 001    "RAVEN"       ""
+    // WIZLAB.LBX, 002    "SHAREE"      ""
+    // WIZLAB.LBX, 003    "LOPAN"       ""
+    // WIZLAB.LBX, 004    "JAFAR"       ""
+    // WIZLAB.LBX, 005    "OBERIC"      ""
+    // WIZLAB.LBX, 006    "RJAK"        ""
+    // WIZLAB.LBX, 007    "SSSRA"       ""
+    // WIZLAB.LBX, 008    "TAURON"      ""
+    // WIZLAB.LBX, 009    "FREYA"       ""
+    // WIZLAB.LBX, 010    "HORUS"       ""
+    // WIZLAB.LBX, 011    "ARIEL"       ""
+    // WIZLAB.LBX, 012    "TLALOC"      ""
+    // WIZLAB.LBX, 013    "KALI"        ""
+    wizlab_wizard_seg = LBX_Reload_Next(wizlab_lbx_file__ovr118, _players[HUMAN_PLAYER_IDX].wizard_id, _screen_seg);
+
+}
+
 
 // WZD o118p06
 // drake178: GAME_LearnSpellAnim()
-// GAME_LearnSpellAnim()
+/*
+; displays the spell learning animations and, if new
+; research is enabled, flips the apprentice book to the
+; pages with the research candidates afterwards
+*/
+/*
+
+*/
+void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
+{
+    char Spell_Description[LEN_SPELL_DESCRIPTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t Blink_Color_Array[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char Spell_Name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    SAMB_ptr Spell_Gained_Dlg_IMG = 0;
+    int16_t Have_Candidates = 0;
+    int16_t Interrupted = 0;
+    char Conversion_String[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Minus1_Hotkey_Ctrl_Index = 0;
+    int16_t Spell_Found = 0;
+    int16_t Spell_on_Side = 0;
+    int16_t casting_cost = 0;
+    int16_t itr = 0;
+    int16_t spellbook_page = 0;  // _SI_
+    int16_t itr_spellbook_page_spell_count = 0;  // _DI_
+
+    SBK_Spell_Index = spell_idx;
+
+    if(magic_set.spell_animations != ST_TRUE)
+    {
+
+        Reset_First_Block(_screen_seg);
+
+        Allocate_Reduced_Map();
+
+        // SPELLSCR.LBX, 060  "SUMGREEN"    ""
+        Spell_Gained_Dlg_IMG = LBX_Reload_Next(spellscr_lbx_file__ovr118, 60, _screen_seg);
+
+        Assign_Auto_Function(Fill_Black_Draw, 2);
+
+        Set_Page_Off();
+
+        Main_Screen_Draw();
+
+        strcpy(GUI_NearMsgString, cnst_NewSpell_Msg);
+
+        String_Copy_Far(Spell_Name, spell_data_table[spell_idx].name);
+
+        strcat(GUI_NearMsgString, Spell_Name);
+
+        Notify2(0, 40, 2, GUI_NearMsgString, 0, Spell_Gained_Dlg_IMG, 0, 9, 0, 0, 0, 1, 0);
+
+        Deactivate_Auto_Function();
+
+    }
+    else
+    {
+
+        if(magic_set.background_music == ST_TRUE)
+        {
+            Stop_All_Sounds__STUB();
+
+            SND_Spell_Music = LBX_Reload(music_lbx_file__ovr118, MUSIC_New_Spell, SND_Music_Segment);
+
+            Play_Sound__STUB(SND_Spell_Music);
+
+        }
+
+        Fade_Out();
+
+        Set_Mouse_List(1, mouse_list_none);
+
+        Learn_Spell_Animation_Load();
+
+        Set_Page_Off();
+
+        Learn_Spell_Animation_Draw();
+
+        PageFlipEffect = 2;
+
+        PageFlip_FX();
+
+        Clear_Fields();
+
+        spellbook_page = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr118[0], ST_UNDEFINED);
+
+        Assign_Auto_Function(Learn_Spell_Animation_Draw, 2);
+
+        for(itr = 0; ((itr < 60) && (Get_Input() == 0)); itr++)
+        {
+            Mark_Time();
+
+            Set_Page_Off();
+
+            Learn_Spell_Animation_Draw();
+
+            PageFlip_FX();
+
+            Release_Time(2);
+
+        }
+
+        Clear_Fields();
+
+        Assign_Auto_Function(Fill_Black_Draw, 3);
+
+        Fade_Out();
+
+        Set_Page_Off();
+
+        Fill_Black_Draw();
+
+        PageFlip_FX();
+
+        // Load_Palette(0, 255);  // ; EMPERATO - main game palette
+        Load_Palette(0, 0, 255);
+
+        Reset_Cycle_Palette_Color();
+
+        Set_Palette_Changes(0, 254);
+
+        Update_Remap_Color_Range(10, 11);
+
+        Update_Remap_Color_Range(0, 0);
+
+        SBK_BuildSpellbook__WIP(slt_Library, 4);
+
+        // SCROLL.LBX, 006  "BIGBOOK"   ""
+        _spellbook_big_seg = LBX_Reload(scroll_lbx_file__ovr118__2, 6, _screen_seg);
+
+        Set_Page_Off();
+
+        FLIC_Draw(0, 0, _spellbook_big_seg);
+
+        Copy_Off_To_Back();
+
+        Set_Page_On();
+
+        Spell_Found = ST_FALSE;
+
+        for(spellbook_page = 0; ((m_spellbook_page_count - 2) && (Spell_Found == ST_FALSE)) > spellbook_page; spellbook_page++)
+        {
+
+            for(itr_spellbook_page_spell_count = 0; ((m_spellbook_pages[spellbook_page].count > itr_spellbook_page_spell_count) && (Spell_Found == ST_FALSE)); itr_spellbook_page_spell_count++)
+            {
+
+                if(abs(m_spellbook_pages[spellbook_page].spell[itr_spellbook_page_spell_count]) == spell_idx)
+                {
+
+                    if((spellbook_page % 2) == 0)
+                    {
+
+                        SBK_OpenPage = spellbook_page;
+                        Spell_on_Side = 0;
+                        SBK_Dogears = 0;
+
+                    }
+                    else
+                    {
+
+                        Spell_on_Side = 1;
+                        SBK_Dogears = 1;
+                        SBK_OpenPage = (spellbook_page - 1);
+
+                    }
+
+                    // GUI_Multipurpose_Int__spell_list_count = itr_spellbook_page_spell_count;
+                    GUI_Multipurpose_Int = itr_spellbook_page_spell_count;
+
+                    Spell_Found = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+        // ; conflicting condition (the only caller of this
+        // ; function sets the spell "Known" before the call)
+        // ; - will never jump
+        if(Spell_Found == ST_FALSE)
+        {
+
+            // ; BUG: would mark the first spells of wrong realms, if
+            // ; this branch ever triggered
+            _players[HUMAN_PLAYER_IDX].spells_list[((((spell_idx - 2) / NUM_SPELLS_PER_MAGIC_REALM) * NUM_SPELLS_PER_MAGIC_REALM) + ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM))] = 1;  /* S_Knowable */
+
+            SBK_BuildSpellbook__WIP(slt_Library, 4);
+
+            for(spellbook_page = 0; ((m_spellbook_page_count - 1) && (Spell_Found == ST_FALSE)) > spellbook_page; spellbook_page++)
+            {
+
+                for(itr_spellbook_page_spell_count = 0; ((m_spellbook_pages[spellbook_page].count > itr_spellbook_page_spell_count) && (Spell_Found == ST_FALSE)); itr_spellbook_page_spell_count++)
+                {
+
+                    if(abs(m_spellbook_pages[spellbook_page].spell[itr_spellbook_page_spell_count]) == spell_idx)
+                    {
+
+                        if((spellbook_page % 2) == 0)
+                        {
+
+                            SBK_OpenPage = spellbook_page;
+                            Spell_on_Side = 0;
+                            SBK_Dogears = 0;
+
+                        }
+                        else
+                        {
+
+                            Spell_on_Side = 1;
+                            SBK_Dogears = 1;
+                            SBK_OpenPage = (spellbook_page - 1);
+
+                        }
+
+                        // GUI_Multipurpose_Int__spell_list_count = itr_spellbook_page_spell_count;
+                        GUI_Multipurpose_Int = itr_spellbook_page_spell_count;
+
+                        Spell_Found = ST_TRUE;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        Reset_First_Block(_screen_seg);
+
+        for(spellbook_page = 0; spellbook_page < NUM_SPELLBOOK_DESCRIPTIONS; spellbook_page++)
+        {
+
+            // SBK_Descriptions[itr] = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 12));
+            SBK_Descriptions[spellbook_page] = (char *)Allocate_Next_Block(_screen_seg, 12);
+
+        }
+
+        SBK_LoadSpellDescs__WIP(SBK_OpenPage);
+
+        Mark_Block(_screen_seg);
+
+        IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 1800);  // 1800 PR, 28800 B
+
+        IMG_SBK_Anims = Allocate_Next_Block(_screen_seg, 325);  // 325 PR, 5200 B
+
+        // SPECFX.LBX, 049  "NEWSPELL"  ""
+        spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr118, 49, _screen_seg);
+
+        // mov     bx, [bp+Spell_on_Side]
+        // mov     cl, 2
+        // shl     bx, cl
+        // add     bx, _DI_itr_spellbook_page_spell_count
+        // mov     cl, 2
+        // shl     bx, cl
+        // push    SBK_Descriptions@[bx-4+2]       ; src_sgmt
+        // push    SBK_Descriptions@[bx-4]         ; src_ofst
+        String_Copy_Far(Spell_Description, SBK_Descriptions[(((Spell_on_Side * 4) + itr_spellbook_page_spell_count) - 4)]);
+
+        Create_Picture(129, 37, IMG_SBK_Anims);
+
+        casting_cost = Casting_Cost(HUMAN_PLAYER_IDX, SBK_Spell_Index, ST_FALSE);
+
+        for(itr = 0; itr < 16; itr++)
+        {
+            Blink_Color_Array[itr] = 198;
+        }
+
+        Set_Font_Colors_15(7, &Blink_Color_Array[0]);
+
+        String_Copy_Far(Spell_Name, spell_data_table[SBK_Spell_Index].name);
+
+        Print_To_Bitmap(0, 0, Spell_Name, IMG_SBK_Anims);
+
+        Set_Font_Colors_15(6, &Blink_Color_Array[0]);
+
+        Print_To_Bitmap(0, 11, cnst_SP_Cost, IMG_SBK_Anims);
+
+        itoa(casting_cost, Conversion_String, 10);
+
+        Print_Right_To_Bitmap(42, 11, Conversion_String, IMG_SBK_Anims);
+
+        Set_Font_LF(0);
+
+        Set_Font_Spacing(1);
+
+        Print_Paragraph_To_Bitmap(0, 17, 128, Spell_Description, 0, IMG_SBK_Anims);
+
+        Clear_Fields();
+
+        SBK_NewSpellAnim_Stg = 0;  // ; (0-7), also combat casting cursor anim stage (0-4)
+
+        Minus1_Hotkey_Ctrl_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_UNDEFINED, ST_UNDEFINED);
+
+        Interrupted = 0;
+
+        Assign_Auto_Function(SBK_DrawSpellDecode__STUB, 2);
+
+        // ; (0-7), also combat casting cursor anim stage (0-4)
+        for(SBK_NewSpellAnim_Stg = 0; ((SBK_NewSpellAnim_Stg < 45) && (Interrupted == ST_FALSE)); SBK_NewSpellAnim_Stg++)
+        {
+
+            Interrupted = Get_Input();
+
+            // ; (0-7), also combat casting cursor anim stage (0-4)
+            if(SBK_NewSpellAnim_Stg < 15)
+            {
+
+                Cycle_Palette_Color__STUB(198, 18, 14, 9, 38, 38, 53, 2);
+
+            }
+
+            Set_Page_Off();
+
+            SBK_DrawSpellDecode__STUB();
+
+            PageFlip_FX();
+
+            // ; (0-7), also combat casting cursor anim stage (0-4)
+            if(SBK_NewSpellAnim_Stg == 0)
+            {
+                PageFlipEffect = 0;
+            }
+
+        }
+
+
+}
+
+
+
+}
+
 
 // WZD o118p07
 // drake178: SBK_DrawSpellDecode()
-// SBK_DrawSpellDecode()
+/*
+; draws the spellbook part of the animation of learning
+; a new spell using the related global variables
+*/
+/*
+
+*/
+void SBK_DrawSpellDecode__STUB(void)
+{
+    // struct s_SPELL_DECODE Spell_Decode_Lefts = { 0, 0, 0, 0, 0, 0 };
+    // struct s_SPELL_DECODE Spell_Decode_Rights = { 0, 0, 0, 0, 0, 0 };
+// IDGI
+// var_44= byte ptr -44h
+// var_38= byte ptr -38h
+// var_2C= byte ptr -2Ch
+// var_18= word ptr -18h
+// var_C= word ptr -0Ch
+// -0044 var_44 db 12 dup(?)
+// -0038 var_38 db 12 dup(?)
+// -002C var_2C db 20 dup(?)
+// -0018 var_18 s_SPELL_DECODE ?
+// -000C var_C s_SPELL_DECODE ?
+uint8_t var_44[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t var_38[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t var_2C[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+struct s_SPELL_DECODE var_18 = { 0, 0, 0, 0, 0, 0 };
+struct s_SPELL_DECODE var_C = { 0, 0, 0, 0, 0, 0 };
+
+// lea     ax, [bp+Spell_Decode_Rights]
+// push    ss
+// push    ax                              ; Dest_Struct
+// mov     ax, offset TBL_SpellDecode_Rs
+// push    ds
+// push    ax                              ; src
+// mov     cx, 12
+// call    F_SCOPY@
+
+// lea     ax, [bp+Spell_Decode_Lefts]
+// push    ss
+// push    ax                              ; Dest_Struct
+// mov     ax, offset TBL_SpellDecode_Ls
+// push    ds
+// push    ax                              ; src
+// mov     cx, 12
+// call    F_SCOPY@
+
+    // memcpy(Spell_Decode_Rights, TBL_SpellDecode_Rs);
+    // memcpy(Spell_Decode_Lefts, TBL_SpellDecode_Ls);
+    
+    // Spell_Decode_Rights = TBL_SpellDecode_Rs;
+    // Spell_Decode_Lefts = TBL_SpellDecode_Ls;
+    
+    var_C = TBL_SpellDecode_Rs;
+    var_18 = TBL_SpellDecode_Ls;
+
+    Copy_Back_To_Off();
+
+    if(SBK_Dogears == 1)
+    {
+
+        BigBook_Compose__WIP(SBK_OpenPage, IMG_SBK_PageText, ST_TRUE);
+
+        Draw_Picture_Windowed(25, -20, IMG_SBK_PageText);
+
+    }
+    else
+    {
+
+        BigBook_Compose__WIP((SBK_OpenPage + 1), IMG_SBK_PageText, ST_FALSE);
+
+        Draw_Picture_Windowed(173, -20, IMG_SBK_PageText);
+
+    }
+
+    if(SBK_Dogears == 0)
+    {
+        
+        BigBook_Compose__WIP(SBK_OpenPage, IMG_SBK_PageText, ST_TRUE);
+
+    }
+    else
+    {
+
+        BigBook_Compose__WIP((SBK_OpenPage + 1), IMG_SBK_PageText, ST_FALSE);
+
+    }                          
+
+    if(SBK_NewSpellAnim_Stg < 22)
+    {
+
+        Clear_Bitmap_Region(0, (48 + (GUI_Multipurpose_Int * 37)), 129, (82 + (GUI_Multipurpose_Int * 37)), IMG_SBK_PageText);
+
+    }
+    else if(SBK_NewSpellAnim_Stg < 28)
+    {
+
+        Clear_Bitmap_Region(0, (48 + (GUI_Multipurpose_Int * 37)), var_38[SBK_NewSpellAnim_Stg], (82 + (GUI_Multipurpose_Int * 37)), IMG_SBK_PageText);
+
+        Clear_Bitmap_Region(0, (48 + (GUI_Multipurpose_Int * 37)), var_38[SBK_NewSpellAnim_Stg], (82 + (GUI_Multipurpose_Int * 37)), IMG_SBK_PageText);
+
+        Clear_Bitmap_Region(var_44[SBK_NewSpellAnim_Stg], (48 + (GUI_Multipurpose_Int * 37)), 129, (82 + (GUI_Multipurpose_Int * 37)), IMG_SBK_PageText);
+
+        Clear_Bitmap_Region(var_38[SBK_NewSpellAnim_Stg], 0, var_44[SBK_NewSpellAnim_Stg], 37, IMG_SBK_Anims);
+
+    }
+
+    if(SBK_Dogears == 0)
+    {
+
+        Draw_Picture_Windowed(25, -20, IMG_SBK_PageText);
+
+        if(SBK_NewSpellAnim_Stg < 27)
+        {
+
+            Draw_Picture(25, (28 + (GUI_Multipurpose_Int * 37)), IMG_SBK_Anims);
+            
+        }
+
+        if(
+            (SBK_NewSpellAnim_Stg > 15)
+            &&
+            (SBK_NewSpellAnim_Stg < 29)
+        )
+        {
+
+            FLIC_Set_CurrentFrame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
+
+            FLIC_Draw(20, (21 + (GUI_Multipurpose_Int * 37)), spell_animation_seg);
+            
+        }
+
+    }
+    else
+    {
+
+        Draw_Picture_Windowed(173, -20, IMG_SBK_PageText);
+
+        if(SBK_NewSpellAnim_Stg < 27)
+        {
+
+            Draw_Picture(173, (28 + (GUI_Multipurpose_Int * 37)), IMG_SBK_Anims);
+
+        }
+
+        if(
+            (SBK_NewSpellAnim_Stg > 15)
+            &&
+            (SBK_NewSpellAnim_Stg < 29)
+        )
+        {
+
+            FLIC_Set_CurrentFrame(spell_animation_seg, (SBK_NewSpellAnim_Stg - 16));
+
+            FLIC_Draw(168, (24 + (GUI_Multipurpose_Int * 37)), spell_animation_seg);
+
+        }
+
+    }
+
+}
+
 
 // WZD o118p08
 // drake178: SBK_LoadSpellDescs()
@@ -1594,7 +2200,7 @@ void Apprentice_Screen__WIP(void)
     // ; new spell anim: 0 - spell on left; 1 - spell on right
     SBK_Dogears = 2;
 
-    // SCROLL.LBX, 006      BIGBOOK
+    // SCROLL.LBX, 006  "BIGBOOK"   ""
     _spellbook_big_seg = LBX_Reload(scroll_lbx_file__ovr118__2, 6, _screen_seg);
 
     Set_Page_Off();
@@ -1914,7 +2520,7 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
             if(m_spellbook_pages[page].spell[itr] == _players[HUMAN_PLAYER_IDX].researching_spell_idx)
             {
-                research_cost = _players[HUMAN_PLAYER_IDX].Research_Left;
+                research_cost = _players[HUMAN_PLAYER_IDX].research_cost_remaining;
             }
             else if(abs(m_spellbook_pages[page].spell[itr]) == spl_Spell_Of_Mastery)
             {
@@ -2036,8 +2642,213 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 
 
 // WZD o118p11
-// drake178: SBK_Research_Dialog()
-// SBK_Research_Dialog()
+// drake178: GUI_Research_Dialog()
+// AKA SBK_Research_Dialog()
+// ~ MoO2  Module: TECH  Tech_Select_()
+/*
+; displays the "Choose a spell to research" dialog
+; using the big apprentice spellbook, and prevents the
+; player from progressing until a candidate has been
+; picked for research, which it then sets in the wizard
+; record before returning
+*/
+/*
+
+*/
+void Spell_Research_Select(void)
+{
+    int16_t Spell_GUI_Controls[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Top_Y = 0;
+    int16_t Left_X = 0;
+    int16_t input_field_idx = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t candidate_count = 0;  // _DI_
+    int16_t leave_screen = 0;  // _DI_
+
+    leave_screen = ST_FALSE;
+
+    for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+    {
+
+        if(_players[HUMAN_PLAYER_IDX].research_spells[itr] > 0)
+        {
+            candidate_count++;
+        }
+
+    }
+
+    if(candidate_count == 0)
+    {
+        return;
+    }
+
+    // SCROLL.LBX, 006  "BIGBOOK"   ""
+    _spellbook_big_seg = LBX_Reload(scroll_lbx_file__ovr118__2, 6, _screen_seg);
+
+    Set_Page_Off();
+
+    FLIC_Draw(0, 0, _spellbook_big_seg);
+
+    Copy_Off_To_Back();
+
+    SBK_BuildSpellbook__WIP(slt_Library, 4);
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    SBK_Dogears = 0;
+
+    Reset_First_Block(_screen_seg);
+
+    for(itr = 0; itr < NUM_SPELLBOOK_DESCRIPTIONS; itr++)
+    {
+
+        // SBK_Descriptions[itr] = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 9));
+        SBK_Descriptions[itr] = (char *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
+
+    }
+
+    SBK_OpenPage = SBK_Candidate_Page;
+
+    SBK_LoadSpellDescs__WIP(SBK_OpenPage);
+
+    Assign_Auto_Function(BigBook_Draw, 2);
+
+    Clear_Fields();
+
+    for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+    {
+
+        Left_X = (25 + ((itr / 4) * 147));
+
+        Top_Y = (25 + ((itr % 4) * 37));
+
+        Spell_GUI_Controls[itr] = Add_Hidden_Field(Left_X, Top_Y, (Left_X + 110), (Top_Y + 33), str_empty_string__ovr118[0], ST_UNDEFINED);
+
+    }
+
+    PageFlipEffect = 3;
+
+    Set_Page_Off();
+
+    BigBook_Draw();
+
+    PageFlip_FX();
+
+    leave_screen = ST_FALSE;
+
+    LBX_Load_Data_Static(hlpentry_lbx_file__ovr118, 24, (SAMB_ptr)&_help_entries[0], 0, 10, 10);
+
+    Set_Help_List((char *)&_help_entries[0], 10);
+
+    _help_entries[0].help_idx = ST_UNDEFINED;
+    _help_entries[1].help_idx = ST_UNDEFINED;
+
+    while(leave_screen == ST_FALSE)
+    {
+        
+        input_field_idx = Get_Input();
+
+        for(itr = 0; itr < 4; itr++)
+        {
+
+            if(
+                (m_spellbook_pages[(SBK_OpenPage + 0)].count > itr)
+                &&
+                (m_spellbook_pages[(SBK_OpenPage + 0)].spell > 0)
+            )
+            {
+
+                if(abs(m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr]) == spl_Spell_Of_Return)
+                {
+
+                    _help_entries[(2 + itr)].help_idx = HLP_SPELL_OF_RETURN;
+
+                }
+                else
+                {
+
+                    _help_entries[(2 + itr)].help_idx = abs(m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr]);
+
+                }
+
+            }
+            else
+            {
+
+                _help_entries[(2 + itr)].help_idx = ST_UNDEFINED;
+
+            }
+
+        }
+
+        for(itr = 0; itr < 4; itr++)
+        {
+
+            if(
+                (m_spellbook_pages[(SBK_OpenPage + 1)].count > itr)
+                &&
+                (m_spellbook_pages[(SBK_OpenPage + 1)].spell > 0)
+            )
+            {
+
+                if(abs(m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr]) == spl_Spell_Of_Return)
+                {
+
+                    _help_entries[(6 + itr)].help_idx = HLP_SPELL_OF_RETURN;
+
+                }
+                else
+                {
+
+                    _help_entries[(6 + itr)].help_idx = abs(m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr]);
+
+                }
+
+            }
+            else
+            {
+
+                _help_entries[(6 + itr)].help_idx = ST_UNDEFINED;
+
+            }
+
+        }
+
+        for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+        {
+
+            if(Spell_GUI_Controls[itr] == input_field_idx)
+            {
+
+                if(_players[HUMAN_PLAYER_IDX].research_spells[itr] > 0)
+                {
+
+                    _players[HUMAN_PLAYER_IDX].researching_spell_idx = _players[HUMAN_PLAYER_IDX].research_spells[itr];
+
+                    leave_screen = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Set_Page_Off();
+            BigBook_Draw();
+            PageFlip_FX();
+
+        }
+
+    }
+
+    Deactivate_Help_List();
+    Deactivate_Auto_Function();
+
+}
+
 
 // WZD o118p12
 // drake178: GAME_CheckResearch()
@@ -2062,18 +2873,17 @@ void BigBook_Compose__WIP(int16_t page, SAMB_ptr pict_seg, int16_t flag)
 */
 int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
 {
-    int16_t * Possible_Candidate_List;
-    int16_t Ignore_SoM;
-    int16_t Candidate_Index_In_Realm;
-    int16_t Candidate_Realm;
-    int16_t Candidate_Count;
-    int16_t List_Index;
-    int16_t Max_Candidates;
-    int16_t itr; // _SI_
+    int16_t * Possible_Candidate_List = 0;
+    int16_t Ignore_SoM = 0;
+    int16_t Candidate_Index_In_Realm = 0;
+    int16_t Candidate_Realm = 0;
+    int16_t Candidate_Count = 0;
+    int16_t List_Index = 0;
+    int16_t Max_Candidates = 0;
+    int16_t itr = 0; // _SI_
 
 
     Max_Candidates = 8;
-    // DELETEME  GUI_Multipurpose_Int = 0;
     m_spell_list_count = 0;
     Candidate_Count = 0;
     Ignore_SoM = 0;
@@ -2108,10 +2918,8 @@ int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
     }
 
 
-    // DELETEME  while((Candidate_Count < Max_Candidates) && (GUI_Multipurpose_Int > 0))
     while((Candidate_Count < Max_Candidates) && (m_spell_list_count > 0))
     {
-        // DELETEME  List_Index = (Random(GUI_Multipurpose_Int) - 1);
         List_Index = (Random(m_spell_list_count) - 1);
 
         Candidate_Count++;
@@ -2170,28 +2978,18 @@ int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
     {
         if(player_idx == HUMAN_PLAYER_IDX)
         {
-            // ; displays the "Choose a spell to research" dialog
-            // ; using the big apprentice spellbook, and prevents the
-            // ; player from progressing until a candidate has been
-            // ; picked for research, which it then sets in the wizard
-            // ; record before returning
-            // TODO  SBK_Research_Dialog();
+
+            Spell_Research_Select();
+
         }
         else
         {
-            // ; selects the spell to research from the wizard's list
-            // ; of candidates using a weighted random roll,
-            // ; prioritizing combat spells in research groups from
-            // ; which the player does not yet have a known spell
-            // ;
-            // ; contains multipe BUGs that prevent research-related
-            // ; profile traits from properly affecting the outcome
-            // TODO  AI_Research_Picker(player_idx);
+
+            AI_Research_Picker__STUB(player_idx);
+
         }
 
     }
-
-
 
     return Candidate_Count;
 }

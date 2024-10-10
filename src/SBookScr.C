@@ -174,7 +174,7 @@ void Spellbook_Screen(void)
     for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < m_spellbook_page_count) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
     {
 
-        for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count <= itr_page_spell_count; itr_page_spell_count++)
+        for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count > itr_page_spell_count; itr_page_spell_count++)
         {
 
             if(player_is_casting == ST_FALSE)
@@ -446,10 +446,10 @@ void Spellbook_Screen(void)
 */
 int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t spellbook_page_spell_index)
 {
-    int16_t var_8;
-    int16_t item_idx;
-    int16_t did_cast_spell__iff_human_player;
-    int16_t Mana_This_Turn;
+    int16_t var_8 = 0;
+    int16_t item_idx = 0;
+    int16_t did_cast_spell__iff_human_player = 0;
+    int16_t Mana_This_Turn = 0;
 
     did_cast_spell__iff_human_player = ST_FALSE;
 
@@ -538,7 +538,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
             }
             // ¿ no else {} ?
 
-            _players[player_idx].casting_cost_remaining == 0;
+            _players[player_idx].casting_cost_remaining = 0;
 
         }
         else

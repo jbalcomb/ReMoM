@@ -1218,7 +1218,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
         );
     }
 
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
     IDK_Clear_Cityscape_Vanish_Percent();
 

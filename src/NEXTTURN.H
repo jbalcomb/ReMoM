@@ -171,7 +171,7 @@ void All_Players_Apply_Spell_Casting(void);
 void Determine_Offer(void);
 
 // WZD o140p20
-// WIZ_ResearchProgress()
+void Players_Check_Spell_Research(void);
 
 // WZD o140p21
 void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Research);

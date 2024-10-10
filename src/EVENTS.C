@@ -1412,14 +1412,22 @@ void Show_Event_Message(void)
         return;
     }
 
-    // TODO  Stop_All_Sounds__STUB();
+    Stop_All_Sounds__STUB();
+
     Allocate_Reduced_Map();
+
     Set_Draw_Active_Stack_Always();
+
     Set_Unit_Draw_Priority();
+
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
     Full_Draw_Main_Screen();
+
     Copy_On_To_Off_Page();
+
     m_event_message = (char *)Near_Allocate_First(500);
+
     m_event_message_record = Near_Allocate_Next(500);
 
 
@@ -1475,7 +1483,7 @@ void Show_Event_Message(void)
 
     Update_Remap_Gray_Palette();
 
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
     Allocate_Reduced_Map();
 

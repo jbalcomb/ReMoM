@@ -114,7 +114,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 // ; nothing is entered
                 Change_City_Name_Popup(_city_idx, outpost_owner);
 
-                Play_Background_Music();
+                Play_Background_Music__STUB();
 
                 TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 2);
 

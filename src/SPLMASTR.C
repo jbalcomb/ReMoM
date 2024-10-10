@@ -169,7 +169,7 @@ void SoM_Started(int16_t player_idx)
 
     Stop_All_Sounds__STUB();
 
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
     Fade_Out();
 

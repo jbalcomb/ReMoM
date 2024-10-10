@@ -90,6 +90,7 @@
     <ClInclude Include="..\..\..\src\AIBUILD.H" />
     <ClInclude Include="..\..\..\src\AIDATA.H" />
     <ClInclude Include="..\..\..\src\AIDUDES.H" />
+    <ClInclude Include="..\..\..\src\AISPELL.H" />
     <ClInclude Include="..\..\..\src\ALLOC.H" />
     <ClInclude Include="..\..\..\src\ArmyList.H" />
     <ClInclude Include="..\..\..\src\CITYCALC.H" />
@@ -170,6 +171,7 @@
     <ClCompile Include="..\..\..\src\AIBUILD.C" />
     <ClCompile Include="..\..\..\src\AIDATA.C" />
     <ClCompile Include="..\..\..\src\AIDUDES.C" />
+    <ClCompile Include="..\..\..\src\AISPELL.C" />
     <ClCompile Include="..\..\..\src\ALLOC.C" />
     <ClCompile Include="..\..\..\src\ArmyList.C" />
     <ClCompile Include="..\..\..\src\CITYCALC.C" />

@@ -348,7 +348,7 @@ void Copy_On_To_Off_NM(void)
 {
     uint8_t * src;
     uint8_t * dst;
-    int16_t itr;
+    uint16_t itr;
 
     Save_Mouse_State();
 

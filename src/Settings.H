@@ -38,14 +38,14 @@ struct s_MAGIC_SET
     /*  0A */ uint16_t Summoning_Events;
     /*  0C */ uint16_t end_of_turn_summary;
     /*  0E */ uint16_t Raze_City;
-    /*  10 */ uint16_t Random_Events;
+    /*  10 */ uint16_t random_events;
     /*  12 */ uint16_t EoT_Wait;
     /*  14 */ uint16_t Strategic_Combat;
     /*  16 */ uint16_t Auto_Unit_Info;
     /*  18 */ uint16_t Enemy_Moves;
     /*  1A */ uint16_t Enemy_Spells;
     /*  1C */ uint16_t spell_book_ordering;  /* HELP: "SPELL BOOK ORDERING" "Controls whether spells on your spell book are ordered in categories versus one long list." */
-    /*  1E */ uint16_t Spell_Anims;
+    /*  1E */ uint16_t spell_animations;
     /*  20 */ uint16_t Show_Node_Owners;
     /*  22 */ uint16_t Expanding_Help;
 

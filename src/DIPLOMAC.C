@@ -228,7 +228,7 @@ void Diplomacy_Screen__STUB(void)
     // TODO  GAME_ReloadWorldData();
     // TODO  GAME_CheckResearch(1);
     GFX_Swap_Cities();
-    Play_Background_Music();
+    Play_Background_Music__STUB();
 
     // @@done
 

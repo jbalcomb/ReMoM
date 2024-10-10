@@ -21,7 +21,7 @@ extern int16_t DBG_trigger_event_mana_short;
 extern int16_t DBG_trigger_offer_item;
 extern int16_t DBG_trigger_offer_merc;
 extern int16_t DBG_trigger_offer_hero;
-
+extern int16_t DBG_trigger_complete_research_spell;
 
 
 // Where did this go?  void TST_Load_SAVE_GAM(void);

@@ -2510,7 +2510,7 @@ void Increment_Background_Music(void)
 
         if(background_music_num != m_background_music_num)
         {
-            Play_Background_Music();
+            Play_Background_Music__STUB();
         }
 
     }
@@ -2600,7 +2600,7 @@ int16_t Get_Background_Music(void)
 ; enabled, selects and starts playing the currently
 ; appropriate background track based on player power
 */
-void Play_Background_Music(void)
+void Play_Background_Music__STUB(void)
 {
     SAMB_ptr sound_seg;
     int16_t background_music_num;  // _SI_
@@ -2681,11 +2681,11 @@ calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`
 */
 void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_wx, int16_t unit_wy)
 {
-    int16_t goto_unit_idx;
-    int16_t itr_stack;
-    int16_t unit_idx;
-    int16_t troops[MAX_STACK];
-    int16_t troop_count;
+    int16_t goto_unit_idx = 0;
+    int16_t itr_stack = 0;
+    int16_t unit_idx = 0;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troop_count = 0;
 
     reset_active_stack = ST_TRUE;
 
@@ -3271,16 +3271,16 @@ void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t 
 // WZD o62p09
 int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t unit_array[9];
-    int16_t moveable_units_count;
-    int16_t unit_count;
-    int16_t Radius;
-    int16_t player_idx;
-    int16_t dst_city_idx;
-    int16_t did_earthgate;
-    int16_t src_city_idx;
-    int16_t unit_idx;  // _SI_
-    int16_t itr;  // _DI_
+    int16_t unit_array[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t moveable_units_count = 0;
+    int16_t unit_count = 0;
+    int16_t Radius = 0;
+    int16_t player_idx = 0;
+    int16_t dst_city_idx = 0;
+    int16_t did_earthgate = 0;
+    int16_t src_city_idx = 0;
+    int16_t unit_idx = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
 
     if(_unit_stack_count < 1)
     {
@@ -3503,9 +3503,9 @@ SEE ALSO:  CMB_Draw_Unit_Enchantment_Outline()
 */
 void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
 {
-    int8_t enchantment_magic_realm;
-    uint32_t unit_enchantments;
-    uint8_t * color_list;
+    int8_t enchantment_magic_realm = 0;
+    uint32_t unit_enchantments = 0;
+    uint8_t * color_list = 0;
 
     unit_enchantments = _UNITS[unit_idx].enchantments;
 
@@ -3745,16 +3745,16 @@ Outpost_Screen_Draw()
 */
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
-    uint8_t unit_type_idx;
-    int16_t unit_owner_idx;
-    int16_t banner_idx;
-    uint16_t itr_color_remap;
+    uint8_t unit_type_idx = 0;
+    int16_t unit_owner_idx = 0;
+    int16_t banner_idx = 0;
+    uint16_t itr_color_remap = 0;
     // uint8_t Color_1;
     // uint8_t Color_2;
-    uint8_t color_array[2];
-    uint8_t * vbb_ptr;
-    int16_t itr_width;
-    int16_t itr_height;
+    uint8_t color_array[2] = { 0, 0 };
+    uint8_t * vbb_ptr = 0;
+    int16_t itr_width = 0;
+    int16_t itr_height = 0;
 
     unit_type_idx = _UNITS[unit_idx].type;
 
@@ -4064,12 +4064,12 @@ void Main_Screen_Draw_Movement_Bar(void)
 */
 void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
 {
-    int16_t movement_icons[9];
-    int16_t movement_mode_flags[9];
-    int16_t stack;
-    int16_t x_start;
-    int itr;
-    int movement_mode_icon_count;
+    int16_t movement_icons[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t movement_mode_flags[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t stack = 0;
+    int16_t x_start = 0;
+    int itr = 0;
+    int movement_mode_icon_count = 0;
 
     if(_unit_stack_count >= 1 || unit_idx != ST_UNDEFINED)
     {
@@ -4543,12 +4543,12 @@ void MainScr_Create_Reduced_Map_Picture(void)
 // WZD o064p04
 void Main_Screen_Draw_Summary_Window(void)
 {
-    int16_t gold;
-    int16_t food;
-    int16_t mana;
-    uint8_t colors[16] = {0};
-    int16_t active_event_id;
-    uint8_t color_index;
+    int16_t gold = 0;
+    int16_t food = 0;
+    int16_t mana = 0;
+    uint8_t colors[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t active_event_id = 0;
+    uint8_t color_index = 0;
 
     gold = 0;  // DNE in Dasm
     food = 0;  // DNE in Dasm
@@ -4895,24 +4895,24 @@ void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, i
 // drake178: UNIT_SetGlobalPath()
 void Set_Active_Stack_Movement_Path(int16_t unit_idx)
 {
-    int16_t boatriders[MAX_STACK];
-    int16_t troops[MAX_STACK];
-    int16_t movement_mode_flags[6];
-    int16_t movepath_idx;
-    int16_t road_src_wy;
-    int16_t road_src_wx;
-    int16_t owner_idx;
-    int16_t troop_count;
-    int16_t boatrider_count;
-    int16_t unit_goto_wy;
-    int16_t unit_goto_wx;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t goto_units_count;
-    int16_t l_unit_idx;
-    int16_t unit_stack_idx;  // _SI_
-    int16_t itr_troops;  // _DI_
-    int16_t itr;  // _DI_
+    int16_t boatriders[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t movement_mode_flags[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t movepath_idx = 0;
+    int16_t road_src_wy = 0;
+    int16_t road_src_wx = 0;
+    int16_t owner_idx = 0;
+    int16_t troop_count = 0;
+    int16_t boatrider_count = 0;
+    int16_t unit_goto_wy = 0;
+    int16_t unit_goto_wx = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t goto_units_count = 0;
+    int16_t l_unit_idx = 0;
+    int16_t unit_stack_idx = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
+    int16_t itr = 0;  // _DI_
 
     unit_wx = _UNITS[unit_idx].wx;
     unit_wy = _UNITS[unit_idx].wy;
@@ -5047,36 +5047,36 @@ path_type
 */
 int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[])
 {
-    int16_t boat_rider_array[MAX_STACK];
-    int16_t movement_mode_flags[9];  // BUG should be 6
-    int16_t construction_points;
-    int16_t uu_road_builder_unit_idx;
-    int16_t boatrider_count;
-    int16_t UU_flag_FALSE;
-    int16_t UU_unit_wp;
-    int16_t Total_Move_Cost;
-    int16_t Out_Of_Moves;
-    int16_t movement_points;
-    int16_t defender_idx;
-    int16_t attack_flag;
-    int16_t Current_Step;
-    int16_t YPos;
-    int16_t XPos;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t path_length;
-    int16_t First_Unit_Index;
+    int16_t boat_rider_array[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t movement_mode_flags[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // BUG should be 6
+    int16_t construction_points = 0;
+    int16_t uu_road_builder_unit_idx = 0;
+    int16_t boatrider_count = 0;
+    int16_t UU_flag_FALSE = 0;
+    int16_t UU_unit_wp = 0;
+    int16_t Total_Move_Cost = 0;
+    int16_t Out_Of_Moves = 0;
+    int16_t movement_points = 0;
+    int16_t defender_idx = 0;
+    int16_t attack_flag = 0;
+    int16_t Current_Step = 0;
+    int16_t YPos = 0;
+    int16_t XPos = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t path_length = 0;
+    int16_t First_Unit_Index = 0;
 
-    int16_t unit_idx;
-    int16_t return_value;
-    int16_t itr_eight;
-    int16_t itr_Path_Length;
-    int16_t itr_units;
+    int16_t unit_idx = 0;
+    int16_t return_value = 0;
+    int16_t itr_eight = 0;
+    int16_t itr_Path_Length = 0;
+    int16_t itr_units = 0;
 
-    int16_t lair_combat_result;
-    int16_t combat_result;
-    int16_t itr_troops;  // _SI_
-    int16_t itr_path;  // _SI_
+    int16_t lair_combat_result = 0;
+    int16_t combat_result = 0;
+    int16_t itr_troops = 0;  // _SI_
+    int16_t itr_path = 0;  // _SI_
 
     assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
     assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
@@ -5916,18 +5916,18 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 */
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy)
 {
-    int16_t dst_troops[9];
-    int16_t checked_troops[9];
-    int16_t checked_troops_boatriders_count;
-    int16_t dst_troop_count;
-    int16_t checked_troop_count;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t dst_troops_carry_capacity;
-    int16_t itr_troops;
-    int16_t itr_units;   // _DI_
-    int16_t itr_lairs;   // _DI_
-    int16_t itr_cities;  // _DI_
+    int16_t dst_troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t checked_troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t checked_troops_boatriders_count = 0;
+    int16_t dst_troop_count = 0;
+    int16_t checked_troop_count = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t dst_troops_carry_capacity = 0;
+    int16_t itr_troops = 0;
+    int16_t itr_units = 0;   // _DI_
+    int16_t itr_lairs = 0;   // _DI_
+    int16_t itr_cities = 0;  // _DI_
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -6165,15 +6165,15 @@ if the stack has a boat that still has movement points
 */
 void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
 {
-    int16_t Stack_Units[MAX_STACK];
-    int16_t unit_owner_idx;
-    int16_t unit_wp;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t Stack_Count;
-    int16_t Carry_Stack;
-    int16_t itr_troops;  // _SI_
-    int16_t * troops_ptr;  // _DI_
+    int16_t Stack_Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_owner_idx = 0;
+    int16_t unit_wp = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t Stack_Count = 0;
+    int16_t Carry_Stack = 0;
+    int16_t itr_troops = 0;  // _SI_
+    int16_t * troops_ptr = 0;  // _DI_
 
     troops_ptr = &troops[0];
 
@@ -6604,15 +6604,15 @@ Spell Ward:
 */
 int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int16_t * troops)
 {
-    int16_t UU_troops[MAX_STACK];
-    int16_t Cant_Enter;
-    int16_t Retn_Value;
-    int16_t Unused_Local;
-    int16_t UU_l_troop_count;
-    int16_t UU_troops_owner_idx;
-    int16_t city_has_spellward;
-    int16_t * l_troop_count;  // _DI_
-    int16_t * l_troops;  // _SI_
+    int16_t UU_troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Cant_Enter = 0;
+    int16_t Retn_Value = 0;
+    int16_t Unused_Local = 0;
+    int16_t UU_l_troop_count = 0;
+    int16_t UU_troops_owner_idx = 0;
+    int16_t city_has_spellward = 0;
+    int16_t * l_troop_count = 0;  // _DI_
+    int16_t * l_troops = 0;  // _SI_
 
     l_troop_count = troop_count;
     l_troops = troops;

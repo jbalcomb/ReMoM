@@ -105,6 +105,9 @@ void Screen_Control(void)
             // DBG_trigger_offer_merc = ST_TRUE;
             // DBG_trigger_offer_hero = ST_TRUE;
 
+            DBG_trigger_complete_research_spell = ST_TRUE;
+            
+
             // // _map_x = ( 5 - (12 / 2));
             // // _map_y = (21 - (10 / 2));
             // _map_x = 59;
@@ -151,7 +154,7 @@ void Screen_Control(void)
             {
                 if(magic_set.background_music == ST_TRUE)
                 {
-                    Play_Background_Music();
+                    Play_Background_Music__STUB();
                 }
                 else
                 {

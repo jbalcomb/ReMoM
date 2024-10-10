@@ -3531,7 +3531,7 @@ void Compute_Base_Map_Square_Values(int16_t wx, int16_t wy, int16_t wp, int16_t 
 
     *gold_bonus = Square_Gold_Bonus(wx, wy, wp);
 
-    for(itr_wy = (wy - 2); ((itr_wy < (wy + 3)) && (itr_wy > 0) && (itr_wy < WORLD_HEIGHT)); itr+wy ++)
+    for(itr_wy = (wy - 2); ((itr_wy < (wy + 3)) && (itr_wy > 0) && (itr_wy < WORLD_HEIGHT)); itr_wy++)
     {
 
         for(itr_wx = (wx - 2); itr_wx < (wx + 3); itr_wx++)

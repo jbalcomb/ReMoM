@@ -251,6 +251,22 @@ struct s_SPELL_BOOK_PAGE
 };
 #pragma pack(pop)
 
+// drake178: N/A
+// sizeof:  0Ch  12d
+#pragma pack(push)
+#pragma pack(2)
+struct s_SPELL_DECODE
+{
+    /* 00 */    int16_t field_0;
+    /* 02 */    int16_t field_2;
+    /* 04 */    int16_t field_4;
+    /* 06 */    int16_t field_6;
+    /* 08 */    int16_t field_8;
+    /* 0A */    int16_t field_A;
+    /* 0C */
+};
+#pragma pack(pop)
+
 
 
 // WZD dseg:9448                                                 ¿ BEGIN: Spellbook (!Screen) - Uninitialized Data ?
@@ -375,10 +391,10 @@ extern int16_t spell_list_count;  // DNE in Dasm;  uses GUI_Multipurpose_Int
 // WZD dseg:C928
 extern char * SBK_Descriptions[];
 
-// WZD dseg:C968 00 00                                           IMG_GAME_Lab_Wizard@ dw 0               ; DATA XREF: GAME_NewSpellAnim+1Cr ...
-// WZD dseg:C96A 00 00                                           IMG_GAME_LabFmiliar@ dw 0               ; DATA XREF: GAME_NewSpellAnim+3Ar ...
-// WZD dseg:C96C 00 00                                           IMG_GAME_MagicColmn@ dw 0               ; DATA XREF: GAME_NewSpellAnim+4Er ...
-// WZD dseg:C96E 00 00                                           IMG_GAME_Lab_Podium@ dw 0               ; DATA XREF: GAME_NewSpellAnim+8r ...
+// WZD dseg:C968 00 00                                           wizlab_wizard_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+1Cr ...
+// WZD dseg:C96A 00 00                                           wizlab_familiar_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+3Ar ...
+// WZD dseg:C96C 00 00                                           wizlab_blue_column_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+4Er ...
+// WZD dseg:C96E 00 00                                           wizlab_podium_seg@ dw 0               ; DATA XREF: GAME_NewSpellAnim+8r ...
 // WZD dseg:C970 00                                              db    0
 // WZD dseg:C971 00                                              db    0
 
@@ -443,19 +459,19 @@ void BigBook__PageTurn__WIP(int16_t direction);
 void BigBook_Draw(void);
 
 // WZD o118p03
-// GAME_NewSpellAnim()
+void Learn_Spell_Animation_Draw(void);
 
 // WZD o118p04
-// VGA_DrawBlackScreen()
+void Fill_Black_Draw(void);
 
 // WZD o118p05
-// GAME_LoadNewSpell()
+void Learn_Spell_Animation_Load(void);
 
 // WZD o118p06
-// GAME_LearnSpellAnim()
+void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag);
 
 // WZD o118p07
-// SBK_DrawSpellDecode()
+void SBK_DrawSpellDecode__STUB(void);
 
 // WZD o118p08
 void SBK_LoadSpellDescs__WIP(int16_t page);
@@ -467,7 +483,7 @@ void Apprentice_Screen__WIP(void);
 void BigBook_Compose__WIP(int16_t pict_seg, SAMB_ptr seg, int16_t flag);
 
 // WZD o118p11
-// SBK_Research_Dialog()
+void Spell_Research_Select(void);
 
 // WZD o118p12
 // GAME_CheckResearch()
