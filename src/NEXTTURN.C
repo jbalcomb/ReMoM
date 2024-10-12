@@ -418,6 +418,10 @@ void TILE_VisibilityUpdt(void)
 void Next_Turn_Calc(void)
 {
 
+    int16_t itr_players = 0;  // _SI_
+
+
+
     Set_Random_Seed(RNG_AI_Turn_Seed);
 
     Set_Mouse_List(1, mouse_list_hourglass);
@@ -429,7 +433,7 @@ void Next_Turn_Calc(void)
 
     AI_Kill_Lame_Units();
 
-    // TOOD  AI_Overland_Turn__WIP();
+    AI_Next_Turn__STUB();
 
 
 
@@ -442,50 +446,30 @@ void Next_Turn_Calc(void)
     if(g_TimeStop_PlayerNum != 0)
     {
 
-// mov     ax, [g_TimeStop_PlayerNum]
-// mov     dx, 4C8h
-// imul    dx
-// mov     bx, ax
-// sub     _players.mana_reserve[bx-4c8h], 200
-// mov     ax, [g_TimeStop_PlayerNum]      ; index of the Time Stop wizard plus 1 (0 if none)
-// mov     dx, 4C8h
-// imul    dx
-// mov     dx, (offset _players)-4c8h
-// add     dx, banner_id.mana_reserve
-// add     ax, dx
-// mov     bx, ax
-// cmp     [word ptr bx], 0
-// jge     short loc_9EDF3
+        _players[(g_TimeStop_PlayerNum - 1)].mana_reserve -= 200;  // manual says 150
 
-// loc_9EDC2:                              ; index of the Time Stop wizard plus 1 (0 if none)
-// mov     ax, [g_TimeStop_PlayerNum]
-// mov     dx, 4C8h
-// imul    dx
-// mov     bx, ax
-// mov     _players.mana_reserve[bx-4c8h], 0
-// 
-// 
-// mov     ax, [g_TimeStop_PlayerNum]      ; index of the Time Stop wizard plus 1 (0 if none)
-// mov     dx, 4C8h
-// imul    dx
-// mov     bx, ax
-// mov     _players.Globals.Time_Stop[bx-4c8h], 0
-// 
-// 
-// cmp     [g_TimeStop_PlayerNum], 1       ; index of the Time Stop wizard plus 1 (0 if none)
-// jnz     short loc_9EDED
+        if(_players[(g_TimeStop_PlayerNum - 1)].mana_reserve < 0)
+        {
 
-// mov     [MSG_GEs_Lost], 1
+            _players[(g_TimeStop_PlayerNum - 1)].mana_reserve = 0;
 
-// loc_9EDED:                              ; index of the Time Stop wizard plus 1 (0 if none)
-// mov     [g_TimeStop_PlayerNum], 0
+            _players[(g_TimeStop_PlayerNum - 1)].Globals[TIME_STOP] = 0;
+
+            if((g_TimeStop_PlayerNum - 1) == HUMAN_PLAYER_IDX)
+            {
+                MSG_GEs_Lost = 1;
+            }
+
+            g_TimeStop_PlayerNum = 0;
+
+        }
 
     }
     else
     {
 
-        // drake178: decreases the peace counters for all wizards towards all others
-        // call    j_WIZ_DecreasePeaceCs
+        Decrease_Peace_Duration();
+
 
         Update_Players_Gold_Reserve();
 
@@ -525,12 +509,7 @@ void Next_Turn_Calc(void)
         Apply_City_Changes();
 
 
-        // ; processes the diplomatic reactions and persistent
-        // ; effects of global enchantments and the Spell of Mastery
-        // ; WARNING: Herb Mastery is not included here despite
-        // ; having a persistent effect
-        // ; also contains multiple inherited BUGs
-        // TODO  WIZ_ProcessGlobals()            
+        Diplomacy_Growth_For_Enchantments__WIP();
 
 
         /*
@@ -617,7 +596,20 @@ void Next_Turn_Calc(void)
     _turn++;
 
 
-    // TODO  cap gold, mana 30000
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(_players[itr_players].gold_reserve > 30000)
+        {
+            _players[itr_players].gold_reserve = 30000;
+        }
+
+        if(_players[itr_players].mana_reserve > 30000)
+        {
+            _players[itr_players].mana_reserve = 30000;
+        }
+
+    }
 
 
     OVL_EnableIncmBlink();
@@ -3427,7 +3419,348 @@ void Heal_All_Units(void)
 
 
 // WZD o140p24
-// WIZ_ProcessGlobals()
+// drake178: WIZ_ProcessGlobals()
+// MoO2  Module: DIPLOMAC  Diplomacy_Growth_()
+/*
+; processes the diplomatic reactions and persistent
+; effects of global enchantments and the Spell of Mastery
+; WARNING: Herb Mastery is not included here despite
+; having a persistent effect
+; also contains multiple inherited BUGs
+*/
+void Diplomacy_Growth_For_Enchantments__WIP(void)
+{
+    int16_t itr_players = 0;  // _SI_
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+
+        if(_players[itr_players].casting_spell_idx == spl_NONE)
+        {
+            
+            _players[itr_players].casting_cost_original = 0;
+
+        }
+
+        if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Mastery)
+        {
+
+            Change_Relations_For_Enchantments(itr_players, spl_Spell_Of_Mastery, 2);
+
+        }
+
+        if(_players[itr_players].Globals[ETERNAL_NIGHT] > 0)
+        {
+
+            Change_Relations_For_Enchantments(itr_players, spl_Eternal_Night, 10);
+
+        }
+
+
+
+// ovr140:29EA                                                 loc_C693A:                              ; CODE XREF: WIZ_ProcessGlobals+58j
+// ovr140:29EA 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:29EC BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:29EF F7 EA                                           imul    dx
+// ovr140:29F1 8B D8                                           mov     bx, ax
+// ovr140:29F3 80 BF 4D A3 00                                  cmp     [_players.Globals.Evil_Omens+bx], 0
+// ovr140:29F8 7E 11                                           jle     short loc_C695B
+// ovr140:29FA B8 0A 00                                        mov     ax, 10
+// ovr140:29FD 50                                              push    ax                              ; Divisor
+// ovr140:29FE B8 C6 00                                        mov     ax, spl_Evil_Omens
+// ovr140:2A01 50                                              push    ax                              ; Spell_Index
+// ovr140:2A02 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2A03 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2A08 83 C4 06                                        add     sp, 6
+// ovr140:2A0B
+// ovr140:2A0B                                                 loc_C695B:                              ; CODE XREF: WIZ_ProcessGlobals+79j
+// ovr140:2A0B 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2A0D BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2A10 F7 EA                                           imul    dx
+// ovr140:2A12 8B D8                                           mov     bx, ax
+// ovr140:2A14 80 BF 4E A3 00                                  cmp     [_players.Globals.Zombie_Mastery+bx], 0
+// ovr140:2A19 7E 11                                           jle     short loc_C697C
+// ovr140:2A1B B8 0A 00                                        mov     ax, 10
+// ovr140:2A1E 50                                              push    ax                              ; Divisor
+// ovr140:2A1F B8 BC 00                                        mov     ax, spl_Zombie_Mastery
+// ovr140:2A22 50                                              push    ax                              ; Spell_Index
+// ovr140:2A23 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2A24 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2A29 83 C4 06                                        add     sp, 6
+// ovr140:2A2C
+// ovr140:2A2C                                                 loc_C697C:                              ; CODE XREF: WIZ_ProcessGlobals+9Aj
+// ovr140:2A2C 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2A2E BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2A31 F7 EA                                           imul    dx
+// ovr140:2A33 8B D8                                           mov     bx, ax
+// ovr140:2A35 80 BF 4F A3 00                                  cmp     [_players.Globals.Aura_of_Majesty+bx], 0
+// ovr140:2A3A 7E 11                                           jle     short loc_C699D
+// ovr140:2A3C B8 0A 00                                        mov     ax, 10
+// ovr140:2A3F 50                                              push    ax                              ; Divisor
+// ovr140:2A40 B8 3B 00                                        mov     ax, spl_Aura_of_Majesty
+// ovr140:2A43 50                                              push    ax                              ; Spell_Index
+// ovr140:2A44 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2A45 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2A4A 83 C4 06                                        add     sp, 6
+// ovr140:2A4D
+// ovr140:2A4D                                                 loc_C699D:                              ; CODE XREF: WIZ_ProcessGlobals+BBj
+// ovr140:2A4D 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2A4F BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2A52 F7 EA                                           imul    dx
+// ovr140:2A54 8B D8                                           mov     bx, ax
+// ovr140:2A56 80 BF 50 A3 00                                  cmp     [_players.Globals.Wind_Mastery+bx], 0
+// ovr140:2A5B 7E 11                                           jle     short loc_C69BE
+// ovr140:2A5D B8 0A 00                                        mov     ax, 10
+// ovr140:2A60 50                                              push    ax                              ; Divisor
+// ovr140:2A61 B8 39 00                                        mov     ax, spl_Wind_Mastery
+// ovr140:2A64 50                                              push    ax                              ; Spell_Index
+// ovr140:2A65 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2A66 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2A6B 83 C4 06                                        add     sp, 6
+// ovr140:2A6E
+// ovr140:2A6E                                                 loc_C69BE:                              ; CODE XREF: WIZ_ProcessGlobals+DCj
+// ovr140:2A6E 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2A70 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2A73 F7 EA                                           imul    dx
+// ovr140:2A75 8B D8                                           mov     bx, ax
+// ovr140:2A77 80 BF 51 A3 00                                  cmp     [_players.Globals.Suppress_Magic+bx], 0
+// ovr140:2A7C 7E 11                                           jle     short loc_C69DF
+// ovr140:2A7E B8 0A 00                                        mov     ax, 10
+// ovr140:2A81 50                                              push    ax                              ; Divisor
+// ovr140:2A82 B8 4F 00                                        mov     ax, spl_Suppress_Magic
+// ovr140:2A85 50                                              push    ax                              ; Spell_Index
+// ovr140:2A86 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2A87 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2A8C 83 C4 06                                        add     sp, 6
+// ovr140:2A8F
+// ovr140:2A8F                                                 loc_C69DF:                              ; CODE XREF: WIZ_ProcessGlobals+FDj
+// ovr140:2A8F 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2A91 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2A94 F7 EA                                           imul    dx
+// ovr140:2A96 8B D8                                           mov     bx, ax
+// ovr140:2A98 80 BF 52 A3 00                                  cmp     [_players.Globals.Time_Stop+bx], 0
+// ovr140:2A9D 7E 11                                           jle     short loc_C6A00
+// ovr140:2A9F B8 0A 00                                        mov     ax, 10
+// ovr140:2AA2 50                                              push    ax                              ; Divisor
+// ovr140:2AA3 B8 50 00                                        mov     ax, spl_Time_Stop
+// ovr140:2AA6 50                                              push    ax                              ; Spell_Index
+// ovr140:2AA7 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2AA8 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2AAD 83 C4 06                                        add     sp, 6
+// ovr140:2AB0
+// ovr140:2AB0                                                 loc_C6A00:                              ; CODE XREF: WIZ_ProcessGlobals+11Ej
+// ovr140:2AB0 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2AB2 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2AB5 F7 EA                                           imul    dx
+// ovr140:2AB7 8B D8                                           mov     bx, ax
+// ovr140:2AB9 80 BF 53 A3 00                                  cmp     [_players.Globals.Nature_Awareness+bx], 0
+// ovr140:2ABE 7E 11                                           jle     short loc_C6A21
+// ovr140:2AC0 B8 0A 00                                        mov     ax, 10
+// ovr140:2AC3 50                                              push    ax                              ; Divisor
+// ovr140:2AC4 B8 22 00                                        mov     ax, spl_Nature_Awareness
+// ovr140:2AC7 50                                              push    ax                              ; Spell_Index
+// ovr140:2AC8 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2AC9 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2ACE 83 C4 06                                        add     sp, 6
+// ovr140:2AD1
+// ovr140:2AD1                                                 loc_C6A21:                              ; CODE XREF: WIZ_ProcessGlobals+13Fj
+// ovr140:2AD1 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2AD3 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2AD6 F7 EA                                           imul    dx
+// ovr140:2AD8 8B D8                                           mov     bx, ax
+// ovr140:2ADA 80 BF 54 A3 00                                  cmp     [_players.Globals.Natures_Wrath+bx], 0
+// ovr140:2ADF 7E 11                                           jle     short loc_C6A42
+// ovr140:2AE1 B8 0A 00                                        mov     ax, 10
+// ovr140:2AE4 50                                              push    ax                              ; Divisor
+// ovr140:2AE5 B8 28 00                                        mov     ax, spl_Natures_Wrath
+// ovr140:2AE8 50                                              push    ax                              ; Spell_Index
+// ovr140:2AE9 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2AEA 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2AEF 83 C4 06                                        add     sp, 6
+// ovr140:2AF2
+// ovr140:2AF2                                                 loc_C6A42:                              ; CODE XREF: WIZ_ProcessGlobals+160j
+// ovr140:2AF2 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2AF4 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2AF7 F7 EA                                           imul    dx
+// ovr140:2AF9 8B D8                                           mov     bx, ax
+// ovr140:2AFB 80 BF 55 A3 00                                  cmp     [_players.Globals.Herb_Mastery+bx], 0
+// ovr140:2B00 7E 11                                           jle     short loc_C6A63
+// ovr140:2B02 B8 0A 00                                        mov     ax, 10
+// ovr140:2B05 50                                              push    ax                              ; Divisor
+// ovr140:2B06 B8 26 00                                        mov     ax, spl_Herb_Mastery
+// ovr140:2B09 50                                              push    ax                              ; Spell_Index
+// ovr140:2B0A 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B0B 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2B10 83 C4 06                                        add     sp, 6
+// ovr140:2B13
+// ovr140:2B13                                                 loc_C6A63:                              ; CODE XREF: WIZ_ProcessGlobals+181j
+// ovr140:2B13 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2B15 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2B18 F7 EA                                           imul    dx
+// ovr140:2B1A 8B D8                                           mov     bx, ax
+// ovr140:2B1C 80 BF 56 A3 00                                  cmp     [_players.Globals.Chaos_Surge+bx], 0
+// ovr140:2B21 7E 11                                           jle     short loc_C6A84
+// ovr140:2B23 B8 0A 00                                        mov     ax, 10
+// ovr140:2B26 50                                              push    ax                              ; Divisor
+// ovr140:2B27 B8 74 00                                        mov     ax, spl_Chaos_Surge
+// ovr140:2B2A 50                                              push    ax                              ; Spell_Index
+// ovr140:2B2B 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B2C 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2B31 83 C4 06                                        add     sp, 6
+// ovr140:2B34
+// ovr140:2B34                                                 loc_C6A84:                              ; CODE XREF: WIZ_ProcessGlobals+1A2j
+// ovr140:2B34 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2B36 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2B39 F7 EA                                           imul    dx
+// ovr140:2B3B 8B D8                                           mov     bx, ax
+// ovr140:2B3D 80 BF 57 A3 00                                  cmp     [_players.Globals.Doom_Mastery+bx], 0
+// ovr140:2B42 7E 11                                           jle     short loc_C6AA5
+// ovr140:2B44 B8 0A 00                                        mov     ax, 10
+// ovr140:2B47 50                                              push    ax                              ; Divisor
+// ovr140:2B48 B8 75 00                                        mov     ax, spl_Doom_Mastery
+// ovr140:2B4B 50                                              push    ax                              ; Spell_Index
+// ovr140:2B4C 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B4D 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2B52 83 C4 06                                        add     sp, 6
+// ovr140:2B55
+// ovr140:2B55                                                 loc_C6AA5:                              ; CODE XREF: WIZ_ProcessGlobals+1C3j
+// ovr140:2B55 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2B57 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2B5A F7 EA                                           imul    dx
+// ovr140:2B5C 8B D8                                           mov     bx, ax
+// ovr140:2B5E 80 BF 58 A3 00                                  cmp     [_players.Globals.Great_Wasting+bx], 0
+// ovr140:2B63 7E 18                                           jle     short loc_C6ACD
+// ovr140:2B65 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B66 9A 52 00 B8 35                                  call    j_WIZ_GreatWasting              ; attempts to corrupt 4 to 6 tiles in the world,
+// ovr140:2B66                                                                                         ; excluding oceans, already corrupted tiles, and tiles
+// ovr140:2B66                                                                                         ; within a 2 radius of the caster's cities
+// ovr140:2B66                                                                                         ;
+// ovr140:2B66                                                                                         ; BUG: excludes corner tiles outside of catchments too
+// ovr140:2B66                                                                                         ; BUG: can corrupt node tiles
+// ovr140:2B66                                                                                         ; BUG: scuttles the near buffer for no reason
+// ovr140:2B66                                                                                         ; BUG: ignores all protective measures (Consecration,
+// ovr140:2B66                                                                                         ;  Spell Ward, Nightshade) even if the target is a city
+// ovr140:2B6B 59                                              pop     cx
+// ovr140:2B6C B8 0A 00                                        mov     ax, 10
+// ovr140:2B6F 50                                              push    ax                              ; Divisor
+// ovr140:2B70 B8 72 00                                        mov     ax, spl_Great_Wasting
+// ovr140:2B73 50                                              push    ax                              ; Spell_Index
+// ovr140:2B74 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B75 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2B7A 83 C4 06                                        add     sp, 6
+// ovr140:2B7D
+// ovr140:2B7D                                                 loc_C6ACD:                              ; CODE XREF: WIZ_ProcessGlobals+1E4j
+// ovr140:2B7D 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2B7F BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2B82 F7 EA                                           imul    dx
+// ovr140:2B84 8B D8                                           mov     bx, ax
+// ovr140:2B86 80 BF 59 A3 00                                  cmp     [_players.Globals.Meteor_Storm+bx], 0
+// ovr140:2B8B 7E 18                                           jle     short loc_C6AF5
+// ovr140:2B8D 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B8E 9A 2F 00 B8 35                                  call    j_WIZ_MeteorStorm               ; processes the effect of Meteor Storm - hit all cities
+// ovr140:2B8E                                                                                         ; for 1% building destruction, and all units outside of
+// ovr140:2B8E                                                                                         ; cities for 4 points of area fire damage
+// ovr140:2B8E                                                                                         ;
+// ovr140:2B8E                                                                                         ; WARNING: stores the spell attack details in the
+// ovr140:2B8E                                                                                         ;  Call Chaos spell record
+// ovr140:2B93 59                                              pop     cx
+// ovr140:2B94 B8 0A 00                                        mov     ax, 10
+// ovr140:2B97 50                                              push    ax                              ; Divisor
+// ovr140:2B98 B8 71 00                                        mov     ax, spl_Meteor_Storm
+// ovr140:2B9B 50                                              push    ax                              ; Spell_Index
+// ovr140:2B9C 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2B9D 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2BA2 83 C4 06                                        add     sp, 6
+// ovr140:2BA5
+// ovr140:2BA5                                                 loc_C6AF5:                              ; CODE XREF: WIZ_ProcessGlobals+20Cj
+// ovr140:2BA5 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2BA7 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2BAA F7 EA                                           imul    dx
+// ovr140:2BAC 8B D8                                           mov     bx, ax
+// ovr140:2BAE 80 BF 5A A3 00                                  cmp     [_players.Globals.Armageddon+bx], 0
+// ovr140:2BB3 7E 18                                           jle     short loc_C6B1D
+// ovr140:2BB5 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2BB6 9A 5C 00 B8 35                                  call    j_WIZ_Armageddon                ; attempts to turn 4 to 6 tiles in the world, excluding
+// ovr140:2BB6                                                                                         ; oceans, rivers, volcanoes, nodes, and tiles within a
+// ovr140:2BB6                                                                                         ; 2 radius of the caster's cities
+// ovr140:2BB6                                                                                         ;
+// ovr140:2BB6                                                                                         ; BUG: excludes corner tiles outside of catchments too
+// ovr140:2BB6                                                                                         ; BUG: ignores all protective measures (Consecration,
+// ovr140:2BB6                                                                                         ;  Spell Ward, Nightshade) even if the target is a city
+// ovr140:2BBB 59                                              pop     cx
+// ovr140:2BBC B8 0A 00                                        mov     ax, 10
+// ovr140:2BBF 50                                              push    ax                              ; Divisor
+// ovr140:2BC0 B8 78 00                                        mov     ax, spl_Armageddon
+// ovr140:2BC3 50                                              push    ax                              ; Spell_Index
+// ovr140:2BC4 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2BC5 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2BCA 83 C4 06                                        add     sp, 6
+// ovr140:2BCD
+// ovr140:2BCD                                                 loc_C6B1D:                              ; CODE XREF: WIZ_ProcessGlobals+234j
+// ovr140:2BCD 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2BCF BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2BD2 F7 EA                                           imul    dx
+// ovr140:2BD4 8B D8                                           mov     bx, ax
+// ovr140:2BD6 80 BF 5B A3 00                                  cmp     [_players.Globals.Tranquility+bx], 0
+// ovr140:2BDB 7E 11                                           jle     short loc_C6B3E
+// ovr140:2BDD B8 0A 00                                        mov     ax, 10
+// ovr140:2BE0 50                                              push    ax                              ; Divisor
+// ovr140:2BE1 B8 9D 00                                        mov     ax, spl_Tranquility
+// ovr140:2BE4 50                                              push    ax                              ; Spell_Index
+// ovr140:2BE5 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2BE6 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2BEB 83 C4 06                                        add     sp, 6
+// ovr140:2BEE
+// ovr140:2BEE                                                 loc_C6B3E:                              ; CODE XREF: WIZ_ProcessGlobals+25Cj
+// ovr140:2BEE 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2BF0 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2BF3 F7 EA                                           imul    dx
+// ovr140:2BF5 8B D8                                           mov     bx, ax
+// ovr140:2BF7 80 BF 5C A3 00                                  cmp     [_players.Globals.Life_Force+bx], 0
+// ovr140:2BFC 7E 11                                           jle     short loc_C6B5F
+// ovr140:2BFE B8 0A 00                                        mov     ax, 10
+// ovr140:2C01 50                                              push    ax                              ; Divisor
+// ovr140:2C02 B8 9C 00                                        mov     ax, spl_Life_Force
+// ovr140:2C05 50                                              push    ax                              ; Spell_Index
+// ovr140:2C06 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2C07 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2C0C 83 C4 06                                        add     sp, 6
+// ovr140:2C0F
+// ovr140:2C0F                                                 loc_C6B5F:                              ; CODE XREF: WIZ_ProcessGlobals+27Dj
+// ovr140:2C0F 8B C6                                           mov     ax, _SI_itr_players
+// ovr140:2C11 BA C8 04                                        mov     dx, size s_WIZARD
+// ovr140:2C14 F7 EA                                           imul    dx
+// ovr140:2C16 8B D8                                           mov     bx, ax
+// ovr140:2C18 80 BF 5D A3 00                                  cmp     [_players.Globals.Crusade+bx], 0
+// ovr140:2C1D 7E 11                                           jle     short loc_C6B80
+// ovr140:2C1F B8 0A 00                                        mov     ax, 10
+// ovr140:2C22 50                                              push    ax                              ; Divisor
+// ovr140:2C23 B8 9E 00                                        mov     ax, spl_Crusade
+// ovr140:2C26 50                                              push    ax                              ; Spell_Index
+// ovr140:2C27 56                                              push    _SI_itr_players                 ; Player_Index
+// ovr140:2C28 9A 43 00 9D 35                                  call    j_Global_Enchantment_Change_Relations
+// ovr140:2C2D 83 C4 06                                        add     sp, 6
+
+
+
+        if(_players[itr_players].Globals[JUST_CAUSE] > 0)
+        {
+
+            Change_Relations_For_Enchantments(itr_players, spl_Just_Cause, 10);
+
+        }
+
+        if(_players[itr_players].Globals[HOLY_ARMS] > 0)
+        {
+
+            Change_Relations_For_Enchantments(itr_players, spl_Holy_Arms, 10);
+
+        }
+
+    }
+
+}
+
 
 // WZD o140p25
 // MoO2  Module: INITSHIP  Repair_Ships_At_Colonies_()

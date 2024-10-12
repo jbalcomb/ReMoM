@@ -549,7 +549,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
                 SoM_Started(player_idx);
 
-                Global_Enchantment_Change_Relations(player_idx, spl_Spell_Of_Mastery, 1);
+                Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1);
 
             }
 

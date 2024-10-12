@@ -4,6 +4,9 @@
     WIZARDS.EXE
         ovr084
         ovr085
+        ovr086
+        ovr087
+        ovr088
 
 MoO2
     Module: DIPLODEF
@@ -260,6 +263,69 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 
 // WZD o85p18
 // DIPL_DropCityCurses()
+
+
+
+/*
+    WIZARDS.EXE  ovr086
+*/
+
+// WZD o86p0
+
+// IDK_Dipl_s72690()
+// DIPL_AI_To_AI()
+// sub_72DB6()
+// sub_7323F()
+// sub_732D9()
+
+
+
+/*
+    WIZARDS.EXE  ovr087
+*/
+
+// WZD o87p01
+// DIPL_ContactProgress()
+
+// WZD o87p02
+// IDK_Dipl_s7373B()
+
+// WZD o87p03
+// G_DIPL_NeedForWar()
+
+// WZD o87p04
+// G_DIPL_SuperiorityWar()
+
+// WZD o87p05
+// IDK_Dipl_s73F1C()
+
+// WZD o87p06
+// IDK_Dipl_s73FBF()
+
+// WZD o87p07
+// DIPL_GetOffMyLawn()
+
+// WZD o87p08
+void Decrease_Peace_Duration(void);
+
+// WZD o87p09
+// IDK_Dipl_s7436F()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr088
+*/
+
+// WZD o88p0
+
+// sub_74420()
+// DIPL_HumanWarOrPeace()
+// IDK_Dipl_s74B68()
+// sub_74E2F()
+// sub_74E38()
+// sub_74F4A()
 
 
 

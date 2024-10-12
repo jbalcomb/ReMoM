@@ -4,6 +4,9 @@
     WIZARDS.EXE
         ovr084
         ovr085
+        ovr086
+        ovr087
+        ovr088
 
 MoO2
     Module: DIPLODEF
@@ -306,7 +309,7 @@ called from End_Of_Combat()
 Spellbook_Screen()
     if(did_select_spell == ST_TRUE)
         WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
-            Global_Enchantment_Change_Relations(player_idx, spl_Spell_Of_Mastery, 1)
+            Change_Relations_For_Enchantments(player_idx, spl_Spell_Of_Mastery, 1)
                 if(spell_idx == spl_Spell_Of_Mastery)
                     Change_Relations((-50 / divisor), player_idx, itr_players, 10, 0, spell_idx);
 
@@ -826,3 +829,102 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 
 // WZD o85p18
 // DIPL_DropCityCurses()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr086
+*/
+
+// WZD o86p0
+
+// IDK_Dipl_s72690()
+// DIPL_AI_To_AI()
+// sub_72DB6()
+// sub_7323F()
+// sub_732D9()
+
+
+
+/*
+    WIZARDS.EXE  ovr087
+*/
+
+// WZD o87p01
+// DIPL_ContactProgress()
+
+// WZD o87p02
+// IDK_Dipl_s7373B()
+
+// WZD o87p03
+// G_DIPL_NeedForWar()
+
+// WZD o87p04
+// G_DIPL_SuperiorityWar()
+
+// WZD o87p05
+// IDK_Dipl_s73F1C()
+
+// WZD o87p06
+// IDK_Dipl_s73FBF()
+
+// WZD o87p07
+// DIPL_GetOffMyLawn()
+
+// WZD o87p08
+// drake178: WIZ_DecreasePeaceCs()
+/*
+; decreases the peace counters for all wizards towards
+; all others
+*/
+/*
+
+¿ "Once a peace treaty is in place, the opposing wizard will not attack you for about the next dozen turns." ?
+
+*/
+void Decrease_Peace_Duration(void)
+{
+    int16_t itr_players1;  // _CX_
+    int16_t itr_players2;  // _SI_
+
+    for(itr_players1 = 0; itr_players1 < _num_players; itr_players1++)
+    {
+
+        for(itr_players2 = 0; itr_players2 < _num_players; itr_players2++)
+        {
+
+            _players[itr_players1].peace_duration[itr_players2] -= 1;
+
+            if(_players[itr_players1].peace_duration[itr_players2] != 0)
+            {
+
+                _players[itr_players1].peace_duration[itr_players2] = 0;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+// WZD o87p09
+// IDK_Dipl_s7436F()
+
+
+
+
+/*
+    WIZARDS.EXE  ovr088
+*/
+
+// WZD o88p0
+
+// sub_74420()
+// DIPL_HumanWarOrPeace()
+// IDK_Dipl_s74B68()
+// sub_74E2F()
+// sub_74E38()
+// sub_74F4A()

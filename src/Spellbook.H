@@ -513,7 +513,7 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity);
 // sub_AC19E()
 
 // WZD o128p07
-void Global_Enchantment_Change_Relations(int16_t player_idx, int16_t spell_idx, int16_t divisor);
+void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, int16_t divisor);
 
 // WZD o128p08
 void WIZ_ResearchSort__STUB(int16_t player_idx, int16_t count);

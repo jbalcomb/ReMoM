@@ -3252,7 +3252,7 @@ XREF:
 
 
 */
-void Global_Enchantment_Change_Relations(int16_t player_idx, int16_t spell_idx, int16_t divisor)
+void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, int16_t divisor)
 {
     int16_t itr_players = 0;  // _DI_
 
