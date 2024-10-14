@@ -1446,7 +1446,7 @@ void Build_Overland_Enchantment_List(void)
         {
             if(players_globals[itr] > 0)
             {
-                for(itr2 = 0; itr < 215; itr2++)
+                for(itr2 = 0; itr2 < 215; itr2++)
                 {
                     if(
                         (spell_data_table[itr2].Param0 == itr)  /* ; unit type, base damage, UE flag, or CE index */

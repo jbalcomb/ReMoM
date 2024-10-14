@@ -439,6 +439,8 @@ enum e_MAGIC_REALM
     212 is 'Spell of Mastery
     5 * 40 + 12
 
+¿ sbr_UNDEFINED  = 0FFFFFFFFh ?
+
 */
 enum e_SPELL_BOOK_REALM
 {
@@ -787,7 +789,7 @@ struct s_SPELL_DATA
     /* 1C */  int16_t research_cost;
     /* 1E */  int8_t Sound;
     /* 1F */  /* int8_t Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
-    /* 20 */  int8_t Param0;                //  ; unit type, base damage, UE flag, or CE index
+    /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
     /* 21 */  int8_t Param1;
     /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
     /* 24 */
@@ -1173,7 +1175,7 @@ struct s_WIZARD
     /* 025C */ uint16_t mana_reserve;       /*  */
     /* 025E */ int32_t  spell_casting_skill;  /* "spell casting skill" */
     /* 0262 */ int16_t researching_spell_idx;  /* spells_list[] spell_idx of the spell currently being researched */
-    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */
+    /* 0264 */ uint8_t  spells_list[NUM_SPELLS];   /* TODO should be [6][40] or some odd, equivalent struct */ /* enum? known, knowable, ? */
     /* 0354 */ uint16_t Defeated_Wizards;  /* ¿ bifield of bit_num == play_num ? */
     /* 0356 */ uint16_t gold_reserve;       /*  */
     /* 0358 */ uint16_t Unknown_358h;
@@ -3297,9 +3299,8 @@ extern SAMB_ptr item_view_background_seg;
 // drake178: IMG_USW_ItemPowers IPOW_ICONS
 extern SAMB_ptr item_power_icons_seg[22];
 
-// WZD dseg:979A 00 00                                           IMG_MOODWIZPortrait@ dw 0               ; DATA XREF: IDK_DiplAnim_s6FDA1+4Cr ...
-// WZD dseg:979A                                                                                         ; 3 frame image (good, bad, neutral)
-
+// WZD dseg:979A
+extern SAMB_ptr IMG_MOODWIZPortrait;
 
 // WZD dseg:979C
 // drake178: IMG_USW_WaterBase@
@@ -3347,7 +3348,11 @@ extern SAMB_ptr unitview_stat_gold_icons_seg[15];
 extern SAMB_ptr unitview_stat_icons_seg[15];
 
 // WZD dseg:97F8
-extern SAMB_ptr special_seg[145];
+// extern SAMB_ptr special_seg[145];
+extern SAMB_ptr special_seg[144];
+
+// WZD dseg:9918
+extern SAMB_ptr diplomacy_mirror_seg;
 
 // WZD dseg:991A
 // drake178: IMG_OVL_EZConfirmBG@
@@ -4178,9 +4183,10 @@ extern int16_t AI_Eval_After_Spell;
 
 // WZD dseg:CA10 00 00                                           CMB_SliderLimit dw 0                    ; DATA XREF: CMB_SliderRedraw+7Br ...
 // WZD dseg:CA10                                                                                         ; is this really necessary?
-// WZD dseg:CA12 00 00                                           GAME_MP_SpellVar_1 dw 0                 ; DATA XREF: SBK_SliderRedraw+9Fw ...
-// WZD dseg:CA12                                                                                         ; holds the spell strength during sliders
-// WZD dseg:CA12                                                                                         ; holds the anim stage during global cast anims
+
+// WZD dseg:CA12
+extern int16_t GAME_MP_SpellVar_1;
+
 // WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
 // WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
 
@@ -4190,10 +4196,13 @@ extern int16_t SBK_Spell_Index;
 // WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
 // WZD dseg:CA24 00 00                                           word_434C4 dw 0                         ; DATA XREF: IDK_SomScr_Load+8Cw ...
-// WZD dseg:CA26 00 00                                           IMG_SBK_SliderBG@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+38w ...
-// WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
-// WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
-// WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
+
+// WZD dseg:CA26
+extern SAMB_ptr IMG_SBK_SliderBG;
+
+// WZD dseg:CA28
+extern SAMB_ptr GAME_MP_SpellVar_2;
+
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 // WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:CA2C
@@ -4223,12 +4232,15 @@ extern SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA49 00                                              db    0
 // WZD dseg:CA4A 00                                              db    0
 // WZD dseg:CA4B 00                                              db    0
-// WZD dseg:CA4C 00 00                                           GUI_Interaction_Done dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
+
+// WZD dseg:CA4C
+extern int16_t GUI_Interaction_Done;
+
 // WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
-// WZD dseg:CA50 00 00                                           GAME_MP_SpellVar_3 dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
-// WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
-// WZD dseg:CA50                                                                                         ; player_idx during global cast anims
-// WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
+
+// WZD dseg:CA50
+extern int16_t GAME_MP_SpellVar_3;
+
 // WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
 
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data

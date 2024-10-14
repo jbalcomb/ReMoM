@@ -843,6 +843,11 @@ SAMB_ptr spell_animation_seg;
 // WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
 
 // WZD dseg:9134
+// drake178: SND_Spell_Music
+/*
+¿ why did he name it 'Spell Music' ?
+¿ is this only used for the music for spells ?
+*/
 SAMB_ptr SND_Spell_Music;
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
@@ -1644,8 +1649,8 @@ SAMB_ptr item_view_background_seg;
 // XREF:  GFX_Swap_AppendItems()  USW_Build_Effect_List()
 SAMB_ptr item_power_icons_seg[22];
 
-// WZD dseg:979A 00 00                                           IMG_MOODWIZPortrait@ dw 0               ; DATA XREF: IDK_DiplAnim_s6FDA1+4Cr ...
-// WZD dseg:979A                                                                                         ; 3 frame image (good, bad, neutral)
+// WZD dseg:979A
+SAMB_ptr IMG_MOODWIZPortrait;
 
 // WZD dseg:979C
 // drake178: IMG_USW_WaterBase@
@@ -1692,9 +1697,19 @@ SAMB_ptr unitview_stat_gold_icons_seg[15];
 // drake178: IMG_USW_Stat_Icons
 SAMB_ptr unitview_stat_icons_seg[15];
 
-// WZD dseg:97F8 00                                              
-// special_seg db    0                     ; DATA XREF: GFX_Swap_AppendUView+1Dw ...
-SAMB_ptr special_seg[145];
+// WZD dseg:97F8
+/*
+
+OVL_DrawGlobalAnim()
+    FLIC_Draw(start_x, start_y, special_seg[288]);
+
+*/
+// SAMB_ptr special_seg[145];
+SAMB_ptr special_seg[144];
+
+// WZD dseg:9918
+SAMB_ptr diplomacy_mirror_seg;
+
 
 // WZD dseg:991A
 // drake178: IMG_OVL_EZConfirmBG@
@@ -2690,9 +2705,22 @@ int16_t AI_Eval_After_Spell;
 
 // WZD dseg:CA10 00 00                                           CMB_SliderLimit dw 0                    ; DATA XREF: CMB_SliderRedraw+7Br ...
 // WZD dseg:CA10                                                                                         ; is this really necessary?
-// WZD dseg:CA12 00 00                                           GAME_MP_SpellVar_1 dw 0                 ; DATA XREF: SBK_SliderRedraw+9Fw ...
-// WZD dseg:CA12                                                                                         ; holds the spell strength during sliders
-// WZD dseg:CA12                                                                                         ; holds the anim stage during global cast anims
+
+// WZD dseg:CA12
+/*
+; holds the spell strength during sliders
+; holds the anim stage during global cast anims
+*/
+/*
+
+WIZ_GlobalSpellAnim()
+    for(GAME_MP_SpellVar_1 = 0; ((GAME_MP_SpellVar_1 < 120) && (GUI_Interaction_Done == 0)); GAME_MP_SpellVar_1++)
+...animation counter...anim_ctr...
+
+incrememnted in WIZ_GlobalSpellAnim()
+*/
+int16_t GAME_MP_SpellVar_1;
+
 // WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
 // WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
 
@@ -2702,10 +2730,33 @@ int16_t SBK_Spell_Index;
 // WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
 // WZD dseg:CA24 00 00                                           word_434C4 dw 0                         ; DATA XREF: IDK_SomScr_Load+8Cw ...
-// WZD dseg:CA26 00 00                                           IMG_SBK_SliderBG@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+38w ...
-// WZD dseg:CA28 00 00                                           GAME_MP_SpellVar_2 dw 0                 ; DATA XREF: CMB_SliderRedraw+3Fr ...
-// WZD dseg:CA28                                                                                         ; holds the caster ID during combat sliders
-// WZD dseg:CA28                                                                                         ; holds the mirror reveal mask during global cast anims
+
+// WZD dseg:CA26
+/*
+
+OVL_LoadGlobalAnim()
+    // DIPLOMAC.LBX, 001    "PANE"      "mirror pane"
+    IMG_SBK_SliderBG = LBX_Reload_Next(diplomac_lbx_file__ovr137, 1, _screen_seg);
+
+*/
+SAMB_ptr IMG_SBK_SliderBG;
+
+// WZD dseg:CA28
+/*
+; holds the caster ID during combat sliders
+; holds the mirror reveal mask during global cast anims
+*/
+/*
+
+OVL_LoadGlobalAnim()
+        // SPECFX.LBX, 054  "MASK1"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 54, _screen_seg);
+        // SPECFX.LBX, 055  "MASK2"     ""
+        GAME_MP_SpellVar_2 = LBX_Reload_Next(specfx_lbx_file__ovr137, 55, _screen_seg);
+
+*/
+SAMB_ptr GAME_MP_SpellVar_2;
+
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 // WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
 // WZD dseg:CA2C
@@ -2720,8 +2771,18 @@ SAMB_ptr IMG_SBK_Anims;
 // WZD dseg:CA36
 // drake178: IMG_SBK_PageText
 /*
+
+OVL_LoadGlobalAnim()
+    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 770);  // 770 PR, 12320 B
+OVL_DrawGlobalAnim()
+    Draw_Picture_To_Bitmap(IMG_SBK_SliderBG, IMG_SBK_PageText);
+
 Merchant_Popup_Load()
-    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);
+    IMG_SBK_PageText = Allocate_Next_Block(_screen_seg, 30);  // 30 PR, 480 B
+Merchant_Popup_Draw()
+        Item_View_Prepare()
+            item_view_workarea_bitm
+
 */
 SAMB_ptr IMG_SBK_PageText;
 
@@ -2740,12 +2801,19 @@ SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA49 00                                              db    0
 // WZD dseg:CA4A 00                                              db    0
 // WZD dseg:CA4B 00                                              db    0
-// WZD dseg:CA4C 00 00                                           GUI_Interaction_Done dw 0               ; DATA XREF: SBK_SpellSlider+D5w ...
+
+// WZD dseg:CA4C
+int16_t GUI_Interaction_Done;
+
 // WZD dseg:CA4E 00 00                                           IDK_WizTgt_SplCmpl_w434EE dw 0          ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+20Ar ...
-// WZD dseg:CA50 00 00                                           GAME_MP_SpellVar_3 dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
-// WZD dseg:CA50                                                                                         ; clicked spell label index during combat sliders
-// WZD dseg:CA50                                                                                         ; player_idx during global cast anims
-// WZD dseg:CA50                                                                                         ; city_idx during ¿ ?
+
+// WZD dseg:CA50
+/*
+; clicked spell label index during combat sliders
+; player_idx during global cast anims
+; city_idx during ¿ ?*/
+int16_t GAME_MP_SpellVar_3;
+
 // WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
 
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data

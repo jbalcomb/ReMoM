@@ -53,7 +53,7 @@ enum e_SPELLS
     spl_Regeneration        =  31,
     spl_Behemoth            =  32,
     spl_Entangle            =  33,
-    spl_Nature_Awareness    =  34,
+    spl_Natures_Awareness    =  34,
     spl_Call_Lightning      =  35,
     spl_Colossus            =  36,
     spl_Earth_Gate          =  37,

@@ -45,7 +45,7 @@ void Full_Draw_Main_Screen(void);
 void OVL_MosaicFlip__STUB(void);
 
 // WZD o134p08
-// OVL_CounterMessage()
+void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t spell_idx, char * counter_spell_name);
 
 // WZD o134p09
 // sub_B9D14()

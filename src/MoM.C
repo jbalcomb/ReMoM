@@ -85,10 +85,23 @@ void Screen_Control(void)
             // Stack not being display until after a Next-Turn
             // ¿ not getting an entity_idx in Draw_Map_Units() ?
             // No-Workie  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-            
+
             // HACK:  demo "You can only sell back one building each turn."
             _CITIES[_city_idx].did_sell_building = ST_TRUE;
 
+            // HACK:  'Just Cause'
+            // ¿ have Life books ?
+            if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] > 0)
+            {
+                _players[HUMAN_PLAYER_IDX].spells_list[spl_Just_Cause] = 2 /* S_Known */;
+                (_players[HUMAN_PLAYER_IDX].spells_list[((3 * NUM_SPELLS_PER_MAGIC_REALM) + 7)] = 2);
+
+                _players[HUMAN_PLAYER_IDX].spells_list[126] = 2 /* S_Known */;
+                _players[HUMAN_PLAYER_IDX].spells_list[127] = 2 /* S_Known */;
+                _players[HUMAN_PLAYER_IDX].spells_list[128] = 2 /* S_Known */;
+
+            }
+            
             // HACK:  trigger 'Event'
             DBG_trigger_event = ST_TRUE;
             // DBG_trigger_event_plague = ST_TRUE;

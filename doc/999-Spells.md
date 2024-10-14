@@ -13,6 +13,34 @@ Spell Researching
 
 
 
+Spell Cast Animation - Global Enchantment
+Global Enchantment Animation
+
+animation counter
+    GAME_MP_SpellVar_1
+player index
+    GAME_MP_SpellVar_3
+spell index
+    SBK_Spell_Index
+
+
+
+
+
+ovr128  
+ovr129  
+ovr130  
+ovr131  
+ovr132  
+ovr133  
+ovr134  
+ovr135  
+ovr136  
+ovr137  
+ovr138  
+
+
+
 ...
 ...
 ...
@@ -103,4 +131,53 @@ Next_Turn_Proc()
             |-> WIZ_LearnSpell__WIP()
             |-> Spell_Research_Select()
             |-> AI_Research_Picker__STUB()
+
+
+
+
+
+
+## Spell Casting
+
+Next_Turn_Proc()
+    |-> Cast_Spell_Overland__WIP()
+
+Spellbook_Screen()
+    |-> WIZ_SetOverlandSpell__WIP
+
+```c
+Next_Turn_Proc()
+{
+    if(
+        (_players[_human_player_idx].casting_cost_remaining <= 0)
+        &&
+        (_players[_human_player_idx].casting_spell_idx > spl_NONE))
+    {
+        Cast_Spell_Overland__WIP(_human_player_idx);
+    }
+}
+```
+
+```c
+Spellbook_Screen()
+{
+    if(did_select_spell == ST_TRUE)
+    {
+        WIZ_SetOverlandSpell__WIP(HUMAN_PLAYER_IDX, spell_idx, spellbook_page_spell_index);
+    }
+}
+```
+
+
+spl_Time_Stop           handles in-line     (just sets g_TimeStop_PlayerNum)
+spl_Natures_Awareness   calls out
+spl_Holy_Arms           calls out
+spl_Crusade             handles in-line
+spl_Awareness           calls out
+
+
+
+
+
+WIZ_GlobalSpellAnim()
 

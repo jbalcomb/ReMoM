@@ -265,7 +265,7 @@ void Draw_Picture_Windowed(int16_t x, int16_t y, byte_ptr pict_seg);
 void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr src_pict_seg);
 
 // WZD s30p27
-// LBX_IMG_Overlay()
+void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
 
 // WZD s30p28
 // LBX_IMG_StripColors()
@@ -398,7 +398,7 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 // UU_LBX_IMG_GetIntensity()
 
 // WZD s33p11
-// LBX_IMG_PartialCopy()
+void LBX_IMG_PartialCopy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p12
 void Clear_Memory_Far(byte_ptr dst, int16_t n);

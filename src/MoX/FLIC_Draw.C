@@ -1093,12 +1093,16 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     {
         return;
     }
+
     x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
+
     if(x2 < 0)
     {
         return;
     }
+
     y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
+
     if(y2 < 0)
     {
         return;
@@ -1114,6 +1118,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
         skip_x = 0;
         cx1 = x;
     }
+
     if(y < 0)
     {
         skip_y = (-y);
@@ -1133,6 +1138,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     {
         cwidth = (dst_width - cx1);
     }
+
     if(cwidth > dst_width)
     {
         cwidth = dst_width;
@@ -1146,6 +1152,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
     {
         cheight = (dst_height - cy1);
     }
+
     if(cheight > dst_height)
     {
         cheight = dst_height;
@@ -1167,6 +1174,122 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 
 // WZD s30p27
 // LBX_IMG_Overlay()
+/*
+; overlays one LBX image onto another, trimming the
+; source if necessary; Left and Top are the coordinates
+; in the target image, the source is always wholly
+; copied if possible
+*/
+/*
+
+*/
+void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg)
+{
+
+    int16_t dst_ofst;
+    int16_t src_ofst;
+    int16_t cwidth;
+    int16_t cy1;
+    int16_t cx1;
+    int16_t skip_y;
+    int16_t skip_x;
+    int16_t dst_width;
+    int16_t dst_skip_y;
+    int16_t src_skip_y;
+    int16_t y2;
+    int16_t x2;
+    int16_t dst_height;  // _SI_
+    int16_t cheight;  // _DI_
+    byte_ptr dst;  // DNE in Dasm
+    byte_ptr src;  // DNE in Dasm
+
+    dst_width = FLIC_GET_WIDTH(dst_pict_seg);
+    dst_height = FLIC_GET_HEIGHT(dst_pict_seg);
+
+    if(((dst_width - 1) < x) || ((dst_height - 1) < y))
+    {
+        return;
+    }
+
+    x2 = (x + FLIC_GET_WIDTH(src_pict_seg) - 1);
+
+    if(x2 < 0)
+    {
+        return;
+    }
+
+    y2 = (y + FLIC_GET_HEIGHT(src_pict_seg) - 1);
+
+    if(y2 < 0)
+    {
+        return;
+    }
+
+    if(x < 0)
+    {
+        skip_x = (-x);
+        cx1 = 0;
+    }
+    else
+    {
+        skip_x = 0;
+        cx1 = x;
+    }
+
+    if(y < 0)
+    {
+        skip_y = (-y);
+        cy1 = 0;
+    }
+    else
+    {
+        skip_y = 0;
+        cy1 = y;
+    }
+
+    if((dst_width - 1) > x2)
+    {
+        cwidth = (x2 - cx1 + 1);
+    }
+    else
+    {
+        cwidth = (dst_width - cx1);
+    }
+
+    if(cwidth > dst_width)
+    {
+        cwidth = dst_width;
+    }
+
+    if((dst_height - 1) > y2)
+    {
+        cheight = (y2 - cy1 + 1);
+    }
+    else
+    {
+        cheight = (dst_height - cy1);
+    }
+
+    if(cheight > dst_height)
+    {
+        cheight = dst_height;
+    }
+
+    dst_ofst = (sizeof(struct s_FLIC_HDR) + ((cx1 * dst_height) + cy1));
+    dst_skip_y = (dst_height - cheight);
+
+    src_ofst = (sizeof(struct s_FLIC_HDR) + (skip_x * FLIC_GET_HEIGHT(src_pict_seg)) + skip_y);
+    src_skip_y = (FLIC_GET_HEIGHT(src_pict_seg) - cheight);
+
+    dst = (dst_pict_seg + dst_ofst);
+    src = (src_pict_seg + src_ofst);
+
+    // LBX_IMG_PartialCopy(dst_ofst, dst_pict_seg, src_ofst, src_pict_seg, dst_skip_y, src_skip_y, cwidth, cheight);
+    LBX_IMG_PartialCopy(dst, src, dst_skip_y, src_skip_y, cwidth, cheight);
+
+
+}
+
 
 // WZD s30p28
 // LBX_IMG_StripColors()
@@ -2727,6 +2850,12 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 // WZD s33p07
 // MoO2  Module: draw  Color_Stream_Copy_()
 // 1oom  gfxaux.c  static void gfx_aux_overlay_do_normal(uint8_t *dest, const uint8_t *src, int w, int h, int destskipw, int srcskipw)
+/*
+¿ exact same as LBX_IMG_PartialCopy() ?
+Color_Stream_Copy() skips transparent pixels from the src
+LBX_IMG_PartialCopy() only draws 
+
+*/
 void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
     int16_t itr_height;  // _CX_
@@ -2821,7 +2950,52 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 // UU_LBX_IMG_GetIntensity()
 
 // WZD s33p11
-// LBX_IMG_PartialCopy()
+// drake178: LBX_IMG_PartialCopy()
+/*
+; overlays part of an LBX image on another
+*/
+/*
+...copies transparent from the src to the dst...
+
+JZ vs. JNZ is same in MoO2 Mask_Bitmap_Pixels_() vs. Mask_Bitmap_Pixels_Inverse_()
+¿ ~ Copy_Bitmap_Pixels() ?
+
+¿ exact same as Color_Stream_Copy_() ?
+
+// WZD s33p07
+// MoO2  Module: draw  Color_Stream_Copy_()
+// 1oom  gfxaux.c  static void gfx_aux_overlay_do_normal(uint8_t *dest, const uint8_t *src, int w, int h, int destskipw, int srcskipw)
+void Color_Stream_Copy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+
+*/
+void LBX_IMG_PartialCopy(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
+{
+    int16_t itr_height;  // _CX_
+    uint8_t pixel;  // _AL_
+
+    CS_height = height;
+    CS_width = width;
+
+    while(CS_width)
+    {
+        itr_height = CS_height;
+        while(itr_height)
+        {
+            pixel = *src++;
+            dst++;
+            if(pixel == ST_TRANSPARENT)
+            {
+                dst--;
+                *dst++ = pixel;
+            }
+            itr_height--;
+        }
+        dst += dst_skip_y;
+        src += src_skip_y;
+        CS_width--;
+    }
+
+}
 
 
 // WZD s33p12

@@ -1,5 +1,7 @@
 /*
     WIZARDS.EXE
+        ovr136
+        ovr137
         ovr138
 
 MoO2
@@ -33,6 +35,94 @@ extern int16_t GAME_SoM_Cast_By;
 // WZD dseg:CA5A 00 00                                           word_434FA dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+9Dw ...
 
 // WZD dseg:CA5A                                                 END: ovr138 - Uninitialized Data
+
+
+
+
+/*
+    WIZARDS.EXE  ovr136
+*/
+
+// WZD o136p01
+// Select_Hero_To_Ressurect()
+
+// WZD o136p02
+// SBK_LoadSpellSlider()
+
+// WZD o136p03
+// SBK_SliderRedraw()
+
+// WZD o136p04
+// SBK_SpellSlider()
+
+// WZD o136p05
+// CMB_LoadSpellSlider()
+
+// WZD o136p06
+// CMB_SliderRedraw()
+
+// WZD o136p07
+// CMB_SpellSlider()
+
+// WZD o136p08
+// sub_BD8A8()
+
+// WZD o136p09
+// sub_BDBC5()
+
+// WZD o136p10
+// IDK_SplBk_OvlEnch_sBDEA0()
+
+// WZD o136p11
+// sub_BE356()
+
+// WZD o136p12
+// sub_BE656()
+
+
+
+/*
+    WIZARDS.EXE  ovr137
+*/
+
+// WZD o137p01
+// sub_BE860()
+
+// WZD o137p02
+// sub_BE9FF()
+
+// WZD o137p03
+// sub_BEB92()
+
+// WZD o137p04
+// sub_BECD9()
+
+// WZD o137p05
+// IDK_City_sBEE75()
+
+// WZD o137p06
+// sub_BF048()
+
+// WZD o137p07
+// sub_BF2AF()
+
+// WZD o137p08
+void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx);
+
+// WZD o137p09
+void OVL_DrawGlobalAnim(void);
+
+// WZD o137p10
+void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx);
+
+// WZD o137p11
+// IDK_SplScr_sBFAA5()
+
+// WZD o137p12
+// IDK_WizTgtSpl_sBFC85()
+
+// WZD o137p13
+// IDK_DiploScrn()
 
 
 

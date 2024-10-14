@@ -386,6 +386,8 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
     int16_t itr_spells;  // _SI_
     int16_t spell_status;  // _DI_
 
+    int16_t spells_list_status = 0;  // DNE in Dasm
+
     for(itr_realms = 0; itr_realms < NUM_MAGIC_REALMS; itr_realms++)
     {
 
@@ -395,6 +397,14 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
             spell_status = 0;
             
             spell_idx = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + (itr_spells + 1));
+
+            // if(((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells) == spl_Just_Cause)
+            // {
+            //     __debugbreak();
+            // }
+            // spells_list_status = _players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)];
+            // spells_list_status = _players[HUMAN_PLAYER_IDX].spells_list[spl_Just_Cause];
+
 
             switch(type)
             {
@@ -3227,7 +3237,7 @@ spl_Aura_of_Majesty     + 10   0
 spl_Wind_Mastery        -  4  12
 spl_Suppress_Magic      - 25  12
 spl_Time_Stop              0  12
-spl_Nature_Awareness       0  12
+spl_Natures_Awareness       0  12
 spl_Natures_Wrath       - 20  12
 spl_Herb_Mastery           0  12
 spl_Chaos_Surge         - 10  12
@@ -3310,7 +3320,7 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
-            if(spell_idx == spl_Nature_Awareness)
+            if(spell_idx == spl_Natures_Awareness)
             {
                 Change_Relations((0 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }

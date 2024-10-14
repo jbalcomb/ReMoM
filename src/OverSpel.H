@@ -24,7 +24,7 @@ extern "C" {
 // SPL_Get_CityE_Index()
 
 // WZD o135p02
-// WIZ_GetSpellStrength()
+int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, int16_t magic_realm);
 
 // WZD o135p03
 // sub_BA3A4()

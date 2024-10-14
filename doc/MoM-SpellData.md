@@ -6,6 +6,7 @@ spell_data_table
 struct s_SPELL_DATA * spell_data_table;
 
 
+/* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
 
 
 
@@ -74,7 +75,7 @@ struct s_SPELL_DATA
     /* 1C */  int16_t research_cost;
     /* 1E */  int8_t Sound;
     /* 1F */  /* int8_t Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
-    /* 20 */  int8_t Param0;                //  ; unit type, base damage, UE flag, or CE index
+    /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
     /* 21 */  int8_t Param1;
     /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
     /* 24 */

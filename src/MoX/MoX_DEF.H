@@ -47,6 +47,14 @@
 
 
 /*
+#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
+#define MIN(a, b) (((a) <  (b)) ? (a) : (b))
+...JL vs. JLE...
+...JL would take b when a is equal to be
+...that does not *feel* logical
+
+*/
+/*
 1oom  (ReMoO1)
 C:\STU\developp\1oom\src\comp.h
 ¿ ADDSATT(), SUBSATT(), SUBSAT0() ?
@@ -57,12 +65,14 @@ Eh?
 */
 #ifndef MIN
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
+// #define MIN(a, b) (((a) <  (b)) ? (a) : (b))
 #endif
 #ifndef MAX
 #define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #endif
 #ifndef SETMIN
 #define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
+// #define SETMIN(a, b) do { if ((a) < (b)) { (a) = (b); } } while (0)
 #endif
 #ifndef SETMAX
 #define SETMAX(a, b) do { if ((b) < (a)) { (a) = (b); } } while (0)
