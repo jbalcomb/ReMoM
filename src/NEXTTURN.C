@@ -981,7 +981,7 @@ int16_t Casting_Cost_Reduction(int16_t player_idx, int16_t spell_idx)
 
     if(
         (_players[player_idx].conjurer > 0) &&
-        (spell_data_table[spell_idx].type == 0)  /* Summoning_Spell */
+        (spell_data_table[spell_idx].type == 0)  /* sdt_Summoning */
     )
     {
         casting_cost_reduction += 25;

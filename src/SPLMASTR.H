@@ -86,13 +86,13 @@ extern int16_t GAME_SoM_Cast_By;
 */
 
 // WZD o137p01
-// sub_BE860()
+void IDK_SummonAnim_Load(int16_t unit_type, int16_t player_idx);
 
 // WZD o137p02
-// sub_BE9FF()
+void IDK_SummonAnim_Draw(void);
 
 // WZD o137p03
-// sub_BEB92()
+void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx);
 
 // WZD o137p04
 // sub_BECD9()

@@ -2664,7 +2664,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 
         if(CalledFromFlag == uvt_Prod)
         {
-            if( (_unit_type_table[unit_type].Abilities & 0x40 /* Ab_Invisibility */) != 0)
+            if( (_unit_type_table[unit_type].Abilities & UA_INVISIBILITY) != 0)
             {
                 Replace_Color_All(UnitDraw_WorkArea, 233);
             }
@@ -2977,7 +2977,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
 
     }
 
-    if(_UNITS[unit_idx].owner_idx == -1)
+    if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
     {
         return ST_TRUE;
     }

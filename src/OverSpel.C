@@ -14,7 +14,9 @@
 // WZD dseg:6A42 53 70 45 63 46 78 00                            cnst_SPECFX_FileA db 'SpEcFx',0         ; DATA XREF: IDK_Cast_Disenchant_True+15o ...
 // WZD dseg:6A42                                                                                         ; should use dseg:5e17
 // WZD dseg:6A49 20 68 61 73 20 62 65 65 6E 20 64 69 73 70 65 6C+cnst_Dispel_Msg_2 db ' has been dispelled.',0 ; should use dseg:684b
-// WZD dseg:6A5E 6D 65 73 73 61 67 65 00                         cnst_MESSAGE_FileE db 'message',0       ; DATA XREF: IDK_Cast_Disenchant_True+75Fo ...
+
+// WZD dseg:6A5E
+char message_lbx_file__ovr135[] = "message";
 
 // WZD dseg:6A66
 char str_SuppressMagic[] = "Suppress Magic";
@@ -155,6 +157,9 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t players_globals_idx = 0;  // DNE in Dasm, uses Dispel_Chance
     uint8_t * ptr_players_globals = 0;
     int16_t spell_idx = 0;  // _DI_
+    struct s_SPELL_DATA_TABLE * DBG_spell_data_table;
+    // int8_t * DBG_spell_data_table__Param0;
+    int16_t DBG_spell_data_table__Param0;
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -331,7 +336,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         {
 
 // enum enum_SPELL_DATA_TYPE
-// Summoning_Spell         =  0,
+// sdt_Summoning         =  0,
 // Unit_Enchantment        =  1,
 // City_Enchantment        =  2,
 // City_Curse              =  3,
@@ -402,24 +407,136 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
 // ptr_players_globals = &_players[player_idx].Globals[0];
 
+/*
+    IDA colors
+        sdt_Summoning          ( 0)  #24 reddish-brown
+
+        sdt_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
+
+        sdt_Crafting_Spell     (11)  #17 brown
+
+*/
+
             switch(spell_data_table[spell_idx].type)
             {
+                case sdt_Summoning:
+                {
+
+                    // ¿ BUG should be ((player_idx == HUMAN_PLAYER_IDX) && (_units < 950)) ?
+                    if(
+                        (_units < 980)
+                        ||
+                        (player_idx == HUMAN_PLAYER_IDX)
+                        ||
+                        (
+                            (player_idx != HUMAN_PLAYER_IDX)
+                            &&
+                            (_units < 950)
+                        )
+                    )
+                    {
+
+                        if(spell_idx == spl_Floating_Island)
+                        {
+
+                            AI_Eval_After_Spell = ST_TRUE;
+
+                            // TODO  Cast_FloatingIsland(player_idx);
+
+                        }
+                        else
+                        {
+
+                            Create_Unit__WIP(spell_data_table[spell_idx].Param0, player_idx, _players[player_idx].summon_wx, _players[player_idx].summon_wy, _players[player_idx].summon_wp, ST_UNDEFINED);
+
+                            UNIT_RemoveExcess((_units - 1));
+
+                        }
+
+                        MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
+
+                        MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);
+
+                        if(spell_idx != spl_Floating_Island)
+                        {
+
+                            if(
+                                (player_idx == HUMAN_PLAYER_IDX)
+                                ||
+                                (
+                                    (magic_set.Enemy_Spells == ST_TRUE)
+                                    &&
+                                    (_players[player_idx].Dipl.Contacted[HUMAN_PLAYER_IDX] == ST_TRUE)
+                                    &&
+                                    (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                                )
+                            )
+                            {
+
+                                DBG_spell_data_table = &spell_data_table[spell_idx];
+
+                                // DBG_spell_data_table__Param0 = spell_data_table[spell_idx].Param0;
+                                DBG_spell_data_table__Param0 = GET_2B_OFS(DBG_spell_data_table, 0x20);
+
+                                // DBG_spell_data_table__Param0 = GET_1B_OFS(DBG_spell_data_table, (0x20 - 1));
+
+                                // IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
+                                IDK_SummonAnim(DBG_spell_data_table__Param0, MultiPurpose_Local_Var, player_idx);
+
+                                AI_Eval_After_Spell = ST_TRUE;
+
+                            }
+
+                        }
+
+                        _UNITS[(_units - 1)].Finished = ST_FALSE;
+                        _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
+
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+
+                            _active_world_x = _UNITS[_units].wx;
+                            _active_world_y = _UNITS[_units].wy;
+                            _map_plane = _UNITS[_units].wp;
+
+                            // ; BUG: this function has a parameter!
+                            /* WASBUG */ IDK_HumanPlayer_SelectStack_UnitLocation((_units - 1));  // how to reproduce calling this without the unit_idx parameter?
+
+                        }
+
+                        Cast_Successful = ST_TRUE;
+
+                    }
+                    else
+                    {
+                        
+                        if(player_idx == HUMAN_PLAYER_IDX)
+                        {
+
+                            LBX_Load_Data_Static(message_lbx_file__ovr135, 0, (SAMB_ptr)GUI_NearMsgString, 21, 1, 150);  // "Maximum unit count exceeded.  Summons fails."
+
+                            Warn0(GUI_NearMsgString);
+
+                        }
+
+                        Cast_Successful = ST_FALSE;
+
+                    }
+
+                } break;
 
                 case sdt_Global_Enchantment:
                 {
 
                     AI_Eval_After_Spell = ST_TRUE;
 
-                    // ; plays the global spell cast animation for the
-                    // ; selected wizard and spell, which can be clicked away
-                    // ; but will also end and return automatically
                     WIZ_GlobalSpellAnim(player_idx, spell_idx);
 
                     Cast_Successful = ST_TRUE;
 
                     ptr_players_globals = &_players[player_idx].Globals[0];
 
-                    players_globals_idx = spell_data_table[spell_idx].Param0;  // ; unit type, base damage, UE flag, or CE index
+                    players_globals_idx = spell_data_table[spell_idx].Param0;
 
                     ptr_players_globals[players_globals_idx] = (player_idx + 1);
 
@@ -469,6 +586,11 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
                     }
 
                     Change_Relations_For_Enchantments(player_idx, spell_idx, 1);
+
+                } break;
+
+                case sdt_Crafting_Spell:
+                {
 
                 } break;
 

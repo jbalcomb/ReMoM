@@ -501,7 +501,7 @@ enum RETORTS
 
 enum enum_SPELL_DATA_TYPE
 {
-    Summoning_Spell         =  0,
+    sdt_Summoning           =  0,
     Unit_Enchantment        =  1,
     City_Enchantment        =  2,
     City_Curse              =  3,
@@ -772,6 +772,14 @@ struct s_RETORTS
     /* 11 */ int8_t Artificer;
 };
 
+
+/*
+
+Param0
+code for sdt_Summoning uses 2-byte, signed
+code for sdt_Global_Enchantment uses 2-byte, signed
+
+*/
 // sizeof:  24h  36d
 #pragma pack(push)
 #pragma pack(2)
@@ -789,12 +797,22 @@ struct s_SPELL_DATA
     /* 1C */  int16_t research_cost;
     /* 1E */  int8_t Sound;
     /* 1F */  /* int8_t Unknown_1Fh; */  /* ¿ 2-byte alignment padding ? */
-    /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
-    /* 21 */  int8_t Param1;
+    // /* 20 */  int8_t Param0;                // 2-byte, signed;  ; unit type, base damage, UE flag, or CE index;  for sdt_Global_Enchantment, used to index _players[].Globals[]
+    // /* 21 */  int8_t Param1;
+    union
+    {
+        /* 20 */  int8_t Param0;
+        /* 21 */  int8_t Param1;
+        int16_t unit_type;                  // 0: sdt_Summoning IDK_SummonAnim_Draw()
+        int16_t ge_idx;                     // 9: sdt_Global_Enchantment
+        uint8_t cmbt_0;                     // Attack_Strength  CMB_ConvSpellAttack()
+        uint8_t cmbt_1;                     // Immunity_Flags   CMB_ConvSpellAttack()
+    };
     /* 22 */  int16_t Params2_3;            //  ; ATK_Flags
     /* 24 */
 };
 #pragma pack(pop)
+
 
 // DELETE  // sizeof:  0Ch  12d
 // DELETE  #pragma pack(push)
@@ -4219,7 +4237,7 @@ extern SAMB_ptr IMG_SBK_PageText;
 // WZD dseg:CA36                                                                                         ; 708h paragraphs in the sandbox, or 28h for sliders
 // WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
 // WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
-// WZD dseg:CA3C 00 00                                           IDK_SPELLSCR_seg__1 dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
+// WZD dseg:CA3C 00 00                                           SPELLSCR_FLAMEFR1_seg dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
 // WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
 // WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
 // WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)

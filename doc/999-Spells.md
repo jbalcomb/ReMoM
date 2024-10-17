@@ -25,6 +25,63 @@ spell index
 
 
 
+Spell Cast Animation - Summoning
+Creature Summon Animation
+
+IDK_SummonAnim()
+IDK_SummonAnim_Load()
+IDK_SummonAnim_Draw()
+
+    GAME_MP_SpellVar_3 = player_idx;
+
+    IDK_DiploScrn_scanned_field = unit_type;
+
+    GUI_Interaction_Done = ST_FALSE;
+    var_6 = 130;
+    ((SBK_SliderAnimStage < var_6) && (GUI_Interaction_Done == ST_FALSE))
+
+
+
+
+
+Spells that tkae a "Target Wizard"
+
+Cruel Unminding:
+Death. Instant. Casting Cost: 150 mana. Very Rare.
+Permanently destroys one to 10% of a target wizard’s total spell casting skill points!
+
+Drain Power:
+Death. Instant. Casting Cost: 50 mana. Uncommon.
+Drains from 50 to 150 points of magic power from a target
+wizard’s mana reserve.
+
+Spell Binding:
+Sorcery. Instant. Casting Cost: 1000 mana;
+Upkeep: As For Target Enchantment. Very Rare.
+Steals a global enchantment from another wizard. The stolen
+overland spell becomes the property of the casting wizard in terms
+of maintenance and control.
+
+Spell Blast:
+Sorcery. Instant. Casting Cost: 50+ mana. Uncommon.
+Attempts, through the direct manipulation of magic power, to
+counter an enemy wizard’s spell as it is being cast. When spell blast
+takes effect, a wizard must expend an amount of his or her own
+magic power (from mana reserves) equal to the amount already put
+into the enemy wizard’s spell to blast that spell out of existence. If
+the wizard does not have enough mana, spell blast fails.
+
+Subversion:
+Death. Instant. Casting Cost: 100 mana. Uncommon.
+Creates a state of universal contempt toward the target enemy
+wizard, causing his or her diplomatic relations with all other wizards
+to suffer severely.
+
+TABLE OF SPECIAL SPELLS
+The spells included in the following table do not fall under any convenient classification scheme.
+
+
+
 
 
 ovr128  

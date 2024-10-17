@@ -57,6 +57,30 @@ ovl_ench_list_players = Near_Allocate_Next(96)
 
 
 
+OVL_ConvSpellAttack()
+    |-> UNIT_ConvSpellATK(ATK_Override = 0)
+        |-> CMB_ConvSpellAttack(ATK_Override = ATK_Override)
+
+mov     ax, [bp+spell_idx]
+mov     dx, size s_SPELL_DATA
+imul    dx
+les     bx, [spell_data_table]
+add     bx, ax
+mov     al, [es:bx+s_SPELL_DATA.Param1]
+mov     ah, 0
+mov     [bp+Immunity_Flags], ax
+
+mov     ax, [bp+spell_idx]
+mov     dx, size s_SPELL_DATA
+imul    dx
+les     bx, [spell_data_table]
+add     bx, ax
+mov     al, [es:bx+s_SPELL_DATA.Param0] ; 2-byte, signed; unit type, base damage, UE flag, or CE index
+mov     ah, 0
+mov     [bp+Attack_Strength], ax
+
+
+
 
 // sizeof:  24h  36d
 #pragma pack(push)

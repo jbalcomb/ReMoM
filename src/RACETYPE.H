@@ -5,30 +5,37 @@
 
 
 
+/*
+21 race type  {0,...,20}
+
+at some point, 46 + rt is used to index SPELLSCR
+but, the names and descriptions are incongruent/misaligned
+
+*/
 // drake178: enum Race_Code
 enum e_RACE_TYPE
 {
-    rt_Barbarian,
-    rt_Beastman,
-    rt_Dark_Elf,
-    rt_Draconian,
-    rt_Dwarf,
-    rt_Gnoll,
-    rt_Halfling,
-    rt_High_Elf,
-    rt_High_Man,
-    rt_Klackon,
-    rt_Lizardman,
-    rt_Nomad,
-    rt_Orc,
-    rt_Troll,
-    rt_Standard,
-    rt_Arcane,
-    rt_Nature,
-    rt_Sorcery,
-    rt_Chaos,
-    rt_Life,
-    rt_Death
+    rt_Barbarian  = 0,
+    rt_Beastman   = 1,
+    rt_Dark_Elf   = 2,
+    rt_Draconian  = 3,
+    rt_Dwarf      = 4,
+    rt_Gnoll      = 5,
+    rt_Halfling   = 6,
+    rt_High_Elf   = 7,
+    rt_High_Man   = 8,
+    rt_Klackon    = 9,
+    rt_Lizardman  = 10,
+    rt_Nomad      = 11,
+    rt_Orc        = 12,
+    rt_Troll      = 13,
+    rt_Standard   = 14,
+    rt_Arcane     = 15,     /* SPELLSCR.LBX, 059  "SUMMGREY"    "" */
+    rt_Nature     = 16,     /* SPELLSCR.LBX, 060  "SUMGREEN"    "" */
+    rt_Sorcery    = 17,     /* SPELLSCR.LBX, 061  "SUMMBLUE"    "" */
+    rt_Chaos      = 18,     /* SPELLSCR.LBX, 062  "SUMMRED"     "" */
+    rt_Life       = 19,     /* SPELLSCR.LBX, 063  "SUMWHITE"    "" */
+    rt_Death      = 20      /* SPELLSCR.LBX, 064  "SUMMPURP"    "" */
 };
 
 

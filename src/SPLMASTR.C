@@ -15,14 +15,22 @@ MoO2
 
 // WZD dseg:6C4A                                                 BEGIN:  ovr137 - Initialized Data
 
-// WZD dseg:6C4A 53 70 65 6C 6C 73 63 72                         spellscr_lbx_file__ovr137__1 db 'Spellscr'
-// WZD dseg:6C52 00                                              
+// WZD dseg:6C4A
+char spellscr_lbx_file__ovr137__1[] = "Spellscr";
+
+// WZD dseg:6C52
 char empty_string__ovr137[] = "";
-// WZD dseg:6C53 4D 6F 6E 73 74 65 72 00                         monster_lbx_file__ovr137 db 'Monster',0 ; DATA XREF: IDK_SummonAnim_Load+E2o ...
-// WZD dseg:6C5B 20 53 75 6D 6D 6F 6E 65 64 00                   aSummoned db ' Summoned',0
-// WZD dseg:6C65 49 74 65 6D 20 45 6E 63 68 61 6E 74 65 64 00    aItemEnchanted db 'Item Enchanted',0
-// WZD dseg:6C74 48 65 72 6F 20 53 75 6D 6D 6F 6E 65 64 00       aHeroSummoned_0 db 'Hero Summoned',0
-// WZD dseg:6C82 43 68 61 6D 70 69 6F 6E 20 53 75 6D 6D 6F 6E 65+aChampionSumm_0 db 'Champion Summoned',0
+
+// WZD dseg:6C53
+char monster_lbx_file__ovr137[] = "Monster";
+// WZD dseg:6C5B
+char aSummoned[] = " Summoned";
+// WZD dseg:6C65
+char aItemEnchanted[] = "Item Enchanted";
+// WZD dseg:6C74
+char aHeroSummoned_0 [] = "Hero Summoned";
+// WZD dseg:6C82
+char aChampionSumm_0 [] = "Champion Summoned";
 
 // WZD dseg:6C94
 char music_lbx_file__ovr137[] = "Music";
@@ -151,8 +159,13 @@ char monster_lbx_file__ovr138[] = "Monster";
 // WZD dseg:CA12 00 00                                           GAME_MP_SpellVar_1 dw 0                 ; DATA XREF: SBK_SliderRedraw+9Fw ...
 // WZD dseg:CA12                                                                                         ; holds the spell strength during sliders
 // WZD dseg:CA12                                                                                         ; holds the anim stage during global cast anims
-// WZD dseg:CA14 00 00                                           SBK_SliderAnimStage dw 0                ; DATA XREF: SBK_SliderRedraw+2Cr ...
-// WZD dseg:CA14                                                                                         ; steps 0 to 7 for sliders
+
+// WZD dseg:CA14
+/*
+; steps 0 to 7 for sliders
+*/
+int16_t SBK_SliderAnimStage;
+
 // WZD dseg:CA16 00 00                                           SBK_Spell_Index dw 0                    ; DATA XREF: Learn_Spell_Animation+Cw ...
 // WZD dseg:CA18 00 00                                           SBK_SliderState dw 0                    ; DATA XREF: SBK_SliderRedraw+6Br ...
 // WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
@@ -175,10 +188,18 @@ char monster_lbx_file__ovr138[] = "Monster";
 
 // WZD dseg:CA38                                                 BEGIN: ovr137 - Uninitialized Data
 
-// WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
-// WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
-// WZD dseg:CA3C 00 00                                           IDK_SPELLSCR_seg__1 dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
-// WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
+// WZD dseg:CA38
+SAMB_ptr IDK_MONSTER_seg;
+
+// WZD dseg:CA3A
+SAMB_ptr SPELLSCR_ENCHANT_seg;
+
+// WZD dseg:CA3C
+SAMB_ptr SPELLSCR_FLAMEFR1_seg;
+
+// WZD dseg:CA3E
+SAMB_ptr SPELLSCR_GLOBALMK_seg;
+
 // WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
 // WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)
 // WZD dseg:CA42 00 00                                           IMG_SBK_SliderDot@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+171w ...
@@ -206,11 +227,22 @@ SAMB_ptr ge_anim_moodwiz_seg;
 // WZD dseg:CA52 00 00                                           word_434F2 dw 0                         ; DATA XREF: IDK_Spell_DisjunctOrBind_Draw+25Fr ...
 // WZD dseg:CA52
 // WZD dseg:CA52                                                 END: ovr136 - Uninitialized Data
-// WZD dseg:CA52
-// WZD dseg:CA54
+
+
+
 // WZD dseg:CA54                                                 BEGIN: ovr137 - Uninitialized Data
+
 // WZD dseg:CA54
-// WZD dseg:CA54 00 00                                           IDK_SPELLSCR_seg__2 dw 0                ; DATA XREF: IDK_SummonAnim_Load+174w ...
+/*
+
+IDK_SummonAnimLoad()
+    IDK_wizard_id_thing_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, (46 + _players[player_idx].wizard_id), _screen_seg);
+
+Cast_Spell_Of_Mastery_Load()
+    IDK_wizard_id_thing_seg = LBX_Reload(splmastr_lbx_file__ovr138, (14 + _players[cast_spell_of_mastery_player_idx].wizard_id), World_Data);
+
+*/
+SAMB_ptr IDK_wizard_id_thing_seg;
 
 // WZD dseg:CA54                                                 END: ovr137 - Uninitialized Data
 
@@ -282,15 +314,345 @@ int16_t GAME_SoM_Cast_By;
 
 // WZD o137p01
 // drake178: sub_BE860()
-// sub_BE860()
+/*
+
+¿ parameter is spell index or unit type / index into MONSTER.LBX ?
+
+Cast_Spell_Overland__WIP()
+    IDK_SummonAnim(spell_data_table[spell_idx].Param0, MultiPurpose_Local_Var, player_idx);
+e.g.,
+    'Magic Spirit'  (201)
+    spell_data_table[spl_Magic_Spirit].Param0 == 154  AKA ut_Magic_Spirit
+    // MONSTER.LBX, 000  "MONSTER1" "Magic Spirit"
+    200 - 154 = 46
+    46 - 46 = 0
+    'Demon Lord'    (200)
+    spell_data_table[spl_Demon_Lord].Param0 == 173  AKA ut_Demon_Lord
+    // MONSTER.LBX, 019  "MONSTER2" "Demon Lord"
+    200 - 173 = 27
+    46 - 27 = 19
+*/
+void IDK_SummonAnim_Load(int16_t type_or_other, int16_t player_idx)
+{
+    SAMB_ptr IDK_flic_for_palette_seg = 0;
+    int16_t unit_race = 0;  // _DI_
+    int16_t DBG_entry_num = 0;
+
+    if(type_or_other < 0)
+    {
+        unit_race = rt_Arcane;
+    }
+    else
+    {
+        unit_race = _unit_type_table[type_or_other].Race;
+    }
+
+    unit_race += 46;  // ¿ WTF ?  {0,...,20} + 46 = {46,...,66}
+
+    Mark_Block(_screen_seg);
+
+    // SPELLSCR.LBX, 009  "FLAMEFR1"    ""
+    SPELLSCR_FLAMEFR1_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 9, _screen_seg);
+
+    // SPELLSCR.LBX, 046  "SUMMON02"    ""
+    // SPELLSCR.LBX, 047  "SUMMON03"    ""
+    // SPELLSCR.LBX, 048  "SUMMON04"    ""
+    // SPELLSCR.LBX, 049  "SUMMON05"    ""
+    // SPELLSCR.LBX, 050  "SUMMON06"    ""
+    // SPELLSCR.LBX, 051  "SUMMON07"    ""
+    // SPELLSCR.LBX, 052  "SUMMON08"    ""
+    // SPELLSCR.LBX, 053  "SUMMON09"    ""
+    // SPELLSCR.LBX, 054  "SUMMON10"    "horus"
+    // SPELLSCR.LBX, 055  "SUMMON11"    "ariel"
+    // SPELLSCR.LBX, 056  "SUMMON12"    "tlaloc"
+    // SPELLSCR.LBX, 057  "SUMMON13"    "kali"
+    // SPELLSCR.LBX, 058  "SMLRESCH"    ""
+    // SPELLSCR.LBX, 059  "SUMMGREY"    ""
+    // SPELLSCR.LBX, 060  "SUMGREEN"    ""
+    // SPELLSCR.LBX, 061  "SUMMBLUE"    ""
+    // SPELLSCR.LBX, 062  "SUMMRED"     ""
+    // SPELLSCR.LBX, 063  "SUMWHITE"    ""
+    // SPELLSCR.LBX, 064  "SUMMPURP"    ""
+    // SPELLSCR.LBX, 065  "VORTEX1"     ""
+    // SPELLSCR.LBX, 066  "VORTEX2"     ""
+    IDK_flic_for_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
+
+    Load_Palette_From_Animation(IDK_flic_for_palette_seg);
+
+    Set_Page_Off();
+
+    Main_Screen_Draw();
+
+    FLIC_Draw(30, 42, SPELLSCR_FLAMEFR1_seg);
+
+    Copy_Off_To_Back();
+
+    Release_Block(_screen_seg);
+
+    Mark_Block(_screen_seg);
+
+    // SPELLSCR.LBX, 010  "GLOBALMK"    ""
+    SPELLSCR_GLOBALMK_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 10, _screen_seg);
+
+    // SPELLSCR.LBX, 011  "ENCHANT"     ""
+    SPELLSCR_ENCHANT_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, 11, _screen_seg);
+
+    if(type_or_other > 0)
+    {
+
+        // MONSTER.LBX, 000  "MONSTER1" "Magic Spirit"
+        // ...
+        // MONSTER.LBX, 043  "MONSTER4" "Nagas"
+        // IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, (46 - (200 - spell_data_table[type_or_other].Param0)), _screen_seg);
+        // DBG_entry_num = (46 - (200 - spell_data_table[type_or_other].Param0));
+        // DBG_entry_num = (46 - (200 - spell_data_table[type_or_other].unit_type));
+        DBG_entry_num = spell_data_table[type_or_other].Param0;
+        DBG_entry_num = spell_data_table[type_or_other].unit_type;
+        DBG_entry_num = (200 - DBG_entry_num);
+        DBG_entry_num = (46 - DBG_entry_num);
+        DBG_entry_num = (46 - (200 - type_or_other));
+        IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, DBG_entry_num, _screen_seg);
+
+    }
+    else
+    {
+
+        if(type_or_other == -1)
+        {
+
+            // MONSTER.LBX, 046  "MONSTER2" "Sword"
+            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 46, _screen_seg);
+
+        }
+        else if(
+            (type_or_other == -2)
+            ||
+            (type_or_other == -20)
+        )
+        {
+
+            // MONSTER.LBX, 045  "MONSTER4" "Male Hero"
+            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 45, _screen_seg);
+
+        }
+        else if(
+            (type_or_other == -3)
+            ||
+            (type_or_other == -30)
+        )
+        {
+
+            // MONSTER.LBX, 044  "MONSTER4" "Female Hero"
+            IDK_MONSTER_seg = LBX_Reload_Next(monster_lbx_file__ovr137, 44, _screen_seg);
+
+        }
+
+    }
+
+    IDK_wizard_id_thing_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, (46 + _players[player_idx].wizard_id), _screen_seg);
+
+    IDK_flic_for_palette_seg = LBX_Reload_Next(spellscr_lbx_file__ovr137__1, unit_race, _screen_seg);
+
+    Load_Palette_From_Animation(IDK_flic_for_palette_seg);
+
+    Apply_Palette();
+
+}
+
 
 // WZD o137p02
 // drake178: sub_BE9FF()
-// sub_BE9FF()
+void IDK_SummonAnim_Draw(void)
+{
+    int16_t start_y = 0;  // _SI_
+    int16_t start_x = 0;  // _DI_
+    int16_t DBG_unit_type;
+
+    start_x = 30;
+    start_y = 42;
+
+    Copy_Back_To_Off();
+
+    Set_Window((start_x + 7), (start_y + 8), SCREEN_XMAX, SCREEN_YMAX);
+
+    Clipped_Draw((start_x + 8), (start_y + 3), IDK_wizard_id_thing_seg);
+
+    FLIC_Draw((start_x + 55), (start_y + 54), SPELLSCR_GLOBALMK_seg);
+
+    Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, (start_y + 105));
+
+    if(
+        (SBK_SliderAnimStage < 30)
+        &&
+        (magic_set.spell_animations == ST_TRUE)
+        &&
+        (GAME_MP_SpellVar_3 == HUMAN_PLAYER_IDX)
+    )
+    {
+
+        Clipped_Draw((start_x + 76), (start_y + 110 - (SBK_SliderAnimStage * 3)), IDK_MONSTER_seg);
+
+    }
+    else
+    {
+
+        Clipped_Draw((start_x + 76), (start_y + 18), IDK_MONSTER_seg);
+
+    }
+
+    FLIC_Draw((start_x + 64), (start_y + 80), SPELLSCR_ENCHANT_seg);
+
+    Set_Outline_Color(16);
+
+    Set_Font_Style_Shadow_Down(4, 4, 0, 0);
+
+    Set_Alias_Color(190);
+
+    if(IDK_DiploScrn_scanned_field > 0)
+    {
+
+        // strcpy(GUI_NearMsgString, *_unit_type_table[spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].Param0].name);
+        DBG_unit_type = spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].Param0;
+        DBG_unit_type = spell_data_table[_players[GAME_MP_SpellVar_3].casting_spell_idx].unit_type;
+        strcpy(GUI_NearMsgString, *_unit_type_table[DBG_unit_type].name);
+
+        strcat(GUI_NearMsgString, aSummoned);
+
+    }
+    else
+    {
+        if(IDK_DiploScrn_scanned_field == -1)
+        {
+
+            strcpy(GUI_NearMsgString, aItemEnchanted);
+
+        }
+        else
+        {
+
+            if(IDK_DiploScrn_scanned_field > -10)
+            {
+
+                strcpy(GUI_NearMsgString, aHeroSummoned_0);
+
+            }
+            else
+            {
+
+                strcpy(GUI_NearMsgString, aChampionSumm_0);
+
+            }
+
+        }
+
+    }
+
+    Print_Centered((start_x + 90), (start_y + 117), GUI_NearMsgString);
+
+}
+
 
 // WZD o137p03
 // drake178: sub_BEB92()
-// sub_BEB92()
+/*
+
+¿ magic_realm_spell_idx is Spell_Rarity ?
+    MultiPurpose_Local_Var = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);
+    MultiPurpose_Local_Var = (MultiPurpose_Local_Var / 10);
+
+*/
+void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t player_idx)
+{
+    int16_t var_6;
+    int16_t input_field_idx;
+    int16_t full_screen_field;
+
+    Stop_All_Sounds__STUB();
+
+    SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (MUSIC_Weak_Summon + magic_realm_spell_idx), SND_Music_Segment);
+
+    if(magic_set.background_music == ST_TRUE)
+    {
+
+        Play_Sound__STUB(SND_Spell_Music);
+
+    }
+
+    SBK_SliderAnimStage = 0;
+
+    GAME_MP_SpellVar_3 = player_idx;
+
+    IDK_DiploScrn_scanned_field = unit_type;
+
+    Allocate_Reduced_Map();
+
+    Full_Draw_Main_Screen();
+
+    IDK_SummonAnim_Load(unit_type, player_idx);
+
+    Assign_Auto_Function(IDK_SummonAnim_Draw, 2);
+
+    PageFlipEffect = 3;
+
+    Clear_Fields();
+
+    full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED);
+
+    if(magic_set.spell_animations == ST_TRUE)
+    {
+        var_6 = 130;
+    }
+    else
+    {
+        var_6 = 40;
+    }
+
+    GUI_Interaction_Done = ST_FALSE;
+
+    for(SBK_SliderAnimStage = 0; ((SBK_SliderAnimStage < var_6) && (GUI_Interaction_Done == ST_FALSE)); SBK_SliderAnimStage++)
+    {
+
+        Mark_Time();
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == full_screen_field)
+        {
+            GUI_Interaction_Done = ST_TRUE;
+        }
+
+        Set_Page_Off();
+
+        IDK_SummonAnim_Draw();
+
+        PageFlip_FX();
+
+        Release_Time(2);
+
+        PageFlipEffect =  0;
+
+    }
+
+    Deactivate_Auto_Function();
+
+    OVL_MosaicFlip__STUB();
+
+    Stop_All_Sounds__STUB();
+
+    Release_Block(_screen_seg);
+
+    Play_Background_Music__STUB();
+
+    if(player_idx == HUMAN_PLAYER_IDX)
+    {
+        Set_Mouse_List(1, mouse_list_default);
+    }
+    else
+    {
+        Set_Mouse_List(1, mouse_list_hourglass);
+    }
+
+}
 
 // WZD o137p04
 // drake178: sub_BECD9()

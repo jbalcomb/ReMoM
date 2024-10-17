@@ -2628,10 +2628,63 @@ void Play_Background_Music__STUB(void)
 
 
 // WZD o58p08
-// sub_51A1A()
+// drake178: sub_51A1A()
+/*
+
+XREF:
+    Cast_SummonHero()
+    Cast_Incarnation()
+    Cast_Resurrection()
+    Cast_Spell_Overland__WIP()
+        ¿ sdt_Summoning, but not 'Floating Island' ?
+
+*/
+void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx)
+{
+
+    o62p01_empty_function(_human_player_idx);
+
+    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _UNITS[unit_idx].wp, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy);
+
+    Set_Unit_Draw_Priority();
+
+    Reset_Stack_Draw_Priority();
+
+    all_units_moved = ST_FALSE;
+
+    Reset_Draw_Active_Stack();
+
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+}
+
 
 // WZD o58p09
-// sub_51AA0()
+// drake178: sub_51AA0()
+/*
+
+XREF:
+    UV_Remove_Unit_Enchantment()
+
+*/
+void IDK_HumanPlayer_SelectStack_SummonLocation(void)
+{
+
+    o62p01_empty_function(_human_player_idx);
+
+    Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _players[_human_player_idx].summon_wp, _players[_human_player_idx].summon_wx, _players[_human_player_idx].summon_wy);
+
+    Set_Unit_Draw_Priority();
+
+    Reset_Stack_Draw_Priority();
+
+    all_units_moved = ST_FALSE;
+
+    Reset_Draw_Active_Stack();
+
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+}
 
 
 

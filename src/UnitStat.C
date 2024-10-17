@@ -1013,7 +1013,7 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
                 unit_race = global_battle_unit->race;
                 bldg_pict_x1 = unit_type_idx;
                 // if(unit_race < rt_Arcane) // TODO  figure out how the Dasm makes sense for race-specific, race 14 Standard - Trireme, Galley, Catapult, Warship
-                if (unit_race < rt_Standard)
+                if(unit_race < rt_Standard)
                 {
                     Print((UV_x_start_offset + UV_x_start + 51), (UV_y_start + 11), *_race_type_table[unit_race].name);
                     product_idx = Get_String_Width(*_race_type_table[unit_race].name);

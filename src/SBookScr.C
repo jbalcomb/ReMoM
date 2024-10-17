@@ -689,7 +689,7 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 
     if(spell_idx > spl_NONE)
     {
-        // === { Summoning_Spell, Unit_Enchantment, City_Enchantment, City_Curse, Fixed_Dmg_Spell, Special_Spell, Target_Wiz_Spell, sdt_Global_Enchantment, Battlefield_Spell }
+        // === { sdt_Summoning, Unit_Enchantment, City_Enchantment, City_Curse, Fixed_Dmg_Spell, Special_Spell, Target_Wiz_Spell, sdt_Global_Enchantment, Battlefield_Spell }
         // DEDU  But, why?
         if(spell_data_table[spell_idx].type < sdt_Crafting_Spell)
         {

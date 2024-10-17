@@ -132,7 +132,7 @@ enum e_SPELLS
     spl_Chaos_Rift          = 110,
     spl_Hydra               = 111,
     spl_Disintegrate        = 112,
-    spl_Meteor_Storm        = 113,
+    spl_MeteorStorms        = 113,
     spl_Great_Wasting       = 114,
     spl_Call_Chaos          = 115,
     spl_Chaos_Surge         = 116,

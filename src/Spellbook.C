@@ -3362,7 +3362,7 @@ void Change_Relations_For_Enchantments(int16_t player_idx, int16_t spell_idx, in
                 Change_Relations((-20 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }
 
-            if(spell_idx == spl_Meteor_Storm)
+            if(spell_idx == spl_MeteorStorms)
             {
                 Change_Relations((-15 / divisor), player_idx, itr_players, 12, 0, spell_idx);
             }

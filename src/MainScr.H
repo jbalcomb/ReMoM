@@ -352,11 +352,10 @@ int16_t Get_Background_Music(void);
 void Play_Background_Music__STUB(void);
 
 // WZD o58p08
-// sub_51A1A()
+void IDK_HumanPlayer_SelectStack_UnitLocation(int16_t unit_idx);
 
 // WZD o58p09
-// sub_51AA0()
-
+void IDK_HumanPlayer_SelectStack_SummonLocation(void);
 
 
 /*

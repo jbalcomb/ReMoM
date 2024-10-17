@@ -891,7 +891,7 @@ int16_t Player_Spell_Research_Bonus(int16_t player_idx, int16_t spell_idx)
         research_bonus_percentage += 25;
     }
 
-    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* Summoning_Spell */) != 0) )
+    if( (_players[player_idx].conjurer > 0) && ( (spell_data_table[spell_idx].type & 0x00 /* sdt_Summoning */) != 0) )
     {
         research_bonus_percentage += 25;
     }

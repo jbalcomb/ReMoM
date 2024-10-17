@@ -2759,8 +2759,42 @@ SAMB_ptr GAME_MP_SpellVar_2;
 
 // WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
 // WZD dseg:CA2A                                                                                         ; 2 frame image (normal - clicked)
+
 // WZD dseg:CA2C
+/*
+
+XREF:
+    IDK_Spell_DisjunctOrBind_Draw+44  cmp     [IDK_DiploScrn_scanned_field], 0            
+    IDK_Spell_DisjunctOrBind_Draw+54  cmp     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind_Draw+5E  mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind_Draw+6C  mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind_Draw+26A mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind_Draw+278 mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind+1E4      mov     [IDK_DiploScrn_scanned_field], ax           
+    IDK_Spell_DisjunctOrBind+1E7      mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind+1F1      mov     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_DisjunctOrBind+207      mov     [IDK_DiploScrn_scanned_field], 0            
+    IDK_Spell_DisjunctOrBind+221      cmp     [IDK_DiploScrn_scanned_field], 0            
+    IDK_SummonAnim_Draw+F9            cmp     [IDK_DiploScrn_scanned_field], 0            
+    IDK_SummonAnim_Draw:loc_BEB43     cmp     [IDK_DiploScrn_scanned_field], -1           
+    IDK_SummonAnim_Draw:loc_BEB5B     cmp     [IDK_DiploScrn_scanned_field], -10          
+    IDK_SummonAnim+48                 mov     [IDK_DiploScrn_scanned_field], _DI_unit_type
+    IDK_Spell_Cityscape_Draw+49       cmp     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_Spell_Cityscape_1+58          mov     [IDK_DiploScrn_scanned_field], -1000
+    IDK_Spell_Cityscape_2+12D         mov     [IDK_DiploScrn_scanned_field], ax           
+    IDK_WizTgtSpl_sBFC85+104          cmp     ax, [IDK_DiploScrn_scanned_field]           
+    IDK_DiploScrn+1B1                 mov     [IDK_DiploScrn_scanned_field], ax           
+    SoM_Started+5F                    mov     [IDK_DiploScrn_scanned_field], 67           
+
+IDK_SummonAnim()
+IDK_SummonAnim_Draw()
+set to unit_type, which spell_data_table[].Param0
+but, also special cases of -1 for *summon* item and -2,-3,-20,-30 for summon hero/champion
+¿ ~ summon_type ?
+
+*/
 int16_t IDK_DiploScrn_scanned_field;
+
 // WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
 // WZD dseg:CA30 00 00                                           IMG_SBK_SliderOK@ dw 0                  ; DATA XREF: SBK_LoadSpellSlider+7Dw ...
 // WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
@@ -2788,7 +2822,7 @@ SAMB_ptr IMG_SBK_PageText;
 
 // WZD dseg:CA38 00 00                                           IDK_MONSTER_seg dw 0                    ; DATA XREF: IDK_SummonAnim_Load+EEw ...
 // WZD dseg:CA3A 00 00                                           word_434DA dw 0                         ; DATA XREF: IDK_SummonAnim_Load+CBw ...
-// WZD dseg:CA3C 00 00                                           IDK_SPELLSCR_seg__1 dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
+// WZD dseg:CA3C 00 00                                           SPELLSCR_FLAMEFR1_seg dw 0                ; DATA XREF: IDK_SummonAnim_Load+49w ...
 // WZD dseg:CA3E 00 00                                           word_434DE dw 0                         ; DATA XREF: IDK_SummonAnim_Load+B4w ...
 // WZD dseg:CA40 00 00                                           IMG_SBK_SliderBar@ dw 0                 ; DATA XREF: ITEM_LoadCraftingRes+188w ...
 // WZD dseg:CA40                                                                                         ; also the item crafting right arrow (2 state image)

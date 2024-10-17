@@ -114,7 +114,7 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     uint32_t entry_start;
     uint32_t entry_end;
     uint32_t entry_length;
-    char lbx_file_name[20];
+    char lbx_file_name[LEN_FILE_NAME];
     SAMB_ptr SAMB_data;
     SAMB_ptr rvr_SAMB_data;
 
