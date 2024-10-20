@@ -39,7 +39,8 @@ void Screen_Control(void)
             int16_t itr_world_size;
 
             // HACK:
-            magic_set.Strategic_Combat = ST_TRUE;  // "Strategic Combat Only"
+            // magic_set.strategic_combat_only = ST_TRUE;  // "Strategic Combat Only"
+            magic_set.strategic_combat_only = ST_FALSE;
 
             // BEGIN: WZD main()
             Load_SAVE_GAM(-1);  // SAVETEST.GAM

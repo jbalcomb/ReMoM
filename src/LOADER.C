@@ -1,75 +1,4 @@
 
-/*
-
-MGC s01p04
-Load_MGC_Resources()
-
-*/
-/*
-    WIZARDS.EXE
-        ovr052
-            34
-
-WZD o52p01
-Load_WZD_Resources()
-
-WZD o52p02
-UNIT_Upkeep_Reset()
-
-WZD o52p03
-Terrain_Init()
-
-// WZD o52p04
-// WZD o52p05
-// WZD o52p06
-// WZD o52p07
-// WZD o52p08
-// WZD o52p09
-// WZD o52p10
-// WZD o52p11
-// WZD o52p12
-// WZD o52p13
-// WZD o52p14
-// WZD o52p15
-// WZD o52p16
-// WZD o52p17
-// WZD o52p18
-// WZD o52p19
-
-WZD o52p20
-void GFX_Swap_Reset()
-
-WZD o52p21
-
-WZD o52p22
-Load_Unit_StatFigs()
-
-// WZD o52p23
-// WZD o52p24
-// WZD o52p25
-// WZD o52p26
-// WZD o52p27
-// WZD o52p28
-
-// WZD o52p29
-void Spellbook_Load_Small_Pictures(void);
-
-WZD o52p30
-GFX_Swap_Cities()
-
-// WZD o52p31
-void GFX_Swap_Overland(void);
-
-// WZD o52p32
-// WZD o52p33
-
-// WZD o52p34
-// GFX_Swap_Combat()
-
-*/
-
-
-
 #include "MoM.H"
 
 
@@ -130,18 +59,18 @@ char units1_lbx_file[] = "UNITS1";
 
 // WZD dseg:2A26
 char units2_lbx_file[] = "UNITS2";
-// WZD dseg:2A2D
 
-char cmbmagic_lbx_file[] = "CMBMAGIC";
+// WZD dseg:2A2D
+char cmbmagic_lbx_file__ovr052[] = "CMBMAGIC";
 
 // WZD dseg:2A36
-char cmbtcity_lbx_file[] = "CMBTCITY";
+char cmbtcity_lbx_file__ovr052[] = "CMBTCITY";
 
 // WZD dseg:2A3F
-char chriver_lbx_file[] = "CHRIVER";
+char chriver_lbx_file__ovr052[] = "CHRIVER";
 
 // WZD dseg:2A47
-char citywall_lbx_file[] = "CITYWALL";
+char citywall_lbx_file__ovr052[] = "CITYWALL";
 
 // WZD dseg:2A50
 char cityscap_lbx_file[] = "CITYSCAP";
@@ -245,8 +174,10 @@ void Load_WZD_Resources(void)
 // fxn_o52p10();
 // fxn_o52p07();
 // fxn_o52p11();
+
 // drake178: LBX_Assign_Cmbt_BG()
-// Load_Combat_Background_Bottom();  // ; creates a reserved EMM LBX header for the combat screen's bottom background
+    Load_Combat_Background_Bottom();  // ; creates a reserved EMM LBX header for the combat screen's bottom background
+
 // fxn_o52p12();
 // fxn_o52p14():
 // fxn_o52p15();
@@ -802,7 +733,12 @@ void Load_BUILDDAT(void)
 // fxn_o52p18()
 
 // WZD o52p19
-// Load_Combat_Background_Bottom()
+void Load_Combat_Background_Bottom(void)
+{
+
+    combat_background_bottom = LBX_Load(backgrnd_lbx_file, 3);
+
+}
 
 
 // WZD o52p20
@@ -836,7 +772,184 @@ void Load_Unit_StatFigs(void)
 
 
 // WZD o52p23
-// GFX_Swap_AppendCmbt()
+// drake178: GFX_Swap_AppendCmbt()
+/*
+; appends combat graphics to GFX_Swap_Seg
+; these are all in reserved EMM handles, so only
+; headers will be created in the allocation
+*/
+/*
+
+¿ all LBX_Reload_Next() ?
+    Yes.
+    Therefore, "Reload_..."
+
+*/
+void Reload_Combat_Graphics_Cache(void)
+{
+    int16_t itr1 = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
+
+    // CMBMAGIC.LBX, 000  "LIGHTNIN"  ""
+    // CMBMAGIC.LBX, 008  "ARROW"     ""
+    // CMBMAGIC.LBX, 016  "FIREBALL"  ""
+    // CMBMAGIC.LBX, 024  "ILLUSION"  ""
+    // CMBMAGIC.LBX, 032  "ROCKS"     ""
+    // CMBMAGIC.LBX, 040  "SLING"     ""
+    // CMBMAGIC.LBX, 048  "DETHBOLT"  ""
+    // CMBMAGIC.LBX, 056  "ICEBOLT"   ""
+    // CMBMAGIC.LBX, 064  "SCATTER"   ""
+    // CMBMAGIC.LBX, 072  "PRIEST"    ""
+    // CMBMAGIC.LBX, 080  "DROW"      ""
+    // CMBMAGIC.LBX, 088  "SHIMMER"   ""
+    // CMBMAGIC.LBX, 096  "WEB"       ""
+    // CMBMAGIC.LBX, 104  "GREEN"     ""
+    // CMBMAGIC.LBX, 112  "CLOUD"     ""
+    for(itr1 = 0; itr1 < 15; itr1++)
+    {
+
+        for(itr2 = 0; itr2 < 8; itr2++)
+        {
+
+            // CMB_RangedAtx_GFX[((itr1 * 8) + itr2)].Up = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), GFX_Swap_Seg);
+            CMB_RangedAtx_GFX[itr1][itr2] = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, ((itr1 * 8) + itr2), GFX_Swap_Seg);
+
+        }
+
+    }
+
+    // CMBMAGIC.LBX, 120  "VORTEX2"   ""
+    IMG_GUI_Vortex = LBX_Reload_Next(cmbmagic_lbx_file__ovr052, 120, GFX_Swap_Seg);
+
+    for(itr1 = 0; itr1 < 5; itr1++)
+    {
+
+        IMG_CMB_Blood[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (24 + itr1), GFX_Swap_Seg);
+
+    }
+
+    CMB_Damage_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 119, GFX_Swap_Seg);
+
+    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, GFX_Swap_Seg);
+
+    for(itr1 = 0; itr1 < 15; itr1++)
+    {
+
+        IMG_CMB_Houses[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (2 + itr1), GFX_Swap_Seg);
+
+    }
+
+    IMG_CMB_Fortress = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 17, GFX_Swap_Seg);
+
+    IMG_CMB_Outpost = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 18, GFX_Swap_Seg);
+
+    IMG_CMB_Cave = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 19, GFX_Swap_Seg);
+
+    IMG_CMB_Tower = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 20, GFX_Swap_Seg);
+
+    IMG_CMB_Dungeon = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 21, GFX_Swap_Seg);
+
+    IMG_CMB_Fort = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 22, GFX_Swap_Seg);
+
+    IMG_CMB_Temple = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 23, GFX_Swap_Seg);
+
+    IMG_CMB_RoadGrid = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 0, GFX_Swap_Seg);
+
+    IMG_CMB_DirtTile = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 1, GFX_Swap_Seg);
+
+    IMG_CMB_Ruins = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 121, GFX_Swap_Seg);
+
+    IMG_CMB_NatNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 65, GFX_Swap_Seg);
+
+    IMG_CMB_SorcNode = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 66, GFX_Swap_Seg);
+
+    CMB_TargetFrame_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 67, GFX_Swap_Seg);
+
+    CMB_ActiveFrame_GFX = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 68, GFX_Swap_Seg);
+
+    IMG_CMB_Mud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 118, GFX_Swap_Seg);
+
+    IMG_CMB_FlotIsle = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 117, GFX_Swap_Seg);
+
+    IMG_CMB_Cloud = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 113, GFX_Swap_Seg);
+
+    IMG_GUI_Chasm = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, 120, GFX_Swap_Seg);
+
+    for(itr1 = 0; itr1 < 4; itr1++)
+    {
+
+        IMG_CMB_OceanTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (109 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 28; itr1++)
+    {
+
+        IMG_CMB_RoadTiles[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (69 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 12; itr1++)
+    {
+        IMG_CMB_RiverTile[itr1] = LBX_Reload_Next(cmbtcity_lbx_file__ovr052, (97 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 12; itr1++)
+    {
+
+        IMG_CMB_RivrNULLs[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (0 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 4; itr1++)
+    {
+
+        IMG_CMB_ChaosOcn[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (12 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 9; itr1++)
+    {
+
+        IMG_CMB_Volcano[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (24 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 14; itr1++)
+    {
+
+        IMG_CMB_FireWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (36 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 14; itr1++)
+    {
+
+        IMG_CMB_DarkWall[itr1] = LBX_Reload_Next(citywall_lbx_file__ovr052, (50 + itr1), GFX_Swap_Seg);
+
+    }
+
+    for(itr1 = 0; itr1 < 3; itr1++)
+    {
+        for(itr2 = 0; itr2 < 12; itr2++)
+        {
+
+            IMG_CMB_StoneWalls[itr1][itr2] = LBX_Reload_Next(citywall_lbx_file__ovr052, ((itr1 * 12) + itr2), GFX_Swap_Seg);
+
+        }
+
+    }
+
+    for(itr1 = 0; itr1 < 8; itr1++)
+    {
+
+        IMG_CMB_Curses[itr1] = LBX_Reload_Next(chriver_lbx_file__ovr052, (16 + itr1), GFX_Swap_Seg);
+
+    }
+
+}
+
 
 // WZD o52p24
 // fxn_o52p24()
@@ -1629,6 +1742,12 @@ void Cache_Graphics_Unit_List_Window(void)
 }
 
 // WZD o52p33
+// U_GFX_Swap_Empty()
 
 // WZD o52p34
-// GFX_Swap_Combat()
+void Cache_Graphics_Combat(void)
+{
+    GFX_Swap_Reset();
+    Reload_Combat_Graphics_Cache();
+    Spellbook_Load_Small_Pictures__WIP();
+}

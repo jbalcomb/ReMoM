@@ -40,7 +40,7 @@ struct s_MAGIC_SET
     /*  0E */ uint16_t Raze_City;
     /*  10 */ uint16_t random_events;
     /*  12 */ uint16_t EoT_Wait;
-    /*  14 */ uint16_t Strategic_Combat;
+    /*  14 */ uint16_t strategic_combat_only;
     /*  16 */ uint16_t Auto_Unit_Info;
     /*  18 */ uint16_t Enemy_Moves;
     /*  1A */ uint16_t Enemy_Spells;

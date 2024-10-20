@@ -17,6 +17,13 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 
 #include "MoM.H"
 
+
+
+// WZD dseg:4AB4
+extern char * TBL_EZ_Names[];
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

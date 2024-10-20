@@ -61,7 +61,7 @@ extern "C" {
 */
 
 // WZD o72p01
-// drake178: USW_CombatDisplay()
+void USW_CombatDisplay__WIP(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx);
 
 // WZD o72p02
 void USW_LoadAndShow(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx);

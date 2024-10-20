@@ -889,26 +889,34 @@ struct s_COMBAT_ENCHANTMENTS * combat_enchantments;             // alloc in IDK_
 struct s_HEROES * _HEROES2[NUM_PLAYERS];
 
 
-// WZD dseg:924A 00 00                                           CMB_AI_Fled dw 0                        ; DATA XREF: Tactical_Combat__WIP:loc_75ED7w ...
+// WZD dseg:924A
+int16_t CMB_AI_Fled;
 // WZD dseg:924A                                                                                         ; now 0 (non-strategic battle init)
 // WZD dseg:924A                                                                                         ; set to 1 if the AI decides to flee
-// WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_ScanIcons@ CSCAN_ICONS <0>      ; DATA XREF: CMB_LoadResources+39Bw ...
+
+// WZD dseg:924C
+// struct CSCAN_ICONS IMG_CMB_ScanIcons;
+SAMB_ptr IMG_CMB_ScanIcons[18];
 // WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 pointers to sandbox appended images
+
 // WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
 // WZD dseg:9272 00 00                                           CMB_WallRise_Going dw 0                 ; DATA XREF: CMB_WallRise_Anim+35w ...
 // WZD dseg:9272                                                                                         ; set to 0 at the beginning of combat map creation
 // WZD dseg:9272                                                                                         ; 1 branches wall entity creation (unknown IMG array)
 
 // WZD dseg:9274
-// ; 15Ch LBX_Alloc_First paragraphs, sandbox segment
 struct s_BATTLEFIELD * battlefield;
 
-// WZD dseg:9278 00 00                                           CMB_ActiveUnitFrameY dw 0               ; DATA XREF: CMB_SetActionCursor+48w ...
+// WZD dseg:9278 00 00                                           CMB_ActiveUnitFrameY dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
 // WZD dseg:927A 00 00                                           CMB_ActiveUnitFrameX dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
-// WZD dseg:927C 00 00                                           CMB_ActiveUnitFrame dw 0                ; DATA XREF: Tactical_Combat__WIP+246w ...
-// WZD dseg:927E 00 00                                           CMB_TargetFrame_Y dw 0                  ; DATA XREF: Tactical_Combat__WIP+92Dw ...
-// WZD dseg:9280 00 00                                           CMB_TargetFrame_X dw 0                  ; DATA XREF: Tactical_Combat__WIP+915w ...
-// WZD dseg:9282 00 00                                           CMB_TargetFrame dw 0                    ; DATA XREF: Tactical_Combat__WIP+24Cw ...
+// WZD dseg:927C
+int16_t CMB_ActiveUnitFrame;
+// WZD dseg:927E
+int16_t CMB_TargetFrame_Y;
+// WZD dseg:9280
+int16_t CMB_TargetFrame_X;
+// WZD dseg:9282
+int16_t CMB_TargetFrame;
 
 // WZD dseg:9284
 int16_t OVL_Action_Type;
@@ -1604,7 +1612,7 @@ int16_t entities_on_movement_map[120];  //  12 * 10  MAP_WIDTH * MAP_HEIGHT
 
 // dseg:973C                                                 ; unsigned int gsa_BACKGRND_3_IMG_CMB_Bottom_BG
 // dseg:973C 00 00                                           gsa_BACKGRND_3_IMG_CMB_Bottom_BG dw 0   ; DATA XREF: Load_Combat_Background_Bottom+12w ...
-
+SAMB_ptr combat_background_bottom;
 
 
 // WZD dseg:9750                                                 ¿ END: maps / map grid fields - Uninitialized Data ?

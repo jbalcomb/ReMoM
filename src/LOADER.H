@@ -340,7 +340,7 @@ void Load_BUILDDAT(void);
 // fxn_o52p18()
 
 // WZD o52p19
-// Load_Combat_Background_Bottom()
+void Load_Combat_Background_Bottom(void);
 
 // WZD o52p20
 void GFX_Swap_Reset(void);
@@ -353,7 +353,7 @@ void GFX_Swap_Reset(void);
 void Load_Unit_StatFigs(void);
 
 // WZD o52p23
-// GFX_Swap_AppendCmbt()
+void Reload_Combat_Graphics_Cache(void);
 
 // WZD o52p24
 // fxn_o52p24()
@@ -386,7 +386,7 @@ void Cache_Graphics_Unit_List_Window(void);
 // U_GFX_Swap_Empty()
 
 // WZD o52p34
-// GFX_Swap_Combat()
+void Cache_Graphics_Combat(void);
 
 
 

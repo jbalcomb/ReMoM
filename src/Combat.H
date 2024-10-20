@@ -3,16 +3,22 @@
 
     WIZARDS.EXE
         ovr090
+        ovr091
         ovr096
         ovr098
+        ovr099  ¿ MoO2  Module: CMBTDRW1 ?
         ovr103
         ovr105
         ovr110
         ovr112
+        ovr114
         ovr116
         ovr122
         ovr123
         ovr124
+        ovr153
+        ovr154
+        ovr155
         ovr163
 
 */
@@ -58,6 +64,29 @@ enum e_BATTLE_UNIT_STATUS
     bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? */
 };
 
+enum BU_Action
+{
+    BUA_Ready           =   0,
+    BUA_Finished        =   4,
+    BUA_Wait            =   5,
+
+    BUA_MeleeAttack     = 100,
+    BUA_RangedAttack    = 101,
+    BUA_MoveNFire       = 102,
+    BUA_MoveNAttack     = 103,
+
+    BUA_DoomBolt        = 104,
+    BUA_Fireball        = 105,
+    BUA_Healing         = 106,
+    BUA_UseItem         = 107,
+    BUA_CastSpell       = 108,
+    BUA_SummonDemon     = 109,
+    BUA_WebSpell        = 110,
+
+    BUA_Flee            = 150,
+
+    BUA_No_Spells       = 333
+};
 
 enum e_BATTLE_UNIT_EFFECT
 {
@@ -169,10 +198,13 @@ struct s_CTY_ENCH
     /* 0x19 */
 };
 
+/*
+    MoO2 "board"
+*/
 // sizeof: 0x1598
 struct s_BATTLEFIELD
 {
-    /* 0x0000 */  int8_t Tile_Terrain[462];
+    /* 0x0000 */  int8_t Tile_Terrain[462];  // ¿ 22 x 21 ?
     /* 0x039C */  int8_t Tile_TerrGroup[462];
     /* 0x056A */  int8_t Tile_Road[462];
     /* 0x0738 */  int8_t MoveCost_Ground[462];
@@ -204,87 +236,239 @@ struct s_BATTLEFIELD
 };
 
 
+// ; (sizeof=0x10, standard type)
+struct RNGD_ANIM
+{
+    /* 00 */ int16_t Up;
+    /* 02 */ int16_t UpRight;
+    /* 04 */ int16_t Right;
+    /* 06 */ int16_t DnRight;
+    /* 08 */ int16_t Down;
+    /* 0A */ int16_t DnLeft;
+    /* 0C */ int16_t Left;
+    /* 0E */ int16_t UpLeft;
+    /* 10 */
+};
 
 
+// ; (sizeof=0x12, standard type)
+struct ATK_ICONS
+{
+    /* 00 */ int16_t Melee;
+    /* 02 */ int16_t Ranged_Magic;
+    /* 04 */ int16_t Mithril;
+    /* 06 */ int16_t Magic_Weapon;
+    /* 08 */ int16_t Adamantium;
+    /* 0A */ int16_t Ranged_Bow;
+    /* 0C */ int16_t Ranged_Rock;
+    /* 0E */ int16_t Fire_Breath;
+    /* 10 */ int16_t Thrown_Attack;
+    /* 12 */
+};
 
-// WZD dseg:C406                                                 ¿ BEGIN:  ?
+
+// ; (sizeof=0x6, standard type)
+struct CMOVE_ICONS
+{
+    /* 00 */ int16_t Ground_Movement;
+    /* 02 */ int16_t Flying_Movement;
+    /* 04 */ int16_t Water_Movement;
+    /* 06 */
+};
+
+
+// ; (sizeof=0x1E, standard type)
+struct STAT_ICONS
+{
+    /* 00 */ int16_t Melee;
+    /* 02 */ int16_t Ranged_Magic;
+    /* 04 */ int16_t Mithril;
+    /* 06 */ int16_t Magic_Weapon;
+    /* 08 */ int16_t Adamantium;
+    /* 0A */ int16_t Ranged_Bow;
+    /* 0C */ int16_t Ranged_Rock;
+    /* 0E */ int16_t Fire_Breath;
+    /* 10 */ int16_t Thrown_Attack;
+    /* 12 */ int16_t Defense;
+    /* 14 */ int16_t Hits;
+    /* 16 */ int16_t Ground_Movement;
+    /* 18 */ int16_t Flying_Movement;
+    /* 1A */ int16_t Water_Movement;
+    /* 1C */ int16_t Resist;
+    /* 1E */
+};
+
+
+// ; (sizeof=0x24, standard type)
+struct CSCAN_ICONS
+{
+    /* 00 */ struct STAT_ICONS Stat;
+    /* 1E */ int16_t White_XP;
+    /* 20 */ int16_t Gold_XP;
+    /* 22 */ int16_t Red_XP;
+    /* 24 */
+};
+
+
 
 
 
 // WZD dseg:C47C
 extern int16_t OVL_Action_Plane;
+
 // WZD dseg:C47E
 extern int16_t OVL_Action_YPos;
+
 // WZD dseg:C480
 extern int16_t OVL_Action_XPos;
 
-
-
 // WZD dseg:C582
 extern int16_t CMB_SelectedUnit;
+
 // WZD dseg:C584
 extern int16_t _combat_defender_player;
+
 // WZD dseg:C586
 extern int16_t _combat_attacker_player;
+
 // WZD dseg:C588
 extern int16_t _combat_total_unit_count;
 
-
-
-// WZD dseg:C5D4                                                 ¿ END:  ?
-
-
-
-
-
-// WZD dseg:C972                                                 ¿ BEGIN: ovr123 - Uninitialized Data ?
-
 // WZD dseg:C972
 extern int16_t CMB_Winner;
+
 // WZD dseg:C974
 extern int16_t GAME_RazeCity;
+
 // WZD dseg:C976
 extern int16_t CMB_Gold_Reward;
+
 // WZD dseg:C978
 extern int16_t CMB_Buildings_Lost;
+
 // WZD dseg:C97A
 extern int16_t * CMB_LostBuildings;
+
 // WZD dseg:C97C
 extern int16_t CMB_Population_Lost;
+
 // WZD dseg:C97E
 extern int16_t CMB_ScrollMsg_Type;
 
-// WZD dseg:C97E                                                 ¿ END: ovr123 - Uninitialized Data ?    
+// WZD dseg:CFBE
+extern SAMB_ptr IMG_CMB_Blood[5];
 
+// WZD dseg:CFCA
+extern SAMB_ptr IMG_CMB_Curses[8];
 
+// WZD dseg:CFEE
+extern SAMB_ptr IMG_CMB_RiverTile[12];
 
+// WZD dseg:D006
+extern SAMB_ptr IMG_CMB_RivrNULLs[12];
 
+// WZD dseg:D01E
+extern SAMB_ptr IMG_CMB_RoadTiles[28];
 
+// WZD dseg:D056
+extern SAMB_ptr IMG_CMB_OceanTile[4];
+
+// WZD dseg:D05E
+extern SAMB_ptr IMG_CMB_ChaosOcn[4];
+
+// WZD dseg:D066
+extern SAMB_ptr IMG_CMB_Cloud;
+
+// WZD dseg:D06E
+extern SAMB_ptr IMG_CMB_FlotIsle;
+
+// WZD dseg:D070
+extern SAMB_ptr IMG_CMB_Mud;
+
+// WZD dseg:D072
+extern SAMB_ptr IMG_CMB_SorcNode;
+
+// WZD dseg:D074
+extern SAMB_ptr IMG_CMB_NatNode;
+
+// WZD dseg:D076
+extern SAMB_ptr IMG_CMB_Volcano[8];
+
+// WZD dseg:D088
+extern SAMB_ptr IMG_CMB_DarkWall[14];
+
+// WZD dseg:D0A4
+extern SAMB_ptr IMG_CMB_FireWall[14];
+
+// WZD dseg:D0C0
+extern SAMB_ptr IMG_CMB_StoneWalls[3][12];
+
+// WZD dseg:D108
+extern SAMB_ptr IMG_CMB_DirtTile;
+// WZD dseg:D10A
+extern SAMB_ptr IMG_CMB_RoadGrid;
+// WZD dseg:D10C
+extern SAMB_ptr IMG_CMB_Fort;
+// WZD dseg:D10E
+extern SAMB_ptr IMG_CMB_Ruins;
+// WZD dseg:D110
+extern SAMB_ptr IMG_CMB_Temple;
+// WZD dseg:D112
+extern SAMB_ptr IMG_CMB_Dungeon;
+// WZD dseg:D114
+extern SAMB_ptr IMG_CMB_Tower;
+// WZD dseg:D116
+extern SAMB_ptr IMG_CMB_Cave;
+// WZD dseg:D118
+extern SAMB_ptr IMG_CMB_Outpost;
+// WZD dseg:D11A
+extern SAMB_ptr IMG_CMB_Fortress;
+
+// WZD dseg:D11C
+extern SAMB_ptr IMG_CMB_Houses[15];
+
+// WZD dseg:D13A
+extern SAMB_ptr IMG_GUI_Chasm;
+
+// WZD dseg:D13C
+extern SAMB_ptr IMG_GUI_Vortex;
 
 // WZD dseg:D13E
 extern SAMB_ptr CMB_Path_Ys;
+
 // WZD dseg:D140
 extern SAMB_ptr CMB_Path_Xs;
-// WZD dseg:D142 00 00                                           CMB_Path_Length dw 0                    ; DATA XREF: BU_Move:loc_77989w ...
+
 // WZD dseg:D144
 extern SAMB_ptr CMB_NearBuffer_3;
+
 // WZD dseg:D146
 extern SAMB_ptr CMB_Path_Costs;
+
 // WZD dseg:D148
 extern SAMB_ptr CMB_ActiveMoveMap;
-// WZD dseg:D14A 00 00                                           CMB_Chasm_Anim_Y dw 0                   ; DATA XREF: TILE_CracksCall+1Ew ...
-// WZD dseg:D14C 00 00                                           CMB_Chasm_Anim_X dw 0                   ; DATA XREF: TILE_CracksCall+18w ...
+
 // WZD dseg:D14E
 extern SAMB_ptr CMB_Vortex_Array;
-// WZD dseg:D152 00 00                                           CMB_Vortex_Count dw 0                   ; DATA XREF: BU_Move:loc_77934r ...
+
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;
-// WZD dseg:D158 00 00                                           CMB_ProjectileCount dw 0                ; DATA XREF: CMB_RangedAnim+464r ...
+
 // WZD dseg:D15A
 extern SAMB_ptr CMB_EntitySprites;
-// WZD dseg:D15E 00 00                                           CMB_SpriteCount dw 0                    ; DATA XREF: CMB_DrawEntities:loc_DD3A3r ...
 
+// WZD dseg:D188
+extern SAMB_ptr CMB_ActiveFrame_GFX;
 
+// WZD dseg:D18A
+extern SAMB_ptr CMB_TargetFrame_GFX;
+
+// WZD dseg:D18C
+// extern RNGD_ANIM * CMB_RangedAtx_GFX[15];
+extern SAMB_ptr CMB_RangedAtx_GFX[15][8];
+
+// WZD dseg:D27C
+extern SAMB_ptr CMB_Damage_GFX;
 
 
 
@@ -295,6 +479,42 @@ extern SAMB_ptr CMB_EntitySprites;
 // WZD s90p01
 // drake178: CMB_TacticalCombat()
 int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
+
+
+
+/*
+    WIZARDS.EXE  ovr091
+*/
+
+// WZD s91p01
+// drake178: UU_BU_LoadFigureGFX()
+
+// WZD s91p02
+void CMB_PrepareTurn__WIP(void);
+
+// WZD s91p03
+// drake178: BU_GetMoveMap()
+
+// WZD s91p04
+// drake178: BU_Move()
+
+// WZD s91p05
+void G_BU_SelectUnit__WIP(int16_t battle_unit_idx);
+
+// WZD s91p06
+void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
+
+// WZD s91p07
+void CMB_FillTargetMaps__WIP(void);
+
+// WZD s91p08
+// drake178: BU_IsVisible()
+
+// WZD s91p09
+// drake178: CMB_UnitCityDamage()
+
+// WZD s91p10
+// drake178: BU_GetInstaMoveType()
 
 
 
@@ -333,23 +553,20 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 
 // WZD o98p01
 // drake178: CMB_CE_Refresh()
-// CMB_CE_Refresh()
+void CMB_CE_Refresh__WIP(void);
 
 // WZD o98p02
-// drake178: BU_HasSpellAbility()
-// BU_HasSpellAbility()
+int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx);
 
 // WZD o98p03
 // drake178: sub_7EC81()
 // sub_7EC81()
 
 // WZD o98p04
-// drake178: AI_CMB_PlayTurn()
-// AI_CMB_PlayTurn()
+void AI_CMB_PlayTurn__WIP(int16_t player_idx);
 
 // WZD o98p05
-// drake178: CMB_ProgressTurnFlow()
-// CMB_ProgressTurnFlow()
+void CMB_ProgressTurnFlow__WIP(void);
 
 // WZD o98p06
 // drake178: WIZ_FleeCombat()
@@ -366,16 +583,14 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
 int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, int16_t troop_count);
 
 // WZD o98p10
-// drake178: CMB_SetActionCursor()
-// CMB_SetActionCursor()
+void CMB_SetActionCursor__WIP(void);
 
 // WZD o98p11
 // drake178: BU_GetRangedCursor()
 // BU_GetRangedCursor()
 
 // WZD o98p12
-// drake178: CMB_CreateCELabels()
-// CMB_CreateCELabels()
+void CMB_CreateCELabels__WIP(void);
 
 // WZD o98p13
 // drake178: BU_GetCmbtMoveType()
@@ -390,8 +605,7 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 // BU_UnitLoadToBattle()
 
 // WZD o98p16
-// drake178: CMB_Units_Init()
-// CMB_Units_Init()
+int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
 
 // WZD o98p17
 // drake178: BU_CheckFlight()
@@ -419,11 +633,46 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
 
 
 /*
+    WIZARDS.EXE  ovr099
+*/
+
+// WZD o99p01
+// WZD o99p02
+// WZD o99p03
+// WZD o99p04
+// WZD o99p05
+// WZD o99p06
+// WZD o99p07
+
+// WZD o99p01
+void CMB_DrawFullScreen__WIP(void);
+
+// WZD o99p02
+// drake178: CMB_DrawActiveUnitW()
+
+// WZD o99p03
+// drake178: CMB_Draw_GUI_Btns()
+
+// WZD o99p04
+// drake178: CMB_DrawSpellInfoW()
+
+// WZD o99p05
+// drake178: CMB_DrawAUWStats()
+
+// WZD o99p06
+// drake178: CMB_CreateEntities()
+
+// WZD o99p07
+// drake178: CMB_DrawBUHPBar()
+
+
+
+/*
     WIZARDS.EXE  ovr103
 */
 
 // WZD s103p01
-// CMB_ShowInfoWindow()
+void CMB_ShowInfoWindow__WIP(void);
 
 // WZD s103p02
 // CMB_DrawInfoWindow()
@@ -435,34 +684,34 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
 // CMB_SetCommonXFX()
 
 // WZD s103p05
-// CMB_CountExternalFX()
+int16_t CMB_CountExternalFX__WIP(void);
 
 // WZD s103p06
-void CMB_Set_Node_Type(void);
+void Combat_Node_Type(void);
 
 // WZD s103p07
 // BU_CreateImage()
 
 // WZD s103p08
-// WIZ_BU_SelectNext()
+void WIZ_BU_SelectNext__WIP(int16_t player_idx);
 
 // WZD s103p09
 // WIZ_BU_SelectClosest()
 
 // WZD s103p10
-// CMB_SpellcastError()
+void CMB_SpellcastError__WIP(int16_t type);
 
 // WZD s103p11
-// BU_MoveConfused()
+void BU_MoveConfused__WIP(int16_t battle_unit_idx);
 
 // WZD s103p12
-// CMB_LoadResources()
+void CMB_LoadResources__WIP(void);
 
 // WZD s103p13
-// CMB_SetNearAllocs()
+void CMB_SetNearAllocs__WIP(void);
 
 // WZD s103p14
-// CMB_SelectCaster()
+void CMB_SelectCaster__WIP(int16_t caster_id);
 
 
 
@@ -471,7 +720,7 @@ void CMB_Set_Node_Type(void);
 */
 
 // WZD o105p01
-// CMB_WinLoseFlee()
+int16_t CMB_WinLoseFlee__WIP(void);
 
 // WZD o105p02
 // LBX_IMG_BannerPaint()
@@ -492,7 +741,7 @@ void CMB_Set_Node_Type(void);
 void CMB_UpdateTrueSight(void);
 
 // WZD o105p08
-// BU_SetVisibility()
+ void BU_SetVisibility__WIP(int16_t battle_unit_idx);
 
 // WZD o105p09
 // BU_GetCombatEffect()
@@ -546,7 +795,7 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 // CMB_RedrawSpellbook()
 
 // WZD o112p03
-// G_CMB_CastSpell()
+int16_t G_CMB_CastSpell__WIP(int16_t caster_id, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o112p04
 // CMB_ShowSpellbook()
@@ -810,7 +1059,7 @@ int16_t CMB_MarkLandLubbers(int16_t player_idx);
 int16_t BU_IsCombatSummon(int16_t battle_unit_idx);
 
 // WZD o124p16
-// BU_GetHalfMoves()
+int16_t BU_GetHalfMoves__WIP(int16_t battle_unit_idx);
 
 // WZD o124p17
 void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[]);
@@ -829,6 +1078,161 @@ void Raze_City_Prompt_Draw(void);
 
 
 
+/*
+    WIZARDS.EXE  ovr153
+*/
+
+// WZD ovr153p01
+// drake178: UU_sub_DC990()
+
+// WZD ovr153p02
+// drake178: CMB_DrawMap()
+
+// WZD ovr153p03
+// drake178: CMB_DrawEntities()
+
+// WZD ovr153p04
+// drake178: sub_DD536()
+
+// WZD ovr153p05
+// drake178: CMB_SpawnTrees()
+
+// WZD ovr153p06
+// drake178: CMB_SpawnRocks()
+
+// WZD ovr153p07
+// drake178: CMB_SpawnStructures()
+
+// WZD ovr153p08
+// drake178: CMB_SpawnStoneWall()
+
+// WZD ovr153p09
+// drake178: CMB_SpawnDarkWall()
+
+// WZD ovr153p10
+// drake178: CMB_SpawnFireWall()
+
+// WZD ovr153p11
+// drake178: CMB_SpawnVortices()
+
+// WZD ovr153p12
+// drake178: CMB_SpawnFigure()
+
+// WZD ovr153p13
+// drake178: CMB_SpawnUnitCurse()
+
+// WZD ovr153p14
+// drake178: CMB_EntitiesReset()
+
+// WZD ovr153p15
+// drake178: CMB_ComposeFigureIMG()
+
+// WZD ovr153p16
+// drake178: CMB_SpawnProjectiles()
+
+// WZD ovr153p17
+// drake178: CMB_GetFigDrawPos()
+
+// WZD ovr153p18
+// drake178: CMB_CreateEntity()
+
+// WZD ovr153p19
+// drake178: CMB_ZSort_Insert()
+
+// WZD ovr153p20
+// drake178: EMM_FIGX_CreateHdr()
+
+// WZD ovr153p21
+// drake178: EMM_TILEX_Init()
+
+// WZD ovr153p22
+// drake178: UU_NullSub_153_1()
+
+// WZD ovr153p23
+// drake178: CMB_Predraw_Figures()
+
+// WZD ovr153p24
+// drake178: RP_NullSub_153_2()
+
+
+
+/*
+    WIZARDS.EXE  ovr154
+*/
+
+// WZD ovr154p01
+void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp);
+
+// WZD ovr154p02
+// drake178: CMB_GenerateMap()
+
+// WZD ovr154p03
+// drake178: CMB_TreeGen()
+
+// WZD ovr154p04
+// drake178: CMB_RockGen()
+
+// WZD ovr154p05
+// drake178: CMB_RoadGen()
+
+// WZD ovr154p06
+// drake178: CMB_RiverGen()
+
+// WZD ovr154p07
+// drake178: CMB_MergeDirt()
+
+// WZD ovr154p08
+// drake178: CMB_RemoveRough()
+
+// WZD ovr154p09
+// drake178: CMB_TileGen()
+
+// WZD ovr154p10
+// drake178: CMB_SetMoveMaps()
+
+// WZD ovr154p11
+// drake178: CMB_TerrPatchGen()
+
+// WZD ovr154p12
+// drake178: CMB_GetScreenCoords()
+
+// WZD ovr154p13
+// drake178: CMB_EarthToMud()
+
+// WZD ovr154p14
+int16_t CMB_GetTileX__WIP(int16_t x, int16_t y);
+
+// WZD ovr154p15
+int16_t CMB_GetTileY__WIP(int16_t x, int16_t y);
+
+// WZD ovr154p16
+// drake178: CMB_GetInTileX()
+
+// WZD ovr154p17
+// drake178: CMB_GetInTileY()
+
+// WZD ovr154p18
+void Combat_Cache_Read(void);
+
+// WZD ovr154p19
+void Combat_Cache_Write(void);
+
+
+
+/*
+    WIZARDS.EXE  ovr155
+*/
+
+// WZD ovr155p01
+// WZD ovr155p02
+
+// WZD ovr155p01
+// drake178: CMB_GetPath()
+
+// WZD ovr155p02
+// drake178: CMB_FillReachMap()
+
+
 
 /*
     WIZARDS.EXE  ovr163
@@ -838,13 +1242,13 @@ void Raze_City_Prompt_Draw(void);
 // CMB_LoadTerrainGFX()
 
 // WZD ovr163p02
-// CMB_ComposeBackgrnd()
+void CMB_ComposeBackgrnd__WIP(void);
 
 // WZD ovr163p03
 // CMB_LoadWallRiseGFX()
 
 // WZD ovr163p04
-void CMB_BaseAllocs(void);
+void CMB_BaseAllocs__WIP(void);
 
 // WZD ovr163p05
 // CMB_SetProjectiles()

@@ -1311,8 +1311,10 @@ void Set_Road_Build_Screen_Help_List(void);
 void Set_Surveyor_Screen_Help_List(void);
 
 // WZD o104p21
+void Set_Combat_Help_List(void);
 
 // WZD o104p22
+void Set_TaxCollector_Window_Help_List(void);
 
 // WZD o104p23
 void Set_Advisor_Screen_Help_List(void);

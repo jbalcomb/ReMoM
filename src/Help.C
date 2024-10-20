@@ -195,7 +195,12 @@ void Set_Surveyor_Screen_Help_List(void)
 }
 
 // WZD o104p21
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "combat Help"
+void Set_Combat_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 21, (SAMB_ptr)_help_entries, 0, 17, 10);
+    Set_Help_List((char*)&_help_entries[0], 17);
+}
 
 // WZD o104p22
 // HLPENTRY.LBX, 38  "Tax Help"

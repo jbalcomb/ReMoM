@@ -197,6 +197,24 @@ int16_t UV_x_start;
 
 // WZD o72p01
 // drake178: USW_CombatDisplay()
+/*
+; a wrapper for USW_Display that performs the necessary
+; memory management to show the unit statistics window
+; in combat before doing it, and swaps back the combat
+; graphics afterward
+;
+; inherits multiple BUGs
+*/
+/*
+
+*/
+void USW_CombatDisplay__WIP(int16_t x_start, int16_t y_start, int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t flag, int16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o72p02
 // drake178: USW_LoadAndShow()

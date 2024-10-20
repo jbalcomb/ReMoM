@@ -3,22 +3,27 @@
 
     WIZARDS.EXE
         ovr090
+        ovr091
         ovr096
         ovr098
+        ovr099  ¿ MoO2  Module: CMBTDRW1 ?
         ovr103
         ovr105
         ovr110
         ovr112
+        ovr114
         ovr116
         ovr122
         ovr123
         ovr124
+        ovr153
+        ovr154
+        ovr155
         ovr163
 
 */
 
 #include "MoM.H"
-
 
 
 
@@ -39,6 +44,39 @@ Module: MOX
 
 
 
+// WZD dseg:50E8                                                 BEGIN:  ovr090 - Intialized Data  (Tactical Combat)
+
+// WZD dseg:50E8
+char cnst_SOUNDFX_File2[] = "SOUNDFX";
+// WZD dseg:50EF
+char cnst_ZeroString_17__ovr090[] = "";
+// WZD dseg:50F0
+char cnst_MUSIC_File7[] = "MUSIC";
+// WZD dseg:50F6
+char cnst_HOTKEY_EscF[] = "\x1B";
+// WZD dseg:50F8
+char cnst_HOTKEY_S_3[] = "S";
+// WZD dseg:50FA
+char cnst_HOTKEY_W_2[] = "W";
+// WZD dseg:50FC
+char cnst_HOTKEY_D_5[] = "D";
+// WZD dseg:50FE
+char cnst_HOTKEY_U_5[] = "U";
+// WZD dseg:5100
+char cnst_HOTKEY_A_4[] = "A";
+// WZD dseg:5102
+char cnst_HOTKEY_F[] = "F";
+// WZD dseg:5104
+char cnst_HOTKEY_SPACE_4[] = " ";
+// WZD dseg:5106
+char cnst_FleeConfirm_Msg[] = "Do you wish to flee?";
+
+// WZD dseg:511B 00                                              align 2
+
+// WZD dseg:511B                                                 END:  ovr090 - Intialized Data  (Tactical Combat)
+
+
+
 // WZD dseg:5660                                                 ¿ BEGIN: ovr096 - Strings ?
 
 // WZD dseg:5660
@@ -50,15 +88,95 @@ char cnst_TreatyAtk_Msg2[] = ".  Do you still wish to attack?";
 
 
 
+// WZD dseg:56E8                                                 BEGIN:  ovr099 - Initialized Data
+
+// WZD dseg:56E8 61 62 63 64                                     COL_CMBUI_Banner0 db 97, 98, 99, 100    ; DATA XREF: CMB_DrawFullScreen__WIP+1EAt ...
+// WZD dseg:56EC 42 43 44 45                                     COL_CMBUI_Banner1 db 66, 67, 68, 69
+// WZD dseg:56F0 21 22 23 24                                     COL_CMBUI_Banner2 db 33, 34, 35, 36
+// WZD dseg:56F4 C9 CA CB A6                                     COL_CMBUI_Banner3 db 201, 202, 203, 166
+// WZD dseg:56F8 A0 A1 A2 A3                                     COL_CMBUI_Banner4 db 160, 161, 162, 163
+// WZD dseg:56FC 1C 1B 1A 19                                     COL_CMBUI_Banner5 db 28, 27, 26, 25
+uint8_t COL_CMBUI_Banner[6][4] = {
+    { 97,  98,  99, 100}, 
+    { 66,  67,  68,  69}, 
+    { 33,  34,  35,  36}, 
+    {201, 202, 203, 166}, 
+    {160, 161, 162, 163}, 
+    { 28,  27,  26,  25}, 
+};
+// WZD dseg:5700
+char str_Monsters__ovr099[] = "Monsters";
+// WZD dseg:5709
+char str_Raiders__ovr099[] = "Raiders";
+// WZD dseg:5711
+char cnst_Cmbt_Immobile[] = "All units are immobilized. Select an action.";
+// WZD dseg:573E 4D 6F 76 65 00                                  cnst_VortexMove_1 db 'Move',0           ; DATA XREF: CMB_DrawActiveUnitW+2E6o
+// WZD dseg:5743 4D 61 67 69 63 00                               cnst_VortexMove_2 db 'Magic',0          ; DATA XREF: CMB_DrawActiveUnitW+2FAo
+// WZD dseg:5749 56 6F 72 74 65 78 00                            cnst_VortexMove_3 db 'Vortex',0         ; DATA XREF: CMB_DrawActiveUnitW+30Eo
+// WZD dseg:5750 31 20 53 70 61 63 65 00                         cnst_VortexMove_4 db '1 Space',0        ; DATA XREF: CMB_DrawActiveUnitW+322o
+// WZD dseg:5758 53 6B 69 6C 6C 3A 00                            cnst_CMB_Skill db 'Skill:',0            ; DATA XREF: CMB_DrawSpellInfoW+5Ao
+// WZD dseg:5758                                                                                         ; could use dseg:3532
+// WZD dseg:575F 4D 61 6E 61 3A 00                               cnst_CMB_Mana db 'Mana:',0              ; DATA XREF: CMB_DrawSpellInfoW+8Co
+// WZD dseg:5765 52 61 6E 67 65 3A 00                            cnst_CMB_Range db 'Range:',0            ; DATA XREF: CMB_DrawSpellInfoW+BDo
+
+// WZD dseg:5765                                                 END:  ovr099 - Initialized Data
 
 
-// WZD dseg:C7AA                                                 ¿ BEGIN:  ovr103 ?
 
-// WZD dseg:C7C2
-// ; contains a Node_Type flag or -1 (unit bonus aura)
-extern int16_t CMB_node_type;
+// WZD dseg:5852                                                 BEGIN:  ovr103 - Initialized Data
 
-// WZD dseg:C7E6                                                 ¿ END:  ovr103 ?
+// WZD dseg:5852
+char compix_lbx_file__ovr103[] = "COMPIX";
+// WZD dseg:5858 00                                              cnst_ZeroString_19 db 0                 ; DATA XREF: CMB_SelectCaster+4Eo
+// WZD dseg:5859 1B 00                                           cnst_HOTKEY_Esc13 db 1Bh,0              ; DATA XREF: CMB_ShowInfoWindow__WIP+225o
+// WZD dseg:5859                                                                                         ; should use dseg:2c56 - reused in combat info upgrade
+// WZD dseg:585B 20 53 70 65 6C 6C 73 00                         cnst_SpaceSpells db ' Spells',0         ; DATA XREF: CMB_DrawInfoWindow+171o ...
+// WZD dseg:585B                                                                                         ; could use dseg:4ce9 - reused in combat info upgrade
+// WZD dseg:5863 43 72 75 73 61 64 65 00                         cnst_Crusade db 'Crusade',0             ; DATA XREF: CMB_FillInfoArrays+5Ao
+// WZD dseg:5863                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:586B 48 6F 6C 79 20 41 72 6D 73 00                   cnst_HolyArms db 'Holy Arms',0          ; DATA XREF: CMB_FillInfoArrays+A2o
+// WZD dseg:586B                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:5875 43 68 61 72 6D 20 4F 66 20 4C 69 66 65 00       cnst_CharmofLife db 'Charm Of Life',0   ; DATA XREF: CMB_FillInfoArrays+EAo
+// WZD dseg:5875                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:5883 5A 6F 6D 62 69 65 20 4D 61 73 74 65 72 79 00    cnst_ZombieMastery db 'Zombie Mastery',0
+// WZD dseg:5883                                                                                         ; DATA XREF: CMB_FillInfoArrays:loc_8441Do
+// WZD dseg:5883                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:5892 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 53 6F 72+cnst_SorcNodeDispel db 'Dispells Non-Sorcery',0
+// WZD dseg:5892 63 65 72 79 00                                                                          ; DATA XREF: CMB_SetCommonXFX+4Co
+// WZD dseg:5892                                                                                         ;  - moved in combat info upgrade
+// WZD dseg:58A7 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 43 68 61+cnst_ChaosNodeDispel db 'Dispells Non-Chaos',0
+// WZD dseg:58A7 6F 73 00                                                                                ; DATA XREF: CMB_SetCommonXFX+80o
+// WZD dseg:58A7                                                                                         ;  - moved in combat info upgrade
+// WZD dseg:58BA 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 4E 61 74+cnst_NatNodeDispel db 'Dispells Non-Nature',0
+// WZD dseg:58BA 75 72 65 00                                                                             ; DATA XREF: CMB_SetCommonXFX+9Fo
+// WZD dseg:58BA                                                                                         ;  - moved in combat info upgrade
+// WZD dseg:58CE 53 6F 72 63 65 72 79 20 4E 6F 64 65 20 41 75 72+cnst_SorceryAura db 'Sorcery Node Aura',0
+// WZD dseg:58CE 61 00                                                                                   ; DATA XREF: CMB_SetCommonXFX+D1o
+// WZD dseg:58CE                                                                                         ;  - moved in combat info upgrade
+// WZD dseg:58E0 4E 61 74 75 72 65 20 4E 6F 64 65 20 41 75 72 61+cnst_NatureAura db 'Nature Node Aura',0 ; DATA XREF: CMB_SetCommonXFX+105o
+// WZD dseg:58E0 00                                                                                      ;  - moved in combat info upgrade
+// WZD dseg:58F1 43 68 61 6F 73 20 4E 6F 64 65 20 41 75 72 61 00 cnst_ChaosAura db 'Chaos Node Aura',0   ; DATA XREF: CMB_SetCommonXFX+124o
+// WZD dseg:58F1                                                                                         ;  - moved in combat info upgrade
+// WZD dseg:5901 43 6C 6F 75 64 20 4F 66 20 44 61 72 6B 6E 65 73+cnst_CloudofDark db 'Cloud Of Darkness',0
+// WZD dseg:5901 73 00                                                                                   ; DATA XREF: CMB_SetCommonXFX+151o
+// WZD dseg:5901                                                                                         ; should use dseg:273e - reused in combat info upgrade
+// WZD dseg:5913 48 6F 6C 79 20 4C 69 67 68 74 00                cnst_HolyLight db 'Holy Light',0        ; DATA XREF: CMB_SetCommonXFX+18Ao
+// WZD dseg:5913                                                                                         ; should use dseg:27d9 - reused in combat info upgrade
+// WZD dseg:591E 43 68 61 6F 73 20 53 75 72 67 65 00             cnst_ChaosSurge db 'Chaos Surge',0      ; DATA XREF: CMB_SetCommonXFX+1D0o
+// WZD dseg:591E                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:592A 45 74 65 72 6E 61 6C 20 4E 69 67 68 74 00       cnst_EternalNight db 'Eternal Night',0  ; DATA XREF: CMB_SetCommonXFX+21Eo
+// WZD dseg:592A                                                                                         ;  - reused in combat info upgrade
+// WZD dseg:5938 59 6F 75 20 61 72 65 20 75 6E 61 62 6C 65 20 74+cnst_CmbCastError_2 db 'You are unable to throw spells at this time.',0
+// WZD dseg:5938 6F 20 74 68 72 6F 77 20 73 70 65 6C 6C 73 20 61+                                        ; DATA XREF: CMB_SpellcastError__WIP:loc_84E35o
+// WZD dseg:5965 59 6F 75 20 6D 61 79 20 6F 6E 6C 79 20 63 61 73+cnst_CmbCastError_1 db 'You may only cast once per turn.',0
+// WZD dseg:5965 74 20 6F 6E 63 65 20 70 65 72 20 74 75 72 6E 2E+                                        ; DATA XREF: CMB_SpellcastError__WIP:loc_84E41o
+// WZD dseg:5986 43 61 6E 63 65 6C 00                            cnst_Cancel_2 db 'Cancel',0             ; DATA XREF: CMB_SelectCaster+49o
+// WZD dseg:5986                                                                                         ; should use dseg:2df1 - reused in combat info upgrade
+// WZD dseg:598D 57 68 6F 20 57 69 6C 6C 20 43 61 73 74 00       cnst_CasterSelectMsg db 'Who Will Cast',0
+
+// WZD dseg:599B 00                                              align 2
+
+// WZD dseg:599B                                                 END:  ovr103 - Initialized Data
 
 
 
@@ -169,53 +287,163 @@ char cnst_HOTKEY_Esc1B = '\x1B';
 
 
 
+// WZD dseg:706E                                                 BEGIN:  ovr153 - Initialized Data
+
+// WZD dseg:706E 00 00                                           CMB_StoneWallType dw 0                  ; DATA XREF: CMB_SpawnStoneWall+AEr ...
+// WZD dseg:706E                                                                                         ; zeroed for deserts and mountains, unset otherwise,
+// WZD dseg:706E                                                                                         ; then set to 1 if on Myrror
+// WZD dseg:7070 00 00                                           G_CMB_MWallAnimSkip dw 0                ; DATA XREF: CMB_DrawMap+661r ...
+// WZD dseg:7070                                                                                         ; 0 or 1, controls whether something else is stepped
+// WZD dseg:7072 01                                              db    1
+// WZD dseg:7073 00                                              db    0
+// WZD dseg:7074 00 00                                           G_CMB_MWallAnimStage dw 0               ; DATA XREF: CMB_DrawMap+668r ...
+// WZD dseg:7074                                                                                         ; steps 0 to 4 if the above is 0
+// WZD dseg:7076 00 00                                           CMB_RoadAnimStage dw 0                  ; DATA XREF: CMB_DrawMap+2F0r ...
+// WZD dseg:7076                                                                                         ; steps 0 to 4
+// WZD dseg:7078 00 00                                           CMB_WaterAnimStage dw 0                 ; DATA XREF: CMB_DrawMap+11Cr ...
+// WZD dseg:707A
+int16_t CMB_MudAnimStage = 0;
+// WZD dseg:707C 00 00                                           CMB_ChasmAnimYMod dw 0                  ; originally unused, reused for alternate summon anim
+// WZD dseg:707E 00 00                                           CMB_CNodeAnimStage dw 0                 ; DATA XREF: CMB_DrawMap+234r ...
+// WZD dseg:707E                                                                                         ; steps 0 to 7
+// WZD dseg:7080
+int16_t CMB_TargetFrameStage = 0;
+// WZD dseg:7082 00 00                                           RP_CMB_Movement_Var dw 0                ; DATA XREF: BU_Move+172w ...
+// WZD dseg:7082                                                                                         ; cleared before movement, never used for anything
+// WZD dseg:7084 00 00                                           RP_CMB_ProjectileFrame2 dw 0            ; DATA XREF: CMB_RangedAnim+3ADw ...
+// WZD dseg:7086 00 00                                           CMB_ProjectileFrame dw 0                ; DATA XREF: CMB_RangedAnim+3A7w ...
+// WZD dseg:7086                                                                                         ; used with entity drawing type 3, steps 0 to 2
+// WZD dseg:7088
+int16_t CMB_VortexAnimStage = 0;
+// WZD dseg:708A
+int16_t CMB_ChasmAnimStage = 0;
+// WZD dseg:708C 00 00                                           IMG_CMB_OrigChasm@ dw 0                 ; originally unused, reused for Demon/Fire summoning
+// WZD dseg:708E 00 00                                           CMB_Chasm_Anim dw 0                     ; DATA XREF: TILE_CracksCall+27w ...
+// WZD dseg:7090 00 00                                           CMB_CurseAnimStage dw 0                 ; DATA XREF: CMB_DrawMap+680w ...
+// WZD dseg:7092 00 00                                           CMB_MoveAnimDir dw 0                    ; DATA XREF: CMB_DrawMap:loc_DD03Dr ...
+// WZD dseg:7092                                                                                         ; controls the stepping direction of GUI_MoveAnimFrame
+// WZD dseg:7094 00 00                                           CMB_MoveAnimFrame dw 0                  ; DATA XREF: BU_CreateImage:loc_849D5r ...
+// WZD dseg:7094                                                                                         ; two-way, steps 0 to 2 then back
+// WZD dseg:7096 00 00                                           CMB_BaseAnimFrame dw 0                  ; DATA XREF: BU_CreateImage+122r ...
+// WZD dseg:7096                                                                                         ; steps 0 to 2
+// WZD dseg:7098 01 00                                           CMB_UnitATKAnimFrame dw 1               ; DATA XREF: CMB_DrawMap+6D7r ...
+// WZD dseg:7098                                                                                         ; alternating between 1 and 3
+// WZD dseg:709A 03 00                                           CMB_UnitDEFAnimFrame dw 3               ; DATA XREF: CMB_DrawMap:loc_DD097r ...
+// WZD dseg:709A                                                                                         ; alternating between 1 and 3
+// WZD dseg:709C 00 00                                           RP_CMB_NoCombatMap dw 0                 ; DATA XREF: CMB_Terrain_Init+583r
+// WZD dseg:709E 45 31                                           cnst_CMBEntity_Error db 'E1'            ; DATA XREF: CMB_CreateEntity+13o
+
+// WZD dseg:709E                                                 END:  ovr153 - Initialized Data
+
+
+
+// WZD dseg:70A0                                                 BEGIN:  ovr154 - Initialized Data
+
+// WZD dseg:70A0 00 00                                           MoveDir_NextX_0 dw 0                    ; DATA XREF: CMB_TerrPatchGen+3Ar
+// WZD dseg:70A0                                                                                         ; element 0 will not be used (Rnd min return is 1)
+// WZD dseg:70A2 00 00 FF FF 00 00 01 00                         XChange dw 0, 0FFFFh, 0, 1              ; DATA XREF: CMB_RoadGen+EAr ...
+// WZD dseg:70AA 00 00                                           MoveDir_NextY_0 dw 0                    ; DATA XREF: CMB_TerrPatchGen+52r
+// WZD dseg:70AA                                                                                         ; element 0 will not be used (Rnd min return is 1)
+// WZD dseg:70AC 01 00 00 00 FF FF 00 00                         YChange dw 1, 0, 0FFFFh, 0              ; DATA XREF: CMB_RoadGen+F8r ...
+// WZD dseg:70B4 00                                              db    0
+// WZD dseg:70B5 00                                              db    0
+// WZD dseg:70B6
+char str_COMBAT_TMP__ovr154[] = "COMBAT.TMP";
+// WZD dseg:70B6                                                                                         ; DATA XREF: Combat_Cache_Read+29o ...
+// WZD dseg:70C1
+char str_RB__ovr154[] = "rb";
+// WZD dseg:70C4
+char str_WB__ovr154[] = "wb";
+// WZD dseg:70C7 00                                              align 2
+
+// WZD dseg:70C7                                                 END:  ovr154 - Initialized Data
+
+
+
+// WZD dseg:70C8 EC FF 14 00 16 00 EA FF EB FF 15 00 FF FF 01 00 CMB_AdjacentOffsets dw 0FFECh, 14h, 16h, 0FFEAh, 0FFEBh, 15h, 0FFFFh, 1
+// WZD dseg:70C8                                                                                         ; DATA XREF: CMB_GetPath+1E4r ...
+// WZD dseg:70D8 EC FF 18 FC 16 00 18 FC EB FF 15 00 18 FC 01 00 CMB_AdjctOffs_NoLeft dw 0FFECh, 0FC18h, 16h, 0FC18h, 0FFEBh, 15h, 0FC18h, 1
+// WZD dseg:70D8                                                                                         ; DATA XREF: CMB_GetPath:loc_E2A97r ...
+// WZD dseg:70E8 18 FC 14 00 18 FC EA FF EB FF 15 00 FF FF 18 FC CMB_AdjctOffs_NoRgt dw 0FC18h, 14h, 0FC18h, 0FFEAh, 0FFEBh, 15h, 0FFFFh, 0FC18h
+// WZD dseg:70E8                                                                                         ; DATA XREF: CMB_GetPath+307r ...
+// WZD dseg:70F8 20 63 6F 75 6C 64 20 6E 6F 74 20 62 65 20 66 6F+CRP_AI_SpellTargetError db ' could not be found for CP.',0
+// WZD dseg:70F8 75 6E 64 20 66 6F 72 20 43 50 2E 00                                                     ; DATA XREF: CRP_DBG_SpellTargetError+33o
+// WZD dseg:7114 00                                              db    0
+// WZD dseg:7115 00                                              db    0
+// WZD dseg:7116 00 00                                           AI_Human_Hostility dw 0                 ; DATA XREF: AI_SetUnitOrders:loc_EBDABw ...
+// WZD dseg:7118 B9 2F 2F 2F 2F                                  COL_HLP_Titles db 0B9h, 4 dup(2Fh)      ; DATA XREF: Draw_Help_Entry:loc_F27EBo
+// WZD dseg:7118                                                                                         ; this should ideally have been 16 bytes long
+// WZD dseg:711D B8 37 37 37 37                                  COL_HLP_Text db 0B8h, 4 dup(37h)        ; DATA XREF: Draw_Help_Entry:loc_F25E4o ...
+// WZD dseg:711D                                                                                         ; this should ideally have been 16 bytes long
+// WZD dseg:7122 48 45 4C 50 00                                  cnst_HELP_File3 db 'HELP',0             ; DATA XREF: Draw_Help_Entry+E9o
+// WZD dseg:7122                                                                                         ; should use dseg:2d08 (or dseg:6257)
+// WZD dseg:7127 68 65 6C 70 00                                  cnst_HELP_File4 db 'help',0             ; DATA XREF: Draw_Help_Entry+211o ...
+// WZD dseg:7127                                                                                         ; should use dseg:2d08 (or dseg:6257)
+
+
 
 
 
 // WZD dseg:C406                                                 ¿ BEGIN:  ?
-
-// WZD dseg:C406 00 00                                           CMB_ImmobileCanAct dw 0                 
-// WZD dseg:C408 00 00                                           CMB_WizardCitySiege dw 0                
-// WZD dseg:C40A 00 00 00 00 00 00 00 00 00 00 00 00 00 00       CMB_CityName db 0Eh dup(0)              
-
+// WZD dseg:C406
+// WZD dseg:C406
+int16_t CMB_ImmobileCanAct;
+// WZD dseg:C408
+int16_t CMB_WizardCitySiege;
+// WZD dseg:C40A
+char CMB_CityName[14];
 // WZD dseg:C418
 int16_t CMB_CityDamage;
-
-// WZD dseg:C41A 00 00                                           SND_CMB_Silence@ dw 0                   ; LBXE_LoadReplace of SFX_Silence into World_Data@
-// WZD dseg:C41C 00 00                                           SND_CMB_Music@ dw 0                     ; LBXE_LoadAppend into World_Data@
+// WZD dseg:C41A
+SAMB_ptr SND_CMB_Silence;
+// WZD dseg:C41C
+SAMB_ptr SND_CMB_Music;
 
 // WZD dseg:C41E
 int16_t CMB_DEFR_TrueSight;
-
 // WZD dseg:C420
 int16_t CMB_ATKR_TrueSight;
 
-// WZD dseg:C422 00 00                                           IMG_CMB_Cancel_Btn@ dw 0                
-// WZD dseg:C424 00 00                                           IMG_CMB_InfoBtnLock@ dw 0               
-// WZD dseg:C426 00 00                                           IMG_CMB_FleeBtnLock@ dw 0               
-// WZD dseg:C428 00 00                                           IMG_CMB_AutoBtnLock@ dw 0               
-// WZD dseg:C42A 00 00                                           IMG_CMB_DoneBtnLock@ dw 0               
-// WZD dseg:C42C 00 00                                           IMG_CMB_WaitBtnLock@ dw 0               
-// WZD dseg:C42E 00 00                                           IMG_CMB_SpllBtnLock@ dw 0               
-// WZD dseg:C430 00 00                                           CMB_AIGoesFirst dw 0                    
-// WZD dseg:C432 00 00                                           CMB_Auto_ON dw 0                        
-// WZD dseg:C434 00 00                                           CRP_CMB_AI_Player_2 dw 0                
-// WZD dseg:C436 00 00                                           CRP_CMB_HumanPlayer dw 0                
-// WZD dseg:C438 00 00                                           CMB_WizCastAvailable dw 0               
-// WZD dseg:C438                                                                                         ; now 1 (during tactical combat init)
-// WZD dseg:C438                                                                                         ; enables or disables the Spell button when a finished
-// WZD dseg:C438                                                                                         ; unit is selected
-// WZD dseg:C43A 00 00                                           CMB_DEFR_First_CE dw 0                  
+// WZD dseg:C422
+SAMB_ptr IMG_CMB_Cancel_Btn;
+// WZD dseg:C424
+SAMB_ptr IMG_CMB_InfoBtnLock;
+// WZD dseg:C426
+SAMB_ptr IMG_CMB_FleeBtnLock;
+// WZD dseg:C428
+SAMB_ptr IMG_CMB_AutoBtnLock;
+// WZD dseg:C42A
+SAMB_ptr IMG_CMB_DoneBtnLock;
+// WZD dseg:C42C
+SAMB_ptr IMG_CMB_WaitBtnLock;
+// WZD dseg:C42E
+SAMB_ptr IMG_CMB_SpllBtnLock;
+// WZD dseg:C430
+int16_t CMB_AIGoesFirst;
+// WZD dseg:C432
+int16_t CMB_Auto_ON;
+// WZD dseg:C434
+int16_t CRP_CMB_AI_Player_2;
+// WZD dseg:C436
+int16_t CRP_CMB_HumanPlayer;
+// WZD dseg:C438
+int16_t CMB_WizCastAvailable;
+// WZD dseg:C43A
+int16_t CMB_DEFR_First_CE;
 // WZD dseg:C43A                                                                                         ; now 0 (after tactical BU init)
 // WZD dseg:C43A                                                                                         ; defender's first shown combat enchant
-// WZD dseg:C43C 00 00                                           CMB_ATKR_First_CE dw 0                  
+// WZD dseg:C43C
+int16_t CMB_ATKR_First_CE;
 // WZD dseg:C43C                                                                                         ; now 0 (after tactical BU init)
 // WZD dseg:C43C                                                                                         ; attacker's first shown combat enchant
-// WZD dseg:C43E 00 00                                           CMB_AI_Player dw 0                      
+// WZD dseg:C43E
+int16_t CMB_AI_Player;
 // WZD dseg:C43E                                                                                         ; when populating the BU table, set to the index of the
 // WZD dseg:C43E                                                                                         ; AI player (the other participant being always human)
-// WZD dseg:C440 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_DEFR_CE_Labels dw 0Fh dup(0)        
-// WZD dseg:C45E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_ATKR_CE_Labels dw 0Fh dup(0)        
+// WZD dseg:C440
+int16_t CMB_DEFR_CE_Labels[15];
+// WZD dseg:C45E
+int16_t CMB_ATKR_CE_Labels[15];
 
 // WZD dseg:C47C
 int16_t OVL_Action_Plane;
@@ -224,43 +452,48 @@ int16_t OVL_Action_YPos;
 // WZD dseg:C480
 int16_t OVL_Action_XPos;
 
-// WZD dseg:C482 00 00                                           CMB_ATKR_CE_Count dw 0                  
-// WZD dseg:C484 00 00                                           CMB_DEFR_CE_Count dw 0                  
-// WZD dseg:C486 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_DEFR_CE_Wnd Active_CE 0Fh dup(<0>)  
-// WZD dseg:C4C2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_ATKR_CE_Wnd Active_CE 0Fh dup(<0>)  
-// WZD dseg:C4FE 00 00                                           IMG_CMB_TrueLight@ dw 0                 
-// WZD dseg:C4FE                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C500 00 00                                           IMG_CMB_Darkness@ dw 0                  
-// WZD dseg:C500                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C502 00 00                                           IMG_CMB_WarpReality@ dw 0               
-// WZD dseg:C502                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C504 00 00                                           IMG_CMB_BlackPrayer@ dw 0               
-// WZD dseg:C504                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C506 00 00                                           IMG_CMB_Wrack@ dw 0                     
-// WZD dseg:C506                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C508 00 00                                           IMG_CMB_MetalFires@ dw 0                
-// WZD dseg:C508                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C50A 00 00                                           IMG_CMB_Prayer@ dw 0                    
-// WZD dseg:C50A                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C50C 00 00                                           IMG_CMB_HighPrayer@ dw 0                
-// WZD dseg:C50C                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C50E 00 00                                           IMG_CMB_Terror@ dw 0                    
-// WZD dseg:C50E                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C510 00 00                                           IMG_CMB_CallLightng@ dw 0               
-// WZD dseg:C510                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C512 00 00                                           IMG_CMB_CounterMgc@ dw 0                
-// WZD dseg:C512                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C514 00 00                                           IMG_CMB_MassInvis@ dw 0                 
-// WZD dseg:C514                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C516 00 00                                           IMG_CMB_Entangle@ dw 0                  
-// WZD dseg:C516                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C518 00 00                                           IMG_CMB_ManaLeak@ dw 0                  
-// WZD dseg:C518                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C51A 00 00                                           IMG_CMB_Blur@ dw 0                      
-// WZD dseg:C51A                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C51C 00 00                                           CMB_Turn dw 0                           
-// WZD dseg:C51E 00 00                                           CMB_HumanUnitsDone dw 0                 
-// WZD dseg:C520 00 00                                           CMB_combat_structure dw 0               
+// WZD dseg:C482
+int16_t CMB_ATKR_CE_Count;
+// WZD dseg:C484
+int16_t CMB_DEFR_CE_Count;
+// WZD dseg:C486 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_DEFR_CE_Wnd Active_CE 0Fh dup(<0>)  ; DATA XREF: CMB_CE_Refresh+BFw ...
+// WZD dseg:C4C2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_ATKR_CE_Wnd Active_CE 0Fh dup(<0>)  ; DATA XREF: CMB_CE_Refresh+87w ...
+// WZD dseg:C4FE
+SAMB_ptr IMG_CMB_TrueLight;
+// WZD dseg:C500
+SAMB_ptr IMG_CMB_Darkness;
+// WZD dseg:C502
+SAMB_ptr IMG_CMB_WarpReality;
+// WZD dseg:C504
+SAMB_ptr IMG_CMB_BlackPrayer;
+// WZD dseg:C506
+SAMB_ptr IMG_CMB_Wrack;
+// WZD dseg:C508
+SAMB_ptr IMG_CMB_MetalFires;
+// WZD dseg:C50A
+SAMB_ptr IMG_CMB_Prayer;
+// WZD dseg:C50C
+SAMB_ptr IMG_CMB_HighPrayer;
+// WZD dseg:C50E
+SAMB_ptr IMG_CMB_Terror;
+// WZD dseg:C510
+SAMB_ptr IMG_CMB_CallLightng;
+// WZD dseg:C512
+SAMB_ptr IMG_CMB_CounterMgc;
+// WZD dseg:C514
+SAMB_ptr IMG_CMB_MassInvis;
+// WZD dseg:C516
+SAMB_ptr IMG_CMB_Entangle;
+// WZD dseg:C518
+SAMB_ptr IMG_CMB_ManaLeak;
+// WZD dseg:C51A
+SAMB_ptr IMG_CMB_Blur;
+// WZD dseg:C51C
+int16_t _combat_turn;
+// WZD dseg:C51E
+int16_t CMB_HumanUnitsDone;
+// WZD dseg:C520
+int16_t CMB_combat_structure;
 // WZD dseg:C520                                                                                         ; a seemingly pointless variable whose state could have
 // WZD dseg:C520                                                                                         ; been extrapolated from others
 // WZD dseg:C520                                                                                         ;   1 - city battle (defender only for wall spells?)
@@ -268,78 +501,45 @@ int16_t OVL_Action_XPos;
 // WZD dseg:C520                                                                                         ;   3 - nature node
 // WZD dseg:C520                                                                                         ;   4 - chaos node
 // WZD dseg:C520                                                                                         ;   6 - sailable tile
-// WZD dseg:C522 00 00                                           GUI_CombatWindow@ dw 0                  
+// WZD dseg:C522 00 00                                           GUI_CombatWindow@ dw 0                  ; DATA XREF: CMB_SetActionCursor:loc_7FC95r ...
 // WZD dseg:C522                                                                                         ; 12 LBX_NearAlloc_Next bytes
-// WZD dseg:C524 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_TargetRows@ dw 16h dup(0)           
+// WZD dseg:C524
+int16_t * CMB_TargetRows[22];
 // WZD dseg:C524 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 22 pointers to LBX_NearAlloc_Next
 // WZD dseg:C524 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; allocations of 21 bytes each
-// WZD dseg:C550 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_BU_Figure_GFX@ dw 12h dup(0)        
+// WZD dseg:C550
+SAMB_ptr CMB_BU_Figure_GFX[18];
 // WZD dseg:C550 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 segment pointers after an LBX_Alloc_Mark
 // WZD dseg:C550 00 00 00 00                                                                             ; of the sandbox, one every 38h paragraphs
 // WZD dseg:C550                                                                                         ;
 // WZD dseg:C550                                                                                         ; WARNING: this allocation is always undone!
 // WZD dseg:C574 00                                              db    0
 // WZD dseg:C575 00                                              db    0
-// WZD dseg:C576 00 00                                           IMG_CMB_Info_Btn@ dw 0                  
-// WZD dseg:C576                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C578 00 00                                           IMG_CMB_Flee_Btn@ dw 0                  
-// WZD dseg:C578                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C57A 00 00                                           IMG_CMB_Auto_Btn@ dw 0                  
-// WZD dseg:C57A                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C57C 00 00                                           IMG_CMB_Done_Btn@ dw 0                  
-// WZD dseg:C57C                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C57E 00 00                                           IMG_CMB_Wait_Btn@ dw 0                  
-// WZD dseg:C57E                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C580 00 00                                           IMG_CMB_Spell_Btn@ dw 0                 
-// WZD dseg:C580                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C582 00 00                                           CMB_SelectedUnit dw 0                   
-// WZD dseg:C582                                                                                         ; active battle unit in combat?
-// WZD dseg:C582                                                                                         ; 666 - rampage, no ruins
-// WZD dseg:C582                                                                                         ; 667 - raiders won (city neutral)
-// WZD dseg:C582                                                                                         ; 668 - rampage, created ruins
-// WZD dseg:C584 00 00                                           _combat_defender_player dw 0            
-// WZD dseg:C586 00 00                                           _combat_attacker_player dw 0            
-// WZD dseg:C588 00 00                                           _combat_total_unit_count dw 0           
-// WZD dseg:C58A 00 00                                           CMB_CursorBattleUnit dw 0               
-// WZD dseg:C58A                                                                                         ; the combat unit display is based on this
-// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_InfoIcons@ dw 0Eh dup(0)        
-// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 pointers to World_Data@ appended images
-// WZD dseg:C5A8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_ATK_Icons@ ATK_ICONS <0>        
-// WZD dseg:C5A8 00 00                                                                                   ; array of 9 pointers to sandbox appended images
-// WZD dseg:C5BA 00 00                                           IMG_GAME_LimboFall@ dw 0                
-// WZD dseg:C5BA                                                                                         ; 190h appended paragraphs into the LBX_Sandbox_Segment
-// WZD dseg:C5BC 00 00                                           GAME_LimboFall_Stage dw 0               
-// WZD dseg:C5BE 00 00                                           IMG_GAME_WizHandsUp@ dw 0               
-// WZD dseg:C5BE                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
-// WZD dseg:C5C0 00 00                                           IMG_GAME_RedSparkle@ dw 0               
-// WZD dseg:C5C2 00 00                                           GAME_Conquering_Wiz dw 0                
-// WZD dseg:C5C4 00 00                                           GAME_Conquered_Wiz dw 0                 
-// WZD dseg:C5C6 00 00                                           SND_GAME_Scream@ dw 0                   
-// WZD dseg:C5C6                                                                                         ; appended into the LBX_Sandbox_Segment (~20k)
-// WZD dseg:C5C8 00 00                                           GAME_ConqstAnimStage dw 0               
-// WZD dseg:C5CA 00 00                                           IMG_GAME_ZappedWiz@ dw 0                
-// WZD dseg:C5CA                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C5CC 00 00                                           IMG_GAME_GrowZap@ dw 0                  
-// WZD dseg:C5CC                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C5CE 00 00                                           IMG_GAME_Axeboy@ dw 0                   
-// WZD dseg:C5CE                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C5D0 00 00                                           IMG_GAME_ConeHead@ dw 0                 
-// WZD dseg:C5D0                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C5D2 00 00                                           IMG_GAME_ConqrngWiz@ dw 0               
-// WZD dseg:C5D2                                                                                         ; appended into the LBX_Sandbox_Segment
-// WZD dseg:C5D4 00 00                                           IMG_GAME_ConqrdWiz@ dw 0                
+// WZD dseg:C576
+SAMB_ptr IMG_CMB_Info_Btn;
+// WZD dseg:C578
+SAMB_ptr IMG_CMB_Flee_Btn;
+// WZD dseg:C57A
+SAMB_ptr IMG_CMB_Auto_Btn;
+// WZD dseg:C57C
+SAMB_ptr IMG_CMB_Done_Btn;
+// WZD dseg:C57E
+SAMB_ptr IMG_CMB_Wait_Btn;
+// WZD dseg:C580
+SAMB_ptr IMG_CMB_Spell_Btn;
 
-// WZD dseg:C5D4                                                 ¿ END:  ?
-
-
-
-
-
-
-
-// 
 // WZD dseg:C582
+// drake178: CMB_SelectedUnit
+// MoO2  Module: MOX  _cur_ship
+/*
+; active battle unit in combat?
+;
+; 666 - rampage, no ruins
+; 667 - raiders won (city neutral)
+; 668 - rampage, created ruins
+*/
 int16_t CMB_SelectedUnit;
+
 // WZD dseg:C584
 int16_t _combat_defender_player;
 // WZD dseg:C586
@@ -347,14 +547,35 @@ int16_t _combat_attacker_player;
 // WZD dseg:C588
 int16_t _combat_total_unit_count;
 
+// WZD dseg:C58A
+int16_t CMB_CursorBattleUnit;
+// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_InfoIcons@ dw 0Eh dup(0)        ; DATA XREF: CMB_ShowInfoWindow+112w ...
+// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 pointers to World_Data@ appended images
+// WZD dseg:C5A8
+// struct ATK_ICONS IMG_CMB_ATK_Icons;
+SAMB_ptr IMG_CMB_ATK_Icons[9];
 
+// WZD dseg:C5BA                                                 BEGIN:  ovr093 - Uninitialized Data
+
+
+
+// WZD dseg:C79A                                                 ¿ ovr098 ?
+
+// WZD dseg:C79A
+int16_t CMB_HumanTurn;
+// WZD dseg:C79C
+int16_t CRP_CMB_NeverChecked1;
+
+// WZD dseg:C79C                                                 ¿ ovr098 ?
 
 
 
 // WZD dseg:C7AA                                                 ¿ BEGIN:  ovr103 ?
 
-// WZD dseg:C7AA 00 00 00 00 00 00                               IMG_CMB_MoveIcons@ CMOVE_ICONS <0>      ; DATA XREF: CMB_DrawAUWStats+168r ...
-// WZD dseg:C7AA                                                                                         ; array of 3 pointers to sandbox appended images
+// WZD dseg:C7AA
+// struct CMOVE_ICONS IMG_CMB_MoveIcons;
+SAMB_ptr IMG_CMB_MoveIcons[3];
+
 // WZD dseg:C7B0 00 00                                           IMG_CMB_HitBar@ dw 0                    ; DATA XREF: CMB_DrawActiveUnitW+1FAr ...
 // WZD dseg:C7B2 00 00                                           IMG_CMB_FX_Figure@ dw 0                 ; DATA XREF: BU_CreateImage+1Aw ...
 // WZD dseg:C7B2                                                                                         ; 7Ch paragraphs appended into World_Data@
@@ -374,25 +595,21 @@ int16_t _combat_total_unit_count;
 
 // WZD dseg:C7C2
 // ; contains a Node_Type flag or -1 (unit bonus aura)
-int16_t CMB_node_type;
+int16_t _combat_node_type;
 
 // WZD dseg:C7C4 00 00                                           CMB_Info_CommonCount dw 0               ; DATA XREF: CMB_ShowInfoWindow+144r ...
-// WZD dseg:C7C6 00 00                                           CMB_ExternalFX_Count dw 0               ; DATA XREF: Tactical_Combat__WIP+143w ...
+// WZD dseg:C7C6
+int16_t CMB_ExternalFX_Count;
 // WZD dseg:C7C8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_External_FX@ dw 0Eh dup(0)          ; DATA XREF: CMB_ShowInfoWindow+82w ...
 // WZD dseg:C7C8 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; 30 LBX_NearAlloc_Next bytes each
-// WZD dseg:C7E4                                                 ; int CMB_InfoWindow_Top
 // WZD dseg:C7E4 00 00                                           CMB_InfoWindow_Top dw 0                 ; DATA XREF: CMB_ShowInfoWindow+13Ew ...
-// WZD dseg:C7E6                                                 ; int CMB_InfoWindow_Left
 // WZD dseg:C7E6 00 00                                           CMB_InfoWindow_Left dw 0                ; DATA XREF: CMB_ShowInfoWindow+138w ...
 
 // WZD dseg:C7E6                                                 ¿ END:  ovr103 ?
 
 
 
-
-
-
-
+// WZD dseg:C896                                                 ¿ BEGIN:  ovr112 ?
 
 // WZD dseg:C896
 int16_t * CMB_LeadershipArray;
@@ -402,9 +619,28 @@ int16_t * CMB_ResistAllArray;
 int16_t * CMB_HolyBonusArray;
 // WZD dseg:C8A2
 int16_t * CMB_IDK_4PR;
+// WZD dseg:C8A6 00 00                                           CMB_TargetingType dw 0                  ; DATA XREF: CMB_SetTargetCursor:loc_8F58Er ...
+// WZD dseg:C8A8 00 00                                           CMB_NearDispel_UCs@ dw 0                ; DATA XREF: TILE_DispelMagic+27w ...
+// WZD dseg:C8AA 00 00                                           CMB_NearDispel_UEs@ dw 0                ; DATA XREF: TILE_DispelMagic+1Aw ...
+// WZD dseg:C8AC 00 00                                           CMB_Caster_ID dw 0                      ; DATA XREF: CMB_RedrawSpellbook:loc_8CF55r ...
+
+// WZD dseg:C8AC                                                 ¿ END:  ovr112 ?
 
 
 
+// WZD dseg:C8AE                                                 ¿ BEGIN:  ovr114 ?
+// WZD dseg:C8AE
+// WZD dseg:C8AE 00 00                                           AI_NoMeleeHeroSafety dw 0               ; DATA XREF: AI_MoveBattleUnits:loc_93437w ...
+// WZD dseg:C8B0
+int16_t AI_ImmobileCounter;
+// WZD dseg:C8B2
+int16_t G_AI_StayInTownProper;
+// WZD dseg:C8B2                                                                                         ; now 1 (during tactical combat init)
+// WZD dseg:C8B2                                                                                         ; set to 0 if the enemy has a high-powered ranged unit,
+// WZD dseg:C8B2                                                                                         ; Magic Vortex, Wrack, Call Lightning, or Mana Leak
+// WZD dseg:C8B4 00 00                                           AI_CmbtWall_BitField dw 0               ; DATA XREF: AI_SetBasicAttacks+274r ...
+// WZD dseg:C8B4                                                                                         ; 1 - stone, 2 - fire, 4 - darkness
+// WZD dseg:C8B4                                                 ¿ END:  ovr114 ?                        ; zeroed when the above variable is zeroed
 
 
 
@@ -429,33 +665,183 @@ int16_t CMB_ScrollMsg_Type;
 
 
 
+// WZD dseg:CFA0                                                 IDK ~ Combat
+// WZD dseg:CFA0
+// WZD dseg:CFA0
+// WZD dseg:CFA0                                                 ovr153, ovr154
+// WZD dseg:CFA0 00 00                                           CMB_Enchanted_Roads dw 0                ; DATA XREF: CMB_DrawMap:loc_DCCC7r ...
+// WZD dseg:CFA2                                                 ovr153, ovr163
+// WZD dseg:CFA2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_WallRise@ dw 0Eh dup(0)         ; DATA XREF: CMB_SpawnStoneWall+69r ...
+// WZD dseg:CFA2 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 12 or 14 appended animations in the sandbox
+// WZD dseg:CFBE                                                 ovr052, ovr153
+// WZD dseg:CFBE
+SAMB_ptr IMG_CMB_Blood[5];
+// WZD dseg:CFBE                                                                                         ; array of 5 appended reserved EMM headers in
+// WZD dseg:CFBE                                                                                         ; GFX_Swap_Seg, with a 3 frame animation each
+// WZD dseg:CFC8 00                                              db    0
+// WZD dseg:CFC9 00                                              db    0
+// WZD dseg:CFCA
+SAMB_ptr IMG_CMB_Curses[8];
+// WZD dseg:CFCA                                                                                         ; array of 8 appended reserved EMM headers in
+// WZD dseg:CFCA                                                                                         ; GFX_Swap_Seg, with the first 7 containing 8 frame
+// WZD dseg:CFCA                                                                                         ; animations, while the last one is single image (web)
+// WZD dseg:CFDA 00 00 00 00 00 00 00 00 00 00                   IMG_CMB_Rocks@ dw 5 dup(0)              ; DATA XREF: CMB_SpawnRocks+3Ar ...
+// WZD dseg:CFDA                                                                                         ; array of 5 images appended into the EMM TILEX handle
+// WZD dseg:CFE4 00 00 00 00 00 00 00 00 00 00                   IMG_CMB_Trees@ dw 5 dup(0)              ; DATA XREF: CMB_SpawnTrees+3Ar ...
+// WZD dseg:CFE4                                                                                         ; array of 5 images appended into the EMM TILEX handle
+// WZD dseg:CFEE
+SAMB_ptr IMG_CMB_RiverTile[12];
+// WZD dseg:CFEE 00 00 00 00 00 00 00 00                                                                 ; array of 12 appended reserved EMM headers in
+// WZD dseg:CFEE                                                                                         ; GFX_Swap_Seg; the first 6 are empty, the other 6
+// WZD dseg:CFEE                                                                                         ; have 5 frame animations for rivers
+// WZD dseg:D006
+SAMB_ptr IMG_CMB_RivrNULLs[12];
+// WZD dseg:D006 00 00 00 00 00 00 00 00                                                                 ; array of 12 appended reserved EMM headers in
+// WZD dseg:D006                                                                                         ; GFX_Swap_Seg with no actual data (entry size 0)
+// WZD dseg:D01E
+SAMB_ptr IMG_CMB_RoadTiles[28];
+// WZD dseg:D01E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 28 appended reserved EMM headers in
+// WZD dseg:D01E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; GFX_Swap_Seg with 5 frame animations each, although
+// WZD dseg:D01E 00 00 00 00 00 00 00 00                                                                 ; the normal ones (first in array) are all static
+// WZD dseg:D056
+SAMB_ptr IMG_CMB_OceanTile[4];
+// WZD dseg:D056                                                                                         ; array of 4 appended reserved EMM headers in
+// WZD dseg:D056                                                                                         ; GFX_Swap_Seg, each with a 5 frame animation
+// WZD dseg:D05E
+SAMB_ptr IMG_CMB_ChaosOcn[4];
+// WZD dseg:D05E                                                                                         ; array of 4 appended reserved EMM headers in
+// WZD dseg:D05E                                                                                         ; GFX_Swap_Seg, each with a 5 frame animation
+// WZD dseg:D066
+SAMB_ptr IMG_CMB_Cloud;
+// WZD dseg:D066                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:D068 00 00 00 00 00 00                               UU_IMG_CMB_Cloud_Array dw 3 dup(0)      ; unused, original single-tile cloud image space
 
+// WZD dseg:D06E
+SAMB_ptr IMG_CMB_FlotIsle;
+// WZD dseg:D06E                                                                                         ; this image is actually empty
+// WZD dseg:D070
+SAMB_ptr IMG_CMB_Mud;
+// WZD dseg:D070                                                                                         ; 5 frame (earth to) mud animation
 
+// WZD dseg:D072
+SAMB_ptr IMG_CMB_SorcNode;
+// WZD dseg:D074
+SAMB_ptr IMG_CMB_NatNode;
+// WZD dseg:D076
+SAMB_ptr IMG_CMB_Volcano[8];
+// WZD dseg:D076                                                                                         ; array of 8 appended reserved EMM headers in
+// WZD dseg:D076                                                                                         ; GFX_Swap_Seg, each with a single animation frame
+// WZD dseg:D076                                                                                         ; for the same section of the volcano image
+// WZD dseg:D086 00 00                                           IMG_CMB_VolcnFull@ dw 0                 ; DATA XREF: CMB_ComposeBackgrnd__WIP+14Er
+// WZD dseg:D086                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:D086                                                                                         ; this is the full volcano image
+// WZD dseg:D088
+SAMB_ptr IMG_CMB_DarkWall[14];
+// WZD dseg:D088 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
+// WZD dseg:D088                                                                                         ; GFX_Swap_Seg, each with a 4 frame animation
+// WZD dseg:D0A4
+SAMB_ptr IMG_CMB_FireWall[14];
+// WZD dseg:D0A4 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
+// WZD dseg:D0A4                                                                                         ; GFX_Swap_Seg, each with a 4 frame animation
+// WZD dseg:D0C0
+SAMB_ptr IMG_CMB_StoneWalls[3][12];
+// WZD dseg:D0C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 36 appended reserved EMM headers in
+// WZD dseg:D0C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; GFX_Swap_Seg, 3 runs of 12 wall section images
+// WZD dseg:D0C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; with 2 frames each (intact - destroyed)
+// WZD dseg:D108
+SAMB_ptr IMG_CMB_DirtTile;
+// WZD dseg:D10A
+SAMB_ptr IMG_CMB_RoadGrid;
+// WZD dseg:D10C
+SAMB_ptr IMG_CMB_Fort;
+// WZD dseg:D10E
+SAMB_ptr IMG_CMB_Ruins;
+// WZD dseg:D110
+SAMB_ptr IMG_CMB_Temple;
+// WZD dseg:D112
+SAMB_ptr IMG_CMB_Dungeon;
+// WZD dseg:D114
+SAMB_ptr IMG_CMB_Tower;
+// WZD dseg:D116
+SAMB_ptr IMG_CMB_Cave;
+// WZD dseg:D118
+SAMB_ptr IMG_CMB_Outpost;
+// WZD dseg:D11A
+SAMB_ptr IMG_CMB_Fortress;
+// WZD dseg:D11C
+SAMB_ptr IMG_CMB_Houses[15];
+// WZD dseg:D11C 00 00 00 00 00 00 00 00 00 00 00 00 00 00                                               ; array of 15 appended reserved EMM headers in
+// WZD dseg:D11C                                                                                         ; GFX_Swap_Seg, with 1 image each (3 groups of 5)
+// WZD dseg:D13A
+SAMB_ptr IMG_GUI_Chasm;
+// WZD dseg:D13A                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:D13A                                                                                         ; 8 frame animation
+// WZD dseg:D13C                                                 ovr099, ovr153
+// WZD dseg:D13C
+SAMB_ptr IMG_GUI_Vortex;
+// WZD dseg:D13C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:D13C                                                                                         ; 6 frame animation
 
 // WZD dseg:D13E
 SAMB_ptr CMB_Path_Ys;
 // WZD dseg:D140
 SAMB_ptr CMB_Path_Xs;
 // WZD dseg:D142 00 00                                           CMB_Path_Length dw 0                    ; DATA XREF: BU_Move:loc_77989w ...
+// WZD dseg:D142                                                                                         ; set to 0 when generating a melee target map
 // WZD dseg:D144
 SAMB_ptr CMB_NearBuffer_3;
+// WZD dseg:D144                                                                                         ; holds spellbook pages or move path prev tiles
 // WZD dseg:D146
 SAMB_ptr CMB_Path_Costs;
 // WZD dseg:D148
 SAMB_ptr CMB_ActiveMoveMap;
+// WZD dseg:D148                                                                                         ; (combat movement map for the current unit?)
+
 // WZD dseg:D14A 00 00                                           CMB_Chasm_Anim_Y dw 0                   ; DATA XREF: TILE_CracksCall+1Ew ...
 // WZD dseg:D14C 00 00                                           CMB_Chasm_Anim_X dw 0                   ; DATA XREF: TILE_CracksCall+18w ...
 // WZD dseg:D14E
 SAMB_ptr CMB_Vortex_Array;
 // WZD dseg:D152 00 00                                           CMB_Vortex_Count dw 0                   ; DATA XREF: BU_Move:loc_77934r ...
+// WZD dseg:D152                                                                                         ; set to 0 after generating the combat map
 // WZD dseg:D154
 SAMB_ptr CMB_Projectiles;
+// WZD dseg:D154                                                                                         ; (up to 11 records of 14 bytes each)
 // WZD dseg:D158 00 00                                           CMB_ProjectileCount dw 0                ; DATA XREF: CMB_RangedAnim+464r ...
 // WZD dseg:D15A
 SAMB_ptr CMB_EntitySprites;
+// WZD dseg:D15A                                                                                         ; (up to 101h records of 1Eh bytes each)
 // WZD dseg:D15E 00 00                                           CMB_SpriteCount dw 0                    ; DATA XREF: CMB_DrawEntities:loc_DD3A3r ...
+// WZD dseg:D160 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_BloodFrames dw 14h dup(0)           ; DATA XREF: BU_SetBloodAnim+F8w ...
 
+// WZD dseg:D188
+SAMB_ptr CMB_ActiveFrame_GFX;
+// WZD dseg:D18A
+SAMB_ptr CMB_TargetFrame_GFX;
 
+// WZD dseg:D18C
+// RNGD_ANIM * CMB_RangedAtx_GFX[15];
+SAMB_ptr CMB_RangedAtx_GFX[15][8];
+
+// WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: Reload_Combat_Graphics_Cache+32w ...
+// WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; appended LBX_Alloc_Space header links to reserved
+// WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; EMM resources, 8 4-frame animations for each of the
+// WZD dseg:D18C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; 15 ranged attack graphics types (last is unused?)
+// WZD dseg:D27C
+SAMB_ptr CMB_Damage_GFX;
+// WZD dseg:D27C                                                                                         ; appended reserved EMM header in GFX_Swap_Seg
+// WZD dseg:D27C                                                                                         ; 4 frame animation
+// WZD dseg:D27E 00 00                                           CMB_WallRise_Type dw 0                  ; DATA XREF: CMB_SpawnStoneWall+36r ...
+// WZD dseg:D27E                                                                                         ; 0 branches wall entity creation (unknown IMG array)
+// WZD dseg:D280 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_ZSort_Array db 100h dup(0)          ; DATA XREF: CMB_DrawEntities:loc_DD0C9r ...
+// WZD dseg:D280 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; from farthest to nearest combat entities
+// WZD dseg:D380 00 00                                           DEFR_FloatingIsland dw 0                ; DATA XREF: CMB_Units_Init+24Ew ...
+// WZD dseg:D380                                                                                         ; unset yet (thus 0)
+// WZD dseg:D382                                                 ovr098, ovr154
+// WZD dseg:D382 00 00                                           ATKR_FloatingIsland dw 0                ; DATA XREF: CMB_Units_Init+92w ...
+// WZD dseg:D382                                                                                         ; unset yet (thus 0)
+// WZD dseg:D384                                                 ovr155
+// WZD dseg:D384 00 00                                           RP_CMB_MoveMap dw 0                     ; DATA XREF: CMB_GetPath+409w ...
+// WZD dseg:D384                                                                                         ; duplicate of GUI_ActiveMoveMap (no real purpose)
 
 
 
@@ -465,14 +851,1294 @@ SAMB_ptr CMB_EntitySprites;
 
 // WZD s90p01
 // drake178: CMB_TacticalCombat()
+// MoO2
+// 1oom
+/*
+; processes tactical combat from start to finish
+; returns 1 if the attacker won, or 0 otherwise
+;
+; contains a host of BUGs, both own and inherited
+*/
+/*
+
+    returns ST_TRUE, if Combat_Winner is _combat_attacker_player
+    otherwise, returns ST_FALSE
+
+*/
 int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 {
     int16_t did_win;
 
-    did_win = ST_TRUE;
+    int16_t Battle_Result = 0;
+    int16_t Defending_Unit_Count = 0;
+    int16_t Player_Fled = 0;
+    int16_t Combat_Winner = 0;
+    int16_t Auto_Cancel_Label = 0;
+    int16_t Wizard_Cast_Result = 0;
+    int16_t MoveHalves_Save = 0;
+    uint32_t Overland_Enchants = 0;
+    int16_t Active_Unit_Label_Index = 0;
+    int16_t SPACE_Hotkey = 0;
+    int16_t Info_Button_Index = 0;
+    int16_t Flee_Button_Index = 0;
+    int16_t Auto_Button_Index = 0;
+    int16_t Done_Button_Index = 0;
+    int16_t Wait_Button_Index = 0;
+    int16_t Spell_Button_Index = 0;
+    int16_t RightClick_Y = 0;
+    int16_t RightClick_X = 0;
+    int16_t MapGrid_Control_Index = 0;
+    // int16_t Grid_Y = 0;
+    // int16_t Grid_X = 0;
+    int64_t Grid_Y = 0;
+    int64_t Grid_X = 0;
+    int16_t Bottom_GUI_Escape_Hotkey = 0;
+    int16_t screen_changed = 0;
+    int16_t leave_screen = 0;
+    int16_t input_field_idx = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t battle_unit_idx;  // _DI_
 
-    return did_win;
+    AI_ImmobileCounter = 0;
+
+    CMB_WizardCitySiege = ST_FALSE;
+
+    if(
+        (OVL_Action_Type == 1)  /* Stack vs. City */
+        &&
+        (combat_defender_player_idx != NEUTRAL_PLAYER_IDX)
+    )
+    {
+        CMB_WizardCitySiege = ST_TRUE;
+    }
+
+    CMB_AI_Fled = ST_FALSE;  // ; set to 1 if the AI decides to flee
+
+    Player_Fled = ST_FALSE;
+
+    Deactivate_Auto_Function();
+
+    Clear_Fields();
+
+    Fade_Out();
+
+    Set_Page_Off();
+
+    Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+
+    Toggle_Pages();
+
+    PageFlipEffect = 0;
+
+    if(OVL_Action_Type == 1)  /* Stack vs. City */
+    {
+        String_Copy_Far(CMB_CityName, _CITIES[OVL_Action_Structure].name);
+    }
+
+
+    CMB_BaseAllocs__WIP();
+
+
+    CMB_LoadResources__WIP();
+
+
+    OVL_Action_XPos = wx;
+    OVL_Action_YPos = wy;
+    OVL_Action_Plane = wp;
+
+    _combat_attacker_player = combat_attacker_player_idx;
+
+    _combat_defender_player = combat_defender_player_idx;
+
+    Cache_Graphics_Combat();
+
+    CMB_Terrain_Init__WIP(wx, wy, wp);
+
+    Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+    CMB_ATKR_First_CE = 0;
+
+    CMB_DEFR_First_CE = 0;
+
+    CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
+
+    CMB_CE_Refresh__WIP();
+
+    Combat_Node_Type();
+
+    CMB_HumanUnitsDone = ST_FALSE;
+
+    _combat_turn = 0;
+
+    // ; now 1 (during tactical combat init)
+    // ; enables or disables the Spell button when a finished
+    // ; unit is selected
+    CMB_WizCastAvailable = ST_TRUE;
+
+    CMB_ExternalFX_Count = CMB_CountExternalFX__WIP();
+
+    Init_Battlefield_Effects(CMB_combat_structure);
+
+    Combat_Cache_Write();
+
+    SND_CMB_Silence = LBX_Reload(cnst_SOUNDFX_File2, SFX_Silence, World_Data);
+
+    // ; when populating the BU table, set to the index of the
+    // ; AI player (the other participant being always human)
+    if(CMB_AI_Player != NEUTRAL_PLAYER_IDX)
+    {
+
+        SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, ((MUSIC_Merlin_Cmbt1 - 1) + ((_players[CMB_AI_Player].wizard_id * 2) + Random(2))), World_Data);
+
+    }
+    else
+    {
+
+        itr = (MUSIC_Combat_1 - 1) + Random(2);
+
+        SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, itr, World_Data);
+
+    }
+
+    if(magic_set.background_music == ST_TRUE)
+    {
+
+        Play_Sound__STUB(SND_CMB_Music);
+
+    }
+
+    CMB_ImmobileCanAct = 0;
+
+    G_AI_StayInTownProper = 1;
+
+    CMB_CursorBattleUnit = ST_UNDEFINED;
+
+    Reset_Cycle_Palette_Color();
+
+    Load_Palette_From_Animation(combat_background_bottom);
+
+    Apply_Palette();
+
+    Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 8);
+
+    Set_Palette_Changes(0, 243);
+
+    Calculate_Remap_Colors();
+
+    if(_combat_attacker_player == _human_player_idx)
+    {
+
+        G_BU_SelectUnit__WIP(0);
+
+    }
+    else
+    {
+
+        // ; BUG: should set the selected unit manually!
+        // ; corrupts memory is the last value is invalid
+
+        G_BU_SelectUnit__WIP((_combat_total_unit_count - Defending_Unit_Count));
+
+    }
+
+    CMB_ActiveUnitFrame = 0;
+
+    CMB_TargetFrame = 0;
+
+    CRP_CMB_NeverChecked1 = 1;
+
+
+    CMB_DrawFullScreen__WIP();
+
+    PageFlip_FX();
+
+
+    CMB_CityDamage = 0;
+
+    leave_screen = ST_FALSE;
+
+    CMB_HumanTurn = ST_TRUE;
+
+    CMB_Auto_ON = ST_FALSE;
+
+
+    CMB_PrepareTurn__WIP();
+
+
+    CMB_ImmobileCanAct = 0;
+
+    // ; NONE of the above functions change the focus unit
+    if(_combat_attacker_player == _human_player_idx)
+    {
+
+        G_BU_SelectUnit__WIP(0);
+
+    }
+    else
+    {
+
+        G_BU_SelectUnit__WIP((_combat_total_unit_count - Defending_Unit_Count));
+
+    }
+
+    CMB_ActiveUnitFrame = 0;
+
+    CMB_TargetFrame = 0;
+
+    CRP_CMB_NeverChecked1 = 1;
+
+
+    CMB_DrawFullScreen__WIP();
+
+    PageFlip_FX();
+
+
+    CMB_AIGoesFirst = ST_FALSE;
+
+    if(_combat_defender_player == CRP_CMB_AI_Player_2)
+    {
+
+        AI_CMB_PlayTurn__WIP(_combat_defender_player);
+
+        // ; BUG: the defending AI gets an extra turn?
+
+        CMB_PrepareTurn__WIP();
+
+        CMB_AIGoesFirst = ST_TRUE;
+
+    }
+
+    Combat_Winner = CMB_WinLoseFlee__WIP();
+
+    // ; BUG: second time clearing this without using it
+    if(Combat_Winner != ST_UNDEFINED)
+    {
+        leave_screen = ST_UNDEFINED;
+    }
+
+    CMB_HumanUnitsDone = ST_FALSE;
+
+    if(_combat_attacker_player == _human_player_idx)
+    {
+
+        WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+    }
+    else
+    {
+
+        G_BU_SelectUnit__WIP((_combat_total_unit_count - Defending_Unit_Count));
+
+    }
+
+
+    CMB_DrawFullScreen__WIP();
+
+    PageFlip_FX();
+
+
+    CMB_FillTargetMaps__WIP();
+
+    Set_Input_Delay(3);
+
+    CMB_CE_Refresh__WIP();
+
+    Deactivate_Help_List();
+
+    Set_Combat_Help_List();
+
+    CRP_CMB_NeverChecked1 = ST_TRUE;
+
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+        Mark_Time();
+
+        Clear_Fields();
+
+        if(CMB_Auto_ON != ST_TRUE)
+        {
+
+            if(
+                (battle_units[CMB_SelectedUnit].movement_points > 0)
+                &&
+                (
+                    (battle_units[CMB_SelectedUnit].mana >= 3)
+                    ||
+                    (BU_HasSpellAbility__WIP(CMB_SelectedUnit) == ST_TRUE)
+                    ||
+                    (battle_units[CMB_SelectedUnit].Item_Charges > 0)
+                    ||
+                    (CMB_WizCastAvailable != ST_TRUE)
+                )
+            )
+            {
+
+                Spell_Button_Index = Add_Button_Field(144, 168, cnst_ZeroString_17__ovr090, IMG_CMB_Spell_Btn, cnst_HOTKEY_S_3[0], ST_UNDEFINED);
+
+            }
+            else
+            {
+
+                Spell_Button_Index = INVALID_FIELD;
+
+            }
+
+        }
+        else
+        {
+            // TODO  'Auto Combat'
+        }
+
+        if(CMB_ExternalFX_Count > 0)
+        {
+
+            Info_Button_Index = Add_Button_Field(144, 178, cnst_ZeroString_17__ovr090, IMG_CMB_Info_Btn, cnst_HOTKEY_U_5[0], ST_UNDEFINED);
+
+        }
+        else
+        {
+
+            Info_Button_Index = INVALID_FIELD;
+
+        }
+
+        Auto_Button_Index = Add_Button_Field(170, 178, cnst_ZeroString_17__ovr090, IMG_CMB_Auto_Btn, cnst_HOTKEY_A_4[0], ST_UNDEFINED);
+
+        Flee_Button_Index = Add_Button_Field(144, 188, cnst_ZeroString_17__ovr090, IMG_CMB_Flee_Btn, cnst_HOTKEY_F[0], ST_UNDEFINED);
+
+        Active_Unit_Label_Index = Add_Hidden_Field(83, 173, 116, 198, cnst_ZeroString_17__ovr090[0], ST_UNDEFINED);
+
+        CMB_CreateCELabels__WIP();
+
+        Bottom_GUI_Escape_Hotkey = Add_Hidden_Field(0, 164, 319, 199, cnst_HOTKEY_EscF[0], ST_UNDEFINED);
+
+        MapGrid_Control_Index = Add_Grid_Field(0, 0, 1, 1, 319, 164, &Grid_X, &Grid_Y, ST_UNDEFINED);
+
+        SPACE_Hotkey = Add_Hot_Key(cnst_HOTKEY_SPACE_4[0]);
+
+
+        input_field_idx = Get_Input();
+
+
+        /*
+            BEGIN:  Left-Click Auto Button
+        */
+        if(input_field_idx == Auto_Button_Index)
+        {
+
+            Play_Left_Click__STUB();
+
+            Set_Mouse_List(1, mouse_list_default);
+
+            CMB_ActiveUnitFrame = 0;
+
+            CMB_TargetFrame = 0;
+
+            CMB_Auto_ON = (1 - CMB_Auto_ON);
+
+            CMB_HumanUnitsDone = 0;
+
+            Clear_Fields();
+
+            input_field_idx = 0;
+
+            AI_CMB_PlayTurn__WIP(CRP_CMB_HumanPlayer);
+
+            Combat_Winner = CMB_WinLoseFlee__WIP();
+
+            if(Combat_Winner == ST_UNDEFINED)
+            {
+                leave_screen = ST_UNDEFINED;
+                input_field_idx = 0;
+            }
+
+        }
+        /*
+            END:  Left-Click Auto Button
+        */
+
+
+        if(
+            (
+                (battle_units[CMB_SelectedUnit].movement_points > 1)
+                &&
+                (battle_units[CMB_SelectedUnit].Action == BUA_Finished)
+            )
+            ||
+            (battle_units[CMB_SelectedUnit].Status > bus_Active)
+        )
+        {
+
+            battle_units[CMB_SelectedUnit].Moving = 0;
+
+            battle_units[CMB_SelectedUnit].movement_points = 0;
+
+            battle_units[CMB_SelectedUnit].Action = BUA_Finished;
+
+            if(
+                ((battle_units[CMB_SelectedUnit].Combat_Effects & bue_Confusion) != 0)
+                &&
+                (battle_units[CMB_SelectedUnit].Confusion_State == 2)
+            )
+            {
+
+                if(battle_units[CMB_SelectedUnit].controller_idx == _combat_attacker_player)
+                {
+
+                    battle_units[CMB_SelectedUnit].controller_idx = _combat_defender_player;
+
+                }
+                else
+                {
+
+                    battle_units[CMB_SelectedUnit].controller_idx = _combat_attacker_player;
+
+                }
+
+            }
+
+            // ; an awfully awkward wrapper for WIZ_BU_SelectClosest
+            // ;
+            // ; what is going on here?
+            WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+            CMB_FillTargetMaps__WIP();
+
+            input_field_idx = ST_UNDEFINED;
+
+            screen_changed = ST_TRUE;
+
+            CRP_CMB_NeverChecked1 = 1;
+
+            Combat_Winner = CMB_WinLoseFlee__WIP();
+
+            if(Combat_Winner != ST_UNDEFINED)
+            {
+                leave_screen = ST_UNDEFINED;
+                input_field_idx = 0;
+            }
+
+        }
+
+        if(
+            (battle_units[CMB_SelectedUnit].Confusion_State == 1)
+            &&
+            (battle_units[CMB_SelectedUnit].movement_points > 0)
+        )
+        {
+
+            BU_MoveConfused__WIP(CMB_SelectedUnit);
+
+            WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+            CMB_FillTargetMaps__WIP();
+
+            input_field_idx = ST_UNDEFINED;
+
+            screen_changed = ST_TRUE;
+
+            CRP_CMB_NeverChecked1 = 1;
+
+            Combat_Winner = CMB_WinLoseFlee__WIP();
+
+            if(Combat_Winner != ST_UNDEFINED)
+            {
+
+                leave_screen = ST_UNDEFINED;
+                input_field_idx = 0;
+
+            }
+
+        }
+
+
+        for(itr = 0; itr < CMB_ATKR_CE_Count; itr++)
+        {
+
+            if(itr >= 4)
+            {
+                break;
+            }
+
+            if(CMB_ATKR_CE_Count <= 4)
+            {
+                break;
+            }
+
+            if(CMB_ATKR_CE_Labels[itr] == input_field_idx)
+            {
+
+                Play_Left_Click__STUB();
+
+                CMB_ATKR_First_CE += 4;  // ; now 0 (after tactical BU init)
+                                         // ; attacker's first shown combat enchant
+                if(CMB_ATKR_First_CE > 8)
+                {
+                    CMB_ATKR_First_CE = 0;
+                }
+
+                CRP_CMB_NeverChecked1 = 1;
+
+                break;
+
+            }
+
+        }
+
+
+
+        for(itr = 0; itr < CMB_DEFR_CE_Count; itr++)
+        {
+
+            if(itr >= 4)
+            {
+                break;
+            }
+
+            if(CMB_DEFR_CE_Count <= 4)
+            {
+                break;
+            }
+
+            if(CMB_DEFR_CE_Labels[itr] == input_field_idx)
+            {
+
+                Play_Left_Click__STUB();
+
+                CMB_DEFR_First_CE += 4;  // ; now 0 (after tactical BU init)
+                                         // ; attacker's first shown combat enchant
+                if(CMB_DEFR_First_CE > 8)
+                {
+                    CMB_DEFR_First_CE = 0;
+                }
+
+                CRP_CMB_NeverChecked1 = 1;
+
+                break;
+
+            }
+
+        }
+
+        /*
+            BEGIN:  Left-Click Flee Button
+        */
+        if(input_field_idx == Flee_Button_Index)
+        {
+
+            CMB_ImmobileCanAct = 0;
+
+            Play_Left_Click__STUB();
+
+            Set_Mouse_List(1, mouse_list_default);
+
+            if(Confirmation_Box(cnst_FleeConfirm_Msg) == ST_TRUE)
+            {
+
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
+                {
+
+                    if(battle_units[itr].controller_idx == CRP_CMB_HumanPlayer)
+                    {
+
+                        battle_units[itr].Action = BUA_Flee;
+
+                        if(
+                            (battle_units[itr].Status == bus_Active)
+                            ||
+                            (battle_units[itr].Status == bus_Uninvolved)
+                        )
+                        {
+                            
+                            battle_units[itr].Status == bus_Fleeing;
+
+                        }
+
+                    }
+
+                }
+
+                Combat_Winner = CRP_CMB_AI_Player_2;
+                Player_Fled = ST_TRUE;
+                leave_screen = ST_UNDEFINED;
+
+            }
+
+            CMB_FillTargetMaps__WIP();
+
+            screen_changed = ST_TRUE;
+
+        }
+        /*
+            END:  Left-Click Flee Button
+        */
+
+
+        if(input_field_idx == MapGrid_Control_Index)
+        {
+
+            CMB_ImmobileCanAct = 0;
+
+            CMB_TargetFrame_X = CMB_GetTileX__WIP((Grid_X + 4), (Grid_Y + 4));
+
+            CMB_TargetFrame_Y = CMB_GetTileY__WIP((Grid_X + 4), (Grid_Y + 4));
+
+            BU_CombatAction__WIP(CMB_SelectedUnit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
+
+            for(itr = 0; itr < _combat_total_unit_count; itr++)
+            {
+
+                BU_SetVisibility__WIP(itr);
+
+            }
+
+            CMB_FillTargetMaps__WIP();
+
+            CRP_CMB_NeverChecked1 = 1;
+
+            Combat_Winner = CMB_WinLoseFlee__WIP();
+
+            if(Combat_Winner != ST_UNDEFINED)
+            {
+
+                leave_screen = ST_UNDEFINED;
+                input_field_idx = 0;
+
+            }
+
+
+
+        }
+
+
+        if(-(MapGrid_Control_Index) == input_field_idx)
+        {
+
+            RightClick_X = CMB_GetTileX__WIP((Grid_X + 4), (Grid_Y + 4));
+
+            RightClick_Y = CMB_GetTileY__WIP((Grid_X + 4), (Grid_Y + 4));
+
+            battle_unit_idx = *CMB_TargetRows[((RightClick_Y * 2) + RightClick_X)];
+
+            // ; BUG: this needs to be range checked, it can be 99!
+            if(
+                (battle_unit_idx > 0)
+                &&
+                (battle_units[battle_unit_idx].Status == bus_Active)
+            )
+            {
+
+                if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
+                {
+
+                    Play_Left_Click__STUB();
+
+                    Deactivate_Help_List();
+
+                    Set_Mouse_List(1, mouse_list_default);
+
+                    // ; byte-identical to the other branch
+
+                    MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+
+                    battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
+
+                    Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+
+                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
+
+                    // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
+                    memcpy(global_battle_unit, &battle_units[CMB_SelectedUnit], sizeof(struct s_BATTLE_UNIT));
+
+                    USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+
+                    battle_units[battle_unit_idx].movement_points + MoveHalves_Save;
+
+                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+
+                    CMB_SetNearAllocs__WIP();
+
+                    CMB_FillTargetMaps__WIP();
+
+                    Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+                    CMB_CE_Refresh__WIP();
+
+                    CMB_ComposeBackgrnd__WIP();
+
+                    Deactivate_Help_List();
+
+                    Set_Combat_Help_List();
+
+                    CRP_CMB_NeverChecked1 = 1;
+
+                }
+                else
+                {
+
+                    if(CMB_SelectedUnit != battle_unit_idx)
+                    {
+
+                        G_BU_SelectUnit__WIP(battle_unit_idx);
+
+                        CMB_FillTargetMaps__WIP();
+
+                    }
+                    else
+                    {
+
+                        Play_Left_Click__STUB();
+
+                        Deactivate_Help_List();
+
+                        Set_Mouse_List(1, mouse_list_default);
+
+                        MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+
+                        battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
+
+                        Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+
+                        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
+
+                        // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
+                        memcpy(global_battle_unit, &battle_units[CMB_SelectedUnit], sizeof(struct s_BATTLE_UNIT));
+
+                        USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+
+                        battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+
+                        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+
+                        CMB_SetNearAllocs__WIP();
+
+                        CMB_FillTargetMaps__WIP();
+
+                        Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+                        CMB_CE_Refresh__WIP();
+
+                        CMB_ComposeBackgrnd__WIP();
+
+                        Deactivate_Help_List();
+
+                        Set_Combat_Help_List();
+
+                    }
+
+                    CRP_CMB_NeverChecked1 = 1;
+
+                }
+
+            }
+
+        }
+
+
+        /*
+            BEGIN:  Left-Click Spell Button
+        */
+        {
+            if(input_field_idx == Spell_Button_Index)
+            {
+
+                Play_Left_Click__STUB();
+
+                screen_changed = ST_TRUE;
+
+                Deactivate_Help_List();
+
+                if(
+                    (battle_units[CMB_SelectedUnit].movement_points > 0)
+                    &&
+                    (
+                        (battle_units[CMB_SelectedUnit].mana >= 3)
+                        ||
+                        (BU_HasSpellAbility__WIP(CMB_SelectedUnit) == ST_TRUE)
+                        ||
+                        (battle_units[CMB_SelectedUnit].Item_Charges > 0)
+                        ||
+                        (CMB_WizCastAvailable != ST_TRUE)
+                    )
+                )
+                {
+
+                    CMB_SelectCaster__WIP(CMB_SelectedUnit);
+
+                }
+                else
+                {
+
+                    if(CMB_WizCastAvailable == ST_TRUE)
+                    {
+
+                        Wizard_Cast_Result = G_CMB_CastSpell__WIP((_human_player_idx + 20), OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane);
+
+                        switch(Wizard_Cast_Result)
+                        {
+                            case 0:
+                            {
+                                CMB_SpellcastError__WIP(0);
+                            } break;
+                            case 1:
+                            {
+
+                            } break;
+                            case 2:
+                            {
+                                CMB_WizCastAvailable = 0;
+                                CMB_ImmobileCanAct = 0;
+                            } break;
+                        }
+
+                    }
+                    else
+                    {
+
+                        CMB_SpellcastError__WIP(1);
+
+                    }
+
+                }
+
+                screen_changed = ST_TRUE;
+
+                Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+                CMB_FillTargetMaps__WIP();
+
+                CMB_CE_Refresh__WIP();
+
+                CMB_ComposeBackgrnd__WIP();
+
+                Deactivate_Help_List();
+
+                Set_Combat_Help_List();
+
+                CRP_CMB_NeverChecked1 = 1;
+
+                Combat_Winner = CMB_WinLoseFlee__WIP();
+
+                if(Combat_Winner != ST_UNDEFINED)
+                {
+                    leave_screen = ST_UNDEFINED;
+                    input_field_idx = 0;
+                }
+
+            }
+        }
+        /*
+            END:  Left-Click Spell Button
+        */
+
+
+        /*
+            BEGIN:  Left-Click Wait Button
+        */
+        {
+            if(input_field_idx == Wait_Button_Index)
+            {
+
+                CMB_ImmobileCanAct = 0;
+
+                Play_Left_Click__STUB();
+
+                battle_units[CMB_SelectedUnit].Action = BUA_Wait;
+
+                WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+                CMB_FillTargetMaps__WIP();
+
+                CRP_CMB_NeverChecked1 = 1;
+
+            }
+        }
+        /*
+            END:  Left-Click Wait Button
+        */
+
+
+        /*
+            BEGIN:  Left-Click Info Button
+        */
+        {
+            if(input_field_idx == Info_Button_Index)
+            {
+
+                CMB_ImmobileCanAct = 0;
+
+                Play_Left_Click__STUB();
+
+                Deactivate_Help_List();
+
+                CMB_ShowInfoWindow__WIP();
+
+                CMB_SetNearAllocs__WIP();
+
+                Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+                CMB_FillTargetMaps__WIP();
+
+                CMB_CE_Refresh__WIP();
+
+                CMB_ComposeBackgrnd__WIP();
+
+                Deactivate_Help_List();
+
+                Set_Combat_Help_List();
+
+                CRP_CMB_NeverChecked1 = 1;
+
+            }
+        }
+        /*
+            END:  Left-Click Info Button
+        */
+
+
+        /*
+            BEGIN:  Left-Click Done Button
+        */
+        {
+            if(
+                (input_field_idx == Done_Button_Index)
+                ||
+                (input_field_idx == SPACE_Hotkey)
+            )
+            {
+
+                CMB_ImmobileCanAct = 0;
+
+                Play_Left_Click__STUB();
+
+                battle_units[CMB_SelectedUnit].Action = BUA_Finished;
+
+                battle_units[CMB_SelectedUnit].movement_points = 0;
+
+                WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+                CMB_FillTargetMaps__WIP();
+
+                if(CMB_HumanUnitsDone == 1)
+                {
+                    screen_changed = ST_TRUE;
+                }
+
+                CRP_CMB_NeverChecked1 = 1;
+
+                Combat_Winner = CMB_WinLoseFlee__WIP();
+
+                if(Combat_Winner != ST_UNDEFINED)
+                {
+                    
+                    leave_screen = ST_UNDEFINED;
+                    input_field_idx = 0;
+
+                }
+
+            }
+        }
+        /*
+            END:  Left-Click Done Button
+        */
+
+
+        /*
+            BEGIN:  Right-Click Unit
+        */
+        if(-(Active_Unit_Label_Index) == input_field_idx)
+        {
+
+            Play_Left_Click__STUB();
+
+            Deactivate_Help_List();
+
+            MoveHalves_Save = battle_units[CMB_SelectedUnit].movement_points;
+
+            battle_units[CMB_SelectedUnit].movement_points = BU_GetHalfMoves__WIP(CMB_SelectedUnit);
+
+            Overland_Enchants = _UNITS[battle_units[CMB_SelectedUnit].unit_idx].enchantments;
+
+            _UNITS[battle_units[CMB_SelectedUnit].unit_idx].enchantments = (_UNITS[battle_units[CMB_SelectedUnit].unit_idx].enchantments | battle_units[CMB_SelectedUnit].enchantments);
+
+            // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
+            memcpy(global_battle_unit, &battle_units[CMB_SelectedUnit], sizeof(struct s_BATTLE_UNIT));
+
+            USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[CMB_SelectedUnit].unit_idx);
+
+            battle_units[CMB_SelectedUnit].movement_points = MoveHalves_Save;
+
+            Overland_Enchants = _UNITS[battle_units[CMB_SelectedUnit].unit_idx].enchantments;
+
+            CMB_SetNearAllocs__WIP();
+
+            CMB_FillTargetMaps__WIP();
+
+            Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+
+            CMB_ComposeBackgrnd__WIP();
+
+            CMB_CE_Refresh__WIP();
+
+            Deactivate_Help_List();
+
+            Set_Combat_Help_List();
+
+            CRP_CMB_NeverChecked1 = 1;
+
+        }
+        /*
+            END:  Right-Click Unit
+        */
+
+
+        if(battle_units[CMB_SelectedUnit].controller_idx != CRP_CMB_HumanPlayer)
+        {
+            
+            CMB_HumanUnitsDone = 1;
+            CMB_ImmobileCanAct = 0;
+
+        }
+
+
+        if(
+            (leave_screen == ST_FALSE)
+            &&
+            (CMB_HumanUnitsDone == ST_TRUE)
+            &&
+            (CMB_ImmobileCanAct == ST_FALSE)
+        )
+        {
+
+            CMB_HumanUnitsDone = 0;
+
+            CMB_ProgressTurnFlow__WIP();
+
+            WIZ_BU_SelectNext__WIP(_human_player_idx);
+
+            CMB_FillTargetMaps__WIP();
+
+            input_field_idx = ST_UNDEFINED;
+
+            screen_changed = ST_TRUE;
+
+            CRP_CMB_NeverChecked1 = 1;
+
+            Combat_Winner = CMB_WinLoseFlee__WIP();
+
+            if(Combat_Winner != ST_UNDEFINED)
+            {
+
+                leave_screen = ST_UNDEFINED;
+
+                input_field_idx = 0;
+
+            }
+
+        }
+
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            CMB_DrawFullScreen__WIP();
+
+            CMB_SetActionCursor__WIP();
+
+            PageFlip_FX();
+
+            Release_Time(1);
+
+        }
+
+        screen_changed = ST_FALSE;
+
+    }
+
+    Deactivate_Help_List();
+
+    Clear_Palette_Changes(0, 255);
+
+    Set_Palette_Changes(0, 223);
+
+    Calculate_Remap_Colors();
+
+    Reset_Cycle_Palette_Color();
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Page4();
+
+    // ; now 0 (non-strategic battle init)
+    // ; set to 1 if the AI decides to flee
+    if(CMB_AI_Fled == ST_TRUE)
+    {
+        Battle_Result = 5;
+    }
+    else if(Combat_Winner == _human_player_idx)
+    {
+        Battle_Result = 1;
+    }
+    else if(Player_Fled == ST_TRUE)
+    {
+        Battle_Result = 3;
+    }
+    else if(_combat_turn > 50)
+    {
+        Battle_Result = 4;
+    }
+    else
+    {
+        Battle_Result = 2;
+    }
+
+    // ; $AC00, to the current draw frame, overwriting
+    // ; whatever was there before
+    Copy_Page4_To_Off();
+
+    Copy_Off_To_Back();
+
+    Stop_All_Sounds__STUB();
+
+    Combat_Cache_Read();
+
+    GFX_Swap_Cities();
+
+    Mark_Time();
+
+    Release_Time(1);
+
+    Play_Background_Music__STUB();
+
+    End_Of_Combat__WIP(Combat_Winner, item_count, item_list, Battle_Result);
+
+    if(Combat_Winner == _combat_attacker_player)
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+
 }
+
+
+
+
+/*
+    WIZARDS.EXE  ovr091
+*/
+
+// WZD s91p01
+// drake178: UU_BU_LoadFigureGFX()
+
+// WZD s91p02
+// drake178: CMB_PrepareTurn()
+void CMB_PrepareTurn__WIP(void)
+{
+
+
+
+}
+
+
+// WZD s91p03
+// drake178: BU_GetMoveMap()
+
+// WZD s91p04
+// drake178: BU_Move()
+
+// WZD s91p05
+// drake178: G_BU_SelectUnit()
+/*
+; BUG: should set the selected unit manually!
+; corrupts memory is the last value is invalid
+; selects the active battle unit in combat?
+;
+; zeroes out field 52h in the old one
+;
+; WILL CORRUPT MEMORY IF THE CURRENT SELECTION IS
+; INVALID / OUT OF THE TABLE BOUNDS!
+*/
+/*
+
+*/
+void G_BU_SelectUnit__WIP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
+
+// WZD s91p06
+// drake178: BU_CombatAction()
+/*
+; if possible, processes an action for the specified
+; unit, based on the passed target coordinates -
+; movement if the tile is empty and within reach, or an
+; attack if there's an enemy unit or crushable wall on
+; the target tile
+;
+; BUGs: inherited from BU_MeleeFlightCheck and
+;  BU_MeleeWallCheck
+*/
+/*
+
+*/
+void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y)
+{
+
+
+
+}
+
+
+// WZD s91p07
+// drake178: CMB_FillTargetMaps()
+/*
+; fills out the CMB_ActiveMoveMap, CMB_Path_Costs@,
+; and CMB_TargetRows@ arrays, and sets into the
+; CMB_NearBuffer_3 0s or 1s depending whether the
+; corresponding tile can be reached - all based on the
+; CMB_SelectedUnit index
+*/
+/*
+
+*/
+void CMB_FillTargetMaps__WIP(void)
+{
+
+
+
+}
+
+
+// WZD s91p08
+// drake178: BU_IsVisible()
+
+// WZD s91p09
+// drake178: CMB_UnitCityDamage()
+
+// WZD s91p10
+// drake178: BU_GetInstaMoveType()
 
 
 
@@ -647,7 +2313,8 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
     }
 
     if(
-        (OVL_Action_Type == 1) &&
+        (OVL_Action_Type == 1)  /* Stack vs. City */
+        &&
         (Garrison_Size < 1)
     )
     {
@@ -664,7 +2331,7 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
                 (defender_idx == _human_player_idx)
             )
             &&
-            (magic_set.Strategic_Combat == ST_FALSE)
+            (magic_set.strategic_combat_only == ST_FALSE)
         )
         {
             Stop_All_Sounds__STUB();
@@ -963,11 +2630,30 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 
 // WZD o98p01
 // drake178: CMB_CE_Refresh()
-// CMB_CE_Refresh()
+/*
+; refreshes the combat enchantment display arrays from
+; the Combat_Enchants@ allocation for both players
+*/
+/*
+
+*/
+void CMB_CE_Refresh__WIP(void)
+{
+
+
+
+}
+
 
 // WZD o98p02
 // drake178: BU_HasSpellAbility()
-// BU_HasSpellAbility()
+int16_t BU_HasSpellAbility__WIP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
 
 // WZD o98p03
 // drake178: sub_7EC81()
@@ -975,11 +2661,32 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 
 // WZD o98p04
 // drake178: AI_CMB_PlayTurn()
-// AI_CMB_PlayTurn()
+void AI_CMB_PlayTurn__WIP(int16_t player_idx)
+{
+
+
+
+}
+
 
 // WZD o98p05
 // drake178: CMB_ProgressTurnFlow()
-// CMB_ProgressTurnFlow()
+/*
+; plays out an AI turn either before or after
+; processing beginning of turn events and, if automatic
+; combat is turned on, also plays a turn for the human
+; player
+*/
+/*
+
+*/
+void CMB_ProgressTurnFlow__WIP(void)
+{
+
+
+
+}
+
 
 // WZD o98p06
 /*
@@ -1801,7 +3508,23 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 
 // WZD o98p10
 // drake178: CMB_SetActionCursor()
-// CMB_SetActionCursor()
+/*
+; sets the cursor based on the currently selected unit
+; and the contents of the space that the mouse is over
+;
+; has multiple BUGs regarding the melee and ranged
+; cursors
+*/
+/*
+
+*/
+void CMB_SetActionCursor__WIP(void)
+{
+
+
+
+}
+
 
 // WZD o98p11
 // drake178: BU_GetRangedCursor()
@@ -1809,7 +3532,22 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 
 // WZD o98p12
 // drake178: CMB_CreateCELabels()
-// CMB_CreateCELabels()
+/*
+; creates up to 8 click labels for the combat
+; enchantments currently displayed in the left and
+; right enchantment windows, storing their indices into
+; the corresponding global arrays
+*/
+/*
+
+*/
+void CMB_CreateCELabels__WIP(void)
+{
+
+
+
+}
+
 
 // WZD o98p13
 // drake178: BU_GetCmbtMoveType()
@@ -1825,7 +3563,26 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 
 // WZD o98p16
 // drake178: CMB_Units_Init()
-// CMB_Units_Init()
+/*
+; creates battle unit structures for the passed stack
+; as the attacking force, and the action target's units
+; on the action tile as the defending army; maps and
+; populates the EMM FIGUREX handle, and positions the
+; armies on their starting locations
+; returns the defender's unit count
+*/
+/*
+
+*/
+int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
+{
+
+
+
+
+
+}
+
 
 // WZD o98p17
 // drake178: BU_CheckFlight()
@@ -1881,30 +3638,527 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[])
 
 
 /*
+    WIZARDS.EXE  ovr099
+*/
+
+// WZD o99p01
+// WZD o99p02
+// WZD o99p03
+// WZD o99p04
+// WZD o99p05
+// WZD o99p06
+// WZD o99p07
+
+// WZD o99p01
+// drake178: CMB_DrawFullScreen()
+/*
+; draws the combat UI into the current draw frame using
+; only global variables, on a background loaded from
+; the third VGA frame, recreating the combat entity
+; (sprite) array on every run
+*/
+/*
+
+*/
+void CMB_DrawFullScreen__WIP(void)
+{
+    int16_t First_CE_Help_Entry = 0;
+    int16_t Opponent_Type = 0;
+    int16_t Can_Split_Name = 0;
+    int16_t CE_Window_Left = 0;
+    uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
+    int16_t string_index = 0;  // _DI_
+
+    Set_Page_Off();
+
+    /* HACK */ Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+
+// TODO  CMB_CreateEntities();
+// ; resets and recreates the combat entity array for
+// ; drawing the combat sprites
+
+// TODO  CMB_DrawMap();
+// ; draws the combat map into the current draw frame,
+// ; starting with the background saved in VGA frame 3,
+// ; and drawing all tile animations, roads, and combat
+// ; entities on top of that; includes the bottom UI
+// ; background, but not the actual controls
+
+    Reset_Window();
+
+    CMB_ExternalFX_Count = CMB_CountExternalFX__WIP();
+
+// TODO  CMB_Draw_GUI_Btns();
+// ; draws the active (unclicked) or locked action buttons
+// ; into the current draw frame, depending on the
+// ; circumstances
+
+    if(_combat_attacker_player == _human_player_idx)
+    {
+        CE_Window_Left = 247;
+        First_CE_Help_Entry = 9;
+    }
+    else
+    {
+        CE_Window_Left = 8;
+        First_CE_Help_Entry = 13;
+    }
+
+    _help_entries[ 9].help_idx = ST_UNDEFINED;
+    _help_entries[10].help_idx = ST_UNDEFINED;
+    _help_entries[11].help_idx = ST_UNDEFINED;
+    _help_entries[12].help_idx = ST_UNDEFINED;
+    _help_entries[13].help_idx = ST_UNDEFINED;
+    _help_entries[14].help_idx = ST_UNDEFINED;
+    _help_entries[15].help_idx = ST_UNDEFINED;
+    _help_entries[16].help_idx = ST_UNDEFINED;
+
+    for(itr = 0; (((CMB_ATKR_First_CE + itr) < CMB_ATKR_CE_Count) && (itr < 4)); itr++)
+    {
+// mov     bx, _SI_itr
+// add     bx, [CMB_ATKR_First_CE]         ; now 0 (after tactical BU init)
+// mov     cl, 2
+// shl     bx, cl
+// push    [word ptr CMB_ATKR_CE_Wnd.IMG_Seg+bx] ; picture
+// mov     ax, 179
+// push    ax                              ; y
+// mov     ax, _SI_itr
+// mov     dx, 17
+// imul    dx
+// mov     dx, [bp+CE_Window_Left]
+// add     dx, ax
+// push    dx                              ; x
+// call    FLIC_Draw
+// add     sp, 6
+// mov     bx, _SI_itr
+// add     bx, [CMB_ATKR_First_CE]         ; now 0 (after tactical BU init)
+// mov     cl, 2
+// shl     bx, cl
+// mov     ax, [CMB_ATKR_CE_Wnd.Help_Entry+bx]
+// push    ax
+// mov     ax, [bp+First_CE_Help_Entry]
+// add     ax, _SI_itr
+// mov     dx, size s_HELP_ENTRY
+// imul    dx
+// mov     bx, ax
+// pop     ax
+// mov     [word ptr _help_entries.help_00.help_idx+bx], ax
+    }
+
+    if(_combat_defender_player == _human_player_idx)
+    {
+        CE_Window_Left = 247;
+        First_CE_Help_Entry = 9;
+    }
+    else
+    {
+        CE_Window_Left = 8;
+        First_CE_Help_Entry = 13;
+    }
+
+    for(itr = 0; (((CMB_DEFR_First_CE + itr) < CMB_DEFR_CE_Count) && (itr < 4)); itr++)
+    {
+// mov     bx, _SI_itr
+// add     bx, [CMB_DEFR_First_CE]         ; now 0 (after tactical BU init)
+// mov     cl, 2
+// shl     bx, cl
+// push    [word ptr CMB_DEFR_CE_Wnd.IMG_Seg+bx] ; picture
+// mov     ax, 179
+// push    ax                              ; y
+// mov     ax, _SI_itr
+// mov     dx, 17
+// imul    dx
+// mov     dx, [bp+CE_Window_Left]
+// add     dx, ax
+// push    dx                              ; x
+// call    FLIC_Draw
+// add     sp, 6
+// mov     bx, _SI_itr
+// add     bx, [CMB_DEFR_First_CE]         ; now 0 (after tactical BU init)
+// mov     cl, 2
+// shl     bx, cl
+// mov     ax, [CMB_DEFR_CE_Wnd.Help_Entry+bx]
+// push    ax
+// mov     ax, [bp+First_CE_Help_Entry]
+// add     ax, _SI_itr
+// mov     dx, size s_HELP_ENTRY
+// imul    dx
+// mov     bx, ax
+// pop     ax
+// mov     [word ptr _help_entries.help_00.help_idx+bx], ax
+    }
+
+
+    colors[0] = 241;
+
+
+    Opponent_Type = 0;
+
+    if(CMB_AI_Player == NEUTRAL_PLAYER_IDX)
+    {
+
+        for(itr = 0; itr < _combat_total_unit_count; itr++)
+        {
+
+            if(battle_units[itr].controller_idx == CMB_AI_Player)
+            {
+
+                if((_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+                {
+                    Opponent_Type = 1;  /* Monsters */
+                }
+                else
+                {
+                    Opponent_Type = 2;  /* Raiders */
+                }
+
+            }
+
+        }
+
+    }
+
+
+    if(OVL_Action_Type == 0)
+    {
+
+        for(itr = 1; itr < 5; itr++)
+        {
+
+            colors[itr] = COL_CMBUI_Banner[_players[CMB_AI_Player].banner_id][(itr - 1)];
+
+        }
+
+        Set_Font_Colors_15(4, &colors[0]);
+
+        Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+        Set_Outline_Color(241);
+
+        if(CMB_AI_Player != NEUTRAL_PLAYER_IDX)
+        {
+
+            Print_Centered(40, 168, _players[CMB_AI_Player].name);
+
+        }
+        else
+        {
+
+            if(Opponent_Type == 1)
+            {
+
+                Print_Centered(40, 168, str_Monsters__ovr099);
+
+            }
+            else
+            {
+
+                Print_Centered(40, 168, str_Raiders__ovr099);
+
+            }
+
+        }
+
+    }
+    else if(OVL_Action_Type == 1)
+    {
+
+        for(itr = 1; itr < 5; itr++)
+        {
+
+            colors[itr] = COL_CMBUI_Banner[_players[CMB_AI_Player].banner_id][(itr - 1)];
+
+        }
+
+        Set_Font_Colors_15(4, &colors[0]);
+
+        Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+        Set_Outline_Color(241);
+
+        if(CMB_AI_Player != NEUTRAL_PLAYER_IDX)
+        {
+
+            Print_Centered(40, 168, _players[CMB_AI_Player].name);
+
+        }
+        else
+        {
+
+            if(
+                (Opponent_Type == 0)
+                ||
+                (_combat_attacker_player != NEUTRAL_PLAYER_IDX)
+            )
+            {
+
+                Print_Centered(40, 168, CMB_CityName);
+
+            }
+            else
+            {
+
+                if(Opponent_Type == 1)
+                {
+
+                    Print_Centered(40, 168, str_Monsters__ovr099);
+
+                }
+                else
+                {
+
+                    Print_Centered(40, 168, str_Raiders__ovr099);
+
+                }
+
+            }
+
+        }
+
+    }
+    else if(OVL_Action_Type == 5)  /* Lair */
+    {
+
+        strcpy(GUI_String_1, TBL_EZ_Names[_LAIRS[OVL_Action_Structure].type]);
+
+        string_index = 0;
+
+        Can_Split_Name = ST_FALSE;
+
+        for(itr = 0; strlen(GUI_String_1) > itr; itr++)
+        {
+
+            if(GUI_String_1[string_index] == ' ')
+            {
+
+                Can_Split_Name = ST_TRUE;
+
+                break;
+
+            }
+
+            string_index++;
+
+        }
+
+        string_index++;
+
+        if(Can_Split_Name == ST_FALSE)
+        {
+            string_index = 0;
+        }
+
+        GUI_String_1[string_index] -= 32;
+
+        for(itr = 1; itr < 5; itr++)
+        {
+
+            colors[itr] = COL_CMBUI_Banner[_players[CMB_AI_Player].banner_id][(itr - 1)];
+
+        }
+
+        Set_Font_Colors_15(4, &colors[0]);
+
+        Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+        Set_Outline_Color(241);
+
+        Print_Centered(40, 167, &GUI_String_1[string_index]);
+
+    }
+
+
+    for(itr = 1; itr < 5; itr++)
+    {
+
+        colors[itr] = COL_CMBUI_Banner[_players[_human_player_idx].banner_id][(itr - 1)];
+
+    }
+
+    Set_Font_Colors_15(4, &colors[0]);
+
+    Set_Font_Style_Shadow_Down(4, 15, 0, 0);
+
+    Set_Outline_Color(241);
+
+    Print_Centered(40, 167, _players[_human_player_idx].name);
+
+    // TODO  CMB_DrawSpellInfoW();
+    // ; draws the text and numbers of the spell information
+    // ; window for the human player into the current draw
+    // ; frame
+
+    if(magic_set.Auto_Unit_Info == ST_TRUE)
+    {
+
+        // TODO  CMB_DrawUnitDisplay();
+        // ; draws the combat unit display into the current draw
+        // ; frame based on the unit that the mouse is hovering
+        // ; over (top right corner)
+
+    }
+
+    Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 11);
+
+    if(
+        (CMB_ImmobileCanAct == ST_TRUE)
+        &&
+        (CMB_Auto_ON == ST_FALSE)
+        &&
+        (CMB_SelectedUnit != ST_UNDEFINED)
+    )
+    {
+
+        if(battle_units[CMB_SelectedUnit].controller_idx != CRP_CMB_HumanPlayer)
+        {
+// TODO  CMB_DrawActiveUnitW();
+// ; draws the active/selected battle unit and its stats
+// ; and icons normally shown in the active unit window
+// ; into the current draw frame; or alternatively the
+// ; magic vortex icon and movement prompt text
+        }
+        else
+        {
+            if(CMB_HumanTurn == ST_TRUE)
+            {
+
+                colors[0] = 227;
+
+                colors[1] = 243;
+
+                Set_Font_Colors_15(0, &colors[0]);
+
+                Set_Outline_Color(227);
+
+                Set_Font_Style_Shadow_Down(0, 15, 0, 0);
+
+                Set_Font_LF(1);
+
+                Print_Paragraph(84, 167, 58, cnst_Cmbt_Immobile, 0);
+
+            }
+
+        }
+
+    }
+    else
+    {
+// TODO  CMB_DrawActiveUnitW();
+// ; draws the active/selected battle unit and its stats
+// ; and icons normally shown in the active unit window
+// ; into the current draw frame; or alternatively the
+// ; magic vortex icon and movement prompt text
+    }
+
+
+    CMB_VortexAnimStage++;
+
+    if(CMB_VortexAnimStage > 5)
+    {
+        CMB_VortexAnimStage = 0;
+    }
+
+    CMB_ChasmAnimStage++;
+
+    if(CMB_ChasmAnimStage > 7)
+    {
+        CMB_ChasmAnimStage = 0;
+    }
+
+    CMB_TargetFrameStage++;
+
+    if(CMB_TargetFrameStage > 2)
+    {
+        CMB_TargetFrameStage = 0;
+    }
+
+    CMB_MudAnimStage++;
+
+    if(CMB_MudAnimStage > 2)
+    {
+        CMB_MudAnimStage = 0;
+    }
+
+}
+
+
+// WZD o99p02
+// drake178: CMB_DrawActiveUnitW()
+
+// WZD o99p03
+// drake178: CMB_Draw_GUI_Btns()
+
+// WZD o99p04
+// drake178: CMB_DrawSpellInfoW()
+
+// WZD o99p05
+// drake178: CMB_DrawAUWStats()
+
+// WZD o99p06
+// drake178: CMB_CreateEntities()
+
+// WZD o99p07
+// drake178: CMB_DrawBUHPBar()
+
+
+
+/*
     WIZARDS.EXE  ovr103
 */
 
 // WZD s103p01
-// CMB_ShowInfoWindow()
+// drake178: CMB_ShowInfoWindow()
+/*
+; sets up and displays the combat information window
+;
+; INCONSISTENT: excludes Evil Omens and Spell Wards
+*/
+/*
+
+*/
+void CMB_ShowInfoWindow__WIP(void)
+{
+
+
+
+}
+
 
 // WZD s103p02
-// CMB_DrawInfoWindow()
+// drake178: CMB_DrawInfoWindow()
 
 // WZD s103p03
-// CMB_FillInfoArrays()
+// drake178: CMB_FillInfoArrays()
 
 // WZD s103p04
-// CMB_SetCommonXFX()
+// drake178: CMB_SetCommonXFX()
 
 // WZD s103p05
-// CMB_CountExternalFX()
+// drake178: CMB_CountExternalFX()
+/*
+; returns the total amount of external effects that
+; affect combat on the current tile
+;
+; BUG: ignores Evil Omens despite its combat effect
+*/
+/*
+
+*/
+int16_t CMB_CountExternalFX__WIP(void)
+{
+
+
+
+}
+
 
 // WZD s103p06
 // ¿ MoO2  Point_Is_In_Some_Nebula_() |-> Point_Is_In_Nebula_N_() ?
 /*
     sets node type, if any
 */
-void CMB_Set_Node_Type(void)
+void Combat_Node_Type(void)
 {
     int16_t itr_auras;  // _SI_
     int16_t node_type;  // _DI_
@@ -1933,35 +4187,247 @@ void CMB_Set_Node_Type(void)
 
     }
 
-    CMB_node_type = node_type;
+    _combat_node_type = node_type;
 
 }
 
 
 // WZD s103p07
-// BU_CreateImage()
+// drake178: BU_CreateImage()
 
 // WZD s103p08
-// WIZ_BU_SelectNext()
+// drake178: WIZ_BU_SelectNext()
+void WIZ_BU_SelectNext__WIP(int16_t player_idx)
+{
+
+
+
+}
+
 
 // WZD s103p09
-// WIZ_BU_SelectClosest()
+// drake178: WIZ_BU_SelectClosest()
 
 // WZD s103p10
-// CMB_SpellcastError()
+// drake178: CMB_SpellcastError()
+/*
+; displays a warning dialog for not being able to cast
+; combat spells due to either having cast one already
+; this turn (1), or not having any available that can
+; be cast in the current situation (2)
+*/
+/*
+
+*/
+void CMB_SpellcastError__WIP(int16_t type)
+{
+
+
+
+}
+
 
 // WZD s103p11
-// BU_MoveConfused()
+// drake178: BU_MoveConfused()
+/*
+; moves the unit to a random destination within its
+; reach, if one can be found in 600 random attempts,
+; but zeroes movement allowance and marks the unit as
+; finished in any case regardless
+*/
+/*
+
+*/
+void BU_MoveConfused__WIP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
 
 // WZD s103p12
-// CMB_LoadResources()
+// drake178: CMB_LoadResources()
+/*
+; creates the rest of the combat sandbox allocations,
+; loads COMPIX image resources, sets the battle figure
+; image pointers, and calls CMB_SetNearAllocs
+; uses roughly 990h paragraphs of the sandbox, of which
+; 3f2h are the figure images, which are undone in the
+; end, and have to be reallocated whenever their space
+; is used for something else
+;
+; WARNING: the aura arrays are larger than necessary
+*/
+/*
+
+¿ ~== Strategic_Combat_Allocate() ?
+
+*/
+void CMB_LoadResources__WIP(void)
+{
+    int16_t itr;  // _SI_
+
+    // 249 * 16 = 3984 / 110 = 36.2182 ... 36? 2 * max stack = 18 so, ...?
+    // battle_units = SA_MK_FP0(Allocate_Next_Block(_screen_seg, 249));
+    battle_units = (struct s_BATTLE_UNIT *)Allocate_First_Block(_screen_seg, 249);
+
+    CMB_IDK_4PR = (int16_t *)Allocate_Next_Block(_screen_seg, 4);  // header + sub-header + 2 PR ... or header + 3 sub-headers?
+
+    CMB_HolyBonusArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+    CMB_ResistAllArray  = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+    CMB_LeadershipArray = (int16_t *)Allocate_Next_Block(_screen_seg, 6);
+
+    
+    IMG_CMB_Spell_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 1, _screen_seg);
+
+    
+    IMG_CMB_Wait_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 2, _screen_seg);
+
+    
+    IMG_CMB_Done_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 3, _screen_seg);
+
+    
+    IMG_CMB_Auto_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 4, _screen_seg);
+
+    
+    IMG_CMB_Info_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 20, _screen_seg);
+
+    
+    IMG_CMB_Flee_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 21, _screen_seg);
+
+
+    // 3 * 16 = 48 ... 1PR header, 15 2-byte values
+    combat_enchantments = (struct s_COMBAT_ENCHANTMENTS *)Allocate_Next_Block(_screen_seg, 3);
+
+    for(itr = 0; itr < 30; itr++)
+    {
+        *((char *)&combat_enchantments[itr]) = ST_FALSE;
+    }
+
+
+    IMG_CMB_TrueLight = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
+
+    IMG_CMB_Darkness = LBX_Reload_Next(compix_lbx_file__ovr103, 6, _screen_seg);
+
+    IMG_CMB_WarpReality = LBX_Reload_Next(compix_lbx_file__ovr103, 7, _screen_seg);
+
+    IMG_CMB_BlackPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 8, _screen_seg);
+
+    IMG_CMB_Wrack = LBX_Reload_Next(compix_lbx_file__ovr103, 9, _screen_seg);
+
+    IMG_CMB_MetalFires = LBX_Reload_Next(compix_lbx_file__ovr103, 10, _screen_seg);
+    
+    IMG_CMB_Prayer = LBX_Reload_Next(compix_lbx_file__ovr103, 11, _screen_seg);
+    
+    IMG_CMB_HighPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 12, _screen_seg);
+    
+    IMG_CMB_Terror = LBX_Reload_Next(compix_lbx_file__ovr103, 13, _screen_seg);
+    
+    IMG_CMB_CallLightng = LBX_Reload_Next(compix_lbx_file__ovr103, 14, _screen_seg);
+    
+    IMG_CMB_CounterMgc = LBX_Reload_Next(compix_lbx_file__ovr103, 15, _screen_seg);
+
+    IMG_CMB_MassInvis = LBX_Reload_Next(compix_lbx_file__ovr103, 41, _screen_seg);
+    
+    IMG_CMB_Entangle = LBX_Reload_Next(compix_lbx_file__ovr103, 60, _screen_seg);
+    
+    IMG_CMB_ManaLeak = LBX_Reload_Next(compix_lbx_file__ovr103, 79, _screen_seg);
+    
+    IMG_CMB_Blur = LBX_Reload_Next(compix_lbx_file__ovr103, 80, _screen_seg);
+    
+    IMG_CMB_Cancel_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 22, _screen_seg);
+
+    IMG_CMB_SpllBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 23, _screen_seg);
+
+    IMG_CMB_WaitBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 24, _screen_seg);
+
+    IMG_CMB_DoneBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 28, _screen_seg);
+
+    IMG_CMB_AutoBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 26, _screen_seg);
+    
+    IMG_CMB_InfoBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 25, _screen_seg);
+
+    IMG_CMB_FleeBtnLock = LBX_Reload_Next(compix_lbx_file__ovr103, 27, _screen_seg);
+
+
+    for(itr = 0; itr < 9; itr++)
+    {
+
+        // IMG_CMB_ATK_Icons[itr].Melee = LBX_Reload_Next(compix_lbx_file__ovr103, (29 + itr), _screen_seg);
+        IMG_CMB_ATK_Icons[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (29 + itr), _screen_seg);
+
+    }
+
+
+    for(itr = 0; itr < 3; itr++)
+    {
+
+        // IMG_CMB_MoveIcons[itr].Ground_Movement = LBX_Reload_Next(compix_lbx_file__ovr103, (38 + itr), _screen_seg);
+        IMG_CMB_MoveIcons[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (38 + itr), _screen_seg);
+
+    }
+
+
+    for(itr = 0; itr < 18; itr++)
+    {
+
+        // IMG_CMB_ScanIcons[itr].Stat.Melee = LBX_Reload_Next(compix_lbx_file__ovr103, (61 + itr), _screen_seg);
+        IMG_CMB_ScanIcons[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (61 + itr), _screen_seg);
+
+    }
+
+
+    for(itr = 0; itr < 18; itr++)
+    {
+
+        CMB_BU_Figure_GFX[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (55 + itr), _screen_seg);
+
+    }
+
+
+    Release_Block(_screen_seg);
+
+
+    CMB_SetNearAllocs__WIP();
+
+}
+
 
 // WZD s103p13
-// CMB_SetNearAllocs()
+// drake178: CMB_SetNearAllocs()
+/*
+; resets the dynamic near memory allocation (in the
+; data segment), and recreates the resident combat
+; buffers into it (2630 bytes allocated in total)
+*/
+/*
+
+*/
+void CMB_SetNearAllocs__WIP(void)
+{
+
+
+
+}
+
 
 // WZD s103p14
-// CMB_SelectCaster()
+// drake178: CMB_SelectCaster()
+/*
+; shows the combat spell caster selection dialog and,
+; if a valid caster is chosen, proceeds directly to
+; calling and resolving the CMB_CastSpell function
+*/
+/*
 
+*/
+void CMB_SelectCaster__WIP(int16_t caster_id)
+{
+
+
+
+}
 
 
 
@@ -1970,22 +4436,40 @@ void CMB_Set_Node_Type(void)
 */
 
 // WZD o105p01
-// CMB_WinLoseFlee()
+// drake178: CMB_WinLoseFlee()
+/*
+; checks whether either side has no units left on the
+; battlefield, and if the AI player is not the neutral
+; one, checks for fight or flight, and will flee if it
+; finds the situation hopeless and has units to save
+; returns the index of the victorious player, if any,
+; or -1 if the battle can continue
+*/
+/*
+
+*/
+int16_t CMB_WinLoseFlee__WIP(void)
+{
+
+    return ST_UNDEFINED;
+
+}
+
 
 // WZD o105p02
-// LBX_IMG_BannerPaint()
+// drake178: LBX_IMG_BannerPaint()
 
 // WZD o105p03
-// LBX_IMG_Highlight()
+// drake178: LBX_IMG_Highlight()
 
 // WZD o105p04
-// LBX_IMG_FX()
+// drake178: LBX_IMG_FX()
 
 // WZD o105p05
-// BU_SetUEColor()
+// drake178: BU_SetUEColor()
 
 // WZD o105p06
-// LBX_IMG_UE_Outline()
+// drake178: LBX_IMG_UE_Outline()
 
 // WZD o105p07
 void CMB_UpdateTrueSight(void)
@@ -2023,22 +4507,36 @@ void CMB_UpdateTrueSight(void)
 
 
 // WZD o105p08
-// BU_SetVisibility()
+// drake178: BU_SetVisibility()
+/*
+; checks the unit's visibility state and modifies the
+; BU image effect field accordingly if necessary
+*/
+/*
+
+*/
+void BU_SetVisibility__WIP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
 
 // WZD o105p09
-// BU_GetCombatEffect()
+// drake178: BU_GetCombatEffect()
 
 // WZD o105p10
-// BU_SetBaseAnims()
+// drake178: BU_SetBaseAnims()
 
 // WZD o105p11
-// BU_GetWpnIconIndex()
+// drake178: BU_GetWpnIconIndex()
 
 // WZD o105p12
-// BU_GetRngIconIndex()
+// drake178: BU_GetRngIconIndex()
 
 // WZD o105p13
-// CMB_DrawUnitDisplay()
+// drake178: CMB_DrawUnitDisplay()
 
 
 
@@ -3249,22 +5747,44 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 */
 
 // WZD o112p01
-// CMB_ComposeBookBG()
+// drake178: CMB_ComposeBookBG()
 
 // WZD o112p02
-// CMB_RedrawSpellbook()
+// drake178: CMB_RedrawSpellbook()
 
 // WZD o112p03
-// G_CMB_CastSpell()
+// drake178: G_CMB_CastSpell()
+/*
+; resolves combat spellcasting by the specified entity,
+; from opening the spellbook to casting the spell; or
+; evaluating the castable list, selecting one, and
+; casting it in case of the AI
+; returns 0 if no spell can be cast, 1 if cancelled
+; during targeting, or 2 if resolved (or countered)
+;
+; contains many BUGs related to casting costs, and
+; inherints many more from the targeting-, spell list
+; building-, and spell effect functions
+*/
+/*
+
+*/
+int16_t G_CMB_CastSpell__WIP(int16_t caster_id, int16_t wx, int16_t wy, int16_t wp)
+{
+
+
+
+}
+
 
 // WZD o112p04
-// CMB_ShowSpellbook()
+// drake178: CMB_ShowSpellbook()
 
 // WZD o112p05
-// CMB_CheckSpellErrors()
+// drake178: CMB_CheckSpellErrors()
 
 // WZD o112p06
-// SPL_GetResistMod()
+// drake178: SPL_GetResistMod()
 
 // WZD o112p07
 /*
@@ -3362,19 +5882,19 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 
 
 // WZD o112p08
-// AITP_EarthToMud()
+// drake178: AITP_EarthToMud()
 
 // WZD o112p09
-// AITP_Disrupt()
+// drake178: AITP_Disrupt()
 
 // WZD o112p10
-// AITP_CracksCall()
+// drake178: AITP_CracksCall()
 
 // WZD o112p11
-// UU_AITP_WordofRecall()
+// drake178: UU_AITP_WordofRecall()
 
 // WZD o112p12
-// AITP_RecallHero()
+// drake178: AITP_RecallHero()
 
 
 
@@ -5017,19 +7537,19 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
 
     if(
         (
-            (CMB_node_type == cnt_Sorcery)
+            (_combat_node_type == cnt_Sorcery)
             &&
             (battle_unit->race == rt_Sorcery)
         )
         ||
         (
-            (CMB_node_type == cnt_Chaos)
+            (_combat_node_type == cnt_Chaos)
             &&
             (battle_unit->race == rt_Chaos)
         )
         ||
         (
-            (CMB_node_type == cnt_Chaos)
+            (_combat_node_type == cnt_Chaos)
             &&
             (battle_unit->race == rt_Chaos)
         )
@@ -7086,7 +9606,30 @@ int16_t BU_IsCombatSummon(int16_t battle_unit_idx)
 
 
 // WZD o124p16
-// BU_GetHalfMoves()
+// drake178: BU_GetHalfMoves()
+/*
+; calculates and returns the unit's movement allowance
+; in half movement point units, accounting for all
+; factors
+;
+; BUG: fails to initialize the Endurance variable,
+; causing units without it to sometimes gain the effect
+;
+; INCONSISTENT: it applies modifiers in different order
+; than UNIT_GetHalfMoves, resulting in discrepancies
+; between overland and combat movement allowance under
+; certain situations
+*/
+/*
+
+*/
+int16_t BU_GetHalfMoves__WIP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
 
 // WZD o124p17
 /*
@@ -7426,41 +9969,343 @@ void Raze_City_Prompt_Draw(void)
 
 
 
+/*
+    WIZARDS.EXE  ovr153
+*/
+
+// WZD ovr153p01
+// drake178: UU_sub_DC990()
+
+// WZD ovr153p02
+// drake178: CMB_DrawMap()
+
+// WZD ovr153p03
+// drake178: CMB_DrawEntities()
+
+// WZD ovr153p04
+// drake178: sub_DD536()
+
+// WZD ovr153p05
+// drake178: CMB_SpawnTrees()
+
+// WZD ovr153p06
+// drake178: CMB_SpawnRocks()
+
+// WZD ovr153p07
+// drake178: CMB_SpawnStructures()
+
+// WZD ovr153p08
+// drake178: CMB_SpawnStoneWall()
+
+// WZD ovr153p09
+// drake178: CMB_SpawnDarkWall()
+
+// WZD ovr153p10
+// drake178: CMB_SpawnFireWall()
+
+// WZD ovr153p11
+// drake178: CMB_SpawnVortices()
+
+// WZD ovr153p12
+// drake178: CMB_SpawnFigure()
+
+// WZD ovr153p13
+// drake178: CMB_SpawnUnitCurse()
+
+// WZD ovr153p14
+// drake178: CMB_EntitiesReset()
+
+// WZD ovr153p15
+// drake178: CMB_ComposeFigureIMG()
+
+// WZD ovr153p16
+// drake178: CMB_SpawnProjectiles()
+
+// WZD ovr153p17
+// drake178: CMB_GetFigDrawPos()
+
+// WZD ovr153p18
+// drake178: CMB_CreateEntity()
+
+// WZD ovr153p19
+// drake178: CMB_ZSort_Insert()
+
+// WZD ovr153p20
+// drake178: EMM_FIGX_CreateHdr()
+
+// WZD ovr153p21
+// drake178: EMM_TILEX_Init()
+
+// WZD ovr153p22
+// drake178: UU_NullSub_153_1()
+
+// WZD ovr153p23
+// drake178: CMB_Predraw_Figures()
+
+// WZD ovr153p24
+// drake178: RP_NullSub_153_2()
+
+
+
+/*
+    WIZARDS.EXE  ovr154
+*/
+
+// WZD ovr154p01
+// drake178: CMB_Terrain_Init()
+/*
+; sets the terrain and map-related combat variables
+; into the battlefield structure, loads the combat tile
+; images, generates the combat map, and then draws the
+; background, saving it into VGA frame 3
+;
+; has multiple BUGs related to outposts, roads across
+; the Y-axis, rivers, and walls
+*/
+/*
+
+*/
+void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
+{
+
+
+
+}
+
+
+// WZD ovr154p02
+// drake178: CMB_GenerateMap()
+
+// WZD ovr154p03
+// drake178: CMB_TreeGen()
+
+// WZD ovr154p04
+// drake178: CMB_RockGen()
+
+// WZD ovr154p05
+// drake178: CMB_RoadGen()
+
+// WZD ovr154p06
+// drake178: CMB_RiverGen()
+
+// WZD ovr154p07
+// drake178: CMB_MergeDirt()
+
+// WZD ovr154p08
+// drake178: CMB_RemoveRough()
+
+// WZD ovr154p09
+// drake178: CMB_TileGen()
+
+// WZD ovr154p10
+// drake178: CMB_SetMoveMaps()
+
+// WZD ovr154p11
+// drake178: CMB_TerrPatchGen()
+
+// WZD ovr154p12
+// drake178: CMB_GetScreenCoords()
+
+// WZD ovr154p13
+// drake178: CMB_EarthToMud()
+
+// WZD ovr154p14
+// drake178: CMB_GetTileX()
+/*
+; calculates and returns the X coordinate of the combat
+; map tile at the selected screen pixel location
+*/
+/*
+
+*/
+int16_t CMB_GetTileX__WIP(int16_t x, int16_t y)
+{
+
+
+
+}
+
+
+// WZD ovr154p15
+// drake178: CMB_GetTileY()
+/*
+; calculates and returns the Y coordinate of the combat
+; map tile at the selected screen pixel location
+*/
+/*
+
+*/
+int16_t CMB_GetTileY__WIP(int16_t x, int16_t y)
+{
+
+
+
+}
+
+
+// WZD ovr154p16
+// drake178: CMB_GetInTileX()
+
+// WZD ovr154p17
+// drake178: CMB_GetInTileY()
+
+// WZD ovr154p18
+// drake178: GAME_ReloadWorldData()
+/*
+; reloads the contents of the World_Data@ allocation
+; from the COMBAT.TMP disk file, overwriting it
+; completely
+*/
+/*
+
+*/
+void Combat_Cache_Read(void)
+{
+    int16_t Pass_2_Paras = 0;
+    int16_t world_data_size = 0;  // _SI_
+    // int16_t file_handle = 0;  // _DI_
+    FILE * file_pointer = 0;
+
+    world_data_size = tmp_World_Data_Paras;
+
+    if(world_data_size > 2048)  /* 2048 PR, 32768 B */
+    {
+        world_data_size = 2047;
+        Pass_2_Paras = (tmp_World_Data_Paras - 2047);
+    }
+    else
+    {
+        Pass_2_Paras = 0;
+    }
+
+    // filehandle = DISK_OpenCreate(str_COMBAT_TMP__ovr154, str_RB__ovr154);
+    file_pointer = fopen(str_COMBAT_TMP__ovr154, str_RB__ovr154);
+
+    // DISK_ReadFile(0, World_Data, (world_data_size * 16), 1, file_handle);
+    fread(World_Data, (world_data_size * 16), 1, file_pointer);
+
+    // DISK_ReadFile((world_data_size * 16), World_Data, (Pass_2_Paras * 16), 1, filehandle);
+    fread(World_Data, (Pass_2_Paras * 16), 1, file_pointer);
+
+    // DISK_FileClose(filehandle);
+    fclose(file_pointer);
+
+}
+
+
+// WZD ovr154p19
+// drake178: GAME_DumpWorldData()
+/*
+; saves the contents of the World_Data@ allocation into
+; a disk file named COMBAT.TMP, overwriting any
+; existing previous version
+*/
+/*
+
+*/
+void Combat_Cache_Write(void)
+{
+    int16_t Pass_2_Paras = 0;
+    int16_t world_data_size = 0;  // _SI_
+    // int16_t file_handle = 0;  // _DI_
+    FILE * file_pointer = 0;
+
+    world_data_size = tmp_World_Data_Paras;
+
+    if(world_data_size > 2048)  /* 2048 PR, 32768 B */
+    {
+        world_data_size = 2047;
+        Pass_2_Paras = (tmp_World_Data_Paras + 63489);
+    }
+    else
+    {
+        Pass_2_Paras = 0;
+    }
+
+    // filehandle = DISK_OpenCreate(str_COMBAT_TMP__ovr154, str_WB__ovr154);
+    file_pointer = fopen(str_COMBAT_TMP__ovr154, str_WB__ovr154);
+
+    // DISK_WriteFile(0, World_Data, (world_data_size * 16), 1, file_handle);
+    fwrite(World_Data, (world_data_size * 16), 1, file_pointer);
+
+    // DISK_WriteFile((world_data_size * 16), World_Data, (Pass_2_Paras * 16), 1, file_handle);
+    fwrite(World_Data, (Pass_2_Paras * 16), 1, file_pointer);
+
+    // DISK_FileClose(filehandle);
+    fclose(file_pointer);
+
+}
+
+
+/*
+    WIZARDS.EXE  ovr155
+*/
+
+// WZD ovr155p01
+// WZD ovr155p02
+
+// WZD ovr155p01
+// drake178: CMB_GetPath()
+
+// WZD ovr155p02
+// drake178: CMB_FillReachMap()
+
+
 
 /*
     WIZARDS.EXE  ovr163
 */
 
 // WZD ovr163p01
-// CMB_LoadTerrainGFX()
+// drake178: CMB_LoadTerrainGFX()
 
 // WZD ovr163p02
-// CMB_ComposeBackgrnd()
-
-// WZD ovr163p03
-// CMB_LoadWallRiseGFX()
-
-// WZD ovr163p04
+// drake178: CMB_ComposeBackgrnd()
+/*
+; composes the combat background (tile images and
+; bottom UI base image) into the current draw frame,
+; advances all combat background animations, and saves
+; the screen into VGA frame 3 ($A800)
+*/
 /*
 
-; clears the sandbox and the LBX near buffer, and
-; allocates into the former the battlefield structure
-; and the sprite, projectile, and vortex arrays (351h
-; paragraphs in total); and the latter the pathfinding
-; arrays which are entirely useless here as they will
-; be redone by another function in the current code
+*/
+void CMB_ComposeBackgrnd__WIP(void)
+{
+
+
+
+}
+
+
+// WZD ovr163p03
+// drake178: CMB_LoadWallRiseGFX()
+
+// WZD ovr163p04
+// drake178: CMB_BaseAllocs()
+/*
+clears the sandbox and the LBX near buffer, and
+allocates into the former the battlefield structure
+and the sprite, projectile, and vortex arrays (351h
+paragraphs in total); and the latter the pathfinding
+arrays which are entirely useless here as they will
+be redone by another function in the current code
+*/
+/*
 
 */
-void CMB_BaseAllocs(void)
+void CMB_BaseAllocs__WIP(void)
 {
 
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
-    CMB_EntitySprites = Allocate_Next_Block(_screen_seg, 482);
-    CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);
-    CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);
-    CMB_Vortex_Array = Allocate_Next_Block(_screen_seg, 9);
 
-    // ¿ drake178:  ; WARNING: these are entirely redundant and will be  ; reallocated immediately after this!
+    CMB_EntitySprites = Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
+
+    CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
+
+    CMB_Vortex_Array = Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
+
+    // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
     CMB_ActiveMoveMap = Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
     CMB_NearBuffer_3 = Near_Allocate_Next(1008);
@@ -7471,7 +10316,7 @@ void CMB_BaseAllocs(void)
 
 
 // WZD ovr163p05
-// CMB_SetProjectiles()
+// drake178: CMB_SetProjectiles()
 
 // WZD ovr163p06
-// EMM_LoadFigureGFX()
+// drake178: EMM_LoadFigureGFX()

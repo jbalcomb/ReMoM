@@ -605,7 +605,7 @@ void Set_Default_Game_Settings(void)
     magic_set.end_of_turn_summary = ST_TRUE;
     magic_set.Raze_City = ST_TRUE;
     magic_set.spell_book_ordering = ST_TRUE;
-    magic_set.Strategic_Combat = ST_FALSE;
+    magic_set.strategic_combat_only = ST_FALSE;
     magic_set.spell_animations = ST_TRUE;
     magic_set.City_Spell_Events = ST_TRUE;
     magic_set.Ovl_Spell_Events = ST_TRUE;

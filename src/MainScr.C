@@ -5436,7 +5436,7 @@ Combat_Handlers:
     {
         combat_result = Combat__WIP(player_idx, defender_idx, troop_count, &troops[0]);
 
-        if(combat_result == 1)
+        if(combat_result == ST_TRUE)  /* Winner == Attacker */
         {
             Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, troops);
         }
