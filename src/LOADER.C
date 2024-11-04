@@ -322,13 +322,13 @@ void Terrain_Init(void)
     // MAPBACK.LBX, 074     SITES    ruins
     // MAPBACK.LBX, 075     SITES    fallen temple
 
-    IMG_OVL_EZ_Cave  = LBX_Load(mapback_lbx_file, 71);  // ~ EZ_Cave
-    IMG_OVL_EZ_Dung  = LBX_Load(mapback_lbx_file, 74);  // ~ EZ_Dungeon
-    IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);  // ~ EZ_Ancient_Temple
-    IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);  // ~ EZ_Keep
-    IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);  // ~ EZ_Monster_Lair
-    IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);  // ~ EZ_Ruins
-    IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);  // ~ EZ_Fallen_Temple
+    IMG_OVL_EZ_Cave  = LBX_Load(mapback_lbx_file, 71);  // ~ lt_Cave
+    IMG_OVL_EZ_Dung  = LBX_Load(mapback_lbx_file, 74);  // ~ lt_Dungeon
+    IMG_OVL_EZ_ATmpl = LBX_Load(mapback_lbx_file, 72);  // ~ lt_Ancient_Temple
+    IMG_OVL_EZ_AKeep = LBX_Load(mapback_lbx_file, 73);  // ~ lt_Keep
+    IMG_OVL_EZ_MLair = LBX_Load(mapback_lbx_file, 71);  // ~ lt_Monster_Lair
+    IMG_OVL_EZ_Ruins = LBX_Load(mapback_lbx_file, 74);  // ~ lt_Ruins
+    IMG_OVL_EZ_FTmpl = LBX_Load(mapback_lbx_file, 75);  // ~ lt_Fallen_Temple
 
 
     // MAPBACK.LBX, 078     SITES   coal

@@ -952,7 +952,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;  // _CX_
 
-    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & TF_Road) != 0)
+    if((_map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] & MSF_ROAD) != 0)
     {
         return 0;
     }

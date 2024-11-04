@@ -31,7 +31,8 @@ struct s_EMM_RECORD
 
 // WZD dseg:760C                                                 BEGIN:  seg012 - Initialized Data
 
-// WZD dseg:760C 00 00                                           EMM_PageFrame dw 0                      ; DATA XREF: EMM_DetectDevice:loc_16AE0w ...
+// WZD dseg:760C
+extern SAMB_ptr EMM_PageFrame;
 // WZD dseg:760C                                                                                         ; contains the segment address of the EMS page frame
 // WZD dseg:760E 45 4D 4D 58 58 58 58 30 00                      EMM_DevName db 'EMMXXXX0',0             ; DATA XREF: EMM_DetectDevice:loc_16AA0o
 // WZD dseg:7617 00 00 00 00 00 00 01 00 00 00 02 00 00 00 03 00 EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>

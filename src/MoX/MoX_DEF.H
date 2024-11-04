@@ -64,11 +64,17 @@ Eh?
     SetMin(), SetMax(), SetRange()
 */
 #ifndef MIN
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
+#define MIN(a, b)           ( ((a) <= (b)) ? (a) : (b) )
 // #define MIN(a, b) (((a) <  (b)) ? (a) : (b))
 #endif
 #ifndef MAX
-#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
+#define MAX(a, b)           ( ((a) >= (b)) ? (a) : (b) )
+#endif
+#ifndef IS_EVEN
+#define IS_EVEN(_number_)   ( ((_number_) % 2 == 0) )
+#endif
+#ifndef IS_ODD
+#define IS_ODD(_number_)    ( ((_number_) % 2 == 1) )
 #endif
 #ifndef SETMIN
 #define SETMIN(a, b) do { if ((b) > (a)) { (a) = (b); } } while (0)
@@ -405,15 +411,15 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
     Map Square Flags
 
-#define TF_Road         0x08
+#define MSF_ROAD         0x08
 #define TF_Enc_Road     0x10
 #define MSF_CORRUPTION   0x20
 #define TF_Unk_40       0x40
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
 #define TF_AnyRoad      0x18
 */
+#define MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
 #define GET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_)           ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
-
 #define SET_MAP_SQUARE_FLAG(_wx_, _wy_, _wp_, _value_)  ( _map_square_flags[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
 
 #define CLEAR_MAP_SQUARE_FLAGS_VOLCANO_PLAYER_IDX()  ( SET_MAP_SQUARE_FLAG(wx, wy, wp, (GET_MAP_SQUARE_FLAG(wx, wy, wp) & 0b11111000)) )

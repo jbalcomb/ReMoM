@@ -173,8 +173,8 @@ void GAME_NextHumanStack(void)
     _unit_window_start_x = 247;
     _unit_window_start_y = 79;
 
-    OVL_Action_XPos = ST_UNDEFINED;
-    OVL_Action_YPos = ST_UNDEFINED;
+    _combat_wx = ST_UNDEFINED;
+    _combat_wy = ST_UNDEFINED;
 
     Update_Scouted_And_Contacted__WIP();
 

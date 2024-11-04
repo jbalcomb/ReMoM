@@ -118,12 +118,13 @@ struct s_Field
         int16_t string_len;         //  8  ft_MultiHotKey
     };
     union {
-        int64_t Param3;
+        int64_t Param3;             //  ft_Grid  &xpos
         int16_t justification;      //  4  ft_Input
         int16_t min_value;          //  6  ft_scroll
     };
     union {
             int64_t Param4;         // MaxSlide      CStyle                                               ypos
+                                    //  ft_Grid  &ypos
             int16_t cursor_type;    //  4  ft_Input
             int16_t max_value;      //  6  ft_scroll
     };

@@ -123,7 +123,7 @@ void Get_Unit_Enchantment_Names(int16_t unit_idx, char ** unit_enchantment_names
 void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_idx, int16_t VType);
 
 // WZD o89p06
-void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * fig_x, int16_t * fig_y);
+void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y);
 
 // WZD o89p07
 int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantmnt, char * message);

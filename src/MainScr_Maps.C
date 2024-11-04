@@ -1756,7 +1756,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
         {
             if(_LAIRS[itr_lairs].Intact == ST_TRUE)
             {
-                if(_LAIRS[itr_lairs].type > EZ_Sorcery_Node)
+                if(_LAIRS[itr_lairs].type > lt_Sorcery_Node)
                 {
                     lair_x = _LAIRS[itr_lairs].wx;
                     lair_y = _LAIRS[itr_lairs].wy;
@@ -1792,23 +1792,23 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                                         cbw
                                         shl     ax, 1
                                         mov     bx, ax
-                                        push    (IMG_OVL_EZ_Cave@ - (2*EZ_Cave))[bx]
-                                        push    (IMG_OVL_EZ_Cave@ - (2*EZ_Cave))[bx] ; sa_FLIC_Header
+                                        push    (IMG_OVL_EZ_Cave@ - (2*lt_Cave))[bx]
+                                        push    (IMG_OVL_EZ_Cave@ - (2*lt_Cave))[bx] ; sa_FLIC_Header
                                         */
                                         // TODO(JimBalcomb,20230701): figure out what is going on with this approach to the pict seg
                                         // FWIW, they are in the same order in the Data Segment, Terrain_Init(), and enum (though I assume the enum is derived)
-                                        // No-Workie  FLIC_Draw(start_x, start_y, (SAMB_ptr)(IMG_OVL_EZ_Cave + ((_LAIRS[itr_lairs].Type - EZ_Cave) * sizeof(SAMB_ptr))));
+                                        // No-Workie  FLIC_Draw(start_x, start_y, (SAMB_ptr)(IMG_OVL_EZ_Cave + ((_LAIRS[itr_lairs].Type - lt_Cave) * sizeof(SAMB_ptr))));
                                         // No-Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave + 1);
                                         // Workie  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);
                                         switch(_LAIRS[itr_lairs].type)
                                         {
-                                            case EZ_Cave: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);  } break;
-                                            case EZ_Dungeon: {        FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Dung);  } break;
-                                            case EZ_Ancient_Temple: { FLIC_Draw(start_x, start_y, IMG_OVL_EZ_ATmpl); } break;
-                                            case EZ_Keep: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_AKeep); } break;
-                                            case EZ_Monster_Lair: {   FLIC_Draw(start_x, start_y, IMG_OVL_EZ_MLair); } break;
-                                            case EZ_Ruins: {          FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Ruins); } break;
-                                            case EZ_Fallen_Temple: {  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_FTmpl); } break;
+                                            case lt_Cave: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Cave);  } break;
+                                            case lt_Dungeon: {        FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Dung);  } break;
+                                            case lt_Ancient_Temple: { FLIC_Draw(start_x, start_y, IMG_OVL_EZ_ATmpl); } break;
+                                            case lt_Keep: {           FLIC_Draw(start_x, start_y, IMG_OVL_EZ_AKeep); } break;
+                                            case lt_Monster_Lair: {   FLIC_Draw(start_x, start_y, IMG_OVL_EZ_MLair); } break;
+                                            case lt_Ruins: {          FLIC_Draw(start_x, start_y, IMG_OVL_EZ_Ruins); } break;
+                                            case lt_Fallen_Temple: {  FLIC_Draw(start_x, start_y, IMG_OVL_EZ_FTmpl); } break;
                                         }
 
                                     }

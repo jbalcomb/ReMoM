@@ -21,6 +21,11 @@ extern int16_t DBG_Alt_A_State;
 
 
 
+// WZD dseg:305E
+extern int16_t unit_enchantment_animation_count;
+
+
+
 // WZD dseg:3062
 extern uint8_t enchantment_outline_colors[5][8][8];
 

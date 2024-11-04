@@ -49,6 +49,67 @@ extern "C" {
 
 
 
+enum e_COMBAT_LOCATION_TYPE
+{
+    clt_OpenField       =  0, 
+    clt_Outpost         =  1, 
+    clt_City            =  2, 
+    clt_Fortress        =  3, 
+    clt_Tower           =  4, 
+    clt_ChaosNode       =  5, 
+    clt_NatureNode      =  6, 
+    clt_SorceryNode     =  7, 
+    clt_Cave            =  8, 
+    clt_Dungeon         =  9, 
+    clt_AncientTemple   = 10, 
+    clt_Keep            = 11, 
+    clt_MonsterLair     = 12, 
+    clt_Ruins           = 13, 
+    clt_FallenTemple    = 14
+};
+
+
+enum Central_Structures
+{
+    CS_None         =  0, 
+    CS_Outpost      =  1, 
+    CS_City         =  2, 
+    CS_Fortress     =  3, 
+    CS_Dungeon      =  4, 
+    CS_Tower        =  5, 
+    CS_Cave         =  6, 
+    CS_Temple       =  7, 
+    CS_Fort         =  8, 
+    CS_SorceryNode  =  9, 
+    CS_ChaosNode    = 10, 
+    CS_NatureNode   = 11, 
+    CS_Ruins        = 12
+};
+
+
+enum e_COMBAT_TERRAIN_TYPE
+{
+    ctt_Water      = 0, 
+    ctt_Plains     = 1, 
+    ctt_Hills      = 2, 
+    ctt_Desert     = 3, 
+    ctt_Mountains  = 4, 
+    ctt_Tundra     = 5, 
+    ctt_Forest     = 6
+};
+
+
+enum Combat_TileGroup
+{
+    CTG_Grass       = 0, 
+    CTG_Rough       = 1, 
+    CTG_Dirt        = 2, 
+    CTG_River       = 3, 
+    CTG_DeepWater   = 4, 
+    CTG_IDK         = 5
+};
+
+
 /*
     ¿ Meaning / Usage ?
 
@@ -66,8 +127,8 @@ enum e_BATTLE_UNIT_STATUS
 
 enum BU_Action
 {
-    BUA_Ready           =   0,
-    BUA_Finished        =   4,
+    bua_Ready           =   0,
+    bua_Finished        =   4,
     BUA_Wait            =   5,
 
     BUA_MeleeAttack     = 100,
@@ -88,6 +149,12 @@ enum BU_Action
     BUA_No_Spells       = 333
 };
 
+
+/*
+
+CMB_PrepareTurn__WIP() uses `test .. jz`
+
+*/
 enum e_BATTLE_UNIT_EFFECT
 {
     bue_Vertigo           = 0x1,
@@ -204,7 +271,7 @@ struct s_CTY_ENCH
 // sizeof: 0x1598
 struct s_BATTLEFIELD
 {
-    /* 0x0000 */  int8_t Tile_Terrain[462];  // ¿ 22 x 21 ?
+    /* 0x0000 */  int8_t Tile_Terrain[462];  // 21 x 22
     /* 0x039C */  int8_t Tile_TerrGroup[462];
     /* 0x056A */  int8_t Tile_Road[462];
     /* 0x0738 */  int8_t MoveCost_Ground[462];
@@ -224,15 +291,42 @@ struct s_BATTLEFIELD
     /* 0x14F4 */  int16_t House_Count;
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
-    /* 0x1536 */  int16_t House_IMG_Segs[16];  // [4][4]
+    /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
     /* 0x1556 */  int16_t Walled_City;
     /* 0x1558 */  int16_t Wall_Sections[16];   // {4,4,4,4}
     /* 0x1578 */  int16_t Wall_of_Fire;
     /* 0x157A */  int16_t Wall_of_Darkness;
-    /* 0x157C */  int16_t Plane;
-    /* 0x157E */  struct s_CTY_ENCH City_Enchants[26];  // int16_t City_Enchants CTY_ENCH
+    /* 0x157C */  int16_t wp;
+    /* 0x157E */  // struct s_CTY_ENCH City_Enchants[26];  // int16_t City_Enchants CTY_ENCH
+                  int8_t City_Enchants[26];
     /* 0x1597 */  int8_t Nightshades;
     /* 0x1598 */
+};
+
+
+// ; (sizeof=0x1E)
+struct s_COMBAT_ENTITY
+{
+    /* 0x00 */ int16_t Origin_X;
+    /* 0x02 */ int16_t Origin_Y;
+    /* 0x04 */ // int16_t IMG_Seg_or_Id;
+    union {
+        int64_t seg_or_idx;
+        int16_t index;
+        SAMB_ptr pict_seg;
+    };
+    /* 0x06 */ int16_t Draw_Frame;
+    /* 0x08 */ int16_t Y_Offset;
+    /* 0x0A */ int16_t X_Offset;
+    /* 0x0C */ int16_t Draw_Type;
+    /* 0x0E */ int16_t Owner;
+    /* 0x10 */ int16_t UU_Facing;
+    /* 0x12 */ int16_t UE_Color;
+    /* 0x14 */ int16_t Unused_14h;
+    /* 0x16 */ int16_t Blood_Frame;
+    /* 0x18 */ int16_t Blood_Amt;
+    /* 0x1A */ uint32_t ZDepth;
+    /* 0x1E */
 };
 
 
@@ -314,13 +408,13 @@ struct CSCAN_ICONS
 
 
 // WZD dseg:C47C
-extern int16_t OVL_Action_Plane;
+extern int16_t _combat_wp;
 
 // WZD dseg:C47E
-extern int16_t OVL_Action_YPos;
+extern int16_t _combat_wy;
 
 // WZD dseg:C480
-extern int16_t OVL_Action_XPos;
+extern int16_t _combat_wx;
 
 // WZD dseg:C582
 extern int16_t CMB_SelectedUnit;
@@ -354,6 +448,12 @@ extern int16_t CMB_Population_Lost;
 
 // WZD dseg:C97E
 extern int16_t CMB_ScrollMsg_Type;
+
+// WZD dseg:CF9A
+extern SAMB_ptr EmmHndl_TILEXXX;
+
+// WZD dseg:CF9C
+extern SAMB_ptr EmmHndl_FIGUREX;
 
 // WZD dseg:CFBE
 extern SAMB_ptr IMG_CMB_Blood[5];
@@ -455,7 +555,7 @@ extern SAMB_ptr CMB_Vortex_Array;
 extern SAMB_ptr CMB_Projectiles;
 
 // WZD dseg:D15A
-extern SAMB_ptr CMB_EntitySprites;
+extern struct s_COMBAT_ENTITY * combat_grid_entities;
 
 // WZD dseg:D188
 extern SAMB_ptr CMB_ActiveFrame_GFX;
@@ -651,7 +751,7 @@ void CMB_DrawFullScreen__WIP(void);
 // drake178: CMB_DrawActiveUnitW()
 
 // WZD o99p03
-// drake178: CMB_Draw_GUI_Btns()
+void Tactical_Combat_Draw_Buttons(void);
 
 // WZD o99p04
 // drake178: CMB_DrawSpellInfoW()
@@ -660,7 +760,7 @@ void CMB_DrawFullScreen__WIP(void);
 // drake178: CMB_DrawAUWStats()
 
 // WZD o99p06
-// drake178: CMB_CreateEntities()
+void CMB_CreateEntities__WIP(void);
 
 // WZD o99p07
 // drake178: CMB_DrawBUHPBar()
@@ -723,19 +823,19 @@ void CMB_SelectCaster__WIP(int16_t caster_id);
 int16_t CMB_WinLoseFlee__WIP(void);
 
 // WZD o105p02
-// LBX_IMG_BannerPaint()
+void Combat_Figure_Banner_Color(int16_t player_idx);
 
 // WZD o105p03
-// LBX_IMG_Highlight()
+void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx);
 
 // WZD o105p04
-// LBX_IMG_FX()
+void Combat_Figure_Effect__WIP(int16_t effect);
 
 // WZD o105p05
 // BU_SetUEColor()
 
 // WZD o105p06
-// LBX_IMG_UE_Outline()
+void Combat_Figure_Enchantment_Outline(int16_t enchantment_magic_realm);
 
 // WZD o105p07
 void CMB_UpdateTrueSight(void);
@@ -771,7 +871,7 @@ void Strategic_Combat_Allocate(void);
 int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 // WZD o110p03
-// drake178: BU_Heal()
+void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits);
 
 // WZD o110p04
 int16_t Get_Effective_Hits(int16_t hits, int16_t defense);
@@ -855,7 +955,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[]);
 // BU_RangedValidate()
 
 // WZD o113p09
-// CMB_PlaceArmy()
+void Deploy_Battle_Units(int16_t player_idx);
 
 // WZD o113p10
 // BU_SummonDemon()
@@ -1026,7 +1126,7 @@ int16_t CTY_RampageVictory(void);
 int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_flag);
 
 // WZD o124p05
-int16_t CMB_MarkLandLubbers(int16_t player_idx);
+int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 
 // WZD o124p06
 // AI_CompareArmies()
@@ -1086,10 +1186,10 @@ void Raze_City_Prompt_Draw(void);
 // drake178: UU_sub_DC990()
 
 // WZD ovr153p02
-// drake178: CMB_DrawMap()
+void CMB_DrawMap__WIP(void);
 
 // WZD ovr153p03
-// drake178: CMB_DrawEntities()
+void CMB_DrawEntities__WIP(void);
 
 // WZD ovr153p04
 // drake178: sub_DD536()
@@ -1116,16 +1216,16 @@ void Raze_City_Prompt_Draw(void);
 // drake178: CMB_SpawnVortices()
 
 // WZD ovr153p12
-// drake178: CMB_SpawnFigure()
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t FigId, int16_t MaxFigs, int16_t Owner, int16_t UECol, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld);
 
 // WZD ovr153p13
 // drake178: CMB_SpawnUnitCurse()
 
 // WZD ovr153p14
-// drake178: CMB_EntitiesReset()
+void CMB_EntitiesReset(void);
 
 // WZD ovr153p15
-// drake178: CMB_ComposeFigureIMG()
+void Combat_Figure_Compose(int16_t figure_index, int16_t Direction, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame);
 
 // WZD ovr153p16
 // drake178: CMB_SpawnProjectiles()
@@ -1134,22 +1234,22 @@ void Raze_City_Prompt_Draw(void);
 // drake178: CMB_GetFigDrawPos()
 
 // WZD ovr153p18
-// drake178: CMB_CreateEntity()
+void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int16_t XOff, int16_t YOff, int16_t Frame, int16_t DrawType, int16_t Owner, int16_t UU_10h, int16_t UE_Color, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
 
 // WZD ovr153p19
-// drake178: CMB_ZSort_Insert()
+void CMB_ZSort_Insert__WIP(void);
 
 // WZD ovr153p20
-// drake178: EMM_FIGX_CreateHdr()
+void EMM_FIGUREX_Init__HACK(int16_t figure_index);
 
 // WZD ovr153p21
-// drake178: EMM_TILEX_Init()
+void EMM_TILEX_Init__HACK(void);
 
 // WZD ovr153p22
 // drake178: UU_NullSub_153_1()
 
 // WZD ovr153p23
-// drake178: CMB_Predraw_Figures()
+void CMB_Predraw_Figures__WIP(void);
 
 // WZD ovr153p24
 // drake178: RP_NullSub_153_2()
@@ -1164,7 +1264,7 @@ void Raze_City_Prompt_Draw(void);
 void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr154p02
-// drake178: CMB_GenerateMap()
+void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t roads_array[], int16_t enchanted_roads_flag, int16_t ctt, int16_t rivers_array[], int16_t flying_fortress_flag, int16_t attacker_floating_island_flag, int16_t defender_floating_island_flag, int16_t city_walls, int16_t city_population, int16_t magic_walls);
 
 // WZD ovr154p03
 // drake178: CMB_TreeGen()
@@ -1185,31 +1285,31 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp);
 // drake178: CMB_RemoveRough()
 
 // WZD ovr154p09
-// drake178: CMB_TileGen()
+void CMB_TileGen__WIP(int16_t ctt);
 
 // WZD ovr154p10
-// drake178: CMB_SetMoveMaps()
+void CMB_SetMoveMaps__WIP(int16_t location_type, int16_t city_walls);
 
 // WZD ovr154p11
 // drake178: CMB_TerrPatchGen()
 
 // WZD ovr154p12
-// drake178: CMB_GetScreenCoords()
+void CMB_GetScreenCoords__WIP(int16_t XPos, int16_t YPos, int16_t TileX, int16_t TileY, int16_t * Retn_X, int16_t * Retn_Y);
 
 // WZD ovr154p13
 // drake178: CMB_EarthToMud()
 
 // WZD ovr154p14
-int16_t CMB_GetTileX__WIP(int16_t x, int16_t y);
+int16_t CMB_GetTileX(int16_t Scrn_X, int16_t Scrn_Y);
 
 // WZD ovr154p15
-int16_t CMB_GetTileY__WIP(int16_t x, int16_t y);
+int16_t CMB_GetTileY(int16_t Scrn_X, int16_t Scrn_Y);
 
 // WZD ovr154p16
-// drake178: CMB_GetInTileX()
+void CMB_GetInTileX(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_X, int16_t * InTile_X);
 
 // WZD ovr154p17
-// drake178: CMB_GetInTileY()
+void CMB_GetInTileY(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_Y, int16_t * InTile_Y);
 
 // WZD ovr154p18
 void Combat_Cache_Read(void);
@@ -1239,7 +1339,7 @@ void Combat_Cache_Write(void);
 */
 
 // WZD ovr163p01
-// CMB_LoadTerrainGFX()
+void Load_Combat_Terrain_Pictures(int16_t ctt, int16_t wp);
 
 // WZD ovr163p02
 void CMB_ComposeBackgrnd__WIP(void);
@@ -1254,7 +1354,7 @@ void CMB_BaseAllocs__WIP(void);
 // CMB_SetProjectiles()
 
 // WZD ovr163p06
-// EMM_LoadFigureGFX()
+int16_t Combat_Figure_Load(int16_t unit_type, int16_t figure_index);
 
 
 

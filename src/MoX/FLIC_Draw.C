@@ -511,6 +511,9 @@ void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, uint
 
 // WZD s30p09
 // MoO2  Module: replace  Replace_Color_All()
+/*
+    replaces all colors with replacement color, excluding transparent
+*/
 void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
 {
     int16_t width;
@@ -524,8 +527,8 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
     height = FLIC_GET_HEIGHT(pict_seg);
     pict_size = width * height;
 
-    src_ptr = (uint8_t *)(pict_seg + 16);
-    dst_ptr = (uint8_t *)(pict_seg + 16);
+    src_ptr = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
+    dst_ptr = (uint8_t *)(pict_seg + SZ_FLIC_HDR);
 
     while(pict_size--)
     {
@@ -533,7 +536,6 @@ void Replace_Color_All(SAMB_ptr pict_seg, uint8_t replacement_color)
         dst_ptr++;
         if(pixel != ST_TRANSPARENT)
         {
-            // DELETE  DLOG("(pixel != ST_TRANSPARENT)");
             dst_ptr--;
             *dst_ptr++ = replacement_color;
         }
@@ -1292,7 +1294,72 @@ void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_p
 
 
 // WZD s30p28
-// LBX_IMG_StripColors()
+// drake178: LBX_IMG_StripColors()
+// ¿ MoO2  Module: bitmap  Mask_Out_Colors() ?
+// ¿ Replace_Color_Range() ?
+/*
+; replaces any colors between the specified two
+; (inclusive) with the overlay color (index #00) in an
+; LBX image
+*/
+/*
+
+*/
+void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color_end)
+{
+    int16_t height = 0;
+    int16_t width = 0;
+    int16_t bitmap_size = 0;
+    byte_ptr src_sgmt;  // _DS_
+    byte_ptr dst_sgmt;  // _ES_
+    uint16_t src_ofst;  // _SI_
+    uint16_t dst_ofst;  // _DI_
+    uint8_t pixel;
+
+    // TODO  width = farpeekw(bitmap, FLIC_HDR_POS_WIDTH);
+    // TODO  height = farpeekw(bitmap, FLIC_HDR_POS_HEIGHT);
+    width = GET_2B_OFS(bitmap, FLIC_HDR_POS_WIDTH);
+    height = GET_2B_OFS(bitmap, FLIC_HDR_POS_HEIGHT);
+
+    bitmap_size = (height * width);
+
+// push    ds
+// push    es
+// push    si
+// push    di
+// mov     si, 16
+// mov     di, 16
+// mov     cx, [bp+bitmap_size]
+// mov     bx, [bp+color_start]
+// mov     dx, [bp+color_end]
+// mov     ax, [bp+bitmap]
+// mov     es, ax
+// mov     ds, ax
+
+    src_ofst = SZ_FLIC_HDR;
+    dst_ofst = SZ_FLIC_HDR;
+    dst_sgmt = (uint8_t *)(bitmap);
+    src_sgmt = (uint8_t *)(bitmap);
+
+    while(bitmap_size--)
+    {
+
+        pixel = *(src_sgmt + src_ofst++);  // `LODSB`  ; AX = DS:SI++
+
+        if(pixel >= color_start && pixel <= color_end)
+        {
+            pixel = ST_TRANSPARENT;
+            *(dst_sgmt + dst_ofst) = pixel;  // `STOSB`  ; ES:DI++ = AX
+            dst_ofst -= 1;
+        }
+
+        dst_ofst += 1;
+
+    }
+
+
+}
+
 
 // WZD s30p29
 // UU_LBX_IMG_CropRect()
@@ -3245,7 +3312,26 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
 }
 
 // WZD s33p17
-// LBX_IMG_RevGrayscale()
+// drake178: LBX_IMG_RevGrayscale()
+/*
+; similar to LBX_IMG_Grayscale, this calculates the
+; intensities of each DAC color and condenses them to a
+; nibble before replacing the original non-overlay
+; colors of the image with them, except this negates
+; them before adding the provided color index, creating
+; an inverse scale, but also taking the last color of
+; the scale as the parameter instead of the first one
+*/
+/*
+
+*/
+void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index)
+{
+
+
+
+}
+
 
 // WZD s33p18
 // UU_DUP_RevGrayscale()

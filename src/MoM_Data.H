@@ -241,20 +241,22 @@ enum Meld_Flags
 
 // drake178: EZ_Types
 // TODO  rename to Lairs
-
-enum EZ_Types
+/*
+    {0,...}
+*/
+enum e_LAIR_TYPE
 {
-    EZ_Tower,
-    EZ_Chaos_Node,
-    EZ_Nature_Node,
-    EZ_Sorcery_Node,
-    EZ_Cave,
-    EZ_Dungeon,
-    EZ_Ancient_Temple,
-    EZ_Keep,
-    EZ_Monster_Lair,
-    EZ_Ruins,
-    EZ_Fallen_Temple
+    lt_Tower            =  1,
+    lt_Chaos_Node       =  2,
+    lt_Nature_Node      =  3,
+    lt_Sorcery_Node     =  4,
+    lt_Cave             =  5,
+    lt_Dungeon          =  6,
+    lt_Ancient_Temple   =  7,
+    lt_Keep             =  8,
+    lt_Monster_Lair     =  9,
+    lt_Ruins            = 10,
+    lt_Fallen_Temple    = 11
 };
 
 
@@ -1581,7 +1583,13 @@ struct s_BATTLE_UNIT
                 int8_t   reqd_bldg_2;
                 int8_t   hero_type;
     };
-    /* 0x0E */  uint64_t Fig_IMG_Index;                     // SAMB_ptr pict_seg
+    /* 0x0E */
+    union {
+        int64_t seg_or_idx;
+        int16_t battle_unit_figure_idx;
+        SAMB_ptr pict_seg;
+    };
+
     /* 0x10 */  int8_t   hits;
     /* 0x11 */  int8_t   scout_range;
     /* 0x12 */  int8_t   carry_capacity;
@@ -1620,8 +1628,8 @@ struct s_BATTLE_UNIT
     /* 0x43 */  int8_t   Target_BU;
     /* 0x44 */  int16_t  X_Pos;
     /* 0x46 */  int16_t  Y_Pos;
-    /* 0x48 */  int16_t  Target_X;
-    /* 0x4A */  int16_t  Target_Y;
+    /* 0x48 */  int16_t  Target_X;  /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
+    /* 0x4A */  int16_t  Target_Y;  /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
     /* 0x4C */  int16_t  MoveStage;
     /* 0x4E */  int16_t  Atk_FigLoss;
     /* 0x50 */  int16_t  UE_Color;
@@ -1633,7 +1641,7 @@ struct s_BATTLE_UNIT
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  Always_Animate;
     /* 0x5E */  int16_t  Melee_Anim;
-    /* 0x60 */  int16_t  Image_Effect;
+    /* 0x60 */  int16_t  Image_Effect;  /* passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
     /* 0x62 */  int16_t  Move_Bob;
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;
@@ -1665,7 +1673,7 @@ struct s_CMBT_DATA
     /* 0x0B */  int8_t race;                                // ; enum Race_Code
     /* 0x0C */  int8_t Unused_0Ch;
     /* 0x0D */  int8_t Cur_Figures;
-    /* 0x0E */  int16_t Fig_IMG_Index;
+    /* 0x0E */  int16_t battle_unit_figure_idx;
     /* 0x10 */  int8_t hits;
     /* 0x11 */  int8_t scout_range;
     /* 0x12 */  int8_t carry_capacity;
@@ -2665,15 +2673,19 @@ extern int16_t CMB_AI_Fled;
 extern SAMB_ptr IMG_CMB_ScanIcons[18];
 
 // WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
-// WZD dseg:9272 00 00                                           CMB_WallRise_Going dw 0                 ; DATA XREF: CMB_WallRise_Anim+35w ...
+// WZD dseg:9272
+extern int16_t CMB_WallRise_Going;
 
 // WZD dseg:9274
 extern struct s_BATTLEFIELD * battlefield;
 
-// WZD dseg:9278 00 00                                           CMB_ActiveUnitFrameY dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
-// WZD dseg:927A 00 00                                           CMB_ActiveUnitFrameX dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
+// WZD dseg:9278
+extern int16_t CMB_ActiveUnitFrameY;
+// WZD dseg:927A
+extern int16_t CMB_ActiveUnitFrameX;
 // WZD dseg:927C
 extern int16_t CMB_ActiveUnitFrame;
+
 // WZD dseg:927E
 extern int16_t CMB_TargetFrame_Y;
 // WZD dseg:9280
@@ -2857,8 +2869,9 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 
 
 
-// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_TerrTiles@ dw 30h dup(0)        ; DATA XREF: CMB_LoadTerrainGFX+D0w ...
-// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 48 images appended into the EMM TILEX handle
+// WZD  dseg:939A
+extern SAMB_ptr IMG_CMB_TerrTiles[48];
+
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0
 // WZD  dseg:93FC 00                                              db    0

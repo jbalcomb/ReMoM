@@ -157,7 +157,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     int16_t players_globals_idx = 0;  // DNE in Dasm, uses Dispel_Chance
     uint8_t * ptr_players_globals = 0;
     int16_t spell_idx = 0;  // _DI_
-    struct s_SPELL_DATA_TABLE * DBG_spell_data_table;
+    struct s_SPELL_DATA * DBG_spell_data_table;
     // int8_t * DBG_spell_data_table__Param0;
     int16_t DBG_spell_data_table__Param0;
 

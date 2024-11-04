@@ -188,7 +188,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
-int16_t Army_Boatriders(int16_t Stack_Size, int16_t troops[], int16_t boatriders[]);
+int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
 
 // WZD o95p06
 // Fix_Patrol_On_Boats()
@@ -5409,8 +5409,8 @@ Combat_Handlers:
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
                 if(
-                    (_UNITS[troops[itr_troops]].wx == OVL_Action_XPos) &&
-                    (_UNITS[troops[itr_troops]].wy == OVL_Action_YPos)
+                    (_UNITS[troops[itr_troops]].wx == _combat_wx) &&
+                    (_UNITS[troops[itr_troops]].wy == _combat_wy)
                 )
                 {
                     _UNITS[troops[itr_troops]].wx = OVL_Action_OriginX;
@@ -5420,7 +5420,7 @@ Combat_Handlers:
         }
         else if(lair_combat_result == 1)  // ~ Winner == True / Combat - Win
         {
-            Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, troops);
+            Player_Army_At_Square(_combat_wx, _combat_wy, _combat_wp, player_idx, &troop_count, troops);
 
         }
         else if(lair_combat_result == 99)  // ~ Combat - Cancel
@@ -5438,7 +5438,7 @@ Combat_Handlers:
 
         if(combat_result == ST_TRUE)  /* Winner == Attacker */
         {
-            Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, troops);
+            Player_Army_At_Square(_combat_wx, _combat_wy, _combat_wp, player_idx, &troop_count, troops);
         }
     }
 
@@ -5448,8 +5448,8 @@ Combat_Handlers:
 End_Of_Moving:
 {
 
-    OVL_Action_XPos = ST_UNDEFINED;
-    OVL_Action_YPos = ST_UNDEFINED;
+    _combat_wx = ST_UNDEFINED;
+    _combat_wy = ST_UNDEFINED;
 
     Units_In_Tower(troop_count, troops, map_p);
 
@@ -6177,9 +6177,11 @@ XREF:
 */
 int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[])
 {
-    int16_t boatrider_count;
-    int16_t itr_troops;
+    int16_t boatrider_count = 0;
+    int16_t itr_troops = 0;
+
     boatrider_count = 0;
+
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
         if(

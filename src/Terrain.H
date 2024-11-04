@@ -58,15 +58,18 @@ enum enum_Terrain_Specials
 
 
 // drake178: enum Terrain_Flags
+/*
+Meh. I put stuff in MoX_DEF.H that is mean to have access to this.
+*/
 // 0x01
 // 0x02
 // 0x04
-#define TF_Road         0x08
+#define MSF_ROAD        0x08
 #define TF_Enc_Road     0x10
 #define MSF_CORRUPTION  0x20
 #define MSF_UNKNOWN_40H 0x40
 #define TF_NoRoad80     0x80  // ~== -1 ST_UNDEFINED
-#define TF_AnyRoad      0x18
+#define TF_AnyRoad      0x18    // (MSF_ROAD | TF_Enc_Road)
 
 
 

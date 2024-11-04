@@ -196,7 +196,7 @@ void Lair_Clear(int16_t lair_idx)
     _LAIRS[lair_idx].Intact = ST_FALSE;
 
     // For Towers, clear the other side, as well.
-    if(_LAIRS[lair_idx].type == EZ_Tower)
+    if(_LAIRS[lair_idx].type == lt_Tower)
     {
         status = ST_UNDEFINED;
         for(itr_lairs = 0; ((itr_lairs < NUM_LAIRS) && (status == ST_UNDEFINED)); itr_lairs++)
@@ -288,9 +288,9 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     notify_draw_offscr = ST_FALSE;  // ¿ ALWAYS 0 ?
 
     // DEDU: Why OVL_Action_Structure here instead of passed in lair_idx? Macro? API Boundary?
-    OVL_Action_XPos = _LAIRS[OVL_Action_Structure].wx;
-    OVL_Action_YPos = _LAIRS[OVL_Action_Structure].wy;
-    OVL_Action_Plane = _LAIRS[OVL_Action_Structure].wp;
+    _combat_wx = _LAIRS[OVL_Action_Structure].wx;
+    _combat_wy = _LAIRS[OVL_Action_Structure].wy;
+    _combat_wp = _LAIRS[OVL_Action_Structure].wp;
 
     if(
         (Encounter_Outcome == ST_TRUE)  // drake178: ; conflicting condition, will never jump
@@ -364,9 +364,9 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
             if(Hire_Hero_Popup(Hero_Slot, Reward_Hero, 2) == ST_TRUE)
             {
                 // drake178: ; BUG: this needs to be done when hiring the hero
-                _UNITS[(_units - 1)].wx = OVL_Action_XPos;
-                _UNITS[(_units - 1)].wy = OVL_Action_YPos;
-                _UNITS[(_units - 1)].wp = OVL_Action_Plane;
+                _UNITS[(_units - 1)].wx = _combat_wx;
+                _UNITS[(_units - 1)].wy = _combat_wy;
+                _UNITS[(_units - 1)].wp = _combat_wp;
             }
             Reset_Draw_Active_Stack();
         }
@@ -872,7 +872,7 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
 
     if(Prisoner_Reward > 0)
     {
-        Player_Army_At_Square(OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane, player_idx, &troop_count, &troops[0]);
+        Player_Army_At_Square(_combat_wx, _combat_wy, _combat_wp, player_idx, &troop_count, &troops[0]);
         if(troop_count >= MAX_STACK)
         {
             Prisoner_Reward = 0;

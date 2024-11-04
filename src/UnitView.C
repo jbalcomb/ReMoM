@@ -2563,6 +2563,7 @@ void Load_Unit_Figure(int16_t type_or_unit, int16_t use_type)
     strcat(file_name, buffer);
     strcat(file_name, ".LBX");
 
+    // DEDU  ¿ + 2 here is for facing/direction ?
     entry_num = (((figure_num % 15) * 8) + 2);  // TODO  document this algo to the unit figure picture  (knows how many figures are in each figure lbx)
 
     unit_figure_seg = LBX_Reload_Next(file_name, entry_num, _screen_seg);
@@ -2636,7 +2637,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
         unit_owner_idx = _UNITS[unit_or_type].owner_idx;
         unit_owner_banner_idx = _players[unit_owner_idx].banner_id;
         // 'Hydra' manual override of figure count, because 'Cur_Figures' is actually 'Heads'
-        if(spell_data_table[SPL_HYDRA].Param0 == unit_type)
+        if(spell_data_table[SPL_HYDRA].unit_type == unit_type)
         {
             unit_figure_count = 1;
         }
@@ -2655,6 +2656,7 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
         FLIC_Set_CurrentFrame(unit_figure_seg, 2);
         Draw_Picture_To_Bitmap(unit_figure_seg, UnitDraw_WorkArea);
 
+        // HERE: same as in Combat_Figure_Banner_Color()
         for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
         {
             // Draw_Map_Towers()
@@ -2689,8 +2691,15 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
 }
 
 // WZD o89p06
-void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * fig_x, int16_t * fig_y)
+/*
+
+~== CMB_SpawnFigure__WIP()
+
+*/
+void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t * figure_x, int16_t * figure_y)
 {
+    int16_t fig_x;
+    int16_t fig_y;
 
     assert(figure_count   >  0);
     assert(figure_count   <= 8);
@@ -2701,87 +2710,90 @@ void Unit_Figure_Position(int16_t figure_count, int16_t current_figure, int16_t 
     {
         case 0:
         {
-            *fig_x = 1;
-            *fig_y = 8;
+            fig_x = 1;
+            fig_y = 8;
         } break;
         case 1:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x = -8; *fig_y =  9; } break;
-                case 1: { *fig_x =  8; *fig_y =  9; } break;
+                case 0: { fig_x = -8; fig_y =  9; } break;
+                case 1: { fig_x =  8; fig_y =  9; } break;
             }
         } break;
         case 2:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =  0; *fig_y =  4; } break;
-                case 1: { *fig_x = -7; *fig_y = 10; } break;
-                case 2: { *fig_x =  8; *fig_y = 10; } break;
+                case 0: { fig_x =  0; fig_y =  4; } break;
+                case 1: { fig_x = -7; fig_y = 10; } break;
+                case 2: { fig_x =  8; fig_y = 10; } break;
             }
         } break;
         case 3:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =  1; *fig_y =  3; } break;
-                case 1: { *fig_x = -9; *fig_y =  8; } break;
-                case 2: { *fig_x = 11; *fig_y =  8; } break;
-                case 3: { *fig_x =  1; *fig_y = 13; } break;
+                case 0: { fig_x =  1; fig_y =  3; } break;
+                case 1: { fig_x = -9; fig_y =  8; } break;
+                case 2: { fig_x = 11; fig_y =  8; } break;
+                case 3: { fig_x =  1; fig_y = 13; } break;
             }
         } break;
         case 4:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =  1; *fig_y =  3; } break;
-                case 1: { *fig_x = -9; *fig_y =  8; } break;
-                case 2: { *fig_x =  1; *fig_y =  8; } break;
-                case 3: { *fig_x =  9; *fig_y =  8; } break;
-                case 4: { *fig_x =  1; *fig_y = 14; } break;
+                case 0: { fig_x =  1; fig_y =  3; } break;
+                case 1: { fig_x = -9; fig_y =  8; } break;
+                case 2: { fig_x =  1; fig_y =  8; } break;
+                case 3: { fig_x =  9; fig_y =  8; } break;
+                case 4: { fig_x =  1; fig_y = 14; } break;
             }
         } break;
         case 5:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =   1; *fig_y =  3; } break;
-                case 1: { *fig_x =   4; *fig_y =  7; } break;
-                case 2: { *fig_x = -10; *fig_y =  8; } break;
-                case 3: { *fig_x =  10; *fig_y = 10; } break;
-                case 4: { *fig_x =  -3; *fig_y = 11; } break;
-                case 5: { *fig_x =   1; *fig_y = 15; } break;
+                case 0: { fig_x =   1; fig_y =  3; } break;
+                case 1: { fig_x =   4; fig_y =  7; } break;
+                case 2: { fig_x = -10; fig_y =  8; } break;
+                case 3: { fig_x =  10; fig_y = 10; } break;
+                case 4: { fig_x =  -3; fig_y = 11; } break;
+                case 5: { fig_x =   1; fig_y = 15; } break;
             }
         } break;
         case 6:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =  1; *fig_y =  3; } break;
-                case 1: { *fig_x =  6; *fig_y =  6; } break;
-                case 2: { *fig_x = -9; *fig_y =  8; } break;
-                case 3: { *fig_x =  1; *fig_y =  8; } break;
-                case 4: { *fig_x = 10; *fig_y =  8; } break;
-                case 5: { *fig_x = -3; *fig_y = 11; } break;
-                case 6: { *fig_x =  1; *fig_y = 14; } break;
+                case 0: { fig_x =  1; fig_y =  3; } break;
+                case 1: { fig_x =  6; fig_y =  6; } break;
+                case 2: { fig_x = -9; fig_y =  8; } break;
+                case 3: { fig_x =  1; fig_y =  8; } break;
+                case 4: { fig_x = 10; fig_y =  8; } break;
+                case 5: { fig_x = -3; fig_y = 11; } break;
+                case 6: { fig_x =  1; fig_y = 14; } break;
             }
         } break;
         case 7:
         {
             switch(current_figure)
             {
-                case 0: { *fig_x =   1; *fig_y =  3; } break;
-                case 1: { *fig_x =   6; *fig_y =  6; } break;
-                case 2: { *fig_x =  -2; *fig_y =  7; } break;
-                case 3: { *fig_x = -10; *fig_y =  8; } break;
-                case 4: { *fig_x =  10; *fig_y =  8; } break;
-                case 5: { *fig_x =   3; *fig_y =  9; } break;
-                case 6: { *fig_x =  -5; *fig_y = 11; } break;
-                case 7: { *fig_x =   1; *fig_y = 14; } break;
+                case 0: { fig_x =   1; fig_y =  3; } break;
+                case 1: { fig_x =   6; fig_y =  6; } break;
+                case 2: { fig_x =  -2; fig_y =  7; } break;
+                case 3: { fig_x = -10; fig_y =  8; } break;
+                case 4: { fig_x =  10; fig_y =  8; } break;
+                case 5: { fig_x =   3; fig_y =  9; } break;
+                case 6: { fig_x =  -5; fig_y = 11; } break;
+                case 7: { fig_x =   1; fig_y = 14; } break;
             }
         } break;
     }
+
+    *figure_x = fig_x;
+    *figure_y = fig_y;
 
 }
 

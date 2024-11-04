@@ -900,17 +900,23 @@ SAMB_ptr IMG_CMB_ScanIcons[18];
 // WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 pointers to sandbox appended images
 
 // WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
-// WZD dseg:9272 00 00                                           CMB_WallRise_Going dw 0                 ; DATA XREF: CMB_WallRise_Anim+35w ...
+// WZD dseg:9272
+int16_t CMB_WallRise_Going;
 // WZD dseg:9272                                                                                         ; set to 0 at the beginning of combat map creation
 // WZD dseg:9272                                                                                         ; 1 branches wall entity creation (unknown IMG array)
 
 // WZD dseg:9274
+// MoO2  Module: MoX  _combat_data
+// MoO2  Module: MoX  _combat_grid
 struct s_BATTLEFIELD * battlefield;
 
-// WZD dseg:9278 00 00                                           CMB_ActiveUnitFrameY dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
-// WZD dseg:927A 00 00                                           CMB_ActiveUnitFrameX dw 0               ; DATA XREF: CMB_SetActionCursor+33w ...
+// WZD dseg:9278
+int16_t CMB_ActiveUnitFrameY;
+// WZD dseg:927A
+int16_t CMB_ActiveUnitFrameX;
 // WZD dseg:927C
 int16_t CMB_ActiveUnitFrame;
+
 // WZD dseg:927E
 int16_t CMB_TargetFrame_Y;
 // WZD dseg:9280
@@ -1129,8 +1135,11 @@ uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data
 
 
 
-// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_TerrTiles@ dw 30h dup(0)        ; DATA XREF: CMB_LoadTerrainGFX+D0w ...
-// WZD  dseg:939A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 48 images appended into the EMM TILEX handle
+// drake178: IMG_CMB_TerrTiles
+// ; array of 48 images appended into the EMM TILEX handle
+// WZD  dseg:939A
+SAMB_ptr IMG_CMB_TerrTiles[48];
+
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0
 // WZD  dseg:93FC 00                                              db    0
@@ -1822,10 +1831,28 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 
 
 // WZD dseg:998C
-// GUI_SmallWork_IMG@ dw 0
-    // 96h paragraphs used for building GUI notification images
-    // (although the pointer variable is also used for building combat figure images, after which it is reassigned)
-// TODO  confirm this is only used for 'bitmaps'
+// drake178: GUI_SmallWork_IMG@
+/*
+96h paragraphs used for building GUI notification images
+(although the pointer variable is also used for building combat figure images, after which it is reassigned)
+*/
+// TODO  confirm GfxBuf_2400B is only used for 'bitmaps'
+/*
+
+used for battle unit figure, in CMB_Predraw_Figures__WIP()
+
+used for ..., in Cityscape_Draw_Buildings_And_Features__WIP()
+
+used for ..., in Draw_Item_Icon_With_Enchantment_Outline()
+
+used for notify_pict1, in Notify1_Draw()
+used for notify_pict1, in Notify2_Draw()
+
+is destination bitmap in calls to Draw_Picture_To_Bitmap()
+drawn by Draw_Picture()  (meaningfully, not by FLIC_Draw())
+    ¿ meaning it is assumed to be non-/post-RLE decoding ?
+
+*/
 SAMB_ptr GfxBuf_2400B;
 
 // WZD dseg:998E
@@ -2051,7 +2078,7 @@ uint8_t * _square_explored;                     // load in Load_SAVE_GAM()
 // 0x01
 // 0x02
 // 0x04
-#define TF_Road         0x08
+#define MSF_ROAD         0x08
 #define TF_Enc_Road     0x10
 #define MSF_CORRUPTION   0x20
 #define TF_Unk_40       0x40

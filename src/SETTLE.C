@@ -217,8 +217,8 @@ void UNIT_PushOffTile(int16_t unit_idx)
                     }
 
                     if(
-                        (Checked_X != OVL_Action_XPos) &&
-                        (itr_y != OVL_Action_YPos)
+                        (Checked_X != _combat_wx) &&
+                        (itr_y != _combat_wy)
                     )
                     {
                         if(

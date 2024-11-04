@@ -212,11 +212,13 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
             if(num_blocks > Get_Free_Blocks(SAMB_head)) { Error_Handler(lbx_name, 5, entry_num, (num_blocks - Get_Free_Blocks(SAMB_head))); }
             // assert(Check_Allocation(SAMB_head) != ST_FAILURE));
             
-            SAMB_data = SAMB_head + 12 + (16 * SA_GET_USED(SAMB_head));
+            SAMB_data = SAMB_head + 12 + (SA_GET_USED(SAMB_head) * SZ_PARAGRAPH_B);
 
             num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
             *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (num_blocks_used)      );
             *( (SAMB_head) + (SAMB_USED) + 1 ) = ( (num_blocks_used) >> 8 );
+            // SET_2B_OFS(SAMB_head, SAMB_USED);
+            // SA_SET_USED(SAMB_head, (num_blocks + 1));
 
         } break;
     }

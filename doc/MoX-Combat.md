@@ -132,8 +132,8 @@ OON XREF: Combat()
 
 ### Strategic_Combat()
 
-called from Combat() with OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane
-immediately uses those parameters to set OVL_Action_XPos, OVL_Action_YPos, OVL_Action_Plane
+called from Combat() with _combat_wx, _combat_wy, _combat_wp
+immediately uses those parameters to set _combat_wx, _combat_wy, _combat_wp
 
 
 
@@ -200,7 +200,7 @@ when OVL_Action_Type is 5, OVL_Action_Structure contains the Lair Index
 in the data segment, OVL_Action_Structure is followed by 14 *unused* bytes, so it may have been a ((common) paragraph sized) structure
 
 in Lair_Combat(), the code uses OVL_Action_Structure instead of the passed in lair_idx
-and this is only for setting OVL_Action_XPos, OVL_Action_YPos, and OVL_Action_Plane
+and this is only for setting _combat_wx, _combat_wy, and _combat_wp
 Macro? API Boundary?
 Why aren't they in the structure?
 

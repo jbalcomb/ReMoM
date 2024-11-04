@@ -1021,6 +1021,7 @@ void Tint_Fill(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t remap_blo
 // drake178: VGA_Grayscale_Rect()
 // MoO2  Module: graphics  Gray_Scale_Fill()
 // VGA_Grayscale_Rect
+// Gray_Scale_Fill
 
 // WZD s16p10
 // drake178: UU_VGA_Columns()

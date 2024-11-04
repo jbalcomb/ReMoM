@@ -268,7 +268,7 @@ void Clipped_Copy_Bitmap(int16_t x, int16_t y, byte_ptr dst_pict_seg, byte_ptr s
 void LBX_IMG_Overlay(int16_t x, int16_t y, SAMB_ptr src_pict_seg, SAMB_ptr dst_pict_seg);
 
 // WZD s30p28
-// LBX_IMG_StripColors()
+void Transparent_Color_Range(SAMB_ptr bitmap, int16_t color_start, int16_t color_end);
 
 // WZD s30p29
 // UU_LBX_IMG_CropRect()
@@ -421,7 +421,7 @@ void Vanish_Bitmap__NOP(SAMB_ptr bitmap, int16_t percent);
 void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start);
 
 // WZD s33p17
-// LBX_IMG_RevGrayscale()
+void LBX_IMG_RevGrayscale__STUB(byte_ptr bitmap, int16_t color_index);
 
 // WZD s33p18
 // UU_DUP_RevGrayscale()

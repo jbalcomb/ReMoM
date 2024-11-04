@@ -1126,7 +1126,7 @@ void SoM_Started_Draw(void)
 
     Print_Centered(160, 180, strSpellOfMastery);
 
-    OVL_Action_XPos++;
+    _combat_wx++;
 
 }
 
@@ -1185,9 +1185,9 @@ void SoM_Started(int16_t player_idx)
     full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
 
     
-    OVL_Action_XPos = 0;
+    _combat_wx = 0;
     /* incremented in SoM_Started_Draw() */
-    while((OVL_Action_XPos < 200) && (Get_Input() != full_screen_ESC_field))
+    while((_combat_wx < 200) && (Get_Input() != full_screen_ESC_field))
     {
 
     }

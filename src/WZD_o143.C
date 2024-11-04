@@ -397,7 +397,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                     (Y_Loop_Var != 0)
                 )
                 {
-                    if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & 0x08) != 0)  // TF_Road
+                    if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & 0x08) != 0)  // MSF_ROAD
                     {
                         has_road_connection = ST_TRUE;
                     }
@@ -431,7 +431,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                 {
                     for(X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                     {
-                        if((_map_square_flags[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] & 0x08) == 0)  // TF_Road
+                        if((_map_square_flags[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] & 0x08) == 0)  // MSF_ROAD
                         {
                             movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = -1;
                         }
@@ -542,7 +542,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                         (Y_Loop_Var != 0)
                     )
                     {
-                        if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & TF_Road) != 0)
+                        if((_map_square_flags[((city_wp * WORLD_SIZE) + ((city_wy + Y_Loop_Var) * WORLD_WIDTH) + (city_wx + X_Loop_Var))] & MSF_ROAD) != 0)
                         {
                             Has_Road_Out = ST_TRUE;
                         }
@@ -572,7 +572,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                     {
                         for (X_Loop_Var = 0; X_Loop_Var < WORLD_WIDTH; X_Loop_Var++)
                         {
-                            if ((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & TF_Road) != 0)
+                            if ((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & MSF_ROAD) != 0)
                             {
                                 if (TBL_Landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
                                 {
@@ -652,7 +652,7 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
         {
             if(TBL_Landmasses[((wp * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)] == landmass_num)
             {
-                if((_map_square_flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & TF_Road) != 0)
+                if((_map_square_flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & MSF_ROAD) != 0)
                 {
                     movepath_cost_map->moves2[((itr_world_height * WORLD_WIDTH) + itr_world_width)] = 1;
                 }

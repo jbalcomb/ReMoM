@@ -11,8 +11,10 @@
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
     
-// TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);  // Page_Count, Handle_Name, Reserved_Flag
-// TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);  // Page_Count, Handle_Name, Reserved_Flag
+    // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
+    // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
+    EmmHndl_FIGUREX = Allocate_Space(28672);
+    EmmHndl_TILEXXX = Allocate_Space(3072);
 
     // MGC: 6100
     // WZD: 4600
