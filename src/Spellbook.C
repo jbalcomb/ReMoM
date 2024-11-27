@@ -7,6 +7,8 @@
 */
 
 #include "MoM.H"
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+
 #include "MainScr.H"   /* Allocate_Reduced_Map(); */
 #include "SBookScr.H"  /* Spellbook_Screen_Draw(); */
 // TODO  #include ...  /* CMB_RedrawSpellbook(); */

@@ -22,6 +22,7 @@ Notify
 */
 
 #include "MoX_Lib.H"
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 
 

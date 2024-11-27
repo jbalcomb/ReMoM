@@ -31,6 +31,8 @@ USW_Attributes_1
 */
 
 #include "MoM.H"
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+
 #include "UnitStat.H"
 #include "UnitView.H"
 #include <intrin.h>

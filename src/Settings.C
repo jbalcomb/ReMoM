@@ -16,6 +16,7 @@ MoO2
 */
 
 #include "MoM.H"
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 /*
     LoadScr.C

@@ -23,6 +23,8 @@ Elsewhere, ...
 */
 
 #include "MoM.H"
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+
 #include "UnitMove.H"
 #include "MainScr.H"
 #include "MovePath.H"
