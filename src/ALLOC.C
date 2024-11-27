@@ -13,8 +13,10 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
-    EmmHndl_FIGUREX = Allocate_Space(28672);
-    EmmHndl_TILEXXX = Allocate_Space(3072);
+    EmmHndl_FIGUREX = Allocate_Space(28672);  // 28672 PR, 458752 B ... 
+    EmmHndl_TILEXXX = Allocate_Space(3072);   //  3072 PR,  49152 B
+// DELETE      DBG_figure_pict_base_seg = Allocate_Space(421);  // 1 + (8 * 1) + (8 * (28 * 30)) = 1 + 8 + 6720 = 6729  ((6729 + 1) / 16) = 421 PR, 6736 B
+// DELETE      DBG_EmmHndl_FIGUREX = EmmHndl_FIGUREX;
 
     // MGC: 6100
     // WZD: 4600

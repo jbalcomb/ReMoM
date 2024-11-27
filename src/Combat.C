@@ -26,6 +26,97 @@
 #include "MoM.H"
 
 
+#include "FIGURES8_LBX_063.H"
+
+// DELETE  #define DEBUG_UNIT_IDX          825
+// DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
+// DELETE  #define DEBUG_UNIT_TYPE         ut_HMenPikemen  // ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
+// DELETE  #define DEBUG_FIGURE_COUNT      8
+
+extern uint8_t DBG_debug_flag;
+// uint8_t DBG_debug_flag = ST_FALSE;
+
+// void Main_Screen_Draw_Debug_Information(void);
+void Combat_Screen_Draw_Debug_Information(void);
+
+// DELETE  void DBG_Combat_Figure_Load(void);
+
+// DELETE  SAMB_ptr DBG_EmmHndl_FIGUREX;
+
+// DELETE  int DBG_Test_HMPIKE_7(void);
+// DELETE  SAMB_ptr DBG_battle_unit_figure_picture;
+// DELETE  SAMB_ptr DBG_figure_pict_base_seg;
+// DELETE  SAMB_ptr DBG_figure_pict_seg[8];
+// DELETE  SAMB_ptr DBG_ptr_figure_pointer_seg[8];
+// DELETE  int16_t DBG_figure_count;
+// DELETE  int16_t DBG_battle_unit_idx;
+// DELETE  int16_t DBG_combat_grid_entity_idx;  // index into combat_grid_entities[]
+// DELETE  
+// DELETE  int16_t DBG_battle_unit_figure_idx; // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_position_cgc2;          // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_position_cgc1;          // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_target_cgc2;            // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_target_cgc1;            // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_MoveStage;              // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_itr_figures;            // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_unit_figure_maximum;    // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_controller_idx;         // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_outline_magic_realm;    // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_Blood_Amount;           // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_Moving;                 // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  int16_t DBG_Atk_FigLoss;            // captured via battle_units[itr].unit_idx, in CMB_SpawnFigure__WIP()
+// DELETE  // int16_t DBG_SrcBld;  // ALWAYS 0
+// DELETE  
+// DELETE  // CMB_SpawnFigure__WIP
+// DELETE  // CMB_CreateEntity__WIP(draw_x,draw_y,seg_or_idx,13,23,UU,1,controller_idx,figure_set_idx,outline_magic_realm,BldAmt,UU,Blood_Frame);
+// DELETE  int16_t DBG_draw_x;
+// DELETE  int16_t DBG_draw_y;
+// DELETE  int16_t DBG_position_screen_x;
+// DELETE  int16_t DBG_position_screen_y;
+// DELETE  int16_t DBG_target_screen_x;
+// DELETE  int16_t DBG_target_screen_y;
+// DELETE  int16_t DBG_fig_x;
+// DELETE  int16_t DBG_fig_y;
+// DELETE  int16_t DBG_figure_set_idx;
+// DELETE  
+// DELETE  // EMM_FIGUREX_Init__HACK()
+// DELETE  int16_t DBG_battle_unit_figure_idx__1;
+// DELETE  int16_t DBG_logical_page__1;
+// DELETE  int16_t DBG_offset__1;  // via FIGUREX_OFFSET
+// DELETE  // DONT; OON.  int16_t DBG_EmmHndl_FIGUREX__1;
+// DELETE  int64_t DBG_EMM_PageFrame__1;
+// DELETE  // Combat_Figure_Load()
+// DELETE  int16_t DBG_battle_unit_figure_idx__2;
+// DELETE  int16_t DBG_offset__2;  // via FIGUREX_OFFSET
+// DELETE  int64_t ptr_figure_pointer_seg;  // via FIGUREX_POINTER     
+// DELETE  int64_t DBG_EMM_PageFrame__2;
+// DELETE  
+// DELETE  int16_t DBG_CMB_SpawnFigure__WIP = ST_FALSE;  // if ST_TRUE, in call to CMB_SpawnFigure__WIP() for DEBUG_UNIT_IDX
+// DELETE  int16_t DBG_CMB_CreateEntity__WIP = ST_FALSE;
+// DELETE  int16_t DBG_Draw_Picture_To_Bitmap = ST_FALSE;
+// DELETE  
+// DELETE  int64_t DBG_pict_seg__1;
+// DELETE  int64_t DBG_pict_seg__2;
+// DELETE  
+// DELETE  int64_t DBG_bitm_seg__1;  // captured in Combat_Figure_Compose_USEFULL();  should be the same address in CMB_DrawEntities__WIP()
+// DELETE  int64_t DBG_bitm_seg__2;
+// DELETE  
+// DELETE  // Combat_Figure_Load()
+// DELETE  int16_t DBG_8_battle_unit_figure_idx__1;
+// DELETE  int64_t DBG_8_EMM_PageFrame__1;
+// DELETE  int16_t DBG_8_offset__1;
+// DELETE  // USELESS_Combat_Figure_Load_Compose()
+// DELETE  int16_t DBG_8_battle_unit_figure_idx__2;
+// DELETE  int64_t DBG_8_EMM_PageFrame__2;
+// DELETE  int16_t DBG_8_offset__2;
+// DELETE  // Combat_Figure_Compose_USEFULL()
+// DELETE  int16_t DBG_8_battle_unit_figure_idx__3;
+// DELETE  int64_t DBG_8_EMM_PageFrame__3;
+// DELETE  int16_t DBG_8_offset__3;
+
+
+
+
 
 /*
 
@@ -574,20 +665,44 @@ int16_t CMB_combat_structure;
 // WZD dseg:C520                                                                                         ;   3 - nature node
 // WZD dseg:C520                                                                                         ;   4 - chaos node
 // WZD dseg:C520                                                                                         ;   6 - sailable tile
-// WZD dseg:C522 00 00                                           GUI_CombatWindow@ dw 0                  ; DATA XREF: CMB_SetActionCursor:loc_7FC95r ...
-// WZD dseg:C522                                                                                         ; 12 LBX_NearAlloc_Next bytes
+
+// WZD dseg:C522
+struct s_mouse_list * _combat_mouse_grid;
+
 // WZD dseg:C524
-int16_t * CMB_TargetRows[22];
-// WZD dseg:C524 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 22 pointers to LBX_NearAlloc_Next
-// WZD dseg:C524 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; allocations of 21 bytes each
+// drake178: CMB_TargetRows
+// MoO2  Module: MOX  _combat_mouse_grid
+/*
+; array of 22 pointers to LBX_NearAlloc_Next
+; allocations of 21 bytes each
+
+indexed by sizeof(2)
+uses Near_Allocate_Next(), so points to 1-byte values
+mov     bx, [bp+YPos]
+shl     bx, 1
+mov     bx, [CMB_TargetRows@+bx]
+add     bx, _SI_XPos
+mov     al, [bx]
+cbw
+uses AL and CBW, so 1-byte, signed values
+
+allocated in CMB_SetNearAllocs__WIP()
+*/
+/*
+e.g., CMB_TargetRows[Tile_Y][Tile_X]
+1-byte, signed
+*/
+int8_t * CMB_TargetRows[22];
+
 // WZD dseg:C550
-SAMB_ptr CMB_BU_Figure_GFX[18];
-// WZD dseg:C550 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 segment pointers after an LBX_Alloc_Mark
-// WZD dseg:C550 00 00 00 00                                                                             ; of the sandbox, one every 38h paragraphs
-// WZD dseg:C550                                                                                         ;
-// WZD dseg:C550                                                                                         ; WARNING: this allocation is always undone!
+/*
+array of pointers to composed bitmaps of combat battle unit figure pictures
+*/
+SAMB_ptr CMB_BU_Figure_GFX[(2 * MAX_STACK)];
+
 // WZD dseg:C574 00                                              db    0
 // WZD dseg:C575 00                                              db    0
+
 // WZD dseg:C576
 SAMB_ptr _cmbt_info_button_seg;
 // WZD dseg:C578
@@ -917,9 +1032,16 @@ int16_t CMB_Vortex_Count;
 SAMB_ptr CMB_Projectiles;
 // WZD dseg:D154                                                                                         ; (up to 11 records of 14 bytes each)
 // WZD dseg:D158 00 00                                           CMB_ProjectileCount dw 0                ; DATA XREF: CMB_RangedAnim+464r ...
+
 // WZD dseg:D15A
+/*
+~ battle unit figure
+¿ ++ rocks, trees ?
+¿ ++ city walls ?
+¿ ++ lair ?
+*/
 struct s_COMBAT_ENTITY * combat_grid_entities;
-// WZD dseg:D15A                                                                                         ; (up to 101h records of 1Eh bytes each)
+
 // WZD dseg:D15E
 int16_t combat_grid_entity_count;
 // WZD dseg:D160
@@ -948,7 +1070,7 @@ SAMB_ptr CMB_Damage_GFX;
 // WZD dseg:D280
 // drake178: CMB_ZSort_Array
 // ; from farthest to nearest combat entities
-uint8_t CMB_ZSort_Array[256];
+uint8_t combat_entity_draw_order_array[256];
 
 // WZD dseg:D380
 int16_t DEFR_FloatingIsland;
@@ -1016,6 +1138,8 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     int16_t input_field_idx = 0;
     int16_t itr = 0;  // _SI_
     int16_t battle_unit_idx;  // _DI_
+    int16_t hotkey_idx_Z = 0;  // debug_hotkey
+    int16_t hotkey_idx_T = 0;  // test_hotkey
 
     AI_ImmobileCounter = 0;
 
@@ -1345,6 +1469,10 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         SPACE_Hotkey = Add_Hot_Key(cnst_HOTKEY_SPACE_4[0]);
 
 
+        hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
+        hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
+
+
         input_field_idx = Get_Input();
 
 
@@ -1607,9 +1735,10 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CMB_ImmobileCanAct = 0;
 
-            CMB_TargetFrame_X = CMB_GetTileX((Grid_X + 4), (Grid_Y + 4));
-
-            CMB_TargetFrame_Y = CMB_GetTileY((Grid_X + 4), (Grid_Y + 4));
+            CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+            CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+            // CMB_TargetFrame_X = COMBAT_GRID_X1(Grid_X, Grid_Y);
+            // CMB_TargetFrame_Y = COMBAT_GRID_Y1(Grid_X, Grid_Y);
 
             BU_CombatAction__WIP(CMB_SelectedUnit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
@@ -1634,19 +1763,18 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             }
 
-
-
         }
 
 
         if(-(MapGrid_Control_Index) == input_field_idx)
         {
 
-            RightClick_X = CMB_GetTileX((Grid_X + 4), (Grid_Y + 4));
+            RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
 
-            RightClick_Y = CMB_GetTileY((Grid_X + 4), (Grid_Y + 4));
+            RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
 
-            battle_unit_idx = *CMB_TargetRows[((RightClick_Y * 2) + RightClick_X)];
+            // Eh?  battle_unit_idx = *CMB_TargetRows[((RightClick_Y * 2) + RightClick_X)];
+            battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
 
             // ; BUG: this needs to be range checked, it can be 99!
             if(
@@ -2020,6 +2148,24 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         */
 
 
+        // ST_DEBUG Hot-Keys
+        if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
+        {
+            DLOG("STU_DEBUG: debug_hotkey");
+            DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
+            if(DBG_debug_flag)
+            {
+
+            }
+
+        }
+        if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
+        {
+            DLOG("STU_DEBUG: test_hotkey");
+
+        }
+
+
         if(battle_units[CMB_SelectedUnit].controller_idx != combat_human_player)
         {
             
@@ -2071,7 +2217,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CMB_DrawFullScreen__WIP();
 
-            CMB_SetActionCursor__WIP();
+            Assign_Mouse_Image();
 
             PageFlip_FX();
 
@@ -2565,8 +2711,34 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y)
 */
 void CMB_FillTargetMaps__WIP(void)
 {
+    int16_t Can_Teleport = 0;
+    int16_t Teleport_Type = 0;
+    int16_t Move_Halves = 0;
+    int16_t UU_Max_HalfMoves = 0;
+    int16_t UU_TotalMoveArea = 0;
+    int16_t UU_Y_Position = 0;
+    int16_t UU_X_Position = 0;
+    int16_t Row_Origin_Offset = 0;
+    int16_t itr = 0;
+    int16_t itr_x = 0;  // DNE in Dasm, uses itr
+    int16_t itr_y = 0;  // _SI_
 
+// BU_GetMoveMap(CMB_SelectedUnit);
+// // ; checks the unit's combat movement type, and fills
+// // ; out the GUI_ActiveMoveMap allocation accordingly
+// 
+//     for(itr = 0; itr < _combat_total_unit_count; itr++)
+//     {
+//         
+//     }
 
+/* HACK */    for(itr_y = 0; itr_y < 22; itr_y++)
+/* HACK */    {
+/* HACK */        for(itr_x = 0; itr_x < 21; itr_x++)
+/* HACK */        {
+/* HACK */            CMB_TargetRows[itr_y][itr_x] = -2;
+/* HACK */        }
+/* HACK */    }
 
 }
 
@@ -3948,6 +4120,7 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 
 // WZD o98p10
 // drake178: CMB_SetActionCursor()
+// MoO2  Module:  COMBAT1  Assign_Mouse_Images_()
 /*
 ; sets the cursor based on the currently selected unit
 ; and the contents of the space that the mouse is over
@@ -3958,17 +4131,256 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 /*
 
 */
-void CMB_SetActionCursor__WIP(void)
+void Assign_Mouse_Image(void)
 {
+    int16_t ranged_attack_type_group = 0;
+    int16_t Tile_Y = 0;
+    int16_t Screen_Y = 0;
+    int16_t Screen_X = 0;
+    int16_t Y_Distance = 0;
+    int16_t X_Distance = 0;
+    int16_t scanned_battle_unit_idx = 0;  // _SI_
+    int16_t Tile_X = 0;  // _DI_
+
+    CMB_CursorBattleUnit = ST_UNDEFINED;
+
+    CMB_ActiveUnitFrame = 0;
+
+    if(CMB_SelectedUnit > ST_UNDEFINED)
+    {
+
+        CMB_ActiveUnitFrame = 1;
+
+        CMB_ActiveUnitFrameX = battle_units[CMB_SelectedUnit].position_cgc2;
+
+        CMB_ActiveUnitFrameY = battle_units[CMB_SelectedUnit].position_cgc1;
+
+        if(
+            (CMB_ImmobileCanAct == ST_TRUE)
+            &&
+            (_auto_combat_flag == ST_FALSE)
+        )
+        {
+
+            if(battle_units[CMB_SelectedUnit].controller_idx == combat_human_player)
+            {
+                
+                CMB_ActiveUnitFrame = 0;
+
+            }
+
+        }
+
+    }
+
+    _combat_mouse_grid->image_num = crsr_Finger;
+
+    Screen_X = (Pointer_X() + 4);  // ¿ why the (+ 4) ?
+
+    Screen_Y = (Pointer_Y() + 4);  // ¿ why the (+ 4) ?
+
+    CMB_TargetFrame = 0;
+
+    if(Screen_Y < 168)
+    {
+
+        Tile_X = Get_Combat_Grid_Cell_X(Screen_X, Screen_Y);
+
+        Tile_Y = Get_Combat_Grid_Cell_Y(Screen_X, Screen_Y);
+
+        if(CMB_TargetRows[Tile_Y][Tile_X] == -2)
+        {
+
+            _combat_mouse_grid->image_num = crsr_RedCross;  /* Page 92  (PDF Page 97) "Squares that are not valid as targets for an active unit’s actions show a red “X” when the mouse cursor moves over them." */
+
+        }
+        else if(CMB_TargetRows[Tile_Y][Tile_X] == -1)
+        {
+
+            CMB_TargetFrame = 1;
+
+            CMB_TargetFrame_X = Tile_X;
+
+            CMB_TargetFrame_Y = Tile_Y;
+
+            _combat_mouse_grid->image_num = crsr_WingedBoot;
+
+        }
+        else if(CMB_TargetRows[Tile_Y][Tile_X] == 99)
+        {
+
+            CMB_TargetFrame = 1;
+
+            CMB_TargetFrame_X = Tile_X;
+
+            CMB_TargetFrame_Y = Tile_Y;
+
+            CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
+
+            scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+
+            X_Distance = abs((Tile_X - battle_units[CMB_SelectedUnit].position_cgc2));
+
+            Y_Distance = abs((Tile_Y - battle_units[CMB_SelectedUnit].position_cgc1));
+
+            _combat_mouse_grid->image_num = crsr_RedCross;
+
+            if(battle_units[CMB_SelectedUnit].movement_points > 0)
+            {
+
+                // ; BUG: ranged units will still make this as a ranged attack?
+                if(
+                    (X_Distance <= 1)
+                    &&
+                    (Y_Distance <= 1)
+                )
+                {
+
+                    _combat_mouse_grid->image_num = crsr_Melee;
+
+                }
+                else
+                {
+
+                    ranged_attack_type_group = (battle_units[CMB_SelectedUnit].ranged_type / 10);
+
+                    if(
+                        (ranged_attack_type_group == rag_Boulder)
+                        ||
+                        (ranged_attack_type_group == rag_Missile)
+                        ||
+                        (ranged_attack_type_group == rag_Magic)
+                    )
+                    {
+
+                        _combat_mouse_grid->image_num = crsr_Ranged;
+
+                    }
+
+                }
+
+            }
+
+        }
+        else
+        {
+
+            CMB_TargetFrame = 1;
+
+            CMB_TargetFrame_X = Tile_X;
+
+            CMB_TargetFrame_Y = Tile_Y;
+
+            CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
+
+            scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+
+            CMB_CursorBattleUnit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
+
+            if(
+                (CMB_ImmobileCanAct == ST_TRUE)
+                ||
+                (_auto_combat_flag == ST_FALSE)
+            )
+            {
+
+                if(battle_units[scanned_battle_unit_idx].controller_idx == _human_player_idx)
+                {
+
+                    X_Distance = abs(battle_units[scanned_battle_unit_idx].position_cgc2 - battle_units[CMB_SelectedUnit].position_cgc2);
+
+                    Y_Distance = abs(battle_units[scanned_battle_unit_idx].position_cgc1 - battle_units[CMB_SelectedUnit].position_cgc1);
+
+                    _combat_mouse_grid->image_num = crsr_RedCross;
+
+                    if(battle_units[CMB_SelectedUnit].movement_points > 0)
+                    {
+
+                        if(BU_MeleeFlightCheck__WIP(CMB_SelectedUnit, scanned_battle_unit_idx) == ST_TRUE)
+                        {
+
+                            if(
+                                (X_Distance <= 1)
+                                &&
+                                (Y_Distance <= 1)
+                            )
+                            {
+
+                                if(BU_MeleeWallCheck__WIP(CMB_SelectedUnit, scanned_battle_unit_idx) == ST_TRUE)
+                                {
+
+                                    _combat_mouse_grid->image_num = crsr_Melee;
+
+                                }
+                                else
+                                {
+
+                                    _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(CMB_SelectedUnit, scanned_battle_unit_idx);
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                _combat_mouse_grid->image_num = BU_GetRangedCursor__WIP(CMB_SelectedUnit, scanned_battle_unit_idx);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 
 
+    if(_auto_combat_flag == ST_TRUE)
+    {
+        
+        CMB_ActiveUnitFrame = 0;
+        CMB_TargetFrame = 0;
+
+    }
+
+    _combat_mouse_grid->center_offset = 0;
+    _combat_mouse_grid->x1 = SCREEN_XMIN;
+    _combat_mouse_grid->y1 = SCREEN_YMIN;
+    _combat_mouse_grid->x2 = SCREEN_XMAX;
+    _combat_mouse_grid->y2 = SCREEN_YMAX;
+
+    Set_Mouse_List(1, _combat_mouse_grid);
 
 }
 
 
 // WZD o98p11
 // drake178: BU_GetRangedCursor()
-// BU_GetRangedCursor()
+/*
+; returns either the red cross (3) or ranged attack (4)
+; cursor index depending on whether the selected unit
+; can attack the target based on its visibility
+;
+; BUG: returns the ranged cursor if any of the
+; attacker's units can see through invisibility,
+; ignoring the unit's own ability, and always using the
+; attacking player's variable
+*/
+/*
+
+*/
+int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
+{
+
+    /* HACK */  return crsr_Ranged;
+
+}
+
 
 // WZD o98p12
 // drake178: CMB_CreateCELabels()
@@ -4024,6 +4436,12 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     int16_t itr = 0;  // _SI_
     int16_t count = 0;  // _DI_
 
+// DELETE      //if(troop_count == 1)
+// DELETE      if(troops[itr] == DEBUG_UNIT_IDX)
+// DELETE      {
+// DELETE          // __debugbreak();
+// DELETE      }
+
     for(itr = 0; itr < 36; itr++)
     {
 
@@ -4038,6 +4456,11 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     for(itr = 0; itr < troop_count; itr++)
     {
 
+// DELETE          if(troops[itr] == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE              DBG_battle_unit_idx = itr;
+// DELETE          }
+
         Load_Battle_Unit(troops[itr], &battle_units[_combat_total_unit_count]);
 
         if(_UNITS[battle_units[_combat_total_unit_count].unit_idx].type == spell_data_table[spl_Floating_Island].unit_type)
@@ -4048,6 +4471,8 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
             battle_units[_combat_total_unit_count].Status = bus_Uninvolved;
 
         }
+
+// DELETE          DBG_Combat_Figure_Load();
 
         battle_units[_combat_total_unit_count].battle_unit_figure_idx = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
 
@@ -4170,12 +4595,12 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        battle_units[itr].X_Pos = 0;
-        battle_units[itr].Y_Pos = 0;
-        battle_units[itr].Target_X = 0;
-        battle_units[itr].Target_Y = 0;
+        battle_units[itr].position_cgc2 = 0;
+        battle_units[itr].position_cgc1 = 0;
+        battle_units[itr].target_cgc2 = 0;
+        battle_units[itr].target_cgc1 = 0;
         battle_units[itr].MoveStage = 0;
-        battle_units[itr].UE_Color = 0;
+        battle_units[itr].outline_magic_realm = 0;
         battle_units[itr].Atk_FigLoss = 0;
         battle_units[itr].Moving = 0;
         battle_units[itr].Action = bua_Ready;
@@ -4268,7 +4693,24 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
 // WZD o98p19
 // drake178: BU_MeleeFlightCheck()
-// BU_MeleeFlightCheck()
+/*
+; returns 1 if the specified unit can initiate melee
+; against the target, or 0 if it can't
+;
+; BUG: considers Wind Walking a form of flight
+; BUG: ignores Demon Wings unless it sets the flight
+;  movement flag (which it does, but still)
+*/
+/*
+
+*/
+int16_t BU_MeleeFlightCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
+{
+
+    /* HACK */  return ST_TRUE;
+
+}
+
 
 // WZD o98p20
 // drake178: BU_PrepMoveSound()
@@ -4346,7 +4788,7 @@ void CMB_DrawFullScreen__WIP(void)
 
     Set_Page_Off();
 
-    /* HACK */ Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
+    // /* HACK */ Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
 
     CMB_CreateEntities__WIP();
 
@@ -4484,7 +4926,7 @@ void CMB_DrawFullScreen__WIP(void)
     }
 
 
-    if(OVL_Action_Type == 0)
+    if(OVL_Action_Type == 0)  /* Enemy Stack */
     {
 
         for(itr = 1; itr < 5; itr++)
@@ -4525,7 +4967,7 @@ void CMB_DrawFullScreen__WIP(void)
         }
 
     }
-    else if(OVL_Action_Type == 1)
+    else if(OVL_Action_Type == 1)  /* Enemy City */
     {
 
         for(itr = 1; itr < 5; itr++)
@@ -4646,7 +5088,7 @@ void CMB_DrawFullScreen__WIP(void)
 
     Set_Outline_Color(241);
 
-    Print_Centered(40, 167, _players[_human_player_idx].name);
+    Print_Centered(278, 167, _players[_human_player_idx].name);
 
     // TODO  CMB_DrawSpellInfoW();
     // ; draws the text and numbers of the spell information
@@ -4742,6 +5184,12 @@ void CMB_DrawFullScreen__WIP(void)
     if(CMB_MudAnimStage > 2)
     {
         CMB_MudAnimStage = 0;
+    }
+
+
+    if(DBG_debug_flag)
+    {
+        Combat_Screen_Draw_Debug_Information();
     }
 
 }
@@ -4861,6 +5309,17 @@ void Tactical_Combat_Draw_Buttons(void)
 
 // WZD o99p06
 // drake178: CMB_CreateEntities()
+/*
+; resets and recreates the combat entity array for
+; drawing the combat sprites
+*/
+/*
+
+~ Create Entities
+    clears entities and defaults order
+    *spawns* trees, rocks, figures, projectiles, vortices, structures
+
+*/
 void CMB_CreateEntities__WIP(void)
 {
     int16_t Curse_Anim = 0;
@@ -4869,6 +5328,7 @@ void CMB_CreateEntities__WIP(void)
     int16_t itr = 0;  // _SI_
     int16_t itr_figures = 0;  // _DI_
 
+    // sets combat_grid_entity_count to 0
     CMB_EntitiesReset();
 
     // TODO  CMB_SpawnTrees();
@@ -4907,10 +5367,7 @@ void CMB_CreateEntities__WIP(void)
 
         battle_units[itr].Image_Effect = 0;
 
-        // TODO  BU_SetUEColor(itr);
-        // ; sets the unit enchantment outline color into the BU
-        // ; structure based on the enchantments currently active
-        // ; on the unit
+        Combat_Unit_Enchantment_Outline_Set(itr);
 
         // TODO  BU_SetBaseAnims(itr);
         // ; sets the BU fields controlling whether the unit is
@@ -4928,15 +5385,43 @@ void CMB_CreateEntities__WIP(void)
 
         for(itr_figures = 0; itr_figures < unit_figure_count; itr_figures++)
         {
+            
+// DELETE              // if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE              if(itr == DBG_battle_unit_idx)
+// DELETE              {
+// DELETE  
+// DELETE                  DBG_CMB_SpawnFigure__WIP = ST_TRUE;
+// DELETE                  DBG_CMB_CreateEntity__WIP = ST_TRUE;
+// DELETE  
+// DELETE                  // already set in CMB_Units_Init__WIP() ... DBG_battle_unit_idx = itr;
+// DELETE  
+// DELETE                  DBG_battle_unit_figure_idx = battle_units[itr].battle_unit_figure_idx;
+// DELETE                  DBG_position_cgc2 = battle_units[itr].position_cgc2;
+// DELETE                  DBG_position_cgc1 = battle_units[itr].position_cgc1;
+// DELETE                  DBG_target_cgc2 = battle_units[itr].target_cgc2;
+// DELETE                  DBG_target_cgc1 = battle_units[itr].target_cgc1;
+// DELETE                  DBG_MoveStage = battle_units[itr].MoveStage;
+// DELETE                  DBG_itr_figures = itr_figures;
+// DELETE                  DBG_unit_figure_maximum = unit_figure_maximum;
+// DELETE                  DBG_controller_idx = battle_units[itr].controller_idx;
+// DELETE                  DBG_outline_magic_realm = battle_units[itr].outline_magic_realm;
+// DELETE                  DBG_Blood_Amount = battle_units[itr].Blood_Amount;
+// DELETE                  DBG_Moving = battle_units[itr].Moving;
+// DELETE                  DBG_Atk_FigLoss = battle_units[itr].Atk_FigLoss;
+// DELETE              }
 
-            CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].X_Pos, battle_units[itr].Y_Pos, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].UE_Color, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+            // calls CMB_CreateEntity__WIP(), which increments combat_grid_entity_count
+            CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+
+// DELETE              DBG_CMB_CreateEntity__WIP = ST_FALSE;
+// DELETE              DBG_CMB_SpawnFigure__WIP = ST_FALSE;
 
         }
 
         if(Curse_Anim != ST_UNDEFINED)
         {
 
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].X_Pos, battle_units[itr].Y_Pos, battle_units[itr].Target_X, battle_units[itr].Target_Y, battle_units[itr].MoveStage, Curse_Anim);
+            // TODO  CMB_SpawnUnitCurse(battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, Curse_Anim);
             // ; creates a combat entity corresponding to the passed
             // ; curse effect and positioning
 
@@ -5247,7 +5732,7 @@ void CMB_LoadResources__WIP(void)
     for(itr = 0; itr < 18; itr++)
     {
 
-        CMB_BU_Figure_GFX[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (55 + itr), _screen_seg);
+        CMB_BU_Figure_GFX[itr] = Allocate_Next_Block(_screen_seg, 55);
 
     }
 
@@ -5271,8 +5756,28 @@ void CMB_LoadResources__WIP(void)
 */
 void CMB_SetNearAllocs__WIP(void)
 {
+    int16_t itr = 0;  // _SI_
 
+    CMB_ActiveMoveMap = Near_Allocate_First(504);
 
+    CMB_Path_Costs = Near_Allocate_Next(504);
+
+    CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+
+    CMB_Path_Xs = Near_Allocate_Next(60);
+
+    CMB_Path_Ys = Near_Allocate_Next(60);
+
+    _combat_mouse_grid = (struct s_mouse_list *)Near_Allocate_Next(12);
+
+    for(itr = 0; itr < 22; itr++)
+    {
+
+        CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(21);
+
+    } 
+
+    GUI_String_1 = (char *)Near_Allocate_Next(20);
 
 }
 
@@ -5452,6 +5957,179 @@ void Combat_Figure_Effect__WIP(int16_t effect)
 
 // WZD o105p05
 // drake178: BU_SetUEColor()
+/*
+
+Combat_Unit_Enchantment_Outline_Set() + Combat_Unit_Enchantment_Outline_Draw() is the same as Draw_Unit_Enchantment_Outline() from 'Main Screen'
+
+*/
+void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx)
+{
+    int16_t Combat_Effects = 0;
+    uint32_t unit_enchantments = 0;
+    int8_t enchantment_magic_realm = 0;  // _SI_
+
+    uint8_t * color_list = 0;
+
+    enchantment_magic_realm = ST_UNDEFINED;
+
+    unit_enchantments = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+
+    Combat_Effects = battle_units[battle_unit_idx].Combat_Effects;
+
+    if(
+        ((unit_enchantments & UE_INVISIBILITY) != 0)
+        ||
+        ((battle_units[battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
+    )
+    {
+
+        unit_enchantments = 0;
+
+        Combat_Effects = 0;
+
+    }
+
+    if(
+        (unit_enchantments != 0)
+        ||
+        (Combat_Effects != 0)
+    )
+    {
+
+        if((unit_enchantments & UE_REGENERATION) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_RESISTMAGIC) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_RIGHTEOUSNESS) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_PLANARTRAVEL) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((Combat_Effects & bue_Haste) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_BLACKCHANNELS) != 0)
+        {
+            enchantment_magic_realm = mr_Death;
+        }
+        else if((unit_enchantments & UE_LIONHEART) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_IRONSKIN) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_MAGICIMMUNITY) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_WINDWALKING) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_ELEMENTALARMOR) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_TRUESIGHT) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_INVULNERABILITY) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_PATHFINDING) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_FLIGHT) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_ELDRITCHWEAPON) != 0)
+        {
+            enchantment_magic_realm = mr_Chaos;
+        }
+        else if((unit_enchantments & UE_WRAITHFORM) != 0)
+        {
+            enchantment_magic_realm = mr_Death;
+        }
+        else if((unit_enchantments & UE_GIANTSTRENGTH) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_IMMOLATION) != 0)
+        {
+            enchantment_magic_realm = mr_Chaos;
+        }
+        else if((unit_enchantments & UE_GUARDIANWIND) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_SPELLLOCK) != 0)
+        {
+            enchantment_magic_realm = mr_Sorcery;
+        }
+        else if((unit_enchantments & UE_HEROISM) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_BERSERK) != 0)
+        {
+            enchantment_magic_realm = mr_Death;
+        }
+        else if((unit_enchantments & UE_HOLYARMOR) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_WATERWALKING) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_ENDURANCE) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_CLOAKOFFEAR) != 0)
+        {
+            enchantment_magic_realm = mr_Death;
+        }
+        else if((unit_enchantments & UE_STONESKIN) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+        else if((unit_enchantments & UE_FLAMEBLADE) != 0)
+        {
+            enchantment_magic_realm = mr_Chaos;
+        }
+        else if((unit_enchantments & UE_BLESS) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_HOLYWEAPON) != 0)
+        {
+            enchantment_magic_realm = mr_Life;
+        }
+        else if((unit_enchantments & UE_RESISTELEMENTS) != 0)
+        {
+            enchantment_magic_realm = mr_Nature;
+        }
+    }
+
+    battle_units[battle_unit_idx].outline_magic_realm = enchantment_magic_realm;
+
+}
+
 
 // WZD o105p06
 // drake178: LBX_IMG_UE_Outline()
@@ -5459,10 +6137,13 @@ void Combat_Figure_Effect__WIP(int16_t effect)
 */
 /*
 
-same as seen in Draw_Unit_Enchantment_Outline() (MainScr.C)
+Combat_Unit_Enchantment_Outline_Set() + Combat_Unit_Enchantment_Outline_Draw() is the same as Draw_Unit_Enchantment_Outline() from 'Main Screen'
+
+here    GfxBuf_2400B
+there   UnitDraw_WorkArea
 
 */
-void Combat_Figure_Enchantment_Outline(int16_t enchantment_magic_realm)
+void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm)
 {
 
     if(enchantment_magic_realm != ST_UNDEFINED)
@@ -6080,7 +6761,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
     IDK_health_attacker__2 = IDK_health_attacker;
     IDK_health_defender__2 = IDK_health_defender;
-    /* DEMOHACK */ if (OVL_Action_Type == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
+    /* DEMOHACK */ if(OVL_Action_Type == 5) { IDK_health_attacker__2 = IDK_health_attacker = 0x7FFFFFFF /*0b01111111111111111111111111111111*/; }
 
     /*
         BEGIN:  ¿ halve values for Neutral Player ?
@@ -7169,8 +7850,8 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
 */
 void Deploy_Battle_Units(int16_t player_idx)
 {
-    int16_t Starting_Ys[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Starting_Xs[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t starting_cgc1[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t starting_cgc2[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Ranged_Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Melee_Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t MoveFront_Count = 0;
@@ -7186,60 +7867,62 @@ void Deploy_Battle_Units(int16_t player_idx)
 
     if(player_idx == _combat_defender_player)
     {
-        Starting_Xs[ 0] = 8;
-        Starting_Xs[ 1] = 8;
-        Starting_Xs[ 2] = 8;
-        Starting_Xs[ 3] = 8;
-        Starting_Xs[ 4] = 7;
-        Starting_Xs[ 5] = 7;
-        Starting_Xs[ 6] = 7;
-        Starting_Xs[ 7] = 7;
-        Starting_Xs[ 8] = 6;
-        Starting_Xs[ 9] = 6;
-        Starting_Xs[10] = 6;
-        Starting_Xs[11] = 6;
+        starting_cgc2[ 0] = 8;
+        starting_cgc2[ 1] = 8;
+        starting_cgc2[ 2] = 8;
+        starting_cgc2[ 3] = 8;
+        starting_cgc2[ 4] = 7;
+        starting_cgc2[ 5] = 7;
+        starting_cgc2[ 6] = 7;
+        starting_cgc2[ 7] = 7;
+        starting_cgc2[ 8] = 6;
+        starting_cgc2[ 9] = 6;
+        starting_cgc2[10] = 6;
+        starting_cgc2[11] = 6;
     }
     else
     {
-        Starting_Xs[ 0] = 14;
-        Starting_Xs[ 1] = 14;
-        Starting_Xs[ 2] = 14;
-        Starting_Xs[ 3] = 14;
-        Starting_Xs[ 4] = 15;
-        Starting_Xs[ 5] = 15;
-        Starting_Xs[ 6] = 15;
-        Starting_Xs[ 7] = 15;
-        Starting_Xs[ 8] = 16;
-        Starting_Xs[ 9] = 16;
-        Starting_Xs[10] = 16;
-        Starting_Xs[11] = 16;
+        starting_cgc2[ 0] = 14;
+        starting_cgc2[ 1] = 14;
+        starting_cgc2[ 2] = 14;
+        starting_cgc2[ 3] = 14;
+        starting_cgc2[ 4] = 15;
+        starting_cgc2[ 5] = 15;
+        starting_cgc2[ 6] = 15;
+        starting_cgc2[ 7] = 15;
+        starting_cgc2[ 8] = 16;
+        starting_cgc2[ 9] = 16;
+        starting_cgc2[10] = 16;
+        starting_cgc2[11] = 16;
     }
 
-    Starting_Ys[ 0] = 12;
-    Starting_Ys[ 1] = 11;
-    Starting_Ys[ 2] = 13;
-    Starting_Ys[ 3] = 10;
-    Starting_Ys[ 4] = 12;
-    Starting_Ys[ 5] = 11;
-    Starting_Ys[ 6] = 13;
-    Starting_Ys[ 7] = 10;
-    Starting_Ys[ 8] = 12;
-    Starting_Ys[ 9] = 11;
-    Starting_Ys[10] = 13;
-    Starting_Ys[11] = 10;
+    starting_cgc1[ 0] = 12;
+    starting_cgc1[ 1] = 11;
+    starting_cgc1[ 2] = 13;
+    starting_cgc1[ 3] = 10;
+    starting_cgc1[ 4] = 12;
+    starting_cgc1[ 5] = 11;
+    starting_cgc1[ 6] = 13;
+    starting_cgc1[ 7] = 10;
+    starting_cgc1[ 8] = 12;
+    starting_cgc1[ 9] = 11;
+    starting_cgc1[10] = 13;
+    starting_cgc1[11] = 10;
 
     Melee_Count = 0;
     Ranged_Count = 0;
 
-    // ; count and enumerate the player's ranged and melee units
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
+
+        if(battle_units[itr].Cur_Figures < battle_units[itr].Max_Figures)
+        {
+            // __debugbreak();
+        }
 
         if(battle_units[itr].controller_idx == player_idx)
         {
 
-            // ; returns 1 if the unit has a proper (not short-)
-            // ; ranged attack, or 0 otherwise
             if(Battle_Unit_Has_Ranged_Attack(itr) != ST_FALSE)
             {
 
@@ -7319,6 +8002,15 @@ void Deploy_Battle_Units(int16_t player_idx)
     for(itr = 0; itr < Melee_Count; itr++)
     {
 
+        if(battle_units[Melee_Units[itr]].Cur_Figures < battle_units[itr].Max_Figures)
+        {
+            // __debugbreak();
+        }
+        if(battle_units[Melee_Units[itr]].controller_idx == HUMAN_PLAYER_IDX)
+        {
+            // __debugbreak();
+        }
+
         if(_combat_defender_player == player_idx)
         {
 
@@ -7346,9 +8038,9 @@ void Deploy_Battle_Units(int16_t player_idx)
 
         }
 
-        battle_units[Melee_Units[itr]].X_Pos = Starting_Xs[ctr];
+        battle_units[Melee_Units[itr]].position_cgc2 = starting_cgc2[ctr];
 
-        battle_units[Melee_Units[itr]].Y_Pos = Starting_Ys[ctr];
+        battle_units[Melee_Units[itr]].position_cgc1 = starting_cgc1[ctr];
 
         ctr++;
 
@@ -7387,9 +8079,9 @@ void Deploy_Battle_Units(int16_t player_idx)
 
         }
 
-        battle_units[Ranged_Units[itr]].X_Pos = Starting_Xs[ctr];
+        battle_units[Ranged_Units[itr]].position_cgc2 = starting_cgc2[ctr];
 
-        battle_units[Ranged_Units[itr]].Y_Pos = Starting_Ys[ctr];
+        battle_units[Ranged_Units[itr]].position_cgc1 = starting_cgc1[ctr];
 
         ctr++;
 
@@ -7399,23 +8091,28 @@ void Deploy_Battle_Units(int16_t player_idx)
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
+        if(battle_units[itr].Cur_Figures < battle_units[itr].Max_Figures)
+        {
+            // __debugbreak();
+        }
+
         if(battle_units[itr].controller_idx == player_idx)
         {
 
             if(_combat_attacker_player == player_idx)
             {
 
-                battle_units[itr].Target_X = (battle_units[itr].X_Pos - 1);
+                battle_units[itr].target_cgc2 = (battle_units[itr].position_cgc2 - 1);
 
             }
             else
             {
 
-                battle_units[itr].Target_X = (battle_units[itr].X_Pos + 1);
+                battle_units[itr].target_cgc2 = (battle_units[itr].position_cgc2 + 1);
 
             }
 
-            battle_units[itr].Target_Y = battle_units[itr].Y_Pos;
+            battle_units[itr].target_cgc1 = battle_units[itr].position_cgc1;
 
         }
 
@@ -7430,6 +8127,26 @@ void Deploy_Battle_Units(int16_t player_idx)
 
 // WZD o113p11
 // drake178: BU_MeleeWallCheck()
+/*
+; returns 1 if the specified unit can attack the target
+; based on the condition of City Walls, if any, or 0 if
+; it can't
+;
+; BUG? teleporting and merging units can attack through
+;  walls
+; BUG: Flying Fortress should be considered here, but
+;  it isn't
+*/
+/*
+
+*/
+int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
+{
+
+    /* HACK */  return ST_TRUE;
+
+}
+
 
 // WZD o113p12
 // drake178: CMB_ManaLeak()
@@ -8141,7 +8858,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->Unknown_5A = 0;
 
     battle_unit->Melee_Anim = 0;
-    battle_unit->UE_Color = 0;
+    battle_unit->outline_magic_realm = 0;
     battle_unit->MoveStage = 0;
     battle_unit->Moving = 0;
     battle_unit->Action = 0;
@@ -8833,7 +9550,7 @@ void BU_Init_Hero_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     }
 
 
-    if (HERO_AGILITY(hero_owner_idx, hero_type))
+    if(HERO_AGILITY(hero_owner_idx, hero_type))
     {
         battle_unit->defense = (battle_unit->defense + (_UNITS[unit_idx].Level + 1));
     }
@@ -11404,67 +12121,65 @@ void CMB_DrawMap__WIP(void)
     int16_t Road_Flags = 0;
     int16_t Set_Base_2 = 0;
     int16_t Set_Base_1 = 0;
-    int16_t Tile_Y = 0;
-    int16_t Tile_X = 0;
-    int16_t Top = 0;
-    int16_t Left = 0;
-    int16_t BaseTile_Y = 0;
-    int16_t BaseTile_X = 0;
-    int16_t Loop_Var = 0;
-    int16_t itr = 0;  // _SI_
+    int16_t cgc1 = 0;
+    int16_t cgc2 = 0;
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
+    int16_t IDK_base_cgc1 = 0;
+    int16_t IDK_base_cgc2 = 0;
+    int16_t itr_x = 0;
+    int16_t itr_y = 0;  // _SI_
     int16_t battlefield_terrain = 0;  // _DI_
 
     Copy_Back_To_Off();
 
 
-    CMB_Predraw_Figures__WIP();
+    Combat_Figure_Compose_USEFULL();
 
 
     Set_Page_Off();
 
-    Set_Window(0, 0, 319, 163);
+    Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, 163);
 
-    for(itr = 0; itr < 22; itr++)
+
+    for(itr_y = 0; itr_y < 22; itr_y++)
     {
 
-        BaseTile_X = (itr / 2);
+        CALC_BASE_CGC2;
+        CALC_BASE_CGC1;
 
-        BaseTile_Y = (9 + (itr + 1) / 2);
-
-        for(Loop_Var = 0; Loop_Var < 11; Loop_Var++)
+        for(itr_x = 0; itr_x < 11; itr_x++)
         {
 
-            Tile_X = (BaseTile_X + Loop_Var);
+            CALC_CGC2;
+            CALC_CGC1;
 
-            Tile_Y = (BaseTile_Y - Loop_Var);
-
-            Left = ((Loop_Var * 32) - ((itr & 0x1) * 16));
-
-            Top = ((itr * 8) - 8);
+            CALC_SCREEN_X;
+            CALC_SCREEN_Y;
 
             if(
-                (Tile_X >= 0)
+                (cgc2 >= 0)
                 &&
-                (Tile_X < 21)
+                (cgc2 < 21)
                 &&
-                (Tile_X >= 0)
+                (cgc1 >= 0)
                 &&
-                (Tile_X < 22)
+                (cgc1 < 22)
             )
             {
 
-                if(battlefield->Tile_Mud[((Tile_Y * 21) + Tile_X)] != 0)
+                if(battlefield->Tile_Mud[((cgc1 * 21) + cgc2)] != 0)
                 {
 
-                    FLIC_Set_CurrentFrame(IMG_CMB_Mud, ((Tile_X + Tile_Y + CMB_MudAnimStage) % 8));
+                    FLIC_Set_CurrentFrame(IMG_CMB_Mud, ((cgc2 + cgc1 + CMB_MudAnimStage) % 8));
 
-                    Clipped_Draw(Left, Top, IMG_CMB_Mud);
+                    Clipped_Draw(screen_x, screen_y, IMG_CMB_Mud);
 
                 }
                 else
                 {
 
-                    battlefield_terrain = battlefield->Tile_Terrain[((Tile_Y * 42) + Tile_X)];
+                    battlefield_terrain = battlefield->Tile_Terrain[((cgc1 * 21) + cgc2)];
 
                     if(battlefield_terrain >= 56)
                     {
@@ -11498,7 +12213,7 @@ void CMB_DrawMap__WIP(void)
 // push    (IMG_CMB_RivrNULLs@-70h)[bx]    ; picture
                         }
 
-//                         Clipped_Draw(Left, Top);
+//                         Clipped_Draw(screen_x, screen_y);
 
                     }
                     else if(
@@ -11545,8 +12260,8 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-// push    [bp+Top]                        ; y
-// push    [bp+Left]                       ; x
+// push    [bp+screen_y]                        ; y
+// push    [bp+screen_x]                       ; x
 // call    Clipped_Draw
                     }
                     else if(
@@ -11565,8 +12280,8 @@ void CMB_DrawMap__WIP(void)
 // mov     bx, _DI_battlefield_terrain
 // shl     bx, 1
 // push    (IMG_CMB_Cloud@-68h)[bx]        ; picture
-// push    [bp+Top]                        ; y
-// push    [bp+Left]                       ; x
+// push    [bp+screen_y]                        ; y
+// push    [bp+screen_x]                       ; x
 // call    Clipped_Draw
                     }
 
@@ -11574,23 +12289,23 @@ void CMB_DrawMap__WIP(void)
                     if(
                         (battlefield->Central_Structure == CS_SorceryNode)
                         &&
-                        (Tile_X == 6)
+                        (cgc2 == 6)
                         &&
-                        (Tile_Y == 11)
+                        (cgc1 == 11)
                     )
                     {
 
-                        CMB_GetScreenCoords__WIP(6, 11, 0, 0, &Left, &Top);
+                        Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
 
-                        Left -= 46;
-                        Top -= 15;
+                        screen_x -= 46;
+                        screen_y -= 15;
 
                         FLIC_Set_CurrentFrame(IMG_CMB_SorcNode, CMB_CNodeAnimStage);
 
-                        Clipped_Draw(Left, Top, IMG_CMB_SorcNode);
+                        Clipped_Draw(screen_x, screen_y, IMG_CMB_SorcNode);
 
-                        Left += 46;
-                        Top += 15;
+                        screen_x += 46;
+                        screen_y += 15;
 
                     }
 
@@ -11598,26 +12313,26 @@ void CMB_DrawMap__WIP(void)
                     if(
                         (battlefield->Central_Structure == CS_ChaosNode)
                         &&
-                        (Tile_X == 6)
+                        (cgc2 == 6)
                         &&
-                        (Tile_Y == 11)
+                        (cgc1 == 11)
                     )
                     {
 
-                        CMB_GetScreenCoords__WIP(6, 11, 0, 0, &Left, &Top);
+                        Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
 
-                        Left -= 10;
-                        Top -= 2;
+                        screen_x -= 10;
+                        screen_y -= 2;
     
-                        FLIC_Draw(Left, Top, IMG_CMB_Volcano[(CMB_CNodeAnimStage % 8)]);
+                        FLIC_Draw(screen_x, screen_y, IMG_CMB_Volcano[(CMB_CNodeAnimStage % 8)]);
 
-                        Left += 10;
-                        Top += 2;
+                        screen_x += 10;
+                        screen_y += 2;
 
                     }
 
 
-                    Road_Flags = battlefield->Tile_Road[((Tile_Y * 21) + Tile_X)];
+                    Road_Flags = battlefield->Tile_Road[((cgc1 * 21) + cgc2)];
 
                     if(Road_Flags != 0)
                     {
@@ -11631,7 +12346,7 @@ void CMB_DrawMap__WIP(void)
 
                             FLIC_Set_CurrentFrame(IMG_CMB_FlotIsle, CMB_RoadAnimStage);
 
-                            Clipped_Draw((Left - 32), (Top - 48), IMG_CMB_FlotIsle);
+                            Clipped_Draw((screen_x - 32), (screen_y - 48), IMG_CMB_FlotIsle);
 
                         }
                         else
@@ -11658,49 +12373,49 @@ void CMB_DrawMap__WIP(void)
                             if((Road_Flags & 0x02) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(0 + (Set_Base_1 + Set_Base_2))]);
                             }
 
                             if((Road_Flags & 0x04) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(1 + (Set_Base_1 + Set_Base_2))]);
                             }
 
                             if((Road_Flags & 0x08) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(2 + (Set_Base_1 + Set_Base_2))]);
                             }
 
                             if((Road_Flags & 0x10) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(3 + (Set_Base_1 + Set_Base_2))]);
                             }
 
                             if((Road_Flags & 0x20) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(4 + (Set_Base_1 + Set_Base_2))]);
                             }
 
                             if((Road_Flags & 0x40) != 0)
                             {
                                 FLIC_Set_CurrentFrame(IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))], CMB_RoadAnimStage);
-                                Clipped_Draw(Left, Top, IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))]);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_RoadTiles[(5 + (Set_Base_1 + Set_Base_2))]);
                             }
 
 
                             if(
                                 (battlefield->Central_Structure == CS_Outpost)
                                 &&
-                                (Tile_X == 6)
+                                (cgc2 == 6)
                                 &&
-                                (Tile_Y == 11)
+                                (cgc1 == 11)
                             )
                             {
-                                Clipped_Draw(Left, Top, IMG_CMB_DirtTile);
+                                Clipped_Draw(screen_x, screen_y, IMG_CMB_DirtTile);
                             }
 
                             // ; BUG: will fail to show Flying Fortress graphics on outposts
@@ -11711,19 +12426,19 @@ void CMB_DrawMap__WIP(void)
                                     (battlefield->Central_Structure == CS_Fortress)
                                 )
                                 &&
-                                (Tile_X == 8)
+                                (cgc2 == 8)
                                 &&
-                                (Tile_Y ==  13)
+                                (cgc1 ==  13)
                             )
                             {
 
                                 if(battlefield->City_Enchants[FLYING_FORTRESS] != 0)
                                 {
-                                    Clipped_Draw((Left - 48), (Top - 48), IMG_CMB_Cloud);
+                                    Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_Cloud);
                                 }
                                 else
                                 {
-                                    Clipped_Draw((Left - 48), (Top - 48), IMG_CMB_RoadGrid);
+                                    Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_RoadGrid);
                                 }
 
                             }
@@ -11731,19 +12446,17 @@ void CMB_DrawMap__WIP(void)
                             if(
                                 (CMB_Chasm_Anim == 1)
                                 &&
-                                (CMB_Chasm_Anim_X == Tile_X)
+                                (CMB_Chasm_Anim_X == cgc2)
                                 &&
-                                (CMB_Chasm_Anim_Y == Tile_Y)
+                                (CMB_Chasm_Anim_Y == cgc1)
                             )
                             {
 
                                 FLIC_Set_CurrentFrame(IMG_GUI_Chasm, CMB_ChasmAnimStage);
 
-                                Clipped_Draw(Left, (Top - 18), IMG_GUI_Chasm);
+                                Clipped_Draw(screen_x, (screen_y - 18), IMG_GUI_Chasm);
 
                             }
-
-
 
                         }
 
@@ -11758,57 +12471,62 @@ void CMB_DrawMap__WIP(void)
     }
 
 
-    for(itr = 0; itr < 22; itr++)
+    /*
+        BEGIN:  ¿ ?
+    */
     {
-
-        BaseTile_X = (itr / 2);
-
-        BaseTile_Y = (9 + ((itr + 1) / 2));
-
-        for(Loop_Var = 0; Loop_Var < 11; Loop_Var++)
+        for(itr_y = 0; itr_y < 22; itr_y++)
         {
 
-            Tile_X = (BaseTile_X + Loop_Var);
+            CALC_BASE_CGC2;
+            CALC_BASE_CGC1;
 
-            Tile_Y = (BaseTile_Y + Loop_Var);
-
-            Left = (Loop_Var * 32) - ((itr & 0x1) * 16);
-
-            Top = ((itr * 8) - 8);
-
-            if(
-                (CMB_TargetFrame == 1)
-                &&
-                (Tile_X == CMB_TargetFrame_X)
-                &&
-                (Tile_Y == CMB_TargetFrame_Y)
-            )
+            for(itr_x = 0; itr_x < 11; itr_x++)
             {
 
-                FLIC_Set_CurrentFrame(CMB_TargetFrame_GFX, CMB_TargetFrameStage);
+                CALC_CGC2;
+                CALC_CGC1;
 
-                Clipped_Draw(Left, Top, CMB_TargetFrame_GFX);
+                CALC_SCREEN_X;
+                CALC_SCREEN_Y;
 
-            }
+                if(
+                    (CMB_TargetFrame == 1)
+                    &&
+                    (cgc2 == CMB_TargetFrame_X)
+                    &&
+                    (cgc1 == CMB_TargetFrame_Y)
+                )
+                {
 
-            if(
-                (CMB_ActiveUnitFrame == 1)
-                &&
-                (Tile_X == CMB_ActiveUnitFrameX)
-                &&
-                (Tile_Y == CMB_ActiveUnitFrameY)
-            )
-            {
+                    FLIC_Set_CurrentFrame(CMB_TargetFrame_GFX, CMB_TargetFrameStage);
 
-                FLIC_Set_CurrentFrame(CMB_ActiveFrame_GFX, CMB_TargetFrameStage);
+                    Clipped_Draw(screen_x, screen_y, CMB_TargetFrame_GFX);
 
-                Clipped_Draw(Left, Top, CMB_ActiveFrame_GFX);
+                }
+
+                if(
+                    (CMB_ActiveUnitFrame == 1)
+                    &&
+                    (cgc2 == CMB_ActiveUnitFrameX)
+                    &&
+                    (cgc1 == CMB_ActiveUnitFrameY)
+                )
+                {
+
+                    FLIC_Set_CurrentFrame(CMB_ActiveFrame_GFX, CMB_TargetFrameStage);
+
+                    Clipped_Draw(screen_x, screen_y, CMB_ActiveFrame_GFX);
+
+                }
 
             }
 
         }
-
     }
+    /*
+        END:  ¿ ?
+    */
 
 
     CMB_RoadAnimStage = ((CMB_RoadAnimStage + 1) % 5);
@@ -11908,59 +12626,162 @@ void CMB_DrawMap__WIP(void)
 */
 void CMB_DrawEntities__WIP(void)
 {
-    int16_t InTile_Y = 0;
-    int16_t InTile_X = 0;
-    int16_t Tile_Y = 0;
-    int16_t Tile_X = 0;
+    int16_t combat_grid_cell_y_offset = 0;
+    int16_t combat_grid_cell_x_offset = 0;
+    int16_t combat_grid_cell_y = 0;
+    int16_t combat_grid_cell_x = 0;
     int16_t Blood_Offset_X = 0;
     int16_t Blood_Offset_Y = 0;
-    int16_t IDK_itr_sprites = 0;  // _DI_
-    int16_t IDK_combat_entity_idx = 0;  // _SI_
+    int16_t itr_combat_entity_draw_order = 0;  // _DI_
+    int16_t combat_grid_entity_idx = 0;  // _SI_
+    struct s_COMBAT_ENTITY * ptr_combat_grid_entity = 0;  // DNE in Dasm
+    SAMB_ptr pict_seg = 0;  // DNE in Dasm
 
-    for(IDK_itr_sprites = 0; IDK_itr_sprites < combat_grid_entity_count; IDK_itr_sprites++)
+    for(itr_combat_entity_draw_order = 0; itr_combat_entity_draw_order < combat_grid_entity_count; itr_combat_entity_draw_order++)
     {
 
-        IDK_combat_entity_idx = CMB_ZSort_Array[IDK_itr_sprites];
+        // get combat_grid_entity_idx, in order of draw_order_value
+        combat_grid_entity_idx = combat_entity_draw_order_array[itr_combat_entity_draw_order];
 
-        if(combat_grid_entities[IDK_combat_entity_idx].Draw_Type == 1)
+
+// DELETE          // if(itr_combat_entity_draw_order == 4)
+// DELETE          if(combat_grid_entity_idx == DBG_combat_grid_entity_idx)
+// DELETE          {
+// DELETE              // __debugbreak();
+// DELETE              // ¿ now what ?
+// DELETE  
+// DELETE          }
+
+
+        if(combat_grid_entities[combat_grid_entity_idx].entity_type == 1)  /* Battle Unit Figure */
         {
 
-            if(combat_grid_entities[IDK_combat_entity_idx].Blood_Amt == 0)
+            if(combat_grid_entities[combat_grid_entity_idx].Blood_Amt == 0)
             {
 
+                
+
+                // Draw_Picture_Windowed(
+                //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                //     CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]
+                // );
+
+                ptr_combat_grid_entity = &combat_grid_entities[combat_grid_entity_idx];
+                // index into battle unit figure pictures array  [2 * MAX_STACK]
+                // ¿ all 8 entity figures should have the same index ?
+                // 
+                // Draw_Picture_Windowed(
+                //     (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                //     (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                //     CMB_BU_Figure_GFX[ptr_combat_grid_entity->index]
+                // );
+
+
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entity_idx: %d\n", __FILE__, __LINE__, combat_grid_entity_idx);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].index: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].index);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]: %p\n", __FILE__, __LINE__, CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]: %d\n", __FILE__, __LINE__, (int64_t)CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]: %16X\n", __FILE__, __LINE__, (int64_t)CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]);
+// DELETE  #endif
+
+                pict_seg = CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index];
+
+// DELETE                  DBG_bitm_seg__2 = (int64_t)CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index];
+
+// DELETE                  if(combat_grid_entity_idx == DBG_combat_grid_entity_idx)
+// DELETE                  {
+// DELETE                      DLOG("CMB_DrawEntities__WIP()  combat_grid_entity_idx == DBG_combat_grid_entity_idx");
+// DELETE                      // __debugbreak();
+// DELETE                      // ¿ now what ?
+// DELETE                      // combat_grid_entity_idx
+// DELETE                      // combat_grid_entities[combat_grid_entity_idx].index
+// DELETE                      // CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]
+// DELETE                      // combat_grid_entities[combat_grid_entity_idx].draw_x
+// DELETE                      // combat_grid_entities[combat_grid_entity_idx].draw_x_shift
+// DELETE                      // combat_grid_entities[combat_grid_entity_idx].draw_y
+// DELETE                      // combat_grid_entities[combat_grid_entity_idx].draw_y_shift
+// DELETE  
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entity_idx: %d\n", __FILE__, __LINE__, combat_grid_entity_idx);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].index: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].index);
+// DELETE      // dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]: %p\n", __FILE__, __LINE__, CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].draw_x: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].draw_x);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].draw_x_shift: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].draw_x_shift);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].draw_y: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].draw_y);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: combat_grid_entities[combat_grid_entity_idx].draw_y_shift: %d\n", __FILE__, __LINE__, combat_grid_entities[combat_grid_entity_idx].draw_y_shift);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_bitm_seg__1: %d\n", __FILE__, __LINE__, DBG_bitm_seg__1);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_bitm_seg__2: %d\n", __FILE__, __LINE__, DBG_bitm_seg__2);
+// DELETE  #endif
+// DELETE  
+// DELETE                      assert(DBG_bitm_seg__2 == DBG_bitm_seg__1);
+// DELETE  
+// DELETE                  }
+
+// DELETE                  // if(
+// DELETE                  //     (combat_grid_entity_idx == 8)
+// DELETE                  //     ||
+// DELETE                  //     (combat_grid_entity_idx == 9)
+// DELETE                  //     ||
+// DELETE                  //     (combat_grid_entity_idx == 10)
+// DELETE                  //     ||
+// DELETE                  //     (combat_grid_entity_idx == 11)
+// DELETE                  // )
+// DELETE                  // {
+// DELETE                  //     Draw_Picture_Windowed(
+// DELETE                  //         (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+// DELETE                  //         (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+// DELETE                  //         pict_seg
+// DELETE                  //     );
+// DELETE                  // }
+// DELETE                  // if(
+// DELETE                  //     (combat_grid_entity_idx == 0)
+// DELETE                  // )
+// DELETE                  // {
+// DELETE                  //     // pict_seg = CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index];
+// DELETE                  //     // pict_seg = CMB_BU_Figure_GFX[0];  // FAIL
+// DELETE                  //     pict_seg = CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index];
+// DELETE                  //     Draw_Picture_Windowed(
+// DELETE                  //         (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+// DELETE                  //         (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+// DELETE                  //         pict_seg
+// DELETE                  //     );
+// DELETE                  // }
+
                 Draw_Picture_Windowed(
-                    (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                    (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                    CMB_BU_Figure_GFX[combat_grid_entities[IDK_combat_entity_idx].index]
+                    (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                    (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                    pict_seg
                 );
 
             }
             else
             {
-                if(combat_grid_entities[IDK_combat_entity_idx].Blood_Frame != 3)
+                if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame != 3)
                 {
 
                     Draw_Picture_Windowed(
-                        (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                        (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                        CMB_BU_Figure_GFX[combat_grid_entities[IDK_combat_entity_idx].index]
+                        (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                        (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                        CMB_BU_Figure_GFX[combat_grid_entities[combat_grid_entity_idx].index]
                     );
 
-                    if(combat_grid_entities[IDK_combat_entity_idx].Blood_Frame >= 0)
+                    if(combat_grid_entities[combat_grid_entity_idx].Blood_Frame >= 0)
                     {
 
                         FLIC_Set_CurrentFrame(
-                            IMG_CMB_Blood[(combat_grid_entities[IDK_combat_entity_idx].Blood_Amt - 1)],
-                            combat_grid_entities[IDK_combat_entity_idx].Blood_Frame
+                            IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)],
+                            combat_grid_entities[combat_grid_entity_idx].Blood_Frame
                         );
 
                         Blood_Offset_Y = 11;
                         Blood_Offset_X = 3;
 
                         Clipped_Draw(
-                            (combat_grid_entities[IDK_combat_entity_idx].Origin_X - Blood_Offset_X), 
-                            (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - Blood_Offset_Y), 
-                            IMG_CMB_Blood[(combat_grid_entities[IDK_combat_entity_idx].Blood_Amt - 1)]
+                            (combat_grid_entities[combat_grid_entity_idx].draw_x - Blood_Offset_X), 
+                            (combat_grid_entities[combat_grid_entity_idx].draw_y - Blood_Offset_Y), 
+                            IMG_CMB_Blood[(combat_grid_entities[combat_grid_entity_idx].Blood_Amt - 1)]
                         );
 
                     }
@@ -11970,30 +12791,30 @@ void CMB_DrawEntities__WIP(void)
             }
 
         }
-        else if(combat_grid_entities[IDK_combat_entity_idx].Draw_Type == 0)
+        else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 0)
         {
 
             FLIC_Set_CurrentFrame(
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg,
-                combat_grid_entities[IDK_combat_entity_idx].Draw_Frame
+                combat_grid_entities[combat_grid_entity_idx].pict_seg,
+                combat_grid_entities[combat_grid_entity_idx].Draw_Frame
             );
 
             Clipped_Draw(
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg
+                (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                combat_grid_entities[combat_grid_entity_idx].pict_seg
             );
 
         }
-        else if(combat_grid_entities[IDK_combat_entity_idx].Draw_Type == 4)
+        else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 4)
         {
 
             EMM_TILEX_Init__HACK();
 
             Clipped_Draw(
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg
+                (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+                (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+                combat_grid_entities[combat_grid_entity_idx].pict_seg
             );
 
         }
@@ -12005,47 +12826,47 @@ void CMB_DrawEntities__WIP(void)
         ~== draw next layer up
         ¿ projectiles ?
     */
-    for(IDK_itr_sprites = 0; IDK_itr_sprites < combat_grid_entity_count; IDK_itr_sprites++)
-    {
+// REDO     for(itr_combat_grid_entities = 0; itr_combat_grid_entities < combat_grid_entity_count; itr_combat_grid_entities++)
+// REDO     {
+// REDO 
+// REDO         if(combat_grid_entities[combat_grid_entity_idx].entity_type == 3)
+// REDO         {
+// REDO 
+// REDO 
+// REDO             FLIC_Set_CurrentFrame(
+// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
+// REDO                 CMB_ProjectileFrame
+// REDO             );
+// REDO 
+// REDO             Clipped_Draw(
+// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg
+// REDO             );
+// REDO 
+// REDO         }
+// REDO         else if(combat_grid_entities[combat_grid_entity_idx].entity_type == 2)
+// REDO         {
+// REDO 
+// REDO             FLIC_Set_CurrentFrame(
+// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg,
+// REDO                 CMB_CurseAnimStage
+// REDO             );
+// REDO 
+// REDO             Clipped_Draw(
+// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_x - combat_grid_entities[combat_grid_entity_idx].draw_x_shift),
+// REDO                 (combat_grid_entities[combat_grid_entity_idx].draw_y - combat_grid_entities[combat_grid_entity_idx].draw_y_shift),
+// REDO                 combat_grid_entities[combat_grid_entity_idx].pict_seg
+// REDO             );
+// REDO 
+// REDO         }
+// REDO 
+// REDO     }
 
-        if(combat_grid_entities[IDK_combat_entity_idx].Draw_Type == 3)
-        {
 
+    Screen_To_Combat_Grid_Cell_X_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_x, &combat_grid_cell_x_offset);
 
-            FLIC_Set_CurrentFrame(
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg,
-                CMB_ProjectileFrame
-            );
-
-            Clipped_Draw(
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg
-            );
-
-        }
-        else if(combat_grid_entities[IDK_combat_entity_idx].Draw_Type == 2)
-        {
-
-            FLIC_Set_CurrentFrame(
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg,
-                CMB_CurseAnimStage
-            );
-
-            Clipped_Draw(
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_X - combat_grid_entities[IDK_combat_entity_idx].X_Offset),
-                (combat_grid_entities[IDK_combat_entity_idx].Origin_Y - combat_grid_entities[IDK_combat_entity_idx].Y_Offset),
-                combat_grid_entities[IDK_combat_entity_idx].pict_seg
-            );
-
-        }
-
-    }
-
-
-    CMB_GetInTileX(Pointer_X(), Pointer_Y(), &Tile_X, &InTile_X);
-
-    CMB_GetInTileY(Pointer_X(), Pointer_Y(), &Tile_Y, &InTile_Y);
+    Screen_To_Combat_Grid_Cell_Y_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_y, &combat_grid_cell_y_offset);
 
 }
 
@@ -12087,36 +12908,71 @@ along with a c&p if the switch(){}
 
 TODO  sync up with Unit_Figure_Position()
 
+CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+
 */
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t current_figure, int16_t figure_count, int16_t Owner, int16_t UECol, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t position_cgc1, int16_t target_cgc2, int16_t target_cgc1, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
 {
     int16_t Blood_Frame = 0;
     int16_t figure_set_idx = 0;
     int16_t Prev_Blood_Frame = 0;
     int16_t fig_y = 0;
-    int16_t Top = 0;
-    int16_t Target_Top = 0;
-    int16_t Tile_Top = 0;
-    int16_t Left = 0;
-    int16_t Target_Left = 0;
-    int16_t Tile_Left = 0;
+    int16_t draw_y = 0;
+    int16_t target_screen_y = 0;
+    int16_t position_screen_y = 0;
+    int16_t draw_x = 0;
+    int16_t target_screen_x = 0;
+    int16_t position_screen_x = 0;
     int16_t fig_x = 0;  // _DI_
 
-    CMB_GetScreenCoords__WIP(PosX, PosY, 0, 0, &Tile_Left, &Tile_Top);
+// DELETE      if(
+// DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
+// DELETE          &&
+// DELETE          (position_cgc2 == DBG_position_cgc2)
+// DELETE          &&
+// DELETE          (position_cgc1 == DBG_position_cgc1)
+// DELETE          &&
+// DELETE          (target_cgc2 == DBG_target_cgc2)
+// DELETE          &&
+// DELETE          (target_cgc1 == DBG_target_cgc1)
+// DELETE          &&
+// DELETE          (MoveStage == DBG_MoveStage)
+// DELETE          &&
+// DELETE          (current_figure == DBG_itr_figures)
+// DELETE          &&
+// DELETE          (figure_count == DBG_unit_figure_maximum)
+// DELETE          &&
+// DELETE          (controller_idx == DBG_controller_idx)
+// DELETE          &&
+// DELETE          (outline_magic_realm == DBG_outline_magic_realm)
+// DELETE          &&
+// DELETE          (BldAmt == DBG_Blood_Amount)
+// DELETE          &&
+// DELETE          (UU == DBG_Moving)
+// DELETE          &&
+// DELETE          (LostFigs == DBG_Atk_FigLoss)
+// DELETE          /* && SrcBld */
+// DELETE      )
+// DELETE      {
+// DELETE          // __debugbreak();
+// DELETE          DBG_combat_grid_entity_idx = combat_grid_entity_count;
+// DELETE      }
 
-    CMB_GetScreenCoords__WIP(TarX, TarY, 0, 0, &Target_Left, &Target_Top);
+    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+
+    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
 
     /*
         BEGIN:  ~== Unit_Figure_Position()
     */
-    switch(figure_count - 1)
+    switch(figure_count)
     {
-        case 0:
+        case 1:
         {
             fig_x = 1;
             fig_y = 8;
         } break;
-        case 1:
+        case 2:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12124,7 +12980,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 1: { fig_x =  8; fig_y =  9; } break;
             }
         } break;
-        case 2:
+        case 3:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12133,7 +12989,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 2: { fig_x =  8; fig_y = 10; } break;
             }
         } break;
-        case 3:
+        case 4:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12143,7 +12999,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 3: { fig_x =  1; fig_y = 13; } break;
             }
         } break;
-        case 4:
+        case 5:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12154,7 +13010,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 4: { fig_x =  1; fig_y = 14; } break;
             }
         } break;
-        case 5:
+        case 6:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12166,7 +13022,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 5: { fig_x =   1; fig_y = 15; } break;
             }
         } break;
-        case 6:
+        case 7:  /* TODO  fixup fig_x & fig_y values */
         {
             switch(current_figure)
             {
@@ -12179,18 +13035,18 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
                 case 6: { fig_x =  1; fig_y = 14; } break;
             }
         } break;
-        case 7:
+        case 8:
         {
             switch(current_figure)
             {
-                case 0: { fig_x =   1; fig_y =  3; } break;
+                case 0: { fig_x =   1; fig_y =  4; } break;
                 case 1: { fig_x =   6; fig_y =  6; } break;
                 case 2: { fig_x =  -2; fig_y =  7; } break;
-                case 3: { fig_x = -10; fig_y =  8; } break;
+                case 3: { fig_x = -8; fig_y =  8; } break;
                 case 4: { fig_x =  10; fig_y =  8; } break;
                 case 5: { fig_x =   3; fig_y =  9; } break;
-                case 6: { fig_x =  -5; fig_y = 11; } break;
-                case 7: { fig_x =   1; fig_y = 14; } break;
+                case 6: { fig_x =  -3; fig_y = 11; } break;
+                default: { fig_x =   1; fig_y = 11; } break;
             }
         } break;
     }
@@ -12200,18 +13056,18 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
     */
 
     /*
-        BEGIN:  ~== CMB_Predraw_Figures__WIP()
+        BEGIN:  ~== Combat_Figure_Compose_USEFULL()
     */
-    if(PosX > TarX)
+    if(position_cgc2 > target_cgc2)
     {
 
-        if(PosY > TarY)
+        if(position_cgc1 > target_cgc1)
         {
 
             figure_set_idx = 0;
 
         }
-        else if(PosY < TarY)
+        else if(position_cgc1 < target_cgc1)
         {
 
             figure_set_idx = 6;
@@ -12225,16 +13081,16 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
         }
 
     }
-    else if(PosX < TarX)
+    else if(position_cgc2 < target_cgc2)
     {
 
-        if(PosY > TarY)
+        if(position_cgc1 > target_cgc1)
         {
 
             figure_set_idx = 2;
 
         }
-        else if(PosY < TarY)
+        else if(position_cgc1 < target_cgc1)
         {
 
             figure_set_idx = 4;
@@ -12251,13 +13107,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
     else
     {
 
-        if(PosY > TarY)
+        if(position_cgc1 > target_cgc1)
         {
 
             figure_set_idx = 1;
 
         }
-        else if(PosY < TarY)
+        else if(position_cgc1 < target_cgc1)
         {
 
             figure_set_idx = 5;
@@ -12271,13 +13127,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
         }
     }
     /*
-        END:  ~== CMB_Predraw_Figures__WIP()
+        END:  ~== Combat_Figure_Compose_USEFULL()
     */
 
 
-    Left = (((((Target_Left - Tile_Left) * MStage) / 8) + Tile_Left) + fig_x);
+    draw_x = (((((target_screen_x - position_screen_x) * MoveStage) / 8) + position_screen_x) + fig_x);
 
-    Top = (((((Target_Top - Tile_Top) * MStage) / 8) + Tile_Top) + fig_y);
+    draw_y = (((((target_screen_y - position_screen_y) * MoveStage) / 8) + position_screen_y) + fig_y);
 
 
     if(
@@ -12341,8 +13197,64 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
 
     }
 
+// DELETE      if (
+// DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
+// DELETE          &&
+// DELETE          (position_cgc2 == DBG_position_cgc2)
+// DELETE          &&
+// DELETE          (position_cgc1 == DBG_position_cgc1)
+// DELETE          &&
+// DELETE          (target_cgc2 == DBG_target_cgc2)
+// DELETE          &&
+// DELETE          (target_cgc1 == DBG_target_cgc1)
+// DELETE          &&
+// DELETE          (MoveStage == DBG_MoveStage)
+// DELETE          &&
+// DELETE          (current_figure == DBG_itr_figures)
+// DELETE          &&
+// DELETE          (figure_count == DBG_unit_figure_maximum)
+// DELETE          &&
+// DELETE          (controller_idx == DBG_controller_idx)
+// DELETE          &&
+// DELETE          (outline_magic_realm == DBG_outline_magic_realm)
+// DELETE          &&
+// DELETE          (BldAmt == DBG_Blood_Amount)
+// DELETE          &&
+// DELETE          (UU == DBG_Moving)
+// DELETE          &&
+// DELETE          (LostFigs == DBG_Atk_FigLoss)
+// DELETE          /* && SrcBld */
+// DELETE          )
+// DELETE      {
+// DELETE          // __debugbreak();
+// DELETE  
+// DELETE          // captured here, to be added to the debug info for testing earlier in the chain
+// DELETE          DBG_position_screen_x = position_screen_x;
+// DELETE          DBG_position_screen_y = position_screen_y;
+// DELETE          DBG_target_screen_x = target_screen_x;
+// DELETE          DBG_target_screen_y = target_screen_y;
+// DELETE          DBG_fig_x = fig_x;
+// DELETE          DBG_fig_y = fig_y;
+// DELETE          DBG_figure_set_idx = figure_set_idx;
+// DELETE          DBG_draw_x = draw_x;
+// DELETE          DBG_draw_y = draw_y;
+// DELETE  
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_combat_grid_entity_idx: %d\n", __FILE__, __LINE__, DBG_combat_grid_entity_idx);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_position_screen_x: %d\n", __FILE__, __LINE__, DBG_position_screen_x);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_position_screen_y: %d\n", __FILE__, __LINE__, DBG_position_screen_y);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_target_screen_x: %d\n", __FILE__, __LINE__, DBG_target_screen_x);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_target_screen_y: %d\n", __FILE__, __LINE__, DBG_target_screen_y);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_fig_x: %d\n", __FILE__, __LINE__, DBG_fig_x);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_fig_y: %d\n", __FILE__, __LINE__, DBG_fig_y);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_figure_set_idx: %d\n", __FILE__, __LINE__, DBG_figure_set_idx);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_draw_x: %d\n", __FILE__, __LINE__, DBG_draw_x);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_draw_y: %d\n", __FILE__, __LINE__, DBG_draw_y);
+// DELETE  #endif
+// DELETE  
+// DELETE      }
 
-    CMB_CreateEntity__WIP(Left, Top, seg_or_idx, 13, 23, UU, 1, Owner, figure_set_idx, UECol, BldAmt, UU, Blood_Frame);
+    CMB_CreateEntity__WIP(draw_x, draw_y, seg_or_idx, 13, 23, UU, 1, controller_idx, figure_set_idx, outline_magic_realm, BldAmt, UU, Blood_Frame);
 
 }
 
@@ -12360,6 +13272,14 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
 
 256 values of {0,...,255}
 */
+/*
+
+clears combat_grid_entity_count
+
+defaults combat_entity_draw_order_array[]
+
+
+*/
 void CMB_EntitiesReset(void)
 {
     int16_t itr = 0;  // _DX_
@@ -12370,7 +13290,7 @@ void CMB_EntitiesReset(void)
     {
 
         // ; from farthest to nearest combat entities
-        CMB_ZSort_Array[itr] = itr;
+        combat_entity_draw_order_array[itr] = itr;
 
     }
 
@@ -12386,43 +13306,38 @@ void CMB_EntitiesReset(void)
 */
 /*
 
+Does this actually accomplish anything?
+
 ¿ ~ UnitView.C Draw_Unit_Figure() ?
 
 */
-void Combat_Figure_Compose(int16_t battle_unit_figure_idx, int16_t Direction, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame)
+void USELESS_Combat_Figure_Load_Compose(int16_t battle_unit_figure_idx, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t frame_num)
 {
     SAMB_ptr * ptr_figure_pointer_seg = 0;
     SAMB_ptr figure_pointer_seg = 0;
     int16_t offset = 0;  // _SI_
 
-    if((battle_unit_figure_idx & 0x1) == 0)
-    {
-        offset = 0;
-    }
-    else
-    {
-        // offset = 512;
-        offset = (512 * SZ_PARAGRAPH_B);
-    }
+    FIGUREX_OFFSET
 
-    // offset += (battle_unit_figure_idx * 56);
-    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+    FIGUREX_MAP
 
-    EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+    FIGUREX_POINTER
 
-    // figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 2);
-    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+// TODO              DBG_8_battle_unit_figure_idx__2 = battle_unit_figure_idx;
+// TODO              DBG_8_EMM_PageFrame__2 = (int64_t)EMM_PageFrame;
+// TODO              DBG_8_offset__2 = offset;
+// TODO  
+// TODO              assert(DBG_8_battle_unit_figure_idx__2 == DBG_8_battle_unit_figure_idx__1);
+// TODO              assert(DBG_8_EMM_PageFrame__2 == DBG_8_EMM_PageFrame__1);
+// TODO              assert(DBG_8_offset__2 == DBG_8_offset__1);
 
-    // TODO  ptr_figure_pointer_seg = SA_MK_FP0(figure_pointer_seg);
-    ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+    FLIC_Set_CurrentFrame(ptr_figure_pointer_seg[figure_set_idx], frame_num);
 
-    FLIC_Set_CurrentFrame(ptr_figure_pointer_seg[Direction], Frame);
-
-    Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[Direction], GfxBuf_2400B);
+    Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
 
     Combat_Figure_Banner_Color(player_idx);
 
-    Combat_Figure_Enchantment_Outline(enchantment_magic_realm);
+    Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
 
 }
 
@@ -12452,13 +13367,16 @@ void Combat_Figure_Compose(int16_t battle_unit_figure_idx, int16_t Direction, in
 seg_or_idx
     CMB_SpawnFigure__WIP() passes battle_units[itr].battle_unit_figure_idx
 
+CMB_SpawnFigure__WIP()
+    CMB_CreateEntity__WIP(draw_x, draw_y, seg_or_idx, 13, 23, UU, 1, controller_idx, figure_set_idx, outline_magic_realm, BldAmt, UU, Blood_Frame);
+
 */
-void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int16_t XOff, int16_t YOff, int16_t Frame, int16_t DrawType, int16_t Owner, int16_t UU_10h, int16_t UE_Color, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm)
+void CMB_CreateEntity__WIP(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t controller_idx, int16_t UU_10h, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm)
 {
-    int16_t InTile_Y = 0;
-    int16_t InTile_X = 0;
-    int16_t Tile_Y = 0;
-    int16_t Tile_X = 0;
+    int16_t combat_grid_cell_y_offset = 0;
+    int16_t combat_grid_cell_x_offset = 0;
+    int16_t combat_grid_cell_y = 0;
+    int16_t combat_grid_cell_x = 0;
 
     if(combat_grid_entity_count > 256)
     {
@@ -12467,25 +13385,37 @@ void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int
 
     }
 
-    combat_grid_entities[combat_grid_entity_count].Origin_X = OrigX;
+    // half-damaged, first attcker unit, first figure
+    if(
+        (draw_x == 191)
+        &&
+        (draw_y == 132)
+    )
+    {
 
-    combat_grid_entities[combat_grid_entity_count].Origin_Y = OrigY;
+        // __debugbreak();
+
+    }
+
+    combat_grid_entities[combat_grid_entity_count].draw_x = draw_x;
+
+    combat_grid_entities[combat_grid_entity_count].draw_y = draw_y;
 
     combat_grid_entities[combat_grid_entity_count].seg_or_idx = seg_or_idx;
 
     combat_grid_entities[combat_grid_entity_count].Draw_Frame = Frame;
 
-    combat_grid_entities[combat_grid_entity_count].X_Offset = XOff;
+    combat_grid_entities[combat_grid_entity_count].draw_x_shift = draw_x_shift;
 
-    combat_grid_entities[combat_grid_entity_count].Y_Offset = YOff;
+    combat_grid_entities[combat_grid_entity_count].draw_y_shift = draw_y_shift;
 
-    combat_grid_entities[combat_grid_entity_count].Draw_Type = DrawType;
+    combat_grid_entities[combat_grid_entity_count].entity_type = entity_type;
 
-    combat_grid_entities[combat_grid_entity_count].Owner = Owner;
+    combat_grid_entities[combat_grid_entity_count].Owner = controller_idx;
 
     combat_grid_entities[combat_grid_entity_count].UU_Facing = UU_10h;
 
-    combat_grid_entities[combat_grid_entity_count].UE_Color = UE_Color;
+    combat_grid_entities[combat_grid_entity_count].outline_magic_realm = outline_magic_realm;
 
     combat_grid_entities[combat_grid_entity_count].Unused_14h = UU_14h;
 
@@ -12494,14 +13424,14 @@ void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int
     combat_grid_entities[combat_grid_entity_count].Blood_Amt = BldAmt;
 
 
-    CMB_GetInTileX(OrigX, OrigY, &Tile_X, &InTile_X);
+    Screen_To_Combat_Grid_Cell_X_And_Offset(draw_x, draw_y, &combat_grid_cell_x, &combat_grid_cell_x_offset);
 
-    CMB_GetInTileY(OrigX, OrigY, &Tile_Y, &InTile_Y);
+    Screen_To_Combat_Grid_Cell_Y_And_Offset(draw_x, draw_y, &combat_grid_cell_y, &combat_grid_cell_y_offset);
 
 
-    combat_grid_entities[combat_grid_entity_count].ZDepth = ((Tile_Y * 8000) + (Tile_X * 320) + (InTile_Y * 16) + InTile_X);
+    combat_grid_entities[combat_grid_entity_count].draw_order_value = ((combat_grid_cell_y * 8000) + (combat_grid_cell_x * 320) + (combat_grid_cell_y_offset * 16) + combat_grid_cell_x_offset);
 
-    CMB_ZSort_Insert__WIP();
+    Set_Entity_Draw_Order();
 
     combat_grid_entity_count++;
 
@@ -12518,9 +13448,9 @@ void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int
 /*
 
 */
-void CMB_ZSort_Insert__WIP(void)
+void Set_Entity_Draw_Order(void)
 {
-    uint32_t Entity_Depth = 0;
+    uint32_t draw_order_value = 0;
     int16_t itr_up = 0;  // _SI_
     int16_t itr_dn = 0;  // _DI_
     int16_t entity_idx;  // _CX_
@@ -12530,12 +13460,12 @@ void CMB_ZSort_Insert__WIP(void)
         return;
     }
 
-    Entity_Depth = combat_grid_entities[combat_grid_entity_count].ZDepth;
+    draw_order_value = combat_grid_entities[combat_grid_entity_count].draw_order_value;
 
     for(itr_up = 0; itr_up < combat_grid_entity_count; itr_up++)
     {
 
-        if(combat_grid_entities[CMB_ZSort_Array[itr_up]].ZDepth > Entity_Depth)
+        if(combat_grid_entities[combat_entity_draw_order_array[itr_up]].draw_order_value > draw_order_value)
         {
             break;
         }
@@ -12554,11 +13484,11 @@ void CMB_ZSort_Insert__WIP(void)
     for(itr_dn = combat_grid_entity_count; itr_dn >= entity_idx; itr_dn--)
     {
 
-        CMB_ZSort_Array[itr_dn] = CMB_ZSort_Array[(itr_dn - 1)];
+        combat_entity_draw_order_array[itr_dn] = combat_entity_draw_order_array[(itr_dn - 1)];
 
     }
 
-    CMB_ZSort_Array[entity_idx] = combat_grid_entity_count;
+    combat_entity_draw_order_array[entity_idx] = combat_grid_entity_count;  // combat_grid_entity_count is incremented in CMB_CreateEntity__WIP()
 
 }
 
@@ -12579,28 +13509,20 @@ void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
     int16_t logical_page = 0;
     int16_t offset = 0;  // _SI_
 
+// DELETE      DBG_battle_unit_figure_idx__1 = battle_unit_figure_idx;
+
     logical_page = ((battle_unit_figure_idx * 3) / 2);
-    
-    if((battle_unit_figure_idx & 0x1) == 0)
-    {
-        offset = 0;
-    }
-    else
-    {
-        // offset = 512;
-        offset = (512 * SZ_PARAGRAPH_B);
-    }
 
-    // offset += (battle_unit_figure_idx * 56);
-    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+// DELETE      DBG_logical_page__1 = logical_page;
 
-    // ; maps in four consecutive logical pages from the
-    // ; passed handle, starting with the one specified
-    // ; uses a different EMM function than seg012:0255
-    // ; preserves all register values
+    FIGUREX_OFFSET
+
+// DELETE      DBG_offset__1 = offset;
+
     // TODO  EMM_Map4Pages(logical_page, EmmHndl_FIGUREX);
-    // EMM_PageFrame = EmmHndl_FIGUREX;
     EMM_PageFrame = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
+
+// DELETE      DBG_EMM_PageFrame__1 = (int64_t)EMM_PageFrame;
 
     // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
     SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
@@ -12622,12 +13544,9 @@ void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
 void EMM_TILEX_Init__HACK(void)
 {
 
-    // ; maps in four consecutive logical pages from the
-    // ; passed handle, starting with the one specified
-    // ; uses a different EMM function than seg012:0255
-    // ; preserves all register values
     // EMM_Map4Pages(0, EmmHndl_TILEXXX);
-    EMM_PageFrame = EmmHndl_TILEXXX;
+    // EMM_PageFrame = EmmHndl_TILEXXX;
+    EMM_PageFrame = (EmmHndl_TILEXXX + (0 * SZ_EMM_LOGICAL_PAGE));
 
     // TODO  farpokew(EMM_PageFrame, SAMB.MemSig1, SA_MEMSIG1);
     SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, SA_MEMSIG1);
@@ -12657,22 +13576,24 @@ void EMM_TILEX_Init__HACK(void)
 */
 /*
 
+
+
 */
-void CMB_Predraw_Figures__WIP(void)
+void Combat_Figure_Compose_USEFULL(void)
 {
     SAMB_ptr temp_GfxBuf_2400B = 0;
     int16_t IMG_Effect = 0;
     int16_t frame_num = 0;
-    int16_t UE_Rlm = 0;
+    int16_t outline_magic_realm = 0;
     int16_t player_idx = 0;
     int16_t battle_unit_figure_idx = 0;
     SAMB_ptr * ptr_figure_pointer_seg = 0;
     int16_t offset = 0;
     SAMB_ptr figure_pointer_seg = 0;
-    int16_t TarY = 0;
-    int16_t PosY = 0;
-    int16_t TarX = 0;
-    int16_t PosX = 0;
+    int16_t target_cgc1 = 0;
+    int16_t position_cgc1 = 0;
+    int16_t target_cgc2 = 0;
+    int16_t position_cgc2 = 0;
     int16_t itr = 0;  // _SI_
     int16_t figure_set_idx = 0;  // _DI_
 
@@ -12680,6 +13601,12 @@ void CMB_Predraw_Figures__WIP(void)
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
+
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE              // __debugbreak();
+// DELETE          }
+
 
         if(battle_units[itr].Status != bus_Active)
         {
@@ -12690,7 +13617,7 @@ void CMB_Predraw_Figures__WIP(void)
         
         player_idx = battle_units[itr].controller_idx;
         
-        UE_Rlm = battle_units[itr].UE_Color;
+        outline_magic_realm = battle_units[itr].outline_magic_realm;
         
         IMG_Effect = battle_units[itr].Image_Effect;
         
@@ -12747,24 +13674,24 @@ void CMB_Predraw_Figures__WIP(void)
 
         }
         
-        PosX = battle_units[itr].X_Pos;
+        position_cgc2 = battle_units[itr].position_cgc2;
         
-        PosY = battle_units[itr].Y_Pos;
+        position_cgc1 = battle_units[itr].position_cgc1;
         
-        TarX = battle_units[itr].Target_X;
+        target_cgc2 = battle_units[itr].target_cgc2;
         
-        TarY = battle_units[itr].Target_Y;
+        target_cgc1 = battle_units[itr].target_cgc1;
         
-        if(PosX > TarX)
+        if(position_cgc2 > target_cgc2)
         {
 
-            if(PosY > TarY)
+            if(position_cgc1 > target_cgc1)
             {
 
                 figure_set_idx = 0;
 
             }
-            else if(PosY < TarY)
+            else if(position_cgc1 < target_cgc1)
             {
 
                 figure_set_idx = 6;
@@ -12778,16 +13705,16 @@ void CMB_Predraw_Figures__WIP(void)
             }
 
         }
-        else if(PosX < TarX)
+        else if(position_cgc2 < target_cgc2)
         {
 
-            if(PosY > TarY)
+            if(position_cgc1 > target_cgc1)
             {
 
                 figure_set_idx = 2;
 
             }
-            else if(PosY < TarY)
+            else if(position_cgc1 < target_cgc1)
             {
 
                 figure_set_idx = 4;
@@ -12804,13 +13731,13 @@ void CMB_Predraw_Figures__WIP(void)
         else
         {
 
-            if(PosY > TarY)
+            if(position_cgc1 > target_cgc1)
             {
 
                 figure_set_idx = 1;
 
             }
-            else if(PosY < TarY)
+            else if(position_cgc1 < target_cgc1)
             {
 
                 figure_set_idx = 5;
@@ -12825,52 +13752,147 @@ void CMB_Predraw_Figures__WIP(void)
         }
 
 
-        EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+        FIGUREX_MAP
 
-        if((battle_unit_figure_idx & 1) == 0)
-        {
+        FIGUREX_OFFSET
 
-            offset = 0;
-
-        }
-        else
-        {
-
-            // offset = 512;
-            offset = (512 * SZ_PARAGRAPH_B);
-
-        }
-
-        // offset += (battle_unit_figure_idx * 56);
-        offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
-
-        // figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 2);
-        figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
-
-        // TODO  ptr_figure_pointer_seg = SA_MK_FP0(figure_pointer_seg);
-        ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+        FIGUREX_POINTER
 
 
-        // FLIC_Set_CurrentFrame((SAMB_ptr)&ptr_figure_pointer_seg[figure_set_idx], frame_num);
+// DELETE          assert(ptr_figure_pointer_seg[figure_set_idx] == DBG_ptr_figure_pointer_seg[figure_set_idx]);
+
+
         FLIC_Set_CurrentFrame(ptr_figure_pointer_seg[figure_set_idx], frame_num);
 
-        // not in Combat_Figure_Compose()
-        // GfxBuf_2400B = (SAMB_ptr)&CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];
         GfxBuf_2400B = CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];
+
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: itr: %d\n", __FILE__, __LINE__, itr);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: battle_units[itr].battle_unit_figure_idx: %d\n", __FILE__, __LINE__, battle_units[itr].battle_unit_figure_idx);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]: %p\n", __FILE__, __LINE__, CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]: %d\n", __FILE__, __LINE__, (int64_t)CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]: %16X\n", __FILE__, __LINE__, (int64_t)CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx]);
+// DELETE  #endif
+
+
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE              // HERE:  get addr from GfxBuf_2400B ... figure out what trashes the memory there later on
+// DELETE              // __debugbreak();
+// DELETE  
+// DELETE  
+// DELETE              DBG_pict_seg__2 = (int64_t)ptr_figure_pointer_seg[figure_set_idx];
+// DELETE  
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_pict_seg__2: %d\n", __FILE__, __LINE__, DBG_pict_seg__2);
+// DELETE  #endif
+// DELETE  
+// DELETE              assert(DBG_pict_seg__2 == DBG_pict_seg__1);
+// DELETE  
+// DELETE              DBG_8_battle_unit_figure_idx__3 = battle_unit_figure_idx;
+// DELETE              DBG_8_EMM_PageFrame__3 = (int64_t)EMM_PageFrame;
+// DELETE              DBG_8_offset__3 = offset;
+// DELETE  
+// DELETE              assert(DBG_8_battle_unit_figure_idx__3 == DBG_8_battle_unit_figure_idx__1);
+// DELETE              assert(DBG_8_EMM_PageFrame__3 == DBG_8_EMM_PageFrame__1);
+// DELETE              assert(DBG_8_offset__3 == DBG_8_offset__1);
+// DELETE  
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_battle_unit_figure_idx__3: %d\n", __FILE__, __LINE__, DBG_8_battle_unit_figure_idx__3);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_EMM_PageFrame__3: %d\n", __FILE__, __LINE__, DBG_8_EMM_PageFrame__3);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_offset__3: %d\n", __FILE__, __LINE__, DBG_8_offset__3);
+// DELETE  #endif
+// DELETE  
+// DELETE  
+// DELETE              DBG_bitm_seg__1 = (int64_t)CMB_BU_Figure_GFX[battle_units[itr].battle_unit_figure_idx];  // to be tested in CMB_DrawEntities__WIP()
+// DELETE  
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE  
+// DELETE              DBG_Draw_Picture_To_Bitmap = ST_TRUE;
+// DELETE          }
+
+
+// DELETE          if(DBG_Draw_Picture_To_Bitmap == ST_TRUE)
+// DELETE          {
+// DELETE              // __debugbreak();
+// DELETE          }
 
         // Draw_Picture_To_Bitmap((SAMB_ptr)&ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
         Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
 
+        // DBG_Draw_Picture_To_Bitmap = ST_FALSE;
+
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE          }
+
         Combat_Figure_Banner_Color(player_idx);
 
-        Combat_Figure_Enchantment_Outline(UE_Rlm);
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE          }
 
+        Combat_Unit_Enchantment_Outline_Draw(outline_magic_realm);
 
-        // not in Combat_Figure_Compose()
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE          }
+
         Combat_Figure_Effect__WIP(IMG_Effect);
 
-        // not in Combat_Figure_Compose()
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE          }
+
         Combat_Figure_Active_Red_Outline(itr);
+
+// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
+// DELETE          {
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[figure_set_idx]);
+// DELETE  
+// DELETE          }
+
+
+// DELETE          if (DBG_Draw_Picture_To_Bitmap == ST_TRUE)
+// DELETE          {
+// DELETE              Draw_Picture_Windowed(
+// DELETE                  32,
+// DELETE                  112,
+// DELETE                  GfxBuf_2400B
+// DELETE              );
+// DELETE              Draw_Picture_Windowed(
+// DELETE                  48,
+// DELETE                  112,
+// DELETE                  GfxBuf_2400B
+// DELETE              );
+// DELETE              Draw_Picture_Windowed(
+// DELETE                  32,
+// DELETE                  128,
+// DELETE                  GfxBuf_2400B
+// DELETE              );
+// DELETE              Draw_Picture_Windowed(
+// DELETE                  48,
+// DELETE                  128,
+// DELETE                  GfxBuf_2400B
+// DELETE              );
+// DELETE          }
+
+// DELETE          DBG_Draw_Picture_To_Bitmap = ST_FALSE;
 
     }
 
@@ -14342,26 +15364,31 @@ combat grid y
 
 
 CMB_DrawMap__WIP()
-    CMB_GetScreenCoords__WIP(6, 11, 0, 0, &Left, &Top);
+    Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &Left, &Top);
 ...{6,11} are combat grid coordinates of lair/node structure
 
+CMB_SpawnFigure__WIP()
+    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+
+    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
+
+cgc2 and cgc1 get passed in
+pbr's/in-out's screen_x,screen_y
+
 */
-void CMB_GetScreenCoords__WIP(int16_t XPos, int16_t YPos, int16_t TileX, int16_t TileY, int16_t * Retn_X, int16_t * Retn_Y)
+void Combat_Grid_Screen_Coordinates(int16_t cgc2, int16_t cgc1, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y)
 {
-    int16_t IDK1 = 0;  // _DX_
-    int16_t IDK2 = 0;  // _SI_
+    int16_t l_screen_x = 0;  // _DX_
+    int16_t l_screen_y = 0;  // _SI_
 
-    IDK1 = (((XPos - YPos) * 16) + 158);  /* ¿ + mid x ? */
+    l_screen_x = (((cgc2 - cgc1) * 16) + 158);  /* ¿ + mid x ? */
+    l_screen_y = (((cgc2 + cgc1) *  8) -  80);  /* ¿ + mid y ? */
 
-    IDK2 = (((XPos + YPos)  * 8) - 80);  /* ¿ + mid y ? */
+    l_screen_x += ((something_x - something_y) * 2);
+    l_screen_y += (something_x + something_y);
 
-    IDK1 += ((TileX - TileY) * 2);
-
-    IDK2 += (TileX + TileY);
-
-    *Retn_X = IDK1;
-
-    *Retn_Y = IDK2;
+    *screen_x = l_screen_x;
+    *screen_y = l_screen_y;
 
 }
 
@@ -14377,11 +15404,16 @@ void CMB_GetScreenCoords__WIP(int16_t XPos, int16_t YPos, int16_t TileX, int16_t
 */
 /*
 
-*/
-int16_t CMB_GetTileX(int16_t Scrn_X, int16_t Scrn_Y)
-{
+same calc as in Screen_To_Combat_Grid_Cell_X_And_Offset()
 
-    return (((((Scrn_X - 158) / 2) + Scrn_Y) + 80) / 16);
+*/
+int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y)
+{
+    int16_t combat_grid_cell_x = 0;
+
+    combat_grid_cell_x = ((((screen_x - 158) / 2) + (screen_y + 80)) / 16);
+
+    return combat_grid_cell_x;
 
 }
 
@@ -14394,11 +15426,16 @@ int16_t CMB_GetTileX(int16_t Scrn_X, int16_t Scrn_Y)
 */
 /*
 
-*/
-int16_t CMB_GetTileY(int16_t Scrn_X, int16_t Scrn_Y)
-{
+same calc as in Screen_To_Combat_Grid_Cell_Y_And_Offset()
 
-    return ((Scrn_Y + 80) - ((Scrn_X - 158) / 2));
+*/
+int16_t Get_Combat_Grid_Cell_Y(int16_t screen_x, int16_t screen_y)
+{
+    int16_t combat_grid_cell_y = 0;
+
+    combat_grid_cell_y = (((screen_y + 80) - ((screen_x - 158) / 2)) / 16);
+
+    return combat_grid_cell_y;
 
 }
 
@@ -14417,21 +15454,21 @@ XREF:
     CMB_CreateEntity__WIP()
 
 CMB_DrawEntities__WIP()
-    CMB_GetInTileX(Pointer_X(), Pointer_Y(), &Tile_X, &InTile_X);
+    Screen_To_Combat_Grid_Cell_X_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_x, &combat_grid_cell_x_offset);
 
 CMB_CreateEntity__WIP()
-    CMB_GetInTileX(OrigX, OrigY, &Tile_X, &InTile_X);
+    Screen_To_Combat_Grid_Cell_X_And_Offset(draw_x, draw_y, &combat_grid_cell_x, &combat_grid_cell_x_offset);
 
 */
-void CMB_GetInTileX(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_X, int16_t * InTile_X)
+void Screen_To_Combat_Grid_Cell_X_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * combat_grid_cell_x, int16_t * combat_grid_cell_x_offset)
 {
     int16_t IDK = 0;  // _CX_
 
-    IDK = (( ( (Scrn_X - 158) / 2) + Scrn_Y) + 80);
+    IDK = (((screen_x - 158) / 2) + (screen_y + 80));
 
-    *Tile_X = (IDK / 16);
+    *combat_grid_cell_x = (IDK / 16);
 
-    *InTile_X = (IDK % 16);
+    *combat_grid_cell_x_offset = (IDK % 16);
 
 }
 
@@ -14451,22 +15488,22 @@ XREF:
     CMB_CreateEntity__WIP()
 
 CMB_DrawEntities__WIP()
-    CMB_GetInTileY(Pointer_X(), Pointer_Y(), &Tile_Y, &InTile_Y);
+    Screen_To_Combat_Grid_Cell_Y_And_Offset(Pointer_X(), Pointer_Y(), &combat_grid_cell_y, &combat_grid_cell_y_offset);
 
 CMB_CreateEntity__WIP()
-    CMB_GetInTileY(OrigX, OrigY, &Tile_Y, &InTile_Y);
+    Screen_To_Combat_Grid_Cell_Y_And_Offset(draw_x, draw_y, &combat_grid_cell_y, &combat_grid_cell_y_offset);
 
 */
-void CMB_GetInTileY(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_Y, int16_t * InTile_Y)
+void Screen_To_Combat_Grid_Cell_Y_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * combat_grid_cell_y, int16_t * combat_grid_cell_y_offset)
 {
 
     int16_t IDK = 0;  // _CX_
 
-    IDK = (Scrn_Y + 80) - ((Scrn_X - 158) / 2);
+    IDK = (screen_y + 80) - ((screen_x - 158) / 2);
 
-    *Tile_Y = (IDK / 16);
+    *combat_grid_cell_y = (IDK / 16);
 
-    *InTile_Y = (IDK % 16);
+    *combat_grid_cell_y_offset = (IDK % 16);
 
 }
 
@@ -14717,12 +15754,12 @@ void Load_Combat_Terrain_Pictures(int16_t ctt, int16_t wp)
 void CMB_ComposeBackgrnd__WIP(void)
 {
     int16_t combat_terrain_type = 0;
-    int16_t Draw_Tile_Y = 0;
-    int16_t Draw_Tile_X = 0;
+    int16_t cgc1 = 0;
+    int16_t cgc2 = 0;
     int16_t screen_y = 0;
     int16_t screen_x = 0;
-    int16_t Base_Tile_Y = 0;
-    int16_t Base_Tile_X = 0;
+    int16_t IDK_base_cgc1 = 0;
+    int16_t IDK_base_cgc2 = 0;
     int16_t itr_x = 0;  // _DI_
     int16_t itr_y = 0;  // _SI_
 
@@ -14735,33 +15772,19 @@ void CMB_ComposeBackgrnd__WIP(void)
     for(itr_y = 0; itr_y < 22; itr_y++)
     {
 
-        Base_Tile_X = (itr_y / 2);  // ¿ row, in half-rows ?
-
-        Base_Tile_Y = (((itr_y + 1) / 2) + 9);  // {9, }
+        CALC_BASE_CGC2;
+        CALC_BASE_CGC1;
 
         for(itr_x = 0; itr_x < 11; itr_x++)
         {
 
-            Draw_Tile_X = (Base_Tile_X + itr_x);  // {0, 1, 2, ...}, {0, 1, 2, ...}, {1, 2, 3, ...}, {1, 2, 3, ...}
+            CALC_CGC2;
+            CALC_CGC1;
 
-            Draw_Tile_Y = (Base_Tile_Y - itr_x);  // 
+            CALC_SCREEN_X;
+            CALC_SCREEN_Y;
 
-            // if y is odd, shift left a half-square
-            screen_x = (itr_x * 32) - ((itr_y & 0x1) * 16);
-            // (itr_y % 2) * 16
-
-            if(IS_EVEN(itr_y))
-            {
-                screen_x = (itr_x * 32) - ((itr_y & 0x1) * 16);
-            }
-            else if(IS_ODD(itr_y))
-            {
-                screen_x = (itr_x * 32) - ((itr_y & 0x1) * 16);
-            }
-
-            screen_y = ((itr_y * 8) - 8);  // {-8, 0, -8, ...}, {0, 8, 0, ...}, ... {8, 16, 8, ...}, ...
-
-            combat_terrain_type = battlefield->Tile_Terrain[((Draw_Tile_Y * 21) + Draw_Tile_X)];
+            combat_terrain_type = battlefield->Tile_Terrain[((cgc1 * 21) + cgc2)];
 
             if(combat_terrain_type < 0)
             {
@@ -14772,7 +15795,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             if(combat_terrain_type >= 56)
             {
 
-                combat_terrain_type = ((Draw_Tile_X + Draw_Tile_Y) & 0x3);
+                combat_terrain_type = ((cgc2 + cgc1) & 0x3);
     
             }
 
@@ -14851,12 +15874,19 @@ void CMB_BaseAllocs__WIP(void)
 /*
 
 ~ Load_Unit_Figure()
-~ Combat_Figure_Compose()
+~ USELESS_Combat_Figure_Load_Compose()
 
 battle_unit_figure_idx gets passed in as the current battle_unit_idx
 nothing modifies it, so it gets returned as-is
 then, it gets assigned to battle_units[_combat_total_unit_count].battle_unit_figure_idx
 so, the battle_unit_idx is equivalent to the unit figure index
+
+the is just itr_troop_count {0,...,8}
+used to set the offset into EMM
+per battle_units[], it's just value used to track the cached figure picture
+
+How does it track them separately for each stack?
+loads attackers, then loads for any units that are the defenders
 
 */
 int16_t Combat_Figure_Load(int16_t unit_type, int16_t battle_unit_figure_idx)
@@ -14868,27 +15898,14 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t battle_unit_figure_idx)
     int16_t entry_num = 0;
     SAMB_ptr figure_pointer_seg = 0;
     int16_t itr = 0;  // _DI_
+    int64_t DBG_memory_address_1 = 0;
+    int64_t DBG_memory_address_2 = 0;
 
-    EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+    FIGUREX_MAP
 
-    if((battle_unit_figure_idx & 0x1) == 0)
-    {
-        offset = 0;
-    }
-    else
-    {
-        // offset = 512;
-        offset = (512 * SZ_PARAGRAPH_B);
-    }
+    FIGUREX_OFFSET
 
-    // offset += (battle_unit_figure_idx * 56);
-    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
-
-    // figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 2);  // ¿ 2 as in 16-byte header and 8 2-byte pointers ?
-    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);  // 16-byte header + 8 64-byte pointers = (16 + 512) = 528 / 16 = 33
-    
-    // TODO  ptr_figure_pointer_seg = SA_MK_FP0(Seg_Address);
-    ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+    FIGUREX_POINTER
 
     // e.g., ut_Sky_Drake  = 196   FIGURE14.LBX,   8    SKYDRAKE
     // 196 / 15 = 13 + 1 = 14
@@ -14908,17 +15925,309 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t battle_unit_figure_idx)
     strcat(file_name, str_empty_string__ovr163);
 
     // 196 % 15 = 1 * 8 = 8
+    // 112 % 15 = 7 * 8 = 56
     entry_num = ((unit_type % 15) * 8);
 
-    for(itr = 0; itr < 8; itr++)
+    if(unit_type == ut_HMenPikemen)
+    {
+        // __debugbreak();
+    }
+
+    for(itr = 0; itr < 8; itr++)  /* 8 directions/faces per unit figure picture set */
     {
 
         ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
 
+// DELETE          // add battle_unit_figure_idx
+// DELETE          if(
+// DELETE              (unit_type == DEBUG_UNIT_TYPE)
+// DELETE              &&
+// DELETE              (itr == DEBUG_FIGURE_SET_IDX)
+// DELETE          )
+// DELETE          {
+// DELETE  
+// DELETE              DBG_8_battle_unit_figure_idx__1 = battle_unit_figure_idx;
+// DELETE              DBG_8_EMM_PageFrame__1 = (int64_t)EMM_PageFrame;
+// DELETE              DBG_8_offset__1 = offset;
+// DELETE  
+// DELETE              DBG_pict_seg__1 = (int64_t)ptr_figure_pointer_seg[itr];
+// DELETE  
+// DELETE  #ifdef STU_DEBUG
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_battle_unit_figure_idx__1: %d\n", __FILE__, __LINE__, DBG_8_battle_unit_figure_idx__1);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_EMM_PageFrame__1: %d\n", __FILE__, __LINE__, DBG_8_EMM_PageFrame__1);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_8_offset__1: %d\n", __FILE__, __LINE__, DBG_8_offset__1);
+// DELETE      dbg_prn("DEBUG: [%s, %d]: DBG_pict_seg__1: %d\n", __FILE__, __LINE__, DBG_pict_seg__1);
+// DELETE  #endif
+// DELETE  
+// DELETE              DBG_Test_HMPIKE_7(ptr_figure_pointer_seg[itr]);
+// DELETE  
+// DELETE          }
+// DELETE  
+// DELETE          DBG_ptr_figure_pointer_seg[itr] = ptr_figure_pointer_seg[itr];
+// DELETE  
+// DELETE          DBG_memory_address_1 = (int64_t)ptr_figure_pointer_seg[itr];
+// DELETE  
+// DELETE          DBG_memory_address_2 = (int64_t)DBG_ptr_figure_pointer_seg[itr];
+// DELETE  
+// DELETE          assert(DBG_memory_address_2 == DBG_memory_address_1);
+
     }
 
-    Combat_Figure_Compose(battle_unit_figure_idx, 0, 0, 0, 0);
+
+// DELETE      if (DBG_Test_Figure_Pointers(&ptr_figure_pointer_seg[0], &DBG_ptr_figure_pointer_seg[0]) != ST_TRUE)
+// DELETE      {
+// DELETE          __debugbreak();
+// DELETE      }
+
+
+    // WTF?  USELESS_Combat_Figure_Load_Compose(battle_unit_figure_idx, 0, 0, 0, 0);
+
 
     return battle_unit_figure_idx;
 
 }
+
+
+
+void Combat_Screen_Draw_Debug_Information(void)
+{
+    int16_t mouse_x = 0;
+    int16_t mouse_y = 0;
+    int16_t screen_x = 0;
+    int16_t screen_y = 0;
+    int16_t combat_grid_x = 0;
+    int16_t combat_grid_y = 0;
+    int16_t x_pos = 0;
+    int16_t y_pos = 0;
+    int16_t x_off = 0;
+    int16_t y_off = 0;
+    int16_t line_height = 0;
+    int16_t x_col1 = 0;
+    int16_t x_col2 = 0;
+    int16_t string_width = 0;
+    char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t combat_grid_x1 = 0;
+    int16_t combat_grid_y1 = 0;
+    int16_t combat_grid_x2 = 0;
+    int16_t combat_grid_y2 = 0;
+    int16_t combat_grid_col = 0;
+    int16_t combat_grid_row = 0;
+    int16_t l_screen_x = 0;
+    int16_t l_screen_y = 0;
+    int16_t cgc1 = 0;
+    int16_t cgc2 = 0;
+
+    Set_Outline_Color(0);
+    Set_Font_Style_Shadow_Down(1, 0, 0, 0);  /* ¿ smallest/narrow font ? */
+    Set_Alias_Color(8);
+    line_height = Get_Font_Height();
+
+    x_off = 0;
+    y_off = 8;
+    x_pos = 0;
+    y_pos = 0;
+    x_col1 = 2;
+    x_col2 = 0;
+
+    mouse_x = Pointer_X();
+    mouse_y = Pointer_Y();
+
+    screen_x = mouse_x;
+    screen_y = mouse_y;
+
+    combat_grid_x = Get_Combat_Grid_Cell_X((mouse_x + 4), (mouse_y + 4));
+    combat_grid_y = Get_Combat_Grid_Cell_Y((mouse_x + 4), (mouse_y + 4));
+
+    combat_grid_x1 = 
+    (
+        (
+            ( ( screen_x - 158 ) / 2 )
+            +
+            ( screen_y + 80 )
+        )
+        / 16
+    );
+    combat_grid_y1 = Get_Combat_Grid_Cell_Y((mouse_x + 4), (mouse_y + 4));
+
+    combat_grid_x2 = 
+    (
+        (
+            ( ( screen_x - 158 ) / 32 )
+            +
+            ( ( screen_y +  80 ) / 16)
+        )
+    );
+    combat_grid_y2 = Get_Combat_Grid_Cell_Y((mouse_x + 4), (mouse_y + 4));
+
+
+    combat_grid_col = (screen_x / COMBAT_GRID_CELL_WIDTH);
+    combat_grid_row = (screen_y / COMBAT_GRID_CELL_HEIGHT);
+
+    cgc2 = Get_Combat_Grid_Cell_X(mouse_x, mouse_y);
+    cgc1 = Get_Combat_Grid_Cell_Y(mouse_x, mouse_y);
+    l_screen_x = (((cgc2 - cgc1) * 16) + 158);  /* ¿ + mid x ? */
+    l_screen_y = (((cgc2 + cgc1) *  8) -  80);  /* ¿ + mid y ? */
+
+
+    strcpy(temp_string, "MD X,Y");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer(40, (y_off+(y_pos*line_height)), mouse_x);
+    Print_Integer(56, (y_off+(y_pos*line_height)), mouse_y);
+    y_pos++;
+
+    y_pos++;
+
+    strcpy(temp_string, "CG C,R");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_col);
+    Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_row);
+    y_pos++;
+
+    y_pos++;
+
+    strcpy(temp_string, "CG X,Y");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x);
+    Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_y);
+    y_pos++;
+
+    strcpy(temp_string, "CG1 X,Y");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x1);
+    Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_y1);
+    y_pos++;
+
+    strcpy(temp_string, "CG2 X,Y");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer(40, (y_off+(y_pos*line_height)), combat_grid_x2);
+    Print_Integer(56, (y_off+(y_pos*line_height)), combat_grid_y2);
+    y_pos++;
+
+    y_pos++;
+
+    strcpy(temp_string, "CGC 2,1");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer((2 + string_width + 5), (y_off+(y_pos*line_height)), cgc2);
+    Print_Integer((2 + string_width + 16), (y_off+(y_pos*line_height)), cgc1);
+    y_pos++;
+
+    strcpy(temp_string, "CGC SX,SY");
+    string_width = Get_String_Width(temp_string);
+    Print(         2, (y_off+(y_pos*line_height)), temp_string);
+    Print_Integer((2 + string_width + 5), (y_off+(y_pos*line_height)), l_screen_x);
+    Print_Integer((2 + string_width + 16), (y_off+(y_pos*line_height)), l_screen_y);
+    y_pos++;
+
+
+
+    // Set_Font_Style_Shadow_Down(0, 0, 0, 0);
+    // Set_Outline_Color(0);
+    // Set_Alias_Color(0);
+
+}
+
+// DELETE  void DBG_Combat_Figure_Load(void)
+// DELETE  {
+// DELETE      SAMB_ptr temp_seg = 0;
+// DELETE      int16_t unit_type = 0;
+// DELETE      char file_name[LEN_FILE_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+// DELETE      char buffer[6] = { 0, 0, 0, 0, 0, 0 };
+// DELETE      int16_t entry_num = 0;
+// DELETE      int16_t itr = 0;
+// DELETE  
+// DELETE  
+// DELETE      unit_type = _UNITS[DEBUG_UNIT_IDX].type;
+// DELETE  
+// DELETE  
+// DELETE      // 1 + (1 + ((28 * 30) / 16)) ... 840 / 16 52.5 + 1
+// DELETE      temp_seg = Allocate_First_Block(DBG_figure_pict_base_seg, 1);
+// DELETE  
+// DELETE  
+// DELETE      itoa(((unit_type / 15) + 1), buffer, 10);
+// DELETE      strcpy(file_name, figure_lbx_file__ovr163);
+// DELETE      if(((unit_type / 15) + 1) < 10)
+// DELETE      {
+// DELETE          strcat(file_name, str_figure_plural_s__ovr163);
+// DELETE      }
+// DELETE      strcat(file_name, buffer);
+// DELETE      strcat(file_name, str_empty_string__ovr163);
+// DELETE  
+// DELETE      entry_num = ((unit_type % 15) * 8);
+// DELETE      
+// DELETE      // unit_type is ut_HMenPikemen (112)
+// DELETE      // file_name is FIGURES8
+// DELETE      // entry_num is 56
+// DELETE      // should be HMPIKE?
+// DELETE  
+// DELETE      for(itr = 0; itr < 8; itr++)  /* 8 directions/faces per unit figure picture set */
+// DELETE      {
+// DELETE  
+// DELETE          DBG_figure_pict_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), DBG_figure_pict_base_seg);
+// DELETE  
+// DELETE      }
+// DELETE  
+// DELETE  }
+
+// DELETE  int DBG_Test_Figure_Pointers(SAMB_ptr * ptr_figure_pointer_seg, SAMB_ptr * DBG_ptr_figure_pointer_seg)
+// DELETE  {
+// DELETE      int64_t DBG_memory_address_1 = 0;
+// DELETE      int64_t DBG_memory_address_2 = 0;
+// DELETE      int itr = 0;
+// DELETE      int pass = 0;
+// DELETE  
+// DELETE      pass = ST_TRUE;
+// DELETE  
+// DELETE      for( itr = 0; itr < 8; itr++)
+// DELETE      {
+// DELETE  
+// DELETE          DBG_memory_address_1 = (int64_t)ptr_figure_pointer_seg[itr];
+// DELETE          DBG_memory_address_2 = (int64_t)DBG_ptr_figure_pointer_seg[itr];
+// DELETE  
+// DELETE          if(DBG_memory_address_2 != DBG_memory_address_1)
+// DELETE          {
+// DELETE              pass = ST_FALSE;
+// DELETE              break;
+// DELETE          }
+// DELETE  
+// DELETE      }
+// DELETE      
+// DELETE      return pass;
+// DELETE  
+// DELETE  }
+
+// DELETE  int DBG_Test_HMPIKE_7(SAMB_ptr pict_seg)
+// DELETE  {
+// DELETE      int itr = 0;
+// DELETE      int pass = 0;
+// DELETE  
+// DELETE      pass = ST_TRUE;
+// DELETE  
+// DELETE      // TODO  ~ (sizeof(FIGURES8_LBX_063) / sizeof(FIGURES8_LBX_063[0])
+// DELETE      for (itr = 0; itr < 638; itr++)
+// DELETE      {
+// DELETE  
+// DELETE  // #ifdef STU_DEBUG
+// DELETE  //     dbg_prn("DEBUG: [%s, %d]: %02X : %02X\n", __FILE__, __LINE__, pict_seg[itr], FIGURES8_LBX_063[itr]);
+// DELETE  // #endif
+// DELETE          // run-time altered bytes
+// DELETE          if(itr == FLIC_HDR_POS_CURRENT_FRAME)
+// DELETE          {
+// DELETE              continue;
+// DELETE          }
+// DELETE  
+// DELETE          if(pict_seg[itr] != FIGURES8_LBX_063[itr])
+// DELETE          {
+// DELETE              pass = ST_FALSE;
+// DELETE              __debugbreak();
+// DELETE          }
+// DELETE  
+// DELETE      }
+// DELETE  
+// DELETE      return pass;
+// DELETE  }

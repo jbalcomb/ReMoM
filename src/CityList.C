@@ -330,19 +330,12 @@ void CityList_Draw_Reduced_Map(void)
     int16_t city_world_y;
     int16_t city_world_p;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: CityList_Draw_Reduced_Map()\n", __FILE__, __LINE__);
-#endif
-
     city_world_x = _CITIES[list_cities[citylist_item_scanned_field]].wx;
     city_world_y = _CITIES[list_cities[citylist_item_scanned_field]].wy;
     city_world_p = _CITIES[list_cities[citylist_item_scanned_field]].wp;
 
     List_Screen_Draw_Reduced_Map(CITYLIST_REDUCED_MAP_X, CITYLIST_REDUCED_MAP_Y, CITYLIST_REDUCED_MAP_W, CITYLIST_REDUCED_MAP_H, city_world_p, city_world_x, city_world_y);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: CityList_Draw_Reduced_Map()\n", __FILE__, __LINE__);
-#endif
 }
 
 

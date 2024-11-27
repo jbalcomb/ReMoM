@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STU_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -103,6 +103,7 @@
     <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\EVENTS.H" />
     <ClInclude Include="..\..\..\src\Explore.H" />
+    <ClInclude Include="..\..\..\src\FIGURES8_LBX_063.H" />
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />

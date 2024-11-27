@@ -44,7 +44,6 @@ Tactical_Combat__WIP()
 
 
 
-CMB_Predraw_Figures__WIP()
 
 
 
@@ -53,3 +52,74 @@ selected unit vs. scanned unit
 selected/active unit is shown in the "active unit window"
 scanned unit is shown in the "combat unit display"
     ..."if you have toggled on the additional unit information button in your game settings window"
+
+
+
+
+
+## CMB_SelectedUnit
+
+XREF:  (112)
+    Tactical_Combat__WIP()
+    CMB_PrepareTurn__WIP()
+    G_BU_SelectUnit()
+    CMB_FillTargetMaps__WIP()
+    CMB_SetActionCursor__WIP()
+    Tactical_Combat_Draw()
+    CMB_DrawActiveUnitW()
+    Tactical_Combat_Draw_Buttons()
+    CMB_DrawAUWStats()
+    WIZ_BU_SelectNext__WIP()
+    WIZ_BU_SelectClosest()
+    AI_BU_ProcessAction()
+    End_Of_Combat__WIP()
+    Combat_Results_Scroll_Text()
+    STK_CaptureCity()
+    CMB_VortexPlayerMove()
+
+
+
+
+
+
+
+## CMB_CursorBattleUnit
+
+    CMB_SetTargetCursor()
+        CMB_CursorBattleUnit = ST_UNDEFINED
+
+    CMB_SetActionCursor__WIP()
+        CMB_CursorBattleUnit = ST_UNDEFINED
+        CMB_CursorBattleUnit = scanned_battle_unit_idx
+
+
+
+## CMB_ActiveUnitFrame
+
+
+
+
+## CMB_SetActionCursor__WIP()
+
+CMB_ActiveUnitFrame = 0;
+CMB_TargetFrame = 0;
+
+
+GUI_CombatWindow.image_num
+    GUI_CombatWindow.center_offset = 0;
+    GUI_CombatWindow.x1 = SCREEN_XMIN;
+    GUI_CombatWindow.y1 = SCREEN_YMIN;
+    GUI_CombatWindow.x2 = SCREEN_XMAX;
+    GUI_CombatWindow.y2 = SCREEN_YMAX;
+
+
+            CMB_TargetFrame = 1;
+
+            CMB_TargetFrame_X = Tile_X;
+
+            CMB_TargetFrame_Y = Tile_Y;
+
+            CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
+
+
+

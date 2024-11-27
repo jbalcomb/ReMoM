@@ -343,10 +343,6 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
     int16_t itr_cities;
     int16_t itr_heroes;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Resource_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
     Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
     gold_expense = 0;
@@ -409,10 +405,6 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Resource_Income_Total()\n", __FILE__, __LINE__);
-#endif
-
 }
 
 // WZD o120p08
@@ -428,10 +420,6 @@ int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx)
     int16_t mana_upkeep_cost;
     int16_t itr_units;
     int16_t itr_cities;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Armies_And_Enchantments_Mana_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     mana_upkeep_cost = 0;
 
@@ -454,10 +442,6 @@ int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx)
     {
         mana_upkeep_cost = (mana_upkeep_cost / 2);  /* -50% */
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Armies_And_Enchantments_Mana_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     return mana_upkeep_cost;
 }
@@ -538,10 +522,6 @@ int16_t Player_City_Enchantments_Upkeep(int16_t city_idx, int16_t player_idx)
     uint8_t * city_enchantments;
     int16_t itr_city_enchantments;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_City_Enchantments_Upkeep()\n", __FILE__, __LINE__);
-#endif
-
     mana_upkeep = 0;
 
     city_enchantments = _CITIES[city_idx].enchantments;
@@ -554,10 +534,6 @@ int16_t Player_City_Enchantments_Upkeep(int16_t city_idx, int16_t player_idx)
             mana_upkeep += city_enchantment_upkeep_table[itr_city_enchantments];
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_City_Enchantments_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     return mana_upkeep;
 }
@@ -572,10 +548,6 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 
     overland_enchantments = _players[player_idx].Globals;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Player_Overland_Enchantments_Upkeep()\n", __FILE__, __LINE__);
-#endif
-
     mana_upkeep = 0;
 
     for(itr_overland_enchantments = 0; itr_overland_enchantments < NUM_OVERLAND_ENCHANTMENTS; itr_overland_enchantments++)
@@ -585,10 +557,6 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
             mana_upkeep += overland_enchantment_upkeep_table[itr_overland_enchantments];
         }
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Player_Overland_Enchantments_Upkeep()\n", __FILE__, __LINE__);
-#endif
 
     return mana_upkeep;
 }
@@ -1049,10 +1017,6 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
     int16_t gold_units;  // _DI_
     int16_t itr;  //  _SI_
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Mainanence()\n", __FILE__, __LINE__);
-// #endif
-
     gold_units = 0;
 
     for(itr = 0; itr < NUM_BUILDINGS; itr++)
@@ -1068,10 +1032,6 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
             }
         }
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Mainanence()\n", __FILE__, __LINE__);
-// #endif
 
     return gold_units;
 }
@@ -1478,10 +1438,6 @@ int16_t City_Food_Terrain(int16_t city_idx)
     int16_t food2_units = 0;  // _DI_
     int16_t itr = 0;  // _SI_
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Terrain()\n", __FILE__, __LINE__);
-// #endif
-
     city_wp = _CITIES[city_idx].wp;
 
     // NOTE: Accounts for 'Corruption'
@@ -1500,11 +1456,7 @@ int16_t City_Food_Terrain(int16_t city_idx)
         food2_units = ((food2_units * 3) / 2);
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_Terrain()\n", __FILE__, __LINE__);
-// #endif
-
-    return food2_units / 4;
+    return (food2_units / 4);
 }
 
 // WZD o142p07
@@ -1521,11 +1473,6 @@ int16_t City_Food_WildGame(int16_t city_idx)
     uint8_t * bit_field = 0;  // _DX_
     uint16_t terrain_specials_offset = 0;
     uint8_t terrain_special = 0;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_WildGame(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-// #endif
-
 
     city_wp = _CITIES[city_idx].wp;
 
@@ -1556,10 +1503,6 @@ int16_t City_Food_WildGame(int16_t city_idx)
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_WildGame(city_idx = %d) { food_units = %d }\n", __FILE__, __LINE__, city_idx, food_units);
-// #endif
-
     return food_units;
 
 }
@@ -1589,10 +1532,6 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 
     int16_t itr_city_area_squares;  // _DI_
     int16_t square_x;  // _SI_
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Get_Useable_City_Area(city_wx = %d, city_wy = %d, city_wp = %d)\n", __FILE__, __LINE__, city_wx, city_wy, city_wp);
-// #endif
 
     map_square_count = 0;
 
@@ -1642,10 +1581,6 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
         }
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: Get_Useable_City_Area(city_wx = %d, city_wy = %d, city_wp = %d) { map_square_count = %d }\n", __FILE__, __LINE__, city_wx, city_wy, city_wp, map_square_count);
-// #endif
-
     return map_square_count;
 }
 
@@ -1657,10 +1592,6 @@ int16_t City_Food_Production(int16_t city_idx)
     int16_t city_area_food_units;
 
     int16_t food_units;
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Food_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1737,10 +1668,6 @@ int16_t City_Food_Production(int16_t city_idx)
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Food_Production(city_idx = %d) { food_units = %d }\n", __FILE__, __LINE__, city_idx, food_units);
-// #endif
-
     return food_units;
 }
 
@@ -1812,10 +1739,6 @@ int16_t City_Production_Production(int16_t city_idx)
     int16_t itr = 0;
     int16_t useable_map_squares = 0;
     int16_t production_modifier = 0;  // _DI_
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Production_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1911,10 +1834,6 @@ int16_t City_Production_Production(int16_t city_idx)
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Production_Production(city_idx = %d) { production_units = %d }\n", __FILE__, __LINE__, city_idx, production_units);
-// #endif
-
     return production_units;
 }
 
@@ -1934,10 +1853,6 @@ int16_t City_Gold_Production(int16_t city_idx)
     int16_t itr = 0;
     int16_t useable_map_squares = 0;
     int16_t gold_units = 0;  // _DI_
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Gold_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-// #endif
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -2046,10 +1961,6 @@ int16_t City_Gold_Production(int16_t city_idx)
 
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Gold_Production(city_idx = %d)\n", __FILE__, __LINE__, city_idx);
-// #endif
-
     return gold_units;
 }
 
@@ -2061,10 +1972,6 @@ int16_t City_Research_Production(int16_t city_idx)
     int16_t city_owner_idx;
 
     int16_t research_units;  // _SI_
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Research_Production()\n", __FILE__, __LINE__);
-// #endif
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2114,10 +2021,6 @@ int16_t City_Research_Production(int16_t city_idx)
         research_units = 0;
     }
 
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Research_Production()\n", __FILE__, __LINE__);
-// #endif
-
     return research_units;
 }
 
@@ -2138,10 +2041,6 @@ int16_t City_Mana_Production(int16_t city_idx)
     int16_t city_owner_idx = 0;
     int16_t itr = 0;
     int16_t mana_units = 0;  // _DI_
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Mana_Production()\n", __FILE__, __LINE__);
-// #endif
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2326,10 +2225,6 @@ int16_t City_Mana_Production(int16_t city_idx)
     {
         mana_units = 0;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: END: City_Mana_Production()\n", __FILE__, __LINE__);
-// #endif
 
     return mana_units;
 }
@@ -3258,7 +3153,6 @@ int16_t City_Rebel_Count(int16_t city_idx)
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
-
     unrest_races = (TBL_Unrest[_players[city_owner_idx].capital_race][_CITIES[city_idx].race] * 10);
     unrest_taxes = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
     unrest_percent = unrest_races + unrest_taxes;
@@ -3436,10 +3330,6 @@ int16_t City_Rebel_Count(int16_t city_idx)
     {
         _CITIES[city_idx].farmer_count = 0;
     }
-
-// #ifdef STU_DEBUG
-//     dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Map_Square_Is_Shared()\n", __FILE__, __LINE__);
-// #endif
 
     return rebel_count;
 }

@@ -188,7 +188,7 @@ int16_t Audio_Init__STUB(int16_t midi_driver, int16_t sound_channels, int16_t MI
     if(
         (midi_driver == SND_NONE)
         &&
-        (midi_driver == SND_NONE)
+        (digi_driver == SND_NONE)
     )
     {
         SND_Driver_Count = 0;

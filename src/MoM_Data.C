@@ -1839,7 +1839,7 @@ SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 // TODO  confirm GfxBuf_2400B is only used for 'bitmaps'
 /*
 
-used for battle unit figure, in CMB_Predraw_Figures__WIP()
+used for battle unit figure, in Combat_Figure_Compose_USEFULL()
 
 used for ..., in Cityscape_Draw_Buildings_And_Features__WIP()
 

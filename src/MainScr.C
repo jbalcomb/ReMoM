@@ -18,7 +18,7 @@
 
 
 // extern uint8_t DBG_debug_flag;
-uint8_t DBG_debug_flag = 0;
+uint8_t DBG_debug_flag = ST_FALSE;
 void Main_Screen_Draw_Debug_Information(void);
 
 
@@ -984,7 +984,7 @@ void Main_Screen(void)
     int16_t mouse_y = 0;
     int16_t itr_units = 0;
 
-    int16_t hotkey_idx_D = 0;  // debug_hotkey
+    int16_t hotkey_idx_Z = 0;  // debug_hotkey
     int16_t hotkey_idx_T = 0;  // test_hotkey
 
 
@@ -1114,7 +1114,7 @@ void Main_Screen(void)
         hotkey_idx_Alt_K = Add_Multi_Hot_Key_Field("K");
         hotkey_idx_Alt_A = Add_Multi_Hot_Key_Field("A");
 
-        hotkey_idx_D = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
+        hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
         hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
 
         /*
@@ -1221,7 +1221,7 @@ void Main_Screen(void)
         /* Alt-N   */  /* if(input_field_idx == hotkey_idx_Alt_A) {if(Check_Release_Version()==ST_FALSE){DBG_ShowTileInfo=1-DBG_ShowTileInfo;}} */
 
         // ST_DEBUG Hot-Keys
-        if(input_field_idx == hotkey_idx_D)  /* Debug Hot-Key */
+        if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
         {
             DLOG("STU_DEBUG: debug_hotkey");
             DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
@@ -2951,10 +2951,6 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     // int16_t l_map_x;  // _SI_
     // int16_t l_map_y;  // _DI_
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
-#endif
-
     // l_map_x = *map_x;
     // l_map_y = *map_y;
 
@@ -3041,10 +3037,6 @@ void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t u
     Reset_Stack_Draw_Priority();
     Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: OVL_BringIntoView(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_plane = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_plane);
-#endif
-
 }
 
 
@@ -3061,10 +3053,6 @@ int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int1
     // int16_t l_map_x;  // _SI_
     // int16_t l_map_y;  // _DI_
     int16_t off_map_flag;  // _CX_
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: OVL_TileOffScrnEdge(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d)\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_width, map_height);
-#endif
 
     // l_map_x = map_x;
     // l_map_y = map_y;
@@ -3120,10 +3108,6 @@ int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int1
         // NIU? CRP_OVL_MapWindowX = _prev_world_x * SQUARE_WIDTH;
         // NIU? CRP_OVL_MapWindowY = _prev_world_y * SQUARE_HEIGHT;
     }
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: OVL_TileOffScrnEdge(*map_x = %d, *map_y = %d, unit_x = %d, unit_y = %d, map_width = %d, map_height = %d) { off_map_flag = %d }\n", __FILE__, __LINE__, *map_x, *map_y, unit_x, unit_y, map_width, map_height, off_map_flag);
-#endif
 
     return off_map_flag;
 }
@@ -3552,7 +3536,7 @@ _ship_bitmap
 _combat_bitmap
 ???
 
-SEE ALSO:  CMB_Draw_Unit_Enchantment_Outline()
+SEE ALSO:  Combat_Unit_Enchantment_Outline_Set(); Combat_Unit_Enchantment_Outline_Draw();
 */
 void Draw_Unit_Enchantment_Outline(int16_t unit_idx)
 {
@@ -3939,14 +3923,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     // SAMB_ptr weapon_type_icon_seg;
     SAMB_ptr weapon_type_icon_seg = NULL;  // Error	C4703	potentially uninitialized local pointer variable 'weapon_type_icon_seg' used
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Unit_Window_Draw_Unit_Attributes(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
-
     Unit_Type = _UNITS[unit_idx].type;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Unit_Type: %d\n", __FILE__, __LINE__, Unit_Type);
-#endif
 
     /*
         BEGIN: Draw Unit Damaged Bar
@@ -3955,40 +3932,28 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     // MoO2  Module: AIPOWER  Max_Ship_Hits_      Address: 01:0005F2F6
     // MoO2  Module: CMBTAI   Get_Total_Hits_     Address: 01:0002BB06
     max_hits = Unit_Hit_Points(unit_idx) * _unit_type_table[Unit_Type].Figures;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: max_hits: %d\n", __FILE__, __LINE__, max_hits);
-#endif
+
     current_hits = max_hits - _UNITS[unit_idx].Damage;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: _UNITS[unit_idx].Damage: %d\n", __FILE__, __LINE__, _UNITS[unit_idx].Damage);
-    dbg_prn("DEBUG: [%s, %d]: current_hits: %d\n", __FILE__, __LINE__, current_hits);
-#endif
+
     // cmp  current_hits, max_hits; jz ... So, != OR just <
     if((current_hits != max_hits) && (current_hits > 0) )
     {
         // NOTE: `CWD; IDIV;` is 'divide', 'not 'modulus'
         bar_length = (((current_hits * 10) / max_hits) - 1);  // `- 1`, because Line() will draw one pixel, then this length
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: bar_length: %d\n", __FILE__, __LINE__, bar_length);
-#endif
+
         if(bar_length >= 6)
         {
-            DLOG("(bar_length >= 6)");
             Color = DAMAGE_BAR_GREEN;  /* Damage Bar Green */
         }
         else if(bar_length >= 3)
         {
-            DLOG("(bar_length >= 3)");
             Color = DAMAGE_BAR_YELLOW;  /* Damage Bar Yellow */
         }
         else
         {
-            DLOG("(bar_length < 3)");
             Color = DAMAGE_BAR_RED;  /* Damage Bar Red */
         }
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Color: %d\n", __FILE__, __LINE__, Color);
-#endif
+
         Line(x + 5, y + 19, x + bar_length + 5, y + 19, Color);
     }
     /*
@@ -4063,10 +4028,6 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     /*
         END: Weapon - "Circle"/"Ring"/"Medal"/"Icon"
     */
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Unit_Window_Draw_Unit_Attributes(x = %d, y = %d, unit_idx = %d)\n", __FILE__, __LINE__, x, y, unit_idx);
-#endif
 
 }
 

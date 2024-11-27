@@ -40,14 +40,10 @@ Elsewhere, ...
 */
 void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
 {
-    int16_t troops[9];
+    int16_t troops[MAX_STACK];
     int16_t stack_has_no_active_units;
     int16_t troop_count;
     int16_t itr;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Active_Stack_Movement_Modes()\n", __FILE__, __LINE__);
-#endif
 
     stack_has_no_active_units = ST_TRUE;
 
@@ -88,9 +84,6 @@ void Active_Stack_Movement_Modes(int16_t movement_mode_flags[])
         }
     }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Active_Stack_Movement_Modes()\n", __FILE__, __LINE__);
-#endif
 }
 
 

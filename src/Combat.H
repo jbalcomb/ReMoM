@@ -35,6 +35,124 @@ extern "C" {
 
 
 
+extern SAMB_ptr DBG_EmmHndl_FIGUREX;
+extern SAMB_ptr DBG_figure_pict_base_seg;
+
+
+
+
+
+#define COMBAT_GRID_X1(_x_,_y_)     ( CMB_GetTileX( ( (_x_) + 4), ((_y_) + 4) ) )
+#define COMBAT_GRID_Y1(_x_,_y_)     ( CMB_GetTileY( ( (_x_) + 4), ((_y_) + 4) ) )
+
+#define CALC_BASE_CGC2  IDK_base_cgc2 = (itr_y / 2)
+#define CALC_BASE_CGC1  IDK_base_cgc1 = (((itr_y + 1) / 2) + 9)
+
+#define CALC_CGC2       cgc2 = (IDK_base_cgc2 + itr_x)
+#define CALC_CGC1       cgc1 = (IDK_base_cgc1 - itr_x)
+
+#define CALC_SCREEN_X   screen_x = ((itr_x * 32) - ((itr_y & 0x1) * 16))
+#define CALC_SCREEN_Y   screen_y = ((itr_y * 8) - 8)
+
+
+/*
+
+Combat Battle Unit Figure Picture Cache
+
+EMM_FIGUREX_Init__HACK()
+USELESS_Combat_Figure_Load_Compose()
+Combat_Figure_Compose_USEFULL()
+Combat_Figure_Load()
+
+
+EMM_FIGUREX_Init__HACK()
+    logical_page = ((battle_unit_figure_idx * 3) / 2);
+    if((battle_unit_figure_idx & 0x1) == 0)
+    {
+        offset = 0;
+    }
+    else
+    {
+        offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
+    }
+    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));  // 28 * 30 = 840 / 16 = 52.5 PR per figure picture
+    EMM_PageFrame = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
+
+USELESS_Combat_Figure_Load_Compose()
+    if((battle_unit_figure_idx & 0x1) == 0)
+    {
+        offset = 0;
+    }
+    else
+    {
+        offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
+    }
+    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+    EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+    ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+
+Combat_Figure_Compose_USEFULL()
+        EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+        if((battle_unit_figure_idx & 1) == 0)
+        {
+            offset = 0;
+        }
+        else
+        {
+            offset = (512 * SZ_PARAGRAPH_B);
+        }
+        offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+        figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+        ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+
+Combat_Figure_Load()
+    EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+    if((battle_unit_figure_idx & 0x1) == 0)
+    {
+        offset = 0;
+    }
+    else
+    {
+        offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
+    }
+    offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);  // 16-byte header + 8 8-byte pointers = (16 + (8 * 8)) = (16 + (64)) / 16 = 5
+    ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+
+Pieces & Parts
+
+    1)  EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+
+    2)  if((battle_unit_figure_idx & 0x1) == 0)
+        {
+            offset = 0;
+        }
+        else
+        {
+            offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
+        }
+        offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+
+    3)  figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+        ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+
+EMM_FIGUREX_Init__HACK()
+    2
+USELESS_Combat_Figure_Load_Compose()
+    2, 1, 3
+Combat_Figure_Compose_USEFULL()
+    1, 2, 3
+Combat_Figure_Load()
+    1, 2, 3
+
+*/
+// 28 * 30 = 840 * 9 = 7560 / 16 = 472.5
+// offsets 56 paragraphs for each figure picture; 56 * = 896 - 840 = 56 / 3.5
+// 
+#define FIGUREX_MAP         EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
+#define FIGUREX_OFFSET      if((battle_unit_figure_idx & 0x1) == 0) { offset = 0; } else { offset = (512 * SZ_PARAGRAPH_B); } offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
+#define FIGUREX_POINTER     figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33); ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 /*
     Battle Unit Macros
 
@@ -305,10 +423,11 @@ struct s_BATTLEFIELD
 
 
 // ; (sizeof=0x1E)
+// sizeof 40, due to union / pointer size ... in-mem, union looks to be 12 bytes
 struct s_COMBAT_ENTITY
 {
-    /* 0x00 */ int16_t Origin_X;
-    /* 0x02 */ int16_t Origin_Y;
+    /* 0x00 */ int16_t draw_x;  /* only used by CMB_DrawEntities__WIP();  e.g., battle unit figure screen x;  screen x for Draw_Picture_Windowed() */
+    /* 0x02 */ int16_t draw_y;  /* only used by CMB_DrawEntities__WIP();  e.g., battle unit figure screen y;  screen y for Draw_Picture_Windowed() */
     /* 0x04 */ // int16_t IMG_Seg_or_Id;
     union {
         int64_t seg_or_idx;
@@ -316,16 +435,16 @@ struct s_COMBAT_ENTITY
         SAMB_ptr pict_seg;
     };
     /* 0x06 */ int16_t Draw_Frame;
-    /* 0x08 */ int16_t Y_Offset;
-    /* 0x0A */ int16_t X_Offset;
-    /* 0x0C */ int16_t Draw_Type;
-    /* 0x0E */ int16_t Owner;
+    /* 0x08 */ int16_t draw_y_shift;  /* only used by CMB_DrawEntities__WIP(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen y offset for Draw_Picture_Windowed() */
+    /* 0x0A */ int16_t draw_x_shift;  /* only used by CMB_DrawEntities__WIP(), only subtracted, never added;  curiously hard-coded value, per entity type;  screen x offset for Draw_Picture_Windowed() */
+    /* 0x0C */ int16_t entity_type;  /* ¿ entity type ?  1 is battle unit figure */
+    /* 0x0E */ int16_t Owner;  /* battle_unit[].controller_idx */
     /* 0x10 */ int16_t UU_Facing;
-    /* 0x12 */ int16_t UE_Color;
+    /* 0x12 */ int16_t outline_magic_realm;  /* unit enchantment outline magic realm */
     /* 0x14 */ int16_t Unused_14h;
     /* 0x16 */ int16_t Blood_Frame;
     /* 0x18 */ int16_t Blood_Amt;
-    /* 0x1A */ uint32_t ZDepth;
+    /* 0x1A */ uint32_t draw_order_value;
     /* 0x1E */
 };
 
@@ -683,11 +802,10 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
 int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, int16_t troop_count);
 
 // WZD o98p10
-void CMB_SetActionCursor__WIP(void);
+void Assign_Mouse_Image(void);
 
 // WZD o98p11
-// drake178: BU_GetRangedCursor()
-// BU_GetRangedCursor()
+int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o98p12
 void CMB_CreateCELabels__WIP(void);
@@ -716,8 +834,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
 // BU_IsFlying()
 
 // WZD o98p19
-// drake178: BU_MeleeFlightCheck()
-// BU_MeleeFlightCheck()
+int16_t BU_MeleeFlightCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o98p20
 // drake178: BU_PrepMoveSound()
@@ -832,10 +949,10 @@ void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx);
 void Combat_Figure_Effect__WIP(int16_t effect);
 
 // WZD o105p05
-// BU_SetUEColor()
+void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx);
 
 // WZD o105p06
-void Combat_Figure_Enchantment_Outline(int16_t enchantment_magic_realm);
+void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm);
 
 // WZD o105p07
 void CMB_UpdateTrueSight(void);
@@ -877,7 +994,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
 int16_t Get_Effective_Hits(int16_t hits, int16_t defense);
 
 // WZD o110p05
-int16_t Get_Effective_Ranged_Strength();
+int16_t Get_Effective_Ranged_Strength(int16_t ranged, int16_t figures, int16_t attack_flags);
 
 // WZD o110p06
 int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figures, int16_t attack_flags, int16_t ranged_type);
@@ -961,7 +1078,7 @@ void Deploy_Battle_Units(int16_t player_idx);
 // BU_SummonDemon()
 
 // WZD o113p11
-// BU_MeleeWallCheck()
+int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o113p12
 // CMB_ManaLeak()
@@ -1216,7 +1333,7 @@ void CMB_DrawEntities__WIP(void);
 // drake178: CMB_SpawnVortices()
 
 // WZD ovr153p12
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t FigId, int16_t MaxFigs, int16_t Owner, int16_t UECol, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld);
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_t TarX, int16_t TarY, int16_t MStage, int16_t FigId, int16_t MaxFigs, int16_t Owner, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld);
 
 // WZD ovr153p13
 // drake178: CMB_SpawnUnitCurse()
@@ -1225,7 +1342,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t PosX, int16_t PosY, int16_
 void CMB_EntitiesReset(void);
 
 // WZD ovr153p15
-void Combat_Figure_Compose(int16_t figure_index, int16_t Direction, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame);
+void USELESS_Combat_Figure_Load_Compose(int16_t figure_index, int16_t figure_set_idx, int16_t player_idx, int16_t enchantment_magic_realm, int16_t Frame);
 
 // WZD ovr153p16
 // drake178: CMB_SpawnProjectiles()
@@ -1234,10 +1351,10 @@ void Combat_Figure_Compose(int16_t figure_index, int16_t Direction, int16_t play
 // drake178: CMB_GetFigDrawPos()
 
 // WZD ovr153p18
-void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int16_t XOff, int16_t YOff, int16_t Frame, int16_t DrawType, int16_t Owner, int16_t UU_10h, int16_t UE_Color, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
+void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t Owner, int16_t UU_10h, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
 
 // WZD ovr153p19
-void CMB_ZSort_Insert__WIP(void);
+void Set_Entity_Draw_Order(void);
 
 // WZD ovr153p20
 void EMM_FIGUREX_Init__HACK(int16_t figure_index);
@@ -1249,7 +1366,7 @@ void EMM_TILEX_Init__HACK(void);
 // drake178: UU_NullSub_153_1()
 
 // WZD ovr153p23
-void CMB_Predraw_Figures__WIP(void);
+void Combat_Figure_Compose_USEFULL(void);
 
 // WZD ovr153p24
 // drake178: RP_NullSub_153_2()
@@ -1294,22 +1411,22 @@ void CMB_SetMoveMaps__WIP(int16_t location_type, int16_t city_walls);
 // drake178: CMB_TerrPatchGen()
 
 // WZD ovr154p12
-void CMB_GetScreenCoords__WIP(int16_t XPos, int16_t YPos, int16_t TileX, int16_t TileY, int16_t * Retn_X, int16_t * Retn_Y);
+void Combat_Grid_Screen_Coordinates(int16_t cgc2, int16_t cgc1, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y);
 
 // WZD ovr154p13
 // drake178: CMB_EarthToMud()
 
 // WZD ovr154p14
-int16_t CMB_GetTileX(int16_t Scrn_X, int16_t Scrn_Y);
+int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y);
 
 // WZD ovr154p15
-int16_t CMB_GetTileY(int16_t Scrn_X, int16_t Scrn_Y);
+int16_t Get_Combat_Grid_Cell_Y(int16_t screen_x, int16_t screen_y);
 
 // WZD ovr154p16
-void CMB_GetInTileX(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_X, int16_t * InTile_X);
+void Screen_To_Combat_Grid_Cell_X_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * Tile_X, int16_t * InTile_X);
 
 // WZD ovr154p17
-void CMB_GetInTileY(int16_t Scrn_X, int16_t Scrn_Y, int16_t * Tile_Y, int16_t * InTile_Y);
+void Screen_To_Combat_Grid_Cell_Y_And_Offset(int16_t screen_x, int16_t screen_y, int16_t * Tile_Y, int16_t * InTile_Y);
 
 // WZD ovr154p18
 void Combat_Cache_Read(void);

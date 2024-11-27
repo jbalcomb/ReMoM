@@ -640,8 +640,9 @@ void Building_Allows_List__WIP(int16_t bldg_idx, int16_t * allows_list_count, in
     {
         Cant_Build = ST_FALSE;
         if(
-            (bldg_data_table[itr].reqd_bldg_1 == bldg_idx) &&
             (bldg_data_table[itr].reqd_bldg_1 == bldg_idx)
+            &&
+            (bldg_data_table[itr].reqd_bldg_2 == bldg_idx)
         )
         {
             for(itr_cantbuild = 0; itr_cantbuild < _race_type_table[city_race].cant_build_count; itr_cantbuild++)

@@ -365,9 +365,9 @@ void Pump_Events(void)
 
     while (PeekMessageA(&Message, 0, 0, 0, PM_REMOVE))
     {
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: Message.message: %d\n", __FILE__, __LINE__, Message.message);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: Message.message: %d\n", __FILE__, __LINE__, Message.message);
+// #endif
         if (Message.message == WM_QUIT)
         {
             // DELETE  g_State_Run = false;

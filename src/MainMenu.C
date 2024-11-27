@@ -251,17 +251,11 @@ int16_t Main_Menu_Screen(void)
     
     int16_t leave_screen_flag;
     
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen()\n", __FILE__, __LINE__);
-#endif
-
-
     if(!main_menu_screen_loaded)
     {
         Main_Menu_Load_Pictures();
         main_menu_screen_loaded = ST_TRUE;
     }
-
 
     // if(g_GUI_MainScreenJump != e_ST_UNDEFINED)
     // {
@@ -427,7 +421,6 @@ int16_t Main_Menu_Screen(void)
 
         if(quit_game_flag == ST_TRUE)
         {
-            DLOG("(quit_game_flag == ST_TRUE)");
             current_screen = scr_Quit_To_DOS;
             leave_screen_flag = ST_TRUE;
             current_menu_screen = 3;  // Quit To DOS
@@ -436,49 +429,39 @@ int16_t Main_Menu_Screen(void)
         {
             if(input_field_idx != ST_FALSE)
             {
-                DLOG("(input_field_idx != ST_FALSE)");
                 leave_screen_flag = ST_TRUE;
             }
 
             if((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))
             {
-                DLOG("((input_field_idx == _continue_hotkey) || (input_field_idx == _continue_button))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 0;
-                // HACK:
-                current_screen = scr_Continue;
+                /* HACK */  current_screen = scr_Continue;
             }
             if((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))
             {
-                DLOG("((input_field_idx == _load_hotkey) || (input_field_idx == _load_button))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 1;
-                // HACK:
-                current_screen = scr_Load_Screen;
+                /* HACK */  current_screen = scr_Load_Screen;
             }
             if((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))
             {
-                DLOG("((input_field_idx == _new_hotkey) || (input_field_idx == _new_button))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 2;
-                // HACK:
-                current_screen = scr_New_Game_Screen;
+                /* HACK */  current_screen = scr_New_Game_Screen;
             }
             if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
             {
-                DLOG("((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 3;
-                // HACK:
-                current_screen = scr_Quit_To_DOS;
+                /* HACK */  current_screen = scr_Quit_To_DOS;
             }
             if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
             {
                 DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 4;
-                // HACK:
-                current_screen = scr_Hall_Of_Fame_Screen;
+                /* HACK */  current_screen = scr_Hall_Of_Fame_Screen;
             }
         }
 
@@ -508,9 +491,6 @@ int16_t Main_Menu_Screen(void)
     // TODO  Disable_Redraw();
     // TODO  Deactivate_Help_List();
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Screen()\n", __FILE__, __LINE__);
-#endif
     return current_menu_screen;
 
 }
@@ -524,10 +504,6 @@ void Main_Menu_Screen_Draw(void)
     uint16_t menu_y_start;
     uint8_t menu_shift;
     int16_t scanned_field;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Main_Menu_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 
     menu_x_start = 123;
     menu_y_start = 141;
@@ -602,10 +578,5 @@ void Main_Menu_Screen_Draw(void)
     FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
 
     // TODO  IDK_frame_count = ((IDK_frame_count + 1) % 20);
-
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Main_Menu_Screen_Draw()\n", __FILE__, __LINE__);
-#endif
 
 }

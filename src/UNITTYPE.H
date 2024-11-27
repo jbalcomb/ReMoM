@@ -119,7 +119,7 @@ enum e_UNIT_TYPE
     ut_HMenMagicians  = 109,
     ut_HMenEngineers  = 110,
     ut_HMenSettlers  = 111,
-    ut_HMenPikemen  = 112,
+    ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
     ut_Paladins  = 113,
     ut_KlckSpearmen  = 114,
     ut_KlckSwordsmen  = 115,
