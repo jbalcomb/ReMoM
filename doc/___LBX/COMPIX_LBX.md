@@ -4,89 +4,89 @@ Type:        0
 
 
 
-000             
-001  CMBTBUTT   spell button
-002  CMBTBUTT   wait button
-003  CMBTBUTT   done button
-004  CMBTBUTT   auto button
-005  COMENCHI   light
-006  COMENCHI   darkness
-007  COMENCHI   warp reality
-008  COMENCHI   black curse
-009  COMENCHI   wrack
-010  COMENCHI   metal fires
-011  COMENCHI   prayer
-012  COMENCHI   high prayer
-013  COMENCHI   terror
-014  COMENCHI   lightning
-015  COMENCHI   counter magic
-016  CSPELL     right arrow
-017  CSPELL     left arrow
-018  HITBAR     unit hit bar
-019  COMBLIST   combat unit list
-020  CMBTBUTT   use button
-021  CMBTBUTT   flee butotn
-022  CMBTBUTT   cancel button
-023  LOCKBUTT   spell lock
-024  LOCKBUTT   wait lock
-025  LOCKBUTT   use lock
-026  LOCKBUTT   auto lock
-027  LOCKBUTT   flee lock
-028  LOCKBUTT   done lock
-029  SMALICON   sword
-030  SMALICON   fireball
-031  SMALICON   bless
-032  SMALICON   magic
-033  SMALICON   adam
-034  SMALICON   bow
-035  SMALICON   rock
-036  SMALICON   breath
-037  SMALICON   axe
-038  SMALICON   walk
-039  SMALICON   fly
-040  SMALICON   swim
-041  MASINVIS   mass invis
-042  INFOICON   crusade
-043  INFOICON   holy arms
-044  INFOICON   holy light
-045  INFOICON   charm of life
-046  INFOICON   chaos surge
-047  INFOICON   red node
-048  INFOICON   red node w/aura
-049  INFOICON   eternal night
-050  INFOICON   cloud of darkness
-051  INFOICON   zombie mastery
-052  INFOICON   green node
-053  INFOICON   green node w/aura
-054  INFOICON   blue node
-055  INFOICON   blue node w/aura
-056  INFOBAC1   info bot
-057  INFOBAC2   info mid
-058  INFOBAC3   info top
-059  INFOBOX    info box
-060  COMENCHI   entangle icon
-061  SCANICON   sword
-062  SCANICON   fireball
-063  SCANICON   bless
-064  SCANICON   magic
-065  SCANICON   adam
-066  SCANICON   bow
-067  SCANICON   rock
-068  SCANICON   breath
-069  SCANICON   axe
-070  SCANICON   defense
-071  SCANICON   health
-072  SCANICON   walk
-073  SCANICON   fly
-074  SCANICON   swim
-075  SCANICON   resistance
-076  SCANICON   silver
-077  SCANICON   gold
-078  SCANICON   red
-079  COMENCHI   mana leek
-080  COMENCHI   blur
-081  BASE       no raze button
-082  BASE       raze button
+COMPIX.LBX, 000  ""           ""
+COMPIX.LBX, 001  "CMBTBUTT"   "spell button"
+COMPIX.LBX, 002  "CMBTBUTT"   "wait button"
+COMPIX.LBX, 003  "CMBTBUTT"   "done button"
+COMPIX.LBX, 004  "CMBTBUTT"   "auto button"
+COMPIX.LBX, 005  "COMENCHI"   "light"
+COMPIX.LBX, 006  "COMENCHI"   "darkness"
+COMPIX.LBX, 007  "COMENCHI"   "warp reality"
+COMPIX.LBX, 008  "COMENCHI"   "black curse"
+COMPIX.LBX, 009  "COMENCHI"   "wrack"
+COMPIX.LBX, 010  "COMENCHI"   "metal fires"
+COMPIX.LBX, 011  "COMENCHI"   "prayer"
+COMPIX.LBX, 012  "COMENCHI"   "high prayer"
+COMPIX.LBX, 013  "COMENCHI"   "terror"
+COMPIX.LBX, 014  "COMENCHI"   "lightning"
+COMPIX.LBX, 015  "COMENCHI"   "counter magic"
+COMPIX.LBX, 016  "CSPELL"     "right arrow"
+COMPIX.LBX, 017  "CSPELL"     "left arrow"
+COMPIX.LBX, 018  "HITBAR"     "unit hit bar"
+COMPIX.LBX, 019  "COMBLIST"   "combat unit list"
+COMPIX.LBX, 020  "CMBTBUTT"   "use button"
+COMPIX.LBX, 021  "CMBTBUTT"   "flee butotn"
+COMPIX.LBX, 022  "CMBTBUTT"   "cancel button"
+COMPIX.LBX, 023  "LOCKBUTT"   "spell lock"
+COMPIX.LBX, 024  "LOCKBUTT"   "wait lock"
+COMPIX.LBX, 025  "LOCKBUTT"   "use lock"
+COMPIX.LBX, 026  "LOCKBUTT"   "auto lock"
+COMPIX.LBX, 027  "LOCKBUTT"   "flee lock"
+COMPIX.LBX, 028  "LOCKBUTT"   "done lock"
+COMPIX.LBX, 029  "SMALICON"   "sword"
+COMPIX.LBX, 030  "SMALICON"   "fireball"
+COMPIX.LBX, 031  "SMALICON"   "bless"
+COMPIX.LBX, 032  "SMALICON"   "magic"
+COMPIX.LBX, 033  "SMALICON"   "adam"
+COMPIX.LBX, 034  "SMALICON"   "bow"
+COMPIX.LBX, 035  "SMALICON"   "rock"
+COMPIX.LBX, 036  "SMALICON"   "breath"
+COMPIX.LBX, 037  "SMALICON"   "axe"
+COMPIX.LBX, 038  "SMALICON"   "walk"
+COMPIX.LBX, 039  "SMALICON"   "fly"
+COMPIX.LBX, 040  "SMALICON"   "swim"
+COMPIX.LBX, 041  "MASINVIS"   "mass invis"
+COMPIX.LBX, 042  "INFOICON"   "crusade"
+COMPIX.LBX, 043  "INFOICON"   "holy arms"
+COMPIX.LBX, 044  "INFOICON"   "holy light"
+COMPIX.LBX, 045  "INFOICON"   "charm of life"
+COMPIX.LBX, 046  "INFOICON"   "chaos surge"
+COMPIX.LBX, 047  "INFOICON"   "red node"
+COMPIX.LBX, 048  "INFOICON"   "red node w/aura"
+COMPIX.LBX, 049  "INFOICON"   "eternal night"
+COMPIX.LBX, 050  "INFOICON"   "cloud of darkness"
+COMPIX.LBX, 051  "INFOICON"   "zombie mastery"
+COMPIX.LBX, 052  "INFOICON"   "green node"
+COMPIX.LBX, 053  "INFOICON"   "green node w/aura"
+COMPIX.LBX, 054  "INFOICON"   "blue node"
+COMPIX.LBX, 055  "INFOICON"   "blue node w/aura"
+COMPIX.LBX, 056  "INFOBAC1"   "info bot"
+COMPIX.LBX, 057  "INFOBAC2"   "info mid"
+COMPIX.LBX, 058  "INFOBAC3"   "info top"
+COMPIX.LBX, 059  "INFOBOX"    "info box"
+COMPIX.LBX, 060  "COMENCHI"   "entangle icon"
+COMPIX.LBX, 061  "SCANICON"   "sword"
+COMPIX.LBX, 062  "SCANICON"   "fireball"
+COMPIX.LBX, 063  "SCANICON"   "bless"
+COMPIX.LBX, 064  "SCANICON"   "magic"
+COMPIX.LBX, 065  "SCANICON"   "adam"
+COMPIX.LBX, 066  "SCANICON"   "bow"
+COMPIX.LBX, 067  "SCANICON"   "rock"
+COMPIX.LBX, 068  "SCANICON"   "breath"
+COMPIX.LBX, 069  "SCANICON"   "axe"
+COMPIX.LBX, 070  "SCANICON"   "defense"
+COMPIX.LBX, 071  "SCANICON"   "health"
+COMPIX.LBX, 072  "SCANICON"   "walk"
+COMPIX.LBX, 073  "SCANICON"   "fly"
+COMPIX.LBX, 074  "SCANICON"   "swim"
+COMPIX.LBX, 075  "SCANICON"   "resistance"
+COMPIX.LBX, 076  "SCANICON"   "silver"
+COMPIX.LBX, 077  "SCANICON"   "gold"
+COMPIX.LBX, 078  "SCANICON"   "red"
+COMPIX.LBX, 079  "COMENCHI"   "mana leek"
+COMPIX.LBX, 080  "COMENCHI"   "blur"
+COMPIX.LBX, 081  "BASE"       "no raze button"
+COMPIX.LBX, 082  "BASE"       "raze button"
 
 
 

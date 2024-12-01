@@ -458,7 +458,6 @@ int16_t Main_Menu_Screen(void)
             }
             if((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))
             {
-                DLOG("((input_field_idx == _hof_hotkey) || (input_field_idx == _hof_button))");
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 4;
                 /* HACK */  current_screen = scr_Hall_Of_Fame_Screen;

@@ -4,6 +4,22 @@ Tactical Combat
 
 
 
+Active Unit Window
+Spell Information Window
+Defender Enchantment Window
+Attacker Enchantment Window
+Combat Unit Display
+Combat Information Window
+
+
+
+
+
+
+
+
+
+
 Move_Units()
     Eval_Move_Path__WIP(..., &attack_flag, ...)
     if((attack_flag == ST_TRUE) || (UU_flag_FALSE == ST_TRUE))

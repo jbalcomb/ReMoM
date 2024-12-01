@@ -220,45 +220,49 @@ char cnst_Cmbt_Immobile[] = "All units are immobilized. Select an action.";
 
 // WZD dseg:5852
 char compix_lbx_file__ovr103[] = "COMPIX";
-// WZD dseg:5858 00                                              cnst_ZeroString_19 db 0                 ; DATA XREF: CMB_SelectCaster+4Eo
-// WZD dseg:5859 1B 00                                           cnst_HOTKEY_Esc13 db 1Bh,0              ; DATA XREF: CMB_ShowInfoWindow__WIP+225o
-// WZD dseg:5859                                                                                         ; should use dseg:2c56 - reused in combat info upgrade
-// WZD dseg:585B 20 53 70 65 6C 6C 73 00                         cnst_SpaceSpells db ' Spells',0         ; DATA XREF: CMB_DrawInfoWindow+171o ...
-// WZD dseg:585B                                                                                         ; could use dseg:4ce9 - reused in combat info upgrade
-// WZD dseg:5863 43 72 75 73 61 64 65 00                         cnst_Crusade db 'Crusade',0             ; DATA XREF: CMB_FillInfoArrays+5Ao
-// WZD dseg:5863                                                                                         ;  - reused in combat info upgrade
-// WZD dseg:586B 48 6F 6C 79 20 41 72 6D 73 00                   cnst_HolyArms db 'Holy Arms',0          ; DATA XREF: CMB_FillInfoArrays+A2o
-// WZD dseg:586B                                                                                         ;  - reused in combat info upgrade
-// WZD dseg:5875 43 68 61 72 6D 20 4F 66 20 4C 69 66 65 00       cnst_CharmofLife db 'Charm Of Life',0   ; DATA XREF: CMB_FillInfoArrays+EAo
-// WZD dseg:5875                                                                                         ;  - reused in combat info upgrade
-// WZD dseg:5883 5A 6F 6D 62 69 65 20 4D 61 73 74 65 72 79 00    cnst_ZombieMastery db 'Zombie Mastery',0
-// WZD dseg:5883                                                                                         ; DATA XREF: CMB_FillInfoArrays:loc_8441Do
-// WZD dseg:5883                                                                                         ;  - reused in combat info upgrade
-// WZD dseg:5892 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 53 6F 72+cnst_SorcNodeDispel db 'Dispells Non-Sorcery',0
-// WZD dseg:5892 63 65 72 79 00                                                                          ; DATA XREF: CMB_SetCommonXFX+4Co
-// WZD dseg:5892                                                                                         ;  - moved in combat info upgrade
-// WZD dseg:58A7 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 43 68 61+cnst_ChaosNodeDispel db 'Dispells Non-Chaos',0
-// WZD dseg:58A7 6F 73 00                                                                                ; DATA XREF: CMB_SetCommonXFX+80o
-// WZD dseg:58A7                                                                                         ;  - moved in combat info upgrade
-// WZD dseg:58BA 44 69 73 70 65 6C 6C 73 20 4E 6F 6E 2D 4E 61 74+cnst_NatNodeDispel db 'Dispells Non-Nature',0
-// WZD dseg:58BA 75 72 65 00                                                                             ; DATA XREF: CMB_SetCommonXFX+9Fo
-// WZD dseg:58BA                                                                                         ;  - moved in combat info upgrade
-// WZD dseg:58CE 53 6F 72 63 65 72 79 20 4E 6F 64 65 20 41 75 72+cnst_SorceryAura db 'Sorcery Node Aura',0
-// WZD dseg:58CE 61 00                                                                                   ; DATA XREF: CMB_SetCommonXFX+D1o
-// WZD dseg:58CE                                                                                         ;  - moved in combat info upgrade
-// WZD dseg:58E0 4E 61 74 75 72 65 20 4E 6F 64 65 20 41 75 72 61+cnst_NatureAura db 'Nature Node Aura',0 ; DATA XREF: CMB_SetCommonXFX+105o
-// WZD dseg:58E0 00                                                                                      ;  - moved in combat info upgrade
-// WZD dseg:58F1 43 68 61 6F 73 20 4E 6F 64 65 20 41 75 72 61 00 cnst_ChaosAura db 'Chaos Node Aura',0   ; DATA XREF: CMB_SetCommonXFX+124o
-// WZD dseg:58F1                                                                                         ;  - moved in combat info upgrade
-// WZD dseg:5901 43 6C 6F 75 64 20 4F 66 20 44 61 72 6B 6E 65 73+cnst_CloudofDark db 'Cloud Of Darkness',0
-// WZD dseg:5901 73 00                                                                                   ; DATA XREF: CMB_SetCommonXFX+151o
-// WZD dseg:5901                                                                                         ; should use dseg:273e - reused in combat info upgrade
-// WZD dseg:5913 48 6F 6C 79 20 4C 69 67 68 74 00                cnst_HolyLight db 'Holy Light',0        ; DATA XREF: CMB_SetCommonXFX+18Ao
-// WZD dseg:5913                                                                                         ; should use dseg:27d9 - reused in combat info upgrade
-// WZD dseg:591E 43 68 61 6F 73 20 53 75 72 67 65 00             cnst_ChaosSurge db 'Chaos Surge',0      ; DATA XREF: CMB_SetCommonXFX+1D0o
-// WZD dseg:591E                                                                                         ;  - reused in combat info upgrade
-// WZD dseg:592A 45 74 65 72 6E 61 6C 20 4E 69 67 68 74 00       cnst_EternalNight db 'Eternal Night',0  ; DATA XREF: CMB_SetCommonXFX+21Eo
-// WZD dseg:592A                                                                                         ;  - reused in combat info upgrade
+
+// WZD dseg:5858
+char cnst_ZeroString_19[] = "";
+
+// WZD dseg:5859
+char cnst_HOTKEY_Esc13[] = "\x1B";
+
+// WZD dseg:585B
+char cnst_SpaceSpells[] = " Spells";
+
+// WZD dseg:5863
+char cnst_Crusade[]= "Crusade";
+// WZD dseg:586B
+char cnst_HolyArms[] = "Holy Arms";
+// WZD dseg:5875
+char cnst_CharmofLife[] = "Charm Of Life";
+// WZD dseg:5883
+char cnst_ZombieMastery[] = "Zombie Mastery";
+
+// WZD dseg:5892
+char cnst_SorcNodeDispel[] = "Dispells Non-Sorcery";
+// WZD dseg:58A7
+char cnst_ChaosNodeDispel[] = "Dispells Non-Chaos";
+// WZD dseg:58BA
+char cnst_NatNodeDispel[] = "Dispells Non-Nature";
+
+// WZD dseg:58CE
+char cnst_SorceryAura[] = "Sorcery Node Aura";
+// WZD dseg:58E0
+char cnst_NatureAura[] = "Nature Node Aura";
+// WZD dseg:58F1
+char cnst_ChaosAura[] = "Chaos Node Aura";
+
+// WZD dseg:5901
+char cnst_CloudOfDarkness[] = "Cloud Of Darkness";
+// WZD dseg:5913
+char cnst_HolyLight[] = "Holy Light";
+
+// WZD dseg:591E
+char cnst_ChaosSurge[] = "Chaos Surge";
+// WZD dseg:592A
+char cnst_EternalNight[] = "Eternal Night";
+
 // WZD dseg:5938 59 6F 75 20 61 72 65 20 75 6E 61 62 6C 65 20 74+cnst_CmbCastError_2 db 'You are unable to throw spells at this time.',0
 // WZD dseg:5938 6F 20 74 68 72 6F 77 20 73 70 65 6C 6C 73 20 61+                                        ; DATA XREF: CMB_SpellcastError__WIP:loc_84E35o
 // WZD dseg:5965 59 6F 75 20 6D 61 79 20 6F 6E 6C 79 20 63 61 73+cnst_CmbCastError_1 db 'You may only cast once per turn.',0
@@ -755,8 +759,9 @@ Page 92  (PDF Page 97)
 */
 int16_t CMB_CursorBattleUnit;
 
-// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CMB_InfoIcons@ dw 0Eh dup(0)        ; DATA XREF: CMB_ShowInfoWindow+112w ...
-// WZD dseg:C58C 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 pointers to World_Data@ appended images
+// WZD dseg:C58C
+SAMB_ptr _combat_info_effect_icon_segs[14];
+
 // WZD dseg:C5A8
 // struct ATK_ICONS IMG_CMB_ATK_Icons;
 SAMB_ptr IMG_CMB_ATK_Icons[9];
@@ -786,31 +791,46 @@ SAMB_ptr IMG_CMB_MoveIcons[3];
 SAMB_ptr IMG_CMB_HitBar;
 // WZD dseg:C7B2 00 00                                           IMG_CMB_FX_Figure@ dw 0                 ; DATA XREF: BU_CreateImage+1Aw ...
 // WZD dseg:C7B2                                                                                         ; 7Ch paragraphs appended into World_Data@
-// WZD dseg:C7B4 00                                              CMB_HeavenlyLight db 0                  ; DATA XREF: CMB_ShowInfoWindow+29w ...
-// WZD dseg:C7B5 00                                              CMB_CloudofShadow db 0                  ; DATA XREF: CMB_ShowInfoWindow:loc_83D3Dw ...
-// WZD dseg:C7B6 00                                              CMB_CentralStructure db 0               ; DATA XREF: CMB_ShowInfoWindow:loc_83D31w ...
+
+// WZD dseg:C7B4
+int16_t CMB_HeavenlyLight;
+// WZD dseg:C7B5
+int16_t CMB_CloudofShadow;
+// WZD dseg:C7B6
+int16_t CMB_CentralStructure;
+
 // WZD dseg:C7B7 00                                              db    0
-// WZD dseg:C7B8 00 00                                           IMG_CMB_Info_Box@ dw 0                  ; DATA XREF: CMB_ShowInfoWindow+F1w ...
-// WZD dseg:C7B8                                                                                         ; appended into World_Data@
-// WZD dseg:C7BA 00 00                                           IMG_CMB_Info_Bottom@ dw 0               ; DATA XREF: CMB_ShowInfoWindow+C3w ...
-// WZD dseg:C7BA                                                                                         ; appended into World_Data@
-// WZD dseg:C7BC 00 00                                           IMG_CMB_Info_Middle@ dw 0               ; DATA XREF: CMB_ShowInfoWindow+DAw ...
-// WZD dseg:C7BC                                                                                         ; appended into World_Data@
-// WZD dseg:C7BE 00 00                                           IMG_CMB_Info_Top@ dw 0                  ; DATA XREF: CMB_ShowInfoWindow+130w ...
-// WZD dseg:C7BE                                                                                         ; appended into the sandbox
-// WZD dseg:C7C0 00 00                                           CMB_PerSideInfo dw 0                    ; DATA XREF: CMB_ShowInfoWindow:loc_83E82r ...
+
+// WZD dseg:C7B8
+SAMB_ptr _combat_info_wnd_box_seg;
+
+// WZD dseg:C7BA
+SAMB_ptr _combat_info_wnd_bot_seg;
+// WZD dseg:C7BC
+SAMB_ptr _combat_info_wnd_mid_seg;
+// WZD dseg:C7BE
+SAMB_ptr _combat_info_wnd_top_seg;
+
+// WZD dseg:C7C0
+int16_t CMB_PerSideInfo;
 
 // WZD dseg:C7C2
 // ; contains a Node_Type flag or -1 (unit bonus aura)
 int16_t _combat_node_type;
 
-// WZD dseg:C7C4 00 00                                           CMB_Info_CommonCount dw 0               ; DATA XREF: CMB_ShowInfoWindow+144r ...
+// WZD dseg:C7C4
+int16_t _combat_info_item_count;
+
 // WZD dseg:C7C6
-int16_t CMB_ExternalFX_Count;
-// WZD dseg:C7C8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CMB_External_FX@ dw 0Eh dup(0)          ; DATA XREF: CMB_ShowInfoWindow+82w ...
-// WZD dseg:C7C8 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; 30 LBX_NearAlloc_Next bytes each
-// WZD dseg:C7E4 00 00                                           CMB_InfoWindow_Top dw 0                 ; DATA XREF: CMB_ShowInfoWindow+13Ew ...
-// WZD dseg:C7E6 00 00                                           CMB_InfoWindow_Left dw 0                ; DATA XREF: CMB_ShowInfoWindow+138w ...
+int16_t _combat_total_battle_effect_count;
+// WZD dseg:C7C8
+struct s_CMB_InfoItem * _combat_info_effects[14];
+
+
+// WZD dseg:C7E4
+int16_t _combat_info_wnd_start_y;
+// WZD dseg:C7E6
+int16_t _combat_info_wnd_start_x;
 
 // WZD dseg:C7E6                                                 ¿ END:  ovr103 ?
 
@@ -1220,12 +1240,12 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     _combat_turn = 0;
 
-    // ; now 1 (during tactical combat init)
-    // ; enables or disables the Spell button when a finished
-    // ; unit is selected
+
     CMB_WizCastAvailable = ST_TRUE;
 
-    CMB_ExternalFX_Count = CMB_CountExternalFX__WIP();
+
+    _combat_total_battle_effect_count = Combat_Info_Effects_Count();
+
 
     Init_Battlefield_Effects(CMB_combat_structure);
 
@@ -1443,7 +1463,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             // TODO  'Auto Combat'
         }
 
-        if(CMB_ExternalFX_Count > 0)
+        if(_combat_total_battle_effect_count > 0)
         {
 
             Info_Button_Index = Add_Button_Field(144, 178, cnst_ZeroString_17__ovr090, _cmbt_info_button_seg, cnst_HOTKEY_U_5[0], ST_UNDEFINED);
@@ -2029,7 +2049,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Deactivate_Help_List();
 
-                CMB_ShowInfoWindow__WIP();
+                Combat_Information_Window();
 
                 CMB_SetNearAllocs__WIP();
 
@@ -4798,7 +4818,7 @@ void CMB_DrawFullScreen__WIP(void)
 
     Reset_Window();
 
-    CMB_ExternalFX_Count = CMB_CountExternalFX__WIP();
+    _combat_total_battle_effect_count = Combat_Info_Effects_Count();
 
     Tactical_Combat_Draw_Buttons();
 
@@ -5275,7 +5295,7 @@ void Tactical_Combat_Draw_Buttons(void)
 
         FLIC_Draw(170, 188, _cmbt_done_button_seg);
 
-        if(CMB_ExternalFX_Count > 0)
+        if(_combat_total_battle_effect_count > 0)
         {
 
             FLIC_Set_CurrentFrame(_cmbt_info_button_seg, 0);
@@ -5463,22 +5483,710 @@ void CMB_CreateEntities__WIP(void)
 /*
 
 */
-void CMB_ShowInfoWindow__WIP(void)
+void Combat_Information_Window(void)
 {
+    int16_t full_screen_ESC_field = 0;
+    int16_t input_field_idx = 0;
+    int16_t leave_screen = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t IDK_screen_offset = 0;  // _DI_
+
+    CMB_CentralStructure = battlefield->Central_Structure;
+
+    CMB_CloudofShadow = battlefield->City_Enchants[CLOUD_OF_SHADOW];
+    CMB_HeavenlyLight = battlefield->City_Enchants[HEAVENLY_LIGHT];
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    Assign_Auto_Function(Combat_Information_Window_Draw, 1);
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Back();
+
+    GUI_String_1 = (char *)Near_Allocate_First(80);
+
+    for(itr = 0; itr < 14; itr++)
+    {
+
+        // _combat_info_effects[itr] = Near_Allocate_Next(30);
+        _combat_info_effects[itr] = (struct s_CMB_InfoItem *)Near_Allocate_Next(sizeof(struct s_CMB_InfoItem));
+
+    }
+
+    Mark_Block(World_Data);
+
+    Mark_Block(_screen_seg);
+
+    Allocate_Next_Block(_screen_seg, 990);
+
+    // COMPIX.LBX, 056  "INFOBAC1"   "info bot"
+    // COMPIX.LBX, 057  "INFOBAC2"   "info mid"
+    // COMPIX.LBX, 058  "INFOBAC3"   "info top"
+    // COMPIX.LBX, 059  "INFOBOX"    "info box"
+
+    _combat_info_wnd_bot_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 56, World_Data);
+
+    _combat_info_wnd_mid_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 57, World_Data);
+
+    _combat_info_wnd_box_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 59, World_Data);
+
+    // COMPIX.LBX, 042  "INFOICON"   "crusade"
+    // COMPIX.LBX, 043  "INFOICON"   "holy arms"
+    // COMPIX.LBX, 044  "INFOICON"   "holy light"
+    // COMPIX.LBX, 045  "INFOICON"   "charm of life"
+    // COMPIX.LBX, 046  "INFOICON"   "chaos surge"
+    // COMPIX.LBX, 047  "INFOICON"   "red node"
+    // COMPIX.LBX, 048  "INFOICON"   "red node w/aura"
+    // COMPIX.LBX, 049  "INFOICON"   "eternal night"
+    // COMPIX.LBX, 050  "INFOICON"   "cloud of darkness"
+    // COMPIX.LBX, 051  "INFOICON"   "zombie mastery"
+    // COMPIX.LBX, 052  "INFOICON"   "green node"
+    // COMPIX.LBX, 053  "INFOICON"   "green node w/aura"
+    // COMPIX.LBX, 054  "INFOICON"   "blue node"
+    // COMPIX.LBX, 055  "INFOICON"   "blue node w/aura"
+
+    for(itr = 0; itr < 14; itr++)
+    {
+
+        _combat_info_effect_icon_segs[itr] = LBX_Reload_Next(compix_lbx_file__ovr103, (42 + itr), World_Data);
+
+    }
+
+    _combat_info_wnd_top_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 58, _screen_seg);
 
 
+    Combat_Info_Effects();
+
+
+    _combat_info_wnd_start_x = 50;
+    _combat_info_wnd_start_y = 10;
+
+
+    if(_combat_info_item_count > 0)
+    {
+
+        IDK_screen_offset = (((_combat_info_item_count / 2) * 19) + 9);
+
+    }
+    else
+    {
+
+        IDK_screen_offset = 4;
+
+    }
+
+
+    if(CMB_PerSideInfo > 0)
+    {
+
+        IDK_screen_offset = (_combat_info_wnd_start_y + (CMB_PerSideInfo * 20) + IDK_screen_offset + 21);
+
+    }
+    else
+    {
+
+        IDK_screen_offset = (_combat_info_wnd_start_y + (CMB_PerSideInfo * 20) + IDK_screen_offset);
+
+    }
+
+    _combat_info_wnd_start_y = (100 - (IDK_screen_offset / 2));
+
+    IDK_screen_offset = (_combat_info_wnd_start_y + IDK_screen_offset);
+
+    Deactivate_Help_List();
+
+    for(itr = 0; itr < 20; itr++)
+    {
+
+        _help_entries[itr].help_idx = ST_UNDEFINED;
+        _help_entries[itr].x1 = 0;
+        _help_entries[itr].y1 = 0;
+        _help_entries[itr].x2 = 0;
+        _help_entries[itr].y2 = 0;
+
+    }
+
+    Set_Help_List(_help_entries, 20);
+
+    leave_screen = ST_FALSE;
+
+    while(leave_screen == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        Clear_Fields();
+
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_Esc13[0], ST_UNDEFINED);
+
+        input_field_idx = Get_Input();
+
+        if(input_field_idx == full_screen_ESC_field)
+        {
+
+            leave_screen = ST_UNDEFINED;
+
+        }
+
+        if(leave_screen == ST_FALSE)
+        {
+
+            Copy_Back_To_Off();
+
+            Combat_Information_Window_Draw();
+
+            PageFlip_FX();
+
+            Release_Time(1);
+
+        }
+
+    }
+
+    Release_Block(_screen_seg);
+
+    Release_Block(World_Data);
+
+    Clear_Fields();
+
+    Deactivate_Auto_Function();
+
+    PageFlipEffect = 3;
+
+    Deactivate_Help_List();
 
 }
 
 
 // WZD s103p02
 // drake178: CMB_DrawInfoWindow()
+void Combat_Information_Window_Draw(void)
+{
+    int16_t Drawing_Sides = 0;
+    uint8_t colors[4] = { 0, 0, 0, 0 };
+    int16_t PerSide_Draw_Top = 0;
+    int16_t Draw_Top = 0;
+    int16_t Draw_Left = 0;
+    // int16_t Middle_Y = 0;
+    int16_t IDK_itr = 0;  // _SI_
+    // int16_t IDK_count = 0;  // _DI_
+    int16_t top_y2 = 0;  // uses IDK_count
+    int16_t mid_start_y = 0;  // same as top_y2
+    int16_t mid_y2 = 0;  // Middle_Y
+    int16_t bot_y1 = 0;  // same as mid_y2
+    int16_t bot_start_y = 0;  // same as bot_y1 - 2
+
+    Set_Page_Off();
+
+    if(_combat_info_item_count > 0)
+    {
+
+        // IDK_count = (9 + ((_combat_info_item_count / 2) * 19));
+        // IDK_count += _combat_info_wnd_start_y;
+        // Set_Window(0, 0, 319, IDK_count);
+        top_y2 = (9 + ((_combat_info_item_count / 2) * 19));
+        top_y2 += _combat_info_wnd_start_y;
+        Set_Window(0, 0, 319, top_y2);
+
+    }
+    else
+    {
+
+        // IDK_count = 4;
+        // Set_Window(0, 0, 319, IDK_count);
+        top_y2 = 4;
+        Set_Window(0, 0, 319, top_y2);
+
+    }
+
+    Clipped_Draw(_combat_info_wnd_start_x, _combat_info_wnd_start_y, _combat_info_wnd_top_seg);
+
+    Reset_Window();
+
+    if(CMB_PerSideInfo > 0)
+    {
+
+        // Middle_Y = (CMB_PerSideInfo * 20) + IDK_count + 21;
+        mid_y2 = (CMB_PerSideInfo * 20) + top_y2 + 21;
+
+    }
+    else
+    {
+
+        // Middle_Y = ((CMB_PerSideInfo * 20) + IDK_count);
+        mid_y2 = ((CMB_PerSideInfo * 20) + top_y2);
+
+    }
+
+    // Set_Window(0, 0, 319, Middle_Y);
+    Set_Window(0, 0, 319, mid_y2);
+
+    // Clipped_Draw(_combat_info_wnd_start_x, IDK_count, _combat_info_wnd_mid_seg);
+    mid_start_y = top_y2;
+    Clipped_Draw(_combat_info_wnd_start_x, mid_start_y, _combat_info_wnd_mid_seg);
+
+    if(CMB_PerSideInfo > 0)
+    {
+
+        Reset_Window();
+
+    }
+    else
+    {
+
+        // Set_Window(0, Middle_Y, 319, 199);
+        // Middle_Y -= 2;
+        bot_y1 = mid_y2;
+        Set_Window(0, bot_y1, 319, 199);
+        bot_y1 -= 2;
+
+    }
+
+    // Clipped_Draw(_combat_info_wnd_start_x, Middle_Y, _combat_info_wnd_bot_seg);
+    bot_start_y = bot_y1;
+    Clipped_Draw(_combat_info_wnd_start_x, bot_start_y, _combat_info_wnd_bot_seg);
+
+    Reset_Window();
+
+    colors[0] = 250;
+    colors[1] = 177;
+
+    Set_Outline_Color(254);
+
+    Set_Font_Colors_15(2, &colors[0]);
+
+    Set_Font_Style_Shadow_Down(2, 15, 0, 0);
+
+    Set_Font_Spacing_Width(2);
+
+    if(CMB_PerSideInfo > 0)
+    {
+
+        if(_combat_info_item_count > 0)
+        {
+
+            PerSide_Draw_Top = (15 + ((_combat_info_item_count / 2) * 19));
+
+        }
+        else
+        {
+
+            PerSide_Draw_Top = 11;
+
+        }
+
+        if(CMB_AI_Player < NEUTRAL_PLAYER_IDX)
+        {
+
+            strcpy(GUI_String_1, _players[CMB_AI_Player].name);
+
+            strcat(GUI_String_1, cnst_SpaceSpells);
+
+            Print_Centered((_combat_info_wnd_start_x + 54), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
+
+        }
+
+        strcpy(GUI_String_1, _players[combat_human_player].name);
+
+        strcat(GUI_String_1, cnst_SpaceSpells);
+
+        Print_Centered((_combat_info_wnd_start_x + 170), (_combat_info_wnd_start_y + PerSide_Draw_Top), GUI_String_1);
+
+    }
+
+    if(_combat_info_item_count > 0)
+    {
+
+        PerSide_Draw_Top = 10;
+
+    }
+    else
+    {
+
+        PerSide_Draw_Top = 26;
+
+    }
+
+    Drawing_Sides = 0;
+
+    for(IDK_itr = 0; ((CMB_PerSideInfo / 2) + _combat_info_item_count) > IDK_itr; IDK_itr++)
+    {
+
+        if(
+            (IDK_itr >= _combat_info_item_count)
+            &&
+            (_combat_info_item_count > 0)
+            &&
+            (Drawing_Sides == 0)
+        )
+        {
+
+            Drawing_Sides = 1;
+            PerSide_Draw_Top = 31;
+
+        }
+
+        Draw_Left = (_combat_info_wnd_start_x + ((IDK_itr % 2) * 112) + 11);
+
+        Draw_Top = _combat_info_wnd_start_y + PerSide_Draw_Top + ((IDK_itr / 2) * 19);
+
+        FLIC_Draw((Draw_Left - 1), (Draw_Top - 1), _combat_info_wnd_box_seg);
+
+        if(_combat_info_effects[IDK_itr]->Icon_IMG_Seg != (SAMB_ptr)ST_UNDEFINED)
+        {
+
+            FLIC_Draw(Draw_Left, Draw_Top, _combat_info_effects[IDK_itr]->Icon_IMG_Seg);
+
+            Print((Draw_Left + 20), (Draw_Top + 5), _combat_info_effects[IDK_itr]->Name);
+
+            _help_entries[IDK_itr].help_idx = _combat_info_effects[IDK_itr]->HLP_Index;
+            _help_entries[IDK_itr].x1 = Draw_Left;
+            _help_entries[IDK_itr].y1 = Draw_Top;
+            _help_entries[IDK_itr].x2 = (Draw_Left + 100);
+            _help_entries[IDK_itr].y2 = (Draw_Top  +  15);
+
+        }
+
+    }
+
+}
+
 
 // WZD s103p03
 // drake178: CMB_FillInfoArrays()
+/*
+; fills out the CMB_External_FX@ array and related
+; global variables for the display of the combat info
+; window
+;
+; INCONSISTENT: excludes Evil Omens and Spell Wards
+*/
+/*
+
+handles
+Crusade
+Holy Arms
+Charm Of Life
+Zombie Mastery
+
+¿ info_common_count isn't actually used for anything ?
+...used to index _combat_info_effects[]
++= 2, because it's a pointer to 2-byte values?
+...doesn't make sense
+
+*/
+void Combat_Info_Effects(void)
+{
+    int16_t computer_player_battle_effect_count = 0;
+    int16_t itr_combatants = 0;
+    int16_t info_common_count = 0;  // _SI_
+    int16_t player_idx = 0;  // _DI_
+
+
+    Combat_Info_Effects_Base();
+
+
+    _combat_total_battle_effect_count = 0;
+
+    info_common_count = _combat_info_item_count;  // just set in Combat_Info_Effects_Base()
+
+    computer_player_battle_effect_count = 0;
+
+    player_idx = CMB_AI_Player;
+
+    for(itr_combatants = 0; itr_combatants < 2; itr_combatants++)
+    {
+
+        if(player_idx < NEUTRAL_PLAYER_IDX)
+        {
+
+            if(_players[player_idx].Globals[CRUSADE] > 0)
+            {
+
+                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[0];
+
+                _combat_info_effects[info_common_count]->HLP_Index = HLP_CRUSADE;
+
+                strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
+
+                _combat_total_battle_effect_count++;
+
+                info_common_count += 2;
+
+            }
+
+            if(_players[player_idx].Globals[HOLY_ARMS] > 0)
+            {
+
+                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[1];
+
+                _combat_info_effects[info_common_count]->HLP_Index = HLP_HOLY_ARMS;
+
+                strcpy(_combat_info_effects[info_common_count]->Name, cnst_HolyArms);
+
+                _combat_total_battle_effect_count++;
+
+                info_common_count += 2;
+
+            }
+
+            if(_players[player_idx].Globals[CHARM_OF_LIFE] > 0)
+            {
+
+                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[0];
+
+                _combat_info_effects[info_common_count]->HLP_Index = HLP_CRUSADE;
+
+                strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
+
+                _combat_total_battle_effect_count++;
+
+                info_common_count += 2;
+
+            }
+
+            if(_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
+            {
+
+                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[9];
+
+                _combat_info_effects[info_common_count]->HLP_Index = HLP_ZOMBIE_MASTERY;
+
+                strcpy(_combat_info_effects[info_common_count]->Name, cnst_ZombieMastery);
+
+                _combat_total_battle_effect_count++;
+
+                info_common_count += 2;
+
+            }
+
+        }
+
+        player_idx = _human_player_idx;
+
+        info_common_count = (_combat_info_item_count + 1);
+
+        if(itr_combatants == 0)
+        {
+
+            computer_player_battle_effect_count = _combat_total_battle_effect_count;
+
+        }
+
+    }
+
+
+    if((_combat_total_battle_effect_count - computer_player_battle_effect_count) > computer_player_battle_effect_count)
+    {
+
+        CMB_PerSideInfo = (_combat_total_battle_effect_count - computer_player_battle_effect_count);
+
+    }
+    else
+    {
+
+        CMB_PerSideInfo = computer_player_battle_effect_count;
+        
+    }
+
+}
+
 
 // WZD s103p04
 // drake178: CMB_SetCommonXFX()
+/*
+; counts and adds to the CMB_Extrenal_FX@ array any
+; universal / neutral external effects, whose affected
+; targets do not depend on the effect origin
+;
+; INCONSISTENT: ignores Evil Omens
+*/
+/*
+
+handles
+node dispel - Sorcery, Chaos, Nature
+node auta - Sorcery, Nature, Chaos
+Cloud of Shadows, Heavenly Light
+Chaos Surge, Eternal Night
+
+*/
+void Combat_Info_Effects_Base(void)
+{
+    int16_t itr = 0;  // _DI_
+    int16_t idx = 0;  // _SI_
+
+    for(itr = 0; itr < 14; itr++)
+    {
+
+        _combat_info_effects[itr]->Icon_IMG_Seg = (SAMB_ptr)ST_UNDEFINED;
+
+    }
+
+    idx = 0;
+
+    if(CMB_CentralStructure == CS_SorceryNode)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[12];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_SORCERY;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_SorcNodeDispel);
+
+        idx++;
+
+    }
+    else if(CMB_CentralStructure == CS_ChaosNode)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[5];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_CHAOS;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_ChaosNodeDispel);
+
+        idx++;
+
+    }
+    else if(CMB_CentralStructure == CS_NatureNode)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[10];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_NATURE;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_NatNodeDispel);
+
+        idx++;
+
+    }
+
+
+    if(_combat_node_type == cnt_Sorcery)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[13];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_SORCERY_NODE_AURA;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_SorceryAura);
+
+        idx++;
+
+    }
+    else if(_combat_node_type == cnt_Nature)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[11];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_NATURE_NODE_AURA;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_NatureAura);
+
+        idx++;
+
+    }
+    else if(_combat_node_type == cnt_Chaos)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[6];
+
+        _combat_info_effects[idx]->HLP_Index = HLP_CHAOS_NODE_AURA;
+
+        strcpy(_combat_info_effects[idx]->Name, cnst_ChaosAura);
+
+        idx++;
+
+    }
+
+
+    if(OVL_Action_Type == 1)
+    {
+
+        if(CMB_CloudofShadow > 0)
+        {
+
+            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[8];
+
+            _combat_info_effects[idx]->HLP_Index = HLP_CLOUD_OF_DARKNESS;
+
+            strcpy(_combat_info_effects[idx]->Name, cnst_CloudOfDarkness);
+
+            idx++;
+
+        }
+
+        if(CMB_HeavenlyLight > 0)
+        {
+
+            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[2];
+
+            _combat_info_effects[idx]->HLP_Index = HLP_HOLY_LIGHT;
+
+            strcpy(_combat_info_effects[idx]->Name, cnst_HolyLight);
+
+            idx++;
+
+        }
+
+    }
+
+    for(itr = 0; itr < NUM_PLAYERS; itr++)
+    {
+
+        if(_players[itr].Globals[CHAOS_SURGE] > 0)
+        {
+
+            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[4];
+
+            _combat_info_effects[idx]->HLP_Index = HLP_CHAOS_SURGE;
+
+            strcpy(_combat_info_effects[idx]->Name, cnst_ChaosSurge);
+
+            idx++;
+
+        }
+
+    }
+
+    for(itr = 0; itr < NUM_PLAYERS; itr++)
+    {
+
+        if(_players[itr].Globals[ETERNAL_NIGHT] > 0)
+        {
+
+            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[7];
+
+            _combat_info_effects[idx]->HLP_Index = HLP_ETERNAL_NIGHT;
+
+            strcpy(_combat_info_effects[idx]->Name, cnst_EternalNight);
+
+            idx++;
+
+        }
+
+    }
+
+
+    if((idx % 2) != 0)
+    {
+
+        _combat_info_effects[idx]->Icon_IMG_Seg = (SAMB_ptr)ST_UNDEFINED;
+
+        idx++;
+
+    }
+
+
+    _combat_info_item_count = idx;
+
+}
+
 
 // WZD s103p05
 // drake178: CMB_CountExternalFX()
@@ -5490,11 +6198,148 @@ void CMB_ShowInfoWindow__WIP(void)
 */
 /*
 
-*/
-int16_t CMB_CountExternalFX__WIP(void)
-{
+¿ exact same logic as Combat_Info_Effects() and Combat_Info_Effects_Base() ?
+~ Battle Effects
+~ External
 
-    /* HACK */  return 0;
+*/
+int16_t Combat_Info_Effects_Count(void)
+{
+    int16_t battle_effects_count = 0;  // _CX_
+    int16_t player_idx = 0;  // _DI_
+    int16_t itr_combatants = 0;  // _SI_
+    int16_t itr_players = 0;  // _SI_
+
+    battle_effects_count = 0;
+
+    player_idx = CMB_AI_Player;
+
+
+    for(itr_combatants = 0; itr_combatants < 2; itr_combatants++)
+    {
+
+        if(player_idx < NEUTRAL_PLAYER_IDX)
+        {
+
+            if(_players[player_idx].Globals[CRUSADE] > 0)
+            {
+
+                battle_effects_count++;
+
+            }
+
+            if(_players[player_idx].Globals[HOLY_ARMS] > 0)
+            {
+
+                battle_effects_count++;
+
+            }
+
+            if(_players[player_idx].Globals[CHARM_OF_LIFE] > 0)
+            {
+
+                battle_effects_count++;
+
+            }
+
+            if(_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
+            {
+
+                battle_effects_count++;
+
+            }
+
+            if(_players[player_idx].Globals[CRUSADE] > 0)
+            {
+
+                battle_effects_count++;
+
+            }
+
+        }
+
+        player_idx = _human_player_idx;
+
+    }
+
+
+    if(
+        (battlefield->Central_Structure == CS_SorceryNode)
+        ||
+        (battlefield->Central_Structure == CS_ChaosNode)
+        ||
+        (battlefield->Central_Structure == CS_NatureNode)
+    )
+    {
+
+        battle_effects_count++;
+
+    }
+
+
+    if(
+        (_combat_node_type == cnt_Sorcery)
+        ||
+        (_combat_node_type == cnt_Sorcery)
+        ||
+        (_combat_node_type == cnt_Sorcery)
+    )
+    {
+
+        battle_effects_count++;
+
+    }
+
+
+
+    if(OVL_Action_Type == 1)
+    {
+
+        if(battlefield->City_Enchants[CLOUD_OF_SHADOW] > 0)
+        {
+
+            battle_effects_count++;
+
+        }
+
+
+        if(battlefield->City_Enchants[HEAVENLY_LIGHT] > 0)
+        {
+
+            battle_effects_count++;
+
+        }
+
+    }
+
+
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    {
+
+        if(_players[itr_players].Globals[CHAOS_SURGE] > 0)
+        {
+
+            battle_effects_count++;
+
+        }
+
+    }
+
+
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    {
+
+        if(_players[itr_players].Globals[ETERNAL_NIGHT] > 0)
+        {
+
+            battle_effects_count++;
+
+        }
+
+    }
+
+
+    return battle_effects_count;
 
 }
 

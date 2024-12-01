@@ -523,6 +523,14 @@ struct CSCAN_ICONS
 };
 
 
+// sizeof=0x1E
+struct s_CMB_InfoItem
+{
+    /* 00 */ SAMB_ptr Icon_IMG_Seg;
+    /* 02 */ int16_t HLP_Index;  // enum HELP_TXT
+    /* 04 */ char Name[26];
+    /* 1E */ 
+};
 
 
 
@@ -889,19 +897,19 @@ void CMB_CreateEntities__WIP(void);
 */
 
 // WZD s103p01
-void CMB_ShowInfoWindow__WIP(void);
+void Combat_Information_Window(void);
 
 // WZD s103p02
-// CMB_DrawInfoWindow()
+void Combat_Information_Window_Draw(void);
 
 // WZD s103p03
-// CMB_FillInfoArrays()
+void Combat_Info_Effects(void);
 
 // WZD s103p04
-// CMB_SetCommonXFX()
+void Combat_Info_Effects_Base(void);
 
 // WZD s103p05
-int16_t CMB_CountExternalFX__WIP(void);
+int16_t Combat_Info_Effects_Count(void);
 
 // WZD s103p06
 void Combat_Node_Type(void);

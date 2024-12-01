@@ -180,7 +180,7 @@ void Screen_Control(void)
 
         case scr_New_Game_Screen:
         {
-            // TODO  New_Game_Screen();
+            // TODO  Newgame_Screen__STUB();
         } break;
 
         case scr_Quit_To_DOS:
