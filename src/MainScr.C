@@ -3918,7 +3918,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     int16_t Exp_Left;
     int16_t Level_Index;
     uint8_t Unit_Type;
-    uint8_t Color;
+    uint8_t bar_color;
     SAMB_ptr experience_level_icon_seg;
     // SAMB_ptr weapon_type_icon_seg;
     SAMB_ptr weapon_type_icon_seg = NULL;  // Error	C4703	potentially uninitialized local pointer variable 'weapon_type_icon_seg' used
@@ -3926,7 +3926,7 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
     Unit_Type = _UNITS[unit_idx].type;
 
     /*
-        BEGIN: Draw Unit Damaged Bar
+        BEGIN: Draw Unit Damage Bar
     */
     // MoO2  Module: AIPOWER  Current_Ship_Hits_  Address: 01:0005F2C3
     // MoO2  Module: AIPOWER  Max_Ship_Hits_      Address: 01:0005F2F6
@@ -3943,21 +3943,22 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
 
         if(bar_length >= 6)
         {
-            Color = DAMAGE_BAR_GREEN;  /* Damage Bar Green */
+            bar_color = DAMAGE_BAR_GREEN;
         }
         else if(bar_length >= 3)
         {
-            Color = DAMAGE_BAR_YELLOW;  /* Damage Bar Yellow */
+            bar_color = DAMAGE_BAR_YELLOW;
         }
         else
         {
-            Color = DAMAGE_BAR_RED;  /* Damage Bar Red */
+            bar_color = DAMAGE_BAR_RED;
         }
 
-        Line(x + 5, y + 19, x + bar_length + 5, y + 19, Color);
+        Line(x + 5, y + 19, x + bar_length + 5, y + 19, bar_color);
+
     }
     /*
-        END: Draw Unit Damaged Bar
+        END: Draw Unit Damage Bar
     */
 
     /*

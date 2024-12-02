@@ -1633,7 +1633,7 @@ struct s_BATTLE_UNIT
     /* 0x4C */  int16_t  MoveStage;
     /* 0x4E */  int16_t  Atk_FigLoss;
     /* 0x50 */  int16_t  outline_magic_realm;  /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
-    /* 0x52 */  int16_t  Moving;
+    /* 0x52 */  int16_t  Moving;  // set to ST_FALSE in Switch_Active_Battle_Unit()
     /* 0x54 */  int16_t  Action;
     /* 0x56 */  int8_t   Confusion_State;
     /* 0x57 */  int8_t   pad2B_57h;
@@ -2657,7 +2657,8 @@ extern struct s_BATTLE_UNIT * battle_units;
 
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
-extern struct s_COMBAT_ENCHANTMENTS * combat_enchantments;      // alloc in
+// extern struct s_COMBAT_ENCHANTMENTS * combat_enchantments;      // alloc in
+extern int8_t * combat_enchantments;
 
 
 

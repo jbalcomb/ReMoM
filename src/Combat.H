@@ -34,6 +34,55 @@ extern "C" {
 
 
 
+#define TRUE_LIGHT_ATTKR 0
+#define TRUE_LIGHT_DFNDR 1
+#define DARKNESS_ATTKR 2
+#define DARKNESS_DFNDR 3
+#define WARP_REALITY_ATTKR 4
+#define WARP_REALITY_DFNDR 5
+#define BLACK_PRAYER_ATTKR 6
+#define BLACK_PRAYER_DFNDR 7
+#define WRACK_ATTKR 8
+#define WRACK_DFNDR 9
+#define METAL_FIRES_ATTKR 10
+#define METAL_FIRES_DFNDR 11
+#define PRAYER_ATTKR 12
+#define PRAYER_DFNDR 13
+#define HIGH_PRAYER_ATTKR 14
+#define HIGH_PRAYER_DFNDR 15
+#define TERROR_ATTKR 16
+#define TERROR_DFNDR 17
+#define CALL_LIGHTNING_ATTKR 18
+#define CALL_LIGHTNING_DFNDR 19
+#define COUNTER_MAGIC_ATTKR 20
+#define COUNTER_MAGIC_DFNDR 21
+#define MASS_INVISIBILITY_ATTKR 22
+#define MASS_INVISIBILITY_DFNDR 23
+#define ENTANGLE_ATTKR 24
+#define ENTANGLE_DFNDR 25
+#define MANA_LEAK_ATTKR 26
+#define MANA_LEAK_DFNDR 27
+#define BLUR_ATTKR 28
+#define BLUR_DFNDR 29
+
+
+
+//  ; (sizeof=0x4, standard type)
+struct s_CE_Display
+{
+    /* 00 */  int16_t icon_idx;
+    /* 02 */  int16_t help_idx;
+    /* 04 */
+};
+
+//  ; (sizeof=0x4, standard type)
+struct s_Active_CE
+{
+    /* 00 */ int16_t icon_idx;
+    /* 02 */ int16_t help_idx;
+    /* 04 */
+};
+
 
 extern SAMB_ptr DBG_EmmHndl_FIGUREX;
 extern SAMB_ptr DBG_figure_pict_base_seg;
@@ -247,7 +296,7 @@ enum BU_Action
 {
     bua_Ready           =   0,
     bua_Finished        =   4,
-    BUA_Wait            =   5,
+    bua_Wait            =   5,
 
     BUA_MeleeAttack     = 100,
     BUA_RangedAttack    = 101,
@@ -544,7 +593,7 @@ extern int16_t _combat_wy;
 extern int16_t _combat_wx;
 
 // WZD dseg:C582
-extern int16_t CMB_SelectedUnit;
+extern int16_t _active_battle_unit;
 
 // WZD dseg:C584
 extern int16_t _combat_defender_player;
@@ -726,7 +775,7 @@ void CMB_PrepareTurn__WIP(void);
 // drake178: BU_Move()
 
 // WZD s91p05
-void G_BU_SelectUnit__WIP(int16_t battle_unit_idx);
+void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 
 // WZD s91p06
 void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
@@ -819,8 +868,7 @@ int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_
 void CMB_CreateCELabels__WIP(void);
 
 // WZD o98p13
-// drake178: BU_GetCmbtMoveType()
-// BU_GetCmbtMoveType()
+int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);
 
 // WZD o98p14
 // drake178: UNIT_SummonToBattle()
@@ -849,8 +897,7 @@ int16_t BU_MeleeFlightCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle
 // BU_PrepMoveSound()
 
 // WZD o98p21
-// drake178: G_CMB_Auto_OFF()
-// G_CMB_Auto_OFF()
+void Turn_Off_Auto_Combat(void);
 
 // WZD o98p22
 void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
@@ -873,7 +920,7 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
 void CMB_DrawFullScreen__WIP(void);
 
 // WZD o99p02
-// drake178: CMB_DrawActiveUnitW()
+void Draw_Active_Unit_Window(void);
 
 // WZD o99p03
 void Tactical_Combat_Draw_Buttons(void);
@@ -882,13 +929,13 @@ void Tactical_Combat_Draw_Buttons(void);
 // drake178: CMB_DrawSpellInfoW()
 
 // WZD o99p05
-// drake178: CMB_DrawAUWStats()
+void Draw_Active_Unit_Stats_And_Icons(void);
 
 // WZD o99p06
 void CMB_CreateEntities__WIP(void);
 
 // WZD o99p07
-// drake178: CMB_DrawBUHPBar()
+void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y);
 
 
 
@@ -918,10 +965,10 @@ void Combat_Node_Type(void);
 // BU_CreateImage()
 
 // WZD s103p08
-void WIZ_BU_SelectNext__WIP(int16_t player_idx);
+void Next_Battle_Unit(int16_t player_idx);
 
 // WZD s103p09
-// WIZ_BU_SelectClosest()
+int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx);
 
 // WZD s103p10
 void CMB_SpellcastError__WIP(int16_t type);
@@ -975,10 +1022,10 @@ void CMB_UpdateTrueSight(void);
 // BU_SetBaseAnims()
 
 // WZD o105p11
-// BU_GetWpnIconIndex()
+int16_t Battle_Unit_Melee_Attack_Icon(int16_t battle_unit_idx);
 
 // WZD o105p12
-// BU_GetRngIconIndex()
+int16_t Battle_Unit_Ranged_Attack_Icon(int16_t battle_unit_idx);
 
 // WZD o105p13
 // CMB_DrawUnitDisplay()

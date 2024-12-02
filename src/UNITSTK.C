@@ -374,13 +374,13 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     int16_t next_unit_dst_wx;
     int16_t next_unit_wy;
     int16_t next_unit_wx;
-    int16_t no_units_available;
+    int16_t all_done_none_available;
     int16_t done;
     int16_t next_unit_idx;
 
     // DONT  UU_var8 = 0;
 
-    no_units_available = ST_FALSE;
+    all_done_none_available = ST_FALSE;
 
     done = ST_FALSE;
 
@@ -392,14 +392,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     {
         // TODO  CRP_OverlandVar_3 = ST_FALSE;
 
-        no_units_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
+        all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
 
-        if(_unit == 502)
-        {
-            // __debugbreak();
-        }
-
-        if(no_units_available == ST_TRUE)
+        if(all_done_none_available == ST_TRUE)
         {
             all_units_moved = ST_TRUE;
             _active_stack_has_path = ST_FALSE;
@@ -418,7 +413,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         {
             done = ST_TRUE;
 
-            // HERE:  Nay no_units_available / Yay GotNextUnit;  To be sure, assume we're good, but undo if this Unit is *busy* with a 'GOTO'
+            // HERE:  Nay all_done_none_available / Yay GotNextUnit;  To be sure, assume we're good, but undo if this Unit is *busy* with a 'GOTO'
             // if it does have a 'GOTO' and that 'GOTO' is actually for 'Build Road', do some 'Build Road' process (which appears to update the map views)
             // or, not quite? cause the conditions are ORs?
             // @@Next_Unit_Goto
@@ -492,7 +487,7 @@ How to not keep selecting the same waiting stack/unit?
 */
 int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 {
-    int16_t UU_var11;
+    int16_t uu_flag;
     int16_t tried_other_plane;
     int16_t itr_wait_units;
     int16_t Closest_Active_Unit;
@@ -501,7 +496,7 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
     int16_t Closest_Waiting_Dist;
     int16_t itr_units;
     int16_t delta;
-    int16_t Return_Value;
+    int16_t all_done_none_available;
     int16_t done;
     int16_t current_world_plane;
 
@@ -514,12 +509,14 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 
     tried_other_plane = ST_FALSE;
 
-    UU_var11 = ST_UNDEFINED;
+    uu_flag = ST_UNDEFINED;
 
-    Return_Value = ST_FALSE;
+    all_done_none_available = ST_FALSE;
 
     done = ST_FALSE;
+
     itr_units = 0;
+
     while(done == ST_FALSE)
     {
         assert(itr_units < MAX_UNIT_COUNT);
@@ -566,6 +563,7 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
 
         itr_units++;
         // HERE: we've iterated through all of the units
+        // processed unit count == total unit count
         if(itr_units == _units)
         {
             if(Closest_Active_Unit != ST_UNDEFINED)
@@ -619,18 +617,18 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
                 Closest_Waiting_Unit = ST_UNDEFINED;
                 Closest_Active_Dist = 1000;
                 Closest_Active_Unit = ST_UNDEFINED;
-                UU_var11 = ST_UNDEFINED;
+                uu_flag = ST_UNDEFINED;
                 itr_units = 0;
             }
             else
             {
                 done = ST_TRUE;
-                Return_Value = ST_TRUE;  // FAILED!!  tried both planes, neither Closest_Active_Unit nor Closest_Waiting_Unit
+                all_done_none_available = ST_TRUE;  // FAILED!!  tried both planes, neither Closest_Active_Unit nor Closest_Waiting_Unit
             }
         }
     }
 
-    return Return_Value;
+    return all_done_none_available;
 }
 
 // WZD o61p06

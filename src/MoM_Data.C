@@ -881,7 +881,8 @@ struct s_BATTLE_UNIT * battle_units;                            // alloc in IDK_
 
 // WZD dseg:922E
 // ; 3 LBX_Alloc_Next paragraphs, sandbox segment; the first 30 (1Eh) bytes are zeroed when allocated
-struct s_COMBAT_ENCHANTMENTS * combat_enchantments;             // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
+// struct s_COMBAT_ENCHANTMENTS * combat_enchantments;             // alloc in IDK_Combat_Allocate() and CMB_LoadResources()
+int8_t * combat_enchantments;
 
 
 

@@ -18,6 +18,123 @@ Combat Information Window
 
 
 
+CMB_SelectedUnit ==> _active_battle_unit
+G_BU_SelectUnit__WIP() ==> Switch_Active_Battle_Unit()
+G_CMB_Auto_OFF__WIP() ==> Turn_Off_Auto_Combat()   ~ MoO2 Toggle_Auto_Combat_Flags_()
+WIZ_BU_SelectClosest__WIP() ==> Next_Battle_Unit_Nearest_Available()
+WIZ_BU_SelectNext__WIP() ==> Next_Battle_Unit()
+
+
+## Active Battle Unit
+
+
+set in 8 places
+    CMB_VortexPlayerMove+63       mov     [_active_battle_unit], -1                  
+    End_Of_Combat__WIP:loc_A5B34  mov     [_active_battle_unit], 667                 
+    Next_Battle_Unit+AA           mov     [_active_battle_unit], _SI_itr_battle_units
+    STK_CaptureCity+372           mov     [_active_battle_unit], ax                  
+    CMB_PrepareTurn__WIP+8E       mov     [_active_battle_unit], ax                  
+    Switch_Active_Battle_Unit+1A  mov     [_active_battle_unit], ax                  
+    End_Of_Combat__WIP+B8F        mov     [_active_battle_unit], ax                  
+    AI_BU_ProcessAction+64        mov     [_active_battle_unit], si                  
+
+[x] Switch_Active_Battle_Unit()
+[x] Next_Battle_Unit()
+
+
+
+Tactical_Combat__WIP()
+    if(_combat_attacker_player == _human_player_idx)
+        Switch_Active_Battle_Unit(0);
+    else
+        Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
+NOTE: there's a call to CMB_PrepareTurn__WIP() immediately preceding
+
+
+Tactical_Combat__WIP+304
+Tactical_Combat__WIP+70A
+Tactical_Combat__WIP+775
+Tactical_Combat__WIP+EB1
+Tactical_Combat__WIP+F5D
+Tactical_Combat__WIP+1189
+Turn_Off_Auto_Combat+D
+    |-> j_Next_Battle_Unit()
+        |-> Next_Battle_Unit()
+
+
+Tactical_Combat__WIP()
+    ***cancel auto combat***
+        j_CMB_ProgressTurnFlow__WIP()
+        j_Turn_Off_Auto_Combat()
+            Turn_Off_Auto_Combat()
+                j_Next_Battle_Unit(_human_player_idx)
+                    Next_Battle_Unit(_human_player_idx)
+
+
+Next_Battle_Unit()
+
+XREF:
+    j_Next_Battle_Unit()
+        Next_Battle_Unit()
+XREF:
+j_Next_Battle_Unit
+    Tactical_Combat__WIP+304  call    j_Next_Battle_Unit
+    Tactical_Combat__WIP+70A  call    j_Next_Battle_Unit
+    Tactical_Combat__WIP+775  call    j_Next_Battle_Unit
+    Tactical_Combat__WIP+EB1  call    j_Next_Battle_Unit
+    Tactical_Combat__WIP+F5D  call    j_Next_Battle_Unit
+    Tactical_Combat__WIP+1189 call    j_Next_Battle_Unit
+    Turn_Off_Auto_Combat+D    call    j_Next_Battle_Unit
+
+sets _active_battle_unit, via Next_Battle_Unit_Nearest_Available(player_idx)
+but, ...
+    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+        for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
+            if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
+                _active_battle_unit = itr_battle_units;
+
+called for Turn_Off_Auto_Combat(), so doesn't *feel* like "Next"
+other six?
+Tactical_Combat__WIP()
+    Pre Screen Loop
+        if(_combat_attacker_player == _human_player_idx)
+            j_Next_Battle_Unit(_human_player_idx)
+    Screen / Input Loop
+        Eh? _active_battle_unit has become unavailable?
+            j_Next_Battle_Unit(_human_player_idx)
+        _active_battle_unit is *confused*
+            j_Next_Battle_Unit(_human_player_idx)
+        input_field_idx == wait_button_field
+            j_Next_Battle_Unit(_human_player_idx)
+        input_field_idx == done_button_field
+            j_Next_Battle_Unit(_human_player_idx)
+    Closing The Loop
+        if leave_screen == ST_FALSE && CMB_HumanUnitsDone == ST_TRUE && CMB_ImmobileCanAct == ST_FALSE
+            CMB_HumanUnitsDone = ST_FALSE
+            j_CMB_ProgressTurnFlow__WIP()
+            j_Next_Battle_Unit(_human_player_idx)
+
+
+
+
+
+## Next_Battle_Unit_Nearest_Available()
+
+Next_Battle_Unit_Nearest_Available()
+OON XREF:  Next_Battle_Unit()
+
+UNITSTK.C Next_Unit_Nearest_Available()
+OON XREF:  WIZ_NextIdleStack()
+
+CMB_HumanUnitsDone
+CMB_ImmobileCanAct
+in Next_Battle_Unit()
+    if(all_done_none_available == ST_TRUE)
+        CMB_HumanUnitsDone = ST_TRUE;
+    else
+        CMB_ImmobileCanAct = ST_FALSE;
+
+
 
 
 Move_Units()
@@ -85,7 +202,7 @@ XREF:  (112)
     CMB_DrawActiveUnitW()
     Tactical_Combat_Draw_Buttons()
     CMB_DrawAUWStats()
-    WIZ_BU_SelectNext__WIP()
+    Next_Battle_Unit()
     WIZ_BU_SelectClosest()
     AI_BU_ProcessAction()
     End_Of_Combat__WIP()

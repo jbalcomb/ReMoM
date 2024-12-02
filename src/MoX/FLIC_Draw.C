@@ -2057,6 +2057,8 @@ void Bitmap_Aura_Pixels(SAMB_ptr pict_seg, uint8_t aura_color, uint8_t * color_l
 // WZD s30p46
 // EXACT  MoO2  Module: bitmap  Get_Bitmap_Actual_Size()
 /*
+sets x, y, w, h based on the first and last non-transparent pixel
+
     No RLE, therefore "Bitmap", per MoO2
 */
 void Get_Bitmap_Actual_Size(SAMB_ptr bitmap_addr, int16_t * x1, int16_t * y1, int16_t * width, int16_t * height)
