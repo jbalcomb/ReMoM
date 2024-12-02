@@ -717,7 +717,7 @@ void Powergraph_Screen_Draw(void)
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
-    char dest[4] = { 0, 0, 0, 0 };
+    char dest[7] = { 0, 0, 0, 0, 0, 0, 0 };
     int16_t month = 0;  // ¿ used as 'first month' ... 'first turn' (¿ because turns are months ?) ?
     int16_t y1 = 0;
     int16_t x2 = 0;
