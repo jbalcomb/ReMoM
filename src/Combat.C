@@ -239,10 +239,12 @@ char cnst_VortexMove_3[] = "Vortex";
 // WZD dseg:5750
 char cnst_VortexMove_4[] = "1 Space";
 
-// WZD dseg:5758 53 6B 69 6C 6C 3A 00                            cnst_CMB_Skill db 'Skill:',0            ; DATA XREF: CMB_DrawSpellInfoW+5Ao
-// WZD dseg:5758                                                                                         ; could use dseg:3532
-// WZD dseg:575F 4D 61 6E 61 3A 00                               cnst_CMB_Mana db 'Mana:',0              ; DATA XREF: CMB_DrawSpellInfoW+8Co
-// WZD dseg:5765 52 61 6E 67 65 3A 00                            cnst_CMB_Range db 'Range:',0            ; DATA XREF: CMB_DrawSpellInfoW+BDo
+// WZD dseg:5758
+char cnst_CMB_Skill[] = "Skill:";
+// WZD dseg:575F
+char cnst_CMB_Mana[] = "Mana:";
+// WZD dseg:5765
+char cnst_CMB_Range[] = "Range:";
 
 // WZD dseg:5765                                                 END:  ovr099 - Initialized Data
 
@@ -5392,7 +5394,7 @@ void CMB_DrawFullScreen__WIP(void)
 
     Print_Centered(278, 167, _players[_human_player_idx].name);
 
-    // TODO  CMB_DrawSpellInfoW();
+    Draw_Spell_Information_Window();
     // ; draws the text and numbers of the spell information
     // ; window for the human player into the current draw
     // ; frame
@@ -5740,6 +5742,86 @@ void Tactical_Combat_Draw_Buttons(void)
 
 // WZD o99p04
 // drake178: CMB_DrawSpellInfoW()
+/*
+; draws the text and numbers of the spell information
+; window for the human player into the current draw
+; frame
+*/
+/*
+
+*/
+void Draw_Spell_Information_Window(void)
+{
+    uint8_t colors[4] = { 0, 0, 0, 0 };
+    char Range_Display_String[6] = { 0, 0, 0, 0, 0, 0 };
+    char Range_Number_String[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t value = 0;  // _SI_
+
+    colors[0] = 227;
+    colors[1] = 243;
+
+    Set_Font_Colors_15(0, &colors[0]);
+
+    Set_Outline_Color(227);
+
+    Set_Font_Style_Shadow_Down(0, 15, 0, 0);
+
+    Print_Integer_Right(236, 172, _players[_human_player_idx].Cmbt_Skill_Left);
+
+    Print(200, 172, cnst_CMB_Skill);
+
+    Print_Integer_Right(236, 181, _players[_human_player_idx].mana_reserve);
+
+    Print(200, 181, cnst_CMB_Mana);
+
+    value = Combat_Casting_Cost_Multiplier(_human_player_idx);
+
+    itoa(value, Range_Number_String, 10);
+
+    Print(200, 190, cnst_CMB_Range);
+
+    if(value < 10)
+    {
+
+        Range_Display_String[0] = '0';
+
+        Range_Display_String[1] = '.';
+
+        Range_Display_String[2] = Range_Number_String[0];
+
+        Range_Display_String[3] = 'x';
+
+        Range_Display_String[4] = 0;
+
+    }
+    else
+    {
+
+        Range_Display_String[0] = Range_Number_String[0];
+
+        Range_Display_String[1] = 'x';
+
+        Range_Display_String[2] = 0;
+
+        if(Range_Number_String[1] != '0')
+        {
+
+            Range_Display_String[1] = '.';
+
+            Range_Display_String[2] = Range_Number_String[1];
+
+            Range_Display_String[3] = 'x';
+
+            Range_Display_String[4] = 0;
+
+        }
+
+    }
+
+    Print_Right(236, 190, Range_Display_String);
+
+}
+
 
 // WZD o99p05
 // drake178: CMB_DrawAUWStats()

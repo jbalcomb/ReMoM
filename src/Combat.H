@@ -926,7 +926,7 @@ void Draw_Active_Unit_Window(void);
 void Tactical_Combat_Draw_Buttons(void);
 
 // WZD o99p04
-// drake178: CMB_DrawSpellInfoW()
+void Draw_Spell_Information_Window(void);
 
 // WZD o99p05
 void Draw_Active_Unit_Stats_And_Icons(void);
