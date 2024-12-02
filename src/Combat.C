@@ -8981,7 +8981,7 @@ void Battle_Unit_Heal(int16_t battle_unit_idx, int16_t Healing, int16_t TempHits
 
     }
 
-    for(itr_damages = 0; itr_damages = 3; itr_damages++)
+    for(itr_damages = 0; itr_damages < 3; itr_damages++)
     {
 
         battle_units[battle_unit_idx].damage[itr_damages] += damages[itr_damages];
