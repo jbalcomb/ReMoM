@@ -14298,34 +14298,32 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
         Mark_Time();
         Control_Input = Get_Input();
 
-        if (Control_Input != Click_Grid_Index) {
-            continue;
+        if (Control_Input == Click_Grid_Index) {
+
+            int16_t di = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
+            Picked_Y = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
+
+            if (CMB_Vortex_Array[Vortex_Index].X_Pos != di ||
+                CMB_Vortex_Array[Vortex_Index].Y_Pos != Picked_Y) {
+
+                if (battlefield->MoveCost_Teleport[Picked_Y * 21 + di] != -1) {
+
+                    if (abs(di - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
+                        abs(Picked_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+
+                        CMB_VortexMovement(Vortex_Index, di, Picked_Y);
+                        Finished = 1;
+                    }
+                }
+            }
         }
 
-        int16_t di = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
-        Picked_Y = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
-
-        if (CMB_Vortex_Array[Vortex_Index].X_Pos == di &&
-            CMB_Vortex_Array[Vortex_Index].Y_Pos == Picked_Y) {
-            continue;
+        if (!Finished) {
+            CMB_DrawFullScreen__WIP();
+            CMB_SetVortexCursor(Vortex_Index);
+            PageFlip_FX();
+            Release_Time(2);
         }
-
-        if (battlefield->MoveCost_Teleport[Picked_Y * 21 + di] == -1) {
-            continue;
-        }
-
-        if (abs(di - CMB_Vortex_Array[Vortex_Index].X_Pos) > 1 ||
-            abs(Picked_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) > 1) {
-            continue;
-        }
-
-        CMB_VortexMovement(Vortex_Index, di, Picked_Y);
-        Finished = 1;
-
-        CMB_DrawFullScreen__WIP();
-        CMB_SetVortexCursor(Vortex_Index);
-        PageFlip_FX();
-        Release_Time(2);
     }
 }
 
