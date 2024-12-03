@@ -14163,7 +14163,7 @@ void CMB_ProcessVortices(void)
                 if (Next_X != Current_X || Next_Y != Current_Y) {
                     dx = (Next_Y * 21) + Next_X;
 
-                    if (battlefield->MoveCost_Teleport[dx] != 0xFF &&
+                    if (battlefield->MoveCost_Teleport[dx] != -1 &&
                         Next_X >= 0 && Next_X <= 21 &&
                         Next_Y >= 0 && Next_Y <= 22) {
 
@@ -14310,8 +14310,7 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
             continue;
         }
 
-        int battlefieldValue = battlefield->MoveCost_Teleport[Picked_Y * 21 + di];
-        if (battlefieldValue == -1) {
+        if (battlefield->MoveCost_Teleport[Picked_Y * 21 + di] == -1) {
             continue;
         }
 
@@ -14334,7 +14333,6 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
 void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     unsigned int Pointer_Offset = 4;
     unsigned int Tile_Y, Scrn_Y, Scrn_X;
-    unsigned int ActiveUnitFrameX, ActiveUnitFrameY, TargetFrameX, TargetFrameY;
 
     _combat_mouse_grid->image_num = crsr_RedCross;
     Scrn_X = Pointer_X() + Pointer_Offset;
@@ -14353,12 +14351,15 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
 
         if (CMB_Vortex_Array[Vortex_Index].X_Pos == Grid_X &&
             CMB_Vortex_Array[Vortex_Index].Y_Pos == Tile_Y) {
-            if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
-                abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
-                CMB_TargetFrame = 1;
-                TargetFrameX = Grid_X;
-                TargetFrameY = Tile_Y;
-                _combat_mouse_grid->image_num = crsr_WingedBoot;
+
+            if (battlefield->MoveCost_Teleport[Grid_X] != -1) {
+                if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
+                    abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+                    CMB_TargetFrame = 1;
+                    CMB_TargetFrame_X = Grid_X;
+                    CMB_TargetFrame_Y = Tile_Y;
+                    _combat_mouse_grid->image_num = crsr_WingedBoot;
+                }
             }
         }
     }
