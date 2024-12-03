@@ -51,6 +51,7 @@
 #define NUM_UNIT_VIEW_LIST_ITEMS   40
 #define NUM_CITY_ENCHANTMENTS      26   // ¿ wha'hapen? CTY_EnchantsUpkeep() has 26, but s_CITY has 25 ? Includes Nightshade!
 #define NUM_OVERLAND_ENCHANTMENTS  24
+#define NUM_COMBAT_ENCHANTMENTS    15
 #define NUM_BUILDINGS              36
 #define NUM_RESOURCE_TYPES          5
 #define CITY_COUNT_MAX            100

@@ -68,7 +68,7 @@ extern "C" {
 
 
 //  ; (sizeof=0x4, standard type)
-struct s_CE_Display
+struct s_COMBAT_ENCHANTMENT_ICON_DATA
 {
     /* 00 */  int16_t icon_idx;
     /* 02 */  int16_t help_idx;
@@ -76,9 +76,9 @@ struct s_CE_Display
 };
 
 //  ; (sizeof=0x4, standard type)
-struct s_Active_CE
+struct s_COMBAT_ENCHANTMENT_ICON
 {
-    /* 00 */ int16_t icon_idx;
+    /* 00 */ SAMB_ptr icon_seg;
     /* 02 */ int16_t help_idx;
     /* 04 */
 };
@@ -459,13 +459,13 @@ struct s_BATTLEFIELD
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
-    /* 0x1556 */  int16_t Walled_City;
+    /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?
     /* 0x1558 */  int16_t Wall_Sections[16];   // {4,4,4,4}
     /* 0x1578 */  int16_t Wall_of_Fire;
     /* 0x157A */  int16_t Wall_of_Darkness;
     /* 0x157C */  int16_t wp;
-    /* 0x157E */  // struct s_CTY_ENCH City_Enchants[26];  // int16_t City_Enchants CTY_ENCH
-                  int8_t City_Enchants[26];
+    /* 0x157E */  // struct s_CTY_ENCH city_enchantments[26];  // int16_t city_enchantments CTY_ENCH
+                  int8_t city_enchantments[26];
     /* 0x1597 */  int8_t Nightshades;
     /* 0x1598 */
 };
@@ -575,8 +575,8 @@ struct CSCAN_ICONS
 // sizeof=0x1E
 struct s_CMB_InfoItem
 {
-    /* 00 */ SAMB_ptr Icon_IMG_Seg;
-    /* 02 */ int16_t HLP_Index;  // enum HELP_TXT
+    /* 00 */ SAMB_ptr icon_seg;
+    /* 02 */ int16_t help_idx;  // enum HELP_TXT
     /* 04 */ char Name[26];
     /* 1E */ 
 };
@@ -865,7 +865,7 @@ void Assign_Mouse_Image(void);
 int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
 
 // WZD o98p12
-void CMB_CreateCELabels__WIP(void);
+void Add_Combat_Enchantment_Fields(void);
 
 // WZD o98p13
 int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);

@@ -102,6 +102,8 @@ void Screen_Control(void)
                 _players[HUMAN_PLAYER_IDX].spells_list[128] = 2 /* S_Known */;
 
             }
+
+            /* HACK: need combat_enchantments[] */ _players[HUMAN_PLAYER_IDX].Globals[ETERNAL_NIGHT] = 1;
             
             // HACK:  trigger 'Event'
             DBG_trigger_event = ST_TRUE;

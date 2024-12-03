@@ -140,8 +140,10 @@ Module: MOX
 
 
 // WZD dseg:50AC                                                 BEGIN:  ovr098
-
-struct s_CE_Display TBL_CE_Display_Data[15] = 
+/*
+¿ could just be [15][2] ?
+*/
+struct s_COMBAT_ENCHANTMENT_ICON_DATA combat_enchantment_icon_data[NUM_COMBAT_ENCHANTMENTS] = 
 {
     {  0, HLP_LIGHT             },
     {  1, HLP_DARKNESS          },
@@ -204,6 +206,21 @@ char cnst_TreatyAtk_Msg1[] = "You have a treaty with ";
 char cnst_TreatyAtk_Msg2[] = ".  Do you still wish to attack?";
 
 // WZD dseg:5678                                                 ¿ END: ovr096 - Strings ?
+
+
+
+// WZD dseg:56CC                                                 BEGIN:  ovr098 - Initialized Data
+
+// WZD dseg:56CC
+char str_empty_string__ovr098[] = "";
+// WZD dseg:56CD
+char cnst_FleeLoss_Msg[] = "While fleeing you lost:";
+// WZD dseg:56E4
+char cnst_Space_6[] = " ";
+// WZD dseg:56E6
+char cnst_Dot8[] = ".";
+
+// WZD dseg:56E6                                                 END:  ovr098 - Initialized Data
 
 
 
@@ -638,9 +655,9 @@ int16_t CMB_AI_Player;
 // WZD dseg:C43E                                                                                         ; when populating the BU table, set to the index of the
 // WZD dseg:C43E                                                                                         ; AI player (the other participant being always human)
 // WZD dseg:C440
-int16_t CMB_DEFR_CE_Labels[15];
+int16_t defender_enchantment_fields[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C45E
-int16_t CMB_ATKR_CE_Labels[15];
+int16_t attacker_enchantment_fields[NUM_COMBAT_ENCHANTMENTS];
 
 
 // WZD dseg:C47C
@@ -657,44 +674,31 @@ int16_t _combat_wy;
 int16_t _combat_wx;
 
 // WZD dseg:C482
-int16_t CMB_ATKR_CE_Count;
+int16_t attacker_enchantment_count;
 // WZD dseg:C484
-int16_t CMB_DEFR_CE_Count;
+int16_t defender_enchantment_count;
 // WZD dseg:C486
-struct  s_Active_CE CMB_DEFR_CE_Wnd[15];
+struct  s_COMBAT_ENCHANTMENT_ICON CMB_DEFR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C4C2
-struct  s_Active_CE CMB_ATKR_CE_Wnd[15];
-
+struct  s_COMBAT_ENCHANTMENT_ICON CMB_ATKR_CE_Wnd[NUM_COMBAT_ENCHANTMENTS];
 // WZD dseg:C4FE
-SAMB_ptr IMG_CMB_TrueLight;
-// WZD dseg:C500
-SAMB_ptr IMG_CMB_Darkness;
-// WZD dseg:C502
-SAMB_ptr IMG_CMB_WarpReality;
-// WZD dseg:C504
-SAMB_ptr IMG_CMB_BlackPrayer;
-// WZD dseg:C506
-SAMB_ptr IMG_CMB_Wrack;
-// WZD dseg:C508
-SAMB_ptr IMG_CMB_MetalFires;
-// WZD dseg:C50A
-SAMB_ptr IMG_CMB_Prayer;
-// WZD dseg:C50C
-SAMB_ptr IMG_CMB_HighPrayer;
-// WZD dseg:C50E
-SAMB_ptr IMG_CMB_Terror;
-// WZD dseg:C510
-SAMB_ptr IMG_CMB_CallLightng;
-// WZD dseg:C512
-SAMB_ptr IMG_CMB_CounterMgc;
-// WZD dseg:C514
-SAMB_ptr IMG_CMB_MassInvis;
-// WZD dseg:C516
-SAMB_ptr IMG_CMB_Entangle;
-// WZD dseg:C518
-SAMB_ptr IMG_CMB_ManaLeak;
-// WZD dseg:C51A
-SAMB_ptr IMG_CMB_Blur;
+SAMB_ptr combat_enchantment_icon_segs[NUM_COMBAT_ENCHANTMENTS];
+// SAMB_ptr IMG_CMB_TrueLight;
+// SAMB_ptr IMG_CMB_Darkness;
+// SAMB_ptr IMG_CMB_WarpReality;
+// SAMB_ptr IMG_CMB_BlackPrayer;
+// SAMB_ptr IMG_CMB_Wrack;
+// SAMB_ptr IMG_CMB_MetalFires;
+// SAMB_ptr IMG_CMB_Prayer;
+// SAMB_ptr IMG_CMB_HighPrayer;
+// SAMB_ptr IMG_CMB_Terror;
+// SAMB_ptr IMG_CMB_CallLightng;
+// SAMB_ptr IMG_CMB_CounterMgc;
+// SAMB_ptr IMG_CMB_MassInvis;
+// SAMB_ptr IMG_CMB_Entangle;
+// SAMB_ptr IMG_CMB_ManaLeak;
+// SAMB_ptr IMG_CMB_Blur;
+
 // WZD dseg:C51C
 int16_t _combat_turn;
 // WZD dseg:C51E
@@ -1263,13 +1267,17 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
 
+
     CMB_ATKR_First_CE = 0;
 
     CMB_DEFR_First_CE = 0;
 
+
     CMB_combat_structure = Combat_Structure(wx, wy, wp, 0);
 
+
     CMB_CE_Refresh__WIP();
+
 
     Combat_Node_Type();
 
@@ -1285,6 +1293,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
 
     Init_Battlefield_Effects(CMB_combat_structure);
+
 
     Combat_Cache_Write();
 
@@ -1448,7 +1457,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Set_Input_Delay(3);
 
+
     CMB_CE_Refresh__WIP();
+
 
     Deactivate_Help_List();
 
@@ -1581,7 +1592,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         Active_Unit_Label_Index = Add_Hidden_Field(83, 173, 116, 198, cnst_ZeroString_17__ovr090[0], ST_UNDEFINED);
 
 
-        CMB_CreateCELabels__WIP();
+        Add_Combat_Enchantment_Fields();
 
 
         Bottom_GUI_Escape_Hotkey = Add_Hidden_Field(0, 164, 319, 199, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
@@ -1736,7 +1747,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         }
 
 
-        for(itr = 0; itr < CMB_ATKR_CE_Count; itr++)
+        for(itr = 0; itr < attacker_enchantment_count; itr++)
         {
 
             if(itr >= 4)
@@ -1744,12 +1755,12 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 break;
             }
 
-            if(CMB_ATKR_CE_Count <= 4)
+            if(attacker_enchantment_count <= 4)
             {
                 break;
             }
 
-            if(CMB_ATKR_CE_Labels[itr] == input_field_idx)
+            if(attacker_enchantment_fields[itr] == input_field_idx)
             {
 
                 Play_Left_Click__STUB();
@@ -1771,7 +1782,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
 
 
-        for(itr = 0; itr < CMB_DEFR_CE_Count; itr++)
+        for(itr = 0; itr < defender_enchantment_count; itr++)
         {
 
             if(itr >= 4)
@@ -1779,12 +1790,12 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 break;
             }
 
-            if(CMB_DEFR_CE_Count <= 4)
+            if(defender_enchantment_count <= 4)
             {
                 break;
             }
 
-            if(CMB_DEFR_CE_Labels[itr] == input_field_idx)
+            if(defender_enchantment_fields[itr] == input_field_idx)
             {
 
                 Play_Left_Click__STUB();
@@ -3399,6 +3410,8 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
 */
 /*
 
+special treatment for 'Counter Magic'
+
 */
 void CMB_CE_Refresh__WIP(void)
 {
@@ -3406,11 +3419,10 @@ void CMB_CE_Refresh__WIP(void)
     int16_t itr = 0;  // _SI_
     int16_t idx = 0;  // _DI_
 
-    CMB_ATKR_CE_Count = 0;
-    CMB_DEFR_CE_Count = 0;
+    attacker_enchantment_count = 0;
+    defender_enchantment_count = 0;
 
-    // 30 is 15 enchantments for 2 players
-    for(itr = 0; itr < 30; itr++)
+    for(itr = 0; itr < (NUM_COMBAT_ENCHANTMENTS * 2); itr++)
     {
 
         Active = ST_FALSE;
@@ -3423,9 +3435,9 @@ void CMB_CE_Refresh__WIP(void)
         }
 
         if(
-            (itr == 20)
+            (itr == 20)  /* Counter Magic - Defender */
             ||
-            (itr == 21)
+            (itr == 21)  /* Counter Magic - Attacker */
         )
         {
 
@@ -3438,7 +3450,7 @@ void CMB_CE_Refresh__WIP(void)
             else
             {
 
-                Active = ST_TRUE;
+                Active = ST_FALSE;
 
             }
 
@@ -3447,26 +3459,28 @@ void CMB_CE_Refresh__WIP(void)
         if(Active == ST_TRUE)
         {
 
-            idx = (itr / 2);
+            // enchantment index
+            idx = (itr / 2);  /* { 0, 1, 2, ..., 27, 28, 29}  { 0, 0, 1, ..., 13, 14, 14 } */
 
+            // even/odd - attacker/defender
             if((itr % 2) == 0)
             {
 
-                CMB_ATKR_CE_Wnd[CMB_ATKR_CE_Count].icon_idx = IMG_CMB_TrueLight[TBL_CE_Display_Data[idx].icon_idx];
+                CMB_ATKR_CE_Wnd[attacker_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
 
-                CMB_ATKR_CE_Wnd[CMB_ATKR_CE_Count].help_idx = TBL_CE_Display_Data[idx].help_idx;
+                CMB_ATKR_CE_Wnd[attacker_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
 
-                CMB_ATKR_CE_Count++;
+                attacker_enchantment_count++;
 
             }
             else
             {
 
-                CMB_DEFR_CE_Wnd[CMB_DEFR_CE_Count].icon_idx = IMG_CMB_TrueLight[TBL_CE_Display_Data[idx].icon_idx];
+                CMB_DEFR_CE_Wnd[defender_enchantment_count].icon_seg = combat_enchantment_icon_segs[combat_enchantment_icon_data[idx].icon_idx];
 
-                CMB_DEFR_CE_Wnd[CMB_DEFR_CE_Count].help_idx = TBL_CE_Display_Data[idx].help_idx;
+                CMB_DEFR_CE_Wnd[defender_enchantment_count].help_idx = combat_enchantment_icon_data[idx].help_idx;
 
-                CMB_DEFR_CE_Count++;
+                defender_enchantment_count++;
 
             }
 
@@ -4613,10 +4627,51 @@ int16_t BU_GetRangedCursor__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_
 /*
 
 */
-void CMB_CreateCELabels__WIP(void)
+void Add_Combat_Enchantment_Fields(void)
 {
+    int16_t start_x = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    if(_combat_attacker_player == _human_player_idx)
+    {
+
+        start_x = 247;
+
+    }
+    else
+    {
+
+        start_x = 8;
+
+    }
+
+    for(itr = 0; (((CMB_ATKR_First_CE + itr)  < attacker_enchantment_count) && (itr < 4)); itr++)
+    {
+
+        attacker_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].help_idx);
+
+    }
 
 
+    if(_combat_defender_player == _human_player_idx)
+    {
+
+        start_x = 247;
+
+    }
+    else
+    {
+
+        start_x = 8;
+
+    }
+
+    for(itr = 0; (((CMB_DEFR_First_CE + itr)  < defender_enchantment_count) && (itr < 4)); itr++)
+    {
+
+        defender_enchantment_fields[itr] = Add_Picture_Field((start_x + (itr * 17)), 179, CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].icon_seg, str_empty_string__ovr098[0], CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].help_idx);
+
+    }
 
 }
 
@@ -5124,36 +5179,13 @@ void CMB_DrawFullScreen__WIP(void)
     _help_entries[15].help_idx = ST_UNDEFINED;
     _help_entries[16].help_idx = ST_UNDEFINED;
 
-    for(itr = 0; (((CMB_ATKR_First_CE + itr) < CMB_ATKR_CE_Count) && (itr < 4)); itr++)
+    for(itr = 0; (((CMB_ATKR_First_CE + itr) < attacker_enchantment_count) && (itr < 4)); itr++)
     {
-// mov     bx, _SI_itr
-// add     bx, [CMB_ATKR_First_CE]         ; now 0 (after tactical BU init)
-// mov     cl, 2
-// shl     bx, cl
-// push    [word ptr CMB_ATKR_CE_Wnd.IMG_Seg+bx] ; picture
-// mov     ax, 179
-// push    ax                              ; y
-// mov     ax, _SI_itr
-// mov     dx, 17
-// imul    dx
-// mov     dx, [bp+CE_Window_Left]
-// add     dx, ax
-// push    dx                              ; x
-// call    FLIC_Draw
-// add     sp, 6
-// mov     bx, _SI_itr
-// add     bx, [CMB_ATKR_First_CE]         ; now 0 (after tactical BU init)
-// mov     cl, 2
-// shl     bx, cl
-// mov     ax, [CMB_ATKR_CE_Wnd.Help_Entry+bx]
-// push    ax
-// mov     ax, [bp+First_CE_Help_Entry]
-// add     ax, _SI_itr
-// mov     dx, size s_HELP_ENTRY
-// imul    dx
-// mov     bx, ax
-// pop     ax
-// mov     [word ptr _help_entries.help_00.help_idx+bx], ax
+
+        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].icon_seg);
+
+        _help_entries[(First_CE_Help_Entry + itr)].help_idx = CMB_ATKR_CE_Wnd[(CMB_ATKR_First_CE + itr)].help_idx;
+
     }
 
     if(_combat_defender_player == _human_player_idx)
@@ -5167,36 +5199,13 @@ void CMB_DrawFullScreen__WIP(void)
         First_CE_Help_Entry = 13;
     }
 
-    for(itr = 0; (((CMB_DEFR_First_CE + itr) < CMB_DEFR_CE_Count) && (itr < 4)); itr++)
+    for(itr = 0; (((CMB_DEFR_First_CE + itr) < defender_enchantment_count) && (itr < 4)); itr++)
     {
-// mov     bx, _SI_itr
-// add     bx, [CMB_DEFR_First_CE]         ; now 0 (after tactical BU init)
-// mov     cl, 2
-// shl     bx, cl
-// push    [word ptr CMB_DEFR_CE_Wnd.IMG_Seg+bx] ; picture
-// mov     ax, 179
-// push    ax                              ; y
-// mov     ax, _SI_itr
-// mov     dx, 17
-// imul    dx
-// mov     dx, [bp+CE_Window_Left]
-// add     dx, ax
-// push    dx                              ; x
-// call    FLIC_Draw
-// add     sp, 6
-// mov     bx, _SI_itr
-// add     bx, [CMB_DEFR_First_CE]         ; now 0 (after tactical BU init)
-// mov     cl, 2
-// shl     bx, cl
-// mov     ax, [CMB_DEFR_CE_Wnd.Help_Entry+bx]
-// push    ax
-// mov     ax, [bp+First_CE_Help_Entry]
-// add     ax, _SI_itr
-// mov     dx, size s_HELP_ENTRY
-// imul    dx
-// mov     bx, ax
-// pop     ax
-// mov     [word ptr _help_entries.help_00.help_idx+bx], ax
+        
+        FLIC_Draw((CE_Window_Left + (itr * 17)), 179, CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].icon_seg);
+
+        _help_entries[(First_CE_Help_Entry + itr)].help_idx = CMB_DEFR_CE_Wnd[(CMB_DEFR_First_CE + itr)].help_idx;
+
     }
 
 
@@ -6149,8 +6158,8 @@ void Combat_Information_Window(void)
 
     CMB_CentralStructure = battlefield->Central_Structure;
 
-    CMB_CloudofShadow = battlefield->City_Enchants[CLOUD_OF_SHADOW];
-    CMB_HeavenlyLight = battlefield->City_Enchants[HEAVENLY_LIGHT];
+    CMB_CloudofShadow = battlefield->city_enchantments[CLOUD_OF_SHADOW];
+    CMB_HeavenlyLight = battlefield->city_enchantments[HEAVENLY_LIGHT];
 
     Clear_Fields();
 
@@ -6493,14 +6502,14 @@ void Combat_Information_Window_Draw(void)
 
         FLIC_Draw((Draw_Left - 1), (Draw_Top - 1), _combat_info_wnd_box_seg);
 
-        if(_combat_info_effects[IDK_itr]->Icon_IMG_Seg != (SAMB_ptr)ST_UNDEFINED)
+        if(_combat_info_effects[IDK_itr]->icon_seg != (SAMB_ptr)ST_UNDEFINED)
         {
 
-            FLIC_Draw(Draw_Left, Draw_Top, _combat_info_effects[IDK_itr]->Icon_IMG_Seg);
+            FLIC_Draw(Draw_Left, Draw_Top, _combat_info_effects[IDK_itr]->icon_seg);
 
             Print((Draw_Left + 20), (Draw_Top + 5), _combat_info_effects[IDK_itr]->Name);
 
-            _help_entries[IDK_itr].help_idx = _combat_info_effects[IDK_itr]->HLP_Index;
+            _help_entries[IDK_itr].help_idx = _combat_info_effects[IDK_itr]->help_idx;
             _help_entries[IDK_itr].x1 = Draw_Left;
             _help_entries[IDK_itr].y1 = Draw_Top;
             _help_entries[IDK_itr].x2 = (Draw_Left + 100);
@@ -6564,9 +6573,9 @@ void Combat_Info_Effects(void)
             if(_players[player_idx].Globals[CRUSADE] > 0)
             {
 
-                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[0];
+                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[0];
 
-                _combat_info_effects[info_common_count]->HLP_Index = HLP_CRUSADE;
+                _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
 
                 strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
 
@@ -6579,9 +6588,9 @@ void Combat_Info_Effects(void)
             if(_players[player_idx].Globals[HOLY_ARMS] > 0)
             {
 
-                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[1];
+                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[1];
 
-                _combat_info_effects[info_common_count]->HLP_Index = HLP_HOLY_ARMS;
+                _combat_info_effects[info_common_count]->help_idx = HLP_HOLY_ARMS;
 
                 strcpy(_combat_info_effects[info_common_count]->Name, cnst_HolyArms);
 
@@ -6594,9 +6603,9 @@ void Combat_Info_Effects(void)
             if(_players[player_idx].Globals[CHARM_OF_LIFE] > 0)
             {
 
-                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[0];
+                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[0];
 
-                _combat_info_effects[info_common_count]->HLP_Index = HLP_CRUSADE;
+                _combat_info_effects[info_common_count]->help_idx = HLP_CRUSADE;
 
                 strcpy(_combat_info_effects[info_common_count]->Name, cnst_Crusade);
 
@@ -6609,9 +6618,9 @@ void Combat_Info_Effects(void)
             if(_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
             {
 
-                _combat_info_effects[info_common_count]->Icon_IMG_Seg = _combat_info_effect_icon_segs[9];
+                _combat_info_effects[info_common_count]->icon_seg = _combat_info_effect_icon_segs[9];
 
-                _combat_info_effects[info_common_count]->HLP_Index = HLP_ZOMBIE_MASTERY;
+                _combat_info_effects[info_common_count]->help_idx = HLP_ZOMBIE_MASTERY;
 
                 strcpy(_combat_info_effects[info_common_count]->Name, cnst_ZombieMastery);
 
@@ -6679,7 +6688,7 @@ void Combat_Info_Effects_Base(void)
     for(itr = 0; itr < 14; itr++)
     {
 
-        _combat_info_effects[itr]->Icon_IMG_Seg = (SAMB_ptr)ST_UNDEFINED;
+        _combat_info_effects[itr]->icon_seg = (SAMB_ptr)ST_UNDEFINED;
 
     }
 
@@ -6688,9 +6697,9 @@ void Combat_Info_Effects_Base(void)
     if(CMB_CentralStructure == CS_SorceryNode)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[12];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[12];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_SORCERY;
+        _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_SORCERY;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_SorcNodeDispel);
 
@@ -6700,9 +6709,9 @@ void Combat_Info_Effects_Base(void)
     else if(CMB_CentralStructure == CS_ChaosNode)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[5];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[5];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_CHAOS;
+        _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_CHAOS;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_ChaosNodeDispel);
 
@@ -6712,9 +6721,9 @@ void Combat_Info_Effects_Base(void)
     else if(CMB_CentralStructure == CS_NatureNode)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[10];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[10];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_DISPELS_NON_NATURE;
+        _combat_info_effects[idx]->help_idx = HLP_DISPELS_NON_NATURE;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_NatNodeDispel);
 
@@ -6726,9 +6735,9 @@ void Combat_Info_Effects_Base(void)
     if(_combat_node_type == cnt_Sorcery)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[13];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[13];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_SORCERY_NODE_AURA;
+        _combat_info_effects[idx]->help_idx = HLP_SORCERY_NODE_AURA;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_SorceryAura);
 
@@ -6738,9 +6747,9 @@ void Combat_Info_Effects_Base(void)
     else if(_combat_node_type == cnt_Nature)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[11];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[11];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_NATURE_NODE_AURA;
+        _combat_info_effects[idx]->help_idx = HLP_NATURE_NODE_AURA;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_NatureAura);
 
@@ -6750,9 +6759,9 @@ void Combat_Info_Effects_Base(void)
     else if(_combat_node_type == cnt_Chaos)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[6];
+        _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[6];
 
-        _combat_info_effects[idx]->HLP_Index = HLP_CHAOS_NODE_AURA;
+        _combat_info_effects[idx]->help_idx = HLP_CHAOS_NODE_AURA;
 
         strcpy(_combat_info_effects[idx]->Name, cnst_ChaosAura);
 
@@ -6767,9 +6776,9 @@ void Combat_Info_Effects_Base(void)
         if(CMB_CloudofShadow > 0)
         {
 
-            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[8];
+            _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[8];
 
-            _combat_info_effects[idx]->HLP_Index = HLP_CLOUD_OF_DARKNESS;
+            _combat_info_effects[idx]->help_idx = HLP_CLOUD_OF_DARKNESS;
 
             strcpy(_combat_info_effects[idx]->Name, cnst_CloudOfDarkness);
 
@@ -6780,9 +6789,9 @@ void Combat_Info_Effects_Base(void)
         if(CMB_HeavenlyLight > 0)
         {
 
-            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[2];
+            _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[2];
 
-            _combat_info_effects[idx]->HLP_Index = HLP_HOLY_LIGHT;
+            _combat_info_effects[idx]->help_idx = HLP_HOLY_LIGHT;
 
             strcpy(_combat_info_effects[idx]->Name, cnst_HolyLight);
 
@@ -6798,9 +6807,9 @@ void Combat_Info_Effects_Base(void)
         if(_players[itr].Globals[CHAOS_SURGE] > 0)
         {
 
-            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[4];
+            _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[4];
 
-            _combat_info_effects[idx]->HLP_Index = HLP_CHAOS_SURGE;
+            _combat_info_effects[idx]->help_idx = HLP_CHAOS_SURGE;
 
             strcpy(_combat_info_effects[idx]->Name, cnst_ChaosSurge);
 
@@ -6816,9 +6825,9 @@ void Combat_Info_Effects_Base(void)
         if(_players[itr].Globals[ETERNAL_NIGHT] > 0)
         {
 
-            _combat_info_effects[idx]->Icon_IMG_Seg = _combat_info_effect_icon_segs[7];
+            _combat_info_effects[idx]->icon_seg = _combat_info_effect_icon_segs[7];
 
-            _combat_info_effects[idx]->HLP_Index = HLP_ETERNAL_NIGHT;
+            _combat_info_effects[idx]->help_idx = HLP_ETERNAL_NIGHT;
 
             strcpy(_combat_info_effects[idx]->Name, cnst_EternalNight);
 
@@ -6832,7 +6841,7 @@ void Combat_Info_Effects_Base(void)
     if((idx % 2) != 0)
     {
 
-        _combat_info_effects[idx]->Icon_IMG_Seg = (SAMB_ptr)ST_UNDEFINED;
+        _combat_info_effects[idx]->icon_seg = (SAMB_ptr)ST_UNDEFINED;
 
         idx++;
 
@@ -6951,7 +6960,7 @@ int16_t Combat_Info_Effects_Count(void)
     if(OVL_Action_Type == 1)
     {
 
-        if(battlefield->City_Enchants[CLOUD_OF_SHADOW] > 0)
+        if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
         {
 
             battle_effects_count++;
@@ -6959,7 +6968,7 @@ int16_t Combat_Info_Effects_Count(void)
         }
 
 
-        if(battlefield->City_Enchants[HEAVENLY_LIGHT] > 0)
+        if(battlefield->city_enchantments[HEAVENLY_LIGHT] > 0)
         {
 
             battle_effects_count++;
@@ -7394,36 +7403,57 @@ void CMB_LoadResources__WIP(void)
     }
 
 
-    IMG_CMB_TrueLight = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
 
-    IMG_CMB_Darkness = LBX_Reload_Next(compix_lbx_file__ovr103, 6, _screen_seg);
+    // IMG_CMB_TrueLight = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
+    // IMG_CMB_Darkness = LBX_Reload_Next(compix_lbx_file__ovr103, 6, _screen_seg);
+    // IMG_CMB_WarpReality = LBX_Reload_Next(compix_lbx_file__ovr103, 7, _screen_seg);
+    // IMG_CMB_BlackPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 8, _screen_seg);
+    // IMG_CMB_Wrack = LBX_Reload_Next(compix_lbx_file__ovr103, 9, _screen_seg);
+    // IMG_CMB_MetalFires = LBX_Reload_Next(compix_lbx_file__ovr103, 10, _screen_seg);
+    // IMG_CMB_Prayer = LBX_Reload_Next(compix_lbx_file__ovr103, 11, _screen_seg);
+    // IMG_CMB_HighPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 12, _screen_seg);
+    // IMG_CMB_Terror = LBX_Reload_Next(compix_lbx_file__ovr103, 13, _screen_seg);
+    // IMG_CMB_CallLightng = LBX_Reload_Next(compix_lbx_file__ovr103, 14, _screen_seg);
+    // IMG_CMB_CounterMgc = LBX_Reload_Next(compix_lbx_file__ovr103, 15, _screen_seg);
+    // IMG_CMB_MassInvis = LBX_Reload_Next(compix_lbx_file__ovr103, 41, _screen_seg);
+    // IMG_CMB_Entangle = LBX_Reload_Next(compix_lbx_file__ovr103, 60, _screen_seg);
+    // IMG_CMB_ManaLeak = LBX_Reload_Next(compix_lbx_file__ovr103, 79, _screen_seg);
+    // IMG_CMB_Blur = LBX_Reload_Next(compix_lbx_file__ovr103, 80, _screen_seg);
 
-    IMG_CMB_WarpReality = LBX_Reload_Next(compix_lbx_file__ovr103, 7, _screen_seg);
+    // COMPIX.LBX, 005  "COMENCHI"   "light"
+    // COMPIX.LBX, 006  "COMENCHI"   "darkness"
+    // COMPIX.LBX, 007  "COMENCHI"   "warp reality"
+    // COMPIX.LBX, 008  "COMENCHI"   "black curse"
+    // COMPIX.LBX, 009  "COMENCHI"   "wrack"
+    // COMPIX.LBX, 010  "COMENCHI"   "metal fires"
+    // COMPIX.LBX, 011  "COMENCHI"   "prayer"
+    // COMPIX.LBX, 012  "COMENCHI"   "high prayer"
+    // COMPIX.LBX, 013  "COMENCHI"   "terror"
+    // COMPIX.LBX, 014  "COMENCHI"   "lightning"
+    // COMPIX.LBX, 015  "COMENCHI"   "counter magic"
+    // COMPIX.LBX, 041  "MASINVIS"   "mass invis"
+    // COMPIX.LBX, 060  "COMENCHI"   "entangle icon"
+    // COMPIX.LBX, 079  "COMENCHI"   "mana leek"
+    // COMPIX.LBX, 080  "COMENCHI"   "blur"
 
-    IMG_CMB_BlackPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 8, _screen_seg);
+    combat_enchantment_icon_segs[ 0] = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
+    combat_enchantment_icon_segs[ 1] = LBX_Reload_Next(compix_lbx_file__ovr103, 6, _screen_seg);
+    combat_enchantment_icon_segs[ 2] = LBX_Reload_Next(compix_lbx_file__ovr103, 7, _screen_seg);
+    combat_enchantment_icon_segs[ 3] = LBX_Reload_Next(compix_lbx_file__ovr103, 8, _screen_seg);
+    combat_enchantment_icon_segs[ 4] = LBX_Reload_Next(compix_lbx_file__ovr103, 9, _screen_seg);
+    combat_enchantment_icon_segs[ 5] = LBX_Reload_Next(compix_lbx_file__ovr103, 10, _screen_seg);
+    combat_enchantment_icon_segs[ 6] = LBX_Reload_Next(compix_lbx_file__ovr103, 11, _screen_seg);
+    combat_enchantment_icon_segs[ 7] = LBX_Reload_Next(compix_lbx_file__ovr103, 12, _screen_seg);
+    combat_enchantment_icon_segs[ 8] = LBX_Reload_Next(compix_lbx_file__ovr103, 13, _screen_seg);
+    combat_enchantment_icon_segs[ 9] = LBX_Reload_Next(compix_lbx_file__ovr103, 14, _screen_seg);
+    combat_enchantment_icon_segs[10] = LBX_Reload_Next(compix_lbx_file__ovr103, 15, _screen_seg);
+    combat_enchantment_icon_segs[11] = LBX_Reload_Next(compix_lbx_file__ovr103, 41, _screen_seg);
+    combat_enchantment_icon_segs[12] = LBX_Reload_Next(compix_lbx_file__ovr103, 60, _screen_seg);
+    combat_enchantment_icon_segs[13] = LBX_Reload_Next(compix_lbx_file__ovr103, 79, _screen_seg);
+    combat_enchantment_icon_segs[14] = LBX_Reload_Next(compix_lbx_file__ovr103, 80, _screen_seg);
 
-    IMG_CMB_Wrack = LBX_Reload_Next(compix_lbx_file__ovr103, 9, _screen_seg);
 
-    IMG_CMB_MetalFires = LBX_Reload_Next(compix_lbx_file__ovr103, 10, _screen_seg);
-    
-    IMG_CMB_Prayer = LBX_Reload_Next(compix_lbx_file__ovr103, 11, _screen_seg);
-    
-    IMG_CMB_HighPrayer = LBX_Reload_Next(compix_lbx_file__ovr103, 12, _screen_seg);
-    
-    IMG_CMB_Terror = LBX_Reload_Next(compix_lbx_file__ovr103, 13, _screen_seg);
-    
-    IMG_CMB_CallLightng = LBX_Reload_Next(compix_lbx_file__ovr103, 14, _screen_seg);
-    
-    IMG_CMB_CounterMgc = LBX_Reload_Next(compix_lbx_file__ovr103, 15, _screen_seg);
 
-    IMG_CMB_MassInvis = LBX_Reload_Next(compix_lbx_file__ovr103, 41, _screen_seg);
-    
-    IMG_CMB_Entangle = LBX_Reload_Next(compix_lbx_file__ovr103, 60, _screen_seg);
-    
-    IMG_CMB_ManaLeak = LBX_Reload_Next(compix_lbx_file__ovr103, 79, _screen_seg);
-    
-    IMG_CMB_Blur = LBX_Reload_Next(compix_lbx_file__ovr103, 80, _screen_seg);
-    
     IMG_CMB_Cancel_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 22, _screen_seg);
 
     _cmbt_lock_spell_button_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 23, _screen_seg);
@@ -11710,17 +11740,31 @@ void Init_Battlefield_Effects(int16_t combat_structure)
     int16_t itr_battle_units;  // _SI_
     int16_t battle_unit_owner_idx;  // _DI_
 
-// WTFmate:  Per the Dasm, battlefield is not even allocated for Strategic_Combat()  (and, I can't find where it's populated, in either case)
-// IDGI      if(battlefield->City_Enchants->Cloud_of_Shadow > 0)
-// IDGI      {
-// IDGI          combat_enchantments->Darkness.Dfndr = 2;
-// IDGI      }
-// IDGI  
-// IDGI      if(battlefield->City_Enchants->Heavenly_Light > 0)
-// IDGI      {
-// IDGI          combat_enchantments->True_Light.Dfndr = 2;
-// IDGI      }
 
+    // WTFmate:  Per the Dasm, battlefield is not even allocated for Strategic_Combat()  (and, I can't find where it's populated, in either case)
+
+    if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
+    {
+
+        combat_enchantments[DARKNESS_DFNDR] = 2;
+
+    }
+
+    if(battlefield->city_enchantments[HEAVENLY_LIGHT] > 0)
+    {
+
+        combat_enchantments[TRUE_LIGHT_DFNDR] = 2;
+
+    }
+
+    /*
+        if any player has 'Eternal Night'
+        and the defender does not have 'True Light' or its city does not have 'Heavenly Light'
+        then
+        if that player is the attacker, the attacker has 'Darkness'
+        if that player is the defender, the defender has 'Darkness'
+        if that player is neither, then both have 'Darkness'
+    */
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
@@ -11729,15 +11773,20 @@ void Init_Battlefield_Effects(int16_t combat_structure)
             // if(combat_enchantments->True_Light.Dfndr != 2)
             if(combat_enchantments[TRUE_LIGHT_DFNDR] != 2)
             {
+
                 if(itr_players == _combat_attacker_player)
                 {
+
                     // combat_enchantments->Darkness.Attkr = 3;
                     combat_enchantments[DARKNESS_ATTKR] = 3;
+
                 }
                 else if(itr_players == _combat_defender_player)
                 {
+
                     // combat_enchantments->Darkness.Dfndr = 3;
                     combat_enchantments[DARKNESS_DFNDR] = 3;
+
                 }
                 else
                 {
@@ -11748,8 +11797,11 @@ void Init_Battlefield_Effects(int16_t combat_structure)
                     combat_enchantments[DARKNESS_ATTKR] = 3;
 
                 }
+
             }
+
         }
+
     }
 
     for(itr_arrays = 0; itr_arrays < 7; itr_arrays++)
@@ -13487,52 +13539,70 @@ maybe not 5 because 5 is Lair?
 */
 int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_flag)
 {
-    int16_t combat_structure;  //  _SI_
-    int16_t terrain_type;  // _DI_
+    int16_t combat_structure = 0;  //  _SI_
+    int16_t terrain_type = 0;  // _DI_
 
     combat_structure = cs_NONE;
 
     if(Square_Is_Sailable(wx, wy, wp) != ST_FALSE)
     {
+
         combat_structure = cs_OceanTerrainType;
+
     }
 
     if(OVL_Action_Type == 1)  /* Combat - Enemy City */
     {
-        if(_CITIES[OVL_Action_Structure].enchantments[HEAVENLY_LIGHT] > ST_FALSE)
+
+        if(_CITIES[OVL_Action_Structure].enchantments[HEAVENLY_LIGHT] > 0)
         {
-            // TBL_CombatEnchants[] ... Combat_Enchants.True_Light.Dfndr] = 2
+
+            combat_enchantments[TRUE_LIGHT_DFNDR] = 2;
+
         }
 
-        if(_CITIES[OVL_Action_Structure].enchantments[CLOUD_OF_SHADOW] > ST_FALSE)
+        if(_CITIES[OVL_Action_Structure].enchantments[CLOUD_OF_SHADOW] > 0)
         {
-            // TBL_CombatEnchants[] ... Combat_Enchants.Darkness.Dfndr] = 2
+
+            combat_enchantments[DARKNESS_DFNDR] = 2;
+
         }
 
         if(set_city_flag == ST_TRUE)
         {
+
             combat_structure = cs_City;
+
         }
+
     }
+
 
     terrain_type = (_world_maps[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] % NUM_TERRAIN_TYPES);
 
     if(terrain_type == tt_SorceryNode)
     {
+
         combat_structure = cs_SorceryNode;
+
     }
     
     if(terrain_type == tt_NatureNode)
     {
+
         combat_structure = cs_NatureNode;
+
     }
     
     if(terrain_type == tt_ChaosNode)
     {
+
         combat_structure = cs_ChaosNode;
+
     }
 
     return combat_structure;
+
 }
 
 
@@ -14370,7 +14440,7 @@ void CMB_DrawMap__WIP(void)
                             )
                             {
 
-                                if(battlefield->City_Enchants[FLYING_FORTRESS] != 0)
+                                if(battlefield->city_enchantments[FLYING_FORTRESS] != 0)
                                 {
                                     Clipped_Draw((screen_x - 48), (screen_y - 48), IMG_CMB_Cloud);
                                 }
@@ -15889,7 +15959,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     Magic_Walls = 0;
 
-    CityEnchant_Ptr = (int8_t *)&battlefield->City_Enchants;
+    CityEnchant_Ptr = (int8_t *)&battlefield->city_enchantments;
 
     for(itr = 0; itr < 30; itr++)
     {
@@ -15995,7 +16065,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
 
 //             CityEnchant_Ptr = _CITIES[itr].enchantments;
 // 
-//             Battlefield_CityEnchant_Ptr = battlefield.City_Enchants;
+//             Battlefield_CityEnchant_Ptr = battlefield.city_enchantments;
 // 
 // if(_CITIES[itr].enchantments[NIGHTSHADE] > CityEnchant_Ptr)
 // {
