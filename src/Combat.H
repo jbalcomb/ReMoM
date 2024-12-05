@@ -571,6 +571,16 @@ struct CSCAN_ICONS
     /* 24 */
 };
 
+// ; (sizeof = 0xC)
+struct s_CMB_Vortex
+{
+    /* 00 */ int16_t X_Pos;
+    /* 02 */ int16_t Y_Pos;
+    /* 04 */ int16_t Prev_or_Next_X;
+    /* 06 */ int16_t Prev_or_Next_Y;
+    /* 08 */ int16_t Move_Stage;
+    /* 0A */ int16_t Owner;
+};
 
 // sizeof=0x1E
 struct s_CMB_InfoItem
@@ -725,7 +735,7 @@ extern SAMB_ptr CMB_Path_Costs;
 extern SAMB_ptr CMB_ActiveMoveMap;
 
 // WZD dseg:D14E
-extern SAMB_ptr CMB_Vortex_Array;
+extern struct s_CMB_Vortex* CMB_Vortex_Array;
 
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;
@@ -1118,7 +1128,7 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx);
 // CMB_MeleeAnim()
 
 // WZD o113p06
-// CMB_ConvSpellAttack()
+void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override);
 
 // WZD o113p07
 void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[]);
@@ -1348,7 +1358,14 @@ int16_t Raze_City_Prompt(char * message);
 // WZD o124p21
 void Raze_City_Prompt_Draw(void);
 
+/*
+    WIZARDS.EXE  ovr133
+*/
 
+void CMB_ProcessVortices(void);
+void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y);
+void CMB_VortexPlayerMove(int Vortex_Index);
+void CMB_SetVortexCursor(int Vortex_Index);
 
 /*
     WIZARDS.EXE  ovr153

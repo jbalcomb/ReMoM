@@ -760,7 +760,7 @@ SAMB_ptr _cmbt_wait_button_seg;
 SAMB_ptr _cmbt_spell_button_seg;
 
 // WZD dseg:C582
-// drake178: CMB_SelectedUnit
+// drake178: _active_battle_unit
 // MoO2  Module: MOX  _cur_ship
 /*
 ; active battle unit in combat?
@@ -1083,7 +1083,7 @@ int16_t CMB_Chasm_Anim_Y;
 // WZD dseg:D14C
 int16_t CMB_Chasm_Anim_X;
 // WZD dseg:D14E
-SAMB_ptr CMB_Vortex_Array;
+struct s_CMB_Vortex* CMB_Vortex_Array;
 // WZD dseg:D152
 int16_t CMB_Vortex_Count;
 
@@ -2522,7 +2522,7 @@ void CMB_PrepareTurn__WIP(void)
 
     Selected_Unit = _active_battle_unit;
 
-    // TODO  CMB_ProcessVortices();
+    CMB_ProcessVortices();
     // ; processes the movement of magic votrices - 3 random
     // ; moves, then one player selected one
     // ;
@@ -11635,10 +11635,41 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
 */
 
 // WZD o122p01
-// CMB_AttackRoll()
+int16_t CMB_AttackRoll(uint16_t attack_strength, uint16_t to_hit) {
+    int16_t die_roll;
+    uint16_t success_count = 0;
+    uint16_t total_rolls = 0;
+
+    while (total_rolls < attack_strength) {
+        die_roll = Random(10);
+
+        if ((8 - to_hit) <= die_roll || die_roll == 10) {
+            success_count++;
+        }
+        total_rolls++;
+    }
+
+    return success_count;
+}
+
 
 // WZD o122p02
-// CMB_DefenseRoll()
+uint16_t CMB_DefenseRoll(uint16_t defense, uint16_t to_block) {
+    uint16_t success_count = 0;
+    uint16_t total_rolls = 0;
+
+    while (total_rolls < defense) {
+        int16_t die_roll = Random(10);
+
+        if (die_roll >= (8 - to_block)) {
+            success_count++;
+        }
+
+        total_rolls++;
+    }
+
+    return success_count;
+}
 
 // WZD o122p03
 // drake178: BU_ResistRoll()
@@ -11669,7 +11700,68 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 // BU_ProcessAttack()
 
 // WZD o122p08
-// BU_GetEffectiveDEF()
+uint16_t BU_GetEffectiveDEF(uint16_t BU_Index, uint16_t AType, uint16_t Imm_Flags, uint16_t ATK_Flags, uint16_t Realm) {
+    uint16_t Immunity_Type = 0;
+    uint16_t si;
+
+    struct s_BATTLE_UNIT* battleunit = &battle_units[BU_Index];
+    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+
+    int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+
+    si = battleunit->defense;
+
+    if (Imm_Flags & battleunit->Attribs_1 & USA_IMMUNITY_ILLUSION) {
+        Imm_Flags ^= USA_IMMUNITY_ILLUSION;
+    }
+
+    if (Imm_Flags & USA_IMMUNITY_ILLUSION) {
+        return 0;
+    }
+
+    if ((battleunit->Abilities & 0x02) && AType != 0) {
+        si += 2;
+    }
+
+    if (Imm_Flags & battleunit->Attribs_1) {
+        if (AType != 0) {
+            Immunity_Type = 2;
+        }
+    }
+
+    if (Imm_Flags & battleunit->Attribs_1 & USA_IMMUNITY_WEAPON) {
+        Immunity_Type = 1;
+    }
+
+    if ((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) && Realm != 0xFFFF && AType != 0) {
+        Immunity_Type = 2;
+    }
+
+    if ((Realm == sbr_Chaos || Realm == sbr_Death) && (Enchants & UE_RESISTELEMENTS)) {
+        si += 3;
+    }
+
+    if ((Realm == sbr_Chaos || Realm == sbr_Nature) && (Enchants & UE_ELEMENTALARMOR)) {
+        si += 10;
+    }
+    else if ((Enchants & UE_RESISTELEMENTS)) {
+        si += 3;
+    }
+
+    if (ATK_Flags & 0x01) {
+        si -= si >> 1;
+    }
+
+    if (Immunity_Type == 1 && si < 10) {
+        si = 10;
+    }
+
+    if (Immunity_Type == 2) {
+        return 0x32;
+    }
+
+    return si;
+}
 
 // WZD o122p09
 // BU_GetATKRealm()
@@ -14033,7 +14125,398 @@ void Raze_City_Prompt_Draw(void)
 
 }
 
+/*
+    WIZARDS.EXE  ovr133
+*/
+void CMB_ProcessVortices(void)
+{
+    int Tries_Counter, Current_Y, Current_X, Next_Y, Loop_Var;
+    unsigned int Vortex_Index = 0;
 
+    if (magic_set.sound_effects == 1) {
+        Play_Sound__STUB(SND_CMB_Silence);
+        Mark_Block(World_Data);
+        SND_SpellCast = LBX_Reload_Next(cnst_SOUNDFX_File2, SFX_Flyer_S, World_Data);
+        Release_Block(World_Data);
+    }
+
+    while (Vortex_Index < CMB_Vortex_Count) {
+        Loop_Var = 0;
+
+        while (Loop_Var < 3) {
+            int Next_X, dx;
+
+            // Set Current_X and Current_Y from CMB_Vortex_Array
+            Current_X = CMB_Vortex_Array[Vortex_Index].X_Pos;
+            Current_Y = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+
+            Next_X = Current_X;
+            Next_Y = Current_Y;
+            Tries_Counter = 0;
+
+            do {
+                // Generate random next position
+                Next_X = Current_X + (Random(3) - 2);
+                Next_Y = Current_Y + (Random(3) - 2);
+
+                // Validate position
+                if (Next_X != Current_X || Next_Y != Current_Y) {
+                    dx = (Next_Y * 21) + Next_X;
+
+                    if (battlefield->MoveCost_Teleport[dx] != -1 &&
+                        Next_X >= 0 && Next_X <= 21 &&
+                        Next_Y >= 0 && Next_Y <= 22) {
+
+                        // Calculate absolute movement distances
+                        int dist_x = abs(Next_X - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X);
+                        int dist_y = abs(Next_Y - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y);
+
+                        if (dist_x + dist_y <= 1 && Tries_Counter < 50) {
+                            CMB_VortexMovement(Vortex_Index, Next_X, Next_Y);
+                            break;
+                        }
+                    }
+                }
+
+                Tries_Counter++;
+            } while (Tries_Counter < 50);
+
+            Loop_Var++;
+        }
+
+        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X = CMB_Vortex_Array[Vortex_Index].X_Pos;
+        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+
+        CMB_VortexPlayerMove(Vortex_Index);
+        Vortex_Index++;
+    }
+}
+
+/*
+ * WZD o133p18
+ * 
+ * moves	a Magic	Vortex from its	current	location to the
+ * target tile using an 8-step animation, processing its
+ * damage after reaching	the destination
+ *
+ * prev coordinates are set to /	used as	next ones for
+ * the duration of the movement
+ */
+void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
+{
+    int Prev_X, Prev_Y;
+    int16_t Damage_Array[3] = { 0, 0, 0 };
+    int X_Distance, Y_Distance;
+
+    // Retrieve the vortex
+    struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
+    Prev_X = vortex->X_Pos;
+    Prev_Y = vortex->Y_Pos;
+    CMB_ActiveUnitFrame = 0;
+
+    // Update the vortex with the new position
+    vortex->Prev_or_Next_X = Next_X;
+    vortex->Prev_or_Next_Y = Next_Y;
+
+    if (magic_set.sound_effects == 1) {
+        Play_Sound__STUB(SND_SpellCast);
+    }
+
+    // Animate the vortex movement
+    for (int i = 0; i < 8; i++) {
+        vortex->Move_Stage = i;
+        Set_Page_Off();
+        CMB_DrawFullScreen__WIP();
+        PageFlip_FX();
+    }
+
+    // Update vortex position
+    vortex->X_Pos = Next_X;
+    vortex->Y_Pos = Next_Y;
+
+    // Check if the new position affects the city damage
+    if (Next_X >= 5 && Next_X <= 8 && Next_Y >= 10 && Next_Y <= 13) {
+        CMB_CityDamage += 5;
+    }
+
+    vortex->Prev_or_Next_X = Prev_X;
+    vortex->Prev_or_Next_Y = Prev_Y;
+    vortex->Move_Stage = 0;
+
+    for (int i = 0; i < _combat_total_unit_count; i++) {
+        struct s_BATTLE_UNIT* battleunit = &battle_units[i];
+        
+        struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+        int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+
+        if (battleunit->position_cgc2 == Next_X && battleunit->position_cgc1 == Next_Y) {
+
+            if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
+                continue;
+            }
+
+            if (!(Enchants & UE_RIGHTEOUSNESS)) {
+                Damage_Array[0] = 5;
+                Damage_Array[1] = 0;
+                Damage_Array[2] = 0;
+
+                BU_ApplyDamage(i, Damage_Array);
+            }
+        }
+
+        X_Distance = abs(battleunit->position_cgc2 - Next_X);
+        Y_Distance = abs(battleunit->position_cgc1 - Next_Y);
+        if ((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0)) {
+            if (Random(3) == 1) {
+                CMB_ConvSpellAttack(spl_Lightning_Bolt, i, Damage_Array, 0);
+                BU_ApplyDamage(i, Damage_Array);
+            }
+        }
+    }
+}
+
+// WZD o133p16
+void CMB_VortexPlayerMove(int Vortex_Index) {
+    int16_t Picked_Y, Y_Retn, X_Retn;
+    int16_t Click_Grid_Index = -1;
+    int16_t Control_Input, Finished = 0;
+
+    if (CMB_Vortex_Array[Vortex_Index].Owner != 0) {
+        return;
+    }
+
+    if (_auto_combat_flag != 0) {
+        return;
+    }
+
+    Clear_Fields();
+    Click_Grid_Index = Add_Grid_Field(0, 0, 1, 1, 319, 168, &X_Retn, &Y_Retn, ST_UNDEFINED);
+    Finished = 0;
+    _active_battle_unit = -1;
+
+    while (Finished == 0) {
+        Mark_Time();
+        Control_Input = Get_Input();
+
+        if (Control_Input == Click_Grid_Index) {
+
+            int16_t di = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
+            Picked_Y = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
+
+            if (CMB_Vortex_Array[Vortex_Index].X_Pos != di ||
+                CMB_Vortex_Array[Vortex_Index].Y_Pos != Picked_Y) {
+
+                if (battlefield->MoveCost_Teleport[Picked_Y * 21 + di] != -1) {
+
+                    if (abs(di - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
+                        abs(Picked_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+
+                        CMB_VortexMovement(Vortex_Index, di, Picked_Y);
+                        Finished = 1;
+                    }
+                }
+            }
+        }
+
+        if (!Finished) {
+            CMB_DrawFullScreen__WIP();
+            CMB_SetVortexCursor(Vortex_Index);
+            PageFlip_FX();
+            Release_Time(2);
+        }
+    }
+}
+
+// WZD o133p15
+void CMB_SetVortexCursor(unsigned int Vortex_Index) {
+    unsigned int Pointer_Offset = 4;
+    unsigned int Tile_Y, Scrn_Y, Scrn_X;
+
+    _combat_mouse_grid->image_num = crsr_RedCross;
+    Scrn_X = Pointer_X() + Pointer_Offset;
+    Scrn_Y = Pointer_Y() + Pointer_Offset;
+    CMB_ActiveUnitFrame = 1;
+
+    CMB_ActiveUnitFrameX = CMB_Vortex_Array[Vortex_Index].X_Pos;
+    CMB_ActiveUnitFrameY = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+
+    CMB_TargetFrameStage = (CMB_ActiveUnitFrameY + 1) % 3;
+
+    if ((Pointer_Offset + 168) > Scrn_Y) {
+        CMB_TargetFrame = 0;
+        Tile_Y = Get_Combat_Grid_Cell_Y(Scrn_X, Scrn_Y);
+        unsigned int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
+
+        if (CMB_Vortex_Array[Vortex_Index].X_Pos == Grid_X &&
+            CMB_Vortex_Array[Vortex_Index].Y_Pos == Tile_Y) {
+
+            if (battlefield->MoveCost_Teleport[Grid_X] != -1) {
+                if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
+                    abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+                    CMB_TargetFrame = 1;
+                    CMB_TargetFrame_X = Grid_X;
+                    CMB_TargetFrame_Y = Tile_Y;
+                    _combat_mouse_grid->image_num = crsr_WingedBoot;
+                }
+            }
+        }
+    }
+
+    _combat_mouse_grid->center_offset = 2;
+    _combat_mouse_grid->x1 = 0;
+    _combat_mouse_grid->y1 = 0;
+    _combat_mouse_grid->x2 = 319;
+    _combat_mouse_grid->y2 = 199;
+    Set_Mouse_List(1, _combat_mouse_grid);
+}
+
+// WZD o113p05
+void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override) {
+    int32_t Enchants = 0;
+    int16_t Total_Damage = 0;
+    int16_t Figures_Slain = 0;
+    int16_t To_Block = 0;
+    int16_t Attack_Count = 0;
+    int16_t Attack_Strength = 0;
+    int16_t Effective_Defense = 0;
+    int16_t Immunity_Flags = 0;
+    int16_t Attack_Flags = 0;
+    int16_t Top_Figure_Damage = 0;
+    uint16_t Loop_Var = 0;
+
+    struct s_BATTLE_UNIT* battleunit = &battle_units[BU_Index];
+    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+
+    Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+
+    for (Loop_Var = 0; Loop_Var < 3; Loop_Var++) {
+        Dmg_Array[Loop_Var] = 0;
+    }
+
+    if (Enchants & UE_RIGHTEOUSNESS) {
+        struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
+        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death) {
+            return;
+        }
+    }
+
+    if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
+        return;
+    }
+
+    Top_Figure_Damage = battleunit->TopFig_Dmg;
+
+    struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
+    Attack_Flags = spell->Params2_3;
+
+    To_Block = battleunit->To_Block;
+    if (Attack_Flags & Att_EldrWeap) {
+        To_Block--;
+    }
+
+    Immunity_Flags = spell->Param1;
+
+    if (ATK_Override > 0) {
+        Attack_Strength = ATK_Override;
+    } else {
+        Attack_Strength = spell->Param0;
+    }
+
+    Effective_Defense = BU_GetEffectiveDEF(BU_Index, 0x26, Immunity_Flags, Attack_Flags, spell->magic_realm);
+
+    if (Attack_Flags & Att_AREAFLAG) {
+        Attack_Count = battleunit->Cur_Figures;
+        Attack_Flags |= Att_DMGLIMIT;
+    }
+    else if (Attack_Flags & Att_WarpLghtn) {
+        Attack_Count = Attack_Strength;
+    }
+    else {
+        Attack_Count = 1;
+    }
+
+    if (battleunit->Combat_Effects & bue_Black_Sleep) {
+        Attack_Flags |= Att_DoomDmg;
+    }
+
+    for (Loop_Var = 0; Loop_Var < Attack_Count; Loop_Var++) {
+        int16_t damage = 0;
+
+        if (Attack_Flags & Att_DoomDmg) {
+            damage = Attack_Strength;
+        }
+        else {
+            damage = CMB_AttackRoll(Attack_Strength, 0) - CMB_DefenseRoll(Effective_Defense, To_Block);
+            if (Enchants & UE_INVULNERABILITY) {
+                damage -= 2;
+            }
+        }
+
+        if (damage < 0) damage = 0;
+
+        if (Loop_Var == 0 && Top_Figure_Damage > 0) {
+            damage += Top_Figure_Damage;
+            Top_Figure_Damage = 0;
+        }
+
+        if (Top_Figure_Damage < 0) {
+            Top_Figure_Damage += damage;
+            if (Top_Figure_Damage > 0) {
+                damage = Top_Figure_Damage;
+                Top_Figure_Damage = 0;
+            }
+            else {
+                damage = 0;
+            }
+        }
+
+        if (Attack_Flags & Att_DMGLIMIT) {
+            if (battleunit->hits <= damage) {
+                Figures_Slain++;
+                damage = 0;
+            }
+            else {
+                battleunit->hits -= damage;
+            }
+        }
+        else {
+            while (battleunit->hits < damage) {
+                Figures_Slain++;
+
+                damage -= battleunit->hits;
+
+                if (!(Attack_Flags & Att_DoomDmg)) {
+
+                    damage -= CMB_DefenseRoll(Effective_Defense, To_Block);
+
+                    if (Enchants & UE_INVULNERABILITY) {
+                        damage -= 2;
+                    }
+                }
+            } 
+
+            if (damage < 0) {
+                damage = 0;
+            }
+        }
+
+        //ovr113:1A6B
+        Total_Damage += battleunit->hits * Figures_Slain;
+        Figures_Slain = 0;
+
+        if (Attack_Flags & Att_WarpLghtn) {
+            Attack_Strength--;
+        }
+    }
+
+    Total_Damage -= battleunit->TopFig_Dmg;
+
+    if (Total_Damage < 0) {
+        Total_Damage = 0;
+    }
+
+    Dmg_Array[0] = Total_Damage;
+}
 
 /*
     WIZARDS.EXE  ovr153
@@ -17786,7 +18269,7 @@ void CMB_BaseAllocs__WIP(void)
 
     CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
 
-    CMB_Vortex_Array = Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
+    CMB_Vortex_Array = (struct s_CMB_Vortex *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
     CMB_ActiveMoveMap = Near_Allocate_First(504);
