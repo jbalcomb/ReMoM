@@ -621,7 +621,7 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 #define UA_FANTASTIC        0x0001      // 0b0000000000000001  0x0001      1
 #define UA_LARGESHIELD      0x0002      // 0b0000000000000010  0x0002      2
 #define UA_PLANARTRAVEL     0x0004      // 0b0000000000000100  0x0004      4
-#define UA_WALLCRSHR        0x0008      // 0b0000000000001000  0x0008      8
+#define UA_WALLCRUSHER      0x0008      // 0b0000000000001000  0x0008      8
 #define UA_HEALER           0x0010      // 0b0000000000010000  0x0010     16
 #define UA_CREATEOUTPOST    0x0020      // 0b0000000000100000  0x0020     32
 #define UA_INVISIBILITY     0x0040      // 0b0000000001000000  0x0040     64

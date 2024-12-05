@@ -2,6 +2,43 @@
 
 
 
+Blerg. Why are notes so much garbage?
+Past-Me does not show enough love for Future-Me.
+
+
+
+¿ CMB_TargetRows[] ?
+// DELETE  #define DEBUG_UNIT_IDX          825
+// DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
+// DELETE  #define DEBUG_UNIT_TYPE         ut_HMenPikemen  // ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
+// DELETE  #define DEBUG_FIGURE_COUNT      8
+...
+screen_x, screen_y
+grid_x, grid_y
+Get_Combat_Grid_Cell_X()
+Get_Combat_Grid_Cell_Y()
+
+Q: Where does CMB_TargetRows[] get populated?
+A: ¿ CMB_FillTargetMaps__WIP() ?
+
+
+
+
+        if(-(MapGrid_Control_Index) == input_field_idx)
+            RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+            RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+            battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+
+
+Q: What does CMB_TargetRows[] get used for?
+A: 
+
+
+
+
+
+
+
 What do I mean by "Battlefield" vs. "Grid"?
 
 
@@ -340,6 +377,8 @@ is 22 pointers to 21 values
 the combat map window is 168 in height
 168 / 16 = 10.5
 168 / 21 = 8
+
+202412041432:  the check on 168 includes a `+ 4`
 
 
 e.g., ...

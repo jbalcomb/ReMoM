@@ -1,6 +1,10 @@
 
 
 
+rename magic_set to ~settings ... ¿ //MoO2 ?
+
+
+
 TODO Review 20241128
 
 added Spell Casting
@@ -16,6 +20,15 @@ Tactical Combat
     did combat screen
     did terrain drawing
     did figure drawing
+
+
+TODO Review 20241203
+Tactical Combat
+    did ¿?
+    did active unit window
+    did spell information window
+    did enchantment windows
+    doing Combat Unit Display
 
 
 

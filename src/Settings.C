@@ -611,7 +611,7 @@ void Set_Default_Game_Settings(void)
     magic_set.City_Spell_Events = ST_TRUE;
     magic_set.Ovl_Spell_Events = ST_TRUE;
     magic_set.Summoning_Events = ST_TRUE;
-    magic_set.Auto_Unit_Info = ST_TRUE;
+    magic_set.auto_unit_information = ST_TRUE;
     magic_set.Show_Node_Owners = ST_TRUE;
     magic_set.Expanding_Help = ST_TRUE;
     magic_set.Movement_Anims = ST_TRUE;

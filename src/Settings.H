@@ -41,7 +41,7 @@ struct s_MAGIC_SET
     /*  10 */ uint16_t random_events;
     /*  12 */ uint16_t EoT_Wait;
     /*  14 */ uint16_t strategic_combat_only;
-    /*  16 */ uint16_t Auto_Unit_Info;
+    /*  16 */ uint16_t auto_unit_information;  /* Settings Screen: "Auto Unit Information" */
     /*  18 */ uint16_t Enemy_Moves;
     /*  1A */ uint16_t Enemy_Spells;
     /*  1C */ uint16_t spell_book_ordering;  /* HELP: "SPELL BOOK ORDERING" "Controls whether spells on your spell book are ordered in categories versus one long list." */

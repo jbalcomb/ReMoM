@@ -256,3 +256,33 @@ GUI_CombatWindow.image_num
 
 
 
+
+
+##### Naming Things is Hard
+
+Combat unit display
+a combat unit display
+upper right corner of the combat screen
+active unit
+
+
+
+Settings Screen
+
+Auto Unit Information
+
+
+Page 90  (PDF Page 95)
+
+Combat unit display
+
+
+Page 92  (PDF Page 97)
+
+Finally,  
+  if you have toggled on the additional unit information button in your game settings window (see Settings),  
+  you have a combat unit display open in the upper right corner of the combat screen.  
+This window can be toggled on and off by pressing L on the keyboard.  
+The combat unit display contains some useful information to have available during battle,  
+  including the remaining ammunition (if relevant) of the active unit,   
+  mana and health of the "front" figure in the active unit.

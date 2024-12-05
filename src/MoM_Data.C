@@ -898,7 +898,6 @@ int16_t CMB_AI_Fled;
 // WZD dseg:924C
 // struct CSCAN_ICONS IMG_CMB_ScanIcons;
 SAMB_ptr IMG_CMB_ScanIcons[18];
-// WZD dseg:924C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 18 pointers to sandbox appended images
 
 // WZD dseg:9270 00 00                                           CMB_WallRise_Frame dw 0                 ; DATA XREF: CMB_WallRise_Anim:loc_B6D7Ew ...
 // WZD dseg:9272

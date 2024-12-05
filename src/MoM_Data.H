@@ -112,7 +112,7 @@
 
 
 
-// Game Option - Difficulty
+// Game Option - Difficulty  (god)
 enum e_Difficulty
 {
     god_Intro,
@@ -121,6 +121,7 @@ enum e_Difficulty
     god_Hard,
     god_Impossible
 };
+// Game Option - Opponents  (goo)
 enum e_Opponents
 {
     goo_None,
@@ -129,12 +130,14 @@ enum e_Opponents
     goo_Three,
     goo_Four
 };
+// Game Option - LandSize  (gol)
 enum e_LandSize
 {
     gol_Small,
     gol_Medium,
     gol_Large
 };
+// Game Option - MagicPower  (gom)
 enum e_Magic
 {
     gom_Weak,

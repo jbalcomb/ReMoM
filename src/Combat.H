@@ -582,6 +582,19 @@ struct s_CMB_InfoItem
 };
 
 
+//  ; (sizeof=0xC)
+struct s_Vortex_REC
+{
+    /* 00 */ int16_t X_Pos;
+    /* 02 */ int16_t Y_Pos;
+    /* 04 */ int16_t Prev_or_Next_X;  // ; prev when stationary, next while moving
+    /* 06 */ int16_t Prev_or_Next_Y;  // ; prev when stationary, next while moving
+    /* 08 */ int16_t Move_Stage;
+    /* 0A */ int16_t Owner;
+    /* 0C */
+};
+
+
 
 // WZD dseg:C47C
 extern int16_t _combat_wp;
@@ -725,7 +738,7 @@ extern SAMB_ptr CMB_Path_Costs;
 extern SAMB_ptr CMB_ActiveMoveMap;
 
 // WZD dseg:D14E
-extern SAMB_ptr CMB_Vortex_Array;
+extern struct s_Vortex_REC * CMB_Vortex_Array;
 
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;
@@ -769,7 +782,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 void CMB_PrepareTurn__WIP(void);
 
 // WZD s91p03
-// drake178: BU_GetMoveMap()
+void BU_GetMoveMap__WIP(int16_t battle_unit_idx);
 
 // WZD s91p04
 // drake178: BU_Move()
@@ -790,7 +803,7 @@ void CMB_FillTargetMaps__WIP(void);
 // drake178: CMB_UnitCityDamage()
 
 // WZD s91p10
-// drake178: BU_GetInstaMoveType()
+int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx);
 
 
 
@@ -1028,7 +1041,7 @@ int16_t Battle_Unit_Melee_Attack_Icon(int16_t battle_unit_idx);
 int16_t Battle_Unit_Ranged_Attack_Icon(int16_t battle_unit_idx);
 
 // WZD o105p13
-// CMB_DrawUnitDisplay()
+void Draw_Combat_Unit_Display(void);
 
 
 
@@ -1325,7 +1338,7 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 // BU_IsInCityProper()
 
 // WZD o124p14
-// TILE_HasIntactWall()
+int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
 
 // WZD o124p15
 int16_t BU_IsCombatSummon(int16_t battle_unit_idx);

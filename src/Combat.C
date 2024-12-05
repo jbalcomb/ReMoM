@@ -328,6 +328,23 @@ char cnst_EternalNight[] = "Eternal Night";
 
 
 
+// WZD dseg:59A6                                                 BEGIN:  ovr105 - Initialized Data
+
+// WZD dseg:59A6
+char cnst_Hits_2[] = "Hits";
+
+// WZD dseg:59AB
+char cnst_mp[] = "mp";
+
+// WZD dseg:59AE
+char cnst_Ammo[] = "ammo";
+
+// WZD dseg:59B3 00                                              align 2
+
+// WZD dseg:59B3                                                 END:  ovr105 - Initialized Data
+
+
+
 // WZD dseg:5EA6                                                 ¿ BEGIN:  ovr123 - Strings ?
 
 // WZD dseg:5EA6
@@ -779,6 +796,8 @@ SAMB_ptr _cmbt_spell_button_seg;
 
     ¿ unit_idx or battle_unit_idx ?
 
+currently selected battle unit
+as shown in the active unit window
 */
 int16_t _active_battle_unit;
 
@@ -791,6 +810,9 @@ int16_t _combat_total_unit_count;
 
 // WZD dseg:C58A
 /*
+    scanned battle unit, as shown in the combat unit display
+    set in Assign_Mouse_Image(), from CMB_TargetRows[grid_y][grid_x]
+
     currently active battle unit index
     (active as in selected, not scanned)
 
@@ -798,7 +820,7 @@ Page 92  (PDF Page 97)
 "(a red outline surrounds the active unit’s square on the combat grid)""
 
 */
-int16_t CMB_CursorBattleUnit;
+int16_t _scanned_battle_unit;
 
 // WZD dseg:C58C
 SAMB_ptr _combat_info_effect_icon_segs[14];
@@ -1087,7 +1109,7 @@ int16_t CMB_Chasm_Anim_Y;
 // WZD dseg:D14C
 int16_t CMB_Chasm_Anim_X;
 // WZD dseg:D14E
-SAMB_ptr CMB_Vortex_Array;
+struct s_Vortex_REC * CMB_Vortex_Array;
 // WZD dseg:D152
 int16_t CMB_Vortex_Count;
 
@@ -1327,7 +1349,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     G_AI_StayInTownProper = 1;
 
-    CMB_CursorBattleUnit = ST_UNDEFINED;
+    _scanned_battle_unit = ST_UNDEFINED;
 
     Reset_Cycle_Palette_Color();
 
@@ -1454,6 +1476,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
 
     CMB_FillTargetMaps__WIP();
+
 
     Set_Input_Delay(3);
 
@@ -2468,7 +2491,7 @@ void CMB_PrepareTurn__WIP(void)
 
     CMB_WizCastAvailable = ST_TRUE;
 
-    CMB_CursorBattleUnit = ST_UNDEFINED;
+    _scanned_battle_unit = ST_UNDEFINED;
 
     CMB_AIGoesFirst = ST_FALSE;
 
@@ -2794,6 +2817,102 @@ void CMB_PrepareTurn__WIP(void)
 
 // WZD s91p03
 // drake178: BU_GetMoveMap()
+/*
+; checks the unit's combat movement type, and fills
+; out the GUI_ActiveMoveMap allocation accordingly
+*/
+/*
+    sets CMB_ActiveMoveMap[]
+
+*/
+void BU_GetMoveMap__WIP(int16_t battle_unit_idx)
+{
+    int16_t movement_type = 0;
+    int16_t instant_movement_type = 0;  // _SI_
+    int16_t itr_y = 0;  // _SI_
+    int16_t itr_x = 0;  // _DI_
+
+    movement_type = Battle_Unit_Movement_Icon(battle_unit_idx);
+
+    instant_movement_type = BU_GetInstaMoveType__WIP(battle_unit_idx);
+
+    if(instant_movement_type > 0)
+    {
+        movement_type = instant_movement_type;
+    }
+
+
+    switch(movement_type)
+    {
+        case 0:
+        case 1:
+        {
+
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground[1], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground[1], 462);
+
+        } break;
+        case 2:
+        {
+
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[1], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+
+        } break;
+        case 3:
+        {
+
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground2[1], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground2[1], 462);
+
+        } break;
+        case 4:
+        {
+
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Sailing[1], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Sailing[1], 462);
+
+        } break;
+        case 5:
+        {
+
+            for(itr_y = 0; itr_y < 22; itr_y++)
+            {
+
+                for(itr_x = 0; itr_x < 21; itr_x++)
+                {
+
+                    if(battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)] > battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)])
+                    {
+
+                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)];
+
+                    }
+                    else
+                    {
+
+                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)];
+
+                    }
+
+                }
+
+            }
+
+        } break;
+        case 6:
+        case 7:
+        {
+
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[1], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+
+        } break;
+        
+    }
+
+}
+
 
 // WZD s91p04
 // drake178: BU_Move()
@@ -2870,29 +2989,26 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y)
 */
 /*
 
+populates CMB_TargetRows[] and CMB_ActiveMoveMap[]
+uses CMB_NearBuffer_3[]
+
+
 */
 void CMB_FillTargetMaps__WIP(void)
 {
     int16_t Can_Teleport = 0;
     int16_t Teleport_Type = 0;
-    int16_t Move_Halves = 0;
-    int16_t UU_Max_HalfMoves = 0;
+    int16_t moves2 = 0;
+    int16_t uu_max_moves2 = 0;
     int16_t UU_TotalMoveArea = 0;
-    int16_t UU_Y_Position = 0;
-    int16_t UU_X_Position = 0;
+    int16_t uu_position_cgc1 = 0;
+    int16_t uu_position_cgc2 = 0;
     int16_t Row_Origin_Offset = 0;
     int16_t itr = 0;
     int16_t itr_x = 0;  // DNE in Dasm, uses itr
     int16_t itr_y = 0;  // _SI_
+    int16_t useable_moves2 = 0;  // _DI_
 
-// BU_GetMoveMap(_active_battle_unit);
-// // ; checks the unit's combat movement type, and fills
-// // ; out the GUI_ActiveMoveMap allocation accordingly
-// 
-//     for(itr = 0; itr < _combat_total_unit_count; itr++)
-//     {
-//         
-//     }
 
 /* HACK */    for(itr_y = 0; itr_y < 22; itr_y++)
 /* HACK */    {
@@ -2901,6 +3017,207 @@ void CMB_FillTargetMaps__WIP(void)
 /* HACK */            CMB_TargetRows[itr_y][itr_x] = -2;
 /* HACK */        }
 /* HACK */    }
+
+
+    BU_GetMoveMap__WIP(_active_battle_unit);
+
+
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(battle_units[itr].Status == bus_Active)
+        {
+
+            CMB_ActiveMoveMap[((battle_units[itr].position_cgc1 * 21) + battle_units[itr].position_cgc2)] = -1;
+
+        }
+
+    }
+
+
+    for(itr= 0; itr < CMB_Vortex_Count; itr++)
+    {
+
+        CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].Y_Pos * 21) + CMB_Vortex_Array[itr].X_Pos)] = -1;
+
+    }
+
+
+    // ; BUG: cities don't have anything on that tile either
+    if(battlefield->Central_Structure!= CS_None)
+    {
+
+        CMB_ActiveMoveMap[0xED] = -1;  // EDh  237d  237 / 21 = 11.28571  11 * 21 = 231  237 - 231 = 6  ~ cgc1 = 11, cgc2 = 6
+
+    }
+
+    if(
+        (battlefield->Walled_City == ST_TRUE)
+        ||
+        (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
+    )
+    {
+        // TODO  BU_SetCityMovement(_active_battle_unit);
+        // ; modifies the GUI_ActiveMoveMap based on whether the
+        // ; unit is allowed to enter the city proper or not,
+        // ; depending on any intact walls and Flying Fortress
+        // ;
+        // ; BUGs: allows Merging and Non-Corporeal units to enter
+        // ; a Flying Fortress even if they don't fly, and can set
+        // ; the central structure tile impassable even when there
+        // ; isn't one
+    }
+
+
+    Can_Teleport = ST_FALSE;
+
+    Teleport_Type = BU_GetInstaMoveType__WIP(_active_battle_unit);
+
+    if(
+        (Teleport_Type == 6)
+        ||
+        (Teleport_Type == 7)
+    )
+    {
+
+        Can_Teleport = ST_TRUE;
+
+    }
+
+
+    moves2 = battle_units[_active_battle_unit].movement_points;
+
+    uu_max_moves2 = Unit_Moves2(battle_units[_active_battle_unit].unit_idx);
+    // ; calculates and returns the unit's movement allowance
+    // ; in half movement point units, accounting for all
+    // ; non-combat factors
+    // ; would-be BUG: ignores Entangle
+
+    uu_position_cgc2 = battle_units[_active_battle_unit].position_cgc2;
+
+    uu_position_cgc1 = battle_units[_active_battle_unit].position_cgc1;
+
+    for(itr_y = 0; itr_y < 22; itr_y++)
+    {
+
+        for(itr_x = 0; itr_x < 21; itr_x++ )
+        {
+
+
+
+        }
+
+    }
+
+
+    if(
+        (battlefield->Walled_City == ST_TRUE)
+        &&
+        (battle_units[_active_battle_unit].controller_idx == _combat_attacker_player)
+        &&
+        ((battle_units[_active_battle_unit].Abilities & UA_WALLCRUSHER) != 0)
+    )
+    {
+
+        for(itr_y = 0; itr_y < 22; itr_y++)
+        {
+
+            for(itr_x = 0; itr_x < 21; itr_x++ )
+            {
+
+                // ; returns 1 if the specified combat tile has an intact
+                // ; city wall section on it, or 0 otherwise
+                if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
+                {
+
+                    CMB_TargetRows[itr_y][itr_x] = 99;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        BEGIN:  assign Battle Unit Indices
+    */
+    // ; in the map row allocations, mark the index of each
+    // ; battle unit into their corresponding tiles, with the
+    // ; exception of undrawn invisible units
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(
+            (battle_units[itr].Status == bus_Active)
+            &&
+            (battle_units[itr].Image_Effect != 5)
+        )
+        {
+
+            CMB_TargetRows[battle_units[itr].position_cgc1][battle_units[itr].position_cgc2] = itr;  // batle_unit_idx
+
+        }
+
+    }
+    /*
+        END:  assign Battle Unit Indices
+    */
+
+
+    useable_moves2 = 0;
+
+    if(Can_Teleport == ST_FALSE)
+    {
+
+        useable_moves2 = battle_units[_active_battle_unit].movement_points;
+
+    }
+    else
+    {
+
+        if(battle_units[_active_battle_unit].movement_points > 0)
+        {
+
+            useable_moves2 = 20;
+
+        }
+
+    }
+
+    UU_TotalMoveArea = 0;
+
+    // TODO  CMB_FillReachMap(battle_units[_active_battle_unit].position_cgc2, battle_units[_active_battle_unit].position_cgc1, useable_moves2);
+    // ; creates a path map from the origin tile, then
+    // ; replaces the result array with 0s or 1s depending on
+    // ; whether the tile can be reached and entered; storing
+    // ; the result in CMB_NearBuffer_3
+
+    for(itr_y = 0; itr_y < 22; itr_y++)
+    {
+
+        Row_Origin_Offset = (itr_y * 21);
+
+        for(itr_x = 0; itr_x < 21; itr_x++)
+        {
+
+            if(CMB_NearBuffer_3[Row_Origin_Offset + itr_x] == 1)
+            {
+
+                CMB_TargetRows[itr_y][itr_x] = -1;
+
+                UU_TotalMoveArea++;
+
+            }
+
+        }
+
+    }
+
+
+    CMB_TargetRows[battle_units[_active_battle_unit].position_cgc1][battle_units[_active_battle_unit].position_cgc2] = _active_battle_unit;
 
 }
 
@@ -2913,6 +3230,37 @@ void CMB_FillTargetMaps__WIP(void)
 
 // WZD s91p10
 // drake178: BU_GetInstaMoveType()
+/*
+; returns the type of any instant movement ability
+; that the unit has (6 for Teleporting, 7 for Merging),
+; or 0 if neither
+*/
+/*
+    returns 6 for teleporting, 7 for merging, or 0 if neither
+*/
+int16_t BU_GetInstaMoveType__WIP(int16_t battle_unit_idx)
+{
+
+    if((battle_units[battle_unit_idx].Move_Flags & MV_TELEPORT) != 0)
+    {
+
+        return 6;
+
+    }
+    else if((battle_units[battle_unit_idx].Move_Flags & MV_MERGING) != 0)
+    {
+
+        return 7;
+
+    }
+    else
+    {
+
+        return 0;
+
+    }
+
+}
 
 
 
@@ -4369,14 +4717,14 @@ void Assign_Mouse_Image(void)
 {
     int16_t ranged_attack_type_group = 0;
     int16_t Tile_Y = 0;
-    int16_t Screen_Y = 0;
-    int16_t Screen_X = 0;
+    int16_t screen_y = 0;
+    int16_t screen_x = 0;
     int16_t Y_Distance = 0;
     int16_t X_Distance = 0;
     int16_t scanned_battle_unit_idx = 0;  // _SI_
     int16_t Tile_X = 0;  // _DI_
 
-    CMB_CursorBattleUnit = ST_UNDEFINED;
+    _scanned_battle_unit = ST_UNDEFINED;
 
     CMB_ActiveUnitFrame = 0;
 
@@ -4409,18 +4757,20 @@ void Assign_Mouse_Image(void)
 
     _combat_mouse_grid->image_num = crsr_Finger;
 
-    Screen_X = (Pointer_X() + 4);  // ¿ why the (+ 4) ?
+    screen_x = (Pointer_X() + 4);  // ¿ why the (+ 4) ?
 
-    Screen_Y = (Pointer_Y() + 4);  // ¿ why the (+ 4) ?
+    screen_y = (Pointer_Y() + 4);  // ¿ why the (+ 4) ?
 
     CMB_TargetFrame = 0;
 
-    if(Screen_Y < 168)
+    if(screen_y < 168)
     {
 
-        Tile_X = Get_Combat_Grid_Cell_X(Screen_X, Screen_Y);
+        // ¿ cgc2, cgc1 ?
+        Tile_X = Get_Combat_Grid_Cell_X(screen_x, screen_y);
 
-        Tile_Y = Get_Combat_Grid_Cell_Y(Screen_X, Screen_Y);
+        // ¿ cgc2, cgc1 ?
+        Tile_Y = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
 
         if(CMB_TargetRows[Tile_Y][Tile_X] == -2)
         {
@@ -4509,7 +4859,7 @@ void Assign_Mouse_Image(void)
 
             scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
 
-            CMB_CursorBattleUnit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
+            _scanned_battle_unit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 
             if(
                 (CMB_ImmobileCanAct == ST_TRUE)
@@ -5155,9 +5505,12 @@ void CMB_DrawFullScreen__WIP(void)
 
     Reset_Window();
 
+
     _combat_total_battle_effect_count = Combat_Info_Effects_Count();
 
+
     Tactical_Combat_Draw_Buttons();
+
 
     if(_combat_attacker_player == _human_player_idx)
     {
@@ -5212,7 +5565,7 @@ void CMB_DrawFullScreen__WIP(void)
     colors[0] = 241;
 
 
-    Opponent_Type = 0;
+    Opponent_Type = 0;  /* Player */
 
     if(CMB_AI_Player == NEUTRAL_PLAYER_IDX)
     {
@@ -5264,7 +5617,7 @@ void CMB_DrawFullScreen__WIP(void)
         else
         {
 
-            if(Opponent_Type == 1)
+            if(Opponent_Type == 1)  /* Monsters */
             {
 
                 Print_Centered(40, 168, str_Monsters__ovr099);
@@ -5306,7 +5659,7 @@ void CMB_DrawFullScreen__WIP(void)
         {
 
             if(
-                (Opponent_Type == 0)
+                (Opponent_Type == 0)  /* Player */
                 ||
                 (_combat_attacker_player != NEUTRAL_PLAYER_IDX)
             )
@@ -5318,13 +5671,13 @@ void CMB_DrawFullScreen__WIP(void)
             else
             {
 
-                if(Opponent_Type == 1)
+                if(Opponent_Type == 1)  /* Monsters */
                 {
 
                     Print_Centered(40, 168, str_Monsters__ovr099);
 
                 }
-                else
+                else  /* Raiders */
                 {
 
                     Print_Centered(40, 168, str_Raiders__ovr099);
@@ -5404,19 +5757,20 @@ void CMB_DrawFullScreen__WIP(void)
     Print_Centered(278, 167, _players[_human_player_idx].name);
 
     Draw_Spell_Information_Window();
-    // ; draws the text and numbers of the spell information
-    // ; window for the human player into the current draw
-    // ; frame
 
-    if(magic_set.Auto_Unit_Info == ST_TRUE)
+    /*
+        BEGIN:  Combat Unit Display
+    */
+    if(magic_set.auto_unit_information == ST_TRUE)
     {
 
-        // TODO  CMB_DrawUnitDisplay();
-        // ; draws the combat unit display into the current draw
-        // ; frame based on the unit that the mouse is hovering
-        // ; over (top right corner)
+        Draw_Combat_Unit_Display();
 
     }
+    /*
+        END:  Combat Unit Display
+    */
+
 
     Cycle_Palette_Color__STUB(198, 0, 0, 0, 55, 0, 0, 11);
 
@@ -7675,7 +8029,7 @@ Page 92  (PDF Page 97)
 void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx)
 {
 
-    if(CMB_CursorBattleUnit == battle_unit_idx)
+    if(_scanned_battle_unit == battle_unit_idx)
     {
 
         Replace_Color(GfxBuf_2400B, 1, 198);
@@ -8029,7 +8383,7 @@ void BU_SetVisibility__WIP(int16_t battle_unit_idx)
 */
 /*
 
-icon_idx {-1, 0, }
+icon_idx { -1, 0, 2, 3, 4 }
 ¿ no weapon type 1 ?
 
 */
@@ -8183,6 +8537,246 @@ int16_t Battle_Unit_Ranged_Attack_Icon(int16_t battle_unit_idx)
 
 // WZD o105p13
 // drake178: CMB_DrawUnitDisplay()
+/*
+; draws the combat unit display into the current draw
+; frame based on the unit that the mouse is hovering
+; over (top right corner)
+*/
+/*
+
+*/
+void Draw_Combat_Unit_Display(void)
+{
+    int16_t Resist_Score = 0;
+    int16_t Defense_Score = 0;
+    uint8_t colors[2] = { 0, 0 };
+    int16_t Attribute_Value = 0;
+    int16_t y2 = 0;
+    int16_t x2 = 0;
+    int16_t level_icon_count = 0;
+    int16_t Move_Type = 0;
+    SAMB_ptr level_icon_seg = 0;
+    int16_t unit_idx = 0;
+    int16_t unit_type = 0;
+    int16_t unit_owner_idx = 0;
+    // int16_t unit_hero_slot_idx__Attr_Display_Var = 0;
+    int16_t unit_hero_slot_idx = 0;
+    int16_t Attr_Display_Var = 0;
+    int16_t x1 = 0;  // _SI_
+    int16_t y1 = 0;  // _DI_
+
+
+    if(
+        (_scanned_battle_unit != ST_UNDEFINED)
+        &&
+        (_scanned_battle_unit < 36)
+    )
+    {
+
+        x1 = 250;
+        y1 = 4;
+        x2 = 318;
+        y2 = 43;
+
+        Gradient_Fill(x1, y1, x2, y2, 15, 8, ST_NULL, ST_NULL, ST_NULL);
+
+        Line(x1, y1, x1, y2, 230);
+
+        Line(x1, y1, (x2 - 1), y1, 230);
+
+        Line(x2, y1, x2, y2, 237);
+
+        Line((x1 + 1), y2, x2, y2, 237);
+
+        colors[0] = 182;
+        colors[1] = 177;
+
+        Set_Font_Colors_15(0, &colors[0]);
+
+        Set_Font_Style_Shadow_Down(0, 15, 0, 0);
+
+        Set_Alias_Color(182);
+
+        Set_Outline_Color(2);
+
+        unit_idx = battle_units[_scanned_battle_unit].unit_idx;
+
+        unit_owner_idx = _UNITS[unit_idx].owner_idx;
+
+        unit_hero_slot_idx = _UNITS[unit_idx].Hero_Slot;
+
+        unit_type = _UNITS[unit_idx].type;
+
+        if(unit_hero_slot_idx != ST_UNDEFINED)
+        {
+
+            strcpy(GUI_String_1, _players[unit_owner_idx].Heroes[unit_hero_slot_idx].name);
+
+        }
+        else
+        {
+
+            strcpy(GUI_String_1, *_unit_type_table[unit_type].name);
+
+        }
+
+        Print_Centered((x1 + ((x2 - x1) / 2)), (y1 + 2), GUI_String_1);
+
+
+        Attr_Display_Var = Battle_Unit_Melee_Attack_Icon(_scanned_battle_unit);
+
+        if(Attr_Display_Var != ST_UNDEFINED)
+        {
+
+            Attribute_Value = battle_units[_scanned_battle_unit].melee;
+
+            Print_Integer_Right((x1 + 9), (y1 + 10), Attribute_Value);
+
+            FLIC_Draw((x1 + 11), (y1 + 8), IMG_CMB_ScanIcons[Attr_Display_Var]);
+
+        }
+
+
+        Attr_Display_Var = Battle_Unit_Ranged_Attack_Icon(_scanned_battle_unit);
+
+        if(Attr_Display_Var != ST_UNDEFINED)
+        {
+
+            Attribute_Value = battle_units[_scanned_battle_unit].ranged;
+
+            Print_Integer_Right((x1 + 9), (y1 + 17), Attribute_Value);
+
+            FLIC_Draw((x1 + 11), (y1 + 15), IMG_CMB_ScanIcons[Attr_Display_Var]);
+
+        }
+
+
+        if(battle_units[_scanned_battle_unit].movement_points != 0)
+        {
+
+            Print_Moves_String((x1 + 9), (y1 + 24), battle_units[_scanned_battle_unit].movement_points, 1);
+
+        }
+        else
+        {
+
+            Print_Integer_Right((x1 + 9), (y1 + 24), battle_units[_scanned_battle_unit].movement_points);
+
+        }
+
+
+        Move_Type = Battle_Unit_Movement_Icon(_scanned_battle_unit);
+
+        Attr_Display_Var = 11;
+
+        if(Move_Type == 2)
+        {
+
+            Attr_Display_Var = 12;
+
+        }
+
+        if(
+            (Move_Type == 4)
+            ||
+            (Move_Type == 5)
+        )
+        {
+
+            Attr_Display_Var = 13;
+
+        }
+
+        FLIC_Draw((x1 + 11), (y1 + 22), IMG_CMB_ScanIcons[Attr_Display_Var]);
+
+        Print((x1 + 3), (y1 + 32), cnst_Hits_2);
+
+        Gradient_Fill((x1 + 19), (y1 + 34), (x1 + 38), (y1 + 34), 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);
+
+        Line((x1 + 19), (y1 + 35), (x1 + 38), (y1 + 35), 1);
+
+        Draw_Active_Unit_Damage_Bar(_scanned_battle_unit, (x1 + 19), (y1 + 34));
+
+        Defense_Score = battle_units[_scanned_battle_unit].defense;
+
+        Print_Integer_Right((x1 + 48), (y1 + 10), Defense_Score);
+
+        FLIC_Draw((x1 + 50), (y1 + 8), IMG_CMB_ScanIcons[9]);
+
+        Resist_Score = battle_units[_scanned_battle_unit].resist;
+
+        Print_Integer_Right((x1 + 48), (y1 + 17), Resist_Score);
+
+        FLIC_Draw((x1 + 50), (y1 + 15), IMG_CMB_ScanIcons[14]);  // ~RESIST
+
+        if(battle_units[_scanned_battle_unit].mana > 0)
+        {
+
+            Print_Integer_Right((x1 + 48), (y1 + 24), battle_units[_scanned_battle_unit].mana);
+
+            Print((x1 + 51), (y1 + 24), cnst_mp);
+
+        }
+        else
+        {
+
+            if(battle_units[_scanned_battle_unit].ammo > 0)
+            {
+
+                Print_Integer_Right((x1 + 48), (y1 + 24), battle_units[_scanned_battle_unit].ammo);
+
+                Print((x1 + 51), (y1 + 24), cnst_Ammo);
+
+            }
+
+        }
+
+        if(_UNITS[unit_idx].Level > 0)
+        {
+
+            if(_UNITS[unit_idx].Level > 6)
+            {
+
+                level_icon_seg = IMG_CMB_ScanIcons[17];
+
+                Attr_Display_Var = 6;
+
+            }
+            else if(_UNITS[unit_idx].Level > 3)
+            {
+
+                level_icon_seg = IMG_CMB_ScanIcons[16];
+
+                Attr_Display_Var = 3;
+
+            }
+            else
+            {
+
+                level_icon_seg = IMG_CMB_ScanIcons[15];
+
+                Attr_Display_Var = 0;
+
+            }
+
+            level_icon_count = 0;
+
+            Attribute_Value = Attr_Display_Var;
+
+            while(_UNITS[unit_idx].Level > Attribute_Value)
+            {
+
+                FLIC_Draw((x1 + (level_icon_count * 5) + 48), (y1 + 33), level_icon_seg);
+
+                Attribute_Value++;
+
+            }
+
+        }
+
+    }
+
+}
 
 
 
@@ -13675,33 +14269,86 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
 
 
 // WZD o124p06
-// AI_CompareArmies()
+// drake178: AI_CompareArmies()
 
 // WZD o124p07
-// BU_LoadMoveSound()
+// drake178: BU_LoadMoveSound()
 
 // WZD o124p08
-// BU_LoadMeleeSound()
+// drake178: BU_LoadMeleeSound()
 
 // WZD o124p09
-// GAME_LoadSpellSound()
+// drake178: GAME_LoadSpellSound()
 
 // WZD o124p10
-// BU_WallofFire()
+// drake178: BU_WallofFire()
 
 // WZD o124p11
-// BU_SetBloodAnim()
+// drake178: BU_SetBloodAnim()
 
 // WZD o124p12
-// BU_ClearBlood()
+// drake178: BU_ClearBlood()
 
 // WZD o124p13
-// BU_IsInCityProper()
+// drake178: BU_IsInCityProper()
 
 // WZD o124p14
-// TILE_HasIntactWall()
+// drake178: TILE_HasIntactWall()
+/*
+; returns 1 if the specified combat tile has an intact
+; city wall section on it, or 0 otherwise
+*/
+/*
+
+*/
+int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1)
+{
+    int16_t has_wall = 0;  // _DI_
+
+    has_wall = ST_FALSE;
+
+    if(
+        (battlefield->Walled_City == ST_TRUE)
+        &&
+        (
+            (cgc2 >= 5)
+            &&
+            (cgc2 <= 8)
+        )
+        &&
+        (
+            (cgc1 >= 10)
+            &&
+            (cgc1 <= 13)
+        )
+        &&
+        (
+            !(
+                ((cgc2 == 6) || (cgc2 == 7))
+                &&
+                ((cgc1 == 11) || (cgc1 == 12))
+            )
+        )
+    )
+    {
+
+        // DEDU  sizeof()?  if(battlefield->Wall_Sections[((cgc1 - 10) * 8) + ((cgc2 - 5) * 2)] == ST_TRUE)
+        if(battlefield->Wall_Sections[(((cgc1 - 10) * 4) + (cgc2 - 5))] == ST_TRUE)
+        {
+
+            has_wall = ST_TRUE;
+
+        }
+
+    }
+
+    return has_wall;
+
+}
+
 
 // WZD o124p15
+// drake178: BU_IsCombatSummon
 /*
 "While most creature summonings are cast overland, the summoning of Elementals, Phantom Warriors and Phantom Beasts can only be performed during combat."
 */
@@ -17414,6 +18061,8 @@ void Combat_Grid_Screen_Coordinates(int16_t cgc2, int16_t cgc1, int16_t somethin
 
 same calc as in Screen_To_Combat_Grid_Cell_X_And_Offset()
 
+Assign_Mouse_Image() calls with (Pointer_X() + 4), (Pointer_Y() + 4)
+
 */
 int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y)
 {
@@ -17435,6 +18084,8 @@ int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y)
 /*
 
 same calc as in Screen_To_Combat_Grid_Cell_Y_And_Offset()
+
+Assign_Mouse_Image() calls with (Pointer_X() + 4), (Pointer_Y() + 4)
 
 */
 int16_t Get_Combat_Grid_Cell_Y(int16_t screen_x, int16_t screen_y)
@@ -17856,7 +18507,7 @@ void CMB_BaseAllocs__WIP(void)
 
     CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
 
-    CMB_Vortex_Array = Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
+    CMB_Vortex_Array = (struct s_Vortex_REC *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
     CMB_ActiveMoveMap = Near_Allocate_First(504);
