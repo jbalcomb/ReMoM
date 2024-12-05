@@ -841,6 +841,7 @@ SAMB_ptr spell_animation_seg;
 // WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
 // WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
 // WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
+SAMB_ptr SND_SpellCast;
 
 // WZD dseg:9134
 // drake178: SND_Spell_Music
@@ -848,6 +849,7 @@ SAMB_ptr spell_animation_seg;
 ¿ why did he name it 'Spell Music' ?
 ¿ is this only used for the music for spells ?
 */
+
 SAMB_ptr SND_Spell_Music;
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
