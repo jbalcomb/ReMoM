@@ -13,8 +13,25 @@ Combat Information Window
 
 
 
+¿ "entity" vs. unit/object/combat_grid_datum ?
+unit level
+figure level
+unit vs. rock vs. tree vs. wall vs. structure
 
 
+
+Per BU_IsInCityProper()
+city area on combat grid
+cgx >=  5 && cgx <=  8
+cgy >= 10 && cgy <= 13
+cgx: {  5,  6,  7,  8 }
+cgy: { 10, 11, 12, 13 }
+{
+    { 5, 10 }, { 5, 11 }, { 5, 12 }, { 5, 13 },
+    { 6, 10 }, { 6, 11 }, { 6, 12 }, { 6, 13 },
+    { 7, 10 }, { 7, 11 }, { 7, 12 }, { 7, 13 },
+    { 8, 10 }, { 8, 11 }, { 8, 12 }, { 8, 13 }
+}
 
 
 
@@ -196,7 +213,7 @@ XREF:  (112)
     Tactical_Combat__WIP()
     CMB_PrepareTurn__WIP()
     G_BU_SelectUnit()
-    CMB_FillTargetMaps__WIP()
+    Assign_Combat_Grids()
     CMB_SetActionCursor__WIP()
     Tactical_Combat_Draw()
     CMB_DrawActiveUnitW()

@@ -644,6 +644,8 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 // WZD o148p03
 // STK_GetPath()
 /*
+¿ start of overland move-mode/path / pathfinding ?
+
     populates movepath_cost_map path, x's, y's, and cost's
     returns path length
 
@@ -734,7 +736,7 @@ Calc_Move_Path:
 
         Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
 
-        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)
+        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == -1)  /* ¿ cost of -1 means impassible ? */
         {
             goto Done_Return_Zero;
         }

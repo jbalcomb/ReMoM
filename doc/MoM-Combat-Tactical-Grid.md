@@ -7,6 +7,33 @@ Past-Me does not show enough love for Future-Me.
 
 
 
+
+
+
+Combat Grid Coordinates
+...indexing data structures...
+CMB_TargetRows[]
+CMB_ActiveMoveMap[]
+CMB_Vortex_Array[]
+
+BU_Move__WIP indexes CMB_ActiveMoveMap[] using ((cgy * 21) + cgx)
+
+battle_units[itr].position_cgc1,cgc2
+is used the same as 
+CMB_Vortex_Array[itr].Y_Pos,X_Pos
+
+
+CMB_GetPath__WIP()
+    if(CMB_ActiveMoveMap[((target_cgy * 21) + target_cgx)] == -1)  /* impassible */
+        return;
+
+
+
+
+
+
+
+
 ¿ CMB_TargetRows[] ?
 // DELETE  #define DEBUG_UNIT_IDX          825
 // DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
@@ -19,7 +46,7 @@ Get_Combat_Grid_Cell_X()
 Get_Combat_Grid_Cell_Y()
 
 Q: Where does CMB_TargetRows[] get populated?
-A: ¿ CMB_FillTargetMaps__WIP() ?
+A: ¿ Assign_Combat_Grids() ?
 
 
 

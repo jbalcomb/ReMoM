@@ -10,10 +10,10 @@ CMB_PrepareTurn__WIP()
     CMB_CursorBattleUnit = ST_UNDEFINED;
 Assign_Mouse_Image()
     CMB_CursorBattleUnit = ST_UNDEFINED;
-    scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+    scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
     CMB_CursorBattleUnit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 ...
-CMB_TargetRows[Tile_Y][Tile_X]
+CMB_TargetRows[cgy][cgx]
 int8_t * CMB_TargetRows[22];  // 22 pointers to LBX_NearAlloc_Next()'s of 21 bytes each
 allocated in CMB_SetNearAllocs__WIP()
 ...
@@ -27,11 +27,11 @@ scanned field
 XREF:  (19)
     Tactical_Combat__WIP+9BB    mov     bx, [CMB_TargetRows@+bx]
     BU_CombatAction+10          mov     bx, [CMB_TargetRows@+bx]
-    CMB_FillTargetMaps__WIP+177 mov     bx, [CMB_TargetRows@+bx]
-    CMB_FillTargetMaps__WIP+1EA mov     bx, [CMB_TargetRows@+bx]
-    CMB_FillTargetMaps__WIP+248 mov     ax, [CMB_TargetRows@+bx]
-    CMB_FillTargetMaps__WIP+308 mov     bx, [CMB_TargetRows@+bx]
-    CMB_FillTargetMaps__WIP+338 mov     ax, [CMB_TargetRows@+bx]
+    Assign_Combat_Grids+177 mov     bx, [CMB_TargetRows@+bx]
+    Assign_Combat_Grids+1EA mov     bx, [CMB_TargetRows@+bx]
+    Assign_Combat_Grids+248 mov     ax, [CMB_TargetRows@+bx]
+    Assign_Combat_Grids+308 mov     bx, [CMB_TargetRows@+bx]
+    Assign_Combat_Grids+338 mov     ax, [CMB_TargetRows@+bx]
     Assign_Mouse_Image+CC       mov     bx, [CMB_TargetRows@+bx]
     Assign_Mouse_Image+130      mov     bx, [CMB_TargetRows@+bx]
     Assign_Mouse_Image+207      mov     bx, [CMB_TargetRows@+bx]
@@ -46,7 +46,7 @@ XREF:  (19)
     CMB_AnimateDead+1BC         mov     bx, [CMB_TargetRows@+bx]
 ...
 Tactical_Combat__WIP()
-    |-> CMB_FillTargetMaps__WIP()
+    |-> Assign_Combat_Grids()
 
 
 

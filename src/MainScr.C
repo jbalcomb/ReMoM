@@ -6002,8 +6002,10 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
 
         // Unit is Trooper & Destination is Ocean
         if(
-            (_UNITS[itr_units].wx == src_wx) &&
-            (_UNITS[itr_units].wy == src_wy) &&
+            (_UNITS[itr_units].wx == src_wx)
+            &&
+            (_UNITS[itr_units].wy == src_wy)
+            &&
             (TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
         )
         {
@@ -6031,8 +6033,9 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                         checked_troops_boatriders_count--;
                     }
                     if(
-                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
-                        (checked_troops_boatriders_count <= 9)
+                        ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
+                        &&
+                        (checked_troops_boatriders_count <= MAX_STACK)
                     )
                     {
                         ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
@@ -6052,7 +6055,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             Player_Army_At_Square(unit_wx, unit_wy, wp, player_idx, &checked_troop_count, &checked_troops[0]);
         }
 
-        if((checked_troop_count + troop_count) > 9)
+        if((checked_troop_count + troop_count) > MAX_STACK)
         {
             ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = -1;
         }
@@ -6083,8 +6086,9 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
                             checked_troops_boatriders_count--;
                         }
                         if(
-                            ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity) &&
-                            (checked_troops_boatriders_count <= 9)
+                            ((checked_troops_boatriders_count - 1) <= dst_troops_carry_capacity)
+                            &&
+                            (checked_troops_boatriders_count <= MAX_STACK)
                         )
                         {
                             ptr_movepath_cost_map_moves2[((unit_wy * WORLD_WIDTH) + unit_wx)] = 2;
@@ -6100,8 +6104,10 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
         if(
-            (_LAIRS[itr_lairs].wp == wp) &&
-            (_LAIRS[itr_lairs].Intact == ST_TRUE) &&
+            (_LAIRS[itr_lairs].wp == wp)
+            &&
+            (_LAIRS[itr_lairs].Intact == ST_TRUE)
+            &&
             ((_LAIRS[itr_lairs].wx != dst_wx) || (_LAIRS[itr_lairs].wy != dst_wy))
         )
         {
@@ -6113,8 +6119,10 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
         if(
-            (_CITIES[itr_cities].wp == wp) &&
-            (_CITIES[itr_cities].owner_idx != player_idx) &&
+            (_CITIES[itr_cities].wp == wp)
+            &&
+            (_CITIES[itr_cities].owner_idx != player_idx)
+            &&
             ((_CITIES[itr_cities].wx != dst_wx) || (_CITIES[itr_cities].wy != dst_wy))
         )
         {

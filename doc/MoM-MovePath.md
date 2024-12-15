@@ -27,14 +27,16 @@ Move_Units()
         |-> Overland_Pathfinder()
     |-> STK_EvaluatePath()
 
-STK_GetPath() returns path length
+Make_Move_Path() returns path length
 EZ_Resolve() is called inside of Move_Units()
+
+Set_Active_Stack_Movement_Path()
 
 
 
 ## Move_Units()
 
-calls Units_Moves() to get available moes2
+calls Units_Moves() to get available moves2
 bails if its < 1
 
 gets movement modes
@@ -444,7 +446,7 @@ dseg:C756 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IDK_MovePath db 3Eh du
 
 
 Elsewhere, WTF is OVL_Action_OriginX, Y?
-    different that *active x,y* for the *active* stack, first, highest priority unit `_unit`
+    different than *active x,y* for the *active* stack, first, highest priority unit `_unit`
 
 
 
