@@ -32,6 +32,16 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 
 #include "FIGURES8_LBX_063.H"
 
+int16_t DBG_player_idx = HUMAN_PLAYER_IDX;
+int16_t DBG_cgx = 0;  // 14
+int16_t DBG_cgy = 0;  // 12
+int16_t DBG_target_cgx = 0;  // 13 W
+int16_t DBG_target_cgy = 0;  // 11 N
+int16_t DBG_PFA_1311_set = ST_FALSE;
+int16_t DBG_PFA_1411_set = ST_FALSE;
+int16_t DBG_PFA_1511_set = ST_FALSE;
+int16_t * DBG_ptr_CMB_NearBuffer_3 = 0;
+
 // DELETE  #define DEBUG_UNIT_IDX          825
 // DELETE  #define DEBUG_FIGURE_SET_IDX    7  // DBG_figure_set_idx: 7
 // DELETE  #define DEBUG_UNIT_TYPE         ut_HMenPikemen  // ut_HMenPikemen  = 112,  /* FIGURES8.LBX, 056    HMPIKE*/
@@ -120,8 +130,6 @@ void Combat_Screen_Draw_Debug_Information(void);
 
 
 
-
-
 /*
 
 MoO2
@@ -170,7 +178,7 @@ struct s_COMBAT_ENCHANTMENT_ICON_DATA combat_enchantment_icon_data[NUM_COMBAT_EN
 // WZD dseg:50E8
 char cnst_SOUNDFX_File2[] = "SOUNDFX";
 // WZD dseg:50EF
-char cnst_ZeroString_17__ovr090[] = "";
+char str_empty_string__ovr090[] = "";
 // WZD dseg:50F0
 char cnst_MUSIC_File7[] = "MUSIC";
 // WZD dseg:50F6
@@ -226,7 +234,7 @@ char cnst_Dot8[] = ".";
 
 // WZD dseg:56E8                                                 BEGIN:  ovr099 - Initialized Data
 
-// WZD dseg:56E8 61 62 63 64                                     COL_CMBUI_Banner0 db 97, 98, 99, 100    ; DATA XREF: CMB_DrawFullScreen__WIP+1EAt ...
+// WZD dseg:56E8 61 62 63 64                                     COL_CMBUI_Banner0 db 97, 98, 99, 100    ; DATA XREF: Tactical_Combat_Draw+1EAt ...
 // WZD dseg:56EC 42 43 44 45                                     COL_CMBUI_Banner1 db 66, 67, 68, 69
 // WZD dseg:56F0 21 22 23 24                                     COL_CMBUI_Banner2 db 33, 34, 35, 36
 // WZD dseg:56F4 C9 CA CB A6                                     COL_CMBUI_Banner3 db 201, 202, 203, 166
@@ -481,7 +489,8 @@ int16_t CMB_CNodeAnimStage = 0;
 // WZD dseg:707E                                                                                         ; steps 0 to 7
 // WZD dseg:7080
 int16_t CMB_TargetFrameStage = 0;
-// WZD dseg:7082 00 00                                           RP_CMB_Movement_Var dw 0                ; DATA XREF: BU_Move+172w ...
+// WZD dseg:7082
+int16_t RP_CMB_Movement_Var;
 // WZD dseg:7082                                                                                         ; cleared before movement, never used for anything
 // WZD dseg:7084 00 00                                           RP_CMB_ProjectileFrame2 dw 0            ; DATA XREF: CMB_RangedAnim+3ADw ...
 // WZD dseg:7086 00 00                                           
@@ -552,12 +561,23 @@ char str_WB__ovr154[] = "wb";
 
 
 
-// WZD dseg:70C8 EC FF 14 00 16 00 EA FF EB FF 15 00 FF FF 01 00 CMB_AdjacentOffsets dw 0FFECh, 14h, 16h, 0FFEAh, 0FFEBh, 15h, 0FFFFh, 1
-// WZD dseg:70C8                                                                                         ; DATA XREF: CMB_GetPath+1E4r ...
-// WZD dseg:70D8 EC FF 18 FC 16 00 18 FC EB FF 15 00 18 FC 01 00 CMB_AdjctOffs_NoLeft dw 0FFECh, 0FC18h, 16h, 0FC18h, 0FFEBh, 15h, 0FC18h, 1
-// WZD dseg:70D8                                                                                         ; DATA XREF: CMB_GetPath:loc_E2A97r ...
-// WZD dseg:70E8 18 FC 14 00 18 FC EA FF EB FF 15 00 FF FF 18 FC CMB_AdjctOffs_NoRgt dw 0FC18h, 14h, 0FC18h, 0FFEAh, 0FFEBh, 15h, 0FFFFh, 0FC18h
-// WZD dseg:70E8                                                                                         ; DATA XREF: CMB_GetPath+307r ...
+// WZD dseg:70C8                                                 BEGIN:  ovr155 - Initialized Data
+
+// WZD dseg:70C8 EC FF 14 00 16 00 EA FF EB FF 15 00 FF FF 01 00 CMB_AdjacentOffsets dw   -20,   20,   22,  -22,  -21,   21,   -1,    1
+// WZD dseg:70D8 EC FF 18 FC 16 00 18 FC EB FF 15 00 18 FC 01 00 CMB_AdjctOfs_NoWest dw   -20,-1000,   22,-1000,  -21,   21,-1000,    1
+// WZD dseg:70E8 18 FC 14 00 18 FC EA FF EB FF 15 00 FF FF 18 FC CMB_AdjctOfs_NoEast dw -1000,   20,-1000,  -22,  -21,   21,   -1,-1000
+//                                    NE     SW     SE     NW  North  South   West   East
+int16_t CMB_AdjacentOffsets[8] = {   -20,    20,    22,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1,     1 };
+int16_t CMB_AdjctOfs_NoWest[8] = {   -20, -1000,    22, -1000,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH), -1000,     1 };
+int16_t CMB_AdjctOfs_NoEast[8] = { -1000,    20, -1000,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1, -1000 };
+int16_t adjacent_offsets[24] =
+{
+      -20,    20,    22,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1,     1,
+      -20, -1000,    22, -1000,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH), -1000,     1,
+    -1000,    20, -1000,   -22,   -(COMBAT_GRID_WIDTH),    (COMBAT_GRID_WIDTH),    -1, -1000
+};
+
+
 // WZD dseg:70F8 20 63 6F 75 6C 64 20 6E 6F 74 20 62 65 20 66 6F+CRP_AI_SpellTargetError db ' could not be found for CP.',0
 // WZD dseg:70F8 75 6E 64 20 66 6F 72 20 43 50 2E 00                                                     ; DATA XREF: CRP_DBG_SpellTargetError+33o
 // WZD dseg:7114 00                                              db    0
@@ -731,6 +751,7 @@ int16_t CMB_combat_structure;
 // WZD dseg:C520                                                                                         ;   6 - sailable tile
 
 // WZD dseg:C522
+// MoO2  Module: MOX  _combat_mouse_grid
 struct s_mouse_list * _combat_mouse_grid;
 
 // WZD dseg:C524
@@ -753,8 +774,11 @@ uses AL and CBW, so 1-byte, signed values
 allocated in CMB_SetNearAllocs__WIP()
 */
 /*
-e.g., CMB_TargetRows[Tile_Y][Tile_X]
+e.g., CMB_TargetRows[cgy][cgx]
 1-byte, signed
+
+'Right-Click Combat Grid' uses it to get battle_unit_idx
+
 */
 int8_t * CMB_TargetRows[22];
 
@@ -817,7 +841,7 @@ int16_t _combat_total_unit_count;
     (active as in selected, not scanned)
 
 Page 92  (PDF Page 97)
-"(a red outline surrounds the active unit’s square on the combat grid)""
+"(a red outline surrounds the active unit’s square on the combat grid)"
 
 */
 int16_t _scanned_battle_unit;
@@ -1093,23 +1117,45 @@ SAMB_ptr IMG_GUI_Vortex;
 SAMB_ptr CMB_Path_Ys;
 // WZD dseg:D140
 SAMB_ptr CMB_Path_Xs;
-// WZD dseg:D142 00 00                                           CMB_Path_Length dw 0                    ; DATA XREF: BU_Move:loc_77989w ...
-// WZD dseg:D142                                                                                         ; set to 0 when generating a melee target map
+// WZD dseg:D142
+int16_t movement_path_grid_cell_count;
+
 // WZD dseg:D144
-SAMB_ptr CMB_NearBuffer_3;
-// WZD dseg:D144                                                                                         ; holds spellbook pages or move path prev tiles
+/*
+2-byte, signed
+allocated in CMB_SetNearAllocs__WIP()
+CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+504 2-byte values
+*/
+int16_t * CMB_NearBuffer_3;
+
 // WZD dseg:D146
-SAMB_ptr CMB_Path_Costs;
+/*
+1-byte, unsigned
+*/
+uint8_t * CMB_Path_Costs;
+
 // WZD dseg:D148
-SAMB_ptr CMB_ActiveMoveMap;
-// WZD dseg:D148                                                                                         ; (combat movement map for the current unit?)
+/*
+1-byte
+used as movement cost map
+
+-1: ¿ occupied or impassible ?
+¿ otherwise, the movement cost of the combat grid cell ?
+...which gets memcpy()'d over, in in Set_Movement_Cost_Map()
+
+movement cost is set in 
+
+*/
+int8_t * CMB_ActiveMoveMap;
 
 // WZD dseg:D14A
 int16_t CMB_Chasm_Anim_Y;
 // WZD dseg:D14C
 int16_t CMB_Chasm_Anim_X;
+
 // WZD dseg:D14E
-struct s_Vortex_REC * CMB_Vortex_Array;
+struct s_MAGIC_VORTEX * CMB_Vortex_Array;
 // WZD dseg:D152
 int16_t CMB_Vortex_Count;
 
@@ -1165,8 +1211,10 @@ int16_t DEFR_FloatingIsland;
 int16_t ATKR_FloatingIsland;
 // WZD dseg:D382                                                                                         ; unset yet (thus 0)
 // WZD dseg:D384                                                 ovr155
-// WZD dseg:D384 00 00                                           RP_CMB_MoveMap dw 0                     ; DATA XREF: CMB_GetPath+409w ...
-// WZD dseg:D384                                                                                         ; duplicate of GUI_ActiveMoveMap (no real purpose)
+
+// ; duplicate of GUI_ActiveMoveMap (no real purpose)
+// WZD dseg:D384
+SAMB_ptr RP_CMB_MoveMap;
 
 
 
@@ -1202,17 +1250,17 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     int16_t Wizard_Cast_Result = 0;
     int16_t MoveHalves_Save = 0;
     uint32_t Overland_Enchants = 0;
-    int16_t Active_Unit_Label_Index = 0;
+    int16_t active_unit_window_field = 0;
     int16_t SPACE_Hotkey = 0;
     int16_t info_button_field = 0;
     int16_t Flee_Button_Index = 0;
     int16_t auto_button_field = 0;
     int16_t done_button_field = 0;
     int16_t wait_button_field = 0;
-    int16_t Spell_Button_Index = 0;
+    int16_t spell_button_field = 0;
     int16_t RightClick_Y = 0;
     int16_t RightClick_X = 0;
-    int16_t MapGrid_Control_Index = 0;
+    int16_t combat_grid_field = 0;
     // int16_t Grid_Y = 0;
     // int16_t Grid_X = 0;
     int64_t Grid_Y = 0;
@@ -1266,7 +1314,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     CMB_BaseAllocs__WIP();
 
 
-    CMB_LoadResources__WIP();
+    CMB_LoadResources__WIP();  /* calls CMB_SetNearAllocs__WIP() */
 
 
     _combat_wx = wx;
@@ -1277,17 +1325,21 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     _combat_defender_player = combat_defender_player_idx;
 
+
     Cache_Graphics_Combat();
+
 
     CMB_Terrain_Init__WIP(wx, wy, wp);
 
+
     Defending_Unit_Count = CMB_Units_Init__WIP(troop_count, troops);
+
 
     Clear_Fields();
 
     Deactivate_Auto_Function();
 
-    Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+    Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
 
     CMB_ATKR_First_CE = 0;
@@ -1345,6 +1397,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     }
 
+
     CMB_ImmobileCanAct = 0;
 
     G_AI_StayInTownProper = 1;
@@ -1386,7 +1439,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     CRP_CMB_NeverChecked1 = 1;
 
 
-    CMB_DrawFullScreen__WIP();
+    Tactical_Combat_Draw();
 
     PageFlip_FX();
 
@@ -1426,7 +1479,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     CRP_CMB_NeverChecked1 = 1;
 
 
-    CMB_DrawFullScreen__WIP();
+    Tactical_Combat_Draw();
 
     PageFlip_FX();
 
@@ -1470,12 +1523,12 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     }
 
 
-    CMB_DrawFullScreen__WIP();
+    Tactical_Combat_Draw();
 
     PageFlip_FX();
 
 
-    CMB_FillTargetMaps__WIP();
+    Assign_Combat_Grids();
 
 
     Set_Input_Delay(3);
@@ -1494,7 +1547,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     while(leave_screen == ST_FALSE)
     {
 
-        Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+        Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
         Mark_Time();
 
@@ -1575,27 +1628,27 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         )
         {
 
-            Spell_Button_Index = Add_Button_Field(144, 168, cnst_ZeroString_17__ovr090, _cmbt_spell_button_seg, cnst_HOTKEY_S_3[0], ST_UNDEFINED);
+            spell_button_field = Add_Button_Field(144, 168, str_empty_string__ovr090, _cmbt_spell_button_seg, cnst_HOTKEY_S_3[0], ST_UNDEFINED);
 
         }
         else
         {
 
-            Spell_Button_Index = INVALID_FIELD;
+            spell_button_field = INVALID_FIELD;
 
         }
 
 
-        wait_button_field = Add_Button_Field(170, 168, cnst_ZeroString_17__ovr090, _cmbt_wait_button_seg, cnst_HOTKEY_W_2[0], ST_UNDEFINED);
+        wait_button_field = Add_Button_Field(170, 168, str_empty_string__ovr090, _cmbt_wait_button_seg, cnst_HOTKEY_W_2[0], ST_UNDEFINED);
 
 
-        done_button_field = Add_Button_Field(170, 188, cnst_ZeroString_17__ovr090, _cmbt_done_button_seg, cnst_HOTKEY_D_5[0], ST_UNDEFINED);
+        done_button_field = Add_Button_Field(170, 188, str_empty_string__ovr090, _cmbt_done_button_seg, cnst_HOTKEY_D_5[0], ST_UNDEFINED);
 
 
         if(_combat_total_battle_effect_count > 0)
         {
 
-            info_button_field = Add_Button_Field(144, 178, cnst_ZeroString_17__ovr090, _cmbt_info_button_seg, cnst_HOTKEY_U_5[0], ST_UNDEFINED);
+            info_button_field = Add_Button_Field(144, 178, str_empty_string__ovr090, _cmbt_info_button_seg, cnst_HOTKEY_U_5[0], ST_UNDEFINED);
 
         }
         else
@@ -1606,13 +1659,14 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         }
 
 
-        auto_button_field = Add_Button_Field(170, 178, cnst_ZeroString_17__ovr090, _cmbt_auto_button_seg, cnst_HOTKEY_A_4[0], ST_UNDEFINED);
+        auto_button_field = Add_Button_Field(170, 178, str_empty_string__ovr090, _cmbt_auto_button_seg, cnst_HOTKEY_A_4[0], ST_UNDEFINED);
 
 
-        Flee_Button_Index = Add_Button_Field(144, 188, cnst_ZeroString_17__ovr090, _cmbt_flee_button_seg, cnst_HOTKEY_F[0], ST_UNDEFINED);
+        Flee_Button_Index = Add_Button_Field(144, 188, str_empty_string__ovr090, _cmbt_flee_button_seg, cnst_HOTKEY_F[0], ST_UNDEFINED);
 
 
-        Active_Unit_Label_Index = Add_Hidden_Field(83, 173, 116, 198, cnst_ZeroString_17__ovr090[0], ST_UNDEFINED);
+        // ¿ Right-Click brings up 'Unit View' ?
+        active_unit_window_field = Add_Hidden_Field(83, 173, 116, 198, str_empty_string__ovr090[0], ST_UNDEFINED);
 
 
         Add_Combat_Enchantment_Fields();
@@ -1621,7 +1675,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         Bottom_GUI_Escape_Hotkey = Add_Hidden_Field(0, 164, 319, 199, str_hotkey_ESC__ovr090[0], ST_UNDEFINED);
 
 
-        MapGrid_Control_Index = Add_Grid_Field(0, 0, 1, 1, 319, 164, &Grid_X, &Grid_Y, ST_UNDEFINED);
+        combat_grid_field = Add_Grid_Field(0, 0, 1, 1, 319, 164, &Grid_X, &Grid_Y, ST_UNDEFINED);
 
 
         SPACE_Hotkey = Add_Hot_Key(cnst_HOTKEY_SPACE_4[0]);
@@ -1716,7 +1770,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             Next_Battle_Unit(_human_player_idx);
 
-            CMB_FillTargetMaps__WIP();
+            Assign_Combat_Grids();
 
             input_field_idx = ST_UNDEFINED;
 
@@ -1749,7 +1803,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             Next_Battle_Unit(_human_player_idx);
 
-            CMB_FillTargetMaps__WIP();
+            Assign_Combat_Grids();
 
             input_field_idx = ST_UNDEFINED;
 
@@ -1882,7 +1936,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             }
 
-            CMB_FillTargetMaps__WIP();
+            Assign_Combat_Grids();
 
             screen_changed = ST_TRUE;
 
@@ -1892,117 +1946,73 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         */
 
 
-        if(input_field_idx == MapGrid_Control_Index)
+        /*
+            BEGIN:  Left-Click Combat Grid
+        */
         {
-
-            CMB_ImmobileCanAct = 0;
-
-            CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
-            CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-            // CMB_TargetFrame_X = COMBAT_GRID_X1(Grid_X, Grid_Y);
-            // CMB_TargetFrame_Y = COMBAT_GRID_Y1(Grid_X, Grid_Y);
-
-            BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
-
-            for(itr = 0; itr < _combat_total_unit_count; itr++)
+            // @@LeftClickCombatGrid
+            if(input_field_idx == combat_grid_field)
             {
 
-                BU_SetVisibility__WIP(itr);
+                CMB_ImmobileCanAct = ST_FALSE;
 
-            }
+                CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+                CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+                // CMB_TargetFrame_X = COMBAT_GRID_X1(Grid_X, Grid_Y);
+                // CMB_TargetFrame_Y = COMBAT_GRID_Y1(Grid_X, Grid_Y);
 
-            CMB_FillTargetMaps__WIP();
+                BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
-            CRP_CMB_NeverChecked1 = 1;
-
-            Combat_Winner = CMB_WinLoseFlee__WIP();
-
-            if(Combat_Winner != ST_UNDEFINED)
-            {
-
-                leave_screen = ST_UNDEFINED;
-                input_field_idx = 0;
-
-            }
-
-        }
-
-
-        if(-(MapGrid_Control_Index) == input_field_idx)
-        {
-
-            RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
-
-            RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-
-            // Eh?  battle_unit_idx = *CMB_TargetRows[((RightClick_Y * 2) + RightClick_X)];
-            battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
-
-            // ; BUG: this needs to be range checked, it can be 99!
-            if(
-                (battle_unit_idx > 0)
-                &&
-                (battle_units[battle_unit_idx].Status == bus_Active)
-            )
-            {
-
-                if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
 
-                    Play_Left_Click__STUB();
-
-                    Deactivate_Help_List();
-
-                    Set_Mouse_List(1, mouse_list_default);
-
-                    // ; byte-identical to the other branch
-
-                    MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
-
-                    battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
-
-                    Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
-
-                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
-
-                    // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
-                    memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
-
-                    USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
-
-                    battle_units[battle_unit_idx].movement_points += MoveHalves_Save;
-
-                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
-
-                    CMB_SetNearAllocs__WIP();
-
-                    CMB_FillTargetMaps__WIP();
-
-                    Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
-
-                    CMB_CE_Refresh__WIP();
-
-                    CMB_ComposeBackgrnd__WIP();
-
-                    Deactivate_Help_List();
-
-                    Set_Combat_Help_List();
-
-                    CRP_CMB_NeverChecked1 = 1;
+                    BU_SetVisibility__WIP(itr);
 
                 }
-                else
+
+                Assign_Combat_Grids();
+
+                CRP_CMB_NeverChecked1 = 1;
+
+                Combat_Winner = CMB_WinLoseFlee__WIP();
+
+                if(Combat_Winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
                 {
 
-                    if(_active_battle_unit != battle_unit_idx)
-                    {
+                    leave_screen = ST_UNDEFINED;
+                    input_field_idx = 0;
 
-                        Switch_Active_Battle_Unit(battle_unit_idx);
+                }
 
-                        CMB_FillTargetMaps__WIP();
+            }
+        }
+        /*
+            END:  Left-Click Combat Grid
+        */
 
-                    }
-                    else
+
+        /*
+            BEGIN:  Right-Click Combat Grid
+        */
+        {
+            if(-(combat_grid_field) == input_field_idx)
+            {
+
+                RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+
+                RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+
+                battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+
+                // ; BUG: this needs to be range checked, it can be 99!
+                if(
+                    (battle_unit_idx > 0)
+                    &&
+                    (battle_units[battle_unit_idx].Status == bus_Active)
+                )
+                {
+
+                    if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
                     {
 
                         Play_Left_Click__STUB();
@@ -2010,6 +2020,8 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                         Deactivate_Help_List();
 
                         Set_Mouse_List(1, mouse_list_default);
+
+                        // ; byte-identical to the other branch
 
                         MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
 
@@ -2024,15 +2036,15 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
 
-                        battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+                        battle_units[battle_unit_idx].movement_points += MoveHalves_Save;
 
                         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
 
                         CMB_SetNearAllocs__WIP();
 
-                        CMB_FillTargetMaps__WIP();
+                        Assign_Combat_Grids();
 
-                        Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+                        Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
                         CMB_CE_Refresh__WIP();
 
@@ -2042,22 +2054,80 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         Set_Combat_Help_List();
 
-                    }
+                        CRP_CMB_NeverChecked1 = 1;
 
-                    CRP_CMB_NeverChecked1 = 1;
+                    }
+                    else
+                    {
+
+                        if(_active_battle_unit != battle_unit_idx)
+                        {
+
+                            Switch_Active_Battle_Unit(battle_unit_idx);
+
+                            Assign_Combat_Grids();
+
+                        }
+                        else
+                        {
+
+                            Play_Left_Click__STUB();
+
+                            Deactivate_Help_List();
+
+                            Set_Mouse_List(1, mouse_list_default);
+
+                            MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+
+                            battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
+
+                            Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+
+                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
+
+                            // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
+                            memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
+
+                            USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+
+                            battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+
+                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+
+                            CMB_SetNearAllocs__WIP();
+
+                            Assign_Combat_Grids();
+
+                            Assign_Auto_Function(Tactical_Combat_Draw, 1);
+
+                            CMB_CE_Refresh__WIP();
+
+                            CMB_ComposeBackgrnd__WIP();
+
+                            Deactivate_Help_List();
+
+                            Set_Combat_Help_List();
+
+                        }
+
+                        CRP_CMB_NeverChecked1 = 1;
+
+                    }
 
                 }
 
             }
-
         }
+        /*
+            END:  Right-Click Combat Grid
+        */
 
 
         /*
             BEGIN:  Left-Click Spell Button
         */
         {
-            if(input_field_idx == Spell_Button_Index)
+            if(input_field_idx == spell_button_field)
             {
 
                 Play_Left_Click__STUB();
@@ -2121,9 +2191,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 screen_changed = ST_TRUE;
 
-                Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+                Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
-                CMB_FillTargetMaps__WIP();
+                Assign_Combat_Grids();
 
                 CMB_CE_Refresh__WIP();
 
@@ -2165,7 +2235,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Next_Battle_Unit(_human_player_idx);
 
-                CMB_FillTargetMaps__WIP();
+                Assign_Combat_Grids();
 
                 CRP_CMB_NeverChecked1 = 1;
 
@@ -2193,9 +2263,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_SetNearAllocs__WIP();
 
-                Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+                Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
-                CMB_FillTargetMaps__WIP();
+                Assign_Combat_Grids();
 
                 CMB_CE_Refresh__WIP();
 
@@ -2235,7 +2305,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Next_Battle_Unit(_human_player_idx);
 
-                CMB_FillTargetMaps__WIP();
+                Assign_Combat_Grids();
 
                 if(CMB_HumanUnitsDone == 1)
                 {
@@ -2262,9 +2332,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
 
         /*
-            BEGIN:  Right-Click Unit
+            BEGIN:  Right-Click Active Unit Window
         */
-        if(-(Active_Unit_Label_Index) == input_field_idx)
+        if(-(active_unit_window_field) == input_field_idx)
         {
 
             Play_Left_Click__STUB();
@@ -2290,9 +2360,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CMB_SetNearAllocs__WIP();
 
-            CMB_FillTargetMaps__WIP();
+            Assign_Combat_Grids();
 
-            Assign_Auto_Function(CMB_DrawFullScreen__WIP, 1);
+            Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
             CMB_ComposeBackgrnd__WIP();
 
@@ -2331,8 +2401,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
             
-            CMB_HumanUnitsDone = 1;
-            CMB_ImmobileCanAct = 0;
+            CMB_HumanUnitsDone = ST_TRUE;
+
+            CMB_ImmobileCanAct = ST_FALSE;
 
         }
 
@@ -2352,7 +2423,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             Next_Battle_Unit(_human_player_idx);
 
-            CMB_FillTargetMaps__WIP();
+            Assign_Combat_Grids();
 
             input_field_idx = ST_UNDEFINED;
 
@@ -2377,7 +2448,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(leave_screen == ST_FALSE)
         {
 
-            CMB_DrawFullScreen__WIP();
+            Tactical_Combat_Draw();
 
             Assign_Mouse_Image();
 
@@ -2825,7 +2896,7 @@ void CMB_PrepareTurn__WIP(void)
     sets CMB_ActiveMoveMap[]
 
 */
-void BU_GetMoveMap__WIP(int16_t battle_unit_idx)
+void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 {
     int16_t movement_type = 0;
     int16_t instant_movement_type = 0;  // _SI_
@@ -2848,50 +2919,50 @@ void BU_GetMoveMap__WIP(int16_t battle_unit_idx)
         case 1:
         {
 
-            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground[1], 462);
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground[1], 462);
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground[0], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground[0], COMBAT_GRID_CELL_COUNT);
 
         } break;
         case 2:
         {
 
-            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[1], 462);
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[0], COMBAT_GRID_CELL_COUNT);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[0], COMBAT_GRID_CELL_COUNT);
 
         } break;
         case 3:
         {
 
-            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground2[1], 462);
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground2[1], 462);
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Ground2[0], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Ground2[0], COMBAT_GRID_CELL_COUNT);
 
         } break;
         case 4:
         {
 
-            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Sailing[1], 462);
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Sailing[1], 462);
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Sailing[0], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Sailing[0], COMBAT_GRID_CELL_COUNT);
 
         } break;
         case 5:
         {
 
-            for(itr_y = 0; itr_y < 22; itr_y++)
+            for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
             {
 
-                for(itr_x = 0; itr_x < 21; itr_x++)
+                for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
                 {
 
-                    if(battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)] > battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)])
+                    if(battlefield->MoveCost_Sailing[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] > battlefield->MoveCost_Ground[((itr_y * COMBAT_GRID_WIDTH) + itr_x)])
                     {
 
-                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * 21) + itr_x)];
+                        CMB_ActiveMoveMap[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = battlefield->MoveCost_Ground[((itr_y * COMBAT_GRID_WIDTH) + itr_x)];
 
                     }
                     else
                     {
 
-                        CMB_ActiveMoveMap[((itr_y * 21) + itr_x)] = battlefield->MoveCost_Sailing[((itr_y * 21) + itr_x)];
+                        CMB_ActiveMoveMap[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = battlefield->MoveCost_Sailing[((itr_y * COMBAT_GRID_WIDTH) + itr_x)];
 
                     }
 
@@ -2904,8 +2975,8 @@ void BU_GetMoveMap__WIP(int16_t battle_unit_idx)
         case 7:
         {
 
-            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[1], 462);
-            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[1], 462);
+            // TODO  _fmemcpy(CMB_ActiveMoveMap, &battlefield.MoveCost_Teleport[0], 462);
+            memcpy(CMB_ActiveMoveMap, &battlefield->MoveCost_Teleport[0], COMBAT_GRID_CELL_COUNT);
 
         } break;
         
@@ -2916,6 +2987,290 @@ void BU_GetMoveMap__WIP(int16_t battle_unit_idx)
 
 // WZD s91p04
 // drake178: BU_Move()
+/*
+; plays the animation for, and moves the specified
+; unit to the passed coordinates on the combat map
+;
+; BUG: prevents moving into the central structure tile
+; in regular city battles
+; BUG: teleporting units can't use roads
+*/
+/*
+
+
+~ MainScr.C  Move_Units_Draw()
+
+*/
+void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
+{
+    SAMB_ptr Sound_Data_Seg = 0;
+    int16_t Can_Teleport = 0;
+    int16_t Teleport_Type = 0;
+    int16_t Last_Facing_Y = 0;
+    int16_t Last_Facing_X = 0;
+    int16_t Origin_Y = 0;
+    int16_t Origin_X = 0;
+    int16_t battle_unit_owner_idx = 0;
+    int16_t Facing_Diff_Y = 0;
+    int16_t Facing_Diff_X = 0;
+    int16_t Move_Step_Index = 0;
+    int16_t itr;  // _DI_
+
+
+    battle_unit_owner_idx = battle_units[battle_unit_idx].controller_idx;
+
+
+    Set_Movement_Cost_Map(battle_unit_idx);
+
+
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(battle_units[itr].Status == bus_Active)
+        {
+
+            CMB_ActiveMoveMap[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = INF;  /* ¿ occupied ? */
+
+        }
+
+    }
+
+
+    for(itr = 0; itr < CMB_Vortex_Count; itr++)
+    {
+
+        CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr].cgx)] = INF;  /* ¿ occupied ? */
+
+    }
+
+
+    // ; BUG: outposts and cities don't have anything on that
+    // ; tile either
+    // same as in Assign_Combat_Grids()
+    if(battlefield->Central_Structure != CS_None)
+    {
+
+        CMB_ActiveMoveMap[COMBAT_STRUCTURE_IDX] = INF;
+
+    }
+
+
+    if(
+        (battlefield->Walled_City == ST_TRUE)
+        ||
+        (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
+    )
+    {
+
+        // TODO  BU_SetCityMovement(battle_unit_idx);
+        // ; modifies the GUI_ActiveMoveMap based on whether the
+        // ; unit is allowed to enter the city proper or not,
+        // ; depending on any intact walls and Flying Fortress
+        // ;
+        // ; BUGs: allows Merging and Non-Corporeal units to enter
+        // ; a Flying Fortress even if they don't fly, and can set
+        // ; the central structure tile impassable even when there
+        // ; isn't one
+        
+    }
+
+
+    Can_Teleport = ST_FALSE;
+
+    Teleport_Type = BU_GetInstaMoveType__WIP(battle_unit_idx);
+
+    if(
+        (Teleport_Type == 6)
+        ||
+        (Teleport_Type == 7)
+    )
+    {
+
+        movement_path_grid_cell_count = 0;
+
+        Can_Teleport = ST_TRUE;
+
+    }
+    else
+    {
+        // HERE: check the memory view of the path cost map
+        Combat_Move_Path_Find(battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, target_cgx, target_cgy);
+
+        if(movement_path_grid_cell_count == 0)
+        {
+            return;
+        }
+
+    }
+
+    Origin_X = battle_units[battle_unit_idx].cgx;
+
+    Origin_Y = battle_units[battle_unit_idx].cgy;
+
+    RP_CMB_Movement_Var = 0;  // ; cleared before movement, never used for anything
+
+    battle_units[battle_unit_idx].Moving = ST_TRUE;
+
+// TODO  Sound_Data_Seg = BU_PrepMoveSound(battle_unit_idx);
+// ; plays the silence sound if SFX are enabled, then
+// ; marks the World_Data@ allocation, loads the unit's
+// ; movement sound into it, finally undoing the
+// ; allocation
+// ; returns the segment address for the sound effect
+// ;
+// ; BUG: should not mark, load, or undo if SFX are
+// ; disabled, but should instead return the expected -1
+// ; in this case
+
+    if(Can_Teleport != ST_FALSE)
+    {
+
+        battle_units[battle_unit_idx].target_cgx = target_cgx;
+
+        battle_units[battle_unit_idx].target_cgy = target_cgy;
+
+        for(Move_Step_Index = 0; Move_Step_Index < movement_path_grid_cell_count; Move_Step_Index++)
+        {
+
+            battle_units[battle_unit_idx].target_cgx = CMB_Path_Xs[Move_Step_Index];
+
+            battle_units[battle_unit_idx].target_cgy = CMB_Path_Ys[Move_Step_Index];
+
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                Play_Sound__STUB(Sound_Data_Seg);
+            }
+
+            if(magic_set.Movement_Anims == ST_TRUE)
+            {
+
+                for(itr = 0; itr < 8; itr++)
+                {
+
+                    battle_units[battle_unit_idx].MoveStage += 1;
+
+                    Tactical_Combat_Draw();
+
+                    PageFlip_FX();
+
+                }
+
+            }
+            else
+            {
+
+                battle_units[battle_unit_idx].MoveStage = 7;
+
+                Tactical_Combat_Draw();
+
+                PageFlip_FX();
+
+            }
+
+            if(magic_set.sound_effects == ST_TRUE)
+            {
+                Play_Sound__STUB(SND_CMB_Silence);
+            }
+
+            // TODO  BU_WallofFire(battle_unit_idx);
+            // ; check whether the unit's target coordinates are
+            // ; through a Wall of Fire from the outside, and if so,
+            // ; process and apply a base strength Fireball effect
+            // ; targeted at it
+
+            if(battle_units[battle_unit_idx].Status != bus_Active)
+            {
+                break;
+            }
+
+            battle_units[battle_unit_idx].MoveStage = 0;
+
+            battle_units[battle_unit_idx].cgx = CMB_Path_Xs[Move_Step_Index];
+
+            battle_units[battle_unit_idx].cgy = CMB_Path_Ys[Move_Step_Index];
+
+        }
+
+    }
+    else
+    {
+
+        if(Teleport_Type == 6)
+        {
+
+            // TODO  BU_Teleport(battle_unit_idx, target_cgx, target_cgy);
+            // ; plays the teleport animation for, and moves the
+            // ; specified unit to the selected tile on the field
+
+        }
+        else
+        {
+
+            // TODO  BU_TunnelTo(battle_unit_idx, target_cgx, target_cgy);
+            // ; plays the tunneling (Merging) animation for, and
+            // ; moves the specified unit to the selected tile on the
+            // ; battlefield
+            // ;
+            // ; BUG: ignores the unit movement animations setting
+
+        }
+
+    }
+
+
+    battle_units[battle_unit_idx].MoveStage = 0;
+
+    battle_units[battle_unit_idx].Moving = ST_FALSE;
+
+    if(movement_path_grid_cell_count > 1)
+    {
+
+        Origin_X = CMB_Path_Xs[(movement_path_grid_cell_count - 2)];
+
+        Origin_Y = CMB_Path_Ys[(movement_path_grid_cell_count - 2)];
+
+        Last_Facing_X = CMB_Path_Xs[(movement_path_grid_cell_count - 1)];
+
+        Last_Facing_Y = CMB_Path_Ys[(movement_path_grid_cell_count - 1)];
+
+    }
+    else
+    {
+
+        Last_Facing_X = target_cgx;
+
+        target_cgy = Last_Facing_Y;
+
+    }
+
+
+    Facing_Diff_X = (Last_Facing_X - Origin_X);
+
+    Facing_Diff_Y = (Last_Facing_Y - Origin_Y);
+
+    if(Can_Teleport != ST_FALSE)
+    {
+
+    }
+    else
+    {
+
+        battle_units[battle_unit_idx].cgx = battle_units[battle_unit_idx].target_cgx;
+
+        battle_units[battle_unit_idx].cgy = battle_units[battle_unit_idx].target_cgy;  // ; already done during movement?
+
+        battle_units[battle_unit_idx].target_cgx = (Last_Facing_X + Facing_Diff_X);
+
+        battle_units[battle_unit_idx].target_cgy = (Last_Facing_Y + Facing_Diff_Y);
+
+        battle_units[battle_unit_idx].movement_points -= CMB_Path_Costs[((battle_units[battle_unit_idx].cgy * COMBAT_GRID_WIDTH) + battle_units[battle_unit_idx].cgx)];
+
+    }
+
+    SETMIN(battle_units[battle_unit_idx].movement_points, 0);
+
+}
+
 
 // WZD s91p05
 // drake178: G_BU_SelectUnit()
@@ -2968,11 +3323,189 @@ void Switch_Active_Battle_Unit(int16_t battle_unit_idx)
 ;  BU_MeleeWallCheck
 */
 /*
+Left-Click Combat Grid
+passed in ~x,y of combat grid cell that qualifies for the left-click
+*action* deduced from *unit* in target grid cell
+
+
+Tactical_Combat__WIP()
+    CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+    CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+    |-> BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
 */
-void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y)
+void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
+    int16_t Target_Y = 0;
+    int16_t Target_X = 0;
+    int16_t Ranged_Group = 0;
+    int16_t Unused_Local = 0;
+    int16_t Y_Distance = 0;
+    int16_t X_Distance = 0;
+    int16_t combat_grid_target = 0;  // _DI_
 
+    combat_grid_target = CMB_TargetRows[cgy][cgx];
+
+    /*
+        DEDU  test condition for *action* of 'Left-Click Combat Grid'
+
+
+    */
+    if(
+        (combat_grid_target == 99)  /* City Wall */
+        ||
+        (
+            (combat_grid_target >= 0)
+            &&
+            (battle_units[combat_grid_target].controller_idx != battle_units[battle_unit_idx].controller_idx)
+            &&
+            (battle_units[combat_grid_target].Status == bus_Active)
+        )
+    )
+    {
+
+        if(combat_grid_target == 99)  /* City Wall */
+        {
+
+            Target_X = cgx;
+
+            Target_Y = cgy;
+
+        }
+        else
+        {
+
+            Target_X = battle_units[combat_grid_target].cgx;
+
+            Target_Y = battle_units[combat_grid_target].cgy;
+
+        }
+
+        X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);
+
+        Y_Distance = abs(Target_X - battle_units[battle_unit_idx].cgy);
+
+        Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy dbug code
+
+        if(battle_units[battle_unit_idx].movement_points > 0)
+        {
+
+            if(combat_grid_target == 99)  /* City Wall */
+            {
+
+                if(
+                    (X_Distance > 1)
+                    ||
+                    (Y_Distance > 1)
+                )
+                {
+
+                    Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+
+                    if(
+                        (Ranged_Group == rag_Boulder)
+                        ||
+                        (Ranged_Group == rag_Missile)
+                        ||
+                        (Ranged_Group == rag_Magic)
+                    )
+                    {
+
+                        BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+                    }
+
+                }
+                else
+                {
+
+                    BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+                }
+
+            }
+            else
+            {
+
+                if(BU_MeleeFlightCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
+                {
+
+                    if(
+                        (X_Distance > 1)
+                        ||
+                        (Y_Distance > 1)
+                    )
+                    {
+
+                        Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+
+                        if(
+                            (Ranged_Group == rag_Boulder)
+                            ||
+                            (Ranged_Group == rag_Missile)
+                            ||
+                            (Ranged_Group == rag_Magic)
+                        )
+                        {
+
+                            BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        if(BU_MeleeWallCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
+                        {
+
+                            BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+                        }
+                        else
+                        {
+
+                            Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+
+                            if(
+                                (Ranged_Group == rag_Boulder)
+                                ||
+                                (Ranged_Group == rag_Missile)
+                                ||
+                                (Ranged_Group == rag_Magic)
+                            )
+                            {
+
+                                BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        if(
+            (combat_grid_target == -1)  /* ¿ empty and reachable ? */
+            &&
+            (battle_units[battle_unit_idx].movement_points > 0)
+        )
+        {
+
+            Move_Battle_Unit(battle_unit_idx, cgx, cgy);
+
+        }
+
+    }
 
 
 }
@@ -2992,34 +3525,29 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y)
 populates CMB_TargetRows[] and CMB_ActiveMoveMap[]
 uses CMB_NearBuffer_3[]
 
+CMB_TargetRows[]
+
+CMB_ActiveMoveMap[]
+...just sets occupied cells to *impassible* (255)?
 
 */
-void CMB_FillTargetMaps__WIP(void)
+void Assign_Combat_Grids(void)
 {
     int16_t Can_Teleport = 0;
     int16_t Teleport_Type = 0;
     int16_t moves2 = 0;
     int16_t uu_max_moves2 = 0;
-    int16_t UU_TotalMoveArea = 0;
-    int16_t uu_position_cgc1 = 0;
-    int16_t uu_position_cgc2 = 0;
-    int16_t Row_Origin_Offset = 0;
+    int16_t uu_count_of_reachable_cells = 0;
+    int16_t uu_cgy = 0;
+    int16_t uu_cgx = 0;
+    int16_t cgy_offset = 0;
     int16_t itr = 0;
     int16_t itr_x = 0;  // DNE in Dasm, uses itr
     int16_t itr_y = 0;  // _SI_
     int16_t useable_moves2 = 0;  // _DI_
 
 
-/* HACK */    for(itr_y = 0; itr_y < 22; itr_y++)
-/* HACK */    {
-/* HACK */        for(itr_x = 0; itr_x < 21; itr_x++)
-/* HACK */        {
-/* HACK */            CMB_TargetRows[itr_y][itr_x] = -2;
-/* HACK */        }
-/* HACK */    }
-
-
-    BU_GetMoveMap__WIP(_active_battle_unit);
+    Set_Movement_Cost_Map(_active_battle_unit);
 
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
@@ -3028,7 +3556,7 @@ void CMB_FillTargetMaps__WIP(void)
         if(battle_units[itr].Status == bus_Active)
         {
 
-            CMB_ActiveMoveMap[((battle_units[itr].position_cgc1 * 21) + battle_units[itr].position_cgc2)] = -1;
+            CMB_ActiveMoveMap[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = -1;
 
         }
 
@@ -3038,7 +3566,7 @@ void CMB_FillTargetMaps__WIP(void)
     for(itr= 0; itr < CMB_Vortex_Count; itr++)
     {
 
-        CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].Y_Pos * 21) + CMB_Vortex_Array[itr].X_Pos)] = -1;
+        CMB_ActiveMoveMap[((CMB_Vortex_Array[itr].cgy * COMBAT_GRID_WIDTH) + CMB_Vortex_Array[itr].cgx)] = -1;
 
     }
 
@@ -3047,7 +3575,7 @@ void CMB_FillTargetMaps__WIP(void)
     if(battlefield->Central_Structure!= CS_None)
     {
 
-        CMB_ActiveMoveMap[0xED] = -1;  // EDh  237d  237 / 21 = 11.28571  11 * 21 = 231  237 - 231 = 6  ~ cgc1 = 11, cgc2 = 6
+        CMB_ActiveMoveMap[0xED] = -1;  // EDh  237d  237 / 21 = 11.28571  11 * 21 = 231  237 - 231 = 6  ~ cgx = 6, cgy = 11
 
     }
 
@@ -3057,16 +3585,16 @@ void CMB_FillTargetMaps__WIP(void)
         (battlefield->city_enchantments[FLYING_FORTRESS] > 0)
     )
     {
-        // TODO  BU_SetCityMovement(_active_battle_unit);
-        // ; modifies the GUI_ActiveMoveMap based on whether the
-        // ; unit is allowed to enter the city proper or not,
-        // ; depending on any intact walls and Flying Fortress
-        // ;
-        // ; BUGs: allows Merging and Non-Corporeal units to enter
-        // ; a Flying Fortress even if they don't fly, and can set
-        // ; the central structure tile impassable even when there
-        // ; isn't one
+
+        // sets -1 in CMB_ActiveMoveMap[] for city walls and the non-city structure
+        BU_SetCityMovement__WIP(_active_battle_unit);
+
     }
+
+
+/*
+    NOTE: nothing else touches CMB_ActiveMoveMap[]
+*/
 
 
     Can_Teleport = ST_FALSE;
@@ -3088,22 +3616,22 @@ void CMB_FillTargetMaps__WIP(void)
     moves2 = battle_units[_active_battle_unit].movement_points;
 
     uu_max_moves2 = Unit_Moves2(battle_units[_active_battle_unit].unit_idx);
-    // ; calculates and returns the unit's movement allowance
-    // ; in half movement point units, accounting for all
-    // ; non-combat factors
-    // ; would-be BUG: ignores Entangle
 
-    uu_position_cgc2 = battle_units[_active_battle_unit].position_cgc2;
+    uu_cgx = battle_units[_active_battle_unit].cgx;
 
-    uu_position_cgc1 = battle_units[_active_battle_unit].position_cgc1;
+    uu_cgy = battle_units[_active_battle_unit].cgy;
 
-    for(itr_y = 0; itr_y < 22; itr_y++)
+
+    /*
+        default all combat grid targets to invalid action targets
+    */
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
     {
 
-        for(itr_x = 0; itr_x < 21; itr_x++ )
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
         {
 
-
+            CMB_TargetRows[itr_y][itr_x] = -2;  /* not valid as targets for an active unit’s actions */
 
         }
 
@@ -3119,14 +3647,12 @@ void CMB_FillTargetMaps__WIP(void)
     )
     {
 
-        for(itr_y = 0; itr_y < 22; itr_y++)
+        for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
         {
 
-            for(itr_x = 0; itr_x < 21; itr_x++ )
+            for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
             {
 
-                // ; returns 1 if the specified combat tile has an intact
-                // ; city wall section on it, or 0 otherwise
                 if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
                 {
 
@@ -3144,9 +3670,6 @@ void CMB_FillTargetMaps__WIP(void)
     /*
         BEGIN:  assign Battle Unit Indices
     */
-    // ; in the map row allocations, mark the index of each
-    // ; battle unit into their corresponding tiles, with the
-    // ; exception of undrawn invisible units
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
@@ -3157,7 +3680,7 @@ void CMB_FillTargetMaps__WIP(void)
         )
         {
 
-            CMB_TargetRows[battle_units[itr].position_cgc1][battle_units[itr].position_cgc2] = itr;  // batle_unit_idx
+            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
 
         }
 
@@ -3187,28 +3710,54 @@ void CMB_FillTargetMaps__WIP(void)
 
     }
 
-    UU_TotalMoveArea = 0;
 
-    // TODO  CMB_FillReachMap(battle_units[_active_battle_unit].position_cgc2, battle_units[_active_battle_unit].position_cgc1, useable_moves2);
-    // ; creates a path map from the origin tile, then
-    // ; replaces the result array with 0s or 1s depending on
-    // ; whether the tile can be reached and entered; storing
-    // ; the result in CMB_NearBuffer_3
+    /*
 
-    for(itr_y = 0; itr_y < 22; itr_y++)
+    */
+    uu_count_of_reachable_cells = 0;
+
+    // sets CMB_NearBuffer_3[] to {F,T} - reachable
+    // ¿ MoO2 Set_Legal_Moves_() ?
+    Combat_Move_Path_Valid(battle_units[_active_battle_unit].cgx, battle_units[_active_battle_unit].cgy, useable_moves2);
+
+    if(
+        (battle_units[_active_battle_unit].cgx == 14)
+        &&
+        (battle_units[_active_battle_unit].cgy == 12)
+    )
+    {
+        
+        // __debugbreak();
+
+        // assert(CMB_NearBuffer_3[((battle_units[_active_battle_unit].cgy * COMBAT_GRID_WIDTH) + battle_units[_active_battle_unit].cgx)] == _active_battle_unit);
+
+        DBG_ptr_CMB_NearBuffer_3 = &CMB_NearBuffer_3[( ((battle_units[_active_battle_unit].cgy - 1) * COMBAT_GRID_WIDTH) + (battle_units[_active_battle_unit].cgx - 1) )];
+
+//        assert(CMB_NearBuffer_3[
+//            (
+//                ((battle_units[_active_battle_unit].cgy - 1) * COMBAT_GRID_WIDTH)
+//                +
+//                (battle_units[_active_battle_unit].cgx - 1)
+//            ) ] == ST_TRUE
+//        );
+
+    }
+
+
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
     {
 
-        Row_Origin_Offset = (itr_y * 21);
+        cgy_offset = (itr_y * COMBAT_GRID_WIDTH);
 
-        for(itr_x = 0; itr_x < 21; itr_x++)
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
         {
 
-            if(CMB_NearBuffer_3[Row_Origin_Offset + itr_x] == 1)
+            if(CMB_NearBuffer_3[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
             {
 
                 CMB_TargetRows[itr_y][itr_x] = -1;
 
-                UU_TotalMoveArea++;
+                uu_count_of_reachable_cells++;
 
             }
 
@@ -3217,7 +3766,7 @@ void CMB_FillTargetMaps__WIP(void)
     }
 
 
-    CMB_TargetRows[battle_units[_active_battle_unit].position_cgc1][battle_units[_active_battle_unit].position_cgc2] = _active_battle_unit;
+    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
 
 }
 
@@ -4712,17 +5261,22 @@ int16_t Unit_Try_To_Move(int16_t wx, int16_t wy, int16_t wp, int16_t unit_idx, i
 */
 /*
 
+finger on own unit
+winged boot on reachable move
+red x on unreachable
+crossed swords on reachable attack
+
 */
 void Assign_Mouse_Image(void)
 {
     int16_t ranged_attack_type_group = 0;
-    int16_t Tile_Y = 0;
+    int16_t cgy = 0;
     int16_t screen_y = 0;
     int16_t screen_x = 0;
     int16_t Y_Distance = 0;
     int16_t X_Distance = 0;
     int16_t scanned_battle_unit_idx = 0;  // _SI_
-    int16_t Tile_X = 0;  // _DI_
+    int16_t cgx = 0;  // _DI_
 
     _scanned_battle_unit = ST_UNDEFINED;
 
@@ -4733,9 +5287,9 @@ void Assign_Mouse_Image(void)
 
         CMB_ActiveUnitFrame = 1;
 
-        CMB_ActiveUnitFrameX = battle_units[_active_battle_unit].position_cgc2;
+        CMB_ActiveUnitFrameX = battle_units[_active_battle_unit].cgx;
 
-        CMB_ActiveUnitFrameY = battle_units[_active_battle_unit].position_cgc1;
+        CMB_ActiveUnitFrameY = battle_units[_active_battle_unit].cgy;
 
         if(
             (CMB_ImmobileCanAct == ST_TRUE)
@@ -4767,45 +5321,45 @@ void Assign_Mouse_Image(void)
     {
 
         // ¿ cgc2, cgc1 ?
-        Tile_X = Get_Combat_Grid_Cell_X(screen_x, screen_y);
+        cgx = Get_Combat_Grid_Cell_X(screen_x, screen_y);
 
         // ¿ cgc2, cgc1 ?
-        Tile_Y = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
+        cgy = Get_Combat_Grid_Cell_Y(screen_x, screen_y);
 
-        if(CMB_TargetRows[Tile_Y][Tile_X] == -2)
+        if(CMB_TargetRows[cgy][cgx] == -2)
         {
 
-            _combat_mouse_grid->image_num = crsr_RedCross;  /* Page 92  (PDF Page 97) "Squares that are not valid as targets for an active unit’s actions show a red “X” when the mouse cursor moves over them." */
+            _combat_mouse_grid->image_num = crsr_RedCross;  /* Page 92  (PDF Page 97) "Squares that are not valid as targets for an active unit’s actions show a red "X" when the mouse cursor moves over them." */
 
         }
-        else if(CMB_TargetRows[Tile_Y][Tile_X] == -1)
+        else if(CMB_TargetRows[cgy][cgx] == -1)
         {
 
             CMB_TargetFrame = 1;
 
-            CMB_TargetFrame_X = Tile_X;
+            CMB_TargetFrame_X = cgx;
 
-            CMB_TargetFrame_Y = Tile_Y;
+            CMB_TargetFrame_Y = cgy;
 
             _combat_mouse_grid->image_num = crsr_WingedBoot;
 
         }
-        else if(CMB_TargetRows[Tile_Y][Tile_X] == 99)
+        else if(CMB_TargetRows[cgy][cgx] == 99)
         {
 
             CMB_TargetFrame = 1;
 
-            CMB_TargetFrame_X = Tile_X;
+            CMB_TargetFrame_X = cgx;
 
-            CMB_TargetFrame_Y = Tile_Y;
+            CMB_TargetFrame_Y = cgy;
 
             CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
 
-            scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+            scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
 
-            X_Distance = abs((Tile_X - battle_units[_active_battle_unit].position_cgc2));
+            X_Distance = abs((cgx - battle_units[_active_battle_unit].cgx));
 
-            Y_Distance = abs((Tile_Y - battle_units[_active_battle_unit].position_cgc1));
+            Y_Distance = abs((cgy - battle_units[_active_battle_unit].cgy));
 
             _combat_mouse_grid->image_num = crsr_RedCross;
 
@@ -4846,34 +5400,34 @@ void Assign_Mouse_Image(void)
             }
 
         }
-        else
+        else  /* not -2, -1, 99 */
         {
 
             CMB_TargetFrame = 1;
 
-            CMB_TargetFrame_X = Tile_X;
+            CMB_TargetFrame_X = cgx;
 
-            CMB_TargetFrame_Y = Tile_Y;
+            CMB_TargetFrame_Y = cgy;
 
             CMB_TargetFrameStage = ((CMB_TargetFrameStage + 1) % 3);
 
-            scanned_battle_unit_idx = CMB_TargetRows[Tile_Y][Tile_X];
+            scanned_battle_unit_idx = CMB_TargetRows[cgy][cgx];
 
             _scanned_battle_unit = scanned_battle_unit_idx;  // ; the combat unit display is based on this
 
             if(
-                (CMB_ImmobileCanAct == ST_TRUE)
+                (CMB_ImmobileCanAct != ST_TRUE)
                 ||
-                (_auto_combat_flag == ST_FALSE)
+                (_auto_combat_flag != ST_FALSE)
             )
             {
 
-                if(battle_units[scanned_battle_unit_idx].controller_idx == _human_player_idx)
+                if(battle_units[scanned_battle_unit_idx].controller_idx != _human_player_idx)
                 {
 
-                    X_Distance = abs(battle_units[scanned_battle_unit_idx].position_cgc2 - battle_units[_active_battle_unit].position_cgc2);
+                    X_Distance = abs(battle_units[scanned_battle_unit_idx].cgx - battle_units[_active_battle_unit].cgx);
 
-                    Y_Distance = abs(battle_units[scanned_battle_unit_idx].position_cgc1 - battle_units[_active_battle_unit].position_cgc1);
+                    Y_Distance = abs(battle_units[scanned_battle_unit_idx].cgy - battle_units[_active_battle_unit].cgy);
 
                     _combat_mouse_grid->image_num = crsr_RedCross;
 
@@ -4928,6 +5482,7 @@ void Assign_Mouse_Image(void)
     {
         
         CMB_ActiveUnitFrame = 0;
+
         CMB_TargetFrame = 0;
 
     }
@@ -5157,8 +5712,6 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
         }
 
-// DELETE          DBG_Combat_Figure_Load();
-
         battle_units[_combat_total_unit_count].battle_unit_figure_idx = Combat_Figure_Load(_UNITS[troops[itr]].type, itr);
 
         battle_units[_combat_total_unit_count].controller_idx = _combat_attacker_player;
@@ -5280,10 +5833,10 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        battle_units[itr].position_cgc2 = 0;
-        battle_units[itr].position_cgc1 = 0;
-        battle_units[itr].target_cgc2 = 0;
-        battle_units[itr].target_cgc1 = 0;
+        battle_units[itr].cgx = 0;
+        battle_units[itr].cgy = 0;
+        battle_units[itr].target_cgx = 0;
+        battle_units[itr].target_cgy = 0;
         battle_units[itr].MoveStage = 0;
         battle_units[itr].outline_magic_realm = 0;
         battle_units[itr].Atk_FigLoss = 0;
@@ -5424,7 +5977,7 @@ void Turn_Off_Auto_Combat(void)
 
     Next_Battle_Unit(_human_player_idx);
 
-    CMB_FillTargetMaps__WIP();
+    Assign_Combat_Grids();
 
 }
 
@@ -5485,7 +6038,7 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[])
 /*
 
 */
-void CMB_DrawFullScreen__WIP(void)
+void Tactical_Combat_Draw(void)
 {
     int16_t First_CE_Help_Entry = 0;
     int16_t Opponent_Type = 0;
@@ -5496,8 +6049,6 @@ void CMB_DrawFullScreen__WIP(void)
     int16_t string_index = 0;  // _DI_
 
     Set_Page_Off();
-
-    // /* HACK */ Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_BLACK);
 
     CMB_CreateEntities__WIP();
 
@@ -5795,7 +6346,6 @@ void CMB_DrawFullScreen__WIP(void)
             {
 
                 colors[0] = 227;
-
                 colors[1] = 243;
 
                 Set_Font_Colors_15(0, &colors[0]);
@@ -6370,10 +6920,10 @@ void CMB_CreateEntities__WIP(void)
 // DELETE                  // already set in CMB_Units_Init__WIP() ... DBG_battle_unit_idx = itr;
 // DELETE  
 // DELETE                  DBG_battle_unit_figure_idx = battle_units[itr].battle_unit_figure_idx;
-// DELETE                  DBG_position_cgc2 = battle_units[itr].position_cgc2;
+// DELETE                  DBG_position_cgc2 = battle_units[itr].cgx;
 // DELETE                  DBG_position_cgc1 = battle_units[itr].position_cgc1;
-// DELETE                  DBG_target_cgc2 = battle_units[itr].target_cgc2;
-// DELETE                  DBG_target_cgc1 = battle_units[itr].target_cgc1;
+// DELETE                  DBG_target_cgc2 = battle_units[itr].target_cgx;
+// DELETE                  DBG_target_cgc1 = battle_units[itr].target_cgy;
 // DELETE                  DBG_MoveStage = battle_units[itr].MoveStage;
 // DELETE                  DBG_itr_figures = itr_figures;
 // DELETE                  DBG_unit_figure_maximum = unit_figure_maximum;
@@ -6385,7 +6935,7 @@ void CMB_CreateEntities__WIP(void)
 // DELETE              }
 
             // calls CMB_CreateEntity__WIP(), which increments combat_grid_entity_count
-            CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+            CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 // DELETE              DBG_CMB_CreateEntity__WIP = ST_FALSE;
 // DELETE              DBG_CMB_SpawnFigure__WIP = ST_FALSE;
@@ -6395,7 +6945,7 @@ void CMB_CreateEntities__WIP(void)
         if(Curse_Anim != ST_UNDEFINED)
         {
 
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, Curse_Anim);
+            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
             // ; creates a combat entity corresponding to the passed
             // ; curse effect and positioning
 
@@ -7524,9 +8074,9 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
     int16_t itr = 0;  // _SI_
     int16_t battle_unit_idx = 0;  // _DI_
 
-    Selected_Unit_X = battle_units[_active_battle_unit].position_cgc2;
+    Selected_Unit_X = battle_units[_active_battle_unit].cgx;
 
-    Selected_Unit_Y = battle_units[_active_battle_unit].position_cgc1;
+    Selected_Unit_Y = battle_units[_active_battle_unit].cgy;
 
     Unit_Count = 0;
 
@@ -7576,7 +8126,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
             if(battle_units[battle_unit_idx].movement_points > 0)
             {
 
-                delta = Delta_XY_With_Wrap(Selected_Unit_X, Selected_Unit_Y, battle_units[battle_unit_idx].position_cgc2, battle_units[battle_unit_idx].position_cgc1, WORLD_WIDTH);
+                delta = Delta_XY_With_Wrap(Selected_Unit_X, Selected_Unit_Y, battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, WORLD_WIDTH);
 
                 if(battle_units[battle_unit_idx].Action == bua_Wait)
                 {
@@ -7915,11 +8465,11 @@ void CMB_SetNearAllocs__WIP(void)
 {
     int16_t itr = 0;  // _SI_
 
-    CMB_ActiveMoveMap = Near_Allocate_First(504);
+    CMB_ActiveMoveMap = (int8_t *)Near_Allocate_First(504);
 
-    CMB_Path_Costs = Near_Allocate_Next(504);
+    CMB_Path_Costs = (uint8_t *)Near_Allocate_Next(504);
 
-    CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+    CMB_NearBuffer_3 = (int16_t *)Near_Allocate_Next(1008);  // 504 2-byte values
 
     CMB_Path_Xs = Near_Allocate_Next(60);
 
@@ -7927,10 +8477,10 @@ void CMB_SetNearAllocs__WIP(void)
 
     _combat_mouse_grid = (struct s_mouse_list *)Near_Allocate_Next(12);
 
-    for(itr = 0; itr < 22; itr++)
+    for(itr = 0; itr < COMBAT_GRID_HEIGHT; itr++)
     {
 
-        CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(21);
+        CMB_TargetRows[itr] = (int8_t *)Near_Allocate_Next(COMBAT_GRID_WIDTH);
 
     } 
 
@@ -10405,8 +10955,8 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
 */
 void Deploy_Battle_Units(int16_t player_idx)
 {
-    int16_t starting_cgc1[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t starting_cgc2[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t starting_cgy[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t starting_cgx[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Ranged_Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Melee_Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t MoveFront_Count = 0;
@@ -10422,58 +10972,54 @@ void Deploy_Battle_Units(int16_t player_idx)
 
     if(player_idx == _combat_defender_player)
     {
-        starting_cgc2[ 0] = 8;
-        starting_cgc2[ 1] = 8;
-        starting_cgc2[ 2] = 8;
-        starting_cgc2[ 3] = 8;
-        starting_cgc2[ 4] = 7;
-        starting_cgc2[ 5] = 7;
-        starting_cgc2[ 6] = 7;
-        starting_cgc2[ 7] = 7;
-        starting_cgc2[ 8] = 6;
-        starting_cgc2[ 9] = 6;
-        starting_cgc2[10] = 6;
-        starting_cgc2[11] = 6;
+        starting_cgx[ 0] = 8;
+        starting_cgx[ 1] = 8;
+        starting_cgx[ 2] = 8;
+        starting_cgx[ 3] = 8;
+        starting_cgx[ 4] = 7;
+        starting_cgx[ 5] = 7;
+        starting_cgx[ 6] = 7;
+        starting_cgx[ 7] = 7;
+        starting_cgx[ 8] = 6;
+        starting_cgx[ 9] = 6;
+        starting_cgx[10] = 6;
+        starting_cgx[11] = 6;
     }
     else
     {
-        starting_cgc2[ 0] = 14;
-        starting_cgc2[ 1] = 14;
-        starting_cgc2[ 2] = 14;
-        starting_cgc2[ 3] = 14;
-        starting_cgc2[ 4] = 15;
-        starting_cgc2[ 5] = 15;
-        starting_cgc2[ 6] = 15;
-        starting_cgc2[ 7] = 15;
-        starting_cgc2[ 8] = 16;
-        starting_cgc2[ 9] = 16;
-        starting_cgc2[10] = 16;
-        starting_cgc2[11] = 16;
+        starting_cgx[ 0] = 14;
+        starting_cgx[ 1] = 14;
+        starting_cgx[ 2] = 14;
+        starting_cgx[ 3] = 14;
+        starting_cgx[ 4] = 15;
+        starting_cgx[ 5] = 15;
+        starting_cgx[ 6] = 15;
+        starting_cgx[ 7] = 15;
+        starting_cgx[ 8] = 16;
+        starting_cgx[ 9] = 16;
+        starting_cgx[10] = 16;
+        starting_cgx[11] = 16;
     }
 
-    starting_cgc1[ 0] = 12;
-    starting_cgc1[ 1] = 11;
-    starting_cgc1[ 2] = 13;
-    starting_cgc1[ 3] = 10;
-    starting_cgc1[ 4] = 12;
-    starting_cgc1[ 5] = 11;
-    starting_cgc1[ 6] = 13;
-    starting_cgc1[ 7] = 10;
-    starting_cgc1[ 8] = 12;
-    starting_cgc1[ 9] = 11;
-    starting_cgc1[10] = 13;
-    starting_cgc1[11] = 10;
+    starting_cgy[ 0] = 12;
+    starting_cgy[ 1] = 11;
+    starting_cgy[ 2] = 13;
+    starting_cgy[ 3] = 10;
+    starting_cgy[ 4] = 12;
+    starting_cgy[ 5] = 11;
+    starting_cgy[ 6] = 13;
+    starting_cgy[ 7] = 10;
+    starting_cgy[ 8] = 12;
+    starting_cgy[ 9] = 11;
+    starting_cgy[10] = 13;
+    starting_cgy[11] = 10;
+
 
     Melee_Count = 0;
     Ranged_Count = 0;
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
-        if(battle_units[itr].Cur_Figures < battle_units[itr].Max_Figures)
-        {
-            // __debugbreak();
-        }
 
         if(battle_units[itr].controller_idx == player_idx)
         {
@@ -10557,20 +11103,11 @@ void Deploy_Battle_Units(int16_t player_idx)
     for(itr = 0; itr < Melee_Count; itr++)
     {
 
-        if(battle_units[Melee_Units[itr]].Cur_Figures < battle_units[itr].Max_Figures)
-        {
-            // __debugbreak();
-        }
-        if(battle_units[Melee_Units[itr]].controller_idx == HUMAN_PLAYER_IDX)
-        {
-            // __debugbreak();
-        }
-
         if(_combat_defender_player == player_idx)
         {
 
             while(
-                (battlefield->Walled_City == 1)
+                (battlefield->Walled_City == ST_TRUE)
                 &&
                 (
                     (ctr == 2)
@@ -10593,9 +11130,25 @@ void Deploy_Battle_Units(int16_t player_idx)
 
         }
 
-        battle_units[Melee_Units[itr]].position_cgc2 = starting_cgc2[ctr];
+        // ¿ if(Melee_Units[itr] == 0) ? ... 
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            &&
+            (starting_cgx[ctr] == 14)
+            &&
+            (starting_cgy[ctr] == 12)
+        )
+        {
+            // __debugbreak();
+            DBG_cgx = starting_cgx[ctr];
+            DBG_cgy = starting_cgy[ctr];
+            DBG_target_cgx = (DBG_cgx - 1);
+            DBG_target_cgy = (DBG_cgy - 1);
+        }
 
-        battle_units[Melee_Units[itr]].position_cgc1 = starting_cgc1[ctr];
+        battle_units[Melee_Units[itr]].cgx = starting_cgx[ctr];
+
+        battle_units[Melee_Units[itr]].cgy = starting_cgy[ctr];
 
         ctr++;
 
@@ -10611,7 +11164,7 @@ void Deploy_Battle_Units(int16_t player_idx)
         {
 
             while(
-                (battlefield->Walled_City == 1)
+                (battlefield->Walled_City == ST_TRUE)
                 &&
                 (
                     (ctr == 2)
@@ -10634,9 +11187,9 @@ void Deploy_Battle_Units(int16_t player_idx)
 
         }
 
-        battle_units[Ranged_Units[itr]].position_cgc2 = starting_cgc2[ctr];
+        battle_units[Ranged_Units[itr]].cgx = starting_cgx[ctr];
 
-        battle_units[Ranged_Units[itr]].position_cgc1 = starting_cgc1[ctr];
+        battle_units[Ranged_Units[itr]].cgy = starting_cgy[ctr];
 
         ctr++;
 
@@ -10646,28 +11199,23 @@ void Deploy_Battle_Units(int16_t player_idx)
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        if(battle_units[itr].Cur_Figures < battle_units[itr].Max_Figures)
-        {
-            // __debugbreak();
-        }
-
         if(battle_units[itr].controller_idx == player_idx)
         {
 
             if(_combat_attacker_player == player_idx)
             {
 
-                battle_units[itr].target_cgc2 = (battle_units[itr].position_cgc2 - 1);
+                battle_units[itr].target_cgx = (battle_units[itr].cgx - 1);
 
             }
             else
             {
 
-                battle_units[itr].target_cgc2 = (battle_units[itr].position_cgc2 + 1);
+                battle_units[itr].target_cgx = (battle_units[itr].cgx + 1);
 
             }
 
-            battle_units[itr].target_cgc1 = battle_units[itr].position_cgc1;
+            battle_units[itr].target_cgy = battle_units[itr].cgy;
 
         }
 
@@ -12590,13 +13138,20 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
 
 // WZD o122p11
-// BU_Attack()
+// drake178: BU_Attack()
+void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_target, int16_t Target_X, int16_t Target_Y)
+{
+
+
+
+}
+
 
 // WZD o122p12
-// BU_GetDistanceFrom()
+// drake178: BU_GetDistanceFrom()
 
 // WZD o122p13
-// AI_BU_GetAttackValue()
+// drake178: AI_BU_GetAttackValue()
 
 // WZD o122p14
 // drake178: ¿ ?
@@ -14197,13 +14752,34 @@ int16_t CTY_RampageVictory(void)
 */
 
 // WZD o124p01
-// WIZ_GetLastRangedStr()
+// drake178: WIZ_GetLastRangedStr()
 
 // WZD o124p02
-// BU_SetCityMovement()
+// drake178: BU_SetCityMovement()
+/*
+; modifies the GUI_ActiveMoveMap based on whether the
+; unit is allowed to enter the city proper or not,
+; depending on any intact walls and Flying Fortress
+;
+; BUGs: allows Merging and Non-Corporeal units to enter
+; a Flying Fortress even if they don't fly, and can set
+; the central structure tile impassable even when there
+; isn't one
+*/
+/*
+
+*/
+void BU_SetCityMovement__WIP(int16_t battle_unit_idx)
+{
+
+
+
+
+}
+
 
 // WZD o124p03
-// AI_RestrictToCity()
+// drake178: AI_RestrictToCity()
 
 // WZD o124p04
 /*
@@ -14864,8 +15440,8 @@ void CMB_ProcessVortices(void)
             int Next_X, dx;
 
             // Set Current_X and Current_Y from CMB_Vortex_Array
-            Current_X = CMB_Vortex_Array[Vortex_Index].X_Pos;
-            Current_Y = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+            Current_X = CMB_Vortex_Array[Vortex_Index].cgx;
+            Current_Y = CMB_Vortex_Array[Vortex_Index].cgy;
 
             Next_X = Current_X;
             Next_Y = Current_Y;
@@ -14878,11 +15454,11 @@ void CMB_ProcessVortices(void)
 
                 // Validate position
                 if (Next_X != Current_X || Next_Y != Current_Y) {
-                    dx = (Next_Y * 21) + Next_X;
+                    dx = (Next_Y * COMBAT_GRID_WIDTH) + Next_X;
 
                     if (battlefield->MoveCost_Teleport[dx] != -1 &&
-                        Next_X >= 0 && Next_X <= 21 &&
-                        Next_Y >= 0 && Next_Y <= 22) {
+                        Next_X >= 0 && Next_X <= COMBAT_GRID_WIDTH &&
+                        Next_Y >= 0 && Next_Y <= COMBAT_GRID_HEIGHT) {
 
                         // Calculate absolute movement distances
                         int dist_x = abs(Next_X - CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X);
@@ -14901,8 +15477,8 @@ void CMB_ProcessVortices(void)
             Loop_Var++;
         }
 
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X = CMB_Vortex_Array[Vortex_Index].X_Pos;
-        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_X = CMB_Vortex_Array[Vortex_Index].cgx;
+        CMB_Vortex_Array[Vortex_Index].Prev_or_Next_Y = CMB_Vortex_Array[Vortex_Index].cgy;
 
         CMB_VortexPlayerMove(Vortex_Index);
         Vortex_Index++;
@@ -14927,8 +15503,8 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
 
     // Retrieve the vortex
     struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
-    Prev_X = vortex->X_Pos;
-    Prev_Y = vortex->Y_Pos;
+    Prev_X = vortex->cgx;
+    Prev_Y = vortex->cgy;
     CMB_ActiveUnitFrame = 0;
 
     // Update the vortex with the new position
@@ -14943,13 +15519,13 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
     for (int i = 0; i < 8; i++) {
         vortex->Move_Stage = i;
         Set_Page_Off();
-        CMB_DrawFullScreen__WIP();
+        Tactical_Combat_Draw();
         PageFlip_FX();
     }
 
     // Update vortex position
-    vortex->X_Pos = Next_X;
-    vortex->Y_Pos = Next_Y;
+    vortex->cgx = Next_X;
+    vortex->cgy = Next_Y;
 
     // Check if the new position affects the city damage
     if (Next_X >= 5 && Next_X <= 8 && Next_Y >= 10 && Next_Y <= 13) {
@@ -14966,7 +15542,7 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
         struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
         int32_t Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
 
-        if (battleunit->position_cgc2 == Next_X && battleunit->position_cgc1 == Next_Y) {
+        if (battleunit->cgx == Next_X && battleunit->cgy == Next_Y) {
 
             if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
                 continue;
@@ -14981,8 +15557,8 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
             }
         }
 
-        X_Distance = abs(battleunit->position_cgc2 - Next_X);
-        Y_Distance = abs(battleunit->position_cgc1 - Next_Y);
+        X_Distance = abs(battleunit->cgx - Next_X);
+        Y_Distance = abs(battleunit->cgy - Next_Y);
         if ((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0)) {
             if (Random(3) == 1) {
                 CMB_ConvSpellAttack(spl_Lightning_Bolt, i, Damage_Array, 0);
@@ -15020,13 +15596,13 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
             int16_t di = Get_Combat_Grid_Cell_X(X_Retn + 4, Y_Retn + 4);
             Picked_Y = Get_Combat_Grid_Cell_Y(X_Retn + 4, Y_Retn + 4);
 
-            if (CMB_Vortex_Array[Vortex_Index].X_Pos != di ||
-                CMB_Vortex_Array[Vortex_Index].Y_Pos != Picked_Y) {
+            if (CMB_Vortex_Array[Vortex_Index].cgx != di ||
+                CMB_Vortex_Array[Vortex_Index].cgy != Picked_Y) {
 
-                if (battlefield->MoveCost_Teleport[Picked_Y * 21 + di] != -1) {
+                if (battlefield->MoveCost_Teleport[Picked_Y * COMBAT_GRID_WIDTH + di] != -1) {
 
-                    if (abs(di - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
-                        abs(Picked_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+                    if (abs(di - CMB_Vortex_Array[Vortex_Index].cgx) <= 1 &&
+                        abs(Picked_Y - CMB_Vortex_Array[Vortex_Index].cgy) <= 1) {
 
                         CMB_VortexMovement(Vortex_Index, di, Picked_Y);
                         Finished = 1;
@@ -15036,7 +15612,7 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
         }
 
         if (!Finished) {
-            CMB_DrawFullScreen__WIP();
+            Tactical_Combat_Draw();
             CMB_SetVortexCursor(Vortex_Index);
             PageFlip_FX();
             Release_Time(2);
@@ -15054,8 +15630,8 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     Scrn_Y = Pointer_Y() + Pointer_Offset;
     CMB_ActiveUnitFrame = 1;
 
-    CMB_ActiveUnitFrameX = CMB_Vortex_Array[Vortex_Index].X_Pos;
-    CMB_ActiveUnitFrameY = CMB_Vortex_Array[Vortex_Index].Y_Pos;
+    CMB_ActiveUnitFrameX = CMB_Vortex_Array[Vortex_Index].cgx;
+    CMB_ActiveUnitFrameY = CMB_Vortex_Array[Vortex_Index].cgy;
 
     CMB_TargetFrameStage = (CMB_ActiveUnitFrameY + 1) % 3;
 
@@ -15064,12 +15640,12 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
         Tile_Y = Get_Combat_Grid_Cell_Y(Scrn_X, Scrn_Y);
         unsigned int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
 
-        if (CMB_Vortex_Array[Vortex_Index].X_Pos == Grid_X &&
-            CMB_Vortex_Array[Vortex_Index].Y_Pos == Tile_Y) {
+        if (CMB_Vortex_Array[Vortex_Index].cgx == Grid_X &&
+            CMB_Vortex_Array[Vortex_Index].cgy == Tile_Y) {
 
             if (battlefield->MoveCost_Teleport[Grid_X] != -1) {
-                if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].X_Pos) <= 1 &&
-                    abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].Y_Pos) <= 1) {
+                if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].cgx) <= 1 &&
+                    abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].cgy) <= 1) {
                     CMB_TargetFrame = 1;
                     CMB_TargetFrame_X = Grid_X;
                     CMB_TargetFrame_Y = Tile_Y;
@@ -15298,15 +15874,15 @@ void CMB_DrawMap__WIP(void)
             if(
                 (cgc2 >= 0)
                 &&
-                (cgc2 < 21)
+                (cgc2 < COMBAT_GRID_WIDTH)
                 &&
                 (cgc1 >= 0)
                 &&
-                (cgc1 < 22)
+                (cgc1 < COMBAT_GRID_HEIGHT)
             )
             {
 
-                if(battlefield->Tile_Mud[((cgc1 * 21) + cgc2)] != 0)
+                if(battlefield->Tile_Mud[((cgc1 * COMBAT_GRID_WIDTH) + cgc2)] != 0)
                 {
 
                     FLIC_Set_CurrentFrame(IMG_CMB_Mud, ((cgc2 + cgc1 + CMB_MudAnimStage) % 8));
@@ -15317,7 +15893,7 @@ void CMB_DrawMap__WIP(void)
                 else
                 {
 
-                    battlefield_terrain = battlefield->Tile_Terrain[((cgc1 * 21) + cgc2)];
+                    battlefield_terrain = battlefield->Tile_Terrain[((cgc1 * COMBAT_GRID_WIDTH) + cgc2)];
 
                     if(battlefield_terrain >= 56)
                     {
@@ -15470,7 +16046,7 @@ void CMB_DrawMap__WIP(void)
                     }
 
 
-                    Road_Flags = battlefield->Tile_Road[((cgc1 * 21) + cgc2)];
+                    Road_Flags = battlefield->Tile_Road[((cgc1 * COMBAT_GRID_WIDTH) + cgc2)];
 
                     if(Road_Flags != 0)
                     {
@@ -16046,10 +16622,10 @@ along with a c&p if the switch(){}
 
 TODO  sync up with Unit_Figure_Position()
 
-CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].position_cgc2, battle_units[itr].position_cgc1, battle_units[itr].target_cgc2, battle_units[itr].target_cgc1, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 */
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t position_cgc1, int16_t target_cgc2, int16_t target_cgc1, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
 {
     int16_t Blood_Frame = 0;
     int16_t figure_set_idx = 0;
@@ -16066,13 +16642,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
 // DELETE      if(
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (position_cgc2 == DBG_position_cgc2)
+// DELETE          (cgx == DBG_position_cgc2)
 // DELETE          &&
 // DELETE          (position_cgc1 == DBG_position_cgc1)
 // DELETE          &&
-// DELETE          (target_cgc2 == DBG_target_cgc2)
+// DELETE          (target_cgx == DBG_target_cgc2)
 // DELETE          &&
-// DELETE          (target_cgc1 == DBG_target_cgc1)
+// DELETE          (target_cgy == DBG_target_cgc1)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -16096,9 +16672,9 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
 // DELETE          DBG_combat_grid_entity_idx = combat_grid_entity_count;
 // DELETE      }
 
-    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
 
-    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
+    Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
     /*
         BEGIN:  ~== Unit_Figure_Position()
@@ -16196,16 +16772,16 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
     /*
         BEGIN:  ~== Combat_Figure_Compose_USEFULL()
     */
-    if(position_cgc2 > target_cgc2)
+    if(cgx > target_cgx)
     {
 
-        if(position_cgc1 > target_cgc1)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 0;
 
         }
-        else if(position_cgc1 < target_cgc1)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 6;
@@ -16219,16 +16795,16 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
         }
 
     }
-    else if(position_cgc2 < target_cgc2)
+    else if(cgx < target_cgx)
     {
 
-        if(position_cgc1 > target_cgc1)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 2;
 
         }
-        else if(position_cgc1 < target_cgc1)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 4;
@@ -16245,13 +16821,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
     else
     {
 
-        if(position_cgc1 > target_cgc1)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 1;
 
         }
-        else if(position_cgc1 < target_cgc1)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 5;
@@ -16338,13 +16914,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t position_cgc2, int16_t pos
 // DELETE      if (
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (position_cgc2 == DBG_position_cgc2)
+// DELETE          (cgx == DBG_position_cgc2)
 // DELETE          &&
 // DELETE          (position_cgc1 == DBG_position_cgc1)
 // DELETE          &&
-// DELETE          (target_cgc2 == DBG_target_cgc2)
+// DELETE          (target_cgx == DBG_target_cgc2)
 // DELETE          &&
-// DELETE          (target_cgc1 == DBG_target_cgc1)
+// DELETE          (target_cgy == DBG_target_cgc1)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -16728,10 +17304,10 @@ void Combat_Figure_Compose_USEFULL(void)
     SAMB_ptr * ptr_figure_pointer_seg = 0;
     int16_t offset = 0;
     SAMB_ptr figure_pointer_seg = 0;
-    int16_t target_cgc1 = 0;
+    int16_t target_cgy = 0;
     int16_t position_cgc1 = 0;
-    int16_t target_cgc2 = 0;
-    int16_t position_cgc2 = 0;
+    int16_t target_cgx = 0;
+    int16_t cgx = 0;
     int16_t itr = 0;  // _SI_
     int16_t figure_set_idx = 0;  // _DI_
 
@@ -16812,24 +17388,24 @@ void Combat_Figure_Compose_USEFULL(void)
 
         }
         
-        position_cgc2 = battle_units[itr].position_cgc2;
+        cgx = battle_units[itr].cgx;
         
-        position_cgc1 = battle_units[itr].position_cgc1;
+        position_cgc1 = battle_units[itr].cgy;
         
-        target_cgc2 = battle_units[itr].target_cgc2;
+        target_cgx = battle_units[itr].target_cgx;
         
-        target_cgc1 = battle_units[itr].target_cgc1;
+        target_cgy = battle_units[itr].target_cgy;
         
-        if(position_cgc2 > target_cgc2)
+        if(cgx > target_cgx)
         {
 
-            if(position_cgc1 > target_cgc1)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 0;
 
             }
-            else if(position_cgc1 < target_cgc1)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 6;
@@ -16843,16 +17419,16 @@ void Combat_Figure_Compose_USEFULL(void)
             }
 
         }
-        else if(position_cgc2 < target_cgc2)
+        else if(cgx < target_cgx)
         {
 
-            if(position_cgc1 > target_cgc1)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 2;
 
             }
-            else if(position_cgc1 < target_cgc1)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 4;
@@ -16869,13 +17445,13 @@ void Combat_Figure_Compose_USEFULL(void)
         else
         {
 
-            if(position_cgc1 > target_cgc1)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 1;
 
             }
-            else if(position_cgc1 < target_cgc1)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 5;
@@ -17722,13 +18298,13 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
     Set_Random_Seed(random_seed);
 
 
-    for(itr2 = 0; itr2 < 22; itr2++)
+    for(itr2 = 0; itr2 < COMBAT_GRID_HEIGHT; itr2++)
     {
 
-        for(itr1 = 0; itr1 < 22; itr1++)
+        for(itr1 = 0; itr1 < COMBAT_GRID_WIDTH; itr1++)
         {
 
-            battlefield->Tile_Mud[((itr2 * 21) + itr1)] = 0;
+            battlefield->Tile_Mud[((itr2 * COMBAT_GRID_WIDTH) + itr1)] = 0;
 
         }
 
@@ -17762,13 +18338,13 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
 
     CMB_Enchanted_Roads = enchanted_roads_flag;
 
-    for(itr2 = 0; itr2 < 22; itr2++)
+    for(itr2 = 0; itr2 < COMBAT_GRID_HEIGHT; itr2++)
     {
 
-        for(itr1 = 0; itr1 < 21; itr1++)
+        for(itr1 = 0; itr1 < COMBAT_GRID_WIDTH; itr1++)
         {
 
-            battlefield->Tile_Road[((itr2 * 21) + itr1)] = 0;
+            battlefield->Tile_Road[((itr2 * COMBAT_GRID_WIDTH) + itr1)] = 0;
 
         }
 
@@ -17777,13 +18353,13 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
     if(ctt != ctt_Water)
     {
 
-        for(itr2 = 0; itr2 < 22; itr2++)
+        for(itr2 = 0; itr2 < COMBAT_GRID_HEIGHT; itr2++)
         {
 
-            for(itr1 = 0; itr1 < 21; itr1++)
+            for(itr1 = 0; itr1 < COMBAT_GRID_WIDTH; itr1++)
             {
 
-                battlefield->Tile_TerrGroup[((itr2 * 21) + itr1)] = CTG_Grass;
+                battlefield->Tile_TerrGroup[((itr2 * COMBAT_GRID_WIDTH) + itr1)] = CTG_Grass;
 
             }
 
@@ -17863,13 +18439,13 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
     else
     {
 
-        for(itr2 = 0; itr2 < 22; itr2++)
+        for(itr2 = 0; itr2 < COMBAT_GRID_HEIGHT; itr2++)
         {
 
-            for(itr1 = 0; itr1 < 21; itr1++)
+            for(itr1 = 0; itr1 < COMBAT_GRID_WIDTH; itr1++)
             {
 
-                battlefield->Tile_TerrGroup[((itr2 * 21) + itr1)] = CTG_DeepWater;
+                battlefield->Tile_TerrGroup[((itr2 * COMBAT_GRID_WIDTH) + itr1)] = CTG_DeepWater;
 
             }
 
@@ -17959,7 +18535,7 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
     CMB_TileGen__WIP(ctt);
 
 
-    CMB_SetMoveMaps__WIP(location_type, city_walls);
+    Set_Movement_Cost_Maps(location_type, city_walls);
 
 
     if(ctt == ctt_Water)
@@ -18051,21 +18627,21 @@ void CMB_TileGen__WIP(int16_t ctt)
     Unused_Local = 0;
     UU_RoughTiles_Index = 0;
 
-    for(itr_y = 0; itr_y < 22; itr_y++)
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
     {
 
-        for(itr_x = 0; itr_x < 21; itr_x++)
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
         {
 
-            TerrGroup_UpLeft     = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * 21) + itr_x) - 1)];
-            TerrGroup_Up         = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * 21) + itr_x)    )];
-            TerrGroup_UpRight    = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * 21) + itr_x) + 1)];
-            TerrGroup_Left       = battlefield->Tile_TerrGroup[ ((((itr_y    ) * 21) + itr_x) - 1)];
-            TerrGroup_Middle     = battlefield->Tile_TerrGroup[ ((((itr_y    ) * 21) + itr_x)    )];
-            TerrGroup_Right      = battlefield->Tile_TerrGroup[ ((((itr_y    ) * 21) + itr_x) + 1)];
-            TerrGroup_DownLeft   = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * 21) + itr_x) - 1)];
-            TerrGroup_Down       = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * 21) + itr_x)    )];
-            TerrGroup_DownRight  = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * 21) + itr_x) + 1)];
+            TerrGroup_UpLeft     = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * COMBAT_GRID_WIDTH) + itr_x) - 1)];
+            TerrGroup_Up         = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * COMBAT_GRID_WIDTH) + itr_x)    )];
+            TerrGroup_UpRight    = battlefield->Tile_TerrGroup[ ((((itr_y - 1) * COMBAT_GRID_WIDTH) + itr_x) + 1)];
+            TerrGroup_Left       = battlefield->Tile_TerrGroup[ ((((itr_y    ) * COMBAT_GRID_WIDTH) + itr_x) - 1)];
+            TerrGroup_Middle     = battlefield->Tile_TerrGroup[ ((((itr_y    ) * COMBAT_GRID_WIDTH) + itr_x)    )];
+            TerrGroup_Right      = battlefield->Tile_TerrGroup[ ((((itr_y    ) * COMBAT_GRID_WIDTH) + itr_x) + 1)];
+            TerrGroup_DownLeft   = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * COMBAT_GRID_WIDTH) + itr_x) - 1)];
+            TerrGroup_Down       = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * COMBAT_GRID_WIDTH) + itr_x)    )];
+            TerrGroup_DownRight  = battlefield->Tile_TerrGroup[ ((((itr_y + 1) * COMBAT_GRID_WIDTH) + itr_x) + 1)];
 
             if(itr_y == 0)
             {
@@ -18074,7 +18650,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 TerrGroup_UpRight = CTG_Grass;
             }
 
-            if(itr_y == 21)
+            if(itr_y == COMBAT_GRID_WIDTH)
             {
                 TerrGroup_DownLeft = CTG_Grass;
                 TerrGroup_Down = CTG_Grass;
@@ -18108,7 +18684,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                     if(TerrGroup_Up == CTG_Dirt)
                     {
 
-                        battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 27);
+                        battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 27);
 
                     }
                     else
@@ -18117,13 +18693,13 @@ void CMB_TileGen__WIP(int16_t ctt)
                         if(TerrGroup_Down == CTG_Dirt)
                         {
 
-                            battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 11);
+                            battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 11);
 
                         }
                         else
                         {
 
-                            battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 29);
+                            battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 29);
 
                         }
 
@@ -18139,13 +18715,13 @@ void CMB_TileGen__WIP(int16_t ctt)
                         if(TerrGroup_Left == CTG_Dirt)
                         {
 
-                            battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 21);
+                            battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + COMBAT_GRID_WIDTH);
 
                         }
                         else
                         {
 
-                            battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 23);
+                            battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 23);
 
                         }
 
@@ -18159,7 +18735,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                             if(TerrGroup_Up == CTG_Dirt)
                             {
 
-                                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 21);
+                                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + COMBAT_GRID_WIDTH);
 
                             }
                             else
@@ -18168,13 +18744,13 @@ void CMB_TileGen__WIP(int16_t ctt)
                                 if(TerrGroup_Down == CTG_Dirt)
                                 {
 
-                                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 15);
+                                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 15);
 
                                 }
                                 else
                                 {
 
-                                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 17);
+                                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 17);
 
                                 }
 
@@ -18190,7 +18766,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                                 if(TerrGroup_Right == CTG_Dirt)
                                 {
 
-                                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 11);
+                                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 11);
 
                                 }
                                 else
@@ -18199,13 +18775,13 @@ void CMB_TileGen__WIP(int16_t ctt)
                                     if(TerrGroup_Left == CTG_Dirt)
                                     {
 
-                                        battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 15);
+                                        battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 15);
 
                                     }
                                     else
                                     {
 
-                                        battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 9);
+                                        battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 9);
 
                                     }
 
@@ -18218,7 +18794,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                                 if(TerrGroup_DownRight == CTG_Dirt)
                                 {
 
-                                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 7);
+                                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 7);
 
                                 }
                                 else
@@ -18227,7 +18803,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                                     if(TerrGroup_UpRight == CTG_Dirt)
                                     {
 
-                                        battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 25);
+                                        battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 25);
 
                                     }
                                     else
@@ -18236,7 +18812,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                                         if(TerrGroup_UpLeft == CTG_Dirt)
                                         {
 
-                                            battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 19);
+                                            battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 19);
 
                                         }
                                         else
@@ -18245,13 +18821,13 @@ void CMB_TileGen__WIP(int16_t ctt)
                                             if(TerrGroup_DownLeft == CTG_Dirt)
                                             {
 
-                                                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 13);
+                                                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(2) + UU_Dirt_Trans_Index + 13);
 
                                             }
                                             else
                                             {
 
-                                                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(4) + UU_BaseTiles_Index - 1);
+                                                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(4) + UU_BaseTiles_Index - 1);
 
                                             }
 
@@ -18278,7 +18854,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             /*
                 BEGIN:  CTG_River
             */
-            if(battlefield->Tile_TerrGroup[((itr_y * 21) + itr_x)] == CTG_River)
+            if(battlefield->Tile_TerrGroup[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] == CTG_River)
             {
 
                 if(itr_y == 0)
@@ -18288,7 +18864,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                     TerrGroup_UpRight = CTG_River;
                 }
 
-                if(itr_y == 21)
+                if(itr_y == COMBAT_GRID_WIDTH)
                 {
                     TerrGroup_DownLeft = CTG_River;
                     TerrGroup_Down = CTG_River;
@@ -18316,7 +18892,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (56 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (56 + ((Random(2) - 1) * 6));
                 }
 
                 if(
@@ -18326,7 +18902,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (57 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (57 + ((Random(2) - 1) * 6));
                 }
 
                 if(
@@ -18336,7 +18912,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (58 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (58 + ((Random(2) - 1) * 6));
                 }
 
                 if(
@@ -18346,7 +18922,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (59 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (59 + ((Random(2) - 1) * 6));
                 }
 
                 if(
@@ -18356,7 +18932,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (60 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (60 + ((Random(2) - 1) * 6));
                 }
 
                 if(
@@ -18366,7 +18942,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 )
                 {
 
-                    battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (61 + ((Random(2) - 1) * 6));
+                    battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (61 + ((Random(2) - 1) * 6));
                 }
 
 
@@ -18377,7 +18953,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                     TerrGroup_UpRight = CTG_Grass;
                 }
 
-                if(itr_y == 21)
+                if(itr_y == COMBAT_GRID_WIDTH)
                 {
                     TerrGroup_DownLeft = CTG_Grass;
                     TerrGroup_Down = CTG_Grass;
@@ -18410,7 +18986,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(TerrGroup_Middle == CTG_Dirt)
             {
 
-                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(4) + UU_DirtTiles_Index + 3);
+                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(4) + UU_DirtTiles_Index + 3);
 
             }
             /*
@@ -18424,7 +19000,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(TerrGroup_Middle == CTG_DeepWater)
             {
 
-                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(4) + 47);
+                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(4) + 47);
 
             }
             /*
@@ -18438,7 +19014,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(TerrGroup_Middle == CTG_IDK)
             {
 
-                battlefield->Tile_Terrain[((itr_y * 21) + itr_x)] = (Random(4) + 51);
+                battlefield->Tile_Terrain[((itr_y * COMBAT_GRID_WIDTH) + itr_x)] = (Random(4) + 51);
 
             }
             /*
@@ -18474,11 +19050,175 @@ void CMB_TileGen__WIP(int16_t ctt)
 */
 /*
 
+    location_type and city_walls pushed like parameters, but do not get used
+
 */
-void CMB_SetMoveMaps__WIP(int16_t location_type, int16_t city_walls)
+void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
 {
+    int16_t itr_cgy = 0;  // _CX_
+    int16_t itr_cgx = 0;  // _SI_
+    int16_t terain_group = 0;  // _DI_
+
+    for(itr_cgy = 0; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
+    {
+
+        for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+        {
+
+            terain_group = battlefield->Tile_TerrGroup[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)];
+
+            switch(terain_group)
+            {
+
+                case 0:
+                case 2:
+                {
+                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 2;
+                    battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
+                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+                } break;
+
+                case 1:
+                {
+                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 4;
+                    battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
+                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 4;
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+                } break;
+
+                case 3:
+                {
+                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 4;
+                    battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
+                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 4;
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
+                } break;
+
+                case 4:
+                {
+                    battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;
+                    battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
+                    battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+                    battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
+                } break;
+
+            }
+
+        }
+
+    }
 
 
+    for(itr_cgy = 0; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
+    {
+
+        for(itr_cgx = 0; itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+        {
+
+            terain_group = battlefield->Tile_Road[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)];
+
+            if(
+                (terain_group != 0)
+                &&
+                (terain_group != 0x81)
+            )
+            {
+                battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = 1;
+                battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = 2;
+                battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 1;
+                battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+            }
+
+
+
+        }
+
+    }
+
+
+    // top-left corner
+    for(itr_cgy = 0; itr_cgy < 11; itr_cgy++)
+    {
+
+        for(itr_cgx = 0; ((11 - itr_cgy) > itr_cgx); itr_cgx++)
+        {
+
+            battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;
+            battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = INF;
+            battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+            battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+
+        }
+        
+    }
+
+
+    // bottom-left corner
+    for(itr_cgy = 10; itr_cgy < 22; itr_cgy++)
+    {
+
+        for(itr_cgx = 0; ((itr_cgy - 9) > itr_cgx); itr_cgx++)
+        {
+
+            battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;
+            battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = INF;
+            battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+            battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+
+        }
+        
+    }
+
+
+    // top-right corner
+    for(itr_cgy = 0; itr_cgy < 12; itr_cgy++)
+    {
+
+        for(itr_cgx = (itr_cgy + 10); itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+        {
+
+            battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;
+            battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = INF;
+            battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+            battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+
+        }
+        
+    }
+
+
+    // bottom-right corner
+    for(itr_cgy = 10; itr_cgy < COMBAT_GRID_HEIGHT; itr_cgy++)
+    {
+
+        for(itr_cgx = (32 - itr_cgy); itr_cgx < COMBAT_GRID_WIDTH; itr_cgx++)
+        {
+
+            battlefield->MoveCost_Ground[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]   = INF;
+            battlefield->MoveCost_Teleport[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = INF;
+            battlefield->MoveCost_Ground2[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+            battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = INF;
+
+        }
+        
+    }
+
+
+    // not None, but not City ... So, Lair, Node, Tower
+    if(
+        (battlefield->Central_Structure != CS_None)
+        &&
+        (battlefield->Central_Structure != CS_City)
+    )
+    {
+
+            battlefield->MoveCost_Ground[COMBAT_STRUCTURE_IDX] = INF;
+            battlefield->MoveCost_Teleport[COMBAT_STRUCTURE_IDX] = INF;
+            battlefield->MoveCost_Ground2[COMBAT_STRUCTURE_IDX] = INF;
+            battlefield->MoveCost_Sailing[COMBAT_STRUCTURE_IDX] = INF;
+
+    }
 
 }
 
@@ -18506,9 +19246,9 @@ CMB_DrawMap__WIP()
 ...{6,11} are combat grid coordinates of lair/node structure
 
 CMB_SpawnFigure__WIP()
-    Combat_Grid_Screen_Coordinates(position_cgc2, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
 
-    Combat_Grid_Screen_Coordinates(target_cgc2, target_cgc1, 0, 0, &target_screen_x, &target_screen_y);
+    Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
 cgc2 and cgc1 get passed in
 pbr's/in-out's screen_x,screen_y
@@ -18743,13 +19483,1592 @@ void Combat_Cache_Write(void)
 */
 
 // WZD ovr155p01
-// WZD ovr155p02
-
-// WZD ovr155p01
 // drake178: CMB_GetPath()
+/*
+; calculates the shortest path from the source to the
+; destination tile in combat based on the
+; CMB_ActiveMoveMap
+; returns the path length, or 0 if the tile can't
+; be entered by the unit, setting the path array in
+; CMB_Path_Xs@ and CMB_Path_Ys@, the length also in
+; movement_path_grid_cell_count, and leaving CMB_Path_Costs@ set up
+*/
+/*
+
+*/
+void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;  // 1-byte, unsigned
+    int16_t max_j = 0;
+    int16_t itr_j = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+    int16_t existing_path_cost = 0;  // DNE in Dasm
+    int16_t new_next_cell_index = 0;  // DNE in Dasm
+
+    movement_path_grid_cell_count = 0;
+
+    if(IS_INF(CMB_ActiveMoveMap[TERMINAL_VERTEX]))
+    {
+        return;
+    }
+
+    SET_REACH_FROM
+
+    SET_LENGTH
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+        unstable = ST_FALSE;
+        max_j = 19;  // 21 - 2
+        max_i = 20;  // 22 - 2
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            /*
+                BEGIN: First
+            */
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoWest[itr_adjacent]);
+                    // adjacent_idx = (ctr + adjacent_offsets[(((0) * 8) + itr_adjacent)]);
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ctr++;
+            /*
+                END: First
+            */
+
+            /*
+                BEGIN: Middle
+            */
+            for(itr_j = 0; itr_j < max_j; itr_j++)
+            {
+                move_cost = CMB_ActiveMoveMap[ctr];
+                if(!IS_INF(move_cost))
+                {
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+                    for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                    {
+                        adjacent_idx = (ctr + CMB_AdjacentOffsets[itr_adjacent]);
+                        // adjacent_idx = (ctr + adjacent_offsets[(((1) * 8) + itr_adjacent)]);
+                        if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                        {
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+                                potential_path_cost = adjacent_path_cost + move_cost;
+                                existing_path_cost = CMB_Path_Costs[ctr];
+                                if(existing_path_cost > potential_path_cost)
+                                {
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+                                    new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                    if(new_next_cell_index != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                                                           
+                ctr++;
+            }
+            /*
+                END: Middle
+            */
+
+            /*
+                BEGIN: Last
+            */
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoWest[itr_adjacent]);
+                    // adjacent_idx = (ctr + adjacent_offsets[(((0) * 8) + itr_adjacent)]);
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ctr++;
+            /*
+                END: Last
+            */
+
+        }
+
+    }
+
+
+    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+
+    movement_path_grid_cell_count = 0;
+
+    // ctr = ((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx);  /* starting index */
+    ctr = TERMINAL_VERTEX;
+
+    while(CMB_NearBuffer_3[ctr] != ctr)  /* ~ while next index is not current index */
+    {
+
+        RP_CMB_MoveMap[movement_path_grid_cell_count] = ctr;
+
+        ctr = CMB_NearBuffer_3[ctr];
+
+        movement_path_grid_cell_count++;
+
+    }
+
+
+    for(itr = 0; itr < movement_path_grid_cell_count; itr++)
+    {
+
+        CMB_Path_Xs[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
+
+        CMB_Path_Ys[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
+
+    }
+
+}
+
+void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;  // 1-byte, unsigned
+    int16_t max_j = 0;
+    int16_t itr_j = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+    int16_t existing_path_cost = 0;  // DNE in Dasm
+    int16_t new_next_cell_index = 0;  // DNE in Dasm
+
+    movement_path_grid_cell_count = 0;
+
+    if(IS_INF(CMB_ActiveMoveMap[TERMINAL_VERTEX]))
+    {
+        return;
+    }
+
+    SET_REACH_FROM
+
+    SET_LENGTH
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+        unstable = ST_FALSE;
+        max_j = 19;  // 21 - 2
+        max_i = 20;  // 22 - 2
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            // NEW_PATH_COST_ALL()
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                {
+                    NEW_PATH_COST_ANY(itr_adjacent)
+                }
+                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                {
+                    NEW_PATH_COST_ANY(itr_adjacent)
+                }
+            }
+
+            for(itr_j = 0; itr_j < max_j; itr_j++)
+            {
+                // NEW_PATH_COST_ALL()
+                move_cost = CMB_ActiveMoveMap[ctr];
+                if(!IS_INF(move_cost))
+                {
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+                    for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                    {
+                        NEW_PATH_COST_ANY(itr_adjacent)
+                    }
+                    for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                    {
+                        NEW_PATH_COST_ANY(itr_adjacent)
+                    }
+                }
+            }
+
+            // NEW_PATH_COST_ALL()
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                {
+                    NEW_PATH_COST_ANY(itr_adjacent)
+                }
+                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                {
+                    NEW_PATH_COST_ANY(itr_adjacent)
+                }
+            }
+
+        }
+
+    }
+
+
+    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+
+    movement_path_grid_cell_count = 0;
+
+    // ctr = ((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx);  /* starting index */
+    ctr = TERMINAL_VERTEX;
+
+    while(CMB_NearBuffer_3[ctr] != ctr)  /* ~ while next index is not current index */
+    {
+
+        RP_CMB_MoveMap[movement_path_grid_cell_count] = ctr;
+
+        ctr = CMB_NearBuffer_3[ctr];
+
+        movement_path_grid_cell_count++;
+
+    }
+
+
+    for(itr = 0; itr < movement_path_grid_cell_count; itr++)
+    {
+
+        CMB_Path_Xs[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
+
+        CMB_Path_Ys[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
+
+    }
+
+}
+
+void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t destination_cgx, int16_t destination_cgy)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;  // 1-byte, unsigned
+    int16_t max_j = 0;
+    int16_t itr_x = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+
+
+    movement_path_grid_cell_count = 0;
+
+
+//     if(CMB_ActiveMoveMap[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] == -1)  /* impassible */
+//     {
+// 
+//         return;
+// 
+//     }
+    // if(IS_INF(CMB_ActiveMoveMap[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)]))
+    if(IS_INF(CMB_ActiveMoveMap[TERMINAL_VERTEX]))
+    {
+
+        return;
+
+    }
+
+
+    // // MovePath.C  Move_Path_Find()
+    // // for(itr = 0; itr < WORLD_SIZE; itr++) { movepath_cost_map->Reach_From[itr] = itr; }
+    // for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+    // {
+    // 
+    //     CMB_NearBuffer_3[itr] = itr;  /* ¿ reach from ? */
+    // 
+    // }
+    SET_REACH_FROM
+
+    // // MovePath.C  Move_Path_Find()
+    // // for(itr = 0; itr < WORLD_SIZE; itr++) {movepath_cost_map->Reach_Costs[itr] = 255; }
+    // for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+    // {
+    // 
+    //     CMB_Path_Costs[itr] = 255;  /* ¿ infinity ? */
+    // 
+    // }
+    // CMB_Path_Costs[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = 0;
+    SET_LENGTH
+
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+
+        unstable = ST_FALSE;
+
+        max_j = 19;  // 21 - 2
+
+        max_i = 20;  // 22 - 2
+
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            if(ctr = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+            {
+                __debugbreak();
+            }
+            if(ctr = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx -1)))
+            {
+                __debugbreak();
+            }
+
+            // movepath_cost = &movepath_cost_map->moves2[CS_Row_Start];
+            // move_cost = *movepath_cost++;
+            move_cost = CMB_ActiveMoveMap[ctr];  // moves2 cost of cell, given terrain and movement mode
+
+            // if(move_cost != -1)
+            if(!IS_INF(move_cost))
+            {
+
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                {
+
+                    // // North-West
+                    // adj_pos = -1;
+                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+
+                    if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+                    {
+                        __debugbreak();
+                    }
+
+
+                    // if((adjacent_idx >= 0) && (adjacent_idx < 462))
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+
+                        // adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        
+                        // if(adjacent_reach_cost != 255)
+                        // if(adjacent_path_cost != 255)
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+
+                            // new_reach_cost = adjacent_reach_cost + tmp_move_cost;
+                            // current_reach_cost = *movepath_reach_cost;
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            // if(new_reach_cost < current_reach_cost)
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                // *movepath_reach_from = (ofst_movepath_cost + ((adj_pos) - 1));
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                // *movepath_reach_cost = new_reach_cost;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+
+                                    // reach_costs_changed = ST_TRUE;
+                                    unstable = ST_TRUE;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                {
+
+                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+
+                    if(
+                        (adjacent_idx >= 0)
+                        &&
+                        (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                    )
+                    {
+
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            
+                        if(adjacent_path_cost != 255)
+                        {
+
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            ctr++;
+
+            for(itr_x = 0; itr_x < max_j; itr_x++)
+            {
+
+                move_cost = CMB_ActiveMoveMap[ctr];
+
+                // if(move_cost != -1)
+                if(!IS_INF(move_cost))
+                {
+
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                    for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                    {
+
+                        adjacent_idx = CMB_AdjacentOffsets[itr_adjacent];
+
+                        if(
+                            (adjacent_idx >= 0)
+                            &&
+                            (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                        )
+                        {
+
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                                
+                            // if(adjacent_path_cost != 255)
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+
+                                potential_path_cost = adjacent_path_cost + move_cost;
+
+                                if(CMB_Path_Costs[ctr] > potential_path_cost)
+                                {
+
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                    if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                    {
+
+                        adjacent_idx = CMB_AdjacentOffsets[itr_adjacent];
+
+                        if(
+                            (adjacent_idx >= 0)
+                            &&
+                            (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                        )
+                        {
+
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                                
+                            // if(adjacent_path_cost != 255)
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+
+                                potential_path_cost = adjacent_path_cost + move_cost;
+
+                                if(CMB_Path_Costs[ctr] > potential_path_cost)
+                                {
+
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                    if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                ctr++;
+
+            }
+
+
+            move_cost = CMB_ActiveMoveMap[ctr];
+
+            // if(move_cost != -1)
+            if(!IS_INF(move_cost))
+            {
+
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                {
+
+                    adjacent_idx = CMB_AdjctOfs_NoEast[itr_adjacent];
+
+                    if(
+                        (adjacent_idx >= 0)
+                        &&
+                        (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                    )
+                    {
+
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        
+                        // if(adjacent_path_cost != 255)
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                {
+
+                    adjacent_idx = CMB_AdjctOfs_NoEast[itr_adjacent];
+
+                    if(
+                        (adjacent_idx >= 0)
+                        &&
+                        (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                    )
+                    {
+
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            
+                        // if(adjacent_path_cost != 255)
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            ctr++;
+
+        }
+
+    }
+
+
+    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+
+    movement_path_grid_cell_count = 0;
+
+    // ctr = ((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx);  /* starting index */
+    ctr = TERMINAL_VERTEX;
+
+    while(CMB_NearBuffer_3[ctr] != ctr)  /* ~ while next index is not current index */
+    {
+
+        RP_CMB_MoveMap[movement_path_grid_cell_count] = ctr;
+
+        ctr = CMB_NearBuffer_3[ctr];
+
+        movement_path_grid_cell_count++;
+
+    }
+
+
+    for(itr = 0; itr < movement_path_grid_cell_count; itr++)
+    {
+
+        CMB_Path_Xs[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] % COMBAT_GRID_WIDTH);
+
+        CMB_Path_Ys[itr] = (RP_CMB_MoveMap[((movement_path_grid_cell_count - 1) - itr)] / COMBAT_GRID_WIDTH);
+
+    }
+
+
+}
+
 
 // WZD ovr155p02
 // drake178: CMB_FillReachMap()
+/*
+; creates a path map from the origin tile, then
+; replaces the result array with 0s or 1s depending on
+; whether the tile can be reached and entered; storing
+; the result in CMB_NearBuffer_3
+*/
+/*
+
+Assign_Combat_Grids()
+    CMB_FillReachMap(battle_units[_active_battle_unit].cgx, battle_units[_active_battle_unit].cgy, useable_moves2);
+
+What's in CMB_ActiveMoveMap[] when this is called?
+-1 for *impassible* combat grid cells
+movement cost of the combat grid cell  (set in Set_Movement_Cost_Map())
+
+'ctr' is the current array index
+...for CMB_ActiveMoveMap[], CMB_NearBuffer_3[], and CMB_Path_Costs[]
+
+*/
+void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t Tile_GetTo_Cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;
+    int16_t max_j = 0;
+    int16_t itr_j = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t itr_y = 0;
+    int16_t itr_x = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+    int16_t existing_path_cost = 0;  // DNE in Dasm
+    int16_t new_next_cell_index = 0;  // DNE in Dasm
+
+    movement_path_grid_cell_count = 0;
+
+    SET_REACH_FROM
+
+    SET_LENGTH
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+        unstable = ST_FALSE;
+        max_j = (COMBAT_GRID_WIDTH  - 2);
+        max_i = (COMBAT_GRID_HEIGHT - 2);
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            /*
+                BEGIN: First
+            */
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoWest[itr_adjacent]);
+                    // adjacent_idx = (ctr + adjacent_offsets[(((0) * 8) + itr_adjacent)]);
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ctr++;
+            /*
+                END: First
+            */
+
+            /*
+                BEGIN: Middle
+            */
+            for(itr_j = 0; itr_j < max_j; itr_j++)
+            {
+                move_cost = CMB_ActiveMoveMap[ctr];
+                if(!IS_INF(move_cost))
+                {
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+                    for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                    {
+                        adjacent_idx = (ctr + CMB_AdjacentOffsets[itr_adjacent]);
+                        // adjacent_idx = (ctr + adjacent_offsets[(((1) * 8) + itr_adjacent)]);
+                        if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                        {
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+                                potential_path_cost = adjacent_path_cost + move_cost;
+                                existing_path_cost = CMB_Path_Costs[ctr];
+                                if(existing_path_cost > potential_path_cost)
+                                {
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+                                    new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                    if(new_next_cell_index != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                                                           
+                ctr++;
+            }
+            /*
+                END: Middle
+            */
+
+            /*
+                BEGIN: Last
+            */
+            move_cost = CMB_ActiveMoveMap[ctr];
+
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoEast[itr_adjacent]);
+                    // adjacent_idx = (ctr + adjacent_offsets[(((2) * 8) + itr_adjacent)]);
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+                            }
+                        }
+                    }
+                }
+            }                                                           
+            ctr++;
+            /*
+                END: Last
+            */
+            
+        }
+
+    }
+
+
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+    {
+
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
+        {
+
+            // if(
+            //     (itr_x == DBG_cgx)
+            //     &&
+            //     (itr_y == DBG_cgy)
+            //     )
+            // {
+            //     // __debugbreak();
+            //     DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
+            //     DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
+            //     DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
+            //     DBG_path_cost_2 = CMB_Path_Costs[DBG_array_index_2];
+            // }
+
+            ctr = ((itr_y * COMBAT_GRID_WIDTH) + itr_x);
+
+            CMB_NearBuffer_3[ctr] = ST_FALSE;
+
+            if(!IS_INF(CMB_Path_Costs[ctr]))
+            {
+
+                move_cost = CMB_ActiveMoveMap[ctr];
+
+                Tile_GetTo_Cost = (CMB_Path_Costs[ctr] - move_cost);
+
+                if(moves2 > Tile_GetTo_Cost)
+                {
+
+                    CMB_NearBuffer_3[ctr] = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t Tile_GetTo_Cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;
+    int16_t max_j = 0;
+    int16_t itr_j = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t itr_y = 0;
+    int16_t itr_x = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+    int16_t existing_path_cost = 0;  // DNE in Dasm
+    int16_t new_next_cell_index = 0;  // DNE in Dasm
+    int16_t DBG_array_index_1 = 0;
+    int16_t DBG_array_index_2 = 0;
+    uint8_t DBG_path_cost_1 = 0;
+    uint8_t DBG_path_cost_2 = 0;
+    uint8_t DBG_move_cost_1 = 0;
+    uint8_t DBG_move_cost_2 = 0;
+    int16_t DBG_ctr = 0;
+
+    if(
+        (source_cgx == DBG_cgx)
+        &&
+        (source_cgy == DBG_cgy)
+        )
+    {
+        // __debugbreak();
+        DBG_array_index_1 = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx);  // current combat grid cell
+        DBG_array_index_2 = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx - 1));  // NW
+        DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
+        DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
+    }
+
+
+    movement_path_grid_cell_count = 0;
+
+    SET_REACH_FROM
+    SET_LENGTH
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+        unstable = ST_FALSE;
+        max_j = (COMBAT_GRID_WIDTH  - 2);
+        max_i = (COMBAT_GRID_HEIGHT - 2);
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            if(ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
+            {
+                __debugbreak();
+            }
+            if(ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
+            {
+                __debugbreak();
+            }
+            if(ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
+            {
+                __debugbreak();
+            }
+            // NEW_PATH_COST_ALL()
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    // NEW_PATH_COST_ANY(itr_adjacent)
+                    // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
+                    // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
+                    // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoWest[itr_adjacent]);
+                    
+                    if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+                    {
+                        __debugbreak();
+                    }     
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            // if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1311_set = ST_TRUE; }
+                                    if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
+                                    if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
+
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+
+                                    if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ctr++;
+            DBG_ctr++;
+            // __debugbreak();
+
+            for(itr_j = 0; itr_j < max_j; itr_j++)
+            {
+
+                if (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
+                {
+                    // __debugbreak();
+                }
+                if (ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
+                {
+                    // __debugbreak();
+                }
+                if (ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
+                {
+                    // __debugbreak();
+                }
+                //  if((itr_i == (DBG_cgy - 1)) && (itr_j == (DBG_cgx -1))) { __debugbreak(); }
+                // NEW_PATH_COST_ALL()
+                move_cost = CMB_ActiveMoveMap[ctr];
+                if(!IS_INF(move_cost))
+                {
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+                    for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                    {
+                        // NEW_PATH_COST_ANY(itr_adjacent)
+                        // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
+                        // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
+                        // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
+                        adjacent_idx = (ctr + CMB_AdjacentOffsets[itr_adjacent]);
+                        if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+                        {
+                            // __debugbreak();
+                        }     
+                        if(
+                            (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
+                            &&
+                            (adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+                        )
+                        {
+                            // __debugbreak();
+                        }
+                        if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                        {
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+                                potential_path_cost = adjacent_path_cost + move_cost;
+                                // if(CMB_Path_Costs[ctr] > potential_path_cost)
+                                existing_path_cost = CMB_Path_Costs[ctr];
+                                if(existing_path_cost > potential_path_cost)
+                                {
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+                                    // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                    new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                    if(new_next_cell_index != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                        if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1311_set = ST_TRUE; }
+                                        if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
+                                        if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
+
+                                        if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+
+                                        if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                                                           
+                ctr++;
+                DBG_ctr++;
+                // __debugbreak();
+
+            }
+
+            if (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
+            {
+                __debugbreak();
+            }
+            if (ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
+            {
+                __debugbreak();
+            }
+            if (ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
+            {
+                __debugbreak();
+            }
+            // NEW_PATH_COST_ALL()
+            move_cost = CMB_ActiveMoveMap[ctr];
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+                    // NEW_PATH_COST_ANY(itr_adjacent)
+                    // adjacent_idx = adjacent_offsets[(((_value_) * 8) + itr_adjacent)];
+                    // adjacent_idx = adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)];
+                    // adjacent_idx = (ctr + adjacent_offsets[(((itr_adjacent) * 8) + itr_adjacent)]);
+                    adjacent_idx = (ctr + CMB_AdjctOfs_NoEast[itr_adjacent]);
+                    if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+                    {
+                        __debugbreak();
+                    }     
+                    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
+                    {
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+                            potential_path_cost = adjacent_path_cost + move_cost;
+                            // if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            existing_path_cost = CMB_Path_Costs[ctr];
+                            if(existing_path_cost > potential_path_cost)
+                            {
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+                                // if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                new_next_cell_index = CMB_NearBuffer_3[ctr];
+                                if(new_next_cell_index != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1311_set = ST_TRUE; }
+                                    if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
+                                    if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
+
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+
+                                    if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            }                                                           
+            ctr++;
+            DBG_ctr++;
+            // __debugbreak();
+            
+        }
+
+    }
+
+
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+    {
+
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
+        {
+
+            if(
+                (itr_x == DBG_cgx)
+                &&
+                (itr_y == DBG_cgy)
+                )
+            {
+                // __debugbreak();
+                DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
+                DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
+                DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
+                DBG_path_cost_2 = CMB_Path_Costs[DBG_array_index_2];
+            }
+
+            ctr = ((itr_y * COMBAT_GRID_WIDTH) + itr_x);
+
+            CMB_NearBuffer_3[ctr] = ST_FALSE;
+
+            if(!IS_INF(CMB_Path_Costs[ctr]))
+            {
+
+                move_cost = CMB_ActiveMoveMap[ctr];
+
+                Tile_GetTo_Cost = (CMB_Path_Costs[ctr] - move_cost);
+
+                if(moves2 > Tile_GetTo_Cost)
+                {
+
+                    CMB_NearBuffer_3[ctr] = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, int16_t moves2)
+{
+    int16_t move_cost = 0;
+    int16_t potential_path_cost = 0;
+    int16_t Tile_GetTo_Cost = 0;
+    int16_t max_i = 0;
+    int16_t adjacent_path_cost = 0;
+    int16_t max_j = 0;
+    int16_t itr_j = 0;
+    int16_t itr_i = 0;
+    int16_t old_next_cell_index = 0;
+    int16_t unstable = 0;
+    int16_t itr = 0;
+    int16_t itr_y = 0;
+    int16_t itr_x = 0;
+    int16_t ctr = 0;  // _CX_
+    int16_t itr_adjacent = 0;  // _DI_
+    int16_t adjacent_idx = 0;  // _SI_
+    int16_t DBG_array_index_1 = 0;
+    int16_t DBG_array_index_2 = 0;
+    uint8_t DBG_path_cost_1 = 0;
+    uint8_t DBG_path_cost_2 = 0;
+    uint8_t DBG_move_cost_1 = 0;
+    uint8_t DBG_move_cost_2 = 0;
+
+    if(
+        (source_cgx == DBG_cgx)
+        &&
+        (source_cgy == DBG_cgy)
+        )
+    {
+        // __debugbreak();
+        DBG_array_index_1 = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx);  // current combat grid cell
+        DBG_array_index_2 = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx - 1));  // NW
+        DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
+        DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
+    }
+
+
+    movement_path_grid_cell_count = 0;
+
+
+    // // MovePath.C  Move_Path_Find()
+    // // for(itr = 0; itr < WORLD_SIZE; itr++) { movepath_cost_map->Reach_From[itr] = itr; }
+    // for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+    // {
+    //     
+    //     CMB_NearBuffer_3[itr] = itr;
+    // 
+    // }
+    SET_REACH_FROM
+
+    // // MovePath.C  Move_Path_Find()
+    // // for(itr = 0; itr < WORLD_SIZE; itr++) {movepath_cost_map->Reach_Costs[itr] = 255; }
+    // for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+    // {
+    // 
+    //     CMB_Path_Costs[itr] = 255;  // ¿ ~ inifinity ?
+    // 
+    // }
+    // CMB_Path_Costs[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] = 0;  /* manually set the current cell's cost to zero */
+    SET_LENGTH
+
+
+    unstable = ST_TRUE;
+
+    while(unstable == ST_TRUE)
+    {
+
+        unstable = ST_FALSE;
+
+        max_j = 19;  // ¿ not 21 ?
+
+        max_i = 20;  // ¿ not 22 ?
+
+        ctr = 0;
+
+        for(itr_i = 0; itr_i < max_i; itr_i++)
+        {
+
+            /*
+                First Column
+            */
+
+            // ~ move_cost = *movepath_cost++;
+            move_cost = CMB_ActiveMoveMap[ctr];
+
+            // if(move_cost != -1)
+            if(!IS_INF(move_cost))
+            {
+
+                // movepath_reach_from = &movepath_cost_map->Reach_From[CS_Row_Start];
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+
+                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+
+                    if(
+                        (adjacent_idx >= 0)
+                        &&
+                        (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                    )
+                    {
+
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            
+                        // if(adjacent_path_cost != 255)
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            ctr++;
+
+            /*
+                Middle Columns
+            */
+            for(itr_j = 0; itr_j < max_j; itr_j++)
+            {
+
+                move_cost = CMB_ActiveMoveMap[ctr];
+
+                // if(move_cost != -1)
+                if(!IS_INF(move_cost))
+                {
+
+                    old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                    for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                    {
+
+                        adjacent_idx = CMB_AdjacentOffsets[itr_adjacent];
+
+                        if(
+                            (adjacent_idx >= 0)
+                            &&
+                            (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                        )
+                        {
+
+                            adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                                
+                            // if(adjacent_path_cost != 255)
+                            if(!IS_INF(adjacent_path_cost))
+                            {
+
+                                potential_path_cost = adjacent_path_cost + move_cost;
+
+                                if(CMB_Path_Costs[ctr] > potential_path_cost)
+                                {
+
+                                    CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                    CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                    if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                    {
+                                        unstable = ST_TRUE;
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                ctr++;
+
+            }
+
+            /*
+                Last Column
+            */
+
+            move_cost = CMB_ActiveMoveMap[ctr];
+
+            // if(move_cost != -1)
+            if(!IS_INF(move_cost))
+            {
+
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+
+                for(itr_adjacent = 0; itr_adjacent < 8; itr_adjacent++)
+                {
+
+                    adjacent_idx = CMB_AdjctOfs_NoEast[itr_adjacent];
+
+                    if(
+                        (adjacent_idx >= 0)
+                        &&
+                        (adjacent_idx < COMBAT_GRID_CELL_COUNT)
+                    )
+                    {
+
+                        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];
+                            
+                        // if(adjacent_path_cost != 255)
+                        if(!IS_INF(adjacent_path_cost))
+                        {
+
+                            potential_path_cost = adjacent_path_cost + move_cost;
+
+                            if(CMB_Path_Costs[ctr] > potential_path_cost)
+                            {
+
+                                CMB_NearBuffer_3[ctr] = adjacent_idx;
+
+                                CMB_Path_Costs[ctr] = potential_path_cost;
+
+                                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)
+                                {
+                                    unstable = ST_TRUE;
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            ctr++;
+
+        }
+
+    }
+
+
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+    {
+
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
+        {
+
+            if(
+                (itr_x == DBG_cgx)
+                &&
+                (itr_y == DBG_cgy)
+                )
+            {
+                // __debugbreak();
+                DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
+                DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
+                DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
+                DBG_path_cost_2 = CMB_Path_Costs[DBG_array_index_2];
+            }
+
+            ctr = ((itr_y * COMBAT_GRID_WIDTH) + itr_x);
+
+            CMB_NearBuffer_3[ctr] = ST_FALSE;
+
+            if(CMB_Path_Costs[ctr] != 255)
+            {
+
+                move_cost = CMB_ActiveMoveMap[ctr];
+
+                Tile_GetTo_Cost = (CMB_Path_Costs[ctr] - move_cost);
+
+                if(moves2 > Tile_GetTo_Cost)
+                {
+
+                    CMB_NearBuffer_3[ctr] = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
 
 
 
@@ -18926,7 +21245,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             CALC_SCREEN_X;
             CALC_SCREEN_Y;
 
-            combat_terrain_type = battlefield->Tile_Terrain[((cgc1 * 21) + cgc2)];
+            combat_terrain_type = battlefield->Tile_Terrain[((cgc1 * COMBAT_GRID_WIDTH) + cgc2)];
 
             if(combat_terrain_type < 0)
             {
@@ -18990,7 +21309,7 @@ void CMB_BaseAllocs__WIP(void)
 
     CMB_Projectiles = Allocate_Next_Block(_screen_seg, 10);  // 10 PR, 160 B
 
-    CMB_Vortex_Array = (struct s_Vortex_REC *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
+    CMB_Vortex_Array = (struct s_MAGIC_VORTEX *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
     CMB_ActiveMoveMap = Near_Allocate_First(504);

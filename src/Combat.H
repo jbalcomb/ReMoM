@@ -103,6 +103,251 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define CALC_SCREEN_X   screen_x = ((itr_x * 32) - ((itr_y & 0x1) * 16))
 #define CALC_SCREEN_Y   screen_y = ((itr_y * 8) - 8)
 
+#define COMBAT_GRID_WIDTH   21
+#define COMBAT_GRID_HEIGHT  22
+#define COMBAT_GRID_COLS    21
+#define COMBAT_GRID_ROWS    22
+// path finding iters over {(21-2),(22-2)}
+#define COMBAT_STRUCTURE_CGX 11
+#define COMBAT_STRUCTURE_CGY  6
+#define COMBAT_STRUCTURE_IDX ((COMBAT_STRUCTURE_CGY * COMBAT_GRID_WIDTH)   + COMBAT_STRUCTURE_CGX)
+
+
+
+/*
+
+    BEGIN:  Combat Map Path Finding
+
+*/
+
+#define IN_RANGE(x, lower, upper) ((x) >= (lower) && (x) <= (upper))
+#define GTELT(_value_, _lower_bound_, _upper_bound_) ((_value_) >= (_lower_bound_) && (_value_) < (_upper_bound_))
+
+#define COMBAT_GRID_CELL_COUNT  (COMBAT_GRID_WIDTH * COMBAT_GRID_HEIGHT)  /* (21 * 22) = 462 */
+
+#define NUMBER_OF_VERTICES      COMBAT_GRID_CELL_COUNT
+#define TERMINAL_VERTEX         ((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx) 
+
+#define INF                     0xFF
+
+#define IS_INF(_value_)         ((uint8_t)(_value_) == INF)
+
+//  Combat_Move_Path_Find()
+//     // MovePath.C  Move_Path_Find()
+//     // for(itr = 0; itr < WORLD_SIZE; itr++) { movepath_cost_map->Reach_From[itr] = itr; }
+//     for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+//     {
+//         CMB_NearBuffer_3[itr] = itr;  /* ¿ reach from ? */
+//     }
+//  Combat_Move_Path_Valid()
+//     // MovePath.C  Move_Path_Find()
+//     // for(itr = 0; itr < WORLD_SIZE; itr++) { movepath_cost_map->Reach_From[itr] = itr; }
+//     for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+//     {
+//         CMB_NearBuffer_3[itr] = itr;
+//     }
+#define SET_REACH_FROM          { for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { CMB_NearBuffer_3[itr] = itr; } }
+
+//  Combat_Move_Path_Find()
+//      // MovePath.C  Move_Path_Find()
+//      // for(itr = 0; itr < WORLD_SIZE; itr++) {movepath_cost_map->Reach_Costs[itr] = 255; }
+//      for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+//      {
+//  
+//          CMB_Path_Costs[itr] = 255;  /* ¿ infinity ? */
+//  
+//      }
+//     CMB_Path_Costs[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] = 0;  /* manually set the current cell's cost to zero */
+//  Combat_Move_Path_Valid()
+//     // MovePath.C  Move_Path_Find()
+//     // for(itr = 0; itr < WORLD_SIZE; itr++) {movepath_cost_map->Reach_Costs[itr] = 255; }
+//     for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++)
+//     {
+// 
+//         CMB_Path_Costs[itr] = 255;  // ¿ ~ inifinity ?
+// 
+//     }
+//     CMB_Path_Costs[((destination_cgy * COMBAT_GRID_WIDTH) + destination_cgx)] = 0;  /* manually set the current cell's cost to zero */
+#define SET_LENGTH              { for(itr = 0; itr < COMBAT_GRID_CELL_COUNT; itr++) { CMB_Path_Costs[itr] = INF;  CMB_Path_Costs[((source_cgy * COMBAT_GRID_WIDTH) + source_cgx)] = 0; } }
+
+/*
+    reduce the loops over the adjacent cells to a single macro
+    iter 0-8 or iter 0-4 & 4-8
+
+NEW_PATH_COST()
+...the the portion inside each iteration, because that just needs itr_adjacent
+
+NEW_PATH_COST_0()
+NEW_PATH_COST_1()
+NEW_PATH_COST_2()
+...treats the three adjacent cell offsets array as one array - adjacent_offsets[(({0,1,2} * 8) + itr_adjacent)]
+
+NEW_PATH_COST_ANY()
+...takes a parameter, which just reduces NEW_PATH_COST_0(), NEW_PATH_COST_1(), and NEW_PATH_COST_2()
+
+what I want is all of this...
+            move_cost = CMB_ActiveMoveMap[ctr];  // moves2 cost of cell, given terrain and movement mode
+            if(!IS_INF(move_cost))
+            {
+                old_next_cell_index = CMB_NearBuffer_3[ctr];
+                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
+                {
+                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+                    NEW_PATH_COST()
+                }
+                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
+                {
+                    adjacent_idx = CMB_AdjctOfs_NoWest[itr_adjacent];
+                    NEW_PATH_COST()
+                }
+            }
+            ctr++;
+
+NEW_PATH_COST_ALL()
+...uses NEW_PATH_COST_ANY()
+
+
+*/
+#define NEW_PATH_COST() {                                               \
+    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
+    {                                                                   \
+        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];              \
+        if(adjacent_path_cost != 255)                                   \
+        {                                                               \
+            potential_path_cost = adjacent_path_cost + move_cost;       \
+            if(CMB_Path_Costs[ctr] > potential_path_cost)               \
+            {                                                           \
+                CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
+                CMB_Path_Costs[ctr] = potential_path_cost;              \
+                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
+                {                                                       \
+                    Map_Changed = ST_TRUE;                              \
+                }                                                       \
+            }                                                           \
+        }                                                               \
+    }                                                                   \
+}
+
+
+#define NEW_PATH_COST_0() {                                             \
+    adjacent_idx = adjacent_offsets[((0 * 8) + itr_adjacent)];          \
+    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
+    {                                                                   \
+        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];              \
+        if(adjacent_path_cost != 255)                                   \
+        {                                                               \
+            potential_path_cost = adjacent_path_cost + move_cost;       \
+            if(CMB_Path_Costs[ctr] > potential_path_cost)               \
+            {                                                           \
+                CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
+                CMB_Path_Costs[ctr] = potential_path_cost;              \
+                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
+                {                                                       \
+                    Map_Changed = ST_TRUE;                              \
+                }                                                       \
+            }                                                           \
+        }                                                               \
+    }                                                                   \
+}
+
+#define NEW_PATH_COST_1() {                                             \
+    adjacent_idx = adjacent_offsets[((1 * 8) + itr_adjacent)];          \
+    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
+    {                                                                   \
+        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];              \
+        if(adjacent_path_cost != 255)                                   \
+        {                                                               \
+            potential_path_cost = adjacent_path_cost + move_cost;       \
+            if(CMB_Path_Costs[ctr] > potential_path_cost)               \
+            {                                                           \
+                CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
+                CMB_Path_Costs[ctr] = potential_path_cost;              \
+                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
+                {                                                       \
+                    Map_Changed = ST_TRUE;                              \
+                }                                                       \
+            }                                                           \
+        }                                                               \
+    }                                                                   \
+}
+
+#define NEW_PATH_COST_2() {                                             \
+    adjacent_idx = adjacent_offsets[((2 * 8) + itr_adjacent)];          \
+    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
+    {                                                                   \
+        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];              \
+        if(adjacent_path_cost != 255)                                   \
+        {                                                               \
+            potential_path_cost = adjacent_path_cost + move_cost;       \
+            if(CMB_Path_Costs[ctr] > potential_path_cost)               \
+            {                                                           \
+                CMB_NearBuffer_3[ctr] = adjacent_idx;                   \
+                CMB_Path_Costs[ctr] = potential_path_cost;              \
+                if(CMB_NearBuffer_3[ctr] != old_next_cell_index)        \
+                {                                                       \
+                    Map_Changed = ST_TRUE;                              \
+                }                                                       \
+            }                                                           \
+        }                                                               \
+    }                                                                   \
+}
+
+#define NEW_PATH_COST_ANY(_value_) {                                            \
+    adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]);  \
+    if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))               \
+    {                                                                           \
+        __debugbreak();                                                         \
+    }                                                                           \
+    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))                          \
+    {                                                                           \
+        adjacent_path_cost = CMB_Path_Costs[adjacent_idx];                      \
+        if(!IS_INF(adjacent_path_cost))                                         \
+        {                                                                       \
+            potential_path_cost = adjacent_path_cost + move_cost;               \
+            existing_path_cost = CMB_Path_Costs[ctr];                           \
+            if(existing_path_cost > potential_path_cost)                        \
+            {                                                                   \
+                CMB_NearBuffer_3[ctr] = adjacent_idx;                           \
+                CMB_Path_Costs[ctr] = potential_path_cost;                      \
+                new_next_cell_index = CMB_NearBuffer_3[ctr];                    \
+                if(new_next_cell_index != old_next_cell_index)                  \
+                {                                                               \
+                    unstable = ST_TRUE;                                         \
+                }                                                               \
+            }                                                                   \
+        }                                                                       \
+    }                                                                           \
+}
+
+#define NEW_PATH_COST_ALL(_value_) {                            \
+    move_cost = CMB_ActiveMoveMap[ctr];                         \
+    if(!IS_INF(move_cost))                                      \
+    {                                                           \
+        old_next_cell_index = CMB_NearBuffer_3[ctr];            \
+        for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++) \
+        {                                                       \
+            NEW_PATH_COST_ANY(itr_adjacent)                     \
+        }                                                       \
+        for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++) \
+        {                                                       \
+            NEW_PATH_COST_ANY(itr_adjacent)                     \
+        }                                                       \
+    }                                                           \
+    ctr++;                                                      \
+}
+
+
+
+/*
+
+    END:  Combat Map Path Finding
+
+*/
+
+
+
+
+
 
 /*
 
@@ -438,13 +683,13 @@ struct s_CTY_ENCH
 // sizeof: 0x1598
 struct s_BATTLEFIELD
 {
-    /* 0x0000 */  int8_t Tile_Terrain[462];  // 21 x 22
-    /* 0x039C */  int8_t Tile_TerrGroup[462];
-    /* 0x056A */  int8_t Tile_Road[462];
-    /* 0x0738 */  int8_t MoveCost_Ground[462];
-    /* 0x0906 */  int8_t MoveCost_Teleport[462];
-    /* 0x0AD4 */  int8_t MoveCost_Ground2[462];
-    /* 0x0CA2 */  int8_t MoveCost_Sailing[462];
+    /* 0x0000 */  int8_t Tile_Terrain[COMBAT_GRID_CELL_COUNT];  // 21 x 22
+    /* 0x039C */  int8_t Tile_TerrGroup[COMBAT_GRID_CELL_COUNT];  /* 1-byte, unsigned */
+    /* 0x056A */  int8_t Tile_Road[COMBAT_GRID_CELL_COUNT];
+    /* 0x0738 */  int8_t MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
+    /* 0x0906 */  int8_t MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
+    /* 0x0AD4 */  int8_t MoveCost_Ground2[COMBAT_GRID_CELL_COUNT];
+    /* 0x0CA2 */  int8_t MoveCost_Sailing[COMBAT_GRID_CELL_COUNT];
     /* 0x0E70 */  int16_t Tree_Count;
     /* 0x0E72 */  int16_t Tree_DrawXs[100];
     /* 0x0F3A */  int16_t Tree_DrawYs[100];
@@ -453,7 +698,7 @@ struct s_BATTLEFIELD
     /* 0x10CC */  int16_t Rock_DrawXs[100];
     /* 0x1194 */  int16_t Rock_DrawYs[100];
     /* 0x125C */  int16_t Rock_IMG_Segs[100];
-    /* 0x1324 */  int8_t Tile_Mud[462];
+    /* 0x1324 */  int8_t Tile_Mud[COMBAT_GRID_CELL_COUNT];
     /* 0x14F2 */  int16_t Central_Structure;   // enum Central_Structures
     /* 0x14F4 */  int16_t House_Count;
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
@@ -574,8 +819,8 @@ struct CSCAN_ICONS
 // ; (sizeof = 0xC)
 struct s_CMB_Vortex
 {
-    /* 00 */ int16_t X_Pos;
-    /* 02 */ int16_t Y_Pos;
+    /* 00 */ int16_t cgx;
+    /* 02 */ int16_t cgy;
     /* 04 */ int16_t Prev_or_Next_X;
     /* 06 */ int16_t Prev_or_Next_Y;
     /* 08 */ int16_t Move_Stage;
@@ -593,10 +838,10 @@ struct s_CMB_InfoItem
 
 
 //  ; (sizeof=0xC)
-struct s_Vortex_REC
+struct s_MAGIC_VORTEX
 {
-    /* 00 */ int16_t X_Pos;
-    /* 02 */ int16_t Y_Pos;
+    /* 00 */ int16_t cgx;
+    /* 02 */ int16_t cgy;
     /* 04 */ int16_t Prev_or_Next_X;  // ; prev when stationary, next while moving
     /* 06 */ int16_t Prev_or_Next_Y;  // ; prev when stationary, next while moving
     /* 08 */ int16_t Move_Stage;
@@ -739,16 +984,16 @@ extern SAMB_ptr CMB_Path_Ys;
 extern SAMB_ptr CMB_Path_Xs;
 
 // WZD dseg:D144
-extern SAMB_ptr CMB_NearBuffer_3;
+extern int16_t * CMB_NearBuffer_3;
 
 // WZD dseg:D146
-extern SAMB_ptr CMB_Path_Costs;
+extern uint8_t * CMB_Path_Costs;
 
 // WZD dseg:D148
-extern SAMB_ptr CMB_ActiveMoveMap;
+extern int8_t * CMB_ActiveMoveMap;
 
 // WZD dseg:D14E
-extern struct s_Vortex_REC * CMB_Vortex_Array;
+extern struct s_MAGIC_VORTEX * CMB_Vortex_Array;
 
 // WZD dseg:D154
 extern SAMB_ptr CMB_Projectiles;
@@ -792,10 +1037,10 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 void CMB_PrepareTurn__WIP(void);
 
 // WZD s91p03
-void BU_GetMoveMap__WIP(int16_t battle_unit_idx);
+void Set_Movement_Cost_Map(int16_t battle_unit_idx);
 
 // WZD s91p04
-// drake178: BU_Move()
+void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
 
 // WZD s91p05
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
@@ -804,7 +1049,7 @@ void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
 
 // WZD s91p07
-void CMB_FillTargetMaps__WIP(void);
+void Assign_Combat_Grids(void);
 
 // WZD s91p08
 // drake178: BU_IsVisible()
@@ -940,7 +1185,7 @@ void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[]);
 // WZD o99p07
 
 // WZD o99p01
-void CMB_DrawFullScreen__WIP(void);
+void Tactical_Combat_Draw(void);
 
 // WZD o99p02
 void Draw_Active_Unit_Window(void);
@@ -1259,7 +1504,7 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 void Init_Battlefield_Effects(int16_t combat_structure);
 
 // WZD o122p11
-// BU_Attack()
+void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_datum, int16_t Target_X, int16_t Target_Y);
 
 // WZD o122p12
 // BU_GetDistanceFrom()
@@ -1312,7 +1557,7 @@ int16_t CTY_RampageVictory(void);
 // WIZ_GetLastRangedStr()
 
 // WZD o124p02
-// BU_SetCityMovement()
+void BU_SetCityMovement__WIP(int16_t battle_unit_idx);
 
 // WZD o124p03
 // AI_RestrictToCity()
@@ -1490,7 +1735,7 @@ void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t
 void CMB_TileGen__WIP(int16_t ctt);
 
 // WZD ovr154p10
-void CMB_SetMoveMaps__WIP(int16_t location_type, int16_t city_walls);
+void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls);
 
 // WZD ovr154p11
 // drake178: CMB_TerrPatchGen()
@@ -1526,13 +1771,10 @@ void Combat_Cache_Write(void);
 */
 
 // WZD ovr155p01
-// WZD ovr155p02
-
-// WZD ovr155p01
-// drake178: CMB_GetPath()
+void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t target_cgx, int16_t target_cgy);
 
 // WZD ovr155p02
-// drake178: CMB_FillReachMap()
+void Combat_Move_Path_Valid(int16_t cgx, int16_t cgy, int16_t moves2);
 
 
 

@@ -117,7 +117,6 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 // UU_OVL_GetLinePath()
 
 // WZD o148p03
-// drake178: STK_GetPath()
 int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t one, int16_t moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx);
 
 // WZD o148p04

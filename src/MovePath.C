@@ -55,6 +55,7 @@ void Check_Cost(void)
 {
     adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
     // if (adjacent_reach_cost == 0) { MOX_DBG_BREAK; }
+    // TODO  if(!IS_INF(adjacent_reach_cost))
     if(adjacent_reach_cost != 255)
     {
         new_reach_cost = adjacent_reach_cost + tmp_move_cost;
@@ -73,6 +74,7 @@ void Do_Costs_Fst(void)
     // if(ofst_movepath_cost == (((wy - 1) * WORLD_WIDTH) + (wx + 1))) { MOX_DBG_BREAK; }
     move_cost = *movepath_cost++;
     ofst_movepath_cost++;
+    // TODO  if(!IS_INF(move_cost))
     if(move_cost != -1)
     {
         incr_flag++;
@@ -200,7 +202,7 @@ void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_mov
 
     CS_Row_Start = (wy * WORLD_WIDTH);
     for(itr = 0; itr < WORLD_SIZE; itr++)
-        movepath_cost_map->Reach_Costs[itr] = 255;
+        movepath_cost_map->Reach_Costs[itr] = 255;  // ¿ infinity ?
     for(itr = 0; itr < WORLD_SIZE; itr++)
         movepath_cost_map->Reach_From[itr] = itr;
     movepath_cost_map->Reach_Costs[((wy * WORLD_WIDTH) + wx)] = 0;
