@@ -22,6 +22,7 @@ Tactical Combat
     did figure drawing
 
 
+
 TODO Review 20241203
 Tactical Combat
     did ¿?
@@ -31,6 +32,19 @@ Tactical Combat
     doing Combat Unit Display
 
 
+
+TODO Review 20241215
+Tactical Combat
+    did Combat Unit Display
+    did Combat Information Window
+    did Combat Movement Cost Map
+    did Combat Path Cost Map
+    did Combat Path Finding Algorithm
+    did Combat Move Action
+    doing Combat Turn
+    doing Computer Player Move Action
+    doing Combat Attack Action
+    doing Computer Player Attack Action
 
 
 

@@ -1398,9 +1398,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     }
 
 
-    CMB_ImmobileCanAct = 0;
+    CMB_ImmobileCanAct = ST_FALSE;
 
-    G_AI_StayInTownProper = 1;
+    G_AI_StayInTownProper = ST_TRUE;
 
     _scanned_battle_unit = ST_UNDEFINED;
 
@@ -1419,7 +1419,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     if(_combat_attacker_player == _human_player_idx)
     {
 
-        Switch_Active_Battle_Unit(0);
+        Switch_Active_Battle_Unit(0);  /* first attacker battle_unit_idx */
 
     }
     else
@@ -1428,7 +1428,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         // ; BUG: should set the selected unit manually!
         // ; corrupts memory is the last value is invalid
 
-        Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
+        Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));  /* first defender battle_unit_idx */
 
     }
 
@@ -1444,7 +1444,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     PageFlip_FX();
 
 
-    CMB_CityDamage = 0;
+    CMB_CityDamage = ST_FALSE;
 
     leave_screen = ST_FALSE;
 
@@ -1456,7 +1456,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     CMB_PrepareTurn__WIP();
 
 
-    CMB_ImmobileCanAct = 0;
+    CMB_ImmobileCanAct = ST_FALSE;
 
     // ; NONE of the above functions change the focus unit
     if(_combat_attacker_player == _human_player_idx)
@@ -1499,7 +1499,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     }
 
-    Combat_Winner = CMB_WinLoseFlee__WIP();
+    Combat_Winner = Check_For_Winner__WIP();
 
     // ; BUG: second time clearing this without using it
     if(Combat_Winner != ST_UNDEFINED)
@@ -1512,13 +1512,13 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     if(_combat_attacker_player == _human_player_idx)
     {
 
-        Next_Battle_Unit(_human_player_idx);
+        Next_Battle_Unit(0);  /* first attacker battle_unit_idx */
 
     }
     else
     {
 
-        Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));
+        Switch_Active_Battle_Unit((_combat_total_unit_count - Defending_Unit_Count));  /* first defender battle_unit_idx */
 
     }
 
@@ -1566,7 +1566,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 input_field_idx = Get_Input();
 
-                if(input_field_idx == auto_combat_cancel_ESC_field)
+                if(input_field_idx == auto_combat_cancel_ESC_field)  /* turn off 'Auto Combat' */
                 {
 
                     Play_Left_Click__STUB();
@@ -1586,13 +1586,13 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                     CMB_ImmobileCanAct = ST_FALSE;
 
                 }
-                else
+                else  /* do 'Auto Combat' */
                 {
                     CMB_ProgressTurnFlow__WIP();
                 }
 
 
-                Combat_Winner = CMB_WinLoseFlee__WIP();
+                Combat_Winner = Check_For_Winner__WIP();
 
                 if(Combat_Winner != ST_UNDEFINED)
                 {
@@ -1712,7 +1712,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             AI_CMB_PlayTurn__WIP(combat_human_player);
 
-            Combat_Winner = CMB_WinLoseFlee__WIP();
+            Combat_Winner = Check_For_Winner__WIP();
 
             if(Combat_Winner == ST_UNDEFINED)
             {
@@ -1728,23 +1728,27 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
         /*
             BEGIN:  ¿ what is going on here ?
+
+                seems like this would be where the battle unit that just moved would have its turn ended
+                does bua_Finished get set anywhere else?
+                what's status > bus_Active?  ...bus_Recalled, bus_Fleeing, bus_Uninvolved, bus_Dead, bus_Drained, bus_Gone
         */
         if(
             (
-                (battle_units[_active_battle_unit].movement_points > 1)
+                (battle_units[_active_battle_unit].movement_points < 1)
                 &&
-                (battle_units[_active_battle_unit].Action == bua_Finished)
+                (battle_units[_active_battle_unit].action != bua_Finished)
             )
             ||
-            (battle_units[_active_battle_unit].Status > bus_Active)
+            (battle_units[_active_battle_unit].status > bus_Active)
         )
         {
 
-            battle_units[_active_battle_unit].Moving = 0;
+            battle_units[_active_battle_unit].Moving = ST_FALSE;
 
             battle_units[_active_battle_unit].movement_points = 0;
 
-            battle_units[_active_battle_unit].Action = bua_Finished;
+            battle_units[_active_battle_unit].action = bua_Finished;
 
             if(
                 ((battle_units[_active_battle_unit].Combat_Effects & bue_Confusion) != 0)
@@ -1778,7 +1782,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CRP_CMB_NeverChecked1 = 1;
 
-            Combat_Winner = CMB_WinLoseFlee__WIP();
+            Combat_Winner = Check_For_Winner__WIP();
 
             if(Combat_Winner != ST_UNDEFINED)
             {
@@ -1811,12 +1815,13 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CRP_CMB_NeverChecked1 = 1;
 
-            Combat_Winner = CMB_WinLoseFlee__WIP();
+            Combat_Winner = Check_For_Winner__WIP();
 
             if(Combat_Winner != ST_UNDEFINED)
             {
 
                 leave_screen = ST_UNDEFINED;
+
                 input_field_idx = 0;
 
             }
@@ -1913,16 +1918,16 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                     if(battle_units[itr].controller_idx == combat_human_player)
                     {
 
-                        battle_units[itr].Action = BUA_Flee;
+                        battle_units[itr].action = BUA_Flee;
 
                         if(
-                            (battle_units[itr].Status == bus_Active)
+                            (battle_units[itr].status == bus_Active)
                             ||
-                            (battle_units[itr].Status == bus_Uninvolved)
+                            (battle_units[itr].status == bus_Uninvolved)
                         )
                         {
                             
-                            battle_units[itr].Status = bus_Fleeing;
+                            battle_units[itr].status = bus_Fleeing;
 
                         }
 
@@ -1961,7 +1966,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 // CMB_TargetFrame_X = COMBAT_GRID_X1(Grid_X, Grid_Y);
                 // CMB_TargetFrame_Y = COMBAT_GRID_Y1(Grid_X, Grid_Y);
 
-                BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
+                Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
@@ -1974,12 +1979,13 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CRP_CMB_NeverChecked1 = 1;
 
-                Combat_Winner = CMB_WinLoseFlee__WIP();
+                Combat_Winner = Check_For_Winner__WIP();
 
                 if(Combat_Winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
                 {
 
                     leave_screen = ST_UNDEFINED;
+
                     input_field_idx = 0;
 
                 }
@@ -2008,7 +2014,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 if(
                     (battle_unit_idx > 0)
                     &&
-                    (battle_units[battle_unit_idx].Status == bus_Active)
+                    (battle_units[battle_unit_idx].status == bus_Active)
                 )
                 {
 
@@ -2025,7 +2031,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
 
-                        battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
+                        battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
 
                         Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
@@ -2079,7 +2085,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                             MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
 
-                            battle_units[battle_unit_idx].movement_points = BU_GetHalfMoves__WIP(battle_unit_idx);
+                            battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
 
                             Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
@@ -2205,7 +2211,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CRP_CMB_NeverChecked1 = 1;
 
-                Combat_Winner = CMB_WinLoseFlee__WIP();
+                Combat_Winner = Check_For_Winner__WIP();
 
                 if(Combat_Winner != ST_UNDEFINED)
                 {
@@ -2231,7 +2237,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Play_Left_Click__STUB();
 
-                battle_units[_active_battle_unit].Action = bua_Wait;
+                battle_units[_active_battle_unit].action = bua_Wait;
 
                 Next_Battle_Unit(_human_player_idx);
 
@@ -2295,11 +2301,11 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             )
             {
 
-                CMB_ImmobileCanAct = 0;
+                CMB_ImmobileCanAct = ST_FALSE;
 
                 Play_Left_Click__STUB();
 
-                battle_units[_active_battle_unit].Action = bua_Finished;
+                battle_units[_active_battle_unit].action = bua_Finished;
 
                 battle_units[_active_battle_unit].movement_points = 0;
 
@@ -2307,19 +2313,20 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Assign_Combat_Grids();
 
-                if(CMB_HumanUnitsDone == 1)
+                if(CMB_HumanUnitsDone == ST_TRUE)
                 {
                     screen_changed = ST_TRUE;
                 }
 
-                CRP_CMB_NeverChecked1 = 1;
+                CRP_CMB_NeverChecked1 = ST_TRUE;
 
-                Combat_Winner = CMB_WinLoseFlee__WIP();
+                Combat_Winner = Check_For_Winner__WIP();
 
                 if(Combat_Winner != ST_UNDEFINED)
                 {
                     
                     leave_screen = ST_UNDEFINED;
+
                     input_field_idx = 0;
 
                 }
@@ -2343,7 +2350,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             MoveHalves_Save = battle_units[_active_battle_unit].movement_points;
 
-            battle_units[_active_battle_unit].movement_points = BU_GetHalfMoves__WIP(_active_battle_unit);
+            battle_units[_active_battle_unit].movement_points = Battle_Unit_Moves2(_active_battle_unit);
 
             Overland_Enchants = _UNITS[battle_units[_active_battle_unit].unit_idx].enchantments;
 
@@ -2400,6 +2407,8 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
+
+            __debugbreak();
             
             CMB_HumanUnitsDone = ST_TRUE;
 
@@ -2417,7 +2426,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         )
         {
 
-            CMB_HumanUnitsDone = 0;
+            CMB_HumanUnitsDone = ST_FALSE;
 
             CMB_ProgressTurnFlow__WIP();
 
@@ -2431,7 +2440,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CRP_CMB_NeverChecked1 = 1;
 
-            Combat_Winner = CMB_WinLoseFlee__WIP();
+            Combat_Winner = Check_For_Winner__WIP();
 
             if(Combat_Winner != ST_UNDEFINED)
             {
@@ -2548,6 +2557,21 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
 // WZD s91p02
 // drake178: CMB_PrepareTurn()
+/*
+; applies turn-based combat effects, recalculates unit
+; statistics, and resets movement allowances
+;
+; contains a BUG regarding nearly every turn-based
+; effect either by itself or inherited from one of the
+; called functions
+*/
+/*
+
+    calls BU_Init_Battle_Unit() on all battle units
+    then, manually sets movement_points via Battle_Unit_Moves2()
+    PS. BU_Init_Battle_Unit() does battle_unit->movement_points = Unit_Moves2(unit_idx);
+
+*/
 void CMB_PrepareTurn__WIP(void)
 {
     int16_t Selected_Unit = 0;
@@ -2625,16 +2649,13 @@ void CMB_PrepareTurn__WIP(void)
         // ; intended damage to units
     }
 
+
     Selected_Unit = _active_battle_unit;
 
-    CMB_ProcessVortices();
-    // ; processes the movement of magic votrices - 3 random
-    // ; moves, then one player selected one
-    // ;
-    // ; BUGs: the player can't move their vortex if actions
-    // ; are locked out, and the AI never gets its 4th move
+    CMB_ProcessVortices();  // segrax
 
     _active_battle_unit = Selected_Unit;
+
 
     // TODO  Init_Battlefield_Effects(CMB_combat_structure);
     // ; calculates and stores the highest unit aura values
@@ -2655,7 +2676,7 @@ void CMB_PrepareTurn__WIP(void)
 
         battle_units[itr].Suppression = 0;
 
-        if(battle_units[itr].Status != bus_Active)
+        if(battle_units[itr].status != bus_Active)
         {
             continue;
         }
@@ -2665,9 +2686,9 @@ void CMB_PrepareTurn__WIP(void)
 
         BU_Apply_Battlefield_Effects__WIP(&battle_units[itr]);
 
-        battle_units[itr].movement_points = BU_GetHalfMoves__WIP(itr);
+        battle_units[itr].movement_points = Battle_Unit_Moves2(itr);  // ¿ manually fix-up the value set in BU_Init_Battle_Unit() ?
 
-        battle_units[itr].Action = bus_Active;
+        battle_units[itr].action = bus_Active;
 
 
         if(
@@ -2698,7 +2719,7 @@ void CMB_PrepareTurn__WIP(void)
             if(Roll_Result > 0)
             {
 
-                battle_units[itr].Action = bua_Finished;
+                battle_units[itr].action = bua_Finished;
 
                 battle_units[itr].movement_points = 0;
 
@@ -2794,7 +2815,7 @@ void CMB_PrepareTurn__WIP(void)
         if((battle_units[itr].Combat_Effects & bue_Black_Sleep) != 0)
         {
 
-            battle_units[itr].Action = bua_Finished;
+            battle_units[itr].action = bua_Finished;
 
             battle_units[itr].movement_points = 0;
 
@@ -2803,8 +2824,11 @@ void CMB_PrepareTurn__WIP(void)
 
         /*
             BEGIN:  Confusion
+
+                "Every turn the confused unit randomly does one of the following: stand around and do nothing while looking foolish and confused, move randomly, attack allies, or attack enemies."
         */
         // ; BUG: resets the state without ever returning control of the unit to its previous owner!
+        // ¿ NOBUG  pretty sure this is covered by having called BU_Init_Battle_Unit() to (re-)initialize the battle unit ?
         battle_units[itr].Confusion_State = 0;
 
         if((battle_units[itr].Combat_Effects & bue_Confusion) != 0)
@@ -2815,7 +2839,7 @@ void CMB_PrepareTurn__WIP(void)
             if(Roll_Result = 1)
             {
 
-                battle_units[itr].Action = bua_Finished;
+                battle_units[itr].action = bua_Finished;
 
                 battle_units[itr].movement_points = 0;
 
@@ -2869,7 +2893,7 @@ void CMB_PrepareTurn__WIP(void)
         {
 
             // ¿ ; conflicting condition - will never jump ?
-            if(battle_units[itr].Status == bus_Active)
+            if(battle_units[itr].status == bus_Active)
             {
 
                 Battle_Unit_Heal(itr, 1, 0);
@@ -3001,7 +3025,7 @@ void Set_Movement_Cost_Map(int16_t battle_unit_idx)
 ~ MainScr.C  Move_Units_Draw()
 
 */
-void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
+void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy)
 {
     SAMB_ptr Sound_Data_Seg = 0;
     int16_t Can_Teleport = 0;
@@ -3026,7 +3050,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        if(battle_units[itr].Status == bus_Active)
+        if(battle_units[itr].status == bus_Active)
         {
 
             CMB_ActiveMoveMap[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = INF;  /* ¿ occupied ? */
@@ -3178,7 +3202,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
             // ; process and apply a base strength Fireball effect
             // ; targeted at it
 
-            if(battle_units[battle_unit_idx].Status != bus_Active)
+            if(battle_units[battle_unit_idx].status != bus_Active)
             {
                 break;
             }
@@ -3239,7 +3263,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
 
         Last_Facing_X = target_cgx;
 
-        target_cgy = Last_Facing_Y;
+        Last_Facing_Y = target_cgy;
 
     }
 
@@ -3250,7 +3274,7 @@ void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t targe
 
     if(Can_Teleport != ST_FALSE)
     {
-
+        // TODO  Can_Teleport
     }
     else
     {
@@ -3331,10 +3355,10 @@ passed in ~x,y of combat grid cell that qualifies for the left-click
 Tactical_Combat__WIP()
     CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
     CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-    |-> BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
+    |-> Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
 */
-void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
+void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t Target_Y = 0;
     int16_t Target_X = 0;
@@ -3359,7 +3383,7 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
             &&
             (battle_units[combat_grid_target].controller_idx != battle_units[battle_unit_idx].controller_idx)
             &&
-            (battle_units[combat_grid_target].Status == bus_Active)
+            (battle_units[combat_grid_target].status == bus_Active)
         )
     )
     {
@@ -3383,7 +3407,7 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
         X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);
 
-        Y_Distance = abs(Target_X - battle_units[battle_unit_idx].cgy);
+        Y_Distance = abs(Target_Y - battle_units[battle_unit_idx].cgy);
 
         Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy dbug code
 
@@ -3501,7 +3525,7 @@ void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         )
         {
 
-            Move_Battle_Unit(battle_unit_idx, cgx, cgy);
+            Move_Battle_Unit__WIP(battle_unit_idx, cgx, cgy);
 
         }
 
@@ -3553,7 +3577,7 @@ void Assign_Combat_Grids(void)
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        if(battle_units[itr].Status == bus_Active)
+        if(battle_units[itr].status == bus_Active)
         {
 
             CMB_ActiveMoveMap[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = -1;
@@ -3674,7 +3698,7 @@ void Assign_Combat_Grids(void)
     {
 
         if(
-            (battle_units[itr].Status == bus_Active)
+            (battle_units[itr].status == bus_Active)
             &&
             (battle_units[itr].Image_Effect != 5)
         )
@@ -4425,8 +4449,55 @@ void AI_CMB_PlayTurn__WIP(int16_t player_idx)
 */
 void CMB_ProgressTurnFlow__WIP(void)
 {
+    int16_t Winner = 0;
 
+    _scanned_battle_unit = ST_UNDEFINED;
 
+    CMB_ActiveUnitFrame = 0;
+
+    CMB_TargetFrame = 0;
+
+    Set_Mouse_List(1, mouse_list_default);
+
+    CMB_HumanTurn = ST_FALSE;
+
+    if(CMB_AIGoesFirst == ST_FALSE)
+    {
+
+        CMB_ActiveUnitFrame = 0;
+
+        CMB_TargetFrame = 0;
+
+        AI_CMB_PlayTurn__WIP(combat_computer_player);
+
+    }
+
+    Winner =  Check_For_Winner__WIP();
+
+    if(Winner == ST_UNDEFINED)
+    {
+
+        CMB_PrepareTurn__WIP();
+
+        if(_combat_defender_player == combat_computer_player)
+        {
+
+            AI_CMB_PlayTurn__WIP(_combat_defender_player);
+
+            CMB_AIGoesFirst = ST_TRUE;
+
+        }
+
+        CMB_HumanTurn = ST_TRUE;
+
+        if(_auto_combat_flag == ST_TRUE)
+        {
+
+            AI_CMB_PlayTurn__WIP(combat_human_player);
+
+        }
+
+    }
 
 }
 
@@ -4476,10 +4547,10 @@ void Retreat_From_Combat(int16_t player_idx)
     {
         if(_UNITS[battle_units[itr_battle_units].unit_idx].wp == 9)
         {
-            battle_units[itr_battle_units].Status = bus_Dead;
+            battle_units[itr_battle_units].status = bus_Dead;
         }
 
-        if(battle_units[itr_battle_units].Status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Fleeing)
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
@@ -4510,9 +4581,9 @@ void Retreat_From_Combat(int16_t player_idx)
 // mark all non-involved units as fleeing
 // INCONSISTENT: these units have already been marked
 // as dead in the parent function, so there will never be any
-        if(battle_units[itr_battle_units].Status == bus_Uninvolved)
+        if(battle_units[itr_battle_units].status == bus_Uninvolved)
         {
-            battle_units[itr_battle_units].Status = bus_Fleeing;
+            battle_units[itr_battle_units].status = bus_Fleeing;
         }
     }
 
@@ -4526,12 +4597,12 @@ void Retreat_From_Combat(int16_t player_idx)
     */
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        if(battle_units[itr_battle_units].Status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Fleeing)
         {
             unit_idx = battle_units[itr_battle_units].unit_idx;
             _UNITS[unit_idx].wx = OVL_Action_OriginX;
             _UNITS[unit_idx].wy = OVL_Action_OriginY;
-            battle_units[itr_battle_units].Status = bus_Active;
+            battle_units[itr_battle_units].status = bus_Active;
 
         }
 
@@ -4552,7 +4623,7 @@ void Retreat_From_Combat(int16_t player_idx)
 // clear all road building progress for fleeing units
     if(fleeing_player_idx == _combat_attacker_player)
     {
-        if(battle_units[itr_battle_units].Status == bus_Fleeing)
+        if(battle_units[itr_battle_units].status == bus_Fleeing)
         {
             if(_UNITS[battle_units[itr_battle_units].unit_idx].Rd_Constr_Left > -1)
             {
@@ -4566,7 +4637,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 (fleeing_player_idx == HUMAN_PLAYER_IDX)
             )
             {
-                battle_units[itr_battle_units].Status = bus_Active;
+                battle_units[itr_battle_units].status = bus_Active;
             }
             else
             {
@@ -4574,14 +4645,14 @@ void Retreat_From_Combat(int16_t player_idx)
                 {
                     if(Random(2) == 1)
                     {
-                        battle_units[itr_battle_units].Status = bus_Active;
+                        battle_units[itr_battle_units].status = bus_Active;
                     }
                 }
                 else
                 {
                     if(Random(4) != 1)
                     {
-                        battle_units[itr_battle_units].Status = bus_Active;
+                        battle_units[itr_battle_units].status = bus_Active;
                     }
                 }
             }
@@ -4598,7 +4669,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 )
             )
             {
-                battle_units[itr_battle_units].Status = bus_Fleeing;
+                battle_units[itr_battle_units].status = bus_Fleeing;
             }
 
         }
@@ -4616,7 +4687,7 @@ void Retreat_From_Combat(int16_t player_idx)
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].Status == bus_Active)
+                    (battle_units[itr_battle_units].status == bus_Active)
                     &&
                     (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                     &&
@@ -4638,7 +4709,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 {
 
                     if(
-                        (battle_units[itr_battle_units].Status == bus_Active)
+                        (battle_units[itr_battle_units].status == bus_Active)
                         &&
                         (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                     )
@@ -4660,7 +4731,7 @@ void Retreat_From_Combat(int16_t player_idx)
                     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
                     {
                         if(
-                            (battle_units[itr_battle_units].Status == bus_Active)
+                            (battle_units[itr_battle_units].status == bus_Active)
                             &&
                             (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                         )
@@ -4677,11 +4748,11 @@ void Retreat_From_Combat(int16_t player_idx)
                                 (Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE)
                             )
                             {
-                                battle_units[itr_battle_units].Status = bus_Active;  // BUG:  ¿ this check for filtered status is due to macro usage ?
+                                battle_units[itr_battle_units].status = bus_Active;  // BUG:  ¿ this check for filtered status is due to macro usage ?
                             }
                             else
                             {
-                                battle_units[itr_battle_units].Status = bus_Fleeing;
+                                battle_units[itr_battle_units].status = bus_Fleeing;
                             }
                         }
                     }
@@ -4697,7 +4768,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 {
 
                     if(
-                        (battle_units[itr_battle_units].Status == bus_Active)
+                        (battle_units[itr_battle_units].status == bus_Active)
                         &&
                         (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                     )
@@ -4725,7 +4796,7 @@ void Retreat_From_Combat(int16_t player_idx)
                 {
 
                     if(
-                        (battle_units[itr_battle_units].Status == bus_Active)
+                        (battle_units[itr_battle_units].status == bus_Active)
                         &&
                         (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
                         &&
@@ -4750,7 +4821,7 @@ void Retreat_From_Combat(int16_t player_idx)
 
                                 if(boat_riders > Transport_Capacity)
                                 {
-                                    battle_units[itr_battle_units].Status = bus_Fleeing;
+                                    battle_units[itr_battle_units].status = bus_Fleeing;
                                 }
                             }
                         }
@@ -4769,7 +4840,7 @@ void Retreat_From_Combat(int16_t player_idx)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             if(
-                (battle_units[itr_battle_units].Status == bus_Active)
+                (battle_units[itr_battle_units].status == bus_Active)
                 &&
                 (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
             )
@@ -4798,7 +4869,7 @@ void Retreat_From_Combat(int16_t player_idx)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
 
-            if(battle_units[itr_battle_units].Status == bus_Fleeing)
+            if(battle_units[itr_battle_units].status == bus_Fleeing)
             {
 
                 if(fleeing_player_idx != _human_player_idx)
@@ -4823,14 +4894,14 @@ void Retreat_From_Combat(int16_t player_idx)
                     {
                         if(Random(2) == 1)
                         {
-                            battle_units[itr_battle_units].Status = bus_Dead;
+                            battle_units[itr_battle_units].status = bus_Dead;
                         }
                     }
                     else
                     {
                         if(Random(4) == 1)
                         {
-                            battle_units[itr_battle_units].Status = bus_Dead;
+                            battle_units[itr_battle_units].status = bus_Dead;
                         }
                     }
                 }
@@ -4847,10 +4918,10 @@ void Retreat_From_Combat(int16_t player_idx)
                     )
                 )
                 {
-                    battle_units[itr_battle_units].Status = bus_Dead;
+                    battle_units[itr_battle_units].status = bus_Dead;
                 }
 
-                if(battle_units[itr_battle_units].Status == bus_Dead)
+                if(battle_units[itr_battle_units].status == bus_Dead)
                 {
                     Fleeing_Units_Lost[Fleeing_Death_Count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
 
@@ -4928,12 +4999,12 @@ void Retreat_From_Combat(int16_t player_idx)
         for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
         {
             if(
-                (battle_units[itr_battle_units].Status == bus_Fleeing)
+                (battle_units[itr_battle_units].status == bus_Fleeing)
                 &&
                 (battle_units[itr_battle_units].controller_idx == fleeing_player_idx)
             )
             {
-                battle_units[itr_battle_units].Status = bus_Dead;
+                battle_units[itr_battle_units].status = bus_Dead;
 
                 Fleeing_Units_Lost[Fleeing_Death_Count] = _UNITS[battle_units[itr_battle_units].unit_idx].type;
 
@@ -5044,7 +5115,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].Status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5085,7 +5156,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 Transport_Capacity = 0;
 
                 if(
-                    (battle_units[itr_battle_units].Status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5105,7 +5176,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                 for(itr_battle_units = 0; ((itr_battle_units < _combat_total_unit_count) && (Wind_Walker == ST_FALSE)); itr_battle_units++)
                 {
                     if(
-                        (battle_units[itr_battle_units].Status == bus_Fleeing)
+                        (battle_units[itr_battle_units].status == bus_Fleeing)
                         &&
                         (battle_units[itr_battle_units].controller_idx == player_idx)
                     )
@@ -5127,7 +5198,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                             {
                                 troop_count++;
 
-                                battle_units[itr_battle_units].Status = bus_Active;
+                                battle_units[itr_battle_units].status = bus_Active;
                             }
                         }
                         else
@@ -5140,7 +5211,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                                 {
                                     troop_count++;
 
-                                    battle_units[itr_battle_units].Status = bus_Active;
+                                    battle_units[itr_battle_units].status = bus_Active;
                                 }   
                             }
                         }
@@ -5157,7 +5228,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].Status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5184,7 +5255,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
             for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
             {
                 if(
-                    (battle_units[itr_battle_units].Status == bus_Fleeing)
+                    (battle_units[itr_battle_units].status == bus_Fleeing)
                     &&
                     (battle_units[itr_battle_units].controller_idx == player_idx)
                 )
@@ -5195,7 +5266,7 @@ int16_t Process_Retreating_Units(int16_t wx, int16_t wy, int16_t wp, int16_t pla
                     {
                         troop_count++;
 
-                        battle_units[itr_battle_units].Status = bus_Active;
+                        battle_units[itr_battle_units].status = bus_Active;
                     }   
                 }
             }
@@ -5685,7 +5756,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
     for(itr = 0; itr < 36; itr++)
     {
 
-        battle_units[itr].Status = bus_Gone;
+        battle_units[itr].status = bus_Gone;
 
         battle_units[itr].battle_unit_figure_idx = ST_UNDEFINED;
 
@@ -5708,7 +5779,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
             ATKR_FloatingIsland = 1;
 
-            battle_units[_combat_total_unit_count].Status = bus_Uninvolved;
+            battle_units[_combat_total_unit_count].status = bus_Uninvolved;
 
         }
 
@@ -5766,7 +5837,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
                 DEFR_FloatingIsland = ST_TRUE;
 
-                battle_units[_combat_total_unit_count].Status = bus_Uninvolved;
+                battle_units[_combat_total_unit_count].status = bus_Uninvolved;
 
             }
 
@@ -5841,7 +5912,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
         battle_units[itr].outline_magic_realm = 0;
         battle_units[itr].Atk_FigLoss = 0;
         battle_units[itr].Moving = 0;
-        battle_units[itr].Action = bua_Ready;
+        battle_units[itr].action = bua_Ready;
         battle_units[itr].Blood_Amount = 0;
         battle_units[itr].Unknown_5A = 0;
         battle_units[itr].Always_Animate = 0;
@@ -5862,7 +5933,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
             )
             {
 
-                battle_units[itr].Status = bus_Uninvolved;
+                battle_units[itr].status = bus_Uninvolved;
 
             }
 
@@ -6874,7 +6945,7 @@ void CMB_CreateEntities__WIP(void)
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-        if(battle_units[itr].Status != bus_Active)
+        if(battle_units[itr].status != bus_Active)
         {
             continue;
         }
@@ -7986,6 +8057,7 @@ void Next_Battle_Unit(int16_t player_idx)
 
         if(all_done_none_available == ST_TRUE)
         {
+            
             CMB_HumanUnitsDone = ST_TRUE;
         }
         else
@@ -7994,6 +8066,7 @@ void Next_Battle_Unit(int16_t player_idx)
         }
 
         done = ST_TRUE;
+
     }
 
 
@@ -8084,7 +8157,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
     {
 
         if(
-            (battle_units[itr].Status == bus_Active)
+            (battle_units[itr].status == bus_Active)
             &&
             (battle_units[itr].controller_idx == player_idx)
         )
@@ -8117,7 +8190,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
         battle_unit_idx = battle_unit_ctr;
 
         if(
-            (battle_units[battle_unit_idx].Status == bus_Active)
+            (battle_units[battle_unit_idx].status == bus_Active)
             &&
             (battle_units[battle_unit_idx].controller_idx == player_idx)
         )
@@ -8128,7 +8201,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
 
                 delta = Delta_XY_With_Wrap(Selected_Unit_X, Selected_Unit_Y, battle_units[battle_unit_idx].cgx, battle_units[battle_unit_idx].cgy, WORLD_WIDTH);
 
-                if(battle_units[battle_unit_idx].Action == bua_Wait)
+                if(battle_units[battle_unit_idx].action == bua_Wait)
                 {
                     if(Closest_Waiting_Dist > delta)
                     {
@@ -8177,10 +8250,10 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
                 for(itr = 0; itr < _combat_total_unit_count; itr++)
                 {
 
-                    if(battle_units[itr].Action == bua_Wait)
+                    if(battle_units[itr].action == bua_Wait)
                     {
 
-                        battle_units[itr].Action == bua_Ready;
+                        battle_units[itr].action == bua_Ready;
 
                     }
 
@@ -8514,6 +8587,7 @@ void CMB_SelectCaster__WIP(int16_t caster_id)
 
 // WZD o105p01
 // drake178: CMB_WinLoseFlee()
+// MoO2  Module: COMBAT1  Check_For_Winner_()
 /*
 ; checks whether either side has no units left on the
 ; battlefield, and if the AI player is not the neutral
@@ -8525,10 +8599,134 @@ void CMB_SelectCaster__WIP(int16_t caster_id)
 /*
 
 */
-int16_t CMB_WinLoseFlee__WIP(void)
+int16_t Check_For_Winner__WIP(void)
 {
+    int16_t defender_count = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t attacker_count = 0;  // _DI_
 
-    return ST_UNDEFINED;
+    attacker_count = 0;
+
+    defender_count = 0;
+
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(battle_units[itr].status == bus_Active)
+        {
+
+            if(battle_units[itr].controller_idx == _combat_attacker_player)
+            {
+
+                if(battle_units[itr].Confusion_State == 2)  // ; BUG: never checks for the actual effect
+                {
+
+                    defender_count++;
+
+                }
+                else
+                {
+
+                    attacker_count++;
+
+                }
+
+            }
+            else
+            {
+
+                if(battle_units[itr].controller_idx == _combat_defender_player)
+                {
+
+                    if(battle_units[itr].Confusion_State == 2)  // ; BUG: never checks for the actual effect
+                    {
+
+                        attacker_count++;
+
+                    }
+                    else
+                    {
+
+                        defender_count++;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    if(attacker_count == 0)
+    {
+
+        return _combat_defender_player;
+
+    }
+
+    if(defender_count == 0)
+    {
+
+        return _combat_attacker_player;
+
+    }
+
+    if(_combat_turn > 50)
+    {
+
+        return _combat_defender_player;
+
+    }
+
+    if(combat_computer_player == NEUTRAL_PLAYER_IDX)
+    {
+
+        return ST_UNDEFINED;
+
+    }
+
+
+    // TODO  flip this logic around the the fleeing code is wrapped in the tests and the default/fall-through is return ST_UNDEFINED
+    if(
+        !(CMB_WizardCitySiege == ST_FALSE)
+        ||
+        !(_combat_turn > 1)
+        ||
+        !(AI_FightorFlight__STUB(combat_computer_player) == ST_TRUE)
+    )
+    {
+
+        return ST_UNDEFINED;
+
+    }
+
+
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+    {
+
+        if(battle_units[itr].controller_idx == combat_computer_player)
+        {
+
+
+            battle_units[itr].action = BUA_Flee;
+
+            if(battle_units[itr].status == bus_Active)
+            {
+
+                battle_units[itr].status == bus_Fleeing;
+
+            }
+
+        }
+
+    }
+
+    CMB_AI_Fled = ST_TRUE;
+
+    return combat_human_player;
 
 }
 
@@ -8875,7 +9073,7 @@ void CMB_UpdateTrueSight(void)
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        if(battle_units[itr_battle_units].Status == 0) /* Unit_Active */
+        if(battle_units[itr_battle_units].status == 0) /* Unit_Active */
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
@@ -9522,7 +9720,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
-                battle_units[itr_battle_units].Status = 6;  /* Unit_Gone */
+                battle_units[itr_battle_units].status = 6;  /* Unit_Gone */
             }
         }
     }
@@ -9533,7 +9731,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_defender_player)
             {
-                battle_units[itr_battle_units].Status = 6;  /* Unit_Gone */
+                battle_units[itr_battle_units].status = 6;  /* Unit_Gone */
             }
         }
     }
@@ -9544,7 +9742,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
 
    for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
    {
-        if(battle_units[itr_battle_units].Status == bus_Active)
+        if(battle_units[itr_battle_units].status == bus_Active)
         {
             Weights[itr_battle_units] = (30 - battle_units[itr_battle_units].defense);
 
@@ -10102,7 +10300,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
     {
         if(battle_units[itr].controller_idx != winner_player_idx)
         {
-            battle_units[itr].Status = bus_Dead;  /* Unit_Dead */
+            battle_units[itr].status = bus_Dead;  /* Unit_Dead */
             Weights[itr] = 0;
         }
     }
@@ -10139,7 +10337,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             // ; combat victor and true sights are also updated)
             BU_ApplyDamage(BU_Index, &Dmg_Array[0]);
 
-            if(battle_units[BU_Index].Status <= 0)
+            if(battle_units[BU_Index].status <= 0)
             {
                 MsgType = BU_Index;
             }
@@ -10851,7 +11049,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
     if(
         (Total_Damage > 0)
         &&
-        (battle_units[battle_unit_idx].Status == 0)  /* Unit_Active */
+        (battle_units[battle_unit_idx].status == 0)  /* Unit_Active */
     )
     {
         for(itr = 0; itr < 3; itr++)
@@ -10901,7 +11099,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
             (battle_units[battle_unit_idx].damage[2] >= battle_units[battle_unit_idx].damage[0])
         )
         {
-            battle_units[battle_unit_idx].Status = 6;  /* Unit_Gone */
+            battle_units[battle_unit_idx].status = 6;  /* Unit_Gone */
         }
         else
         {
@@ -10913,11 +11111,11 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
             {
                 if(_UNITS[battle_units[battle_unit_idx].unit_idx].wp != 9)
                 {
-                    battle_units[battle_unit_idx].Status = 5;  /* Unit_Drained */
+                    battle_units[battle_unit_idx].status = 5;  /* Unit_Drained */
                 }
                 else
                 {
-                    battle_units[battle_unit_idx].Status = 6;  /* Unit_Gone */
+                    battle_units[battle_unit_idx].status = 6;  /* Unit_Gone */
                 }
             }
             else
@@ -10928,7 +11126,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
                     (battle_units[battle_unit_idx].damage[0] > battle_units[battle_unit_idx].damage[1])
                 )
                 {
-                    battle_units[battle_unit_idx].Status = 4;  /* Unit_Dead */
+                    battle_units[battle_unit_idx].status = 4;  /* Unit_Dead */
                 }
             }
         }
@@ -11280,7 +11478,7 @@ int16_t Check_For_Winner(void)
 
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
-        if(battle_units[itr_battle_units].Status == 0)  /* Unit_Active */
+        if(battle_units[itr_battle_units].status == 0)  /* Unit_Active */
         {
             if(battle_units[itr_battle_units].controller_idx == _combat_attacker_player)
             {
@@ -11913,7 +12111,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
 
     battle_unit->battle_unit_figure_idx = ST_UNDEFINED;
 
-    battle_unit->Status = 0;
+    battle_unit->status = bus_Active;
 
     battle_unit->controller_idx = _UNITS[unit_idx].owner_idx;
 
@@ -11963,8 +12161,8 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->Melee_Anim = 0;
     battle_unit->outline_magic_realm = 0;
     battle_unit->MoveStage = 0;
-    battle_unit->Moving = 0;
-    battle_unit->Action = 0;
+    battle_unit->Moving = ST_FALSE;
+    battle_unit->action = bua_Ready;
     battle_unit->Always_Animate = 0;
     battle_unit->Image_Effect = 0;
     battle_unit->Move_Bob = 0;
@@ -13050,7 +13248,7 @@ void Init_Battlefield_Effects(int16_t combat_structure)
     {
         Leadership_Value = 0;
 
-        if(battle_units[itr_battle_units].Status = 0) /* Unit_Active */
+        if(battle_units[itr_battle_units].status = 0) /* Unit_Active */
         {
 
             // BUGBUG: should be checking for City Wall
@@ -13142,7 +13340,7 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_target, int16_t Target_X, int16_t Target_Y)
 {
 
-
+    __debugbreak();
 
 }
 
@@ -13249,7 +13447,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             if(battle_units[itr_battle_units].controller_idx == player_idx)
             {
-                battle_units[itr_battle_units].Status = bus_Gone;
+                battle_units[itr_battle_units].status = bus_Gone;
             }
         }
     }
@@ -13287,7 +13485,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         {
             if(_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx != player_idx)
             {
-                battle_units[itr_battle_units].Status = bus_Dead;
+                battle_units[itr_battle_units].status = bus_Dead;
             }
             else
             {
@@ -13297,16 +13495,16 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
         if(battle_units[itr_battle_units].controller_idx != player_idx)
         {
-            if(battle_units[itr_battle_units].Status == bus_Uninvolved)
+            if(battle_units[itr_battle_units].status == bus_Uninvolved)
             {
-                battle_units[itr_battle_units].Status = bus_Dead;
+                battle_units[itr_battle_units].status = bus_Dead;
             }
         }
         else
         {
-            if(battle_units[itr_battle_units].Status == bus_Uninvolved)
+            if(battle_units[itr_battle_units].status == bus_Uninvolved)
             {
-                battle_units[itr_battle_units].Status = bus_Active;
+                battle_units[itr_battle_units].status = bus_Active;
             }
         }
 
@@ -13333,23 +13531,23 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             }
             else
             {
-                battle_units[itr_battle_units].Status = bus_Gone;
+                battle_units[itr_battle_units].status = bus_Gone;
             }
         }
 
         if(
-            (battle_units[itr_battle_units].Status <= bus_Dead)
+            (battle_units[itr_battle_units].status <= bus_Dead)
             ||
-            (battle_units[itr_battle_units].Status == bus_Fleeing)
+            (battle_units[itr_battle_units].status == bus_Fleeing)
             ||
-            (battle_units[itr_battle_units].Status == bus_Recalled)
+            (battle_units[itr_battle_units].status == bus_Recalled)
         )
         {
             if(((battle_units[itr_battle_units].Abilities & UA_REGENERATION) | (enchantments & UE_REGENERATION)) != 0)
             {
                 if(battle_units[itr_battle_units].controller_idx == player_idx)
                 {
-                    battle_units[itr_battle_units].Status = bus_Active;
+                    battle_units[itr_battle_units].status = bus_Active;
                 }
 
                 battle_units[itr_battle_units].Cur_Figures = battle_units[itr_battle_units].Max_Figures;
@@ -13358,7 +13556,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             }
         }
 
-        if(battle_units[itr_battle_units].Status == bus_Recalled)
+        if(battle_units[itr_battle_units].status == bus_Recalled)
         {
             battle_unit_owner_idx = battle_units[itr_battle_units].controller_idx;
 
@@ -13367,7 +13565,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _UNITS[battle_units[itr_battle_units].unit_idx].wp = _players[battle_unit_owner_idx].summon_wp;
             _UNITS[battle_units[itr_battle_units].unit_idx].Finished = ST_TRUE;
             UNIT_RemoveExcess(battle_units[itr_battle_units].unit_idx);
-            battle_units[itr_battle_units].Status = bus_Active;
+            battle_units[itr_battle_units].status = bus_Active;
             if(
                 (battle_unit_owner_idx == player_idx)
                 &&
@@ -13381,7 +13579,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         if(
             (battle_units[itr_battle_units].controller_idx == player_idx)
             &&
-            (battle_units[itr_battle_units].Status == bus_Active)
+            (battle_units[itr_battle_units].status == bus_Active)
         )
         {
             Surviving_Unit_Count++;
@@ -13411,7 +13609,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         if(
             (battle_units[itr_battle_units].controller_idx == player_idx)
             &&
-            (battle_units[itr_battle_units].Status == bus_Drained)
+            (battle_units[itr_battle_units].status == bus_Drained)
             &&
             (battle_units[itr_battle_units].race == rt_Death)
             &&
@@ -13428,7 +13626,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             _UNITS[battle_units[itr_battle_units].unit_idx].owner_idx = player_idx;
             _UNITS[battle_units[itr_battle_units].unit_idx].mutations |= UM_UNDEAD;
             battle_units[itr_battle_units].controller_idx = player_idx;
-            battle_units[itr_battle_units].Status = bus_Active;
+            battle_units[itr_battle_units].status = bus_Active;
             Undead_Created++;
             Surviving_Unit_Count++;
             Experience_Gained += 2;
@@ -13437,7 +13635,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
         if(
             (_players[player_idx].Globals[ZOMBIE_MASTERY] > 0)
             &&
-            (battle_units[itr_battle_units].Status == bus_Dead)
+            (battle_units[itr_battle_units].status == bus_Dead)
             &&
             (battle_units[itr_battle_units].race < rt_Arcane)
             &&
@@ -13463,7 +13661,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             battle_units[itr_battle_units].Cur_Figures = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].Max_Figures = _unit_type_table[ut_Zombies].Figures;
             battle_units[itr_battle_units].TopFig_Dmg = 0;
-            battle_units[itr_battle_units].Status = bus_Active;
+            battle_units[itr_battle_units].status = bus_Active;
 
             Surviving_Unit_Count++;
         }
@@ -13736,30 +13934,30 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                 &&
                 (battle_units[itr_battle_units].controller_idx == NEUTRAL_PLAYER_IDX)
                 &&
-                (battle_units[itr_battle_units].Status == bus_Active)
+                (battle_units[itr_battle_units].status == bus_Active)
             )
             {
                 if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[OVL_Action_Structure].guard1_unit_type)
                 {
                     _LAIRS[OVL_Action_Structure].guard1_count++;
-                    battle_units[itr_battle_units].Status = bus_Dead;
+                    battle_units[itr_battle_units].status = bus_Dead;
                 }
                 else if(_UNITS[battle_units[itr_battle_units].unit_idx].type == _LAIRS[OVL_Action_Structure].guard2_unit_type)
                 {
                     _LAIRS[OVL_Action_Structure].guard2_count++;
-                    battle_units[itr_battle_units].Status = bus_Dead;
+                    battle_units[itr_battle_units].status = bus_Dead;
                 }
                 else
                 {
                     if(No_Secondaries != ST_TRUE)
                     {
-                        battle_units[itr_battle_units].Status = bus_Dead;
+                        battle_units[itr_battle_units].status = bus_Dead;
                     }
                     else
                     {
                         _LAIRS[OVL_Action_Structure].guard2_unit_type = _UNITS[battle_units[itr_battle_units].unit_idx].type;
                         _LAIRS[OVL_Action_Structure].guard2_count += 0x11;  // add 1 to both the high and low nibbles
-                        battle_units[itr_battle_units].Status = bus_Dead;
+                        battle_units[itr_battle_units].status = bus_Dead;
                         No_Secondaries = ST_FALSE;
                     }
                 }
@@ -13775,7 +13973,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             Current Battle Unit is Alive or Dead
         */
         if(
-            (battle_units[itr_battle_units].Status > bus_Active)
+            (battle_units[itr_battle_units].status > bus_Active)
             ||
             (_UNITS[battle_units[itr_battle_units].unit_idx].wp == 9)  /* BU Combat Summon */  /* ¿ ~unsummoned ? */
             ||
@@ -13846,7 +14044,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
                     if(_players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items] > -1)
                     {
                         // BU Status 6 ~== unsummoned, banished, disintegrated, stoned, cracks called
-                        if(battle_units[itr_battle_units].Status == bus_Gone)
+                        if(battle_units[itr_battle_units].status == bus_Gone)
                         {
                             Remove_Item(_players[_UNITS[battle_units[itr_battle_units].unit_idx].owner_idx].Heroes[_UNITS[battle_units[itr_battle_units].unit_idx].Hero_Slot].Items[itr_hero_items]);
                         }
@@ -13886,7 +14084,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
 
             // BU Status 6 ~== unsummoned, banished, disintegrated, stoned, cracks called
             if(
-                (battle_units[itr_battle_units].Status == bus_Gone)
+                (battle_units[itr_battle_units].status == bus_Gone)
                 ||
                 ((_UNITS[battle_units[itr_battle_units].unit_idx].mutations & UM_UNDEAD) != 0)
             )
@@ -14053,7 +14251,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
     for(itr_battle_units = 0; itr_battle_units < _combat_total_unit_count; itr_battle_units++)
     {
         if(
-            (battle_units[itr_battle_units].Status == bus_Active)
+            (battle_units[itr_battle_units].status == bus_Active)
             &&
             (battle_units[itr_battle_units].controller_idx == player_idx)
             &&
@@ -14656,12 +14854,12 @@ int16_t CTY_RampageVictory(void)
         {
 
             if(
-                (battle_units[itr].Status == 0) // Unit_Active
+                (battle_units[itr].status == 0) // Unit_Active
                 &&
                 (battle_units[itr].controller_idx == NEUTRAL_PLAYER_IDX) // Unit_Active
             )
             {
-                battle_units[itr].Status = 4; // Unit_Dead
+                battle_units[itr].status = 4; // Unit_Dead
 
                 Unit_Type = _UNITS[battle_units[itr].unit_idx].type;
 
@@ -14924,7 +15122,7 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx)
                 ((battle_units[itr_battle_units].Move_Flags & MV_SWIMMING) == 0)
             )
             {
-                battle_units[itr_battle_units].Status = bus_Uninvolved;
+                battle_units[itr_battle_units].status = bus_Uninvolved;
                 unit_count++;
             }
 
@@ -15073,11 +15271,142 @@ int16_t BU_IsCombatSummon(int16_t battle_unit_idx)
 */
 /*
 
-*/
-int16_t BU_GetHalfMoves__WIP(int16_t battle_unit_idx)
-{
+~== NEXTTURN.C  Unit_Moves2()
 
-    /* HACK */  return 2;
+*/
+int16_t Battle_Unit_Moves2(int16_t battle_unit_idx)
+{
+    uint32_t enchantments;
+    int16_t * hero_items = 0;
+    int16_t wind_mastery = 0;
+    int16_t item_moves2 = 0;
+    int16_t itr = 0;
+    int16_t endurance = 0;
+    int16_t moves2 = 0;  // _SI_
+
+
+    if(battle_units[battle_unit_idx].Web_HP > 0)
+    {
+        return 0;
+    }
+
+
+    enchantments = (battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments);
+
+    item_moves2 = 0;
+
+    /*
+        BEGIN: Hero Items
+    */
+    if(_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot > -1)
+    {
+
+        // ; BUG: this may not be the hero's original owner
+        // ¿ should index UNITS[] for owner_idx ?
+        hero_items = &(_players[battle_units[battle_unit_idx].controller_idx].Heroes[_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot].Items[0]);
+
+        for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
+        {
+
+            if(hero_items[itr] > -1)
+            {
+                
+                if(ITEM_POWER(hero_items[itr], ip_Endurance))
+                {
+                    endurance = ST_TRUE;
+                }
+
+                /* NOTE: Battle_Unit_Moves2() does not add the Item Enchantments like Unit_Moves2()
+                 * TODO  enchantments |= _ITEMS[itr].Powers;
+                 * enchantments |= GET_4B_OFS((uint8_t*)&_ITEMS[hero_items[itr]], 0x2E);
+                 */
+
+                item_moves2 += _ITEMS[hero_items[itr]].moves2;
+
+            }
+
+        }
+
+    }
+    /*
+        END: Hero Items
+    */
+
+
+    moves2 = _unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Move_Halves;
+
+    moves2 += item_moves2;
+
+
+    /*
+        BEGIN: Wind Mastery
+    */
+    if(_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Transport > 0)
+    {
+        wind_mastery = 0;
+        for(itr = 0; itr < NUM_PLAYERS; itr++)
+        {
+            if(_players[itr].Globals[WIND_MASTERY] > 0)
+            {
+                if(battle_units[battle_unit_idx].controller_idx == itr)
+                {
+                    wind_mastery++;
+                }
+                else
+                {
+                    wind_mastery--;
+                }
+            }
+        }
+        if(wind_mastery > 0)
+        {
+            moves2 = ((moves2 * 3) / 2);  /* +50% */
+        }
+        if(wind_mastery < 0)
+        {
+            moves2 = (moves2 / 2);  /* -50% */
+        }
+    }
+    /*
+        END: Wind Mastery
+    */
+
+
+    if(moves2 < 6)
+    {
+        if((enchantments & UE_FLIGHT) != 0)
+        {
+            moves2 = 6;
+        }
+    }
+
+    if(moves2 < 4)
+    {
+        if((_UNITS[battle_units[battle_unit_idx].unit_idx].mutations & CC_FLIGHT) != 0)
+        {
+            moves2 = 4;
+        }
+    }
+
+    if((enchantments & UE_ENDURANCE) != 0)
+    {
+        endurance = ST_TRUE;
+    }
+
+    // ; BUG: variable never initialized
+    // ¿ NOBUG  as compiled, set to 0 ?
+    if(endurance == ST_TRUE)
+    {
+        moves2 += 2;
+    }
+
+    if((battle_units[battle_unit_idx].Combat_Effects & bue_Haste) != 0)
+    {
+        moves2 *= 2;
+    }
+
+
+    return moves2;
 
 }
 
@@ -15241,7 +15570,7 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
         for(itr = 0; itr < troop_count; itr++)
         {
             battle_units[itr].controller_idx = NEUTRAL_PLAYER_IDX;
-            battle_units[itr].Status = 0;  // Unit_Active
+            battle_units[itr].status = 0;  // Unit_Active
             battle_units[itr].unit_idx = troops[itr];
         }
 
@@ -15284,10 +15613,29 @@ void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[])
 }
 
 // WZD o124p18
-// AI_FightorFlight()
+// drake178: AI_FightorFlight()
+/*
+; decides whether the AI will try to flee from the
+; battle, which it will only if its situation seems
+; hopeless, and it either has at least one hero on the
+; field or otherwise all of the units are builders
+; returns 1 if the AI picks flight, or 0 if fight
+*/
+/*
+
+
+
+*/
+int16_t AI_FightorFlight__STUB(int16_t player_idx)
+{
+
+    /* HACK */ return ST_FALSE;
+
+}
+
 
 // WZD o124p19
-// AI_Raze_Decision()
+// drake178: AI_Raze_Decision()
 
 // WZD o124p20
 int16_t Raze_City_Prompt(char * message)
@@ -15418,8 +15766,20 @@ void Raze_City_Prompt_Draw(void)
 
 }
 
+
+
 /*
     WIZARDS.EXE  ovr133
+*/
+
+// segrax
+// drake178: CMB_ProcessVortices()
+/*
+; processes the movement of magic votrices - 3 random
+; moves, then one player selected one
+;
+; BUGs: the player can't move their vortex if actions
+; are locked out, and the AI never gets its 4th move
 */
 void CMB_ProcessVortices(void)
 {
@@ -15485,6 +15845,8 @@ void CMB_ProcessVortices(void)
     }
 }
 
+
+// segrax
 /*
  * WZD o133p18
  * 
@@ -15568,6 +15930,7 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
     }
 }
 
+// segrax
 // WZD o133p16
 void CMB_VortexPlayerMove(int Vortex_Index) {
     int16_t Picked_Y, Y_Retn, X_Retn;
@@ -15620,6 +15983,7 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
     }
 }
 
+// segrax
 // WZD o133p15
 void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     unsigned int Pointer_Offset = 4;
@@ -15662,6 +16026,7 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     _combat_mouse_grid->y2 = 199;
     Set_Mouse_List(1, _combat_mouse_grid);
 }
+
 
 // WZD o113p05
 void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override) {
@@ -17322,7 +17687,7 @@ void Combat_Figure_Compose_USEFULL(void)
 // DELETE          }
 
 
-        if(battle_units[itr].Status != bus_Active)
+        if(battle_units[itr].status != bus_Active)
         {
             continue;
         }

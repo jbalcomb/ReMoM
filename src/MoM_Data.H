@@ -1558,6 +1558,7 @@ struct s_UNIT
 //     /* 22 */  int16_t  Sound;
 
 
+// TODO  move `struct s_BATTLE_UNIT` to Combat.H  (or finish figuring out how this sort of thing looks to be include in MOX, in MoO2)
 // sizeof: 6Eh  110d
 // drake178: struct s_BU_REC
 #pragma pack(push)
@@ -1571,7 +1572,7 @@ struct s_BATTLE_UNIT
     /* 0x04 */  int8_t   tohit;
     /* 0x05 */  int8_t   defense;
     /* 0x06 */  int8_t   resist;
-    /* 0x07 */  int8_t   movement_points;
+    /* 0x07 */  int8_t   movement_points;   /* ¿ moves2 ? */
     /* 0x08 */  int16_t  cost;
     /* 0x0A */  int8_t   upkeep;
     /* 0x0B */  int8_t   race;                              // ; enum Race_Code
@@ -1607,7 +1608,7 @@ struct s_BATTLE_UNIT
     /* 0x1C */  uint16_t Abilities;                         // ; enum ABL_FLAGS  ~ 'Unit Abilities'
     /* 0x1E */  uint16_t Attack_Flags;                      // ; enum ATK_FLAGS
     /* 0x20 */  int16_t  Sound;
-    /* 0x22 */  int16_t  Combat_Effects;                    // ; enum Combat_Effect
+    /* 0x22 */  int16_t  Combat_Effects;                    /* enum e_BATTLE_UNIT_EFFECT */
     /* 0x24 */  int8_t   Melee_To_Hit;
     /* 0x25 */  int8_t   Ranged_To_Hit;
     /* 0x26 */  int8_t   To_Block;
@@ -1618,11 +1619,11 @@ struct s_BATTLE_UNIT
     /* 0x30 */  int16_t  unit_idx;
     /* 0x32 */  int8_t   Extra_Hits;
     /* 0x33 */  int8_t   Web_HP;
-    /* 0x34 */  int8_t   Status;
-    /* 0x35 */  int8_t   controller_idx;                    // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
-    /* 0x36 */  uint8_t  damage[3];                         // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
+    /* 0x34 */  int8_t   status;                /* enum e_BATTLE_UNIT_STATUS */
+    /* 0x35 */  int8_t   controller_idx;        // Player Number of the Controlling Wizard  (was owner_idx, but conflicts with _UNITS[unit_idx].owner_idx)
+    /* 0x36 */  uint8_t  damage[3];             // Regular_Dmg, Undeath_Dmg, Irreversible_Dmg
     /* 0x39 */  int8_t   TopFig_Dmg;
-    /* 0x3A */  uint32_t enchantments;                      // Unit Enchantments
+    /* 0x3A */  uint32_t enchantments;          // Unit Enchantments
     /* 0x3E */  int8_t   Suppression;
     /* 0x3F */  int8_t   mana_max;
     /* 0x40 */  int8_t   mana;
@@ -1631,20 +1632,20 @@ struct s_BATTLE_UNIT
     /* 0x43 */  int8_t   Target_BU;
     /* 0x44 */  int16_t  cgx;
     /* 0x46 */  int16_t  cgy;
-    /* 0x48 */  int16_t  target_cgx;  /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
-    /* 0x4A */  int16_t  target_cgy;  /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
+    /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
+    /* 0x4A */  int16_t  target_cgy;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */
     /* 0x4C */  int16_t  MoveStage;
     /* 0x4E */  int16_t  Atk_FigLoss;
-    /* 0x50 */  int16_t  outline_magic_realm;  /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
-    /* 0x52 */  int16_t  Moving;  // set to ST_FALSE in Switch_Active_Battle_Unit()
-    /* 0x54 */  int16_t  Action;
-    /* 0x56 */  int8_t   Confusion_State;
+    /* 0x50 */  int16_t  outline_magic_realm;   /* enchantment_magic_realm ... enum e_MAGIC_REALM{} ... index into enchantment_outline_colors[], used for unit outline color */
+    /* 0x52 */  int16_t  Moving;                // set to ST_FALSE in Switch_Active_Battle_Unit()
+    /* 0x54 */  int16_t  action;                /* enum e_BATTLE_UNIT_ACTION */
+    /* 0x56 */  int8_t   Confusion_State;       /* {0: , 1: , 2: }  ~== stand around and do nothing while looking foolish and confused, move randomly, attack allies, attack enemies */
     /* 0x57 */  int8_t   pad2B_57h;
     /* 0x58 */  int16_t  Blood_Amount;
     /* 0x5A */  int16_t  Unknown_5A;
     /* 0x5C */  int16_t  Always_Animate;
     /* 0x5E */  int16_t  Melee_Anim;
-    /* 0x60 */  int16_t  Image_Effect;  /* passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
+    /* 0x60 */  int16_t  Image_Effect;          /* passed to Combat_Figure_Effect__WIP() for BU figure bitmap composition */
     /* 0x62 */  int16_t  Move_Bob;
     /* 0x64 */  int8_t   Gold_Melee;
     /* 0x65 */  int8_t   Gold_Ranged;

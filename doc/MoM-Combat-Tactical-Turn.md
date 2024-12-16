@@ -1,6 +1,200 @@
 
 
 
+Move_Battle_Unit__WIP() ==> Battle_Unit_Move__WIP()
+BU_CombatAction__WIP() ==> Battle_Unit_Action__WIP()
+... ==> Battle_Unit_Attack__WIP()
+CMB_WinLoseFlee__WIP() ==> Check_For_Winner__WIP()
+BU_GetHalfMoves__WIP() == Battle_Unit_Moves2()
+
+
+
+MoO2
+mov     _ai_retreat_flag, ax            ; _ai_retreat_flag = IDK_retreat_flag; Russ_Combat() ai_can_retreat_flag
+_ai_retreat_flag is {F,T} for hether the AI is allowed to retreat, checked in Retreat_Check_(), from Get_Player_Mode_()
+
+
+
+
+How does a 'Combat Turn' happen?
+
+Battle_Unit_Action__WIP()
+
+CMB_ProgressTurnFlow__WIP() does the turn for the computer player and the auto combat for the human player, but still has nothing for an 'end of turn' indicator.
+...calls AI_CMB_PlayTurn__WIP()
+
+
+At the end of Tactical_Combat__WIP()
+    if((leave_screen == ST_FALSE) && (CMB_HumanUnitsDone == ST_TRUE) && (CMB_ImmobileCanAct == ST_FALSE))
+        CMB_ProgressTurnFlow__WIP()
+            CMB_PrepareTurn__WIP()
+                Battle_Unit_Moves2()
+
+
+...after moving, didn't hit Next_Battle_Unit() and it still thinks the moved unit is the active unit
+
+
+battle_units[itr].action = bua_Finished;
+    Tactical_Combat__WIP()
+        ...right after 'Auto Combat', before balance of input matching...
+        if(((battle_units[_active_battle_unit].movement_points < 1) && (battle_units[_active_battle_unit].action != bua_Finished)) || (battle_units[_active_battle_unit].status > bus_Active))
+    'Left-Click Done Button'
+    CMB_PrepareTurn__WIP()
+        Roll_Result = BU_ResistRoll()
+        if(Roll_Result > 0)
+
+...
+no movement points triggers setting all_done_none_available
+all_done_none_available triggers setting CMB_HumanUnitsDone
+does not hit `if(battle_units[_active_battle_unit].controller_idx != combat_human_player)`
+hits Next_Battle_Unit() again
+Hrrrmm..._active_battle_unit didn't get its movement_points used up
+...actually did though in Move_Battle_Unit__WIP()
+*shrug*
+did trigger on the step-through
+so, ...
+    if(
+        (leave_screen == ST_FALSE)
+        &&
+        (CMB_HumanUnitsDone == ST_TRUE)
+        &&
+        (CMB_ImmobileCanAct == ST_FALSE)
+    )
+    {
+
+        CMB_HumanUnitsDone = ST_TRUE;
+
+        CMB_ProgressTurnFlow__WIP();
+...got there
+this is where the AI turn should happen
+so what follows is assuming that it's the human players turn again
+heh.
+blows through 50 turns before I can move again
+CMB_PrepareTurn__WIP() increments _combat_turn
+so, it's getting called when it shouldn't?
+...called by CMB_ProgressTurnFlow__WIP()
+
+
+
+`CMB_ProgressTurnFlow__WIP()` |-> `CMB_PrepareTurn__WIP()` |-> `Battle_Unit_Moves2()`
+¿ order in the code ?
+    Tactical_Combat__WIP()
+        ...
+        CMB_HumanUnitsDone = ST_FALSE;
+        ...
+        CMB_ImmobileCanAct = ST_FALSE;
+        G_AI_StayInTownProper = ST_TRUE;
+        ...
+        Switch_Active_Battle_Unit();
+        ...
+        CMB_HumanTurn = ST_TRUE;
+        _auto_combat_flag = ST_FALSE;
+        ...
+        *** CMB_PrepareTurn__WIP(); ***  |-> 
+        CMB_ImmobileCanAct = ST_FALSE;
+        Switch_Active_Battle_Unit();
+        ...
+        CMB_AIGoesFirst = ST_FALSE;
+        if(_combat_defender_player == combat_computer_player)
+            AI_CMB_PlayTurn__WIP(_combat_defender_player);
+            CMB_PrepareTurn__WIP();
+            CMB_AIGoesFirst = ST_TRUE;
+        Combat_Winner = Check_For_Winner__WIP();
+        CMB_HumanUnitsDone = ST_FALSE;
+        Next_Battle_Unit()
+        ...
+        while(leave_screen == ST_FALSE)
+
+'Left-Click Done Button'
+    battle_units[_active_battle_unit].action = bua_Finished;
+    battle_units[_active_battle_unit].movement_points = 0;
+    Next_Battle_Unit(_human_player_idx);
+
+
+
+
+## 'Auto Combat'
+```c
+    CMB_ProgressTurnFlow__WIP();
+    Combat_Winner = Check_For_Winner__WIP();
+```
+
+
+
+## CMB_HumanUnitsDone
+
+set to ST_TRUE in Tactical_Combat__WIP()
+    if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
+set to ST_TRUE in Next_Battle_Unit()
+    all_done_none_available = Next_Battle_Unit_Nearest_Available(player_idx);
+    if(all_done_none_available == ST_TRUE)
+
+
+XREF:
+    Tactical_Combat__WIP+12C       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Tactical_Combat__WIP:loc_761A1 mov     [CMB_HumanUnitsDone], e_ST_FALSE; BUG: second time clearing this without using it
+    Tactical_Combat__WIP+5EB       mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Tactical_Combat__WIP+F68       cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+115A      mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+116C      cmp     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+    Tactical_Combat__WIP+117A      mov     [CMB_HumanUnitsDone], e_ST_FALSE                                                 
+    Next_Battle_Unit+23            mov     [CMB_HumanUnitsDone], e_ST_TRUE                                                  
+
+
+## CMB_ImmobileCanAct
+
+
+## CMB_HumanTurn
+
+
+## CMB_AIGoesFirst
+
+
+
+
+
+## Check_For_Winner__WIP()
+
+defender battle unit count
+attacker battle unit count
+AI_FightorFlight__STUB()
+NOTE: The human-player fleeing is handled by the 'Left-Click Flee Button' code.
+
+
+### CMB_AI_Fled
+ovr105
+...odd mix of AoR's; most battle unit figures and effects
+
+set to ST_FALSE during setup section of Tactical_Combat__WIP()
+set to ST_TRUE in Check_For_Winner__WIP() if AI decides to Flee
+checked after existing screen-loop in Tactical_Combat__WIP()
+used to set Battle_Result for End_Of_Combat__WIP()
+...in End_Of_Combat__WIP(..., MsgType)
+        CMB_ScrollMsg_Type = MsgType  (only usage)
+    ...in Combat_Results_Scroll() and Combat_Results_Scroll_Text()
+        CMB_ScrollMsg_Type
+        switch(CMB_ScrollMsg_Type)
+            LBX_Load_Data_Static(message_lbx_file__ovr123)
+            "Your opponent has fled"
+
+XREF:
+    Tactical_Combat__WIP:loc_75ED7 mov     [CMB_AI_Fled], e_ST_FALSE
+    Tactical_Combat__WIP+123D      cmp     [CMB_AI_Fled], e_ST_TRUE
+    Check_For_Winner__WIP+138       mov     [CMB_AI_Fled], e_ST_TRUE
+
+
+### CMB_WizardCitySiege
+
+set to ST_FALSE during setup section of Tactical_Combat__WIP()
+immediately set to ST_TRUE if combat_defender_player_idx is NEUTRAL_PLAYER_IDX
+
+
+
+
+
+
+
+
 
 
 
@@ -12,10 +206,10 @@ AI_CMB_PlayTurn__WIP()
 
 CMB_ProgressTurnFlow__WIP()
 
-CMB_WinLoseFlee__WIP()
+Check_For_Winner__WIP()
 
 
-CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), CMB_ProgressTurnFlow__WIP(), CMB_WinLoseFlee__WIP()
+CMB_PrepareTurn__WIP(), AI_CMB_PlayTurn__WIP(), CMB_ProgressTurnFlow__WIP(), Check_For_Winner__WIP()
 
 
 ...
@@ -45,9 +239,9 @@ attack or move
 Tactical_Combat__WIP()
     CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
     CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-    |-> BU_CombatAction__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
+    |-> Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
-BU_CombatAction__WIP()
+Battle_Unit_Action__WIP()
     |-> BU_Attack__WIP()
     |-> BU_Move__WIP()
 
@@ -122,7 +316,7 @@ Tactical_Combat__WIP()
         AI_CMB_PlayTurn__WIP(_combat_defender_player);
         CMB_PrepareTurn__WIP();
         CMB_AIGoesFirst = ST_TRUE;
-    Combat_Winner = CMB_WinLoseFlee__WIP();
+    Combat_Winner = Check_For_Winner__WIP();
     if(Combat_Winner != ST_UNDEFINED)
         leave_screen = ST_UNDEFINED;
     CMB_HumanUnitsDone = ST_FALSE;

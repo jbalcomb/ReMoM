@@ -1174,7 +1174,7 @@ int16_t Unit_Moves2(int16_t unit_idx)
     int16_t wind_mastery;
     int16_t item_moves2;
     int16_t endurance;
-    int16_t movement_points;  // _DI_
+    int16_t moves2;  // _DI_
     int16_t itr_hero_items;  // _SI_
     int16_t itr_players;  // _SI_
 
@@ -1189,13 +1189,15 @@ int16_t Unit_Moves2(int16_t unit_idx)
     */
     if(_UNITS[unit_idx].Hero_Slot > -1)
     {
+
         hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
 
-        for (itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
+        for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
         {
-            if (hero_items[itr_hero_items] > -1)
+            if(hero_items[itr_hero_items] > -1)
             {
-                if (ITEM_POWER(hero_items[itr_hero_items], ip_Endurance))
+
+                if(ITEM_POWER(hero_items[itr_hero_items], ip_Endurance))
                 {
                     endurance = ST_TRUE;
                 }
@@ -1204,28 +1206,34 @@ int16_t Unit_Moves2(int16_t unit_idx)
                 enchantments |= GET_4B_OFS((uint8_t*)&_ITEMS[hero_items[itr_hero_items]], 0x2E);
 
                 item_moves2 += _ITEMS[hero_items[itr_hero_items]].moves2;
+
             }
+
         }
+
     }
     /*
         END: Hero Items
     */
 
-    movement_points = _unit_type_table[_UNITS[unit_idx].type].Move_Halves;
+    moves2 = _unit_type_table[_UNITS[unit_idx].type].Move_Halves;
 
     enchantments |= _UNITS[unit_idx].enchantments;
 
-    if(movement_points < 6)
+    if(moves2 < 6)
     {
         if((enchantments & UE_FLIGHT) != 0)
         {
-            movement_points = 6;
+            moves2 = 6;
         }
     }
 
     if((_UNITS[unit_idx].mutations & CC_FLIGHT) != 0)
     {
-        movement_points = 4;
+        if(moves2 < 4)
+        {
+            moves2 = 4;
+        }
     }
 
     if((enchantments & UE_ENDURANCE) != 0)
@@ -1235,15 +1243,15 @@ int16_t Unit_Moves2(int16_t unit_idx)
 
     if(endurance == ST_TRUE)
     {
-        movement_points += 2;
+        moves2 += 2;
     }
 
-    movement_points += item_moves2;
+    moves2 += item_moves2;
 
     /*
         BEGIN: Wind Mastery
     */
-    if(_unit_type_table[_UNITS[unit_idx].type].Transport > ST_FALSE)
+    if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
     {
         wind_mastery = 0;
         for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
@@ -1262,18 +1270,18 @@ int16_t Unit_Moves2(int16_t unit_idx)
         }
         if(wind_mastery > 0)
         {
-            movement_points = ((movement_points * 3) / 2);
+            moves2 = ((moves2 * 3) / 2);  /* +50% */
         }
         if(wind_mastery < 0)
         {
-            movement_points = (movement_points / 2);
+            moves2 = (moves2 / 2);  /* -50% */
         }
     }
     /*
         END: Wind Mastery
     */
 
-    return movement_points;
+    return moves2;
 }
 
 

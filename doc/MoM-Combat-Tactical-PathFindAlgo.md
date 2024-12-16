@@ -2,6 +2,11 @@
 SEEALSO:  dijkstra.c
 
 
+Elsewhere, ...
+found some material on...
+flood fill algorithm
+smell map
+value iteration algorithm  (+stochastic movement)
 
 
 

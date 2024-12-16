@@ -537,7 +537,7 @@ enum e_BATTLE_UNIT_STATUS
     bus_Gone        = 6   /* ¿ ? ¿ ~== _UNITS[].wp == 9 ? */
 };
 
-enum BU_Action
+enum e_BATTLE_UNIT_ACTION
 {
     bua_Ready           =   0,
     bua_Finished        =   4,
@@ -1040,13 +1040,13 @@ void CMB_PrepareTurn__WIP(void);
 void Set_Movement_Cost_Map(int16_t battle_unit_idx);
 
 // WZD s91p04
-void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
+void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
 
 // WZD s91p05
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 
 // WZD s91p06
-void BU_CombatAction__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
+void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
 
 // WZD s91p07
 void Assign_Combat_Grids(void);
@@ -1260,7 +1260,7 @@ void CMB_SelectCaster__WIP(int16_t caster_id);
 */
 
 // WZD o105p01
-int16_t CMB_WinLoseFlee__WIP(void);
+int16_t Check_For_Winner__WIP(void);
 
 // WZD o105p02
 void Combat_Figure_Banner_Color(int16_t player_idx);
@@ -1599,13 +1599,13 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
 int16_t BU_IsCombatSummon(int16_t battle_unit_idx);
 
 // WZD o124p16
-int16_t BU_GetHalfMoves__WIP(int16_t battle_unit_idx);
+int16_t Battle_Unit_Moves2(int16_t battle_unit_idx);
 
 // WZD o124p17
 void STK_CaptureCity__WIP(int16_t troop_count, int16_t troops[]);
 
 // WZD o124p18
-// AI_FightorFlight()
+int16_t AI_FightorFlight__STUB(int16_t player_idx);
 
 // WZD o124p19
 // AI_Raze_Decision()
