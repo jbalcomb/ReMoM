@@ -5734,7 +5734,7 @@ void UNIT_SummonToBattle(int Owner, int Unit_Index, int XPos, int YPos) {
         while (si < _combat_total_unit_count) {
             struct s_BATTLE_UNIT* battle_unit = &battle_units[si];
 
-            if (battle_unit->Status > bus_Active) {
+            if (battle_unit->status > bus_Active) {
                 uint16_t unit_idx = battle_unit->unit_idx;
                 struct s_UNIT* unit = &_UNITS[unit_idx];
 
@@ -5766,18 +5766,18 @@ void BU_UnitLoadToBattle(int16_t BU_Index, int8_t Player_Index, int16_t Unit_Ind
     battle_unit->battle_unit_figure_idx = Fig_Index;
     battle_unit->controller_idx = Player_Index;
 
-    battle_unit->position_cgc2 = XPos;
-    battle_unit->position_cgc1 = YPos;
+    battle_unit->cgx = XPos;
+    battle_unit->cgy = YPos;
 
-    battle_unit->target_cgc2 = XPos;
-    battle_unit->target_cgc1 = YPos;
+    battle_unit->target_cgx = XPos;
+    battle_unit->target_cgy = YPos;
 
     battle_unit->MoveStage = 0;
     battle_unit->outline_magic_realm = 0;
     battle_unit->Atk_FigLoss = 0;
     battle_unit->Moving = 0;
 
-    battle_unit->Action = bua_Ready;
+    battle_unit->action = bua_Ready;
 }
 
 // WZD o98p16
@@ -7072,7 +7072,7 @@ void CMB_CreateEntities__WIP(void)
         if(Curse_Anim != ST_UNDEFINED)
         {
 
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
+            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
             // ; creates a combat entity corresponding to the passed
             // ; curse effect and positioning
 
@@ -8086,7 +8086,7 @@ void BU_CreateImage(int BU_Index) {
 
     IMG_CMB_FX_Figure = Allocate_Next_Block(World_Data, 124);
 
-    if (battle_unit->Status != bus_Active) {
+    if (battle_unit->status != bus_Active) {
         return;
     }
 
@@ -8131,28 +8131,28 @@ void BU_CreateImage(int BU_Index) {
     }
 
     //loc_849E2
-    int16_t position_cgc2 = battle_unit->position_cgc2;
-    int16_t position_cgc1 = battle_unit->position_cgc1;
-    int16_t target_cgc2 = battle_unit->target_cgc2;
-    int16_t target_cgc1 = battle_unit->target_cgc1;
+    int16_t cgx = battle_unit->cgx;
+    int16_t cgy = battle_unit->cgy;
+    int16_t target_cgx = battle_unit->target_cgx;
+    int16_t target_cgy = battle_unit->target_cgy;
 
     int16_t di = 0;
-    if (position_cgc2 > target_cgc2) {
-        if (position_cgc1 > target_cgc1) {
+    if (cgx > target_cgx) {
+        if (cgy > target_cgy) {
             di = 0;
         }
-        else if (position_cgc1 < target_cgc1) {
+        else if (cgy < target_cgy) {
             di = 6;
         }
         else {
             di = 7;
         }
     }
-    else if (position_cgc2 < target_cgc2) {
-        if (position_cgc1 > target_cgc1) {
+    else if (cgx < target_cgx) {
+        if (cgy > target_cgy) {
             di = 2;
         }
-        else if (position_cgc1 < target_cgc1) {
+        else if (cgy < target_cgy) {
             di = 4;
         }
         else {
@@ -8160,10 +8160,10 @@ void BU_CreateImage(int BU_Index) {
         }
     }
     else {
-        if (position_cgc1 > target_cgc1) {
+        if (cgy > target_cgy) {
             di = 1;
         }
-        else if (position_cgc1 < target_cgc1) {
+        else if (cgy < target_cgy) {
             di = 5;
         }
         else {
@@ -11693,7 +11693,7 @@ int16_t CMB_FindEmptyFigSlot()
         struct s_BATTLE_UNIT* battle_unit = &battle_units[cx];
 
         if (battle_unit->battle_unit_figure_idx > -1 && 
-            battle_unit->Status == bus_Active)
+            battle_unit->status == bus_Active)
         {
             Figure_Array[battle_unit->battle_unit_figure_idx] = 1;
         }
@@ -11789,8 +11789,8 @@ int16_t AI_BU_ProcessAction(int16_t BU_Index, int16_t Rally_X, int16_t Rally_Y)
 
         struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
 
-        di = battleunitTarget->position_cgc2;
-        Rally_Y = battleunitTarget->position_cgc1;
+        di = battleunitTarget->cgx;
+        Rally_Y = battleunitTarget->cgy;
     }
 
 loc_92521:
@@ -11798,7 +11798,7 @@ loc_92521:
     _active_battle_unit = BU_Index;
 
     
-    switch (battleunit->Action) {
+    switch (battleunit->action) {
         default:
             break;
 
@@ -11860,7 +11860,7 @@ loc_92521:
                             battleunit->movement_points < MoveHalves &&
                             battleunit->Target_BU != -1 &&
                             battleunit->movement_points > 0 &&
-                            battleunit->Status == bus_Active)
+                            battleunit->status == bus_Active)
                         {
 
                             //loc_92711
@@ -11870,14 +11870,14 @@ loc_92521:
                             if (battleunit->Target_BU >= 0) 
                             {
                                 G_AI_BU_MoveOrRampage(BU_Index,
-                                    battleunitTarget->position_cgc2,
-                                    battleunitTarget->position_cgc1,
+                                    battleunitTarget->cgx,
+                                    battleunitTarget->cgy,
                                     battleunit->Target_BU,
                                     di,
                                     Rally_Y);
                             }
                             //loc_9279C
-                            if (battleunitTarget->Status != bus_Active)
+                            if (battleunitTarget->status != bus_Active)
                             {
                                 AI_BU_AssignAction(BU_Index, 0);
                             }
@@ -11886,7 +11886,7 @@ loc_92521:
                 }
             }
             //loc_92821
-            battleunit->Status = bua_Finished;
+            battleunit->status = bua_Finished;
             break;
         }
 
@@ -11899,7 +11899,7 @@ loc_92521:
                     battleunit->movement_points < MoveHalves &&
                     battleunit->Target_BU > -1 &&
                     battleunit->movement_points > 0 &&
-                    battleunit->Status == bus_Active)
+                    battleunit->status == bus_Active)
                 {
                     //loc_92A6B
                     MoveHalves = battleunit->movement_points;
@@ -11908,8 +11908,8 @@ loc_92521:
                     if (battleunit->ranged_type == -1) {
                     
                         G_AI_BU_MoveOrRampage(BU_Index,
-                            battleunitTarget->position_cgc2,
-                            battleunitTarget->position_cgc1,
+                            battleunitTarget->cgx,
+                            battleunitTarget->cgy,
                             battleunit->Target_BU,
                             di,
                             Rally_Y);
@@ -11920,7 +11920,7 @@ loc_92521:
                     }
 
                     //loc_92B1A
-                    if (battleunitTarget->Status != bus_Active) {
+                    if (battleunitTarget->status != bus_Active) {
                         AI_BU_AssignAction(BU_Index, 0);
                     }
                 }
@@ -11928,7 +11928,7 @@ loc_92521:
             }
             //loc_92B9F
             //loc_92821
-            battleunit->Status = bua_Finished;
+            battleunit->status = bua_Finished;
             break;
         }
 
@@ -11946,8 +11946,8 @@ loc_92521:
                     struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
 
                     G_AI_BU_MoveOrRampage(BU_Index,
-                        battleunitTarget->position_cgc2,
-                        battleunitTarget->position_cgc1,
+                        battleunitTarget->cgx,
+                        battleunitTarget->cgy,
                         battleunit->Target_BU,
                         di,
                         Rally_Y);
@@ -11964,7 +11964,7 @@ loc_92521:
                     BU_Attack(BU_Index, battleunit->Target_BU, 0, 0);
                     struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
 
-                    if (battleunitTarget->Status != bus_Active) {
+                    if (battleunitTarget->status != bus_Active) {
                         AI_BU_AssignAction(battleunit, 0);
                     }
                 }
@@ -11972,7 +11972,7 @@ loc_92521:
 
             //loc_9299E
             //loc_92821
-            battleunit->Status = bua_Finished;
+            battleunit->status = bua_Finished;
             break;
         }
         case BUA_MoveNAttack: // loc_929A1
@@ -11982,20 +11982,20 @@ loc_92521:
                 struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
 
                 G_AI_BU_MoveOrRampage(BU_Index,
-                    battleunitTarget->position_cgc2,
-                    battleunitTarget->position_cgc1,
+                    battleunitTarget->cgx,
+                    battleunitTarget->cgy,
                     battleunit->Target_BU,
                     di,
                     Rally_Y);
 
-                if (battleunitTarget->Status != bus_Active) {
+                if (battleunitTarget->status != bus_Active) {
                     AI_BU_AssignAction(battleunit, 0);
                 }
             }
 
             //loc_92A49
             //loc_92821
-            battleunit->Status = bua_Finished;
+            battleunit->status = bua_Finished;
             break;
         }
 
@@ -12006,7 +12006,7 @@ loc_92521:
             battleunit->Attribs_2 ^= USA_DOOMBOLT;
 
             //loc_92D44
-            G_CMB_SpellEffect(spl_Doom_Bolt, battleunit->Target_BU, BU_Index, battleunitTarget->position_cgc2, battleunitTarget->position_cgc1, 0, 1, 0, 0);
+            G_CMB_SpellEffect(spl_Doom_Bolt, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
 
             //loc_92D4D
             battleunit->movement_points = 0;
@@ -12020,7 +12020,7 @@ loc_92521:
             battleunit->Attribs_2 ^= USA_FIREBALL;
 
             //loc_92D44
-            G_CMB_SpellEffect(spl_Fireball, battleunit->Target_BU, BU_Index, battleunitTarget->position_cgc2, battleunitTarget->position_cgc1, 0, 1, 0, 0);
+            G_CMB_SpellEffect(spl_Fireball, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
 
             //loc_92D4D
             battleunit->movement_points = 0;
@@ -12057,8 +12057,8 @@ loc_92521:
                         if (battleunit->ranged_type == -1)
                         {
                             G_AI_BU_MoveOrRampage(BU_Index,
-                                battleunitTarget->position_cgc2,
-                                battleunitTarget->position_cgc1,
+                                battleunitTarget->cgx,
+                                battleunitTarget->cgy,
                                 battleunit->Target_BU,
                                 di,
                                 Rally_Y);
@@ -12070,7 +12070,7 @@ loc_92521:
                         }
 
                         //loc_92E5D
-                        if (battleunitTarget->Status != bus_Active) {
+                        if (battleunitTarget->status != bus_Active) {
                             AI_BU_AssignAction(battleunit, 0);
                         }
                     }
@@ -12085,7 +12085,7 @@ loc_92521:
 
             //loc_92EE2
             //loc_92821
-            battleunit->Status = bua_Finished;
+            battleunit->status = bua_Finished;
             break;
         }
     
@@ -12104,7 +12104,7 @@ loc_92521:
         
             battleunit->Attribs_2 ^= USA_WEB;
 
-            G_CMB_SpellEffect(spl_Web, battleunit->Target_BU, BU_Index, battleunitTarget->position_cgc2, battleunitTarget->position_cgc1, 0, 1, 0, 0);
+            G_CMB_SpellEffect(spl_Web, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
             break;
         }
 
@@ -12133,9 +12133,9 @@ int16_t G_AI_BU_MoveOrRampage(int16_t BU_Index, int16_t Dest_X, int16_t	Dest_Y, 
         if (si == Target) continue;
 
         struct s_BATTLE_UNIT* other_unit = &battle_units[si];
-        if (other_unit->Status != bus_Active) continue;
+        if (other_unit->status != bus_Active) continue;
 
-        uint16_t pos_index = other_unit->position_cgc1 * 21 + other_unit->position_cgc2;
+        uint16_t pos_index = other_unit->cgy * 21 + other_unit->cgx;
         CMB_ActiveMoveMap[pos_index] = -1;
     }
 
@@ -12155,11 +12155,11 @@ int16_t G_AI_BU_MoveOrRampage(int16_t BU_Index, int16_t Dest_X, int16_t	Dest_Y, 
 
     for (uint16_t si = 0; si < CMB_Vortex_Count; si++)
     {
-        uint16_t pos_index = CMB_Vortex_Array[si].Y_Pos * 21 + CMB_Vortex_Array[si].X_Pos;
+        uint16_t pos_index = CMB_Vortex_Array[si].cgy * 21 + CMB_Vortex_Array[si].cgx;
         CMB_ActiveMoveMap[pos_index] = -1;
     }
 
-    CMB_GetPath(battle_unit->position_cgc2, battle_unit->position_cgc1, Dest_X, Dest_Y);
+    CMB_GetPath(battle_unit->cgx, battle_unit->cgy, Dest_X, Dest_Y);
 
     if ((Target > -1 && (CMB_ActiveMoveMap[Dest_Y * 21 + Dest_X] == -1)) ||
         Target == -1)
@@ -12174,7 +12174,7 @@ int16_t G_AI_BU_MoveOrRampage(int16_t BU_Index, int16_t Dest_X, int16_t	Dest_Y, 
                 Town_Y = 10;
                 while (Town_Y < 14)
                 {
-                    CMB_GetPath(battle_unit->position_cgc2, battle_unit->position_cgc1, Town_X, Town_Y);
+                    CMB_GetPath(battle_unit->cgx, battle_unit->cgy, Town_X, Town_Y);
 
                     if (CMB_Path_Length > 0 && CMB_Path_Length < City_Steps)
                     {
@@ -12207,7 +12207,7 @@ void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
 
     struct s_BATTLE_UNIT* battle_unit = &battle_units[BU_Index];
 
-    if (battle_unit->Status != bus_Active)
+    if (battle_unit->status != bus_Active)
     {
         return;
     }
@@ -12260,17 +12260,17 @@ void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
     if (Selected_Action == bua_Ready || Selected_Action == BUA_No_Spells)
     {
         if (Ranged == 1) {
-            battle_unit->Action = BUA_RangedAttack;
+            battle_unit->action = BUA_RangedAttack;
         }
         else {
-            battle_unit->Action = BUA_MeleeAttack;
+            battle_unit->action = BUA_MeleeAttack;
         }
     }
     else {
-        battle_unit->Action = Selected_Action;
+        battle_unit->action = Selected_Action;
     }
 
-    if (battle_unit->Action == BUA_RangedAttack || battle_unit->Action == BUA_MeleeAttack)
+    if (battle_unit->action == BUA_RangedAttack || battle_unit->action == BUA_MeleeAttack)
     {
         if (battle_unit->controller_idx == _combat_defender_player ||
             AI_CmbtWall_BitField == 0)
@@ -12283,7 +12283,7 @@ void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
 
                     struct s_BATTLE_UNIT* potential_target = &battle_units[di];
 
-                    if (potential_target->Status == bus_Active &&
+                    if (potential_target->status == bus_Active &&
                         potential_target->controller_idx != battle_unit->controller_idx)
                     {
                         // loc_937F2
@@ -12314,7 +12314,7 @@ void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
                 {
                     struct s_BATTLE_UNIT* potential_target = &battle_units[di];
 
-                    if (potential_target->Status == bus_Active &&
+                    if (potential_target->status == bus_Active &&
                         potential_target->controller_idx == battle_unit->controller_idx)
                     {
                         // loc_938D1
@@ -12325,7 +12325,7 @@ void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
 
                         if (target_unit->type == current_target_unit->type)
                         {
-                            if (target_of_potential->Status == bus_Active &&
+                            if (target_of_potential->status == bus_Active &&
                                 target_of_potential->defense == battle_units[Target_Index].defense)
                             {
                                 Target_Index = potential_target->Target_BU;
@@ -14168,8 +14168,8 @@ int16_t BU_GetDistanceFrom(int BU_1, int BU_2) {
     struct s_BATTLE_UNIT* battleunit1 = &battle_units[BU_1];
     struct s_BATTLE_UNIT* battleunit2 = &battle_units[BU_2];
 
-    X_Distance = abs(battleunit1->position_cgc2 - battleunit2->position_cgc2);
-    Y_Distance = abs(battleunit1->position_cgc1 - battleunit2->position_cgc1);
+    X_Distance = abs(battleunit1->cgx - battleunit2->cgx);
+    Y_Distance = abs(battleunit1->cgy - battleunit2->cgy);
 
     if (X_Distance <= Y_Distance) {
         return Y_Distance;
@@ -17014,8 +17014,8 @@ void BU_CombatSummon(int16_t battle_unit_idx, int16_t XPos, int16_t YPos, int16_
     int16_t di_idk_screen_cycler = 0;
     struct s_BATTLE_UNIT* battle_unit = &battle_units[battle_unit_idx];
 
-    CMB_Chasm_Anim_X = battle_unit->position_cgc2;
-    CMB_Chasm_Anim_Y = battle_unit->position_cgc1;
+    CMB_Chasm_Anim_X = battle_unit->cgx;
+    CMB_Chasm_Anim_Y = battle_unit->cgy;
 
     Combat_Grid_Screen_Coordinates(XPos, YPos, 4, 4, &screen_x, &screen_y);
     unused_x = screen_x - 14;
@@ -17041,16 +17041,16 @@ void BU_CombatSummon(int16_t battle_unit_idx, int16_t XPos, int16_t YPos, int16_
     }
 
     if (battle_unit->controller_idx == _combat_attacker_player) {
-        battle_unit->target_cgc2 = 8;
+        battle_unit->target_cgx = 8;
     }
     else
     {
-        battle_unit->target_cgc2 = 14;
+        battle_unit->target_cgx = 14;
     }
-    battle_unit->target_cgc1 = 12;
+    battle_unit->target_cgy = 12;
 
     BU_CreateImage(battle_unit_idx);
-    battle_unit->Status = bus_Dead;
+    battle_unit->status = bus_Dead;
 
     if (SND_SpellCast != -1)
     {
@@ -17065,7 +17065,7 @@ void BU_CombatSummon(int16_t battle_unit_idx, int16_t XPos, int16_t YPos, int16_
 
         if (di_idk_screen_cycler == 14)
         {
-            battle_unit->Status = bus_Active;
+            battle_unit->status = bus_Active;
         }
 
         Set_Page_Off();
@@ -17912,10 +17912,10 @@ along with a c&p if the switch(){}
 
 TODO  sync up with Unit_Figure_Position()
 
-CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 */
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
 {
     int16_t Blood_Frame = 0;
     int16_t figure_set_idx = 0;
@@ -17932,13 +17932,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
 // DELETE      if(
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (cgx == DBG_position_cgc2)
+// DELETE          (cgx == DBG_cgx)
 // DELETE          &&
-// DELETE          (position_cgc1 == DBG_position_cgc1)
+// DELETE          (cgy == DBG_cgy)
 // DELETE          &&
-// DELETE          (target_cgx == DBG_target_cgc2)
+// DELETE          (target_cgx == DBG_target_cgx)
 // DELETE          &&
-// DELETE          (target_cgy == DBG_target_cgc1)
+// DELETE          (target_cgy == DBG_target_cgy)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -17962,7 +17962,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
 // DELETE          DBG_combat_grid_entity_idx = combat_grid_entity_count;
 // DELETE      }
 
-    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 0, 0, &position_screen_x, &position_screen_y);
 
     Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
@@ -18065,13 +18065,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
     if(cgx > target_cgx)
     {
 
-        if(position_cgc1 > target_cgy)
+        if(cgy > target_cgy)
         {
 
             figure_set_idx = 0;
 
         }
-        else if(position_cgc1 < target_cgy)
+        else if(cgy < target_cgy)
         {
 
             figure_set_idx = 6;
@@ -18088,13 +18088,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
     else if(cgx < target_cgx)
     {
 
-        if(position_cgc1 > target_cgy)
+        if(cgy > target_cgy)
         {
 
             figure_set_idx = 2;
 
         }
-        else if(position_cgc1 < target_cgy)
+        else if(cgy < target_cgy)
         {
 
             figure_set_idx = 4;
@@ -18111,13 +18111,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
     else
     {
 
-        if(position_cgc1 > target_cgy)
+        if(cgy > target_cgy)
         {
 
             figure_set_idx = 1;
 
         }
-        else if(position_cgc1 < target_cgy)
+        else if(cgy < target_cgy)
         {
 
             figure_set_idx = 5;
@@ -18204,13 +18204,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
 // DELETE      if (
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (cgx == DBG_position_cgc2)
+// DELETE          (cgx == DBG_cgx)
 // DELETE          &&
-// DELETE          (position_cgc1 == DBG_position_cgc1)
+// DELETE          (cgy == DBG_cgy)
 // DELETE          &&
-// DELETE          (target_cgx == DBG_target_cgc2)
+// DELETE          (target_cgx == DBG_target_cgx)
 // DELETE          &&
-// DELETE          (target_cgy == DBG_target_cgc1)
+// DELETE          (target_cgy == DBG_target_cgy)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -18759,7 +18759,7 @@ void Combat_Figure_Compose_USEFULL(void)
     int16_t offset = 0;
     SAMB_ptr figure_pointer_seg = 0;
     int16_t target_cgy = 0;
-    int16_t position_cgc1 = 0;
+    int16_t cgy = 0;
     int16_t target_cgx = 0;
     int16_t cgx = 0;
     int16_t itr = 0;  // _SI_
@@ -18844,7 +18844,7 @@ void Combat_Figure_Compose_USEFULL(void)
         
         cgx = battle_units[itr].cgx;
         
-        position_cgc1 = battle_units[itr].cgy;
+        cgy = battle_units[itr].cgy;
         
         target_cgx = battle_units[itr].target_cgx;
         
@@ -18853,13 +18853,13 @@ void Combat_Figure_Compose_USEFULL(void)
         if(cgx > target_cgx)
         {
 
-            if(position_cgc1 > target_cgy)
+            if(cgy > target_cgy)
             {
 
                 figure_set_idx = 0;
 
             }
-            else if(position_cgc1 < target_cgy)
+            else if(cgy < target_cgy)
             {
 
                 figure_set_idx = 6;
@@ -18876,13 +18876,13 @@ void Combat_Figure_Compose_USEFULL(void)
         else if(cgx < target_cgx)
         {
 
-            if(position_cgc1 > target_cgy)
+            if(cgy > target_cgy)
             {
 
                 figure_set_idx = 2;
 
             }
-            else if(position_cgc1 < target_cgy)
+            else if(cgy < target_cgy)
             {
 
                 figure_set_idx = 4;
@@ -18899,13 +18899,13 @@ void Combat_Figure_Compose_USEFULL(void)
         else
         {
 
-            if(position_cgc1 > target_cgy)
+            if(cgy > target_cgy)
             {
 
                 figure_set_idx = 1;
 
             }
-            else if(position_cgc1 < target_cgy)
+            else if(cgy < target_cgy)
             {
 
                 figure_set_idx = 5;
@@ -20700,7 +20700,7 @@ CMB_DrawMap__WIP()
 ...{6,11} are combat grid coordinates of lair/node structure
 
 CMB_SpawnFigure__WIP()
-    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, cgy, 0, 0, &position_screen_x, &position_screen_y);
 
     Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
