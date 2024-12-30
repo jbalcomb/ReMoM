@@ -10,12 +10,14 @@
         ovr103
         ovr105
         ovr110
+        ovr111
         ovr112
-        ovr114
+        ovr114  ¿ MoO2  Module: CMBTAI ?
         ovr116
         ovr122
         ovr123
         ovr124
+        ovr139
         ovr153
         ovr154
         ovr155
@@ -65,6 +67,11 @@ extern "C" {
 #define BLUR_ATTKR 28
 #define BLUR_DFNDR 29
 
+// _battlefield_city_walls
+#define BATTLEFIELD_CITY_WALL_STONE     0x1 /* 0b00000001 */
+#define BATTLEFIELD_CITY_WALL_FIRE      0x2 /* 0b00000010 */
+#define BATTLEFIELD_CITY_WALL_DARKNESS  0x4 /* 0b00000100 */
+
 
 
 //  ; (sizeof=0x4, standard type)
@@ -111,7 +118,8 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define COMBAT_STRUCTURE_CGX 11
 #define COMBAT_STRUCTURE_CGY  6
 #define COMBAT_STRUCTURE_IDX ((COMBAT_STRUCTURE_CGY * COMBAT_GRID_WIDTH)   + COMBAT_STRUCTURE_CGX)
-
+#define COMBAT_GRID_CITY_AREA_WIDTH     4
+#define COMBAT_GRID_CITY_AREA_HEIGHT    4
 
 
 /*
@@ -542,22 +550,20 @@ enum e_BATTLE_UNIT_ACTION
     bua_Ready           =   0,
     bua_Finished        =   4,
     bua_Wait            =   5,
-
+    /* ¿ BEGIN:  computer-player actions ? */
     BUA_MeleeAttack     = 100,
     BUA_RangedAttack    = 101,
     BUA_MoveNFire       = 102,
     BUA_MoveNAttack     = 103,
-
     BUA_DoomBolt        = 104,
     BUA_Fireball        = 105,
-    BUA_Healing         = 106,
+    bua_Healing         = 106,
     BUA_UseItem         = 107,
     BUA_CastSpell       = 108,
     BUA_SummonDemon     = 109,
-    BUA_WebSpell        = 110,
-
+    bua_WebSpell        = 110,
     BUA_Flee            = 150,
-
+    /* ¿ END:  computer-player actions ? */
     BUA_No_Spells       = 333
 };
 
@@ -704,7 +710,7 @@ struct s_BATTLEFIELD
     /* 0x14F6 */  int16_t House_TileXs[16];    // [4][4]
     /* 0x1516 */  int16_t House_TileYs[16];    // [4][4]
     /* 0x1536 */  SAMB_ptr House_IMG_Segs[16];  // [4][4]  ¿ assigned pict seg from [3][15] house types ?
-    /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?
+    /* 0x1556 */  int16_t Walled_City;  // ¿ {{F,T} city has wall flag ?  ... used to set _battlefield_city_walls |= 0x1;, so must be specifcally 'City Walls'/'Wall of Stone'
     /* 0x1558 */  int16_t Wall_Sections[16];   // {4,4,4,4}
     /* 0x1578 */  int16_t Wall_of_Fire;
     /* 0x157A */  int16_t Wall_of_Darkness;
@@ -1052,7 +1058,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t x, int16_t y);
 void Assign_Combat_Grids(void);
 
 // WZD s91p08
-// drake178: BU_IsVisible()
+int16_t BU_IsVisible__STUB(int16_t battle_unit_idx);
 
 // WZD s91p09
 // drake178: CMB_UnitCityDamage()
@@ -1329,6 +1335,39 @@ int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figu
 */
 
 // WZD o112p01
+int16_t AITP_CombatSpell__STUB(int16_t spell_idx, int16_t player_idx, int16_t * Target_X, int16_t * Target_Y);
+
+// WZD o112p02
+// AITP_DarknessLight()
+
+// WZD o112p03
+// AITP_Healing()
+
+// WZD o112p04
+// AITP_WarpWood()
+
+// WZD o112p05
+// AITP_WarpCreature()
+
+// WZD o112p06
+// UU15_AITP_Disintegrate()
+
+// WZD o112p07
+// AITP_DispelMagic()
+
+// WZD o112p08
+// G_CMB_SpellEffect()
+
+// WZD o112p09
+// AITP_HolyWord()
+
+
+
+/*
+    WIZARDS.EXE  ovr112
+*/
+
+// WZD o112p01
 // CMB_ComposeBookBG()
 
 // WZD o112p02
@@ -1420,6 +1459,38 @@ int16_t Check_For_Winner(void);
 
 
 
+/*
+    WIZARDS.EXE  ovr116
+*/
+
+// WZD o114p01
+void AI_SetBasicAttacks__WIP(int16_t player_idx);
+
+// WZD o114p02
+void AI_BU_ProcessAction__WIP(int16_t battle_unit_idx, int16_t Rally_X, int16_t Rally_Y);
+
+// WZD o114p03
+void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Count);
+
+// WZD o114p04
+void AI_GetCombatRallyPt__WIP(int16_t battle_unit_idx, int16_t * Rally_X, int16_t * Rally_Y);
+
+// WZD o114p05
+void AI_MoveBattleUnits__WIP(int16_t player_idx);
+
+// WZD o114p06
+int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag);
+
+// WZD o114p07
+int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_action, int16_t has_ranged_attack);
+
+// WZD o114p08
+void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, int16_t target_battle_unit_idx, int16_t Rally_X, int Rally_Y);
+
+// WZD o114p09
+int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, int16_t target_battle_unit_idx, int16_t Max_X, int16_t Max_Y);
+
+
 
 /*
     WIZARDS.EXE  ovr116
@@ -1495,7 +1566,7 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 // BU_ProcessAttack()
 
 // WZD o122p08
-// BU_GetEffectiveDEF()
+int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm);
 
 // WZD o122p09
 // BU_GetATKRealm()
@@ -1507,10 +1578,10 @@ void Init_Battlefield_Effects(int16_t combat_structure);
 void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_datum, int16_t Target_X, int16_t Target_Y);
 
 // WZD o122p12
-// BU_GetDistanceFrom()
+int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
 
 // WZD o122p13
-// AI_BU_GetAttackValue()
+int16_t AI_BU_GetAttackValue__STUB(int16_t battle_unit_idx, int16_t target_battle_unit_idx, int16_t has_ranged_attack);
 
 // WZD o122p14
 int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx);
@@ -1554,13 +1625,13 @@ int16_t CTY_RampageVictory(void);
 */
 
 // WZD o124p01
-// WIZ_GetLastRangedStr()
+int16_t WIZ_GetLastRangedStr__WIP(int16_t player_idx);
 
 // WZD o124p02
 void BU_SetCityMovement__WIP(int16_t battle_unit_idx);
 
 // WZD o124p03
-// AI_RestrictToCity()
+void AI_RestrictToCity__WIP(void);
 
 // WZD o124p04
 int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_flag);
@@ -1569,7 +1640,7 @@ int16_t Combat_Structure(int16_t wx, int16_t wy, int16_t wp, int16_t set_city_fl
 int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 
 // WZD o124p06
-// AI_CompareArmies()
+int16_t AI_CompareArmies__STUB(int16_t player_idx);
 
 // WZD o124p07
 // BU_LoadMoveSound()
@@ -1590,7 +1661,7 @@ int16_t Undeployable_Battle_Units_On_Water(int16_t player_idx);
 // BU_ClearBlood()
 
 // WZD o124p13
-// BU_IsInCityProper()
+int16_t BU_IsInCityProper__STUB(int16_t battle_unit_idx);
 
 // WZD o124p14
 int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
@@ -1616,6 +1687,8 @@ int16_t Raze_City_Prompt(char * message);
 // WZD o124p21
 void Raze_City_Prompt_Draw(void);
 
+
+
 /*
     WIZARDS.EXE  ovr133
 */
@@ -1624,6 +1697,32 @@ void CMB_ProcessVortices(void);
 void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y);
 void CMB_VortexPlayerMove(int Vortex_Index);
 void CMB_SetVortexCursor(int Vortex_Index);
+
+
+
+/*
+    WIZARDS.EXE  ovr139
+*/
+
+// WZD ovr139p01
+//AI_SelectCmbtSpell()
+
+// WZD ovr139p02
+//AI_EvaluateCmbtSpell()
+
+// WZD ovr139p03
+int16_t Effective_Battle_Unit_Strength(int16_t battle_unit_idx);
+
+// WZD ovr139p04
+//AI_SetCombatRealms()
+
+// WZD ovr139p05
+//AI_UnitThreatRealms()
+
+// WZD ovr139p06
+//AI_CombatSpellList()
+
+
 
 /*
     WIZARDS.EXE  ovr153

@@ -1194,6 +1194,7 @@ int16_t Unit_Moves2(int16_t unit_idx)
 
         for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
         {
+            
             if(hero_items[itr_hero_items] > -1)
             {
 

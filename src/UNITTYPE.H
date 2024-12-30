@@ -248,10 +248,10 @@ enum e_RANGED_ATTACK_TYPE
 
 enum e_RANGED_ATTACK_GROUP
 {
-    rag_Boulder = 1,  /* { 10, ...,  19} / 10 */
-    rag_Missile = 2,  /* { 20, ...,  29} / 10 */
-    rag_Magic   = 3,  /* { 30, ...,  39} / 10 */
-    rag_Short   = 10  /* {100, ..., 109} / 10 */
+    rag_Boulder =  1,   /* { 10, ...,  19} / 10 */
+    rag_Missile =  2,   /* { 20, ...,  29} / 10 */
+    rag_Magic   =  3,   /* { 30, ...,  39} / 10 */
+    rag_Short   = 10    /* {100, ..., 109} / 10 */
 };
 
 // sizeof:  24h  36d
