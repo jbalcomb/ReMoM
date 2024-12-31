@@ -989,6 +989,9 @@ extern SAMB_ptr CMB_Path_Ys;
 // WZD dseg:D140
 extern SAMB_ptr CMB_Path_Xs;
 
+// WZD dseg:D142
+extern int16_t CMB_Path_Length;
+
 // WZD dseg:D144
 extern int16_t * CMB_NearBuffer_3;
 
@@ -1146,11 +1149,11 @@ int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx);
 
 // WZD o98p14
 // drake178: UNIT_SummonToBattle()
-// UNIT_SummonToBattle()
+void UNIT_SummonToBattle(int Owner, int Unit_Index, int XPos, int YPos);
 
 // WZD o98p15
 // drake178: BU_UnitLoadToBattle()
-// BU_UnitLoadToBattle()
+void BU_UnitLoadToBattle(uint16_t BU_Index, uint8_t Player_Index, uint16_t Unit_Index, uint16_t XPos, uint16_t YPos);
 
 // WZD o98p16
 int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
@@ -1328,6 +1331,12 @@ int16_t Get_Effective_Ranged_Strength(int16_t ranged, int16_t figures, int16_t a
 // WZD o110p06
 int16_t Get_Effective_Melee_Strength(int16_t melee, int16_t thrown, int16_t figures, int16_t attack_flags, int16_t ranged_type);
 
+/*
+    WIZARDS.EXE  ovr110
+*/
+
+// WZD o111p
+int16_t G_CMB_SpellEffect(int Spell, int Target, int Caster, int XPos, int YPos, int Mana, int Anims, int UU1, int UU2);
 
 
 /*
@@ -1437,7 +1446,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[]);
 void Deploy_Battle_Units(int16_t player_idx);
 
 // WZD o113p10
-// BU_SummonDemon()
+void BU_SummonDemon(int BU_Index);
 
 // WZD o113p11
 int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
@@ -1452,19 +1461,26 @@ int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_u
 // CMB_SpellcastMessage()
 
 // WZD o113p15
-// CMB_FindEmptyFigSlot()
+int16_t CMB_FindEmptyFigSlot();
 
 // WZD o113p16
 int16_t Check_For_Winner(void);
 
+/*
+    WIZARDS.EXE  ovr114
+*/
+int16_t AI_BU_ProcessAction(int16_t BU_Index, int16_t Rally_X, int16_t Rally_Y);
+int16_t G_AI_BU_MoveOrRampage(int16_t BU_Index, int16_t Dest_X, int16_t	Dest_Y, int16_t Target, int16_t	Rally_X, int16_t Rally_Y);
+void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells);
+int16_t BU_Attack(int16_t BU_Index, int16_t Target_Index, int16_t Target_X, int16_t Target_Y);
 
 
 /*
     WIZARDS.EXE  ovr116
 */
 
-// WZD o114p01
 void AI_SetBasicAttacks__WIP(int16_t player_idx);
+// WZD o114p01
 
 // WZD o114p02
 void AI_BU_ProcessAction__WIP(int16_t battle_unit_idx, int16_t Rally_X, int16_t Rally_Y);
@@ -1579,6 +1595,7 @@ void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_datum, int16_t 
 
 // WZD o122p12
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
+int16_t BU_GetDistanceFrom(int BU_1, int BU_2);
 
 // WZD o122p13
 int16_t AI_BU_GetAttackValue__STUB(int16_t battle_unit_idx, int16_t target_battle_unit_idx, int16_t has_ranged_attack);
@@ -1697,6 +1714,7 @@ void CMB_ProcessVortices(void);
 void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y);
 void CMB_VortexPlayerMove(int Vortex_Index);
 void CMB_SetVortexCursor(int Vortex_Index);
+void BU_CombatSummon(int16_t battle_unit_idx, int16_t XPos, int16_t YPos, int16_t spell_idx, int16_t player_idx);
 
 
 
@@ -1778,6 +1796,7 @@ void USELESS_Combat_Figure_Load_Compose(int16_t figure_index, int16_t figure_set
 
 // WZD ovr153p17
 // drake178: CMB_GetFigDrawPos()
+void CMB_GetFigDrawPos(int16_t Max_Figs, int16_t Cur_Fig, int16_t* Left, int16_t* Top);
 
 // WZD ovr153p18
 void CMB_CreateEntity__WIP(int16_t OrigX, int16_t OrigY, int64_t seg_or_idx, int16_t draw_x_shift, int16_t draw_y_shift, int16_t Frame, int16_t entity_type, int16_t Owner, int16_t UU_10h, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU_14h, int16_t BldFrm);
