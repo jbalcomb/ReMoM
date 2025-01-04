@@ -1629,7 +1629,7 @@ struct s_BATTLE_UNIT
     /* 0x40 */  int8_t   mana;
     /* 0x41 */  int8_t   Item_Charges;
     /* 0x42 */  int8_t   Poison_Strength;
-    /* 0x43 */  int8_t   Target_BU;
+    /* 0x43 */  int8_t   Target_BU;             /* 1-byte, signed */
     /* 0x44 */  int16_t  cgx;
     /* 0x46 */  int16_t  cgy;
     /* 0x48 */  int16_t  target_cgx;            /* set by Deploy_Battle_Units()  ¿ used for facing direction ? */

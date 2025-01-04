@@ -258,9 +258,6 @@ WIZARDS.LBX
 #define REDUCED_MAP_SQUARE_HEIGHT     1  // in Pixels
 
 
-#define COMBAT_GRID_CELL_WIDTH       32  // in pixels
-#define COMBAT_GRID_CELL_HEIGHT      16  // in pixels
-
 
 #define WORLD_X_MIN          0  // in Squares
 // #define WORLD_X_MAX         59  // in Squares
