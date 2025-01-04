@@ -110,10 +110,20 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define CALC_SCREEN_X   screen_x = ((itr_x * 32) - ((itr_y & 0x1) * 16))
 #define CALC_SCREEN_Y   screen_y = ((itr_y * 8) - 8)
 
+
+#define COMBAT_GRID_CELL_WIDTH       32  // in pixels
+#define COMBAT_GRID_CELL_HEIGHT      16  // in pixels
+
 #define COMBAT_GRID_WIDTH   21
 #define COMBAT_GRID_HEIGHT  22
 #define COMBAT_GRID_COLS    21
 #define COMBAT_GRID_ROWS    22
+
+#define COMBAT_GRID_XMIN     0
+#define COMBAT_GRID_XMAX    21
+#define COMBAT_GRID_YMIN     0
+#define COMBAT_GRID_YMAX    22
+
 // path finding iters over {(21-2),(22-2)}
 #define COMBAT_STRUCTURE_CGX 11
 #define COMBAT_STRUCTURE_CGY  6
