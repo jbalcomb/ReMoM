@@ -2876,7 +2876,7 @@ extern uint8_t * square_scouted_p1;         // Bit_Field  alloc in Allocate_Data
 
 
 // WZD  dseg:939A
-extern SAMB_ptr IMG_CMB_TerrTiles[48];
+extern SAMB_ptr _combat_terrain_pict_segs[48];
 
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0

@@ -60,6 +60,51 @@ A: ¿ Assign_Combat_Grids() ?
 Q: What does CMB_TargetRows[] get used for?
 A: 
 
+CMB_TargetRows[]
+{-2, -1, battle_unit_idx, 99}
+
+Tactical_Combat__WIP()
+    battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+Battle_Unit_Action__WIP
+    combat_grid_target = CMB_TargetRows[cgy][cgx];
+Assign_Combat_Grids()
+    populates CMB_TargetRows[] and CMB_ActiveMoveMap[]
+    uses CMB_NearBuffer_3[]
+    /*
+        default all combat grid targets to invalid action targets
+    */
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
+            CMB_TargetRows[itr_y][itr_x] = -2;  /* not valid as targets for an active unit’s actions */
+    if(
+        (battlefield->Walled_City == ST_TRUE)
+        &&
+        (battle_units[_active_battle_unit].controller_idx == _combat_attacker_player)
+        &&
+        ((battle_units[_active_battle_unit].Abilities & UA_WALLCRUSHER) != 0)
+    )
+        for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+            for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++ )
+                if(Combat_Grid_Cell_Has_City_Wall(itr_x, itr_y) == ST_TRUE)
+                    CMB_TargetRows[itr_y][itr_x] = 99;
+    /*
+        BEGIN:  assign Battle Unit Indices
+    */
+    for(itr = 0; itr < _combat_total_unit_count; itr++)
+        if(
+            (battle_units[itr].status == bus_Active)
+            &&
+            (battle_units[itr].Image_Effect != 5)
+        )
+            CMB_TargetRows[battle_units[itr].cgy][battle_units[itr].cgx] = itr;  // batle_unit_idx
+    for(itr_y = 0; itr_y < COMBAT_GRID_HEIGHT; itr_y++)
+        cgy_offset = (itr_y * COMBAT_GRID_WIDTH);
+        for(itr_x = 0; itr_x < COMBAT_GRID_WIDTH; itr_x++)
+            if(CMB_NearBuffer_3[cgy_offset + itr_x] == ST_TRUE)  /* combat grid cell is *reachable* */
+                CMB_TargetRows[itr_y][itr_x] = -1;
+                uu_count_of_reachable_cells++;
+    CMB_TargetRows[battle_units[_active_battle_unit].cgy][battle_units[_active_battle_unit].cgx] = _active_battle_unit;
+
 
 
 

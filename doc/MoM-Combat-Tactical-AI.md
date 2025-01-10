@@ -1,5 +1,15 @@
 
 
+
+
+
+
+Tactical_Combat__WIP()
+    |-> AI_CMB_PlayTurn__WIP()
+        |-> AI_MoveBattleUnits__WIP()
+
+
+
 When does happen?
 ...
 if defender is computer-player...

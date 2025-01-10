@@ -1140,7 +1140,7 @@ uint8_t * square_scouted_p1;                // Bit_Field  alloc in Allocate_Data
 // drake178: IMG_CMB_TerrTiles
 // ; array of 48 images appended into the EMM TILEX handle
 // WZD  dseg:939A
-SAMB_ptr IMG_CMB_TerrTiles[48];
+SAMB_ptr _combat_terrain_pict_segs[48];
 
 // WZD  dseg:93FA 00                                              db    0
 // WZD  dseg:93FB 00                                              db    0
