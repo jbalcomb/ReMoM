@@ -2163,7 +2163,7 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
     CS031_height = height;  // actual_height;
 
 
-    if(skip_x != 0)
+    while(skip_x != 0)
     {
         packet_op = *frame_data++;
         packet_byte_count = *frame_data++;
@@ -2175,6 +2175,7 @@ void Clipped_Draw_Frame(int16_t x1, int16_t y1, int16_t width, int16_t height, i
         {
             frame_data += packet_byte_count;
         }
+        skip_x--;
     }
 
     bbuff_pos = current_video_page + ((y1 * SCREEN_WIDTH) + x1);

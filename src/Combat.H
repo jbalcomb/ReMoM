@@ -104,8 +104,8 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define CALC_BASE_CGC2  IDK_base_cgc2 = (itr_y / 2)
 #define CALC_BASE_CGC1  IDK_base_cgc1 = (((itr_y + 1) / 2) + 9)
 
-#define CALC_CGC2       cgc2 = (IDK_base_cgc2 + itr_x)
-#define CALC_CGC1       cgc1 = (IDK_base_cgc1 - itr_x)
+#define CALC_CGX       cgx = (IDK_base_cgc2 + itr_x)
+#define CALC_CGY       cgy = (IDK_base_cgc1 - itr_x)
 
 #define CALC_SCREEN_X   screen_x = ((itr_x * 32) - ((itr_y & 0x1) * 16))
 #define CALC_SCREEN_Y   screen_y = ((itr_y * 8) - 8)
@@ -125,11 +125,37 @@ extern SAMB_ptr DBG_figure_pict_base_seg;
 #define COMBAT_GRID_YMAX    22
 
 // path finding iters over {(21-2),(22-2)}
+// if(battlefield->Central_Structure!= CS_None)
+//     CMB_ActiveMoveMap[0xED] = -1;  // EDh  237d  237 / 21 = 11.28571  11 * 21 = 231  237 - 231 = 6  ~ cgx = 6, cgy = 11
 #define COMBAT_STRUCTURE_CGX 11
 #define COMBAT_STRUCTURE_CGY  6
 #define COMBAT_STRUCTURE_IDX ((COMBAT_STRUCTURE_CGY * COMBAT_GRID_WIDTH)   + COMBAT_STRUCTURE_CGX)
 #define COMBAT_GRID_CITY_AREA_WIDTH     4
 #define COMBAT_GRID_CITY_AREA_HEIGHT    4
+/*
+
+CMB_DrawMap__WIP()
+    if
+        (battlefield->Central_Structure == CS_SorceryNode)
+        (battlefield->Central_Structure == CS_ChaosNode)
+        (battlefield->Central_Structure == CS_Outpost)
+        && (cgx == 6) && (cgy == 11)
+    if
+        (battlefield->Central_Structure == CS_City)
+        (battlefield->Central_Structure == CS_Fortress)
+        && (cgx == 8) && (cgy == 13)
+
+*/
+/*
+Generate_Combat_Map__WIP()
+                battlefield->Wall_Sections[5] = 0;
+                battlefield->Wall_Sections[9] = 0;
+                battlefield->Wall_Sections[6] = 0;
+                battlefield->Wall_Sections[10] = 0;
+
+*/
+
+
 
 
 /*
@@ -517,17 +543,30 @@ enum Central_Structures
 };
 
 
-enum e_COMBAT_TERRAIN_TYPE
-{
-    ctt_Water      = 0, 
-    ctt_Plains     = 1, 
-    ctt_Hills      = 2, 
-    ctt_Desert     = 3, 
-    ctt_Mountains  = 4, 
-    ctt_Tundra     = 5, 
-    ctt_Forest     = 6
-};
+/*
+    BEGIN: Combat Terrain
+*/
 
+/*
+convert overland map terrain into combat map terrain
+
+'Combat Terrain Set'
+    Load_Combat_Terrain_Pictures()
+    Generate_Combat_Map__WIP()
+
+¿ overlaps with code using e_COMBAT_LOCATION_TYPE ?
+*/
+
+enum e_COMBAT_TERRAIN_SET
+{
+    cts_Water      = 0, 
+    cts_Plains     = 1, 
+    cts_Hills      = 2, 
+    cts_Desert     = 3, 
+    cts_Mountains  = 4, 
+    cts_Tundra     = 5, 
+    cts_Forest     = 6
+};
 
 enum Combat_TileGroup
 {
@@ -538,6 +577,10 @@ enum Combat_TileGroup
     CTG_DeepWater   = 4, 
     CTG_IDK         = 5
 };
+
+/*
+    END: Combat Terrain
+*/
 
 
 /*
@@ -699,8 +742,8 @@ struct s_CTY_ENCH
 // sizeof: 0x1598
 struct s_BATTLEFIELD
 {
-    /* 0x0000 */  int8_t Tile_Terrain[COMBAT_GRID_CELL_COUNT];  // 21 x 22
-    /* 0x039C */  int8_t Tile_TerrGroup[COMBAT_GRID_CELL_COUNT];  /* 1-byte, unsigned */
+    /* 0x0000 */  int8_t terrain_type[COMBAT_GRID_CELL_COUNT];  // 21 x 22
+    /* 0x039C */  int8_t terrain_group[COMBAT_GRID_CELL_COUNT];  /* 1-byte, unsigned */
     /* 0x056A */  int8_t Tile_Road[COMBAT_GRID_CELL_COUNT];
     /* 0x0738 */  int8_t MoveCost_Ground[COMBAT_GRID_CELL_COUNT];
     /* 0x0906 */  int8_t MoveCost_Teleport[COMBAT_GRID_CELL_COUNT];
@@ -1839,7 +1882,20 @@ void Combat_Figure_Compose_USEFULL(void);
 void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD ovr154p02
-void Generate_Combat_Map__WIP(int16_t location_type, int16_t house_type, int16_t roads_array[], int16_t enchanted_roads_flag, int16_t ctt, int16_t rivers_array[], int16_t flying_fortress_flag, int16_t attacker_floating_island_flag, int16_t defender_floating_island_flag, int16_t city_walls, int16_t city_population, int16_t magic_walls);
+void Generate_Combat_Map__WIP(
+    int16_t location_type, 
+    int16_t house_type, 
+    int16_t roads_array[], 
+    int16_t enchanted_roads_flag, 
+    int16_t cts, 
+    int16_t rivers_array[], 
+    int16_t flying_fortress_flag, 
+    int16_t attacker_floating_island_flag, 
+    int16_t defender_floating_island_flag, 
+    int16_t city_walls, 
+    int16_t city_population, 
+    int16_t magic_walls
+);
 
 // WZD ovr154p03
 // drake178: CMB_TreeGen()
@@ -1866,7 +1922,7 @@ void CMB_TileGen__WIP(int16_t ctt);
 void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls);
 
 // WZD ovr154p11
-// drake178: CMB_TerrPatchGen()
+void Patch_Terrain_Group(int16_t ctg, int16_t count, int16_t max, int16_t min);
 
 // WZD ovr154p12
 void Combat_Grid_Screen_Coordinates(int16_t cgc2, int16_t cgc1, int16_t something_x, int16_t something_y, int16_t * screen_x, int16_t * screen_y);
@@ -1911,7 +1967,7 @@ void Combat_Move_Path_Valid(int16_t cgx, int16_t cgy, int16_t moves2);
 */
 
 // WZD ovr163p01
-void Load_Combat_Terrain_Pictures(int16_t ctt, int16_t wp);
+void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp);
 
 // WZD ovr163p02
 void CMB_ComposeBackgrnd__WIP(void);
