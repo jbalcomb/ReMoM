@@ -1,7 +1,38 @@
 
 
 
-move Print() notes here to MoX-Print.md
+TODO  move Print() notes here to MoX-Print.md
+
+
+
+
+## Load_Font_File()
+
+void Load_Font_File(char * font_file)
+
+
+
+## Load_Palette()
+
+void Load_Palette(int entry, int start_color, int end_color)
+
+    palette_data = LBX_Reload(font_name, entry+2, palette_block);
+    font_colors = &palette_data[768];
+    // UU_gsa_Palette_Data = (palette_data + (16 * (48 + 16)));  // 400h
+    mouse_palette = (palette_data + (16 * (48 + 16 + 16)));  // 1280
+    remap_colors = (palette_data + (16 * (48 + 16 + 16 + 256)));  // FONTS.LBX, 2; @0x1500  5376
+    for(itr = 0; itr < (color_count * 3); itr++)
+        *(p_Palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
+    Set_Font_Style(0, 0, 0, 0);
+    if(start_color == ST_UNDEFINED)
+        Set_Palette_Changes(0, 255);
+    else
+        Set_Palette_Changes(start_color, end_color);
+
+
+
+
+
 
 
 

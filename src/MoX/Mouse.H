@@ -12,26 +12,26 @@ extern "C" {
 // "cursor image"
 enum e_Cursor_Image
 {
-    crsr_None,
-    crsr_Finger,
-    crsr_CastBase,
-    crsr_RedCross,
-    crsr_Ranged,
-    crsr_Melee,
-    crsr_Hourglass,
-    crsr_WingedBoot,
-    crsr_Empty,
-    crsr_CastAnim1,
-    crsr_CastAnim2,
-    crsr_CastAnim3,
-    crsr_CastAnim4,
-    crsr_CastAnim5
+    crsr_None        =  0,
+    crsr_Finger      =  1,
+    crsr_CastBase    =  2,
+    crsr_RedCross    =  3,
+    crsr_Ranged      =  4,
+    crsr_Melee       =  5,
+    crsr_Hourglass   =  6,
+    crsr_WingedBoot  =  7,
+    crsr_Empty       =  8,
+    crsr_CastAnim1   =  9,
+    crsr_CastAnim2   = 10,
+    crsr_CastAnim3   = 11,
+    crsr_CastAnim4   = 12,
+    crsr_CastAnim5   = 13
 };
 
 
 struct s_mouse_list
 {
-    int16_t image_num;
+    int16_t image_num;  /* 2-byte, signed */
     int16_t center_offset;
     int16_t x1;
     int16_t y1;

@@ -790,6 +790,9 @@ int16_t CMB_combat_structure;
 // WZD dseg:C522
 // MoO2  Module: MOX  _combat_mouse_grid
 struct s_mouse_list * _combat_mouse_grid;
+// struct s_mouse_list _combat_mouse_grid[1] = {
+//     {crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX}
+// };
 
 // WZD dseg:C524
 // drake178: CMB_TargetRows
@@ -5448,12 +5451,12 @@ void Assign_Mouse_Image(void)
 
     _scanned_battle_unit = ST_UNDEFINED;
 
-    CMB_ActiveUnitFrame = 0;
+    CMB_ActiveUnitFrame = ST_FALSE;
 
     if(_active_battle_unit > ST_UNDEFINED)
     {
 
-        CMB_ActiveUnitFrame = 1;
+        CMB_ActiveUnitFrame = ST_TRUE;
 
         CMB_ActiveUnitFrameX = battle_units[_active_battle_unit].cgx;
 
@@ -5469,7 +5472,7 @@ void Assign_Mouse_Image(void)
             if(battle_units[_active_battle_unit].controller_idx == combat_human_player)
             {
                 
-                CMB_ActiveUnitFrame = 0;
+                CMB_ActiveUnitFrame = ST_FALSE;
 
             }
 
@@ -5483,7 +5486,7 @@ void Assign_Mouse_Image(void)
 
     screen_y = (Pointer_Y() + 4);  // ¿ why the (+ 4) ?
 
-    CMB_TargetFrame = 0;
+    CMB_TargetFrame = ST_FALSE;
 
     if(screen_y < 168)
     {
@@ -5503,7 +5506,7 @@ void Assign_Mouse_Image(void)
         else if(CMB_TargetRows[cgy][cgx] == -1)
         {
 
-            CMB_TargetFrame = 1;
+            CMB_TargetFrame = ST_TRUE;
 
             CMB_TargetFrame_X = cgx;
 
@@ -5515,7 +5518,7 @@ void Assign_Mouse_Image(void)
         else if(CMB_TargetRows[cgy][cgx] == 99)
         {
 
-            CMB_TargetFrame = 1;
+            CMB_TargetFrame = ST_TRUE;
 
             CMB_TargetFrame_X = cgx;
 
@@ -5559,6 +5562,8 @@ void Assign_Mouse_Image(void)
                     )
                     {
 
+                        __debugbreak();
+
                         _combat_mouse_grid->image_num = crsr_Ranged;
 
                     }
@@ -5571,7 +5576,7 @@ void Assign_Mouse_Image(void)
         else  /* not -2, -1, 99 */
         {
 
-            CMB_TargetFrame = 1;
+            CMB_TargetFrame = ST_TRUE;
 
             CMB_TargetFrame_X = cgx;
 
@@ -5649,9 +5654,9 @@ void Assign_Mouse_Image(void)
     if(_auto_combat_flag == ST_TRUE)
     {
         
-        CMB_ActiveUnitFrame = 0;
+        CMB_ActiveUnitFrame = ST_FALSE;
 
-        CMB_TargetFrame = 0;
+        CMB_TargetFrame = ST_FALSE;
 
     }
 
@@ -5662,6 +5667,8 @@ void Assign_Mouse_Image(void)
     _combat_mouse_grid->y2 = SCREEN_YMAX;
 
     Set_Mouse_List(1, _combat_mouse_grid);
+
+    Draw_Mouse_On_Page_(7, 191);
 
 }
 
@@ -26135,7 +26142,7 @@ void CMB_ComposeBackgrnd__WIP(void)
                 )
             {
 
-                __debugbreak();
+                // __debugbreak();
 
             }
 

@@ -67,7 +67,7 @@ SAMB_ptr Intensity_Scale_Tbl;
 
 // WZD dseg:E7FC
 SAMB_ptr palette_data;
-// WZD dseg:E7FE0                               ; 15Ch paragraphs
+// WZD dseg:E7FE0
 SAMB_ptr palette_block;
 
 // WZD dseg:E800
@@ -2566,52 +2566,22 @@ void Load_Palette(int entry, int start_color, int end_color)
 
     palette_data = LBX_Reload(font_name, entry+2, palette_block);
     // 1oom: lbxpal_palette_inlbx = palette_data;
-#ifdef STU_DEBUG
-//     for(palette_idx = 0; palette_idx < 256; palette_idx++)
-//     {
-//         dbg_prn("[%02X] %02X %02X %02X\n", palette_idx, *(palette_data + (palette_idx * 3) + 0), *(palette_data + (palette_idx * 3) + 1), *(palette_data + (palette_idx * 3) + 2) );
-//     }
-#endif
-#ifdef STU_DEBUG
-//     for(palette_idx = 0; palette_idx < 256; palette_idx++)
-//     {
-//         dbg_prn("[%d] %d %d %d\n", palette_idx, *(palette_data + (palette_idx * 3) + 0), *(palette_data + (palette_idx * 3) + 1), *(palette_data + (palette_idx * 3) + 2) );
-//     }
-#endif
 
     // font_colors = (palette_data + (16 * (48)));  // 768
     font_colors = &palette_data[768];
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(font_color_block = 0; font_color_block < 16; font_color_block++)
-// DELETE      {
-// DELETE          for(color_index = 0; color_index < 16; color_index++)
-// DELETE          {
-// DELETE              dbg_prn("DEBUG: [%s, %d]: font_colors[%d][%d]: 0x%02X\n", __FILE__, __LINE__, font_color_block, color_index, font_colors[(font_color_block * 16) + color_index]);
-// DELETE          }
-// DELETE  
-// DELETE      }
-// DELETE  #endif
 
     // UU_gsa_Palette_Data = (palette_data + (16 * (48 + 16)));  // 400h
 
     mouse_palette = (palette_data + (16 * (48 + 16 + 16)));  // 1280
+    // 5376 - 1280 = 4096
+    // CURSOR_WIDTH == 16; CURSOR_HEIGHT == 16
+    // 16 * 16 = 256
+    // 4096 / 256 = 16
 
     // array of 24 color fractions (B-G-R-Percent)
     // used to set shaded replacement colors for each color index
     // gsa_ShadingColors = (palette_data + (16 * (48 + 16 + 16 + 256)));  // 5376  (24 * 4 = 96) 0x60  6 PR
     remap_colors = (palette_data + (16 * (48 + 16 + 16 + 256)));  // FONTS.LBX, 2; @0x1500  5376
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(itr = 0; itr < 24; itr++)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: remap_colors[%d]: %02X %02X %02X %d\n", __FILE__, __LINE__, itr, remap_colors[itr * 4 + 0], remap_colors[itr * 4 + 1], remap_colors[itr * 4 + 2], remap_colors[itr * 4 + 3]);
-// DELETE      }
-// DELETE  #endif
-// DELETE  #ifdef STU_DEBUG
-// DELETE      for(itr = 0; itr < 24; itr++)
-// DELETE      {
-// DELETE          dbg_prn("DEBUG: [%s, %d]: remap_colors[%d]: %d %d %d %d\n", __FILE__, __LINE__, itr, remap_colors[itr * 4 + 0], remap_colors[itr * 4 + 1], remap_colors[itr * 4 + 2], remap_colors[itr * 4 + 3]);
-// DELETE      }
-// DELETE  #endif
     // 1oom
     // lbxpal_ctableparam = Pal + 0x1500;
     // 1oom: lbxpal_ctableparam = palette_data + 0x1500;
@@ -2633,14 +2603,6 @@ void Load_Palette(int entry, int start_color, int end_color)
         // MoO2 current_palette
         *(p_Palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
     }
-
-// DELETE      for(itr = 0; itr < color_count; itr++)
-// DELETE      {
-// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 3) = 0x00;
-// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 2) = (*(palette_data + (color_start * 3) + (itr * 3) + 0) << 2);
-// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 1) = (*(palette_data + (color_start * 3) + (itr * 3) + 1) << 2);
-// DELETE          *(p_Palette_XBGR + (color_start * 4) + (itr * 4) + 0) = (*(palette_data + (color_start * 3) + (itr * 3) + 2) << 2);
-// DELETE      }
 
     Set_Font_Style(0, 0, 0, 0);
 
