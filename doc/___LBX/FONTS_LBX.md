@@ -5,6 +5,18 @@
 5568 bytes each
 768 bytes of 256 colors of 6-bbp Red, Green, Blue  {0, ..., 63} {0x00, ..., 0x3F}
 
+
+
+FONTS_000_1
+FONTS_000_2
+FONTS_000_3
+FONTS_000_4
+
+
+
+
+
+
 font header structure
 font structure
 

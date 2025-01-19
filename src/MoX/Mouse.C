@@ -25,7 +25,7 @@ struct s_mouse_list mouse_list_none[1] = {
 // };
 
 struct s_mouse_list mouse_list_default[1] = {
-    {crsr_Finger, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
+    {crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX}
 };
 
 
@@ -125,36 +125,51 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     struct s_mouse_list * tmp_list;
 
     tmp_list = list;
+
     tmp_count = count;
 
     current_mouse_list_count = count;
+
     current_mouse_list = list;
 
     tmp_count--;
 
     if(tmp_count != 0)
     {
+
+        __debugbreak();
+
         *tmp_list = list[tmp_count];
+
         do
         {
+
             if((tmp_list->x1 == 0) && (tmp_list->y1 == 0))
             {
+
                 break;
+
             }
+
             *tmp_list = list[tmp_count];
+
             tmp_list--;
+
             tmp_count--;
+
         } while(tmp_count != 0);
+
     }
 
     current_pointer_offset = list[tmp_count].center_offset;
+
     current_pointer_image_number = list[tmp_count].image_num;
 
 }
 
 
 // WZD s35p02
-// void GUI_FindWindow(int X_Pos, int Y_Pos);
+// drake178: GUI_FindWindow()
 void Check_Mouse_Shape(int16_t l_mx, int16_t l_my)
 {
     int16_t count;
@@ -630,6 +645,7 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y)
     }
 
 }
+
 void Draw_Mouse_Off_Page(int16_t x, int16_t y)
 {
 
@@ -639,9 +655,9 @@ void Draw_Mouse_Off_Page(int16_t x, int16_t y)
     }
 
 }
+
 void Draw_Mouse_On_Page_(int16_t x, int16_t y)
 {
-
     uint8_t * mouse_image;
     uint8_t * screen_page;
     uint16_t screen_page_offset;
@@ -652,7 +668,7 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
     uint8_t pixel;
 
     // clip the cursor image to the right and the bottom of the screen
-    if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH ; } else { width  = SCREEN_WIDTH  - x; }
+    if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH;  } else { width  = SCREEN_WIDTH  - x; }
     if(y + CURSOR_HEIGHT < SCREEN_HEIGHT) { height = CURSOR_HEIGHT; } else { height = SCREEN_HEIGHT - y; }
 
     screen_page_offset = ((y * SCREEN_WIDTH) + x);
@@ -672,11 +688,11 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
             }
         }
     }
+
 }
 
 void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
 {
-
     uint8_t * mouse_image;
     uint8_t * screen_page;
     uint16_t screen_page_offset;

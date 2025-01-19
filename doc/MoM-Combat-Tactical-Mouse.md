@@ -46,6 +46,31 @@ Assign_Combat_Grids()
 
 
 
+## DEBUG
+
+mouse image orientation
+BUG: ¿ 90 degrees counter-clockwise and flipped ?
+
+Assign_Mouse_Image()
+    struct s_mouse_list * _combat_mouse_grid;
+    ...
+    _combat_mouse_grid->image_num = crsr_Finger;
+    ...
+    _combat_mouse_grid->center_offset = 0;
+    _combat_mouse_grid->x1 = SCREEN_XMIN;
+    _combat_mouse_grid->y1 = SCREEN_YMIN;
+    _combat_mouse_grid->x2 = SCREEN_XMAX;
+    _combat_mouse_grid->y2 = SCREEN_YMAX;
+    Set_Mouse_List(1, _combat_mouse_grid);
+
+Draw_Mouse_On_Page()
+    |-> Draw_Mouse_On_Page_()
+
+
+
+
+
+
 
 
 ##### Naming Things is Hard
