@@ -215,11 +215,16 @@ enum e_UNIT_TYPE
 2-Byte, Signed
 "Special"   {100, 101, 102, 103, 104, 105}
 
+in BU_ProcessAttack__WIP()
+attake type 0 is Melee
+
 */
 enum e_RANGED_ATTACK_TYPE
 {
-    rat_None         =  -1,
-    /* rat_None         =   0, ... BU_IsRangedUnit() checks > 0 */
+    rat_None         =  -1,  /* ¿ out of ammo / not enough mana ? Battle_unit_attack__WIP() */
+    rat_NONE         =   0,
+        /* BU_IsRangedUnit() checks ranged_type > 0 */
+        /* BU_MeleeFlightCheck__WIP() checks ranged_type > 0 */
 
     rat_Rock         =  10,
     rat_Cannon       =  11,
@@ -238,12 +243,12 @@ enum e_RANGED_ATTACK_TYPE
     rat_Sprite       =  37,
     rat_Nat_Bolt     =  38,
 
-    srat_Thrown      = 100,
-    srat_FireBreath  = 101,
-    srat_Lightning   = 102,
-    srat_StoneGaze   = 103,
-    srat_MultiGaze   = 104,
-    srat_DeathGaze   = 105
+    srat_Thrown      = 100,     /* Thrown Attack */
+    srat_FireBreath  = 101,     /* Breath Attack */ /* "Fiery Breath"     */
+    srat_Lightning   = 102,     /* Breath Attack */ /* "Lightning Breath" */
+    srat_StoneGaze   = 103,     /* Gaze Attack   */
+    srat_MultiGaze   = 104,     /* Gaze Attack   */
+    srat_DeathGaze   = 105      /* Gaze Attack   */
 };
 
 enum e_RANGED_ATTACK_GROUP
@@ -260,8 +265,8 @@ enum e_RANGED_ATTACK_GROUP
 struct s_UNIT_TYPE
 {
     /* 00 */  char **  name;                    /* offset (00036AA0) */
-    /* 02 */  int8_t   Melee;
-    /* 03 */  int8_t   Ranged;
+    /* 02 */  int8_t   Melee;   /* Melee Attack Strength */
+    /* 03 */  int8_t   Ranged;  /* Ranged Attack Strength */
     /* 04 */  int8_t   Ranged_Type;             // enum e_RANGED_ATTACK_TYPE
     /* 05 */  int8_t   Ammo;
     /* 06 */  int8_t   To_Hit;
@@ -271,13 +276,13 @@ struct s_UNIT_TYPE
     /* 0A */  int16_t  Cost;
     /* 0C */  int8_t   Upkeep;
     /* 0D */  int8_t   Race;
-    /* 0E */  // int8_t   Bldng1_or_Portrait;      /* enum BLD_TYPE */
+    /* 0E */  // int8_t   Bldng1_or_Portrait;   /* enum BLD_TYPE */
     union
     {
         int8_t   reqd_bldg_1;
         int8_t   hero_portrait;  /* entry_num PORTAITS.LBX */
     };
-    /* 0F */  // int8_t   Bldng2_or_HeroType;      /* enum BLD_TYPE */
+    /* 0F */  // int8_t   Bldng2_or_HeroType;   /* enum BLD_TYPE */
     union
     {
         int8_t   reqd_bldg_2;
@@ -291,11 +296,11 @@ struct s_UNIT_TYPE
     /* 16 */  int8_t   Construction;
     /* 17 */  int8_t   Spec_Att_Attr;
     /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
-    /* 1A */  int16_t Attribs_1;               /* enum ATTRIB_1 */
-    /* 1C */  int8_t Attribs_2;               /* enum ATTRIB_2 */
+    /* 1A */  int16_t Attribs_1;                /* enum ATTRIB_1 */
+    /* 1C */  int8_t Attribs_2;                 /* enum ATTRIB_2 */
     /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
-    /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */
+    /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.
     /* 22 */  int16_t  Sound;
 };
 #pragma pack(pop)
