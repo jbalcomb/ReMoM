@@ -492,7 +492,7 @@ Combat_Figure_Load()
 #define FIGUREX_OFFSET      if((battle_unit_figure_idx & 0x1) == 0) { offset = 0; } else { offset = (512 * SZ_PARAGRAPH_B); } offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
 #define FIGUREX_POINTER     figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33); ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 /*
-    Battle Unit Macros
+    Global Battle Unit Macros
 
         Unit Special Abilities
         Unit Mutations
@@ -504,6 +504,57 @@ Combat_Figure_Load()
 #define BU_CASTER_40()  ( ( battle_unit->Attribs_1 & USA_CASTER_40 ) != 0 )
 
 
+
+/*
+    Tactical Combat Macros
+*/
+
+#define DAMAGE_TYPE_1   1   /* ¿ ? */
+#define DAMAGE_TYPE_2   2   /* ¿ ? */
+#define DAMAGE_TYPE_3   3    /* ¿ ? */
+
+/*
+    Combat Battle Unit Macros
+
+        Unit Special Abilities
+        Unit Mutations
+        Unit Enchantments
+
+attacker_battle_unit_idx
+defender_battle_unit_idx
+
+battle_units[].Attack_Flags
+battle_units[].Attribs_1
+
+battle_units[].Attack_Flags
+    Att_ArmorPrc, Att_1stStrike, Att_Poison, Att_LifeSteal, Att_DoomDmg, Att_Destruct, Att_Illusion, Att_StnTouch, _noeffect100, Att_DthTouch, Att_PwrDrain, Att_DsplEvil, Att_AREAFLAG, Att_DMGLIMIT, Att_EldrWeap, Att_WarpLghtn
+
+battle_units[].Attribs_1
+    USA_IMMUNITY_FIRE, USA_IMMUNITY_STONING, USA_IMMUNITY_MISSILES, USA_IMMUNITY_ILLUSION, USA_IMMUNITY_COLD, USA_IMMUNITY_MAGIC, USA_IMMUNITY_DEATH, USA_IMMUNITY_POISON, USA_IMMUNITY_WEAPON, USA_FLYING, USA_LUCKY, USA_SUMMON_DEMON_1, USA_SUMMON_DEMON_2, USA_CASTER_20, USA_CASTER_40, USA_RACE_SPECIFIC_UNIT
+
+*/
+#define ATT_POISON_ATTACK       ((battle_units[attacker_battle_unit_idx].Attack_Flags & Att_Poison) != 0)
+#define DEF_POISON_IMMUNITY     ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_POISON) == 0)
+
+
+
+enum e_COMBAT_ATTACK_MODE
+{
+    am_Melee            = 0,
+    am_ThrownOrBreath   = 1,
+    am_Ranged           = 2
+};
+
+enum e_COMBAT_STRUCTURE
+{
+    cs_NONE              = 0,
+    cs_City              = 1,
+    cs_SorceryNode       = 2,
+    cs_NatureNode        = 3,
+    cs_ChaosNode         = 4,
+    cs_UNKOWN            = 5,
+    cs_OceanTerrainType  = 6
+};
 
 enum e_COMBAT_LOCATION_TYPE
 {
@@ -662,19 +713,6 @@ enum e_CMB_ScrollMsg_Type
     cmbmsg_IDK_11      = 11,
     cmbmsg_CityLost    = 12   // ; city lost
 };
-
-
-enum e_COMBAT_STRUCTURE
-{
-    cs_NONE              = 0,
-    cs_City              = 1,
-    cs_SorceryNode       = 2,
-    cs_NatureNode        = 3,
-    cs_ChaosNode         = 4,
-    cs_UNKOWN            = 5,
-    cs_OceanTerrainType  = 6
-};
-
 
 struct s_COMBAT_ENCHANTMENT_STATUS
 {
@@ -1213,11 +1251,10 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[]);
 // BU_CheckFlight()
 
 // WZD o98p18
-// drake178: BU_IsFlying()
-// BU_IsFlying()
+int16_t Battle_Unit_Has_Flight(int16_t battle_unit_idx);
 
 // WZD o98p19
-int16_t BU_MeleeFlightCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx);
+int16_t Check_Attack_Melee(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
 
 // WZD o98p20
 // drake178: BU_PrepMoveSound()
@@ -1472,19 +1509,19 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx);
 // CMB_TargetSpell()
 
 // WZD o113p04
-// CMB_RangedAnim()
+void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Sum, int16_t cgx, int16_t cgy);
 
 // WZD o113p05
-// CMB_MeleeAnim()
+void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy);
 
 // WZD o113p06
 void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override);
 
 // WZD o113p07
-void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[]);
+void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[]);
 
 // WZD o113p08
-// BU_RangedValidate()
+int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
 
 // WZD o113p09
 void Deploy_Battle_Units(int16_t player_idx);
@@ -1598,10 +1635,10 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit);
 */
 
 // WZD o122p01
-// CMB_AttackRoll()
+int16_t CMB_AttackRoll__SEGRAX(uint16_t attack_strength, uint16_t to_hit);
 
 // WZD o122p02
-// CMB_DefenseRoll()
+uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block);
 
 // WZD o122p03
 int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, int16_t magic_realm);
@@ -1613,13 +1650,13 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 // BU_GetATKImmFlags()
 
 // WZD o122p06
-// BU_AttackTarget()
+void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t Target_Damage_Array[], int16_t Counter_Damage_Array[], int16_t ranged_attack_flag, int16_t SpFx);
 
 // WZD o122p07
-// BU_ProcessAttack()
+void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx);
 
 // WZD o122p08
-int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm);
+int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm);
 
 // WZD o122p09
 // BU_GetATKRealm()
@@ -1628,7 +1665,7 @@ int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t 
 void Init_Battlefield_Effects(int16_t combat_structure);
 
 // WZD o122p11
-void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_datum, int16_t Target_X, int16_t Target_Y);
+void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy);
 
 // WZD o122p12
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2);
@@ -1640,7 +1677,7 @@ int16_t AI_BU_GetAttackValue__STUB(int16_t battle_unit_idx, int16_t target_battl
 int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx);
 
 // WZD o122p15
-// BU_CauseFear()
+int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx);
 
 
 
@@ -1705,7 +1742,7 @@ int16_t AI_CompareArmies__STUB(int16_t player_idx);
 // GAME_LoadSpellSound()
 
 // WZD o124p10
-// BU_WallofFire()
+void BU_WallofFire__NOOP(int16_t battle_unit_idx);
 
 // WZD o124p11
 // BU_SetBloodAnim()
@@ -1720,7 +1757,7 @@ int16_t BU_IsInCityProper__STUB(int16_t battle_unit_idx);
 int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1);
 
 // WZD o124p15
-int16_t BU_IsCombatSummon(int16_t battle_unit_idx);
+int16_t BU_IsCombatSummon__WIP(int16_t battle_unit_idx);
 
 // WZD o124p16
 int16_t Battle_Unit_Moves2(int16_t battle_unit_idx);

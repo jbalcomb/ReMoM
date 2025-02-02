@@ -13,6 +13,18 @@ Combat Information Window
 
 
 
+Wall Crushers
+    Catapult
+    Engineers
+    War Mammoths
+    Colossus
+    Earth Elemental
+    Fire Giant
+    Stone Giant
+    Storm Giants
+
+
+
 ¿ "entity" vs. unit/object/combat_grid_datum ?
 unit level
 figure level
@@ -282,11 +294,15 @@ a combat unit display
 upper right corner of the combat screen
 active unit
 
-
+standard city walls
+magic walls
+a magic wall
+Wall Crusher ability
 
 Settings Screen
 
 Auto Unit Information
+
 
 
 Page 90  (PDF Page 95)
@@ -303,3 +319,42 @@ This window can be toggled on and off by pressing L on the keyboard.
 The combat unit display contains some useful information to have available during battle,  
   including the remaining ammunition (if relevant) of the active unit,   
   mana and health of the "front" figure in the active unit.
+
+Page 57  (PDF Page 62)
+
+CITY ENCHANTMENTS AND CITY WALLS
+
+Some specific city enchantments create magic walls around the city  
+  (wall of darkness and wall of fire; see Spellbook supplement).  
+Only one magic wall can encircle a city at any one time;  
+  however, a city can have standard city walls (an option in the production screen; see Buildings)  
+  in addition to a magic wall.  
+The Wall Crusher ability that some units have only applies to the standard city walls,  
+  not to magic ones (see Special Unit Abilities).
+
+
+Page 85  (PDF Page 90)
+
+Wall Crusher . . . . . . .  
+Ability to destroy a section of stone wall 50% of the time if unit is adjacent to the target wall section.  
+This probability falls to 25% if the target wall section is attacked at range.  
+Units with this ability melee attack adjacent enemy units across wall sections that they destroy that turn.  
+When conducting ranged attacks, wall crushers also attack an enemy unit that is in the targeted wall square.  
+If the wall is not crushed, the defenders receive the wall’s full benefit against the attack.  
+If the wall crumbles, they don’t.  
+
+
+Page 98  (PDF Page 103)
+
+STRUCTURES INFLUENCING COMBAT
+
+City Walls
+
+City walls prevent all nonflying creatures from entering a city except through the city gates.  
+Ranged attacks can be used on garrisoned units cowering behind the walls, but nonflying defenders gain a +3 bonus to their defense (shields) against such attacks.  
+Flyers cannot really cower as well and are more exposed to ranged attacks, so they only receive a defense bonus of one shield when "behind" a wall.  
+Units that have the special ability Wall Crusher (see Special Unit Abilities) can systematically destroy city walls, allowing attackers greater access to any garrisoned units.  
+In addition, nonflying defenders behind destroyed city wall sections only get a +1 bonus to their defense against ranged attacks.  
+Note that both magic and city walls can exist concurrently.  
+They also have different effects (see Building Types and Spellbook supplement).  
+Magic walls may not be crushed; they may only be dispelled.  

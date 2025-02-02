@@ -33,7 +33,7 @@ void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_
 
 #include "FIGURES8_LBX_063.H"
 
-int16_t DBG_Ignore_Computer_Player = ST_TRUE;
+int16_t DBG_Ignore_Computer_Player = ST_FALSE; // {ST_FALSE, ST_TRUE} skips computer player's turn - AI_MoveBattleUnits__WIP()
 int16_t DBG_player_idx = HUMAN_PLAYER_IDX;
 int16_t DBG_cgx = 0;  // 14
 int16_t DBG_cgy = 0;  // 12
@@ -354,6 +354,13 @@ char cnst_Ammo[] = "ammo";
 // WZD dseg:59B3                                                 END:  ovr105 - Initialized Data
 
 
+
+// WZD dseg:5E9E                                                 BEGIN:  ovr122 - Initialized Data
+
+// WZD dseg:5E9E
+char message_lbx_file__ovr122[] = "message";
+
+// WZD dseg:5E9E                                                 END:  ovr122 - Initialized Data
 
 
 
@@ -1309,6 +1316,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     int16_t combat_grid_field = 0;
     // int16_t Grid_Y = 0;
     // int16_t Grid_X = 0;
+    // TODO  rename Grid_X & Grid_Y - they are the screen x,y of a click on the combat grid
     int64_t Grid_Y = 0;
     int64_t Grid_X = 0;
     int16_t Bottom_GUI_Escape_Hotkey = 0;
@@ -2009,8 +2017,6 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
                 CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
-                // CMB_TargetFrame_X = COMBAT_GRID_X1(Grid_X, Grid_Y);
-                // CMB_TargetFrame_Y = COMBAT_GRID_Y1(Grid_X, Grid_Y);
 
                 Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
@@ -2023,7 +2029,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Assign_Combat_Grids();
 
-                CRP_CMB_NeverChecked1 = 1;
+                CRP_CMB_NeverChecked1 = ST_TRUE;
 
                 Combat_Winner = Check_For_Winner__WIP();
 
@@ -3418,7 +3424,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 {
     int16_t Target_Y = 0;
     int16_t Target_X = 0;
-    int16_t Ranged_Group = 0;
+    int16_t ranged_group = 0;  /* ~ "ranged attack type" */
     int16_t Unused_Local = 0;
     int16_t Y_Distance = 0;
     int16_t X_Distance = 0;
@@ -3447,9 +3453,9 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
         if(combat_grid_target == 99)  /* City Wall */
         {
 
-            Target_X = cgx;
+            Target_X = cgx;  // passed in - CMB_TargetFrame_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
 
-            Target_Y = cgy;
+            Target_Y = cgy;  // passed in - CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
 
         }
         else
@@ -3461,11 +3467,11 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
         }
 
-        X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);
+        X_Distance = abs(Target_X - battle_units[battle_unit_idx].cgx);  // passed in - _active_battle_unit
 
-        Y_Distance = abs(Target_Y - battle_units[battle_unit_idx].cgy);
+        Y_Distance = abs(Target_Y - battle_units[battle_unit_idx].cgy);  // passed in - _active_battle_unit
 
-        Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy dbug code
+        Unused_Local = -2;  // ¿ -2 as in invalid target ?  ...can't think of any reason this would be here, not even as legacy debug code
 
         if(battle_units[battle_unit_idx].movement_points > 0)
         {
@@ -3473,6 +3479,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
             if(combat_grid_target == 99)  /* City Wall */
             {
 
+                // if "ranged attack" else "melee attack"
                 if(
                     (X_Distance > 1)
                     ||
@@ -3480,18 +3487,18 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
                 )
                 {
 
-                    Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+                    ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
 
                     if(
-                        (Ranged_Group == rag_Boulder)
+                        (ranged_group == rag_Boulder)
                         ||
-                        (Ranged_Group == rag_Missile)
+                        (ranged_group == rag_Missile)
                         ||
-                        (Ranged_Group == rag_Magic)
+                        (ranged_group == rag_Magic)
                     )
                     {
 
-                        BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+                        Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
 
                     }
 
@@ -3499,15 +3506,16 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
                 else
                 {
 
-                    BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+                    Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
 
                 }
 
             }
-            else
+            else  /* (combat_grid_target != 99) */
             {
 
-                if(BU_MeleeFlightCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
+                // ¿ can attack, if attacker has flight or both do ?
+                if(Check_Attack_Melee(battle_unit_idx, combat_grid_target) == ST_TRUE)
                 {
 
                     if(
@@ -3517,46 +3525,46 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
                     )
                     {
 
-                        Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+                        ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
 
                         if(
-                            (Ranged_Group == rag_Boulder)
+                            (ranged_group == rag_Boulder)
                             ||
-                            (Ranged_Group == rag_Missile)
+                            (ranged_group == rag_Missile)
                             ||
-                            (Ranged_Group == rag_Magic)
+                            (ranged_group == rag_Magic)
                         )
                         {
 
-                            BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+                            Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
 
                         }
 
                     }
-                    else
+                    else  /* (X_Distance <= 0) && (Y_Distance <= ) */
                     {
 
                         if(BU_MeleeWallCheck__WIP(battle_unit_idx, combat_grid_target) == ST_TRUE)
                         {
 
-                            BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+                            Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
 
                         }
                         else
                         {
 
-                            Ranged_Group = (battle_units[battle_unit_idx].ranged_type / 10);
+                            ranged_group = (battle_units[battle_unit_idx].ranged_type / 10);
 
                             if(
-                                (Ranged_Group == rag_Boulder)
+                                (ranged_group == rag_Boulder)
                                 ||
-                                (Ranged_Group == rag_Missile)
+                                (ranged_group == rag_Missile)
                                 ||
-                                (Ranged_Group == rag_Magic)
+                                (ranged_group == rag_Magic)
                             )
                             {
 
-                                BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+                                Battle_Unit_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
 
                             }
 
@@ -5605,7 +5613,7 @@ void Assign_Mouse_Image(void)
                     if(battle_units[_active_battle_unit].movement_points > 0)
                     {
 
-                        if(BU_MeleeFlightCheck__WIP(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
+                        if(Check_Attack_Melee(_active_battle_unit, scanned_battle_unit_idx) == ST_TRUE)
                         {
 
                             if(
@@ -6100,7 +6108,75 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
 // WZD o98p18
 // drake178: BU_IsFlying()
-// BU_IsFlying()
+/*
+; returns 1 if the target unit can fly in battle, or 0
+; if not
+;
+; BUG: considers the Wind Walking spell a form of
+; flight, but ignores Demon Wings unless it sets the
+; flight movement flag in the BU record
+*/
+/*
+
+has UE_WINDWALKING, UE_FLIGHT, MV_FLYING
+not bue_Web, bue_Black_Sleep
+
+*/
+int16_t Battle_Unit_Has_Flight(int16_t battle_unit_idx)
+{
+    uint32_t enchantments = 0;
+    int16_t has_flight = 0;  // DNE in Dasm
+
+    has_flight = ST_FALSE;
+
+    enchantments = (battle_units[battle_unit_idx].enchantments | battle_units[battle_unit_idx].item_enchantments);
+
+    if((enchantments & UE_WINDWALKING) != 0)
+    {
+
+        has_flight = ST_TRUE;
+        
+    }
+
+    if((enchantments & UE_FLIGHT) != 0)
+    {
+
+        has_flight = ST_TRUE;
+        
+    }
+
+    if((_unit_type_table[_UNITS[battle_units[battle_unit_idx].unit_idx].type].Move_Flags & MV_FLYING) != 0)
+    {
+
+        has_flight = ST_TRUE;
+        
+    }
+
+    if((battle_units[battle_unit_idx].Move_Flags & MV_FLYING) != 0)
+    {
+
+        has_flight = ST_TRUE;
+
+    }
+
+    if((battle_units[battle_unit_idx].Combat_Effects & bue_Web) != 0)
+    {
+
+        has_flight = ST_FALSE;
+
+    }
+
+    if((battle_units[battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
+    {
+
+        has_flight = ST_FALSE;
+
+    }
+
+    return has_flight;
+
+}
+
 
 // WZD o98p19
 // drake178: BU_MeleeFlightCheck()
@@ -6114,11 +6190,41 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 */
 /*
 
-*/
-int16_t BU_MeleeFlightCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_unit_idx)
-{
+¿ compliment to Check_Attack_Ranged() ?
 
-    /* HACK */  return ST_TRUE;
+*/
+int16_t Check_Attack_Melee(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
+{
+    int16_t result = 0;
+    int16_t defender_has_flight = 0;
+    int16_t attacker_has_flight = 0;
+
+    result = ST_FALSE;
+
+    attacker_has_flight = Battle_Unit_Has_Flight(attacker_battle_unit_idx);
+
+    defender_has_flight = Battle_Unit_Has_Flight(defender_battle_unit_idx);
+
+    if(
+        (attacker_has_flight == ST_TRUE)
+        ||
+        (defender_has_flight != ST_TRUE)
+        ||
+        (battle_units[attacker_battle_unit_idx].ranged_type > rat_NONE)
+    )
+    {
+
+        result = ST_TRUE;
+
+    }
+    else
+    {
+
+        result = ST_FALSE;
+
+    }
+
+    return result;
 
 }
 
@@ -10437,7 +10543,7 @@ int16_t Strategic_Combat__WIP(int16_t troops[], int16_t troop_count, int16_t wx,
             // ; to the target battle unit, reducing its figure count
             // ; or marking it dead as necessary (in which case the
             // ; combat victor and true sights are also updated)
-            BU_ApplyDamage(BU_Index, &Dmg_Array[0]);
+            BU_ApplyDamage__WIP(BU_Index, &Dmg_Array[0]);
 
             if(battle_units[BU_Index].status <= 0)
             {
@@ -11181,31 +11287,225 @@ int16_t Combat_Casting_Cost_Multiplier(int16_t player_idx)
 */
 
 // WZD o113p01
-// CMB_SetTargetCursor()
+// drake178: CMB_SetTargetCursor()
 
 // WZD o113p02
-// CMB_DrawTargetScreen()
+// drake178: CMB_DrawTargetScreen()
 
 // WZD o113p03
-// CMB_TargetSpell()
+// drake178: CMB_TargetSpell()
 
 // WZD o113p04
-// CMB_RangedAnim()
+// drake178: CMB_RangedAnim()
+/*
+; performs a ranged attack animation by the chosen
+; unit against the target specified, using projectiles
+; based on the unit's ranged attack type
+*/
+/*
+
+*/
+void CMB_RangedAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_total, int16_t cgx, int16_t cgy)
+{
+
+    return;
+
+}
+
 
 // WZD o113p05
-// CMB_MeleeAnim()
+// drake178: CMB_MeleeAnim()
+/*
+performs the melee attack animation between the
+specified two units, or shows the chosen unit
+attacking the tile at the selected coordinates (used
+when targeting walls with Wall Crushers)*/
+/*
 
-// WZD o113p06
-// CMB_ConvSpellAttack()
-
-// WZD o113p07
-// Segrax
-void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
+*/
+void CMB_MeleeAnim__STUB(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t attacker_damage, int16_t defender_damage, int16_t cgx, int16_t cgy)
 {
-    int16_t Figures_Lost;
-    int16_t Total_Damage;
-    int16_t itr;  // _DI_
 
+    return;
+
+}
+
+
+// Segrax
+// WZD o113p06
+// drake178: CMB_ConvSpellAttack()
+/*
+*/
+/*
+
+
+
+*/
+void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override) {
+    int32_t Enchants = 0;
+    int16_t Total_Damage = 0;
+    int16_t Figures_Slain = 0;
+    int16_t To_Block = 0;
+    int16_t Attack_Count = 0;
+    int16_t Attack_Strength = 0;
+    int16_t Effective_Defense = 0;
+    int16_t Immunity_Flags = 0;
+    int16_t Attack_Flags = 0;
+    int16_t Top_Figure_Damage = 0;
+    uint16_t Loop_Var = 0;
+
+    struct s_BATTLE_UNIT* battleunit = &battle_units[BU_Index];
+    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
+
+    Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
+
+    for (Loop_Var = 0; Loop_Var < 3; Loop_Var++) {
+        Dmg_Array[Loop_Var] = 0;
+    }
+
+    if (Enchants & UE_RIGHTEOUSNESS) {
+        struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
+        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death) {
+            return;
+        }
+    }
+
+    if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
+        return;
+    }
+
+    Top_Figure_Damage = battleunit->TopFig_Dmg;
+
+    struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
+    Attack_Flags = spell->Params2_3;
+
+    To_Block = battleunit->To_Block;
+    if (Attack_Flags & Att_EldrWeap) {
+        To_Block--;
+    }
+
+    Immunity_Flags = spell->Param1;
+
+    if (ATK_Override > 0) {
+        Attack_Strength = ATK_Override;
+    } else {
+        Attack_Strength = spell->Param0;
+    }
+
+    Effective_Defense = BU_GetEffectiveDEF__SEGRAX(BU_Index, 0x26, Immunity_Flags, Attack_Flags, spell->magic_realm);
+
+    if (Attack_Flags & Att_AREAFLAG) {
+        Attack_Count = battleunit->Cur_Figures;
+        Attack_Flags |= Att_DMGLIMIT;
+    }
+    else if (Attack_Flags & Att_WarpLghtn) {
+        Attack_Count = Attack_Strength;
+    }
+    else {
+        Attack_Count = 1;
+    }
+
+    if (battleunit->Combat_Effects & bue_Black_Sleep) {
+        Attack_Flags |= Att_DoomDmg;
+    }
+
+    for (Loop_Var = 0; Loop_Var < Attack_Count; Loop_Var++) {
+        int16_t damage = 0;
+
+        if (Attack_Flags & Att_DoomDmg) {
+            damage = Attack_Strength;
+        }
+        else {
+            damage = CMB_AttackRoll__SEGRAX(Attack_Strength, 0) - CMB_DefenseRoll__SEGRAX(Effective_Defense, To_Block);
+            if (Enchants & UE_INVULNERABILITY) {
+                damage -= 2;
+            }
+        }
+
+        if (damage < 0) damage = 0;
+
+        if (Loop_Var == 0 && Top_Figure_Damage > 0) {
+            damage += Top_Figure_Damage;
+            Top_Figure_Damage = 0;
+        }
+
+        if (Top_Figure_Damage < 0) {
+            Top_Figure_Damage += damage;
+            if (Top_Figure_Damage > 0) {
+                damage = Top_Figure_Damage;
+                Top_Figure_Damage = 0;
+            }
+            else {
+                damage = 0;
+            }
+        }
+
+        if (Attack_Flags & Att_DMGLIMIT) {
+            if (battleunit->hits <= damage) {
+                Figures_Slain++;
+                damage = 0;
+            }
+            else {
+                battleunit->hits -= damage;
+            }
+        }
+        else {
+            while (battleunit->hits < damage) {
+                Figures_Slain++;
+
+                damage -= battleunit->hits;
+
+                if (!(Attack_Flags & Att_DoomDmg)) {
+
+                    damage -= CMB_DefenseRoll__SEGRAX(Effective_Defense, To_Block);
+
+                    if (Enchants & UE_INVULNERABILITY) {
+                        damage -= 2;
+                    }
+                }
+            } 
+
+            if (damage < 0) {
+                damage = 0;
+            }
+        }
+
+        //ovr113:1A6B
+        Total_Damage += battleunit->hits * Figures_Slain;
+        Figures_Slain = 0;
+
+        if (Attack_Flags & Att_WarpLghtn) {
+            Attack_Strength--;
+        }
+    }
+
+    Total_Damage -= battleunit->TopFig_Dmg;
+
+    if (Total_Damage < 0) {
+        Total_Damage = 0;
+    }
+
+    Dmg_Array[0] = Total_Damage;
+}
+
+
+// Segrax
+// WZD o113p07
+// drake178: BU_ApplyDamage()
+/*
+; applies the damage points passed through the array
+; to the target battle unit, reducing its figure count
+; or marking it dead as necessary (in which case the
+; combat victor and true sights are also updated)
+*/
+/*
+
+*/
+void BU_ApplyDamage__WIP(int16_t battle_unit_idx, int16_t Dmg_Array[])
+{
+    int16_t Figures_Lost = 0;
+    int16_t Total_Damage = 0;
+    int16_t itr = 0;  // _DI_
 
     Total_Damage = 0;
 
@@ -11256,7 +11556,7 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
         CMB_Winner = Check_For_Winner();
 
-        if(BU_IsCombatSummon(battle_unit_idx) == ST_TRUE)
+        if(BU_IsCombatSummon__WIP(battle_unit_idx) == ST_TRUE)
         {
             _UNITS[battle_units[battle_unit_idx].unit_idx].wp = 9;
         }
@@ -11307,6 +11607,89 @@ void BU_ApplyDamage(int16_t battle_unit_idx, int16_t Dmg_Array[])
 
 // WZD o113p08
 // drake178: BU_RangedValidate()
+/*
+; returns 0 if the target can be attacked at range, 1
+; if this is prevented by Invisibility, or 2 if by Wall
+; of Darkness
+;
+; BUG: the Wall of Darkness check ignores natural
+; Illusions Immunity, disallowing the attack
+*/
+/*
+
+returns {0,1,2}
+0: allow ranged attack
+1: disallow ranged attack, due to 'Invisibility'
+2: disallow ranged attack, due to 'Wall of Darkness'
+
+compliment to Check_Attack_Melee()
+
+*/
+int16_t Check_Attack_Ranged(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
+{
+    int16_t result = 0;
+    uint32_t defender_enchantments;
+    uint32_t attacker_enchantments;
+
+    defender_enchantments = (battle_units[defender_battle_unit_idx].enchantments | battle_units[defender_battle_unit_idx].item_enchantments);
+
+    attacker_enchantments = (battle_units[attacker_battle_unit_idx].enchantments | battle_units[attacker_battle_unit_idx].item_enchantments);
+
+    result = 0;
+
+    if(
+        ((attacker_enchantments & UE_TRUESIGHT) != 0)
+        ||
+        ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) != 0)
+    )
+    {
+
+        result = 0;
+
+    }
+    else
+    {
+
+         if(
+            ((defender_enchantments & UE_INVISIBILITY) != 0)
+            ||
+            ((battle_units[defender_battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
+        )
+        {
+
+            result = 1;
+
+        }
+
+    }
+
+    if(battlefield->Wall_of_Darkness == 1)
+    {
+
+        // ; BUG: ignores natural Illusions Immunity
+        if((attacker_enchantments & UE_TRUESIGHT) == 0)
+        {
+
+            if(BU_IsInCityProper__STUB(defender_battle_unit_idx) == ST_TRUE)
+            {
+                
+                if(BU_IsInCityProper__STUB(attacker_battle_unit_idx) == ST_FALSE)
+                {
+
+                    result = 2;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return result;
+
+}
+
 
 // WZD o113p09
 // drake178: CMB_PlaceArmy()
@@ -12140,7 +12523,7 @@ jt_bua_10
             )
             {
 
-                BU_Attack__WIP(battle_unit_idx, battle_units[battle_unit_idx].Target_BU, 0, 0);
+                Battle_Unit_Attack__WIP(battle_unit_idx, battle_units[battle_unit_idx].Target_BU, 0, 0);
 
                 if(battle_units[battle_units[battle_unit_idx].Target_BU].status == bus_Active)
                 {
@@ -12678,7 +13061,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
 
 
         /*
-        ; BUG: this is not set anywhere - BU_ApplyDamage does
+        ; BUG: this is not set anywhere - BU_ApplyDamage__WIP does
         ; not set it at the right time either
         */
         if(CMB_Winner != ST_UNDEFINED)
@@ -13098,7 +13481,7 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
         if(target_battle_unit_idx > ST_UNDEFINED)
         {
 
-            Highest_Value = (16 - BU_GetEffectiveDEF__WIP(target_battle_unit_idx, rat_Fireball, (0x1 /* Imm_Fire */ | 0x20 /* Imm_Magic */), 0, sbr_Chaos));
+            Highest_Value = (16 - BU_GetEffectiveDEF__SEGRAX(target_battle_unit_idx, rat_Fireball, (0x1 /* Imm_Fire */ | 0x20 /* Imm_Magic */), 0, sbr_Chaos));
 
             *selected_action = BUA_Fireball;
 
@@ -14023,7 +14406,7 @@ BUG: this has just been done in the parent function
                 else
                 {
 
-                    BU_Attack__WIP(battle_unit_idx, target_battle_unit_idx, 0, 0);
+                    Battle_Unit_Attack__WIP(battle_unit_idx, target_battle_unit_idx, 0, 0);
 
                 }
 
@@ -15745,8 +16128,18 @@ void BU_Apply_Battlefield_Effects__WIP(struct s_BATTLE_UNIT * battle_unit)
     WIZARDS.EXE  ovr122
 */
 
+// Segrax
 // WZD o122p01
-int16_t CMB_AttackRoll(uint16_t attack_strength, uint16_t to_hit) {
+// drake178: CMB_AttackRoll()
+/*
+*/
+/*
+
+one D10 roll per attack (strength) units
+returns count of applicable attack units
+
+*/
+int16_t CMB_AttackRoll__SEGRAX(uint16_t attack_strength, uint16_t to_hit) {
     int16_t die_roll;
     uint16_t success_count = 0;
     uint16_t total_rolls = 0;
@@ -15765,7 +16158,19 @@ int16_t CMB_AttackRoll(uint16_t attack_strength, uint16_t to_hit) {
 
 
 // WZD o122p02
-uint16_t CMB_DefenseRoll(uint16_t defense, uint16_t to_block) {
+// Segrax
+// drake178: CMB_DefenseRoll()
+/*
+; performs a defense roll, returning the amount of
+; damage points blocked
+*/
+/*
+
+one D10 roll per defense unit
+returns count of applicable defense units
+
+*/
+uint16_t CMB_DefenseRoll__SEGRAX(uint16_t defense, uint16_t to_block) {
     uint16_t success_count = 0;
     uint16_t total_rolls = 0;
 
@@ -15799,16 +16204,1119 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 
 
 // WZD o122p04
-// BU_GetEffectiveRES()
+// drake178: BU_GetEffectiveRES()
 
 // WZD o122p05
-// BU_GetATKImmFlags()
+// drake178: BU_GetATKImmFlags()
 
 // WZD o122p06
-// BU_AttackTarget()
+// drake178: BU_AttackTarget()
+/*
+; processes an attack made by the chosen unit against
+; the specified target, returning the damage done to
+; both units in the passed array pointers
+;
+; BUG: applies Cause Fear to the wrong unit on attacks
+; BUG: ranged magical attacks are often not doubled by
+;  Haste as intended
+; BUG: First Strike figures slain by Doom Gaze will
+;  sometimes still perform their melee attacks
+*/
+/*
+
+OON XREF: Battle_Unit_Attack__WIP()
+
+SpFx {F,T}
+as compiled, hard-coded to ST_TRUE
+
+*/
+void BU_AttackTarget__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t defender_damage_array[], int16_t attacker_damage_array[], int16_t ranged_attack_flag, int16_t SpFx)
+{
+    int16_t Can_Attack_Again = 0;
+    int16_t Source_Unit_Damage = 0;
+    int16_t Feared_Figures = 0;
+    int16_t ranged_attack_check = 0;
+    int16_t Figs = 0;
+    int16_t Target_Damage_Sum = 0;
+    int16_t Damage_Array[3] = { 0, 0, 0 };
+    int16_t itr_damage_types = 0;  // _SI_
+
+    Feared_Figures = 0;
+
+    // ; zero out both damage return arrays
+    for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+    {
+
+        defender_damage_array[itr_damage_types] = 0;
+
+        attacker_damage_array[itr_damage_types] = 0;
+
+    }
+
+    Source_Unit_Damage = 0;
+
+    // {0: allow, 1: disallow, 2: disallow}
+    ranged_attack_check = Check_Attack_Ranged(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+    if(ranged_attack_flag != ST_TRUE)
+    {
+
+        // ; if the unit has a short range attack, process it and,
+        // ; if it is hasted and the attack is not a gaze, repeat
+        // ; it once more
+
+        if(battle_units[attacker_battle_unit_idx].ranged_type >= srat_Thrown)
+        {
+
+            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_ThrownOrBreath, &Damage_Array[0], 0, SpFx);
+
+            for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+            {
+
+                defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+            }
+
+            if(
+                ((battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
+                &&
+                (battle_units[attacker_battle_unit_idx].ranged_type < srat_StoneGaze)
+            )
+            {
+
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_ThrownOrBreath, &Damage_Array[0], 0, SpFx);
+
+                for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                {
+
+                    defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                }
+
+            }
+
+        }
+
+        // AFTER
+        // if(battle_units[attacker_battle_unit_idx].ranged_type >= srat_Thrown)
+
+        if(
+            ((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
+            &&
+            (battle_units[defender_battle_unit_idx].ranged_type >= srat_StoneGaze)
+        )
+        {
+
+            Target_Damage_Sum = 0;
+
+            for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+            {
+
+                Target_Damage_Sum += defender_damage_array[itr_damage_types];
+
+            }
+
+            Target_Damage_Sum += battle_units[defender_battle_unit_idx].TopFig_Dmg;
+
+            if(Target_Damage_Sum > 0)
+            {
+
+                Figs = (battle_units[defender_battle_unit_idx].Cur_Figures - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
+
+            }
+            else
+            {
+
+                Figs = battle_units[defender_battle_unit_idx].Cur_Figures;
+
+            }
+
+            BU_ProcessAttack__WIP(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_ThrownOrBreath, &Damage_Array[0], 1, SpFx);
+
+            for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+            {
+
+                defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+            }
+
+            // ; transfer the damage to the counter attack damage
+            // ; return array, and sum it into a local variable too
+
+            attacker_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+            Source_Unit_Damage += Damage_Array[itr_damage_types];
+
+        }
+
+
+        // Wall of Fire, First Strike, Cause Fear
+            
+        if(SpFx != 0)
+        {
+
+            BU_WallofFire__NOOP(attacker_battle_unit_idx);
+
+        }
+
+        if(battle_units[attacker_battle_unit_idx].status == bus_Active)
+        {
+
+            // ; if the attacking unit has First Strike, and the
+            // ; defender can't negate it, process an attack before
+            // ; the defender could retaliate
+            // ; BUG: Cause Fear is applied to the wrong unit
+            // ; BUG: the attacker's damage taken is not calculated
+            // ;  properly, and can yield extra attacks on their part
+
+            /*
+                BEGIN: Melee
+            */
+
+            /*
+                BEGIN: Attacker First-Strike
+            */
+            if(
+                ((battle_units[attacker_battle_unit_idx].Attack_Flags & Att_1stStrike) != 0)
+                &&
+                ((battle_units[defender_battle_unit_idx].Abilities & UA_NEGATEFIRSTSTRIKE) == 0)
+            )
+            {
+
+                if(SpFx == 1)
+                {
+
+                    // ; BUG: wrong parameter order, this fear will backfire
+                    Feared_Figures = BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+                }
+
+                for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                {
+
+                    // ; BUG: not all gaze attacks and associated effects
+                    // ; deal figure-based damage
+                    Feared_Figures += (attacker_damage_array[itr_damage_types] / battle_units[attacker_battle_unit_idx].hits);
+
+                }
+
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &Damage_Array[0], 0, SpFx);
+
+                for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                {
+
+                    defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                }
+
+            }
+            /*
+                END: Attacker First-Strike
+            */
+
+            /*
+                BEGIN: Defender Counter-Attack
+            */
+            if((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) == 0)
+            {
+
+                // ; sum up the damage taken by the target unit so far
+                
+                Target_Damage_Sum = 0;
+
+                for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                {
+
+                    Target_Damage_Sum += defender_damage_array[itr_damage_types];
+
+                }
+
+                Target_Damage_Sum += battle_units[defender_battle_unit_idx].TopFig_Dmg;
+
+                if(Target_Damage_Sum > 0)
+                {
+
+                    Figs = (battle_units[defender_battle_unit_idx].Cur_Figures - (Target_Damage_Sum / battle_units[defender_battle_unit_idx].hits));
+
+                }
+                else
+                {
+
+                    Figs = battle_units[defender_battle_unit_idx].Cur_Figures;
+
+                }
+
+                if(SpFx == 1)
+                {
+
+                    Figs -= BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+                }
+
+                if(Figs > 0)
+                {
+
+                    BU_ProcessAttack__WIP(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_Melee, &Damage_Array[0], 1, SpFx);
+
+                    for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                    {
+
+                        attacker_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                    }
+
+                    if((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
+                    {
+
+                        BU_ProcessAttack__WIP(defender_battle_unit_idx, Figs, attacker_battle_unit_idx, am_Melee, &Damage_Array[0], 1, SpFx);
+
+                        for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                        {
+
+                            attacker_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                        }
+
+                    }
+
+                }
+
+            }
+            /*
+                END: Defender Counter-Attack
+            */
+
+            /*
+                BEGIN: Attacker Non-First-Strike
+            */
+            if(
+                ((battle_units[attacker_battle_unit_idx].Attack_Flags & Att_1stStrike) == 0)
+                ||
+                ((battle_units[defender_battle_unit_idx].Abilities & UA_NEGATEFIRSTSTRIKE) != 0)
+            )
+            {
+
+                if(SpFx == 1)
+                {
+
+                    // ; BUG: wrong parameter order, this fear will backfire
+                    // BUGBUG
+                    Feared_Figures = BU_CauseFear__NOOP(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+                }
+
+                Source_Unit_Damage += battle_units[attacker_battle_unit_idx].TopFig_Dmg;
+
+                Feared_Figures += (Source_Unit_Damage / battle_units[attacker_battle_unit_idx].hits);
+
+                BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &Damage_Array[0], 0, SpFx);
+
+                for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                {
+
+                    defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                }
+
+                if((battle_units[attacker_battle_unit_idx].Combat_Effects & bue_Haste) != 0)
+                {
+
+                    BU_ProcessAttack__WIP(attacker_battle_unit_idx, (battle_units[attacker_battle_unit_idx].Cur_Figures - Feared_Figures), defender_battle_unit_idx, am_Melee, &Damage_Array[0], 0, SpFx);
+
+                    for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+                    {
+
+                        defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+                    }
+
+                }
+
+                /*
+                    END: Melee
+                */
+
+            }
+            /*
+                END: Attacker Non-First-Strike
+            */
+
+        }
+        // else goto @@Done
+
+    }
+    else  /* (ranged_attack_flag == ST_TRUE) */
+    {
+
+
+        if(
+            (battle_units[attacker_battle_unit_idx].ranged <= 0)
+            ||
+            (ranged_attack_check != 0)
+        )
+        {
+
+            // ; subtract 5 from each type of damage in the target
+            // ; damage array
+            // ; BUG...?
+
+            for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+            {
+
+                defender_damage_array[itr_damage_types] += -5;
+
+            }
+
+        }
+        else
+        {
+
+            BU_ProcessAttack__WIP(attacker_battle_unit_idx, battle_units[attacker_battle_unit_idx].Cur_Figures, defender_battle_unit_idx, am_Ranged, &Damage_Array[0], 0, SpFx);
+
+            for(itr_damage_types = 0; itr_damage_types < 3; itr_damage_types++)
+            {
+
+                defender_damage_array[itr_damage_types] += Damage_Array[itr_damage_types];
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o122p07
-// BU_ProcessAttack()
+// drake178: BU_ProcessAttack()
+/*
+; processes a single melee-, ranged-, or counter attack
+; made by the specified unit against a target, setting
+; any damage done into the passed array pointer
+;
+; BUG: fails to apply ranged To Hit modifiers to short
+;  range attacks
+; BUG: Blur checks immunity on the wrong unit, and
+;  is limited to half damage reduction
+; BUG? the Power Drain item power is ignored here
+*/
+/*
+
+Counter: {F,T}
+SpFx:  {F,T}  as compiled, hard-coded to ST_TRUE
+
+*/
+void BU_ProcessAttack__WIP(int16_t attacker_battle_unit_idx, int16_t figure_count, int16_t defender_battle_unit_idx, int16_t attack_mode, int16_t damage_array[], int16_t Counter, int16_t SpFx)
+{
+
+    int16_t Save_Mod = 0;
+    int16_t defender_enchantments = 0;
+    // int16_t Reg_Dmg = 0;
+    // int16_t Drain_Dmg = 0;
+    // int16_t Irrev_Dmg = 0;
+    int16_t new_damage_array[3] = { 0, 0, 0 };
+    int16_t defender_front_figure_damage = 0;
+    int16_t Target_Damage = 0;
+    int16_t Target_To_Block = 0;
+    int16_t Unused_Local = 0;
+    int16_t To_Hit = 0;
+    int16_t Imm_Flags = 0;
+    int16_t Type_Specific_ATK_Flags = 0;
+    int16_t Combined_ATK_Flags = 0;
+    int16_t Attack_Strength = 0;
+    int16_t Attack_Realm = 0;
+    int16_t Attack_Type = 0;
+    int16_t Target_Defense = 0;
+    int16_t Range_Penalty = 0;
+    int16_t Attack_Damage = 0;
+    int16_t Blur_Loop_Var = 0;
+    int16_t Loop_Var_2 = 0;
+    int16_t itr = 0;
+
+    defender_front_figure_damage = battle_units[defender_battle_unit_idx].TopFig_Dmg;
+
+    defender_enchantments = (_UNITS[battle_units[defender_battle_unit_idx].unit_idx].enchantments | battle_units[defender_battle_unit_idx].enchantments);
+
+    Unused_Local = 0;
+
+    Attack_Strength = 0;
+
+    Attack_Damage = 0;
+
+    To_Hit = battle_units[attacker_battle_unit_idx].tohit;
+
+    for(itr = 0; itr < 3; itr++)
+    {
+
+        damage_array[itr] = 0;
+
+    }
+
+    if(figure_count <= 0)
+    {
+
+        return;
+
+    }
+
+    Combined_ATK_Flags = battle_units[attacker_battle_unit_idx].Attack_Flags;
+
+    Target_To_Block = battle_units[defender_battle_unit_idx].To_Block;
+
+    // Imm_Flags = BU_GetATKImmFlags(attacker_battle_unit_idx, attack_mode);
+    // ; returns the immunity flag bitfield that applies
+    // ; against the selected unit's melee or ranged attacks
+    // ;
+    // ; BUG: fails to properly set Weapon Immunity for Thrown
+    // ; attacks made with normal weapons
+    /* HACK */  Imm_Flags = 0;
+
+    if(attack_mode <= am_Melee)
+    {
+
+        Combined_ATK_Flags |= battle_units[attacker_battle_unit_idx].Melee_ATK_Flags;
+
+        Type_Specific_ATK_Flags = battle_units[attacker_battle_unit_idx].Melee_ATK_Flags;
+
+        // ; BUG: this already reduces the damage elsewhere
+        To_Hit = (battle_units[attacker_battle_unit_idx].Melee_To_Hit - battle_units[defender_battle_unit_idx].To_Block);
+
+        Attack_Strength = battle_units[attacker_battle_unit_idx].melee;
+
+        // Attack_Realm = BU_GetATKRealm(0, attacker_battle_unit_idx);
+        // ; returns the realm associated with the specified
+        // ; attack type, or -1 if none
+
+        Attack_Type = 0;  // Melee
+
+    }
+    else
+    {
+
+        Combined_ATK_Flags |= battle_units[attacker_battle_unit_idx].Ranged_ATK_Flags;
+
+        Type_Specific_ATK_Flags = battle_units[attacker_battle_unit_idx].Ranged_ATK_Flags;
+
+        // ; BUG: this already reduces the damage elsewhere
+        To_Hit = (battle_units[attacker_battle_unit_idx].Melee_To_Hit - battle_units[defender_battle_unit_idx].To_Block);
+
+        Attack_Strength = battle_units[attacker_battle_unit_idx].ranged;
+
+        // Attack_Realm = BU_GetATKRealm(battle_units[attacker_battle_unit_idx].ranged_type, attacker_battle_unit_idx);
+        // ; returns the realm associated with the specified
+        // ; attack type, or -1 if none
+        /* HACK */  Attack_Realm = ST_UNDEFINED;
+
+        Attack_Type = battle_units[attacker_battle_unit_idx].ranged_type;
+
+        if(Attack_Type == srat_Lightning)
+        {
+
+            Combined_ATK_Flags |= Att_ArmorPrc;
+
+        }
+
+        if(Attack_Type == srat_MultiGaze)
+        {
+
+            Combined_ATK_Flags |= Att_DoomDmg;
+
+        }
+
+        // ; BUG: fails to apply the proper To Hit modifiers to
+        // ; Thrown and Breath attacks
+        if(
+            (attack_mode == 2)
+            &&
+            (Battle_Unit_Has_Ranged_Attack(attacker_battle_unit_idx) != ST_FALSE)
+        )
+        {
+
+            To_Hit = battle_units[attacker_battle_unit_idx].Ranged_To_Hit;
+
+            if((battle_units[attacker_battle_unit_idx].ranged_type / 10) != rag_Magic)
+            {
+
+                Range_Penalty = (Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx) / 3);
+
+                if(
+                    ((battle_units[attacker_battle_unit_idx].Abilities & UA_LONGRANGE) != 0)
+                    &&
+                    (Range_Penalty > 0)
+                )
+                {
+                    Range_Penalty = 1;
+                }
+
+                To_Hit -= Range_Penalty;
+
+            }
+
+        }
+        else
+        {
+
+            Attack_Strength = 0;
+
+        }
+
+    }
+
+    for(itr = 0; itr < 3; itr++)
+    {
+
+        new_damage_array[itr] = 0;
+
+    }
+
+    if(
+        (
+            ((defender_enchantments & UE_INVISIBILITY) != 0)
+            ||
+            ((battle_units[defender_battle_unit_idx].Abilities & UA_INVISIBILITY) != 0)
+        )
+        &&
+        ((battle_units[attacker_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) == 0)
+    )
+    {
+
+        To_Hit -= 1;
+
+    }
+
+    if(Counter == ST_TRUE)
+    {
+
+        To_Hit -= (battle_units[attacker_battle_unit_idx].Suppression / 2);
+
+    }
+
+    if(
+        ((battle_units[defender_battle_unit_idx].Move_Flags & MV_FLYING) != 0)
+        &&
+        (attack_mode == am_Melee)
+        &&
+        ((battle_units[attacker_battle_unit_idx].Move_Flags & MV_FLYING) == 0)
+        &&
+        (Counter != ST_TRUE)
+        &&
+        (battle_units[attacker_battle_unit_idx].ranged_type < srat_Thrown)
+    )
+    {
+
+        return;
+
+    }
+
+
+    if((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+    {
+
+        if((battle_units[attacker_battle_unit_idx].Attribs_2 & USA_IMMOLATION) != 0)
+        {
+
+            CMB_ConvSpellAttack(spl_Fireball, defender_battle_unit_idx, &new_damage_array[0], 4);
+
+        }
+
+
+        if(
+            (
+                (Attack_Type == srat_StoneGaze)
+                ||
+                (Attack_Type == srat_MultiGaze)
+            )
+            &&
+            ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_STONING) == 0)
+        )
+        {
+
+            for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
+            {
+
+                // // IDGI  BU_ResistRoll(SPUSH@(battle_units[defender_battle_unit_idx]), -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), 0);
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Nature) > 0)
+                {
+
+                    new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+        }
+
+
+        if(
+            (
+                (Attack_Type == srat_MultiGaze)
+                ||
+                (Attack_Type == srat_DeathGaze)
+            )
+            &&
+            ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+        )
+        {
+
+            for(itr = 0; battle_units[defender_battle_unit_idx].Cur_Figures > itr; itr++)
+            {
+
+                // // IDGI  BU_ResistRoll(SPUSH@(battle_units[defender_battle_unit_idx]), -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death);
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib)), sbr_Death) > 0)
+                {
+
+                    new_damage_array[0] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    if((battle_units[defender_battle_unit_idx].Combat_Effects & bue_Black_Sleep) != 0)
+    {
+
+        Combined_ATK_Flags |= Att_DoomDmg;
+
+    }
+
+
+    if(Attack_Strength <= 0)
+    {
+
+        return;
+
+    }
+
+
+    Target_Defense = BU_GetEffectiveDEF__SEGRAX(defender_battle_unit_idx, Attack_Type, Imm_Flags, Combined_ATK_Flags, Attack_Realm);
+
+
+    if((Combined_ATK_Flags & Att_EldrWeap) != 0)
+    {
+
+        Target_To_Block -= 1;
+
+    }
+
+
+    if(
+        (BU_IsInCityProper__STUB(defender_battle_unit_idx) == ST_TRUE)
+        &&
+        (BU_IsInCityProper__STUB(attacker_battle_unit_idx) == ST_FALSE)
+        &&
+        (battlefield->Walled_City != 0)
+    )
+    {
+
+        if(Combat_Grid_Cell_Has_City_Wall(battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy) != ST_FALSE)
+        {
+
+            Target_Defense += 3;
+
+        }
+        else
+        {
+
+            Target_Defense += 1;
+
+        }
+
+
+    }
+
+
+    for(itr = 0; itr < figure_count; itr++)
+    {
+
+
+        if((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+        {
+
+            // process the Dispel Evil touch attack if applicable
+            // INCONSISTENT: Spell Lock does not protect from this,
+            // even though it does from the spell versions
+            if(
+                ((Combined_ATK_Flags & Att_DsplEvil) != 0)
+                &&
+                (
+                    (battle_units[defender_battle_unit_idx].race == rt_Chaos)
+                    ||
+                    (battle_units[defender_battle_unit_idx].race == rt_Death)
+                )
+            )
+            {
+
+                Save_Mod = -4;
+
+                if((_UNITS[battle_units[defender_battle_unit_idx].unit_idx].mutations & UM_UNDEAD) != 0)
+                {
+                    Save_Mod -= 5;
+                }
+
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Life) > 0)
+                {
+
+                    new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+
+            if(
+                ((Combined_ATK_Flags & Att_StnTouch) != 0)
+                &&
+                ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_STONING) == 0)
+            )
+            {
+
+                Save_Mod = -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib));
+
+                if((Type_Specific_ATK_Flags & Att_StnTouch) != 0)
+                {
+
+                    Save_Mod -= 1;
+
+                }
+
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Nature) > 0)
+                {
+
+                    new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+
+            if(
+                ((Combined_ATK_Flags & Att_DthTouch) != 0)
+                &&
+                ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+            )
+            {
+
+                Save_Mod = -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib));
+
+                if((Type_Specific_ATK_Flags & Att_DthTouch) != 0)
+                {
+
+                    Save_Mod -= 3;
+
+                }
+
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death) > 0)
+                {
+
+                    new_damage_array[0] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+
+            if(
+                ((Combined_ATK_Flags & Att_LifeSteal) != 0)
+                &&
+                ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
+            )
+            {
+
+                Save_Mod = -(abs(battle_units[attacker_battle_unit_idx].Spec_Att_Attrib));
+
+                if((Type_Specific_ATK_Flags & Att_LifeSteal) != 0)
+                {
+
+                    Save_Mod -= 3;
+
+                }
+
+                Loop_Var_2 = BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], Save_Mod, sbr_Death);
+
+                new_damage_array[1] += Loop_Var_2;
+
+                if(SpFx != 0)
+                {
+
+                    Battle_Unit_Heal(attacker_battle_unit_idx, Loop_Var_2, 1);
+
+                }
+
+            }
+
+
+            if((Combined_ATK_Flags & Att_Destruct) != 0)
+            {
+
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], 0, sbr_Death) > 0)
+                {
+
+                    new_damage_array[2] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+            }
+
+        }
+
+
+        if((Combined_ATK_Flags & Att_DoomDmg) != 0)
+        {
+
+            if((Type_Specific_ATK_Flags & Att_DoomDmg) != 0)
+            {
+
+                Attack_Damage = Attack_Strength;
+
+            }
+            else
+            {
+
+                Attack_Damage = (Attack_Strength / 2);
+
+            }
+
+        }
+        else
+        {
+
+            Attack_Damage = CMB_AttackRoll__SEGRAX(Attack_Strength, To_Hit);
+
+            if(
+                (
+                    (battle_units[defender_battle_unit_idx].controller_idx == _combat_attacker_player)
+                    &&
+                    (combat_enchantments[BLUR_ATTKR] > 0)
+                    &&
+                    ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) == 0)  // ; BUG: this is not the attacking unit's index
+                )
+                ||
+                (
+                    (battle_units[defender_battle_unit_idx].controller_idx == _combat_defender_player)
+                    &&
+                    (combat_enchantments[BLUR_DFNDR]> 0)
+                    &&
+                    ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_ILLUSION) == 0)  // ; BUG: this is not the attacking unit's index
+                )
+            )
+            {
+
+                for(Blur_Loop_Var = 0; Blur_Loop_Var < Attack_Damage; Blur_Loop_Var++)
+                {
+
+                    if(Random(10) == 10)
+                    {
+
+                        // ; BUG: this also alters the loop condition, which
+                        // ; limits the total reduction to at most 50%
+                        Attack_Damage -= 1;
+
+                    }
+
+                }
+
+            }
+
+
+            // attack units minus defense units
+            Attack_Damage -= CMB_DefenseRoll__SEGRAX(Target_Defense, Target_To_Block);
+
+
+            if((defender_enchantments & UE_INVULNERABILITY) != 0)
+            {
+
+                Attack_Damage -= 2;
+
+            }
+
+            SETMIN(Attack_Damage, 0);
+
+        }
+
+
+        // ; process Poison Touch, if applicable
+        if(
+            ((battle_units[attacker_battle_unit_idx].Attack_Flags & Att_Poison) != 0)
+            &&
+            ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_POISON) == 0)
+        )
+        {
+
+            for(Loop_Var_2 = 0; battle_units[attacker_battle_unit_idx].Poison_Strength > Loop_Var_2; Loop_Var_2++)
+            {
+
+                if(BU_ResistRoll__STUB(battle_units[defender_battle_unit_idx], 0, -1) != 0)
+                {
+
+                    if(
+                        ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
+                        &&
+                        ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                    )
+                    {
+
+                        new_damage_array[1] += 1;
+
+                    }
+                    else
+                    {
+
+                        new_damage_array[0] += 1;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        // ; sum up the damage done so far, and add to it the
+        // ; target's original top figure damage
+
+        Target_Damage = 0;
+
+        for(Loop_Var_2 = 0; Loop_Var_2 < 3; Loop_Var_2++)
+        {
+
+            Target_Damage += new_damage_array[Loop_Var_2];
+
+        }
+
+        Target_Damage += defender_front_figure_damage;
+
+        // ; process the actual attack damage directly into the
+        // ; return array, making extra defense rolls when
+        // ; necessary
+
+        while (battle_units[defender_battle_unit_idx].hits > (Attack_Damage + Target_Damage))
+        {
+
+            Attack_Damage -= battle_units[defender_battle_unit_idx].hits;
+
+            if(Attack_Damage < 0)
+            {
+
+// went negative
+// damage < hit - pooints
+// alive
+
+                // ; no additional defense rolls required - transfer the
+                // ; attack damage to the total, and add it to the return
+                // ; array
+
+                if (
+                    ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
+                    &&
+                    ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                    )
+                {
+
+                    damage_array[1] += (battle_units[defender_battle_unit_idx].hits + Attack_Damage);
+
+                }
+                else
+                {
+
+                    damage_array[0] += (battle_units[defender_battle_unit_idx].hits + Attack_Damage);
+
+                }
+
+                Target_Damage += Attack_Damage;
+
+                Attack_Damage = 0;
+
+            }
+            else
+            {
+
+// didn't go negative
+// damage >= hit - pooints
+// dead
+
+                // ; figure overkill - transfer Hits worth of damage from
+                // ; the attack damage to the return array, then make a
+                // ; new defense roll to reduce the remainder
+
+                if (
+                    ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
+                    &&
+                    ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                    )
+                {
+
+                    damage_array[1] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+                else
+                {
+
+                    damage_array[0] += battle_units[defender_battle_unit_idx].hits;
+
+                }
+
+                if ((Combined_ATK_Flags & Att_DoomDmg) == 0)
+                {
+
+                    Attack_Damage = CMB_DefenseRoll__SEGRAX(Target_Defense, Target_To_Block);
+
+                    if ((defender_enchantments & UE_INVULNERABILITY) != 0)
+                    {
+
+                        Attack_Damage -= 2;
+
+                    }
+
+                    SETMIN(Attack_Damage, 0);
+
+                }
+
+            }
+
+
+        }  /* while(battle_units[defender_battle_unit_idx].hits > (Attack_Damage + Target_Damage)) */
+
+        if(
+            ((battle_units[attacker_battle_unit_idx].Abilities & UA_CREATEUNDEAD) != 0)
+            &&
+            ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+        )
+        {
+
+            damage_array[1] += Attack_Damage;
+
+        }
+        else
+        {
+
+            damage_array[0] += Attack_Damage;
+
+        }
+
+        defender_front_figure_damage = (Target_Damage + Attack_Damage);
+
+        Attack_Damage = 0;
+
+        Unused_Local = 0;
+
+        for(Loop_Var_2 = 0; Loop_Var_2 < 3; Loop_Var_2++)
+        {
+
+            damage_array[Loop_Var_2] += new_damage_array[Loop_Var_2];
+
+            new_damage_array[Loop_Var_2] = 0;
+
+        }
+
+    }  /* END: for(itr = 0; itr < figure_count; itr++) */
+
+}
+
 
 // WZD o122p08
 // Segrax
@@ -15816,13 +17324,15 @@ int16_t BU_ResistRoll__STUB(struct s_BATTLE_UNIT battle_unit, int16_t Save_Mod, 
 /*
 ; calculates and returns the unit's effective Defense
 ; score based on immunities and other conditional
-; modifiers (except City Walls and Doom Damage), AType
+; modifiers (except City Walls and Doom Damage), attack_mode
 ; only matters if it is melee (value of 0)
 */
 /*
 
+
+
 */
-int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm)
+int16_t BU_GetEffectiveDEF__SEGRAX(int16_t battle_unit_idx, int16_t attack_type, int16_t Imm_Flags, int16_t ATK_Flags, int16_t Realm)
 {
     int16_t Immunity_Type = 0;
     int16_t IDK_effective_defense = 0;  // _SI_
@@ -15842,12 +17352,12 @@ int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t 
         return 0;
     }
 
-    if ((battleunit->Abilities & 0x02) && AType != 0) {
+    if ((battleunit->Abilities & UA_LARGESHIELD) && attack_type != am_Melee) {
         IDK_effective_defense += 2;
     }
 
     if (Imm_Flags & battleunit->Attribs_1) {
-        if (AType != 0) {
+        if (attack_type != am_Melee) {
             Immunity_Type = 2;
         }
     }
@@ -15856,7 +17366,7 @@ int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t 
         Immunity_Type = 1;
     }
 
-    if ((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) && Realm != ST_UNDEFINED && AType != 0) {
+    if ((battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) && Realm != ST_UNDEFINED && attack_type != 0) {
         Immunity_Type = 2;
     }
 
@@ -15871,7 +17381,7 @@ int16_t BU_GetEffectiveDEF__WIP(int16_t battle_unit_idx, int16_t AType, int16_t 
         IDK_effective_defense += 3;
     }
 
-    if (ATK_Flags & 0x01) {
+    if (ATK_Flags & Att_ArmorPrc) {
         IDK_effective_defense -= IDK_effective_defense >> 1;
     }
 
@@ -16091,10 +17601,405 @@ void Init_Battlefield_Effects(int16_t combat_structure)
 
 // WZD o122p11
 // drake178: BU_Attack()
-void BU_Attack__WIP(int16_t battle_unit_idx, int16_t combat_grid_target, int16_t Target_X, int16_t Target_Y)
-{
+/*
+; processes a full attack action by the chosen unit
+; against the specified target unit or wall tile
+;
+; BUG: fails to properly expend the moves of units
+;  performing ranged attacks
+; INCONSISTENT in its decision-making about whether to
+;  melee or shoot at an adjacent target
+*/
+/*
 
-    __debugbreak();
+
+Battle_Unit_Action__WIP()
+    |-> BU_Attack__WIP(battle_unit_idx, combat_grid_target, Target_X, Target_Y);
+
+*/
+void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx, int16_t cgx, int16_t cgy)
+{
+    int16_t Wall_Destroyed = 0;
+    int16_t ranged_attack_check = 0;
+    int16_t range_to_target = 0;
+    int16_t ranged_attack_flag = 0;  // DNE in Dasm, reuses range_to_target
+    int16_t attacker_damage_array[3] = { 0, 0, 0 };
+    int16_t defender_damage_array[3] = { 0, 0, 0 };
+    int16_t defender_damage_total = 0;
+    int16_t attacker_damage_total = 0;
+    int16_t itr_damage_type = 0;
+
+    if(battle_units[attacker_battle_unit_idx].controller_idx != HUMAN_PLAYER_IDX)
+    {
+
+        AI_ImmobileCounter = ST_UNDEFINED;
+
+    }
+
+    if(defender_battle_unit_idx != 99)
+    {
+
+        cgx = battle_units[defender_battle_unit_idx].cgx;
+
+        cgy = battle_units[defender_battle_unit_idx].cgy;
+
+        // {0: allow; 1: disallow (Invisibility); 2: disallow (Wall of Darkness)}
+        ranged_attack_check = Check_Attack_Ranged(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+        range_to_target = Range_To_Battle_Unit(attacker_battle_unit_idx, defender_battle_unit_idx);
+
+        if(range_to_target <= 1)
+        {
+
+            // ; these checks are in the wrong logical order
+            if(
+                (battle_units[attacker_battle_unit_idx].ranged > (battle_units[attacker_battle_unit_idx].melee / 2))
+                &&
+                (Battle_Unit_Has_Ranged_Attack(attacker_battle_unit_idx) != ST_FALSE)
+            )
+            {
+
+                if(
+                    (
+                        ((battle_units[attacker_battle_unit_idx].ranged_type / 10) == rag_Missile)
+                        &&
+                        ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MISSILES) != 0)
+                    )
+                    ||
+                    (
+                        ((battle_units[attacker_battle_unit_idx].ranged_type / 10) == rag_Magic)
+                        &&
+                        ((battle_units[defender_battle_unit_idx].Attribs_1 & USA_IMMUNITY_MAGIC) != 0)  // ; BUG: ignores Righteousness
+                    )
+                )
+                {
+
+                    ranged_attack_flag = ST_FALSE;
+
+                }
+                else
+                {
+
+                    ranged_attack_flag = ST_TRUE;
+
+                }
+
+            }
+            else
+            {
+
+                ranged_attack_flag = ST_FALSE;
+
+            }
+
+        }
+        else  /* (range_to_target > 1) */
+        {
+
+            if(ranged_attack_check == 0)
+            {
+
+                ranged_attack_flag = ST_TRUE;
+
+            }
+            else if(ranged_attack_check == 1)
+            {
+
+                if(
+                    (battle_units[attacker_battle_unit_idx].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (_auto_combat_flag == ST_FALSE)
+                )
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr122, 0, (SAMB_ptr)GUI_NearMsgString, 3, 1, 150);
+                    
+                    Warn1(GUI_NearMsgString);
+
+                    return;
+
+                }
+
+            }
+            else if(ranged_attack_check == 2)
+            {
+                
+                if(
+                    (battle_units[attacker_battle_unit_idx].controller_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (_auto_combat_flag == ST_FALSE)
+                )
+                {
+
+                    LBX_Load_Data_Static(message_lbx_file__ovr122, 0, (SAMB_ptr)GUI_NearMsgString, 4, 1, 150);
+                    
+                    Warn1(GUI_NearMsgString);
+
+                    return;
+
+                }
+                
+            }
+
+        }
+
+
+        if(ranged_attack_check > 0)
+        {
+
+            ranged_attack_flag = ST_FALSE;
+
+        }
+
+
+        battle_units[attacker_battle_unit_idx].target_cgx = battle_units[defender_battle_unit_idx].cgx;
+
+        battle_units[attacker_battle_unit_idx].target_cgy = battle_units[defender_battle_unit_idx].cgy;
+
+
+        BU_AttackTarget__WIP(attacker_battle_unit_idx, defender_battle_unit_idx, &defender_damage_array[0], &attacker_damage_array[0], ranged_attack_flag, 1);
+
+
+        battle_units[defender_battle_unit_idx].Suppression += 1;
+
+        attacker_damage_total = 0;
+
+        defender_damage_total = 0;
+
+        for(itr_damage_type = 0; itr_damage_type < 3; itr_damage_type++)
+        {
+
+            attacker_damage_total += attacker_damage_array[itr_damage_type];
+
+            defender_damage_total += defender_damage_array[itr_damage_type];
+
+        }
+
+        if(ranged_attack_flag != ST_TRUE)
+        {
+
+            CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, battle_units[defender_battle_unit_idx].cgx, battle_units[defender_battle_unit_idx].cgy);
+
+            battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
+
+            SETMIN(battle_units[attacker_battle_unit_idx].movement_points, 0);
+
+        }
+        else  /* (ranged_attack_flag == ST_TRUE) */
+        {
+
+            CMB_RangedAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+
+            // ; BUG: performing a ranged attack is supposed to
+            // ; always end the unit's turn
+            battle_units[attacker_battle_unit_idx].movement_points -= 20;
+
+            SETMIN(battle_units[attacker_battle_unit_idx].movement_points, 0);
+
+            if(
+                (
+                    (_UNITS[battle_units[attacker_battle_unit_idx].unit_idx].Hero_Slot > -1)
+                    ||
+                    ((battle_units[attacker_battle_unit_idx].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) != 0)
+                )
+                &&
+                ((battle_units[attacker_battle_unit_idx].ranged_type / 10) == rag_Magic)
+            )
+            {
+
+                if(battle_units[attacker_battle_unit_idx].mana > 3)
+                {
+
+                    battle_units[attacker_battle_unit_idx].mana -= 3;
+
+                }
+                else
+                {
+
+                    battle_units[attacker_battle_unit_idx].mana;
+
+                }
+
+                if(battle_units[attacker_battle_unit_idx].mana < 3)
+                {
+
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+
+                    battle_units[attacker_battle_unit_idx].ranged = 0;
+
+                }
+
+            }
+            else
+            {
+
+                battle_units[attacker_battle_unit_idx].ammo -= 1;
+
+                if(battle_units[attacker_battle_unit_idx].ammo <= 0)
+                {
+
+                    battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+
+                    battle_units[attacker_battle_unit_idx].ranged = 0;
+
+                }
+
+            }
+
+        }
+
+
+
+        BU_ApplyDamage__WIP(defender_battle_unit_idx, defender_damage_array);
+
+        BU_ApplyDamage__WIP(attacker_battle_unit_idx, attacker_damage_array);
+
+    }
+
+
+    // @@Wall_Crusher:
+    Wall_Destroyed = ST_FALSE;
+
+
+    if(
+        ((battle_units[attacker_battle_unit_idx].Abilities & UA_WALLCRUSHER) != 0)
+        &&
+        (battle_units[attacker_battle_unit_idx].controller_idx != _combat_defender_player)
+        &&
+        (Combat_Grid_Cell_Has_City_Wall(cgx, cgy) != 0)
+
+    )
+    {
+
+        if(defender_battle_unit_idx != 99)
+        {
+
+            if(
+                (abs(battle_units[attacker_battle_unit_idx].cgx - cgx) > 1)
+                ||
+                (abs(battle_units[attacker_battle_unit_idx].cgy - cgy) > 1)
+            )
+            {
+
+                // ; 25% probability if ranged attack
+                if(Random(100) <= 25)
+                {
+                    Wall_Destroyed = ST_TRUE;
+                }
+
+            }
+            else
+            {
+
+                // ; 50% probability if melee attack
+                if(Random(100) <= 50)
+                {
+                    Wall_Destroyed = ST_TRUE;
+                }
+
+            }
+
+        }
+        else
+        {
+
+            if(
+                (abs(battle_units[attacker_battle_unit_idx].cgx - cgx) > 1)
+                ||
+                (abs(battle_units[attacker_battle_unit_idx].cgy - cgy) > 1)
+            )
+            {
+
+                // ; 25% probability if ranged attack
+                if(Random(100) <= 25)
+                {
+                    Wall_Destroyed = ST_TRUE;
+                }
+
+                // perform a ranged attack animation, expend movement,
+                // and expend the attacker's ammo or mana as
+                // appropriate, removing their ranged attack if they
+                // don't have enough left to perform another one
+                // BUG: only expends 10 movement points instead of all
+                // of them, as stated in the v1.2 patch notes
+
+                CMB_RangedAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, defender_damage_total, cgx, cgy);
+
+                // ; BUG: performing a ranged attack is supposed to
+                // ; always end the unit's turn
+                battle_units[attacker_battle_unit_idx].movement_points -= 20;
+
+                if(
+                    (_UNITS[battle_units[attacker_battle_unit_idx].unit_idx].Hero_Slot > -1)
+                    &&
+                    ((battle_units[attacker_battle_unit_idx].ranged_type / 10) == rag_Magic)
+                )
+                {
+
+                    if(battle_units[attacker_battle_unit_idx].mana > 3)
+                    {
+
+                        battle_units[attacker_battle_unit_idx].mana -= 3;
+
+                    }
+                    else
+                    {
+
+                        battle_units[attacker_battle_unit_idx].mana;
+
+                    }
+
+                    if(battle_units[attacker_battle_unit_idx].mana < 5)
+                    {
+
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+
+                        battle_units[attacker_battle_unit_idx].ranged = 0;
+
+                    }
+
+                }
+                else
+                {
+
+                    battle_units[attacker_battle_unit_idx].ammo -= 1;
+
+                    if(battle_units[attacker_battle_unit_idx].ammo <= 0)
+                    {
+
+                        battle_units[attacker_battle_unit_idx].ranged_type = rat_None;
+
+                        battle_units[attacker_battle_unit_idx].ranged = 0;
+
+                    }
+
+                }
+
+            }
+            else
+            {
+
+                // ; 50% probability if melee attack
+                if(Random(100) <= 50)
+                {
+                    Wall_Destroyed = ST_TRUE;
+                }
+
+                CMB_MeleeAnim__STUB(attacker_battle_unit_idx, defender_battle_unit_idx, attacker_damage_total, defender_damage_total, cgx, cgy);
+
+                battle_units[attacker_battle_unit_idx].movement_points -= ((Battle_Unit_Moves2(attacker_battle_unit_idx) + 1) / 2);
+
+            }
+
+        }
+
+    }
+
+
+    // @@JmpDone_DrawFlip:
+    Set_Page_Off();
+    Tactical_Combat_Draw();
+    PageFlip_FX();
 
 }
 
@@ -16197,7 +18102,23 @@ int16_t Battle_Unit_Has_Ranged_Attack(int16_t battle_unit_idx)
 
 
 // WZD o122p15
-// BU_CauseFear()
+// drake178: BU_CauseFear()
+/*
+; processes the Cause Fear effect if applicable,
+; returning the amount of attacking figures that have
+; failed their resistance checks
+*/
+/*
+
+
+
+*/
+int16_t BU_CauseFear__NOOP(int16_t attacker_battle_unit_idx, int16_t defender_battle_unit_idx)
+{
+
+    return 0;
+
+}
 
 
 
@@ -18229,6 +20150,24 @@ int16_t AI_CompareArmies__STUB(int16_t player_idx)
 
 // WZD o124p10
 // drake178: BU_WallofFire()
+/*
+; check whether the unit's target coordinates are
+; through a Wall of Fire from the outside, and if so,
+; process and apply a base strength Fireball effect
+; targeted at it
+*/
+/*
+
+
+
+*/
+void BU_WallofFire__NOOP(int16_t battle_unit_idx)
+{
+
+
+
+}
+
 
 // WZD o124p11
 // drake178: BU_SetBloodAnim()
@@ -18301,14 +20240,21 @@ int16_t Combat_Grid_Cell_Has_City_Wall(int16_t cgc2, int16_t cgc1)
 }
 
 
+// Segrax
 // WZD o124p15
 // drake178: BU_IsCombatSummon
 /*
-"While most creature summonings are cast overland, the summoning of Elementals, Phantom Warriors and Phantom Beasts can only be performed during combat."
+returns 1 if the target unit is a combat summon, or
+0 otherwise
 */
-int16_t BU_IsCombatSummon(int16_t battle_unit_idx)
+/*
+
+"While most creature summonings are cast overland, the summoning of Elementals, Phantom Warriors and Phantom Beasts can only be performed during combat."
+
+*/
+int16_t BU_IsCombatSummon__WIP(int16_t battle_unit_idx)
 {
-    int16_t unit_type;  // _SI_
+    int16_t unit_type = 0;  // _SI_
 
     unit_type = _UNITS[battle_units[battle_unit_idx].unit_idx].type;
 
@@ -19003,7 +20949,7 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
                 Damage_Array[1] = 0;
                 Damage_Array[2] = 0;
 
-                BU_ApplyDamage(i, Damage_Array);
+                BU_ApplyDamage__WIP(i, Damage_Array);
             }
         }
 
@@ -19012,7 +20958,7 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
         if ((X_Distance <= 1 && Y_Distance <= 1) && (X_Distance + Y_Distance != 0)) {
             if (Random(3) == 1) {
                 CMB_ConvSpellAttack(spl_Lightning_Bolt, i, Damage_Array, 0);
-                BU_ApplyDamage(i, Damage_Array);
+                BU_ApplyDamage__WIP(i, Damage_Array);
             }
         }
     }
@@ -19113,156 +21059,6 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     _combat_mouse_grid->x2 = 319;
     _combat_mouse_grid->y2 = 199;
     Set_Mouse_List(1, _combat_mouse_grid);
-}
-
-
-// WZD o113p05
-// Segrax
-void CMB_ConvSpellAttack(uint16_t spell_idx, uint16_t BU_Index, int16_t* Dmg_Array, int16_t ATK_Override) {
-    int32_t Enchants = 0;
-    int16_t Total_Damage = 0;
-    int16_t Figures_Slain = 0;
-    int16_t To_Block = 0;
-    int16_t Attack_Count = 0;
-    int16_t Attack_Strength = 0;
-    int16_t Effective_Defense = 0;
-    int16_t Immunity_Flags = 0;
-    int16_t Attack_Flags = 0;
-    int16_t Top_Figure_Damage = 0;
-    uint16_t Loop_Var = 0;
-
-    struct s_BATTLE_UNIT* battleunit = &battle_units[BU_Index];
-    struct s_UNIT* unit = &_UNITS[battleunit->unit_idx];
-
-    Enchants = unit->enchantments | battleunit->enchantments | battleunit->item_enchantments;
-
-    for (Loop_Var = 0; Loop_Var < 3; Loop_Var++) {
-        Dmg_Array[Loop_Var] = 0;
-    }
-
-    if (Enchants & UE_RIGHTEOUSNESS) {
-        struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
-        if (spell->magic_realm == sbr_Chaos || spell->magic_realm == sbr_Death) {
-            return;
-        }
-    }
-
-    if (battleunit->Attribs_1 & USA_IMMUNITY_MAGIC) {
-        return;
-    }
-
-    Top_Figure_Damage = battleunit->TopFig_Dmg;
-
-    struct s_SPELL_DATA* spell = &spell_data_table[spell_idx];
-    Attack_Flags = spell->Params2_3;
-
-    To_Block = battleunit->To_Block;
-    if (Attack_Flags & Att_EldrWeap) {
-        To_Block--;
-    }
-
-    Immunity_Flags = spell->Param1;
-
-    if (ATK_Override > 0) {
-        Attack_Strength = ATK_Override;
-    } else {
-        Attack_Strength = spell->Param0;
-    }
-
-    Effective_Defense = BU_GetEffectiveDEF__WIP(BU_Index, 0x26, Immunity_Flags, Attack_Flags, spell->magic_realm);
-
-    if (Attack_Flags & Att_AREAFLAG) {
-        Attack_Count = battleunit->Cur_Figures;
-        Attack_Flags |= Att_DMGLIMIT;
-    }
-    else if (Attack_Flags & Att_WarpLghtn) {
-        Attack_Count = Attack_Strength;
-    }
-    else {
-        Attack_Count = 1;
-    }
-
-    if (battleunit->Combat_Effects & bue_Black_Sleep) {
-        Attack_Flags |= Att_DoomDmg;
-    }
-
-    for (Loop_Var = 0; Loop_Var < Attack_Count; Loop_Var++) {
-        int16_t damage = 0;
-
-        if (Attack_Flags & Att_DoomDmg) {
-            damage = Attack_Strength;
-        }
-        else {
-            damage = CMB_AttackRoll(Attack_Strength, 0) - CMB_DefenseRoll(Effective_Defense, To_Block);
-            if (Enchants & UE_INVULNERABILITY) {
-                damage -= 2;
-            }
-        }
-
-        if (damage < 0) damage = 0;
-
-        if (Loop_Var == 0 && Top_Figure_Damage > 0) {
-            damage += Top_Figure_Damage;
-            Top_Figure_Damage = 0;
-        }
-
-        if (Top_Figure_Damage < 0) {
-            Top_Figure_Damage += damage;
-            if (Top_Figure_Damage > 0) {
-                damage = Top_Figure_Damage;
-                Top_Figure_Damage = 0;
-            }
-            else {
-                damage = 0;
-            }
-        }
-
-        if (Attack_Flags & Att_DMGLIMIT) {
-            if (battleunit->hits <= damage) {
-                Figures_Slain++;
-                damage = 0;
-            }
-            else {
-                battleunit->hits -= damage;
-            }
-        }
-        else {
-            while (battleunit->hits < damage) {
-                Figures_Slain++;
-
-                damage -= battleunit->hits;
-
-                if (!(Attack_Flags & Att_DoomDmg)) {
-
-                    damage -= CMB_DefenseRoll(Effective_Defense, To_Block);
-
-                    if (Enchants & UE_INVULNERABILITY) {
-                        damage -= 2;
-                    }
-                }
-            } 
-
-            if (damage < 0) {
-                damage = 0;
-            }
-        }
-
-        //ovr113:1A6B
-        Total_Damage += battleunit->hits * Figures_Slain;
-        Figures_Slain = 0;
-
-        if (Attack_Flags & Att_WarpLghtn) {
-            Attack_Strength--;
-        }
-    }
-
-    Total_Damage -= battleunit->TopFig_Dmg;
-
-    if (Total_Damage < 0) {
-        Total_Damage = 0;
-    }
-
-    Dmg_Array[0] = Total_Damage;
 }
 
 
@@ -22946,7 +24742,7 @@ void Combat_Grid_Screen_Coordinates(int16_t cgc2, int16_t cgc1, int16_t somethin
 /*
 
 same calc as in Screen_To_Combat_Grid_Cell_X_And_Offset()
-
+Tactical_Combat__WIP() calls with (Grid_X + 4), (Grid_Y + 4)
 Assign_Mouse_Image() calls with (Pointer_X() + 4), (Pointer_Y() + 4)
 
 */
@@ -22970,7 +24766,7 @@ int16_t Get_Combat_Grid_Cell_X(int16_t screen_x, int16_t screen_y)
 /*
 
 same calc as in Screen_To_Combat_Grid_Cell_Y_And_Offset()
-
+Tactical_Combat__WIP() calls with (Grid_X + 4), (Grid_Y + 4)
 Assign_Mouse_Image() calls with (Pointer_X() + 4), (Pointer_Y() + 4)
 
 */

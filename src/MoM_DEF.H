@@ -615,22 +615,22 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
     s_UNIT_TYPE.Abilities
 */
 // enum ABL_FLAGS
-#define UA_FANTASTIC        0x0001      // 0b0000000000000001  0x0001      1
-#define UA_LARGESHIELD      0x0002      // 0b0000000000000010  0x0002      2
-#define UA_PLANARTRAVEL     0x0004      // 0b0000000000000100  0x0004      4
-#define UA_WALLCRUSHER      0x0008      // 0b0000000000001000  0x0008      8
-#define UA_HEALER           0x0010      // 0b0000000000010000  0x0010     16
-#define UA_CREATEOUTPOST    0x0020      // 0b0000000000100000  0x0020     32
-#define UA_INVISIBILITY     0x0040      // 0b0000000001000000  0x0040     64
-#define UA_CREATEUNDEAD     0x0080      // 0b0000000010000000  0x0080    128
-#define UA_LONGRANGE        0x0100      // 0b0000000100000000  0x0100    256
-#define UA_LANDCORRUPTION   0x0200      // 0b0000001000000000  0x0200    512
-#define UA_MELD             0x0400      // 0b0000010000000000  0x0400   1024
-#define UA_NONCORPOREAL     0x0800      // 0b0000100000000000  0x0800   2048
-#define UA_WINDWALKING      0x1000      // 0b0001000000000000  0x1000   4096
-#define UA_REGENERATION     0x2000      // 0b0010000000000000  0x2000   8192
-#define UA_PURIFY           0x4000      // 0b0100000000000000  0x4000  16384
-#define UA_NEGATE1STST      0x8000      // 0b1000000000000000  0x8000  32768
+#define UA_FANTASTIC            0x0001      // 0b0000000000000001  0x0001      1
+#define UA_LARGESHIELD          0x0002      // 0b0000000000000010  0x0002      2
+#define UA_PLANARTRAVEL         0x0004      // 0b0000000000000100  0x0004      4
+#define UA_WALLCRUSHER          0x0008      // 0b0000000000001000  0x0008      8
+#define UA_HEALER               0x0010      // 0b0000000000010000  0x0010     16
+#define UA_CREATEOUTPOST        0x0020      // 0b0000000000100000  0x0020     32
+#define UA_INVISIBILITY         0x0040      // 0b0000000001000000  0x0040     64
+#define UA_CREATEUNDEAD         0x0080      // 0b0000000010000000  0x0080    128
+#define UA_LONGRANGE            0x0100      // 0b0000000100000000  0x0100    256
+#define UA_LANDCORRUPTION       0x0200      // 0b0000001000000000  0x0200    512
+#define UA_MELD                 0x0400      // 0b0000010000000000  0x0400   1024
+#define UA_NONCORPOREAL         0x0800      // 0b0000100000000000  0x0800   2048
+#define UA_WINDWALKING          0x1000      // 0b0001000000000000  0x1000   4096
+#define UA_REGENERATION         0x2000      // 0b0010000000000000  0x2000   8192
+#define UA_PURIFY               0x4000      // 0b0100000000000000  0x4000  16384
+#define UA_NEGATEFIRSTSTRIKE    0x8000      // 0b1000000000000000  0x8000  32768
 
 
 
@@ -756,7 +756,16 @@ s_HERO.Abilities_LO
 #define HSA_AGILITY        0x80000000
 
 
-// enum e_ATTACK_FLAGS
+/*
+enum e_ATTACK_FLAGS
+...
+Touch Attacks?
+If/How do these align with the tactical combat attack phases?
+
+Combined_ATK_Flags
+
+*/
+
 #define Att_ArmorPrc    0x0001
 #define Att_1stStrike   0x0002
 #define Att_Poison      0x0004

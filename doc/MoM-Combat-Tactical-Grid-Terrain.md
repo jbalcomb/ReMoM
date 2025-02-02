@@ -2,6 +2,19 @@
 
 
 
+
+Terrain Movement Points Per Square  
+Cities          1/2  
+Hills           2  
+Rivers          2  
+Roads           1/2  
+Rough (Dirt)    2  
+Tree            2  
+
+
+
+
+
 BaseTile_X  ==> IDK_base_cgc2
 BaseTile_Y  ==> IDK_base_cgc1
 Tile_X      ==> cgc2  ==> cgx
@@ -333,3 +346,20 @@ CMB_DrawMap__WIP() only gets called by CMB_DrawFullScreen__WIP(), when it is tim
 
             screen_x = ((itr_x * 32) - ((itr_y & 1) * 16));
             screen_y = ((itr_y * 8) - 8);  // {-8, 0, -8, ...}, {0, 8, 0, ...}, ... {8, 16, 8, ...}, ...
+
+
+
+
+Page 93  (PDF Page 98)
+
+Combat Movement and Terrain
+
+All terrain not listed in this chart costs one movement point per square.  
+
+Terrain Movement Points Per Square  
+Cities          1/2  
+Hills           2  
+Rivers          2  
+Roads           1/2  
+Rough (Dirt)    2  
+Tree            2  
