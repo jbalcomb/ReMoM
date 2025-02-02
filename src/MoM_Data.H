@@ -1567,7 +1567,7 @@ struct s_BATTLE_UNIT
 {
     /* 0x00 */  int8_t   melee;  /* ~ "melee attack strength" */
     /* 0x01 */  int8_t   ranged;  /* ~ "ranged attack strength" */
-    /* 0x02 */  int8_t   ranged_type;
+    /* 0x02 */  int8_t   ranged_type;  /* ~ "ranged attack type" */
     /* 0x03 */  int8_t   ammo;
     /* 0x04 */  int8_t   tohit;
     /* 0x05 */  int8_t   defense;
@@ -1594,7 +1594,7 @@ struct s_BATTLE_UNIT
         SAMB_ptr pict_seg;
     };
 
-    /* 0x10 */  int8_t   hits;
+    /* 0x10 */  int8_t   hits;                  /* Hit-Points ¿ Per Figure ? */
     /* 0x11 */  int8_t   scout_range;
     /* 0x12 */  int8_t   carry_capacity;
     /* 0x13 */  int8_t   Max_Figures;

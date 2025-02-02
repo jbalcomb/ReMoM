@@ -5,6 +5,17 @@ rename magic_set to ~settings ... ¿ //MoO2 ?
 
 
 
+
+TODO Review 20250202
+Tactical Combat
+    did Combat Turn
+    did Computer Player Move Action
+    did Combat Attack Action
+    did Computer Player Attack Action
+Now what?
+    doing AI overland/turn
+
+
 TODO Review 20241128
 
 added Spell Casting
