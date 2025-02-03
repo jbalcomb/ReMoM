@@ -236,11 +236,11 @@ void Units_Upkeeps(void)
     {
         if(itr >= 0x23 /* Trireme */)
         {
-            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].Cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
+            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
         }
         else
         {
-            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].Cost + 99) / 100);  // Dasm is doing a ceil(), somehow?
+            _unit_type_table[itr].Upkeep = ((_unit_type_table[itr].cost + 99) / 100);  // Dasm is doing a ceil(), somehow?
         }
     }
 

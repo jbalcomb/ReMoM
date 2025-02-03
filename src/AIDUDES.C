@@ -76,15 +76,13 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost)
 /*
 
 */
-void AI_Next_Turn__STUB(void)
+void AI_Next_Turn__WIP(void)
 {
     int16_t itr_players = 0;  // _SI_
     int16_t itr_units = 0;  // _DI_
     int16_t itr_players2 = 0;  // _DI_
 
-    // perform a sanity check on all unit coordinates,
-    // marking any that had an invalid one as dead by
-    // setting their owner to -1
+    // sanity check all unit coordinates
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
@@ -157,6 +155,8 @@ void AI_Next_Turn__STUB(void)
             )
             {
 
+                AI_SCircle_Reevals[itr_players] -= 1;
+                
                 // ; decrease the war reevaluation counter, and if 0 or
                 // ; less reset to Rnd(10)+15 and perform a war
                 // ; evaluation, resetting Hostility with all other
@@ -166,7 +166,7 @@ void AI_Next_Turn__STUB(void)
                 // ; BUG: considers the casting of Fire Elemental as an
                 // ; immediate call for war instead of the Spell of
                 // ; Mastery in the first instance
-                // TODO  AI_Evaluate_War(itr_players, (AI_SCircle_Reevals[itr_players] - 1));
+                AI_Evaluate_War(itr_players);
 
                 // ; evaluates conditions and sets the magic strategy
                 // ; that may influence the AI's power distribution

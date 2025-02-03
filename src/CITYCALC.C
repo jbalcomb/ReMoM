@@ -567,9 +567,20 @@ int16_t Player_Overland_Enchantments_Upkeep(int16_t player_idx)
 // UU_UNIT_OnSameTile()
 
 // WZD o120p13
+// drake178: UNIT_MarkRemoved()
+/*
+; marks a unit as dead or dismissed in the unit table
+; (owner -1, plane -1), to be cleared up at the end of
+; the turn - type 1 is dismissal, 2 is irreversible
+;
+; BUG: does not set the hero index in the unit table
+; to -1, which is used by this same function to
+; determine if the unit is an active hero; if called
+; again by accident this will likely corrupt memory
+*/
 /*
     undefines owner and plane, resets level, sets finished
-Removal Type:
+Kill Type:
     0:                undefines hero items, undefines hero unit index, saves level, experience, name
     1: deletes items, undefines hero items, undefines hero unit index, saves level, experience, name
     2:                undefines hero items, undefines hero unit index, sets level to -20
@@ -581,14 +592,28 @@ Artifacts may be picked up from heroes killed in battle
   including disintegration, banishment, unsummoning and holy word).
 ...banished or unsummoned... ~disintegrated ...otherwise, manual intermingles "killed" and "destroyed"
 Meh. ~ "Perma-Death"
+¿ "eradicated" ?
+
+"The Chosen" ... can be resummoned.
+
+What does the resurrection spell get up to?
+
+After combat, what does it check for rewarding with items from a killed enemy hero?
+    _players[].Heroes[].Items[]
+    _ITEMS[].cost != 0
+    _ITEMS[].cost != -1
 
 e.g.,
     'Unit Statistics Window' / 'Unit View'
-        Remove Enchantment - Fligh, Waterwalking, Windwalking
+        Remove Enchantment - Flight, Waterwalking, Windwalking
             |-> Dismiss_Unit(unit_idx)
                 |-> Kill_Unit(unit_idx, 1)
+    'AI Next-Turn'
+        AI_Kill_Lame_Units()
+            |-> Kill_Unit(troops[itr_troops], 0);
+
 */
-void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type)
+void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 {
     int16_t itr;
     int16_t unit_owner_idx;
@@ -598,20 +623,26 @@ void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type)
     _UNITS[unit_idx].Level = Unit_Base_Level(unit_idx);
 
     // ¿ removal type 1 is "Dismiss" ?
-    if((Rmv_Type == 1) || (_UNITS[unit_idx].type == ut_Chosen))
+    if((kill_type == 1) || (_UNITS[unit_idx].type == ut_Chosen))
     {
+
         _UNITS[unit_idx].Finished = ST_TRUE;
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
+
             for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
             {
+
                 if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
                 {
+
                     Remove_Item(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr]);
+
                 }
 
                 _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
+
             }
 
             _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
@@ -620,17 +651,23 @@ void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type)
 
             if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
             {
+
                 hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+
                 strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+
             }
+
         }
     }
-    else
+    else  /* ((kill_type != 1) && (_UNITS[unit_idx].type != ut_Chosen)) */
     {
+
         _UNITS[unit_idx].Finished = ST_TRUE;
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
         {
+
             for(itr = 0; itr < NUM_HERO_ITEMS; itr++)
             {
                 _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = ST_UNDEFINED;
@@ -638,21 +675,30 @@ void Kill_Unit(int16_t unit_idx, int16_t Rmv_Type)
 
             _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].unit_idx = ST_UNDEFINED;
 
-            if(Rmv_Type != 2)  /* ¿ must be type 0 ? */
+            if(kill_type != 2)  /* ¿ must be type 0 ? */
             {
+
                 if(_UNITS[unit_idx].owner_idx == HUMAN_PLAYER_IDX)
                 {
+
                     hero_names_table[_UNITS[unit_idx].type].experience_points = _UNITS[unit_idx].XP;
+
                     strcpy(hero_names_table[_UNITS[unit_idx].type].name, _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].name);
+
                 }
 
                 _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = _UNITS[unit_idx].Level;
+
             }
             else
             {
+
                 _HEROES2[_UNITS[unit_idx].owner_idx]->heroes[_UNITS[unit_idx].type].Level = -20;
+
             }
+
         }
+
     }
 
     _UNITS[unit_idx].owner_idx = ST_UNDEFINED;
@@ -2434,7 +2480,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 
     if(product_idx >= 100)
     {
-        product_cost = _unit_type_table[(product_idx - 100)].Cost;
+        product_cost = _unit_type_table[(product_idx - 100)].cost;
 
         city_wp = _CITIES[city_idx].wp;
 
@@ -2694,7 +2740,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
             continue;
         }
 
-        Total_Cost = ((_unit_type_table[unit_type].Cost * (3 + Merc_Level)) / 2);
+        Total_Cost = ((_unit_type_table[unit_type].cost * (3 + Merc_Level)) / 2);
 
         Roll_Total = (Random(100) + player_fame);
 

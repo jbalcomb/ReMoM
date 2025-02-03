@@ -207,7 +207,6 @@ SAMB_ptr AI_Own_City_Values;
 ; buffer to various AI arrays
 ;
 ; RE-EXPLORE and MOVE
-; Attributes: bp-based frame
 */
 /*
 
@@ -260,7 +259,20 @@ void Allocate_AI_Data(void)
 
 // WZD o164p07
 // drake178: AI_Evaluate_War()
-// AI_Evaluate_War()
+/*
+*/
+/*
+
+
+
+*/
+void AI_Evaluate_War__WIP(int16_t player_idx)
+{
+
+
+
+}
+
 
 // WZD o164p08
 // drake178: AI_GetNeutralStacks()
