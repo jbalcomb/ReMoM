@@ -157,6 +157,8 @@ void AI_Next_Turn__STUB(void)
             )
             {
 
+                AI_SCircle_Reevals[itr_players] -= 1;
+                
                 // ; decrease the war reevaluation counter, and if 0 or
                 // ; less reset to Rnd(10)+15 and perform a war
                 // ; evaluation, resetting Hostility with all other

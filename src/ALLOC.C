@@ -13,10 +13,8 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
-    EmmHndl_FIGUREX = Allocate_Space(28672);  // 28672 PR, 458752 B ... 
-    EmmHndl_TILEXXX = Allocate_Space(3072);   //  3072 PR,  49152 B
-// DELETE      DBG_figure_pict_base_seg = Allocate_Space(421);  // 1 + (8 * 1) + (8 * (28 * 30)) = 1 + 8 + 6720 = 6729  ((6729 + 1) / 16) = 421 PR, 6736 B
-// DELETE      DBG_EmmHndl_FIGUREX = EmmHndl_FIGUREX;
+    EmmHndl_FIGUREX = Allocate_Space(28672);  // 28 * 16384 EMM Page Size = 458752 B / 16 = 28672 PR
+    EmmHndl_TILEXXX = Allocate_Space(3072);   //  3 * 16384 EMM Page Size =  49152 B / 16 =  3072 PR
 
     // MGC: 6100
     // WZD: 4600
@@ -168,22 +166,6 @@ so, 300 PRs, + 1 for the SAMB header
     /*
     
     */
-// DELETE      p0_heroes = Allocate_Space(28);  // 28 paragraphs = 448 bytes
-// DELETE      p1_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-// DELETE      p2_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-// DELETE      p3_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-// DELETE      p4_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-// DELETE      p5_heroes = Allocate_Space(27);  // 27 paragraphs = 432 bytes
-// DELETE  
-// DELETE      p_heroes[0] = (struct s_HERO *)p0_heroes;
-// DELETE      p_heroes[1] = (struct s_HERO *)p1_heroes;
-// DELETE      p_heroes[2] = (struct s_HERO *)p2_heroes;
-// DELETE      p_heroes[3] = (struct s_HERO *)p3_heroes;
-// DELETE      p_heroes[4] = (struct s_HERO *)p4_heroes;
-// DELETE      p_heroes[5] = (struct s_HERO *)p5_heroes;
-// DELETE  
-// DELETE      _HEROES = (struct s_HERO **)p0_heroes;
-// DELETE      _HEROES2 = p0_heroes;
 
     _HEROES2[0] = (struct s_HEROES *)Allocate_Space(28);  // 28 PR, 448 B
     _HEROES2[1] = (struct s_HEROES *)Allocate_Space(27);  // 27 PR, 432 B
@@ -224,23 +206,54 @@ so, 300 PRs, + 1 for the SAMB header
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
 
-// ¿¿¿
-// mov     [AI_Arc_MainWarConts@], (offset TBL_Wizards.spells_list+17E8h)
-// mov     [AI_Myr_MainWarConts@], (offset TBL_Wizards.spells_list+17F4h)
-// mov     [AI_CONTX_Reevals@], (offset TBL_Wizards.spells_list+1800h)
-// mov     [Wiz5_Spell_28h@], (offset TBL_Wizards.spells_list+1810h)
-// mov     [Wiz5_Spell_3Ch@], (offset TBL_Wizards.spells_list+1824h)
-// mov     [Wiz5_Spell_50h@], (offset TBL_Wizards.spells_list+1838h)
-// mov     [Wiz5_Spell_64h@], (offset TBL_Wizards.spells_list+184Ch)
-// mov     [AI_Arc_NewColConts@], (offset TBL_Wizards.spells_list+1860h)
-// mov     [AI_Myr_NewColConts@], (offset TBL_Wizards.spells_list+1874h)
-// mov     [AI_Arc_NewColTgtXs@], (offset TBL_Wizards.spells_list+1888h)
-// mov     [AI_Myr_NewColTgtXs@], (offset TBL_Wizards.spells_list+189Ch)
-// mov     [AI_Arc_NewColTgtYs@], (offset TBL_Wizards.spells_list+18B0h)
-// mov     [AI_Myr_NewColTgtYs@], (offset TBL_Wizards.spells_list+18BCh)
-// mov     [AI_SCircle_Reevals@], (offset TBL_Wizards.spells_list+18C8h)
-// ???
+// mov     [AI_Arc_MainWarConts@], (offset _players.spells_list+17E8h) ; 12 bytes, Arcanus array
+// mov     [AI_Myr_MainWarConts@], (offset _players.spells_list+17F4h) ; 12 bytes, Myrror array
+// mov     [AI_CONTX_Reevals@],    (offset _players.spells_list+1800h) ; 16 bytes
+// mov     [Wiz5_Spell_28h@],      (offset _players.spells_list+1810h) ; 20 bytes
+// mov     [Wiz5_Spell_3Ch@],      (offset _players.spells_list+1824h) ; 20 bytes
+// mov     [Wiz5_Spell_50h@],      (offset _players.spells_list+1838h) ; 20 bytes
+// mov     [Wiz5_Spell_64h@],      (offset _players.spells_list+184Ch) ; 20 bytes
+// mov     [AI_Arc_NewColConts@],  (offset _players.spells_list+1860h) ; 20 bytes
+// mov     [AI_Myr_NewColConts@],  (offset _players.spells_list+1874h) ; 20 bytes
+// mov     [AI_Arc_NewColTgtXs@],  (offset _players.spells_list+1888h) ; 20 bytes
+// mov     [AI_Myr_NewColTgtXs@],  (offset _players.spells_list+189Ch) ; 20 bytes
+// mov     [AI_Arc_NewColTgtYs@],  (offset _players.spells_list+18B0h) ; 12 bytes
+// mov     [AI_Myr_NewColTgtYs@],  (offset _players.spells_list+18BCh) ; 12 bytes
+// mov     [AI_SCircle_Reevals@],  (offset _players.spells_list+18C8h) ; 16 bytes
 
-    // EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
+    // WZD dseg:9ECA struct s_WIZARD _players[6]
+    // struc s_WIZARD ; (sizeof=0x4C8)  1224
+
+    // B916 - 9ECA = 1A4C  6732
+    // 6732 / 1224 = 5.5
+    // 5.0 * 1224 = 6120   ¿ ~== _players[5] ?
+    // 0.5 * 1224 = 612  0x264
+
+    // B9F6 - 9ECA = 1B2C  6956
+    // 6956 - 6120 = 836  0x344
+
+    // /* 0264 */ uint8_t  spells_list[NUM_SPELLS];
+    // 240 bytes
+
+    // 17E8  6120  6120 - 6120 =  0
+    // 17F4  6132  6132 - 6120 = 12
+
+    AI_Arc_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
+    AI_Myr_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
+    AI_CONTX_Reevals    = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes
+    Wiz5_Spell_28h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1810) );  // 20 bytes
+    Wiz5_Spell_3Ch      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1824) );  // 20 bytes
+    Wiz5_Spell_50h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1838) );  // 20 bytes
+    Wiz5_Spell_64h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x184C) );  // 20 bytes
+    AI_Arc_NewColConts  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1860) );  // 20 bytes
+    AI_Myr_NewColConts  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1874) );  // 20 bytes
+    AI_Arc_NewColTgtXs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1888) );  // 20 bytes
+    AI_Myr_NewColTgtXs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x189C) );  // 20 bytes
+    AI_Arc_NewColTgtYs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18B0) );  // 12 bytes
+    AI_Myr_NewColTgtYs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18BC) );  // 12 bytes
+    AI_SCircle_Reevals  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
+
+    // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
+    EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
 }
