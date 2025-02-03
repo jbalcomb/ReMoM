@@ -824,7 +824,7 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
         if(View_Type == 1)  /* Product is Unit */
         {
             strcat(GUI_NearMsgString, "(");
-            itoa(_unit_type_table[unit_type_idx].Cost, temp_string, 10);  // Full Cost
+            itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
             strcat(GUI_NearMsgString, temp_string);
             strcat(GUI_NearMsgString, ")");
         }

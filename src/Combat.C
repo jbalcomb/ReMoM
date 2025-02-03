@@ -926,7 +926,6 @@ SAMB_ptr combat_movemode_icon_segs[3];
 SAMB_ptr unit_hit_bar_seg;
 // WZD dseg:C7B2 00 00                                           IMG_CMB_FX_Figure@ dw 0                 ; DATA XREF: BU_CreateImage+1Aw ...
 // WZD dseg:C7B2                                                                                         ; 7Ch paragraphs appended into World_Data@
-SAMB_ptr IMG_CMB_FX_Figure;
 
 // WZD dseg:C7B4
 int16_t CMB_HeavenlyLight;
@@ -1004,7 +1003,7 @@ int16_t G_AI_StayInTownProper;
 // WZD dseg:C8B4 00 00                                           _battlefield_city_walls dw 0               ; DATA XREF: AI_SetBasicAttacks+274r ...
 // WZD dseg:C8B4                                                                                         ; 1 - stone, 2 - fire, 4 - darkness
 // WZD dseg:C8B4                                                 ¿ END:  ovr114 ?                        ; zeroed when the above variable is zeroed
-int16_t AI_CmbtWall_BitField;
+
 
 
 // WZD dseg:C972                                                 ¿ BEGIN: ovr123 - Uninitialized Data ?
@@ -1174,7 +1173,6 @@ SAMB_ptr CMB_Path_Xs;
 // WZD dseg:D142
 int16_t movement_path_grid_cell_count;
 
-int16_t CMB_Path_Length;
 // WZD dseg:D144
 /*
 2-byte, signed
@@ -2022,12 +2020,12 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 Battle_Unit_Action__WIP(_active_battle_unit, CMB_TargetFrame_X, CMB_TargetFrame_Y);
 
-            for(itr = 0; itr < _combat_total_unit_count; itr++)
-            {
+                for(itr = 0; itr < _combat_total_unit_count; itr++)
+                {
 
-                BU_SetVisibility__WIP(itr);
+                    BU_SetVisibility__WIP(itr);
 
-            }
+                }
 
                 Assign_Combat_Grids();
 
@@ -2036,15 +2034,15 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 Combat_Winner = Check_For_Winner__WIP();
 
                 if(Combat_Winner != ST_UNDEFINED)  /* invalid / no winner / none / neither */
-            {
+                {
 
-                leave_screen = ST_UNDEFINED;
+                    leave_screen = ST_UNDEFINED;
 
-                input_field_idx = 0;
+                    input_field_idx = 0;
+
+                }
 
             }
-
-        }
         }
         /*
             END:  Left-Click Combat Grid
@@ -2058,77 +2056,21 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             if(-(combat_grid_field) == input_field_idx)
             {
 
-            RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
+                RightClick_X = Get_Combat_Grid_Cell_X((Grid_X + 4), (Grid_Y + 4));
 
-            RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
+                RightClick_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
 
-            battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
+                battle_unit_idx = CMB_TargetRows[RightClick_Y][RightClick_X];
 
-            // ; BUG: this needs to be range checked, it can be 99!
-            if(
-                (battle_unit_idx > 0)
-                &&
+                // ; BUG: this needs to be range checked, it can be 99!
+                if(
+                    (battle_unit_idx > 0)
+                    &&
                     (battle_units[battle_unit_idx].status == bus_Active)
-            )
-            {
-
-                if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
+                )
                 {
 
-                    Play_Left_Click__STUB();
-
-                    Deactivate_Help_List();
-
-                    Set_Mouse_List(1, mouse_list_default);
-
-                    // ; byte-identical to the other branch
-
-                    MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
-
-                        battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
-
-                    Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
-
-                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
-
-                    // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
-                    memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
-
-                    USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
-
-                    battle_units[battle_unit_idx].movement_points += MoveHalves_Save;
-
-                    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
-
-                    CMB_SetNearAllocs__WIP();
-
-                        Assign_Combat_Grids();
-
-                        Assign_Auto_Function(Tactical_Combat_Draw, 1);
-
-                    CMB_CE_Refresh__WIP();
-
-                    CMB_ComposeBackgrnd__WIP();
-
-                    Deactivate_Help_List();
-
-                    Set_Combat_Help_List();
-
-                    CRP_CMB_NeverChecked1 = 1;
-
-                }
-                else
-                {
-
-                    if(_active_battle_unit != battle_unit_idx)
-                    {
-
-                        Switch_Active_Battle_Unit(battle_unit_idx);
-
-                            Assign_Combat_Grids();
-
-                    }
-                    else
+                    if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
                     {
 
                         Play_Left_Click__STUB();
@@ -2137,9 +2079,11 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         Set_Mouse_List(1, mouse_list_default);
 
+                        // ; byte-identical to the other branch
+
                         MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
 
-                            battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
+                        battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
 
                         Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
 
@@ -2150,15 +2094,15 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
 
-                        battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+                        battle_units[battle_unit_idx].movement_points += MoveHalves_Save;
 
                         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
 
                         CMB_SetNearAllocs__WIP();
 
-                            Assign_Combat_Grids();
+                        Assign_Combat_Grids();
 
-                            Assign_Auto_Function(Tactical_Combat_Draw, 1);
+                        Assign_Auto_Function(Tactical_Combat_Draw, 1);
 
                         CMB_CE_Refresh__WIP();
 
@@ -2168,15 +2112,69 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                         Set_Combat_Help_List();
 
-                    }
+                        CRP_CMB_NeverChecked1 = 1;
 
-                    CRP_CMB_NeverChecked1 = 1;
+                    }
+                    else
+                    {
+
+                        if(_active_battle_unit != battle_unit_idx)
+                        {
+
+                            Switch_Active_Battle_Unit(battle_unit_idx);
+
+                            Assign_Combat_Grids();
+
+                        }
+                        else
+                        {
+
+                            Play_Left_Click__STUB();
+
+                            Deactivate_Help_List();
+
+                            Set_Mouse_List(1, mouse_list_default);
+
+                            MoveHalves_Save = battle_units[battle_unit_idx].movement_points;
+
+                            battle_units[battle_unit_idx].movement_points = Battle_Unit_Moves2(battle_unit_idx);
+
+                            Overland_Enchants = _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments;
+
+                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = (_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments | battle_units[battle_unit_idx].enchantments);
+
+                            // TODO  _fmemcpy(global_battle_unit, battle_units[battle_unit_idx], sizeof(struct s_BATTLE_UNIT));
+                            memcpy(global_battle_unit, &battle_units[_active_battle_unit], sizeof(struct s_BATTLE_UNIT));
+
+                            USW_CombatDisplay__WIP(61, 6, 89, 174, 117, 194, 2, battle_units[battle_unit_idx].unit_idx);
+
+                            battle_units[battle_unit_idx].movement_points = MoveHalves_Save;
+
+                            _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = Overland_Enchants;
+
+                            CMB_SetNearAllocs__WIP();
+
+                            Assign_Combat_Grids();
+
+                            Assign_Auto_Function(Tactical_Combat_Draw, 1);
+
+                            CMB_CE_Refresh__WIP();
+
+                            CMB_ComposeBackgrnd__WIP();
+
+                            Deactivate_Help_List();
+
+                            Set_Combat_Help_List();
+
+                        }
+
+                        CRP_CMB_NeverChecked1 = 1;
+
+                    }
 
                 }
 
             }
-
-        }
         }
         /*
             END:  Right-Click Combat Grid
@@ -2461,9 +2459,9 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
-            
-            __debugbreak();
 
+            __debugbreak();
+            
             CMB_HumanUnitsDone = ST_TRUE;
 
             CMB_ImmobileCanAct = ST_FALSE;
@@ -3459,7 +3457,7 @@ void Battle_Unit_Action__WIP(int16_t battle_unit_idx, int16_t cgx, int16_t cgy)
 
             Target_Y = cgy;  // passed in - CMB_TargetFrame_Y = Get_Combat_Grid_Cell_Y((Grid_X + 4), (Grid_Y + 4));
 
-}
+        }
         else
         {
 
@@ -3648,7 +3646,7 @@ void Assign_Combat_Grids(void)
 
             CMB_ActiveMoveMap[((battle_units[itr].cgy * COMBAT_GRID_WIDTH) + battle_units[itr].cgx)] = -1;
 
-}
+        }
 
     }
 
@@ -4578,7 +4576,7 @@ void CMB_ProgressTurnFlow__WIP(void)
 
         AI_CMB_PlayTurn__WIP(combat_computer_player);
 
-}
+    }
 
     Winner =  Check_For_Winner__WIP();
 
@@ -5725,7 +5723,7 @@ void Add_Combat_Enchantment_Fields(void)
 
         start_x = 247;
 
-}
+    }
     else
     {
 
@@ -5830,65 +5828,11 @@ int16_t Battle_Unit_Movement_Icon(int16_t battle_unit_idx)
 
 // WZD o98p14
 // drake178: UNIT_SummonToBattle()
-void UNIT_SummonToBattle(int Owner, int Unit_Index, int XPos, int YPos) {
-    uint16_t si = 0;
-
-    if (_combat_total_unit_count < 0x24) {
-        // Add unit to the battle
-        BU_UnitLoadToBattle(_combat_total_unit_count, Owner, Unit_Index, XPos, YPos);
-        _combat_total_unit_count++;
-    } 
-    else 
-    {
-        si = 0;
-        while (si < _combat_total_unit_count) {
-            struct s_BATTLE_UNIT* battle_unit = &battle_units[si];
-
-            if (battle_unit->status > bus_Active) {
-                uint16_t unit_idx = battle_unit->unit_idx;
-                struct s_UNIT* unit = &_UNITS[unit_idx];
-
-                if (unit->wp == 9) {
-                    BU_UnitLoadToBattle(si, Owner, Unit_Index, XPos, YPos);
-                    return;
-                }
-            }
-            si++;
-        }
-    }
-}
+// UNIT_SummonToBattle()
 
 // WZD o98p15
 // drake178: BU_UnitLoadToBattle()
-void BU_UnitLoadToBattle(int16_t BU_Index, int8_t Player_Index, int16_t Unit_Index, int16_t XPos, int16_t YPos) {
-    int16_t Fig_Index;
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[BU_Index];
-    struct s_UNIT* unit = &_UNITS[Unit_Index];
-
-    Load_Battle_Unit(Unit_Index, battle_unit);
-
-    Fig_Index = CMB_FindEmptyFigSlot();
-
-    int16_t unit_type = unit->type;
-    Combat_Figure_Load(unit_type, Fig_Index);
-
-
-    battle_unit->battle_unit_figure_idx = Fig_Index;
-    battle_unit->controller_idx = Player_Index;
-
-    battle_unit->cgx = XPos;
-    battle_unit->cgy = YPos;
-
-    battle_unit->target_cgx = XPos;
-    battle_unit->target_cgy = YPos;
-
-    battle_unit->MoveStage = 0;
-    battle_unit->outline_magic_realm = 0;
-    battle_unit->Atk_FigLoss = 0;
-    battle_unit->Moving = 0;
-
-    battle_unit->action = bua_Ready;
-}
+// BU_UnitLoadToBattle()
 
 // WZD o98p16
 // drake178: CMB_Units_Init()
@@ -7280,7 +7224,7 @@ void CMB_CreateEntities__WIP(void)
         if(Curse_Anim != ST_UNDEFINED)
         {
 
-            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
+            // TODO  CMB_SpawnUnitCurse(battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, Curse_Anim);
             // ; creates a combat entity corresponding to the passed
             // ; curse effect and positioning
 
@@ -8289,125 +8233,6 @@ void Combat_Node_Type(void)
 
 // WZD s103p07
 // drake178: BU_CreateImage()
-void BU_CreateImage(int BU_Index) {
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[BU_Index];
-
-    IMG_CMB_FX_Figure = Allocate_Next_Block(World_Data, 124);
-
-    if (battle_unit->status != bus_Active) {
-        return;
-    }
-
-    Create_Picture(47, 42, IMG_CMB_FX_Figure);
-
-    uint8_t Current_Figs = battle_unit->Cur_Figures;
-    uint8_t Max_Figs = battle_unit->Max_Figures;
-
-    if (_UNITS[battle_unit->unit_idx].type == spell_data_table[ut_Hydra].unit_type) {
-        Current_Figs = 1;
-        Max_Figs = 1;
-    }
-
-    Combat_Unit_Enchantment_Outline_Set(BU_Index);
-    BU_SetBaseAnims(BU_Index);
-    BU_SetVisibility(BU_Index);
-
-    int16_t Fig_Index = battle_unit->battle_unit_figure_idx;
-    int8_t controller_idx = battle_unit->controller_idx;
-    int16_t enchantment_magic_realm = battle_unit->outline_magic_realm;
-    int16_t IMG_Effect = battle_unit->Image_Effect;
-
-    int16_t Frame_Index;
-    if (battle_unit->Always_Animate == 1)
-    {
-        Frame_Index = CMB_BaseAnimFrame;
-    }
-    else if (battle_unit->Moving == 1)
-    {
-        if (battle_unit->Move_Bob == 1)
-        {
-            Frame_Index = CMB_BaseAnimFrame;
-        } 
-        else
-        {
-            Frame_Index = CMB_MoveAnimFrame;
-        }
-    }
-    else
-    {
-        Frame_Index = 1;
-    }
-
-    //loc_849E2
-    int16_t cgx = battle_unit->cgx;
-    int16_t cgy = battle_unit->cgy;
-    int16_t target_cgx = battle_unit->target_cgx;
-    int16_t target_cgy = battle_unit->target_cgy;
-
-    int16_t di = 0;
-    if (cgx > target_cgx) {
-        if (cgy > target_cgy) {
-            di = 0;
-        }
-        else if (cgy < target_cgy) {
-            di = 6;
-        }
-        else {
-            di = 7;
-        }
-    }
-    else if (cgx < target_cgx) {
-        if (cgy > target_cgy) {
-            di = 2;
-        }
-        else if (cgy < target_cgy) {
-            di = 4;
-        }
-        else {
-            di = 3;
-        }
-    }
-    else {
-        if (cgy > target_cgy) {
-            di = 1;
-        }
-        else if (cgy < target_cgy) {
-            di = 5;
-        }
-        else {
-            di = 2;
-        }
-    }
-
-    EMM_FIGUREX_Init__HACK(Fig_Index);
-
-    int16_t EMM_Segment = (Fig_Index & 1) ? 512 : 0;
-    EMM_Segment += Fig_Index * 56;
-
-    SAMB_ptr Facing_Data_Seg = Allocate_First_Block(EMM_PageFrame + EMM_Segment, 2);
-    
-    // unsure about this
-    //SA_MK_FP0(Facing_Data_Seg, Facing_Offset_Table);
-
-    di = 7;
-
-    FLIC_Set_CurrentFrame(Facing_Data_Seg[di<<1], Frame_Index);
-    Draw_Picture_To_Bitmap(Facing_Data_Seg[di<<1], GfxBuf_2400B);
-
-    Combat_Figure_Banner_Color(controller_idx);
-    Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
-    Combat_Figure_Effect__WIP(IMG_Effect);
-
-    uint16_t itr_figures = 0;
-    while (itr_figures < Current_Figs) {
-        uint16_t Fig_Top, Fig_Left;
-        CMB_GetFigDrawPos(Max_Figs, itr_figures, &Fig_Left, &Fig_Top);
-
-        Clipped_Copy_Bitmap(Fig_Left, Fig_Top - 4, IMG_CMB_FX_Figure, GfxBuf_2400B);
-
-        itr_figures++;
-    }
-}
 
 // WZD s103p08
 // drake178: WIZ_BU_SelectNext()
@@ -8813,7 +8638,7 @@ void CMB_LoadResources__WIP(void)
     combat_enchantment_icon_segs[14] = LBX_Reload_Next(compix_lbx_file__ovr103, 80, _screen_seg);
 
 
-    
+
     IMG_CMB_Cancel_Btn = LBX_Reload_Next(compix_lbx_file__ovr103, 22, _screen_seg);
 
     _cmbt_lock_spell_button_seg = LBX_Reload_Next(compix_lbx_file__ovr103, 23, _screen_seg);
@@ -9067,9 +8892,9 @@ int16_t Check_For_Winner__WIP(void)
     if(combat_computer_player == NEUTRAL_PLAYER_IDX)
     {
 
-    return ST_UNDEFINED;
+        return ST_UNDEFINED;
 
-}
+    }
 
 
     // TODO  flip this logic around the the fleeing code is wrapped in the tests and the default/fall-through is return ST_UNDEFINED
@@ -12150,50 +11975,7 @@ void Deploy_Battle_Units(int16_t player_idx)
 
 
 // WZD o113p10
-void BU_SummonDemon(int BU_Index)
-{
-    int16_t X_Pos;
-    int16_t Y_Pos;
-    uint16_t Demons_Bitfield;
-
-    struct s_BATTLE_UNIT* battleunit1 = &battle_units[BU_Index];
-
-    // Calculate the demons bitfield
-    Demons_Bitfield = battleunit1->Attribs_1 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2);
-
-    if (Demons_Bitfield == USA_SUMMON_DEMON_1)
-    {
-        battleunit1->Attribs_1 ^= USA_SUMMON_DEMON_1;
-    }
-    else if (Demons_Bitfield == USA_SUMMON_DEMON_2)
-    {
-        battleunit1->Attribs_1 ^= USA_SUMMON_DEMON_2;
-        battleunit1->Attribs_1 |= USA_SUMMON_DEMON_1;
-    }
-    else
-    {
-        battleunit1->Attribs_1 ^= USA_SUMMON_DEMON_1; 
-    }
-
-    int16_t owner = battleunit1->controller_idx;
-    Create_Unit__WIP(ut_Demon, owner, 0, 0, 9, 2000);
-
-    do {
-        if (owner == _combat_attacker_player) {
-            X_Pos = 14 - Random(3);
-        }
-        else {
-            X_Pos = Random(3) + 7;
-        }
-
-        Y_Pos = Random(3) + 8;
-
-    } while (CMB_TargetRows[Y_Pos][X_Pos] >= 0);
-
-    UNIT_SummonToBattle(owner, _units - 1, X_Pos, Y_Pos);
-
-    BU_CombatSummon(_combat_total_unit_count - 1, X_Pos, Y_Pos, 0, BU_Index);
-}
+// drake178: BU_SummonDemon()
 
 // WZD o113p11
 // drake178: BU_MeleeWallCheck()
@@ -12228,38 +12010,7 @@ int16_t BU_MeleeWallCheck__WIP(int16_t src_battle_unit_idx, int16_t dst_battle_u
 // drake178: CMB_SpellcastMessage()
 
 // WZD o113p15
-int16_t CMB_FindEmptyFigSlot()
-{
-    int16_t Figure_Array[18] = { 0 };
-    int16_t cx;
-
-    for (cx = 0; cx < 18; cx++)
-    {
-        Figure_Array[cx] = 0;
-    }
-
-    // Mark used figure slots
-    for (cx = 0; cx < _combat_total_unit_count; cx++)
-    {
-        struct s_BATTLE_UNIT* battle_unit = &battle_units[cx];
-
-        if (battle_unit->battle_unit_figure_idx > -1 && 
-            battle_unit->status == bus_Active)
-        {
-            Figure_Array[battle_unit->battle_unit_figure_idx] = 1;
-        }
-    }
-
-    for (cx = 0; cx < 18; cx++)
-    {
-        if (Figure_Array[cx] == 0)
-        {
-            return cx;
-        }
-    }
-
-    return -1;
-}
+// drake178: CMB_FindEmptyFigSlot()
 
 // WZD o113p16
 // MoO2  Module: COMBAT1  Check_For_Winner_()
@@ -12325,572 +12076,6 @@ int16_t Check_For_Winner(void)
 }
 
 
-/*
-    WIZARDS.EXE  ovr114
-*/
-int16_t AI_BU_ProcessAction(int16_t BU_Index, int16_t Rally_X, int16_t Rally_Y)
-{
-    uint16_t No_Override = 0;
-    uint16_t Spell_Result = 0;
-    uint16_t MoveHalves = 0;
-    int16_t di = Rally_X;
-    struct s_BATTLE_UNIT* battleunit = &battle_units[BU_Index];
-
-    if (Rally_X == 0 && Rally_Y == 0) {
-
-        struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-        di = battleunitTarget->cgx;
-        Rally_Y = battleunitTarget->cgy;
-    }
-
-loc_92521:
-    Switch_Active_Battle_Unit(BU_Index);
-    _active_battle_unit = BU_Index;
-
-    
-    switch (battleunit->action) {
-        default:
-            break;
-
-        case BUA_MeleeAttack:   // loc_9254F
-        {
-            if (battleunit->melee)
-            {
-                //loc_92565
-                if (AI_CmbtWall_BitField & 1 && battleunit->Target_BU == -1)
-                {
-                    //loc_92587
-                    No_Override = 0;
-                    if (battleunit->controller_idx == _combat_attacker_player)
-                    {
-                        //loc_925A7
-                        if (battleunit->Target_BU != -1)
-                        {
-                            // Unreachable Code
-                            // 
-                            //loc_925BE
-                            MoveHalves = 0;
-
-                            //while (MoveHalves < _combat_total_unit_count) {
-                                //loc_925C6
-                            //}
-
-                            //loc_92654
-
-                        }
-                    }
-                    else
-                    {
-                        //loc_92679
-                        G_AI_BU_MoveOrRampage(BU_Index, 8, 12, -666, 8, 12);
-                    }
-                }
-                else
-                {
-                    //loc_92698
-                    No_Override = 1;
-                }
-
-                //loc_9269D
-                if (No_Override == 1)
-                {
-                    //loc_926A6
-                    MoveHalves = 220;
-                    if (battleunit->Target_BU == -1 &&
-                        battleunit->controller_idx == 5 &&
-                        battleunit->controller_idx == _combat_attacker_player &&
-                        OVL_Action_Type == 1)
-                    {
-                        G_AI_BU_MoveOrRampage(BU_Index, 0, 0, -1, 0, 0);
-                    }
-                    else {
-                        //loc_9270E
-
-                        while (
-                            battleunit->movement_points < MoveHalves &&
-                            battleunit->Target_BU != -1 &&
-                            battleunit->movement_points > 0 &&
-                            battleunit->status == bus_Active)
-                        {
-
-                            //loc_92711
-                            MoveHalves = battleunit->movement_points;
-                            struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                            if (battleunit->Target_BU >= 0) 
-                            {
-                                G_AI_BU_MoveOrRampage(BU_Index,
-                                    battleunitTarget->cgx,
-                                    battleunitTarget->cgy,
-                                    battleunit->Target_BU,
-                                    di,
-                                    Rally_Y);
-                            }
-                            //loc_9279C
-                            if (battleunitTarget->status != bus_Active)
-                            {
-                                AI_BU_AssignAction(BU_Index, 0);
-                            }
-                        }
-                    }
-                }
-            }
-            //loc_92821
-            battleunit->status = bua_Finished;
-            break;
-        }
-
-        case BUA_RangedAttack:  // loc_92A4C
-        {
-            if (battleunit->Target_BU >= 0) {
-                MoveHalves == 220;
-
-                while (
-                    battleunit->movement_points < MoveHalves &&
-                    battleunit->Target_BU > -1 &&
-                    battleunit->movement_points > 0 &&
-                    battleunit->status == bus_Active)
-                {
-                    //loc_92A6B
-                    MoveHalves = battleunit->movement_points;
-                    struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                    if (battleunit->ranged_type == -1) {
-                    
-                        G_AI_BU_MoveOrRampage(BU_Index,
-                            battleunitTarget->cgx,
-                            battleunitTarget->cgy,
-                            battleunit->Target_BU,
-                            di,
-                            Rally_Y);
-                    }
-                    else {
-                        //loc_92AF8
-                        BU_Attack(BU_Index, battleunit->Target_BU, 0, 0);
-                    }
-
-                    //loc_92B1A
-                    if (battleunitTarget->status != bus_Active) {
-                        AI_BU_AssignAction(BU_Index, 0);
-                    }
-                }
-
-            }
-            //loc_92B9F
-            //loc_92821
-            battleunit->status = bua_Finished;
-            break;
-        }
-
-        case BUA_MoveNFire: // loc_92837
-        {
-            if (battleunit->Target_BU >= 0)
-            {
-                // loc_9284E
-                if (BU_GetDistanceFrom(BU_Index, battleunit->Target_BU) != 1)
-                {
-                    //loc_92871
-                    MoveHalves = battleunit->movement_points;
-                    battleunit->movement_points = 1;
-
-                    struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                    G_AI_BU_MoveOrRampage(BU_Index,
-                        battleunitTarget->cgx,
-                        battleunitTarget->cgy,
-                        battleunit->Target_BU,
-                        di,
-                        Rally_Y);
-
-                    battleunit->movement_points = (MoveHalves + battleunit->movement_points) - 1;
-                }
-
-                //loc_92923
-                while (
-                    battleunit->movement_points > 0 &&
-                    battleunit->Target_BU > -1
-                    )
-                {
-                    BU_Attack(BU_Index, battleunit->Target_BU, 0, 0);
-                    struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                    if (battleunitTarget->status != bus_Active) {
-                        AI_BU_AssignAction(battleunit, 0);
-                    }
-                }
-            }
-
-            //loc_9299E
-            //loc_92821
-            battleunit->status = bua_Finished;
-            break;
-        }
-        case BUA_MoveNAttack: // loc_929A1
-        {
-            if (battleunit->Target_BU >= 0)
-            {
-                struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                G_AI_BU_MoveOrRampage(BU_Index,
-                    battleunitTarget->cgx,
-                    battleunitTarget->cgy,
-                    battleunit->Target_BU,
-                    di,
-                    Rally_Y);
-
-                if (battleunitTarget->status != bus_Active) {
-                    AI_BU_AssignAction(battleunit, 0);
-                }
-            }
-
-            //loc_92A49
-            //loc_92821
-            battleunit->status = bua_Finished;
-            break;
-        }
-
-        case BUA_DoomBolt:  // loc_92BA2
-        {
-            struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-            battleunit->Attribs_2 ^= USA_DOOMBOLT;
-
-            //loc_92D44
-            G_CMB_SpellEffect(spl_Doom_Bolt, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
-
-            //loc_92D4D
-            battleunit->movement_points = 0;
-            break;
-        }
-
-        case BUA_Fireball:  // loc_92C2B
-        {
-            struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-            battleunit->Attribs_2 ^= USA_FIREBALL;
-
-            //loc_92D44
-            G_CMB_SpellEffect(spl_Fireball, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
-
-            //loc_92D4D
-            battleunit->movement_points = 0;
-            break;
-        }
-
-        case BUA_Healing:   // loc_92EE5
-        {
-            break;
-        }
-
-        case BUA_UseItem:   // loc_92D62
-        case BUA_CastSpell: // loc_92D62
-        {
-            Spell_Result = G_CMB_CastSpell(BU_Index, _combat_wx, _combat_wy, _combat_wp);
-            if (Spell_Result == 1)
-            {
-                AI_BU_AssignAction(BU_Index, 1);
-
-                if (battleunit->Target_BU >= 0)
-                {
-                    MoveHalves = 220;
-                    //loc_92E8C
-
-                    while (
-                        battleunit->movement_points < MoveHalves &&
-                        battleunit->Target_BU > -1 &&
-                        battleunit->movement_points > 0)
-                    {
-                        //loc_92DAE
-                        MoveHalves = battleunit->movement_points;
-                        struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-
-                        if (battleunit->ranged_type == -1)
-                        {
-                            G_AI_BU_MoveOrRampage(BU_Index,
-                                battleunitTarget->cgx,
-                                battleunitTarget->cgy,
-                                battleunit->Target_BU,
-                                di,
-                                Rally_Y);
-                        }
-                        else 
-                        {
-                            //loc_92E3B
-                            BU_Attack(BU_Index, battleunit->Target_BU, 0, 0);
-                        }
-
-                        //loc_92E5D
-                        if (battleunitTarget->status != bus_Active) {
-                            AI_BU_AssignAction(battleunit, 0);
-                        }
-                    }
-
-                }
-            }
-            else
-            {
-                //loc_92ED0
-                battleunit->movement_points = 0;
-            }
-
-            //loc_92EE2
-            //loc_92821
-            battleunit->status = bua_Finished;
-            break;
-        }
-    
-        case BUA_SummonDemon:   // loc_92CB4
-        {
-            BU_SummonDemon(BU_Index);
-            //loc_92D4D
-            battleunit->movement_points = 0;
-
-            break;
-        }
-
-        case BUA_WebSpell:  // loc_92CBE
-        {
-            struct s_BATTLE_UNIT* battleunitTarget = &battle_units[battleunit->Target_BU];
-        
-            battleunit->Attribs_2 ^= USA_WEB;
-
-            G_CMB_SpellEffect(spl_Web, battleunit->Target_BU, BU_Index, battleunitTarget->cgx, battleunitTarget->cgy, 0, 1, 0, 0);
-            break;
-        }
-
-    }
-
-    //loc_92EE5
-
-    if (battleunit->movement_points < 0) {
-        battleunit->movement_points = 0;
-    }
-}
-
-int16_t G_AI_BU_MoveOrRampage(int16_t BU_Index, int16_t Dest_X, int16_t	Dest_Y, int16_t Target, int16_t	Rally_X, int16_t Rally_Y)
-{
-    uint16_t Rampage_X = 0, Rampage_Y = 0;
-    uint16_t City_Steps = 999;
-    uint16_t Town_X = 5, Town_Y = 10;
-
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[BU_Index];
-
-    // Get the movement map for the unit
-    BU_GetMoveMap(BU_Index);
-
-    // Mark units in the active move map
-    for (uint16_t si = 0; si < _combat_total_unit_count; si++) {
-        if (si == Target) continue;
-
-        struct s_BATTLE_UNIT* other_unit = &battle_units[si];
-        if (other_unit->status != bus_Active) continue;
-
-        uint16_t pos_index = other_unit->cgy * 21 + other_unit->cgx;
-        CMB_ActiveMoveMap[pos_index] = -1;
-    }
-
-    BU_SetCityMovement(BU_Index);
-
-    if (battle_unit->controller_idx == _combat_defender_player &&
-        G_AI_StayInTownProper == 1)
-    {
-        if (battlefield->Wall_of_Fire > 0 || battlefield->Wall_of_Darkness > 0)
-        {
-            if (BU_IsInCityProper(BU_Index))
-            {
-                AI_RestrictToCity();
-            }
-        }
-    }
-
-    for (uint16_t si = 0; si < CMB_Vortex_Count; si++)
-    {
-        uint16_t pos_index = CMB_Vortex_Array[si].cgy * 21 + CMB_Vortex_Array[si].cgx;
-        CMB_ActiveMoveMap[pos_index] = -1;
-    }
-
-    CMB_GetPath(battle_unit->cgx, battle_unit->cgy, Dest_X, Dest_Y);
-
-    if ((Target > -1 && (CMB_ActiveMoveMap[Dest_Y * 21 + Dest_X] == -1)) ||
-        Target == -1)
-    {
-        if (battle_unit->controller_idx == _combat_defender_player)
-        {
-            City_Steps = 999;
-            Town_X = 5;
-
-            while (Town_X < 9)
-            {
-                Town_Y = 10;
-                while (Town_Y < 14)
-                {
-                    CMB_GetPath(battle_unit->cgx, battle_unit->cgy, Town_X, Town_Y);
-
-                    if (CMB_Path_Length > 0 && CMB_Path_Length < City_Steps)
-                    {
-                        Rampage_X = Town_X;
-                        Rampage_Y = Town_Y;
-                        City_Steps = CMB_Path_Length;
-                    }
-                    Town_Y++;
-                }
-                Town_X++;
-            }
-
-            if (City_Steps < 999)
-            {
-                G_AI_BU_Move(BU_Index, Rampage_X, Rampage_Y, -1, Rampage_X, Rampage_Y);
-            }
-        }
-    }
-
-    // loc_943CF
-    G_AI_BU_Move(BU_Index, Dest_X, Dest_Y, Target, Rally_X, Rally_Y);
-}
-
-void AI_BU_AssignAction(int16_t BU_Index, int16_t NoSpells)
-{
-    int16_t Player_Index;
-    int16_t Ranged = 0;
-    int16_t Selected_Action = 0;
-    int8_t Target_Index = -1;
-
-    struct s_BATTLE_UNIT* battle_unit = &battle_units[BU_Index];
-
-    if (battle_unit->status != bus_Active)
-    {
-        return;
-    }
-
-    if (NoSpells == 1)
-    {
-        Selected_Action = BUA_No_Spells;
-    }
-    else
-    {
-        Selected_Action = 0;
-    }
-
-    Player_Index = battle_unit->controller_idx;
-
-    // Check if the unit has a ranged attack
-    Ranged = Battle_Unit_Has_Ranged_Attack(BU_Index);
-
-    // Select the next action
-    Target_Index = AI_BU_SelectAction(BU_Index, Selected_Action, Ranged);
-
-    if (Target_Index != -1 && Ranged == 1)
-    {
-        struct s_BATTLE_UNIT* target_unit = &battle_units[Target_Index];
-
-        if ((battle_unit->ranged_type / 10) == rag_Missile &&
-            (target_unit->Attribs_1 & USA_IMMUNITY_MISSILES)) {
-            if ((battle_unit->melee * 3) >= (battle_unit->ranged * 2)) {
-                Target_Index = -1;
-            }
-        }
-    }
-
-    if (Ranged == 1 && Target_Index == -1)
-    {
-        if (Selected_Action == bua_Ready || Selected_Action == BUA_No_Spells ||
-            Selected_Action == BUA_RangedAttack || Selected_Action == BUA_MoveNFire)
-        {
-            Ranged = 0;
-            Target_Index = AI_BU_SelectAction(BU_Index, Selected_Action, Ranged);
-
-            if (Selected_Action == BUA_RangedAttack || Selected_Action == BUA_MoveNFire)
-            {
-                Selected_Action = BUA_MeleeAttack;
-            }
-        }
-    }
-
-    //loc_936FD
-    if (Selected_Action == bua_Ready || Selected_Action == BUA_No_Spells)
-    {
-        if (Ranged == 1) {
-            battle_unit->action = BUA_RangedAttack;
-        }
-        else {
-            battle_unit->action = BUA_MeleeAttack;
-        }
-    }
-    else {
-        battle_unit->action = Selected_Action;
-    }
-
-    if (battle_unit->action == BUA_RangedAttack || battle_unit->action == BUA_MeleeAttack)
-    {
-        if (battle_unit->controller_idx == _combat_defender_player ||
-            AI_CmbtWall_BitField == 0)
-        {
-            if (Target_Index >= 0 && Target_Index < 36)
-            {
-                for (uint16_t di = 0; di < _combat_total_unit_count; di++)
-                {
-                    //loc_937B2
-
-                    struct s_BATTLE_UNIT* potential_target = &battle_units[di];
-
-                    if (potential_target->status == bus_Active &&
-                        potential_target->controller_idx != battle_unit->controller_idx)
-                    {
-                        // loc_937F2
-
-                        struct s_UNIT* best_unit = &_UNITS[battle_units[Target_Index].unit_idx];
-                        struct s_UNIT* potential_unit = &_UNITS[potential_target->unit_idx];
-                        
-                        if (potential_unit->type == best_unit->type &&
-                            potential_target->defense != battle_units[Target_Index].defense)
-                        {
-                            int16_t potential_distance, best_distance;
-                            potential_distance = BU_GetDistanceFrom(BU_Index, di);
-                            best_distance = BU_GetDistanceFrom(BU_Index, Target_Index);
-
-                            if (potential_distance < best_distance)
-                            {
-                                Target_Index = di;
-                            }
-                        }
-                    }
-                }
-            }
-
-            //loc_93883
-            if (Ranged == 0)
-            {
-                for (uint16_t di = 0; di < Target_Index; di++)
-                {
-                    struct s_BATTLE_UNIT* potential_target = &battle_units[di];
-
-                    if (potential_target->status == bus_Active &&
-                        potential_target->controller_idx == battle_unit->controller_idx)
-                    {
-                        // loc_938D1
-
-                        struct s_BATTLE_UNIT* target_of_potential = &battle_units[potential_target->Target_BU];
-                        struct s_UNIT* target_unit = &_UNITS[target_of_potential->unit_idx];
-                        struct s_UNIT* current_target_unit = &_UNITS[battle_units[Target_Index].unit_idx];
-
-                        if (target_unit->type == current_target_unit->type)
-                        {
-                            if (target_of_potential->status == bus_Active &&
-                                target_of_potential->defense == battle_units[Target_Index].defense)
-                            {
-                                Target_Index = potential_target->Target_BU;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // loc_9399C
-    battle_unit->Target_BU = Target_Index;
-}
 
 
 /*
@@ -18252,7 +17437,7 @@ void Init_Battlefield_Effects(int16_t combat_structure)
     int16_t battle_unit_owner_idx;  // _DI_
 
 
-// WTFmate:  Per the Dasm, battlefield is not even allocated for Strategic_Combat()  (and, I can't find where it's populated, in either case)
+    // WTFmate:  Per the Dasm, battlefield is not even allocated for Strategic_Combat()  (and, I can't find where it's populated, in either case)
 
     if(battlefield->city_enchantments[CLOUD_OF_SHADOW] > 0)
     {
@@ -18824,24 +18009,8 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
 /*
 ; returns the simple distance (largest of X and Y)
 ; between the two specified battle units
-/*
 */
-int16_t BU_GetDistanceFrom(int BU_1, int BU_2) {
-    int16_t Y_Distance;
-    int16_t X_Distance;
-
-    struct s_BATTLE_UNIT* battleunit1 = &battle_units[BU_1];
-    struct s_BATTLE_UNIT* battleunit2 = &battle_units[BU_2];
-
-    X_Distance = abs(battleunit1->cgx - battleunit2->cgx);
-    Y_Distance = abs(battleunit1->cgy - battleunit2->cgy);
-
-    if (X_Distance <= Y_Distance) {
-        return Y_Distance;
-    }
-    
-    return X_Distance;
-}
+/*
 
 */
 int16_t Range_To_Battle_Unit(int16_t BU_1, int16_t BU_2)
@@ -21153,7 +20322,7 @@ int16_t Battle_Unit_Moves2(int16_t battle_unit_idx)
     if(battle_units[battle_unit_idx].Web_HP > 0)
     {
         return 0;
-}
+    }
 
 
     enchantments = (battle_units[battle_unit_idx].enchantments | _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments);
@@ -21850,7 +21019,7 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
 
 // segrax
 // WZD o133p15
-void CMB_SetVortexCursor(int Vortex_Index) {
+void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     unsigned int Pointer_Offset = 4;
     unsigned int Tile_Y, Scrn_Y, Scrn_X;
 
@@ -22791,10 +21960,10 @@ along with a c&p if the switch(){}
 
 TODO  sync up with Unit_Figure_Position()
 
-CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].cgy, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
+CMB_SpawnFigure__WIP(battle_units[itr].battle_unit_figure_idx, battle_units[itr].cgx, battle_units[itr].position_cgc1, battle_units[itr].target_cgx, battle_units[itr].target_cgy, battle_units[itr].MoveStage, itr_figures, unit_figure_maximum, battle_units[itr].controller_idx, battle_units[itr].outline_magic_realm, battle_units[itr].Blood_Amount, battle_units[itr].Moving, battle_units[itr].Atk_FigLoss, 0);
 
 */
-void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
+void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1, int16_t target_cgx, int16_t target_cgy, int16_t MoveStage, int16_t current_figure, int16_t figure_count, int16_t controller_idx, int16_t outline_magic_realm, int16_t BldAmt, int16_t UU, int16_t LostFigs, int16_t SrcBld)
 {
     int16_t Blood_Frame = 0;
     int16_t figure_set_idx = 0;
@@ -22811,13 +21980,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
 // DELETE      if(
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (cgx == DBG_cgx)
+// DELETE          (cgx == DBG_position_cgc2)
 // DELETE          &&
-// DELETE          (cgy == DBG_cgy)
+// DELETE          (position_cgc1 == DBG_position_cgc1)
 // DELETE          &&
-// DELETE          (target_cgx == DBG_target_cgx)
+// DELETE          (target_cgx == DBG_target_cgc2)
 // DELETE          &&
-// DELETE          (target_cgy == DBG_target_cgy)
+// DELETE          (target_cgy == DBG_target_cgc1)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -22841,7 +22010,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
 // DELETE          DBG_combat_grid_entity_idx = combat_grid_entity_count;
 // DELETE      }
 
-    Combat_Grid_Screen_Coordinates(cgx, cgy, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
 
     Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
@@ -22944,13 +22113,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
     if(cgx > target_cgx)
     {
 
-        if(cgy > target_cgy)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 0;
 
         }
-        else if(cgy < target_cgy)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 6;
@@ -22967,13 +22136,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
     else if(cgx < target_cgx)
     {
 
-        if(cgy > target_cgy)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 2;
 
         }
-        else if(cgy < target_cgy)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 4;
@@ -22990,13 +22159,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
     else
     {
 
-        if(cgy > target_cgy)
+        if(position_cgc1 > target_cgy)
         {
 
             figure_set_idx = 1;
 
         }
-        else if(cgy < target_cgy)
+        else if(position_cgc1 < target_cgy)
         {
 
             figure_set_idx = 5;
@@ -23083,13 +22252,13 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t cgy, int16_t 
 // DELETE      if (
 // DELETE          (seg_or_idx == DBG_battle_unit_figure_idx)
 // DELETE          &&
-// DELETE          (cgx == DBG_cgx)
+// DELETE          (cgx == DBG_position_cgc2)
 // DELETE          &&
-// DELETE          (cgy == DBG_cgy)
+// DELETE          (position_cgc1 == DBG_position_cgc1)
 // DELETE          &&
-// DELETE          (target_cgx == DBG_target_cgx)
+// DELETE          (target_cgx == DBG_target_cgc2)
 // DELETE          &&
-// DELETE          (target_cgy == DBG_target_cgy)
+// DELETE          (target_cgy == DBG_target_cgc1)
 // DELETE          &&
 // DELETE          (MoveStage == DBG_MoveStage)
 // DELETE          &&
@@ -23230,170 +22399,6 @@ void USELESS_Combat_Figure_Load_Compose(int16_t battle_unit_figure_idx, int16_t 
 
 // WZD ovr153p17
 // drake178: CMB_GetFigDrawPos()
-void CMB_GetFigDrawPos(int16_t Max_Figs, int16_t Cur_Fig, int16_t* Left, int16_t* Top)
-{
-    switch (Max_Figs - 1) {
-    case 0x0:
-        *Left = 1;
-        *Top = 8;
-        break;
-    case 0x1:
-        if (Cur_Fig == 0) {
-            *Left = -7;
-        }
-        else {
-            *Left = 7;
-        }
-        *Top = 9;
-        break;
-    case 0x2:
-        if (Cur_Fig == 0) {
-            *Left = 0;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = -6;
-            *Top = 10;
-        }
-        else {
-            *Left = 7;
-            *Top = 10;
-        }
-        break;
-    case 0x3:
-        if (Cur_Fig == 0) {
-            *Left = 1;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = 8;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 2) {
-            *Left = 1;
-            *Top = 12;
-        }
-        else {
-            *Left = -7;
-            *Top = 8;
-        }
-        break;
-    case 0x4:
-        if (Cur_Fig == 0) {
-            *Left = 1;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = 8;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 2) {
-            *Left = 1;
-            *Top = 12;
-        }
-        else if (Cur_Fig == 3) {
-            *Left = -7;
-            *Top = 8;
-        }
-        else {
-            *Left = 1;
-            *Top = 8;
-        }
-        break;
-    case 0x5:
-        if (Cur_Fig == 0) {
-            *Left = 1;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = 9;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 2) {
-            *Left = -8;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 3) {
-            *Left = 1;
-            *Top = 12;
-        }
-        else if (Cur_Fig == 4) {
-            *Left = -3;
-            *Top = 9;
-        }
-        else {
-            *Left = 4;
-            *Top = 7;
-        }
-        break;
-    case 0x6:
-        if (Cur_Fig == 0) {
-            *Left = 1;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = 10;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 2) {
-            *Left = -8;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 3) {
-            *Left = 1;
-            *Top = 12;
-        }
-        else if (Cur_Fig == 4) {
-            *Left = 6;
-            *Top = 6;
-        }
-        else if (Cur_Fig == 5) {
-            *Left = -3;
-            *Top = 11;
-        }
-        else {
-            *Left = 1;
-            *Top = 8;
-        }
-        break;
-    case 0x7:
-        if (Cur_Fig == 0) {
-            *Left = 1;
-            *Top = 4;
-        }
-        else if (Cur_Fig == 1) {
-            *Left = 10;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 2) {
-            *Left = -8;
-            *Top = 8;
-        }
-        else if (Cur_Fig == 3) {
-            *Left = 2;
-            *Top = 12;
-        }
-        else if (Cur_Fig == 4) {
-            *Left = 6;
-            *Top = 6;
-        }
-        else if (Cur_Fig == 5) {
-            *Left = -3;
-            *Top = 12;
-        }
-        else if (Cur_Fig == 6) {
-            *Left = -2;
-            *Top = 7;
-        }
-        else {
-            *Left = 3;
-            *Top = 9;
-        }
-        break;
-    default:
-        break;
-    }
-}
 
 // WZD ovr153p18
 // drake178: CMB_CreateEntity()
@@ -23638,7 +22643,7 @@ void Combat_Figure_Compose_USEFULL(void)
     int16_t offset = 0;
     SAMB_ptr figure_pointer_seg = 0;
     int16_t target_cgy = 0;
-    int16_t cgy = 0;
+    int16_t position_cgc1 = 0;
     int16_t target_cgx = 0;
     int16_t cgx = 0;
     int16_t itr = 0;  // _SI_
@@ -23723,7 +22728,7 @@ void Combat_Figure_Compose_USEFULL(void)
         
         cgx = battle_units[itr].cgx;
         
-        cgy = battle_units[itr].cgy;
+        position_cgc1 = battle_units[itr].cgy;
         
         target_cgx = battle_units[itr].target_cgx;
         
@@ -23732,13 +22737,13 @@ void Combat_Figure_Compose_USEFULL(void)
         if(cgx > target_cgx)
         {
 
-            if(cgy > target_cgy)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 0;
 
             }
-            else if(cgy < target_cgy)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 6;
@@ -23755,13 +22760,13 @@ void Combat_Figure_Compose_USEFULL(void)
         else if(cgx < target_cgx)
         {
 
-            if(cgy > target_cgy)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 2;
 
             }
-            else if(cgy < target_cgy)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 4;
@@ -23778,13 +22783,13 @@ void Combat_Figure_Compose_USEFULL(void)
         else
         {
 
-            if(cgy > target_cgy)
+            if(position_cgc1 > target_cgy)
             {
 
                 figure_set_idx = 1;
 
             }
-            else if(cgy < target_cgy)
+            else if(position_cgc1 < target_cgy)
             {
 
                 figure_set_idx = 5;
@@ -25495,7 +24500,7 @@ void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls)
                     battlefield->MoveCost_Sailing[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)]  = 2;
                 } break;
 
-}
+            }
 
         }
 
@@ -25700,7 +24705,7 @@ CMB_DrawMap__WIP()
 ...{6,11} are combat grid coordinates of lair/node structure
 
 CMB_SpawnFigure__WIP()
-    Combat_Grid_Screen_Coordinates(cgx, cgy, 0, 0, &position_screen_x, &position_screen_y);
+    Combat_Grid_Screen_Coordinates(cgx, position_cgc1, 0, 0, &position_screen_x, &position_screen_y);
 
     Combat_Grid_Screen_Coordinates(target_cgx, target_cgy, 0, 0, &target_screen_x, &target_screen_y);
 
@@ -26793,7 +25798,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
         for(itr_i = 0; itr_i < max_i; itr_i++)
         {
 
-/*
+            /*
                 BEGIN: First
             */
             move_cost = CMB_ActiveMoveMap[ctr];

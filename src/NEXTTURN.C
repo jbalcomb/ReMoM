@@ -194,6 +194,11 @@ retf
 
 
 // WZD o60p04
+/*
+
+
+
+*/
 void Next_Turn_Proc(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -433,7 +438,7 @@ void Next_Turn_Calc(void)
 
     AI_Kill_Lame_Units();
 
-    AI_Next_Turn__STUB();
+    AI_Next_Turn__WIP();
 
 
 
@@ -1121,7 +1126,7 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
                         (_players[player_idx].spellranks[sbr_Death] > 0)
                     )
                     &&
-                    (((_unit_type_table[hero_type_idx].Cost - 100) / 10) < player_fame)
+                    (((_unit_type_table[hero_type_idx].cost - 100) / 10) < player_fame)
                 )
                 {
                     Success = ST_TRUE;
@@ -1394,7 +1399,7 @@ _TrlSpearmen
             } break;
             default:
             {
-                _unit_type_table[itr_unit_types].Upkeep = ((_unit_type_table[itr_unit_types].Cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
+                _unit_type_table[itr_unit_types].Upkeep = ((_unit_type_table[itr_unit_types].cost + 49) / 50);  // Dasm is doing a ceil(), somehow?
             }
         }
     }
@@ -3994,6 +3999,8 @@ void Cool_Off_Volcanoes(void)
 */
 /*
 
+IDGI  uses GUI_Multipurpose_Int to track count of culled military units, for the every turn culling
+
 ¿ units_in_city is {F,T} of whether each _units[] is in a city that is not owned by the neutral or human player ?
 ...to what end?
 
@@ -4085,10 +4092,10 @@ void AI_Kill_Lame_Units(void)
                 if(did_remove_unit == ST_FALSE)
                 {
 
-                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].Cost < (_players[_CITIES[itr_cities].owner_idx].average_unit_cost / 2))
+                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].cost < (_players[_CITIES[itr_cities].owner_idx].average_unit_cost / 2))
                     {
 
-                        Kill_Unit(troops[itr_troops], 0);
+                        Kill_Unit(troops[itr_troops], 0);  // kill type 0 does not remove hero's items
 
                         did_remove_unit = ST_TRUE;
 
@@ -4103,6 +4110,8 @@ void AI_Kill_Lame_Units(void)
     }
 
 
+    // ¿ does this subsequently get used in  AI_Next_Turn() ?
+    // count of killed military units? doesn't inlude units killed in cities...
     GUI_Multipurpose_Int = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
@@ -4115,7 +4124,7 @@ void AI_Kill_Lame_Units(void)
         if(
             (unit_owner > HUMAN_PLAYER_IDX)
             &&
-            (unit_owner > NEUTRAL_PLAYER_IDX)
+            (unit_owner < NEUTRAL_PLAYER_IDX)
         )
         {
 
@@ -4128,15 +4137,15 @@ void AI_Kill_Lame_Units(void)
                 &&
                 (_unit_type_table[unit_type].Transport == 0)
                 &&
-                (unit_type > ut_Trireme)
+                (unit_type > ut_Trireme)  /* ¿ BUGBUG  `>=` || ut_Chosen (34) || 'Last Hero Unit Index' ? */
                 &&
-                (_unit_type_table[unit_type].Cost < (_players[unit_owner].average_unit_cost / 2))
+                (_unit_type_table[unit_type].cost < (_players[unit_owner].average_unit_cost / 2))
                 &&
                 (units_in_city[itr_units] == ST_FALSE)
             )
             {
 
-                Kill_Unit(itr_units, 0);
+                Kill_Unit(itr_units, 0);  // kill type 0 does not remove hero's items
 
                 GUI_Multipurpose_Int++;
 
@@ -4146,12 +4155,12 @@ void AI_Kill_Lame_Units(void)
 
     }
 
-
 }
 
 
 // WZD o140p28
 // drake178: AI_GetAvgUnitCosts()
+// ¿ MoO2  Module: AIBUILD  Mean_Ship_Strength_() ?
 /*
 ; calculates and sets into the wizard record the
 ; average combat unit value (total cost / count) of
@@ -4159,22 +4168,27 @@ void AI_Kill_Lame_Units(void)
 */
 /*
 
+only for 'Computer Player', not 'Human Player' or 'Neutral Player'
+does not include Settler; Magic Spirit, Guardian Spirit; Engineer, Trireme, Galley, Catapult, Warship;
+OON XREF:  AI_Kill_Lame_Units()
+
 */
 void AI_Calculate_Average_Unit_Cost(void)
 {
-    int16_t Combat_Unit_Count[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
-    int32_t Combat_Unit_Value[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t unit_counts[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int32_t unit_costs[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
     int16_t unit_owner = 0;
-    int16_t itr_num_players = 0;  // _SI_
+    // int16_t itr_players__units = 0;  // _SI_
+    int16_t itr_players = 0;  // _SI_
     int16_t itr_units = 0;  // _SI_
     int16_t unit_type = 0;  // _DI_
 
-    for(itr_num_players = 0; itr_num_players < NUM_PLAYERS; itr_num_players)
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players)
     {
 
-        Combat_Unit_Value[itr_num_players] = 0;
+        unit_costs[itr_players] = 0;
 
-        Combat_Unit_Count[itr_num_players] = 0;
+        unit_counts[itr_players] = 0;
 
     }
 
@@ -4192,7 +4206,7 @@ void AI_Calculate_Average_Unit_Cost(void)
         )
         {
 
-
+            // NOT Settler; Magic Spirit, Guardian Spirit; Engineer, Trireme, Galley, Catapult, Warship;
             if(
                 ((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) == 0)
                 &&
@@ -4204,9 +4218,9 @@ void AI_Calculate_Average_Unit_Cost(void)
             )
             {
 
-                Combat_Unit_Value[unit_owner] += _unit_type_table[unit_type].Cost;
+                unit_costs[unit_owner] += _unit_type_table[unit_type].cost;
 
-                Combat_Unit_Count[unit_owner]++;
+                unit_counts[unit_owner]++;
 
             }
 
@@ -4214,13 +4228,13 @@ void AI_Calculate_Average_Unit_Cost(void)
 
     }
 
-    for(itr_num_players = 1; itr_num_players < NUM_PLAYERS; itr_num_players++)
+    for(itr_players = 1; itr_players < NUM_PLAYERS; itr_players++)
     {
 
-        if(Combat_Unit_Count[itr_num_players] != 0)
+        if(unit_counts[itr_players] != 0)
         {
 
-            _players[itr_num_players].average_unit_cost = (Combat_Unit_Value[itr_num_players] / Combat_Unit_Count[itr_num_players]);
+            _players[itr_players].average_unit_cost = (unit_costs[itr_players] / unit_counts[itr_players]);
 
         }
 
