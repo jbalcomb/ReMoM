@@ -200,7 +200,7 @@ void Allocate_AI_Data(void);
 // AI_Magic_Strategy()
 
 // WZD o164p07
-// AI_Evaluate_War()
+void AI_Evaluate_War__WIP(int16_t player_idx);
 
 // WZD o164p08
 // AI_GetNeutralStacks()

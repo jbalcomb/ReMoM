@@ -273,7 +273,7 @@ struct s_UNIT_TYPE
     /* 07 */  int8_t   Defense;
     /* 08 */  int8_t   Resist;
     /* 09 */  int8_t   Move_Halves;
-    /* 0A */  int16_t  Cost;
+    /* 0A */  int16_t  cost;                    /* Unit Cost */
     /* 0C */  int8_t   Upkeep;
     /* 0D */  int8_t   Race;
     /* 0E */  // int8_t   Bldng1_or_Portrait;   /* enum BLD_TYPE */
@@ -293,7 +293,7 @@ struct s_UNIT_TYPE
     /* 13 */  int8_t   Sight;
     /* 14 */  int8_t   Transport;
     /* 15 */  int8_t   Figures;
-    /* 16 */  int8_t   Construction;
+    /* 16 */  int8_t   Construction;            /* {0: , 1: , 2: } 'Build Roads'  ¿ Build Outposts ? */
     /* 17 */  int8_t   Spec_Att_Attr;
     /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
     /* 1A */  int16_t Attribs_1;                /* enum ATTRIB_1 */

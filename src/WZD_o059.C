@@ -74,6 +74,11 @@ int16_t Player_Summon_City(int16_t player_idx)
 
 
 // WZD o59p03
+/*
+
+in-outs count and indices of units in city
+
+*/
 void Army_At_City(int16_t city_idx, int16_t * troop_count, int16_t troops[])
 {
     int16_t itr;

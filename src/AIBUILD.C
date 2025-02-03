@@ -273,7 +273,7 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
         }
         else
         {
-            Weights[itr] = (_unit_type_table[product_array[itr]].Cost / 10);
+            Weights[itr] = (_unit_type_table[product_array[itr]].cost / 10);
         }
     }
 
@@ -419,7 +419,7 @@ void Player_Colony_Autobuild_NP(int16_t city_idx)
     {
         if(product_array[itr] >= 100)
         {
-            Weights[itr] = (_unit_type_table[product_array[itr]].Cost / 10);
+            Weights[itr] = (_unit_type_table[product_array[itr]].cost / 10);
         }
         else
         {
@@ -680,7 +680,7 @@ void Player_Colony_Autobuild_HP(int16_t city_idx)
         }
         else
         {
-            Weights[itr] = (_unit_type_table[product_array[itr]].Cost / 10);
+            Weights[itr] = (_unit_type_table[product_array[itr]].cost / 10);
         }
     }
 

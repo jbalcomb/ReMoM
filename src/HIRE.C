@@ -470,7 +470,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         return ST_FALSE;
     }
 
-    GAME_AssetCost = (_unit_type_table[unit_type_idx].Cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].Cost) / 4));
+    GAME_AssetCost = (_unit_type_table[unit_type_idx].cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].cost) / 4));
 
     if(
         (_players[HUMAN_PLAYER_IDX].gold_reserve < GAME_AssetCost)
@@ -838,7 +838,7 @@ void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type
     int16_t allowance;
     int16_t unit_cost;  // _DI_
 
-    unit_cost = _unit_type_table[unit_type_idx].Cost;
+    unit_cost = _unit_type_table[unit_type_idx].cost;
 
     if(_players[player_idx].charismatic > 0)
     {
