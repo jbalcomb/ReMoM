@@ -58,7 +58,7 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     UU_TBL_1 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
     UU_TBL_2 = Allocate_Next_Block(World_Data, 14);  // 14 PR, 224 B
 
-    TBL_Landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
+    _landmasses    = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
     TBL_Terr_Specials = (uint8_t *)Allocate_Next_Block(World_Data, 302);   // 302 PR, 4832 B
 
@@ -160,7 +160,7 @@ so, 300 PRs, + 1 for the SAMB header
     city_area_shared_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
     city_area_bits = (uint8_t *)Allocate_Space(WORLD_MAP_BITFIELD_SIZE + 1);
 
-    TBL_OvlMovePaths_EMS = Allocate_Space(1033);
+    TBL_OvlMovePaths_EMS = Allocate_Space(1033);  // 1033 * 16 = 16528 B
 
 
     /*
@@ -208,7 +208,7 @@ so, 300 PRs, + 1 for the SAMB header
 
 // mov     [AI_Arc_MainWarConts@], (offset _players.spells_list+17E8h) ; 12 bytes, Arcanus array
 // mov     [AI_Myr_MainWarConts@], (offset _players.spells_list+17F4h) ; 12 bytes, Myrror array
-// mov     [AI_CONTX_Reevals@],    (offset _players.spells_list+1800h) ; 16 bytes
+// mov     [_ai_reevaluate_continents_countdown@],    (offset _players.spells_list+1800h) ; 16 bytes
 // mov     [Wiz5_Spell_28h@],      (offset _players.spells_list+1810h) ; 20 bytes
 // mov     [Wiz5_Spell_3Ch@],      (offset _players.spells_list+1824h) ; 20 bytes
 // mov     [Wiz5_Spell_50h@],      (offset _players.spells_list+1838h) ; 20 bytes
@@ -238,22 +238,25 @@ so, 300 PRs, + 1 for the SAMB header
     // 17E8  6120  6120 - 6120 =  0
     // 17F4  6132  6132 - 6120 = 12
 
-    AI_Arc_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
-    AI_Myr_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
-    AI_CONTX_Reevals    = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes
-    Wiz5_Spell_28h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1810) );  // 20 bytes
-    Wiz5_Spell_3Ch      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1824) );  // 20 bytes
-    Wiz5_Spell_50h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1838) );  // 20 bytes
-    Wiz5_Spell_64h      = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x184C) );  // 20 bytes
-    AI_Arc_NewColConts  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1860) );  // 20 bytes
-    AI_Myr_NewColConts  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1874) );  // 20 bytes
-    AI_Arc_NewColTgtXs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1888) );  // 20 bytes
-    AI_Myr_NewColTgtXs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x189C) );  // 20 bytes
-    AI_Arc_NewColTgtYs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18B0) );  // 12 bytes
-    AI_Myr_NewColTgtYs  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18BC) );  // 12 bytes
-    AI_SCircle_Reevals  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
+    // AI_Arc_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
+    // AI_Myr_MainWarConts = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
+    AI_MainWarConts[0] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) );  // 12 bytes
+    AI_MainWarConts[1] = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17F4) );  // 12 bytes
+    _ai_reevaluate_continents_countdown   = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1800) );  // 16 bytes
+    Wiz5_Spell_28h     = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1810) );  // 20 bytes
+    Wiz5_Spell_3Ch     = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1824) );  // 20 bytes
+    Wiz5_Spell_50h     = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1838) );  // 20 bytes
+    Wiz5_Spell_64h     = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x184C) );  // 20 bytes
+    AI_NewColConts[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1860) );  // 20 bytes
+    AI_NewColConts[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1874) );  // 20 bytes
+    AI_NewColTgtXs[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x1888) );  // 20 bytes
+    AI_NewColTgtXs[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x189C) );  // 20 bytes
+    AI_NewColTgtYs[0]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18B0) );  // 12 bytes
+    AI_NewColTgtYs[1]  = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18BC) );  // 12 bytes
+    AI_SCircle_Reevals = ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
 
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
+    // EMM_PageFrame = Allocate_Space(((4 * 16384) / 16));
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
 }

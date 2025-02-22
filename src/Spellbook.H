@@ -31,7 +31,7 @@ enum e_SPELLS
     spl_Sprites             =   9,
     spl_Earth_Lore          =  10,
     spl_Cracks_Call         =  11,
-    spl_Natures_eye         =  12,
+    spl_Natures_Eye         =  12,
     spl_Ice_Bolt            =  13,
     spl_Giant_Spiders       =  14,
     spl_Change_Terrain      =  15,

@@ -23,19 +23,94 @@
 */
 
 // WZD s23p01
-// UU_VGA_GetPointInDir()
+// drake178: UU_VGA_GetPointInDir()
 
 // WZD s23p02
-// TILE_GetDistance()
+// drake178: TILE_GetDistance()
+// MoO2  Module: special  Range()
+/*
+    function (0 bytes) Range
+    Address: 01:00134637
+        Num params: 4
+        Return type: signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            signed integer (2 bytes) x1
+            signed integer (2 bytes) y1
+            signed integer (2 bytes) x2
+            signed integer (2 bytes) y2
+            signed integer (2 bytes) delta_x
+            signed integer (2 bytes) delta_y
+            signed integer (2 bytes) range
+*/
+/*
+a somewhat better approximation than
+TILE_SimpleDistance, this adds half of the smaller
+distance to the larger, but it does not account for
+the map wrapping around
+*/
+/*
+looks like assembly code
+
+*/
+int16_t Range(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+{
+    int16_t delta_x = 0;  // _BX_
+    int16_t delta_y = 0;  // _CX_
+    int16_t range = 0;  // _DX_, _SI_
+
+    delta_x = (x2 - x1);
+    
+    delta_y = (y2 - y1);
+
+    if(delta_x < 0)
+    {
+
+        delta_x = -(delta_x);
+
+    }
+
+    if(delta_y < 0)
+    {
+        
+        delta_y = -(delta_y);
+
+    }
+
+    if(delta_x > delta_y)
+    {
+
+        range = delta_x;
+        range += (delta_y / 2);
+
+    }
+    else
+    {
+
+        range = delta_y;
+        range += (delta_x / 2);
+
+    }
+
+    return range;
+
+}
+
 
 // WZD s23p03
 // MoO2
 // 1oom
 /*
-    calculate the distance between {x1,y1} and {x2,y2}
 ; returns a non-euclidean distance between two tiles,
 ; using the larger of the X and Y distances, but
 ; accounting for the map wrapping around (with Width)
+*/
+/*
+    calculate the distance between {x1,y1} and {x2,y2}
+
 */
 int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t wrap_x)
 {

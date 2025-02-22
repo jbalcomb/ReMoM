@@ -78,7 +78,7 @@ _world_maps  // 4800 * 2 = 9600
 
 UU_TBL_1
 UU_TBL_2
-TBL_Landmasses
+_landmasses
 
 _NODES
 _FORTRESSES
@@ -129,7 +129,7 @@ void Test_Run(void)
     // _world_maps  // 4800 * 2 = 9600
     // UU_TBL_1
     // UU_TBL_2
-    // TBL_Landmasses
+    // _landmasses
 assert(sizeof(struct s_NODE) == NODE_RECORD_SIZE);          //   48  _NODES
 assert(sizeof(struct s_FORTRESS) == FORTRESS_RECORD_SIZE);  //    4  _FORTRESSES
 assert(sizeof(struct s_TOWER) == TOWER_RECORD_SIZE);        //    4  _TOWERS

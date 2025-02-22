@@ -23,6 +23,15 @@ MoO2
     Diplomatic Relations
     Treaty Status
 
+_players[].Dipl.Dipl_Status[]
+_players[].Dipl.Visible_Rel[]
+_players[].Hostility[]
+
+_players[].Hostility[]
+    OSG
+        four levels of aggression
+        None, Annoyed, Warlike, Jihad
+
 */
 enum DIPL_Status
 {

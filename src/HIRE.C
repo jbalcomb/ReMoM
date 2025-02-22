@@ -410,20 +410,22 @@ void Hire_Hero_Popup_Draw(void)
 */
 int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hire_type)
 {
-    uint8_t Name_Edit_Colors[20];
-    int16_t Hero_Hired;
-    int16_t Hire_Success;
-    int16_t window_y;
-    int16_t hire_button_field;
-    int16_t reject_button_field;
-    int16_t itr;
-    int16_t leave_screen;
-    int16_t input_field_idx;
-    int16_t window_x;  // _DI_
+    uint8_t Name_Edit_Colors[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Hero_Hired = 0;
+    int16_t Hire_Success = 0;
+    int16_t window_y = 0;
+    int16_t hire_button_field = 0;
+    int16_t reject_button_field = 0;
+    int16_t itr = 0;
+    int16_t leave_screen = 0;
+    int16_t input_field_idx = 0;
+    int16_t window_x = 0;  // _DI_
 
     for(itr = 0; itr < 20; itr++)
     {
+
         Name_Edit_Colors[itr] = (176 + (itr % 10));
+
     }
 
     Hero_Hired = ST_FALSE;
@@ -466,8 +468,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     // ; conflicting condition - will always jump
     if(Hire_Success == ST_FALSE)
     {
+
         GFX_Swap_Cities();
+
         return ST_FALSE;
+
     }
 
     GAME_AssetCost = (_unit_type_table[unit_type_idx].cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].cost) / 4));
@@ -481,8 +486,11 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
         if(_UNITS[(_units - 1)].Level < 4)
         {
+
             _UNITS[(_units - 1)].Level += 1;
+
             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
+
         }
 
         Kill_Unit((_units - 1), 1);
@@ -490,11 +498,14 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         GFX_Swap_Cities();
 
         return ST_FALSE;
+
     }
 
     if(_players[HUMAN_PLAYER_IDX].charismatic > 0)
     {
+
         GAME_AssetCost /= 2;  // 50%
+
     }
 
     Load_Battle_Unit((_units - 1), global_battle_unit);
@@ -509,13 +520,17 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     if(GAME_HeroHireType == 0)  // ; 0: random, 1: summon, 2: prisoner, 3: champion
     {
+
         // ¿ "[H]ire" ?
         hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED);
+
     }
     else
     {
+
         // ¿ "[A]ccept" ?
         hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED);
+
     }
 
     reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
@@ -536,8 +551,8 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     // ~== Set_Hire_Hero_Popup_Help_List()
     LBX_Load_Data_Static(hlpentry_lbx_file__ovr127, 23, (SAMB_ptr)_help_entries, 0, 23, 10);
-    Set_Help_List((char *)_help_entries, 23);
 
+    Set_Help_List((char *)_help_entries, 23);
 
     leave_screen = ST_FALSE;
 
@@ -559,14 +574,22 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         */
         if(input_field_idx == reject_button_field)
         {
+
             leave_screen = ST_TRUE;
+
             Play_Left_Click__DUPE();
+
             if(_UNITS[(_units - 1)].Level < 4)
             {
+
                 _UNITS[(_units - 1)].Level += 1;
+
                 _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
+
             }
+            
             Kill_Unit((_units - 1), 1);
+
         }
         /*
             END:  Left-Click Reject Button
@@ -577,24 +600,39 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         */
         if(input_field_idx == hire_button_field)
         {
+
             Play_Left_Click__STUB();
+
             GUI_InHeroNaming = ST_TRUE;
+
             _HEROES2[HUMAN_PLAYER_IDX]->heroes[unit_type_idx].Level = -20;
+
             if(GAME_HeroHireType == 0)
             {
+
                 _players[HUMAN_PLAYER_IDX].gold_reserve -= GAME_AssetCost;
+
             }
+            
             // DEDU  Is this for real? Who would ever and/or why?
             if((GAME_HeroHireType % 2) != 0)  // ~== 1 or 3  Summon Hero or Champion
             {
+
                 _UNITS[(_units - 1)].wx = _players[HUMAN_PLAYER_IDX].summon_wx;
+
                 _UNITS[(_units - 1)].wy = _players[HUMAN_PLAYER_IDX].summon_wy;
+
                 _UNITS[(_units - 1)].wp = _players[HUMAN_PLAYER_IDX].summon_wp;
+
             }
+
             // ; BUG: can push a unit out of the capital when finding a prisoner
             UNIT_RemoveExcess((_units - 1));
+
             Hero_Hired = ST_TRUE;
+
             leave_screen = ST_TRUE;
+
         }
         /*
             END:  Left-Click Hire / Accept Button
@@ -606,21 +644,30 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
         if(leave_screen == ST_FALSE)
         {
+
             Set_Page_Off();
+
             Hire_Hero_Popup_Draw();
+
             PageFlip_FX();
+
             Release_Time(1);
+
         }
+
     }
 
     if(Hero_Hired == ST_TRUE)
     {
+
         Set_Font_Style(4, 4, 4, 4);
 
         // // int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
         // Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0], ST_UNDEFINED);
         Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0]);
+
         strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
+
     }
 
     Clear_Fields();
@@ -636,6 +683,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     Deactivate_Help_List();
 
     return Hero_Hired;
+
 }
 
 

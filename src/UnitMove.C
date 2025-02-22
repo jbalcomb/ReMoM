@@ -627,7 +627,52 @@ int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx)
 }
 
 // WZD o71p014
-// int16_t UNIT_IsNonCorporeal(int16_t unit_idx);
+// drake178: UNIT_IsNonCorporeal()
+/*
+returns 1 if the unit is non-corporeal, 0 otherwise
+
+this is an actual FULL check, considering natural
+ability, wraith form enchantment, and item powers
+*/
+/*
+
+*/
+int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
+{
+    uint32_t UU_item_enchantments = 0;
+    int16_t unit_type = 0;
+
+    unit_type = _UNITS[unit_idx].type;
+
+    if((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
+    {
+
+        return ST_TRUE;
+
+    }
+
+    if((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
+    {
+
+        return ST_TRUE;
+    }
+
+    if(_UNITS[unit_idx].Hero_Slot != ST_UNDEFINED)
+    {
+
+        UU_item_enchantments = BU_Apply_Item_Powers(unit_idx, global_battle_unit);
+
+        if((global_battle_unit->item_enchantments & UE_WRAITHFORM) != 0)
+        {
+
+            return ST_TRUE;
+        }
+
+    }
+
+    return ST_FALSE;
+
+}
 
 
 
@@ -685,7 +730,7 @@ int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t M
     UU_flag = ST_TRUE;
     UU_moves2 = 8;
 
-    // DONT  CRP_UNIT_OverlandPath = ST_UNDEFINED;  // ; an index into OvlMovePaths_EMS@
+    CRP_UNIT_OverlandPath = ST_UNDEFINED;  // ; an index into OvlMovePaths_EMS@
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {

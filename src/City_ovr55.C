@@ -1205,23 +1205,35 @@ void City_Check_Production(int16_t city_idx)
 // WZD o55p17
 void City_Cancel_Production(int16_t city_idx)
 {
+
     if(_CITIES[city_idx].owner_idx == _human_player_idx)
     {
+
         if(g_bldg_msg_ctr < 20)
         {
+
             MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
+
             MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = -(_CITIES[city_idx].construction);  // DEDU  negative means?  ("...can no longer produce...")
+
             g_bldg_msg_ctr++;
+
         }
         else
         {
+
             _CITIES[city_idx].construction = bt_Housing;
+
         }
+        
     }
     else
     {
+
         _CITIES[city_idx].construction = bt_AUTOBUILD;
+
     }
+
 }
 
 
@@ -1254,9 +1266,18 @@ int16_t City_Sell_Building_Value(int16_t bldg_idx)
 void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx)
 {
     int16_t cost;
+
+Check_Cities_Data();
     cost = City_Cost_To_Buy_Product(city_idx);
+Check_Cities_Data();
+
     _players[player_idx].gold_reserve -= cost;
+
+Check_Cities_Data();
     _CITIES[city_idx].Prod_Accu += City_Production_Cost(_CITIES[city_idx].construction, city_idx);
+// Check_Cities_Data();
+Capture_Cities_Data();
+
 }
 
 
@@ -1959,12 +1980,16 @@ void City_Screen_Draw_Population_Row(int16_t city_idx, int16_t xstart, int16_t y
 
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
+
         _CITIES[city_idx].farmer_count = min_farmer_count;
+
     }
 
     if(_CITIES[city_idx].farmer_count > (_CITIES[city_idx].population - rebel_count))
     {
+
         _CITIES[city_idx].farmer_count = (_CITIES[city_idx].population - rebel_count);
+
     }
 
     farmer_count = _CITIES[city_idx].farmer_count;
@@ -2041,12 +2066,16 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
 
     if(_CITIES[city_idx].farmer_count < min_farmer_count)
     {
+
         _CITIES[city_idx].farmer_count = min_farmer_count;
+
     }
 
     if(_CITIES[city_idx].farmer_count > (_CITIES[city_idx].population - rebel_count))
     {
+
         _CITIES[city_idx].farmer_count = (_CITIES[city_idx].population - rebel_count);
+
     }
 
     figure_space = 9;

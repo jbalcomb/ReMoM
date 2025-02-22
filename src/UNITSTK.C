@@ -241,21 +241,38 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 }
 
 // WZD o61p03
+// drake178: RdBd_UNIT_MoveStack()
+/*
+; attempts to select and move the stack of units that
+; the selected one is part of based on destination and
+; road building progress
+; returns 1 if the stack has moved, or 0 if not at all
+; or selection was impossible
+;
+; contains multiple inherited BUGs
+;
+; progress is in here
+*/
+/*
+
+*/
 int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int16_t dst_wy, int16_t * map_x, int16_t * map_y, int16_t map_p)
 {
-    int16_t troops[MAX_STACK];
-    int16_t roadbuilder_count;
-    int16_t unit_wy;
-    int16_t unit_wx;
-    int16_t did_move_stack;
-    int16_t troop_count;
-    int16_t Special_Move;
-    int16_t troop_unit_idx;
-    int16_t itr_units;  // _SI_
-    int16_t itr_troops;  // _SI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t roadbuilder_count = 0;
+    int16_t unit_wy = 0;
+    int16_t unit_wx = 0;
+    int16_t did_move_stack = 0;
+    int16_t troop_count = 0;
+    int16_t Special_Move = 0;
+    int16_t troop_unit_idx = 0;
+    int16_t itr_units = 0;  // _SI_
+    int16_t itr_troops = 0;  // _SI_
 
 
+Check_Cities_Data();
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
+Check_Cities_Data();
 
 
     if(troop_count < 1)
@@ -271,31 +288,42 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
     // yellow
     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
     {
+
         troop_unit_idx = troops[itr_troops];
+
         if(_UNITS[troop_unit_idx].Rd_Constr_Left != ST_UNDEFINED)
         {
+
             roadbuilder_count++;
+
         }
+
     }
 
 
     if(roadbuilder_count == troop_count)
     {
+
         Special_Move = 2;  /* ¿ IIF 'Build Road' ? */
+
     }
 
 
     unit_wx = _UNITS[unit_idx].wx;
+
     unit_wy = _UNITS[unit_idx].wy;
 
 
     // HERE: as-is, except Special_Move is '2' if all 'road builder', rather than *normal* '0'
+Check_Cities_Data();
     did_move_stack = Move_Units(player_idx, dst_wx, dst_wy, Special_Move, map_x, map_y, map_p, troop_count, &troops[0]);
+Check_Cities_Data();
 
 
     // purple
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
+
         if(
             (_UNITS[troops[itr_units]].wx == unit_wx)
             &&
@@ -303,37 +331,53 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
             &&
             (_UNITS[troops[itr_units]].Rd_Constr_Left == ST_UNDEFINED)
             &&
-            ((_UNITS[troops[itr_units]].Status == us_GOTO) || (_UNITS[troops[itr_units]].Status == us_Move))
+            (
+                (_UNITS[troops[itr_units]].Status == us_GOTO)
+                ||
+                (_UNITS[troops[itr_units]].Status == us_Move)
+            )
             &&
             (_UNITS[troops[itr_units]].Finished == ST_FALSE)
         )
         {
+
             _UNITS[troops[itr_units]].Move_Failed = ST_TRUE;
+
             _UNITS[troops[itr_units]].Status = us_Ready;
+
             _UNITS[troops[itr_units]].dst_wx = 0;
+
             _UNITS[troops[itr_units]].dst_wy = 0;
+
         }
+
     }
 
 
     // dark gold
     for(itr_units = 0; itr_units < troop_count; itr_units++)
     {
+
         if(
             (_UNITS[troops[itr_units]].owner_idx != ST_UNDEFINED)
             &&
             (_UNITS[troops[itr_units]].Rd_Constr_Left == -1)
         )
         {
+
             if(_UNITS[troops[itr_units]].Status == us_Ready)
             {
+
                 // HERE: unit status is NOT "NO ORDERS"  us_Ready
-                // TODO  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
+                // DONT  EMM_Map_DataH();
                 // TODO  OVL_ClearUnitPath();               ; clears the long path referenced by UNIT_OverlandPath, provided that it is in the range of the corresponding table
+
             }
             else
             {
-                // TODO  EMM_Map_DataH();
+
+                // DONT  EMM_Map_DataH();
+
                 // TODO  OVL_StoreLongPath(player_idx, _UNITS[unit_array[itr_units]].wx, _UNITS[unit_array[itr_units]].wy, _UNITS[unit_array[itr_units]].dst_wx, _UNITS[unit_array[itr_units]].dst_wy, map_p, &MovePath_X, &MovePath_Y, &OVL_Path_Costs);
                     // ; attempts to store a multi-turn path into EMS,
                     // ; provided that both the source and destination
@@ -342,7 +386,9 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
                     // ; BUG: ignores the plane when looking for a match
                     // ; WARNING: the state of the map can change by the time
                     // ;  the path is retrieved later (concept flaw)
+
             }
+
         }
 
     }
@@ -351,11 +397,21 @@ int16_t RdBd_UNIT_MoveStack__WIP(int16_t player_idx, int16_t unit_idx, int16_t d
 
     if(player_idx == _human_player_idx)
     {
+
         // DONT  o62p01_Empty_pFxn(player_idx);
+
+Check_Cities_Data();
+
         Set_Unit_Draw_Priority();
+
         Reset_Stack_Draw_Priority();
+
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
+
         Reset_Draw_Active_Stack();
+
+Check_Cities_Data();
+
     }
 
     return did_move_stack;
@@ -384,7 +440,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
 
     done = ST_FALSE;
 
+Check_Cities_Data();
     Reset_Map_Draw();
+Check_Cities_Data();
 
     // TODO  o62p01_Empty_pFxn(player_idx);
 
@@ -392,7 +450,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     {
         // TODO  CRP_OverlandVar_3 = ST_FALSE;
 
+Check_Cities_Data();
         all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
+Check_Cities_Data();
 
         if(all_done_none_available == ST_TRUE)
         {
@@ -405,7 +465,9 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
             next_unit_idx = _unit;  // just updated by Next_Unit_Nearest_Available()
             next_unit_wx = _UNITS[next_unit_idx].wx;
             next_unit_wy = _UNITS[next_unit_idx].wy;
+Check_Cities_Data();
             Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
+Check_Cities_Data();
         }
 
         // HERE: Found a Unit;  `_unit` has been updated;  and ?
@@ -437,9 +499,13 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
                 }
                 else
                 {
+Check_Cities_Data();
                     Allocate_Reduced_Map();
+Check_Cities_Data();
                     RdBd_UNIT_MoveStack__WIP(player_idx, _unit, next_unit_dst_wx, next_unit_dst_wy, map_x, map_y, *map_p);
+Check_Cities_Data();
                     Allocate_Reduced_Map();
+Check_Cities_Data();
                 }
 
                 done = ST_FALSE;
@@ -454,13 +520,18 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         next_unit_idx = _unit;
         next_unit_wx = _UNITS[next_unit_idx].wx;
         next_unit_wy = _UNITS[next_unit_idx].wy;
+Check_Cities_Data();
         Select_Unit_Stack(player_idx, map_x, map_y, *map_p, next_unit_wx, next_unit_wy);  // ...calls Build_Unit_Stack() & Sort_Unit_Stack(); Sort_Unit_Stack() updates `_unit`;
+Check_Cities_Data();
     }
     else
     {
         _unit_stack_count = 0;
+Check_Cities_Data();
         Set_Draw_Active_Stack_Always();
+Check_Cities_Data();
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
+Check_Cities_Data();
     }
 
     // TODO  OVL_MapVar3 = ST_TRUE;
@@ -885,82 +956,164 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
     int16_t itr_units;  // _SI_
     int16_t itr;  // _SI_
 
+
     unit_wx = _UNITS[unit_idx].wx;
+
     unit_wy = _UNITS[unit_idx].wy;
+
     unit_wp = _UNITS[unit_idx].wp;
 
     unit_roadbuild_count = _UNITS[unit_idx].Rd_Constr_Left;
 
     entire_stack_count = 0;
+
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if((_UNITS[itr_units].wp == unit_wp) && (_UNITS[itr_units].wx == unit_wx) && (_UNITS[itr_units].wy == unit_wy) && (_UNITS[itr_units].owner_idx == player_idx))
+
+        if(
+            (_UNITS[itr_units].wp == unit_wp)
+            &&
+            (_UNITS[itr_units].wx == unit_wx)
+            &&
+            (_UNITS[itr_units].wy == unit_wy)
+            &&
+            (_UNITS[itr_units].owner_idx == player_idx))
         {
+
             entire_stack[entire_stack_count] = itr_units;
+
             entire_stack_count++;
+
         }
+
     }
 
     l_troop_count = 0;
+
     stack_has_transport = ST_FALSE;
+
     transport_capacity = 0;
+
     for(itr = 0; itr < entire_stack_count; itr++)
     {
+
         unit_idx = entire_stack[itr];
-        if(((_UNITS[unit_idx].Status == us_GOTO) || (_UNITS[unit_idx].Status == us_Move)) && (_UNITS[unit_idx].dst_wx == dst_wx) && (_UNITS[unit_idx].dst_wy == dst_wy) && (_unit_type_table[_UNITS[unit_idx].type].Transport > 0))
+
+        if(
+            (
+                (_UNITS[unit_idx].Status == us_GOTO)
+                ||
+                (_UNITS[unit_idx].Status == us_Move)
+            )
+            &&
+            (_UNITS[unit_idx].dst_wx == dst_wx)
+            &&
+            (_UNITS[unit_idx].dst_wy == dst_wy)
+            &&
+            (_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+        )
         {
+
             stack_has_transport = ST_TRUE;
+
             transport_capacity += _unit_type_table[_UNITS[unit_idx].type].Transport;
+
         }
     }
 
     if(stack_has_transport == ST_TRUE)
     {
+
         l_troop_count = 0;
+
         boat_count = 0;
+
         for(itr = 0; itr < entire_stack_count; itr++)
         {
+
             unit_idx = entire_stack[itr];
-            if(((_UNITS[unit_idx].Status == us_GOTO) || (_UNITS[unit_idx].Status == us_Move)) && (_UNITS[unit_idx].dst_wx == dst_wx) && (_UNITS[unit_idx].dst_wy == dst_wy) && (_unit_type_table[_UNITS[unit_idx].type].Transport > 0))
+
+            if(
+                (
+                    (_UNITS[unit_idx].Status == us_GOTO)
+                    ||
+                    (_UNITS[unit_idx].Status == us_Move)
+                )
+                &&
+                (_UNITS[unit_idx].dst_wx == dst_wx)
+                &&
+                (_UNITS[unit_idx].dst_wy == dst_wy)
+                &&
+                (_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+            )
             {
+
                 troops[boat_count] = unit_idx;
+
                 boat_count++;
+
             }
+
             entire_stack_copy[l_troop_count] = unit_idx;  // just a copy of the initial, entire stack
+
             l_troop_count++;
+
         }
+
         l_troop_count = boat_count;
 
         if(Square_Has_City(unit_wx, unit_wy, unit_wp) == ST_UNDEFINED)
         {
+
             for(itr = 0; itr < MAX_STACK; itr++)
             {
+
                 boatriders[itr] = ST_UNDEFINED;
+
             }
+
             boatrider_count = Army_Boatriders(entire_stack_count, &entire_stack_copy[0], &boatriders[0]);
+
             Unused_Local = 0;
+
             if(boatrider_count > 0)
             {
+
                 l_troop_count = boat_count;
+
                 boatrider_idx = 0;
+
                 passenger_count = 0;
+
                 for(itr = 0; itr < entire_stack_count; itr++)
                 {
+
                     unit_idx = entire_stack[itr];
+
                     if((boatriders[boatrider_idx] != unit_idx) && (passenger_count < transport_capacity))
                     {
+
                         troops[l_troop_count] = unit_idx;
+
                         l_troop_count++;
+
                         boatrider_idx++;
+
                         // drake178: ; BUG: incorrect order of operations - heroes should be checked for before evaluating the passenger count
                         if(_UNITS[unit_idx].type > ut_Chosen)
                         {
+
                             passenger_count++;
+
                         }
+
                     }
+
                 }
+
                 for(itr = 0; itr < entire_stack_count; itr++)
                 {
+
                     // TODO  macro - does or does not need a seat on a boat
                     if(
                         (Unit_Has_AirTravel_Item(entire_stack[itr]) == ST_TRUE)
@@ -974,24 +1127,38 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
                         (Unit_Has_AirTravel(entire_stack[itr]) == ST_TRUE)
                     )
                     {
+
                         troops[l_troop_count] = entire_stack[itr];
+
                         l_troop_count++;
+
                     }
+
                 }
+
             }  /* if(boatrider_count > 0) */
             else
             {
+
                 if(l_troop_count < entire_stack_count)
                 {
+
                     for(itr = 0; itr < entire_stack_count; itr++)
                     {
+
                         if(_unit_type_table[_UNITS[entire_stack[itr]].type].Transport < 1)
                         {
+
                             troops[l_troop_count] = entire_stack[itr];
+
                             l_troop_count++;
+
                         }
+
                     }
+
                 }
+
             }  /* if(boatrider_count > 0) { ... } else */
 
         }  /* if(Square_Has_City(unit_wx, unit_wy, unit_wp) == ST_UNDEFINED) */
@@ -999,19 +1166,43 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
     }  /* if(stack_has_transport == ST_TRUE) */
     else
     {
+
         l_troop_count = 0;
+
         for(itr = 0; itr < entire_stack_count; itr++)
         {
+
             unit_idx = entire_stack[itr];
-            if(((_UNITS[unit_idx].Status == us_GOTO) || (_UNITS[unit_idx].Status == us_Move)) && (_UNITS[unit_idx].dst_wx == dst_wx) && (_UNITS[unit_idx].dst_wy == dst_wy) && (_UNITS[unit_idx].moves2 > 0) && (_UNITS[unit_idx].Rd_Constr_Left == unit_roadbuild_count))
+
+            if(
+                (
+                    (_UNITS[unit_idx].Status == us_GOTO)
+                    ||
+                    (_UNITS[unit_idx].Status == us_Move)
+                )
+                &&
+                (_UNITS[unit_idx].dst_wx == dst_wx)
+                &&
+                (_UNITS[unit_idx].dst_wy == dst_wy)
+                &&
+                (_UNITS[unit_idx].moves2 > 0)
+                &&
+                (_UNITS[unit_idx].Rd_Constr_Left == unit_roadbuild_count)
+            )
             {
+
                 troops[l_troop_count] = unit_idx;
+
                 l_troop_count++;
+
             }
+
         }
+
     }  /* if(stack_has_transport == ST_TRUE) { ... } else */
 
     *troop_count = l_troop_count;
+
 }
 
 

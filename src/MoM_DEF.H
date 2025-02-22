@@ -36,6 +36,25 @@
 
         Specific to MoM, not MoX (SimTex *Game-Engine*)
 
+WTF
+PLANE_COUNT_MAX
+NUM_PLANES
+PLAYER_COUNT_MAX
+NUM_PLAYERS
+CITY_COUNT_MAX
+NUM_CITIES
+UNIT_COUNT_MAX
+NUM_UNITS
+MAX_UNIT_COUNT          MoX_DEF
+TOWER_COUNT_MAX
+NUM_TOWERS
+FORTRESS_COUNT_MAX
+NUM_FORTRESSES
+MAX_UNIT_COUNT
+MAX_STACK
+NUM_ITEM_POWERS
+MAX_ITEM_POWERS
+ITEM_MAX_POWERS
 */
 
 #define NUM_MAGIC_TYPES             5
@@ -55,7 +74,7 @@
 #define NUM_BUILDINGS              36
 #define NUM_RESOURCE_TYPES          5
 #define CITY_COUNT_MAX            100
-#define UNIT_COUNT_MAX           1009
+#define UNIT_COUNT_MAX           1009  // SEEALSO:  MAX_UNIT_COUNT  1000 in MoX_DEF
 #define TOWER_COUNT_MAX             6
 #define FORTRESS_COUNT_MAX          6
 // #define NODE_COUNT_MAX          30
@@ -71,8 +90,10 @@
 #define MAX_HERO_TYPE              34
 #define NUM_TOWERS                  6
 #define NUM_FORTRESSES              6
+#define NUM_LANDMASSES             60
 #define NUM_NODES                  30
-#define NUM_LAIRS                 102
+// #define NUM_LAIRS                 102
+/* HACK */  #define NUM_LAIRS                 99
 #define MAX_STACK                   9
 #define NUM_SPELLS                      240  // 6 reals, 40 spells each
 #define NUM_SPELLS_PER_MAGIC_REALM       40
@@ -613,6 +634,8 @@ PS. 'MoM Demo' has "Forest Walk", "Mountain Walk", "Pathfinding"
 
 /*
     s_UNIT_TYPE.Abilities
+
+UA_FANTASTIC AKA Ab_Summoned
 */
 // enum ABL_FLAGS
 #define UA_FANTASTIC            0x0001      // 0b0000000000000001  0x0001      1
@@ -655,6 +678,8 @@ Attempts to mutate all creatures within a target unit during combat.
 Target creatures suffer a penalty of one to their resistance when trying to withstand being warped.
 Mutated or warped creatures suffer from one of the following degenerative changes:
   half strength attacks, half strength defense, or no magic resistance.
+
+UM_UNDEAD AKA R_Undead
 
 */
 // enum MUT_FLAGS
@@ -1330,7 +1355,7 @@ Spell_Of_Return  = 214
 #define WIND_MASTERY        0x04
 #define SUPPRESS_MAGIC      0x05
 #define TIME_STOP           0x06
-#define NATURE_AWARENESS    0x07
+#define NATURES_AWARENESS   0x07
 #define NATURES_WRATH       0x08
 #define HERB_MASTERY        0x09
 #define CHAOS_SURGE         0x0A

@@ -21,7 +21,7 @@ extern "C" {
 */
 
 // WZD o157p01
-void All_Player_Colony_Autobuild(int16_t player_idx);
+void Player_All_Colony_Autobuild(int16_t player_idx);
 
 // WZD o157p02
 void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx);

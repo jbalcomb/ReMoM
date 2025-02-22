@@ -1643,11 +1643,8 @@ void Reload_Item_Pictures(void)
 // WZD o52p29
 void Spellbook_Load_Small_Pictures__WIP(void)
 {
-    int16_t itr;
+    int16_t itr = 0;
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
-#endif
 
     // SPECIAL2.LBX, 034  SMLBOOK
     // SPECIAL2.LBX, 035  BCORNERS
@@ -1656,6 +1653,7 @@ void Spellbook_Load_Small_Pictures__WIP(void)
     _spellbook_small_seg              = LBX_Reload_Next(special2_lbx_file, 34, GFX_Swap_Seg);
     _spellbook_small_left_corner_seg  = LBX_Reload_Next(special2_lbx_file, 35, GFX_Swap_Seg);
     _spellbook_small_right_corner_seg = LBX_Reload_Next(special2_lbx_file, 36, GFX_Swap_Seg);
+
 
     // SPECIAL2.LBX, 037  BOOKSYMB
     // SPECIAL2.LBX, 038  BOOKSYMB
@@ -1669,13 +1667,10 @@ void Spellbook_Load_Small_Pictures__WIP(void)
         _spellbook_small_symbols[itr] = LBX_Reload_Next(special2_lbx_file, (37 + itr), GFX_Swap_Seg);
     }
 
+
     // SPECIAL2.LBX, 043  SMALTEXT
 
     _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, GFX_Swap_Seg);
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures__WIP()\n", __FILE__, __LINE__);
-#endif
 
 }
 

@@ -15,6 +15,7 @@
 #include "AIBUILD.H"
 #include "AIDATA.H"
 #include "AIDUDES.H"
+#include "AIMOVE.H"
 #include "AISPELL.H"
 #include "ALLOC.H"
 #include "ArmyList.H"

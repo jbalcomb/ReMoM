@@ -814,21 +814,44 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
 
     if(CalledFromFlag == uvt_Prod)  /* on 'Production Screen' */
     {
+
         product_idx = _CITIES[_city_idx].construction;
+
         _CITIES[_city_idx].construction = thing_idx;
+
         product_cost = City_Current_Product_Cost(_city_idx);  // Discount Cost
+
         _CITIES[_city_idx].construction = product_idx;
+if(_CITIES[_city_idx].construction < 0)
+{
+    __debugbreak();
+}
+if(_CITIES[_city_idx].construction > 298)
+{
+    __debugbreak();
+}
+
         UV_x_start_offset = 4;
+
         Print((UV_x_start + UV_x_start_offset + 51), (UV_y_start + 34), "Cost");
+
         itoa(product_cost, GUI_NearMsgString, 10);
+
         if(View_Type == 1)  /* Product is Unit */
         {
+            
             strcat(GUI_NearMsgString, "(");
+
             itoa(_unit_type_table[unit_type_idx].cost, temp_string, 10);  // Full Cost
+
             strcat(GUI_NearMsgString, temp_string);
+
             strcat(GUI_NearMsgString, ")");
+
         }
+
         Print((UV_x_start + UV_x_start_offset + 73), (UV_y_start + 34), GUI_NearMsgString);
+
     }
 
 

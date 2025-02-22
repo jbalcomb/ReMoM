@@ -112,13 +112,13 @@ Set_Mouse_List(1, mouse_list_default);
 `Computer Player (HP)`
     Next_Turn_Calc()
         |-> AI_Overland_Turn()
-            |-> All_Player_Colony_Autobuild()
+            |-> Player_All_Colony_Autobuild()
                 |-> Player_Colony_Autobuild_CP()
 
 `Neutral Player (NP)`
     Next_Turn_Calc()
         |-> AI_Overland_Turn()
-            |-> All_Player_Colony_Autobuild()
+            |-> Player_All_Colony_Autobuild()
                 |-> Player_Colony_Autobuild_NP()
 
 ### Apply_City_Changes()

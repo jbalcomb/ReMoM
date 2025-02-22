@@ -461,11 +461,19 @@ void Set_Draw_Active_Stack_Never(void)
 // Reset_Active_Stack_Draw
 void Reset_Draw_Active_Stack(void)
 {
-    if( (all_units_moved == ST_FALSE) && (_unit_stack_count > 0) )
+    if(
+        (all_units_moved == ST_FALSE)
+        &&
+        (_unit_stack_count > 0)
+    )
     {
+
         draw_active_stack_flag = 0;
+
     }
+
     Reset_Map_Draw();
+
 }
 
 // WZD o67p07
@@ -1300,8 +1308,11 @@ void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, in
 // AKA Undef_Prev_Map_Draw_XY
 void Reset_Map_Draw(void)
 {
+
     map_draw_prev_x = ST_UNDEFINED;
+
     map_draw_prev_y = ST_UNDEFINED;
+    
 }
 
 // WZD o150p04
@@ -1464,7 +1475,7 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             {
                 // TODO  j_EMM_Map_CONTXXX();  // ; maps in the EMM_ContXXX_H handle (all 4 pages), and resets its corresponding global pointers
                 // TODO  Set_Font_Style(0,0);
-                // Print_Integer(itr_screen_x, itr_screen_y + 12, TBL_Landmasses[(_map_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + curr_world_x]);
+                // Print_Integer(itr_screen_x, itr_screen_y + 12, _landmasses[(_map_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + curr_world_x]);
                 // TODO  Set_Font_Style(0, 2);
                 // Print_Integer(itr_screen_x, itr_screen_y, curr_world_x);
             }
