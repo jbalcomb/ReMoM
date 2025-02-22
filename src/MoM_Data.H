@@ -282,7 +282,7 @@ enum e_UNIT_STATUS
     us_Unknown_13     =  13,
     us_Unknown_14     =  14,
     us_Unknown_15     =  15,
-    us_Move           =  16,
+    us_Move           =  16,    /* AI_Set_Move_Or_Goto_Target() sets this for site/fortress target */
     us_Unknown_100    = 100,   //  64h  100d  01100100b
     us_PurifyDone     = 111    //  6Fh  111d  01101111b
 };
@@ -1101,7 +1101,7 @@ struct s_WIZ_DIPL
     /* 0012 */ int16_t Peace_Interest[NUM_PLAYERS];
     /* 001E */ int16_t Trade_Interest[NUM_PLAYERS];
     /* 002A */ int8_t Visible_Rel[NUM_PLAYERS];  /* 1-byte, signed;  1oom: relation1 */
-    /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty */
+    /* 0030 */ int8_t Dipl_Status[NUM_PLAYERS];  /* 1-byte, signed;  1oom: treaty;  enum DIPL_Status { DIPL_NoTreaty, DIPL_WizardPact, DIPL_Alliance, DIPL_War, DIPL_Crusade } */
     /* 0036 */ int16_t DA_Strength[NUM_PLAYERS];
     /* 0042 */ int8_t Dipl_Action[NUM_PLAYERS];
     /* 0048 */ int16_t DA_Spell[NUM_PLAYERS];
@@ -1208,11 +1208,11 @@ struct s_WIZARD
     /* 0482 */ // struct s_GLOBALE Globals;
                uint8_t  Globals[NUM_OVERLAND_ENCHANTMENTS];
     /* 049A */ uint16_t Magic_Strategy;
-    /* 049C */ uint16_t Unknown_49Ch;
-    /* 049E */ uint16_t Hostility[NUM_PLAYERS];
-    /* 04AA */ uint16_t War_Reeval;
-    /* 04AC */ uint16_t MgcStrat_Reeval;
-    /* 04AE */ uint16_t Pow_Redist_Wait;
+    /* 049C */ uint16_t Unknown_49Ch;   /* ¿ unused strategy ? */
+    /* 049E */ uint16_t Hostility[NUM_PLAYERS]; /* attitude;  < 2 == non-hostile;  OSG: "None, Annoyed, Warlike, Jihad" */
+    /* 04AA */ uint16_t reevaluate_hostility_countdown;
+    /* 04AC */ uint16_t reevaluate_magic_strategy_countdown;
+    /* 04AE */ uint16_t reevaluate_magic_power_countdown;
     /* 04B0 */ uint8_t  peace_duration[NUM_PLAYERS];
     /* 04B6 */ uint8_t  field_4B6;
     /* 04B7 */ uint8_t  field_4B7;
@@ -1459,8 +1459,8 @@ struct s_NODE
     /* 00 */  int8_t  wx;
     /* 01 */  int8_t  wy;
     /* 02 */  int8_t  wp;
-    /* 03 */  int8_t  owner_idx;
-    /* 04 */  int8_t  power;        // 1-byte, signed;  used to index Aura_Xs,Ys and added to node_anim_ctr for FLIC_Set_CurrentFrame()
+    /* 03 */  int8_t  owner_idx;    /* controller */
+    /* 04 */  int8_t  power;        /* ¿ value range ? */  // 1-byte, signed;  used to index Aura_Xs,Ys and added to node_anim_ctr for FLIC_Set_CurrentFrame()
     /* 05 */  int8_t  Aura_Xs[20];
     /* 19 */  int8_t  Aura_Ys[20];
     /* 2D */  int8_t  type;         // enum e_NODE_TYPE {0: nt_Sorcery, 1: nt_Nature, 2: nt_Chaos}
@@ -1497,7 +1497,7 @@ struct s_UNIT
     /* 06 */  int8_t  Hero_Slot;    /* index into _players[owner_idx].Heroes[] */
     /* 07 */  int8_t  Finished;     /* ¿ orderable ? {F,T}; Unit is out of Movement Points or is Busy performing a Unit Action (Go-To, Build Road, Purify, etc.) */
     /* 08 */  int8_t  moves2;       /* Movement Points, as half-points */
-    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  
+    /* 09 */  int8_t  dst_wx;       /* 1-byte, signed; ...used as Pruify progress?;  Go-To Destination World X */  /* AI_Order_SeekTransport() uses this as some timer value */
     /* 0A */  int8_t  dst_wy;       /* 1-byte, signed;  Go-To Destination World Y */
     /* 0B */  int8_t  Status;  // Build_Unit_Stack() resets us_WAIT to us_Ready
     /* 0C */  int8_t  Level;
@@ -2245,8 +2245,8 @@ extern char * _personality_type_names[];
 extern char * _objective_type_names[];
 
 
-// WZD dseg:1FDE 28 00 14 00 0A 00 0A 00 D8 FF EC FF             TBL_AI_PRS_War_Mod dw 40, 20, 10, 10, 65496, 65516
-
+// WZD dseg:1FDE
+extern int16_t TBL_AI_PRS_War_Mod[6];
 
 
 // WZD dseg:1FEA 
@@ -2539,12 +2539,26 @@ extern struct s_BLDG_CR cityscape_cr[5][3];
 
 
 
+// WZD dseg:6F76                                                 BEGIN:  ovr148 - Initialized Data
+
+// WZD dseg:6F76
+// ; an index into OvlMovePaths_EMS@
+extern int16_t CRP_UNIT_OverlandPath;
+
+// WZD dseg:6F76                                                 END:  ovr148 - Initialized Data
+
+
+
+
+
 // WZD dseg:6FFE
-extern int16_t Map_LastDraw_X;
+extern int16_t prev_map_x;
+
 // WZD dseg:7000
-extern int16_t Map_LastDraw_Y;
+extern int16_t prev_map_y;
+
 // WZD dseg:7002
-extern int16_t OVL_NewMapSustain;
+extern int16_t map_sustain;
 
 
 
@@ -2598,63 +2612,57 @@ extern int16_t help_list_count;
 
 
 
+
+
 // WZD dseg:888A 01 01 93 01 43 32                               ExitStart _start_exit_proc <1, 1, __OVREXIT>
+// WZD dseg:888A                                                 ; defined as segment _EXIT_ in c0.asm
+
+
+
+
 
 // WZD dseg:8890                                                 ¿ BEGIN: ?
 // WZD dseg:8890                                                 IDK
 // WZD dseg:8890                                                 ...*feels like* ~ AIDATA
 
-
-
-// WZD dseg:8890                                                 ¿ BEGIN: ?
-// WZD dseg:8890                                                 IDK
-// WZD dseg:8890                                                 ...*feels like* ~ AIDATA
-// WZD dseg:8890
-// WZD dseg:8890 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Arcanus CONT_TBL <0>                ; DATA XREF: start:loc_100C7o ...
-// WZD dseg:8890 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; _bdata_start
+// WZD dseg:8890 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Arcanus CONT_TBL <0>
 // WZD dseg:8C14 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+TBL_Myrror CONT_TBL <0>
+// WZD dseg:8890
+// extern struct s_CONTTBL TBL_Arcanus;
+// WZD dseg:8C14
+// extern struct s_CONT_TBL TBL_Myrror;
+// WZD dseg:8890
+extern struct s_AI_CONTINENTS _ai_continents;
 
-// WZD dseg:8F98
-extern uint8_t * AI_SCircle_Reevals;
+/*
+; 80 + rnd(40) is stored here for each AI wizard (word
+; array pointer, human excluded) when setting initial
+; gold during game creation in MAGIC.EXE
+; decreased during the AI's turn, likely some relation
+; or interest value
+*/
+// WZD dseg:8F98 
+// extern uint8_t * AI_SCircle_Reevals;
+extern int16_t * AI_SCircle_Reevals;
 
 // WZD dseg:8F9A
-extern uint8_t * AI_Arc_NewColTgtYs;
-
-// WZD dseg:8F9C
-extern uint8_t * AI_Myr_NewColTgtYs;
-
+extern uint8_t * AI_NewColTgtYs[2];
 // WZD dseg:8F9E
-extern uint8_t * AI_Arc_NewColTgtXs;
-
-// WZD dseg:8FA0
-extern uint8_t * AI_Myr_NewColTgtXs;
-
+extern uint8_t * AI_NewColTgtXs[2];
 // WZD dseg:8FA2
 extern uint8_t * Wiz5_Spell_50h;
-
 // WZD dseg:8FA4
 extern uint8_t * Wiz5_Spell_64h;
-
 // WZD dseg:8FA6
 extern uint8_t * Wiz5_Spell_28h;
-
 // WZD dseg:8FA8
 extern uint8_t * Wiz5_Spell_3Ch;
-
 // WZD dseg:8FAA
-extern uint8_t * AI_CONTX_Reevals;
-
+extern uint8_t * _ai_reevaluate_continents_countdown;
 // WZD dseg:8FAC
-extern uint8_t * AI_Arc_NewColConts;
-
-// WZD dseg:8FAE
-extern uint8_t * AI_Myr_NewColConts;
-
+extern uint8_t * AI_NewColConts[2];
 // WZD dseg:8FB0
-extern uint8_t * AI_Arc_MainWarConts;
-
-// WZD dseg:8FB2
-extern uint8_t * AI_Myr_MainWarConts;
+extern int16_t * AI_MainWarConts[2];
 
 // WZD dseg:8FB4 00                                              unk_3FA54 db    0                       ; DATA XREF: sub_F6CAB+103o
 // WZD dseg:8FB5 00                                              db    0
@@ -2672,68 +2680,94 @@ extern uint8_t * AI_Myr_MainWarConts;
 // WZD dseg:8FC1 00                                              db    0
 // WZD dseg:8FC2 00                                              db    0
 // WZD dseg:8FC3 00                                              db    0
-// WZD dseg:8FC4 00 00                                           Some_AI_Turn_Var_2 dw 0                 ; DATA XREF: AI_Next_Turn__WIP+212w
-// WZD dseg:8FC4                                                                                         ; now 0
-// WZD dseg:8FC6 00 00                                           Some_AI_Turn_Var_3 dw 0                 ; DATA XREF: AI_Next_Turn__WIP+218w
-// WZD dseg:8FC6                                                                                         ; now 0
-// WZD dseg:8FC8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_Target_Values dw 19h dup(     0)     ; DATA XREF: AI_AddTarget+3Aw ...
-// WZD dseg:8FFA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_Target_Strengths dw 19h dup(     0)  ; DATA XREF: AI_AddTarget+2Dw ...
-// WZD dseg:902C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_Target_Ys dw 19h dup(     0)         ; DATA XREF: AI_AddTarget+20w ...
-// WZD dseg:905E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_Target_Xs dw 19h dup(     0)         ; DATA XREF: AI_AddTarget+13w ...
-// WZD dseg:9090 00                                              db    0
-// WZD dseg:9091 00                                              db    0
-// WZD dseg:9092 00 00                                           AI_Target_Count dw 0                    ; DATA XREF: AI_CreateTargetList+8w ...
-// WZD dseg:9094 00 00                                           ai_transport_count dw 0                 ; DATA XREF: AI_OVL_Eval_Assets+1262w ...
-// WZD dseg:9096 00 00                                           AI_SeekTransport_Cnt dw 0               ; DATA XREF: AI_SetUnitOrders:loc_EBDECw ...
-// WZD dseg:9098 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_SeekTransport_Ps dw 0Fh dup(0)       ; DATA XREF: G_AI_ProcessTransports+B4r ...
-// WZD dseg:90B6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_SeekTransport_Ys dw 0Fh dup(0)       ; DATA XREF: G_AI_ProcessTransports+AAr ...
-// WZD dseg:90D4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+AI_SeekTransport_Xs dw 0Fh dup(0)       ; DATA XREF: G_AI_ProcessTransports+8Er ...
-// WZD dseg:90F2 00 00                                           AI_Arc_ContBalances@ dw 0               ; DATA XREF: AI_Continent_Eval+4C5r ...
-// WZD dseg:90F2                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90F2                                                                                         ; own str - enemy str - own value
-// WZD dseg:90F4 00 00                                           AI_Myr_ContBalances@ dw 0               ; DATA XREF: Allocate_AI_Data+DCw
-// WZD dseg:90F4                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90F4                                                                                         ; own str - enemy str - own value
-// WZD dseg:90F6 00 00                                           AI_Arc_Cont_Nme_Val@ dw 0               ; DATA XREF: AI_Continent_Eval+64r ...
-// WZD dseg:90F6                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90F8 00 00                                           AI_Myr_Cont_Nme_Val@ dw 0               ; DATA XREF: AI_Continent_Eval+72r ...
-// WZD dseg:90F8                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90FA 00 00                                           AI_Arc_Cont_Own_Val@ dw 0               ; DATA XREF: AI_Continent_Eval+48r ...
-// WZD dseg:90FA                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90FC 00 00                                           AI_Myr_Cont_Own_Val@ dw 0               ; DATA XREF: AI_Continent_Eval+56r ...
-// WZD dseg:90FC                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:90FE 00 00                                           CRP_AI_Arc_Cont_Nme_Str@ dw 0           ; DATA XREF: AI_Continent_Eval+2Cr ...
-// WZD dseg:90FE                                                                                         ; redundant, should not be the primary pointer
-// WZD dseg:9100 00 00                                           CRP_AI_Myr_Cont_Nme_Str@ dw 0           ; DATA XREF: AI_Continent_Eval+3Ar ...
-// WZD dseg:9100                                                                                         ; redundant, should not be the primary pointer
-// WZD dseg:9102 00 00                                           AI_Arc_Cont_Own_Str@ dw 0               ; DATA XREF: AI_Continent_Eval+10r ...
-// WZD dseg:9102                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:9104 00 00                                           AI_Myr_Cont_Own_Str@ dw 0               ; DATA XREF: AI_Continent_Eval+1Er ...
-// WZD dseg:9104                                                                                         ; 120 LBX_NearAlloc_Next bytes
-// WZD dseg:9106 00 00                                           AI_Enemy_Stacks@ dw 0                   ; DATA XREF: AI_Continent_Eval+121r ...
-// WZD dseg:9106                                                                                         ; 1440 LBX_NearAlloc_Next bytes
-// WZD dseg:9108 00 00                                           AI_Own_Stacks@ dw 0                     ; DATA XREF: AI_Continent_Eval+8Er ...
-// WZD dseg:9108                                                                                         ; 800 LBX_NearAlloc_Next bytes
-// WZD dseg:910A 00 00                                           AI_Enemy_Stack_Count dw 0               ; DATA XREF: AI_Continent_Eval:loc_D2593r ...
-// WZD dseg:910C 00 00                                           AI_Own_Stack_Count dw 0                 ; DATA XREF: AI_Continent_Eval:loc_D24FFr ...
-// WZD dseg:910E 00 00 00 00 00 00 00 00 00 00 00 00             AI_AtWarWith_Players dw 6 dup(0)        ; DATA XREF: AI_Count_Active_Wars+43w ...
-// WZD dseg:911A                                                 ; int AI_Active_War_Count
-// WZD dseg:911A 00 00                                           AI_Active_War_Count dw 0                ; DATA XREF: AI_Count_Active_Wars+7w ...
-// WZD dseg:911C 00 00                                           CRP_AI_OVL_SpellList dw 0               ; DATA XREF: AI_OVL_GetSpellList+DBr ...
-// WZD dseg:911C                                                                                         ; 50 LBX_NearAlloc_Next bytes
-// WZD dseg:911C                                                                                         ; redundant - filled out but never used
-// WZD dseg:911E 00 00                                           CRP_AI_OVL_SpellCount dw 0              ; DATA XREF: AI_OVL_GetSpellList+8w ...
-// WZD dseg:911E                                                                                         ; redundant - calculated but never used
-// WZD dseg:9120 00 00                                           AI_OVL_Spell_Cats dw 0                  ; DATA XREF: AI_OVL_SplCat_Picker:loc_E4471r ...
-// WZD dseg:9120                                                                                         ; 92 LBX_NearAlloc_Next bytes
-// WZD dseg:9122 00 00                                           AI_NME_Garrison_Strs dw 0               ; DATA XREF: AI_OVL_Eval_Assets+15r ...
-// WZD dseg:9122                                                                                         ; 200 LBX_NearAlloc_Next bytes
-// WZD dseg:9124 00 00                                           AI_Own_Garr_Strs dw 0                   ; DATA XREF: AI_OVL_Eval_Assets+24r ...
-// WZD dseg:9124                                                                                         ; 200 LBX_NearAlloc_Next bytes
-// WZD dseg:9126 00 00                                           AI_Enemy_City_Values dw 0               ; DATA XREF: AI_Continent_Eval+36Fr ...
-// WZD dseg:9126                                                                                         ; 200 LBX_NearAlloc_Next bytes
-// WZD dseg:9128 00 00                                           AI_Own_City_Values dw 0                 ; DATA XREF: AI_Continent_Eval+351r ...
-// WZD dseg:9128                                                                                         ; 200 LBX_NearAlloc_Next bytes
+
+// WZD dseg:8FC4
+extern int16_t Some_AI_Turn_Var_2;
+
+// WZD dseg:8FC6
+extern int16_t Some_AI_Turn_Var_3;
+
+// DEDU  couldn't these just be in a struct? can't tell from IDA?
+// WZD dseg:8FC8
+extern int16_t _ai_targets_value[25];
+// WZD dseg:8FFA
+extern int16_t _ai_targets_strength[25];
+// WZD dseg:902C
+extern int16_t _ai_targets_wy[25];
+// WZD dseg:905E
+extern int16_t _ai_targets_wx[25];
+// WZD dseg:9090 db    0
+// WZD dseg:9091 db    0
+// WZD dseg:9092
+extern int16_t _ai_targets_count;
+
+// WZD dseg:9094
+extern int16_t ai_transport_count;
+
+// WZD dseg:9096
+extern int16_t ai_seektransport_cnt;
+// WZD dseg:9098 
+extern int16_t AI_SeekTransport_Ps[15];
+// WZD dseg:90B6 
+extern int16_t AI_SeekTransport_Ys[15];
+// WZD dseg:90D4 
+extern int16_t AI_SeekTransport_Xs[15];
+
+// WZD dseg:90F2
+extern int16_t * AI_ContBalances[2];
+
+// WZD dseg:90F6
+/*
+allocated in Allocate_AI_Data()
+*/
+extern int16_t * AI_Cont_Nme_Val[2];
+
+// WZD dseg:90FA
+/*
+allocated in Allocate_AI_Data()
+*/
+extern int16_t * AI_Cont_Own_Val[2];
+
+// WZD dseg:90FE
+extern int16_t * CRP_AI_Cont_Nme_Str[2];
+
+// WZD dseg:9102
+extern int16_t * AI_Cont_Own_Str[2];
+
+// WZD dseg:9106
+extern struct s_AI_TARGET * AI_Enemy_Stacks;
+
+// WZD dseg:9108
+extern struct s_AI_STACK_DATA * AI_Own_Stacks;
+
+// WZD dseg:910A
+extern int16_t AI_Enemy_Stack_Count;
+
+// WZD dseg:910C
+extern int16_t AI_Own_Stack_Count;
+
+// WZD dseg:910E
+extern int16_t _cp_hostile_opponents[NUM_PLAYERS];
+
+// WZD dseg:911A
+extern int16_t _cp_hostile_opponent_count;
+
+// ; redundant - filled out but never used
+// WZD dseg:911C
+extern SAMB_ptr CRP_AI_OVL_SpellList;
+// WZD dseg:911E
+extern int16_t CRP_AI_OVL_SpellCount;
+// WZD dseg:9120
+extern SAMB_ptr AI_OVL_Spell_Cats;
+
+// WZD dseg:9122
+extern int16_t * AI_NME_Garrison_Strs;
+// WZD dseg:9124
+extern int16_t * AI_Own_Garr_Strs;
+// WZD dseg:9126
+extern int16_t * AI_Enemy_City_Values;
+// WZD dseg:9128
+extern int16_t * AI_Own_City_Values;
 
 
 
@@ -3760,9 +3794,7 @@ extern int8_t MSG_GEs_Lost;
 extern SAMB_ptr TBL_OvlMovePaths_EMS;
 
 // WZD dseg:9C94
-// CONTX_Arc_NmeStrMap
-// WZD dseg:9C98
-// CONTX_Myr_NmeStrMap
+extern SAMB_ptr CONTX_NmeStrMap[2];
 
 // WZD dseg:9C9C
 // drake178: TBL_Catchments_EMS
@@ -3806,7 +3838,7 @@ extern struct s_FORTRESS * _FORTRESSES;
 extern struct s_NODE * _NODES;
 
 // WZD dseg:9CD0
-extern uint8_t * TBL_Landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
+extern uint8_t * _landmasses;  // 12Eh 302d PR 302*16=4832, in World_Data
 // WZD dseg:9CD4
 extern SAMB_ptr UU_TBL_2;
 // WZD dseg:9CD8
@@ -3847,70 +3879,47 @@ extern uint16_t grand_vizier;
 // WZD dseg:9D27 00                                              db    0
 // WZD dseg:9D28 00                                              db    0
 // WZD dseg:9D29 00                                              db    0
-// WZD dseg:9D2A 00 00 00 00                                     CONTX_Arc_1stLoadTs dd 0                ; DATA XREF: EMM_Map_CONTXXX+1C4w ...
-// WZD dseg:9D2A                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9D2E 00 00 00 00                                     CONTX_Myr_1stLoadTs dd 0                ; DATA XREF: EMM_Map_CONTXXX+1D8w ...
-// WZD dseg:9D2E                                                                                         ; 0xc8 paragraphs (3200 bytes)
-// WZD dseg:9D32 00 00 00 00                                     CONTX_Arc_LoadTChain dd 0               ; DATA XREF: EMM_Map_CONTXXX+19Cw ...
-// WZD dseg:9D32                                                                                         ; 0xc8 paragraphs (3200 bytes)
-// WZD dseg:9D36 00 00 00 00                                     CONTX_Myr_LoadTChain dd 0               ; DATA XREF: EMM_Map_CONTXXX+1B0w ...
-// WZD dseg:9D36                                                                                         ; 0xc8 paragraphs (3200 bytes)
-// WZD dseg:9D3A 00 00 00 00                                     CONTX_Arc_LoadTileYs dd 0               ; DATA XREF: EMM_Map_CONTXXX+174w ...
-// WZD dseg:9D3A                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9D3E 00 00 00 00                                     CONTX_Myr_LoadTileYs dd 0               ; DATA XREF: EMM_Map_CONTXXX+188w ...
-// WZD dseg:9D3E                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9D42 00 00 00 00                                     CONTX_Arc_LoadTileXs dd 0               ; DATA XREF: EMM_Map_CONTXXX+14Cw ...
-// WZD dseg:9D42                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9D46 00 00 00 00                                     CONTX_Myr_LoadTileXs dd 0               ; DATA XREF: EMM_Map_CONTXXX+160w ...
-// WZD dseg:9D46                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9D4A 00 00                                           CONTX_OwnStack_Count dw 0               ; DATA XREF: AI_FillGarrisons:loc_EC35Er ...
-// WZD dseg:9D4C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+CONTX_OwnStack_ULsts dd 50h dup(0)      ; DATA XREF: EMM_Map_CONTXXX+1FEw ...
-// WZD dseg:9D4C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; 2 segment increments each (32 bytes data space)
-// WZD dseg:9D4C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; each holds a list of unit indices or -1s for units
-// WZD dseg:9D4C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; that have already been assigned orders
-// WZD dseg:9E8C 00 00 00 00                                     CONTX_OwnStack_UCnt@ dd 0               ; DATA XREF: EMM_Map_CONTXXX+110w ...
-// WZD dseg:9E8C                                                                                         ; 0x0a paragraphs (160 bytes)
-// WZD dseg:9E90 00 00 00 00                                     CONTX_OwnStack_Types dd 0               ; DATA XREF: EMM_Map_CONTXXX+FCw ...
-// WZD dseg:9E90                                                                                         ; 0x0a paragraphs (160 bytes)
-// WZD dseg:9E90                                                                                         ;   0 - in transit, purifying, or road building (c < 3)
-// WZD dseg:9E90                                                                                         ;   1 - roamer
-// WZD dseg:9E90                                                                                         ;   3 - garrison (city or node)
-// WZD dseg:9E90                                                                                         ;   4 - fortress garrison
-// WZD dseg:9E94 00 00 00 00                                     CONTX_OwnStack_Ps@ dd 0                 ; DATA XREF: EMM_Map_CONTXXX+E8w ...
-// WZD dseg:9E94                                                                                         ; 0x0a paragraphs (160 bytes)
-// WZD dseg:9E98 00 00 00 00                                     CONTX_OwnStack_Ys@ dd 0                 ; DATA XREF: EMM_Map_CONTXXX+D4w ...
-// WZD dseg:9E98                                                                                         ; 0x0a paragraphs (160 bytes)
-// WZD dseg:9E9C 00 00 00 00                                     CONTX_OwnStack_Xs@ dd 0                 ; DATA XREF: EMM_Map_CONTXXX+C0w ...
-// WZD dseg:9E9C                                                                                         ; 0x0a paragraphs (160 bytes)
-// WZD dseg:9EA0 00 00 00 00                                     CONTX_Arc_FirstTiles dd 0               ; DATA XREF: EMM_Map_CONTXXX+98w ...
-// WZD dseg:9EA0                                                                                         ; 0x19 paragraphs (400 bytes)
-// WZD dseg:9EA0                                                                                         ; G_Arcanus_First_Tile_Indices
-// WZD dseg:9EA0                                                                                         ; first 60 words initialized to -1
-// WZD dseg:9EA4 00 00 00 00                                     CONTX_Myr_FirstTiles dd 0               ; DATA XREF: EMM_Map_CONTXXX+ACw ...
-// WZD dseg:9EA4                                                                                         ; 0x19 paragraphs (400 bytes)
-// WZD dseg:9EA4                                                                                         ; G_Myrror_First_Tile_Indices
-// WZD dseg:9EA4                                                                                         ; first 60 words initialized to -1
-// WZD dseg:9EA8 00 00 00 00                                     CONTX_Arc_TileChain dd 0                ; DATA XREF: EMM_Map_CONTXXX+70w ...
-// WZD dseg:9EA8                                                                                         ; 0xc8 paragraphs (3200 bytes)
-// WZD dseg:9EA8                                                                                         ; G_Arcanus_Tile_Values?
-// WZD dseg:9EAC 00 00 00 00                                     CONTX_Myr_TileChain dd 0                ; DATA XREF: EMM_Map_CONTXXX+84w ...
-// WZD dseg:9EAC                                                                                         ; 0xc8 paragraphs (3200 bytes)
-// WZD dseg:9EAC                                                                                         ; G_Myrror_Tile_Values?
-// WZD dseg:9EB0 00 00 00 00                                     CONTX_Arc_TileYs dd 0                   ; DATA XREF: EMM_Map_CONTXXX+48w ...
-// WZD dseg:9EB0                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9EB0                                                                                         ; G_Arcanus_Tile_Ys
-// WZD dseg:9EB4 00 00 00 00                                     CONTX_Myr_TileYs dd 0                   ; DATA XREF: EMM_Map_CONTXXX+5Cw ...
-// WZD dseg:9EB4                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9EB4                                                                                         ; G_Myrror_Tile_Ys
-// WZD dseg:9EB8 00 00 00 00                                     CONTX_Arc_TileXs dd 0                   ; DATA XREF: EMM_Map_CONTXXX+20w ...
-// WZD dseg:9EB8                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9EB8                                                                                         ; G_Arcanus_Tile_Xs
-// WZD dseg:9EBC 00 00 00 00                                     CONTX_Myr_TileXs dd 0                   ; DATA XREF: EMM_Map_CONTXXX+34w ...
-// WZD dseg:9EBC                                                                                         ; 0x64 paragraphs (1600 bytes)
-// WZD dseg:9EBC                                                                                         ; G_Myrror_Tile_Xs
+
+/*
+    ¿ BEGIN: CONTXXX ?
+*/
+
+// WZD dseg:9D2A
+extern int16_t * CONTX_1stLoadTs[NUM_PLANES];
+// WZD dseg:9D32
+extern int16_t * CONTX_LoadTChain[NUM_PLANES];
+// WZD dseg:9D3A
+extern int8_t * CONTX_LoadTileYs[NUM_PLANES];
+// WZD dseg:9D42
+extern int8_t * CONTX_LoadTileXs[NUM_PLANES];
+// WZD dseg:9D4A
+extern int16_t _ai_own_stack_count;
+// WZD dseg:9D4C
+extern int16_t * _ai_own_stack_unit_list[80];
+// WZD dseg:9E8C
+extern SAMB_ptr _ai_own_stack_unit_count;
+// WZD dseg:9E90
+extern SAMB_ptr _ai_own_stack_type;
+// WZD dseg:9E94
+extern SAMB_ptr _ai_own_stack_wp;
+// WZD dseg:9E98
+extern SAMB_ptr _ai_own_stack_wy;
+// WZD dseg:9E9C
+extern SAMB_ptr _ai_own_stack_wx;
+// WZD dseg:9EA0
+extern int16_t * CONTX_FirstTiles[NUM_PLANES];
+// WZD dseg:9EA8
+extern int16_t * CONTX_TileChain[NUM_PLANES];
+// WZD dseg:9EB0
+extern int8_t * CONTX_TileYs[NUM_PLANES];
+// WZD dseg:9EB8
+extern int8_t * CONTX_TileXs[NUM_PLANES];
 
 // WZD dseg:9EC0
 extern SAMB_ptr EmmHndl_CONTXXX;
+/*
+    ¿ END: CONTXXX ?
+*/
 
 
 

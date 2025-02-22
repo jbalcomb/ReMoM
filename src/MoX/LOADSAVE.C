@@ -165,7 +165,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 19864);
 
-    fwrite(TBL_Landmasses, NUM_PLANES, 2400, file_pointer);
+    fwrite(_landmasses, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 24664);
@@ -187,7 +187,8 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 26152);
 
-    fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    // fwrite(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    /* HACK */  fwrite(_LAIRS, 102, 24, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 28600);
@@ -342,7 +343,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 19864);
 
-    fread(TBL_Landmasses, NUM_PLANES, 2400, file_pointer);
+    fread(_landmasses, NUM_PLANES, 2400, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 24664);
@@ -364,7 +365,8 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 26152);
 
-    fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    // fread(_LAIRS, NUM_LAIRS, 24, file_pointer);
+    /* HACK */  fread(_LAIRS, 102, 24, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 28600);

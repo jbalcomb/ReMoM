@@ -140,7 +140,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp);
 // UU_TILE_GetUnsdMPCost
 
 // WZD s161p22
-// TILE_IsAISailable    
+int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p23
 int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp);
@@ -152,7 +152,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p26
-// G_TILE_IsAIEmbarkable
+int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p27
 // TILE_BuildingReqType 
@@ -188,7 +188,7 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp);
 void All_City_Nightshade_Count(void);
 
 // WZD s161p38
-// TILE_IsLand          
+int16_t Map_Square_Is_Land(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD s161p39
 int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp);

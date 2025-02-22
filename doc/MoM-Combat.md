@@ -1,5 +1,15 @@
 
 
+..."DEF"..."ATK"...
+MoO2
+Module: COLGCBT
+    data (0 bytes) _N_DEF_UNIT_ROWS
+    Address: 02:0017A8CE
+    data (0 bytes) _N_ATK_UNIT_ROWS
+    Address: 02:0017A8CF
+
+
+
 move to move path notes
 in Eval Move Path
 ¿ if no units in the army have a status of going-to, then the Combat_Path_Value flag is meaningless ?

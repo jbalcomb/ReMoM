@@ -626,7 +626,10 @@ int16_t adjacent_offsets[24] =
 // WZD dseg:70F8 75 6E 64 20 66 6F 72 20 43 50 2E 00                                                     ; DATA XREF: CRP_DBG_SpellTargetError+33o
 // WZD dseg:7114 00                                              db    0
 // WZD dseg:7115 00                                              db    0
-// WZD dseg:7116 00 00                                           AI_Human_Hostility dw 0                 ; DATA XREF: AI_SetUnitOrders:loc_EBDABw ...
+
+// WZD dseg:7116
+int16_t ai_human_hostility = ST_FALSE;
+
 // WZD dseg:7118 B9 2F 2F 2F 2F                                  COL_HLP_Titles db 0B9h, 4 dup(2Fh)      ; DATA XREF: Draw_Help_Entry:loc_F27EBo
 // WZD dseg:7118                                                                                         ; this should ideally have been 16 bytes long
 // WZD dseg:711D B8 37 37 37 37                                  COL_HLP_Text db 0B8h, 4 dup(37h)        ; DATA XREF: Draw_Help_Entry:loc_F25E4o ...
@@ -4381,7 +4384,7 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
         _players[defender_player_idx].Hostility[attacker_player_idx] = 0;
     }
 
-    _players[defender_player_idx].War_Reeval = (15+ Random(10));
+    _players[defender_player_idx].reevaluate_hostility_countdown = (15+ Random(10));
 
 }
 
@@ -18734,7 +18737,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 Experience_Gained += 2;
 
-                if(_unit_type_table[_UNITS[battle_units[itr_battle_units].unit_idx].type].Cost >= 600)  /* ¿ >= the cost of Torin ? */
+                if(_unit_type_table[_UNITS[battle_units[itr_battle_units].unit_idx].type].cost >= 600)  /* ¿ >= the cost of Torin ? */
                 {
                     Rare_Foe_Defeated = ST_TRUE;  // later, +1 Fame for "winning a battle where the enemy lost a very rare creature" - MoM-OSG
                 }
@@ -19622,7 +19625,7 @@ int16_t CTY_RampageVictory(void)
                         else if(Unit_Types == 1)
                         {
                             Unit_Types = 2;
-                            if(_unit_type_table[Unit_Type].Cost < _unit_type_table[Primary_Unit].Cost)
+                            if(_unit_type_table[Unit_Type].cost < _unit_type_table[Primary_Unit].cost)
                             {
                                 Secondary_Unit = Unit_Type;
                                 Secondary_Count = 1;
@@ -19637,7 +19640,7 @@ int16_t CTY_RampageVictory(void)
                         }
                         else
                         {
-                            if(_unit_type_table[Unit_Type].Cost > _unit_type_table[Primary_Unit].Cost)
+                            if(_unit_type_table[Unit_Type].cost > _unit_type_table[Primary_Unit].cost)
                             {
                                 Secondary_Unit = Primary_Unit;
                                 Secondary_Count = Primary_Count;
@@ -19646,7 +19649,7 @@ int16_t CTY_RampageVictory(void)
                             }
                             else
                             {
-                                if(_unit_type_table[Unit_Type].Cost > _unit_type_table[Secondary_Unit].Cost)
+                                if(_unit_type_table[Unit_Type].cost > _unit_type_table[Secondary_Unit].cost)
                                 {
                                     Secondary_Unit = Unit_Type;
                                     Secondary_Count = 1;
@@ -22654,12 +22657,6 @@ void Combat_Figure_Compose_USEFULL(void)
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
 
-// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
-// DELETE          {
-// DELETE              // __debugbreak();
-// DELETE          }
-
-
         if(battle_units[itr].status != bus_Active)
         {
             continue;
@@ -23222,7 +23219,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
                 if((MAP_SQUARE_FLAG(TileTest_X, TileTest_Y, wp) & MSF_ROAD) != 0)
                 {
 
-                    Road_Matrix[((TileTest_Y - wy) + 1) + (TileTest_X - wx)] = ST_TRUE;
+                    Road_Matrix[((TileTest_Y - wy + 1) * 3) + (TileTest_X - wx + 1)] = ST_TRUE;
 
                 }
 

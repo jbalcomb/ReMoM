@@ -122,6 +122,77 @@ enum TER_TYPES
 
 
 
+/*
+
+    tte_1Mountain1   = 0xA4,  type used by Set_Terrain_Type_Mountain()
+    tte_Volcano      = 0xB3,  type used by Set_Terrain_Type_Volcano()
+    tte_AnimOcean      = 0x259,  type used by Square_Is_Ocean()
+
+Square_Is_Sailable()
+    if(terrain_type > 0x25A  tt_Tundra_1st AKA _Tundra00001000
+    if(terrain_type > 0x1D8)    / * _River1111_5 * /
+    if(terrain_type > 0x1D3)    / * _Shore111R1110 * /
+    if(terrain_type > 0x1C3)    / * _Desert10101111 * /
+    if(terrain_type > 0xE8)     / * _Shore000R0000 * /
+    if(terrain_type > 0xC4)     / * _River1001_2 * /
+    if(terrain_type > 0xA1)     / * _Shore10101111 * /
+    if(terrain_type == 0x1  e_TT_BugGrass AKA TT_BugGrass
+
+
+enum OVL_Tiles_Extended
+
+    _Ocean          = 0x0,
+    _Land           = 0x1,
+
+    _Shore00001000  = 0x2,
+    _Shore10101111  = 0xA1,
+
+    _Grasslands1    = 0xA2,
+    _Forest1        = 0xA3,
+
+    tte_1Mountain1   = 0xA4,  type used by Set_Terrain_Type_Mountain()
+
+    _AllDesert1     = 0xA5,
+    _Swamp1         = 0xA6,
+    _AllTundra1     = 0xA7,
+    _SorceryLake    = 0xA8,
+    _NatureForest   = 0xA9,
+    _ChaosVolcano   = 0xAA,
+    _1Hills1        = 0xAB,
+    _Grasslands2    = 0xAC,
+    _Grasslands3    = 0xAD,
+    _AllDesert2     = 0xAE,
+    _AllDesert3     = 0xAF,
+    _AllDesert4     = 0xB0,
+    _Swamp2         = 0xB1,
+    _Swamp3         = 0xB2,
+    tte_Volcano      = 0xB3,  type used by Set_Terrain_Type_Volcano()
+    _Grasslands4    = 0xB4,
+    _AllTundra2     = 0xB5,
+    _AllTundra3     = 0xB6,
+    _Forest2        = 0xB7,
+    _Forest3        = 0xB8,
+
+    _River0010      = 0xB9,
+    _River1011_4    = 0x102,
+
+    _Mount0010      = 0x103,
+    _Mount1001      = 0x112,
+
+    _Hills_0010     = 0x113,
+    _1Hills2        = 0x123,
+
+    _Desert00001000 = 0x124,
+    _Desert10101111 = 0x1C3,
+
+    _Shore00011R11  = 0x1C4,
+    _Shore001R1001  = 0x258,
+
+    tte_AnimOcean      = 0x259,  type used by Square_Is_Ocean()
+
+    _Tundra00001000 = 0x25A,
+    _Tundra10101111 = 0x2F9,
+*/
 enum OVL_Tiles_Extended
 {
     _Ocean          = 0x0,

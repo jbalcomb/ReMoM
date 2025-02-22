@@ -289,12 +289,12 @@ exact same in MGC & WZD
  [x] _world_maps         World_Data
  [x] UU_TBL_1            World_Data
  [x] UU_TBL_2            World_Data
- [x] TBL_Landmasses      World_Data
+ [x] _landmasses      World_Data
  [x] TBL_Nodes
  [x] _FORTRESSES
  [x] _TOWERS
- [x] TBL_Lairs
- [x] TBL_Items
+ [x] _LAIRS
+ [x] _ITEMS
  [x] _CITIES             World_Data
  [x] _UNITS
  [x] TBL_Terr_Specials   World_Data
@@ -323,7 +323,7 @@ World_Data
     _world_maps
     UU_TBL_1
     UU_TBL_2
-    TBL_Landmasses
+    _landmasses
     TBL_Terr_Specials
     _map_square_flags
     _square_explored

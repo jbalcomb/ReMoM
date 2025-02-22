@@ -228,24 +228,43 @@ void City_Screen__WIP(void)
 
     if(_CITIES[_city_idx].farmer_count < required_farmer_count)
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].farmer_count = required_farmer_count;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
     city_rebel_count = City_Rebel_Count(_city_idx);
 
     if(_CITIES[_city_idx].farmer_count > (_CITIES[_city_idx].population - city_rebel_count))
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].farmer_count = (_CITIES[_city_idx].population - city_rebel_count);
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
     if(_CITIES[_city_idx].construction == bt_NONE)
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].construction = bt_Housing;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
 
+Check_Cities_Data();
     Do_City_Calculations(_city_idx);
+Check_Cities_Data();
+
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
     m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
 
 
@@ -271,7 +290,9 @@ void City_Screen__WIP(void)
 
 
     Do_City_Calculations(_city_idx);
+
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
     m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
 
 

@@ -26,8 +26,7 @@
 void Do_City_Calculations(int16_t city_idx)
 {
 
-    // drake178: ; maps the EMM Data block into the page frame
-    // TODO  EMM_Map_DataH();
+    // DONT  EMM_Map_DataH();
 
     _CITIES[city_idx].food_units            = City_Food_Production(city_idx);
     _CITIES[city_idx].production_units      = City_Production_Production(city_idx);
@@ -36,9 +35,15 @@ void Do_City_Calculations(int16_t city_idx)
     _CITIES[city_idx].research_units        = City_Research_Production(city_idx);
     _CITIES[city_idx].mana_units            = City_Mana_Production(city_idx);
 
-    if((_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX) && (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX))
+    if(
+        (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+        &&
+        (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
+    )
     {
+
         _CITIES[city_idx].food_units = ((_CITIES[city_idx].food_units * difficulty_modifiers_table[_difficulty].food) / 100);
+
     }
 
 }
@@ -290,27 +295,50 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx)
 
 // WZD o120p06
 // drake178: WIZ_GetNUCounts()
+/*
+*/
+/*
+
+*/
 void Players_Normal_Units(int16_t normal_units[])
 {
-    int16_t itr_players;  // _SI_
-    int16_t itr_units;  // _SI_
+    int16_t itr_players = 0;  // _SI_
+    int16_t itr_units = 0;  // _SI_
 
     for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
+
         normal_units[itr_players] = 0;
+
     }
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+
+        /* HACK */  if(
+        /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        /* HACK */      ||
+        /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
+        /* HACK */  )
+        /* HACK */  {
+        /* HACK */      continue;
+        /* HACK */  }
+
         if(
-            ((_unit_type_table[_UNITS[itr_units].type].Abilities & 0x01 /* Ab_Summoned */) == 0) &&
-            (_UNITS[itr_units].type > ut_Chosen) &&
-            (_UNITS[itr_units].owner_idx < _num_players) &&
-            ((_UNITS[itr_units].mutations & 0x20 /* R_Undead */) == 0)
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
+            &&
+            (_UNITS[itr_units].type > ut_Chosen)
+            &&
+            (_UNITS[itr_units].owner_idx < _num_players)
+            &&
+            ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
-            normal_units[_UNITS[itr_units].owner_idx]++;
+
+            normal_units[_UNITS[itr_units].owner_idx] += 1;
+
         }
+
     }
 
 }
@@ -333,15 +361,14 @@ void Players_Normal_Units(int16_t normal_units[])
 */
 void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int16_t * food_total, int16_t * mana_total)
 {
-    int16_t mana_income;
-    int16_t food_income;
-    int16_t gold_income;
-    int16_t mana_expense;
-    int16_t food_expense;
-    int16_t gold_expense;
-
-    int16_t itr_cities;
-    int16_t itr_heroes;
+    int16_t mana_income = 0;
+    int16_t food_income = 0;
+    int16_t gold_income = 0;
+    int16_t mana_expense = 0;
+    int16_t food_expense = 0;
+    int16_t gold_expense = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_heroes = 0;
 
     Player_Magic_Power_Income_Total(&mana_income, &food_income, &gold_income, player_idx);
 
@@ -354,12 +381,17 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
     if((g_TimeStop_PlayerNum - 1) == player_idx)
     {
+
         *food_total = 0;
+
         *gold_total = 0;
+
         *mana_total = -200;
+
     }
     else
     {
+
         mana_expense = Player_Armies_And_Enchantments_Mana_Upkeep(player_idx);
 
         gold_expense = Player_Armies_Gold_Upkeep(player_idx);
@@ -368,35 +400,49 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 
         if(player_idx != HUMAN_PLAYER_IDX)
         {
+
             mana_expense = ((difficulty_modifiers_table[_difficulty].maintenance * mana_expense) / 100);
+
             gold_expense = ((difficulty_modifiers_table[_difficulty].maintenance * gold_expense) / 100);
+
             food_expense = ((difficulty_modifiers_table[_difficulty].maintenance * food_expense) / 100);
+
         }
 
 
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
         {
+
             if(_CITIES[itr_cities].owner_idx == player_idx)
             {
+
                 gold_income += (_CITIES[itr_cities].gold_units - _CITIES[itr_cities].building_maintenance);
+
                 food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population);
+
             }
+
         }
 
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
+
             if(_players[player_idx].Heroes[itr_heroes].unit_idx > -1)
             {
+
                 if((_HEROES2[player_idx]->heroes[_UNITS[_players[player_idx].Heroes[itr_heroes].unit_idx].type].abilities & HSA_NOBLE) != 0)
                 {
+
                     gold_income += 10;
+
                 }
+
             }
+
         }
 
-
-
         *food_total = food_income - food_expense;
+
         // mov bx, [bp+food]; mov ax, [bx]; cwd; sub ax, dx; sar ax, 1; add [bp+gold_income], ax
         gold_income += (*food_total > 0) ? *food_total / 2 : 0;
         *gold_total = gold_income - gold_expense;
@@ -722,23 +768,32 @@ void Kill_Unit(int16_t unit_idx, int16_t kill_type)
 */
 void Army_At_Square_1(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
 {
-    int16_t itr_units;  // _DX_
+    int16_t itr_units = 0;  // _DX_
 
     *troop_count = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+
         if(
-            (_UNITS[itr_units].wx == wx) &&
-            (_UNITS[itr_units].wy == wy) &&
-            (_UNITS[itr_units].owner_idx != ST_UNDEFINED) &&
+            (_UNITS[itr_units].wx == wx)
+            &&
+            (_UNITS[itr_units].wy == wy)
+            &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+            &&
             (_UNITS[itr_units].wp == wp)
         )
         {
+
             troops[*troop_count] = itr_units;
+
             *troop_count += 1;
+
         }
+
     }
+    
 }
 
 
@@ -1068,8 +1123,8 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
     for(itr = 0; itr < NUM_BUILDINGS; itr++)
     {
         if(
-            (_CITIES[city_idx].bldg_status[itr] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[itr] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[itr] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[itr] == bs_Replaced)
         )
         {
             if(bldg_data_table[itr].maintenance_cost != 0)
@@ -1635,35 +1690,45 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
 // drake178: CTY_GetFood()
 int16_t City_Food_Production(int16_t city_idx)
 {
-    int16_t city_area_food_units;
-
-    int16_t food_units;
+    int16_t city_area_food_units = 0;
+    int16_t food_units = 0;
 
     if(_CITIES[city_idx].population == 0)
     {
+
         food_units = 0;
+
     }
     else
     {
+
         city_area_food_units = City_Food_Terrain(city_idx);
 
         // ¿ someone died ?
         if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
         {
+
             _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+
         }
 
         if(
-            (_CITIES[city_idx].race == 0x06 /* R_Halfling */) ||
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].race == rt_Halfling)
+            ||
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced)
         )
         {
+
             food_units = _CITIES[city_idx].farmer_count * 3;
+
         }
         else
         {
+
             food_units = _CITIES[city_idx].farmer_count * 2;
+
         }
 
         /*
@@ -1676,38 +1741,51 @@ int16_t City_Food_Production(int16_t city_idx)
         */
 
         if(
-            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced)
         )
         {
+
             food_units += 2;
+
         }
 
         if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
         {
+
             food_units = food_units / 2;
+
         }
 
         // Over-Farming Adjustment
         if(food_units > city_area_food_units)
         {
+
             food_units = (city_area_food_units + ((food_units - city_area_food_units) / 2));
+
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
         )
         {
+
             food_units += 2;
+
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
         )
         {
+
             food_units += 3;
+
         }
 
         food_units += City_Food_WildGame(city_idx);
@@ -1745,18 +1823,18 @@ int16_t City_Maximum_Size(int16_t city_idx)
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
         ||
-        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
     )
     {
         maximum_size += 2;
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
         ||
-        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
     )
     {
         maximum_size += 3;
@@ -1799,21 +1877,28 @@ int16_t City_Production_Production(int16_t city_idx)
         // ¿ someone died ?
         if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
         {
+
             _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+
         }
 
         worker_count = _CITIES[city_idx].population - _CITIES[city_idx].farmer_count - City_Rebel_Count(city_idx);
 
         if(
-            (_CITIES[city_idx].race == 0x04 /* R_Dwarf */) ||
-            (_CITIES[city_idx].race == 0x09 /* R_Klackon */)
+            (_CITIES[city_idx].race == rt_Dwarf)
+            ||
+            (_CITIES[city_idx].race == rt_Klackon)
         )
         {
+
             production2_per_worker = 6;
+
         }
         else
         {
+
             production2_per_worker = 4;
+            
         }
 
         production_units = ((((worker_count * production2_per_worker) + _CITIES[city_idx].farmer_count) + 1) / 2);
@@ -1835,32 +1920,32 @@ int16_t City_Production_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced)
         )
         {
             production_modifier += 25;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced)
         )
         {
             production_modifier += 25;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Replaced)
         )
         {
             production_modifier += 50;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MECHANICIANS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[MECHANICIANS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MECHANICIANS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[MECHANICIANS_GUILD] == bs_Replaced)
         )
         {
             production_modifier += 50;
@@ -1926,16 +2011,16 @@ int16_t City_Gold_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MERCHANTS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[MERCHANTS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MERCHANTS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[MERCHANTS_GUILD] == bs_Replaced)
         )
         {
             gold_modifier += 100;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] == bs_Replaced)
         )
         {
             have_miners_guild = ST_TRUE;
@@ -1946,16 +2031,16 @@ int16_t City_Gold_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[BANK] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[BANK] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[BANK] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[BANK] == bs_Replaced)
         )
         {
             gold_modifier += 50;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MARKETPLACE] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[MARKETPLACE] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MARKETPLACE] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[MARKETPLACE] == bs_Replaced)
         )
         {
             gold_modifier += 50;
@@ -1968,12 +2053,15 @@ int16_t City_Gold_Production(int16_t city_idx)
 
         if(city_owner_idx != NEUTRAL_PLAYER_IDX)
         {
+
             gold_units = (((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) * _players[city_owner_idx].tax_rate) / 2);
 
         }
         else
         {
+
             gold_units = (_CITIES[city_idx].population - City_Rebel_Count(city_idx));
+
         }
         
         if(_CITIES[city_idx].race != 0x04 /* R_Dwarf */)
@@ -2030,31 +2118,31 @@ int16_t City_Research_Production(int16_t city_idx)
         research_units = 0;
 
         if(
-            (_CITIES[city_idx].bldg_status[LIBRARY] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[LIBRARY] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[LIBRARY] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[LIBRARY] == bs_Replaced)
         )
         {
             research_units += 2;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[SAGES_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[SAGES_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[SAGES_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[SAGES_GUILD] == bs_Replaced)
         )
         {
             research_units += 3;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[UNIVERSITY] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[UNIVERSITY] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[UNIVERSITY] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[UNIVERSITY] == bs_Replaced)
         )
         {
             research_units += 5;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Built /* B_Built */) ||
+            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Built) ||
             (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Replaced     /* B_Replaced */)
         )
         {
@@ -2110,7 +2198,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Built /* B_Built */) ||
+            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Built) ||
             (_CITIES[city_idx].bldg_status[SHRINE] == bs_Replaced   /* B_Replaced */)
         )
         {
@@ -2118,24 +2206,24 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Replaced)
         )
         {
             building_magic_power += 2;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Replaced)
         )
         {
             building_magic_power += 3;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Replaced)
         )
         {
             building_magic_power += 4;
@@ -2146,16 +2234,16 @@ int16_t City_Mana_Production(int16_t city_idx)
         mana_units = building_magic_power;
 
         if(
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced)
         )
         {
             mana_units += 3;
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Built) ||
+            (_CITIES[city_idx].bldg_status[WIZARDS_GUILD] == bs_Replaced)
         )
         {
             mana_units += 3;
@@ -2211,8 +2299,8 @@ int16_t City_Mana_Production(int16_t city_idx)
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] != bs_Built /* B_Built */) &&
-            (_CITIES[city_idx].bldg_status[MINERS_GUILD] != bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] != bs_Built) &&
+            (_CITIES[city_idx].bldg_status[MINERS_GUILD] != bs_Replaced)
         )
         {
             have_miners_guild = ST_FALSE;
@@ -2292,13 +2380,15 @@ XREF:
 */
 int16_t City_Growth_Rate(int16_t city_idx)
 {
-    int16_t maximum_size;
-    int16_t population_growth_modifier;
-    int16_t population_growth_rate;  // _DI_
+    int16_t maximum_size = 0;
+    int16_t population_growth_modifier = 0;
+    int16_t population_growth_rate = 0;  // _DI_
 
     if(_CITIES[city_idx].population == 0)
     {
+
         population_growth_rate = 0;
+
     }
     else
     {
@@ -2306,19 +2396,25 @@ int16_t City_Growth_Rate(int16_t city_idx)
 
         if(_CITIES[city_idx].population == maximum_size)  // BUGBUG  drake178: BUG #1: prevents negative growth at max pop
         {
+
             population_growth_rate = 0;
+
         }
         else
         {
             if(maximum_size == 0)
             {
+
                 population_growth_rate = -(_CITIES[city_idx].population);
+
             }
             else
             {
                 if(_CITIES[city_idx].food_units < _CITIES[city_idx].population)
                 {
+
                     population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);
+
                 }
                 else
                 {
@@ -2326,33 +2422,41 @@ int16_t City_Growth_Rate(int16_t city_idx)
                     population_growth_rate = ((((maximum_size - _CITIES[city_idx].population) + 1) / 2) + _race_type_table[_CITIES[city_idx].race].Growth_Mod);
 
                     if(
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built /* B_Built */)
+                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
                         ||
-                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced /* B_Replaced */)
+                        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
                     )
                     {
+
                         population_growth_rate += 2;
+
                     }
 
                     if(
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built /* B_Built */)
+                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
                         ||
-                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced /* B_Replaced */)
+                        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
                     )
                     {
+
                         population_growth_rate += 3;
+
                     }
 
                     if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #2: prevents negative growth at 25 pop
                     {
+
                         population_growth_rate = 0;
+
                     }
                     else
                     {
 
                         if(_CITIES[city_idx].enchantments[STREAM_OF_LIFE] > 0)
                         {
+
                             population_growth_rate = (population_growth_rate * 2);
+
                         }
 
                         /*
@@ -2360,14 +2464,18 @@ int16_t City_Growth_Rate(int16_t city_idx)
                         */
                         if( (events_table->Population_Boom_Status != 0) && (events_table->Population_Boom_Data == city_idx) )
                         {
+
                             population_growth_rate = (population_growth_rate * 2);
+
                         }
 
                         population_growth_modifier = 0;
 
                         if(_CITIES[city_idx].enchantments[DARK_RITUALS] > 0)
                         {
+
                             population_growth_modifier -= 25;
+
                         }
 
                         if(_CITIES[city_idx].construction == bt_Housing)
@@ -2375,34 +2483,44 @@ int16_t City_Growth_Rate(int16_t city_idx)
 
                             if(_CITIES[city_idx].population == 1)
                             {
+
                                 population_growth_modifier += 50;
+
                             }
                             else
                             {
+
                                 population_growth_modifier += ((((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) - _CITIES[city_idx].farmer_count) * 100) / _CITIES[city_idx].population);
+
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built /* B_Built */)
+                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Built)
                                 ||
-                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced /* B_Replaced */)
+                                (_CITIES[city_idx].bldg_status[SAWMILL] == bs_Replaced)
                             )
                             {
+
                                 population_growth_modifier += 10;
+
                             }
 
                             if(
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built /* B_Built */)
+                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Built)
                                 ||
-                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced /* B_Replaced */)
+                                (_CITIES[city_idx].bldg_status[BUILDERS_HALL] == bs_Replaced)
                             )
                             {
+
                                 population_growth_modifier += 15;
+
                             }
 
                             if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)  // BUGBUG  drake178: BUG #3: prevents negative growth at 25 pop if housing is selected as the build project, even with zero workers and no buildings
                             {
+
                                 population_growth_rate = 0;
+
                             }
                             else
                             {
@@ -2415,14 +2533,18 @@ int16_t City_Growth_Rate(int16_t city_idx)
 
                                     if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))
                                     {
+
                                         population_growth_rate = 0;
+
                                     }
                                 }
                                 else
                                 {
                                     if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                                     {
+
                                         population_growth_rate = ((population_growth_rate * difficulty_modifiers_table[_difficulty].population_growth) / 100);
+
                                     }
                                 }
 
@@ -2795,14 +2917,24 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
 
 // WZD o142p20
 // drake178: CTY_GetMinFarmers()
+/*
+calculates and returns the minimum amount of farmers
+that the city needs to sustain its population
+*/
+/*
+
+¿ can be negative ?
+Nope.
+
+*/
 int16_t City_Minimum_Farmers(int16_t city_idx)
 {
-    int16_t food_per_farmer;
-    int16_t Farming_Threshold;
-    int16_t city_population;
-    int16_t required_farmer_food;
-    int16_t minimum_farmer_count;
-    int16_t farmer_food;  // _DI_
+    int16_t food_per_farmer = 0;
+    int16_t Farming_Threshold = 0;
+    int16_t city_population = 0;
+    int16_t required_farmer_food = 0;
+    int16_t minimum_farmer_count = 0;
+    int16_t farmer_food = 0;  // _DI_
 
     // TODO  EMM_Map_DataH()
 
@@ -2810,62 +2942,102 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
     required_farmer_food = (city_population - City_Food_WildGame(city_idx));
 
-    if( (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built) || (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced) )
+    if(
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[GRANARY] == bs_Replaced)
+    )
     {
+
         required_farmer_food -= 2;
+        
     }
 
-    if( (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built) || (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced) )
+    if(
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[FARMERS_MARKET] == bs_Replaced)
+    )
     {
+
         required_farmer_food -= 3;
+
     }
 
     if(required_farmer_food > 0)
     {
-            Farming_Threshold = City_Food_Terrain(city_idx);
 
-            if(
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced /* B_Replaced */) ||
-            (_CITIES[city_idx].race == rt_Halfling /* R_Halfling */)
+        Farming_Threshold = City_Food_Terrain(city_idx);
+
+        if(
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Replaced)
+            ||
+            (_CITIES[city_idx].race == rt_Halfling)
         )
         {
+
             food_per_farmer = 3;
+
         }
         else
         {
+
             food_per_farmer = 2;
+
         }
 
         minimum_farmer_count = 0;
+
         farmer_food = 0;
+
         while((farmer_food < required_farmer_food) && (minimum_farmer_count < city_population))
         {
+
             minimum_farmer_count++;
 
             farmer_food = minimum_farmer_count * food_per_farmer;
 
-            if((_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built) || (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced))
+            if(
+                (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Built)
+                ||
+                (_CITIES[city_idx].bldg_status[FORESTERS_GUILD] == bs_Replaced)
+            )
             {
+
                 farmer_food += 2;
+
             }
 
             if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
             {
-                farmer_food = (farmer_food / 2);
+
+                farmer_food /= 2;
+
             }
 
             if(farmer_food > Farming_Threshold)
             {
+
                 farmer_food = (Farming_Threshold + ((farmer_food - Farming_Threshold) / 2));
+
             }
+
         }
 
     }
     else
     {
+
         minimum_farmer_count = 0;
+
     }
+
+/* DEBUG */  if(minimum_farmer_count < 0)
+/* DEBUG */  {
+/* DEBUG */      __debugbreak();
+/* DEBUG */  }
 
     return minimum_farmer_count;
 }
@@ -2900,6 +3072,7 @@ void All_Outpost_Population_Growth(void)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+
         if(_CITIES[itr_cities].population == 0)
         {
             continue;
@@ -3179,33 +3352,40 @@ int16_t WIZ_Get_Nation_Size__STUB(int16_t player_idx)
 // drake178: CTY_GetRebelCount()
 int16_t City_Rebel_Count(int16_t city_idx)
 {
-    int16_t Pacify_Police;
-    int16_t city_wp;
-    int16_t Pacify_Religion;
-    int16_t unrest_percent;
-    int16_t city_wy;
-    int16_t city_wx;
-    int16_t Pacify;
+    int16_t Pacify_Police = 0;
+    int16_t city_wp = 0;
+    int16_t Pacify_Religion = 0;
+    int16_t unrest_percent = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t Pacify = 0;
     // itr_num_players__units
-    int16_t itr_num_players;  // itr_num_players__units
-    int16_t itr_units;  // itr_num_players__units
-    int16_t city_owner_idx;
-    int16_t rebel_count;
-    int16_t unrest_races;  // DNE in Dasm
-    int16_t unrest_taxes;  // DNE in Dasm
+    int16_t itr_num_players = 0;  // itr_num_players__units
+    int16_t itr_units = 0;  // itr_num_players__units
+    int16_t city_owner_idx = 0;
+    int16_t rebel_count = 0;
+    int16_t unrest_races = 0;  // DNE in Dasm
+    int16_t unrest_taxes = 0;  // DNE in Dasm
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
+
     city_wx = _CITIES[city_idx].wx;
+
     city_wy = _CITIES[city_idx].wy;
+
     city_wp = _CITIES[city_idx].wp;
 
     unrest_races = (TBL_Unrest[_players[city_owner_idx].capital_race][_CITIES[city_idx].race] * 10);
+
     unrest_taxes = tax_unrest_pct_table[_players[city_owner_idx].tax_rate];
+
     unrest_percent = unrest_races + unrest_taxes;
 
     if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
     {
+        
         unrest_percent += 25;
+
     }
 
     rebel_count = ((_CITIES[city_idx].population * unrest_percent) / 100);
@@ -3222,35 +3402,47 @@ int16_t City_Rebel_Count(int16_t city_idx)
         Pacify_Religion = 0;
 
         if(
-            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[SHRINE] == bs_Replaced)
         )
         {
+
             Pacify_Religion += 1;
+
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[TEMPLE] == bs_Replaced)
         )
         {
+
             Pacify_Religion += 1;
+
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[PARTHENON] == bs_Replaced)
         )
         {
+            
             Pacify_Religion += 1;
+
         }
 
         if(
-            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Built /* B_Built */) ||
-            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Replaced /* B_Replaced */)
+            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Built)
+            ||
+            (_CITIES[city_idx].bldg_status[CATHEDRAL] == bs_Replaced)
         )
         {
+
             Pacify_Religion += 1;
+
         }
 
         if(
@@ -3263,118 +3455,166 @@ int16_t City_Rebel_Count(int16_t city_idx)
         }
 
         Pacify += Pacify_Religion;
+
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[ORACLE] == bs_Built /* B_Built */)
+        (_CITIES[city_idx].bldg_status[ORACLE] == bs_Built)
     )
     {
+
         Pacify += 2;
+
     }
 
     if(
-        (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built /* B_Built */)
+        (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
     )
     {
+
         Pacify += 1;
+
     }
 
     for(itr_num_players = 0; itr_num_players < _num_players; itr_num_players++)
     {
+
         if(itr_num_players != city_owner_idx)
         {
+
             if(_players[itr_num_players].Globals[GREAT_WASTING] != ST_FALSE)
             {
+
                 // BUG: ¿ 'Great Wasting' was only supposed to do -1, not be -1 ?
                 Pacify = -1;
+
             }
+
         }
+
     }
 
     for(itr_num_players = 0; itr_num_players < _num_players; itr_num_players++)
     {
+
         if(itr_num_players != city_owner_idx)
         {
+
             if(_players[itr_num_players].Globals[ARMAGEDDON] != ST_FALSE)
             {
+
                 // BUG: ¿ 'Great Wasting' was only supposed to do -2, not be -2 ?
                 Pacify = -2;
+
             }
+
         }
+
     }
 
 
     if(_CITIES[city_idx].enchantments[DARK_RITUALS] != ST_FALSE)
     {
+
         Pacify -= 1;
+
     }
 
     // ¿ also counts as the 'Plague' Event ?
     if(_CITIES[city_idx].enchantments[PESTILENCE] != ST_FALSE)
     {
+
         Pacify -= 2;
+
     }
 
     if(_CITIES[city_idx].enchantments[CURSED_LANDS] != ST_FALSE)
     {
+
         Pacify -= 1;
+
     }
 
     if(_players[city_owner_idx].Globals[JUST_CAUSE] != ST_FALSE)
     {
+
         Pacify += 1;
+
     }
 
     if(_players[city_owner_idx].Globals[GAIAS_BLESSING] != ST_FALSE)
     {
+
         Pacify += 2;
+
     }
 
     if(Pacify < rebel_count)
     {
+
         Pacify_Police = 0;
 
         for(itr_units = 0; itr_units < _units; itr_units++)
         {
+
             if(
-                (_UNITS[itr_units].owner_idx == city_owner_idx) &&
-                (_UNITS[itr_units].wx == city_wx) &&
-                (_UNITS[itr_units].wy == city_wy) &&
-                (_UNITS[itr_units].wp == city_wp) &&
+                (_UNITS[itr_units].owner_idx == city_owner_idx)
+                &&
+                (_UNITS[itr_units].wx == city_wx)
+                &&
+                (_UNITS[itr_units].wy == city_wy)
+                &&
+                (_UNITS[itr_units].wp == city_wp)
+                &&
                 (_UNITS[itr_units].type < ut_Magic_Spirit)
             )
             {
+
                 Pacify_Police++;
+
             }
+
         }
+
         Pacify += (Pacify_Police / 2);
+
     }
 
     rebel_count -= Pacify;
 
     if(rebel_count < 0)
     {
+
         rebel_count = 0;
+
     }
 
     if(_players[city_owner_idx].Globals[STREAM_OF_LIFE] != ST_FALSE)
     {
+
         rebel_count = 0;
+
     }
 
     if(_CITIES[city_idx].population < rebel_count)
     {
+
         rebel_count = _CITIES[city_idx].population;
+
     }
 
     if((_CITIES[city_idx].farmer_count + rebel_count) > _CITIES[city_idx].population)
     {
+
         _CITIES[city_idx].farmer_count = _CITIES[city_idx].population;
+
     }
 
     if(_CITIES[city_idx].farmer_count < 0)
     {
+
         _CITIES[city_idx].farmer_count = 0;
+
     }
 
     return rebel_count;

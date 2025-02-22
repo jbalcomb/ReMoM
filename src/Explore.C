@@ -182,6 +182,11 @@ void UU_Clear_Square_Scouted(int16_t world_x, int16_t world_y, int16_t world_p)
 
 // WZD o92p05
 // drake178: TILE_VisibilityReset
+/*
+*/
+/*
+
+*/
 void Update_Scouted_And_Contacted__WIP(void)
 {
     int16_t itr_planes;
@@ -200,7 +205,7 @@ void Update_Scouted_And_Contacted__WIP(void)
             Severity	Code	Description	Project	File	Line	Suppression State
             Warning	C6385	Reading invalid data from '_players':  the readable size is '7344' bytes, but '_human_player_idx' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Explore.C	215
         */
-        if(_players[_human_player_idx].Globals[NATURE_AWARENESS] == ST_FALSE)
+        if(_players[_human_player_idx].Globals[NATURES_AWARENESS] == ST_FALSE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
             {

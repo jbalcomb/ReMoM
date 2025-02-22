@@ -9,7 +9,11 @@
 void Screen_Control(void)
 {
     int16_t prev__Settings_BG_Music;
-
+    /*  BEGIN:  DEBUG */
+    int16_t itr_lairs;
+    int16_t lair_wp;
+    struct s_LAIR * lair_ptr;
+    /*  END:  DEBUG */
     int quit_flag;
 
     quit_flag = ST_FALSE;
@@ -46,9 +50,31 @@ void Screen_Control(void)
             Load_SAVE_GAM(-1);  // SAVETEST.GAM
             // TST_Load_SAVE_GAM();
             Loaded_Game_Update();
-            
+
+            Capture_Cities_Data();
+            Check_Cities_Data();
+            Release_Cities_Data();
+
+            Capture_Units_Data();
+            Check_Units_Data();
+            Release_Units_Data();
+
             Capture_Game_Data();
             Check_Game_Data();
+            Release_Game_Data();
+
+
+            /*
+                DEBUG  - _LAIRS[] is bjorked in AI_Continent_Eval__WIP()
+            */
+            for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
+            {
+                // lair_wp = _LAIRS[itr_lairs].wp;
+                lair_ptr = &_LAIRS[itr_lairs];
+                lair_wp = lair_ptr->wp;
+                assert(((lair_wp == 0) || (lair_wp == 1)));
+            }
+            // ¿ _LAIRS[99].wp = 0; ?
 
 
             // HACK:  (4) Magicians  @  {18, 11}
@@ -160,7 +186,10 @@ void Screen_Control(void)
             */
             prev__Settings_BG_Music = magic_set.background_music;
 
+Capture_Cities_Data();
             Load_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
 
             GAME_SoM_Cast_By = ST_UNDEFINED;
 
@@ -215,16 +244,25 @@ void Screen_Control(void)
         // scr_City = 100,
         case scr_City_Screen: /* WZD 0x00 */
         {
+Capture_Cities_Data();
             City_Screen__WIP();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         // scr_Load = 101,
         case scr_Armies_Screen: /* WZD 0x02 */
         {
+Capture_Cities_Data();
             ArmyList_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         case scr_Cities_Screen:  /* WZD 0x03 */
         {
+Capture_Cities_Data();
             CityList_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         // scr_Quit = 104,
         case scr_Main_Screen:
@@ -252,47 +290,74 @@ void Screen_Control(void)
             Fill(0, 0, SCREEN_XMAX, SCREEN_YMAX, 5);
             Set_Page_Off();
 
+Capture_Cities_Data();
             Main_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
             // MoO2  previous_screen = scr_Main_Screen
             previous_screen = scr_Main_Screen;
         } break;
         // scr_Magic = 106,
         case scr_Magic_Screen:
         {
+Capture_Cities_Data();
             Magic_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         case scr_Road_Build:
         {
-        Road_Build_Screen();
+Capture_Cities_Data();
+            Road_Build_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         case scr_Production_Screen:
         {
+Capture_Cities_Data();
             Production_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
 
         case scr_Item_Screen:  /* 109 */
         {
+Capture_Cities_Data();
             Item_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         // scr_NextTurn = 110,
         case scr_NextTurn:
         {
+Capture_Cities_Data();
             Next_Turn_Proc();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         // /* ?default? */
         case scr_Spellbook_Screen:
         {
+Capture_Cities_Data();
             Spellbook_Screen();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
         // /* ?default? */
         case scr_Advisor_Screen:
         {
+Capture_Cities_Data();
             Advisor_Screen(ST_UNDEFINED);
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
 
         case scr_Diplomacy_Screen:
         {
+Capture_Cities_Data();
             Diplomacy_Screen__STUB();
+Check_Cities_Data();
+Release_Cities_Data();
         } break;
 
         case scr_Test_Screen:

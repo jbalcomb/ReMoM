@@ -3429,9 +3429,13 @@ USW_FullDisplay()
 */
 void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
+
     Set_Mouse_List(1, mouse_list_default);
+
     Load_Battle_Unit(unit_idx, global_battle_unit);
+
     USW_LoadAndShow(31, 6, x1, y1, x2, y2, 1, unit_idx);
+
 }
 
 
@@ -3447,13 +3451,21 @@ void Main_Screen_Draw_Status_Window(void)
 
     Set_Outline_Color(0);
 
-    if(_players[player_idx].gold_reserve > 9999 || _players[player_idx].mana_reserve > 9999)
+    if(
+        _players[player_idx].gold_reserve > 9999
+        ||
+        _players[player_idx].mana_reserve > 9999
+    )
     {
+
         Set_Font_Style_Shadow_Down(0, 0, 0, 0);  // ¿ narrow ?
+
     }
     else
     {
+
         Set_Font_Style_Shadow_Down(1, 0, 0, 0);  // ¿ default / regular / normal ?
+
     }
 
     Set_Alias_Color(ST_GRAY);
@@ -3731,8 +3743,8 @@ void Cycle_Unit_Enchantment_Animation(void)
 // WZD o063p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
-    int16_t unit_owner_idx;
-    int16_t unit_colored_backgrounds_idx;
+    int16_t unit_owner_idx = 0;
+    int16_t unit_colored_backgrounds_idx = 0;
 
     /*
         if flag is 0 / FALSE / None, skip to draw
@@ -4348,10 +4360,6 @@ OON XREF STK_Move() WZD o95p01
     int16_t itr_stack;
     int8_t tmp_unit_type;  // DNE in Dasm
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Stack_Moves_Active()\n", __FILE__, __LINE__);
-#endif
-
     movement_points = 1000;
 
     stack_has_windwalker = ST_FALSE;
@@ -4388,10 +4396,6 @@ OON XREF STK_Move() WZD o95p01
     }
 
     stack_moves = movement_points;
-
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: END: Stack_Moves_Active() { stack_moves = %d }\n", __FILE__, __LINE__, stack_moves);
-#endif
 
     return stack_moves;
 }
@@ -5219,6 +5223,7 @@ Prep_Road_Path:
                 _UNITS[troops[itr_troops]].Status = us_Ready;
                 TILE_CreateRoad(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
                 TILE_ResetRoadConns(_UNITS[troops[itr_troops]].wx, _UNITS[troops[itr_troops]].wy, map_p);
+Capture_Cities_Data();
             }
             else
             {
@@ -5565,58 +5570,93 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         BEGIN: display_moves
     */
     display_moves = ST_FALSE;
+
     if(player_idx == _human_player_idx)
     {
+
         display_moves = ST_TRUE;
+
     }
-    if( (player_idx != _human_player_idx) && (magic_set.Enemy_Moves == ST_TRUE) )
+
+    if(
+        (player_idx != _human_player_idx)
+        &&
+        (magic_set.Enemy_Moves == ST_TRUE)
+    )
     {
-        for(itr_path_length = 0; (itr_path_length < movepath_length) && (display_moves == ST_FALSE); itr_path_length++)
+
+        for(itr_path_length = 0; ((itr_path_length < movepath_length) && (display_moves == ST_FALSE)); itr_path_length++)
         {
+
             if(Check_Square_Scouted(movepath_x_array[itr_path_length], movepath_y_array[itr_path_length], map_p) == ST_TRUE)
             {
+
                 display_moves = ST_TRUE;
+
             }
+
         }
 
         if(display_moves == ST_TRUE)
         {
+
             invisibility_unit_count = 0;
+
             for(itr_unit_array_count = 0; itr_unit_array_count < unit_array_count; itr_unit_array_count++)
             {
+
                 if(Unit_Has_Invisibility(unit_array[itr_unit_array_count]) == ST_TRUE)
                 {
+
                     invisibility_unit_count++;
+
                 }
+
             }
             if(invisibility_unit_count == unit_array_count)
             {
+
                 display_moves = ST_FALSE;
+
             }
+
         }
+
     }
     /*
         END: display_moves
     */
 
+    /* HACK */  display_moves = ST_TRUE;
     if(display_moves == ST_TRUE)
     {
+
         OVL_BringIntoView(map_x, map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_p);
+
         _map_x = *map_x;
+
         _map_y = *map_y;
+
         Set_Unit_Draw_Priority();
+
         Set_Entities_On_Map_Window(*map_x, *map_y, map_p);
+
         Reset_Map_Draw();
+
         MainScr_Create_Reduced_Map_Picture();
 
         assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+
         assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
 
         Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
 
         PageFlip_FX();
+
         Copy_On_To_Off_Page();
+
         Reset_Map_Draw();
+
     }
 
     /*
@@ -5715,7 +5755,11 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
         if(curr_dst_wx > unit_x)  /* ¿ moving to the right ? */
         {
 
-            if(unit_x == 0 && curr_dst_wx == WORLD_X_MAX)
+            if(
+                (unit_x == 0)
+                &&
+                (curr_dst_wx == WORLD_X_MAX)
+            )
             {
                 unit_pict_shift_sx = -4;  // MAP_WIDTH / 3
                 unit_x -= 1;
@@ -6006,7 +6050,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             &&
             (_UNITS[itr_units].wy == src_wy)
             &&
-            (TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            (_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
         )
         {
             dst_troops_carry_capacity = 0;
@@ -6061,7 +6105,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         }
         else
         {
-            if(TBL_Landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
+            if(_landmasses[((dst_wy * WORLD_WIDTH) + dst_wx)] == TT_Ocean1)
             {
                 dst_troops_carry_capacity = 0;
                 Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);

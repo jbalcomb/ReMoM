@@ -64,7 +64,7 @@ extern struct s_FORTRESS * DBG_ORIG__FORTRESSES;
 // WZD dseg:9CCC  
 extern struct s_NODE * DBG_ORIG__NODES;
 // WZD dseg:9CD0
-extern uint8_t * DBG_ORIG_TBL_Landmasses;
+extern uint8_t * DBG_ORIG__landmasses;
 // WZD dseg:9CD4
 extern SAMB_ptr DBG_ORIG_UU_TBL_2;
 // WZD dseg:9CD8

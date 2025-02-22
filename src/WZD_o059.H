@@ -39,10 +39,10 @@ void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx
 void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p07
-// CRP_TILE_GetUnits_2()
+void Army_At_Square_3(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p08
-// UU_Army_At_Square_3()
+void UU_Army_At_Square_4(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[]);
 
 // WZD o59p09
 int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[]);

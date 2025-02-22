@@ -948,6 +948,16 @@ struct s_MAGIC_VORTEX
 
 
 
+
+
+// WZD dseg:7116
+/*
+used in AI_SetUnitOrders__WIP()
+*/
+extern int16_t ai_human_hostility;
+
+
+
 // WZD dseg:C47C
 extern int16_t _combat_wp;
 

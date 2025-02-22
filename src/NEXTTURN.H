@@ -35,13 +35,13 @@ void empty_function__o060p03(void);
 void Next_Turn_Proc(void);
 
 // WZD o60p05
-// AI_ResetUnitMoves()
+void All_AI_Refresh_Units_Movement(void);
 
 // WZD o60p06
 void Update_Units_MvsSts(void);
 
 // WZD o60p07
-void TILE_VisibilityUpdt(void);
+void All_AI_Players_Contacted(void);
 
 
 
@@ -96,10 +96,10 @@ int16_t Unit_Moves2(int16_t unit_idx);
 void Cheat_Power(void);
 
 // WZD o121p11
-// AI_GetThreat_UType()
+int16_t Effective_Unit_Type_Strength(int16_t unit_type);
 
 // WZD o121p12
-// AI_GetThreat_UNIT()
+int16_t Effective_Unit_Strength(int16_t unit_idx);
 
 // WZD o121p13
 void Patch_Units_Upkeep_And_Sound(void);
@@ -132,7 +132,7 @@ void Players_Apply_Magic_Power(void);
 void Players_Apply_Upkeeps__WIP(void);
 
 // WZD o140p07
-void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep);
+void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t food_upkeep);
 
 // WZD o140p08
 int16_t WIZ_MatchGoldUpkeep(int16_t player_idx, int16_t gold_upkeep);
