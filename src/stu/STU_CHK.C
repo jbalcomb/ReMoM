@@ -81,7 +81,7 @@ void Copy_City_Struct(struct s_CITY * dst, struct s_CITY * src)
 
 int16_t Check_City_Struct(struct s_CITY * dst, struct s_CITY * src)
 {
-    int16_t itr;
+    int16_t itr = 0xBB;
     if(strcmp(dst->name, src->name) != 0)
             __debugbreak();
     if(dst->race != src->race)
