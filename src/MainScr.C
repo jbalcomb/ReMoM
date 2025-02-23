@@ -2021,27 +2021,47 @@ void Main_Screen(void)
 
 
 
-        if((leave_screen_flag == ST_FALSE) && (screen_changed == ST_FALSE) )
+        if(
+            (leave_screen_flag == ST_FALSE)
+            &&
+            (screen_changed == ST_FALSE)
+        )
         {
+
             Main_Screen_Draw();
+
             if(
                 (_turn == 0)
                 &&
                 (_given_chance_to_rename_home_city == ST_FALSE)
             )
             {
+
+Check_Cities_Data();
                 NameStartingCity_Dialog_Popup(0);
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                 Assign_Auto_Function(Main_Screen_Draw, 1);
+
                 _given_chance_to_rename_home_city = ST_TRUE;
+
             }
             else
             {
+
                 _given_chance_to_rename_home_city = ST_TRUE;
+
             }
+
             // o146p04_Empty_pFxn();
+// 
             // o108p03_Empty_pFxn();
+
             PageFlip_FX();
+
             Release_Time(1);
+
         }
         
         screen_changed = ST_FALSE;

@@ -198,13 +198,13 @@ void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp)
 */
 void Random_City_Name_By_Race(int16_t race_idx, char * name)
 {
-    char Local_Name_String[20];
-    int16_t city_name_idx;
-    int16_t attempts;
-    char * city_names_buffer;  // _DI_
-    int16_t itr_cities;  // _SI_
-    /* hack */ char hack_new_name[20];
-    /* hack */ char * city_names_buffer_ptr;
+    char Local_Name_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_name_idx = 0;
+    int16_t attempts = 0;
+    char * city_names_buffer = 0;  // _DI_
+    int16_t itr_cities = 0;  // _SI_
+    /* hack */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* hack */ char * city_names_buffer_ptr = 0;
 
     city_names_buffer = (char *)Near_Allocate_First(280);
 
@@ -212,6 +212,7 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
 
     for(attempts = 0; attempts < 200; attempts++)
     {
+
         city_name_idx = (Random(20) - 1);
 
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
@@ -222,25 +223,33 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
             strcpy(hack_new_name, _CITIES[itr_cities].name);
 
             // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
-            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+
             if (stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
             {
+
                 continue;
+
             }
 
             if(attempts < 200)
             {
+
                 break;
+
             }
 
-            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(14) - 1), 1, 280);
+            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(NUM_RACES) - 1), 1, 280);
 
         }
+
     }
     
     // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
-    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+
     strcpy(name, city_names_buffer_ptr);
+
 }
 
 

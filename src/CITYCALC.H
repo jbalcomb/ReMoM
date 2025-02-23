@@ -43,7 +43,7 @@ int16_t Player_Armies_Food_Upkeep(int16_t player_idx);
 void Players_Normal_Units(int16_t normal_units[]);
 
 // WZD o120p07
-void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold, int16_t * food, int16_t * mana);
+void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int16_t * food_total, int16_t * mana_total);
 
 // WZD o120p08
 int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx);

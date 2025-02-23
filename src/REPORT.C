@@ -277,7 +277,9 @@ void Chancellor_Screen__WIP(int16_t flag)
             (events_table->Plague_Player == HUMAN_PLAYER_IDX)
         )
         {
+
             ongoing_event_count++;
+
         }
 
         if(
@@ -286,49 +288,51 @@ void Chancellor_Screen__WIP(int16_t flag)
             (events_table->Population_Boom_Player == HUMAN_PLAYER_IDX)
         )
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Good_Moon_Status == 2)
-        )
+        if(events_table->Good_Moon_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Bad_Moon_Status == 2)
-        )
+        if(events_table->Bad_Moon_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Conjunction_Chaos_Status == 2)
-        )
+        if(events_table->Conjunction_Chaos_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Conjunction_Nature_Status == 2)
-        )
+        if(events_table->Conjunction_Nature_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Conjunction_Sorcery_Status == 2)
-        )
+        if(events_table->Conjunction_Sorcery_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
-        if(
-            (events_table->Mana_Short_Status == 2)
-        )
+        if(events_table->Mana_Short_Status == 2)
         {
+
             ongoing_event_count++;
+
         }
 
         total_message_count += ongoing_event_count;
@@ -338,60 +342,84 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     if(total_message_count == 0)
     {
+
         if(flag == 1)
         {
+
             scroll_text_line_count++;
+
         }
         else
         {
-            // TODO  IDGI  return ST_TRUE;
+
+            return;
+
         }
+
     }
 
 
     if(ongoing_event_count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_UnitLost_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_UnitKilled_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_CityGrowth_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_CityDeath_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_BldLost_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_UEsLost_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_CEsLost_Count > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     if(MSG_GEs_Lost > 0)
     {
+
         scroll_text_line_count++;
+
     }
 
     // ~ (report count * report line height) + (message count * message line height)
@@ -430,12 +458,17 @@ void Chancellor_Screen__WIP(int16_t flag)
 
         if(itr_msgs == 0)
         {
+
             Apply_Palette();
+
             VGA_MosaicFlip__STUB();
+
         }
         else
         {
+
             PageFlip_FX();
+
         }
 
     }
@@ -448,13 +481,19 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     if(m_report_scroll_text_height > 127)
     {
+
         hotkey_U = Add_Hidden_Field(28, 9, 288, 25, str_hotkey_U__ovr126[0], ST_UNDEFINED);
+
         hotkey_D = Add_Hidden_Field(28, 170, 288, 190, str_hotkey_D__ovr126[0], ST_UNDEFINED);
+
     }
     else
     {
+
         hotkey_U = INVALID_FIELD;
+
         hotkey_D = INVALID_FIELD;
+
     }
 
     full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr126[0], ST_UNDEFINED);
@@ -467,35 +506,48 @@ void Chancellor_Screen__WIP(int16_t flag)
 
         if(input_field_idx == full_screen_ESC_field)
         {
+
             leave_screen = ST_TRUE;
+
         }
 
         if(input_field_idx == hotkey_U)
         {
+
             // TODO
             // TODO
             // TODO
+
         }
 
         if(input_field_idx == hotkey_D)
         {
+
             // TODO
             // TODO
             // TODO
+
         }
 
         if(leave_screen == ST_FALSE)
         {
+
             Set_Page_Off();
+
             Chancellor_Screen_Draw();
+
             PageFlip_FX();
+
         }
 
     }
 
     Deactivate_Auto_Function();
+
     Release_Block(_screen_seg);
+
     Full_Draw_Main_Screen();
+
     Copy_On_To_Off_Page();
 
 }

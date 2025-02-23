@@ -266,9 +266,12 @@ Check_Cities_Data();
 
 
 
+    // OG-MoM does not show/wait/do anything here if there are no message
     if(magic_set.end_of_turn_summary == ST_TRUE)
     {
+
         Chancellor_Screen__WIP(0);
+
     }
 
 

@@ -463,33 +463,42 @@ void Player_Resource_Income_Total(int16_t player_idx, int16_t * gold_total, int1
 */
 int16_t Player_Armies_And_Enchantments_Mana_Upkeep(int16_t player_idx)
 {
-    int16_t mana_upkeep_cost;
-    int16_t itr_units;
-    int16_t itr_cities;
+    int16_t mana_upkeep_cost = 0;
+    int16_t itr_units = 0;
+    int16_t itr_cities = 0;
 
     mana_upkeep_cost = 0;
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+
         if(_UNITS[itr_units].owner_idx == player_idx)
         {
+
             mana_upkeep_cost += Unit_Mana_Upkeep(itr_units);
+
         }
+
     }
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+
         mana_upkeep_cost += Player_City_Enchantments_Upkeep(itr_cities, player_idx);
+
     }
 
     mana_upkeep_cost += Player_Overland_Enchantments_Upkeep(player_idx);
 
     if(_players[player_idx].channeler > 0)
     {
+
         mana_upkeep_cost = (mana_upkeep_cost / 2);  /* -50% */
+
     }
 
     return mana_upkeep_cost;
+    
 }
 
 // WZD o120p09
