@@ -9,7 +9,17 @@ MoO2
 
 */
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
+
+#include "CITYCALC.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "special.H"
+#include "Terrain.H"
+#include "UnitMove.H"   // WTFMATE
+#include "UNITSTK.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
 
 
 
@@ -1625,7 +1635,7 @@ void Next_Turn_Process_Purify(void)
     returns ST_TRUE if any of the player's units are not *busy*
     logic feels inverted for the way it is tested
 */
-int16_t Any_Units_Not_Busy()
+int16_t Any_Units_Not_Busy(void)
 {
     int16_t unit_count;
     int16_t itr_units;

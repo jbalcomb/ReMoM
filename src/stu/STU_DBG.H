@@ -13,17 +13,12 @@
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 /*
     ¿ Game-State Debug Variables ?
 */
 
 
-extern int16_t DBG_trigger_event;
+extern int16_t STU_DBG_trigger_event;
 
 
 // WZD dseg:9136
@@ -112,6 +107,12 @@ extern int16_t DBG_TST_entities_on_movement_map[];
 /*
     ¿ Game-State Debug Variables ?
 */
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 

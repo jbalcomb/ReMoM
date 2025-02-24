@@ -16,24 +16,22 @@ void IDK_Draw_MiniMap_s5B828()
 void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 
 */
-#include "MoM.H"
-#include "stu_dbg.h"
 
-#include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "SCastScr.H"
+
+#include "MoX/FLIC_Draw.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/MOX_SET.H"  /* magic_set */
+
+#include "Explore.H"
+#include "MainScr.H"
+#include "MOM_SCR.H"
+#include "SCastScr.H"  /* World_To_Screen() */
+#include "TERRAIN.H"
+#include "UnitMove.H"
+#include "UNITTYPE.H"
 
 #include "assert.h"
-
-
-
-/*
-    Forward Declare Private Functions
-*/
-
-// WZD o68p04
-void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
-
 
 
 
@@ -146,10 +144,10 @@ uint32_t WarpNode_SeedSave = 0x000F9F9B;
 
 
 
-// WZD dseg:974A
-int16_t _prev_world_y;
-// WZD dseg:974C
-int16_t _prev_world_x;
+// MoM_Data  // WZD dseg:974A
+// MoM_Data  int16_t _prev_world_y;
+// MoM_Data  // WZD dseg:974C
+// MoM_Data  int16_t _prev_world_x;
 
 // NIU?  // WZD dseg:9746
 // NIU?  int16_t CRP_OVL_MapWindowY;
@@ -190,6 +188,8 @@ int16_t reduced_map_x;
 int16_t reduced_map_mark_cycle;
 
 //                                          ¿ END: ~ Reduced/World Map  - Uninitialized Data ?
+
+
 
 
 
@@ -404,7 +404,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 
 }
 
-// WZD o67p0
+// WZD o67p02
 // AKA IDK_CheckSet_MapDisplay_XY
 void IDK_CheckSet_MapDisplay_XY(void)
 {
@@ -440,6 +440,11 @@ void IDK_CheckSet_MapDisplay_XY(void)
 
 
 }
+
+
+// WZD o67p03
+// void sub_59DF7(int16_t arg_0);
+
 
 
 // WZD o67p04
@@ -577,6 +582,8 @@ void Reduced_Map_Set_Dims(int16_t width, int16_t height)
 
 
 // WZD o67p09
+// "Reduced Map"/"World Window"
+// AKA Draw_Minimap_Window()
 // void Draw_Minimap_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
 void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height)
 {
@@ -764,6 +771,9 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 
 
 // WZD o67p13
+/*
+    updates draw priority on ALL units in _UNITS
+*/
 void Set_Unit_Draw_Priority(void)
 {
     int16_t draw_priority;
@@ -801,7 +811,7 @@ void Set_Unit_Draw_Priority(void)
 
 
 // WZD o67p14
-// drake178: STK_NoUnitDraw
+// drake178: STK_NoUnitDraw()
 void Reset_Stack_Draw_Priority(void)
 {
     int16_t itr_unit_stack_count = 0;
@@ -826,21 +836,34 @@ int16_t IsPassableTower(int16_t wx, int16_t wy)
 
     for(itr_towers = 0; itr_towers < TOWER_COUNT_MAX; itr_towers++)
     {
-        if((wx == _TOWERS[itr_towers].wx) && (wy == _TOWERS[itr_towers].wy))
+
+        if(
+            (wx == _TOWERS[itr_towers].wx)
+            &&
+            (wy == _TOWERS[itr_towers].wy)
+        )
         {
+
             is_passible_tower = ST_TRUE;
+
         }
+
     }
 
     if(is_passible_tower == ST_TRUE)
     {
+
         if(Check_Planar_Seal() == ST_TRUE)
         {
+
             is_passible_tower = ST_FALSE;
+
         }
+
     }
 
     return is_passible_tower;
+
 }
 
 
@@ -2364,6 +2387,8 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // "Reduced Map"/"World Window"
 // AKA Draw_Minimap()
 // AKA Draw_Reduced_Map
+// AKA Draw_Minimap()
+// void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 // TODO  rename to ~create/build
 /*
     TODO(JimBalcomb,20240914):  MainScr_Maps.C  Create_Reduced_Map_Picture()  needs a full review

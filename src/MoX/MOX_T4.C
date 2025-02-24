@@ -115,12 +115,38 @@ OON XREF:
 
 
 
-#include "MoX_Lib.H"
+#include "Fonts.H"
+#include "Input.H"
+#include "MOX_DAT.H"  /* _screen_seg */
+#include "MOX_SET.H"  /* magic_set */
+#include "MOX_SND.H"
+#include "MoX_TYPE.H"
+#include "SOUND.H"
+#include "Timer.H"
+#include "Util.H"
+
+#include "../MoM_Data.H"
 
 
 
 int16_t current_screen;
 int16_t previous_screen;
+
+
+
+/*
+only used twice, from 'Main Screen'
+
+PageFlip_FX()
+    PageFlipEffect == 4
+    RP_VGA_GrowOutFlip(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + 400));
+*/
+// WZD dseg:9992
+int16_t GrowOutFrames;
+// WZD dseg:9994
+int16_t GrowOutTop;
+// WZD dseg:9996
+int16_t GrowOutLeft;
 
 
 

@@ -6,6 +6,10 @@
         ovr132
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
 #include "MoM.H"
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
@@ -1706,7 +1710,8 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         Spell_Found = ST_FALSE;
 
-        for(spellbook_page = 0; ((m_spellbook_page_count - 2) && (Spell_Found == ST_FALSE)) > spellbook_page; spellbook_page++)
+        // ¿ BUG:  reuses spellbook_page, which is holding Add_Hidden_Field() ?
+        for(spellbook_page = 0; (((m_spellbook_page_count - 2) > spellbook_page) && (Spell_Found == ST_FALSE)); spellbook_page++)
         {
 
             for(itr_spellbook_page_spell_count = 0; ((m_spellbook_pages[spellbook_page].count > itr_spellbook_page_spell_count) && (Spell_Found == ST_FALSE)); itr_spellbook_page_spell_count++)
@@ -1755,7 +1760,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
             SBK_BuildSpellbook__WIP(slt_Library, 4);
 
-            for(spellbook_page = 0; ((m_spellbook_page_count - 1) && (Spell_Found == ST_FALSE)) > spellbook_page; spellbook_page++)
+            for(spellbook_page = 0; (((m_spellbook_page_count - 1) > spellbook_page) && (Spell_Found == ST_FALSE)); spellbook_page++)
             {
 
                 for(itr_spellbook_page_spell_count = 0; ((m_spellbook_pages[spellbook_page].count > itr_spellbook_page_spell_count) && (Spell_Found == ST_FALSE)); itr_spellbook_page_spell_count++)

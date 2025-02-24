@@ -30,7 +30,10 @@ USW_Attributes_1
 
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "MoM.H"
+
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 #include "UnitStat.H"
@@ -44,7 +47,7 @@ USW_Attributes_1
 struct USW_Ability
 {
     /* 00 */  char ** name;
-    /* 02 */  int16_t bit_idx;  // enum ABL_FLAGS  ... tested against global_battle_unit->Abilities, which is copied from unit_type_table.Abilities
+    /* 02 */  uint16_t bit_idx;  // enum ABL_FLAGS  ... tested against global_battle_unit->Abilities, which is copied from unit_type_table.Abilities
     /* 04 */  uint8_t icon_idx;  // 
     /* 05 */  // 2-byte alignment padding
     /* 06 */  int16_t help_idx;
@@ -754,7 +757,7 @@ struct s_UNIT_ENCHANTMENT
 /* 00 */ char ** name;
 /* 02 */ uint32_t flag;  // ¿ enum e_UNIT_ENCHANTMENT ?
 /* 06 */ uint8_t icon_idx;
-/* 07 */ uint8_t align2_07h;  // 2-byte alignment
+/* 07 */ // clangd says we're landing here, instead of at help_idx  uint8_t align2_07h;  // 2-byte alignment
 /* 08 */ int16_t help_idx;    // ; enum HELP_TXT
 /* 0A */
 };

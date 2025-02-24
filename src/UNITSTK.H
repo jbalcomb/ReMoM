@@ -6,6 +6,8 @@
 #ifndef UNITSTK_H
 #define UNITSTK_H
 
+#include "MoX/MoX_TYPE.H"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,7 +68,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[]);
 void Next_Turn_Process_Purify(void);
 
 // WZD o61p16
-// ¿PRIVATE?  int16_t Any_Units_Not_Busy();
+int16_t Any_Units_Not_Busy(void);
 
 
 

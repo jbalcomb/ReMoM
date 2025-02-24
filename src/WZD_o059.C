@@ -3,6 +3,8 @@
         ovr059
 */
 
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 #include "WZD_o059.H"
 #include "MainScr.H"

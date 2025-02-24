@@ -49,15 +49,15 @@ A nibble is four consecutive binary digits, or half of an 8-bit byte. It can be 
 )
 
 #define SET_2B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >> 8 )  \
+*( (uint16_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
+*( (uint16_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >> 8 )  \
 )
 
 #define SET_4B_OFS(_ptr_,_ofs_,_val_) (        \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >>  8), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 2 ) = ( (_val_) >> 16), \
-*( (uint8_t *)(_ptr_) + (_ofs_) + 3 ) = ( (_val_) >> 24)  \
+*( (uint32_t *)(_ptr_) + (_ofs_) + 0 ) = ( (_val_)      ), \
+*( (uint32_t *)(_ptr_) + (_ofs_) + 1 ) = ( (_val_) >>  8), \
+*( (uint32_t *)(_ptr_) + (_ofs_) + 2 ) = ( (_val_) >> 16), \
+*( (uint32_t *)(_ptr_) + (_ofs_) + 3 ) = ( (_val_) >> 24)  \
 )
 
 

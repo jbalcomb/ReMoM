@@ -11,6 +11,9 @@
         Module: SCORE
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"
+
 #include "MoM.H"
 
 

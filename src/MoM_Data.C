@@ -811,17 +811,24 @@ int16_t map_sustain = 2;
 
 
 
-// WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
-
-// WZD dseg:8296
-// AKA have_help
-int16_t help_list_active = ST_FALSE;
-
-// WZD dseg:8298
-// AKA _help_count
-int16_t help_list_count = 0;
-
-// WZD dseg:8298                                                 ¿ END: Help - Initialized Data ?
+// MoX/Input.C  // WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
+// MoX/Input.C  // WZD dseg:8296                                                 BEGIN: seg036 (fields) - Initialized Data
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:8296
+// MoX/Input.C  // AKA have_help
+// MoX/Input.C  int16_t help_list_active = ST_FALSE;
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:8298
+// MoX/Input.C  // AKA _help_count
+// MoX/Input.C  int16_t help_list_count = 0;
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:8298                                                 ¿ END: Help - Initialized Data ?
+// MoX/Input.C  // WZD dseg:8298                                                 END: seg036 (fields) - Initialized Data
+// MoX/Input.C  
+// MoX/Input.C  
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// MoX/Input.C  // WZD dseg:82A6
 
 
 
@@ -1170,9 +1177,6 @@ int16_t OVL_Action_Structure;
 
 
 
-
-
-
 // WZD dseg:92B0
 // drake178: cityscape_bldgs
 struct s_BLDG * cityscape_bldgs;
@@ -1373,16 +1377,16 @@ SAMB_ptr _combat_terrain_pict_segs[48];
 // WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
 // WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
 
-// WZD  dseg:9414
-SAMB_ptr snd_left_button_click;
-
-// WZD  dseg:9416 00                                              db    0
-// WZD  dseg:9417 00                                              db    0
-// WZD  dseg:9418 00                                              db    0
-// WZD  dseg:9419 00                                              db    0
-
-// WZD  dseg:941A
-SAMB_ptr snd_standard_button_click;
+// MOX_SND  // WZD  dseg:9414
+// MOX_SND  SAMB_ptr snd_left_button_click;
+// MOX_SND  
+// MOX_SND  // WZD  dseg:9416 00                                              db    0
+// MOX_SND  // WZD  dseg:9417 00                                              db    0
+// MOX_SND  // WZD  dseg:9418 00                                              db    0
+// MOX_SND  // WZD  dseg:9419 00                                              db    0
+// MOX_SND  
+// MOX_SND  // WZD  dseg:941A
+// MOX_SND  SAMB_ptr snd_standard_button_click;
 
 // WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
 // WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
@@ -2070,26 +2074,26 @@ drawn by Draw_Picture()  (meaningfully, not by FLIC_Draw())
 */
 SAMB_ptr GfxBuf_2400B;
 
-// WZD dseg:998E
-SAMB_ptr _screen_seg;
-// allocated in MoM_Init_Tables()
+// MOX_DAT  // WZD dseg:998E
+// MOX_DAT  SAMB_ptr _screen_seg;
+// MOX_DAT  // allocated in MoM_Init_Tables()
 
-// WZD dseg:9990
-// _current_screen
+// MoX/MOX_T4.C  // WZD dseg:9990
+// MoX/MOX_T4.C  // _current_screen
 
-/*
-only used twice, from 'Main Screen'
-
-PageFlip_FX()
-    PageFlipEffect == 4
-    RP_VGA_GrowOutFlip(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + 400));
-*/
-// WZD dseg:9992
-int16_t GrowOutFrames;
-// WZD dseg:9994
-int16_t GrowOutTop;
-// WZD dseg:9996
-int16_t GrowOutLeft;
+// MoX/MOX_T4.C  /*
+// MoX/MOX_T4.C  only used twice, from 'Main Screen'
+// MoX/MOX_T4.C  
+// MoX/MOX_T4.C  PageFlip_FX()
+// MoX/MOX_T4.C      PageFlipEffect == 4
+// MoX/MOX_T4.C      RP_VGA_GrowOutFlip(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + 400));
+// MoX/MOX_T4.C  */
+// MoX/MOX_T4.C  // WZD dseg:9992
+// MoX/MOX_T4.C  int16_t GrowOutFrames;
+// MoX/MOX_T4.C  // WZD dseg:9994
+// MoX/MOX_T4.C  int16_t GrowOutTop;
+// MoX/MOX_T4.C  // WZD dseg:9996
+// MoX/MOX_T4.C  int16_t GrowOutLeft;
 
 // MoO2  Module: EVENTS  data (0 bytes) _last_event_year Address: 02:00192CE8
 
@@ -2579,10 +2583,6 @@ int16_t _num_players;                       // MoO2 _NUM_PLAYERS    New Game: ma
 struct s_GAME_DATA game_data;
 // WZD dseg:BD9E
 // magic_set s_MAGIC_SET
-
-// ovr150 MainScr_Maps  // WZD dseg:CB5C
-// ovr150 MainScr_Maps  // AKA OVL_NewMapDrawing
-// ovr150 MainScr_Maps  int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
 
 
 
@@ -3233,6 +3233,21 @@ SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
 
 
 
+// NOTE(JimBalcomb,20250224): just messed this up differently, should actually just/only be in MainScr_Maps
+// ovr150 MainScr_Maps  // WZD dseg:CB5C
+// ovr150 MainScr_Maps  // AKA OVL_NewMapDrawing
+// ovr150 MainScr_Maps  int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
+//                                          ovr150
+// WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
+// WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...
+// WZD dseg:CB5A 00 00                                           OVL_NewMapSust_Save dw 0; DATA XREF : OVL_MapStateSave + 12w ...
+// WZD dseg:CB5C
+int16_t map_draw_full;
+
+
+
+
+
 // WZD dseg:D490 00 00                                           UU_AI_TargetingVar dw 0                 ; DATA XREF: AI_ProcessRoamers:loc_ED7F2w
 // WZD dseg:D492 00 00                                           dw 0
 // WZD dseg:D494 00 00                                           GUI_Help_NearAlloc dw 0                 ; DATA XREF: Draw_Help_Entry_+BBw ...
@@ -3282,7 +3297,7 @@ SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
 */
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
 // AKA  EmmHndlNbr_VGAFILEH
-byte_ptr _VGAFILEH_seg;
+// MoX/EMM.C  byte_ptr _VGAFILEH_seg;
 /* MoO2 */
 
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
@@ -3315,22 +3330,22 @@ dseg02:001A8700                                                 END: Create_IO_B
 
 
 
-// WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
-// WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
-
-// WZD dseg:E872
-// AKA _help_list
-// struct s_HELP_FIELD * help_struct_pointer[50];
-/*
-    ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
-*/
-// struct s_HELP_FIELD ** help_struct_pointer;
-struct s_HELP_FIELD * help_struct_pointer;
-
-
-// WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
-// ...
-// ...
-// ...
-// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// MoX/Input.C  // WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
+// MoX/Input.C  // WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:E872
+// MoX/Input.C  // AKA _help_list
+// MoX/Input.C  // struct s_HELP_FIELD * help_struct_pointer[50];
+// MoX/Input.C  /*
+// MoX/Input.C      ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
+// MoX/Input.C  */
+// MoX/Input.C  // struct s_HELP_FIELD ** help_struct_pointer;
+// MoX/Input.C  struct s_HELP_FIELD * help_struct_pointer;
+// MoX/Input.C  
+// MoX/Input.C  
+// MoX/Input.C  // WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
+// MoX/Input.C  // ...
+// MoX/Input.C  // ...
+// MoX/Input.C  // ...
+// MoX/Input.C  // WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
 

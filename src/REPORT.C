@@ -7,7 +7,13 @@
 
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "REPORT.H"
+#include "SBookScr.H"
+#include "UNITTYPE.H"
 
 
 
@@ -101,26 +107,26 @@ SAMB_ptr _scroll_dn_arrow_seg = 0;
 SAMB_ptr _scroll_up_arrow_seg = 0;
 
 // WZD dseg:C9D0
-SAMB_ptr _scroll_paper_seg = 0;
+// MoM_Data  SAMB_ptr _scroll_paper_seg = 0;
 
 // WZD dseg:C9D2
 int16_t IDK_chancellor_screen_incr_mod_7 = 0;
 
 // WZD dseg:C9D4
-int16_t CMB_Scroll_MinHeight = 0;
+// MoM_Data  int16_t CMB_Scroll_MinHeight = 0;
 
 // WZD dseg:C9D6
-int16_t _scroll_text_height = 0;
+// MoM_Data  int16_t _scroll_text_height = 0;
 
 // WZD dseg:C9D8
 // drake178: G_CMB_NextScrollLineTop
-int16_t _scroll_start_x = 0;
+// MoM_Data  int16_t _scroll_start_x = 0;
 
 // WZD dseg:C9DA
 int16_t m_report_scroll_text_height = 0;
 
 // WZD dseg:C9DC
-int16_t _scroll_text_top = 0;
+// MoM_Data  int16_t _scroll_text_top = 0;
 
 // WZD dseg:C9DC                                                 END:  ovr126 - Uninitialized Data  (EoT Summary / Scroll Chancellor / Combat Results)
 

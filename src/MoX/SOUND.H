@@ -6,17 +6,36 @@ MoO2
     Module: sound
 
 */
-
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "MoM.H"
+
+
+#include "MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
+
+/*
+FFFFFFFF ; enum e_Sound_Hardware
+FFFFFFFF No_Sound_HW  = 0
+FFFFFFFF PC_Speaker  = 1
+FFFFFFFF AdLib  = 16
+FFFFFFFF SB_Orig  = 18
+FFFFFFFF SB_Pro  = 24
+FFFFFFFF Pro_Audio_S  = 25
+FFFFFFFF SB_Pro_OPL3  = 32
+FFFFFFFF Pro_Audio_S_16  = 33
+FFFFFFFF AdLib_Gold  = 34
+FFFFFFFF Roland_MT32  = 48
+FFFFFFFF Roland_LAPC  = 49
+FFFFFFFF General_MIDI  = 56
+*/
 
 enum e_SND_DRV
 {

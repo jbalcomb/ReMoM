@@ -22,12 +22,17 @@ Elsewhere, ...
 
 */
 
-#include "MoM.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
-
 #include "UnitMove.H"
-#include "MainScr.H"
-#include "MovePath.H"
+
+#include "MoX/MoX_TYPE.H"
+#include "MoX/MoX_DEF.H"
+
+#include "Combat.H"
+#include "MoM_Data.H"
+#include "MoM_DEF.H"
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+
 
 
 /*

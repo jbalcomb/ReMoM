@@ -6,7 +6,20 @@
     
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "ArmyList.H"
+#include "City_ovr55.H"
+#include "Help.H"
+#include "ItemScrn.H"
+#include "ItemView.H"
+#include "MagicScr.H"
+#include "MainScr.H"
+#include "MOM_SCR.H"
+#include "Terrain.H"
+#include "UnitMove.H"   // WTFMATE
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
 
 
 

@@ -6,6 +6,9 @@
         ovr162
 */
 
+#include "MoX/MoX_DEF.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 
 
@@ -1619,7 +1622,7 @@ void G_AI_ProcessTransports__WIP(int16_t player_idx, int16_t wp)
 
                                     }
 
-                                    for(itr_list_units + 0; itr_list_units < list_unit_count; itr_list_units++)
+                                    for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
                                     {
 
                                         itr_units = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
@@ -4833,9 +4836,10 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
 
                             Best_Tile_Value = ST_UNDEFINED;
 
-                            CONTX_FirstTiles[unit_wp][landmass_idx];
+                            Next_Tile_ChainIndex = CONTX_FirstTiles[unit_wp][landmass_idx];
 
-                            while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                            // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                            while(Next_Tile_ChainIndex != ST_UNDEFINED)
                             {
 
                                 wx = CONTX_TileXs[unit_wp][Next_Tile_ChainIndex];
@@ -4904,6 +4908,7 @@ void AI_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                                     
                                 }
 
+                                Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
 
                             }
 
@@ -5612,7 +5617,7 @@ int16_t AI_Enemy_Unit_In_Range(int16_t wx, int16_t wy, int16_t wp, int16_t range
 int16_t AI_CanSettleOffPlane__WIP(int16_t player_idx, int16_t unit_idx, int16_t * Tower_X, int16_t * Tower_Y, int16_t unit_wp)
 {
 
-
+    return ST_FALSE;
 
 }
 
@@ -5946,7 +5951,8 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
 
         Next_Tile_ChainIndex = CONTX_FirstTiles[Opposite_Plane][Opposite_Landmass];
 
-        while(Next_Tile_ChainIndex = CONTX_TileChain[Opposite_Plane][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_TileChain[Opposite_Plane][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             if(Have_City_Target != ST_FALSE)
@@ -5965,9 +5971,13 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
 
             }
 
+            Next_Tile_ChainIndex = CONTX_TileChain[Opposite_Plane][Next_Tile_ChainIndex];
+
         }
 
     }
+
+    return Have_City_Target;
 
 }
 
@@ -6564,6 +6574,8 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
                     *RetX = some_wx;
                     
                     *RetY = some_wy;
+
+                    return ST_TRUE;
                     
                 }
 
@@ -6572,6 +6584,8 @@ int16_t TILE_AI_FindEmptyLnd__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * 
         }
 
     }
+
+    return ST_FALSE;
 
 }
 
@@ -6889,7 +6903,7 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
         for(landmass_idx = 0; ((landmass_idx < NUM_PLANES) && (found_target == ST_FALSE)); landmass_idx++)
         {
 
-            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] == CONT_Invalid;  // actually just 0, cause its about to just be a city count
+            _ai_continents.plane[wp].player[player_idx].Cont_Types[landmass_idx] = CONT_Invalid;  // actually just 0, cause its about to just be a city count
 
             // ; own unit strength (value total)
             Sum_City_X_Own_UnitCost[wp][landmass_idx] = 0;
@@ -7734,13 +7748,26 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
                     if(First_Hostile_Player > ST_UNDEFINED)
                     {
 
+                        if(Continent_Values[First_Hostile_Player] == 0)
+                        {
+
+                            Reevaluate = ST_TRUE;
+
+                        }
+                        else
+                        {
+
+                            Reevaluate = ST_FALSE;
+
+                        }
+
                     }
                     else
                     {
                         
                         Reevaluate = ST_TRUE;
 
-                        if(Continent_Values[5] > 0)
+                        if(Continent_Values[NEUTRAL_PLAYER_IDX] > 0)
                         {
 
                             Reevaluate = ST_FALSE;
@@ -7755,7 +7782,17 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
                                 if(Reevaluate == ST_TRUE)
                                 {
 
-                                    _players[player_idx].Hostility[itr_players] >= 2;
+                                    if(_players[player_idx].Hostility[itr_players] >= 2)
+                                    {
+
+                                        if(Continent_Values[itr_players] > 0)
+                                        {
+
+                                            Reevaluate = ST_FALSE;
+
+                                        }
+
+                                    }
 
                                 }
 

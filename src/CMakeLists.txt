@@ -33,6 +33,7 @@ add_library(gamelib STATIC
     MainScr.C
     MainScr_Maps.C
     MoM.C
+    MOM_SCR.C
     MoM_Data.C
     MoM_DBG.C
     MoM_PFL.C
@@ -52,7 +53,6 @@ add_library(gamelib STATIC
     SETTLE.C
     special.C
     Spellbook.C
-    SOUND.C
     SPLMASTR.C
     Surveyor.C
     Terrain.C
@@ -68,6 +68,11 @@ add_library(gamelib STATIC
     WZD_o129.C
     WZD_o143.C
 
+)
+
+add_executable(game
+    win_MoM.cpp
+
     win_CLK.C
     win_DIR.C
     win_EMS.C
@@ -78,10 +83,7 @@ add_library(gamelib STATIC
     win_PFL.cpp
     win_Video.C
 )
-
-add_executable(game
-    win_MoM.cpp
-)
+set_target_properties(game PROPERTIES WIN32_EXECUTABLE TRUE)
 
 add_subdirectory(MOX)
 
@@ -89,7 +91,7 @@ add_subdirectory(STU)
 
 target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR})
 
-target_link_libraries(game PUBLIC MOX STU)
+target_link_libraries(game PUBLIC gamelib MOX STU winmm)
 
 # target_compile_features(ReMoM PUBLIC cxx_std_23)
 # target_compile_definitions(ReMoM PUBLIC -DNOMINMAX)

@@ -14,7 +14,13 @@ MoO2
     Module: DIPLOMAC
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/SOUND.H"
+
+#include "DIPLOMAC.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MOM_SCR.H"
 
 
 

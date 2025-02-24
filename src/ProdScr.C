@@ -6,9 +6,11 @@
 
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "ProdScr.H"
 #include "MainScr.H"
+#include "MOM_SCR.H"
 #include "UnitStat.H"
 #include "UnitView.H"
 #include "WZD_o059.H"

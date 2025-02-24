@@ -5,7 +5,24 @@
         ovr127
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "CITYCALC.H"
+#include "Combat.H"
+#include "HIRE.H"
+#include "Items.H"
+#include "ItemScrn.H"
+#include "ItemView.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MOM_SCR.H"
+#include "NEXTTURN.H"
+#include "SBookScr.H"
+#include "Spellbook.H"
+#include "UnitStat.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "UnitView.H"
 
 
 

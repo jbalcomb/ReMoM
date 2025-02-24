@@ -8,6 +8,10 @@
     ovr070
 */
 
+#include "MoX/MoX_TYPE.H"
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

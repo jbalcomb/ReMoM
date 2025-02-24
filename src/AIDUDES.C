@@ -5,6 +5,8 @@
         ¿ ovr145 ?
 */
 
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 
 
@@ -1107,7 +1109,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                 }
 
-                AI_Enemy_City_Values[itr_cities] + _CITIES[itr_cities].bldg_cnt;
+                AI_Enemy_City_Values[itr_cities] += _CITIES[itr_cities].bldg_cnt;
 
                 if(
                     (_FORTRESSES[city_owner_idx].wx == _CITIES[itr_cities].wx)
@@ -1156,7 +1158,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
             }
 
-            AI_Enemy_City_Values[itr_cities] + _CITIES[itr_cities].bldg_cnt;
+            AI_Enemy_City_Values[itr_cities] += _CITIES[itr_cities].bldg_cnt;
 
             if(
                 (_FORTRESSES[player_idx].wx == _CITIES[itr_cities].wx)
@@ -1698,7 +1700,7 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                             
                         }
 
-                        for(City_Loop_Var = 0; ((City_Loop_Var) && (Processed_Unit == ST_FALSE)) < _cities; City_Loop_Var++)
+                        for(City_Loop_Var = 0; ((City_Loop_Var < _cities) && (Processed_Unit == ST_FALSE)); City_Loop_Var++)
                         {
 
                             if(

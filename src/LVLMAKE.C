@@ -5,6 +5,10 @@
         ovr102
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
 #include "MoM.H"
 
 
@@ -110,7 +114,7 @@ char str_SPACE_mp__ovr102[] = " mp";
 // WZD dseg:C79E                                                 BEGIN:  ovr102 - Uninitialized Data
 
 // WZD dseg:C79E
-SAMB_ptr m_hero_portrait_seg;
+// MoM_Data  SAMB_ptr m_hero_portrait_seg;
 
 // WZD dseg:C7A0
 SAMB_ptr LVLMAKE_pc_level_bottom;

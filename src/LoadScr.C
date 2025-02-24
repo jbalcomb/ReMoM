@@ -18,7 +18,27 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "MoM.H"
+#include "LoadScr.H"
+
+#include "MoX/LOADSAVE.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+
+#include "AIDUDES.H"
+#include "CITYCALC.H"
+#include "Combat.H"
+#include "Explore.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MOM_SCR.H"
+#include "NEXTTURN.H"
+#include "Settings.H"
+#include "Spellbook.H"
+#include "UNITSTK.H"
+#include "WZD_o143.H"
+
+
 
 /*
     Settings.C
@@ -90,7 +110,7 @@ SAMB_ptr save_inactive;
 
 // WZD dseg:C99C
 // AKA IDK_SaveSlots_Array
-int16_t save_game_slots[NUM_SAVE_SLOTS];
+int16_t save_game_slots__ovr160[NUM_SAVE_SLOTS];  // BUGBUG  why is this clashing with the one over in MainMenu?
 
 // WZD dseg:C9AC
 int16_t loadsave_save_button;
@@ -120,7 +140,7 @@ SAMB_ptr load_inactive;
 SAMB_ptr selection_marker;
 
 // WZD dseg:C9BE
-int16_t save_game_count;
+int16_t save_game_count__ovr160;  // BUGBUG  why is this clashing with the one over in MainMenu?
 
 // WZD dseg:C9C0
 SAMB_ptr settings_button;
@@ -259,7 +279,7 @@ void Load_Screen(void)
     settings_button         = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
 
 
-    save_game_count = 0;
+    save_game_count__ovr160 = 0;
     
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
@@ -269,12 +289,12 @@ void Load_Screen(void)
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == 0)  /* File Not Found */
         {
-            save_game_slots[save_game_count] = ST_UNDEFINED;
+            save_game_slots__ovr160[save_game_count__ovr160] = ST_UNDEFINED;
         }
         else
         {
-            save_game_slots[save_game_count] = itr;
-            save_game_count++;
+            save_game_slots__ovr160[save_game_count__ovr160] = itr;
+            save_game_count__ovr160++;
         }
     }
 
@@ -334,9 +354,9 @@ void Load_Screen(void)
             {
                 selected_save_game_slot_idx = itr_save_slot_fields;
                 selected_load_game_slot_idx = ST_UNDEFINED;
-                for(itr_save_game_count = 0; itr_save_game_count < save_game_count; itr_save_game_count++)
+                for(itr_save_game_count = 0; itr_save_game_count < save_game_count__ovr160; itr_save_game_count++)
                 {
-                    if(save_game_slots[itr_save_game_count] == itr_save_slot_fields)
+                    if(save_game_slots__ovr160[itr_save_game_count] == itr_save_slot_fields)
                     {
                         selected_load_game_slot_idx = itr_save_slot_fields;
                     }
@@ -517,9 +537,9 @@ void Load_Screen_Draw(void)
     Fill(171, 170, 271, 184, 0);
 
 
-    for(itr_save_gam = 0; itr_save_gam < save_game_count; itr_save_gam++)
+    for(itr_save_gam = 0; itr_save_gam < save_game_count__ovr160; itr_save_gam++)
     {
-        FLIC_Draw(x_start, (47 + (save_game_slots[itr_save_gam] * 15)), loadsave_text_fill_seg);
+        FLIC_Draw(x_start, (47 + (save_game_slots__ovr160[itr_save_gam] * 15)), loadsave_text_fill_seg);
     }
 
 

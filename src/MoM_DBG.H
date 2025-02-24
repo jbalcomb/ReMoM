@@ -1,11 +1,7 @@
 #ifndef MOM_DBG_H
 #define MOM_DBG_H
 
-#include "MoM.H"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "MoX/MoX_TYPE.H"
 
 
 
@@ -23,8 +19,18 @@ extern int16_t DBG_trigger_offer_merc;
 extern int16_t DBG_trigger_offer_hero;
 extern int16_t DBG_trigger_complete_research_spell;
 
+extern uint8_t DBG_debug_flag;
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 // Where did this go?  void TST_Load_SAVE_GAM(void);
+
 
 
 void Test_Run(void);

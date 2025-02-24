@@ -3,7 +3,12 @@
     ovr092
 */
 
-#include "MoM.H"
+#include "Explore.H"
+
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/MoX_DEF.H"
+#include "MoX/MoX_TYPE.H"
+#include "MoX/Util.H"
 
 
 
@@ -200,11 +205,6 @@ void Update_Scouted_And_Contacted__WIP(void)
         curr_world_p = itr_planes;
         Clear_Square_Scouted_Flags(itr_planes);
 
-        // if(_players[_human_player_idx].Globals.Nature_Awareness == ST_FALSE)
-        /*
-            Severity	Code	Description	Project	File	Line	Suppression State
-            Warning	C6385	Reading invalid data from '_players':  the readable size is '7344' bytes, but '_human_player_idx' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Explore.C	215
-        */
         if(_players[_human_player_idx].Globals[NATURES_AWARENESS] == ST_FALSE)
         {
             for(itr_units = 0; itr_units < _units; itr_units++)
@@ -239,7 +239,6 @@ void Update_Scouted_And_Contacted__WIP(void)
                     {
                         scout_level = 3;
                     }
-                    // if(_CITIES[itr_cities].enchantments.Natures_Eye != ST_FALSE)
                     if(_CITIES[itr_cities].enchantments[NATURES_EYE] != ST_FALSE)
                     {
                         scout_level = 5;
@@ -256,14 +255,25 @@ void Update_Scouted_And_Contacted__WIP(void)
 
             for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
+
                 if( (_CITIES[itr_cities].owner_idx != _human_player_idx) && (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX) && ( (_CITIES[itr_cities].wp == curr_world_p) || (_CITIES[itr_cities].wp == 2) ) )
                 {
-                    if( (Check_Square_Scouted(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, curr_world_p)) && (_CITIES[itr_cities].owner_idx < 5) )
+
+                    if(
+                        (Check_Square_Scouted(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, curr_world_p))
+                        &&
+                        (_CITIES[itr_cities].owner_idx < NEUTRAL_PLAYER_IDX)
+                    )
                     {
-                        _players[_human_player_idx].Dipl.Contacted[_CITIES[itr_cities].owner_idx];
-                        _players[_CITIES[itr_cities].owner_idx].Dipl.Contacted[_human_player_idx];
+
+                        _players[_human_player_idx].Dipl.Contacted[_CITIES[itr_cities].owner_idx] = ST_TRUE;
+
+                        _players[_CITIES[itr_cities].owner_idx].Dipl.Contacted[_human_player_idx] = ST_TRUE;
+
                     }
+
                 }
+
             }
 
             for(itr_units = 0; itr_units < _units; itr_units++)

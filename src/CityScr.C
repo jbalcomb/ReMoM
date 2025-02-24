@@ -1,12 +1,23 @@
 
-#include "MoM.H"
-#include "CityScr.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
 #include "City_ovr55.H"
+#include "CITYCALC.H"
 #include "CITYSCAP.H"
+#include "CityScr.H"
+#include "Help.H"
+#include "Lair.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
+#include "MOM_SCR.H"
 #include "ProdScr.H"
-#include "UnitStat.H"
+#include "RACETYPE.H"
+#include "SBookScr.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "UnitView.H"
+#include "WZD_o143.H"
 
 
 
@@ -106,15 +117,6 @@ char cstr_NameStartingCity[] = "Name Starting City";
 // WZD dseg:2C87                                                 END:  ovr054 - Strings  (City Screen)
 
 
-
-
-
-// WZD dseg:92B0
-// drake178: cityscape_bldgs@
-
-
-// WZD dseg:92B4
-int16_t cityscape_bldg_count;
 
 
 

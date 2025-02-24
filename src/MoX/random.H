@@ -10,7 +10,11 @@ MoO2
 #ifndef MOX_RNG_H
 #define MOX_RNG_H
 
-#include "MoX_Lib.H"
+
+
+#include "MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

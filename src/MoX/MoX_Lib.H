@@ -9,8 +9,6 @@
 #include "..\MoM_DEF.H"
 #include "..\MoM_Data.H"
 
-#include "MoX_Temp.H"
-
 #include "MOX_T4.H"  // ~ MOX & MOX2 //MoO2
 
 #include "Allocate.H"

@@ -2038,6 +2038,8 @@ int16_t Map_Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 
     }
 
+    return is_land;
+    
 }
 
 

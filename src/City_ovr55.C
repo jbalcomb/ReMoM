@@ -6,6 +6,8 @@
 
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "MoM.H"
 #include "City_ovr55.H"
 #include "CityScr.H"

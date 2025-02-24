@@ -3,7 +3,22 @@
         ovr143
 */
 
-#include "MoM.H"
+#include "WZD_o143.H"
+
+#include "MoX/MoX_BASE.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/MoX_DEF.H"
+#include "MoX/MoX_TYPE.H"
+#include "MoX/Allocate.H"
+#include "MoX/LBX_Load.H"
+#include "MoX/random.H"
+#include "MoX/Util.H"
+
+#include "MoM_DEF.H"
+#include "MoM_Data.H"
+#include "MovePath.H"
+#include "Terrain.H"
+#include "TerrType.H"
 
 
 
@@ -38,12 +53,8 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 */
 void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
-    uint16_t terrain_type;
-    int16_t terrain_special;
-
-
-    MOX_DBG_BREAK;
-
+    uint16_t terrain_type = 0;
+    int16_t terrain_special = 0;
 
     terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
 

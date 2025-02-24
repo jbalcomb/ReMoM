@@ -2,11 +2,12 @@
     WIZARDS.EXE
         ovr147
 */
-
-#include "MoM.H"
-
 #ifndef MOVEPATH_H
 #define MOVEPATH_H
+
+#include "MoX/MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,8 +55,8 @@ struct s_MOVE_MODE_COST_MAPS
 #pragma pack(2)
 struct s_MOVE_PATH
 {
-/* 0000 */  int8_t  moves2[2400];
-/* 0960 */  uint8_t   Reach_Costs[2400];
+/* 0000 */  int8_t   moves2[2400];
+/* 0960 */  uint8_t  Reach_Costs[2400];
 /* 12C0 */  int16_t  Reach_From[2400];
 /* 2580 */  int16_t  Reverse_Path[256];
 /* 2780 */

@@ -5,14 +5,16 @@
         ovr072
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "UnitStat.H"
-#include "CityScr.H"    /* Draw_Building_Picture_To_Bitmap(); */
-#include "Lair.H"       /* STR_ListSeparator(); */
-#include "MainScr.H"    /* Draw_Unit_Enchantment_Outline(); Cycle_Unit_Enchantment_Animation(); */
+#include "CityScr.H"
+#include "Lair.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
 #include "UnitView.H"
-#include "City_ovr55.H" /* Draw_Resource_Icons(); */
-#include "ItemView.H"  /* Cycle_Item_Enchantment_Animation(); */
+#include "City_ovr55.H"
+#include "ItemView.H"
 
 /*
     Product Screen

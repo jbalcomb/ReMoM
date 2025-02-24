@@ -23,6 +23,15 @@ extern int16_t previous_screen;
 
 
 
+// WZD dseg:9992
+extern int16_t GrowOutFrames;
+// WZD dseg:9994
+extern int16_t GrowOutTop;
+// WZD dseg:9996
+extern int16_t GrowOutLeft;
+
+
+
 extern int16_t PageFlipEffect;
 
 

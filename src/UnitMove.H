@@ -6,7 +6,7 @@
 #ifndef UNITMOVE_H
 #define UNITMOVE_H
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
 
 
 

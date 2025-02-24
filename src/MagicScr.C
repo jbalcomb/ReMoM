@@ -10,7 +10,19 @@
         Module: ¿  ?
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "City_ovr55.H"
+#include "CITYCALC.H"
+#include "DIPLOMAC.H"
+#include "Explore.H"
+#include "Help.H"
+#include "MagicScr.H"
+#include "MOM_SCR.H"
+#include "NEXTTURN.H"
+#include "Spellbook.H"
+#include "WIZVIEW.H"
+#include "WZD_o059.H"
 
 
 

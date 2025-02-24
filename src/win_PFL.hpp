@@ -1,6 +1,7 @@
 #pragma once
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
+
 #include <Windows.h>
 
 void Init_Platform(HINSTANCE hInstance, int nCmdShow);

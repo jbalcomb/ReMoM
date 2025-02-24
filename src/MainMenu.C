@@ -1,7 +1,7 @@
 
-// #include "MoM.hpp"  /* Pump_Events() */
-
-#include "MoM.H"
+#include "MainMenu.H"
+#include "MOM_SCR.H"
+#include "Settings.H"
 
 
 
@@ -88,9 +88,9 @@ int16_t cont_flag;
 // MGC dseg:52FA NEWG_LastRetorts@ dw 0
 // MGC dseg:52FC g_GUI_MainScreenJump dw 0
 // MGC dseg:52FE
-int16_t save_game_count;
+int16_t save_game_count;  // BUGBUG  why is this clashing with the one over in LoadScr?
 // MGC dseg:5300
-int16_t save_game_slots[8];
+int16_t save_game_slots[8];  // BUGBUG  why is this clashing with the one over in LoadScr?
 
 /*
     END: Main Menu Screen - Uninitialized Data

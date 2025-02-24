@@ -10,11 +10,8 @@
 #ifndef EMM_H
 #define EMM_H
 
-#include "MoX_Lib.H"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+// #include "MoX_Lib.H"
+#include "MoX_TYPE.H"
 
 
 
@@ -90,6 +87,12 @@ extern byte_ptr _VGAFILEH_seg;
 // WZD dseg:E7DC                                                 END:  seg013 - Unitialized Data
 
 
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 

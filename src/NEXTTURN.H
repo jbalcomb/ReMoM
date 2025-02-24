@@ -8,9 +8,12 @@
         ovr140
         ovr141
 */
-
 #ifndef NEXTTURN_H
 #define NEXTTURN_H
+
+#include "MoX/MOX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

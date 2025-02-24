@@ -21,7 +21,20 @@ Notify
         any/all in order    
 */
 
-#include "MoX_Lib.H"
+#include "MOX_DAT.H"  /* _screen_seg */
+#include "MOX_SET.H"  /* magic_set */
+#include "EMM.H"
+#include "Fields.H"
+#include "FLIC_Draw.H"
+#include "Fonts.H"
+#include "GENDRAW.H"
+#include "Graphics.H"
+#include "Input.H"
+#include "LBX_Load.H"
+#include "paragrph.H"
+#include "Util.H"
+#include "Video.H"
+
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 

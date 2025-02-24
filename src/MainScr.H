@@ -14,6 +14,10 @@
     ovr097
 */
 
+#include "MoX/MoX_TYPE.H"
+
+#include "MoM_DEF.H"
+
 
 
 // WZD dseg:2E12
@@ -136,7 +140,7 @@ extern SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM hea
     MAPBACK.LBX  78-86
     SITES - coal, iron, silver, gold, gems, mithril, adamantium, quork, crysx
 */
-extern SAMB_ptr mineral_site_segs[];
+extern SAMB_ptr mineral_site_segs[10];
 
 // WZD dseg:CB80 00                                              db    0
 // WZD dseg:CB81 00                                              db    0
@@ -153,7 +157,7 @@ extern SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM he
 extern SAMB_ptr Warp_Node_WorkArea;                // ; used to save and manipulate the tile graphics to ; display the warp node effect
 
 // WZD dseg:CB92
-extern SAMB_ptr _unit_colored_backgrounds_seg[];    // load in Terrain_Init() ovr052
+extern SAMB_ptr _unit_colored_backgrounds_seg[6];    // load in Terrain_Init() ovr052
 
 // WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init+F3w ...
 // WZD dseg:CB92                                                                                         ; array of 6 reserved EMM header pointers
@@ -162,11 +166,11 @@ extern SAMB_ptr _unit_colored_backgrounds_seg[];    // load in Terrain_Init() ov
 // WZD dseg:CB9F 00                                              db    0
 
 // WZD dseg:CBA0
-extern SAMB_ptr eroads_seg[];               // ; array of 8 reserved EMM header pointers  ; for 6 frame animations  ; clockwise 1-connection e.roads starting up
+extern SAMB_ptr eroads_seg[8];               // ; array of 8 reserved EMM header pointers  ; for 6 frame animations  ; clockwise 1-connection e.roads starting up
 // WZD dseg:CBB0
 extern SAMB_ptr eroad_lone_seg;             // ; reserved EMM header pointer for a 6 frame animation  ; no connection enchanted road
 // WZD dseg:CBB0
-extern SAMB_ptr roads_seg[];                // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
+extern SAMB_ptr roads_seg[8];                // ; array of 8 reserved EMM header pointers  ; clockwise 1-connection roads starting up
 // WZD dseg:CBB2
 extern SAMB_ptr road_lone_seg;              // ; reserved EMM header pointer for a single image  ; no connection normal road
 
@@ -239,7 +243,7 @@ extern SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header poin
 // WZD dseg:CC01 00                                              db    0
 
 // WZD dseg:CC02
-extern SAMB_ptr unexplored_mask_seg[];       // ; array of 14 reserved EMM header pointers
+extern SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
 
 // WZD dseg:CC1E 00                                              db    0
 // WZD dseg:CC1F 00                                              db    0
@@ -264,6 +268,37 @@ extern SAMB_ptr unexplored_mask_seg[];       // ; array of 14 reserved EMM heade
 extern "C" {
 #endif
     /* C and Asm Function Prototypes */
+
+
+
+/*
+    WIZARDS.EXE  ovr067
+*/
+// WZD o67p01
+void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
+// WZD o67p02
+void IDK_CheckSet_MapDisplay_XY(void);
+// WZD o67p05
+void Set_Draw_Active_Stack_Never(void);
+// WZD o67p08
+void Reduced_Map_Set_Dims(int16_t width, int16_t height);
+// WZD o67p09
+void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
+// WZD o67p15
+int16_t IsPassableTower(int16_t wx, int16_t wy);
+/*
+    WIZARDS.EXE  ovr068
+*/
+// WZD o68p03
+void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x, int16_t mid_y, int16_t minimap_width, int16_t minimap_height);
+// WZD o68p09
+void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, int16_t wp, int16_t wx, int16_t wy);
+/*
+    WIZARDS.EXE  ovr150
+*/
+// WZD o150p16
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag);
+
 
 
 /*
@@ -307,36 +342,43 @@ o57p10  ? Move_Stack_DirKey() ?
     WIZARDS.EXE  ovr057
 */
 // WZD o57p01
-/* PUBLIC */  void Main_Screen(void);
+void Main_Screen(void);
+
 // WZD o57p02
-// PRIVATE  void Main_Screen_Add_Fields(void);
+void Main_Screen_Add_Fields(void);
+
 // WZD o57p03
-// PRIVATE  void Add_Unit_Action_Fields(void);
+void Add_Unit_Action_Fields(void);
+
 // WZD o57p04
-// AKA j_OVL_DrawUnitActnBtns()
-// PRIVATE  void Main_Screen_Draw_Unit_Action_Buttons(void);
+void Main_Screen_Draw_Unit_Action_Buttons(void);
+
 // WZD o57p05
-// PRIVATE  void Add_Game_Button_Fields(void);
+void Add_Game_Button_Fields(void);
+
 // WZD o57p06
 void Main_Screen_Draw_Game_Buttons(void);
+
 // WZD o57p07
-// PRIVATE  void Add_Unit_Window_Fields(void);
+void Add_Unit_Window_Fields(void);
+
 // WZD o57p08
-// called by `Spellbook_Screen()`, to create its background
 void Main_Screen_Draw(void);
+
 // WZD o57p09
-// PRIVATE  void Main_Screen_Reset(void);
+void Main_Screen_Reset(void);
+
 // WZD o57p10
-// AKA Do_Move_Stack_DirKey()
-// PRIVATE  void Move_Stack_DirKey(int16_t movement_direction);
+void Move_Stack_DirKey(int16_t movement_direction);
 
 
 
 /*
     WIZARDS.EXE  ovr058
 */
+
 // WZD o58p01
-// PRIVATE  void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
+void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
 
 // WZD o58p02
 void Set_Mouse_List_Default(void);
@@ -371,30 +413,25 @@ void IDK_HumanPlayer_SelectStack_SummonLocation(void);
 int16_t o62p01_empty_function(int16_t player_idx);
 
 // WZD o62p02
-// AKA OVL_StackSelect()
 void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y);
 
-
 // WZD o62p03
-// drake178: STK_DisplaySort
-// OON XREF: Select_Unit_Stack()
-// PRIVATE  void Sort_Unit_Stack(void);
+void Sort_Unit_Stack(void);
 
 // WZD o62p04
-// PRIVATE  void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
+void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
 
 // WZD o62p05
-// PRIVATE void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane)
+void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
 
 // WZD o62p06
-// drake178: OVL_TileOffScrnEdge()
-// PRIVATE int16_t OVL_TileOffScrnEdge(int16_t map_x, int16_t map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height)
+int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
 
 // WZD o62p07
-// DONT  int16_t o62p07_Empty_pFxn(int16_t unit_array_count, int16_t * unit_array);
+// DONT  int16_t o62p07_Empty_pFxn(int16_t troop_count, int16_t * troops);
 
 // WZD o62p08
-// ¿PRIVATE?  void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
+void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
 
 // WZD o62p09
 int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
@@ -411,53 +448,44 @@ void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16
 void Main_Screen_Draw_Status_Window(void);
 
 // WZD o063p02
-// PRIVATE  void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
+void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
 
 // WZD o063p03
 void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
 
 // WZD o63p04
-// drake178: j_GAME_Animate_UEs()
 void Cycle_Unit_Enchantment_Animation(void);
 
 // WZD o63p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 // called from WZD o67p07 Draw_Active_Unit_Stack()
 
-// WZD o63p05
-// AKA OVL_DrawUnitImage()
-// AKA Unit_Window_Draw_Unit_StatFig()
+// WZD o63p06
 void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
 
-// WZD o063p06
-// PRIVATE  void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
+// WZD o063p07
+void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx);
 
-// WZD o63p07
-// drake178: OVL_DrawStackMoves
-void Main_Screen_Draw_Movement_Bar();
+// WZD o63p08
+void Main_Screen_Draw_Movement_Bar(void);
 
 // WZD o63p09
-// drake178: OVL_DrawMoveTypes()
-// void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
+void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
 
 // WZD o63p10
 int16_t Stack_Has_PlanarTravel(void);
 
 // WZD o63p11
-// PRIVATE  int16_t Active_Stack_On_Astral_Gate(void);
+int16_t Active_Stack_On_Astral_Gate(void);
 
 // WZD o63p12
-// AKA OVL_GetStackHMoves()
-// AKA OVL_GetStackHMoves_1()
-// PRIVATE int16_t Stack_Moves_Active(void);
+int16_t Stack_Moves_Active(void);
 
 // WZD o63p13
-// AKA OVL_GetStackHMoves_2()
-// PRIVATE  int16_t Stack_Moves(void);
+int16_t Stack_Moves(void);
 
 // WZD o63p14
-// RP_TILE_HasCity2()
-// PRIVATE  int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
+int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o63p15
 int16_t Check_Planar_Seal(void);
@@ -467,35 +495,34 @@ int16_t Check_Planar_Seal(void);
 /*
     WIZARDS.EXE  ovr064
 */
+
 // WZD o64p01
 // void Allocate_Reduced_Map__1(void);
 // WZD o64p02
 // void Allocate_Reduced_Map__2(void);
-void Allocate_Reduced_Map(void);  // called from GAME_Overland_Init()  <-|  WZD_Startup_MainGame()  <-|  _main()
+void Allocate_Reduced_Map(void);
 
 // WZD o64p03
 // AKA OVL_PrepMinimap()
 void MainScr_Create_Reduced_Map_Picture(void);
 
-// WZD o64p04
-// PRIVATE  void Main_Screen_Draw_Summary_Window(void);
+// WZD o064p04
+void Main_Screen_Draw_Summary_Window(void);
 
-// WZD o64p05
-// PRIVATE  void Main_Screen_Draw_Next_Turn_Button(void);
+// WZD o064p05
+void Main_Screen_Draw_Next_Turn_Button(void);
 
 // WZD o64p06
-// drake178: OVL_DisableIncmBlink()
 void OVL_DisableIncmBlink(void);
 
 // WZD o64p07
-// drake178: OVL_EnableIncmBlink()
 void OVL_EnableIncmBlink(void);
 
 // WZD o64p08
-// PRIVATE  void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
+void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
 
 // WZD o64p09
-// PRIVATE  void Unit_Window_Picture_Coords(int16_t unit_stack_unit_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
+void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 // WZD o64p10
 void Set_Active_Stack_Movement_Path(int16_t unit_idx);
@@ -514,19 +541,16 @@ void Draw_Active_Stack_Movement_Path(int16_t path_length, int8_t movepath_x_arra
 int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t troop_count, int16_t troops[]);
 
 // WZD o95p02
-// AKA OVL_MoveUnitStack()
-// AKA Move_Units()
-// ¿PRIVATE? void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
+void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
 // AI_ContactWizards()
 
 // WZD o95p04
-// drake178: G_STK_OvlObstacles()
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
 
 // WZD o95p05
-// ¿PRIVATE? int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
+int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
 
 // WZD o95p06
 void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[]);
@@ -538,35 +562,28 @@ void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[]);
 */
 
 // WZD o97p01
-// drake178: STK_EvaluatePath()
 void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count);
-
-
 
 // WZD o97p02
 // sub_7E597()
 
 // WZD o97p03
-// drake178: TILE_HasCity()
-// PRIVATE?  int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
+int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o97p04
-// AKA STK_GetMovesLeft()
-// ¿ vs. WZD o63p12  Stack_Moves_Active() ?
-// ¿ vs. WZD o63p13  Stack_Moves() ?
-// ¿PRIVATE? int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count);
+int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o97p05
-// RP_CTY_CheckSpellWard()
+int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
 
 // WZD o97p06
-// CTY_CheckSpellWard()
+int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
 
 // WZD o97p07
 // OVL_SpellWardError()
 
 // WZD o97p08
-// PRIVATE?  void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t half_value, int16_t right_align_flag);
+void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_t right_align_flag);
 
 
 

@@ -1,7 +1,12 @@
 #ifndef MOM_DATA_H
 #define MOM_DATA_H
 
-#include "MoM.H"
+#include "MoX/MoX_BASE.H"
+#include "MoX/MoX_TYPE.H"
+#include "MoX/Mouse.H"
+
+#include "MoM_DEF.H"
+
 
 
 
@@ -2598,17 +2603,19 @@ extern int16_t map_sustain;
 
 
 
-// WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
-
-// WZD dseg:8296
-// AKA have_help
-extern int16_t help_list_active;
-
-// WZD dseg:8298
-// AKA _help_count
-extern int16_t help_list_count;
-
-// WZD dseg:8298                                                 ¿ END: Help - Initialized Data ?
+// MoX/Input.H // WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
+// MoX/Input.H // WZD dseg:8296                                                 BEGIN: seg036 (fields) - Initialized Data
+// MoX/Input.H  
+// MoX/Input.H  // WZD dseg:8296
+// MoX/Input.H  // AKA have_help
+// MoX/Input.H  extern int16_t help_list_active;
+// MoX/Input.H  
+// MoX/Input.H  // WZD dseg:8298
+// MoX/Input.H  // AKA _help_count
+// MoX/Input.H  extern int16_t help_list_count;
+// MoX/Input.H  
+// MoX/Input.H  // WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// MoX/Input.H  // WZD dseg:82A6
 
 
 
@@ -2874,6 +2881,7 @@ extern int16_t OVL_Action_Structure;
 
 
 
+
 // WZD dseg:92B0
 // drake178: cityscape_bldgs
 extern struct s_BLDG * cityscape_bldgs;
@@ -3063,16 +3071,16 @@ extern SAMB_ptr _combat_terrain_pict_segs[48];
 // WZD  dseg:9408                                                                                         ; 5 appended single images in the LBX_Sandbox_Segment,
 // WZD  dseg:9408                                                                                         ; with the sixth (Arcane) left as zero
 
-// WZD  dseg:9414
-extern SAMB_ptr snd_left_button_click;
-
-// WZD  dseg:9416 00                                              db    0
-// WZD  dseg:9417 00                                              db    0
-// WZD  dseg:9418 00                                              db    0
-// WZD  dseg:9419 00                                              db    0
-
-// WZD  dseg:941A
-extern SAMB_ptr snd_standard_button_click;
+// MOX_SND  // WZD  dseg:9414
+// MOX_SND  extern SAMB_ptr snd_left_button_click;
+// MOX_SND  
+// MOX_SND  // WZD  dseg:9416 00                                              db    0
+// MOX_SND  // WZD  dseg:9417 00                                              db    0
+// MOX_SND  // WZD  dseg:9418 00                                              db    0
+// MOX_SND  // WZD  dseg:9419 00                                              db    0
+// MOX_SND  
+// MOX_SND  // WZD  dseg:941A
+// MOX_SND  extern SAMB_ptr snd_standard_button_click;
 
 // WZD  dseg:941C 00 00 00 00 00                                  TF_Unk_40_Planes db 5 dup(0)                             ; 0
 // WZD  dseg:941C                                                                                         ; DATA XREF: LD_MAP_TFUnk40_Eval+5Fw
@@ -3683,19 +3691,19 @@ extern SAMB_ptr movement_mode_icons[10];  // {0,...,9} 10 icons
 // GUI_SmallWork_IMG@ dw 0
 extern SAMB_ptr GfxBuf_2400B;
 
-// WZD dseg:998E
-extern SAMB_ptr _screen_seg;
-// allocated in MoM_Init_Tables()
+// MOX_DAT  // WZD dseg:998E
+// MOX_DAT  extern SAMB_ptr _screen_seg;
+// MOX_DAT  // allocated in MoM_Init_Tables()
 
-// WZD dseg:9990
-// _current_screen
+// MoX/MOX_T4.H  // WZD dseg:9990
+// MoX/MOX_T4.H  // _current_screen
 
-// WZD dseg:9992
-extern int16_t GrowOutFrames;
-// WZD dseg:9994
-extern int16_t GrowOutTop;
-// WZD dseg:9996
-extern int16_t GrowOutLeft;
+// MoX/MOX_T4.H  // WZD dseg:9992
+// MoX/MOX_T4.H  extern int16_t GrowOutFrames;
+// MoX/MOX_T4.H  // WZD dseg:9994
+// MoX/MOX_T4.H  extern int16_t GrowOutTop;
+// MoX/MOX_T4.H  // WZD dseg:9996
+// MoX/MOX_T4.H  extern int16_t GrowOutLeft;
 
 // WZD dseg:9998
 // AKA TBL_Events
@@ -4536,9 +4544,15 @@ extern SAMB_ptr IDK_BUILDS1_horizontal_mask_seg;
 
 
 
+//                                          ovr150
+// WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
+// WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...
+// WZD dseg:CB5A 00 00                                           OVL_NewMapSust_Save dw 0; DATA XREF : OVL_MapStateSave + 12w ...
+// WZD dseg:CB5C
+extern int16_t map_draw_full;
 // WZD dseg:CB5C
 // AKA OVL_NewMapDrawing
-extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
+// BROKEN extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles will be redrawn or not
 
 
 
@@ -4576,7 +4590,7 @@ extern int16_t draw_map_full;  //; determines whether non-animated terrain tiles
 // WZD dseg:E5F2 00 00                                           dw 0
 
 // WZD dseg:E5F4 00 00                                           g_EmmHndl_VGAFILEH dw 0                 ; DATA XREF: EMM_Startup+174w ...
-extern byte_ptr _VGAFILEH_seg;
+// MoX/EMM.H  extern byte_ptr _VGAFILEH_seg;
 
 // WZD dseg:E5F4                                                                                         ; 5 reserved pages
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
@@ -4598,24 +4612,24 @@ extern byte_ptr _VGAFILEH_seg;
 
 
 
-// WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
-// WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
-
-// WZD dseg:E872
-// AKA _help_list
-// extern struct s_HELP_FIELD * help_struct_pointer;
-/*
-    ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
-*/
-// extern struct s_HELP_FIELD ** help_struct_pointer;
-extern struct s_HELP_FIELD * help_struct_pointer;
-
-
-// WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
-// ...
-// ...
-// ...
-// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// MoX/Input.H  // WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
+// MoX/Input.H  // WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
+// MoX/Input.H  
+// MoX/Input.H  // WZD dseg:E872
+// MoX/Input.H  // AKA _help_list
+// MoX/Input.H  // extern struct s_HELP_FIELD * help_struct_pointer;
+// MoX/Input.H  /*
+// MoX/Input.H      ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
+// MoX/Input.H  */
+// MoX/Input.H  // extern struct s_HELP_FIELD ** help_struct_pointer;
+// MoX/Input.H  extern struct s_HELP_FIELD * help_struct_pointer;
+// MoX/Input.H  
+// MoX/Input.H  
+// MoX/Input.H  // WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
+// MoX/Input.H  // ...
+// MoX/Input.H  // ...
+// MoX/Input.H  // ...
+// MoX/Input.H  // WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
 
 
 

@@ -9,10 +9,18 @@
         ovr141
 */
 
-#include "MoM.H"
+#include "NEXTTURN.H"
+
+#include "MoX/LOADSAVE.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/MOX_TYPE.H"
+#include "MoX/SOUND.H"
+
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "NEXTTURN.H"
+#include "MoM_DBG.H"
+#include "MOM_SCR.H"
 #include "WZD_o059.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
 

@@ -13,221 +13,18 @@
 
 */
 
-#include "MoM.H"
+#include "MainScr.H"
 
+#include "MoX/LOADSAVE.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+#include "MoX/MOX_T4.H"
 
-
-// extern uint8_t DBG_debug_flag;
-uint8_t DBG_debug_flag = ST_FALSE;
-void Main_Screen_Draw_Debug_Information(void);
-
-
-
-/*
-    Forward Declare Private Functions
-*/
-
-void Main_Screen_Load_Pictures(void);
-
-/*
-    WIZARDS.EXE  ovr057
-*/
-// WZD o57p01
-// PUBLIC void Main_Screen(void);
-// WZD o57p02
-void Main_Screen_Add_Fields(void);
-// WZD o57p03
-void Add_Unit_Action_Fields(void);
-// WZD o57p04
-void Main_Screen_Draw_Unit_Action_Buttons(void);
-// WZD o57p05
-void Add_Game_Button_Fields(void);
-// WZD o57p06
-void Main_Screen_Draw_Game_Buttons(void);
-// WZD o57p07
-void Add_Unit_Window_Fields(void);
-// WZD o57p08
-void Main_Screen_Draw(void);
-// WZD o57p09
-void Main_Screen_Reset(void);
-// WZD o57p10
-// AKA Do_Move_Stack_DirKey()
-void Move_Stack_DirKey(int16_t movement_direction);
-
-/*
-    WIZARDS.EXE  ovr058
-*/
-// WZD o58p01
-void Main_Screen_Draw_Unit_Window(int16_t start_x, int16_t start_y);
-// WZD o58p02
-void Set_Mouse_List_Default(void);
-
-
-
-/*
-    WIZARDS.EXE  ovr062
-*/
-// WZD o62p01
-int16_t o62p01_empty_function(int16_t player_idx);
-// WZD o62p02
-// AKA OVL_StackSelect()
-void Select_Unit_Stack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t unit_x, int16_t unit_y);
-// WZD o62p03
-void Sort_Unit_Stack(void);
-// WZD o62p04
-void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
-// WZD o62p05
-void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
-// WZD o62p06
-int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
-// WZD o62p07
-// DONT  int16_t o62p07_Empty_pFxn(int16_t troop_count, int16_t * troops);
-// WZD o62p08
-void Stack_Action(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_p, int16_t action, int16_t destination_x, int16_t destination_y);
-// WZD o62p09
-int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp);
-// WZD o62p10
-void USW_FullDisplay(int16_t unit_idx, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-
-/*
-    WIZARDS.EXE  ovr063
-*/
-// WZD o063p01
-void Main_Screen_Draw_Status_Window(void);
-// WZD o063p02
-void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx);
-// WZD o063p03
-// PUBLIC  void Draw_Unit_Enchantment_Outline(int16_t unit_idx);
-// WZD o063p04
-// PUBLIC  void Cycle_Unit_Enchantment_Animation(void);
-// WZD o063p05
-void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_stack_unit_idx, int16_t flag);
-// WZD o063p05
-// AKA OVL_DrawUnitImage()
-void Draw_Unit_StatFig(int16_t x, int16_t y, int16_t unit_idx, int16_t flag);
-// WZD o063p06
-void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx);
-
-// WZD o63p07
-void Main_Screen_Draw_Movement_Bar();
-
-// WZD o63p08
-void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx);
-
-// WZD o63p10
-int16_t Stack_Has_PlanarTravel(void);
-
-// WZD o63p11
-int16_t Active_Stack_On_Astral_Gate();
-
-// WZD o63p12
-// AKA OVL_GetStackHMoves()
-// AKA OVL_GetStackHMoves_1()
-int16_t Stack_Moves_Active(void);
-
-// WZD o63p13
-// AKA OVL_GetStackHMoves_2()
-int16_t Stack_Moves(void);
-
-// WZD o63p14
-// AKA RP_TILE_HasCity2()
-// functionally identical to TILE_HasCity, would be byte identical if it wasn't for the reversed order of checking the three parameters
-int16_t City_At_Square__2(int16_t wx, int16_t wy, int16_t wp);
-
-// WZD o63p15
-int16_t Check_Planar_Seal(void);
-
-
-
-/*
-    WIZARDS.EXE  ovr064
-*/
-// WZD o64p01
-// void Allocate_Reduced_Map__1(void);
-// WZD o64p02
-// void Allocate_Reduced_Map__2(void);
-void Allocate_Reduced_Map(void);
-// WZD o064p04
-void Main_Screen_Draw_Summary_Window(void);
-// WZD o064p05
-void Main_Screen_Draw_Next_Turn_Button(void);
-// WZD o64p06
-// drake178: OVL_DisableIncmBlink()
-void OVL_DisableIncmBlink(void);
-// WZD o64p07
-// drake178: OVL_EnableIncmBlink()
-void OVL_EnableIncmBlink(void);
-// WZD o64p08
-void Main_Screen_Draw_Unit_Action_Locked_Buttons(void);
-// WZD o64p09
-void Unit_Window_Picture_Coords(int16_t stack_idx, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
-// WZD o64p10
-void Set_Active_Stack_Movement_Path(int16_t unit_idx);
-// WZD o64p11
-void Draw_Active_Stack_Movement_Path(int16_t path_length, int8_t movepath_x_array[], int8_t movepath_y_array[]);
-
-/*
-    WIZARDS.EXE  ovr095
-*/
-
-// WZD o95p01
-// drake178: STK_Move()
-// AKA Move_Stack()
-int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destination_y, int16_t path_type, int16_t * map_x, int16_t * map_y, int16_t map_p, int16_t unit_array_count, int16_t unit_array[]);
-
-// WZD o95p02
-// AKA OVL_MoveUnitStack()
-// AKA Move_Units()
-void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
-
-// WZD o95p03
-// AI_ContactWizards()
-
-// WZD o95p04
-// drake178: G_STK_OvlObstacles()
-void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
-
-// WZD o95p05
-int16_t Army_Boatriders(int16_t troop_count, int16_t troops[], int16_t boatriders[]);
-
-// WZD o95p06
-// Fix_Patrol_On_Boats()
-
-
-/*
-    WIZARDS.EXE  ovr097
-*/
-
-// WZD o97p01
-// STK_EvaluatePath()
-
-// WZD o97p02
-// sub_7E597()
-
-// WZD o97p03
-// drake178: TILE_HasCity()
-int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
-// PRIVATE?  int16_t Square_Has_City(int16_t world_x, int16_t world_y, int16_t map_plane);
-
-// WZD o97p04
-// AKA STK_GetMovesLeft()
-// ¿ vs. WZD o63p12  Stack_Moves_Active(void) ?
-// ¿ vs. WZD o63p13  Stack_Moves(void) ?
-int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count);
-
-// WZD o97p05
-// drake178: RP_CTY_CheckSpellWard()
-int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
-
-// WZD o97p06
-// drake178: CTY_CheckSpellWard()
-int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
-
-// WZD o97p07
-// OVL_SpellWardError()
-
-// WZD o97p08
-void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_t right_align_flag);
+#include "LOADER.H"
+#include "MoM_DBG.H"
+#include "MOM_SCR.H"
+#include "SCastScr.H"  /* World_To_Screen() */
 
 
 
@@ -431,14 +228,14 @@ int16_t g_unit_window_fields[MAX_STACK];
 
 // WZD dseg:C066
 int16_t _active_stack_path_length;
-// WZD dseg:C068 
-/*
-; set to 0 after display-sorting the active stack
-; set to 1 if road-building, but the unit is not on any of the plotted line tiles (before returning)
-; set to 1 if road-building, and tiles left to do
-; set to 1 if moving with path left to go
-*/
-int16_t _active_stack_has_path;
+// MoM_Data  // WZD dseg:C068 
+// MoM_Data  /*
+// MoM_Data  ; set to 0 after display-sorting the active stack
+// MoM_Data  ; set to 1 if road-building, but the unit is not on any of the plotted line tiles (before returning)
+// MoM_Data  ; set to 1 if road-building, and tiles left to do
+// MoM_Data  ; set to 1 if moving with path left to go
+// MoM_Data  */
+// MoM_Data  int16_t _active_stack_has_path;
 
 
 
@@ -638,7 +435,7 @@ int16_t player_idx;
 
 
 // WZD dseg:942E
-SAMB_ptr main_lilevent_icons[6];
+// MoM_Data  SAMB_ptr main_lilevent_icons[6];
 // XREF: Main_Screen_Load_Pictures()
 // MAIN.LBX,{59,60,61,62,63,64}  LILEVENT  {blue, red, grn, bad, good, short}
 // NOTE(drake178): array of 6 single-loaded images
@@ -658,14 +455,14 @@ int16_t skill_staff_lock_flag;
 // WZD dseg:9548  IMG_OVL_BuildBtn_BG  ; DATA XREF: GFX_Swap_AppendUView() ; appended reserved EMM header in GFX_Swap_Seg
 // WZD dseg:954A  IMG_WIZ_BookBinders dw 12h dup(0)  ; DATA XREF: sub_6343B()
 // WZD dseg:956E
-SAMB_ptr mirror_screen_background_seg;
+// MoM_Data  SAMB_ptr mirror_screen_background_seg;
 // XREF: Main_Screen_Load_Pictures(); sub_62BBC()
 // ; single-loaded image
 // WZD dseg:9570 IMG_ArmyScrn_Ok  ; DATA XREF: Armies_Screen(); sub_58CD2(); sub_598F1(); 2 frame image (normal - clicked)
 
 
 // WZD dseg:95F2
-SAMB_ptr goto_booty_icon;
+// MoM_Data  SAMB_ptr goto_booty_icon;
 // MAIN.LBX,50  GOTO        goto booty
 
 
@@ -686,9 +483,9 @@ int64_t _minimap_grid_y;
 
 
 // WZD dseg:974A
-int16_t _prev_world_y;
+// MoM_Data  int16_t _prev_world_y;
 // WZD dseg:974C
-int16_t _prev_world_x;
+// MoM_Data  int16_t _prev_world_x;
 
 // WZD dseg:974E 
 // int16_t _main_map_grid_x;
@@ -2240,7 +2037,12 @@ void Main_Screen_Draw_Unit_Action_Buttons(void)
 }
 
 // WZD o57p05
-// OVL_SetMenuButtons
+// drake178: OVL_SetMenuButtons()
+/*
+*/
+/*
+
+*/
 void Add_Game_Button_Fields(void)
 {
     _game_button    = Add_Button_Field(  7, 4, empty_string__ovr057, main_game_button,   hotkey_GameButton[0], ST_UNDEFINED);
@@ -3760,6 +3562,7 @@ void Cycle_Unit_Enchantment_Animation(void)
     }
 }
 
+
 // WZD o063p05
 void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 {
@@ -3803,7 +3606,7 @@ void Draw_Unit_Picture(int16_t x, int16_t y, int16_t unit_idx, int16_t flag)
 }
 
 
-// WZD o063p05
+// WZD o063p06
 // AKA OVL_DrawUnitImage()
 // pict_seg is 
 // MoO2  Draw_Ship_Icon()
@@ -4064,7 +3867,8 @@ void Unit_Window_Draw_Unit_Attributes(int16_t x, int16_t y, int16_t unit_idx)
 
 }
 
-// WZD o63p07
+
+// WZD o63p08
 // drake178: OVL_DrawStackMoves
 void Main_Screen_Draw_Movement_Bar(void)
 {
@@ -4103,7 +3907,7 @@ void Main_Screen_Draw_Movement_Bar(void)
 }
 
 
-// WZD o63p08
+// WZD o63p09
 // drake178: OVL_DrawMoveTypes()
 /*
     if called with unit_idx = -1, _unit_stack_count MUST BE >= 1
@@ -4220,7 +4024,7 @@ void Draw_Movement_Mode_Icons(int16_t x, int16_t y, int16_t unit_idx)
 }
 
 
-// WZD o63p09
+// WZD o63p10
 /*
     checks if Active Stack is on City with Astral Gate
     or if all Units have Planar Travel, by Enchantment, Ability, or Item
@@ -4335,7 +4139,7 @@ int16_t Active_Stack_On_Astral_Gate(void)
         ...which would mean being in ovr063 is meaingful?
         ...and ovr097 is differently meaningful?
             ...and, cause called by ovr095?
-    
+
 */
 int16_t Stack_Moves_Active(void)
 {
@@ -4548,7 +4352,10 @@ int16_t Check_Planar_Seal(void)
 // WZD o64p01
 // void Allocate_Reduced_Map__1(void)
 // WZD o64p02
-// PRIVATE  void Allocate_Reduced_Map__2(void);
+// void Allocate_Reduced_Map__2(void);
+/*
+called from GAME_Overland_Init()  <-|  WZD_Startup_MainGame()  <-|  _main()
+*/
 void Allocate_Reduced_Map(void)
 {
     _reduced_map_seg = Allocate_First_Block(_screen_seg, 303);  // 303 * 16 = 4848 bytes
@@ -6334,29 +6141,29 @@ void Fix_Patrol_On_Boats(int16_t troop_count, int16_t troops[])
 // STK_EvaluatePath()
 void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[], int16_t wp, int8_t mvpth_c[], int16_t moves2, int16_t * atackee_idx, int16_t * attack_flag, int16_t * path_length, int16_t * Cmplt, int16_t troops[], int16_t troop_count)
 {
-    int16_t Units[MAX_STACK] = { 0xBBBB };
-    int16_t src_boatriders_count;
-    int16_t dst_boatriders_count;
-    int16_t Transport_Capacity;
-    int16_t Cant_Enter;
-    int16_t Path_Length_Copy;
-    int16_t Stop_Short;
-    int16_t Out_of_Moves_Value;
-    int16_t HMoves_Used;
-    int16_t lair_idx;
-    int16_t UU_Encounter;   // boolean flag for movement blocked by Lair
-    int16_t UU_City;        // boolean flag for movement blocked by City - spellwarded or enemy
-    int16_t UU_EnemyUnit;   // boolean flag for movement blocked by Enemy Army
+    int16_t Units[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t src_boatriders_count = 0;
+    int16_t dst_boatriders_count = 0;
+    int16_t Transport_Capacity = 0;
+    int16_t Cant_Enter = 0;
+    int16_t Path_Length_Copy = 0;
+    int16_t Stop_Short = 0;
+    int16_t Out_of_Moves_Value = 0;
+    int16_t HMoves_Used = 0;
+    int16_t lair_idx = 0;
+    int16_t UU_Encounter = 0;   // boolean flag for movement blocked by Lair
+    int16_t UU_City = 0;        // boolean flag for movement blocked by City - spellwarded or enemy
+    int16_t UU_EnemyUnit = 0;   // boolean flag for movement blocked by Enemy Army
     // ¿ no flag for movement blocked by own army, in city or not
-    int16_t city_idx;
-    int16_t Unit_Count;
-    int16_t unit_idx;
-    int16_t Move_Interrupted;
-    int16_t Path_Length;
-    int16_t Combat_Path_Value;
-    int16_t Obstacle_Value;
-    int16_t itr_Path_Length;  // _DI_
-    int16_t itr_troops;  // _SI_
+    int16_t city_idx = 0;
+    int16_t Unit_Count = 0;
+    int16_t unit_idx = 0;
+    int16_t Move_Interrupted = 0;
+    int16_t Path_Length = 0;
+    int16_t Combat_Path_Value = 0;
+    int16_t Obstacle_Value = 0;
+    int16_t itr_Path_Length = 0;  // _DI_
+    int16_t itr_troops = 0;  // _SI_
 
     Obstacle_Value = -1;
     Combat_Path_Value = *attack_flag;
@@ -6407,7 +6214,6 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 
         if(city_idx != ST_UNDEFINED)
         {
-            // TODO  RP_CTY_CheckSpellWard__STUB()
             Cant_Enter = RP_CTY_CheckSpellWard__STUB(city_idx, &troop_count, &troops[0]);
             if(Cant_Enter == ST_TRUE)
             {
@@ -6609,26 +6415,43 @@ void Eval_Move_Path__WIP(int16_t player_idx, int8_t mvpth_x[], int8_t mvpth_y[],
 // sub_7E597()
 
 // WZD o97p03
-// TODO  ¿ vs. City_At_Square__2() ?
+// drake178: TILE_HasCity()
+/*
+*/
 /*
     returns city_idx or -1
+
+TODO  ¿ vs. City_At_Square__2() ?
 */
 int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t square_has_city;
-    int16_t itr_cities;
+    int16_t square_has_city = 0;
+    int16_t itr_cities = 0;
 
     itr_cities = 0;
+
     square_has_city = ST_UNDEFINED;
-    while(itr_cities++ < _cities && square_has_city == ST_UNDEFINED)
+
+    while((itr_cities++ < _cities) && (square_has_city == ST_UNDEFINED))
     {
-        if((_CITIES[itr_cities].wp == wp) && (_CITIES[itr_cities].wx == wx) && (_CITIES[itr_cities].wy == wy))
+
+        if(
+            (_CITIES[itr_cities].wp == wp)
+            &&
+            (_CITIES[itr_cities].wx == wx)
+            &&
+            (_CITIES[itr_cities].wy == wy)
+        )
         {
+
             square_has_city = itr_cities;
+
         }
+
     }
 
     return square_has_city;
+
 }
 
 
@@ -6685,6 +6508,8 @@ int16_t Units_Moves(int16_t unit_array[], int16_t unit_array_count)
 // WZD o97p05
 // drake178: RP_CTY_CheckSpellWard()
 /*
+*/
+/*
     determines if Stack is prohibited from entering the City due to Spell Ward
     returns {ST_FALSE,ST_TRUE}
 
@@ -6704,6 +6529,7 @@ int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int
     int16_t * l_troops = 0;  // _SI_
 
     l_troop_count = troop_count;
+
     l_troops = troops;
 
     city_has_spellward = ST_FALSE;
@@ -6717,11 +6543,15 @@ int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * troop_count, int
 
     if(Cant_Enter == ST_TRUE)
     {
+
         OVL_SWardTriggered = ST_TRUE;
+
         city_has_spellward = ST_TRUE;
+
     }
  
     return city_has_spellward;
+
 }
 
 

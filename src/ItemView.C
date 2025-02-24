@@ -5,6 +5,8 @@
         ovr082
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "MoM.H"
 #include "ItemView.H"
 #include "MainScr.H"  /* enchantment_outline_colors */

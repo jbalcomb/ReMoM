@@ -5,7 +5,19 @@
     MoO2: Module: LOADSAVE
 */
 
-#include "MoX_Lib.H"
+#include "LOADSAVE.H"
+
+#include "MOX_DAT.H"  /* _players[]; _screen_seg; */
+#include "MOX_SET.H"  /* magic_set */
+
+#include "../MoM_Data.H"
+#include "../MoM_PFL.H"
+
+#include <assert.h>
+#include <math.h>       /* sqrt() */
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdlib.h>     /* abs(); itoa(); */
+#include <string.h>     /* memset(), strcat(), strcpy(); */
 
 
 

@@ -8,6 +8,8 @@ MoO2
 Module: AITECH
 */
 
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 
 

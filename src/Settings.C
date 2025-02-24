@@ -15,8 +15,16 @@ MoO2
 
 */
 
-#include "MoM.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+
+#include "MoM_SCR.H"
+#include "Settings.H"
+#include "Spellbook.H"
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+
+
 
 /*
     LoadScr.C
@@ -25,12 +33,6 @@ MoO2
 extern SAMB_ptr ok_active;
 // WZD dseg:C9CA
 extern SAMB_ptr loadsave_background;
-
-
-
-uint8_t _magic_set[466];
-
-struct s_MAGIC_SET magic_set;
 
 
 
@@ -574,7 +576,7 @@ void Load_MAGIC_SET(void)
     if(magic_set.Raze_City != ST_FALSE) { magic_set.Raze_City = ST_TRUE; }
 
     
-    if(magic_set.hof_scores == 0)
+    if(magic_set.hof_scores[0] == 0)
     {
         for(itr = 0; itr < NUM_HOF_ENTRIES; itr++)
         {

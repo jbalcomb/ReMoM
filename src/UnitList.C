@@ -5,6 +5,8 @@
         ovr079
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "MoM.H"
 
 

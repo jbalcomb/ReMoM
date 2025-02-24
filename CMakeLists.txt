@@ -15,4 +15,7 @@ add_subdirectory(src)
 
 # cmake -G "Ninja" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
 
-# cmake --build C:/foo/build/ --target clean
+# DOME
+# cmake --build . --target clean
+# cmake .
+# cmake --build .
