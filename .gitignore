@@ -10,8 +10,8 @@
 # VS - build directory
 x64/
 x86/
-# TBD//Collab  *.sln
-# TBD//Collab  *.vcxproj
+*.sln
+*.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
 *.ncb
@@ -19,6 +19,9 @@ x86/
 *.user
 
 CppProperties.json
+
+# ¿ CMake ?
+_deps/
 
 build/
 Debug/

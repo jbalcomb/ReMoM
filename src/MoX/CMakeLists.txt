@@ -1,5 +1,5 @@
 
-add_library(MOX
+add_library(MOX STATIC
     Allocate.C
     CFG.C
     DBG.C

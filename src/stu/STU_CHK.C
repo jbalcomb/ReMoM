@@ -6,7 +6,9 @@
 #include "STU_UTIL.H"   /* get_datetime() */
 #include "STU_CHK.H"
 
-#include "..\MoM.H"
+#include "../MoM_Data.H"
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 
 
 
