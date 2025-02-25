@@ -13,9 +13,12 @@ MoO2
 
 */
 
-#include "MoX_Lib.H"
+#include "random.H"
+
+#include "MoX_TYPE.H"
 
 // win_CLK.C  /* Get_System_Clock_Counter() */
+uint32_t Get_System_Clock_Counter(void);
 
 
 

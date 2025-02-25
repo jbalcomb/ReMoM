@@ -1,4 +1,4 @@
-/*
+    /*
     Next Turn Procedure
 
     WIZARDS.EXE
@@ -9,10 +9,18 @@
         ovr141
 */
 
-#include "MoM.H"
+#include "NEXTTURN.H"
+
+#include "MoX/LOADSAVE.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/MOX_TYPE.H"
+#include "MoX/SOUND.H"
+
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "NEXTTURN.H"
+#include "MoM_DBG.H"
+#include "MOM_SCR.H"
 #include "WZD_o059.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
 
@@ -87,6 +95,15 @@ int16_t IDK_autosave;
     Eh?
         for each _units
     ...reduces _units...
+
+XREF:
+Next_Turn_Proc__WIP()
+Next_Turn_Proc__WIP()
+j_Delete_Dead_Units()
+    Loaded_Game_Update_WZD()
+    Next_Turn_Calc()
+    Loaded_Game_Update()
+
 */
 void Delete_Dead_Units(void)
 {
@@ -205,6 +222,35 @@ void Next_Turn_Proc(void)
     int16_t orig_map_plane = 0;
     int16_t itr_msg = 0;  // _SI_
     int16_t curr_prod_idx = 0;  // _DI_
+    int16_t DBG_itr_cities = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Proc()\n", __FILE__, __LINE__);
+#endif
+
+
+// #ifdef STU_DEBUG
+
+//     for(DBG_itr_cities = 0; DBG_itr_cities < _cities; DBG_itr_cities++)
+//     {
+//         if(_CITIES[DBG_itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+//         {
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, DBG_itr_cities);
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %s()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].name);
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].food_units);
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].farmer_count);
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].population);
+//             dbg_prn("DEBUG: [%s, %d]: City_Minimum_Farmers(): %d()\n", __FILE__, __LINE__, City_Minimum_Farmers(DBG_itr_cities));
+//             dbg_prn("DEBUG: [%s, %d]: City_Rebel_Count(): %d()\n", __FILE__, __LINE__, City_Rebel_Count(DBG_itr_cities));
+//             dbg_prn("DEBUG: [%s, %d]: Player_Armies_Food_Upkeep(): %d()\n", __FILE__, __LINE__, Player_Armies_Food_Upkeep(HUMAN_PLAYER_IDX));
+//         }
+//     }
+
+//  prints food from Player_Resource_Income_Total()...
+// ...food_expense = Player_Armies_Food_Upkeep(player_idx)...
+// ...food_income += (_CITIES[itr_cities].food_units - _CITIES[itr_cities].population)...
+
+// #endif
 
 
     Delete_Dead_Units();
@@ -217,6 +263,7 @@ void Next_Turn_Proc(void)
 
 
     Next_Turn_Calc();
+Check_Cities_Data();
 
 
     GFX_Swap_Cities();
@@ -227,9 +274,12 @@ void Next_Turn_Proc(void)
 
 
 
+    // OG-MoM does not show/wait/do anything here if there are no message
     if(magic_set.end_of_turn_summary == ST_TRUE)
     {
+
         Chancellor_Screen__WIP(0);
+
     }
 
 
@@ -298,6 +348,7 @@ void Next_Turn_Proc(void)
     /*
         END: Messages
     */
+Check_Cities_Data();
 
     current_screen = scr_Main_Screen;
 
@@ -306,7 +357,10 @@ void Next_Turn_Proc(void)
 
 
     Update_Units_MvsSts();
+Check_Cities_Data();
+
     o62p01_empty_function(_human_player_idx);
+
     o59p10_empty_function();
 
 
@@ -316,20 +370,104 @@ void Next_Turn_Proc(void)
         &&
         (_players[_human_player_idx].casting_spell_idx > spl_NONE))
     {
+
         Cast_Spell_Overland__WIP(_human_player_idx);
+Check_Cities_Data();
+
     }
 
 
-
     all_units_moved = ST_FALSE;
+
     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
+Check_Cities_Data();
+
     Reset_Draw_Active_Stack();
+Check_Cities_Data();
+
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Next_Turn_Proc()\n", __FILE__, __LINE__);
+#endif
 
 }
 
 
 // WZD o60p05
-// AI_ResetUnitMoves()
+// drake178: AI_ResetUnitMoves()
+/*
+marks all AI units that are on patrol, building a
+road, or have the unknown status 6 as finished; marks
+all AI units that are waiting or have reached their
+destinations as ready; resets the movement allowance
+of all AI units; and updates the visibility
+*/
+/*
+
+sets Finished, moves2_max, moves2
+handles Statis
+calls All_AI_Players_Contacted(), which calls Update_Scouted_And_Contacted__WIP()
+
+XREF
+    j_All_AI_Refresh_Units_Movement()
+        Loaded_Game_Update_WZD()
+        Loaded_Game_Update()
+
+*/
+void All_AI_Refresh_Units_Movement(void)
+{
+    int16_t itr_units = 0;  // _SI_
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(_UNITS[itr_units].owner_idx != _human_player_idx)  // ¿ current player ?
+        {
+
+            _UNITS[itr_units].Finished = ST_FALSE;
+
+            if(
+                (_UNITS[itr_units].Status == us_Patrol)
+                &&
+                (_UNITS[itr_units].Status == us_BuildRoad)
+                &&
+                (_UNITS[itr_units].Status == us_Casting)
+            )
+            {
+
+                _UNITS[itr_units].Finished = ST_TRUE;
+
+            }
+
+            if(
+                (_UNITS[itr_units].Status == us_Wait)
+                &&
+                (_UNITS[itr_units].Status == us_ReachedDest)
+                &&
+                (_UNITS[itr_units].Status == us_Ready)
+            )
+            {
+
+                _UNITS[itr_units].moves2_max = Unit_Moves2(itr_units);
+
+                _UNITS[itr_units].moves2 = _UNITS[itr_units].moves2_max;
+
+                if(_UNITS[itr_units].mutations & (C_STASISINIT | C_STASISLINGER) != 0)
+                {
+
+                    _UNITS[itr_units].Finished = ST_TRUE;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    All_AI_Players_Contacted();
+
+}
 
 
 // WZD o60p06
@@ -367,45 +505,68 @@ void Update_Units_MvsSts(void)
 
     }
 
-    TILE_VisibilityUpdt();
+    All_AI_Players_Contacted();
 
 }
 
 
 // WZD o60p07
-void TILE_VisibilityUpdt(void)
+// drake178: TILE_VisibilityUpdt()
+// ¿ MoO2  Module: CONTACTS  Compute_Contacts_() ?
+/*
+marks all AI wizards as having contacted the human
+player (one-sided), processes Nature Awareness
+contacting wizards whose units are visible, and calls
+TILE_VisibilityReset to refresh the bit maps
+
+Invisibility BUG: only checks the enchantment in the
+Nature Awareness loop, ignoring both natural ability
+and item power
+*/
+/*
+
+Cast_NaturesAwareness()
+    |-> Cheat_Reveal()
+    |-> All_AI_Players_Contacted()
+
+*/
+void All_AI_Players_Contacted(void)
 {
-    int16_t itr_players;
-    int16_t itr_units;
-    int16_t tmp_unit_enchantments_hiword;
+    int16_t itr_players = 0;  // _SI_
+    int16_t itr_units = 0;  //_DI_
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        // TODO(JimBalcomb,2023075): figure out the indexing in the Dasm - doesn't look like array of struct  also, this'll set the neutral player?
-        _players[itr_players + 1].Dipl.Contacted[HUMAN_PLAYER_IDX] = 1;
 
-        // if(_players[itr_players + 1].Globals.Nature_Awareness != ST_FALSE)
-        if(_players[itr_players + 1].Globals[NATURE_AWARENESS] != ST_FALSE)
+        _players[(itr_players + 1)].Dipl.Contacted[HUMAN_PLAYER_IDX] = ST_TRUE;
+
+        if(_players[(itr_players + 1)].Globals[NATURES_AWARENESS] != ST_FALSE)
         {
+
             for(itr_units = 0; itr_units < _units; itr_units++)
             {
-                if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+
+                if(
+                    (_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+                    &&
+                    (_UNITS[itr_units].owner_idx != itr_players)
+                    &&
+                    (_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
+                    &&
+                    ((_UNITS[itr_units].enchantments & UE_INVISIBILITY) == 0)  // BUG: only checks enchantment, not ability or item
+                )
                 {
-                    if(_UNITS[itr_units].owner_idx != itr_players)
-                    {
-                        if(_UNITS[itr_units].owner_idx != NEUTRAL_PLAYER_IDX)
-                        {
-                            // BUG: only checks enchantment, not ability or item
-                            if((_UNITS[itr_units].enchantments & UE_INVISIBILITY) != 0)
-                            {
-                                _players[itr_players].Dipl.Contacted[_UNITS[itr_units].owner_idx] = 1;
-                                _players[_UNITS[itr_units].owner_idx].Dipl.Contacted[itr_players] = 1;
-                            }
-                        }
-                    }
+
+                    _players[itr_players].Dipl.Contacted[_UNITS[itr_units].owner_idx] = ST_TRUE;
+
+                    _players[_UNITS[itr_units].owner_idx].Dipl.Contacted[itr_players] = ST_TRUE;
+
                 }
+
             }
+
         }
+
     }
 
     Update_Scouted_And_Contacted__WIP();
@@ -422,31 +583,72 @@ void TILE_VisibilityUpdt(void)
 // WZD o119p01
 void Next_Turn_Calc(void)
 {
-
     int16_t itr_players = 0;  // _SI_
+    int16_t DBG_itr_cities = 0;
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Next_Turn_Calc()\n", __FILE__, __LINE__);
+#endif
 
 
-
+Check_Cities_Data();
     Set_Random_Seed(RNG_AI_Turn_Seed);
+Check_Cities_Data();
 
+Check_Cities_Data();
     Set_Mouse_List(1, mouse_list_hourglass);
+Check_Cities_Data();
 
 
+//     for(DBG_itr_cities = 0; DBG_itr_cities < _cities; DBG_itr_cities++)
+//     {
+//         if(_CITIES[DBG_itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+//         {
+//             dbg_prn("DEBUG: [%s, %d]: city_idx: %d()\n", __FILE__, __LINE__, DBG_itr_cities);
+//             dbg_prn("DEBUG: [%s, %d]: name: %s()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].name);
+//             dbg_prn("DEBUG: [%s, %d]: food_units: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].food_units);
+//             dbg_prn("DEBUG: [%s, %d]: farmer_count: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].farmer_count);
+//             dbg_prn("DEBUG: [%s, %d]: population: %d()\n", __FILE__, __LINE__, _CITIES[DBG_itr_cities].population);
+//             dbg_prn("DEBUG: [%s, %d]: City_Minimum_Farmers(): %d()\n", __FILE__, __LINE__, City_Minimum_Farmers(DBG_itr_cities));
+//             dbg_prn("DEBUG: [%s, %d]: City_Rebel_Count(): %d()\n", __FILE__, __LINE__, City_Rebel_Count(DBG_itr_cities));
+//             dbg_prn("DEBUG: [%s, %d]: Player_Armies_Food_Upkeep(): %d()\n", __FILE__, __LINE__, Player_Armies_Food_Upkeep(HUMAN_PLAYER_IDX));
+//         }
+//     }
+
+Check_Cities_Data();
     All_City_Calculations();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
 
 
-    AI_Kill_Lame_Units();
+Check_Cities_Data();
+    AI_Kill_Lame_Units();  // ¿ BUGBUG  leaves dead/deleteable units lying around ?
+Check_Cities_Data();
 
+Check_Cities_Data();
+    Delete_Dead_Units();  // DNE in Dasm
+Check_Cities_Data();
+
+Check_Cities_Data();
     AI_Next_Turn__WIP();
+// Check_Cities_Data();
+Capture_Cities_Data();
+
+Check_Cities_Data();
+    Delete_Dead_Units();  // DNE in Dasm
+Check_Cities_Data();
 
 
 
+Check_Cities_Data();
     Next_Turn_Process_Purify();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Initialize_Reports();
-
+Check_Cities_Data();
 
     if(g_TimeStop_PlayerNum != 0)
     {
@@ -473,20 +675,32 @@ void Next_Turn_Calc(void)
     else
     {
 
+Check_Cities_Data();
         Decrease_Peace_Duration();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
         Update_Players_Gold_Reserve();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
         Players_Update_Magic_Power();
+Check_Cities_Data();
 
+Check_Cities_Data();
         Players_Apply_Magic_Power();
+Check_Cities_Data();
 
+Check_Cities_Data();
         Players_Check_Spell_Research();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
         OVL_DisableIncmBlink();
+Check_Cities_Data();
 
 
         if(
@@ -495,26 +709,42 @@ void Next_Turn_Calc(void)
             (magic_set.random_events == ST_TRUE)
         )
         {
+
+Check_Cities_Data();
             Determine_Event();
+Check_Cities_Data();
+
         }
 
 
+Check_Cities_Data();
         Event_Twiddle();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
         Players_Apply_Upkeeps__WIP();
+Check_Cities_Data();
 
 
         // DONT  EMM_Map_DataH()
 
 
+Check_Cities_Data();
         All_Outpost_Population_Growth();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
 
+Check_Cities_Data();
         Apply_City_Changes();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
 
+Check_Cities_Data();
         Diplomacy_Growth_For_Enchantments__WIP();
+Check_Cities_Data();
 
 
         /*
@@ -529,13 +759,17 @@ void Next_Turn_Calc(void)
         */
 
 
+Check_Cities_Data();
         Determine_Offer();
+Check_Cities_Data();
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
 
 
+Check_Cities_Data();
         All_City_Nightshade_Count();
+Check_Cities_Data();
 
 
     // call    j_DIPL_Gravitation              ; process wizard pact and alliance relation
@@ -548,13 +782,17 @@ void Next_Turn_Calc(void)
     //                                         ; set progress to 1 and relations to no treaty
 
 
+Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
+Check_Cities_Data();
 
 
     // call    j_DIPL_AI_To_AI                 ; many BUGs and INCONSISTENCIES inside ; RE-EXPLORE in more context!
 
 
+Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
+Check_Cities_Data();
 
 
     // call    j_IDK_Dipl_s7373B
@@ -562,40 +800,62 @@ void Next_Turn_Calc(void)
     // call    j_IDK_Dipl_s73FBF
 
 
+Check_Cities_Data();
         Set_Mouse_List(1, mouse_list_hourglass);
+Check_Cities_Data();
 
         // TODO  End_Of_Turn_Diplomacy_Adjustments_
 
         // TODO  Modifier_Diplomacy_Adjustments()
 
+Check_Cities_Data();
         Cool_Off_Volcanoes();
+Check_Cities_Data();
 
     }
 
 
+Check_Cities_Data();
     All_Players_Apply_Spell_Casting();
+Check_Cities_Data();
 
 
-    Delete_Dead_Units();
+Check_Cities_Data();
+    Delete_Dead_Units();  // ¿ here, because we may have killed units with a spell, just above ?
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Set_Unit_Draw_Priority();
+Check_Cities_Data();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     All_City_Removed_Buildings();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
 
+Check_Cities_Data();
     Do_All_Units_XP_Check_();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Heal_All_Units();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Record_History();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Increment_Background_Music();
+Check_Cities_Data();
 
 
     _turn++;
@@ -617,19 +877,30 @@ void Next_Turn_Calc(void)
     }
 
 
+Check_Cities_Data();
     OVL_EnableIncmBlink();
+Check_Cities_Data();
     
 
+Check_Cities_Data();
     Do_Autosave();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     All_City_Calculations();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
 
+Check_Cities_Data();
     RNG_AI_Turn_Seed = Get_Random_Seed();
+Check_Cities_Data();
 
 
+Check_Cities_Data();
     Set_Mouse_List(1, mouse_list_default);
+Check_Cities_Data();
 
 
 #ifdef STU_DEBUG
@@ -649,18 +920,25 @@ void Next_Turn_Calc(void)
 */
 void All_Colony_Calculations(void)
 {
-    int16_t minimum_farmer_count;
-    int16_t itr_cities;  // _SI_
+    int16_t minimum_farmer_count = 0;
+    int16_t itr_cities = 0;  // _SI_
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+
         Do_City_Calculations(itr_cities);
+
         minimum_farmer_count = City_Minimum_Farmers(itr_cities);
+
         if(_CITIES[itr_cities].farmer_count < minimum_farmer_count)
         {
+
             _CITIES[itr_cities].farmer_count = minimum_farmer_count;
+
         }
+
         City_Rebel_Count(itr_cities);
+
     }
 
 }
@@ -720,7 +998,8 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
             (_units <= 980)
         )
         {
-            if(_units != 1000)
+            
+            if(_units != MAX_UNIT_COUNT)
             {
                 _UNITS[_units].wx = wx;
                 _UNITS[_units].wy = wy;
@@ -742,7 +1021,7 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
                 _UNITS[_units].Draw_Priority = 0;
                 _UNITS[_units].enchantments = 0;
                 _UNITS[_units].mutations = 0;
-                _UNITS[_units].Move_Failed = 0;
+                _UNITS[_units].Move_Failed = ST_FALSE;
                 _UNITS[_units].Rd_Constr_Left = -1;
 
                 if((R_Param < 0) || R_Param >= 2000)
@@ -782,7 +1061,11 @@ int16_t Create_Unit__WIP(int16_t unit_type, int16_t owner_idx, int16_t wx, int16
 
                     if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
                     {
+
+Check_Cities_Data();
                         _CITIES[R_Param].population -= 1;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                         if(_CITIES[R_Param].population == 0)
                         {
@@ -1165,6 +1448,11 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 
 // WZD o121p08
 /*
+; calculates and returns the unit's movement allowance
+; in half movement point units, accounting for all
+; non-combat factors
+*/
+/*
     Calculate Movement Points for Unit
         Unit Type Table :: Movement Points
         Hero Unit Items - ¿ ... ?
@@ -1336,11 +1624,126 @@ void Cheat_Power(void)
 
 // WZD o121p11
 // drake178: AI_GetThreat_UType()
-// AI_GetThreat_UType()
+/*
+; calculates and returns an arbitrary unit threat value
+; based on attack attributes, defense, and remaining
+; hit points and figures; doubling ranged threat if any
+; compared to the BU version of the same function
+*/
+/*
+
+~== Effective_Unit_Strength()
+~== Effective_Battle_Unit_Strength()
+
+*/
+int16_t Effective_Unit_Type_Strength(int16_t unit_type)
+{
+    int16_t temp = 0;
+    int16_t unit_type_strength = 0;  // _DI_
+
+    unit_type_strength = 0;
+
+    temp = _unit_type_table[unit_type].Hits * _unit_type_table[unit_type].Figures;
+
+    unit_type_strength += Get_Effective_Hits(_unit_type_table[unit_type].Defense, temp);
+
+    if((_unit_type_table[unit_type].Ranged_Type / 10) <= rag_Magic)
+    {
+
+        unit_type_strength += (Get_Effective_Ranged_Strength(_unit_type_table[unit_type].Ranged, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags) * 2);
+
+    }
+
+    if((_unit_type_table[unit_type].Ranged_Type / 10) >= srat_Thrown)
+    {
+
+        temp = _unit_type_table[unit_type].Ranged;
+
+        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags, _unit_type_table[unit_type].Ranged_Type);
+
+    }
+    else
+    {
+        temp = 0;
+
+        unit_type_strength += Get_Effective_Melee_Strength(_unit_type_table[unit_type].Melee, temp, _unit_type_table[unit_type].Figures, _unit_type_table[unit_type].Attack_Flags, ST_UNDEFINED);
+
+    }
+
+    return unit_type_strength;
+
+}
+
 
 // WZD o121p12
 // drake178: AI_GetThreat_UNIT()
-// AI_GetThreat_UNIT()
+/*
+; calculates and returns an arbitrary unit threat value
+; based on attack attributes, defense, and remaining
+; hit points and figures; doubling ranged threat if any
+; compared to the BU version of the same function
+*/
+/*
+
+~== Effective_Unit_Type_Strength()
+~== Effective_Battle_Unit_Strength()
+
+*/
+int16_t Effective_Unit_Strength(int16_t unit_idx)
+{
+    int16_t effective_strength = 0;  // _SI_
+    int16_t temp = 0;  // _DI_
+
+    if(
+        (unit_idx < 0)
+        ||
+        (unit_idx > _units)
+    )
+    {
+
+        return 0;
+
+    }
+
+    effective_strength = 0;
+
+    Load_Battle_Unit(unit_idx, global_battle_unit);
+
+    temp = ((global_battle_unit->Cur_Figures * global_battle_unit->hits) - global_battle_unit->TopFig_Dmg);
+
+    effective_strength += Get_Effective_Hits(temp, global_battle_unit->defense);
+
+    if(
+        ((global_battle_unit->ranged_type / 10) <= rag_Magic)
+        ||
+        (global_battle_unit->ranged_type != rat_None)
+    )
+    {
+
+        effective_strength += Get_Effective_Ranged_Strength(global_battle_unit->ranged, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Ranged_ATK_Flags));
+
+    }
+
+    if(global_battle_unit->ranged_type >= srat_Thrown)
+    {
+
+        temp = 0;
+
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Melee_ATK_Flags), ST_UNDEFINED);
+
+    }
+    else
+    {
+
+        temp = global_battle_unit->ranged;
+
+        effective_strength += Get_Effective_Melee_Strength(global_battle_unit->melee, temp, global_battle_unit->Cur_Figures, (global_battle_unit->Attack_Flags | global_battle_unit->Melee_ATK_Flags), global_battle_unit->ranged_type);
+
+    }
+
+    return effective_strength;
+
+}
 
 
 // WZD o121p13
@@ -1672,7 +2075,7 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx)
 // WZD o140p01
 void All_City_Calculations(void)
 {
-    int16_t itr_cities;
+    int16_t itr_cities = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -1728,26 +2131,46 @@ void City_Apply_Production(int16_t city_idx)
     int16_t uu_troop_count;
     int16_t product_cost;  // _SI_
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: City_Apply_Production()\n", __FILE__, __LINE__);
+#endif
+
+Check_Cities_Data();
     product_cost = City_Current_Product_Cost(city_idx);
+Check_Cities_Data();
 
     if(_CITIES[city_idx].population <= 0)
     {
+
         return;
+
     }
 
     if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
     {
+
+Check_Cities_Data();
         _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
         if(_CITIES[city_idx].Prod_Accu >= product_cost)
         {
+            
             if((_units + 1) < MAX_UNIT_COUNT)
             {
+
+Check_Cities_Data();
                 Create_Unit__WIP((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+Check_Cities_Data();
 
+Check_Cities_Data();
                 UNIT_RemoveExcess((_units - 1));
+Check_Cities_Data();
 
+Check_Cities_Data();
                 Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
+Check_Cities_Data();
 
                 if(
                     (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
@@ -1755,23 +2178,48 @@ void City_Apply_Production(int16_t city_idx)
                     (grand_vizier == ST_TRUE)
                 )
                 {
+
+Check_Cities_Data();
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                 }
 
             }
             else
             {
+
                 if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                 {
+
+Check_Cities_Data();
                     _CITIES[city_idx].construction = bt_AUTOBUILD;
+Check_Cities_Data();
+
                 }
                 else
                 {
+
+Check_Cities_Data();
                     LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
+Check_Cities_Data();
+
+Check_Cities_Data();
                     strcpy(city_name, _CITIES[city_idx].name);
+Check_Cities_Data();
+
+Check_Cities_Data();
                     strcat(GUI_NearMsgString, city_name);
+Check_Cities_Data();
+
+Check_Cities_Data();
                     strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
+Check_Cities_Data();
+
+Check_Cities_Data();
                     Warn0(GUI_NearMsgString);
+Check_Cities_Data();
 
                     if(
                         (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
@@ -1779,56 +2227,107 @@ void City_Apply_Production(int16_t city_idx)
                         (grand_vizier == ST_TRUE)
                     )
                     {
+
+Check_Cities_Data();
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
+Check_Cities_Data();
+
                     }
                     else
                     {
+
+Check_Cities_Data();
                         _CITIES[city_idx].construction = bt_TradeGoods;
+Check_Cities_Data();
+
                     }
                 }
+
             }
 
+
+Check_Cities_Data();
             _CITIES[city_idx].Prod_Accu = 0;  // BUGBUG ¿ drake178: discards excess ? not actually a bug, just prescribed behavior? "surplus production units will be lost"
+// Check_Cities_Data();
+Capture_Cities_Data();
+
         }
 
     }
     else  /* *Product* is 'Building' */
     {
+
         if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
         {
+
             if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
             {
+
+Check_Cities_Data();
                 _CITIES[city_idx].construction = bt_AUTOBUILD;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
             }
+
         }
         else
         {
+
             if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
             {
+
+Check_Cities_Data();
                 _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
+// Check_Cities_Data();
+Capture_Cities_Data();
+
             }
             else
             {
+
+Check_Cities_Data();
                 _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
             }
 
             if(_CITIES[city_idx].Prod_Accu >= product_cost)
             {
 
-                assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
+// Severity	Code	Description	Project	File	Line	Suppression State	Details
+// Warning	C6385	Reading invalid data from '_CITIES[city_idx].bldg_status'.ReMoM	C : \STU\devel\ReMoM\src\NEXTTURN.C	1934
+                // NOTE(JimBalcomb,20250221):  just got triggered, don't recall why I had this here...  assert((_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] < 0));
+
                 // IDGI:  ¿ impossible state - unreachable code ?
                 // #CRASHME
                 // BUGBUG
                 if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
                 {
+
+Check_Cities_Data();
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                 }
                 else
                 {
+
+Check_Cities_Data();
                     _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                     if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
                     {
+
+Check_Cities_Data();
                         _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                     }
 
                     if(
@@ -1837,38 +2336,71 @@ void City_Apply_Production(int16_t city_idx)
                         (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                     )
                     {
+
+Check_Cities_Data();
                         TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+Check_Cities_Data();
+
                     }
 
+Check_Cities_Data();
                     _CITIES[city_idx].bldg_cnt += 1;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
+Check_Cities_Data();
                     _CITIES[city_idx].Prod_Accu = 0;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                     if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
                     {
+
+Check_Cities_Data();
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                     }
                     else
                     {
+
                         if(g_bldg_msg_ctr < 20)
                         {
+
                             MSG_Building_Complete[g_bldg_msg_ctr].city_idx = city_idx;
+
                             MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
+
                             g_bldg_msg_ctr++;
+
                         }
 
                         if(grand_vizier == ST_TRUE)
                         {
+
+Check_Cities_Data();
                             _CITIES[city_idx].construction = bt_AUTOBUILD;
+Check_Cities_Data();
+
                         }
                         else
                         {
+
+Check_Cities_Data();
                             _CITIES[city_idx].construction = bt_Housing;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
     if(
@@ -1879,8 +2411,18 @@ void City_Apply_Production(int16_t city_idx)
         (_CITIES[city_idx].construction == bt_AUTOBUILD)
     )
     {
+
+Check_Cities_Data();
         Player_Colony_Autobuild_HP(city_idx);
+Check_Cities_Data();
+
     }
+
+Check_Cities_Data();
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: City_Apply_Production()\n", __FILE__, __LINE__);
+#endif
 
 }
 
@@ -2027,40 +2569,49 @@ void Players_Apply_Magic_Power(void)
 */
 void Players_Apply_Upkeeps__WIP(void)
 {
-    int16_t excess_foods[NUM_PLAYERS];
-    int16_t mana_upkeeps[NUM_PLAYERS];
-    int16_t gold_upkeeps[NUM_PLAYERS];
-    int16_t food_upkeep;
-    int16_t itr;  // _DI_
+    int16_t excess_foods[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t mana_upkeeps[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t gold_upkeeps[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
+    int16_t food_upkeep = 0;
+    int16_t itr = 0;  // _DI_
 
     for(itr = 0; itr < NUM_PLAYERS; itr++)
     {
+
         excess_foods[itr] = 0;
+
     }
 
     for(itr = 0; itr < _cities; itr++)
     {
+
         if(
             (_CITIES[itr].owner_idx != ST_UNDEFINED)
             &&
             (_CITIES[itr].food_units > _CITIES[itr].population)
         )
         {
+
             excess_foods[_CITIES[itr].owner_idx] += (_CITIES[itr].food_units - _CITIES[itr].population);
+
         }
+
     }
 
     for(itr = 0; itr < _num_players; itr++)
     {
+
         food_upkeep = Player_Armies_Food_Upkeep(itr);
 
         if(
             (excess_foods[itr] < food_upkeep)
             &&
-            (itr == 0)
+            (itr == HUMAN_PLAYER_IDX)
         )
         {
-            WIZ_MatchFoodUpkeep(itr, excess_foods[itr], food_upkeep);
+
+            WIZ_MatchFoodUpkeep__WIP(itr, excess_foods[itr], food_upkeep);
+
         }
 
         gold_upkeeps[itr] = Player_Armies_Gold_Upkeep(itr);
@@ -2071,14 +2622,18 @@ void Players_Apply_Upkeeps__WIP(void)
             (itr == 0)
         )
         {
+
             gold_upkeeps[itr] = WIZ_MatchGoldUpkeep(itr, gold_upkeeps[itr]);
+
         }
 
         _players[itr].gold_reserve = (_players[itr].gold_reserve - gold_upkeeps[itr]);
 
         if(_players[itr].gold_reserve < 0)
         {
+
             _players[itr].gold_reserve = 0;
+
         }
 
         mana_upkeeps[itr] = Player_Armies_And_Enchantments_Mana_Upkeep(itr);
@@ -2089,14 +2644,18 @@ void Players_Apply_Upkeeps__WIP(void)
             (itr == 0)
         )
         {
+
             mana_upkeeps[itr] = WIZ_MatchManaUpkeep__WIP(itr, mana_upkeeps[itr]);
+
         }
 
         _players[itr].mana_reserve = (_players[itr].mana_reserve - mana_upkeeps[itr]);
 
         if(_players[itr].mana_reserve < 0)
         {
+
             _players[itr].mana_reserve = 0;
+
         }
 
     }
@@ -2106,62 +2665,103 @@ void Players_Apply_Upkeeps__WIP(void)
 
 // WZD o140p07
 // drake178: WIZ_MatchFoodUpkeep()
-void WIZ_MatchFoodUpkeep(int16_t player_idx, int16_t food_excess, int16_t food_upkeep)
+/*
+attempts to disband non-hero, non-transport normal
+units until the food upkeep matches or is less than
+the food income
+
+inherits a severe BUG from UNIT_GetDependants
+*/
+/*
+
+IIF
+if((excess_foods[itr] < food_upkeep) && (itr == HUMAN_PLAYER_IDX))
+...when Food is negative...
+
+*/
+void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t food_upkeep)
 {
-    int16_t troops[MAX_STACK];
-    int16_t itr_troops;
-    int16_t troop_count;
-    int16_t itr_units;  // _SI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr_troops = 0;
+    int16_t troop_count = 0;
+    int16_t itr_units = 0;  // _SI_
 
     for(itr_units = (_units - 1); ((itr_units > -1) && (food_upkeep > food_excess)); itr_units--)
     {
+
+        // just Normal/Regular units
         if(
-            (_UNITS[itr_units].owner_idx == player_idx) &&
-            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0) &&
-            (_UNITS[itr_units].type > ut_Chosen) &&
+            (_UNITS[itr_units].owner_idx == player_idx)
+            &&
+            ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
+            &&
+            (_UNITS[itr_units].type > ut_Chosen)
+            &&
             (_unit_type_table[_UNITS[itr_units].type].Transport == 0)
         )
         {
+
             food_upkeep--;
 
             UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
 
             if(troop_count > 0)
             {
+
                 for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                 {
+
                     if(
-                        ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0) &&
+                        ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
+                        &&
                         (_UNITS[itr_units].type > ut_Chosen)
                     )
                     {
+
                         food_upkeep--;
 
                         if(
-                            (MSG_UnitLost_Count < 20) &&
+                            (MSG_UnitLost_Count < 20)
+                            &&
                             (player_idx == HUMAN_PLAYER_IDX)
                         )
                         {
+
                             MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+
                             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 4;
+
                             MSG_UnitLost_Count++;
+
                         }
+
                         Kill_Unit(troops[itr_troops], 0);
+
                     }
+
                 }
+
             }
+
         }
 
         if(
-            (MSG_UnitLost_Count < 20) &&
+            (MSG_UnitLost_Count < 20)
+            &&
             (player_idx == HUMAN_PLAYER_IDX)
         )
         {
+
             MSG_UnitLost_Array[MSG_UnitLost_Count].Unit_Type = _UNITS[itr_units].type;
+
             MSG_UnitLost_Array[MSG_UnitLost_Count].Cause = 0;
+
             MSG_UnitLost_Count++;
+
         }
+
         Kill_Unit(itr_units, 1);
+
     }
 
 }
@@ -2394,77 +2994,137 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 */
 void Apply_City_Changes(void)
 {
-    int16_t Surplus_Farmers;
-    int16_t New_Min_Farmers;
-    int16_t Population_Growth;
-    int16_t itr_cities;
+    int16_t excess_farmer_count = 0;
+    int16_t New_Min_Farmers = 0;
+    int16_t Population_Growth = 0;
+    int16_t itr_cities = 0;
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
+
         // if 'City' is 'Outpost'
         if(_CITIES[itr_cities].population == 0)  /* assume "City" is 'Outpost' */
         {
+
             // 'Outpost' failed
             if(_CITIES[itr_cities].Pop_10s <= 0)
             {
+
                 if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
                 {
+
                     strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
+
                     MSG_CityLost_Count++;
+
                 }
+
+Check_Cities_Data();
                 Destroy_City(itr_cities);
+Check_Cities_Data();
+
             }
 
             // 'Outpost' graduated to 'City'
             if(_CITIES[itr_cities].Pop_10s >= 10)
             {
+
+Check_Cities_Data();
                 _CITIES[itr_cities].population = 1;
+Check_Cities_Data();
+
+Check_Cities_Data();
                 _CITIES[itr_cities].size = 1;  /* CTY_Hamlet */
+Check_Cities_Data();
+
+Check_Cities_Data();
                 _CITIES[itr_cities].farmer_count = City_Minimum_Farmers(itr_cities);
+Check_Cities_Data();
+
+Check_Cities_Data();
                 Do_City_Calculations(itr_cities);
-                if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityGained_Count < 20))
+Check_Cities_Data();
+
+                if(
+                    (_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (MSG_CityGained_Count < 20)
+                )
                 {
+
                     MSG_CityGained_Array[MSG_CityGained_Count] = itr_cities;
+
                     MSG_CityGained_Count++;
+
                 }
+
             }
+
         }
-        else
+        else  /* (_CITIES[itr_cities].population != 0) */
         {
+
             // apply population growth
             Population_Growth = City_Growth_Rate(itr_cities);
 
+Check_Cities_Data();
             _CITIES[itr_cities].Pop_10s += Population_Growth;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
             // increase population
             if((_CITIES[itr_cities].Pop_10s >= 100) && (_CITIES[itr_cities].population < 25))
             {
-                Surplus_Farmers = City_Minimum_Farmers(itr_cities);
 
-                Surplus_Farmers -= _CITIES[itr_cities].farmer_count;
+                excess_farmer_count = City_Minimum_Farmers(itr_cities);
 
+                excess_farmer_count = (_CITIES[itr_cities].farmer_count - excess_farmer_count);
+
+Check_Cities_Data();
                 _CITIES[itr_cities].population += 1;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
+Check_Cities_Data();
                 _CITIES[itr_cities].Pop_10s = 0;  /* ; BUG: discards excess population */
+// Check_Cities_Data();
+Capture_Cities_Data();
 
+Check_Cities_Data();
                 New_Min_Farmers = City_Minimum_Farmers(itr_cities);
+Check_Cities_Data();
 
-                _CITIES[itr_cities].farmer_count = (New_Min_Farmers + Surplus_Farmers);
+Check_Cities_Data();
+                _CITIES[itr_cities].farmer_count = (New_Min_Farmers + excess_farmer_count);  // new minimum farmers +/- too many/few
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                 if(_CITIES[itr_cities].farmer_count > _CITIES[itr_cities].population)
                 {
+
+Check_Cities_Data();
                     _CITIES[itr_cities].farmer_count = _CITIES[itr_cities].population;
+Check_Cities_Data();
+
                 }
 
+Check_Cities_Data();
                 _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);  // {0, ..., 24} {3, ..., 27} {0, 1, 2, 3, 4, 5, 6}
                 // _CITIES[itr_cities].size = BUCKET(_CITIES[itr_cities].population, 4);
+// Check_Cities_Data();
+Capture_Cities_Data();
 
+Check_Cities_Data();
                 SETMAX(_CITIES[itr_cities].size, MAX_CITY_SIZE);  // CTY_Capital
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                 if(_CITIES[itr_cities].owner_idx == NEUTRAL_PLAYER_IDX)
                 {
+
                     // BUGBUG:  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))`
                     SETMAX(_CITIES[itr_cities].population, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
+
                 }
 
                 if(
@@ -2473,8 +3133,11 @@ void Apply_City_Changes(void)
                     (MSG_CityGrowth_Count < 20)
                 )
                 {
+
                     MSG_CityGrowth_Array[MSG_CityGrowth_Count] = itr_cities;
+
                     MSG_CityGrowth_Count++;
+
                 }
 
             }
@@ -2482,15 +3145,27 @@ void Apply_City_Changes(void)
             // decrease population
             if(_CITIES[itr_cities].Pop_10s < 0)
             {
+
                 if(_CITIES[itr_cities].population <= 1)  /* cant be 0 in this branch, so must be == 1 or <= -1 */
                 {
+
+Check_Cities_Data();
                     _CITIES[itr_cities].Pop_10s = 5;
+Check_Cities_Data();
+
                 }
                 else
                 {
-                    _CITIES[itr_cities].population -= 1;
 
+Check_Cities_Data();
+                    _CITIES[itr_cities].population -= 1;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
+Check_Cities_Data();
                     _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
@@ -2498,20 +3173,32 @@ void Apply_City_Changes(void)
                         (MSG_CityDeath_Count < 20)
                     )
                     {
+
                         MSG_CityDeath_Array[MSG_CityDeath_Count] = itr_cities;
+
                         MSG_CityDeath_Count++;
+
                     }
 
+Check_Cities_Data();
                     _CITIES[itr_cities].Pop_10s += 100;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
                 }
+
             }
 
             // decrease population
             if(_CITIES[itr_cities].enchantments[PESTILENCE] > 0)
             {
+
                 if(_CITIES[itr_cities].population > Random(10))
                 {
+
+Check_Cities_Data();
                     _CITIES[itr_cities].population -= 1;
+Check_Cities_Data();
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
@@ -2519,14 +3206,27 @@ void Apply_City_Changes(void)
                         (MSG_CityDeath_Count < 20)
                     )
                     {
+
                         MSG_CityDeath_Array[MSG_CityDeath_Count] = itr_cities;
+
                         MSG_CityDeath_Count++;
+
                     }
 
                 }
+
             }
-            
+
+            /*
+                HERE:
+                    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+                        if(_CITIES[itr_cities].population == 0)  / * assume "City" is 'Outpost' * /
+                        else  / * (_CITIES[itr_cities].population != 0) * /
+            */
+
+Check_Cities_Data();
             City_Apply_Production(itr_cities);
+Check_Cities_Data();
 
         }
 
@@ -2557,7 +3257,9 @@ void Apply_City_Changes(void)
         }
     }
 
+Check_Cities_Data();
     Volcano_Counts();
+Check_Cities_Data();
 
 }
 
@@ -2960,7 +3662,7 @@ void Determine_Offer(void)
         if(
             (Random(100) <= IDK)
             &&
-            ((_units + 1) < 1000)
+            ((_units + 1) < MAX_UNIT_COUNT)
         )
         {
 
@@ -2977,13 +3679,21 @@ void Determine_Offer(void)
 
                 if(itr_players == HUMAN_PLAYER_IDX)
                 {
+
                     Set_Mouse_List(1, mouse_list_default);
+
+Check_Cities_Data();
                     Hire_Hero_Popup(Hero_Slot, unit_type, 0);
+Check_Cities_Data();
+
                     Set_Mouse_List(1, mouse_list_hourglass);
+
                 }
                 else
                 {
+
                     AI_Accept_Hero(itr_players, Hero_Slot, unit_type);
+
                 }
 
             }
@@ -3794,7 +4504,7 @@ void Diplomacy_Growth_For_Enchantments__WIP(void)
 */
 void Do_All_Units_XP_Check_(void)
 {
-    /* TODO  init to zeroes (But, HOW!?!?!) */  struct s_BATTLE_UNIT battle_unit;
+    /* TODO  init to zeroes (But, HOW!?!?!) */  static struct s_BATTLE_UNIT battle_unit;  // // sizeof: 6Eh  110d
     int16_t Processed_Hero_List[NUM_HEROES] = { 0, 0, 0, 0, 0, 0 };
     int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t New_Level = 0;
@@ -3806,6 +4516,8 @@ void Do_All_Units_XP_Check_(void)
     int16_t itr_units = 0;  // _SI_
     int16_t itr_players = 0;  // _SI_
     int16_t itr_troops = 0;  // _DI_
+
+    memset(&battle_unit, 0, sizeof(struct s_BATTLE_UNIT));
 
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -3819,23 +4531,32 @@ void Do_All_Units_XP_Check_(void)
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
+
             _UNITS[itr_units].Damage = 0;
+
         }
 
         if((_UNITS[itr_units].mutations & C_STASISLINGER) != 0)
         {
+
             Load_Battle_Unit(itr_units, &battle_unit);
 
             if(BU_ResistRoll__STUB(battle_unit, -5, sbr_Sorcery) == 0)
             {
+
                 _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0x7F /*0b01111111*/);  // ¿ xor     al, C_STASISLINGER  10000000b ?
+
             }
+
         }
 
         if((_UNITS[itr_units].mutations & C_STASISINIT) != 0)
         {
+
             _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations | C_STASISLINGER);
+
             _UNITS[itr_units].mutations = (_UNITS[itr_units].mutations & 0xBF /*0b10111111*/);  // ¿ xor     al, C_STASISINIT  01000000b ?
+
         }
 
         if(
@@ -3857,13 +4578,19 @@ void Do_All_Units_XP_Check_(void)
 
             if(_UNITS[itr_units].Hero_Slot > -1)
             {
+
                 if(_UNITS[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
+
                     if(_UNITS[itr_units].Level < New_Level)
                     {
+
                         Hero_LevelUp_Popup(itr_units);
+
                     }
+
                 }
+
             }
 
             _UNITS[itr_units].Level = Calc_Unit_Level(itr_units);
@@ -3875,9 +4602,12 @@ void Do_All_Units_XP_Check_(void)
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
+
         for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
         {
+
             Processed_Hero_List[itr_heroes] = ST_FALSE;
+
         }
 
         if(
@@ -3886,8 +4616,10 @@ void Do_All_Units_XP_Check_(void)
             (g_TimeStop_PlayerNum == itr_players)
         )
         {
+
             for(itr_heroes = 0; itr_heroes < NUM_HEROES; itr_heroes++)
             {
+
                 if(
                     (_players[itr_players].Heroes[itr_heroes].unit_idx > -1)
                     &&
@@ -3905,6 +4637,7 @@ void Do_All_Units_XP_Check_(void)
 
                     for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                     {
+
                         XP_Gain = 0;
 
                         /*
@@ -3914,7 +4647,9 @@ void Do_All_Units_XP_Check_(void)
                         // Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;  // ; BUG: this can also be -1!
                         if(_UNITS[troop_list[itr_troops]].Hero_Slot > ST_UNDEFINED)
                         {
+
                             Processed_Hero_List[_UNITS[troop_list[itr_troops]].Hero_Slot] = ST_TRUE;
+
                         }
 
                         if(_UNITS[troop_list[itr_troops]].Hero_Slot > -1)
@@ -3922,37 +4657,54 @@ void Do_All_Units_XP_Check_(void)
 
                             if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER) != 0)
                             {
+
                                 XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 2);
+
                             }
+
                             else if((_HEROES2[HUMAN_PLAYER_IDX]->heroes[_UNITS[troop_list[itr_troops]].type].abilities & HSA_ARMSMASTER2) != 0)
                             {
+
                                 XP_Gain = ((_UNITS[troop_list[itr_troops]].Level + 1) * 3);
+
                             }
 
                             if(XP_Gain > Highest_Armsmaster_XP)
                             {
+
                                 Highest_Armsmaster_XP = XP_Gain;
+
                             }
 
                         }
+
                     }
 
                     if(Highest_Armsmaster_XP > 0)
                     {
+
                         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                         {
+
                             if(_UNITS[troop_list[itr_troops]].Hero_Slot == -1)
                             {
+
                                 _UNITS[troop_list[itr_troops]].XP += Highest_Armsmaster_XP;
 
                                 _UNITS[troop_list[itr_troops]].Level = Calc_Unit_Level(troop_list[itr_troops]);
+
                             }
+
                         }
+                        
                     }
 
                 }
+
             }
+
         }
+        
     }
 
 }

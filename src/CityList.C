@@ -8,7 +8,18 @@
         Module: ¿ Planets/Colonies Screen ?
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "City_ovr55.H"
+#include "CityList.H"
+#include "Help.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MOM_SCR.H"
+#include "ProdScr.H"
+#include "RACETYPE.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
 
 
 

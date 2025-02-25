@@ -296,8 +296,8 @@ struct s_UNIT_TYPE
     /* 16 */  int8_t   Construction;            /* {0: , 1: , 2: } 'Build Roads'  ¿ Build Outposts ? */
     /* 17 */  int8_t   Spec_Att_Attr;
     /* 18 */  uint16_t Move_Flags;              /* enum MOVEFLAGS */  /* TODO: check the data-type - UnitHasFlying() uses `byte ptr` and `CBW` */
-    /* 1A */  int16_t Attribs_1;                /* enum ATTRIB_1 */
-    /* 1C */  int8_t Attribs_2;                 /* enum ATTRIB_2 */
+    /* 1A */  uint16_t Attribs_1;                /* enum ATTRIB_1 */
+    /* 1C */  uint8_t Attribs_2;                 /* enum ATTRIB_2 */
     /* 1B */  // 2-byte alignment padding
     /* 1E */  uint16_t Abilities;               /* enum ABL_FLAGS */  // macros - UA_...
     /* 20 */  uint16_t Attack_Flags;            /* enum ATK_FLAGS */  // Att_ArmorPrc, etc.

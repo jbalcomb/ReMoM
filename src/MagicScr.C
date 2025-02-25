@@ -10,7 +10,19 @@
         Module: ¿  ?
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "City_ovr55.H"
+#include "CITYCALC.H"
+#include "DIPLOMAC.H"
+#include "Explore.H"
+#include "Help.H"
+#include "MagicScr.H"
+#include "MOM_SCR.H"
+#include "NEXTTURN.H"
+#include "Spellbook.H"
+#include "WIZVIEW.H"
+#include "WZD_o059.H"
 
 
 
@@ -596,7 +608,7 @@ void Magic_Screen(void)
                 {
                     players_globals = &_players[HUMAN_PLAYER_IDX].Globals[0];
                     players_globals[spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0] = 0;
-                    if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == NATURE_AWARENESS)
+                    if(spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].Param0 == NATURES_AWARENESS)
                     {
                         Update_Scouted_And_Contacted__WIP();
                     }

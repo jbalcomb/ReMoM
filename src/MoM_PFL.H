@@ -1,7 +1,9 @@
 #ifndef MOX_PFL_H
 #define MOX_PFL_H
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,13 +30,13 @@ extern uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
         Input wants mouse_x, mouse_y
         so, this lets it know they exist
     ...maybe should be Platform_Input.hpp? ~IN{,KD,MD,JD,GD,HD,etc.}
-    ? definitely don't declare them here and in the MoM, just to avoid including platform code in the game code ?
-    ? doesn't make sense to move the defn to the platform code ?
-    ? defn should be with impl ?
+    ¿ definitely don't declare them here and in the MoM, just to avoid including platform code in the game code ?
+    ¿ doesn't make sense to move the defn to the platform code ?
+    ¿ defn should be with impl ?
     But, ...
         the enums for KD are in Input, because they are used elsewhere
-        ? move them to their own include ? //SDL
-        ? include everything everywhere ? //GLFW
+        ¿ move them to their own include ? //SDL
+        ¿ include everything everywhere ? //GLFW
     
 */
 
@@ -57,6 +59,12 @@ extern uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
 void Pump_Events(void);
 // used by Page_Flip() in win_Video.C
 void Pump_Paints(void);
+// used by Set_Mouse_Position() in win_MD.C
+void MWA_Set_Mouse_Position(int16_t x, int16_t y);
+
+
+// win_DIR.C
+int32_t LOF(char * file_name);
 
 
 // win_EMS.C

@@ -7,6 +7,10 @@
 
 */
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
 #include "MoM.H"
 
 
@@ -38,7 +42,7 @@ int16_t G_CTY_SomeVar_0;
 // WZD dseg:C2A8
 int16_t m_new_outpost_flag;
 // WZD dseg:C2AA
-int16_t m_troop_count;
+int16_t m_troop_count__ovr077;
 // WZD dseg:C2AC
 int16_t CTY_Garrison_Units[MAX_STACK];
 // WZD dseg:C2BE 00 00                                           UU_IDK_OutpostScreen dw 0
@@ -207,9 +211,9 @@ void Outpost_Screen(int16_t flag)
 
     m_new_outpost_flag = flag;
 
-    m_troop_count = 0;
+    m_troop_count__ovr077 = 0;
 
-    Army_At_City(_city_idx, &m_troop_count, &CTY_Garrison_Units[0]);
+    Army_At_City(_city_idx, &m_troop_count__ovr077, &CTY_Garrison_Units[0]);
 
     Outpost_Screen_Load();
 
@@ -243,7 +247,7 @@ void Outpost_Screen(int16_t flag)
 
         if(m_new_outpost_flag == ST_FALSE)
         {
-            for(itr = 0; itr < m_troop_count; itr++)
+            for(itr = 0; itr < m_troop_count__ovr077; itr++)
             {
                 Outpost_Garrison_Picture_Coords(itr, &x1, &y1, &x2, &y2);
                 g_unit_window_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr077[0], ST_UNDEFINED);
@@ -337,7 +341,7 @@ void Outpost_Screen(int16_t flag)
             BEGIN:  Left-Click Unit Window
         */
         {
-            for(itr = 0; itr < m_troop_count; itr++)
+            for(itr = 0; itr < m_troop_count__ovr077; itr++)
             {
                 if(g_unit_window_fields[itr] == input_field_idx)
                 {
@@ -453,7 +457,7 @@ void Outpost_Screen_Draw(void)
 
     Reset_Window();
 
-    if(m_troop_count > 0)
+    if(m_troop_count__ovr077 > 0)
     {
         // TODO  mov     [_help_entries.help_01.entry_idx], HLP_CITY_GARRISONS
     }
@@ -462,7 +466,7 @@ void Outpost_Screen_Draw(void)
         // TODO  mov     [_help_entries.help_01.entry_idx], e_ST_UNDEFINED
     }
 
-    for(itr = 0; itr < m_troop_count; itr++)
+    for(itr = 0; itr < m_troop_count__ovr077; itr++)
     {
         Outpost_Garrison_Picture_Coords(itr, &figure_x1, &figure_y1, &figure_x2, &figure_y2);
         Draw_Unit_StatFig(figure_x1, figure_y1, CTY_Garrison_Units[itr], 1);

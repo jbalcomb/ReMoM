@@ -27,22 +27,22 @@ int16_t AI_Accept_Mercenaries(int16_t player_idx, int16_t cost);
 void AI_Next_Turn__WIP(void);
 
 // WZD o145p03
-// AI_Continent_Eval()
+void AI_Continent_Eval__WIP(int16_t player_idx);
 
 // WZD o145p04
-// AI_Power_Distrib()
+void AI_Update_Magic_Power(int16_t player);
 
 // WZD o145p05
-// WIZ_IsSpellKnown()
+int16_t Player_Knows_Spell(int16_t player_idx, int16_t spell_idx);
 
 // WZD o145p06
-// WIZ_KnownSpellCount()
+int16_t Player_Known_Spell_Count(int16_t player_idx);
 
 // WZD o145p07
-// AI_OVL_Eval_Assets()
+void AI_Player_Calculate_Target_Values(int16_t player_idx);
 
 // WZD o145p08
-// AI_Count_Active_Wars()
+void Player_Hostile_Opponents(int16_t player_idx);
 
 // WZD o145p09
 // sub_D405F()
@@ -51,28 +51,28 @@ void AI_Next_Turn__WIP(void);
 int16_t Map_Square_Unit_Count(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o145p11
-// AI_Alchemy()
+void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx);
 
 // WZD o145p12
-// AI_Tax_And_Farmers()
+void AI_Update_Gold_Income_And_Food_Income(int16_t player_idx);
 
 // WZD o145p13
 // AI_SetNeutralFarmers()
 
 // WZD o145p14
-// AI_ExcessBuilders()
+void AI_Kill_Excess_Settlers_And_Engineers(int16_t player_idx);
 
 // WZD o145p15
 // AI_StasisDisband()
 
 // WZD o145p16
-// EMM_Map_CONTXXX()
+void EMM_Map_CONTXXX__WIP(void);
 
 // WZD o145p17
-// CONTX_CreateChains()
+void CONTX_CreateChains__WIP(void);
 
 // WZD o145p18
-// CONTX_CreateLChains()
+void CONTX_CreateLChains__WIP(void);
 
 
 

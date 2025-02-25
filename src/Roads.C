@@ -6,7 +6,17 @@
 
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "Help.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "Roads.H"
+#include "special.H"
+#include "Terrain.H"
+#include "UnitMove.H"   // WTFMATE
+#include "UNITSTK.H"
+#include "UNITTYPE.H"   // WTFMATE
 
 
 

@@ -6,7 +6,19 @@
     
 */
 
-#include "MoM.H"
+#include "AdvsrScr.H"
+
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "Explore.H"
+#include "Help.H"
+#include "MainScr_Maps.H"
+#include "MOM_SCR.H"
+#include "REPORT.H"
+#include "Spellbook.H"
+#include "Surveyor.H"
+#include "UnitMove.H"   // WTFMATE
+#include "WIZVIEW.H"
 
 
 

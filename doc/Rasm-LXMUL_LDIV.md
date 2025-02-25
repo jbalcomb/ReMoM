@@ -5,9 +5,88 @@
 
 ¿ ((#3 * #2) % #1) ?
 
+#2 * #3 / #1
+
 LXMUL@()
 LDIV@()
 
+MACRO
+
+
+
+AI_Alchemy__WIP()
+xor     ax, ax
+mov     dx, 10
+push    ax
+push    dx                              ; divisor
+mov     cx, [word ptr bp+Resource_Total+2]
+mov     bx, [word ptr bp+Resource_Total]
+xor     dx, dx
+mov     ax, 7
+call    LXMUL@
+push    dx
+push    ax                              ; dividend
+call    LDIV@
+mov     [word ptr bp+Desired_Mana+2], dx
+mov     [word ptr bp+Desired_Mana], ax
+
+mov     [word ptr bp+Resource_Total], cx
+xor     ax, ax
+mov     dx, 10
+push    ax
+push    dx                              ; divisor
+mov     cx, [word ptr bp+Resource_Total+2]
+mov     bx, [word ptr bp+Resource_Total]
+xor     dx, dx
+mov     ax, 9
+call    LXMUL@
+push    dx
+push    ax                              ; dividend
+call    LDIV@
+mov     [word ptr bp+Desired_Gold+2], dx
+mov     [word ptr bp+Desired_Gold], ax
+
+Desired_Mana = (Resource_Total * 7 / 10);  // mana = total * .7
+Desired_Gold = (Resource_Total - Desired_Mana);
+e.g., 100 * 7 / 10 = 70; 100 - 70 = 30;
+Desired_Gold = (Resource_Total * 9 / 10);  // gold = total * .9
+Desired_Mana = (Resource_Total - Desired_Gold);
+e.g., 100 * 9 / 10 = 90; 100 - 90 = 10;
+
+#2 * #3 / #1
+
+
+Determine_Event()
+xor     ax, ax
+mov     dx, 100
+push    ax
+push    dx                              ; divisor
+mov     ax, _DI_player_idx
+mov     dx, size s_WIZARD
+imul    dx
+mov     bx, ax
+mov     ax, [_players.gold_reserve+bx]
+cwd
+push    ax
+push    dx
+mov     ax, 21
+push    ax                              ; n
+call    Random
+pop     cx
+cwd
+add     ax, 29
+adc     dx, 0
+pop     cx
+pop     bx
+call    LXMUL@
+push    dx
+push    ax                              ; dividend
+call    LDIV@
+mov     [bp+Conjunction_Active], ax
+
+Conjunction_Active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
+
+#2 * #1 / #3
 
 
 

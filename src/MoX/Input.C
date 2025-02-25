@@ -152,6 +152,50 @@ char * field_names[FIELD_COUNT_MAX] = {
 
 
 
+// WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
+// WZD dseg:8296                                                 BEGIN: seg036 (fields) - Initialized Data
+
+// WZD dseg:8296
+// AKA have_help
+int16_t help_list_active = ST_FALSE;
+
+// WZD dseg:8298
+// AKA _help_count
+int16_t help_list_count = 0;
+
+// WZD dseg:8298                                                 ¿ END: Help - Initialized Data ?
+// WZD dseg:8298                                                 END: seg036 (fields) - Initialized Data
+
+
+
+// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// WZD dseg:82A6
+
+
+
+// WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
+// WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
+
+// WZD dseg:E872
+// AKA _help_list
+// struct s_HELP_FIELD * help_struct_pointer[50];
+/*
+    ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
+*/
+// struct s_HELP_FIELD ** help_struct_pointer;
+struct s_HELP_FIELD * help_struct_pointer;
+
+
+// WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
+// ...
+// ...
+// ...
+// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+
+
+
+
+
 /*
     WIZARDS.EXE
     seg035
@@ -577,7 +621,6 @@ MoO2
                         else  /* input_field_active == ST_TRUE */
                         {
                             // ¿ UNREACHABLE ?
-                            MOX_DBG_BREAK;
                             if(active_input_field_number == alt_field_num)
                             {
                                 itr_continuous_string = 0;
@@ -606,7 +649,6 @@ MoO2
                     {
                         if(input_field_active != 0)
                         {
-                            MOX_DBG_BREAK;
                             // UNREACHABLE  if(p_fields[alt_field_num].type == ft_ContinuousStringInput)
                             // UNREACHABLE  {
                             // UNREACHABLE      itr_continuous_string = 0;
@@ -1192,11 +1234,15 @@ Return type: void (1 bytes)
 pointer (4 bytes) help_pointer
 signed integer (2 bytes) count
 */
-// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer, int16_t count)
-// // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count)
-// // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count)
-// void Set_Help_List(int16_t * help_pointer, int16_t count)
-void Set_Help_List(char * help_pointer, int16_t count)
+// // // // void Set_Help_List(struct s_HELP_FIELD * help_pointer, int16_t count)
+// // // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count)
+// // // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count)
+// // void Set_Help_List(int16_t * help_pointer, int16_t count)
+// void Set_Help_List(char * help_pointer, int16_t count)
+/*
+Set_Help_List(_help_entries, 20);
+*/
+void Set_Help_List(void * help_pointer, int16_t count)
 {
     help_struct_pointer = (struct s_HELP_FIELD *)help_pointer;
     help_list_count = count;
@@ -1400,7 +1446,8 @@ void Reset_Wait_For_Input(void)
 // MoO2  Module: fields  Wait_For_Input()
 int16_t Wait_For_Input(void)
 {
-    char charcode;
+    // char charcode;  // clangd says comparrisons with ST_KEY_F11, etc. are always false, because they are out of range
+    uint8_t charcode;
     int16_t keyboard_flag;
     int16_t mouse_button_flag;
 
@@ -1581,7 +1628,8 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
 void GUI_EditBoxControl(int16_t field_num)
 {
     char input_string[63];
-    char key;
+    // char key;  // ¿ clangd ... out of range ?
+    uint8_t key;
     int16_t Timeout_Counter;
     int16_t Control_Change;
     int16_t Font_Height;
@@ -1591,9 +1639,6 @@ void GUI_EditBoxControl(int16_t field_num)
     int16_t Allowed_Char;
     int16_t string_pos;  // _SI_
     int16_t itr;  // _DI_
-
-    // Where does this called from / through?
-    MOX_DBG_BREAK;
 
     Timeout_Counter = 4;
 
@@ -1657,7 +1702,7 @@ void GUI_EditBoxControl(int16_t field_num)
             break;
         }
         
-        while((Keyboard_Status == 0) && (Control_Change == ST_FALSE))
+        while((Keyboard_Status() == 0) && (Control_Change == ST_FALSE))
         {
             if(GUI_EditTimeOutType == ST_UNDEFINED)
             {

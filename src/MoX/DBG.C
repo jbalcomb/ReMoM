@@ -110,13 +110,15 @@ Module: capture
 void Screen_Flic_Capture__STUB(void)
 {
     char Conversion_String[16];
-    char ScreenDump_File[16];
-    uint8_t scanline_buffer[SCREEN_WIDTH];
+    char file_name[16];
+    // uint8_t scanline_buffer[SCREEN_WIDTH];
+    char scanline_buffer[SCREEN_WIDTH];
     char var_26[30];
     int16_t Scrdmp_File_Number;
     uint16_t Word_Field_Value;
     uint32_t Dword_Field_Value;
-    int16_t file_handle;  // _SI_
+    // int16_t file_handle;  // _SI_
+    FILE * file_pointer;
 
     if(release_flag == ST_TRUE)
     {
@@ -128,10 +130,10 @@ void Screen_Flic_Capture__STUB(void)
 
     Scrdmp_File_Number = 0;
 
-    strcpy(ScreenDump_File, cnst_Scrdmp00_Full);  // "SCRDMP00"
+    strcpy(file_name, cnst_Scrdmp00_Full);  // "SCRDMP00"
 
 
-    while(DIR(ScreenDump_File, scanline_buffer) != 0)
+    while(DIR(file_name, scanline_buffer) != 0)
     {
         Scrdmp_File_Number++;
         if (Scrdmp_File_Number < 10)
@@ -145,13 +147,30 @@ void Screen_Flic_Capture__STUB(void)
             itoa(Scrdmp_File_Number, scanline_buffer, 10);
 
         }
-        strcpy(ScreenDump_File, cnst_Scrdmp_Base);  // "SCRDMP"
-        strcat(ScreenDump_File, scanline_buffer);
-        strcat(ScreenDump_File, cnst_Scrdmp_Ext);  // ".FLI"
+        strcpy(file_name, cnst_Scrdmp_Base);  // "SCRDMP"
+        strcat(file_name, scanline_buffer);
+        strcat(file_name, cnst_Scrdmp_Ext);  // ".FLI"
     }
 
+    file_pointer = fopen(file_name, cnst_WB7);
+
+    
+
+    // TODO
+    // TODO
+    // TODO
+    // TODO
+    // TODO
+    
 
 
+    fclose(file_pointer);
+    
+    
+    Restore_Mouse_State();
+
+    Set_Page_Off();
+    
 }
 
 // WZD s24p03

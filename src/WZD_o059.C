@@ -3,6 +3,8 @@
         ovr059
 */
 
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 #include "WZD_o059.H"
 #include "MainScr.H"
@@ -140,7 +142,7 @@ void Enemy_Army_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx
             (_UNITS[itr].wx == wx) &&
             (_UNITS[itr].wy == wy) &&
             (_UNITS[itr].owner_idx != player_idx) &&
-            (_UNITS[itr].owner_idx != -1)
+            (_UNITS[itr].owner_idx != ST_UNDEFINED)
         )
         {
             troops[*troop_count] = itr;
@@ -162,28 +164,133 @@ void Army_At_Square_2(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count,
     for(itr = 0; ((itr < _units) && (*troop_count < MAX_STACK)); itr++)
     {
         if(
-            ((_UNITS[itr].wp == wp) || (_UNITS[itr].in_tower == ST_TRUE)) &&
-            (_UNITS[itr].wx == wx) &&
-            (_UNITS[itr].wy == wy) &&
-            (_UNITS[itr].owner_idx != -1)
+            (
+                (_UNITS[itr].wp == wp)
+                ||
+                (_UNITS[itr].in_tower == ST_TRUE)
+            )
+            &&
+            (_UNITS[itr].wx == wx)
+            &&
+            (_UNITS[itr].wy == wy)
+            &&
+            (_UNITS[itr].owner_idx != ST_UNDEFINED)
         )
         {
+
             troops[*troop_count] = itr;
+
             *troop_count += 1;
+
         }
+
     }
 
 }
 
 
 // WZD o59p07
-// CRP_TILE_GetUnits_2()
+// drake178: CRP_TILE_GetUnits_2()
+/*
+returns a list of the units occupying the selected
+tile, excluding any that are marked as owned by
+player index -1
+
+(slightly better than TILE_GetUnits)
+*/
+/*
+
+vs Army_At_Square_2()
+    doesn't check tower
+    doesn't limit MAX_STACK
+
+*/
+void Army_At_Square_3(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
+{
+    int16_t itr_units = 0;  // _DX_
+
+    *troop_count = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(
+            (_UNITS[itr_units].wp == wp)
+            &&
+            (_UNITS[itr_units].wx == wx)
+            &&
+            (_UNITS[itr_units].wy == wy)
+            &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+        )
+        {
+
+            troops[*troop_count] = itr_units;
+
+            *troop_count += 1;
+
+        }
+
+    }
+
+}
+
 
 // WZD o59p08
-// UU_Army_At_Square_3()
+/*
+*/
+/*
+
+vs Army_At_Square_2()
+    doesn't limit MAX_STACK
+
+vs Army_At_Square_3()
+    does check tower
+
+*/
+void UU_Army_At_Square_4(int16_t wx, int16_t wy, int16_t wp, int16_t * troop_count, int16_t troops[])
+{
+
+    int16_t itr_units = 0;  // _DX_
+
+    *troop_count = 0;
+
+    for(itr_units = 0; itr_units < _units; itr_units++)
+    {
+
+        if(
+            (
+                (_UNITS[itr_units].wp == wp)
+                ||
+                (_UNITS[itr_units].in_tower == ST_TRUE)
+            )
+            &&
+            (_UNITS[itr_units].wx == wx)
+            &&
+            (_UNITS[itr_units].wy == wy)
+            &&
+            (_UNITS[itr_units].owner_idx != ST_UNDEFINED)
+        )
+        {
+
+            troops[*troop_count] = itr_units;
+
+            *troop_count += 1;
+
+        }
+
+    }
+
+}
+
 
 // WZD o59p09
-// STK_SettlingPossible()
+// drake178: STK_SettlingPossible()
+/*
+*/
+/*
+
+*/
 int16_t Unit_Action_Special_Settle(int16_t troop_count, int16_t troops[])
 {
     int16_t unit_type;
@@ -417,7 +524,7 @@ void Cheat_Reveal(void)
         }
     }
 
-    _players[_human_player_idx].Globals[NATURE_AWARENESS] = ST_TRUE;
+    _players[_human_player_idx].Globals[NATURES_AWARENESS] = ST_TRUE;
 
     Update_Scouted_And_Contacted__WIP();
 

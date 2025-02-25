@@ -8,7 +8,15 @@
     WIZARDS.EXE  ovr074
 */
 
-#include "MoM.H"
+#include "WIZVIEW.H"
+
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "CITYCALC.H"
+#include "Help.H"
+#include "UNITTYPE.H"   // WTFMATE
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 
 
 

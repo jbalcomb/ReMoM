@@ -6,7 +6,9 @@
 #ifndef WZD_O143_H
 #define WZD_O143_H
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

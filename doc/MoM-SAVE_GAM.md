@@ -50,12 +50,12 @@ _players
 _world_maps
 UU_TBL_1
 UU_TBL_2
-TBL_Landmasses
-TBL_Nodes
+_landmasses
+_NODES
 _FORTRESSES
 _TOWERS
-TBL_Lairs
-TBL_Items
+_LAIRS
+_ITEMS
 _CITIES
 _UNITS
 TBL_Terr_Specials

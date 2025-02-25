@@ -27,7 +27,22 @@
 
 */
 
-#include "MoX_Lib.H"
+#include "ALLOCATE.H"
+
+#include "DBG.H"  /* Check_Release_Version() */
+#include "MoX_DEF.H"
+#include "MoX_TYPE.H"
+
+#include <stdlib.h>     /* abs(); itoa(); */
+#include <string.h>     /* memset(), strcat(), strcpy(); */
+
+// #include "../MoM.H"
+
+uint16_t _SA_MEMSIG1 = 0x12FA;
+uint16_t _SA_MEMSIG2 = 0x4ECF;
+
+uint16_t _BBBB = 0xBBBB;
+
 
 
 
@@ -182,7 +197,9 @@ Notes from MGC Dasm
 SAMB_ptr tmp_SAMB_head;  // rename - ?pTmpSAMB?, g_header, tmp_header_ptr, _header_ptr, ?!?
 
 
-char * str_allocation_errors[] =
+// char * str_allocation_errors[] =
+// ISO C++11 does not allow conversion from string literal to 'char *'clang(-Wwritable-strings)
+char const * str_allocation_errors[] =
 {
     "Near Allocation too large by ",
     " bytes",
@@ -208,7 +225,8 @@ int16_t Check_Allocation(SAMB_ptr SAMB_head)
 {
     int16_t is_valid;
 
-    if (SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
+    // if (SA_GET_MEMSIG1(SAMB_head) != SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != SA_MEMSIG2)
+    if (SA_GET_MEMSIG1(SAMB_head) != _SA_MEMSIG1 || SA_GET_MEMSIG2(SAMB_head) != _SA_MEMSIG2)
     {
         is_valid = ST_FAILURE;
     }
@@ -305,9 +323,11 @@ SAMB_ptr Allocate_Space(uint16_t size)
     SAMB_head = tmp_SAMB_head + 12;  // 16-byte paragraph - 4-byte malloc header
 
 #pragma warning(suppress : 6011)
-    SA_SET_MEMSIG1(SAMB_head);
+    // SA_SET_MEMSIG1(SAMB_head);
+    _SA_SET_MEMSIG1(SAMB_head);
 #pragma warning(suppress : 6011)
-    SA_SET_MEMSIG2(SAMB_head);
+    // SA_SET_MEMSIG2(SAMB_head);
+    _SA_SET_MEMSIG2(SAMB_head);
 #pragma warning(suppress : 6011)
     SA_SET_SIZE(SAMB_head,size);
 #pragma warning(suppress : 6011)
@@ -394,17 +414,27 @@ SAMB_ptr Allocate_First_Block(SAMB_ptr SAMB_head, uint16_t size)
 
     sub_SAMB_head = SAMB_head + 16;  // ~== &SAMB_head[16]
 
-    SET_2B_OFS(sub_SAMB_head,  0, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head,  2, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head,  4, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head,  6, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head,  8, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head, 10, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head, 12, 0xBBBB);  // DNE in Dasm
-    SET_2B_OFS(sub_SAMB_head, 14, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head,  0, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head,  2, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head,  4, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head,  6, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head,  8, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head, 10, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head, 12, 0xBBBB);  // DNE in Dasm
+    // SET_2B_OFS(sub_SAMB_head, 14, 0xBBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  0, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  2, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  4, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  6, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head,  8, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 10, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 12, _BBBB);  // DNE in Dasm
+    SET_2B_OFS(sub_SAMB_head, 14, _BBBB);  // DNE in Dasm
 
-    SA_SET_MEMSIG1(sub_SAMB_head);
-    SA_SET_MEMSIG2(sub_SAMB_head);
+    // SA_SET_MEMSIG1(sub_SAMB_head);
+    // SA_SET_MEMSIG2(sub_SAMB_head);
+    _SA_SET_MEMSIG1(sub_SAMB_head);
+    _SA_SET_MEMSIG2(sub_SAMB_head);
     SA_SET_SIZE(sub_SAMB_head,size);
     SA_SET_USED(sub_SAMB_head,1);
     SA_SET_MARK(sub_SAMB_head,1);
@@ -446,8 +476,10 @@ SAMB_ptr Allocate_Next_Block(SAMB_ptr SAMB_head, uint16_t size)
     
     sub_SAMB_head = SAMB_head + (old_used * 16);  // ~== &SAMB_head[SAMB->used]
 
-    SA_SET_MEMSIG1(sub_SAMB_head);
-    SA_SET_MEMSIG2(sub_SAMB_head);
+    // SA_SET_MEMSIG1(sub_SAMB_head);
+    // SA_SET_MEMSIG2(sub_SAMB_head);
+    _SA_SET_MEMSIG1(sub_SAMB_head);
+    _SA_SET_MEMSIG2(sub_SAMB_head);
     SA_SET_SIZE(sub_SAMB_head,size);
     SA_SET_USED(sub_SAMB_head,1);
     // SA_SET_MARK(sub_SAMB_head,1);
@@ -571,8 +603,10 @@ SAMB_ptr Allocate_Dos_Space(int32_t size)
 
     SAMB_head = (header + 12);
 
-    SA_SET_MEMSIG1(SAMB_head);  // DNE in MoO2 Dasm
-    SA_SET_MEMSIG2(SAMB_head);  // DNE in MoO2 Dasm
+    // SA_SET_MEMSIG1(SAMB_head);  // DNE in MoO2 Dasm
+    // SA_SET_MEMSIG2(SAMB_head);  // DNE in MoO2 Dasm
+    _SA_SET_MEMSIG1(SAMB_head);  // DNE in MoO2 Dasm
+    _SA_SET_MEMSIG2(SAMB_head);  // DNE in MoO2 Dasm
     SA_SET_SIZE(SAMB_head, size);
     SA_SET_USED(SAMB_head, 1);  // MoO2 Dasm shows 0
     // ¿ DONT ?  SA_SET_MARK(SAMB_head, 1);  // MoO2 Dasm shows 0

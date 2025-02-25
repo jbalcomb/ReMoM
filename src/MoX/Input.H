@@ -647,6 +647,52 @@ EKey_NumEnter  = 0E00Dh
 
 
 
+
+
+// WZD dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
+// WZD dseg:8296                                                 BEGIN: seg036 (fields) - Initialized Data
+
+// WZD dseg:8296
+// AKA have_help
+extern int16_t help_list_active;
+
+// WZD dseg:8298
+// AKA _help_count
+extern int16_t help_list_count;
+
+// WZD dseg:8298                                                 ¿ END: Help - Initialized Data ?
+// WZD dseg:8298                                                 END: seg036 (fields) - Initialized Data
+
+
+
+// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+// WZD dseg:82A6
+
+
+
+// WZD dseg:E872                                                 ¿ BEGIN: fields, intput, ... ?
+// WZD dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
+
+// WZD dseg:E872
+// AKA _help_list
+// extern struct s_HELP_FIELD * help_struct_pointer;
+/*
+    ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
+*/
+// extern struct s_HELP_FIELD ** help_struct_pointer;
+extern struct s_HELP_FIELD * help_struct_pointer;
+
+
+// WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
+// ...
+// ...
+// ...
+// WZD dseg:82A6                                                 END: Fields, Input, Mouse, Keyboard
+
+
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -694,7 +740,8 @@ void Set_Global_ESC(void);
 // // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count);
 // // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count);
 // void Set_Help_List(int16_t * help_pointer, int16_t count);
-void Set_Help_List(char * help_pointer, int16_t count);
+// void Set_Help_List(char * help_pointer, int16_t count);
+void Set_Help_List(void * help_pointer, int16_t count);
 
 // WZD s36p13
 void Deactivate_Help_List(void);

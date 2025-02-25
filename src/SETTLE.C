@@ -67,15 +67,157 @@ Game-Data:
 
 // WZD o100p01
 // drake178: AI_MoveUnits()
-// AI_MoveUnits()
+/*
+attempts to execute the current orders for all owned
+units
+
+unclear, BUGgy, RE-EXPLORE!
+*/
+/*
+
+*/
+void AI_MoveUnits__WIP(int16_t player_idx)
+{
+    int16_t OVL_Prev_Plane = 0;
+    int16_t OVL_Prev_Top_Y = 0;
+    int16_t OVL_Prev_Left_X = 0;
+    int16_t itr_units = 0;  // _SI_
+
+
+    OVL_Prev_Left_X = _map_x;
+
+    OVL_Prev_Top_Y = _map_y;
+
+    OVL_Prev_Plane = _map_plane;
+
+
+    if(
+        (g_TimeStop_PlayerNum > 0)
+        &&
+        ((player_idx + 1) != g_TimeStop_PlayerNum)
+    )
+    {
+
+        return;
+
+    }
+
+
+    for(itr_units = 0; itr_units <_units; itr_units++)
+    {
+
+        if(_UNITS[itr_units].owner_idx == player_idx)
+        {
+
+            switch(_UNITS[itr_units].Status)
+            {
+
+                case us_BuildRoad:
+                {
+
+                    AI_UNIT_BuildRoad__WIP(itr_units);
+
+                    AI_UNIT_Move__WIP(itr_units);
+
+                } break;
+
+                case us_GOTO:
+                {
+
+                    AI_UNIT_Move__WIP(itr_units);
+
+                } break;
+
+                case us_Meld:
+                {
+
+                    AI_UNIT_Meld__WIP(itr_units);
+
+                } break;
+
+                case us_Settle:
+                {
+
+                    AI_UNIT_Settle__WIP(itr_units);
+
+                } break;
+
+                case us_SeekTransport:
+                {
+
+                    AI_UNIT_SeekTransprt__WIP(itr_units);
+
+                } break;
+
+                case us_Move:
+                {
+
+                    AI_UNIT_Move__WIP(itr_units);
+
+                } break;
+
+            }
+
+        }
+
+    }
+
+
+    _map_x = OVL_Prev_Left_X;
+
+    _map_y = OVL_Prev_Top_Y;
+
+    _prev_world_x = _map_x;
+
+    _prev_world_y = _map_y;
+
+    _map_plane = OVL_Prev_Plane;
+
+
+}
+
 
 // WZD o100p02
 // drake178: AI_UNIT_Meld()
-// AI_UNIT_Meld()
+/*
+; melds the first spirit found on the unit's tile into
+; the node on the tile unless the selected unit is
+; already marked as finished for the turn
+;
+; BUG: marks all other units on the tile as ready
+;  regardless of their previous status
+*/
+/*
+
+*/
+void AI_UNIT_Meld__WIP(int16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o100p03
 // drake178: AI_UNIT_Settle()
-// AI_UNIT_Settle()
+/*
+; settles the tile if possible with the first settler
+; found on the unit's tile unless the selected unit is
+; already marked as finished for the turn
+;
+; BUG: marks all other units on the tile as ready
+;  regardless of their previous status
+*/
+/*
+
+*/
+void AI_UNIT_Settle__WIP(int16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o100p04
 int16_t Do_Build_Outpost(void)
@@ -146,7 +288,67 @@ int16_t STK_SettleTile(int16_t troop_count, int16_t troops[])
 
 // WZD o100p06
 // drake178: AI_UNIT_Move()
-// AI_UNIT_Move()
+/*
+; selects and moves the stack that the specified unit
+; is part of based on destination and road building
+; progress
+; returns 1 if the unit has moved, or 0 if not
+; (including if it is already marked as finished)
+;
+; contains multiple inherited BUGs
+*/
+/*
+
+*/
+void AI_UNIT_Move__WIP(int16_t unit_idx)
+{
+    int16_t UU_Result = 0;
+    int16_t Unit_Y = 0;
+    int16_t Unit_X = 0;
+    int16_t Unit_Owner = 0;
+    int16_t Plane = 0;
+    int16_t Dummy_OVL_Map_TopY = 0;
+    int16_t Dummy_OVL_Map_LeftX = 0;
+    int16_t Target_Y = 0;
+    int16_t Target_X = 0;
+
+
+    if(_UNITS[unit_idx].Finished != ST_TRUE)
+    {
+
+        return;
+
+    }
+
+
+    Allocate_Reduced_Map();
+
+    MainScr_Create_Reduced_Map_Picture();
+
+    Target_X = _UNITS[unit_idx].dst_wx;
+    
+    Target_Y = _UNITS[unit_idx].dst_wy;
+    
+    Plane = _UNITS[unit_idx].wp;
+
+    Unit_Owner = _UNITS[unit_idx].owner_idx;
+
+    Unit_X = _UNITS[unit_idx].wx;
+
+    Unit_Y = _UNITS[unit_idx].wy;
+
+    Dummy_OVL_Map_LeftX = _map_x;
+
+    Dummy_OVL_Map_TopY = _map_y;
+
+    _map_x = Dummy_OVL_Map_LeftX;
+
+    _map_y = Dummy_OVL_Map_TopY;
+
+    UU_Result = RdBd_UNIT_MoveStack__WIP(Unit_Owner, unit_idx, Target_X, Target_Y, &Dummy_OVL_Map_LeftX, &Dummy_OVL_Map_TopY, Plane);
+
+}
+
 
 // WZD o100p07
 // drake178: sub_8227A()
@@ -387,12 +589,260 @@ Done:
 
 // WZD o100p11
 // drake178: AI_UNIT_SeekTransprt()
-// AI_UNIT_SeekTransprt()
+/*
+; decrease the transport waiting counter of the unit
+; unless it is already marked as finished, changing its
+; status back to ready if it either ran out, or there
+; are also other units on its tile
+;
+; RE-EXAMINE in more context!
+*/
+/*
+
+*/
+void AI_UNIT_SeekTransprt__WIP(uint16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o100p12
 // drake178: AI_UNIT_BuildRoad()
-// AI_UNIT_BuildRoad()
+/*
+; still not quite clear, and definitely conceptually
+; flawed
+;
+; RE-EXPLORE!
+*/
+/*
+
+*/
+void AI_UNIT_BuildRoad__WIP(int16_t unit_idx)
+{
+
+
+
+}
+
 
 // WZD o100p13
 // drake178: TILE_CanShiftPlanes()
-// TILE_CanShiftPlanes()
+/*
+; returns 1 if the stack on the tile can shift to the
+; other plane, or 0 otherwise
+;
+; contains multiple BUGs, many of which have to do with
+; Non-Corporeal units
+*/
+/*
+
+*/
+int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t troops2[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wp2 = 0;
+    int16_t Stack_Owner = 0;
+    int16_t unit_dx = 0;
+    int16_t Have_Windwalker = 0;
+    int16_t UU_Local_0 = 0;
+    int16_t troop_count2 = 0;
+    int16_t troop_count = 0;
+    int16_t itr_troops = 0;  // _SI_
+    int16_t can_do = 0;  // _DI_
+
+
+    if(Check_Planar_Seal() == ST_TRUE)
+    {
+
+        return ST_FALSE;
+
+    }
+
+
+    Army_At_Square_3(wx, wy, wp, &troop_count, &troops[0]);
+
+
+    if(troop_count < 1)
+    {
+
+        return ST_FALSE;
+
+    }
+
+
+    Stack_Owner = _UNITS[troops[0]].owner_idx;
+
+
+    if(
+        (troop_count > 1)
+        &&
+        (
+            (_UNITS[troops[0]].owner_idx != Stack_Owner)
+            ||
+            (troop_count >= MAX_STACK)
+        )
+    )
+    {
+
+        return ST_FALSE;
+
+    }
+
+
+    wp2 = (1 - wp);
+
+    Army_At_Square_3(wx, wy, wp2, &troop_count2, &troops2[0]);
+
+
+    if(
+        (troop_count2 > 0)
+        &&
+        (
+            (_UNITS[troops[0]].owner_idx != Stack_Owner)
+            ||
+            (troop_count > MAX_STACK)
+            ||
+            ((troop_count2 + troop_count) > MAX_STACK)
+        )
+    )
+    {
+
+        return ST_FALSE;
+
+    }
+
+
+// ; BUG: prevents shifting into the player's own cities,
+// ; and yet doesn't prevent shifting into enemy cities
+
+    if(
+        (Square_Has_Lair(wx, wy, wp2) != ST_UNDEFINED)
+        ||
+        (Player_City_At_Square(wx, wy, wp2, Stack_Owner) != ST_UNDEFINED)
+    )
+    {
+
+        return ST_FALSE;
+
+    }
+
+
+    can_do = 0;
+
+    UU_Local_0 = 0;
+
+    if(Square_Is_Sailable(wx, wy, wp2) != ST_TRUE)
+    {
+
+        can_do = ST_TRUE;
+
+        for(itr_troops = 0; ((itr_troops < troop_count) & (can_do == ST_TRUE)); itr_troops++)
+        {
+
+            if(
+                ((_unit_type_table[_UNITS[troops[itr_troops]].type].Move_Flags & MV_SAILING) == 0)
+                ||
+                (Unit_Has_AirTravel(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal
+            )
+            {
+
+                can_do = ST_FALSE;
+
+            }
+            else
+            {
+
+                can_do = ST_TRUE;
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        Have_Windwalker = ST_FALSE;
+
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+
+            if(Unit_Has_WindWalking(troops[itr_troops]) == ST_TRUE)
+            {
+
+                can_do = ST_TRUE;
+
+                Have_Windwalker = ST_TRUE;
+
+            }
+
+        }
+
+        if(Have_Windwalker == ST_FALSE)
+        {
+
+            Have_Windwalker = ST_FALSE;
+
+            for(itr_troops = 0; ((itr_troops < troop_count2) & (Have_Windwalker == ST_FALSE)); itr_troops++)
+            {
+
+                unit_dx = troops2[itr_troops];
+
+                // ; conflicting condition - will never jump
+                if(unit_dx != ST_UNDEFINED)
+                {
+
+                    if(Unit_Has_WindWalking(unit_dx) == ST_TRUE)
+                    {
+
+                        can_do = ST_TRUE;
+
+                        Have_Windwalker = ST_TRUE;
+                        
+                    }
+
+                }
+
+            }
+
+            if(Have_Windwalker == ST_FALSE)
+            {
+
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+
+                    if(
+                        (Unit_Has_AirTravel(troops[itr_troops]) != ST_TRUE)
+                        ||
+                        (Unit_Has_AirTravel_Item(troops[itr_troops]) != ST_TRUE)
+                        ||
+                        (Unit_Has_Swimming(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal
+                        ||
+                        (Unit_Has_WaterTravel_Item(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal (Wraithform item)
+                    )
+                    {
+
+                        can_do = ST_FALSE;  // Dasm looks like `return;`
+
+                    }
+                    else
+                    {
+
+                        can_do = ST_TRUE;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return can_do;
+
+}

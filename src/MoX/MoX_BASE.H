@@ -32,7 +32,7 @@
 #define NUM_SAVE_GAME_FILES    9
 #define NUM_HOF_ENTRIES       10
 
-#define LEN_STRING            30
+#define LEN_STRING            30  /* used for found_file in main() */
 #define LEN_NAME              20  /* ¿ Wizard Name, Unit Type Name, Building Name, HoF Name, Save-Game Name, ... ? (NOT Item Name, City Name)*/
 #define LEN_DESCRIPTION       30  /* ¿ Item Name ? */
 #define LEN_TEMP_STRING       20

@@ -8,7 +8,7 @@
 #ifndef MAINSCR_MAPS_H
 #define MAINSCR_MAPS_H
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
 
 
 
@@ -61,10 +61,10 @@ extern uint32_t WarpNode_SeedSave;
 
 
 
-// WZD dseg:974A
-extern int16_t _prev_world_y;
-// WZD dseg:974C
-extern int16_t _prev_world_x;
+// MoM_Data  WZD dseg:974A
+// MoM_Data  extern int16_t _prev_world_y;
+// MoM_Data  WZD dseg:974C
+// MoM_Data  extern int16_t _prev_world_x;
 
 
 
@@ -110,15 +110,6 @@ extern int16_t reduced_map_mark_cycle;
 
 
 
-//                                          ovr150
-// WZD dseg : CB56 00 00                                           OVL_MapDrawY_Save dw 0; DATA XREF : OVL_MapStateSave + Cw ...
-// WZD dseg:CB58 00 00                                           OVL_MapDrawX_Save dw 0; DATA XREF : OVL_MapStateSave + 6w ...
-// WZD dseg:CB5A 00 00                                           OVL_NewMapSust_Save dw 0; DATA XREF : OVL_MapStateSave + 12w ...
-// WZD dseg:CB5C
-int16_t map_draw_full;
-
-
-
 
 
 #ifdef __cplusplus
@@ -145,49 +136,41 @@ extern "C" {
 */
 void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
 
-// WZD o67p0
-// AKA IDK_CheckSet_MapDisplay_XY
+// WZD o67p02
 void IDK_CheckSet_MapDisplay_XY(void);
+
+// WZD o67p03
+// void sub_59DF7(int16_t arg_0);
 
 // WZD o67p04
 void Set_Draw_Active_Stack_Always(void);
 
 // WZD o67p05
-// AKA OVL_HideActiveStack
 void Set_Draw_Active_Stack_Never(void);
 
 // WZD o67p06
-// Reset_Active_Stack_Draw
 void Reset_Draw_Active_Stack(void);
 
 // WZD o67p07
-// AKA OVL_DrawActiveStack
 void Draw_Active_Unit_Stack(int16_t world_x, int16_t world_y, int16_t world_plane);
 
 // WZD o67p08
-// AKA Minimap_Set_Dims()
 void Reduced_Map_Set_Dims(int16_t width, int16_t height);
 
 // WZD o67p09
-// "Reduced Map"/"World Window"
-// AKA Draw_Minimap_Window()
 void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t height);
 
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
 
 // WZD o67p13
-/*
-    updates draw priority on ALL units in _UNITS
-*/
 void Set_Unit_Draw_Priority(void);
 
 // WZD o67p14
-// drake178: STK_NoUnitDraw
 void Reset_Stack_Draw_Priority(void);
 
 // WZD o67p15
-int16_t IsPassableTower(int16_t world_x, int16_t world_y);
+int16_t IsPassableTower(int16_t wx, int16_t wy);
 
 
 
@@ -281,9 +264,7 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y);
 
 // WZD o150p16
-// AKA Draw_Minimap()
-// void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
-void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag);
 
 // WZD o150p17
 void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB_ptr cartograph_seg);

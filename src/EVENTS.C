@@ -6,7 +6,27 @@
         ovr081
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
+#include "City_ovr55.H"
+#include "CITYCALC.H"
+#include "EVENTS.H"
+#include "ItemMake.H"
+#include "Items.H"
+#include "ItemScrn.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MoM_Data.H"
+#include "MoM_DBG.H"
+#include "MoM_DEF.H"
+#include "RACETYPE.H"
+#include "SBookScr.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
+#include "WZD_o129.H"
+#include "WZD_o143.H"
 
 
 
@@ -188,23 +208,23 @@ char * m_event_message;
 */
 void Determine_Event(void)
 {
-    int16_t troops[MAX_STACK];
-    int16_t Conjunction_Active;
-    int16_t Normal_Units;
-    int16_t Summoned_Units;
-    int16_t troop_count;
-    int16_t terrain_special;
-    int16_t wp;
-    int16_t marriage_city_idx;
-    int16_t city_idx;
-    int16_t wy;
-    int16_t wx;
-    int16_t Unused_Diff_Var;
-    int16_t itr_troops;
-    int16_t Tries;
-    int16_t Event_Chance;
-    int16_t event_type;  // _SI_
-    int16_t player_idx;  // _DI_
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Conjunction_Active = 0;;
+    int16_t Normal_Units = 0;;
+    int16_t Summoned_Units = 0;;
+    int16_t troop_count = 0;;
+    int16_t terrain_special = 0;;
+    int16_t wp = 0;;
+    int16_t marriage_city_idx = 0;;
+    int16_t city_idx = 0;;
+    int16_t wy = 0;;
+    int16_t wx = 0;;
+    int16_t Unused_Diff_Var = 0;;
+    int16_t itr_troops = 0;;
+    int16_t Tries = 0;;
+    int16_t Event_Chance = 0;;
+    int16_t event_type = 0;;  // _SI_
+    int16_t player_idx = 0;;  // _DI_
 
     // ¿ clear events_table data ?
     if(EVNT_Enabled == ST_FALSE)
@@ -259,53 +279,78 @@ void Determine_Event(void)
 
     if(events_table->last_event_turn > _turn)
     {
+
         Event_Chance = 0;
+
     }
     else
     {
+
         Event_Chance = (_turn - events_table->last_event_turn);
+
         SETMIN(Event_Chance, 0);
+
     }
 
     // ; BUG: events can not be processed in the first 5 turns after launching the game
     if(_event_delay_count < 5)
     {
+
         _event_delay_count++;
+
         Event_Chance = 0;
+
     }
 
     switch(_difficulty)
     {
+
         case god_Intro:
         {
+
             Event_Chance = ((Event_Chance * 1) / 2);  // 50%
-        } break;
-        case god_Easy:
-        {
-            Event_Chance = ((Event_Chance * 2) / 3);  // 66%
 
         } break;
+
+        case god_Easy:
+        {
+
+            Event_Chance = ((Event_Chance * 2) / 3);  // 66%
+
+
+        } break;
+
         case god_Normal:
         {
+
             Event_Chance = ((Event_Chance * 3) / 4);  // 75%
 
         } break;
+
         case god_Hard:
         {
+
             Event_Chance = ((Event_Chance * 4) / 5);  // 80%
+
         } break;
+
         // ~ Impossible is 100%
+
     }
 
     // if(DBG_trigger_event == STU_TRUE)
     if(DBG_trigger_event == ST_TRUE)
     {
+
         Event_Chance = 512;
+
     }
 
     if(Random(512) > Event_Chance)
     {
+
         return;
+
     }
 
     event_type = ST_UNDEFINED;
@@ -338,17 +383,23 @@ void Determine_Event(void)
 
         if(DBG_trigger_event == ST_TRUE)
         {
+
             player_idx = HUMAN_PLAYER_IDX;
+
         }
 
         if(player_idx == ST_UNDEFINED)
         {
+
             event_type = ST_UNDEFINED;
+
         }
 
         if(_FORTRESSES[player_idx].active == ST_FALSE)
         {
+
             event_type = ST_UNDEFINED;
+
         }
 
         /* et_None */
@@ -382,6 +433,7 @@ void Determine_Event(void)
 
         if(Conjunction_Active >= 1)
         {
+
             if(
                 (event_type == et_Good_Moon)
                 ||
@@ -396,8 +448,11 @@ void Determine_Event(void)
                 (event_type == et_Mana_Short)
             )
             {
+
                 event_type = ST_UNDEFINED;
+
             }
+
         }
 
         if(
@@ -406,7 +461,9 @@ void Determine_Event(void)
             (_players[player_idx].gold_reserve < 100)
         )
         {
+
             event_type = ST_UNDEFINED;
+
         }
 
         if(
@@ -428,16 +485,21 @@ void Determine_Event(void)
 
             if(city_idx == ST_UNDEFINED)
             {
+
                 event_type = ST_UNDEFINED;
+
             }
 
             if(event_type == et_Marriage)
             {
+
                 marriage_city_idx = Pick_Random_City(NEUTRAL_PLAYER_IDX);
 
                 if(marriage_city_idx == ST_UNDEFINED)
                 {
+
                     event_type = ST_UNDEFINED;
+
                 }
 
             }
@@ -450,7 +512,9 @@ void Determine_Event(void)
             (_turn < 150)
         )
         {
+
             event_type = ST_UNDEFINED;
+
         }
 
         if(
@@ -459,7 +523,9 @@ void Determine_Event(void)
             (_turn < 150)
         )
         {
+
             event_type = ST_UNDEFINED;
+
         }
 
         if(event_type == et_Rebellion)
@@ -471,7 +537,9 @@ void Determine_Event(void)
 
             if(Player_Fortress_City(player_idx) == city_idx)
             {
+
                 event_type = ST_UNDEFINED;
+
             }
             else
             {
@@ -480,25 +548,34 @@ void Determine_Event(void)
 
                 for(itr_troops = 0; ((itr_troops < troop_count) && (event_type == et_Rebellion)); itr_troops++)
                 {
+
                     if(_unit_type_table[_UNITS[troops[itr_troops]].type].Race < rt_Arcane)
                     {
+
                         Normal_Units++;
+
                     }
                     else
                     {
+
                         Summoned_Units++;
+
                     }
 
                     if(_UNITS[troops[itr_troops]].Hero_Slot > -1)
                     {
+
                         event_type = ST_UNDEFINED;
+
                     }
 
                 }
 
                 if(Summoned_Units > Normal_Units)
                 {
+
                     event_type = ST_UNDEFINED;
+
                 }
 
             }
@@ -509,24 +586,35 @@ void Determine_Event(void)
         {
             if(EVNT_TargetDepletion__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
+
                 event_type = ST_UNDEFINED;
+
             }
+
         }
 
         if(event_type == et_New_Mine)
         {
+
             if(EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
+
                 event_type = ST_UNDEFINED;
+
             }
+
         }
 
         if(event_type == et_Disjunction)
         {
+
             if(Any_Overland_Enchantments() == ST_FALSE)
             {
+
                 event_type = ST_UNDEFINED;
+
             }
+
         }
 
         if((event_type == et_Good_Moon) && (events_table->Bad_Moon_Status  == 2)) { event_type = ST_UNDEFINED; }
@@ -539,7 +627,9 @@ void Determine_Event(void)
 
     if(event_type == ST_UNDEFINED)
     {
+
         return;
+
     }
 
     events_table->last_event_turn = _turn;
@@ -548,128 +638,215 @@ void Determine_Event(void)
 
     switch(_difficulty)
     {
+
         case god_Intro:
         {
+
             Unused_Diff_Var = (_turn / 20);
+
         } break;
+
         case god_Easy:
         {
+
             Unused_Diff_Var = (_turn / 18);
 
         } break;
+
         case god_Normal:
         {
+            
             Unused_Diff_Var = (_turn / 15);
 
         } break;
         case god_Hard:
         {
+
             Unused_Diff_Var = (_turn / 13);
 
         } break;
         case god_Impossible:
         {
+
             Unused_Diff_Var = (_turn / 10);
 
         } break;
+
     }
 
     switch(event_type)
     {
+
         case et_Meteor:
         {
+
             events_table->Meteor_Status = 1;
+
             events_table->Meteor_Data = city_idx;
+
             events_table->Meteor_Player = player_idx;
+
         } break;
+
         case et_Gift:
         {
+
             events_table->Gift_Status = 1;
+
             events_table->Gift_Player = player_idx;
+
             events_table->Gift_Data = Make_Item(2, _players[player_idx].spellranks, 0);
+            
         } break;
+
         case et_Disjunction:
         {
+
             events_table->Disjunction_Status = 1;
+
         } break;
+
         case et_Marriage:
         {
+
             events_table->marriage_status = 1;
+
             events_table->marriage_neutral_city_idx = marriage_city_idx;
+
             events_table->marriage_player_city_idx = city_idx;
+
             events_table->marriage_player_idx = player_idx;
+
         } break;
+
         case et_Earthquake:
         {
+
             events_table->Earthquake_Status = 1;
+
             events_table->Earthquake_Player = player_idx;
+
             events_table->Earthquake_Data = city_idx;
+
         } break;
+
         case et_Pirates:
         {
+
             events_table->Pirates_Status = 1;
+
             events_table->Pirates_Player = player_idx;
+
             Conjunction_Active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
+
             Conjunction_Active -= (Conjunction_Active % 10);
+
             events_table->Pirates_Data = Conjunction_Active;
+
         } break;
+
         case et_Plague:
         {
+
             events_table->Plague_Status = 1;
+
             events_table->Plague_Data = city_idx;
+
             events_table->Plague_Player = player_idx;
+
         } break;
+
         case et_Rebellion:
         {
+
             events_table->Rebellion_Status = 1;
+
             events_table->Rebellion_Data = city_idx;
+
             events_table->Rebellion_Player = player_idx;
+
         } break;
+
         case et_Donation:
         {
+
             events_table->Donation_Status = 1;
+
             events_table->Donation_Player = player_idx;
+
             events_table->Donation_Data = (100 + (Random(100) * 5));
+
         } break;
+
         case et_Depletion:
         {
+
             events_table->Depletion_Status = 1;
+
             events_table->Depletion_Player = player_idx;
+
         } break;
+
         case et_New_Mine:
         {
+
             events_table->minerals_status = 1;
+
             events_table->minerals_player = player_idx;
+
         } break;
+
         case et_Population_Boom:
         {
+
             events_table->Population_Boom_Status = 1;
+
             events_table->Population_Boom_Data = city_idx;
+
             events_table->Population_Boom_Player = player_idx;
+
         } break;
+
         case et_Good_Moon:
         {
+
             events_table->Good_Moon_Status = 1;
+
         } break;
+
         case et_Bad_Moon:
         {
+
             events_table->Bad_Moon_Status = 1;
+
         } break;
+
         case et_Conjunction_Chaos:
         {
+
             events_table->Conjunction_Chaos_Status = 1;
+
         } break;
+        
         case et_Conjunction_Nature:
         {
+            
             events_table->Conjunction_Nature_Status = 1;
+
         } break;
+
         case et_Conjunction_Sorcery:
         {
+
             events_table->Conjunction_Sorcery_Status = 1;
+
         } break;
+
         case et_Mana_Short:
         {
+
             events_table->Mana_Short_Status = 1;
+
         } break;
 
     }
@@ -1798,34 +1975,37 @@ int16_t Pick_Random_City(int16_t player_idx)
         return ST_UNDEFINED;
     }
 
-    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+
+    city_idx = (Random(_cities) - 1);
+
+    IDK = ST_UNDEFINED;
+
+    for(itr_cities = 0; ((itr_cities < _cities) && (IDK == ST_UNDEFINED)); itr_cities++)
     {
 
-        city_idx = (Random(_cities) - 1);
-
-        IDK = ST_UNDEFINED;
-
-        for(itr_cities = 0; ((itr_cities < _cities) && (IDK == ST_UNDEFINED)); itr_cities++)
+        if(_CITIES[city_idx].owner_idx == player_idx)
         {
 
-            if(_CITIES[city_idx].owner_idx == player_idx)
-            {
-                IDK = city_idx;
-            }
-
-            if(IDK != ST_UNDEFINED)
-            {
-                if(TBL_Unrest[_players[player_idx].capital_race][_CITIES[city_idx].race] > 1)
-                {
-                    IDK = ST_UNDEFINED;
-                }
-            }
-
-            city_idx = ((city_idx + 1) % _cities);
+            IDK = city_idx;
 
         }
 
+        if(IDK != ST_UNDEFINED)
+        {
+
+            if(TBL_Unrest[_players[player_idx].capital_race][_CITIES[city_idx].race] > 1)
+            {
+
+                IDK = ST_UNDEFINED;
+
+            }
+
+        }
+
+        city_idx = ((city_idx + 1) % _cities);
+
     }
+
     
     return city_idx;
 }

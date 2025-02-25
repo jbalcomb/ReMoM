@@ -3,7 +3,22 @@
         ovr143
 */
 
-#include "MoM.H"
+#include "WZD_o143.H"
+
+#include "MoX/MoX_BASE.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/MoX_DEF.H"
+#include "MoX/MoX_TYPE.H"
+#include "MoX/Allocate.H"
+#include "MoX/LBX_Load.H"
+#include "MoX/random.H"
+#include "MoX/Util.H"
+
+#include "MoM_DEF.H"
+#include "MoM_Data.H"
+#include "MovePath.H"
+#include "Terrain.H"
+#include "TerrType.H"
 
 
 
@@ -38,12 +53,8 @@ char cityname_lbx_file__ovr143[] = "CITYNAME";
 */
 void Set_Terrain_Type_Volcano(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx)
 {
-    uint16_t terrain_type;
-    int16_t terrain_special;
-
-
-    MOX_DBG_BREAK;
-
+    uint16_t terrain_type = 0;
+    int16_t terrain_special = 0;
 
     terrain_type = GET_TERRAIN_TYPE(wx, wy, wp);
 
@@ -198,13 +209,13 @@ void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp)
 */
 void Random_City_Name_By_Race(int16_t race_idx, char * name)
 {
-    char Local_Name_String[20];
-    int16_t city_name_idx;
-    int16_t attempts;
-    char * city_names_buffer;  // _DI_
-    int16_t itr_cities;  // _SI_
-    /* hack */ char hack_new_name[20];
-    /* hack */ char * city_names_buffer_ptr;
+    char Local_Name_String[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t city_name_idx = 0;
+    int16_t attempts = 0;
+    char * city_names_buffer = 0;  // _DI_
+    int16_t itr_cities = 0;  // _SI_
+    /* hack */ char hack_new_name[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* hack */ char * city_names_buffer_ptr = 0;
 
     city_names_buffer = (char *)Near_Allocate_First(280);
 
@@ -212,6 +223,7 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
 
     for(attempts = 0; attempts < 200; attempts++)
     {
+
         city_name_idx = (Random(20) - 1);
 
         for(itr_cities = 0; itr_cities < _cities; itr_cities++)
@@ -222,25 +234,33 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
             strcpy(hack_new_name, _CITIES[itr_cities].name);
 
             // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
-            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+            city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+
             if (stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
             {
+
                 continue;
+
             }
 
             if(attempts < 200)
             {
+
                 break;
+
             }
 
-            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(14) - 1), 1, 280);
+            LBX_Load_Data_Static(cityname_lbx_file__ovr143, 0, (SAMB_ptr)city_names_buffer, (Random(NUM_RACES) - 1), 1, 280);
 
         }
+
     }
     
     // strcpy(name, city_names_buffer[(city_name_idx * 14)]);
-    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * 14)];
+    city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
+
     strcpy(name, city_names_buffer_ptr);
+
 }
 
 
@@ -382,7 +402,7 @@ void Reset_City_Road_Connection_Bitfields(void)
         city_wx = _CITIES[itr_cities].wx;
         city_wy = _CITIES[itr_cities].wy;
 
-        city_landmass_idx = TBL_Landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
+        city_landmass_idx = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
 
         // check if city has any road connection - any adjacent square has the road bit set
         // ¿ BUGBUG:  does not handle world wrapping ?
@@ -413,7 +433,7 @@ void Reset_City_Road_Connection_Bitfields(void)
             {
                 if(_CITIES[itr_cities].wp == _CITIES[dst_city_idx].wp)
                 {
-                    if(TBL_Landmasses[((_CITIES[dst_city_idx].wp * WORLD_SIZE) + (_CITIES[dst_city_idx].wy * WORLD_WIDTH) + _CITIES[dst_city_idx].wx)] == city_landmass_idx)
+                    if(_landmasses[((_CITIES[dst_city_idx].wp * WORLD_SIZE) + (_CITIES[dst_city_idx].wy * WORLD_WIDTH) + _CITIES[dst_city_idx].wx)] == city_landmass_idx)
                     {
                         candidate_list[candidate_count] = dst_city_idx;
                         candidate_count++;
@@ -437,7 +457,7 @@ void Reset_City_Road_Connection_Bitfields(void)
                         }
                         else
                         {
-                            if(TBL_Landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass_idx)
+                            if(_landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass_idx)
                             {
                                 movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = 1;
                             }
@@ -496,12 +516,12 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
     int16_t Dest_City_Index;
     int16_t itr_cities;  // _DI_
 
-    // DONT  EMM_Map_DataH()                   ; maps the EMM Data block into the page frame
+    // DONT  EMM_Map_DataH()
 
 
     UU_var10 = WORLD_SIZE;
 
-    square_landmass = TBL_Landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+    square_landmass = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
 
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
@@ -510,7 +530,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
         city_wx = _CITIES[itr_cities].wx;
         city_wy = _CITIES[itr_cities].wy;
 
-        city_landmass = TBL_Landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
+        city_landmass = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
                 
         if(city_landmass == square_landmass)
         {
@@ -527,7 +547,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
         city_wx = _CITIES[itr_cities].wx;
         city_wy = _CITIES[itr_cities].wy;
 
-        city_landmass = TBL_Landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
+        city_landmass = _landmasses[((city_wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)];
 
         if(city_landmass == square_landmass)
         {
@@ -558,7 +578,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                     if(
                         (_CITIES[itr_cities].wp == _CITIES[Dest_City_Index].wp)
                         &&
-                        (TBL_Landmasses[((city_wp * WORLD_SIZE) + (_CITIES[Dest_City_Index].wy * WORLD_WIDTH) + _CITIES[Dest_City_Index].wx)] == city_landmass)
+                        (_landmasses[((city_wp * WORLD_SIZE) + (_CITIES[Dest_City_Index].wy * WORLD_WIDTH) + _CITIES[Dest_City_Index].wx)] == city_landmass)
                     )
                     {
                         City_List[City_Count] = Dest_City_Index;
@@ -574,7 +594,7 @@ void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp)
                         {
                             if ((_map_square_flags[((city_wp * WORLD_SIZE) + ((Y_Loop_Var)*WORLD_WIDTH) + (X_Loop_Var))] & MSF_ROAD) != 0)
                             {
-                                if (TBL_Landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
+                                if (_landmasses[((city_wp * WORLD_SIZE) + (Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] == city_landmass)
                                 {
                                     movepath_cost_map->moves2[((Y_Loop_Var * WORLD_WIDTH) + X_Loop_Var)] = 1;
                                 }
@@ -634,14 +654,14 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
 
     // DONT  EMM_Map_DataH();                   ; maps the EMM Data block into the page frame
 
-    landmass_num = TBL_Landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)];
+    landmass_num = _landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)];
 
     if(landmass_num = 0)  /* ; ? 0: None / No Land ? */
     {
         return 0;
     }                
 
-    if(TBL_Landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] != landmass_num)
+    if(_landmasses[((wp * WORLD_SIZE) + (dst_wy * WORLD_WIDTH) + dst_wx)] != landmass_num)
     {
         return 0;
     }
@@ -650,7 +670,7 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
     {
         for(itr_world_width = 0; itr_world_width < WORLD_WIDTH; itr_world_width++)
         {
-            if(TBL_Landmasses[((wp * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)] == landmass_num)
+            if(_landmasses[((wp * WORLD_SIZE) + (itr_world_height * WORLD_WIDTH) + itr_world_width)] == landmass_num)
             {
                 if((_map_square_flags[((itr_world_height * WORLD_WIDTH) + itr_world_width)] & MSF_ROAD) != 0)
                 {

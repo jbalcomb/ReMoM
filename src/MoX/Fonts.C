@@ -7,8 +7,20 @@
         seg021
 */
 
-#include "MoX_Lib.H"
+#include "Allocate.H"
+#include "FLIC_Draw.H"
+#include "Fonts.H"
+#include "Graphics.H"
+#include "LBX_Load.H"
+#include "MoX_BASE.H"
+#include "MoX_BITS.H"
+#include "MoX_DEF.H"
+#include "MOX_T4.H"  // ~ MOX & MOX2 //MoO2
+#include "MoX_TYPE.H"
+#include "Util.H"
+#include "Video.H"
 
+#include "../MoM_PFL.H"
 
 
 // WZD dseg:783C                                                 seg017  MoO2 Module: fonts
@@ -365,10 +377,10 @@ void Restore_Alias_Colors(void)
         *(font_colors + (itr_color_count * 16) ) = old_alias_colors[itr_color_count];
     }
 
-    GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS) = VGA_Current_AA_Color;
-    GET_1B_OFS(font_style_data, FONT_HDR_POS_NORMAL_COLORS) = VGA_AA_Color_1;
-    GET_1B_OFS(font_style_data, FONT_HDR_POS_HIGHLIGHT_COLORS) = VGA_AA_Color_2;
-    GET_1B_OFS(font_style_data, FONT_HDR_POS_SPECIAL_COLORS) = VGA_AA_Color_3;
+    SET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_COLORS, VGA_Current_AA_Color);
+    SET_1B_OFS(font_style_data, FONT_HDR_POS_NORMAL_COLORS, VGA_AA_Color_1);
+    SET_1B_OFS(font_style_data, FONT_HDR_POS_HIGHLIGHT_COLORS, VGA_AA_Color_2);
+    SET_1B_OFS(font_style_data, FONT_HDR_POS_SPECIAL_COLORS, VGA_AA_Color_3);
 
 }
 

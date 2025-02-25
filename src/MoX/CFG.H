@@ -73,10 +73,14 @@ extern uint16_t CFG_NIU_10;     //
 extern uint16_t CFG_NIU_12;     // 
 
 
+
 void Load_CONFIG_MOM(void);
 
 void Read_CONFIG_MOM(void);
+
 void Write_CONFIG_MOM(void);
+
+
 
 #ifdef __cplusplus
 }

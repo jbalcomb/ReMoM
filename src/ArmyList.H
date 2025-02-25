@@ -63,7 +63,7 @@ void ArmyList_Screen_Load(void);
 // NX_IDK_ArmlyIst_PrintParagraph()
 
 // WZD o66p12
-void ArmyList_Hero_Portrait_Coords();
+void ArmyList_Hero_Portrait_Coords(int16_t hero_portrait_num, int16_t * x1, int16_t * y1, int16_t * x2, int16_t * y2);
 
 
 // MoO2 Draw_Galaxy_Map_Box_()

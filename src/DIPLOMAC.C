@@ -14,7 +14,13 @@ MoO2
     Module: DIPLOMAC
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MoX/SOUND.H"
+
+#include "DIPLOMAC.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MOM_SCR.H"
 
 
 
@@ -611,7 +617,7 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                     }
 
 
-                    _players[defender_idx].War_Reeval = (15 + Random(10));
+                    _players[defender_idx].reevaluate_hostility_countdown = (15 + Random(10));
 
 
                 }  /* ¿ Normal / Everything ? */
@@ -694,8 +700,8 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx)
     _players[defender_idx].Hostility[attacker_idx] = 3;
     _players[attacker_idx].Hostility[defender_idx] = 3;
 
-    _players[defender_idx].War_Reeval = (15 + Random(10));
-    _players[attacker_idx].War_Reeval = (15 + Random(10));
+    _players[defender_idx].reevaluate_hostility_countdown = (15 + Random(10));
+    _players[attacker_idx].reevaluate_hostility_countdown = (15 + Random(10));
 
 }
 
@@ -813,8 +819,8 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
     _players[defender_idx].Dipl.Trade_Interest[attacker_idx] = -200;
     _players[defender_idx].Dipl.Peace_Interest[attacker_idx] = -200;
 
-    _players[attacker_idx].War_Reeval = (15 + Random(10));
-    _players[defender_idx].War_Reeval = (15 + Random(10));
+    _players[attacker_idx].reevaluate_hostility_countdown = (15 + Random(10));
+    _players[defender_idx].reevaluate_hostility_countdown = (15 + Random(10));
 
 }
 

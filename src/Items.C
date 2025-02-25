@@ -5,7 +5,14 @@
         ovr109
 */
 
-#include "MoM.H"
+#include "MoX/MoX_DEF.H"
+#include "MoX/MoX_TYPE.H"
+
+#include "Items.H"
+#include "ItemScrn.H"
+#include "MainScr.H"
+#include "MOM_SCR.H"
+#include "SBookScr.H"
 
 
 

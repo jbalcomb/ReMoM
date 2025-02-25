@@ -31,7 +31,7 @@ extern "C" {
 // UU_VGA_GetPointInDir()
 
 // WZD s23p02
-// TILE_GetDistance()
+int16_t Range(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 // WZD s23p03
 int16_t Delta_XY_With_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t wrap_x);

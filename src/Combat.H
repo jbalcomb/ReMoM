@@ -30,10 +30,6 @@
 
 #include "MoM.H"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 
 #define TRUE_LIGHT_ATTKR 0
@@ -914,6 +910,7 @@ struct CSCAN_ICONS
 };
 
 // ; (sizeof = 0xC)
+// segrax did this? before/after I did struct s_MAGIC_VORTEX?
 struct s_CMB_Vortex
 {
     /* 00 */ int16_t cgx;
@@ -945,6 +942,16 @@ struct s_MAGIC_VORTEX
     /* 0A */ int16_t Owner;
     /* 0C */
 };
+
+
+
+
+
+// WZD dseg:7116
+/*
+used in AI_SetUnitOrders__WIP()
+*/
+extern int16_t ai_human_hostility;
 
 
 
@@ -1113,6 +1120,14 @@ extern SAMB_ptr CMB_RangedAtx_GFX[15][8];
 
 // WZD dseg:D27C
 extern SAMB_ptr CMB_Damage_GFX;
+
+
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 

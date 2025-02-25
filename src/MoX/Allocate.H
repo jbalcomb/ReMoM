@@ -25,7 +25,8 @@ blocks?
 
 
 
-#include "MoX_Lib.H"
+#include "MoX_BITS.H"
+#include "MoX_TYPE.H"
 
 
 
@@ -47,16 +48,20 @@ enum e_SA_Allocation_Type
 #define SAMB_unknown    12
 #define SAMB_MARK       14
 
-#define SA_MEMSIG1      0x12FA
-#define SA_MEMSIG2      0x4ECF
+// #define SA_MEMSIG1      0x12FA
+// #define SA_MEMSIG2      0x4ECF
+extern uint16_t _SA_MEMSIG1;
+extern uint16_t _SA_MEMSIG2;
 
 #define SA_GET_MEMSIG1(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_), SAMB_MEMSIG1) )
 #define SA_GET_MEMSIG2(_SAMB_head_) ( GET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2) )
 #define SA_GET_SIZE(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), SAMB_SIZE)    )
 #define SA_GET_USED(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), SAMB_USED)    )
 #define SA_GET_MARK(_SAMB_head_)    ( GET_2B_OFS((_SAMB_head_), SAMB_MARK)    )
-#define SA_SET_MEMSIG1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG1, SA_MEMSIG1) )
-#define SA_SET_MEMSIG2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2, SA_MEMSIG2) )
+// #define SA_SET_MEMSIG1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG1, SA_MEMSIG1) )
+// #define SA_SET_MEMSIG2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2, SA_MEMSIG2) )
+#define _SA_SET_MEMSIG1(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG1, _SA_MEMSIG1) )
+#define _SA_SET_MEMSIG2(_SAMB_head_)        ( SET_2B_OFS((_SAMB_head_), SAMB_MEMSIG2, _SA_MEMSIG2) )
 #define SA_SET_SIZE(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_SIZE, (_nparas_))    )
 #define SA_SET_USED(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_USED, (_nparas_))    )
 #define SA_SET_MARK(_SAMB_head_,_nparas_)  ( SET_2B_OFS((_SAMB_head_), SAMB_MARK, (_nparas_))    )

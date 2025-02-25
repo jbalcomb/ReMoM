@@ -1,5 +1,10 @@
+#include "Mouse.H"
 
-#include "MoX_Lib.H"
+#include "MoX_DEF.H"
+// #include "MoX_TYPE.H"
+#include "Video.H"
+
+#include <assert.h>  /* assert() */
 
 
 
@@ -422,7 +427,7 @@ void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
 // WZD s35p29
 void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
 {
-    if(buttons = (buttons & 0x03) != 0)
+    if((buttons = (buttons & 0x03)) != 0)
     {
         mouse_buffer_button = buttons;
         mouse_buffer_flag = ST_TRUE;

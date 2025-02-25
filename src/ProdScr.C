@@ -6,9 +6,11 @@
 
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
 #include "ProdScr.H"
 #include "MainScr.H"
+#include "MOM_SCR.H"
 #include "UnitStat.H"
 #include "UnitView.H"
 #include "WZD_o059.H"
@@ -294,8 +296,18 @@ void Production_Screen(void)
                 }
                 else if(current_item == itr)
                 {
+
                     /* Left-Click on what is already being produced - Close Pop-Up ~ ESC, Cancel, OK  ¿ ~== Double-Click ? */
                     _CITIES[_city_idx].construction = product_indexes[current_item];
+    if(_CITIES[_city_idx].construction < 0)
+    {
+        __debugbreak();
+    }
+    if(_CITIES[_city_idx].construction > 298)
+    {
+        __debugbreak();
+    }
+
                     leave_screen = ST_TRUE;
                     current_screen = scr_City_Screen;
                     Do_City_Calculations(_city_idx);
@@ -326,6 +338,15 @@ void Production_Screen(void)
         {
             Play_Left_Click__STUB();
             _CITIES[_city_idx].construction = product_indexes[current_item];
+    if(_CITIES[_city_idx].construction < 0)
+    {
+        __debugbreak();
+    }
+    if(_CITIES[_city_idx].construction > 298)
+    {
+        __debugbreak();
+    }
+
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;
             Do_City_Calculations(_city_idx);
@@ -722,95 +743,140 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     product_count = 0;
 
+Check_Cities_Data();
     _CITIES[city_idx].bldg_cnt = 0;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
     UU_bldg_built_count = 0;
 
     for(itr = 1; itr < NUM_BUILDINGS; itr++)
     {
+
         if(_CITIES[city_idx].bldg_status[itr] != bs_NotBuilt)
         {
+
+Check_Cities_Data();
             _CITIES[city_idx].bldg_cnt++;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
         }
 
         if(_CITIES[city_idx].bldg_status[itr] == bs_Built)
         {
+
             UU_bldg_built_count++;
+
         }
+
     }
 
     for(itr = 35; ((itr < 198) && (product_count < 12)); itr++)
     {
+
         if(
             (_unit_type_table[itr].Race == city_race)
             ||
             (_unit_type_table[itr].Race == rt_Standard)
         )
         {
+
             if(
                 (_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)
                 &&
                 (_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)
             )
             {
+
                 if(
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt) &&
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed) &&
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt) &&
+                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                    &&
+                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                    &&
+                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                    &&
                     (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
                 )
                 {
+
                     product_array[product_count] = (itr + 100);
+
                     product_count++;
+
                 }
 
             }
+
         }
+
     }
 
     if(product_count > 11)
     {
+
         for(itr = 0; itr < product_count; itr++)
         {
+
             product_array[itr] = 0;
+
         }
 
         product_count = 0;
 
-        for (itr = 35; ((itr < 198) && (product_count < 12)); itr++)
+        for(itr = 35; ((itr < 198) && (product_count < 12)); itr++)
         {
-            if (
-                (_unit_type_table[itr].Race == city_race) ||
+
+            if(
+                (_unit_type_table[itr].Race == city_race)
+                ||
                 (_unit_type_table[itr].Race == rt_Standard)
-                )
+            )
             {
-                if (
-                    (_unit_type_table[itr].reqd_bldg_1 != -1) &&
+
+                if(
+                    (_unit_type_table[itr].reqd_bldg_1 != -1)
+                    &&
                     (_unit_type_table[itr].reqd_bldg_2 != -1)
-                    )
+                )
                 {
-                    if (
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt) &&
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed) &&
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt) &&
+
+                    if
+                    (
+                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                        &&
+                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                        &&
+                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                        &&
                         (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
-                        )
+                    )
                     {
-                        if (
-                            (strcmp("Spearmen", *_unit_type_table[itr].name) != 0) &&
+
+                        if(
+                            (strcmp("Spearmen", *_unit_type_table[itr].name) != 0)
+                            &&
                             (strcmp("Swordsmen", *_unit_type_table[itr].name) != 0)
-                            )
+                        )
                         {
+
                             product_array[product_count] = (itr + 100);
+
                             product_count++;
+
                         }
                     }
+
                 }
+
             }
+
         }
+
     }
 
     *depr_count = product_count;  // BUGBUG  drake178: will be overwritten before returning
+
     *unit_count = product_count;
 
     bldg_max_adj_amt = product_count;
@@ -818,56 +884,85 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
     // ¿ ~== MoO2  Module: COLBLDG  Colony_Can_Build_Product_()
     for(itr = 1; ((itr < NUM_BUILDINGS) && (product_count < 20)); itr++)
     {
+
         cant_build_flag = ST_FALSE;
 
         // if not already built/replaced
         if(
-            (_CITIES[city_idx].bldg_status[itr] == bs_NotBuilt) ||
+            (_CITIES[city_idx].bldg_status[itr] == bs_NotBuilt)
+            ||
             (_CITIES[city_idx].bldg_status[itr] == bs_Removed)
         )
         {
+
             for(itr_cant_build = 0; itr_cant_build < _race_type_table[city_race].cant_build_count; itr_cant_build++)
             {
+
                 if(_race_type_table[city_race].cant_build[itr_cant_build] == itr)
                 {
+
                     cant_build_flag = ST_TRUE;
+
                     break;
+
                 }
+
             }
             
             if(cant_build_flag == ST_FALSE)
             {
+
                 if(bldg_data_table[itr].reqd_bldg_1 > 100)
                 {
+
                     reqd_terrtype = bldg_data_table[itr].reqd_terrain;
+
                     // TODO  CTY_CheckTerrainReq__ALWAYS_TRUE()
                     if(CTY_CheckTerrainReq__ALWAYS_TRUE(city_idx, reqd_terrtype) == ST_TRUE)
                     {
+
                         if(
-                            (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_NotBuilt) &&
+                            (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                            &&
                             (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_Removed)
                         )
                         {
+
                             product_array[product_count] = itr;
+
                             product_count++;
+
                         }
+
                     }
+
                 }
                 else
                 {
+
                     if(
-                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_1] != bs_NotBuilt) &&
-                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_1] != bs_Removed) &&
-                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_NotBuilt) &&
+                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                        &&
+                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_1] != bs_Removed)
+                        &&
+                        (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                        &&
                         (_CITIES[city_idx].bldg_status[bldg_data_table[itr].reqd_bldg_2] != bs_Removed)
                     )
                     {
+
                         product_array[product_count] = itr;
+
                         product_count++;
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
     *depr_count += 2;  // BUGBUG  drake178: will be overwritten before returning
@@ -883,11 +978,15 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     if(bldg_max_adj_amt > 12)
     {
+
         bldg_max_adj_amt = (bldg_max_adj_amt - 12);  // (bldg_max_adj_amt - 12) = count of building over the max of 12
+
         product_count = (product_count - bldg_max_adj_amt);  // truncate product_count
+
     }
 
     *total_count = product_count;
+
     *depr_count = product_count;  // overrides the previous two assignments to depr_count
 
 }
@@ -912,9 +1011,23 @@ int16_t City_Production_Cost(int16_t production_idx, int16_t city_idx)
 
     tmp_production_idx = _CITIES[city_idx].construction;
 
+Check_Cities_Data();
     _CITIES[city_idx].construction = production_idx;
+// Check_Cities_Data();
+Capture_Cities_Data();
 
+if(_CITIES[city_idx].construction < 0)
+{
+    __debugbreak();
+}
+if(_CITIES[city_idx].construction > 298)
+{
+    __debugbreak();
+}
+
+Check_Cities_Data();
     production_cost = City_Current_Product_Cost(city_idx);
+Check_Cities_Data();
 
     production_cost -= _CITIES[city_idx].Prod_Accu;
 
@@ -923,7 +1036,18 @@ int16_t City_Production_Cost(int16_t production_idx, int16_t city_idx)
         production_cost = 0;
     }
 
+Check_Cities_Data();
     _CITIES[city_idx].construction = tmp_production_idx;
+// Check_Cities_Data();
+Capture_Cities_Data();
+    if(_CITIES[city_idx].construction < -4)
+    {
+        __debugbreak();
+    }
+    if(_CITIES[city_idx].construction > 298)
+    {
+        __debugbreak();
+    }
 
     return production_cost;
 }

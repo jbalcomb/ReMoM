@@ -29,7 +29,7 @@
 
 int16_t wx;
 int16_t wy;
-struct s_MOVE_PATH * movepath_cost_map;
+// MoM_Data  struct s_MOVE_PATH * movepath_cost_map;
 
 int8_t  reach_costs_changed = ST_TRUE;  // WZD ovr147:0000  Code-Segment Variable
 int16_t CS_Row_Start = 0;           // WZD ovr147:0002  Code-Segment Variable

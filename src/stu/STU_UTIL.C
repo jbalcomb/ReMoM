@@ -80,6 +80,8 @@ Date and time in UTC
 
 */
 
+#include "STU_UTIL.H"
+
 #include <stdlib.h>  /* putenv */
 #include <stdio.h>   /* printf() */
 #include <time.h>    /* time(), tzset() */

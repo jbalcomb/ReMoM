@@ -1,7 +1,9 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "MoX_Lib.H"
+#include "MoX_TYPE.H"
+
+
 
 #ifdef __cplusplus
 extern "C" {

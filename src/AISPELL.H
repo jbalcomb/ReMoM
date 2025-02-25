@@ -28,13 +28,13 @@ extern "C" {
 void AI_Research_Picker__STUB(int16_t player_idx);
 
 // WZD o156p02
-// AI_OVL_SpellPicker()
+void AI_Spell_Select__STUB(int16_t player_idx);
 
 // WZD o156p03
 // AI_OVL_SplCat_Picker()
 
 // WZD o156p04
-// AI_OVL_GetSpellList()
+void AI_Compute_Spells_Info(int16_t player_idx);
 
 // WZD o156p05
 // AI_OVL_PickSummon()
@@ -136,7 +136,7 @@ void AI_Research_Picker__STUB(int16_t player_idx);
 // CRP_DBG_SpellTargetError()
 
 // WZD o156p38
-// AI_ReleaseGlobals()
+void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 
 // WZD o156p39
 // sub_E7CC9()

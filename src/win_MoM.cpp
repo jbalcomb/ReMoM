@@ -2,7 +2,22 @@
 
 #include "win_PFL.hpp"
 
-#include "MoM.H"
+#include "MoX/MoX_BASE.H"
+#include "MoX/MoX_TYPE.H"
+#include "MoX/CFG.H"
+#include "MoX/Fields.H"
+#include "MoX/Fonts.H"
+#include "MoX/Graphics.H"
+#include "MoX/MOX_SET.H"
+#include "MoX/SOUND.H"
+#include "MoX/Timer.H"
+
+#include "ALLOC.H"
+#include "Init.H"
+#include "LOADER.H"
+#include "MoM_DBG.H"
+#include "MOM_SCR.H"
+#include "Settings.H"
 
 
 
@@ -72,26 +87,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     IDK = ST_UNDEFINED;
     midi_driver = config_mom.MIDI_ID;
 
-/*
-FFFFFFFF ; enum e_Sound_Hardware
-FFFFFFFF No_Sound_HW  = 0
-FFFFFFFF PC_Speaker  = 1
-FFFFFFFF AdLib  = 16
-FFFFFFFF SB_Orig  = 18
-FFFFFFFF SB_Pro  = 24
-FFFFFFFF Pro_Audio_S  = 25
-FFFFFFFF SB_Pro_OPL3  = 32
-FFFFFFFF Pro_Audio_S_16  = 33
-FFFFFFFF AdLib_Gold  = 34
-FFFFFFFF Roland_MT32  = 48
-FFFFFFFF Roland_LAPC  = 49
-FFFFFFFF General_MIDI  = 56
-*/
     switch(midi_driver)
     {
         case 0:
         {
-            midi_driver = 0;
+            midi_driver = SND_NONE;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
             IDK = ST_UNDEFINED;

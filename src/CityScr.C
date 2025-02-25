@@ -1,12 +1,23 @@
 
-#include "MoM.H"
-#include "CityScr.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
+
 #include "City_ovr55.H"
+#include "CITYCALC.H"
 #include "CITYSCAP.H"
+#include "CityScr.H"
+#include "Help.H"
+#include "Lair.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
+#include "MOM_SCR.H"
 #include "ProdScr.H"
-#include "UnitStat.H"
+#include "RACETYPE.H"
+#include "SBookScr.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "UnitView.H"
+#include "WZD_o143.H"
 
 
 
@@ -106,15 +117,6 @@ char cstr_NameStartingCity[] = "Name Starting City";
 // WZD dseg:2C87                                                 END:  ovr054 - Strings  (City Screen)
 
 
-
-
-
-// WZD dseg:92B0
-// drake178: cityscape_bldgs@
-
-
-// WZD dseg:92B4
-int16_t cityscape_bldg_count;
 
 
 
@@ -228,24 +230,43 @@ void City_Screen__WIP(void)
 
     if(_CITIES[_city_idx].farmer_count < required_farmer_count)
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].farmer_count = required_farmer_count;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
     city_rebel_count = City_Rebel_Count(_city_idx);
 
     if(_CITIES[_city_idx].farmer_count > (_CITIES[_city_idx].population - city_rebel_count))
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].farmer_count = (_CITIES[_city_idx].population - city_rebel_count);
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
     if(_CITIES[_city_idx].construction == bt_NONE)
     {
+
+Check_Cities_Data();
         _CITIES[_city_idx].construction = bt_Housing;
+// Check_Cities_Data();
+Capture_Cities_Data();
+
     }
 
 
+Check_Cities_Data();
     Do_City_Calculations(_city_idx);
+Check_Cities_Data();
+
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
     m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
 
 
@@ -271,7 +292,9 @@ void City_Screen__WIP(void)
 
 
     Do_City_Calculations(_city_idx);
+
     m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
+
     m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
 
 

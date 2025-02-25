@@ -7,7 +7,13 @@ MoO2
 
 */
 
-#include "MoM.H"
+#include "SOUND.H"
+
+#include "Allocate.H"
+#include "MoX_DEF.H"
+#include "MoX_TYPE.H"
+
+#include <string.h>     /* memset(), strcat(), strcpy(); */
 
 
 
@@ -68,12 +74,13 @@ char str_empty_string__seg038[] = "";
 // WZD dseg:82F1 00                                                                                      ; DATA XREF: _AIL_board_ID+BCr
 // WZD dseg:82F1                                                                                         ; BLASTER.C character constant
 
+// // char * str_allocation_errors[] =
+// // ISO C++11 does not allow conversion from string literal to 'char *'clang(-Wwritable-strings)
+// char const * str_allocation_errors[] =
 // WZD dseg:8302
 char cnst_SND_Error01[] = "You selected an invalid sound driver, ";
-
 // WZD dseg:8329
 char cnst_SND_Error02[] = "reconfigure hardware options";
-
 // WZD dseg:8346 59 6F 75 20 73 65 6C 65 63 74 65 64 20 61 6E 20+cnst_SND_Error2 db 'You selected an invalid digi driver, ',0
 // WZD dseg:8346 69 6E 76 61 6C 69 64 20 64 69 67 69 20 64 72 69+                                        ; DATA XREF: SND_Error:loc_32397o
 // WZD dseg:836C 53 6F 75 6E 64 20 64 72 69 76 65 72 20 69 73 20+cnst_SND_Error3 db 'Sound driver is not a valid XMIDI driver, ',0
@@ -95,7 +102,6 @@ char cnst_SND_Error02[] = "reconfigure hardware options";
 // WZD dseg:8461 54 69 6D 62 72 65 20 6E 6F 74 20 66 6F 75 6E 64+cnst_SND_ErrorC db 'Timbre not found',0 ; DATA XREF: SND_Error:loc_323D5o
 // WZD dseg:8472 43 6F 75 6C 64 20 6E 6F 74 20 6C 6F 61 64 00    cnst_SND_ErrorD db 'Could not load',0   ; DATA XREF: SND_Error:loc_323DAo
 // WZD dseg:8481 4E 6F 74 20 61 20 76 61 6C 69 64 00             cnst_SND_ErrorF db 'Not a valid',0      ; DATA XREF: SND_Error:loc_323E1o
-
 // WZD dseg:848D
 char cnst_SND_Error10[] = "Could not load sound file";
 

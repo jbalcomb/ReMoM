@@ -6,7 +6,7 @@
 #ifndef UNITMOVE_H
 #define UNITMOVE_H
 
-#include "MoM.H"
+#include "MoX/MoX_TYPE.H"
 
 
 
@@ -102,7 +102,7 @@ int16_t Unit_Has_Endurance(int16_t unit_idx);
 int16_t Unit_Has_PlanarTravel_Item(int16_t unit_idx);
 
 // WZD o71p014
-// int16_t UNIT_IsNonCorporeal(int16_t unit_idx);
+int16_t Unit_Has_NonCorporeal(int16_t unit_idx);
 
 
 

@@ -1125,6 +1125,7 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 // UU_TILE_GetUnsdMPCost
 
 // WZD s161p22
+// NOTE(20250216, Jim Balcomb): WTF with all these c&p notes? I'm only just now doing anything with this.
 // TILE_IsAISailable    
 /*
 WZD s161p22
@@ -1146,6 +1147,132 @@ TILE_IsAISailable()
 ; returns 1 for ocean/shore/lake tiles, or 0 otherwise
 
 */
+// *whatever*, above...
+// WZD s161p22
+// drake178: TILE_IsAISailable()
+/*
+returns 1 if the tile is a shore, ocean, or lake, or
+0 otherwise
+
+INCONSISTENT: returns 0 for the single tile no-river
+lake, which means it should also return 0 for its
+river outlet versions (0xC5 - 0xC8)
+*/
+/*
+
+*/
+int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+    int16_t is_shoreline = 0;
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(terrain_type >= _Tundra00001000)
+    {
+
+        is_shoreline = ST_TRUE;
+
+    }
+    else
+    {
+
+        if(terrain_type >= _Shore1100000R)
+        {
+
+            is_shoreline = ST_TRUE;
+
+        }
+        else
+        {
+
+            if(terrain_type >= _River1111_1)
+            {
+
+                is_shoreline = ST_FALSE;
+
+            }
+            else
+            {
+
+                if(terrain_type >= _Shore00011R11)
+                {
+
+                    is_shoreline = ST_TRUE;
+
+                }
+                else
+                {
+
+                    if(terrain_type >= _River1100_3)
+                    {
+
+                        is_shoreline = ST_FALSE;
+
+                    }
+                    else
+                    {
+
+                        if(terrain_type >= _1LakeRiv_W)
+                        {
+
+                            is_shoreline = ST_TRUE;
+
+                        }
+                        else
+                        {
+
+                            if(terrain_type >= _Grasslands1)
+                            {
+
+                                is_shoreline = ST_FALSE;
+
+                            }
+                            else
+                            {
+
+                                if(terrain_type == TT_BugGrass)
+                                {
+
+                                    is_shoreline = ST_FALSE;
+
+                                }
+                                else
+                                {
+
+                                    if(terrain_type == _1Lake)
+                                    {
+
+                                        is_shoreline = ST_FALSE;
+
+                                    }
+                                    else
+                                    {
+
+                                        is_shoreline = ST_TRUE;
+
+                                    }
+
+                                }
+
+                            }
+                            
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return is_shoreline;
+
+}
+
 
 // WZD s161p23
 // drake178: TILE_IsVisibleForest()
@@ -1218,48 +1345,66 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     }
     else
     {
+        // <= TT_Ocean2      = 0x259,
         if(terrain_type > 0x1D8)  /* _River1111_5 */
         {
             goto Return_True;
         }
         else
         {
+            // <= TT_4WRiver5    = 0x1D8,
             if(terrain_type > 0x1D3)  /* _Shore111R1110 */
             {
                 goto Return_False;
             }
             else
             {
+                // <= TT_Shore2_end  = 0x1D3,
                 if(terrain_type > 0x1C3)  /* _Desert10101111 */
                 {
+                    // >= tt_Shore2_1st  = 0x1C4,
                     goto Return_True;
                 }
                 else
                 {
+                    // <= TT_Desert_end  = 0x1C3,
                     if(terrain_type > 0xE8)  /* _Shore000R0000 */
                     {
+                        // >= TT_Rivers_1st  = 0x0E9,
                         goto Return_False;
                     }
                     else
                     {
+                        // <= TT_Shore2F_end = 0xE8,
                         if(terrain_type > 0xC4)  /* _River1001_2 */
                         {
+                            // >= TT_Lake1       = 0x0C5,
                             goto Return_True;
                         }
                         else
                         {
+                            // <= TT_RiverM_end  = 0x0C4,
                             if(terrain_type > 0xA1)  /* _Shore10101111 */
                             {
+                                // >= tt_Grasslands1      = 0x0A2,
                                 goto Return_False;
                             }
                             else
                             {
-                                if(terrain_type == 0x1)  /* TT_BugGrass */
+                                // <= TT_Shore1_end  = 0x0A1,
+                                if(terrain_type == e_TT_BugGrass)  /* TT_BugGrass */
                                 {
                                     goto Return_False;
                                 }
                                 else
                                 {
+                                    // _Ocean          = 0x0,
+                                    // _Land           = 0x1,
+                                    // _Shore00001000  = 0x2,
+                                    // ...
+                                    // _1Lake          = 0x12,
+                                    // ...
+                                    // _Shore10101111  = 0xA1,
                                     goto Return_True;
                                 }
                             }
@@ -1310,7 +1455,131 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD s161p26
-// G_TILE_IsAIEmbarkable
+// drake178: G_TILE_IsAIEmbarkable()
+/*
+; returns 1 for certain ocean tiles, 0 for everything
+; else
+;
+; BUG: should return 1 for all oceans and shores except
+; single tile lakes
+*/
+/*
+
+*/
+int16_t Map_Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type = 0;  // _CX_
+    int16_t is_emarkable = 0;  // DNE in Dasm
+
+    is_emarkable = ST_FALSE;
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(terrain_type == TT_BugGrass)
+    {
+
+        is_emarkable = ST_FALSE;
+
+    }
+    else
+    {
+
+        if(terrain_type == TT_Lake)
+        {
+
+            is_emarkable = ST_FALSE;
+
+        }
+        else
+        {
+
+            if(terrain_type < _Shore11101110)
+            {
+
+                is_emarkable = ST_FALSE;
+
+            }
+            else
+            {
+
+                if(terrain_type < _Shore10111000)
+                {
+
+                    is_emarkable = ST_FALSE;
+
+                }
+                else
+                {
+
+                    if(terrain_type < _Grasslands1)
+                    {
+
+                        is_emarkable = ST_TRUE;
+
+                    }
+                    else
+                    {
+
+                        if(terrain_type < _Shore00001R10)
+                        {
+
+                            is_emarkable = ST_FALSE;
+
+                        }
+                        else
+                        {
+
+                            if(terrain_type < _River1100_3)
+                            {
+
+                                is_emarkable = ST_TRUE;
+
+                            }
+                            else
+                            {
+
+                                if(terrain_type < _Shore1100000R)
+                                {
+
+                                    is_emarkable = ST_FALSE;
+
+                                }
+                                else
+                                {
+
+                                    if(terrain_type < _Shore1000111R)
+                                    {
+
+                                        is_emarkable = ST_TRUE;
+
+                                    }
+                                    else
+                                    {
+
+                                        is_emarkable = ST_FALSE;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return is_emarkable;
+
+}
+
 
 // WZD s161p27
 // TILE_BuildingReqType 
@@ -1688,7 +1957,91 @@ void All_City_Nightshade_Count(void)
 
 
 // WZD s161p38
-// TILE_IsLand          
+// drake178: TILE_IsLand()
+/*
+returns 1 for land (walkable) tiles, 0 otherwise
+*/
+/*
+
+*/
+int16_t Map_Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // _CX_
+    int16_t is_land;  // DNE in Dasm
+
+    is_land = ST_FALSE;
+
+    terrain_type = TERRAIN_TYPE(wx, wy, wp);
+
+    if(terrain_type > tt_Tundra_1st)
+    {
+        is_land = ST_TRUE;
+    }
+    else
+    {
+        
+        if(terrain_type == TT_BugGrass)
+        {
+            is_land = ST_TRUE;
+        }
+        else
+        {
+
+            if(
+                (terrain_type < TT_Rivers_1st)
+                ||
+                (terrain_type > TT_Rivers_1st)
+            )
+            {
+                if(
+                    (terrain_type < TT_4WRiver1)
+                    ||
+                    (terrain_type > TT_4WRiver5)
+                )
+                {
+
+                    if
+                    (
+                        (terrain_type < tt_Grasslands1)
+                        ||
+                        (terrain_type > TT_RiverM_end)
+                    )
+                    {
+
+                        is_land = ST_FALSE;
+
+                    }
+                    else
+                    {
+
+                        is_land = ST_TRUE;
+
+                    }
+
+                }
+                else
+                {
+
+                    is_land = ST_TRUE;
+
+                }
+
+            }
+            else
+            {
+
+                is_land = ST_TRUE;
+
+            }
+
+        }
+
+    }
+
+    return is_land;
+    
+}
+
 
 // WZD s161p39
 // drake178: TILE_IsAISailable2()

@@ -1,5 +1,18 @@
 
-#include "MoM.H"
+#include "MoM_DBG.H"
+
+#include "MoX/MoX_DEF.H"
+#include "MoX/MoX_TYPE.H"
+
+#include "MoM_DEF.H"
+
+#include "MoM_Data.H"
+
+#include <assert.h>
+#include <math.h>       /* sqrt() */
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
+#include <stdlib.h>     /* abs(); itoa(); */
+#include <string.h>     /* memset(), strcat(), strcpy(); */
 
 
 
@@ -59,6 +72,9 @@ int16_t DBG_trigger_offer_hero = ST_FALSE;
 
 int16_t DBG_trigger_complete_research_spell = ST_FALSE;
 
+uint8_t DBG_debug_flag = ST_FALSE;
+
+
 
 /*
 _HEROES2
@@ -78,7 +94,7 @@ _world_maps  // 4800 * 2 = 9600
 
 UU_TBL_1
 UU_TBL_2
-TBL_Landmasses
+_landmasses
 
 _NODES
 _FORTRESSES
@@ -129,14 +145,14 @@ void Test_Run(void)
     // _world_maps  // 4800 * 2 = 9600
     // UU_TBL_1
     // UU_TBL_2
-    // TBL_Landmasses
-assert(sizeof(struct s_NODE) == NODE_RECORD_SIZE);          //   48  _NODES
-assert(sizeof(struct s_FORTRESS) == FORTRESS_RECORD_SIZE);  //    4  _FORTRESSES
-assert(sizeof(struct s_TOWER) == TOWER_RECORD_SIZE);        //    4  _TOWERS
-assert(sizeof(struct s_LAIR) == LAIR_RECORD_SIZE);          //   24  _LAIRS
-assert(sizeof(struct s_ITEM) == ITEM_RECORD_SIZE);          //   50  _ITEMS
-assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  114  _CITIES
-assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
+    // _landmasses
+    assert(sizeof(struct s_NODE) == NODE_RECORD_SIZE);          //   48  _NODES
+    assert(sizeof(struct s_FORTRESS) == FORTRESS_RECORD_SIZE);  //    4  _FORTRESSES
+    assert(sizeof(struct s_TOWER) == TOWER_RECORD_SIZE);        //    4  _TOWERS
+    assert(sizeof(struct s_LAIR) == LAIR_RECORD_SIZE);          //   24  _LAIRS
+    assert(sizeof(struct s_ITEM) == ITEM_RECORD_SIZE);          //   50  _ITEMS
+    assert(sizeof(struct s_CITY) == CITY_RECORD_SIZE);          //  114  _CITIES
+    assert(sizeof(struct s_UNIT) == UNIT_RECORD_SIZE);          //   32  _UNITS
 
     // TBL_Terr_Specials
     // _square_explored

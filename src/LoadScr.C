@@ -18,7 +18,27 @@ MoO2  Module: LOADSAVE
 
 */
 
-#include "MoM.H"
+#include "LoadScr.H"
+
+#include "MoX/LOADSAVE.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+
+#include "AIDUDES.H"
+#include "CITYCALC.H"
+#include "Combat.H"
+#include "Explore.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MOM_SCR.H"
+#include "NEXTTURN.H"
+#include "Settings.H"
+#include "Spellbook.H"
+#include "UNITSTK.H"
+#include "WZD_o143.H"
+
+
 
 /*
     Settings.C
@@ -90,7 +110,7 @@ SAMB_ptr save_inactive;
 
 // WZD dseg:C99C
 // AKA IDK_SaveSlots_Array
-int16_t save_game_slots[NUM_SAVE_SLOTS];
+int16_t save_game_slots__ovr160[NUM_SAVE_SLOTS];  // BUGBUG  why is this clashing with the one over in MainMenu?
 
 // WZD dseg:C9AC
 int16_t loadsave_save_button;
@@ -120,7 +140,7 @@ SAMB_ptr load_inactive;
 SAMB_ptr selection_marker;
 
 // WZD dseg:C9BE
-int16_t save_game_count;
+int16_t save_game_count__ovr160;  // BUGBUG  why is this clashing with the one over in MainMenu?
 
 // WZD dseg:C9C0
 SAMB_ptr settings_button;
@@ -259,7 +279,7 @@ void Load_Screen(void)
     settings_button         = LBX_Reload_Next(load_lbx_file__ovr160, 12, _screen_seg);
 
 
-    save_game_count = 0;
+    save_game_count__ovr160 = 0;
     
     for(itr = 1; itr < NUM_SAVE_GAME_FILES; itr++)
     {
@@ -269,12 +289,12 @@ void Load_Screen(void)
         strcat(match_string, cnst_SAVE_ext3);
         if(DIR(match_string, found_file) == 0)  /* File Not Found */
         {
-            save_game_slots[save_game_count] = ST_UNDEFINED;
+            save_game_slots__ovr160[save_game_count__ovr160] = ST_UNDEFINED;
         }
         else
         {
-            save_game_slots[save_game_count] = itr;
-            save_game_count++;
+            save_game_slots__ovr160[save_game_count__ovr160] = itr;
+            save_game_count__ovr160++;
         }
     }
 
@@ -334,9 +354,9 @@ void Load_Screen(void)
             {
                 selected_save_game_slot_idx = itr_save_slot_fields;
                 selected_load_game_slot_idx = ST_UNDEFINED;
-                for(itr_save_game_count = 0; itr_save_game_count < save_game_count; itr_save_game_count++)
+                for(itr_save_game_count = 0; itr_save_game_count < save_game_count__ovr160; itr_save_game_count++)
                 {
-                    if(save_game_slots[itr_save_game_count] == itr_save_slot_fields)
+                    if(save_game_slots__ovr160[itr_save_game_count] == itr_save_slot_fields)
                     {
                         selected_load_game_slot_idx = itr_save_slot_fields;
                     }
@@ -517,9 +537,9 @@ void Load_Screen_Draw(void)
     Fill(171, 170, 271, 184, 0);
 
 
-    for(itr_save_gam = 0; itr_save_gam < save_game_count; itr_save_gam++)
+    for(itr_save_gam = 0; itr_save_gam < save_game_count__ovr160; itr_save_gam++)
     {
-        FLIC_Draw(x_start, (47 + (save_game_slots[itr_save_gam] * 15)), loadsave_text_fill_seg);
+        FLIC_Draw(x_start, (47 + (save_game_slots__ovr160[itr_save_gam] * 15)), loadsave_text_fill_seg);
     }
 
 
@@ -606,6 +626,10 @@ void Set_Load_Screen_Help_List(void)
 }
 
 // WZD o160p04
+/*
+vs. Loaded_Game_Update_MGC()
+vs. Loaded_Game_Update_WZD()
+*/
 void Loaded_Game_Update(void)
 {
     int16_t itr;
@@ -615,15 +639,21 @@ void Loaded_Game_Update(void)
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
     GAME_RazeCity = ST_FALSE;
 
+
     _human_player_idx = HUMAN_PLAYER_IDX;
+
 
     PageFlipEffect = 0;
     
+
     Reset_City_Area_Bitfields();
+
 
     GAME_Overland_Init();
 
+
     Patch_Units_Upkeep_And_Sound();
+
 
     // DONT  j_LD_CTY_ResRefresh();
 //     ; drake178: LD_CTY_ResRefresh()
@@ -632,66 +662,104 @@ void Loaded_Game_Update(void)
 //     ; tile of every catchment area (including corners)
 // call    j_NOOP_Current_Player_All_City_Areas
 
+
     // DONT  j_LD_MAP_TFUnk40_Eval();  // drake178: ; not sure what this resource is or would have been, this function enumerates the first five tiles that have it, and records their coordinates
 // call    j_LD_MAP_TFUnk40_Eval           ; not sure what this resource is or would have been,
 //                                         ; this function enumerates the first five tiles that
 //                                         ; have it, and records their coordinates
+
 
     // ¿ in MGC, not WZD ?
 // call    j_CTY_CheckMinFarmers           ; ensures that every city has at least the minimum
 //                                         ; amount of farmers it needs, or can have if there are
 //                                         ; also rebels in it
 
+
     All_Colony_Calculations();
+
 
     _unit_stack_count = 0;
 
+
     Play_Background_Music__STUB();
+
 
     GFX_Swap_Cities();
 
+
     Reset_City_Road_Connection_Bitfields();
+
 
     Delete_Dead_Units();
 
-    // TODO  j_AI_ResetUnitMoves();
+
+    All_AI_Refresh_Units_Movement();
+
 
 // DIFF DNE   WZD  s01p06  Loaded_Game_Update_WZD()
-    // TODO  for(itr = 1; itr < NUM_PLAYERS; itr++)
-    // TODO  {
-    // TODO      TBL_Wizards[itr].average_unit_cost = 0;
-    // TODO  }
+    for(itr = 1; itr < NUM_PLAYERS; itr++)
+    {
+
+        _players[itr].average_unit_cost = 0;
+
+    }
+
 
     // DEDU  ¿¿¿ WIZ_NextIdleStack() was called above in GAME_Overland_Init() ???
     GAME_NextHumanStack();
 
 
-    if(_difficulty = god_Intro)
+    if(_difficulty == god_Intro)
     {
+
         magic_set.random_events = ST_FALSE;
+
     }
 
 
-    // TODO  for(itr = 0; itr < 100; itr++)
-    // TODO  {
-    // TODO      TBL_OvlMovePathsEMS[itr] = ST_UNDEFINED;
-    // TODO  }
-    // TODO  CRP_UNIT_OverlandPath = ST_UNDEFINED;
-    // TODO  j_CONTX_CreateChains();
-    // TODO  j_CONTX_CreateLChains();
-    // TODO  for(itr = 0; itr < _num_players; itr++)
-    // TODO  {
-    // TODO      AI_CONTX_Reevals[itr] = ST_FALSE;
-    // TODO  }
+
+    /*
+        BEGIN:  AI CONT / MOVE
+    */
+
+    for(itr = 0; itr < 100; itr++)
+    {
+
+        TBL_OvlMovePaths_EMS[itr] = ST_UNDEFINED;
+
+    }
+
+    CRP_UNIT_OverlandPath = ST_UNDEFINED;
+
+    CONTX_CreateChains__WIP();
+
+    CONTX_CreateLChains__WIP();
+
+    for(itr = 0; itr < _num_players; itr++)
+    {
+
+        _ai_reevaluate_continents_countdown[itr] = ST_FALSE;
+
+    }
+
+    /*
+        END:  AI CONT / MOVE
+    */
+
 
 
     g_TimeStop_PlayerNum = ST_NONE;
+
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
+
         if(_players[itr_players].Globals[TIME_STOP] > 0)
         {
+
             g_TimeStop_PlayerNum = (itr_players + 1);
+
         }
+
     }
 
 }
@@ -789,7 +857,7 @@ void GAME_Overland_Init(void)
     _map_plane = _FORTRESSES[HUMAN_PLAYER_IDX].wp;
 
 
-    TILE_VisibilityUpdt();
+    All_AI_Players_Contacted();
 
 
     Allocate_Reduced_Map();

@@ -13,17 +13,12 @@
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 /*
     ¿ Game-State Debug Variables ?
 */
 
 
-extern int16_t DBG_trigger_event;
+extern int16_t STU_DBG_trigger_event;
 
 
 // WZD dseg:9136
@@ -64,7 +59,7 @@ extern struct s_FORTRESS * DBG_ORIG__FORTRESSES;
 // WZD dseg:9CCC  
 extern struct s_NODE * DBG_ORIG__NODES;
 // WZD dseg:9CD0
-extern uint8_t * DBG_ORIG_TBL_Landmasses;
+extern uint8_t * DBG_ORIG__landmasses;
 // WZD dseg:9CD4
 extern SAMB_ptr DBG_ORIG_UU_TBL_2;
 // WZD dseg:9CD8
@@ -112,6 +107,12 @@ extern int16_t DBG_TST_entities_on_movement_map[];
 /*
     ¿ Game-State Debug Variables ?
 */
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 

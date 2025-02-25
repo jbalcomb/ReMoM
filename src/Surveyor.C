@@ -4,7 +4,18 @@
 
 */
 
-#include "MoM.H"
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+
+#include "CITYCALC.H"
+#include "Help.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "Outpost.H"
+#include "Roads.H"
+#include "Surveyor.H"
+#include "Terrain.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "WZD_o059.H"
 
 
 

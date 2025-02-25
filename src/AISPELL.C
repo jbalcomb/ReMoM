@@ -8,6 +8,8 @@ MoO2
 Module: AITECH
 */
 
+#include "MoX/MOX_DAT.H"  /* _players[] */
+
 #include "MoM.H"
 
 
@@ -99,13 +101,218 @@ void AI_Research_Picker__STUB(int16_t player_idx)
 
 
 // WZD o156p02
-// AI_OVL_SpellPicker()
+// drake178: AI_OVL_SpellPicker()
+/*
+; selects the next overland spell to cast for the
+; specified wizard
+;
+; multiple BUGs and unexplored sub-functions,
+; RE-EXPLORE!
+*/
+/*
+
+
+
+*/
+void AI_Spell_Select__STUB(int16_t player_idx)
+{
+    int16_t Mana_Income = 0;
+    int16_t Food_Income = 0;
+    int16_t Gold_Income = 0;
+    uint8_t * ptr_players_spells_known = 0;
+    int16_t Mana_Per_Turn = 0;
+    int16_t spellbook_page_spell_index = 0;
+    int16_t Selected_Category = 0;
+    int16_t spell_idx = 0;  // _DI_
+
+
+    ptr_players_spells_known = &_players[player_idx].spells_list[0];
+
+
+AI_Compute_Spells_Info(player_idx);
+
+// TODO  Selected_Category = AI_OVL_SplCat_Picker(player_idx);
+// ; selects a spell category for the AI to use next:
+// ;   0 - no spell
+// ;   1 - summon
+// ;   2 - unit enchantment
+// ;   3 - city enchantment
+// ;   4 - disenchant / true
+// ;   5 - disjunction / true
+// ;   6 - summoning circle
+// ;   7 - overland curse / damage
+// ;   8 - suppression global
+// ;   9 - global enchantment
+// ;  10 - spell of mastery
+// ;
+// ; contains a number of BUGs - re-examine and fix later
+Selected_Category = 0;
+
+    switch(Selected_Category)
+    {
+
+        case 0:
+        {
+
+            spell_idx = 0;
+
+        } break;
+
+        case 1:
+        {
+
+        } break;
+
+        case 2:
+        {
+
+        } break;
+
+        case 3:
+        {
+
+        } break;
+
+        case 4:
+        {
+
+        } break;
+
+        case 5:
+        {
+
+        } break;
+
+        case 6:
+        {
+
+        } break;
+
+        case 7:
+        {
+
+        } break;
+
+        case 8:
+        {
+
+        } break;
+
+        case 9:
+        {
+
+        } break;
+
+        case 10:
+        {
+
+        } break;
+
+    }
+
+
+    Player_Resource_Income_Total(player_idx, &Gold_Income, &Food_Income, &Mana_Income);
+
+    Mana_Per_Turn = ((_players[player_idx].mana_reserve / 10) + Mana_Income);
+
+    if((spell_data_table[spell_idx].Casting_Cost / 50) > Mana_Per_Turn)
+    {
+
+        spell_idx = 0;
+
+    }
+
+
+    /* TODO */ WIZ_SetOverlandSpell__WIP(player_idx, spell_idx, spellbook_page_spell_index);
+
+
+}
+
 
 // WZD o156p03
 // AI_OVL_SplCat_Picker()
 
 // WZD o156p04
-// AI_OVL_GetSpellList()
+// drake178: AI_OVL_GetSpellList()
+/*
+; recalculates the overland spells available to the
+; selected player, setting AI_OVL_SpellCount,
+; AI_OVL_Spell_Cats, and AI_OVL_SpellList accordingly
+*/
+/*
+
+
+
+*/
+void AI_Compute_Spells_Info(int16_t player_idx)
+{
+    int16_t spell_idx = 0;
+    int16_t itr = 0;
+    int16_t itr_spells = 0;  // _DI_
+    int16_t itr_realms = 0;  // _SI_
+    int16_t ai_spell_group = 0;  // _CX_
+
+    CRP_AI_OVL_SpellCount = 0;  // ; redundant - calculated but never used
+
+
+    for(itr = 0; itr < 90; itr++)
+    {
+
+        AI_OVL_Spell_Cats[itr] = 0;
+
+    }
+
+    for(itr_realms = 0; itr_realms < NUM_MAGIC_REALMS; itr_realms++)
+    {
+
+        for(itr_spells = 0; itr_spells < NUM_SPELLS_PER_MAGIC_REALM; itr_spells++)
+        {
+
+            if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == 2 /* S_Known */)
+            {
+
+                spell_idx = ((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells);
+
+                ai_spell_group = spell_data_table[spell_idx].AI_Group;
+
+                if(ai_spell_group ==  5) { continue; }  // ; combat damage spells
+                if(ai_spell_group == 24) { continue; }
+                if(ai_spell_group == 47) { continue; }
+                if(ai_spell_group == 70) { continue; }
+                if(ai_spell_group == 12) { continue; }
+                if(ai_spell_group == 31) { continue; }
+                if(ai_spell_group == 55) { continue; }
+                if(ai_spell_group == 77) { continue; }
+                if(ai_spell_group == 16) { continue; }
+                if(ai_spell_group == 35) { continue; }
+                if(ai_spell_group == 59) { continue; }
+                if(ai_spell_group == 81) { continue; }
+                if(ai_spell_group == 17) { continue; }
+                if(ai_spell_group == 36) { continue; }
+                if(ai_spell_group == 60) { continue; }
+                if(ai_spell_group == 82) { continue; }
+                if(ai_spell_group ==  1) { continue; }  // ; Dispel Magic
+                if(ai_spell_group == 20) { continue; }
+                if(ai_spell_group == 43) { continue; }
+                if(ai_spell_group == 19) { continue; }
+                if(ai_spell_group ==  0) { continue; }  // ¿ NONE ?
+
+                // ; redundant - filled out but never used
+                // ; redundant - calculated but never used
+                CRP_AI_OVL_SpellList[CRP_AI_OVL_SpellCount] = spell_idx;
+
+                AI_OVL_Spell_Cats[ai_spell_group] = 1;
+
+                CRP_AI_OVL_SpellCount++;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o156p05
 // AI_OVL_PickSummon()
@@ -183,52 +390,164 @@ void AI_Research_Picker__STUB(int16_t player_idx)
 // AITP_Inspirations()
 
 // WZD o156p30
-// AITP_Prosperity()
+// drake178: AITP_Prosperity()
 
 // WZD o156p31
-// AITP_AstralGate()
+// drake178: AITP_AstralGate()
 
 // WZD o156p32
-// AITP_DarkRituals()
+// drake178: AITP_DarkRituals()
 
 // WZD o156p33
-// AITP_CloudofShadow()
+// drake178: AITP_CloudofShadow()
 
 // WZD o156p34
-// AITP_SpellWard()
+// drake178: AITP_SpellWard()
 
 // WZD o156p35
-// AITP_Consecration()
+// drake178: AITP_Consecration()
 
 // WZD o156p36
-// UU_DBG_GetKnownSpells()
+// drake178: UU_DBG_GetKnownSpells()
 
 // WZD o156p37
-// CRP_DBG_SpellTargetError()
+// drake178: CRP_DBG_SpellTargetError()
 
 // WZD o156p38
-// AI_ReleaseGlobals()
+// drake178: AI_ReleaseGlobals()
+/*
+releases unwanted global enchantments or, if at zero
+mana, all global enchantments
+
+WARNING: this may not be the best thing to do...
+*/
+/*
+
+*/
+void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
+{
+
+    if(
+        (_players[player_idx].Globals[ETERNAL_NIGHT] != 0)
+        &&
+        (_players[player_idx].Prim_Realm != sbr_Death)
+        &&
+        (_players[player_idx].Sec_Realm != sbr_Death)
+    )
+    {
+
+        _players[player_idx].Globals[ETERNAL_NIGHT] = 0;
+
+    }
+
+    if(
+        (_players[player_idx].Globals[EVIL_OMENS] != 0)
+        &&
+        (_players[player_idx].Prim_Realm == sbr_Life)
+        &&
+        (_players[player_idx].Sec_Realm == sbr_Life)
+        &&
+        (_players[player_idx].Prim_Realm == sbr_Nature)
+        &&
+        (_players[player_idx].Sec_Realm == sbr_Nature)
+    )
+    {
+
+        _players[player_idx].Globals[EVIL_OMENS] = 0;
+
+    }
+
+    if(
+        (_players[player_idx].Globals[CHAOS_SURGE] != 0)
+        &&
+        (_players[player_idx].Prim_Realm != sbr_Chaos)
+        &&
+        (_players[player_idx].Sec_Realm != sbr_Chaos)
+    )
+    {
+
+        _players[player_idx].Globals[CHAOS_SURGE] = 0;
+
+    }
+
+    if(
+        (_players[player_idx].Globals[TRANQUILITY] != 0)
+        &&
+        (_players[player_idx].Prim_Realm == sbr_Chaos)
+        &&
+        (_players[player_idx].Sec_Realm == sbr_Chaos)
+    )
+    {
+
+        _players[player_idx].Globals[TRANQUILITY] = 0;
+
+    }
+
+    if(
+        (_players[player_idx].Globals[LIFE_FORCE] != 0)
+        &&
+        (_players[player_idx].Prim_Realm == sbr_Chaos)
+        &&
+        (_players[player_idx].Sec_Realm == sbr_Chaos)
+    )
+    {
+
+        _players[player_idx].Globals[LIFE_FORCE] = 0;
+
+    }
+
+    if(_players[player_idx].mana_reserve == 0)
+    {
+
+        _players[player_idx].Globals[ETERNAL_NIGHT] = 0;
+        _players[player_idx].Globals[EVIL_OMENS] = 0;
+        _players[player_idx].Globals[ZOMBIE_MASTERY] = 0;
+        _players[player_idx].Globals[AURA_OF_MAJESTY] = 0;
+        _players[player_idx].Globals[WIND_MASTERY] = 0;
+        _players[player_idx].Globals[SUPPRESS_MAGIC] = 0;
+        _players[player_idx].Globals[TIME_STOP] = 0;
+        _players[player_idx].Globals[NATURES_AWARENESS] = 0;
+        _players[player_idx].Globals[NATURES_WRATH] = 0;
+        _players[player_idx].Globals[HERB_MASTERY] = 0;
+        _players[player_idx].Globals[CHAOS_SURGE] = 0;
+        _players[player_idx].Globals[DOOM_MASTERY] = 0;
+        _players[player_idx].Globals[GREAT_WASTING] = 0;
+        _players[player_idx].Globals[METEOR_STORM] = 0;
+        _players[player_idx].Globals[ARMAGEDDON] = 0;
+        _players[player_idx].Globals[TRANQUILITY] = 0;
+        _players[player_idx].Globals[LIFE_FORCE] = 0;
+        _players[player_idx].Globals[CRUSADE] = 0;
+        _players[player_idx].Globals[JUST_CAUSE] = 0;
+        _players[player_idx].Globals[HOLY_ARMS] = 0;
+        _players[player_idx].Globals[PLANAR_SEAL] = 0;
+        _players[player_idx].Globals[CHARM_OF_LIFE] = 0;
+        _players[player_idx].Globals[DETECT_MAGIC] = 0;
+        _players[player_idx].Globals[AWARENESS] = 0;
+    }
+
+}
+
 
 // WZD o156p39
-// sub_E7CC9()
+// drake178: sub_E7CC9()
 
 // WZD o156p40
-// AI_CanTargetCities()
+// drake178: AI_CanTargetCities()
 
 // WZD o156p41
-// sub_E8070()
+// drake178: sub_E8070()
 
 // WZD o156p42
-// sub_E8448()
+// drake178: sub_E8448()
 
 // WZD o156p43
-// sub_E882B()
+// drake178: sub_E882B()
 
 // WZD o156p44
-// sub_E88F3()
+// drake178: sub_E88F3()
 
 // WZD o156p45
-// AITP_OVL_TileSpells()
+// drake178: AITP_OVL_TileSpells()
 
 // WZD o156p46
 // AITP_OVL_HarmStack()

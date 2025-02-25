@@ -24,12 +24,39 @@
 
 */
 
-#include "MoM.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
-// WZD o97p08
-void Print_Moves_String(int16_t x_start, int16_t y_start, int16_t moves2, int16_t right_align_flag);
+#include "Combat.H"
 
+#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MoX/SOUND.H"
 
+#include "City_ovr55.H"
+#include "CITYCALC.H"
+#include "DIPLOMAC.H"
+#include "Help.H"
+#include "Items.H"
+#include "Lair.H"
+#include "LOADER.H"
+#include "MainScr.H"
+#include "MainScr_Maps.H"
+#include "MoM_Data.H"
+#include "MoM_DBG.H"
+#include "MoM_DEF.H"
+#include "NEXTTURN.H"
+#include "RACETYPE.H"
+#include "SBookScr.H"
+#include "special.H"
+#include "Spellbook.H"
+#include "Terrain.H"
+#include "TerrType.H"
+#include "UnitMove.H"   // WTFMATE
+#include "UnitStat.H"
+#include "UNITTYPE.H"   // WTFMATE
+#include "UnitView.H"
+#include "WZD_o059.H"
+
+#include <stdlib.h>     /* abs(); itoa(); */
+#include <cstdlib> /* IDGI;  "...abs(int) is defined in <cstdlib>" */
 
 #include "FIGURES8_LBX_063.H"
 
@@ -364,37 +391,6 @@ char message_lbx_file__ovr122[] = "message";
 
 
 
-// WZD dseg:C8AE                                                 ¿ BEGIN:  ovr114 ?
-
-// WZD dseg:C8AE
-int16_t AI_NoMeleeHeroSafety;
-// WZD dseg:C8B0
-int16_t AI_ImmobileCounter;
-// WZD dseg:C8B2
-int16_t G_AI_StayInTownProper;
-// WZD dseg:C8B2                                                                                         ; now 1 (during tactical combat init)
-// WZD dseg:C8B2                                                                                         ; set to 0 if the enemy has a high-powered ranged unit,
-// WZD dseg:C8B2                                                                                         ; Magic Vortex, Wrack, Call Lightning, or Mana Leak
-
-// WZD dseg:C8B4
-// drake178: AI_CmbtWall_BitField
-/*
-battlefield city wall bit-field
-
- 0 0 0 0 0 0 0 0
-           | | \- stone
-           | \--- fire
-           \----- darkness
-
-Dear drake178, Why "AI"?
-
-*/
-int16_t _battlefield_city_walls;
-
-// WZD dseg:C8B4                                                 ¿ END:  ovr114 ?
-
-
-
 
 
 // WZD dseg:5EA6                                                 ¿ BEGIN:  ovr123 - Strings ?
@@ -626,7 +622,10 @@ int16_t adjacent_offsets[24] =
 // WZD dseg:70F8 75 6E 64 20 66 6F 72 20 43 50 2E 00                                                     ; DATA XREF: CRP_DBG_SpellTargetError+33o
 // WZD dseg:7114 00                                              db    0
 // WZD dseg:7115 00                                              db    0
-// WZD dseg:7116 00 00                                           AI_Human_Hostility dw 0                 ; DATA XREF: AI_SetUnitOrders:loc_EBDABw ...
+
+// WZD dseg:7116
+int16_t ai_human_hostility = ST_FALSE;
+
 // WZD dseg:7118 B9 2F 2F 2F 2F                                  COL_HLP_Titles db 0B9h, 4 dup(2Fh)      ; DATA XREF: Draw_Help_Entry:loc_F27EBo
 // WZD dseg:7118                                                                                         ; this should ideally have been 16 bytes long
 // WZD dseg:711D B8 37 37 37 37                                  COL_HLP_Text db 0B8h, 4 dup(37h)        ; DATA XREF: Draw_Help_Entry:loc_F25E4o ...
@@ -990,9 +989,14 @@ int16_t * CMB_IDK_4PR;
 
 
 
+
+
+
+
 // WZD dseg:C8AE                                                 ¿ BEGIN:  ovr114 ?
+
 // WZD dseg:C8AE
-// WZD dseg:C8AE 00 00                                           AI_NoMeleeHeroSafety dw 0               ; DATA XREF: AI_MoveBattleUnits:loc_93437w ...
+int16_t AI_NoMeleeHeroSafety;
 // WZD dseg:C8B0
 int16_t AI_ImmobileCounter;
 // WZD dseg:C8B2
@@ -1000,9 +1004,25 @@ int16_t G_AI_StayInTownProper;
 // WZD dseg:C8B2                                                                                         ; now 1 (during tactical combat init)
 // WZD dseg:C8B2                                                                                         ; set to 0 if the enemy has a high-powered ranged unit,
 // WZD dseg:C8B2                                                                                         ; Magic Vortex, Wrack, Call Lightning, or Mana Leak
-// WZD dseg:C8B4 00 00                                           _battlefield_city_walls dw 0               ; DATA XREF: AI_SetBasicAttacks+274r ...
-// WZD dseg:C8B4                                                                                         ; 1 - stone, 2 - fire, 4 - darkness
-// WZD dseg:C8B4                                                 ¿ END:  ovr114 ?                        ; zeroed when the above variable is zeroed
+
+// WZD dseg:C8B4
+// drake178: AI_CmbtWall_BitField
+/*
+battlefield city wall bit-field
+
+ 0 0 0 0 0 0 0 0
+           | | \- stone
+           | \--- fire
+           \----- darkness
+
+Dear drake178, Why "AI"?
+
+*/
+int16_t _battlefield_city_walls;
+
+// WZD dseg:C8B4                                                 ¿ END:  ovr114 ?
+
+
 
 
 
@@ -4381,7 +4401,7 @@ void Update_Defender_Hostility(int attacker_player_idx, int defender_player_idx)
         _players[defender_player_idx].Hostility[attacker_player_idx] = 0;
     }
 
-    _players[defender_player_idx].War_Reeval = (15+ Random(10));
+    _players[defender_player_idx].reevaluate_hostility_countdown = (15+ Random(10));
 
 }
 
@@ -8461,7 +8481,7 @@ int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx)
                     if(battle_units[itr].action == bua_Wait)
                     {
 
-                        battle_units[itr].action == bua_Ready;
+                        battle_units[itr].action = bua_Ready;
 
                     }
 
@@ -8924,7 +8944,7 @@ int16_t Check_For_Winner__WIP(void)
             if(battle_units[itr].status == bus_Active)
             {
 
-                battle_units[itr].status == bus_Fleeing;
+                battle_units[itr].status = bus_Fleeing;
 
             }
 
@@ -12252,7 +12272,7 @@ void AI_SetBasicAttacks__WIP(int16_t player_idx)
                         if(Random(2) == 1)
                         {
 
-                            battle_units[battle_unit_idx].action == BUA_MoveNFire;
+                            battle_units[battle_unit_idx].action = BUA_MoveNFire;
 
                         }
 
@@ -12823,7 +12843,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
             {
 
                 __debugbreak();  /* WTF, Mate? ... How did I get here? ... Do I ever get here? */
-                battle_units[battle_unit_idx].status == bus_Dead;
+                battle_units[battle_unit_idx].status = bus_Dead;
 
             }
 
@@ -13861,7 +13881,7 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
         )
         {
 
-            CMB_ActiveMoveMap[((battle_units[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + battle_units[itr_battle_units].cgx)] == INF;
+            CMB_ActiveMoveMap[((battle_units[itr_battle_units].cgy * COMBAT_GRID_WIDTH) + battle_units[itr_battle_units].cgx)] = INF;
 
         }
 
@@ -13994,7 +14014,7 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
 {
     int16_t Move_Anim_Base_Speed = 0;
     int16_t First_Step_Index = 0;
-    SAMB_ptr Sound_Data_Seg = 0;
+    SAMB_INT Sound_Data_Seg = 0;
     int16_t Move_Visible = 0;
     int16_t Y_Distance = 0;
     int16_t X_Distance = 0;
@@ -14108,7 +14128,7 @@ BUG: this has just been done in the parent function
 
     if(movement_path_grid_cell_count == 0)
     {
-        return;
+        return ST_FALSE;
     }
 
 
@@ -14497,7 +14517,7 @@ BUG: this has just been done in the parent function
                             if(Sound_Data_Seg != ST_UNDEFINED)
                             {
 
-                                Play_Sound__STUB(Sound_Data_Seg);
+                                Play_Sound__STUB((SAMB_ptr)Sound_Data_Seg);
 
                             }
 
@@ -18734,7 +18754,7 @@ void End_Of_Combat__WIP(int16_t player_idx, int16_t * item_count, int16_t item_l
             {
                 Experience_Gained += 2;
 
-                if(_unit_type_table[_UNITS[battle_units[itr_battle_units].unit_idx].type].Cost >= 600)  /* ¿ >= the cost of Torin ? */
+                if(_unit_type_table[_UNITS[battle_units[itr_battle_units].unit_idx].type].cost >= 600)  /* ¿ >= the cost of Torin ? */
                 {
                     Rare_Foe_Defeated = ST_TRUE;  // later, +1 Fame for "winning a battle where the enemy lost a very rare creature" - MoM-OSG
                 }
@@ -19622,7 +19642,7 @@ int16_t CTY_RampageVictory(void)
                         else if(Unit_Types == 1)
                         {
                             Unit_Types = 2;
-                            if(_unit_type_table[Unit_Type].Cost < _unit_type_table[Primary_Unit].Cost)
+                            if(_unit_type_table[Unit_Type].cost < _unit_type_table[Primary_Unit].cost)
                             {
                                 Secondary_Unit = Unit_Type;
                                 Secondary_Count = 1;
@@ -19637,7 +19657,7 @@ int16_t CTY_RampageVictory(void)
                         }
                         else
                         {
-                            if(_unit_type_table[Unit_Type].Cost > _unit_type_table[Primary_Unit].Cost)
+                            if(_unit_type_table[Unit_Type].cost > _unit_type_table[Primary_Unit].cost)
                             {
                                 Secondary_Unit = Primary_Unit;
                                 Secondary_Count = Primary_Count;
@@ -19646,7 +19666,7 @@ int16_t CTY_RampageVictory(void)
                             }
                             else
                             {
-                                if(_unit_type_table[Unit_Type].Cost > _unit_type_table[Secondary_Unit].Cost)
+                                if(_unit_type_table[Unit_Type].cost > _unit_type_table[Secondary_Unit].cost)
                                 {
                                     Secondary_Unit = Unit_Type;
                                     Secondary_Count = 1;
@@ -20898,7 +20918,8 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
     int X_Distance, Y_Distance;
 
     // Retrieve the vortex
-    struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
+    // struct s_CMB_Vortex* vortex = &CMB_Vortex_Array[Vortex_Index];
+    struct s_MAGIC_VORTEX * vortex = &CMB_Vortex_Array[Vortex_Index];
     Prev_X = vortex->cgx;
     Prev_Y = vortex->cgy;
     CMB_ActiveUnitFrame = 0;
@@ -20967,7 +20988,10 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
 // segrax
 // WZD o133p16
 void CMB_VortexPlayerMove(int Vortex_Index) {
-    int16_t Picked_Y, Y_Retn, X_Retn;
+    // int16_t Picked_Y, Y_Retn, X_Retn;
+    int16_t Picked_Y;
+    int64_t Y_Retn;
+    int64_t X_Retn;
     int16_t Click_Grid_Index = -1;
     int16_t Control_Input, Finished = 0;
 
@@ -20980,6 +21004,8 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
     }
 
     Clear_Fields();
+
+    // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
     Click_Grid_Index = Add_Grid_Field(0, 0, 1, 1, 319, 168, &X_Retn, &Y_Retn, ST_UNDEFINED);
     Finished = 0;
     _active_battle_unit = -1;
@@ -21019,9 +21045,9 @@ void CMB_VortexPlayerMove(int Vortex_Index) {
 
 // segrax
 // WZD o133p15
-void CMB_SetVortexCursor(unsigned int Vortex_Index) {
-    unsigned int Pointer_Offset = 4;
-    unsigned int Tile_Y, Scrn_Y, Scrn_X;
+void CMB_SetVortexCursor(int Vortex_Index) {
+    int Pointer_Offset = 4;
+    int Tile_Y, Scrn_Y, Scrn_X;
 
     _combat_mouse_grid->image_num = crsr_RedCross;
     Scrn_X = Pointer_X() + Pointer_Offset;
@@ -21036,14 +21062,14 @@ void CMB_SetVortexCursor(unsigned int Vortex_Index) {
     if ((Pointer_Offset + 168) > Scrn_Y) {
         CMB_TargetFrame = 0;
         Tile_Y = Get_Combat_Grid_Cell_Y(Scrn_X, Scrn_Y);
-        unsigned int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
+        int Grid_X = Get_Combat_Grid_Cell_X(Scrn_X, Scrn_Y);
 
         if (CMB_Vortex_Array[Vortex_Index].cgx == Grid_X &&
             CMB_Vortex_Array[Vortex_Index].cgy == Tile_Y) {
 
             if (battlefield->MoveCost_Teleport[Grid_X] != -1) {
-                if (abs(Grid_X - CMB_Vortex_Array[Vortex_Index].cgx) <= 1 &&
-                    abs(Tile_Y - CMB_Vortex_Array[Vortex_Index].cgy) <= 1) {
+                if (abs((int)(Grid_X - CMB_Vortex_Array[Vortex_Index].cgx)) <= 1 &&
+                    abs((int)(Tile_Y - CMB_Vortex_Array[Vortex_Index].cgy)) <= 1) {
                     CMB_TargetFrame = 1;
                     CMB_TargetFrame_X = Grid_X;
                     CMB_TargetFrame_Y = Tile_Y;
@@ -22576,11 +22602,13 @@ void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
 
 // DELETE      DBG_EMM_PageFrame__1 = (int64_t)EMM_PageFrame;
 
-    // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
+    // // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
+    // SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
+    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, _SA_MEMSIG1);
 
-    // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
+    // // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
+    // SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
+    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG2, _SA_MEMSIG2);
 
     // farpokew((EMM_PageFrame + offset), SAMB_SIZE, 1591);
     SET_2B_OFS((EMM_PageFrame + offset), SAMB_SIZE, 1591);  // 1591 PR, 25456 B
@@ -22600,11 +22628,13 @@ void EMM_TILEX_Init__HACK(void)
     // EMM_PageFrame = EmmHndl_TILEXXX;
     EMM_PageFrame = (EmmHndl_TILEXXX + (0 * SZ_EMM_LOGICAL_PAGE));
 
-    // TODO  farpokew(EMM_PageFrame, SAMB.MemSig1, SA_MEMSIG1);
-    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, SA_MEMSIG1);
+    // // TODO  farpokew(EMM_PageFrame, SAMB.MemSig1, SA_MEMSIG1);
+    // SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, SA_MEMSIG1);
+    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, _SA_MEMSIG1);
 
-    // TODO  farpokew(EMM_PageFrame, SAMB.MemSig2, SA_MEMSIG2);
-    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG2, SA_MEMSIG2);
+    // // TODO  farpokew(EMM_PageFrame, SAMB.MemSig2, SA_MEMSIG2);
+    // SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG2, SA_MEMSIG2);
+    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG2, _SA_MEMSIG2);
 
     // TODO  farpokew(EMM_PageFrame, SAMB.size, 3071);
     SET_2B_OFS(EMM_PageFrame, SAMB_SIZE, 3071);  // 3071 PR, 49136 B
@@ -22653,12 +22683,6 @@ void Combat_Figure_Compose_USEFULL(void)
 
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-
-// DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
-// DELETE          {
-// DELETE              // __debugbreak();
-// DELETE          }
-
 
         if(battle_units[itr].status != bus_Active)
         {
@@ -23222,7 +23246,7 @@ void CMB_Terrain_Init__WIP(int16_t wx, int16_t wy, int16_t wp)
                 if((MAP_SQUARE_FLAG(TileTest_X, TileTest_Y, wp) & MSF_ROAD) != 0)
                 {
 
-                    Road_Matrix[((TileTest_Y - wy) + 1) + (TileTest_X - wx)] = ST_TRUE;
+                    Road_Matrix[((TileTest_Y - wy + 1) * 3) + (TileTest_X - wx + 1)] = ST_TRUE;
 
                 }
 
@@ -25139,7 +25163,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     }
 
 
-    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+    RP_CMB_MoveMap = (int16_t *)CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
 
     movement_path_grid_cell_count = 0;
 
@@ -25291,7 +25315,7 @@ void Combat_Move_Path_Find__v02(int16_t source_cgx, int16_t source_cgy, int16_t 
     }
 
 
-    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+    RP_CMB_MoveMap = (int16_t *)CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
 
     movement_path_grid_cell_count = 0;
 
@@ -25706,7 +25730,7 @@ void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t 
     }
 
 
-    RP_CMB_MoveMap = CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
+    RP_CMB_MoveMap = (int16_t *)CMB_ActiveMoveMap;  /* Why?  ¿ pointer of different data-type ? */
 
     movement_path_grid_cell_count = 0;
 
@@ -26945,9 +26969,9 @@ void CMB_BaseAllocs__WIP(void)
     CMB_Vortex_Array = (struct s_MAGIC_VORTEX *)Allocate_Next_Block(_screen_seg, 9);  // 9 PR, 144 B
 
     // ¿ drake178:  ; WARNING: these are entirely redundant and will be  reallocated immediately after this! ?
-    CMB_ActiveMoveMap = Near_Allocate_First(504);
+    CMB_ActiveMoveMap = (int8_t *)Near_Allocate_First(504);
     CMB_Path_Costs = Near_Allocate_Next(504);
-    CMB_NearBuffer_3 = Near_Allocate_Next(1008);
+    CMB_NearBuffer_3 = (int16_t *)Near_Allocate_Next(1008);
     CMB_Path_Xs = Near_Allocate_Next(504);
     CMB_Path_Ys = Near_Allocate_Next(504);
 
