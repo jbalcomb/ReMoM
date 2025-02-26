@@ -1,7 +1,7 @@
 #ifndef INIT_H
 #define INIT_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

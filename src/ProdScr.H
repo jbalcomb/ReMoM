@@ -9,7 +9,7 @@
 #ifndef PRODSCR_H
 #define PRODSCR_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 #ifdef __cplusplus

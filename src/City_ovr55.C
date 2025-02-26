@@ -6,12 +6,14 @@
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
-#include "MoM.H"
+#include "MOM.H"
 #include "City_ovr55.H"
 #include "CityScr.H"
 #include "ProdScr.H"
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 
 
@@ -873,7 +875,10 @@ void Print_City_Enchantment_List(int16_t start_x, int16_t start_y, int16_t * cit
     int16_t x;
     uint8_t banner_colors[6];
     uint8_t colors[6];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     int16_t var_2;
+#pragma clang diagnostic push
     int16_t itr;  // _DI_
     int16_t itr_colors;  // _SI_
 
@@ -1342,7 +1347,10 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
     int16_t group_two_x1;  // DNE in Dasm, uses city_resource_row_field_idx
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     abs_diff_gold = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
+#pragma clang diagnostic pop
 
     resources[0] = (_CITIES[city_idx].food_units + 1);
     resources[1] = _CITIES[city_idx].production_units;
@@ -1486,7 +1494,10 @@ void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t y
     int16_t itr_resource_types;  // _SI_
 
     abs_diff_food = abs(_CITIES[city_idx].food_units - _CITIES[city_idx].population);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     abs_diff_gold = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
+#pragma clang diagnostic pop
 
     resources[0] = (_CITIES[city_idx].food_units + 1);
     resources[1] = _CITIES[city_idx].production_units;
@@ -1818,7 +1829,8 @@ void Build_City_Enchantment_List(int16_t city_idx, int16_t city_enchantment_list
         {
             city_enchantment_list[city_enchantment_count] = itr_city_enchantments;
 
-            if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
+            // TODO  stricmp() for Linux/clang? if(stricmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
+            if(strcmp(_city_enchantment_names[itr_city_enchantments], str_Nightshade) == 0)
             {
                 city_enchantment_owner_list[city_enchantment_count] = 10;
             }
@@ -2120,6 +2132,8 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
 
         // Add_Hidden_Field(x1, y1, x2, y2, cnst_ZeroString_30, 0xFFFF);
         city_population_row_fields[itr_figures] = Add_Hidden_Field(x1, y1, x2, y2, 0, ST_UNDEFINED);
+
+        xadd += figure_space;
 
         itr_figures++;
     }

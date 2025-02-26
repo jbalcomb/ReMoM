@@ -5,7 +5,7 @@
         ovr072
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
 #include "UnitStat.H"
 #include "CityScr.H"
@@ -826,11 +826,11 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
         _CITIES[_city_idx].construction = product_idx;
 if(_CITIES[_city_idx].construction < 0)
 {
-    __debugbreak();
+    STU_DEBUG_BREAK();
 }
 if(_CITIES[_city_idx].construction > 298)
 {
-    __debugbreak();
+    STU_DEBUG_BREAK();
 }
 
         UV_x_start_offset = 4;

@@ -19,15 +19,15 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 #include "MainScr_Maps.H"
 
-#include "MoX/FLIC_Draw.H"
-#include "MoX/MOX_DAT.H"  /* _players[] */
-#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MOX/FLIC_Draw.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_SET.H"  /* magic_set */
 
 #include "Explore.H"
 #include "MainScr.H"
 #include "MOM_SCR.H"
 #include "SCastScr.H"  /* World_To_Screen() */
-#include "TERRAIN.H"
+#include "Terrain.H"
 #include "UnitMove.H"
 #include "UNITTYPE.H"
 

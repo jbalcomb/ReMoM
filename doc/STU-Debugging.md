@@ -18,7 +18,7 @@ memory allocation to build-up bitmap image data for debug *dump*
 #ifdef STU_DEBUG
     if(DBG_Draw_Invisibility = 1)  /* Unit Has Invisibility */
     {
-        DLOG("(DBG_Draw_Invisibility = 1)");
+        // TODO  DLOG("(DBG_Draw_Invisibility = 1)");
         // screen_page = (video_page_buffer[1 - draw_page_num]);
         // screen_ofst = (80 * SCREEN_WIDTH) + 248;
         vbb_ptr = (video_page_buffer[1 - draw_page_num] + ((80 * SCREEN_WIDTH) + 248));
@@ -167,7 +167,7 @@ But, something like...
     in Draw_Maps()
         if(map_moved_flag == ST_TRUE)
         {
-            DLOG("(map_moved_flag == ST_TRUE)");
+            // TODO  DLOG("(map_moved_flag == ST_TRUE)");
             Set_Unit_Draw_Priority();
             Reset_Stack_Draw_Priority();
             Set_Entities_On_Map_Window(l_map_x, l_map_y, map_plane);
@@ -214,7 +214,7 @@ Set_Entities_On_Map_Window(world_x = 18, world_y = 11, world_plane = 0)
 
 
 if(map_moved_flag == ST_TRUE)
-    DLOG("(map_moved_flag == ST_TRUE)");
+    // TODO  DLOG("(map_moved_flag == ST_TRUE)");
 
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
@@ -231,9 +231,9 @@ entities_on_movement_map[(itr_map_y * MAP_WIDTH) + itr_map_x] = ST_UNDEFINED;
 Main_Screen()
 /* Right-Click Movement Map Grid Field */
 entity_idx = entities_on_movement_map[( (_main_map_grid_y * MAP_WIDTH) + _main_map_grid_x )];
-DLOG("if(entity_idx != ST_UNDEFINED)");
-DLOG("if(entity_idx < 1000)");
-DLOG("if(_UNITS[entity_idx].owner_idx == _human_player_idx)");
+// TODO  DLOG("if(entity_idx != ST_UNDEFINED)");
+// TODO  DLOG("if(entity_idx < 1000)");
+// TODO  DLOG("if(_UNITS[entity_idx].owner_idx == _human_player_idx)");
     _unit = entity_idx;
     unit_idx = _unit;
     Unit_X = _UNITS[unit_idx].world_x;

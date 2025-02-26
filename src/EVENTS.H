@@ -9,7 +9,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

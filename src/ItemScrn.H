@@ -9,7 +9,7 @@
 #ifndef ITEMSCRN_H
 #define ITEMSCRN_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

@@ -7,7 +7,7 @@
 #ifndef CITYSCAP_H
 #define CITYSCAP_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 #ifdef __cplusplus

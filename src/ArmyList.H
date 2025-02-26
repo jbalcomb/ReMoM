@@ -11,7 +11,7 @@
 #ifndef ARMYLIST_H
 #define ARMYLIST_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

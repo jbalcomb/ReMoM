@@ -8,7 +8,7 @@
 #ifndef MAINSCR_MAPS_H
 #define MAINSCR_MAPS_H
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

@@ -6,7 +6,7 @@
 #ifndef UNITSTK_H
 #define UNITSTK_H
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 #ifdef __cplusplus
 extern "C" {

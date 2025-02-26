@@ -9,7 +9,7 @@ MoO2
 
 */
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 #include "CITYCALC.H"
 #include "MainScr.H"
@@ -223,7 +223,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
         if(movement_points_available < 1)
         {
-            DLOG("(movement_points_available < 1)");
+            // TODO  DLOG("(movement_points_available < 1)");
             for(itr_units = 0; itr_units < unit_array_count; itr_units++)
             {
                 if(_UNITS[unit_array[itr_units]].Status == us_Ready)
@@ -237,7 +237,7 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         }
         else
         {
-            DLOG("(movement_points_available >= 1)");
+            // TODO  DLOG("(movement_points_available >= 1)");
         }
 
         Set_Unit_Draw_Priority();

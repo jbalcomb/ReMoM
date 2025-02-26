@@ -6,7 +6,7 @@
 #ifndef WZD_O143_H
 #define WZD_O143_H
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

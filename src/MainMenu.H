@@ -1,7 +1,7 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 extern char mainscrn_lbx_file[];
 extern char vortex_lbx_file[];

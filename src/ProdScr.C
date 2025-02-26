@@ -6,7 +6,7 @@
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
 #include "ProdScr.H"
 #include "MainScr.H"
@@ -301,11 +301,11 @@ void Production_Screen(void)
                     _CITIES[_city_idx].construction = product_indexes[current_item];
     if(_CITIES[_city_idx].construction < 0)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     if(_CITIES[_city_idx].construction > 298)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
 
                     leave_screen = ST_TRUE;
@@ -340,11 +340,11 @@ void Production_Screen(void)
             _CITIES[_city_idx].construction = product_indexes[current_item];
     if(_CITIES[_city_idx].construction < 0)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     if(_CITIES[_city_idx].construction > 298)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
 
             leave_screen = ST_TRUE;
@@ -1018,11 +1018,11 @@ Capture_Cities_Data();
 
 if(_CITIES[city_idx].construction < 0)
 {
-    __debugbreak();
+    STU_DEBUG_BREAK();
 }
 if(_CITIES[city_idx].construction > 298)
 {
-    __debugbreak();
+    STU_DEBUG_BREAK();
 }
 
 Check_Cities_Data();
@@ -1042,11 +1042,11 @@ Check_Cities_Data();
 Capture_Cities_Data();
     if(_CITIES[city_idx].construction < -4)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
     if(_CITIES[city_idx].construction > 298)
     {
-        __debugbreak();
+        STU_DEBUG_BREAK();
     }
 
     return production_cost;

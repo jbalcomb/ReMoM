@@ -5,10 +5,10 @@
 
 #include "Explore.H"
 
-#include "MoX/MOX_DAT.H"  /* _players[] */
-#include "MoX/MoX_DEF.H"
-#include "MoX/MoX_TYPE.H"
-#include "MoX/Util.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/Util.H"
 
 
 

@@ -4,7 +4,7 @@
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
 #include "CITYCALC.H"
 #include "Help.H"

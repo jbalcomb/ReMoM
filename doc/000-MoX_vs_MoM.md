@@ -99,8 +99,8 @@ rename MoX.C/.H - ...MoX_MoM...MoX_Lib...
 
 eliminate the declarations in MoX.H for the MoX functions
 add all MoX headers to MoX_Lib.H
-move all MoM includes to MoM.H from MoX.H
+move all MoM includes to MOM.H from MoX.H
 ...requires moving the modules to the MoX project
 
 
-GENDRAW *knows* enum e_SPELL_BOOK_REALM, which is currently in MoM_Data.H
+GENDRAW *knows* enum e_SPELL_BOOK_REALM, which is currently in MOM_Data.H

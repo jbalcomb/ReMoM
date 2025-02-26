@@ -1,9 +1,9 @@
 #include "SCastScr.H"
 
-#include "MoX/MoX_DEF.H"
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
-#include "MoM_DEF.H"
+#include "MOM_DEF.H"
 
 #include <assert.h>
 

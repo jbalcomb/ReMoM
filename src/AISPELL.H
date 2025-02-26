@@ -12,7 +12,7 @@ Module: AITECH
 #ifndef AISPELL_H
 #define AISPELL_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

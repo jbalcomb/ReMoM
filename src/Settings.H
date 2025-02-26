@@ -18,7 +18,7 @@ MoO2
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

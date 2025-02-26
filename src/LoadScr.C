@@ -20,9 +20,9 @@ MoO2  Module: LOADSAVE
 
 #include "LoadScr.H"
 
-#include "MoX/LOADSAVE.H"
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MOX/LOADSAVE.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
 
 #include "AIDUDES.H"
 #include "CITYCALC.H"

@@ -8,7 +8,8 @@
         Module: ¿ Planets/Colonies Screen ?
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 
 #include "City_ovr55.H"
 #include "CityList.H"

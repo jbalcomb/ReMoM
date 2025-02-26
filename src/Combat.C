@@ -26,9 +26,10 @@
 
 #include "Combat.H"
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
 #include "CITYCALC.H"
@@ -39,9 +40,9 @@
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MoM_Data.H"
-#include "MoM_DBG.H"
-#include "MoM_DEF.H"
+#include "MOM_Data.H"
+#include "MOM_DBG.H"
+#include "MOM_DEF.H"
 #include "NEXTTURN.H"
 #include "RACETYPE.H"
 #include "SBookScr.H"
@@ -2462,7 +2463,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         // ST_DEBUG Hot-Keys
         if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
         {
-            DLOG("STU_DEBUG: debug_hotkey");
+            // TODO  DLOG("STU_DEBUG: debug_hotkey");
             DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
             if(DBG_debug_flag)
             {
@@ -2472,7 +2473,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         }
         if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
         {
-            DLOG("STU_DEBUG: test_hotkey");
+            // TODO  DLOG("STU_DEBUG: test_hotkey");
 
         }
 
@@ -2480,7 +2481,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(battle_units[_active_battle_unit].controller_idx != combat_human_player)
         {
 
-            __debugbreak();
+            STU_DEBUG_BREAK();
             
             CMB_HumanUnitsDone = ST_TRUE;
 
@@ -2908,7 +2909,7 @@ void CMB_PrepareTurn__WIP(void)
 
             Roll_Result = Random(4);
 
-            if(Roll_Result = 1)
+            if(Roll_Result == 1)
             {
 
                 battle_units[itr].action = bua_Finished;
@@ -2917,14 +2918,14 @@ void CMB_PrepareTurn__WIP(void)
 
             }
 
-            if(Roll_Result = 2)
+            if(Roll_Result == 2)
             {
 
                 battle_units[itr].Confusion_State = 1;
 
             }
 
-            if(Roll_Result = 3)
+            if(Roll_Result == 3)
             {
 
                 battle_units[itr].Confusion_State = 2;
@@ -3838,7 +3839,7 @@ void Assign_Combat_Grids(void)
     )
     {
         
-        // __debugbreak();
+        // STU_DEBUG_BREAK();
 
         // assert(CMB_NearBuffer_3[((battle_units[_active_battle_unit].cgy * COMBAT_GRID_WIDTH) + battle_units[_active_battle_unit].cgx)] == _active_battle_unit);
 
@@ -5588,7 +5589,7 @@ void Assign_Mouse_Image(void)
                     )
                     {
 
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
 
                         _combat_mouse_grid->image_num = crsr_Ranged;
 
@@ -5880,7 +5881,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 // DELETE      //if(troop_count == 1)
 // DELETE      if(troops[itr] == DEBUG_UNIT_IDX)
 // DELETE      {
-// DELETE          // __debugbreak();
+// DELETE          // STU_DEBUG_BREAK();
 // DELETE      }
 
     for(itr = 0; itr < 36; itr++)
@@ -11908,7 +11909,7 @@ void Deploy_Battle_Units(int16_t player_idx)
             (starting_cgy[ctr] == 12)
         )
         {
-            // __debugbreak();
+            // STU_DEBUG_BREAK();
             DBG_cgx = starting_cgx[ctr];
             DBG_cgy = starting_cgy[ctr];
             DBG_target_cgx = (DBG_cgx - 1);
@@ -12506,7 +12507,7 @@ jt_bua_10
 
         case BUA_RangedAttack:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
@@ -12518,7 +12519,7 @@ jt_bua_10
         */
         case BUA_MoveNFire:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
             if(battle_units[battle_unit_idx].Target_BU < 0)
             {
@@ -12560,43 +12561,43 @@ jt_bua_10
 
         case BUA_MoveNAttack:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_DoomBolt:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_Fireball:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case bua_Healing:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_UseItem:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_CastSpell:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_SummonDemon:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
             // TODO  BU_SummonDemon(battle_unit_idx);
             // ; processes summoning a demon by the specified unit,
             // ; from decrementing its available summon counter to
@@ -12608,13 +12609,13 @@ jt_bua_10
 
         case bua_WebSpell:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
         case BUA_Flee:
         {
-            __debugbreak();
+            STU_DEBUG_BREAK();
 
         } break;
 
@@ -12680,7 +12681,7 @@ void BU_SortSlowestFirst__WIP(int16_t Melee_Unit_List[], int16_t Melee_Unit_Coun
 
         Melee_Unit_List[previous_battle_unit_idx] = current_battle_unit_idx;
 
-        itr++;
+        // NEWBUG  itr++;
 
     }
 
@@ -12842,7 +12843,7 @@ void AI_MoveBattleUnits__WIP(int16_t player_idx)
             )
             {
 
-                __debugbreak();  /* WTF, Mate? ... How did I get here? ... Do I ever get here? */
+                STU_DEBUG_BREAK();  /* WTF, Mate? ... How did I get here? ... Do I ever get here? */
                 battle_units[battle_unit_idx].status = bus_Dead;
 
             }
@@ -13202,7 +13203,7 @@ int16_t AI_BU_AssignAction__WIP(int16_t battle_unit_idx, int16_t no_spells_flag)
             (selected_action == bua_Ready)
             ||
             (selected_action == BUA_RangedAttack)
-            &&
+            ||
             (selected_action == BUA_MoveNFire)
         )
     )
@@ -13418,7 +13419,7 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
 
 
     if(
-        ((battle_units[battle_unit_idx].Attribs_1 & (0x0800 /* Sum_Demon_1 */ | 0x1000 /* Sum_Demon_2 */ ) != 0))
+        ((battle_units[battle_unit_idx].Attribs_1 & (0x0800 /* Sum_Demon_1 */ | 0x1000 /* Sum_Demon_2 */ )) != 0)
         &&
         (_combat_total_unit_count < 36)
         &&
@@ -13692,7 +13693,7 @@ int16_t AI_BU_SelectAction__WIP(int16_t battle_unit_idx, int16_t * selected_acti
                                     (_UNITS[battle_units[battle_unit_idx].unit_idx].Hero_Slot > -1)
                                 )
                                 {
-                                    __debugbreak();
+                                    STU_DEBUG_BREAK();
                                     continue;
                                 }
 
@@ -13941,7 +13942,7 @@ void G_AI_BU_MoveOrRampage__WIP(int16_t battle_unit_idx, int16_t Dest_X, int16_t
     )
     {
 
-        __debugbreak();
+        STU_DEBUG_BREAK();
 
         City_Steps = 999;
 
@@ -14115,7 +14116,7 @@ BUG: this has just been done in the parent function
 
     if(battle_unit_idx == 1)
     {
-        // DELETEME  __debugbreak();
+        // DELETEME  STU_DEBUG_BREAK();
     }
 
     // sets movement_path_grid_cell_count
@@ -17532,7 +17533,7 @@ void Init_Battlefield_Effects(int16_t combat_structure)
     {
         Leadership_Value = 0;
 
-        if(battle_units[itr_battle_units].status = 0) /* Unit_Active */
+        if(battle_units[itr_battle_units].status == 0) /* Unit_Active */
         {
 
             // BUGBUG: should be checking for City Wall
@@ -17836,7 +17837,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                 else
                 {
 
-                    battle_units[attacker_battle_unit_idx].mana;
+                    // NEWBUG  battle_units[attacker_battle_unit_idx].mana;
 
                 }
 
@@ -17965,7 +17966,7 @@ void Battle_Unit_Attack__WIP(int16_t attacker_battle_unit_idx, int16_t defender_
                     else
                     {
 
-                        battle_units[attacker_battle_unit_idx].mana;
+                        // NEWBUG  battle_units[attacker_battle_unit_idx].mana;
 
                     }
 
@@ -19573,6 +19574,8 @@ int16_t CTY_RampageVictory(void)
     int16_t idx;  // _SI_
     int16_t return_value;  // DNE in Dasm
 
+    return_value = 0;  // DNE in Dasm
+
     // get next available lair_idx
     idx = ST_UNDEFINED;
     for(itr = 0; ((itr < NUM_LAIRS) && (idx == ST_UNDEFINED)); itr++)
@@ -19608,7 +19611,7 @@ int16_t CTY_RampageVictory(void)
 
         Unit_Types = 0;
 
-        for(itr = 0; _combat_total_unit_count < _combat_total_unit_count; itr++)
+        for(itr = 0; itr < _combat_total_unit_count; itr++)
         {
 
             if(
@@ -21242,7 +21245,7 @@ void CMB_DrawMap__WIP(void)
                 if(battlefield->Tile_Mud[((cgy * COMBAT_GRID_WIDTH) + cgx)] != 0)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     FLIC_Set_CurrentFrame(IMG_CMB_Mud, ((cgx + cgy + CMB_MudAnimStage) % 8));
 
@@ -21368,7 +21371,7 @@ void CMB_DrawMap__WIP(void)
                     )
                     {
 
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
 
                         Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
 
@@ -21394,7 +21397,7 @@ void CMB_DrawMap__WIP(void)
                     )
                     {
 
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
 
                         Combat_Grid_Screen_Coordinates(6, 11, 0, 0, &screen_x, &screen_y);
 
@@ -21413,7 +21416,7 @@ void CMB_DrawMap__WIP(void)
                     if(Road_Flags != 0)
                     {
 
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
 
                         if(
                             (Road_Flags & 0x80) != 0
@@ -21725,7 +21728,7 @@ void CMB_DrawEntities__WIP(void)
 // DELETE          // if(itr_combat_entity_draw_order == 4)
 // DELETE          if(combat_grid_entity_idx == DBG_combat_grid_entity_idx)
 // DELETE          {
-// DELETE              // __debugbreak();
+// DELETE              // STU_DEBUG_BREAK();
 // DELETE              // ¿ now what ?
 // DELETE  
 // DELETE          }
@@ -21770,8 +21773,8 @@ void CMB_DrawEntities__WIP(void)
 
 // DELETE                  if(combat_grid_entity_idx == DBG_combat_grid_entity_idx)
 // DELETE                  {
-// DELETE                      DLOG("CMB_DrawEntities__WIP()  combat_grid_entity_idx == DBG_combat_grid_entity_idx");
-// DELETE                      // __debugbreak();
+// DELETE                      // TODO  DLOG("CMB_DrawEntities__WIP()  combat_grid_entity_idx == DBG_combat_grid_entity_idx");
+// DELETE                      // STU_DEBUG_BREAK();
 // DELETE                      // ¿ now what ?
 // DELETE                      // combat_grid_entity_idx
 // DELETE                      // combat_grid_entities[combat_grid_entity_idx].index
@@ -22032,7 +22035,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
 // DELETE          /* && SrcBld */
 // DELETE      )
 // DELETE      {
-// DELETE          // __debugbreak();
+// DELETE          // STU_DEBUG_BREAK();
 // DELETE          DBG_combat_grid_entity_idx = combat_grid_entity_count;
 // DELETE      }
 
@@ -22304,7 +22307,7 @@ void CMB_SpawnFigure__WIP(int64_t seg_or_idx, int16_t cgx, int16_t position_cgc1
 // DELETE          /* && SrcBld */
 // DELETE          )
 // DELETE      {
-// DELETE          // __debugbreak();
+// DELETE          // STU_DEBUG_BREAK();
 // DELETE  
 // DELETE          // captured here, to be added to the debug info for testing earlier in the chain
 // DELETE          DBG_position_screen_x = position_screen_x;
@@ -22471,7 +22474,7 @@ void CMB_CreateEntity__WIP(int16_t draw_x, int16_t draw_y, int64_t seg_or_idx, i
     )
     {
 
-        // __debugbreak();
+        // STU_DEBUG_BREAK();
 
     }
 
@@ -22854,7 +22857,7 @@ void Combat_Figure_Compose_USEFULL(void)
 // DELETE          if(battle_units[itr].unit_idx == DEBUG_UNIT_IDX)
 // DELETE          {
 // DELETE              // HERE:  get addr from GfxBuf_2400B ... figure out what trashes the memory there later on
-// DELETE              // __debugbreak();
+// DELETE              // STU_DEBUG_BREAK();
 // DELETE  
 // DELETE  
 // DELETE              DBG_pict_seg__2 = (int64_t)ptr_figure_pointer_seg[figure_set_idx];
@@ -22892,7 +22895,7 @@ void Combat_Figure_Compose_USEFULL(void)
 
 // DELETE          if(DBG_Draw_Picture_To_Bitmap == ST_TRUE)
 // DELETE          {
-// DELETE              // __debugbreak();
+// DELETE              // STU_DEBUG_BREAK();
 // DELETE          }
 
         // Draw_Picture_To_Bitmap((SAMB_ptr)&ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
@@ -24118,7 +24121,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 if(ctg_6 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     if(ctg_8 == CTG_Dirt)
                     {
@@ -24148,7 +24151,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_8 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     if(ctg_4 == CTG_Dirt)
                     {
@@ -24167,7 +24170,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_4 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     if(ctg_8 == CTG_Dirt)
                     {
@@ -24192,7 +24195,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_2 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     if(ctg_6 == CTG_Dirt)
                     {
@@ -24216,7 +24219,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_3 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 7);
 
@@ -24224,7 +24227,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_9 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 25);
 
@@ -24232,7 +24235,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_7 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 19);
 
@@ -24240,7 +24243,7 @@ void CMB_TileGen__WIP(int16_t ctt)
                 else if(ctg_1 == CTG_Dirt)
                 {
 
-                    __debugbreak();
+                    STU_DEBUG_BREAK();
 
                     battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(2) + UU_Dirt_Trans_Index + 13);
 
@@ -24256,7 +24259,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             else
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
             }
             /*
@@ -24270,7 +24273,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(battlefield->terrain_group[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] == CTG_River)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 if(itr_cgy == 0)
                 {
@@ -24401,7 +24404,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(ctg_5 == CTG_Dirt)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + UU_DirtTiles_Index + 3);
 
@@ -24417,7 +24420,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(ctg_5 == CTG_DeepWater)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + 47);
 
@@ -24433,7 +24436,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(ctg_5 == CTG_IDK)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 battlefield->terrain_type[((itr_cgy * COMBAT_GRID_WIDTH) + itr_cgx)] = (Random(4) + 51);
 
@@ -24449,7 +24452,7 @@ void CMB_TileGen__WIP(int16_t ctt)
             if(ctg_5 == CTG_IDK)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
             }
             /*
@@ -25016,7 +25019,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
         )
     {
 
-        // DELETEME  __debugbreak();
+        // DELETEME  STU_DEBUG_BREAK();
 
     }
 
@@ -25418,13 +25421,13 @@ void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t 
         for(itr_i = 0; itr_i < max_i; itr_i++)
         {
 
-            if(ctr = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
+            if(ctr == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
-            if(ctr = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx -1)))
+            if(ctr == (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx -1)))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
 
             // movepath_cost = &movepath_cost_map->moves2[CS_Row_Start];
@@ -25446,7 +25449,7 @@ void Combat_Move_Path_Find__v01(int16_t source_cgx, int16_t source_cgy, int16_t 
 
                     if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }
 
 
@@ -25954,7 +25957,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
             //     (itr_y == DBG_cgy)
             //     )
             // {
-            //     // __debugbreak();
+            //     // STU_DEBUG_BREAK();
             //     DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
             //     DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
             //     DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
@@ -26021,7 +26024,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
         (source_cgy == DBG_cgy)
         )
     {
-        // __debugbreak();
+        // STU_DEBUG_BREAK();
         DBG_array_index_1 = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx);  // current combat grid cell
         DBG_array_index_2 = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx - 1));  // NW
         DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
@@ -26048,15 +26051,15 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
 
             if(ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             if(ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             if(ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             // NEW_PATH_COST_ALL()
             move_cost = CMB_ActiveMoveMap[ctr];
@@ -26073,7 +26076,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                     
                     if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }     
                     if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
                     {
@@ -26096,9 +26099,9 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                                     if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
                                     if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
 
-                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { STU_DEBUG_BREAK(); }
 
-                                    if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+                                    if (DBG_ctr > (22 * 462)) { STU_DEBUG_BREAK(); }
 
                                 }
                             }
@@ -26108,24 +26111,24 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
             }
             ctr++;
             DBG_ctr++;
-            // __debugbreak();
+            // STU_DEBUG_BREAK();
 
             for(itr_j = 0; itr_j < max_j; itr_j++)
             {
 
                 if (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
                 {
-                    // __debugbreak();
+                    // STU_DEBUG_BREAK();
                 }
                 if (ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
                 {
-                    // __debugbreak();
+                    // STU_DEBUG_BREAK();
                 }
                 if (ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
                 {
-                    // __debugbreak();
+                    // STU_DEBUG_BREAK();
                 }
-                //  if((itr_i == (DBG_cgy - 1)) && (itr_j == (DBG_cgx -1))) { __debugbreak(); }
+                //  if((itr_i == (DBG_cgy - 1)) && (itr_j == (DBG_cgx -1))) { STU_DEBUG_BREAK(); }
                 // NEW_PATH_COST_ALL()
                 move_cost = CMB_ActiveMoveMap[ctr];
                 if(!IS_INF(move_cost))
@@ -26140,7 +26143,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                         adjacent_idx = (ctr + CMB_AdjacentOffsets[itr_adjacent]);
                         if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
                         {
-                            // __debugbreak();
+                            // STU_DEBUG_BREAK();
                         }     
                         if(
                             (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
@@ -26148,7 +26151,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                             (adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
                         )
                         {
-                            // __debugbreak();
+                            // STU_DEBUG_BREAK();
                         }
                         if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
                         {
@@ -26171,9 +26174,9 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                                         if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
                                         if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
 
-                                        if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+                                        if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { STU_DEBUG_BREAK(); }
 
-                                        if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+                                        if (DBG_ctr > (22 * 462)) { STU_DEBUG_BREAK(); }
 
                                     }
                                 }
@@ -26183,21 +26186,21 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                 }                                                           
                 ctr++;
                 DBG_ctr++;
-                // __debugbreak();
+                // STU_DEBUG_BREAK();
 
             }
 
             if (ctr == ((11 * COMBAT_GRID_WIDTH) + 13))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             if (ctr == ((11 * COMBAT_GRID_WIDTH) + 14))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             if (ctr == ((11 * COMBAT_GRID_WIDTH) + 15))
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
             // NEW_PATH_COST_ALL()
             move_cost = CMB_ActiveMoveMap[ctr];
@@ -26213,7 +26216,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                     adjacent_idx = (ctr + CMB_AdjctOfs_NoEast[itr_adjacent]);
                     if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }     
                     if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))
                     {
@@ -26236,9 +26239,9 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                                     if((ctr == ((11 * 21) + 14)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1411_set = ST_TRUE; }
                                     if((ctr == ((11 * 21) + 15)) && (adjacent_idx == ((12 * 21) + 14))) { DBG_PFA_1511_set = ST_TRUE; }
 
-                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { __debugbreak(); }
+                                    if((ctr == ((11 * 21) + 13)) && (adjacent_idx == ((12 * 21) + 14)) && (!(DBG_ctr < COMBAT_GRID_CELL_COUNT))) { STU_DEBUG_BREAK(); }
 
-                                    if (DBG_ctr > (22 * 462)) { __debugbreak(); }
+                                    if (DBG_ctr > (22 * 462)) { STU_DEBUG_BREAK(); }
 
                                 }
                             }
@@ -26249,7 +26252,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
             }                                                           
             ctr++;
             DBG_ctr++;
-            // __debugbreak();
+            // STU_DEBUG_BREAK();
             
         }
 
@@ -26268,7 +26271,7 @@ void Combat_Move_Path_Valid__v02(int16_t source_cgx, int16_t source_cgy, int16_t
                 (itr_y == DBG_cgy)
                 )
             {
-                // __debugbreak();
+                // STU_DEBUG_BREAK();
                 DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
                 DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
                 DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
@@ -26332,7 +26335,7 @@ void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, int16_t
         (source_cgy == DBG_cgy)
         )
     {
-        // __debugbreak();
+        // STU_DEBUG_BREAK();
         DBG_array_index_1 = ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx);  // current combat grid cell
         DBG_array_index_2 = (((DBG_cgy - 1) * COMBAT_GRID_WIDTH) + (DBG_cgx - 1));  // NW
         DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
@@ -26572,7 +26575,7 @@ void Combat_Move_Path_Valid__v01(int16_t source_cgx, int16_t source_cgy, int16_t
                 (itr_y == DBG_cgy)
                 )
             {
-                // __debugbreak();
+                // STU_DEBUG_BREAK();
                 DBG_move_cost_1 = CMB_ActiveMoveMap[DBG_array_index_1];
                 DBG_move_cost_2 = CMB_ActiveMoveMap[DBG_array_index_2];
                 DBG_path_cost_1 = CMB_Path_Costs[DBG_array_index_1];
@@ -26874,7 +26877,7 @@ void CMB_ComposeBackgrnd__WIP(void)
                 )
             {
 
-                // __debugbreak();
+                // STU_DEBUG_BREAK();
 
             }
 
@@ -26891,7 +26894,7 @@ void CMB_ComposeBackgrnd__WIP(void)
 
             if(combat_terrain_type < 0)
             {
-                __debugbreak();
+                STU_DEBUG_BREAK();
             }
 
             // ¿ only grass ?
@@ -26902,7 +26905,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             )
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
             }
 
@@ -26911,7 +26914,7 @@ void CMB_ComposeBackgrnd__WIP(void)
             if(combat_terrain_type >= 56)
             {
 
-                __debugbreak();
+                STU_DEBUG_BREAK();
 
                 combat_terrain_type = ((cgy + cgx) & 0x3);
     

@@ -9,7 +9,7 @@
 #ifndef AIDATA_H
 #define AIDATA_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {
@@ -82,8 +82,8 @@ Tile_Enemy_Value = CONTX_NmeStrMap[wp][((Next_Tile_Y * WORLD_WIDTH) + Next_Tile_
 */
 #define AI_TARGET_FORTRESS      0x3FFF
 #define AI_TARGET_NONHOSTILE    0x4000
-#define AI_TARGET_SITE          0x8000
 
+#define AI_TARGET_SITE          0x8000
 
 //  ; (sizeof=0x6)
 struct s_AI_TARGET

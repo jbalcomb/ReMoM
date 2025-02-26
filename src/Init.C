@@ -15,9 +15,9 @@ MoO2  Module: fonts     Load_Font_File()
 
 #include "Init.H"
 
-#include "MoX/SOUND.H"
+#include "MOX/SOUND.H"
 
-#include "MoM_PFL.H"
+#include "MOM_PFL.H"
 
 
 
