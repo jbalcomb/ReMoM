@@ -85,9 +85,9 @@ add_executable(game
 )
 set_target_properties(game PROPERTIES WIN32_EXECUTABLE TRUE)
 
-add_subdirectory(MOX)
+add_subdirectory(_MOX)
 
-add_subdirectory(STU)
+add_subdirectory(_STU)
 
 target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR})
 
