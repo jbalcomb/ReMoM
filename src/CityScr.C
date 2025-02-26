@@ -1,7 +1,8 @@
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
 #include "CITYCALC.H"
@@ -720,6 +721,29 @@ void City_Screen_Draw__WIP(void)
         BEGIN:  Help Entries
     */
 
+    for(itr = 0; itr < 6; itr++)
+    {
+        _help_entries[(16 + itr)].help_idx = ST_UNDEFINED;
+    }
+
+    if(city_enchantment_display_count > 0)
+    {
+
+        _help_entries[7].help_idx = ST_UNDEFINED;
+
+        for(itr = 0; itr < city_enchantment_display_count; itr++)
+        {
+
+            // TODO  _help_entries[(16 + itr)].help_idx = City_Enchantment_HelpIdx(city_enchantment_list[(city_enchantment_display_first + itr)]);
+
+        }
+
+    }
+
+    _help_entries[9].help_idx = HLP_CITY_SCAPE;
+
+    // TODO  cityscape help fields
+
     /*
         END:  Help Entries
     */
@@ -1258,7 +1282,10 @@ void NameStartingCity_Dialog_Popup(int16_t city_idx)
     char Text[16];
     int16_t start_y;
     int16_t start_x;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
     int16_t UU_RetVal_TextEditDialog;
+#pragma clang diagnostic push
 
     PageFlipEffect = 0;
 

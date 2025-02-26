@@ -7,7 +7,7 @@
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
 #include "MainScr.H"
 #include "MainScr_Maps.H"
@@ -603,44 +603,32 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Good_Moon_Status == 2)
-        )
+        if(events_table->Good_Moon_Status == 2)
         {
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Bad_Moon_Status == 2)
-        )
+        if(events_table->Bad_Moon_Status == 2)
         {
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Conjunction_Chaos_Status == 2)
-        )
+        if(events_table->Conjunction_Chaos_Status == 2)
         {
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Conjunction_Nature_Status == 2)
-        )
+        if(events_table->Conjunction_Nature_Status == 2)
         {
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Conjunction_Sorcery_Status == 2)
-        )
+        if(events_table->Conjunction_Sorcery_Status == 2)
         {
             ongoing_event_count++;
         }
 
-        if(
-            (events_table->Mana_Short_Status == 2)
-        )
+        if(events_table->Mana_Short_Status == 2)
         {
             ongoing_event_count++;
         }

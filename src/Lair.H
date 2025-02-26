@@ -15,7 +15,7 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 #ifndef LAIR_H
 #define LAIR_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 

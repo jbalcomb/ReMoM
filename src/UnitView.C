@@ -30,15 +30,16 @@ USW_Attributes_1
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
-#include "MoM.H"
+#include "MOM.H"
 
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 #include "UnitStat.H"
 #include "UnitView.H"
-#include <intrin.h>
+
+// TODO  WTF  SRSLY #include <intrin.h>
 
 
 
@@ -1611,8 +1612,10 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
             if(
                 (ranged_attack_group != rag_Magic)
                 ||
-                /* ((battle_units[unit_type].Attribs_1 & (USA_CASTER_20 || USA_CASTER_40)) == 0) * / /* ; BUG: this is not a battle unit index */ /* ¿ typo: ~ combat_data vs. global_combat_data ? */
-                ((global_battle_unit->Attribs_1 & (USA_CASTER_20 || USA_CASTER_40)) == 0)
+                /* ((battle_units[unit_type].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) == 0) */
+                /* ; BUG: this is not a battle unit index */
+                /* ¿ typo: ~ combat_data vs. global_combat_data ? */
+                ((global_battle_unit->Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) == 0)
             )
             {
                 if(
@@ -1841,7 +1844,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
         // ¿ BUG: checks the unit type data rather than the battle unit, and will thus always show the maximum value instead of the current ?
         // ¿ BUG? does not have the record limit check from above ?
         // "Creature Summoning"
-        if((_unit_type_table[unit_type].Attribs_1 & (USA_SUMMON_DEMON_1 || USA_SUMMON_DEMON_2)) != 0)
+        if((_unit_type_table[unit_type].Attribs_1 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
         {
             strcpy(specials_list->names[specials_index], cnst_SummonDemons);
             ability_value = 0;
@@ -1872,7 +1875,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
     */
     {
         // ¿ BUG? does not have the record limit check from above ?
-        if((_unit_type_table[unit_type].Attribs_1 & (USA_CASTER_20 || USA_CASTER_40)) != 0)  /* (Sum_Demon_1 || Sum_Demon_2) */
+        if((_unit_type_table[unit_type].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) != 0)  /* (Sum_Demon_1 || Sum_Demon_2) */
         {
             strcpy(specials_list->names[specials_index], cnst_Caster);
             strcat(specials_list->names[specials_index], cnst_Space_3);

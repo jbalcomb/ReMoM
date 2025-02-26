@@ -8,7 +8,7 @@
 #ifndef OVERSPEL_H
 #define OVERSPEL_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

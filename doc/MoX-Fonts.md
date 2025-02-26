@@ -178,7 +178,7 @@ which would be in the portion that does the outline for (x + 1) (y - 1)
 How's that look in the debug?
 BEGIN: Main_Screen_Draw_Summary_Window()
 Print_Right(): string: 142
-            DLOG("(outline_style > 3)");
+            // TODO  DLOG("(outline_style > 3)");
             Print_String(x + 1, y - 1, string, 0, full_flag);  // overdraw right + top
 DEBUG: [C:\devel\STU-MoM_Rasm\src\Fonts.C, 433]: BEGIN: Print_String(x = 266, y = 100, string = 142, change_color_ok_flag = 0, full_flag = 0)
 

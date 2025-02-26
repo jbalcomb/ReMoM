@@ -7,7 +7,7 @@
 
 */
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

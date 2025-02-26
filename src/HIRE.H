@@ -8,7 +8,7 @@
 #ifndef HIRE_H
 #define HIRE_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

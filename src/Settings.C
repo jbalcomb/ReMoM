@@ -15,10 +15,10 @@ MoO2
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
 
-#include "MoM_SCR.H"
+#include "MOM_SCR.H"
 #include "Settings.H"
 #include "Spellbook.H"
 

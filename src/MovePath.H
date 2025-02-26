@@ -5,7 +5,7 @@
 #ifndef MOVEPATH_H
 #define MOVEPATH_H
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 
 

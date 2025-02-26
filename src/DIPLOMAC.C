@@ -14,8 +14,8 @@ MoO2
     Module: DIPLOMAC
 */
 
-#include "MoX/MOX_DAT.H"  /* _players[] */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/SOUND.H"
 
 #include "DIPLOMAC.H"
 #include "LOADER.H"

@@ -5,9 +5,9 @@
         ovr157
 */
 
-#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DAT.H"  /* _players[] */
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -276,11 +276,15 @@ Check_Cities_Data();
             product_idx = _CITIES[itr_cities].construction;
 if(_CITIES[itr_cities].construction < -4)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 if(_CITIES[itr_cities].construction > 298)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 
             if(product_idx >= 100)
@@ -603,11 +607,15 @@ Check_Cities_Data();
 Capture_Cities_Data();
 if(_CITIES[city_idx].construction < -4)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 if(_CITIES[city_idx].construction > 298)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 Check_Cities_Data();
 
@@ -767,11 +775,15 @@ Capture_Cities_Data();
 
 if(_CITIES[city_idx].construction < -4)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 if(_CITIES[city_idx].construction > 298)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 
     }
@@ -1093,11 +1105,15 @@ Check_Cities_Data();
 
 if(_CITIES[city_idx].construction < -4)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 if(_CITIES[city_idx].construction > 298)
 {
-    __debugbreak();
+#ifdef WIN32
+    STU_DEBUG_BREAK();
+#endif
 }
 
 }

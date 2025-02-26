@@ -9,7 +9,7 @@
 #ifndef AIMOVE_H
 #define AIMOVE_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

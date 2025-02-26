@@ -5,17 +5,17 @@
 
 #include "WZD_o143.H"
 
-#include "MoX/MoX_BASE.H"
-#include "MoX/MOX_DAT.H"  /* _players[] */
-#include "MoX/MoX_DEF.H"
-#include "MoX/MoX_TYPE.H"
-#include "MoX/Allocate.H"
-#include "MoX/LBX_Load.H"
-#include "MoX/random.H"
-#include "MoX/Util.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/Allocate.H"
+#include "MOX/LBX_Load.H"
+#include "MOX/random.H"
+#include "MOX/Util.H"
 
-#include "MoM_DEF.H"
-#include "MoM_Data.H"
+#include "MOM_DEF.H"
+#include "MOM_Data.H"
 #include "MovePath.H"
 #include "Terrain.H"
 #include "TerrType.H"
@@ -236,7 +236,8 @@ void Random_City_Name_By_Race(int16_t race_idx, char * name)
             // if(stricmp(Local_Name_String, city_names_buffer[(city_name_idx * 14)]) != 0)
             city_names_buffer_ptr = &city_names_buffer[(city_name_idx * LEN_CITY_NAME)];
 
-            if (stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            // TODO  stricmp() vs. strcmp()  if(stricmp(Local_Name_String, city_names_buffer_ptr) != 0)
+            if(strcmp(Local_Name_String, city_names_buffer_ptr) != 0)
             {
 
                 continue;
@@ -656,7 +657,7 @@ int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t 
 
     landmass_num = _landmasses[((wp * WORLD_SIZE) + (src_wy * WORLD_WIDTH) + src_wx)];
 
-    if(landmass_num = 0)  /* ; ? 0: None / No Land ? */
+    if(landmass_num == 0)  /* ; ? 0: None / No Land ? */
     {
         return 0;
     }                

@@ -6,7 +6,7 @@
 #ifndef WZD_O059_H
 #define WZD_O059_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 #ifdef __cplusplus

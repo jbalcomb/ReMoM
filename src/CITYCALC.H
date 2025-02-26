@@ -9,7 +9,7 @@
 #ifndef CITYCALC_H
 #define CITYCALC_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,10 +1,10 @@
 
-#include "MoX/Mouse.H"
-#include "MoX/MoX_DEF.H"
-#include "MoX/MoX_TYPE.H"
+#include "MOX/Mouse.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
-#include "MoM_DEF.H"
-#include "MoM_PFL.H"
+#include "MOM_DEF.H"
+#include "MOM_PFL.H"
 
 
 

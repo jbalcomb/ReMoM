@@ -10,7 +10,7 @@
     
 */
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -1439,9 +1439,7 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
-    if(
-        (terrain_type == tte_AnimOcean)
-    )
+    if(terrain_type == tte_AnimOcean)
     {
         is_ocean = ST_TRUE;
     }
@@ -1905,7 +1903,7 @@ void All_City_Nightshade_Count(void)
 
         nightshade_count = 0;
 
-        if(city_population = 0)
+        if(city_population == 0)
         {
             continue;
         }

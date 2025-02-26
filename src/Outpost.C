@@ -7,11 +7,11 @@
 
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -67,9 +67,10 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 {
     SAMB_ptr sound_seg;
     int16_t Result;
-    int16_t city_idx;  // _SI_
+    int16_t city_idx = 0;  // _SI_
     int16_t itr_players;  // _DI_
-
+// TODO  warning: variable 'city_idx' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 
     Result = Map_Square_Survey(outpost_wx, outpost_wy, outpost_wp);
 
     if(Result != 0)
@@ -742,9 +743,7 @@ int16_t Map_Square_Survey(int16_t wx, int16_t wy, int16_t wp)
 
     for(itr = 0; itr < _cities; itr++)
     {
-        if(
-            (_CITIES[itr].wp == wp)
-        )
+        if(_CITIES[itr].wp == wp)
         {
             Tile_Distance = Delta_XY_With_Wrap(wx, wy, _CITIES[itr].wx, _CITIES[itr].wy, WORLD_WIDTH);
             if(Tile_Distance <= 3)

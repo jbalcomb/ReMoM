@@ -8,7 +8,8 @@
 
 #include "AdvsrScr.H"
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_ITOA.H" /* mox_itoa() */
 
 #include "Explore.H"
 #include "Help.H"
@@ -19,6 +20,8 @@
 #include "Surveyor.H"
 #include "UnitMove.H"   // WTFMATE
 #include "WIZVIEW.H"
+
+#include <stdlib.h>     /* abs(); itoa(); */
 
 
 

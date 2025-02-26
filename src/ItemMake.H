@@ -10,7 +10,7 @@
 #ifndef ITEMMAKE_H
 #define ITEMMAKE_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

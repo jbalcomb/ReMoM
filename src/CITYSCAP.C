@@ -5,9 +5,9 @@
         ovr144
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
 
-#include "MoM.H"
+#include "MOM.H"
 #include "CITYSCAP.H"
 
 
@@ -1114,7 +1114,7 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
     {
         house_count = (_CITIES[city_idx].population * 8);
 
-        if(house_count = 0)
+        if(house_count == 0)
         {
             house_count = 1;
         }

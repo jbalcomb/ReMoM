@@ -14,7 +14,7 @@
 
 */
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -470,7 +470,8 @@ int16_t Path_Wrap(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int8_t * path_
     return distance;
 }
 
-__forceinline static int util_math_route_step_len(int adx, int ady)
+// __forceinline static int util_math_route_step_len(int adx, int ady)
+int util_math_route_step_len(int adx, int ady)
 {
     int v = adx + ady;
     return v ? (v + 1) : 3;

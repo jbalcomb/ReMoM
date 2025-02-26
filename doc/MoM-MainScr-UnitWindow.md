@@ -59,7 +59,7 @@ renamed to reset_active_stack
 
 ## Right-Click Unit Window Grid Field
 
-    DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
+    // TODO  DLOG("(Unit_Window_Fields[Stack_Index] = -input_field_idx)");
     Set_Draw_Active_Stack_Always();
     Set_Unit_Draw_Priority();
     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);

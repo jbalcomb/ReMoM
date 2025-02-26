@@ -1,16 +1,16 @@
 
 #include "MOM_SCR.H"
 
-#include "MoX/MoX_BASE.H"
-#include "MoX/MOX_T4.H"  // ~ MOX & MOX2 //MoO2
-#include "MoX/Fields.H"
-#include "MoX/Fonts.H"
-#include "MoX/Graphics.H"
-#include "MoX/LOADSAVE.H"
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/Mouse.H"
-#include "MoX/SOUND.H"
-#include "MoX/Video.H"
+#include "MOX/MOX_BASE.H"
+#include "MOX/MOX_T4.H"  // ~ MOX & MOX2 //MoO2
+#include "MOX/Fields.H"
+#include "MOX/Fonts.H"
+#include "MOX/Graphics.H"
+#include "MOX/LOADSAVE.H"
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/Mouse.H"
+#include "MOX/SOUND.H"
+#include "MOX/Video.H"
 
 #include "AdvsrScr.H"
 #include "ArmyList.H"

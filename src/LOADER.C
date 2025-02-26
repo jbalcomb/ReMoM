@@ -1,6 +1,6 @@
 
-#include "MoM.H"
-#include "MoX/MOX_SND.H"
+#include "MOM.H"
+#include "MOX/MOX_SND.H"
 
 
 // WZD dseg:291E                            BEGIN: ovr052
@@ -292,6 +292,8 @@ void Terrain_Init(void)
     }
 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wfor-loop-analysis"
     // Loop MAPBACK 0 to 13:
     for(itr = 1; itr < 15; itr++)
     {
@@ -299,6 +301,7 @@ void Terrain_Init(void)
         unexplored_mask_seg[itr] = LBX_Load(rsc0C_MAPBACK_LBX, itr);
         itr++;
     }
+#pragma clang diagnostic pop
 
 
     // Loop MAPBACK 14 to 19:

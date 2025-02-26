@@ -5,8 +5,8 @@
         ovr109
 */
 
-#include "MoX/MoX_DEF.H"
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
 
 #include "Items.H"
 #include "ItemScrn.H"

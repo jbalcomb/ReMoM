@@ -10,7 +10,7 @@
 #ifndef SBOOKSCR_H
 #define SBOOKSCR_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

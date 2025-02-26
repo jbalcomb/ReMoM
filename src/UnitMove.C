@@ -24,12 +24,12 @@ Elsewhere, ...
 
 #include "UnitMove.H"
 
-#include "MoX/MoX_TYPE.H"
-#include "MoX/MoX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/MOX_DEF.H"
 
 #include "Combat.H"
-#include "MoM_Data.H"
-#include "MoM_DEF.H"
+#include "MOM_Data.H"
+#include "MOM_DEF.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 
@@ -219,15 +219,24 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                     Units_With_Same--;
                 }
 
+                /* BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code) */
+                // warning: '&&' within '||' [-Wlogical-op-parentheses]
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wlogical-op-parentheses"
                 if(
-                    (l_movement_modes_array[itr_modes] == MV_FLYING) &&  // BUGBUG:  drake178: this jump is supposed to skip all 4 of the following blocks, not just the first one (misplaced parentheses in the original code)
-                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0) ||
-                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0) ||
+                    (l_movement_modes_array[itr_modes] == MV_FLYING)
+                    &&
+                    ((_unit_type_table[unit_type].Abilities & UA_NONCORPOREAL) != 0)
+                    ||
+                    ((_UNITS[unit_idx].enchantments & UE_WRAITHFORM) != 0)
+                    ||
                     ((item_enchantments & UE_WRAITHFORM) != 0)
                 )
                 {
                     Swimming_Units--;
                 }
+#pragma clang diagnostic pop
+
             }
 
             if
@@ -718,17 +727,17 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
 */
 int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
-    int16_t ext_y2;
-    int16_t ext_x2;
-    int16_t ext_y1;
-    int16_t ext_x1;
-    int16_t dst_world_map_idx;
-    int16_t itr_wy;
-    int16_t itr_wx;
-    int16_t itr;  // _SI_
-    int16_t path_length;  // _DI_
-    int16_t * ptr_reached_from;  // DNE in Dasm
-    int16_t reached_from;  // DNE in Dasm
+    int16_t ext_y2 = 0;
+    int16_t ext_x2 = 0;
+    int16_t ext_y1 = 0;
+    int16_t ext_x1 = 0;
+    int16_t dst_world_map_idx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wx = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t path_length = 0;  // _DI_
+    int16_t * ptr_reached_from = 0;  // DNE in Dasm
+    int16_t reached_from = 0;  // DNE in Dasm
 
     // DONT  EMM_Map_DataH();  // ; maps the EMM Data block into the page frame
 

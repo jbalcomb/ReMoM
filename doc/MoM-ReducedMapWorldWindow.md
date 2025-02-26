@@ -6,7 +6,7 @@ Main Screen
 Army List Screen
 City List Screen
 
-{x,y,w,h} in MoM_DEF.H
+{x,y,w,h} in MOM_DEF.H
 
     WIZARDS.EXE
         ovr067

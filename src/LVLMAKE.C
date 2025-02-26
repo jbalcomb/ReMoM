@@ -5,11 +5,11 @@
         ovr102
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 

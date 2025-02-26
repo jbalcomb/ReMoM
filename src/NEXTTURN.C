@@ -11,15 +11,15 @@
 
 #include "NEXTTURN.H"
 
-#include "MoX/LOADSAVE.H"
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/MOX_TYPE.H"
-#include "MoX/SOUND.H"
+#include "MOX/LOADSAVE.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_TYPE.H"
+#include "MOX/SOUND.H"
 
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MoM_DBG.H"
+#include "MOM_DBG.H"
 #include "MOM_SCR.H"
 #include "WZD_o059.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
@@ -452,7 +452,7 @@ void All_AI_Refresh_Units_Movement(void)
 
                 _UNITS[itr_units].moves2 = _UNITS[itr_units].moves2_max;
 
-                if(_UNITS[itr_units].mutations & (C_STASISINIT | C_STASISLINGER) != 0)
+                if((_UNITS[itr_units].mutations & (C_STASISINIT | C_STASISLINGER)) != 0)
                 {
 
                     _UNITS[itr_units].Finished = ST_TRUE;
@@ -4935,7 +4935,7 @@ void AI_Calculate_Average_Unit_Cost(void)
     int16_t itr_units = 0;  // _SI_
     int16_t unit_type = 0;  // _DI_
 
-    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players)
+    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
     {
 
         unit_costs[itr_players] = 0;

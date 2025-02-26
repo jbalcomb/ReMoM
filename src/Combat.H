@@ -28,7 +28,7 @@
 #ifndef COMBAT_H
 #define COMBAT_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -336,7 +336,7 @@ NEW_PATH_COST_ALL()
     adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]);  \
     if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))               \
     {                                                                           \
-        __debugbreak();                                                         \
+        STU_DEBUG_BREAK();                                                         \
     }                                                                           \
     if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))                          \
     {                                                                           \

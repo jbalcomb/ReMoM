@@ -645,7 +645,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoM_Data.H"
+				RelativePath="..\..\src\MOM_Data.H"
 				>
 			</File>
 			<File
@@ -653,7 +653,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MoM_DEF.H"
+				RelativePath="..\..\src\MOM_DEF.H"
 				>
 			</File>
 			<File

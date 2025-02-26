@@ -16,7 +16,7 @@ MoO2
 #ifndef HELP_H
 #define HELP_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 

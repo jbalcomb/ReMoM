@@ -1,0 +1,602 @@
+[
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AdvsrScr.C.o -c /home/jbalcomb/devel/ReMoM/src/AdvsrScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AdvsrScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/AdvsrScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AIBUILD.C.o -c /home/jbalcomb/devel/ReMoM/src/AIBUILD.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AIBUILD.C",
+  "output": "src/CMakeFiles/gamelib.dir/AIBUILD.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AIDATA.C.o -c /home/jbalcomb/devel/ReMoM/src/AIDATA.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AIDATA.C",
+  "output": "src/CMakeFiles/gamelib.dir/AIDATA.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AIDUDES.C.o -c /home/jbalcomb/devel/ReMoM/src/AIDUDES.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AIDUDES.C",
+  "output": "src/CMakeFiles/gamelib.dir/AIDUDES.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AIMOVE.C.o -c /home/jbalcomb/devel/ReMoM/src/AIMOVE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AIMOVE.C",
+  "output": "src/CMakeFiles/gamelib.dir/AIMOVE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/AISPELL.C.o -c /home/jbalcomb/devel/ReMoM/src/AISPELL.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/AISPELL.C",
+  "output": "src/CMakeFiles/gamelib.dir/AISPELL.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ALLOC.C.o -c /home/jbalcomb/devel/ReMoM/src/ALLOC.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ALLOC.C",
+  "output": "src/CMakeFiles/gamelib.dir/ALLOC.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ArmyList.C.o -c /home/jbalcomb/devel/ReMoM/src/ArmyList.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ArmyList.C",
+  "output": "src/CMakeFiles/gamelib.dir/ArmyList.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/CITYCALC.C.o -c /home/jbalcomb/devel/ReMoM/src/CITYCALC.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/CITYCALC.C",
+  "output": "src/CMakeFiles/gamelib.dir/CITYCALC.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/CityList.C.o -c /home/jbalcomb/devel/ReMoM/src/CityList.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/CityList.C",
+  "output": "src/CMakeFiles/gamelib.dir/CityList.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/CITYSCAP.C.o -c /home/jbalcomb/devel/ReMoM/src/CITYSCAP.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/CITYSCAP.C",
+  "output": "src/CMakeFiles/gamelib.dir/CITYSCAP.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/CityScr.C.o -c /home/jbalcomb/devel/ReMoM/src/CityScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/CityScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/CityScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/City_ovr55.C.o -c /home/jbalcomb/devel/ReMoM/src/City_ovr55.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/City_ovr55.C",
+  "output": "src/CMakeFiles/gamelib.dir/City_ovr55.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Combat.C.o -c /home/jbalcomb/devel/ReMoM/src/Combat.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Combat.C",
+  "output": "src/CMakeFiles/gamelib.dir/Combat.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/DIPLOMAC.C.o -c /home/jbalcomb/devel/ReMoM/src/DIPLOMAC.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/DIPLOMAC.C",
+  "output": "src/CMakeFiles/gamelib.dir/DIPLOMAC.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/EVENTS.C.o -c /home/jbalcomb/devel/ReMoM/src/EVENTS.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/EVENTS.C",
+  "output": "src/CMakeFiles/gamelib.dir/EVENTS.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Explore.C.o -c /home/jbalcomb/devel/ReMoM/src/Explore.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Explore.C",
+  "output": "src/CMakeFiles/gamelib.dir/Explore.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Help.C.o -c /home/jbalcomb/devel/ReMoM/src/Help.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Help.C",
+  "output": "src/CMakeFiles/gamelib.dir/Help.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/HIRE.C.o -c /home/jbalcomb/devel/ReMoM/src/HIRE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/HIRE.C",
+  "output": "src/CMakeFiles/gamelib.dir/HIRE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Init.C.o -c /home/jbalcomb/devel/ReMoM/src/Init.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Init.C",
+  "output": "src/CMakeFiles/gamelib.dir/Init.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ItemMake.C.o -c /home/jbalcomb/devel/ReMoM/src/ItemMake.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ItemMake.C",
+  "output": "src/CMakeFiles/gamelib.dir/ItemMake.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Items.C.o -c /home/jbalcomb/devel/ReMoM/src/Items.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Items.C",
+  "output": "src/CMakeFiles/gamelib.dir/Items.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ItemScrn.C.o -c /home/jbalcomb/devel/ReMoM/src/ItemScrn.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ItemScrn.C",
+  "output": "src/CMakeFiles/gamelib.dir/ItemScrn.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ItemView.C.o -c /home/jbalcomb/devel/ReMoM/src/ItemView.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ItemView.C",
+  "output": "src/CMakeFiles/gamelib.dir/ItemView.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Lair.C.o -c /home/jbalcomb/devel/ReMoM/src/Lair.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Lair.C",
+  "output": "src/CMakeFiles/gamelib.dir/Lair.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/LOADER.C.o -c /home/jbalcomb/devel/ReMoM/src/LOADER.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/LOADER.C",
+  "output": "src/CMakeFiles/gamelib.dir/LOADER.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/LoadScr.C.o -c /home/jbalcomb/devel/ReMoM/src/LoadScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/LoadScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/LoadScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/LVLMAKE.C.o -c /home/jbalcomb/devel/ReMoM/src/LVLMAKE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/LVLMAKE.C",
+  "output": "src/CMakeFiles/gamelib.dir/LVLMAKE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MagicScr.C.o -c /home/jbalcomb/devel/ReMoM/src/MagicScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MagicScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/MagicScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MainMenu.C.o -c /home/jbalcomb/devel/ReMoM/src/MainMenu.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MainMenu.C",
+  "output": "src/CMakeFiles/gamelib.dir/MainMenu.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MainScr.C.o -c /home/jbalcomb/devel/ReMoM/src/MainScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MainScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/MainScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MainScr_Maps.C.o -c /home/jbalcomb/devel/ReMoM/src/MainScr_Maps.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MainScr_Maps.C",
+  "output": "src/CMakeFiles/gamelib.dir/MainScr_Maps.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MOM.C.o -c /home/jbalcomb/devel/ReMoM/src/MOM.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOM.C",
+  "output": "src/CMakeFiles/gamelib.dir/MOM.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MOM_SCR.C.o -c /home/jbalcomb/devel/ReMoM/src/MOM_SCR.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOM_SCR.C",
+  "output": "src/CMakeFiles/gamelib.dir/MOM_SCR.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MOM_Data.C.o -c /home/jbalcomb/devel/ReMoM/src/MOM_Data.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOM_Data.C",
+  "output": "src/CMakeFiles/gamelib.dir/MOM_Data.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MOM_DBG.C.o -c /home/jbalcomb/devel/ReMoM/src/MOM_DBG.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOM_DBG.C",
+  "output": "src/CMakeFiles/gamelib.dir/MOM_DBG.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MOM_PFL.C.o -c /home/jbalcomb/devel/ReMoM/src/MOM_PFL.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOM_PFL.C",
+  "output": "src/CMakeFiles/gamelib.dir/MOM_PFL.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/MovePath.C.o -c /home/jbalcomb/devel/ReMoM/src/MovePath.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MovePath.C",
+  "output": "src/CMakeFiles/gamelib.dir/MovePath.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/NewGame.C.o -c /home/jbalcomb/devel/ReMoM/src/NewGame.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/NewGame.C",
+  "output": "src/CMakeFiles/gamelib.dir/NewGame.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/NEXTTURN.C.o -c /home/jbalcomb/devel/ReMoM/src/NEXTTURN.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/NEXTTURN.C",
+  "output": "src/CMakeFiles/gamelib.dir/NEXTTURN.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Outpost.C.o -c /home/jbalcomb/devel/ReMoM/src/Outpost.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Outpost.C",
+  "output": "src/CMakeFiles/gamelib.dir/Outpost.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/OverSpel.C.o -c /home/jbalcomb/devel/ReMoM/src/OverSpel.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/OverSpel.C",
+  "output": "src/CMakeFiles/gamelib.dir/OverSpel.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/ProdScr.C.o -c /home/jbalcomb/devel/ReMoM/src/ProdScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/ProdScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/ProdScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/RACETYPE.C.o -c /home/jbalcomb/devel/ReMoM/src/RACETYPE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/RACETYPE.C",
+  "output": "src/CMakeFiles/gamelib.dir/RACETYPE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/REPORT.C.o -c /home/jbalcomb/devel/ReMoM/src/REPORT.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/REPORT.C",
+  "output": "src/CMakeFiles/gamelib.dir/REPORT.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Roads.C.o -c /home/jbalcomb/devel/ReMoM/src/Roads.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Roads.C",
+  "output": "src/CMakeFiles/gamelib.dir/Roads.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/SBookScr.C.o -c /home/jbalcomb/devel/ReMoM/src/SBookScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/SBookScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/SBookScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/SCastScr.C.o -c /home/jbalcomb/devel/ReMoM/src/SCastScr.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/SCastScr.C",
+  "output": "src/CMakeFiles/gamelib.dir/SCastScr.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/SCORE.C.o -c /home/jbalcomb/devel/ReMoM/src/SCORE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/SCORE.C",
+  "output": "src/CMakeFiles/gamelib.dir/SCORE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Settings.C.o -c /home/jbalcomb/devel/ReMoM/src/Settings.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Settings.C",
+  "output": "src/CMakeFiles/gamelib.dir/Settings.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/SETTLE.C.o -c /home/jbalcomb/devel/ReMoM/src/SETTLE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/SETTLE.C",
+  "output": "src/CMakeFiles/gamelib.dir/SETTLE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/special.C.o -c /home/jbalcomb/devel/ReMoM/src/special.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/special.C",
+  "output": "src/CMakeFiles/gamelib.dir/special.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Spellbook.C.o -c /home/jbalcomb/devel/ReMoM/src/Spellbook.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Spellbook.C",
+  "output": "src/CMakeFiles/gamelib.dir/Spellbook.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/SPLMASTR.C.o -c /home/jbalcomb/devel/ReMoM/src/SPLMASTR.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/SPLMASTR.C",
+  "output": "src/CMakeFiles/gamelib.dir/SPLMASTR.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Surveyor.C.o -c /home/jbalcomb/devel/ReMoM/src/Surveyor.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Surveyor.C",
+  "output": "src/CMakeFiles/gamelib.dir/Surveyor.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/Terrain.C.o -c /home/jbalcomb/devel/ReMoM/src/Terrain.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/Terrain.C",
+  "output": "src/CMakeFiles/gamelib.dir/Terrain.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/TEXTBOX.C.o -c /home/jbalcomb/devel/ReMoM/src/TEXTBOX.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/TEXTBOX.C",
+  "output": "src/CMakeFiles/gamelib.dir/TEXTBOX.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UnitList.C.o -c /home/jbalcomb/devel/ReMoM/src/UnitList.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UnitList.C",
+  "output": "src/CMakeFiles/gamelib.dir/UnitList.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UnitMove.C.o -c /home/jbalcomb/devel/ReMoM/src/UnitMove.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UnitMove.C",
+  "output": "src/CMakeFiles/gamelib.dir/UnitMove.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UnitStat.C.o -c /home/jbalcomb/devel/ReMoM/src/UnitStat.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UnitStat.C",
+  "output": "src/CMakeFiles/gamelib.dir/UnitStat.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UNITSTK.C.o -c /home/jbalcomb/devel/ReMoM/src/UNITSTK.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UNITSTK.C",
+  "output": "src/CMakeFiles/gamelib.dir/UNITSTK.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UNITTYPE.C.o -c /home/jbalcomb/devel/ReMoM/src/UNITTYPE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UNITTYPE.C",
+  "output": "src/CMakeFiles/gamelib.dir/UNITTYPE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/UnitView.C.o -c /home/jbalcomb/devel/ReMoM/src/UnitView.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/UnitView.C",
+  "output": "src/CMakeFiles/gamelib.dir/UnitView.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/WIZVIEW.C.o -c /home/jbalcomb/devel/ReMoM/src/WIZVIEW.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/WIZVIEW.C",
+  "output": "src/CMakeFiles/gamelib.dir/WIZVIEW.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/WZD_o059.C.o -c /home/jbalcomb/devel/ReMoM/src/WZD_o059.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/WZD_o059.C",
+  "output": "src/CMakeFiles/gamelib.dir/WZD_o059.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/WZD_o129.C.o -c /home/jbalcomb/devel/ReMoM/src/WZD_o129.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/WZD_o129.C",
+  "output": "src/CMakeFiles/gamelib.dir/WZD_o129.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++   -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -o CMakeFiles/gamelib.dir/WZD_o143.C.o -c /home/jbalcomb/devel/ReMoM/src/WZD_o143.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/WZD_o143.C",
+  "output": "src/CMakeFiles/gamelib.dir/WZD_o143.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src",
+  "command": "/usr/bin/c++  -I/home/jbalcomb/devel/ReMoM -Wall -Wno-missing-braces -Wno-tautological-compare -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-label -Wno-unused-variable -Wno-unused-function -Wno-writable-strings -Wno-char-subscripts -o CMakeFiles/game.dir/main.cpp.o -c /home/jbalcomb/devel/ReMoM/src/main.cpp",
+  "file": "/home/jbalcomb/devel/ReMoM/src/main.cpp",
+  "output": "src/CMakeFiles/game.dir/main.cpp.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Allocate.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Allocate.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Allocate.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Allocate.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/CFG.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/CFG.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/CFG.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/CFG.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/DBG.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/DBG.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/DBG.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/DBG.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/DOS.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/DOS.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/DOS.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/DOS.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/EMM.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/EMM.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/EMM.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/EMM.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/EXIT.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/EXIT.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/EXIT.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/EXIT.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Fields.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Fields.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Fields.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Fields.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/file_ani.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/file_ani.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/file_ani.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/file_ani.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Fonts.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Fonts.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Fonts.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Fonts.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/GENDRAW.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/GENDRAW.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/GENDRAW.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/GENDRAW.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Graphics.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Graphics.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Graphics.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Graphics.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/FLIC_Draw.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/FLIC_Draw.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/FLIC_Draw.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/FLIC_Draw.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Input.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Input.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Input.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Input.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/IO_Buffer.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/IO_Buffer.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/IO_Buffer.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/IO_Buffer.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Keyboard.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Keyboard.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Keyboard.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Keyboard.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/LBX_Load.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/LBX_Load.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/LBX_Load.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/LBX_Load.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/LOADSAVE.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/LOADSAVE.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/LOADSAVE.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/LOADSAVE.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Mouse.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Mouse.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Mouse.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Mouse.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/MOX_DAT.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/MOX_DAT.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/MOX_DAT.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/MOX_DAT.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/MOX_SET.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/MOX_SET.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/MOX_SET.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/MOX_SET.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/MOX_SND.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/MOX_SND.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/MOX_SND.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/MOX_SND.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/MOX_T4.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/MOX_T4.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/MOX_T4.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/MOX_T4.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/paragrph.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/paragrph.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/paragrph.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/paragrph.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/random.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/random.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/random.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/random.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/SOUND.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/SOUND.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/SOUND.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/SOUND.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Util.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Util.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Util.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Util.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Video.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Video.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Video.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Video.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/MOX",
+  "command": "/usr/bin/c++   -Wall -Wno-char-subscripts -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-label -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/MOX.dir/Video2.C.o -c /home/jbalcomb/devel/ReMoM/src/MOX/Video2.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/MOX/Video2.C",
+  "output": "src/MOX/CMakeFiles/MOX.dir/Video2.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/STU",
+  "command": "/usr/bin/c++   -Wall -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/STU.dir/STU_CHK.C.o -c /home/jbalcomb/devel/ReMoM/src/STU/STU_CHK.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/STU/STU_CHK.C",
+  "output": "src/STU/CMakeFiles/STU.dir/STU_CHK.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/STU",
+  "command": "/usr/bin/c++   -Wall -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/STU.dir/STU_DBG.C.o -c /home/jbalcomb/devel/ReMoM/src/STU/STU_DBG.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/STU/STU_DBG.C",
+  "output": "src/STU/CMakeFiles/STU.dir/STU_DBG.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/STU",
+  "command": "/usr/bin/c++   -Wall -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/STU.dir/STU_JSON.C.o -c /home/jbalcomb/devel/ReMoM/src/STU/STU_JSON.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/STU/STU_JSON.C",
+  "output": "src/STU/CMakeFiles/STU.dir/STU_JSON.C.o"
+},
+{
+  "directory": "/home/jbalcomb/devel/ReMoM/src/STU",
+  "command": "/usr/bin/c++   -Wall -Wno-unknown-pragmas -Wno-unused-but-set-variable -Wno-unused-variable -Wno-writable-strings -o CMakeFiles/STU.dir/STU_UTIL.C.o -c /home/jbalcomb/devel/ReMoM/src/STU/STU_UTIL.C",
+  "file": "/home/jbalcomb/devel/ReMoM/src/STU/STU_UTIL.C",
+  "output": "src/STU/CMakeFiles/STU.dir/STU_UTIL.C.o"
+}
+]

@@ -6,11 +6,12 @@
         ovr132
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_ITOA.H"  /* mox_itoa() */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
-#include "MoM.H"
+#include "MOM.H"
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 #include "MainScr.H"   /* Allocate_Reduced_Map(); */
@@ -406,7 +407,7 @@ void Build_Spell_List(int16_t type, int16_t spell_list[])
 
             // if(((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells) == spl_Just_Cause)
             // {
-            //     __debugbreak();
+            //     STU_DEBUG_BREAK();
             // }
             // spells_list_status = _players[HUMAN_PLAYER_IDX].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)];
             // spells_list_status = _players[HUMAN_PLAYER_IDX].spells_list[spl_Just_Cause];
@@ -2269,7 +2270,7 @@ void Apprentice_Screen__WIP(void)
             if(
                 (m_spellbook_pages[SBK_OpenPage].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + itr)].spell > 0)
+                (m_spellbook_pages[(SBK_OpenPage + itr)].spell[itr] > 0)
             )
             {
                 if(abs(m_spellbook_pages->spell[(SBK_OpenPage + itr)]) == spl_Spell_Of_Return)
@@ -2294,7 +2295,7 @@ void Apprentice_Screen__WIP(void)
             if(
                 (m_spellbook_pages[(SBK_OpenPage + 1)].count > itr)
                 &&
-                (m_spellbook_pages[((SBK_OpenPage + 1) + itr)].spell > 0)
+                (m_spellbook_pages[((SBK_OpenPage + 1) + itr)].spell[itr] > 0)
             )
             {
                 if(abs(m_spellbook_pages->spell[((SBK_OpenPage + 1) + itr)]) == 214)  /* Spell_Of_Return */
@@ -2774,7 +2775,7 @@ void Spell_Research_Select(void)
             if(
                 (m_spellbook_pages[(SBK_OpenPage + 0)].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + 0)].spell > 0)
+                (m_spellbook_pages[(SBK_OpenPage + 0)].spell[itr] > 0)
             )
             {
 
@@ -2807,7 +2808,7 @@ void Spell_Research_Select(void)
             if(
                 (m_spellbook_pages[(SBK_OpenPage + 1)].count > itr)
                 &&
-                (m_spellbook_pages[(SBK_OpenPage + 1)].spell > 0)
+                (m_spellbook_pages[(SBK_OpenPage + 1)].spell[itr] > 0)
             )
             {
 
@@ -2918,7 +2919,7 @@ int16_t WIZ_RefreshResearch__STUB(int16_t player_idx)
     // D4h  212d  5 * 40 + 12
     // _players.spells_list+Spell_Of_Mastery-1)
     // DEDU  ¿ macro for spell status would know to xlat 'Spell Number' to 'spell_idx' ?
-    if(_players[player_idx].spells_list[((sbr_Arcane * 40) + 12)] = 2)
+    if(_players[player_idx].spells_list[((sbr_Arcane * 40) + 12)] == 2)
     {
         Ignore_SoM = ST_TRUE;
     }
@@ -3538,7 +3539,7 @@ void WIZ_AddSpellbook__WIP(int16_t player_idx, int16_t magic_realm)
             for(In_Rarity_Index = 0; In_Rarity_Index < 10; In_Rarity_Index++)
             {
                 // DEDU  sizeof() 40 and 10 for spells magic realm and rarity
-                if(_players[player_idx].spells_list[((magic_realm * 40) + (itr * 10) + In_Rarity_Index)] == 0);  /* S_Unknown */
+                if(_players[player_idx].spells_list[((magic_realm * 40) + (itr * 10) + In_Rarity_Index)] == 0)  /* S_Unknown */
                 {
                     realm_spells[realm_spell_count] = ((itr * 10) + In_Rarity_Index);
                     realm_spell_count++;

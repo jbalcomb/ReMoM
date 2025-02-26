@@ -6,9 +6,9 @@
         ovr142
 */
 
-#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DAT.H"  /* _players[] */
 
-#include "MoM.H"
+#include "MOM.H"
 
 /*
     WIZARDS.EXE  ovr120
@@ -3047,7 +3047,9 @@ int16_t City_Minimum_Farmers(int16_t city_idx)
 
 /* DEBUG */  if(minimum_farmer_count < 0)
 /* DEBUG */  {
-/* DEBUG */      __debugbreak();
+#ifdef WIN32
+/* DEBUG */      STU_DEBUG_BREAK();
+#endif
 /* DEBUG */  }
 
     return minimum_farmer_count;
@@ -3469,18 +3471,14 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
     }
 
-    if(
-        (_CITIES[city_idx].bldg_status[ORACLE] == bs_Built)
-    )
+    if(_CITIES[city_idx].bldg_status[ORACLE] == bs_Built)
     {
 
         Pacify += 2;
 
     }
 
-    if(
-        (_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
-    )
+    if(_CITIES[city_idx].bldg_status[ANIMISTS_GUILD] == bs_Built)
     {
 
         Pacify += 1;

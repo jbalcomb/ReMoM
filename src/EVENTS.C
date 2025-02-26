@@ -6,9 +6,9 @@
         ovr081
 */
 
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
 #include "CITYCALC.H"
@@ -18,9 +18,9 @@
 #include "ItemScrn.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MoM_Data.H"
-#include "MoM_DBG.H"
-#include "MoM_DEF.H"
+#include "MOM_Data.H"
+#include "MOM_DBG.H"
+#include "MOM_DEF.H"
 #include "RACETYPE.H"
 #include "SBookScr.H"
 #include "UNITTYPE.H"   // WTFMATE

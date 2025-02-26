@@ -1,5 +1,5 @@
 
-#include "MoM.H"
+#include "MOM.H"
 #include <windows.h>
 
 void EMS_Startup(void)

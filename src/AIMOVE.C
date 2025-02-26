@@ -6,10 +6,10 @@
         ovr162
 */
 
-#include "MoX/MoX_DEF.H"
-#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_DAT.H"  /* _players[] */
 
-#include "MoM.H"
+#include "MOM.H"
 
 
 
@@ -1776,7 +1776,8 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
         Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][AI_MainWarConts[wp][player_idx]];
 
-        while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             Midpoint_X += CONTX_LoadTileXs[wp][Next_Tile_ChainIndex];
@@ -1784,6 +1785,8 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
             Midpoint_X += CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
             Tile_Count++;
+
+            Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
         }
 
@@ -1795,7 +1798,8 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
 
             Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-        while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             LoadTile_X = CONTX_LoadTileXs[wp][Next_Tile_ChainIndex];
@@ -1819,6 +1823,8 @@ void AI_ProcessRoamers__WIP(int16_t landmass_idx, int16_t wp, int16_t player_idx
                 }
 
             }
+
+            Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
         }
         
@@ -4558,7 +4564,7 @@ void AI_Do_Meld(int16_t player_idx)
         for(list_unit_idx = 0; list_unit_idx < list_unit_count; list_unit_idx++)
         {
 
-            unit_idx ; _ai_own_stack_unit_list[itr][list_unit_idx];
+            unit_idx = _ai_own_stack_unit_list[itr][list_unit_idx];
 
 // ; BUG: the check for -1 needs to come first
 
@@ -4657,7 +4663,7 @@ void AI_Do_Meld(int16_t player_idx)
                 if(target_node_idx != ST_UNDEFINED)
                 {
 
-                    if(closest_distance = 0)
+                    if(closest_distance == 0)
                     {
 
                         AI_Order_Meld(unit_idx, itr, list_unit_idx);
@@ -6167,7 +6173,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
         Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-        while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             Tile_Weight = Delta_XY_With_Wrap(CONTX_TileYs[wp][Next_Tile_ChainIndex], CONTX_TileYs[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH) + Random(5);
@@ -6195,6 +6202,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
                 }
 
             }
+
+            Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
         }
 
@@ -6242,7 +6251,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
         Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][AI_MainWarConts[wp][player_idx]];
 
-        while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             LoadTile_X += CONTX_LoadTileXs[wp][Next_Tile_ChainIndex];
@@ -6250,6 +6260,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
             LoadTile_Y += CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
             Tile_X++;
+
+            Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
         }
 
@@ -6263,7 +6275,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
 
         Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-        while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+        while(Next_Tile_ChainIndex != ST_UNDEFINED)
         {
 
             Tile_Weight = (Delta_XY_With_Wrap(CONTX_LoadTileXs[wp][Next_Tile_ChainIndex], CONTX_LoadTileYs[wp][Next_Tile_ChainIndex], LoadTile_X, LoadTile_Y, WORLD_WIDTH) + Random(5));
@@ -6287,6 +6300,8 @@ void AI_SingleCont_Reeval__WIP(int16_t player_idx, int16_t landmass_idx, int16_t
                 }
 
             }
+
+            Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
         }
 
@@ -6442,7 +6457,8 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
 
     Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-    while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+    while(Next_Tile_ChainIndex != ST_UNDEFINED)
     {
 
         LoadTile_Y = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
@@ -6452,7 +6468,7 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
         for(some_wy = -1; ((some_wy < 2) && (Adj_Empty_Land == ST_FALSE)); some_wy++)
         {
 
-            for(some_wx = -1; ((some_wx < 2) && (Adj_Empty_Land == ST_FALSE)); some_wx, some_wx++)
+            for(some_wx = -1; ((some_wx < 2) && (Adj_Empty_Land == ST_FALSE)); some_wx++)
             {
 
                 if(
@@ -6487,6 +6503,8 @@ void TILE_AI_FindLoadTile__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t * Ret
             }
 
         }
+
+        Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
     }
 
@@ -7228,7 +7246,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                     Next_Tile_ChainIndex = CONTX_FirstTiles[wp][landmass_idx];
 
-                    while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    // while(Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
 
                         Tile_Weight = Delta_XY_With_Wrap(CONTX_TileXs[wp][Next_Tile_ChainIndex], CONTX_TileYs[wp][Next_Tile_ChainIndex], Center_X, Center_Y, WORLD_WIDTH);
@@ -7256,6 +7275,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                             }
 
                         }
+
+                        Next_Tile_ChainIndex = CONTX_TileChain[wp][Next_Tile_ChainIndex];
 
                     }
 
@@ -7310,7 +7331,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                 Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-                while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                while(Next_Tile_ChainIndex != ST_UNDEFINED)
                 {
 
                     Tile_X = CONTX_LoadTileXs[wp][Next_Tile_ChainIndex];
@@ -7336,6 +7358,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                         }
 
                     }
+
+                    Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
                 }
 
@@ -7389,7 +7413,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                     Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][AI_MainWarConts[wp][player_idx]];
 
-                    while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
 
                         X_2 = CONTX_LoadTileXs[wp][Next_Tile_ChainIndex];
@@ -7397,6 +7422,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                         Y_2 = CONTX_LoadTileYs[wp][Next_Tile_ChainIndex];
 
                         Tile_Linear++;
+
+                        Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
                     }
 
@@ -7408,7 +7435,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
 
                     Next_Tile_ChainIndex = CONTX_1stLoadTs[wp][landmass_idx];
 
-                    while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    // while(Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex] != ST_UNDEFINED)
+                    while(Next_Tile_ChainIndex != ST_UNDEFINED)
                     {
 
                         Tile_Weight = Delta_XY_With_Wrap(CONTX_LoadTileXs[wp][Next_Tile_ChainIndex], CONTX_LoadTileYs[wp][Next_Tile_ChainIndex], X_2, Y_2, WORLD_WIDTH);
@@ -7432,6 +7460,8 @@ void AI_Continent_Reeval__WIP(int16_t player_idx)
                             }
 
                         }
+
+                        Next_Tile_ChainIndex = CONTX_LoadTChain[wp][Next_Tile_ChainIndex];
 
                     }
 
@@ -8067,10 +8097,13 @@ void AI_Pick_Action_Conts__WIP(int16_t player_idx)
 
                             Value_Sum = CONTX_FirstTiles[wp][itr_landmasses];
 
-                            while(Value_Sum = CONTX_TileChain[wp][Value_Sum] != ST_UNDEFINED)
+                            // while(Value_Sum = CONTX_TileChain[wp][Value_Sum] != ST_UNDEFINED)
+                            while(Value_Sum != ST_UNDEFINED)
                             {
 
                                 Continent_Values_2[itr_landmasses] += 1;
+
+                                Value_Sum = CONTX_TileChain[wp][Value_Sum];
 
                             }
 

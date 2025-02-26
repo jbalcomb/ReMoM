@@ -12,7 +12,7 @@ MoO2
 #ifndef SPLMASTR_H
 #define SPLMASTR_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,9 +3,9 @@
         ovr059
 */
 
-#include "MoX/MOX_DAT.H"  /* _players[] */
+#include "MOX/MOX_DAT.H"  /* _players[] */
 
-#include "MoM.H"
+#include "MOM.H"
 #include "WZD_o059.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"  /* TILE_Explore(); */
@@ -641,17 +641,17 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     */
     if(all_units_moved == ST_FALSE)
     {
-        DLOG("(all_units_moved == ST_FALSE)");
+        // TODO  DLOG("(all_units_moved == ST_FALSE)");
         if(_unit_stack_count > 0)
         {
-            DLOG("(_unit_stack_count > 0)");
+            // TODO  DLOG("(_unit_stack_count > 0)");
             stack_planar_travel = Stack_Has_PlanarTravel();
             if(stack_planar_travel == ST_TRUE)
             {
-                DLOG("(stack_planar_travel == ST_TRUE)");
+                // TODO  DLOG("(stack_planar_travel == ST_TRUE)");
                 if(Check_Planar_Seal() == ST_TRUE)
                 {
-                    DLOG("(Check_Planar_Seal() == ST_TRUE)");
+                    // TODO  DLOG("(Check_Planar_Seal() == ST_TRUE)");
                     Warn0(_msg_planar_seal_prevents);  // "Planar Seal prevents your units from changing planes."
                     // curr_map_plane = orig_map_plane;
                     *map_plane = orig_map_plane;
@@ -659,22 +659,22 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
                 }
                 else
                 {
-                    DLOG("(Check_Planar_Seal() != ST_TRUE)");
+                    // TODO  DLOG("(Check_Planar_Seal() != ST_TRUE)");
                 }
             }
             else
             {
-                DLOG("(stack_planar_travel != ST_TRUE)");
+                // TODO  DLOG("(stack_planar_travel != ST_TRUE)");
             }
         }
         else
         {
-            DLOG("(_unit_stack_count <= 0)");
+            // TODO  DLOG("(_unit_stack_count <= 0)");
         }
     }
     else
     {
-        DLOG("(all_units_moved != ST_FALSE)");
+        // TODO  DLOG("(all_units_moved != ST_FALSE)");
     }
     /*
         HERE: stack_planar_travel = {-1, 0, 1, 99}
@@ -693,29 +693,29 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     */
     if(stack_planar_travel == ST_TRUE)
     {
-        DLOG("(stack_planar_travel == ST_TRUE)");
+        // TODO  DLOG("(stack_planar_travel == ST_TRUE)");
         // stack_plane_shift = Check_Stack_Plane_Shift(_unit_stack[0].unit_idx, curr_map_plane);
         stack_plane_shift = Check_Stack_Plane_Shift(_unit_stack[0].unit_idx, *map_plane);
 
         if(stack_plane_shift == -2)
         {
-            DLOG("(stack_plane_shift == -2)");
+            // TODO  DLOG("(stack_plane_shift == -2)");
             // curr_map_plane = orig_map_plane;
             *map_plane = orig_map_plane;
             Warn0(_msg_units_cant_planar_travel); // "The selected units cannot Planar Travel at this location."
         }
         else
         {
-            DLOG("(stack_plane_shift != -2)");
+            // TODO  DLOG("(stack_plane_shift != -2)");
         }
         if(stack_plane_shift == -1)
         {
-            DLOG("(stack_plane_shift == -1)");
+            // TODO  DLOG("(stack_plane_shift == -1)");
 
         }
         else
         {
-            DLOG("(stack_plane_shift != -1)");
+            // TODO  DLOG("(stack_plane_shift != -1)");
         }
 
         Reset_Map_Draw();
@@ -728,7 +728,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     */
     else
     {
-        DLOG("(stack_planar_travel != ST_TRUE)");
+        // TODO  DLOG("(stack_planar_travel != ST_TRUE)");
         // HERE: Yay PlanarTravel, Yay PlanarSeal falls through to '@@Done'
         if(stack_planar_travel != 99)
         {

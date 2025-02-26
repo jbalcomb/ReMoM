@@ -15,14 +15,14 @@
 
 #include "MainScr.H"
 
-#include "MoX/LOADSAVE.H"
-#include "MoX/MOX_DAT.H"  /* _screen_seg */
-#include "MoX/MOX_SET.H"  /* magic_set */
-#include "MoX/SOUND.H"
-#include "MoX/MOX_T4.H"
+#include "MOX/LOADSAVE.H"
+#include "MOX/MOX_DAT.H"  /* _screen_seg */
+#include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/SOUND.H"
+#include "MOX/MOX_T4.H"
 
 #include "LOADER.H"
-#include "MoM_DBG.H"
+#include "MOM_DBG.H"
 #include "MOM_SCR.H"
 #include "SCastScr.H"  /* World_To_Screen() */
 
@@ -1020,7 +1020,7 @@ void Main_Screen(void)
         // ST_DEBUG Hot-Keys
         if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
         {
-            DLOG("STU_DEBUG: debug_hotkey");
+            // // TODO  DLOG("STU_DEBUG: debug_hotkey");
             DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
             if(DBG_debug_flag)
             {
@@ -1030,7 +1030,7 @@ void Main_Screen(void)
         }
         if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
         {
-            DLOG("STU_DEBUG: test_hotkey");
+            // // TODO  DLOG("STU_DEBUG: test_hotkey");
             // city in last column / on right edge Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
             // TST?  Center_Map(&_map_x, &_map_y, 8+6, 10+5, 0);
             // Center_Map(&_map_x, &_map_y, 18+6, 11+5, 0);  // TST: Validate_Entities_On_Movement_Map()
@@ -1209,13 +1209,13 @@ void Main_Screen(void)
             {
                 case 0:  /* Road Building */
                 {
-                    DLOG("switch(special_action_flag)  case 0:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 0:");
                     leave_screen_flag = ST_UNDEFINED;
                     current_screen = scr_Road_Build;
                 } break;
                 case 1:  /* Settle */
                 {
-                    DLOG("switch(special_action_flag)  case 1:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 1:");
                     // o100p04
                     if(Do_Build_Outpost() == ST_TRUE)
                     {
@@ -1229,7 +1229,7 @@ void Main_Screen(void)
                 } break;
                 case 2:  /* Purify */
                 {
-                    DLOG("switch(special_action_flag)  case 2:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 2:");
                     Play_Left_Click__STUB();
                     // DNE    Reset_Draw_Active_Stack();
                     Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 8, 0, 0);  /* Action 8: 'Purify' */
@@ -1245,37 +1245,37 @@ void Main_Screen(void)
                 } break;
                 case 3:
                 {
-                    DLOG("switch(special_action_flag)  case 3:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 3:");
 
                 } break;
                 case 4:
                 {
-                    DLOG("switch(special_action_flag)  case 4:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 4:");
 
                 } break;
                 case 5:
                 {
-                    DLOG("switch(special_action_flag)  case 5:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 5:");
 
                 } break;
                 case 6:
                 {
-                    DLOG("switch(special_action_flag)  case 6:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 6:");
 
                 } break;
                 case 7:
                 {
-                    DLOG("switch(special_action_flag)  case 7:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 7:");
 
                 } break;
                 case 8:
                 {
-                    DLOG("switch(special_action_flag)  case 8:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 8:");
 
                 } break;
                 case 9:  /* Meld */
                 {
-                    DLOG("switch(special_action_flag)  case 9:");
+                    // // TODO  DLOG("switch(special_action_flag)  case 9:");
                     STK_MeldWithNode();
                     o62p01_empty_function(_human_player_idx);
                     Select_Unit_Stack(_human_player_idx, &_map_x, &_map_y, _map_plane, selected_unit_wx, selected_unit_wy);
@@ -1368,7 +1368,7 @@ void Main_Screen(void)
             {
                 if(g_unit_window_fields[itr_stack] == -(input_field_idx))
                 {
-                    DLOG("(g_unit_window_fields[Stack_Index] = -input_field_idx)");
+                    // TODO  WTF clang this is is unused-value // TODO  DLOG("(g_unit_window_fields[Stack_Index] = -input_field_idx)");
                     Set_Draw_Active_Stack_Always();
                     Set_Unit_Draw_Priority();
                     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
@@ -2133,16 +2133,16 @@ void Main_Screen_Reset(void)
 // WZD o57p10
 void Move_Stack_DirKey(int16_t movement_direction)
 {
-    int16_t movement_points;
-    int16_t move_x;
-    int16_t move_y;
+    int16_t movement_points = 0;
+    int16_t move_x = 0;
+    int16_t move_y = 0;
 
     if(_unit_stack_count == 0)
     {
         return;
     }
 
-    if(movement_points = Stack_Moves_Active() == 0)
+    if((movement_points = Stack_Moves_Active()) == 0)
     {
         return;
     }
@@ -2378,7 +2378,7 @@ int16_t Get_Background_Music(void)
 
     wizards_power = 255;
 
-    for(itr_players = 1; itr_players < _num_players; itr_players++);
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
 
         if(_players[itr_players].Historian[IDK] > Highest_Power)
@@ -5882,7 +5882,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
         {
             dst_troops_carry_capacity = 0;
             Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
-            for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+            for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops++)
             {
                 dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
             }
@@ -5936,7 +5936,7 @@ void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider
             {
                 dst_troops_carry_capacity = 0;
                 Player_Army_At_Square(dst_wx, dst_wy, wp, player_idx, &dst_troop_count, &dst_troops[0]);
-                for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops)
+                for(itr_troops = 0; itr_troops < dst_troop_count; itr_troops++)
                 {
                     dst_troops_carry_capacity += _unit_type_table[_UNITS[dst_troops[itr_troops]].type].Transport;
                 }

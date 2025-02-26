@@ -20,7 +20,7 @@ MoO2  Module: LOADSAVE
 #ifndef LOADSCR_MGC_H
 #define LOADSCR_MGC_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

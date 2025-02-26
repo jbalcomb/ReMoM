@@ -1,7 +1,7 @@
 
 #include <Windows.h>
 
-#include "MoM.H"
+#include "MOM.H"
 
 extern HWND g_Window;
 

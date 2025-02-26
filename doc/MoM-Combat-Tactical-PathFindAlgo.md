@@ -142,7 +142,7 @@ Find does 0 to 4 and 4 to 8
 
                     if(adjacent_idx == ((DBG_cgy * 21) + DBG_cgx))
                     {
-                        __debugbreak();
+                        STU_DEBUG_BREAK();
                     }
                     // if((adjacent_idx >= 0) && (adjacent_idx < 462))
                     if(GTELT(adjacent_idx, 0, 462))
@@ -264,7 +264,7 @@ So, just at `Combat_Move_Path_Find() |-> NEW_PATH_COST_ALL() |> NEW_PATH_COST_AN
 What do I want to see?
 What do I get out of it?
 
-`if((itr_i == (DBG_cgy - 1)) && (itr_j == (DBG_cgx -1))) { __debugbreak(); }`
+`if((itr_i == (DBG_cgy - 1)) && (itr_j == (DBG_cgx -1))) { STU_DEBUG_BREAK(); }`
 ...outside the macros
 ...in Combat_Move_Path_Valid()
 

@@ -6,7 +6,7 @@
 #ifndef WZD_O129_H
 #define WZD_O129_H
 
-#include "MoM.H"
+#include "MOM.H"
 
 #ifdef __cplusplus
 extern "C" {

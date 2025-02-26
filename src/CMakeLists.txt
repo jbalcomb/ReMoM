@@ -1,4 +1,19 @@
 
+
+set(WINDOWS_SOURCES
+    win_MoM.cpp
+
+    win_CLK.C
+    win_DIR.C
+    win_EMS.C
+    win_Fonts.C
+    win_Input.C
+    win_KD.C
+    win_MD.C
+    win_PFL.cpp
+    win_Video.C
+)
+
 add_library(gamelib STATIC
     AdvsrScr.C
     AIBUILD.C
@@ -32,11 +47,11 @@ add_library(gamelib STATIC
     MainMenu.C
     MainScr.C
     MainScr_Maps.C
-    MoM.C
+    MOM.C
     MOM_SCR.C
-    MoM_Data.C
-    MoM_DBG.C
-    MoM_PFL.C
+    MOM_Data.C
+    MOM_DBG.C
+    MOM_PFL.C
     MovePath.C
     NewGame.C
     NEXTTURN.C
@@ -61,7 +76,7 @@ add_library(gamelib STATIC
     UnitMove.C
     UnitStat.C
     UNITSTK.C
-    UnitType.C
+    UNITTYPE.C
     UnitView.C
     WIZVIEW.C
     WZD_o059.C
@@ -71,17 +86,7 @@ add_library(gamelib STATIC
 )
 
 add_executable(game
-    win_MoM.cpp
-
-    win_CLK.C
-    win_DIR.C
-    win_EMS.C
-    win_Fonts.C
-    win_Input.C
-    win_KD.C
-    win_MD.C
-    win_PFL.cpp
-    win_Video.C
+    main.cpp
 )
 set_target_properties(game PROPERTIES WIN32_EXECUTABLE TRUE)
 
@@ -91,8 +96,23 @@ add_subdirectory(_STU)
 
 target_include_directories(game PUBLIC ${PROJECT_SOURCE_DIR})
 
-target_link_libraries(game PUBLIC gamelib MOX STU winmm)
+if ( WIN32 )
+    target_link_libraries(game PUBLIC gamelib MOX STU winmm)
+else ()
+    target_link_libraries(game PUBLIC gamelib MOX STU)
+endif ()
 
 # target_compile_features(ReMoM PUBLIC cxx_std_23)
 # target_compile_definitions(ReMoM PUBLIC -DNOMINMAX)
 # target_compile_options(ReMoM PUBLIC /W4 /WX /Debug /Od /Z7)
+target_compile_options(gamelib PUBLIC
+    "-Wall"
+    "-Wno-missing-braces"
+    "-Wno-tautological-compare"
+    "-Wno-unknown-pragmas"
+    "-Wno-unused-but-set-variable"
+    "-Wno-unused-label"
+    "-Wno-unused-variable"
+    "-Wno-unused-function"
+    "-Wno-writable-strings"
+)

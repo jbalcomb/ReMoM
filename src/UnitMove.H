@@ -6,11 +6,11 @@
 #ifndef UNITMOVE_H
 #define UNITMOVE_H
 
-#include "MoX/MoX_TYPE.H"
+#include "MOX/MOX_TYPE.H"
 
 
 
-// ... in MoM_DEF.H  :shrug:
+// ... in MOM_DEF.H  :shrug:
 // 00000000 struc s_Movement_Modes ; (sizeof=0x12)
 // 00000000 mm_UU_Cavalry dw ?
 // 00000002 mm_Forester dw ?
