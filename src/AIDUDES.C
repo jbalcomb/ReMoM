@@ -2426,6 +2426,7 @@ void CONTX_CreateChains__WIP(void)
             {
 
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+                assert(landmass_idx < NUM_LANDMASSES);
 
                 if(landmass_idx != 0)
                 {
@@ -2528,6 +2529,7 @@ void CONTX_CreateLChains__WIP(void)
             {
 
                 landmass_idx = _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)];
+                assert(landmass_idx < NUM_LANDMASSES);
 
                 if(landmass_idx != 0)
                 {

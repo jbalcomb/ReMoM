@@ -71,6 +71,8 @@ void Screen_Control(void)
 
             Load_SAVE_GAM(-1);  // SAVETEST.GAM
 
+            TST_Validate_GameData();
+            
             Loaded_Game_Update();
 
             current_screen = scr_Main_Screen;

@@ -15,7 +15,7 @@
     <ClCompile Include="..\..\..\src\MoX\CFG.C" />
     <ClCompile Include="..\..\..\src\MoX\DBG.C" />
     <ClCompile Include="..\..\..\src\MoX\EMM.C" />
-    <ClCompile Include="..\..\..\src\MoX\Exit.C" />
+    <ClCompile Include="..\..\..\src\MOX\EXIT.C" />
     <ClCompile Include="..\..\..\src\MoX\Fields.C" />
     <ClCompile Include="..\..\..\src\MoX\file_ani.C" />
     <ClCompile Include="..\..\..\src\MoX\FLIC_Draw.C" />
@@ -28,10 +28,14 @@
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\MoX\LOADSAVE.C" />
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
+    <ClCompile Include="..\..\..\src\MOX\MOX_DAT.C" />
+    <ClCompile Include="..\..\..\src\MOX\MOX_ITOA.C" />
+    <ClCompile Include="..\..\..\src\MOX\MOX_SET.C" />
+    <ClCompile Include="..\..\..\src\MOX\MOX_SND.C" />
     <ClCompile Include="..\..\..\src\MoX\MOX_T4.C" />
-    <ClCompile Include="..\..\..\src\MoX\MoX_Temp.C" />
     <ClCompile Include="..\..\..\src\MoX\paragrph.C" />
     <ClCompile Include="..\..\..\src\MoX\random.C" />
+    <ClCompile Include="..\..\..\src\MOX\SOUND.C" />
     <ClCompile Include="..\..\..\src\MoX\Util.C" />
     <ClCompile Include="..\..\..\src\MoX\Video.C" />
     <ClCompile Include="..\..\..\src\MoX\Video2.C" />
@@ -42,7 +46,7 @@
     <ClInclude Include="..\..\..\src\MoX\DBG.H" />
     <ClInclude Include="..\..\..\src\MoX\DIR.H" />
     <ClInclude Include="..\..\..\src\MoX\EMM.H" />
-    <ClInclude Include="..\..\..\src\MoX\Exit.H" />
+    <ClInclude Include="..\..\..\src\MOX\EXIT.H" />
     <ClInclude Include="..\..\..\src\MoX\Fields.H" />
     <ClInclude Include="..\..\..\src\MoX\file_ani.H" />
     <ClInclude Include="..\..\..\src\MoX\FLIC_Draw.H" />
@@ -55,18 +59,23 @@
     <ClInclude Include="..\..\..\src\MoX\LBX_Load.H" />
     <ClInclude Include="..\..\..\src\MoX\LOADSAVE.H" />
     <ClInclude Include="..\..\..\src\MoX\Mouse.H" />
-    <ClInclude Include="..\..\..\src\MoX\MoX_BASE.H" />
-    <ClInclude Include="..\..\..\src\MoX\MoX_BITS.H" />
-    <ClInclude Include="..\..\..\src\MoX\MoX_Lib.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_BITS.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_DAT.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_DEF.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_ITOA.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_Lib.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_SET.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_SND.H" />
     <ClInclude Include="..\..\..\src\MoX\MOX_T4.H" />
-    <ClInclude Include="..\..\..\src\MoX\MoX_Temp.H" />
-    <ClInclude Include="..\..\..\src\MoX\MoX_TYPE.H" />
+    <ClInclude Include="..\..\..\src\MOX\MOX_TYPE.H" />
     <ClInclude Include="..\..\..\src\MoX\paragrph.H" />
     <ClInclude Include="..\..\..\src\MoX\random.H" />
+    <ClInclude Include="..\..\..\src\MOX\SOUND.H" />
     <ClInclude Include="..\..\..\src\MoX\Timer.H" />
     <ClInclude Include="..\..\..\src\MoX\Util.H" />
     <ClInclude Include="..\..\..\src\MoX\Video.H" />
     <ClInclude Include="..\..\..\src\MoX\Video2.H" />
+    <ClInclude Include="..\..\..\src\SAVETEST2_landmasses.H" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

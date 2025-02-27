@@ -4,7 +4,10 @@
 /* ~ STGE */
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_BITS.H"
+#include "MOX/MOX_DAT.H"
 #include "MOX/MOX_DEF.H"
+#include "MOX/MOX_SET.H"
+#include "MOX/MOX_SND.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_T4.H"  // ~ MOX & MOX2 //MoO2
 #include "MOX/Allocate.H"

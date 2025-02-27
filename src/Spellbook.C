@@ -1829,7 +1829,8 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
         // shl     bx, cl
         // push    SBK_Descriptions@[bx-4+2]       ; src_sgmt
         // push    SBK_Descriptions@[bx-4]         ; src_ofst
-        String_Copy_Far(Spell_Description, SBK_Descriptions[(((Spell_on_Side * 4) + itr_spellbook_page_spell_count) - 4)]);
+        // String_Copy_Far(Spell_Description, SBK_Descriptions[(((Spell_on_Side * 4) + itr_spellbook_page_spell_count) - 4)]);
+        String_Copy_Far(Spell_Description, SBK_Descriptions[((Spell_on_Side * 4) + itr_spellbook_page_spell_count)]);
 
         Create_Picture(129, 37, IMG_SBK_Anims);
 

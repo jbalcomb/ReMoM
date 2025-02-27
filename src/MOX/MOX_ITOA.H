@@ -10,7 +10,7 @@ extern "C" {
 
 
 // void mox_itoa(int n, char s[]);
-#ifndef WIN32
+#ifndef _WIN32
 void itoa(int value, char * string, int radix);
 void ltoa(long value, char * string, int radix);
 #endif

@@ -2,10 +2,7 @@
 #define MOX_TYPE_H
 
 
-// #define STU_DEBUG_BREAK() ;() (void)0
-// Expands to:
-// ;() (void)0
-#define STU_DEBUG_BREAK() (void)0
+
 #include "MOX_ITOA.H"
 
 

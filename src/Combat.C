@@ -57,7 +57,7 @@
 #include "WZD_o059.H"
 
 #include <stdlib.h>     /* abs(); itoa(); */
-#include <cstdlib> /* IDGI;  "...abs(int) is defined in <cstdlib>" */
+// #include <cstdlib> /* IDGI;  "...abs(int) is defined in <cstdlib>" */
 
 #include "FIGURES8_LBX_063.H"
 
@@ -5877,6 +5877,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 {
     int16_t itr = 0;  // _SI_
     int16_t count = 0;  // _DI_
+    uint16_t DBG_casting_spell_idx = 0;
 
 // DELETE      //if(troop_count == 1)
 // DELETE      if(troops[itr] == DEBUG_UNIT_IDX)
@@ -6077,6 +6078,7 @@ int16_t CMB_Units_Init__WIP(int16_t troop_count, int16_t troops[])
 
     Deploy_Battle_Units(_combat_defender_player);
 
+    DBG_casting_spell_idx = _players[_combat_attacker_player].casting_spell_idx;
 
     if(_players[_combat_attacker_player].casting_spell_idx == spl_Spell_Of_Return)
     {

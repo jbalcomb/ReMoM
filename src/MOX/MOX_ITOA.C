@@ -56,7 +56,7 @@ void mox_itoa(int n, char s[])
     mox_reverse(s);
 }  
 
-#ifndef WIN32
+#ifndef _WIN32
 void itoa(int value, char * string, int radix)
 {
     mox_itoa(value, string);

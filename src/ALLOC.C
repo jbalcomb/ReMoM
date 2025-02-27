@@ -53,7 +53,9 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // also used for COMBAT.TMP
     // TODO figure out if/how there is a relationship between this and the check for file size 57764 in Load_SAVE_GAM()
 
-    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
+    // should be 100 * 114 = 11400 but, it aint.
+    // _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
+    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  // 714 PR, 11424 B
 
     _world_maps = (uint8_t *)Allocate_Next_Block(World_Data, 602);  // 602 PR, 9632 B
 

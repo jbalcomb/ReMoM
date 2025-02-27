@@ -255,7 +255,7 @@ Offset	Length	Quantity	Contents / Comments
 0x0009e8	0x04c8	5 + 1	Wizards + "Neutral wizard" data
 0x002698	0x12c0	2	Terrain maps
 0x004c18	0x00c0	2	Unused maps
-0x004d98	0x0960	2	Land mass IDs
+0x004d98	0x0960	2	Land mass IDs  2 * 0x960 = 0x12C0  2 * 2400 = 4800
 0x006058	0x0030	30	Node attributes
 0x0065f8	0x0004	6	Fortresses data
 0x006610	0x0004	6	Towers data

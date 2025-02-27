@@ -142,7 +142,7 @@ void Set_Mouse_List(int16_t count, struct s_mouse_list * list)
     if(tmp_count != 0)
     {
 
-        STU_DEBUG_BREAK();
+        // TODO  Why did I put this here?  Why can't I see the file history in VSC?  STU_DEBUG_BREAK();
 
         *tmp_list = list[tmp_count];
 

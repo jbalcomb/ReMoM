@@ -54,14 +54,14 @@ struct s_MAGIC_SET
 
 
 
-extern uint8_t _magic_set[];
-extern struct s_MAGIC_SET magic_set;
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+// TODO  DEDU  Why do these get C++ name mangled?
+extern uint8_t _magic_set[];
+extern struct s_MAGIC_SET magic_set;
 
 
 

@@ -19,9 +19,18 @@
 #include <stdlib.h>     /* abs(); itoa(); */
 #include <string.h>     /* memset(), strcat(), strcpy(); */
 
+#include "../SAVETEST2_landmasses.H"
+extern uint8_t SAVETEST2_landmasses[4800];
+
+
+#ifdef STU_DEBUG
+#include "../STU/STU_DBG.H"
+#endif
+
 
 
 uint8_t _save_gam[123300];
+
 
 
 void TST_Validate_GameData(void)
@@ -38,9 +47,58 @@ void TST_Validate_GameData(void)
 //     int8_t unexplored_min;
 //     int8_t unexplored_max;
 
+    int16_t wx;
+    int16_t wy;
+    int16_t wp;
+
+
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: TST_Validate_GameData()\n", __FILE__, __LINE__);
 #endif
+
+
+
+/*
+    BEGIN: _landmasses
+*/
+    for(wp = 0; wp < NUM_PLANES; wp++)
+    {
+
+        for(wy = 0; wy < WORLD_HEIGHT; wy++)
+        {
+
+            for(wx = 0; wx < WORLD_WIDTH; wx++)
+            {
+
+                if(_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] != SAVETEST2_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)])
+                {
+#ifdef STU_DEBUG
+    dbg_prn("_landmasses[]: 0%X02\n", _landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+    dbg_prn("SAVETEST2_landmasses: 0%X02\n", SAVETEST2_landmasses[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)]);
+#endif
+
+                    is_bjorked = ST_TRUE;
+                    // TODO  Why doesn't this work?  STU_DEBUG_BREAK();
+#ifdef _WIN32
+                    __debugbreak();
+#endif
+
+                }
+
+            }
+
+        }
+
+    }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: _landmasses is bjorked!!\n", __FILE__, __LINE__);
+#endif
+
+/*
+    END: _landmasses
+*/
+
 
 
 // terrain_special_min: -128
@@ -49,7 +107,7 @@ void TST_Validate_GameData(void)
     ptr_TBL_Terr_Specials = (int8_t *)TBL_Terr_Specials;
     terrain_special_min = 0;
     terrain_special_max = 0;
-    for(itr = 0; itr < 4800; itr++)
+    for(itr = 0; itr < (NUM_PLANES * WORLD_SIZE); itr++)
     {
         terrain_special = *(ptr_TBL_Terr_Specials + itr);
 #ifdef STU_DEBUG
@@ -110,7 +168,9 @@ void TST_Validate_GameData(void)
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: TST_Validate_GameData()\n", __FILE__, __LINE__);
 #endif
+
 }
+
 
 // WZD o50p01
 void Save_SAVE_GAM(int16_t save_gam_idx)
@@ -355,7 +415,10 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 19864);
 
-    fread(_landmasses, NUM_PLANES, 2400, file_pointer);
+    // 0x004d98	0x0960	2	Land mass IDs
+    assert(file_pointer_position == 0x4D98);
+    // fread(_landmasses, NUM_PLANES, 2400, file_pointer);
+    fread(_landmasses, 2400, NUM_PLANES, file_pointer);
 
     file_pointer_position = ftell(file_pointer);
     assert(file_pointer_position == 24664);

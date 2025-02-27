@@ -114,6 +114,17 @@ extern int16_t DBG_TST_entities_on_movement_map[];
 extern "C" {
 #endif
 
+// #define STU_DEBUG_BREAK() ;() (void)0
+// Expands to:
+// ;() (void)0
+
+#ifdef STU_DEBUG
+#ifdef _WIN32
+#define STU_DEBUG_BREAK() __debugbreak()
+#endif
+#else
+#define STU_DEBUG_BREAK() (void)0
+#endif
 
 
 extern FILE * Debug_Log_File;

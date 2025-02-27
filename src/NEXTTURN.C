@@ -3123,7 +3123,10 @@ Capture_Cities_Data();
                 {
 
                     // BUGBUG:  In City_Growth_Rate(), uses `if(_CITIES[city_idx].population >= ((_difficulty + 1) * 2))`
+Check_Cities_Data();
                     SETMAX(_CITIES[itr_cities].population, MAX_CITY_POPULATION_NEUTRAL_PLAYER);
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                 }
 
@@ -3198,7 +3201,8 @@ Capture_Cities_Data();
 
 Check_Cities_Data();
                     _CITIES[itr_cities].population -= 1;
-Check_Cities_Data();
+// Check_Cities_Data();
+Capture_Cities_Data();
 
                     if((
                         _CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)

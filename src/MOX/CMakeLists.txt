@@ -30,13 +30,23 @@ add_library(MOX STATIC
     Video2.C
 )
 
-target_compile_options(MOX PUBLIC
-    "-Wall"
-    "-Wno-char-subscripts"
-    "-Wno-unknown-pragmas"
-    "-Wno-unused-but-set-variable"
-    "-Wno-unused-function"
-    "-Wno-unused-label"
-    "-Wno-unused-variable"
-    "-Wno-writable-strings"
-)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+    target_compile_options(MOX PRIVATE
+        "-Wall"
+        "-Wno-char-subscripts"
+        "-Wno-unknown-pragmas"
+        "-Wno-unused-but-set-variable"
+        "-Wno-unused-function"
+        "-Wno-unused-label"
+        "-Wno-unused-variable"
+        "-Wno-writable-strings"
+    )
+endif()
+if(MSVC)
+    target_compile_options(momlib PRIVATE
+        "/W0"
+        "/wd4068"   # "unknown pragma"
+        "/wd4365"
+        "/wd4820"
+    )
+endif()
