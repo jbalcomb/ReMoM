@@ -809,3 +809,9 @@ void File_Name_Base(char * file_name)
     }
 
 }
+
+// WZD s10p17
+void RAM_Set_Minimum(int16_t amount)
+{
+        RAM_MinKbytes = amount;
+}

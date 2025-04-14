@@ -1,12 +1,11 @@
 
 #include "MOM_DBG.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
 
 #include "MOM_DEF.H"
-
-#include "MOM_Data.H"
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */

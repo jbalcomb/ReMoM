@@ -48,6 +48,8 @@ void Main_Menu_Add_Fields(void);
 // MGC s01p06
 void Main_Menu_Screen_Draw(void);
 
+void Main_Menu_Screen_Draw_Debug();
+
 // MGC s01p07
 // Load_TERRSTAT
 

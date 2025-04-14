@@ -13,7 +13,7 @@
 #include "MOX_TYPE.H"
 
 #include "../MOM_DEF.H"  /* NUM_PLAYERS */
-#include "../MOM_Data.H"  /* struct s_WIZARD*/
+#include "MOM_Data.H"  /* struct s_WIZARD*/
 
 
 

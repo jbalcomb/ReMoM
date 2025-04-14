@@ -67,10 +67,9 @@ src/STU/STU.vcxproj.filters
 # local debug  //Hand-Made Hero
 misc/
 
-# DELETE - old VS hack-job
-MoM-Rasm/
-MoM_Rasm.sln
-MoM_Rasm.vcxproj
+
+# SDL2
+SDL2.dll
 
 
 # MoM

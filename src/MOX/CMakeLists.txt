@@ -18,6 +18,7 @@ add_library(MOX STATIC
     LBX_Load.C
     LOADSAVE.C
     Mouse.C
+    MOM_Data.C
     MOX_DAT.C
     MOX_SET.C
     MOX_SND.C
@@ -25,10 +26,13 @@ add_library(MOX STATIC
     paragrph.C
     random.C
     SOUND.C
+    TEXTBOX.C
     Util.C
     Video.C
     Video2.C
 )
+
+set_target_properties(MOX PROPERTIES LINKER_LANGUAGE C)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(MOX PRIVATE

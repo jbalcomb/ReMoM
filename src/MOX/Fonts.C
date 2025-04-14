@@ -23,6 +23,7 @@
 #include "../MOM_PFL.H"
 
 
+
 // WZD dseg:783C                                                 seg017  MoO2 Module: fonts
 
 // WZD dseg:783C
@@ -48,7 +49,7 @@ int16_t cycle_direction_flag = ST_UNDEFINED;
     BEGIN:  Fonts
 */
 // WZD  dseg:E7DE 00 00                                           gsa_VGAFILEH_Header dw 0 
-// WZD  dseg:E7E0 00 00                                           p_PaletteFlags dw 0      
+// WZD  dseg:E7E0 00 00                                           palette_flags dw 0      
 
 // WZD  dseg:E7E2 00 00                                           
 // AKA gsa_ShadingColors
@@ -150,11 +151,16 @@ byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_
 byte_ptr font_colors;  // 300h into the palette entry, 16 arrays of 16 colors
 
 
-byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
-byte_ptr current_palette;
+// WZD dseg:E7E8
+// MoO2  current_palette
+// MGC dseg:A7DE    alloc in Load_Font_File()
+// AKA p_Palette;                             
+uint8_t * current_palette;
 
-byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
-byte_ptr palette_flags;
+// WZD dseg:E7E0
+// AKA p_Palette_XBGR
+// AKA p_PaletteFlags
+uint8_t * palette_flags;
 
 
 // WZD  s14o03
@@ -172,15 +178,11 @@ void Load_Font_File(char * font_file)
 
     font_header = (struct s_FONT_HEADER *)font_style_data;
 
-    palette_block          = Allocate_Space(348);    // 348 PR, 5568 B
+    palette_block = Allocate_Space(348);    // 348 PR, 5568 B
 
-    // MoO2  current_palette
-    p_Palette              = Allocate_Space(64);     //  64 PR, 1024 B
-    // 1oom: lbxpal_palette = p_Palette;
-    current_palette = p_Palette;
+    current_palette = Allocate_Space(64);     //  64 PR, 1024 B
 
-    p_PaletteFlags         = p_Palette + (48 * SZ_PARAGRAPH_B);  // ~== p_PaletteFlags = &p_Palette[768];
-    palette_flags = p_PaletteFlags;
+    palette_flags = current_palette + (48 * SZ_PARAGRAPH_B);  // ~== palette_flags = &current_palette[768];
 
     // TODO  UU_DAC_Save_Seg = Allocate_Space(48);  // in MoO1, also unused, maybe debug code
 
@@ -194,11 +196,11 @@ void Load_Font_File(char * font_file)
 
     for(itr = 0; itr < 768; itr++)
     {
-        *(p_Palette + itr) = 0;
+        *(current_palette + itr) = ST_TRANSPARENT;
     }
     for(itr = 0; itr < 256; itr++)
     {
-        *(p_PaletteFlags + itr) = 1;
+        *(palette_flags + itr) = ST_TRUE;
     }
 
 }
@@ -2567,6 +2569,11 @@ int16_t Get_Font_Height(void)
 */
 
 // WZD s20p01
+/*
+
+updates current_palette from palette_data, the palette entry loaded from FONTS.LBX
+
+*/
 void Load_Palette(int entry, int start_color, int end_color)
 {
     int color_start;
@@ -2616,14 +2623,15 @@ void Load_Palette(int entry, int start_color, int end_color)
         color_count = (end_color - start_color) + 1;
     }
 
+    // TODO  make this look more like the Dasm - see 1oom
     for(itr = 0; itr < (color_count * 3); itr++)
     {
-        // MoO2 current_palette
-        *(p_Palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
+        *(current_palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
     }
 
     Set_Font_Style(0, 0, 0, 0);
 
+    // HERE: not in MoO1
     if(start_color == ST_UNDEFINED)
     {
         Set_Palette_Changes(0, 255);
@@ -2724,7 +2732,7 @@ void Set_Palette_Changes(int start_color, int end_color)
 
     for(itr = start_color; itr < end_color; itr++)
     {
-        *(p_PaletteFlags + itr) = ST_TRUE;
+        *(palette_flags + itr) = ST_TRUE;
     }
 
 }
@@ -2736,7 +2744,7 @@ void Clear_Palette_Changes(int start_color, int end_color)
 
     for(itr = start_color; itr < end_color; itr++)
     {
-        *(p_PaletteFlags + itr) = ST_FALSE;
+        *(palette_flags + itr) = ST_FALSE;
     }
 
 }
@@ -2901,20 +2909,104 @@ Module: palette
 // PLATFORM  
 // PLATFORM      for(itr = 0; itr < 256; itr++)
 // PLATFORM      {
-// PLATFORM          if(*(p_Palette + 768 + itr) == 1)
+// PLATFORM          if(*(current_palette + 768 + itr) == 1)
 // PLATFORM          {
-// PLATFORM              *(g_Palette + itr) = *(p_Palette + itr);
+// PLATFORM              *(g_Palette + itr) = *(current_palette + itr);
 // PLATFORM  
 // PLATFORM              *(g_Palette_XBGR + (itr * 4) + 3) = 0x00;
-// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 2) = (*(p_Palette + (itr * 3) + 0) << 2);
-// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 1) = (*(p_Palette + (itr * 3) + 1) << 2);
-// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 0) = (*(p_Palette + (itr * 3) + 2) << 2);
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 2) = (*(current_palette + (itr * 3) + 0) << 2);
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 1) = (*(current_palette + (itr * 3) + 1) << 2);
+// PLATFORM              *(g_Palette_XBGR + (itr * 4) + 0) = (*(current_palette + (itr * 3) + 2) << 2);
 // PLATFORM          }
 // PLATFORM  
 // PLATFORM      }
 // PLATFORM  
 // PLATFORM  }
+#ifdef _STU_WIN
 
+#include "MOM.H"
+
+// TODO  turn this into MoX64 or somesuch; not PFL, just not OG/DOS/16-bit/6-bpp (VGA)
+
+/*
+    WIZARDS.EXE  seg021
+*/
+
+// WZD s21p01
+// MoO2: Refresh_Palette |-> Store_Palette_Block_
+// 1oom :: uipal.c :: void ui_palette_set_n(void)
+// AKA VGA_DAC_Write()
+// IBM-PC, VGA, MS-DOS: write to the VGA-DAC
+// MS-Windows: write to PFL-provded palette buffer
+/*
+    copy current_palette to PFL_palette
+
+*/
+void Apply_Palette(void)
+{
+
+    int16_t itr;
+
+    for (itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
+    {
+        if (*(current_palette + 768 + itr) == 1)  // TODO  ~ #define Palette Flags Offset
+        {
+            // ¿ XBGR pixel format ?
+            *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
+            *(platform_palette_buffer + (itr * 4) + 2) = (*(current_palette + (itr * 3) + 0) << 2);
+            *(platform_palette_buffer + (itr * 4) + 1) = (*(current_palette + (itr * 3) + 1) << 2);
+            *(platform_palette_buffer + (itr * 4) + 0) = (*(current_palette + (itr * 3) + 2) << 2);
+        }
+    }
+
+    // Here, in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
+
+}
+
+#endif
+#ifdef _STU_SDL2
+// WZD s21p01
+void Apply_Palette(void)
+{
+    // uint8_t * pal;
+    int itr;
+
+    // pal = (uint8_t*)current_palette;
+    // 
+    // for(itr = 0; itr < 256; itr++)
+    // {
+    // 
+    //     if(*(current_palette + 768 + itr) == ST_TRUE)
+    //     {
+    // 
+    //         platform_palette_buffer[itr].r = *pal++ << 2;
+    //         platform_palette_buffer[itr].g = *pal++ << 2;
+    //         platform_palette_buffer[itr].b = *pal++ << 2;
+    //         platform_palette_buffer[itr].a = 0xFF;
+    // 
+    //     }
+    // 
+    // }
+
+    for(itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
+    {
+
+        if(*(current_palette + 768 + itr) == ST_TRUE)  // TODO  ~ #define Palette Flags Offset
+        {
+
+            platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 0) << 2);
+            platform_palette_buffer[itr].g = (*(current_palette + (itr * 3) + 1) << 2);
+            platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 2) << 2);
+            platform_palette_buffer[itr].a = 0xFF;
+
+        }
+
+    }
+
+    // HERE: in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
+
+}
+#endif
 
 // WZD s21p02
 // drake178: VGA_DAC_DimWrite()
@@ -2930,7 +3022,7 @@ void Cycle_Palette(int16_t percent)
     uint16_t color_multiplier;
     int16_t itr;
     uint8_t palette_change_flag;
-    uint8_t * current_palette;
+    uint8_t * tmpcurrpal;
     uint16_t ofst;
     uint8_t color_red;
     uint8_t color_grn;
@@ -2942,8 +3034,8 @@ void Cycle_Palette(int16_t percent)
     {
         if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
         {
-            color_multiplier = (( percent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
-            current_palette = (uint8_t *)(p_Palette);
+            color_multiplier = ((percent << 8) / 100) & 0x00FF;  // ¿ Fixed_Point Math ~== << 8 ?
+            tmpcurrpal = (uint8_t *)(current_palette);
             for(itr = 0; itr < 256; itr++)
             {
                 palette_change_flag = PALETTE_FLAG(itr);
@@ -2951,16 +3043,24 @@ void Cycle_Palette(int16_t percent)
                 {
                     ofst = itr * 3;
 
-                    *(PFL_Palette + (itr * 4) + 3) = 0x00;
-
-                    color_red = *(current_palette + ofst++);
-                    *(PFL_Palette + (itr * 4) + 2) = (((color_red * color_multiplier) >> 8) << 2);
-
-                    color_grn = *(current_palette + ofst++);
-                    *(PFL_Palette + (itr * 4) + 1) = (((color_grn * color_multiplier) >> 8) << 2);
-
-                    color_blu = *(current_palette + ofst++);
-                    *(PFL_Palette + (itr * 4) + 0) = (((color_blu * color_multiplier) >> 8) << 2);
+#ifdef _STU_SDL2
+                    platform_palette_buffer[itr].a = 0xFF;
+                    color_red = *(tmpcurrpal + ofst++);
+                    platform_palette_buffer[itr].b = (((color_red * color_multiplier) >> 8) << 2);
+                    color_grn = *(tmpcurrpal + ofst++);
+                    platform_palette_buffer[itr].g = (((color_grn * color_multiplier) >> 8) << 2);
+                    color_blu = *(tmpcurrpal + ofst++);
+                    platform_palette_buffer[itr].r = (((color_blu * color_multiplier) >> 8) << 2);
+#endif
+#ifdef _STU_WIN
+                    *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
+                    color_red = *(tmpcurrpal + ofst++);
+                    *(platform_palette_buffer + (itr * 4) + 2) = (((color_red * color_multiplier) >> 8) << 2);
+                    color_grn = *(tmpcurrpal + ofst++);
+                    *(platform_palette_buffer + (itr * 4) + 1) = (((color_grn * color_multiplier) >> 8) << 2);
+                    color_blu = *(tmpcurrpal + ofst++);
+                    *(platform_palette_buffer + (itr * 4) + 0) = (((color_blu * color_multiplier) >> 8) << 2);
+#endif
 
                 }
             }
@@ -2979,18 +3079,27 @@ void Cycle_Palette(int16_t percent)
             if(palette_change_flag != ST_FALSE)
             {
                 // set hardware palette color to {0,0,0} black
-                // ¿ ~== set PFL_Palette color to {0,0,0} black ?
-                *(PFL_Palette + (itr * 4) + 3) = 0x00;
-                *(PFL_Palette + (itr * 4) + 2) = 0x00;
-                *(PFL_Palette + (itr * 4) + 1) = 0x00;
-                *(PFL_Palette + (itr * 4) + 0) = 0x00;
+                // ¿ ~== set platform_palette_buffer color to {0,0,0} black ?
+#ifdef _STU_SDL2
+                platform_palette_buffer[itr].a = 0xFF;
+                platform_palette_buffer[itr].b = 0x00;
+                platform_palette_buffer[itr].g = 0x00;
+                platform_palette_buffer[itr].r = 0x00;
+#endif
+#ifdef _STU_WIN
+
+                *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
+                *(platform_palette_buffer + (itr * 4) + 2) = 0x00;
+                *(platform_palette_buffer + (itr * 4) + 1) = 0x00;
+                *(platform_palette_buffer + (itr * 4) + 0) = 0x00;
+#endif
             }
         }
 
     }
     ;
     // ~== REP STOSW
-    memset((uint8_t *)(p_Palette + 768), 0x00, 256);  // ~== `REP STOSB`
+    memset((uint8_t *)(current_palette + 768), 0x00, 256);  // ~== `REP STOSB`
 
 Done:
     return;  // DNE in Dasm - VSBS
@@ -3252,7 +3361,7 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
     int16_t itr;
     uint8_t palette_change_flag;
     uint8_t * remap_palette;
-    uint8_t * current_palette;
+    uint8_t * tmpcurrpal;
     uint16_t ofst;
     uint8_t vpercent;
     uint16_t color2_multiplier;
@@ -3289,7 +3398,7 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
     color2_blu_portion = ((color2_blu * color2_multiplier) >> 8);
 
     remap_palette   = (uint8_t *)(remap_color_palettes + (block * 256));
-    current_palette = (uint8_t *)(p_Palette);
+    tmpcurrpal = (uint8_t *)(current_palette);
 
     // iterate through the current build, make the new mixed color, and find the closest existing color
     for(itr = 0; itr < 256; itr++)
@@ -3299,9 +3408,9 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
         {
             ofst = itr * 3;
 
-            color1_red = *(current_palette + ofst++);
-            color1_grn = *(current_palette + ofst++);
-            color1_blu = *(current_palette + ofst++);
+            color1_red = *(tmpcurrpal + ofst++);
+            color1_grn = *(tmpcurrpal + ofst++);
+            color1_blu = *(tmpcurrpal + ofst++);
 
             color1_red_portion = ((color1_red * color1_multiplier) >> 8);
             color1_grn_portion = ((color1_grn * color1_multiplier) >> 8);
@@ -3328,7 +3437,7 @@ void Create_Remap_Palette_(int16_t block, uint8_t red, uint8_t green, uint8_t bl
 */
 uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
 {
-    uint8_t * current_palette = 0;
+    uint8_t * tmpcurrpal = 0;
     uint8_t * remap_palette = 0;
     uint16_t ofst = 0;
     // uint8_t colormap_idx;
@@ -3348,7 +3457,7 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
 
     found_color = 0;
 
-    current_palette = (uint8_t *)(p_Palette);
+    tmpcurrpal = (uint8_t *)(current_palette);
 
     closest = 0;
     closest_dif = 10000;
@@ -3361,21 +3470,21 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
         ofst = colormap_idx * 3;
 
         // diff color = current color - glass color
-        palette_red = *(current_palette + ofst++);
+        palette_red = *(tmpcurrpal + ofst++);
         dif_red = AbsVal(palette_red - red);
 
         ofst += 2;
         if(dif_red >= REMAP_THRESHOLD) { continue; }
         ofst -= 2;
 
-        palette_green = *(current_palette + ofst++);
+        palette_green = *(tmpcurrpal + ofst++);
         dif_green = AbsVal(palette_green - green);
 
         ofst += 1;
         if(dif_green >= REMAP_THRESHOLD) { continue; }
         ofst -= 1;
 
-        palette_blue = *(current_palette + ofst++);
+        palette_blue = *(tmpcurrpal + ofst++);
         dif_blue = AbsVal(palette_blue - blue);
 
         if(dif_blue >= REMAP_THRESHOLD) { continue; }

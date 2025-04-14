@@ -1,4 +1,6 @@
 
+#define _CRT_SECURE_NO_WARNINGS
+
 /*
 asctime .............................. 22
 biostime ............................ 57

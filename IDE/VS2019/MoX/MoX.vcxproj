@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\..\src\MoX\Keyboard.C" />
     <ClCompile Include="..\..\..\src\MoX\LBX_Load.C" />
     <ClCompile Include="..\..\..\src\MoX\LOADSAVE.C" />
+    <ClCompile Include="..\..\..\src\MOX\MOM_Data.C" />
     <ClCompile Include="..\..\..\src\MoX\Mouse.C" />
     <ClCompile Include="..\..\..\src\MOX\MOX_DAT.C" />
     <ClCompile Include="..\..\..\src\MOX\MOX_ITOA.C" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\..\src\MoX\paragrph.C" />
     <ClCompile Include="..\..\..\src\MoX\random.C" />
     <ClCompile Include="..\..\..\src\MOX\SOUND.C" />
+    <ClCompile Include="..\..\..\src\MOX\TEXTBOX.C" />
     <ClCompile Include="..\..\..\src\MoX\Util.C" />
     <ClCompile Include="..\..\..\src\MoX\Video.C" />
     <ClCompile Include="..\..\..\src\MoX\Video2.C" />
@@ -71,6 +73,7 @@
     <ClInclude Include="..\..\..\src\MoX\paragrph.H" />
     <ClInclude Include="..\..\..\src\MoX\random.H" />
     <ClInclude Include="..\..\..\src\MOX\SOUND.H" />
+    <ClInclude Include="..\..\..\src\MOX\TEXTBOX.H" />
     <ClInclude Include="..\..\..\src\MoX\Timer.H" />
     <ClInclude Include="..\..\..\src\MoX\Util.H" />
     <ClInclude Include="..\..\..\src\MoX\Video.H" />
@@ -90,6 +93,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -97,6 +101,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -120,9 +125,11 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_STU_SDL2;STU_DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -140,6 +147,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>

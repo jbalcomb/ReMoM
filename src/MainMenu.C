@@ -232,25 +232,27 @@ void Main_Menu_Add_Fields(void)
 */
 int16_t Main_Menu_Screen(void)
 {
-    char Found_File_Name[30] = {0};
-    char Conversion_String[30] = {0};
-    char File_Name[30] = {0};
-// field_idx_L= word ptr -12h
-// field_idx_H= word ptr -10h
-// field_idx_ESC= word ptr -0Eh
-    int16_t first_draw_done_flag;
-// field_idx_Q= word ptr -0Ah
-// field_idx_N= word ptr -8
-// field_idx_C= word ptr -6
-    int16_t menu_shift;
-    int16_t itr_saves__retval;
+    char Found_File_Name[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char Conversion_String[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char File_Name[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+// int16_t _load_hotkey = 0;
+// int16_t _hof_hotkey = 0;
+// int16_t _esc_hotkey = 0;
+    int16_t first_draw_done_flag = 0;
+    // int16_t _quit_hotkey = 0;
+    // int16_t _new_hotkey = 0;
+    // int16_t _continue_hotkey = 0;
+    int16_t menu_shift = 0;
+    int16_t itr_saves__retval = 0;
+    int16_t leave_screen_flag = 0;  // _DI_
+    int16_t input_field_idx = 0;  // _SI_
 
-    int16_t input_field_idx;
-    int16_t mouse_x;
-    int16_t mouse_y;
+    int16_t mouse_x = 0;
+    int16_t mouse_y = 0;
     
-    int16_t leave_screen_flag;
-    
+    int16_t hotkey_idx_Z = 0;  // debug_hotkey
+    int16_t hotkey_idx_T = 0;  // test_hotkey
+
     if(!main_menu_screen_loaded)
     {
         Main_Menu_Load_Pictures();
@@ -270,23 +272,34 @@ int16_t Main_Menu_Screen(void)
     // current_menu_screen = ST_UNDEFINED;
     load_flag = ST_FALSE;
     // IDK_frame_count = 0;
+
     leave_screen_flag = ST_FALSE;
+
     screen_change = ST_TRUE;
+
     if(screen_change == ST_FALSE)
     {
-        // TODO  VGA_Fade_Out(); // MGC s50
+
+        Fade_Out();
+
     }
-    Fill(0, 0, 319, 199, 0);
+
+    Fill(0, 0, 319, 199, 7);
     Set_Page_On();
-    Fill(0, 0, 319, 199, 0);
+    Fill(0, 0, 319, 199, 3);
     Set_Page_Off();
+    // CLS();
+
     Load_Palette(2, -1, 0); // ARCANUS - Magic Castle View
+
     Load_MAGIC_SET();
-    // _help_entries.entry_num], -1     ; ? [0] ?
-    // _help_entries.entry_num+0Ah], -1 ; ? [1] ?
-    // _help_entries.entry_num+14h], -1 ; ? [2] ?
-    // _help_entries.entry_num+1Eh], -1 ; ? [3] ?
-    // _help_entries.entry_num+28h], -1 ; ? [4] ?
+
+    _help_entries[0].help_idx = ST_UNDEFINED;
+    _help_entries[1].help_idx = ST_UNDEFINED;
+    _help_entries[2].help_idx = ST_UNDEFINED;
+    _help_entries[3].help_idx = ST_UNDEFINED;
+    _help_entries[4].help_idx = ST_UNDEFINED;
+    
     // ~ MoO2 Check_For_Saved_Games_()
     save_game_count = 0;
     for(itr_saves__retval = 1; itr_saves__retval < 10; itr_saves__retval++)
@@ -326,60 +339,60 @@ int16_t Main_Menu_Screen(void)
     menu_shift = 0;
     if(load_flag == ST_FALSE)
     {
-        _load_button = -1000;  // INVALID
+        _load_button = INVALID_FIELD;
         menu_shift = 1;
     }
     else
     {
         _load_button = Add_Hidden_Field(108, 150, 211, 161, '0', ST_UNDEFINED);
-        // HLP_IDX_0 = 629; // HLP_LOAD
-        // HLP_IDX_0_X1 = 108;
-        // HLP_IDX_0_Y1 = 148;
-        // HLP_IDX_0_X2 = 211;
-        // HLP_IDX_0_Y2 = 162;
+        _help_entries[0].help_idx = HLP_LOAD;
+        _help_entries[0].x1 = 108;
+        _help_entries[0].y1 = 148;
+        _help_entries[0].x2 = 211;
+        _help_entries[0].y2 = 162;
     }
 
     if(cont_flag == ST_FALSE)
     {
-        _continue_button = -1000;  // INVALID
+        _continue_button = INVALID_FIELD;
     }
     else
     {
         _continue_button = Add_Hidden_Field(108, (138 + (12 * menu_shift)), 211, (149 + (12 * menu_shift)), 0, ST_UNDEFINED);
-        // HLP_IDX_1 = 628; // HLP_CONTINUE
-        // HLP_IDX_1_X1 = 108;
-        // HLP_IDX_1_Y1 = (138 + (12 * menu_shift));
-        // HLP_IDX_1_X2 = 211;
-        // HLP_IDX_1_Y2 = (149 + (12 * menu_shift));
+        _help_entries[1].help_idx = HLP_CONTINUE;
+        _help_entries[1].x1 = 108;
+        _help_entries[1].y1 = (138 + (12 * menu_shift));
+        _help_entries[1].x2 = 211;
+        _help_entries[1].y2 = (149 + (12 * menu_shift));
     }
 
     _new_button = Add_Hidden_Field(108, 162, 211, 173, 0, ST_UNDEFINED);
-    // HLP_IDX_2 = 630; // HLP_NEWGAME
-    // HLP_IDX_2_X1 = 108;
-    // HLP_IDX_2_Y1 = 162;
-    // HLP_IDX_2_X2 = 211;
-    // HLP_IDX_2_Y2 = 173;
+    _help_entries[1].help_idx = HLP_NEW_GAME;
+    _help_entries[1].x1 = 108;
+    _help_entries[1].y1 = 162;
+    _help_entries[1].x2 = 211;
+    _help_entries[1].y2 = 173;
 
     _hof_button = Add_Hidden_Field(108, 174, 211, 185, 0, ST_UNDEFINED);
-    // HLP_IDX_3 = 798; // HLP_HALLOFFAME
-    // HLP_IDX_3_X1 = 108;
-    // HLP_IDX_3_Y1 = 174;
-    // HLP_IDX_3_X2 = 211;
-    // HLP_IDX_3_Y2 = 185;
+    _help_entries[2].help_idx = HLP_HALL_OF_FAME;
+    _help_entries[2].x1 = 108;
+    _help_entries[2].y1 = 174;
+    _help_entries[2].x2 = 211;
+    _help_entries[2].y2 = 185;
 
     _quit_button = Add_Hidden_Field(108, 186, 211, 199, 0, ST_UNDEFINED);
-    // HLP_IDX_4 = 631; // HLP_QUITTODOS
-    // HLP_IDX_4_X1 = 108;
-    // HLP_IDX_4_Y1 = 186;
-    // HLP_IDX_4_X2 = 211;
-    // HLP_IDX_4_Y2 = 199;
+    _help_entries[2].help_idx = HLP_QUIT_TO_DOS;
+    _help_entries[2].x1 = 108;
+    _help_entries[2].y1 = 186;
+    _help_entries[2].x2 = 211;
+    _help_entries[2].y2 = 199;
 
     if(cont_flag == ST_FALSE)
-        _continue_hotkey = -1000;  // INVALID
+        _continue_hotkey = INVALID_FIELD;
     else
         _continue_hotkey = Add_Hot_Key('C');
     if(load_flag == ST_FALSE)
-        _load_hotkey = -1000;  // INVALID
+        _load_hotkey = INVALID_FIELD;
     else
         _load_hotkey = Add_Hot_Key('L');
     _new_hotkey = Add_Hot_Key('N');
@@ -387,29 +400,34 @@ int16_t Main_Menu_Screen(void)
     _quit_hotkey = Add_Hot_Key('Q');
     _esc_hotkey = Add_Hot_Key(27); // ? '\1B' = 322?
 
+    hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
+    hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
+
+
 
     Set_Mouse_List(1, mouse_list_mainmenu);
 
     Save_Mouse_On_Page(Pointer_X(), Pointer_Y());
 
-    // DONT  GUI_MouseEMUMoveTo(_newgame_button);
 
-    // ? being here breaks the animation frame cycling ? FLIC_Reset_CurrentFrame(mainmenu_top);
-    // AKA FLIC_Reset_CurrentFrame  FLIC_ResetFrame  LBX_IMG_ResetFrame
-    // FLIC_Reset_CurrentFrame(mainmenu_top);
 
+    // TODO  GUI_MouseEMUMoveTo(_newgame_button);
+
+
+
+    // ¿ being here breaks the animation frame cycling ?
+    // FLIC_ResetFrame(mainmenu_top);
+
+
+    
     // AKA main_menu_selection
     current_menu_screen = ST_UNDEFINED;
 
-    // TODO(JimBalcomb,20230621): move SCRN_Set_Redraw_Function() over from .\MoM_Rasm\ _s34p76c.c, ST_GUI.C/.H
-    // AKA SCRN_Set_Redraw_Function(Main_Menu_Screen_Draw, 2);
-    // Set_Redraw_Function(Main_Menu_Screen_Draw, 2);
+    Assign_Auto_Function(Main_Menu_Screen_Draw, 2);
 
-    // AKA GUI_SetHelp(HLP_IDX_0, 5);
-    // Set_Help_List(_help_entries, 5);
-
+    Set_Help_List(_help_entries, 5);
+    
     Set_Input_Delay(4);
-
 
     // DNE input_field_idx = ST_FALSE;
     while(leave_screen_flag == ST_FALSE)
@@ -464,6 +482,23 @@ int16_t Main_Menu_Screen(void)
             }
         }
 
+        // ST_DEBUG Hot-Keys
+        if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
+        {
+            // // TODO  DLOG("STU_DEBUG: debug_hotkey");
+            DBG_debug_flag = !DBG_debug_flag;  // ~== `^= 1`
+            if(DBG_debug_flag)
+            {
+        
+            }
+        
+        }
+        if(input_field_idx == hotkey_idx_T)  /* Test Hot-Key */
+        {
+
+        }
+        
+
         if(current_menu_screen == ST_UNDEFINED)
         {
             leave_screen_flag = ST_FALSE;
@@ -471,14 +506,21 @@ int16_t Main_Menu_Screen(void)
 
         if(leave_screen_flag == ST_FALSE)
         {
-            Main_Menu_Screen_Draw();
+            if(DBG_debug_flag)
+            {
+                Main_Menu_Screen_Draw_Debug();
+            }
+            else
+            {
+                Main_Menu_Screen_Draw();
+            }
             Toggle_Pages();
 
             // do a full draw - initial or on-change
             if((screen_change != ST_FALSE) || (first_draw_done_flag == ST_FALSE))
             {
-                // TODO  Fade_In()
-                // TODO  Copy_Off_To_On_Page();
+                Fade_In();
+                Copy_On_To_Off_Page();
                 first_draw_done_flag = ST_TRUE;
                 screen_change = ST_FALSE;
             }
@@ -487,8 +529,8 @@ int16_t Main_Menu_Screen(void)
 
     }  /* while(leave_screen_flag == ST_FALSE) */
 
-    // TODO  Disable_Redraw();
-    // TODO  Deactivate_Help_List();
+    Deactivate_Auto_Function();
+    Deactivate_Help_List();
 
     return current_menu_screen;
 
@@ -511,7 +553,7 @@ void Main_Menu_Screen_Draw(void)
 
     Set_Page_Off();
     Fill(0, 0, 319, 199, ST_BLACK);
-
+    // CLROFF();
 
     /*
         draw the main menu logo, with animation, and the rest of the screen background
@@ -578,4 +620,90 @@ void Main_Menu_Screen_Draw(void)
 
     // TODO  IDK_frame_count = ((IDK_frame_count + 1) % 20);
 
+}
+
+
+/*
+NOTE(JimBalcomb,20250302): added per a request from Blake, but can't won't work ... EMM_Open_Handles, str_Initializing_Roland_drivers ... already deing in win_Mom, MoM_Data
+*/
+void Main_Menu_Screen_Draw_Debug()
+{
+    int16_t logo_frame_idx;
+    int16_t itr_logo;
+    uint16_t menu_x_start;
+    uint16_t menu_y_start;
+    uint8_t menu_shift;
+    int16_t scanned_field;
+
+    menu_x_start = 123;
+    menu_y_start = 141;
+
+    scanned_field = Scan_Input();
+
+    Set_Page_Off();
+    Fill(0, 0, 319, 199, ST_BLACK);
+
+    /*
+        draw the main menu logo, with animation, and the rest of the screen background
+    */
+    logo_frame_idx = FLIC_Get_CurrentFrame(mainmenu_top);
+    FLIC_Set_CurrentFrame(mainmenu_top, 0);
+    for(itr_logo = 0; itr_logo <= logo_frame_idx; itr_logo++)
+    {
+        FLIC_Draw(0, 0, mainmenu_top);
+    }
+    FLIC_Draw(0, 41, mainmenu_bot);
+
+    if(screen_change == ST_FALSE) { /* Draw_Credits() */ }
+
+    /*
+        Draw Buttons
+            NOTE: uses VORTEX, not MAINSCRN
+    */
+//     menu_shift = 0;
+// 
+//     
+//     
+//     if(load_flag != ST_FALSE)
+//     {
+//         if(scanned_field == _load_button)
+//             FLIC_Reset_CurrentFrame(mainmenu_l);
+//         else
+//             FLIC_Set_CurrentFrame(mainmenu_l, 1);
+//         FLIC_Draw(menu_x_start, (menu_y_start + 12), mainmenu_l);
+//     }
+//     else
+//     {
+//         menu_shift = 1;
+//     }
+// 
+//     if(cont_flag != ST_FALSE)
+//     {
+//         if(scanned_field == _continue_button )
+//             FLIC_Reset_CurrentFrame(mainmenu_c);
+//         else
+//             FLIC_Set_CurrentFrame(mainmenu_c, 1);
+//         FLIC_Draw(menu_x_start, (menu_y_start + (12 * menu_shift)), mainmenu_c);
+//     }
+// 
+//     if(scanned_field == _new_button)
+//         FLIC_Reset_CurrentFrame(mainmenu_n);
+//     else
+//         FLIC_Set_CurrentFrame(mainmenu_n, 1);
+//     FLIC_Draw(menu_x_start, (menu_y_start + 24), mainmenu_n);
+// 
+//     if(scanned_field == _hof_button)
+//         FLIC_Reset_CurrentFrame(mainmenu_h);
+//     else
+//         FLIC_Set_CurrentFrame(mainmenu_h, 1);
+//     FLIC_Draw(menu_x_start, (menu_y_start + 36), mainmenu_h);
+// 
+//     if(scanned_field == _quit_button)
+//         FLIC_Reset_CurrentFrame(mainmenu_q);
+//     else
+//         FLIC_Set_CurrentFrame(mainmenu_q, 1);
+//     FLIC_Draw(menu_x_start, (menu_y_start + 48), mainmenu_q);
+// 
+//     // TODO  IDK_frame_count = ((IDK_frame_count + 1) % 20);
+// 
 }

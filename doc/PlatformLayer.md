@@ -1,5 +1,65 @@
 
 
+1oom
+chocolate-doom
+OpenXcom
+SDLPoP
+
+
+
+
+
+*Platform-Layer* for IBM-PC/MS-DOS
+VGA (Video) Card
+    Video Memory (VGA VRAM)
+    Palette/Color-Map (VGA DAC)
+
+e.g.,
+    Apply_Palette()
+        copies `current_palette` to `VGA DAC`
+    ...no equivalent - must add and expose platform palette  `SDL_Color sdl2_palette[256];`
+
+video_back_buffer
+PFL_Palette
+VGA Memory
+VGA Palette
+video buffer
+palette buffer
+...
+MoO2
+    __back_page_buffer
+    __off_page_buffer
+    N/A / DNE
+...
+video_page_buffer
+video_palette_buffer
+platform_video_buffer
+platform_palette_buffer
+
+https://github.com/lab313ru/dsbxida/blob/master/README.source-code-description
+src/hardware/vga_dac.cpp    VGA DAC (palette) emulation
+
+https://github.com/joncampbell123/dosbox-x/blob/master/include/vga.h#L704
+void VGA_DAC_SetEntry(Bitu entry,uint8_t red,uint8_t green,uint8_t blue);
+https://github.com/joncampbell123/dosbox-x/blob/master/src/hardware/vga_dac.cpp#L411
+void VGA_DAC_SetEntry(Bitu entry,uint8_t red,uint8_t green,uint8_t blue) {
+    //Should only be called in machine != vga
+    vga.dac.rgb[entry].red=red;
+    vga.dac.rgb[entry].green=green;
+    vga.dac.rgb[entry].blue=blue;
+    for (Bitu i=0;i<16;i++) 
+        if (vga.dac.combine[i]==entry)
+            VGA_DAC_SendColor( i, i );
+}
+https://github.com/joncampbell123/dosbox-x/blob/master/include/video.h#L33
+https://github.com/joncampbell123/dosbox-x/blob/master/include/video.h#L59
+https://github.com/joncampbell123/dosbox-x/blob/master/src/hardware/vga_dac.cpp#L199
+https://github.com/joncampbell123/dosbox-x/blob/master/src/hardware/vga_dac.cpp#L143
+
+
+
+
+
 
 
 OS
@@ -85,6 +145,8 @@ Platform-Side:
     VD
         Translate From Game Video Buffer Format to Platform Video Buffer Format
         *Paint* *Canvas* to *Display*
+        IBM-PC VGA VRAM (platform_video_memory)
+        IBM-PC VGA DAC  (platform_palette)
     CLK
         Timer Ticks
 

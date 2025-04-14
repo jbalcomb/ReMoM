@@ -243,7 +243,8 @@ extern SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header poin
 // WZD dseg:CC01 00                                              db    0
 
 // WZD dseg:CC02
-extern SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
+// NEWCODE  extern SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
+extern SAMB_ptr unexplored_mask_seg[15];
 
 // WZD dseg:CC1E 00                                              db    0
 // WZD dseg:CC1F 00                                              db    0

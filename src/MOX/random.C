@@ -17,9 +17,6 @@ MoO2
 
 #include "MOX_TYPE.H"
 
-// win_CLK.C  /* Get_System_Clock_Counter() */
-uint32_t Get_System_Clock_Counter(void);
-
 
 
 /*
@@ -182,7 +179,7 @@ uint32_t Get_Random_Seed(void)
 void Randomize(void)
 {
     uint32_t Clock_Ticks;
-    Clock_Ticks = Get_System_Clock_Counter();
+    Clock_Ticks = Read_System_Clock_Timer();
     // MoO2  timer_value = time();
     random_seed = Clock_Ticks;
 }

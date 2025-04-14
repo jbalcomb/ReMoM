@@ -1,6 +1,15 @@
 
 
 
+20250403:
+if(Keyboard_Status())
+else if(Mouse_Button())
+else if(Mouse_Buffer())
+else
+    return 0;
+
+
+
 [ ] Yay KD
     [x] Keyboard Hot-Key
     [ ] ST_ENTER

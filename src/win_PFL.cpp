@@ -17,11 +17,6 @@
 
 
 
-// DELETE  uint8_t g_State_Run;
-
-// DELETE  uint8_t g_Palette[768];  // ~== IBM-PC/MS-DOS Video Card's hardware VGA-DAC buffer
-// DELETE  uint8_t g_Palette_XBGR[1024];
-uint8_t PFL_Palette[1024];  // Platform's Shadow Palette: 256 colors * bits/bytes/components per color as required by the platform  e.g., RGB, XBGR, RGBA
 
 
 /*
@@ -416,7 +411,7 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
 
     p_320x200xVGA = video_page_buffer[draw_page_num];
     p_320x200xXBGR = (uint32_t*)Buffer->Memory;
-    p_XBGR = (uint32_t*)PFL_Palette;  // ~== IBM-PC VGA-DAC
+    p_XBGR = (uint32_t*)platform_palette_buffer;  // ~== IBM-PC VGA-DAC
 
     int width;
     int height;
@@ -433,7 +428,7 @@ void Update_Window_Display(win32_offscreen_buffer * Buffer, HDC DeviceContext, i
         {
             color_map_index = *(p_320x200xVGA + (itr_height * width) + itr_width);
             color = p_XBGR[color_map_index];
-            *(p_320x200xXBGR + (itr_height * width) + itr_width) = color;
+            *(p_320x200xXBGR + (itr_height * width) + itr_width) = color;  // ¿ ~== SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, platform_palette_buffer, 0, 256); ?
         }
     }
 
@@ -459,7 +454,7 @@ void Convert_320x200xVGA_To_320x200xXBGR(uint8_t * p_320x200xVGA, uint32_t* p_32
     uint8_t color_map_index = 0;
     uint32_t color = 0;
 
-    p_XBGR = (uint32_t*)PFL_Palette;  // ~== IBM-PC VGA-DAC
+    p_XBGR = (uint32_t*)platform_palette_buffer;  // ~== IBM-PC VGA-DAC
 
     width = 320;
     height = 320;

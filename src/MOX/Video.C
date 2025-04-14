@@ -12,6 +12,13 @@
 
 
 
+/*
+video_page_buffer
+emulates 256KB of IBM-PC VRAM
+[4] of 64KB
+
+*/
+
 // WZD dseg:76EE
 int16_t draw_page_num = 0;
 
@@ -80,7 +87,7 @@ void VGA_MosaicFlip__STUB(void)
 
 
 
-    GUI_PageFlip();
+    Toggle_Pages_No_Draw_Fields();
 
 }
 
@@ -130,8 +137,11 @@ exchanges the current draw and display frames by resetting the VGA read start ad
 requires a prior call to GUI_PageFlipPrep
 
 same as Toggle_Pages(), except doesn't call Draw_Fields()
+
+GUI_PageFlip()
+Toggle_Pages_No_Draw_Fields();
 */
-void GUI_PageFlip(void)
+void Toggle_Pages_No_Draw_Fields(void)
 {
     int16_t mx;  // DNE in Dasm
     int16_t my;  // DNE in Dasm
@@ -260,7 +270,48 @@ void Check_Default_Video_Page(void)
 
 
 // WZD s28p04
-// PLATFORM  void Page_Flip(void)
+/*
+    switch on/off video memory page
+    ...update what is displayer to the user
+
+MS-DOS/IBM-PC: next hardware video refresh reads from different hardware video memory
+MS Win: next WM_PAINT event, blit different video back buffer  (manually generate a WM_PAINT event)
+SDL2: manually or next SDL_WINDOWEVENT_EXPOSED, blit, copy, and render different video back buffer
+
+*/
+void Page_Flip(void)
+{
+
+    // MS-DOS & IBM-PC VGA
+        // CRT Controller - Address
+        // VGA_WaitSync();
+    // MS Windows
+        // pointer to buffer to render/present
+    draw_page_num = (1 - draw_page_num);  // NOTE: this is the only code that changes 'draw_page_num'
+    // 1oom/Kilgore  draw_page_num ^= 1;
+    draw_page = video_page_buffer[draw_page_num];
+    // current_video_page = video_page_buffer[1 - draw_page_num];
+    // HERE: what was drawn should now be displayed
+#ifdef _STU_DOS
+
+#endif
+#ifdef _STU_LIN
+
+#endif
+#ifdef _STU_MAC
+
+#endif
+#ifdef _STU_SDL2
+    Platform_Palette_Update();
+    Platform_Video_Update();
+#endif
+#ifdef _STU_WIN
+    Pump_Paints();
+#endif
+
+    Set_Page_Off();
+
+}
 
 
 

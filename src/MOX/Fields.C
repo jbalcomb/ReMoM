@@ -108,7 +108,7 @@ dseg:8272 00 00                                           _global_esc dw 0      
 dseg:8274 00 00                                           GUI_ClickActivate dw 0                  ; DATA XREF: Interpret_Mouse_Input+2FCr ...
 dseg:8276 4E 4F 54 20 49 4E 20 55 53 45 00                aNotInUse db 'NOT IN USE',0
 dseg:8281 00                                              db    0
-dseg:8282 00 00                                           GUI_Edit_Position dw 0                  ; DATA XREF: GUI_EditBoxControl:loc_29A23w ...
+dseg:8282 00 00                                           GUI_Edit_Position dw 0                  ; DATA XREF: Input_Box_Popup:loc_29A23w ...
 dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
 dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
 dseg:8288 00 00                                           input_field_active dw 0                 ; DATA XREF: Interpret_Mouse_Input:loc_26941r ...
@@ -125,7 +125,7 @@ dseg:8298                                                 ¿ END: Help - Initial
 dseg:829A                                                 ? BEGIN: Mouse Buffer ?
 dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
 dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: Input_Box_Popup+3Bo ...
+dseg:829E 00                                              cnst_ZeroString_12 db 0                 ; DATA XREF: Setup_Input_Box_Popup+3Bo ...
 dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
 dseg:829F                                                 ? END: Mouse Buffer ?
 dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
@@ -198,7 +198,7 @@ int16_t mouse_installed = ST_FALSE;
 int16_t down_mouse_button = ST_UNDEFINED;
 
 // WZD dseg:8252
-int16_t down_x = 1 ;
+int16_t down_x = 1;
 
 // WZD dseg:8254
 int16_t down_y = -1;
@@ -239,10 +239,24 @@ int16_t _global_esc = ST_FALSE;  // ERROR: mistook for mouse_cancel_disabled, fo
 int16_t mouse_cancel_disabled = ST_FALSE;
 
 // WZD dseg:8274
-int16_t mouse_auto_exit;
+int16_t mouse_auto_exit = ST_FALSE;
 
-// WZD dseg:8276 aNotInUse db 'NOT IN USE',0
-// WZD dseg:8281 db    0
+// WZD dseg:8276
+// drake178: aNotInUse
+/*
+    MoO2
+    Module: fields
+    array (12 bytes) default_string
+    Address: 02:0017C4B8
+    Num elements:   12, Type:        unsigned integer (4 bytes) 
+*/
+/*
+    NIU in MGC, WZD, and MoO2
+*/
+char default_string[12] = "NOT IN USE";
+
+// WZD dseg:8281 db    0  // align 2
+
 // WZD dseg:8282 GUI_Edit_Position dw 0                  
 
 // WZD dseg:8284
@@ -301,9 +315,18 @@ char GUI_EditCursor[] = "_";
 // AKA _help_list
 // HELP  help_struct_pointer
 
-// dseg:E874 GUI_Processed_Btns dw 0    
-// dseg:E876 GUI_Processed_LastY dw 0   
-// dseg:E878 GUI_Processed_LastX dw 0   
+// WZD dseg:E874
+// drake178: GUI_Processed_Btns
+// MoO2  Module: fields  last_button_number
+int16_t last_button_number;
+// WZD dseg:E876
+// drake178: GUI_Processed_LastY
+// MoO2  Module: fields  last_button_y
+int16_t last_button_y;
+// WZD dseg:E878
+// drake178: GUI_Processed_LastX
+// MoO2  Module: fields  last_button_x
+int16_t last_button_x;
 
 // WZD dseg:E87A
 // drake178: GUI_EditString
@@ -1379,7 +1402,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         } break;
         case ft_Input:                  /*  4  0x04 */  // drake178: EditBox
         {
-            // TODO  GUI_EditBoxControl(field_num);
+            // TODO  Input_Box_Popup(field_num);
         } break;
         case ft_Picture:                /*  5  0x05 */  // drake178: ImageLabel      DNE/NIU in MoO2
         {
@@ -1441,6 +1464,10 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
 // WZD s36p73
 void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
 {
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Push_Field_Down()\n", __FILE__, __LINE__);
+#endif
 
     if( (l_mx < 0) || (l_mx >= SCREEN_WIDTH) || (l_my < 0) || (l_my >= SCREEN_HEIGHT) )
     {
@@ -1513,6 +1540,11 @@ void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
         Draw_Mouse_On_Page(l_mx, l_my);
         Set_Pointer_Position(l_mx, l_my);
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Push_Field_Down()\n", __FILE__, __LINE__);
+#endif
+
 }
 
 
@@ -1631,6 +1663,11 @@ void Quick_Call_Auto_Function(void)
 // MoO2  Module: fields  Call_Auto_Function()
 void Call_Auto_Function(void)
 {
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Call_Auto_Function()\n", __FILE__, __LINE__);
+#endif
+
     if(auto_active_flag == ST_TRUE)
     {
         Mark_Time();
@@ -1645,6 +1682,10 @@ void Call_Auto_Function(void)
         Apply_Palette();
         Toggle_Pages();
     }
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: END: Call_Auto_Function()\n", __FILE__, __LINE__);
+#endif
 
 }
 

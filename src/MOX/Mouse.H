@@ -5,6 +5,14 @@
 
 
 
+#define MOUSE_BUTTON_MASK_LEFT  1
+#define MOUSE_BUTTON_MASK_RIGHT 2
+
+#define ST_LEFT_BUTTON  1
+#define ST_RIGHT_BUTTON 2
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -69,12 +77,9 @@ extern int16_t mouse_driver_installed;
 // WZD dseg:78C0 MOUSE_Usable dw 0
 
 // WZD dseg:78C2
-// MOUSE_CurrentX dw 9Eh  158
-// extern int16_t mouse_x;
-// WZD dseg:78C4 MOUSE_CurrentY dw 64h  100
-// extern int16_t mouse_y;
-extern int16_t g_mouse_x;
-extern int16_t g_mouse_y;
+extern int16_t pointer_x;
+// WZD dseg:78C4
+extern int16_t pointer_y;
 
 // WZD dseg:78C6
 extern int16_t current_mouse_list_count;

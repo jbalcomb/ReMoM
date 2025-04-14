@@ -26,6 +26,10 @@
 #include "MOM_SCR.H"
 #include "SCastScr.H"  /* World_To_Screen() */
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // dseg:2E10                                                 BEGIN: Main Screen
@@ -658,7 +662,8 @@ SAMB_ptr IMG_OVL_NoWall_City;               // ; reserved EMM header pointer for
 // WZD dseg:CC01 00                                              db    0
 
 // WZD dseg:CC02
-SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
+// NEWCODE  SAMB_ptr unexplored_mask_seg[14];       // ; array of 14 reserved EMM header pointers
+SAMB_ptr unexplored_mask_seg[15];
 
 // WZD dseg:CC1E 00                                              db    0
 // WZD dseg:CC1F 00                                              db    0
@@ -1835,7 +1840,7 @@ void Main_Screen(void)
             {
 
 Check_Cities_Data();
-                NameStartingCity_Dialog_Popup(0);
+                Change_Home_City_Name_Popup(0);
 // Check_Cities_Data();
 Capture_Cities_Data();
 
@@ -3323,10 +3328,10 @@ void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plan
 
     Draw_World_Window(REDUCED_MAP_X, REDUCED_MAP_Y, REDUCED_MAP_W, REDUCED_MAP_H);
 
-    // TODO  _help_entries.Entry_Index+6Eh = ST_UNDEFINED;
-    // TODO  _help_entries.Entry_Index+96h = ST_UNDEFINED;
-    // TODO  _help_entries.Entry_Index+0A0h = ST_UNDEFINED;
-    // TODO  _help_entries.Entry_Index+0F0h = ST_UNDEFINED;
+    _help_entries[11].help_idx = ST_UNDEFINED;  // ¿ 'Next Turn' ?
+    _help_entries[15].help_idx = ST_UNDEFINED;  // 'Gold Income'
+    _help_entries[16].help_idx = ST_UNDEFINED;  // 'Food Reserve'
+    _help_entries[24].help_idx = ST_UNDEFINED;  // 'Mana Income'
 
     if(_unit_stack_count > 0)
     {

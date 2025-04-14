@@ -64,7 +64,7 @@ void VGA_MosaicFlip__STUB(void);
 void GUI_PageFlipPrep(void);
 
 // WZD s26p11
-void GUI_PageFlip(void);
+void Toggle_Pages_No_Draw_Fields(void);
 
 // WZD s26p12
 // UU_VGA_ColWipeLeft()

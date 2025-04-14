@@ -2,13 +2,22 @@
     WIZARDS.EXE
         seg036
 */
-#include "MOX_Lib.H"
+
+#include "Fields.H"
+#include "MOX_DEF.H"
+#include "MOX_TYPE.H"
+#include "TEXTBOX.H"
 #include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
+#ifdef _STU_SDL2
+#include "../sdl2_PFL.H"
+#endif
 
 
 #ifdef STU_DEBUG
-#include "STU_DBG.H"
+// #include "STU/STU_DBG.H"
+// #include "STU_DBG.H"
+#include "../STU/STU_DBG.H"
 int16_t DBG_In_MouseButtonLeft = ST_FALSE;
 int16_t DBG_In_MouseButtonRight = ST_FALSE;
 int16_t DBG_movement_map_grid_field_idx = 0;
@@ -178,13 +187,19 @@ int16_t help_list_count = 0;
 
 // WZD dseg:E872
 // AKA _help_list
-// struct s_HELP_FIELD * help_struct_pointer[50];
 /*
     ¿ pointer to an array of pointers of data type 'struct s_HELP_FIELD' ?
 */
-// struct s_HELP_FIELD ** help_struct_pointer;
-struct s_HELP_FIELD * help_struct_pointer;
-
+// // // struct s_HELP_FIELD * help_struct_pointer;
+// // struct s_HELP_FIELD ** help_struct_pointer;
+// struct s_HELP_FIELD * help_struct_pointer;
+struct s_HELP_FIELD * help_struct;
+int16_t * help_struct_pointer;
+// help_struct_pointer[j + 0]
+// help_struct_pointer[j + 1]
+// help_struct_pointer[j + 3]
+// help_struct_pointer[j + 2]
+// help_struct_pointer[j + 4]
 
 // WZD dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
 // ...
@@ -366,6 +381,10 @@ ProgramPath - Mouse_Buffer()
 Color #34 128,64,0 ~PooEmoji Brown
 20240725: started changing to dark purple #40  SEEALSO: MoX-Input.md
 
+20250406:
+MoX-Input-InterpretMouseInput-Buffer.md
+IDA light purple (color #22)
+
 */
 int16_t Interpret_Mouse_Input(void)
 {
@@ -397,8 +416,30 @@ MoO2
     return_value= dword ptr -8
     clear_multi_hotkey_fields= byte ptr -4
 */
+/*
+
+character= byte ptr -15h
+field_num= word ptr -14h
+Unused_Local= word ptr -12h
+ymax= word ptr -10h
+xmax= word ptr -0Eh
+ymin= word ptr -0Ch
+xmin= word ptr -0Ah
+Accepted_Char= word ptr -8
+mouse_button= word ptr -6
+l_my= word ptr -4
+l_mx= word ptr -2
+
+_SI_alt_field_num = si
+_DI_itr_continuous_string = di
+*/
     int16_t field_num;
     int16_t character;
+    int16_t Unused_Local = 0;
+    int16_t ymax = 0;
+    int16_t xmax = 0;
+    int16_t ymin = 0;
+    int16_t xmin = 0;
     int16_t l_mx;
     int16_t l_my;
     int16_t pointer_offset;
@@ -420,6 +461,10 @@ MoO2
     int16_t alt_field_num;  // _SI_
     int16_t scanned_field;  // _SI_
     int16_t return_value;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
+
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
 
 /*
 MoO1
@@ -836,174 +881,233 @@ MoO2
         goto Return_Type_Z11;
 
     }
-    else
+    else  /* BEGIN:  Keyboard_Status() != ST_TRUE */
     {
+
         Mouse_Movement_Handler();
+
         if(Mouse_Button() != ST_FALSE)
         {
             mouse_button = Mouse_Button();
 
-            // if(mouse_button = ST_RIGHTBUTTON) { if(help_list_active == ST_TRUE && Check_Help_List() { MD_Get_ClickRec1(); MD_Get_ClickRec2(); return 0; } else { if(mouse_cancel_disabled == ST_FALSE) { while(Mouse_Button = ST_RIGHTBUTTON){ Quick_Call_Auto_Function()} return ST_UNDEFINED; } } }
-
-            // IDA:  @@Loop_MouseButton  bright green #11
-            // Begin Block: Loop Mouse_Button()
-            // TODO  make this be the loop that it looks like - need some Input Field that makes use of the feature  e.g., Magic Screen Power Distribution Staves
-            while(Mouse_Button() != 0)
+/*
+    BEGIN: Right-Click
+*/
             {
+// NEWCODE                if(mouse_button == ST_RIGHT_BUTTON)
+// NEWCODE                {
+// NEWCODE                    if(
+// NEWCODE                        (help_list_active == ST_TRUE)
+// NEWCODE                        &&
+// NEWCODE                        Check_Help_List() == 0
+// NEWCODE                    )
+// NEWCODE                    {
+// NEWCODE                        Mouse_Buffer();
+// NEWCODE                        Mouse_Buffer2();
+// NEWCODE                        return 0;
+// NEWCODE                    }
+// NEWCODE                    else
+// NEWCODE                    {
+// NEWCODE                        if(mouse_cancel_disabled == ST_FALSE)
+// NEWCODE                        {
+// NEWCODE                            while(Mouse_Button() == ST_RIGHT_BUTTON)
+// NEWCODE                            {
+// NEWCODE                                Quick_Call_Auto_Function();
+// NEWCODE                            }
+// NEWCODE                            return ST_UNDEFINED;
+// NEWCODE                        } 
+// NEWCODE                    }
+// NEWCODE                }
+            }
+/*
+    END: Right-Click
+*/
 
-                l_mx = Pointer_X();
-                l_my = Pointer_Y();
-                pointer_offset = Get_Pointer_Offset();
-                field_num = 0;
-                // Unused_Local == ST_UNDEFINED
-                character = 0;
-                field_num = Scan_Field();
-
-                /*
-                    BEGIN BLOCK: field_num = Scan_Field() != 0
-                */
-                if(field_num != 0)
+            
+/*
+    BEGIN: Loop Mouse_Button()
+*/
+            {
+                // IDA:  @@Loop_MouseButton  bright green #11
+                // TODO  make this be the loop that it looks like - need some Input Field that makes use of the feature  e.g., Magic Screen Power Distribution Staves
+                
+                while(Mouse_Button() != 0)
                 {
-                    
-                    // Begin Block: field_num = Scan_Field() != 0 && != down_mouse_button
-                    // Begin Block: Push_Field_Down()
+
+                    l_mx = Pointer_X();
+                    l_my = Pointer_Y();
+                    pointer_offset = Get_Pointer_Offset();
+                    field_num = 0;
+                    // Unused_Local == ST_UNDEFINED
+                    character = 0;
+                    field_num = Scan_Field();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: while(Mouse_Button() != 0)  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
+#endif
+
+                    /*
+                        BEGIN BLOCK: field_num = Scan_Field() != 0
+                    */
+                    if(field_num != 0)
                     {
+                    
+                        /*
+                            BEGIN: Left-Click - Push_Field_Down()
+                        */
+                        {
+                            if(
+                                (field_num != down_mouse_button)
+                                &&
+                                (p_fields[field_num].type != ft_Input)
+                                &&
+                                (p_fields[field_num].type != ft_ContinuousStringInput)
+                                &&
+                                !(
+                                    (down_mouse_button != ST_UNDEFINED)
+                                    &&
+                                    (p_fields[field_num].type == ft_Grid)
+                                    &&
+                                    (p_fields[down_mouse_button].type == ft_Grid)
+                                )
+                            )
+                            {
+
+                                if(p_fields[down_mouse_button].type == ft_Scroll)
+                                {
+                                    Invoke_Auto_Function();
+                                }
+
+                                Push_Field_Down(field_num, l_mx, l_my);
+                            }
+                        }
+                        /*
+                            END: Left-Click - Push_Field_Down()
+                        */
+
+                        // HERE:    Nay KD, Yay MD, No Help, No Cancel, Yay Field, field_num !=/== down_mouse_button
+                        // Unhandled Conditions:
+                        //     field_num == down_mouse_button
+                        //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_Input)
+                        //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_ContinuousStringInput)
+                        //     (field_num != down_mouse_button) && (down_mouse_button != ST_UNDEFINED) && ¿ ... ?
+
+                        // Yay/Nay click on an edit field that is the active edit field
+                        // NOTE: In MoM, if you click off of an active edit field, it restores the string in the previous edit field and activates the new one
+                        //       the activation includes, e.g., for the save game name the arrow/marker icon and the blicking underscore cursor
+
+                        /*
+                            BEGIN BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                        */
+
+                        // if((p_fields[field_num].type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE)) { // DO NOTHING }
                         if(
-                            (field_num != down_mouse_button) &&
-                            (p_fields[field_num].type != ft_Input) &&
-                            (p_fields[field_num].type != ft_ContinuousStringInput) &&
-                            !( (down_mouse_button != ST_UNDEFINED) && (p_fields[field_num].type == ft_Grid) && (p_fields[down_mouse_button].type == ft_Grid) )
+                            (p_fields[field_num].type != ft_ContinuousStringInput)
+                            &&
+                            (input_field_active != ST_FALSE)
                         )
+                        {
+                            // `Exit Edit-State`
+                            itr_continuous_string = 0;
+                            while((continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters > itr_continuous_string))
+                            {
+                                itr_continuous_string++;
+                            }
+                            if(continuous_string[(itr_continuous_string - 1)] == '_')
+                            {
+                                itr_continuous_string--;
+                            }
+                            continuous_string[itr_continuous_string] = '\0';
+                            strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                            input_field_active = ST_FALSE;
+                            active_input_field_number = ST_UNDEFINED;
+                        }
+                        else if(
+                                (p_fields[field_num].type == ft_ContinuousStringInput)
+                                &&
+                                (input_field_active == ST_FALSE)
+                            )
+                        {
+                            strcpy(continuous_string, p_fields[field_num].string);
+                            GUI_EditAnimStage = 0;
+                            GUI_EditCursorOn = ST_FALSE;
+                            input_field_active = ST_TRUE;
+                            active_input_field_number = field_num;
+                        }
+                        else if(
+                                (p_fields[field_num].type == ft_ContinuousStringInput)
+                                &&
+                                (input_field_active != ST_FALSE)
+                                &&
+                                (field_num != active_input_field_number)
+                            )
+                        {
+                            // `Exit Edit-State`  ~== `Cancel Edit-State`
+                            // `Enter Edit-State`
+                            strcpy(continuous_string, p_fields[field_num].string);
+                            GUI_EditAnimStage = 0;
+                            GUI_EditCursorOn = ST_FALSE;
+                            input_field_active = ST_TRUE;
+                            active_input_field_number = field_num;
+                        }
+                        // @@After_MouseLeftButton_ContinuousStringInput
+                        /*
+                            END BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                        */
+                        // @@After_MouseButtonLeft_EditState
+
+                        auto_input_variable = field_num;
+
+                        if(mouse_auto_exit != ST_FALSE)
+                        {
+                            break;
+                        }
+
+                        if(Mouse_Button() != 0)
+                        {
+                            Call_Auto_Function();
+                        }
+
+                    }
+                    /*
+                        END BLOCK: field_num = Scan_Field() != 0
+                    */
+                    else  /* (field_num == 0) */
+                    {
+                        if(down_mouse_button != ST_UNDEFINED)
                         {
                             if(p_fields[down_mouse_button].type == ft_Scroll)
                             {
                                 Invoke_Auto_Function();
                             }
-
-                            Push_Field_Down(field_num, l_mx, l_my);
+                            if(
+                                (p_fields[down_mouse_button].type != ft_MultiButton)
+                                &&
+                                (p_fields[down_mouse_button].type != ft_StringList)
+                                &&
+                                (p_fields[down_mouse_button].type != ft_ContinuousStringInput)
+                            )
+                            {
+                                Save_Mouse_State();
+                                Restore_Mouse_On_Page();
+                                Draw_Field(down_mouse_button, DRAW_FIELD_UP);
+                                Save_Mouse_On_Page(l_mx, l_my);
+                                Draw_Mouse_On_Page(l_mx, l_my);
+                                Set_Pointer_Position(l_mx, l_my);
+                                Restore_Mouse_State();
+                            }
+                            down_mouse_button = ST_UNDEFINED;
                         }
-                    }
-                    // End Block: Push_Field_Down()
-                    // End Block: field_num = Scan_Field() != 0 && != down_mouse_button
-
-                    // HERE:    Nay KD, Yay MD, No Help, No Cancel, Yay Field, field_num !=/== down_mouse_button
-                    // Unhandled Conditions:
-                    //     field_num == down_mouse_button
-                    //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_Input)
-                    //     (field_num != down_mouse_button) && (p_fields[field_num].type == ft_ContinuousStringInput)
-                    //     (field_num != down_mouse_button) && (down_mouse_button != ST_UNDEFINED) && ¿ ... ?
-
-                    // Yay/Nay click on an edit field that is the active edit field
-                    // NOTE: In MoM, if you click off of an active edit field, it restores the string in the previous edit field and activates the new one
-                    //       the activation includes, e.g., for the save game name the arrow/marker icon and the blicking underscore cursor
-
-                    /*
-                        BEGIN BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
-                    */
-
-                    // if((p_fields[field_num].type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE)) { // DO NOTHING }
-                    if(
-                        (p_fields[field_num].type != ft_ContinuousStringInput)
-                        &&
-                        (input_field_active != ST_FALSE)
-                    )
-                    {
-                        // `Exit Edit-State`
-                        itr_continuous_string = 0;
-                        while((continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters > itr_continuous_string))
-                        {
-                            itr_continuous_string++;
-                        }
-                        if(continuous_string[(itr_continuous_string - 1)] == '_')
-                        {
-                            itr_continuous_string--;
-                        }
-                        continuous_string[itr_continuous_string] = '\0';
-                        strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
-                        input_field_active = ST_FALSE;
-                        active_input_field_number = ST_UNDEFINED;
-                    }
-                    else if(
-                        (p_fields[field_num].type == ft_ContinuousStringInput)
-                        &&
-                        (input_field_active == ST_FALSE)
-                    )
-                    {
-                        strcpy(continuous_string, p_fields[field_num].string);
-                        GUI_EditAnimStage = 0;
-                        GUI_EditCursorOn = ST_FALSE;
-                        input_field_active = ST_TRUE;
-                        active_input_field_number = field_num;
-                    }
-                    else if(
-                        (p_fields[field_num].type == ft_ContinuousStringInput)
-                        &&
-                        (input_field_active != ST_FALSE)
-                        &&
-                        (field_num != active_input_field_number)
-                    )
-                    {
-                        // `Exit Edit-State`  ~== `Cancel Edit-State`
-                        // `Enter Edit-State`
-                        strcpy(continuous_string, p_fields[field_num].string);
-                        GUI_EditAnimStage = 0;
-                        GUI_EditCursorOn = ST_FALSE;
-                        input_field_active = ST_TRUE;
-                        active_input_field_number = field_num;
-                    }
-                    /*
-                        END BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
-                    */
-
-                    auto_input_variable = field_num;
-
-                    if(mouse_auto_exit != ST_FALSE)
-                    {
+                        Set_Buffer_2(l_mx, l_my);
                         break;
                     }
+                
+                }  /* while(Mouse_Button() != 0) */
 
-                    if(Mouse_Button() != 0)
-                    {
-                        Call_Auto_Function();
-                    }
-
-                }
-                /*
-                    END BLOCK: field_num = Scan_Field() != 0
-                */
-                else
-                {
-                    if(down_mouse_button != ST_UNDEFINED)
-                    {
-                        if(p_fields[down_mouse_button].type == ft_Scroll)
-                        {
-                            Invoke_Auto_Function();
-                        }
-                        if(
-                            (p_fields[down_mouse_button].type != ft_MultiButton)
-                            &&
-                            (p_fields[down_mouse_button].type != ft_StringList)
-                            &&
-                            (p_fields[down_mouse_button].type != ft_ContinuousStringInput)
-                        )
-                        {
-                            Save_Mouse_State();
-                            Restore_Mouse_On_Page();
-                            Draw_Field(down_mouse_button, DRAW_FIELD_UP);
-                            Save_Mouse_On_Page(l_mx, l_my);
-                            Draw_Mouse_On_Page(l_mx, l_my);
-                            Set_Pointer_Position(l_mx, l_my);
-                            Restore_Mouse_State();
-                        }
-                        down_mouse_button = ST_UNDEFINED;
-                    }
-                    Set_Buffer_2(l_mx, l_my);
-                }
+                // @@After_Mouse_Button_Loop
             }
-            /*
-                END BLOCK: Loop Mouse_Button()
-            */
-            // IDA: @@IDK_After_Loop_GetButtonStatus
+/*
+    END: Loop Mouse_Button()
+*/
 
 
             if(p_fields[auto_input_variable].type == ft_Scroll)
@@ -1016,15 +1120,21 @@ MoO2
 
             if(field_num != 0)
             {
-                // TODO  MD_Get_ClickRec1();
-                // TODO  MD_Get_ClickRec2();
-                // TODO  GUI_Processed_LastX = mouse_x;
-                // TODO  GUI_Processed_LastY = mouse_y;
-                // TODO  GUI_Processed_Btns = MD_ButtonStatus;
+
+                Mouse_Buffer();  // HERE: the MBB path does not call Mouse_Buffer()
+
+                Mouse_Buffer2();
+                
+                last_button_x = l_mx;
+                
+                last_button_y = l_my;
+
+                last_button_number = mouse_button;
 
                 // TODO says switch 9 cases, but only actually handles 4 - figure out which, including the odd (type - 1) part
                 // the (type - 1) part is a compiler artifact; it subtracts whatever amount to make the first case be case 0
                 // here, that means there was no case for type 0 ft_Button
+                // Did it. It's in the MBB branch.
                 switch(p_fields[field_num].type)
                 {
                     case ft_Button:
@@ -1083,23 +1193,276 @@ MoO2
 
             }
 
+
+            
+            // IDA: @@EndOfTheClickRoad
+
+            Mouse_Button_Handler();
+            down_mouse_button = ST_UNDEFINED;
+            /*
+                1oom
+                    if(mb == MOUSE_BUTTON_MASK_RIGHT)
+                    {
+                        return -field_num;
+                    }
+                    else
+                    {
+                        return field_num;
+                    }
+            */
+#ifdef STU_DEBUG
+        dbg_prn("DEBUG: [%s, %d]: switch(mouse_button)  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
+#endif
+
+            switch(mouse_button)
+            {
+                case 0: { field_num =          0; goto Done; } break;
+    // warning: explicitly assigning value of variable of type 'int16_t' (aka 'short') to itself [-Wself-assign]
+    //             case 1: { field_num =  field_num; goto Done; } break;
+                case 2: { field_num = -field_num; goto Done; } break;
+            }        
+
+
+        
         }  /* END:  if(Mouse_Button() != ST_FALSE) */
-
-        // IDA: @@EndOfTheClickRoad
-
-        Mouse_Button_Handler();
-        down_mouse_button = ST_UNDEFINED;
-        switch(mouse_button)
+        else if(Mouse_Buffer() != ST_FALSE)
         {
-            case 0: { field_num =          0; goto Done; } break;
-// warning: explicitly assigning value of variable of type 'int16_t' (aka 'short') to itself [-Wself-assign]
-//             case 1: { field_num =  field_num; goto Done; } break;
-            case 2: { field_num = -field_num; goto Done; } break;
-        }        
 
-    }
-    // else if(MD_Get_ClickRec1()
-    // ¿ ...else... Mouse_Button_Handler(); field_num = 0;
+            mouse_button = Mouse_Buffer_Button();
+            
+// NEWCODE            if(mouse_button == ST_RIGHT_BUTTON)
+// NEWCODE            {
+// NEWCODE
+// NEWCODE                if(
+// NEWCODE                    (help_list_active != ST_FALSE)
+// NEWCODE                    &&
+// NEWCODE                    (Check_Help_List() == 0)
+// NEWCODE                )
+// NEWCODE                {
+// NEWCODE                    Mouse_Buffer();
+// NEWCODE                    Mouse_Buffer2();
+// NEWCODE                    return 0;
+// NEWCODE                }
+// NEWCODE
+// NEWCODE                if(mouse_cancel_disabled == ST_FALSE)
+// NEWCODE                {
+// NEWCODE                    Mouse_Buffer();
+// NEWCODE                    Mouse_Buffer2();
+// NEWCODE                    return ST_UNDEFINED;
+// NEWCODE                }
+// NEWCODE
+// NEWCODE            }
+
+            l_mx = Mouse_Buffer_X();
+
+            l_my = Mouse_Buffer_Y();
+            
+            field_num = 0;
+
+            Unused_Local = ST_UNDEFINED;
+
+            character = 0;
+
+            Check_Mouse_Shape(l_mx, l_my);
+
+            pointer_offset = Get_Pointer_Offset();
+            
+            for(alt_field_num = 1; alt_field_num < fields_count; alt_field_num++)
+            {
+
+                xmin = p_fields[alt_field_num].x1;
+                
+                ymin = p_fields[alt_field_num].x1;
+
+                xmax = p_fields[alt_field_num].x2;
+                
+                ymax = p_fields[alt_field_num].x2;
+                
+                if(
+                    ((l_mx + pointer_offset) >= xmin)
+                    &&
+                    ((l_mx + pointer_offset) <= xmin)
+                    &&
+                    ((l_my + pointer_offset) >= ymin)
+                    &&
+                    ((l_my + pointer_offset) <= ymax)
+                )
+                {
+                    field_num = alt_field_num;
+                }
+
+            }
+
+            if(
+                (field_num != 0)
+                &&
+                (p_fields[field_num].type != ft_ContinuousStringInput)
+            )
+            {
+
+                auto_input_variable = field_num;
+
+                Push_Field_Down(field_num, l_mx, l_my);
+
+                Quick_Call_Auto_Function();
+   
+            }
+
+            if(field_num != 0)
+            {
+
+                /*
+                    BEGIN BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                */
+
+                // if((p_fields[field_num].type != ft_ContinuousStringInput) && (input_field_active == ST_FALSE)) { // DO NOTHING }
+                if(
+                    (p_fields[field_num].type != ft_ContinuousStringInput)
+                    &&
+                    (input_field_active != ST_FALSE)
+                )
+                {
+                    // `Exit Edit-State`
+                    itr_continuous_string = 0;
+                    while((continuous_string[itr_continuous_string] != '\0') && (p_fields[active_input_field_number].max_characters > itr_continuous_string))
+                    {
+                        itr_continuous_string++;
+                    }
+                    if(continuous_string[(itr_continuous_string - 1)] == '_')
+                    {
+                        itr_continuous_string--;
+                    }
+                    continuous_string[itr_continuous_string] = '\0';
+                    strcpy((char *)p_fields[active_input_field_number].string, continuous_string);
+                    input_field_active = ST_FALSE;
+                    active_input_field_number = ST_UNDEFINED;
+                }
+                else if(
+                        (p_fields[field_num].type == ft_ContinuousStringInput)
+                        &&
+                        (input_field_active == ST_FALSE)
+                    )
+                {
+                    strcpy(continuous_string, p_fields[field_num].string);
+                    GUI_EditAnimStage = 0;
+                    GUI_EditCursorOn = ST_FALSE;
+                    input_field_active = ST_TRUE;
+                    active_input_field_number = field_num;
+                }
+                else if(
+                        (p_fields[field_num].type == ft_ContinuousStringInput)
+                        &&
+                        (input_field_active != ST_FALSE)
+                        &&
+                        (field_num != active_input_field_number)
+                    )
+                {
+                    // `Exit Edit-State`  ~== `Cancel Edit-State`
+                    // `Enter Edit-State`
+                    strcpy(continuous_string, p_fields[field_num].string);
+                    GUI_EditAnimStage = 0;
+                    GUI_EditCursorOn = ST_FALSE;
+                    input_field_active = ST_TRUE;
+                    active_input_field_number = field_num;
+                }
+                // @@After_MouseLeftButton_ContinuousStringInput
+                /*
+                    END BLOCK:  Exit, Enter, or Exit & Enter an ~Edit-State
+                */
+
+            }
+
+            down_mouse_button = ST_UNDEFINED;
+            
+            if(field_num != 0)
+            {
+
+                // HERE: the MB path calls Mouse_Buffer()
+
+                Mouse_Buffer2();
+                
+                last_button_x = l_mx;
+                
+                last_button_y = l_my;
+
+                last_button_number = mouse_button;
+
+            }
+
+            if(field_num != 0)
+            {
+
+                // @@MB_Switch_FieldType:
+                // 5 branches?
+                // (p_fields[field_num].type - 1)
+                // {0, 1, 3, 8}
+                // {ft_01__ft_RadioButton__1, ft_02__ft_LockedButton__1, ft_04__ft_Input__1, ft_09__ft_ClickLink__1}
+                // {ft_01__ft_RadioButton__2, ft_02__ft_LockedButton__2, ft_04__ft_Input__2, ft_09__ft_ClickLink__2}
+                switch(p_fields[field_num].type)
+                {
+
+                    case ft_RadioButton:
+                    {
+                        if(p_fields[field_num].state == 0)
+                        {
+                            p_fields[field_num].state = 1;
+                        }
+                        else
+                        {
+                            p_fields[field_num].state = 0;
+                        }
+                    } break;
+
+                    case ft_LockedButton:
+                    {
+                        if(p_fields[field_num].state == 0)
+                        {
+                            p_fields[field_num].state = 1;
+                        }
+                        else
+                        {
+                            Mouse_Button_Handler();
+                            down_mouse_button = ST_UNDEFINED;
+                            return 0;
+                        }
+                    } break;
+
+                    case ft_Input:
+                    {
+                        Push_Field_Down(field_num, l_mx, l_my);
+                    } break;
+
+                    case ft_ClickLink:
+                    {
+                        mouse_button = ST_RIGHT_BUTTON;
+                    } break;
+
+                }  /* switch(p_fields[field_num].type) */
+
+            }  /* if(field_num != 0) */
+
+            Mouse_Button_Handler();
+
+            auto_input_variable = ST_FALSE;
+
+            if(mouse_button == ST_RIGHT_BUTTON)
+            {
+                // return_value = field_num;
+                // jump-to return -(return_value)
+                return -(field_num);
+            }
+            else
+            {
+                return field_num;
+            }
+
+        }
+        else
+        {
+            return 0;
+        }
+
+    }  /* BEGIN:  Keyboard_Status() != ST_TRUE */
 
 
     // TODO  if(character != 0)
@@ -1107,6 +1470,9 @@ MoO2
     // TODO      
     // TODO  }
 
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: goto Done  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
+#endif
 
     goto Done;
 /*
@@ -1127,12 +1493,18 @@ MoO2
 return ST_UNDEFINED;
 */
 Return_Type_ESC:
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return ST_UNDEFINED;
 
 /*
 return 0;
 */
 Return_Type_Z00:
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return 0;
 
 /*
@@ -1140,6 +1512,9 @@ down_mouse_button = ST_UNDEFINED; return 0;
 */
 Return_Type_Z10:
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return 0;
 
 /*
@@ -1147,6 +1522,9 @@ Mouse_Button_Handler(); return 0;
 */
 Return_Type_Z01:
     Mouse_Button_Handler();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return 0;
 
 /*
@@ -1155,6 +1533,9 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return 0;
 Return_Type_Z11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return 0;
 
 /*
@@ -1168,6 +1549,9 @@ down_mouse_button = ST_UNDEFINED; return field_num;
 */
 Return_Type_F10:
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return field_num;
 
 /*
@@ -1175,6 +1559,9 @@ Mouse_Button_Handler(); return field_num;
 */
 Return_Type_F01:
     Mouse_Button_Handler();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return field_num;
 
 /*
@@ -1183,6 +1570,9 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 Return_Type_F11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return field_num;
 
 /*
@@ -1191,6 +1581,9 @@ Mouse_Button_Handler(); down_mouse_button == ST_UNDEFINED; return alt_field_num;
 Return_Type_4:
     Mouse_Button_Handler();
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return alt_field_num;
 
 /*
@@ -1198,6 +1591,9 @@ down_mouse_button == ST_UNDEFINED; return alt_field_num;
 */
 Return_Type_5:
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return alt_field_num;
 
 /*
@@ -1205,6 +1601,9 @@ down_mouse_button = ST_UNDEFINED; return p_fields[field_num].Param0;
 */
 Return_Type_P10:
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return p_fields[field_num].parent;
 
 /*
@@ -1212,9 +1611,15 @@ down_mouse_button = ST_UNDEFINED; return p_fields[alt_field_num].Param0;
 */
 Return_Type_7:
     down_mouse_button = ST_UNDEFINED;
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return p_fields[alt_field_num].parent;
 
 Done:
+#ifdef STU_DEBUG
+    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+#endif
     return field_num;
 }
 
@@ -1229,23 +1634,26 @@ void Set_Global_ESC(void)
 
 // WZD s36p12
 /*
-function (0 bytes) Set_Help_List
-Address: 01:001196B8
-Return type: void (1 bytes) 
-pointer (4 bytes) help_pointer
-signed integer (2 bytes) count
+MoO2
+Module: fields
+    function (0 bytes) Set_Help_List
+    Address: 01:001196B8
+        Num params: 2
+        Return type: void (1 bytes) 
+        pointer (4 bytes) 
+        signed integer (2 bytes) 
+        Locals:
+            pointer (4 bytes) help_pointer
+            signed integer (2 bytes) count
 */
-// // // // void Set_Help_List(struct s_HELP_FIELD * help_pointer, int16_t count)
-// // // // void Set_Help_List(struct s_HELP_FIELD * help_pointer[], int16_t count)
-// // // void Set_Help_List(struct s_HELP_FIELD ** help_pointer, int16_t count)
-// // void Set_Help_List(int16_t * help_pointer, int16_t count)
-// void Set_Help_List(char * help_pointer, int16_t count)
 /*
 Set_Help_List(_help_entries, 20);
 */
 void Set_Help_List(void * help_pointer, int16_t count)
 {
-    help_struct_pointer = (struct s_HELP_FIELD *)help_pointer;
+    // help_struct_pointer = (struct s_HELP_FIELD *)help_pointer;
+    help_struct_pointer = (int16_t *)help_pointer;
+    help_struct = (struct s_HELP_FIELD *)help_pointer;
     help_list_count = count;
     help_list_active = ST_TRUE;
 }
@@ -1255,16 +1663,92 @@ void Deactivate_Help_List(void)
 {
     help_list_active = ST_FALSE;
     help_list_count = 0;
+    // help_struct_pointer = ST_NULL;
+    help_struct = ST_NULL;
     help_struct_pointer = ST_NULL;
 }
 
 // WZD s36p14
-// CAUTION: returns ZERO on SUCCESS
-int16_t Check_Help_List__STUB(void)
+/*
+; checks if the current mouse coordinates correspond
+; to a help entry area and if so, calls GUI_DisplayHelp
+; to show the corresponding context-based help text
+; returns 0 if successful, or 1 if help was not
+; available for the clicked location
+*/
+/*
+MoO2
+Module: fields
+    function (0 bytes) Check_Help_List
+    Address: 01:00119732
+        Num params: 0
+        Return type: signed integer (4 bytes) 
+        Locals:
+            signed integer (2 bytes) help_entry_found
+            signed integer (2 bytes) mouse_x
+            signed integer (2 bytes) mouse_y
+            signed integer (2 bytes) i
+            signed integer (2 bytes) j
+*/
+/*
+    CAUTION: returns ZERO on SUCCESS
+
+*/
+int16_t Check_Help_List(void)
 {
-    int16_t help_entry_found;
+    int16_t mouse_x = 0;
+    int16_t mouse_y = 0;
+    int16_t help_entry_found = 0;
+    int16_t i = 0;  // _DI_
+    int16_t j = 0;  // _SI_
 
     help_entry_found = ST_FALSE;
+
+    mouse_x = Pointer_X();
+
+    mouse_y = Pointer_Y();
+
+    if(help_list_count == 0)
+    {
+
+        help_entry_found = 1;
+
+    }
+    else
+    {
+
+        for(i = 0; i < help_list_count; i++)
+        {
+
+            j = (i * sizeof(struct s_HELP_FIELD));
+
+            if(help_struct_pointer[j + 0] != ST_UNDEFINED)
+            {
+
+                if(
+                    (help_struct_pointer[j + 1] <= mouse_x)
+                    &&
+                    (help_struct_pointer[j + 3] >= mouse_x)
+                    &&
+                    (help_struct_pointer[j + 2] <= mouse_y)
+                    &&
+                    (help_struct_pointer[j + 4] >= mouse_y)
+                )
+                {
+
+                    Draw_Help_Entry__WIP(help_struct_pointer[j + 0]);
+
+                    i = help_list_count;
+
+                    help_entry_found = 0;
+                    
+                }
+
+            }
+
+        }
+
+    }
 
     return help_entry_found;
 }
@@ -1414,6 +1898,25 @@ int16_t Scan_Input(void)
     }
 
     return current_field;
+}
+
+
+// WZD s36p27
+// drake178: UU_GUI_KeyWaitLoop()
+// MoO2  Module: fields  Read_Character()  returns signed integer (2 bytes)
+/*
+Unused in MoM
+
+loops until keyboard input is available, which it
+returns
+*/
+/*
+    Eh? NIU in MoO1, MoM, and MoO2.
+*/
+uint8_t Read_Character(void)
+{
+    while(!Keyboard_Status()) {}
+    return Read_Key();
 }
 
 
@@ -1622,11 +2125,11 @@ int16_t Process_Direction_Key__STUB(int16_t dir_key)
 /*
     only called from Draw_Feild()
     only processed if it is not selected
-    doesn't/can't happen via Input_Box_Popup()
-    any Add_Input_Field() outside of Input_Box_Popup()?
+    doesn't/can't happen via Setup_Input_Box_Popup()
+    any Add_Input_Field() outside of Setup_Input_Box_Popup()?
         only ITEM_CreateControls()
 */
-void GUI_EditBoxControl(int16_t field_num)
+void Input_Box_Popup(int16_t field_num)
 {
     char input_string[63];
     // char key;  // ¿ clangd ... out of range ?
@@ -1640,6 +2143,10 @@ void GUI_EditBoxControl(int16_t field_num)
     int16_t Allowed_Char;
     int16_t string_pos;  // _SI_
     int16_t itr;  // _DI_
+
+#ifdef _STU_SDL2
+    hw_textinput_start();
+#endif
 
     Timeout_Counter = 4;
 
@@ -1925,6 +2432,10 @@ ST_KEY_ENTER            = 0x0C
         END:  
     */
 
+#ifdef _STU_SDL2
+    hw_textinput_stop();
+#endif
+
     strcpy(p_fields[field_num].string, input_string);
 
     if(Control_Change != ST_FALSE)
@@ -1967,7 +2478,7 @@ NameStartingCity_Dialog_Popup()
     Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED)
 
 */
-int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
+int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
 {
     char input_string[63];
     char key;
@@ -1979,6 +2490,14 @@ int16_t Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * 
     int16_t Allowed_Char;
     int16_t string_pos;  // _SI_
     int16_t itr;  // _DI_
+
+
+
+#ifdef _STU_SDL2
+    hw_textinput_start();
+#endif
+
+
 
     Timeout_Counter = 4;
 
@@ -2253,6 +2772,12 @@ ST_KEY_ENTER            = 0x0C
     /*
         END:  
     */
+
+
+#ifdef _STU_SDL2
+    hw_textinput_stop();
+#endif
+
 
     strcpy(string, input_string);
 

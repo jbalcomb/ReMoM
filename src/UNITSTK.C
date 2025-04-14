@@ -21,6 +21,10 @@ MoO2
 #include "UNITTYPE.H"   // WTFMATE
 #include "WZD_o059.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 /*

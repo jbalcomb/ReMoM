@@ -328,6 +328,7 @@ void Load_Button_Sounds(void);
 
 // WZD o52p15
 // fxn_o52p15()
+void Load_TERRSTAT(void);
 
 // WZD o52p16
 void Load_SPELLDAT(void);

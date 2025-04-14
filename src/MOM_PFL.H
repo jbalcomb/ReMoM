@@ -3,6 +3,11 @@
 
 #include "MOX/MOX_TYPE.H"
 
+#ifdef _STU_SDL2
+// #include "SDL.h"
+#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+#endif
+
 
 
 #ifdef __cplusplus
@@ -17,8 +22,26 @@ extern "C" {
 
 extern int quit_game_flag;
 
-extern int key_pressed;  // win_KD.C  Keyboard_Status(), Read_Key()
+
+// #ifdef _STU_SDL2
+/*
+Module: key
+char (1 bytes) key_pressed
+Address: 02:001B42E4
+*/
+extern int8_t key_pressed;
+// #endif
+// #ifdef _STU_WIN
+// extern int key_pressed;  // win_KD.C  Keyboard_Status(), Read_Key()
+// #endif
+
 extern uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
+
+// ITRY  extern int platform_mouse_button_status;
+
+extern int lock_mouse_button_status_flag;
+
+extern int platform_mouse_input_enabled;
 
 
 
@@ -52,16 +75,28 @@ extern uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
 
 
 
+/*
+    PLATFORM
+*/
+
+void Platform_Palette_Update(void);
+void Platform_Video_Update(void);
+
 
 
 // win_PFL.cpp
 // used by Get_Input() in win_Input.C
+#ifdef _STU_WIN
 void Pump_Events(void);
+#endif
 // used by Page_Flip() in win_Video.C
+#ifdef _STU_WIN
 void Pump_Paints(void);
+#endif
 // used by Set_Mouse_Position() in win_MD.C
+#ifdef _STU_WIN
 void MWA_Set_Mouse_Position(int16_t x, int16_t y);
-
+#endif
 
 // win_DIR.C
 int32_t LOF(char * file_name);
@@ -72,8 +107,6 @@ void EMS_Startup(void);
 
 
 // win_MD.C
-extern int16_t platform_mouse_button_status;
-extern int16_t lock_mouse_button_status_flag;
 void Update_Mouse_Position(int16_t platform_mouse_x, int16_t platform_mouse_y);
 void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse_y, int16_t mouse_button_status);
 
@@ -82,9 +115,12 @@ void Update_Mouse_Button_Status(int16_t platform_mouse_x, int16_t platform_mouse
 /*
     Fonts
 */
-// DELETE  extern uint8_t g_Palette[];
-// DELETE  extern uint8_t g_Palette_XBGR[];
-extern uint8_t PFL_Palette[];
+// #ifdef _STU_SDL2
+extern SDL_Color platform_palette_buffer[256];
+// #endif
+#ifdef _STU_WIN
+extern uint8_t platform_palette_buffer[1024];  // Platform's Shadow Palette: 256 colors * bits/bytes/components per color as required by the platform  e.g., RGB, XBGR, RGBA
+#endif
 
 /*
     Fonts

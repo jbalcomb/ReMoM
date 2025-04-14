@@ -1,9 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 
 /*
 https://olegkutkov.me/2019/03/25/simple-logger-with-stdout-files-and-syslog-support-for-c-projects-in-linux/
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <STDARG.H>     /* va_list; va_arg(), va_end(), va_start() */
 #include <STDIO.H>      /* FILE; fclose(), fopen() */
 #include <STDLIB.H>     /* exit() */
@@ -155,7 +156,7 @@ void Debug_Log_Startup(void)
     if(Debug_Log_File == NULL)
     {
         printf("DEBUG [FATAL]: Unable to open log file: %s", Debug_Log_FileName);
-#ifdef WIN32
+#ifdef _WIN32
         exit(1);
 #endif
     }

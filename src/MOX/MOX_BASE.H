@@ -3,7 +3,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning (disable : 4101)  // Warning C4101 unreferenced local variable
 // #pragma warning (disable : 4701)
 #pragma warning (disable : 4703)  // Error C4703 potentially uninitialized local pointer variable used

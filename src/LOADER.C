@@ -1,6 +1,12 @@
 
-#include "MOM.H"
+#include "LOADER.H"
+
+
+#include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_SND.H"
+
+#include "MGC_DATA.H"
+
 
 
 // WZD dseg:291E                            BEGIN: ovr052
@@ -32,6 +38,8 @@ char rsc0C_MAPBACK_LBX[] = "MAPBACK.LBX";
 char terrain_lbx_file[] = "TERRAIN.LBX";
 
 // WZD dseg:29DE
+// MGC dseg:28D2 54 45 52 52 53 54 41 54 00                      g_LbxNm_TERRSTAT db 'TERRSTAT',0        ; DATA XREF: Load_TERRSTAT+11o
+//  Load_TERRSTAT+11 mov     ax, offset g_LbxNm_TERRSTAT     ; "TERRSTAT"
 char terrstat_lbx_file[] = "TERRSTAT";
 
 // WZD dseg:29E7
@@ -49,6 +57,9 @@ char backgrnd_lbx_file[] = "BACKGRND";
 char soundfx_lbx_file__ovr052[] = "SOUNDFX";
 
 // WZD dseg:2A05
+// MGC dseg:28BF 53 50 45 4C 4C 44 41 54 00                      g_LbxNm_SPELLDAT db 'SPELLDAT',0        ; DATA XREF: Load_MGC_Resources+B3o ...
+//  Load_MGC_Resources+B3 mov     ax, offset g_LbxNm_SPELLDAT     ; "SPELLDAT"
+//  Load_SPELLDAT+11      mov     ax, offset g_LbxNm_SPELLDAT     ; "SPELLDAT"
 char spelldat_lbx_file[] = "SPELLDAT.LBX";
 
 // WZD dseg:2A12
@@ -716,6 +727,18 @@ void Load_Button_Sounds(void)
 
 // WZD o52p15
 // fxn_o52p15()
+/*
+    MAYBE, ...
+    this is actually this?
+    no way to make sense of how it is in seg001 in MGC
+    but, it's just under Load_SPELLDAT() in that same module
+    compiler artifact?
+
+*/
+void Load_TERRSTAT(void)
+{
+    terrain_stats_table = LBX_Load_Data(terrstat_lbx_file, 0, 0, 770, 6);
+}
 
 
 // WZD o52p16

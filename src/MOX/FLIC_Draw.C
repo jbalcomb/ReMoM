@@ -15,14 +15,12 @@ MoO2 Module: shear
 
 */
 
-#include "MOX_Lib.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "MOX_TYPE.H"
 
-/*
-    Palette
-*/
-// WZD dseg:E7E8
-extern byte_ptr p_Palette;  // AKA current_palette
+#include "FLIC_Draw.H"
+#include "Fonts.H"
+
+#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
 
 /*
     Video
@@ -52,6 +50,7 @@ int16_t file_animation_entry_num;
 
 // WZD s21p07
 // ¿ MoO2  Module: animate  Set_Animation_Palette() ?
+// Load_Animation_Palette()
 // ¿ vs. MoO2  Draw_Palette() ?
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
@@ -88,19 +87,19 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     // // for(itr = start; itr < count; itr++)
     // for(itr = start; itr < (start + count); itr++)
     // {
-    //     *(p_Palette + itr) = *(flic_palette_data + itr);
-    //     *(p_Palette + 768 + itr) = 1;
+    //     *(current_palette + itr) = *(flic_palette_data + itr);
+    //     *(current_palette + 768 + itr) = 1;
     // }
     for(itr = 0; itr < count; itr++)
     {
 
         // DASM: MOVSW; MOVSB;
         // ¿ ~== ? SET_2B, SET_1B ... rvr++;
-        *(p_Palette + (start * 3) + (itr * 3) + 0) = *(flic_palette_data + (itr * 3) + 0);
-        *(p_Palette + (start * 3) + (itr * 3) + 1) = *(flic_palette_data + (itr * 3) + 1);
-        *(p_Palette + (start * 3) + (itr * 3) + 2) = *(flic_palette_data + (itr * 3) + 2);
+        *(current_palette + (start * 3) + (itr * 3) + 0) = *(flic_palette_data + (itr * 3) + 0);
+        *(current_palette + (start * 3) + (itr * 3) + 1) = *(flic_palette_data + (itr * 3) + 1);
+        *(current_palette + (start * 3) + (itr * 3) + 2) = *(flic_palette_data + (itr * 3) + 2);
 
-        *(p_Palette + 768 + start + itr) = ST_TRUE;  // TODO  review, remaster, add manifest-constant for palette change flags offset
+        *(current_palette + 768 + start + itr) = ST_TRUE;  // TODO  review, remaster, add manifest-constant for palette change flags offset
     }
 
 }
@@ -430,7 +429,16 @@ void FLIC_Remap_Draw_Frame(int16_t x_start, int16_t y_start, int16_t width, byte
 */
 
 
+// WZD s30p01
+// UU_LBX_Image_Copy()
+
 // WZD s30p02
+// AKA  FLIC_Prepare()
+/*
+creates a decoded image header into the specified
+segment, and zeroes out the bytes required to hold it
+ST_FLIC.H
+*/
 /*
     ¿ Create_Picture() vs. Create_Blank_Picture() ?
     same header values, just default transparent vs. specified color
@@ -3255,9 +3263,9 @@ void Gray_Scale_Bitmap(SAMB_ptr pict_seg, int16_t color_start)
     uint8_t data;
     uint8_t intensity_value;
 
-    // DS:SI  src  p_Palette[0]
+    // DS:SI  src  current_palette[0]
     // ES:DI  dst  Intensity_Scale_Tbl@[0]
-    src_sgmt = (uint8_t *)p_Palette;
+    src_sgmt = current_palette;
     src_ofst = 0;
     dst_sgmt = (uint8_t *)Intensity_Scale_Tbl;
     dst_ofst = 0;

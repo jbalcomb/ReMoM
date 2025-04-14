@@ -6,6 +6,8 @@ add_library(STU STATIC
     STU_UTIL.C
 )
 
+set_target_properties(STU PROPERTIES LINKER_LANGUAGE C)
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     target_compile_options(STU PRIVATE
         "-Wall"

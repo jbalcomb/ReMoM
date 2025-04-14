@@ -6,6 +6,7 @@
         ovr081
 */
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/SOUND.H"
@@ -18,7 +19,6 @@
 #include "ItemScrn.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MOM_Data.H"
 #include "MOM_DBG.H"
 #include "MOM_DEF.H"
 #include "RACETYPE.H"

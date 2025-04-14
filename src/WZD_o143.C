@@ -5,6 +5,7 @@
 
 #include "WZD_o143.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_DAT.H"  /* _players[] */
 #include "MOX/MOX_DEF.H"
@@ -15,7 +16,6 @@
 #include "MOX/Util.H"
 
 #include "MOM_DEF.H"
-#include "MOM_Data.H"
 #include "MovePath.H"
 #include "Terrain.H"
 #include "TerrType.H"

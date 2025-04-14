@@ -7,10 +7,10 @@
 
 #include "LOADSAVE.H"
 
+#include "MOM_Data.H"
 #include "MOX_DAT.H"  /* _players[]; _screen_seg; */
 #include "MOX_SET.H"  /* magic_set */
 
-#include "../MOM_Data.H"
 #include "../MOM_PFL.H"
 
 #include <assert.h>

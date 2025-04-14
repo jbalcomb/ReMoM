@@ -15,6 +15,10 @@
 #include "UnitView.H"
 #include "WZD_o059.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // WZD dseg:2D72                                                 ¿ BEGIN: ovr056 - Strings ?
@@ -337,7 +341,10 @@ void Production_Screen(void)
         if(input_field_idx == production_screen_ok_button)
         {
             Play_Left_Click__STUB();
+Check_Cities_Data();
             _CITIES[_city_idx].construction = product_indexes[current_item];
+// Check_Cities_Data();
+Capture_Cities_Data();
     if(_CITIES[_city_idx].construction < 0)
     {
         STU_DEBUG_BREAK();

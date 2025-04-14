@@ -9,6 +9,10 @@
 
 #include "MOM.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // WZD dseg:6F60                                                 BEGIN:  ovr145 - Initialized Data
@@ -2309,41 +2313,41 @@ void EMM_Map_CONTXXX__WIP(void)
 
     // TODO  EMM_Map4Pages(0, EmmHndl_CONTXXX);
     // ...
-    // TODO  CONTX_Arc_TileXs = SA_MK_FP0(EMM_PageFrame);
+    // TODO  CONTX_Arc_TileXs = SA_MK_FP0(EMS_PFBA);
     // ...
     // ...
     // ...
 
-    // EMM_PageFrame = Allocate_Space(((4 * 16384) / 16));
-    EMM_PageFrame = EmmHndl_CONTXXX;
+    // EMS_PFBA = Allocate_Space(((4 * 16384) / 16));
+    EMS_PFBA = EmmHndl_CONTXXX;
 
-    CONTX_TileXs[0]           =  (int8_t *)(&EMM_PageFrame[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
-    CONTX_TileXs[1]           =  (int8_t *)(&EMM_PageFrame[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
-    CONTX_TileYs[0]           =  (int8_t *)(&EMM_PageFrame[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
-    CONTX_TileYs[1]           =  (int8_t *)(&EMM_PageFrame[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
-    CONTX_TileChain[0]        = (int16_t *)(&EMM_PageFrame[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
-    CONTX_TileChain[1]        = (int16_t *)(&EMM_PageFrame[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
-    CONTX_FirstTiles[0]       = (int16_t *)(&EMM_PageFrame[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
-    CONTX_FirstTiles[1]       = (int16_t *)(&EMM_PageFrame[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
-    _ai_own_stack_wx          = (&EMM_PageFrame[0] + ( 850 * SZ_PARAGRAPH_B));  //  860 -  850 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_wy          = (&EMM_PageFrame[0] + ( 860 * SZ_PARAGRAPH_B));  //  870 -  860 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_wp          = (&EMM_PageFrame[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_type        = (&EMM_PageFrame[0] + ( 880 * SZ_PARAGRAPH_B));  //  890 -  880 =  10 * 1 PR =  160 B  80 2-byte values
-    _ai_own_stack_unit_count  = (&EMM_PageFrame[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
-    CONTX_NmeStrMap[0]        = (&EMM_PageFrame[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
-    CONTX_NmeStrMap[1]        = (&EMM_PageFrame[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
-    CONTX_LoadTileXs[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileXs[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[0]       =  (int8_t *)(&EMM_PageFrame[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
-    CONTX_LoadTileYs[1]       =  (int8_t *)(&EMM_PageFrame[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
-    CONTX_LoadTChain[0]       = (int16_t *)(&EMM_PageFrame[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
-    CONTX_LoadTChain[1]       = (int16_t *)(&EMM_PageFrame[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
-    CONTX_1stLoadTs[0]        = (int16_t *)(&EMM_PageFrame[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
-    CONTX_1stLoadTs[1]        = (int16_t *)(&EMM_PageFrame[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
+    CONTX_TileXs[0]           =  (int8_t *)(&EMS_PFBA[0] + (   0 * SZ_PARAGRAPH_B));  //  100 -    0 = 100 * 1 PR = 1600 B
+    CONTX_TileXs[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 100 * SZ_PARAGRAPH_B));  //  200 -  100 = 100 * 1 PR = 1600 B
+    CONTX_TileYs[0]           =  (int8_t *)(&EMS_PFBA[0] + ( 200 * SZ_PARAGRAPH_B));  //  300 -  200 = 100 * 1 PR = 1600 B
+    CONTX_TileYs[1]           =  (int8_t *)(&EMS_PFBA[0] + ( 300 * SZ_PARAGRAPH_B));  //  400 -  300 = 100 * 1 PR = 1600 B
+    CONTX_TileChain[0]        = (int16_t *)(&EMS_PFBA[0] + ( 400 * SZ_PARAGRAPH_B));  //  600 -  400 = 200 * 1 PR = 3200 B
+    CONTX_TileChain[1]        = (int16_t *)(&EMS_PFBA[0] + ( 600 * SZ_PARAGRAPH_B));  //  800 -  600 = 200 * 1 PR = 3200 B
+    CONTX_FirstTiles[0]       = (int16_t *)(&EMS_PFBA[0] + ( 800 * SZ_PARAGRAPH_B));  //  825 -  800 =  25 * 1 PR =  400 B
+    CONTX_FirstTiles[1]       = (int16_t *)(&EMS_PFBA[0] + ( 825 * SZ_PARAGRAPH_B));  //  850 -  825 =  25 * 1 PR =  400 B
+    _ai_own_stack_wx          = (&EMS_PFBA[0] + ( 850 * SZ_PARAGRAPH_B));  //  860 -  850 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_wy          = (&EMS_PFBA[0] + ( 860 * SZ_PARAGRAPH_B));  //  870 -  860 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_wp          = (&EMS_PFBA[0] + ( 870 * SZ_PARAGRAPH_B));  //  880 -  870 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_type        = (&EMS_PFBA[0] + ( 880 * SZ_PARAGRAPH_B));  //  890 -  880 =  10 * 1 PR =  160 B  80 2-byte values
+    _ai_own_stack_unit_count  = (&EMS_PFBA[0] + ( 890 * SZ_PARAGRAPH_B));  //  900 -  890 =  10 * 1 PR =  160 B  80 2-byte values
+    CONTX_NmeStrMap[0]        = (&EMS_PFBA[0] + ( 900 * SZ_PARAGRAPH_B));  // 1500 -  900 = 600 * 1 PR = 9600 B
+    CONTX_NmeStrMap[1]        = (&EMS_PFBA[0] + (1500 * SZ_PARAGRAPH_B));  // 2100 - 1500 = 600 * 1 PR = 9600 B
+    CONTX_LoadTileXs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2100 * SZ_PARAGRAPH_B));  // 2200 - 2100 = 100 * 1 PR = 1600 B
+    CONTX_LoadTileXs[1]       =  (int8_t *)(&EMS_PFBA[0] + (2200 * SZ_PARAGRAPH_B));  // 2300 - 2200 = 100 * 1 PR = 1600 B
+    CONTX_LoadTileYs[0]       =  (int8_t *)(&EMS_PFBA[0] + (2300 * SZ_PARAGRAPH_B));  // 2400 - 2300 = 100 * 1 PR = 1600 B
+    CONTX_LoadTileYs[1]       =  (int8_t *)(&EMS_PFBA[0] + (2400 * SZ_PARAGRAPH_B));  // 2500 - 2400 = 100 * 1 PR = 1600 B
+    CONTX_LoadTChain[0]       = (int16_t *)(&EMS_PFBA[0] + (2500 * SZ_PARAGRAPH_B));  // 2700 - 2500 = 200 * 1 PR = 3200 B
+    CONTX_LoadTChain[1]       = (int16_t *)(&EMS_PFBA[0] + (2700 * SZ_PARAGRAPH_B));  // 2900 - 2700 = 200 * 1 PR = 3200 B
+    CONTX_1stLoadTs[0]        = (int16_t *)(&EMS_PFBA[0] + (2900 * SZ_PARAGRAPH_B));  // 3000 - 2900 = 100 * 1 PR = 1600 B
+    CONTX_1stLoadTs[1]        = (int16_t *)(&EMS_PFBA[0] + (3000 * SZ_PARAGRAPH_B));  // 3200 - 3000 = 200 * 1 PR = 3200 B
 
 // mov     ax, _SI_itr
 // shl     ax, 1
-// mov     dx, [EMM_PageFrame]             ; contains the segment address of the EMS page frame
+// mov     dx, [EMS_PFBA]             ; contains the segment address of the EMS page frame
 // add     dx, ax
 // add     dx, 3200
 // push    dx                              ; addr
@@ -2364,7 +2368,7 @@ void EMM_Map_CONTXXX__WIP(void)
     {
 
         // ¿ get a pointer at every 32 bytes, starting at 51200 bytes from the EMM base ?
-        _ai_own_stack_unit_list[itr] = (int16_t *)(&EMM_PageFrame[0] + (3200 * SZ_PARAGRAPH_B) + ((itr * 2) * SZ_PARAGRAPH_B));
+        _ai_own_stack_unit_list[itr] = (int16_t *)(&EMS_PFBA[0] + (3200 * SZ_PARAGRAPH_B) + ((itr * 2) * SZ_PARAGRAPH_B));
         
     }
 

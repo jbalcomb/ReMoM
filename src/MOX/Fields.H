@@ -445,8 +445,11 @@ extern int16_t mouse_cancel_disabled;
 // WZD dseg:8274
 extern int16_t mouse_auto_exit;
 
-// WZD dseg:8276 aNotInUse db 'NOT IN USE',0
-// WZD dseg:8281 db    0
+// WZD dseg:8276
+extern char default_string[12];
+
+// WZD dseg:8281 db    0  // align 2
+
 // WZD dseg:8282 GUI_Edit_Position dw 0                  
 
 // WZD dseg:8284
@@ -508,9 +511,12 @@ extern char cnst_ZeroString_12[];
 // AKA _help_list
 // HELP  help_struct_pointer
 
-// dseg:E874 GUI_Processed_Btns dw 0    
-// dseg:E876 GUI_Processed_LastY dw 0   
-// dseg:E878 GUI_Processed_LastX dw 0   
+// WZD dseg:E874
+extern int16_t last_button_number;
+// WZD dseg:E876
+extern int16_t last_button_y;
+// WZD dseg:E878
+extern int16_t last_button_x;
 
 // WZD dseg:E87A
 // drake178: GUI_EditString

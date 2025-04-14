@@ -16,6 +16,7 @@
     <ProjectGuid>{4851fd01-1e05-46f8-8088-88ffc7d23cbd}</ProjectGuid>
     <RootNamespace>ReMoM</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>MWA_ReMoM</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -23,6 +24,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -30,6 +32,7 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -53,10 +56,11 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>STU_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_STU_WIN;STU_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -73,8 +77,9 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src;C:\STU\devel\ReMoM\src\stu;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\STU\devel\ReMoM\src</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,6 +105,7 @@
     <ClInclude Include="..\..\..\src\CityScr.H" />
     <ClInclude Include="..\..\..\src\City_ovr55.H" />
     <ClInclude Include="..\..\..\src\Combat.H" />
+    <ClInclude Include="..\..\..\src\CREDITS.H" />
     <ClInclude Include="..\..\..\src\DebugSrc.H" />
     <ClInclude Include="..\..\..\src\DIPLOMAC.H" />
     <ClInclude Include="..\..\..\src\EVENTS.H" />
@@ -108,6 +114,7 @@
     <ClInclude Include="..\..\..\src\Help.H" />
     <ClInclude Include="..\..\..\src\HIRE.H" />
     <ClInclude Include="..\..\..\src\Init.H" />
+    <ClInclude Include="..\..\..\src\INTRO.H" />
     <ClInclude Include="..\..\..\src\ItemMake.H" />
     <ClInclude Include="..\..\..\src\Items.H" />
     <ClInclude Include="..\..\..\src\ItemScrn.H" />
@@ -120,6 +127,7 @@
     <ClInclude Include="..\..\..\src\MainMenu.H" />
     <ClInclude Include="..\..\..\src\MainScr.H" />
     <ClInclude Include="..\..\..\src\MainScr_Maps.H" />
+    <ClInclude Include="..\..\..\src\MGC_DATA.H" />
     <ClInclude Include="..\..\..\src\MOM.H" />
     <ClInclude Include="..\..\..\src\MOM_Data.H" />
     <ClInclude Include="..\..\..\src\MOM_DBG.H" />
@@ -150,9 +158,6 @@
     <ClInclude Include="..\..\..\src\special.H" />
     <ClInclude Include="..\..\..\src\Spellbook.H" />
     <ClInclude Include="..\..\..\src\SPLMASTR.H" />
-    <ClInclude Include="..\..\..\src\stu\STU_CHK.H" />
-    <ClInclude Include="..\..\..\src\stu\STU_DBG.H" />
-    <ClInclude Include="..\..\..\src\stu\STU_TYPE.H" />
     <ClInclude Include="..\..\..\src\Surveyor.H" />
     <ClInclude Include="..\..\..\src\Terrain.H" />
     <ClInclude Include="..\..\..\src\TEXTBOX.H" />
@@ -183,12 +188,14 @@
     <ClCompile Include="..\..\..\src\CityScr.C" />
     <ClCompile Include="..\..\..\src\City_ovr55.C" />
     <ClCompile Include="..\..\..\src\Combat.C" />
+    <ClCompile Include="..\..\..\src\CREDITS.C" />
     <ClCompile Include="..\..\..\src\DIPLOMAC.C" />
     <ClCompile Include="..\..\..\src\EVENTS.C" />
     <ClCompile Include="..\..\..\src\Explore.C" />
     <ClCompile Include="..\..\..\src\Help.C" />
     <ClCompile Include="..\..\..\src\HIRE.C" />
     <ClCompile Include="..\..\..\src\Init.C" />
+    <ClCompile Include="..\..\..\src\INTRO.C" />
     <ClCompile Include="..\..\..\src\ItemMake.C" />
     <ClCompile Include="..\..\..\src\Items.C" />
     <ClCompile Include="..\..\..\src\ItemScrn.C" />
@@ -201,8 +208,8 @@
     <ClCompile Include="..\..\..\src\MainMenu.C" />
     <ClCompile Include="..\..\..\src\MainScr.C" />
     <ClCompile Include="..\..\..\src\MainScr_Maps.C" />
+    <ClCompile Include="..\..\..\src\MGC_DATA.C" />
     <ClCompile Include="..\..\..\src\MOM.C" />
-    <ClCompile Include="..\..\..\src\MOM_Data.C" />
     <ClCompile Include="..\..\..\src\MOM_DBG.C" />
     <ClCompile Include="..\..\..\src\MOM_PFL.C" />
     <ClCompile Include="..\..\..\src\MOM_SCR.C" />
@@ -224,9 +231,6 @@
     <ClCompile Include="..\..\..\src\special.C" />
     <ClCompile Include="..\..\..\src\Spellbook.C" />
     <ClCompile Include="..\..\..\src\SPLMASTR.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_CHK.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_DBG.C" />
-    <ClCompile Include="..\..\..\src\stu\STU_UTIL.C" />
     <ClCompile Include="..\..\..\src\Surveyor.C" />
     <ClCompile Include="..\..\..\src\Terrain.C" />
     <ClCompile Include="..\..\..\src\TEXTBOX.C" />
@@ -240,7 +244,6 @@
     <ClCompile Include="..\..\..\src\win_DIR.C" />
     <ClCompile Include="..\..\..\src\win_EMS.C" />
     <ClCompile Include="..\..\..\src\win_Exit.C" />
-    <ClCompile Include="..\..\..\src\win_Fonts.C" />
     <ClCompile Include="..\..\..\src\win_Input.C" />
     <ClCompile Include="..\..\..\src\win_KD.C" />
     <ClCompile Include="..\..\..\src\win_MD.C" />
@@ -255,6 +258,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MoX\MoX.vcxproj">
       <Project>{da90c873-d83f-4cdf-963d-7b733fe10997}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\STU\STU.vcxproj">
+      <Project>{39d8c23a-8f3f-4e95-b17a-be8e6a8e5e5c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

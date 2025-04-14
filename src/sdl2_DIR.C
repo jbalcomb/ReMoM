@@ -1,3 +1,10 @@
+#include "MOX/DIR.H"
+
+#include "MOX/Mouse.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+
+#include "MOM_PFL.H"
 
 // minwinbase.h  WIN32_FIND_DATAA
 // winnt.h  HANDLE
@@ -6,11 +13,12 @@
 #include <tchar.h>
 #include <stdio.h>
 
-#include "MOM.H"
+// #include "SDL.h"
+#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+// #include "SDL_rwops.h"
 
 
 
-// MGC s03p05
 // WZD s03p05
 int32_t LOF(char * file_name)
 {
@@ -19,36 +27,26 @@ int32_t LOF(char * file_name)
 
     Save_Mouse_State();
 
-    // HANDLE CreateFileA(
-    //   [in]           LPCSTR                lpFileName,
-    //   [in]           DWORD                 dwDesiredAccess,
-    //   [in]           DWORD                 dwShareMode,
-    //   [in, optional] LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-    //   [in]           DWORD                 dwCreationDisposition,
-    //   [in]           DWORD                 dwFlagsAndAttributes,
-    //   [in, optional] HANDLE                hTemplateFile
-    // );
-    // dwDesiredAccess (GENERIC_READ | GENERIC_WRITE)
-    hFile = CreateFileA(
-                file_name,
-                GENERIC_READ,
-                FILE_SHARE_READ | FILE_SHARE_WRITE,
-                NULL,
-                OPEN_EXISTING,
-                FILE_ATTRIBUTE_NORMAL,
-                NULL
-    );
-    if (hFile == INVALID_HANDLE_VALUE)
+    hFile = CreateFileA(file_name, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    // //Open file for reading in binary
+    // SDL_RWops * file = SDL_RWFromFile( "33_file_reading_and_writing/nums.bin", "r+b" );
+    // // NULL on failure; SDL_GetError() for more information
+    // //File does not exist
+    // if( file == NULL )
+    // {
+    //     printf( "Warning: Unable to open file! SDL Error: %s\n", SDL_GetError() );
+    //     
+    //     //Create file for writing
+    //     file = SDL_RWFromFile( "33_file_reading_and_writing/nums.bin", "w+b" );
+    // }
+
+    if(hFile == INVALID_HANDLE_VALUE)
     {
-#ifdef STU_DEBUG
-        dbg_prn("DEBUG: [%s, %d]: FAILURE CreateFile(%s): %d\n", __FILE__, __LINE__, file_name, GetLastError());
-        // ERROR_FILE_NOT_FOUND
-        // 2 (0x2)
-#endif
         return 0;  // ST_FAILURE
     }
 
-    if (hFile && hFile != INVALID_HANDLE_VALUE)
+    if(hFile && hFile != INVALID_HANDLE_VALUE)
     {
 
         DWORD lodwFileSize = 0;
@@ -56,10 +54,7 @@ int32_t LOF(char * file_name)
 
         lodwFileSize = GetFileSize(hFile, &hidwFileSize);
 
-
-        // TODO  WTF? warning C4047: '==': 'void *' differs in levels of indirection from 'DWORD'
-        // if(lodwFileSize == INVALID_FILE_SIZE && NULL == hidwFileSize)
-        if (lodwFileSize == INVALID_FILE_SIZE && 0 == hidwFileSize)
+        if(lodwFileSize == INVALID_FILE_SIZE && 0 == hidwFileSize)
         {
             size = 0;  // ST_FAILURE
         }
@@ -82,7 +77,6 @@ int32_t LOF(char * file_name)
 
 }
 
-// MGC s04p01
 // WZD s04p01
 /*
     returns ST_SUCCESS(0), ST_FAILURE(1)

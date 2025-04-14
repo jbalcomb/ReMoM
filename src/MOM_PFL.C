@@ -1,5 +1,14 @@
 
-#include "MOM.H"
+// #include "MOM.H"
+#include "MOX/Fonts.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+
+// #ifdef _STU_SDL2
+#include "sdl2_PFL.H"
+// #include "SDL.h"
+#include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+// #endif
 
 /*
     non-OG-MoM
@@ -8,13 +17,45 @@
 
 int quit_game_flag;
 
-int key_pressed;  // win_KD.C  Keyboard_Status(), Read_Key()
+// #ifdef _STU_SDL2
+/*
+Module: key
+char (1 bytes) key_pressed
+Address: 02:001B42E4
+*/
+int8_t key_pressed;
+// #endif
+// #ifdef _STU_WIN32
+// int key_pressed;  // win_KD.C  Keyboard_Status(), Read_Key()
+// #endif
+
 uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
 
 // DELETE uint8_t g_Palette[768];  // ~== IBM-PC/MS-DOS Video Card's hardware VGA-DAC buffer
 // DELETE uint8_t g_Palette_XBGR[1024];
+// ~== IBM-PC/MS-DOS Video Card's hardware VGA-DAC buffer
+// #ifdef _STU_SDL2
+SDL_Color platform_palette_buffer[256];  // TODO  add manifest constant for platform color count
+// #endif
+#ifdef _STU_WIN
+uint8_t platform_palette_buffer[1024];  // Platform's Shadow Palette: 256 colors * bits/bytes/components per color as required by the platform  e.g., RGB, XBGR, RGBA
+#endif
 
 
+
+/*
+This is platform-layer code.
+It is defined here, because it can not be defined in both sdl2_MOM.C and win_MOM.C
+It is not used by MOM, MOX, or STU.
+*/
+// YNM  int16_t platform_mouse_click_x;
+// YNM  int16_t platform_mouse_click_y;
+// ITRY  int platform_mouse_button_status;
+// left, right, middle, x1, x2; wheel;
+
+int lock_mouse_button_status_flag = ST_FALSE;
+
+int platform_mouse_input_enabled = ST_FALSE;  // ¿ ~=== Mouse Driver Installed, for MS-DOS ?
 
 
 
@@ -108,3 +149,82 @@ uint16_t scan_code_char_code;  // win_KD.C  Read_Key()
 // Meh?          }
 // Meh?      }
 // Meh?  }
+
+/*
+    copy MoX software palette to platform *hardware* palette
+
+    MoO2  Refresh_Palett() |-> Store_Palette_Block_()
+*/
+void Platform_Palette_Update(void)
+{
+    int itr;
+
+// #ifdef _STU_SDL2
+    for (itr = 0; itr < 256; itr++)
+    {
+        platform_palette_buffer[itr].r = (*(current_palette + (itr * 3) + 0) << 2);
+        platform_palette_buffer[itr].g = (*(current_palette + (itr * 3) + 1) << 2);
+        platform_palette_buffer[itr].b = (*(current_palette + (itr * 3) + 2) << 2);
+        platform_palette_buffer[itr].a = 0xFF;
+    }
+// #endif
+#ifdef _STU_WIN
+    for (itr = 0; itr < 256; itr++)  // TODO  ~ #define Color Count
+    {
+        *(platform_palette_buffer + (itr * 4) + 3) = 0x00;
+        *(platform_palette_buffer + (itr * 4) + 2) = (*(current_palette + (itr * 3) + 0) << 2);
+        *(platform_palette_buffer + (itr * 4) + 1) = (*(current_palette + (itr * 3) + 1) << 2);
+        *(platform_palette_buffer + (itr * 4) + 0) = (*(current_palette + (itr * 3) + 2) << 2);
+    }
+#endif
+
+}
+
+
+/*
+
+
+¿ always/only 'On-Page' ?
+
+*/
+void Platform_Video_Update(void)
+{
+    uint8_t * dst;
+    uint8_t * src;
+    int pitch;
+
+
+
+    Platform_Palette_Update();
+
+    SDL_SetPaletteColors(sdl2_surface_RGB666->format->palette, platform_palette_buffer, 0, 256);
+
+
+
+    SDL_LockSurface(sdl2_surface_RGB666);
+
+    pitch = sdl2_surface_RGB666->pitch;
+    dst = (uint8_t *)sdl2_surface_RGB666->pixels;
+    src = video_page_buffer[draw_page_num];
+    for(int y = 0; y < screen_pixel_height; ++y)
+    {
+        memcpy(dst, src, screen_pixel_width);
+        dst += pitch;
+        src += screen_pixel_width;
+    }
+
+    SDL_UnlockSurface(sdl2_surface_RGB666);
+
+
+
+    SDL_LockTexture(sdl2_texture, &sdl2_blit_rect, &sdl2_surface_ARGB8888->pixels, &sdl2_surface_ARGB8888->pitch);
+
+    SDL_LowerBlit(sdl2_surface_RGB666, &sdl2_blit_rect, sdl2_surface_ARGB8888, &sdl2_blit_rect);
+
+    SDL_UnlockTexture(sdl2_texture);
+
+    SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, NULL);
+
+    SDL_RenderPresent(sdl2_renderer);
+
+}

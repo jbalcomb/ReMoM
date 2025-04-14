@@ -14,6 +14,10 @@ MoO2
 
 
 
+
+/*
+NOTE(JimBalcomb,20250302Why do I have two config mom structures?
+*/
 //  ; (sizeof=0x12)
 #pragma pack(push)
 #pragma pack(2)
@@ -31,7 +35,6 @@ struct s_CONFIG_MOM_18
     /* 12 */
 };
 #pragma pack(pop)
-
 //  ; (sizeof=0x14)
 #pragma pack(push)
 #pragma pack(2)

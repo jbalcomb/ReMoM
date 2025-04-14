@@ -145,6 +145,13 @@ extern char secondary_drive_path[];
 
 
 
+// WZD dseg:D494                                                 ovr159
+// WZD dseg:D494
+extern struct s_HELP_DATA * help_data_near_buffer;
+
+// WZD dseg:D496                                                 ; unsigned int save_active
+// WZD dseg:D496 00 00                                           save_active dw 0                        ; DATA XREF: Load_Screen+D1w ...
+
 // WZD dseg:D498
 // drake178: LBX_NearBuf_Mark
 extern int16_t near_buffer_mark;

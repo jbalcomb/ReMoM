@@ -24,11 +24,11 @@ Elsewhere, ...
 
 #include "UnitMove.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/MOX_DEF.H"
 
 #include "Combat.H"
-#include "MOM_Data.H"
 #include "MOM_DEF.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */

@@ -46,6 +46,7 @@ uint16_t _BBBB = 0xBBBB;
 
 
 
+
 //                                          ¿ BEGIN: Allocate.C - Initialized Data ?
 // WZD dseg:727C
 // drake178: LBX_NearBuf_Used
@@ -119,7 +120,14 @@ char secondary_drive_path[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 
 
+// WZD dseg:D494                                                 ovr159
+// WZD dseg:D494
+// drake178: GUI_Help_NearAlloc
+struct s_HELP_DATA * help_data_near_buffer;
+
+// WZD dseg:D496                                                 ; unsigned int save_active
 // WZD dseg:D496 00 00                                           save_active dw 0                        ; DATA XREF: Load_Screen+D1w ...
+
 //                                          ¿ BEGIN: Allocate.C - Uninitialized Data ?
 
 // WZD dseg:D498
@@ -214,6 +222,23 @@ char const * str_allocation_errors[] =
     "Allocation space has been corrupted for",
     " (EMM) "
 };
+
+
+
+
+// struct S {
+//     int i : 1;
+// } s;
+// sizeof(1, s.i); // OK, sizeof(int)
+// // Old-style function declaration (not allowed in C++)
+// int func(a, b)
+// int a, b;
+// {
+//     p = malloc(sizeof(int));
+// 
+//     return a + b;
+// }
+
 
 
 /*

@@ -8,6 +8,10 @@
 
 #include "MOM.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // MGC s03p05

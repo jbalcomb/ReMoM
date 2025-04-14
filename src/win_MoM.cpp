@@ -1,10 +1,16 @@
+
 #include <Windows.h>
 
 #include "win_PFL.hpp"
 
+#include "STU/STU.H"
+
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_TYPE.H"
 #include "MOX/CFG.H"
+#include "MOX/EMM.H"
+#include "MOX/EXIT.H"
 #include "MOX/Fields.H"
 #include "MOX/Fonts.H"
 #include "MOX/Graphics.H"
@@ -13,11 +19,17 @@
 #include "MOX/Timer.H"
 
 #include "ALLOC.H"
+/* NEWCODE */  // #include "CREDITS.H"
 #include "Init.H"
+/* NEWCODE */  // #include "INTRO.H"
 #include "LOADER.H"
 #include "MOM_DBG.H"
 #include "MOM_SCR.H"
 #include "Settings.H"
+
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
 
 
 
@@ -33,23 +45,21 @@ char * GAME_FONT_FILE = &MOM_FONT_FILE[0];  // Create a Pointer to the Character
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
     char found_file[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-// File_Name = byte ptr - 3Eh
+    char file_name[40] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t DIGI_ID = 0;
     int16_t MIDI_ID = 0;
-    int16_t MIDI_DRV = 0;
     int16_t DIGI_DMA = 0;
     int16_t DIGI_IRQ = 0;
     int16_t DIGI_IO = 0;
     int16_t DIGI_DRV = 0;
     int16_t MIDI_IRQ = 0;
     int16_t MIDI_IO = 0;
-// itr_savegams = word ptr - 6
-// file_handle = word ptr - 4
-    SAMB_ptr main_menu_music_seg = 0;  // MGC
-// EMS_Pages_Left = word ptr - 2
-    int16_t midi_driver = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
+    int16_t itr_savegams = 0;
+    FILE *  file_handle = 0;
+    int16_t EMS_Pages_Left = 0;
     int16_t MIDI_DMA = 0;  // _DI_
+    int16_t MIDI_DRV = 0;  // _SI_
+    SAMB_ptr main_menu_music_seg = 0;  // MGC
 
 
     int input_type = 0;
@@ -84,91 +94,91 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     MIDI_IO = config_mom.MIDI_IO;
     MIDI_IRQ = config_mom.MIDI_IRQ;
-    IDK = ST_UNDEFINED;
-    midi_driver = config_mom.MIDI_ID;
+    MIDI_DMA = ST_UNDEFINED;
+    MIDI_ID = config_mom.MIDI_ID;
 
-    switch(midi_driver)
+    switch(MIDI_ID)
     {
         case 0:
         {
-            midi_driver = SND_NONE;
+            MIDI_DRV = SND_NONE;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 1:
         {
-            midi_driver = SND_Speaker;
+            MIDI_DRV = SND_Speaker;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 16:
         {
-            midi_driver = SND_AdLib;
+            MIDI_DRV = SND_AdLib;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 18:
         {
-            midi_driver = SND_SB;
+            MIDI_DRV = SND_SB;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 24:
         {
-            midi_driver = SND_SBPro;
+            MIDI_DRV = SND_SBPro;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 25:
         {
-            midi_driver = SND_PAS;
+            MIDI_DRV = SND_PAS;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 32:
         {
-            midi_driver = SND_SBPro2;
+            MIDI_DRV = SND_SBPro2;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 33:
         {
-            midi_driver = SND_PAS16;
+            MIDI_DRV = SND_PAS16;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 34:
         {
-            midi_driver = SND_ALG;
+            MIDI_DRV = SND_ALG;
             MIDI_IO = ST_UNDEFINED;
             MIDI_IRQ = ST_UNDEFINED;
-            IDK = ST_UNDEFINED;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 48:
         {
-            midi_driver = SND_GMIDI;
-            IDK = ST_UNDEFINED;
+            MIDI_DRV = SND_GMIDI;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 49:
         {
-            midi_driver = SND_Roland;
-            IDK = ST_UNDEFINED;
+            MIDI_DRV = SND_Roland;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
         case 56:
         {
-            midi_driver = SND_GMIDI;
-            IDK = ST_UNDEFINED;
+            MIDI_DRV = SND_GMIDI;
+            MIDI_DMA = ST_UNDEFINED;
         } break;
     }
 
-    if(midi_driver == SND_Roland)
+    if(MIDI_DRV == SND_Roland)
     {
-        DOS_PrintString__STUB(str_Initializing_Roland_Drivers);  // "Initializing Roland Drivers...$"
+        /* NEWCODE */  // DOS_PrintString__STUB(str_Initializing_Roland_Drivers);  // "Initializing Roland Drivers...$"
         Mark_Time();
         Release_Time(20);
     }
@@ -218,7 +228,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         {
             DIGI_DRV = SND_SBPro2;
             MIDI_IRQ = DIGI_IRQ;
-            IDK = DIGI_DMA;
+            MIDI_DMA = DIGI_DMA;
         } break;
         case 33:  /* 0x21 */
         {
@@ -246,7 +256,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         } break;
     }
 
-    if(midi_driver == SND_AdLib)
+    if(MIDI_DRV == SND_AdLib)
     {
         DIGI_DRV = SND_AdLib;
     }
@@ -283,7 +293,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         Initialize PFL - The Platform-Layer
     */
     // Init_Drivers(VIDEO_MODE, MOM_FONT_FILE);
-    Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, midi_driver, MIDI_IO, MIDI_IRQ, IDK, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
+    Init_Drivers(magic_set.input_type, magic_set.sound_channels, MOM_FONT_FILE, MIDI_DRV, MIDI_IO, MIDI_IRQ, MIDI_DMA, DIGI_DRV, DIGI_IO, DIGI_IRQ, DIGI_DMA);
 
 
 
@@ -334,11 +344,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     // MoO2: Draw_Logos()
     // TODO  c0argv == 'J','E','N','N','Y'
     // TODO  j_GAME_PlayIntro()
+    /* NEWCODE */  // Draw_Logos();
 
 
 
     // MoO2: Init_Credits() <-| Load_Credits() <-| Main_Menu_Screen()
     // TODO  j_Init_Credits()
+    /* NEWCODE */  // Init_Credits();
+
     Stop_Music__STUB();
     main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
     if(magic_set.background_music == ST_TRUE)

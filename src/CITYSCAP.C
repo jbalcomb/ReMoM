@@ -1116,45 +1116,57 @@ void Cityscape_Set_BldgStruc__WIP(int16_t city_idx, int16_t bldg_idx)
 
         if(house_count == 0)
         {
+
             house_count = 1;
+
         }
 
         var_1C = 3;
 
-        IDK_itr_bldg = 0;
-
-        while(IDK_itr_bldg < house_count)
+        for(IDK_itr_bldg = 0; IDK_itr_bldg < house_count; IDK_itr_bldg++)
+        
         {
             col = ((Random((var_1C + 1)) + 10) - (var_1C / 2));
+
             row = ((Random((var_1C + 1)) +  6) - (var_1C / 2));
 
             if((col >= 0) && (col < 23) && (row >= 0) && (row < 15))
             {
-                if(
-                  cityscape_bldg_array->cr[(row + 0)][(col + 0)].bldg_idx == 0
-                )
+
+                if(cityscape_bldg_array->cr[row][col].bldg_idx == 0)
                 {
-                    cityscape_bldg_array->cr[(row + itr1)][(col + itr2)].bldg_idx = 2;
-                    IDK_itr_bldg++;
+
+                    cityscape_bldg_array->cr[row][col].bldg_idx = 2;
+
                 }
+
             }
             else
             {
+
                 if(Random(4) == 1)
                 {
+
                     if(var_1C < 30)
                     {
+
                         var_1C++;
+
                     }
+
                 }
 
                 if(Random(4) != 1)
                 {
+
                     IDK_itr_bldg--;
+
                 }
                 
             }
+
         }
+
     }
     /*
         END:  houses

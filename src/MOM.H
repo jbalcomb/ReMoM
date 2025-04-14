@@ -2,6 +2,7 @@
 #define MOM_H
 
 /* ~ STGE */
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_BITS.H"
 #include "MOX/MOX_DAT.H"
@@ -69,7 +70,6 @@
 #include "MagicScr.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MOM_Data.H"
 #include "MOM_DBG.H"
 #include "MOM_DEF.H"
 #include "MOM_PFL.H"
@@ -105,14 +105,14 @@
 #include "WZD_o143.H"
 
 #ifdef STU_DEBUG
-#include "STU_DBG.H"
+#include "STU/STU_DBG.H"
 #endif
 #include "STU/STU_DBG.H"
 
 #include <assert.h>
 #include <math.h>       /* sqrt() */
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), fseek(); */
-#include <stdlib.h>     /* abs(); itoa(); */
+#include <stdlib.h>     /* abs(); itoa(); malloc(); */
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 

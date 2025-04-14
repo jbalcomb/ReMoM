@@ -1,9 +1,9 @@
 #include "MOX_DAT.H"
 
+#include "MOM_Data.H"  /* struct s_WIZARD*/
 #include "MOX_TYPE.H"
 
 #include "../MOM_DEF.H"  /* NUM_PLAYERS */
-#include "../MOM_Data.H"  /* struct s_WIZARD*/
 
 
 

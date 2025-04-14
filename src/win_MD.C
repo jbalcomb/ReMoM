@@ -8,13 +8,6 @@
 
 
 
-// YNM  int16_t platform_mouse_click_x;
-// YNM  int16_t platform_mouse_click_y;
-int16_t platform_mouse_button_status;
-// left, right, middle, x1, x2; wheel;
-
-int16_t lock_mouse_button_status_flag = ST_FALSE;
-
 // WZD s35p05
 int16_t Mouse_Button(void)
 {
@@ -55,21 +48,21 @@ void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
         return;
     }
 
-    g_mouse_x = l_mx / 2;
-    g_mouse_y = l_my / 2;
-    
-    platform_mouse_button_status = buttons;
+    pointer_x = l_mx / 2;
+    pointer_y = l_my / 2;
 
-    if (mouse_interrupt_active == ST_FALSE)
+    platform_mouse_button_status = buttons;  // 1oom does this in Check_Mouse_Buffer()
+
+    if(mouse_interrupt_active == ST_FALSE)
     {
         mouse_interrupt_active = ST_TRUE;
 
         Check_Mouse_Buffer((l_mx / 2), (l_my / 2), buttons);
 
-        if (mouse_enabled == ST_TRUE)
+        if(mouse_enabled == ST_TRUE)
         {
             mouse_enabled = ST_FALSE;
-            if (current_mouse_list_count >= 2)
+            if(current_mouse_list_count >= 2)
             {
                 Check_Mouse_Shape((l_mx / 2), (l_my/ 2));
             }

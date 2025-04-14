@@ -42,7 +42,8 @@ https://stackoverflow.com/questions/76149260/synchronizing-a-game-loop-to-a-desi
 uint32_t tick_count;
 
 // ~== INT 1A,0 - Read System Clock Timer
-uint32_t Get_System_Clock_Counter(void)
+// uint32_t Get_System_Clock_Counter(void)
+uint32_t Read_System_Clock_Timer(void)
 {
     uint32_t dos_tick_count = 0;
     DWORD win_tick_count = 0;
@@ -54,12 +55,13 @@ uint32_t Get_System_Clock_Counter(void)
     return dos_tick_count;
 }
 
+// WZD s02p03
 void Release_Time(int ticks)
 {
     uint32_t current_tick_count = 0;
     do
     {
-        current_tick_count = Get_System_Clock_Counter();
+        current_tick_count = Read_System_Clock_Timer();
     } while(current_tick_count < tick_count + ticks);
     
 // TODO  // HMH Day 10
@@ -162,17 +164,19 @@ void Release_Time(int ticks)
 
 }
 
+// WZD s02p01
 void Mark_Time(void)
 {
-    tick_count = Get_System_Clock_Counter();
+    tick_count = Read_System_Clock_Timer();
 }
 
+// WZD s02p02
 uint32_t Time_Passed(void)
 {
-    return Get_System_Clock_Counter() - tick_count;
+    return Read_System_Clock_Timer() - tick_count;
 }
 
 uint32_t Timer_Value(void)
 {
-    return Get_System_Clock_Counter();
+    return Read_System_Clock_Timer();
 }

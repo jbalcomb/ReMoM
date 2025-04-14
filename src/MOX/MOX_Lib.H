@@ -1,13 +1,13 @@
 #ifndef MOX_LIB_H
 #define MOX_LIB_H
 
+#include "MOM_Data.H"
 #include "MOX_BASE.H"
 #include "MOX_BITS.H"
 #include "MOX_DEF.H"
 #include "MOX_TYPE.H"
 
 #include "../MOM_DEF.H"
-#include "../MOM_Data.H"
 
 #include "MOX_T4.H"  // ~ MOX & MOX2 //MoO2
 
@@ -38,7 +38,9 @@
 #include "Video2.H"
 
 #ifdef STU_DEBUG
-#include "STU_DBG.H"    /* DLOG() */
+// #include "STU/STU_DBG.H"    /* DLOG() */
+// #include "STU_DBG.H"    /* DLOG() */
+#include "../STU/STU_DBG.H"    /* DLOG() */
 #endif
 
 #include <assert.h>

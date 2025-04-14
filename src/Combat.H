@@ -410,7 +410,7 @@ EMM_FIGUREX_Init__HACK()
         offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
     }
     offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));  // 28 * 30 = 840 / 16 = 52.5 PR per figure picture
-    EMM_PageFrame = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
+    EMS_PFBA = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
 
 USELESS_Combat_Figure_Load_Compose()
     if((battle_unit_figure_idx & 0x1) == 0)
@@ -423,7 +423,7 @@ USELESS_Combat_Figure_Load_Compose()
     }
     offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
     EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
-    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+    figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 Combat_Figure_Compose_USEFULL()
@@ -437,7 +437,7 @@ Combat_Figure_Compose_USEFULL()
             offset = (512 * SZ_PARAGRAPH_B);
         }
         offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
-        figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+        figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
         ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 Combat_Figure_Load()
@@ -451,7 +451,7 @@ Combat_Figure_Load()
         offset = (512 * SZ_PARAGRAPH_B);  // 512 PR, 8192 B; 512 / 56 = 9.14 ... ¿ 2 sets of 9 figure pictures ?
     }
     offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
-    figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);  // 16-byte header + 8 8-byte pointers = (16 + (8 * 8)) = (16 + (64)) / 16 = 5
+    figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);  // 16-byte header + 8 8-byte pointers = (16 + (8 * 8)) = (16 + (64)) / 16 = 5
     ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 Pieces & Parts
@@ -468,7 +468,7 @@ Pieces & Parts
         }
         offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
 
-    3)  figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33);
+    3)  figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33);
         ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 
 EMM_FIGUREX_Init__HACK()
@@ -486,7 +486,7 @@ Combat_Figure_Load()
 // 
 #define FIGUREX_MAP         EMM_FIGUREX_Init__HACK(battle_unit_figure_idx);
 #define FIGUREX_OFFSET      if((battle_unit_figure_idx & 0x1) == 0) { offset = 0; } else { offset = (512 * SZ_PARAGRAPH_B); } offset += (battle_unit_figure_idx * (56 * SZ_PARAGRAPH_B));
-#define FIGUREX_POINTER     figure_pointer_seg = Allocate_First_Block((EMM_PageFrame + offset), 33); ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
+#define FIGUREX_POINTER     figure_pointer_seg = Allocate_First_Block((EMS_PFBA + offset), 33); ptr_figure_pointer_seg = (SAMB_ptr *)figure_pointer_seg;
 /*
     Global Battle Unit Macros
 
@@ -1040,7 +1040,8 @@ extern SAMB_ptr IMG_CMB_SorcNode;
 extern SAMB_ptr IMG_CMB_NatNode;
 
 // WZD dseg:D076
-extern SAMB_ptr IMG_CMB_Volcano[8];
+// NEWCODE  extern SAMB_ptr IMG_CMB_Volcano[8];
+extern SAMB_ptr IMG_CMB_Volcano[9];
 
 // WZD dseg:D088
 extern SAMB_ptr IMG_CMB_DarkWall[14];

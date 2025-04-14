@@ -1,16 +1,12 @@
 /*
     WIZARDS.EXE
-        ovr126
-
-    Moo2
-        Module: REPORT
-
+        seg012
+        seg013
 */
 
 #ifndef EMM_H
 #define EMM_H
 
-// #include "MOX_Lib.H"
 #include "MOX_TYPE.H"
 
 
@@ -18,10 +14,18 @@
 // ; (sizeof=0xC)
 struct s_EMM_RECORD
 {
-    /* 0x00 */ char HandleName[9];
-    /* 0x09 */ char Reserved;
-    /* 0x0A */ uint16_t Handle;
+    /* 0x00 */ char name[9];  // 8 characters + null-terminator
+    /* 0x09 */ char reserved;
+    /* 0x0A */ uint16_t handle;
     /* 0x0C */ 
+};
+
+//  ; (sizeof=0x4, standard type)
+struct s_EMM_L2P_MAP_RECORD
+{
+    /* 0x00 */ uint16_t Logical_Page;
+    /* 0x02 */ uint16_t Physical_Page;
+    /* 0x04 */
 };
 
 
@@ -29,18 +33,21 @@ struct s_EMM_RECORD
 // WZD dseg:760C                                                 BEGIN:  seg012 - Initialized Data
 
 // WZD dseg:760C
-extern SAMB_ptr EMM_PageFrame;
-// WZD dseg:760C                                                                                         ; contains the segment address of the EMS page frame
+extern SAMB_ptr EMS_PFBA;
+
 // WZD dseg:760E 45 4D 4D 58 58 58 58 30 00                      EMM_DevName db 'EMMXXXX0',0             ; DATA XREF: EMM_DetectDevice:loc_16AA0o
-// WZD dseg:7617 00 00 00 00 00 00 01 00 00 00 02 00 00 00 03 00 EMM_Log2Phys_Map EMM_L2P_Map_Record <0, 0>
-// WZD dseg:7617                                                                                         ; DATA XREF: EMM_Map4Pages:loc_16D34w ...
-// WZD dseg:7617                                                 EMM_L2P_Map_Record <0, 1>
-// WZD dseg:7617                                                 EMM_L2P_Map_Record <0, 2>
-// WZD dseg:7617                                                 EMM_L2P_Map_Record <0, 3>
+
+// WZD dseg:7617
+extern struct s_EMM_L2P_MAP_RECORD EMM_Log2Phys_Map[4];
+
 // WZD dseg:7627 00                                              db    0
-// WZD dseg:7628 28 00                                           EMM_Pages_Reserved dw 40                ; DATA XREF: _main+8w ...
-// WZD dseg:7628                                                                                         ; set to 9E at the start of _main
-// WZD dseg:762A 00 00                                           EMM_Open_Handles dw 0                   ; DATA XREF: EMM_Startup:loc_16DB5w ...
+
+// WZD dseg:7628
+extern int16_t EMM_Pages_Reserved;
+
+// WZD dseg:762A
+extern int16_t EMM_Open_Handles;
+
 // WZD dseg:762C 59 4F 20 4D 4F 4D 41 00                         cnst_EMM_Hnd1 db 'YO MOMA',0            ; DATA XREF: EMM_Startup+3Ao ...
 // WZD dseg:7634 59 4F 20 4D 4F 4D 41 00                         cnst_EMM_Hnd12 db 'YO MOMA',0           ; DATA XREF: EMM_Startup+6Ao
 // WZD dseg:7634                                                                                         ; should use dseg:762c
@@ -72,17 +79,26 @@ extern SAMB_ptr EMM_PageFrame;
 // WZD dseg:E5EA                                                 BEGIN:  seg013 - Unitialized Data
 
 // WZD dseg:E5EA 00 00                                           UU_EMMData_PrevLvl dw 0                 ; DATA XREF: UU_EMM_Data_Mark+6w ...
-// WZD dseg:E5EC 00 00                                           g_EmmHndl_OVERXYZ dw 0                  ; DATA XREF: _main+302w ...
+
+// WZD dseg:E5EC
+extern int16_t g_EmmHndl_OVERXYZ;
+
 // WZD dseg:E5EE 00 00                                           EMM_Data_Level dw 0                     ; DATA XREF: EMM_Startup+18Ew ...
 // WZD dseg:E5F0 00 00                                           _EMMDATAH_seg dw 0                      ; DATA XREF: EMM_Startup+18Bw ...
 // WZD dseg:E5F2 00 00                                           dw 0
+
 // WZD dseg:E5F4
 extern byte_ptr _VGAFILEH_seg;
+
 // WZD dseg:E5F6 00 00                                           g_EmmRsvd dw 0                          ; DATA XREF: EMM_LBX_EntryLoader:@@EmmHndlNmExistsr ...
 // WZD dseg:E5F8 00 00                                           EmmHndlNbr_YOMOMA dw 0                  ; DATA XREF: EMM_Startup+1Bw ...
 // WZD dseg:E5FA 00 00                                           EMM_OK dw 0                             ; DATA XREF: EMM_Startup:loc_16E33w ...
-// WZD dseg:E5FC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+EMM_Table s_EMM_RECORD 28h dup(<0>)     ; DATA XREF: EMM_Startup+8Bt ...
-// WZD dseg:E7DC 00 00                                           EMM_MinKB dw 0                          ; DATA XREF: EMS_SetMinKB:loc_18645w ...
+
+// WZD dseg:E5FC
+extern struct s_EMM_RECORD EMM_Table[40];
+
+// WZD dseg:E7DC
+/* private */ // extern int16_t EMM_MinKB;
 
 // WZD dseg:E7DC                                                 END:  seg013 - Unitialized Data
 
@@ -93,6 +109,149 @@ extern byte_ptr _VGAFILEH_seg;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+/*
+    WIZARDS.EXE seg012
+*/
+
+// WZD s12p01
+// EMM_DetectDevice()
+
+// WZD s12p02
+// EMM_GetHandleCount()
+
+// WZD s12p03
+// EMM_GetFreePageCnt()
+
+// WZD s12p04
+// EMM_GetPageCount()
+
+// WZD s12p05
+// EMM_MakeNamedHandle()
+
+// WZD s12p06
+// EMM_GetHandleName()
+
+// WZD s12p07
+void EMM_ReleaseHandle__SUTB(int16_t handle);
+
+// WZD s12p08
+// EMM_MapnRead()
+
+// WZD s12p09
+// EMM_MapnWrite()
+
+// WZD s12p10
+// EMM_GetPageFrame()
+
+// WZD s12p11
+// EMM_MapFourPages()
+
+// WZD s12p12
+void EMM_Map4Pages(int emsFirst, SAMB_ptr emsHandle);
+
+
+/*
+    WIZARDS.EXE seg013
+*/
+
+// WZD s13p01
+void EMM_Startup(void);
+
+// WZD s13p02
+// EMM_Load_LBX_File_0()
+
+// WZD s13p03
+// EMM_Load_LBX_File_1()
+
+// WZD s13p04
+// EMM_Load_LBX_File()
+
+// WZD s13p05
+// RP_EMM_LoadLBX2Hnd()
+
+// WZD s13p06
+// RP_EMM_LoadLBX2Hnd2()
+
+// WZD s13p07
+// UU_EMM_LoadLBX_Fail()
+
+// WZD s13p08
+// UU_EMM_CustLoadLBX()
+
+// WZD s13p09
+// UU_EMM_CustLoadLBX2()
+
+// WZD s13p10
+// UU_EMM_CustomLBXLoad()
+
+// WZD s13p11
+// EMM_LBX_EntryLoader()
+
+// WZD s13p12
+// EMM_LBX_Load_Picture_Header()
+
+// WZD s13p13
+// EMM_LBX_RecLoader()
+
+// WZD s13p14
+// EMM_LBXR_DirectLoad()
+
+// WZD s13p15
+// EMM_CheckHandleOpen()
+
+// s13p16
+void EMM_ReleaseAll__STUB(void);
+
+// WZD s13p17
+// EMM_Release_Resd()
+
+// WZD s13p18
+// UU_EMM_ReleaseHnd()
+
+// WZD s13p19
+// UU_EMM_Available()
+
+// WZD s13p20
+// EMM_GetHandle()
+
+// WZD s13p21
+// RP_EMM_VGAWrite_fP5()
+
+// WZD s13p22
+// RP_EMM_VGARead_fP5()
+
+// WZD s13p23
+// RP_EMM_VGAWrite_P5()
+
+// WZD s13p24
+// RP_EMM_VGARead_P5()
+
+// WZD s13p25
+// EMM_Map_DataH()
+
+// WZD s13p26
+// EMM_EMMDATAH_AllocFirst()
+
+// WZD s13p27
+// EMM_EMMDATAH_AllocNext()
+
+// WZD s13p28
+// UU_EMM_Data_Mark()
+
+// WZD s13p29
+// UU_EMM_Data_Undo()
+
+// WZD s13p30
+// UU_EMM_LBX_Load2Hnd()
+
+// WZD s13p31
+void EMM_Set_Minimum(int amount);
+
+// WZD s13p32
+void EMM_GetLowString(char * string);
 
 
 

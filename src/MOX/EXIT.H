@@ -25,7 +25,7 @@ extern "C" {
 // void Exit_With_Size(void);
 
 // WZD s05p02
-// TODO  void Exit_With_Message(char * string);
+void Exit_With_Message(char * string);
 
 // WZD s05p03
 // void Exit_With_Value(int16_t value);
@@ -49,10 +49,10 @@ extern "C" {
 */
 
 // WZD s06p01
-// VGA_SetTextMode()
+void Reset_Video(void);
 
 // WZD s06p02
-// TODO  void Quit_With_Message(char * string);
+void Quit_With_Message(char * string);
 
 // WZD s06p03
 // UU_DOS_PrintString2()
@@ -62,10 +62,29 @@ extern "C" {
 
 // WZD s06p05
 // s06p05_Empty_pFxn()
+void DBG_Open_ERROR_LOG__STUB(void);
 
 // WZD s06p06
 // s06p06_Empty_pFxn()
+void DBG_Close_ERROR_LOG__STUB(void);
+/*
 
+; In MoO1
+; this is closing ERRROR.LOG
+
+*/
+// ; int __far DBG_Close_ERROR_LOG(void)
+// proc DBG_Close_ERROR_LOG far
+// push    es
+// push    ds
+// push    si
+// push    di
+// pop     di
+// pop     si
+// pop     ds
+// pop     es
+// retf
+// endp DBG_Close_ERROR_LOG
 
 
 #ifdef __cplusplus

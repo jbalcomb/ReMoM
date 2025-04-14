@@ -260,7 +260,7 @@ so, 300 PRs, + 1 for the SAMB header
     AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes
 
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
-    // EMM_PageFrame = Allocate_Space(((4 * 16384) / 16));
+    // EMS_PFBA = Allocate_Space(((4 * 16384) / 16));
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
 }

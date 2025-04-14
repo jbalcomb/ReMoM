@@ -9,7 +9,25 @@
 #ifndef GENDRAW_H
 #define GENDRAW_H
 
-#include "MOX_Lib.H"
+#include "EMM.H"
+#include "MOX_TYPE.H"
+#include "TEXTBOX.H"
+
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
+
+
+
+/*
+¿ ~== MoO2's Save_Block_To_Drive() in Text_Box_Startup_() ?
+~== Save_ScreenSeg()
+¿ ~== MoO2's Restore_Block_From_Drive() in Text_Box_Cleanup_() ?
+~== Restore_ScreenSeg()
+*/
+
+#define SAVE_SCREEN_SEG     { EMS_PFBA = EMM_Map4Pages_VGAFILEH1234(); memcpy(&EMS_PFBA[0], &_screen_seg[0], 32768); memcpy(&EMS_PFBA[(2048 * SZ_SEGMENT)], &_screen_seg[(2048 * SZ_SEGMENT)], 32768); }
+#define RESTORE_SCREEN_SEG  { EMS_PFBA = EMM_Map4Pages_VGAFILEH1234(); memcpy(&_screen_seg[0], &EMS_PFBA[0], 32768); memcpy(&_screen_seg[(2048 * SZ_SEGMENT)], &EMS_PFBA[(2048 * SZ_SEGMENT)], 32768); }
+
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,3 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include "STU_CHK.H"
 
 #include "STU.H"
 #include "STU_TYPE.H"
@@ -6,7 +9,7 @@
 #include "STU_UTIL.H"   /* get_datetime() */
 #include "STU_CHK.H"
 
-#include "../MOM_Data.H"
+#include "../MOX/MOM_Data.H"
 
 #include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
 

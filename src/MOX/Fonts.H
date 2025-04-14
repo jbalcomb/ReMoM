@@ -37,7 +37,7 @@
 
 
 
-#define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (p_Palette), (768 + (_palette_index_)) ) )
+#define PALETTE_FLAG(_palette_index_)                  ( GET_1B_OFS( (current_palette), (768 + (_palette_index_)) ) )
 
 
 
@@ -169,7 +169,8 @@ extern byte_ptr remap_color_palettes;   // alloc in Load_Font_File()  set in Cre
 // WZD  dseg:E7E6 00 00                                           UU_DAC_Save_Seg dw 0     
 
 // WZD dseg:E7E8
-// current_palette
+extern uint8_t * current_palette;
+extern uint8_t * palette_flags;
 
 // WZD dseg:E7EA
 // char font_name[16];                             // set in Load_Font_File()
@@ -179,18 +180,11 @@ extern byte_ptr remap_color_palettes;   // alloc in Load_Font_File()  set in Cre
 extern SAMB_ptr Intensity_Scale_Tbl;  // alloc in Load_Font_File()  used in Gray_Scale_Bitmap()
 // ¿ MoO2 ~ remap_gray_scale_palette ?
 
-
 // WZD dseg:E820
 extern SAMB_ptr font_style_data;                       // alloc & load in Load_Font_File()
 
 extern byte_ptr mouse_palette;                         // MGC dseg:A81A    set in Load_Palette()  16 (16*16) cursor images
 
-extern byte_ptr p_Palette;                             // MGC dseg:A7DE    alloc in Load_Font_File()
-extern byte_ptr current_palette;
-
-extern byte_ptr p_PaletteFlags;                        // MGC dseg:A7D6    alloc in Load_Font_File()
-// DELETE  extern byte_ptr p_Palette_XBGR;                        // STU/Win32
-extern byte_ptr palette_flags;
 
 
 

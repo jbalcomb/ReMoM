@@ -1,19 +1,29 @@
 
-#include "MOM.H"
+#include "MOX/Fields.H"
+#include "MOX/MOX_DEF.H"
+#include "MOX/MOX_TYPE.H"
+#include "MOX/Video.H"
+
+#include "MOM_PFL.H"
+
+#include "sdl2_PFL.H"
 
 
 
 // WZD s36p66
-// MGC s34p66
 /*
     returns field_idx/num
 */
 int16_t Get_Input(void)
 {
-
     int16_t field_index;
 
+// #ifdef _STU_SDL2
+    Platform_Event_Handler();
+// #endif
+#ifdef _STU_WIN
     Pump_Events();
+#endif
 
     if(input_delay > 0)
     {
@@ -43,4 +53,5 @@ int16_t Get_Input(void)
     Set_Page_Off();
 
     return field_index;
+
 }

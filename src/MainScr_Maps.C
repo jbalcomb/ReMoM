@@ -1467,8 +1467,8 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
                         l_terrain_001_1 += terrain_anim_ctr;
                     }
 
-                    // MS-DOS  // Dasm  terrain_pict_seg = EMM_PageFrame[( (((((m_terrain_lbx_001 * 2) + m_terrain_lbx_001) * 2) * 2) *2) )];
-                    // MS-DOS  terrain_pict_seg = EMM_PageFrame[(m_terrain_lbx_001 * 24)];  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
+                    // MS-DOS  // Dasm  terrain_pict_seg = EMS_PFBA[( (((((m_terrain_lbx_001 * 2) + m_terrain_lbx_001) * 2) * 2) *2) )];
+                    // MS-DOS  terrain_pict_seg = EMS_PFBA[(m_terrain_lbx_001 * 24)];  // segments; 24 * 16 = 384, sizeof pict; 180h offset from File, not Entry
                     // MS-DOS  if(terrain_000_elpn != terrain_001_0)
                     // MS-DOS  {
                     // MS-DOS      EMM_Map4Pages(terrain_001_0, g_EmmHndl_TERRAIN); // First Logical Page, EMM Handle Name
@@ -2713,7 +2713,7 @@ void Cartograph_Screen_Draw_Map_Terrain__NOWORKIE(int16_t cartograph_plane, SAMB
                 }
 
                 // drake178: ; * 180h, from FILE start, not entry start!  ; contains the segment address of the EMS page frame
-                // TODO  terrain_pict_seg = (EMM_PageFrame + (m_terrain_lbx_001 * 2 * 2 * 2));
+                // TODO  terrain_pict_seg = (EMS_PFBA + (m_terrain_lbx_001 * 2 * 2 * 2));
 
                 // if(terrain_000_elpn != m_terrain_lbx_001)
                 // {

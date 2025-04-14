@@ -1,6 +1,8 @@
 
 #include "MOM_SCR.H"
 
+#include "STU/STU_CHK.H"
+
 #include "MOX/MOX_BASE.H"
 #include "MOX/MOX_T4.H"  // ~ MOX & MOX2 //MoO2
 #include "MOX/Fields.H"
@@ -29,6 +31,11 @@
 #include "SBookScr.H"
 #include "SCORE.H"      // Hall Of Fame (HoF)
 #include "SPLMASTR.H"
+
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // WZD s01p02

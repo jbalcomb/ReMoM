@@ -24,6 +24,10 @@
 #include "WZD_o059.H"
 #include "CityScr.H"  /* City_Screen__WIP(); */
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // WZD dseg:5E92                                                 BEGIN:  ovr119 - Initialized Data

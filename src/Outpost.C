@@ -576,7 +576,7 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
     char city_name[16];
     int16_t y_start;
     int16_t x_start;
-    int16_t UU_Edit_Return;
+    int16_t input_box_result;
 
     PageFlipEffect = 0;
 
@@ -626,7 +626,7 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
 
     Set_Alias_Color(103);
 
-    UU_Edit_Return = Input_Box_Popup((x_start + 16), (y_start + 21), 75, city_name, 12, 0, 0, 0, &colors[0], ST_UNDEFINED);
+    input_box_result = Setup_Input_Box_Popup((x_start + 16), (y_start + 21), 75, city_name, 12, 0, 0, 0, &colors[0], ST_UNDEFINED);
 
     // ; trims white space from the beginning and end of the passed string
     // ; BUGGED: will only remove one trailing space if there are multiple

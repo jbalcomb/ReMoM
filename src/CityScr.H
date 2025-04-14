@@ -72,7 +72,7 @@ void City_Screen_Draw_Buttons(void);
 void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t bldg_idx);
 
 // WZD o54p09
-void NameStartingCity_Dialog_Popup(int16_t city_idx);
+void Change_Home_City_Name_Popup(int16_t city_idx);
 
 // WZD o54p10
 void Draw_NameStartingCity_Background(void);

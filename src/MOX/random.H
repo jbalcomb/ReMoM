@@ -57,6 +57,12 @@ void Randomize(void);
 // WZD s22p08
 int16_t Random(int16_t max);
 
+// win_CLK.C  /* Get_System_Clock_Counter() */
+// uint32_t Get_System_Clock_Counter(void);
+// uint32_t Read_System_Clock_Timer(void);
+uint64_t Read_System_Clock_Timer(void);
+
+
 
 #ifdef __cplusplus
 }

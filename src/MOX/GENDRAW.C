@@ -23,6 +23,7 @@ Notify
 
 #include "MOX_DAT.H"  /* _screen_seg */
 #include "MOX_SET.H"  /* magic_set */
+#include "MOX_TYPE.H"
 #include "EMM.H"
 #include "Fields.H"
 #include "FLIC_Draw.H"
@@ -35,7 +36,7 @@ Notify
 #include "Util.H"
 #include "Video.H"
 
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 
 
@@ -434,13 +435,19 @@ int16_t Confirmation_Box(char * text_string)
         }
 
         Confirmation_Box_Draw();
+        
         PageFlip_FX();
+
     }
 
     Deactivate_Auto_Function();
+
     Clear_Fields();
+
     Restore_Alias_Colors();
+
     Reset_Window();
+
     Restore_ScreenSeg();
 
     return choice;
@@ -1940,39 +1947,7 @@ void ITEM_ResetViewGrow(void)
 */
 void Save_ScreenSeg(void)
 {
-// ovr159
-// call    j_EMM_Map_VGAFILEH1_5           ; maps in pages 1 - 5 of the VGAFILEH EMM handle ; returns the page frame segment
-// mov     _SI_EMM_PageFrame, ax           ; EMM_PageFrame
-// xor     ax, ax
-// mov     dx, 32768
-// push    ax
-// push    dx                              ; count
-// push    [_screen_seg]                   ; 203h + 11F8h LBX_Alloc_Space paragraphs
-// xor     ax, ax
-// push    ax                              ; src
-// push    _SI_EMM_PageFrame
-// xor     ax, ax
-// push    ax                              ; dst
-// call    _fmemcpy
-// xor     ax, ax
-// mov     dx, 32768
-// push    ax
-// push    dx                              ; count
-// mov     ax, [_screen_seg]               ; 203h + 11F8h LBX_Alloc_Space paragraphs
-// add     ax, 2048
-// push    ax
-// xor     ax, ax
-// push    ax                              ; src
-// mov     ax, _SI_EMM_PageFrame
-// add     ax, 2048
-// push    ax
-// xor     ax, ax
-// push    ax                              ; dst
-// call    _fmemcpy
-
-    memcpy(_VGAFILEH_seg, _screen_seg, 32768);
-    memcpy(_VGAFILEH_seg+32768, _screen_seg+32768, 32768);
-
+    SAVE_SCREEN_SEG
 }
 
 // WZD o149p22
@@ -1991,37 +1966,5 @@ void Save_ScreenSeg(void)
 */
 void Restore_ScreenSeg(void)
 {
-// ovr159
-// call    j_EMM_Map_VGAFILEH1_5           ; maps in pages 1 - 5 of the VGAFILEH EMM handle ; returns the page frame segment
-// mov     _SI_EMM_PageFrame, ax           ; EMM_PageFrame
-// xor     ax, ax
-// mov     dx, 32768
-// push    ax
-// push    dx                              ; count
-// push    _SI_EMM_PageFrame
-// xor     ax, ax
-// push    ax                              ; src
-// push    [_screen_seg]                   ; 203h + 11F8h LBX_Alloc_Space paragraphs
-// xor     ax, ax
-// push    ax                              ; dst
-// call    _fmemcpy                        ; _fmemcpy(0, _screen_seg, 0, EMM_PageFrame, 32768, 0)
-// xor     ax, ax
-// mov     dx, 32768
-// push    ax
-// push    dx                              ; count
-// mov     ax, _SI_EMM_PageFrame
-// add     ax, 2048
-// push    ax
-// xor     ax, ax
-// push    ax                              ; src
-// mov     ax, [_screen_seg]               ; 203h + 11F8h LBX_Alloc_Space paragraphs
-// add     ax, 2048
-// push    ax
-// xor     ax, ax
-// push    ax                              ; dst
-// call    _fmemcpy                        ; _fmemcpy(0, _screen_seg+32768, 0, EMM_PageFrame+32768, 32768, 0)
-
-    memcpy(_screen_seg, _VGAFILEH_seg, 32768);
-    memcpy(_screen_seg+32768, _VGAFILEH_seg+32768, 32768);
-
+    RESTORE_SCREEN_SEG
 }

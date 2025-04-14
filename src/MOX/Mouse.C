@@ -56,9 +56,21 @@ int16_t mouse_driver_installed = ST_FALSE;
 int16_t MOUSE_Usable = ST_FALSE;
 
 // WZD dseg:78C2
-int16_t g_mouse_x = 158;
+// MoO2  Module: video  signed integer (2 bytes) mouse_x  Address: 02 : 001B3A38
+/*
+    ~== pomter_x
+    (only?) used for the pointer  (AKA cursor image)
+*/
+// MoO2  Module: video  signed integer (2 bytes) mouse_y  Address: 02 : 001B3A36
+// /int16_t g_mouse_x = 158;
+int16_t pointer_x = 158;
 // WZD dseg:78C4
-int16_t g_mouse_y = 100;
+/*
+    ~== pomter_y
+    (only?) used for the pointer  (AKA cursor image)
+*/
+// int16_t g_mouse_y = 100;
+int16_t pointer_y = 100;
 
 // WZD dseg:78C6
 int16_t current_mouse_list_count = 1;
@@ -85,9 +97,11 @@ int16_t mouse_interrupt_active = ST_FALSE;
 int16_t mouse_save_flag = ST_FALSE;
 
 // WZD dseg:78D8
-int16_t init_mouse_x = 158;
+// int16_t init_mouse_x = 158;
+int16_t init_pointer_x = 158;
 // WZD dseg:78DA
-int16_t init_mouse_y = 100;
+// int16_t init_mouse_y = 100;
+int16_t init_pointer_y = 100;
 
 // WZD dseg:78DC
 // drake178: MOUSE_CDraw_Save
@@ -246,8 +260,8 @@ int16_t Init_Mouse_Driver(void)
     mouse_driver_installed = ST_TRUE;
     mouse_interrupt_active = ST_FALSE;
 
-    g_mouse_x = init_mouse_x;
-    g_mouse_y = init_mouse_y;
+    pointer_x = init_pointer_x;
+    pointer_y = init_pointer_y;
 
     // INT 33, 7  638
     // INT 33, 8  199
@@ -283,8 +297,8 @@ void Reset_System_Mouse(void)
         mouse_buffer_flag2 = ST_FALSE;
         // MoO2  old_mouse_x = Pointer_X();
         // MoO2  old_mouse_y = Pointer_Y();
-        init_mouse_x = Pointer_X();
-        init_mouse_y = Pointer_Y();
+        init_pointer_x = Pointer_X();
+        init_pointer_y = Pointer_Y();
 
 // cli  AKA _disable_()
 // mov     ax, 21h
@@ -327,23 +341,23 @@ void Restore_Mouse_State(void)
 // WZD s35p18
 int16_t Pointer_X(void)
 {
-    assert(g_mouse_x <= SCREEN_XMAX);
-    return g_mouse_x;
+    assert(pointer_x <= SCREEN_XMAX);
+    return pointer_x;
 }
 
 // WZD s35p19
 int16_t Pointer_Y(void)
 {
-    assert(g_mouse_y <= SCREEN_YMAX);
-    return g_mouse_y;
+    assert(pointer_y <= SCREEN_YMAX);
+    return pointer_y;
 }
 
 // WZD s35p20
 // MD_MoveCursor
 void Set_Pointer_Position(int16_t l_mx, int16_t l_my)
 {
-    g_mouse_x = l_mx;
-    g_mouse_y = l_my;
+    pointer_x = l_mx;
+    pointer_y = l_my;
 
     if(mouse_driver_installed)
     {
@@ -427,7 +441,13 @@ void Set_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
 // WZD s35p29
 void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
 {
-    if((buttons = (buttons & 0x03)) != 0)
+    // 1oom
+    // buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
+    // mouse_buttons = buttons;
+    // if (buttons) {
+    // 1oom:  buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
+    buttons &= (MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT);
+    if(buttons != 0)
     {
         mouse_buffer_button = buttons;
         mouse_buffer_flag = ST_TRUE;

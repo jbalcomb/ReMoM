@@ -45,7 +45,7 @@ extern int16_t PageFlipEffect;
 // MGC dseg:2836                                                                                         ; "read binary" open mode constant
 
 // MGC dseg:2839 49 6E 69 74 69 61 6C 69 7A 69 6E 67 20 52 6F 6C+cnst_MIDI_Init db 'Initializing Roland Drivers...$',0
-extern char str_Initializing_Roland_Drivers[];
+// MOX_Data  extern char str_Initializing_Roland_Drivers[];
 
 // MGC dseg:2859 53 41 56 45 00                                  cnst_SAVE db 'SAVE',0                   ; DATA XREF: _main+1D9o ...
 // MGC dseg:285E 2E 47 41 4D 00                                  cnst_SAVE_ext db '.GAM',0               ; DATA XREF: _main+1F7o ...

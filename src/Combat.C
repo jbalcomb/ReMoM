@@ -26,6 +26,7 @@
 
 #include "Combat.H"
 
+#include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
@@ -40,7 +41,6 @@
 #include "LOADER.H"
 #include "MainScr.H"
 #include "MainScr_Maps.H"
-#include "MOM_Data.H"
 #include "MOM_DBG.H"
 #include "MOM_DEF.H"
 #include "NEXTTURN.H"
@@ -57,7 +57,7 @@
 #include "WZD_o059.H"
 
 #include <stdlib.h>     /* abs(); itoa(); */
-// #include <cstdlib> /* IDGI;  "...abs(int) is defined in <cstdlib>" */
+#include <string.h>     /* memcpy() memset(), strcat(), strcpy(), stricmp() */
 
 #include "FIGURES8_LBX_063.H"
 
@@ -1131,7 +1131,8 @@ SAMB_ptr IMG_CMB_SorcNode;
 // WZD dseg:D074
 SAMB_ptr IMG_CMB_NatNode;
 // WZD dseg:D076
-SAMB_ptr IMG_CMB_Volcano[8];
+// NEWCODE  SAMB_ptr IMG_CMB_Volcano[8];
+SAMB_ptr IMG_CMB_Volcano[9];
 // WZD dseg:D076                                                                                         ; array of 8 appended reserved EMM headers in
 // WZD dseg:D076                                                                                         ; GFX_Swap_Seg, each with a single animation frame
 // WZD dseg:D076                                                                                         ; for the same section of the volcano image
@@ -1314,7 +1315,7 @@ int16_t * RP_CMB_MoveMap;
 */
 int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[])
 {
-    int16_t did_win;
+    int16_t did_win = 0;
 
     int16_t Battle_Result = 0;
     int16_t Defending_Unit_Count = 0;
@@ -4637,21 +4638,21 @@ void CMB_ProgressTurnFlow__WIP(void)
 */
 void Retreat_From_Combat(int16_t player_idx)
 {
-    int16_t Fleeing_Units_Lost[9];
-    int16_t Wind_Walker;
-    int16_t Transport_Capacity;
-    int16_t Fleeing_Death_Count;
-    int16_t unit_idx;
-    int16_t Checked_X;  // also, boat_riders
-    int16_t boat_riders;  // in Dasm, `Checked_X`
-    int16_t Diameter;
-    int16_t Min_Y;
-    int16_t Min_X;
-    int16_t Checked_Y;
-    int16_t Defender_Fleeing_Count;
-    int16_t Attacker_Fleeing_Count;
-    int16_t itr_battle_units;  // _SI_
-    int16_t fleeing_player_idx;  // _DI_
+    int16_t Fleeing_Units_Lost[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t Wind_Walker = 0;
+    int16_t Transport_Capacity = 0;
+    int16_t Fleeing_Death_Count = 0;
+    int16_t unit_idx =0 ;
+    int16_t Checked_X = 0;  // also, boat_riders
+    int16_t boat_riders = 0;  // in Dasm, `Checked_X`
+    int16_t Diameter = 0;
+    int16_t Min_Y = 0;
+    int16_t Min_X = 0;
+    int16_t Checked_Y = 0;
+    int16_t Defender_Fleeing_Count = 0;
+    int16_t Attacker_Fleeing_Count = 0;
+    int16_t itr_battle_units = 0;  // _SI_
+    int16_t fleeing_player_idx = 0;  // _DI_
 
     Fleeing_Death_Count = 0;
 
@@ -6292,15 +6293,15 @@ void Turn_Off_Auto_Combat(void)
 */
 void STK_ComposeFleeLost__STUB(int16_t troop_count, int16_t troop_list[])
 {
-    int16_t Unit_Types;
-    int16_t Type_Counts;
-    int16_t rest_of_the_array;
-    int16_t Last_Char_Pointer;
-    int16_t Conv_String;
-    int16_t Record_Count;
-    int16_t Added_Count;
-    int16_t Record_Loopvar;
-    int16_t itr;  // _DI_
+    int16_t Unit_Types = 0;
+    int16_t Type_Counts = 0;
+    int16_t rest_of_the_array = 0;
+    int16_t Last_Char_Pointer = 0;
+    int16_t Conv_String = 0;
+    int16_t Record_Count = 0;
+    int16_t Added_Count = 0;
+    int16_t Record_Loopvar = 0;
+    int16_t itr = 0;  // _DI_
 
     if(troop_count <= 0)
     {
@@ -8151,9 +8152,9 @@ int16_t Combat_Info_Effects_Count(void)
     if(
         (_combat_node_type == cnt_Sorcery)
         ||
-        (_combat_node_type == cnt_Sorcery)
+        (_combat_node_type == cnt_Nature)
         ||
-        (_combat_node_type == cnt_Sorcery)
+        (_combat_node_type == cnt_Chaos)
     )
     {
 
@@ -22407,7 +22408,7 @@ void USELESS_Combat_Figure_Load_Compose(int16_t battle_unit_figure_idx, int16_t 
     FIGUREX_POINTER
 
 // TODO              DBG_8_battle_unit_figure_idx__2 = battle_unit_figure_idx;
-// TODO              DBG_8_EMM_PageFrame__2 = (int64_t)EMM_PageFrame;
+// TODO              DBG_8_EMM_PageFrame__2 = (int64_t)EMS_PFBA;
 // TODO              DBG_8_offset__2 = offset;
 // TODO  
 // TODO              assert(DBG_8_battle_unit_figure_idx__2 == DBG_8_battle_unit_figure_idx__1);
@@ -22603,23 +22604,23 @@ void EMM_FIGUREX_Init__HACK(int16_t battle_unit_figure_idx)
 // DELETE      DBG_offset__1 = offset;
 
     // TODO  EMM_Map4Pages(logical_page, EmmHndl_FIGUREX);
-    EMM_PageFrame = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
+    EMS_PFBA = (EmmHndl_FIGUREX + (logical_page * SZ_EMM_LOGICAL_PAGE));
 
-// DELETE      DBG_EMM_PageFrame__1 = (int64_t)EMM_PageFrame;
+// DELETE      DBG_EMM_PageFrame__1 = (int64_t)EMS_PFBA;
 
-    // // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
-    // SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, SA_MEMSIG1);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG1, _SA_MEMSIG1);
+    // // farpokew((EMS_PFBA + offset), SAMB_MEMSIG1, SA_MEMSIG1);
+    // SET_2B_OFS((EMS_PFBA + offset), SAMB_MEMSIG1, SA_MEMSIG1);
+    SET_2B_OFS((EMS_PFBA + offset), SAMB_MEMSIG1, _SA_MEMSIG1);
 
-    // // farpokew((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
-    // SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG2, SA_MEMSIG2);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_MEMSIG2, _SA_MEMSIG2);
+    // // farpokew((EMS_PFBA + offset), SAMB_MEMSIG2, SA_MEMSIG2);
+    // SET_2B_OFS((EMS_PFBA + offset), SAMB_MEMSIG2, SA_MEMSIG2);
+    SET_2B_OFS((EMS_PFBA + offset), SAMB_MEMSIG2, _SA_MEMSIG2);
 
-    // farpokew((EMM_PageFrame + offset), SAMB_SIZE, 1591);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_SIZE, 1591);  // 1591 PR, 25456 B
+    // farpokew((EMS_PFBA + offset), SAMB_SIZE, 1591);
+    SET_2B_OFS((EMS_PFBA + offset), SAMB_SIZE, 1591);  // 1591 PR, 25456 B
 
-    // farpokew((EMM_PageFrame + offset), SAMB_USED, 1);
-    SET_2B_OFS((EMM_PageFrame + offset), SAMB_USED, 1);
+    // farpokew((EMS_PFBA + offset), SAMB_USED, 1);
+    SET_2B_OFS((EMS_PFBA + offset), SAMB_USED, 1);
 
 }
 
@@ -22630,22 +22631,22 @@ void EMM_TILEX_Init__HACK(void)
 {
 
     // EMM_Map4Pages(0, EmmHndl_TILEXXX);
-    // EMM_PageFrame = EmmHndl_TILEXXX;
-    EMM_PageFrame = (EmmHndl_TILEXXX + (0 * SZ_EMM_LOGICAL_PAGE));
+    // EMS_PFBA = EmmHndl_TILEXXX;
+    EMS_PFBA = (EmmHndl_TILEXXX + (0 * SZ_EMM_LOGICAL_PAGE));
 
-    // // TODO  farpokew(EMM_PageFrame, SAMB.MemSig1, SA_MEMSIG1);
-    // SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, SA_MEMSIG1);
-    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG1, _SA_MEMSIG1);
+    // // TODO  farpokew(EMS_PFBA, SAMB.MemSig1, SA_MEMSIG1);
+    // SET_2B_OFS(EMS_PFBA, SAMB_MEMSIG1, SA_MEMSIG1);
+    SET_2B_OFS(EMS_PFBA, SAMB_MEMSIG1, _SA_MEMSIG1);
 
-    // // TODO  farpokew(EMM_PageFrame, SAMB.MemSig2, SA_MEMSIG2);
-    // SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG2, SA_MEMSIG2);
-    SET_2B_OFS(EMM_PageFrame, SAMB_MEMSIG2, _SA_MEMSIG2);
+    // // TODO  farpokew(EMS_PFBA, SAMB.MemSig2, SA_MEMSIG2);
+    // SET_2B_OFS(EMS_PFBA, SAMB_MEMSIG2, SA_MEMSIG2);
+    SET_2B_OFS(EMS_PFBA, SAMB_MEMSIG2, _SA_MEMSIG2);
 
-    // TODO  farpokew(EMM_PageFrame, SAMB.size, 3071);
-    SET_2B_OFS(EMM_PageFrame, SAMB_SIZE, 3071);  // 3071 PR, 49136 B
+    // TODO  farpokew(EMS_PFBA, SAMB.size, 3071);
+    SET_2B_OFS(EMS_PFBA, SAMB_SIZE, 3071);  // 3071 PR, 49136 B
 
-    // TODO  farpokew(EMM_PageFrame, SAMB.used, 1);
-    SET_2B_OFS(EMM_PageFrame, SAMB_USED, 1);
+    // TODO  farpokew(EMS_PFBA, SAMB.used, 1);
+    SET_2B_OFS(EMS_PFBA, SAMB_USED, 1);
 
 }
 
@@ -22871,7 +22872,7 @@ void Combat_Figure_Compose_USEFULL(void)
 // DELETE              assert(DBG_pict_seg__2 == DBG_pict_seg__1);
 // DELETE  
 // DELETE              DBG_8_battle_unit_figure_idx__3 = battle_unit_figure_idx;
-// DELETE              DBG_8_EMM_PageFrame__3 = (int64_t)EMM_PageFrame;
+// DELETE              DBG_8_EMM_PageFrame__3 = (int64_t)EMS_PFBA;
 // DELETE              DBG_8_offset__3 = offset;
 // DELETE  
 // DELETE              assert(DBG_8_battle_unit_figure_idx__3 == DBG_8_battle_unit_figure_idx__1);
@@ -26717,27 +26718,27 @@ void Load_Combat_Terrain_Pictures(int16_t cts, int16_t wp)
 
     }
 
-    temp_seg = Allocate_First_Block(EMM_PageFrame, 1);
+    temp_seg = Allocate_First_Block(EMS_PFBA, 1);
 
     for(itr = 0; itr < 48; itr++)
     {
 
-        // _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMM_PageFrame);
-        _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, 0, EMM_PageFrame);
+        // _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, itr, EMS_PFBA);
+        _combat_terrain_pict_segs[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, 0, EMS_PFBA);
 
     }
 
     for(itr = 0; itr < 5; itr++)
     {
 
-        IMG_CMB_Trees[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, (48 + itr), EMM_PageFrame);
+        IMG_CMB_Trees[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, (48 + itr), EMS_PFBA);
 
     }
 
     for(itr = 0; itr < 5; itr++)
     {
 
-        IMG_CMB_Rocks[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, (53 + itr), EMM_PageFrame);
+        IMG_CMB_Rocks[itr] = LBX_Reload_Next(combat_terrain_set_lbx_filename, (53 + itr), EMS_PFBA);
 
     }
 
@@ -27050,7 +27051,7 @@ int16_t Combat_Figure_Load(int16_t unit_type, int16_t battle_unit_figure_idx)
     for(itr = 0; itr < 8; itr++)  /* 8 directions/faces per unit figure picture set */
     {
 
-        ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMM_PageFrame + offset));
+        ptr_figure_pointer_seg[itr] = LBX_Reload_Next(file_name, (entry_num + itr), (EMS_PFBA + offset));
 
     }
 

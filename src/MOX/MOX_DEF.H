@@ -648,8 +648,22 @@ uint8_t COL_Banners2[36] = {
 
 
 
-#define CLROFF() { Set_Page_Off(); Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0); }
-#define CLRON()  { Set_Page_On();  Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0); }
+
+/*
+    MoO2 has Cls() and Cls_On()
+    uses Set_Memory_()
+
+    Main_Menu_Screen()
+        Fill(0, 0, 319, 199, 0);
+        Set_Page_On();
+        Fill(0, 0, 319, 199, 0);
+        Set_Page_Off();
+
+*/
+#define CLS()    {                 Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);                 }
+#define CLS_ON() { Set_Page_On();  Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);              Set_Page_Off(); }
+#define CLROFF() { Set_Page_Off(); Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);                              }
+#define CLRON()  { Set_Page_On();  Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0);                              }
 
 // MoO2  Darken_Fill()
 // MoO2  Darken_Main_Screen_Background_()

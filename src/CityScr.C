@@ -20,6 +20,10 @@
 #include "UnitView.H"
 #include "WZD_o143.H"
 
+#ifdef STU_DEBUG
+#include "STU/STU_DBG.H"    /* DLOG() */
+#endif
+
 
 
 // WZD dseg:2A8A                                                 BEGIN:  ovr054 - Strings  (City Screen)
@@ -367,7 +371,10 @@ Check_Cities_Data();
                 Deactivate_Help_List();
                 Set_City_Screen_Help_List();
                 Assign_Auto_Function(City_Screen_Draw__WIP, 1);
+Check_Cities_Data();
                 Do_City_Calculations(_city_idx);
+// Check_Cities_Data();
+Capture_Cities_Data();
                 m_city_production_cost = City_Production_Cost(_CITIES[_city_idx].construction, _city_idx);
                 m_city_n_turns_to_produce = City_N_Turns_To_Produce(m_city_production_cost, _city_idx);
                 City_Can_Buy_Product();
@@ -1275,7 +1282,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
 
 // WZD o54p09
 // MoO2  Module: NAMESTAR  Change_Home_Star_Name_Popup_
-void NameStartingCity_Dialog_Popup(int16_t city_idx)
+void Change_Home_City_Name_Popup(int16_t city_idx)
 {
     uint8_t color_array[14];
     char default_cityname[16];
@@ -1330,7 +1337,7 @@ void NameStartingCity_Dialog_Popup(int16_t city_idx)
 
     Set_Alias_Color(103);
 
-    UU_RetVal_TextEditDialog = Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED);
+    UU_RetVal_TextEditDialog = Setup_Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED);
 
     Trim(Text);
 

@@ -1,5 +1,53 @@
 
 
+GUI_EditBoxControl()  ==>  Input_Box_Popup()
+GUI_TextEditDialog()  ==>  Setup_Input_Box_Popup()
+GUI_CreateEditBox()   ==>  Add_Input_Field()
+NameStartingCity_Dialog_Popup()  ==>  Change_Home_City_Name_Popup()
+
+
+2025030:
+Module: NAMESTAR
+    code (0 bytes) Draw_Input_Box_Popup_
+    Address: 01:00091B89
+        Locals:
+
+    code (0 bytes) Remapped_Input_Box_Popup_
+    Address: 01:00091BB4
+        Locals:
+
+    code (0 bytes) Setup_Input_Box_Popup_
+    Address: 01:00091BD4
+        Locals:
+
+    code (0 bytes) Input_Box_Popup_
+    Address: 01:00091F14
+        Locals:
+
+// WZD s36p32
+// drake178: GUI_TextEditDialog()
+// MoO2  Module: Module: NAMESTAR  Input_Box_Popup_()
+// 1oom  uiobj.c  uiobj_textinput_do()
+/*
+; clears the GUI, creates an edit box with the passed
+; parameters, and transfers control to it until it
+; loses focus, at which point the resulting string is
+; saved to the passed pointer and the function returns
+; -1 if the Esc key was pressed, or 0 otherwise
+*/
+/*
+
+NameStartingCity_Dialog_Popup()
+    start_x = 60;
+    start_y = 30;
+    Setup_Input_Box_Popup((start_x + 16), (start_y + 21), 75, Text, 12, 0, 0, 0, &color_array[0], ST_UNDEFINED)
+
+*/
+int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
+
+
+
+
 
 ¿ MoO2 ?
 ¿ 1oom ?
@@ -80,7 +128,7 @@ XREF:
     GUI_EditBoxRedraw+30C           cmp     [GUI_EditCursorOn], 1         
     GUI_EditBoxRedraw+313           mov     [GUI_EditCursorOn], 0         
     GUI_EditBoxRedraw+330           cmp     [GUI_EditCursorOn], 0         
-    GUI_TextEditDialog+77           mov     [GUI_EditCursorOn], 0         
+    Setup_Input_Box_Popup+77           mov     [GUI_EditCursorOn], 0         
     Interpret_Mouse_Input+360       mov     [GUI_EditCursorOn], e_ST_FALSE
     Interpret_Mouse_Input+39B       mov     [GUI_EditCursorOn], e_ST_FALSE
     Interpret_Mouse_Input+8C6       mov     [GUI_EditCursorOn], 0         
@@ -98,17 +146,17 @@ XREF:
     GUI_EditBoxControl+13C call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
     GUI_EditBoxControl+19C call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
     GUI_EditBoxControl+3C0 call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
-    GUI_TextEditDialog+DD  call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
-    GUI_TextEditDialog+13D call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
-    GUI_TextEditDialog+359 call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
+    Setup_Input_Box_Popup+DD  call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
+    Setup_Input_Box_Popup+13D call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
+    Setup_Input_Box_Popup+359 call    near ptr GUI_EditBoxRedraw      ; calls any active redraw function, draws the selected
 
 
-## GUI_TextEditDialog()
+## Setup_Input_Box_Popup()
 
 XREF:
-    NameStartingCity_Dialog_Popup+12E call    GUI_TextEditDialog
-    NameOutpost_Dialog_Popup+147      call    GUI_TextEditDialog
-    Hire_Hero_Popup+504               call    GUI_TextEditDialog
+    NameStartingCity_Dialog_Popup+12E call    Setup_Input_Box_Popup
+    NameOutpost_Dialog_Popup+147      call    Setup_Input_Box_Popup
+    Hire_Hero_Popup+504               call    Setup_Input_Box_Popup
 
 
 
