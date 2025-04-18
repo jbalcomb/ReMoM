@@ -1035,7 +1035,7 @@ void Event_Twiddle(void)
         _CITIES[city_idx].did_sell_building = ST_FALSE;
         if(player_idx == _human_player_idx)  /* ¿ current player ? */
         {
-            TILE_ExploreRadius__WIP(CITYX(), CITYY(), CITYP(), 3);
+            Set_Map_Square_Explored_Flags_XYP_Range(CITYX(), CITYY(), CITYP(), 3);
         }
         NOOP_Current_Player_All_City_Areas();
         Do_City_Calculations(city_idx);

@@ -306,6 +306,7 @@ void Terrain_Init(void)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wfor-loop-analysis"
     // Loop MAPBACK 0 to 13:
+    // "MASK", ..., "MASK"   AKA "xploid"
     for(itr = 1; itr < 15; itr++)
     {
         itr--;

@@ -449,8 +449,8 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 1:  /* Cartographer  (F2) */
         {
-            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+            assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
             Cartographer_Screen__WIP();
         } break;
         case 2:  /* Apprentice    (F3) */
@@ -1247,8 +1247,8 @@ void Cartographer_Screen__WIP(void)
             _unit_stack_count = 0;
 
             /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
-            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+            assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
             Center_Map(&_map_x, &_map_y, grid_column, grid_row, _map_plane);
 
             Set_Draw_Active_Stack_Always();

@@ -58,10 +58,10 @@ int16_t World_To_Screen(int16_t map_wx, int16_t map_wy, int16_t * unit_wx, int16
     int16_t screen_y;  // DNE in Dasm
     int16_t screen_x;  // DNE in Dasm
 
-    assert( map_wx  >= WORLD_X_MIN &&  map_wx  <= WORLD_X_MAX);  /*  0 & 59 */
-    assert( map_wy  >= WORLD_Y_MIN &&  map_wy  <= WORLD_Y_MAX);  /*  0 & 39 */
-    assert(*unit_wx >= WORLD_X_MIN && *unit_wx <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*unit_wy >= WORLD_Y_MIN && *unit_wy <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert( map_wx  >= WORLD_XMIN &&  map_wx  <= WORLD_XMAX);  /*  0 & 59 */
+    assert( map_wy  >= WORLD_YMIN &&  map_wy  <= WORLD_YMAX);  /*  0 & 39 */
+    assert(*unit_wx >= WORLD_XMIN && *unit_wx <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*unit_wy >= WORLD_YMIN && *unit_wy <= WORLD_YMAX);  /*  0 & 39 */
 
     in_view = ST_FALSE;
 

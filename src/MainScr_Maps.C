@@ -13,7 +13,7 @@ void IDK_Draw_MiniMap_s5B828()
 // WZD o150p16
 // "Reduced Map"/"World Window"
 // AKA Draw_Minimap()
-void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t wp, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 
 */
 
@@ -32,6 +32,40 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "UNITTYPE.H"
 
 #include "assert.h"
+
+
+
+enum e_SCOUT_BITS
+{
+    SCT_BottomLeft   = 1,
+    SCT_TopLeft      = 2,
+    SCT_TopRight     = 4,
+    SCT_BottomRight  = 8
+};
+
+
+
+// WZD dseg:3278                                                 BEGIN:  ovr068 - Initialized Data
+
+// WZD dseg:3278
+/*
+
+SCT_BottomLeft   0x01  00000001
+SCT_TopLeft      0x02  00000010
+SCT_TopRight     0x04  00000100
+SCT_BottomRight  0x08  00001000
+
+*/
+uint8_t NoSide_Explores[] =
+{
+    SCT_BottomLeft                || SCT_TopRight,
+    SCT_BottomLeft || SCT_TopLeft || SCT_TopRight,
+                      SCT_TopLeft                 || SCT_BottomRight,
+    SCT_BottomLeft || SCT_TopLeft                 || SCT_BottomRight,
+    SCT_BottomLeft                || SCT_TopRight || SCT_BottomRight,
+                      SCT_TopLeft || SCT_TopRight || SCT_BottomRight
+};
+// WZD dseg:3278                                                 END:  ovr068 - Initialized Data
 
 
 
@@ -261,8 +295,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
     int16_t shift_right_flag;
     int16_t half_swap_flag;
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     l_map_x = *map_x;
     l_map_y = *map_y;
@@ -388,8 +422,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 
     if(map_moved_flag == ST_FALSE)
     {
-        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+        assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
         Draw_Active_Unit_Stack(*map_x, *map_y, map_plane);
     }
 
@@ -483,7 +517,7 @@ void Reset_Draw_Active_Stack(void)
 
 // WZD o67p07
 // AKA OVL_DrawActiveStack
-void Draw_Active_Unit_Stack(int16_t mmap_xw, int16_t mmap_yw, int16_t world_plane)
+void Draw_Active_Unit_Stack(int16_t mmap_xw, int16_t mmap_yw, int16_t wp)
 {
 /*
 draws the top movable unit's card from the active
@@ -504,15 +538,15 @@ when always draw (-1) is set for OVL_ActiveStackDraw
     int16_t unit_idx;
     int16_t itr_unit_stack_count;
 
-    assert(mmap_xw >= WORLD_X_MIN && mmap_xw <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(mmap_yw >= WORLD_Y_MIN && mmap_yw <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(mmap_xw >= WORLD_XMIN && mmap_xw <= WORLD_XMAX);  /*  0 & 59 */
+    assert(mmap_yw >= WORLD_YMIN && mmap_yw <= WORLD_YMAX);  /*  0 & 39 */
 
     if(draw_active_stack_flag != -2)  /* -2: never draw*/
     {
         if((_UNITS[_unit_stack[0].unit_idx].owner_idx != ST_UNDEFINED))
         {
             unit_idx = _unit_stack[0].unit_idx;
-            if( (_UNITS[_unit_stack[0].unit_idx].wp == world_plane) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
+            if( (_UNITS[_unit_stack[0].unit_idx].wp == wp) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
             {
                 unit_xw = _UNITS[unit_idx].wx;
                 unit_yw = _UNITS[unit_idx].wy;
@@ -561,8 +595,8 @@ when always draw (-1) is set for OVL_ActiveStackDraw
                         }
 
                         unit_idx = _unit_stack[0].unit_idx;
-                        // Draw_Minimap(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
-                        Create_Reduced_Map_Picture(minimap_x, minimap_y, world_plane, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
+                        // Draw_Minimap(minimap_x, minimap_y, wp, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
+                        Create_Reduced_Map_Picture(minimap_x, minimap_y, wp, _reduced_map_seg, minimap_width, minimap_height, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, ST_TRUE);
 
                     }
                 }
@@ -617,7 +651,7 @@ void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t 
 
 
 // WZD o67p10
-void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane)
+void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t wp)
 {
     int16_t city_in_view;
     int16_t entity_owner_idx;
@@ -653,13 +687,13 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         entity_world_x = _UNITS[itr_units].wx;
         entity_world_y = _UNITS[itr_units].wy;
         entity_world_p = _UNITS[itr_units].wp;
-        square_is_scouted = Check_Square_Scouted(entity_world_x, entity_world_y, world_plane);
+        square_is_scouted = Check_Square_Scouted(entity_world_x, entity_world_y, wp);
 
         if(entity_owner_idx != ST_UNDEFINED)
         {
             if(square_is_scouted == ST_TRUE)
             {
-                if( (_UNITS[itr_units].wp == world_plane) || (_UNITS[itr_units].in_tower == ST_TRUE) )
+                if( (_UNITS[itr_units].wp == wp) || (_UNITS[itr_units].in_tower == ST_TRUE) )
                 {
                     // entity_world_y = _UNITS[itr_units].wy;
                     if( (entity_world_y >= world_y) && (entity_world_y < world_y + MAP_HEIGHT) )
@@ -725,7 +759,7 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
         // DELETEME  square_is_explored = _square_explored[((entity_world_p * WORLD_SIZE) + (entity_world_y * WORLD_WIDTH) + entity_world_x)];
         square_is_explored = GET_SQUARE_EXPLORED(entity_world_x, entity_world_y, entity_world_p);
 
-        if( ((entity_world_p == world_plane) || (entity_world_p == 2)) && (square_is_explored != ST_FALSE) )
+        if( ((entity_world_p == wp) || (entity_world_p == 2)) && (square_is_explored != ST_FALSE) )
         {
             entity_world_y = _CITIES[itr_cities].wy;
 
@@ -880,13 +914,13 @@ int16_t IsPassableTower(int16_t wx, int16_t wy)
     in: world_grid_x,ys is new world-map center
     in/out: map_x,map_y are cur/new map start
 */
-void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t tmp_world_grid_y = 0;
     int16_t tmp_world_grid_x = 0;
 
     // NOWORKIE  assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    // NOWORKIE  assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    // NOWORKIE  assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     if(world_grid_x >= WORLD_WIDTH)
     {
@@ -927,8 +961,8 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
         *map_y = (WORLD_HEIGHT - MAP_HEIGHT);  // (40 - 10) = 30  (World Height - Map Height)
     }
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     _prev_world_x = *map_x;
     _prev_world_y = *map_y;
@@ -938,13 +972,13 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
     
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-    Set_Entities_On_Map_Window(*map_x, *map_y, world_plane);
+    Set_Entities_On_Map_Window(*map_x, *map_y, wp);
 
 }
 
 
 // WZD o68p02
-void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t city_screen_map_world_grid_y = 0;
     int16_t city_screen_map_world_grid_x = 0;
@@ -985,7 +1019,7 @@ void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int
 
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
-    Set_Entities_On_Map_Window(*map_x, *map_y, world_plane);
+    Set_Entities_On_Map_Window(*map_x, *map_y, wp);
 
 }
 
@@ -1033,7 +1067,7 @@ void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x,
 
 // WZD o68p04
 // drake178: OVL_RedrawScouting()
-void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_screen_x;
     int16_t itr_screen_y;
@@ -1063,15 +1097,14 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
             terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
 
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
             // if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             // {
-                // DELETEME  square_explored_flag = _square_explored[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
                 if(
                     (square_explored_flag != 0x0)
@@ -1111,36 +1144,25 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 /*
     called from Units_In_Tower()
         only for human_player_idx
-    called from TILE_ExploreRadius__WIP()
+    called from Set_Map_Square_Explored_Flags_XYP_Range()
 
 */
-void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
+void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
 {
     // DEDU  does this actually exist in the Dasm?  uint8_t * ptr_square_explored;
-    int16_t X_LoopVar;
-    int16_t Y_Up_2;
-    int16_t Y_Down_2;
-    int16_t X_Left_2;
-    int16_t X_Right_2;
-    int16_t Y_Up_1;
-    int16_t Y_Down_1;
-    int16_t X_Left_1;
-    int16_t X_Right_1;
-
-    // DELETEME  ptr_square_explored = (uint8_t *)(_square_explored + (2400 * wp));
+    int16_t itr_wx;
+    int16_t wy_u2;
+    int16_t wy_d2;
+    int16_t wx_l2;
+    int16_t wx_r2;
+    int16_t wy_u1;
+    int16_t wy_d1;
+    int16_t wx_l1;
+    int16_t wx_r1;
 
     if(wy == 0)
     {
-        // ; BX = (wy * WORLD_WIDTH) + wx
-        // mov     [byte ptr es:bx], SCT_BottomLeft or SCT_TopLeft or SCT_TopRight or SCT_BottomRight
-        // *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)) = (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight);
-// enum SCOUT_BITS (bitfield)
-// 01 SCT_BottomLeft  = 1
-// 02 SCT_TopLeft  = 2
-// 04 SCT_TopRight  = 4
-// 08 SCT_BottomRight  = 8
-        // DELETEME  *(ptr_square_explored + ((wy * WORLD_WIDTH) + wx)) = (0x01 | 0x02 | 0x04 | 0x08);  // ... sets all four corners ...
-        SET_SQUARE_EXPLORED(wx, wy, wp, (0x01 | 0x02 | 0x04 | 0x08));
+        SET_SQUARE_EXPLORED(wx, wy, wp, (SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
     }
     else
     {
@@ -1150,121 +1172,105 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
         */
         if(wy == 0)
         {
-            Y_Up_1 = 0;
-            Y_Up_2 = 0;
+            wy_u1 = 0;
+            wy_u2 = 0;
         }
         else
         {
-            Y_Up_1 = wy - 1;
-            Y_Up_2 = wy - 2;
-            if(Y_Up_2 < 0)
-            {
-                Y_Up_2 = 0;
-            }
+            wy_u1 = wy - 1;
+            wy_u2 = wy - 2;
+            SETMIN(wy_u2, 0);
         }
 
-        if(wy == WORLD_Y_MAX)
+        if(wy == WORLD_YMAX)
         {
-            Y_Down_1 = WORLD_WIDTH - 1;  // 40 - 1 = 39
-            Y_Down_2 = WORLD_WIDTH - 2;  // 40 - 2 = 38
+            wy_d1 = WORLD_WIDTH - 1;  // 40 - 1 = 39
+            wy_d2 = WORLD_WIDTH - 2;  // 40 - 2 = 38
         }
         else
         {
-            Y_Down_1 = wy + 1;
-            Y_Down_2 = wy + 2;
-            if(Y_Down_2 > WORLD_WIDTH)
-            {
-                Y_Down_2 = WORLD_Y_MAX;
-            }
+            wy_d1 = wy + 1;
+            wy_d2 = wy + 2;
+            SETMAX(wy_d2, WORLD_WIDTH);
         }
 
         if(wx == 0)
         {
-            X_Left_1 = WORLD_WIDTH - 1;  // 60 - 1 = 59
-            X_Left_2 = WORLD_WIDTH - 2;  // 60 - 2 = 58
+            wx_l1 = WORLD_WIDTH - 1;  // 60 - 1 = 59
+            wx_l2 = WORLD_WIDTH - 2;  // 60 - 2 = 58
         }
         else
         {
-            X_Left_1 = wx - 1;
-            X_Left_2 = wx - 2;
-            if(X_Left_2 < 0)
+            wx_l1 = wx - 1;
+            wx_l2 = wx - 2;
+            if(wx_l2 < 0)
             {
-                X_Left_2 = WORLD_X_MAX;
+                wx_l2 = WORLD_XMAX;
             }
         }
 
-        if(wx == WORLD_X_MAX)
+        if(wx == WORLD_XMAX)
         {
-            X_Right_1 = 0;
-            X_Right_2 = 1;
+            wx_r1 = 0;
+            wx_r2 = 1;
         }
         else
         {
-            X_Right_1 = wx + 1;
-            X_Right_2 = wx + 2;
+            wx_r1 = wx + 1;
+            wx_r2 = wx + 2;
         }
         /*
             END: sanitize wy & wx
         */
 
-    // DELETEME  *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Left_1 ))                      | 0x08;  //                                               SCT_BottomRight
-    // DELETEME  *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + wx       )) | 0x01               | 0x08;  // SCT_BottomLeft                              | SCT_BottomRight
-    // DELETEME  *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Up_1   * WORLD_WIDTH) + X_Right_1)) | 0x01                     ;  // SCT_BottomLeft
-    // DELETEME  *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Left_1 ))               | 0x04 | 0x08;  //                                SCT_TopRight | SCT_BottomRight
-    // DELETEME  *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + wx       )) | 0x01 | 0x02 | 0x04 | 0x08;  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
-    // DELETEME  *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((wy       * WORLD_WIDTH) + X_Right_1)) | 0x01 | 0x02              ;  // SCT_BottomLeft | SCT_TopLeft
-    // DELETEME  *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Left_1 ))               | 0x04       ;  //                                SCT_TopRight
-    // DELETEME  *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       )) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + wx       ))        | 0x02 | 0x04       ;  //                  SCT_TopLeft | SCT_TopRight
-    // DELETEME  *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1)) = *(ptr_square_explored + ((Y_Down_1 * WORLD_WIDTH) + X_Right_1))        | 0x02              ;  //                  SCT_TopLeft
-
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) |                      0x08));  //                                               SCT_BottomRight
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) | 0x01               | 0x08));  // SCT_BottomLeft                              | SCT_BottomRight
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) | 0x01                     ));  // SCT_BottomLeft
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) |               0x04 | 0x08));  //                                SCT_TopRight | SCT_BottomRight
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) | 0x01 | 0x02 | 0x04 | 0x08));  // SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) | 0x01 | 0x02              ));  // SCT_BottomLeft | SCT_TopLeft
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) |        0x02              ));  //                  SCT_TopLeft
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) |               0x04       ));  //                                SCT_TopRight
-    SET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp, (GET_SQUARE_EXPLORED(X_Left_1, Y_Up_1, wp) |        0x02 | 0x04       ));  //                  SCT_TopLeft | SCT_TopRight
-
-            // drake178:  ; entirely redundant, TILE_ExploreCorners, if it was
-            // drake178:  ; implemented correctly, would deal with each and every
-            // drake178:  ; one of these cases, and then some
-            // drake178:  ;
-            // drake178:  ; performs exploration matching of neighboring tiles
-            // drake178:  ; in a 5-by-5 rectangle around the selected tile in an
-            // drake178:  ; attempt to remove fog of war from between tiles that
-            // drake178:  ; are already explored
-            // drake178:  ;
-            // drake178:  ; BUG: the array contains many elements that are only
-            // drake178:  ; intended to bugfix artifacts that the developers
-            // drake178:  ; could not track down, but is missing 10 valid and
-            // drake178:  ; occuring configurations, and has wrong values for 4
-            // drake178:  ; of the ones it does include
-        // TODO  RP_TILE_ExploreMatch(wx, wy, wp);
+        // 
+        SET_SQUARE_EXPLORED(wx_l1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_u1, wp) |                                               SCT_BottomRight));
+        // 
+        SET_SQUARE_EXPLORED(wx,    wy_u1, wp, (GET_SQUARE_EXPLORED(wx,    wy_u1, wp) | SCT_BottomLeft                              | SCT_BottomRight));
+        // 
+        SET_SQUARE_EXPLORED(wx_r1, wy_u1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_u1, wp) | SCT_BottomLeft                                               ));
+        // 
+        SET_SQUARE_EXPLORED(wx_l1, wy,    wp, (GET_SQUARE_EXPLORED(wx_l1, wy,    wp) |                                SCT_TopRight | SCT_BottomRight));
+        // 
+        SET_SQUARE_EXPLORED(wx,    wy,    wp, (GET_SQUARE_EXPLORED(wx,    wy,    wp) | SCT_BottomLeft | SCT_TopLeft | SCT_TopRight | SCT_BottomRight));
+        // 
+        SET_SQUARE_EXPLORED(wx_r1, wy,    wp, (GET_SQUARE_EXPLORED(wx_r1, wy,    wp) | SCT_BottomLeft | SCT_TopLeft                                 ));
+        // 
+        SET_SQUARE_EXPLORED(wx_l1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_l1, wy_d1, wp) |                                SCT_TopRight                  ));
+        // 
+        SET_SQUARE_EXPLORED(wx,    wy_d1, wp, (GET_SQUARE_EXPLORED(wx,    wy_d1, wp) |                  SCT_TopLeft | SCT_TopRight                  ));
+        // 
+        SET_SQUARE_EXPLORED(wx_r1, wy_d1, wp, (GET_SQUARE_EXPLORED(wx_r1, wy_d1, wp) |                  SCT_TopLeft                                 ));
 
 
 
-        for(X_LoopVar = X_Left_2; X_LoopVar < X_Right_2; X_LoopVar++)
+        Set_Square_Explored_Flags_Fix(wx, wy, wp);
+
+
+
+        for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
         {
-                // drake178:  ; compares the tile and it's bottom, right, and
-                // drake178:  ; diagonal bottom-right neighbors to NoSide_Explores,
-                // drake178:  ; and if all match one of them, removes the corner
-                // drake178:  ; corresponding to the original tile's bottom right one
-                // drake178:  ;
-                // drake178:  ; conceptually flawed, it should simply check whether
-                // drake178:  ; there is any exploration on all 4 tiles, rather than
-                // drake178:  ; comparing them against the corner only masks
-            // TODO  TILE_ExploreCorners(X_LoopVar, Y_Up_2, wp);
-        }
-        // TODO  TILE_ExploreCorners(X_Right_1, Y_Up_1, wp);
-        // TODO  TILE_ExploreCorners(X_Right_1, wy, wp);
-        for(X_LoopVar = X_Left_2; X_LoopVar < X_Right_2; X_LoopVar++)
-        {
-            // TODO  TILE_ExploreCorners(X_LoopVar, Y_Down_1, wp);
+
+            Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_u2, wp);
+
         }
 
+        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy_u1, wp);
 
+        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_r1, wy, wp);
+        
+        for(itr_wx = wx_l2; itr_wx < wx_r2; itr_wx++)
+        {
+
+            Set_Square_Explored_Flags_Bottom_Right_Corner(itr_wx, wy_d1, wp);
+
+        }
+
+        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy_u1, wp);
+
+        Set_Square_Explored_Flags_Bottom_Right_Corner(wx_l2, wy, wp);
+
+        Set_Square_Explored_Flags_Fix(wx, wy, wp);
 
     }
 
@@ -1272,11 +1278,459 @@ void TILE_Explore(int16_t wx, int16_t wy, int16_t wp)
 
 
 // WZD o68p07
-// TILE_ExploreCorners()
+// drake178: TILE_ExploreCorners()
+/*
+; compares the tile and it's bottom, right, and
+; diagonal bottom-right neighbors to NoSide_Explores,
+; and if all match one of them, removes the corner
+; corresponding to the original tile's bottom right one
+;
+; conceptually flawed, it should simply check whether
+; there is any exploration on all 4 tiles, rather than
+; comparing them against the corner only masks
+*/
+/*
+
+*/
+void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16_t wp)
+{
+    uint8_t * ptr_square_explored = 0;
+    int16_t wy_d1 = 0;
+    int16_t wx_r1 = 0;
+    uint8_t CornerOnly_Explores[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t IDK_itr2 = 0;  // _DI_
+    int16_t IDK_itr1 = 0;  // _SI_
+
+
+// lea     ax, [bp+CornerOnly_Explores]
+// push    ss
+// push    ax                              ; Dest_Struct
+// mov     ax, offset NoSide_Explores
+// push    ds
+// push    ax                              ; src
+// mov     cx, 6
+// call    F_SCOPY@
+    // ...generated by the compiler...
+    memcpy(CornerOnly_Explores, NoSide_Explores, sizeof(NoSide_Explores));
+    
+    ptr_square_explored = &_square_explored[wp];
+    
+    wx_r1 = (wx + 1);
+    
+    wy_d1 = (wy + 1);
+    
+    IDK_itr2 = 0;
+    
+    for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
+    {
+        if(ptr_square_explored[((wy * WORLD_WIDTH) + wx)] == CornerOnly_Explores[IDK_itr1])
+        {
+            IDK_itr2++;
+        }
+        else
+        {
+            continue;
+        }
+    }
+
+    if(IDK_itr2 == 0)
+    {
+        return;
+    }
+
+    for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
+    {
+        if(ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] == CornerOnly_Explores[IDK_itr1])
+        {
+            IDK_itr2++;
+        }
+    }
+
+    if(IDK_itr2 == 1)
+    {
+        return;
+    }
+
+    for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
+    {
+        // ; BUG: at Y=39, this is out of bounds on Myrror!
+        // ; (next alloc is the arcanus visibility table)
+        if(ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] == CornerOnly_Explores[IDK_itr1])
+        {
+            IDK_itr2++;
+        }
+    }
+
+    if(IDK_itr2 == 2)
+    {
+        return;
+    }
+
+    for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
+    {
+        // ; BUG: at Y=39, this is out of bounds on Myrror!
+        if(ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] == CornerOnly_Explores[IDK_itr1])
+        {
+            IDK_itr2++;
+        }
+    }
+
+    if(IDK_itr2 == 4)
+    {
+        ptr_square_explored[((wy * WORLD_WIDTH) + wx)] = ptr_square_explored[((wy * WORLD_WIDTH) + wx)] || SCT_BottomRight;
+        ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] || SCT_BottomLeft;
+        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] || SCT_BottomLeft;
+        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] || SCT_BottomLeft;
+    }
+
+}
 
 
 // WZD o68p08
-// RP_TILE_ExploreMatch()
+// drake178: RP_TILE_ExploreMatch()
+/*
+; entirely redundant, TILE_ExploreCorners, if it was
+; implemented correctly, would deal with each and every
+; one of these cases, and then some
+;
+; performs exploration matching of neighboring tiles
+; in a 5-by-5 rectangle around the selected tile in an
+; attempt to remove fog of war from between tiles that
+; are already explored
+;
+; BUG: the array contains many elements that are only
+; intended to bugfix artifacts that the developers
+; could not track down, but is missing 10 valid and
+; occuring configurations, and has wrong values for 4
+; of the ones it does include
+*/
+/*
+
+*/
+struct Explore_Matching
+{
+    int16_t Tile_Value;
+    int16_t Adj_Scouting;
+    int16_t Mark_Tile;
+    int16_t Mark_Adj;
+    int16_t Adj_Direction;
+   
+};
+void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
+{
+    struct Explore_Matching Match_Array[38];
+    uint8_t * ptr_square_explored;
+    int16_t Adj_Tile_Scouting = 0;
+    int16_t LoopTile_Scouting = 0;
+    int16_t Y_LoopVar = 0;
+    int16_t Match_Count = 0;
+    int16_t Adjacent_Row = 0;
+    int16_t wx_l2 = 0;
+    int16_t X_LoopVar = 0;
+    int16_t Match_Index = 0;
+    int16_t wy_u2 = 0;  // _DI_
+    int16_t IDK_wx_l2 = 0;  // _SI_
+    int16_t Adjacent_Col = 0;  // _CX_
+
+    Match_Count = 38;
+    
+    Match_Array[0].Tile_Value = SCT_BottomLeft;
+    Match_Array[0].Adj_Scouting = SCT_BottomRight;
+    Match_Array[0].Mark_Tile = 9;
+    Match_Array[0].Mark_Adj = 9;
+    Match_Array[0].Adj_Direction = 0;
+    Match_Array[1].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[1].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[1].Mark_Tile = 15;
+    Match_Array[1].Mark_Adj = 15;
+    Match_Array[1].Adj_Direction = 0;
+    Match_Array[2].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[2].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[2].Mark_Tile = 15;
+    Match_Array[2].Mark_Adj = 15;
+    Match_Array[2].Adj_Direction = 0;
+    Match_Array[3].Tile_Value = SCT_TopLeft;
+    Match_Array[3].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[3].Mark_Tile = 6;
+    Match_Array[3].Mark_Adj = 15;  // ; BUG: should be 0Eh
+    Match_Array[3].Adj_Direction = 0;
+    Match_Array[4].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[4].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[4].Mark_Tile = 15;
+    Match_Array[4].Mark_Adj = 15;
+    Match_Array[4].Adj_Direction = 1;
+    Match_Array[5].Tile_Value = SCT_TopLeft;
+    Match_Array[5].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[5].Mark_Tile = 3;
+    Match_Array[5].Mark_Adj = 11;
+    Match_Array[5].Adj_Direction = 1;
+    Match_Array[6].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[6].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[6].Mark_Tile = 15;
+    Match_Array[6].Mark_Adj = 15;
+    Match_Array[6].Adj_Direction = 1;
+    Match_Array[7].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[7].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[7].Mark_Tile = 15;
+    Match_Array[7].Mark_Adj = 15;
+    Match_Array[7].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[8].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[8].Adj_Scouting = SCT_BottomRight;
+    Match_Array[8].Mark_Tile = 11;
+    Match_Array[8].Mark_Adj = 9;
+    Match_Array[8].Adj_Direction = 0;
+    Match_Array[9].Tile_Value = SCT_TopLeft;
+    Match_Array[9].Adj_Scouting = SCT_BottomRight;
+    Match_Array[9].Mark_Tile = 6;
+    Match_Array[9].Mark_Adj = 9;
+    Match_Array[9].Adj_Direction = 0;  // ; concept flaw, this should not yield extra scouting
+    Match_Array[10].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[10].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[10].Mark_Tile = 15;
+    Match_Array[10].Mark_Adj = 3;
+    Match_Array[10].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[11].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[11].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[11].Mark_Tile = 15;
+    Match_Array[11].Mark_Adj = 15;
+    Match_Array[11].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[12].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[12].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[12].Mark_Tile = 15;
+    Match_Array[12].Mark_Adj = 15;
+    Match_Array[12].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[13].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[13].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[13].Mark_Tile = 11;
+    Match_Array[13].Mark_Adj = 15;
+    Match_Array[13].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[14].Tile_Value = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[14].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[14].Mark_Tile = 9;
+    Match_Array[14].Mark_Adj = 15;
+    Match_Array[14].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[15].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[15].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[15].Mark_Tile = 15;
+    Match_Array[15].Mark_Adj = 15;
+    Match_Array[15].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[16].Tile_Value = SCT_TopRight;
+    Match_Array[16].Adj_Scouting = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[16].Mark_Tile = 15;  // ; BUG: should be 12
+    Match_Array[16].Mark_Adj = 15;  // ; BUG: should be 0Dh
+    Match_Array[16].Adj_Direction = 1;
+    Match_Array[17].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[17].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[17].Mark_Tile = 15;
+    Match_Array[17].Mark_Adj = 15;
+    Match_Array[17].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[18].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[18].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[18].Mark_Tile = 15;
+    Match_Array[18].Mark_Adj = 15;
+    Match_Array[18].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[19].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[19].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[19].Mark_Tile = 15;
+    Match_Array[19].Mark_Adj = 15;
+    Match_Array[19].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[20].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[20].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[20].Mark_Tile = 15;
+    Match_Array[20].Mark_Adj = 15;
+    Match_Array[20].Adj_Direction = 2;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[21].Tile_Value = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[21].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[21].Mark_Tile = 15;
+    Match_Array[21].Mark_Adj = 15;
+    Match_Array[21].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[22].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight;
+    Match_Array[22].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[22].Mark_Tile = 15;
+    Match_Array[22].Mark_Adj = 15;
+    Match_Array[22].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[23].Tile_Value = SCT_TopLeft;
+    Match_Array[23].Adj_Scouting = SCT_BottomLeft;
+    Match_Array[23].Mark_Tile = 3;
+    Match_Array[23].Mark_Adj = 3;
+    Match_Array[23].Adj_Direction = 1;
+    Match_Array[24].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[24].Adj_Scouting = SCT_BottomLeft;
+    Match_Array[24].Mark_Tile = 15;  // ; BUG: should be 07h
+    Match_Array[24].Mark_Adj = 3;
+    Match_Array[24].Adj_Direction = 1;
+    Match_Array[25].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_BottomRight;
+    Match_Array[25].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[25].Mark_Tile = 15;
+    Match_Array[25].Mark_Adj = 3;
+    Match_Array[25].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[26].Tile_Value = SCT_TopLeft;
+    Match_Array[26].Adj_Scouting = SCT_TopRight;
+    Match_Array[26].Mark_Tile = 6;
+    Match_Array[26].Mark_Adj = 6;
+    Match_Array[26].Adj_Direction = 0;
+    Match_Array[27].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[27].Adj_Scouting = SCT_BottomRight;
+    Match_Array[27].Mark_Tile = 14;
+    Match_Array[27].Mark_Adj = 12;
+    Match_Array[27].Adj_Direction = 1;
+    Match_Array[28].Tile_Value = SCT_TopRight;
+    Match_Array[28].Adj_Scouting = SCT_BottomRight;
+    Match_Array[28].Mark_Tile = 12;
+    Match_Array[28].Mark_Adj = 12;
+    Match_Array[28].Adj_Direction = 1;
+    Match_Array[29].Tile_Value = SCT_TopRight || SCT_BottomRight;
+    Match_Array[29].Adj_Scouting = SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[29].Mark_Tile = 12;
+    Match_Array[29].Mark_Adj = 15;
+    Match_Array[29].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[30].Tile_Value = SCT_TopRight || SCT_BottomRight;
+    Match_Array[30].Adj_Scouting = SCT_BottomLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[30].Mark_Tile = 12;
+    Match_Array[30].Mark_Adj = 15;
+    Match_Array[30].Adj_Direction = 0;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[31].Tile_Value = SCT_BottomLeft || SCT_TopLeft;
+    Match_Array[31].Adj_Scouting = SCT_TopRight;
+    Match_Array[31].Mark_Tile = 7;
+    Match_Array[31].Mark_Adj = 6;
+    Match_Array[31].Adj_Direction = 0;
+    Match_Array[32].Tile_Value = SCT_BottomLeft;
+    Match_Array[32].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[32].Mark_Tile = 9;
+    Match_Array[32].Mark_Adj = 14;  // BUG: should be 0Dh;
+    Match_Array[32].Adj_Direction = 0;
+    Match_Array[33].Tile_Value = SCT_TopLeft || SCT_TopRight;
+    Match_Array[33].Adj_Scouting = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[33].Mark_Tile = 15;
+    Match_Array[33].Mark_Adj = 15;
+    Match_Array[33].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[34].Tile_Value = SCT_BottomLeft || SCT_BottomRight;
+    Match_Array[34].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[34].Mark_Tile = 9;
+    Match_Array[34].Mark_Adj = 15;
+    Match_Array[34].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[35].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[35].Adj_Scouting = SCT_TopRight || SCT_BottomRight;
+    Match_Array[35].Mark_Tile = 15;
+    Match_Array[35].Mark_Adj = 15;
+    Match_Array[35].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[36].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[36].Adj_Scouting = SCT_TopLeft;
+    Match_Array[36].Mark_Tile = 15;
+    Match_Array[36].Mark_Adj = 6;
+    Match_Array[36].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    Match_Array[37].Tile_Value = SCT_BottomLeft || SCT_TopLeft || SCT_TopRight || SCT_BottomRight;
+    Match_Array[37].Adj_Scouting = SCT_BottomLeft || SCT_TopRight;
+    Match_Array[37].Mark_Tile = 15;
+    Match_Array[37].Mark_Adj = 15;
+    Match_Array[37].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
+    
+    
+    ptr_square_explored = &_square_explored[wp];
+    
+    wx_l2 = (wx - 2);
+
+    if(wx_l2 < 0)
+    {
+        wx_l2 += WORLD_WIDTH;
+    }
+    
+    IDK_wx_l2 = wx_l2;
+
+    wy_u2 = (wy - 2);
+
+    if(wy_u2 < 1)
+    {
+        wy_u2 = 1;
+    }
+
+    for(Y_LoopVar = 0; Y_LoopVar < 5; Y_LoopVar++)
+    {
+
+        for(X_LoopVar = 0; X_LoopVar < 5; X_LoopVar++)
+        {
+
+            IDK_wx_l2 = (wx_l2 + X_LoopVar);
+            
+            if(IDK_wx_l2 >= WORLD_WIDTH)
+            {
+                IDK_wx_l2 -= WORLD_WIDTH;
+            }
+
+            LoopTile_Scouting = ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)];
+
+            for(Match_Index = 0; Match_Index < Match_Count; Match_Index++)
+            {
+
+                if(Match_Array[Match_Index].Tile_Value == LoopTile_Scouting)
+                {
+
+                    Adjacent_Row = wy_u2;
+
+                    Adjacent_Col = IDK_wx_l2;
+                    
+                    switch(Match_Array[Match_Index].Adj_Direction)
+                    {
+                        case 0:  // ; Tile_Right
+                        {
+                            Adjacent_Col = (IDK_wx_l2 + 1);
+                            if(Adjacent_Col >= WORLD_WIDTH)
+                            {
+                                Adjacent_Col -= WORLD_WIDTH;
+                            }
+                        } break;
+                        case 1:  // ; Tile_Below
+                        {
+                            Adjacent_Row++;
+                            if(Adjacent_Row >= WORLD_HEIGHT)
+                            {
+                                Adjacent_Row = WORLD_YMAX;
+                            }
+                        } break;
+                        case 2:  // ; Tile_Left
+                        {
+                            Adjacent_Col = (IDK_wx_l2 - 1);
+                            if(Adjacent_Col < 0)
+                            {
+                                Adjacent_Col = WORLD_XMAX;
+                            }
+                        } break;
+
+                    }
+
+                    Adj_Tile_Scouting = ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)];
+                    
+                    if(Match_Array[Match_Index].Adj_Scouting == Adj_Tile_Scouting)
+                    {
+
+                        // ; BUG: modifying the tile scouting should also modify
+                        // ; its locally stored value, otherwise matches further
+                        // ; on will not work properly any more (a single tile
+                        // ; can have a match in both directions)
+                        ptr_square_explored[((wy_u2 * WORLD_WIDTH) + IDK_wx_l2)] = (Match_Array[Match_Index].Mark_Tile || LoopTile_Scouting);
+                        
+                        ptr_square_explored[((Adjacent_Row * WORLD_WIDTH) + Adjacent_Col)] = (Match_Array[Match_Index].Mark_Adj || Adj_Tile_Scouting);
+                        
+                    }
+
+                }
+
+            }
+
+        }
+
+        wy_u2++;
+
+        if(wy_u2 >= WORLD_HEIGHT)
+        {
+
+            wy_u2 = WORLD_HEIGHT;
+
+        }
+
+    }
+
+}
 
 
 // WZD o68p09
@@ -1391,7 +1845,7 @@ void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t 
 
 
 // WZD o150p05
-void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t terrain_tile_base;
     int16_t itr_world_x;
@@ -1407,7 +1861,7 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
     uint8_t l_terrain_001_1;  // DNE in Dasm
     byte_ptr terrain_pict_seg;
 
-    if(world_plane == 0)
+    if(wp == 0)
     {
         terrain_tile_base = 0;
     }
@@ -1437,8 +1891,8 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
                 curr_world_x = itr_world_x;
             }
 
-            // DELETEME  unexplored_area_flag = _square_explored[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+            // DELETEME  unexplored_area_flag = _square_explored[(wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
             if(unexplored_area_flag == ST_FALSE)
             {
@@ -1446,7 +1900,7 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
             }
             else
             {
-                world_maps_offset = ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2));
+                world_maps_offset = ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2));
                 terrain_001_index = GET_2B_OFS(_world_maps,world_maps_offset);
                 terrain_001_index += terrain_tile_base;
                 terrain_001_index *= 2;  // because, sizeof(int16_t)
@@ -1530,7 +1984,7 @@ void Cycle_Map_Animations(void)
 }
 
 // WZD o150p07
-void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_screen_x;
     int16_t itr_screen_y;
@@ -1560,7 +2014,7 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            terrain_001_index = GET_2B_OFS(_world_maps, ((world_plane * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
+            terrain_001_index = GET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (itr_world_y * WORLD_WIDTH * 2) + (curr_world_x * 2)));
             terrain_001_0 = GET_1B_OFS(m_terrain_lbx_001, (terrain_001_index * 2) + 0);
             animated_terrain_flag = ((terrain_001_0 & 0x80) != 0);  // ¿ prefer ((bitfield >> 7) & 0x01) - saves the CPU doing a full register-sized compare ?
 
@@ -1569,8 +2023,8 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
 
             if( (map_draw_full == ST_TRUE) || (animated_terrain_flag != ST_TRUE) )
             {
-                // DELETEME  square_explored_flag = _square_explored[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+                // DELETEME  square_explored_flag = _square_explored[(wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+                square_explored_flag = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
                 if( (square_explored_flag != 0) && (square_explored_flag != 15) )
                 {
@@ -1590,7 +2044,7 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
 }
 
 // WZD o150p08
-void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_cities;
     int16_t city_x;
@@ -1613,12 +2067,12 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr_cities].wp == world_plane)
+        if(_CITIES[itr_cities].wp == wp)
         {
             city_x = _CITIES[itr_cities].wx;
             city_y = _CITIES[itr_cities].wy;
-            // DELETEME  if(_square_explored[((world_plane * WORLD_SIZE) + (city_y * WORLD_WIDTH) + city_x)] != ST_FALSE)
-            if(GET_SQUARE_EXPLORED(city_x, city_y, world_plane)!= ST_FALSE)
+            // DELETEME  if(_square_explored[((wp * WORLD_SIZE) + (city_y * WORLD_WIDTH) + city_x)] != ST_FALSE)
+            if(GET_SQUARE_EXPLORED(city_x, city_y, wp)!= ST_FALSE)
             {
                 city_x = city_x - world_grid_x;  // translate to map relative coordinates
                 if(city_x < 0)
@@ -1702,7 +2156,7 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 }
 
 // WZD o150p09
-void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_towers;
     int16_t tower_x;
@@ -1718,8 +2172,8 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
         tower_x = _TOWERS[itr_towers].wx;
         tower_y = _TOWERS[itr_towers].wy;
 
-        // DELETEME  unexplored_flag = _square_explored[(world_plane * WORLD_SIZE) + (tower_y * WORLD_WIDTH) + tower_x];
-        unexplored_flag = GET_SQUARE_EXPLORED(tower_x, tower_y, world_plane);
+        // DELETEME  unexplored_flag = _square_explored[(wp * WORLD_SIZE) + (tower_y * WORLD_WIDTH) + tower_x];
+        unexplored_flag = GET_SQUARE_EXPLORED(tower_x, tower_y, wp);
 
         if(unexplored_flag != ST_FALSE)
         {
@@ -1775,7 +2229,7 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
 /*
     Draws Lairs (but, not *Lairs* that Towers or Nodes)
 */
-void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_lairs;
     int16_t lair_x;
@@ -1786,7 +2240,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
-        if(_LAIRS[itr_lairs].wp == world_plane)
+        if(_LAIRS[itr_lairs].wp == wp)
         {
             if(_LAIRS[itr_lairs].Intact == ST_TRUE)
             {
@@ -1795,8 +2249,8 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     lair_x = _LAIRS[itr_lairs].wx;
                     lair_y = _LAIRS[itr_lairs].wy;
 
-                    // DELETEME  unexplored_flag = _square_explored[(world_plane * WORLD_SIZE) + (lair_y * WORLD_WIDTH) + lair_x];
-                    unexplored_flag = GET_SQUARE_EXPLORED(lair_x, lair_y, world_plane);
+                    // DELETEME  unexplored_flag = _square_explored[(wp * WORLD_SIZE) + (lair_y * WORLD_WIDTH) + lair_x];
+                    unexplored_flag = GET_SQUARE_EXPLORED(lair_x, lair_y, wp);
 
                     if(unexplored_flag != ST_FALSE)
                     {
@@ -1858,7 +2312,7 @@ void Draw_Map_Lairs(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 }
 
 // WZD o150p11
-void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_nodes;
     int16_t node_owner_idx;
@@ -1880,7 +2334,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
     for(itr_nodes = 0; itr_nodes < NUM_NODES; itr_nodes++)
     {
-        if(world_plane == _NODES[itr_nodes].wp)
+        if(wp == _NODES[itr_nodes].wp)
         {
             node_owner_idx = _NODES[itr_nodes].owner_idx;
 
@@ -1917,8 +2371,8 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 
                         node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
 
-                        // DELETEME  unexplored_area = _square_explored[(world_plane * WORLD_SIZE) + (node_aura_world_y * WORLD_WIDTH) + (node_aura_world_x)];
-                        unexplored_area = GET_SQUARE_EXPLORED(node_aura_world_x, node_aura_world_y, world_plane);
+                        // DELETEME  unexplored_area = _square_explored[(wp * WORLD_SIZE) + (node_aura_world_y * WORLD_WIDTH) + (node_aura_world_x)];
+                        unexplored_area = GET_SQUARE_EXPLORED(node_aura_world_x, node_aura_world_y, wp);
 
                         if(unexplored_area != ST_FALSE)
                         {
@@ -1949,7 +2403,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // TODO                      {
 // TODO                          node_aura_world_x = _NODES[itr_nodes].Aura_Xs[Tile_Index];
 // TODO                          node_aura_world_y = _NODES[itr_nodes].Aura_Ys[Tile_Index];
-// TODO                          unexplored_area = _square_explored[(world_plane * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
+// TODO                          unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (node_aura_world_y) + (node_aura_world_x)];
 // TODO                          if(unexplored_area != ST_FALSE)
 // TODO                          {
 // TODO                              node_aura_map_x = node_aura_world_x - world_grid_x;
@@ -2010,7 +2464,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 }
 
 // WZD o150p12
-void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_screen_x;
     int16_t itr_screen_y;
@@ -2041,14 +2495,14 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            // DELETEME  unexplored_area = _square_explored[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+            // DELETEME  unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
             if(unexplored_area != ST_FALSE)
             {
-                terrain_special = TBL_Terr_Specials[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+                terrain_special = TBL_Terr_Specials[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
-                terrain_flag = _map_square_flags[(world_plane * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+                terrain_flag = _map_square_flags[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
 
                 if((terrain_flag & 0x20) != 0)  /* Corruption */
                 {
@@ -2061,7 +2515,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     has_city = ST_FALSE;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == world_plane))
+                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == wp))
                         {
                             has_city = ST_TRUE;
                         }
@@ -2100,7 +2554,7 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 }
 
 // WZD o150p13
-void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     // DEDU  does this actually exist in the Dasm?  uint8_t * ptr_TBL_Scouting;
     uint8_t * ptr_TBL_Terr_Specials;
@@ -2122,9 +2576,9 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
     {
         itr_screen_x = screen_x;
 
-        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
+        ptr_TBL_Terr_Specials = (uint8_t *)(TBL_Terr_Specials + (wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
-        // DELETEME  ptr_TBL_Scouting = (uint8_t *)(_square_explored + (world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
+        // DELETEME  ptr_TBL_Scouting = (uint8_t *)(_square_explored + (wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH));
 
         itr_world_x = world_grid_x;
 
@@ -2140,7 +2594,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
             }
 
             // DELETEME  unexplored_area = *(ptr_TBL_Scouting + curr_world_x);
-            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
             if(unexplored_area != ST_FALSE)
             {
@@ -2154,7 +2608,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
                     City_Cover = 0;
                     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
                     {
-                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == world_plane))
+                        if((_CITIES[itr_cities].wx == curr_world_x) && (_CITIES[itr_cities].wy == itr_world_y) && (_CITIES[itr_cities].wp == wp))
                         {
                             City_Cover = 1;
                         }
@@ -2181,7 +2635,7 @@ void Draw_Map_Minerals(int16_t screen_x, int16_t screen_y, int16_t map_grid_widt
 }
 
 // WZD o150p14
-void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane)
+void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
     int16_t itr_screen_x = 0;
     int16_t itr_screen_y = 0;
@@ -2213,12 +2667,12 @@ void Draw_Map_Roads(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            // DELETEME  unexplored_area = _square_explored[(world_plane * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
-            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, world_plane);
+            // DELETEME  unexplored_area = _square_explored[(wp * WORLD_SIZE) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
+            unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
             if(unexplored_area != ST_FALSE)
             {
                 terrain_flags_table_sgmt = (uint8_t *)_map_square_flags;
-                terrain_flags_table_ofst = (world_plane * WORLD_SIZE) + ((itr_world_y - 1) * WORLD_WIDTH) + (curr_world_x - 1);
+                terrain_flags_table_ofst = (wp * WORLD_SIZE) + ((itr_world_y - 1) * WORLD_WIDTH) + (curr_world_x - 1);
                 // -------------
                 // |  0|  1|  2|
                 // -------------
@@ -2388,7 +2842,7 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 // AKA Draw_Minimap()
 // AKA Draw_Reduced_Map
 // AKA Draw_Minimap()
-// void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
+// void Draw_Minimap(int16_t minimap_start_x, int16_t minimap_start_y, int16_t wp, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t Mark_X, int16_t Mark_Y, int16_t Mark);
 // TODO  rename to ~create/build
 /*
     TODO(JimBalcomb,20240914):  MainScr_Maps.C  Create_Reduced_Map_Picture()  needs a full review
@@ -2396,7 +2850,7 @@ void Draw_Map_Units(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
 Elsewhere, Draw_World_Window() is called to call Draw_Picture() on _reduced_map_seg
 
 */
-void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t world_plane, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
+void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y, int16_t wp, byte_ptr minimap_pict_seg, int16_t minimap_width, int16_t minimap_height, int16_t mark_x, int16_t mark_y, int16_t mark_flag)
 {
 // minimap_pict_data_ptr = dword ptr - 1Ch
 // world_data_ptr = dword ptr - 18h
@@ -2412,7 +2866,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 // 
 // minimap_start_x = word ptr  6
 // minimap_start_y = word ptr  8
-// world_plane = word ptr  0Ah
+// wp = word ptr  0Ah
 // minimap_pict_seg = word ptr  0Ch
 // minimap_width = word ptr  0Eh
 // minimap_height = word ptr  10h
@@ -2448,10 +2902,10 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
     int16_t minimap_square_y_gte_zero = 0;  // DNE in Dasm
     int16_t minimap_square_y_lt_world_height = 0;  // DNE in Dasm
 
-    terrain_type_idx_base = world_plane * NUM_TERRAIN_TYPES;
+    terrain_type_idx_base = wp * NUM_TERRAIN_TYPES;
 
-    explore_data_ptr = (_square_explored + (world_plane * WORLD_SIZE));
-    world_data_ptr = (_world_maps + (world_plane * WORLD_SIZE_DW));
+    explore_data_ptr = (_square_explored + (wp * WORLD_SIZE));
+    world_data_ptr = (_world_maps + (wp * WORLD_SIZE_DW));
     minimap_pict_data_ptr = minimap_pict_seg + SZ_PARAGRAPH_B;  // +1 segment (paragraph), for the animation/picture/bitmap header
 
     // WZD s30p06
@@ -2494,7 +2948,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
             }
             square_explored_flag = *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x);
-            square_explored_flag = GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, world_plane);
+            square_explored_flag = GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, wp);
             // // if ((minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && (square_explored != UNEXPLORED));
             // if(
             //     (
@@ -2532,12 +2986,12 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
     */
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr_cities].wp == world_plane)
+        if(_CITIES[itr_cities].wp == wp)
         {
             city_world_x = _CITIES[itr_cities].wx;
             city_world_y = _CITIES[itr_cities].wy;
             // DELETEME  if(*(explore_data_ptr + (city_world_y * WORLD_WIDTH) + city_world_x) != ST_FALSE)
-            if(GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, world_plane) != ST_FALSE)
+            if(GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, wp) != ST_FALSE)
             {
                 city_minimap_x = city_world_x - minimap_start_x;
                 if(city_minimap_x < 0)

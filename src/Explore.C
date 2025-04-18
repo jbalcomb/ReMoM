@@ -202,8 +202,10 @@ void Update_Scouted_And_Contacted__WIP(void)
 
     for(itr_planes = 0; itr_planes < NUM_PLANES; itr_planes++)
     {
+
         curr_world_p = itr_planes;
-        Clear_Square_Scouted_Flags(itr_planes);
+
+        Clear_Square_Scouted_Flags(itr_planes);  // ¿ MoO2  Clear_Planet_Explored_Flags_() ?
 
         if(_players[_human_player_idx].Globals[NATURES_AWARENESS] == ST_FALSE)
         {

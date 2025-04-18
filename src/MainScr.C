@@ -852,8 +852,8 @@ void Main_Screen(void)
 
     DBG_Alt_A__TurnCount = ST_UNDEFINED;
     
-    assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Main_Screen_Draw();
 
@@ -1613,8 +1613,8 @@ void Main_Screen(void)
                             (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE)
                         )
                         {
-                            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-                            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+                            assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+                            assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
                             Move_Stack(target_world_x, target_world_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
                         }
@@ -2109,8 +2109,8 @@ void Main_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
 
-    assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Main_Screen_Draw_Do_Draw(&_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _human_player_idx);
 }
@@ -2206,18 +2206,18 @@ void Move_Stack_DirKey(int16_t movement_direction)
         // DELETEME  {
         // DELETEME      move_y = WORLD_Y_MIN;
         // DELETEME  }
-        SETMIN(move_y, WORLD_Y_MIN);
+        SETMIN(move_y, WORLD_YMIN);
 
         // DELETEME  if(move_y >= WORLD_HEIGHT)
         // DELETEME  {
-        // DELETEME      move_y = WORLD_Y_MAX;
+        // DELETEME      move_y = WORLD_YMAX;
         // DELETEME  }
         SETMAX(move_y, WORLD_HEIGHT);
 
         if(Stack_Has_PlanarTravel() == ST_TRUE)
         {
-            assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-            assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+            assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+            assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
             Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
         }
@@ -2225,8 +2225,8 @@ void Move_Stack_DirKey(int16_t movement_direction)
         {
             if( (_UNITS[_unit_stack[0].unit_idx].wp == _map_plane) || (_UNITS[_unit_stack[0].unit_idx].in_tower == ST_TRUE) )
             {
-                assert(_map_x >= WORLD_X_MIN && _map_x <= WORLD_X_MAX);  /*  0 & 59 */
-                assert(_map_y >= WORLD_Y_MIN && _map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+                assert(_map_x >= WORLD_XMIN && _map_x <= WORLD_XMAX);  /*  0 & 59 */
+                assert(_map_y >= WORLD_YMIN && _map_y <= WORLD_YMAX);  /*  0 & 39 */
 
                 Move_Stack(move_x, move_y, _human_player_idx, &_map_x, &_map_y, &_map_plane);
             }
@@ -3218,8 +3218,8 @@ int16_t EarthGateTeleport__WIP(int16_t wx, int16_t wy, int16_t wp)
             player_idx = _CITIES[src_city_idx].owner_idx;
             // TODO  Radius = IDK_City_Radius_s34255(player_idx, wx, wy, wp);
             // AI_ContactWizards((player_idx, wx, wy, wp, Radius);
-            // TODO TILE_ExploreRadius__WIP(wx, wy, wp, Radius);
-            TILE_ExploreRadius__WIP(wx, wy, wp, 2);
+            // TODO Set_Map_Square_Explored_Flags_XYP_Range(wx, wy, wp, Radius);
+            Set_Map_Square_Explored_Flags_XYP_Range(wx, wy, wp, 2);
             _active_world_x = _CITIES[dst_city_idx].wx;
             _active_world_y = _CITIES[dst_city_idx].wy;
             WIZ_NextIdleStack(player_idx, &_map_x, &_map_y, &wp);
@@ -3312,15 +3312,15 @@ void Main_Screen_Draw_Status_Window(void)
 // WZD o063p02
 void Main_Screen_Draw_Do_Draw(int16_t * map_x, int16_t * map_y, int16_t map_plane, int16_t x_pos, int16_t y_pos, int16_t player_idx)
 {
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Reset_Map_Draw();
 
     Reduced_Map_Set_Dims(REDUCED_MAP_W, REDUCED_MAP_H);
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, map_x, map_y, map_plane, x_pos, y_pos, player_idx);
 
@@ -4929,8 +4929,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
     int16_t itr_troops = 0;  // _SI_
     int16_t itr_path = 0;  // _SI_
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     unit_idx = troops[0];
     unit_wx = _UNITS[unit_idx].wx;
@@ -5166,8 +5166,8 @@ Start_Path:
     }
     else
     {
-        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+        assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
         Move_Units_Draw(player_idx, map_p, path_length, map_x, map_y, troops, troop_count);
     }
@@ -5393,8 +5393,8 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
     int16_t itr_move_stages;
     int16_t itr_units;
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     unit_idx = unit_array[0];
 
@@ -5477,9 +5477,9 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
         MainScr_Create_Reduced_Map_Picture();
 
-        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
+        assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
 
-        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+        assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
         Main_Screen_Draw_Do_Draw(map_x, map_y, map_p, *map_x, *map_y, player_idx);
 
@@ -5590,14 +5590,14 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
             if(
                 (unit_x == 0)
                 &&
-                (curr_dst_wx == WORLD_X_MAX)
+                (curr_dst_wx == WORLD_XMAX)
             )
             {
                 unit_pict_shift_sx = -4;  // MAP_WIDTH / 3
                 unit_x -= 1;
                 if(unit_x == 0)
                 {
-                    unit_x = WORLD_X_MAX;
+                    unit_x = WORLD_XMAX;
                 }
             }
             else
@@ -5613,7 +5613,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
 
         if(curr_dst_wx < unit_x)  /* ¿ moving to the left ? */
         {
-            if(unit_x == WORLD_X_MAX && curr_dst_wx == 0)
+            if(unit_x == WORLD_XMAX && curr_dst_wx == 0)
             {
                 unit_pict_shift_sx = 4;  // MAP_WIDTH / 3
                 unit_x += 1;
@@ -5628,7 +5628,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 unit_x -= 1;
                 if(unit_x == 0)
                 {
-                    unit_x = WORLD_X_MAX;
+                    unit_x = WORLD_XMAX;
                 }
             }
         }
@@ -5700,7 +5700,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 {
                     // ; the same call with the same parameters is repeated below, except it more appropriately also updates the minimap after the call
                     // ; explores map tiles in the specified radius, usually referred to as the scouting range
-                    TILE_ExploreRadius__WIP(unit_x, unit_y, map_p, scout_range);
+                    Set_Map_Square_Explored_Flags_XYP_Range(unit_x, unit_y, map_p, scout_range);
                 }
 
             }
@@ -5733,7 +5733,7 @@ void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length,
                 if( (itr_move_stages == 1) && (player_idx == _human_player_idx) )
                 {
                     Reset_Map_Draw();
-                    TILE_ExploreRadius__WIP(unit_x, unit_y, map_p, scout_range);
+                    Set_Map_Square_Explored_Flags_XYP_Range(unit_x, unit_y, map_p, scout_range);
                     MainScr_Create_Reduced_Map_Picture();
                 }
 

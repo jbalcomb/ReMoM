@@ -744,7 +744,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
     if(player_idx == _human_player_idx)
     {
         // drake178: ; BUG: ignores Oracle exploration radius
-        TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
+        Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
     }
 
     _CITIES[city_idx].owner_idx = player_idx;

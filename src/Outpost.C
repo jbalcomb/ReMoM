@@ -121,7 +121,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 
                 Play_Background_Music__STUB();
 
-                TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 2);
+                Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 2);
 
             }
             else
@@ -135,7 +135,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 {
                     if(itr_players == _human_player_idx)
                     {
-                        TILE_ExploreRadius__WIP(outpost_wx, outpost_wy, outpost_wp, 1);
+                        Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 1);
                     }
                     else
                     {

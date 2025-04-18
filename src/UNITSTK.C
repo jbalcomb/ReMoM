@@ -183,12 +183,12 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 
     int16_t itr_units;
 
-    assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-    assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+    assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+    assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
     move_type = 0;
 
-    if(move_y != WORLD_Y_MIN && move_y != WORLD_Y_MAX)
+    if(move_y != WORLD_YMIN && move_y != WORLD_YMAX)
     {
         Build_Moveable_Stack(&unit_array_count, &unit_array[0]);
 
@@ -204,8 +204,8 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
 // TODO              o58p03_Empty_pFxn();
 // TODO          }
 
-        assert(*map_x >= WORLD_X_MIN && *map_x <= WORLD_X_MAX);  /*  0 & 59 */
-        assert(*map_y >= WORLD_Y_MIN && *map_y <= WORLD_Y_MAX);  /*  0 & 39 */
+        assert(*map_x >= WORLD_XMIN && *map_x <= WORLD_XMAX);  /*  0 & 59 */
+        assert(*map_y >= WORLD_YMIN && *map_y <= WORLD_YMAX);  /*  0 & 39 */
 
         Move_Units(player_idx, move_x, move_y, move_type, map_x, map_y, *map_p, unit_array_count, &unit_array[0]);
 

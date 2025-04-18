@@ -73,7 +73,7 @@ void Cheat_Reveal(void);
 // sub_5245A()
 
 // WZD o59p18
-void TILE_ExploreRadius__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range);
+void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range);
 
 // WZD o59p19
 void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, int16_t * map_plane);

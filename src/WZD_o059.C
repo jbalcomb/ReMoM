@@ -426,8 +426,8 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
         _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
         if(_UNITS[unit_idx].owner_idx == _human_player_idx)
         {
-            TILE_Explore(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
-            TILE_Explore(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
+            Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
+            Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
         }
     }
     else
@@ -538,68 +538,58 @@ void Cheat_Reveal(void)
 
 
 // WZD o59p18
-void TILE_ExploreRadius__WIP(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
+// drake178: ¿ ?
+/*
+
+Set_Map_Square_Explored_Flags_XYP_Range()
+AKA TILE_ExploreRadius__WIP()
+*/
+void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
 {
-// Top_Y= word ptr -8
-// Left_X= word ptr -6
-// Tile_X= word ptr -4
-// Tile_Y= word ptr -2
-    int16_t y_start;
-    int16_t x_start;
-    int16_t itr_world_x;
-    int16_t itr_world_y;
-    int16_t world_x;
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    int16_t world_x = 0;
+    int16_t itr_world_y = 0;
+    int16_t itr_world_x = 0;  // _DI_
 
-    if(scout_range != 0)
+    if(scout_range == 0)
     {
-        if(scout_range != 1)
+        return;
+    }
+
+    if(scout_range == 1)
+    {
+        Set_Map_Square_Explored_Flags_XYP(wx, wy, wp);
+    }
+
+    scout_range--;
+
+    y_start = wy - scout_range;
+
+    if(y_start < 0)
+    {
+        y_start = 0;
+    }
+
+    x_start = wx - scout_range;
+
+    if(x_start < 0)
+    {
+        x_start += WORLD_WIDTH;
+    }
+
+    scout_range = (scout_range * 2) + 1;
+
+    for(itr_world_y = y_start; ((y_start + scout_range) > itr_world_y) && (itr_world_y < WORLD_HEIGHT); itr_world_y++)
+    {
+        for(itr_world_x = x_start; (x_start + scout_range) > itr_world_x; itr_world_x++)
         {
-            scout_range--;
-            y_start = wy - scout_range;
-            if(y_start < 0)
-            {
-                y_start = 0;
-            }
-            x_start = wx - scout_range;
-            if(x_start < 0)
-            {
-                x_start += WORLD_WIDTH;
-            }
-            scout_range = (scout_range * 2) + 1;
+            if(itr_world_x < WORLD_WIDTH)
+                world_x = itr_world_x;
+            else
+                world_x = itr_world_x - WORLD_WIDTH;
 
-            itr_world_y = y_start;
-            while((y_start + scout_range) > itr_world_y)
-            {
-
-                if(itr_world_y < WORLD_HEIGHT)
-                {
-                    itr_world_x = x_start;
-                    while((x_start + scout_range) > itr_world_x)
-                    {
-                        
-                        if(itr_world_x < WORLD_WIDTH)
-                        {
-                            world_x = itr_world_x;
-                        }
-                        else
-                        {
-                            world_x = itr_world_x - WORLD_WIDTH;
-                        }
-
-                        TILE_Explore(world_x, itr_world_y, wp);
-
-                        itr_world_x++;
-                    }
-
-                }
-
-                itr_world_y++;
-            }
-
-        }
-        else
-        {
-            TILE_Explore(wx, wy, wp);
+            Set_Map_Square_Explored_Flags_XYP(world_x, itr_world_y, wp);
         }
     }
 

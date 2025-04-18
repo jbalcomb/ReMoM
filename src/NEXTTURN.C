@@ -2342,7 +2342,7 @@ Capture_Cities_Data();
                     {
 
 Check_Cities_Data();
-                        TILE_ExploreRadius__WIP(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                        Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
 Check_Cities_Data();
 
                     }

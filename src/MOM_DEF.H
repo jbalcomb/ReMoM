@@ -280,12 +280,10 @@ WIZARDS.LBX
 
 
 
-#define WORLD_X_MIN          0  // in Squares
-// #define WORLD_X_MAX         59  // in Squares
-#define WORLD_X_MAX         (WORLD_WIDTH - 1)  // in Squares
-#define WORLD_Y_MIN          0  // in Squares
-// #define WORLD_Y_MAX         39  // in Squares
-#define WORLD_Y_MAX         (WORLD_HEIGHT - 1)  // in Squares
+#define WORLD_XMIN          0  // in Squares
+#define WORLD_XMAX         (WORLD_WIDTH - 1)  // in Squares
+#define WORLD_YMIN          0  // in Squares
+#define WORLD_YMAX         (WORLD_HEIGHT - 1)  // in Squares
 
 #define MAP_X_MIN          0  // in Squares
 #define MAP_X_MAX         (MAP_WIDTH - 1)  // in Squares
