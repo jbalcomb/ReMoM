@@ -5,35 +5,6 @@
 
 
 
-// MGC dseg:385E                                                     BEGIN: IntroAnim Screen
-
-// MGC dseg:385E
-int16_t IntroAnim_FrameCounts[13] = { 15,   12,   30,   18,   25,   32,   24,   32,   30,   37,   30,   11,   32 };
-
-// MGC dseg:3878
-char music_lbx_file__MGC_ovr058[] = "music.lbx";
-
-// MGC dseg:3881
-char str_empty_string__MGC_ovr058[] = "";
-
-// MGC dseg:3882
-char soundfx_lbx_file__MGC_ovr058[] = "soundfx.lbx";
-
-// MGC dseg:388E
-char str_ESC__MGC_ovr058[] = "\x1B";
-
-// MGC dseg:3890
-char intro_lbx_file__MGC_ovr058[] = "INTRO.LBX";
-
-// MGC dseg:389A
-char str_SIMTEX_COPYRIGHT_1995_V131__MGC_ovr058[] = "Copyright  Simtex Software, 1995   V1.31";
-
-// MGC dseg:389A                                                     END: IntroAnim Screen
-
-
-
-
-
 // MGC dseg:38D8                                                 BEGIN:  MGC seg060 - Initialized Data
 
 // MGC dseg:38D8

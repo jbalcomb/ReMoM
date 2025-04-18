@@ -22,19 +22,19 @@ extern "C" {
 void Draw_Logos(void);
 
 // MGC o58p2
-void VGA_Fade_Out_2(void);
+void Intro_Fade_Out_2(void);
 
 // MGC o58p3
-void VGA_Fade_Out_10(void);
+void Intro_Fade_Out_10(void);
 
 // MGC o58p4
-void VGA_Fade_Out_20(void);
+void Intro_Fade_Out_20(void);
 
 // MGC o58p5
-void VGA_Fade_In_2(void);
+void Intro_Fade_In_2(void);
 
 // MGC o58p6
-void VGA_Fade_In_50(void);
+void Intro_Fade_In_50(void);
 
 
 

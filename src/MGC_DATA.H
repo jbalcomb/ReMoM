@@ -5,38 +5,6 @@
 
 
 
-
-
-// MGC dseg:385E                                                     BEGIN: IntroAnim Screen
-
-// MGC dseg:385E
-extern int16_t IntroAnim_FrameCounts[13];
-
-// MGC dseg:3878
-extern char music_lbx_file__MGC_ovr058[];
-
-// MGC dseg:3881
-extern char str_empty_string__MGC_ovr058[];
-
-// MGC dseg:3882
-extern char soundfx_lbx_file__MGC_ovr058[];
-
-// MGC dseg:388E
-extern char str_ESC__MGC_ovr058[];
-
-// MGC dseg:3890
-extern char intro_lbx_file__MGC_ovr058[];
-
-// MGC dseg:389A
-extern char str_SIMTEX_COPYRIGHT_1995_V131__MGC_ovr058[];
-
-// MGC dseg:389A                                                     END: IntroAnim Screen
-
-
-
-
-
-
 // MGC dseg:38D8                                                 BEGIN:  MGC seg060 - Initialized Data
 
 // MGC dseg:38D8

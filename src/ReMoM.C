@@ -333,7 +333,6 @@ int MOM_main(int argc, char** argv)
     // MGC Enable_Cancel();
     // WZD Enable_Cancel();
     // WZD Allocate_Data_Space(4600);
-
     Enable_Cancel();
 
     Allocate_Data_Space(6100);
@@ -342,10 +341,10 @@ int MOM_main(int argc, char** argv)
 
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
-    /* NEWCODE */  // if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
-    /* NEWCODE */  // {
-    /* NEWCODE */  //     Draw_Logos();
-    /* NEWCODE */  // }
+    if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
+    {
+        Draw_Logos();
+    }
 
     Load_MGC_Resources();
 

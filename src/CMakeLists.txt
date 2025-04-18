@@ -44,6 +44,7 @@ set(MOMLIB_SOURCES
     Help.C
     HIRE.C
     Init.C
+    INTRO.C
     ItemMake.C
     Items.C
     ItemScrn.C

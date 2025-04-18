@@ -1,3 +1,6 @@
+/*
+    MAGIC.EXE ovr058
+*/
 
 #include "INTRO.H"
 
@@ -13,9 +16,32 @@
 
 
 
-/*
-    MAGIC.EXE ovr058
-*/
+// MGC dseg:385E                                                 BEGIN:  ovr058 - Initialized Data  (Intro/Logos)
+
+// MGC dseg:385E
+int16_t IntroAnim_FrameCounts__MGC_ovr058[13] = { 15,   12,   30,   18,   25,   32,   24,   32,   30,   37,   30,   11,   32 };
+
+// MGC dseg:3878
+char music_lbx_file__MGC_ovr058[] = "music.lbx";
+
+// MGC dseg:3881
+char str_empty_string__MGC_ovr058[] = "";
+
+// MGC dseg:3882
+char soundfx_lbx_file__MGC_ovr058[] = "soundfx.lbx";
+
+// MGC dseg:388E
+char str_ESC__MGC_ovr058[] = "\x1B";
+
+// MGC dseg:3890
+char intro_lbx_file__MGC_ovr058[] = "INTRO.LBX";
+
+// MGC dseg:389A
+char str_SIMTEX_COPYRIGHT_1995_V131__MGC_ovr058[] = "Copyright  Simtex Software, 1995   V1.31";
+
+// MGC dseg:389A                                                 END:  ovr058 - Initialized Data  (Intro/Logos)
+
+
 
 // MGC o58p1
 /*
@@ -79,26 +105,26 @@ void Draw_Logos(void)
         */
         if(itr_scenes == 0)
         {
-            VGA_Fade_Out_2();
+            Intro_Fade_Out_2();
         }
         else if(itr_scenes == 1)
         {
-            VGA_Fade_Out_20();
+            Intro_Fade_Out_20();
         }
         else if(itr_scenes == 2)
         {
-            VGA_Fade_Out_10();
+            Intro_Fade_Out_10();
         }
         else if(itr_scenes == 3)
         {
-            VGA_Fade_Out_20();
+            Intro_Fade_Out_20();
         }
         else
         {
-            VGA_Fade_Out_2();
+            Intro_Fade_Out_2();
         }
 
-        for(itr_frames = 0; IntroAnim_FrameCounts[itr_scenes] > itr_frames; itr_frames++)
+        for(itr_frames = 0; IntroAnim_FrameCounts__MGC_ovr058[itr_scenes] > itr_frames; itr_frames++)
         {
 
             Mark_Time();
@@ -260,11 +286,11 @@ void Draw_Logos(void)
 
             if((itr_frames == 0) && (itr_scenes > 2))
             {
-                VGA_Fade_In_2();
+                Intro_Fade_In_2();
             }
             else if((itr_frames == 0) && ((itr_scenes == 0) || (itr_scenes == 1) || (itr_scenes == 2)))
             {
-                VGA_Fade_In_50();
+                Intro_Fade_In_50();
             }
 
             Copy_On_To_Off_Page();
@@ -273,7 +299,7 @@ void Draw_Logos(void)
 
             if(leave_screen == ST_TRUE)
             {
-                itr_frames = IntroAnim_FrameCounts[itr_scenes];
+                itr_frames = IntroAnim_FrameCounts__MGC_ovr058[itr_scenes];
             }
 
         }
@@ -289,7 +315,7 @@ void Draw_Logos(void)
 
 
 // MGC o58p2
-void VGA_Fade_Out_2(void)
+void Intro_Fade_Out_2(void)
 {
     int16_t itr;  // _SI_
 
@@ -310,7 +336,7 @@ void VGA_Fade_Out_2(void)
 
 
 // MGC o58p3
-void VGA_Fade_Out_10(void)
+void Intro_Fade_Out_10(void)
 {
     int16_t itr;  // _SI_
 
@@ -331,7 +357,7 @@ void VGA_Fade_Out_10(void)
 
 
 // MGC o58p4
-void VGA_Fade_Out_20(void)
+void Intro_Fade_Out_20(void)
 {
     int16_t itr;  // _SI_
 
@@ -352,7 +378,7 @@ void VGA_Fade_Out_20(void)
 
 
 // MGC o58p5
-void VGA_Fade_In_2(void)
+void Intro_Fade_In_2(void)
 {
     int16_t itr;  // _SI_
 
@@ -373,7 +399,7 @@ void VGA_Fade_In_2(void)
 
 
 // MGC o58p6
-void VGA_Fade_In_50(void)
+void Intro_Fade_In_50(void)
 {
     int16_t itr;  // _SI_
 
