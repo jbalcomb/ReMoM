@@ -341,7 +341,8 @@ int MOM_main(int argc, char** argv)
 
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();
-    if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
+    // if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
+    if(strcmp(argv, "JENNY") != 0)
     {
         Draw_Logos();
     }
@@ -353,7 +354,7 @@ int MOM_main(int argc, char** argv)
     Load_SPELLDAT();  // ; ~== Newgame_Screen
     // END: ~== New Game Screen
 
-    /* NEWCODE */  // Init_Credits();
+    Init_Credits();
 
     // BEGIN: ~== Main Menu Screen
     CLS();

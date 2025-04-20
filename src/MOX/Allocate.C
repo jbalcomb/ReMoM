@@ -163,8 +163,8 @@ Notes from MGC Dasm
     GUI_Help_NearAlloc dw 0
 
 // MGC dseg:948C
-    ; unsigned int gsa_GUI_Credits_Text_IMG
-    gsa_GUI_Credits_Text_IMG dw 0
+    ; unsigned int _credits_pict_seg
+    _credits_pict_seg dw 0
         ; MGC_DEF.H C35h LBX_Alloc_First paragraphs in the sandbox, now formatted for a 280x122 image
 
 // MGC dseg:948E

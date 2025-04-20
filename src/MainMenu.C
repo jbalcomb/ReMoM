@@ -567,7 +567,10 @@ void Main_Menu_Screen_Draw(void)
     FLIC_Draw(0, 41, mainmenu_bot);
 
 
-    if(screen_change == ST_FALSE) { /* Draw_Credits() */ }
+    if(screen_change == ST_FALSE)
+    {
+        Draw_Credits();
+    }
 
 
     /*

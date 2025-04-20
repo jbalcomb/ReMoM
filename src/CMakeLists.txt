@@ -38,6 +38,7 @@ set(MOMLIB_SOURCES
     CityScr.C
     City_ovr55.C
     Combat.C
+    CREDITS.C
     DIPLOMAC.C
     EVENTS.C
     Explore.C
