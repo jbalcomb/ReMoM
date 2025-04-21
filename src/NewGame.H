@@ -26,7 +26,7 @@ void Newgame_Control(void);
 // Load_Screen_Draw()
 
 // o50p05
-void Newgame_Screen_0__WIP(void);
+int16_t Newgame_Screen_0__WIP(void);
 
 // o50p06
 void Newgame_Screen_0_Draw__WIP(void);
@@ -98,7 +98,7 @@ void GAME_New_Screen_5__WIP(void);
 // Set_Load_Screen_Help_List_MGC()
 
 // o50p29
-// HLP_Load_NewGOptions()
+void Set_Newgame_Screen0_Help_List(void);
 
 // o50p30
 // HLP_Load_BannerSel()

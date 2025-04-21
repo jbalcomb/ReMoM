@@ -622,8 +622,10 @@ char str_wb__ovr050[] = "wb";
 // MGC dseg:3272 20 70 69 63 6B 73 00                            cnst_Picks db ' picks',0                ; DATA XREF: GAME_Draw_NewScr4+AA9o ...
 // MGC dseg:3279 59 6F 75 20 64 6F 6E 27 74 20 68 61 76 65 20 65+cnst_Pick_Error_5 db 'You don',27h,'t have enough picks left to make this selection. You need 2 picks',0
 // MGC dseg:3279 6E 6F 75 67 68 20 70 69 63 6B 73 20 6C 65 66 74+                                        ; DATA XREF: GAME_New_Screen_4:loc_40D3Ao
-// MGC dseg:32C3 68 6C 70 65 6E 74 72 79 2E 6C 62 78 00          cnst_HLPENTRY_File3 db 'hlpentry.lbx',0 ; DATA XREF: GAME_New_Screen_5+1AEo ...
-// MGC dseg:32C3                                                                                         ; should use dseg:28db
+
+// MGC dseg:32C3
+char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
+
 // MGC dseg:32D0 59 6F 75 20 68 61 76 65 20 6E 6F 20 70 69 63 6B+cnst_Pick_Error_6 db 'You have no picks left in this area, to deselect click on a selected item',0
 // MGC dseg:32D0 73 20 6C 65 66 74 20 69 6E 20 74 68 69 73 20 61+                                        ; DATA XREF: GAME_New_Screen_5:loc_42154o
 // MGC dseg:331A 53 65 6C 65 63 74 20 00                         cnst_Spell_Select_0 db 'Select ',0      ; DATA XREF: SCRN_Draw_NewScr5_2+DDo
@@ -962,7 +964,7 @@ without saving if the Esc key is pressed
 /*
 
 */
-void Newgame_Screen_0__WIP(void)
+int16_t Newgame_Screen_0__WIP(void)
 {
     char file_found[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t leave_screen = 0;
@@ -1089,7 +1091,7 @@ void Newgame_Screen_0__WIP(void)
 
     Assign_Auto_Function(Newgame_Screen_0_Draw__WIP, 1);
 
-    // TODO  HLP_Load_NewGOptions();
+    Set_Newgame_Screen0_Help_List();
 
     while(leave_screen == ST_FALSE)
     {
@@ -1108,7 +1110,7 @@ void Newgame_Screen_0__WIP(void)
         if(input_field_idx == _ok_button)
         {
 
-            fopen(file_pointer, str_MAGIC_SET__ovr050, str_wb__ovr050);
+            file_pointer = fopen(str_MAGIC_SET__ovr050, str_wb__ovr050);
             
             fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             
@@ -1493,7 +1495,26 @@ void GAME_New_Screen_5__WIP(void)
 // Set_Load_Screen_Help_List_MGC()
 
 // o50p29
-// HLP_Load_NewGOptions()
+// drake178: HLP_Load_NewGOptions()
+/*
+loads and sets the GUI help entry area array for the
+new game options selection screen
+*/
+/*
+
+¿ Set_Options_Screen_Help_List ?
+
+*/
+void Set_Newgame_Screen0_Help_List(void)
+{
+
+    // HLPENTRY.LBX, 29  Options Screen Help
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 29, (SAMB_ptr)_help_entries, 6);
+
+    Set_Help_List(_help_entries, 6);
+
+}
+
 
 // o50p30
 // HLP_Load_BannerSel()
