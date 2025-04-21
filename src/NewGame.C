@@ -3,6 +3,7 @@
     MAGIC.EXE
         ovr050
         ovr051
+        ovr056
 */
 
 #include "NEWGAME.H"
@@ -828,6 +829,7 @@ void Newgame_Control(void)
 
     while(Can_Create == ST_FALSE)
     {
+
         Deactivate_Help_List();
         
         Create_State = newgame_state;
@@ -840,22 +842,22 @@ void Newgame_Control(void)
             } break;
             case 0:
             {
-                Newgame_Screen_0__WIP();
+                Newgame_Screen0();
             } break;
             case 1:
             {
-                GAME_New_Screen_1__WIP();
+                Newgame_Screen1__WIP();
             } break;
             case 2:
             {
-                GAME_New_Screen_2__WIP();
+                Newgame_Screen2__WIP();
             } break;
             case 3:
             {
-                newgame_state = GAME_New_Screen_3__WIP();
+                newgame_state = Newgame_Screen3__WIP();
                 if(custom_game_flag != ST_FALSE)
                 {
-                    if(newgame_state == -1)
+                    if(newgame_state == ST_UNDEFINED)
                     {
                         newgame_state = 2;
                     }
@@ -866,7 +868,7 @@ void Newgame_Control(void)
                 }
                 else
                 {
-                    if(newgame_state == -1)
+                    if(newgame_state == ST_UNDEFINED)
                     {
                         newgame_state = 1;
                     }
@@ -878,16 +880,16 @@ void Newgame_Control(void)
             } break;
             case 4:
             {
-                GAME_New_Screen_4__WIP();
+                Newgame_Screen4__WIP();
             } break;
             case 5:
             {
-                GAME_New_Screen_5__WIP();
+                Newgame_Screen5__WIP();
             } break;
             case 6:
             {
-                newgame_state = GAME_New_Screen_6__WIP();
-                if(newgame_state = -1)
+                newgame_state = Newgame_Screen6__WIP();
+                if(newgame_state = ST_UNDEFINED)
                 {
                     if(custom_game_flag != ST_FALSE)
                     {
@@ -901,7 +903,7 @@ void Newgame_Control(void)
             } break;
             case 7:
             {
-                GAME_New_Screen_7__WIP();
+                Newgame_Screen7__WIP();
             } break;
             case 99:
             {
@@ -912,37 +914,43 @@ void Newgame_Control(void)
         
     }
 
-// TODO  NEWG_CreateWorld();
-// ; creates the basic profiles of the AI wizards, then
-// ; generates the game map for both planes, drawing and
-// ; updating a progress bar in the process
-// ; BUG: may freeze if tower or fortress generation fails
-// ; due to there not being enough valid locations - also
-// ; inherits numerous smaller issues from the subroutines
-// ; and their order of execution
+    NEWG_CreateWorld();
 
-                                          // TODO  NEWG_ClearEvents();
-// ; clears the event data structure by setting the status
-// ; of all events to 0
+    NEWG_ClearEvents();
 
-// TODO  NEWG_FinalizeTables();
-// ; finalizes the item, hero, and wizard record tables
-// ; RE-CHECK: some fields are not yet known
+    NEWG_FinalizeTables();
 
-// TODO  Save_SAVE_GAM(8);
-// ; saves the relevant game tables into a disk file
+    Save_SAVE_GAM(8);
 
-// TODO  GAME_WizardsLaunch(8);
-// ; fades out the screen, if the passed save index is not
-// ; that of the continue save (index 8), loads that game
-// ; and saves it as the current continue, then launches
-// ; WIZARDS.EXE (which always loads that save on startup)
+    GAME_WizardsLaunch(8);
 
 }
 
 
 // o50p02
-// GAME_WizardsLaunch()
+// drake178: GAME_WizardsLaunch()
+/*
+; fades out the screen, if the passed save index is not
+; that of the continue save (index 8), loads that game
+; and saves it as the current continue, then launches
+; WIZARDS.EXE (which always loads that save on startup)
+*/
+/*
+
+*/
+void GAME_WizardsLaunch(int16_t save_gam_idx)
+{
+    Fade_Out();
+    Stop_Music__STUB();
+    Audio_Uninit__STUB();
+    if(save_gam_idx != 8)
+    {
+        Load_SAVE_GAM(save_gam_idx);
+        Save_SAVE_GAM(8);
+    }
+    GAME_EXE_Swap(cnst_EXESwap_File, cnst_EXESwap_Arg, cnst_EXESwap_Arg, empty_string__ovr050);
+}
+
 
 // o50p03
 // Load_Screen()
@@ -964,9 +972,9 @@ without saving if the Esc key is pressed
 /*
 
 */
-int16_t Newgame_Screen_0__WIP(void)
+int16_t Newgame_Screen0(void)
 {
-    char file_found[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char file_found[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t leave_screen = 0;
     int16_t First_Draw_Done = 0;
     int16_t input_field_idx = 0;  // _SI_
@@ -1020,8 +1028,7 @@ int16_t Newgame_Screen_0__WIP(void)
 
         file_pointer = fopen(str_MAGIC_SET__ovr050, str_rb__ovr050);
 
-        // fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-        fread(&magic_set, 466, 1, file_pointer);
+        fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
 
         fclose(file_pointer);
         
@@ -1089,10 +1096,10 @@ int16_t Newgame_Screen_0__WIP(void)
 
     First_Draw_Done = ST_FALSE;
 
-    Assign_Auto_Function(Newgame_Screen_0_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen0_Draw, 1);
 
+    
     Set_Newgame_Screen0_Help_List();
-
     while(leave_screen == ST_FALSE)
     {
 
@@ -1184,7 +1191,7 @@ int16_t Newgame_Screen_0__WIP(void)
         if(leave_screen == ST_FALSE)
         {
 
-            Newgame_Screen_0_Draw__WIP();
+            Newgame_Screen0_Draw();
 
             Toggle_Pages();
 
@@ -1219,7 +1226,7 @@ options into the current draw segment
 /*
 
 */
-void Newgame_Screen_0_Draw__WIP(void)
+void Newgame_Screen0_Draw(void)
 {
     struct s_OPPONENT_COUNT_NAMES l_opponent_count_names[4] = { 0, 0, 0, 0 };
     struct s_MAGIC_STRENGTH_NAMES l_magic_strength_names[3] = { 0, 0, 0 };
@@ -1374,7 +1381,7 @@ void Randomize_Book_Heights(void)
 /*
 
 */
-void GAME_New_Screen_1__WIP(void)
+void Newgame_Screen1__WIP(void)
 {
 
 
@@ -1388,7 +1395,7 @@ void GAME_New_Screen_1__WIP(void)
 /*
 
 */
-void GAME_New_Screen_2__WIP(void)
+void Newgame_Screen2__WIP(void)
 {
 
 
@@ -1399,7 +1406,7 @@ void GAME_New_Screen_2__WIP(void)
 /*
 
 */
-int16_t GAME_New_Screen_3__WIP(void)
+int16_t Newgame_Screen3__WIP(void)
 {
 
 
@@ -1414,7 +1421,7 @@ int16_t GAME_New_Screen_3__WIP(void)
 /*
 
 */
-void GAME_New_Screen_7__WIP(void)
+void Newgame_Screen7__WIP(void)
 {
 
 
@@ -1429,7 +1436,7 @@ void GAME_New_Screen_7__WIP(void)
 /*
 
 */
-int16_t GAME_New_Screen_6__WIP(void)
+int16_t Newgame_Screen6__WIP(void)
 {
 
 
@@ -1450,7 +1457,7 @@ int16_t GAME_New_Screen_6__WIP(void)
 /*
 
 */
-void GAME_New_Screen_4__WIP(void)
+void Newgame_Screen4__WIP(void)
 {
 
 
@@ -1465,7 +1472,7 @@ void GAME_New_Screen_4__WIP(void)
 /*
 
 */
-void GAME_New_Screen_5__WIP(void)
+void Newgame_Screen5__WIP(void)
 {
 
 
@@ -1552,7 +1559,18 @@ void Set_Newgame_Screen0_Help_List(void)
 */
 
 // o51p01
-// NEWG_CreateWorld()
+// drake178: NEWG_CreateWorld()
+/*
+*/
+/*
+
+*/
+void NEWG_CreateWorld(void)
+{
+
+
+
+}
 
 // o51p02
 // NEWG_EZ_MarkHadnLeft()
@@ -1712,3 +1730,40 @@ void Set_Newgame_Screen0_Help_List(void)
 
 // o51p54
 // UU_Empty_Tile_Fn()
+
+
+
+// MGC o56p1
+// WIZ_SetProfiles()
+
+
+
+// MGC o56p11
+// drake178: NEWG_ClearEvents()
+/*
+*/
+/*
+
+*/
+void NEWG_ClearEvents(void)
+{
+    p_Events.Last_Event_Turn = 50;
+    p_Events.Meteor.Status = 0;
+    p_Events.Gift.Status = 0;
+    p_Events.Disjunction = 0;
+    p_Events.Dpl_Marriage.Status = 0;
+    p_Events.Earthquake.Status = 0;
+    p_Events.Pirates.Status = 0;
+    p_Events.Plague.Status = 0;
+    p_Events.Rebellion.Status = 0;
+    p_Events.Donation.Status = 0;
+    p_Events.Depletion.Status = 0;
+    p_Events.New_Mine.Status = 0;
+    p_Events.Pop_Boom.Status = 0;
+    p_Events.Good_Moon.Status = 0;
+    p_Events.Bad_Moon.Status = 0;
+    p_Events.Conjunction_Chaos.Status = 0;
+    p_Events.Conjunction_Nature.Status = 0;
+    p_Events.Conjunction_Sorcery.Status = 0;
+    p_Events.Mana_Short.Status = 0;
+}

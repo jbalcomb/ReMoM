@@ -26,37 +26,37 @@ void Newgame_Control(void);
 // Load_Screen_Draw()
 
 // o50p05
-int16_t Newgame_Screen_0__WIP(void);
+int16_t Newgame_Screen0(void);
 
 // o50p06
-void Newgame_Screen_0_Draw__WIP(void);
+void Newgame_Screen0_Draw(void);
 
 // o50p07
 void Randomize_Book_Heights(void);
 
 // o50p08
-void GAME_New_Screen_1__WIP(void);
+void Newgame_Screen1__WIP(void);
 
 // o50p09
 // Draw_NewGame_Screen1()
 
 // o50p10
-void GAME_New_Screen_2__WIP(void);
+void Newgame_Screen2__WIP(void);
 
 // o50p11
-int16_t GAME_New_Screen_3__WIP(void);
+int16_t Newgame_Screen3__WIP(void);
 
 // o50p12
 // GAME_Draw_NewScr3()
 
 // o50p13
-void GAME_New_Screen_7__WIP(void);
+void Newgame_Screen7__WIP(void);
 
 // o50p14
 // GAME_Draw_NewScr7()
 
 // o50p15
-int16_t GAME_New_Screen_6__WIP(void);
+int16_t Newgame_Screen6__WIP(void);
 
 // o50p16
 // GAME_Draw_NewScr6()
@@ -68,13 +68,13 @@ int16_t GAME_New_Screen_6__WIP(void);
 // NEWG_DrawDefShelf()
 
 // o50p19
-void GAME_New_Screen_4__WIP(void);
+void Newgame_Screen4__WIP(void);
 
 // o50p20
 // GAME_Draw_NewScr4()
 
 // o50p21
-void GAME_New_Screen_5__WIP(void);
+void Newgame_Screen5__WIP(void);
 
 // o50p22
 // GAME_SpellSel_GUI()
