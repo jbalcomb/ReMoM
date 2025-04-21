@@ -52,7 +52,7 @@ void Cartographer_Screen_Draw__WIP(void);
 void Cartograph_Screen_Draw_Map__WIP(int16_t flag);
 
 // WZD o76p11
-void GrandVizier_Window(void);
+void Grand_Vizier_Window(void);
 
 
 

@@ -475,7 +475,7 @@ void Advisor_Screen(int16_t advisor_idx)
         } break;
         case 7:  /* Grand Vizier  (F8) */
         {
-            GrandVizier_Window();
+            Grand_Vizier_Window();
         } break;
         case 8:  /* Mirror        (F9 )*/
         {
@@ -1288,10 +1288,10 @@ void Cartographer_Screen__WIP(void)
 */
 void Cartographer_Screen_Draw__WIP(void)
 {
-    int16_t banner_colors[NUM_BANNER_COLORS] = {0,0,0,0,0,0};
+    int16_t banner_colors[NUM_BANNER_COLORS] = { 0, 0, 0, 0, 0, 0 };
     int16_t city_dot_y = 0;
     int16_t city_dot_x = 0;
-    uint8_t colors [4] = {0,0,0,0};
+    uint8_t colors [4] = { 0, 0, 0, 0 };
     int16_t l_my = 0;
     int16_t l_mx = 0;
     int16_t itr_cities = 0;  // _DI_
@@ -1350,7 +1350,6 @@ void Cartographer_Screen_Draw__WIP(void)
         )
         {
 
-            // DELETEME  if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) != UNEXPLORED)
             if(SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp))
             {
 
@@ -1599,22 +1598,22 @@ void Cartograph_Screen_Draw_Map__WIP(int16_t flag)
 
 
 // WZD o76p11
-void GrandVizier_Window(void)
+void Grand_Vizier_Window(void)
 {
     if(grand_vizier != ST_FALSE)
     {
+
         grand_vizier = ST_FALSE;
+
     }
     else
     {
-        // ; loads and displays the provided message in a
-        // ; confirmation dialog box, providing "Yes" and "No"
-        // ; option buttons, and halting all other screen
-        // ; animation until a result is selected
-        // ; returns 1 if "Yes" is selected, or 0 otherwise
+
         if(Confirmation_Box(aDoYouWishToAllowThe) == ST_TRUE)
         {
+
             grand_vizier = ST_TRUE;
+
         }
 
     }

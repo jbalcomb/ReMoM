@@ -344,7 +344,7 @@ int16_t Main_Menu_Screen(void)
     }
     else
     {
-        _load_button = Add_Hidden_Field(108, 150, 211, 161, '0', ST_UNDEFINED);
+        _load_button = Add_Hidden_Field(108, 150, 211, 161, 0, ST_UNDEFINED);
         _help_entries[0].help_idx = HLP_LOAD;
         _help_entries[0].x1 = 108;
         _help_entries[0].y1 = 148;

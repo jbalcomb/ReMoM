@@ -119,7 +119,7 @@ Release_Cities_Data();
 
         case scr_New_Game_Screen:
         {
-            // TODO  Newgame_Screen__STUB();
+            Newgame_Control();
         } break;
 
         case scr_Quit_To_DOS:

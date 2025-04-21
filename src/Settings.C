@@ -22,7 +22,8 @@ MoO2
 #include "Settings.H"
 #include "Spellbook.H"
 
-#include <string.h>     /* memcpy() memset(), strcat(), strcpy(); */
+#include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+#include <string.h>     /* memcpy(), memset(), strcat(), strcpy(); */
 
 
 
@@ -554,11 +555,11 @@ void Settings_Screen_Draw(void)
 // WZD o125p03
 void Load_MAGIC_SET(void)
 {
-    char file_name[30] = {0};
+    char found_file[LEN_STRING] = {0};
     FILE * file_pointer;
     int itr;
 
-    if((DIR("MAGIC.SET", file_name) == ST_FAILURE) || (LOF("MAGIC.SET") != 466))
+    if((DIR("MAGIC.SET", found_file) == ST_FAILURE) || (LOF("MAGIC.SET") != 466))
     {
         Set_Default_Game_Settings();
         file_pointer = fopen("MAGIC.SET","wb");

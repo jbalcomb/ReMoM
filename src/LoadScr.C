@@ -158,6 +158,7 @@ SAMB_ptr load_active;
 SAMB_ptr quit_active;
 
 // WZD dseg:C9CA
+// MGC dseg:52B8
 SAMB_ptr loadsave_background;
 
 /*
@@ -271,7 +272,7 @@ void Load_Screen(void)
     save_active             = LBX_Reload_Next(load_lbx_file__ovr160,  3, _screen_seg);
     ok_active               = LBX_Reload_Next(load_lbx_file__ovr160,  4, _screen_seg);
     // DNE  Quit inactive
-    load_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  6, _screen_seg);  // WZD uses entry 5 for load_inactive
+    load_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  6, _screen_seg);  // MGC uses entry 5 for load_inactive
     save_inactive           = LBX_Reload_Next(load_lbx_file__ovr160,  7, _screen_seg);
     // DNE  Ok   inactive
     loadsave_text_fill_seg  = LBX_Reload_Next(load_lbx_file__ovr160,  9, _screen_seg);

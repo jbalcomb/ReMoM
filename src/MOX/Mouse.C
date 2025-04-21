@@ -16,7 +16,7 @@
 
 // int16_t mouse_list_none_count = 1;
 struct s_mouse_list mouse_list_none[1] = {
-    {crsr_None, 0, 0, 0, SCREEN_XMAX, SCREEN_YMAX}
+    { crsr_None, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
 // int16_t mouse_list_default_count = 1;
@@ -30,7 +30,7 @@ struct s_mouse_list mouse_list_none[1] = {
 // };
 
 struct s_mouse_list mouse_list_default[1] = {
-    {crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX}
+    { crsr_Finger, 0, SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX }
 };
 
 

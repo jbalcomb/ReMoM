@@ -4,6 +4,8 @@
     ovr051
 */
 
+#include "MOX/MOX_TYPE.H"
+
 
 
 /*
@@ -12,7 +14,7 @@
 */
 
 // o50p01
-void Newgame_Screen__STUB(void);
+void Newgame_Control(void);
 
 // o50p02
 // GAME_WizardsLaunch()
@@ -24,37 +26,37 @@ void Newgame_Screen__STUB(void);
 // Load_Screen_Draw()
 
 // o50p05
-// NewGame_Screen_1()
+void Newgame_Screen_0__WIP(void);
 
 // o50p06
-// NewGame_Screen_Draw_1()
+void Newgame_Screen_0_Draw__WIP(void);
 
 // o50p07
-// GAME_RandBookBinders()
+void Randomize_Book_Heights(void);
 
 // o50p08
-// GAME_New_Screen_1()
+void GAME_New_Screen_1__WIP(void);
 
 // o50p09
 // Draw_NewGame_Screen1()
 
 // o50p10
-// GAME_New_Screen_2()
+void GAME_New_Screen_2__WIP(void);
 
 // o50p11
-// GAME_New_Screen_3()
+int16_t GAME_New_Screen_3__WIP(void);
 
 // o50p12
 // GAME_Draw_NewScr3()
 
 // o50p13
-// GAME_New_Screen_7()
+void GAME_New_Screen_7__WIP(void);
 
 // o50p14
 // GAME_Draw_NewScr7()
 
 // o50p15
-// GAME_New_Screen_6()
+int16_t GAME_New_Screen_6__WIP(void);
 
 // o50p16
 // GAME_Draw_NewScr6()
@@ -66,13 +68,13 @@ void Newgame_Screen__STUB(void);
 // NEWG_DrawDefShelf()
 
 // o50p19
-// GAME_New_Screen_4()
+void GAME_New_Screen_4__WIP(void);
 
 // o50p20
 // GAME_Draw_NewScr4()
 
 // o50p21
-// GAME_New_Screen_5()
+void GAME_New_Screen_5__WIP(void);
 
 // o50p22
 // GAME_SpellSel_GUI()
