@@ -210,6 +210,21 @@ so, 300 PRs, + 1 for the SAMB header
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
 
+// MGC mov     [Wiz5_Spell_00h@], (offset _players.Spells_Known+17E8h)
+// MGC mov     [Wiz5_Spell_0Ch@], (offset _players.Spells_Known+17F4h)
+// MGC mov     [Wiz5_Spell_18h@], (offset _players.Spells_Known+1800h)
+// MGC mov     [Wiz5_Spell_28h@], (offset _players.Spells_Known+1810h)
+// MGC mov     [Wiz5_Spell_3Ch@], (offset _players.Spells_Known+1824h)
+// MGC mov     [Wiz5_Spell_50h@], (offset _players.Spells_Known+1838h)
+// MGC mov     [Wiz5_Spell_64h@], (offset _players.Spells_Known+184Ch)
+// MGC mov     [Wiz5_Spell_78h@], (offset _players.Spells_Known+1860h)
+// MGC mov     [Wiz5_Spell_8Ch@], (offset _players.Spells_Known+1874h)
+// MGC mov     [Wiz5_Spell_A0h@], (offset _players.Spells_Known+1888h)
+// MGC mov     [Wiz5_Spell_B4h@], (offset _players.Spells_Known+189Ch)
+// MGC mov     [Wiz5_Spell_C8h@], (offset _players.Spells_Known+18B0h)
+// MGC mov     [Wiz5_Spell_D4h@], (offset _players.Spells_Known+18BCh)
+// MGC mov     [Wiz5_Spell_E0h@], (offset _players.Spells_Known+18C8h)
+
 // mov     [AI_Arc_MainWarConts@], (offset _players.spells_list+17E8h) ; 12 bytes, Arcanus array
 // mov     [AI_Myr_MainWarConts@], (offset _players.spells_list+17F4h) ; 12 bytes, Myrror array
 // mov     [_ai_reevaluate_continents_countdown@],    (offset _players.spells_list+1800h) ; 16 bytes

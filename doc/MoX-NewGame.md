@@ -2,6 +2,21 @@
 MAGIC.EXE
 ovr050
 ovr051
+ovr056
+
+MoO2
+MAINMENU
+NEWGAME
+MAPGEN
+HOMEGEN
+
+
+
+main()
+Main_Menu_Control()
+Newgame_Control()
+Init_New_Game()
+
 
 
 

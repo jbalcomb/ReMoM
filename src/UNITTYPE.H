@@ -233,6 +233,7 @@ enum e_RANGED_ATTACK_TYPE
     rat_Sling        =  21,
     rat_Unknown      =  22,
 
+    /* this group is used for assigning 'Arcane Power' - "magic ranged attack" */
     rat_Lightning    =  30,
     rat_Fireball     =  31,
     rat_Sorcery      =  32,

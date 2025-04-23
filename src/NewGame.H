@@ -296,3 +296,68 @@ void Set_Newgame_Screen0_Help_List(void);
 
 // o51p54
 // UU_Empty_Tile_Fn()
+
+
+
+/*
+    MAGIC.EXE
+        ovr056
+*/
+
+// MGC o56p1
+// WIZ_SetProfiles()
+
+// MGC o56p2
+void NEWG_FinalizeTables__WIP(void);
+
+// MGC o56p3
+// drake178: AI_WIZ_SetRelations()
+// AI_WIZ_SetRelations()
+
+// MGC o56p4
+void Initialize_Items(void);
+
+// MGC o56p5
+// drake178: WIZ_Set_Sum_n_SoM()
+// WIZ_Set_Sum_n_SoM()
+
+// MGC o56p6
+// drake178: WIZ_SetPersonalities()
+// WIZ_SetPersonalities()
+
+// MGC o56p7
+// drake178: AI_WIZ_StrategyReset()
+// AI_WIZ_StrategyReset()
+
+// MGC o56p8
+// drake178: WIZ_SetStartingStats()
+// WIZ_SetStartingStats()
+
+// MGC o56p9
+// drake178: AI_CreateWizards()
+// AI_CreateWizards()
+
+// MGC o56p10
+// drake178: WIZ_SetSpells()
+// WIZ_SetSpells()
+
+// MGC o56p11
+void Initialize_Events(void);
+
+// MGC o56p12
+void Init_Heroes(void);
+
+// MGC o56p13
+void Initialize_Messages(void);
+
+// MGC o56p14
+// UU_ITEM_SetHeroSlots()
+
+// MGC o56p15
+// WIZ_ConsolidateBooks()
+
+// MGC o56p16
+// WIZ_GetNominalSkill()
+
+// MGC o56p17
+// RNG_WeightedPick16()

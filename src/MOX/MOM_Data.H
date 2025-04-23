@@ -963,12 +963,12 @@ struct s_ITEM_DATA
 #pragma pack(2)
 struct s_ITEM
 {
-    /* 00 */  char     name[30];
+    /* 00 */  char     name[LEN_ITEM_NAME];
     /* 1E */  int8_t   icon_idx;       // ¿ entry_num for ITEMS.LBX ?
     /* 1F */  int8_t   IDK_icon_idx;   // ¿ item 4 "I of the Elements" came up with icon_idx of 1541, so I changed this to 1 byte, not sure if HI/LO of 0605
     /* 20 */  int8_t   Slot_Type;      // ¿ ITEMMISC.LBX  ITEMSLOT  sword, bow, weapon/staff, wand, misc, armor ?
     /* 21 */  int8_t   type;           // ¿ {sword, mace, axe, bow, staff, wand, misc, shield, chain, plate} ?
-    /* 22 */  int16_t  cost;     // ¿ "Cost" ... "the base creation cost of the artifact in mana" ?  Activate_Item() uses `<= 0` here to mean "empty"/"available"
+    /* 22 */  int16_t  cost;     // AKA Mana_Value  ¿ "Cost" ... "the base creation cost of the artifact in mana" ?  Activate_Item() uses `<= 0` here to mean "empty"/"available"
     /* 24 */  int8_t   attack;   // "Attack"
     /* 25 */  int8_t   tohit;   // "To Hit"
     /* 26 */  int8_t   defense;  // "Defense"

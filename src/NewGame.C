@@ -83,6 +83,101 @@ spell_data_table    = SA_MK_FP0( LBXR_LoadSingle("SPELLDAT", 0, 0, 215, 36) )
 
 
 
+struct S_HERO_TEMPLATE
+{
+    /* 00 */  int16_t pick_count;
+    /* 02 */  int16_t pick_type;  // {warrior, mage, any/both/either} ; enum e_RANDOM_PICK_TYPES
+    /* 04 */  int32_t abilities;
+    /* 08 */  int16_t casting_skill;
+    /* 0A */  int16_t spell_1;  // ; enum Spells
+    /* 0C */  int16_t spell_2;  // ; enum Spells
+    /* 0E */  int16_t spell_3;  // ; enum Spells
+    /* 10 */  int16_t spell_4;  // ; enum Spells
+    /* 12 */
+};
+enum e_RANDOM_PICK_TYPES
+{
+    Warrior_Picks  = 0,
+    mage_picks     = 1,
+    Any_Picks      = 2
+};
+struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
+    /* picks        special                  casting  spells     */
+    /* count, type, abilities,               skill    1,  2,  3,  4 */
+    /*  */  {      0,   0, HSA_CONSTITUTION,              0,  0,  0,  0,  0 },
+    /*  */  {      0,   0, HSA_MIGHT,                     0,  0,  0, 0, 0 },
+    /*  */  {      0,   1, HSA_SAGE,                      2,  42, 48, 0, 0 },
+    /*  */  {      0,   0, HSA_NOBLE,                     0,  0, 0, 0, 0 },
+    /*  */  {      0,   0, 0,                             1,  spl_Resist_Elements, 0, 0, 0 },
+    /*  */  {      0,   0, (HSA_LEADERSHIP | HSA_FEMALE), 1, 46, 53, 0, 0 },
+    /*  */  {      1,   0, 0,                             0, 0, 0, 0, 0 },
+    /*  */  {      1,   1, 0x40000000, 2, 125, 0, 0, 0 },
+    /*  */  {      1,   0, 0x40000040, 0, 0, 0, 0, 0 },
+    /*  */  {      0,   0, 0xD0000000, 0, 0, 0, 0, 0 },
+    /*  */  {      0,   0, 0, 2, 13, 22, 5, 0 },
+    /*  */  {      1,   0, 0x4000000, 0, 0, 0, 0, 0 },
+    /*  */  {      1,   2, 0, 1, 86, 88, 94, 0 },
+    /*  */  {      1,   1, 0x40000, 3, 83, 96, 90, 109 },
+    /*  */  {      1,   0, 0x40, 0, 0, 0, 0, 0 },
+    /*  */  {      1,   1, 0, 2, 47, 44, 0, 0 },
+    /*  */  {      0,   0, 0x8000, 1, 2, 7, 0, 0 },
+    /*  */  {      2,   0, 0x8000, 0, 0, 0, 0, 0 },
+    /*  */  {      2,   1, 0x50000000, 3, 169, 170, 174, 172 },
+    /*  */  {      2,   2, 0, 1, 0, 0, 0, 0 },
+    /*  */  {      2,   0, 0x40, 0, 0, 0, 0, 0 },
+    /*  */  {      1,   0, 0x11, 0, 0, 0, 0, 0 },
+    /*  */  {      1,   0, 0x50008040, 0, 0, 0, 0, 0 },
+    /*  */  {      1,   1, 0, 5, 91, 101, 104, 0 },
+    /*  */  {      5,   2, 0, 1, 0, 0, 0, 0 },
+    /*  */  {      2,   1, 0x40000000, 3, 50, 53, 67, 0 },
+    /* Deathstryke Swordsman */  {      1,   0, 0x9209, 0, 0, 0, 0, 0 },
+    /* Elana Priestess */        {      0,   0, 0x72040000, 4, 134, 125, 140, 150 },
+    /* Roland Paladin */         {      1,   0, 0x1010008, 0, 0, 0, 0, 0 },
+    /* Mortu Black Night */      {      1,   0, 0x9048, 0, 0, 0, 0, 0 },
+    /* Alorra Elven Archer */    {      3,   2, 0x40000040, 1, 41, 56, 0, 0 },
+    /* Sir Harold Knight */      {      1,   0, 0x20001012, 0, 0, 0, 0, 0 },
+    /* Ravashack Necromancer */  {      2,   1, 0x40000, 4, 162, 165, 195, 182 },
+    /* Warrax Chaos Warrior */   {      3,   2, 0x41000, 3, 0, 0, 0, 0 },
+    /* Torin The Chosen */       {      2,   2, 0x1011002, 5, 128, 125, 126, 141 }
+};
+
+// dseg:35D0 00 00 00 00 00 10 00 00 00 00 00 00 00 00 00 00+_hero_premade_table s_HERO_TEMPLATE <0, 0, 1000h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 80 00 00 00 00 00 00 00 00+                                        ; DATA XREF: NEWG_CreateHeroes+66r ...
+// dseg:35D0 00 00 00 00 00 00 01 00 00 00 20 00 02 00 2A 00+s_HERO_TEMPLATE <0, 0, 8000h, 0, 0, 0, 0, 0>
+// dseg:35D0 30 00 00 00 00 00 00 00 00 00 00 00 00 20 00 00+s_HERO_TEMPLATE <0, 1, 200000h, 2, 42, 48, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <0, 0, 20000000h, 0, 0, 0, 0, 0>
+// dseg:35D0 01 00 02 00 00 00 00 00 00 00 00 00 00 00 01 00+s_HERO_TEMPLATE <0, 0, 0, 1, 2, 0, 0, 0>
+// dseg:35D0 00 40 01 00 2E 00 35 00 00 00 00 00 01 00 00 00+s_HERO_TEMPLATE <0, 0, 40000001h, 1, 46, 53, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+s_HERO_TEMPLATE <1, 0, 0, 0, 0, 0, 0, 0>
+// dseg:35D0 01 00 00 00 00 40 02 00 7D 00 00 00 00 00 00 00+s_HERO_TEMPLATE <1, 1, 40000000h, 2, 125, 0, 0, 0>
+// dseg:35D0 01 00 00 00 40 00 00 40 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <1, 0, 40000040h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 D0 00 00 00 00 00 00+s_HERO_TEMPLATE <0, 0, 0D0000000h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 02 00 0D 00+s_HERO_TEMPLATE <0, 0, 0, 2, 13, 22, 5, 0>
+// dseg:35D0 16 00 05 00 00 00 01 00 00 00 00 00 00 04 00 00+s_HERO_TEMPLATE <1, 0, 4000000h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 01 00 02 00 00 00 00 00+s_HERO_TEMPLATE <1, 2, 0, 1, 86, 88, 94, 0>
+// dseg:35D0 01 00 56 00 58 00 5E 00 00 00 01 00 01 00 00 00+s_HERO_TEMPLATE <1, 1, 40000h, 3, 83, 96, 90, 109>
+// dseg:35D0 04 00 03 00 53 00 60 00 5A 00 6D 00 01 00 00 00+s_HERO_TEMPLATE <1, 0, 40h, 0, 0, 0, 0, 0>
+// dseg:35D0 40 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00+s_HERO_TEMPLATE <1, 1, 0, 2, 47, 44, 0, 0>
+// dseg:35D0 01 00 00 00 00 00 02 00 2F 00 2C 00 00 00 00 00+s_HERO_TEMPLATE <0, 0, 8000h, 1, 2, 7, 0, 0>
+// dseg:35D0 00 00 00 00 00 80 00 00 01 00 02 00 07 00 00 00+s_HERO_TEMPLATE <2, 0, 8000h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 02 00 00 00 00 80 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <2, 1, 50000000h, 3, 169, 170, 174, 172>
+// dseg:35D0 00 00 00 00 02 00 01 00 00 00 00 50 03 00 A9 00+s_HERO_TEMPLATE <2, 2, 0, 1, 0, 0, 0, 0>
+// dseg:35D0 AA 00 AE 00 AC 00 02 00 02 00 00 00 00 00 01 00+s_HERO_TEMPLATE <2, 0, 40h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 02 00 00 00 40 00 00 00+s_HERO_TEMPLATE <1, 0, 11h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 01 00 00 00 11 00+s_HERO_TEMPLATE <1, 0, 50008040h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00+s_HERO_TEMPLATE <1, 1, 0, 5, 91, 101, 104, 0>
+// dseg:35D0 40 80 00 50 00 00 00 00 00 00 00 00 00 00 01 00+s_HERO_TEMPLATE <5, 2, 0, 1, 0, 0, 0, 0>
+// dseg:35D0 01 00 00 00 00 00 05 00 5B 00 65 00 68 00 00 00+s_HERO_TEMPLATE <2, 1, 40000000h, 3, 50, 53, 67, 0>
+// dseg:35D0 05 00 02 00 00 00 00 00 01 00 00 00 00 00 00 00+s_HERO_TEMPLATE <1, 0, 9209h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 02 00 01 00 00 00 00 40 03 00 32 00 35 00+s_HERO_TEMPLATE <0, 0, 72040000h, 4, 134, 125, 140, 150>
+// dseg:35D0 43 00 00 00 01 00 00 00 09 92 00 00 00 00 00 00+s_HERO_TEMPLATE <1, 0, 1010008h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 04 72 04 00+s_HERO_TEMPLATE <1, 0, 9048h, 0, 0, 0, 0, 0>
+// dseg:35D0 86 00 7D 00 8C 00 96 00 01 00 00 00 08 00 01 01+s_HERO_TEMPLATE <3, 2, 40000040h, 1, 41, 56, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 01 00 00 00 48 90+s_HERO_TEMPLATE <1, 0, 20001012h, 0, 0, 0, 0, 0>
+// dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 03 00 02 00+s_HERO_TEMPLATE <2, 1, 40000h, 4, 162, 165, 195, 182>
+// dseg:35D0 40 00 00 40 01 00 29 00 38 00 00 00 00 00 01 00+s_HERO_TEMPLATE <3, 2, 41000h, 3, 0, 0, 0, 0>
+// dseg:35D0 00 00 12 10 00 20 00 00 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <2, 2, 1011002h, 5, 128, 125, 126, 141>
+
 
 // MGC dseg:52C0
 int16_t _quit_button = 0;
@@ -916,9 +1011,9 @@ void Newgame_Control(void)
 
     NEWG_CreateWorld();
 
-    NEWG_ClearEvents();
+    Initialize_Events();
 
-    NEWG_FinalizeTables();
+    NEWG_FinalizeTables__WIP();
 
     Save_SAVE_GAM(8);
 
@@ -1675,7 +1770,38 @@ void NEWG_CreateWorld(void)
 // TILE_InvalidOutflow()
 
 // o51p36
-// NEWG_UpdateProgress()
+// drake178: NEWG_UpdateProgress()
+// ~ MoO2  Module: MISC  Draw_Advancing_Fill_Message_()
+/*
+PATCHED in the worldgen customizer to use a created
+background image and always redraw, allowing the
+progress bar to be reset if necessary
+updates the progress bar to the specified percentage
+before doing a simple page flip
+WARNING: can't go backwards with this setup
+*/
+/*
+
+*/
+void Draw_Building_The_Worlds(int16_t percent)
+{
+    int16_t width = 0;
+    Set_Page_Off();
+    if(percent = 0)
+    {
+        return;
+    }
+    if(percent >= 100)
+    {
+        Fill(90, 89, 225, 94, 172);
+    }
+    else
+    {
+        width = ((percent * 136) / 100);
+        Fill(90, 89, (90 + width), 94, 172);
+    }
+    Toggle_Pages();
+}
 
 // o51p37
 // UNIT_Create()
@@ -1734,36 +1860,355 @@ void NEWG_CreateWorld(void)
 
 
 // MGC o56p1
-// WIZ_SetProfiles()
+// drake178: WIZ_SetProfiles()
+/*
+*/
+/*
 
+*/
+// WIZ_SetProfiles__WIP()
+
+// MGC o56p2
+// drake178: NEWG_FinalizeTables()
+/*
+finalizes the item, hero, and wizard record tables
+RE-CHECK: some fields are not yet known
+*/
+/*
+
+*/
+void NEWG_FinalizeTables__WIP(void)
+{
+    int16_t itr_players = 0;  // _SI_
+
+    Draw_Building_The_Worlds(100);
+
+    Initialize_Items();
+
+    Init_Heroes();
+
+    WIZ_SetStartingStats__WIP();
+
+    AI_WIZ_StrategyReset__WIP();
+
+    WIZ_SetPersonalities__WIP();
+
+    WIZ_Set_Sum_n_SoM__WIP();
+
+    Initialize_Messages();
+
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
+    {
+        _players[itr_players].capital_race = _CITIES[itr_players].race;
+    }
+
+    AI_WIZ_SetRelations__WIP();
+
+    _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
+
+    for(itr_players = 1; itr_players < _num_players; itr_players++)
+    {
+
+        _players[itr_players].gold_reserve = 150;
+
+
+// ; 80 + rnd(40) is stored here for each AI wizard (word
+// ; array pointer, human excluded) when setting initial
+// ; gold
+// mov     ax, 40
+// push    ax
+// call    Random
+// add     ax, 80
+// mov     dx, _SI_itr_players
+// shl     dx, 1
+// mov     bx, [Wiz5_Spell_E0h@]             
+// add     bx, dx
+// mov     [bx], ax
+        // Wiz5_Spell_E0h[itr_players] = (80 + Random(40));
+        // mov     [AI_SCircle_Reevals@],  (offset _players.spells_list+18C8h) ; 16 bytes
+        AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes        
+    }
+
+}
+
+
+// MGC o56p3
+// drake178: AI_WIZ_SetRelations()
+// AI_WIZ_SetRelations()
+
+// MGC o56p4
+// drake178: NEWG_ClearItems()
+/*
+clears the item table by setting the value of all
+records to 0, and clears the predefined item
+appearance table
+*/
+/*
+
+*/
+void Initialize_Items(void)
+{
+    int16_t itr = 0;  // _CX_
+    for(itr = 0; itr < 138; itr++)
+    {
+        _ITEMS[itr].cost = 0;
+    }
+    for(itr = 0; itr < 250; itr++)
+    {
+        TBL_Premade_Items[itr] = 0;
+    }
+}
+
+
+// MGC o56p5
+// drake178: WIZ_Set_Sum_n_SoM()
+// WIZ_Set_Sum_n_SoM()
+
+// MGC o56p6
+// drake178: WIZ_SetPersonalities()
+// WIZ_SetPersonalities()
+
+// MGC o56p7
+// drake178: AI_WIZ_StrategyReset()
+// AI_WIZ_StrategyReset()
+
+// MGC o56p8
+// drake178: WIZ_SetStartingStats()
+// WIZ_SetStartingStats()
+
+// MGC o56p9
+// drake178: AI_CreateWizards()
+// AI_CreateWizards()
+
+// MGC o56p10
+// drake178: WIZ_SetSpells()
+// WIZ_SetSpells()
 
 
 // MGC o56p11
 // drake178: NEWG_ClearEvents()
+// ¿ ~== MoO2  Module: REPORT  Initialize_Reports_() ?
 /*
+; clears the event data structure by setting the status
+; of all events to 0
 */
 /*
 
 */
-void NEWG_ClearEvents(void)
+void Initialize_Events(void)
 {
-    p_Events.Last_Event_Turn = 50;
-    p_Events.Meteor.Status = 0;
-    p_Events.Gift.Status = 0;
-    p_Events.Disjunction = 0;
-    p_Events.Dpl_Marriage.Status = 0;
-    p_Events.Earthquake.Status = 0;
-    p_Events.Pirates.Status = 0;
-    p_Events.Plague.Status = 0;
-    p_Events.Rebellion.Status = 0;
-    p_Events.Donation.Status = 0;
-    p_Events.Depletion.Status = 0;
-    p_Events.New_Mine.Status = 0;
-    p_Events.Pop_Boom.Status = 0;
-    p_Events.Good_Moon.Status = 0;
-    p_Events.Bad_Moon.Status = 0;
-    p_Events.Conjunction_Chaos.Status = 0;
-    p_Events.Conjunction_Nature.Status = 0;
-    p_Events.Conjunction_Sorcery.Status = 0;
-    p_Events.Mana_Short.Status = 0;
+    events_table->last_event_turn = 50;
+    events_table->Meteor_Status = 0;
+    events_table->Gift_Status = 0;
+    events_table->Disjunction_Status = 0;
+    events_table->marriage_status = 0;
+    events_table->Earthquake_Status = 0;
+    events_table->Pirates_Status = 0;
+    events_table->Plague_Status = 0;
+    events_table->Rebellion_Status = 0;
+    events_table->Donation_Status = 0;
+    events_table->Depletion_Status = 0;
+    events_table->minerals_status = 0;
+    events_table->Population_Boom_Status = 0;
+    events_table->Good_Moon_Status = 0;
+    events_table->Bad_Moon_Status = 0;
+    events_table->Conjunction_Chaos_Status = 0;
+    events_table->Conjunction_Nature_Status = 0;
+    events_table->Conjunction_Sorcery_Status = 0;
+    events_table->Mana_Short_Status = 0;
 }
+
+// MGC o56p12
+// drake178: NEWG_CreateHeroes()
+// MoO2  Module: INITGAME  Init_Leaders_()
+void Init_Heroes(void)
+{
+    int32_t abilities = 0;
+    int16_t all_picks = 0;
+    int16_t mage_picks = 0;
+    int16_t casting_skill = 0;
+    int16_t itr_hero_types = 0;
+    int16_t itr_players = 0;
+    int16_t warrior_picks = 0;  // _DI_
+
+    for(itr_players = 0; itr_players < 5; itr_players++)
+    {
+
+        for(itr_hero_types = 0; itr_hero_types < NUM_HERO_TYPES; itr_hero_types++)
+        {
+
+            _HEROES2[itr_players]->heroes[itr_hero_types].Level = 0;
+
+            warrior_picks = 0;
+
+            mage_picks = 0;
+
+            all_picks = 0;
+
+            switch(_hero_premade_table[itr_hero_types].pick_type)
+            {
+                case 0:  /* Warrior */
+                {
+                    warrior_picks = _hero_premade_table[itr_hero_types].pick_count;
+                } break;
+                case 1:  /* Mage */
+                {
+                    mage_picks = _hero_premade_table[itr_hero_types].pick_count;
+                } break;
+                case 2:  /* All/Any/Both/Either/Neither */
+                {
+                    all_picks = _hero_premade_table[itr_hero_types].pick_count;
+                } break;
+            }
+
+            abilities = _hero_premade_table[itr_hero_types].abilities;
+
+            casting_skill = _hero_premade_table[itr_hero_types].casting_skill;
+
+            if(all_picks > 0)
+            {
+                warrior_picks = all_picks;
+                mage_picks = all_picks;
+            }
+
+            while((warrior_picks > 0) || (mage_picks > 0))
+            {
+
+                switch(Random(14) - 1)
+                {
+                    case 0:  /* Leadership */
+                    {
+                        if(((abilities & HSA_LEADERSHIP2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_LEADERSHIP) != 0) { abilities ^= HSA_LEADERSHIP; abilities |= HSA_LEADERSHIP2; } else { abilities |= HSA_LEADERSHIP; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 1:  /* Legendary */
+                    {
+                        if(((abilities & HSA_LEGENDARY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_LEGENDARY) != 0) { abilities ^= HSA_LEGENDARY; abilities |= HSA_LEGENDARY2; } else { abilities |= HSA_LEGENDARY; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 2:  /* Armsmaster */
+                    {
+                        if(((abilities & HSA_ARMSMASTER2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_ARMSMASTER) != 0) { abilities ^= HSA_ARMSMASTER; abilities |= HSA_ARMSMASTER2; } else { abilities |= HSA_ARMSMASTER; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 3:  /* Blademaster */
+                    {
+                        if(((abilities & HSA_BLADEMASTER2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_BLADEMASTER) != 0) { abilities ^= HSA_BLADEMASTER; abilities |= HSA_BLADEMASTER2; } else { abilities |= HSA_BLADEMASTER; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 4:  /* Might */
+                    {
+                        if(((abilities & HSA_MIGHT2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_MIGHT) != 0) { abilities ^= HSA_MIGHT; abilities |= HSA_MIGHT2; } else { abilities |= HSA_MIGHT; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 5:  /* Constitution */
+                    {
+                        if(((abilities & HSA_CONSTITUTION2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_CONSTITUTION) != 0) { abilities ^= HSA_CONSTITUTION; abilities |= HSA_CONSTITUTION2; } else { abilities |= HSA_CONSTITUTION; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 6:  /* Arcane Power */
+                    {
+                        if(((abilities & HSA_ARCANE_POWER2) == 0) && (mage_picks > 0))
+                        {
+                            // ; BUG: the Knight has no caster picks, this should be $1E (the Elven Archer)
+                            if(itr_hero_types != ut_Knight)  /* ¿ should ut_ElvenArcher  = 30 ? */
+                            {
+                                // ; BUG: excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning)
+                                if(
+                                    ((abilities & HSA_ARCANE_POWER) != 0)
+                                    &&
+                                    (_unit_type_table[itr_hero_types].Ranged_Type >= rat_Fireball)  /* ¿ should be rat_Lightning    =  30 ? */
+                                    &&
+                                    (_unit_type_table[itr_hero_types].Ranged_Type <= rat_Nat_Bolt)
+                                )
+                                {
+                                    abilities ^= HSA_ARCANE_POWER;
+                                    abilities |= HSA_ARCANE_POWER2;
+                                }
+                                else
+                                {
+                                    abilities |= HSA_ARCANE_POWER;
+                                }
+                            }
+                        }
+                    } break;
+                    case 7:  /* Prayermaster */
+                    {
+                        if(((abilities & HSA_PRAYERMASTER2) == 0) && (mage_picks > 0)) { if((abilities & HSA_PRAYERMASTER) != 0) { abilities ^= HSA_PRAYERMASTER; abilities |= HSA_PRAYERMASTER2; } else { abilities |= HSA_PRAYERMASTER; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 8:  /* Casting Skill */
+                    {
+                        if(mage_picks > 0) { casting_skill++; warrior_picks--; mage_picks--; }
+                    } break;
+                    case 9:  /* Noble */
+                    {
+                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types = ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
+                    } break;
+                    case 10:  /* Charm */
+                    {
+                        if(((abilities & HSA_CHARMED) == 0) && ((_unit_type_table[itr_hero_types].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)) { abilities |= HSA_CHARMED; warrior_picks--; mage_picks--; }
+                    } break;
+                    case 11:  /* Lucky */
+                    {
+                        if((abilities & HSA_LUCKY) == 0) { abilities |= HSA_LUCKY; warrior_picks--; mage_picks--; }
+                    } /* BUGBUG: case 11/Luck missing `break;`, falls through to case 12/Agility */
+                    case 12:  /* Agility */
+                    {
+                        if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }
+                    } break;
+                    case 13:  /* Sage */
+                    {
+                        if(((abilities & HSA_SAGE2) == 0) && (mage_picks > 0)) { if((abilities & HSA_SAGE) != 0) { abilities |= HSA_SAGE2; } else { abilities |= HSA_SAGE; } warrior_picks--; mage_picks--; }
+                    } break;
+
+                }
+
+            }
+
+            _HEROES2[itr_players]->heroes[itr_hero_types].abilities = abilities;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Casting_Skill = casting_skill;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[0] = _hero_premade_table[itr_hero_types].spell_1;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[1] = _hero_premade_table[itr_hero_types].spell_2;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2] = _hero_premade_table[itr_hero_types].spell_3;
+            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3] = _hero_premade_table[itr_hero_types].spell_4;
+
+        }
+
+    }
+
+}
+
+
+// MGC o56p13
+// drake178: CRP_MSG_Clear()
+/*
+zeroes the counters of all chancellor (scroll)
+message types, clearing all event messages
+*/
+/*
+
+*/
+void Initialize_Messages(void)
+{
+    MSG_UnitLost_Count = 0;
+    MSG_UnitKilled_Count = 0;
+    MSG_UEsLost_Count = 0;
+    MSG_CEsLost_Count = 0;
+    MSG_GEs_Lost = 0;
+    MSG_CityGrowth_Count = 0;
+    MSG_CityDeath_Count = 0;
+    MSG_BldLost_Count = 0;
+    MSG_CityLost_Count = 0;
+    MSG_CityGained_Count = 0;
+}
+
+
+// MGC o56p14
+// drake178: UU_ITEM_SetHeroSlots()
+// UU_ITEM_SetHeroSlots()
+
+// MGC o56p15
+// drake178: WIZ_ConsolidateBooks()
+// WIZ_ConsolidateBooks()
+
+// MGC o56p16
+// drake178: WIZ_GetNominalSkill()
+// WIZ_GetNominalSkill()
+
+// MGC o56p17
+// drake178: RNG_WeightedPick16()
+// RNG_WeightedPick16()
