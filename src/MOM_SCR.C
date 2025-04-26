@@ -25,6 +25,7 @@
 #include "MainMenu.H"
 #include "MagicScr.H"
 #include "MainScr.H"
+#include "NEWGAME.H"
 #include "NEXTTURN.H"
 #include "ProdScr.H"
 #include "Roads.H"
@@ -119,7 +120,7 @@ Release_Cities_Data();
 
         case scr_New_Game_Screen:
         {
-            Newgame_Control();
+            // BJORKED  Newgame_Control();
         } break;
 
         case scr_Quit_To_DOS:

@@ -882,7 +882,7 @@ struct s_HEROES
 struct s_OWNED_HERO
 {
     /* 00 */ int16_t unit_idx;       /*  Unit Index;      index into _UNITS[]                                        */
-    /* 02 */ char name[14];
+    /* 02 */ char name[LEN_HERO_NAME];
     /* 10 */ int16_t Items[3];       /*  Item Index;      index into _ITEMS[]                                        */
     /* 16 */ int16_t Item_Slots[3];  /*  Item Slot Type;  index into item_slot_icons_seg[] and itemtile_icons_seg[]  */
     /* 1C */
@@ -1142,7 +1142,7 @@ struct s_WIZARD
     /* 0018 */ uint16_t Personality;            /* enum AI_Personality */
     /* 001A */ uint16_t Objective;              /* enum AI_Objective */
     /* 001C */ uint8_t Unknown_01Ch[6];         /* ¿  ? */
-    /* 0022 */ uint16_t SoM_RC;                 /* DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
+    /* 0022 */ uint16_t SoM_RC;                 /* in Init_Summoning_Circle_And_Spell_Of_Mastery(), sets to spell_data_table[spl_Spell_Of_Mastery].research_cost;  DEDU  What is this? ¿ 'Spell of Mastery' Research Cost ? ¿ Is it dynamic / why is it not just in the spell data table or a formula/function ? */
     /* 0024 */ uint16_t fame;
     /* 0026 */ uint16_t Power_Base;
     /* 0028 */ uint16_t volcanoes;              /* count of volcanoes created by the Wizard  (NOTE: stored as a 3-bit member in the _map_square_flags bitfield) */

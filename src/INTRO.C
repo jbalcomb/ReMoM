@@ -86,9 +86,9 @@ void Draw_Logos(void)
     
     Clear_Fields();
 
-    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, &str_empty_string__MGC_ovr058[0], ST_UNDEFINED);
+    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__MGC_ovr058[0], ST_UNDEFINED);
 
-    hotkey_idx_ESC = Add_Hot_Key(&str_ESC__MGC_ovr058[0]);
+    hotkey_idx_ESC = Add_Hot_Key(str_ESC__MGC_ovr058[0]);
 
     // 13 SCENE's, in INTRO.LBX
     for(itr_scenes = 0; itr_scenes < 13; itr_scenes++)

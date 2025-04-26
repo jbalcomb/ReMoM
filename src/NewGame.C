@@ -2,13 +2,12 @@
 
     MAGIC.EXE
         ovr050
-        ovr051
-        ovr056
 */
 
 #include "NEWGAME.H"
 
 #include "MOX/Fonts.H"
+#include "MOX/Mouse.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"
 #include "MOX/MOX_TYPE.H"
@@ -16,6 +15,15 @@
 #include "MOX/Timer.H"
 
 #include <stdio.h>      /* FILE; fclose(), fopen(), fread(), frite(), fseek(); */
+
+
+
+// MGC o51p01
+void NEWG_CreateWorld__WIP(void);
+// MGC o56p2
+void NEWG_FinalizeTables__WIP(void);
+// MGC o56p11
+void Initialize_Events(void);
 
 
 
@@ -83,24 +91,62 @@ spell_data_table    = SA_MK_FP0( LBXR_LoadSingle("SPELLDAT", 0, 0, 215, 36) )
 
 
 
-struct S_HERO_TEMPLATE
-{
-    /* 00 */  int16_t pick_count;
-    /* 02 */  int16_t pick_type;  // {warrior, mage, any/both/either} ; enum e_RANDOM_PICK_TYPES
-    /* 04 */  int32_t abilities;
-    /* 08 */  int16_t casting_skill;
-    /* 0A */  int16_t spell_1;  // ; enum Spells
-    /* 0C */  int16_t spell_2;  // ; enum Spells
-    /* 0E */  int16_t spell_3;  // ; enum Spells
-    /* 10 */  int16_t spell_4;  // ; enum Spells
-    /* 12 */
+
+
+// MGC dseg:354C 00 00 01 00 01 00 01 00 05 00 02 00 01 00 02 00+TBL_AI_Realm_PER AI_PERS_Modifiers <0, 1, 1, 1, 5, 2>    ; 0
+// MGC dseg:354C 03 00 01 00 02 00 01 00 01 00 02 00 02 00 05 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2A7r
+// MGC dseg:354C 00 00 00 00 00 00 01 00 02 00 00 00 02 00 05 00+AI_PERS_Modifiers <1, 2, 3, 1, 2, 1>    ; 1
+// MGC dseg:354C 03 00 03 00 02 00 01 00 01 00 00 00 00 00 00 00+AI_PERS_Modifiers <1, 2, 2, 5, 0, 0>    ; 2
+// MGC dseg:354C 00 00 00 00 00 00 00 00                         AI_PERS_Modifiers <0, 1, 2, 0, 2, 5>    ; 3
+// MGC dseg:354C                                                 AI_PERS_Modifiers <3, 3, 2, 1, 1, 0>    ; 4
+// MGC dseg:354C                                                 AI_PERS_Modifiers  <0>
+// MGC dseg:3594 00 00 02 00 02 00 04 00 02 00 00 00 01 00 04 00+TBL_AI_Realm_OBJ AI_OBJ_Modifiers <0, 2, 2, 4, 2>        ; 0
+// MGC dseg:3594 02 00 03 00 00 00 03 00 02 00 02 00 03 00 00 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2D0r
+// MGC dseg:3594 02 00 03 00 04 00 01 00 00 00 04 00 01 00 01 00+AI_OBJ_Modifiers <0, 1, 4, 2, 3>        ; 1
+// MGC dseg:3594 04 00 00 00 00 00 00 00 00 00 00 00             AI_OBJ_Modifiers <0, 3, 2, 2, 3>        ; 2
+// MGC dseg:3594                                                 AI_OBJ_Modifiers <0, 2, 3, 4, 1>        ; 3
+// MGC dseg:3594                                                 AI_OBJ_Modifiers <0, 4, 1, 1, 4>        ; 4
+// MGC dseg:3594                                                 AI_OBJ_Modifiers  <0>
+// struct AI_PERS_Modifiers
+// {
+//     /* 00 */  int16_t Maniacal;
+//     /* 02 */  int16_t Ruthless;
+//     /* 04 */  int16_t Aggressive;
+//     /* 06 */  int16_t Chaotic;
+//     /* 08 */  int16_t Lawful;
+//     /* 0A */  int16_t Peaceful;
+//     /* 0C */
+// };
+// struct AI_OBJ_Modifiers
+// {
+//     /* 00 */  int16_t Pragmatist;
+//     /* 02 */  int16_t Militarist;
+//     /* 04 */  int16_t Theurgist;
+//     /* 06 */  int16_t Perfectionist;
+//     /* 08 */  int16_t Expansionist;
+//     /* 0A */
+// };
+int16_t TBL_AI_Realm_PRS[6][6] = {
+    { 0, 1, 1, 1, 5, 2 },
+    { 1, 2, 3, 1, 2, 1 },
+    { 1, 2, 2, 5, 0, 0 },
+    { 0, 1, 2, 0, 2, 5 },
+    { 3, 3, 2, 1, 1, 0 },
+    { 0, 0, 0, 0, 0, 0 }
 };
-enum e_RANDOM_PICK_TYPES
-{
-    Warrior_Picks  = 0,
-    mage_picks     = 1,
-    Any_Picks      = 2
+int16_t TBL_AI_Realm_OBJ[6][5] = {
+    { 0, 2, 2, 4, 2 },
+    { 0, 1, 4, 2, 3 },
+    { 0, 3, 2, 2, 3 },
+    { 0, 2, 3, 4, 1 },
+    { 0, 4, 1, 1, 4 },
+    { 0, 0, 0, 0, 0 }
 };
+
+
+
+
+
 struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
     /* picks        special                  casting  spells     */
     /* count, type, abilities,               skill    1,  2,  3,  4 */
@@ -731,60 +777,7 @@ char hlpentry_lbx_file__MGC_ovr050[] = "hlpentry.lbx";
 
 // MGC dseg:3333 00                                              align 2
 
-// MGC dseg:3334 00 00 FF FF 00 00 01 00 00 00                   TILE_Cardinal_XMod dw 0, 0FFFFh, 0, 1, 0
-// MGC dseg:3334                                                                                         ; DATA XREF: NEWG_CreateLands+240r ...
-// MGC dseg:333E 01 00 00 00 FF FF 00 00 00 00                   TILE_Cardinal_YMod dw 1, 0, 0FFFFh, 0, 0
-// MGC dseg:333E                                                                                         ; DATA XREF: NEWG_CreateLands+24Fr ...
-// MGC dseg:3348 02 00 03 00 00 00 01 00                         TILE_OppositeDirs dw 2, 3, 0, 1         ; DATA XREF: NEWG_CreateRiver+1F8r
-// MGC dseg:3350 00 00 FF FF 00 00 01 00 00 00                   TILE_Cardinal_XMod2 dw 0, 0FFFFh, 0, 1, 0
-// MGC dseg:3350                                                                                         ; DATA XREF: NEWG_SetSpecLands+1A3r ...
-// MGC dseg:3350                                                                                         ; should use dseg:3334
-// MGC dseg:335A 01 00 00 00 FF FF 00 00 00 00                   TILE_Cardinal_YMod2 dw 1, 0, 0FFFFh, 0, 0
-// MGC dseg:335A                                                                                         ; DATA XREF: NEWG_SetSpecLands+1B2r ...
-// MGC dseg:335A                                                                                         ; should use dseg:333e
-// MGC dseg:3364                                                 ; #110 NEWG_Hourglass_Wnd
-// MGC dseg:3364 06 00 00 00 00 00 00 00 3F 01 C7 00             NEWG_Hourglass_Wnd s_MOUSE_LIST <Crsr_Hourglass, 0, 0, 0, 319, 199>
-// MGC dseg:3364                                                                                         ; DATA XREF: NEWG_CreateWorld+2Do
-// MGC dseg:3364                                                                                         ; should use dseg:1f6c
-// MGC dseg:3370 26 34 2C 34 37 34 43 34 50 34 60 34 68 34 77 34+UU_EZ_Names@_Array dw offset UU_cnst_Tower, offset UU_cnst_ChaosNode, offset UU_cnst_NatureNode, offset UU_cnst_SorceryNode, offset UU_cnst_Cave, offset UU_cnst_Dungeon, offset UU_cnst_AncientTmpl, offset UU_cnst_Keep, offset UU_cnst_Lair, offset UU_cnst_Ruins, offset UU_cnst_FallenTmpl ; "tower"
-// MGC dseg:3386 A2 00 A2 00 A2 00 A2 00 BB 00 BB 00 BB 00 BB 00+TILE_River_Types dw _Grasslands1, _Grasslands1, _Grasslands1, _Grasslands1
-// MGC dseg:3386 BC 00 BC 00 BC 00 BC 00 BD 00 C1 00 E9 00 BD 00+                                        ; DATA XREF: NEWG_SetRiverTiles+127t
-// MGC dseg:3386 B9 00 B9 00 B9 00 B9 00 ED 00 EE 00 EF 00 ED 00+dw _River1000, _River1000, _River1000, _River1000
-// MGC dseg:3386 BF 00 C3 00 EB 00 BF 00 FB 00 FC 00 FD 00 FE 00+dw _River0100, _River0100, _River0100, _River0100
-// MGC dseg:3386 BA 00 BA 00 BA 00 BA 00 C0 00 C4 00 EC 00 C0 00+dw _River1100_1, _River1100_2, _River1100_3, _River1100_1
-// MGC dseg:3386 F0 00 F1 00 F2 00 F0 00 F3 00 F4 00 F5 00 F6 00+dw _River0010, _River0010, _River0010, _River0010
-// MGC dseg:3386 BE 00 C2 00 EA 00 BE 00 FF 00 00 01 01 01 02 01+dw _River1010_1, _River1010_2, _River1010_3, _River1010_1
-// MGC dseg:3386 F7 00 F8 00 F9 00 FA 00 D4 01 D5 01 D6 01 D7 01 dw _River0110_1, _River0110_2, _River0110_3, _River0110_1
-// MGC dseg:3386                                                 dw _River1110_1, _River1110_2, _River1110_3, _River1110_4
-// MGC dseg:3386                                                 dw _River0001, _River0001, _River0001, _River0001
-// MGC dseg:3386                                                 dw _River1001_1, _River1001_2, _River1001_3, _River1001_1
-// MGC dseg:3386                                                 dw _River0101_1, _River0101_2, _River0101_3, _River0101_1
-// MGC dseg:3386                                                 dw _River1101_1, _River1101_2, _River1101_3, _River1101_4
-// MGC dseg:3386                                                 dw _River0011_1, _River0011_2, _River0011_3, _River0011_1
-// MGC dseg:3386                                                 dw _River1011_1, _River1011_2, _River1011_3, _River1011_4
-// MGC dseg:3386                                                 dw _River0111_1, _River0111_2, _River0111_3, _River0111_4
-// MGC dseg:3386                                                 dw _River1111_1, _River1111_2, _River1111_3, _River1111_4
-// MGC dseg:3406 42 55 49 4C 44 44 41 54 00                      cnst_BUILDDAT_File db 'BUILDDAT',0      ; DATA XREF: NEWG_CreateWorld+13o
-// MGC dseg:340F 42 75 69 6C 64 69 6E 67 20 54 68 65 20 57 6F 72+cnst_Creation_Msg db 'Building The Worlds...',0
-// MGC dseg:340F 6C 64 73 2E 2E 2E 00                                                                    ; DATA XREF: NEWG_CreateWorld+69o
-// MGC dseg:3426 74 6F 77 65 72 00                               UU_cnst_Tower db 'tower',0              ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:342C 63 68 61 6F 73 20 6E 6F 64 65 00                UU_cnst_ChaosNode db 'chaos node',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3437 6E 61 74 75 72 65 20 6E 6F 64 65 00             UU_cnst_NatureNode db 'nature node',0   ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3443 73 6F 72 63 65 72 79 20 6E 6F 64 65 00          UU_cnst_SorceryNode db 'sorcery node',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3450 6D 79 73 74 65 72 69 6F 75 73 20 63 61 76 65 00 UU_cnst_Cave db 'mysterious cave',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3460 64 75 6E 67 65 6F 6E 00                         UU_cnst_Dungeon db 'dungeon',0          ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3468 61 6E 63 69 65 6E 74 20 74 65 6D 70 6C 65 00    UU_cnst_AncientTmpl db 'ancient temple',0
-// MGC dseg:3468                                                                                         ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3477 61 62 61 6E 64 6F 6E 65 64 20 6B 65 65 70 00    UU_cnst_Keep db 'abandoned keep',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3486 6D 6F 6E 73 74 65 72 20 6C 61 69 72 00          UU_cnst_Lair db 'monster lair',0        ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC dseg:34AF 54 45 52 52 54 59 50 45 00                      cnst_TERRTYPE_File db 'TERRTYPE',0      ; DATA XREF: NEWG_SetDeserts+26o ...
-// MGC dseg:34B8 43 49 54 59 4E 41 4D 45 00                      cnst_CITYNAME_File db 'CITYNAME',0      ; DATA XREF: CTY_SetDefaultName+23o
-
-// MGC dseg:34C1 00 00 00                                        align 4
-
-// MGC dseg:34C1                                                 END:  ovr050 - Initialized Data
+// MGC dseg:3333                                                 END:  ovr050 - Initialized Data
 
 
 
@@ -817,7 +810,14 @@ int16_t TBL_Realm3_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 // MGC dseg:8DC0
 int16_t TBL_Realm4_Books[11] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// MGC dseg:8DD6 00 00                                           IMG_NEWG_MapBuildBG@ dw 0               ; DATA XREF: GAME_New_Screen_7+83w ...
+// MGC dseg:8DD6
+// drake78: IMG_NEWG_MapBuildBG
+/*
+    loaded in GAME_New_Screen_7()
+    used in NEWG_CreateWorld__WIP()
+*/
+SAMB_ptr IMG_NEWG_MapBuildBG;
+
 // MGC dseg:8DD8 00 00                                           NEWG_SliderPos_Sorc dw 0                ; DATA XREF: GAME_New_Screen_4+155w ...
 // MGC dseg:8DDA 00 00                                           NEWG_SliderPos_Nat dw 0                 ; DATA XREF: GAME_New_Screen_4+14Fw ...
 // MGC dseg:8DDC 00 00                                           NEWG_SliderPos_Chaos dw 0               ; DATA XREF: GAME_New_Screen_4+149w ...
@@ -933,7 +933,7 @@ void Newgame_Control(void)
         {
             case -1:
             {
-                return 0;  // ¿ cancel ?
+                return;  // ¿ cancel ?
             } break;
             case 0:
             {
@@ -1009,7 +1009,7 @@ void Newgame_Control(void)
         
     }
 
-    NEWG_CreateWorld();
+    NEWG_CreateWorld__WIP();
 
     Initialize_Events();
 
@@ -1017,7 +1017,7 @@ void Newgame_Control(void)
 
     Save_SAVE_GAM(8);
 
-    GAME_WizardsLaunch(8);
+    // TODO  GAME_WizardsLaunch(8);
 
 }
 
@@ -1033,17 +1033,17 @@ void Newgame_Control(void)
 /*
 
 */
-void GAME_WizardsLaunch(int16_t save_gam_idx)
+void GAME_WizardsLaunch__WIP(int16_t save_gam_idx)
 {
     Fade_Out();
-    Stop_Music__STUB();
-    Audio_Uninit__STUB();
+    // NEWCODE  Stop_Music__STUB();
+    // NEWCODE  Audio_Uninit__STUB();
     if(save_gam_idx != 8)
     {
         Load_SAVE_GAM(save_gam_idx);
         Save_SAVE_GAM(8);
     }
-    GAME_EXE_Swap(cnst_EXESwap_File, cnst_EXESwap_Arg, cnst_EXESwap_Arg, empty_string__ovr050);
+    // TODO  GAME_EXE_Swap(cnst_EXESwap_File, cnst_EXESwap_Arg, cnst_EXESwap_Arg, empty_string__ovr050);
 }
 
 
@@ -1175,17 +1175,17 @@ int16_t Newgame_Screen0(void)
 
     Set_Page_Off();
 
-    _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, &empty_string__ovr050[0], ST_UNDEFINED);
+    _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050[0], ST_UNDEFINED);
 
-    _quit_button = Add_Button_Field(171, 179, &empty_string__ovr050[0], _quit_active_seg, &str_ESC__ovr050[0], ST_UNDEFINED);
+    _quit_button = Add_Button_Field(171, 179, &empty_string__ovr050[0], _quit_active_seg, str_ESC__ovr050[0], ST_UNDEFINED);
 
-    newgame_difficulty_button_field = Add_Hidden_Field(250, 38, 315, 54, &empty_string__ovr050[0], ST_UNDEFINED);
+    newgame_difficulty_button_field = Add_Hidden_Field(250, 38, 315, 54, empty_string__ovr050[0], ST_UNDEFINED);
 
-    newgame_opponents_button_field = Add_Hidden_Field(250, 65, 315, 81, &empty_string__ovr050[0], ST_UNDEFINED);
+    newgame_opponents_button_field = Add_Hidden_Field(250, 65, 315, 81, empty_string__ovr050[0], ST_UNDEFINED);
 
-    newgame_landsize_button_field = Add_Hidden_Field(250, 92, 315, 108, &empty_string__ovr050[0], ST_UNDEFINED);
+    newgame_landsize_button_field = Add_Hidden_Field(250, 92, 315, 108, empty_string__ovr050[0], ST_UNDEFINED);
 
-    newgame_magic_button_field = Add_Hidden_Field(250, 119, 315, 135, &empty_string__ovr050[0], ST_UNDEFINED);
+    newgame_magic_button_field = Add_Hidden_Field(250, 119, 315, 135, empty_string__ovr050[0], ST_UNDEFINED);
 
     leave_screen = ST_FALSE;
 
@@ -1504,7 +1504,7 @@ void Newgame_Screen2__WIP(void)
 int16_t Newgame_Screen3__WIP(void)
 {
 
-
+    return 0;
 
 }
 
@@ -1534,7 +1534,7 @@ void Newgame_Screen7__WIP(void)
 int16_t Newgame_Screen6__WIP(void)
 {
 
-
+    return 0;
 
 }
 
@@ -1611,7 +1611,7 @@ void Set_Newgame_Screen0_Help_List(void)
 {
 
     // HLPENTRY.LBX, 29  Options Screen Help
-    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 29, (SAMB_ptr)_help_entries, 6);
+    LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 29, (SAMB_ptr)_help_entries, 0, 6, 10);
 
     Set_Help_List(_help_entries, 6);
 
@@ -1644,571 +1644,3 @@ void Set_Newgame_Screen0_Help_List(void)
 
 // o50p38
 // Do_Toggle_Pages()
-
-
-
-
-/*
-    MAGIC.EXE
-    ovr051
-*/
-
-// o51p01
-// drake178: NEWG_CreateWorld()
-/*
-*/
-/*
-
-*/
-void NEWG_CreateWorld(void)
-{
-
-
-
-}
-
-// o51p02
-// NEWG_EZ_MarkHadnLeft()
-
-// o51p03
-// NEWG_TileIsleExtend()
-
-// o51p04
-// NEWG_CreateTowers()
-
-// o51p05
-// NEWG_CreateCapitals()
-
-// o51p06
-// NEWG_ClearLandmasses()
-
-// o51p07
-// NEWG_EqualizeNodes()
-
-// o51p08
-// NEWG_SetSpecLands()
-
-// o51p09
-// NEWG_SetBaseLands()
-
-// o51p10
-// NEWG_CreateLands()
-
-// o51p11
-// NEWG_CreateNodes()
-
-// o51p12
-// NEWG_CreateNodeAura()
-
-// o51p13
-// NODE_IsAuraUnique()
-
-// o51p14
-// NEWG_SetNodeType()
-
-// o51p15
-// TILE_SetLandMass()
-
-// o51p16
-// NEWG_CreateEZs()
-
-// o51p17
-// NEWG_CreateEncounter()
-
-// o51p18
-// UU_UNIT_RandomRacial()
-
-// o51p19
-// NEWG_SetDeserts()
-
-// o51p20
-// NEWG_CreateShores()
-
-// o51p21
-// NEWG_RandomizeTiles()
-
-// o51p22
-// NEWG_CreateRiver()
-
-// o51p23
-// NEWG_SetRiverTiles()
-
-// o51p24
-// NEWG_CreateNeutrals()
-
-// o51p25
-// CTY_SetDefaultName()
-
-// o51p26
-// NEWG_CreateRoads()
-
-// o51p27
-// CRP_NEWG_CreatePathGrids()
-
-// o51p28
-// NEWG_CreateSpecials()
-
-// o51p29
-// NEWG_DesertSpecials()
-
-// o51p30
-// NEWG_HillSpecials()
-
-// o51p31
-// NEWG_MntnSpecials()
-
-// o51p32
-// NEWG_SetScoutingMaps()
-
-// o51p33
-// TILE_SetScouting()
-
-// o51p34
-// NEWG_SetMoveMaps()
-
-// o51p35
-// TILE_InvalidOutflow()
-
-// o51p36
-// drake178: NEWG_UpdateProgress()
-// ~ MoO2  Module: MISC  Draw_Advancing_Fill_Message_()
-/*
-PATCHED in the worldgen customizer to use a created
-background image and always redraw, allowing the
-progress bar to be reset if necessary
-updates the progress bar to the specified percentage
-before doing a simple page flip
-WARNING: can't go backwards with this setup
-*/
-/*
-
-*/
-void Draw_Building_The_Worlds(int16_t percent)
-{
-    int16_t width = 0;
-    Set_Page_Off();
-    if(percent = 0)
-    {
-        return;
-    }
-    if(percent >= 100)
-    {
-        Fill(90, 89, 225, 94, 172);
-    }
-    else
-    {
-        width = ((percent * 136) / 100);
-        Fill(90, 89, (90 + width), 94, 172);
-    }
-    Toggle_Pages();
-}
-
-// o51p37
-// UNIT_Create()
-
-// o51p38
-// NEWG_AnimateOceans()
-
-// o51p39
-// TILE_IsOcean()
-
-// o51p40
-// TILE_HasNode()
-
-// o51p41
-// TILE_HasTower()
-
-// o51p42
-// TILE_IsForest()
-
-// o51p43
-// TILE_IsRiver()
-
-// o51p44
-// UU_TILE_IsRiverOutlet()
-
-// o51p45
-// UU_TILE_IsShore()
-
-// o51p46
-// TILE_IsMountains()
-
-// o51p47
-// TILE_IsHills()
-
-// o51p48
-// TILE_IsSwamp()
-
-// o51p49
-// TILE_IsDesert()
-
-// o51p50
-// TILE_IsGrasslands()
-
-// o51p51
-// TILE_GetFood()
-
-// o51p52
-// TILE_GetMaxPop()
-
-// o51p53
-// TILE_GetCatchment()
-
-// o51p54
-// UU_Empty_Tile_Fn()
-
-
-
-// MGC o56p1
-// drake178: WIZ_SetProfiles()
-/*
-*/
-/*
-
-*/
-// WIZ_SetProfiles__WIP()
-
-// MGC o56p2
-// drake178: NEWG_FinalizeTables()
-/*
-finalizes the item, hero, and wizard record tables
-RE-CHECK: some fields are not yet known
-*/
-/*
-
-*/
-void NEWG_FinalizeTables__WIP(void)
-{
-    int16_t itr_players = 0;  // _SI_
-
-    Draw_Building_The_Worlds(100);
-
-    Initialize_Items();
-
-    Init_Heroes();
-
-    WIZ_SetStartingStats__WIP();
-
-    AI_WIZ_StrategyReset__WIP();
-
-    WIZ_SetPersonalities__WIP();
-
-    WIZ_Set_Sum_n_SoM__WIP();
-
-    Initialize_Messages();
-
-    for(itr_players = 0; itr_players < _num_players; itr_players++)
-    {
-        _players[itr_players].capital_race = _CITIES[itr_players].race;
-    }
-
-    AI_WIZ_SetRelations__WIP();
-
-    _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
-
-    for(itr_players = 1; itr_players < _num_players; itr_players++)
-    {
-
-        _players[itr_players].gold_reserve = 150;
-
-
-// ; 80 + rnd(40) is stored here for each AI wizard (word
-// ; array pointer, human excluded) when setting initial
-// ; gold
-// mov     ax, 40
-// push    ax
-// call    Random
-// add     ax, 80
-// mov     dx, _SI_itr_players
-// shl     dx, 1
-// mov     bx, [Wiz5_Spell_E0h@]             
-// add     bx, dx
-// mov     [bx], ax
-        // Wiz5_Spell_E0h[itr_players] = (80 + Random(40));
-        // mov     [AI_SCircle_Reevals@],  (offset _players.spells_list+18C8h) ; 16 bytes
-        AI_SCircle_Reevals = ( (int16_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x18C8) );  // 16 bytes        
-    }
-
-}
-
-
-// MGC o56p3
-// drake178: AI_WIZ_SetRelations()
-// AI_WIZ_SetRelations()
-
-// MGC o56p4
-// drake178: NEWG_ClearItems()
-/*
-clears the item table by setting the value of all
-records to 0, and clears the predefined item
-appearance table
-*/
-/*
-
-*/
-void Initialize_Items(void)
-{
-    int16_t itr = 0;  // _CX_
-    for(itr = 0; itr < 138; itr++)
-    {
-        _ITEMS[itr].cost = 0;
-    }
-    for(itr = 0; itr < 250; itr++)
-    {
-        TBL_Premade_Items[itr] = 0;
-    }
-}
-
-
-// MGC o56p5
-// drake178: WIZ_Set_Sum_n_SoM()
-// WIZ_Set_Sum_n_SoM()
-
-// MGC o56p6
-// drake178: WIZ_SetPersonalities()
-// WIZ_SetPersonalities()
-
-// MGC o56p7
-// drake178: AI_WIZ_StrategyReset()
-// AI_WIZ_StrategyReset()
-
-// MGC o56p8
-// drake178: WIZ_SetStartingStats()
-// WIZ_SetStartingStats()
-
-// MGC o56p9
-// drake178: AI_CreateWizards()
-// AI_CreateWizards()
-
-// MGC o56p10
-// drake178: WIZ_SetSpells()
-// WIZ_SetSpells()
-
-
-// MGC o56p11
-// drake178: NEWG_ClearEvents()
-// ¿ ~== MoO2  Module: REPORT  Initialize_Reports_() ?
-/*
-; clears the event data structure by setting the status
-; of all events to 0
-*/
-/*
-
-*/
-void Initialize_Events(void)
-{
-    events_table->last_event_turn = 50;
-    events_table->Meteor_Status = 0;
-    events_table->Gift_Status = 0;
-    events_table->Disjunction_Status = 0;
-    events_table->marriage_status = 0;
-    events_table->Earthquake_Status = 0;
-    events_table->Pirates_Status = 0;
-    events_table->Plague_Status = 0;
-    events_table->Rebellion_Status = 0;
-    events_table->Donation_Status = 0;
-    events_table->Depletion_Status = 0;
-    events_table->minerals_status = 0;
-    events_table->Population_Boom_Status = 0;
-    events_table->Good_Moon_Status = 0;
-    events_table->Bad_Moon_Status = 0;
-    events_table->Conjunction_Chaos_Status = 0;
-    events_table->Conjunction_Nature_Status = 0;
-    events_table->Conjunction_Sorcery_Status = 0;
-    events_table->Mana_Short_Status = 0;
-}
-
-// MGC o56p12
-// drake178: NEWG_CreateHeroes()
-// MoO2  Module: INITGAME  Init_Leaders_()
-void Init_Heroes(void)
-{
-    int32_t abilities = 0;
-    int16_t all_picks = 0;
-    int16_t mage_picks = 0;
-    int16_t casting_skill = 0;
-    int16_t itr_hero_types = 0;
-    int16_t itr_players = 0;
-    int16_t warrior_picks = 0;  // _DI_
-
-    for(itr_players = 0; itr_players < 5; itr_players++)
-    {
-
-        for(itr_hero_types = 0; itr_hero_types < NUM_HERO_TYPES; itr_hero_types++)
-        {
-
-            _HEROES2[itr_players]->heroes[itr_hero_types].Level = 0;
-
-            warrior_picks = 0;
-
-            mage_picks = 0;
-
-            all_picks = 0;
-
-            switch(_hero_premade_table[itr_hero_types].pick_type)
-            {
-                case 0:  /* Warrior */
-                {
-                    warrior_picks = _hero_premade_table[itr_hero_types].pick_count;
-                } break;
-                case 1:  /* Mage */
-                {
-                    mage_picks = _hero_premade_table[itr_hero_types].pick_count;
-                } break;
-                case 2:  /* All/Any/Both/Either/Neither */
-                {
-                    all_picks = _hero_premade_table[itr_hero_types].pick_count;
-                } break;
-            }
-
-            abilities = _hero_premade_table[itr_hero_types].abilities;
-
-            casting_skill = _hero_premade_table[itr_hero_types].casting_skill;
-
-            if(all_picks > 0)
-            {
-                warrior_picks = all_picks;
-                mage_picks = all_picks;
-            }
-
-            while((warrior_picks > 0) || (mage_picks > 0))
-            {
-
-                switch(Random(14) - 1)
-                {
-                    case 0:  /* Leadership */
-                    {
-                        if(((abilities & HSA_LEADERSHIP2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_LEADERSHIP) != 0) { abilities ^= HSA_LEADERSHIP; abilities |= HSA_LEADERSHIP2; } else { abilities |= HSA_LEADERSHIP; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 1:  /* Legendary */
-                    {
-                        if(((abilities & HSA_LEGENDARY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_LEGENDARY) != 0) { abilities ^= HSA_LEGENDARY; abilities |= HSA_LEGENDARY2; } else { abilities |= HSA_LEGENDARY; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 2:  /* Armsmaster */
-                    {
-                        if(((abilities & HSA_ARMSMASTER2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_ARMSMASTER) != 0) { abilities ^= HSA_ARMSMASTER; abilities |= HSA_ARMSMASTER2; } else { abilities |= HSA_ARMSMASTER; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 3:  /* Blademaster */
-                    {
-                        if(((abilities & HSA_BLADEMASTER2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_BLADEMASTER) != 0) { abilities ^= HSA_BLADEMASTER; abilities |= HSA_BLADEMASTER2; } else { abilities |= HSA_BLADEMASTER; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 4:  /* Might */
-                    {
-                        if(((abilities & HSA_MIGHT2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_MIGHT) != 0) { abilities ^= HSA_MIGHT; abilities |= HSA_MIGHT2; } else { abilities |= HSA_MIGHT; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 5:  /* Constitution */
-                    {
-                        if(((abilities & HSA_CONSTITUTION2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_CONSTITUTION) != 0) { abilities ^= HSA_CONSTITUTION; abilities |= HSA_CONSTITUTION2; } else { abilities |= HSA_CONSTITUTION; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 6:  /* Arcane Power */
-                    {
-                        if(((abilities & HSA_ARCANE_POWER2) == 0) && (mage_picks > 0))
-                        {
-                            // ; BUG: the Knight has no caster picks, this should be $1E (the Elven Archer)
-                            if(itr_hero_types != ut_Knight)  /* ¿ should ut_ElvenArcher  = 30 ? */
-                            {
-                                // ; BUG: excludes the Warlock and the Chaos Warrior, this should be $1E (Ranged_Lightning)
-                                if(
-                                    ((abilities & HSA_ARCANE_POWER) != 0)
-                                    &&
-                                    (_unit_type_table[itr_hero_types].Ranged_Type >= rat_Fireball)  /* ¿ should be rat_Lightning    =  30 ? */
-                                    &&
-                                    (_unit_type_table[itr_hero_types].Ranged_Type <= rat_Nat_Bolt)
-                                )
-                                {
-                                    abilities ^= HSA_ARCANE_POWER;
-                                    abilities |= HSA_ARCANE_POWER2;
-                                }
-                                else
-                                {
-                                    abilities |= HSA_ARCANE_POWER;
-                                }
-                            }
-                        }
-                    } break;
-                    case 7:  /* Prayermaster */
-                    {
-                        if(((abilities & HSA_PRAYERMASTER2) == 0) && (mage_picks > 0)) { if((abilities & HSA_PRAYERMASTER) != 0) { abilities ^= HSA_PRAYERMASTER; abilities |= HSA_PRAYERMASTER2; } else { abilities |= HSA_PRAYERMASTER; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 8:  /* Casting Skill */
-                    {
-                        if(mage_picks > 0) { casting_skill++; warrior_picks--; mage_picks--; }
-                    } break;
-                    case 9:  /* Noble */
-                    {
-                        if(((abilities & HSA_NOBLE) == 0) && (itr_hero_types = ut_Chosen)) { abilities |= HSA_NOBLE; warrior_picks--; mage_picks--; }
-                    } break;
-                    case 10:  /* Charm */
-                    {
-                        if(((abilities & HSA_CHARMED) == 0) && ((_unit_type_table[itr_hero_types].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)) { abilities |= HSA_CHARMED; warrior_picks--; mage_picks--; }
-                    } break;
-                    case 11:  /* Lucky */
-                    {
-                        if((abilities & HSA_LUCKY) == 0) { abilities |= HSA_LUCKY; warrior_picks--; mage_picks--; }
-                    } /* BUGBUG: case 11/Luck missing `break;`, falls through to case 12/Agility */
-                    case 12:  /* Agility */
-                    {
-                        if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }
-                    } break;
-                    case 13:  /* Sage */
-                    {
-                        if(((abilities & HSA_SAGE2) == 0) && (mage_picks > 0)) { if((abilities & HSA_SAGE) != 0) { abilities |= HSA_SAGE2; } else { abilities |= HSA_SAGE; } warrior_picks--; mage_picks--; }
-                    } break;
-
-                }
-
-            }
-
-            _HEROES2[itr_players]->heroes[itr_hero_types].abilities = abilities;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Casting_Skill = casting_skill;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[0] = _hero_premade_table[itr_hero_types].spell_1;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[1] = _hero_premade_table[itr_hero_types].spell_2;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[2] = _hero_premade_table[itr_hero_types].spell_3;
-            _HEROES2[itr_players]->heroes[itr_hero_types].Spells[3] = _hero_premade_table[itr_hero_types].spell_4;
-
-        }
-
-    }
-
-}
-
-
-// MGC o56p13
-// drake178: CRP_MSG_Clear()
-/*
-zeroes the counters of all chancellor (scroll)
-message types, clearing all event messages
-*/
-/*
-
-*/
-void Initialize_Messages(void)
-{
-    MSG_UnitLost_Count = 0;
-    MSG_UnitKilled_Count = 0;
-    MSG_UEsLost_Count = 0;
-    MSG_CEsLost_Count = 0;
-    MSG_GEs_Lost = 0;
-    MSG_CityGrowth_Count = 0;
-    MSG_CityDeath_Count = 0;
-    MSG_BldLost_Count = 0;
-    MSG_CityLost_Count = 0;
-    MSG_CityGained_Count = 0;
-}
-
-
-// MGC o56p14
-// drake178: UU_ITEM_SetHeroSlots()
-// UU_ITEM_SetHeroSlots()
-
-// MGC o56p15
-// drake178: WIZ_ConsolidateBooks()
-// WIZ_ConsolidateBooks()
-
-// MGC o56p16
-// drake178: WIZ_GetNominalSkill()
-// WIZ_GetNominalSkill()
-
-// MGC o56p17
-// drake178: RNG_WeightedPick16()
-// RNG_WeightedPick16()

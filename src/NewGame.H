@@ -1,10 +1,52 @@
 /*
     MAGIC.EXE
     ovr050
-    ovr051
 */
 
+#ifndef NEWGAME_H
+#define NEWGAME_H
+
 #include "MOX/MOX_TYPE.H"
+
+
+
+
+#define AI_PRS_MANIACAL         0
+#define AI_PRS_RUTHLESS         1
+#define AI_PRS_AGGRESSIVE       2
+#define AI_PRS_CHAOTIC          3
+#define AI_PRS_LAWFUL           4
+#define AI_PRS_PEACEFUL         5
+#define AI_OBJ_PRAGMATIST       0
+#define AI_OBJ_MILITARIST       1
+#define AI_OBJ_THEURGIST        2
+#define AI_OBJ_PERFECTIONIST    3
+#define AI_OBJ_EXPANSIONIST     4
+
+struct S_HERO_TEMPLATE
+{
+    /* 00 */  int16_t pick_count;
+    /* 02 */  int16_t pick_type;  // {warrior, mage, any/both/either} ; enum e_RANDOM_PICK_TYPES
+    /* 04 */  int32_t abilities;
+    /* 08 */  int16_t casting_skill;
+    /* 0A */  int16_t spell_1;  // ; enum Spells
+    /* 0C */  int16_t spell_2;  // ; enum Spells
+    /* 0E */  int16_t spell_3;  // ; enum Spells
+    /* 10 */  int16_t spell_4;  // ; enum Spells
+    /* 12 */
+};
+enum e_RANDOM_PICK_TYPES
+{
+    Warrior_Picks  = 0,
+    mage_picks     = 1,
+    Any_Picks      = 2
+};
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 
@@ -17,7 +59,7 @@
 void Newgame_Control(void);
 
 // o50p02
-// GAME_WizardsLaunch()
+void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
 
 // o50p03
 // Load_Screen()
@@ -129,235 +171,8 @@ void Set_Newgame_Screen0_Help_List(void);
 
 
 
-
-/*
-    MAGIC.EXE
-    ovr051
-*/
-
-// o51p01
-// NEWG_CreateWorld()
-
-// o51p02
-// NEWG_EZ_MarkHadnLeft()
-
-// o51p03
-// NEWG_TileIsleExtend()
-
-// o51p04
-// NEWG_CreateTowers()
-
-// o51p05
-// NEWG_CreateCapitals()
-
-// o51p06
-// NEWG_ClearLandmasses()
-
-// o51p07
-// NEWG_EqualizeNodes()
-
-// o51p08
-// NEWG_SetSpecLands()
-
-// o51p09
-// NEWG_SetBaseLands()
-
-// o51p10
-// NEWG_CreateLands()
-
-// o51p11
-// NEWG_CreateNodes()
-
-// o51p12
-// NEWG_CreateNodeAura()
-
-// o51p13
-// NODE_IsAuraUnique()
-
-// o51p14
-// NEWG_SetNodeType()
-
-// o51p15
-// TILE_SetLandMass()
-
-// o51p16
-// NEWG_CreateEZs()
-
-// o51p17
-// NEWG_CreateEncounter()
-
-// o51p18
-// UU_UNIT_RandomRacial()
-
-// o51p19
-// NEWG_SetDeserts()
-
-// o51p20
-// NEWG_CreateShores()
-
-// o51p21
-// NEWG_RandomizeTiles()
-
-// o51p22
-// NEWG_CreateRiver()
-
-// o51p23
-// NEWG_SetRiverTiles()
-
-// o51p24
-// NEWG_CreateNeutrals()
-
-// o51p25
-// CTY_SetDefaultName()
-
-// o51p26
-// NEWG_CreateRoads()
-
-// o51p27
-// CRP_NEWG_CreatePathGrids()
-
-// o51p28
-// NEWG_CreateSpecials()
-
-// o51p29
-// NEWG_DesertSpecials()
-
-// o51p30
-// NEWG_HillSpecials()
-
-// o51p31
-// NEWG_MntnSpecials()
-
-// o51p32
-// NEWG_SetScoutingMaps()
-
-// o51p33
-// TILE_SetScouting()
-
-// o51p34
-// NEWG_SetMoveMaps()
-
-// o51p35
-// TILE_InvalidOutflow()
-
-// o51p36
-// NEWG_UpdateProgress()
-
-// o51p37
-// UNIT_Create()
-
-// o51p38
-// NEWG_AnimateOceans()
-
-// o51p39
-// TILE_IsOcean()
-
-// o51p40
-// TILE_HasNode()
-
-// o51p41
-// TILE_HasTower()
-
-// o51p42
-// TILE_IsForest()
-
-// o51p43
-// TILE_IsRiver()
-
-// o51p44
-// UU_TILE_IsRiverOutlet()
-
-// o51p45
-// UU_TILE_IsShore()
-
-// o51p46
-// TILE_IsMountains()
-
-// o51p47
-// TILE_IsHills()
-
-// o51p48
-// TILE_IsSwamp()
-
-// o51p49
-// TILE_IsDesert()
-
-// o51p50
-// TILE_IsGrasslands()
-
-// o51p51
-// TILE_GetFood()
-
-// o51p52
-// TILE_GetMaxPop()
-
-// o51p53
-// TILE_GetCatchment()
-
-// o51p54
-// UU_Empty_Tile_Fn()
-
-
-
-/*
-    MAGIC.EXE
-        ovr056
-*/
-
-// MGC o56p1
-// WIZ_SetProfiles()
-
-// MGC o56p2
-void NEWG_FinalizeTables__WIP(void);
-
-// MGC o56p3
-// drake178: AI_WIZ_SetRelations()
-// AI_WIZ_SetRelations()
-
-// MGC o56p4
-void Initialize_Items(void);
-
-// MGC o56p5
-// drake178: WIZ_Set_Sum_n_SoM()
-// WIZ_Set_Sum_n_SoM()
-
-// MGC o56p6
-// drake178: WIZ_SetPersonalities()
-// WIZ_SetPersonalities()
-
-// MGC o56p7
-// drake178: AI_WIZ_StrategyReset()
-// AI_WIZ_StrategyReset()
-
-// MGC o56p8
-// drake178: WIZ_SetStartingStats()
-// WIZ_SetStartingStats()
-
-// MGC o56p9
-// drake178: AI_CreateWizards()
-// AI_CreateWizards()
-
-// MGC o56p10
-// drake178: WIZ_SetSpells()
-// WIZ_SetSpells()
-
-// MGC o56p11
-void Initialize_Events(void);
-
-// MGC o56p12
-void Init_Heroes(void);
-
-// MGC o56p13
-void Initialize_Messages(void);
-
-// MGC o56p14
-// UU_ITEM_SetHeroSlots()
-
-// MGC o56p15
-// WIZ_ConsolidateBooks()
-
-// MGC o56p16
-// WIZ_GetNominalSkill()
-
-// MGC o56p17
-// RNG_WeightedPick16()
+#ifdef __cplusplus
+}
+#endif
+
+#endif  /* NEWGAME_H */
