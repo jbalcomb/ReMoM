@@ -78,7 +78,7 @@ void Draw_Logos(void)
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__STUB(Intro_Music_Segment);
+        Play_Sound__WIP(Intro_Music_Segment);
         
     }
 
@@ -167,7 +167,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX1_Segment);
+                    Play_Sound__WIP(Intro_SFX1_Segment);
                 }
             }
 
@@ -183,7 +183,7 @@ void Draw_Logos(void)
                 Intro_SFX2_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_Unknown116, _screen_seg);  // ; [Merlin] "My work has already met with success."
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX1_Segment);
+                    Play_Sound__WIP(Intro_SFX1_Segment);
                 }
             }
 
@@ -195,7 +195,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX2_Segment);
+                    Play_Sound__WIP(Intro_SFX2_Segment);
                 }
             }
 
@@ -211,7 +211,7 @@ void Draw_Logos(void)
                 Intro_SFX3_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX1_Segment);
+                    Play_Sound__WIP(Intro_SFX1_Segment);
                 }
             }
 
@@ -227,7 +227,7 @@ void Draw_Logos(void)
                 Intro_SFX3_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX1_Segment);
+                    Play_Sound__WIP(Intro_SFX1_Segment);
                 }
             }
 
@@ -242,7 +242,7 @@ void Draw_Logos(void)
                 Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT3, _screen_seg);
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX1_Segment);
+                    Play_Sound__WIP(Intro_SFX1_Segment);
                 }
             }
 
@@ -254,7 +254,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX3_Segment);
+                    Play_Sound__WIP(Intro_SFX3_Segment);
                 }
             }
 
@@ -266,7 +266,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX3_Segment);
+                    Play_Sound__WIP(Intro_SFX3_Segment);
                 }
             }
 
@@ -278,7 +278,7 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__STUB(Intro_SFX3_Segment);
+                    Play_Sound__WIP(Intro_SFX3_Segment);
                 }
             }
 

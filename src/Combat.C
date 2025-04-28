@@ -1469,7 +1469,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__STUB(SND_CMB_Music);
+        Play_Sound__WIP(SND_CMB_Music);
 
     }
 
@@ -3260,7 +3260,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
             if(magic_set.sound_effects == ST_TRUE)
             {
-                Play_Sound__STUB(Sound_Data_Seg);
+                Play_Sound__WIP(Sound_Data_Seg);
             }
 
             if(magic_set.Movement_Anims == ST_TRUE)
@@ -3291,7 +3291,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
             if(magic_set.sound_effects == ST_TRUE)
             {
-                Play_Sound__STUB(SND_CMB_Silence);
+                Play_Sound__WIP(SND_CMB_Silence);
             }
 
             // TODO  BU_WallofFire(battle_unit_idx);
@@ -14496,7 +14496,7 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound__STUB(SND_CMB_Silence);
+                                Play_Sound__WIP(SND_CMB_Silence);
 
                                 Mark_Block(World_Data);
 
@@ -14521,7 +14521,7 @@ BUG: this has just been done in the parent function
                             if(Sound_Data_Seg != ST_UNDEFINED)
                             {
 
-                                Play_Sound__STUB((SAMB_ptr)Sound_Data_Seg);
+                                Play_Sound__WIP((SAMB_ptr)Sound_Data_Seg);
 
                             }
 
@@ -14555,7 +14555,7 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound__STUB(SND_CMB_Silence);
+                                Play_Sound__WIP(SND_CMB_Silence);
 
                             }
 
@@ -20847,7 +20847,7 @@ void CMB_ProcessVortices(void)
     unsigned int Vortex_Index = 0;
 
     if (magic_set.sound_effects == 1) {
-        Play_Sound__STUB(SND_CMB_Silence);
+        Play_Sound__WIP(SND_CMB_Silence);
         Mark_Block(World_Data);
         SND_SpellCast = LBX_Reload_Next(cnst_SOUNDFX_File2, SFX_Flyer_S, World_Data);
         Release_Block(World_Data);
@@ -20935,7 +20935,7 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
     vortex->Prev_or_Next_Y = Next_Y;
 
     if (magic_set.sound_effects == 1) {
-        Play_Sound__STUB(SND_SpellCast);
+        Play_Sound__WIP(SND_SpellCast);
     }
 
     // Animate the vortex movement

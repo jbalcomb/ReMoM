@@ -1230,7 +1230,7 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     if(magic_set.event_music == ST_TRUE)
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr054, MUSIC_Bldng_Finished, SND_Music_Segment);
-        Play_Sound__STUB(sound_seg);
+        Play_Sound__WIP(sound_seg);
     }
 
     bitm_x = 0;

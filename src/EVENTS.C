@@ -1646,7 +1646,7 @@ void Show_Event_Message(void)
         }
 
         sound_seg = LBX_Reload(music_lbx_file__ovr081, event_music_num, SND_Music_Segment);
-        Play_Sound__STUB(sound_seg);
+        Play_Sound__WIP(sound_seg);
 
     }
 

@@ -315,10 +315,10 @@ enum SOUND_FX
 // _AIL_load_timbre()
 
 // WZD s38p02
-int16_t Audio_Init__STUB(int16_t midi_driver, int16_t sound_channels, int16_t MIDI_IO, int16_t MIDI_IRQ, int16_t MIDI_DMA, int16_t digi_driver, int16_t Digi_IO, int16_t Digi_IRQ, int16_t Digi_DMA);
+int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MIDI_IO, int16_t MIDI_IRQ, int16_t MIDI_DMA, int16_t digi_driver, int16_t Digi_IO, int16_t Digi_IRQ, int16_t Digi_DMA);
 
 // WZD s38p03
-void Play_Sound__STUB(SAMB_ptr voc);
+int16_t Play_Sound__WIP(SAMB_ptr sound_buffer);
 
 // WZD s38p04
 void Set_Music_Volume__STUB(int16_t volume);
@@ -330,7 +330,7 @@ int16_t Get_Music_Volume__STUB(void);
 void Stop_All_Sounds__STUB(void);
 
 // WZD s38p07
-// SND_Get_Seq_Status()
+int16_t Midi_Sequence_Status(void);
 
 // WZD s38p08
 void Stop_Music__STUB(void);
@@ -342,10 +342,10 @@ void Audio_Uninit__STUB(void);
 // UU_SND_LegacyFn()
 
 // WZD s38p11
-// _AIL_board_ID()
+int16_t BLASTER__board_ID(void);
 
 // WZD s38p12
-void Sound_Error__STUB(int16_t error);
+void Audio_Error__STUB(int16_t error);
 
 
 

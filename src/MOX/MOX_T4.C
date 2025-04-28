@@ -325,7 +325,7 @@ void Play_Left_Click__STUB(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__STUB(snd_left_button_click);
+        Play_Sound__WIP(snd_left_button_click);
     }
 }
 
@@ -339,7 +339,7 @@ void Play_Standard_Click__STUB(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__STUB(snd_standard_button_click);
+        Play_Sound__WIP(snd_standard_button_click);
     }
 }
 
@@ -357,7 +357,7 @@ void Play_Left_Click__DUPE(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__STUB(snd_left_button_click);
+        Play_Sound__WIP(snd_left_button_click);
     }
 }
 

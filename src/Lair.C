@@ -272,7 +272,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         if (magic_set.event_music == ST_TRUE)
         {
             sound_seg = LBX_Reload(music_lbx_file__ovr083, MUSIC_Site_Discovery, SND_Music_Segment);
-            Play_Sound__STUB(sound_seg);
+            Play_Sound__WIP(sound_seg);
         }
 
         Encounter_Outcome = Do_Lair_Confirm(lair_idx);

@@ -363,7 +363,7 @@ int MOM_main(int argc, char** argv)
     main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
     if(magic_set.background_music == ST_TRUE)
     {
-        Play_Sound__STUB(main_menu_music_seg);
+        Play_Sound__WIP(main_menu_music_seg);
     }
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();

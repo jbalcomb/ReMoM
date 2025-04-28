@@ -32,6 +32,18 @@ Generate_Home_Worlds_()
 
 
 
+000004B0 peace_duration db 6 dup(?)
+000004B6 Unknown_4B6h dw ?
+000004B8 Unknown_4B8h dw ?
+000004BA Unknown_4BAh dw ?
+000004BC Unknown_4BCh dw ?
+000004BE Unknown_4BEh db 6 dup(?)
+
+AI_WIZ_StrategyReset()
+
+
+
+
 
 ## Init_New_Game__WIP()
 

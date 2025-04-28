@@ -192,7 +192,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     if(magic_set.event_music == ST_TRUE)
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr102, MUSIC_Fanfare, SND_Music_Segment);
-        Play_Sound__STUB(sound_seg);
+        Play_Sound__WIP(sound_seg);
     }
 
     GUI_String_1 = (char *)Near_Allocate_First(100);

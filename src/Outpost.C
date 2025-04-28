@@ -110,7 +110,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 if(magic_set.event_music == ST_TRUE)
                 {
                     sound_seg = LBX_Reload(music_lbx_file__ovr077, MUSIC_New_Outpost, SND_Music_Segment);
-                    Play_Sound__STUB(sound_seg);
+                    Play_Sound__WIP(sound_seg);
                 }
 
                 // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);

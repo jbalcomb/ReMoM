@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\MOX\AIL.C" />
     <ClCompile Include="..\..\..\src\MoX\Allocate.C" />
     <ClCompile Include="..\..\..\src\MoX\CFG.C" />
     <ClCompile Include="..\..\..\src\MoX\DBG.C" />
@@ -21,6 +22,7 @@
     <ClCompile Include="..\..\..\src\MoX\FLIC_Draw.C" />
     <ClCompile Include="..\..\..\src\MoX\Fonts.C" />
     <ClCompile Include="..\..\..\src\MoX\GENDRAW.C" />
+    <ClCompile Include="..\..\..\src\MOX\GFILE.C" />
     <ClCompile Include="..\..\..\src\MoX\Graphics.C" />
     <ClCompile Include="..\..\..\src\MoX\Input.C" />
     <ClCompile Include="..\..\..\src\MoX\IO_Buffer.C" />
@@ -43,6 +45,7 @@
     <ClCompile Include="..\..\..\src\MoX\Video2.C" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\MOX\AIL.H" />
     <ClInclude Include="..\..\..\src\MoX\Allocate.H" />
     <ClInclude Include="..\..\..\src\MoX\CFG.H" />
     <ClInclude Include="..\..\..\src\MoX\DBG.H" />
@@ -54,6 +57,7 @@
     <ClInclude Include="..\..\..\src\MoX\FLIC_Draw.H" />
     <ClInclude Include="..\..\..\src\MoX\Fonts.H" />
     <ClInclude Include="..\..\..\src\MoX\GENDRAW.H" />
+    <ClInclude Include="..\..\..\src\MOX\GFILE.H" />
     <ClInclude Include="..\..\..\src\MoX\Graphics.H" />
     <ClInclude Include="..\..\..\src\MoX\Input.H" />
     <ClInclude Include="..\..\..\src\MoX\IO_Buffer.H" />

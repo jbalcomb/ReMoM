@@ -578,7 +578,7 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__STUB(SND_Spell_Music);
+        Play_Sound__WIP(SND_Spell_Music);
 
     }
 
@@ -975,7 +975,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__STUB(SND_Spell_Music);
+        Play_Sound__WIP(SND_Spell_Music);
 
     }
 
@@ -1181,7 +1181,7 @@ void SoM_Started(int16_t player_idx)
 
     if(magic_set.background_music == ST_TRUE)
     {
-        Play_Sound__STUB(SND_Spell_Music);
+        Play_Sound__WIP(SND_Spell_Music);
     }
 
     Clear_Fields();

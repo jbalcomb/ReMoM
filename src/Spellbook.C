@@ -1635,7 +1635,7 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
             SND_Spell_Music = LBX_Reload(music_lbx_file__ovr118, MUSIC_New_Spell, SND_Music_Segment);
 
-            Play_Sound__STUB(SND_Spell_Music);
+            Play_Sound__WIP(SND_Spell_Music);
 
         }
 
