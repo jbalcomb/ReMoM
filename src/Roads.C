@@ -209,7 +209,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == main_cancel_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Main_Screen;
             leave_screen = ST_UNDEFINED;
         }
@@ -217,7 +217,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == roadbuild_ok_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             if(m_turns_to_build_road > 0)
             {
                 Clear_Fields();
@@ -237,7 +237,7 @@ void Road_Build_Screen(void)
 
         if(input_field_idx == _main_map_grid_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             target_wx = ((_map_x + _main_map_grid_x) % WORLD_WIDTH);
             target_wy = (_map_y + _main_map_grid_y);
             Reset_Map_Draw();
@@ -258,7 +258,7 @@ void Road_Build_Screen(void)
                 _map_y = _prev_world_y;
                 Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             */
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Reduced_Map_Coords(&target_wx, &target_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = (_minimap_grid_x + target_wx);
             _prev_world_y = (_minimap_grid_y + target_wy);

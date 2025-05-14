@@ -321,11 +321,12 @@ SOUNDFX.LBX, 000    SLX19 VO    Standard Button click
 SOUNDFX.LBX, 002    OKBUTTN     left button click
 
 */
-void Play_Left_Click__STUB(void)
+void Play_Left_Click(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__WIP(snd_left_button_click);
+        // DOMSDOS  Play_Sound__WIP(snd_left_button_click);
+        sdl2_Play_Sound(snd_left_button_click, snd_left_button_click_size);
     }
 }
 
@@ -335,11 +336,12 @@ void Play_Left_Click__STUB(void)
 /*
 ; if sound effects are enabled, plays the standard mouse click sound
 */
-void Play_Standard_Click__STUB(void)
+void Play_Standard_Click(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__WIP(snd_standard_button_click);
+        // DOMSDOS  Play_Sound__WIP(snd_standard_button_click);
+        sdl2_Play_Sound(snd_standard_button_click, snd_standard_button_click_size);
     }
 }
 
@@ -357,7 +359,8 @@ void Play_Left_Click__DUPE(void)
 {
     if(magic_set.sound_effects == ST_TRUE)
     {
-        Play_Sound__WIP(snd_left_button_click);
+        // DOMSDOS  Play_Sound__WIP(snd_left_button_click);
+        sdl2_Play_Sound(snd_left_button_click, snd_left_button_click_size);
     }
 }
 

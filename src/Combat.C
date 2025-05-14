@@ -1645,7 +1645,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                 if(input_field_idx == auto_combat_cancel_ESC_field)  /* turn off 'Auto Combat' */
                 {
 
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
 
                     _auto_combat_flag = ST_FALSE;
 
@@ -1770,7 +1770,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(input_field_idx == auto_button_field)
         {
 
-            Play_Left_Click__STUB();
+            Play_Left_Click();
 
             Set_Mouse_List(1, mouse_list_default);
 
@@ -1921,7 +1921,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             if(attacker_enchantment_fields[itr] == input_field_idx)
             {
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 CMB_ATKR_First_CE += 4;  // ; now 0 (after tactical BU init)
                                          // ; attacker's first shown combat enchant
@@ -1956,7 +1956,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             if(defender_enchantment_fields[itr] == input_field_idx)
             {
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 CMB_DEFR_First_CE += 4;  // ; now 0 (after tactical BU init)
                                          // ; attacker's first shown combat enchant
@@ -1981,7 +1981,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
             CMB_ImmobileCanAct = 0;
 
-            Play_Left_Click__STUB();
+            Play_Left_Click();
 
             Set_Mouse_List(1, mouse_list_default);
 
@@ -2095,7 +2095,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                     if(battle_units[battle_unit_idx].controller_idx != _human_player_idx)
                     {
 
-                        Play_Left_Click__STUB();
+                        Play_Left_Click();
 
                         Deactivate_Help_List();
 
@@ -2151,7 +2151,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
                         else
                         {
 
-                            Play_Left_Click__STUB();
+                            Play_Left_Click();
 
                             Deactivate_Help_List();
 
@@ -2210,7 +2210,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
             if(input_field_idx == spell_button_field)
             {
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 screen_changed = ST_TRUE;
 
@@ -2309,7 +2309,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_ImmobileCanAct = 0;
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 battle_units[_active_battle_unit].action = bua_Wait;
 
@@ -2335,7 +2335,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_ImmobileCanAct = 0;
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 Deactivate_Help_List();
 
@@ -2377,7 +2377,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
                 CMB_ImmobileCanAct = ST_FALSE;
 
-                Play_Left_Click__STUB();
+                Play_Left_Click();
 
                 battle_units[_active_battle_unit].action = bua_Finished;
 
@@ -2418,7 +2418,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         if(-(active_unit_window_field) == input_field_idx)
         {
 
-            Play_Left_Click__STUB();
+            Play_Left_Click();
 
             Deactivate_Help_List();
 

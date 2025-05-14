@@ -208,7 +208,7 @@ void Mirror_Screen(int16_t player_idx, int16_t OL, int16_t OT, int16_t OR, int16
 
         if(input_field_idx == full_screen_ESC_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_UNDEFINED;
         }
 

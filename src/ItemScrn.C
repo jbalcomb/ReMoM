@@ -248,7 +248,7 @@ void Item_Screen(void)
             ( (input_field_idx == hotkey_idx_ESC)                      && (m_cursor_item_idx == ST_UNDEFINED) )
         )
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
         }
 
@@ -258,7 +258,7 @@ void Item_Screen(void)
         */
         if(input_field_idx == m_item_screen_alchemy_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Alchemy_Popup((_item_window_start_x + 63), (_item_window_start_y + 58));
             Assign_Auto_Function(Item_Screen_Draw_Do, 1);
             Item_Screen_Load();
@@ -384,7 +384,7 @@ void Item_Screen(void)
                 {
                     if(m_item_screen_hero_item_fields[itr_hero_slots][itr_item_slots] == input_field_idx)
                     {
-                        Play_Left_Click__STUB();
+                        Play_Left_Click();
                         Deactivate_Help_List();
                         Move_Item(itr_hero_slots, itr_item_slots);
                         Assign_Auto_Function(Item_Screen_Draw_Do, 1);
@@ -404,7 +404,7 @@ void Item_Screen(void)
             {
                 if(m_item_screen_vault_item_fields[itr_vault_item_slots] == input_field_idx)
                 {
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     Deactivate_Help_List();
                     Move_Item(VAULT_HERO_SLOT_IDX, itr_vault_item_slots);
                     Assign_Auto_Function(Item_Screen_Draw_Do, 1);
@@ -424,7 +424,7 @@ void Item_Screen(void)
                 if(m_cursor_item_idx > -1)
                 {
                     Deactivate_Auto_Function();
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     Deactivate_Help_List();
                     Destroy_Item();
                     Deactivate_Help_List();

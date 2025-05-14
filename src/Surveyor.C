@@ -291,14 +291,14 @@ void Surveyor_Screen(void)
             (input_field_idx == hotkey_ESC_field)
         )
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Main_Screen;
             leave_screen = ST_UNDEFINED;
         }
 
         if(input_field_idx == _plane_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Reset_Map_Draw();
             MainScr_Create_Reduced_Map_Picture();
@@ -308,7 +308,7 @@ void Surveyor_Screen(void)
 
         if(input_field_idx == _minimap_grid_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = (reduced_map_window_wx + _minimap_grid_x);  // ...is the 'wx' of the clicked square
             _prev_world_y = (reduced_map_window_wy + _minimap_grid_y);  // ...is the 'wy' of the clicked square

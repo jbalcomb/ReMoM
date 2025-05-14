@@ -694,7 +694,7 @@ void Powergraph_Screen(void)
 
         if(input_field_idx == full_screen_ESC_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
         }
 
@@ -1031,7 +1031,7 @@ void Status_Screen(void)
 
         if(input_field_idx == full_screen_ESC_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
         }
 
@@ -1219,7 +1219,7 @@ void Cartographer_Screen__WIP(void)
 
         if(input_field_idx == hotkey_next)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             m_cartograph_plane = (1 - m_cartograph_plane);
         }
 
@@ -1229,7 +1229,7 @@ void Cartographer_Screen__WIP(void)
             (input_field_idx == hotkey_escape)
         )
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
         }
 

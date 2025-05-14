@@ -569,19 +569,19 @@ void Magic_Screen(void)
         
         if(input_field_idx == magic_mana_staff_locked)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             // mov  ax, [mana_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [mana_staff_locked], ax;
             mana_staff_locked = (1 - mana_staff_locked);
         }
         if(input_field_idx == magic_skill_staff_locked)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             // mov  ax, [skill_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [skill_staff_locked], ax;
             skill_staff_locked = (1 - skill_staff_locked);
         }
         if(input_field_idx == magic_research_staff_locked)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             // mov  ax, [research_staff_locked];  neg  ax;  sbb  ax, ax;  inc  ax;  mov  [research_staff_locked], ax;
             research_staff_locked = (1 - research_staff_locked);
         }
@@ -591,7 +591,7 @@ void Magic_Screen(void)
         */
        if((input_field_idx == button_magic_ok) || (input_field_idx == hotkey_ESC))
        {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen_flag = ST_UNDEFINED;
        }
 
@@ -599,7 +599,7 @@ void Magic_Screen(void)
         {
             if((magic_ovl_ench_flds[itr] == input_field_idx) && (ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr)] == _human_player_idx))
             {
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 strcpy(GUI_String_1, aDoYouWishToCancelYour);  // "Do you wish to cancel your \x02"
                 strcpy(GUI_String_2, spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr)]].name);
                 strcat(GUI_String_1, GUI_String_2);
@@ -640,7 +640,7 @@ void Magic_Screen(void)
         */
         if(input_field_idx == button_magic_alchemy)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Alchemy_Popup(80, 60);
 
             Assign_Auto_Function(Magic_Screen_Draw, 1);
@@ -680,7 +680,7 @@ void Magic_Screen(void)
         {
             if((-(magic_gem_fields[itr]) == input_field_idx) && (gem_player_nums[itr] > 0))
             {
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 gem_x1 = (29 + (77 * itr));
                 gem_y1 = 10;
                 gem_x2 = (gem_x1 + 30);
@@ -716,7 +716,7 @@ void Magic_Screen(void)
                 }
                 else
                 {
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     G_DIPL_TargetWizard = gem_player_nums[itr];
                     current_screen = scr_Diplomacy_Screen;
                     leave_screen_flag = 2;
@@ -730,7 +730,7 @@ void Magic_Screen(void)
 
         if(magic_ovl_ench_list_down == abs(input_field_idx))
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             magic_ovl_ench_list_first_item += 18;
             if(magic_ovl_ench_list_first_item >= ovl_ench_cnt)
             {
@@ -1647,13 +1647,13 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
             (input_field_idx == hotkey_ESC)
         )
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
         }
 
         if(input_field_idx == m_alchemy_ok_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
 
             if(m_alchemy_conversion_direction == 1)
@@ -1670,7 +1670,7 @@ void Alchemy_Popup(int16_t start_x, int16_t y_start)
 
         if(input_field_idx == m_alchemy_arrow_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             /*
                 IDGI: two's compliment trickery?
                     mov     ax, [m_alchemy_conversion_direction]

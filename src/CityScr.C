@@ -363,7 +363,7 @@ Check_Cities_Data();
         {
             if(input_field_idx == city_sceen_change_button)
             {
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 production_screen_return_screen = 2;  // {1: CityList Screen, 2: City Screen}
                 Production_Screen();
 
@@ -406,7 +406,7 @@ Capture_Cities_Data();
             if((input_field_idx == city_screen_ok_button) || (input_field_idx == city_screen_esc_hotkey))
             {
                 _unit_stack_count = 0;
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 _prev_world_x = _map_x;
                 _prev_world_y = _map_y;
                 Deactivate_Auto_Function();
@@ -431,7 +431,7 @@ Capture_Cities_Data();
         {
             if(input_field_idx == city_screen_buy_button)
             {
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 building_value = _players[_human_player_idx].gold_reserve;
                 if(
                     (m_city_n_turns_to_produce > 1)
@@ -502,7 +502,7 @@ Capture_Cities_Data();
         {
             if(city_cityscape_fields[itr_cityscape] == input_field_idx)
             {
-                Play_Left_Click__STUB();
+                Play_Left_Click();
                 cityscape_bldg_idx = cityscape_bldgs[itr_cityscape].bldg_idx;
 
                 if(cityscape_bldg_idx <= NUM_BUILDINGS)
@@ -628,7 +628,7 @@ Capture_Cities_Data();
             {
                 if(g_unit_window_fields[itr_stack] == input_field_idx)
                 {
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     _prev_world_x = _map_x;
                     _prev_world_y = _map_y;
                     leave_screen = ST_TRUE;

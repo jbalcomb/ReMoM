@@ -215,14 +215,14 @@ void CityList_Screen(void)
         */
         if((input_field_idx == ST_UNDEFINED) || (input_field_idx == button_citylist_ok) || (input_field_idx == hotkey_ESC))
         {
-            // Play_Left_Click__STUB();
+            // Play_Left_Click();
             leave_screen_flag = ST_TRUE;
             current_screen = scr_Main_Screen;
         }
 
         if((input_field_idx == citylist_up_button_left) || (input_field_idx == citylist_up_button_right) || (input_field_idx == hotkey_U))
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             if(list_first_item != 0)
             {
                 if((list_first_item - NUM_CITY_LIST_SCROLL) < 0)
@@ -240,7 +240,7 @@ void CityList_Screen(void)
 
         if((input_field_idx == citylist_down_button_left) || (input_field_idx == citylist_down_button_right) || (input_field_idx == hotkey_D))
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             if((list_first_item + NUM_CITY_LIST) < m_city_list_count)
             {
                 if((list_first_item + NUM_CITY_LIST + NUM_CITY_LIST_SCROLL) < m_city_list_count)
@@ -260,7 +260,7 @@ void CityList_Screen(void)
         {
             if(m_cities_list_fields[itr] == input_field_idx)
             {
-                // Play_Left_Click__STUB();
+                // Play_Left_Click();
                 _city_idx = list_cities[itr];
                 if(_CITIES[_city_idx].size == 0)
                 {
@@ -282,7 +282,7 @@ void CityList_Screen(void)
         {
             if(-(m_cities_list_fields[itr]) == input_field_idx)
             {
-                // Play_Left_Click__STUB();
+                // Play_Left_Click();
                 m_citylist_first_item = list_first_item;
                 _city_idx = list_cities[itr];
                 if(_CITIES[_city_idx].size == 0)

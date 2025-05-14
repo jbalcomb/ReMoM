@@ -90,10 +90,10 @@ void s01p11_empty_function(void);
 void s01p12_empty_function(void);
 
 // WZD s01p13
-void Play_Left_Click__STUB(void);
+void Play_Left_Click(void);
 
 // WZD s01p14
-void Play_Standard_Click__STUB(void);
+void Play_Standard_Click(void);
 
 // WZD s01p15
 void Play_Left_Click__DUPE(void);

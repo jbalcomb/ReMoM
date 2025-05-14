@@ -1117,7 +1117,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _info_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Advisor_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1127,7 +1127,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _game_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Load_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1136,7 +1136,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _cities_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Cities_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1145,7 +1145,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _magic_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Magic_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1154,7 +1154,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _armies_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             current_screen = scr_Armies_Screen;
             leave_screen_flag = ST_TRUE;
         }
@@ -1164,7 +1164,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _spells_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             if(_players[_human_player_idx].casting_spell_idx == 214) /* Spell of Return */
             {
                 turns_til_return = _players[HUMAN_PLAYER_IDX].casting_cost_remaining / _players[HUMAN_PLAYER_IDX].Nominal_Skill;
@@ -1187,7 +1187,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _patrol_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 1, 0, 0);  /* Action 1: 'Patrol' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1202,7 +1202,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _special_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             /*
                 -1: no extra action possible
                  0: road building possible
@@ -1235,7 +1235,7 @@ void Main_Screen(void)
                 case 2:  /* Purify */
                 {
                     // // TODO  DLOG("switch(special_action_flag)  case 2:");
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     // DNE    Reset_Draw_Active_Stack();
                     Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 8, 0, 0);  /* Action 8: 'Purify' */
                     WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1292,7 +1292,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _done_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 4, 0, 0);  /* Action 4: 'Done' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1307,7 +1307,7 @@ void Main_Screen(void)
 
         if(input_field_idx == _wait_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Reset_Draw_Active_Stack();
             Stack_Action(_human_player_idx, &_map_x, &_map_y, &_map_plane, 5, 0, 0);  /* Action 5: 'Wait' */
             WIZ_NextIdleStack(_human_player_idx, &_map_x, &_map_y, &_map_plane);
@@ -1325,7 +1325,7 @@ void Main_Screen(void)
         */
         if(input_field_idx == _plane_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             Do_Plane_Button__WIP(_human_player_idx, &_map_x, &_map_y, &_map_plane);
             Main_Screen_Reset();
             Reset_Map_Draw();
@@ -1423,7 +1423,7 @@ void Main_Screen(void)
         )
         {
 
-            Play_Left_Click__STUB();
+            Play_Left_Click();
 
             Player_Resource_Income_Total(_human_player_idx, &eot_gold_nop, &eot_food, &eot_mana_nop);
 
@@ -1787,7 +1787,7 @@ void Main_Screen(void)
 
         if(abs(input_field_idx) == _minimap_grid_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             // HERE: target_world_x,y are not *used*, just in-out'd to the x,y for the reduced map window, in world coordinates
             Reduced_Map_Coords(&reduced_map_window_wx, &reduced_map_window_wy, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = reduced_map_window_wx + _minimap_grid_x;  // ...is the 'wx' of the clicked square

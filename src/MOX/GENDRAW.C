@@ -545,7 +545,7 @@ void Warn(char * msg)
 
         UU_var3 = 0;
 
-        Play_Standard_Click__STUB();
+        Play_Standard_Click();
 
         Wait_For_Input();
 

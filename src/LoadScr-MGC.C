@@ -262,7 +262,7 @@ void Load_Screen_MGC__WIP(void)
             // Save_SAVE_GAM(8)
             // execl(MAGIC.EXE)
             leave_screen_flag = ST_TRUE;
-            // TODO  SND_Empty_Fn();  // ; used in place of WIZARDS.EXE's Play_Standard_Click__STUB
+            // TODO  SND_Empty_Fn();  // ; used in place of WIZARDS.EXE's Play_Standard_Click
         }
 
 

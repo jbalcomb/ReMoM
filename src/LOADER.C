@@ -153,13 +153,15 @@ void Load_MGC_Resources(void)
 // WZD o52p01
 // drake178: LBX_Tables_LoadMain()
 // AKA Load_Init_MainGame
+// MoO2 ¿ ?
+// 1oom ¿ ?
 void Load_WZD_Resources(void)
 {
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
 #endif
 
-// Load_MAGIC_SET();
+    Load_MAGIC_SET();
 
 // EMM_Load_LBX_File_1(rsc01_MAIN_LBX)
 // EMM_Load_LBX_File_1(rsc02_BACKGRND_LBX);
@@ -197,13 +199,11 @@ void Load_WZD_Resources(void)
 
     Load_BUILDDAT();  // loads all records from BUILDDAT.LBX
 
-// fxn_o52p18();
-// drake178: LBX_Load_Click_SFX
-// Load_Button_Sounds();  // ; loads the standard and left click sounds
+    // fxn_o52p18();
 
+    Load_Button_Sounds();  // ; loads the standard and left click sounds
 
     Units_Upkeeps();
-
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
@@ -708,7 +708,9 @@ void City_Screen_Load_Pictures(void)
 // fxn_o52p12()
 
 // WZD o52p13
-// drake178: ¿ ?
+// drake178: LBX_Load_Click_SFX()
+// MoO2 ¿ ?
+// 1oom  seg001  sound_play_24() || sound_play_06()
 /*
 ; loads the standard and left click sounds
 */
@@ -717,9 +719,11 @@ void Load_Button_Sounds(void)
 
     // SOUNDFX.LBX, 000    SLX19 VO    Standard Button click
     snd_standard_button_click = LBX_Load(soundfx_lbx_file__ovr052, 0);
+    snd_standard_button_click_size = lbxload_entry_length;
 
     // SOUNDFX.LBX, 002    OKBUTTN     left button click
     snd_left_button_click = LBX_Load(soundfx_lbx_file__ovr052, 2);
+    snd_left_button_click_size = lbxload_entry_length;
 
 }
 

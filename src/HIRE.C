@@ -618,7 +618,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
         if(input_field_idx == hire_button_field)
         {
 
-            Play_Left_Click__STUB();
+            Play_Left_Click();
 
             GUI_InHeroNaming = ST_TRUE;
 
@@ -859,7 +859,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
         if(input_field_idx == hire_button_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_TRUE;
             _units -= 1;
             return_value = ST_TRUE;

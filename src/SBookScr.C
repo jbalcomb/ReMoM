@@ -311,7 +311,7 @@ void Spellbook_Screen(void)
                     if(m_spellbook_pages[SBK_OpenPage].count > itr_spellbook_page_fields)
                     {
 
-                        Play_Left_Click__STUB();
+                        Play_Left_Click();
 
                         spellbook_page_spell_index = itr_spellbook_page_fields;
 
@@ -347,7 +347,7 @@ void Spellbook_Screen(void)
                     if(m_spellbook_pages[(SBK_OpenPage + 1)].count > (itr_spellbook_page_fields - 6))
                     {
 
-                        Play_Left_Click__STUB();
+                        Play_Left_Click();
 
                         spellbook_page_spell_index = (itr_spellbook_page_fields - 6);
 

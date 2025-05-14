@@ -263,7 +263,7 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == full_screen_ESC_field)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             leave_screen = ST_UNDEFINED;
         }
 
@@ -280,7 +280,7 @@ void Outpost_Screen(int16_t flag)
                     (city_enchantment_owner_list[(city_enchantment_display_first + itr)] == _human_player_idx)
                 )
                 {
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     Deactivate_Help_List();
                     strcpy(GUI_String_1, str_TurnOffSpell_1__ovr077);
                     strcat(GUI_String_1, _city_enchantment_names[city_enchantment_list[(city_enchantment_display_first + itr)]]);
@@ -316,7 +316,7 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == city_up_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             city_enchantment_display_first -= 6;
             if(city_enchantment_display_first < 0)
             {
@@ -328,7 +328,7 @@ void Outpost_Screen(int16_t flag)
 
         if(input_field_idx == city_dn_button)
         {
-            Play_Left_Click__STUB();
+            Play_Left_Click();
             city_enchantment_display_first += 6;
             if(city_enchantment_display_first > city_enchantment_list_count)
             {
@@ -346,7 +346,7 @@ void Outpost_Screen(int16_t flag)
             {
                 if(g_unit_window_fields[itr] == input_field_idx)
                 {
-                    Play_Left_Click__STUB();
+                    Play_Left_Click();
                     if(_CITIES[_city_idx].owner_idx == _human_player_idx)
                     {
                         _active_world_x = _CITIES[_city_idx].wx;
