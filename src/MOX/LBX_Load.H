@@ -57,6 +57,7 @@ extern char lbxload_lbx_file_extension[];
 extern int16_t lbxload_num_entries;
 extern SAMB_ptr lbxload_lbx_header;
 extern char lbxload_lbx_name[];
+/* HACK */  extern uint32_t lbxload_entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
 
 

@@ -462,9 +462,9 @@ _DI_itr_continuous_string = di
     int16_t scanned_field;  // _SI_
     int16_t return_value;  // _AX_  MoO2: return _EAX_ = return_value = maybe__field_num__scanned_field = itr_fields_count
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
 
 /*
 MoO1
@@ -1470,9 +1470,9 @@ MoO2
     // TODO      
     // TODO  }
 
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: goto Done  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: goto Done  mouse_button: %d field_num: %d\n", __FILE__, __LINE__, mouse_button, field_num);
+// #endif
 
     goto Done;
 /*
@@ -1493,18 +1493,18 @@ MoO2
 return ST_UNDEFINED;
 */
 Return_Type_ESC:
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return ST_UNDEFINED;
 
 /*
 return 0;
 */
 Return_Type_Z00:
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return 0;
 
 /*
@@ -1512,9 +1512,9 @@ down_mouse_button = ST_UNDEFINED; return 0;
 */
 Return_Type_Z10:
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return 0;
 
 /*
@@ -1522,9 +1522,9 @@ Mouse_Button_Handler(); return 0;
 */
 Return_Type_Z01:
     Mouse_Button_Handler();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return 0;
 
 /*
@@ -1533,9 +1533,9 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return 0;
 Return_Type_Z11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return 0;
 
 /*
@@ -1549,9 +1549,9 @@ down_mouse_button = ST_UNDEFINED; return field_num;
 */
 Return_Type_F10:
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return field_num;
 
 /*
@@ -1559,9 +1559,9 @@ Mouse_Button_Handler(); return field_num;
 */
 Return_Type_F01:
     Mouse_Button_Handler();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return field_num;
 
 /*
@@ -1570,9 +1570,9 @@ down_mouse_button = ST_UNDEFINED; Mouse_Button_Handler(); return field_num;
 Return_Type_F11:
     down_mouse_button = ST_UNDEFINED;
     Mouse_Button_Handler();
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return field_num;
 
 /*
@@ -1581,9 +1581,9 @@ Mouse_Button_Handler(); down_mouse_button == ST_UNDEFINED; return alt_field_num;
 Return_Type_4:
     Mouse_Button_Handler();
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return alt_field_num;
 
 /*
@@ -1591,9 +1591,9 @@ down_mouse_button == ST_UNDEFINED; return alt_field_num;
 */
 Return_Type_5:
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return alt_field_num;
 
 /*
@@ -1601,9 +1601,9 @@ down_mouse_button = ST_UNDEFINED; return p_fields[field_num].Param0;
 */
 Return_Type_P10:
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return p_fields[field_num].parent;
 
 /*
@@ -1611,15 +1611,15 @@ down_mouse_button = ST_UNDEFINED; return p_fields[alt_field_num].Param0;
 */
 Return_Type_7:
     down_mouse_button = ST_UNDEFINED;
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return p_fields[alt_field_num].parent;
 
 Done:
-#ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
-#endif
+// #ifdef STU_DEBUG
+//     dbg_prn("DEBUG: [%s, %d]: BEGIN: Interpret_Mouse_Input()\n", __FILE__, __LINE__);
+// #endif
     return field_num;
 }
 

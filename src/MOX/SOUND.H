@@ -54,6 +54,15 @@ enum e_SND_DRV
 
 
 
+/*
+    SOUNDFX.LBX
+    .VOC files
+    Creative Labs - Creative Voice File
+*/
+enum e_SOUNDFX
+{
+    SFX_000 = 0  /* SLX19.VOC  Standard Button click */
+};
 
 /*
 MUSIC.LBX
@@ -342,7 +351,7 @@ void Audio_Uninit__STUB(void);
 // UU_SND_LegacyFn()
 
 // WZD s38p11
-int16_t BLASTER__board_ID(void);
+// int16_t BLASTER__board_ID(void);
 
 // WZD s38p12
 void Audio_Error__STUB(int16_t error);

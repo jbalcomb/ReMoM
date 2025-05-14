@@ -2,6 +2,7 @@
 #include "MOX/Mouse.H"
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/sdl2_Audio.H"
 
 #include "MOM_PFL.H"
 
@@ -14,8 +15,8 @@
 
 // #include "SDL.h"
 #include "C:\devellib\SDL2-2.32.2\include\SDL.h"
-
-
+// #include "SDL_mixer.h"
+#include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
 
 /*
     Platform-Layer Screen Buffer / Window Surface
@@ -48,7 +49,7 @@ void Startup_Platform(void)
     int sdl2_window_flags;
     int sdl2_renderer_flags;
 
-    SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO);
 
     sdl2_ticks_startup = SDL_GetTicks64();  // the number of milliseconds since SDL library initialization
     dbg_prn("sdl2_ticks_startup: %llu\n", sdl2_ticks_startup);
@@ -91,9 +92,7 @@ void Startup_Platform(void)
 
     build_key_xlat();
 
-// if (hw_audio_init()) {
-    //     return 12;
-    // }
+    sdl2_Audio_Init();
 
 }
 
@@ -101,8 +100,12 @@ void Shudown_Platform(void)
 {
     SDL_ShowCursor(SDL_ENABLE);
 
+    sdl2_Audio_Deinit();
+
     SDL_DestroyRenderer(sdl2_renderer);
+
     SDL_DestroyWindow(sdl2_window);
+
     SDL_Quit();
 }
 

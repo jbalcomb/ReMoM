@@ -420,7 +420,8 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
         (AIL_mdi_driver == SND_SBPro2)
     )
     {
-        sound_blaster_type = BLASTER__board_ID();
+        // TODO  sound_blaster_type = BLASTER__board_ID();
+        sound_blaster_type = 3;
 
         if(sound_blaster_type == ST_NULL)
         {
@@ -759,8 +760,8 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
     if(SND_Driver_Count == 2)
     {
 
-        // if(farpeekw(sound_buffer, 0) != SND_FileSig)
-        if(GET_2B_OFS(sound_buffer, 0) != 0xDEAD /* SND_FileSig */)
+        // if(farpeekw(sound_buffer, 0) != SNDMAGSIG)
+        if(GET_2B_OFS(sound_buffer, 0) != SNDMAGSIG)
         {
             AIL_shutdown(NULL);
             Audio_Error__STUB(SND_Not_SFX_File);
@@ -805,10 +806,10 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
                     {
                         bank = timbre_required / 256;
                         patch = timbre_required % 256;
-                        timb = (char *)load_global_timbre(GTL,bank,patch);
+                        timb = (char *)load_global_timbre(GTL, bank, patch);
                         if (timb != NULL)
                         {
-                            AIL_install_timbre(midi_driver_handle,bank,patch,timb);
+                            AIL_install_timbre(midi_driver_handle, bank, patch, timb);
                         }
                         else
                         {
@@ -836,8 +837,8 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
                     Audio_Error__STUB(SND_Couldnt_Load_File);
                 }
 
-                // if(farpeekw((sound_buffer - 1), 4) == VOC_FormSig)
-                if(GET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4) != 0xDEAD /* VOC_FormSig */)
+                // if(farpeekw((sound_buffer - 1), 4) == SNDVOCMAGSIG)
+                if(GET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4) != SNDVOCMAGSIG)
                 {
                     if(
                         (digi_driver_handle != -1)
@@ -848,8 +849,8 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
                         AIL_stop_digital_playback(digi_driver_handle);
                     }
 
-                    // farpokew((sound_buffer - 1), 4, VOC_FormSig)
-                    SET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4, 0xDEAD /* VOC_FormSig */);
+                    // farpokew((sound_buffer - 1), 4, SNDVOCMAGSIG)
+                    SET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4, SNDVOCMAGSIG);
 
                     AIL_format_VOC_file(digi_driver_handle, digi_sound_buffer, -1);
 
@@ -875,8 +876,8 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
         {
             return 1;
         }
-        // if(farpeekw(sound_buffer, 0) != SND_FileSig)
-        if(GET_2B_OFS(sound_buffer, 0) != 0xDEAF /* SND_FileSig */)
+        // if(farpeekw(sound_buffer, 0) != SNDMAGSIG)
+        if(GET_2B_OFS(sound_buffer, 0) != SNDMAGSIG)
         {
             AIL_shutdown(NULL);
             Audio_Error__STUB(SND_Not_Sound_File);
@@ -892,16 +893,16 @@ int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
                 AIL_shutdown(0);
                 Audio_Error__STUB(SND_Couldnt_Load_SND_File);
             }
-            // if(farpeekw((sound_buffer - 1), 4) == VOC_FormSig)
-            if(GET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4) != 0xDEAD /* VOC_FormSig */)
+            // if(farpeekw((sound_buffer - 1), 4) == SNDVOCMAGSIG)
+            if(GET_2B_OFS((sound_buffer - SZ_PARAGRAPH_B), 4) != SNDVOCMAGSIG)
             {
                 if((digi_driver_handle != -1) && (AIL_dig_driver > SND_NONE))
                 {
                     AIL_stop_digital_playback(digi_driver_handle);
                 }
                 AIL_format_VOC_file(digi_driver_handle, digi_sound_buffer, -1);
-                // farpokew((sound_buffer - 1), 4, VOC_FormSig)
-                SET_2B_OFS(sound_buffer, 4, 0xDEAD /* VOC_FormSig */);
+                // farpokew((sound_buffer - 1), 4, SNDVOCMAGSIG)
+                SET_2B_OFS(sound_buffer, 4, SNDVOCMAGSIG);
             }
             AIL_play_VOC_file(digi_driver_handle, digi_sound_buffer, -1);
             AIL_start_digital_playback(digi_driver_handle);
@@ -1115,102 +1116,102 @@ C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\READ.ME
 C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\BLASTER.C
 
 */
-// int16_t BLASTER__board_ID(void)
-int16_t BLASTER__board_ID(drvr_desc *desc, char *FM_driver_name, char *DSP_driver_name, char *board_name)
-{
-   int16_t i,j,k,m,d,num,p;
-   char *env;
-   char string[128];
-   static drvr_desc t;
-   static int16_t type;
-   static char tokens[] =
-      {
-      "AIDT"
-      };
-   static int16_t base[] =
-      {
-      16,10,10,10
-      };
-   static int16_t * targets[] =
-      {
-         &t.default_IO,&t.default_IRQ,&t.default_DMA,&type
-      };
-   static char *FM_driver_names[] =
-      {
-         "SBFM.ADV",
-         "SBP1FM.ADV",
-         "SBFM.ADV",
-         "SBP2FM.ADV",
-      };
-   static char *DSP_driver_names[] =
-      {
-         "SBDIG.ADV",
-         "SBPDIG.ADV",
-         "SBDIG.ADV",
-         "SBPDIG.ADV",
-      };
-   static char *board_names[] =
-      {
-         "Sound Blaster V1.5 or earlier",
-         "Sound Blaster Pro (Yamaha YM3812 version)",
-         "Sound Blaster V2.0",
-         "Sound Blaster Pro (Yamaha YMF262/OPL3 version)",
-      };
-
-    env = getenv("BLASTER");
-    if (env==NULL) return 0;
-
-    strncpy(string,env,127);
-    if (!strlen(string)) return 0;
-
-    strupr(string);
-
-    t = *desc;
-
-    for (m=0;m<strlen(string);m++)
-        {
-        if ((m != 0) && (string[m] != ' ')) continue;
-
-        m += (string[m] == ' '); k = string[m];
-
-        for (i=0;i<4;i++)
-            if (k==tokens[i])
-            {
-            p = m + 1;
-            num = 0;
-
-            do
-                {
-                d = string[p++];
-
-                for (j=0;j<base[i];j++)
-                    if (toupper(d) == "0123456789ABCDEF"[j])
-                        num = (num * base[i]) + j;
-                }
-            while (isalnum(d));
-
-            *targets[i] = num;
-            break;
-            }
-        }
-                     
-    *desc = t;
-
-    if (!type) return 0;
-
-    if (type > 4) type=4;
-
-    if (FM_driver_name != NULL)
-        strcpy(FM_driver_name,FM_driver_names[type-1]);
-
-    if (DSP_driver_name != NULL)
-        strcpy(DSP_driver_name,DSP_driver_names[type-1]);
-
-    if (board_name != NULL)
-        strcpy(board_name,board_names[type-1]);
-
-    return type;
-}
+// // int16_t BLASTER__board_ID(void)
+// int16_t BLASTER__board_ID(drvr_desc *desc, char *FM_driver_name, char *DSP_driver_name, char *board_name)
+// {
+//    int16_t i,j,k,m,d,num,p;
+//    char *env;
+//    char string[128];
+//    static drvr_desc t;
+//    static int16_t type;
+//    static char tokens[] =
+//       {
+//       "AIDT"
+//       };
+//    static int16_t base[] =
+//       {
+//       16,10,10,10
+//       };
+//    static int16_t * targets[] =
+//       {
+//          &t.default_IO,&t.default_IRQ,&t.default_DMA,&type
+//       };
+//    static char *FM_driver_names[] =
+//       {
+//          "SBFM.ADV",
+//          "SBP1FM.ADV",
+//          "SBFM.ADV",
+//          "SBP2FM.ADV",
+//       };
+//    static char *DSP_driver_names[] =
+//       {
+//          "SBDIG.ADV",
+//          "SBPDIG.ADV",
+//          "SBDIG.ADV",
+//          "SBPDIG.ADV",
+//       };
+//    static char *board_names[] =
+//       {
+//          "Sound Blaster V1.5 or earlier",
+//          "Sound Blaster Pro (Yamaha YM3812 version)",
+//          "Sound Blaster V2.0",
+//          "Sound Blaster Pro (Yamaha YMF262/OPL3 version)",
+//       };
+// 
+//     env = getenv("BLASTER");
+//     if (env==NULL) return 0;
+// 
+//     strncpy(string,env,127);
+//     if (!strlen(string)) return 0;
+// 
+//     strupr(string);
+// 
+//     t = *desc;
+// 
+//     for (m=0;m<strlen(string);m++)
+//         {
+//         if ((m != 0) && (string[m] != ' ')) continue;
+// 
+//         m += (string[m] == ' '); k = string[m];
+// 
+//         for (i=0;i<4;i++)
+//             if (k==tokens[i])
+//             {
+//             p = m + 1;
+//             num = 0;
+// 
+//             do
+//                 {
+//                 d = string[p++];
+// 
+//                 for (j=0;j<base[i];j++)
+//                     if (toupper(d) == "0123456789ABCDEF"[j])
+//                         num = (num * base[i]) + j;
+//                 }
+//             while (isalnum(d));
+// 
+//             *targets[i] = num;
+//             break;
+//             }
+//         }
+//                      
+//     *desc = t;
+// 
+//     if (!type) return 0;
+// 
+//     if (type > 4) type=4;
+// 
+//     if (FM_driver_name != NULL)
+//         strcpy(FM_driver_name,FM_driver_names[type-1]);
+// 
+//     if (DSP_driver_name != NULL)
+//         strcpy(DSP_driver_name,DSP_driver_names[type-1]);
+// 
+//     if (board_name != NULL)
+//         strcpy(board_name,board_names[type-1]);
+// 
+//     return type;
+// }
 
 
 // WZD s38p12

@@ -6,6 +6,7 @@
 #ifndef STU_DEBUG
 #define STU_DEBUG
 #endif
+#include "STU/STU_SND.H"
 
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_BASE.H"
@@ -15,14 +16,16 @@
 #include "MOX/Fields.H"
 #include "MOX/Fonts.H"
 #include "MOX/Graphics.H"
+#include "MOX/LBX_Load.H"
 #include "MOX/MOX_SET.H"
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/Timer.H"
 
 #include "ALLOC.H"
-/* NEWCODE */  // #include "CREDITS.H"
+#include "CREDITS.H"
 #include "Init.H"
-/* NEWCODE */  // #include "INTRO.H"
+#include "INTRO.H"
 #include "LOADER.H"
 #include "MOM_DBG.H"
 #include "MOM_SCR.H"
@@ -31,6 +34,13 @@
 #define SDL_MAIN_HANDLED
 // #include <SDL.h>
 #include "C:\devellib\SDL2-2.32.2\include\SDL.h"
+// #include <SDL_mixer.h>
+#include "C:\devellib\SDL2_mixer-2.8.1\include\SDL_mixer.h"
+
+#ifdef STU_DEBUG
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 
 
@@ -49,6 +59,9 @@ char * GAME_FONT_FILE = &MOM_FONT_FILE[0];  // Create a Pointer to the Character
 
 char CONFIG_FILE[] = "CONFIG.MOM";
 
+/* HACK */  char soundfx_lbx__remom[] = "SOUNDFX";
+/* HACK */  char introsfx_lbx__remom[] = "INTROSFX";
+
 
 
 // int main(int argc, char * argv[])
@@ -62,8 +75,10 @@ int SDL_main(int argc, char* argv[])
     dbg_prn("DEBUG: [%s, %d]: BEGIN: SDL_main()\n", __FILE__, __LINE__);
 #endif
 
-    /* NEWCODE */  // AllocConsole();
-
+    AllocConsole();
+    AttachConsole(GetCurrentProcessId());
+    HWND Handle = GetConsoleWindow();
+    freopen("CON", "w", stdout);
     printf("Hello from the console!\n");
 
     Startup_Platform();
@@ -73,10 +88,10 @@ int SDL_main(int argc, char* argv[])
     MOM_main(argc, argv);
 
 
-    
+
     Shudown_Platform();
 
-    /* NEWCODE */  // FreeConsole();
+    FreeConsole();
 
 #ifdef STU_DEBUG
     dbg_prn("DEBUG: [%s, %d]: END: SDL_main()\n", __FILE__, __LINE__);
@@ -344,6 +359,7 @@ int MOM_main(int argc, char** argv)
     // if(!((argv[1][0] == 'J') && (argv[1][1] == 'E') && (argv[1][1] == 'N') && (argv[1][1] == 'N') && (argv[1][1] == 'Y')))
     if(strcmp(argv, "JENNY") != 0)
     {
+        /* HACK */  magic_set.sound_effects = ST_TRUE;
         Draw_Logos();
     }
 

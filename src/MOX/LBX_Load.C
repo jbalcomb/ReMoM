@@ -7,7 +7,7 @@ char lbxload_lbx_file_extension[] = ".LBX";
 int16_t lbxload_num_entries;
 SAMB_ptr lbxload_lbx_header;
 char lbxload_lbx_name[16];
-
+/* HACK */  uint32_t lbxload_entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
 
 char * str_error_handler[] =
@@ -186,6 +186,8 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     entry_start = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4)    ) ) );
     entry_end   = ( GET_4B_OFS( (lbxload_lbx_header), ( 8 + ((entry_num) * 4) + 4) ) );
     entry_length = entry_end - entry_start;
+
+    /* HACK */  lbxload_entry_length = entry_length;  /* because. SDL Mixed needs the sound buffer size */
 
     fseek(lbxload_fptr, entry_start, 0);
     /*
@@ -803,7 +805,7 @@ void File_Name_Base(char * file_name)
     itr = 0;
     while(file_name[itr] != '\0')
     {
-        if(file_name[itr] >= 'a') { file_name[itr] = file_name[itr] - 32; }
+        if(file_name[itr] >= 'a') { file_name[itr] = (file_name[itr] - 32); }
         if(file_name[itr] == '.') { file_name[itr] = '\0'; }
         itr++;
     }

@@ -10,6 +10,7 @@
 #include "MOX/MOX_DEF.H"
 #include "MOX/MOX_SET.H"
 #include "MOX/MOX_TYPE.H"
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MGC_DATA.H"
@@ -56,29 +57,33 @@ void Draw_Logos(void)
 {
     uint8_t colors[2] = { 0, 0 };
     int16_t hotkey_idx_ESC = 0;
-    SAMB_ptr Intro_SFX2_Segment = 0;
-    SAMB_ptr Intro_SFX1_Segment = 0;
-    SAMB_ptr Intro_SFX3_Segment = 0;
-    SAMB_ptr Intro_Music_Segment = 0;
+    SAMB_ptr digi_sound_buffer2 = 0;
+    SAMB_ptr digi_sound_buffer1 = 0;
+    SAMB_ptr digi_sound_buffer3 = 0;
+    SAMB_ptr midi_sound_buffer = 0;
     int16_t leave_screen = 0;
     int16_t input_idx = 0;
     int16_t fullscreen_field = 0;
     int16_t itr_scenes = 0;  // _SI_
     int16_t itr_frames = 0;  // _DI_
+    /* HACK */  uint32_t sound_buffer_size1 = 0;  // DNE in Dasm
+    /* HACK */  uint32_t sound_buffer_size2 = 0;  // DNE in Dasm
+    /* HACK */  uint32_t sound_buffer_size3 = 0;  // DNE in Dasm
 
     colors[0] = 79;
     colors[1] = 163;
     
-    Intro_Music_Segment = LBX_Reload(music_lbx_file__MGC_ovr058, MUSIC_Intro, _screen_seg);
+    midi_sound_buffer = LBX_Reload(music_lbx_file__MGC_ovr058, MUSIC_Intro, _screen_seg);
 
     Mark_Block(_screen_seg);
 
-    Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT1, _screen_seg);
+    digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT1, _screen_seg);
+    sound_buffer_size1 = lbxload_entry_length;
 
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__WIP(Intro_Music_Segment);
+        Play_Sound__WIP(midi_sound_buffer);
         
     }
 
@@ -167,7 +172,8 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX1_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
+                    sdl2_Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -179,11 +185,17 @@ void Draw_Logos(void)
             {
                 Release_Block(_screen_seg);
                 Mark_Block(_screen_seg);
-                Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroM, _screen_seg);  // [Merlin] "You have come too late."
-                Intro_SFX2_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_Unknown116, _screen_seg);  // ; [Merlin] "My work has already met with success."
+
+                digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroM, _screen_seg);  // [Merlin] "You have come too late."
+                sound_buffer_size1 = lbxload_entry_length;
+
+                digi_sound_buffer2 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_Unknown116, _screen_seg);  // ; [Merlin] "My work has already met with success."
+                sound_buffer_size2 = lbxload_entry_length;
+
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX1_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
+                    sdl2_Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -195,7 +207,8 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX2_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer2);
+                    sdl2_Play_Sound(digi_sound_buffer2, sound_buffer_size2);
                 }
             }
 
@@ -207,11 +220,17 @@ void Draw_Logos(void)
             {
                 Release_Block(_screen_seg);
                 Mark_Block(_screen_seg);
-                Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT2, _screen_seg);
-                Intro_SFX3_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
+
+                digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT2, _screen_seg);
+                sound_buffer_size1 = lbxload_entry_length;
+
+                digi_sound_buffer3 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
+                sound_buffer_size3 = lbxload_entry_length;
+
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX1_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
+                    sdl2_Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -223,11 +242,17 @@ void Draw_Logos(void)
             {
                 Release_Block(_screen_seg);
                 Mark_Block(_screen_seg);
-                Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_Unknown118, _screen_seg);
-                Intro_SFX3_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
+
+                digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_Unknown118, _screen_seg);
+                sound_buffer_size1 = lbxload_entry_length;
+
+                digi_sound_buffer3 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_ATK_LightningBolt, _screen_seg);
+                sound_buffer_size3 = lbxload_entry_length;
+
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX1_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
+                    sdl2_Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -237,12 +262,17 @@ void Draw_Logos(void)
                 (itr_frames == 2)
             )
             {
+                // BUGBUG  release digi_sound_buffer3 here, but uses it below ... the load above should probably be in this block
                 Release_Block(_screen_seg);
                 Mark_Block(_screen_seg);
-                Intro_SFX1_Segment = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT3, _screen_seg);
+
+                digi_sound_buffer1 = LBX_Reload_Next(soundfx_lbx_file__MGC_ovr058, SFX_IntroT3, _screen_seg);
+                sound_buffer_size1 = lbxload_entry_length;
+
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX1_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer1);
+                    sdl2_Play_Sound(digi_sound_buffer1, sound_buffer_size1);
                 }
             }
 
@@ -254,7 +284,8 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX3_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
+                    sdl2_Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 
@@ -266,7 +297,8 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX3_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
+                    sdl2_Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 
@@ -278,7 +310,8 @@ void Draw_Logos(void)
             {
                 if(magic_set.sound_effects == ST_TRUE)
                 {
-                    Play_Sound__WIP(Intro_SFX3_Segment);
+                    // DOMSDOS  Play_Sound__WIP(digi_sound_buffer3);
+                    sdl2_Play_Sound(digi_sound_buffer3, sound_buffer_size3);
                 }
             }
 

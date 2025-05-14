@@ -8,6 +8,13 @@
 #endif
 
 
+/*
+    LBX Entry File Signature / Magic Number
+*/
+#define SNDMAGSIG 0xDEAF
+#define SNDVOCMAGSIG 0xDEAD
+
+
 
 #define VIDEO_MODE_MODE_Y
 // #define VIDEO_MODE_MODE_Y_2x

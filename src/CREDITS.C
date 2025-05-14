@@ -145,6 +145,7 @@ static char * credit_strings[CREDITS_COUNT][2] = {
     {"", "Steve Barcia"},
     {"", "Grissel Barcia"},
     {"", ""},
+    {"", ""},
     {"Producer", "Doug Caspian-Kaufman"},
     { "", "" },
     { "Art Director", "Jeff Dee" },
@@ -184,7 +185,7 @@ static char * credit_strings[CREDITS_COUNT][2] = {
     { "", "" },
     { "", "" },
     { "Special Thanks", "Jenny Cowlishaw" },
-    { "", "" },
+    { "", "" }
 };
 
 // IDGI  struct s_CREDIT_PAIR TBL_Credits_Texts[] = {

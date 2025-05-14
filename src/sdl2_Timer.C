@@ -57,8 +57,8 @@ static uint64_t delay_start;
 void Mark_Time(void)
 {
     sdl2_ticks_mark_time = SDL_GetTicks64();  // the number of milliseconds since SDL library initialization
-    dbg_prn("sdl2_ticks_mark_time: %llu\n", sdl2_ticks_mark_time);
-    dbg_prn("(sdl2_ticks_mark_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_mark_time - sdl2_ticks_startup));
+    // DELETEME  dbg_prn("sdl2_ticks_mark_time: %llu\n", sdl2_ticks_mark_time);
+    // DELETEME  dbg_prn("(sdl2_ticks_mark_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_mark_time - sdl2_ticks_startup));
 
     delay_start = Read_System_Clock_Timer();
 }
@@ -92,8 +92,8 @@ void Release_Time(int ticks)
     uint64_t sdl2_tick_end = 0;
 
     sdl2_ticks_release_time = Platform_Get_Millies();  // the number of milliseconds since SDL library initialization
-    dbg_prn("sdl2_ticks_release_time: %llu\n", sdl2_ticks_release_time);
-    dbg_prn("(sdl2_ticks_release_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_release_time - sdl2_ticks_startup));
+    // DELETEME  dbg_prn("sdl2_ticks_release_time: %llu\n", sdl2_ticks_release_time);
+    // DELETEME  dbg_prn("(sdl2_ticks_release_time - sdl2_ticks_startup): %llu\n", (sdl2_ticks_release_time - sdl2_ticks_startup));
 
     sdl2_tick_end = (sdl2_ticks_mark_time + (ticks * MILLISECONDS_PER_FRAME));  // ~ IBM-PC - 55 ms per BIOS timer tick
 
@@ -104,7 +104,7 @@ void Release_Time(int ticks)
     while(sdl2_tick_count < (sdl2_ticks_mark_time + (ticks * MILLISECONDS_PER_FRAME)));
 
     sdl2_frame_count += 1;
-    dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
+    // DELETEME  dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
 
     // cap the frame rate by *sleeping* for the remaining frame time
 
@@ -136,7 +136,7 @@ void Release_Time(int ticks)
         while(sdl2_tick_count < (sdl2_ticks_mark_time + (itr_ticks * MILLISECONDS_PER_FRAME)));
 
         sdl2_frame_count += 1;
-        dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
+        // DELETEME  dbg_prn("sdl2_frame_count: %llu\n", sdl2_frame_count);
     
     }
 }

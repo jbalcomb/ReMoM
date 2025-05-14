@@ -45,7 +45,7 @@ set(MOMLIB_SOURCES
     Help.C
     HIRE.C
     Init.C
-    INITGAME.C4
+    INITGAME.C
     INTRO.C
     ItemMake.C
     Items.C
@@ -59,14 +59,14 @@ set(MOMLIB_SOURCES
     MainMenu.C
     MainScr.C
     MainScr_Maps.C
-    MAPGEN.C4
+    MAPGEN.C
     MGC_Data.C
     MOM.C
     MOM_SCR.C
     MOM_DBG.C
     MOM_PFL.C
     MovePath.C
-    NEWGAME.C4
+    NEWGAME.C
     NEXTTURN.C
     Outpost.C
     OverSpel.C
