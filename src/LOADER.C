@@ -188,7 +188,7 @@ void Load_WZD_Resources(void)
 // fxn_o52p07();
 // fxn_o52p11();
 
-// drake178: LBX_Assign_Cmbt_BG()
+
     Load_Combat_Background_Bottom();  // ; creates a reserved EMM LBX header for the combat screen's bottom background
 
 // fxn_o52p12();
@@ -206,7 +206,7 @@ void Load_WZD_Resources(void)
     Units_Upkeeps();
 
 #ifdef STU_DEBUG
-    dbg_prn("DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()\n", __FILE__, __LINE__);
+    dbg_prn("DEBUG: [%s, %d]: END: Load_WZD_Resources()\n", __FILE__, __LINE__);
 #endif
 }
 
@@ -262,6 +262,9 @@ void Units_Upkeeps(void)
 }
 
 // WZD o52p03
+// drake178:  ¿ ?
+// MoO2  ¿ ?
+// 1oom  ¿ ?
 /*
     All (Movement) Map
         TERRAIN.LBX   Entry 1,2
@@ -369,6 +372,7 @@ void Terrain_Init(void)
 
 //     UU_IMG_OVL_Empty1 = LBX_Load(mapback_lbx_file, 87);
 //     // ; single-loaded image, called "mine" in the file
+
 //     UU_IMG_OVL_Empty2 = LBX_Load(mapback_lbx_file, 88);
 //     // ; single-loaded image, called "lumber camp" in the file
 
@@ -764,6 +768,9 @@ void Load_BUILDDAT(void)
 // fxn_o52p18()
 
 // WZD o52p19
+// drake178: LBX_Assign_Cmbt_BG()
+// MoO2  ¿ ?
+// 1oom  ¿ ?
 void Load_Combat_Background_Bottom(void)
 {
 

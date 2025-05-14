@@ -2442,7 +2442,8 @@ void Play_Background_Music__STUB(void)
 
         sound_seg = LBX_Reload(music_lbx_file__ovr058, background_music_num, SND_Music_Segment);
 
-        Play_Sound__WIP(sound_seg);
+        // DOMSDOS  Play_Sound__WIP(sound_seg);
+        sdl2_Play_Sound(sound_seg);
 
     }
     else

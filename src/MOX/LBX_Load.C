@@ -201,25 +201,25 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
     num_blocks = 1 + (entry_length / SZ_PARAGRAPH_B);
     switch(allocation_type)
     {
-        case 0:  /* sa_Single */
+        case sa_Single:
         {
             SAMB_data = Allocate_Space_No_Header(num_blocks);
             if(SAMB_data == NULL) { Error_Handler(lbx_name, 3, entry_num, ST_NULL); }
         } break;
-        case 1:  /* sa_First */
+        case sa_First:
         {
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > (SA_GET_SIZE(SAMB_head) - 1)) { Error_Handler(lbx_name, 4, entry_num, (num_blocks - (SA_GET_SIZE(SAMB_head) + 1))); }
-            SAMB_data = SAMB_head + 12;
+            SAMB_data = SAMB_head + (16 - 4);
             SA_SET_USED(SAMB_head, (num_blocks + 1));
         } break;
-        case 2:  /* sa_Next */
+        case sa_Next:
         {
             if(Check_Allocation(SAMB_head) == ST_FAILURE) { Error_Handler(lbx_name, 2, entry_num, ST_NULL); };
             if(num_blocks > Get_Free_Blocks(SAMB_head)) { Error_Handler(lbx_name, 5, entry_num, (num_blocks - Get_Free_Blocks(SAMB_head))); }
             // assert(Check_Allocation(SAMB_head) != ST_FAILURE));
             
-            SAMB_data = SAMB_head + 12 + (SA_GET_USED(SAMB_head) * SZ_PARAGRAPH_B);
+            SAMB_data = SAMB_head + (16 - 4) + (SA_GET_USED(SAMB_head) * SZ_PARAGRAPH_B);
 
             num_blocks_used = num_blocks + SA_GET_USED(SAMB_head);
             *( (SAMB_head) + (SAMB_USED) + 0 ) = ( (num_blocks_used)      );

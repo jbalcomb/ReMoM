@@ -21,28 +21,6 @@ MoO2
 
 
 
-enum e_AUDIO_ERROR
-{
-    SND_bad_driver              =  0,
-    SND_driver_error            =  1,
-    SND_invalid_Digi_driver     =  2,
-    SND_Invalid_XMIDI_driver    =  3,
-    SND_not_DSP_driver          =  4,
-    SND_Invalid_Music_IO        =  5,
-    SND_Bad_Music_IO            =  6,
-    SND_Invalid_Digi_IO         =  7,
-    SND_Bad_Digi_IO             =  8,
-    SND_Not_SFX_File            =  9,
-    SND_Not_XMIDI_File          = 10,
-    SND_Sequence_Failure        = 11,
-    SND_Timbre_Missing          = 12,
-    SND_Couldnt_Load_File       = 13,
-    SND_Invalid_File            = 14,
-    SND_Not_Sound_File          = 15,
-    SND_Couldnt_Load_SND_File   = 16
-};
-
-
 // // C:\STU\devel\Audio Interface Library (AIL)\AIL2\A214_D3\AIL.H
 // // typedef struct
 // // {
@@ -494,7 +472,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 
     if(AIL_mdi_driver > SND_Speaker)
     {
-        digi_driver_handle = AIL_register_driver(SND_AIL_MIDI_Driver);
+        midi_driver_handle = AIL_register_driver(SND_AIL_MIDI_Driver);
     }
 
     if(AIL_dig_driver > SND_NONE)
@@ -1223,19 +1201,82 @@ void Audio_Error__STUB(int16_t error)
 {
     char string[120];
 
+    // YOU SHOULD NOT BE HERE
+    __debugbreak();
+
     switch(error)
     {
-        case 0:
+        case SND_bad_driver:
         {
             strcpy(string, audio_error_messages[0]);  //  cnst_SND_Error01
             strcpy(string, audio_error_messages[1]);  //  cnst_SND_Error02
         } break;
-        // ...
-        // ...
-        // ...
-        case 16:
+        case SND_driver_error:
         {
-            strcpy(string, audio_error_messages[16]);  //  cnst_SND_Error10
+
+        } break;
+        case SND_invalid_Digi_driver:
+        {
+
+        } break;
+        case SND_Invalid_XMIDI_driver:
+        {
+
+        } break;
+        case SND_not_DSP_driver:
+        {
+
+        } break;
+        case SND_Invalid_Music_IO:
+        {
+
+        } break;
+        case SND_Bad_Music_IO:
+        {
+
+        } break;
+        case SND_Invalid_Digi_IO:
+        {
+
+        } break;
+        case SND_Bad_Digi_IO:
+        {
+
+        } break;
+        case SND_Not_SFX_File:
+        {
+
+        } break;
+        case SND_Not_XMIDI_File:
+        {
+
+        } break;
+        case SND_Sequence_Failure:
+        {
+
+        } break;
+        case SND_Timbre_Missing:
+        {
+
+        } break;
+        case SND_Couldnt_Load_File:
+        {
+            // strcpy(string, cnst_SND_ErrorD);   // "Could not load"
+            // strcat(string, cnst_SND_Error92);  // " sound file"
+        } break;
+        case SND_Invalid_File:
+        {
+            // strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
+            // strcat(string, cnst_SND_Error92);  // " sound file"
+        } break;
+        case SND_Not_Sound_File:
+        {
+            // strcpy(string, cnst_SND_ErrorF);   // "Not a valid"
+            // strcat(string, cnst_SND_Error92);  // " sound file"
+        } break;
+        case SND_Couldnt_Load_SND_File:
+        {
+            strcpy(string, audio_error_messages[16]);  //  "Could not load sound file"
         } break;
     }
 

@@ -66,6 +66,7 @@ void Draw_Logos(void)
     int16_t fullscreen_field = 0;
     int16_t itr_scenes = 0;  // _SI_
     int16_t itr_frames = 0;  // _DI_
+    /* HACK */  uint32_t midi_sound_buffer_size = 0;  // DNE in Dasm
     /* HACK */  uint32_t sound_buffer_size1 = 0;  // DNE in Dasm
     /* HACK */  uint32_t sound_buffer_size2 = 0;  // DNE in Dasm
     /* HACK */  uint32_t sound_buffer_size3 = 0;  // DNE in Dasm
@@ -73,7 +74,10 @@ void Draw_Logos(void)
     colors[0] = 79;
     colors[1] = 163;
     
-    midi_sound_buffer = LBX_Reload(music_lbx_file__MGC_ovr058, MUSIC_Intro, _screen_seg);
+    // midi_sound_buffer = LBX_Reload(music_lbx_file__MGC_ovr058, MUSIC_Intro, _screen_seg);  // MOM49.XMI  "Intro music"
+    Allocate_Next_Block(_screen_seg, 1);
+    midi_sound_buffer = LBX_Reload_Next(music_lbx_file__MGC_ovr058, MUSIC_Intro, _screen_seg);  // MOM49.XMI  "Intro music"
+    midi_sound_buffer_size = lbxload_entry_length;
 
     Mark_Block(_screen_seg);
 
@@ -83,8 +87,8 @@ void Draw_Logos(void)
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__WIP(midi_sound_buffer);
-        
+        // DOMSDOS  Play_Sound__WIP(midi_sound_buffer);
+        sdl2_Play_Sound(midi_sound_buffer, midi_sound_buffer_size);
     }
 
     Set_Mouse_List(1, mouse_list_none);  // in MGC, second set of mouse list definitions?  mouse_list__MGC_HoF

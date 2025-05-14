@@ -21,6 +21,30 @@ extern "C" {
 
 
 
+
+
+
+enum e_AUDIO_ERROR
+{
+    SND_bad_driver              =  0,
+    SND_driver_error            =  1,
+    SND_invalid_Digi_driver     =  2,
+    SND_Invalid_XMIDI_driver    =  3,
+    SND_not_DSP_driver          =  4,
+    SND_Invalid_Music_IO        =  5,
+    SND_Bad_Music_IO            =  6,
+    SND_Invalid_Digi_IO         =  7,
+    SND_Bad_Digi_IO             =  8,
+    SND_Not_SFX_File            =  9,
+    SND_Not_XMIDI_File          = 10,
+    SND_Sequence_Failure        = 11,
+    SND_Timbre_Missing          = 12,
+    SND_Couldnt_Load_File       = 13,
+    SND_Invalid_File            = 14,
+    SND_Not_Sound_File          = 15,
+    SND_Couldnt_Load_SND_File   = 16
+};
+
 /*
 FFFFFFFF ; enum e_Sound_Hardware
 FFFFFFFF No_Sound_HW  = 0

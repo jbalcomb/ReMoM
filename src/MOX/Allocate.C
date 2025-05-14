@@ -386,8 +386,8 @@ SAMB_ptr Allocate_Space_No_Header(uint16_t size)
 void Mark_Block(SAMB_ptr block)
 {
     int16_t used;
-    // MSDOS  used = farpeekw(block, SAMB_HDR_POS_USED);
-    // MSDOS  farpokew(block, SMB_HDR_POS_MARK);
+    // DOMSDOS  used = farpeekw(block, SAMB_HDR_POS_USED);
+    // DOMSDOS  farpokew(block, SMB_HDR_POS_MARK);
     used = SA_GET_USED(block);
     SA_SET_MARK(block, used);
 }

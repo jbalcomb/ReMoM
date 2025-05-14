@@ -1,7 +1,106 @@
 
-LBX entries have an additional 16-byte header
-DEAF
-01 or 02
+FAT.AD
+FAT.CAT
+FAT.MT
+FAT.OPL
+FAT-GEN.CAT
+FAT-OPL3.BNK
+FATV10.BNK
+
+
+
+# TBD, someday, maybe...
+http://www.palserv.com/XMidi/
+https://libtimidity.sourceforge.net/
+https://github.com/sezero/libtimidity
+https://stackoverflow.com/questions/19613244/xmidi-file-format
+https://github.com/Mindwerks/wildmidi/blob/master/docs/formats/XMIFileFormat-AIL.txt
+https://ml.csound.1bpm.net/mailinglist.csound/thread/60154
+https://github.com/sezero/libtimidity/tree/master/src
+...
+https://github.com/jimdose/Apogee_Sound_System
+https://github.com/volkertb/JUDAS
+https://www.vogons.org/viewtopic.php?t=91224
+https://discourse.libsdl.org/t/playing-midi-music-through-sdl-mixer/10659
+https://www.google.com/search?q=SDL2+play+midi+music&rlz=1C1GCEU_enUS1161US1161&oq=SDL2+play+midi+music&gs_lcrp=EgZjaHJvbWUyBwgAEEUYoAEyBwgBECEYoAHSAQg2MDg0ajFqN6gCCLACAfEFFzJzOrUzry0&sourceid=chrome&ie=UTF-8
+http://cd.textfiles.com/vgaspectrum/sound/
+http://cd.textfiles.com/20mnn/SOUND/
+https://www.vgmpf.com/Wiki/index.php?title=AdLib_Visual_Composer_(DOS)
+http://fileformats.archiveteam.org/wiki/AdLib_Visual_Composer_/_Roland_Synthesizer_song
+https://www.google.com/search?q=AdLib+Visual+Composer&rlz=1C1GCEU_enUS1161US1161&oq=AdLib+Visual+Composer&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDINCAEQABiGAxiABBiKBTINCAIQABiGAxiABBiKBTIHCAMQABjvBTIHCAQQABjvBTIKCAUQABiABBiiBNIBBzkxNmoxajeoAgiwAgHxBXFQnXf-698f&sourceid=chrome&ie=UTF-8
+https://www.vogons.org/viewtopic.php?t=48513&start=20
+https://www.google.com/search?q=Adlib+Insmaker+Bankfile&rlz=1C1GCEU_enUS1161US1161&oq=Adlib+Insmaker+Bankfile&gs_lcrp=EgZjaHJvbWUyBggAEEUYQDIHCAEQIRigATIHCAIQIRigATIHCAMQIRigAdIBBzQ4NmoxajeoAgiwAgHxBWp6UVbf_6gv&sourceid=chrome&ie=UTF-8
+https://moddingwiki.shikadi.net/wiki/AdLib_Timbre_Bank_Format
+https://moddingwiki.shikadi.net/wiki/AdLib_MIDI_Format
+...
+https://www.google.com/search?q=winamp+source+code&rlz=1C1GCEU_enUS1161US1161&oq=winamp+source+code&gs_lcrp=EgZjaHJvbWUyBwgAEEUYgAQyBwgBEAAYgAQyCAgCEAAYFhgeMggIAxAAGBYYHjIICAQQABgWGB4yCAgFEAAYFhgeMggIBhAAGBYYHjIICAcQABgWGB4yCAgIEAAYFhgeMggICRAAGBYYHtIBCDMwMTFqMWo3qAIIsAIB8QVLsFTjAm-9hg&sourceid=chrome&ie=UTF-8
+https://github.com/alexfreud/winamp
+https://github.com/alexfreud/winamp/tree/community/Src
+https://github.com/alexfreud/winamp/tree/community/Src/Plugins/Output
+https://github.com/alexfreud/winamp/tree/community/Src/Plugins
+https://github.com/alexfreud/winamp/tree/community/Src/Plugins/Input
+https://github.com/alexfreud/winamp/tree/community/Src/Plugins/Input/in_midi
+https://github.com/alexfreud/winamp/blob/community/Src/Plugins/Input/in_midi/xmi.cpp
+...
+https://www.freepascal-meets-sdl.net/chapter-9-music-and-sound/
+https://www.freepascal-meets-sdl.net/wp-content/uploads/SDL_Layers.png
+...
+MIDIPLEX
+Meh. It's in Pascal... ...maybe, ask Implode about it
+C:\STU\developp\MIDIPLEX\Main.pas
+
+
+
+
+
+
+
+
+
+
+
+C:\STU\devel\AIL214\A214_D2\DOC\ASCIIDOC\XMIDI.TXT
+The term 'Extended MIDI,' or 'XMIDI,' refers to the set of features added to the base Musical
+Instrument Digital Interface (MIDI) data specification by the drivers and utility programs
+included with the Audio Interface Library's Version 2.00 release.  The XMIDI standard brings
+many powerful features to the Audio Interface Library which would otherwise be absent in a
+system conforming to the original MIDI standard.
+
+XMIDI provides a number of additional MIDI-style Control Change messages which greatly
+extend the range of composition and arrangement options available to the musician and
+application programmer.  Below is a list of Extended MIDI Control Change messages available
+in the current Audio Interface Library release, together with explanations of their uses in
+XMIDI sequences.
+
+旼컴컴컴컴컴컴컴쩡컴컴컴컴컴컴컴컴컴컴컴컴컴컴?
+?Controller    ?Description                 ?
+팠袴袴袴袴袴袴袴妄袴袴袴袴袴袴袴袴袴袴袴袴袴袴?
+?110 (6eh)     ?Channel Lock                ?
+?111 (6fh)     ?Channel Lock Protect        ?
+?112 (70h)     ?Voice Protect               ?
+?113 (71h)     ?Timbre Protect              ?
+?114 (72h)     ?Patch Bank Select           ?
+?115 (73h)     ?Indirect Controller Prefix  ?
+?116 (74h)     ?For Loop Controller         ?
+?117 (75h)     ?Next/Break Loop Controller  ?
+?118 (76h)     ?Clear Beat/Bar Count        ?
+?119 (77h)     ?Callback Trigger            ?
+?120 (78h)     ?Sequence Branch Index       ?
+읕컴컴컴컴컴컴컴좔컴컴컴컴컴컴컴컴컴컴컴컴컴컴?
+
+
+
+
+
+
+
+
+
+
+
+
+LBX sound entries have an additional 16-byte header
+DEAF and 0001 or 0002
 
 
 
@@ -97,3 +196,55 @@ Name: AnsiString; Sub: AnsiString
 if IFFSearchNode(Nodes, 'CAT ', 'XMID')
 // Standard multi-song XMIDI
 
+
+
+C:\STU\devel\AIL214\A214_D3\XMIDI.ASM
+
+C:\STU\devel\AIL214\A214_D3\XPLAY.C
+
+
+
+
+
+## Audio_Init()
+
+...
+
+AIL_state_table_size()
+
+
+
+
+
+
+
+
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴퀼
+C: unsigned AIL_state_table_size(HDRIVER driver)
+Purpose:
+    Returns the amount of memory in bytes required to store the state table for each XMIDI sequence registered with a given driver.
+Remarks:
+    One of the features provided by the AIL's Extended MIDI drivers is the ability to stop, start, and maintain the status of up to eight independent, concurrent XMIDI sequences.
+    To keep the drivers' internal memory requirements to a minimum, the data pointers, time counters, and controller value registers associated with each XMIDI sequence are preserved in an external area of memory called the "state table."
+    Each sequence's state table will occupy approximately 500-700 bytes; this function returns the precise amount of memory required.
+
+The application should allocate memory for a sufficient number
+of state tables to maintain as many XMIDI sequences as the
+application expects to register concurrently.  Since many
+applications will never need to register more than one or two
+concurrent XMIDI sequences, substantial memory savings may be
+realized by allowing the application to dynamically allocate
+memory for its sequences' state tables.
+
+After an XMIDI sequence's handle is released with AIL_release_sequence_handle(), its state table is no longer needed by the driver.
+(Refer to the AIL_release_sequence_handle() description for an important exception.)
+The state table's memory may be returned to the application's heap, or re-used when registering another sequence.
+However, the required state table size may vary
+between different XMIDI driver types, so a state table whose
+size was determined with a call to one driver should not be
+arbitrarily reassigned to a different driver.  Under no
+circumstances should the sequence state table be released or
+altered before its handle is released.  
+
+Example: XPLAY.C, XP16.C, MIX16.C, WINXMIDI.C
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴퀼
