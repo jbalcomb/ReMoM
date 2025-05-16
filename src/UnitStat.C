@@ -807,12 +807,12 @@ void Thing_View_Draw__WIP(int16_t x_start, int16_t y_start, int16_t CalledFromFl
     colors[1] = 255;
 
     Set_Font_Colors_15(1, &colors[0]);
+
     Set_Font_Style_Outline(1, 15, 0, 0);
+
     Set_Outline_Color(251);
 
-
     UV_x_start_offset = 0;
-
 
     if(CalledFromFlag == uvt_Prod)  /* on 'Production Screen' */
     {

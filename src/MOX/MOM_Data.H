@@ -2762,6 +2762,7 @@ extern SAMB_ptr SND_SpellCast;
 
 // WZD dseg:9134
 extern SAMB_ptr SND_Spell_Music;
+extern int16_t SND_Spell_Music_size;  // DNE in Dasm
 
 // WZD dseg:9136                                                 ? BEGIN:  - Uninitialized Data ?
 

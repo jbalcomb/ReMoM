@@ -1,5 +1,9 @@
 
 
+SPELLY
+    Spell Casting code that I should have already finished probably in the current *sprint*
+
+
 ¿ ?
     Question?
 

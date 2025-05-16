@@ -1,4 +1,4 @@
-    /*
+/*
     Next Turn Procedure
 
     WIZARDS.EXE

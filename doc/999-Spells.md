@@ -44,7 +44,7 @@ IDK_SummonAnim_Draw()
 
 
 
-Spells that tkae a "Target Wizard"
+Spells that take a "Target Wizard"
 
 Cruel Unminding:
 Death. Instant. Casting Cost: 150 mana. Very Rare.
@@ -180,7 +180,7 @@ Next_Turn_Proc()
         |-> Players_Apply_Magic_Power()
         |-> Players_Check_Spell_Research()
 
-Players_Apply_Magic_Power() updates _players[].research_cost_remaining.
+Players_Apply_Magic_Power() updates _players[].research_cost_remaining
 
 Next_Turn_Proc()
     |-> Next_Turn_Calc()

@@ -214,10 +214,9 @@ void Production_Screen(void)
         uv_multipage = ST_TRUE;
     }
 
-
     Deactivate_Auto_Function();
-    Assign_Auto_Function(Production_Screen_Draw, 1);
 
+    Assign_Auto_Function(Production_Screen_Draw, 1);
 
     Production_Screen_Allocate_First_Block();
 
@@ -230,13 +229,21 @@ void Production_Screen(void)
     Clear_Fields();
 
     Set_Page_Off();
+
     Copy_On_To_Off_Page();
+
     Load_Palette_From_Animation(unitview_small_background_seg);
+
     Apply_Palette();
+
     Clear_Palette_Changes(0, 255);
+
     Set_Palette_Changes(0, 255);
+
     Update_Remap_Color_Range(0, 1);
+
     Gradient_Fill(0, 0, 319, 199, 3, ST_NULL, ST_NULL, ST_NULL, ST_NULL);  // ...remap_block, Slope, Scale, Seed
+
     Copy_Off_To_Back();
 
     Set_Input_Delay(1);
@@ -262,11 +269,12 @@ void Production_Screen(void)
             Cancel Button  || ESC Hot-Key
         */
         if(
-            (input_field_idx == production_screen_cancel_button) ||
+            (input_field_idx == production_screen_cancel_button)
+            ||
             (input_field_idx == hotkey_idx_ESC)
         )
         {
-            Play_Left_Click();
+            // Play_Left_Click();
             leave_screen = ST_TRUE;
             current_screen = scr_City_Screen;
         }
@@ -279,7 +287,9 @@ void Production_Screen(void)
         {
             if(product_fields[itr] == input_field_idx)
             {
-                Play_Left_Click();
+
+                // Play_Left_Click();
+
                 Deactivate_Help_List();
 
                 if(itr >= G_CTY_ProducableCount2)
@@ -340,7 +350,7 @@ void Production_Screen(void)
         */
         if(input_field_idx == production_screen_ok_button)
         {
-            Play_Left_Click();
+            // Play_Left_Click();
 Check_Cities_Data();
             _CITIES[_city_idx].construction = product_indexes[current_item];
 // Check_Cities_Data();
@@ -377,11 +387,12 @@ Capture_Cities_Data();
         screen_changed = ST_FALSE;
     }
 
-
-
     Deactivate_Auto_Function();
+
     Deactivate_Help_List();
+
     Clear_Fields();
+    
     Reset_Window();
 
     // BUGBUG  these should be one or the other, and not allow for neither
@@ -395,8 +406,11 @@ Capture_Cities_Data();
     }
 
     PageFlipEffect = 3;
+
     Clear_Palette_Changes(0, 255);
+
     Set_Palette_Changes(0, 223);
+
     Update_Remap_Gray_Palette();
 
     GFX_Swap_Cities();

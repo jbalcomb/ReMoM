@@ -132,13 +132,13 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx);
 
 
 // WZD o138p01
-// IDK_SomScr_Lose_Load()
+void Spell_Of_Mastery_Lose_Load(int16_t wizard_id);
 
 // WZD o138p02
-// IDK_SomScr_Lose_Draw()
+void Spell_Of_Mastery_Lose_Draw(void);
 
 // WZD o138p03
-// IDK_SomScr_Lose()
+void Spell_Of_Mastery_Lose(void);
 
 // WZD o138p04
 void SoM_Started_Draw(void);
@@ -147,13 +147,13 @@ void SoM_Started_Draw(void);
 void SoM_Started(int16_t player_idx);
 
 // WZD o138p06
-// IDK_SomScr_Load()
+void Spell_Of_Mastery_Load(void);
 
 // WZD o138p07
-// IDK_SomScr_Draw()
+void Spell_Of_Mastery_Draw(void);
 
 // WZD o138p08
-// IDK_SomScr()
+void Spell_Of_Mastery(int16_t player_idx);
 
 // WZD o138p09
 // CMB_LoadUndeadAnim()

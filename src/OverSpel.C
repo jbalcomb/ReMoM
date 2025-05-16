@@ -135,6 +135,8 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 
 // WZD o135p05
 // drake178: ¿ G_OVL_Cast() ?
+// MoO2  N/A
+// 1oom  N/A
 /*
 */
 /*
@@ -178,7 +180,6 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
     AI_Eval_After_Spell = ST_FALSE;
 
     spell_idx = _players[player_idx].casting_spell_idx;
-
 
     if(spell_idx == spl_NONE)
     {
@@ -330,7 +331,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
         if(spell_idx == spl_Spell_Of_Mastery)
         {
 
-            // TODO  Cast_Spell_Of_Mastery(player_idx);
+            Spell_Of_Mastery(player_idx);
 
             AI_Eval_After_Spell = ST_TRUE;
             
@@ -526,7 +527,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                     }
 
-                } break;
+                } break;  /* case sdt_Summoning: */
 
                 case sdt_Global_Enchantment:
                 {
