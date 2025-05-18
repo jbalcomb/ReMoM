@@ -170,7 +170,7 @@ char SND_tbank_suffix[22];
 // WZD dseg:E8E8
 uint16_t * timb_ptr;
 
-// WZD dseg:E8EC 00 00 00 00                                     SND_Timbre_Data@ dd 0                   ; DATA XREF: Play_Sound__WIP+116w ...
+// WZD dseg:E8EC 00 00 00 00                                     SND_Timbre_Data@ dd 0
 char * timb;
 
 // WZD dseg:E8F0
@@ -696,7 +696,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
     if(AIL_mdi_driver == SND_Roland)
     {
         Roland_Timbre_Init = LBX_Load(snddrv_lbx_file__seg038, 20);
-        Play_Sound__WIP(Roland_Timbre_Init);
+        Play_Sound__MSDOS(Roland_Timbre_Init);
     }
 
     while(Midi_Sequence_Status() != SEQ_DONE) { }
@@ -719,7 +719,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 /*
 
 */
-int16_t Play_Sound__WIP(SAMB_ptr sound_buffer)
+int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer)
 {
     int16_t timbre_required = 0;
     int16_t sound_type = 0;  // _DI_
@@ -1280,6 +1280,6 @@ void Audio_Error__STUB(int16_t error)
         } break;
     }
 
-    // TODO  Exit_With_Message(string);
+    Exit_With_Message(string);
 
 }

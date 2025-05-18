@@ -30,6 +30,7 @@
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -619,13 +620,11 @@ int16_t adjacent_offsets[24] =
 };
 
 
-// WZD dseg:70F8 20 63 6F 75 6C 64 20 6E 6F 74 20 62 65 20 66 6F+CRP_AI_SpellTargetError db ' could not be found for CP.',0
-// WZD dseg:70F8 75 6E 64 20 66 6F 72 20 43 50 2E 00                                                     ; DATA XREF: CRP_DBG_SpellTargetError+33o
-// WZD dseg:7114 00                                              db    0
-// WZD dseg:7115 00                                              db    0
 
+// WZD dseg:7116                                                 BEGIN:  ovr158
 // WZD dseg:7116
 int16_t ai_human_hostility = ST_FALSE;
+// WZD dseg:7116                                                 END:  ovr158
 
 // WZD dseg:7118 B9 2F 2F 2F 2F                                  COL_HLP_Titles db 0B9h, 4 dup(2Fh)      ; DATA XREF: Draw_Help_Entry:loc_F27EBo
 // WZD dseg:7118                                                                                         ; this should ideally have been 16 bytes long
@@ -680,8 +679,10 @@ char CMB_CityName[14];
 int16_t CMB_CityDamage;
 // WZD dseg:C41A
 SAMB_ptr SND_CMB_Silence;
+uint32_t SND_CMB_Silence_size;  // DNE in Dasm
 // WZD dseg:C41C
 SAMB_ptr SND_CMB_Music;
+uint32_t SND_CMB_Music_size;  // DNE in Dasm
 
 // WZD dseg:C41E
 int16_t CMB_DEFR_TrueSight;
@@ -1455,6 +1456,7 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
     {
 
         SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, ((MUSIC_Merlin_Cmbt1 - 1) + ((_players[CMB_AI_Player].wizard_id * 2) + Random(2))), World_Data);
+        SND_CMB_Music_size = lbxload_entry_length;
 
     }
     else
@@ -1463,13 +1465,15 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
         itr = (MUSIC_Combat_1 - 1) + Random(2);
 
         SND_CMB_Music = LBX_Reload_Next(cnst_MUSIC_File7, itr, World_Data);
+        SND_CMB_Music_size = lbxload_entry_length;
 
     }
 
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__WIP(SND_CMB_Music);
+        // DOMSDOS  Play_Sound__WIP(SND_CMB_Music);
+        sdl2_Play_Sound__WIP(SND_CMB_Music, SND_CMB_Music_size);
 
     }
 
@@ -2604,7 +2608,8 @@ int16_t Tactical_Combat__WIP(int16_t combat_attacker_player_idx, int16_t combat_
 
     Release_Time(1);
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     End_Of_Combat__WIP(Combat_Winner, item_count, item_list, Battle_Result);
 
@@ -3113,7 +3118,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
     int16_t Facing_Diff_X = 0;
     int16_t Move_Step_Index = 0;
     int16_t itr;  // _DI_
-
+    uint32_t Sound_Data_Seg_size = 0;  // DNE in Dasm 
 
     battle_unit_owner_idx = battle_units[battle_unit_idx].controller_idx;
 
@@ -3209,7 +3214,7 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
     battle_units[battle_unit_idx].Moving = ST_TRUE;
 
-// TODO  Sound_Data_Seg = BU_PrepMoveSound(battle_unit_idx);
+// OHDIO  Sound_Data_Seg = BU_PrepMoveSound(battle_unit_idx);
 // ; plays the silence sound if SFX are enabled, then
 // ; marks the World_Data@ allocation, loads the unit's
 // ; movement sound into it, finally undoing the
@@ -3260,7 +3265,8 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
             if(magic_set.sound_effects == ST_TRUE)
             {
-                Play_Sound__WIP(Sound_Data_Seg);
+                // Play_Sound__WIP(Sound_Data_Seg);
+                sdl2_Play_Sound__WIP(Sound_Data_Seg, Sound_Data_Seg_size);
             }
 
             if(magic_set.Movement_Anims == ST_TRUE)
@@ -3291,7 +3297,8 @@ void Move_Battle_Unit__WIP(int16_t battle_unit_idx, int16_t target_cgx, int16_t 
 
             if(magic_set.sound_effects == ST_TRUE)
             {
-                Play_Sound__WIP(SND_CMB_Silence);
+                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
+                sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
             }
 
             // TODO  BU_WallofFire(battle_unit_idx);
@@ -4125,9 +4132,10 @@ int16_t Combat__WIP(int16_t attacker_player_idx, int16_t defender_player_idx, in
             (magic_set.strategic_combat_only == ST_FALSE)
         )
         {
-            Stop_All_Sounds__STUB();
+            // DOMSDOS  Stop_All_Sounds__STUB();
             Battle_Outcome = Tactical_Combat__WIP(combat_attacker_player_idx, defender_idx, troops, troop_count, _combat_wx, _combat_wy, _combat_wp, &Item_Count, &Item_List[0]);
-            Play_Background_Music__STUB();
+            // DOMSDOS  Play_Background_Music__STUB();
+            sdl2_Play_Background_Music__WIP();
         }
         else
         {
@@ -14037,6 +14045,7 @@ int16_t Auto_Move_Ship(int16_t battle_unit_idx, int16_t Dest_X, int16_t Dest_Y, 
     int16_t itr_battle_units = 0;
     int16_t itr_grid = 0;  // _DI_
     int16_t DBG_path_cost = 0;
+    uint32_t Sound_Data_Seg_size = 0;  // DNE in Dasm
 
     if(_auto_combat_flag == ST_TRUE)
     {
@@ -14496,11 +14505,12 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound__WIP(SND_CMB_Silence);
+                                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
+                                sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
 
                                 Mark_Block(World_Data);
 
-                                // TODO  Sound_Data_Seg = BU_LoadMoveSound(battle_unit_idx);
+                                // OHDIO  Sound_Data_Seg = BU_LoadMoveSound(battle_unit_idx);
                                 // ; appends the movement sound effect of the specified
                                 // ; unit into the World_Data@ allocation
                                 // ; returns the segment pointer to the effect data
@@ -14521,7 +14531,8 @@ BUG: this has just been done in the parent function
                             if(Sound_Data_Seg != ST_UNDEFINED)
                             {
 
-                                Play_Sound__WIP((SAMB_ptr)Sound_Data_Seg);
+                                // DOMSDOS  Play_Sound__WIP(Sound_Data_Seg);
+                                sdl2_Play_Sound__WIP(Sound_Data_Seg, Sound_Data_Seg_size);
 
                             }
 
@@ -14555,7 +14566,8 @@ BUG: this has just been done in the parent function
                             if(magic_set.sound_effects == ST_TRUE)
                             {
 
-                                Play_Sound__WIP(SND_CMB_Silence);
+                                // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
+                                sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
 
                             }
 
@@ -20847,7 +20859,8 @@ void CMB_ProcessVortices(void)
     unsigned int Vortex_Index = 0;
 
     if (magic_set.sound_effects == 1) {
-        Play_Sound__WIP(SND_CMB_Silence);
+        // DOMSDOS  Play_Sound__WIP(SND_CMB_Silence);
+        sdl2_Play_Sound__WIP(SND_CMB_Silence, SND_CMB_Silence_size);
         Mark_Block(World_Data);
         SND_SpellCast = LBX_Reload_Next(cnst_SOUNDFX_File2, SFX_Flyer_S, World_Data);
         Release_Block(World_Data);
@@ -20934,8 +20947,10 @@ void CMB_VortexMovement(int Vortex_Index, int Next_X, int Next_Y)
     vortex->Prev_or_Next_X = Next_X;
     vortex->Prev_or_Next_Y = Next_Y;
 
-    if (magic_set.sound_effects == 1) {
-        Play_Sound__WIP(SND_SpellCast);
+    if(magic_set.sound_effects == 1)
+    {
+        // DOMSDOS  Play_Sound__WIP(SND_SpellCast);
+        sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
     }
 
     // Animate the vortex movement

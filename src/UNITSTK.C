@@ -1325,7 +1325,7 @@ int16_t Unit_Action_Special_Meld(int16_t troop_count, int16_t troops[])
     int16_t unit_idx;
     int16_t itr_troops;  // _DI_
 
-    node_idx = TILE_HasNode(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp);
+    node_idx = Get_Map_Square_Magic_Node(_UNITS[troops[0]].wx, _UNITS[troops[0]].wy, _UNITS[troops[0]].wp);
 
     unit_owner = _UNITS[troops[0]].owner_idx;
 
@@ -1437,7 +1437,7 @@ void STK_DoMeldWithNode(int16_t troop_count, int16_t troops[])
 
     unit_idx = troops[0];
 
-    node_idx = TILE_HasNode(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+    node_idx = Get_Map_Square_Magic_Node(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
 
     if((_NODES[node_idx].Meld_Flags & M_Warped) != 0)
     {

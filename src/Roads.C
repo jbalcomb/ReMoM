@@ -72,6 +72,9 @@ int16_t roadbuild_ok_button_field;
 int16_t m_multi_colored_line_start;
 
 // WZD dseg:C130
+/*
+same cancel button used by surveyor, road build, and overland spell cast
+*/
 int16_t main_cancel_button_field;
 
 // WZD dseg:C132
@@ -150,7 +153,6 @@ void Road_Build_Screen(void)
         }
     }
 
-
     turns_to_build_road = Turns_To_Build_Road(unit_wx, unit_wy, _map_plane);
     // NOTE: can't be on ocean, so no check for -1
     if(m_construction_points > 0)
@@ -158,7 +160,6 @@ void Road_Build_Screen(void)
         turns_to_build_road /= m_construction_points;
         SETMIN(turns_to_build_road, 1);
     }
-
 
     m_turns_to_build_road = turns_to_build_road;
 
@@ -206,7 +207,6 @@ void Road_Build_Screen(void)
 
         scanned_field = Scan_Input();
 
-
         if(input_field_idx == main_cancel_button_field)
         {
             Play_Left_Click();
@@ -243,7 +243,6 @@ void Road_Build_Screen(void)
             Reset_Map_Draw();
             Road_Build_Path(target_wx, target_wy);
         }
-
 
         if(input_field_idx == _minimap_grid_field)
         {
@@ -301,12 +300,13 @@ void Road_Build_Screen_Add_Fields(void)
 
     _main_map_grid_field = INVALID_FIELD;
     _minimap_grid_field = INVALID_FIELD;
+
     roadbuild_ok_button_field = INVALID_FIELD;
 
-    // TODO  CRP_OVL_UU_Control_4 = INVALID_FIELD;
-    // TODO  CRP_OVL_UU_Control_3 = INVALID_FIELD;
-    // TODO  CRP_OVL_UU_Control_2 = INVALID_FIELD;
-    // TODO  CRP_OVL_UU_Control_1 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_4 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_3 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_2 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_1 = INVALID_FIELD;
 
     if(
         (_map_x == _prev_world_x)
@@ -314,7 +314,7 @@ void Road_Build_Screen_Add_Fields(void)
         (_map_y == _prev_world_y)
     )
     {
-        _main_map_grid_field = Add_Grid_Field(0, 20, 20, 18, 12, 10, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
+        _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
     }
 
     if(
@@ -323,7 +323,7 @@ void Road_Build_Screen_Add_Fields(void)
         (_map_y == _prev_world_y)
     )
     {
-        _minimap_grid_field = Add_Grid_Field(251, 21, 1, 1, 58, 30, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
+        _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
     main_cancel_button_field = Add_Button_Field(280, 181, str_empty_string__ovr069, cast_cancel_button, str_hotkey_C__ovr069[0], ST_UNDEFINED);

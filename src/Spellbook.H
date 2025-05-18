@@ -590,66 +590,6 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
 
 
 
-/*
-    WIZARDS.EXE  ovr132
-*/
-
-// WZD o132p01
-// sub_B4250()
-
-// WZD o132p02
-// sub_B4471()
-
-// WZD o132p03
-// CTY_ChaosRift()
-
-// WZD o132p04
-// WIZ_MeteorStorm()
-
-// WZD o132p05
-// CTY_StreamOfLife()
-
-// WZD o132p06
-int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_t Saved);
-
-// WZD o132p07
-// sub_B4E00()
-
-// WZD o132p08
-// sub_B50AE()
-
-// WZD o132p09
-// sub_B517B()
-
-// WZD o132p10
-// IDK_SplCst_sB529D()
-
-// WZD o132p11
-// WIZ_GreatWasting()
-
-// WZD o132p12
-// CTY_GaiasBlessing()
-
-// WZD o132p13
-// WIZ_Armageddon()
-
-// WZD o132p14
-// sub_B5D8E()
-
-// WZD o132p15
-// CTY_NightshadeDispel()
-
-// WZD o132p16
-// sub_B609C()
-
-// WZD o132p17
-// sub_B62F7()
-
-// WZD o132p18
-// sub_B6505()
-
-
-
 #ifdef __cplusplus
 }
 #endif

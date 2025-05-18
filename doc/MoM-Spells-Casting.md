@@ -11,6 +11,46 @@ Next_Turn_Proc()
     |-> Cast_Spell_Overland__WIP()
 
 
+IDA Group Colors
+    sdt_Summoning           ( 0)  #24 reddish-brown
+    ...
+    sdt_Global_Enchantment  ( 9)  #13 ~ blue, greyish/greenish
+    ...
+    sdt_Crafting_Spell      (11)  #17 brown
+    ...
+    Banish_Spell            (23)
+
+
+
+## AITP_OVL_TileSpells__STUB()
+spl_Black_Wind
+spl_Change_Terrain
+spl_Corruption
+spl_Disenchant_Area
+spl_Disenchant_True
+spl_Enchant_Road
+spl_Fire_Storm
+spl_Floating_Island
+spl_Ice_Storm
+spl_Natures_Cures
+spl_PlaneShift
+spl_Raise_Volcano
+spl_Stasis
+spl_Transmute
+
+Cast_Spell_Target_Error(spell_idx)
+; if debug is enabled, quits the game with an error
+; stating the specified spell could not be found for
+; the computer player, indicating a missing AI target
+; picker function
+
+
+
+
+
+
+
+
 ## Cast_Spell_Overland__WIP()
 
 BEGIN:  Suppress Magic

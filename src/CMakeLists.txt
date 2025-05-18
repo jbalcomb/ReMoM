@@ -81,6 +81,7 @@ set(MOMLIB_SOURCES
     SETTLE.C
     special.C
     Spellbook.C
+    Spells132.C
     SPLMASTR.C
     Surveyor.C
     Terrain.C

@@ -1,4 +1,12 @@
 
+Earth Lore:
+Nature Instant. Casting Cost: 20 mana. Common.
+Fully reveals all of the terrain, terrain specials, cities and armies
+on all map squares in the targeted “map window.” (Hint: get as much
+“black” on the screen as possible before left-clicking to accept this
+spell.) This spell basically does your exploring for you, making huge
+expanses of the world permanently visible.
+
 
 
 TILE_ExploreRadius__WIP()   ==>  Set_Square_Explored_Flags_XYP_Range()

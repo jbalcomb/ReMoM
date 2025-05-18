@@ -165,7 +165,17 @@ void Set_Level_Screen_Help_List(void)
 }
 
 // WZD o104p16
-// HLPENTRY.LBX  ""
+// drake178: GUI_SetFullHelp()
+/*
+; a wrapper for GUI_SetHelp that passes it the offset
+; of the global help table, along with its maximum
+; entry count of 50 (but does not actually load any)
+*/
+// HLPENTRY.LBX  N/A
+void GUI_SetFullHelp(void)
+{
+    Set_Help_List((char *)&_help_entries[0], 50);
+}
 
 // WZD o104p17
 // HLPENTRY.LBX  ""
@@ -176,7 +186,12 @@ void Set_Outpost_Screen_Help_List(void)
 }
 
 // WZD o104p18
-// HLPENTRY.LBX  ""
+// HLPENTRY.LBX  "casting Help"
+void Set_Spell_Cast_Screen_Help_List(void)
+{
+    LBX_Load_Data_Static(hlpentry_lbx_file, 18, (SAMB_ptr)_help_entries, 0, 12, 10);
+    Set_Help_List((char *)&_help_entries[0], 12);
+}
 
 // WZD o104p19
 // HLPENTRY.LBX  "road Help"
@@ -225,5 +240,5 @@ void Set_Advisor_Screen_Help_List(void)
 void HLP_Load_HallofFame(void)
 {
     LBX_Load_Data_Static(hlpentry_lbx_file, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
-    Set_Help_List((char *)&_help_entries[0], 27);  // TODO  ¿ bug - someone put entry_num instead of help_count ?
+    Set_Help_List((char *)&_help_entries[0], 27);  // BUGBUG  ¿ someone put entry_num instead of help_count ?
 }

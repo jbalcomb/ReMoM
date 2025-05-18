@@ -18,6 +18,7 @@
 #include "MOX/LOADSAVE.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/MOX_T4.H"
 
@@ -1882,12 +1883,14 @@ void Main_Screen_Add_Fields(void)
 {
     int16_t itr_unit_stack;
 
-    // CRP_OVL_UU_Control_4 = INVALID_FIELD;
-    // CRP_OVL_UU_Control_3 = INVALID_FIELD;
-    // CRP_OVL_UU_Control_2 = INVALID_FIELD;
-    // CRP_OVL_UU_Control_1 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_4 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_3 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_2 = INVALID_FIELD;
+    // DONT  CRP_OVL_UU_Control_1 = INVALID_FIELD;
+
     _main_map_grid_field = INVALID_FIELD;
     _minimap_grid_field = INVALID_FIELD;
+
     _next_turn_button = INVALID_FIELD;
     _special_button = INVALID_FIELD;
     _patrol_button = INVALID_FIELD;
@@ -1917,17 +1920,18 @@ void Main_Screen_Add_Fields(void)
 
     }
 
-    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y))
     {
         _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
     }
 
-    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y) )
+    if((_map_x == _prev_world_x) && (_map_y == _prev_world_y))
     {
         _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
     Add_Game_Button_Fields();
+
     Add_Unit_Action_Fields();
 
 }
@@ -2337,7 +2341,8 @@ void Increment_Background_Music(void)
 
         if(background_music_num != m_background_music_num)
         {
-            Play_Background_Music__STUB();
+            // DOMSDOS  Play_Background_Music__STUB();
+            sdl2_Play_Background_Music__WIP();
         }
 
     }
@@ -2427,10 +2432,12 @@ int16_t Get_Background_Music(void)
 ; enabled, selects and starts playing the currently
 ; appropriate background track based on player power
 */
-void Play_Background_Music__STUB(void)
+// void Play_Background_Music__STUB(void)
+void sdl2_Play_Background_Music__WIP(void)
 {
     SAMB_ptr sound_seg;
     int16_t background_music_num;  // _SI_
+    uint16_t sound_seg_size = 0;  // DNE in Dasm
 
     if(magic_set.background_music == ST_TRUE)
     {
@@ -2441,9 +2448,10 @@ void Play_Background_Music__STUB(void)
         m_background_music_num = background_music_num;
 
         sound_seg = LBX_Reload(music_lbx_file__ovr058, background_music_num, SND_Music_Segment);
+        sound_seg_size = lbxload_entry_length;
 
         // DOMSDOS  Play_Sound__WIP(sound_seg);
-        sdl2_Play_Sound(sound_seg);
+        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
 
     }
     else

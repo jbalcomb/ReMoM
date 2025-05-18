@@ -114,7 +114,6 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
     int16_t itr_troops;  // _SI_
     int16_t leave_screen;  // _DI_
 
-    // ; resets the GFX_Swap_Seg allocation, then appends reserved EMM handle headers into it for unit and unit view graphics
     Cache_Graphics_Unit_List_Window();
 
     Load_Palette_From_Animation(_unitlist_background_seg);
@@ -204,15 +203,17 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
 
     Deactivate_Help_List();
 
-    // ; a wrapper for GUI_SetHelp that passes it the offset of the global help table, along with its maximum entry count of 50 (but does not actually load any)
-    // TODO  GUI_SetFullHelp();
+    GUI_SetFullHelp();  // DEDU  what does this accomplish?
 
     leave_screen = ST_FALSE;
+
     screen_changed = ST_FALSE;  // DNE in Dasm
 
     while(leave_screen == ST_FALSE)
     {
+
         Mark_Time();
+
         Clear_Fields();
 
         Unit_List_Window_Add_Fields(flag);

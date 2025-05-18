@@ -163,6 +163,12 @@ void Draw_World_Window(int16_t start_x, int16_t start_y, int16_t width, int16_t 
 // WZD o67p10
 void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_plane);
 
+// WZD o67p11
+void Add_Nodes_To_Entities_On_Map_Window(void);
+
+// WZD o67p12
+// OVL_DrawMapSection
+
 // WZD o67p13
 void Set_Unit_Draw_Priority(void);
 

@@ -351,7 +351,7 @@ enum SOUND_FX
 int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MIDI_IO, int16_t MIDI_IRQ, int16_t MIDI_DMA, int16_t digi_driver, int16_t Digi_IO, int16_t Digi_IRQ, int16_t Digi_DMA);
 
 // WZD s38p03
-int16_t Play_Sound__WIP(SAMB_ptr sound_buffer);
+int16_t Play_Sound__MSDOS(SAMB_ptr sound_buffer);
 
 // WZD s38p04
 void Set_Music_Volume__STUB(int16_t volume);

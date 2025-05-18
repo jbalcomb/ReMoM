@@ -39,6 +39,7 @@ enum e_Cursor_Image
 };
 
 
+// sizeof: 12
 struct s_mouse_list
 {
     int16_t image_num;  /* 2-byte, signed */

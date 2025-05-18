@@ -2,6 +2,7 @@
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_ITOA.H"  /* mox_itoa() */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -1193,23 +1194,25 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     int16_t height;
     int16_t ystart;
     int16_t xstart;
-
     int16_t bitm_x;  // _SI_
     int16_t bitm_y;  // _DI_
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
 
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
     Allocate_Reduced_Map();
-    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
+    Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
     Full_Draw_Main_Screen();
 
-
     Copy_On_To_Off_Page();
+
     GUI_String_1 = (char *)Near_Allocate_First(100);
     GUI_String_2 = (char *)Near_Allocate_Next(100);
+
     bldg_bitm_seg = Allocate_First_Block(_screen_seg, 500);
+
     strcpy(GUI_String_1, "The ");
     strcat(GUI_String_1, _city_size_names[_CITIES[_city_idx].size]);
     strcat(GUI_String_1, " of ");
@@ -1230,7 +1233,9 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
     if(magic_set.event_music == ST_TRUE)
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr054, MUSIC_Bldng_Finished, SND_Music_Segment);
-        Play_Sound__WIP(sound_seg);
+        sound_seg_size = lbxload_entry_length;
+        // DOMSDOS  Play_Sound__WIP(sound_seg);
+        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
     }
 
     bitm_x = 0;
@@ -1272,7 +1277,8 @@ void City_Built_Building_Message(int16_t x, int16_t y, int16_t city_idx, int16_t
         );
     }
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     IDK_Clear_Cityscape_Vanish_Percent();
 

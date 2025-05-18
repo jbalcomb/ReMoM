@@ -124,6 +124,7 @@ int MOM_main(int argc, char** argv)
     int16_t MIDI_DMA = 0;  // _DI_
     int16_t MIDI_DRV = 0;  // _SI_
     SAMB_ptr main_menu_music_seg;  // MGC
+    uint32_t main_menu_music_seg_size = 0;  // DNE in Dasm
 
     EMM_Pages_Reserved = 158;
 
@@ -375,11 +376,13 @@ int MOM_main(int argc, char** argv)
     // BEGIN: ~== Main Menu Screen
     CLS();
     CLS_ON();
-    Stop_Music__STUB();
+    // DOMSDOS  Stop_Music__STUB();
     main_menu_music_seg = LBX_Load(music_lbx__main, MUSIC_Main_Menu);
+    main_menu_music_seg_size = lbxload_entry_length;
     if(magic_set.background_music == ST_TRUE)
     {
-        Play_Sound__WIP(main_menu_music_seg);
+        // DOMSDOS  Play_Sound__WIP(main_menu_music_seg);
+        sdl2_Play_Sound__WIP(main_menu_music_seg, main_menu_music_seg_size);
     }
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();

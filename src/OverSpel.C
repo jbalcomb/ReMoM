@@ -7,8 +7,9 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/MOX_TYPE.H"
 
-#include "MOM.H"
+#include "Spells132.H"
 
 
 
@@ -140,6 +141,11 @@ int16_t Calculate_Dispel_Difficulty(int16_t casting_cost, int16_t player_idx, in
 /*
 */
 /*
+
+IDA Group Colors
+    sdt_Summoning          ( 0)  #24 reddish-brown
+    sdt_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
+    sdt_Crafting_Spell     (11)  #17 brown
 
 */
 void Cast_Spell_Overland__WIP(int16_t player_idx)
@@ -412,12 +418,6 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 // ptr_players_globals = &_players[player_idx].Globals[0];
 
 /*
-    IDA colors
-        sdt_Summoning          ( 0)  #24 reddish-brown
-
-        sdt_Global_Enchantment ( 9)  #13 ~ blue, greyish/greenish
-
-        sdt_Crafting_Spell     (11)  #17 brown
 
 */
 
@@ -445,7 +445,7 @@ void Cast_Spell_Overland__WIP(int16_t player_idx)
 
                             AI_Eval_After_Spell = ST_TRUE;
 
-                            // TODO  Cast_FloatingIsland(player_idx);
+                            Cast_Floating_Island(player_idx);
 
                         }
                         else

@@ -14,6 +14,7 @@ NOTE: IDGI, but the FanDom MoM Wiki uses the term "Encounter Zone"
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MOM.H"
@@ -259,6 +260,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
     int16_t Reward_Items[3] = { 0, 0, 0 };
     int16_t treasure_window_y = 0;
     int16_t Encounter_Outcome = 0;
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
 
     Clear_Fields();
 
@@ -272,14 +274,17 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         if (magic_set.event_music == ST_TRUE)
         {
             sound_seg = LBX_Reload(music_lbx_file__ovr083, MUSIC_Site_Discovery, SND_Music_Segment);
-            Play_Sound__WIP(sound_seg);
+            sound_seg_size = lbxload_entry_length;
+            // DOMSDOS  Play_Sound__WIP(sound_seg);
+            sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
         }
 
         Encounter_Outcome = Do_Lair_Confirm(lair_idx);
 
         Set_Bit_Field(1, &_LAIRS[lair_idx].Misc_Flags);
 
-        Play_Background_Music__STUB();
+        // DOMSDOS  Play_Background_Music__STUB();
+        sdl2_Play_Background_Music__WIP();
     }
 
     if(Encounter_Outcome == ST_FALSE)

@@ -2755,10 +2755,9 @@ extern struct s_SPELL_DATA * spell_data_table;
 // WZD dseg:9130
 extern SAMB_ptr spell_animation_seg;
 
-// WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
-// WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
-// WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
+// WZD dseg:9132
 extern SAMB_ptr SND_SpellCast;
+extern int16_t SND_SpellCast_size;
 
 // WZD dseg:9134
 extern SAMB_ptr SND_Spell_Music;

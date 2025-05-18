@@ -3,7 +3,6 @@
         ovr128
         ovr117
         ovr130
-        ovr132
 */
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
@@ -11,12 +10,13 @@
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/SOUND.H"
 
-#include "MOM.H"
-#include "malloc.h"  // ¿ this is included in MoX_Lib.H, but CLang is complaining ?
+#include "MOX/MOM_Data.H"
 
 #include "MainScr.H"   /* Allocate_Reduced_Map(); */
 #include "SBookScr.H"  /* Spellbook_Screen_Draw(); */
 // TODO  #include ...  /* CMB_RedrawSpellbook(); */
+
+#include <stdlib.h>     /* abs(); itoa(); malloc(); */
 
 
 
@@ -148,22 +148,6 @@ char cnst_Research_Cost[] = "Research Cost:";
 // WZD dseg:5E90 00 00                                           dw 0
 
 // WZD dseg:5E90                                                 END:  ovr118 - Initialized Data
-
-
-
-// WZD dseg:68A0                                                 ¿ BEGIN:  ovr132 - Strings ?
-
-// WZD dseg:68A0
-char message_lbx_file__ovr132[] = "message";
-// WZD dseg:68A8
-char names_lbx_file__ovr132[] = "NAMES";
-// WZD dseg:68AE
-char cnst_PlaneShift_2[] = "Plane Shift";
-// WZD dseg:68BA
-char soundfx_lbx_file__ovr132[] = "soundfx";
-
-// WZD dseg:68BA                                                 ¿ END:  ovr132 - Strings ?
-
 
 
 
@@ -1631,11 +1615,13 @@ void Learn_Spell_Animation(int16_t spell_idx, int16_t research_flag)
 
         if(magic_set.background_music == ST_TRUE)
         {
-            Stop_All_Sounds__STUB();
+            // DOMSDOS  Stop_All_Sounds__STUB();
 
             SND_Spell_Music = LBX_Reload(music_lbx_file__ovr118, MUSIC_New_Spell, SND_Music_Segment);
+            SND_Spell_Music_size = lbxload_entry_length;
 
-            Play_Sound__WIP(SND_Spell_Music);
+            // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
+            sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
 
         }
 
@@ -3683,139 +3669,3 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 
 // WZD o130p18
 // sub_B1ABE()
-
-
-
-/*
-    WIZARDS.EXE  ovr132
-*/
-
-// WZD o132p01
-// sub_B4250()
-
-// WZD o132p02
-// sub_B4471()
-
-// WZD o132p03
-// CTY_ChaosRift()
-
-// WZD o132p04
-// WIZ_MeteorStorm()
-
-// WZD o132p05
-// CTY_StreamOfLife()
-
-// WZD o132p06
-// ¿ MoO2  Module: OFFICER  Set_Officer_To_Player_()
-// Hire_Officer_() |-> Set_Officer_To_Player_()  ...Hire_Officer_() handles the officer cost
-/*
-
-    assumes (_units - 1)
-
-unit_type_idx is passed over all the wzay from Hire_Hero_Popup()
-so, not quite 'Generate Random Hero'
-
-
-XREF:
-    sub_B4250()
-    sub_B4471()
-    sub_B4E00()
-    j_WIZ_HireHero()
-        Hire_Hero_Popup()
-        AI_Accept_Hero()
-e.g.,
-    Hire_Hero_Popup()
-        |-> j_WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, 0)
-
-    void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type_idx)
-        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
-
-"Hire" as in "Summon"
-*/
-int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
-{
-    int16_t itr;
-
-    Create_Unit__WIP(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
-
-    _UNITS[(_units - 1)].Finished = 0;
-
-    _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;
-
-    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;
-
-    _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
-
-    Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots);
-
-    for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
-    {
-        _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].Items[itr] = ST_UNDEFINED;
-    }
-
-    if(saved_flag == ST_TRUE)
-    {
-        if(player_idx == HUMAN_PLAYER_IDX)
-        {
-            strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
-            _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
-            _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
-        }
-        else
-        {
-            LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
-            _UNITS[(_units - 1)].Level = abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level);
-            _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
-        }
-    }
-    else
-    {
-        LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
-        SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, HL_GRANDLORD);
-    }
-
-    _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
-    _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
-
-    // BUG  Did this used to do something different? What tests it?
-    // may be is/was success status as in cast the spell
-    // NOTE(JimBalcomb,202409090905): AI_Accept_Hero() tests this
-    return ST_TRUE;
-}
-
-
-// WZD o132p07
-// sub_B4E00()
-
-// WZD o132p08
-// sub_B50AE()
-
-// WZD o132p09
-// sub_B517B()
-
-// WZD o132p10
-// IDK_SplCst_sB529D()
-
-// WZD o132p11
-// WIZ_GreatWasting()
-
-// WZD o132p12
-// CTY_GaiasBlessing()
-
-// WZD o132p13
-// WIZ_Armageddon()
-
-// WZD o132p14
-// sub_B5D8E()
-
-// WZD o132p15
-// CTY_NightshadeDispel()
-
-// WZD o132p16
-// sub_B609C()
-
-// WZD o132p17
-// sub_B62F7()
-
-// WZD o132p18
-// sub_B6505()

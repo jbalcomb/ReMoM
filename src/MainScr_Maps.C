@@ -804,6 +804,80 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t wp)
 }
 
 
+// WZD o67p11
+void Add_Nodes_To_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t var_4 = 0;
+    int16_t node_wy = 0;
+    int16_t itr = 0;  // _CX_
+    int16_t node_wx = 0;  // _DI_
+
+    for(itr = 0; itr < NUM_NODES; itr++)
+    {
+
+        if(_NODES[itr].wp == wp)
+        {
+
+            if(SQUARE_EXPLORED(wx,wy,wp))
+            {
+
+                if(
+                    (node_wy = _NODES[itr].wy >= wy)
+                    &&
+                    ((wy + MAP_HEIGHT) > node_wy)
+                )
+                {
+
+                    var_4 = ST_FALSE;
+
+                    node_wy = (_NODES[itr].wy - wy);
+
+                    node_wx = _NODES[itr].wx;
+
+                    if(
+                        (node_wx >= wx)
+                        &&
+                        ((wx + MAP_WIDTH) > node_wx)
+                    )
+                    {
+                        node_wx -= wx;
+                        var_4 = ST_TRUE;
+                    }
+                    else
+                    {
+                        node_wx += WORLD_WIDTH;
+                        if(
+                            (node_wx >= wx)
+                            &&
+                            ((wx + MAP_WIDTH) > node_wx)
+                        )
+                        {
+                            node_wx -= wx;
+                            var_4 = ST_TRUE;
+                        }
+
+                    }
+
+                    if(var_4 == ST_TRUE)
+                    {
+
+                        entities_on_movement_map[((node_wy * MAP_WIDTH) + node_wx)] = (1100 + itr);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+// WZD o67p12
+// OVL_DrawMapSection
+
 // WZD o67p13
 /*
     updates draw priority on ALL units in _UNITS

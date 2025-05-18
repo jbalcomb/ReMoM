@@ -9,6 +9,7 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MOM.H"
@@ -69,6 +70,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
     int16_t Result;
     int16_t city_idx = 0;  // _SI_
     int16_t itr_players;  // _DI_
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
 // TODO  warning: variable 'city_idx' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
  
     Result = Map_Square_Survey(outpost_wx, outpost_wy, outpost_wp);
@@ -105,21 +107,21 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
 
             if(outpost_owner == _human_player_idx)
             {
-                Stop_All_Sounds__STUB();
+                // DOMSDOS  Stop_All_Sounds__STUB();
 
                 if(magic_set.event_music == ST_TRUE)
                 {
                     sound_seg = LBX_Reload(music_lbx_file__ovr077, MUSIC_New_Outpost, SND_Music_Segment);
-                    Play_Sound__WIP(sound_seg);
+                    sound_seg_size = lbxload_entry_length;
+                    // DOMSDOS  Play_Sound__WIP(sound_seg);
+                    sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
                 }
 
                 // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);
-                // ; displays and processes the new outpost naming dialog,
-                // ; suggesting a default name, and falling back to it if
-                // ; nothing is entered
                 Change_City_Name_Popup(_city_idx, outpost_owner);
 
-                Play_Background_Music__STUB();
+                // DOMSDOS  Play_Background_Music__STUB();
+                sdl2_Play_Background_Music__WIP();
 
                 Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 2);
 

@@ -372,11 +372,11 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 /*
     gets the uint16_t 'Terrain Type' from _world_maps
 */
-#define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_)  ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
+#define GET_TERRAIN_TYPE(_wx_, _wy_, _wp_)  ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) )
 // terrain_type = (*( (uint16_t *)(_world_maps + ( (wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + (wx) )) ) % NUM_TERRAIN_TYPES);
 // NOWORKIE  #define TERRAIN_TYPE(_wx_, _wy_, _wp_)      ( (*( (uint16_t *)(_world_maps + ( ((_wp_) * WORLD_SIZE) + ((_wy_) * WORLD_WIDTH) + (_wx_) )) ) % NUM_TERRAIN_TYPES) )
-#define TERRAIN_TYPE_INDEX(_wx_, _wy_, _wp_)  ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)))                     )
-#define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) % NUM_TERRAIN_TYPES )
+#define TERRAIN_TYPE_INDEX(_wx_, _wy_, _wp_)  ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2)))                     )
+#define TERRAIN_TYPE(_wx_, _wy_, _wp_)        ( (int16_t)GET_2B_OFS(_world_maps, (((_wp_) * WORLD_SIZE * 2) + ((_wy_) * WORLD_WIDTH * 2) + ((_wx_) * 2))) % NUM_TERRAIN_TYPES )
 
 // #define SET_TERRAIN_TYPE(_terrain_type_) do { SET_2B_OFS(_world_maps, ((wp * WORLD_SIZE * 2) + (wy * WORLD_WIDTH * 2) + (wx * 2)), (_terrain_type_)) } while (0)
 /*
@@ -437,6 +437,39 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 
 // ovr094:06CF 26 F6 07 20                                     test    [byte ptr es:bx], TF_Corruption
 // 26 F6 07 40                                     test    [byte ptr es:bx], TF_Unk_40
+
+
+
+
+/*
+entities_on_movement_map
+
+
+loc_5C6B6:
+mov     ax, [_main_map_grid_y]
+mov     dx, e_MAP_WIDTH_DB
+imul    dx
+mov     dx, [_main_map_grid_x]
+shl     dx, 1
+add     ax, dx
+mov     bx, ax
+mov     _SI_entity_idx, [entities_on_movement_map+bx]
+
+*/
+// #define GET_MOVEMENT_MAP_ENTITY(_wx_, _wy_, _wp_)         ( entities_on_movement_map[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ]             )
+// #define SET_MOVEMENT_MAP_FLAG(_wx_, _wy_, _wp_, _value_)  ( entities_on_movement_map[ ( ( (_wp_) * WORLD_SIZE ) + ( (_wy_) * WORLD_WIDTH ) + (_wx_) ) ] = (_value_) )
+#define GET_MAIN_MAP_ENTITY()              ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ]                  )
+#define SET_MAIN_MAP_ENTITY(_entity_idx_)  ( entities_on_movement_map[ ( ( (_main_map_grid_y) * MAP_WIDTH ) + (_main_map_grid_x) ) ] = (_entity_idx_) )
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1298,11 +1298,13 @@ void Set_Level_Screen_Help_List(void);
 
 
 // WZD o104p16
+void GUI_SetFullHelp(void);
 
 // WZD o104p17
 void Set_Outpost_Screen_Help_List(void);
 
 // WZD o104p18
+void Set_Spell_Cast_Screen_Help_List(void);
 
 // WZD o104p19
 void Set_Road_Build_Screen_Help_List(void);

@@ -228,7 +228,7 @@ void Diplomacy_Screen__STUB(void)
 
 
     // @@leave_screen
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
     Deactivate_Auto_Function();
     Clear_Fields();
     current_screen = scr_Magic_Screen;
@@ -237,7 +237,8 @@ void Diplomacy_Screen__STUB(void)
     // TODO  GAME_ReloadWorldData();
     // TODO  GAME_CheckResearch(1);
     GFX_Swap_Cities();
-    Play_Background_Music__STUB();
+    // DOSMSODS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     // @@done
 

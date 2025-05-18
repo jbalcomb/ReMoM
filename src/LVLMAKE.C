@@ -7,6 +7,7 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MOM.H"
@@ -150,7 +151,8 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     int16_t leave_screen;
     int16_t itr;  // _SI_
     int16_t xmin;  // _DI_
-
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
+    
     if(_UNITS[unit_idx].Level > MAX_LEVEL_HERO)
     {
         return;
@@ -192,7 +194,9 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     if(magic_set.event_music == ST_TRUE)
     {
         sound_seg = LBX_Reload(music_lbx_file__ovr102, MUSIC_Fanfare, SND_Music_Segment);
-        Play_Sound__WIP(sound_seg);
+        sound_seg_size = lbxload_entry_length;
+        // DOMSDOS  Play_Sound__WIP(sound_seg);
+        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
     }
 
     GUI_String_1 = (char *)Near_Allocate_First(100);
@@ -291,7 +295,8 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
     Deactivate_Auto_Function();
     Allocate_Reduced_Map();
     OVL_MosaicFlip__STUB();
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
 }
 

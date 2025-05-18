@@ -54,7 +54,7 @@ void o59p10_empty_function(void);
 // sub_520DD()
 
 // WZD o59p12
-int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp);
+int16_t Get_Map_Square_Magic_Node(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o59p13
 void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p);

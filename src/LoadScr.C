@@ -682,7 +682,8 @@ void Loaded_Game_Update(void)
     _unit_stack_count = 0;
 
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
 
     GFX_Swap_Cities();

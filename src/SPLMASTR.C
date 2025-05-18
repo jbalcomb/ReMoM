@@ -11,6 +11,7 @@ MoO2
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MOM.H"
@@ -602,14 +603,16 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
     int16_t input_field_idx;
     int16_t full_screen_field;
 
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr137, (MUSIC_Weak_Summon + magic_realm_spell_idx), SND_Music_Segment);
+    SND_Spell_Music_size = lbxload_entry_length;
 
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__WIP(SND_Spell_Music);
+        // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -676,7 +679,8 @@ void IDK_SummonAnim(int16_t unit_type, int16_t magic_realm_spell_idx, int16_t pl
 
     Release_Block(_screen_seg);
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -975,7 +979,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     int16_t fullscreen_ESC_field = 0;
     int16_t input_field_idx = 0;
 
-    // SPELLY  Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
     if(spell_idx == spl_Death_Wish)
     {
@@ -1009,7 +1013,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
     {
 
         // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-        sdl2_Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -1104,7 +1108,8 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     Stop_All_Sounds__STUB();
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     OVL_MosaicFlip__STUB();
 
@@ -1323,7 +1328,7 @@ void Spell_Of_Mastery_Lose(void)
     if(magic_set.background_music == ST_TRUE)
     {
         // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
-        sdl2_Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Set_Mouse_List(1, mouse_list_none);
@@ -1457,7 +1462,7 @@ void SoM_Started(int16_t player_idx)
     if(magic_set.background_music == ST_TRUE)
     {
         // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
-        sdl2_Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Clear_Fields();
@@ -1472,9 +1477,10 @@ void SoM_Started(int16_t player_idx)
 
     }
 
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     Fade_Out();
 
@@ -1628,7 +1634,7 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     cast_spell_of_mastery_player_idx = player_idx;
 
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
     SND_Spell_Music = LBX_Reload(music_lbx_file__ovr138, MUSIC_SoM_Started, SND_Music_Segment);  // MUSIC.LBX, 012 "MOM62 XM"    "Spell Mastery Started"
     SND_Spell_Music_size = lbxload_entry_length;
@@ -1655,8 +1661,8 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     if(magic_set.background_music == ST_TRUE)
     {
-        // DOMSDOS Play_Sound__STUB(SND_Spell_Music);
-        sdl2_Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
+        // DOMSDOS  Play_Sound__STUB(SND_Spell_Music);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
     }
 
     Clear_Fields();
@@ -1724,9 +1730,10 @@ void Spell_Of_Mastery(int16_t player_idx)
 
     }
 
-    // SPELLY  Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
-    // SPELLY  Play_Background_Music__STUB();
+    // DOMSDOS Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     Fade_Out();
 

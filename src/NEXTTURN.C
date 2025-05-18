@@ -3781,8 +3781,9 @@ void Players_Check_Spell_Research(void)
 
                 if(IDK == ST_TRUE)
                 {
-                    Stop_All_Sounds__STUB();
-                    Play_Background_Music__STUB();
+                    // DOMSDOS  Stop_All_Sounds__STUB();
+                    // DOMSDOS  Play_Background_Music__STUB();
+                    sdl2_Play_Background_Music__WIP();
                 }
 
             }
@@ -3873,7 +3874,7 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
     }
     else
     {
-        // BUG  ¿ refactor or this just shouldn't being doing the same as above ?
+        // BUGBUG  ¿ refactor or this just shouldn't being doing the same as above ?
         for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
         {
             if(_players[player_idx].research_spells[itr] == _players[player_idx].researching_spell_idx)
@@ -3897,8 +3898,9 @@ void WIZ_LearnSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t New_Rese
 
         if(Was_Research_Target == ST_FALSE)
         {
-            Stop_All_Sounds__STUB();
-            Play_Background_Music__STUB();
+            // DOMSDOS  Stop_All_Sounds__STUB();
+            // DOMSDOS  Play_Background_Music__STUB();
+            sdl2_Play_Background_Music__WIP();
         }
 
     }

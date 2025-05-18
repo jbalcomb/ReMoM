@@ -1118,10 +1118,10 @@ Learn_Spell_Animation()
 */
 SAMB_ptr spell_animation_seg;
 
-// WZD dseg:9132 00 00                                           SND_SpellCast@ dw 0                     ; DATA XREF: GAME_LoadSpellSound+7Cw ...
-// WZD dseg:9132                                                                                         ; appended into World_Data@ during combat, or the
-// WZD dseg:9132                                                                                         ; Sandbox overland (-1 if none or SFX are disabled)
+// WZD dseg:9132
+// (-1 if none or SFX are disabled)
 SAMB_ptr SND_SpellCast;
+int16_t SND_SpellCast_size;  // DNE in Dasm
 
 // WZD dseg:9134
 // drake178: SND_Spell_Music
@@ -1680,6 +1680,9 @@ SAMB_ptr cast_button_border;
 // MAIN.LBX,47  C&RBORDR    cast button border
 
 // WZD dseg:9526
+/*
+same cancel button used by surveyor, road build, and overland spell cast
+*/
 SAMB_ptr cast_cancel_button;
 // MAIN.LBX,41  CASTCNCL    cast cancel button
 
@@ -2610,11 +2613,20 @@ set in Next_Unit_Nearest_Available()
 int16_t _active_world_y;    // AKA OVL_Map_CenterY
 int16_t _active_world_x;    // AKA OVL_Map_CenterX
 
-// WZD dseg:BD86 
+// WZD dseg:BD86
+/*
+~ global wp
+*/
 int16_t _map_plane;     // AKA _world_plane
 // WZD dseg:BD88 
+/*
+~ global wy
+*/
 int16_t _map_y;         // AKA _curr_world_y
 // WZD dseg:BD8A 
+/*
+~ global wx
+*/
 int16_t _map_x;         // AKA _curr_world_x
 
 // WZD dseg:BD8C

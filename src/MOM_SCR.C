@@ -11,6 +11,7 @@
 #include "MOX/LOADSAVE.H"
 #include "MOX/MOX_SET.H"  /* magic_set */
 #include "MOX/Mouse.H"
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 #include "MOX/Video.H"
 
@@ -80,6 +81,8 @@ void Screen_Control(void)
             Load_SAVE_GAM(-1);  // SAVETEST.GAM
 
             TST_Validate_GameData();
+
+            TST_Patch_Game_Data();
             
             Loaded_Game_Update();
 
@@ -108,11 +111,12 @@ Release_Cities_Data();
             {
                 if(magic_set.background_music == ST_TRUE)
                 {
-                    Play_Background_Music__STUB();
+                    // DOMSDOS  Play_Background_Music__STUB();
+                    sdl2_Play_Background_Music__WIP();
                 }
                 else
                 {
-                    Stop_Music__STUB();
+                    // DOMSDOS  Stop_Music__STUB();
                 }
             }
 

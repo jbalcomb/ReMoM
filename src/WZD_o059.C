@@ -349,10 +349,17 @@ void o59p10_empty_function(void)
 
 
 // WZD o59p12
-int16_t TILE_HasNode(int16_t wx, int16_t wy, int16_t wp)
+/*
+; returns the index (into Node_Table@) of the node if
+; the tile has one, or -1 if it doesn't
+*/
+/* 
+
+*/
+int16_t Get_Map_Square_Magic_Node(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t node_idx;  // _SI_
-    int16_t itr;  // _CX_
+    int16_t node_idx = 0;  // _SI_
+    int16_t itr = 0;  // _CX_
 
     node_idx = ST_UNDEFINED;
 

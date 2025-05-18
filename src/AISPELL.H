@@ -79,7 +79,7 @@ void AI_Compute_Spells_Info(int16_t player_idx);
 // AITP_Transmute()
 
 // WZD o156p19
-// AITP_ChangeTerrain()
+int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p20
 // AITP_MoveFortress()
@@ -133,7 +133,7 @@ void AI_Compute_Spells_Info(int16_t player_idx);
 // UU_DBG_GetKnownSpells()
 
 // WZD o156p37
-// CRP_DBG_SpellTargetError()
+void Cast_Spell_Target_Error(int16_t spell_idx);
 
 // WZD o156p38
 void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
@@ -157,13 +157,13 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 // sub_E88F3()
 
 // WZD o156p45
-// AITP_OVL_TileSpells()
+int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx);
 
 // WZD o156p46
 // AITP_OVL_HarmStack()
 
 // WZD o156p47
-// AITP_FloatingIsland()
+int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp);
 
 // WZD o156p48
 // AITP_EnchantRoad()
@@ -193,7 +193,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx);
 // AI_MyrrorAdvantage()
 
 // WZD o156p57
-// TILE_IsOcean()
+int16_t Map_Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o156p58
 // sub_EA61E()

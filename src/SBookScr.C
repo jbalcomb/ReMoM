@@ -9,6 +9,7 @@
 
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "MOM.H"
@@ -22,8 +23,7 @@
 
 
 
-// WZD dseg:6994                                                 ¿ BEGIN: SPELLSCR || Spellbook Screen - Initialized Data ?
-// WZD dseg:6994                                                 BEGIN:  ovr134
+// WZD dseg:6994                                                 BEGIN:  ovr134 - Initialized Data
 
 // WZD dseg:6994
 // REDEF  char hlpentry_lbx_file [] = "hlpentry";
@@ -47,7 +47,7 @@ char _msg_abort_3[] = " spell?";
 char message_lbx_file__ovr134[] = "message";
 
 // WZD dseg:69CE
-char specfx_lbx_file__ovr134[] = "Specfx";
+char specfx_lbx_file__ovr134__1of3[] = "Specfx";
 
 // WZD dseg:69D5
 char music_lbx_file__ovr134[] = "MUSIC";
@@ -63,59 +63,24 @@ char cnst_CounterMsg2_2[] = " spell has caused ";
 // WZD dseg:69FB
 char cnst_CounterMsg6_2[] = " spell to fizzle.";
 
-// WZD dseg:6A0D 63 6D 62 74 66 78 00                            cnst_CMBTFX_File4 db 'cmbtfx',0         ; DATA XREF: GAME_LoadSpellAnim+41o ...
-// WZD dseg:6A14 73 70 65 63 66 78 00                            cnst_SPECFX_File8 db 'specfx',0         ; DATA XREF: GAME_LoadSpellAnim+1E4o ...
-// WZD dseg:6A1B 53 50 45 43 46 58 00                            cnst_SPECFX_File9 db 'SPECFX',0         ; DATA XREF: GAME_LoadSpellAnim+18Bo
-// WZD dseg:6A22 43 4D 42 54 46 58 00                            cnst_CMBTFX_File5 db 'CMBTFX',0         ; DATA XREF: GAME_LoadSpellAnim+1F2o
-// WZD dseg:6A29 53 4F 55 4E 44 46 58 00                         cnst_SOUNDFX_FileB db 'SOUNDFX',0       ; DATA XREF: SPL_LoadSoundEffect+39o
-// WZD dseg:6A31 4E 45 57 53 4F 55 4E 44 00                      cnst_NEWSOUND_File3 db 'NEWSOUND',0     ; DATA XREF: SPL_LoadSoundEffect+5Co
-// WZD dseg:6A3A 73 6F 75 6E 64 66 78 00                         cnst_SOUNDFX_FileC db 'soundfx',0       ; DATA XREF: sub_BA1AF+1Co
+// WZD dseg:6A0D
+char cmbtfx_lbx_file__ovr134__1of2[] = "cmbtfx";
+// WZD dseg:6A14
+char specfx_lbx_file__ovr134__2of3[] = "specfx";
+// WZD dseg:6A1B
+char specfx_lbx_file__ovr134__3of3[] = "SPECFX";
+// WZD dseg:6A22
+char cmbtfx_lbx_file__ovr134__2of2[] = "CMBTFX";
 
-// WZD dseg:6A3A                                                 END:  ovr134                            ; should use dseg:29fd
+// WZD dseg:6A29
+char soundfx_lbx_file__ovr134__1of2[] = "SOUNDFX";
+// WZD dseg:6A31
+char newfound_lbx_file__ovr134[] = "NEWSOUND";
 
+// WZD dseg:6A3A
+char soundfx_lbx_file__ovr134__2of2[] = "soundfx";
 
-
-
-/*
-    WIZARDS.EXE  ovr134
-*/
-
-// WZD o134p01
-void Spell_Screen_Load(void);
-
-// WZD o134p02
-// PUBLIC  void Spellbook_Screen_Draw(void);
-
-// WZD o134p03
-// PUBLIC  void Spellbook_Screen(void);
-
-// WZD o134p04
-// WIZ_SetOverlandSpell()
-
-// WZD o134p05
-// sub_B9837()
-
-// WZD o134p06
-// Full_Draw_Main_Screen()
-
-// WZD o134p07
-// drake178: OVL_MosaicFlip()
-void OVL_MosaicFlip__STUB(void);
-
-// WZD o134p08
-// OVL_CounterMessage()
-
-// WZD o134p09
-// sub_B9D14()
-
-// WZD o134p10
-// GAME_LoadSpellAnim()
-
-// WZD o134p11
-// SPL_LoadSoundEffect()
-
-// WZD o134p12
-// sub_BA1AF()
+// WZD dseg:6A3A                                                 END:  ovr134 - Initialized Data
 
 
 
@@ -126,7 +91,6 @@ void OVL_MosaicFlip__STUB(void);
 // WZD o134p01
 void Spell_Screen_Load(void)
 {
-
     Allocate_Reduced_Map();
     Set_Page_Off();
     Reset_Map_Draw();
@@ -136,18 +100,14 @@ void Spell_Screen_Load(void)
     Copy_Off_To_Back();
     Set_Page_On();
     LBX_Load_Data_Static(hlpentry_lbx_file, 0, (SAMB_ptr)_help_entries, 0, 15, 10);  // "Spell Book Help"
-
 }
 
 
 // WZD o134p02
 void Spellbook_Screen_Draw(void)
 {
-
     Copy_Back_To_Off();
-
     SmlBook_Draw__WIP(16, 10);
-
 }
 
 
@@ -805,15 +765,17 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
     Mark_Block(_screen_seg);
 
     // SPECFX.LBX, 050  "FIZZLE"    ""
-    fizzle_seg = LBX_Reload_Next(specfx_lbx_file__ovr134, 50, _screen_seg);
+    fizzle_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__1of3, 50, _screen_seg);
 
     // MUSIC.LBX, 017 "MOM53 XM"    "Spell Failure Theme"
     SND_Spell_Music = LBX_Reload_Next(music_lbx_file__ovr134, MUSIC_Spell_Failure, _screen_seg);
+    SND_Spell_Music_size = lbxload_entry_length;  // DNE in Dasm
 
     if(magic_set.background_music == ST_TRUE)
     {
 
-        Play_Sound__WIP(SND_Spell_Music);
+        // DOMSDOS  Play_Sound__WIP(SND_Spell_Music);
+        sdl2_Play_Sound__WIP(SND_Spell_Music, SND_Spell_Music_size);
 
     }
 
@@ -880,9 +842,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     PageFlip_FX();
 
-
     Notify2(160, 80, 1, GUI_NearMsgString, 0, fizzle_seg, ST_UNDEFINED, 7, 0, 0, 0, 1, 0);
-
 
     Allocate_Reduced_Map();
 
@@ -892,9 +852,10 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     PageFlip_FX();
 
-    Stop_All_Sounds__STUB();
+    // DOMSDOS  Stop_All_Sounds__STUB();
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     Release_Block(_screen_seg);
 
@@ -902,13 +863,365 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
 
 // WZD o134p09
-// sub_B9D14()
+// drake178: sub_B9D14()
+// IDK_Spell_Cityscape_1__Load_Music
+/*
+OON XREF  IDK_Spell_Cityscape_1()
+*/
 
 // WZD o134p10
-// GAME_LoadSpellAnim()
+// drake178: GAME_LoadSpellAnim()
+/*
+; loads and appends the animation corresponding to the
+; selected spell into the LBX_Sandbox_Segment after
+; reallocating the battle figure space, assigning its
+; segment pointer to the IMG_GAME_SpellAnim@ global
+; returns 1 for Black Wind, Earth to Mud, and spells
+; loading the generic realm effects; or 0 otherwise
+; (indicates the draw location for the animation)
+; CAN'T LOAD MULTIPLE ANIMATIONS ONE AFTER THE OTHER!
+*/
+int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx)
+{
+    int16_t l_spell_idx = 0;
+    int16_t return_value = 0;  // _DI_
+
+    Allocate_Next_Block(_screen_seg, 1010);  // 1,010 PR  16,160 B
+
+    return_value = ST_FALSE;
+
+    l_spell_idx = spell_idx;
+
+    switch(l_spell_idx)
+    {
+        case spl_Earth_to_Mud:
+        {
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 14, _screen_seg);
+            return_value = ST_TRUE;
+        } break;
+        case spl_Web:
+        {
+            __debugbreak();
+        } break;
+        case spl_Cracks_Call:
+        {
+            __debugbreak();
+        } break;
+        case spl_Ice_Bolt:
+        {
+            __debugbreak();
+        } break;
+        case spl_Change_Terrain:
+        {
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, 8, _screen_seg);
+        } break;
+        case spl_Petrify:
+        {
+            __debugbreak();
+        } break;
+        case spl_Ice_Storm:
+        {
+            __debugbreak();
+        } break;
+        case spl_Call_Lightning:
+        {
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__2of2, 24, _screen_seg);
+        } break;
+        case spl_Dispel_Magic_True:
+        {
+            __debugbreak();
+        } break;
+        case spl_Confusion:
+        {
+            __debugbreak();
+        } break;
+        case spl_Psionic_Blast:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disenchant_True:
+        {
+            __debugbreak();
+        } break;
+        case spl_Vertigo:
+        {
+            __debugbreak();
+        } break;
+        case spl_Spell_Blast:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disjunction_True:
+        {
+            __debugbreak();
+        } break;
+        case spl_Banish:
+        {
+            __debugbreak();
+        } break;
+        case spl_Mind_Storm:
+        {
+            __debugbreak();
+        } break;
+        case spl_Stasis:
+        {
+            __debugbreak();
+        } break;
+        case spl_Spell_Binding:
+        {
+            __debugbreak();
+        } break;
+        case spl_Warp_Wood:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disrupt:
+        {
+            __debugbreak();
+        } break;
+        case spl_Fire_Bolt:
+        {
+            __debugbreak();
+        } break;
+        case spl_Corruption:
+        {
+            __debugbreak();
+        } break;
+        case spl_Fireball:      /* 0x60  96*/
+        {
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 23, _screen_seg);
+        } break;
+        case spl_Raise_Volcano: /* 0x62  98*/
+        {
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__3of3, 11, _screen_seg);
+        } break;
+        case spl_Warp_Lightning:
+        {
+            __debugbreak();
+        } break;
+        case spl_Doom_Bolt:
+        {
+            __debugbreak();
+        } break;
+        case spl_Magic_Vortex:
+        {
+            __debugbreak();
+        } break;
+        case spl_Fire_Storm:
+        {
+            __debugbreak();
+        } break;
+        case spl_Flame_Strike:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disintegrate:
+        {
+            __debugbreak();
+        } break;
+        case spl_Call_The_Void:
+        {
+            __debugbreak();
+        } break;
+        case spl_Star_Fires:
+        {
+            __debugbreak();
+        } break;
+        case spl_Dispel_Evil:
+        {
+            __debugbreak();
+        } break;
+        case spl_Life_Drain:
+        {
+            __debugbreak();
+        } break;
+        case spl_Drain_Power:
+        {
+            __debugbreak();
+        } break;
+        case spl_Possession:
+        {
+            __debugbreak();
+        } break;
+        case spl_Subversion:
+        {
+            __debugbreak();
+        } break;
+        case spl_Warp_Node:
+        {
+            __debugbreak();
+        } break;
+        case spl_Black_Wind:
+        {
+            __debugbreak();
+        } break;
+        case spl_Cruel_Unminding:
+        {
+            __debugbreak();
+        } break;
+        case spl_Word_of_Death:
+        {
+            __debugbreak();
+        } break;
+        case spl_Death_Spell:
+        {
+            __debugbreak();
+        } break;
+        case spl_Dispel_Magic:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disenchant_Area:
+        {
+            __debugbreak();
+        } break;
+        case spl_Disjunction:
+        {
+            __debugbreak();
+        } break;
+
+        default:
+        {
+            // __debugbreak();
+        } break;
+    }
+
+    if(spell_data_table[spell_idx].type == sdt_Summoning)
+    {
+        if (spell_idx == spl_Floating_Island)
+        {
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+            return_value = ST_TRUE;
+        }
+        else if(
+            (spell_idx == spl_Raise_Dead)
+            ||
+            (spell_idx == spl_Animate_Dead)
+        )
+        {
+            spell_animation_seg = LBX_Reload_Next(cmbtfx_lbx_file__ovr134__1of2, 22, _screen_seg);
+            return_value = ST_FALSE;
+        }
+        else
+        {
+            spell_animation_seg = LBX_Reload_Next(specfx_lbx_file__ovr134__2of3, spell_data_table[spell_idx].magic_realm, _screen_seg);
+            return_value = ST_TRUE;
+        }
+    }
+    else
+    {
+        __debugbreak();  // FTLOGAATIH!?!?!
+    }
+
+    return return_value;
+
+}
 
 // WZD o134p11
-// SPL_LoadSoundEffect()
+// drake178: SPL_LoadSoundEffect()
+/*
+; appends the spell's sound effect into the sandbox,
+; from SOUNDFX.LBX if the index value is positive, or
+; NEWSOUND.LBX if negative; sets the resource pointer
+; into SND_SpellCast@ if successful
+*/
+/*
+
+*/
+void Spell_Animation_Load_Sound_Effect__WIP(int16_t spell_idx)
+{
+    if(magic_set.sound_effects == ST_TRUE)
+    {
+        if(spell_data_table[spell_idx].Sound > ST_UNDEFINED)
+        {
+            SND_SpellCast = LBX_Reload_Next(soundfx_lbx_file__ovr134__1of2, spell_data_table[spell_idx].Sound, _screen_seg);
+        }
+        else
+        {
+            SND_SpellCast = LBX_Reload_Next(newfound_lbx_file__ovr134, abs(spell_data_table[spell_idx].Sound), _screen_seg);
+        }
+    }
+    else
+    {
+        SND_SpellCast = ST_UNDEFINED;
+    }
+}
+
 
 // WZD o134p12
-// sub_BA1AF()
+// drake178: sub_BA1AF()
+/*
+*/
+/*
+DEDU  ¿ something specific to spell animations that have a target map square ?
+*/
+void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t map_p = 0;
+    int16_t map_y = 0;
+    int16_t map_x = 0;
+    SAMB_ptr sound_buffer = NULL;
+    int16_t Y_To_Top = 0;
+    int16_t X_To_Left = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t frame_count = 0;  // _DI_
+    int16_t sound_buffer_size = 0;  // DNE in Dasm
+
+    X_To_Left = wx;
+
+    Y_To_Top = wy;
+
+    sound_buffer = LBX_Reload_Next(soundfx_lbx_file__ovr134__2of2, SFX_Silence, _screen_seg);
+    sound_buffer_size - lbxload_entry_length;
+
+    frame_count = FLIC_Get_FrameCount(spell_animation_seg);
+
+    if(frame_count < 12)
+    {
+        frame_count = 12;
+    }
+
+    map_x = _map_x;
+
+    map_y = _map_y;
+
+    map_p = _map_plane;
+
+    OVL_BringIntoView(&_map_x, &_map_y, wx, wy, wp);
+
+    _map_plane = wp;
+
+    World_To_Screen(_map_x, _map_y, &X_To_Left, &Y_To_Top);
+
+    if(SND_SpellCast != ST_UNDEFINED)
+    {
+        // DOMSDOS  Play_Sound__STUB(SND_SpellCast);
+        // DOME_RIGHTMEOW  sdl2_Play_Sound__WIP(SND_SpellCast, SND_SpellCast_size);
+    }
+
+    for(itr = 0; (frame_count + 3) > itr; itr++)
+    {
+        Mark_Time();
+        Main_Screen_Draw();
+        if(itr >= 3)
+        {
+            Clipped_Draw((X_To_Left - 20), (Y_To_Top - 18), spell_animation_seg);
+        }
+        PageFlip_FX();
+        Release_Time(2);
+    }
+
+    Mark_Time();
+
+    Release_Time(5);
+
+    // DOMSDOS  Play_Sound__STUB(sound_buffer);
+    // DOME_RIGHTMEOW  sdl2_Play_Sound__WIP(sound_buffer, sound_buffer_size);
+
+    _map_x = map_x;
+
+    _map_y = map_y;
+
+    _map_plane = map_p;
+
+}

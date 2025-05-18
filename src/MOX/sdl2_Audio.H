@@ -20,7 +20,7 @@ void sdl2_Audio_Init(void);
 
 void sdl2_Audio_Deinit(void);
 
-int16_t sdl2_Play_Sound(void* sound_buffer, uint32_t sound_buffer_size);
+int16_t sdl2_Play_Sound__WIP(void* sound_buffer, uint32_t sound_buffer_size);
 
 void sdl2_Play_Sound_WAV(Mix_Chunk * wav_sound_chunk);
 

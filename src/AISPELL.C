@@ -14,6 +14,18 @@ Module: AITECH
 
 
 
+// WZD dseg:70F8                                                 BEGIN:  ovr156 - Initialized Data
+
+// WZD dseg:70F8
+char CRP_AI_SpellTargetError[] = " could not be found for CP.";
+
+// WZD dseg:7114 00                                              db    0
+// WZD dseg:7115 00                                              db    0
+
+// WZD dseg:7115                                                 END:  ovr156 - Initialized Data
+
+
+
 /*
     WIZARDS.EXE ovr156
 */
@@ -315,49 +327,97 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
 
 // WZD o156p05
-// AI_OVL_PickSummon()
+// drake178: AI_OVL_PickSummon()
 
 // WZD o156p06
-// AI_OVL_PickUnitBuff()
+// drake178: AI_OVL_PickUnitBuff()
 
 // WZD o156p07
-// AI_OVL_PickRealmSupr()
+// drake178: AI_OVL_PickRealmSupr()
 
 // WZD o156p08
-// AI_OVL_PickGlobal()
+// drake178: AI_OVL_PickGlobal()
 
 // WZD o156p09
-// AI_OVL_PickCurse()
+// drake178: AI_OVL_PickCurse()
 
 // WZD o156p10
-// AI_OVL_PickCityBuff()
+// drake178: AI_OVL_PickCityBuff()
 
 // WZD o156p11
-// SPL_IsLifeSupressed()
+// drake178: SPL_IsLifeSupressed()
 
 // WZD o156p12
-// SPL_IsChsSuppressed()
+// drake178: SPL_IsChsSuppressed()
 
 // WZD o156p13
-// SPL_IsDthSuppressed()
+// drake178: SPL_IsDthSuppressed()
 
 // WZD o156p14
-// CRP_SPL_IsNatSuppressed()
+// drake178: CRP_SPL_IsNatSuppressed()
 
 // WZD o156p15
-// AI_OVL_PickDise()
+// drake178: AI_OVL_PickDise()
 
 // WZD o156p16
-// AI_OVL_PickDisj()
+// drake178: AI_OVL_PickDisj()
 
 // WZD o156p17
-// AITP_WallofStone()
+// drake178: AITP_WallofStone()
 
 // WZD o156p18
-// AITP_Transmute()
+// drake178: AITP_Transmute()
 
 // WZD o156p19
-// AITP_ChangeTerrain()
+// drake178: AITP_ChangeTerrain()
+/*
+; AI target picker for Change Terrain - selects the
+; first desert or swamp in the catchment of the highest
+; value city with such
+; returns 1 if a valid target was found, or 0 otherwise
+; BUG: treats catchment corners as affecting the city
+; WARNING: only targets deserts and swamps
+*/
+/*
+
+*/
+int16_t AITP_ChangeTerrain__WIP(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+{
+    int16_t Target_Plane = 0;
+    int16_t Target_Y = 0;
+    int16_t Target_X = 0;
+    int16_t Tile_Y = 0;
+    int16_t Plane = 0;
+    int16_t Y_Modifier = 0;
+    int16_t X_Modifier = 0;
+    int16_t Highest_Value = 0;
+    int16_t Target_City = 0;
+    int16_t itr_cities = 0;  // _SI_
+
+    __debugbreak();
+
+    Target_City = ST_UNDEFINED;
+
+    Highest_Value = 0;
+
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+
+    }
+
+
+
+    if(Target_City == ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        return ST_TRUE;
+    }
+
+}
+
 
 // WZD o156p20
 // AITP_MoveFortress()
@@ -412,6 +472,22 @@ void AI_Compute_Spells_Info(int16_t player_idx)
 
 // WZD o156p37
 // drake178: CRP_DBG_SpellTargetError()
+void Cast_Spell_Target_Error(int16_t spell_idx)
+{
+
+    if(Check_Release_Version() == ST_TRUE)
+    {
+        return;
+    }
+
+    String_Copy_Far(near_buffer, spell_data_table[spell_idx].name);
+
+    strcat(near_buffer, CRP_AI_SpellTargetError);  // " could not be found for CP."
+
+    Exit_With_Message(near_buffer);
+
+}
+
 
 // WZD o156p38
 // drake178: AI_ReleaseGlobals()
@@ -548,45 +624,296 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 
 // WZD o156p45
 // drake178: AITP_OVL_TileSpells()
+/* 
+AI target picker for overland tile spells
+returns 1 if a successful target is found, 0 if not,
+or the passed return value if the spell is undefined
+contains BUGs in every targeting function, and some
+select completely inappropriate targets
+*/
+/*
+    calls out to get wx,wy,wp, for 14 spells
+
+*/
+int16_t Get_Map_Square_Target_For_Spell(int16_t something, int16_t * wx, int16_t * wy, int16_t * wp, int16_t spell_idx, int16_t player_idx)
+{
+    int16_t Passed_Return = 0;
+    int16_t return_value = 0;  // DNE in Dasm
+
+    switch(spell_idx)
+    {
+        case spl_Transmute:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_Transmute(player_idx, wx, wy, wp);
+        } break;
+        case spl_Change_Terrain:
+        {
+            /* SPELLY */  return_value = AITP_ChangeTerrain__WIP(player_idx, wx, wy, wp);
+
+        } break;
+        case spl_Ice_Storm:
+        case spl_Fire_Storm:
+        case spl_Black_Wind:
+        case spl_Stasis:
+        {
+            __debugbreak();
+            // SPELLY  return_value AITP_OVL_HarmStack(player_idx, wx, wy, wp);
+        } break;
+        case spl_Floating_Island:
+        {
+            return_value = Pick_Target_For_Floating_Island(player_idx, wx, wy, wp);
+        } break;
+        case spl_Enchant_Road:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_EnchantRoad(player_idx, wx, wy, wp);
+        } break;
+        case spl_Disenchant_True:
+        case spl_Disenchant_Area:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_Disenchant(player_idx, wx, wy, wp);
+        } break;
+        case spl_Corruption:
+        case spl_Raise_Volcano:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_HarmTerrain(player_idx, wx, wy, wp, spell_idx);
+        } break;
+        case spl_Plane_Shift:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_PlaneShift(player_idx, wx, wy, wp);
+        } break;
+        case spl_Natures_Cures:
+        {
+            __debugbreak();
+            // SPELLY  return_value = AITP_NaturesCures(player_idx, wx, wy, wp);
+        } break;
+        default:
+        {
+            Cast_Spell_Target_Error(spell_idx);  // "[spell name] could not be found for CP."
+            return_value = something;
+            Passed_Return = return_value;
+        } break;
+    }
+
+    return return_value;
+
+}
+
 
 // WZD o156p46
-// AITP_OVL_HarmStack()
+// drake178: AITP_OVL_HarmStack()
+
 
 // WZD o156p47
-// AITP_FloatingIsland()
+// drake178: AITP_FloatingIsland()
+/*
+; AI target picker for Floating Island - selects the
+; closest ocean tile within 10 tiles of a random city
+; in a cardinal direction
+; returns 1 if a valid target was found, or 0 otherwise
+; BUG: utterly useless targeting
+*/
+/*
+
+*/
+int16_t Pick_Target_For_Floating_Island(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp)
+{
+    int16_t city_idx = 0;
+    int16_t Tries = 0;
+    int16_t uu_player_idx = 0;
+    int16_t target_wy = 0;
+    int16_t target_wx = 0;
+    int16_t Vertical = 0;
+    int16_t city_wp = 0;
+    int16_t UpLeft = 0;
+    int16_t city_wy = 0;
+    int16_t city_wx = 0;
+    int16_t check_value = 0;  // _DI_
+    int16_t itr_squares = 0;  // _SI_
+
+    uu_player_idx = player_idx;
+
+    check_value = ST_FALSE;
+
+    // ; make 200 attempts to find a random city that belongs
+    // ; to the player
+    for(Tries = 0; ((Tries < 200) && (check_value == ST_FALSE)); Tries++)
+    {
+
+        city_idx = (Random(_cities) - 1);
+
+        if(_CITIES[city_idx].owner_idx == player_idx)
+        {
+
+            check_value = ST_TRUE;
+
+            city_wp = _CITIES[city_idx].wp;
+            
+            city_wx = _CITIES[city_idx].wx;
+            
+            city_wy = _CITIES[city_idx].wy;
+
+        }
+
+    }
+
+    if(check_value == ST_FALSE)
+    {
+        return ST_FALSE;
+    }
+
+    // ; find the closest ocean tile within 10 tiles in any of
+    // ; the cardinal directions (straight only)
+
+    itr_squares = 0;
+
+    UpLeft = ST_TRUE;
+
+    Vertical = ST_FALSE;
+
+    check_value = ST_FALSE;
+
+    while((check_value == ST_FALSE) && (itr_squares < 10))
+    {
+        if(UpLeft == ST_FALSE)
+        {
+            if(Vertical == ST_FALSE)
+            {
+                if(Map_Square_Is_Legal_For_Floating_Island((city_wx + itr_squares), city_wy, city_wp) == ST_TRUE)
+                {
+                    check_value = ST_TRUE;
+                    target_wx = (city_wx + itr_squares);
+                    target_wy = city_wy;
+                }
+                Vertical = ST_TRUE;
+            }
+            else  /* (Vertical == ST_TRUE) */
+            {
+                if(Map_Square_Is_Legal_For_Floating_Island(city_wx, (city_wy + itr_squares), city_wp) == ST_TRUE)
+                {
+                    check_value = ST_TRUE;
+                    target_wx = city_wx;
+                    target_wy = (city_wy + itr_squares);
+                }
+                Vertical = ST_TRUE;
+            }
+        }
+        else  /* (UpLeft == ST_TRUE) */
+        {
+            if(Vertical == ST_FALSE)
+            {
+                if(Map_Square_Is_Legal_For_Floating_Island((city_wx - itr_squares), city_wy, city_wp) == ST_TRUE)
+                {
+                    check_value = ST_TRUE;
+                    target_wx = (city_wx - itr_squares);
+                    target_wy = city_wy;
+                }
+                Vertical = ST_TRUE;
+            }
+            else  /* (Vertical == ST_TRUE) */
+            {
+                if(Map_Square_Is_Legal_For_Floating_Island(city_wx, (city_wy - itr_squares), city_wp) == ST_TRUE)
+                {
+                    check_value = ST_TRUE;
+                    target_wx = city_wx;
+                    target_wy = (city_wy - itr_squares);
+                }
+                Vertical = ST_FALSE;
+                itr_squares++;
+                UpLeft = ST_FALSE;
+            }
+        }
+    }
+
+    if(check_value == ST_FALSE)
+    {
+        return ST_FALSE;
+    }
+    else
+    {
+        *wx = target_wx;
+        *wy = target_wy;
+        *wp = city_wp;
+        return ST_TRUE;
+    }
+
+}
+
 
 // WZD o156p48
-// AITP_EnchantRoad()
+// drake178: AITP_EnchantRoad()
 
 // WZD o156p49
-// AITP_Disenchant()
+// drake178: AITP_Disenchant()
 
 // WZD o156p50
-// AITP_HarmTerrain()
+// drake178: AITP_HarmTerrain()
 
 // WZD o156p51
-// sub_E9FA9()
+// drake178: sub_E9FA9()
 
 // WZD o156p52
-// AITP_PlaneShift()
+// drake178: AITP_PlaneShift()
 
 // WZD o156p53
-// AITP_NaturesCures()
+// drake178: AITP_NaturesCures()
 
 // WZD o156p54
-// sub_EA43C()
+// drake178: sub_EA43C()
 
 // WZD o156p55
-// sub_EA4FE()
+// drake178: sub_EA4FE()
 
 // WZD o156p56
-// AI_MyrrorAdvantage()
+// drake178: AI_MyrrorAdvantage()
 
 // WZD o156p57
-// TILE_IsOcean()
+// drake178: TILE_IsOcean()
+/*
+; returns 1 if the tile is a shore, ocean, or lake, or
+; 0 otherwise
+; differs from TILE_IsAISailable and TILE_IsAISailable2
+; in that this also returns 0 for river-outflow single
+; tile lakes
+; differs from TILE_IsSailable in that this returns 0
+; for all inland lakes
+*/
+/*
+
+*/
+int16_t Map_Square_Is_Legal_For_Floating_Island(int16_t wx, int16_t wy, int16_t wp)
+{
+    int16_t terrain_type;  // DNE in Dasm
+
+    // DEDU  `% _TerType_Count`? same seen in NEXTTURN.C
+    terrain_type = (GET_TERRAIN_TYPE(wx, wy, wp) % _TerType_Count);
+
+    if(
+        ((terrain_type < _Tundra00001000) && (terrain_type > _River1111_5))
+        ||
+        ((terrain_type <= _Shore111R1110) && (terrain_type > _Desert10101111))
+        ||
+        ((terrain_type <= _Shore000R0000) && (terrain_type > _1LakeRiv_S))
+        ||
+        ((terrain_type <= _Shore10101111) && (terrain_type != TT_BugGrass) && (terrain_type != _1Lake))
+    )
+    {
+        return ST_TRUE;
+    }
+    else
+    {
+        return ST_FALSE;
+    }
+
+}
+
 
 // WZD o156p58
-// sub_EA61E()
+// drake178: sub_EA61E()
 
 // WZD o156p59
-// WIZ_SummonInFortress()
+// drake178: WIZ_SummonInFortress()

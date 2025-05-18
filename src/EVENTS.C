@@ -9,6 +9,7 @@
 #include "MOX/MOM_Data.H"
 #include "MOX/MOX_DAT.H"  /* _screen_seg */
 #include "MOX/MOX_SET.H"  /* magic_set */
+#include "MOX/sdl2_Audio.H"
 #include "MOX/SOUND.H"
 
 #include "City_ovr55.H"
@@ -1577,6 +1578,7 @@ void Show_Event_Message(void)
     SAMB_ptr sound_seg;
     SAMB_ptr m_event_display_seg;
     int16_t event_music_num;  // _SI_
+    uint32_t sound_seg_size = 0;  // DNE in Dasm
 
     if(
         (m_event_player_idx != 99)
@@ -1646,7 +1648,9 @@ void Show_Event_Message(void)
         }
 
         sound_seg = LBX_Reload(music_lbx_file__ovr081, event_music_num, SND_Music_Segment);
-        Play_Sound__WIP(sound_seg);
+        sound_seg_size = lbxload_entry_length;
+        // DOMSDOS  Play_Sound__WIP(sound_seg);
+        sdl2_Play_Sound__WIP(sound_seg, sound_seg_size);
 
     }
 
@@ -1660,7 +1664,8 @@ void Show_Event_Message(void)
 
     Update_Remap_Gray_Palette();
 
-    Play_Background_Music__STUB();
+    // DOMSDOS  Play_Background_Music__STUB();
+    sdl2_Play_Background_Music__WIP();
 
     Allocate_Reduced_Map();
 

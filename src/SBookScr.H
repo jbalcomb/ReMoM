@@ -38,7 +38,6 @@ int16_t WIZ_SetOverlandSpell__WIP(int16_t player_idx, int16_t spell_idx, int16_t
 // sub_B9837()
 
 // WZD o134p06
-// drake178: Full_Draw_Main_Screen()
 void Full_Draw_Main_Screen(void);
 
 // WZD o134p07
@@ -49,15 +48,16 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
 // WZD o134p09
 // sub_B9D14()
+// IDK_Spell_Cityscape_1__Load_Music
 
 // WZD o134p10
-// GAME_LoadSpellAnim()
+int16_t Spell_Animation_Load_Graphics__WIP(int16_t spell_idx);
 
 // WZD o134p11
-// SPL_LoadSoundEffect()
+void Spell_Animation_Load_Sound_Effect__WIP(void);
 
 // WZD o134p12
-// sub_BA1AF()
+void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp);
 
 
 
